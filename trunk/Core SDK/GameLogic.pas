@@ -24,9 +24,18 @@ uses
       ProcessEvents();
   
       //Draw screen
-    ClearScreen(ColorBlack);
-    DrawFramerate(0, 0, GameFont(courier));
-    DrawText('Hello World', ColorWhite, GameFont(ArialLarge), 50, 50);
+	  ClearScreen(ColorBlack);
+      
+      FillRectangle(ColorRed, 20, 200, 200, 100);
+      FillRectangle(ColorGreen, 220, 200, 200, 100);
+      FillRectangle(ColorBlue, 420, 200, 200, 100);
+
+      DrawText('Hello World', ColorRed, GameFont(Courier), 20, 310);
+      DrawText('Hello World', ColorGreen, GameFont(Courier), 220, 310);
+      DrawText('Hello World', ColorBlue, GameFont(Courier), 420, 310);
+
+ 	  DrawFramerate(0, 0, GameFont(courier));
+      DrawText('Hello World', ColorWhite, GameFont(ArialLarge), 50, 50);
   
       RefreshScreen();
     until WindowCloseRequested();
