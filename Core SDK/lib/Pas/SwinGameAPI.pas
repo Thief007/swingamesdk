@@ -3260,7 +3260,7 @@ begin
 	SDL_EnableUNICODE(SDL_ENABLE);
 
 	//Load sound
-	if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) = -1 then
+	if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
 	begin
 		raise Exception.Create('Error openning audio device. ' + 
                            string(Mix_GetError));
