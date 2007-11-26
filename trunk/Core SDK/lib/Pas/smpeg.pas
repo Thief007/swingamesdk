@@ -1,7 +1,7 @@
 unit smpeg;
 {******************************************************************************}
 {
-  $Id: smpeg.pas,v 1.7 2004/08/14 22:54:30 savage Exp $
+  $Id: smpeg.pas,v 1.11 2007/05/20 20:32:45 savage Exp $
   
 }
 {                                                                              }
@@ -101,6 +101,18 @@ unit smpeg;
 {                                                                              }
 {
   $Log: smpeg.pas,v $
+  Revision 1.11  2007/05/20 20:32:45  savage
+  Initial Changes to Handle 64 Bits
+
+  Revision 1.10  2005/04/10 11:48:33  savage
+  Changes as suggested by Michalis, thanks.
+
+  Revision 1.9  2005/01/05 01:47:15  savage
+  Changed LibName to reflect what MacOS X should have. ie libSDL*-1.2.0.dylib respectively.
+
+  Revision 1.8  2005/01/04 23:14:59  savage
+  Changed LibName to reflect what most Linux distros will have. ie libSDL*-1.2.so.0 respectively.
+
   Revision 1.7  2004/08/14 22:54:30  savage
   Updated so that Library name defines are correctly defined for MacOS X.
 
@@ -132,7 +144,7 @@ unit smpeg;
 {$IFDEF UNIX}
   {$ALIGN 4} // Linux uses DWORD alignment
 {$ENDIF}
-{$IFDEF Win32}
+{$IFDEF WINDOWS}
   {$IFDEF VER140}
     {$ALIGN 8} // Windows uses Quad-Word alignment
   {$ENDIF}
@@ -148,15 +160,19 @@ uses
   sdl;
 
 const
-{$IFDEF WIN32}
+{$IFDEF WINDOWS}
   SmpegLibName = 'smpeg.dll';
 {$ENDIF}
 
 {$IFDEF UNIX}
 {$IFDEF DARWIN}
-  SmpegLibName = 'libsmpeg.dylib';
+  SmpegLibName = 'libsmpeg-0.4.0.dylib';
 {$ELSE}
-  SmpegLibName = 'libsmpeg.so';
+  {$IFDEF FPC}
+    SmpegLibName = 'libsmpeg.so';
+  {$ELSE}
+    SmpegLibName = 'libsmpeg-0.4.so.0';
+  {$ENDIF}
 {$ENDIF}
 {$ENDIF}
 
