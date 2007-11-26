@@ -1,0 +1,1 @@
+This folder contains the libraries that you need in order to compile and run games developed with the SwinGameAPI.
