@@ -735,15 +735,7 @@ implementation
 
 	function ToSDLColor(color: UInt32): TSDL_Color;
 	begin
-		{$IF SDL_BYTEORDER = SDL_BIG_ENDIAN } //4321 = ARGB
-			result.r := (color and $00FF0000) shr 16;
-			result.g := (color and $0000FF00) shr 8;
-			result.b := (color and $000000FF);
-		{$ELSE} //1234 = BGRA
-			result.r := (color and $0000FF00) shr 8;
-			result.g := (color and $00FF0000) shr 16;
-			result.b := (color and $FF000000) shr 24;
-		{$IFEND}
+		SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
 	end;
 
 	function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;
@@ -1038,14 +1030,9 @@ implementation
 	/// Gets a color given its RGBA components.
 	///
 	///	@param red, green, blue, alpha:	 Components of the color
-	///	@returns:												 The matching colour
+	///	@returns: The matching colour
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;
 	begin
-		//result := red shl baseSurface.format.Rshift;
-		//result := result or (green shl baseSurface.format.Gshift);
-		//result := result or (blue shl baseSurface.format.Bshift);
-		//result := result or (alpha shl baseSurface.format.Ashift);
-
 		result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
 	end;
 
@@ -1061,14 +1048,14 @@ implementation
 	function GetPixel32(surface: PSDL_Surface; x, y: Integer): Colour;
 	var
 		pixels, pixel: PUint32;
-		offset, pixelAddress: Integer;
+		offset, pixelAddress: Uint32;
 	begin
 		//Convert the pixels to 32 bit
 		pixels := surface.pixels;
 
 		//Get the requested pixel
 		offset := (( y * surface.w ) + x) * surface.format.BytesPerPixel;
-		pixelAddress := Integer(pixels) + offset;
+		pixelAddress := uint32(pixels) + offset;
 
 		{$IFDEF FPC}
 			pixel := PUint32(pixelAddress);
@@ -2000,14 +1987,14 @@ implementation
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	var
 		keys: PUint8;
-		indexAddress: Integer;
+		indexAddress: uint32;
 		intPtr: ^UInt8;
 	begin
 		keys := SDL_GetKeyState(nil);
 
 		if keys <> nil then
 		begin
-			indexAddress := Integer(keys) + (virtKeyCode);
+			indexAddress := uint32(keys) + uint32(virtKeyCode);
 
 			{$IFDEF FPC}
 				intPtr := PUInt8(indexAddress);

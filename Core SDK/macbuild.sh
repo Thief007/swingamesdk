@@ -58,7 +58,7 @@ fpc $EXTRA_OPTS -XMSDL_main -Mdelphi -Fe./bin -Fu./lib/Pas -s GameLauncher.pas
 if [ $? != 0 ]; then DoExitCompile; fi
 
 #Remove the pascal assembler script
-#rm ppas.sh
+rm ppas.sh
 
 echo Assembling mygame
 
