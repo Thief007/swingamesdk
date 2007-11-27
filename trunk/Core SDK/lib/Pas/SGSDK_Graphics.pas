@@ -1,8 +1,8 @@
 unit SGSDK_Graphics;
 
 interface
-	uses	SGSDK_Core;
-	
+	uses	SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
+			SDL_Mixer, SDL_TTF, SDLEventProcessing;
 	type
 		/// Record: Sprite
 		///
@@ -989,7 +989,7 @@ implementation
 		//Lock dest.surface
 		if SDL_MUSTLOCK(dest.surface) then
 		begin
-			if SDL_Lockdest.surface(dest.surface) < 0 then exit;
+			if SDL_LockSurface(dest.surface) < 0 then exit;
 		end;
 		
 		// Plot four ellipse points by iteration
@@ -1046,7 +1046,7 @@ implementation
 		end;
 		
 		// Unlock dest.surface
-		if SDL_MUSTLOCK(dest.surface) then  SDL_Unlockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
@@ -1089,14 +1089,14 @@ implementation
 		//Lock dest.surface
 		if SDL_MUSTLOCK(dest.surface) then
 		begin
-			if SDL_Lockdest.surface(dest.surface) < 0 then exit;
+			if SDL_LockSurface(dest.surface) < 0 then exit;
 		end;
 		
 		// Plot four ellipse points by iteration
 		while stoppingX > stoppingY do
 		begin
-			DrawHorizontalLine(dest.surface, yPos + yRadius + y, xPos + xRadius - x, xPos + xRadius + x, theColour);
-			DrawHorizontalLine(dest.surface, yPos + yRadius - y, xPos + xRadius - x, xPos + xRadius + x, theColour);
+			DrawHorizontalLine(dest, yPos + yRadius + y, xPos + xRadius - x, xPos + xRadius + x, theColour);
+			DrawHorizontalLine(dest, yPos + yRadius - y, xPos + xRadius - x, xPos + xRadius + x, theColour);
 			
 			y := y + 1;
 			stoppingY := stoppingY + twoASquare;
@@ -1124,8 +1124,8 @@ implementation
 		//Plot four ellipse points by iteration
 		while stoppingX < stoppingY do
 		begin
-			DrawHorizontalLine(dest.surface, yPos + yRadius + y, xPos + xRadius - x, xPos + xRadius + x, theColour);
-			DrawHorizontalLine(dest.surface, yPos + yRadius - y, xPos + xRadius - x, xPos + xRadius + x, theColour);
+			DrawHorizontalLine(dest, yPos + yRadius + y, xPos + xRadius - x, xPos + xRadius + x, theColour);
+			DrawHorizontalLine(dest, yPos + yRadius - y, xPos + xRadius - x, xPos + xRadius + x, theColour);
 			
 			x := x + 1;
 			stoppingX := stoppingX + twoBSquare;
@@ -1142,7 +1142,7 @@ implementation
 		end;
 		
 		// Unlock dest.surface
-		if SDL_MUSTLOCK(dest.surface) then  SDL_Unlockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a vertical line on the destination bitmap.
@@ -1172,7 +1172,7 @@ implementation
 		
 		if (x < 0) or (x > w - 1) or (y2 < 0) or (y1 > h - 1) then
 		begin
-			result := false;
+			//result := false;
 			exit;
 		end;
 		
@@ -1186,17 +1186,17 @@ implementation
 		addr := Integer(pixels) + (x * dest.surface.format.BytesPerPixel) + (y1 * dest.surface.Pitch);
 		bufp := PUint32(addr);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_Lockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for y := y1 to y2 - 1 do
 		begin
 			bufp := PUInt32(Integer(bufp) + (dest.surface.pitch));
-			bufp^ := theColour;
+			bufp^ := theColor;
 		end;
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_Unlockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 		
-		result := true;
+		//result := true;
 	end;
 
 	/// Draws a horizontal line on the destination bitmap.
@@ -1226,7 +1226,7 @@ implementation
 		
 		if (x2 < 0) or (x1 > w - 1) or (y < 0) or (y > h - 1) then
 		begin
-			result := false;
+			//result := false;
 			exit; //no single point of the line is on screen
 		end;
 		
@@ -1241,16 +1241,16 @@ implementation
 		addr := Integer(pixels) + ((x1 - 1) * dest.surface.format.BytesPerPixel) + (y * dest.surface.pitch);
 		bufp := PUint32(addr);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_Lockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for x := x1 to x2 do
 		begin
 			Inc(bufp);
-			bufp^ := theColour;
+			bufp^ := theColor;
 		end;
-		result := true;
+		//result := true;
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_Unlockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a line on the destination bitmap.
@@ -1345,7 +1345,7 @@ implementation
 				y := y + yinc2;                 // Change the y as appropriate
 			end;
 			
-			result := true;
+			//result := true;
 		end;
 	end;
 
@@ -1361,11 +1361,11 @@ implementation
 	begin
 		if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_Lockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
-		PutPixel(dest.surface, x, y, theColor);
+		PutPixel(dest.surface, x, y, theColour);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_Unlockdest.surface(dest.surface);
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 	
 	/// Draws a circle centered on a given x, y location.
@@ -1443,7 +1443,7 @@ implementation
 			end;
 		end;
 		
-		result := true;
+		//result := true;
 	end;
 
 	/// Draws a filled circle centered on a given x, y location.
@@ -1481,10 +1481,10 @@ implementation
 			g := xc - y;
 			h := yc - x;
 			
-			if b <> pb then DrawHorizontalLine(dest.surface, b, a, c, theColour);
-			if d <> pd then DrawHorizontalLine(dest.surface, d, a, c, theColour);
-			if f <> b  then DrawHorizontalLine(dest.surface, f, e, g, theColour);
-			if (h <> d) and (h <> f) then DrawHorizontalLine(dest.surface, h, e, g, theColour);
+			if b <> pb then DrawHorizontalLine(dest, b, a, c, theColour);
+			if d <> pd then DrawHorizontalLine(dest, d, a, c, theColour);
+			if f <> b  then DrawHorizontalLine(dest, f, e, g, theColour);
+			if (h <> d) and (h <> f) then DrawHorizontalLine(dest, h, e, g, theColour);
 			
 			pb := b;
 			pd := d;

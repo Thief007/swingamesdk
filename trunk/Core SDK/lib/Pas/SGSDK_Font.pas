@@ -6,7 +6,7 @@ unit SGSDK_Font;
 {$ENDIF}
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core;
+	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics;
 	
 	type
 
