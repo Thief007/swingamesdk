@@ -39,6 +39,8 @@ interface
 	// These routines are used to load resources, and to free them.
 	//
 	
+	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
+	
 	function CreateBitmap(width, height: Integer): Bitmap;
 	
 	procedure OptimiseBitmap(surface: Bitmap);
@@ -196,6 +198,51 @@ interface
 															vwPrtWidth, vwPrtHeight : Integer) : Boolean; overload;
 
 implementation
+
+	/// Clears the surface of the bitmap to the passed in color.
+	///
+	///	@param dest:		 The bitmap to clear
+	///	@param toColour: The colour to clear the bitmap to
+	///
+	/// Side Effects:
+	///	- dest's surface is set to the toColor
+	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
+	begin
+		SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColour);
+	end;
+
+ 	/// Clears the surface of the bitmap to Black.
+	///
+	///	@param dest:		 The bitmap to clear
+	///
+	/// Side Effects:
+	///	- dest's surface is set to black
+	procedure ClearSurface(dest: Bitmap); overload;
+	begin
+		ClearSurface(dest, ColorBlack);
+	end;
+
+	/// Clears the surface of the screen to the passed in color.
+	///
+	///	@param toColour: The colour to clear the bitmap to
+	///
+	/// Side Effects:
+	///	- Screen's surface is set to the toColor
+	procedure ClearScreen(toColour : Colour); overload;
+	begin
+		ClearSurface(scr, toColour);
+	end;
+
+	/// Clears the screen to Black.
+	///
+	/// Side Effects:
+	///	- screen's surface is set to black
+	procedure ClearScreen(); overload;
+	begin
+		ClearScreen(ColorBlack);
+	end;
+
+
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
 	begin
 		if w < 0 then
