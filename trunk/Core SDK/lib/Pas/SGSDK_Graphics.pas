@@ -1506,7 +1506,7 @@ implementation
                        xc, yc, radius: Integer);
 	var
 		interval, lengthX, lengthY: Double;
-		step: Integer;
+		step: Single;
 	begin
 		step := 0;
 		interval := PI / (radius * 2);
@@ -1515,7 +1515,7 @@ implementation
 	 		lengthX := radius * System.Sin(step * interval);
 	 		lengthY := radius * System.Cos(step * interval);
 	 		DrawHorizontalLine(dest, theColour, round(yc + lengthY), round(xc - lengthX), round(xc + lengthX));
-	 		step := step + 1;
+	 		step := step + 0.5;
 	 	end;
 	end;
   
