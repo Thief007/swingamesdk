@@ -1018,11 +1018,11 @@ implementation
 		xRadius := width div 2;
 		yRadius := height div 2;
 
-		twoASquare := 2 * Xradius * Xradius;
-		twoBSquare := 2 * Yradius * Yradius;
+		twoASquare := 2 * xRadius * xRadius;
+		twoBSquare := 2 * yRadius * xRadius;
 		
 		// 1st set of points
-		x := Xradius - 1;  // radius zero == draw nothing
+		x := xRadius - 1;  // radius zero == draw nothing
 		y := 0;
 		
 		xChange := yRadius * yRadius * (1 - 2 * xRadius);
@@ -1108,88 +1108,18 @@ implementation
 	procedure FillEllipse(dest: Bitmap; theColour: Colour;
                          xPos, yPos, width, height: Integer);
 	var
-		xRadius, yRadius: Integer;
-		x, y: Integer;
-		xChange, yChange: Integer;
-		ellipseError: Integer;
-		twoASquare, twoBSquare: Integer;
-		stoppingX, stoppingY: Integer;
+		interval, lengthX, lengthY: Double;
+		step: Single;
 	begin
-		xRadius := width div 2;
-		yRadius := height div 2;
-
-		twoASquare := 2 * Xradius * Xradius;
-		twoBSquare := 2 * Yradius * Yradius;
-		
-		// 1st set of points
-		x := Xradius - 1;  // radius zero == draw nothing
-		y := 0;
-		
-		xChange := yRadius * yRadius * (1 - 2 * xRadius);
-		yChange := xRadius * xRadius;
-		
-		ellipseError := 0;
-		
-		stoppingX := twoBSquare * xRadius;
-		stoppingY := 0;
-		
-		//Lock dest.surface
-		if SDL_MUSTLOCK(dest.surface) then
-		begin
-			if SDL_LockSurface(dest.surface) < 0 then exit;
-		end;
-		
-		// Plot four ellipse points by iteration
-		while stoppingX > stoppingY do
-		begin
-			DrawHorizontalLine(dest, yPos + yRadius + y, xPos + xRadius - x, xPos + xRadius + x, theColour);
-			DrawHorizontalLine(dest, yPos + yRadius - y, xPos + xRadius - x, xPos + xRadius + x, theColour);
-			
-			y := y + 1;
-			stoppingY := stoppingY + twoASquare;
-			ellipseError := ellipseError + Ychange;
-			yChange := yChange + twoASquare;
-			
-			if (2 * ellipseError + xChange) > 0 then
-			begin
-				x := x - 1;
-				stoppingX := stoppingX - twoBSquare;
-				ellipseError := ellipseError + xChange;
-				xChange := xChange + twoBSquare;
-			end;
-		end;
-		
-		// 2nd set of points
-		x := 0;
-		y := yRadius - 1;  //radius zero == draw nothing
-		xChange := yRadius * yRadius;
-		yChange := xRadius * xRadius * (1 - 2 * yRadius);
-		ellipseError := 0;
-		stoppingX := 0;
-		stoppingY := twoASquare * yRadius;
-		
-		//Plot four ellipse points by iteration
-		while stoppingX < stoppingY do
-		begin
-			DrawHorizontalLine(dest, yPos + yRadius + y, xPos + xRadius - x, xPos + xRadius + x, theColour);
-			DrawHorizontalLine(dest, yPos + yRadius - y, xPos + xRadius - x, xPos + xRadius + x, theColour);
-			
-			x := x + 1;
-			stoppingX := stoppingX + twoBSquare;
-			ellipseError := ellipseError + xChange;
-			xChange := xChange + twoBSquare;
-			
-			if (2 * ellipseError + yChange) > 0 then
-			begin
-				y := y - 1;
-				stoppingY := stoppingY - TwoASquare;
-				ellipseError := ellipseError + yChange;
-				yChange := yChange + twoASquare;
-			end;
-		end;
-		
-		// Unlock dest.surface
-		if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
+		step := 0;
+		interval := PI / height;
+ 		while step <= radius * 2 do
+	 	begin
+	 		lengthX := height / 2 * System.Sin(step * interval);
+	 		lengthY := width / 2 * System.Cos(step * interval);
+	 		DrawHorizontalLine(dest, theColour, round(yc + lengthY), round(xc - lengthX), round(xc + lengthX));
+	 		step := step + 0.5;
+	 	end;
 	end;
 
 	/// Draws a vertical line on the destination bitmap.
