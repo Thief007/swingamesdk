@@ -1008,32 +1008,124 @@ implementation
 	procedure DrawEllipse(dest: Bitmap; theColour: Colour; 
                  xPos, yPos, width, height: Integer); overload;
 	var
-		xRadius, yRadius: Integer;
+	  x, y: Integer;
+	  xChange, yChange: Integer;
+	  ellipseError: Integer;
+	  twoASquare, twoBSquare: Integer;
+	  stoppingX, stoppingY: Integer;
+	begin
+	  twoASquare := 2 * (width shr 1) * (width shr 1);
+	  twoBSquare := 2 * (height shr 1) * (height shr 1);
+	
+	  // 1st set of points
+	  x := (width shr 1) - 1;  // radius zero == draw nothing
+	  y := 0;
+	
+	  xChange := (height shr 1) * (height shr 1) * (1 - 2 * (width shr 1));
+	  yChange := (width shr 1) * (width shr 1);
+	
+	  ellipseError := 0;
+	
+	  stoppingX := twoBSquare * (width shr 1);
+	  stoppingY := 0;
+	
+	  //Lock dest
+	  if SDL_MUSTLOCK(dest.surface) then
+	  begin
+	      if SDL_LockSurface(dest.surface) < 0 then exit;
+	  end;
+	
+	  // Plot four ellipse points by iteration
+	  while stoppingX > stoppingY do
+	  begin
+	    PutPixel(dest.surface, xPos + x, yPos + y, theColour);
+	    PutPixel(dest.surface, xPos - x, yPos + y, theColour);
+	    PutPixel(dest.surface, xPos + x, yPos - y, theColour);
+	    PutPixel(dest.surface, xPos - x, yPos - y, theColour);
+	
+	    y := y + 1;
+	    stoppingY := stoppingY + twoASquare;
+	    ellipseError := ellipseError + Ychange;
+	    yChange := yChange + twoASquare;
+	
+	    if (2 * ellipseError + xChange) > 0 then
+	    begin
+	      x := x - 1;
+	      stoppingX := stoppingX - twoBSquare;
+	      ellipseError := ellipseError + xChange;
+	      xChange := xChange + twoBSquare;
+	    end;
+	  end;
+	
+	  // 2nd set of points
+	  x := 0;
+	  y := (height shr 1) - 1;  //radius zero == draw nothing
+	  xChange := (height shr 1) * (height shr 1);
+	  yChange := (width shr 1) * (width shr 1) * (1 - 2 * (height shr 1));
+	  ellipseError := 0;
+	  stoppingX := 0;
+	  stoppingY := twoASquare * (height shr 1);
+	
+	  //Plot four ellipse points by iteration
+	  while stoppingX < stoppingY do
+	  begin
+	    PutPixel(dest.surface, xPos + x, yPos + y, theColour);
+	    PutPixel(dest.surface, xPos - x, yPos + y, theColour);
+	    PutPixel(dest.surface, xPos + x, yPos - y, theColour);
+	    PutPixel(dest.surface, xPos - x, yPos - y, theColour);
+	
+	    x := x + 1;
+	    stoppingX := stoppingX + twoBSquare;
+	    ellipseError := ellipseError + xChange;
+	    xChange := xChange + twoBSquare;
+	
+	    if (2 * ellipseError + yChange) > 0 then
+	    begin
+	      y := y - 1;
+	      stoppingY := stoppingY - TwoASquare;
+	      ellipseError := ellipseError + yChange;
+	      yChange := yChange + twoASquare;
+	    end;
+	  end;
+	
+	  // Unlock dest
+	  if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
+	end;
+
+	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
+	///
+	///	@param dest:				 The destination bitmap - not optimised!
+	///	@param theColor:		 The color to draw the ellipse
+	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
+	///	@param width,height: The width and height of the ellipse
+	///
+	/// Side Effects:
+	///	- Draws a ellipse in the dest bitmap
+	procedure FillEllipse(dest: Bitmap; theColour: Colour;
+                         xPos, yPos, width, height: Integer);
+	var
 		x, y: Integer;
 		xChange, yChange: Integer;
 		ellipseError: Integer;
 		twoASquare, twoBSquare: Integer;
 		stoppingX, stoppingY: Integer;
 	begin
-		xRadius := width div 2;
-		yRadius := height div 2;
-
-		twoASquare := 2 * xRadius * xRadius;
-		twoBSquare := 2 * yRadius * xRadius;
+		twoASquare := 2 * (width shr 1) * (width shr 1);
+		twoBSquare := 2 * (height shr 1) * (height shr 1);
 		
 		// 1st set of points
-		x := xRadius - 1;  // radius zero == draw nothing
+		x := (width shr 1) - 1;  // radius zero == draw nothing
 		y := 0;
 		
-		xChange := yRadius * yRadius * (1 - 2 * xRadius);
-		yChange := xRadius * xRadius;
+		xChange := (height shr 1) * (height shr 1) * (1 - 2 * (width shr 1));
+		yChange := (width shr 1) * (width shr 1);
 		
 		ellipseError := 0;
 		
-		stoppingX := twoBSquare * xRadius;
+		stoppingX := twoBSquare * (width shr 1);
 		stoppingY := 0;
 		
-		//Lock dest.surface
+		//Lock dest
 		if SDL_MUSTLOCK(dest.surface) then
 		begin
 			if SDL_LockSurface(dest.surface) < 0 then exit;
@@ -1042,10 +1134,8 @@ implementation
 		// Plot four ellipse points by iteration
 		while stoppingX > stoppingY do
 		begin
-			PutPixel(dest.surface, xPos + xRadius + x, yPos + yRadius + y, theColour);
-			PutPixel(dest.surface, xPos + xRadius - x, yPos + yRadius + y, theColour);
-			PutPixel(dest.surface, xPos + xRadius + x, yPos + yRadius - y, theColour);
-			PutPixel(dest.surface, xPos + xRadius - x, yPos + yRadius - y, theColour);
+			DrawHorizontalLine(dest, theColour, yPos + y, xPos - x, xPos + x);
+			DrawHorizontalLine(dest, theColour, yPos - y, xPos - x, xPos + x);
 			
 			y := y + 1;
 			stoppingY := stoppingY + twoASquare;
@@ -1063,20 +1153,18 @@ implementation
 		
 		// 2nd set of points
 		x := 0;
-		y := yRadius - 1;  //radius zero == draw nothing
-		xChange := yRadius * yRadius;
-		yChange := xRadius * xRadius * (1 - 2 * yRadius);
+		y := (height shr 1) - 1;  //radius zero == draw nothing
+		xChange := (height shr 1) * (height shr 1);
+		yChange := (width shr 1) * (width shr 1) * (1 - 2 * (height shr 1));
 		ellipseError := 0;
 		stoppingX := 0;
-		stoppingY := twoASquare * yRadius;
+		stoppingY := twoASquare * (height shr 1);
 		
 		//Plot four ellipse points by iteration
 		while stoppingX < stoppingY do
 		begin
-			PutPixel(dest.surface, xPos + xRadius + x, yPos + yRadius + y, theColour);
-			PutPixel(dest.surface, xPos + xRadius - x, yPos + yRadius + y, theColour);
-			PutPixel(dest.surface, xPos + xRadius + x, yPos + yRadius - y, theColour);
-			PutPixel(dest.surface, xPos + xRadius - x, yPos + yRadius - y, theColour);
+			DrawHorizontalLine(dest, theColour, yPos + y, xPos - x, xPos + x);
+			DrawHorizontalLine(dest, theColour, yPos - y, xPos - x, xPos + x);
 			
 			x := x + 1;
 			stoppingX := stoppingX + twoBSquare;
@@ -1092,34 +1180,8 @@ implementation
 			end;
 		end;
 		
-		// Unlock dest.surface
+		// Unlock dest
 		if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
-	end;
-
-	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse in the dest bitmap
-	procedure FillEllipse(dest: Bitmap; theColour: Colour;
-                         xPos, yPos, width, height: Integer);
-	var
-		interval, lengthX, lengthY: Double;
-		step: Single;
-	begin
-		step := 0;
-		interval := PI / height;
- 		while step <= height do
-	 	begin
-	 		lengthX := height / 2 * System.Sin(step * interval);
-	 		lengthY := width / 2 * System.Cos(step * interval);
-	 		DrawHorizontalLine(dest, theColour, round(yPos + lengthY), round(xPos - lengthX), round(xPos + lengthX));
-	 		step := step + 10 / height;
-	 	end;
 	end;
 
 	/// Draws a vertical line on the destination bitmap.
@@ -1149,17 +1211,13 @@ implementation
 		
 		if (x < 0) or (x > w - 1) or (y2 < 0) or (y1 > h - 1) then
 		begin
-			//result := false;
 			exit;
 		end;
 		
 		if y1 < 0 then y1 := 0;
 		if y2 >= h then y2 := h - 1;
 		
-		//vlinetheColour(dest.surface, x, y1, y2, ToSDLGFXtheColour(theColour));
-		
 		pixels := dest.surface.pixels;
-		//addr := Integer(pixels) + (( y1 * dest.surface.w ) + x) * dest.surface.format.BytesPerPixel;
 		addr := Integer(pixels) + (x * dest.surface.format.BytesPerPixel) + (y1 * dest.surface.Pitch);
 		bufp := PUint32(addr);
 		
@@ -1172,8 +1230,6 @@ implementation
 		end;
 		
 		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-		
-		//result := true;
 	end;
 
 	/// Draws a horizontal line on the destination bitmap.
@@ -1203,18 +1259,13 @@ implementation
 		
 		if (x2 < 0) or (x1 > w - 1) or (y < 0) or (y > h - 1) then
 		begin
-			//result := false;
 			exit; //no single point of the line is on screen
 		end;
 		
 		if x1 < 0 then x1 := 0;
 		if x2 >= w then x2 := w - 1;
 		
-		//hlinetheColour(dest.surface, x1, x2, y, ToSDLGFXtheColour(theColour));
-		//result := true;
-		
 		pixels := dest.surface.pixels;
-		//addr := Integer(pixels) + (( y * dest.surface.w ) + x1 - 1) * dest.surface.format.BytesPerPixel;
 		addr := Integer(pixels) + ((x1 - 1) * dest.surface.format.BytesPerPixel) + (y * dest.surface.pitch);
 		bufp := PUint32(addr);
 		
@@ -1225,8 +1276,7 @@ implementation
 			Inc(bufp);
 			bufp^ := theColor;
 		end;
-		//result := true;
-		
+
 		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
@@ -1435,18 +1485,49 @@ implementation
 	procedure FillCircle(dest: Bitmap; theColour: Colour;
                        xc, yc, radius: Integer);
 	var
-		interval, lengthX, lengthY: Double;
-		step: Single;
+		x, y, p: Integer;
+		a, b, c, d, e, f, g, h: Integer;
+		pb, pd: Integer; //previous values: to avoid drawing horizontal lines multiple times
 	begin
-		step := 0;
-		interval := PI / (radius * 2);
- 		while step <= radius * 2 do
-	 	begin
-	 		lengthX := radius * System.Sin(step * interval);
-	 		lengthY := radius * System.Cos(step * interval);
-	 		DrawHorizontalLine(dest, theColour, round(yc + lengthY), round(xc - lengthX), round(xc + lengthX));
-	 		step := step + 0.5;
-	 	end;
+		x := 0;
+		y := radius;
+		p := 3 - (radius shl 1);
+		
+		pb := -1;
+		pd := -1;
+		
+		while x <= y do
+		begin
+			// write data
+			a := xc + x;
+			b := yc + y;
+			c := xc - x;
+			d := yc - y;
+			e := xc + y;
+			f := yc + x;
+			g := xc - y;
+			h := yc - x;
+			
+			if b <> pb then DrawHorizontalLine(dest, theColour, b, a, c);
+			if d <> pd then DrawHorizontalLine(dest, theColour, d, a, c);
+			if f <> b  then DrawHorizontalLine(dest, theColour, f, e, g);
+			if (h <> d) and (h <> f) then DrawHorizontalLine(dest, theColour, h, e, g);
+			
+			pb := b;
+			pd := d;
+			
+			if p < 0 then
+			begin
+				p := p + (x shl 2) + 6;
+				x := x + 1;
+			end
+			else
+			begin
+				p := p + ((x - y) shl 2) + 10;
+				x := x + 1;
+				y := y - 1;
+			end;
+		end;
 	end;
   
   	/// Returns the average framerate for the last 10 frames as an integer.
