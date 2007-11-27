@@ -1,7 +1,7 @@
 unit SGSDK;
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics;
+	uses	SGSDK_Input, SGSDK_Audio, SGSDK_Graphics, SGSDK_Physics, SGSDK_Core, SGSDK_Font;
 
 implementation
 

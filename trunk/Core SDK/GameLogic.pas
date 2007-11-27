@@ -7,7 +7,7 @@ implementation
 uses
   GameResources,
   SysUtils,
-  SwinGameAPI,
+  SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics,
   KeyCodes;
 
   //The main procedure that controlls the game logic.
