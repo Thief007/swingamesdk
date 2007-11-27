@@ -100,6 +100,10 @@ interface
 		ColourGrey, ColorGrey, ColourMagenta, ColorMagenta: Color;
 		ColorTransparent, ColourTransparent: Color;
 		
+		scr: Bitmap;
+		applicationPath: String;   //global variable for optimisation...
+		sdlManager: TSDLManager;
+		
 	function WindowCloseRequested(): Boolean;
 	
 	//*****
@@ -134,6 +138,10 @@ interface
 	//
 	// These routines are used for general purposes.
 	//
+	
+	function	ToSDLColor(color: UInt32): TSDL_Color;
+	
+
 	
 	function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
 	
@@ -187,10 +195,6 @@ implementation
 		end;
 	
 	var
-		/// Object to process SDL events in the background
-		sdlManager: TSDLManager;
-		
-		scr: Bitmap;
 		
 		/// The base surface is used to get pixel format information for the
 		///	surfaces created. This is used to create colors etc.
@@ -555,9 +559,6 @@ implementation
 	begin
 		sdlManager.RegisterEventProcessor(handle, handle2);
 	end;
-	
-	var
-	applicationPath: String;   //global variable for optimisation...
 	
 	function GetPathToResource(filename: String): String; overload;
 	begin
