@@ -1505,49 +1505,19 @@ implementation
 	procedure FillCircle(dest: Bitmap; theColour: Colour;
                        xc, yc, radius: Integer);
 	var
-		x, y, p: Integer;
-		a, b, c, d, e, f, g, h: Integer;
-		pb, pd: Integer; //previous values: to avoid drawing horizontal lines multiple times
+		interval, length, stepLength: Double;
+		step: Integer;
 	begin
-	 	x := 0;
-		y := radius;
-		p := 3 - (radius shl 1);
-		
-		pb := -1;
-		pd := -1;
-		
-		while x <= y do
-		begin
-			// write data
-			a := xc + x;
-			b := yc + y;
-			c := xc - x;
-			d := yc - y;
-			e := xc + y;
-			f := yc + x;
-			g := xc - y;
-			h := yc - x;
-			
-			if b <> pb then DrawHorizontalLine(dest, b, a, c, theColour);
-			if d <> pd then DrawHorizontalLine(dest, d, a, c, theColour);
-			if f <> b  then DrawHorizontalLine(dest, f, e, g, theColour);
-			if (h <> d) and (h <> f) then DrawHorizontalLine(dest, h, e, g, theColour);
-			
-			pb := b;
-			pd := d;
-			
-			if p < 0 then
-			begin
-				p := p + (x shl 2) + 6;
-				x := x + 1;
-			end
-			else
-			begin
-				p := p + ((x - y) shl 2) + 10;
-				x := x + 1;
-				y := y - 1;
-			end;
-		end;
+		step := 0;
+		interval := PI / (radius * 2);
+		stepLength := interval;
+	 	while step < radius * 2 do
+	 	begin
+	 		length := System.Sin(step * interval);
+	 		DrawHorizontalLine(dest, theColour, yc - radius + step, xc - length, xc + length);
+	 		step := step + 1;
+	 		interval := interval + stepLength;
+	 	end;
 	end;
   
   	/// Returns the average framerate for the last 10 frames as an integer.
