@@ -1118,7 +1118,7 @@ implementation
 	 		lengthX := height / 2 * System.Sin(step * interval);
 	 		lengthY := width / 2 * System.Cos(step * interval);
 	 		DrawHorizontalLine(dest, theColour, round(yPos + lengthY), round(xPos - lengthX), round(xPos + lengthX));
-	 		step := step + 0.1;
+	 		step := step + 0.05;
 	 	end;
 	end;
 
