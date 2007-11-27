@@ -6,7 +6,7 @@ unit SGSDK_Font;
 {$ENDIF}
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
+	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core;
 	
 	type
 
@@ -148,6 +148,11 @@ implementation
 		fontToFree := nil;
 	end;
 
+	function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;
+	begin
+		result := (Integer(toCheck) and Integer(checkFor)) = Integer(checkFor);
+	end;
+	
 { This function prints "str" with font "font" and color "clrFg"
  * onto a rectangle of color "clrBg".
  * It does not pad the text.
@@ -263,10 +268,6 @@ implementation
 		FreeBitmap(sText);
 	
 		result := nil;
-	end;
-	function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;
-	begin
-		result := (Integer(toCheck) and Integer(checkFor)) = Integer(checkFor);
 	end;
 
 	/// Draws texts to the destination bitmap. Drawing text is a slow operation,
