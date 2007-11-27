@@ -1514,7 +1514,7 @@ implementation
 	 	while step < radius * 2 do
 	 	begin
 	 		length := System.Sin(step * interval);
-	 		DrawHorizontalLine(dest, theColour, yc - radius + step, xc - length, xc + length);
+	 		DrawHorizontalLine(dest, theColour, yc - radius + step, round(xc - length), round(xc + length));
 	 		step := step + 1;
 	 		interval := interval + stepLength;
 	 	end;
