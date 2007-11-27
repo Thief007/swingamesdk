@@ -30,6 +30,16 @@ interface
 		UInt16 = sdl.UInt16;
 		UInt32 = sdl.UInt32;
 		UInt64 = sdl.UInt64;
+		
+		/// Record: FPSCalcInfo
+		///
+		/// This record contains details required for the
+		/// Frames per second calculations.
+		FPSCalcInfo = record
+			valuesArray : Array [0..9] of UInt32;
+			arrayIndex, loopCount : Integer;
+			high, low, average : Single;
+		end;
 
 		/// Type: Colour
 		///
@@ -103,6 +113,17 @@ interface
 		scr: Bitmap;
 		applicationPath: String;   //global variable for optimisation...
 		sdlManager: TSDLManager;
+		
+			
+		/// The base surface is used to get pixel format information for the
+		///	surfaces created. This is used to create colors etc.
+		baseSurface: PSDL_Surface;
+		
+		//Timing details related to calculating FPS
+		lastDrawUpdateTime: UInt32;
+		renderFPSInfo: FPSCalcInfo;
+		
+		iconFile: String;
 		
 	function WindowCloseRequested(): Boolean;
 	
@@ -184,27 +205,6 @@ implementation
 		result := Math.Tan(DegToRad(angle));
 	end;
 	
-	/// Record: FPSCalcInfo
-	///
-	/// This record contains details required for the
-	/// Frames per second calculations.
-	type FPSCalcInfo = record
-			valuesArray : Array [0..9] of UInt32;
-			arrayIndex, loopCount : Integer;
-			high, low, average : Single;
-		end;
-	
-	var
-		
-		/// The base surface is used to get pixel format information for the
-		///	surfaces created. This is used to create colors etc.
-		baseSurface: PSDL_Surface;
-		
-		//Timing details related to calculating FPS
-		lastDrawUpdateTime: UInt32;
-		renderFPSInfo: FPSCalcInfo;
-		
-		iconFile: String;
 	
 	/// Sets up the graphical window for the specified width and height.
 	/// Sets the caption of the window, and the icon if one is specified.
