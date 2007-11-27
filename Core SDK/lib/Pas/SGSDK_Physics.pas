@@ -765,19 +765,23 @@ function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
 var
 	o, a, oa, rads: Single;
 begin
-	if (x1 = x2) and (y2 < y1) then result := 90
-	else if (x1 = x2) and (y2 >= y1) then result := 270
+	if (x1 = x2) and (y2 < y1) then result := -90
+	else if (x1 = x2) and (y2 >= y1) then result := 90
 	else if (y1 = y2) and (x2 < x1) then result := 180
 	else if (y1 = y2) and (x2 >= x1) then result := 0
 	else
 	begin
 		o := (y2 - y1);
-		a := (x1 - x2);
+		a := (x2 - x1);
 		oa := o / a;
 		rads := arctan(oa);
 		result := RadToDeg(rads);
 
-		if (x2 < x1) then result := result + 180;
+		if x2 < x1 then
+		begin
+			if (y2 < y1) then result := result - 180
+			else result := result + 180;
+		end;
 	end;
 end;
 

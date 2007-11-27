@@ -24,6 +24,7 @@ interface
 		{$ENDIF}
 
 		DEG_TO_RAD = 0.0174532925;
+		PI = 3.14159265359;
 	
 	type
 		UInt8	= sdl.UInt8;
