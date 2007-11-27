@@ -1113,11 +1113,11 @@ implementation
 	begin
 		step := 0;
 		interval := PI / height;
- 		while step <= radius * 2 do
+ 		while step <= height do
 	 	begin
 	 		lengthX := height / 2 * System.Sin(step * interval);
 	 		lengthY := width / 2 * System.Cos(step * interval);
-	 		DrawHorizontalLine(dest, theColour, round(yc + lengthY), round(xc - lengthX), round(xc + lengthX));
+	 		DrawHorizontalLine(dest, theColour, round(yPos + lengthY), round(xPos - lengthX), round(xPos + lengthX));
 	 		step := step + 0.5;
 	 	end;
 	end;
