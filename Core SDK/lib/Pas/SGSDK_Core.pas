@@ -159,7 +159,22 @@ interface
 	function Tan(angle: Single): Single;
 		
 implementation
-	uses SysUtils, Math, Classes
+	uses SysUtils, Math, Classes;
+	
+	function Cos(angle: Single): Single;
+	begin
+		result := System.Cos(DegToRad(angle));
+	end;
+
+	function Sin(angle: Single): Single;
+	begin
+		result := System.Sin(DegToRad(angle));
+	end;
+
+	function Tan(angle: Single): Single;
+	begin
+		result := Math.Tan(DegToRad(angle));
+	end;
 	
 	/// Record: FPSCalcInfo
 	///
@@ -524,6 +539,56 @@ implementation
 	begin
 		result := SDL_GetTicks();
 	end;
+	
+	/// Returns the average framerate for the last 10 frames as an integer.
+	///
+	///	@returns		 The current average framerate
+	function GetFramerate(): Integer;
+	begin
+		if renderFPSInfo.average = 0 then
+			result := 9999
+		else
+			result := Round(1000 / renderFPSInfo.average);
+	end;
+	
+	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
+	begin
+		sdlManager.RegisterEventProcessor(handle, handle2);
+	end;
+	
+	var
+	applicationPath: String;   //global variable for optimisation...
+	
+	function GetPathToResource(filename: String): String; overload;
+	begin
+	{$ifdef UNIX}
+		{$ifdef DARWIN}
+			result := applicationPath + '/../Resources/';
+		{$else}
+			result := applicationPath + '/Resources/';
+		{$endif}
+	{$else}
+	//Windows
+		result := applicationPath + '\resources\';
+	{$endif}
+
+	result := result + filename;
+	end;
+
+	function GetPathToResource(filename: String; kind: ResourceKind) : String; overload;
+	begin
+		case kind of
+			{$ifdef UNIX}
+				FontResource: result := GetPathToResource('fonts/' + filename);
+				SoundResource: result := GetPathToResource('sounds/' + filename);
+				ImageResource: result := GetPathToResource('images/' + filename);
+			{$else}
+				FontResource: result := GetPathToResource('fonts\' + filename);
+				SoundResource: result := GetPathToResource('sounds\' + filename);
+				ImageResource: result := GetPathToResource('images\' + filename);
+			{$endif}
+	end;
+end;
 		
 initialization
 begin
