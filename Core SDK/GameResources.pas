@@ -1,7 +1,7 @@
 unit GameResources;
  
 interface
-	uses SwinGameAPI;
+	uses SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics;
 
 	type 
 		GameFonts = (
