@@ -1505,15 +1505,16 @@ implementation
 	procedure FillCircle(dest: Bitmap; theColour: Colour;
                        xc, yc, radius: Integer);
 	var
-		interval, length: Double;
+		interval, lengthX, lengthY: Double;
 		step: Integer;
 	begin
 		step := 0;
 		interval := PI / (radius * 2);
  		while step <= radius * 2 do
 	 	begin
-	 		length := radius * System.Sin(step * interval);
-	 		DrawHorizontalLine(dest, theColour, yc - radius + step, round(xc - length), round(xc + length));
+	 		lengthX := radius * System.Sin(step * interval);
+	 		lengthY := radius * System.Cos(step * interval);
+	 		DrawHorizontalLine(dest, theColour, round(yc + lengthY), round(xc - lengthX), round(xc + lengthX));
 	 		step := step + 1;
 	 	end;
 	end;
