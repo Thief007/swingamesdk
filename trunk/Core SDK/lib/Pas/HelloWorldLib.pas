@@ -1,6 +1,6 @@
 library HelloWorldLib;
 
-	var	x : Integer; cvar;
+	//var	x : Integer; cvar;
 
 	procedure SayHello(); cdecl ;
 	
