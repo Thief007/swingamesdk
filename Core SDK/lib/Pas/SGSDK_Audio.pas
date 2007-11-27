@@ -6,7 +6,7 @@ unit SGSDK_Audio;
 {$ENDIF}
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
+	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core;
 	
 	type
 
