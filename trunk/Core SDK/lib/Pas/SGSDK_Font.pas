@@ -393,7 +393,48 @@ implementation
 	begin
 		TTF_SizeText(theFont, PChar(theText), w, result);
 	end;
-	initialization
+	
+	/// Draws the frame rate using the specified font at the indicated x, y.
+	///	Draws the FPS (min, max) current average
+	///
+	///	@param x,y:			The x, y location to draw to
+	///	@param font:		 The font used to draw the framerate
+	///
+	/// Side Effects:
+	///	- Framerate is drawn to the screen
+	procedure DrawFramerate(x, y: integer; font: Font);
+	var
+		temp, temp2, temp3 : String;
+		textColour : Colour;
+		average, highest, lowest : Single;
+	begin
+		//Draw framerates
+		DrawRectangle(ColourBlack, true, x, y, x + 200, y + 16);
+
+		if renderFPSInfo.average = 0 then
+			average := 9999
+		else
+			average := (1000 / renderFPSInfo.average);
+		
+		lowest	:= (1000 / renderFPSInfo.high);
+		highest := (1000 / renderFPSInfo.low);
+
+		if average < 30 then
+			textColour := ColourRed
+		else if average < 50 then
+			textColour := ColourYellow
+		else
+			textColour := ColourGreen;
+
+		Str(average:4:1, temp);
+		Str(highest:4:1, temp2);
+		Str(lowest:4:1, temp3);
+
+		DrawText('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, 
+             textColour, font, x + 2, y + 2);
+	end;
+	
+initialization
 begin
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
