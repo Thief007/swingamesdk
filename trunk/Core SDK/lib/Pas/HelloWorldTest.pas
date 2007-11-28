@@ -1,11 +1,13 @@
 program testsubs ;
 
-procedure SayHello(); cdecl ; external 'HelloWorldLib' ;
-function getX(): Integer; cdecl; external 'HelloWorldLib' ;
+procedure SayHello(); external 'HelloWorldLib' ;
+function getX(): Integer; external 'HelloWorldLib' ;
+procedure setX(xy : String); external 'HelloWorldLib' ;
 	
 begin
-	WriteLn(getX);
 	SayHello();
-	WriteLn(getX);
+	setX('haha');
+	SayHello();
+	
 	ReadLn();
 end.

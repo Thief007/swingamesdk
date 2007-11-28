@@ -1,21 +1,29 @@
 library HelloWorldLib;
 
-	var	x : Integer;
+	type
+		msg = string;
 
-	procedure SayHello(); cdecl;
+	var	x : msg;
+
+	procedure SayHello();
 	begin
-		WriteLn('Hello World!');
-		x := 1000;
+		WriteLn(x);
 	end ;
 	
-	function getX() : Integer; cdecl;
+	function getX() : String;
 	begin
 		result := x;
+	end;
+	
+	procedure setX(xy : String);
+	begin
+		x := xy;
 	end;
 	
 	
 	
 exports
 	SayHello,
-	getX;
+	getX,
+	setX;
 end.
