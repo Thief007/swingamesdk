@@ -1,13 +1,21 @@
 library HelloWorldLib;
 
-	//var	x : Integer; cvar;
+	var	x : Integer;
 
-	procedure SayHello(); cdecl ;
-	
+	procedure SayHello(); cdecl;
 	begin
 		WriteLn('Hello World!');
+		x := 1000;
 	end ;
 	
-	exports
-		SayHello;
+	function getX() : Integer; cdecl;
+	begin
+		result := x;
+	end;
+	
+	
+	
+exports
+	SayHello,
+	getX;
 end.
