@@ -105,7 +105,7 @@ interface
 	
 implementation
 	uses SysUtils, Math,
-			 Classes, SwinGameDrawing;
+			 Classes;
 
 	
 	/// Loads a font from file with the specified side. Fonts must be freed using

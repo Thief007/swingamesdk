@@ -713,7 +713,7 @@ implementation
 	
 	  pixels := surface.pixels;
 	  //addr := Integer(pixels) + (( y * surface.w ) + x) * surface.format.BytesPerPixel;
-	  addr := Integer(pixels) + (x * surface.format.BytesPerPixel) + (y * surface.pitch) ;
+	  addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
 	  bufp := PUint32(addr);
 	  bufp^ := color;
 	  //PixelColor(surface, x, y, ToSDLGFXColor(color));
@@ -1218,14 +1218,14 @@ implementation
 		if y2 >= h then y2 := h - 1;
 		
 		pixels := dest.surface.pixels;
-		addr := Integer(pixels) + (x * dest.surface.format.BytesPerPixel) + (y1 * dest.surface.Pitch);
+		addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
 		bufp := PUint32(addr);
 		
 		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for y := y1 to y2 - 1 do
 		begin
-			bufp := PUInt32(Integer(bufp) + (dest.surface.pitch));
+			bufp := PUInt32(UInt32(bufp) + (dest.surface.pitch));
 			bufp^ := theColor;
 		end;
 		
@@ -1266,7 +1266,7 @@ implementation
 		if x2 >= w then x2 := w - 1;
 		
 		pixels := dest.surface.pixels;
-		addr := Integer(pixels) + ((x1 - 1) * dest.surface.format.BytesPerPixel) + (y * dest.surface.pitch);
+		addr := UInt32(pixels) + ((UInt32(x1 - 1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch);
 		bufp := PUint32(addr);
 		
 		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
