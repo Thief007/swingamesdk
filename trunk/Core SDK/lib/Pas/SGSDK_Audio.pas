@@ -63,7 +63,7 @@ interface
 
 implementation
 	uses SysUtils, Math,
-			 Classes, SwinGameDrawing;
+			 Classes;
 			 
 		var
 		
