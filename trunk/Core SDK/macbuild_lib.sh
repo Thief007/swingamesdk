@@ -20,6 +20,7 @@ then
 	rm -f sdl_ttf.*
 	rm -f sdl.*
 	rm -f SDLEventProcessing.*
+	rm -f SGSDK_KeyCodes.*
 	echo Cleaned
 else
 	mkdir -p "$Output"
