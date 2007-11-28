@@ -1,6 +1,11 @@
 #!/bin/sh
+
 Output=`pwd`/bin/mac/
-cd lib/Pas/
+MacFPCDir=`pwd`/../SDKs/Pascal/Mac/FPC/lib/
+LibDir=`pwd`/lib/mac
+
+cd src/
+
 if [ $1 = "-clean" ]
 then
 	cd "$Output"
@@ -24,5 +29,11 @@ else
 	fpc -Mdelphi -FE"$Output" SGSDK_Input.pas
 	fpc -Mdelphi -FE"$Output" SGSDK_Physics.pas
 	fpc -Mdelphi -FE"$Output" SGSDK_Audio.pas
+	fpc -Mdelphi -FE"$Output" SGSDK_KeyCodes.pas
+	echo Copying to FPC
+	cp "$Output"/*.ppu "$MacFPCDir"
+	cp "$Output"/*.o "$MacFPCDir"
+	cp "$LibDir"/*.a "$MacFPCDir"
+	echo Finished
 fi
 #open "$Output"
