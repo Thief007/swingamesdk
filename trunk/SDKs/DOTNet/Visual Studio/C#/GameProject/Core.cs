@@ -52,6 +52,17 @@ namespace SwinGame
     }
 
     /// <summary>
+    /// Vector Structure
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+    public struct Vector
+    {
+        Single x;
+        Single y;
+        Single w;
+    }
+
+    /// <summary>
     /// Core Class
     /// 
     /// This Classes contains on the Core functionality of the SwinGameSDK
