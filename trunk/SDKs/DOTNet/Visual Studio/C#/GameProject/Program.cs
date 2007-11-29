@@ -4,6 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using SwinGame;
+using Bitmap = SwinGame.Bitmap;
 
 namespace GameProject
 {
@@ -15,7 +16,7 @@ namespace GameProject
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
 
-            SwinGame.Bitmap test = Core.LoadBitmap("SwinGameAni.png");
+            Bitmap test = Core.LoadBitmap("SwinGameAni.png");
             Console.WriteLine(test.Width);
             Console.WriteLine(test.Height);
             while (Core.WindowCloseRequested() != true)
