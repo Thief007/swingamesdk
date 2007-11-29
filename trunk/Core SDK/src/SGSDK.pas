@@ -1,6 +1,6 @@
 library SGSDK;
 
-uses SGSDK_Core, SGSDK_Input,
+uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
 	//CORE
@@ -131,6 +131,82 @@ uses SGSDK_Core, SGSDK_Input,
 	end;
 	
 	//INPUT
+	
+	//Audio
+	function	LoadSoundEffect(path: String): SoundEffect; cdecl; export;
+	begin
+		result := SGSDK_Audio.LoadsoundEffect(path);
+	end;
+	
+	function	LoadMusic(path: String): Music; cdecl; export;
+	begin
+		result := SGSDK_Audio.LoadMusic(path);
+	end;
+
+	procedure FreeMusic(var mus: Music); cdecl; export;
+	begin
+		SGSDK_Audio.FreeMusic(mus);
+	end;
+
+	procedure FreeSoundEffect(var effect: SoundEffect); cdecl; export;
+	begin
+		SGSDK_Audio.FreeSoundEffect(effect);
+	end;
+
+	{procedure PlaySoundEffect(effect: SoundEffect); overload; cdecl; export;
+	begin
+		SGSDK_Audio.PlaySoundEffect(effect);
+	end;
+
+	procedure PlaySoundEffect(effect: SoundEffect; loops: Integer); overload; cdecl; export;
+	begin
+		SGSDK_Audio.PlaySoundEffect(effect, loops);
+	end;
+
+	procedure PlayMusic(mus: Music; loops: Integer); overload; cdecl; export;
+	begin
+		SGSDK_Audio.PlayMusic(mus, loops);
+	end;
+
+	procedure PlayMusic(mus: Music); overload; cdecl; export;
+	begin
+		SGSDK_Audio.PlayMusic(mus);
+	end;
+}
+	function IsMusicPlaying(mus: Music): Integer; cdecl; export;
+	begin
+		if SGSDK_Audio.IsMusicPlaying(mus) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function IsSoundEffectPlaying(effect: SoundEffect): Integer; cdecl; export;
+	begin
+		if SGSDK_Audio.IsSoundEffectPlaying(effect) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	procedure StopSoundEffect(effect: SoundEffect); cdecl; export;
+	begin
+		SGSDK_Audio.StopSoundEffect(effect);
+	end;
+
+	procedure StopMusic(); cdecl; export;
+	begin
+		SGSDK_Audio.StopMusic();
+	end;
+	
 exports
 	//CORE
 	OpenGraphicsWindow,
@@ -152,10 +228,23 @@ exports
 	RegisterEventProcessor,	
 	Cos,
 	Sin,
-	Tan;
+	Tan,
 	
 	
 	
 	//INPUT
 	
+	
+	//Audio
+	LoadSoundEffect,
+	LoadMusic,
+	FreeMusic,
+	FreeSoundEffect,
+	//PlaySoundEffect,
+	//PlayMusic,
+	IsMusicPlaying,
+	IsSoundEffectPlaying,
+	StopSoundEffect,
+	StopMusic
+	;
 end.
