@@ -33,10 +33,10 @@ namespace SwinGame
         private static extern void SetSpriteCurrentFrame(IntPtr pointer, int frame);
 
         [DllImport("SGSDK.dll")]
-        private static extern float GetSpriteUsePixelCollision(IntPtr pointer);
+        private static extern bool GetSpriteUsePixelCollision(IntPtr pointer);
 
         [DllImport("SGSDK.dll")]
-        private static extern void SetSpriteUsePixelCollusion(IntPtr pointer, bool pixelcollision);
+        private static extern void SetSpriteUsePixelCollision(IntPtr pointer, bool pixelcollision);
 
         internal IntPtr Pointer;
 
@@ -162,7 +162,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "LoadTransparentBitmap")]
-        private static extern Bitmap DLL_LoadTransparentBitmap(string pathToBitmap, Color transparentColor);
+        private static extern IntPtr DLL_LoadTransparentBitmap(string pathToBitmap, Color transparentColor);
 
         /// <summary>
         /// Load an image with transparency
@@ -186,7 +186,7 @@ namespace SwinGame
         /// <param name="bitmapToFree">Bitmap to free</param>
         public static void FreeBitmap(ref Bitmap bitmapToFree)
         {
-            DLL_FreeBitmap(bitmapToFree.pointer);
+            DLL_FreeBitmap(ref bitmapToFree.pointer);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "GetBitmapWidth")]
@@ -225,7 +225,7 @@ namespace SwinGame
         /// <param name="toColour">The color used to clear</param>
         public static void ClearSurface(Bitmap dest, Color toColour)
         {
-            return DLL_ClearSurfaceWithColor(dest.pointer, toColour);
+            DLL_ClearSurfaceWithColor(dest.pointer, toColour);
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace SwinGame
         /// <param name="dest">Bitmap to clear</param>
         public static void ClearSurface(Bitmap dest)
         {
-            return DLL_ClearSurfaceWithColor(dest.pointer, Color.Black);
+            DLL_ClearSurfaceWithColor(dest.pointer, Color.Black);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "DrawBitmapWithDestination")]
@@ -249,7 +249,7 @@ namespace SwinGame
         /// <param name="y">Y coordinate</param>
         public static void DrawBitmap(Bitmap dest, Bitmap bitmapToDraw, int x, int y)
         {
-            DLL_DrawBitmapWithDestination(dest, bitmapToDraw, x, y);
+            DLL_DrawBitmapWithDestination(dest.pointer, bitmapToDraw.pointer, x, y);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "DrawBitmapPartWithDestination")]
