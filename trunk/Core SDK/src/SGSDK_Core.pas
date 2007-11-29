@@ -447,10 +447,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- A graphical window is opened
+	
 	procedure OpenGraphicsWindow(caption : String); overload;
 	begin
 		OpenGraphicsWindow(caption, 800,600);
 	end;
+	
 	
 	/// Draws the current drawing to the screen. This must be called to display
 	///	anything to the screen. This will draw all drawing operations, as well
