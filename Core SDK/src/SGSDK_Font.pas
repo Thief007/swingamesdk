@@ -72,7 +72,7 @@ interface
 	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); overload;
-								//*****
+	//*****
 	//
 	// Bitmap drawing routines
 	//
