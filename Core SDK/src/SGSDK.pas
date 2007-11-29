@@ -679,6 +679,58 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	function GetSpriteBitmap(surface: Sprite; id: Integer); Bitmap; cdecl; export;
+	begin
+		result := surface.bitmaps[id];
+	end;
+	
+	function GetSpriteX(surface: Sprite); Single; cdecl; export;
+	begin
+		result := surface.xPos;
+	end;
+	
+	procedure SetSpriteX(surface: Sprite; val: Single); cdecl; export;
+	begin
+		surface.xPos := val;
+	end;
+	
+	function GetSpriteY(surface: Sprite); Single; cdecl; export;
+	begin
+		result := surface.yPos;
+	end;
+	
+	procedure SetSpriteY(surface: Sprite; val: Single); cdecl; export;
+	begin
+		surface.yPos := val;
+	end;
+	
+	function GetSpriteCurrentFrame(surface: Sprite); Integer; cdecl; export;
+	begin
+		result := surface.currentFrame;
+	end;
+	
+	procedure SetSpriteCurrentFrame(surface: Sprite; val: Integer); cdecl; export;
+	begin
+		surface.currentFrame := val;
+	end;
+	
+	function GetSpriteUsePixelCollision(surface: Sprite); boolean; cdecl; export;
+	begin
+		if surface.usePixelCollision then
+		begin
+			result := -1
+		end
+		else
+		begin
+			result := 0
+		end;
+	end;
+	
+	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Boolean); cdecl; export;
+	begin
+		surface.usePixelCollision := val;
+	end;
+	
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect; cdecl; export;
 	begin
 		result := SGSDK_Graphics.NewSDLRect(x, y, w, h);
@@ -694,13 +746,13 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.OptimiseBitmap(surface);
 	end;
 	
-	function LoadBitmap2(pathToBitmap: String; transparent: Boolean;
+	function LoadBitmapWithTransparentColor(pathToBitmap: String; transparent: Boolean;
 								transparentColor: Colour): Bitmap; cdecl; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
 	end;
 	
-	function LoadBitmap1(pathToBitmap : String): Bitmap; cdecl; export;
+	function LoadBitmap(pathToBitmap : String): Bitmap; cdecl; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap);
 	end;
@@ -1135,8 +1187,8 @@ exports
 	NewSDLRect,
 	CreateBitmap,
 	OptimiseBitmap,
-	LoadBitmap2,
-	LoadBitmap1,
+	LoadBitmapWithTransparentColor,
+	LoadBitmap,
 	LoadTransparentBitmap,
 	FreeBitmap,
 	GetBitmapWidth,
