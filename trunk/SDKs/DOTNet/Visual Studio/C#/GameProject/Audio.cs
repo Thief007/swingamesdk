@@ -39,15 +39,16 @@ namespace SwinGame
         /// <param name="loops">The number of times to play it</param>
         public static void PlaySoundEffect(SoundEffect effect, int loops)
         {
-            if (loops == 1)
-            {
-                DLL_PlaySoundEffect(effect.Pointer);
-            }
-            else
-            {
-                DLL_PlaySoundEffectLoop(effect.Pointer, loops);
-            }
-            
+            DLL_PlaySoundEffectLoop(effect.Pointer, loops);  
+        }
+
+        /// <summary>
+        /// Play the indicated sound effect a number of times
+        /// </summary>
+        /// <param name="effect">The Sound Effect to play</param>
+        public static void PlaySoundEffect(SoundEffect effect)
+        {
+            DLL_PlaySoundEffect(effect.Pointer);  
         }
 
         [DllImport("SGSDK.dll", EntryPoint="LoadSoundEffect")]
@@ -100,6 +101,60 @@ namespace SwinGame
         {
             DLL_FreeMusic(effect.Pointer);
         }
+
+        [DllImport("SGSDK.dll", EntryPoint="PlayMusic")]
+        private static extern void DLL_PlayMusic(IntPtr music, int loops);
+        /// <summary>
+        /// Play the indicated music effect a number of times
+        /// </summary>
+        /// <param name="effect">The Music to play</param>
+        /// <param name="loops">The number of times to play it</param>
+        public static void PlayMusic(Music music, int loops)
+        {
+            DLL_PlayMusic(music.Pointer, loops);  
+        }
+
+        /// <summary>
+        /// Play the indicated music effect a number of times
+        /// </summary>
+        /// <param name="effect">The Music to play</param>
+        public static void PlayMusic(Music music)
+        {
+            DLL_PlayMusic(music.Pointer,-1);  
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "IsSoundEffectPlaying")]
+        private static extern IntPtr DLL_IsSoundEffectPlaying(IntPtr effect);
+        /// <summary>
+        /// This function checks whether a sound is playing
+        /// </summary>
+        /// <param name="effect">The sound effect to check if it is playing</param>
+        /// <returns>True if it is playing</returns>
+        public static bool IsSoundEffectPlaying(SoundEffect effect)
+        {
+            return DLL_IsSoundEffectPlaying(effect.Pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "IsMusicPlaying")]
+        private static extern IntPtr DLL_IsMusicPlaying(IntPtr music);
+        /// <summary>
+        /// This function checks whether music is playing
+        /// </summary>
+        /// <param name="effect">The music to check if it is playing</param>
+        /// <returns>True if it is playing</returns>
+        public static bool IsMusicPlaying(Music music)
+        {
+            return DLL_IsMusicPlaying(music.Pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "StopMusic")]
+        /// Stops music from playing
+        public static extern void StopMusic();
+
+        [DllImport("SGSDK.dll", EntryPoint = "StopSoundEffect")]
+        /// Stop playing sound effects
+        public static extern void StopSoundEffect();
+
 
     }
 }
