@@ -34,6 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Physics.cs" />
     <Compile Include="Graphics.cs" />
     <Compile Include="Audio.cs" />
     <Compile Include="Program.cs" />

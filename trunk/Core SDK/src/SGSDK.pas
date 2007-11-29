@@ -639,11 +639,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		result :=SGSDK_Physics.GetVectorMagnitude(theVector);
 	end;
-
-	function	DecayVector(theVector : Vector;	const decayProps : DecayProperties): Vector; cdecl; export;
-	begin
-		result :=SGSDK_Physics.DecayVector(theVector, decayProps);
-	end;
 	
 	function	DotProduct(v1, v2: Vector): Single; cdecl; export;
 	begin
@@ -1134,7 +1129,6 @@ exports
 	GetUnitVector,
 	IsZeroVector,
 	GetVectorMagnitude,
-	DecayVector,
 	DotProduct,
 	MultiplyVector,
 	CalculateAngle,
