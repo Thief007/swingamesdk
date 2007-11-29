@@ -3,26 +3,20 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace Test
+namespace GameProject
 {
     class Program
     {
-        [DllImport("HelloWorld.dll")]
-        static extern void SayHello();
-        [DllImport("HelloWorld.dll")]
-        static extern String MakeHello();
-
         static void Main(string[] args)
         {
-            SayHello();
-            String hello = "";
-            Console.ReadLine();
+            SwinGame.OpenGraphicsWindow("Hi", 800, 600);
 
-            hello = MakeHello();
-            System.GC.Collect();
-   
-            Console.WriteLine(hello);
-            Console.ReadLine();
+            while (SwinGame.WindowCloseRequested() != true)
+            {
+                System.Threading.Thread.Sleep(100);
+                //SwinGame.ProcessEvents();
+            }
+         
         }
     }
 }
