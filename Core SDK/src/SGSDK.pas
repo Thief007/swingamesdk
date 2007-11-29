@@ -442,20 +442,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			result:= 0
 		end
 	end;
-
-	function HasSpriteCollidedWithRect1(theSprite : Sprite; x, y : Single;
-		width, height: Integer; vwPrtX, vwPrtY: Integer)
-		: Integer; cdecl; export;
-	begin
-		if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height, vwPrtX, vwPrtY) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
-	end;
 		
 	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Integer; cdecl; export;
 	begin
@@ -1109,7 +1095,6 @@ exports
 	HasSpriteCollidedX,
 	HasSpriteCollidedY,
 	HasSpriteCollidedWithRect,
-	HasSpriteCollidedWithRect1,
 	HaveSpritesCollided,
 	HasSpriteCollidedWithBitmap,
 	HasSpriteCollidedWithBitmap1,
