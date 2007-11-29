@@ -735,6 +735,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FreeBitmap(bitmapToFree);
 	end;
 	
+	function GetBitmapWidth(targetbitmap : Bitmap); cdecl; export;
+	begin
+		result := targetbitmap.width;
+	end;
+	
+	function GetBitmapHeight(targetbitmap : Bitmap); cdecl; export;
+	begin
+		result := targetbitmap.height;
+	end;
+	
 	procedure ClearSurface2(dest: Bitmap; toColour: Colour); cdecl; export;
 	begin
 		SGSDK_Graphics.ClearSurface(dest, toColour);
@@ -1150,6 +1160,8 @@ exports
 	LoadBitmap1,
 	LoadTransparentBitmap,
 	FreeBitmap,
+	GetBitmapWidth,
+	GetBitmapHeight,
 	ClearSurface2,
 	ClearSurface1,
 	DrawBitmap2,

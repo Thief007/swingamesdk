@@ -13,6 +13,27 @@ namespace SwinGame
 	    SoundResource
     }
 
+    public struct Bitmap
+    {
+        internal IntPtr pointer;
+
+        [DllImport("SGSDK.dll")]
+        private static extern int GetBitmapWidth(IntPtr pointer);
+        [DllImport("SGSDK.dll")]
+        private static extern int GetBitmapHeight(IntPtr pointer);
+
+        public int Width
+        {
+            get { return GetBitmapWidth(pointer); }
+        }
+
+        public int Height
+        {
+            get { return GetBitmapHeight(pointer); }
+        }
+    }
+
+
     public class Core
     {
         /// <summary>
