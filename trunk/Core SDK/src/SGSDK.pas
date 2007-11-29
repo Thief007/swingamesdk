@@ -1160,6 +1160,7 @@ exports
 	ClearScreen1,
 	DrawBitmap1,
 	DrawBitmapPart1,
+	DrawPixel1,
 	DrawRectangle2,
 	DrawRectangle1,
 	FillRectangle1,
