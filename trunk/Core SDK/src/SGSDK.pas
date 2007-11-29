@@ -292,10 +292,10 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Audio.PlayMusic(mus, loops);
 	end;
 
-	procedure PlayMusic1(mus: Music); cdecl; export;
-	begin
-		SGSDK_Audio.PlayMusic(mus);
-	end;
+	//procedure PlayMusic1(mus: Music); cdecl; export;
+	//begin
+		//SGSDK_Audio.PlayMusic(mus);
+	//end;
 
 	function IsMusicPlaying(mus: Music): Integer; cdecl; export;
 	begin
@@ -1112,7 +1112,7 @@ exports
 	PlaySoundEffect,
 	PlayMusic,
 	PlaySoundEffectLoop,
-	PlayMusic1,
+	//PlayMusic1,
 	IsMusicPlaying,
 	IsSoundEffectPlaying,
 	StopSoundEffect,
