@@ -608,8 +608,11 @@ end;
 		
 initialization
 begin
+	WriteLn('InitSDL');
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
+		WriteLn('Errorm loading sdl...');
+		WriteLn(string(SDL_GetError));
 		raise Exception.Create('Error initialising SDL. ' + string(SDL_GetError));
 	end;
 	
@@ -617,10 +620,22 @@ begin
 	
 	sdlManager := TSDLManager.Create();
 	applicationPath := ExtractFileDir(ParamStr(0));
+	
+	//Load sound
+	{WriteLn('Opening Mixer');
+	if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
+	begin
+		WriteLn('Errorm loading mixer...');
+		WriteLn(string(Mix_GetError));
+		//raise Exception.Create('Error openning audio device. ' + string(Mix_GetError));
+	end;
+	
+	WriteLn('Mixer Open');}
 end;
 
 finalization
 begin
+	WriteLn('Closing Down');
 	if sdlManager <> nil then
 	begin
 		sdlManager.Free();
@@ -639,6 +654,12 @@ begin
 		scr := nil;
 	end;
 	
+	WriteLn('Closing TTF');
+	//TTF_Quit();
+	WriteLn('Closed TTF');
+	
+	WriteLn('Quitting SDL');
 	SDL_Quit();
+	WriteLn('Quit');
 end;
 end.

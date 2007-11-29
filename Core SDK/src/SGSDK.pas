@@ -8,6 +8,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	// 					Core
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+	
 	procedure ProcessEvents(); cdecl; export;
 	begin
 		SGSDK_Core.ProcessEvents();
@@ -247,6 +248,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	
+	procedure	OpenAudio(); cdecl; export;
+	begin
+		SGSDK_Audio.OpenAudio();
+	end;
+	
+	procedure	CloseAudio(); cdecl; export;
+	begin
+		SGSDK_Audio.CloseAudio();
+	end;
+	
 	function	LoadSoundEffect(path: String): SoundEffect; cdecl; export;
 	begin
 		result := SGSDK_Audio.LoadsoundEffect(path);
@@ -271,7 +283,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect);
 	end;
-
+	
 	procedure PlaySoundEffect1(effect: SoundEffect; loops: Integer); cdecl; export;
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect, loops);
@@ -1051,6 +1063,8 @@ exports
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	OpenAudio,
+	CloseAudio,
 	LoadSoundEffect,
 	LoadMusic,
 	FreeMusic,

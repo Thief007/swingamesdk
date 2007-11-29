@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace GameProject
 {
@@ -9,18 +10,27 @@ namespace GameProject
     {
         static void Main(string[] args)
         {
-            SwinGame.OpenGraphicsWindow("Hi", 800, 600);
+            Console.WriteLine("here");
+           //Console.WriteLine(Core.GetColor(255, 0, 0, 255).ToString());
+            Core.OpenGraphicsWindow("Hi", 800, 600);
+            Core.OpenAudio();
+            IntPtr sound = Core.LoadSoundEffect("SwinGameStart.ogg");
+            Core.PlaySoundEffect(sound);
 
-            while (SwinGame.WindowCloseRequested() != true)
+            while (Core.WindowCloseRequested() != true)
             {
+           
+                //Console.WriteLine(Core.GetFramerate());
+                
+                
 
-                Console.WriteLine(SwinGame.GetFramerate());
 
-                SwinGame.ToggleFullScreen();
-                SwinGame.RefreshScreen();
-                //SwinGame.ProcessEvents();
+                //Core.ToggleFullScreen();
+                //Core.RefreshScreen();
+                Core.ProcessEvents();
             }
-         
+            Core.FreeSoundEffect(ref sound);
+            Core.CloseAudio();
         }
     }
 }

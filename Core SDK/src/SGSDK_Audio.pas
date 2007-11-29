@@ -36,6 +36,8 @@ interface
 	// These routines are used to work with sound effects and music within the
 	// game API.
 	//
+	procedure OpenAudio();
+	procedure CloseAudio();
 
 	function	LoadSoundEffect(path: String): SoundEffect;
 
@@ -76,6 +78,25 @@ implementation
 // Sound routines
 //
 //*******
+
+	procedure OpenAudio();
+	begin
+		WriteLn('Opening Mixer');
+		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
+		begin
+			WriteLn('Errorm loading mixer...');
+			WriteLn(string(Mix_GetError));
+			raise Exception.Create('Error openning audio device. ' + string(Mix_GetError));
+		end;
+		WriteLn('Mixer Open');
+	end;
+
+	procedure CloseAudio();
+	begin
+		WriteLn('Closing Audio');
+		Mix_CloseAudio();
+		WriteLn('Closed Audio');	
+	end;
 
 	/// Loads a sound effect from the file system. The sound effect can be in the
 	///	form of a wav, ogg, or mp3 file.
@@ -238,21 +259,4 @@ implementation
   	end;
   end;
   
-initialization
-begin
-
-	//Load sound
-	if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
-	begin
-		raise Exception.Create('Error openning audio device. ' + 
-                           string(Mix_GetError));
-	end;
-end;
-
-finalization
-begin
-
-	Mix_CloseAudio();
-end;
-
 end.
