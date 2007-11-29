@@ -11,28 +11,6 @@ interface
     ///  used to apply these changes to vectors.
 		Matrix2D = Array [0..2,0..2] of Single;
 
-		/// Record: DecayProperties
-		///
-		///	These properties contain a number of values that can be used to decay
-		///	vectors applied to sprites in a game. This allows for things such as
-		///	gravety, and provides a means for slowing a character to stop rather
-		///	than stopping immediately when a key is released.
-		///
-		///	- posXDecay: The amount to decay the X component towards zero if the
-		///							 X component is positive
-		///	- negXDecay: The amount to decay the X component towards zero if the
-		///							 X component is negative
-		///	- posYDecay: The amount to decay the Y component towards zero if the
-		///							 Y component is positive
-		///	- negYDecay: The amount to decay the Y component towards zero if the
-		///							 Y component is negative
-		DecayProperties = record
-			posXDecay : Single;
-			negXDecay : Single;
-			posYDecay : Single;
-			negYDecay : Single;
-		end;
-
 		/// Enumeration: CollisionDetectionRanges
 		///	This is used to indicate the kind of collision being checked with the
 		///	Sprite collision routines. 
@@ -129,8 +107,7 @@ interface
 
 	function	GetVectorMagnitude(theVector : Vector): Single;
 
-	function	DecayVector(theVector : Vector;
-												const decayProps : DecayProperties): Vector;
+
 	function	DotProduct(v1, v2: Vector): Single;
 	function 	MultiplyVector(v1: Vector; s1: Single): Vector;
 
@@ -284,40 +261,7 @@ implementation
 		result := Sqrt((theVector.x * theVector.x) + (theVector.y * theVector.y));
 	end;
 
-	/// Decay a vector using information in the decayProps. This can be used to
-	///	decay for gravety, and to allow smooth stopping/friction.
-	///
-	///	@param theVector		 the vector to decay
-	///	@param decayProps		The properties used to perform the decay
-	///	@returns						 A new vector created as a result
-	function DecayVector(theVector : Vector; const decayProps : DecayProperties)
-            : Vector;
-	begin
-		if theVector.x > 0 then
-		begin
-			theVector.x := theVector.x - decayProps.posXDecay;
-			if theVector.x < 0 then theVector.x := 0;
-		end
-		else if theVector.x < 0 then
-		begin
-			theVector.x := theVector.x + decayProps.negXDecay;
-			if theVector.x > 0 then theVector.x := 0;
-		end;
 
-		if theVector.y > 0 then
-		begin
-			theVector.y := theVector.y - decayProps.posYDecay;
-			if theVector.y < 0 then theVector.y := 0;
-		end
-		else if theVector.y < 0 then
-		begin
-			theVector.y := theVector.y + decayProps.negYDecay;
-			if theVector.y > 0 then theVector.y := 0;
-		end;
-
-		result.x := theVector.x;
-		result.y := theVector.y;
-	end;
 
 	function DotProduct(v1, v2: Vector): Single;
 	begin
