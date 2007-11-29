@@ -36,7 +36,6 @@ goto end
 :cleaning
 	del /Q "%Output%\SGSDK*.*"
 	del /Q "%Output%\sdl*.*"
-	del /Q "%Output%\SDLEventProcessing.*"
 	del /Q "%Output%\libimp*.*"
 	del /Q "%Output%\smpeg.*"
 	echo Cleaned
