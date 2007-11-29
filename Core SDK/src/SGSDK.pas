@@ -3,8 +3,11 @@ library SGSDK;
 uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
-	//CORE
-
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					Core
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	procedure ProcessEvents(); cdecl; export;
 	begin
 		SGSDK_Core.ProcessEvents();
@@ -39,7 +42,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
 		SGSDK_Core.ChangeScreenSize(width, height);
 	end;
 	
-
 	procedure ToggleFullScreen(); cdecl; export;
 	begin
 		SGSDK_Core.ToggleFullScreen();
@@ -70,20 +72,20 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
 		result := SGSDK_Core.ToSDLColor(color);
 	end;
 	
-	//function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
-	//begin
-		//result := SGSDK_Core.GetColour(forBitmap, apiColor);
-	//end;
+	function	GetColour1(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
+	begin
+		result := SGSDK_Core.GetColour(forBitmap, apiColor);
+	end;
 	
-	function	GetColour(red, green, blue, alpha: Byte) : Colour; cdecl; export;
+	function	GetColour2(red, green, blue, alpha: Byte) : Colour; cdecl; export;
 	begin
 		result := SGSDK_Core.GetColour(red, green, blue, alpha);
 	end;
 	
-	//function	GetColour(red, green, blue : Byte) : Colour; overload; cdecl; export;
-	//begin
-		//result := SGSDK_Core.GetColour(red, green, blue);	
-	//end;
+	function	GetColour3(red, green, blue : Byte) : Colour; overload; cdecl; export;
+	begin
+		result := SGSDK_Core.GetColour(red, green, blue);	
+	end;
 	
 	function	GetFramerate(): Integer; cdecl; export;
 	begin
@@ -100,15 +102,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
 		SGSDK_Core.Sleep(time);
 	end;
 	
-	function GetPathToResource(filename: String; kind: ResourceKind) : String; overload; cdecl; export;
+	function GetPathToResource1(filename: String; kind: ResourceKind) : String; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename, kind);
 	end;
 	
-	//function GetPathToResource(filename: String): String; overload; cdecl; export;
-	//begin
-		//result := SGSDK_Core.GetPathToResource(filename);
-	//end;
+	function GetPathToResource2(filename: String): String; overload; cdecl; export;
+	begin
+		result := SGSDK_Core.GetPathToResource(filename);
+	end;
 	
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); cdecl; export;
 	begin
@@ -227,11 +229,14 @@ exports
 	ScreenWidth,
 	ScreenHeight,
 	ToSDLColor,
-	GetColour,	
+	GetColour1,	
+	GetColour2,
+	GetColour3,
 	GetFramerate,	
 	GetTicks,	
 	Sleep,	
-	GetPathToResource,
+	GetPathToResource1,
+	GetPathToResource2,
 	RegisterEventProcessor,	
 	Cos,
 	Sin,
