@@ -1,6 +1,6 @@
 library SGSDK;
 
-uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
+uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -216,6 +216,70 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio,
 		SGSDK_Audio.StopMusic();
 	end;
 	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//**************************************************
+	//                       Font
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	
+	function LoadFont(fontName: String; size: Integer): Font; cdecl; export;
+	begin
+		result := SGSDK_Font.LoadFont(fontName, size)
+	end;
+
+	procedure SetFontStyle(font: Font; style: FontStyle); cdecl; export;
+	begin
+		SGSDK_Font.SetFontStyle(font, style);
+	end;
+
+	procedure FreeFont(var fontToFree: Font); cdecl; export;
+	begin
+		SGSDK_Font.FreeFont(fontToFree);
+	end;
+	
+	{procedure DrawText(theText: String; textColor: Colour;
+					 theFont: Font; x, y: Integer); overload; cdecl; export;
+	begin
+		SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
+	end;
+
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
+							theFont: Font; align: FontAlignment;
+							x, y, w, h: Integer); overload; cdecl; export;
+	begin
+		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
+	end;
+							
+	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour;
+					theFont: Font; x, y: Integer); overload; cdecl; export;
+	begin
+		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y0;
+	end;
+
+	procedure DrawTextLines(dest: Bitmap; theText: String;
+							textColor, backColor: Colour;
+							theFont: Font; align: FontAlignment;
+							x, y, w, h: Integer); overload; cdecl; export;
+	begin
+		SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
+	end;}
+
+	function TextWidth(theText: String; theFont: Font): Integer; cdecl; export;
+	begin
+		result :=SGSDK_Font.TextWidth(theText, theFont);
+	end;
+
+	function TextHeight(theText: String; theFont: Font): Integer; cdecl; export;
+	begin
+		result := SGSDK_Font.TextHeight(theText, theFont);
+	end;
+
+	procedure DrawFramerate(x, y: Integer; font: Font); cdecl; export;
+	begin
+		SGSDK_Font.DrawFramerate(x, y, font);
+	end;
 exports
 	//CORE
 	OpenGraphicsWindow,
@@ -264,6 +328,23 @@ exports
 	IsMusicPlaying,
 	IsSoundEffectPlaying,
 	StopSoundEffect,
-	StopMusic
+	StopMusic,
+	
+	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//**************************************************
+	//                       Font
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	LoadFont,
+	SetFontStyle,
+	FreeFont,
+	//DrawText,
+	//DrawTextLines,
+	TextWidth,
+	TextHeight,
+	DrawFramerate
 	;
 end.
