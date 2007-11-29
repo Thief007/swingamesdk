@@ -1,6 +1,6 @@
 library SGSDK;
 
-uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
+uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -385,12 +385,326 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
 	begin
 		SGSDK_Font.DrawFramerate(x, y, font);
 	end;
+	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//**************************************************
+	//                       Graphics
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	
+	function NewSDLRect(x, y, w, h: Integer): SDL_Rect; cdecl; export;
+	begin
+		result := SGSDK_Grphics.NewSDKRect(x, y, w, h);
+	end;
+	
+	function CreateBitmap(width, height: Integer): Bitmap; cdecl; export;
+	begin
+		result := SGSDK_Grphics.CreateBitmap(width, height);
+	end;
+	
+	procedure OptimiseBitmap(surface: Bitmap); cdecl; export;
+	begin
+		SGSDK_Grphics.OptimiseBitmap(surface);
+	end;
+	
+	function LoadBitmap2(pathToBitmap: String; transparent: Boolean;
+								transparentColor: Colour): Bitmap; cdecl; export;
+	begin
+		result := SGSDK_Grphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
+	end;
+	
+	function LoadBitmap1(pathToBitmap : String): Bitmap; cdecl; export;
+	begin
+		result := SGSDK_Grphics.LoadBitmap(pathToBitmap);
+	end;
+	
+	function LoadTransparentBitmap(pathToBitmap : String;
+								transparentColor : Colour): Bitmap; cdecl; export;
+	begin
+		result := SGSDK_Grphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
+	end;
+	
+	procedure FreeBitmap(var bitmapToFree : Bitmap); cdecl; export;
+	begin
+		SGSDK_Grphics.FreeBitmap(bitmapToFree);
+	end;
+	
+	procedure ClearSurface2(dest: Bitmap; toColour: Colour); cdecl; export;
+	begin
+		SGSDK_Grphics.ClearSurface(dest, toColour);
+	end;
+	
+	procedure ClearSurface1(dest: Bitmap); cdecl; export;
+	begin
+		SGSDK_Grphics.ClearSurface(dest);
+	end;
+	
+	procedure DrawBitmap2(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
+		cdecl; export;
+	begin
+		SGSDK_Grphics.DrawBitmap(dest, bitmapToDraw, x, y);
+	end;
+	
+	procedure DrawBitmapPart2(dest: Bitmap; bitmapToDraw: Bitmap;
+							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+	end;
+	
+	procedure DrawPixel2(dest: Bitmap; theColour: Colour; x, y: Integer);
+		cdecl; export;
+	begin
+		SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
+	end;
+	
+	procedure DrawRectangle4(dest: Bitmap; theColour : Colour; filled : Boolean;
+							xPos, yPos, width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
+	end;
+	
+	procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
+							width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawRectangle(dest, theColour, xPos, yPos, width, height);
+	end;
+	
+	procedure FillRectangle2(dest: Bitmap; theColour : Colour; xPos, yPos,
+							width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
+	end;
+
+	procedure DrawLine2(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
+					 xPosEnd, yPosEnd: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+	end;
+
+	procedure DrawHorizontalLine2(dest: Bitmap; theColor: Color;
+								 y, x1, x2: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
+	end;
+
+	procedure DrawVerticalLine2(dest: Bitmap; theColor: Color;
+							 x, y1, y2: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
+	end;
+
+	procedure DrawCircle4(dest: Bitmap; theColour: Colour; filled: Boolean;
+							 xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, xy, radius);
+	end;
+
+	procedure DrawCircle3(dest: Bitmap; theColour: Colour;
+							 xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawCircle(dest, theColour, xc, yc, radius);
+	end;
+
+	procedure FillCircle2(dest: Bitmap; theColour: Colour;
+							 xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillCircle(dest, theColour, xc, yc, radius);
+	end;
+
+	procedure DrawEllipse4(dest: Bitmap; theColour: Colour; filled: Boolean;
+							xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawEllipse(dest, theColour, filled, xPos, yPos, width, height);
+	end;
+
+	procedure DrawEllipse3(dest: Bitmap; theColour: Colour;
+							xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawEllipse(dest, theColour, xPos, yPos, width, height);
+	end;
+	
+	procedure FillEllipse2(dest: Bitmap; theColour: Colour;
+							xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillEllipse(dest, theColour, xPos, yPos, width, height);
+	end;
+	
+	procedure ClearScreen2(toColour : Colour); cdecl; export;
+	begin
+		SGSDK_Graphics.ClearScreen(theColour);
+	end;
+
+	procedure ClearScreen1(); cdecl; export;
+	begin
+		SGSDK_Graphics.ClearScreen();
+	end;
+
+	procedure DrawBitmap1(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
+	end;
+
+	procedure DrawBitmapPart1(bitmapToDraw : Bitmap;
+							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+	end;
+	
+	procedure DrawPixel1(theColour: Colour; x, y: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawPixel(theColour, x, y);
+	end;
+
+	procedure DrawRectangle2(theColour : Colour; filled : Boolean;
+							xPos, yPos, width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawRectangle(theColour, filled, xPos, yPos, width, height);
+	end;
+
+	procedure DrawRectangle1(theColour : Colour; xPos, yPos,
+							width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawRectangle(theColour, xPos, yPos, width, height);
+	end;
+
+	procedure FillRectangle1(theColour : Colour; xPos, yPos,
+							width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillRectangle(theColour, xPos, yPos, width, height);
+	end;
+
+	procedure DrawLine1(theColour: Colour; xPosStart, yPosStart,
+					 xPosEnd, yPosEnd: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+	end;
+
+	procedure DrawHorizontalLine1(theColor: Color; y, x1, x2: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
+	end;
+
+	procedure DrawVerticalLine1(theColor: Color; x, y1, y2: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
+	end;
+
+	procedure DrawCircle2(theColour: Colour; filled: Boolean;
+						 xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawCircle(theColour, filled, xc, yc, radius);
+	end;
+
+	procedure DrawCircle1(theColour: Colour; xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawCircle(theColour, xc, yc, radius);
+	end;
+
+	procedure FillCircle1(theColour: Colour; xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillCircle(theColour, xc, yc, radius);
+	end;
+
+	procedure DrawEllipse2(theColour: Colour; filled: Boolean;
+						xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawEllipse(theColour, filled, xPos, yPos, width, height);
+	end;
+
+	procedure DrawEllipse1(theColour: Colour;
+						xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawEllipse(theColour, xPos, yPos, width, height);
+	end;
+
+	procedure FillEllipse1(theColour: Colour;
+						xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillEllipse(theColour, xPos, yPos, width, height);
+	end;
+
+	function CreateSprite(startBitmap : Bitmap): Sprite; cdecl; export;
+	begin
+		result := SGSDK_Graphics.CreateSprite(startBitmap);
+	end;
+
+	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
+	begin
+		SGSDK_Graphics.FreeSprite(spriteToFree);
+	end;
+
+	function AddBitmapToSprite(spriteToAddTo : Sprite;
+														 bitmapToAdd : Bitmap): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
+	end;
+
+	function CurrentHeight(sprite: Sprite): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.CurrentHeight(sprite);
+	end;
+
+	function CurrentWidth(sprite: Sprite): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.CurrentWidth(sprite);
+	end;
+
+	procedure DrawSprite1(spriteToDraw : Sprite); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawSprite(spriteToDraw);
+	end;
+
+	procedure DrawSprite2(spriteToDraw : Sprite; vwPrtX, vwPrtY, vwPrtWidth,
+											 vwPrtHeight : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawSprite(spriteToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
+	end;
+
+	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); cdecl; export;
+	begin
+		SGSDK_Graphics.MoveSprite(spriteToMove, movementVector);
+	end;
+
+	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
+	end;
+
+	function IsSpriteOffscreen1(theSprite : Sprite): Boolean; cdecl; export;
+	begin
+		if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function IsSpriteOffscreen2(theSprite : Sprite; vwPrtX, vwPrtY,
+															vwPrtWidth, vwPrtHeight : Integer) : Boolean; cdecl; export;
+	begin
+		if SGSDK_Graphics.IsSpriteOffscreen(theSprite, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+	
 exports
+
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Core
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+	
 	OpenGraphicsWindow,
 	WindowCloseRequested,
 	ProcessEvents,
@@ -415,9 +729,6 @@ exports
 	Sin,
 	Tan,
 	
-	
-	
-	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//**************************************************
@@ -425,7 +736,6 @@ exports
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
-	
 	
 	GetMousePosition,
 	GetMouseMovement,
@@ -460,7 +770,6 @@ exports
 	StopSoundEffect,
 	StopMusic,
 	
-	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//**************************************************
@@ -468,6 +777,7 @@ exports
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
+	
 	LoadFont,
 	SetFontStyle,
 	FreeFont,
@@ -477,6 +787,67 @@ exports
 	DrawTextLines1,
 	TextWidth,
 	TextHeight,
-	DrawFramerate
+	DrawFramerate,
+	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//**************************************************
+	//                       Graphics
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	
+	NewSDLRect,
+	CreateBitmap,
+	OptimiseBitmap,
+	LoadBitmap2,
+	LoadBitmap1,
+	LoadTransparentBitmap,
+	FreeBitmap,
+	ClearSurface2,
+	ClearSurface1,
+	DrawBitmap2,
+	DrawBitmapPart2,
+	DrawPixel2,
+	DrawRectangle4,
+	DrawRectangle3,
+	FillRectangle2,
+	DrawLine2,
+	DrawHorizontalLine2,
+	DrawVerticalLine2,
+	DrawCircle4,
+	DrawCircle3,
+	FillCircle2,
+	DrawEllipse4,
+	DrawEllipse3,
+	FillEllipse2,
+	ClearScreen2,
+	ClearScreen1,
+	DrawBitmap1,
+	DrawBitmapPart1,
+	DrawBitmapPart1,
+	DrawRectangle2,
+	DrawRectangle1,
+	FillRectangle1,
+	DrawLine1,
+	DrawHorizontalLine1,
+	DrawVerticalLine1,
+	DrawCircle2,
+	DrawCircle1,
+	FillCircle1,
+	DrawEllipse2,
+	DrawEllipse1,
+	FillEllipse1,
+	CreateSprite,
+	FreeSprite,
+	AddBitmapToSprite,
+	CurrentHeight,
+	CurrentWidth,
+	DrawSprite1,
+	DrawSprite2,
+	MoveSprite,
+	MoveSpriteTo,
+	IsSpriteOffscreen1,
+	IsSpriteOffscreen2
 	;
 end.
