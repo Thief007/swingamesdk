@@ -1,6 +1,6 @@
 library SGSDK;
 
-uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
+uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -134,7 +134,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
-	//**************************************************
+	//***************************************************
 	//                       Input
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -241,7 +241,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
-	//**************************************************
+	//***************************************************
 	//                       Audio
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -323,7 +323,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
-	//**************************************************
+	//***************************************************
 	//                       Font
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -388,6 +388,300 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	//                       Physics
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	
+	function	HasSpriteCollidedX(theSprite : Sprite; x : Integer;
+								 range : CollisionDetectionRange):  Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function HasSpriteCollidedY(theSprite : Sprite; y : Integer;
+								 range : CollisionDetectionRange): Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedY(theSprite, y, range) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
+		width, height : Integer): Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function HasSpriteCollidedWithRect1(theSprite : Sprite; x, y : Single;
+		width, height: Integer; vwPrtX, vwPrtY: Integer)
+		: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height, vwPrtX, vwPrtY) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+		
+	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HaveSpritesCollided(sprite1, sprite2) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+		x, y: Integer; bounded: Boolean;
+		vwPrtX, vwPrtY: Integer)
+		: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded, vwPrtX, vwPrtY) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function	HasSpriteCollidedWithBitmap1(theSprite: Sprite; theBitmap: Bitmap;
+								x, y: Integer; bounded: Boolean)
+								: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function	HasSpriteCollidedWithBitmap2(theSprite: Sprite; theBitmap: Bitmap;
+								x, y, vwPrtX, vwPrtY: Integer)
+								: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, vwPrtX, vwPrtY) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function	HasSpriteCollidedWithBitmap3(theSprite: Sprite; theBitmap: Bitmap;
+								x, y: Integer)
+								: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2 : Bitmap;
+								 x2, y2: Integer): Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, image2, x2, y2) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function HaveBitmapsCollided1(image1: Bitmap; x1, y1: Integer;
+		bounded1: Boolean; image2: Bitmap;
+		x2, y2: Integer; bounded2: Boolean)
+		: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
+		image2: Bitmap; x2, y2: Integer)
+		: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, image2, x2, y2) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function CollisionWithinBitmapImages1(image1: Bitmap; x1, y1: Integer;
+		bounded1: Boolean; image2: Bitmap;
+		x2, y2: Integer; bounded2: Boolean)
+		: Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+	
+	function	CreateVector(x,y : Single; invertY : boolean): Vector;  cdecl; export;
+	begin
+		result :=SGSDK_Physics.CreateVector(x, y, invertY);
+	end;
+
+	function	CreateVector1(x,y : Single): Vector;  cdecl; export;
+	begin
+		result :=SGSDK_Physics.CreateVector(x, y);
+	end;
+
+	function	AddVectors(v1, v2 : Vector): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.AddVectors(v1, v2);
+	end;
+
+	function	SubtractVectors(v1, v2 : Vector): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.SubtractVectors(v1, v2);
+	end;
+
+	function	InvertVector(v : Vector): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.InvertVector(v);
+	end;
+
+	function	ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
+	end;
+
+	function	LimitVector(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
+	end;
+
+	function	GetUnitVector(theVector : Vector): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.GetUnitVector(theVector);
+	end;
+
+	function	IsZeroVector(theVector : Vector): Integer; cdecl; export;
+	begin
+		if SGSDK_Physics.IsZeroVector(theVector) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+	function	GetVectorMagnitude(theVector : Vector): Single; cdecl; export;
+	begin
+		result :=SGSDK_Physics.GetVectorMagnitude(theVector);
+	end;
+
+	function	DecayVector(theVector : Vector;	const decayProps : DecayProperties): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.DecayVector(theVector, decayProps);
+	end;
+	
+	function	DotProduct(v1, v2: Vector): Single; cdecl; export;
+	begin
+		result :=SGSDK_Physics.DotProduct(v1, v2);
+	end;
+	
+	function 	MultiplyVector(v1: Vector; s1: Single): Vector; cdecl; export;
+	begin
+		result :=SGSDK_Physics.MultiplyVector(v1, s1);
+	end;
+
+ 	function CalculateAngle(x1, y1, x2, y2: Single): Single;  cdecl; export;
+	begin
+		result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
+	end;
+	
+	function CalculateAngle1(sprite1, sprite2: Sprite): Single;  cdecl; export;
+	begin
+		result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
+	end;
+
+	function TranslationMatric(dx, dy: Single): Matrix2D; cdecl; export;
+	begin
+		result :=SGSDK_Physics.TranslationMatric(dx, dy);
+	end;
+	
+	function ScaleMatrix(scale: Single): Matrix2D; cdecl; export;
+	begin
+		result :=SGSDK_Physics.ScaleMatrix(scale);
+	end;
+	
+	function RotationMatrix(deg: Single): Matrix2D; cdecl; export;
+	begin
+		result :=SGSDK_Physics.RotationMatrix(deg);
+	end;
+	
+	function Multiply(const m1, m2: Matrix2D): Matrix2D;  cdecl; export;
+	begin
+		result :=SGSDK_Physics.Multiply(m1, m2);
+	end;
+	
+	function Multiply1(const m: Matrix2D; const v: Vector): Vector;  cdecl; export;
+	begin
+		result :=SGSDK_Physics.Multiply(m, v);
+	end;
+	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//**************************************************
 	//                       Graphics
 	//***************************************************
@@ -396,55 +690,55 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect; cdecl; export;
 	begin
-		result := SGSDK_Grphics.NewSDKRect(x, y, w, h);
+		result := SGSDK_Graphics.NewSDLRect(x, y, w, h);
 	end;
 	
 	function CreateBitmap(width, height: Integer): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Grphics.CreateBitmap(width, height);
+		result := SGSDK_Graphics.CreateBitmap(width, height);
 	end;
 	
 	procedure OptimiseBitmap(surface: Bitmap); cdecl; export;
 	begin
-		SGSDK_Grphics.OptimiseBitmap(surface);
+		SGSDK_Graphics.OptimiseBitmap(surface);
 	end;
 	
 	function LoadBitmap2(pathToBitmap: String; transparent: Boolean;
 								transparentColor: Colour): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Grphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
+		result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
 	end;
 	
 	function LoadBitmap1(pathToBitmap : String): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Grphics.LoadBitmap(pathToBitmap);
+		result := SGSDK_Graphics.LoadBitmap(pathToBitmap);
 	end;
 	
 	function LoadTransparentBitmap(pathToBitmap : String;
 								transparentColor : Colour): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Grphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
+		result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
 	end;
 	
 	procedure FreeBitmap(var bitmapToFree : Bitmap); cdecl; export;
 	begin
-		SGSDK_Grphics.FreeBitmap(bitmapToFree);
+		SGSDK_Graphics.FreeBitmap(bitmapToFree);
 	end;
 	
 	procedure ClearSurface2(dest: Bitmap; toColour: Colour); cdecl; export;
 	begin
-		SGSDK_Grphics.ClearSurface(dest, toColour);
+		SGSDK_Graphics.ClearSurface(dest, toColour);
 	end;
 	
 	procedure ClearSurface1(dest: Bitmap); cdecl; export;
 	begin
-		SGSDK_Grphics.ClearSurface(dest);
+		SGSDK_Graphics.ClearSurface(dest);
 	end;
 	
 	procedure DrawBitmap2(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
 		cdecl; export;
 	begin
-		SGSDK_Grphics.DrawBitmap(dest, bitmapToDraw, x, y);
+		SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
 	end;
 	
 	procedure DrawBitmapPart2(dest: Bitmap; bitmapToDraw: Bitmap;
@@ -498,7 +792,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	procedure DrawCircle4(dest: Bitmap; theColour: Colour; filled: Boolean;
 							 xc, yc, radius: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, xy, radius);
+		SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, yc, radius);
 	end;
 
 	procedure DrawCircle3(dest: Bitmap; theColour: Colour;
@@ -533,7 +827,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	
 	procedure ClearScreen2(toColour : Colour); cdecl; export;
 	begin
-		SGSDK_Graphics.ClearScreen(theColour);
+		SGSDK_Graphics.ClearScreen(toColour);
 	end;
 
 	procedure ClearScreen1(); cdecl; export;
@@ -672,7 +966,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 		SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
 	end;
 
-	function IsSpriteOffscreen1(theSprite : Sprite): Boolean; cdecl; export;
+	function IsSpriteOffscreen1(theSprite : Sprite): Integer; cdecl; export;
 	begin
 		if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then
 		begin
@@ -685,7 +979,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 	end;
 
 	function IsSpriteOffscreen2(theSprite : Sprite; vwPrtX, vwPrtY,
-															vwPrtWidth, vwPrtHeight : Integer) : Boolean; cdecl; export;
+															vwPrtWidth, vwPrtHeight : Integer) : Integer; cdecl; export;
 	begin
 		if SGSDK_Graphics.IsSpriteOffscreen(theSprite, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight) then
 		begin
@@ -696,7 +990,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Graphics,
 			result:= 0
 		end
 	end;
-	
+
 exports
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -731,7 +1025,7 @@ exports
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
-	//**************************************************
+	//***************************************************
 	//                       Input
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -751,7 +1045,7 @@ exports
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
-	//**************************************************
+	//***************************************************
 	//                       Audio
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -772,7 +1066,7 @@ exports
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
-	//**************************************************
+	//***************************************************
 	//                       Font
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -788,6 +1082,47 @@ exports
 	TextWidth,
 	TextHeight,
 	DrawFramerate,
+	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	//                       Physics
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	HasSpriteCollidedX,
+	HasSpriteCollidedY,
+	HasSpriteCollidedWithRect,
+	HasSpriteCollidedWithRect1,
+	HaveSpritesCollided,
+	HasSpriteCollidedWithBitmap,
+	HasSpriteCollidedWithBitmap1,
+	HasSpriteCollidedWithBitmap2,
+	HasSpriteCollidedWithBitmap3,
+	HaveBitmapsCollided,
+	HaveBitmapsCollided1,
+	CollisionWithinBitmapImages,
+	CollisionWithinBitmapImages1,
+	CreateVector,
+	CreateVector1,
+	AddVectors,
+	SubtractVectors,
+	InvertVector,
+	ChopVector,
+	LimitVector,
+	GetUnitVector,
+	IsZeroVector,
+	GetVectorMagnitude,
+	DecayVector,
+	DotProduct,
+	MultiplyVector,
+	CalculateAngle,
+	CalculateAngle1,
+	TranslationMatric,
+	ScaleMatrix,
+	RotationMatrix,
+	Multiply,
+	Multiply1,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -824,7 +1159,6 @@ exports
 	ClearScreen2,
 	ClearScreen1,
 	DrawBitmap1,
-	DrawBitmapPart1,
 	DrawBitmapPart1,
 	DrawRectangle2,
 	DrawRectangle1,
