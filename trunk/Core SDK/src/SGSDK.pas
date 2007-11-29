@@ -752,10 +752,10 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
 	end;
 	
-	function LoadBitmap(pathToBitmap : String): Bitmap; cdecl; export;
+	{function LoadBitmap(pathToBitmap : String): Bitmap; cdecl; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap);
-	end;
+	end;}
 	
 	function LoadTransparentBitmap(pathToBitmap : String;
 								transparentColor : Colour): Bitmap; cdecl; export;
@@ -778,29 +778,29 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := targetbitmap.height;
 	end;
 	
-	procedure ClearSurface2(dest: Bitmap; toColour: Colour); cdecl; export;
+	procedure ClearSurfaceWithColor(dest: Bitmap; toColour: Colour); cdecl; export;
 	begin
 		SGSDK_Graphics.ClearSurface(dest, toColour);
 	end;
 	
-	procedure ClearSurface1(dest: Bitmap); cdecl; export;
+	{procedure ClearSurface(dest: Bitmap); cdecl; export;
 	begin
 		SGSDK_Graphics.ClearSurface(dest);
-	end;
+	end;}
 	
-	procedure DrawBitmap2(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
+	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
 		cdecl; export;
 	begin
 		SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
 	end;
 	
-	procedure DrawBitmapPart2(dest: Bitmap; bitmapToDraw: Bitmap;
+	procedure DrawBitmapPartWithDestination(dest: Bitmap; bitmapToDraw: Bitmap;
 							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
 	
-	procedure DrawPixel2(dest: Bitmap; theColour: Colour; x, y: Integer);
+	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: Integer);
 		cdecl; export;
 	begin
 		SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
@@ -888,18 +888,18 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.ClearScreen();
 	end;
 
-	procedure DrawBitmap1(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
+	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
 	end;
 
-	procedure DrawBitmapPart1(bitmapToDraw : Bitmap;
+	procedure DrawBitmapPart(bitmapToDraw : Bitmap;
 							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
 	
-	procedure DrawPixel1(theColour: Colour; x, y: Integer); cdecl; export;
+	procedure DrawPixel(theColour: Colour; x, y: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawPixel(theColour, x, y);
 	end;
@@ -1188,16 +1188,16 @@ exports
 	CreateBitmap,
 	OptimiseBitmap,
 	LoadBitmapWithTransparentColor,
-	LoadBitmap,
+	//LoadBitmap,
 	LoadTransparentBitmap,
 	FreeBitmap,
 	GetBitmapWidth,
 	GetBitmapHeight,
-	ClearSurface2,
-	ClearSurface1,
-	DrawBitmap2,
-	DrawBitmapPart2,
-	DrawPixel2,
+	ClearSurfaceWithColor,
+	//ClearSurface,
+	DrawBitmapWithDestination,
+	DrawBitmapPartWithDestination,
+	DrawPixelWithDestination,
 	DrawRectangle4,
 	DrawRectangle3,
 	FillRectangle2,
@@ -1212,9 +1212,9 @@ exports
 	FillEllipse2,
 	ClearScreen2,
 	ClearScreen1,
-	DrawBitmap1,
-	DrawBitmapPart1,
-	DrawPixel1,
+	DrawBitmap,
+	DrawBitmapPart,
+	DrawPixel,
 	DrawRectangle2,
 	DrawRectangle1,
 	FillRectangle1,
