@@ -73,20 +73,18 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Core.ToSDLColor(color);
 	end;
 	
-	function	GetColour1(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
+	function	GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetColour(forBitmap, apiColor);
 	end;
 	
-	function	GetColour2(red, green, blue, alpha: Byte) : Colour; cdecl; export;
+	function	GetColourRGBA(red, green, blue, alpha: Byte) : Colour; cdecl; export;
 	begin
 		result := SGSDK_Core.GetColour(red, green, blue, alpha);
 	end;
 	
-	function	GetColour3(red, green, blue : Byte) : Colour; overload; cdecl; export;
-	begin
-		result := SGSDK_Core.GetColour(red, green, blue);	
-	end;
+	// function GetColour(red, green, blue : Byte) : Colour;
+	// pass 255 into parameter 4
 	
 	function	GetFramerate(): Integer; cdecl; export;
 	begin
@@ -1024,7 +1022,6 @@ exports
 	ToSDLColor,
 	GetColour1,	
 	GetColour2,
-	GetColour3,
 	GetFramerate,	
 	GetTicks,	
 	Sleep,	
