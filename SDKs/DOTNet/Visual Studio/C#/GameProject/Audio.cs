@@ -73,7 +73,7 @@ namespace SwinGame
         /// <param name="effect">The effect to be freed from memory</param>
         public static void FreeSoundEffect(ref SoundEffect effect)
         {
-            DLL_FreeSoundEffect(effect.Pointer);
+            DLL_FreeSoundEffect(ref effect.Pointer);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "LoadMusic")]
@@ -99,7 +99,7 @@ namespace SwinGame
         /// <param name="music">Music to be freed</param>
         public static void FreeMusic(ref Music music)
         {
-            DLL_FreeMusic(effect.Pointer);
+            DLL_FreeMusic(ref music.Pointer);
         }
 
         [DllImport("SGSDK.dll", EntryPoint="PlayMusic")]
@@ -124,7 +124,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "IsSoundEffectPlaying")]
-        private static extern IntPtr DLL_IsSoundEffectPlaying(IntPtr effect);
+        private static extern bool DLL_IsSoundEffectPlaying(IntPtr effect);
         /// <summary>
         /// This function checks whether a sound is playing
         /// </summary>
@@ -133,10 +133,11 @@ namespace SwinGame
         public static bool IsSoundEffectPlaying(SoundEffect effect)
         {
             return DLL_IsSoundEffectPlaying(effect.Pointer);
+          
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "IsMusicPlaying")]
-        private static extern IntPtr DLL_IsMusicPlaying(IntPtr music);
+        private static extern bool DLL_IsMusicPlaying(IntPtr music);
         /// <summary>
         /// This function checks whether music is playing
         /// </summary>
