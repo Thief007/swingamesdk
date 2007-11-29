@@ -6,6 +6,9 @@ using System.Drawing;
 
 namespace SwinGame
 {
+    /// <summary>
+    /// This contains number of bitmaps and its position.
+    /// </summary>
     public struct Sprite
     {
         [DllImport("SGSDK.dll")]
@@ -37,6 +40,11 @@ namespace SwinGame
 
         internal IntPtr Pointer;
 
+        /// <summary>
+        /// Array of bitmaps this sprite contains
+        /// </summary>
+        /// <param name="idx">Index number</param>
+        /// <returns>Bitmap of the specified frame</returns>
         public Bitmap this[int idx]
         {
             get
@@ -45,6 +53,9 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// X position of this sprite
+        /// </summary>
         public float X
         {
             get
@@ -57,6 +68,9 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Y position of this sprite
+        /// </summary>
         public float Y
         {
             get
@@ -69,6 +83,9 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Current animation frame of this sprite
+        /// </summary>
         public int CurrentFrame
         {
             get
@@ -81,6 +98,9 @@ namespace SwinGame
             }
         }
         
+        /// <summary>
+        /// True if this sprite use pixel collision
+        /// </summary>
         public bool UsePixelCollision
         {
             get
@@ -96,25 +116,44 @@ namespace SwinGame
 
     public class Graphics
     {
+        /// <summary>
+        /// Create a bitmap
+        /// </summary>
+        /// <param name="width">Width of a bitmap</param>
+        /// <param name="height">Height of a bitmap</param>
+        /// <returns>New bitmap</returns>
         [DllImport("SGSDK.dll")]
         public static extern Bitmap CreateBitmap(int width, int height);
 
+        /// <summary>
+        /// Optimise the specified bitmap
+        /// </summary>
+        /// <param name="surface">Bitmap to optimise</param>
         [DllImport("SGSDK.dll")]
         public static extern void OptimiseBitmap(Bitmap surface);
 
-        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmap")]
-        private static extern IntPtr DLL_LoadBitmap(String pathToBitmap);
-
+        /// <summary>
+        /// Load the specified image file
+        /// </summary>
+        /// <param name="pathToBitmap">Path to the image file</param>
+        /// <returns>New bitmap</returns>
         public static Bitmap LoadBitmap(String pathToBitmap)
         {
             Bitmap result;
-            result.pointer = DLL_LoadBitmap1(pathToBitmap);
+            result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, false, Color.Black);
             return result;
         }
 
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmapWithTransparentColor")]
         private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, Boolean transparent, Color transparentColor);
 
+        /// <summary>
+        /// Load the specified image file with a transparent color
+        /// </summary>
+        /// <param name="pathToBitmap">Path to the image file</param>
+        /// <param name="transparent">True if this image has transparent pixels</param>
+        /// <param name="transparentColor">Color of the transparent pixels</param>
+        /// <returns>New bitmap</returns>
         public static Bitmap LoadBitmap(String pathToBitmap, Boolean transparent, Color transparentColor)
         {
             Bitmap result;
@@ -122,9 +161,15 @@ namespace SwinGame
             return result;
         }
 
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", EntryPoint = "LoadTransparentBitmap")]
         private static extern Bitmap DLL_LoadTransparentBitmap(string pathToBitmap, Color transparentColor);
 
+        /// <summary>
+        /// Load an image with transparency
+        /// </summary>
+        /// <param name="pathToBitmap">Path to the image file</param>
+        /// <param name="transparentColor">Color of the transparent pixels</param>
+        /// <returns>New bitmap</returns>
         public static Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor)
         {
             Bitmap result;
@@ -132,20 +177,98 @@ namespace SwinGame
             return result;
         }
 
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", EntryPoint = "FreeBitmap")]
         private static extern void DLL_FreeBitmap(ref IntPtr bitmapToFree);
 
+        /// <summary>
+        /// Free the specified bitmap
+        /// </summary>
+        /// <param name="bitmapToFree">Bitmap to free</param>
         public static void FreeBitmap(ref Bitmap bitmapToFree)
         {
             DLL_FreeBitmap(bitmapToFree.pointer);
         }
 
-        [DllImport("SGSDK.dll")]
-        private static extern int DLL_GetBitmapWidth(ref IntPtr targetbitmap);
+        [DllImport("SGSDK.dll", EntryPoint = "GetBitmapWidth")]
+        private static extern int DLL_GetBitmapWidth(IntPtr targetbitmap);
 
-        public static int GetBitmapWidth(ref Bitmap targetbitmap)
+        /// <summary>
+        /// Get the specified bitmap's width
+        /// </summary>
+        /// <param name="targetbitmap">Target bitmap</param>
+        /// <returns>Width of the bitmap</returns>
+        public static int GetBitmapWidth(Bitmap targetbitmap)
         {
-            return DLL_FreeBitmap(ref targetbitmap.pointer);
+            return DLL_GetBitmapWidth(targetbitmap.pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "GetBitmapHeight")]
+        private static extern int DLL_GetBitmapHeight(IntPtr targetbitmap);
+
+        /// <summary>
+        /// Get the specified bitmap's height
+        /// </summary>
+        /// <param name="targetbitmap">Target bitmap</param>
+        /// <returns>Height of the bitmap</returns>
+        public static int GetBitmapHeight(Bitmap targetbitmap)
+        {
+            return DLL_GetBitmapHeight(targetbitmap.pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "ClearSurfaceWithColor")]
+        private static extern void DLL_ClearSurfaceWithColor(IntPtr dest, Color toColour);
+
+        /// <summary>
+        /// Clear the bitmap with the specified color
+        /// </summary>
+        /// <param name="dest">Bitmap to clear</param>
+        /// <param name="toColour">The color used to clear</param>
+        public static void ClearSurface(Bitmap dest, Color toColour)
+        {
+            return DLL_ClearSurfaceWithColor(dest.pointer, toColour);
+        }
+
+        /// <summary>
+        /// Clear the bitmap
+        /// </summary>
+        /// <param name="dest">Bitmap to clear</param>
+        public static void ClearSurface(Bitmap dest)
+        {
+            return DLL_ClearSurfaceWithColor(dest.pointer, Color.Black);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawBitmapWithDestination")]
+        private static extern void DLL_DrawBitmapWithDestination(IntPtr dest, IntPtr bitmapToDraw, int x, int y);
+
+        /// <summary>
+        /// Draw bitmap to the specified bitmap
+        /// </summary>
+        /// <param name="dest">Bitmap to draw on</param>
+        /// <param name="bitmapToDraw">Bitmap to draw</param>
+        /// <param name="x">X coordinate</param>
+        /// <param name="y">Y coordinate</param>
+        public static void DrawBitmap(Bitmap dest, Bitmap bitmapToDraw, int x, int y)
+        {
+            DLL_DrawBitmapWithDestination(dest, bitmapToDraw, x, y);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawBitmapPartWithDestination")]
+        private static extern void DLL_DrawBitmapPartWithDestination(IntPtr dest, IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
+
+        /// <summary>
+        /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest)
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="bitmapToDraw">The bitmap to be drawn onto the destination</param>
+        /// <param name="srcX">The x offset to the area to copy in bitmapToDraw</param>
+        /// <param name="srcY">The y offset to the area to copy in bitmapToDraw</param>
+        /// <param name="srcW">The width of the area to copy</param>
+        /// <param name="srcH">The height of the area to copy</param>
+        /// <param name="x">The x location to draw the bitmap part to</param>
+        /// <param name="y">The y location to draw the bitmap part to</param>
+        public static void DrawBitmapPart(Bitmap dest, Bitmap bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y)
+        {
+            DLL_DrawBitmapPartWithDestination(dest.pointer, bitmapToDraw.pointer, srcX, srcY, srcW, srcH, x, y);
         }
     }
 }
