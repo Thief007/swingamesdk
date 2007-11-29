@@ -13,7 +13,11 @@ namespace GameProject
 
             while (SwinGame.WindowCloseRequested() != true)
             {
-                System.Threading.Thread.Sleep(100);
+
+                Console.WriteLine(SwinGame.GetFramerate());
+
+                SwinGame.ToggleFullScreen();
+                SwinGame.RefreshScreen();
                 //SwinGame.ProcessEvents();
             }
          
