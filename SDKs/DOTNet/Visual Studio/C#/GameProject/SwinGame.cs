@@ -130,6 +130,15 @@ namespace SwinGame
 
 	    [DllImport("SGSDK.dll")]
         public static extern Single Tan(Single angle);
-        
+
+        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmap1")]
+        private static extern IntPtr DLL_LoadBitmap1(String pathToBitmap);
+
+        public static Bitmap LoadBitmap(String pathToBitmap)
+        {
+            Bitmap result;
+            result.pointer = DLL_LoadBitmap1(pathToBitmap);
+            return result;
+        }
      }
 }

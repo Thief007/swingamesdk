@@ -735,12 +735,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FreeBitmap(bitmapToFree);
 	end;
 	
-	function GetBitmapWidth(targetbitmap : Bitmap); cdecl; export;
+	function GetBitmapWidth(targetbitmap : Bitmap): Integer ; cdecl; export;
 	begin
 		result := targetbitmap.width;
 	end;
 	
-	function GetBitmapHeight(targetbitmap : Bitmap); cdecl; export;
+	function GetBitmapHeight(targetbitmap : Bitmap): Integer; cdecl; export;
 	begin
 		result := targetbitmap.height;
 	end;

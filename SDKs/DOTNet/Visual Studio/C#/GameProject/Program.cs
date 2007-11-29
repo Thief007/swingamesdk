@@ -12,11 +12,12 @@ namespace GameProject
         static void Main(string[] args)
         {
             Console.WriteLine("here");
-     
-       
-        
-     
+            Core.OpenGraphicsWindow("Hi", 800, 600);
 
+
+            SwinGame.Bitmap test = Core.LoadBitmap("SwinGameAni.png");
+            Console.WriteLine(test.Width);
+            Console.WriteLine(test.Height);
             while (Core.WindowCloseRequested() != true)
             {
            
