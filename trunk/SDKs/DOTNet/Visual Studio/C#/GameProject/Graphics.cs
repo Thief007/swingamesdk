@@ -24,7 +24,7 @@ namespace SwinGame
         private static extern void SetSpriteY(IntPtr pointer, float Y);
 
         [DllImport("SGSDK.dll")]
-        private static extern float GetSpriteCurrentFrame(IntPtr pointer);
+        private static extern int GetSpriteCurrentFrame(IntPtr pointer);
 
         [DllImport("SGSDK.dll")]
         private static extern void SetSpriteCurrentFrame(IntPtr pointer, int frame);
@@ -102,10 +102,50 @@ namespace SwinGame
         [DllImport("SGSDK.dll")]
         public static extern void OptimiseBitmap(Bitmap surface);
 
-        [DllImport("SGSDK.dll")]
-        public static extern Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor);
+        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmap")]
+        private static extern IntPtr DLL_LoadBitmap(String pathToBitmap);
 
-        //	function LoadTransparentBitmap(pathToBitmap : String;
-		//						transparentColor : Colour): Bitmap; cdecl; export;
+        public static Bitmap LoadBitmap(String pathToBitmap)
+        {
+            Bitmap result;
+            result.pointer = DLL_LoadBitmap1(pathToBitmap);
+            return result;
+        }
+
+        [DllImport("SGSDK.dll")]
+        private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, Boolean transparent, Color transparentColor);
+
+        public static Bitmap LoadBitmap(String pathToBitmap, Boolean transparent, Color transparentColor)
+        {
+            Bitmap result;
+            result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, transparent, transparentColor);
+            return result;
+        }
+
+        [DllImport("SGSDK.dll")]
+        private static extern Bitmap DLL_LoadTransparentBitmap(string pathToBitmap, Color transparentColor);
+
+        public static Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor)
+        {
+            Bitmap result;
+            result.pointer = DLL_LoadTransparentBitmap(pathToBitmap, transparentColor);
+            return result;
+        }
+
+        [DllImport("SGSDK.dll")]
+        private static extern void DLL_FreeBitmap(ref IntPtr bitmapToFree);
+
+        public static void FreeBitmap(ref Bitmap bitmapToFree)
+        {
+            DLL_FreeBitmap(bitmapToFree.pointer);
+        }
+
+        [DllImport("SGSDK.dll")]
+        private static extern int DLL_GetBitmapWidth(ref IntPtr targetbitmap);
+
+        public static int GetBitmapWidth(ref Bitmap targetbitmap)
+        {
+            return DLL_FreeBitmap(ref targetbitmap.pointer);
+        }
     }
 }
