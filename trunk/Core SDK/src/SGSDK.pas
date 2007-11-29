@@ -132,7 +132,112 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
 		result := SGSDK_Core.Tan(angle);
 	end;
 	
-	//INPUT
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//**************************************************
+	//                       Input
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	
+	function GetMousePosition(): Vector; cdecl; export;
+	begin
+		result := SGSDK_Input.GetMousePosition();
+	end;
+	
+	function GetMouseMovement(): Vector; cdecl; export;
+	begin
+		result := SGSDK_Input.GetMouseMovement();
+	end;
+	
+	function IsMouseDown(button: MouseButton): Integer; cdecl; export;
+	begin
+		if SGSDK_Input.IsMouseDown(button) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+	
+	function IsMouseUp(button: MouseButton): Integer; cdecl; export;
+	begin
+		if SGSDK_Input.IsMouseUp(button) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+	
+	function MouseWasClicked(button: MouseButton): Integer; cdecl; export;
+	begin
+		if SGSDK_Input.MouseWasClicked(button) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+
+
+	procedure StartReadingText(textColor: Colour; maxLength: Integer;
+														 theFont: Font; x, y: Integer); cdecl; export;
+	begin
+		SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
+	end;
+
+	function IsReadingText(): Integer; cdecl; export;
+	begin
+		if SGSDK_Input.IsReadingText() then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+	
+	function TextReadAsASCII(): String; cdecl; export;
+	begin
+		result := SGSDK_Input.TextReadAsASCII();
+	end;
+	
+	function TextReadAsUNICODE(): WideString; cdecl; export;
+	begin
+		result := SGSDK_Input.TextReadAsUNICODE();
+	end;
+	
+	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
+	begin
+		if SGSDK_Input.IsKeyPressed(virtKeyCode) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
+	
+	function WasKeyTyped(virtKeyCode: Integer): Integer; cdecl; export;
+	begin
+		if SGSDK_Input.WasKeyTyped(virtKeyCode) then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end
+	end;
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -312,8 +417,27 @@ exports
 	
 	
 	
-	//INPUT
 	
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//**************************************************
+	//                       Input
+	//***************************************************
+	//* * * * * * * * * * * * * * * * * * * * * * * * * *
+	//***************************************************
+	
+	
+	GetMousePosition,
+	GetMouseMovement,
+	IsMouseDown,
+	IsMouseUp,
+	MouseWasClicked,
+	StartReadingText,
+	IsReadingText,
+	TextReadAsASCII,
+	TextReadAsUNICODE,
+	IsKeyPressed,
+	WasKeyTyped,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
