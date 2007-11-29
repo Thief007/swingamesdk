@@ -126,6 +126,8 @@ interface
 		
 		iconFile: String;
 		
+		
+	procedure ProcessEvents();
 	function WindowCloseRequested(): Boolean;
 	
 	//*****
@@ -190,6 +192,18 @@ interface
 		
 implementation
 	uses SysUtils, Math, Classes;
+	
+	/// ProcessEvents allows the SwinGame API to react to user interactions. This
+	///	routine checks the current keyboard and mouse states. This routine must
+	///	be called frequently within your game loop to enable user interaction.
+	///
+	///	Side Effects
+	///	- Reads user interaction events
+	///	- Updates keys down, text input, etc.
+	procedure ProcessEvents();
+	begin
+		sdlManager.ProcessEvents();
+	end;
 	
 	function Cos(angle: Single): Single;
 	begin
