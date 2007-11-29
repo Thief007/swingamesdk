@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
-namespace GameProject
+namespace SwinGame
 {
     public enum ResourceKind
     {     
@@ -15,19 +15,40 @@ namespace GameProject
 
     public class Core
     {
+        /// <summary>
+        /// Opens the graphical window so that it can be drawn onto. You can set the
+	    ///	icon for this window using SetIcon. The window itself is only drawn when
+	    ///	you call RefreshScreen. All windows are opened at 32 bits per pixel. You
+	    ///	can toggle fullscreen using ToggleFullScreen. The window is closed when
+	    ///	the application terminates.
+        /// </summary>
+        /// <param name="caption">Caption for the Window</param>
+        /// <param name="width">Width of the Window</param>
+        /// <param name="height">Height of the Window</param>
         [DllImport("SGSDK.dll")]
         public static extern void OpenGraphicsWindow(String caption, int width, int height);
+        
+        /// <summary>
+        /// Checks to see if the window has been asked to close. You need to handle
+        ///	this if you want the game to end when the window is closed. This value
+        ///	is updated by the ProcessEvents routine. 
+        /// </summary>
+        /// <returns>Returns true if the window has been requested to close</returns>
         [DllImport("SGSDK.dll")]
         public static extern bool WindowCloseRequested();
+
         [DllImport("SGSDK.dll")]
         public static extern void ProcessEvents();
 
         [DllImport("SGSDK.dll")]
         public static extern void PlaySoundEffect(IntPtr effect);
+
         [DllImport("SGSDK.dll")]
         public static extern IntPtr LoadSoundEffect(String path);
+
         [DllImport("SGSDK.dll")]
         public static extern void OpenAudio();
+
         [DllImport("SGSDK.dll")]
         public static extern void CloseAudio();
         [DllImport("SGSDK.dll")]
