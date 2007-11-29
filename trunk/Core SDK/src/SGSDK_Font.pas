@@ -436,13 +436,6 @@ implementation
 	
 initialization
 begin
-	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
-	begin
-		raise Exception.Create('Error initialising SDL. ' + string(SDL_GetError));
-	end;
-
-	SDL_EnableUNICODE(SDL_ENABLE);
-
 
 	if TTF_Init() = -1 then
 	begin
@@ -450,23 +443,6 @@ begin
                             string(TTF_GetError));
 	end;
 
-	sdlManager := TSDLManager.Create();
-	applicationPath := ExtractFileDir(ParamStr(0));
-end;
-
-finalization
-begin
-	if sdlManager <> nil then
-	begin
-		sdlManager.Free();
-		sdlManager := nil;
-	end;
-
-	if scr <> nil then
-		FreeBitmap(scr);
-
-	TTF_Quit();
-	SDL_Quit();
 end;
 
 end.
