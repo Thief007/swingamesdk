@@ -282,7 +282,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Audio.PlaySoundEffect(effect);
 	end;
 	
-	procedure PlaySoundEffect1(effect: SoundEffect; loops: Integer); cdecl; export;
+	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: Integer); cdecl; export;
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect, loops);
 	end;
@@ -1111,7 +1111,7 @@ exports
 	FreeSoundEffect,
 	PlaySoundEffect,
 	PlayMusic,
-	PlaySoundEffect1,
+	PlaySoundEffectLoop,
 	PlayMusic1,
 	IsMusicPlaying,
 	IsSoundEffectPlaying,

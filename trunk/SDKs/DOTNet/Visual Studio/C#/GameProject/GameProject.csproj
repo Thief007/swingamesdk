@@ -53,6 +53,7 @@
     <Content Include="lib\SDL.dll" />
     <Content Include="lib\SDL_gfx.dll" />
     <Content Include="lib\SDL_image.dll" />
+    <Content Include="lib\SDL_mixer.dll" />
     <Content Include="obj\SDL_mixer.dll" />
     <Content Include="lib\SDL_ttf.dll" />
     <Content Include="lib\SGSDK.dll" />
