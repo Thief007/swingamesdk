@@ -162,26 +162,26 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
 		SGSDK_Audio.FreeSoundEffect(effect);
 	end;
 
-	{procedure PlaySoundEffect(effect: SoundEffect); overload; cdecl; export;
+	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect);
 	end;
 
-	procedure PlaySoundEffect(effect: SoundEffect; loops: Integer); overload; cdecl; export;
+	procedure PlaySoundEffect1(effect: SoundEffect; loops: Integer); cdecl; export;
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect, loops);
 	end;
 
-	procedure PlayMusic(mus: Music; loops: Integer); overload; cdecl; export;
+	procedure PlayMusic(mus: Music; loops: Integer); cdecl; export;
 	begin
 		SGSDK_Audio.PlayMusic(mus, loops);
 	end;
 
-	procedure PlayMusic(mus: Music); overload; cdecl; export;
+	procedure PlayMusic1(mus: Music); cdecl; export;
 	begin
 		SGSDK_Audio.PlayMusic(mus);
 	end;
-}
+
 	function IsMusicPlaying(mus: Music): Integer; cdecl; export;
 	begin
 		if SGSDK_Audio.IsMusicPlaying(mus) then
@@ -239,32 +239,32 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
 		SGSDK_Font.FreeFont(fontToFree);
 	end;
 	
-	{procedure DrawText(theText: String; textColor: Colour;
-					 theFont: Font; x, y: Integer); overload; cdecl; export;
+	procedure DrawText(theText: String; textColor: Colour;
+					 theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
 	end;
 
 	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); overload; cdecl; export;
+							x, y, w, h: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 							
-	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour;
-					theFont: Font; x, y: Integer); overload; cdecl; export;
+	procedure DrawText1(dest: Bitmap; theText: String; textColor: Colour;
+					theFont: Font; x, y: Integer); cdecl; export;
 	begin
-		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y0;
+		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
 	end;
 
-	procedure DrawTextLines(dest: Bitmap; theText: String;
+	procedure DrawTextLines1(dest: Bitmap; theText: String;
 							textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); overload; cdecl; export;
+							x, y, w, h: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
-	end;}
+	end;
 
 	function TextWidth(theText: String; theFont: Font): Integer; cdecl; export;
 	begin
@@ -281,7 +281,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font,
 		SGSDK_Font.DrawFramerate(x, y, font);
 	end;
 exports
-	//CORE
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					Core
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	OpenGraphicsWindow,
 	WindowCloseRequested,
 	ProcessEvents,
@@ -323,8 +327,10 @@ exports
 	LoadMusic,
 	FreeMusic,
 	FreeSoundEffect,
-	//PlaySoundEffect,
-	//PlayMusic,
+	PlaySoundEffect,
+	PlayMusic,
+	PlaySoundEffect1,
+	PlayMusic1,
 	IsMusicPlaying,
 	IsSoundEffectPlaying,
 	StopSoundEffect,
@@ -341,8 +347,10 @@ exports
 	LoadFont,
 	SetFontStyle,
 	FreeFont,
-	//DrawText,
-	//DrawTextLines,
+	DrawText,
+	DrawTextLines,
+	DrawText1,
+	DrawTextLines1,
 	TextWidth,
 	TextHeight,
 	DrawFramerate
