@@ -7,7 +7,7 @@ uses SGSDK_Core, SGSDK_Input,
 
 	procedure ProcessEvents(); cdecl; export;
 	begin
-		SGSDK_Input.ProcessEvents();
+		SGSDK_Core.ProcessEvents();
 	end;
 
 	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); cdecl; export;
