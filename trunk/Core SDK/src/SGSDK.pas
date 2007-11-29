@@ -101,12 +101,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Core.Sleep(time);
 	end;
 	
-	function GetPathToResource1(filename: String; kind: ResourceKind) : String; overload; cdecl; export;
+	function GetPathToResourceWithKind(filename: String; kind: ResourceKind) : String; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename, kind);
 	end;
 	
-	function GetPathToResource2(filename: String): String; overload; cdecl; export;
+	function GetPathToResource(filename: String): String; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename);
 	end;
@@ -1030,8 +1030,8 @@ exports
 	GetFramerate,	
 	GetTicks,	
 	Sleep,	
-	GetPathToResource1,
-	GetPathToResource2,
+	GetPathToResourceWithKind,
+	GetPathToResource,
 	RegisterEventProcessor,	
 	Cos,
 	Sin,

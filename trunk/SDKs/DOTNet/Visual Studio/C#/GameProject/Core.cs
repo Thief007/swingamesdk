@@ -6,13 +6,31 @@ using System.Drawing;
 
 namespace SwinGame
 {
+    /// <summary>
+    /// ResourceKind
+    ///
+    /// Use this with the resource path functions to get the path to a
+    /// given resource. Using these functions ensures that your resource
+    /// paths are correct across platforms
+    /// </summary>
     public enum ResourceKind
     {     
 	    FontResource,
 	    ImageResource,
-	    SoundResource
+	    SoundResource,
+        None
     }
 
+    /// <summary>
+    /// Bitmap
+    ///
+    ///	The bitmap type is a pointer to a BitmapData. The BitmapData record
+    ///	contains the data used by the SwinGame API to represent
+    ///	bitmaps. You can create new bitmaps in memory for drawing operatings
+    ///	using the CreateBitmap function. This can then be optimised for drawing
+    ///	to the screen using the OptimiseBitmap routine. Also see the DrawBitmap
+    ///	routines.
+    /// </summary>
     public struct Bitmap
     {
         internal IntPtr pointer;
@@ -33,7 +51,11 @@ namespace SwinGame
         }
     }
 
-
+    /// <summary>
+    /// Core Class
+    /// 
+    /// This Classes contains on the Core functionality of the SwinGameSDK
+    /// </summary>
     public class Core
     {
         /// <summary>
@@ -66,24 +88,56 @@ namespace SwinGame
         [DllImport("SGSDK.dll")]
         public static extern void ProcessEvents();
 
+        /// <summary>
+        /// Sets the icon for the window. This must be called before openning the
+        ///	graphics window. The icon is loaded as a bitmap, though this can be from
+        ///	any kind of bitmap file.
+        /// </summary>
+        /// <param name="iconFilename">The name of the file to load as the image icon</param>
         [DllImport("SGSDK.dll")]
         public static extern void SetIcon(String iconFilename);
 
+        /// <summary>
+        /// Changes the size of the screen.
+        /// </summary>
+        /// <param name="width">New width of the Screen</param>
+        /// <param name="height">New height of the Screen</param>
         [DllImport("SGSDK.dll")]
         public static extern void ChangeScreenSize(int width, int height);
 
+        /// <summary>
+        /// Switches the application to full screen or back from full screen to
+        ///	windowed.
+        /// </summary>
 	    [DllImport("SGSDK.dll")]
         public static extern void ToggleFullScreen();
 
+        /// <summary>
+        /// Draws the current drawing to the screen. This must be called to display
+        ///	anything to the screen. This will draw all drawing operations, as well
+        ///	as the text being entered by the user.
+        /// </summary>
         [DllImport("SGSDK.dll")]
         public static extern void RefreshScreen();
 	
+        /// <summary>
+        /// Saves the current screen a bitmap file. The file will be saved into the
+        ///	current directory.
+        /// <param name="basename">The base name for the screen shot</param>
         [DllImport("SGSDK.dll")]
         public static extern void TakeScreenshot(String basename);
-	
+
+        /// <summary>
+        /// Gets the Screen's Width
+        /// </summary>
+        /// <returns>The Screen Width</returns>
         [DllImport("SGSDK.dll")]
         public static extern int ScreenWidth();
 	
+        /// <summary>
+        /// Gets the Screen's Height
+        /// </summary>
+        /// <returns>The Screen Height</returns>
         [DllImport("SGSDK.dll")]
         public static extern int ScreenHeight();
         
@@ -95,50 +149,106 @@ namespace SwinGame
         //result := SGSDK_Core.GetColour(forBitmap, apiColor);
         //end;
 
+        /// <summary>
+        /// Gets the Color when the user enters the amount of red, green, blue and alpha
+        /// </summary>
+        /// <param name="red">The amount of red (0 - 255)</param>
+        /// <param name="green">The amount of green (0 - 255)</param>
+        /// <param name="blue">The amount of blue (0 - 255)</param>
+        /// <param name="alpha">The amount of alpha (0 - 255)</param>
+        /// <returns>Color</returns>
         public static Color GetColor(Byte red, Byte green, Byte blue, Byte alpha)
         {
             return Color.FromArgb(alpha, red, green, blue);
         }
 
+        /// <summary>
+        /// Gets the Color when the user enters the amount of red, green and blue
+        /// </summary>
+        /// <param name="red">The amount of red (0 - 255)</param>
+        /// <param name="green">The amount of green (0 - 255)</param>
+        /// <param name="blue">The amount of blue (0 - 255)</param>
+        /// <returns>Color</returns>
         public static Color GetColor(Byte red, Byte green, Byte blue)
         {
             return Color.FromArgb(red, green, blue);
         }
-	      
+	    /// <summary>
+        /// Returns the average framerate for the last 10 frames as an integer.
+	    /// </summary>
+	    /// <returns>The current average framerate</returns>
         [DllImport("SGSDK.dll")]
         public static extern int GetFramerate();
-	
+	    
+        /// <summary>
+        /// Gets the number of milliseconds that have passed. This can be used to
+        ///	determine timing operations, such as updating the game elements.
+        /// </summary>
+        /// <returns>The number of milliseconds passed</returns>
 	    [DllImport("SGSDK.dll")]
         public static extern UInt32 GetTicks();
 
+        /// <summary>
+        /// /// Puts the process to sleep for a specified number of
+        /// milliseconds. This can be used to add delays into your
+        /// </summary>
+        /// <param name="time">The number of milliseconds to sleep</param>
+        /// <returns>Delay before returning</returns>
         [DllImport("SGSDK.dll")]
         public static extern UInt32 Sleep(UInt32 time);
 	
-        //[DllImport("SGSDK.dll")]
-        //public static extern UInt32 getPathToResource(String filename, ResourceKind kind);
+        
+        [DllImport("SGSDK.dll" ,EntryPoint= "getPathToResourceWithKind")]
+        private static extern String DLL_getPathToResourceWithKind(String filename, ResourceKind kind);
+        
+        [DllImport("SGSDK.dll",EntryPoint= "getPathToResource")]
+        private static extern String DLL_getPathToResource(String filename);
 
-	    //function GetPathToResource(filename: String): String; overload; cdecl; export;
-	    //begin
-		    //result := SGSDK_Core.GetPathToResource(filename);
-	    //end;
-	            
+        /// <summary>
+        /// Gets the resource to an image, sound, font or other type of resource
+        /// 
+        /// Entering ResourceKind.None into the kind parameters makes this function
+        /// look inside the base resource folder, while entering either, font, image
+        /// or sound, will make this function look inside their respective folders, 
+        /// image, font and sound folders.
+        /// </summary>
+        /// <param name="filename">filename that you need to get the path of</param>
+        /// <param name="kind">The type of resource it is</param>
+        /// <returns>A Path to the Resource</returns>
+        public static String getPathToResource(String filename, ResourceKind kind)
+        {
+            if (kind != ResourceKind.None)
+            {
+                return DLL_getPathToResourceWithKind(filename, kind);
+            }
+            else
+            {
+                return DLL_getPathToResource(filename);
+            }
+        }
+	    
+        /// <summary>
+        /// Gets the Cos of an angle
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <returns>Cos</returns>
         [DllImport("SGSDK.dll")]
         public static extern Single Cos(Single angle);
 
+        /// <summary>
+        /// Gets the Sin of an angle
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <returns>Sin</returns>
         [DllImport("SGSDK.dll")]
         public static extern Single Sin(Single angle);
 
+        /// <summary>
+        /// Gets the Tan of an angle
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <returns>Tan</returns>
 	    [DllImport("SGSDK.dll")]
         public static extern Single Tan(Single angle);
-
-        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmap1")]
-        private static extern IntPtr DLL_LoadBitmap1(String pathToBitmap);
-
-        public static Bitmap LoadBitmap(String pathToBitmap)
-        {
-            Bitmap result;
-            result.pointer = DLL_LoadBitmap1(pathToBitmap);
-            return result;
-        }
      }
 }

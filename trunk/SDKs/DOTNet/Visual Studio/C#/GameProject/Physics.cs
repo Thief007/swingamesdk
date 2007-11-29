@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace GameProject
+namespace SwinGame
 {
 
 
@@ -55,6 +55,7 @@ namespace GameProject
     {
         [DllImport("SGSDK.dll", EntryPoint="HasSpriteCollidedX")]
         private static extern bool DLL_HasSpriteCollidedX(IntPtr theSprite, int x, CollisionDetectionRange  range);
+        
         public static bool HasSpriteCollidedX(Sprite theSprite, int x, CollisionDetectionRange range)
         {
             return DLL_HasSpriteCollidedX(theSprite, x, range);
@@ -62,6 +63,7 @@ namespace GameProject
 
         [DllImport("SGSDK.dll", EntryPoint="HasSpriteCollidedY")]
         private static extern bool DLL_HasSpriteCollidedY(IntPtr theSprite, int y ,CollisionDetectionRange range);
+        
         public static bool HasSpriteCollidedY(Sprite theSprite, int y, CollisionDetectionRange range)
         {
             return DLL_HasSpriteCollidedY(theSprite, y, range);

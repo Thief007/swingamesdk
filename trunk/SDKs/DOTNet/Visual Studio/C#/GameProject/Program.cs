@@ -16,9 +16,9 @@ namespace GameProject
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
 
-            Bitmap test = Core.LoadBitmap("SwinGameAni.png");
-            Console.WriteLine(test.Width);
-            Console.WriteLine(test.Height);
+            //Bitmap test = Core.LoadBitmap("SwinGameAni.png");
+            //Console.WriteLine(test.Width);
+            //Console.WriteLine(test.Height);
             while (Core.WindowCloseRequested() != true)
             {
            
