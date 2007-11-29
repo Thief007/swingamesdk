@@ -37,23 +37,14 @@ namespace SwinGame
         [DllImport("SGSDK.dll")]
         public static extern bool WindowCloseRequested();
 
+        /// <summary>
+        /// ProcessEvents allows the SwinGame API to react to user interactions. This
+        ///	routine checks the current keyboard and mouse states. This routine must
+        ///	be called frequently within your game loop to enable user interaction.
+        /// </summary>
         [DllImport("SGSDK.dll")]
         public static extern void ProcessEvents();
 
-        [DllImport("SGSDK.dll")]
-        public static extern void PlaySoundEffect(IntPtr effect);
-
-        [DllImport("SGSDK.dll")]
-        public static extern IntPtr LoadSoundEffect(String path);
-
-        [DllImport("SGSDK.dll")]
-        public static extern void OpenAudio();
-
-        [DllImport("SGSDK.dll")]
-        public static extern void CloseAudio();
-        [DllImport("SGSDK.dll")]
-        public static extern void FreeSoundEffect(ref IntPtr effect);
-     
         [DllImport("SGSDK.dll")]
         public static extern void SetIcon(String iconFilename);
 
