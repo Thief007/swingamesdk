@@ -455,7 +455,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+	{function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 		x, y: Integer; bounded: Boolean;
 		vwPrtX, vwPrtY: Integer)
 		: Integer; cdecl; export;
@@ -510,7 +510,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		begin
 			result:= 0
 		end
-	end;
+	end;}
 
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2 : Bitmap;
 								 x2, y2: Integer): Integer; cdecl; export;
@@ -540,7 +540,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
+	{function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
 		image2: Bitmap; x2, y2: Integer)
 		: Integer; cdecl; export;
 	begin
@@ -552,9 +552,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		begin
 			result:= 0
 		end
-	end;
+	end;}
 
-	function CollisionWithinBitmapImages1(image1: Bitmap; x1, y1: Integer;
+	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
 		bounded1: Boolean; image2: Bitmap;
 		x2, y2: Integer; bounded2: Boolean)
 		: Integer; cdecl; export;
@@ -1148,14 +1148,14 @@ exports
 	HasSpriteCollidedY,
 	HasSpriteCollidedWithRect,
 	HaveSpritesCollided,
-	HasSpriteCollidedWithBitmap,
-	HasSpriteCollidedWithBitmap1,
-	HasSpriteCollidedWithBitmap2,
-	HasSpriteCollidedWithBitmap3,
+	//HasSpriteCollidedWithBitmap,
+	//HasSpriteCollidedWithBitmap1,
+	//HasSpriteCollidedWithBitmap2,
+	//HasSpriteCollidedWithBitmap3,
 	HaveBitmapsCollided,
 	HaveBitmapsCollided1,
 	CollisionWithinBitmapImages,
-	CollisionWithinBitmapImages1,
+	//CollisionWithinBitmapImages1,
 	CreateVector,
 	CreateVector1,
 	AddVectors,

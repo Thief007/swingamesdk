@@ -93,7 +93,7 @@ namespace SwinGame
         /// <param name="width">The width of the rectangle</param>
         /// <param name="height">The height of the rectangle</param>
         /// <returns>True if the sprite collides with the rectangle</returns>
-        public static extern bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height)
+        public static bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height)
         {
             return DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
         }
@@ -106,12 +106,12 @@ namespace SwinGame
         /// <param name="y">The y location of the rectangle</param>
         /// <param name="width">The width of the rectangle</param>
         /// <param name="height">The height of the rectangle</param>
-        /// <param name="vwPrtX">The x position in the view point window</param>
-        /// <param name="vwPrtY">The y position in the view point window</param>
+        /// <param name="vwPrtX">The x offset of the screen's portal</param>
+        /// <param name="vwPrtY">The y offset of the screen's portal</param>
         /// <returns>True if the sprite collides with the rectangle</returns>
-        public static extern bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height, int vwPrtX, int vwPrtY)
+        public static bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height, int vwPrtX, int vwPrtY)
         {
-            return HasSpriteCollidedWithRect(theSprite.Pointer, x + vwPrtX, y + vwPrtY, width, height);
+            return DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x + vwPrtX, y + vwPrtY, width, height);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "HaveSpritesCollided")]
@@ -122,10 +122,121 @@ namespace SwinGame
         /// <param name="sprite1">The first sprite to check.</param>
         /// <param name="sprite2">The second sprite to check.</param>
         /// <returns>True if the sprites have collided.</returns>
-        public static extern bool HaveSpritesCollided(Sprite sprite1, Sprite sprite2)
+        public static bool HaveSpritesCollided(Sprite sprite1, Sprite sprite2)
         {
             return DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer);
         }
 
+        [DllImport("SGSDK.dll", EntryPoint = "HasSpriteCollidedWithBitmap")]
+        private static extern bool DLL_HasSpriteCollidedWithBitmap();///to do!!
+                                                                    ///
+
+        [DllImport("SGSDK.dll", EntryPoint = "CollisionWithinBitmapImages")]
+        private static extern bool DLL_CollisionWithinBitmapImages(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int x2, int y2, bool bounded2);
+        /// <summary>
+        ///  Performs a collision detection within two bitmaps at the given x, y
+        ///	locations. The bounded values indicate if each bitmap should use per
+        ///	pixel collision detection or a bounded collision detection. This version
+        ///	uses pixel based checking at all times.
+        ///
+        ///	When both bitmaps are using bounded collision the routine checks to see
+        ///	if the bitmap rectangles intersect. If one is bounded and the other is
+        ///	pixel based the routine checks to see if a non-transparent pixel in the
+        ///	pixel based image intersects with the bounds of the bounded image. If
+        ///	both are pixel based, the routine checks to see if two non-transparent
+        ///	pixels collide.
+        ///
+        ///	Note: Bitmaps do not need to actually be drawn on the screen.
+        /// </summary>
+        /// <param name="image1">The bitmap image to check for collision</param>
+        /// <param name="x1">The x location of image 1</param>
+        /// <param name="y1">The y location of image 1</param>
+        /// <param name="bounded1">Indicates if image1 should use bounded collision</param>
+        /// <param name="image2">The bitmap image to check for collision</param>
+        /// <param name="x2">The x location of image 2</param>
+        /// <param name="y2">The y location of image 2</param>
+        /// <param name="bounded2">Indicates if image2 should use bounded collision</param>
+        /// <returns>True if the bitmaps collide.</returns>
+        public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2)
+        {
+            return DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
+        }
+        /// <summary>
+        /// Performs a collision detection within two bitmaps at the given x, y
+        ///	locations using per pixel collision detection. This checks to see if
+        ///	two non-transparent pixels collide.
+        /// </summary>
+        /// <param name="image1">The bitmap image to check for collision</param>
+        /// <param name="x1">The x location of image 1</param>
+        /// <param name="y1">The y location of image 1</param>
+        /// <param name="image2">The bitmap image to check for collision</param>
+        /// <param name="x2">The x location of image 2</param>
+        /// <param name="y2">The y location of image 2</param>
+        /// <returns>True if the bitmaps collide.</returns>
+        public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, Bitmap image2, int x2, int y2)
+        {
+            return DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
+        }
+
+        /// <summary>
+        /// Determines if a sprite has collided with a bitmap using pixel level
+        ///	collision detection with the bitmap.
+        /// </summary>
+        /// <param name="theSprite">The sprite to check for collision</param>
+        /// <param name="theBitmap">The bitmap image to check for collision</param>
+        /// <param name="x">The x location of the bitmap</param>
+        /// <param name="y">The y location of the bitmap</param>
+        /// <param name="bounded">Indicates if theBitmap should use bounded collision</param>
+        /// <returns>True if the bitmap has collided with the sprite.</returns>
+        public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, bool bounded)
+        {
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y,	 !theSprite.UsePixelCollision, theBitmap,	x, y, bounded);
+        }
+        /// <summary>
+        /// Determines if a sprite has collided with a bitmap. The x and y values
+        ///	are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
+        ///	the offset from world to screen coordinates.
+        /// </summary>
+        /// <param name="theSprite">The sprite to check for collision</param>
+        /// <param name="theBitmap">The bitmap image to check for collision</param>
+        /// <param name="x">The x location of the bitmap</param>
+        /// <param name="y">The y location of the bitmap</param>
+        /// <param name="bounded">Indicates if bitmap should use bounded collision</param>
+        /// <param name="vwPrtX">The x offset of the screen's portal</param>
+        /// <param name="vwPrtY">The y offset of the screen's portal</param>
+        /// <returns> rue if the bitmap has collided with the sprite.</returns>
+        public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, bool bounded, int vwPrtX, int vwPrtY)
+        {
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
+        }
+        /// <summary>
+        /// Determines if a sprite has collided with a bitmap. The x and y values
+        ///	are expressed in "world" coordinates.
+        /// </summary>
+        /// <param name="theSprite">The sprite to check for collision</param>
+        /// <param name="theBitmap">The bitmap image to check for collision</param>
+        /// <param name="x">The x location of the bitmap</param>
+        /// <param name="y">The y location of the bitmap</param>
+        /// <returns> rue if the bitmap has collided with the sprite.</returns>
+        public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y)
+        {
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x , y , true);
+        }
+        /// <summary>
+        /// Determines if a sprite has collided with a bitmap. The x and y values
+        ///	are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
+        ///	the offset from world to screen coordinates.
+        /// </summary>
+        /// <param name="theSprite">The sprite to check for collision</param>
+        /// <param name="theBitmap">The bitmap image to check for collision</param>
+        /// <param name="x">The x location of the bitmap</param>
+        /// <param name="y">The y location of the bitmap</param>
+        /// <param name="vwPrtX">The x offset of the screen's portal</param>
+        /// <param name="vwPrtY">The y offset of the screen's portal</param>
+        /// <returns> rue if the bitmap has collided with the sprite.</returns>
+        public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, int vwPrtX, int vwPrtY)
+        {
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
+        }
     }
 }

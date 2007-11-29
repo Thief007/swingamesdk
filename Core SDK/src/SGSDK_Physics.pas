@@ -580,6 +580,7 @@ implementation
 	///	@param theSprite:			The sprite to check for collision
 	///	@param theBitmap:			The bitmap image to check for collision
 	///	@param x, y:					 The x,y location of the bitmap
+	/// @param bounded				Indicates if theBitmap should use bounded collision
 	///
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
@@ -612,7 +613,7 @@ implementation
 																				: Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap,
-																					x + vwPrtX, y + vwPrtY);
+																					x + vwPrtX, y + vwPrtY, true);
 	end;
 
   /// Multiply two matrix2d. Use this to combine the effects to two
