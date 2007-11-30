@@ -661,12 +661,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.RotationMatrix(deg);
 	end;
 	
-	function Multiply(const m1, m2: Matrix2D): Matrix2D; export;
+	function MultiplyMatrix2D(const m1, m2: Matrix2D): Matrix2D; export;
 	begin
 		result :=SGSDK_Physics.Multiply(m1, m2);
 	end;
 	
-	function MultiplyVector(const m: Matrix2D; const v: Vector): Vector; export;
+	function MultiplyMatrix2DAndVector(const m: Matrix2D; const v: Vector): Vector; export;
 	begin
 		result :=SGSDK_Physics.Multiply(m, v);
 	end;
@@ -1173,8 +1173,8 @@ exports
 	TranslationMatric,
 	ScaleMatrix,
 	RotationMatrix,
-	Multiply,
-	MultiplyVector,
+	MultiplyMatrix2D,
+	MultiplyMatrix2DAndVector,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
