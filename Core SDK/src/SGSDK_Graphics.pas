@@ -1412,9 +1412,9 @@ implementation
                        xc, yc, radius: Integer); overload;
 	begin
 		if filled then
-			DrawCircle(dest, theColour, xc, yc, radius)
+			FillCircle(dest, theColour, xc, yc, radius)
 		else
-			FillCircle(dest, theColour, xc, yc, radius);
+			DrawCircle(dest, theColour, xc, yc, radius);
 	end;
 
 	/// Draws a circle outline centered on a given x, y location.
