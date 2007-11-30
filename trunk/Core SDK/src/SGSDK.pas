@@ -1207,7 +1207,7 @@ exports
 	DrawBitmapWithDestination,
 	DrawBitmapPartWithDestination,
 	DrawPixelWithDestination,
-	DrawRectangleWithDestination,
+	//DrawRectangleWithDestination,
 	//DrawRectangle3,
 	FillRectangleWithDestination,
 	DrawLineWithDestination,

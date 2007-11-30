@@ -18,29 +18,37 @@ namespace GameProject
             Console.WriteLine("here");
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
-            //Bitmap hey = Graphics.LoadBitmap("SwinGameAni.png");
-            //hey.pointer = IntPtr.Zero;
-
             Audio.OpenAudio();
 
             Font font = Text.LoadFont("barial.ttf",20);
-            Text.SetFontStyle(font, SwinGame.FontStyle.UnderlineFont);
 
-            //SoundEffect effect = Audio.LoadSoundEffect("SwinGameStart.ogg");
-            //Music music = Audio.LoadMusic("SwinGameStart.wav");
-            //Audio.PlayMusic(music,-1);
+            SoundEffect effect = Audio.LoadSoundEffect("SwinGameStart.ogg");
+
             while (Core.WindowCloseRequested() != true)
             {
-                Text.DrawText("Hi", System.Drawing.Color.Blue, font, 10, 10);
-                
-                //Audio.PlaySoundEffect(effect);
+                //FrameRate
+                Text.DrawFramerate(0, 0, font);
+
+                //Mouse Movement
+                Vector hi = Input.GetMouseMovement();
+                Text.DrawText("Mouse Movement: " + hi.X.ToString() + "," + hi.Y.ToString(), Color.Blue, font, 1, 25);
+
+                //Mouse Position
+                hi = Input.GetMousePosition();
+                Text.DrawText("Mouse Position: " + hi.X.ToString() + "," + hi.Y.ToString(), Color.Blue, font, 1, 50);
+
+                if (Input.IsMouseDown(MouseButton.LeftButton))
+                {
+                    Audio.PlaySoundEffect(effect);
+                }
 
                 Core.RefreshScreen();
+                Graphics.ClearScreen();
                 Core.ProcessEvents();
             }
-            //Audio.FreeMusic(ref music);
-            //Audio.FreeSoundEffect(ref effect);
-            //Graphics.FreeBitmap(ref hey);
+
+            Audio.FreeSoundEffect(ref effect);
+   
             Audio.CloseAudio();
         }
     }
