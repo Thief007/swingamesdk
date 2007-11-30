@@ -27,7 +27,7 @@ namespace SwinGame
         NormalFont = 0,
         BoldFont = 1,
         ItalicFont = 2,
-        UnderlineFont = 3,
+        UnderlineFont = 4,
     }
 
     /// <summary>
