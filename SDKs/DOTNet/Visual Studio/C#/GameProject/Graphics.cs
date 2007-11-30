@@ -132,7 +132,7 @@ namespace SwinGame
         [DllImport("SGSDK.dll")]
         public static extern void OptimiseBitmap(Bitmap surface);
 
-        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmapWithTransparentColor")]
+        [DllImport("SGSDK.dll", EntryPoint = "LoadBitmapWithTransparentColor", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, Boolean transparent, int transparentColor);
         /// <summary>
         /// Load the specified image file
