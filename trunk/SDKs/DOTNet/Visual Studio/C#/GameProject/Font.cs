@@ -121,5 +121,92 @@ namespace SwinGame
             int color = textColor.ToArgb();
             DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
         }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawTextLinesOnBitmap")]
+        private static extern void DLL_DrawTextLines(String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
+        /// <summary>
+        /// Draws multiple lines of text to the screen. This is a very
+        ///	slow operation, so if the text is not frequently changing save it to a
+        ///	bitmap and draw that bitmap to screen instead.
+        /// </summary>
+        /// <param name="theText">The text to be drawn onto the destination</param>
+        /// <param name="textColor">The color to draw the text</param>
+        /// <param name="backColor">The color to draw behind the text</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <param name="align">The alignment for the text in the region</param>
+        /// <param name="x">The x location to draw the text at (top left)</param>
+        /// <param name="y">The y location to draw the text at (top left)</param>
+        /// <param name="w">The width of the region to draw inside</param>
+        /// <param name="h">The height of the region to draw inside</param>
+        public static void DrawTextLines(String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        {
+            int color1 = textColor.ToArgb();
+            int color2 = backColor.ToArgb();
+            DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawText")]
+        private static extern void DLL_DrawTextLines(IntPtr dest, String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
+        /// <summary>
+        /// Draws multiple lines of text to the destination bitmap. This is a very
+        ///	slow operation, so if the text is not frequently changing save it to a
+        ///	bitmap and draw that bitmap to screen instead.
+        /// </summary>
+        /// <param name="dest">The destination bitmap - not optimised!</param>
+        /// <param name="theText">The text to be drawn onto the destination</param>
+        /// <param name="textColor">The color to draw the text</param>
+        /// <param name="backColor">The color to draw behind the text</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <param name="align">The alignment for the text in the region</param>
+        /// <param name="x">The x location to draw the text at (top left)</param>
+        /// <param name="y">The y location to draw the text at (top left)</param>
+        /// <param name="w">The width of the region to draw inside</param>
+        /// <param name="h">The height of the region to draw inside</param>
+        public static void DrawTextLines(Bitmap dest, String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        {
+            int color1 = textColor.ToArgb();
+            int color2 = backColor.ToArgb();
+            DLL_DrawTextLines(dest.pointer, theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "TextWidth")]
+        private static extern int DLL_TextWidth(String theText, IntPtr theFont);
+        /// <summary>
+        /// Calculates the width of a string when drawn with a given font.
+        /// </summary>
+        /// <param name="theText">The text to measure</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <returns>The width of the drawing in pixels</returns>
+        public static int TextWidth(String theText, Font theFont)
+        {
+            return DLL_TextWidth(theText, theFont.Pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "TextHeight")]
+        private static extern int DLL_TextHeight(String theText, IntPtr theFont);
+        /// <summary>
+        /// Calculates the height of a string when drawn with a given font.
+        /// </summary>
+        /// <param name="theText">The text to measure</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <returns>The height of the drawing in pixels</returns>
+        public static int TextHeight(String theText, Font theFont)
+        {
+            return DLL_TextHeight(theText, theFont.Pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawFramerate")]
+        private static extern void DLL_DrawFramerate(int x, int y, IntPtr theFont);
+        /// <summary>
+        /// Draws the frame rate using the specified font at the indicated x, y.
+        ///	Draws the FPS (min, max) current average
+        /// </summary>
+        /// <param name="x">The x location to draw to</param>
+        /// <param name="y">The y location to draw to</param>
+        /// <param name="theFont">The font used to draw the framerate</param>
+        public static void DrawFramerate(int x, int y, Font theFont)
+        {
+            DLL_DrawFramerate(x, y, theFont.Pointer);
+        }
     }
 }
