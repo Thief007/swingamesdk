@@ -41,7 +41,7 @@ namespace SwinGame
         AlignCenter = 2,
         AlignRight = 4,
     }
-    class Text
+    public class Text
     {
         [DllImport("SGSDK.dll", EntryPoint = "LoadFont")]
         private static extern IntPtr DLL_LoadFont(String fontName, int size);
