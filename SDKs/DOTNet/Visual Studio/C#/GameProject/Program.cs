@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using SwinGame;
 using Bitmap = SwinGame.Bitmap;
+using Graphics = SwinGame.Graphics;
 
 namespace GameProject
 {
@@ -15,6 +16,7 @@ namespace GameProject
             Console.WriteLine("here");
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
+            Bitmap hey = Graphics.LoadBitmap("SwinGameAni.png", false, Core.GetColor(0,0,0));
 
             //Bitmap test = Core.LoadBitmap("SwinGameAni.png");
             //Console.WriteLine(test.Width);
@@ -25,10 +27,10 @@ namespace GameProject
                 //Console.WriteLine(Core.GetFramerate());
                 
                 
-
+                
 
                 //Core.ToggleFullScreen();
-                //Core.RefreshScreen();
+                Core.RefreshScreen();
                 Core.ProcessEvents();
             }
       
