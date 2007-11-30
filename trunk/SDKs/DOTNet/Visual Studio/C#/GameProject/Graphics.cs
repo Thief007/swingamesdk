@@ -377,5 +377,153 @@ namespace SwinGame
             int color = theColour.ToArgb();
             DLL_DrawHorizontalLineWithDestination(dest.pointer, (uint)color, y, x1, x2);
         }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawVerticalLineWithDestination")]
+        private static extern void DLL_DrawVerticalLineWithDestination(IntPtr dest, uint theColour, int x, int y1, int y2);
+
+        /// <summary>
+        /// Draws a vertical line on the destination bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the line</param>
+        /// <param name="x">The x location of the line</param>
+        /// <param name="y1">The starting y value of the line</param>
+        /// <param name="y2">The ending y value of the line</param>
+        public static void DrawVerticalLine(Bitmap dest, Color theColour, int x, int y1, int y2)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawVerticalLineWithDestination(dest.pointer, (uint)color, x, y1, y2);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawCircleWithDestination")]
+        private static extern void DLL_DrawCircleWithDestination(IntPtr dest, uint theColour, bool filled, int xc, int yc, int radius);
+
+        /// <summary>
+        /// Draws a circle centered on a given x, y location
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the circle</param>
+        /// <param name="filled">True to draw a filled circle, false for outline</param>
+        /// <param name="xc">The x location of the center of the circle</param>
+        /// <param name="yc">The y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void DrawCircle(Bitmap dest, Color theColour, bool filled, int xc, int yc, int radius)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawCircleWithDestination(dest.pointer, (uint)color, filled, xc, yc, radius);
+        }
+
+        /// <summary>
+        /// Draws a circle outline centered on a given x, y location
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the circle</param>
+        /// <param name="xc">The x location of the center of the circle</param>
+        /// <param name="yc">The y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void DrawCircle(Bitmap dest, Color theColour, int xc, int yc, int radius)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawCircleWithDestination(dest.pointer, (uint)color, false, xc, yc, radius);
+        }
+
+        /// <summary>
+        /// Draws a filled circle centered on a given x, y location
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the circle</param>
+        /// <param name="xc">The x location of the center of the circle</param>
+        /// <param name="yc">The y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void FillCircle(Bitmap dest, Color theColour, int xc, int yc, int radius)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawCircleWithDestination(dest.pointer, (uint)color, true, xc, yc, radius);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawEllipseWithDestination")]
+        private static extern void DLL_DrawEllipseWithDestination(IntPtr dest, uint theColour, bool filled, int xPos, int yPos, int width, int height);
+
+        /// <summary>
+        /// Draws a ellipse within a given rectangle on the dest bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the ellipse</param>
+        /// <param name="filled">True to draw a filled ellipse, false for outline</param>
+        /// <param name="xPos">The x location of the top left of the ellipse</param>
+        /// <param name="yPos">The y location of the top left of the ellipse</param>
+        /// <param name="width">The width of the ellipse</param>
+        /// <param name="height">The height of the ellipse</param>
+        public static void DrawEllipse(Bitmap dest, Color theColour, bool filled, int xPos, int yPos, int width, int height)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, filled, xPos, yPos, width, height);
+        }
+
+        /// <summary>
+        /// Draws a ellipse outline within a given rectangle on the dest bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the ellipse</param>
+        /// <param name="xPos">The x location of the top left of the ellipse</param>
+        /// <param name="yPos">The y location of the top left of the ellipse</param>
+        /// <param name="width">The width of the ellipse</param>
+        /// <param name="height">The height of the ellipse</param>
+        public static void DrawEllipse(Bitmap dest, Color theColour, int xPos, int yPos, int width, int height)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, false, xPos, yPos, width, height);
+        }
+
+        /// <summary>
+        /// Draws a filled ellipse within a given rectangle on the dest bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the ellipse</param>
+        /// <param name="xPos">The x location of the top left of the ellipse</param>
+        /// <param name="yPos">The y location of the top left of the ellipse</param>
+        /// <param name="width">The width of the ellipse</param>
+        /// <param name="height">The height of the ellipse</param>
+        public static void FillEllipse(Bitmap dest, Color theColour, int xPos, int yPos, int width, int height)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, true, xPos, yPos, width, height);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "ClearScreen")]
+        private static extern void DLL_ClearScreen(uint toColour);
+
+        /// <summary>
+        /// Clears the surface of the screen to the passed in color
+        /// </summary>
+        /// <param name="toColour">The colour to clear the bitmap to</param>
+        public static void ClearScreen(Color toColour)
+        {
+            int color = toColour.ToArgb();
+            DLL_ClearScreen((uint)color);
+        }
+
+        /// <summary>
+        /// Clears the screen to Black
+        /// </summary>
+        public static void ClearScreen()
+        {
+            int color = Color.Black.ToArgb();
+            DLL_ClearScreen((uint)color);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawBitmap")]
+        private static extern void DLL_DrawBitmap(IntPtr bitmapToDraw, int x, int y);
+
+        /// <summary>
+        /// Draws one bitmap (bitmapToDraw) onto the screen
+        /// </summary>
+        /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
+        /// <param name="x">The x location to draw the bitmap to</param>
+        /// <param name="y">The y location to draw the bitmap to</param>
+        public static void DrawBitmap(Bitmap bitmapToDraw, int x, int y)
+        {
+            DLL_DrawBitmap(bitmapToDraw.pointer, x, y);
+        }
     }
 }
