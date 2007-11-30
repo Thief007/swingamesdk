@@ -842,51 +842,51 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
 	end;
 
-	procedure DrawCircle4(dest: Bitmap; theColour: Colour; filled: Boolean;
+	procedure DrawCircleWithDestination(dest: Bitmap; theColour: Colour; filled: Boolean;
 							 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, yc, radius);
 	end;
 
-	procedure DrawCircle3(dest: Bitmap; theColour: Colour;
+	{procedure DrawCircle3(dest: Bitmap; theColour: Colour;
 							 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.DrawCircle(dest, theColour, xc, yc, radius);
-	end;
+	end;}
 
-	procedure FillCircle2(dest: Bitmap; theColour: Colour;
+	{procedure FillCircle2(dest: Bitmap; theColour: Colour;
 							 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.FillCircle(dest, theColour, xc, yc, radius);
-	end;
+	end;}
 
-	procedure DrawEllipse4(dest: Bitmap; theColour: Colour; filled: Boolean;
+	procedure DrawEllipseWithDestination(dest: Bitmap; theColour: Colour; filled: Boolean;
 							xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.DrawEllipse(dest, theColour, filled, xPos, yPos, width, height);
 	end;
 
-	procedure DrawEllipse3(dest: Bitmap; theColour: Colour;
+	{procedure DrawEllipse3(dest: Bitmap; theColour: Colour;
 							xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.DrawEllipse(dest, theColour, xPos, yPos, width, height);
-	end;
+	end;}
 	
-	procedure FillEllipse2(dest: Bitmap; theColour: Colour;
+	{procedure FillEllipse2(dest: Bitmap; theColour: Colour;
 							xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.FillEllipse(dest, theColour, xPos, yPos, width, height);
-	end;
+	end;}
 	
-	procedure ClearScreen2(toColour : Colour); export;
+	procedure ClearScreen(toColour : Colour); export;
 	begin
 		SGSDK_Graphics.ClearScreen(toColour);
 	end;
 
-	procedure ClearScreen1(); export;
+	{procedure ClearScreen1(); export;
 	begin
 		SGSDK_Graphics.ClearScreen();
-	end;
+	end;}
 
 	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); export;
 	begin
@@ -1213,14 +1213,14 @@ exports
 	DrawLineWithDestination,
 	DrawHorizontalLineWithDestination,
 	DrawVerticalLineWithDestination,
-	DrawCircle4,
-	DrawCircle3,
-	FillCircle2,
-	DrawEllipse4,
-	DrawEllipse3,
-	FillEllipse2,
-	ClearScreen2,
-	ClearScreen1,
+	DrawCircleWithDestination,
+	//DrawCircle3,
+	//FillCircle2,
+	DrawEllipseWithDestination,
+	//DrawEllipse3,
+	//FillEllipse2,
+	ClearScreen,
+	//ClearScreen1,
 	DrawBitmap,
 	DrawBitmapPart,
 	DrawPixel,
