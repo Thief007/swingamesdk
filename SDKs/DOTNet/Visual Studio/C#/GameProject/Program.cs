@@ -6,6 +6,7 @@ using System.Drawing;
 using SwinGame;
 using Bitmap = SwinGame.Bitmap;
 using Graphics = SwinGame.Graphics;
+using SoundEffect = SwinGame.SoundEffect;
 
 namespace GameProject
 {
@@ -16,24 +17,25 @@ namespace GameProject
             Console.WriteLine("here");
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
-            Bitmap hey = Graphics.LoadBitmap("SwinGameAni.png", false, Core.GetColor(0,0,0));
+            Bitmap hey = Graphics.LoadBitmap("SwinGameAni.png");
+            
+            Audio.OpenAudio();
 
-            //Bitmap test = Core.LoadBitmap("SwinGameAni.png");
-            //Console.WriteLine(test.Width);
-            //Console.WriteLine(test.Height);
+            //SoundEffect effect = Audio.LoadSoundEffect("SwinGameStart.ogg");
+            //Music music = Audio.LoadMusic("SwinGameStart.wav");
+            //Audio.PlayMusic(music,2);
             while (Core.WindowCloseRequested() != true)
             {
            
-                //Console.WriteLine(Core.GetFramerate());
-                
-                
-                
 
-                //Core.ToggleFullScreen();
+                //Audio.PlaySoundEffect(effect);
+
                 Core.RefreshScreen();
                 Core.ProcessEvents();
             }
-      
+            //Audio.FreeMusic(ref music);
+            //Audio.FreeSoundEffect(ref effect);
+            Audio.CloseAudio();
         }
     }
 }

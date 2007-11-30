@@ -5,23 +5,24 @@ using System.Runtime.InteropServices;
 
 namespace SwinGame
 {
+    /// <summary>
+    /// Sound Effect Structure
+    /// </summary>
+    public struct SoundEffect
+    {
+        internal IntPtr Pointer;
+    }
+
+    /// <summary>
+    /// Music Structure
+    /// </summary>
+    public struct Music
+    {
+        internal IntPtr Pointer;
+    }
+
     class Audio
     {
-        /// <summary>
-        /// Sound Effect Structure
-        /// </summary>
-        public struct SoundEffect
-        {
-            internal IntPtr Pointer;
-        }
-
-        /// <summary>
-        /// Music Structure
-        /// </summary>
-        public struct Music
-        {
-            internal IntPtr Pointer;
-        }
 
         [DllImport("SGSDK.dll")]
         public static extern void OpenAudio();
