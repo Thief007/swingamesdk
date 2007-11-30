@@ -24,6 +24,7 @@ namespace GameProject
             Audio.OpenAudio();
 
             Font font = Text.LoadFont("barial.ttf",20);
+            Text.SetFontStyle(font, SwinGame.FontStyle.UnderlineFont);
 
             //SoundEffect effect = Audio.LoadSoundEffect("SwinGameStart.ogg");
             //Music music = Audio.LoadMusic("SwinGameStart.wav");
