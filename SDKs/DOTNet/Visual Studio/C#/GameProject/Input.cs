@@ -8,11 +8,11 @@ namespace SwinGame
 
     public enum MouseButton
     {
-        LeftButton,
-        MiddleButton,
-        RightButton,
-        MouseWheelUp,
-        MouseWheelDown
+        LeftButton = 1,
+        MiddleButton = 2,
+        RightButton = 3,
+        MouseWheelUp = 4,
+        MouseWheelDown = 5
     }
     
     public enum Keys

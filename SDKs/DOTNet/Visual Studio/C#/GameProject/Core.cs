@@ -60,6 +60,22 @@ namespace SwinGame
         Single x;
         Single y;
         Single w;
+
+        public Single X
+        {
+            get { return x; }
+        }
+
+        public Single Y
+        {
+            get { return y; }
+        }
+
+        public Single W
+        {
+            get { return w; }
+        }
+        
     }
 
     /// <summary>
