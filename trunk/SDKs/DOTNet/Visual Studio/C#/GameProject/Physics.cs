@@ -377,11 +377,11 @@ namespace SwinGame
         public static extern double GetVectorMagnitude(Vector theVector);
 
         /// <summary>
-        /// 
+        /// The Angle between two vectors
         /// </summary>
-        /// <param name="v1"></param>
-        /// <param name="v2"></param>
-        /// <returns></returns>
+        /// <param name="v1">The first Vector</param>
+        /// <param name="v2">The Second Vector</param>
+        /// <returns>The angle</returns>
         [DllImport("SGSDK.dll", EntryPoint = "DotProduct")]
         public static extern double DotProduct(Vector v1, Vector v2);
 
@@ -395,7 +395,7 @@ namespace SwinGame
         public static extern Vector MultiplyVector(Vector v1, double s1);
 
         /// <summary>
-        /// 
+        /// Gets the Angle between two points 
         /// </summary>
         /// <param name="x1"></param>
         /// <param name="y1"></param>
@@ -418,7 +418,7 @@ namespace SwinGame
             return CalculateAngle(sprite1.Pointer, sprite2.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "TranslationMatric")]
+        [DllImport("SGSDK.dll", EntryPoint = "TranslationMatrix")]
         public static extern Matrix2D TranslationMatric(double dx, double dy);
 
         [DllImport("SGSDK.dll", EntryPoint = "ScaleMatrix")]
@@ -433,7 +433,7 @@ namespace SwinGame
         /// <param name="m1">The first Matrix</param>
         /// <param name="m2">The second Matrix</param>
         /// <returns>The combined Matrixes</returns>
-        [DllImport("SGSDK.dll", EntryPoint = "Multiply")]
+        [DllImport("SGSDK.dll", EntryPoint = "MultiplyMatrix2D")]
         public static extern Matrix2D Multiply(ref Matrix2D m1, ref Matrix2D m2);//const
 
         /// <summary>
@@ -442,7 +442,7 @@ namespace SwinGame
         /// <param name="m">The Matrix2D</param>
         /// <param name="v">The Vector</param>
         /// <returns>The resulting Matrix2D</returns>
-        [DllImport("SGSDK.dll", EntryPoint = "MultiplyVector")]
+        [DllImport("SGSDK.dll", EntryPoint = "MultiplyMatrix2DAndVector")]
         public static extern Matrix2D Multiply(ref Matrix2D m, ref Vector v);//const
 
   
