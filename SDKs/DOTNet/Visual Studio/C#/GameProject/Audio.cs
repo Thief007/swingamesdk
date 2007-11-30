@@ -107,6 +107,8 @@ namespace SwinGame
         private static extern void DLL_PlayMusic(IntPtr music, int loops);
         /// <summary>
         /// Play the indicated music effect a number of times
+        /// The loops paramater can use anything starting from -1, 
+        /// -1 meaning that the sound plays forever
         /// </summary>
         /// <param name="effect">The Music to play</param>
         /// <param name="loops">The number of times to play it</param>
