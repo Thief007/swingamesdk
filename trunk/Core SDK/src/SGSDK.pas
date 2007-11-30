@@ -9,17 +9,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	
-	procedure ProcessEvents(); cdecl; export;
+	procedure ProcessEvents(); export;
 	begin
 		SGSDK_Core.ProcessEvents();
 	end;
 
-	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); cdecl; export;
+	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); export;
 	begin
 		SGSDK_Core.OpenGraphicsWindow(caption, width, height);
 	end;
 	
-	function WindowCloseRequested(): Integer; cdecl; export;
+	function WindowCloseRequested(): Integer; export;
 	begin
 		if SGSDK_Core.WindowCloseRequested() then
 		begin
@@ -33,52 +33,52 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	procedure SetIcon(iconFilename: String); cdecl; export;
+	procedure SetIcon(iconFilename: String); export;
 	begin
 		SGSDK_Core.SetIcon(iconFilename);
 	end;
 	
-	procedure ChangeScreenSize(width, height: Integer); cdecl; export;
+	procedure ChangeScreenSize(width, height: Integer); export;
 	begin
 		SGSDK_Core.ChangeScreenSize(width, height);
 	end;
 	
-	procedure ToggleFullScreen(); cdecl; export;
+	procedure ToggleFullScreen(); export;
 	begin
 		SGSDK_Core.ToggleFullScreen();
 	end;
 	
-	procedure RefreshScreen(); cdecl; export;
+	procedure RefreshScreen(); export;
 	begin
 		SGSDK_Core.RefreshScreen();
 	end;
 	
-	procedure TakeScreenshot(basename: String); cdecl; export;
+	procedure TakeScreenshot(basename: String); export;
 	begin
 		SGSDK_Core.TakeScreenshot(basename);
 	end;
 	
-	function  ScreenWidth(): Integer; cdecl; export;
+	function  ScreenWidth(): Integer; export;
 	begin
 		result := SGSDK_Core.ScreenWidth();
 	end;
 	
-	function  ScreenHeight(): Integer; cdecl; export;
+	function  ScreenHeight(): Integer; export;
 	begin
 		result := SGSDK_Core.ScreenHeight();
 	end;
 	
-	function	ToSDLColor(color: UInt32): TSDL_Color; cdecl; export;
+	function	ToSDLColor(color: UInt32): TSDL_Color; export;
 	begin
 		result := SGSDK_Core.ToSDLColor(color);
 	end;
 	
-	function	GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
+	function	GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; export;
 	begin
 		result := SGSDK_Core.GetColour(forBitmap, apiColor);
 	end;
 	
-	function	GetColourRGBA(red, green, blue, alpha: Byte) : Colour; cdecl; export;
+	function	GetColourRGBA(red, green, blue, alpha: Byte) : Colour; export;
 	begin
 		result := SGSDK_Core.GetColour(red, green, blue, alpha);
 	end;
@@ -86,47 +86,47 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	// function GetColour(red, green, blue : Byte) : Colour;
 	// pass 255 into parameter 4
 	
-	function	GetFramerate(): Integer; cdecl; export;
+	function	GetFramerate(): Integer; export;
 	begin
 		result := SGSDK_Core.GetFramerate();
 	end;
 	
-	function	GetTicks(): UInt32; cdecl; export;
+	function	GetTicks(): UInt32; export;
 	begin
 		result := SGSDK_Core.GetTicks();
 	end;
 	
-	procedure Sleep(time : UInt32); cdecl; export;
+	procedure Sleep(time : UInt32); export;
 	begin
 		SGSDK_Core.Sleep(time);
 	end;
 	
-	function GetPathToResourceWithKind(filename: String; kind: ResourceKind) : String; overload; cdecl; export;
+	function GetPathToResourceWithKind(filename: String; kind: ResourceKind) : String; overload; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename, kind);
 	end;
 	
-	function GetPathToResource(filename: String): String; overload; cdecl; export;
+	function GetPathToResource(filename: String): String; overload; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename);
 	end;
 	
-	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); cdecl; export;
+	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); export;
 	begin
 		SGSDK_Core.RegisterEventProcessor(handle, handle2);
 	end;
 	
-	function Cos(angle: Single): Single; cdecl; export;
+	function Cos(angle: Single): Single; export;
 	begin
 		result := SGSDK_Core.Cos(angle);
 	end;
 	
-	function Sin(angle: Single): Single; cdecl; export;
+	function Sin(angle: Single): Single; export;
 	begin
 		result := SGSDK_Core.Sin(angle);
 	end;
 	
-	function Tan(angle: Single): Single; cdecl; export;
+	function Tan(angle: Single): Single; export;
 	begin
 		result := SGSDK_Core.Tan(angle);
 	end;
@@ -139,17 +139,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function GetMousePosition(): Vector; cdecl; export;
+	function GetMousePosition(): Vector; export;
 	begin
 		result := SGSDK_Input.GetMousePosition();
 	end;
 	
-	function GetMouseMovement(): Vector; cdecl; export;
+	function GetMouseMovement(): Vector; export;
 	begin
 		result := SGSDK_Input.GetMouseMovement();
 	end;
 	
-	function IsMouseDown(button: MouseButton): Integer; cdecl; export;
+	function IsMouseDown(button: MouseButton): Integer; export;
 	begin
 		if SGSDK_Input.IsMouseDown(button) then
 		begin
@@ -161,7 +161,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	function IsMouseUp(button: MouseButton): Integer; cdecl; export;
+	function IsMouseUp(button: MouseButton): Integer; export;
 	begin
 		if SGSDK_Input.IsMouseUp(button) then
 		begin
@@ -173,7 +173,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	function MouseWasClicked(button: MouseButton): Integer; cdecl; export;
+	function MouseWasClicked(button: MouseButton): Integer; export;
 	begin
 		if SGSDK_Input.MouseWasClicked(button) then
 		begin
@@ -187,12 +187,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 
 	procedure StartReadingText(textColor: Colour; maxLength: Integer;
-														 theFont: Font; x, y: Integer); cdecl; export;
+														 theFont: Font; x, y: Integer); export;
 	begin
 		SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
 	end;
 
-	function IsReadingText(): Integer; cdecl; export;
+	function IsReadingText(): Integer; export;
 	begin
 		if SGSDK_Input.IsReadingText() then
 		begin
@@ -204,17 +204,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	function TextReadAsASCII(): String; cdecl; export;
+	function TextReadAsASCII(): String; export;
 	begin
 		result := SGSDK_Input.TextReadAsASCII();
 	end;
 	
-	function TextReadAsUNICODE(): WideString; cdecl; export;
+	function TextReadAsUNICODE(): WideString; export;
 	begin
 		result := SGSDK_Input.TextReadAsUNICODE();
 	end;
 	
-	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
+	function IsKeyPressed(virtKeyCode : Integer): Integer; export;
 	begin
 		if SGSDK_Input.IsKeyPressed(virtKeyCode) then
 		begin
@@ -226,7 +226,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	function WasKeyTyped(virtKeyCode: Integer): Integer; cdecl; export;
+	function WasKeyTyped(virtKeyCode: Integer): Integer; export;
 	begin
 		if SGSDK_Input.WasKeyTyped(virtKeyCode) then
 		begin
@@ -247,57 +247,57 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//***************************************************
 	
 	
-	procedure	OpenAudio(); cdecl; export;
+	procedure	OpenAudio(); export;
 	begin
 		SGSDK_Audio.OpenAudio();
 	end;
 	
-	procedure	CloseAudio(); cdecl; export;
+	procedure	CloseAudio(); export;
 	begin
 		SGSDK_Audio.CloseAudio();
 	end;
 	
-	function	LoadSoundEffect(path: String): SoundEffect; cdecl; export;
+	function	LoadSoundEffect(path: String): SoundEffect; export;
 	begin
 		result := SGSDK_Audio.LoadsoundEffect(path);
 	end;
 	
-	function	LoadMusic(path: String): Music; cdecl; export;
+	function	LoadMusic(path: String): Music; export;
 	begin
 		result := SGSDK_Audio.LoadMusic(path);
 	end;
 
-	procedure FreeMusic(var mus: Music); cdecl; export;
+	procedure FreeMusic(var mus: Music); export;
 	begin
 		SGSDK_Audio.FreeMusic(mus);
 	end;
 
-	procedure FreeSoundEffect(var effect: SoundEffect); cdecl; export;
+	procedure FreeSoundEffect(var effect: SoundEffect); export;
 	begin
 		SGSDK_Audio.FreeSoundEffect(effect);
 	end;
 
-	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
+	procedure PlaySoundEffect(effect: SoundEffect); export;
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect);
 	end;
 	
-	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: Integer); cdecl; export;
+	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: Integer); export;
 	begin
 		SGSDK_Audio.PlaySoundEffect(effect, loops);
 	end;
 
-	procedure PlayMusic(mus: Music; loops: Integer); cdecl; export;
+	procedure PlayMusic(mus: Music; loops: Integer); export;
 	begin
 		SGSDK_Audio.PlayMusic(mus, loops);
 	end;
 
-	//procedure PlayMusic1(mus: Music); cdecl; export;
+	//procedure PlayMusic1(mus: Music); export;
 	//begin
 		//SGSDK_Audio.PlayMusic(mus);
 	//end;
 
-	function IsMusicPlaying(mus: Music): Integer; cdecl; export;
+	function IsMusicPlaying(mus: Music): Integer; export;
 	begin
 		if SGSDK_Audio.IsMusicPlaying(mus) then
 		begin
@@ -309,7 +309,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function IsSoundEffectPlaying(effect: SoundEffect): Integer; cdecl; export;
+	function IsSoundEffectPlaying(effect: SoundEffect): Integer; export;
 	begin
 		if SGSDK_Audio.IsSoundEffectPlaying(effect) then
 		begin
@@ -321,12 +321,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	procedure StopSoundEffect(effect: SoundEffect); cdecl; export;
+	procedure StopSoundEffect(effect: SoundEffect); export;
 	begin
 		SGSDK_Audio.StopSoundEffect(effect);
 	end;
 
-	procedure StopMusic(); cdecl; export;
+	procedure StopMusic(); export;
 	begin
 		SGSDK_Audio.StopMusic();
 	end;
@@ -339,36 +339,36 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function LoadFont(fontName: String; size: Integer): Font; cdecl; export;
+	function LoadFont(fontName: String; size: Integer): Font; export;
 	begin
 		result := SGSDK_Font.LoadFont(fontName, size)
 	end;
 
-	procedure SetFontStyle(font: Font; style: FontStyle); cdecl; export;
+	procedure SetFontStyle(font: Font; style: FontStyle); export;
 	begin
 		SGSDK_Font.SetFontStyle(font, style);
 	end;
 
-	procedure FreeFont(var fontToFree: Font); cdecl; export;
+	procedure FreeFont(var fontToFree: Font); export;
 	begin
 		SGSDK_Font.FreeFont(fontToFree);
 	end;
 	
 	procedure DrawText(theText: String; textColor: Colour;
-					 theFont: Font; x, y: Integer); cdecl; export;
+					 theFont: Font; x, y: Integer); export;
 	begin
 		SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
 	end;
 
 	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); cdecl; export;
+							x, y, w, h: Integer); export;
 	begin
 		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 							
 	procedure DrawTextOnBitmap(dest: Bitmap; theText: String; textColor: Colour;
-					theFont: Font; x, y: Integer); cdecl; export;
+					theFont: Font; x, y: Integer); export;
 	begin
 		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
 	end;
@@ -376,22 +376,22 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawTextLinesOnBitmap(dest: Bitmap; theText: String;
 							textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); cdecl; export;
+							x, y, w, h: Integer); export;
 	begin
 		SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 
-	function TextWidth(theText: String; theFont: Font): Integer; cdecl; export;
+	function TextWidth(theText: String; theFont: Font): Integer; export;
 	begin
 		result :=SGSDK_Font.TextWidth(theText, theFont);
 	end;
 
-	function TextHeight(theText: String; theFont: Font): Integer; cdecl; export;
+	function TextHeight(theText: String; theFont: Font): Integer; export;
 	begin
 		result := SGSDK_Font.TextHeight(theText, theFont);
 	end;
 
-	procedure DrawFramerate(x, y: Integer; font: Font); cdecl; export;
+	procedure DrawFramerate(x, y: Integer; font: Font); export;
 	begin
 		SGSDK_Font.DrawFramerate(x, y, font);
 	end;
@@ -405,7 +405,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//***************************************************
 	
 	function	HasSpriteCollidedX(theSprite : Sprite; x : Integer;
-								 range : CollisionDetectionRange):  Integer; cdecl; export;
+								 range : CollisionDetectionRange):  Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then
 		begin
@@ -418,7 +418,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 
 	function HasSpriteCollidedY(theSprite : Sprite; y : Integer;
-								 range : CollisionDetectionRange): Integer; cdecl; export;
+								 range : CollisionDetectionRange): Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedY(theSprite, y, range) then
 		begin
@@ -431,7 +431,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 
 	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
-		width, height : Integer): Integer; cdecl; export;
+		width, height : Integer): Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height) then
 		begin
@@ -443,7 +443,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 		
-	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Integer; cdecl; export;
+	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Integer; export;
 	begin
 		if SGSDK_Physics.HaveSpritesCollided(sprite1, sprite2) then
 		begin
@@ -458,7 +458,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	{function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 		x, y: Integer; bounded: Boolean;
 		vwPrtX, vwPrtY: Integer)
-		: Integer; cdecl; export;
+		: Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded, vwPrtX, vwPrtY) then
 		begin
@@ -472,7 +472,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	function	HasSpriteCollidedWithBitmap1(theSprite: Sprite; theBitmap: Bitmap;
 								x, y: Integer; bounded: Boolean)
-								: Integer; cdecl; export;
+								: Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded) then
 		begin
@@ -486,7 +486,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	function	HasSpriteCollidedWithBitmap2(theSprite: Sprite; theBitmap: Bitmap;
 								x, y, vwPrtX, vwPrtY: Integer)
-								: Integer; cdecl; export;
+								: Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, vwPrtX, vwPrtY) then
 		begin
@@ -500,7 +500,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	function	HasSpriteCollidedWithBitmap3(theSprite: Sprite; theBitmap: Bitmap;
 								x, y: Integer)
-								: Integer; cdecl; export;
+								: Integer; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y) then
 		begin
@@ -513,7 +513,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2 : Bitmap;
-								 x2, y2: Integer): Integer; cdecl; export;
+								 x2, y2: Integer): Integer; export;
 	begin
 		if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, image2, x2, y2) then
 		begin
@@ -528,7 +528,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer;
 		bounded1: Boolean; image2: Bitmap;
 		x2, y2: Integer; bounded2: Boolean)
-		: Integer; cdecl; export;
+		: Integer; export;
 	begin
 		if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
 		begin
@@ -542,7 +542,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	{function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
 		image2: Bitmap; x2, y2: Integer)
-		: Integer; cdecl; export;
+		: Integer; export;
 	begin
 		if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, image2, x2, y2) then
 		begin
@@ -557,7 +557,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
 		bounded1: Boolean; image2: Bitmap;
 		x2, y2: Integer; bounded2: Boolean)
-		: Integer; cdecl; export;
+		: Integer; export;
 	begin
 		if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
 		begin
@@ -569,47 +569,47 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	function	CreateVector(x,y : Single; invertY : boolean): Vector;  cdecl; export;
+	function	CreateVector(x,y : Single; invertY : boolean): Vector;  export;
 	begin
 		result :=SGSDK_Physics.CreateVector(x, y, invertY);
 	end;
 
-	{function	CreateVector1(x,y : Single): Vector;  cdecl; export;
+	{function	CreateVector1(x,y : Single): Vector;  export;
 	begin
 		result :=SGSDK_Physics.CreateVector(x, y);
 	end;}
 
-	function	AddVectors(v1, v2 : Vector): Vector; cdecl; export;
+	function	AddVectors(v1, v2 : Vector): Vector; export;
 	begin
 		result :=SGSDK_Physics.AddVectors(v1, v2);
 	end;
 
-	function	SubtractVectors(v1, v2 : Vector): Vector; cdecl; export;
+	function	SubtractVectors(v1, v2 : Vector): Vector; export;
 	begin
 		result :=SGSDK_Physics.SubtractVectors(v1, v2);
 	end;
 
-	function	InvertVector(v : Vector): Vector; cdecl; export;
+	function	InvertVector(v : Vector): Vector; export;
 	begin
 		result :=SGSDK_Physics.InvertVector(v);
 	end;
 
-	function	ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; cdecl; export;
+	function	ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; export;
 	begin
 		result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
 	end;
 
-	function	LimitVector(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
+	function	LimitVector(theVector: Vector; maxMagnitude: Single): Vector; export;
 	begin
 		result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
 	end;
 
-	function	GetUnitVector(theVector : Vector): Vector; cdecl; export;
+	function	GetUnitVector(theVector : Vector): Vector; export;
 	begin
 		result :=SGSDK_Physics.GetUnitVector(theVector);
 	end;
 
-	function	IsZeroVector(theVector : Vector): Integer; cdecl; export;
+	function	IsZeroVector(theVector : Vector): Integer; export;
 	begin
 		if SGSDK_Physics.IsZeroVector(theVector) then
 		begin
@@ -621,52 +621,52 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function	GetVectorMagnitude(theVector : Vector): Single; cdecl; export;
+	function	GetVectorMagnitude(theVector : Vector): Single; export;
 	begin
 		result :=SGSDK_Physics.GetVectorMagnitude(theVector);
 	end;
 	
-	function	DotProduct(v1, v2: Vector): Single; cdecl; export;
+	function	DotProduct(v1, v2: Vector): Single; export;
 	begin
 		result :=SGSDK_Physics.DotProduct(v1, v2);
 	end;
 	
-	function 	MultiplyVector(v1: Vector; s1: Single): Vector; cdecl; export;
+	function 	MultiplyVector(v1: Vector; s1: Single): Vector; export;
 	begin
 		result :=SGSDK_Physics.MultiplyVector(v1, s1);
 	end;
 
- 	function CalculateAngleNumber(x1, y1, x2, y2: Single): Single;  cdecl; export;
+ 	function CalculateAngleNumber(x1, y1, x2, y2: Single): Single;  export;
 	begin
 		result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
 	end;
 	
-	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  cdecl; export;
+	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  export;
 	begin
 		result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
 	end;
 
-	function TranslationMatric(dx, dy: Single): Matrix2D; cdecl; export;
+	function TranslationMatric(dx, dy: Single): Matrix2D; export;
 	begin
 		result :=SGSDK_Physics.TranslationMatric(dx, dy);
 	end;
 	
-	function ScaleMatrix(scale: Single): Matrix2D; cdecl; export;
+	function ScaleMatrix(scale: Single): Matrix2D; export;
 	begin
 		result :=SGSDK_Physics.ScaleMatrix(scale);
 	end;
 	
-	function RotationMatrix(deg: Single): Matrix2D; cdecl; export;
+	function RotationMatrix(deg: Single): Matrix2D; export;
 	begin
 		result :=SGSDK_Physics.RotationMatrix(deg);
 	end;
 	
-	function Multiply(const m1, m2: Matrix2D): Matrix2D;  cdecl; export;
+	function Multiply(const m1, m2: Matrix2D): Matrix2D;  export;
 	begin
 		result :=SGSDK_Physics.Multiply(m1, m2);
 	end;
 	
-	function MultiplyVector(const m: Matrix2D; const v: Vector): Vector;  cdecl; export;
+	function MultiplyVector(const m: Matrix2D; const v: Vector): Vector;  export;
 	begin
 		result :=SGSDK_Physics.Multiply(m, v);
 	end;
@@ -679,42 +679,42 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function GetSpriteBitmap(surface: Sprite; id: Integer): Bitmap; cdecl; export;
+	function GetSpriteBitmap(surface: Sprite; id: Integer): Bitmap; export;
 	begin
 		result := surface.bitmaps[id];
 	end;
 	
-	function GetSpriteX(surface: Sprite): Single; cdecl; export;
+	function GetSpriteX(surface: Sprite): Single; export;
 	begin
 		result := surface.xPos;
 	end;
 	
-	procedure SetSpriteX(surface: Sprite; val: Single); cdecl; export;
+	procedure SetSpriteX(surface: Sprite; val: Single); export;
 	begin
 		surface.xPos := val;
 	end;
 	
-	function GetSpriteY(surface: Sprite): Single; cdecl; export;
+	function GetSpriteY(surface: Sprite): Single; export;
 	begin
 		result := surface.yPos;
 	end;
 	
-	procedure SetSpriteY(surface: Sprite; val: Single); cdecl; export;
+	procedure SetSpriteY(surface: Sprite; val: Single); export;
 	begin
 		surface.yPos := val;
 	end;
 	
-	function GetSpriteCurrentFrame(surface: Sprite): Integer; cdecl; export;
+	function GetSpriteCurrentFrame(surface: Sprite): Integer; export;
 	begin
 		result := surface.currentFrame;
 	end;
 	
-	procedure SetSpriteCurrentFrame(surface: Sprite; val: Integer); cdecl; export;
+	procedure SetSpriteCurrentFrame(surface: Sprite; val: Integer); export;
 	begin
 		surface.currentFrame := val;
 	end;
 	
-	function GetSpriteUsePixelCollision(surface: Sprite): Integer; cdecl; export;
+	function GetSpriteUsePixelCollision(surface: Sprite): Integer; export;
 	begin
 		if surface.usePixelCollision then
 		begin
@@ -726,300 +726,300 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Boolean); cdecl; export;
+	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Boolean); export;
 	begin
 		surface.usePixelCollision := val;
 	end;
 	
-	function NewSDLRect(x, y, w, h: Integer): SDL_Rect; cdecl; export;
+	function NewSDLRect(x, y, w, h: Integer): SDL_Rect; export;
 	begin
 		result := SGSDK_Graphics.NewSDLRect(x, y, w, h);
 	end;
 	
-	function CreateBitmap(width, height: Integer): Bitmap; cdecl; export;
+	function CreateBitmap(width, height: Integer): Bitmap; export;
 	begin
 		result := SGSDK_Graphics.CreateBitmap(width, height);
 	end;
 	
-	procedure OptimiseBitmap(surface: Bitmap); cdecl; export;
+	procedure OptimiseBitmap(surface: Bitmap); export;
 	begin
 		SGSDK_Graphics.OptimiseBitmap(surface);
 	end;
 	
 	function LoadBitmapWithTransparentColor(pathToBitmap: String; transparent: Boolean;
-								transparentColor: Colour): Bitmap; cdecl; export;
+								transparentColor: Colour): Bitmap; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
 	end;
 	
-	{function LoadBitmap(pathToBitmap : String): Bitmap; cdecl; export;
+	{function LoadBitmap(pathToBitmap : String): Bitmap; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap);
 	end;}
 	
 	function LoadTransparentBitmap(pathToBitmap : String;
-								transparentColor : Colour): Bitmap; cdecl; export;
+								transparentColor : Colour): Bitmap; export;
 	begin
 		result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
 	end;
 	
-	procedure FreeBitmap(var bitmapToFree : Bitmap); cdecl; export;
+	procedure FreeBitmap(var bitmapToFree : Bitmap); export;
 	begin
 		SGSDK_Graphics.FreeBitmap(bitmapToFree);
 	end;
 	
-	function GetBitmapWidth(targetbitmap : Bitmap): Integer ; cdecl; export;
+	function GetBitmapWidth(targetbitmap : Bitmap): Integer ; export;
 	begin
 		result := targetbitmap.width;
 	end;
 	
-	function GetBitmapHeight(targetbitmap : Bitmap): Integer; cdecl; export;
+	function GetBitmapHeight(targetbitmap : Bitmap): Integer; export;
 	begin
 		result := targetbitmap.height;
 	end;
 	
-	procedure ClearSurfaceWithColor(dest: Bitmap; toColour: Colour); cdecl; export;
+	procedure ClearSurfaceWithColor(dest: Bitmap; toColour: Colour); export;
 	begin
 		SGSDK_Graphics.ClearSurface(dest, toColour);
 	end;
 	
-	{procedure ClearSurface(dest: Bitmap); cdecl; export;
+	{procedure ClearSurface(dest: Bitmap); export;
 	begin
 		SGSDK_Graphics.ClearSurface(dest);
 	end;}
 	
 	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
-		cdecl; export;
+		export;
 	begin
 		SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
 	end;
 	
 	procedure DrawBitmapPartWithDestination(dest: Bitmap; bitmapToDraw: Bitmap;
-							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+							srcX, srcY, srcW, srcH, x, y : Integer); export;
 	begin
 		SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
 	
 	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: Integer);
-		cdecl; export;
+		export;
 	begin
 		SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
 	end;
 	
 	procedure DrawRectangle4(dest: Bitmap; theColour : Colour; filled : Boolean;
-							xPos, yPos, width, height : Integer); cdecl; export;
+							xPos, yPos, width, height : Integer); export;
 	begin
 		SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
 	end;
 	
 	procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
-							width, height : Integer); cdecl; export;
+							width, height : Integer); export;
 	begin
 		SGSDK_Graphics.DrawRectangle(dest, theColour, xPos, yPos, width, height);
 	end;
 	
 	procedure FillRectangleWithDestination(dest: Bitmap; theColour : Colour; xPos, yPos,
-							width, height : Integer); cdecl; export;
+							width, height : Integer); export;
 	begin
 		SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
 	end;
 
 	procedure DrawLineWithDestination(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); cdecl; export;
+					 xPosEnd, yPosEnd: Integer); export;
 	begin
 		SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
 	end;
 
 	procedure DrawHorizontalLineWithDestination(dest: Bitmap; theColor: Color;
-								 y, x1, x2: Integer); cdecl; export;
+								 y, x1, x2: Integer); export;
 	begin
 		SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
 	end;
 
 	procedure DrawVerticalLineWithDestination(dest: Bitmap; theColor: Color;
-							 x, y1, y2: Integer); cdecl; export;
+							 x, y1, y2: Integer); export;
 	begin
 		SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
 	end;
 
 	procedure DrawCircle4(dest: Bitmap; theColour: Colour; filled: Boolean;
-							 xc, yc, radius: Integer); cdecl; export;
+							 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, yc, radius);
 	end;
 
 	procedure DrawCircle3(dest: Bitmap; theColour: Colour;
-							 xc, yc, radius: Integer); cdecl; export;
+							 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.DrawCircle(dest, theColour, xc, yc, radius);
 	end;
 
 	procedure FillCircle2(dest: Bitmap; theColour: Colour;
-							 xc, yc, radius: Integer); cdecl; export;
+							 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.FillCircle(dest, theColour, xc, yc, radius);
 	end;
 
 	procedure DrawEllipse4(dest: Bitmap; theColour: Colour; filled: Boolean;
-							xPos, yPos, width, height: Integer); cdecl; export;
+							xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.DrawEllipse(dest, theColour, filled, xPos, yPos, width, height);
 	end;
 
 	procedure DrawEllipse3(dest: Bitmap; theColour: Colour;
-							xPos, yPos, width, height: Integer); cdecl; export;
+							xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.DrawEllipse(dest, theColour, xPos, yPos, width, height);
 	end;
 	
 	procedure FillEllipse2(dest: Bitmap; theColour: Colour;
-							xPos, yPos, width, height: Integer); cdecl; export;
+							xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.FillEllipse(dest, theColour, xPos, yPos, width, height);
 	end;
 	
-	procedure ClearScreen2(toColour : Colour); cdecl; export;
+	procedure ClearScreen2(toColour : Colour); export;
 	begin
 		SGSDK_Graphics.ClearScreen(toColour);
 	end;
 
-	procedure ClearScreen1(); cdecl; export;
+	procedure ClearScreen1(); export;
 	begin
 		SGSDK_Graphics.ClearScreen();
 	end;
 
-	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
+	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); export;
 	begin
 		SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
 	end;
 
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap;
-							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+							srcX, srcY, srcW, srcH, x, y : Integer); export;
 	begin
 		SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
 	
-	procedure DrawPixel(theColour: Colour; x, y: Integer); cdecl; export;
+	procedure DrawPixel(theColour: Colour; x, y: Integer); export;
 	begin
 		SGSDK_Graphics.DrawPixel(theColour, x, y);
 	end;
 
 	procedure DrawRectangle2(theColour : Colour; filled : Boolean;
-							xPos, yPos, width, height : Integer); cdecl; export;
+							xPos, yPos, width, height : Integer); export;
 	begin
 		SGSDK_Graphics.DrawRectangle(theColour, filled, xPos, yPos, width, height);
 	end;
 
 	procedure DrawRectangle1(theColour : Colour; xPos, yPos,
-							width, height : Integer); cdecl; export;
+							width, height : Integer); export;
 	begin
 		SGSDK_Graphics.DrawRectangle(theColour, xPos, yPos, width, height);
 	end;
 
 	procedure FillRectangle1(theColour : Colour; xPos, yPos,
-							width, height : Integer); cdecl; export;
+							width, height : Integer); export;
 	begin
 		SGSDK_Graphics.FillRectangle(theColour, xPos, yPos, width, height);
 	end;
 
 	procedure DrawLine1(theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); cdecl; export;
+					 xPosEnd, yPosEnd: Integer); export;
 	begin
 		SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
 	end;
 
-	procedure DrawHorizontalLine1(theColor: Color; y, x1, x2: Integer); cdecl; export;
+	procedure DrawHorizontalLine1(theColor: Color; y, x1, x2: Integer); export;
 	begin
 		SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
 	end;
 
-	procedure DrawVerticalLine1(theColor: Color; x, y1, y2: Integer); cdecl; export;
+	procedure DrawVerticalLine1(theColor: Color; x, y1, y2: Integer); export;
 	begin
 		SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
 	end;
 
 	procedure DrawCircle2(theColour: Colour; filled: Boolean;
-						 xc, yc, radius: Integer); cdecl; export;
+						 xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.DrawCircle(theColour, filled, xc, yc, radius);
 	end;
 
-	procedure DrawCircle1(theColour: Colour; xc, yc, radius: Integer); cdecl; export;
+	procedure DrawCircle1(theColour: Colour; xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.DrawCircle(theColour, xc, yc, radius);
 	end;
 
-	procedure FillCircle1(theColour: Colour; xc, yc, radius: Integer); cdecl; export;
+	procedure FillCircle1(theColour: Colour; xc, yc, radius: Integer); export;
 	begin
 		SGSDK_Graphics.FillCircle(theColour, xc, yc, radius);
 	end;
 
 	procedure DrawEllipse2(theColour: Colour; filled: Boolean;
-						xPos, yPos, width, height: Integer); cdecl; export;
+						xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.DrawEllipse(theColour, filled, xPos, yPos, width, height);
 	end;
 
 	procedure DrawEllipse1(theColour: Colour;
-						xPos, yPos, width, height: Integer); cdecl; export;
+						xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.DrawEllipse(theColour, xPos, yPos, width, height);
 	end;
 
 	procedure FillEllipse1(theColour: Colour;
-						xPos, yPos, width, height: Integer); cdecl; export;
+						xPos, yPos, width, height: Integer); export;
 	begin
 		SGSDK_Graphics.FillEllipse(theColour, xPos, yPos, width, height);
 	end;
 
-	function CreateSprite(startBitmap : Bitmap): Sprite; cdecl; export;
+	function CreateSprite(startBitmap : Bitmap): Sprite; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(startBitmap);
 	end;
 
-	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
+	procedure FreeSprite(var spriteToFree : Sprite); export;
 	begin
 		SGSDK_Graphics.FreeSprite(spriteToFree);
 	end;
 
 	function AddBitmapToSprite(spriteToAddTo : Sprite;
-														 bitmapToAdd : Bitmap): Integer; cdecl; export;
+														 bitmapToAdd : Bitmap): Integer; export;
 	begin
 		result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
 	end;
 
-	function CurrentHeight(sprite: Sprite): Integer; cdecl; export;
+	function CurrentHeight(sprite: Sprite): Integer; export;
 	begin
 		result := SGSDK_Graphics.CurrentHeight(sprite);
 	end;
 
-	function CurrentWidth(sprite: Sprite): Integer; cdecl; export;
+	function CurrentWidth(sprite: Sprite): Integer; export;
 	begin
 		result := SGSDK_Graphics.CurrentWidth(sprite);
 	end;
 
-	procedure DrawSprite1(spriteToDraw : Sprite); cdecl; export;
+	procedure DrawSprite1(spriteToDraw : Sprite); export;
 	begin
 		SGSDK_Graphics.DrawSprite(spriteToDraw);
 	end;
 
 	procedure DrawSprite2(spriteToDraw : Sprite; vwPrtX, vwPrtY, vwPrtWidth,
-											 vwPrtHeight : Integer); cdecl; export;
+											 vwPrtHeight : Integer); export;
 	begin
 		SGSDK_Graphics.DrawSprite(spriteToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
 	end;
 
-	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); cdecl; export;
+	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); export;
 	begin
 		SGSDK_Graphics.MoveSprite(spriteToMove, movementVector);
 	end;
 
-	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer); cdecl; export;
+	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer); export;
 	begin
 		SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
 	end;
 
-	function IsSpriteOffscreen1(theSprite : Sprite): Integer; cdecl; export;
+	function IsSpriteOffscreen1(theSprite : Sprite): Integer; export;
 	begin
 		if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then
 		begin
@@ -1032,7 +1032,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 
 	function IsSpriteOffscreen2(theSprite : Sprite; vwPrtX, vwPrtY,
-															vwPrtWidth, vwPrtHeight : Integer) : Integer; cdecl; export;
+															vwPrtWidth, vwPrtHeight : Integer) : Integer; export;
 	begin
 		if SGSDK_Graphics.IsSpriteOffscreen(theSprite, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight) then
 		begin
