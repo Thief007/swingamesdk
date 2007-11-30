@@ -661,12 +661,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.RotationMatrix(deg);
 	end;
 	
-	function Multiply(const m1, m2: Matrix2D): Matrix2D;  export;
+	function Multiply(const m1, m2: Matrix2D): Matrix2D; export;
 	begin
 		result :=SGSDK_Physics.Multiply(m1, m2);
 	end;
 	
-	function MultiplyVector(const m: Matrix2D; const v: Vector): Vector;  export;
+	function MultiplyVector(const m: Matrix2D; const v: Vector): Vector; export;
 	begin
 		result :=SGSDK_Physics.Multiply(m, v);
 	end;
@@ -806,17 +806,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
 	end;
 	
-	procedure DrawRectangle4(dest: Bitmap; theColour : Colour; filled : Boolean;
+	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : Boolean;
 							xPos, yPos, width, height : Integer); export;
 	begin
 		SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
 	end;
 	
-	procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
+	{procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); export;
 	begin
 		SGSDK_Graphics.DrawRectangle(dest, theColour, xPos, yPos, width, height);
-	end;
+	end;}
 	
 	procedure FillRectangleWithDestination(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); export;
