@@ -427,10 +427,13 @@ implementation
 		begin
 			if bitmapToFree.surface <> nil then
 			begin
+				WriteLn('Freeing SDL Surface');
 				SDL_FreeSurface(bitmapToFree.surface);
 			end;
+			WriteLn('Nilling bitmap surface');
 			bitmapToFree.surface := nil;
 
+			WriteLn('Diposing Bitmap');
 			Dispose(bitmapToFree);
 			bitmapToFree := nil;
 		end;

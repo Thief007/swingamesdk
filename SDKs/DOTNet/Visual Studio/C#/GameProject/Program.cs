@@ -17,11 +17,10 @@ namespace GameProject
             Console.WriteLine("here");
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
-            //Bitmap hey = Graphics.LoadBitmap("SwinGameAni.png");
-            
-            Audio.OpenAudio();
+            Bitmap hey;// = Graphics.LoadBitmap("SwinGameAni.png");
+            hey.pointer = IntPtr.Zero;
 
-           
+            Audio.OpenAudio();
 
             //SoundEffect effect = Audio.LoadSoundEffect("SwinGameStart.ogg");
             //Music music = Audio.LoadMusic("SwinGameStart.wav");
@@ -37,6 +36,7 @@ namespace GameProject
             }
             //Audio.FreeMusic(ref music);
             //Audio.FreeSoundEffect(ref effect);
+            Graphics.FreeBitmap(ref hey);
             Audio.CloseAudio();
         }
     }
