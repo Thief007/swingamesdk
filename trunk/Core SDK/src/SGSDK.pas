@@ -818,25 +818,25 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.DrawRectangle(dest, theColour, xPos, yPos, width, height);
 	end;
 	
-	procedure FillRectangle2(dest: Bitmap; theColour : Colour; xPos, yPos,
+	procedure FillRectangleWithDestination(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
 	end;
 
-	procedure DrawLine2(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
+	procedure DrawLineWithDestination(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
 					 xPosEnd, yPosEnd: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
 	end;
 
-	procedure DrawHorizontalLine2(dest: Bitmap; theColor: Color;
+	procedure DrawHorizontalLineWithDestination(dest: Bitmap; theColor: Color;
 								 y, x1, x2: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
 	end;
 
-	procedure DrawVerticalLine2(dest: Bitmap; theColor: Color;
+	procedure DrawVerticalLineWithDestination(dest: Bitmap; theColor: Color;
 							 x, y1, y2: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
@@ -1207,12 +1207,12 @@ exports
 	DrawBitmapWithDestination,
 	DrawBitmapPartWithDestination,
 	DrawPixelWithDestination,
-	DrawRectangle4,
-	DrawRectangle3,
-	FillRectangle2,
-	DrawLine2,
-	DrawHorizontalLine2,
-	DrawVerticalLine2,
+	DrawRectangleWithDestination,
+	//DrawRectangle3,
+	FillRectangleWithDestination,
+	DrawLineWithDestination,
+	DrawHorizontalLineWithDestination,
+	DrawVerticalLineWithDestination,
 	DrawCircle4,
 	DrawCircle3,
 	FillCircle2,

@@ -133,7 +133,7 @@ namespace SwinGame
         public static extern void OptimiseBitmap(Bitmap surface);
 
         [DllImport("SGSDK.dll", EntryPoint = "LoadBitmapWithTransparentColor", CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, Boolean transparent, int transparentColor);
+        private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, bool transparent, uint transparentColor);
         /// <summary>
         /// Load the specified image file
         /// </summary>
@@ -142,7 +142,8 @@ namespace SwinGame
         public static Bitmap LoadBitmap(String pathToBitmap)
         {
             Bitmap result;
-            result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, false, Color.Black.ToArgb());
+            int color = Color.Black.ToArgb();
+            result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, false, (uint)color);
             return result;
         }
 
@@ -156,12 +157,13 @@ namespace SwinGame
         public static Bitmap LoadBitmap(String pathToBitmap, Boolean transparent, Color transparentColor)
         {
             Bitmap result;
-            result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, transparent, transparentColor.ToArgb());
+            int color = transparentColor.ToArgb();
+            result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, transparent, (uint)color);
             return result;
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "LoadTransparentBitmap")]
-        private static extern IntPtr DLL_LoadTransparentBitmap(string pathToBitmap, int transparentColor);
+        private static extern IntPtr DLL_LoadTransparentBitmap(string pathToBitmap, uint transparentColor);
 
         /// <summary>
         /// Load an image with transparency
@@ -172,7 +174,8 @@ namespace SwinGame
         public static Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor)
         {
             Bitmap result;
-            result.pointer = DLL_LoadTransparentBitmap(pathToBitmap, transparentColor.ToArgb());
+            int color = transparentColor.ToArgb();
+            result.pointer = DLL_LoadTransparentBitmap(pathToBitmap, (uint)color);
             return result;
         }
 
@@ -215,7 +218,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "ClearSurfaceWithColor")]
-        private static extern void DLL_ClearSurfaceWithColor(IntPtr dest, int toColour);
+        private static extern void DLL_ClearSurfaceWithColor(IntPtr dest, uint toColour);
 
         /// <summary>
         /// Clear the bitmap with the specified color
@@ -224,7 +227,8 @@ namespace SwinGame
         /// <param name="toColour">The color used to clear</param>
         public static void ClearSurface(Bitmap dest, Color toColour)
         {
-            DLL_ClearSurfaceWithColor(dest.pointer, toColour.ToArgb());
+            int color = toColour.ToArgb();
+            DLL_ClearSurfaceWithColor(dest.pointer, (uint)color);
         }
 
         /// <summary>
@@ -233,7 +237,8 @@ namespace SwinGame
         /// <param name="dest">Bitmap to clear</param>
         public static void ClearSurface(Bitmap dest)
         {
-            DLL_ClearSurfaceWithColor(dest.pointer, Color.Black.ToArgb());
+            int color = Color.Black.ToArgb();
+            DLL_ClearSurfaceWithColor(dest.pointer, (uint)color);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "DrawBitmapWithDestination")]
@@ -271,7 +276,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "DrawPixelWithDestination")]
-        private static extern void DLL_DrawPixelWithDestination(IntPtr dest, int theColour, int x, int y);
+        private static extern void DLL_DrawPixelWithDestination(IntPtr dest, uint theColour, int x, int y);
 
         /// <summary>
         /// Draws a pixel onto the destination bitmap
@@ -282,11 +287,12 @@ namespace SwinGame
         /// <param name="y">The y location to draw the pixel at</param>
         public static void DrawPixel(Bitmap dest, Color theColour, int x, int y)
         {
-            DLL_DrawPixelWithDestination(dest.pointer, theColour.ToArgb(), x, y);
+            int color = theColour.ToArgb();
+            DLL_DrawPixelWithDestination(dest.pointer, (uint)color, x, y);
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "DrawRectangleWithDestination")]
-        private static extern void DLL_DrawRectangleWithDestination(IntPtr dest, int theColour, bool filled, int xPos, int yPos, int width, int height);
+        private static extern void DLL_DrawRectangleWithDestination(IntPtr dest, uint theColour, bool filled, int xPos, int yPos, int width, int height);
 
         /// <summary>
         /// Draws a rectangle on the destination bitmap
@@ -300,9 +306,76 @@ namespace SwinGame
         /// <param name="height">The height of the rectangle</param>
         public static void DrawRectangle(Bitmap dest, Color theColour, bool filled, int xPos, int yPos, int width, int height)
         {
-            DLL_DrawRectangleWithDestination(dest.pointer, theColour.ToArgb(), filled, xPos, yPos, width, height);
+            int color = theColour.ToArgb();
+            DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, filled, xPos, yPos, width, height);
         }
 
+        [DllImport("SGSDK.dll", EntryPoint = "FillRectangleWithDestination")]
+        private static extern void DLL_FillRectangleWithDestination(IntPtr dest, uint theColour, int xPos, int yPos, int width, int height);
 
+        /// <summary>
+        /// Draws a filled rectangle on the destination bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the rectangle</param>
+        /// <param name="xPos">The x location to draw the rectangle at</param>
+        /// <param name="yPos">The y location to draw the rectangle at</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        public static void FillRectangle(Bitmap dest, Color theColour, int xPos, int yPos, int width, int height)
+        {
+            int color = theColour.ToArgb();
+            DLL_FillRectangleWithDestination(dest.pointer, (uint)color, xPos, yPos, width, height);
+        }
+
+        /// <summary>
+        /// Draws the outline of a rectangle on the destination bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the rectangle</param>
+        /// <param name="xPos">The x location to draw the rectangle at</param>
+        /// <param name="yPos">The y location to draw the rectangle at</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        public static void DrawRectangle(Bitmap dest, Color theColour, int xPos, int yPos, int width, int height)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, false, xPos, yPos, width, height);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawLineWithDestination")]
+        private static extern void DLL_DrawLineWithDestination(IntPtr dest, uint theColour, int xPosStart, int yPosStart, int xPosEnd, int yPosEnd);
+
+        /// <summary>
+        /// Draws a line on the destination bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the line</param>
+        /// <param name="xPosStart">The x location to start the line at</param>
+        /// <param name="yPosStart">The y location to start the line at</param>
+        /// <param name="xPosEnd">The x location to end the line at</param>
+        /// <param name="yPosEnd">The y location to end the line at</param>
+        public static void DrawLine(Bitmap dest, Color theColour, int xPosStart, int yPosStart, int xPosEnd, int yPosEnd)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawLineWithDestination(dest.pointer, (uint)color, xPosStart, yPosStart, xPosEnd, yPosEnd);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "DrawHorizontalLineWithDestination")]
+        private static extern void DLL_DrawHorizontalLineWithDestination(IntPtr dest, uint theColour, int y, int x1, int x2);
+
+        /// <summary>
+        /// Draws a horizontal line on the destination bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the line</param>
+        /// <param name="y">The y location of the line</param>
+        /// <param name="x1">The starting x value of the line</param>
+        /// <param name="x2">The starting y value of the line</param>
+        public static void DrawHorizontalLine(Bitmap dest, Color theColour, int y, int x1, int x2)
+        {
+            int color = theColour.ToArgb();
+            DLL_DrawHorizontalLineWithDestination(dest.pointer, (uint)color, y, x1, x2);
+        }
     }
 }
