@@ -666,7 +666,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.Multiply(m1, m2);
 	end;
 	
-	function MultiplyVectors(const m: Matrix2D; const v: Vector): Vector;  cdecl; export;
+	function MultiplyVector(const m: Matrix2D; const v: Vector): Vector;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.Multiply(m, v);
 	end;
@@ -1174,7 +1174,7 @@ exports
 	ScaleMatrix,
 	RotationMatrix,
 	Multiply,
-	MultiplyVectors,
+	MultiplyVector,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
