@@ -181,7 +181,7 @@ implementation
 	end;
 
 	/// Limits the vector within the range min-max of X-Y. AVOID use... use
-  ///  LimitMagnitude
+  	///  LimitMagnitude
 	///
 	///	@param theVector		 The vector to limit
 	///	@param minX, maxX		The limited range of the vector's x

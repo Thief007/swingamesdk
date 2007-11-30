@@ -308,5 +308,133 @@ namespace SwinGame
         /// <returns>v1 + v2</returns>
         [DllImport("SGSDK.dll", EntryPoint = "AddVectors")]
         public static extern Vector AddVectors(Vector v1, Vector v2);
+
+        /// <summary>
+        /// Subtracts the Vector v1 and the Vector v2.
+        /// </summary>
+        /// <param name="v1">The vectors to work with</param>
+        /// <param name="v2">The vectors to work with</param>
+        /// <returns>v1 - v2</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "SubtractVectors")]
+        public static extern Vector SubtractVectors(Vector v1, Vector v2);
+
+        /// <summary>
+        /// Inverts the vector v. Changes the direction of the vector's x and y.
+        /// </summary>
+        /// <param name="theVector">The vector to invert</param>
+        /// <returns>A new inverted vector</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "InvertVector")]
+        public static extern Vector InvertVector(Vector theVector);
+
+        /// <summary>
+        /// Limits the vector within the range min-max of X-Y. AVOID use... use
+        ///  LimitMagnitude
+        /// </summary>
+        /// <param name="theVector">The vector to limit</param>
+        /// <param name="minX">The min range of the vector's x</param>
+        /// <param name="maxX">The max range of the vector's x</param>
+        /// <param name="minY">The min range of the vector's y</param>
+        /// <param name="maxY">The max range of the vector's y</param>
+        /// <returns>A new vector limited within that range</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "ChopVector")]
+        public static extern Vector ChopVector(Vector theVector, int minX, int maxX, int minY, int maxY);
+
+        /// <summary>
+        /// Limit the magnitude of a vector.
+        /// </summary>
+        /// <param name="theVector">The vector to limit</param>
+        /// <param name="maxMagnitude">The maximum magnitude of the vector.</param>
+        /// <returns>A new vector with the same direction as theVector,
+        ///	with a maximum magnitude of maxMagnitude</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "LimitVector")]
+        public static extern Vector LimitVector(Vector theVector, double maxMagnitude);
+
+        /// <summary>
+        /// Gets the unit vector of the passed in vector. The unit vector has a
+        ///	magnitude of 1, resulting in a vector that indicates the direction of
+        ///	the original vector.
+        /// </summary>
+        /// <param name="theVector">The vector to get the unit vector of</param>
+        /// <returns>The unit vector from the passed in vector</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "GetUnitVector")]
+        public static extern Vector GetUnitVector(Vector theVector);
+
+        /// <summary>
+        /// Indicates if the magnitude of the vector is 0.
+        /// </summary>
+        /// <param name="theVector">The vector to check</param>
+        /// <returns>True if the vector has values 0, 0</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "IsZeroVector")]
+        public static extern Vector IsZeroVector(Vector theVector);
+
+        /// <summary>
+        /// Returns the magnitude of a vector. The magnitude represents the length of
+        ///	the vector.
+        /// </summary>
+        /// <param name="theVector">The vector to get the magnitude of</param>
+        /// <returns>The magnitude of the vector</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "GetVectorMagnitude")]
+        public static extern double GetVectorMagnitude(Vector theVector);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        [DllImport("SGSDK.dll", EntryPoint = "DotProduct")]
+        public static extern double DotProduct(Vector v1, Vector v2);
+
+        /// <summary>
+        /// Multiplies a Vector by a number
+        /// </summary>
+        /// <param name="v1">The vector to multiply</param>
+        /// <param name="s1">The number to multiply the vector by</param>
+        /// <returns>The multiplyed vector</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "MultiplyVector")]
+        public static extern Vector MultiplyVector(Vector v1, double s1);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <returns></returns>
+        [DllImport("SGSDK.dll", EntryPoint = "CalculateAngleNumber")]
+        public static extern double CalculateAngle(double x1, double y1, double x2, double y2);
+
+        [DllImport("SGSDK.dll", EntryPoint = "CalculateAngleSprite")]
+        private static extern double CalculateAngle(IntPtr sprite1, IntPtr sprite2);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sprite1"></param>
+        /// <param name="sprite2"></param>
+        /// <returns></returns>
+        public static double CalculateAngle(Sprite sprite1, Sprite sprite2)
+        {
+            return CalculateAngle(sprite1.Pointer, sprite2.Pointer);
+        }
+
+        [DllImport("SGSDK.dll", EntryPoint = "TranslationMatric")]
+        public static extern Matrix2D TranslationMatric(double dx, double dy);
+
+        [DllImport("SGSDK.dll", EntryPoint = "ScaleMatrix")]
+        public static extern Matrix2D ScaleMatrix(double scale);
+
+        [DllImport("SGSDK.dll", EntryPoint = "RotationMatrix")]
+        public static extern Matrix2D RotationMatrix(double deg);
+
+
+        [DllImport("SGSDK.dll", EntryPoint = "Multiply")]
+        public static extern Matrix2D Multiply(Matrix2D m1, Matrix2D m2);
+
+        [DllImport("SGSDK.dll", EntryPoint = "MultiplyVectors")]
+        public static extern Matrix2D Multiply(const Matrix2D m, Vector v);
+
+
+
     }
 }
