@@ -19,6 +19,10 @@ namespace SwinGame
         CollisionRangeLessThan = 2
     }
 
+    /// <summary>
+    /// This record is used to represent transformations that can be
+    /// used to apply these changes to vectors.
+    /// </summary>
     public struct Matrix2D
     {
         internal float[,] _Matrix2D;
@@ -130,7 +134,6 @@ namespace SwinGame
         [DllImport("SGSDK.dll", EntryPoint = "HasSpriteCollidedWithBitmap")]
         private static extern bool DLL_HasSpriteCollidedWithBitmap();///to do!!
                                                                     ///
-
         [DllImport("SGSDK.dll", EntryPoint = "CollisionWithinBitmapImages")]
         private static extern bool DLL_CollisionWithinBitmapImages(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int x2, int y2, bool bounded2);
         /// <summary>
@@ -238,5 +241,72 @@ namespace SwinGame
         {
             return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
         }
+
+
+        [DllImport("SGSDK.dll", EntryPoint = "HaveBitmapsCollided")]
+        private static extern bool DLL_HaveBitmapsCollided(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int  x2, int y2, bool bounded2);
+        /// <summary>
+        /// Checks to see if two bitmaps have collided, this performs a bounded check
+        ///	then, if required, it performs a per pixel check on the colliding region.
+        /// </summary>
+        /// <param name="image1">The bitmap to check for collision</param>
+        /// <param name="x1">The x location of image 1</param>
+        /// <param name="y1">The y location of image 1</param>
+        /// <param name="bounded1">Indicates if image1 should use bounded collision</param>
+        /// <param name="image2">The bitmap to check for collision</param>
+        /// <param name="x2">The x location of image 2</param>
+        /// <param name="y2">The y location of image 2</param>
+        /// <param name="bounded2">Indicates if image2 should use bounded collision</param>
+        /// <returns>True if the bitmaps collide.</returns>
+        public static bool HaveBitmapsCollided(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2)
+        {
+            return DLL_HaveBitmapsCollided(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
+        }
+        /// <summary>
+        /// Checks to see if two bitmaps have collided, this performs a bounded check
+        ///	then, if required, it performs a per pixel check on the colliding region.
+        /// </summary>
+        /// <param name="image1">The bitmap to check for collision</param>
+        /// <param name="x1">The x location of image 1</param>
+        /// <param name="y1">The y location of image 1</param>
+        /// <param name="image2">The bitmap to check for collision</param>
+        /// <param name="x2">The x location of image 2</param>
+        /// <param name="y2">The y location of image 2</param>
+        /// <returns>True if the bitmaps collide.</returns>
+        public static bool HaveBitmapsCollided(Bitmap image1, int x1, int y1, Bitmap image2, int x2, int y2)
+        {
+            return DLL_HaveBitmapsCollided(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
+        }
+
+        /// <summary>
+        /// Creates a new vector with values x and y, possibly with an inverted y. The
+        ///	inversion of the y value provides a convienient option for handling
+        ///	screen related vectors.
+        /// </summary>
+        /// <param name="x">Initial values for the vector</param>
+        /// <param name="y">Initial values for the vector</param>
+        /// <param name="invertY">Indicates if the y value should be inverted.</param>
+        /// <returns>A new vector with values x and y</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "CreateVector")]
+        public static extern Vector CreateVector(double x, double y, bool invertY);
+        /// <summary>
+        /// Creates a new vector with values x and y.
+        /// </summary>
+        /// <param name="x">Initial values for the vector</param>
+        /// <param name="y">Initial values for the vector</param>
+        /// <returns>A new vector with values x and y</returns>
+        public static Vector CreateVector(double x, double y)
+        {
+            return CreateVector(x, y, false);
+        }
+
+        /// <summary>
+        /// Adds the Vector v1 and the Vector v2.
+        /// </summary>
+        /// <param name="v1">The vectors to work with</param>
+        /// <param name="v2">The vectors to work with</param>
+        /// <returns>v1 + v2</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "AddVectors")]
+        public static extern Vector AddVectors(Vector v1, Vector v2);
     }
 }
