@@ -129,7 +129,7 @@ implementation
 	///	fonts multiple times and set the style for each if needed.
 	///
 	///	@param font:	 The font to set the style of
-	///	@param style:	the new style for the font, values can be ORed together
+	///	@param style:	 The new style for the font, values can be read together
 	///
 	/// Side Effects:
 	///	- The font's style is changed

@@ -367,13 +367,13 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 							
-	procedure DrawText1(dest: Bitmap; theText: String; textColor: Colour;
+	procedure DrawTextOnBitmap(dest: Bitmap; theText: String; textColor: Colour;
 					theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
 	end;
 
-	procedure DrawTextLines1(dest: Bitmap; theText: String;
+	procedure DrawTextLinesOnBitmap(dest: Bitmap; theText: String;
 							textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); cdecl; export;
@@ -1131,8 +1131,8 @@ exports
 	FreeFont,
 	DrawText,
 	DrawTextLines,
-	DrawText1,
-	DrawTextLines1,
+	DrawTextOnBitmap,
+	DrawTextLinesOnBitmap,
 	TextWidth,
 	TextHeight,
 	DrawFramerate,
