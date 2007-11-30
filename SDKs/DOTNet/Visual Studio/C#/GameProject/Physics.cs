@@ -427,12 +427,23 @@ namespace SwinGame
         [DllImport("SGSDK.dll", EntryPoint = "RotationMatrix")]
         public static extern Matrix2D RotationMatrix(double deg);
 
-
+        /// <summary>
+        /// Multiplies two matrixs 
+        /// </summary>
+        /// <param name="m1">The first Matrix</param>
+        /// <param name="m2">The second Matrix</param>
+        /// <returns>The combined Matrixes</returns>
         [DllImport("SGSDK.dll", EntryPoint = "Multiply")]
-        public static extern Matrix2D Multiply(Matrix2D m1, Matrix2D m2);
+        public static extern Matrix2D Multiply(ref Matrix2D m1, ref Matrix2D m2);//const
 
-        [DllImport("SGSDK.dll", EntryPoint = "MultiplyVectors")]
-        public static extern Matrix2D Multiply(const Matrix2D m, Vector v);
+        /// <summary>
+        /// Multiplies 1 Vector and 1 Matrix2D
+        /// </summary>
+        /// <param name="m">The Matrix2D</param>
+        /// <param name="v">The Vector</param>
+        /// <returns>The resulting Matrix2D</returns>
+        [DllImport("SGSDK.dll", EntryPoint = "MultiplyVector")]
+        public static extern Matrix2D Multiply(ref Matrix2D m, ref Vector v);//const
 
 
 
