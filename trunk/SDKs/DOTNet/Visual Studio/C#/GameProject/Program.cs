@@ -18,6 +18,9 @@ namespace GameProject
             Console.WriteLine("here");
             Core.OpenGraphicsWindow("Hi", 800, 600);
 
+            Bitmap hey = Graphics.LoadBitmap("SwinGameAni.png");
+            //hey.pointer = IntPtr.Zero;
+
             Audio.OpenAudio();
 
             Font font = Text.LoadFont("barial.ttf",20);
@@ -41,6 +44,8 @@ namespace GameProject
                 {
                     Audio.PlaySoundEffect(effect);
                 }
+
+                Graphics.DrawBitmap(hey, 10, 10);
 
                 Core.RefreshScreen();
                 Graphics.ClearScreen();
