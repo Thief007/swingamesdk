@@ -6,6 +6,9 @@ using System.Runtime.InteropServices;
 namespace SwinGame
 {
 
+    /// <summary>
+    /// Mouse Buttons
+    /// </summary>
     public enum MouseButton
     {
         LeftButton = 1,
@@ -15,6 +18,9 @@ namespace SwinGame
         MouseWheelDown = 5
     }
     
+    /// <summary>
+    /// Keys that can be used on the Keyboard
+    /// </summary>
     public enum Keys
     {
         VK_BACK = 8,
@@ -124,35 +130,111 @@ namespace SwinGame
 	    VK_EQUALS = 61
     }
     
+    /// <summary>
+    /// Input Class
+    ///
+    /// Handles all the Mouse and Keyboard input functions
+    /// </summary>
     public class Input
     {
+        /// <summary>
+        /// Gets the Mouse Position
+        /// </summary>
+        /// <returns>Vector representing the position of the mouse</returns>
         [DllImport("SGSDK.dll")]
         public static extern Vector GetMousePosition();
 
+        /// <summary>
+        /// Gets the Movement of the mouse
+        /// </summary>
+        /// <returns>Vector representing the movement of the mouse</returns>
         [DllImport("SGSDK.dll")]
         public static extern Vector GetMouseMovement();
 
+        /// <summary>
+        /// This function checks if the specified mouse button is
+        /// being clicked
+        /// </summary>
+        /// <param name="button">Mouse button to check</param>
+        /// <returns>True if the mouse button is being clicked</returns>
         [DllImport("SGSDK.dll")]
         public static extern bool IsMouseDown(MouseButton button);
 
+        /// <summary>
+        /// This function checks if the specified mouse button is not
+        /// being clicked
+        /// </summary>
+        /// <param name="button">Mouse button to check</param>
+        /// <returns>True if the mouse button is not being clicked</returns>
         [DllImport("SGSDK.dll")]
         public static extern bool IsMouseUp(MouseButton button);
 
+        /// <summary>
+        /// This functions checks if the mouse button specified has
+        /// been clicked.
+        /// </summary>
+        /// <param name="button">Mouse button to check</param>
+        /// <returns>True if the mouse button has been clicked</returns>
         [DllImport("SGSDK.dll")]
         public static extern bool MouseWasClicked(MouseButton button);
 
+        /// StartReadingText start the API reading a string values from the user.
+	    ///	Entry is completed when the user presses enter, and aborted with escape.
+	    ///	If the user aborts entry the result is an empty string. Text entry is
+	    ///	updated as part of ProcessEvents, and is drawn to the screen as part of
+	    ///	the RefreshScreen call.
+	    ///
+	    ///	@param textColor:	The color of the text entered by the user
+	    ///	@param maxLength:	The maximum length of the string the user can enter
+	    ///	@param theFont:		The font used to draw the text entered
+	    ///	@param x, y:			 The location at which to draw the text entered
         //[DllImport("SGSDK.dll")]
         //public static extern void StartReadingText(Color color, int maxLength, Font theFont, int x, int y);
 
+        /// <summary>
+        /// IsReadingText indicates if the API is currently reading text from the
+        ///	user. Calling StartReadingText will set this to true, and it becomes
+        ///	false when the user presses enter or escape. At this point you can
+        ///	read the string entered as either ASCII or Unicode.
+        /// </summary>
+        /// <returns>True while the API is reading text from the user</returns>
+        [DllImport("SGSDK.dll")]  
+	    public static extern bool IsReadingText();
+
+        /// <summary>
+        /// TextReadAsASCII allows you to read the value of the string entered by the
+        ///	user as ASCII. See TextReasAsUNICODE, StartReadingText and IsReadingText
+        ///	for more details.
+        /// </summary>
+        /// <returns>The string entered by the user</returns>
         [DllImport("SGSDK.dll")]
         public static extern String TextReadAsASCII();
 
+        /// <summary>
+        /// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
+        ///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
+        /// </summary>
+        /// <returns>The string entered by the user</returns>
         [DllImport("SGSDK.dll")]
         public static extern String TextReadAsUNICODE();
 
+        /// <summary>
+        /// Returns true when the key requested is being held down. This is updated
+        ///	as part of the ProcessEvents call. Use the key codes from the KeyCodes
+        ///	unit.
+        /// </summary>
+        /// <param name="key">Key</param>
+        /// <returns>True if the key is currently being held down</returns>
         [DllImport("SGSDK.dll")]
         public static extern bool IsKeyPressed(Keys key);
 
+        /// <summary>
+        /// Returns true when a key is typed. This occurs when the key is pressed on the 
+        /// keyboard, and will not reoccur until it is released and pressed again. This
+        /// needs to be checked each ProcessEvents loop.
+        /// </summary>
+        /// <param name="key">Key code to check</param>
+        /// <returns>True if the key is pressed</returns>
         [DllImport("SGSDK.dll")]
         public static extern bool WasKeyTyped(Keys key);
     }
