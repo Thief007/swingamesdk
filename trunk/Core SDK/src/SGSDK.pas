@@ -636,12 +636,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.MultiplyVector(v1, s1);
 	end;
 
- 	function CalculateAngle(x1, y1, x2, y2: Single): Single;  cdecl; export;
+ 	function CalculateAngleNumber(x1, y1, x2, y2: Single): Single;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
 	end;
 	
-	function CalculateAngle1(sprite1, sprite2: Sprite): Single;  cdecl; export;
+	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
 	end;
@@ -666,7 +666,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.Multiply(m1, m2);
 	end;
 	
-	function Multiply1(const m: Matrix2D; const v: Vector): Vector;  cdecl; export;
+	function MultiplyVectors(const m: Matrix2D; const v: Vector): Vector;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.Multiply(m, v);
 	end;
@@ -806,17 +806,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
 	end;
 	
-	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : Boolean;
+	procedure DrawRectangle4(dest: Bitmap; theColour : Colour; filled : Boolean;
 							xPos, yPos, width, height : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
 	end;
 	
-	{procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
+	procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawRectangle(dest, theColour, xPos, yPos, width, height);
-	end;}
+	end;
 	
 	procedure FillRectangle2(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); cdecl; export;
@@ -1168,13 +1168,13 @@ exports
 	GetVectorMagnitude,
 	DotProduct,
 	MultiplyVector,
-	CalculateAngle,
-	CalculateAngle1,
+	CalculateAngleNumber,
+	CalculateAngleSprite,
 	TranslationMatric,
 	ScaleMatrix,
 	RotationMatrix,
 	Multiply,
-	Multiply1,
+	MultiplyVectors,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1207,8 +1207,8 @@ exports
 	DrawBitmapWithDestination,
 	DrawBitmapPartWithDestination,
 	DrawPixelWithDestination,
-	//DrawRectangle4,
-	//DrawRectangle3,
+	DrawRectangle4,
+	DrawRectangle3,
 	FillRectangle2,
 	DrawLine2,
 	DrawHorizontalLine2,
