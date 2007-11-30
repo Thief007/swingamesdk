@@ -679,12 +679,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function GetSpriteBitmap(surface: Sprite; id: Integer); Bitmap; cdecl; export;
+	function GetSpriteBitmap(surface: Sprite; id: Integer): Bitmap; cdecl; export;
 	begin
 		result := surface.bitmaps[id];
 	end;
 	
-	function GetSpriteX(surface: Sprite); Single; cdecl; export;
+	function GetSpriteX(surface: Sprite): Single; cdecl; export;
 	begin
 		result := surface.xPos;
 	end;
@@ -694,7 +694,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		surface.xPos := val;
 	end;
 	
-	function GetSpriteY(surface: Sprite); Single; cdecl; export;
+	function GetSpriteY(surface: Sprite): Single; cdecl; export;
 	begin
 		result := surface.yPos;
 	end;
@@ -704,7 +704,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		surface.yPos := val;
 	end;
 	
-	function GetSpriteCurrentFrame(surface: Sprite); Integer; cdecl; export;
+	function GetSpriteCurrentFrame(surface: Sprite): Integer; cdecl; export;
 	begin
 		result := surface.currentFrame;
 	end;
@@ -714,7 +714,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		surface.currentFrame := val;
 	end;
 	
-	function GetSpriteUsePixelCollision(surface: Sprite); boolean; cdecl; export;
+	function GetSpriteUsePixelCollision(surface: Sprite): Integer; cdecl; export;
 	begin
 		if surface.usePixelCollision then
 		begin
@@ -1184,6 +1184,15 @@ exports
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	GetSpriteBitmap,
+	GetSpriteX,
+	GetSpriteY,
+	GetSpriteCurrentFrame,
+	GetSpriteUsePixelCollision,
+	SetSpriteX,
+	SetSpriteY,
+	SetSpriteCurrentFrame,
+	SetSpriteUsePixelCollision,
 	NewSDLRect,
 	CreateBitmap,
 	OptimiseBitmap,
