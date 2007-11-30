@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace SwinGame
 {
@@ -13,117 +14,146 @@ namespace SwinGame
         MouseWheelUp,
         MouseWheelDown
     }
-    /*
+    
     public enum Keys
     {
-        VK_BACK = SDLK_BACKSPACE;
-	    VK_TAB = SDLK_TAB;
-	    VK_CLEAR = SDLK_CLEAR;
-	    VK_RETURN = SDLK_RETURN;
-	    VK_SHIFT = SDLK_LSHIFT;
-	    VK_CONTROL = SDLK_LCTRL;
-	    VK_MENU = SDLK_MENU;
-	    VK_ALT = SDLK_LALT;
-	    VK_PAUSE = SDLK_PAUSE;
-	    VK_CAPITAL = SDLK_CAPSLOCK;
-	    VK_ESCAPE = SDLK_ESCAPE;
-	    VK_SPACE = SDLK_SPACE;
-	    VK_PAGE_UP = SDLK_PAGEUP;
-	    VK_PAGE_DOWN = SDLK_PAGEDOWN;
-	    VK_END = SDLK_END;
-	    VK_HOME = SDLK_HOME;
-	    VK_LEFT = SDLK_LEFT;
-	    VK_UP = SDLK_UP;
-	    VK_RIGHT = SDLK_RIGHT;
-	    VK_DOWN = SDLK_DOWN;
-	    VK_PRINT = SDLK_PRINT;
-	    VK_INSERT = SDLK_INSERT;
-	    VK_DELETE = SDLK_DELETE;
-	    VK_HELP = SDLK_HELP;
-	    VK_0 = SDLK_0;
-	    VK_1 = SDLK_1;
-	    VK_2 = SDLK_2;
-	    VK_3 = SDLK_3;
-	    VK_4 = SDLK_4;
-	    VK_5 = SDLK_5;
-	    VK_6 = SDLK_6;
-	    VK_7 = SDLK_7;
-	    VK_8 = SDLK_8;
-	    VK_9 = SDLK_9;
-	    VK_A = SDLK_A;
-	    VK_B = SDLK_B;
-	    VK_C = SDLK_C;
-	    VK_D = SDLK_D;
-	    VK_E = SDLK_E;
-	    VK_F = SDLK_F;
-	    VK_G = SDLK_G;
-	    VK_H = SDLK_H;
-	    VK_I = SDLK_I;
-	    VK_J = SDLK_J;
-	    VK_K = SDLK_K;
-	    VK_L = SDLK_L;
-	    VK_M = SDLK_M;
-	    VK_N = SDLK_N;
-	    VK_O = SDLK_O;
-	    VK_P = SDLK_P;
-	    VK_Q = SDLK_Q;
-	    VK_R = SDLK_R;
-	    VK_S = SDLK_S;
-	    VK_T = SDLK_T;
-	    VK_U = SDLK_U;
-	    VK_V = SDLK_V;
-	    VK_W = SDLK_W;
-	    VK_X = SDLK_X;
-	    VK_Y = SDLK_Y;
-	    VK_Z = SDLK_Z;
-	    VK_LWIN = SDLK_LSUPER;
-	    VK_RWIN = SDLK_RSUPER;
-	    VK_APPS = SDLK_MENU;
-	    VK_SLEEP = SDLK_POWER;
-	    VK_NUMPAD0 = SDLK_KP0;
-	    VK_NUMPAD1 = SDLK_KP1;
-	    VK_NUMPAD2 = SDLK_KP2;
-	    VK_NUMPAD3 = SDLK_KP3;
-	    VK_NUMPAD4 = SDLK_KP4;
-	    VK_NUMPAD5 = SDLK_KP5;
-	    VK_NUMPAD6 = SDLK_KP6;
-	    VK_NUMPAD7 = SDLK_KP7;
-	    VK_NUMPAD8 = SDLK_KP8;
-	    VK_NUMPAD9 = SDLK_KP9;
-	    VK_MULTIPLY = SDLK_KP_MULTIPLY;
-	    VK_ADD = SDLK_KP_PLUS;
-	    VK_SUBTRACT = SDLK_MINUS;
-	    VK_DECIMAL = SDLK_KP_PERIOD;
-	    VK_DIVIDE = SDLK_KP_DIVIDE;
-	    VK_F1 = SDLK_F1;
-	    VK_F2 = SDLK_F2;
-	    VK_F3 = SDLK_F3;
-	    VK_F4 = SDLK_F4;
-	    VK_F5 = SDLK_F5;
-	    VK_F6 = SDLK_F6;
-	    VK_F7 = SDLK_F7;
-	    VK_F8 = SDLK_F8;
-	    VK_F9 = SDLK_F9;
-	    VK_F10 = SDLK_F10;
-	    VK_F11 = SDLK_F11;
-	    VK_F12 = SDLK_F12;
-	    VK_F13 = SDLK_F13;
-	    VK_F14 = SDLK_F14;
-	    VK_F15 = SDLK_F15;
-	    VK_NUMLOCK = SDLK_NUMLOCK;
-	    VK_SCROLL = SDLK_SCROLLOCK;
-	    VK_LSHIFT = SDLK_LSHIFT;
-	    VK_RSHIFT = SDLK_RSHIFT;
-	    VK_LCONTROL = SDLK_LCTRL;
-	    VK_RCONTROL = SDLK_RCTRL;
-	    VK_LMENU = SDLK_LMETA;
-	    VK_LALT = SDLK_LALT;
-	    VK_RMENU = SDLK_RMETA;
-	    VK_RALT = SDLK_RALT;
-	    VK_EQUALS = SDLK_EQUALS;
+        VK_BACK = 8,
+	    VK_TAB = 9,
+	    VK_CLEAR = 12,
+	    VK_RETURN = 13,
+	    VK_SHIFT = 304,
+	    VK_CONTROL = 306,
+	    VK_MENU = 319,
+	    VK_ALT = 308,
+	    VK_PAUSE = 19,
+	    VK_CAPITAL = 301,
+	    VK_ESCAPE = 27,
+	    VK_SPACE = 32,
+	    VK_PAGE_UP = 280,
+	    VK_PAGE_DOWN = 281,
+	    VK_END = 279,
+	    VK_HOME = 278,
+	    VK_LEFT = 276,
+	    VK_UP = 273,
+	    VK_RIGHT = 275,
+	    VK_DOWN = 274,
+	    VK_PRINT = 316,
+	    VK_INSERT = 277,
+	    VK_DELETE = 127,
+	    VK_HELP = 315,
+	    VK_0 = 48,
+	    VK_1 = 49,
+	    VK_2 = 50,
+	    VK_3 = 51,
+	    VK_4 = 52,
+	    VK_5 = 53,
+	    VK_6 = 54,
+	    VK_7 = 55,
+	    VK_8 = 56,
+	    VK_9 = 57,
+	    VK_A = 97,
+	    VK_B = 98,
+	    VK_C = 99,
+	    VK_D = 100,
+	    VK_E = 101,
+	    VK_F = 102,
+	    VK_G = 103,
+	    VK_H = 104,
+	    VK_I = 105,
+	    VK_J = 106,
+	    VK_K = 107,
+	    VK_L = 108,
+	    VK_M = 109,
+	    VK_N = 110,
+	    VK_O = 111,
+	    VK_P = 112,
+	    VK_Q = 113,
+	    VK_R = 114,
+	    VK_S = 115,
+	    VK_T = 116,
+	    VK_U = 117,
+	    VK_V = 118,
+	    VK_W = 119,
+	    VK_X = 120,
+	    VK_Y = 121,
+	    VK_Z = 122,
+	    VK_LWIN = 311,
+	    VK_RWIN = 312,
+	    VK_APPS = 319,
+	    VK_SLEEP = 320,
+	    VK_NUMPAD0 = 256,
+	    VK_NUMPAD1 = 257,
+	    VK_NUMPAD2 = 258,
+	    VK_NUMPAD3 = 259,
+	    VK_NUMPAD4 = 260,
+	    VK_NUMPAD5 = 261,
+	    VK_NUMPAD6 = 262,
+	    VK_NUMPAD7 = 263,
+	    VK_NUMPAD8 = 264,
+	    VK_NUMPAD9 = 265,
+	    VK_MULTIPLY = 268,
+	    VK_ADD = 270,
+	    VK_SUBTRACT = 269,
+	    VK_DECIMAL =  266,
+	    VK_DIVIDE = 267,
+	    VK_F1 = 282,
+	    VK_F2 = 283,
+	    VK_F3 = 284,
+	    VK_F4 = 285,
+	    VK_F5 = 286,
+	    VK_F6 = 287,
+	    VK_F7 = 288,
+	    VK_F8 = 289,
+	    VK_F9 = 290,
+	    VK_F10 = 291,
+	    VK_F11 = 292,
+	    VK_F12 = 293,
+	    VK_F13 = 294,
+	    VK_F14 = 295,
+	    VK_F15 = 296,
+	    VK_NUMLOCK = 300,
+	    VK_SCROLL = 302,
+	    VK_LSHIFT = 304,
+	    VK_RSHIFT = 303,
+	    VK_LCONTROL = 305,
+	    VK_RCONTROL = 306,
+	    VK_LMENU = 310,
+	    VK_LALT = 308,
+	    VK_RMENU = 309,
+	    VK_RALT = 307,
+	    VK_EQUALS = 61
     }
-    */
-    class Input
+    
+    public class Input
     {
+        [DllImport("SGSDK.dll")]
+        public static extern Vector GetMousePosition();
+
+        [DllImport("SGSDK.dll")]
+        public static extern Vector GetMouseMovement();
+
+        [DllImport("SGSDK.dll")]
+        public static extern bool IsMouseDown(MouseButton button);
+
+        [DllImport("SGSDK.dll")]
+        public static extern bool IsMouseUp(MouseButton button);
+
+        [DllImport("SGSDK.dll")]
+        public static extern bool MouseWasClicked(MouseButton button);
+
+        //[DllImport("SGSDK.dll")]
+        //public static extern void StartReadingText(Color color, int maxLength, Font theFont, int x, int y);
+
+        [DllImport("SGSDK.dll")]
+        public static extern String TextReadAsASCII();
+
+        [DllImport("SGSDK.dll")]
+        public static extern String TextReadAsUNICODE();
+
+        [DllImport("SGSDK.dll")]
+        public static extern bool IsKeyPressed(Keys key);
+
+        [DllImport("SGSDK.dll")]
+        public static extern bool WasKeyTyped(Keys key);
     }
 }
