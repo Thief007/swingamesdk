@@ -17,6 +17,10 @@ if "%1"=="clean" goto cleaning
 	
 	copy "%LibDir%\*.dll" "%Output%"
 
+	del /Q "%Output%\*.o"
+	del /Q "%Output%\*.ppu"
+	del /Q "%Output%\*.a"
+
 	echo Finished
 goto end
 
