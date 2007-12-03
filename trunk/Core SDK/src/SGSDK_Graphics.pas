@@ -499,8 +499,8 @@ implementation
 		if isMulti then
 		begin
 			result.spriteKind := AnimMultiSprite;
-			result.cols := image.height div scr.height;
-			result.row := image.width div scr.width;
+			result.cols := image.height div height;
+			result.row := image.width div width;
 			SetLength(result.framesPerCell, Length(framesPerCell));
 			for i := 0 to High(framesPerCell) do
 			begin
@@ -760,7 +760,7 @@ implementation
 						if spriteToDraw.endingAction = ReverseLoop then
 						begin
 							spriteToDraw.reverse := true;
-							spriteToDraw.currentFrame := High(spriteToDraw.framesPerCell) - 1;
+							spriteToDraw.currentFrame := SpriteToDraw.currentFrame - 1;
 						end;
 						if spriteToDraw.endingAction = Loop then
 							spriteToDraw.currentFrame := 0;

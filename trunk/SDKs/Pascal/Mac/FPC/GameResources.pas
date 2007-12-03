@@ -36,7 +36,8 @@ implementation
 		_Sounds: Array [GameSounds] of SoundEffect;
 		_Music: Array [GameMusicResources] of Music;
 
-		_Background, _Animation: Bitmap;
+		_Background: Bitmap;
+		_Animation: Sprite;
 		_LoadingFont: Font;
  		_StartSound: SoundEffect;
  	
@@ -51,7 +52,8 @@ implementation
 		begin
 			DrawBitmap(_Background, 0, 0);
 			
-			DrawBitmapPart(_Animation, 0, i * 184, 712, 184, 41, 242);
+			DrawSprite(_Animation);
+			UpdateSprite(_Animation);
 			
 			Sleep(67);
 			
@@ -62,13 +64,25 @@ implementation
  	end;
  	
 	procedure ShowLoadingScreen();
+	var
+		i: Integer;
+		tempInt: Array of Integer;
+		
 	begin
 		_Background := LoadBitmap(GetPathToResource('SplashBack.png', ImageResource));
 		DrawBitmap(_Background, 0, 0);
 		RefreshScreen();
 		ProcessEvents();
 		
-		_Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource));
+		SetLength(tempInt, 14);
+		
+		for i := 0 to 13 do
+		begin
+			tempInt[i] := 0;
+		end;
+		_Animation := CreateSprite(LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource)), true, tempInt, ReverseLoop, 712, 184);
+		_Animation.xPos := 41;
+		_Animation.yPos := 242;
 		_LoadingFont := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);
 		_StartSound := LoadSoundEffect(GetPathToResource('SwinGameStart.ogg', SoundResource));
 	
@@ -88,7 +102,7 @@ implementation
 		RefreshScreen();
 		FreeFont(_LoadingFont);
 		FreeBitmap(_Background);
-		FreeBitmap(_Animation);
+		FreeSprite(_Animation);
 		FreeSoundEffect(_StartSound);
 	end;
  
