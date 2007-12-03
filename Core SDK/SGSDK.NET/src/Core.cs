@@ -97,7 +97,7 @@ namespace SwinGame
         /// <param name="caption">Caption for the Window</param>
         /// <param name="width">Width of the Window</param>
         /// <param name="height">Height of the Window</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention=CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl)]
         public static extern void OpenGraphicsWindow(String caption, int width, int height);
         
         /// <summary>
