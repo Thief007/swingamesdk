@@ -11,10 +11,9 @@ namespace PChar_Test
         static void Main(string[] args)
         {
             TestClass.SetString("This is a test");
-            //TestClass.WriteString();
-
-           
-
+            TestClass.WriteString();
+            Console.WriteLine(TestClass.GetString());
+            Console.Write("Enter to quit");
             Console.ReadLine();
         }
     }
