@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.IO;
+
 
 namespace SwinGame
 {
@@ -34,7 +36,7 @@ namespace SwinGame
     public struct Bitmap
     {
         internal IntPtr pointer;
-
+        
         [DllImport("SGSDK.dll")]
         private static extern int GetBitmapWidth(IntPtr pointer);
         [DllImport("SGSDK.dll")]
@@ -95,7 +97,7 @@ namespace SwinGame
         /// <param name="caption">Caption for the Window</param>
         /// <param name="width">Width of the Window</param>
         /// <param name="height">Height of the Window</param>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention=CallingConvention.Cdecl)]
         public static extern void OpenGraphicsWindow(String caption, int width, int height);
         
         /// <summary>
@@ -104,7 +106,7 @@ namespace SwinGame
         ///	is updated by the ProcessEvents routine. 
         /// </summary>
         /// <returns>Returns true if the window has been requested to close</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool WindowCloseRequested();
 
         /// <summary>
@@ -112,7 +114,7 @@ namespace SwinGame
         ///	routine checks the current keyboard and mouse states. This routine must
         ///	be called frequently within your game loop to enable user interaction.
         /// </summary>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ProcessEvents();
 
         /// <summary>
@@ -121,7 +123,7 @@ namespace SwinGame
         ///	any kind of bitmap file.
         /// </summary>
         /// <param name="iconFilename">The name of the file to load as the image icon</param>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetIcon(String iconFilename);
 
         /// <summary>
@@ -129,14 +131,14 @@ namespace SwinGame
         /// </summary>
         /// <param name="width">New width of the Screen</param>
         /// <param name="height">New height of the Screen</param>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ChangeScreenSize(int width, int height);
 
         /// <summary>
         /// Switches the application to full screen or back from full screen to
         ///	windowed.
         /// </summary>
-	    [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ToggleFullScreen();
 
         /// <summary>
@@ -144,31 +146,31 @@ namespace SwinGame
         ///	anything to the screen. This will draw all drawing operations, as well
         ///	as the text being entered by the user.
         /// </summary>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void RefreshScreen();
 	
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
         ///	current directory.
         /// <param name="basename">The base name for the screen shot</param>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void TakeScreenshot(String basename);
 
         /// <summary>
         /// Gets the Screen's Width
         /// </summary>
         /// <returns>The Screen Width</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ScreenWidth();
 	
         /// <summary>
         /// Gets the Screen's Height
         /// </summary>
         /// <returns>The Screen Height</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ScreenHeight();
-        
-        [DllImport("SGSDK.dll", EntryPoint= "GetColourRGBA")]
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetColourRGBA")]
         private static extern int DLL_GetColor(Byte red, Byte green, Byte blue, Byte alpha);
 
         //function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
@@ -204,7 +206,7 @@ namespace SwinGame
         /// Returns the average framerate for the last 10 frames as an integer.
 	    /// </summary>
 	    /// <returns>The current average framerate</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetFramerate();
 	    
         /// <summary>
@@ -212,7 +214,7 @@ namespace SwinGame
         ///	determine timing operations, such as updating the game elements.
         /// </summary>
         /// <returns>The number of milliseconds passed</returns>
-	    [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 GetTicks();
 
         /// <summary>
@@ -221,15 +223,15 @@ namespace SwinGame
         /// </summary>
         /// <param name="time">The number of milliseconds to sleep</param>
         /// <returns>Delay before returning</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 Sleep(UInt32 time);
-	
-        
-        [DllImport("SGSDK.dll" ,EntryPoint= "getPathToResourceWithKind")]
-        private static extern String DLL_getPathToResourceWithKind(String filename, ResourceKind kind);
-        
-        [DllImport("SGSDK.dll",EntryPoint= "getPathToResource")]
-        private static extern String DLL_getPathToResource(String filename);
+
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithKind")]
+        private static extern String DLL_GetPathToResourceWithKind(String filename, ResourceKind kind);
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResource")]
+        private static extern String DLL_GetPathToResource(String filename);
 
         /// <summary>
         /// Gets the resource to an image, sound, font or other type of resource
@@ -242,16 +244,14 @@ namespace SwinGame
         /// <param name="filename">filename that you need to get the path of</param>
         /// <param name="kind">The type of resource it is</param>
         /// <returns>A Path to the Resource</returns>
-        public static String getPathToResource(String filename, ResourceKind kind)
+        public static String GetPathToResource(String filename, ResourceKind kind)
         {
-            if (kind != ResourceKind.None)
-            {
-                return DLL_getPathToResourceWithKind(filename, kind);
-            }
-            else
-            {
-                return DLL_getPathToResource(filename);
-            }
+            return DLL_GetPathToResourceWithKind(filename, kind);
+        }
+
+        public static String GetPathToResource(String filename)
+        {
+            return DLL_GetPathToResource(filename);
         }
 	    
         /// <summary>
@@ -259,7 +259,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="angle">Angle</param>
         /// <returns>Cos</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern Single Cos(Single angle);
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="angle">Angle</param>
         /// <returns>Sin</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern Single Sin(Single angle);
 
         /// <summary>
@@ -275,7 +275,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="angle">Angle</param>
         /// <returns>Tan</returns>
-	    [DllImport("SGSDK.dll")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern Single Tan(Single angle);
      }
 }

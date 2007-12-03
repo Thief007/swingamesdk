@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace SwinGame
 {
@@ -57,7 +58,7 @@ namespace SwinGame
 
     public class Physics
     {
-        [DllImport("SGSDK.dll", EntryPoint="HasSpriteCollidedX")]
+        [DllImport("lib/SGSDk.dll", EntryPoint="HasSpriteCollidedX")]
         private static extern bool DLL_HasSpriteCollidedX(IntPtr theSprite, int x, CollisionDetectionRange  range);
         /// <summary>
         /// Determines if a sprite has collided with a given x position.
