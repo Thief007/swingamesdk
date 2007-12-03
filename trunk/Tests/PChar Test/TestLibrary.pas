@@ -12,7 +12,7 @@ uses TestUnit in 'TestUnit.pas';
 		result := TestUnit.GetString();
 	end;
 	
-	procedure SetString(word : AnsiString); cdecl; export;
+	procedure SetString(word : String); cdecl; export;
 	begin
 		//TestUnit.SetString(word);
 	end;
