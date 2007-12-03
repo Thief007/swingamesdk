@@ -1,5 +1,5 @@
 library PChar_Test;
-{$H}
+{$H+}
 uses TestUnit in 'TestUnit.pas';
 
 	procedure WriteString(); cdecl; export;
@@ -12,9 +12,9 @@ uses TestUnit in 'TestUnit.pas';
 		result := TestUnit.GetString();
 	end;
 	
-	procedure SetString(word : String); cdecl; export;
+	procedure SetString(word : PChar); cdecl; export;
 	begin
-		//TestUnit.SetString(word);
+		TestUnit.SetString(word);
 	end;
 	
 exports
