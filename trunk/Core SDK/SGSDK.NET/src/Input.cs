@@ -142,14 +142,14 @@ namespace SwinGame
         /// Gets the Mouse Position
         /// </summary>
         /// <returns>Vector representing the position of the mouse</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern Vector GetMousePosition();
 
         /// <summary>
         /// Gets the Movement of the mouse
         /// </summary>
         /// <returns>Vector representing the movement of the mouse</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern Vector GetMouseMovement();
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="button">Mouse button to check</param>
         /// <returns>True if the mouse button is being clicked</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool IsMouseDown(MouseButton button);
 
         /// <summary>
@@ -167,7 +167,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="button">Mouse button to check</param>
         /// <returns>True if the mouse button is not being clicked</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool IsMouseUp(MouseButton button);
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="button">Mouse button to check</param>
         /// <returns>True if the mouse button has been clicked</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool MouseWasClicked(MouseButton button);
 
         /// StartReadingText start the API reading a string values from the user.
@@ -189,7 +189,7 @@ namespace SwinGame
 	    ///	@param maxLength:	The maximum length of the string the user can enter
 	    ///	@param theFont:		The font used to draw the text entered
 	    ///	@param x, y:			 The location at which to draw the text entered
-        //[DllImport("SGSDK.dll")]
+        //[DllImport("lib/SGSDK.dll")]
         //public static extern void StartReadingText(Color color, int maxLength, Font theFont, int x, int y);
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace SwinGame
         ///	read the string entered as either ASCII or Unicode.
         /// </summary>
         /// <returns>True while the API is reading text from the user</returns>
-        [DllImport("SGSDK.dll")]  
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]  
 	    public static extern bool IsReadingText();
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace SwinGame
         ///	for more details.
         /// </summary>
         /// <returns>The string entered by the user</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern String TextReadAsASCII();
 
         /// <summary>
@@ -216,7 +216,7 @@ namespace SwinGame
         ///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
         /// </summary>
         /// <returns>The string entered by the user</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern String TextReadAsUNICODE();
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="key">Key</param>
         /// <returns>True if the key is currently being held down</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool IsKeyPressed(Keys key);
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="key">Key code to check</param>
         /// <returns>True if the key is pressed</returns>
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool WasKeyTyped(Keys key);
     }
 }

@@ -44,7 +44,7 @@ namespace SwinGame
     }
     public class Text
     {
-        [DllImport("SGSDK.dll", EntryPoint = "LoadFont")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFont")]
         private static extern IntPtr DLL_LoadFont(String fontName, int size);
         /// <summary>
         /// Loads a font from file with the specified side. Fonts must be freed using
@@ -62,7 +62,7 @@ namespace SwinGame
             return font;
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "SetFontStyle")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetFontStyle")]
         private static extern void DLL_SetFontStyle(IntPtr font, FontStyle style);
         /// <summary>
         /// Sets the style of the passed in font. This is time consuming, so load
@@ -75,7 +75,7 @@ namespace SwinGame
             DLL_SetFontStyle(font.Pointer, style);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "FreeFont")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeFont")]
         private static extern void DLL_FreeFont(ref IntPtr fontToFree);
         /// <summary>
         /// Free a loaded font.
@@ -86,7 +86,7 @@ namespace SwinGame
             DLL_FreeFont(ref fontToFree.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "DrawTextOnBitmap")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
         private static extern void DLL_DrawText(IntPtr dest , String theText, uint textColor, IntPtr theFont,int  x, int y);
         /// <summary>
         /// Draws texts to the destination bitmap. Drawing text is a slow operation,
@@ -105,7 +105,7 @@ namespace SwinGame
             DLL_DrawText(dest.pointer, theText, (uint)color, theFont.Pointer, x, y);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "DrawText")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
         private static extern void DLL_DrawText(String theText, uint textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// Draws texts to the screen. Drawing text is a slow operation,
@@ -123,7 +123,7 @@ namespace SwinGame
             DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "DrawTextLinesOnBitmap")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnBitmap")]
         private static extern void DLL_DrawTextLines(String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
@@ -146,7 +146,7 @@ namespace SwinGame
             DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "DrawText")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
         private static extern void DLL_DrawTextLines(IntPtr dest, String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
         /// <summary>
         /// Draws multiple lines of text to the destination bitmap. This is a very
@@ -170,7 +170,7 @@ namespace SwinGame
             DLL_DrawTextLines(dest.pointer, theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "TextWidth")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextWidth")]
         private static extern int DLL_TextWidth(String theText, IntPtr theFont);
         /// <summary>
         /// Calculates the width of a string when drawn with a given font.
@@ -183,7 +183,7 @@ namespace SwinGame
             return DLL_TextWidth(theText, theFont.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "TextHeight")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextHeight")]
         private static extern int DLL_TextHeight(String theText, IntPtr theFont);
         /// <summary>
         /// Calculates the height of a string when drawn with a given font.
@@ -196,7 +196,7 @@ namespace SwinGame
             return DLL_TextHeight(theText, theFont.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "DrawFramerate")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawFramerate")]
         private static extern void DLL_DrawFramerate(int x, int y, IntPtr theFont);
         /// <summary>
         /// Draws the frame rate using the specified font at the indicated x, y.
