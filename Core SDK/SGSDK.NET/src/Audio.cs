@@ -22,17 +22,17 @@ namespace SwinGame
         internal IntPtr Pointer;
     }
 
-    class Audio
+    public class Audio
     {
 
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void OpenAudio();
-        [DllImport("SGSDK.dll")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void CloseAudio();
 
-        [DllImport("SGSDK.dll", EntryPoint="PlaySoundEffect")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlaySoundEffect")]
         private static extern void DLL_PlaySoundEffect(IntPtr effect);
-        [DllImport("SGSDK.dll", EntryPoint = "PlaySoundEffectLoop")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlaySoundEffectLoop")]
         private static extern void DLL_PlaySoundEffectLoop(IntPtr effect, int loops );
         /// <summary>
         /// Play the indicated sound effect a number of times
@@ -53,7 +53,7 @@ namespace SwinGame
             DLL_PlaySoundEffect(effect.Pointer);  
         }
 
-        [DllImport("SGSDK.dll", EntryPoint="LoadSoundEffect")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect")]
         private static extern IntPtr DLL_LoadSoundEffect(String path);
         /// <summary>
         /// Loads a SoundEffect
@@ -67,7 +67,7 @@ namespace SwinGame
             return effect;
         }
 
-        [DllImport("SGSDK.dll", EntryPoint="FreeSoundEffect")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSoundEffect")]
         private static extern void DLL_FreeSoundEffect(ref IntPtr effect);
         /// <summary>
         /// Frees a Sound Effect From Memory
@@ -78,7 +78,7 @@ namespace SwinGame
             DLL_FreeSoundEffect(ref effect.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "LoadMusic")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic")]
         private static extern IntPtr DLL_LoadMusic(String path);
         /// <summary>
         /// Load music to play from the file system. Music can be in the form of a
@@ -93,7 +93,7 @@ namespace SwinGame
             return music;
         }
 
-        [DllImport("SGSDK.dll", EntryPoint="FreeMusic")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMusic")]
         private static extern void DLL_FreeMusic(ref IntPtr effect);
         /// <summary>
         /// Free a music value. All loaded music values need to be freed.
@@ -104,7 +104,7 @@ namespace SwinGame
             DLL_FreeMusic(ref music.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint="PlayMusic")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlayMusic")]
         private static extern void DLL_PlayMusic(IntPtr music, int loops);
         /// <summary>
         /// Play the indicated music effect a number of times
@@ -127,7 +127,7 @@ namespace SwinGame
             DLL_PlayMusic(music.Pointer,-1);  
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "IsSoundEffectPlaying")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSoundEffectPlaying")]
         private static extern bool DLL_IsSoundEffectPlaying(IntPtr effect);
         /// <summary>
         /// This function checks whether a sound is playing
@@ -140,7 +140,7 @@ namespace SwinGame
           
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "IsMusicPlaying")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsMusicPlaying")]
         private static extern bool DLL_IsMusicPlaying(IntPtr music);
         /// <summary>
         /// This function checks whether music is playing
@@ -152,11 +152,11 @@ namespace SwinGame
             return DLL_IsMusicPlaying(music.Pointer);
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "StopMusic")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopMusic")]
         /// Stops music from playing
         public static extern void StopMusic();
 
-        [DllImport("SGSDK.dll", EntryPoint = "StopSoundEffect")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopSoundEffect")]
         /// Stop playing sound effects
         public static extern void StopSoundEffect();
 

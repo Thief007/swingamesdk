@@ -259,7 +259,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function	LoadSoundEffect(path: PChar): SoundEffect; cdecl; export;
 	begin
-		result := SGSDK_Audio.LoadsoundEffect(path);
+		result := SGSDK_Audio.LoadSoundEffect(path);
 	end;
 	
 	function	LoadMusic(path: PChar): Music; cdecl; export;
