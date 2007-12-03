@@ -123,7 +123,7 @@ namespace SwinGame
             DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnBitmap")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLines")]
         private static extern void DLL_DrawTextLines(String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
@@ -146,7 +146,7 @@ namespace SwinGame
             DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
         private static extern void DLL_DrawTextLines(IntPtr dest, String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
         /// <summary>
         /// Draws multiple lines of text to the destination bitmap. This is a very
