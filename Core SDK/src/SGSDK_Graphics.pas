@@ -869,6 +869,33 @@ implementation
 		SetLength(addTo, Length(addTo) + 1);
 		addTo[High(addTo)] := sprite;
 	end;
+	
+	/// Clear the sprite collection specified.
+	///
+	/// @param toClear:				The array of sprites to clear
+	///
+	/// Side Effects:
+	/// - The sprite collection is cleared.
+	procedure ClearSpriteCollection(var toClear : SpriteCollection);
+	begin
+		SetLength(toClear, 0);
+	end;
+	
+	/// Free the sprite collection specified.
+	///
+	/// @param toClear:				The array of sprites to free
+	///
+	/// Side Effects:
+	/// - The sprite collection is freed.
+	procedure FreeSpriteCollection(var toFree : SpriteCollection);
+	var
+		i : Integer;
+	begin
+		for i := 0 to High(toFree) do
+		begin
+			FreeSprite(toFree[i]);
+		end;
+	end;
 
 	/// Determines if a sprite is off the screen. The view port of the screen
 	///	is defined in the vwPrt... parameters.
