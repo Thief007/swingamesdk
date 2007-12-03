@@ -765,7 +765,10 @@ implementation
 						if spriteToDraw.endingAction = Loop then
 							spriteToDraw.currentFrame := 0;
 						if spriteToDraw.endingAction = Stop then
+						begin
+							spriteToDraw.currentFrame := High(SpriteToDraw.framesPerCell);
 							spriteToDraw.hasEnded := true;
+						end;
 					end;
 				end;
 			end;
