@@ -14,7 +14,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Core.ProcessEvents();
 	end;
 
-	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); cdecl; export;
+	procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
 	begin
 		SGSDK_Core.OpenGraphicsWindow(caption, width, height);
 	end;
@@ -33,7 +33,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	procedure SetIcon(iconFilename: String); cdecl; export;
+	procedure SetIcon(iconFilename: PChar); cdecl; export;
 	begin
 		SGSDK_Core.SetIcon(iconFilename);
 	end;
@@ -53,7 +53,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Core.RefreshScreen();
 	end;
 	
-	procedure TakeScreenshot(basename: String); cdecl; export;
+	procedure TakeScreenshot(basename: PChar); cdecl; export;
 	begin
 		SGSDK_Core.TakeScreenshot(basename);
 	end;
@@ -101,12 +101,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Core.Sleep(time);
 	end;
 	
-	function GetPathToResourceWithKind(filename: String; kind: ResourceKind) : String; overload; cdecl; export;
+	function GetPathToResourceWithKind(filename: PChar; kind: ResourceKind) : String; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename, kind);
 	end;
 	
-	function GetPathToResource(filename: String): String; overload; cdecl; export;
+	function GetPathToResource(filename: PChar): String; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetPathToResource(filename);
 	end;
@@ -257,12 +257,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Audio.CloseAudio();
 	end;
 	
-	function	LoadSoundEffect(path: String): SoundEffect; cdecl; export;
+	function	LoadSoundEffect(path: PChar): SoundEffect; cdecl; export;
 	begin
 		result := SGSDK_Audio.LoadsoundEffect(path);
 	end;
 	
-	function	LoadMusic(path: String): Music; cdecl; export;
+	function	LoadMusic(path: PChar): Music; cdecl; export;
 	begin
 		result := SGSDK_Audio.LoadMusic(path);
 	end;
@@ -339,7 +339,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function LoadFont(fontName: String; size: Integer): Font; cdecl; export;
+	function LoadFont(fontName: PChar; size: Integer): Font; cdecl; export;
 	begin
 		result := SGSDK_Font.LoadFont(fontName, size)
 	end;
@@ -354,26 +354,26 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Font.FreeFont(fontToFree);
 	end;
 	
-	procedure DrawText(theText: String; textColor: Colour;
+	procedure DrawText(theText: PChar; textColor: Colour;
 					 theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
 	end;
 
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
+	procedure DrawTextLines(theText: PChar; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 							
-	procedure DrawTextOnBitmap(dest: Bitmap; theText: String; textColor: Colour;
+	procedure DrawTextOnBitmap(dest: Bitmap; theText: PChar; textColor: Colour;
 					theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
 	end;
 
-	procedure DrawTextLinesOnBitmap(dest: Bitmap; theText: String;
+	procedure DrawTextLinesOnBitmap(dest: Bitmap; theText: PChar;
 							textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); cdecl; export;
@@ -381,12 +381,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 
-	function TextWidth(theText: String; theFont: Font): Integer; cdecl; export;
+	function TextWidth(theText: PChar; theFont: Font): Integer; cdecl; export;
 	begin
 		result :=SGSDK_Font.TextWidth(theText, theFont);
 	end;
 
-	function TextHeight(theText: String; theFont: Font): Integer; cdecl; export;
+	function TextHeight(theText: PChar; theFont: Font): Integer; cdecl; export;
 	begin
 		result := SGSDK_Font.TextHeight(theText, theFont);
 	end;
@@ -746,18 +746,18 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.OptimiseBitmap(surface);
 	end;
 	
-	function LoadBitmapWithTransparentColor(pathToBitmap: String; transparent: Boolean;
+	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Boolean;
 								transparentColor: Colour): Bitmap; cdecl; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
 	end;
 	
-	{function LoadBitmap(pathToBitmap : String): Bitmap; cdecl; export;
+	{function LoadBitmap(pathToBitmap : PChar): Bitmap; cdecl; export;
 	begin
 		result := SGSDK_Graphics.LoadBitmap(pathToBitmap);
 	end;}
 	
-	function LoadTransparentBitmap(pathToBitmap : String;
+	function LoadTransparentBitmap(pathToBitmap : PChar;
 								transparentColor : Colour): Bitmap; cdecl; export;
 	begin
 		result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
