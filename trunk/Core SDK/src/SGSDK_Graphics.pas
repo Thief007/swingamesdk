@@ -13,6 +13,7 @@ interface
 		SpriteEndingAction = (
 			Loop,
 			ReverseLoop,
+			ReverseOnce,
 			Stop
 		);
 		
@@ -748,8 +749,16 @@ implementation
 					spriteToDraw.currentFrame := spriteToDraw.currentFrame - 1;
 					if (spriteToDraw.currentFrame < Low(spriteToDraw.framesPerCell)) then
 					begin
-						spriteToDraw.currentFrame := 1;
-						spriteToDraw.reverse := false;
+						if spriteToDraw.endingAction = ReverseOnce then
+						begin
+							spriteToDraw.currentFrame := 0;
+							spriteToDraw.hasEnded := true;
+						end
+						else
+						begin
+							spriteToDraw.currentFrame := 1;
+							spriteToDraw.reverse := false;
+						end;
 					end;
 				end
 				else
@@ -757,7 +766,7 @@ implementation
 					spriteToDraw.currentFrame := spriteToDraw.currentFrame + 1;
 					if (spriteToDraw.currentFrame > High(spriteToDraw.framesPerCell)) then
 					begin
-						if spriteToDraw.endingAction = ReverseLoop then
+						if (spriteToDraw.endingAction = ReverseLoop) or (spriteToDraw.endingAction = ReverseOnce) then
 						begin
 							spriteToDraw.reverse := true;
 							spriteToDraw.currentFrame := SpriteToDraw.currentFrame - 1;
