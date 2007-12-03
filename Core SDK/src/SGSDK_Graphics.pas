@@ -3,7 +3,19 @@ unit SGSDK_Graphics;
 interface
 	uses	SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
 			SDL_Mixer, SDL_TTF, SDLEventProcessing;
-	type
+	type		
+		SpriteKind = (
+			StaticSprite,
+			AnimArraySprite,
+			AnimMultiSprite
+		);
+		
+		SpriteEndingAction = (
+			Loop,
+			ReverseLoop,
+			Stop
+		);
+		
 		/// Record: Sprite
 		///
 		///	NOTE: Do not use SpriteData directly. Use Sprite.
@@ -15,10 +27,20 @@ interface
 		///											 used, if false bounding collision is used.
 		SpriteData = record
 			bitmaps : Array of Bitmap;
+			spriteKind : SpriteKind;
+			framesPerCell : Array of Integer;
 			xPos : Single;
 			yPos : Single;
+			width : Integer;
+			height : Integer;
+			cols : Integer;
+			row : Integer;
+			frameCount : Integer;
 			currentFrame : Integer;
 			usePixelCollision: Boolean;
+			endingAction : SpriteEndingAction;
+			hasEnded : Boolean;
+			reverse : Boolean;
 		end;
 		
 		/// Type: Sprite
@@ -29,6 +51,8 @@ interface
 		///	store animations, or the like. Sprite drawing operations will draw the
 		///	Sprite's current frame.
 		Sprite = ^SpriteData;
+		
+		SpriteCollection = Array of Sprite;
 		
 	//*****
 	//
@@ -172,21 +196,39 @@ interface
 	// These routines are used to work with Sprites within your game.
 	//
 
-	function	CreateSprite(startBitmap : Bitmap): Sprite;
+	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
+		endingAction : SpriteEndingAction; width, height : Integer): Sprite; overload;
+	
+	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
+		width, height : Integer): Sprite; overload;
+	
+	function CreateSprite(image : Bitmap): Sprite; overload;
+	
+	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; overload;
+	
+	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer): Sprite; overload;
 
 	procedure FreeSprite(var spriteToFree : Sprite);
 
-	function AddBitmapToSprite(spriteToAddTo : Sprite;
-														 bitmapToAdd : Bitmap): Integer;
+	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): Integer;
 
 	function CurrentHeight(sprite: Sprite): Integer;
 
 	function CurrentWidth(sprite: Sprite): Integer;
+	
+	procedure UpdateSprite(spriteToDraw : Sprite);
 
+	procedure DrawSprite(spriteToDraw : Sprite; 
+	              vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
+	
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
-
-	procedure DrawSprite(spriteToDraw : Sprite; vwPrtX, vwPrtY, vwPrtWidth,
-											 vwPrtHeight : Integer); overload;
+	
+	procedure DrawSprites(spritesToDraw : SpriteCollection; 
+	              vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
+	
+	procedure DrawSprites(spritesToDraw : SpriteCollection); overload;
+	
+	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite);
 
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
 
@@ -194,7 +236,7 @@ interface
 
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
 
-	function	IsSpriteOffscreen(theSprite : Sprite; vwPrtX, vwPrtY,
+	function IsSpriteOffscreen(theSprite : Sprite; vwPrtX, vwPrtY,
 															vwPrtWidth, vwPrtHeight : Integer) : Boolean; overload;
 
 implementation
@@ -349,7 +391,7 @@ implementation
 	/// @param transparent:      Indicates if transparency should be set
 	///	@param transparentColor: the color that will be transparent
 	///	@returns: A bitmap from the loaded file.
-	function	LoadBitmap(pathToBitmap: String; transparent: Boolean;
+	function LoadBitmap(pathToBitmap: String; transparent: Boolean;
 											 transparentColor: Colour): Bitmap; overload;
 	var
 		loadedImage: PSDL_Surface;
@@ -438,23 +480,115 @@ implementation
 			bitmapToFree := nil;
 		end;
 	end;
-
-	/// Creates a sprites, and sets its firat bitmap.
+	
+	/// Creates a sprites, and sets its first bitmap.
 	///
 	///	@param startBitmap:		The sprites first bitmap (index 0)
-	///	@returns:							A new sprite with this bitmap as its first bitmap
-	function CreateSprite(startBitmap : Bitmap): Sprite;
+	/// @param isMulti:			True if the bitmap specified is a multi bitmap
+	/// @param framesPerCell:	Array of Integer that defines the frames per cell
+	/// @param endingAction:	This sprite's ending action (Loop, ReverseLoop or Stop)
+	/// @param width, height:	Width and height of this sprite
+	///	@returns:				A new sprite with this bitmap as its first bitmap
+	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
+		endingAction : SpriteEndingAction; width, height : Integer): Sprite; overload;
+	var
+		i : Integer;
 	begin
 		New(result);
 		SetLength(result.bitmaps, 1);
-
-		result.bitmaps[0]						:= startBitmap;
-		result.xPos									:= 0;
-		result.yPos									:= 0;
-		result.currentFrame					:= 0;
-		result.usePixelCollision		 := false;
+		if isMulti then
+		begin
+			result.spriteKind := AnimMultiSprite;
+			result.cols := image.height div scr.height;
+			result.row := image.width div scr.width;
+			SetLength(result.framesPerCell, Length(framesPerCell));
+			for i := 0 to High(framesPerCell) do
+			begin
+				result.framesPerCell[i] := framesPerCell[i];
+			end;
+		end
+		else
+		begin
+			result.spriteKind := StaticSprite;
+		end;
+		result.xPos					:= 0;
+		result.yPos					:= 0;
+		result.currentFrame			:= 0;
+		result.usePixelCollision	:= false;
+		result.hasEnded				:= false;
+		result.bitmaps[0]			:= image;
+		result.frameCount			:= 0;
+		result.endingAction			:= endingAction;
+		result.width				:= width;
+		result.height				:= height;
+		result.reverse				:= false;
+	end;
+	
+	/// Creates a sprites, and sets its first bitmap.
+	///
+	///	@param startBitmap:		The sprites first bitmap (index 0)
+	/// @param isMulti:			True if the bitmap specified is a multi bitmap
+	/// @param framesPerCell:	Array of Integer that defines the frames per cell
+	/// @param width, height:	Width and height of this sprite
+	///	@returns:				A new sprite
+	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
+		width, height : Integer): Sprite; overload;
+	begin
+		result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
 	end;
 
+	/// Creates a sprites, and sets its first bitmap.
+	///
+	///	@param startBitmap:		The sprites first bitmap (index 0)
+	///	@returns:				A new sprite with this bitmap as its first bitmap
+	function CreateSprite(image : Bitmap): Sprite; overload;
+	var
+		empty : Array of Integer;
+	begin
+		result := CreateSprite(image, false, empty, 0, 0);
+	end;
+	
+	/// Creates a sprites ans set bitmaps.
+	///
+	///	@param bitmaps:			The array of bitmaps
+	/// @param framesPerCell:	Array of Integer that defines the frames per cell
+	/// @param endingAction:	Ending action of this sprite when it finishes animating
+	///	@returns:				A new sprite with this bitmap as its first bitmap
+	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; overload;
+	var
+		i : Integer;
+	begin
+		New(result);
+		result.xPos					:= 0;
+		result.yPos					:= 0;
+		result.currentFrame			:= 0;
+		result.usePixelCollision	:= false;
+		result.hasEnded				:= false;
+		SetLength(result.bitmaps, Length(bitmaps));
+		for i := 0 to High(bitmaps) do
+		begin
+			result.bitmaps[i] := bitmaps[i];
+		end;
+		result.spriteKind			:= AnimArraySprite;
+		SetLength(result.framesPerCell, Length(framesPerCell));
+		for i := 0 to High(framesPerCell) do
+		begin
+			result.framesPerCell[i] := framesPerCell[i];
+		end;
+		result.endingAction			:= endingAction;
+		result.reverse				:= false;
+	end;
+	
+	/// Creates a sprites ans set bitmaps.
+	///
+	///	@param bitmaps:			The array of bitmaps
+	/// @param framesPerCell:	Array of Integer that defines the frames per cell
+	///	@returns:				A new sprite with this bitmap as its first bitmap
+	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer): Sprite; overload;
+	begin
+		result := CreateSprite(bitmaps, framesPerCell, Loop);
+	end;
+	
 	/// Frees a sprite, this does not free the sprite's bitmaps, which allows
 	///	bitmaps to be shared between sprites. All created sprites need to be
 	///	freed.
@@ -503,7 +637,14 @@ implementation
 	///	@returns					 The width of the sprite's current frame
 	function CurrentWidth(sprite: Sprite): Integer;
 	begin
-		result := sprite.bitmaps[sprite.currentFrame].width;
+		if sprite.spriteKind = AnimMultiSprite then
+		begin
+			result := sprite.width;
+		end
+		else
+		begin
+			result := sprite.bitmaps[sprite.currentFrame].width;
+		end;
 	end;
   
 	/// Returns the current height of the sprite.
@@ -512,7 +653,14 @@ implementation
 	///	@returns					 The height of the sprite's current frame
 	function CurrentHeight(sprite: Sprite): Integer;
 	begin
-		result := sprite.bitmaps[sprite.currentFrame].height;
+		if sprite.spriteKind = AnimMultiSprite then
+		begin
+			result := sprite.height;
+		end
+		else
+		begin
+			result := sprite.bitmaps[sprite.currentFrame].height;
+		end;
 	end;
 
  	/// Draws one bitmap (bitmapToDraw) onto another bitmap (dest).
@@ -570,14 +718,58 @@ implementation
 
 	/// Draws one bitmap (bitmapToDraw) onto the screen.
 	///
-	///	@param bitmapToDraw: The bitmap to be drawn onto the screen
-	///	@param x,y:					The x,y location to draw the bitmap to
+	///	@param bitmapToDraw:	The bitmap to be drawn onto the screen
+	///	@param x,y:				The x,y location to draw the bitmap to
 	///
 	/// Side Effects:
 	///	- Draws the bitmapToDraw at the x,y location on the screen.
 	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); overload;
 	begin
 		DrawBitmap(scr, bitmapToDraw, x, y);
+	end;
+	
+	/// Update the frame position
+	///
+	/// @param spriteToDraw:	The sprite to be processed
+	///
+	/// Side Effects:
+	/// - Process the frame position depending on the sprite's setting
+	procedure UpdateSprite(spriteToDraw : Sprite);
+	begin
+		if spriteToDraw.hasEnded then exit;
+		if spriteToDraw.spriteKind <> StaticSprite then
+		begin
+			spriteToDraw.frameCount := spriteToDraw.frameCount + 1;
+			if spriteToDraw.frameCount >= spriteToDraw.framesPerCell[spriteToDraw.currentFrame] then
+			begin
+				spriteToDraw.frameCount := 0;
+				if spriteToDraw.reverse then
+				begin
+					spriteToDraw.currentFrame := spriteToDraw.currentFrame - 1;
+					if (spriteToDraw.currentFrame < Low(spriteToDraw.framesPerCell)) then
+					begin
+						spriteToDraw.currentFrame := 1;
+						spriteToDraw.reverse := false;
+					end;
+				end
+				else
+				begin
+					spriteToDraw.currentFrame := spriteToDraw.currentFrame + 1;
+					if (spriteToDraw.currentFrame > High(spriteToDraw.framesPerCell)) then
+					begin
+						if spriteToDraw.endingAction = ReverseLoop then
+						begin
+							spriteToDraw.reverse := true;
+							spriteToDraw.currentFrame := High(spriteToDraw.framesPerCell) - 1;
+						end;
+						if spriteToDraw.endingAction = Loop then
+							spriteToDraw.currentFrame := 0;
+						if spriteToDraw.endingAction = Stop then
+							spriteToDraw.hasEnded := true;
+					end;
+				end;
+			end;
+		end;
 	end;
 
 	/// Draws the sprite to the screen within a given view port.
@@ -590,15 +782,26 @@ implementation
 	///	- The sprite is drawn to the screen, if within view port
 	procedure DrawSprite(spriteToDraw : Sprite; 
                vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
+	var
+		tempWidth, tempHeight : Integer;
 	begin
 		//Don't draw if its offscreen
 		if IsSpriteOffscreen(spriteToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight)
 			 and (vwPrtWidth <> 0)
 			 and (vwPrtHeight <> 0) then exit;
-
-		DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame],
-							 Trunc(spriteToDraw.xPos) - vwPrtX,
-							 Trunc(spriteToDraw.yPos) - vwPrtY);
+		if spriteToDraw.spriteKind <> AnimMultiSprite then
+		begin
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame],
+							 	Trunc(spriteToDraw.xPos) - vwPrtX,
+							 	Trunc(spriteToDraw.yPos) - vwPrtY);
+		end
+		else
+		begin
+			tempWidth := spriteToDraw.currentFrame div spriteToDraw.cols * spriteToDraw.width;
+			tempHeight := spriteToDraw.currentFrame mod spriteToDraw.cols * spriteToDraw.height;
+			DrawBitmapPart(spriteToDraw.bitmaps[0], tempWidth, tempHeight, spriteToDraw.width, spriteToDraw.height,
+								Trunc(spriteToDraw.xPos) - vwPrtX, Trunc(spriteToDraw.yPos) - vwPrtY);
+		end;
 	end;
 
 	/// Draws a sprite to the screen, without using a view port.
@@ -611,6 +814,49 @@ implementation
 	begin
 		DrawSprite(spriteToDraw, 0, 0, 0, 0);
 	end;
+	
+	/// Draws the sprites to the screen within a given view port.
+	///
+	///	@param spritesToDraw:			The sprites to be drawn
+	///	@param vwPrtX, vwPrty:			The x, y of the current view port (i.e. screen)
+	///	@param vwPrtWidth, vwPrtHeight:	The height and width of the view port
+	///
+	/// Side Effects:
+	///	- The sprite is drawn to the screen, if within view port
+	procedure DrawSprites(spritesToDraw : SpriteCollection; 
+               vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
+	var
+		i : Integer;
+	begin
+		for i := 0 to High(spritesToDraw) do
+		begin
+			DrawSprite(spritesToDraw[i], vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
+		end;
+	end;
+	
+	/// Draws a sprites to the screen, without using a view port.
+	///
+	///	@param spritesToDraw:		 The sprites to be drawn
+	///
+	/// Side Effects:
+	///	- The sprite is drawn to the screen, if within screen area
+	procedure DrawSprites(spritesToDraw : SpriteCollection); overload;
+	begin
+		DrawSprite(spritesToDraw, 0, 0, 0, 0);
+	end;
+	
+	/// Adds a specified sprite to a specified array of sprites.
+	///
+	/// @param addTo:				The array of sprites to add a sprite to
+	/// @param sprite:				The sprite to add
+	///
+	/// Side Effects:
+	/// - The sprite specified is added to the specified array
+	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite);
+	begin
+		SetLength(addTo, Length(addTo) + 1);
+		addTo[High(addTo)] := sprite;
+	end;
 
 	/// Determines if a sprite is off the screen. The view port of the screen
 	///	is defined in the vwPrt... parameters.
@@ -621,15 +867,11 @@ implementation
 	///	@returns							 True if the sprite is off the screen
 	function IsSpriteOffscreen(theSprite : Sprite; 
               vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer): Boolean;
-	var
-		bmp: Bitmap;
 	begin
-		bmp := theSprite.bitmaps[theSprite.currentFrame];
 		if theSprite.xPos > vwPrtX + vwPrtWidth then result := true
-		else if theSprite.xPos + bmp.width < vwPrtX then result := true
+		else if theSprite.xPos + CurrentWidth(theSprite) < vwPrtX then result := true
 		else if theSprite.yPos > vwPrtY + vwPrtHeight then result := true
-		else if theSprite.yPos + theSprite.bitmaps[theSprite.currentFrame].height 
-               < vwPrtY then result := true
+		else if theSprite.yPos + CurrentHeight(theSprite) < vwPrtY then result := true
 		else result := false;
 	end;
 
@@ -672,7 +914,7 @@ implementation
 	///
 	///  @param width, height:  The width and height of the surface
 	///  @returns:              A new bitmap
-	function	CreateBitmap(width, height: Integer): Bitmap;
+	function CreateBitmap(width, height: Integer): Bitmap;
 	begin
 		New(result);
 
@@ -933,7 +1175,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	 procedure DrawRectangle(dest: Bitmap; theColour : Colour;
+	procedure DrawRectangle(dest: Bitmap; theColour : Colour;
                            xPos, yPos, width, height : Integer); overload;
 	begin
 		DrawHorizontalLine(dest, theColour, yPos, xPos, xPos + width);
@@ -1305,38 +1547,38 @@ implementation
 			DrawHorizontalLine(dest, theColour, yPosStart, xPosStart, xPosEnd)
 		else
 		begin
-		  	deltax := abs(xPosEnd - xPosStart);        // The difference between the x's
-			deltay := abs(yPosEnd - yPosStart);        // The difference between the y's
+		  	deltax := abs(xPosEnd - xPosStart);			// The difference between the x's
+			deltay := abs(yPosEnd - yPosStart);			// The difference between the y's
 			
-			x := xPosStart;                        // Start x off at the first pixel
-			y := yPosStart;                        // Start y off at the first pixel
+			x := xPosStart;								// Start x off at the first pixel
+			y := yPosStart;								// Start y off at the first pixel
 			
-			if xPosEnd >= xPosStart then                // The x-values are increasing
+			if xPosEnd >= xPosStart then				// The x-values are increasing
 			begin
 				xinc1 := 1;
 				xinc2 := 1;
 			end
-			else                            // The x-values are decreasing
+			else										// The x-values are decreasing
 			begin
 				xinc1 := -1;
 				xinc2 := -1;
 			end;
 			
-			if yPosEnd >= yPosStart then                // The y-values are increasing
+			if yPosEnd >= yPosStart then				// The y-values are increasing
 			begin
 				yinc1 := 1;
 				yinc2 := 1;
 			end
-			else                            // The y-values are decreasing
+			else										// The y-values are decreasing
 			begin
 				yinc1 := -1;
 				yinc2 := -1;
 			end;
 			
-			if deltax >= deltay then         // There is at least one x-value for every y-value
+			if deltax >= deltay then 					// There is at least one x-value for every y-value
 			begin
-				xinc1 := 0;                  // Don't change the x when numerator >= denominator
-				yinc2 := 0;                  // Don't change the y for every iteration
+				xinc1 := 0;								// Don't change the x when numerator >= denominator
+				yinc2 := 0;								// Don't change the y for every iteration
 				
 				den := deltax;
 				
@@ -1344,38 +1586,36 @@ implementation
 				
 				numadd := deltay;
 				
-				numpixels := deltax;         // There are more x-values than y-values
+				numpixels := deltax;					// There are more x-values than y-values
 			end
-			else                          // There is at least one y-value for every x-value
+			else										// There is at least one y-value for every x-value
 			begin
-				xinc2 := 0;                  // Don't change the x for every iteration
-				yinc1 := 0;                  // Don't change the y when numerator >= denominator
+				xinc2 := 0;								// Don't change the x for every iteration
+				yinc1 := 0;								// Don't change the y when numerator >= denominator
 				den := deltay;
 				num := deltay div 2;
 				
 				numadd := deltax;
 				
-				numpixels := deltay;         // There are more y-values than x-values
+				numpixels := deltay;					// There are more y-values than x-values
 			end;
 			
 			for curpixel := 0 to numpixels do
 			begin
-				PutPixel(dest.surface, x, y, theColour);  // Draw the current pixel
+				PutPixel(dest.surface, x, y, theColour);// Draw the current pixel
 				
-				num := num + numadd;              // Increase the numerator by the top of the fraction
+				num := num + numadd;					// Increase the numerator by the top of the fraction
 				
-				if num >= den then           // Check if numerator >= denominator
+				if num >= den then						// Check if numerator >= denominator
 				begin
-					num := num - den;             // Calculate the new numerator value
-					x := x + xinc1;             // Change the x as appropriate
-					y := y + yinc1;             // Change the y as appropriate
+					num := num - den;					// Calculate the new numerator value
+					x := x + xinc1;						// Change the x as appropriate
+					y := y + yinc1;						// Change the y as appropriate
 				end;
 				
-				x := x + xinc2;                 // Change the x as appropriate
-				y := y + yinc2;                 // Change the y as appropriate
+				x := x + xinc2;							// Change the x as appropriate
+				y := y + yinc2;							// Change the y as appropriate
 			end;
-			
-			//result := true;
 		end;
 	end;
 
@@ -1472,8 +1712,6 @@ implementation
 				y := y - 1;
 			end;
 		end;
-		
-		//result := true;
 	end;
 
 	/// Draws a filled circle centered on a given x, y location.
