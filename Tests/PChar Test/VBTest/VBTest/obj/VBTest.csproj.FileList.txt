@@ -1,0 +1,5 @@
+bin\Debug\VBTest.dll
+bin\Debug\VBTest.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\VBTest.dll
+obj\Debug\VBTest.pdb
