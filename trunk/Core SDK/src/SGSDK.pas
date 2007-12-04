@@ -1066,7 +1066,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := surface.frameCount;
 	end;
 
-	function GetSpriteendingAction(surface : Sprite) : ISpriteEndingAction; cdecl; export;
+	function GetSpriteendingAction(surface : Sprite) : SpriteEndingAction; cdecl; export;
 	begin
 		result := surface.endingAction;
 	end;

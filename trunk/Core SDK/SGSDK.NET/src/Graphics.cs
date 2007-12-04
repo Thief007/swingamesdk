@@ -7,6 +7,15 @@ using System.IO;
 
 namespace SwinGame
 {
+
+    /// <summary>
+    /// A Sprite Collection is an array of Sprites
+    /// </summary>
+    public struct SpriteCollection
+    {
+        IntPtr[] Sprites;
+    }
+
     /// <summary>
     /// This contains number of bitmaps and its position.
     /// </summary>
@@ -113,8 +122,153 @@ namespace SwinGame
                 SetSpriteUsePixelCollision(Pointer, value);
             }
         }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SpriteKind GetSpriteKind(IntPtr pointer);
+
+        /// <summary>
+        /// Gets the Sprite Kind
+        /// </summary>
+        public SpriteKind SpriteKind
+        {
+            get
+            {
+                return GetSpriteKind(Pointer);
+            }
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int GetSpriteFramesPerCell(IntPtr pointer);
+
+        /// <summary>
+        /// Gets the Frames per Cell
+        /// </summary>
+        public int FramesPerCell
+        {
+            get
+            {
+                return GetSpriteFramesPerCell(Pointer);
+            }
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int GetSpriteCols(IntPtr pointer);
+
+        /// <summary>
+        /// Gets the number of Columns
+        /// </summary>
+        public int Cols
+        {
+            get
+            {
+                return GetSpriteCols(Pointer);
+            }
+        }
+	        
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int GetSpriteRow(IntPtr pointer);
+
+        /// <summary>
+        /// Gets the number of Rows
+        /// </summary>
+        public int Rows
+        {
+            get
+            {
+                return GetSpriteRow(Pointer);
+            }
+        }
+	
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int GetSpriteFrameCount(IntPtr pointer);
+
+        /// <summary>
+        /// Gets the Frame Count
+        /// </summary>
+        public int FrameCount
+        {
+            get
+            {
+                return GetSpriteFrameCount(Pointer);
+            }
+        }
+
+	    [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SpriteEndingAction GetSpriteendingAction(IntPtr pointer);
+
+        /// <summary>
+        /// Gets the Ending Action
+        /// </summary>
+        public SpriteEndingAction EndingAction
+        {
+            get
+            {
+                return GetSpriteendingAction(Pointer);
+            }
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int GetSpritehasEnded(IntPtr pointer);
+
+        /// <summary>
+        /// Gets whether the Sprite Animation has Ended
+        /// </summary>
+        public Boolean hasEnded
+        {
+            get
+            {
+                if (GetSpritehasEnded(Pointer) == -1)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            }
+        }
+	
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int GetSpriteReverse(IntPtr pointer);
+
+        /// <summary>
+        /// Gets whether the Sprite is reversed
+        /// </summary>
+        public Boolean Reverse
+        {
+            get
+            {
+                if (GetSpriteReverse(Pointer) == -1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 
+    
+    public enum SpriteKind
+    {
+        StaticSprite,
+        AnimArraySprite,
+        AnimMultiSprite
+    }
+
+    public enum SpriteEndingAction
+    {
+        Loop,
+        ReverseLoop,
+        ReverseOnce,
+        Stop
+    }
+
+    /// <summary>
+    /// The Graphics Class enables most of the Drawing features of SGSDK
+    /// </summary>
     public class Graphics
     {
         /// <summary>
@@ -912,5 +1066,11 @@ namespace SwinGame
                 return false;
             }
         }
+
+        // Sprite Additions
+
+        //[DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreenWithViewPort")]
+        //private static extern int DLL_IsSpriteOffscreenWithViewPort(IntPtr theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
+
     }
 }
