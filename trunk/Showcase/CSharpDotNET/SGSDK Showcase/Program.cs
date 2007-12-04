@@ -23,10 +23,13 @@ namespace SGSDK_Showcase
             Intro.LoadResources();
            
             //Run Examples
-            DrawLines.Run();
-            DrawRectangles.Run();
-            DrawCircles.Run();
-            DrawEllipses.Run();
+
+            //DrawLines.Run();
+            //DrawRectangles.Run();
+            //DrawCircles.Run();
+            //DrawEllipses.Run();
+            //DrawBitmaps.Run();
+            DrawSprites.Run();
 
 
             //Closes the Audio System

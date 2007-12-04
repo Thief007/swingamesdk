@@ -3,6 +3,11 @@ library SGSDK;
 uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
+	type
+		IntArray = Array of Integer;
+		BitmapArray = Array of Bitmap;
+	
+	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Core
@@ -981,22 +986,22 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Graphics.CreateSprite(startBitmap);
 	end;
 	
-	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; endingAction : SpriteEndingAction; width, height : Integer) : Sprite; cdecl; export
+	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(image, isMulti, framesPerCell, endingAction, width, height);
 	end;
 	
-	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; width, height : Integer): Sprite; cdecl; export
+	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; framesPerCell : IntArray; width, height : Integer): Sprite; cdecl; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(image, isMulti,framesPerCell, width, height);
 	end;
 
-	function CreateSpriteArrayEnding(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; cdecl; export
+	function CreateSpriteArrayEnding(bitmaps : BitmapArray; framesPerCell : IntArray; endingAction : SpriteEndingAction): Sprite; cdecl; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, endingAction);
 	end;
 	
-	function CreateSpriteArray(bitmaps : Array of Bitmap; framesPerCell : Array of Integer): Sprite; cdecl; export;
+	function CreateSpriteArray(bitmaps : BitmapArray; framesPerCell : IntArray): Sprite; cdecl; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
 	end;
@@ -1046,7 +1051,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := surface.spriteKind;
 	end;
 	
-	function GetSpriteFramesPerCell(surface : Sprite): Array of Intenger; cdecl; export;
+	function GetSpriteFramesPerCell(surface : Sprite): IntArray; cdecl; export;
 	begin
 		result := surface.framesPerCell;
 	end;
@@ -1347,11 +1352,11 @@ exports
 	
 	CreateSprite,
 	CreateSpriteMulti,
-	CreateSpriteMulitEnding,
+	CreateSpriteMultiEnding,
 	CreateSpriteArray,
 	CreateSpriteArrayEnding,
 	
-	DrawSpritesArray,
+	DrawSpritesViewPort,
 	DrawSprites,
 	AddSprite,
 	UpdateSprite,

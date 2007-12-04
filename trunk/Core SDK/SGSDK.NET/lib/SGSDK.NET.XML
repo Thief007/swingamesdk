@@ -4,557 +4,84 @@
         <name>SGSDK.NET</name>
     </assembly>
     <members>
-        <member name="T:SwinGame.MouseButton">
+        <member name="T:SwinGame.SoundEffect">
             <summary>
-            Mouse Buttons
+            Sound Effect Structure
             </summary>
         </member>
-        <member name="T:SwinGame.Keys">
+        <member name="T:SwinGame.Music">
             <summary>
-            Keys that can be used on the Keyboard
+            Music Structure
             </summary>
         </member>
-        <member name="T:SwinGame.Input">
-             <summary>
-             Input Class
-            
-             Handles all the Mouse and Keyboard input functions
-             </summary>
-        </member>
-        <member name="M:SwinGame.Input.GetMousePosition">
+        <member name="M:SwinGame.Audio.PlaySoundEffect(SwinGame.SoundEffect,System.Int32)">
             <summary>
-            Gets the Mouse Position
+            Play the indicated sound effect a number of times
             </summary>
-            <returns>Vector representing the position of the mouse</returns>
+            <param name="effect">The Sound Effect to play</param>
+            <param name="loops">The number of times to play it</param>
         </member>
-        <member name="M:SwinGame.Input.GetMouseMovement">
+        <member name="M:SwinGame.Audio.PlaySoundEffect(SwinGame.SoundEffect)">
             <summary>
-            Gets the Movement of the mouse
+            Play the indicated sound effect a number of times
             </summary>
-            <returns>Vector representing the movement of the mouse</returns>
+            <param name="effect">The Sound Effect to play</param>
         </member>
-        <member name="M:SwinGame.Input.IsMouseDown(SwinGame.MouseButton)">
+        <member name="M:SwinGame.Audio.LoadSoundEffect(System.String)">
             <summary>
-            This function checks if the specified mouse button is
-            being clicked
+            Loads a SoundEffect
             </summary>
-            <param name="button">Mouse button to check</param>
-            <returns>True if the mouse button is being clicked</returns>
+            <param name="path">Path to the Sound Effect file</param>
+            <returns>A SoundEffect</returns>
         </member>
-        <member name="M:SwinGame.Input.IsMouseUp(SwinGame.MouseButton)">
+        <member name="M:SwinGame.Audio.FreeSoundEffect(SwinGame.SoundEffect@)">
             <summary>
-            This function checks if the specified mouse button is not
-            being clicked
+            Frees a Sound Effect From Memory
             </summary>
-            <param name="button">Mouse button to check</param>
-            <returns>True if the mouse button is not being clicked</returns>
+            <param name="effect">The effect to be freed from memory</param>
         </member>
-        <member name="M:SwinGame.Input.MouseWasClicked(SwinGame.MouseButton)">
+        <member name="M:SwinGame.Audio.LoadMusic(System.String)">
             <summary>
-            This functions checks if the mouse button specified has
-            been clicked.
+            Load music to play from the file system. Music can be in the form of a
+            wav, ogg, or mp3 file.
             </summary>
-            <param name="button">Mouse button to check</param>
-            <returns>True if the mouse button has been clicked</returns>
+            <param name="Path">Path to Music file</param>
+            <returns>Music</returns>
         </member>
-        <member name="M:SwinGame.Input.IsReadingText">
+        <member name="M:SwinGame.Audio.FreeMusic(SwinGame.Music@)">
             <summary>
-            IsReadingText indicates if the API is currently reading text from the
-            user. Calling StartReadingText will set this to true, and it becomes
-            false when the user presses enter or escape. At this point you can
-            read the string entered as either ASCII or Unicode.
+            Free a music value. All loaded music values need to be freed.
             </summary>
-            <returns>True while the API is reading text from the user</returns>
+            <param name="music">Music to be freed</param>
         </member>
-        <member name="M:SwinGame.Input.TextReadAsASCII">
+        <member name="M:SwinGame.Audio.PlayMusic(SwinGame.Music,System.Int32)">
             <summary>
-            TextReadAsASCII allows you to read the value of the string entered by the
-            user as ASCII. See TextReasAsUNICODE, StartReadingText and IsReadingText
-            for more details.
+            Play the indicated music effect a number of times
+            The loops paramater can use anything starting from -1, 
+            -1 meaning that the sound plays forever
             </summary>
-            <returns>The string entered by the user</returns>
+            <param name="effect">The Music to play</param>
+            <param name="loops">The number of times to play it</param>
         </member>
-        <member name="M:SwinGame.Input.TextReadAsUNICODE">
+        <member name="M:SwinGame.Audio.PlayMusic(SwinGame.Music)">
             <summary>
-            TextReadAsUNICODE returns the string entered by the user as UNICODE. See
-            TextReadAsASCII, StartReadingText, and IsReadingText for more details.
+            Play the indicated music effect a number of times
             </summary>
-            <returns>The string entered by the user</returns>
+            <param name="effect">The Music to play</param>
         </member>
-        <member name="M:SwinGame.Input.IsKeyPressed(SwinGame.Keys)">
+        <member name="M:SwinGame.Audio.IsSoundEffectPlaying(SwinGame.SoundEffect)">
             <summary>
-            Returns true when the key requested is being held down. This is updated
-            as part of the ProcessEvents call. Use the key codes from the KeyCodes
-            unit.
+            This function checks whether a sound is playing
             </summary>
-            <param name="key">Key</param>
-            <returns>True if the key is currently being held down</returns>
+            <param name="effect">The sound effect to check if it is playing</param>
+            <returns>True if it is playing</returns>
         </member>
-        <member name="M:SwinGame.Input.WasKeyTyped(SwinGame.Keys)">
+        <member name="M:SwinGame.Audio.IsMusicPlaying(SwinGame.Music)">
             <summary>
-            Returns true when a key is typed. This occurs when the key is pressed on the 
-            keyboard, and will not reoccur until it is released and pressed again. This
-            needs to be checked each ProcessEvents loop.
+            This function checks whether music is playing
             </summary>
-            <param name="key">Key code to check</param>
-            <returns>True if the key is pressed</returns>
-        </member>
-        <member name="T:SwinGame.CollisionDetectionRange">
-            <summary>
-            Enumeration: CollisionDetectionRanges
-            This is used to indicate the kind of collision being checked with the
-            Sprite collision routines.  
-            </summary>
-        </member>
-        <member name="T:SwinGame.Matrix2D">
-            <summary>
-            This record is used to represent transformations that can be
-            used to apply these changes to vectors.
-            </summary>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedX(SwinGame.Sprite,System.Int32,SwinGame.CollisionDetectionRange)">
-            <summary>
-            Determines if a sprite has collided with a given x position.
-            </summary>
-            <param name="theSprite">The sprite to check</param>
-            <param name="x">The x location to check collision with</param>
-            <param name="range">The kind of check to perform less, larger or equal.</param>
-            <returns>True if the sprite is within the range requested</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedY(SwinGame.Sprite,System.Int32,SwinGame.CollisionDetectionRange)">
-            <summary>
-            Determines if a sprite has collided with a given y position.
-            </summary>
-            <param name="theSprite">The sprite to check</param>
-            <param name="x">The y location to check collision with</param>
-            <param name="range">The kind of check to perform less, larger or equal.</param>
-            <returns>True if the sprite is within the range requested</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedWithRect(SwinGame.Sprite,System.Double,System.Double,System.Int32,System.Int32)">
-            <summary>
-            Determined if a sprite has collided with a given rectangle. The rectangles
-            coordinates are expressed in "world" coordinates.
-            </summary>
-            <param name="theSprite">The sprite to check</param>
-            <param name="x">The x location of the rectangle</param>
-            <param name="y">The y location of the rectangle</param>
-            <param name="width">The width of the rectangle</param>
-            <param name="height">The height of the rectangle</param>
-            <returns>True if the sprite collides with the rectangle</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedWithRect(SwinGame.Sprite,System.Double,System.Double,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Determined if a sprite has collided with a given rectangle. The rectangles
-            coordinates are expressed in "world" coordinates.
-            </summary>
-            <param name="theSprite">The sprite to check</param>
-            <param name="x">The x location of the rectangle</param>
-            <param name="y">The y location of the rectangle</param>
-            <param name="width">The width of the rectangle</param>
-            <param name="height">The height of the rectangle</param>
-            <param name="vwPrtX">The x offset of the screen's portal</param>
-            <param name="vwPrtY">The y offset of the screen's portal</param>
-            <returns>True if the sprite collides with the rectangle</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HaveSpritesCollided(SwinGame.Sprite,SwinGame.Sprite)">
-            <summary>
-            Determines if two sprites have collided.
-            </summary>
-            <param name="sprite1">The first sprite to check.</param>
-            <param name="sprite2">The second sprite to check.</param>
-            <returns>True if the sprites have collided.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.DLL_CollisionWithinBitmapImages(System.IntPtr,System.Int32,System.Int32,System.Boolean,System.IntPtr,System.Int32,System.Int32,System.Boolean)">
-            to do!!
-            
-        </member>
-        <member name="M:SwinGame.Physics.CollisionWithinBitmapImages(SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean)">
-             <summary>
-              Performs a collision detection within two bitmaps at the given x, y
-            	locations. The bounded values indicate if each bitmap should use per
-            	pixel collision detection or a bounded collision detection. This version
-            	uses pixel based checking at all times.
-            
-            	When both bitmaps are using bounded collision the routine checks to see
-            	if the bitmap rectangles intersect. If one is bounded and the other is
-            	pixel based the routine checks to see if a non-transparent pixel in the
-            	pixel based image intersects with the bounds of the bounded image. If
-            	both are pixel based, the routine checks to see if two non-transparent
-            	pixels collide.
-            
-            	Note: Bitmaps do not need to actually be drawn on the screen.
-             </summary>
-             <param name="image1">The bitmap image to check for collision</param>
-             <param name="x1">The x location of image 1</param>
-             <param name="y1">The y location of image 1</param>
-             <param name="bounded1">Indicates if image1 should use bounded collision</param>
-             <param name="image2">The bitmap image to check for collision</param>
-             <param name="x2">The x location of image 2</param>
-             <param name="y2">The y location of image 2</param>
-             <param name="bounded2">Indicates if image2 should use bounded collision</param>
-             <returns>True if the bitmaps collide.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.CollisionWithinBitmapImages(SwinGame.Bitmap,System.Int32,System.Int32,SwinGame.Bitmap,System.Int32,System.Int32)">
-            <summary>
-            Performs a collision detection within two bitmaps at the given x, y
-            locations using per pixel collision detection. This checks to see if
-            two non-transparent pixels collide.
-            </summary>
-            <param name="image1">The bitmap image to check for collision</param>
-            <param name="x1">The x location of image 1</param>
-            <param name="y1">The y location of image 1</param>
-            <param name="image2">The bitmap image to check for collision</param>
-            <param name="x2">The x location of image 2</param>
-            <param name="y2">The y location of image 2</param>
-            <returns>True if the bitmaps collide.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean)">
-            <summary>
-            Determines if a sprite has collided with a bitmap using pixel level
-            collision detection with the bitmap.
-            </summary>
-            <param name="theSprite">The sprite to check for collision</param>
-            <param name="theBitmap">The bitmap image to check for collision</param>
-            <param name="x">The x location of the bitmap</param>
-            <param name="y">The y location of the bitmap</param>
-            <param name="bounded">Indicates if theBitmap should use bounded collision</param>
-            <returns>True if the bitmap has collided with the sprite.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean,System.Int32,System.Int32)">
-            <summary>
-            Determines if a sprite has collided with a bitmap. The x and y values
-            are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
-            the offset from world to screen coordinates.
-            </summary>
-            <param name="theSprite">The sprite to check for collision</param>
-            <param name="theBitmap">The bitmap image to check for collision</param>
-            <param name="x">The x location of the bitmap</param>
-            <param name="y">The y location of the bitmap</param>
-            <param name="bounded">Indicates if bitmap should use bounded collision</param>
-            <param name="vwPrtX">The x offset of the screen's portal</param>
-            <param name="vwPrtY">The y offset of the screen's portal</param>
-            <returns> rue if the bitmap has collided with the sprite.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32)">
-            <summary>
-            Determines if a sprite has collided with a bitmap. The x and y values
-            are expressed in "world" coordinates.
-            </summary>
-            <param name="theSprite">The sprite to check for collision</param>
-            <param name="theBitmap">The bitmap image to check for collision</param>
-            <param name="x">The x location of the bitmap</param>
-            <param name="y">The y location of the bitmap</param>
-            <returns> rue if the bitmap has collided with the sprite.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Determines if a sprite has collided with a bitmap. The x and y values
-            are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
-            the offset from world to screen coordinates.
-            </summary>
-            <param name="theSprite">The sprite to check for collision</param>
-            <param name="theBitmap">The bitmap image to check for collision</param>
-            <param name="x">The x location of the bitmap</param>
-            <param name="y">The y location of the bitmap</param>
-            <param name="vwPrtX">The x offset of the screen's portal</param>
-            <param name="vwPrtY">The y offset of the screen's portal</param>
-            <returns> rue if the bitmap has collided with the sprite.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HaveBitmapsCollided(SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean)">
-            <summary>
-            Checks to see if two bitmaps have collided, this performs a bounded check
-            then, if required, it performs a per pixel check on the colliding region.
-            </summary>
-            <param name="image1">The bitmap to check for collision</param>
-            <param name="x1">The x location of image 1</param>
-            <param name="y1">The y location of image 1</param>
-            <param name="bounded1">Indicates if image1 should use bounded collision</param>
-            <param name="image2">The bitmap to check for collision</param>
-            <param name="x2">The x location of image 2</param>
-            <param name="y2">The y location of image 2</param>
-            <param name="bounded2">Indicates if image2 should use bounded collision</param>
-            <returns>True if the bitmaps collide.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.HaveBitmapsCollided(SwinGame.Bitmap,System.Int32,System.Int32,SwinGame.Bitmap,System.Int32,System.Int32)">
-            <summary>
-            Checks to see if two bitmaps have collided, this performs a bounded check
-            then, if required, it performs a per pixel check on the colliding region.
-            </summary>
-            <param name="image1">The bitmap to check for collision</param>
-            <param name="x1">The x location of image 1</param>
-            <param name="y1">The y location of image 1</param>
-            <param name="image2">The bitmap to check for collision</param>
-            <param name="x2">The x location of image 2</param>
-            <param name="y2">The y location of image 2</param>
-            <returns>True if the bitmaps collide.</returns>
-        </member>
-        <member name="M:SwinGame.Physics.CreateVector(System.Double,System.Double,System.Boolean)">
-            <summary>
-            Creates a new vector with values x and y, possibly with an inverted y. The
-            inversion of the y value provides a convienient option for handling
-            screen related vectors.
-            </summary>
-            <param name="x">Initial values for the vector</param>
-            <param name="y">Initial values for the vector</param>
-            <param name="invertY">Indicates if the y value should be inverted.</param>
-            <returns>A new vector with values x and y</returns>
-        </member>
-        <member name="M:SwinGame.Physics.CreateVector(System.Double,System.Double)">
-            <summary>
-            Creates a new vector with values x and y.
-            </summary>
-            <param name="x">Initial values for the vector</param>
-            <param name="y">Initial values for the vector</param>
-            <returns>A new vector with values x and y</returns>
-        </member>
-        <member name="M:SwinGame.Physics.AddVectors(SwinGame.Vector,SwinGame.Vector)">
-            <summary>
-            Adds the Vector v1 and the Vector v2.
-            </summary>
-            <param name="v1">The vectors to work with</param>
-            <param name="v2">The vectors to work with</param>
-            <returns>v1 + v2</returns>
-        </member>
-        <member name="M:SwinGame.Physics.SubtractVectors(SwinGame.Vector,SwinGame.Vector)">
-            <summary>
-            Subtracts the Vector v1 and the Vector v2.
-            </summary>
-            <param name="v1">The vectors to work with</param>
-            <param name="v2">The vectors to work with</param>
-            <returns>v1 - v2</returns>
-        </member>
-        <member name="M:SwinGame.Physics.InvertVector(SwinGame.Vector)">
-            <summary>
-            Inverts the vector v. Changes the direction of the vector's x and y.
-            </summary>
-            <param name="theVector">The vector to invert</param>
-            <returns>A new inverted vector</returns>
-        </member>
-        <member name="M:SwinGame.Physics.ChopVector(SwinGame.Vector,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Limits the vector within the range min-max of X-Y. AVOID use... use
-             LimitMagnitude
-            </summary>
-            <param name="theVector">The vector to limit</param>
-            <param name="minX">The min range of the vector's x</param>
-            <param name="maxX">The max range of the vector's x</param>
-            <param name="minY">The min range of the vector's y</param>
-            <param name="maxY">The max range of the vector's y</param>
-            <returns>A new vector limited within that range</returns>
-        </member>
-        <member name="M:SwinGame.Physics.LimitVector(SwinGame.Vector,System.Double)">
-            <summary>
-            Limit the magnitude of a vector.
-            </summary>
-            <param name="theVector">The vector to limit</param>
-            <param name="maxMagnitude">The maximum magnitude of the vector.</param>
-            <returns>A new vector with the same direction as theVector,
-            with a maximum magnitude of maxMagnitude</returns>
-        </member>
-        <member name="M:SwinGame.Physics.GetUnitVector(SwinGame.Vector)">
-            <summary>
-            Gets the unit vector of the passed in vector. The unit vector has a
-            magnitude of 1, resulting in a vector that indicates the direction of
-            the original vector.
-            </summary>
-            <param name="theVector">The vector to get the unit vector of</param>
-            <returns>The unit vector from the passed in vector</returns>
-        </member>
-        <member name="M:SwinGame.Physics.IsZeroVector(SwinGame.Vector)">
-            <summary>
-            Indicates if the magnitude of the vector is 0.
-            </summary>
-            <param name="theVector">The vector to check</param>
-            <returns>True if the vector has values 0, 0</returns>
-        </member>
-        <member name="M:SwinGame.Physics.GetVectorMagnitude(SwinGame.Vector)">
-            <summary>
-            Returns the magnitude of a vector. The magnitude represents the length of
-            the vector.
-            </summary>
-            <param name="theVector">The vector to get the magnitude of</param>
-            <returns>The magnitude of the vector</returns>
-        </member>
-        <member name="M:SwinGame.Physics.DotProduct(SwinGame.Vector,SwinGame.Vector)">
-            <summary>
-            The Angle between two vectors
-            </summary>
-            <param name="v1">The first Vector</param>
-            <param name="v2">The Second Vector</param>
-            <returns>The angle</returns>
-        </member>
-        <member name="M:SwinGame.Physics.MultiplyVector(SwinGame.Vector,System.Double)">
-            <summary>
-            Multiplies a Vector by a number
-            </summary>
-            <param name="v1">The vector to multiply</param>
-            <param name="s1">The number to multiply the vector by</param>
-            <returns>The multiplyed vector</returns>
-        </member>
-        <member name="M:SwinGame.Physics.CalculateAngle(System.Double,System.Double,System.Double,System.Double)">
-            <summary>
-            Gets the Angle between two points 
-            </summary>
-            <param name="x1"></param>
-            <param name="y1"></param>
-            <param name="x2"></param>
-            <param name="y2"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SwinGame.Physics.CalculateAngle(SwinGame.Sprite,SwinGame.Sprite)">
-            <summary>
-            
-            </summary>
-            <param name="sprite1"></param>
-            <param name="sprite2"></param>
-            <returns></returns>
-        </member>
-        <member name="M:SwinGame.Physics.Multiply(SwinGame.Matrix2D@,SwinGame.Matrix2D@)">
-            <summary>
-            Multiplies two matrixs 
-            </summary>
-            <param name="m1">The first Matrix</param>
-            <param name="m2">The second Matrix</param>
-            <returns>The combined Matrixes</returns>
-        </member>
-        <member name="M:SwinGame.Physics.Multiply(SwinGame.Matrix2D@,SwinGame.Vector@)">
-            <summary>
-            Multiplies 1 Vector and 1 Matrix2D
-            </summary>
-            <param name="m">The Matrix2D</param>
-            <param name="v">The Vector</param>
-            <returns>The resulting Matrix2D</returns>
-        </member>
-        <member name="T:SwinGame.Font">
-            <summary>
-            Fonts are used to render text to bitmaps and to the screen.
-            Fonts must be loaded using the CreateFont routine. Also see the
-            DrawText and DrawTextLines routines.
-            </summary>
-        </member>
-        <member name="T:SwinGame.FontStyle">
-            <summary>
-            Use font styles to set the style of a font. Setting the style is time
-            consuming, so create alternative font variables for each different
-            style you want to work with. Note that these values can be logical
-            ORed together to combine styles, e.g. BoldFont or ItalicFont = both
-            bold and italic.
-            </summary>
-        </member>
-        <member name="T:SwinGame.FontAlignment">
-            <summary>
-            Use font alignment for certain drawing operations. With these
-            operations you specify the area to draw in as well as the alignment
-            within that area. See DrawTextLines.
-            </summary>
-        </member>
-        <member name="M:SwinGame.Text.LoadFont(System.String,System.Int32)">
-            <summary>
-            Loads a font from file with the specified side. Fonts must be freed using
-            the FreeFont routine once finished with. Once the font is loaded you
-            can set its style using SetFontStyle. Fonts are then used to draw and
-            measure text in your programs.
-            </summary>
-            <param name="fontName">The name of the font file to load from the file system</param>
-            <param name="size">The point size of the font</param>
-            <returns>The font loaded</returns>
-        </member>
-        <member name="M:SwinGame.Text.SetFontStyle(SwinGame.Font,SwinGame.FontStyle)">
-            <summary>
-            Sets the style of the passed in font. This is time consuming, so load
-            fonts multiple times and set the style for each if needed.
-            </summary>
-            <param name="font">The font to set the style of</param>
-            <param name="style">The new style for the font, values can be read together</param>
-        </member>
-        <member name="M:SwinGame.Text.FreeFont(SwinGame.Font@)">
-            <summary>
-            Free a loaded font.
-            </summary>
-            <param name="fontToFree">The Font to free</param>
-        </member>
-        <member name="M:SwinGame.Text.DrawText(SwinGame.Bitmap,System.String,System.Drawing.Color,SwinGame.Font,System.Int32,System.Int32)">
-            <summary>
-            Draws texts to the destination bitmap. Drawing text is a slow operation,
-            and drawing it to a bitmap, then drawing the bitmap to screen is a
-            good idea. Do not use this technique if the text changes frequently.
-            </summary>
-            <param name="dest">The destination bitmap - not optimised!</param>
-            <param name="theText">The text to be drawn onto the destination</param>
-            <param name="textColor">The color to draw the text</param>
-            <param name="theFont">The font used to draw the text</param>
-            <param name="x">The x location to draw the text at (top left)</param>
-            <param name="y">The y location to draw the text at (top left)</param>
-        </member>
-        <member name="M:SwinGame.Text.DrawText(System.String,System.Drawing.Color,SwinGame.Font,System.Int32,System.Int32)">
-            <summary>
-            Draws texts to the screen. Drawing text is a slow operation,
-            and drawing it to a bitmap, then drawing the bitmap to screen is a
-            good idea. Do not use this technique if the text changes frequently.
-            </summary>
-            <param name="theText">The text to be drawn onto the screen</param>
-            <param name="textColor">The color to draw the text</param>
-            <param name="theFont">The font used to draw the text</param>
-            <param name="x">The x location to draw the text at (top left)</param>
-            <param name="y">The y location to draw the text at (top left)</param>
-        </member>
-        <member name="M:SwinGame.Text.DrawTextLines(System.String,System.Drawing.Color,System.Drawing.Color,SwinGame.Font,SwinGame.FontAlignment,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Draws multiple lines of text to the screen. This is a very
-            slow operation, so if the text is not frequently changing save it to a
-            bitmap and draw that bitmap to screen instead.
-            </summary>
-            <param name="theText">The text to be drawn onto the destination</param>
-            <param name="textColor">The color to draw the text</param>
-            <param name="backColor">The color to draw behind the text</param>
-            <param name="theFont">The font used to draw the text</param>
-            <param name="align">The alignment for the text in the region</param>
-            <param name="x">The x location to draw the text at (top left)</param>
-            <param name="y">The y location to draw the text at (top left)</param>
-            <param name="w">The width of the region to draw inside</param>
-            <param name="h">The height of the region to draw inside</param>
-        </member>
-        <member name="M:SwinGame.Text.DrawTextLines(SwinGame.Bitmap,System.String,System.Drawing.Color,System.Drawing.Color,SwinGame.Font,SwinGame.FontAlignment,System.Int32,System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Draws multiple lines of text to the destination bitmap. This is a very
-            slow operation, so if the text is not frequently changing save it to a
-            bitmap and draw that bitmap to screen instead.
-            </summary>
-            <param name="dest">The destination bitmap - not optimised!</param>
-            <param name="theText">The text to be drawn onto the destination</param>
-            <param name="textColor">The color to draw the text</param>
-            <param name="backColor">The color to draw behind the text</param>
-            <param name="theFont">The font used to draw the text</param>
-            <param name="align">The alignment for the text in the region</param>
-            <param name="x">The x location to draw the text at (top left)</param>
-            <param name="y">The y location to draw the text at (top left)</param>
-            <param name="w">The width of the region to draw inside</param>
-            <param name="h">The height of the region to draw inside</param>
-        </member>
-        <member name="M:SwinGame.Text.TextWidth(System.String,SwinGame.Font)">
-            <summary>
-            Calculates the width of a string when drawn with a given font.
-            </summary>
-            <param name="theText">The text to measure</param>
-            <param name="theFont">The font used to draw the text</param>
-            <returns>The width of the drawing in pixels</returns>
-        </member>
-        <member name="M:SwinGame.Text.TextHeight(System.String,SwinGame.Font)">
-            <summary>
-            Calculates the height of a string when drawn with a given font.
-            </summary>
-            <param name="theText">The text to measure</param>
-            <param name="theFont">The font used to draw the text</param>
-            <returns>The height of the drawing in pixels</returns>
-        </member>
-        <member name="M:SwinGame.Text.DrawFramerate(System.Int32,System.Int32,SwinGame.Font)">
-            <summary>
-            Draws the frame rate using the specified font at the indicated x, y.
-            Draws the FPS (min, max) current average
-            </summary>
-            <param name="x">The x location to draw to</param>
-            <param name="y">The y location to draw to</param>
-            <param name="theFont">The font used to draw the framerate</param>
+            <param name="effect">The music to check if it is playing</param>
+            <returns>True if it is playing</returns>
         </member>
         <member name="T:SwinGame.ResourceKind">
              <summary>
@@ -731,84 +258,141 @@
             <param name="angle">Angle</param>
             <returns>Tan</returns>
         </member>
-        <member name="T:SwinGame.SoundEffect">
+        <member name="T:SwinGame.Font">
             <summary>
-            Sound Effect Structure
+            Fonts are used to render text to bitmaps and to the screen.
+            Fonts must be loaded using the CreateFont routine. Also see the
+            DrawText and DrawTextLines routines.
             </summary>
         </member>
-        <member name="T:SwinGame.Music">
+        <member name="T:SwinGame.FontStyle">
             <summary>
-            Music Structure
+            Use font styles to set the style of a font. Setting the style is time
+            consuming, so create alternative font variables for each different
+            style you want to work with. Note that these values can be logical
+            ORed together to combine styles, e.g. BoldFont or ItalicFont = both
+            bold and italic.
             </summary>
         </member>
-        <member name="M:SwinGame.Audio.PlaySoundEffect(SwinGame.SoundEffect,System.Int32)">
+        <member name="T:SwinGame.FontAlignment">
             <summary>
-            Play the indicated sound effect a number of times
+            Use font alignment for certain drawing operations. With these
+            operations you specify the area to draw in as well as the alignment
+            within that area. See DrawTextLines.
             </summary>
-            <param name="effect">The Sound Effect to play</param>
-            <param name="loops">The number of times to play it</param>
         </member>
-        <member name="M:SwinGame.Audio.PlaySoundEffect(SwinGame.SoundEffect)">
+        <member name="M:SwinGame.Text.LoadFont(System.String,System.Int32)">
             <summary>
-            Play the indicated sound effect a number of times
+            Loads a font from file with the specified side. Fonts must be freed using
+            the FreeFont routine once finished with. Once the font is loaded you
+            can set its style using SetFontStyle. Fonts are then used to draw and
+            measure text in your programs.
             </summary>
-            <param name="effect">The Sound Effect to play</param>
+            <param name="fontName">The name of the font file to load from the file system</param>
+            <param name="size">The point size of the font</param>
+            <returns>The font loaded</returns>
         </member>
-        <member name="M:SwinGame.Audio.LoadSoundEffect(System.String)">
+        <member name="M:SwinGame.Text.SetFontStyle(SwinGame.Font,SwinGame.FontStyle)">
             <summary>
-            Loads a SoundEffect
+            Sets the style of the passed in font. This is time consuming, so load
+            fonts multiple times and set the style for each if needed.
             </summary>
-            <param name="path">Path to the Sound Effect file</param>
-            <returns>A SoundEffect</returns>
+            <param name="font">The font to set the style of</param>
+            <param name="style">The new style for the font, values can be read together</param>
         </member>
-        <member name="M:SwinGame.Audio.FreeSoundEffect(SwinGame.SoundEffect@)">
+        <member name="M:SwinGame.Text.FreeFont(SwinGame.Font@)">
             <summary>
-            Frees a Sound Effect From Memory
+            Free a loaded font.
             </summary>
-            <param name="effect">The effect to be freed from memory</param>
+            <param name="fontToFree">The Font to free</param>
         </member>
-        <member name="M:SwinGame.Audio.LoadMusic(System.String)">
+        <member name="M:SwinGame.Text.DrawText(SwinGame.Bitmap,System.String,System.Drawing.Color,SwinGame.Font,System.Int32,System.Int32)">
             <summary>
-            Load music to play from the file system. Music can be in the form of a
-            wav, ogg, or mp3 file.
+            Draws texts to the destination bitmap. Drawing text is a slow operation,
+            and drawing it to a bitmap, then drawing the bitmap to screen is a
+            good idea. Do not use this technique if the text changes frequently.
             </summary>
-            <param name="Path">Path to Music file</param>
-            <returns>Music</returns>
+            <param name="dest">The destination bitmap - not optimised!</param>
+            <param name="theText">The text to be drawn onto the destination</param>
+            <param name="textColor">The color to draw the text</param>
+            <param name="theFont">The font used to draw the text</param>
+            <param name="x">The x location to draw the text at (top left)</param>
+            <param name="y">The y location to draw the text at (top left)</param>
         </member>
-        <member name="M:SwinGame.Audio.FreeMusic(SwinGame.Music@)">
+        <member name="M:SwinGame.Text.DrawText(System.String,System.Drawing.Color,SwinGame.Font,System.Int32,System.Int32)">
             <summary>
-            Free a music value. All loaded music values need to be freed.
+            Draws texts to the screen. Drawing text is a slow operation,
+            and drawing it to a bitmap, then drawing the bitmap to screen is a
+            good idea. Do not use this technique if the text changes frequently.
             </summary>
-            <param name="music">Music to be freed</param>
+            <param name="theText">The text to be drawn onto the screen</param>
+            <param name="textColor">The color to draw the text</param>
+            <param name="theFont">The font used to draw the text</param>
+            <param name="x">The x location to draw the text at (top left)</param>
+            <param name="y">The y location to draw the text at (top left)</param>
         </member>
-        <member name="M:SwinGame.Audio.PlayMusic(SwinGame.Music,System.Int32)">
+        <member name="M:SwinGame.Text.DrawTextLines(System.String,System.Drawing.Color,System.Drawing.Color,SwinGame.Font,SwinGame.FontAlignment,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
-            Play the indicated music effect a number of times
-            The loops paramater can use anything starting from -1, 
-            -1 meaning that the sound plays forever
+            Draws multiple lines of text to the screen. This is a very
+            slow operation, so if the text is not frequently changing save it to a
+            bitmap and draw that bitmap to screen instead.
             </summary>
-            <param name="effect">The Music to play</param>
-            <param name="loops">The number of times to play it</param>
+            <param name="theText">The text to be drawn onto the destination</param>
+            <param name="textColor">The color to draw the text</param>
+            <param name="backColor">The color to draw behind the text</param>
+            <param name="theFont">The font used to draw the text</param>
+            <param name="align">The alignment for the text in the region</param>
+            <param name="x">The x location to draw the text at (top left)</param>
+            <param name="y">The y location to draw the text at (top left)</param>
+            <param name="w">The width of the region to draw inside</param>
+            <param name="h">The height of the region to draw inside</param>
         </member>
-        <member name="M:SwinGame.Audio.PlayMusic(SwinGame.Music)">
+        <member name="M:SwinGame.Text.DrawTextLines(SwinGame.Bitmap,System.String,System.Drawing.Color,System.Drawing.Color,SwinGame.Font,SwinGame.FontAlignment,System.Int32,System.Int32,System.Int32,System.Int32)">
             <summary>
-            Play the indicated music effect a number of times
+            Draws multiple lines of text to the destination bitmap. This is a very
+            slow operation, so if the text is not frequently changing save it to a
+            bitmap and draw that bitmap to screen instead.
             </summary>
-            <param name="effect">The Music to play</param>
+            <param name="dest">The destination bitmap - not optimised!</param>
+            <param name="theText">The text to be drawn onto the destination</param>
+            <param name="textColor">The color to draw the text</param>
+            <param name="backColor">The color to draw behind the text</param>
+            <param name="theFont">The font used to draw the text</param>
+            <param name="align">The alignment for the text in the region</param>
+            <param name="x">The x location to draw the text at (top left)</param>
+            <param name="y">The y location to draw the text at (top left)</param>
+            <param name="w">The width of the region to draw inside</param>
+            <param name="h">The height of the region to draw inside</param>
         </member>
-        <member name="M:SwinGame.Audio.IsSoundEffectPlaying(SwinGame.SoundEffect)">
+        <member name="M:SwinGame.Text.TextWidth(System.String,SwinGame.Font)">
             <summary>
-            This function checks whether a sound is playing
+            Calculates the width of a string when drawn with a given font.
             </summary>
-            <param name="effect">The sound effect to check if it is playing</param>
-            <returns>True if it is playing</returns>
+            <param name="theText">The text to measure</param>
+            <param name="theFont">The font used to draw the text</param>
+            <returns>The width of the drawing in pixels</returns>
         </member>
-        <member name="M:SwinGame.Audio.IsMusicPlaying(SwinGame.Music)">
+        <member name="M:SwinGame.Text.TextHeight(System.String,SwinGame.Font)">
             <summary>
-            This function checks whether music is playing
+            Calculates the height of a string when drawn with a given font.
             </summary>
-            <param name="effect">The music to check if it is playing</param>
-            <returns>True if it is playing</returns>
+            <param name="theText">The text to measure</param>
+            <param name="theFont">The font used to draw the text</param>
+            <returns>The height of the drawing in pixels</returns>
+        </member>
+        <member name="M:SwinGame.Text.DrawFramerate(System.Int32,System.Int32,SwinGame.Font)">
+            <summary>
+            Draws the frame rate using the specified font at the indicated x, y.
+            Draws the FPS (min, max) current average
+            </summary>
+            <param name="x">The x location to draw to</param>
+            <param name="y">The y location to draw to</param>
+            <param name="theFont">The font used to draw the framerate</param>
+        </member>
+        <member name="T:SwinGame.SpriteCollection">
+            <summary>
+            A Sprite Collection is an array of Sprites
+            </summary>
         </member>
         <member name="T:SwinGame.Sprite">
             <summary>
@@ -840,6 +424,96 @@
         <member name="P:SwinGame.Sprite.UsePixelCollision">
             <summary>
             True if this sprite use pixel collision
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.SpriteKind">
+            <summary>
+            Gets the Sprite Kind
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.FramesPerCell">
+            <summary>
+            Gets the Frames per Cell
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.Cols">
+            <summary>
+            Gets the number of Columns
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.Rows">
+            <summary>
+            Gets the number of Rows
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.FrameCount">
+            <summary>
+            Gets the Frame Count
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.EndingAction">
+            <summary>
+            Gets the Ending Action
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.hasEnded">
+            <summary>
+            Gets whether the Sprite Animation has Ended
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.Reverse">
+            <summary>
+            Gets whether the Sprite is reversed
+            </summary>
+        </member>
+        <member name="T:SwinGame.SpriteKind">
+            It is used to determine how a sprite should act.
+        </member>
+        <member name="F:SwinGame.SpriteKind.StaticSprite">
+            <summary>
+            StaticSprite will no animate at all.
+            </summary>
+        </member>
+        <member name="F:SwinGame.SpriteKind.AnimArraySprite">
+            <summary>
+            AnimArraySprite will animate using an array of bitmaps.
+            </summary>
+        </member>
+        <member name="F:SwinGame.SpriteKind.AnimMultiSprite">
+            <summary>
+            AnimMultiSprite will animate using a single bitmap with multiple
+            frames.
+            </summary>
+        </member>
+        <member name="T:SwinGame.SpriteEndingAction">
+             Record: SpriteEndingAction
+            
+             It is used to determine what this sprite should do when it finishes
+             animating.
+        </member>
+        <member name="F:SwinGame.SpriteEndingAction.Loop">
+            <summary>
+            Loops forward
+            </summary>
+        </member>
+        <member name="F:SwinGame.SpriteEndingAction.ReverseLoop">
+            <summary>
+            Loops back and forth
+            </summary>
+        </member>
+        <member name="F:SwinGame.SpriteEndingAction.ReverseOnce">
+            <summary>
+            Reverse Once
+            </summary>
+        </member>
+        <member name="F:SwinGame.SpriteEndingAction.Stop">
+            <summary>
+            No Loop
+            </summary>
+        </member>
+        <member name="T:SwinGame.Graphics">
+            <summary>
+            The Graphics Class enables most of the Drawing features of SGSDK
             </summary>
         </member>
         <member name="M:SwinGame.Graphics.CreateBitmap(System.Int32,System.Int32)">
@@ -1319,6 +993,512 @@
             <param name="vwPrtWidth">The width of the view port</param>
             <param name="vwPrtHeight">The height of the view port</param>
             <returns>True if the sprite is off the screen</returns>
+        </member>
+        <member name="M:SwinGame.Graphics.CreateSprite(SwinGame.Bitmap,System.Boolean,System.Int32[],SwinGame.SpriteEndingAction,System.Int32,System.Int32)">
+            <summary>
+            Creates a new Sprite
+            </summary>
+            <param name="startBitmap">Bitmap to add</param>
+            <param name="isMulti">set to true if the bitmap is a tileset</param>
+            <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+            <param name="endingAction">sets the ending action</param>
+            <param name="width">The width of the Sprite</param>
+            <param name="height">The height of the Sprite</param>
+            <returns>A Sprite</returns>
+        </member>
+        <member name="M:SwinGame.Graphics.CreateSprite(SwinGame.Bitmap,System.Boolean,System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            Creates a new Sprite
+            </summary>
+            <param name="startBitmap">Bitmap to add</param>
+            <param name="isMulti">set to true if the bitmap is a tileset</param>
+            <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+            <param name="width">The width of the Sprite</param>
+            <param name="height">The height of the Sprite</param>
+            <returns>A Sprite</returns>
+        </member>
+        <member name="M:SwinGame.Graphics.CreateSprite(SwinGame.Bitmap[],System.Int32[],SwinGame.SpriteEndingAction)">
+            <summary>
+            Creates a new Sprite
+            </summary>
+            <param name="startBitmap">Bitmap to add</param>
+            <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+            <param name="endingAction">sets the ending action</param>
+            <param name="width">The width of the Sprite</param>
+            <param name="height">The height of the Sprite</param>
+            <returns>A Sprite</returns>
+        </member>
+        <member name="M:SwinGame.Graphics.CreateSprite(SwinGame.Bitmap[],System.Int32[])">
+            <summary>
+            Creates a new Sprite
+            </summary>
+            <param name="startBitmap">Bitmap to add</param>
+            <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+            <param name="width">The width of the Sprite</param>
+            <param name="height">The height of the Sprite</param>
+            <returns>A Sprite</returns>
+        </member>
+        <member name="M:SwinGame.Graphics.DrawSprites(SwinGame.SpriteCollection,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Draws a Sprite Collection
+            </summary>
+            <param name="spritesToDraw">Collection of Sprites to draw</param>
+            <param name="vwPrtX">The X Coordinate of the ViewPort</param>
+            <param name="vwPrtY">The Y Coordinate of the ViewPort</param>
+            <param name="vmPrtWidth">The Width of the ViewPort</param>
+            <param name="vwPrtHeight">The Height of the ViewPort</param>
+        </member>
+        <member name="M:SwinGame.Graphics.DrawSprites(SwinGame.SpriteCollection)">
+            <summary>
+            Draws a Sprite Collection
+            </summary>
+            <param name="spritesToDraw">Collection of Sprites to draw</param>
+        </member>
+        <member name="M:SwinGame.Graphics.AddSprite(SwinGame.SpriteCollection@,SwinGame.Sprite)">
+            <summary>
+            Adds a Sprite to a SpriteCollection
+            </summary>
+            <param name="spritesToDraw">The Sprite Collection</param>
+            <param name="sprite">The Sprite to Add</param>
+        </member>
+        <member name="M:SwinGame.Graphics.UpdateSprite(SwinGame.Sprite)">
+            <summary>
+            Updates a Sprite
+            </summary>
+            <param name="sprite">The Sprite</param>
+        </member>
+        <member name="M:SwinGame.Graphics.ClearSpriteCollection(SwinGame.SpriteCollection@)">
+            <summary>
+            Clears a Sprite Collection
+            </summary>
+            <param name="spritecollection">The Sprite Collection</param>
+        </member>
+        <member name="M:SwinGame.Graphics.FreeSpriteCollection(SwinGame.SpriteCollection@)">
+            <summary>
+            Frees a Sprite Collection
+            </summary>
+            <param name="spritecollection">The Sprite Collection</param>
+        </member>
+        <member name="T:SwinGame.MouseButton">
+            <summary>
+            Mouse Buttons
+            </summary>
+        </member>
+        <member name="T:SwinGame.Keys">
+            <summary>
+            Keys that can be used on the Keyboard
+            </summary>
+        </member>
+        <member name="T:SwinGame.Input">
+             <summary>
+             Input Class
+            
+             Handles all the Mouse and Keyboard input functions
+             </summary>
+        </member>
+        <member name="M:SwinGame.Input.GetMousePosition">
+            <summary>
+            Gets the Mouse Position
+            </summary>
+            <returns>Vector representing the position of the mouse</returns>
+        </member>
+        <member name="M:SwinGame.Input.GetMouseMovement">
+            <summary>
+            Gets the Movement of the mouse
+            </summary>
+            <returns>Vector representing the movement of the mouse</returns>
+        </member>
+        <member name="M:SwinGame.Input.IsMouseDown(SwinGame.MouseButton)">
+            <summary>
+            This function checks if the specified mouse button is
+            being clicked
+            </summary>
+            <param name="button">Mouse button to check</param>
+            <returns>True if the mouse button is being clicked</returns>
+        </member>
+        <member name="M:SwinGame.Input.IsMouseUp(SwinGame.MouseButton)">
+            <summary>
+            This function checks if the specified mouse button is not
+            being clicked
+            </summary>
+            <param name="button">Mouse button to check</param>
+            <returns>True if the mouse button is not being clicked</returns>
+        </member>
+        <member name="M:SwinGame.Input.MouseWasClicked(SwinGame.MouseButton)">
+            <summary>
+            This functions checks if the mouse button specified has
+            been clicked.
+            </summary>
+            <param name="button">Mouse button to check</param>
+            <returns>True if the mouse button has been clicked</returns>
+        </member>
+        <member name="M:SwinGame.Input.IsReadingText">
+            <summary>
+            IsReadingText indicates if the API is currently reading text from the
+            user. Calling StartReadingText will set this to true, and it becomes
+            false when the user presses enter or escape. At this point you can
+            read the string entered as either ASCII or Unicode.
+            </summary>
+            <returns>True while the API is reading text from the user</returns>
+        </member>
+        <member name="M:SwinGame.Input.TextReadAsASCII">
+            <summary>
+            TextReadAsASCII allows you to read the value of the string entered by the
+            user as ASCII. See TextReasAsUNICODE, StartReadingText and IsReadingText
+            for more details.
+            </summary>
+            <returns>The string entered by the user</returns>
+        </member>
+        <member name="M:SwinGame.Input.TextReadAsUNICODE">
+            <summary>
+            TextReadAsUNICODE returns the string entered by the user as UNICODE. See
+            TextReadAsASCII, StartReadingText, and IsReadingText for more details.
+            </summary>
+            <returns>The string entered by the user</returns>
+        </member>
+        <member name="M:SwinGame.Input.IsKeyPressed(SwinGame.Keys)">
+            <summary>
+            Returns true when the key requested is being held down. This is updated
+            as part of the ProcessEvents call. Use the key codes from the KeyCodes
+            unit.
+            </summary>
+            <param name="key">Key</param>
+            <returns>True if the key is currently being held down</returns>
+        </member>
+        <member name="M:SwinGame.Input.WasKeyTyped(SwinGame.Keys)">
+            <summary>
+            Returns true when a key is typed. This occurs when the key is pressed on the 
+            keyboard, and will not reoccur until it is released and pressed again. This
+            needs to be checked each ProcessEvents loop.
+            </summary>
+            <param name="key">Key code to check</param>
+            <returns>True if the key is pressed</returns>
+        </member>
+        <member name="T:SwinGame.CollisionDetectionRange">
+            <summary>
+            Enumeration: CollisionDetectionRanges
+            This is used to indicate the kind of collision being checked with the
+            Sprite collision routines.  
+            </summary>
+        </member>
+        <member name="T:SwinGame.Matrix2D">
+            <summary>
+            This record is used to represent transformations that can be
+            used to apply these changes to vectors.
+            </summary>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedX(SwinGame.Sprite,System.Int32,SwinGame.CollisionDetectionRange)">
+            <summary>
+            Determines if a sprite has collided with a given x position.
+            </summary>
+            <param name="theSprite">The sprite to check</param>
+            <param name="x">The x location to check collision with</param>
+            <param name="range">The kind of check to perform less, larger or equal.</param>
+            <returns>True if the sprite is within the range requested</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedY(SwinGame.Sprite,System.Int32,SwinGame.CollisionDetectionRange)">
+            <summary>
+            Determines if a sprite has collided with a given y position.
+            </summary>
+            <param name="theSprite">The sprite to check</param>
+            <param name="x">The y location to check collision with</param>
+            <param name="range">The kind of check to perform less, larger or equal.</param>
+            <returns>True if the sprite is within the range requested</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedWithRect(SwinGame.Sprite,System.Double,System.Double,System.Int32,System.Int32)">
+            <summary>
+            Determined if a sprite has collided with a given rectangle. The rectangles
+            coordinates are expressed in "world" coordinates.
+            </summary>
+            <param name="theSprite">The sprite to check</param>
+            <param name="x">The x location of the rectangle</param>
+            <param name="y">The y location of the rectangle</param>
+            <param name="width">The width of the rectangle</param>
+            <param name="height">The height of the rectangle</param>
+            <returns>True if the sprite collides with the rectangle</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedWithRect(SwinGame.Sprite,System.Double,System.Double,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Determined if a sprite has collided with a given rectangle. The rectangles
+            coordinates are expressed in "world" coordinates.
+            </summary>
+            <param name="theSprite">The sprite to check</param>
+            <param name="x">The x location of the rectangle</param>
+            <param name="y">The y location of the rectangle</param>
+            <param name="width">The width of the rectangle</param>
+            <param name="height">The height of the rectangle</param>
+            <param name="vwPrtX">The x offset of the screen's portal</param>
+            <param name="vwPrtY">The y offset of the screen's portal</param>
+            <returns>True if the sprite collides with the rectangle</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HaveSpritesCollided(SwinGame.Sprite,SwinGame.Sprite)">
+            <summary>
+            Determines if two sprites have collided.
+            </summary>
+            <param name="sprite1">The first sprite to check.</param>
+            <param name="sprite2">The second sprite to check.</param>
+            <returns>True if the sprites have collided.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.DLL_CollisionWithinBitmapImages(System.IntPtr,System.Int32,System.Int32,System.Boolean,System.IntPtr,System.Int32,System.Int32,System.Boolean)">
+            to do!!
+            
+        </member>
+        <member name="M:SwinGame.Physics.CollisionWithinBitmapImages(SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean)">
+             <summary>
+              Performs a collision detection within two bitmaps at the given x, y
+            	locations. The bounded values indicate if each bitmap should use per
+            	pixel collision detection or a bounded collision detection. This version
+            	uses pixel based checking at all times.
+            
+            	When both bitmaps are using bounded collision the routine checks to see
+            	if the bitmap rectangles intersect. If one is bounded and the other is
+            	pixel based the routine checks to see if a non-transparent pixel in the
+            	pixel based image intersects with the bounds of the bounded image. If
+            	both are pixel based, the routine checks to see if two non-transparent
+            	pixels collide.
+            
+            	Note: Bitmaps do not need to actually be drawn on the screen.
+             </summary>
+             <param name="image1">The bitmap image to check for collision</param>
+             <param name="x1">The x location of image 1</param>
+             <param name="y1">The y location of image 1</param>
+             <param name="bounded1">Indicates if image1 should use bounded collision</param>
+             <param name="image2">The bitmap image to check for collision</param>
+             <param name="x2">The x location of image 2</param>
+             <param name="y2">The y location of image 2</param>
+             <param name="bounded2">Indicates if image2 should use bounded collision</param>
+             <returns>True if the bitmaps collide.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.CollisionWithinBitmapImages(SwinGame.Bitmap,System.Int32,System.Int32,SwinGame.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Performs a collision detection within two bitmaps at the given x, y
+            locations using per pixel collision detection. This checks to see if
+            two non-transparent pixels collide.
+            </summary>
+            <param name="image1">The bitmap image to check for collision</param>
+            <param name="x1">The x location of image 1</param>
+            <param name="y1">The y location of image 1</param>
+            <param name="image2">The bitmap image to check for collision</param>
+            <param name="x2">The x location of image 2</param>
+            <param name="y2">The y location of image 2</param>
+            <returns>True if the bitmaps collide.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Determines if a sprite has collided with a bitmap using pixel level
+            collision detection with the bitmap.
+            </summary>
+            <param name="theSprite">The sprite to check for collision</param>
+            <param name="theBitmap">The bitmap image to check for collision</param>
+            <param name="x">The x location of the bitmap</param>
+            <param name="y">The y location of the bitmap</param>
+            <param name="bounded">Indicates if theBitmap should use bounded collision</param>
+            <returns>True if the bitmap has collided with the sprite.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Determines if a sprite has collided with a bitmap. The x and y values
+            are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
+            the offset from world to screen coordinates.
+            </summary>
+            <param name="theSprite">The sprite to check for collision</param>
+            <param name="theBitmap">The bitmap image to check for collision</param>
+            <param name="x">The x location of the bitmap</param>
+            <param name="y">The y location of the bitmap</param>
+            <param name="bounded">Indicates if bitmap should use bounded collision</param>
+            <param name="vwPrtX">The x offset of the screen's portal</param>
+            <param name="vwPrtY">The y offset of the screen's portal</param>
+            <returns> rue if the bitmap has collided with the sprite.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Determines if a sprite has collided with a bitmap. The x and y values
+            are expressed in "world" coordinates.
+            </summary>
+            <param name="theSprite">The sprite to check for collision</param>
+            <param name="theBitmap">The bitmap image to check for collision</param>
+            <param name="x">The x location of the bitmap</param>
+            <param name="y">The y location of the bitmap</param>
+            <returns> rue if the bitmap has collided with the sprite.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HasSpriteCollidedWithBitmap(SwinGame.Sprite,SwinGame.Bitmap,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Determines if a sprite has collided with a bitmap. The x and y values
+            are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
+            the offset from world to screen coordinates.
+            </summary>
+            <param name="theSprite">The sprite to check for collision</param>
+            <param name="theBitmap">The bitmap image to check for collision</param>
+            <param name="x">The x location of the bitmap</param>
+            <param name="y">The y location of the bitmap</param>
+            <param name="vwPrtX">The x offset of the screen's portal</param>
+            <param name="vwPrtY">The y offset of the screen's portal</param>
+            <returns> rue if the bitmap has collided with the sprite.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HaveBitmapsCollided(SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean,SwinGame.Bitmap,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Checks to see if two bitmaps have collided, this performs a bounded check
+            then, if required, it performs a per pixel check on the colliding region.
+            </summary>
+            <param name="image1">The bitmap to check for collision</param>
+            <param name="x1">The x location of image 1</param>
+            <param name="y1">The y location of image 1</param>
+            <param name="bounded1">Indicates if image1 should use bounded collision</param>
+            <param name="image2">The bitmap to check for collision</param>
+            <param name="x2">The x location of image 2</param>
+            <param name="y2">The y location of image 2</param>
+            <param name="bounded2">Indicates if image2 should use bounded collision</param>
+            <returns>True if the bitmaps collide.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.HaveBitmapsCollided(SwinGame.Bitmap,System.Int32,System.Int32,SwinGame.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Checks to see if two bitmaps have collided, this performs a bounded check
+            then, if required, it performs a per pixel check on the colliding region.
+            </summary>
+            <param name="image1">The bitmap to check for collision</param>
+            <param name="x1">The x location of image 1</param>
+            <param name="y1">The y location of image 1</param>
+            <param name="image2">The bitmap to check for collision</param>
+            <param name="x2">The x location of image 2</param>
+            <param name="y2">The y location of image 2</param>
+            <returns>True if the bitmaps collide.</returns>
+        </member>
+        <member name="M:SwinGame.Physics.CreateVector(System.Double,System.Double,System.Boolean)">
+            <summary>
+            Creates a new vector with values x and y, possibly with an inverted y. The
+            inversion of the y value provides a convienient option for handling
+            screen related vectors.
+            </summary>
+            <param name="x">Initial values for the vector</param>
+            <param name="y">Initial values for the vector</param>
+            <param name="invertY">Indicates if the y value should be inverted.</param>
+            <returns>A new vector with values x and y</returns>
+        </member>
+        <member name="M:SwinGame.Physics.CreateVector(System.Double,System.Double)">
+            <summary>
+            Creates a new vector with values x and y.
+            </summary>
+            <param name="x">Initial values for the vector</param>
+            <param name="y">Initial values for the vector</param>
+            <returns>A new vector with values x and y</returns>
+        </member>
+        <member name="M:SwinGame.Physics.AddVectors(SwinGame.Vector,SwinGame.Vector)">
+            <summary>
+            Adds the Vector v1 and the Vector v2.
+            </summary>
+            <param name="v1">The vectors to work with</param>
+            <param name="v2">The vectors to work with</param>
+            <returns>v1 + v2</returns>
+        </member>
+        <member name="M:SwinGame.Physics.SubtractVectors(SwinGame.Vector,SwinGame.Vector)">
+            <summary>
+            Subtracts the Vector v1 and the Vector v2.
+            </summary>
+            <param name="v1">The vectors to work with</param>
+            <param name="v2">The vectors to work with</param>
+            <returns>v1 - v2</returns>
+        </member>
+        <member name="M:SwinGame.Physics.InvertVector(SwinGame.Vector)">
+            <summary>
+            Inverts the vector v. Changes the direction of the vector's x and y.
+            </summary>
+            <param name="theVector">The vector to invert</param>
+            <returns>A new inverted vector</returns>
+        </member>
+        <member name="M:SwinGame.Physics.ChopVector(SwinGame.Vector,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Limits the vector within the range min-max of X-Y. AVOID use... use
+             LimitMagnitude
+            </summary>
+            <param name="theVector">The vector to limit</param>
+            <param name="minX">The min range of the vector's x</param>
+            <param name="maxX">The max range of the vector's x</param>
+            <param name="minY">The min range of the vector's y</param>
+            <param name="maxY">The max range of the vector's y</param>
+            <returns>A new vector limited within that range</returns>
+        </member>
+        <member name="M:SwinGame.Physics.LimitVector(SwinGame.Vector,System.Double)">
+            <summary>
+            Limit the magnitude of a vector.
+            </summary>
+            <param name="theVector">The vector to limit</param>
+            <param name="maxMagnitude">The maximum magnitude of the vector.</param>
+            <returns>A new vector with the same direction as theVector,
+            with a maximum magnitude of maxMagnitude</returns>
+        </member>
+        <member name="M:SwinGame.Physics.GetUnitVector(SwinGame.Vector)">
+            <summary>
+            Gets the unit vector of the passed in vector. The unit vector has a
+            magnitude of 1, resulting in a vector that indicates the direction of
+            the original vector.
+            </summary>
+            <param name="theVector">The vector to get the unit vector of</param>
+            <returns>The unit vector from the passed in vector</returns>
+        </member>
+        <member name="M:SwinGame.Physics.IsZeroVector(SwinGame.Vector)">
+            <summary>
+            Indicates if the magnitude of the vector is 0.
+            </summary>
+            <param name="theVector">The vector to check</param>
+            <returns>True if the vector has values 0, 0</returns>
+        </member>
+        <member name="M:SwinGame.Physics.GetVectorMagnitude(SwinGame.Vector)">
+            <summary>
+            Returns the magnitude of a vector. The magnitude represents the length of
+            the vector.
+            </summary>
+            <param name="theVector">The vector to get the magnitude of</param>
+            <returns>The magnitude of the vector</returns>
+        </member>
+        <member name="M:SwinGame.Physics.DotProduct(SwinGame.Vector,SwinGame.Vector)">
+            <summary>
+            The Angle between two vectors
+            </summary>
+            <param name="v1">The first Vector</param>
+            <param name="v2">The Second Vector</param>
+            <returns>The angle</returns>
+        </member>
+        <member name="M:SwinGame.Physics.MultiplyVector(SwinGame.Vector,System.Double)">
+            <summary>
+            Multiplies a Vector by a number
+            </summary>
+            <param name="v1">The vector to multiply</param>
+            <param name="s1">The number to multiply the vector by</param>
+            <returns>The multiplyed vector</returns>
+        </member>
+        <member name="M:SwinGame.Physics.CalculateAngle(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Gets the Angle between two points 
+            </summary>
+            <param name="x1"></param>
+            <param name="y1"></param>
+            <param name="x2"></param>
+            <param name="y2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SwinGame.Physics.CalculateAngle(SwinGame.Sprite,SwinGame.Sprite)">
+            <summary>
+            
+            </summary>
+            <param name="sprite1"></param>
+            <param name="sprite2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SwinGame.Physics.Multiply(SwinGame.Matrix2D@,SwinGame.Matrix2D@)">
+            <summary>
+            Multiplies two matrixs 
+            </summary>
+            <param name="m1">The first Matrix</param>
+            <param name="m2">The second Matrix</param>
+            <returns>The combined Matrixes</returns>
+        </member>
+        <member name="M:SwinGame.Physics.Multiply(SwinGame.Matrix2D@,SwinGame.Vector@)">
+            <summary>
+            Multiplies 1 Vector and 1 Matrix2D
+            </summary>
+            <param name="m">The Matrix2D</param>
+            <param name="v">The Vector</param>
+            <returns>The resulting Matrix2D</returns>
         </member>
     </members>
 </doc>
