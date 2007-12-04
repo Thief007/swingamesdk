@@ -20,7 +20,8 @@ namespace SGSDK_Showcase
             Audio.OpenAudio();
 
             //Plays the SwinGameSDK Intro
-            Intro.LoadResources();
+
+            //Intro.LoadResources();
            
             //Run Examples
 
@@ -29,7 +30,9 @@ namespace SGSDK_Showcase
             //DrawCircles.Run();
             //DrawEllipses.Run();
             //DrawBitmaps.Run();
-            DrawSprites.Run();
+            //DrawSprites.Run();
+            //CollisionDetection.Run();
+            MoveSpriteWithInput.Run();
 
 
             //Closes the Audio System

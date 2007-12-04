@@ -124,7 +124,7 @@ namespace SwinGame
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern SpriteKind GetSpriteKind(IntPtr pointer);
+        private static extern int GetSpriteKind(IntPtr pointer);
 
         /// <summary>
         /// Gets the Sprite Kind
@@ -133,23 +133,25 @@ namespace SwinGame
         {
             get
             {
-                return GetSpriteKind(Pointer);
+                return (SpriteKind)GetSpriteKind(Pointer);
             }
         }
 
+        /*
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int GetSpriteFramesPerCell(IntPtr pointer);
+        private static extern int[] GetSpriteFramesPerCell(IntPtr pointer);
 
         /// <summary>
         /// Gets the Frames per Cell
         /// </summary>
-        public int FramesPerCell
+        public int[] FramesPerCell
         {
             get
             {
-                return GetSpriteFramesPerCell(Pointer);
+                return (int[])GetSpriteFramesPerCell(Pointer);
             }
         }
+        */
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteCols(IntPtr pointer);
@@ -194,7 +196,7 @@ namespace SwinGame
         }
 
 	    [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern SpriteEndingAction GetSpriteendingAction(IntPtr pointer);
+        private static extern int GetSpriteendingAction(IntPtr pointer);
 
         /// <summary>
         /// Gets the Ending Action
@@ -203,7 +205,7 @@ namespace SwinGame
         {
             get
             {
-                return GetSpriteendingAction(Pointer);
+                return (SpriteEndingAction)GetSpriteendingAction(Pointer);
             }
         }
 
@@ -1096,7 +1098,7 @@ namespace SwinGame
         // Sprite Additions
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiEnding")]
-        private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, Boolean isMulti, int length, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
 
         /// <summary>
         /// Creates a new Sprite
@@ -1111,12 +1113,12 @@ namespace SwinGame
         public static Sprite CreateSprite(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
         {
             Sprite result;
-            result.Pointer = DLL_CreateSpriteMultiEnding(startBitmap.pointer, isMulti, framesPerCell, endingAction, width, height);
+            result.Pointer = DLL_CreateSpriteMultiEnding(startBitmap.pointer, isMulti, framesPerCell.Length, framesPerCell, endingAction, width, height);
             return result;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMulti")]
-        private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, Boolean isMulti, int length, int[] framesPerCell, int width, int height);
 
         /// <summary>
         /// Creates a new Sprite
@@ -1130,12 +1132,12 @@ namespace SwinGame
         public static Sprite CreateSprite(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height)
         {
             Sprite result;
-            result.Pointer = DLL_CreateSpriteMulti(startBitmap.pointer, isMulti, framesPerCell, width, height);
+            result.Pointer = DLL_CreateSpriteMulti(startBitmap.pointer, isMulti,framesPerCell.Length, framesPerCell, width, height);
             return result;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
-        private static extern IntPtr DLL_CreateSpriteArrayEnding(IntPtr[] startBitmap, int[] framesPerCell, SpriteEndingAction endingAction);
+        private static extern IntPtr DLL_CreateSpriteArrayEnding(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell, int endingAction);
 
         /// <summary>
         /// Creates a new Sprite
@@ -1156,12 +1158,12 @@ namespace SwinGame
                 temp[i] = startBitmap[i].pointer;
             }
 
-            result.Pointer = DLL_CreateSpriteArrayEnding(temp, framesPerCell, endingAction);
+            result.Pointer = DLL_CreateSpriteArrayEnding(temp.Length, temp,framesPerCell.Length, framesPerCell, (int)endingAction);
             return result;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
-        private static extern IntPtr DLL_CreateSpriteArray(IntPtr[] startBitmap, int[] framesPerCell);
+        private static extern IntPtr DLL_CreateSpriteArray(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell);
 
         /// <summary>
         /// Creates a new Sprite
@@ -1180,7 +1182,7 @@ namespace SwinGame
             {
                 temp[i] = startBitmap[i].pointer;
             }
-            result.Pointer = DLL_CreateSpriteArray(temp, framesPerCell);
+            result.Pointer = DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell);
             return result;
         }
 
@@ -1189,7 +1191,7 @@ namespace SwinGame
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpritesViewPort")]
-        private static extern void DLL_DrawSpritesViewPort(IntPtr[] spritesToDraw, int vwPrtX, int vwPrtY, int vmPrtWidth, int vwPrtHeight);
+        private static extern void DLL_DrawSpritesViewPort(int length, IntPtr[] spritesToDraw, int vwPrtX, int vwPrtY, int vmPrtWidth, int vwPrtHeight);
 
         /// <summary>
         /// Draws a Sprite Collection
@@ -1201,11 +1203,11 @@ namespace SwinGame
         /// <param name="vwPrtHeight">The Height of the ViewPort</param>
         public static void DrawSprites(SpriteCollection spritesToDraw, int vwPrtX, int vwPrtY, int vmPrtWidth, int vwPrtHeight)
         {
-            DLL_DrawSpritesViewPort(spritesToDraw.Sprites, vwPrtX, vwPrtY, vmPrtWidth, vwPrtHeight);
+            DLL_DrawSpritesViewPort(spritesToDraw.Sprites.Length, spritesToDraw.Sprites, vwPrtX, vwPrtY, vmPrtWidth, vwPrtHeight);
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprites")]
-        private static extern void DLL_DrawSprites(IntPtr[] spritesToDraw);
+        private static extern void DLL_DrawSprites(int length, IntPtr[] spritesToDraw);
 
         /// <summary>
         /// Draws a Sprite Collection
@@ -1213,12 +1215,13 @@ namespace SwinGame
         /// <param name="spritesToDraw">Collection of Sprites to draw</param>
         public static void DrawSprites(SpriteCollection spritesToDraw)
         {
-            DLL_DrawSprites(spritesToDraw.Sprites);
+            DLL_DrawSprites(spritesToDraw.Sprites.Length, spritesToDraw.Sprites);
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddSprite")]
         private static extern void DLL_AddSprite(ref IntPtr[] spritescollection, IntPtr sprite);
 
+        /*
         /// <summary>
         /// Adds a Sprite to a SpriteCollection
         /// </summary>
@@ -1228,6 +1231,7 @@ namespace SwinGame
         {
             DLL_AddSprite(ref spritesToDraw.Sprites, sprite.Pointer);
         }
+        */
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
         private static extern void DLL_UpdateSprite(IntPtr sprite);
@@ -1241,6 +1245,7 @@ namespace SwinGame
             DLL_UpdateSprite(sprite.Pointer);
         }
 
+        /*
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearSpriteCollection")]
         private static extern void DLL_ClearSpriteCollection(ref IntPtr[] spritecollection);
 
@@ -1264,5 +1269,6 @@ namespace SwinGame
         {
             DLL_FreeSpriteCollection(ref spritecollection.Sprites);
         }
+        */
     }
 }
