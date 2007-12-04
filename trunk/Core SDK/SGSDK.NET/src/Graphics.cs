@@ -13,7 +13,7 @@ namespace SwinGame
     /// </summary>
     public struct SpriteCollection
     {
-        IntPtr[] Sprites;
+        public IntPtr[] Sprites;
     }
 
     /// <summary>
@@ -250,19 +250,45 @@ namespace SwinGame
         }
     }
 
-    
+    /// It is used to determine how a sprite should act.
     public enum SpriteKind
     {
+        /// <summary>
+        /// StaticSprite will no animate at all.
+        /// </summary>
         StaticSprite,
+        /// <summary>
+        /// AnimArraySprite will animate using an array of bitmaps.
+        /// </summary>
         AnimArraySprite,
+        /// <summary>
+        /// AnimMultiSprite will animate using a single bitmap with multiple
+        /// frames.
+        /// </summary>
         AnimMultiSprite
     }
 
+    /// Record: SpriteEndingAction
+    ///
+    /// It is used to determine what this sprite should do when it finishes
+    /// animating.
     public enum SpriteEndingAction
     {
+        /// <summary>
+        /// Loops forward
+        /// </summary>
         Loop,
+        /// <summary>
+        /// Loops back and forth
+        /// </summary>
         ReverseLoop,
+        /// <summary>
+        /// Reverse Once
+        /// </summary>
         ReverseOnce,
+        /// <summary>
+        /// No Loop
+        /// </summary>
         Stop
     }
 
@@ -1069,8 +1095,161 @@ namespace SwinGame
 
         // Sprite Additions
 
-        //[DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreenWithViewPort")]
-        //private static extern int DLL_IsSpriteOffscreenWithViewPort(IntPtr theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiEnding")]
+        private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
 
+        /// <summary>
+        /// Creates a new Sprite
+        /// </summary>
+        /// <param name="startBitmap">Bitmap to add</param>
+        /// <param name="isMulti">set to true if the bitmap is a tileset</param>
+        /// <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+        /// <param name="endingAction">sets the ending action</param>
+        /// <param name="width">The width of the Sprite</param>
+        /// <param name="height">The height of the Sprite</param>
+        /// <returns>A Sprite</returns>
+        public static Sprite CreateSprite(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
+        {
+            Sprite result;
+            result.Pointer = DLL_CreateSpriteMultiEnding(startBitmap.pointer, isMulti, framesPerCell, endingAction, width, height);
+            return result;
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMulti")]
+        private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height);
+
+        /// <summary>
+        /// Creates a new Sprite
+        /// </summary>
+        /// <param name="startBitmap">Bitmap to add</param>
+        /// <param name="isMulti">set to true if the bitmap is a tileset</param>
+        /// <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+        /// <param name="width">The width of the Sprite</param>
+        /// <param name="height">The height of the Sprite</param>
+        /// <returns>A Sprite</returns>
+        public static Sprite CreateSprite(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height)
+        {
+            Sprite result;
+            result.Pointer = DLL_CreateSpriteMulti(startBitmap.pointer, isMulti, framesPerCell, width, height);
+            return result;
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
+        private static extern IntPtr DLL_CreateSpriteArrayEnding(IntPtr startBitmap, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
+
+        /// <summary>
+        /// Creates a new Sprite
+        /// </summary>
+        /// <param name="startBitmap">Bitmap to add</param>
+        /// <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+        /// <param name="endingAction">sets the ending action</param>
+        /// <param name="width">The width of the Sprite</param>
+        /// <param name="height">The height of the Sprite</param>
+        /// <returns>A Sprite</returns>
+        public static Sprite CreateSprite(Bitmap startBitmap, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
+        {
+            Sprite result;
+            result.Pointer = DLL_CreateSpriteArrayEnding(startBitmap.pointer, framesPerCell, endingAction, width, height);
+            return result;
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
+        private static extern IntPtr DLL_CreateSpriteArray(IntPtr startBitmap, int[] framesPerCell, int width, int height);
+
+        /// <summary>
+        /// Creates a new Sprite
+        /// </summary>
+        /// <param name="startBitmap">Bitmap to add</param>
+        /// <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+        /// <param name="width">The width of the Sprite</param>
+        /// <param name="height">The height of the Sprite</param>
+        /// <returns>A Sprite</returns>
+        public static Sprite CreateSprite(Bitmap startBitmap, int[] framesPerCell, int width, int height)
+        {
+            Sprite result;
+            result.Pointer = DLL_CreateSpriteArray(startBitmap.pointer, framesPerCell, width, height);
+            return result;
+        }
+
+
+
+
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpritesViewPort")]
+        private static extern void DLL_DrawSpritesViewPort(IntPtr[] spritesToDraw, int vwPrtX, int vwPrtY, int vmPrtWidth, int vwPrtHeight);
+
+        /// <summary>
+        /// Draws a Sprite Collection
+        /// </summary>
+        /// <param name="spritesToDraw">Collection of Sprites to draw</param>
+        /// <param name="vwPrtX">The X Coordinate of the ViewPort</param>
+        /// <param name="vwPrtY">The Y Coordinate of the ViewPort</param>
+        /// <param name="vmPrtWidth">The Width of the ViewPort</param>
+        /// <param name="vwPrtHeight">The Height of the ViewPort</param>
+        public static void DrawSprites(SpriteCollection spritesToDraw, int vwPrtX, int vwPrtY, int vmPrtWidth, int vwPrtHeight)
+        {
+            DLL_DrawSpritesViewPort(spritesToDraw.Sprites, vwPrtX, vwPrtY, vmPrtWidth, vwPrtHeight);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprites")]
+        private static extern void DLL_DrawSprites(IntPtr[] spritesToDraw);
+
+        /// <summary>
+        /// Draws a Sprite Collection
+        /// </summary>
+        /// <param name="spritesToDraw">Collection of Sprites to draw</param>
+        public static void DrawSprites(SpriteCollection spritesToDraw)
+        {
+            DLL_DrawSprites(spritesToDraw.Sprites);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddSprite")]
+        private static extern void DLL_AddSprite(ref IntPtr[] spritescollection, IntPtr sprite);
+
+        /// <summary>
+        /// Adds a Sprite to a SpriteCollection
+        /// </summary>
+        /// <param name="spritesToDraw">The Sprite Collection</param>
+        /// <param name="sprite">The Sprite to Add</param>
+        public static void AddSprite(ref SpriteCollection spritesToDraw, Sprite sprite)
+        {
+            DLL_AddSprite(ref spritesToDraw.Sprites, sprite.Pointer);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
+        private static extern void DLL_UpdateSprite(IntPtr sprite);
+
+        /// <summary>
+        /// Updates a Sprite
+        /// </summary>
+        /// <param name="sprite">The Sprite</param>
+        public static void UpdateSprite(Sprite sprite)
+        {
+            DLL_UpdateSprite(sprite.Pointer);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearSpriteCollection")]
+        private static extern void DLL_ClearSpriteCollection(ref IntPtr[] spritecollection);
+
+        /// <summary>
+        /// Clears a Sprite Collection
+        /// </summary>
+        /// <param name="spritecollection">The Sprite Collection</param>
+        public static void ClearSpriteCollection(ref SpriteCollection spritecollection)
+        {
+            DLL_ClearSpriteCollection(ref spritecollection.Sprites);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSpriteCollection")]
+        private static extern void DLL_FreeSpriteCollection(ref IntPtr[] spritecollection);
+
+        /// <summary>
+        /// Frees a Sprite Collection
+        /// </summary>
+        /// <param name="spritecollection">The Sprite Collection</param>
+        public static void FreeSpriteCollection(ref SpriteCollection spritecollection)
+        {
+            DLL_FreeSpriteCollection(ref spritecollection.Sprites);
+        }
     }
 }
