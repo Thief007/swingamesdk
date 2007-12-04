@@ -1039,10 +1039,48 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FreeSpriteCollection(toFree);
 	end;
 
+	// Sprite Properties
 	
+	function GetSpriteKind(surface : Sprite): SpriteKind; cdecl; export;
+	begin
+		result := surface.spriteKind;
+	end;
 	
+	function GetSpriteFramesPerCell(surface : Sprite): Array of Intenger; cdecl; export;
+	begin
+		result := surface.framesPerCell;
+	end;
 	
+	function GetSpriteCols(surface : Sprite) : Integer; cdecl; export;
+	begin
+		result := surface.cols;
+	end;
 	
+	function GetSpriteRow(surface : Sprite) : Integer; cdecl; export;
+	begin
+		result := surface.row;
+	end;
+	
+	function GetSpriteFrameCount(surface : Sprite) : Integer; cdecl; export;
+	begin
+		result := surface.frameCount;
+	end;
+
+	function GetSpriteendingAction(surface : Sprite) : ISpriteEndingAction; cdecl; export;
+	begin
+		result := surface.endingAction;
+	end;
+	
+	function GetSpritehasEnded(surface : Sprite) : Boolean; cdecl; export;
+	begin
+		result := surface.hasEnded;
+	end;
+	
+	function GetSpriteReverse(surface : Sprite) : Boolean; cdecl; export;
+	begin
+		result := surface.reverse;
+	end;
+
 	
 	
 	
@@ -1319,6 +1357,15 @@ exports
 	UpdateSprite,
 	ClearSpriteCollection,
 	FreeSpriteCollection,
+	
+	GetSpriteKind,	
+	GetSpriteFramesPerCell,
+	GetSpriteCols,
+	GetSpriteRow,
+	GetSpriteFrameCount,
+	GetSpriteendingAction,
+	GetSpritehasEnded,
+	GetSpriteReverse,
 	
 	FreeSprite,
 	AddBitmapToSprite,
