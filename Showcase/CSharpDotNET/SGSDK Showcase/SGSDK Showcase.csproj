@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DrawSprites.cs" />
+    <Compile Include="DrawBitmaps.cs" />
     <Compile Include="DrawEllipses.cs" />
     <Compile Include="DrawCircles.cs" />
     <Compile Include="DrawRectangles.cs" />

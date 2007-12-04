@@ -1135,7 +1135,7 @@ namespace SwinGame
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
-        private static extern IntPtr DLL_CreateSpriteArrayEnding(IntPtr startBitmap, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteArrayEnding(IntPtr[] startBitmap, int[] framesPerCell, SpriteEndingAction endingAction);
 
         /// <summary>
         /// Creates a new Sprite
@@ -1146,15 +1146,22 @@ namespace SwinGame
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public static Sprite CreateSprite(Bitmap startBitmap, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
+        public static Sprite CreateSprite(Bitmap[] startBitmap, int[] framesPerCell, SpriteEndingAction endingAction)
         {
             Sprite result;
-            result.Pointer = DLL_CreateSpriteArrayEnding(startBitmap.pointer, framesPerCell, endingAction, width, height);
+            IntPtr[] temp = new IntPtr[startBitmap.Length];
+
+            for (int i = 0; i < startBitmap.Length; i++)
+            {
+                temp[i] = startBitmap[i].pointer;
+            }
+
+            result.Pointer = DLL_CreateSpriteArrayEnding(temp, framesPerCell, endingAction);
             return result;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
-        private static extern IntPtr DLL_CreateSpriteArray(IntPtr startBitmap, int[] framesPerCell, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteArray(IntPtr[] startBitmap, int[] framesPerCell);
 
         /// <summary>
         /// Creates a new Sprite
@@ -1164,10 +1171,16 @@ namespace SwinGame
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public static Sprite CreateSprite(Bitmap startBitmap, int[] framesPerCell, int width, int height)
+        public static Sprite CreateSprite(Bitmap[] startBitmap, int[] framesPerCell)
         {
             Sprite result;
-            result.Pointer = DLL_CreateSpriteArray(startBitmap.pointer, framesPerCell, width, height);
+            IntPtr[] temp = new IntPtr[startBitmap.Length];
+
+            for (int i = 0; i < startBitmap.Length; i++)
+            {
+                temp[i] = startBitmap[i].pointer;
+            }
+            result.Pointer = DLL_CreateSpriteArray(temp, framesPerCell);
             return result;
         }
 

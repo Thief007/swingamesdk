@@ -6,10 +6,7 @@ set BaseDir=%CD%
 echo Running script from %BaseDir%
 
 set Output1=.\SGSDK.NET\lib\
-echo Saving output to %Output%
-
-set Output2=.\SGSDK.NET\lib\
-echo Saving output to %Output2%
+echo Saving output to %Output1%
 
 set LibDir=%BaseDir%\lib\Win
 echo Getting libraries from %LibDir%
@@ -24,16 +21,16 @@ if "%1"=="clean" goto cleaning
 
 	fpc -v0 -Mdelphi -FE"%Output1%" .\src\SGSDK.pas
 	
-	copy "%LibDir%\*.dll" "%Output1%"
+	rem copy "%LibDir%\*.dll" "%Output1%"
 
 	del /Q "%Output1%\*.o"
 	del /Q "%Output1%\*.ppu"
 	del /Q "%Output1%\*.a"
 
-	msbuild "SGSDK.NET\src\SGSDK.NET.sln"
+	rem msbuild "SGSDK.NET\src\SGSDK.NET.sln"
 
-	copy "%DOTNETbin%\*.dll" "%Output2%"
-	copy "%DOTNETbin%\*.xml" "%Output2%"
+	rem copy "%DOTNETbin%\*.dll" "%Output1%"
+	rem copy "%DOTNETbin%\*.xml" "%Output1%"
 	
 
 
