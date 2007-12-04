@@ -3,13 +3,24 @@ unit SGSDK_Graphics;
 interface
 	uses	SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
 			SDL_Mixer, SDL_TTF, SDLEventProcessing;
-	type		
+	type
+		/// Record: SpriteKind
+		///
+		/// It is used to determine how a sprite should act.
+		/// StaticSprite will not animate at all.
+		/// AnimArraySprite will animate using an array of bitmaps.
+		/// AnimMultiSprite will animate using a single bitmap with multiple
+		/// frames.
 		SpriteKind = (
 			StaticSprite,
 			AnimArraySprite,
 			AnimMultiSprite
 		);
 		
+		/// Record: SpriteEndingAction
+		///
+		/// It is used to determine what this sprite should do when it finishes
+		/// animating.
 		SpriteEndingAction = (
 			Loop,
 			ReverseLoop,
@@ -22,10 +33,18 @@ interface
 		///	NOTE: Do not use SpriteData directly. Use Sprite.
 		///
 		///	- bitmaps: The array of bitmaps related to the Sprite
+		/// - spriteKind: Animation kind of this sprite
+		/// - framesPerCell: Array of Integer that defines the frames per cell
 		///	- xPod, yPos: The sprites location within the game world
+		/// - width, height: The width and height of this sprite (used for multi)
+		/// - cols, row: The number of cols and rows of this sprite (used for multi)
+		/// - frameCount: Current frame count of this sprite
 		///	- currentFrame: The current animation frame for the Sprite
 		///	- usePixelCollision: A flag indicating if pixel collision sould be
 		///											 used, if false bounding collision is used.
+		/// - endingAction: How this sprite acts when it finishes playing the animation
+		/// - hasEnded: True if this sprite has stopped animating
+		/// - reverse: True if this sprite's animation is reversing
 		SpriteData = record
 			bitmaps : Array of Bitmap;
 			spriteKind : SpriteKind;
@@ -53,6 +72,10 @@ interface
 		///	Sprite's current frame.
 		Sprite = ^SpriteData;
 		
+		/// Type: SpriteCollection
+		///
+		/// Array of sprites which can be passed to DrawSprites() to draw multiple
+		/// sprites at once.
 		SpriteCollection = Array of Sprite;
 		
 	//*****
