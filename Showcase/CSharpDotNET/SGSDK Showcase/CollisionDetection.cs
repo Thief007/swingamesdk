@@ -1,0 +1,97 @@
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Drawing;
+
+using SwinGame;
+using Graphics = SwinGame.Graphics;
+using Bitmap = SwinGame.Bitmap;
+using Font = SwinGame.Font;
+using FontStyle = SwinGame.FontStyle;
+namespace SGSDK_Showcase
+{
+    public static class CollisionDetection
+    {
+        private static Sprite ball1;
+        private static Sprite ball2;
+        private static int xSpeed1;
+        private static int xSpeed2;
+        private static int ySpeed1;
+        private static int ySpeed2;
+
+        public static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+
+
+        public static void Run()
+        {
+            Graphics.ClearScreen();
+
+            xSpeed1 = 3;
+            xSpeed2 = 3;
+            ySpeed1 = 3;
+            ySpeed2 = 3;
+            
+            ball1 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
+            ball2 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball2.png", ResourceKind.ImageResource)));
+
+            ball1.X = 0;
+            ball1.Y = 0;
+
+            ball2.X = Core.ScreenWidth() - Graphics.CurrentWidth(ball2);
+            ball2.Y = Core.ScreenHeight() - Graphics.CurrentHeight(ball2);
+
+            ball1.UsePixelCollision = true;
+            ball2.UsePixelCollision = true;
+
+            for (int i = 0; i < 1201; i++)
+            {
+                Graphics.ClearScreen();
+                Graphics.DrawSprite(ball1);
+                Graphics.DrawSprite(ball2);
+
+                if (Physics.HaveSpritesCollided(ball1, ball2))
+                {
+                    Text.DrawText("Collided!", Color.White, _Font, Core.ScreenWidth() - 90, Core.ScreenHeight() - 20); 
+                }
+
+                MoveBall(ref ball1, ref xSpeed1, ref ySpeed1);
+                MoveBall(ref ball2, ref xSpeed2, ref ySpeed2);
+
+                Overlay.DrawOverlay("Collision Detection Example");
+                Core.ProcessEvents();
+                Core.RefreshScreen();
+            }
+        }
+
+        public static void MoveBall(ref Sprite ball, ref int xSpeed, ref int ySpeed)
+        {
+            ball.X = ball.X + xSpeed;
+            ball.Y = ball.Y + ySpeed;
+
+            if (ball.X > Core.ScreenWidth() - Graphics.CurrentWidth(ball))
+            {
+                ball.X = Core.ScreenWidth() - Graphics.CurrentWidth(ball);
+                xSpeed = -1 * xSpeed;
+            }
+
+            if (ball.Y > Core.ScreenHeight() - Graphics.CurrentHeight(ball))
+            {
+			    ball.Y = Core.ScreenHeight() - Graphics.CurrentHeight(ball);
+			    ySpeed = -1 * ySpeed;
+            }
+
+            if (ball.X < 0)
+            {
+                ball.X = 0;
+                xSpeed = -1 * xSpeed;
+            }
+
+            if (ball.Y < 0)
+            {
+                ball.Y = 0;
+                ySpeed = -1 * ySpeed;
+            }
+        }
+
+    }
+}

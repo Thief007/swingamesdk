@@ -431,11 +431,6 @@
             Gets the Sprite Kind
             </summary>
         </member>
-        <member name="P:SwinGame.Sprite.FramesPerCell">
-            <summary>
-            Gets the Frames per Cell
-            </summary>
-        </member>
         <member name="P:SwinGame.Sprite.Cols">
             <summary>
             Gets the number of Columns
@@ -1054,30 +1049,11 @@
             </summary>
             <param name="spritesToDraw">Collection of Sprites to draw</param>
         </member>
-        <member name="M:SwinGame.Graphics.AddSprite(SwinGame.SpriteCollection@,SwinGame.Sprite)">
-            <summary>
-            Adds a Sprite to a SpriteCollection
-            </summary>
-            <param name="spritesToDraw">The Sprite Collection</param>
-            <param name="sprite">The Sprite to Add</param>
-        </member>
         <member name="M:SwinGame.Graphics.UpdateSprite(SwinGame.Sprite)">
             <summary>
             Updates a Sprite
             </summary>
             <param name="sprite">The Sprite</param>
-        </member>
-        <member name="M:SwinGame.Graphics.ClearSpriteCollection(SwinGame.SpriteCollection@)">
-            <summary>
-            Clears a Sprite Collection
-            </summary>
-            <param name="spritecollection">The Sprite Collection</param>
-        </member>
-        <member name="M:SwinGame.Graphics.FreeSpriteCollection(SwinGame.SpriteCollection@)">
-            <summary>
-            Frees a Sprite Collection
-            </summary>
-            <param name="spritecollection">The Sprite Collection</param>
         </member>
         <member name="T:SwinGame.MouseButton">
             <summary>

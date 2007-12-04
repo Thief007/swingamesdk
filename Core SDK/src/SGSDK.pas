@@ -986,35 +986,43 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Graphics.CreateSprite(startBitmap);
 	end;
 	
-	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
+	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
 	begin
+		SetLength(framesPerCell, length);
 		result := SGSDK_Graphics.CreateSprite(image, isMulti, framesPerCell, endingAction, width, height);
 	end;
 	
-	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; framesPerCell : IntArray; width, height : Integer): Sprite; cdecl; export;
+	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; width, height : Integer): Sprite; cdecl; export;
 	begin
+		SetLength(framesPerCell, length);
 		result := SGSDK_Graphics.CreateSprite(image, isMulti,framesPerCell, width, height);
 	end;
 
-	function CreateSpriteArrayEnding(bitmaps : BitmapArray; framesPerCell : IntArray; endingAction : SpriteEndingAction): Sprite; cdecl; export;
+	function CreateSpriteArrayEnding(bitlength : Integer; bitmaps : BitmapArray; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction): Sprite; cdecl; export;
 	begin
+		SetLength(bitmaps, bitlength);
+		SetLength(framesPerCell, length);
 		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, endingAction);
 	end;
 	
-	function CreateSpriteArray(bitmaps : BitmapArray; framesPerCell : IntArray): Sprite; cdecl; export;
+	function CreateSpriteArray(bitlength : Integer; bitmaps : BitmapArray; length : Integer; framesPerCell : IntArray): Sprite; cdecl; export;
 	begin
+		SetLength(bitmaps, bitlength);
+		SetLength(framesPerCell, length);
 		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
 	end;
 	
 	// Draw Sprites
 	
-	procedure DrawSpritesViewPort(spritesToDraw : SpriteCollection; vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); cdecl; export;
+	procedure DrawSpritesViewPort(length : Integer; spritesToDraw : SpriteCollection; vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); cdecl; export;
 	begin
+		SetLength(spritesToDraw, length);
 		SGSDK_Graphics.DrawSprites(spritesToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
 	end;
 	
-	procedure DrawSprites(spritesToDraw : SpriteCollection); cdecl; export;
+	procedure DrawSprites(length : Integer; spritesToDraw : SpriteCollection); cdecl; export;
 	begin
+		SetLength(spritesToDraw, length);
 		SGSDK_Graphics.DrawSprites(spritesToDraw);
 	end;
 	
@@ -1046,9 +1054,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	// Sprite Properties
 	
-	function GetSpriteKind(surface : Sprite): SpriteKind; cdecl; export;
+	function GetSpriteKind(surface : Sprite): Integer; cdecl; export;
 	begin
-		result := surface.spriteKind;
+		result := Integer(surface.spriteKind);
 	end;
 	
 	function GetSpriteFramesPerCell(surface : Sprite): IntArray; cdecl; export;
@@ -1070,10 +1078,10 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		result := surface.frameCount;
 	end;
-
-	function GetSpriteendingAction(surface : Sprite) : SpriteEndingAction; cdecl; export;
+	
+	function GetSpriteendingAction(surface : Sprite) : Integer; cdecl; export;
 	begin
-		result := surface.endingAction;
+		result := Integer(surface.endingAction);
 	end;
 	
 	function GetSpritehasEnded(surface : Sprite) : Boolean; cdecl; export;

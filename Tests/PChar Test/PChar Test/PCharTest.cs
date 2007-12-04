@@ -18,5 +18,9 @@ namespace TestSpace
         //[DllImport("TestLibrary.dll", CharSet=CharSet.Ansi)]
         //[DllImport("TestLibrary.dll")]
         public static extern void SetString(String word);
+
+
+        [DllImport("TestLibrary.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void PrintArray(int length, int[] arr);
     }
 }
