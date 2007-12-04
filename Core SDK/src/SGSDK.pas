@@ -23,6 +23,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		SGSDK_Core.OpenGraphicsWindow(caption, width, height);
 	end;
+
 	
 	function WindowCloseRequested(): Integer; cdecl; export;
 	begin
