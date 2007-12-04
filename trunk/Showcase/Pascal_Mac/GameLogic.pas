@@ -113,15 +113,21 @@ implementation
 		end;
 	end;
 	
+	procedure DrawSpriteCaption(sprite : Sprite; caption : String);
+	begin
+		DrawText(caption, ColorWhite, GameFont(Courier), 
+			Round((sprite.xPos + CurrentWidth(sprite) / 2) - ((Length(caption) / 2) * 10)), 
+			Round(sprite.yPos + CurrentHeight(sprite)));
+	end;
+	
 	procedure DrawSprites();
 	var
 		i : Integer;
-		loopSprite, reverseSprite : Sprite;
+		loopSprite, reverseSprite, stopSprite, reverseOnceSprite : Sprite;
 		tempBitmaps : Array of Bitmap;
 		tempIntegers : Array of Integer;
 		tempString : String;
 	begin
-		ClearScreen();
 		SetLength(tempBitmaps, 15);
 		for i := 0 to 14 do
 		begin
@@ -135,21 +141,95 @@ implementation
 		end;
 		loopSprite := CreateSprite(tempBitmaps, tempIntegers, Loop);
 		reverseSprite := CreateSprite(tempBitmaps, tempIntegers, ReverseLoop);
-		loopSprite.xPos := 100;
+		stopSprite := CreateSprite(tempBitmaps, tempIntegers, Stop);
+		reverseOnceSprite := CreateSprite(tempBitmaps, tempIntegers, ReverseOnce);
+		loopSprite.xPos := 50;
 		loopSprite.yPos := 200;
-		reverseSprite.xPos := 300;
+		reverseSprite.xPos := 150;
 		reverseSprite.yPos := 200;
+		stopSprite.xPos := 350;
+		stopSprite.yPos := 200;
+		reverseOnceSprite.xPos := 450;
+		reverseOnceSprite.yPos := 200;
 		for i := 0 to 150 do
 		begin
 			ClearScreen();
 			DrawSprite(loopSprite);
 			DrawSprite(reverseSprite);
+			DrawSprite(stopSprite);
+			DrawSprite(reverseOnceSprite);
+			DrawSpriteCaption(loopSprite, 'Loop');
+			DrawSpriteCaption(reverseSprite, 'ReverseLoop');
+			DrawSpriteCaption(stopSprite, 'Stop');
+			DrawSpriteCaption(reverseOnceSprite, 'ReverseOnce');
 			UpdateSprite(loopSprite);
 			UpdateSprite(reverseSprite);
+			UpdateSprite(stopSprite);
+			UpdateSprite(reverseOnceSprite);
 			DrawOverlay('Drawing Sprite Example');
 			ProcessEvents();
 			RefreshScreen();
 			Sleep(50);
+		end;
+	end;
+	
+	procedure MoveBall(var ball : Sprite; var xSpeed, ySpeed : Integer);
+	begin
+		ball.xPos := ball.xPos + xSpeed;
+		ball.yPos := ball.yPos + ySpeed;
+		if ball.xPos > ScreenWidth() - CurrentWidth(ball) then
+		begin
+			ball.xPos := ScreenWidth() - CurrentWidth(ball);
+			xSpeed := -1 * xSpeed;
+		end;
+		if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
+		begin
+			ball.yPos := ScreenHeight() - CurrentHeight(ball);
+			ySpeed := -1 * ySpeed;
+		end;
+		if ball.xPos < 0 then
+		begin
+			ball.xPos := 0;
+			xSpeed := -1 * xSpeed;
+		end;
+		if ball.yPos < 0 then
+		begin
+			ball.yPos := 0;
+			ySpeed := -1 * ySpeed;
+		end;
+	end;
+	
+	procedure DrawCollisionDetection();
+	var
+		i : Integer;
+		ball1, ball2 : Sprite;
+		xSpeed1, xSpeed2, ySpeed1, ySpeed2 : Integer;
+	begin
+		ClearScreen();
+		xSpeed1 := 3;
+		xSpeed2 := 3;
+		ySpeed1 := 3;
+		ySpeed2 := 3;
+		ball1 := CreateSprite(LoadBitmap(GetPathToResource('ball.png', ImageResource)));
+		ball2 := CreateSprite(LoadBitmap(GetPathToResource('ball2.png', ImageResource)));
+		ball1.xPos := 0;
+		ball1.yPos := 0;
+		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
+		ball2.yPos := ScreenHeight() - CurrentHeight(ball2);
+		ball1.usePixelCollision := true;
+		ball2.usePixelCollision := true;
+		for i := 0 to 1200 do
+		begin
+			ClearScreen();
+			DrawSprite(ball1);
+			DrawSprite(ball2);
+			if HaveSpritesCollided(ball1, ball2) then
+				DrawText('Collided!', ColorWhite, GameFont(Courier), ScreenWidth() - 90, ScreenHeight() - 20);
+			MoveBall(ball1, xSpeed1, ySpeed1);
+			MoveBall(ball2, xSpeed2, ySpeed2);
+			DrawOverlay('Collision Detection Example');
+			ProcessEvents();
+			RefreshScreen();
 		end;
 	end;
 	
@@ -167,12 +247,14 @@ implementation
 		repeat
 			ProcessEvents();
 			
-			{DrawLines();
+			DrawLines();
 			DrawRectangles();
 			DrawCircles();
 			DrawEllipses();
-			DrawBitmaps();}
+			DrawBitmaps();
 			DrawSprites();
+			DrawCollisionDetection();
+			
 			
 			RefreshScreen();
 		until WindowCloseRequested();
