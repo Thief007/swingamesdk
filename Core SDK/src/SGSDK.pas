@@ -1027,6 +1027,19 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.UpdateSprite(spriteToDraw);
 	end;
 	
+	// Clear and Free
+	
+	procedure ClearSpriteCollection(var toClear : SpriteCollection); cdecl; export;
+	begin
+		SGSDK_Graphics.ClearSpriteCollection(toClear);
+	end;
+	
+	procedure FreeSpriteCollection(var toFree : SpriteCollection); cdecl; export;
+	begin
+		SGSDK_Graphics.FreeSpriteCollection(toFree);
+	end;
+
+	
 	
 	
 	
@@ -1299,6 +1312,13 @@ exports
 	CreateSpriteMulitEnding,
 	CreateSpriteArray,
 	CreateSpriteArrayEnding,
+	
+	DrawSpritesArray,
+	DrawSprites,
+	AddSprite,
+	UpdateSprite,
+	ClearSpriteCollection,
+	FreeSpriteCollection,
 	
 	FreeSprite,
 	AddBitmapToSprite,
