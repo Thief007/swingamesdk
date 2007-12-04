@@ -230,6 +230,10 @@ interface
 	procedure DrawSprites(spritesToDraw : SpriteCollection); overload;
 	
 	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite);
+	
+	procedure ClearSpriteCollection(var toClear : SpriteCollection);
+	
+	procedure FreeSpriteCollection(var toFree : SpriteCollection);
 
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
 

@@ -972,10 +972,67 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FillEllipse(theColour, xPos, yPos, width, height);
 	end;}
 
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// 								Animated Sprite Additions
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	function CreateSprite(startBitmap : Bitmap): Sprite; cdecl; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(startBitmap);
 	end;
+	
+	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; endingAction : SpriteEndingAction; width, height : Integer) : Sprite; cdecl; export
+	begin
+		result := SGSDK_Graphics.CreateSprite(image, isMulti, framesPerCell, endingAction, width, height);
+	end;
+	
+	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; width, height : Integer): Sprite; cdecl; export
+	begin
+		result := SGSDK_Graphics.CreateSprite(image, isMulti,framesPerCell, width, height);
+	end;
+
+	function CreateSpriteArrayEnding(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; cdecl; export
+	begin
+		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, endingAction);
+	end;
+	
+	function CreateSpriteArray(bitmaps : Array of Bitmap; framesPerCell : Array of Integer): Sprite; cdecl; export;
+	begin
+		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
+	end;
+	
+	// Draw Sprites
+	
+	procedure DrawSpritesViewPort(spritesToDraw : SpriteCollection; vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawSprites(spritesToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
+	end;
+	
+	procedure DrawSprites(spritesToDraw : SpriteCollection); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawSprites(spritesToDraw);
+	end;
+	
+	// Add Sprite
+	
+	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite); cdecl; export;
+	begin
+		SGSDK_Graphics.AddSprite(addTo, Sprite);
+	end;
+	
+	// Update Sprite
+	
+	procedure UpdateSprite(spriteToDraw : Sprite); cdecl; export;
+	begin
+		SGSDK_Graphics.UpdateSprite(spriteToDraw);
+	end;
+	
+	
+	
+	
+	
+	
+	
 
 	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
 	begin
@@ -1236,7 +1293,13 @@ exports
 	DrawEllipse,
 	//DrawEllipse1,
 	//FillEllipse1,
+	
 	CreateSprite,
+	CreateSpriteMulti,
+	CreateSpriteMulitEnding,
+	CreateSpriteArray,
+	CreateSpriteArrayEnding,
+	
 	FreeSprite,
 	AddBitmapToSprite,
 	CurrentHeight,
