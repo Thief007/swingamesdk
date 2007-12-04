@@ -21,16 +21,16 @@ if "%1"=="clean" goto cleaning
 
 	fpc -v0 -Mdelphi -FE"%Output1%" .\src\SGSDK.pas
 	
-	rem copy "%LibDir%\*.dll" "%Output1%"
+	copy "%LibDir%\*.dll" "%Output1%"
 
 	del /Q "%Output1%\*.o"
 	del /Q "%Output1%\*.ppu"
 	del /Q "%Output1%\*.a"
 
-	rem msbuild "SGSDK.NET\src\SGSDK.NET.sln"
+	msbuild "SGSDK.NET\src\SGSDK.NET.sln"
 
-	rem copy "%DOTNETbin%\*.dll" "%Output1%"
-	rem copy "%DOTNETbin%\*.xml" "%Output1%"
+	copy "%DOTNETbin%\*.dll" "%Output1%"
+	copy "%DOTNETbin%\*.xml" "%Output1%"
 	
 
 
