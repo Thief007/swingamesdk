@@ -43,6 +43,7 @@ implementation
 			DrawOverlay('Drawing Lines Example');
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
 		end;
 	end;
 	
@@ -58,6 +59,7 @@ implementation
 			DrawOverlay('Drawing Rectangles Example');
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
 			Sleep(100);
 		end;
 	end;
@@ -75,6 +77,7 @@ implementation
 			Sleep(100);
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
 		end;
 	end;
 	
@@ -91,6 +94,7 @@ implementation
 			Sleep(100);
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
 		end;
 	end;
 	
@@ -100,8 +104,8 @@ implementation
 		tempBitmap, tempBitmap2 : Bitmap;
 	begin
 		ClearScreen();
-		tempBitmap := LoadBitmap(GetPathToResource('ball.png', ImageResource));
-		tempBitmap2 := LoadBitmap(GetPathToResource('ball2.png', ImageResource));
+		tempBitmap := GameImage(BallImage1);
+		tempBitmap2 := GameImage(BallImage2);
 		for i := 0 to 900 do
 		begin
 			ClearScreen();
@@ -110,6 +114,7 @@ implementation
 			DrawOverlay('Drawing Bitmap Example');
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
 		end;
 	end;
 	
@@ -169,6 +174,7 @@ implementation
 			DrawOverlay('Drawing Sprite Example');
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
 			Sleep(50);
 		end;
 	end;
@@ -210,8 +216,8 @@ implementation
 		xSpeed2 := 3;
 		ySpeed1 := 3;
 		ySpeed2 := 3;
-		ball1 := CreateSprite(LoadBitmap(GetPathToResource('ball.png', ImageResource)));
-		ball2 := CreateSprite(LoadBitmap(GetPathToResource('ball2.png', ImageResource)));
+		ball1 := CreateSprite(GameImage(BallImage1));
+		ball2 := CreateSprite(GameImage(BallImage2));
 		ball1.xPos := 0;
 		ball1.yPos := 0;
 		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
@@ -230,6 +236,115 @@ implementation
 			DrawOverlay('Collision Detection Example');
 			ProcessEvents();
 			RefreshScreen();
+			if WindowCloseRequested() then break;
+		end;
+	end;
+	
+	procedure PlayMusicExample();
+	var
+		i : Integer;
+		musicSource : Music;
+	begin
+		ClearScreen();
+		musicSource := LoadMusic(GetPathToResource('Fast.mp3', SoundResource));
+		PlayMusic(musicSource);
+		for i := 0 to 700 do
+		begin
+			DrawOverlay('Music Playback Example');
+			Sleep(10);
+			RefreshScreen();
+			ProcessEvents();
+			if WindowCloseRequested() then break;
+		end;
+		StopMusic();
+	end;
+	
+	function GetRandomFontStyle(): FontStyle;
+	begin
+		case Random(3) of
+			0: result := NormalFont;
+			1: result := BoldFont;
+			2: result := ItalicFont;
+			3: result := UnderlineFont;
+		end;
+	end;
+	
+	procedure DrawRandomText();
+	var
+		i : Integer;
+	begin
+		ClearScreen();
+		for i := 0 to 500 do
+		begin
+			SetFontStyle(GameFont(Courier), GetRandomFontStyle());
+			DrawText('SwinGameSDK!', GetRandomColor(), GameFont(Courier), Random(ScreenWidth()), Random(ScreenHeight()));
+			SetFontStyle(GameFont(Courier), GetRandomFontStyle());
+			DrawText('SwinGameSDK!', GetRandomColor(), GameFont(Courier), Random(ScreenWidth()), Random(ScreenHeight()));
+			SetFontStyle(GameFont(Courier), NormalFont);
+			DrawOverlay('Drawing Random Texts');
+			Sleep(10);
+			RefreshScreen();
+			ProcessEvents();
+			if WindowCloseRequested() then break;
+		end;
+	end;
+	
+	procedure MoveBallUsingVector(var ball : PhysicsData);
+	begin
+		MoveSprite(ball.sprite, ball.movement);
+		if ball.sprite.xPos > ScreenWidth() - CurrentWidth(ball.sprite) then
+		begin
+			ball.movement.x := ball.movement.x * -1;
+			ball.sprite.xPos := ScreenWidth() - CurrentWidth(ball.sprite);
+		end;
+		if ball.sprite.yPos > ScreenHeight() - CurrentHeight(ball.sprite) then
+		begin
+			ball.movement.y := ball.movement.y * -1;
+			ball.sprite.yPos := ScreenHeight() - CurrentHeight(ball.sprite);
+		end;
+		if ball.sprite.xPos < 0 then
+		begin
+			ball.movement.x := ball.movement.x * -1;
+			ball.sprite.xPos := 0;
+		end;
+		if ball.sprite.yPos < 0 then
+		begin
+			ball.movement.y := ball.movement.y * -1;
+			ball.sprite.yPos := 0;
+		end;
+	end;
+	
+	procedure DrawVectorCollision();
+	var
+		i : Integer;
+		ball1, ball2 : PhysicsData;
+	begin
+		ClearScreen();
+		ball1.movement := CreateVector(3, 3);
+		ball2.movement := CreateVector(3, 3);
+		ball1.mass := 1;
+		ball2.mass := 1;
+		ball1.sprite := CreateSprite(GameImage(BallImage1));
+		ball2.sprite := CreateSprite(GameImage(BallImage2));
+		ball1.sprite.xPos := 0;
+		ball1.sprite.yPos := 0;
+		ball2.sprite.xPos := ScreenWidth() - CurrentWidth(ball2.sprite);
+		ball2.sprite.yPos := ScreenHeight() - CurrentHeight(ball2.sprite);
+		ball1.sprite.usePixelCollision := true;
+		ball2.sprite.usePixelCollision := true;
+		for i := 0 to 4200 do
+		begin
+			ClearScreen();
+			DrawSprite(ball1.sprite);
+			DrawSprite(ball2.sprite);
+			if HaveSpritesCollided(ball1.sprite, ball2.sprite) then
+				VectorCollision(ball1, ball2);
+			MoveBallUsingVector(ball1);
+			MoveBallUsingVector(ball2);
+			DrawOverlay('Vector Collision Example');
+			ProcessEvents();
+			RefreshScreen();
+			if WindowCloseRequested() then break;
 		end;
 	end;
 	
@@ -246,17 +361,25 @@ implementation
 		
 		repeat
 			ProcessEvents();
-			
 			DrawLines();
+			if WindowCloseRequested() then break;
 			DrawRectangles();
+			if WindowCloseRequested() then break;
 			DrawCircles();
+			if WindowCloseRequested() then break;
 			DrawEllipses();
+			if WindowCloseRequested() then break;
 			DrawBitmaps();
+			if WindowCloseRequested() then break;
 			DrawSprites();
+			if WindowCloseRequested() then break;
 			DrawCollisionDetection();
-			
-			
-			RefreshScreen();
+			if WindowCloseRequested() then break;
+			PlayMusicExample();
+			if WindowCloseRequested() then break;
+			DrawRandomText();
+			if WindowCloseRequested() then break;
+			DrawVectorCollision();
 		until WindowCloseRequested();
 		
 		FreeResources();

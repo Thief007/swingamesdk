@@ -4,11 +4,10 @@ interface
 	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics;
 
 	type
-
-    /// type: Matrix2d
-    ///
-    ///  This record is used to represent transformations that can be
-    ///  used to apply these changes to vectors.
+	    /// type: Matrix2d
+	    ///
+	    ///  This record is used to represent transformations that can be
+	    ///  used to apply these changes to vectors.
 		Matrix2D = Array [0..2,0..2] of Single;
 
 		/// Enumeration: CollisionDetectionRanges
@@ -19,6 +18,15 @@ interface
 				CollisionRangeGreaterThan = 1,
 				CollisionRangeLessThan		= 2
 			);
+		/// Record: PhysicsData
+		/// This is used to define a physical property of an object.
+		/// - movement: How this obstacle moves.
+		/// - mass: Mass of this obstacle
+		PhysicsData = record
+			movement : Vector;
+			mass : Single;
+			sprite : Sprite;
+		end;
 
 	//*****
 	//
@@ -29,7 +37,7 @@ interface
 	// These routines are used to detect collisions between sprites or bitmaps.
 	//
 
-	function	HasSpriteCollidedX(theSprite : Sprite; x : Integer;
+	function HasSpriteCollidedX(theSprite : Sprite; x : Integer;
 															 range : CollisionDetectionRange): Boolean;
 
 	function HasSpriteCollidedY(theSprite : Sprite; y : Integer;
@@ -49,15 +57,15 @@ interface
 		vwPrtX, vwPrtY: Integer)
 		: Boolean; overload;
 
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y: Integer; bounded: Boolean)
 																				: Boolean; overload;
 
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y, vwPrtX, vwPrtY: Integer)
 																				: Boolean; overload;
 
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y: Integer)
 																				: Boolean; overload;
 
@@ -87,29 +95,29 @@ interface
 	// These routines are used to manipulate vectors in the API.
 	//
 
-	function	CreateVector(x,y : Single; invertY : boolean): Vector; overload;
+	function CreateVector(x,y : Single; invertY : boolean): Vector; overload;
 
-	function	CreateVector(x,y : Single): Vector; overload;
+	function CreateVector(x,y : Single): Vector; overload;
 
-	function	AddVectors(v1, v2 : Vector): Vector;
+	function AddVectors(v1, v2 : Vector): Vector;
 
-	function	SubtractVectors(v1, v2 : Vector): Vector;
+	function SubtractVectors(v1, v2 : Vector): Vector;
 
-	function	InvertVector(v : Vector): Vector;
+	function InvertVector(v : Vector): Vector;
 
-	function	ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector;
+	function ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector;
 
-	function	LimitVector(theVector: Vector; maxMagnitude: Single): Vector;
+	function LimitVector(theVector: Vector; maxMagnitude: Single): Vector;
 
-	function	GetUnitVector(theVector : Vector): Vector;
+	function GetUnitVector(theVector : Vector): Vector;
 
-	function	IsZeroVector(theVector : Vector): Boolean;
+	function IsZeroVector(theVector : Vector): Boolean;
 
-	function	GetVectorMagnitude(theVector : Vector): Single;
+	function GetVectorMagnitude(theVector : Vector): Single;
 
 
-	function	DotProduct(v1, v2: Vector): Single;
-	function 	MultiplyVector(v1: Vector; s1: Single): Vector;
+	function DotProduct(v1, v2: Vector): Single;
+	function MultiplyVector(v1: Vector; s1: Single): Vector;
 
  	function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
 	function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
@@ -119,6 +127,7 @@ interface
 	function RotationMatrix(deg: Single): Matrix2D;
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
+	procedure VectorCollision(var p1, p2: PhysicsData);
 
 implementation
 	uses SysUtils, Math,
@@ -181,14 +190,14 @@ implementation
 	end;
 
 	/// Limits the vector within the range min-max of X-Y. AVOID use... use
-  	///  LimitMagnitude
+	 	///  LimitMagnitude
 	///
 	///	@param theVector		 The vector to limit
 	///	@param minX, maxX		The limited range of the vector's x
 	///	@param minY, maxY		The limited range of the vector's y
 	///	@returns						 A new vector limited within that range
 	function ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer)
-    : Vector;
+	   : Vector;
 	begin
 		if theVector.x > maxX then theVector.x := maxX;
 		if theVector.x < minX then theVector.x := minX;
@@ -267,7 +276,7 @@ implementation
 	begin
 		result := (v1.x * v2.x) + (v1.y * v2.y);
 	end;
-	
+
 	function MultiplyVector(v1: Vector; s1: Single): Vector;
 	begin
 		result.x := v1.x * s1;
@@ -282,14 +291,14 @@ implementation
 	///
 	///	@returns						 True if the sprite is within the range requested
 	function HasSpriteCollidedX(theSprite: Sprite; x: Integer; 
-              range: CollisionDetectionRange): Boolean;
+	             range: CollisionDetectionRange): Boolean;
 	begin
 		if range = CollisionRangeEquals then
 			result := (x >= theSprite.xPos) and 
-         (x <= theSprite.xPos + theSprite.bitmaps[theSprite.currentFrame].width)
+	        (x <= theSprite.xPos + theSprite.bitmaps[theSprite.currentFrame].width)
 		else if range = CollisionRangeGreaterThan then
 			result := x <= theSprite.xPos + 
-                     theSprite.bitmaps[theSprite.currentFrame].width
+	                    theSprite.bitmaps[theSprite.currentFrame].width
 		else if range = CollisionRangeLessThan then
 			result := x >= theSprite.xPos
 		else
@@ -305,14 +314,14 @@ implementation
 	///
 	///	@returns						 True if the sprite is within the range requested
 	function HasSpriteCollidedY(theSprite : Sprite; y : Integer; 
-               range : CollisionDetectionRange): Boolean;
+	              range : CollisionDetectionRange): Boolean;
 	begin
 		if range = CollisionRangeEquals then
 			result := (y >= theSprite.yPos) and 
-        (y <= theSprite.yPos + theSprite.bitmaps[theSprite.currentFrame].height)
+	       (y <= theSprite.yPos + theSprite.bitmaps[theSprite.currentFrame].height)
 		else if range = CollisionRangeGreaterThan then
 			result := y <= theSprite.yPos + 
-                     theSprite.bitmaps[theSprite.currentFrame].height
+	                    theSprite.bitmaps[theSprite.currentFrame].height
 		else if range = CollisionRangeLessThan then
 			result := y >= theSprite.yPos
 		else
@@ -320,7 +329,7 @@ implementation
 	end;
 
 	function HasBitmapCollidedWithRect(const image: Bitmap; 
-                  x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean;
+	                 x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean;
 	begin
 		if y + image.height <= rectY then result := false
 		else if y >= rectY + rectheight then result := false
@@ -375,10 +384,10 @@ implementation
 	///
 	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
 		image2: Bitmap; x2, y2: Integer)
-        : Boolean; overload;
+	       : Boolean; overload;
 	begin
 		result := CollisionWithinBitmapImages(image1, x1, y1, false, 
-                  image2, x2, y2, false);
+	                 image2, x2, y2, false);
 	end;
 
 	/// Performs a collision detection within two bitmaps at the given x, y
@@ -404,9 +413,9 @@ implementation
 	///	@returns							 True if the bitmaps collide.
 	///
 	function CollisionWithinBitmapImages(
-            image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
+	           image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
 						image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
-            : Boolean; overload;
+	           : Boolean; overload;
 	var
 		left1, left2, overLeft: Integer;
 		right1, right2, overRight: Integer;
@@ -482,7 +491,7 @@ implementation
 	///	@returns							 True if the bitmaps collide.
 	///
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer;
-                           image2 : Bitmap; x2, y2: Integer): Boolean; overload;
+	                          image2 : Bitmap; x2, y2: Integer): Boolean; overload;
 	begin
 		result := HaveBitmapsCollided(image1, x1, y1, false, image2, x2, y2, false);
 	end;
@@ -498,19 +507,19 @@ implementation
 	///
 	///	@returns							 True if the bitmaps collide.
 	///
-  function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer;bounded1: Boolean;
- 													 image2: Bitmap; x2, y2: Integer; bounded2: Boolean): 
-                           Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer;bounded1: Boolean;
+														 image2: Bitmap; x2, y2: Integer; bounded2: Boolean): 
+	                          Boolean; overload;
 	begin
 		if not HasBitmapCollidedWithRect(image1, x1, y1, x2, y2, 
-                                     image2.width, image2.height) then
+	                                    image2.width, image2.height) then
 		begin
 			result := false;
 			exit;
 		end;
 
 		result := CollisionWithinBitmapImages(image1, x1, y1, bounded1, 
-                                          image2, x2, y2, bounded2);
+	                                         image2, x2, y2, bounded2);
 	end;
 
 	/// Determines if two sprites have collided.
@@ -521,7 +530,7 @@ implementation
 	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
 	begin
 		if not HasSpriteCollidedWithRect(sprite1, sprite2.xPos, sprite2.yPos, 
-             CurrentWidth(sprite2), CurrentHeight(sprite2)) then
+	            CurrentWidth(sprite2), CurrentHeight(sprite2)) then
 		begin
 			result := false;
 			exit;
@@ -547,13 +556,13 @@ implementation
 	///
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y: Integer): Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, true);
 	end;
 
-  /// Determines if a sprite has collided with a bitmap. The x and y values
+	 /// Determines if a sprite has collided with a bitmap. The x and y values
 	///	are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
 	///	the offset from world to screen coordinates.
 	///
@@ -584,12 +593,12 @@ implementation
 	///
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y: Integer; bounded: Boolean)
 																				: Boolean; overload;
 	begin
 		result := CollisionWithinBitmapImages(
-                                     theSprite.bitmaps[theSprite.currentFrame],
+	                                    theSprite.bitmaps[theSprite.currentFrame],
 																					Trunc(theSprite.xPos),
 																					Trunc(theSprite.yPos),
 																					not theSprite.usePixelCollision,
@@ -616,130 +625,170 @@ implementation
 																					x + vwPrtX, y + vwPrtY, true);
 	end;
 
-  /// Multiply two matrix2d. Use this to combine the effects to two
-  ///  transformations.
-  ///
-  /// @param m1, m2:   the two matrix to multiply
-  /// @returns:        the result of multiplying these matrix
-  function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
-  begin
-	  //unwound for performance optimisation
-  	result[0, 0] := m1[0, 0] * m2[0, 0] +
-	  								m1[0, 1] * m2[1, 0] +
-  									m1[0, 2] * m2[2, 0];
-	result[0, 1] := m1[0, 0] * m2[0, 1] +
-									m1[0, 1] * m2[1, 1] +
-									m1[0, 2] * m2[2, 1];
-	result[0, 2] := m1[0, 0] * m2[0, 2] +
-									m1[0, 1] * m2[1, 2] +
-									m1[0, 2] * m2[2, 2];
+	  /// Multiply two matrix2d. Use this to combine the effects to two
+	  ///  transformations.
+	  ///
+	  /// @param m1, m2:   the two matrix to multiply
+	  /// @returns:        the result of multiplying these matrix
+	  function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
+	  begin
+		  //unwound for performance optimisation
+	  	result[0, 0] := m1[0, 0] * m2[0, 0] +
+		  								m1[0, 1] * m2[1, 0] +
+	  									m1[0, 2] * m2[2, 0];
+		result[0, 1] := m1[0, 0] * m2[0, 1] +
+										m1[0, 1] * m2[1, 1] +
+										m1[0, 2] * m2[2, 1];
+		result[0, 2] := m1[0, 0] * m2[0, 2] +
+										m1[0, 1] * m2[1, 2] +
+										m1[0, 2] * m2[2, 2];
 
-	result[1, 0] := m1[1, 0] * m2[0, 0] +
-									m1[1, 1] * m2[1, 0] +
-									m1[1, 2] * m2[2, 0];
-	result[1, 1] := m1[1, 0] * m2[0, 1] +
-									m1[1, 1] * m2[1, 1] +
-									m1[1, 2] * m2[2, 1];
-	result[1, 2] := m1[1, 0] * m2[0, 2] +
-									m1[1, 1] * m2[1, 2] +
-									m1[1, 2] * m2[2, 2];
+		result[1, 0] := m1[1, 0] * m2[0, 0] +
+										m1[1, 1] * m2[1, 0] +
+										m1[1, 2] * m2[2, 0];
+		result[1, 1] := m1[1, 0] * m2[0, 1] +
+										m1[1, 1] * m2[1, 1] +
+										m1[1, 2] * m2[2, 1];
+		result[1, 2] := m1[1, 0] * m2[0, 2] +
+										m1[1, 1] * m2[1, 2] +
+										m1[1, 2] * m2[2, 2];
 
-	result[2, 0] := m1[2, 0] * m2[0, 0] +
-									m1[2, 1] * m2[1, 0] +
-									m1[2, 2] * m2[2, 0];
-	result[2, 1] := m1[2, 0] * m2[0, 1] +
-									m1[2, 1] * m2[1, 1] +
-									m1[2, 2] * m2[2, 1];
-	result[2, 2] := m1[2, 0] * m2[0, 2] +
-									m1[2, 1] * m2[1, 2] +
-									m1[2, 2] * m2[2, 2];
+		result[2, 0] := m1[2, 0] * m2[0, 0] +
+										m1[2, 1] * m2[1, 0] +
+										m1[2, 2] * m2[2, 0];
+		result[2, 1] := m1[2, 0] * m2[0, 1] +
+										m1[2, 1] * m2[1, 1] +
+										m1[2, 2] * m2[2, 1];
+		result[2, 2] := m1[2, 0] * m2[0, 2] +
+										m1[2, 1] * m2[1, 2] +
+										m1[2, 2] * m2[2, 2];
 
-end;
+	end;
 
-function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
-begin
-	result.x := v.x * m[0, 0] + v.y * m[0,1] + v.w * m[0,2];
-	result.y := v.x * m[1, 0] + v.y * m[1,1] + v.w * m[1,2];
-	//result.w := v.x * m[2, 0] + v.y * m[2,1] + v.w * m[2,2];
-	//w remains as 1
-end;
-
-function RotationMatrix(deg: Single): Matrix2D;
-var
-	rads: Double;
-begin
-	rads := deg * DEG_TO_RAD;
-
-	result[0, 0] := System.Cos(rads);
-	result[0, 1] := System.Sin(rads);
-	result[0, 2] := 0;
-
-	result[1, 0] := -System.Sin(rads);
-	result[1, 1] := System.Cos(rads);
-	result[1, 2] := 0;
-
-	result[2, 0] := 0;
-	result[2, 1] := 0;
-	result[2, 2] := 1;
-end;
-
-function ScaleMatrix(scale: Single): Matrix2D;
-begin
-	result[0, 0] := scale;
-	result[0, 1] := 0;
-	result[0, 2] := 0;
-
-	result[1, 0] := 0;
-	result[1, 1] := scale;
-	result[1, 2] := 0;
-
-	result[2, 0] := 0;
-	result[2, 1] := 0;
-	result[2, 2] := 1;
-end;
-
-function TranslationMatric(dx, dy: Single): Matrix2D;
-begin
-	result := ScaleMatrix(1);
-
-	result[0, 2] := dx;
-	result[1, 2] := dy;
-end;
-
-function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
-var
-	o, a, oa, rads: Single;
-begin
-	if (x1 = x2) and (y2 < y1) then result := -90
-	else if (x1 = x2) and (y2 >= y1) then result := 90
-	else if (y1 = y2) and (x2 < x1) then result := 180
-	else if (y1 = y2) and (x2 >= x1) then result := 0
-	else
+	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
 	begin
-		o := (y2 - y1);
-		a := (x2 - x1);
-		oa := o / a;
-		rads := arctan(oa);
-		result := RadToDeg(rads);
+		result.x := v.x * m[0, 0] + v.y * m[0,1] + v.w * m[0,2];
+		result.y := v.x * m[1, 0] + v.y * m[1,1] + v.w * m[1,2];
+		//result.w := v.x * m[2, 0] + v.y * m[2,1] + v.w * m[2,2];
+		//w remains as 1
+	end;
 
-		if x2 < x1 then
+	function RotationMatrix(deg: Single): Matrix2D;
+	var
+		rads: Double;
+	begin
+		rads := deg * DEG_TO_RAD;
+
+		result[0, 0] := System.Cos(rads);
+		result[0, 1] := System.Sin(rads);
+		result[0, 2] := 0;
+
+		result[1, 0] := -System.Sin(rads);
+		result[1, 1] := System.Cos(rads);
+		result[1, 2] := 0;
+
+		result[2, 0] := 0;
+		result[2, 1] := 0;
+		result[2, 2] := 1;
+	end;
+
+	function ScaleMatrix(scale: Single): Matrix2D;
+	begin
+		result[0, 0] := scale;
+		result[0, 1] := 0;
+		result[0, 2] := 0;
+
+		result[1, 0] := 0;
+		result[1, 1] := scale;
+		result[1, 2] := 0;
+
+		result[2, 0] := 0;
+		result[2, 1] := 0;
+		result[2, 2] := 1;
+	end;
+
+	function TranslationMatric(dx, dy: Single): Matrix2D;
+	begin
+		result := ScaleMatrix(1);
+
+		result[0, 2] := dx;
+		result[1, 2] := dy;
+	end;
+
+	function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
+	var
+		o, a, oa, rads: Single;
+	begin
+		if (x1 = x2) and (y2 < y1) then result := -90
+		else if (x1 = x2) and (y2 >= y1) then result := 90
+		else if (y1 = y2) and (x2 < x1) then result := 180
+		else if (y1 = y2) and (x2 >= x1) then result := 0
+		else
 		begin
-			if (y2 < y1) then result := result - 180
-			else result := result + 180;
+			o := (y2 - y1);
+			a := (x2 - x1);
+			oa := o / a;
+			rads := arctan(oa);
+			result := RadToDeg(rads);
+
+			if x2 < x1 then
+			begin
+				if (y2 < y1) then result := result - 180
+				else result := result + 180;
+			end;
 		end;
 	end;
-end;
 
-function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
-var
-	cx1, cy1, cx2, cy2: Single;
-begin
-	cx1 := sprite1.XPos + CurrentWidth(sprite1) / 2;
-	cy1 := sprite1.YPos + CurrentHeight(sprite1) / 2;
-	cx2 := sprite2.XPos + CurrentWidth(sprite2) / 2;
-	cy2 := sprite2.YPos + CurrentHeight(sprite2) / 2;
+	function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
+	var
+		cx1, cy1, cx2, cy2: Single;
+	begin
+		cx1 := sprite1.XPos + CurrentWidth(sprite1) / 2;
+		cy1 := sprite1.YPos + CurrentHeight(sprite1) / 2;
+		cx2 := sprite2.XPos + CurrentWidth(sprite2) / 2;
+		cy2 := sprite2.YPos + CurrentHeight(sprite2) / 2;
 	
-	result := CalculateAngle(cx1, cy1, cx2, cy2);
-end;
+		result := CalculateAngle(cx1, cy1, cx2, cy2);
+	end;
+	
+	procedure VectorCollision(var p1, p2: PhysicsData);
+	var
+		colNormalAngle, a1, a2, optP: Single;
+		n: Vector;
+	begin
+		if p1.mass = 0 then
+			p1.mass := 1;
+		if p2.mass = 0 then
+			p1.mass := 1;
+		if (p1.mass = 0) or (p2.mass = 0) then
+			WriteLn('You forgot to initialize the mass!');
+		
+		colNormalAngle := CalculateAngle(p1.sprite, p2.sprite);
 
+		//COLLISION RESPONSE
+		// n = vector connecting the centers of the balls.
+		// we are finding the components of the normalised vector n
+		n := CreateVector(Cos(colNormalAngle), Sin(colNormalAngle));
+
+		// now find the length of the components of each movement vectors
+		// along n, by using dot product.
+		a1 := DotProduct(p1.Movement, n);
+		//Local a1# = c.dx*nX  +  c.dy*nY
+		a2 := DotProduct(p2.Movement, n);
+		//Local a2# = c2.dx*nX +  c2.dy*nY
+
+		// optimisedP = 2(a1 - a2)
+		//             ----------
+		//              m1 + m2
+		optP := (2.0 * (a1-a2)) / (p1.mass + p2.mass);
+
+		// now find out the resultant vectors
+		// Local r1% = c1.v - optimisedP * mass2 * n
+		p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
+		p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
+
+		// Local r2% = c2.v - optimisedP * mass1 * n
+		p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
+		p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
+	end;
 end.
