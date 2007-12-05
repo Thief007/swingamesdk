@@ -15,7 +15,7 @@ do
 	case "$o" in
 	i)	 ICON="$OPTARG";;
 	s)	 EXECUTABLE_NAME="$OPTARG";;
-	d)   EXTRA_OPTS="-gl -gh -gc -gp -Ci -Co -Ct";;
+	d)   EXTRA_OPTS="-gw -gl -gc -gp -Ci -Co -Ct";;
 	h)   Usage;;
 	esac
 done
