@@ -652,30 +652,34 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
 	end;
 
-	function TranslationMatric(dx, dy: Single): Matrix2D; cdecl; export;
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	function TranslationMatric(dx, dy: Single): Matrix2DPtr; cdecl; export;
 	begin
-		result :=SGSDK_Physics.TranslationMatric(dx, dy);
+		result := ^SGSDK_Physics.TranslationMatric(dx, dy);
 	end;
 	
-	function ScaleMatrix(scale: Single): Matrix2D; cdecl; export;
+	function ScaleMatrix(scale: Single): Matrix2DPtr; cdecl; export;
 	begin
-		result :=SGSDK_Physics.ScaleMatrix(scale);
+		result := ^SGSDK_Physics.ScaleMatrix(scale);
 	end;
 	
-	function RotationMatrix(deg: Single): Matrix2D; cdecl; export;
+	function RotationMatrix(deg: Single): Matrix2DPtr; cdecl; export;
 	begin
-		result :=SGSDK_Physics.RotationMatrix(deg);
+		result := ^SGSDK_Physics.RotationMatrix(deg);
 	end;
 	
-	function MultiplyMatrix2D(const m1, m2: Matrix2D): Matrix2D; cdecl; export;
+	function MultiplyMatrix2D(const m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
 	begin
-		result :=SGSDK_Physics.Multiply(m1, m2);
+		result := ^SGSDK_Physics.Multiply(@m1, @m2);
 	end;
 	
-	function MultiplyMatrix2DAndVector(const m: Matrix2D; const v: Vector): Vector; cdecl; export;
+	function MultiplyMatrix2DAndVector(const m: Matrix2DPtr; const v: Vector): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.Multiply(m, v);
+		result := SGSDK_Physics.Multiply(@m, v);
 	end;
+	
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	
 	procedure VectorCollision(var p1, p2: PhysicsData); cdecl; export;
 	begin
