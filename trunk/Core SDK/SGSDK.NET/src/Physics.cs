@@ -194,7 +194,7 @@ namespace SwinGame
         /// <returns>True if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, bool bounded)
         {
-            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y,	 !theSprite.UsePixelCollision, theBitmap,	x, y, bounded);
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos,	 !theSprite.UsePixelCollision, theBitmap,	x, y, bounded);
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap. The x and y values
@@ -211,7 +211,7 @@ namespace SwinGame
         /// <returns> rue if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, bool bounded, int vwPrtX, int vwPrtY)
         {
-            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap. The x and y values
@@ -224,7 +224,7 @@ namespace SwinGame
         /// <returns> rue if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y)
         {
-            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x , y , true);
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x , y , true);
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap. The x and y values
@@ -240,7 +240,7 @@ namespace SwinGame
         /// <returns> rue if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, int vwPrtX, int vwPrtY)
         {
-            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.X, (int)theSprite.Y, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
+            return CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
         }
 
 

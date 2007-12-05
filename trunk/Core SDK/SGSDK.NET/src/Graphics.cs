@@ -66,7 +66,7 @@ namespace SwinGame
         /// <summary>
         /// X position of this sprite
         /// </summary>
-        public float X
+        public float xPos
         {
             get
             {
@@ -81,7 +81,7 @@ namespace SwinGame
         /// <summary>
         /// Y position of this sprite
         /// </summary>
-        public float Y
+        public float yPos
         {
             get
             {
