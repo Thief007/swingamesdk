@@ -348,6 +348,72 @@ implementation
 		end;
 	end;
 	
+	procedure MoveSpriteWithInput();
+	var
+		ball : Sprite;
+		xSpeed, ySpeed : Integer;
+		i : Integer;
+	begin
+		ball := CreateSprite(LoadBitmap(GetPathToResource('ball.png', ImageResource)));
+	    ball.xPos := 400;
+	    ball.yPos := 300;
+
+	    for i := 0 to 1499 do
+	    begin
+	        xSpeed := 0;
+	        ySpeed := 0;
+
+	        if IsKeyPressed(VK_UP) then
+	            ySpeed := -1;
+	        if IsKeyPressed(VK_DOWN) then
+	            ySpeed := 1;
+	        if IsKeyPressed(VK_LEFT) then
+	            xSpeed := -1;
+	        if IsKeyPressed(VK_RIGHT) then
+	            xSpeed := 1;
+
+	        DrawSprite(ball);
+	        ball.xPos := ball.xPos + xSpeed;
+			ball.yPos := ball.yPos + ySpeed;
+
+	        DrawOverlay('Move Sprite with Arrow Keys Example');
+	        ProcessEvents();
+	        RefreshScreen();
+	        ClearScreen();
+			if WindowCloseRequested() then exit;
+	    end;
+	end;
+	
+	procedure MouseCursor();
+	var
+		ball : Sprite;
+		position : Vector;
+		i : Integer;
+	begin
+		ball := CreateSprite(LoadBitmap(GetPathToResource('ball.png', ImageResource)));
+        for i := 0 to 999 do
+        begin
+			ProcessEvents();
+			
+            position := GetMousePosition();
+			
+            DrawHorizontalLine(ColorWhite, Round(position.Y), 0, 800);
+            DrawVerticalLine(ColorWhite, Round(position.X), 0, 600);
+			
+            if MouseWasClicked(LeftButton) then
+            begin
+                ball.xPos := position.X - (CurrentWidth(ball) / 2);
+                ball.yPos := position.Y - (CurrentHeight(ball) / 2);
+                DrawSprite(ball);
+            end;
+
+            DrawOverlay('Mouse Cursor Example');
+            RefreshScreen();
+            ClearScreen();
+			if WindowCloseRequested() then exit;
+        end;
+	end;
+	
 	//The main procedure that controlls the game logic.
 	//
 	// SIDE EFFECTS:
@@ -380,6 +446,10 @@ implementation
 			DrawRandomText();
 			if WindowCloseRequested() then break;
 			DrawVectorCollision();
+			if WindowCloseRequested() then break;
+			MoveSpriteWithInput();
+			if WindowCloseRequested() then break;
+			MouseCursor();
 		until WindowCloseRequested();
 		
 		FreeResources();
