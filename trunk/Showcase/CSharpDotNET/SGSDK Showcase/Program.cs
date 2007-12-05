@@ -32,7 +32,8 @@ namespace SGSDK_Showcase
             //DrawBitmaps.Run();
             //DrawSprites.Run();
             //CollisionDetection.Run();
-            MoveSpriteWithInput.Run();
+            //MoveSpriteWithInput.Run();
+            MouseCursor.Run();
 
 
             //Closes the Audio System

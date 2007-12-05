@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollisionDetection.cs" />
+    <Compile Include="MouseCursor.cs" />
     <Compile Include="MoveSpriteWithInput.cs" />
     <Compile Include="DrawSprites.cs" />
     <Compile Include="DrawBitmaps.cs" />
