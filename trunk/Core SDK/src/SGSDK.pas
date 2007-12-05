@@ -682,6 +682,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Physics.VectorCollision(p1, p2);
 	end;
 	
+	function GetMatrix2DElement(matrix: Matrix2DPtr; int x, y: Integer): Single; cdecl; export;
+	begin
+		result := matrix[x,y];
+	end;
+	
+	procedure SetMatrix2DElement(matrix: Matrix2DPtr; int x, y: Integer; val: Single); cdecl; export;
+	begin
+		matrix[x,y] := val;
+	end;
+	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
@@ -1304,6 +1314,9 @@ exports
 	MultiplyMatrix2D,
 	MultiplyMatrix2DAndVector,
 	VectorCollision,
+	
+	GetMatrix2DElement,
+	SetMatrix2DElement,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
