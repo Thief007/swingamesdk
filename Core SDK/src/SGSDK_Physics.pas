@@ -27,6 +27,8 @@ interface
 			mass : Single;
 			sprite : Sprite;
 		end;
+		
+		Matrix2DPtr = ^Matrix2D;
 
 	//*****
 	//
