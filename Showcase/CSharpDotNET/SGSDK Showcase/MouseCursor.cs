@@ -10,59 +10,34 @@ using Font = SwinGame.Font;
 using FontStyle = SwinGame.FontStyle;
 namespace SGSDK_Showcase
 {
-    public static class MoveSpriteWithInput
-    {
-        private static Sprite ball;
-
-        private static int xSpeed;
-        private static int ySpeed;
+    public static class MouseCursor
+    {                    
+        private static Sprite ball = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png",ResourceKind.ImageResource)));
+        private static Vector position;
 
         public static void Run()
         {
-            ball = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
-            ball.X = 400;
-            ball.Y = 300;
 
-            for (int i = 0; i < 1500; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                xSpeed = 0;
-                ySpeed = 0;
 
-                if (Input.IsKeyPressed(SwinGame.Keys.VK_UP))
+                position = Input.GetMousePosition();
+
+                Graphics.DrawHorizontalLine(Color.White, (int)position.Y, 0, 800);
+                Graphics.DrawVerticalLine(Color.White, (int)position.X, 0, 600);
+
+                if (Input.MouseWasClicked(MouseButton.LeftButton))
                 {
-                    ySpeed = -1;
+                    ball.X = position.X - (Graphics.CurrentWidth(ball) / 2);
+                    ball.Y = position.Y - (Graphics.CurrentHeight(ball) / 2);
+                    Graphics.DrawSprite(ball);
                 }
 
-                if (Input.IsKeyPressed(SwinGame.Keys.VK_DOWN))
-                {
-                    ySpeed = 1;
-                }
-
-                if (Input.IsKeyPressed(SwinGame.Keys.VK_LEFT))
-                {
-                    xSpeed = -1;
-                }
-
-                if (Input.IsKeyPressed(SwinGame.Keys.VK_RIGHT))
-                {
-                    xSpeed = 1;
-                }
-
-                Graphics.DrawSprite(ball);
-                MoveBall(ref ball, ref xSpeed, ref ySpeed);
-
-                Overlay.DrawOverlay("Move Sprite with Arrow Keys Example");
+                Overlay.DrawOverlay("Mouse Cursor Example");
                 Core.ProcessEvents();
                 Core.RefreshScreen();
                 Graphics.ClearScreen();
             }
         }
-
-        public static void MoveBall(ref Sprite ball, ref int xSpeed, ref int ySpeed)
-        {
-            ball.X = ball.X + xSpeed;
-            ball.Y = ball.Y + ySpeed;
-        }
-
     }
 }
