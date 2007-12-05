@@ -56,6 +56,18 @@ namespace SwinGame
         }
     }
 
+    /*
+    /// <summary>
+    /// PhysicsData Structure
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct Vector
+    {
+        Vector movement;
+        Single mass;
+        Sprite sprite;
+    }*/
+
     public class Physics
     {
         [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedX")]
