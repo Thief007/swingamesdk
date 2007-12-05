@@ -666,7 +666,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function RotationMatrix(deg: Single): Matrix2DPtr; cdecl; export;
 	begin
-		result := ^SGSDK_Physics.RotationMatrix(deg);
+		result := SGSDK_Physics.RotationMatrix(deg);
 	end;
 	
 	function MultiplyMatrix2D(const m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
