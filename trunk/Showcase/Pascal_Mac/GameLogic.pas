@@ -414,6 +414,30 @@ implementation
         end;
 	end;
 	
+	procedure TextReadExample();
+	var
+		i : Integer;
+	begin
+		StartReadingText(ColorGreen, 50, GameFont(Courier), 0, 65);
+		while IsReadingText() do
+		begin
+			ClearScreen();
+			DrawText('Please enter a message:', ColorGreen, GameFont(Courier), 0, 50);
+			DrawOverlay('Text Reading Example');
+			RefreshScreen();
+			ProcessEvents();
+			if WindowCloseRequested() then exit;
+		end;
+		DrawText('You have entered ' + TextReadAsASCII(), ColorGreen, GameFont(Courier), 0, 80);
+		RefreshScreen();
+		for i := 0 to 200 do
+		begin
+			Sleep(20);
+			ProcessEvents();
+			if WindowCloseRequested() then exit;
+		end;
+	end;
+	
 	//The main procedure that controlls the game logic.
 	//
 	// SIDE EFFECTS:
@@ -450,6 +474,8 @@ implementation
 			MoveSpriteWithInput();
 			if WindowCloseRequested() then break;
 			MouseCursor();
+			if WindowCloseRequested() then break;
+			TextReadExample();
 		until WindowCloseRequested();
 		
 		FreeResources();
