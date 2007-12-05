@@ -12,7 +12,7 @@ namespace SGSDK_Showcase
 {
     public static class SoundInput
     {
-        private static SoundEffect sound = Audio.LoadSoundEffect(Core.GetPathToResource("SwinGameStart.ogg", ResourceKind.SoundResource));
+        private static SoundEffect sound = Audio.LoadSoundEffect(Core.GetPathToResource("Shock.wav", ResourceKind.SoundResource));
         public static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
 
         public static void Run()

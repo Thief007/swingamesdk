@@ -27,19 +27,19 @@ namespace SGSDK_Showcase
 
             if (!Core.WindowCloseRequested())
             {
-                //DrawLines.Run();
-                //DrawRectangles.Run();
-                //DrawCircles.Run();
-                //DrawEllipses.Run();
-                //DrawBitmaps.Run();
-                //DrawSprites.Run();
-                //CollisionDetection.Run();
-                //MoveSpriteWithInput.Run();
-                //MouseCursor.Run();
-                //VectorCollision.Run();
-                //SoundInput.Run();
-                //KeyInput.Run();
-                //TextRead.Run();
+                DrawLines.Run();
+                DrawRectangles.Run();
+                DrawCircles.Run();
+                DrawEllipses.Run();
+                DrawBitmaps.Run();
+                DrawSprites.Run();
+                CollisionDetection.Run();
+                MoveSpriteWithInput.Run();
+                MouseCursor.Run();
+                VectorCollision.Run();
+                SoundInput.Run();
+                KeyInput.Run();
+                TextRead.Run();
                 DrawRandomText.Run();
             }
 
