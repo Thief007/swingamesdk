@@ -31,6 +31,11 @@ namespace SGSDK_Showcase
                 Overlay.DrawOverlay("Drawing Bitmap Example");
                 Core.ProcessEvents();
                 Core.RefreshScreen();
+
+                if (Core.WindowCloseRequested())
+                {
+                    break;
+                }
             }
         }
     }

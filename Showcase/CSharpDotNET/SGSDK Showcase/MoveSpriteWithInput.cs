@@ -55,6 +55,11 @@ namespace SGSDK_Showcase
                 Core.ProcessEvents();
                 Core.RefreshScreen();
                 Graphics.ClearScreen();
+
+                if (Core.WindowCloseRequested())
+                {
+                    break;
+                }
             }
         }
 

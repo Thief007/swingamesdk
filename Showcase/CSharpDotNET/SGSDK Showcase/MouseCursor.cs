@@ -23,13 +23,13 @@ namespace SGSDK_Showcase
 
                 position = Input.GetMousePosition();
 
-                Graphics.DrawHorizontalLine(Color.White, (int)position.Y, 0, 800);
-                Graphics.DrawVerticalLine(Color.White, (int)position.X, 0, 600);
+                Graphics.DrawHorizontalLine(Color.White, (int)position.y, 0, 800);
+                Graphics.DrawVerticalLine(Color.White, (int)position.x, 0, 600);
 
                 if (Input.MouseWasClicked(MouseButton.LeftButton))
                 {
-                    ball.xPos = position.X - (Graphics.CurrentWidth(ball) / 2);
-                    ball.yPos = position.Y - (Graphics.CurrentHeight(ball) / 2);
+                    ball.xPos = position.x - (Graphics.CurrentWidth(ball) / 2);
+                    ball.yPos = position.y - (Graphics.CurrentHeight(ball) / 2);
                     Graphics.DrawSprite(ball);
                 }
 
@@ -37,6 +37,11 @@ namespace SGSDK_Showcase
                 Core.ProcessEvents();
                 Core.RefreshScreen();
                 Graphics.ClearScreen();
+
+                if (Core.WindowCloseRequested())
+                {
+                    break;
+                }
             }
         }
     }

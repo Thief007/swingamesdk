@@ -25,15 +25,19 @@ namespace SGSDK_Showcase
            
             //Run Examples
 
-            //DrawLines.Run();
-            //DrawRectangles.Run();
-            //DrawCircles.Run();
-            //DrawEllipses.Run();
-            //DrawBitmaps.Run();
-            //DrawSprites.Run();
-            //CollisionDetection.Run();
-            //MoveSpriteWithInput.Run();
-            MouseCursor.Run();
+            if (!Core.WindowCloseRequested())
+            {
+                DrawLines.Run();
+                DrawRectangles.Run();
+                DrawCircles.Run();
+                DrawEllipses.Run();
+                DrawBitmaps.Run();
+                DrawSprites.Run();
+                CollisionDetection.Run();
+                MoveSpriteWithInput.Run();
+                MouseCursor.Run();
+                VectorCollision.Run();
+            }
 
 
             //Closes the Audio System
