@@ -38,7 +38,9 @@ namespace SGSDK_Showcase
                 //MouseCursor.Run();
                 //VectorCollision.Run();
                 //SoundInput.Run();
-                KeyInput.Run();
+                //KeyInput.Run();
+                //TextRead.Run();
+                DrawRandomText.Run();
             }
 
 

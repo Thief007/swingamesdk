@@ -1,7 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Windows.Forms;
 using System.Drawing;
+
+using SwinGame;
+using Graphics = SwinGame.Graphics;
+using Bitmap = SwinGame.Bitmap;
+using Font = SwinGame.Font;
+using FontStyle = SwinGame.FontStyle;
 
 namespace SGSDK_Showcase
 {
@@ -35,5 +41,19 @@ namespace SGSDK_Showcase
 
             return Color.Black;
         }
+
+        public static FontStyle GetRandomFontStyle()
+        {
+            switch ((int)Math.Round((double)_Random.Next(3), 0)) 
+            {
+                case 0: return FontStyle.NormalFont;
+                case 1: return FontStyle.BoldFont;
+                case 2: return FontStyle.ItalicFont;
+                case 3: return FontStyle.UnderlineFont;
+            }
+
+            return FontStyle.NormalFont;
+        }
+
     }
 }
