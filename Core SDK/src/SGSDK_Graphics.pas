@@ -76,7 +76,7 @@ interface
 		///
 		/// Array of sprites which can be passed to DrawSprites() to draw multiple
 		/// sprites at once.
-		SpriteCollection = Array of Sprite;
+		//SpriteCollection = Array of Sprite;
 		
 	//*****
 	//
@@ -247,7 +247,7 @@ interface
 	
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
 	
-	procedure DrawSprites(spritesToDraw : SpriteCollection; 
+	{procedure DrawSprites(spritesToDraw : SpriteCollection; 
 	              vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
 	
 	procedure DrawSprites(spritesToDraw : SpriteCollection); overload;
@@ -256,7 +256,7 @@ interface
 	
 	procedure ClearSpriteCollection(var toClear : SpriteCollection);
 	
-	procedure FreeSpriteCollection(var toFree : SpriteCollection);
+	procedure FreeSpriteCollection(var toFree : SpriteCollection);}
 
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
 
@@ -854,7 +854,7 @@ implementation
 		DrawSprite(spriteToDraw, 0, 0, 0, 0);
 	end;
 	
-	/// Draws the sprites to the screen within a given view port.
+	{/// Draws the sprites to the screen within a given view port.
 	///
 	///	@param spritesToDraw:			The sprites to be drawn
 	///	@param vwPrtX, vwPrty:			The x, y of the current view port (i.e. screen)
@@ -922,7 +922,7 @@ implementation
 		begin
 			FreeSprite(toFree[i]);
 		end;
-	end;
+	end;}
 
 	/// Determines if a sprite is off the screen. The view port of the screen
 	///	is defined in the vwPrt... parameters.
