@@ -56,28 +56,30 @@ namespace SwinGame
     /// <summary>
     /// Vector Structure
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct Vector
     {
-        Single x;
-        Single y;
-        Single w;
+         private Single X;
+         private Single Y;
+         private Single W;
 
-        public Single X
+        public Single x
         {
-            get { return x; }
+            get { return X; }
+            set { X = value; }
         }
 
-        public Single Y
+        public Single y
         {
-            get { return y; }
+            get { return Y; }
+            set { Y = value; }
         }
 
-        public Single W
+        public Single w
         {
-            get { return w; }
+            get { return W; }
+            set { W = value; }
         }
-        
     }
 
     /// <summary>

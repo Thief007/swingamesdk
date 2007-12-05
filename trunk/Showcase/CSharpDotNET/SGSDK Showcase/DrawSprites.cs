@@ -79,6 +79,11 @@ namespace SGSDK_Showcase
                 Core.RefreshScreen();
 
                 Core.Sleep(50);
+
+                if (Core.WindowCloseRequested())
+                {
+                    break;
+                }
             }
         }
 

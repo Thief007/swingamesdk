@@ -60,13 +60,15 @@ namespace SwinGame
     /// <summary>
     /// PhysicsData Structure
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct PhysicsData
     {
-        Vector movement;
-        Single mass;
-        Sprite sprite;
+       
+        public Vector Movement;
+        public Single Mass;
+        public Sprite Sprite;
 
+        /*
         /// <summary>
         /// The mass of the Physics Object
         /// </summary>
@@ -93,6 +95,7 @@ namespace SwinGame
             get { return sprite; }
             set { sprite = value; }
         }
+        */
     }
 
     /// <summary>
@@ -331,14 +334,14 @@ namespace SwinGame
         /// <param name="invertY">Indicates if the y value should be inverted.</param>
         /// <returns>A new vector with values x and y</returns>
         [DllImport("lib/SGSDK.dll", EntryPoint = "CreateVector")]
-        public static extern Vector CreateVector(double x, double y, bool invertY);
+        public static extern Vector CreateVector(Single x, Single y, bool invertY);
         /// <summary>
         /// Creates a new vector with values x and y.
         /// </summary>
         /// <param name="x">Initial values for the vector</param>
         /// <param name="y">Initial values for the vector</param>
         /// <returns>A new vector with values x and y</returns>
-        public static Vector CreateVector(double x, double y)
+        public static Vector CreateVector(Single x, Single y)
         {
             return CreateVector(x, y, false);
         }
@@ -495,7 +498,7 @@ namespace SwinGame
         /// <param name="p1">Physics Data Object 1</param>
         /// <param name="p2">Physics Data Object 2</param>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void VectorCollision(ref PhysicsData p1, PhysicsData p2);
+        public static extern void VectorCollision(ref PhysicsData p1, ref PhysicsData p2);
 
     }
 }

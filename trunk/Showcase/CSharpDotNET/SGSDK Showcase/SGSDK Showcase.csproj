@@ -10,6 +10,8 @@
     <RootNamespace>SGSDK_Showcase</RootNamespace>
     <AssemblyName>SGSDK Showcase</AssemblyName>
     <ApplicationIcon>SwinGame.ico</ApplicationIcon>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollisionDetection.cs" />
+    <Compile Include="VectorCollision.cs" />
     <Compile Include="MouseCursor.cs" />
     <Compile Include="MoveSpriteWithInput.cs" />
     <Compile Include="DrawSprites.cs" />
