@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Drawing;
 using System.IO;
 
 namespace SwinGame
@@ -179,6 +180,9 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool MouseWasClicked(MouseButton button);
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="StartReadingText")]
+        private static extern void DLL_StartReadingText(uint color, int maxLength, Font theFont, int x, int y);
+
         /// StartReadingText start the API reading a string values from the user.
 	    ///	Entry is completed when the user presses enter, and aborted with escape.
 	    ///	If the user aborts entry the result is an empty string. Text entry is
@@ -189,8 +193,11 @@ namespace SwinGame
 	    ///	@param maxLength:	The maximum length of the string the user can enter
 	    ///	@param theFont:		The font used to draw the text entered
 	    ///	@param x, y:			 The location at which to draw the text entered
-        //[DllImport("lib/SGSDK.dll")]
-        //public static extern void StartReadingText(Color color, int maxLength, Font theFont, int x, int y);
+        public static void StartReadingText(Color toColour, int maxLength, Font theFont, int x, int y)
+        {
+            int color = toColour.ToArgb();
+            DLL_StartReadingText((uint) color, maxLength, theFont, x, y);
+        }
 
         /// <summary>
         /// IsReadingText indicates if the API is currently reading text from the
