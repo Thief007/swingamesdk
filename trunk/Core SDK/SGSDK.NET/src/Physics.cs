@@ -56,18 +56,48 @@ namespace SwinGame
         }
     }
 
-    /*
+ 
     /// <summary>
     /// PhysicsData Structure
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct Vector
+    public struct PhysicsData
     {
         Vector movement;
         Single mass;
         Sprite sprite;
-    }*/
 
+        /// <summary>
+        /// The mass of the Physics Object
+        /// </summary>
+        public Single Mass
+        {
+            get { return mass; }
+            set { mass = value; }
+        }
+
+        /// <summary>
+        /// The Vector Movement of the Physics Object
+        /// </summary>
+        public Vector Movement
+        {
+            get { return movement; }
+            set { movement = value; }
+        }
+
+        /// <summary>
+        /// The Sprite of the Physics Object
+        /// </summary>
+        public Sprite Sprite
+        {
+            get { return sprite; }
+            set { sprite = value; }
+        }
+    }
+
+    /// <summary>
+    /// SGSDK.NET's Physics Class
+    /// </summary>
     public class Physics
     {
         [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedX")]
@@ -458,7 +488,14 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
         public static extern Matrix2D Multiply(ref Matrix2D m, ref Vector v);//const
 
-  
+        /// <summary>
+        /// Vector Collisions alters the vectors of two Physics Entities depending on
+        /// the movement and mass of the 2 entities.
+        /// </summary>
+        /// <param name="p1">Physics Data Object 1</param>
+        /// <param name="p2">Physics Data Object 2</param>
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void VectorCollision(ref PhysicsData p1, PhysicsData p2);
 
     }
 }
