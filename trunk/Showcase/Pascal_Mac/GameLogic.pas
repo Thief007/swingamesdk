@@ -437,6 +437,30 @@ implementation
 			if WindowCloseRequested() then exit;
 		end;
 	end;
+
+    procedure SoundInput();
+	var
+		i : Integer;
+		sound : SoundEffect;
+		_Font : Font;
+    begin
+		sound := LoadSoundEffect(GetPathToResource('shock.wav', SoundResource));
+		_Font := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);
+        for i := 0 to 1999 do
+        begin
+            if IsKeyPressed(VK_SPACE) and (not IsSoundEffectPlaying(sound)) then
+                PlaySoundEffect(sound);
+
+            DrawText('Press Space to play a Sound Effect', ColorWhite, _Font, 210, 300);
+
+            DrawOverlay('Play Sound Effect when hitting a key Example');
+            ProcessEvents();
+            RefreshScreen();
+            ClearScreen();
+			
+            if WindowCloseRequested() then break;
+		end;
+    end;
 	
 	//The main procedure that controlls the game logic.
 	//
@@ -476,6 +500,8 @@ implementation
 			MouseCursor();
 			if WindowCloseRequested() then break;
 			TextReadExample();
+			if WindowCloseRequested() then break;
+			SoundInput();
 		until WindowCloseRequested();
 		
 		FreeResources();
