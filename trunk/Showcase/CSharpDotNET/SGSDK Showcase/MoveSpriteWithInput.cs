@@ -20,8 +20,8 @@ namespace SGSDK_Showcase
         public static void Run()
         {
             ball = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
-            ball.X = 400;
-            ball.Y = 300;
+            ball.xPos = 400;
+            ball.yPos = 300;
 
             for (int i = 0; i < 1500; i++)
             {
@@ -60,8 +60,8 @@ namespace SGSDK_Showcase
 
         public static void MoveBall(ref Sprite ball, ref int xSpeed, ref int ySpeed)
         {
-            ball.X = ball.X + xSpeed;
-            ball.Y = ball.Y + ySpeed;
+            ball.xPos = ball.xPos + xSpeed;
+            ball.yPos = ball.yPos + ySpeed;
         }
 
     }

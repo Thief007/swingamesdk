@@ -28,8 +28,8 @@ namespace SGSDK_Showcase
 
                 if (Input.MouseWasClicked(MouseButton.LeftButton))
                 {
-                    ball.X = position.X - (Graphics.CurrentWidth(ball) / 2);
-                    ball.Y = position.Y - (Graphics.CurrentHeight(ball) / 2);
+                    ball.xPos = position.X - (Graphics.CurrentWidth(ball) / 2);
+                    ball.yPos = position.Y - (Graphics.CurrentHeight(ball) / 2);
                     Graphics.DrawSprite(ball);
                 }
 

@@ -34,11 +34,11 @@ namespace SGSDK_Showcase
             ball1 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
             ball2 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball2.png", ResourceKind.ImageResource)));
 
-            ball1.X = 0;
-            ball1.Y = 0;
+            ball1.xPos = 0;
+            ball1.yPos = 0;
 
-            ball2.X = Core.ScreenWidth() - Graphics.CurrentWidth(ball2);
-            ball2.Y = Core.ScreenHeight() - Graphics.CurrentHeight(ball2);
+            ball2.xPos = Core.ScreenWidth() - Graphics.CurrentWidth(ball2);
+            ball2.yPos = Core.ScreenHeight() - Graphics.CurrentHeight(ball2);
 
             ball1.UsePixelCollision = true;
             ball2.UsePixelCollision = true;
@@ -65,30 +65,30 @@ namespace SGSDK_Showcase
 
         public static void MoveBall(ref Sprite ball, ref int xSpeed, ref int ySpeed)
         {
-            ball.X = ball.X + xSpeed;
-            ball.Y = ball.Y + ySpeed;
+            ball.xPos = ball.xPos + xSpeed;
+            ball.yPos = ball.yPos + ySpeed;
 
-            if (ball.X > Core.ScreenWidth() - Graphics.CurrentWidth(ball))
+            if (ball.xPos > Core.ScreenWidth() - Graphics.CurrentWidth(ball))
             {
-                ball.X = Core.ScreenWidth() - Graphics.CurrentWidth(ball);
+                ball.xPos = Core.ScreenWidth() - Graphics.CurrentWidth(ball);
                 xSpeed = -1 * xSpeed;
             }
 
-            if (ball.Y > Core.ScreenHeight() - Graphics.CurrentHeight(ball))
+            if (ball.yPos > Core.ScreenHeight() - Graphics.CurrentHeight(ball))
             {
-			    ball.Y = Core.ScreenHeight() - Graphics.CurrentHeight(ball);
+			    ball.yPos = Core.ScreenHeight() - Graphics.CurrentHeight(ball);
 			    ySpeed = -1 * ySpeed;
             }
 
-            if (ball.X < 0)
+            if (ball.xPos < 0)
             {
-                ball.X = 0;
+                ball.xPos = 0;
                 xSpeed = -1 * xSpeed;
             }
 
-            if (ball.Y < 0)
+            if (ball.yPos < 0)
             {
-                ball.Y = 0;
+                ball.yPos = 0;
                 ySpeed = -1 * ySpeed;
             }
         }

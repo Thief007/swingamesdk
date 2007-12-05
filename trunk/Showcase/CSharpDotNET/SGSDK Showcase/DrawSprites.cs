@@ -45,14 +45,14 @@ namespace SGSDK_Showcase
             stopSprite = Graphics.CreateSprite(tempBitmaps, tempIntegers, SpriteEndingAction.Stop);
             reverseOnceSprite = Graphics.CreateSprite(tempBitmaps, tempIntegers, SpriteEndingAction.ReverseOnce);
 
-            loopSprite.X = 50;
-		    loopSprite.Y = 200;
-		    reverseSprite.X = 150;
-		    reverseSprite.Y = 200;
-		    stopSprite.X = 350;
-		    stopSprite.Y = 200;
-		    reverseOnceSprite.X = 450;
-		    reverseOnceSprite.Y = 200;
+            loopSprite.xPos = 50;
+		    loopSprite.yPos = 200;
+		    reverseSprite.xPos = 150;
+		    reverseSprite.yPos = 200;
+		    stopSprite.xPos = 350;
+		    stopSprite.yPos = 200;
+		    reverseOnceSprite.xPos = 450;
+		    reverseOnceSprite.yPos = 200;
 
             for (int i = 0; i < 151; i++)
             {
@@ -84,7 +84,7 @@ namespace SGSDK_Showcase
 
         public static void DrawSpriteCaption(Sprite sprite, String caption)
         {
-            Text.DrawText(caption, Color.White, _Font, (int)Math.Round(sprite.X + Graphics.CurrentWidth(sprite) / 2) - ((caption.Length / 2) * 10), (int)Math.Round(sprite.Y + Graphics.CurrentHeight(sprite)));
+            Text.DrawText(caption, Color.White, _Font, (int)Math.Round(sprite.xPos + Graphics.CurrentWidth(sprite) / 2) - ((caption.Length / 2) * 10), (int)Math.Round(sprite.yPos + Graphics.CurrentHeight(sprite)));
         
         }
     }
