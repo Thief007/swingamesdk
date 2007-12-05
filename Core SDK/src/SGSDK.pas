@@ -677,6 +677,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result :=SGSDK_Physics.Multiply(m, v);
 	end;
 	
+	procedure VectorCollision(var p1, p2: PhysicsData); cdecl; export;
+	begin
+		SGSDK_Physics.VectorCollision(p1, p2);
+	end;
+	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
@@ -1015,6 +1020,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	// Draw Sprites
 	
+	{
 	procedure DrawSpritesViewPort(length : Integer; spritesToDraw : SpriteCollection; vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); cdecl; export;
 	begin
 		SetLength(spritesToDraw, length);
@@ -1026,14 +1032,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SetLength(spritesToDraw, length);
 		SGSDK_Graphics.DrawSprites(spritesToDraw);
 	end;
-	
+	}
 	// Add Sprite
-	
+	{
 	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite); cdecl; export;
 	begin
 		SGSDK_Graphics.AddSprite(addTo, Sprite);
 	end;
-	
+	}
 	// Update Sprite
 	
 	procedure UpdateSprite(spriteToDraw : Sprite); cdecl; export;
@@ -1042,7 +1048,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 	
 	// Clear and Free
-	
+	{
 	procedure ClearSpriteCollection(var toClear : SpriteCollection); cdecl; export;
 	begin
 		SGSDK_Graphics.ClearSpriteCollection(toClear);
@@ -1052,7 +1058,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		SGSDK_Graphics.FreeSpriteCollection(toFree);
 	end;
-
+	}
 	// Sprite Properties
 	
 	function GetSpriteKind(surface : Sprite): Integer; cdecl; export;
@@ -1297,6 +1303,7 @@ exports
 	RotationMatrix,
 	MultiplyMatrix2D,
 	MultiplyMatrix2DAndVector,
+	VectorCollision,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -1365,12 +1372,12 @@ exports
 	CreateSpriteArray,
 	CreateSpriteArrayEnding,
 	
-	DrawSpritesViewPort,
-	DrawSprites,
-	AddSprite,
+	//DrawSpritesViewPort,
+	//DrawSprites,
+	//AddSprite,
 	UpdateSprite,
-	ClearSpriteCollection,
-	FreeSpriteCollection,
+	//ClearSpriteCollection,
+	//FreeSpriteCollection,
 	
 	GetSpriteKind,	
 	GetSpriteFramesPerCell,
