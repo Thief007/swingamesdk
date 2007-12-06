@@ -29,12 +29,10 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		if SGSDK_Core.WindowCloseRequested() then
 		begin
-			//WriteLn('Close...');
 			result:= -1
 		end
 		else
 		begin
-			//WriteLn('Not Close...');
 			result:= 0
 		end
 	end;
@@ -673,12 +671,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function RotationMatrix(deg: Single): Matrix2DPtr; cdecl; export;
 	var
 		temp: Matrix2D;
-	begin
-		//WriteLn('N00b');
-		//WriteLn(@SGSDK_Physics.RotationMatrix(deg));
-		//WriteLn(^SGSDK_Physics.RotationMatrix(deg));
-		//WriteLn(SGSDK_Physics.RotationMatrix(deg)^);
-		
+	begin		
 		temp := SGSDK_Physics.RotationMatrix(deg);
 		result := @temp;
 	end;
