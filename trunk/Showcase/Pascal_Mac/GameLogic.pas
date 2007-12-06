@@ -462,13 +462,95 @@ implementation
 		end;
     end;
 	
+	procedure DroppingBall();
+	var
+		ball: PhysicsData;
+		GravityConst, AirResistanceV, AirResistanceH: Vector;
+		Rotate: Matrix2D;
+		falling, movingRight: Boolean;
+		i: Integer;
+	begin
+		GravityConst := CreateVector(0, 0.5);
+		AirResistanceV := CreateVector(0, 0.1);
+		AirResistanceH := CreateVector(0.01, 0);
+		
+		Rotate := RotationMatrix(180);
+		
+		ball.sprite := CreateSprite(LoadBitmap(GetPathToResource('ball_small.png', ImageResource)));
+		ball.movement := CreateVector(5, 0);
+		ball.mass := 1;
+		
+		ball.sprite.xPos := 0;
+		ball.sprite.yPos := 0;
+		
+		falling := false;
+		
+		for i := 0 to 800 do
+		begin
+			ClearScreen();
+			if (not falling) and (ball.movement.y >= 0) then
+			begin
+				AirResistanceV := Multiply(Rotate, AirResistanceV);
+				falling := true;
+			end;
+			
+            if (ball.Movement.x < 0) and (AirResistanceH.x < 0) then
+            begin
+                AirResistanceH := InvertVector(AirResistanceH);
+            end;
+
+            if (ball.Movement.x > 0) and (AirResistanceH.x > 0) then
+            begin
+                AirResistanceH := InvertVector(AirResistanceH);
+            end;
+			
+			ball.movement := AddVectors(ball.movement, GravityConst);
+			ball.movement := AddVectors(ball.movement, AirResistanceV);
+			ball.movement := AddVectors(ball.movement, AirResistanceH);
+			
+			MoveSprite(ball.sprite, ball.movement);
+			
+			if ball.sprite.xPos > ScreenWidth() - CurrentWidth(ball.sprite) then
+			begin
+				ball.movement.x := ball.movement.x * -1;
+				ball.sprite.xPos := ScreenWidth() - CurrentWidth(ball.sprite);
+				AirResistanceH := InvertVector(AirResistanceH);
+				movingRight := false;
+			end;
+			if ball.sprite.yPos > ScreenHeight() - CurrentHeight(ball.sprite) then
+			begin
+				if ball.movement.y < 1 then
+					ball.movement.y := 0;
+				ball.movement.y := ball.movement.y * -1;
+				ball.sprite.yPos := ScreenHeight() - CurrentHeight(ball.sprite);
+				AirResistanceV := Multiply(Rotate, AirResistanceV);
+				falling := false;
+			end;
+			if ball.sprite.xPos < 0 then
+			begin
+				ball.movement.x := ball.movement.x * -1;
+				ball.sprite.xPos := 0;
+			end;
+			if ball.sprite.yPos < 0 then
+			begin
+				ball.movement.y := ball.movement.y * -1;
+				ball.sprite.yPos := 0;
+			end;
+			DrawSprite(ball.sprite);
+			
+			ProcessEvents();
+			RefreshScreen();
+			if WindowCloseRequested() then break;
+		end;
+	end;
+	
 	//The main procedure that controlls the game logic.
 	//
 	// SIDE EFFECTS:
 	// - Creates the screen, and displays a message
 	procedure Main();
 	begin
-		OpenGraphicsWindow('My Game', 640, 480);
+		OpenGraphicsWindow('My Game', 800, 600);
 
 		LoadResources();
 		Randomize();
@@ -502,6 +584,8 @@ implementation
 			TextReadExample();
 			if WindowCloseRequested() then break;
 			SoundInput();
+			if WindowCloseRequested() then break;
+			DroppingBall();
 		until WindowCloseRequested();
 		
 		FreeResources();
