@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Drawing;
 using System.IO;
 
 namespace SwinGame
@@ -24,23 +25,29 @@ namespace SwinGame
     /// This record is used to represent transformations that can be
     /// used to apply these changes to vectors.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public struct Matrix2D
     {
-        internal float[,] _Matrix2D;
+        internal IntPtr Pointer;
+
+        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
+        private static extern Single GetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c);
+        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetMatrix2DElement")]
+        private static extern void SetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c, Single val); 
 
         public float this[int r, int c]
         {
             get
             {
-                if (_Matrix2D == null) _Matrix2D = new float[3, 3];
-                return _Matrix2D[r,c];
+                return GetMaxtrix2DElement(this.Pointer, r, c);
             }
             set 
             {
-                if (_Matrix2D == null) _Matrix2D = new float[3, 3];
-                _Matrix2D[r,c] = value;
+                SetMaxtrix2DElement(this.Pointer, r, c, value);
             }
         }
+
+        /*
 
         public static Matrix2D IdentityMatrix
         {
@@ -54,6 +61,7 @@ namespace SwinGame
                 return result;
             }
         }
+         */
     }
 
  
@@ -465,31 +473,76 @@ namespace SwinGame
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TranslationMatrix")]
-        public static extern Matrix2D TranslationMatric(double dx, double dy);
+        private static extern IntPtr DLL_TranslationMatric(Single dx, Single dy);
+
+        public static Matrix2D TranslationMatric(Single dx, Single dy)
+        {
+            Matrix2D temp;
+            temp.Pointer = DLL_TranslationMatric(dx, dy);
+            return temp;
+        }
+
+
+
+
+
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScaleMatrix")]
-        public static extern Matrix2D ScaleMatrix(double scale);
+        private static extern IntPtr DLL_ScaleMatrix(Single scale);
+
+        public static Matrix2D ScaleMatrix(Single scale)
+        {
+            Matrix2D temp;
+            temp.Pointer = DLL_ScaleMatrix(scale);
+            return temp;
+        }
+
+
+
+
+
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RotationMatrix")]
-        public static extern Matrix2D RotationMatrix(double deg);
+        private static extern IntPtr DLL_RotationMatrix(Single deg);
 
+        public static Matrix2D RotationMatrix(Single deg)
+        {
+            Matrix2D temp;
+            temp.Pointer = DLL_RotationMatrix(deg);
+            return temp;
+        }
+
+
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2D")]
+        private static extern IntPtr DLL_Multiply(IntPtr m1, IntPtr m2);//const
         /// <summary>
         /// Multiplies two matrixs 
         /// </summary>
         /// <param name="m1">The first Matrix</param>
         /// <param name="m2">The second Matrix</param>
         /// <returns>The combined Matrixes</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2D")]
-        public static extern Matrix2D Multiply(ref Matrix2D m1, ref Matrix2D m2);//const
+        public static Matrix2D Multiply(Matrix2D m1, ref Matrix2D m2)
+        {
+            Matrix2D temp;
+            temp.Pointer = DLL_Multiply(m1.Pointer, m2.Pointer);
+            return temp;
+        }
 
+
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
+        private static extern Vector DLL_Multiply(IntPtr m, ref Vector v);//const
         /// <summary>
         /// Multiplies 1 Vector and 1 Matrix2D
         /// </summary>
         /// <param name="m">The Matrix2D</param>
         /// <param name="v">The Vector</param>
         /// <returns>The resulting Matrix2D</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
-        public static extern Matrix2D Multiply(ref Matrix2D m, ref Vector v);//const
+        public static Vector Multiply(Matrix2D m, ref Vector v)
+        {
+            return DLL_Multiply(m.Pointer, ref v);
+        }
 
         /// <summary>
         /// Vector Collisions alters the vectors of two Physics Entities depending on

@@ -6,7 +6,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	type
 		IntArray = Array of Integer;
 		BitmapArray = Array of Bitmap;
-	
+		Matrix2DPtr = ^Matrix2D;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -655,28 +655,45 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	function TranslationMatric(dx, dy: Single): Matrix2DPtr; cdecl; export;
+	var
+		temp: Matrix2D;
 	begin
-		result := ^SGSDK_Physics.TranslationMatric(dx, dy);
+		temp := SGSDK_Physics.TranslationMatric(dx, dy);
+		result := @temp;
 	end;
 	
 	function ScaleMatrix(scale: Single): Matrix2DPtr; cdecl; export;
+	var
+		temp: Matrix2D;
 	begin
-		result := ^SGSDK_Physics.ScaleMatrix(scale);
+		temp := SGSDK_Physics.ScaleMatrix(scale);
+		result := @temp;
 	end;
 	
 	function RotationMatrix(deg: Single): Matrix2DPtr; cdecl; export;
+	var
+		temp: Matrix2D;
 	begin
-		result := SGSDK_Physics.RotationMatrix(deg);
+		//WriteLn('N00b');
+		//WriteLn(@SGSDK_Physics.RotationMatrix(deg));
+		//WriteLn(^SGSDK_Physics.RotationMatrix(deg));
+		//WriteLn(SGSDK_Physics.RotationMatrix(deg)^);
+		
+		temp := SGSDK_Physics.RotationMatrix(deg);
+		result := @temp;
 	end;
 	
 	function MultiplyMatrix2D(const m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
+	var
+		temp: Matrix2D;
 	begin
-		result := ^SGSDK_Physics.Multiply(@m1, @m2);
+		temp := SGSDK_Physics.Multiply(m1^, m2^);
+		result := @temp;
 	end;
 	
 	function MultiplyMatrix2DAndVector(const m: Matrix2DPtr; const v: Vector): Vector; cdecl; export;
 	begin
-		result := SGSDK_Physics.Multiply(@m, v);
+		result := SGSDK_Physics.Multiply(m^, v);
 	end;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -686,14 +703,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Physics.VectorCollision(p1, p2);
 	end;
 	
-	function GetMatrix2DElement(matrix: Matrix2DPtr; int x, y: Integer): Single; cdecl; export;
+	function GetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer): Single; cdecl; export;
 	begin
-		result := matrix[x,y];
+		result := matrix^[x,y];
 	end;
 	
-	procedure SetMatrix2DElement(matrix: Matrix2DPtr; int x, y: Integer; val: Single); cdecl; export;
+	procedure SetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer; val: Single); cdecl; export;
 	begin
-		matrix[x,y] := val;
+		matrix^[x,y] := val;
 	end;
 	
 	//***************************************************

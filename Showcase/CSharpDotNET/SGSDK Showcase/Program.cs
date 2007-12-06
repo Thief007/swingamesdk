@@ -27,6 +27,7 @@ namespace SGSDK_Showcase
 
             if (!Core.WindowCloseRequested())
             {
+                /*
                 DrawLines.Run();
                 DrawRectangles.Run();
                 DrawCircles.Run();
@@ -41,6 +42,8 @@ namespace SGSDK_Showcase
                 KeyInput.Run();
                 TextRead.Run();
                 DrawRandomText.Run();
+                 */
+                DroppingBall.Run();
             }
 
 

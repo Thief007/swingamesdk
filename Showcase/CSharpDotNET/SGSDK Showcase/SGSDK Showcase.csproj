@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CollisionDetection.cs" />
+    <Compile Include="DroppingBall.cs" />
     <Compile Include="DrawRandomText.cs" />
     <Compile Include="TextRead.cs" />
     <Compile Include="KeyInput.cs" />
