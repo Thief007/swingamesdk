@@ -55,7 +55,7 @@ interface
 
 	procedure PlayMusic(mus: Music); overload;
 
-	function	IsMusicPlaying(mus: Music): Boolean;
+	function	IsMusicPlaying(): Boolean;
 
 	function	IsSoundEffectPlaying(effect: SoundEffect): Boolean;
 
@@ -225,9 +225,9 @@ implementation
 	///
 	///	@param mus	 The music to check if playing
 	///	@returns		 True if the music is playing
-  function IsMusicPlaying(mus: Music): Boolean;
+  function IsMusicPlaying(): Boolean;
   begin
-  	result := IsSoundPlaying(mus);
+  	result := Mix_PlayingMusic() <> 0;
   end;
 
  	/// Stop music from playing.
