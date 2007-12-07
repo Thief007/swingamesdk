@@ -654,37 +654,41 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	function TranslationMatric(dx, dy: Single): Matrix2DPtr; cdecl; export;
 	var
-		temp: Matrix2D;
+		p: Matrix2DPtr;
 	begin
-		temp := SGSDK_Physics.TranslationMatric(dx, dy);
-		result := @temp;
+		new(p);
+		p^ := SGSDK_Physics.TranslationMatric(dx, dy);
+		result := p;
 	end;
 	
 	function ScaleMatrix(scale: Single): Matrix2DPtr; cdecl; export;
 	var
-		temp: Matrix2D;
+		p: Matrix2DPtr;
 	begin
-		temp := SGSDK_Physics.ScaleMatrix(scale);
-		result := @temp;
+		new(p);
+		p^ := SGSDK_Physics.ScaleMatrix(scale);
+		result := p;
 	end;
 	
 	function RotationMatrix(deg: Single): Matrix2DPtr; cdecl; export;
 	var
-		temp: Matrix2D;
+		p: Matrix2DPtr;
 	begin		
-		temp := SGSDK_Physics.RotationMatrix(deg);
-		result := @temp;
+		new(p);
+		p^ := SGSDK_Physics.RotationMatrix(deg);
+		result := p;
 	end;
 	
-	function MultiplyMatrix2D(const m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
+	function MultiplyMatrix2D(m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
 	var
-		temp: Matrix2D;
+		p: Matrix2DPtr;
 	begin
-		temp := SGSDK_Physics.Multiply(m1^, m2^);
-		result := @temp;
+		new(p);
+		p^ := SGSDK_Physics.Multiply(m1^, m2^);
+		result := p;
 	end;
 	
-	function MultiplyMatrix2DAndVector(const m: Matrix2DPtr; const v: Vector): Vector; cdecl; export;
+	function MultiplyMatrix2DAndVector(m: Matrix2DPtr; v: Vector): Vector; cdecl; export;
 	begin
 		result := SGSDK_Physics.Multiply(m^, v);
 	end;
@@ -704,6 +708,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure SetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer; val: Single); cdecl; export;
 	begin
 		matrix^[x,y] := val;
+	end;
+	
+	procedure FreeMatrix2D(matrix: Matrix2DPtr); cdecl; export;
+	begin
+		Dispose(matrix);
+		matrix := nil;
 	end;
 	
 	//***************************************************
@@ -1331,6 +1341,7 @@ exports
 	
 	GetMatrix2DElement,
 	SetMatrix2DElement,
+	FreeMatrix2D,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
