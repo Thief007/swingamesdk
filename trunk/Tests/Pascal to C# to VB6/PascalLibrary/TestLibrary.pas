@@ -2,6 +2,11 @@ library TestLibrary;
 {$H+}
 uses TestUnit in 'TestUnit.pas';
 
+	function ReciveWords(word:words):PChar; cdecl; export;
+	begin
+		result := TestUnit.ReciveWords(word);
+	end;
+	
 	function SendInt():integer; cdecl; export;
 	begin
 		result := TestUnit.SendInt();
@@ -23,6 +28,7 @@ uses TestUnit in 'TestUnit.pas';
 	end;
 	
 exports
+	ReciveWords,
 	ReciveString,
 	ReciveInt,
 	SendString,
