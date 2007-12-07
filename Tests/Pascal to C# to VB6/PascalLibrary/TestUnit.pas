@@ -2,6 +2,13 @@ unit TestUnit;
 
 interface
 	
+	Type
+		words = record
+			hi:PChar;
+		end;
+		
+	function ReciveWords(word:words):PChar;
+	
 	function SendInt():integer;
 	
 	function SendString():PChar;
@@ -12,6 +19,11 @@ interface
 	
 implementation
 	
+	function ReciveWords(word:words):PChar;
+	begin
+		result := word.hi;
+	end;
+
 	function SendInt():integer;
 	begin
 		result := 123;

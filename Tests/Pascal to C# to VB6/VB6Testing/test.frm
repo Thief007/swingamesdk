@@ -9,6 +9,14 @@ Begin VB.Form Form1
    ScaleHeight     =   3090
    ScaleWidth      =   4680
    StartUpPosition =   3  'Windows Default
+   Begin VB.CommandButton Command2 
+      Caption         =   "Command2"
+      Height          =   915
+      Left            =   2760
+      TabIndex        =   1
+      Top             =   2040
+      Width           =   1095
+   End
    Begin VB.CommandButton Command1 
       Caption         =   "Command1"
       Height          =   615
@@ -26,6 +34,15 @@ Attribute VB_Exposed = False
 Private Sub Command1_Click()
 Dim testing As CSharpLibrary.VBTestClass
 Set testing = New CSharpLibrary.VBTestClass
+Dim number As Integer
+Dim thing As CSharpLibrary.structtest
+Set thing = New CSharpLibrary.structtest
+thing.serTemp ("twietr")
+Print (testing.ReciveWords(thing))
+number = 10
+Print (number)
+testing.Mess (number)
+Print (number)
 Print (testing.ReciveInt(987))
 Print ("int from VB6 to Pascal and back")
 Print (testing.SendInt())

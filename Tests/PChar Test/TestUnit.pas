@@ -3,6 +3,11 @@ unit TestUnit;
 interface
 	var
 		teststring : String;
+	
+	Type
+		words = record
+			hi:string;
+		end;
 
 	procedure WriteString();
 
