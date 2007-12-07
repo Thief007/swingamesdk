@@ -573,6 +573,7 @@ implementation
 	var
 		empty : Array of Integer;
 	begin
+		SetLength(empty, 0);
 		result := CreateSprite(image, false, empty, 0, 0);
 	end;
 	
@@ -1320,12 +1321,18 @@ implementation
                  xPos, yPos, width, height: Integer); overload;
 	var
 	  x, y: Integer;
+	  xRadius, yRadius: Integer;
 	  xChange, yChange: Integer;
 	  ellipseError: Integer;
 	  twoASquare, twoBSquare: Integer;
 	  stoppingX, stoppingY: Integer;
 	begin
-	  twoASquare := 2 * (width shr 1) * (width shr 1);
+		xRadius := width div 2;
+		yRadius := height div 2;
+		
+		xPos += xRadius; yPos += yRadius;
+		
+		twoASquare := 2 * (width shr 1) * (width shr 1);
 	  twoBSquare := 2 * (height shr 1) * (height shr 1);
 	
 	  // 1st set of points
@@ -1420,7 +1427,14 @@ implementation
 		ellipseError: Integer;
 		twoASquare, twoBSquare: Integer;
 		stoppingX, stoppingY: Integer;
+		xRadius, yRadius: Integer;
 	begin
+		xRadius := width div 2;
+		yRadius := height div 2;
+		
+		xPos += xRadius;
+		yPos += yRadius;
+		
 		twoASquare := 2 * (width shr 1) * (width shr 1);
 		twoBSquare := 2 * (height shr 1) * (height shr 1);
 		

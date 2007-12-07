@@ -666,21 +666,17 @@ implementation
 	end;
 
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
-	var
-	i,j : Integer;
 	begin
 		result.x := v.x * m[0, 0] + v.y * m[0,1] + v.w * m[0,2];
 		result.y := v.x * m[1, 0] + v.y * m[1,1] + v.w * m[1,2];
 		result.w := 1;
 		//result.w := v.x * m[2, 0] + v.y * m[2,1] + v.w * m[2,2];
 		//w remains as 1
-		
 	end;
 
 	function RotationMatrix(deg: Single): Matrix2D;
 	var
 		rads: Double;
-		i,j : Integer;
 	begin
 		rads := deg * DEG_TO_RAD;
 
@@ -694,7 +690,7 @@ implementation
 
 		result[2, 0] := 0;
 		result[2, 1] := 0;
-		result[2, 2] := 1;	
+		result[2, 2] := 1;
 	end;
 
 	function ScaleMatrix(scale: Single): Matrix2D;

@@ -24,17 +24,27 @@ then
 	echo Cleaned
 else
 	mkdir -p "$Output"
-	fpc -Mdelphi -FE"$Output" SGSDK_Core.pas
-	fpc -Mdelphi -FE"$Output" SGSDK_Graphics.pas
-	fpc -Mdelphi -FE"$Output" SGSDK_Font.pas
-	fpc -Mdelphi -FE"$Output" SGSDK_Input.pas
-	fpc -Mdelphi -FE"$Output" SGSDK_Physics.pas
-	fpc -Mdelphi -FE"$Output" SGSDK_Audio.pas
-	fpc -Mdelphi -FE"$Output" SGSDK_KeyCodes.pas
-	echo Copying to FPC
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Core.pas
+	if [ $? != 0 ]; then echo "Error compiling Core"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Graphics.pas
+	if [ $? != 0 ]; then echo "Error compiling Graphics"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Font.pas
+	if [ $? != 0 ]; then echo "Error compiling Font"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Input.pas
+	if [ $? != 0 ]; then echo "Error compiling Input"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Physics.pas
+	if [ $? != 0 ]; then echo "Error compiling Physics"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Audio.pas
+	if [ $? != 0 ]; then echo "Error compiling Audio"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_KeyCodes.pas
+	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; exit 1; fi
+	
+	echo "Copying to FPC"
+	
 	cp "$Output"/*.ppu "$MacFPCDir"
 	cp "$Output"/*.o "$MacFPCDir"
 	cp "$LibDir"/*.a "$MacFPCDir"
-	echo Finished
+	
+	echo "Finished"
 fi
 #open "$Output"
