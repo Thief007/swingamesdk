@@ -26,14 +26,17 @@ namespace SwinGame
     /// used to apply these changes to vectors.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Matrix2D
+    public class Matrix2D : IDisposable
     {
-        internal IntPtr Pointer;
-
+        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
+        private static extern void FreeMaxtrix2D(IntPtr maxtrix2d);
         [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
         private static extern Single GetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c);
         [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetMatrix2DElement")]
         private static extern void SetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c, Single val); 
+
+        internal IntPtr Pointer;
+        private bool disposed = false;
 
         public float this[int r, int c]
         {
@@ -45,6 +48,31 @@ namespace SwinGame
             {
                 SetMaxtrix2DElement(this.Pointer, r, c, value);
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                }
+                FreeMaxtrix2D(Pointer);
+                Pointer = IntPtr.Zero;
+
+                disposed = true;
+            }
+        }
+
+        ~Matrix2D()
+        {
+            Dispose(false);
         }
 
         /*
@@ -69,7 +97,7 @@ namespace SwinGame
     /// PhysicsData Structure
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct PhysicsData
+    public class PhysicsData
     {
        
         public Vector Movement;
@@ -111,6 +139,7 @@ namespace SwinGame
     /// </summary>
     public class Physics
     {
+
         [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedX")]
         private static extern bool DLL_HasSpriteCollidedX(IntPtr theSprite, int x, CollisionDetectionRange  range);
         /// <summary>
@@ -477,7 +506,7 @@ namespace SwinGame
 
         public static Matrix2D TranslationMatric(Single dx, Single dy)
         {
-            Matrix2D temp;
+            Matrix2D temp = new Matrix2D();
             temp.Pointer = DLL_TranslationMatric(dx, dy);
             return temp;
         }
@@ -492,7 +521,7 @@ namespace SwinGame
 
         public static Matrix2D ScaleMatrix(Single scale)
         {
-            Matrix2D temp;
+            Matrix2D temp = new Matrix2D();
             temp.Pointer = DLL_ScaleMatrix(scale);
             return temp;
         }
@@ -507,7 +536,7 @@ namespace SwinGame
 
         public static Matrix2D RotationMatrix(Single deg)
         {
-            Matrix2D temp;
+            Matrix2D temp = new Matrix2D();
             temp.Pointer = DLL_RotationMatrix(deg);
             return temp;
         }
@@ -522,9 +551,9 @@ namespace SwinGame
         /// <param name="m1">The first Matrix</param>
         /// <param name="m2">The second Matrix</param>
         /// <returns>The combined Matrixes</returns>
-        public static Matrix2D Multiply(Matrix2D m1, ref Matrix2D m2)
+        public static Matrix2D Multiply(Matrix2D m1, Matrix2D m2)
         {
-            Matrix2D temp;
+            Matrix2D temp = new Matrix2D();
             temp.Pointer = DLL_Multiply(m1.Pointer, m2.Pointer);
             return temp;
         }
@@ -532,16 +561,16 @@ namespace SwinGame
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
-        private static extern Vector DLL_Multiply(IntPtr m, ref Vector v);//const
+        private static extern Vector DLL_Multiply(IntPtr m, Vector v);//const
         /// <summary>
         /// Multiplies 1 Vector and 1 Matrix2D
         /// </summary>
         /// <param name="m">The Matrix2D</param>
         /// <param name="v">The Vector</param>
         /// <returns>The resulting Matrix2D</returns>
-        public static Vector Multiply(Matrix2D m, ref Vector v)
+        public static Vector Multiply(Matrix2D m, Vector v)
         {
-            return DLL_Multiply(m.Pointer, ref v);
+            return DLL_Multiply(m.Pointer, v);
         }
 
         /// <summary>
