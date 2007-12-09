@@ -66,12 +66,20 @@ interface
 	// These routines are used to draw directly to the screen.
 	//
 
-	procedure DrawText(theText: String; textColor: Colour;
+	procedure DrawTextOnScreen(theText: String; textColor: Colour;
 					 theFont: Font; x, y: Integer); overload;
+
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
+							theFont: Font; align: FontAlignment;
+							x, y, w, h: Integer); overload;
+
+	procedure DrawText(theText: String; textColor: Colour;
+					 theFont: Font; x, y: Single); overload;
 
 	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); overload;
+							x, y: Single; w, h: Integer); overload;
+
 	//*****
 	//
 	// Bitmap drawing routines
@@ -344,13 +352,22 @@ implementation
 	/// Side Effects:
 	///	- The text is drawn in the specified font, at the indicated location
 	///		on the screen.
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
 													theFont: Font; align: FontAlignment;
 													x, y, w, h: Integer); overload;
 	begin
 		DrawTextLines(scr, theText, textColor, backColor, theFont, align, 
                   x, y, w, h);
 	end;
+
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
+													theFont: Font; align: FontAlignment;
+													x, y:Single; w, h: Integer); overload;
+	begin
+		DrawTextLines(scr, theText, textColor, backColor, theFont, align, 
+                  ScreenX(x), ScreenY(y), w, h);
+	end;
+
 
 	/// Draws texts to the screen. Drawing text is a slow operation,
 	///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -364,11 +381,18 @@ implementation
 	/// Side Effects:
 	///	- The text is drawn in the specified font, at the indicated location
 	///		on the screen.
-	procedure DrawText(theText: String; textColor: Colour; theFont: Font;
+	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font;
                      x, y: Integer);
 	begin
 		DrawText(scr, theText, textColor, theFont, x, y);
 	end;
+
+	procedure DrawText(theText: String; textColor: Colour; theFont: Font;
+                     x, y: Single);
+	begin
+		DrawText(scr, theText, textColor, theFont, ScreenX(x), ScreenY(y));
+	end;
+
 	
 	/// Calculates the width of a string when drawn with a given font.
 	///

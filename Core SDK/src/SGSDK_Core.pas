@@ -237,7 +237,7 @@ implementation
 		New(scr);
 		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32,
 															 SDL_HWSURFACE or SDL_DOUBLEBUF);
-
+		
 		with scr.surface.format^ do
 		begin
 			baseSurface := SDL_CreateRGBSurface(SDL_SWSURFACE or SDL_SRCALPHA,
@@ -378,6 +378,7 @@ implementation
 	begin
 		oldScr := scr.surface;
 		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+		
 		SDL_FreeSurface(oldScr);
 	end;
 	

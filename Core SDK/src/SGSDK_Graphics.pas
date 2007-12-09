@@ -127,7 +127,7 @@ interface
 							xPos, yPos, width, height : Integer); overload;
 
 	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos,
-							width, height : Integer); overload;
+							width, height: Integer); overload;
 
 	procedure FillRectangle(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); overload;
@@ -165,51 +165,56 @@ interface
 	//
 	//*****
 	//
-	// These routines are used to draw directly to the screen.
+	// These routines are used to to the View Area on the screen.
 	//
 
+	procedure ClearScreen(); overload;
 	procedure ClearScreen(toColour : Colour); overload;
 
-	procedure ClearScreen(); overload;
-
-	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); overload;
+	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
 
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap;
-							srcX, srcY, srcW, srcH, x, y : Integer); overload;
+							srcX, srcY, srcW, srcH: Integer;
+							x, y : Single); overload;
 	
-	procedure DrawPixel(theColour: Colour; x, y: Integer); overload;
+	procedure DrawPixel(theColour: Colour; x, y: Single); overload;
 
 	procedure DrawRectangle(theColour : Colour; filled : Boolean;
-							xPos, yPos, width, height : Integer); overload;
-
-	procedure DrawRectangle(theColour : Colour; xPos, yPos,
+							xPos, yPos: Single;
 							width, height : Integer); overload;
 
-	procedure FillRectangle(theColour : Colour; xPos, yPos,
+	procedure DrawRectangle(theColour : Colour; 
+							xPos, yPos : Single;
+							width, height : Integer); overload;
+
+	procedure FillRectangle(theColour : Colour; 
+							xPos, yPos: Single;
 							width, height : Integer); overload;
 
 	procedure DrawLine(theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); overload;
+					 		xPosEnd, yPosEnd: Single); overload;
 
-	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Integer); overload;
+	procedure DrawHorizontalLine(theColor: Color; 
+							y, x1, x2: Single); overload;
 
-	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Integer); overload;
+	procedure DrawVerticalLine(theColor: Color; 
+							x, y1, y2: Single); overload;
 
 	procedure DrawCircle(theColour: Colour; filled: Boolean;
-						 xc, yc, radius: Integer); overload;
+						 xc, yc: Single; radius: Integer); overload;
 
-	procedure DrawCircle(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
 
-	procedure FillCircle(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
 
 	procedure DrawEllipse(theColour: Colour; filled: Boolean;
-						xPos, yPos, width, height: Integer); overload;
+						xPos, yPos: Single; width, height: Integer); overload;
 
 	procedure DrawEllipse(theColour: Colour;
-						xPos, yPos, width, height: Integer); overload;
+						xPos, yPos: Single; width, height: Integer); overload;
 
 	procedure FillEllipse(theColour: Colour;
-						xPos, yPos, width, height: Integer); overload;
+						xPos, yPos: Single; width, height: Integer); overload;
 
 	//*****
 	//
@@ -242,8 +247,7 @@ interface
 	
 	procedure UpdateSprite(spriteToDraw : Sprite);
 
-	procedure DrawSprite(spriteToDraw : Sprite; 
-	              vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
+	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
 	
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
 	
@@ -264,9 +268,79 @@ interface
 
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
 
-	function IsSpriteOffscreen(theSprite : Sprite; vwPrtX, vwPrtY,
+{	function IsSpriteOffscreen(theSprite : Sprite; vwPrtX, vwPrtY,
 															vwPrtWidth, vwPrtHeight : Integer) : Boolean; overload;
+}
 
+	//*****
+	//
+	// Draws elements directly onto the screen, ignoring the visible window
+	// setting.
+	//
+	//*****
+	//
+	// These routines are used to move the visual window.
+	//
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer);
+	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer);
+
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer); overload;
+
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean;
+							xPos, yPos, width, height : Integer); overload;
+
+	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos,
+							width, height : Integer); overload;
+
+	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos,
+							width, height : Integer); overload;
+
+	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart,
+					 xPosEnd, yPosEnd: Integer); overload;
+
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); overload;
+
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); overload;
+
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean;
+						 xc, yc, radius: Integer); overload;
+
+	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
+
+	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
+
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean;
+						xPos, yPos, width, height: Integer); overload;
+
+	procedure DrawEllipseOnScreen(theColour: Colour;
+						xPos, yPos, width, height: Integer); overload;
+
+	procedure FillEllipseOnScreen(theColour: Colour;
+						xPos, yPos, width, height: Integer); overload;
+
+
+	//*****
+	//
+	// Visible Window management routines.
+	//
+	//*****
+	//
+	// These routines are used to move the visual window.
+	//
+
+	function XOffset(): Integer;
+	function YOffset(): Integer;
+	
+	function ScreenX(x: Single): Integer;
+	function ScreenY(y: Single): Integer;
+	function GameX(x: Integer) : Single;
+	function GameY(y: Integer) : Single;
+	function ToGameCoordinates(screenVector: Vector): Vector;
+		
+	procedure MoveVisualArea(v: Vector); overload;
+	procedure MoveVisualArea(dx, dy: Single); overload;
+	procedure SetScreenOffset(x, y: Single);
+	
 implementation
 
 	/// Clears the surface of the bitmap to the passed in color.
@@ -524,11 +598,14 @@ implementation
 	begin
 		New(result);
 		SetLength(result.bitmaps, 1);
+		
 		if isMulti then
 		begin
 			result.spriteKind := AnimMultiSprite;
-			result.cols := image.height div height;
-			result.row := image.width div width;
+			
+			result.cols := image.width div width;
+			result.row := image.height div height;
+			
 			SetLength(result.framesPerCell, Length(framesPerCell));
 			for i := 0 to High(framesPerCell) do
 			begin
@@ -539,14 +616,15 @@ implementation
 		begin
 			result.spriteKind := StaticSprite;
 		end;
+
 		result.xPos					:= 0;
 		result.yPos					:= 0;
 		result.currentFrame			:= 0;
-		result.usePixelCollision	:= false;
+		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
 		result.bitmaps[0]			:= image;
 		result.frameCount			:= 0;
-		result.endingAction			:= endingAction;
+		result.endingAction		:= endingAction;
 		result.width				:= width;
 		result.height				:= height;
 		result.reverse				:= false;
@@ -633,9 +711,12 @@ implementation
 		//	FreeBitmap(spriteToFree.bitmaps[index]);
 		//end;
 
-		SetLength(spriteToFree.bitmaps, 0);
-		Dispose(spriteToFree);
-		spriteToFree := nil;
+		if spriteToFree <> nil then
+		begin
+			SetLength(spriteToFree.bitmaps, 0);
+			Dispose(spriteToFree);
+			spriteToFree := nil;
+		end;
 	end;
 
 	/// Sprites may contain multiple images. These images can be used for things
@@ -720,7 +801,7 @@ implementation
 	/// Side Effects:
 	///	- Draws part of the bitmapToDraw at the x,y location in the destination.
 	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap;
-													 srcX, srcY, srcW, srcH, x, y : Integer); overload;
+									 srcX, srcY, srcW, srcH, x, y : Integer); overload;
 	var
 		offset, source: SDL_Rect;
 	begin
@@ -733,17 +814,25 @@ implementation
 	/// Draws part of a bitmap (bitmapToDraw) onto the screen.
 	///
 	///	@param bitmapToDraw: The bitmap to be drawn onto the screen
-	///	@param srcX, srcY:	 The x,y offset to the area to copy in bitmapToDraw
-	///	@param srcW, srcH:	 The width and height of the area to copy
-	///	@param x,y:					The x,y location to draw the bitmap part to
+	///	@param srcX, srcY:	The x,y offset to the area to copy in bitmapToDraw
+	///	@param srcW, srcH:	The width and height of the area to copy
+	///	@param x,y:				The x,y location to draw the bitmap part to
 	///
 	/// Side Effects:
 	///	- Draws part of the bitmapToDraw at the x,y location on the screen.
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; 
+	///	- Effected by visible window
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; 
                srcX, srcY, srcW, srcH, x, y : Integer); overload;
 	begin
 		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
+
+	procedure DrawBitmapPart(bitmapToDraw : Bitmap; 
+               srcX, srcY, srcW, srcH: Integer; x, y : Single); overload;
+	begin
+		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, ScreenX(x), ScreenY(y));
+	end;
+
 
 	/// Draws one bitmap (bitmapToDraw) onto the screen.
 	///
@@ -752,9 +841,14 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws the bitmapToDraw at the x,y location on the screen.
-	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); overload;
+	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer); overload;
 	begin
 		DrawBitmap(scr, bitmapToDraw, x, y);
+	end;
+
+	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
+	begin
+		DrawBitmap(scr, bitmapToDraw, ScreenX(x), ScreenY(y));
 	end;
 	
 	/// Update the frame position
@@ -766,9 +860,11 @@ implementation
 	procedure UpdateSprite(spriteToDraw : Sprite);
 	begin
 		if spriteToDraw.hasEnded then exit;
+			
 		if spriteToDraw.spriteKind <> StaticSprite then
 		begin
 			spriteToDraw.frameCount := spriteToDraw.frameCount + 1;
+			
 			if spriteToDraw.frameCount >= spriteToDraw.framesPerCell[spriteToDraw.currentFrame] then
 			begin
 				spriteToDraw.frameCount := 0;
@@ -789,9 +885,10 @@ implementation
 						end;
 					end;
 				end
-				else
+				else //going forward
 				begin
 					spriteToDraw.currentFrame := spriteToDraw.currentFrame + 1;
+					
 					if (spriteToDraw.currentFrame > High(spriteToDraw.framesPerCell)) then
 					begin
 						if (spriteToDraw.endingAction = ReverseLoop) or (spriteToDraw.endingAction = ReverseOnce) then
@@ -820,7 +917,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- The sprite is drawn to the screen, if within view port
-	procedure DrawSprite(spriteToDraw : Sprite; 
+{	procedure DrawSprite(spriteToDraw : Sprite; 
                vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
 	var
 		tempWidth, tempHeight : Integer;
@@ -843,17 +940,57 @@ implementation
 								Trunc(spriteToDraw.xPos) - vwPrtX, Trunc(spriteToDraw.yPos) - vwPrtY);
 		end;
 	end;
-
+}
 	/// Draws a sprite to the screen, without using a view port.
 	///
 	///	@param spriteToDraw:		 The sprite to be drawn
 	///
 	/// Side Effects:
 	///	- The sprite is drawn to the screen, if within screen area
-	procedure DrawSprite(spriteToDraw : Sprite); overload;
+	procedure DrawSprite(spriteToDraw: Sprite); overload;
+	var
+		srcX, srcY: Integer; // the source x, y : i.e. the location of the current part for multi animations
 	begin
-		DrawSprite(spriteToDraw, 0, 0, 0, 0);
+		if IsSpriteOffscreen(spriteToDraw) then exit;
+		
+		if spriteToDraw.spriteKind <> AnimMultiSprite then
+		begin
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.xPos, spriteToDraw.yPos);
+		end
+		else
+		begin
+			with spriteToDraw^ do
+			begin
+				srcX := (currentFrame mod cols) * width;
+				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+			end;
+			
+			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
+								spriteToDraw.width, spriteToDraw.height,
+								spriteToDraw.xPos, spriteToDraw.yPos);
+		end;
 	end;
+	
+	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
+	var
+		tempWidth, tempHeight: Integer;
+	begin
+		if spriteToDraw.spriteKind <> AnimMultiSprite then
+		begin
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.xPos + xOffset, spriteToDraw.yPos + yOffset);
+		end
+		else
+		begin
+			tempWidth := spriteToDraw.currentFrame div spriteToDraw.cols * spriteToDraw.width;
+			tempHeight := spriteToDraw.currentFrame mod spriteToDraw.cols * spriteToDraw.height;
+			
+			DrawBitmapPartOnScreen(spriteToDraw.bitmaps[0], tempWidth, tempHeight, 
+								spriteToDraw.width, spriteToDraw.height,
+								Round(spriteToDraw.xPos + xOffset), Round(spriteToDraw.yPos + yOffset));
+		end;		
+	end;
+
+
 	
 	{/// Draws the sprites to the screen within a given view port.
 	///
@@ -932,7 +1069,7 @@ implementation
 	///	@param vwPrtX, vwPrty: The x, y of the current view port (i.e. screen)
 	///	@param vwPrtWidth, vwPrtHeight:		The height and width of the view port
 	///	@returns							 True if the sprite is off the screen
-	function IsSpriteOffscreen(theSprite : Sprite; 
+	{function IsSpriteOffscreen(theSprite : Sprite; 
               vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer): Boolean;
 	begin
 		if theSprite.xPos > vwPrtX + vwPrtWidth then result := true
@@ -940,7 +1077,7 @@ implementation
 		else if theSprite.yPos > vwPrtY + vwPrtHeight then result := true
 		else if theSprite.yPos + CurrentHeight(theSprite) < vwPrtY then result := true
 		else result := false;
-	end;
+	end;}
 
   	/// Determines if a sprite is off the screen.
 	///
@@ -948,7 +1085,13 @@ implementation
 	///	@returns							 True if the sprite is off the screen
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean;
 	begin
-		result := IsSpriteOffscreen(theSprite, 0, 0, scr.width, scr.height);
+		//WriteLn(theSprite.xPos, ' -> ', ScreenX(theSprite.xPos));
+		
+		if ScreenX(theSprite.xPos) >= ScreenWidth() then result := true
+		else if ScreenX(theSprite.xPos) + CurrentWidth(theSprite) < 0 then result := true
+		else if ScreenY(theSprite.yPos) >= ScreenHeight() then result := true
+		else if ScreenY(theSprite.yPos) + CurrentHeight(theSprite) < 0 then result := true
+		else result := false;
 	end;
 
 	/// Moves a sprite based on information in a movement vector.
@@ -1038,9 +1181,14 @@ implementation
 	///
 	/// Side Effects:
 	///	- Sets one pixel on the screen
-	procedure DrawPixel(theColour: Colour; x, y: Integer); overload;
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer);
 	begin
 		DrawPixel(scr, theColour, x, y);
+	end;
+
+	procedure DrawPixel(theColour: Colour; x, y: Single); overload;
+	begin
+		DrawPixelOnScreen(theColour, ScreenX(x), ScreenY(y));
 	end;
 
 	/// Draws a rectangle on the screen.
@@ -1052,10 +1200,16 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangle(theColour : Colour; filled : Boolean;
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean;
                           xPos, yPos, width, height : Integer); overload;
 	begin
 		DrawRectangle(scr, theColour, filled, xPos, yPos, width, height);
+	end;
+
+	procedure DrawRectangle(theColour : Colour; filled : Boolean;
+                          xPos, yPos: Single; width, height : Integer); overload;
+	begin
+		DrawRectangle(scr, theColour, filled, ScreenX(xPos), ScreenY(yPos), width, height);
 	end;
 
 	/// Draws the outline of a rectangle on the screen.
@@ -1066,10 +1220,16 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle on the screen
-	procedure DrawRectangle(theColour : Colour;
+	procedure DrawRectangleOnScreen(theColour : Colour;
                           xPos, yPos, width, height : Integer); overload;
 	begin
 		DrawRectangle(scr, theColour, xPos, yPos, width, height);
+	end;
+	
+	procedure DrawRectangle(theColour: Colour;
+                          xPos, yPos: Single; width, height : Integer); overload;
+	begin
+		DrawRectangle(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
 	end;
 
 	/// Draws a filled rectangle on the screen.
@@ -1080,10 +1240,16 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle on the screen
-	procedure FillRectangle(theColour : Colour;
+	procedure FillRectangleOnScreen(theColour : Colour;
                           xPos, yPos, width, height : Integer); overload;
 	begin
 		FillRectangle(scr, theColour, xPos, yPos, width, height);
+	end;
+
+	procedure FillRectangle(theColour : Colour;
+                          xPos, yPos: Single; width, height : Integer); overload;
+	begin
+		FillRectangle(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
 	end;
 
 	/// Draws a line on the screen.
@@ -1094,10 +1260,16 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the screen
-	procedure DrawLine(theColour: Colour; 
+	procedure DrawLineOnScreen(theColour: Colour; 
                      xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
 	begin
 		DrawLine(scr, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+	end;
+	
+	procedure DrawLine(theColour: Colour; 
+                     xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+	begin
+		DrawLine(scr, theColour, ScreenX(xPosStart), ScreenY(yPosStart), ScreenX(xPosEnd), ScreenY(yPosEnd));
 	end;
 
 	/// Draws a horizontal line on the screen.
@@ -1108,9 +1280,14 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line on the screen
-	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Integer); overload;
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); overload;
 	begin
 		DrawHorizontalLine(scr, theColor, y, x1, x2);
+	end;
+
+	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
+	begin
+		DrawHorizontalLine(scr, theColor, ScreenY(y), ScreenX(x1), ScreenX(x2));
 	end;
 
 	/// Draws a vertical line on the screen.
@@ -1121,9 +1298,14 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line on the screen
-	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Integer); overload;
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); overload;
 	begin
 		DrawVerticalLine(scr, theColor, x, y1, y2);
+	end;
+
+	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
+	begin
+		DrawVerticalLine(scr, theColor, ScreenX(x), ScreenY(y1), ScreenY(y2));
 	end;
 
 	/// Draws a circle centered on a given x, y location.
@@ -1135,11 +1317,18 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle on the screen
-	procedure DrawCircle(theColour: Colour; filled: Boolean;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean;
                        xc, yc, radius: Integer); overload;
 	begin
 		DrawCircle(scr, theColour, filled, xc, yc, radius);
 	end;
+
+	procedure DrawCircle(theColour: Colour; filled: Boolean;
+                       xc, yc: Single; radius: Integer); overload;
+	begin
+		DrawCircle(scr, theColour, filled, ScreenX(xc), ScreenY(yc), radius);
+	end;
+
 
 	/// Draws a circle outline centered on a given x, y location.
 	///
@@ -1149,9 +1338,14 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle on the screen
-	procedure DrawCircle(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
 	begin
 		DrawCircle(scr, theColour, xc, yc, radius);
+	end;
+
+	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
+	begin
+		DrawCircle(scr, theColour, ScreenX(xc), ScreenY(yc), radius);
 	end;
 
 	/// Draws a filled circle centered on a given x, y location.
@@ -1162,9 +1356,14 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle on the screen
-	procedure FillCircle(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
 	begin
 		FillCircle(scr, theColour, xc, yc, radius);
+	end;
+
+	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
+	begin
+		FillCircle(scr, theColour, ScreenX(xc), ScreenY(yc), radius);
 	end;
 
 	/// Draws a ellipse within a given rectangle on the screen.
@@ -1176,10 +1375,16 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse on the screen
-	procedure DrawEllipse(theColour: Colour; filled: Boolean;
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean;
                         xPos, yPos, width, height: Integer); overload;
 	begin
 		DrawEllipse(scr, theColour, filled, xPos, yPos, width, height);
+	end;
+
+	procedure DrawEllipse(theColour: Colour; filled: Boolean;
+                        xPos, yPos: Single; width, height: Integer); overload;
+	begin
+		DrawEllipse(scr, theColour, filled, ScreenX(xPos), ScreenY(yPos), width, height);
 	end;
 
 	/// Draws a ellipse outline within a given rectangle on the screen.
@@ -1190,11 +1395,18 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse on the screen
-	procedure DrawEllipse(theColour: Colour;
+	procedure DrawEllipseOnScreen(theColour: Colour;
                         xPos, yPos, width, height: Integer); overload;
 	begin
 		DrawEllipse(scr, theColour, xPos, yPos, width, height);
 	end;
+
+	procedure DrawEllipse(theColour: Colour;
+                        xPos, yPos: Single; width, height: Integer); overload;
+	begin
+		DrawEllipse(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
+	end;
+
 
 	/// Draws a filled ellipse within a given rectangle on the screen.
 	///
@@ -1204,11 +1416,18 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse in the screen
-	 procedure FillEllipse(theColour: Colour; 
+	 procedure FillEllipseOnScreen(theColour: Colour; 
                          xPos, yPos, width, height: Integer); overload;
 	begin
 		FillEllipse(scr, theColour, xPos, yPos, width, height);
 	end;
+
+	procedure FillEllipse(theColour: Colour; 
+                         xPos, yPos: Single; width, height: Integer); overload;
+	begin
+		FillEllipse(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
+	end;
+
 
 	/// Draws a rectangle on the destination bitmap.
 	///
@@ -1220,7 +1439,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean;
+	procedure DrawRectangle(dest: Bitmap; theColour: Colour; filled : Boolean;
                           xPos, yPos, width, height : Integer); overload;
 	begin
 		if filled then
@@ -1861,4 +2080,67 @@ implementation
 		else
 			result := Round(1000 / renderFPSInfo.average);
 	end;
+	
+	///
+	/// The screen offset variables
+	///
+	var 
+		ScreenOffsetX : Single = 0.0;
+		ScreenOffsetY : Single = 0.0;
+	
+	function XOffset(): Integer;
+	begin
+		result := Round(ScreenOffsetX);
+	end;
+	
+	function YOffset(): Integer;
+	begin
+		result := Round(ScreenOffsetY);
+	end;
+	
+	function ScreenX(x: Single): Integer;
+	begin
+		result := Round(x - ScreenOffsetX);
+	end;
+	
+	function ScreenY(y: Single): Integer;
+	begin
+		result := Round(y - ScreenOffsetY);
+	end;
+	
+	function GameX(x: Integer) : Single;
+	begin
+		result := x + ScreenOffsetX;
+	end;
+	
+	function GameY(y: Integer) : Single;
+	begin
+		result := y + ScreenOffsetY;
+	end;
+	
+	procedure MoveVisualArea(v: Vector); overload;
+	begin
+		ScreenOffsetX += v.x;
+		ScreenOffsetY += v.y;
+	end;
+	
+	procedure MoveVisualArea(dx, dy: Single); overload;
+	begin
+		ScreenOffsetX += dx;
+		ScreenOffsetY += dy;		
+	end;
+	
+	procedure SetScreenOffset(x, y: Single);
+	begin
+		ScreenOffsetX := x;
+		ScreenOffsetY := y;
+	end;
+	
+	function ToGameCoordinates(screenVector: Vector): Vector;
+	begin
+		result.x := screenVector.x + ScreenOffsetX;
+		result.y := screenVector.y + ScreenOffsetY;
+		result.w := screenVector.w;
+	end;
+
 end.
