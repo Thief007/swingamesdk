@@ -18,6 +18,7 @@ interface
 				CollisionRangeGreaterThan = 1,
 				CollisionRangeLessThan		= 2
 			);
+			
 		/// Record: PhysicsData
 		/// This is used to define a physical property of an object.
 		/// - movement: How this obstacle moves.
@@ -37,40 +38,28 @@ interface
 	// These routines are used to detect collisions between sprites or bitmaps.
 	//
 
-	function HasSpriteCollidedX(theSprite : Sprite; x : Integer;
-															 range : CollisionDetectionRange): Boolean;
+	function HasSpriteCollidedX(theSprite : Sprite; x : Single;
+										 range : CollisionDetectionRange): Boolean;
 
-	function HasSpriteCollidedY(theSprite : Sprite; y : Integer;
-															 range : CollisionDetectionRange): Boolean;
+	function HasSpriteCollidedY(theSprite : Sprite; y : Single;
+										 range : CollisionDetectionRange): Boolean;
 
 	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
 		width, height : Integer): Boolean; overload;
 
-	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
-		width, height: Integer; vwPrtX, vwPrtY: Integer)
-		: Boolean; overload;
-		
 	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
 
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-		x, y: Integer; bounded: Boolean;
-		vwPrtX, vwPrtY: Integer)
-		: Boolean; overload;
+													 x, y: Single; bounded: Boolean)
+													: Boolean; overload;
 
-	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Integer; bounded: Boolean)
-																				: Boolean; overload;
+	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): Boolean; overload;
+	function IsSpriteOnScreenAt(theSprite: Sprite; v: Vector): Boolean; overload;
+	
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
 
-	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y, vwPrtX, vwPrtY: Integer)
-																				: Boolean; overload;
 
-	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Integer)
-																				: Boolean; overload;
-
-	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2 : Bitmap;
-															 x2, y2: Integer): Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2: Bitmap; x2, y2: Integer): Boolean; overload;
 
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer;
 		bounded1: Boolean; image2: Bitmap;
@@ -128,7 +117,13 @@ interface
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
 	procedure VectorCollision(var p1, p2: PhysicsData);
+	
+	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
 
+
+
+	procedure UpdatePhysicsData(var data: PhysicsData);
+		
 implementation
 	uses SysUtils, Math,
 			 Classes;
@@ -290,7 +285,7 @@ implementation
 	///	@param range:				The kind of check to perform less, larger or equal.
 	///
 	///	@returns						 True if the sprite is within the range requested
-	function HasSpriteCollidedX(theSprite: Sprite; x: Integer; 
+	function HasSpriteCollidedX(theSprite: Sprite; x: Single; 
 	             range: CollisionDetectionRange): Boolean;
 	begin
 		if range = CollisionRangeEquals then
@@ -313,7 +308,7 @@ implementation
 	///	@param range:				The kind of check to perform less, larger or equal.
 	///
 	///	@returns						 True if the sprite is within the range requested
-	function HasSpriteCollidedY(theSprite : Sprite; y : Integer; 
+	function HasSpriteCollidedY(theSprite : Sprite; y : Single; 
 	              range : CollisionDetectionRange): Boolean;
 	begin
 		if range = CollisionRangeEquals then
@@ -355,15 +350,28 @@ implementation
 		else if theSprite.xPos >= x + width then result := false
 		else result := true;
 	end;
+	
+	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): Boolean; overload;
+	begin
+		result := HasSpriteCollidedWithRect(theSprite, GameX(x), GameY(y), 1, 1);
+	end;
+	
+	function IsSpriteOnScreenAt(theSprite: Sprite; v: Vector): Boolean; overload;
+	var
+		gameVector: Vector;
+	begin
+		gameVector := ToGameCoordinates(v);
+		result := HasSpriteCollidedWithRect(theSprite, gameVector.x, gameVector.y, 1, 1);		
+	end;
 
-	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
+{	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
 		width, height: Integer; vwPrtX, vwPrtY: Integer)
 		: Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithRect(theSprite, 
 			x + vwPrtX, y + vwPrtY, width, height);
 	end;
-
+}
 	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
 	begin
 		result := (Length(image.nonTransparentPixels) = image.width)
@@ -557,7 +565,7 @@ implementation
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Integer): Boolean; overload;
+																				x, y: Single): Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, true);
 	end;
@@ -574,7 +582,7 @@ implementation
 	///
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+{	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y: Integer; bounded: Boolean;
 																				vwPrtX, vwPrtY: Integer)
 																				: Boolean; overload;
@@ -582,7 +590,7 @@ implementation
 		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, x + vwPrtX,
 																					y + vwPrtY, bounded);
 	end;
-
+}
 	/// Determines if a sprite has collided with a bitmap using pixel level
 	///	collision detection with the bitmap.
 	///
@@ -594,16 +602,15 @@ implementation
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Integer; bounded: Boolean)
+																				x, y: Single; bounded: Boolean)
 																				: Boolean; overload;
 	begin
-		result := CollisionWithinBitmapImages(
-	                                    theSprite.bitmaps[theSprite.currentFrame],
-																					Trunc(theSprite.xPos),
-																					Trunc(theSprite.yPos),
+		result := CollisionWithinBitmapImages(theSprite.bitmaps[theSprite.currentFrame],
+																					Round(theSprite.xPos),
+																					Round(theSprite.yPos),
 																					not theSprite.usePixelCollision,
 																					theBitmap,
-																					x, y, bounded);
+																					Round(x), Round(y), bounded);
 	end;
 
 	/// Determines if a sprite has collided with a bitmap. The x and y values
@@ -617,14 +624,14 @@ implementation
 	///
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
-	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
+{	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y, vwPrtX, vwPrtY: Integer)
 																				: Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap,
 																					x + vwPrtX, y + vwPrtY, true);
 	end;
-
+}
 	  /// Multiply two matrix2d. Use this to combine the effects to two
 	  ///  transformations.
 	  ///
@@ -791,5 +798,35 @@ implementation
 		// Local r2% = c2.v - optimisedP * mass1 * n
 		p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
 		p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
+	end;
+	
+	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
+	var
+		destWdiv2, destHdiv2: Integer;
+		objWdiv2, objHdiv2: Integer;
+		v, pc, wc: Vector;
+	begin
+		objWdiv2 := CurrentWidth(obj) div 2;
+		objHdiv2 := CurrentHeight(obj) div 2;
+											
+		destWdiv2 := CurrentWidth(dest) div 2;
+		destHdiv2 := CurrentHeight(dest) div 2;
+		
+		pc := CreateVector(obj.xPos + objWdiv2, obj.yPos + objHdiv2);
+		wc := CreateVector(dest.xPos + destWdiv2, dest.yPos + destHdiv2);
+		v := SubtractVectors(wc, pc);
+		
+		{WriteLn('xy: ', x:4:2, ',', y:4:2);
+		WriteLn('pc: ', pc.x:4:2, ',', pc.y:4:2, ' - ', objWdiv2, ',', objHdiv2);
+		WriteLn('wc: ', wc.x:4:2, ',', wc.y:4:2, ' - ', destWdiv2, ',', destHdiv2);	
+		WriteLn('v : ', v.x:4:2, ',', v.y:4:2);}
+		
+		result := v;		
+	end;
+
+	procedure UpdatePhysicsData(var data: PhysicsData);
+	begin
+		MoveSprite(data.sprite, data.movement);
+		UpdateSprite(data.sprite);
 	end;
 end.
