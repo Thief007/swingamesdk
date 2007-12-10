@@ -735,6 +735,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		matrix := nil;
 	end;
 	
+	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
@@ -1045,6 +1046,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function CreateSprite(startBitmap : Bitmap): Sprite; cdecl; export;
 	begin
 		result := SGSDK_Graphics.CreateSprite(startBitmap);
+	end;
+	
+	function CreateSpriteMultiFPC(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite;
+	begin
+		CreateSprite(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite;
 	end;
 	
 	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
@@ -1557,6 +1563,8 @@ exports
 	CreateSpriteMultiEnding,
 	CreateSpriteArray,
 	CreateSpriteArrayEnding,
+	
+	CreateSpriteMultiFPC,
 	
 	UpdateSprite,
 
