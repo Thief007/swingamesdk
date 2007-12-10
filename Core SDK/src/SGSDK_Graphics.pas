@@ -240,6 +240,8 @@ interface
 	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; overload;
 	
 	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer): Sprite; overload;
+	
+	function CreateSprite(bitmaps: Array of Bitmap; framesPerCell, frames: Integer): Sprite; overload;
 
 	procedure FreeSprite(var spriteToFree : Sprite);
 
@@ -720,6 +722,25 @@ implementation
 	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer): Sprite; overload;
 	begin
 		result := CreateSprite(bitmaps, framesPerCell, Loop);
+	end;
+	
+	/// Creates a sprites, and sets its first bitmap.
+	///
+	///	@param bitmaps:			The array of bitmaps
+	/// @param framesPerCell:	Number of frames per cell
+	/// @param frames:			Number of frames this sprite contains
+	///	@returns:				A new sprite
+	function CreateSprite(bitmaps: Array of Bitmap; framesPerCell, frames: Integer): Sprite; overload;
+	var
+		tempIntegers: Array of Integer;
+		i: Integer;
+	begin
+		SetLength(tempIntegers, frames);
+		for i := 0 to High(tempIntegers) do
+		begin
+			tempIntegers[i] := framesPerCell;
+		end;
+		result := CreateSprite(bitmaps, tempIntegers);
 	end;
 	
 	/// Frees a sprite, this does not free the sprite's bitmaps, which allows
