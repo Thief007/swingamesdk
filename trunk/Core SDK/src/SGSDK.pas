@@ -72,17 +72,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Core.ScreenHeight();
 	end;
 	
-	function	ToSDLColor(color: UInt32): TSDL_Color; cdecl; export;
+	function ToSDLColor(color: UInt32): TSDL_Color; cdecl; export;
 	begin
 		result := SGSDK_Core.ToSDLColor(color);
 	end;
 	
-	function	GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
+	function GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
 	begin
 		result := SGSDK_Core.GetColour(forBitmap, apiColor);
 	end;
 	
-	function	GetColourRGBA(red, green, blue, alpha: Byte) : Colour; cdecl; export;
+	function GetColourRGBA(red, green, blue, alpha: Byte) : Colour; cdecl; export;
 	begin
 		result := SGSDK_Core.GetColour(red, green, blue, alpha);
 	end;
@@ -90,12 +90,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	// function GetColour(red, green, blue : Byte) : Colour;
 	// pass 255 into parameter 4
 	
-	function	GetFramerate(): Integer; cdecl; export;
+	function GetFramerate(): Integer; cdecl; export;
 	begin
 		result := SGSDK_Core.GetFramerate();
 	end;
 	
-	function	GetTicks(): UInt32; cdecl; export;
+	function GetTicks(): UInt32; cdecl; export;
 	begin
 		result := SGSDK_Core.GetTicks();
 	end;
@@ -251,22 +251,22 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//***************************************************
 	
 	
-	procedure	OpenAudio(); cdecl; export;
+	procedure OpenAudio(); cdecl; export;
 	begin
 		SGSDK_Audio.OpenAudio();
 	end;
 	
-	procedure	CloseAudio(); cdecl; export;
+	procedure CloseAudio(); cdecl; export;
 	begin
 		SGSDK_Audio.CloseAudio();
 	end;
 	
-	function	LoadSoundEffect(path: PChar): SoundEffect; cdecl; export;
+	function LoadSoundEffect(path: PChar): SoundEffect; cdecl; export;
 	begin
 		result := SGSDK_Audio.LoadSoundEffect(path);
 	end;
 	
-	function	LoadMusic(path: PChar): Music; cdecl; export;
+	function LoadMusic(path: PChar): Music; cdecl; export;
 	begin
 		result := SGSDK_Audio.LoadMusic(path);
 	end;
@@ -408,7 +408,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function	HasSpriteCollidedX(theSprite : Sprite; x : Integer;
+	function HasSpriteCollidedX(theSprite : Sprite; x : Integer;
 								 range : CollisionDetectionRange):  Integer; cdecl; export;
 	begin
 		if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then
@@ -474,7 +474,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function	HasSpriteCollidedWithBitmap1(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap1(theSprite: Sprite; theBitmap: Bitmap;
 								x, y: Integer; bounded: Boolean)
 								: Integer; cdecl; export;
 	begin
@@ -488,7 +488,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function	HasSpriteCollidedWithBitmap2(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap2(theSprite: Sprite; theBitmap: Bitmap;
 								x, y, vwPrtX, vwPrtY: Integer)
 								: Integer; cdecl; export;
 	begin
@@ -502,7 +502,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function	HasSpriteCollidedWithBitmap3(theSprite: Sprite; theBitmap: Bitmap;
+	function HasSpriteCollidedWithBitmap3(theSprite: Sprite; theBitmap: Bitmap;
 								x, y: Integer)
 								: Integer; cdecl; export;
 	begin
@@ -573,47 +573,47 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 	
-	function	CreateVector(x,y : Single; invertY : boolean): Vector;  cdecl; export;
+	function CreateVector(x,y : Single; invertY : boolean): Vector;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.CreateVector(x, y, invertY);
 	end;
 
-	{function	CreateVector1(x,y : Single): Vector;  cdecl; export;
+	{function CreateVector1(x,y : Single): Vector;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.CreateVector(x, y);
 	end;}
 
-	function	AddVectors(v1, v2 : Vector): Vector; cdecl; export;
+	function AddVectors(v1, v2 : Vector): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.AddVectors(v1, v2);
 	end;
 
-	function	SubtractVectors(v1, v2 : Vector): Vector; cdecl; export;
+	function SubtractVectors(v1, v2 : Vector): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.SubtractVectors(v1, v2);
 	end;
 
-	function	InvertVector(v : Vector): Vector; cdecl; export;
+	function InvertVector(v : Vector): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.InvertVector(v);
 	end;
 
-	function	ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; cdecl; export;
+	function ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
 	end;
 
-	function	LimitVector(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
+	function LimitVector(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
 	end;
 
-	function	GetUnitVector(theVector : Vector): Vector; cdecl; export;
+	function GetUnitVector(theVector : Vector): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.GetUnitVector(theVector);
 	end;
 
-	function	IsZeroVector(theVector : Vector): Integer; cdecl; export;
+	function IsZeroVector(theVector : Vector): Integer; cdecl; export;
 	begin
 		if SGSDK_Physics.IsZeroVector(theVector) then
 		begin
@@ -625,17 +625,17 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function	GetVectorMagnitude(theVector : Vector): Single; cdecl; export;
+	function GetVectorMagnitude(theVector : Vector): Single; cdecl; export;
 	begin
 		result :=SGSDK_Physics.GetVectorMagnitude(theVector);
 	end;
 	
-	function	DotProduct(v1, v2: Vector): Single; cdecl; export;
+	function DotProduct(v1, v2: Vector): Single; cdecl; export;
 	begin
 		result :=SGSDK_Physics.DotProduct(v1, v2);
 	end;
 	
-	function 	MultiplyVector(v1: Vector; s1: Single): Vector; cdecl; export;
+	function MultiplyVector(v1: Vector; s1: Single): Vector; cdecl; export;
 	begin
 		result :=SGSDK_Physics.MultiplyVector(v1, s1);
 	end;
@@ -648,6 +648,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  cdecl; export;
 	begin
 		result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
+	end;
+	
+	function GetVectorFromAngle(angle, magnitude: Single): Vector; cdecl; export;
+	begin
+		result := SGSDK_Physics.GetVectorFromAngle(angle, magnitude);
 	end;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -1386,6 +1391,8 @@ exports
 	GetMatrix2DElement,
 	SetMatrix2DElement,
 	FreeMatrix2D,
+	
+	GetVectorFromAngle,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *

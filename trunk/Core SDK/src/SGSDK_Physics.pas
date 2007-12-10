@@ -123,6 +123,7 @@ interface
 
 
 	procedure UpdatePhysicsData(var data: PhysicsData);
+	function GetVectorFromAngle(angle, magnitude: Single): Vector;
 		
 implementation
 	uses SysUtils, Math,
@@ -824,9 +825,13 @@ implementation
 		result := v;		
 	end;
 	
-	function GetVectorFromAngle(angle: Single; magnitude: Single): Vector;
+	/// Create a vector from the angle and the magnitude.
+	///
+	/// @param angle:		Target angle
+	/// @param magnitude:	Magnitude of the result vector
+	function GetVectorFromAngle(angle, magnitude: Single): Vector;
 	begin
-		
+		result := CreateVector(magnitude * SGSDK_Core.Cos(angle), magnitude * SGSDK_Core.Sin(angle));
 	end;
 
 	procedure UpdatePhysicsData(var data: PhysicsData);
