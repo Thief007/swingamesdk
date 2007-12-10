@@ -434,8 +434,8 @@ namespace SwinGame
         /// </summary>
         /// <param name="theVector">The vector to get the magnitude of</param>
         /// <returns>The magnitude of the vector</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorMagnitude")]
-        public static extern double GetVectorMagnitude(Vector theVector);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Magnitude")]
+        public static extern double Magnitude(Vector theVector);
 
         /// <summary>
         /// The Angle between two vectors
@@ -560,10 +560,17 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
         private static extern void DLL_VectorCollision(IntPtr spr1, IntPtr spr2);
 
-
         public static void VectorCollision(Sprite sprite1, Sprite sprite2)
         {
             DLL_VectorCollision(sprite1.Pointer, sprite2.Pointer);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorFromAngle")]
+        private static extern Vector DLL_GetVectorFromAngle(float angle, float magnitude);
+
+        public static void GetVectorFromAngle(float angle, float magnitude)
+        {
+            return DLL_GetVectorFromAngle(angle, magnitude);
         }
     }
 }

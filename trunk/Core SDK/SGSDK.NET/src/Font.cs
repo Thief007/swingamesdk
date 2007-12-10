@@ -209,5 +209,25 @@ namespace SwinGame
         {
             DLL_DrawFramerate(x, y, theFont.Pointer);
         }
+
+
+
+        // Draw Text on Screen Stuff
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen")]
+        private static extern void DLL_DrawTextOnScreen(String theText, Color textColor, IntPtr theFont, int x, int y);
+
+        public static void DrawTextOnScreen(String theText, Color textColor, Font theFont, int x, int y)
+        {
+            DLL_DrawTextOnScreen(theText, textColor, theFont.Pointer, x, y);
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen")]
+        private static extern void DLL_DrawTextLinesOnScreen(String theText, Color textColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);
+
+        public static void DrawTextLinesOnScreen(String theText, Color textColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        {
+            DLL_DrawTextLinesOnScreen(theText, textColor, theFont.Pointer, align, x, y, w ,h);
+        }
     }
 }
