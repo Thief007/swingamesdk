@@ -10,9 +10,11 @@ interface
 		 );
 	
 		GameImages = (
-			NoImages,
 			BallImage1,
-			BallImage2
+			BallImage2,
+			Explosion,
+			Ship,
+			Running
 		 );
 	 
 		 GameSounds = (
@@ -128,7 +130,10 @@ implementation
 	 procedure LoadImages();
 	 begin
 		_Images[BallImage1] := LoadBitmap(GetPathToResource('ball.png', ImageResource));	
-		_Images[BallImage2] := LoadBitmap(GetPathToResource('ball2.png', ImageResource));	
+		_Images[BallImage2] := LoadBitmap(GetPathToResource('ball2.png', ImageResource));
+		_Images[Explosion] := LoadBitmap(GetPathToResource('Explosion.png', ImageResource));
+		_Images[Ship] := LoadBitmap(GetPathToResource('Ship.png', ImageResource));	
+		_Images[Running] := LoadBitmap(GetPathToResource('running.png', ImageResource));
 	 end;
  
 	 procedure FreeImages();
