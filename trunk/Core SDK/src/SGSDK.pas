@@ -1267,6 +1267,59 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FillEllipseOnScreen(theColour, xPos, yPos, width, height);
 	end;
 	}
+	
+	// Screen Functions
+	
+	
+	function XOffset(): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.XOffset();
+	end;
+	
+	function YOffset(): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.YOffset();
+	end;
+	
+	function ScreenX(x: Single): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.ScreenX(x);
+	end;
+	
+	function ScreenY(y: Single): Integer; cdecl; export;
+	begin
+		result := SGSDK_Graphics.ScreenY(y);
+	end;
+	
+	function GameX(x: Integer) : Single; cdecl; export;
+	begin
+		result := SGSDK_Graphics.GameX(x);
+	end;
+	
+	function GameY(y: Integer) : Single; cdecl; export;
+	begin
+		result := SGSDK_Graphics.GameY(y);
+	end;
+	
+	function ToGameCoordinates(screenVector: Vector): Vector; cdecl; export;
+	begin
+		result := SGSDK_Graphics.ToGameCoordinates(screenVector);
+	end;
+	
+	procedure MoveVisualAreaWithVector(v: Vector); cdecl; export;
+	begin
+		SGSDK_Graphics.MoveVisualArea(v);
+	end;
+	
+	procedure MoveVisualArea(dx, dy: Single); cdecl; export;
+	begin
+		SGSDK_Graphics.MoveVisualArea(dx, dy);
+	end;
+	
+	procedure SetScreenOffset(x, y: Single); cdecl; export;
+	begin
+		SGSDK_Graphics.SetScreenOffset(x, y);
+	end;
 
 exports
 
@@ -1509,7 +1562,18 @@ exports
 	DrawHorizontalLineOnScreen,
 	DrawVerticalLineOnScreen,
 	DrawCircleOnScreen,
-	DrawEllipseOnScreen
+	DrawEllipseOnScreen,
+	
+	XOffset,
+	YOffset,
+	ScreenX,
+	ScreenY,
+	GameX,
+	GameY,
+	ToGameCoordinates,
+	MoveVisualAreaWithVector,
+	MoveVisualArea,
+	SetScreenOffset
 	
 	;
 end.
