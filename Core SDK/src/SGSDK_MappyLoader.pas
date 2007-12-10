@@ -32,6 +32,7 @@ interface
             Delay: Integer;
             NumberOfFrames: Integer;
             Frame: Array of Integer;
+            CurrentFrame : Integer;
         end;
         
         LayerData = record
@@ -63,7 +64,7 @@ interface
         
         
 		function Loadmap(): Map;
-		procedure Drawmap(var m : Map; CameraX, CameraY : Integer);
+		procedure Drawmap(var m : Map);
 	
 	
 implementation
@@ -137,6 +138,8 @@ implementation
 				begin
 					m.AnimationInfo[i].Frame[j] := ReadInt(stream);
 				end;
+				
+				m.AnimationInfo[i].CurrentFrame := 0;
 				
 			end;
 			
@@ -313,6 +316,7 @@ implementation
 		m.Tiles.currentFrame := 0;
 	end;
 	
+	{
 	procedure LoadAnimatedSprites(var m : Map);
 	var
 		aob : Array of Bitmap;
@@ -331,19 +335,18 @@ implementation
 			
 			for f := 0 to m.AnimationInfo[a].NumberOfFrames - 1 do
 			begin
-				//srcX := m.Tiles.bitmaps[0].Width div m.MapInfo.BlockWidth;
-				//srcY := m.Tiles.bitmaps[0].Height div m.MapInfo.BlockHeight;
-
-				//srcY := (m.AnimationInfo[a].Frame[f] div m.Tiles.cols) * m.MapInfo.BlockHeight;
-				//srcX := (m.AnimationInfo[a].Frame[f] mod m.Tiles.cols) * m.MapInfo.BlockWidth;
 				
-				//srcY := round(m.AnimationInfo[a].Frame[f] / m.Tiles.cols) * m.MapInfo.BlockHeight;
-				//srcX := round(m.AnimationInfo[a].Frame[f] / m.Tiles.row) * m.MapInfo.BlockWidth;
+				//srcY := round(m.AnimationInfo[a].Frame[f] div m.Tiles.cols) * m.MapInfo.BlockHeight;
+				//srcX := round(m.AnimationInfo[a].Frame[f] mod m.Tiles.cols) * m.MapInfo.BlockWidth;
 				//new(aob[f]);
-				//DrawBitmapPart(aob[f], m.Tiles.bitmaps[0] ,srcX, srcY, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight, 0 ,0);
+				
+				srcX := ((m.AnimationInfo[a].Frame[f] - 1) mod m.Tiles.cols) * m.MapInfo.BlockWidth;
+				srcY := ((m.AnimationInfo[a].Frame[f] - 1) - ((m.AnimationInfo[a].Frame[f] - 1) mod m.Tiles.cols)) div m.Tiles.cols * m.MapInfo.BlockHeight;
+				
+				
+				DrawBitmapPart(aob[f], m.Tiles.bitmaps[0] ,srcX, srcY, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight, 0 ,0);
 													 
-				//aob[f] := m.Tiles.bitmaps[m.AnimationInfo[a].Frame[f]];
-				//fpc[f] := 2;
+				fpc[f] := 2;
 			end;
 			
 			m.AnimatedTiles[a] := CreateSprite(aob, fpc, Loop); 
@@ -352,16 +355,17 @@ implementation
 		end;
 	
 	end;
+	}
 	
-	procedure DrawMap(var m : Map; CameraX, CameraY : Integer);
+	procedure DrawMap(var m : Map);
 	var
 		l, y ,x : Integer;
 		XStart, YStart, XEnd, YEnd : Integer;
-		dx, dy : Integer;
+		f : Integer;
 	begin
 		//Screen Drawing Starting Point
-		XStart := round((CameraX / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 3));
-		YStart := round((CameraY / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 3));
+		XStart := round((GameX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 3));
+		YStart := round((GameY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 3));
 		
 		//Screen Drawing Ending point
 		XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 3));
@@ -371,11 +375,11 @@ implementation
 		begin
 			for y := YStart  to YEnd do
 			begin
-				if (y < m.MapInfo.MapHeight - 1) and (y > -1) then
+				if (y < m.MapInfo.MapHeight) and (y > -1) then
 				begin
 					for x := XStart  to XEnd do
 					begin
-						if (x < m.MapInfo.MapWidth - 1) and (x > -1) then
+						if (x < m.MapInfo.MapWidth) and (x > -1) then
 						begin
 					
 							if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
@@ -384,30 +388,21 @@ implementation
 								
 								m.Tiles.xPos := x * m.MapInfo.BlockWidth;
 								m.Tiles.yPos := y * m.MapInfo.BlockHeight;
-								DrawSprite(m.Tiles, CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
+								//DrawSprite(m.Tiles, CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
+								DrawSprite(m.Tiles);
 							end
 							else if (m.LayerInfo[l].Animation[y][x] = 1) then
 							begin
-								{m.Tiles.xPos := x * m.MapInfo.BlockWidth;
+								
+								m.Tiles.xPos := x * m.MapInfo.BlockWidth;
                             	m.Tiles.yPos := y * m.MapInfo.BlockHeight;
-								m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[m.Frame];
 								
-								DrawSprite(m.Tiles,CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
-							}
+                            	
+                            	f := round(m.Frame/100) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
+                            	m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[f] - 1;		
+								
+								DrawSprite(m.Tiles);
 							
-								{DrawBitmapPart(m.Tiles.bitmaps[0], 
-									round(m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[m.Frame] / m.Tiles.cols) * m.MapInfo.BlockHeight,
-									round(m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[m.Frame] / m.Tiles.row) * m.MapInfo.BlockWidth,
-              						m.MapInfo.BlockWidth,
-              						m.Mapinfo.BlockHeight,
-              						x * m.MapInfo.BlockWidth - CameraX,
-              						y * m.MapInfo.BlockHeight - CameraY);
-              						}									
-																		
-                                m.AnimatedTiles[m.LayerInfo[l].Value[y][x]].xPos := x * m.MapInfo.BlockWidth;
-                            	m.AnimatedTiles[m.LayerInfo[l].Value[y][x]].yPos := y * m.MapInfo.BlockHeight;
-                            	DrawSprite(m.AnimatedTiles[m.LayerInfo[l].Value[y][x]], CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
-								
 							end;
 							
 						end;
@@ -416,7 +411,12 @@ implementation
 			end;
 		end;
 		
-		//m.Frame := m.Frame + 1;
+		m.Frame := m.Frame + 1;
+		
+		if m.Frame = 1000 then
+		begin
+		m.Frame := 0
+		end;
 	end;
 	
 	
