@@ -301,9 +301,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		//SGSDK_Audio.PlayMusic(mus);
 	//end;
 
-	function IsMusicPlaying(mus: Music): Integer; cdecl; export;
+	function IsMusicPlaying(): Integer; cdecl; export;
 	begin
-		if SGSDK_Audio.IsMusicPlaying(mus) then
+		if SGSDK_Audio.IsMusicPlaying() then
 		begin
 			result:= -1
 		end
@@ -923,6 +923,8 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FillEllipse(dest, theColour, xPos, yPos, width, height);
 	end;}
 	
+	// Draw to screen
+	
 	procedure ClearScreen(toColour : Colour); cdecl; export;
 	begin
 		SGSDK_Graphics.ClearScreen(toColour);
@@ -933,24 +935,24 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.ClearScreen();
 	end;}
 
-	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
+	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
 	end;
 
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap;
-							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+							srcX, srcY, srcW, srcH : Integer; x, y : Single); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
 	
-	procedure DrawPixel(theColour: Colour; x, y: Integer); cdecl; export;
+	procedure DrawPixel(theColour: Colour; x, y: Single); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawPixel(theColour, x, y);
 	end;
 
 	procedure DrawRectangle(theColour : Colour; filled : Boolean;
-							xPos, yPos, width, height : Integer); cdecl; export;
+							xPos, yPos: Single; width, height : Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawRectangle(theColour, filled, xPos, yPos, width, height);
 	end;
@@ -968,23 +970,23 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;}
 
 	procedure DrawLine(theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); cdecl; export;
+					 xPosEnd, yPosEnd: Single); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
 	end;
 
-	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Integer); cdecl; export;
+	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
 	end;
 
-	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Integer); cdecl; export;
+	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
 	end;
 
 	procedure DrawCircle(theColour: Colour; filled: Boolean;
-						 xc, yc, radius: Integer); cdecl; export;
+						 xc, yc: Single; radius: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawCircle(theColour, filled, xc, yc, radius);
 	end;
@@ -1052,28 +1054,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
 	end;
 	
-	// Draw Sprites
-	
-	{
-	procedure DrawSpritesViewPort(length : Integer; spritesToDraw : SpriteCollection; vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); cdecl; export;
-	begin
-		SetLength(spritesToDraw, length);
-		SGSDK_Graphics.DrawSprites(spritesToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
-	end;
-	
-	procedure DrawSprites(length : Integer; spritesToDraw : SpriteCollection); cdecl; export;
-	begin
-		SetLength(spritesToDraw, length);
-		SGSDK_Graphics.DrawSprites(spritesToDraw);
-	end;
-	}
-	// Add Sprite
-	{
-	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite); cdecl; export;
-	begin
-		SGSDK_Graphics.AddSprite(addTo, Sprite);
-	end;
-	}
 	// Update Sprite
 	
 	procedure UpdateSprite(spriteToDraw : Sprite); cdecl; export;
@@ -1081,18 +1061,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.UpdateSprite(spriteToDraw);
 	end;
 	
-	// Clear and Free
-	{
-	procedure ClearSpriteCollection(var toClear : SpriteCollection); cdecl; export;
-	begin
-		SGSDK_Graphics.ClearSpriteCollection(toClear);
-	end;
-	
-	procedure FreeSpriteCollection(var toFree : SpriteCollection); cdecl; export;
-	begin
-		SGSDK_Graphics.FreeSpriteCollection(toFree);
-	end;
-	}
 	// Sprite Properties
 	
 	function GetSpriteKind(surface : Sprite): Integer; cdecl; export;
@@ -1135,10 +1103,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := surface.reverse;
 	end;
 
-	
-	
-	
-
 	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
 	begin
 		SGSDK_Graphics.FreeSprite(spriteToFree);
@@ -1165,10 +1129,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.DrawSprite(spriteToDraw);
 	end;}
 
-	procedure DrawSprite(spriteToDraw : Sprite; vwPrtX, vwPrtY, vwPrtWidth,
-											 vwPrtHeight : Integer); cdecl; export;
+	procedure DrawSprite(spriteToDraw : Sprite); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawSprite(spriteToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
+		SGSDK_Graphics.DrawSprite(spriteToDraw);
+	end;
+	
+	procedure DrawSpriteViewPort(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
 	end;
 
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); cdecl; export;
@@ -1192,7 +1160,8 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			result:= 0
 		end
 	end;
-
+	
+	{
 	function IsSpriteOffscreenWithViewPort(theSprite : Sprite; vwPrtX, vwPrtY,
 															vwPrtWidth, vwPrtHeight : Integer) : Integer; cdecl; export;
 	begin
@@ -1205,6 +1174,81 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			result:= 0
 		end
 	end;
+	}
+	
+	/// Draw to Screen Stuff
+	
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcW, x ,y);
+	end;
+	
+	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawBitmapOnScreen(bitmapToDraw, x ,y );
+	end;
+	
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawPixelOnScreen(theColour, x ,y);
+	end;
+	
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean;
+							xPos, yPos, width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled, xPos, yPos, width, height);
+	end;
+
+	{
+	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos,
+							width, height : Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillRectangleOnScreen(theColour, xPos, yPos, width, height);
+	end;
+	}
+	
+	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart,
+					 xPosEnd, yPosEnd: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+	end;
+	
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawHorizontalLineOnScreen(theColor, y, x1, x2);
+	end;
+	
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawVerticalLineOnScreen(theColor, x, y1, y2);
+	end;
+	
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean;
+						 xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawCircleOnScreen(theColour, filled, xc, yc, radius);
+	end;
+	
+	{
+	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillCircleOnScreen(theColour, xc, yc, radius);
+	end;
+	}
+	
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean;
+						xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled, xPos, yPos, width, height);
+	end;
+	
+	{
+	procedure FillEllipseOnScreen(theColour: Colour;
+						xPos, yPos, width, height: Integer); cdecl; export;
+	begin
+		SGSDK_Graphics.FillEllipseOnScreen(theColour, xPos, yPos, width, height);
+	end;
+	}
 
 exports
 
@@ -1434,7 +1478,7 @@ exports
 	DrawSprite,
 	MoveSprite,
 	MoveSpriteTo,
-	IsSpriteOffscreen,
-	IsSpriteOffscreenWithViewPort
+	IsSpriteOffscreen
+	
 	;
 end.
