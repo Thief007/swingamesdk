@@ -61,6 +61,8 @@ interface
 			endingAction : SpriteEndingAction;
 			hasEnded : Boolean;
 			reverse : Boolean;
+			movement : Vector;
+			mass 	 : Single;
 		end;
 		
 		/// Type: Sprite

@@ -19,16 +19,6 @@ interface
 				CollisionRangeLessThan		= 2
 			);
 			
-		/// Record: PhysicsData
-		/// This is used to define a physical property of an object.
-		/// - movement: How this obstacle moves.
-		/// - mass: Mass of this obstacle
-		PhysicsData = record
-			movement : Vector;
-			mass : Single;
-			sprite : Sprite;
-		end;
-
 	//*****
 	//
 	// Collision detection routines
@@ -116,13 +106,10 @@ interface
 	function RotationMatrix(deg: Single): Matrix2D;
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
-	procedure VectorCollision(var p1, p2: PhysicsData);
+	procedure VectorCollision(p1, p2: Sprite);
 	
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
 
-
-
-	procedure UpdatePhysicsData(var data: PhysicsData);
 	function GetVectorFromAngle(angle, magnitude: Single): Vector;
 		
 implementation
@@ -809,42 +796,39 @@ implementation
 		result := CalculateAngle(cx1, cy1, cx2, cy2);
 	end;
 	
-	procedure VectorCollision(var p1, p2: PhysicsData);
+	procedure VectorCollision(p1, p2: Sprite);
 	var
 		colNormalAngle, a1, a2, optP: Single;
 		n: Vector;
 	begin
+
 		if p1.mass = 0 then
 			p1.mass := 1;
 		if p2.mass = 0 then
 			p1.mass := 1;
 		if (p1.mass = 0) or (p2.mass = 0) then
 			WriteLn('You forgot to initialize the mass!');
-		
-		colNormalAngle := CalculateAngle(p1.sprite, p2.sprite);
-
+			
+		colNormalAngle := CalculateAngle(p1, p2);
 		//COLLISION RESPONSE
 		// n = vector connecting the centers of the balls.
 		// we are finding the components of the normalised vector n
 		n := CreateVector(Cos(colNormalAngle), Sin(colNormalAngle));
-
 		// now find the length of the components of each movement vectors
 		// along n, by using dot product.
 		a1 := DotProduct(p1.Movement, n);
 		//Local a1# = c.dx*nX  +  c.dy*nY
 		a2 := DotProduct(p2.Movement, n);
 		//Local a2# = c2.dx*nX +  c2.dy*nY
-
+WriteLn('hi');
 		// optimisedP = 2(a1 - a2)
-		//             ----------
-		//              m1 + m2
+		// ----------
+		// m1 + m2
 		optP := (2.0 * (a1-a2)) / (p1.mass + p2.mass);
-
 		// now find out the resultant vectors
 		// Local r1% = c1.v - optimisedP * mass2 * n
 		p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
 		p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
-
 		// Local r2% = c2.v - optimisedP * mass1 * n
 		p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
 		p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
@@ -881,11 +865,5 @@ implementation
 	function GetVectorFromAngle(angle, magnitude: Single): Vector;
 	begin
 		result := CreateVector(magnitude * SGSDK_Core.Cos(angle), magnitude * SGSDK_Core.Sin(angle));
-	end;
-
-	procedure UpdatePhysicsData(var data: PhysicsData);
-	begin
-		MoveSprite(data.sprite, data.movement);
-		UpdateSprite(data.sprite);
 	end;
 end.
