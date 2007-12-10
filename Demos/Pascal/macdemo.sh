@@ -32,7 +32,7 @@ then
 	rm -rf ./lib
 fi
 
-if [ -n $CLEAN ]
+if [ $CLEAN = "Y" ]
 then
 	echo "Removing build script"
 	rm macbuild.sh
