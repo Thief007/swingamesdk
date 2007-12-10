@@ -46,6 +46,7 @@
     <Compile Include="CollisionDetection.cs" />
     <Compile Include="DroppingBall.cs" />
     <Compile Include="DrawRandomText.cs" />
+    <Compile Include="MultiBitmapSprite.cs" />
     <Compile Include="TextRead.cs" />
     <Compile Include="KeyInput.cs" />
     <Compile Include="SoundInput.cs" />
