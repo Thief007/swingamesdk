@@ -1048,9 +1048,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_Graphics.CreateSprite(startBitmap);
 	end;
 	
-	function CreateSpriteMultiFPC(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite;
+	function CreateSpriteMultiFPC(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite; cdecl; export;
 	begin
-		CreateSprite(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite;
+		result := SGSDK_Graphics.CreateSprite(image,framesPerCell, frames, width, height);
+	end;
+	
+	function CreateSpriteArrayFPC(bitlength : Integer; bitmaps: BitmapArray; framesPerCell, frames: Integer): Sprite; cdecl; export;
+	begin
+		SetLength(bitmaps, bitlength);
+		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, frames);
 	end;
 	
 	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
@@ -1565,6 +1571,7 @@ exports
 	CreateSpriteArrayEnding,
 	
 	CreateSpriteMultiFPC,
+	CreateSpriteArrayFPC,
 	
 	UpdateSprite,
 
