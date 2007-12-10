@@ -241,9 +241,9 @@ interface
 
 	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): Integer;
 
-	function CurrentHeight(sprite: Sprite): Integer;
+	function CurrentHeight(sprite: Sprite): Integer; inline;
 
-	function CurrentWidth(sprite: Sprite): Integer;
+	function CurrentWidth(sprite: Sprite): Integer; inline;
 	
 	procedure UpdateSprite(spriteToDraw : Sprite);
 
@@ -624,7 +624,7 @@ implementation
 		result.hasEnded				:= false;
 		result.bitmaps[0]			:= image;
 		result.frameCount			:= 0;
-		result.endingAction		:= endingAction;
+		result.endingAction			:= endingAction;
 		result.width				:= width;
 		result.height				:= height;
 		result.reverse				:= false;
@@ -652,7 +652,7 @@ implementation
 		empty : Array of Integer;
 	begin
 		SetLength(empty, 0);
-		result := CreateSprite(image, false, empty, 0, 0);
+		result := CreateSprite(image, false, empty, image.width, image.height);
 	end;
 	
 	/// Creates a sprites ans set bitmaps.
@@ -669,7 +669,7 @@ implementation
 		result.xPos					:= 0;
 		result.yPos					:= 0;
 		result.currentFrame			:= 0;
-		result.usePixelCollision	:= false;
+		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
 		SetLength(result.bitmaps, Length(bitmaps));
 		for i := 0 to High(bitmaps) do
@@ -683,6 +683,8 @@ implementation
 			result.framesPerCell[i] := framesPerCell[i];
 		end;
 		result.endingAction			:= endingAction;
+		result.width				:= bitmaps[0].width;
+		result.height				:= bitmaps[0].height;
 		result.reverse				:= false;
 	end;
 	
@@ -745,32 +747,34 @@ implementation
 	///
 	///	@param sprite:		 The sprite to get the width of
 	///	@returns					 The width of the sprite's current frame
-	function CurrentWidth(sprite: Sprite): Integer;
+	function CurrentWidth(sprite: Sprite): Integer; inline;
 	begin
-		if sprite.spriteKind = AnimMultiSprite then
+		{if sprite.spriteKind = AnimMultiSprite then
 		begin
 			result := sprite.width;
 		end
 		else
 		begin
 			result := sprite.bitmaps[sprite.currentFrame].width;
-		end;
+		end;}
+		result := sprite.width;
 	end;
   
 	/// Returns the current height of the sprite.
 	///
 	///	@param sprite:		 The sprite to get the height of
 	///	@returns					 The height of the sprite's current frame
-	function CurrentHeight(sprite: Sprite): Integer;
+	function CurrentHeight(sprite: Sprite): Integer; inline;
 	begin
-		if sprite.spriteKind = AnimMultiSprite then
+		{if sprite.spriteKind = AnimMultiSprite then
 		begin
 			result := sprite.height;
 		end
 		else
 		begin
 			result := sprite.bitmaps[sprite.currentFrame].height;
-		end;
+		end;}
+		result := sprite.height;
 	end;
 
  	/// Draws one bitmap (bitmapToDraw) onto another bitmap (dest).
@@ -905,6 +909,11 @@ implementation
 						end;
 					end;
 				end;
+			end;
+			if SpriteToDraw.spriteKind = AnimArraySprite then
+			begin
+				spriteToDraw.width := spriteToDraw.bitmaps[spriteToDraw.currentFrame].width;
+				spriteToDraw.height := spriteToDraw.bitmaps[spriteToDraw.currentFrame].height;
 			end;
 		end;
 	end;
