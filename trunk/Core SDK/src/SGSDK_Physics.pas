@@ -634,8 +634,7 @@ implementation
 	///	@returns							 True if the bitmap has collided with the sprite.
 	///
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Single; bounded: Boolean)
-																				: Boolean; overload;
+										 x, y: Single; bounded: Boolean): Boolean; overload;
 	var
 		bmp: Bitmap;
 		offX, offY: Integer;
