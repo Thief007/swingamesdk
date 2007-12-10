@@ -1242,12 +1242,12 @@ namespace SwinGame
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiFPC")]
-        private static extern IntPtr DLL_CreateSpriteMultiFPC(IntPtr startBitmap, int framesPerCell, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteMultiFPC(IntPtr startBitmap, int framesPerCell, int frames, int width, int height);
 
-        public static Sprite CreateSprite(Bitmap startBitmap, int framesPerCell, int width, int height)
+        public static Sprite CreateSprite(Bitmap startBitmap, int framesPerCell, int frames, int width, int height)
         {
             Sprite result;
-            result.Pointer = DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, width, height);
+            result.Pointer = DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, frames, width, height);
             return result;
         }
 
@@ -1400,7 +1400,7 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
         private static extern void DLL_DrawBitmapOnScreen(IntPtr bitmapToDraw, int x, int y);
 
-        public static void DrawBitmapOnScreenn(Bitmap bitmapToDraw, int x, int y)
+        public static void DrawBitmapOnScreen(Bitmap bitmapToDraw, int x, int y)
         {
             DLL_DrawBitmapOnScreen(bitmapToDraw.pointer, x, y);
         }
