@@ -359,16 +359,29 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 	
 	procedure DrawText(theText: PChar; textColor: Colour;
-					 theFont: Font; x, y: Integer); cdecl; export;
+					 theFont: Font; x, y: Single); cdecl; export;
 	begin
 		SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
 	end;
 
 	procedure DrawTextLines(theText: PChar; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); cdecl; export;
+							x, y: Single; w, h: Integer); cdecl; export;
 	begin
 		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
+	end;
+	
+	procedure DrawTextOnScreen(theText: String; textColor: Colour;
+					 theFont: Font; x, y: Integer); cdecl; export;
+	begin
+		SGSDK_Font.DrawTextOnScreen(theText, textColor, theFont, x, y);
+	end;
+
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
+							theFont: Font; align: FontAlignment;
+							x, y, w, h: Integer); cdecl; export;
+	begin
+		SGSDK_Font.DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, x, y, w, h);
 	end;
 							
 	procedure DrawTextOnBitmap(dest: Bitmap; theText: PChar; textColor: Colour;
@@ -1340,10 +1353,15 @@ exports
 	LoadFont,
 	SetFontStyle,
 	FreeFont,
+	
 	DrawText,
 	DrawTextLines,
 	DrawTextOnBitmap,
 	DrawTextLinesOnBitmap,
+	DrawTextOnScreen,
+	DrawTextLinesOnScreen,
+	
+	
 	TextWidth,
 	TextHeight,
 	DrawFramerate,
@@ -1411,23 +1429,22 @@ exports
 	SetSpriteY,
 	SetSpriteCurrentFrame,
 	SetSpriteUsePixelCollision,
+	
 	NewSDLRect,
 	CreateBitmap,
 	OptimiseBitmap,
 	LoadBitmapWithTransparentColor,
-	//LoadBitmap,
 	LoadTransparentBitmap,
 	FreeBitmap,
 	GetBitmapWidth,
 	GetBitmapHeight,
 	ClearSurfaceWithColor,
-	//ClearSurface,
 	DrawBitmapWithDestination,
 	DrawBitmapPartWithDestination,
 	DrawPixelWithDestination,
-	//DrawRectangleWithDestination,
+	DrawRectangleWithDestination,
 	//DrawRectangle3,
-	FillRectangleWithDestination,
+	//FillRectangleWithDestination,
 	DrawLineWithDestination,
 	DrawHorizontalLineWithDestination,
 	DrawVerticalLineWithDestination,
@@ -1437,6 +1454,7 @@ exports
 	DrawEllipseWithDestination,
 	//DrawEllipse3,
 	//FillEllipse2,
+	
 	ClearScreen,
 	//ClearScreen1,
 	DrawBitmap,
@@ -1461,13 +1479,8 @@ exports
 	CreateSpriteArray,
 	CreateSpriteArrayEnding,
 	
-	//DrawSpritesViewPort,
-	//DrawSprites,
-	//AddSprite,
 	UpdateSprite,
-	//ClearSpriteCollection,
-	//FreeSpriteCollection,
-	
+
 	GetSpriteKind,	
 	GetSpriteFramesPerCell,
 	GetSpriteCols,
@@ -1481,11 +1494,22 @@ exports
 	AddBitmapToSprite,
 	CurrentHeight,
 	CurrentWidth,
-	//DrawSprite1,
+
 	DrawSprite,
+	DrawSpriteViewPort,
 	MoveSprite,
 	MoveSpriteTo,
-	IsSpriteOffscreen
+	IsSpriteOffscreen,
+	
+	DrawBitmapPartOnScreen,
+	DrawBitmapOnScreen,
+	DrawPixelOnScreen,
+	DrawRectangleOnScreen,
+	DrawLineOnScreen,
+	DrawHorizontalLineOnScreen,
+	DrawVerticalLineOnScreen,
+	DrawCircleOnScreen,
+	DrawEllipseOnScreen
 	
 	;
 end.
