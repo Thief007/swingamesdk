@@ -1145,7 +1145,7 @@ namespace SwinGame
         /// <param name="spriteToMove">the sprite being moved</param>
         /// <param name="x">the new location of the sprite</param>
         /// <param name="y">the new location of the sprite</param>
-        public void MoveSpriteTo(Sprite spriteToMove, int x, int y)
+        public static void MoveSpriteTo(Sprite spriteToMove, int x, int y)
         {
             DLL_MoveSpriteTo(spriteToMove.Pointer, x, y);
         }
@@ -1236,6 +1236,28 @@ namespace SwinGame
             return result;
         }
 
+
+
+
+
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiFPC")]
+        private static extern IntPtr DLL_CreateSpriteMultiFPC(IntPtr startBitmap, int framesPerCell, int width, int height);
+
+        public static Sprite CreateSprite(Bitmap startBitmap, int framesPerCell, int width, int height)
+        {
+            Sprite result;
+            result.Pointer = DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, width, height);
+            return result;
+        }
+
+
+
+
+
+
+
+
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
         private static extern IntPtr DLL_CreateSpriteArrayEnding(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell, int endingAction);
 
@@ -1283,6 +1305,24 @@ namespace SwinGame
                 temp[i] = startBitmap[i].pointer;
             }
             result.Pointer = DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell);
+            return result;
+        }
+
+
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayFPC")]
+        private static extern IntPtr DLL_CreateSpriteArrayFPC(int bitmaplength, IntPtr[] startBitmap, int framesPerCell, int frames);
+
+        public static Sprite CreateSprite(Bitmap[] startBitmap, int framesPerCell, int frames)
+        {
+            Sprite result;
+            IntPtr[] temp = new IntPtr[startBitmap.Length];
+
+            for (int i = 0; i < startBitmap.Length; i++)
+            {
+                temp[i] = startBitmap[i].pointer;
+            }
+            result.Pointer = DLL_CreateSpriteArrayFPC(temp.Length, temp, framesPerCell, frames);
             return result;
         }
 

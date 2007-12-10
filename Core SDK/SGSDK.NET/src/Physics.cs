@@ -568,7 +568,7 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorFromAngle")]
         private static extern Vector DLL_GetVectorFromAngle(float angle, float magnitude);
 
-        public static void GetVectorFromAngle(float angle, float magnitude)
+        public static Vector GetVectorFromAngle(float angle, float magnitude)
         {
             return DLL_GetVectorFromAngle(angle, magnitude);
         }
