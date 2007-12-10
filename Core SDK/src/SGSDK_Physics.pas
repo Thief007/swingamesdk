@@ -823,6 +823,11 @@ implementation
 		
 		result := v;		
 	end;
+	
+	function GetVectorFromAngle(angle: Single; magnitude: Single): Vector;
+	begin
+		
+	end;
 
 	procedure UpdatePhysicsData(var data: PhysicsData);
 	begin
