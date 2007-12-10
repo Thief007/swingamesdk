@@ -231,6 +231,8 @@ interface
 	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
 		width, height : Integer): Sprite; overload;
 	
+	function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite; overload;
+	
 	function CreateSprite(image : Bitmap): Sprite; overload;
 	
 	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; overload;
@@ -632,7 +634,7 @@ implementation
 	
 	/// Creates a sprites, and sets its first bitmap.
 	///
-	///	@param startBitmap:		The sprites first bitmap (index 0)
+	///	@param image:			The sprites first bitmap (index 0)
 	/// @param isMulti:			True if the bitmap specified is a multi bitmap
 	/// @param framesPerCell:	Array of Integer that defines the frames per cell
 	/// @param width, height:	Width and height of this sprite
@@ -642,10 +644,30 @@ implementation
 	begin
 		result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
 	end;
+	
+	/// Creates a sprites, and sets its first bitmap.
+	///
+	///	@param image:		The sprites first bitmap (index 0)
+	/// @param framesPerCell:	Number of frames per cell
+	/// @param frames:			Number of frames this sprite contains
+	/// @param width, height:	Width and height of this sprite
+	///	@returns:				A new sprite
+	function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite; overload;
+	var
+		tempIntegers: Array of Integer;
+		i: Integer;
+	begin
+		SetLength(tempIntegers, frames);
+		for i := 0 to High(tempIntegers) do
+		begin
+			tempIntegers[i] := framesPerCell;
+		end;
+		result := CreateSprite(image, true, tempIntegers, width, height);
+	end;
 
 	/// Creates a sprites, and sets its first bitmap.
 	///
-	///	@param startBitmap:		The sprites first bitmap (index 0)
+	///	@param image:			The sprites first bitmap (index 0)
 	///	@returns:				A new sprite with this bitmap as its first bitmap
 	function CreateSprite(image : Bitmap): Sprite; overload;
 	var
