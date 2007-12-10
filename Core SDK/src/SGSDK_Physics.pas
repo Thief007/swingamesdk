@@ -102,7 +102,7 @@ interface
 
 	function IsZeroVector(theVector : Vector): Boolean;
 
-	function GetVectorMagnitude(theVector : Vector): Single;
+	function Magnitude(theVector : Vector): Single;
 
 
 	function DotProduct(v1, v2: Vector): Single;
@@ -211,11 +211,11 @@ implementation
 	///											 with a maximum magnitude of maxMagnitude
 	function LimitVector(theVector: Vector; maxMagnitude: Single): Vector;
 	var
-		magnitude: Single;
+		mag: Single;
 	begin
-		magnitude := GetVectorMagnitude(theVector);
+		mag := Magnitude(theVector);
 
-		if magnitude > maxMagnitude then
+		if mag > maxMagnitude then
 		begin
 			result := Multiply(ScaleMatrix(maxMagnitude), GetUnitVector(theVector));
 		end
@@ -236,12 +236,12 @@ implementation
 		temp : Double;
 		vectorMagnitude : Single;
 	begin
-		vectorMagnitude := GetVectorMagnitude(theVector);
+		vectorMagnitude := Magnitude(theVector);
 
 		if vectorMagnitude = 0 then
 			temp := 0
 		else
-			temp := 1 / GetVectorMagnitude(theVector);
+			temp := 1 / Magnitude(theVector);
 
 		result.x := temp * theVector.x;
 		result.y := temp * theVector.y;
@@ -261,12 +261,10 @@ implementation
 	///
 	///	@param theVector			 The vector to get the magnitude of
 	///	@returns							 The magnitude of the vector
-	function GetVectorMagnitude(theVector : Vector): Single;
+	function Magnitude(theVector : Vector): Single;
 	begin
 		result := Sqrt((theVector.x * theVector.x) + (theVector.y * theVector.y));
 	end;
-
-
 
 	function DotProduct(v1, v2: Vector): Single;
 	begin
@@ -291,10 +289,10 @@ implementation
 	begin
 		if range = CollisionRangeEquals then
 			result := (x >= theSprite.xPos) and 
-	        (x <= theSprite.xPos + theSprite.bitmaps[theSprite.currentFrame].width)
+	        (x <= theSprite.xPos + theSprite.width)
 		else if range = CollisionRangeGreaterThan then
 			result := x <= theSprite.xPos + 
-	                    theSprite.bitmaps[theSprite.currentFrame].width
+	                    theSprite.width
 		else if range = CollisionRangeLessThan then
 			result := x >= theSprite.xPos
 		else
@@ -314,10 +312,10 @@ implementation
 	begin
 		if range = CollisionRangeEquals then
 			result := (y >= theSprite.yPos) and 
-	       (y <= theSprite.yPos + theSprite.bitmaps[theSprite.currentFrame].height)
+	       (y <= theSprite.yPos + theSprite.height)
 		else if range = CollisionRangeGreaterThan then
 			result := y <= theSprite.yPos + 
-	                    theSprite.bitmaps[theSprite.currentFrame].height
+	                    theSprite.height
 		else if range = CollisionRangeLessThan then
 			result := y >= theSprite.yPos
 		else
@@ -420,10 +418,11 @@ implementation
 	///	@param bounded2:			 Indicates if image2 should use bounded collision
 	///
 	///	@returns							 True if the bitmaps collide.
-	///
+	///	
 	function CollisionWithinBitmapImages(
-	           image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
-						image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
+	           image1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: Integer; bounded1: Boolean;
+			   image2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: Integer; bounded2: Boolean
+			)
 	           : Boolean; overload;
 	var
 		left1, left2, overLeft: Integer;
@@ -435,14 +434,14 @@ implementation
 		result := false;
 
 		left1 := x1;
-		right1 := x1 + image1.width - 1;
+		right1 := x1 + w1 - 1;
 		top1 := y1;
-		bottom1 := y1 + image1.height - 1;
+		bottom1 := y1 + h1 - 1;
 
 		left2 := x2;
-		right2 := x2 + image2.width - 1;
+		right2 := x2 + w2 - 1;
 		top2 := y2;
-		bottom2 := y2 + image2.height - 1;
+		bottom2 := y2 + h2 - 1;
 
 		if bottom1 > bottom2 then overBottom := bottom2
 		else overBottom := bottom1;
@@ -458,13 +457,13 @@ implementation
 
 		for i := overTop to overBottom do
 		begin
-			yPixel1 := i - top1;
-			yPixel2 := i - top2;
+			yPixel1 := i - top1 + offsetY1;
+			yPixel2 := i - top2 + offsetY2;
 
 			for j := overLeft to overRight do
 			begin
-				xPixel1 := j - left1;
-				xPixel2 := j - left2;
+				xPixel1 := j - left1 + offsetX1;
+				xPixel2 := j - left2 + offsetX2;
 
 				if (bounded1 or IsPixelDrawnAtPoint(image1, xPixel1, yPixel1))
 					 AND (bounded2 or IsPixelDrawnAtPoint(image2, xPixel2, yPixel2)) then
@@ -476,16 +475,48 @@ implementation
 		end;
 	end;
 
-	function CollisionWithinSpriteImages(sprite1, sprite2: Sprite): Boolean;
+	function CollisionWithinBitmapImages(
+	           image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
+						image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
+	           : Boolean; overload;
 	begin
-		result := CollisionWithinBitmapImages(sprite1.bitmaps[sprite1.currentFrame],
-																					Trunc(sprite1.xPos),
-																					Trunc(sprite1.yPos),
-																					not sprite1.usePixelCollision,
-																					sprite2.bitmaps[sprite2.currentFrame],
-																					Trunc(sprite2.xPos),
-																					Trunc(sprite2.yPos),
-																					not sprite2.usePixelCollision);
+		result := CollisionWithinBitmapImages(image1, x1, y1, image1.width, image1.height, 0, 0, bounded1, 
+											  image2, x2, y2, image2.width, image2.height, 0, 0, bounded2);
+	end;
+
+	function CollisionWithinSpriteImages(sprite1, sprite2: Sprite): Boolean;
+	var
+		bmp1, bmp2: Bitmap;
+		offX1, offY1, offX2, offY2: Integer;
+	begin
+		if sprite1.spriteKind = AnimMultiSprite then
+		begin
+			offX1 := (sprite1.currentFrame mod sprite1.cols) * sprite1.width;
+			offY1 := (sprite1.currentFrame - (sprite1.currentFrame mod sprite1.cols)) div sprite1.cols * sprite1.height;
+			bmp1 := sprite1.bitmaps[0];
+		end
+		else
+		begin
+			bmp1 := sprite1.bitmaps[sprite1.currentFrame];
+			offX1 := 0;
+			offY1 := 0;
+		end;
+		
+		if sprite2.spriteKind = AnimMultiSprite then
+		begin
+			offX2 := (sprite2.currentFrame mod sprite2.cols) * sprite2.width;
+			offY2 := (sprite2.currentFrame - (sprite2.currentFrame mod sprite2.cols)) div sprite2.cols * sprite2.height;
+			bmp2 := sprite2.bitmaps[0];
+		end
+		else
+		begin
+			bmp2 := sprite2.bitmaps[sprite2.currentFrame];
+			offX2 := 0;
+			offY2 := 0;
+		end;
+		
+		result := CollisionWithinBitmapImages(bmp1, Round(sprite1.xPos), Round(sprite1.yPos), CurrentWidth(sprite1), CurrentHeight(sprite1), offX1, offY1, not sprite1.usePixelCollision, 
+											  bmp2, Round(sprite2.xPos), Round(sprite2.yPos), CurrentWidth(sprite2), CurrentHeight(sprite2), offX2, offY2, not sprite2.usePixelCollision);
 	end;
 
 	/// Checks to see if two bitmaps have collided, this performs a bounded check
@@ -605,13 +636,32 @@ implementation
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
 																				x, y: Single; bounded: Boolean)
 																				: Boolean; overload;
+	var
+		bmp: Bitmap;
+		offX, offY: Integer;
 	begin
-		result := CollisionWithinBitmapImages(theSprite.bitmaps[theSprite.currentFrame],
-																					Round(theSprite.xPos),
-																					Round(theSprite.yPos),
-																					not theSprite.usePixelCollision,
-																					theBitmap,
-																					Round(x), Round(y), bounded);
+		if theSprite.spriteKind = AnimMultiSprite then
+		begin
+			offX := (theSprite.currentFrame mod theSprite.cols) * theSprite.width;
+			offY := (theSprite.currentFrame - (theSprite.currentFrame mod theSprite.cols)) div theSprite.cols * theSprite.height;
+			bmp := theSprite.bitmaps[0];
+		end
+		else
+		begin
+			bmp := theSprite.bitmaps[theSprite.currentFrame];
+			offX := 0;
+			offY := 0;
+		end;
+		result := CollisionWithinBitmapImages(bmp,
+											  Round(theSprite.xPos),
+											  Round(theSprite.yPos),
+											  theSprite.width,
+											  theSprite.height,
+											  offX,
+											  offY,
+											  not theSprite.usePixelCollision,
+											  theBitmap,
+											  Round(x), Round(y), theBitmap.width, theBitmap.height, 0, 0, bounded);
 	end;
 
 	/// Determines if a sprite has collided with a bitmap. The x and y values
