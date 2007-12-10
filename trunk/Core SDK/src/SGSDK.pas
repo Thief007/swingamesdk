@@ -638,9 +638,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end
 	end;
 
-	function GetVectorMagnitude(theVector : Vector): Single; cdecl; export;
+	function Magnitude(theVector : Vector): Single; cdecl; export;
 	begin
-		result :=SGSDK_Physics.GetVectorMagnitude(theVector);
+		result :=SGSDK_Physics.Magnitude(theVector);
 	end;
 	
 	function DotProduct(v1, v2: Vector): Single; cdecl; export;
@@ -713,8 +713,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	
-	procedure VectorCollision(var p1, p2: PhysicsData); cdecl; export;
+	procedure VectorCollision(p1, p2 : Sprite); cdecl; export;
 	begin
+		
 		SGSDK_Physics.VectorCollision(p1, p2);
 	end;
 	
@@ -1020,7 +1021,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;}
 
 	procedure DrawEllipse(theColour: Colour; filled: Boolean;
-						xPos, yPos, width, height: Integer); cdecl; export;
+						xPos, yPos: Single; width, height: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawEllipse(theColour, filled, xPos, yPos, width, height);
 	end;
@@ -1120,6 +1121,26 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		result := surface.reverse;
 	end;
+	
+	function GetSpriteMass(surface : Sprite) : Single; cdecl; export;
+	begin
+		result := surface.mass;
+	end;
+	
+	function GetSpriteMovement(surface : Sprite) : Vector; cdecl; export;
+	begin
+		result := surface.movement;
+	end;
+	
+	procedure SetSpriteMass(surface : Sprite; mass : Single); cdecl; export;
+	begin
+		surface.mass := mass;
+	end;
+	
+	procedure SetSpriteMovement(surface : Sprite; movement : Vector); cdecl; export;
+	begin
+		surface.movement := movement;
+	end;
 
 	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
 	begin
@@ -1152,7 +1173,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.DrawSprite(spriteToDraw);
 	end;
 	
-	procedure DrawSpriteViewPort(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
+	procedure DrawSpriteOffSet(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
 	begin
 		SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
 	end;
@@ -1447,7 +1468,7 @@ exports
 	LimitVector,
 	GetUnitVector,
 	IsZeroVector,
-	GetVectorMagnitude,
+	Magnitude,
 	DotProduct,
 	MultiplyVector,
 	CalculateAngleNumber,
@@ -1482,6 +1503,11 @@ exports
 	SetSpriteY,
 	SetSpriteCurrentFrame,
 	SetSpriteUsePixelCollision,
+	
+	GetSpriteMass,
+	GetSpriteMovement,
+	SetSpriteMass,
+	SetSpriteMovement,
 	
 	NewSDLRect,
 	CreateBitmap,
@@ -1549,7 +1575,7 @@ exports
 	CurrentWidth,
 
 	DrawSprite,
-	DrawSpriteViewPort,
+	DrawSpriteOffset,
 	MoveSprite,
 	MoveSpriteTo,
 	IsSpriteOffscreen,

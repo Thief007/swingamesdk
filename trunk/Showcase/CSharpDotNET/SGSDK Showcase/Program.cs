@@ -27,11 +27,11 @@ namespace SGSDK_Showcase
 
             if (!Core.WindowCloseRequested())
             {
-                /*
+                
                 DrawLines.Run();
                 DrawRectangles.Run();
                 DrawCircles.Run();
-                DrawEllipses.Run();
+               DrawEllipses.Run();
                 DrawBitmaps.Run();
                 DrawSprites.Run();
                 CollisionDetection.Run();
@@ -42,7 +42,7 @@ namespace SGSDK_Showcase
                 KeyInput.Run();
                 TextRead.Run();
                 DrawRandomText.Run();
-                 */
+                 
                 DroppingBall.Run();
             }
 

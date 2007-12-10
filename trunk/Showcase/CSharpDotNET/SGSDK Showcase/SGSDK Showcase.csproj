@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SGSDK.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SGSDK.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SGSDK.NET.dll</HintPath>
     </Reference>

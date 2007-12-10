@@ -25,7 +25,7 @@ namespace SwinGame
     /// This record is used to represent transformations that can be
     /// used to apply these changes to vectors.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
+    //[StructLayout(LayoutKind.Sequential)]
     public class Matrix2D : IDisposable
     {
         [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
@@ -99,39 +99,17 @@ namespace SwinGame
     [StructLayout(LayoutKind.Sequential)]
     public class PhysicsData
     {
-       
         public Vector Movement;
         public Single Mass;
         public Sprite Sprite;
+    }
 
-        /*
-        /// <summary>
-        /// The mass of the Physics Object
-        /// </summary>
-        public Single Mass
-        {
-            get { return mass; }
-            set { mass = value; }
-        }
-
-        /// <summary>
-        /// The Vector Movement of the Physics Object
-        /// </summary>
-        public Vector Movement
-        {
-            get { return movement; }
-            set { movement = value; }
-        }
-
-        /// <summary>
-        /// The Sprite of the Physics Object
-        /// </summary>
-        public Sprite Sprite
-        {
-            get { return sprite; }
-            set { sprite = value; }
-        }
-        */
+    [StructLayout(LayoutKind.Sequential)]
+    class PhysicsDataPass
+    {
+        public Vector Movement;
+        public Single Mass;
+        public IntPtr Sprite;
     }
 
     /// <summary>
@@ -579,8 +557,13 @@ namespace SwinGame
         /// </summary>
         /// <param name="p1">Physics Data Object 1</param>
         /// <param name="p2">Physics Data Object 2</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void VectorCollision(ref PhysicsData p1, ref PhysicsData p2);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
+        private static extern void DLL_VectorCollision(IntPtr spr1, IntPtr spr2);
 
+
+        public static void VectorCollision(Sprite sprite1, Sprite sprite2)
+        {
+            DLL_VectorCollision(sprite1.Pointer, sprite2.Pointer);
+        }
     }
 }

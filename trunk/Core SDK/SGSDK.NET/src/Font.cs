@@ -106,7 +106,7 @@ namespace SwinGame
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
-        private static extern void DLL_DrawText(String theText, uint textColor, IntPtr theFont, int x, int y);
+        private static extern void DLL_DrawText(String theText, uint textColor, IntPtr theFont, float x, float y);
         /// <summary>
         /// Draws texts to the screen. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -117,14 +117,14 @@ namespace SwinGame
         /// <param name="theFont">The font used to draw the text</param>
         /// <param name="x">The x location to draw the text at (top left)</param>
         /// <param name="y">The y location to draw the text at (top left)</param>
-        public static void DrawText( String theText, Color textColor, Font theFont, int x, int y)
+        public static void DrawText( String theText, Color textColor, Font theFont, float x, float y)
         {
             int color = textColor.ToArgb();
             DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLines")]
-        private static extern void DLL_DrawTextLines(String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
+        private static extern void DLL_DrawTextLines(String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,float x,float y,int w,int h);
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
         ///	slow operation, so if the text is not frequently changing save it to a
@@ -139,7 +139,7 @@ namespace SwinGame
         /// <param name="y">The y location to draw the text at (top left)</param>
         /// <param name="w">The width of the region to draw inside</param>
         /// <param name="h">The height of the region to draw inside</param>
-        public static void DrawTextLines(String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        public static void DrawTextLines(String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, float x, float y, int w, int h)
         {
             int color1 = textColor.ToArgb();
             int color2 = backColor.ToArgb();

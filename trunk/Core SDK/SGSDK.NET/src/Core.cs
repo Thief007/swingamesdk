@@ -8,6 +8,11 @@ using System.IO;
 
 namespace SwinGame
 {
+    public class SwinGameException : Exception
+    {
+        public SwinGameException(string message) : base(message)
+        { }
+    }
     /// <summary>
     /// ResourceKind
     ///
