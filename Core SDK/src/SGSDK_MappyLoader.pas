@@ -1,7 +1,7 @@
 unit SGSDK_MappyLoader;
 
 interface
-	uses	SGSDK_Graphics, SGSDK_Camera,
+	uses	SGSDK_Graphics, SGSDK_Camera, SGSDK_Physics,
 			SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
 			SDL_Mixer, SDL_TTF, SDLEventProcessing;
 			
@@ -394,4 +394,45 @@ implementation
 		m.Frame := 0;
 		result := m;
 	end;
+	
+	function CollisionWithMap(m : Map; spr : Sprite): Boolean;
+	var
+		temp : Boolean;
+		XStart, XEnd, YStart, YEnd : Integer;
+		y, x : Integer;
+	begin
+		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + 3));
+		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + 3));
+		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) + 3));
+		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + 3));
+		temp := false;
+		
+		for y := YStart to YEnd do
+		begin
+			if (y < m.MapInfo.MapHeight - 1) and (y > 0) then
+			begin
+				for x := XStart to XEnd do
+				begin
+					if (x < m.MapInfo.MapWidth - 1) and (x > 0) then
+					begin
+						if m.CollisionInfo.Collidable[y][x] = true then
+						begin
+							if HasSpriteCollidedWithRect(spr, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight) = true then
+							begin
+								temp := true;
+							end;
+						end;
+					end;
+				end;
+			end;
+		end;
+		
+		result := temp;
+	end;
+	
+	
+	{
+
+
+	}
 end.

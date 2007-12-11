@@ -548,7 +548,7 @@ implementation
 		
 		while (difference < ((1 / TargetFPS) * 1000)) do
 		begin
-			Sleep(1);
+			//Sleep(1);
 			nowTime := GetTicks();
 			difference := nowTime - lastDrawUpdateTime;
 		end;	
