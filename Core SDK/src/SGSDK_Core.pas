@@ -99,7 +99,8 @@ interface
 	    ResourceKind = (
 				FontResource,
 				ImageResource,
-				SoundResource
+				SoundResource,
+				MapResource
 		);
 		
 		/// Record: SpriteKind
@@ -767,10 +768,12 @@ implementation
 				FontResource: result := GetPathToResource('fonts/' + filename);
 				SoundResource: result := GetPathToResource('sounds/' + filename);
 				ImageResource: result := GetPathToResource('images/' + filename);
+				MapResource: result := GetPathToResource('maps/' + filename);
 			{$else}
 				FontResource: result := GetPathToResource('fonts\' + filename);
 				SoundResource: result := GetPathToResource('sounds\' + filename);
 				ImageResource: result := GetPathToResource('images\' + filename);
+				MapResource: result := GetPathToResource('maps\' + filename);
 			{$endif}
 	end;
 end;

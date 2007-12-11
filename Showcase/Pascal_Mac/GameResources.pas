@@ -1,7 +1,7 @@
 unit GameResources;
 
 interface
-	uses SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics;
+	uses SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics, SGSDK_MappyLoader;
 
 	procedure LoadResources();
 	procedure FreeResources();
@@ -9,6 +9,7 @@ interface
 	function GameImage(image: String): Bitmap;
 	function GameSound(sound: String): SoundEffect;
 	function GameMusic(music: String): Music;
+	function GameMap(mapName: String): Map;
  
 implementation
 	var
@@ -16,11 +17,13 @@ implementation
 		_Fonts: Array of Font;
 		_Sounds: Array of SoundEffect;
 		_Music: Array of Music;
+		_Maps: Array of Map;
 
 		_ImagesStr: Array of String;
 		_FontsStr: Array of String;
 		_SoundsStr: Array of String;
 		_MusicStr: Array of String;
+		_MapsStr: Array of String;
 
 		_Background: Bitmap;
 		_Animation: Sprite;
@@ -75,7 +78,15 @@ implementation
 		FreeSprite(_Animation);
 		FreeSoundEffect(_StartSound);
 	end;
-
+	
+	procedure NewMap(mapName: String);
+	begin
+		SetLength(_Maps, Length(_Maps) + 1);
+		SetLength(_MapsStr, Length(_MapsStr) + 1);
+		_Maps[High(_Maps)] := LoadMap(mapName);
+		_MapsStr[High(_MapsStr)] := mapName;
+	end;
+	
 	procedure NewFont(fontName, fileName: String; size: Integer);
 	begin
 		SetLength(_Fonts, Length(_Fonts) + 1);
@@ -151,7 +162,12 @@ implementation
 		NewSound('Shock', 'shock.wav');
 		//NewSound('NoSound', 'sound.ogg');
 	end;
-
+	
+	procedure LoadMaps();
+	begin
+		NewMap('test');
+	end;
+	
 	procedure FreeSounds();
 	var
 		i: Integer;
@@ -175,6 +191,16 @@ implementation
 		for i := Low(_Music) to High(_Music) do
 		begin
 			FreeMusic(_Music[i]);
+		end;
+	end;
+	
+	procedure FreeMaps();
+	var
+		i: Integer;
+	begin
+		for i := Low(_Maps) to High(_Maps) do
+		begin
+			//FreeMap(_Maps[i]);
 		end;
 	end;
 
@@ -204,6 +230,10 @@ implementation
 		ShowMessage('Loading music...', 3);
 		LoadMusics();
 		//Sleep(500);
+		
+		ShowMessage('Loading maps...', 3);
+		LoadMaps();
+		//Sleep(500);
 
 		//Add game level loading here...
 
@@ -221,6 +251,7 @@ implementation
 		FreeImages();
 		FreeMusics();
 		FreeSounds();
+		FreeMaps();
 	end;
 
 	function GameFont(font: String): Font; 
@@ -261,7 +292,20 @@ implementation
 			end;
 		end;
 	end;
-
+	
+	function GameMap(mapName: String): Map;
+	var
+		i: Integer;
+	begin
+		for i := Low(_MapsStr) to High(_MapsStr) do
+		begin
+			if _MapsStr[i] = mapName then begin
+				result := _Maps[i];
+				exit;
+			end;
+		end;
+	end;
+	
 	function GameMusic(music: String): Music;
 	var
 		i: Integer;

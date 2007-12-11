@@ -4,10 +4,8 @@ interface
 	uses	SGSDK_Graphics, SGSDK_Camera,
 			SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
 			SDL_Mixer, SDL_TTF, SDLEventProcessing;
-	
 			
 	type
-	
 		Event = (
 			Event1 = 0, Event2 = 1, Event3 = 2, Event4 = 3, Event5 = 4, Event6 = 5, Event7 = 6, Event8 = 7, Event9 = 8,
 			Event10 = 9, Event11 = 10, Event12 = 11, Event13 = 12, Event14 = 13, Event15 = 14, Event16 = 15, 
@@ -60,15 +58,11 @@ interface
         	Animate : Boolean;
         	Frame : Integer;
         end;
-
         
-        
-		function Loadmap(): Map;
+		function Loadmap(fileName : String): Map;
 		procedure Drawmap(var m : Map);
-	
-	
+		
 implementation
-
 	function ReadInt(var stream : text): UInt16;
 	var
 		c : char;
@@ -305,57 +299,14 @@ implementation
 		}
 	end;
 	
-	procedure LoadBlockSprites(var m : Map);
+	procedure LoadBlockSprites(var m : Map; fileName : String);
 	var
-		tilefile : String;
 		fpc : Array of Integer;
 	begin
-	
 		SetLength(fpc, m.MapInfo.NumberOfBlocks);
-		m.Tiles := CreateSprite(LoadBitmap(GetPathToResource('TileSet.png')), true, fpc, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+		m.Tiles := CreateSprite(LoadBitmap(GetPathToResource(fileName + '.png', MapResource)), true, fpc, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
 		m.Tiles.currentFrame := 0;
 	end;
-	
-	{
-	procedure LoadAnimatedSprites(var m : Map);
-	var
-		aob : Array of Bitmap;
-		fpc : Array of Integer;
-		a, f : Integer;
-		srcX, srcY : Integer;
-	begin
-	
-		SetLength(m.AnimatedTiles, m.MapInfo.NumberOfAnimations);	
-	
-		for a := 0 to m.MapInfo.NumberOfAnimations - 1 do
-		begin
-			
-			SetLength(aob, m.AnimationInfo[a].NumberOfFrames);
-			SetLength(fpc, m.AnimationInfo[a].NumberOfFrames);
-			
-			for f := 0 to m.AnimationInfo[a].NumberOfFrames - 1 do
-			begin
-				
-				//srcY := round(m.AnimationInfo[a].Frame[f] div m.Tiles.cols) * m.MapInfo.BlockHeight;
-				//srcX := round(m.AnimationInfo[a].Frame[f] mod m.Tiles.cols) * m.MapInfo.BlockWidth;
-				//new(aob[f]);
-				
-				srcX := ((m.AnimationInfo[a].Frame[f] - 1) mod m.Tiles.cols) * m.MapInfo.BlockWidth;
-				srcY := ((m.AnimationInfo[a].Frame[f] - 1) - ((m.AnimationInfo[a].Frame[f] - 1) mod m.Tiles.cols)) div m.Tiles.cols * m.MapInfo.BlockHeight;
-				
-				
-				DrawBitmapPart(aob[f], m.Tiles.bitmaps[0] ,srcX, srcY, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight, 0 ,0);
-													 
-				fpc[f] := 2;
-			end;
-			
-			m.AnimatedTiles[a] := CreateSprite(aob, fpc, Loop); 
-			
-			SetLength(aob, 0); 
-		end;
-	
-	end;
-	}
 	
 	procedure DrawMap(var m : Map);
 	var
@@ -398,7 +349,7 @@ implementation
                             	m.Tiles.yPos := y * m.MapInfo.BlockHeight;
 								
                             	
-                            	f := round(m.Frame/100) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
+                            	f := round(m.Frame/10) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
                             	m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[f] - 1;		
 								
 								DrawSprite(m.Tiles);
@@ -413,30 +364,19 @@ implementation
 		
 		m.Frame := m.Frame + 1;
 		
-		if m.Frame = 1000 then
+		if m.Frame = 100 then
 		begin
-		m.Frame := 0
+			m.Frame := 0
 		end;
 	end;
 	
-	
-	{
-
-	}
-	
-	
-	
-	
-	
-	
-	
-	function LoadMap(): Map;
+	function LoadMap(fileName: String): Map;
 	var
 		filestream : text;
 		m : Map;
 	begin
 		//Get File
-		assign(filestream, 'test.txt');
+		assign(filestream, GetPathToResource(fileName + '.sga', MapResource));
 		reset(filestream);
 		
 		//Load Map Content
@@ -449,12 +389,9 @@ implementation
 		//Closes File
 		close(filestream);
 		
-		LoadBlockSprites(m);
+		LoadBlockSprites(m, fileName);
 		//LoadAnimatedSprites(m);
 		m.Frame := 0;
 		result := m;
 	end;
-	
-
-
 end.

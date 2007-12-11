@@ -8,7 +8,7 @@ implementation
 	GameResources,
 	SysUtils,
 	SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics,
-	SGSDK_KeyCodes, SGSDK_Camera;
+	SGSDK_KeyCodes, SGSDK_Camera, SGSDK_MappyLoader;
 	
 	procedure DrawOverlay(title : String);
 	begin
@@ -125,13 +125,13 @@ implementation
 	var
 		loopSprite, reverseSprite, stopSprite, reverseOnceSprite : Sprite;
 	begin
-		loopSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
+		loopSprite := CreateSprite(GameImage('Running'), 5, 15, 80, 94);
 		loopSprite.endingAction := Loop;
-		reverseSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
+		reverseSprite := CreateSprite(GameImage('Running'), 5, 15, 80, 94);
 		reverseSprite.endingAction := ReverseLoop;
-		stopSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
+		stopSprite := CreateSprite(GameImage('Running'), 5, 15, 80, 94);
 		stopSprite.endingAction := Stop;
-		reverseOnceSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
+		reverseOnceSprite := CreateSprite(GameImage('Running'), 5, 15, 80, 94);
 		reverseOnceSprite.endingAction := ReverseOnce;
 		loopSprite.xPos := 50;
 		loopSprite.yPos := 200;
@@ -618,6 +618,33 @@ implementation
 		ProcessEvents();
 	end;
 	
+	procedure MapExample();
+	var
+		m : Map;
+	begin
+		m := GameMap('test');
+		repeat
+			ProcessEvents();
+			if IsKeyPressed(VK_RIGHT) then
+				MoveVisualArea(2, 0);
+			if IsKeyPressed(VK_LEFT) then
+				MoveVisualArea(-2, 0);
+			if IsKeyPressed(VK_UP) then
+				MoveVisualArea(0, -2);
+			if IsKeyPressed(VK_DOWN) then
+				MoveVisualArea(0, 2);
+			DrawMap(m);
+			DrawOverlay('MappyLoader Example');
+			DrawFramerate(0, 0, GameFont('Courier'));
+			RefreshScreen(60);
+			//Draw screen
+			ClearScreen(ColorBlack);
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+	
 	//The main procedure that controlls the game logic.
 	//
 	// SIDE EFFECTS:
@@ -663,6 +690,8 @@ implementation
 		FollowSpriteExample();
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
+		If WindowCloseRequested() then exit;
+		MapExample();
 		FreeResources();
 	end;
 end.

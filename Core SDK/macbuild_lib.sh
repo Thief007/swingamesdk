@@ -21,11 +21,15 @@ then
 	rm -f sdl.*
 	rm -f SDLEventProcessing.*
 	rm -f SGSDK_KeyCodes.*
+	rm -f SGSDK_MappyLoader.*
+	rm -f SGSDK_Camera.*
 	echo Cleaned
 else
 	mkdir -p "$Output"
 	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Core.pas
 	if [ $? != 0 ]; then echo "Error compiling Core"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Camera.pas
+	if [ $? != 0 ]; then echo "Error compiling Camera"; exit 1; fi
 	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Graphics.pas
 	if [ $? != 0 ]; then echo "Error compiling Graphics"; exit 1; fi
 	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Font.pas
@@ -38,6 +42,8 @@ else
 	if [ $? != 0 ]; then echo "Error compiling Audio"; exit 1; fi
 	fpc -Mdelphi -O3 -FE"$Output" SGSDK_KeyCodes.pas
 	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; exit 1; fi
+	fpc -Mdelphi -O3 -FE"$Output" SGSDK_MappyLoader.pas
+	if [ $? != 0 ]; then echo "Error compiling MappyLoader"; exit 1; fi
 	
 	echo "Copying to FPC"
 	
