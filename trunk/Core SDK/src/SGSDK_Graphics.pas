@@ -2202,7 +2202,7 @@ implementation
 	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
 	begin
 
-		SetScreenOffSet( ScreenX(spr.xPos + (spr.width / 2) - (ScreenWidth() / 2) + Xoffset), ScreenY(spr.yPos + (spr.height / 2) - (ScreenHeight() / 2) + Yoffset))
+		SetScreenOffSet( ScreenX(spr.xPos) + (spr.width / 2) - (ScreenWidth() / 2) + Xoffset, ScreenY(spr.yPos) + (spr.height / 2) - (ScreenHeight() / 2) + Yoffset)
 	end;
 
 end.
