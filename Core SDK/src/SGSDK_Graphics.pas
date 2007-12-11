@@ -347,6 +347,8 @@ interface
 	procedure MoveVisualArea(dx, dy: Single); overload;
 	procedure SetScreenOffset(x, y: Single);
 	
+	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
+	
 implementation
 
 	/// Clears the surface of the bitmap to the passed in color.
@@ -2195,6 +2197,12 @@ implementation
 		result.x := screenVector.x + ScreenOffsetX;
 		result.y := screenVector.y + ScreenOffsetY;
 		result.w := screenVector.w;
+	end;
+	
+	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
+	begin
+		SetScreenOffSet( ScreenX(spr.xPos + (spr.width / 2)) + Xoffset, ScreenY(spr.yPos + (spr.height / 2)) + Yoffset);
+		
 	end;
 
 end.
