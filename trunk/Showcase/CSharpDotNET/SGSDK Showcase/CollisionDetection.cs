@@ -59,7 +59,7 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Collision Detection Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
 
                 if (Core.WindowCloseRequested())
                 {

@@ -149,12 +149,13 @@ namespace SwinGame
         public static extern void ToggleFullScreen();
 
         /// <summary>
-        /// Draws the current drawing to the screen. This must be called to display
+        /// /// Draws the current drawing to the screen. This must be called to display
         ///	anything to the screen. This will draw all drawing operations, as well
         ///	as the text being entered by the user.
         /// </summary>
+        /// <param name="TargetFPS">The Target Frame rate</param>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RefreshScreen();
+        public static extern void RefreshScreen(int TargetFPS);
 	
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the

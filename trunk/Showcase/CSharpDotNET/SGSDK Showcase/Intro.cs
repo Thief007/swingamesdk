@@ -56,7 +56,7 @@ namespace SGSDK_Showcase
         {
             _Background = Graphics.LoadBitmap(Core.GetPathToResource("SplashBack.png", ResourceKind.ImageResource));
             Graphics.DrawBitmap(_Background, 0, 0);
-            Core.RefreshScreen();
+            Core.RefreshScreen(60);
             Core.ProcessEvents();
 
 		    _Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind.ImageResource));
@@ -80,7 +80,7 @@ namespace SGSDK_Showcase
 
                 Core.Sleep(67);
 
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
                 Core.ProcessEvents();
             }
 
@@ -90,14 +90,14 @@ namespace SGSDK_Showcase
         public static void ShowMessage(String message, int number)
         {   
 		    Text.DrawText(message, Color.Red, _LoadingFont, 240, 20 + (25 * number));
-		    Core.RefreshScreen();
+		    Core.RefreshScreen(60);
 		    Core.ProcessEvents();
         }
 
         public static void EndLoadingScreen(int width, int height)
         {
             Graphics.ClearScreen();
-            Core.RefreshScreen();
+            Core.RefreshScreen(60);
             Text.FreeFont(ref _LoadingFont);
             Graphics.FreeBitmap(ref _Background);
             Graphics.FreeBitmap(ref _Animation);

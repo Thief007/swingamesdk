@@ -58,7 +58,7 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Multi-Bitmap Collision Detection");
 
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
             }
         
         }

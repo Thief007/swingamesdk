@@ -147,7 +147,7 @@ interface
 	procedure ChangeScreenSize(width, height: Integer);
 	procedure ToggleFullScreen();
 	
-	procedure RefreshScreen();
+	procedure RefreshScreen(TargetFPS : Integer);
 	
 	procedure TakeScreenshot(basename: String);
 	
@@ -461,18 +461,27 @@ implementation
 	///
 	/// Side Effects:
 	///	- The current drawing is shown on the screen.
-	procedure RefreshScreen();
+	procedure RefreshScreen(TargetFPS : Integer);
 	var
 		nowTime: UInt32;
+		difference : UInt32;
 	begin
-		//Update the last time drawn...
 		nowTime := GetTicks();
+		difference := nowTime - lastDrawUpdateTime;
+		
+		while (difference < ((1 / TargetFPS) * 1000)) do
+		begin
+			Sleep(1);
+			nowTime := GetTicks();
+			difference := nowTime - lastDrawUpdateTime;
+		end;	
+		
 		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
 		lastDrawUpdateTime := nowTime;
-	
 		sdlManager.DrawCollectedText(scr.surface);
 		SDL_Flip(scr.surface);
 		//SDL_UpdateRect(scr,0,0,0,0);
+		
 	end;
 	
 	/// Saves the current screen a bitmap file. The file will be saved into the

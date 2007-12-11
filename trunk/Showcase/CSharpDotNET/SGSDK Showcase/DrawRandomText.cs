@@ -30,7 +30,7 @@ namespace SGSDK_Showcase
                 Text.SetFontStyle(_Font, Randoms.GetRandomFontStyle());
                 Overlay.DrawOverlay("Drawing Random Texts");
                 Core.Sleep(10);
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
                 Core.ProcessEvents();
 
                 if (Core.WindowCloseRequested())

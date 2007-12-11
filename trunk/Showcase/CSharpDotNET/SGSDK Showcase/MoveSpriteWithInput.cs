@@ -53,7 +53,7 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Move Sprite with Arrow Keys Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())

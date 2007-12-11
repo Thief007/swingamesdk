@@ -35,7 +35,7 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Mouse Cursor Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())

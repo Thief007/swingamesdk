@@ -24,7 +24,7 @@ namespace SGSDK_Showcase
                 Overlay.DrawOverlay("Drawing Lines Example");
 
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
 
                 if (Core.WindowCloseRequested())
                 {

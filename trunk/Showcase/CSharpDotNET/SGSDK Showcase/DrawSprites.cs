@@ -76,7 +76,7 @@ namespace SGSDK_Showcase
                 Overlay.DrawOverlay("Drawing Sprite Example");
 
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
 
                 Core.Sleep(50);
 
