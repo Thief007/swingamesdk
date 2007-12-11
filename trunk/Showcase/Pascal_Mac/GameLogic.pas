@@ -13,7 +13,7 @@ implementation
 	procedure DrawOverlay(title : String);
 	begin
 		FillRectangle(ColorBlack, 0, 0, 800, 50);
-        DrawText(title, ColorWhite, GameFont(Courier), Round((ScreenWidth() / 2) - ((Length(title) / 2) * 10)), 20);
+        DrawText(title, ColorWhite, GameFont('Courier'), Round((ScreenWidth() / 2) - ((Length(title) / 2) * 10)), 20);
 	end;
 	
 	function GetRandomColor(): Color;
@@ -39,7 +39,7 @@ implementation
 			DrawLine(GetRandomColor(), Random(800), Random(800), Random(800), Random(800));
 			DrawOverlay('Drawing Lines Example');
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -54,7 +54,7 @@ implementation
 			FillRectangle(GetRandomColor(), Random(800), Random(800), Random(800), Random(800));
 			DrawOverlay('Drawing Rectangles Example');
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 			Sleep(100);
 		until IsKeyPressed(VK_N);
@@ -71,7 +71,7 @@ implementation
 			DrawOverlay('Drawing Circles Example');
 			Sleep(100);
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -87,7 +87,7 @@ implementation
 			DrawOverlay('Drawing Ellipses Example');
 			Sleep(100);
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -101,15 +101,15 @@ implementation
 	begin
 		i := 0;
 		ClearScreen();
-		tempBitmap := GameImage(BallImage1);
-		tempBitmap2 := GameImage(BallImage2);
+		tempBitmap := GameImage('BallImage1');
+		tempBitmap2 := GameImage('BallImage2');
 		repeat
 			ClearScreen();
 			DrawBitmap(tempBitmap, round(SGSDK_Core.sin(i) * 100) + 250, round(SGSDK_Core.cos(i) * 100) + 200);
 			DrawBitmap(tempBitmap2, round(SGSDK_Core.cos(i) * 100) + 250, round(SGSDK_Core.sin(i) * 100) + 200);
 			DrawOverlay('Drawing Bitmap Example');
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			i := i + 1;
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -119,7 +119,7 @@ implementation
 	
 	procedure DrawSpriteCaption(sprite : Sprite; caption : String);
 	begin
-		DrawText(caption, ColorWhite, GameFont(Courier), 
+		DrawText(caption, ColorWhite, GameFont('Courier'), 
 			Round((sprite.xPos + CurrentWidth(sprite) / 2) - ((Length(caption) / 2) * 10)), 
 			Round(sprite.yPos + CurrentHeight(sprite)));
 	end;
@@ -128,13 +128,13 @@ implementation
 	var
 		loopSprite, reverseSprite, stopSprite, reverseOnceSprite : Sprite;
 	begin
-		loopSprite := LoadAnimationSprite(GameImage(Running), 80, 94, 2, 15);
+		loopSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
 		loopSprite.endingAction := Loop;
-		reverseSprite := LoadAnimationSprite(GameImage(Running), 80, 94, 2, 15);
+		reverseSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
 		reverseSprite.endingAction := ReverseLoop;
-		stopSprite := LoadAnimationSprite(GameImage(Running), 80, 94, 2, 15);
+		stopSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
 		stopSprite.endingAction := Stop;
-		reverseOnceSprite := LoadAnimationSprite(GameImage(Running), 80, 94, 2, 15);
+		reverseOnceSprite := CreateSprite(GameImage('Running'), 2, 15, 80, 94);
 		reverseOnceSprite.endingAction := ReverseOnce;
 		loopSprite.xPos := 50;
 		loopSprite.yPos := 200;
@@ -160,7 +160,7 @@ implementation
 			UpdateSprite(reverseOnceSprite);
 			DrawOverlay('Drawing Sprite Example');
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 			Sleep(50);
 		until IsKeyPressed(VK_N);
@@ -204,8 +204,8 @@ implementation
 		xSpeed2 := 3;
 		ySpeed1 := 3;
 		ySpeed2 := 3;
-		ball1 := CreateSprite(GameImage(BallImage1));
-		ball2 := CreateSprite(GameImage(BallImage2));
+		ball1 := CreateSprite(GameImage('BallImage1'));
+		ball2 := CreateSprite(GameImage('BallImage2'));
 		ball1.xPos := 0;
 		ball1.yPos := 0;
 		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
@@ -217,12 +217,12 @@ implementation
 			DrawSprite(ball1);
 			DrawSprite(ball2);
 			if HaveSpritesCollided(ball1, ball2) then
-				DrawText('Collided!', ColorWhite, GameFont(Courier), ScreenWidth() - 90, ScreenHeight() - 20);
+				DrawText('Collided!', ColorWhite, GameFont('Courier'), ScreenWidth() - 90, ScreenHeight() - 20);
 			MoveBall(ball1, xSpeed1, ySpeed1);
 			MoveBall(ball2, xSpeed2, ySpeed2);
 			DrawOverlay('Collision Detection Example');
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -234,12 +234,12 @@ implementation
 		musicSource : Music;
 	begin
 		ClearScreen();
-		musicSource := LoadMusic(GetPathToResource('Fast.mp3', SoundResource));
+		musicSource := GameMusic('Fast');
 		PlayMusic(musicSource);
 		repeat
 			DrawOverlay('Music Playback Example');
 			Sleep(10);
-			RefreshScreen();
+			RefreshScreen(60);
 			ProcessEvents();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -262,14 +262,14 @@ implementation
 	begin
 		ClearScreen();
 		repeat
-			SetFontStyle(GameFont(Courier), GetRandomFontStyle());
-			DrawText('SwinGameSDK!', GetRandomColor(), GameFont(Courier), Random(ScreenWidth()), Random(ScreenHeight()));
-			SetFontStyle(GameFont(Courier), GetRandomFontStyle());
-			DrawText('SwinGameSDK!', GetRandomColor(), GameFont(Courier), Random(ScreenWidth()), Random(ScreenHeight()));
-			SetFontStyle(GameFont(Courier), NormalFont);
+			SetFontStyle(GameFont('Courier'), GetRandomFontStyle());
+			DrawText('SwinGameSDK!', GetRandomColor(), GameFont('Courier'), Random(ScreenWidth()), Random(ScreenHeight()));
+			SetFontStyle(GameFont('Courier'), GetRandomFontStyle());
+			DrawText('SwinGameSDK!', GetRandomColor(), GameFont('Courier'), Random(ScreenWidth()), Random(ScreenHeight()));
+			SetFontStyle(GameFont('Courier'), NormalFont);
 			DrawOverlay('Drawing Random Texts');
 			Sleep(10);
-			RefreshScreen();
+			RefreshScreen(60);
 			ProcessEvents();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -277,59 +277,59 @@ implementation
 		ProcessEvents();
 	end;
 	
-	procedure MoveBallUsingVector(var ball : PhysicsData);
+	procedure MoveBallUsingVector(var ball : Sprite);
 	begin
-		MoveSprite(ball.sprite, ball.movement);
-		if ball.sprite.xPos > ScreenWidth() - CurrentWidth(ball.sprite) then
+		MoveSprite(ball, ball.movement);
+		if ball.xPos > ScreenWidth() - CurrentWidth(ball) then
 		begin
 			ball.movement.x := ball.movement.x * -1;
-			ball.sprite.xPos := ScreenWidth() - CurrentWidth(ball.sprite);
+			ball.xPos := ScreenWidth() - CurrentWidth(ball);
 		end;
-		if ball.sprite.yPos > ScreenHeight() - CurrentHeight(ball.sprite) then
+		if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
 		begin
 			ball.movement.y := ball.movement.y * -1;
-			ball.sprite.yPos := ScreenHeight() - CurrentHeight(ball.sprite);
+			ball.yPos := ScreenHeight() - CurrentHeight(ball);
 		end;
-		if ball.sprite.xPos < 0 then
+		if ball.xPos < 0 then
 		begin
 			ball.movement.x := ball.movement.x * -1;
-			ball.sprite.xPos := 0;
+			ball.xPos := 0;
 		end;
-		if ball.sprite.yPos < 0 then
+		if ball.yPos < 0 then
 		begin
 			ball.movement.y := ball.movement.y * -1;
-			ball.sprite.yPos := 0;
+			ball.yPos := 0;
 		end;
 	end;
 	
 	procedure DrawVectorCollision();
 	var
-		ball1, ball2 : PhysicsData;
+		ball1, ball2 : Sprite;
 	begin
 		ClearScreen();
+		ball1 := CreateSprite(GameImage('BallImage1'));
+		ball2 := CreateSprite(GameImage('BallImage2'));
 		ball1.movement := CreateVector(3, 3);
 		ball2.movement := CreateVector(3, 3);
 		ball1.mass := 1;
 		ball2.mass := 1;
-		ball1.sprite := CreateSprite(GameImage(BallImage1));
-		ball2.sprite := CreateSprite(GameImage(BallImage2));
-		ball1.sprite.xPos := 0;
-		ball1.sprite.yPos := 0;
-		ball2.sprite.xPos := ScreenWidth() - CurrentWidth(ball2.sprite);
-		ball2.sprite.yPos := ScreenHeight() - CurrentHeight(ball2.sprite);
-		ball1.sprite.usePixelCollision := true;
-		ball2.sprite.usePixelCollision := true;
+		ball1.xPos := 0;
+		ball1.yPos := 0;
+		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
+		ball2.yPos := ScreenHeight() - CurrentHeight(ball2);
+		ball1.usePixelCollision := true;
+		ball2.usePixelCollision := true;
 		repeat
 			ClearScreen();
-			DrawSprite(ball1.sprite);
-			DrawSprite(ball2.sprite);
-			if HaveSpritesCollided(ball1.sprite, ball2.sprite) then
+			DrawSprite(ball1);
+			DrawSprite(ball2);
+			if HaveSpritesCollided(ball1, ball2) then
 				VectorCollision(ball1, ball2);
 			MoveBallUsingVector(ball1);
 			MoveBallUsingVector(ball2);
 			DrawOverlay('Vector Collision Example');
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -341,7 +341,7 @@ implementation
 		ball : Sprite;
 		xSpeed, ySpeed : Integer;
 	begin
-		ball := CreateSprite(LoadBitmap(GetPathToResource('ball.png', ImageResource)));
+		ball := CreateSprite(GameImage('BallImage1'));
 	    ball.xPos := 400;
 	    ball.yPos := 300;
 
@@ -364,7 +364,7 @@ implementation
 
 	        DrawOverlay('Move Sprite with Arrow Keys Example');
 	        ProcessEvents();
-	        RefreshScreen();
+	        RefreshScreen(60);
 	        ClearScreen();
 			if WindowCloseRequested() then exit;
 	    until IsKeyPressed(VK_N);
@@ -377,7 +377,7 @@ implementation
 		ball : Sprite;
 		position : Vector;
 	begin
-		ball := CreateSprite(LoadBitmap(GetPathToResource('ball.png', ImageResource)));
+		ball := CreateSprite(GameImage('BallImage1'));
         repeat
 			ProcessEvents();
 			
@@ -394,7 +394,7 @@ implementation
             end;
 
             DrawOverlay('Mouse Cursor Example');
-            RefreshScreen();
+            RefreshScreen(60);
             ClearScreen();
 			if WindowCloseRequested() then exit;
         until IsKeyPressed(VK_N);
@@ -404,18 +404,18 @@ implementation
 	
 	procedure TextReadExample();
 	begin
-		StartReadingText(ColorGreen, 50, GameFont(Courier), 0, 65);
+		StartReadingText(ColorGreen, 50, GameFont('Courier'), 0, 65);
 		while IsReadingText() do
 		begin
 			ClearScreen();
-			DrawText('Please enter a message:', ColorGreen, GameFont(Courier), 0, 50);
+			DrawText('Please enter a message:', ColorGreen, GameFont('Courier'), 0, 50);
 			DrawOverlay('Text Reading Example');
-			RefreshScreen();
+			RefreshScreen(60);
 			ProcessEvents();
 			if WindowCloseRequested() then exit;
 		end;
-		DrawText('You have entered ' + TextReadAsASCII(), ColorGreen, GameFont(Courier), 0, 80);
-		RefreshScreen();
+		DrawText('You have entered ' + TextReadAsASCII(), ColorGreen, GameFont('Courier'), 0, 80);
+		RefreshScreen(60);
 		repeat
 			Sleep(20);
 			ProcessEvents();
@@ -430,8 +430,8 @@ implementation
 		sound : SoundEffect;
 		_Font : Font;
     begin
-		sound := LoadSoundEffect(GetPathToResource('shock.wav', SoundResource));
-		_Font := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);
+		sound := GameSound('Shock');
+		_Font := GameFont('Courier');
         repeat
             if IsKeyPressed(VK_SPACE) and (not IsSoundEffectPlaying(sound)) then
                 PlaySoundEffect(sound);
@@ -440,7 +440,7 @@ implementation
 
             DrawOverlay('Play Sound Effect when hitting a key Example');
             ProcessEvents();
-            RefreshScreen();
+            RefreshScreen(60);
             ClearScreen();
 			
             if WindowCloseRequested() then break;
@@ -451,7 +451,7 @@ implementation
 	
 	procedure DroppingBall();
 	var
-		ball: PhysicsData;
+		ball: Sprite;
 		GravityConst, AirResistanceV, AirResistanceH: Vector;
 		Rotate: Matrix2D;
 		falling: Boolean;
@@ -459,18 +459,18 @@ implementation
 		GravityConst := CreateVector(0, 0.5);
 		AirResistanceV := CreateVector(0, 0.1);
 		AirResistanceH := CreateVector(0.01, 0);
-		
+
 		Rotate := RotationMatrix(180);
-		
-		ball.sprite := CreateSprite(LoadBitmap(GetPathToResource('ball_small.png', ImageResource)));
+
+		ball := CreateSprite(GameImage('SmallBall'));
 		ball.movement := CreateVector(5, 0);
 		ball.mass := 1;
-		
-		ball.sprite.xPos := 0;
-		ball.sprite.yPos := 0;
-		
+
+		ball.xPos := 0;
+		ball.yPos := 0;
+
 		falling := false;
-		
+
 		repeat
 			ClearScreen();
 			if (not falling) and (ball.movement.y >= 0) then
@@ -478,52 +478,52 @@ implementation
 				AirResistanceV := Multiply(Rotate, AirResistanceV);
 				falling := true;
 			end;
-			
-            if (ball.Movement.x < 0) and (AirResistanceH.x < 0) then
-            begin
-                AirResistanceH := InvertVector(AirResistanceH);
-            end;
 
-            if (ball.Movement.x > 0) and (AirResistanceH.x > 0) then
-            begin
-                AirResistanceH := InvertVector(AirResistanceH);
-            end;
-			
+	        if (ball.Movement.x < 0) and (AirResistanceH.x < 0) then
+	        begin
+	            AirResistanceH := InvertVector(AirResistanceH);
+	        end;
+
+	        if (ball.Movement.x > 0) and (AirResistanceH.x > 0) then
+	        begin
+	            AirResistanceH := InvertVector(AirResistanceH);
+	        end;
+
 			ball.movement := AddVectors(ball.movement, GravityConst);
 			ball.movement := AddVectors(ball.movement, AirResistanceV);
 			ball.movement := AddVectors(ball.movement, AirResistanceH);
-			
-			MoveSprite(ball.sprite, ball.movement);
-			
-			if ball.sprite.xPos > ScreenWidth() - CurrentWidth(ball.sprite) then
+
+			MoveSprite(ball, ball.movement);
+
+			if ball.xPos > ScreenWidth() - CurrentWidth(ball) then
 			begin
 				ball.movement.x := ball.movement.x * -1;
-				ball.sprite.xPos := ScreenWidth() - CurrentWidth(ball.sprite);
+				ball.xPos := ScreenWidth() - CurrentWidth(ball);
 				AirResistanceH := InvertVector(AirResistanceH);
 			end;
-			if ball.sprite.yPos > ScreenHeight() - CurrentHeight(ball.sprite) then
+			if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
 			begin
 				if ball.movement.y < 1 then
 					ball.movement.y := 0;
 				ball.movement.y := ball.movement.y * -1;
-				ball.sprite.yPos := ScreenHeight() - CurrentHeight(ball.sprite);
+				ball.yPos := ScreenHeight() - CurrentHeight(ball);
 				AirResistanceV := Multiply(Rotate, AirResistanceV);
 				falling := false;
 			end;
-			if ball.sprite.xPos < 0 then
+			if ball.xPos < 0 then
 			begin
 				ball.movement.x := ball.movement.x * -1;
-				ball.sprite.xPos := 0;
+				ball.xPos := 0;
 			end;
-			if ball.sprite.yPos < 0 then
+			if ball.yPos < 0 then
 			begin
 				ball.movement.y := ball.movement.y * -1;
-				ball.sprite.yPos := 0;
+				ball.yPos := 0;
 			end;
-			DrawSprite(ball.sprite);
-			
+			DrawSprite(ball);
+
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -534,8 +534,8 @@ implementation
 	var
 		sp1, sp2: Sprite;
 	begin
-		sp1 := LoadAnimationSprite(GameImage(Explosion), 38, 38, 5, 15);
-		sp2 := LoadAnimationSprite(GameImage(Ship), 40, 43, 3, 2);
+		sp1 := CreateSprite(GameImage('Explosion'), 5, 15, 38, 38);
+		sp2 := CreateSprite(GameImage('Ship'), 3, 2, 40, 43);
 		sp1.xPos := 70;
 		sp1.yPos := 100;
 		sp2.xPos := 80;
@@ -547,14 +547,14 @@ implementation
 			DrawSprite(sp2);
 			UpdateSprite(sp1);
 			UpdateSprite(sp2);
-			DrawBitmap(GameImage(Explosion), 70, 170);
-			DrawText('Explosion Bitmap', ColorWhite, GameFont(Courier), 90 + GameImage(Explosion).width, 190);
-			DrawBitmap(GameImage(Ship), 70, 250);
-			DrawText('Ship Bitmap', ColorWhite, GameFont(Courier), 90 + GameImage(Ship).width, 260);
+			DrawBitmap(GameImage('Explosion'), 70, 170);
+			DrawText('Explosion Bitmap', ColorWhite, GameFont('Courier'), 90 + GameImage('Explosion').width, 190);
+			DrawBitmap(GameImage('Ship'), 70, 250);
+			DrawText('Ship Bitmap', ColorWhite, GameFont('Courier'), 90 + GameImage('Ship').width, 260);
 			if HaveSpritesCollided(sp1, sp2) then
-				DrawText('Collided...', ColorWhite, GameFont(Courier), 125, 120);
+				DrawText('Collided...', ColorWhite, GameFont('Courier'), 125, 120);
 			DrawOverlay('Multi-bitmap Collision Detection');
-			RefreshScreen();
+			RefreshScreen(60);
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
