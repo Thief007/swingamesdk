@@ -1,7 +1,7 @@
 unit SGSDK_MappyLoader;
 
 interface
-	uses	SGSDK_Graphics,
+	uses	SGSDK_Graphics, SGSDK_Camera,
 			SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
 			SDL_Mixer, SDL_TTF, SDLEventProcessing;
 	
