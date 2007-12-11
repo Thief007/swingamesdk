@@ -26,6 +26,7 @@ if "%1"=="clean" goto cleaning
 	fpc -v0 -Mdelphi -FE"%Output%" .\src\SGSDK_Audio.pas
 	fpc -v0 -Mdelphi -FE"%Output%" .\src\SGSDK_KeyCodes.pas
 	fpc -v0 -Mdelphi -FE"%Output%" .\src\SGSDK_MappyLoader.pas
+	fpc -v0 -Mdelphi -FE"%Output%" .\src\SGSDK_Camera.pas
 
 	mkdir "%WinFPCDir%"
 	copy "%Output%\*.ppu" "%WinFPCDir%"
