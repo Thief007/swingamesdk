@@ -648,7 +648,7 @@ implementation
 	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
 		width, height : Integer): Sprite; overload;
 	begin
-		result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
+		result := CreateSprite(image, true, framesPerCell, Loop, width, height);
 	end;
 	
 	/// Creates a sprites, and sets its first bitmap.
