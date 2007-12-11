@@ -1357,51 +1357,6 @@ namespace SwinGame
         }
 
 
-        // Screen ViewPort Functions
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int XOffset();
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int YOffset();
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int ScreenX(float x);
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int ScreenY(float y);
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern float GameX(int x);
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern float GameY(int y);
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern float ToGameCoordinates(Vector screenVector);
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void DLL_MoveVisualAreaWithVector(Vector v);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void DLL_MoveVisualArea(float dx, float dy);
-
-        public static void MoveVisualArea(Vector v)
-        {
-            DLL_MoveVisualAreaWithVector(v);
-        }
-
-        public static void MoveVisualArea(float dx, float dy)
-        {
-            DLL_MoveVisualArea(dx, dy);
-        }
-
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetScreenOffset(float dx, float dy);
-
-
-
-
-
         // Draw On Screen Functions
 
 
@@ -1422,80 +1377,88 @@ namespace SwinGame
         }
         
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
-        private static extern void DLL_DrawPixelOnScreen(Color theColor, int x, int y);
+        private static extern void DLL_DrawPixelOnScreen(int theColor, int x, int y);
 
         public static void DrawPixelOnScreen(Color theColor, int x, int y)
         {
-            DLL_DrawPixelOnScreen(theColor, x, y);
+            int color = theColor.ToArgb();
+            DLL_DrawPixelOnScreen(color, x, y);
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
-        private static extern void DLL_DrawRectangleOnScreen(Color theColor, bool filled, int x, int y, int width, int height);
+        private static extern void DLL_DrawRectangleOnScreen(int theColor, bool filled, int x, int y, int width, int height);
 
         public static void DrawRectangleOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            DLL_DrawRectangleOnScreen(theColor, false, x, y, width, height);
+            int color = theColor.ToArgb();
+            DLL_DrawRectangleOnScreen(color, false, x, y, width, height);
         }
 
         public static void FillRectangleOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            DLL_DrawRectangleOnScreen(theColor, true, x, y, width, height);
+            int color = theColor.ToArgb();
+            DLL_DrawRectangleOnScreen(color, true, x, y, width, height);
         }
 
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
-        private static extern void DLL_DrawLineOnScreen(Color theColor, int x, int y, int x2, int y2);
+        private static extern void DLL_DrawLineOnScreen(int theColor, int x, int y, int x2, int y2);
 
         public static void DrawLineOnScreen(Color theColor, int xPosStart, int yPosStart, int xPosEnd, int yPosEnd)
         {
-            DLL_DrawLineOnScreen(theColor, xPosStart, yPosStart, xPosEnd, yPosEnd);
+            int color = theColor.ToArgb();
+            DLL_DrawLineOnScreen(color, xPosStart, yPosStart, xPosEnd, yPosEnd);
         }
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
-        private static extern void DLL_DrawHorizontalLineOnScreen(Color theColor, int y, int x1, int x2);
+        private static extern void DLL_DrawHorizontalLineOnScreen(int theColor, int y, int x1, int x2);
 
         public static void DrawHorizontalLineOnScreen(Color theColor, int y, int x1, int x2)
         {
-            DLL_DrawHorizontalLineOnScreen(theColor, y, x1, x2);
+            int color = theColor.ToArgb();
+            DLL_DrawHorizontalLineOnScreen(color, y, x1, x2);
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
-        private static extern void DLL_DrawVerticalLineOnScreen(Color theColor, int x, int y1, int y2);
+        private static extern void DLL_DrawVerticalLineOnScreen(int theColor, int x, int y1, int y2);
 
         public static void DrawVerticalLineOnScreen(Color theColor, int x, int y1, int y2)
         {
-            DLL_DrawVerticalLineOnScreen(theColor, x, y1, y2);
+            int color = theColor.ToArgb();
+            DLL_DrawVerticalLineOnScreen(color, x, y1, y2);
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
-        private static extern void DLL_DrawCircleOnScreen(Color theColor, bool filled, int xc, int yc, int radius);
+        private static extern void DLL_DrawCircleOnScreen(int theColor, bool filled, int xc, int yc, int radius);
 
         public static void DrawCircleOnScreen(Color theColor, int xc, int yc, int radius)
         {
-            DLL_DrawCircleOnScreen(theColor, false, xc, yc, radius);
+            int color = theColor.ToArgb();
+            DLL_DrawCircleOnScreen(color, false, xc, yc, radius);
         }
 
         public static void FillCircleOnScreen(Color theColor, int xc, int yc, int radius)
         {
-            DLL_DrawCircleOnScreen(theColor, true, xc, yc, radius);
+            int color = theColor.ToArgb();
+            DLL_DrawCircleOnScreen(color, true, xc, yc, radius);
         }
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
-        private static extern void DLL_DrawEllipseOnScreen(Color theColor, bool filled, int x, int y, int width, int height);
+        private static extern void DLL_DrawEllipseOnScreen(int theColor, bool filled, int x, int y, int width, int height);
 
         public static void DrawEllipseOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            DLL_DrawEllipseOnScreen(theColor, false, x, y, width, height);
+            int color = theColor.ToArgb();
+            DLL_DrawEllipseOnScreen(color, false, x, y, width, height);
         }
 
         public static void FillEllipseOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            DLL_DrawEllipseOnScreen(theColor, true, x, y, width, height);
+            int color = theColor.ToArgb();
+            DLL_DrawEllipseOnScreen(color, true, x, y, width, height);
         }
-
-
     }
 }
