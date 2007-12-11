@@ -49,12 +49,12 @@ namespace SwinGame
 
         public int Width
         {
-            get { return GetBitmapWidth(pointer); }
+            get { return Graphics.GetBitmapWidth(this); }
         }
 
         public int Height
         {
-            get { return GetBitmapHeight(pointer); }
+            get { return Graphics.GetBitmapHeight(this); }
         }
     }
 
