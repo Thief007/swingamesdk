@@ -8,12 +8,12 @@ implementation
 	GameResources,
 	SysUtils,
 	SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics,
-	SGSDK_KeyCodes;
+	SGSDK_KeyCodes, SGSDK_Camera;
 	
 	procedure DrawOverlay(title : String);
 	begin
-		FillRectangle(ColorBlack, 0, 0, 800, 50);
-        DrawText(title, ColorWhite, GameFont('Courier'), Round((ScreenWidth() / 2) - ((Length(title) / 2) * 10)), 20);
+		FillRectangleOnScreen(ColorBlack, 0, 0, 800, 50);
+        DrawTextOnScreen(title, ColorWhite, GameFont('Courier'), Round((ScreenWidth() / 2) - ((Length(title) / 2) * 10)), 20);
 	end;
 	
 	function GetRandomColor(): Color;
@@ -56,7 +56,6 @@ implementation
 			ProcessEvents();
 			RefreshScreen(60);
 			if WindowCloseRequested() then break;
-			Sleep(100);
 		until IsKeyPressed(VK_N);
 		Sleep(500);
 		ProcessEvents();
@@ -69,7 +68,6 @@ implementation
 			DrawCircle(GetRandomColor(), Random(800), Random(800), Random(800));
 			FillCircle(GetRandomColor(), Random(800), Random(800), Random(800));
 			DrawOverlay('Drawing Circles Example');
-			Sleep(100);
 			ProcessEvents();
 			RefreshScreen(60);
 			if WindowCloseRequested() then break;
@@ -85,7 +83,6 @@ implementation
 			DrawEllipse(GetRandomColor(), Random(800), Random(800), Random(400), Random(400));
 			FillEllipse(GetRandomColor(), Random(800), Random(800), Random(400), Random(400));
 			DrawOverlay('Drawing Ellipses Example');
-			Sleep(100);
 			ProcessEvents();
 			RefreshScreen(60);
 			if WindowCloseRequested() then break;
@@ -162,7 +159,6 @@ implementation
 			ProcessEvents();
 			RefreshScreen(60);
 			if WindowCloseRequested() then break;
-			Sleep(50);
 		until IsKeyPressed(VK_N);
 		Sleep(500);
 		ProcessEvents();
@@ -238,7 +234,6 @@ implementation
 		PlayMusic(musicSource);
 		repeat
 			DrawOverlay('Music Playback Example');
-			Sleep(10);
 			RefreshScreen(60);
 			ProcessEvents();
 			if WindowCloseRequested() then break;
@@ -268,7 +263,6 @@ implementation
 			DrawText('SwinGameSDK!', GetRandomColor(), GameFont('Courier'), Random(ScreenWidth()), Random(ScreenHeight()));
 			SetFontStyle(GameFont('Courier'), NormalFont);
 			DrawOverlay('Drawing Random Texts');
-			Sleep(10);
 			RefreshScreen(60);
 			ProcessEvents();
 			if WindowCloseRequested() then break;
@@ -523,6 +517,7 @@ implementation
 			DrawSprite(ball);
 
 			ProcessEvents();
+			DrawOverlay('Drapping Ball Example');
 			RefreshScreen(60);
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -585,9 +580,40 @@ implementation
 			DrawBitmap(Sea, 0, 0);
 			DrawSprite(Ship);
 			UpdateSprite(Ship);
+			DrawOverlay('Follow Sprite Example');
 			RefreshScreen(60);
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
+		SetScreenOffset(0,0);
+		Sleep(500);
+		ProcessEvents();
+	end;
+	
+	procedure DrawCircleWithLines();
+	begin
+		ClearScreen();
+		repeat
+			if IsKeyPressed(VK_RIGHT) then
+				MoveVisualArea(4, 0);
+			if IsKeyPressed(VK_DOWN) then
+				MoveVisualArea(0, 4);
+			if IsKeyPressed(VK_UP) then
+				MoveVisualArea(0, -4);
+			if IsKeyPressed(VK_LEFT) then
+				MoveVisualArea(-4, 0);
+			ClearScreen();
+			FillCircle(ColorGreen, ScreenWidth() div 2, ScreenHeight() div 2, 200);
+			DrawCircle(ColorWhite, ScreenWidth() div 2, ScreenHeight() div 2, 200);
+			FillCircleOnScreen(ColorRed, ScreenWidth() div 2, ScreenHeight() div 2, 100);
+			DrawCircleOnScreen(ColorWhite, ScreenWidth() div 2, ScreenHeight() div 2, 100);
+			DrawHorizontalLine(ColorWhite, ScreenHeight() div 2, ScreenWidth(), 0);
+			DrawVerticalLine(ColorWhite, ScreenWidth() div 2, ScreenHeight(), 0);
+			DrawOverlay('Camera Example');
+			RefreshScreen(60);
+			ProcessEvents();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		SetScreenOffset(0,0);
 		Sleep(500);
 		ProcessEvents();
 	end;
@@ -599,47 +625,44 @@ implementation
 	procedure Main();
 	begin
 		OpenGraphicsWindow('SwinGameSDK Showcase', 800, 600);
-
 		LoadResources();
 		Randomize();
-		
-		repeat
-			ProcessEvents();
-			DrawLines();
-			if WindowCloseRequested() then break;
-			DrawRectangles();
-			if WindowCloseRequested() then break;
-			DrawCircles();
-			if WindowCloseRequested() then break;
-			DrawEllipses();
-			if WindowCloseRequested() then break;
-			DrawBitmaps();
-			if WindowCloseRequested() then break;
-			DrawSprites();
-			if WindowCloseRequested() then break;
-			DrawCollisionDetection();
-			if WindowCloseRequested() then break;
-			PlayMusicExample();
-			if WindowCloseRequested() then break;
-			DrawRandomText();
-			if WindowCloseRequested() then break;
-			DrawVectorCollision();
-			if WindowCloseRequested() then break;
-			MoveSpriteWithInput();
-			if WindowCloseRequested() then break;
-			MouseCursor();
-			if WindowCloseRequested() then break;
-			TextReadExample();
-			if WindowCloseRequested() then break;
-			SoundInput();
-			if WindowCloseRequested() then break;
-			DroppingBall();
-			if WindowCloseRequested() then break;
-			MultiBitmapSprite();
-			If WindowCloseRequested() then break;
-			FollowSpriteExample();
-		until WindowCloseRequested();
-		
+		ProcessEvents();
+		DrawLines();
+		if WindowCloseRequested() then exit;
+		DrawRectangles();
+		if WindowCloseRequested() then exit;
+		DrawCircles();
+		if WindowCloseRequested() then exit;
+		DrawEllipses();
+		if WindowCloseRequested() then exit;
+		DrawBitmaps();
+		if WindowCloseRequested() then exit;
+		DrawSprites();
+		if WindowCloseRequested() then exit;
+		DrawCollisionDetection();
+		if WindowCloseRequested() then exit;
+		PlayMusicExample();
+		if WindowCloseRequested() then exit;
+		DrawRandomText();
+		if WindowCloseRequested() then exit;
+		DrawVectorCollision();
+		if WindowCloseRequested() then exit;
+		MoveSpriteWithInput();
+		if WindowCloseRequested() then exit;
+		MouseCursor();
+		if WindowCloseRequested() then exit;
+		TextReadExample();
+		if WindowCloseRequested() then exit;
+		SoundInput();
+		if WindowCloseRequested() then exit;
+		DroppingBall();
+		if WindowCloseRequested() then exit;
+		MultiBitmapSprite();
+		If WindowCloseRequested() then exit;
+		FollowSpriteExample();
+		If WindowCloseRequested() then exit;
+		DrawCircleWithLines();
 		FreeResources();
 	end;
 end.
