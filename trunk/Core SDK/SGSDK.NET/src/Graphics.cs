@@ -324,7 +324,23 @@ namespace SwinGame
             {
                 return GetSpriteMovement(mc._Data.Pointer);
             }
- 
+
+        }
+
+        public int Width
+        {
+            get
+            {
+                return Graphics.CurrentWidth(this);
+            }
+        }
+
+        public int Height
+        {
+            get
+            {
+                return Graphics.CurrentHeight(this);
+            }
         }
 
         public float Mass
