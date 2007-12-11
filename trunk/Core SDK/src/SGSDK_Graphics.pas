@@ -2,83 +2,8 @@ unit SGSDK_Graphics;
 
 interface
 	uses	SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
-			SDL_Mixer, SDL_TTF, SDLEventProcessing;
-	type
-		/// Record: SpriteKind
-		///
-		/// It is used to determine how a sprite should act.
-		/// StaticSprite will not animate at all.
-		/// AnimArraySprite will animate using an array of bitmaps.
-		/// AnimMultiSprite will animate using a single bitmap with multiple
-		/// frames.
-		SpriteKind = (
-			StaticSprite,
-			AnimArraySprite,
-			AnimMultiSprite
-		);
+			SDL_Mixer, SDL_TTF, SDLEventProcessing, SGSDK_Camera;
 		
-		/// Record: SpriteEndingAction
-		///
-		/// It is used to determine what this sprite should do when it finishes
-		/// animating.
-		SpriteEndingAction = (
-			Loop,
-			ReverseLoop,
-			ReverseOnce,
-			Stop
-		);
-		
-		/// Record: Sprite
-		///
-		///	NOTE: Do not use SpriteData directly. Use Sprite.
-		///
-		///	- bitmaps: The array of bitmaps related to the Sprite
-		/// - spriteKind: Animation kind of this sprite
-		/// - framesPerCell: Array of Integer that defines the frames per cell
-		///	- xPod, yPos: The sprites location within the game world
-		/// - width, height: The width and height of this sprite (used for multi)
-		/// - cols, row: The number of cols and rows of this sprite (used for multi)
-		/// - frameCount: Current frame count of this sprite
-		///	- currentFrame: The current animation frame for the Sprite
-		///	- usePixelCollision: A flag indicating if pixel collision sould be
-		///											 used, if false bounding collision is used.
-		/// - endingAction: How this sprite acts when it finishes playing the animation
-		/// - hasEnded: True if this sprite has stopped animating
-		/// - reverse: True if this sprite's animation is reversing
-		SpriteData = record
-			bitmaps : Array of Bitmap;
-			spriteKind : SpriteKind;
-			framesPerCell : Array of Integer;
-			xPos : Single;
-			yPos : Single;
-			width : Integer;
-			height : Integer;
-			cols : Integer;
-			row : Integer;
-			frameCount : Integer;
-			currentFrame : Integer;
-			usePixelCollision: Boolean;
-			endingAction : SpriteEndingAction;
-			hasEnded : Boolean;
-			reverse : Boolean;
-			movement : Vector;
-			mass 	 : Single;
-		end;
-		
-		/// Type: Sprite
-		///
-		///	Sprites are used to represent Sprites drawn to the screen. Create a
-		///	sprite using the CreateSprite function, and free it when complete with
-		///	the FreeSprite function. The sprite contain a number of bitmaps used to
-		///	store animations, or the like. Sprite drawing operations will draw the
-		///	Sprite's current frame.
-		Sprite = ^SpriteData;
-		
-		/// Type: SpriteCollection
-		///
-		/// Array of sprites which can be passed to DrawSprites() to draw multiple
-		/// sprites at once.
-		//SpriteCollection = Array of Sprite;
 		
 	//*****
 	//
@@ -325,29 +250,6 @@ interface
 						xPos, yPos, width, height: Integer); overload;
 
 
-	//*****
-	//
-	// Visible Window management routines.
-	//
-	//*****
-	//
-	// These routines are used to move the visual window.
-	//
-
-	function XOffset(): Integer;
-	function YOffset(): Integer;
-	
-	function ScreenX(x: Single): Integer;
-	function ScreenY(y: Single): Integer;
-	function GameX(x: Integer) : Single;
-	function GameY(y: Integer) : Single;
-	function ToGameCoordinates(screenVector: Vector): Vector;
-		
-	procedure MoveVisualArea(v: Vector); overload;
-	procedure MoveVisualArea(dx, dy: Single); overload;
-	procedure SetScreenOffset(x, y: Single);
-	
-	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
 	
 implementation
 
@@ -881,7 +783,7 @@ implementation
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap; 
                srcX, srcY, srcW, srcH: Integer; x, y : Single); overload;
 	begin
-		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, ScreenX(x), ScreenY(y));
+		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
 	end;
 
 
@@ -899,7 +801,7 @@ implementation
 
 	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
 	begin
-		DrawBitmap(scr, bitmapToDraw, ScreenX(x), ScreenY(y));
+		DrawBitmap(scr, bitmapToDraw, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
 	end;
 	
 	/// Update the frame position
@@ -1141,12 +1043,12 @@ implementation
 	///	@returns							 True if the sprite is off the screen
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean;
 	begin
-		//WriteLn(theSprite.xPos, ' -> ', ScreenX(theSprite.xPos));
+		//WriteLn(theSprite.xPos, ' -> ', SGSDK_Camera.SGSDK_Camera.ScreenX(theSprite.xPos));
 		
-		if ScreenX(theSprite.xPos) >= ScreenWidth() then result := true
-		else if ScreenX(theSprite.xPos) + CurrentWidth(theSprite) < 0 then result := true
-		else if ScreenY(theSprite.yPos) >= ScreenHeight() then result := true
-		else if ScreenY(theSprite.yPos) + CurrentHeight(theSprite) < 0 then result := true
+		if SGSDK_Camera.ScreenX(theSprite.xPos) >= ScreenWidth() then result := true
+		else if SGSDK_Camera.ScreenX(theSprite.xPos) + CurrentWidth(theSprite) < 0 then result := true
+		else if SGSDK_Camera.ScreenY(theSprite.yPos) >= ScreenHeight() then result := true
+		else if SGSDK_Camera.ScreenY(theSprite.yPos) + CurrentHeight(theSprite) < 0 then result := true
 		else result := false;
 	end;
 
@@ -1244,7 +1146,7 @@ implementation
 
 	procedure DrawPixel(theColour: Colour; x, y: Single); overload;
 	begin
-		DrawPixelOnScreen(theColour, ScreenX(x), ScreenY(y));
+		DrawPixelOnScreen(theColour, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
 	end;
 
 	/// Draws a rectangle on the screen.
@@ -1265,7 +1167,7 @@ implementation
 	procedure DrawRectangle(theColour : Colour; filled : Boolean;
                           xPos, yPos: Single; width, height : Integer); overload;
 	begin
-		DrawRectangle(scr, theColour, filled, ScreenX(xPos), ScreenY(yPos), width, height);
+		DrawRectangle(scr, theColour, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
 
 	/// Draws the outline of a rectangle on the screen.
@@ -1285,7 +1187,7 @@ implementation
 	procedure DrawRectangle(theColour: Colour;
                           xPos, yPos: Single; width, height : Integer); overload;
 	begin
-		DrawRectangle(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
+		DrawRectangle(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
 
 	/// Draws a filled rectangle on the screen.
@@ -1305,7 +1207,7 @@ implementation
 	procedure FillRectangle(theColour : Colour;
                           xPos, yPos: Single; width, height : Integer); overload;
 	begin
-		FillRectangle(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
+		FillRectangle(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
 
 	/// Draws a line on the screen.
@@ -1325,7 +1227,7 @@ implementation
 	procedure DrawLine(theColour: Colour; 
                      xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
 	begin
-		DrawLine(scr, theColour, ScreenX(xPosStart), ScreenY(yPosStart), ScreenX(xPosEnd), ScreenY(yPosEnd));
+		DrawLine(scr, theColour, SGSDK_Camera.ScreenX(xPosStart), SGSDK_Camera.ScreenY(yPosStart), SGSDK_Camera.ScreenX(xPosEnd), SGSDK_Camera.ScreenY(yPosEnd));
 	end;
 
 	/// Draws a horizontal line on the screen.
@@ -1343,7 +1245,7 @@ implementation
 
 	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
 	begin
-		DrawHorizontalLine(scr, theColor, ScreenY(y), ScreenX(x1), ScreenX(x2));
+		DrawHorizontalLine(scr, theColor, SGSDK_Camera.ScreenY(y), SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenX(x2));
 	end;
 
 	/// Draws a vertical line on the screen.
@@ -1361,7 +1263,7 @@ implementation
 
 	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
 	begin
-		DrawVerticalLine(scr, theColor, ScreenX(x), ScreenY(y1), ScreenY(y2));
+		DrawVerticalLine(scr, theColor, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenY(y2));
 	end;
 
 	/// Draws a circle centered on a given x, y location.
@@ -1382,7 +1284,7 @@ implementation
 	procedure DrawCircle(theColour: Colour; filled: Boolean;
                        xc, yc: Single; radius: Integer); overload;
 	begin
-		DrawCircle(scr, theColour, filled, ScreenX(xc), ScreenY(yc), radius);
+		DrawCircle(scr, theColour, filled, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
 	end;
 
 
@@ -1401,7 +1303,7 @@ implementation
 
 	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
 	begin
-		DrawCircle(scr, theColour, ScreenX(xc), ScreenY(yc), radius);
+		DrawCircle(scr, theColour, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
 	end;
 
 	/// Draws a filled circle centered on a given x, y location.
@@ -1419,7 +1321,7 @@ implementation
 
 	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
 	begin
-		FillCircle(scr, theColour, ScreenX(xc), ScreenY(yc), radius);
+		FillCircle(scr, theColour, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
 	end;
 
 	/// Draws a ellipse within a given rectangle on the screen.
@@ -1440,7 +1342,7 @@ implementation
 	procedure DrawEllipse(theColour: Colour; filled: Boolean;
                         xPos, yPos: Single; width, height: Integer); overload;
 	begin
-		DrawEllipse(scr, theColour, filled, ScreenX(xPos), ScreenY(yPos), width, height);
+		DrawEllipse(scr, theColour, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
 
 	/// Draws a ellipse outline within a given rectangle on the screen.
@@ -1460,7 +1362,7 @@ implementation
 	procedure DrawEllipse(theColour: Colour;
                         xPos, yPos: Single; width, height: Integer); overload;
 	begin
-		DrawEllipse(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
+		DrawEllipse(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
 
 
@@ -1481,7 +1383,7 @@ implementation
 	procedure FillEllipse(theColour: Colour; 
                          xPos, yPos: Single; width, height: Integer); overload;
 	begin
-		FillEllipse(scr, theColour, ScreenX(xPos), ScreenY(yPos), width, height);
+		FillEllipse(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
 
 
@@ -2135,74 +2037,6 @@ implementation
 			result := 9999
 		else
 			result := Round(1000 / renderFPSInfo.average);
-	end;
-	
-	///
-	/// The screen offset variables
-	///
-	var 
-		ScreenOffsetX : Single = 0.0;
-		ScreenOffsetY : Single = 0.0;
-	
-	function XOffset(): Integer;
-	begin
-		result := Round(ScreenOffsetX);
-	end;
-	
-	function YOffset(): Integer;
-	begin
-		result := Round(ScreenOffsetY);
-	end;
-	
-	function ScreenX(x: Single): Integer;
-	begin
-		result := Round(x - ScreenOffsetX);
-	end;
-	
-	function ScreenY(y: Single): Integer;
-	begin
-		result := Round(y - ScreenOffsetY);
-	end;
-	
-	function GameX(x: Integer) : Single;
-	begin
-		result := x + ScreenOffsetX;
-	end;
-	
-	function GameY(y: Integer) : Single;
-	begin
-		result := y + ScreenOffsetY;
-	end;
-	
-	procedure MoveVisualArea(v: Vector); overload;
-	begin
-		ScreenOffsetX += v.x;
-		ScreenOffsetY += v.y;
-	end;
-	
-	procedure MoveVisualArea(dx, dy: Single); overload;
-	begin
-		ScreenOffsetX += dx;
-		ScreenOffsetY += dy;		
-	end;
-	
-	procedure SetScreenOffset(x, y: Single);
-	begin
-		ScreenOffsetX := x;
-		ScreenOffsetY := y;
-	end;
-	
-	function ToGameCoordinates(screenVector: Vector): Vector;
-	begin
-		result.x := screenVector.x + ScreenOffsetX;
-		result.y := screenVector.y + ScreenOffsetY;
-		result.w := screenVector.w;
-	end;
-	
-	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
-	begin
-		MoveVisualArea(Round(ScreenX(spr.xPos) + spr.width / 2 - ScreenWidth() / 2) + Xoffset, 
-					   Round(ScreenY(spr.yPos) + spr.height / 2 - ScreenHeight() / 2) + Yoffset);
 	end;
 
 end.

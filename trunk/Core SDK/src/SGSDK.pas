@@ -1,7 +1,7 @@
 library SGSDK;
 
 uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
+	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera;
 
 	type
 		IntArray = Array of Integer;
@@ -1306,52 +1306,57 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function XOffset(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.XOffset();
+		result := SGSDK_Camera.XOffset();
 	end;
 	
 	function YOffset(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.YOffset();
+		result := SGSDK_Camera.YOffset();
 	end;
 	
 	function ScreenX(x: Single): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.ScreenX(x);
+		result := SGSDK_Camera.ScreenX(x);
 	end;
 	
 	function ScreenY(y: Single): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.ScreenY(y);
+		result := SGSDK_Camera.ScreenY(y);
 	end;
 	
 	function GameX(x: Integer) : Single; cdecl; export;
 	begin
-		result := SGSDK_Graphics.GameX(x);
+		result := SGSDK_Camera.GameX(x);
 	end;
 	
 	function GameY(y: Integer) : Single; cdecl; export;
 	begin
-		result := SGSDK_Graphics.GameY(y);
+		result := SGSDK_Camera.GameY(y);
 	end;
 	
 	function ToGameCoordinates(screenVector: Vector): Vector; cdecl; export;
 	begin
-		result := SGSDK_Graphics.ToGameCoordinates(screenVector);
+		result := SGSDK_Camera.ToGameCoordinates(screenVector);
 	end;
 	
 	procedure MoveVisualAreaWithVector(v: Vector); cdecl; export;
 	begin
-		SGSDK_Graphics.MoveVisualArea(v);
+		SGSDK_Camera.MoveVisualArea(v);
 	end;
 	
 	procedure MoveVisualArea(dx, dy: Single); cdecl; export;
 	begin
-		SGSDK_Graphics.MoveVisualArea(dx, dy);
+		SGSDK_Camera.MoveVisualArea(dx, dy);
 	end;
 	
 	procedure SetScreenOffset(x, y: Single); cdecl; export;
 	begin
-		SGSDK_Graphics.SetScreenOffset(x, y);
+		SGSDK_Camera.SetScreenOffset(x, y);
+	end;
+	
+	procedure FollowSprite(spr : Sprite; xOffset, yOffset : Integer); cdecl; export;
+	begin
+		SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
 	end;
 
 exports
@@ -1614,7 +1619,8 @@ exports
 	ToGameCoordinates,
 	MoveVisualAreaWithVector,
 	MoveVisualArea,
-	SetScreenOffset
+	SetScreenOffset,
+	FollowSprite
 	
 	;
 end.

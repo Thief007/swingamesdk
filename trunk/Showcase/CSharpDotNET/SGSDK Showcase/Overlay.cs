@@ -17,8 +17,8 @@ namespace SGSDK_Showcase
 
         public static void DrawOverlay(String title)
         {
-            Graphics.FillRectangle(Color.Black, 0, 0, 800, 50);
-            Text.DrawText(title, Color.White, _Font, (Core.ScreenWidth() / 2) - ((title.Length / 2) * 10), 20);
+            Graphics.FillRectangleOnScreen(Color.Black, 0, 0, 800, 50);
+            Text.DrawTextOnScreen(title, Color.White, _Font, (Core.ScreenWidth() / 2) - ((title.Length / 2) * 10), 20);
         }
     }
 }

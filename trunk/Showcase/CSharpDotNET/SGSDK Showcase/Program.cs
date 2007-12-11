@@ -40,14 +40,15 @@ namespace SGSDK_Showcase
                 VectorCollision.Run();
                 SoundInput.Run();
                 KeyInput.Run();
-                 */
+                 
                 TextRead.Run();
-               /*
+               
                 DrawRandomText.Run();
                  
                 DroppingBall.Run();
                  */
                 //MultiBitmapSprite.Run();
+                FollowExample.Run();
             }
 
 

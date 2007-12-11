@@ -102,6 +102,82 @@ interface
 				SoundResource
 		);
 		
+		/// Record: SpriteKind
+		///
+		/// It is used to determine how a sprite should act.
+		/// StaticSprite will not animate at all.
+		/// AnimArraySprite will animate using an array of bitmaps.
+		/// AnimMultiSprite will animate using a single bitmap with multiple
+		/// frames.
+		SpriteKind = (
+			StaticSprite,
+			AnimArraySprite,
+			AnimMultiSprite
+		);
+		
+		/// Record: SpriteEndingAction
+		///
+		/// It is used to determine what this sprite should do when it finishes
+		/// animating.
+		SpriteEndingAction = (
+			Loop,
+			ReverseLoop,
+			ReverseOnce,
+			Stop
+		);
+		
+		/// Record: Sprite
+		///
+		///	NOTE: Do not use SpriteData directly. Use Sprite.
+		///
+		///	- bitmaps: The array of bitmaps related to the Sprite
+		/// - spriteKind: Animation kind of this sprite
+		/// - framesPerCell: Array of Integer that defines the frames per cell
+		///	- xPod, yPos: The sprites location within the game world
+		/// - width, height: The width and height of this sprite (used for multi)
+		/// - cols, row: The number of cols and rows of this sprite (used for multi)
+		/// - frameCount: Current frame count of this sprite
+		///	- currentFrame: The current animation frame for the Sprite
+		///	- usePixelCollision: A flag indicating if pixel collision sould be
+		///											 used, if false bounding collision is used.
+		/// - endingAction: How this sprite acts when it finishes playing the animation
+		/// - hasEnded: True if this sprite has stopped animating
+		/// - reverse: True if this sprite's animation is reversing
+		SpriteData = record
+			bitmaps : Array of Bitmap;
+			spriteKind : SpriteKind;
+			framesPerCell : Array of Integer;
+			xPos : Single;
+			yPos : Single;
+			width : Integer;
+			height : Integer;
+			cols : Integer;
+			row : Integer;
+			frameCount : Integer;
+			currentFrame : Integer;
+			usePixelCollision: Boolean;
+			endingAction : SpriteEndingAction;
+			hasEnded : Boolean;
+			reverse : Boolean;
+			movement : Vector;
+			mass 	 : Single;
+		end;
+		
+		/// Type: Sprite
+		///
+		///	Sprites are used to represent Sprites drawn to the screen. Create a
+		///	sprite using the CreateSprite function, and free it when complete with
+		///	the FreeSprite function. The sprite contain a number of bitmaps used to
+		///	store animations, or the like. Sprite drawing operations will draw the
+		///	Sprite's current frame.
+		Sprite = ^SpriteData;
+		
+		/// Type: SpriteCollection
+		///
+		/// Array of sprites which can be passed to DrawSprites() to draw multiple
+		/// sprites at once.
+		//SpriteCollection = Array of Sprite;
+		
 	var
 		//Preset colours, do not change these values.
 		ColourBlue, ColorBlue, ColourGreen, ColorGreen,
