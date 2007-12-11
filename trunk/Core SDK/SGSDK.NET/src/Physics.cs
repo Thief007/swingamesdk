@@ -93,24 +93,7 @@ namespace SwinGame
     }
 
  
-    /// <summary>
-    /// PhysicsData Structure
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public class PhysicsData
-    {
-        public Vector Movement;
-        public Single Mass;
-        public Sprite Sprite;
-    }
 
-    [StructLayout(LayoutKind.Sequential)]
-    class PhysicsDataPass
-    {
-        public Vector Movement;
-        public Single Mass;
-        public IntPtr Sprite;
-    }
 
     /// <summary>
     /// SGSDK.NET's Physics Class

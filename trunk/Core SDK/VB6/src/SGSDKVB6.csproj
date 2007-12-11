@@ -28,18 +28,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SGSDK.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SGSDK.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\SGSDK.NET\lib\SGSDK.NET.dll</HintPath>
+      <Aliases>global</Aliases>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audio.cs" />
+    <Compile Include="Camera.cs" />
+    <Compile Include="Font.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Graphics.cs" />
+    <Compile Include="Input.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Physics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

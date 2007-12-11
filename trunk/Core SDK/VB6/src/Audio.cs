@@ -15,6 +15,10 @@ namespace SwinGameVB
     public class SoundEffect :ISoundEffect
     {
         private SwinGame.SoundEffect soundeffect;
+        internal void Free()
+        {
+            SwinGame.Audio.FreeSoundEffect(ref soundeffect);
+        }
         internal SwinGame.SoundEffect result
         {
             get
@@ -43,6 +47,10 @@ namespace SwinGameVB
     public class Music :IMusic
     {
         private SwinGame.Music music;
+        internal void Free()
+        {
+            SwinGame.Audio.FreeMusic(ref music);
+        }
         internal SwinGame.Music result
         {
             get
@@ -70,6 +78,7 @@ namespace SwinGameVB
 
         public void OpenAudio()
         {
+            
             SwinGame.Audio.OpenAudio();
         }
         public void CloseAudio()
@@ -82,10 +91,10 @@ namespace SwinGameVB
         /// </summary>
         /// <param name="effect">The Sound Effect to play</param>
         /// <param name="loops">The number of times to play it</param>
-        public void PlaySoundEffect(SoundEffect effect, int loops)
+        public string PlaySoundEffect_Loop(SoundEffect effect, int loops)
         {
-            SwinGame.SoundEffect temp = effect.result;
-            SwinGame.Audio.PlaySoundEffect(temp, loops);  
+            SwinGame.Audio.PlaySoundEffect(effect.result, loops);
+            return "";
         }
 
         /// <summary>
@@ -94,8 +103,7 @@ namespace SwinGameVB
         /// <param name="effect">The Sound Effect to play</param>
         public void PlaySoundEffect(SoundEffect effect)
         {
-            SwinGame.SoundEffect temp = effect.result;
-            SwinGame.Audio.PlaySoundEffect(temp);   
+            SwinGame.Audio.PlaySoundEffect(effect.result);   
         }
 
         /// <summary>
@@ -116,9 +124,7 @@ namespace SwinGameVB
         /// <param name="effect">The effect to be freed from memory</param>
         public void FreeSoundEffect(ref SoundEffect effect)
         {
-            SwinGame.SoundEffect temp = new SwinGame.SoundEffect();
-            temp = effect.result;
-            SwinGame.Audio.FreeSoundEffect(ref temp);
+            effect.Free();
         }
 
         /// <summary>
@@ -140,9 +146,7 @@ namespace SwinGameVB
         /// <param name="music">Music to be freed</param>
         public void FreeMusic(ref Music music)
         {
-            SwinGame.Music temp = new SwinGame.Music();
-            temp = music.result;
-            SwinGame.Audio.FreeMusic(ref temp);
+            music.Free();
         }
 
         /// <summary>
@@ -152,7 +156,7 @@ namespace SwinGameVB
         /// </summary>
         /// <param name="effect">The Music to play</param>
         /// <param name="loops">The number of times to play it</param>
-        public void PlayMusic(Music music, int loops)
+        public void PlayMusic_Loop(Music music, int loops)
         {
             SwinGame.Audio.PlayMusic(music.result, loops);  
         }
@@ -206,7 +210,7 @@ namespace SwinGameVB
     {
         void OpenAudio();
         void CloseAudio();
-        void PlaySoundEffect(SoundEffect effect, int loops);
+        string PlaySoundEffect_Loop(SoundEffect effect, int loops);
 
         void PlaySoundEffect(SoundEffect effect);
 
@@ -216,7 +220,7 @@ namespace SwinGameVB
 
         Music LoadMusic(String Path);
         void FreeMusic(ref Music music);
-        void PlayMusic(Music music, int loops);
+        void PlayMusic_Loop(Music music, int loops);
         void PlayMusic(Music music);
         bool IsSoundEffectPlaying(SoundEffect effect);
         bool IsMusicPlaying(Music music);
