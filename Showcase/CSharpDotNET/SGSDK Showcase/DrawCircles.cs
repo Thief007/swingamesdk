@@ -27,7 +27,7 @@ namespace SGSDK_Showcase
                 Core.Sleep(100);
 
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
 
                 if (Core.WindowCloseRequested())
                 {

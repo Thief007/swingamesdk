@@ -66,7 +66,7 @@ namespace SGSDK_Showcase
                 Graphics.DrawSprite(ball1.Sprite);
 
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())

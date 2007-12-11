@@ -44,7 +44,7 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Key Input Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen();
+                Core.RefreshScreen(60);
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())

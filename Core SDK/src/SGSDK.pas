@@ -52,9 +52,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Core.ToggleFullScreen();
 	end;
 	
-	procedure RefreshScreen(); cdecl; export;
+	procedure RefreshScreen(TargetFPS : Integer); cdecl; export;
 	begin
-		SGSDK_Core.RefreshScreen();
+		SGSDK_Core.RefreshScreen(TargetFPS);
 	end;
 	
 	procedure TakeScreenshot(basename: PChar); cdecl; export;
