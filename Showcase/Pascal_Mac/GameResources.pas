@@ -132,6 +132,7 @@ implementation
 		NewImage('Running', 'running.png');
 		NewImage('Explosion', 'Explosion.png');
 		NewImage('Ship', 'ship.png');
+		NewImage('Sea', 'sea.png');
 		//NewImage('NoImages', 'Ufo.png');		
 	end;
 

@@ -561,6 +561,37 @@ implementation
 		ProcessEvents();
 	end;
 	
+	procedure FollowSpriteExample();
+	var
+		Sea: Bitmap;
+		Ship: Sprite;
+	begin
+		Sea := GameImage('Sea');
+		Ship := CreateSprite(GameImage('Ship'), 3, 2, 40, 43);
+		Ship.xPos := 0;
+		Ship.yPos := 0;
+		repeat
+			if IsKeyPressed(VK_RIGHT) then
+				Ship.xPos := Ship.xPos + 4;
+			if IsKeyPressed(VK_DOWN) then
+				Ship.yPos := Ship.yPos + 4;
+			if IsKeyPressed(VK_UP) then
+				Ship.yPos := Ship.yPos - 4;
+			if IsKeyPressed(VK_LEFT) then
+				Ship.xPos := Ship.xPos - 4;
+			FollowSprite(Ship, 0, -150);
+			ProcessEvents();
+			ClearScreen();
+			DrawBitmap(Sea, 0, 0);
+			DrawSprite(Ship);
+			UpdateSprite(Ship);
+			RefreshScreen(60);
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+	
 	//The main procedure that controlls the game logic.
 	//
 	// SIDE EFFECTS:
@@ -605,6 +636,8 @@ implementation
 			DroppingBall();
 			if WindowCloseRequested() then break;
 			MultiBitmapSprite();
+			If WindowCloseRequested() then break;
+			FollowSpriteExample();
 		until WindowCloseRequested();
 		
 		FreeResources();
