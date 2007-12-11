@@ -16,6 +16,7 @@ namespace SwinGameVB
     /// given resource. Using these functions ensures that your resource
     /// paths are correct across platforms
     /// </summary>
+    [Guid("A664B544-AA13-496c-B27D-800DE8C22439")]
     [ComVisible(true)]
     public enum ResourceKind
     {
@@ -50,9 +51,21 @@ namespace SwinGameVB
     {
         private SwinGame.Bitmap bitmap = new SwinGame.Bitmap();
 
-        internal SwinGame.Bitmap result()
+        internal void Free()
         {
-            return bitmap;
+            SwinGame.Graphics.FreeBitmap(ref bitmap);
+        }
+
+        internal SwinGame.Bitmap result
+        {
+            get
+            {
+                return bitmap;
+            }
+            set
+            {
+                bitmap = value;
+            }
         }
 
 
@@ -116,9 +129,16 @@ namespace SwinGameVB
             vector.w = value;
         }
 
-        internal SwinGame.Vector result()
+        internal SwinGame.Vector result
         {
-            return vector;
+            get
+            {
+                return vector;
+            }
+            set
+            {
+                vector = value;
+            }
         }
     }
 
@@ -126,23 +146,23 @@ namespace SwinGameVB
     [ComVisible(true)]
     public interface ICore
     {
-        string OpenGraphicsWindow(String caption, int width, int height);
+        void OpenGraphicsWindow(String caption, int width, int height);
         bool WindowCloseRequested();
         void ProcessEvents();
         void SetIcon(String iconFilename);
         void ChangeScreenSize(int width, int height);
         void ToggleFullScreen();
-        void RefreshScreen();
+        void RefreshScreen(int TargetFPS);
         void TakeScreenshot(String basename);
         int ScreenWidth();
         int ScreenHeight();
-        Color GetColor(Byte red, Byte green, Byte blue, Byte alpha);
+        Color GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha);
         Color GetColor(Byte red, Byte green, Byte blue);
         int GetFramerate();
         int GetTicks();
         int Sleep(int time);
         String GetPathToResource(String filename, ResourceKind kind);
-        String GetPathToResource(String filename);
+        String GetPathToResource_NoKind(String filename);
         Single Cos(Single angle);
         Single Sin(Single angle);
         Single Tan(Single angle);
@@ -168,10 +188,9 @@ namespace SwinGameVB
             /// <param name="caption">Caption for the Window</param>
             /// <param name="width">Width of the Window</param>
             /// <param name="height">Height of the Window</param>
-            public string OpenGraphicsWindow(String caption, int width, int height)
-            {
+            public void OpenGraphicsWindow(String caption, int width, int height)
+            {   
                 SwinGame.Core.OpenGraphicsWindow(caption, width, height);
-                return caption;
             }
 
             /// <summary>
@@ -230,9 +249,9 @@ namespace SwinGameVB
             ///	anything to the screen. This will draw all drawing operations, as well
             ///	as the text being entered by the user.
             /// </summary>
-            public void RefreshScreen()
+        public void RefreshScreen(int TargetFPS)
             {
-                SwinGame.Core.RefreshScreen();
+                SwinGame.Core.RefreshScreen(TargetFPS);
             }
 
             /// <summary>
@@ -270,7 +289,7 @@ namespace SwinGameVB
             /// <param name="blue">The amount of blue (0 - 255)</param>
             /// <param name="alpha">The amount of alpha (0 - 255)</param>
             /// <returns>Color</returns>
-            public Color GetColor(Byte red, Byte green, Byte blue, Byte alpha)
+            public Color GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha)
             {
                 return SwinGame.Core.GetColor( red, green, blue, alpha);
             }
@@ -333,7 +352,7 @@ namespace SwinGameVB
                 return SwinGame.Core.GetPathToResource(filename, (SwinGame.ResourceKind)kind);
             }
 
-            public String GetPathToResource(String filename)
+            public String GetPathToResource_NoKind(String filename)
             {
                 return SwinGame.Core.GetPathToResource(filename);
             }
