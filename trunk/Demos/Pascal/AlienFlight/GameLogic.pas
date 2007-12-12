@@ -6,7 +6,7 @@ interface
 implementation
 uses
 	SysUtils,
-	SGSDK_Core, SGSDK_Graphics, SGSDK_Audio, SGSDK_KeyCodes, SGSDK_Input, SGSDK_Physics,
+	SGSDK_Core, SGSDK_Graphics, SGSDK_Audio, SGSDK_KeyCodes, SGSDK_Input, SGSDK_Physics, SGSDK_Camera,
 	GameResources,
 	AlienFlightLevelEditor,
 	AlienFlightModel,
@@ -16,6 +16,8 @@ procedure StartAtLevel(var data: GameDataType; level: Integer);
 begin
 	LoadLevel(level, data);
 	ResetLevel(data);
+
+	data.score := 0;
 
 	if data.currentLevel = data.topLevel then
 	begin
@@ -166,6 +168,127 @@ begin
 	if WasKeyTyped(VK_ESCAPE) then data.state := GameMenuState;
 end;
 
+procedure DoLevelSummary(var data: GameDataType);
+const
+	MENU_X = (SCREEN_WIDTH - 400) div 2;
+	MENU_Y = 55; //(SCREEN_HEIGHT - 350) div 2;
+	STARS_Y = MENU_Y + 175;
+	SHIELD_Y = STARS_Y + 40;
+	FUEL_Y = SHIELD_Y + 40;
+	PICKUP_Y = FUEL_Y + 40;
+	BLACKHOLE_Y = PICKUP_Y + 40;
+	LEVEL_Y = BLACKHOLE_Y + 40;
+	BONUS_Y = MENU_Y + 470;
+	DATA_X = MENU_X + 300;
+	
+	MAX_BONUS = 2000;
+var
+	stars, pickups, fuel, shield, progress: Single;
+	starCount, pickupCount, blackholes: Integer;
+	i, starUseCount, pickupUseCount, cycle, bonus, totalScore, temp: Integer;
+	
+	procedure DrawScores();
+	begin
+		DrawScreen(data, false, false);
+		DrawBitmapOnScreen(GameImage(LevelSummaryMenu), MENU_X, MENU_Y);
+		DrawTextIn(FormatFloat('0%', stars * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, STARS_Y, 100, 40);
+		DrawTextIn(FormatFloat('0%', shield * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, SHIELD_Y, 100, 40);
+		DrawTextIn(FormatFloat('0%', fuel * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, FUEL_Y, 100, 40);
+		DrawTextIn(FormatFloat('0%', pickups * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, PICKUP_Y, 100, 40);
+		DrawTextIn(FormatFloat('0%', progress * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, LEVEL_Y, 100, 40);
+		DrawTextIn(FormatFloat('0 ', blackholes), ColorWhite, GameFont(WelcomeFont), DATA_X, BLACKHOLE_Y, 100, 40);
+		DrawTextIn(FormatFloat('0', temp), ColorWhite, GameFont(WelcomeFont), DATA_X, BONUS_Y, 100, 40);		
+		RefreshScreen();
+	end;
+begin
+	starUseCount := 0; pickupUseCount := 0;
+	starCount := 0; pickupCount := 0; blackholes := 0;
+	stars := 0.0; pickups := 0.0; fuel := 0.0;
+	
+	for i := Low(data.sprites) to High(data.sprites) do
+	begin
+		case data.sprites[i].kind of
+			BlackHoleKind: 
+			begin
+				if data.sprites[i].sprite.xPos < data.ufoSprite.xPos then
+					blackholes += 1;
+			end;
+			StarKind:
+			 	begin
+					starCount += 1;
+					if data.sprites[i].active = false then
+						starUseCount += 1;
+				end;
+			BatteryKind, FuelPackKind:
+				begin
+					pickupCount += 1;
+					if data.sprites[i].active = false then
+						pickupUseCount += 1;
+				end;
+		end;
+	end;
+	
+	if starCount > 0 then
+		stars := starUseCount / starCount;
+	if pickupCount > 0 then
+		pickups := pickupUseCount / pickupCount;
+	
+	fuel := data.fuelLevel / MAX_FUEL;
+	shield := data.shieldStrength;
+	progress := XOffset() / MaxForegroundX();
+	
+	DrawScreen(data, false, false);
+	DrawBitmapOnScreen(GameImage(LevelSummaryMenu), MENU_X, MENU_Y);
+	RefreshScreen();
+	
+	for cycle := 0 to 30 do RefreshScreen();		
+	DrawTextIn(FormatFloat('0%', stars * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, STARS_Y, 100, 40);
+	
+	for cycle := 0 to 30 do RefreshScreen();		
+	DrawTextIn(FormatFloat('0%', shield * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, SHIELD_Y, 100, 40);
+
+	for cycle := 0 to 30 do RefreshScreen();		
+	DrawTextIn(FormatFloat('0%', fuel * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, FUEL_Y, 100, 40);
+
+	for cycle := 0 to 30 do RefreshScreen();		
+	DrawTextIn(FormatFloat('0%', pickups * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, PICKUP_Y, 100, 40);
+
+	for cycle := 0 to 30 do RefreshScreen();		
+	DrawTextIn(FormatFloat('0', blackholes), ColorWhite, GameFont(WelcomeFont), DATA_X, BLACKHOLE_Y, 100, 40);
+
+	for cycle := 0 to 30 do RefreshScreen();		
+	DrawTextIn(FormatFloat('0%', progress * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, LEVEL_Y, 100, 40);
+
+	for cycle := 0 to 60 do RefreshScreen();		
+
+	bonus := Round(MAX_BONUS * (stars + shield * progress + fuel * progress + pickups * progress + blackholes));
+
+	DrawTextIn(FormatFloat('0', bonus), ColorWhite, GameFont(WelcomeFont), DATA_X, BONUS_Y, 100, 40);
+	PlaySoundEffect(GameSound(CollectStarSound));
+
+	totalScore := data.score + bonus;
+	temp := bonus mod 10;
+	data.score += bonus mod 10;
+	
+	for cycle := 0 to bonus div 10 - 1 do
+	begin
+		ProcessEvents();
+		
+		temp += 10;
+		data.score += 10;
+		
+		DrawScores();
+		
+		if cycle mod 10 = 0 then PlaySoundEffect(GameSound(CollectStarSound));
+	end;
+	
+	temp := bonus;
+	data.score := totalScore;
+	DrawScores();
+			
+	for cycle := 0 to 90 do RefreshScreen();
+end;
+
 procedure DoWarpLevel(var data: GameDataType);
 const
 	STEPS = 5 * WARP_FRAMES;
@@ -195,9 +318,11 @@ begin
 		Sleep(15);
 	end;
 	
+	DoLevelSummary(data);
+	
 	ClearScreen(ColorBlack);
 	RefreshScreen();
-	Sleep(700);
+	Sleep(1500);
 	PlaySoundEffect(GameSound(SirenSound));
 	Sleep(2100);
 	//TODO: Player dies here?
