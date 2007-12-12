@@ -44,7 +44,7 @@ interface
 			PlaceHolderImg,
 			BlackHoleImg, BlackHoleEditImg,
 			NewGameMenu, ReturnToLevelMenu, ScoreboardMenu, QuitMenu,
-			TopScoresImg, EnterLevelMenu, EnterNameMenu	
+			TopScoresImg, EnterLevelMenu, EnterNameMenu, LevelSummaryMenu	
 		 );
 		 
 		 GameSounds = (
@@ -203,6 +203,7 @@ implementation
 		_Images[TopScoresImg] := LoadBitmap(GetPathToResource('TopScores.png', ImageResource));
 		_Images[EnterLevelMenu] := LoadBitmap(GetPathToResource('MenuEnterLevel.png', ImageResource));
 		_Images[EnterNameMenu] := LoadBitmap(GetPathToResource('MenuEnterName.png', ImageResource));
+		_Images[LevelSummaryMenu] := LoadBitmap(GetPathToResource('MenuLevelSummary.png', ImageResource));
 	 end;
 	 
 	 procedure FreeImages();

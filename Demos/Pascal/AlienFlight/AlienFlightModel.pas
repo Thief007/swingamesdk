@@ -1352,7 +1352,7 @@ implementation
 			end
 			else
 			begin
-				_Scoreboard[i] := _Scoreboard[i + 1];
+				_Scoreboard[i + 1] := _Scoreboard[i];
 			end;
 		end;
 	end;
