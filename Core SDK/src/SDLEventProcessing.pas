@@ -148,6 +148,13 @@ end;
 
 procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: Integer; theFont: PTTF_Font; x: Integer; y: Integer);
 begin
+	if _textSurface <> nil then
+	begin
+	 	//Free the old surface
+	 	SDL_FreeSurface( _textSurface );
+		_textSurface := nil;
+	end;
+	
 	_readingString := true;
 	_tempString := '';
 	_maxStringLen := maxLength;

@@ -433,7 +433,7 @@ implementation
 		average, highest, lowest : Single;
 	begin
 		//Draw framerates
-		DrawRectangle(ColourBlack, true, x, y, x + 200, y + 16);
+		DrawRectangleOnScreen(ColourBlack, true, x, y, x + 200, y + 16);
 
 		if renderFPSInfo.average = 0 then
 			average := 9999
@@ -454,7 +454,7 @@ implementation
 		Str(highest:4:1, temp2);
 		Str(lowest:4:1, temp3);
 
-		DrawText('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, 
+		DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, 
              textColour, font, x + 2, y + 2);
 	end;
 	
@@ -467,6 +467,11 @@ begin
                             string(TTF_GetError));
 	end;
 
+end;
+
+finalization
+begin
+	TTF_Quit();
 end;
 
 end.

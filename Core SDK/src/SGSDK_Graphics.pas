@@ -177,6 +177,7 @@ interface
 	function CurrentWidth(sprite: Sprite): Integer; inline;
 	
 	procedure UpdateSprite(spriteToDraw : Sprite);
+	procedure UpdateSpriteAnimation(spriteToDraw : Sprite);
 
 	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
 	
@@ -193,10 +194,10 @@ interface
 	
 	procedure FreeSpriteCollection(var toFree : SpriteCollection);}
 
+	procedure MoveSprite(spriteToMove: Sprite);
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
-
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
-
+		
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
 
 {	function IsSpriteOffscreen(theSprite : Sprite; vwPrtX, vwPrtY,
@@ -481,13 +482,13 @@ implementation
 		begin
 			if bitmapToFree.surface <> nil then
 			begin
-				WriteLn('Freeing SDL Surface');
+				//WriteLn('Freeing SDL Surface');
 				SDL_FreeSurface(bitmapToFree.surface);
 			end;
-			WriteLn('Nilling bitmap surface');
+			//WriteLn('Nilling bitmap surface');
 			bitmapToFree.surface := nil;
 
-			WriteLn('Diposing Bitmap');
+			//WriteLn('Diposing Bitmap');
 			Dispose(bitmapToFree);
 			bitmapToFree := nil;
 		end;
@@ -810,7 +811,7 @@ implementation
 	///
 	/// Side Effects:
 	/// - Process the frame position depending on the sprite's setting
-	procedure UpdateSprite(spriteToDraw : Sprite);
+	procedure UpdateSpriteAnimation(spriteToDraw : Sprite);
 	begin
 		if spriteToDraw.hasEnded then exit;
 			
@@ -865,6 +866,12 @@ implementation
 				spriteToDraw.height := spriteToDraw.bitmaps[spriteToDraw.currentFrame].height;
 			end;
 		end;
+	end;
+	
+	procedure UpdateSprite(spriteToDraw: Sprite);
+	begin
+		MoveSprite(spriteToDraw);
+		UpdateSpriteAnimation(spriteToDraw);
 	end;
 
 	/// Draws the sprite to the screen within a given view port.
@@ -935,7 +942,8 @@ implementation
 	begin
 		if spriteToDraw.spriteKind <> AnimMultiSprite then
 		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.xPos + xOffset, spriteToDraw.yPos + yOffset);
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], 
+				spriteToDraw.xPos + xOffset, spriteToDraw.yPos + yOffset);
 		end
 		else
 		begin
@@ -1073,6 +1081,12 @@ implementation
 	begin
 		spriteToMove.xPos := x;
 		spriteToMove.yPos := y;
+	end;
+	
+	procedure MoveSprite(spriteToMove: Sprite);
+	begin
+		spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
+		spriteToMove.yPos := spriteToMove.yPos + spriteToMove.movement.y;		
 	end;
 	
 	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially

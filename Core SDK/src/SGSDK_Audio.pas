@@ -81,21 +81,21 @@ implementation
 
 	procedure OpenAudio();
 	begin
-		WriteLn('Opening Mixer');
+		//WriteLn('Opening Mixer');
 		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
 		begin
 			WriteLn('Errorm loading mixer...');
 			WriteLn(string(Mix_GetError));
 			raise Exception.Create('Error openning audio device. ' + string(Mix_GetError));
 		end;
-		WriteLn('Mixer Open');
+		//WriteLn('Mixer Open');
 	end;
 
 	procedure CloseAudio();
 	begin
-		WriteLn('Closing Audio');
+		//WriteLn('Closing Audio');
 		Mix_CloseAudio();
-		WriteLn('Closed Audio');	
+		//WriteLn('Closed Audio');	
 	end;
 
 	/// Loads a sound effect from the file system. The sound effect can be in the

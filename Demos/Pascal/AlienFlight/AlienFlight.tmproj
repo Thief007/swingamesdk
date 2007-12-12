@@ -18,137 +18,46 @@
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
-	<integer>157</integer>
+	<integer>289</integer>
 	<key>metaData</key>
 	<dict>
-		<key>AlienFlightLevelEditor.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>57</integer>
-				<key>line</key>
-				<integer>703</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>704</integer>
-		</dict>
 		<key>AlienFlightModel.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>61</integer>
 				<key>line</key>
-				<integer>529</integer>
+				<integer>1390</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>169</integer>
-		</dict>
-		<key>AlienFlightView.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>10</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>1061</integer>
 		</dict>
 		<key>GameLogic.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>26</integer>
+				<integer>82</integer>
 				<key>line</key>
-				<integer>78</integer>
+				<integer>369</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>44</integer>
-		</dict>
-		<key>GameResources.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>56</integer>
-				<key>line</key>
-				<integer>93</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>76</integer>
-		</dict>
-		<key>lib/Pas/SwinGameAPI.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>1486</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>1463</integer>
-		</dict>
-		<key>lib/Pas/SwinGameMouse.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>18</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>12</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>24</integer>
-				<key>line</key>
-				<integer>26</integer>
-			</dict>
+			<integer>361</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>AlienFlightLevelEditor.pas</string>
-		<string>AlienFlightModel.pas</string>
 		<string>GameLogic.pas</string>
-		<string>lib/Pas/SwinGameAPI.pas</string>
-		<string>lib/Pas/SwinGameMouse.pas</string>
-		<string>GameResources.pas</string>
-		<string>AlienFlightView.pas</string>
+		<string>AlienFlightModel.pas</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{353, 4}, {1048, 874}}</string>
+	<string>{{8, 89}, {860, 722}}</string>
 </dict>
 </plist>

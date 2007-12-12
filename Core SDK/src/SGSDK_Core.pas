@@ -223,8 +223,9 @@ interface
 	
 	procedure ChangeScreenSize(width, height: Integer);
 	procedure ToggleFullScreen();
-	
-	procedure RefreshScreen(TargetFPS : Integer);
+
+	procedure RefreshScreen(); inline; overload;	
+	procedure RefreshScreen(TargetFPS : Integer); overload;
 	
 	procedure TakeScreenshot(basename: String);
 	
@@ -531,6 +532,10 @@ implementation
 		OpenGraphicsWindow(caption, 800,600);
 	end;
 	
+	procedure RefreshScreen(); inline; overload;
+	begin
+		RefreshScreen(65);
+	end;
 	
 	/// Draws the current drawing to the screen. This must be called to display
 	///	anything to the screen. This will draw all drawing operations, as well
@@ -538,7 +543,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- The current drawing is shown on the screen.
-	procedure RefreshScreen(TargetFPS : Integer);
+	procedure RefreshScreen(TargetFPS : Integer); overload;
 	var
 		nowTime: UInt32;
 		difference : UInt32;
@@ -780,7 +785,7 @@ end;
 		
 initialization
 begin
-	WriteLn('InitSDL');
+	//WriteLn('InitSDL');
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
 		WriteLn('Errorm loading sdl...');
@@ -807,7 +812,7 @@ end;
 
 finalization
 begin
-	WriteLn('Closing Down');
+	//WriteLn('Closing Down');
 	if sdlManager <> nil then
 	begin
 		sdlManager.Free();
@@ -826,12 +831,12 @@ begin
 		scr := nil;
 	end;
 	
-	WriteLn('Closing TTF');
+	//WriteLn('Closing TTF');
 	//TTF_Quit();
-	WriteLn('Closed TTF');
+	//WriteLn('Closed TTF');
 	
-	WriteLn('Quitting SDL');
+	//WriteLn('Quitting SDL');
 	SDL_Quit();
-	WriteLn('Quit');
+	//WriteLn('Quit');
 end;
 end.

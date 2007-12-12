@@ -47,6 +47,8 @@ else
 	
 	echo "Copying to FPC"
 	
+	mkdir -p "$MacFPCDir"
+	
 	cp "$Output"/*.ppu "$MacFPCDir"
 	cp "$Output"/*.o "$MacFPCDir"
 	cp "$LibDir"/*.a "$MacFPCDir"

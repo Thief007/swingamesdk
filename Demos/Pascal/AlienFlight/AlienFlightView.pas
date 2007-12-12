@@ -3,14 +3,15 @@ unit AlienFlightView;
 interface
 	uses 
 		SysUtils, 
-		SGSDK_Core, SGSDK_KeyCodes, SGSDK_Graphics, SGSDK_Font, SGSDK_Physics, SGSDK_Input,
-		AlienFlightModel, GameResources;
+		SGSDK_Core, SGSDK_KeyCodes, SGSDK_Graphics, SGSDK_Font, SGSDK_Physics, SGSDK_Input, SGSDK_Camera,
+		AlienFlightModel, AlienFlightLevelEditor, GameResources;	
 	
 	procedure DrawScreen(const data: GameDataType); overload;
 	procedure DrawScreen(const data: GameDataType; showIDs: Boolean); overload;
 	procedure DrawScreen(const data: GameDataType; showIDs, refresh: Boolean); overload;
 
 	procedure DrawBackground(const data: GameDataType);
+	procedure DrawBackScene(const data: GameDataType; showIDs: Boolean);
 	procedure DrawUfo(const data: GameDataType);
 	procedure DrawHud(const data: GameDataType);
 
@@ -21,13 +22,40 @@ interface
 	procedure DrawWatchOutForHelp();
 	procedure DrawThatsYou();
 	procedure DrawReadyIn(count: String);
-
+	procedure DrawMessage(message: String);
+	//procedure DrawOutline(const data: GameDataType; const sprt: AlienFlightSprite);
+	procedure DrawTextIn(toDraw: String; color: Color; txtFont: Font; x, y, w, h: Integer);
+		
+	procedure DrawEditorStatus(const status: EditorStatusType);
 		
 implementation
+	procedure DrawOutline(const status: EditorStatusType; const sprt: AlienFlightSprite);
+	var
+		x : Single;
+		c: Color;
+	begin
+		c := ColorWhite;
+		
+		if (status.selectedIdx < Length(status.selection)) and (@sprt = status.selection[status.selectedIdx]) then c := ColorYellow;
+		
+		if _Templates[sprt.kind].foreground then
+			DrawRectangle(c, sprt.sprite.xPos, sprt.sprite.yPos, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite))
+		else
+		begin
+			x := Round(sprt.sprite.xPos - CalculateBackgroundX(XOffset()) + XOffset());
+			DrawRectangle(c, x, sprt.sprite.yPos, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite));
+		end;
+	end;
+
+	procedure DrawMessage(message: String);
+	begin		
+		DrawTextLinesOnScreen(Message, ColorWhite, ColorBlack, GameFont(WelcomeFont), AlignCenter, 100, 100, 600, 400);
+	end;
+
 
 	procedure DrawWelcome();
 	const
-		Message = 'Welcome to AlienFlight' + EOL + ' ' + EOL +
+		MESSAGE = 'Welcome to AlienFlight' + EOL + ' ' + EOL +
 					' ----- ' + EOL + ' ' + EOL +
 				  'A SwinGame Demo' + EOL + 
 				  ' ' + EOL + ' ----- ' + EOL + ' ' + EOL +
@@ -35,7 +63,8 @@ implementation
 				  ' ' + EOL +
 				 'Music Arranged by Pip Cain';
 	begin
-		DrawTextLines(Message, ColorWhite, ColorBlack, GameFont(WelcomeFont), AlignCenter, 100, 100, 600, 400);
+		DrawMessage(MESSAGE);
+		//DrawTextLines(Message, ColorWhite, ColorBlack, GameFont(WelcomeFont), AlignCenter, 100, 100, 600, 400);
 	end;
 
 	procedure DrawHUDHelp();
@@ -126,114 +155,120 @@ implementation
 		else result := 0;
 	end;
 	
-	procedure DrawObstacleData(sprite: Sprite; name: String; move: Vector; windowX, windowY: Integer);
+	procedure DrawObstacleData(sprite: Sprite; idx: Integer; move: Vector);
 	var
 		temp: Vector;
-		sx, sy, cx, cy: Integer;
+		sx, sy, cx, cy: Single;
 		mag: Single;
 		change: Matrix2D;
 	begin
-		sx := Round(sprite.xPos - windowX);
-		sy := Round(sprite.yPos - windowY);
+		sx := sprite.xPos;
+		sy := sprite.yPos;
 		cx := sx + CurrentWidth(sprite) div 2;
 		cy := sy + CurrentHeight(sprite) div 2;
 		
-		DrawText(name, ColorGreen, GameFont(Courier), sx, sy);
+		DrawText(IntToStr(idx), ColorGreen, GameFont(Courier), sx, sy);
 
-		mag := GetVectorMagnitude(move);
+		mag := Magnitude(move);
 		
 		if mag > 0 then
 		begin
 			change := ScaleMatrix(50);
 			temp := Multiply(change, move);
 		
-			DrawLine(ColorRed, cx, cy, Round(cx + temp.x), Round(cy + temp.y));
+			DrawLine(ColorRed, cx, cy, cx + temp.x, cy + temp.y);
 		end;
 	end;
 
 	procedure DrawBackground(const data: GameDataType);
 	var
 		bgx, i: Integer;
-		wy: Integer;
+		scrX: Integer;
 	begin
-		wy := Round(data.windowY);
-		
-		bgx := Round(CalculateBackgroundX(data.windowX));
+		bgx := Round(CalculateBackgroundX(XOffset()));
 
-		DrawBitmap(GameImage(Background), 0 - bgx, 0);
+		DrawBitmapOnScreen(GameImage(Background), 0 - bgx, 0);
+	
 		if IsKeyPressed(VK_RSHIFT) then DrawFramerate(2, SCREEN_HEIGHT - 20, GameFont(Courier));		
 
-		for i := Low(data.MidBacks) to High(data.MidBacks) do
+		for i := Low(data.sprites) to High(data.sprites) do
 		begin
-			DrawSprite(data.MidBacks[i], bgx, wy, SCREEN_WIDTH, SCREEN_HEIGHT);
-		end;
-	end;
-
-	procedure DrawWarpHoles(const data: GameDataType; showIds: Boolean);
-	var
-		i: Integer;
-	begin
-		for i := Low(data.WarpHoles) to High(data.WarpHoles) do
-		begin
-			DrawSprite(data.WarpHoles[i].Sprite, Round(data.windowX), Round(data.windowY), SCREEN_WIDTH, SCREEN_HEIGHT);
-			if showIDs then
+			if _Templates[data.sprites[i].kind].foreground = false then
 			begin
-				DrawObstacleData(data.WarpHoles[i].Sprite, IntToStr(data.WarpHoles[i].Level), 
-					CreateVector(0, 0), Round(data.windowX), Round(data.windowY));
+				scrX := Round(data.sprites[i].sprite.xPos - CalculateBackgroundX(XOffset()) + XOffset());
+				
+				DrawBitmap(data.sprites[i].sprite.bitmaps[0], scrX, Round(data.sprites[i].sprite.yPos));
+				//DrawSprite(data.sprites[i].sprite, -bgx, -wy);
 			end;
 		end;
 	end;
 
 	procedure DrawUfo(const data: GameDataType);
 	var
-		x, y: Integer;
+		x, y: Single;
 	begin
-		x := Round(data.UfoSprite.xPos);
-		y := Round(data.UfoSprite.yPos);
-		DrawBitmap(data.ShieldBmp, x - Round(data.windowX) - SHIELD_OFFSET, y - Round(data.windowY) - SHIELD_OFFSET);
-		DrawSprite(data.UfoSprite, Round(data.windowX), Round(data.windowY), SCREEN_WIDTH, SCREEN_HEIGHT);
+		x := data.UfoSprite.xPos;
+		y := data.UfoSprite.yPos;
+		DrawBitmap(data.ShieldBmp, x - SHIELD_OFFSET, y - SHIELD_OFFSET);
+		DrawSprite(data.UfoSprite);
 	end;
 	
-	procedure DrawAnimation(const anim: Animation; wx, wy: Integer);
-	var
-		sx, sy: Integer;
+	procedure DrawAlienFlightSprite(const sprt: AlienFlightSprite);
 	begin
-		with anim do
+		//WriteLn('DrawAlienFlightSprite');
+		if sprt.active then
 		begin
-			if used then
-			begin
-				sx := (currentCell mod cols) * partWidth;
-				sy := (currentCell - (currentCell mod cols)) div cols * partHeight;
-				DrawBitmapPart(image, sx, sy, partWidth, partHeight, 
-					Round(x) - wx, Round(y) - wy);
-			end;
-		end;		
+			//WriteLn('- ', HexStr(sprt.sprite), ' ', sprt.sprite.xPos:4:2, ',', sprt.sprite.yPos:4:2, ' : ', Length(sprt.sprite.bitmaps), ' ', HexStr(sprt.sprite.bitmaps[0]));
+			
+			DrawSprite(sprt.sprite);
+			//WriteLn(' - Drawn');
+			{sx := (currentCell mod cols) * partWidth;
+			sy := (currentCell - (currentCell mod cols)) div cols * partHeight;
+			DrawBitmapPart(image, sx, sy, partWidth, partHeight, x, y);}
+		end;
+
+		//WriteLn(' - End DrawAlienFlightSprite');
 	end;
 	
 	procedure DrawAnimations(const data: GameDataType);
 	var
-		i, wx, wy: Integer;
+		i: Integer;
 	begin
-		wx := Round(data.windowX);
-		wy := Round(data.windowY);
-		
-		for i := 0 to High(data.temporaryAnimations) do
+		for i := 0 to High(data.animations) do
 		begin
-			DrawAnimation(data.temporaryAnimations[i], wx, wy);
-		end;
-
-		for i := 0 to High(data.levelAnimations) do
-		begin
-			DrawAnimation(data.levelAnimations[i], wx, wy);
+			if data.animations[i] <> nil then
+			begin
+				DrawSprite(data.animations[i]);
+			end;
 		end;
 	end;
 
+	procedure DrawSprites(const data: GameDataType; showIds: Boolean);
+	var
+		i: Integer;
+	begin
+		//WriteLn('Drawing Sprites');
+		for i := 0 to High(data.sprites) do
+		begin
+			if _Templates[data.sprites[i].kind].foreground then
+			begin
+				DrawAlienFlightSprite(data.sprites[i]);
+			
+				if showIDs then
+				begin
+					DrawObstacleData(data.sprites[i].sprite, i, data.sprites[i].sprite.movement);
+				end;
+			end;
+		end;
+		//WriteLn('Ended Drawing');
+	end;
+	
 	procedure DrawLevel(level: Integer);
 	const
 		LEVEL_X = 490;
 		LEVEL_Y = 60;
 	begin
-		DrawText( IntToStr(level), ColorWhite, GameFont(Courier), LEVEL_X, LEVEL_Y);
+		DrawTextOnScreen( IntToStr(level), ColorWhite, GameFont(Courier), LEVEL_X, LEVEL_Y);
 	end;
 
 	procedure DrawScore(score: Integer);
@@ -241,7 +276,8 @@ implementation
 		SCORE_X = 350;
 		SCORE_Y = 60;
 	begin
-		DrawText( IntToStr(score), ColorWhite, GameFont(Courier), SCORE_X, SCORE_Y);
+		//TODO: Change this to DrawTextOnScreen
+		DrawTextOnScreen( IntToStr(score), ColorWhite, GameFont(Courier), SCORE_X, SCORE_Y);
 	end;
 	
 	procedure DrawHud(const data: GameDataType);
@@ -252,44 +288,39 @@ implementation
 	var
 		width, srcX, dstX: Integer;
 	begin 
-		DrawBitmap(GameImage(HUDImg), 0, 0);
+		DrawBitmapOnScreen(GameImage(HUDImg), 0, 0);
 		
 		width := Round(BAR_W * data.shieldStrength);
-		DrawBitmapPart(GameImage(ShieldStrengthImg), 0, 0, width, BAR_H, SHIELD_X, SHIELD_Y);
+		DrawBitmapPartOnScreen(GameImage(ShieldStrengthImg), 0, 0, width, BAR_H, SHIELD_X, SHIELD_Y);
 		
 		width := Round(BAR_W * data.fuelLevel / MAX_FUEL);
 		srcX := BAR_W - width;
 		dstX := FUEL_X + srcX;
-		DrawBitmapPart(GameImage(FuelLevelImg), srcX, 0, width, BAR_H, dstX, SHIELD_Y);
+		DrawBitmapPartOnScreen(GameImage(FuelLevelImg), srcX, 0, width, BAR_H, dstX, SHIELD_Y);
 		
 		DrawScore(data.score);
 		DrawLevel(data.currentLevel);
 	end;
-
-	procedure DrawBackScene(const data: GameDataType; showIDs: Boolean); overload;
-	var
-		i: Integer;
-		wx, wy: Integer;
+	
+	function CurrentEditorImage(const status: EditorStatusType): Bitmap;
 	begin
-		wx := Round(data.windowX);
-		wy := Round(data.windowY);
+		result := _Templates[status.currentSpriteKind].editorImage;
+	end;
+	
+	procedure DrawTextIn(toDraw: String; color: Color; txtFont: Font; x, y, w, h: Integer);
+	var
+		txtH, txtW: Integer;
+	begin
+		txtH := TextHeight(toDraw, txtFont);
+		txtW := TextWidth(toDraw, txtFont);
 		
+		DrawTextOnScreen(toDraw, color, txtFont, x + (w - txtW) div 2, y + (h - txtH) div 2);
+	end;
+
+	procedure DrawBackScene(const data: GameDataType; showIDs: Boolean);
+	begin
 		DrawBackground(data);
-		DrawWarpHoles(data, showIDs);
-		
-		//Draw Planets
-		for i := Low(data.Planets) to High(data.Planets) do
-		begin
-			if data.Planets[i].Alive then
-			begin
-				DrawSprite(data.Planets[i].Sprite, wx, wy, SCREEN_WIDTH, SCREEN_HEIGHT);
-				if showIDs then
-				begin
-					DrawObstacleData(data.Planets[i].Sprite, data.Planets[i].Name, 
-						data.Planets[i].Movement, wx, wy);
-				end;
-			end;
-		end;		
+		DrawSprites(data, showIDs);
 	end;
 	
 	procedure DrawOverlay(const data: GameDataType);
@@ -304,19 +335,19 @@ implementation
 		i: Integer;
 		wx, wy, maxX: Integer;
 	begin
-		wx := Round(data.windowX);
-		wy := Round(data.windowY);
+		wx := Round(XOffset());
+		wy := Round(YOffset());
 		maxX := Round(MaxForegroundX());
 		
-		DrawText( IntToStr(wx) + ',' + IntToStr(wy), ColorWhite, GameFont(Courier), 100, 60);
+		DrawTextOnScreen( IntToStr(wx) + ',' + IntToStr(wy), ColorWhite, GameFont(Courier), 100, 60);
 		
 		if wx < 0 then
 		begin
-			DrawVerticalLine(ColorWhite, 0 - wx, 0, SCREEN_HEIGHT);
+			DrawVerticalLineOnScreen(ColorWhite, 0 - wx, 0, SCREEN_HEIGHT);
 		end
 		else if wx > maxX - SCREEN_WIDTH then
 		begin
-			DrawVerticalLine(ColorWhite, maxX - wx, 0, SCREEN_HEIGHT);
+			DrawVerticalLineOnScreen(ColorWhite, maxX - wx, 0, SCREEN_HEIGHT);
 		end;
 
 		if wy <> 0 then
@@ -329,7 +360,7 @@ implementation
 			begin
 				i := SCREEN_HEIGHT - wy;
 			end;
-			DrawHorizontalLine(ColorWhite, i, 0, SCREEN_WIDTH);
+			DrawHorizontalLineOnScreen(ColorWhite, i, 0, SCREEN_WIDTH);
 		end;
 	end;
 	
@@ -339,15 +370,141 @@ implementation
 		
 		//Draw the Player
 		DrawUfo(data);
-
-		if data.state = EditorState then
-		begin
-				DrawEditorGuides(data);
-		end;
-		
 		DrawOverlay(data);
 		
 		if refresh then RefreshScreen();
 	end;
+	
+	procedure DrawAddingMode(const status: EditorStatusType);
+	const
+		COLS = EDITOR_HUD_WIDTH div EDITOR_ICON_WIDTH;
+	var
+		i: AlienFlightSpriteKind;
+		x, y: Integer;
+	begin
+		for i := Low(AlienFlightSpriteKind) to High(AlienFlightSpriteKind) do
+		begin
+			x := (Integer(i) mod COLS) * EDITOR_ICON_WIDTH + EDITOR_DATA_BORDER;
+			y := ((Integer(i) - (Integer(i) mod COLS)) div COLS) * EDITOR_ICON_HEIGHT + SELECTION_Y;
+			
+			DrawBitmapOnScreen(_Templates[i].editorImage, x, y);
+			
+			if i = status.currentSpriteKind then
+				DrawRectangleOnScreen(ColorWhite, x, y, EDITOR_ICON_WIDTH, EDITOR_ICON_HEIGHT);
+		end;
+	end;
+	
+	procedure DrawValueFor(const status: EditorStatusType; sprt: AlienFlightSpritePtr);
+	var
+		message: String;
+	begin
+		message := SelectedName(status, sprt) + '  ' + FormatFloat('0.00', SelectedValue(status, sprt));
+		DrawTextOnScreen(message, ColorWhite, GameFont(Courier), VALUE_X, VALUE_TOP);
+	end;
+	
+	procedure DrawEditorSelection(const status: EditorStatusType);
+	const
+		COLS = EDITOR_HUD_WIDTH div EDITOR_ICON_WIDTH;
+	var
+		i: Integer;
+		sk: AlienFlightSpriteKind;
+		x, y: Integer;
+		
+		various, hasValue: Boolean;
+		value: Single;
+	 	kind: AlienFlightSpriteKind;
+	begin
+		various := false;
+		
+		//if has selected something
+		if Length(status.selection) > 0 then
+		begin
+			//Get kind of first thing
+			kind := status.selection[0].kind;
+
+			hasValue := HasSelectedValue(status, status.selection[0]);
+			value := SelectedValue(status, status.selection[0]);
+			
+			for i := Low(status.selection) to High(status.selection) do
+			begin				
+				sk := status.selection[i].kind;
+				
+				//Check if sprites have the same value
+				if (not various) and (sk <> kind) then various := true;
+				if (hasValue) and (not various) and (value <> SelectedValue(status, status.selection[i])) then various := true;
+					
+				x := (i mod COLS) * EDITOR_ICON_WIDTH + EDITOR_DATA_BORDER;
+				y := ((i - (i mod COLS)) div COLS) * EDITOR_ICON_HEIGHT + SELECTION_Y;
+
+				DrawBitmapOnScreen(_Templates[sk].editorImage, x, y);
+
+				if (status.selectedIdx < Length(status.selection)) 
+					and (i = status.selectedIdx) then DrawRectangleOnScreen(ColorYellow, x, y, 32, 32);
+
+
+				DrawOutline(status, status.selection[i]^);
+				DrawTextOnScreen(IntToStr(i), ColorRed, GameFont(Courier), x, y);
+				DrawText(IntToStr(i), ColorRed, GameFont(Courier), status.selection[i]^.sprite.xPos + status.selection[i]^.sprite.width, status.selection[i]^.sprite.yPos);
+			end;
+			
+			if various then
+			begin
+				DrawTextOnScreen('Various...', ColorWhite, GameFont(Courier), VALUE_X, VALUE_TOP);
+			end
+			else //all the same with the same value
+			begin
+				DrawValueFor(status, status.selection[0]);
+			end;			
+		end;
+	end;
+	
+	procedure DrawEditorStatus(const status: EditorStatusType);
+	var
+		data: GameDataType;
+		bmp: Bitmap;
+	begin
+		data := status.dataPtr^;
+		
+		DrawBackScene(data, true);
+		DrawUfo(data);
+		
+		DrawEditorGuides(data);
+				
+		//DrawBitmapOnScreen(GameImage(EditorStatus), EDITOR_STATUS_LEFT, EDITOR_STATUS_TOP);
+		case status.mode of
+			AddingMode: bmp := GameImage(EditorHUDAdding);
+			EditingMode: bmp := GameImage(EditorHUDEditing);
+			DeletingMode: bmp := GameImage(EditorHUDDeleting);
+			else raise Exception.Create('Unknow editor mode');
+		end;
+		
+		DrawBitmapOnScreen(bmp, EDITOR_HUD_LEFT, EDITOR_HUD_TOP);
+		
+		DrawTextIn(LevelFilename(status.dataPtr^.currentLevel), ColorWhite, GameFont(Courier), EDITOR_HUD_WIDTH, LEVEL_Y, SCREEN_WIDTH - EDITOR_HUD_WIDTH, EDITOR_HUD_DATA_HEIGHT);
+
+		case status.mode of
+			AddingMode: DrawAddingMode(status);
+			EditingMode: DrawEditorSelection(status);
+			DeletingMode: DrawEditorSelection(status);
+		end;
+
+		DrawOverlay(data);
+
+		RefreshScreen();
+				
+{		if status.currentObstacle <> nil then
+		begin
+			DrawTextIn(status.currentObstacle^.Name, 
+				ColorBlack, GameFont(Courier), BOX_X, ELEM_NAME_Y, BOX_W, BOX_H);
+			DrawTextIn(Format('%10.2f', [ status.currentObstacle^.Mass ]), 
+				ColorBlack, GameFont(Courier), BOX_X, MASS_Y, BOX_W, BOX_H);
+		end;
+
+		DrawCurrentSprite(status.currentSprite);
+}		//TODO: DrawOutline(status.dataPtr^, status.currentObstacle.sprite);
+
+{		RefreshScreen();}
+	end;
+
 	
 end.
