@@ -13,29 +13,38 @@ interface
 		
 		GameImages = (
 			 UFO,
-			 Earth,
-			 Saturn,
-			 Uranus,
-			 Asteroid,
-			 SmallAsteroid,
+			 EarthImg, EarthEditImg,
+			 SaturnImg, SaturnEditImg,
+			 UranusImg, UranusEditImg,
+			 AsteroidImg, AsteroidEditImg,
+			 SmallAsteroidImg, SmallAsteroidEditImg, 
 			 Background,
 			 EditorStatus,
 			 MidBack_Galaxy1,
 			 MidBack_Galaxy2,
 			 MidBack_Galaxy3,
 			 MidBack_Galaxy4,
+			 MidBack_Galaxy1_Edit,
+			 MidBack_Galaxy2_Edit,
+			 MidBack_Galaxy3_Edit,
+			 MidBack_Galaxy4_Edit,
 			 WarpHoleImg,
-			 ExplosionImg,
+			WarpHoleEditImg,
+			ExplosionImg,
 			StarImg,
-			StarImgEdit,
+			StarEditImg,
 			FuelPackImg,
-			FuelPackImgEdit,
+			FuelPackEditImg,
 			WarpImg,
 			HUDImg,
 			ShieldStrengthImg,
 			FuelLevelImg,
-			BatteryImg,
-			BatteryEditImg
+			BatteryImg, BatteryEditImg,
+			EditorHUDAdding, EditorHUDEditing, EditorHUDDeleting,
+			PlaceHolderImg,
+			BlackHoleImg, BlackHoleEditImg,
+			NewGameMenu, ReturnToLevelMenu, ScoreboardMenu, QuitMenu,
+			TopScoresImg, EnterLevelMenu, EnterNameMenu	
 		 );
 		 
 		 GameSounds = (
@@ -145,29 +154,55 @@ implementation
 	 procedure LoadImages();
 	 begin
 		 _Images[UFO] := LoadBitmap(GetPathToResource('Ufo.png', ImageResource));		
-		 _Images[Earth] := LoadBitmap(GetPathToResource('Earth.png', ImageResource));
-		 _Images[Saturn] := LoadBitmap(GetPathToResource('Saturn.png', ImageResource));
-		 _Images[Uranus] := LoadBitmap(GetPathToResource('Uranus.png', ImageResource));
-		 _Images[Asteroid] := LoadBitmap(GetPathToResource('Asteroid.png', ImageResource));
-		 _Images[SmallAsteroid] := LoadBitmap(GetPathToResource('Asteroid1.png', ImageResource));
+		 _Images[EarthImg] := LoadBitmap(GetPathToResource('Earth.png', ImageResource));
+		 _Images[EarthEditImg] := LoadBitmap(GetPathToResource('EarthEdit.png', ImageResource));
+		 _Images[SaturnImg] := LoadBitmap(GetPathToResource('Saturn.png', ImageResource));
+		 _Images[SaturnEditImg] := LoadBitmap(GetPathToResource('SaturnEdit.png', ImageResource));
+		 _Images[UranusImg] := LoadBitmap(GetPathToResource('Uranus.png', ImageResource));
+		 _Images[UranusEditImg] := LoadBitmap(GetPathToResource('UranusEdit.png', ImageResource));
+		 _Images[AsteroidImg] := LoadBitmap(GetPathToResource('Asteroid.png', ImageResource));
+		 _Images[AsteroidEditImg] := LoadBitmap(GetPathToResource('AsteroidEdit.png', ImageResource));
+		 _Images[SmallAsteroidImg] := LoadBitmap(GetPathToResource('Asteroid1.png', ImageResource));
+		 _Images[SmallAsteroidEditImg] := LoadBitmap(GetPathToResource('Asteroid1Edit.png', ImageResource));
 		 _Images[Background] := LoadBitmap(GetPathToResource('Background.png', ImageResource));
 		 _Images[EditorStatus] := LoadBitmap(GetPathToResource('EditorStatus.png', ImageResource));
 		 _Images[MidBack_Galaxy1] := LoadBitmap(GetPathToResource('MidBack_Galaxy1.png', ImageResource));
 		 _Images[MidBack_Galaxy2] := LoadBitmap(GetPathToResource('MidBack_Galaxy2.png', ImageResource));
 		 _Images[MidBack_Galaxy3] := LoadBitmap(GetPathToResource('MidBack_Galaxy3.png', ImageResource));
 		 _Images[MidBack_Galaxy4] := LoadBitmap(GetPathToResource('MidBack_Galaxy4.png', ImageResource));
+		 _Images[MidBack_Galaxy1_Edit] := LoadBitmap(GetPathToResource('MidBack_Galaxy1_Edit.png', ImageResource));
+		 _Images[MidBack_Galaxy2_Edit] := LoadBitmap(GetPathToResource('MidBack_Galaxy2_Edit.png', ImageResource));
+		 _Images[MidBack_Galaxy3_Edit] := LoadBitmap(GetPathToResource('MidBack_Galaxy3_Edit.png', ImageResource));
+		 _Images[MidBack_Galaxy4_Edit] := LoadBitmap(GetPathToResource('MidBack_Galaxy4_Edit.png', ImageResource));
+
 		 _Images[WarpHoleImg] := LoadBitmap(GetPathToResource('WarpHole.png', ImageResource));
+		 _Images[WarpHoleEditImg] := LoadBitmap(GetPathToResource('WarpHoleEditor.png', ImageResource));
 		 _Images[ExplosionImg] := LoadBitmap(GetPathToResource('Explosion.png', ImageResource));
 		 _Images[StarImg] := LoadBitmap(GetPathToResource('Star.png', ImageResource));
-		 _Images[StarImgEdit] := LoadBitmap(GetPathToResource('StarEdit.png', ImageResource));
+		 _Images[StarEditImg] := LoadBitmap(GetPathToResource('StarEdit.png', ImageResource));
 		 _Images[FuelPackImg] := LoadBitmap(GetPathToResource('FuelPack.png', ImageResource));
-		 _Images[FuelPackImgEdit] := LoadBitmap(GetPathToResource('FuelPackEdit.png', ImageResource));
+		 _Images[FuelPackEditImg] := LoadBitmap(GetPathToResource('FuelPackEdit.png', ImageResource));
 		 _Images[WarpImg] := LoadBitmap(GetPathToResource('Warp.png', ImageResource));
 		 _Images[HUDImg] := LoadBitmap(GetPathToResource('HUD.png', ImageResource));
 		 _Images[ShieldStrengthImg] := LoadBitmap(GetPathToResource('Shield.png', ImageResource));
 		 _Images[FuelLevelImg] := LoadBitmap(GetPathToResource('Fuel.png', ImageResource));		
 		 _Images[BatteryImg] := LoadBitmap(GetPathToResource('Battery.png', ImageResource));		
 		 _Images[BatteryEditImg] := LoadBitmap(GetPathToResource('BatteryEdit.png', ImageResource));		
+		 _Images[EditorHUDAdding] := LoadBitmap(GetPathToResource('EditorHUDAdding.png', ImageResource));
+		 _Images[EditorHUDEditing] := LoadBitmap(GetPathToResource('EditorHUDEditing.png', ImageResource));
+		 _Images[EditorHUDDeleting] := LoadBitmap(GetPathToResource('EditorHUDDeleting.png', ImageResource));
+		 _Images[PlaceHolderImg] := LoadBitmap(GetPathToResource('PlaceHolderEdit.png', ImageResource));
+		 _Images[BlackHoleImg] := LoadBitmap(GetPathToResource('BlackHole.png', ImageResource));
+		 _Images[BlackHoleEditImg] := LoadBitmap(GetPathToResource('BlackHoleEdit.png', ImageResource));
+		
+		_Images[NewGameMenu] := LoadBitmap(GetPathToResource('MenuNewGame.png', ImageResource));
+		_Images[ReturnToLevelMenu] := LoadBitmap(GetPathToResource('MenuReturnToLevel.png', ImageResource));
+		_Images[ScoreboardMenu] := LoadBitmap(GetPathToResource('MenuScoreboard.png', ImageResource));
+		_Images[QuitMenu] := LoadBitmap(GetPathToResource('MenuQuit.png', ImageResource));
+
+		_Images[TopScoresImg] := LoadBitmap(GetPathToResource('TopScores.png', ImageResource));
+		_Images[EnterLevelMenu] := LoadBitmap(GetPathToResource('MenuEnterLevel.png', ImageResource));
+		_Images[EnterNameMenu] := LoadBitmap(GetPathToResource('MenuEnterName.png', ImageResource));
 	 end;
 	 
 	 procedure FreeImages();

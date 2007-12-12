@@ -111,6 +111,8 @@ interface
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
 
 	function GetVectorFromAngle(angle, magnitude: Single): Vector;
+
+	function VectorWithinRect(const v: Vector; x, y, w, h: Single): Boolean;
 		
 implementation
 	uses SysUtils, Math,
@@ -802,12 +804,10 @@ implementation
 		n: Vector;
 	begin
 
-		if p1.mass = 0 then
-			p1.mass := 1;
-		if p2.mass = 0 then
-			p1.mass := 1;
-		if (p1.mass = 0) or (p2.mass = 0) then
-			WriteLn('You forgot to initialize the mass!');
+		if (p1.mass <= 0) or (p2.mass <= 0) then
+		begin
+			raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
+		end;
 			
 		colNormalAngle := CalculateAngle(p1, p2);
 		//COLLISION RESPONSE
@@ -820,7 +820,7 @@ implementation
 		//Local a1# = c.dx*nX  +  c.dy*nY
 		a2 := DotProduct(p2.Movement, n);
 		//Local a2# = c2.dx*nX +  c2.dy*nY
-WriteLn('hi');
+
 		// optimisedP = 2(a1 - a2)
 		// ----------
 		// m1 + m2
@@ -829,6 +829,7 @@ WriteLn('hi');
 		// Local r1% = c1.v - optimisedP * mass2 * n
 		p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
 		p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
+		
 		// Local r2% = c2.v - optimisedP * mass1 * n
 		p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
 		p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
@@ -866,4 +867,15 @@ WriteLn('hi');
 	begin
 		result := CreateVector(magnitude * SGSDK_Core.Cos(angle), magnitude * SGSDK_Core.Sin(angle));
 	end;
+	
+	/// Does the vector end within the rectangle
+	function VectorWithinRect(const v: Vector; x, y, w, h: Single): Boolean;
+	begin
+		if v.x < x then result := false
+		else if v.x > x + w then result := false
+		else if v.y < y then result := false
+		else if v.y > y + h then result := false
+		else result := true;
+	end;
+	
 end.
