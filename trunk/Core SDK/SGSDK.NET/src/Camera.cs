@@ -32,9 +32,9 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern float ToGameCoordinates(Vector screenVector);
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveVisualAreaWithVector")]
         private static extern void DLL_MoveVisualAreaWithVector(Vector v);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MoveVisualArea")]
         private static extern void DLL_MoveVisualArea(float dx, float dy);
 
         public static void MoveVisualArea(Vector v)

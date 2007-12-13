@@ -130,7 +130,7 @@ namespace SwinGame
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithRect")]
-        private static extern bool DLL_HasSpriteCollidedWithRect(IntPtr theSprite, double x, double y, int width, int height);
+        private static extern bool DLL_HasSpriteCollidedWithRect(IntPtr theSprite, Single x, Single y, int width, int height);
         /// <summary>
         /// Determined if a sprite has collided with a given rectangle. The rectangles
         ///	coordinates are expressed in "world" coordinates.
@@ -141,7 +141,7 @@ namespace SwinGame
         /// <param name="width">The width of the rectangle</param>
         /// <param name="height">The height of the rectangle</param>
         /// <returns>True if the sprite collides with the rectangle</returns>
-        public static bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height)
+        public static bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height)
         {
             return DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
         }
@@ -157,7 +157,7 @@ namespace SwinGame
         /// <param name="vwPrtX">The x offset of the screen's portal</param>
         /// <param name="vwPrtY">The y offset of the screen's portal</param>
         /// <returns>True if the sprite collides with the rectangle</returns>
-        public static bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height, int vwPrtX, int vwPrtY)
+        public static bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height, int vwPrtX, int vwPrtY)
         {
             return DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x + vwPrtX, y + vwPrtY, width, height);
         }
@@ -391,7 +391,7 @@ namespace SwinGame
         /// <returns>A new vector with the same direction as theVector,
         ///	with a maximum magnitude of maxMagnitude</returns>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LimitVector")]
-        public static extern Vector LimitVector(Vector theVector, double maxMagnitude);
+        public static extern Vector LimitVector(Vector theVector, Single maxMagnitude);
 
         /// <summary>
         /// Gets the unit vector of the passed in vector. The unit vector has a
@@ -418,7 +418,7 @@ namespace SwinGame
         /// <param name="theVector">The vector to get the magnitude of</param>
         /// <returns>The magnitude of the vector</returns>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Magnitude")]
-        public static extern double Magnitude(Vector theVector);
+        public static extern Single Magnitude(Vector theVector);
 
         /// <summary>
         /// The Angle between two vectors
@@ -427,7 +427,7 @@ namespace SwinGame
         /// <param name="v2">The Second Vector</param>
         /// <returns>The angle</returns>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DotProduct")]
-        public static extern double DotProduct(Vector v1, Vector v2);
+        public static extern Single DotProduct(Vector v1, Vector v2);
 
         /// <summary>
         /// Multiplies a Vector by a number
@@ -436,7 +436,7 @@ namespace SwinGame
         /// <param name="s1">The number to multiply the vector by</param>
         /// <returns>The multiplyed vector</returns>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyVector")]
-        public static extern Vector MultiplyVector(Vector v1, double s1);
+        public static extern Vector MultiplyVector(Vector v1, Single s1);
 
         /// <summary>
         /// Gets the Angle between two points 
@@ -447,17 +447,17 @@ namespace SwinGame
         /// <param name="y2"></param>
         /// <returns></returns>
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleNumber")]
-        public static extern double CalculateAngle(double x1, double y1, double x2, double y2);
+        public static extern Single CalculateAngle(Single x1, Single y1, Single x2, Single y2);
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleSprite")]
-        private static extern double CalculateAngle(IntPtr sprite1, IntPtr sprite2);
+        private static extern Single CalculateAngle(IntPtr sprite1, IntPtr sprite2);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sprite1"></param>
         /// <param name="sprite2"></param>
         /// <returns></returns>
-        public static double CalculateAngle(Sprite sprite1, Sprite sprite2)
+        public static Single CalculateAngle(Sprite sprite1, Sprite sprite2)
         {
             return CalculateAngle(sprite1.Pointer, sprite2.Pointer);
         }
@@ -502,7 +502,7 @@ namespace SwinGame
             return temp;
         }
 
-
+        
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2D")]
         private static extern IntPtr DLL_Multiply(IntPtr m1, IntPtr m2);//const
