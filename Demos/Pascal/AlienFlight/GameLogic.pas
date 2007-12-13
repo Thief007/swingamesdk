@@ -181,7 +181,7 @@ const
 	BONUS_Y = MENU_Y + 470;
 	DATA_X = MENU_X + 300;
 	
-	MAX_BONUS = 2000;
+	MAX_BONUS = 1000;
 var
 	stars, pickups, fuel, shield, progress: Single;
 	starCount, pickupCount, blackholes: Integer;
@@ -231,11 +231,11 @@ begin
 	if starCount > 0 then
 		stars := starUseCount / starCount;
 	if pickupCount > 0 then
-		pickups := pickupUseCount / pickupCount;
+		pickups := 1 - (pickupUseCount / pickupCount);
 	
 	fuel := data.fuelLevel / MAX_FUEL;
 	shield := data.shieldStrength;
-	progress := XOffset() / MaxForegroundX();
+	progress := (XOffset() + SCREEN_WIDTH) / MaxForegroundX();
 	
 	DrawScreen(data, false, false);
 	DrawBitmapOnScreen(GameImage(LevelSummaryMenu), MENU_X, MENU_Y);
@@ -259,12 +259,11 @@ begin
 	for cycle := 0 to 30 do RefreshScreen();		
 	DrawTextIn(FormatFloat('0%', progress * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, LEVEL_Y, 100, 40);
 
-	for cycle := 0 to 60 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen();		
 
 	bonus := Round(MAX_BONUS * (stars + shield * progress + fuel * progress + pickups * progress + blackholes));
 
-	DrawTextIn(FormatFloat('0', bonus), ColorWhite, GameFont(WelcomeFont), DATA_X, BONUS_Y, 100, 40);
-	PlaySoundEffect(GameSound(CollectStarSound));
+	for cycle := 0 to 30 do RefreshScreen();		
 
 	totalScore := data.score + bonus;
 	temp := bonus mod 10;
@@ -437,8 +436,7 @@ begin
 		DrawMessage(message);
 		DrawHud(data);
 		RefreshScreen();
-		Sleep(15);
-	until IsKeyPressed(VK_RETURN) or WindowCloseRequested();
+	until WasKeyTyped(VK_RETURN) or WindowCloseRequested();
 	
 	if IsHighScore(data.score) then
 		data.state := EnterHighScoreState
@@ -698,10 +696,14 @@ begin
 		end;
 	until WindowCloseRequested();
 	
+	DoEndOfGame(data);
+	
 	SaveScoreboard(data);
 	
 	CleanupGameData(data);
 	FreeResources();
+	
+	CloseAudio();
 end;
 
 end.
