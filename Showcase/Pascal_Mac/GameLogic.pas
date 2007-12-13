@@ -39,7 +39,7 @@ implementation
 			DrawLine(GetRandomColor(), Random(800), Random(800), Random(800), Random(800));
 			DrawOverlay('Drawing Lines Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -54,7 +54,7 @@ implementation
 			FillRectangle(GetRandomColor(), Random(800), Random(800), Random(800), Random(800));
 			DrawOverlay('Drawing Rectangles Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -65,11 +65,11 @@ implementation
 	begin
 		ClearScreen();
 		repeat
-			DrawCircle(GetRandomColor(), Random(800), Random(800), Random(800));
-			FillCircle(GetRandomColor(), Random(800), Random(800), Random(800));
+			DrawCircle(GetRandomColor(), Random(800), Random(800), Random(400));
+			FillCircle(GetRandomColor(), Random(800), Random(800), Random(400));
 			DrawOverlay('Drawing Circles Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -84,7 +84,7 @@ implementation
 			FillEllipse(GetRandomColor(), Random(800), Random(800), Random(400), Random(400));
 			DrawOverlay('Drawing Ellipses Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -106,7 +106,7 @@ implementation
 			DrawBitmap(tempBitmap2, round(SGSDK_Core.cos(i) * 100) + 250, round(SGSDK_Core.sin(i) * 100) + 200);
 			DrawOverlay('Drawing Bitmap Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			i := i + 1;
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -157,7 +157,7 @@ implementation
 			UpdateSprite(reverseOnceSprite);
 			DrawOverlay('Drawing Sprite Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -218,7 +218,7 @@ implementation
 			MoveBall(ball2, xSpeed2, ySpeed2);
 			DrawOverlay('Collision Detection Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -234,7 +234,7 @@ implementation
 		PlayMusic(musicSource);
 		repeat
 			DrawOverlay('Music Playback Example');
-			RefreshScreen(60);
+			RefreshScreen();
 			ProcessEvents();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -263,7 +263,7 @@ implementation
 			DrawText('SwinGameSDK!', GetRandomColor(), GameFont('Courier'), Random(ScreenWidth()), Random(ScreenHeight()));
 			SetFontStyle(GameFont('Courier'), NormalFont);
 			DrawOverlay('Drawing Random Texts');
-			RefreshScreen(60);
+			RefreshScreen();
 			ProcessEvents();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
@@ -323,7 +323,7 @@ implementation
 			MoveBallUsingVector(ball2);
 			DrawOverlay('Vector Collision Example');
 			ProcessEvents();
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -344,13 +344,13 @@ implementation
 	        ySpeed := 0;
 
 	        if IsKeyPressed(VK_UP) then
-	            ySpeed := -1;
+	            ySpeed := -3;
 	        if IsKeyPressed(VK_DOWN) then
-	            ySpeed := 1;
+	            ySpeed := 3;
 	        if IsKeyPressed(VK_LEFT) then
-	            xSpeed := -1;
+	            xSpeed := -3;
 	        if IsKeyPressed(VK_RIGHT) then
-	            xSpeed := 1;
+	            xSpeed := 3;
 
 	        DrawSprite(ball);
 	        ball.xPos := ball.xPos + xSpeed;
@@ -358,7 +358,7 @@ implementation
 
 	        DrawOverlay('Move Sprite with Arrow Keys Example');
 	        ProcessEvents();
-	        RefreshScreen(60);
+	        RefreshScreen();
 	        ClearScreen();
 			if WindowCloseRequested() then exit;
 	    until IsKeyPressed(VK_N);
@@ -388,7 +388,7 @@ implementation
             end;
 
             DrawOverlay('Mouse Cursor Example');
-            RefreshScreen(60);
+            RefreshScreen();
             ClearScreen();
 			if WindowCloseRequested() then exit;
         until IsKeyPressed(VK_N);
@@ -404,12 +404,12 @@ implementation
 			ClearScreen();
 			DrawText('Please enter a message:', ColorGreen, GameFont('Courier'), 0, 50);
 			DrawOverlay('Text Reading Example');
-			RefreshScreen(60);
+			RefreshScreen();
 			ProcessEvents();
 			if WindowCloseRequested() then exit;
 		end;
 		DrawText('You have entered ' + TextReadAsASCII(), ColorGreen, GameFont('Courier'), 0, 80);
-		RefreshScreen(60);
+		RefreshScreen();
 		repeat
 			Sleep(20);
 			ProcessEvents();
@@ -434,7 +434,7 @@ implementation
 
             DrawOverlay('Play Sound Effect when hitting a key Example');
             ProcessEvents();
-            RefreshScreen(60);
+            RefreshScreen();
             ClearScreen();
 			
             if WindowCloseRequested() then break;
@@ -490,7 +490,7 @@ implementation
 
 			ProcessEvents();
 			DrawOverlay('Drapping Ball Example');
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then break;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -521,7 +521,7 @@ implementation
 			if HaveSpritesCollided(sp1, sp2) then
 				DrawText('Collided...', ColorWhite, GameFont('Courier'), 125, 120);
 			DrawOverlay('Multi-bitmap Collision Detection');
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -553,7 +553,7 @@ implementation
 			DrawSprite(Ship);
 			UpdateSprite(Ship);
 			DrawOverlay('Follow Sprite Example');
-			RefreshScreen(60);
+			RefreshScreen();
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		SetScreenOffset(0,0);
@@ -581,7 +581,7 @@ implementation
 			DrawHorizontalLine(ColorWhite, ScreenHeight() div 2, ScreenWidth(), 0);
 			DrawVerticalLine(ColorWhite, ScreenWidth() div 2, ScreenHeight(), 0);
 			DrawOverlay('Camera Example');
-			RefreshScreen(60);
+			RefreshScreen();
 			ProcessEvents();
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
@@ -598,13 +598,13 @@ implementation
 		balls: Array of Sprite;
 		tempString: CollisionSide;
 		i, j : Integer;
-		gravity : Vector;
+		gravity, tempVector1, tempVector2 : Vector;
 	begin
 		m := GameMap('test');
 		
 		SetLength(balls, 2);
 		
-		for i := 0 to 1 do
+		for i := 0 to High(balls) do
 		begin
 			balls[i] := CreateSprite(GameImage('SmallBall'));
 			balls[i].movement := CreateVector(Random(15),0);
@@ -629,28 +629,43 @@ implementation
 			
 			DrawMap(m);
 			
-			for i := 0 to  1 - 1 do
+			for i := 0 to  High(balls) - 1 do
 			begin
-				for j := i + 1 to 1 do
+				for j := i + 1 to High(balls) do
 				begin
 					if i <> j then
 					begin
 						if HaveSpritesCollided(balls[i], balls[j]) then
 						begin
+							MoveSprite(balls[i], InvertVector(balls[i].movement));
+							MoveSprite(balls[j], InvertVector(balls[j].movement));
+							tempVector1 := balls[i].movement;
+							tempVector2 := balls[j].movement;
+							repeat
+								MoveSprite(balls[i], tempVector1);
+								MoveSprite(balls[j], tempVector2);
+								if HaveSpritesCollided(balls[i], balls[j]) then
+								begin
+									MoveSprite(balls[i], InvertVector(tempVector1));
+									MoveSprite(balls[j], InvertVector(tempVector2));
+									tempVector1 := MultiplyVector(tempVector1, 0.5);
+									tempVector2 := MultiplyVector(tempVector2, 0.5);
+								end;
+							until (Magnitude(tempVector1) < 0.05) and (Magnitude(tempVector2) < 0.5);
 							VectorCollision(balls[i], balls[j]);
 						end;
 					end;
 				end;
 			end;
 			
-			for i := 0 to 1 do
+			for i := 0 to High(balls) do
 			begin
 				balls[i].movement := AddVectors(balls[i].movement, gravity);
 				balls[i].movement := MultiplyVector(balls[i].movement, 0.995);
 				MoveSprite(balls[i], balls[i].movement);
 			end;
 			
-			for i := 0 to 1 do
+			for i := 0 to High(balls) do
 			begin
 				tempString := CollisionWithMap(m, balls[i]);
 				if (tempString = Right) or (tempString = Left) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
@@ -659,14 +674,35 @@ implementation
 					balls[i].movement.y := balls[i].movement.y * -1;
 			end;
 			
-			for i := 0 to 1 do
+			for i := 0 to High(balls) do
 			begin
 				DrawSprite(balls[i]);
 			end;
 			DrawOverlay('MappyLoader Example');
 			DrawFramerate(0, 0, GameFont('Courier'));
-			RefreshScreen(60);
+			RefreshScreen(10);
 			ClearScreen(ColorBlack);
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+	
+	procedure VectorAngleExample();
+	var
+		pd: Sprite;
+		mousePos: Vector;
+	begin
+		pd := CreateSprite(GameImage('BallImage1'));
+		repeat
+			ProcessEvents();
+			mousePos := GetMousePosition();
+			pd.movement := GetVectorFromAngle(CalculateAngle(pd.xPos + CurrentWidth(pd) / 2, pd.yPos + CurrentHeight(pd) / 2, mousePos.X, mousePos.Y), 2);
+			MoveSprite(pd, pd.movement);
+			ClearScreen(ColorBlack);
+			DrawSprite(pd);
+			DrawOverlay('Get Vector From Angle Example (The ball will follow your cursor)');
+			RefreshScreen();
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -683,7 +719,7 @@ implementation
 		LoadResources();
 		Randomize();
 		ProcessEvents();
-		DrawLines();
+		{DrawLines();
 		if WindowCloseRequested() then exit;
 		DrawRectangles();
 		if WindowCloseRequested() then exit;
@@ -713,12 +749,14 @@ implementation
 		if WindowCloseRequested() then exit;
 		DroppingBall();
 		if WindowCloseRequested() then exit;
+		VectorAngleExample();
+		if WindowCloseRequested() then exit;
 		MultiBitmapSprite();
 		If WindowCloseRequested() then exit;
 		FollowSpriteExample();
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
-		If WindowCloseRequested() then exit;
+		If WindowCloseRequested() then exit;}
 		MapExample();
 		FreeResources();
 	end;

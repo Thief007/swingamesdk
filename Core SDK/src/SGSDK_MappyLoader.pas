@@ -568,8 +568,8 @@ implementation
 														 m.MapInfo.BlockWidth, 
 														 m.MapInfo.BlockHeight) then
 							begin
-								MoveSprite(spr, {MultiplyVector(InvertVector(vec), 15)} InvertVector(vec));
-								tempVector := {MultiplyVector(vec, 15);}vec;
+								MoveSprite(spr, InvertVector(vec));
+								tempVector := vec;
 								repeat
 									MoveSprite(spr, tempVector);
 									if HasSpriteCollidedWithRect(spr, 

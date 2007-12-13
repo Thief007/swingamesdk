@@ -298,7 +298,6 @@ implementation
 		result := Math.Tan(DegToRad(angle));
 	end;
 	
-	
 	/// Sets up the graphical window for the specified width and height.
 	/// Sets the caption of the window, and the icon if one is specified.
 	procedure InitSDL(caption: String; screenWidth, screenHeight: Integer);
@@ -491,7 +490,12 @@ implementation
 	procedure OpenGraphicsWindow(caption : String; 
 	                              width : Integer; height : Integer); overload;
 	begin
-		InitSDL(caption, width, height);
+		
+		Try
+			InitSDL(caption, width, height);
+		Except
+			Raise Exception.Create('Could not open a graphical window');
+		end;
 		InitFPSCalcInfo(renderFPSInfo);
 	
 		//Init the colors
