@@ -61,7 +61,7 @@
     <Compile Include="DrawRectangles.cs" />
     <Compile Include="DrawLines.cs" />
     <Compile Include="Randoms.cs" />
-    <Compile Include="Intro.cs" />
+    <Compile Include="GameResources.cs" />
     <Compile Include="Overlay.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
