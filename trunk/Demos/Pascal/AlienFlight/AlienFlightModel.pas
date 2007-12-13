@@ -1388,11 +1388,11 @@ implementation
 			data.topFuel := MAX_FUEL;
 			data.topShield := 1.0;
 
-			_Scoreboard[0].name := 'Ace   '; _Scoreboard[0].score := 50000;
-			_Scoreboard[1].name := 'Bossy '; _Scoreboard[1].score := 20000;
-			_Scoreboard[2].name := 'Bexley'; _Scoreboard[2].score := 10000;
-			_Scoreboard[3].name := 'Holly '; _Scoreboard[3].score := 5000;
-			_Scoreboard[4].name := 'Fun   '; _Scoreboard[4].score := 1000;
+			_Scoreboard[0].name := 'Ace   '; _Scoreboard[0].score := 100000;
+			_Scoreboard[1].name := 'Bossy '; _Scoreboard[1].score := 75000;
+			_Scoreboard[2].name := 'Bexley'; _Scoreboard[2].score := 50000;
+			_Scoreboard[3].name := 'Holly '; _Scoreboard[3].score := 20000;
+			_Scoreboard[4].name := 'Fun   '; _Scoreboard[4].score := 10000;
 			
 			exit;
 		end;

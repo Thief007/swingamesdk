@@ -261,6 +261,8 @@ implementation
 	var
 		 i: GameMusicResources;
 	begin
+		StopMusic();
+		
 		for i := Low(_Music) to High(_Music) do
 		begin
 			SGSDK_Audio.FreeMusic(_Music[i]);
@@ -308,8 +310,8 @@ implementation
 	begin
 		FreeFonts();
 		FreeImages();
+		FreeSounds(); 
 		FreeMusic();
-		FreeSounds();
 	end;
 	
 	function GameFont(font: GameFonts): Font; 
