@@ -820,7 +820,6 @@ implementation
 		//Local a1# = c.dx*nX  +  c.dy*nY
 		a2 := DotProduct(p2.Movement, n);
 		//Local a2# = c2.dx*nX +  c2.dy*nY
-
 		// optimisedP = 2(a1 - a2)
 		// ----------
 		// m1 + m2
