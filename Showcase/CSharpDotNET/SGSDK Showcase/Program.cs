@@ -45,6 +45,9 @@ namespace SGSDK_Showcase
                 DroppingBall.Run();
                 MultiBitmapSprite.Run();
                 FollowExample.Run();
+                DrawCircleWithLine.Run();
+                
+                MapExample.Run();
             }
 
 

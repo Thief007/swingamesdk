@@ -71,6 +71,7 @@ namespace SGSDK_Showcase
                 }
             } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
             Core.Sleep(500);
+            Camera.SetScreenOffset(0, 0);
         
         }
 

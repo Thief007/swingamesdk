@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Audio.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="MappyLoader.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="Graphics.cs" />

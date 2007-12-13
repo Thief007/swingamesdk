@@ -1,12 +1,13 @@
 library SGSDK;
 
 uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera;
+	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera, SGSDK_MappyLoader;
 
 	type
 		IntArray = Array of Integer;
 		BitmapArray = Array of Bitmap;
 		Matrix2DPtr = ^Matrix2D;
+		MapPtr = ^Map;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -1368,7 +1369,49 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
 	end;
-
+	
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					MappyLoader
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+	
+	function Loadmap(fileName : PChar): MapPtr; cdecl; export;
+	var
+		p : MapPtr;
+	begin
+		new(p);
+		p^ := SGSDK_MappyLoader.Loadmap(fileName);
+		result := p;
+	end;
+	
+	procedure Drawmap(m : MapPtr); cdecl; export;
+	begin
+		SGSDK_MappyLoader.Drawmap(m^);
+	end;
+	
+	function CollisionWithMapVector(m : MapPtr; spr : Sprite; vec: Vector): CollisionSide; cdecl; export;
+	begin
+		result := SGSDK_MappyLoader.CollisionWithMap(m^, spr, vec);
+	end;
+	
+	function EventCount(m : MapPtr; event : Event): Integer; cdecl; export;
+	begin
+		result := SGSDK_MappyLoader.EventCount(m^, event);
+	end;
+	
+	function EventPositionX(m : MapPtr; event : Event; eventnumber : Integer): Integer; cdecl; export;
+	begin
+		result := SGSDK_MappyLoader.EventPositionX(m^, event, eventnumber);
+	end;
+	
+	function EventPositionY(m : MapPtr; event : Event; eventnumber : Integer): Integer; cdecl; export;
+	begin
+		result := SGSDK_MappyLoader.EventPositionY(m^, event, eventnumber);
+	end;
+	
+	//function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
+		
 exports
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -1632,7 +1675,20 @@ exports
 	MoveVisualAreaWithVector,
 	MoveVisualArea,
 	SetScreenOffset,
-	FollowSprite
+	FollowSprite,
 	
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					MappyLoader
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+	
+	Loadmap,
+	Drawmap,
+	CollisionWithMapVector,
+	EventCount,
+	EventPositionX,
+	EventPositionY
+
 	;
 end.
