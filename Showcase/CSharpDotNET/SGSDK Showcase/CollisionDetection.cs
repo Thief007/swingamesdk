@@ -43,7 +43,7 @@ namespace SGSDK_Showcase
             ball1.UsePixelCollision = true;
             ball2.UsePixelCollision = true;
 
-            for (int i = 0; i < 1201; i++)
+            do
             {
                 Graphics.ClearScreen();
                 Graphics.DrawSprite(ball1);
@@ -59,13 +59,14 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Collision Detection Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
         public static void MoveBall(ref Sprite ball, ref int xSpeed, ref int ySpeed)

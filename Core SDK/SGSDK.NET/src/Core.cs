@@ -148,15 +148,32 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ToggleFullScreen();
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="RefreshScreenWithFrame")]
+        private static extern void DLL_RefreshScreenWithFrame(int TargetFPS);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RefreshScreen")]
+        private static extern void DLL_RefreshScreen();
+
         /// <summary>
-        /// /// Draws the current drawing to the screen. This must be called to display
+        /// Draws the current drawing to the screen. This must be called to display
         ///	anything to the screen. This will draw all drawing operations, as well
         ///	as the text being entered by the user.
         /// </summary>
-        /// <param name="TargetFPS">The Target Frame rate</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void RefreshScreen(int TargetFPS);
-	
+        /// <param name="TargetFPS">The target framerate</param>
+        public static void RefreshScreen(int TargetFPS) 
+        {
+            DLL_RefreshScreenWithFrame(TargetFPS);
+        }
+
+        /// <summary>
+        /// Draws the current drawing to the screen. This must be called to display
+        ///	anything to the screen. This will draw all drawing operations, as well
+        ///	as the text being entered by the user.
+        /// </summary>
+        public static void RefreshScreen()
+        {
+            DLL_RefreshScreen();
+        }
+
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
         ///	current directory.

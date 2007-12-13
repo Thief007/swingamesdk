@@ -23,7 +23,7 @@ namespace SGSDK_Showcase
             ball.xPos = 400;
             ball.yPos = 300;
 
-            for (int i = 0; i < 1500; i++)
+            do
             {
                 xSpeed = 0;
                 ySpeed = 0;
@@ -53,14 +53,15 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Move Sprite with Arrow Keys Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
         public static void MoveBall(ref Sprite ball, ref int xSpeed, ref int ySpeed)

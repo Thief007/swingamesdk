@@ -17,7 +17,7 @@ namespace SGSDK_Showcase
 
         public static void Run()
         {
-            for (int i = 0; i < 2000; i++)
+            do
             {
                 Text.DrawText("Hit a key a,s d, or f", Color.White, _Font, 280, 300);
                 Text.DrawText(msg, Color.White, _Font, 280, 330);
@@ -44,15 +44,15 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Key Input Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
     }

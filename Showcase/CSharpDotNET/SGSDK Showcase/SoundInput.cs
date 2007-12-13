@@ -17,7 +17,7 @@ namespace SGSDK_Showcase
 
         public static void Run()
         {
-            for (int i = 0; i < 2000; i++)
+            do
             {
                 if (Input.IsKeyPressed(SwinGame.Keys.VK_SPACE) && !Audio.IsSoundEffectPlaying(sound))
                 {
@@ -28,15 +28,15 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Play Sound Effect when hitting a key Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
     }

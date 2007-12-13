@@ -17,7 +17,7 @@ namespace SGSDK_Showcase
         {
             Graphics.ClearScreen();
 
-            for (int i = 0; i < 100; i++)
+            do
             {
                 Graphics.DrawEllipse(Randoms.GetRandomColor(), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(400), Randoms.GetRandomNumber(400));
                 Graphics.FillEllipse(Randoms.GetRandomColor(), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(400), Randoms.GetRandomNumber(400));
@@ -27,13 +27,14 @@ namespace SGSDK_Showcase
                 Core.Sleep(100);
 
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
 
             Graphics.ClearScreen();
         }

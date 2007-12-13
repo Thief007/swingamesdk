@@ -14,8 +14,7 @@ namespace SGSDK_Showcase
 {
     public static class DroppingBall
     {
-
-        private static PhysicsData ball1 = new PhysicsData();
+        private static Sprite ball1;
 
         private static Vector GravityConstant = Physics.CreateVector(0, (Single)0.5);
         private static Single Movement = (Single)5.0;
@@ -30,87 +29,88 @@ namespace SGSDK_Showcase
         {
             Rotate = Physics.RotationMatrix((Single)180);
 
-            ball1.Sprite = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball_small.png", ResourceKind.ImageResource)));
-            ball1.Movement = Physics.CreateVector((Single)Movement, 0);
+            ball1 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball_small.png", ResourceKind.ImageResource)));
+            ball1.Movement.SetTo(Physics.CreateVector((Single)Movement, 0));
             ball1.Mass = 1;
        
-            ball1.Sprite.xPos = 40;
-            ball1.Sprite.yPos = 20;
+            ball1.xPos = 40;
+            ball1.yPos = 20;
 
-            for (int i = 0; i < 2000; i++)
+            do
             {
-                if (ball1.Movement.y > 0 && !falling)
+                if (ball1.Movement.Y > 0 && !falling)
                 {
                     //AirResistanceV = Physics.InvertVector(AirResistanceV);
                     AirResistanceV = Physics.Multiply(Rotate, AirResistanceV);
                     falling = true;
                 }
-                if ((ball1.Movement.x < (Single)0.0) && (AirResistanceH.x < (Single)0.0))
+                if ((ball1.Movement.X < (Single)0.0) && (AirResistanceH.x < (Single)0.0))
                 {
                     //AirResistanceH = Physics.Multiply(Rotate, ref AirResistanceH);
                     AirResistanceH = Physics.InvertVector(AirResistanceH);
                     
                 }
-                if ((ball1.Movement.x > (Single)0.0) && (AirResistanceH.x > (Single)0.0))
+                if ((ball1.Movement.X > (Single)0.0) && (AirResistanceH.x > (Single)0.0))
                 {
                     //AirResistanceH = Physics.Multiply(Rotate, ref AirResistanceH);
                     AirResistanceH = Physics.InvertVector(AirResistanceH);
                 }
 
-                ball1.Movement = Physics.AddVectors(ball1.Movement, GravityConstant);
-                ball1.Movement = Physics.AddVectors(ball1.Movement, AirResistanceV);
-                ball1.Movement = Physics.AddVectors(ball1.Movement, AirResistanceH);
+                ball1.Movement.SetTo(Physics.AddVectors(ball1.Movement, GravityConstant));
+                ball1.Movement.SetTo(Physics.AddVectors(ball1.Movement, AirResistanceV));
+                ball1.Movement.SetTo(Physics.AddVectors(ball1.Movement, AirResistanceH));
 
                 MoveBallUsingVector(ref ball1);
 
-                Graphics.DrawSprite(ball1.Sprite);
+                Graphics.DrawSprite(ball1);
 
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
-        public static void MoveBallUsingVector(ref PhysicsData ball)
+        public static void MoveBallUsingVector(ref Sprite ball)
         {
-            Graphics.MoveSprite(ball.Sprite, ball.Movement);
+            Graphics.MoveSprite(ball, ball.Movement);
 
-            if (ball.Sprite.xPos > (Core.ScreenWidth() - Graphics.CurrentWidth(ball.Sprite)))
+            if (ball.xPos > (Core.ScreenWidth() - Graphics.CurrentWidth(ball)))
             {
-                ball.Movement.x = (Single)(ball.Movement.x * -1);
-                ball.Sprite.xPos = Core.ScreenWidth() - Graphics.CurrentWidth(ball.Sprite);
+                ball.Movement.X = (Single)(ball.Movement.X * -1);
+                ball.xPos = Core.ScreenWidth() - Graphics.CurrentWidth(ball);
             }
 
-            if (ball.Sprite.yPos > Core.ScreenHeight() - Graphics.CurrentHeight(ball.Sprite))
+            if (ball.yPos > Core.ScreenHeight() - Graphics.CurrentHeight(ball))
             {
-                if (ball.Movement.y < 1)
+                if (ball.Movement.Y < 1)
                 {
-                    ball.Movement.y = 0;
+                    ball.Movement.Y = 0;
                 }
 
-                ball.Movement.y = (Single)(ball.Movement.y * -1);
-                ball.Sprite.yPos = Core.ScreenHeight() - Graphics.CurrentHeight(ball.Sprite) - 1;
+                ball.Movement.Y = (Single)(ball.Movement.Y * -1);
+                ball.yPos = Core.ScreenHeight() - Graphics.CurrentHeight(ball) - 1;
 
                 AirResistanceV = Physics.Multiply(Rotate, AirResistanceV);
 
                 falling = false;
             }
 
-            if (ball.Sprite.xPos < 0)
+            if (ball.xPos < 0)
             {
-                ball.Movement.x = (Single)(ball.Movement.x * -1);
-                ball.Sprite.xPos = 0;
+                ball.Movement.X = (Single)(ball.Movement.X * -1);
+                ball.xPos = 0;
             }
 
-            if (ball1.Sprite.yPos < 0)
+            if (ball1.yPos < 0)
             {
-                ball.Movement.y = (Single)(ball.Movement.y * -1);
-                ball.Sprite.yPos = 0;
+                ball.Movement.Y = (Single)(ball.Movement.Y * -1);
+                ball.yPos = 0;
             }
 
         }

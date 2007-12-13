@@ -21,22 +21,29 @@ namespace SGSDK_Showcase
 
             tempBitmap = Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource));
             tempBitmap2 = Graphics.LoadBitmap(Core.GetPathToResource("ball2.png", ResourceKind.ImageResource));
+            int i = 0;
 
-            for (int i = 0; i < 901; i++)
+
+            do
             {
+                i = i + 1;
+
                 Graphics.ClearScreen();
                 Graphics.DrawBitmap(tempBitmap, (int)Math.Round(Core.Sin(i) * 100) + 250, (int)Math.Round(Core.Cos(i) * 100) + 200);
                 Graphics.DrawBitmap(tempBitmap2, (int)Math.Round(Core.Cos(i) * 100) + 250, (int)Math.Round(Core.Sin(i) * 100) + 200);
 
                 Overlay.DrawOverlay("Drawing Bitmap Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+
+            
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
     }
 }
