@@ -221,6 +221,18 @@ namespace SwinGameVB
         {
             SwinGame.Text.DrawFramerate(x, y, theFont.result);
         }
+
+        public void DrawTextOnScreen(String theText, int textColor, Font theFont, int x, int y)
+        {
+            Color color = Color.FromArgb(textColor);
+            SwinGame.Text.DrawTextOnScreen(theText, color, theFont.result, x, y);
+        }
+        
+        public void DrawTextLinesOnScreen(String theText, int textColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        {
+            Color color = Color.FromArgb(textColor);
+            SwinGame.Text.DrawTextLinesOnScreen(theText, color, theFont.result, (SwinGame.FontAlignment)align, x, y, w, h);
+        }
     }
 
     [Guid("CF5F7CD4-6576-4862-ABB2-0A3B9B345B57")]
@@ -237,6 +249,8 @@ namespace SwinGameVB
         int TextWidth(String theText, Font theFont);
         int TextHeight(String theText, Font theFont);
         void DrawFramerate(int x, int y, Font theFont);
+        void DrawTextOnScreen(String theText, int textColor, Font theFont, int x, int y);
+        void DrawTextLinesOnScreen(String theText, int textColor, Font theFont, FontAlignment align, int x, int y, int w, int h);
     }
 
 }

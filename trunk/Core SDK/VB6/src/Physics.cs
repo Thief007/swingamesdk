@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using SwinGame;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
@@ -31,7 +32,7 @@ namespace SwinGameVB
     [ClassInterface(ClassInterfaceType.None)]
     [Guid("87C6F043-9E0A-4579-878D-EBD72F98554A")]
     [ComVisible(true)]
-    public class Matrix2D : IDisposable, IMatrix2D
+    public class Matrix2D : IMatrix2D, IDisposable
     {
         private SwinGame.Matrix2D marrix2D;
         internal SwinGame.Matrix2D result
@@ -116,7 +117,7 @@ namespace SwinGameVB
     [ClassInterface(ClassInterfaceType.None)]
     [Guid("2542698C-64CF-4767-B993-D9017D721444")]
     [ComVisible(true)]
-    public class Physics
+    public class Physics : IPhysics
     {
         /// <summary>
         /// Determines if a sprite has collided with a given x position.
@@ -566,11 +567,15 @@ namespace SwinGameVB
             vector.result = SwinGame.Physics.GetVectorFromAngle(angle, magnitude);
             return vector;
         }
+        public void temp()
+        {
+        }
     }
     [Guid("F6B70E5B-3A0E-48e5-8F6B-7033A40D758C")]
     [ComVisible(true)]
     public interface IPhysics
     {
+        void temp();
         bool HasSpriteCollidedX(Sprite theSprite, int x, CollisionDetectionRange range);
         bool HasSpriteCollidedY(Sprite theSprite, int y, CollisionDetectionRange range);
         bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height);
