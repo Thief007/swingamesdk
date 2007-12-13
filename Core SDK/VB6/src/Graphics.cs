@@ -985,7 +985,7 @@ namespace SwinGameVB
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public Sprite CreateSprite_MultiEnding(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
+        public Sprite CreateSprite_MultiEnding(Bitmap startBitmap, Boolean isMulti, [In] ref int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
         {
             Sprite result = new Sprite();
             result.result = SwinGame.Graphics.CreateSprite(startBitmap.result, isMulti, framesPerCell, (SwinGame.SpriteEndingAction)endingAction, width, height);
@@ -1001,7 +1001,7 @@ namespace SwinGameVB
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public Sprite CreateSprite_Multi(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height)
+        public Sprite CreateSprite_Multi(Bitmap startBitmap, Boolean isMulti, [In] ref int[] framesPerCell, int width, int height)
         {
             Sprite result =new Sprite();
             result.result = SwinGame.Graphics.CreateSprite(startBitmap.result, isMulti, framesPerCell, width, height);
@@ -1017,7 +1017,7 @@ namespace SwinGameVB
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public Sprite CreateSprite_ArrayEnding(Bitmap[] startBitmap, int[] framesPerCell, SpriteEndingAction endingAction)
+        public Sprite CreateSprite_ArrayEnding([In] ref Bitmap[] startBitmap, [In] ref int[] framesPerCell, SpriteEndingAction endingAction)
         {
             Sprite result = new Sprite();
             SwinGame.Bitmap[] temp = new SwinGame.Bitmap[startBitmap.Length];
@@ -1039,7 +1039,7 @@ namespace SwinGameVB
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public Sprite CreateSprite_Array(Bitmap[] startBitmap, int[] framesPerCell)
+        public Sprite CreateSprite_Array([In] ref Bitmap[] startBitmap, [In] ref int[] framesPerCell)
         {
             Sprite result = new Sprite();
             SwinGame.Bitmap[] temp = new SwinGame.Bitmap[startBitmap.Length];
@@ -1226,11 +1226,11 @@ namespace SwinGameVB
         void MoveSpriteTo(Sprite spriteToMove, int x, int y);
         bool IsSpriteOffscreen(Sprite theSprite);
         bool IsSpriteOffscreen_ViewPort(Sprite theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
-        Sprite CreateSprite_MultiEnding(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
-        Sprite CreateSprite_Multi(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height);
+        Sprite CreateSprite_MultiEnding(Bitmap startBitmap, Boolean isMulti, [In] ref int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
+        Sprite CreateSprite_Multi(Bitmap startBitmap, Boolean isMulti, [In] ref int[] framesPerCell, int width, int height);
         Sprite CreateSprite_MultiFPC(Bitmap startBitmap, int framesPerCell, int frames, int width, int height);
-        Sprite CreateSprite_ArrayEnding(Bitmap[] startBitmap, int[] framesPerCell, SpriteEndingAction endingAction);
-        Sprite CreateSprite_Array(Bitmap[] startBitmap, int[] framesPerCell);
+        Sprite CreateSprite_ArrayEnding([In] ref Bitmap[] startBitmap, [In] ref int[] framesPerCell, SpriteEndingAction endingAction);
+        Sprite CreateSprite_Array([In] ref Bitmap[] startBitmap, [In] ref int[] framesPerCell);
         Sprite CreateSprite_ArrayFPC(Bitmap[] startBitmap, int framesPerCell, int frames);
         void UpdateSprite(Sprite sprite);
        
