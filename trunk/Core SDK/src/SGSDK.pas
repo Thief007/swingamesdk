@@ -9,6 +9,26 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		Matrix2DPtr = ^Matrix2D;
 		MapPtr = ^Map;
 	
+	var
+		ExceptionMessage: String;
+		HasExceptionOccured: Boolean;
+	
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					Exception
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+	
+	function GetExceptionMessage(): String; cdecl; export;
+	begin
+		result := ExceptionMessage;
+	end;
+	
+	function HasExceptionOccured(): Boolean; cdecl; export;
+	begin
+		result := HasExceptionOccured();
+	end;
+	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Core
@@ -22,9 +42,13 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
 	begin
-		SGSDK_Core.OpenGraphicsWindow(caption, width, height);
+		Try
+			SGSDK_Core.OpenGraphicsWindow(caption, width, height);
+		Except
+			ExceptionMessage := 'Could not open a graphical window';
+			HasExceptionOccured := true;
+		end;
 	end;
-
 	
 	function WindowCloseRequested(): Integer; cdecl; export;
 	begin
@@ -1411,7 +1435,13 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 	
 	//function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
-		
+	
+initialization
+begin
+	HasExceptionOccured := false;
+	ExceptionMessage := 'Empty';
+end;
+	
 exports
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
