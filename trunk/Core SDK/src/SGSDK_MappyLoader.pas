@@ -6,6 +6,20 @@ interface
 			SDL_Mixer, SDL_TTF, SDLEventProcessing;
 			
 	type
+		CollisionSide = (
+			Top,
+			Bottom,
+			Left,
+			Right,
+			TopLeft,
+			TopRight,
+			BottomLeft,
+			BottomRight,
+			LeftRight,
+			TopBottom,
+			None
+		);
+		
 		Event = (
 			Event1 = 0, Event2 = 1, Event3 = 2, Event4 = 3, Event5 = 4, Event6 = 5, Event7 = 6, Event8 = 7, Event9 = 8,
 			Event10 = 9, Event11 = 10, Event12 = 11, Event13 = 12, Event14 = 13, Event15 = 14, Event16 = 15, 
@@ -61,6 +75,12 @@ interface
         
 		function Loadmap(fileName : String): Map;
 		procedure Drawmap(var m : Map);
+		function CollisionWithMap(m: Map; var spr: Sprite; vec: Vector): CollisionSide; overload;
+		function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
+		
+		function EventCount(m : Map; event : Event): Integer;
+		function EventPositionX(m : Map; event : Event; eventnumber : Integer): Integer;
+		function EventPositionY(m : Map; event : Event; eventnumber : Integer): Integer;
 		
 implementation
 	function ReadInt(var stream : text): UInt16;
@@ -284,8 +304,8 @@ implementation
 			end;
 		end;
 		
-		{
-		//Debug
+		
+		{//Debug
 		for y := 0 to m.MapInfo.MapHeight - 1 do
 		begin
 			for x := 0 to m.MapInfo.MapWidth - 1 do
@@ -295,8 +315,8 @@ implementation
 			end;
 			WriteLn('');
 		end;
-		ReadLn();
-		}
+		ReadLn();}
+		
 	end;
 	
 	procedure LoadBlockSprites(var m : Map; fileName : String);
@@ -395,18 +415,86 @@ implementation
 		result := m;
 	end;
 	
-	function CollisionWithMap(m : Map; spr : Sprite): Boolean;
+	//Gets the number of Event of the specified type
+	function EventCount(m : Map; event : Event): Integer;
 	var
-		temp : Boolean;
-		XStart, XEnd, YStart, YEnd : Integer;
-		y, x : Integer;
+		y, x, count : Integer;
 	begin
-		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + 3));
-		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + 3));
-		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) + 3));
-		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + 3));
-		temp := false;
+		count := 0;
 		
+		for y := 0 to m.MapInfo.MapWidth - 1 do
+		begin
+			for x := 0 to m.MapInfo.MapHeight - 1 do
+			begin
+				if event = m.EventInfo.Event[y][x] then
+					count := count + 1;
+			end;
+		end;
+		result := count;
+	end;
+	
+	// Gets the Top Left X Coordinate of the Event
+	function EventPositionX(m : Map; event : Event; eventnumber : Integer): Integer;
+	var
+		y, x, count : Integer;
+	begin
+		count := 0;
+		
+		for y := 0 to m.MapInfo.MapWidth - 1 do
+		begin
+			for x := 0 to m.MapInfo.MapHeight - 1 do
+			begin
+				if event = m.EventInfo.Event[y][x] then
+				begin
+					if eventnumber = count then
+					begin
+						result := x * m.MapInfo.BlockWidth;
+						exit;
+					end;
+					count := count + 1;
+				end;
+			end;
+		end;
+		result := 0;
+	end;
+	
+	// Gets the Top Left Y Coordinate of the Event
+	function EventPositionY(m : Map; event : Event; eventnumber : Integer): Integer;
+	var
+		y, x, count : Integer;
+	begin
+		count := 0;
+		
+		for y := 0 to m.MapInfo.MapWidth - 1 do
+		begin
+			for x := 0 to m.MapInfo.MapHeight - 1 do
+			begin
+				if event = m.EventInfo.Event[y][x] then
+				begin
+					if eventnumber = count then
+					begin
+						result := y * m.MapInfo.BlockHeight;
+						exit;
+					end;
+					count := count + 1;
+				end;
+			end;
+		end;
+		result := 0;
+	end;
+	
+	function BruteForceDetection(m : Map; var spr : Sprite): Boolean;
+	const
+		SEARCH_RANGE = 0;
+	var
+		XStart, XEnd, YStart, YEnd : Integer;
+		y, x: Integer;
+	begin
+		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+
 		for y := YStart to YEnd do
 		begin
 			if (y < m.MapInfo.MapHeight - 1) and (y > 0) then
@@ -417,22 +505,197 @@ implementation
 					begin
 						if m.CollisionInfo.Collidable[y][x] = true then
 						begin
-							if HasSpriteCollidedWithRect(spr, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight) = true then
+							if HasSpriteCollidedWithRect(spr, 
+														 x * m.MapInfo.BlockWidth, 
+														 y * m.MapInfo.BlockHeight, 
+														 m.MapInfo.BlockWidth, 
+														 m.MapInfo.BlockHeight) then
 							begin
-								temp := true;
+								result := true;
+								exit;
 							end;
 						end;
 					end;
 				end;
 			end;
 		end;
-		
-		result := temp;
+		result := false;
 	end;
 	
+	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffSet, yOffSet: Integer): Boolean;
+	begin
+		spr.xPos := spr.xPos + xOffset;
+		spr.yPos := spr.yPos + yOffset;
+
+		if BruteForceDetection(m, spr) then
+		begin
+			result := true;
+		end
+		else
+			result := false;
+
+		spr.xPos := spr.xPos - xOffset;
+		spr.yPos := spr.yPos - yOffset;
+	end;
 	
-	{
+	procedure PushSpriteOut(m : Map; var spr : Sprite; vec : Vector);
+	const
+		SEARCH_RANGE = 0;
+	var
+		XStart, XEnd, YStart, YEnd : Integer;
+		y, x: Integer;
+		difference: Single;
+		tempVector: Vector;
+	begin
+		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
 
+		for y := YStart to YEnd do
+		begin
+			if (y < m.MapInfo.MapHeight - 1) and (y > 0) then
+			begin
+				for x := XStart to XEnd do
+				begin
+					if (x < m.MapInfo.MapWidth - 1) and (x > 0) then
+					begin
+						if m.CollisionInfo.Collidable[y][x] = true then
+						begin
+							if HasSpriteCollidedWithRect(spr, 
+														 x * m.MapInfo.BlockWidth, 
+														 y * m.MapInfo.BlockHeight, 
+														 m.MapInfo.BlockWidth, 
+														 m.MapInfo.BlockHeight) then
+							begin
+								MoveSprite(spr, {MultiplyVector(InvertVector(vec), 15)} InvertVector(vec));
+								tempVector := {MultiplyVector(vec, 15);}vec;
+								repeat
+									MoveSprite(spr, tempVector);
+									if HasSpriteCollidedWithRect(spr, 
+																 x * m.MapInfo.BlockWidth, 
+																 y * m.MapInfo.BlockHeight, 
+																 m.MapInfo.BlockWidth, 
+																 m.MapInfo.BlockHeight) then
+									begin
+										MoveSprite(spr, InvertVector(tempVector));
+										tempVector := MultiplyVector(tempVector, 0.5);
+									end;
+								until Magnitude(tempVector) < 0.1;
+							end;
+						end;
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	function CollisionWithMap(m: Map; var spr: Sprite; vec: vector): CollisionSide; overload;
+	type
+		Collisions = record
+			Top, Bottom, Left, Right: Boolean;
+		end;
+	var
+		xOffset, yOffset: Integer;
+		col: Collisions;
+	begin
+		xOffset := m.MapInfo.BlockWidth div 2;
+		yOffset := m.MapInfo.BlockHeight div 2;
 
-	}
+		result := None;
+		
+		if BruteForceDetection(m, spr) then
+		begin
+			PushSpriteOut(m, spr, vec);
+		
+			if vec.x > 0 then begin
+				//Right
+				if BruteForceDetectionComponent(m, spr, xOffset, 0) then
+					col.Right := true
+				else col.Right := false;
+			end else col.Right := false;
+
+			if vec.x < 0 then begin
+				//Left
+				if BruteForceDetectionComponent(m, spr, xOffset * -1, 0) then
+					col.Left := true
+				else col.Left := false;
+			end else col.Left := false;
+
+			if vec.y < 0 then begin
+				//Top
+				if BruteForceDetectionComponent(m, spr, 0, yOffset * -1) then
+					col.Top := true
+				else col.Top := false;
+			end else col.Top := false;
+
+			if vec.y > 0 then begin
+				//Bottom
+				if BruteForceDetectionComponent(m, spr, 0, yOffset) then
+					col.Bottom := true
+				else col.Bottom := false;
+			end else col.Bottom := false;
+
+			//BottomRight
+			if (col.Right = col.Bottom) and (vec.x > 0) and (vec.y > 0) then
+			begin
+				result := BottomRight;
+				exit;
+			end;
+
+			//BottomLeft
+			if (col.Left = col.Bottom) and (vec.x < 0) and (vec.y > 0) then
+			begin
+				result := BottomLeft;
+				exit;
+			end;
+
+			//TopRight
+			if (col.Right = col.Top) and (vec.x > 0) and (vec.y < 0) then
+			begin
+				result := TopRight;
+				exit;
+			end;
+
+			//TopLeft
+			if (col.Left = col.Top) and (vec.x < 0) and (vec.y < 0) then
+			begin
+				result := TopLeft;
+				exit;
+			end;
+
+			//Left
+			if col.Left then
+			begin
+				result := Left;
+				exit;
+			end;
+
+			//Right
+			if col.Right then
+			begin
+				result := Right;
+				exit;
+			end;
+
+			//Top
+			if col.Top then
+			begin
+				result := Top;
+				exit;
+			end;
+
+			//Bottom
+			if col.Bottom then
+			begin
+				result := Bottom;
+				exit;
+			end;
+		end;
+	end;
+	
+	function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
+	begin
+		result := CollisionWithMap(m, spr, spr.movement);
+	end;
 end.

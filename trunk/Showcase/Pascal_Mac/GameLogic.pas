@@ -303,10 +303,10 @@ implementation
 		ClearScreen();
 		ball1 := CreateSprite(GameImage('BallImage1'));
 		ball2 := CreateSprite(GameImage('BallImage2'));
-		ball1.movement := CreateVector(3, 3);
-		ball2.movement := CreateVector(3, 3);
+		ball1.movement := CreateVector(3, 3, true);
+		ball2.movement := CreateVector(3, 3, true);
 		ball1.mass := 1;
-		ball2.mass := 1;
+		ball2.mass := 5;
 		ball1.xPos := 0;
 		ball1.yPos := 0;
 		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
@@ -446,15 +446,9 @@ implementation
 	procedure DroppingBall();
 	var
 		ball: Sprite;
-		GravityConst, AirResistanceV, AirResistanceH: Vector;
-		Rotate: Matrix2D;
-		falling: Boolean;
+		GravityConst: Vector;
 	begin
 		GravityConst := CreateVector(0, 0.5);
-		AirResistanceV := CreateVector(0, 0.1);
-		AirResistanceH := CreateVector(0.01, 0);
-
-		Rotate := RotationMatrix(180);
 
 		ball := CreateSprite(GameImage('SmallBall'));
 		ball.movement := CreateVector(5, 0);
@@ -462,30 +456,11 @@ implementation
 
 		ball.xPos := 0;
 		ball.yPos := 0;
-
-		falling := false;
-
 		repeat
 			ClearScreen();
-			if (not falling) and (ball.movement.y >= 0) then
-			begin
-				AirResistanceV := Multiply(Rotate, AirResistanceV);
-				falling := true;
-			end;
-
-	        if (ball.Movement.x < 0) and (AirResistanceH.x < 0) then
-	        begin
-	            AirResistanceH := InvertVector(AirResistanceH);
-	        end;
-
-	        if (ball.Movement.x > 0) and (AirResistanceH.x > 0) then
-	        begin
-	            AirResistanceH := InvertVector(AirResistanceH);
-	        end;
 
 			ball.movement := AddVectors(ball.movement, GravityConst);
-			ball.movement := AddVectors(ball.movement, AirResistanceV);
-			ball.movement := AddVectors(ball.movement, AirResistanceH);
+			ball.movement := MultiplyVector(ball.movement, 0.995);
 
 			MoveSprite(ball, ball.movement);
 
@@ -493,7 +468,6 @@ implementation
 			begin
 				ball.movement.x := ball.movement.x * -1;
 				ball.xPos := ScreenWidth() - CurrentWidth(ball);
-				AirResistanceH := InvertVector(AirResistanceH);
 			end;
 			if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
 			begin
@@ -501,8 +475,6 @@ implementation
 					ball.movement.y := 0;
 				ball.movement.y := ball.movement.y * -1;
 				ball.yPos := ScreenHeight() - CurrentHeight(ball);
-				AirResistanceV := Multiply(Rotate, AirResistanceV);
-				falling := false;
 			end;
 			if ball.xPos < 0 then
 			begin
@@ -618,13 +590,34 @@ implementation
 		ProcessEvents();
 	end;
 	
+
+	
 	procedure MapExample();
 	var
 		m : Map;
+		balls: Array of Sprite;
+		tempString: CollisionSide;
+		i, j : Integer;
+		gravity : Vector;
 	begin
 		m := GameMap('test');
+		
+		SetLength(balls, 2);
+		
+		for i := 0 to 1 do
+		begin
+			balls[i] := CreateSprite(GameImage('SmallBall'));
+			balls[i].movement := CreateVector(Random(15),0);
+			balls[i].xPos := EventPositionX(m, Event1, i);
+			balls[i].yPos := EventPositionY(m, Event1, i);
+			balls[i].mass := 1;
+		end;
+		
+		gravity := CreateVector(0, 0.7);
+		
 		repeat
 			ProcessEvents();
+			
 			if IsKeyPressed(VK_RIGHT) then
 				MoveVisualArea(2, 0);
 			if IsKeyPressed(VK_LEFT) then
@@ -633,11 +626,46 @@ implementation
 				MoveVisualArea(0, -2);
 			if IsKeyPressed(VK_DOWN) then
 				MoveVisualArea(0, 2);
+			
 			DrawMap(m);
+			
+			for i := 0 to  1 - 1 do
+			begin
+				for j := i + 1 to 1 do
+				begin
+					if i <> j then
+					begin
+						if HaveSpritesCollided(balls[i], balls[j]) then
+						begin
+							VectorCollision(balls[i], balls[j]);
+						end;
+					end;
+				end;
+			end;
+			
+			for i := 0 to 1 do
+			begin
+				balls[i].movement := AddVectors(balls[i].movement, gravity);
+				balls[i].movement := MultiplyVector(balls[i].movement, 0.995);
+				MoveSprite(balls[i], balls[i].movement);
+			end;
+			
+			for i := 0 to 1 do
+			begin
+				tempString := CollisionWithMap(m, balls[i]);
+				if (tempString = Right) or (tempString = Left) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
+					balls[i].movement.x := balls[i].movement.x * -1;
+				if (tempString = Top) or (tempString = Bottom) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
+					balls[i].movement.y := balls[i].movement.y * -1;
+			end;
+			
+			for i := 0 to 1 do
+			begin
+				DrawSprite(balls[i]);
+			end;
 			DrawOverlay('MappyLoader Example');
 			DrawFramerate(0, 0, GameFont('Courier'));
 			RefreshScreen(60);
-			//Draw screen
 			ClearScreen(ColorBlack);
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);

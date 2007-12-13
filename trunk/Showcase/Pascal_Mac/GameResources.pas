@@ -1,7 +1,7 @@
 unit GameResources;
 
 interface
-	uses SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics, SGSDK_MappyLoader;
+	uses SysUtils, SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics, SGSDK_MappyLoader;
 
 	procedure LoadResources();
 	procedure FreeResources();
@@ -144,7 +144,7 @@ implementation
 		NewImage('Explosion', 'Explosion.png');
 		NewImage('Ship', 'ship.png');
 		NewImage('Sea', 'sea.png');
-		//NewImage('NoImages', 'Ufo.png');		
+		//NewImage('NoImages', 'Ufo.png');
 	end;
 
 	procedure FreeImages();
@@ -217,29 +217,26 @@ implementation
 		ShowLoadingScreen();
 		ShowMessage('Loading fonts...', 0); 
 		LoadFonts();
-		//Sleep(500);
+		Sleep(50);
 
 		ShowMessage('Loading images...', 1);
 		LoadImages();
-		//Sleep(500);
+		Sleep(50);
 
 		ShowMessage('Loading sounds...', 2);
 		LoadSounds();
-		//Sleep(500);
+		Sleep(50);
 
 		ShowMessage('Loading music...', 3);
 		LoadMusics();
-		//Sleep(500);
+		Sleep(50);
 		
 		ShowMessage('Loading maps...', 3);
 		LoadMaps();
-		//Sleep(500);
+		Sleep(50);
 
-		//Add game level loading here...
-
-		//Sleep(500);
 		ShowMessage('Game loaded...', 4);
-		//Sleep(500);
+		Sleep(50);
 		EndLoadingScreen();
 
 		ChangeScreenSize(oldW, oldH);
@@ -265,6 +262,7 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Font ' + font + ' does not exist...');
 	end;
 
 	function GameImage(image: String): Bitmap;
@@ -278,6 +276,7 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Image ' + image + ' does not exist...');
 	end;
 
 	function GameSound(sound: String): SoundEffect; 
@@ -291,6 +290,7 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Sound ' + sound + ' does not exist...');
 	end;
 	
 	function GameMap(mapName: String): Map;
@@ -304,6 +304,7 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Map ' + mapName + ' does not exist...');
 	end;
 	
 	function GameMusic(music: String): Music;
@@ -317,5 +318,6 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Music ' + music + ' does not exist...');
 	end;
 end.
