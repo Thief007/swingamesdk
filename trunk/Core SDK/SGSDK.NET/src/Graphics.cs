@@ -1344,11 +1344,23 @@ namespace SwinGame
 
 
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSpriteAnimation")]
+        private static extern void DLL_UpdateSpriteAnimation(IntPtr sprite);
+
+        /// <summary>
+        /// Updates the Sprites Animation
+        /// </summary>
+        /// <param name="sprite">The Sprite</param>
+        public static void UpdateSpriteAnimation(Sprite sprite)
+        {
+            DLL_UpdateSprite(sprite.Pointer);
+        }
+
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
         private static extern void DLL_UpdateSprite(IntPtr sprite);
 
         /// <summary>
-        /// Updates a Sprite
+        /// Updates the Sprites Animation and Movement
         /// </summary>
         /// <param name="sprite">The Sprite</param>
         public static void UpdateSprite(Sprite sprite)

@@ -18,7 +18,7 @@ namespace SGSDK_Showcase
         public static void Run()
         {
 
-            for (int i = 0; i < 1000; i++)
+            do
             {
 
                 position = Input.GetMousePosition();
@@ -35,14 +35,15 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Mouse Cursor Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
                 Graphics.ClearScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
     }
 }

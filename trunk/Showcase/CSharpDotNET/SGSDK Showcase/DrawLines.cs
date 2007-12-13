@@ -17,20 +17,21 @@ namespace SGSDK_Showcase
         {
             Graphics.ClearScreen();
 
-            for (int i = 0; i < 1000; i++)
+            do
             {
                 Graphics.DrawLine(Randoms.GetRandomColor(), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(800));
 
                 Overlay.DrawOverlay("Drawing Lines Example");
 
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
 
             Graphics.ClearScreen();
         }

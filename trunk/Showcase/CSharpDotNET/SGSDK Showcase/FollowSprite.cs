@@ -30,7 +30,7 @@ namespace SGSDK_Showcase
             ship.xPos = 0;
             ship.yPos = 0;
 
-            while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN))
+            do
             {
                 Core.ProcessEvents();
 
@@ -63,8 +63,14 @@ namespace SGSDK_Showcase
                 Graphics.UpdateSprite(ship);
 
                 Overlay.DrawOverlay("Follow Sprite Example");
-                Core.RefreshScreen(60);
-            }
+                Core.RefreshScreen();
+
+                if (Core.WindowCloseRequested())
+                {
+                    break;
+                }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         
         }
 

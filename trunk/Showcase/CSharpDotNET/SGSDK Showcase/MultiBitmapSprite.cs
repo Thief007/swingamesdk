@@ -36,7 +36,7 @@ namespace SGSDK_Showcase
             sp2.xPos = 80;
             sp2.yPos = 110;
 
-            while (!Input.IsKeyPressed(SwinGame.Keys.VK_N))
+            do
             {
                 Core.ProcessEvents();
                 Graphics.ClearScreen();
@@ -58,8 +58,14 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Multi-Bitmap Collision Detection");
 
-                Core.RefreshScreen(60);
-            }
+                Core.RefreshScreen();
+
+                if (Core.WindowCloseRequested())
+                {
+                    break;
+                }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         
         }
 

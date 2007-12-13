@@ -25,7 +25,7 @@ namespace SGSDK_Showcase
                 Text.DrawText("Please enter a message:", Color.Green, _Font, 0, 50);
                 Overlay.DrawOverlay("Text Reading Example");
                 Text.DrawFramerate(0, 0, _Font);
-                Core.RefreshScreen(72);
+                Core.RefreshScreen();
                 Core.ProcessEvents();
                 if (Core.WindowCloseRequested())
                 {
@@ -34,17 +34,19 @@ namespace SGSDK_Showcase
             }
 
             Text.DrawText("You have entered " + Input.TextReadAsASCII(), Color.Green, _Font, 0, 80);
-            Core.RefreshScreen(60);
+            Core.RefreshScreen();
 
-            for (int i = 0; i < 200; i++)
+            do
             {
                 Core.Sleep(20);
                 Core.ProcessEvents();
+
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
      }
 }

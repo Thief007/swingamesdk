@@ -35,7 +35,7 @@ namespace SGSDK_Showcase
             ball1.UsePixelCollision = true;
             ball2.UsePixelCollision = true;
 
-            for (int i = 0; i < 4200; i++)
+            do
             {
                 Graphics.ClearScreen();
                 Graphics.DrawSprite(ball1);
@@ -53,13 +53,14 @@ namespace SGSDK_Showcase
 
                 Overlay.DrawOverlay("Vector Collision Example");
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
         public static void MoveBallUsingVector(ref Sprite ball)

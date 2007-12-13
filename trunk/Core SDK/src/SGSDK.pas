@@ -52,9 +52,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Core.ToggleFullScreen();
 	end;
 	
-	procedure RefreshScreen(TargetFPS : Integer); cdecl; export;
+	procedure RefreshScreenWithFrame(TargetFPS : Integer); cdecl; export;
 	begin
 		SGSDK_Core.RefreshScreen(TargetFPS);
+	end;
+	
+	procedure RefreshScreen(); cdecl; export;
+	begin
+		SGSDK_Core.RefreshScreen();
 	end;
 	
 	procedure TakeScreenshot(basename: PChar); cdecl; export;
@@ -1087,6 +1092,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	// Update Sprite
 	
+	procedure UpdateSpriteAnimation(spriteToDraw : Sprite); cdecl; export;
+	begin
+		SGSDK_Graphics.UpdateSpriteAnimation(spriteToDraw);
+	end;
+	
 	procedure UpdateSprite(spriteToDraw : Sprite); cdecl; export;
 	begin
 		SGSDK_Graphics.UpdateSprite(spriteToDraw);
@@ -1373,6 +1383,7 @@ exports
 	SetIcon,
 	ChangeScreenSize,
 	ToggleFullScreen,
+	RefreshScreenWithFrame,
 	RefreshScreen,
 	TakeScreenShot,
 	ScreenWidth,
@@ -1578,6 +1589,7 @@ exports
 	CreateSpriteMultiFPC,
 	CreateSpriteArrayFPC,
 	
+	UpdateSpriteAnimation,
 	UpdateSprite,
 
 	GetSpriteKind,	

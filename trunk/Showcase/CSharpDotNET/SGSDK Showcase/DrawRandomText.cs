@@ -20,7 +20,7 @@ namespace SGSDK_Showcase
         {
             Graphics.ClearScreen();
 
-            for (int i = 0; i < 500; i++)
+            do
             {
                 Text.SetFontStyle(_Font, Randoms.GetRandomFontStyle());
                 Text.DrawText("SwinGameSDK!", Randoms.GetRandomColor(), _Font, Randoms.GetRandomNumber(800), Randoms.GetRandomNumber(600));
@@ -30,14 +30,15 @@ namespace SGSDK_Showcase
                 Text.SetFontStyle(_Font, Randoms.GetRandomFontStyle());
                 Overlay.DrawOverlay("Drawing Random Texts");
                 Core.Sleep(10);
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
                 Core.ProcessEvents();
 
                 if (Core.WindowCloseRequested())
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
     }
 }

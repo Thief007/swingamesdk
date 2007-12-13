@@ -54,7 +54,7 @@ namespace SGSDK_Showcase
 		    reverseOnceSprite.xPos = 450;
 		    reverseOnceSprite.yPos = 200;
 
-            for (int i = 0; i < 151; i++)
+            do
             {
                 Graphics.ClearScreen();
 
@@ -76,7 +76,7 @@ namespace SGSDK_Showcase
                 Overlay.DrawOverlay("Drawing Sprite Example");
 
                 Core.ProcessEvents();
-                Core.RefreshScreen(60);
+                Core.RefreshScreen();
 
                 Core.Sleep(50);
 
@@ -84,13 +84,13 @@ namespace SGSDK_Showcase
                 {
                     break;
                 }
-            }
+            } while (!Input.IsKeyPressed(SwinGame.Keys.VK_RETURN));
+            Core.Sleep(500);
         }
 
         public static void DrawSpriteCaption(Sprite sprite, String caption)
         {
-            Text.DrawText(caption, Color.White, _Font, (int)Math.Round(sprite.xPos + Graphics.CurrentWidth(sprite) / 2) - ((caption.Length / 2) * 10), (int)Math.Round(sprite.yPos + Graphics.CurrentHeight(sprite)));
-        
+            Text.DrawText(caption, Color.White, _Font, (int)Math.Round(sprite.xPos + sprite.Width / 2) - ((caption.Length / 2) * 10), (int)Math.Round(sprite.yPos + sprite.Height));
         }
     }
 }

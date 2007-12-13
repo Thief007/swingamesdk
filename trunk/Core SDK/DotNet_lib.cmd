@@ -15,6 +15,11 @@ set DOTNETsln=.\SGSDK.NET\src\
 
 set DOTNETbin=.\SGSDK.NET\src\bin\Debug\
 
+
+set ShowcaseDOTNET=..\Showcase\CSharpDotNET\SGSDK Showcase\lib\
+
+
+
 echo Doing %1
 
 if "%1"=="clean" goto cleaning
@@ -31,7 +36,10 @@ if "%1"=="clean" goto cleaning
 
 	copy "%DOTNETbin%\*.dll" "%Output1%"
 	copy "%DOTNETbin%\*.xml" "%Output1%"
-	
+
+	echo Copying to Showcase
+	copy "%Output1%\*.dll" "%ShowcaseDOTNET%"
+	copy "%Output1%\*.xml" "%ShowcaseDOTNET%"
 
 
 	echo Finished
