@@ -85,7 +85,7 @@ var
 	oldStr: WideString;
 begin
 	SetLength(_KeyTyped, Length(_KeyTyped) + 1);
-	_KeyTyped[High(_KeyTyped)] := event.key.keysym.unicode;
+	_KeyTyped[High(_KeyTyped)] := event.key.keysym.sym;
 
 	if _readingString then
 	begin
