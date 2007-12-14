@@ -442,6 +442,8 @@ begin
 		data.state := EnterHighScoreState
 	else
 		data.state := GameMenuState;
+		
+	data.score := 0;
 end;
 
 procedure DoShowScoreboard(var data: GameDataType);
@@ -696,7 +698,8 @@ begin
 		end;
 	until WindowCloseRequested();
 	
-	DoEndOfGame(data);
+	if data.score > 0 then
+		DoEndOfGame(data);
 	
 	SaveScoreboard(data);
 	
