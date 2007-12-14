@@ -5,11 +5,17 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
 
-
 namespace SwinGame
 {
+    /// <summary>
+    /// SwinGameException
+    /// </summary>
     public class SwinGameException : Exception
     {
+        /// <summary>
+        /// SwinGameException
+        /// </summary>
+        /// <param name="message">Exception Message</param>
         public SwinGameException(string message) : base(message)
         { }
     }
@@ -21,10 +27,26 @@ namespace SwinGame
     /// paths are correct across platforms
     /// </summary>
     public enum ResourceKind
-    {     
+    {   
+        /// <summary>
+        /// Font Resource
+        /// </summary>
 	    FontResource,
+        /// <summary>
+        /// Image Resource
+        /// </summary>
 	    ImageResource,
+        /// <summary>
+        /// Sound Resource
+        /// </summary>
 	    SoundResource,
+        /// <summary>
+        /// Map Resource
+        /// </summary>
+        MapResource,
+        /// <summary>
+        /// No Resource
+        /// </summary>
         None
     }
 
@@ -47,11 +69,17 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll")]
         private static extern int GetBitmapHeight(IntPtr pointer);
 
+        /// <summary>
+        /// The Width of the Bitmap
+        /// </summary>
         public int Width
         {
             get { return Graphics.GetBitmapWidth(this); }
         }
 
+        /// <summary>
+        /// The Height of the Bitmap
+        /// </summary>
         public int Height
         {
             get { return Graphics.GetBitmapHeight(this); }
@@ -64,22 +92,31 @@ namespace SwinGame
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector
     {
-         private Single X;
-         private Single Y;
-         private Single W;
+        private Single X;
+        private Single Y;
+        private Single W;
 
+        /// <summary>
+        /// The X Component of the Vector
+        /// </summary>
         public Single x
         {
             get { return X; }
             set { X = value; }
         }
 
+        /// <summary>
+        /// The Y Component of the Vecotr
+        /// </summary>
         public Single y
         {
             get { return Y; }
             set { Y = value; }
         }
 
+        /// <summary>
+        /// The W Component of the Vector
+        /// </summary>
         public Single w
         {
             get { return W; }
@@ -135,11 +172,12 @@ namespace SwinGame
         /// <returns>Returns true if the window has been requested to close</returns>
         public static bool WindowCloseRequested()
         {
-            return DLL_WindowCloseRequested();
+            bool temp = DLL_WindowCloseRequested();
             if (ExceptionOccured())
             {
                 throw new SwinGameException(GetExceptionMessage());
             }
+            return temp;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ProcessEvents")]
@@ -246,6 +284,7 @@ namespace SwinGame
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
         ///	current directory.
+        /// </summary>
         /// <param name="basename">The base name for the screen shot</param>
         public static void TakeScreenshot(String basename)
         {
@@ -256,28 +295,40 @@ namespace SwinGame
             }
         }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenWidth")]
+        private static extern int DLL_ScreenWidth();
         /// <summary>
         /// Gets the Screen's Width
         /// </summary>
         /// <returns>The Screen Width</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int ScreenWidth();
+        public static int ScreenWidth()
+        {
+            int temp = DLL_ScreenWidth();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
 	
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenHeight")]
+        private static extern int DLL_ScreenHeight();
         /// <summary>
         /// Gets the Screen's Height
         /// </summary>
         /// <returns>The Screen Height</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int ScreenHeight();
+        public static int ScreenHeight()
+        {
+            int temp = DLL_ScreenHeight();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetColourRGBA")]
         private static extern int DLL_GetColor(Byte red, Byte green, Byte blue, Byte alpha);
-
-        //function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
-        //begin
-        //result := SGSDK_Core.GetColour(forBitmap, apiColor);
-        //end;
-
         /// <summary>
         /// Gets the Color when the user enters the amount of red, green, blue and alpha
         /// </summary>
@@ -288,7 +339,12 @@ namespace SwinGame
         /// <returns>Color</returns>
         public static Color GetColor(Byte red, Byte green, Byte blue, Byte alpha)
         {
-            return Color.FromArgb(alpha, red, green, blue);
+            Color temp = Color.FromArgb(alpha, red, green, blue);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
         }
 
         /// <summary>
@@ -300,39 +356,70 @@ namespace SwinGame
         /// <returns>Color</returns>
         public static Color GetColor(Byte red, Byte green, Byte blue)
         {
-            return Color.FromArgb(red, green, blue);
+            Color temp = Color.FromArgb(red, green, blue);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
         }
-	    /// <summary>
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetFramerate")]
+        private static extern int DLL_GetFramerate();
+        /// <summary>
         /// Returns the average framerate for the last 10 frames as an integer.
-	    /// </summary>
-	    /// <returns>The current average framerate</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetFramerate();
-	    
+        /// </summary>
+        /// <returns>The current average framerate</returns>
+        public static int GetFramerate()
+        {
+            int temp = DLL_GetFramerate();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetTicks")]
+        private static extern UInt32 DLL_GetTicks();
         /// <summary>
         /// Gets the number of milliseconds that have passed. This can be used to
         ///	determine timing operations, such as updating the game elements.
         /// </summary>
         /// <returns>The number of milliseconds passed</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern UInt32 GetTicks();
+        public static UInt32 GetTicks()
+        {
+            UInt32 temp = DLL_GetTicks();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Sleep")]
+        private static extern UInt32 DLL_Sleep(UInt32 time);
         /// <summary>
         /// /// Puts the process to sleep for a specified number of
         /// milliseconds. This can be used to add delays into your
         /// </summary>
         /// <param name="time">The number of milliseconds to sleep</param>
         /// <returns>Delay before returning</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern UInt32 Sleep(UInt32 time);
+        public static UInt32 Sleep(UInt32 time)
+        {
+            UInt32 temp = DLL_Sleep(time);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
 
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithKind")]
         private static extern String DLL_GetPathToResourceWithKind(String filename, ResourceKind kind);
-
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResource")]
         private static extern String DLL_GetPathToResource(String filename);
-
         /// <summary>
         /// Gets the resource to an image, sound, font or other type of resource
         /// 
@@ -346,36 +433,77 @@ namespace SwinGame
         /// <returns>A Path to the Resource</returns>
         public static String GetPathToResource(String filename, ResourceKind kind)
         {
-            return DLL_GetPathToResourceWithKind(filename, kind);
+            String temp = DLL_GetPathToResourceWithKind(filename, kind);         
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
         }
-
+        /// <summary>
+        /// Gets the Path to a Resource in the base Resource folder.
+        /// </summary>
+        /// <param name="filename">filename that you need to get the path of</param>
+        /// <returns>A Path to the Resource</returns>
         public static String GetPathToResource(String filename)
         {
-            return DLL_GetPathToResource(filename);
+            String temp = DLL_GetPathToResource(filename);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
         }
 	    
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Cos")]
+        private static extern Single DLL_Cos(Single angle);
         /// <summary>
         /// Gets the Cos of an angle
         /// </summary>
         /// <param name="angle">Angle</param>
         /// <returns>Cos</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern Single Cos(Single angle);
+        public static Single Cos(Single angle)
+        {
+            Single temp = DLL_Cos(angle);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Sin")]
+        private static extern Single DLL_Sin(Single angle);
         /// <summary>
         /// Gets the Sin of an angle
         /// </summary>
         /// <param name="angle">Angle</param>
         /// <returns>Sin</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern Single Sin(Single angle);
+        public static Single Sin(Single angle)
+        {
+            Single temp = DLL_Sin(angle);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Tan")]
+        private static extern Single DLL_Tan(Single angle);
         /// <summary>
         /// Gets the Tan of an angle
         /// </summary>
         /// <param name="angle">Angle</param>
         /// <returns>Tan</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern Single Tan(Single angle);
-     }
+        public static Single Tan(Single angle)
+        {
+            Single temp = DLL_Tan(angle);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
+        }
+    }
 }

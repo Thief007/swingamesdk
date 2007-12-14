@@ -14,7 +14,7 @@ namespace SGSDK_Showcase
         static void Main()
         {
             //Opens the Graphics Window
-            Core.OpenGraphicsWindow("SwinGameSDK Showcase", -1, -1);
+            Core.OpenGraphicsWindow("SwinGameSDK Showcase", 800, 600);
 
             //Opens the Audio System
             Audio.OpenAudio();
