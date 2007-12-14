@@ -203,7 +203,7 @@ interface
 		
 		iconFile: String;
 		
-	procedure RaiseSGSDKException(message: String);
+	procedure RaiseSGSDKException(msg: String);
 	function HasExceptionRaised(): Boolean;
 	function GetSGSDKException(): String;
 	
@@ -276,12 +276,13 @@ implementation
 	
 	var
 		HasErrorOccured: Boolean = false;
-		ExceptionMessage: String = 'Empty';
+		ExceptionMessage: String;
 	
-	procedure RaiseSGSDKException(message: String);
+	procedure RaiseSGSDKException(msg: String);
 	begin
+		ExceptionMessage := msg;
 		HasErrorOccured := true;
-		ExceptionMessage := message;
+		raise Exception.Create(msg);
 	end;
 	
 	function HasExceptionRaised(): Boolean;
@@ -327,6 +328,11 @@ implementation
 	var
 		icon: PSDL_Surface;
 	begin
+		if (screenWidth < 1) and (screenHeight < 1) then
+		begin
+			RaiseSGSDKException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
+		end;
+	
 		if Length(iconFile) > 0 then
 		begin
 			icon := IMG_Load(PChar(iconFile));
@@ -335,12 +341,6 @@ implementation
 		end;
 
 		New(scr);
-		
-		if (screenWidth < 1) and (screenHeight < 1) then
-		begin
-			raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
-			RaiseSGSDKException('Screen Width and Height must be greater then 0 when opening a Graphical Window')
-		end;
 		
 		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32,
 															 SDL_HWSURFACE or SDL_DOUBLEBUF);
@@ -354,7 +354,6 @@ implementation
 
 		if scr.surface = nil then
 		begin
-			raise Exception.Create('Error creating screen with SDL');
 			RaiseSGSDKException('Error creating screen with SDL');
 		end;
 		SDL_WM_SetCaption(PChar(caption), nil);

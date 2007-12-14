@@ -98,7 +98,6 @@ namespace SwinGame
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
         
@@ -118,53 +117,95 @@ namespace SwinGame
         /// <param name="height">Height of the Window</param>
         public static void OpenGraphicsWindow(String caption, int width, int height)
         {
+     
             DLL_OpenGraphicsWindow(caption, width, height);
             if (ExceptionOccured())
             {
                 throw new SwinGameException(GetExceptionMessage());
-            }
+            }     
         }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
+        private static extern bool DLL_WindowCloseRequested();
         /// <summary>
         /// Checks to see if the window has been asked to close. You need to handle
         ///	this if you want the game to end when the window is closed. This value
         ///	is updated by the ProcessEvents routine. 
         /// </summary>
         /// <returns>Returns true if the window has been requested to close</returns>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern bool WindowCloseRequested();
+        public static bool WindowCloseRequested()
+        {
+            return DLL_WindowCloseRequested();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ProcessEvents")]
+        private static extern void DLL_ProcessEvents();
         /// <summary>
         /// ProcessEvents allows the SwinGame API to react to user interactions. This
         ///	routine checks the current keyboard and mouse states. This routine must
         ///	be called frequently within your game loop to enable user interaction.
         /// </summary>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ProcessEvents();
+        public static void ProcessEvents()
+        {
+            DLL_ProcessEvents();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetIcon")]
+        private static extern void DLL_SetIcon(String iconFilename);
         /// <summary>
         /// Sets the icon for the window. This must be called before openning the
         ///	graphics window. The icon is loaded as a bitmap, though this can be from
         ///	any kind of bitmap file.
         /// </summary>
         /// <param name="iconFilename">The name of the file to load as the image icon</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void SetIcon(String iconFilename);
+        public static void SetIcon(String iconFilename)
+        {
+            DLL_SetIcon(iconFilename);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ChangeScreenSize")]
+        private static extern void DLL_ChangeScreenSize(int width, int height);
         /// <summary>
         /// Changes the size of the screen.
         /// </summary>
         /// <param name="width">New width of the Screen</param>
         /// <param name="height">New height of the Screen</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ChangeScreenSize(int width, int height);
+        public static void ChangeScreenSize(int width, int height)
+        {
+            DLL_ChangeScreenSize(width, height);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ToggleFullScreen")]
+        private static extern void DLL_ToggleFullScreen();
         /// <summary>
         /// Switches the application to full screen or back from full screen to
         ///	windowed.
         /// </summary>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void ToggleFullScreen();
+        public static void ToggleFullScreen()
+        {
+            DLL_ToggleFullScreen();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
+
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="RefreshScreenWithFrame")]
         private static extern void DLL_RefreshScreenWithFrame(int TargetFPS);
@@ -180,6 +221,10 @@ namespace SwinGame
         public static void RefreshScreen(int TargetFPS) 
         {
             DLL_RefreshScreenWithFrame(TargetFPS);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
         }
 
         /// <summary>
@@ -190,14 +235,26 @@ namespace SwinGame
         public static void RefreshScreen()
         {
             DLL_RefreshScreen();
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
         }
 
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TakeScreenshot")]
+        private static extern void DLL_TakeScreenshot(String basename);
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
         ///	current directory.
         /// <param name="basename">The base name for the screen shot</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void TakeScreenshot(String basename);
+        public static void TakeScreenshot(String basename)
+        {
+            DLL_TakeScreenshot(basename);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
 
         /// <summary>
         /// Gets the Screen's Width

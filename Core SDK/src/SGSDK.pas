@@ -1,13 +1,16 @@
 library SGSDK;
 
 uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera, SGSDK_MappyLoader;
+	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera, SGSDK_MappyLoader, SysUtils;
 
 	type
 		IntArray = Array of Integer;
 		BitmapArray = Array of Bitmap;
 		Matrix2DPtr = ^Matrix2D;
 		MapPtr = ^Map;
+	
+	var
+		ErrorMessage: String;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -17,12 +20,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function GetExceptionMessage(): String; cdecl; export;
 	begin
-		result := GetSGSDKException();
+		result := ErrorMessage;
 	end;
 	
 	function ExceptionOccured(): Integer; cdecl; export;
 	begin
-		if HasExceptionRaised() then
+		if SGSDK_Core.HasExceptionRaised() then
 		begin
 			result:= -1
 		end
@@ -48,8 +51,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		Try
 			SGSDK_Core.OpenGraphicsWindow(caption, width, height);
 		Except
-			ExceptionMessage := 'Could not open a graphical window';
-			HasExceptionOccured := true;
+			ErrorMessage := GetSGSDKException();
 		end;
 	end;
 	
