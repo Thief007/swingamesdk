@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>GameLogic.pas</string>
+	<string>AlienFlightView.pas</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,63 +21,61 @@
 	<integer>289</integer>
 	<key>metaData</key>
 	<dict>
+		<key>AlienFlightLevelEditor.pas</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>8</integer>
+				<key>line</key>
+				<integer>389</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>308</integer>
+		</dict>
 		<key>AlienFlightModel.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>50</integer>
+				<integer>98</integer>
 				<key>line</key>
-				<integer>1376</integer>
+				<integer>659</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1100</integer>
+			<integer>367</integer>
 		</dict>
 		<key>AlienFlightView.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>69</integer>
+				<integer>41</integer>
 				<key>line</key>
-				<integer>400</integer>
+				<integer>40</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>346</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>49</integer>
-				<key>line</key>
-				<integer>400</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>69</integer>
-				<key>line</key>
-				<integer>400</integer>
-			</dict>
+			<integer>40</integer>
 		</dict>
 		<key>GameLogic.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>17</integer>
+				<integer>35</integer>
 				<key>line</key>
-				<integer>698</integer>
+				<integer>688</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>673</integer>
+			<integer>438</integer>
 		</dict>
 		<key>GameResources.pas</key>
 		<dict>
@@ -93,17 +91,79 @@
 			<key>firstVisibleLine</key>
 			<integer>241</integer>
 		</dict>
+		<key>Resources/level1.dat</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>40</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+		</dict>
+		<key>Resources/level2.dat</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>37</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Resources/level80.dat</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>37</integer>
+				<key>line</key>
+				<integer>1</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>GameLogic.pas</string>
 		<string>AlienFlightModel.pas</string>
+		<string>AlienFlightLevelEditor.pas</string>
+		<string>Resources/level80.dat</string>
+		<string>Resources/level1.dat</string>
+		<string>Resources/level2.dat</string>
 		<string>GameResources.pas</string>
 		<string>AlienFlightView.pas</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{172, 54}, {860, 722}}</string>
+	<string>{{145, 54}, {860, 722}}</string>
 </dict>
 </plist>
