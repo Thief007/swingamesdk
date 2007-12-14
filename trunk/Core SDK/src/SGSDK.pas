@@ -1439,14 +1439,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := SGSDK_MappyLoader.EventPositionY(m^, event, eventnumber);
 	end;
 	
-	//function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
-
-	{	
-initialization
-begin
-	HasExceptionOccured := false;
-	ExceptionMessage := 'Empty';
-end;}
+	procedure FreeMap(m : MapPtr);
+	begin
+		SGSDK_MappyLoader.FreeMap(m^);
+		dispose(m);
+		m := nil;
+	end;
 
 exports
 
@@ -1725,6 +1723,7 @@ exports
 	EventCount,
 	EventPositionX,
 	EventPositionY,
+	FreeMap,
 	
 	GetExceptionMessage,
 	ExceptionOccured
