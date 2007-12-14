@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>AlienFlightView.pas</string>
+	<string>AlienFlightModel.pas</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,14 +40,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>98</integer>
+				<integer>22</integer>
 				<key>line</key>
-				<integer>659</integer>
+				<integer>1269</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>367</integer>
+			<integer>1244</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>9</integer>
+				<key>line</key>
+				<integer>1269</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>25</integer>
+				<key>line</key>
+				<integer>1269</integer>
+			</dict>
 		</dict>
 		<key>AlienFlightView.pas</key>
 		<dict>
@@ -68,14 +84,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>35</integer>
+				<integer>19</integer>
 				<key>line</key>
-				<integer>688</integer>
+				<integer>47</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>438</integer>
+			<integer>147</integer>
 		</dict>
 		<key>GameResources.pas</key>
 		<dict>
