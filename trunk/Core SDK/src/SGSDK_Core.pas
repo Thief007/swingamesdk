@@ -244,19 +244,19 @@ interface
 	// These routines are used for general purposes.
 	//
 
-	function	ToSDLColor(color: UInt32): TSDL_Color;
+	function ToSDLColor(color: UInt32): TSDL_Color;
 
-	function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
-	function	GetColour(red, green, blue, alpha: Byte) : Colour; overload;	
-	function	GetColour(red, green, blue : Byte) : Colour; overload;
+	function GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
+	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;	
+	function GetColour(red, green, blue : Byte) : Colour; overload;
 
-	function 	GetRGBFloatColor(r,g,b: Single): Color;
-	function 	GetHSBColor(hue, saturation, brightness: Single): Color;
+	function GetRGBFloatColor(r,g,b: Single): Color;
+	function GetHSBColor(hue, saturation, brightness: Single): Color;
 
 
-	function	GetFramerate(): Integer;
+	function GetFramerate(): Integer;
 
-	function	GetTicks(): UInt32;
+	function GetTicks(): UInt32;
 
 	procedure Sleep(time : UInt32);
 
@@ -335,9 +335,13 @@ implementation
 	
 		if Length(iconFile) > 0 then
 		begin
-			icon := IMG_Load(PChar(iconFile));
-			SDL_WM_SetIcon(icon, 0);
-			SDL_FreeSurface(icon);
+			try
+				icon := IMG_Load(PChar(iconFile));
+				SDL_WM_SetIcon(icon, 0);
+				SDL_FreeSurface(icon);
+			except
+				RaiseSGSDKException('The icon file specified could not be loaded');
+			end;
 		end;
 
 		New(scr);
@@ -468,9 +472,13 @@ implementation
 		oldScr: PSDL_Surface;
 	begin
 		oldScr := scr.surface;
-		scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, 
+		try
+			scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, 
 	                                   oldScr.flags xor SDL_FULLSCREEN);
-		SDL_FreeSurface(oldScr);
+			SDL_FreeSurface(oldScr);
+		except
+			RaiseSGSDKException('Error occured while toggling fullscreen');
+		end;
 	end;
 	
 	/// Changes the size of the screen.
@@ -483,10 +491,16 @@ implementation
 	var
 		oldScr: PSDL_Surface;
 	begin
+		if (width < 1) or (height < 1) then begin
+			RaiseSGSDKException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+		end;
 		oldScr := scr.surface;
-		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
-		
-		SDL_FreeSurface(oldScr);
+		try
+			scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+			SDL_FreeSurface(oldScr);
+		except
+			RaiseSGSDKException('Error occured while changing the screen size');
+		end;
 	end;
 	
 	/// Returns the width of the screen currently displayed.
@@ -494,7 +508,11 @@ implementation
 	/// @returns:	The screen's width
 	function ScreenWidth(): Integer;
 	begin
-		result := scr.surface.w;
+		try
+			result := scr.surface.w;
+		except
+			RaiseSGSDKException('Could not obtain the screen width');
+		end;
 	end;
 	
 	/// Returns the height of the screen currently displayed.
@@ -502,7 +520,11 @@ implementation
 	/// @returns:	The screen's height
 	function ScreenHeight(): Integer;
 	begin
-		result := scr.surface.h;
+		try
+			result := scr.surface.h;
+		except
+			RaiseSGSDKException('Could not obtain the screen height');
+		end;
 	end;	
 	
 	/// Opens the graphical window so that it can be drawn onto. You can set the
@@ -589,10 +611,17 @@ implementation
 		
 		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
 		lastDrawUpdateTime := nowTime;
-		sdlManager.DrawCollectedText(scr.surface);
-		SDL_Flip(scr.surface);
+		try
+			sdlManager.DrawCollectedText(scr.surface);
+		except
+			RaiseSGSDKException('Error occured while trying to draw collected text');
+		end;
+		try
+			SDL_Flip(scr.surface);
+		except
+			RaiseSGSDKException('Error occured while trying to refresh the screen');
+		end;
 		//SDL_UpdateRect(scr,0,0,0,0);
-		
 	end;
 	
 	/// Saves the current screen a bitmap file. The file will be saved into the
@@ -614,7 +643,11 @@ implementation
 			filename := '"./' + basename + IntToStr(i) + '.bmp"';
 			i := i + 1;
 		end;
-		SDL_SaveBMP(scr.surface, PChar(filename));
+		try
+			SDL_SaveBMP(scr.surface, PChar(filename));
+		except
+			RaiseSGSDKException('Could not save the screenshot to the specified path');
+		end;
 	end;
 	
 	/// Maps a color from a given bitmap. This is used when determining color
@@ -623,12 +656,16 @@ implementation
 	///	@param forBitmap:		the bitmap to get the color for
 	///	@param apiColor:		 The api color to match
 	///	@returns:						The color matched to the bitmaps pixel format
-	function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
+	function GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
 	var
 		temp: TSDL_Color;
 	begin
-		temp := ToSDLColor(apiColor);
-		result := SDL_MapRGB(forBitmap.surface.format, temp.r, temp.g, temp.b);
+		try
+			temp := ToSDLColor(apiColor);
+			result := SDL_MapRGB(forBitmap.surface.format, temp.r, temp.g, temp.b);
+		except
+			RaiseSGSDKException('Error occured while mapping a color from a given bitmap');
+		end;
 	end;
 	
 	/// Gets a color given its RGBA components.
@@ -637,7 +674,11 @@ implementation
 	///	@returns: The matching colour
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;
 	begin
-		result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
+		try
+			result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
+		except
+			RaiseSGSDKException('Error occured while trying to get a color from RGBA components');
+		end;
 	end;
 	
 	/// Gets a color given its RGB components.
@@ -741,7 +782,11 @@ implementation
 	procedure Sleep(
 		time : UInt32);
 	begin
-		SDL_Delay(time);
+		try
+			SDL_Delay(time);
+		except
+			RaiseSGSDKException('Error occured while trying to sleep');
+		end;
 	end;
 	
 	/// Checks to see if the window has been asked to close. You need to handle
@@ -751,7 +796,11 @@ implementation
 	/// @returns : True if the window has been requested to close.
 	function WindowCloseRequested(): Boolean;
 	begin
-		result := sdlManager.HasQuit(); //WndCloseRequested();
+		try
+			result := sdlManager.HasQuit();
+		except
+			RaiseSGSDKException('Error occured while trying to find out if the window has been requested to clode');
+		end;
 	end;
 	
 	/// Gets the number of milliseconds that have passed. This can be used to
@@ -760,7 +809,11 @@ implementation
 	///	@returns		 The number of milliseconds passed
 	function GetTicks(): UInt32;
 	begin
-		result := SDL_GetTicks();
+		try
+			result := SDL_GetTicks();
+		except
+			RaiseSGSDKException('Error occured while trying to get ticks');
+		end;
 	end;
 	
 	/// Returns the average framerate for the last 10 frames as an integer.
@@ -776,7 +829,11 @@ implementation
 	
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 	begin
-		sdlManager.RegisterEventProcessor(handle, handle2);
+		try
+			sdlManager.RegisterEventProcessor(handle, handle2);
+		except
+			RaiseSGSDKException('Could not register the event processor');
+		end;
 	end;
 	
 	function GetPathToResource(filename: String): String; overload;
