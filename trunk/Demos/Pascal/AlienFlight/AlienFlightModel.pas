@@ -262,7 +262,7 @@ interface
 	procedure UpdateBoost(var data: GameDataType; triggerOn: Boolean);
 	procedure AddWarpAnimation(var data: GameDataType; obj: Sprite; v: Vector; steps: Integer);
 	procedure UpdatePlayerLocation(player: Sprite; const data: GameDataType);
-	procedure MovePlayer(var data: GameDataType; mulX, mulY: Integer);	
+	procedure MovePlayer(var data: GameDataType; mulX, mulY: Single);	
 			
 	function GetScore(idx: Integer): HighScore;
 	function IsHighScore(score: Integer): Boolean;
@@ -1249,7 +1249,7 @@ implementation
 		else if player.yPos > maxY then player.yPos := maxY;
 	end;
 	
-	procedure MovePlayer(var data: GameDataType; mulX, mulY: Integer);
+	procedure MovePlayer(var data: GameDataType; mulX, mulY: Single);
 	var
 		dx, dy, boost: Single;
 	begin			

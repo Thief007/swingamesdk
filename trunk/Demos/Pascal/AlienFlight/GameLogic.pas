@@ -35,19 +35,42 @@ begin
 	data.state := PlayingGameState;
 end;
 
+procedure GetShipMovement(var dx, dy: Single; speed, angle : Integer);
+begin
+	dx := speed * SGSDK_Core.Cos(angle);
+	dy := speed * SGSDK_Core.Sin(angle);
+end;
+
 procedure HandleKeyboardInput(var data: GameDataType);
 var
-	dx, dy: Integer;
+	dx, dy: Single;
 begin
 	if _paused then exit;
 	
 	dx := 0;
 	dy := 0;
-	
-	if IsKeyPressed(VK_RIGHT) then dx := 1;
-	if IsKeyPressed(VK_LEFT)  then dx := -1;
-	if IsKeyPressed(VK_UP)    then dy := -1;
-	if IsKeyPressed(VK_DOWN)  then dy := 1;
+		
+	if IsKeyPressed(VK_LEFT) then
+	begin
+		if IsKeyPressed(VK_UP) then
+			GetShipMovement(dx, dy, 1, 225)
+		else if IsKeyPressed(VK_DOWN) then
+			GetShipMovement(dx, dy, 1, 135)
+		else if not IsKeyPressed(VK_RIGHT) then
+			dx := -1;
+	end
+	else if IsKeyPressed(VK_RIGHT) then
+	begin
+		if IsKeyPressed(VK_UP) then
+			GetShipMovement(dx, dy, 1, 315)
+		else if IsKeyPressed(VK_DOWN) then
+			GetShipMovement(dx, dy, 1, 45)
+		else dx := 1;
+	end
+	else if IsKeyPressed(VK_DOWN) and (not IsKeyPressed(VK_UP)) then
+		dy := 1
+	else if IsKeyPressed(VK_UP) and (not IsKeyPressed(VK_DOWN)) then
+		dy := -1;
 		
 	MovePlayer(data, dx, dy);
 end;
