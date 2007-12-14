@@ -312,6 +312,10 @@ implementation
 		end;
 
 		New(scr);
+		{if (screenWidth < 1) and (screenHeight < 1) then
+		begin
+			raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
+		end;}
 		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32,
 															 SDL_HWSURFACE or SDL_DOUBLEBUF);
 		
@@ -491,11 +495,7 @@ implementation
 	                              width : Integer; height : Integer); overload;
 	begin
 		
-		Try
-			InitSDL(caption, width, height);
-		Except
-			Raise Exception.Create('Could not open a graphical window');
-		end;
+		InitSDL(caption, width, height);
 		InitFPSCalcInfo(renderFPSInfo);
 	
 		//Init the colors
