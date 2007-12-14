@@ -371,11 +371,19 @@ implementation
 		SetLength(status.selection, Length(status.selection) - 1);
 	end;
 	
+	procedure ClearSelection(var status: EditorStatusType);
+	begin
+		SetLength(status.selection, 0);
+		status.selectedIdx := 0;
+	end;
+	
 	procedure SelectSprite(var status: EditorStatusType; v: Vector);
 	var
 		temp: AlienFlightSpritePtr;
 		i: Integer;
 	begin
+		if not IsKeyPressed(VK_SHIFT) then ClearSelection(status);
+		
 		if SpriteAtPoint(v, status.dataPtr^, temp) then
 		begin
 			for i := Low(status.selection) to High(status.selection) do
@@ -392,12 +400,6 @@ implementation
 			status.selection[High(status.selection)] := temp;
 			status.selectedIdx := High(status.selection);
 		end;
-	end;
-	
-	procedure ClearSelection(var status: EditorStatusType);
-	begin
-		SetLength(status.selection, 0);
-		status.selectedIdx := 0;
 	end;
 	
 	procedure DeleteSelectedSprites(var status: EditorStatusType);
@@ -446,7 +448,7 @@ implementation
 			DoMove(status, GetMousePosition());	
 			
 		//Switch to delete if delete pressed
-		if WasKeyTyped(VK_DELETE) or WasKeyTyped(VK_D) then
+		if WasKeyTyped(VK_DELETE) or WasKeyTyped(VK_D) or WasKeyTyped(VK_BACK) then
 				SwitchToMode(status, DeletingMode);
 		if WasKeyTyped(VK_A) then 
 				SwitchToMode(status, AddingMode);

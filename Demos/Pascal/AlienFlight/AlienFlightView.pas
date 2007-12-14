@@ -49,7 +49,7 @@ implementation
 
 	procedure DrawMessage(message: String);
 	begin		
-		DrawTextLinesOnScreen(Message, ColorWhite, ColorBlack, GameFont(WelcomeFont), AlignCenter, 100, 100, 600, 400);
+		DrawTextLinesOnScreen(Message, ColorWhite, ColorBlack, GameFont(WelcomeFont), AlignCenter, 50, 100, 700, 400);
 	end;
 
 
@@ -60,8 +60,8 @@ implementation
 				  'A SwinGame Demo' + EOL + 
 				  ' ' + EOL + ' ----- ' + EOL + ' ' + EOL +
 				  'Developed by Andrew Cain' + EOL +
-				  ' ' + EOL +
-				 'Music Arranged by Pip Cain';
+				 'Music Arranged by Pip Cain' + EOL +
+				 'Levels by Aki, Grinneh, and Example...';
 	begin
 		DrawMessage(MESSAGE);
 		//DrawTextLines(Message, ColorWhite, ColorBlack, GameFont(WelcomeFont), AlignCenter, 100, 100, 600, 400);
