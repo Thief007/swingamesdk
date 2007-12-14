@@ -162,8 +162,8 @@
 		<string>AlienFlightView.pas</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<true/>
+	<false/>
 	<key>windowFrame</key>
-	<string>{{145, 54}, {860, 722}}</string>
+	<string>{{55, 31}, {1096, 747}}</string>
 </dict>
 </plist>
