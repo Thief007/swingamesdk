@@ -203,35 +203,38 @@ interface
 		
 		iconFile: String;
 		
-		
+	procedure RaiseSGSDKException(message: String);
+	function HasExceptionRaised(): Boolean;
+	function GetSGSDKException(): String;
+	
 	procedure ProcessEvents();
 	function WindowCloseRequested(): Boolean;
-	
+
 	//*****
- 		//
+			//
 	// Graphical window routines.
 	//
 	//*****
 	//
 	// These routines are used to setup and work with the graphical window.
 	//
-	
+
 	procedure SetIcon(iconFilename: String);
 	procedure OpenGraphicsWindow(caption : String;
 								 width : Integer; height : Integer); overload;
 	procedure OpenGraphicsWindow(caption : String); overload;
-	
+
 	procedure ChangeScreenSize(width, height: Integer);
 	procedure ToggleFullScreen();
 
 	procedure RefreshScreen(); inline; overload;	
 	procedure RefreshScreen(TargetFPS : Integer); overload;
-	
+
 	procedure TakeScreenshot(basename: String);
-	
+
 	function  ScreenWidth(): Integer;
 	function  ScreenHeight(): Integer;
-	
+
 	//*****
 	//
 	// General routines
@@ -240,36 +243,56 @@ interface
 	//
 	// These routines are used for general purposes.
 	//
-	
+
 	function	ToSDLColor(color: UInt32): TSDL_Color;
-	
+
 	function	GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
 	function	GetColour(red, green, blue, alpha: Byte) : Colour; overload;	
 	function	GetColour(red, green, blue : Byte) : Colour; overload;
-	
+
 	function 	GetRGBFloatColor(r,g,b: Single): Color;
 	function 	GetHSBColor(hue, saturation, brightness: Single): Color;
 
-	
+
 	function	GetFramerate(): Integer;
-	
+
 	function	GetTicks(): UInt32;
-	
+
 	procedure Sleep(time : UInt32);
-	
+
 	function GetPathToResource(filename: String; kind: ResourceKind)
 		: String; overload;
-	
+
 	function GetPathToResource(filename: String): String; overload;
-	
+
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-	
+
 	function Cos(angle: Single): Single;
 	function Sin(angle: Single): Single;
 	function Tan(angle: Single): Single;
 		
 implementation
 	uses SysUtils, Math, Classes;
+	
+	var
+		HasErrorOccured: Boolean = false;
+		ExceptionMessage: String = 'Empty';
+	
+	procedure RaiseSGSDKException(message: String);
+	begin
+		HasErrorOccured := true;
+		ExceptionMessage := message;
+	end;
+	
+	function HasExceptionRaised(): Boolean;
+	begin
+		result := HasErrorOccured;
+	end;
+	
+	function GetSGSDKException(): String;
+	begin
+		result := ExceptionMessage;
+	end;
 	
 	/// ProcessEvents allows the SwinGame API to react to user interactions. This
 	///	routine checks the current keyboard and mouse states. This routine must
@@ -312,10 +335,13 @@ implementation
 		end;
 
 		New(scr);
-		{if (screenWidth < 1) and (screenHeight < 1) then
+		
+		if (screenWidth < 1) and (screenHeight < 1) then
 		begin
 			raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
-		end;}
+			RaiseSGSDKException('Screen Width and Height must be greater then 0 when opening a Graphical Window')
+		end;
+		
 		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32,
 															 SDL_HWSURFACE or SDL_DOUBLEBUF);
 		
@@ -329,6 +355,7 @@ implementation
 		if scr.surface = nil then
 		begin
 			raise Exception.Create('Error creating screen with SDL');
+			RaiseSGSDKException('Error creating screen with SDL');
 		end;
 		SDL_WM_SetCaption(PChar(caption), nil);
 	end;
@@ -494,7 +521,6 @@ implementation
 	procedure OpenGraphicsWindow(caption : String; 
 	                              width : Integer; height : Integer); overload;
 	begin
-		
 		InitSDL(caption, width, height);
 		InitFPSCalcInfo(renderFPSInfo);
 	

@@ -9,10 +9,6 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		Matrix2DPtr = ^Matrix2D;
 		MapPtr = ^Map;
 	
-	var
-		ExceptionMessage: String;
-		HasExceptionOccured: Boolean = false;
-	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Exception
@@ -21,12 +17,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function GetExceptionMessage(): String; cdecl; export;
 	begin
-		result := ExceptionMessage;
+		result := GetSGSDKException();
 	end;
 	
 	function ExceptionOccured(): Integer; cdecl; export;
 	begin
-		if HasExceptionOccured then
+		if HasExceptionRaised() then
 		begin
 			result:= -1
 		end
