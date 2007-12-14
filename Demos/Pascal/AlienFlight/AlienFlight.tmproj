@@ -21,6 +21,20 @@
 	<integer>289</integer>
 	<key>metaData</key>
 	<dict>
+		<key>AlienFlightModel.pas</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>50</integer>
+				<key>line</key>
+				<integer>1376</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>1100</integer>
+		</dict>
 		<key>AlienFlightView.pas</key>
 		<dict>
 			<key>caret</key>
@@ -56,24 +70,40 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>7</integer>
+				<integer>17</integer>
 				<key>line</key>
-				<integer>214</integer>
+				<integer>698</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>199</integer>
+			<integer>673</integer>
+		</dict>
+		<key>GameResources.pas</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>2</integer>
+				<key>line</key>
+				<integer>264</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>241</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>GameLogic.pas</string>
+		<string>AlienFlightModel.pas</string>
+		<string>GameResources.pas</string>
 		<string>AlienFlightView.pas</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{8, 89}, {860, 722}}</string>
+	<string>{{172, 54}, {860, 722}}</string>
 </dict>
 </plist>

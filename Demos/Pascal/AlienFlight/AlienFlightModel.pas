@@ -1412,7 +1412,7 @@ implementation
 	
 	procedure UpdateTopLevel(var data: GameDataType);
 	begin
-		if data.currentLevel > data.topLevel then
+		if (data.currentLevel < 80) and (data.currentLevel > data.topLevel) then
 		begin
 			data.topLevel := data.currentLevel;
 			data.topShield := data.shieldStrength;

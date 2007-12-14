@@ -442,14 +442,17 @@ implementation
 		if IsSpecialKeyPressed() and IsMouseDown(LeftButton) then
 			DoSetMovement(status, GetMousePosition());
 			
-		//Move sprites
-		if MouseWasClicked(LeftButton) then
+		if (false = IsSpecialKeyPressed()) and MouseWasClicked(LeftButton) then //Move sprites
 			DoMove(status, GetMousePosition());	
 			
 		//Switch to delete if delete pressed
-		if WasKeyTyped(VK_DELETE) then
+		if WasKeyTyped(VK_DELETE) or WasKeyTyped(VK_D) then
 				SwitchToMode(status, DeletingMode);
-				
+		if WasKeyTyped(VK_A) then 
+				SwitchToMode(status, AddingMode);
+		if WasKeyTyped(VK_C) then 
+			ClearSelection(status);
+			
 		//Select other values
 		if WasKeyTyped(VK_1) then status.selectedValueIdx := 0;
 		if WasKeyTyped(VK_2) then status.selectedValueIdx := 1;
@@ -472,6 +475,13 @@ implementation
 		//Delete selection
 		if WasKeyTyped(VK_DELETE) then
 			DeleteSelectedSprites(status);
+			
+		if WasKeyTyped(VK_A) then 
+			SwitchToMode(status, AddingMode);
+		if WasKeyTyped(VK_E) then
+			SwitchToMode(status, EditingMode);
+		if WasKeyTyped(VK_C) then 
+			ClearSelection(status);
 	end;
 	
 	procedure DoLoadLevel(var status: EditorStatusType; lvl: Integer);
@@ -662,7 +672,6 @@ implementation
 	var
 		x, y: Single;
 		worldOffset: Vector;
-		warp: AlienFlightSprite;
 	begin
 		x := MaxForegroundX(); //CalculateForegroundX(GameImage(Background).width - SCREEN_WIDTH) + ((SCREEN_WIDTH * 3) div 4);
 		y := (SCREEN_HEIGHT - TOP_GAME_AREA) div 2 + TOP_GAME_AREA - _Templates[WarpHoleKind].Width div 2;
@@ -670,8 +679,7 @@ implementation
 		data.currentLevel := level;
 		worldOffset := CreateVector(x, y);
 		
-		warp := CreateSpriteKind(WarpHoleKind, worldOffset);		
-		warp.values[WARP_LEVEL_IDX] := level + 1;
+		AddSpriteKind(data, WarpHoleKind, worldOffset);		
 		
 		SaveLevel(data);
 		FreeLevel(data);
