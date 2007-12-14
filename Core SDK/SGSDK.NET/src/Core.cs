@@ -94,19 +94,37 @@ namespace SwinGame
     /// </summary>
     public class Core
     {
+        // Debug Exception Code
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        private static extern bool ExceptionOccured();
+
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        private static extern String GetExceptionMessage();
+        
+        // Code
+
+        [DllImport("lib/SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="OpenGraphicsWindow")]
+        private static extern void DLL_OpenGraphicsWindow(String caption, int width, int height);
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the
-	    ///	icon for this window using SetIcon. The window itself is only drawn when
-	    ///	you call RefreshScreen. All windows are opened at 32 bits per pixel. You
-	    ///	can toggle fullscreen using ToggleFullScreen. The window is closed when
-	    ///	the application terminates.
+        ///	icon for this window using SetIcon. The window itself is only drawn when
+        ///	you call RefreshScreen. All windows are opened at 32 bits per pixel. You
+        ///	can toggle fullscreen using ToggleFullScreen. The window is closed when
+        ///	the application terminates.
         /// </summary>
         /// <param name="caption">Caption for the Window</param>
         /// <param name="width">Width of the Window</param>
         /// <param name="height">Height of the Window</param>
-        [DllImport("lib/SGSDK.dll", CallingConvention=CallingConvention.Cdecl)]
-        public static extern void OpenGraphicsWindow(String caption, int width, int height);
-        
+        public static void OpenGraphicsWindow(String caption, int width, int height)
+        {
+            DLL_OpenGraphicsWindow(caption, width, height);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+        }
+
         /// <summary>
         /// Checks to see if the window has been asked to close. You need to handle
         ///	this if you want the game to end when the window is closed. This value

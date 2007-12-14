@@ -11,7 +11,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	var
 		ExceptionMessage: String;
-		HasExceptionOccured: Boolean;
+		HasExceptionOccured: Boolean = false;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -24,9 +24,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := ExceptionMessage;
 	end;
 	
-	function HasExceptionOccured(): Boolean; cdecl; export;
+	function ExceptionOccured(): Integer; cdecl; export;
 	begin
-		result := HasExceptionOccured();
+		if HasExceptionOccured then
+		begin
+			result:= -1
+		end
+		else
+		begin
+			result:= 0
+		end;
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -1435,13 +1442,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 	
 	//function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
-	
+
+	{	
 initialization
 begin
 	HasExceptionOccured := false;
 	ExceptionMessage := 'Empty';
-end;
-	
+end;}
+
 exports
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -1718,7 +1726,10 @@ exports
 	CollisionWithMapVector,
 	EventCount,
 	EventPositionX,
-	EventPositionY
+	EventPositionY,
+	
+	GetExceptionMessage,
+	ExceptionOccured
 
 	;
 end.
