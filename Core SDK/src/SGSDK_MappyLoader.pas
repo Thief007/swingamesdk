@@ -66,9 +66,7 @@ interface
         	Layerinfo : Array of LayerData;
         	CollisionInfo : CollisionData;
         	EventInfo : EventData;
-        	Tiles : Sprite;
-        	AnimatedTiles : Array of Sprite;
-        	
+        	Tiles : Sprite;     	
         	Animate : Boolean;
         	Frame : Integer;
         end;
@@ -81,6 +79,8 @@ interface
 		function EventCount(m : Map; event : Event): Integer;
 		function EventPositionX(m : Map; event : Event; eventnumber : Integer): Integer;
 		function EventPositionY(m : Map; event : Event; eventnumber : Integer): Integer;
+		
+		procedure FreeMap(m: Map);
 		
 implementation
 	function ReadInt(var stream : text): UInt16;
@@ -404,13 +404,10 @@ implementation
 		LoadAnimationInformation(m, filestream);
 		LoadLayerData(m, filestream);
 		LoadCollisionData(m, filestream);
-		LoadEventData(m, filestream);
-		
+		LoadEventData(m, filestream);	
 		//Closes File
-		close(filestream);
-		
+		close(filestream);	
 		LoadBlockSprites(m, fileName);
-		//LoadAnimatedSprites(m);
 		m.Frame := 0;
 		result := m;
 	end;
@@ -697,5 +694,10 @@ implementation
 	function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
 	begin
 		result := CollisionWithMap(m, spr, spr.movement);
+	end;
+	
+	procedure FreeMap(m: Map);
+	begin
+		FreeBitmap(m.Tiles.bitmaps[0]);
 	end;
 end.

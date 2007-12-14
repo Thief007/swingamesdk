@@ -25,9 +25,21 @@ namespace SwinGame
     /// </summary>
     public enum FontStyle
     {
+        /// <summary>
+        /// Normal Font
+        /// </summary>
         NormalFont = 0,
+        /// <summary>
+        /// Bold Font
+        /// </summary>
         BoldFont = 1,
+        /// <summary>
+        /// Italic Font
+        /// </summary>
         ItalicFont = 2,
+        /// <summary>
+        /// Underline Font
+        /// </summary>
         UnderlineFont = 4,
     }
 
@@ -38,12 +50,30 @@ namespace SwinGame
     /// </summary>
     public enum FontAlignment
     {
+        /// <summary>
+        /// Align to the Left
+        /// </summary>
         AlignLeft = 1,
+        /// <summary>
+        /// Align to Center
+        /// </summary>
         AlignCenter = 2,
+        /// <summary>
+        /// Align to the Right
+        /// </summary>
         AlignRight = 4,
     }
+
+    /// <summary>
+    /// Text and Font Class
+    /// </summary>
     public class Text
     {
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        private static extern bool ExceptionOccured();
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        private static extern String GetExceptionMessage();
+
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFont")]
         private static extern IntPtr DLL_LoadFont(String fontName, int size);
         /// <summary>
@@ -59,6 +89,10 @@ namespace SwinGame
         {
             Font font;
             font.Pointer = DLL_LoadFont(fontName, size);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
             return font;
         }
 
@@ -73,6 +107,10 @@ namespace SwinGame
         public static void SetFontStyle(Font font, FontStyle style)
         {
             DLL_SetFontStyle(font.Pointer, style);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeFont")]
@@ -84,6 +122,10 @@ namespace SwinGame
         public static void FreeFont(ref Font fontToFree)
         {
             DLL_FreeFont(ref fontToFree.Pointer);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
@@ -103,6 +145,10 @@ namespace SwinGame
         {
             int color = textColor.ToArgb();
             DLL_DrawText(dest.pointer, theText, (uint)color, theFont.Pointer, x, y);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
@@ -121,6 +167,10 @@ namespace SwinGame
         {
             int color = textColor.ToArgb();
             DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLines")]
@@ -144,6 +194,10 @@ namespace SwinGame
             int color1 = textColor.ToArgb();
             int color2 = backColor.ToArgb();
             DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
@@ -168,6 +222,10 @@ namespace SwinGame
             int color1 = textColor.ToArgb();
             int color2 = backColor.ToArgb();
             DLL_DrawTextLines(dest.pointer, theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextWidth")]
@@ -180,7 +238,12 @@ namespace SwinGame
         /// <returns>The width of the drawing in pixels</returns>
         public static int TextWidth(String theText, Font theFont)
         {
-            return DLL_TextWidth(theText, theFont.Pointer);
+            int temp = DLL_TextWidth(theText, theFont.Pointer);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextHeight")]
@@ -193,7 +256,12 @@ namespace SwinGame
         /// <returns>The height of the drawing in pixels</returns>
         public static int TextHeight(String theText, Font theFont)
         {
-            return DLL_TextHeight(theText, theFont.Pointer);
+            int temp = DLL_TextHeight(theText, theFont.Pointer);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawFramerate")]
@@ -208,28 +276,61 @@ namespace SwinGame
         public static void DrawFramerate(int x, int y, Font theFont)
         {
             DLL_DrawFramerate(x, y, theFont.Pointer);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
-
-
 
         // Draw Text on Screen Stuff
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen")]
         private static extern void DLL_DrawTextOnScreen(String theText, int textColor, IntPtr theFont, int x, int y);
-
+        /// <summary>
+        /// /// Draws texts to the screen. Drawing text is a slow operation,
+        ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
+        ///	good idea. Do not use this technique if the text changes frequently.
+        /// </summary>
+        /// <param name="theText">The text to be drawn onto the screen</param>
+        /// <param name="textColor">The color to draw the text</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <param name="x">The x location to draw the text at (top left)</param>
+        /// <param name="y">The y location to draw the text at (top left)</param>
         public static void DrawTextOnScreen(String theText, Color textColor, Font theFont, int x, int y)
         {
             int color = textColor.ToArgb();
             DLL_DrawTextOnScreen(theText, color, theFont.Pointer, x, y);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen")]
-        private static extern void DLL_DrawTextLinesOnScreen(String theText, int textColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);
-
-        public static void DrawTextLinesOnScreen(String theText, Color textColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        private static extern void DLL_DrawTextLinesOnScreen(String theText, int textColor, int backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);   
+        /// <summary>
+        /// Draws multiple lines of text to the screen. This is a very
+        ///	slow operation, so if the text is not frequently changing save it to a
+        ///	bitmap and draw that bitmap to screen instead.
+        /// </summary>
+        /// <param name="theText">The text to be drawn onto the destination</param>
+        /// <param name="textColor">The color to draw the text</param>
+        /// <param name="backColor">The color to draw behind the text</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <param name="align">The alignment for the text in the region</param>
+        /// <param name="x">The x location to draw the text at (top left)</param>
+        /// <param name="y">The y location to draw the text at (top left)</param>
+        /// <param name="w">The width of the region to draw inside</param>
+        /// <param name="h">The height of the region to draw inside</param>
+        public static void DrawTextLinesOnScreen(String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
         {
             int color = textColor.ToArgb();
-            DLL_DrawTextLinesOnScreen(theText, color, theFont.Pointer, align, x, y, w ,h);
+            int color2 = textColor.ToArgb();
+            DLL_DrawTextLinesOnScreen(theText, color, color2, theFont.Pointer, align, x, y, w ,h);
+            if (ExceptionOccured())
+            {
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
     }
 }
