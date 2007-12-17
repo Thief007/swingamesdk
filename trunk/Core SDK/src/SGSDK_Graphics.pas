@@ -535,7 +535,7 @@ implementation
 			RaiseSGSDKException('No image specified to create a sprite');
 		end;
 		
-		if Length(framesPerCell) = 0 then begin
+		if isMulti and (Length(framesPerCell) = 0) then begin
 			RaiseSGSDKException('No frames per cell defined');
 		end;
 		
@@ -587,7 +587,7 @@ implementation
 	function CreateSprite(image : Bitmap; isMulti : Boolean; framesPerCell : Array of Integer; 
 		width, height : Integer): Sprite; overload;
 	begin
-		result := CreateSprite(image, true, framesPerCell, Loop, width, height);
+		result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
 	end;
 	
 	/// Creates a sprites, and sets its first bitmap.
