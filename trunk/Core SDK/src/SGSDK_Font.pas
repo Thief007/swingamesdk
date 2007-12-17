@@ -6,10 +6,10 @@ unit SGSDK_Font;
 {$ENDIF}
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera;
+	uses
+		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera;
 	
 	type
-
 		/// Type: Font
 		///
 		/// Fonts are used to render text to bitmaps and to the screen.
@@ -105,16 +105,14 @@ interface
 	// These routines are used for general purposes.
 	//
 
-	function	TextWidth(theText: String; theFont: Font): Integer;
+	function TextWidth(theText: String; theFont: Font): Integer;
 
-	function	TextHeight(theText: String; theFont: Font): Integer;
+	function TextHeight(theText: String; theFont: Font): Integer;
 
 	procedure DrawFramerate(x, y: Integer; font: Font);
 	
 implementation
-	uses SysUtils, Math,
-			 Classes;
-
+	uses SysUtils, Math, Classes;
 	
 	/// Loads a font from file with the specified side. Fonts must be freed using
 	///	the FreeFont routine once finished with. Once the font is loaded you
@@ -129,7 +127,7 @@ implementation
 		result := TTF_OpenFont(PChar(fontName), size);
 		if result = nil then
 		begin
-			raise Exception.Create('Unable to CreateFont: ' + TTF_GetError());
+			RaiseSGSDKException('Unable to CreateFont: ' + TTF_GetError());
 		end;
 	end;
 
@@ -143,7 +141,11 @@ implementation
 	///	- The font's style is changed
 	procedure SetFontStyle(font: Font; style: FontStyle);
 	begin
-		TTF_SetFontStyle(font, Integer(style));
+		try
+			TTF_SetFontStyle(font, Integer(style));
+		except
+			RaiseSGSDKException('Failed to set the font style');
+		end;
 	end;
 
 	/// Free a loaded font.
@@ -152,8 +154,12 @@ implementation
 	///	- The font is freed and cannot be used any more
 	procedure FreeFont(var fontToFree: Font);
 	begin
-		TTF_CloseFont(fontToFree);
-		fontToFree := nil;
+		try
+			TTF_CloseFont(fontToFree);
+			fontToFree := nil;
+		except
+			RaiseSGSDKException('Unable to free the specified font');
+		end;
 	end;
 
 	function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;
@@ -178,104 +184,108 @@ implementation
 		n, w, h, i: Integer;
 		rect: TSDL_Rect;
 	begin
-		result := nil;
-	
-		// If there's nothing to draw, return NULL
-		if (Length(str) = 0) or (font = nil) then exit;
-	
-		// This is the surface that everything is printed to.
-		lineSkip	:= TTF_FontLineSkip( font );
-		width		 := rc.w;
-		height		:= 10;
-		SetLength(lines, 1);
-	
-		// Break the String into its lines:
-		n := -1; i := 0;
-		while n <> 0 do
-		begin
-			// Get until either "\n" or "\0":
-			n := Pos(eol, str);
-	
-			//Copy all except EOL
-			if n = 0 then subStr := str
-			else subStr := Copy(str, 1, n - 1);
-	
-			//Remove the line from the original string
-			if n <> 0 then
+		try
+			result := nil;
+
+			// If there's nothing to draw, return NULL
+			if (Length(str) = 0) or (font = nil) then exit;
+
+			// This is the surface that everything is printed to.
+			lineSkip	:= TTF_FontLineSkip( font );
+			width		 := rc.w;
+			height		:= 10;
+			SetLength(lines, 1);
+
+			// Break the String into its lines:
+			n := -1; i := 0;
+			while n <> 0 do
 			begin
-				str := Copy( str, n + Length(eol), Length(str)); //excess not copied...
-			end;
-	
-			i := i + 1;
-			SetLength(lines, i);
-			lines[i - 1] := subStr;
-	
-			w := 0;
-			// Get the size of the rendered text.
-			TTF_SizeText(font, PChar(subStr), w, height);
-			if w > width then width := w;
-		end;
-	
-		// Length(lines) = Number of Lines.
-		// we assume that height is the same for all lines.
-		height := (Length(lines) - 1) * lineSkip + height;
-	
-		if dest = nil then
-		begin
-			raise Exception.Create('Error Printing Strings: There was no surface.');
-		end;
-	
-		sText := CreateBitmap(width, height);
-		//ClearSurface(sText, clrBg);
-	
-		// Actually render the text:
-		for i := 0 to High(lines) do
-		begin
-			// The rendered text:
-			temp := TTF_RenderText_Blended( font, PChar(lines[i]), ToSDLColor(clrFg));
-	
-			// Put it on the surface:
-			if IsSet(flags, AlignLeft) or
-				 (not (IsSet(flags, AlignCenter) or
-							 IsSet(flags, AlignRight))) then
-			begin
-				// If it's specifically LEFT or none of the others:
-				rect := NewSDLRect(0,i*lineSkip,0,0);
-			end
-			else if IsSet(flags, AlignCenter) then
-			begin
+				// Get until either "\n" or "\0":
+				n := Pos(eol, str);
+
+				//Copy all except EOL
+				if n = 0 then subStr := str
+				else subStr := Copy(str, 1, n - 1);
+
+				//Remove the line from the original string
+				if n <> 0 then
+				begin
+					str := Copy( str, n + Length(eol), Length(str)); //excess not copied...
+				end;
+
+				i := i + 1;
+				SetLength(lines, i);
+				lines[i - 1] := subStr;
+
 				w := 0;
-				h := 0;
-	
-				TTF_SizeText(font, PChar(lines[i]), w, h);
-				rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0);
-			end
-			else if IsSet(flags, AlignRight) then
-			begin
-				w := 0;
-				h := 0;
-	
-				TTF_SizeText(font, PChar(lines[i]), w, h);
-				rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
-			end
-			else
-			begin
-				raise Exception.Create('Invalid font alignment');
+				// Get the size of the rendered text.
+				TTF_SizeText(font, PChar(subStr), w, height);
+				if w > width then width := w;
 			end;
-	
-			// Render the current line. Ignore alpha in this draw
-			SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
-			SDL_BlitSurface(temp, nil, sText.surface, @rect);
-	
-			// Clean up:
-			SDL_FreeSurface(temp);
+
+			// Length(lines) = Number of Lines.
+			// we assume that height is the same for all lines.
+			height := (Length(lines) - 1) * lineSkip + height;
+
+			if dest = nil then
+			begin
+				RaiseSGSDKException('Error Printing Strings: There was no surface.');
+			end;
+
+			sText := CreateBitmap(width, height);
+			//ClearSurface(sText, clrBg);
+
+			// Actually render the text:
+			for i := 0 to High(lines) do
+			begin
+				// The rendered text:
+				temp := TTF_RenderText_Blended( font, PChar(lines[i]), ToSDLColor(clrFg));
+
+				// Put it on the surface:
+				if IsSet(flags, AlignLeft) or
+					 (not (IsSet(flags, AlignCenter) or
+								 IsSet(flags, AlignRight))) then
+				begin
+					// If it's specifically LEFT or none of the others:
+					rect := NewSDLRect(0,i*lineSkip,0,0);
+				end
+				else if IsSet(flags, AlignCenter) then
+				begin
+					w := 0;
+					h := 0;
+
+					TTF_SizeText(font, PChar(lines[i]), w, h);
+					rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0);
+				end
+				else if IsSet(flags, AlignRight) then
+				begin
+					w := 0;
+					h := 0;
+
+					TTF_SizeText(font, PChar(lines[i]), w, h);
+					rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
+				end
+				else
+				begin
+					RaiseSGSDKException('Invalid font alignment');
+				end;
+
+				// Render the current line. Ignore alpha in this draw
+				SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
+				SDL_BlitSurface(temp, nil, sText.surface, @rect);
+
+				// Clean up:
+				SDL_FreeSurface(temp);
+			end;
+
+			// Draw the text on top of that:
+			SDL_BlitSurface(sText.surface, nil, dest, rc );
+			FreeBitmap(sText);
+
+			result := nil;
+		except
+			RaiseSGSDKException('Failed to print strings');
 		end;
-	
-		// Draw the text on top of that:
-		SDL_BlitSurface(sText.surface, nil, dest, rc );
-		FreeBitmap(sText);
-	
-		result := nil;
 	end;
 
 	/// Draws texts to the destination bitmap. Drawing text is a slow operation,
@@ -298,15 +308,22 @@ implementation
 		surface: PSDL_Surface;
 		offset: TSDL_Rect;
 	begin
-		color := ToSDLColor(textColor);
+		if theFont = nil then begin
+			RaiseSGSDKException('The specified font is nil');
+		end;
+		try
+			color := ToSDLColor(textColor);
 
-		offset.x := x;
-		offset.y := y;
+			offset.x := x;
+			offset.y := y;
 
-		surface := TTF_RenderText_Blended(theFont, PChar(theText), color);
+			surface := TTF_RenderText_Blended(theFont, PChar(theText), color);
 
-		SDL_BlitSurface(surface, nil, dest.surface, @offset);
-		SDL_FreeSurface(surface);
+			SDL_BlitSurface(surface, nil, dest.surface, @offset);
+			SDL_FreeSurface(surface);
+		except
+			RaiseSGSDKException('Failed to draw text');
+		end;
 	end;
 
 	/// Draws multiple lines of text to the destination bitmap. This is a very
@@ -403,7 +420,11 @@ implementation
 	var
 		y: Integer; //SizeText returns both... store and ignore y
 	begin
-		TTF_SizeText(theFont, PChar(theText), result, y);
+		try
+			TTF_SizeText(theFont, PChar(theText), result, y);
+		except
+			RaiseSGSDKException('Unable to get the text width');
+		end;
 	end;
 
 	/// Calculates the height of a string when drawn with a given font.
@@ -415,7 +436,11 @@ implementation
 	var
 		w: Integer; //SizeText returns both... store and ignore w
 	begin
-		TTF_SizeText(theFont, PChar(theText), w, result);
+		try
+			TTF_SizeText(theFont, PChar(theText), w, result);
+		except
+			RaiseSGSDKException('Unable to get the text height');
+		end;
 	end;
 	
 	/// Draws the frame rate using the specified font at the indicated x, y.
@@ -459,19 +484,18 @@ implementation
 	end;
 	
 initialization
-begin
-
-	if TTF_Init() = -1 then
 	begin
-		raise Exception.Create('Error openning font library. ' + 
-                            string(TTF_GetError));
+		if TTF_Init() = -1 then
+		begin
+			raise Exception.Create('Error openning font library. ' + 
+	                            string(TTF_GetError));
+		end;
+
 	end;
 
-end;
-
 finalization
-begin
-	TTF_Quit();
-end;
+	begin
+		TTF_Quit();
+	end;
 
 end.

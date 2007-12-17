@@ -117,6 +117,7 @@ const
 	VK_QUESTION =  SDLK_QUESTION;
 	VK_AT =  SDLK_AT;
  	VK_COMMA = SDLK_COMMA;
+
 implementation
 
 end.

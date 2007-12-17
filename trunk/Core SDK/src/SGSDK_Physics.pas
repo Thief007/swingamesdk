@@ -1,7 +1,8 @@
 unit SGSDK_Physics;
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera;
+	uses
+		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera;
 
 	type
 	    /// type: Matrix2d
@@ -115,8 +116,8 @@ interface
 	function VectorWithinRect(const v: Vector; x, y, w, h: Single): Boolean;
 		
 implementation
-	uses SysUtils, Math,
-			 Classes;
+	uses
+		SysUtils, Math, Classes;
 
 	/// Creates a new vector with values x and y, possibly with an inverted y. The
 	///	inversion of the y value provides a convienient option for handling
@@ -147,7 +148,7 @@ implementation
 	/// Adds v1 and v2.
 	///
 	///	@param v1, v2			The vectors to work with
-	///	@returns					 v1 + v2
+	///	@returns				v1 + v2
 	function AddVectors(v1, v2 : Vector): Vector;
 	begin
 		result.x := v1.x + v2.x;
@@ -157,7 +158,7 @@ implementation
 	/// Subtracts v2 from v1 (i.e. v1 - v2).
 	///
 	///	@param v1, v2			The vectors to work with
-	///	@returns					 v1 - v2
+	///	@returns				v1 - v2
 	function SubtractVectors(v1, v2 : Vector): Vector;
 	begin
 		result.x := v1.x - v2.x;
@@ -195,9 +196,9 @@ implementation
 	/// Limit the magnitude of a vector.
 	///
 	///	@param theVector:		The vector to limit
-	///	@param maxMagnitude: The maximum magnitude of the vector.
-	///	@returns						 A new vector with the same direction as theVector,
-	///											 with a maximum magnitude of maxMagnitude
+	///	@param maxMagnitude:	The maximum magnitude of the vector.
+	///	@returns				A new vector with the same direction as theVector,
+	///							with a maximum magnitude of maxMagnitude
 	function LimitVector(theVector: Vector; maxMagnitude: Single): Vector;
 	var
 		mag: Single;
@@ -205,13 +206,9 @@ implementation
 		mag := Magnitude(theVector);
 
 		if mag > maxMagnitude then
-		begin
-			result := Multiply(ScaleMatrix(maxMagnitude), GetUnitVector(theVector));
-		end
+			result := Multiply(ScaleMatrix(maxMagnitude), GetUnitVector(theVector))
 		else
-		begin
 			result := theVector;
-		end;
 	end;
 
 	/// Gets the unit vector of the passed in vector. The unit vector has a
@@ -238,8 +235,8 @@ implementation
 
 	/// Indicates if the magnitude of the vector is 0.
 	///
-	///	@param theVector		 The vector to check
-	///	@returns						 True if the vector has values 0, 0
+	///	@param theVector			The vector to check
+	///	@returns					True if the vector has values 0, 0
 	function IsZeroVector(theVector : Vector): Boolean;
 	begin
 		result := (theVector.x = 0) and (theVector.y = 0);
@@ -248,8 +245,8 @@ implementation
 	/// Returns the magnitude of a vector. The magnitude represents the length of
 	///	the vector.
 	///
-	///	@param theVector			 The vector to get the magnitude of
-	///	@returns							 The magnitude of the vector
+	///	@param theVector			The vector to get the magnitude of
+	///	@returns					The magnitude of the vector
 	function Magnitude(theVector : Vector): Single;
 	begin
 		result := Sqrt((theVector.x * theVector.x) + (theVector.y * theVector.y));
@@ -269,10 +266,10 @@ implementation
 	/// Determines if a sprite has collided with a given x position.
 	///
 	///	@param theSprite:		The sprite to check
-	///	@param x:						The x location to check collision with
-	///	@param range:				The kind of check to perform less, larger or equal.
+	///	@param x:				The x location to check collision with
+	///	@param range:			The kind of check to perform less, larger or equal.
 	///
-	///	@returns						 True if the sprite is within the range requested
+	///	@returns				True if the sprite is within the range requested
 	function HasSpriteCollidedX(theSprite: Sprite; x: Single; 
 	             range: CollisionDetectionRange): Boolean;
 	begin
@@ -285,19 +282,19 @@ implementation
 		else if range = CollisionRangeLessThan then
 			result := x >= theSprite.xPos
 		else
-			raise Exception.Create('Invalid Collision Range');
+			RaiseSGSDKException('Invalid Collision Range');
 	end;
 
 	/// Determines if a sprite has collided with a given y position. The x and y
 	///	values are in "world" coordinates.
 	///
 	///	@param theSprite:		The sprite to check
-	///	@param y:						The y location to check collision with
-	///	@param range:				The kind of check to perform less, larger or equal.
+	///	@param y:				The y location to check collision with
+	///	@param range:			The kind of check to perform less, larger or equal.
 	///
-	///	@returns						 True if the sprite is within the range requested
+	///	@returns				True if the sprite is within the range requested
 	function HasSpriteCollidedY(theSprite : Sprite; y : Single; 
-	              range : CollisionDetectionRange): Boolean;
+								range : CollisionDetectionRange): Boolean;
 	begin
 		if range = CollisionRangeEquals then
 			result := (y >= theSprite.yPos) and 
@@ -308,11 +305,11 @@ implementation
 		else if range = CollisionRangeLessThan then
 			result := y >= theSprite.yPos
 		else
-			raise Exception.Create('Invalid Collision Range');
+			RaiseSGSDKException('Invalid Collision Range');
 	end;
 
 	function HasBitmapCollidedWithRect(const image: Bitmap; 
-	                 x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean;
+									   x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean;
 	begin
 		if y + image.height <= rectY then result := false
 		else if y >= rectY + rectheight then result := false
@@ -330,8 +327,11 @@ implementation
 	///
 	///	@returns							 True if the sprite collides with the rectangle
 	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
-		width, height : Integer): Boolean; overload;
+									   width, height : Integer): Boolean; overload;
 	begin
+		if theSprite = nil then RaiseSGSDKException('The specified sprite is nil');
+		if (width < 1) or (height < 1) then 
+			RaiseSGSDKException('Rectangle width and height must be greater then 0');
 		if theSprite.yPos + CurrentHeight(theSprite) <= y then result := false
 		else if theSprite.yPos >= y + height then result := false
 		else if theSprite.xPos + CurrentWidth(theSprite) <= x then result := false
@@ -351,15 +351,7 @@ implementation
 		gameVector := ToGameCoordinates(v);
 		result := HasSpriteCollidedWithRect(theSprite, gameVector.x, gameVector.y, 1, 1);		
 	end;
-
-{	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
-		width, height: Integer; vwPrtX, vwPrtY: Integer)
-		: Boolean; overload;
-	begin
-		result := HasSpriteCollidedWithRect(theSprite, 
-			x + vwPrtX, y + vwPrtY, width, height);
-	end;
-}
+	
 	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
 	begin
 		result := (Length(image.nonTransparentPixels) = image.width)
@@ -372,11 +364,11 @@ implementation
 	///	locations using per pixel collision detection. This checks to see if
 	///	two non-transparent pixels collide.
 	///
-	///	@param image1, image2: The bitmap images to check for collision
-	///	@param x1, y1:				 The x,y location of image 1
-	///	@param x2, y2:				 The x,y location of image 2
+	///	@param image1, image2:	The bitmap images to check for collision
+	///	@param x1, y1:			The x,y location of image 1
+	///	@param x2, y2:			The x,y location of image 2
 	///
-	///	@returns							 True if the bitmaps collide.
+	///	@returns				True if the bitmaps collide.
 	///
 	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
 		image2: Bitmap; x2, y2: Integer)
@@ -401,18 +393,17 @@ implementation
 	///	Note: Bitmaps do not need to actually be drawn on the screen.
 	///
 	///	@param image1, image2: The bitmap images to check for collision
-	///	@param x1, y1:				 The x,y location of image 1
-	///	@param bounded1:			 Indicates if image1 should use bounded collision
-	///	@param x2, y2:				 The x,y location of image 2
-	///	@param bounded2:			 Indicates if image2 should use bounded collision
+	///	@param x1, y1:				The x,y location of image 1
+	///	@param bounded1:			Indicates if image1 should use bounded collision
+	///	@param x2, y2:				The x,y location of image 2
+	///	@param bounded2:			Indicates if image2 should use bounded collision
 	///
-	///	@returns							 True if the bitmaps collide.
+	///	@returns					True if the bitmaps collide.
 	///	
 	function CollisionWithinBitmapImages(
 	           image1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: Integer; bounded1: Boolean;
 			   image2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: Integer; bounded2: Boolean
-			)
-	           : Boolean; overload;
+			) : Boolean; overload;
 	var
 		left1, left2, overLeft: Integer;
 		right1, right2, overRight: Integer;
@@ -420,6 +411,12 @@ implementation
 		bottom1, bottom2, overBottom: Integer;
 		i, j, xPixel1, yPixel1, xPixel2, yPixel2: Integer;
 	begin
+		if (image1 = nil) or (image2 = nil) then
+			RaiseSGSDKException('One or both of the spceified bitmaps are nil');
+		
+		if (w1 < 1) or (h1 < 1) or (w2 < 1) or (h2 < 1) then
+			RaiseSGSDKException('Bitmap width and height must be greater then 0');
+		
 		result := false;
 
 		left1 := x1;
@@ -465,9 +462,9 @@ implementation
 	end;
 
 	function CollisionWithinBitmapImages(
-	           image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
-						image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
-	           : Boolean; overload;
+				image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
+				image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
+				: Boolean; overload;
 	begin
 		result := CollisionWithinBitmapImages(image1, x1, y1, image1.width, image1.height, 0, 0, bounded1, 
 											  image2, x2, y2, image2.width, image2.height, 0, 0, bounded2);
@@ -478,6 +475,9 @@ implementation
 		bmp1, bmp2: Bitmap;
 		offX1, offY1, offX2, offY2: Integer;
 	begin
+		if (sprite1 = nil) or (sprite2 = nil) then
+			RaiseSGSDKException('One of the sprites specified is nil');
+		
 		if sprite1.spriteKind = AnimMultiSprite then
 		begin
 			offX1 := (sprite1.currentFrame mod sprite1.cols) * sprite1.width;
@@ -512,12 +512,12 @@ implementation
 	///	then, if required, it performs a per pixel check on the colliding region.
 	///
 	///	@param image1, image2: The bitmap images to check for collision
-	///	@param x1, y1:				 The x,y location of image 1
-	///	@param bounded1:			 Indicates if image1 should use bounded collision
-	///	@param x2, y2:				 The x,y location of image 2
-	///	@param bounded2:			 Indicates if image2 should use bounded collision
+	///	@param x1, y1:				The x,y location of image 1
+	///	@param bounded1:			Indicates if image1 should use bounded collision
+	///	@param x2, y2:				The x,y location of image 2
+	///	@param bounded2:			Indicates if image2 should use bounded collision
 	///
-	///	@returns							 True if the bitmaps collide.
+	///	@returns					True if the bitmaps collide.
 	///
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer;
 	                          image2 : Bitmap; x2, y2: Integer): Boolean; overload;
@@ -529,16 +529,16 @@ implementation
 	///	then, if required, it performs a per pixel check on the colliding region.
 	///
 	///	@param image1, image2: The bitmap images to check for collision
-	///	@param x1, y1:				 The x,y location of image 1
-	///	@param bounded1:			 Indicates if image1 should use bounded collision
-	///	@param x2, y2:				 The x,y location of image 2
-	///	@param bounded2:			 Indicates if image2 should use bounded collision
+	///	@param x1, y1:				The x,y location of image 1
+	///	@param bounded1:			Indicates if image1 should use bounded collision
+	///	@param x2, y2:				The x,y location of image 2
+	///	@param bounded2:			Indicates if image2 should use bounded collision
 	///
-	///	@returns							 True if the bitmaps collide.
+	///	@returns					True if the bitmaps collide.
 	///
 	function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer;bounded1: Boolean;
-														 image2: Bitmap; x2, y2: Integer; bounded2: Boolean): 
-	                          Boolean; overload;
+								 image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
+								 : Boolean; overload;
 	begin
 		if not HasBitmapCollidedWithRect(image1, x1, y1, x2, y2, 
 	                                    image2.width, image2.height) then
@@ -548,7 +548,7 @@ implementation
 		end;
 
 		result := CollisionWithinBitmapImages(image1, x1, y1, bounded1, 
-	                                         image2, x2, y2, bounded2);
+											  image2, x2, y2, bounded2);
 	end;
 
 	/// Determines if two sprites have collided.
@@ -580,38 +580,17 @@ implementation
 	///
 	///	@param theSprite:			The sprite to check for collision
 	///	@param theBitmap:			The bitmap image to check for collision
-	///	@param x, y:					 The x,y location of the bitmap
+	///	@param x, y:				The x,y location of the bitmap
 	///	@param bounded:				Indicates if bitmap should use bounded collision
 	///
-	///	@returns							 True if the bitmap has collided with the sprite.
+	///	@returns					True if the bitmap has collided with the sprite.
 	///
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Single): Boolean; overload;
+										 x, y: Single): Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, true);
 	end;
-
-	 /// Determines if a sprite has collided with a bitmap. The x and y values
-	///	are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
-	///	the offset from world to screen coordinates.
-	///
-	///	@param theSprite:			The sprite to check for collision
-	///	@param theBitmap:			The bitmap image to check for collision
-	///	@param x, y:					 The x,y location of the bitmap
-	///	@param vwPrtX, vwPrtY: The x and y offset of the screen's portal
-	///	@param bounded:				Indicates if bitmap should use bounded collision
-	///
-	///	@returns							 True if the bitmap has collided with the sprite.
-	///
-{	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y: Integer; bounded: Boolean;
-																				vwPrtX, vwPrtY: Integer)
-																				: Boolean; overload;
-	begin
-		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, x + vwPrtX,
-																					y + vwPrtY, bounded);
-	end;
-}
+	
 	/// Determines if a sprite has collided with a bitmap using pixel level
 	///	collision detection with the bitmap.
 	///
@@ -640,75 +619,50 @@ implementation
 			offX := 0;
 			offY := 0;
 		end;
-		result := CollisionWithinBitmapImages(bmp,
-											  Round(theSprite.xPos),
-											  Round(theSprite.yPos),
-											  theSprite.width,
-											  theSprite.height,
-											  offX,
-											  offY,
-											  not theSprite.usePixelCollision,
-											  theBitmap,
+		result := CollisionWithinBitmapImages(bmp, Round(theSprite.xPos), Round(theSprite.yPos),
+											  theSprite.width, theSprite.height,
+											  offX, offY,
+											  not theSprite.usePixelCollision, theBitmap,
 											  Round(x), Round(y), theBitmap.width, theBitmap.height, 0, 0, bounded);
 	end;
-
-	/// Determines if a sprite has collided with a bitmap. The x and y values
-	///	are expressed in "screen" coordinates, with vwPrtX and vwPrtY storing
-	///	the offset from world to screen coordinates.
+	
+	/// Multiply two matrix2d. Use this to combine the effects to two
+	///  transformations.
 	///
-	///	@param theSprite:			The sprite to check for collision
-	///	@param theBitmap:			The bitmap image to check for collision
-	///	@param x, y:					 The x,y location of the bitmap
-	///	@param vwPrtX, vwPrtY: The x and y offset of the screen's portal
-	///
-	///	@returns							 True if the bitmap has collided with the sprite.
-	///
-{	function	HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
-																				x, y, vwPrtX, vwPrtY: Integer)
-																				: Boolean; overload;
+	/// @param m1, m2:   the two matrix to multiply
+	/// @returns:        the result of multiplying these matrix
+	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
 	begin
-		result := HasSpriteCollidedWithBitmap(theSprite, theBitmap,
-																					x + vwPrtX, y + vwPrtY, true);
-	end;
-}
-	  /// Multiply two matrix2d. Use this to combine the effects to two
-	  ///  transformations.
-	  ///
-	  /// @param m1, m2:   the two matrix to multiply
-	  /// @returns:        the result of multiplying these matrix
-	  function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
-	  begin
 		  //unwound for performance optimisation
 	  	result[0, 0] := m1[0, 0] * m2[0, 0] +
-		  								m1[0, 1] * m2[1, 0] +
-	  									m1[0, 2] * m2[2, 0];
+		  				m1[0, 1] * m2[1, 0] +
+	  					m1[0, 2] * m2[2, 0];
 		result[0, 1] := m1[0, 0] * m2[0, 1] +
-										m1[0, 1] * m2[1, 1] +
-										m1[0, 2] * m2[2, 1];
+						m1[0, 1] * m2[1, 1] +
+						m1[0, 2] * m2[2, 1];
 		result[0, 2] := m1[0, 0] * m2[0, 2] +
-										m1[0, 1] * m2[1, 2] +
-										m1[0, 2] * m2[2, 2];
+						m1[0, 1] * m2[1, 2] +
+						m1[0, 2] * m2[2, 2];
 
 		result[1, 0] := m1[1, 0] * m2[0, 0] +
-										m1[1, 1] * m2[1, 0] +
-										m1[1, 2] * m2[2, 0];
+						m1[1, 1] * m2[1, 0] +
+						m1[1, 2] * m2[2, 0];
 		result[1, 1] := m1[1, 0] * m2[0, 1] +
-										m1[1, 1] * m2[1, 1] +
-										m1[1, 2] * m2[2, 1];
+						m1[1, 1] * m2[1, 1] +
+						m1[1, 2] * m2[2, 1];
 		result[1, 2] := m1[1, 0] * m2[0, 2] +
-										m1[1, 1] * m2[1, 2] +
-										m1[1, 2] * m2[2, 2];
+						m1[1, 1] * m2[1, 2] +
+						m1[1, 2] * m2[2, 2];
 
 		result[2, 0] := m1[2, 0] * m2[0, 0] +
-										m1[2, 1] * m2[1, 0] +
-										m1[2, 2] * m2[2, 0];
+						m1[2, 1] * m2[1, 0] +
+						m1[2, 2] * m2[2, 0];
 		result[2, 1] := m1[2, 0] * m2[0, 1] +
-										m1[2, 1] * m2[1, 1] +
-										m1[2, 2] * m2[2, 1];
+						m1[2, 1] * m2[1, 1] +
+						m1[2, 2] * m2[2, 1];
 		result[2, 2] := m1[2, 0] * m2[0, 2] +
-										m1[2, 1] * m2[1, 2] +
-										m1[2, 2] * m2[2, 2];
-
+						m1[2, 1] * m2[1, 2] +
+						m1[2, 2] * m2[2, 2];
 	end;
 
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
@@ -716,8 +670,6 @@ implementation
 		result.x := v.x * m[0, 0] + v.y * m[0,1] + v.w * m[0,2];
 		result.y := v.x * m[1, 0] + v.y * m[1,1] + v.w * m[1,2];
 		result.w := 1;
-		//result.w := v.x * m[2, 0] + v.y * m[2,1] + v.w * m[2,2];
-		//w remains as 1
 	end;
 
 	function RotationMatrix(deg: Single): Matrix2D;
@@ -725,15 +677,15 @@ implementation
 		rads: Double;
 	begin
 		rads := deg * DEG_TO_RAD;
-
+		
 		result[0, 0] := System.Cos(rads);
 		result[0, 1] := System.Sin(rads);
 		result[0, 2] := 0;
-
+		
 		result[1, 0] := -System.Sin(rads);
 		result[1, 1] := System.Cos(rads);
 		result[1, 2] := 0;
-
+		
 		result[2, 0] := 0;
 		result[2, 1] := 0;
 		result[2, 2] := 1;

@@ -6,7 +6,8 @@ unit SGSDK_Core;
 {$ENDIF}
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
+	uses
+		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
 
 	const
 		{$IFDEF FPC}
@@ -93,9 +94,9 @@ interface
 		
 	    /// Record: ResourceKind
 	    ///
-	    ///  Use this with the resource path functions to get the path to a
-	    ///  given resource. Using these functions ensures that your resource
-	    ///  paths are correct across platforms
+	    /// Use this with the resource path functions to get the path to a
+	    /// given resource. Using these functions ensures that your resource
+	    /// paths are correct across platforms
 	    ResourceKind = (
 				FontResource,
 				ImageResource,
@@ -177,7 +178,7 @@ interface
 		///
 		/// Array of sprites which can be passed to DrawSprites() to draw multiple
 		/// sprites at once.
-		//SpriteCollection = Array of Sprite;
+		/// SpriteCollection = Array of Sprite;
 		
 	var
 		//Preset colours, do not change these values.
@@ -197,7 +198,7 @@ interface
 		///	surfaces created. This is used to create colors etc.
 		baseSurface: PSDL_Surface;
 		
-		//Timing details related to calculating FPS
+		// Timing details related to calculating FPS
 		lastDrawUpdateTime: UInt32;
 		renderFPSInfo: FPSCalcInfo;
 		
@@ -260,8 +261,7 @@ interface
 
 	procedure Sleep(time : UInt32);
 
-	function GetPathToResource(filename: String; kind: ResourceKind)
-		: String; overload;
+	function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
 
 	function GetPathToResource(filename: String): String; overload;
 
@@ -375,7 +375,11 @@ implementation
 	
 	function ToSDLColor(color: UInt32): TSDL_Color;
 	begin
-		SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
+		try
+			SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
+		except
+			RaiseSGSDKException('Failed to convert the spceified colour to SDL colour format');
+		end;
 	end;
 	
 	//Used to initialise the Frame Per Second structure.
@@ -418,7 +422,7 @@ implementation
 		if fpsInfo.loopCount < 10 then
 		begin
 			//Don't get the avg, because this may result in a 
-	     //  div 0 error if avg is 0 (when calcing 1000/avg)
+	     	//div 0 error if avg is 0 (when calcing 1000/avg)
 			GetRunningAverage(fpsInfo.valuesArray, nowTime - lastUpdateTime, 
 	                       fpsInfo.arrayIndex);
 			fpsInfo.loopCount := fpsInfo.loopCount + 1;
@@ -646,7 +650,7 @@ implementation
 		try
 			SDL_SaveBMP(scr.surface, PChar(filename));
 		except
-			RaiseSGSDKException('Could not save the screenshot to the specified path');
+			RaiseSGSDKException('Failed to save ' + basename + '.bmp');
 		end;
 	end;
 	

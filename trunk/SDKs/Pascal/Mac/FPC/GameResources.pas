@@ -1,7 +1,7 @@
 unit GameResources;
 
 interface
-	uses SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics;
+	uses SysUtils, SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics, SGSDK_MappyLoader;
 
 	procedure LoadResources();
 	procedure FreeResources();
@@ -9,6 +9,7 @@ interface
 	function GameImage(image: String): Bitmap;
 	function GameSound(sound: String): SoundEffect;
 	function GameMusic(music: String): Music;
+	function GameMap(mapName: String): Map;
  
 implementation
 	var
@@ -16,11 +17,13 @@ implementation
 		_Fonts: Array of Font;
 		_Sounds: Array of SoundEffect;
 		_Music: Array of Music;
+		_Maps: Array of Map;
 
 		_ImagesStr: Array of String;
 		_FontsStr: Array of String;
 		_SoundsStr: Array of String;
 		_MusicStr: Array of String;
+		_MapsStr: Array of String;
 
 		_Background: Bitmap;
 		_Animation: Sprite;
@@ -37,7 +40,7 @@ implementation
 			DrawBitmap(_Background, 0, 0);
 			DrawSprite(_Animation);
 			UpdateSprite(_Animation);
-			RefreshScreen();
+			RefreshScreen(60);
 			ProcessEvents();			
 		end;
 		Sleep(1500);
@@ -47,7 +50,7 @@ implementation
 	begin
 		_Background := LoadBitmap(GetPathToResource('SplashBack.png', ImageResource));
 		DrawBitmap(_Background, 0, 0);
-		RefreshScreen();
+		RefreshScreen(60);
 		ProcessEvents();
 
 		_Animation := CreateSprite(LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource)), 4, 14, 712, 184);
@@ -62,20 +65,28 @@ implementation
 	procedure ShowMessage(message: String; number: Integer);
 	begin
 		DrawText(message, ColorRed, _LoadingFont, 240, 20 + (25 * number));
-		RefreshScreen();
+		RefreshScreen(60);
 		ProcessEvents();
 	end;
 
 	procedure EndLoadingScreen();
 	begin
 		ClearScreen();
-		RefreshScreen();
+		RefreshScreen(60);
 		FreeFont(_LoadingFont);
 		FreeBitmap(_Background);
 		FreeSprite(_Animation);
 		FreeSoundEffect(_StartSound);
 	end;
-
+	
+	procedure NewMap(mapName: String);
+	begin
+		SetLength(_Maps, Length(_Maps) + 1);
+		SetLength(_MapsStr, Length(_MapsStr) + 1);
+		_Maps[High(_Maps)] := LoadMap(mapName);
+		_MapsStr[High(_MapsStr)] := mapName;
+	end;
+	
 	procedure NewFont(fontName, fileName: String; size: Integer);
 	begin
 		SetLength(_Fonts, Length(_Fonts) + 1);
@@ -126,7 +137,7 @@ implementation
 
 	procedure LoadImages();
 	begin
-		//NewImage('NoImages', 'Ufo.png');		
+		//NewImage('NoImages', 'Ufo.png');
 	end;
 
 	procedure FreeImages();
@@ -143,7 +154,12 @@ implementation
 	begin
 		//NewSound('NoSound', 'sound.ogg');
 	end;
-
+	
+	procedure LoadMaps();
+	begin
+		//NewMap('test');
+	end;
+	
 	procedure FreeSounds();
 	var
 		i: Integer;
@@ -154,18 +170,29 @@ implementation
 		end;
 	end;
 
-	procedure LoadMusic();
+	procedure LoadMusics();
 	begin
+		NewMusic('Fast', 'Fast.mp3');
 		//NewMusic('NoMusic', 'sound.mp3');
 	end;
 
-	procedure FreeMusic();
+	procedure FreeMusics();
 	var
 		i: Integer;
 	begin
 		for i := Low(_Music) to High(_Music) do
 		begin
 			FreeMusic(_Music[i]);
+		end;
+	end;
+	
+	procedure FreeMaps();
+	var
+		i: Integer;
+	begin
+		for i := Low(_Maps) to High(_Maps) do
+		begin
+			FreeMap(_Maps[i]);
 		end;
 	end;
 
@@ -182,25 +209,26 @@ implementation
 		ShowLoadingScreen();
 		ShowMessage('Loading fonts...', 0); 
 		LoadFonts();
-		//Sleep(500);
+		Sleep(50);
 
 		ShowMessage('Loading images...', 1);
 		LoadImages();
-		//Sleep(500);
+		Sleep(50);
 
 		ShowMessage('Loading sounds...', 2);
 		LoadSounds();
-		//Sleep(500);
+		Sleep(50);
 
 		ShowMessage('Loading music...', 3);
-		LoadMusic();
-		//Sleep(500);
+		LoadMusics();
+		Sleep(50);
+		
+		ShowMessage('Loading maps...', 3);
+		LoadMaps();
+		Sleep(50);
 
-		//Add game level loading here...
-
-		//Sleep(500);
 		ShowMessage('Game loaded...', 4);
-		//Sleep(500);
+		Sleep(50);
 		EndLoadingScreen();
 
 		ChangeScreenSize(oldW, oldH);
@@ -210,8 +238,9 @@ implementation
 	begin
 		FreeFonts();
 		FreeImages();
-		FreeMusic();
+		FreeMusics();
 		FreeSounds();
+		FreeMaps();
 	end;
 
 	function GameFont(font: String): Font; 
@@ -225,11 +254,12 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Font ' + font + ' does not exist...');
 	end;
 
 	function GameImage(image: String): Bitmap;
 	var
-		i: Integer;
+	i: Integer;
 	begin
 		for i := Low(_ImagesStr) to High(_ImagesStr) do
 		begin
@@ -238,6 +268,7 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Image ' + image + ' does not exist...');
 	end;
 
 	function GameSound(sound: String): SoundEffect; 
@@ -251,8 +282,23 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Sound ' + sound + ' does not exist...');
 	end;
-
+	
+	function GameMap(mapName: String): Map;
+	var
+		i: Integer;
+	begin
+		for i := Low(_MapsStr) to High(_MapsStr) do
+		begin
+			if _MapsStr[i] = mapName then begin
+				result := _Maps[i];
+				exit;
+			end;
+		end;
+		raise exception.create('Map ' + mapName + ' does not exist...');
+	end;
+	
 	function GameMusic(music: String): Music;
 	var
 		i: Integer;
@@ -264,5 +310,6 @@ implementation
 				exit;
 			end;
 		end;
+		raise exception.create('Music ' + music + ' does not exist...');
 	end;
 end.

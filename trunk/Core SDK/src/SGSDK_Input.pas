@@ -3,7 +3,7 @@ unit SGSDK_Input;
 interface
 	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Font, SGSDK_Physics;
 
-  //
+  	//
 	//
 	// Input handling routines.
 	//
@@ -12,11 +12,12 @@ interface
 	// These routines are used to handle input from the user.
 	//
 
-  type MouseButton = (
-			LeftButton = SDL_BUTTON_LEFT,
-			MiddleButton = SDL_BUTTON_MIDDLE,
-			RightButton = SDL_BUTTON_RIGHT
-		);
+	type
+		MouseButton = (
+				LeftButton = SDL_BUTTON_LEFT,
+				MiddleButton = SDL_BUTTON_MIDDLE,
+				RightButton = SDL_BUTTON_RIGHT
+			);
 	
 	function GetMousePosition(): Vector;
 	function GetMouseMovement(): Vector;
@@ -26,7 +27,7 @@ interface
 
 
 	procedure StartReadingText(textColor: Colour; maxLength: Integer;
-														 theFont: Font; x, y: Integer);
+							   theFont: Font; x, y: Integer);
 
 	function IsReadingText(): Boolean;
 	function TextReadAsASCII(): String;
@@ -35,8 +36,7 @@ interface
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 
 implementation
-	uses SysUtils, Math,
-			 Classes;
+	uses SysUtils, Math, Classes;
 
 	/// Returns true when a key is typed. This occurs when the key is pressed on the 
 	/// keyboard, and will not reoccur until it is released and pressed again. This
@@ -46,7 +46,11 @@ implementation
 	/// @returns:					True if the key is pressed
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 	begin
-		result := sdlManager.WasKeyTyped(virtKeyCode);
+		try
+			result := sdlManager.WasKeyTyped(virtKeyCode);
+		except
+			RaiseSGSDKException('Unable to check if the specified key was typed');
+		end;
 	end;
 
 	/// Returns true when the key requested is being held down. This is updated
@@ -92,7 +96,13 @@ implementation
 	procedure StartReadingText(textColor: Colour; maxLength: Integer; 
                              theFont: Font; x, y: Integer);
 	begin
-		sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
+		if theFont = nil then RaiseSGSDKException('The specified font to start reading text is nil');
+		if maxLength <= 0 then RaiseSGSDKException('Minimum length to start reading text is 1');
+		try
+			sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
+		except
+			RaiseSGSDKException('Unable to start reading text');
+		end;
 	end;
 
   /// IsReadingText indicates if the API is currently reading text from the
@@ -101,9 +111,13 @@ implementation
 	///	read the string entered as either ASCII or Unicode.
 	///
 	///	@returns: True while the API is reading text from the user
-	function	IsReadingText(): Boolean;
+	function IsReadingText(): Boolean;
 	begin
-		result := sdlManager.IsReading;
+		try
+			result := sdlManager.IsReading;
+		except
+			RaiseSGSDKException('Unable to check if the program is reading text');
+		end;
 	end;
 
  	/// TextReadAsASCII allows you to read the value of the string entered by the
@@ -111,45 +125,64 @@ implementation
 	///	for more details.
 	///
 	///	@return:	 The string entered by the user
-	function	TextReadAsASCII(): String;
+	function TextReadAsASCII(): String;
 	begin
-		result := String(sdlManager.EnteredString);
+		try
+			result := String(sdlManager.EnteredString);
+		except
+			RaiseSGSDKException('Unable to get the text entered as ASCII');
+		end;
 	end;
 
-  /// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
+  	/// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
 	///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
 	///
 	///	@returns:	The string entered by the user
-	function	TextReadAsUNICODE(): WideString;
+	function TextReadAsUNICODE(): WideString;
 	begin
-		result := sdlManager.EnteredString;
+		try
+			result := sdlManager.EnteredString;
+		except
+			RaiseSGSDKException('Unable to get the text entered as Unicode');
+		end;
 	end;
 
-
-  var _ButtonsClicked: Array [MouseButton] of Boolean;
+	var _ButtonsClicked: Array [MouseButton] of Boolean;
 	
 	function GetMousePosition(): Vector;
 	var
 		x, y: Integer;
 	begin
-		SDL_GetMouseState(x, y);
-		result := CreateVector(x, y);
+		try
+			SDL_GetMouseState(x, y);
+			result := CreateVector(x, y);
+		except
+			RaiseSGSDKException('Failed to get the mouse position');
+		end;
 	end;
 
 	function GetMouseMovement(): Vector;
 	var
 		x, y: Integer;
 	begin
-		SDL_GetRelativeMouseState(x, y);
-		result := CreateVector(x, y);
+		try
+			SDL_GetRelativeMouseState(x, y);
+			result := CreateVector(x, y);
+		except
+			RaiseSGSDKException('Failed to get the mouse movement vector');
+		end;
 	end;
 	
 	function IsMouseDown(button: MouseButton): Boolean;
 	var
 		x, y: Integer;
 	begin
-		result := (SDL_GetMouseState(x, y) and 
-		  SDL_BUTTON(Integer(button))) > 0;
+		try
+			result := (SDL_GetMouseState(x, y) and 
+			SDL_BUTTON(Integer(button))) > 0;
+		except
+			RaiseSGSDKException('Failed to check if the mouse button is down');
+		end;
 	end;
 	
 	function IsMouseUp(button: MouseButton): Boolean;
@@ -177,8 +210,8 @@ implementation
 	end;
 
 initialization
-begin
-	RegisterEventProcessor(@ProcessEvent, @StartProcessEvents);
-end;
+	begin
+		RegisterEventProcessor(@ProcessEvent, @StartProcessEvents);
+	end;
 
 end.
