@@ -1405,18 +1405,18 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	
-	function Loadmap(fileName : PChar): MapPtr; cdecl; export;
+	function LoadMap(fileName : PChar): MapPtr; cdecl; export;
 	var
 		p : MapPtr;
 	begin
 		new(p);
-		p^ := SGSDK_MappyLoader.Loadmap(fileName);
+		p^ := SGSDK_MappyLoader.LoadMap(fileName);
 		result := p;
 	end;
 	
-	procedure Drawmap(m : MapPtr); cdecl; export;
+	procedure DrawMap(m : MapPtr); cdecl; export;
 	begin
-		SGSDK_MappyLoader.Drawmap(m^);
+		SGSDK_MappyLoader.DrawMap(m^);
 	end;
 	
 	function CollisionWithMapVector(m : MapPtr; spr : Sprite; vec: Vector): CollisionSide; cdecl; export;
@@ -1717,8 +1717,8 @@ exports
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	
-	Loadmap,
-	Drawmap,
+	LoadMap,
+	DrawMap,
 	CollisionWithMapVector,
 	EventCount,
 	EventPositionX,

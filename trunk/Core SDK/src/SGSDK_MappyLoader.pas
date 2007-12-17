@@ -71,8 +71,8 @@ interface
         	Frame : Integer;
         end;
         
-		function Loadmap(fileName : String): Map;
-		procedure Drawmap(var m : Map);
+		function LoadMap(fileName : String): Map;
+		procedure DrawMap(var m : Map);
 		function CollisionWithMap(m: Map; var spr: Sprite; vec: Vector): CollisionSide; overload;
 		function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
 		
