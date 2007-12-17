@@ -200,7 +200,7 @@ implementation
 	begin
 		for i := Low(_Maps) to High(_Maps) do
 		begin
-			//FreeMap(_Maps[i]);
+			FreeMap(_Maps[i]);
 		end;
 	end;
 

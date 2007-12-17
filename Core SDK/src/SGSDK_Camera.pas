@@ -1,8 +1,8 @@
 unit SGSDK_Camera;
 
 interface
-	uses	SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
-			SDL_Mixer, SDL_TTF, SDLEventProcessing;
+	uses
+		SDL, SGSDK_Core, Classes, SysUtils, SDL_image, SDL_Mixer, SDL_TTF, SDLEventProcessing;
 
 	//*****
 	//
@@ -94,6 +94,9 @@ implementation
 	
 	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
 	begin
+		if spr = nil then begin
+			RaiseSGSDKException('The target sprite to follow is nil');
+		end;
 		MoveVisualArea(Round(ScreenX(spr.xPos) + spr.width / 2 - ScreenWidth() / 2) + Xoffset, 
 					   Round(ScreenY(spr.yPos) + spr.height / 2 - ScreenHeight() / 2) + Yoffset);
 	end;

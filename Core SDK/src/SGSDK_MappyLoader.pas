@@ -541,7 +541,6 @@ implementation
 	var
 		XStart, XEnd, YStart, YEnd : Integer;
 		y, x: Integer;
-		difference: Single;
 		tempVector: Vector;
 	begin
 		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));

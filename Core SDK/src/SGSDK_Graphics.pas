@@ -263,7 +263,11 @@ implementation
 	///	- dest's surface is set to the toColor
 	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
 	begin
-		SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColour);
+		try
+			SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColour);
+		except
+			RaiseSGSDKException('Error occured while trying to clear the bitmap you have specified');
+		end;
 	end;
 
  	/// Clears the surface of the bitmap to Black.
@@ -300,6 +304,8 @@ implementation
 
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
 	begin
+		if (w < 0) or (h < 0) then
+			RaiseSGSDKException('Width and height of a rectangle must be larger than 0');
 		if w < 0 then
 		begin
 			result.x := x + w;
@@ -313,9 +319,12 @@ implementation
 			h := -h;
 		end
 		else result.y := y;
-
-		result.w := Word(w);
-		result.h := Word(h);
+		try
+			result.w := Word(w);
+			result.h := Word(h);
+		except
+			RaiseSGSDKException('Error occured while trying to create a SDL rectangle');
+		end;
 	end;
 	
 	function GetPixel32(surface: PSDL_Surface; x, y: Integer): Colour;
@@ -343,7 +352,7 @@ implementation
 			3: result := pixel^ and $00ffffff;
 			4: result := pixel^;
 		else
-			raise Exception.Create('Unsuported bit format...');
+			RaiseSGSDKException('Unsuported bit format...');
 		end;
 		{$ELSE}
 		case surface.format.BytesPerPixel of
@@ -352,7 +361,7 @@ implementation
 			3: result := pixel^ and $ffffff00;
 			4: result := pixel^;
 		else
-			raise Exception.Create('Unsuporte bit format...');
+			RaiseSGSDKException('Unsuporte bit format...')
 		end;
 		{$IFEND}
 	end;
@@ -384,16 +393,20 @@ implementation
 		r, c: Integer;
 		hasAlpha: Boolean;
 	begin
-		SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
-		hasAlpha := surface.format.BytesPerPixel = 4;
+		try
+			SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
+			hasAlpha := surface.format.BytesPerPixel = 4;
 
-		for c := 0 to toSet.width - 1 do
-		begin
-			for r := 0 to toSet.height - 1 do
+			for c := 0 to toSet.width - 1 do
 			begin
-				toSet.nonTransparentPixels[c, r] := hasAlpha and
-					((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
+				for r := 0 to toSet.height - 1 do
+				begin
+					toSet.nonTransparentPixels[c, r] := hasAlpha and
+						((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
+				end;
 			end;
+		except
+			RaiseSGSDKException('Failed to set non alpha pixels');
 		end;
 	end;
 
@@ -411,7 +424,7 @@ implementation
 		correctedTransColor: Colour;
 	begin
 		loadedImage := IMG_Load(pchar(pathToBitmap));
-
+		
 		if loadedImage <> nil then
 		begin
 			new(result);
@@ -426,20 +439,27 @@ implementation
 			if transparent then
 			begin
 				correctedTransColor := GetColour(result, transparentColor);
-				SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, 
-                        correctedTransColor);
+				try
+					SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, 
+	                        correctedTransColor);
+				except
+					RaiseSGSDKException('Failed to set the colour key');
+				end;
 				SetNonTransparentPixels(result, loadedImage, correctedTransColor);
 			end
 			else
 			begin
 				SetNonAlphaPixels(result, loadedImage);
 			end;
-
-			SDL_FreeSurface(loadedImage);
+			try
+				SDL_FreeSurface(loadedImage);
+			except
+				RaiseSGSDKException('Failed to free the specified SDL surface');
+			end;
 		end
 		else
 		begin
-			raise Exception.Create('Error loading image: ' + 
+			RaiseSGSDKException('Error loading image: ' + 
                              pathToBitmap + ': ' + SDL_GetError());
 		end;
 	end;
@@ -483,7 +503,11 @@ implementation
 			if bitmapToFree.surface <> nil then
 			begin
 				//WriteLn('Freeing SDL Surface');
-				SDL_FreeSurface(bitmapToFree.surface);
+				try
+					SDL_FreeSurface(bitmapToFree.surface);
+				except
+					RaiseSGSDKException('Failed to free the specified SDL surface');
+				end;
 			end;
 			//WriteLn('Nilling bitmap surface');
 			bitmapToFree.surface := nil;
@@ -507,6 +531,18 @@ implementation
 	var
 		i : Integer;
 	begin
+		if image = nil then begin
+			RaiseSGSDKException('No image specified to create a sprite');
+		end;
+		
+		if Length(framesPerCell) = 0 then begin
+			RaiseSGSDKException('No frames per cell defined');
+		end;
+		
+		if (width < 1) or (height < 1) then begin
+			RaiseSGSDKException('Sprite Width and Height must be greater then 0');
+		end;
+		
 		New(result);
 		SetLength(result.bitmaps, 1);
 		
@@ -596,6 +632,14 @@ implementation
 	var
 		i : Integer;
 	begin
+		if Length(bitmaps) = 0 then begin
+			RaiseSGSDKException('No images specified to create a sprite');
+		end;
+		
+		if Length(framesPerCell) = 0 then begin
+			RaiseSGSDKException('No frames per cell defined');
+		end;
+		
 		New(result);
 		result.xPos					:= 0;
 		result.yPos					:= 0;
@@ -699,14 +743,6 @@ implementation
 	///	@returns					 The width of the sprite's current frame
 	function CurrentWidth(sprite: Sprite): Integer; inline;
 	begin
-		{if sprite.spriteKind = AnimMultiSprite then
-		begin
-			result := sprite.width;
-		end
-		else
-		begin
-			result := sprite.bitmaps[sprite.currentFrame].width;
-		end;}
 		result := sprite.width;
 	end;
   
@@ -716,14 +752,6 @@ implementation
 	///	@returns					 The height of the sprite's current frame
 	function CurrentHeight(sprite: Sprite): Integer; inline;
 	begin
-		{if sprite.spriteKind = AnimMultiSprite then
-		begin
-			result := sprite.height;
-		end
-		else
-		begin
-			result := sprite.bitmaps[sprite.currentFrame].height;
-		end;}
 		result := sprite.height;
 	end;
 
@@ -741,7 +769,11 @@ implementation
 		offset: SDL_Rect;
 	begin
 		offset := NewSDLRect(x, y, 0, 0);
-		SDL_BlitSurface(bitmapToDraw.surface, nil, dest.surface, @offset);
+		try
+			SDL_BlitSurface(bitmapToDraw.surface, nil, dest.surface, @offset);
+		except
+			RaiseSGSDKException('Failed to draw the specified bitmap');
+		end;
 	end;
 
 	/// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest).
@@ -761,8 +793,11 @@ implementation
 	begin
 		offset := NewSDLRect(x, y, 0, 0);
 		source := NewSDLRect(srcX, srcY, srcW, srcH);
-
-		SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
+		try
+			SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
+		except
+			RaiseSGSDKException('Failed to draw the specified part of the specified bitmap');
+		end;
 	end;
 
 	/// Draws part of a bitmap (bitmapToDraw) onto the screen.
@@ -1066,8 +1101,12 @@ implementation
 	///	@param movementVector:	 The vector containing the movement details
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
 	begin
-		spriteToMove.xPos := spriteToMove.xPos + movementVector.x;
-		spriteToMove.yPos := spriteToMove.yPos + movementVector.y;
+		try
+			spriteToMove.xPos := spriteToMove.xPos + movementVector.x;
+			spriteToMove.yPos := spriteToMove.yPos + movementVector.y;
+		except
+			RaiseSGSDKException('Failed to move the specified sprite using the specified vector');
+		end;
 	end;
 
 	/// Moves a sprite to a given x,y location.
@@ -1079,14 +1118,22 @@ implementation
 	///	- Moves the sprite, changing its x and y
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
 	begin
-		spriteToMove.xPos := x;
-		spriteToMove.yPos := y;
+		try
+			spriteToMove.xPos := x;
+			spriteToMove.yPos := y;
+		except
+			RaiseSGSDKException('Failed to move the specified sprite to the spceified coordinate');
+		end;
 	end;
 	
 	procedure MoveSprite(spriteToMove: Sprite);
 	begin
-		spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
-		spriteToMove.yPos := spriteToMove.yPos + spriteToMove.movement.y;		
+		try
+			spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
+			spriteToMove.yPos := spriteToMove.yPos + spriteToMove.movement.y;
+		except
+			RaiseSGSDKException('Failed to move the specified sprite with the attached vector');
+		end;
 	end;
 	
 	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
@@ -1098,17 +1145,25 @@ implementation
 	///  @returns:              A new bitmap
 	function CreateBitmap(width, height: Integer): Bitmap;
 	begin
-		New(result);
-
-		with baseSurface.format^ do
-		begin
-			result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
-											 RMask, GMask, BMask, AMask);
+		if (width < 1) or (height < 1) then begin
+			RaiseSGSDKException('Bitmap width and height must be greater then 0');
 		end;
-		result.width := width;
-		result.height := height;
-		SDL_SetAlpha(result.surface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
-		SDL_FillRect(result.surface, nil, ColorTransparent);
+		
+		try
+			New(result);
+
+			with baseSurface.format^ do
+			begin
+				result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
+												 RMask, GMask, BMask, AMask);
+			end;
+			result.width := width;
+			result.height := height;
+			SDL_SetAlpha(result.surface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+			SDL_FillRect(result.surface, nil, ColorTransparent);
+		except
+			RaiseSGSDKException('Failed to create a bitmap');
+		end;
 	end;
 
 	/// Created bitmaps can be optimised for faster drawing to the screen. This
@@ -1124,10 +1179,14 @@ implementation
 	var
 		oldSurface: PSDL_Surface;
 	begin
-		oldSurface := surface.surface;
-		SetNonAlphaPixels(surface, oldSurface);
-		surface.surface := SDL_DisplayFormatAlpha(oldSurface);
-		SDL_FreeSurface(oldSurface);
+		try
+			oldSurface := surface.surface;
+			SetNonAlphaPixels(surface, oldSurface);
+			surface.surface := SDL_DisplayFormatAlpha(oldSurface);
+			SDL_FreeSurface(oldSurface);
+		except
+			RaiseSGSDKException('Failed to optimise the specified bitmap')
+		end;
 	end;
 	
 	procedure PutPixel(surface: PSDL_Surface; x, y: Integer; color: Color);
@@ -1136,14 +1195,18 @@ implementation
 	  pixels: PUint32;
 	  addr: UInt32;
 	begin
-	  if (x < 0) or (x >= surface.w) or (y < 0) or (y >= surface.h) then exit;
-	
-	  pixels := surface.pixels;
-	  //addr := Integer(pixels) + (( y * surface.w ) + x) * surface.format.BytesPerPixel;
-	  addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
-	  bufp := PUint32(addr);
-	  bufp^ := color;
-	  //PixelColor(surface, x, y, ToSDLGFXColor(color));
+		try
+			if (x < 0) or (x >= surface.w) or (y < 0) or (y >= surface.h) then exit;
+
+			pixels := surface.pixels;
+			//addr := Integer(pixels) + (( y * surface.w ) + x) * surface.format.BytesPerPixel;
+			addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
+			bufp := PUint32(addr);
+			bufp^ := color;
+			//PixelColor(surface, x, y, ToSDLGFXColor(color));
+		except
+			RaiseSGSDKException('Failed to put pixel to the specified coordinate');
+		end;
 	end;
 	
 	/// Draws a pixel onto the screen.
@@ -1460,20 +1523,22 @@ implementation
 		begin
 			rect.x := xPos + width; //move back by width
 			width := -width;
-		end
-		else rect.x := xPos;
-
+		end else rect.x := xPos;
+		
 		if height < 0 then
 		begin
 			rect.y := yPos + height; //move up by height
 			height := -height;
-		end
-		else rect.y := yPos;
-
+		end else rect.y := yPos;
+		
 		rect.w := width;
 		rect.h := height;
-
-		SDL_FillRect(dest.surface, @rect, theColour);
+		
+		try
+			SDL_FillRect(dest.surface, @rect, theColour);
+		except
+			RaiseSGSDKException('Failed to fill rectangle');
+		end;
 	end;
 
 	/// Draws a ellipse within a given rectangle on the dest bitmap.
@@ -1511,94 +1576,106 @@ implementation
 	procedure DrawEllipse(dest: Bitmap; theColour: Colour; 
                  xPos, yPos, width, height: Integer); overload;
 	var
-	  x, y: Integer;
-	  xRadius, yRadius: Integer;
-	  xChange, yChange: Integer;
-	  ellipseError: Integer;
-	  twoASquare, twoBSquare: Integer;
-	  stoppingX, stoppingY: Integer;
+		x, y: Integer;
+		xRadius, yRadius: Integer;
+		xChange, yChange: Integer;
+		ellipseError: Integer;
+		twoASquare, twoBSquare: Integer;
+		stoppingX, stoppingY: Integer;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw an ellipse is nil');
+		end;
+		
+		if (width < 1) or (height < 1) then begin
+			RaiseSGSDKException('Ellipse width and height must be greater then 0');
+		end;
+		
 		xRadius := width div 2;
 		yRadius := height div 2;
-		
+
 		xPos += xRadius; yPos += yRadius;
-		
+
 		twoASquare := 2 * (width shr 1) * (width shr 1);
-	  twoBSquare := 2 * (height shr 1) * (height shr 1);
-	
-	  // 1st set of points
-	  x := (width shr 1) - 1;  // radius zero == draw nothing
-	  y := 0;
-	
-	  xChange := (height shr 1) * (height shr 1) * (1 - 2 * (width shr 1));
-	  yChange := (width shr 1) * (width shr 1);
-	
-	  ellipseError := 0;
-	
-	  stoppingX := twoBSquare * (width shr 1);
-	  stoppingY := 0;
-	
-	  //Lock dest
-	  if SDL_MUSTLOCK(dest.surface) then
-	  begin
-	      if SDL_LockSurface(dest.surface) < 0 then exit;
-	  end;
-	
-	  // Plot four ellipse points by iteration
-	  while stoppingX > stoppingY do
-	  begin
-	    PutPixel(dest.surface, xPos + x, yPos + y, theColour);
-	    PutPixel(dest.surface, xPos - x, yPos + y, theColour);
-	    PutPixel(dest.surface, xPos + x, yPos - y, theColour);
-	    PutPixel(dest.surface, xPos - x, yPos - y, theColour);
-	
-	    y := y + 1;
-	    stoppingY := stoppingY + twoASquare;
-	    ellipseError := ellipseError + Ychange;
-	    yChange := yChange + twoASquare;
-	
-	    if (2 * ellipseError + xChange) > 0 then
-	    begin
-	      x := x - 1;
-	      stoppingX := stoppingX - twoBSquare;
-	      ellipseError := ellipseError + xChange;
-	      xChange := xChange + twoBSquare;
-	    end;
-	  end;
-	
-	  // 2nd set of points
-	  x := 0;
-	  y := (height shr 1) - 1;  //radius zero == draw nothing
-	  xChange := (height shr 1) * (height shr 1);
-	  yChange := (width shr 1) * (width shr 1) * (1 - 2 * (height shr 1));
-	  ellipseError := 0;
-	  stoppingX := 0;
-	  stoppingY := twoASquare * (height shr 1);
-	
-	  //Plot four ellipse points by iteration
-	  while stoppingX < stoppingY do
-	  begin
-	    PutPixel(dest.surface, xPos + x, yPos + y, theColour);
-	    PutPixel(dest.surface, xPos - x, yPos + y, theColour);
-	    PutPixel(dest.surface, xPos + x, yPos - y, theColour);
-	    PutPixel(dest.surface, xPos - x, yPos - y, theColour);
-	
-	    x := x + 1;
-	    stoppingX := stoppingX + twoBSquare;
-	    ellipseError := ellipseError + xChange;
-	    xChange := xChange + twoBSquare;
-	
-	    if (2 * ellipseError + yChange) > 0 then
-	    begin
-	      y := y - 1;
-	      stoppingY := stoppingY - TwoASquare;
-	      ellipseError := ellipseError + yChange;
-	      yChange := yChange + twoASquare;
-	    end;
-	  end;
-	
-	  // Unlock dest
-	  if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
+		twoBSquare := 2 * (height shr 1) * (height shr 1);
+
+		// 1st set of points
+		x := (width shr 1) - 1;  // radius zero == draw nothing
+		y := 0;
+
+		xChange := (height shr 1) * (height shr 1) * (1 - 2 * (width shr 1));
+		yChange := (width shr 1) * (width shr 1);
+
+		ellipseError := 0;
+
+		stoppingX := twoBSquare * (width shr 1);
+		stoppingY := 0;
+
+		//Lock dest
+		if SDL_MUSTLOCK(dest.surface) then
+		begin
+			if SDL_LockSurface(dest.surface) < 0 then exit;
+		end;
+
+		// Plot four ellipse points by iteration
+		while stoppingX > stoppingY do
+		begin
+			PutPixel(dest.surface, xPos + x, yPos + y, theColour);
+			PutPixel(dest.surface, xPos - x, yPos + y, theColour);
+			PutPixel(dest.surface, xPos + x, yPos - y, theColour);
+			PutPixel(dest.surface, xPos - x, yPos - y, theColour);
+
+			y := y + 1;
+			stoppingY := stoppingY + twoASquare;
+			ellipseError := ellipseError + Ychange;
+			yChange := yChange + twoASquare;
+
+			if (2 * ellipseError + xChange) > 0 then
+			begin
+				x := x - 1;
+				stoppingX := stoppingX - twoBSquare;
+				ellipseError := ellipseError + xChange;
+				xChange := xChange + twoBSquare;
+			end;
+		end;
+
+		// 2nd set of points
+		x := 0;
+		y := (height shr 1) - 1;  //radius zero == draw nothing
+		xChange := (height shr 1) * (height shr 1);
+		yChange := (width shr 1) * (width shr 1) * (1 - 2 * (height shr 1));
+		ellipseError := 0;
+		stoppingX := 0;
+		stoppingY := twoASquare * (height shr 1);
+
+		//Plot four ellipse points by iteration
+		while stoppingX < stoppingY do
+		begin
+			PutPixel(dest.surface, xPos + x, yPos + y, theColour);
+			PutPixel(dest.surface, xPos - x, yPos + y, theColour);
+			PutPixel(dest.surface, xPos + x, yPos - y, theColour);
+			PutPixel(dest.surface, xPos - x, yPos - y, theColour);
+
+			x := x + 1;
+			stoppingX := stoppingX + twoBSquare;
+			ellipseError := ellipseError + xChange;
+			xChange := xChange + twoBSquare;
+			
+			if (2 * ellipseError + yChange) > 0 then
+			begin
+				y := y - 1;
+				stoppingY := stoppingY - TwoASquare;
+				ellipseError := ellipseError + yChange;
+				yChange := yChange + twoASquare;
+			end;
+		end;
+		
+		try
+			// Unlock dest
+			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to unlock the bitmap');
+		end;
 	end;
 
 	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
@@ -1620,6 +1697,14 @@ implementation
 		stoppingX, stoppingY: Integer;
 		xRadius, yRadius: Integer;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw an ellipse is nil');
+		end;
+		
+		if (width < 1) or (height < 1) then begin
+			RaiseSGSDKException('Ellipse width and height must be greater then 0');
+		end;
+		
 		xRadius := width div 2;
 		yRadius := height div 2;
 		
@@ -1696,8 +1781,12 @@ implementation
 			end;
 		end;
 		
-		// Unlock dest
-		if SDL_MUSTLOCK(dest.surface) then  SDL_UnlockSurface(dest.surface);
+		try
+			// Unlock dest
+			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to unlock the destination bitmap');
+		end;
 	end;
 
 	/// Draws a vertical line on the destination bitmap.
@@ -1715,6 +1804,10 @@ implementation
 		bufP: PUInt32;
 		pixels: PUint32;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw a vertical line is nil');
+		end;
+		
 		w := dest.surface.w;
 		h := dest.surface.h;
 		
@@ -1737,7 +1830,11 @@ implementation
 		addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
 		bufp := PUint32(addr);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		try
+			if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to lock the destination bitmap')
+		end;
 		
 		for y := y1 to y2 - 1 do
 		begin
@@ -1745,7 +1842,11 @@ implementation
 			bufp^ := theColor;
 		end;
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		try
+			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to unlock the destination bitmap');
+		end;
 	end;
 
 	/// Draws a horizontal line on the destination bitmap.
@@ -1763,6 +1864,10 @@ implementation
 		bufP: PUInt32;
 		pixels: PUint32;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw a horizontal line is nil');
+		end;
+		
 		w := dest.surface.w;
 		h := dest.surface.h;
 		
@@ -1785,15 +1890,23 @@ implementation
 		addr := UInt32(pixels) + ((UInt32(x1 - 1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch);
 		bufp := PUint32(addr);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		try
+			if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to lock the destination bitmap')
+		end;
 		
 		for x := x1 to x2 do
 		begin
 			Inc(bufp);
 			bufp^ := theColor;
 		end;
-
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		
+		try
+			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to unlock the destination bitmap');
+		end;
 	end;
 
 	/// Draws a line on the destination bitmap.
@@ -1812,6 +1925,10 @@ implementation
 		deltaX, deltaY: Integer;
 		xinc1, xinc2, yinc1, yinc2, den, num, numadd, numpixels, curpixel: Integer;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw a line is nil');
+		end;
+		
 		if xPosStart = xPosEnd then
 			DrawVerticalLine(dest, theColour, xPosStart, yPosStart, yPosEnd)
 		else if yPosStart = yPosEnd then
@@ -1900,13 +2017,25 @@ implementation
 	///	- Sets one pixel on the destination bitmap
 	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer); overload;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw a pixel is nil');
+		end;
+		
 		if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		try
+			if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to lock the destination bitmap')
+		end;
 		
 		PutPixel(dest.surface, x, y, theColour);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		try
+			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		except
+			RaiseSGSDKException('Failed to unlock the destination bitmap');
+		end;
 	end;
 	
 	/// Draws a circle centered on a given x, y location.
@@ -1943,6 +2072,14 @@ implementation
 		x, y, p: Integer;
 		a, b, c, d, e, f, g, h: Integer;
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw a circle is nil');
+		end;
+		
+		if radius < 1 then begin
+			RaiseSGSDKException('Radius for a circle must be greater then 0');
+		end;
+		
 	  	x := 0;
 		y := radius;
 		p := 3 - (radius shl 1);
@@ -2001,6 +2138,14 @@ implementation
 		a, b, c, d, e, f, g, h: Integer;
 		pb, pd: Integer; //previous values: to avoid drawing horizontal lines multiple times
 	begin
+		if dest = nil then begin
+			RaiseSGSDKException('The destination bitmap to draw a circle is nil');
+		end;
+		
+		if radius < 1 then begin
+			RaiseSGSDKException('Radius for a circle must be greater then 0');
+		end;
+		
 		x := 0;
 		y := radius;
 		p := 3 - (radius shl 1);
@@ -2052,5 +2197,4 @@ implementation
 		else
 			result := Round(1000 / renderFPSInfo.average);
 	end;
-
 end.
