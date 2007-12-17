@@ -179,7 +179,7 @@ namespace SwinGame
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Loadmap")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
         private static extern IntPtr DLL_Loadmap(String fileName);
         /// <summary>
         /// Loads a Map
@@ -197,7 +197,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Drawmap")]
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawMap")]
         private static extern void DLL_Drawmap(IntPtr map);
         /// <summary>
         /// Draws the Map

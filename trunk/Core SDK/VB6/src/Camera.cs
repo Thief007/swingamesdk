@@ -51,9 +51,11 @@ namespace SwinGameVB
         {
             return SwinGame.Camera.GameY(y);
         }
-        public float ToGameCoordinates(Vector screenVector)
+        public Vector ToGameCoordinates(Vector screenVector)
         {
-            return SwinGame.Camera.ToGameCoordinates(screenVector.result);
+            Vector vector = new Vector();
+            vector.result = SwinGame.Camera.ToGameCoordinates(screenVector.result);
+            return vector;
         }
         public void FollowSprite(Sprite sprite, int xOffset, int yOffset)
         {
@@ -71,7 +73,7 @@ namespace SwinGameVB
         int ScreenY(float y);
         float GameX(int x);
         float GameY(int y);
-        float ToGameCoordinates(Vector screenVector);
+        Vector ToGameCoordinates(Vector screenVector);
         void MoveVisualArea_WithVecotr(Vector v);
         void MoveVisualArea(float dx, float dy);
         void SetScreenOffset(float dx, float dy);

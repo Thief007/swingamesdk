@@ -48,6 +48,7 @@
     <Compile Include="Input.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MappyLoader.cs" />
     <Compile Include="Physics.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

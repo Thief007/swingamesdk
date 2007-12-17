@@ -38,14 +38,16 @@ namespace SGSDK_Showcase
                 CollisionDetection.Run();
                 MoveSpriteWithInput.Run();
                 MouseCursor.Run();
+                 * */
                 VectorCollision.Run();
+                /*
                 SoundInput.Run();
                 KeyInput.Run();
                 TextRead.Run();
                 DrawRandomText.Run();
                 DroppingBall.Run();
                 MultiBitmapSprite.Run();
-                FollowExample.Run();
+                //FollowExample.Run();
                 DrawCircleWithLine.Run();
                 MapExample.Run();
             }

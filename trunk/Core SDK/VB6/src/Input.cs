@@ -214,7 +214,7 @@ namespace SwinGameVB
         ///	@param maxLength:	The maximum length of the string the user can enter
         ///	@param theFont:		The font used to draw the text entered
         ///	@param x, y:			 The location at which to draw the text entered
-        public void StartReadingText(int toColour, int maxLength, Font theFont, int x, int y)
+        public void StartReadingText(int toColour, int maxLength, Fonts theFont, int x, int y)
         {
             Color color = Color.FromArgb(toColour);
             SwinGame.Input.StartReadingText(color, maxLength, theFont.result, x, y);
@@ -287,7 +287,7 @@ namespace SwinGameVB
         bool IsMouseDown(MouseButton button);
         bool IsMouseUp(MouseButton button);
         bool MouseWasClicked(MouseButton button);
-        void StartReadingText(int toColour, int maxLength, Font theFont, int x, int y);
+        void StartReadingText(int toColour, int maxLength, Fonts theFont, int x, int y);
         bool IsReadingText();
         String TextReadAsASCII();
         String TextReadAsUNICODE();

@@ -90,6 +90,8 @@ namespace SwinGameVB
         void setY(Single value);
         Single getW();
         void setW(Single value);
+        Vector getVector();
+        void setVector(Vector value);
 
     }
 
@@ -103,7 +105,14 @@ namespace SwinGameVB
     {
         private SwinGame.Vector vector = new SwinGame.Vector();
 
-
+        public Vector getVector()
+        {
+            return this;
+        }
+        public void setVector(Vector value)
+        {
+            vector = value.result;
+        }
         public Single getX()
         {
             return vector.x;
@@ -152,7 +161,8 @@ namespace SwinGameVB
         void SetIcon(String iconFilename);
         void ChangeScreenSize(int width, int height);
         void ToggleFullScreen();
-        void RefreshScreen(int TargetFPS);
+        void RefreshScreen_WithFrame(int TargetFPS);
+        void RefreshScreen();
         void TakeScreenshot(String basename);
         int ScreenWidth();
         int ScreenHeight();
@@ -177,215 +187,221 @@ namespace SwinGameVB
     [Guid("696A5E07-D52D-4ee7-A2F9-B2387D17B56F")]
     [ComVisible(true)]
     public class Core :ICore
+    {
+        /// <summary>
+        /// Opens the graphical window so that it can be drawn onto. You can set the
+        ///	icon for this window using SetIcon. The window itself is only drawn when
+        ///	you call RefreshScreen. All windows are opened at 32 bits per pixel. You
+        ///	can toggle fullscreen using ToggleFullScreen. The window is closed when
+        ///	the application terminates.
+        /// </summary>
+        /// <param name="caption">Caption for the Window</param>
+        /// <param name="width">Width of the Window</param>
+        /// <param name="height">Height of the Window</param>
+        public void OpenGraphicsWindow(String caption, int width, int height)
+        {   
+            SwinGame.Core.OpenGraphicsWindow(caption, width, height);
+        }
+
+        /// <summary>
+        /// Checks to see if the window has been asked to close. You need to handle
+        ///	this if you want the game to end when the window is closed. This value
+        ///	is updated by the ProcessEvents routine. 
+        /// </summary>
+        /// <returns>Returns true if the window has been requested to close</returns>
+        public bool WindowCloseRequested()
         {
-            /// <summary>
-            /// Opens the graphical window so that it can be drawn onto. You can set the
-            ///	icon for this window using SetIcon. The window itself is only drawn when
-            ///	you call RefreshScreen. All windows are opened at 32 bits per pixel. You
-            ///	can toggle fullscreen using ToggleFullScreen. The window is closed when
-            ///	the application terminates.
-            /// </summary>
-            /// <param name="caption">Caption for the Window</param>
-            /// <param name="width">Width of the Window</param>
-            /// <param name="height">Height of the Window</param>
-            public void OpenGraphicsWindow(String caption, int width, int height)
-            {   
-                SwinGame.Core.OpenGraphicsWindow(caption, width, height);
-            }
+            return SwinGame.Core.WindowCloseRequested();
+        }
 
-            /// <summary>
-            /// Checks to see if the window has been asked to close. You need to handle
-            ///	this if you want the game to end when the window is closed. This value
-            ///	is updated by the ProcessEvents routine. 
-            /// </summary>
-            /// <returns>Returns true if the window has been requested to close</returns>
-            public bool WindowCloseRequested()
-            {
-                return SwinGame.Core.WindowCloseRequested();
-            }
+        /// <summary>
+        /// ProcessEvents allows the SwinGame API to react to user interactions. This
+        ///	routine checks the current keyboard and mouse states. This routine must
+        ///	be called frequently within your game loop to enable user interaction.
+        /// </summary>
+        public void ProcessEvents()
+        {
+            SwinGame.Core.ProcessEvents();
+        }
 
-            /// <summary>
-            /// ProcessEvents allows the SwinGame API to react to user interactions. This
-            ///	routine checks the current keyboard and mouse states. This routine must
-            ///	be called frequently within your game loop to enable user interaction.
-            /// </summary>
-            public void ProcessEvents()
-            {
-                SwinGame.Core.ProcessEvents();
-            }
+        /// <summary>
+        /// Sets the icon for the window. This must be called before openning the
+        ///	graphics window. The icon is loaded as a bitmap, though this can be from
+        ///	any kind of bitmap file.
+        /// </summary>
+        /// <param name="iconFilename">The name of the file to load as the image icon</param>
+        public void SetIcon(String iconFilename)
+        {
+            SwinGame.Core.SetIcon(iconFilename);
+        }
 
-            /// <summary>
-            /// Sets the icon for the window. This must be called before openning the
-            ///	graphics window. The icon is loaded as a bitmap, though this can be from
-            ///	any kind of bitmap file.
-            /// </summary>
-            /// <param name="iconFilename">The name of the file to load as the image icon</param>
-            public void SetIcon(String iconFilename)
-            {
-                SwinGame.Core.SetIcon(iconFilename);
-            }
+        /// <summary>
+        /// Changes the size of the screen.
+        /// </summary>
+        /// <param name="width">New width of the Screen</param>
+        /// <param name="height">New height of the Screen</param>
+        public void ChangeScreenSize(int width, int height)
+        {
+            SwinGame.Core.ChangeScreenSize(width, height);
+        }
 
-            /// <summary>
-            /// Changes the size of the screen.
-            /// </summary>
-            /// <param name="width">New width of the Screen</param>
-            /// <param name="height">New height of the Screen</param>
-            public void ChangeScreenSize(int width, int height)
-            {
-                SwinGame.Core.ChangeScreenSize(width, height);
-            }
+        /// <summary>
+        /// Switches the application to full screen or back from full screen to
+        ///	windowed.
+        /// </summary>
+        public void ToggleFullScreen()
+        {
+            SwinGame.Core.ToggleFullScreen();
+        }
 
-            /// <summary>
-            /// Switches the application to full screen or back from full screen to
-            ///	windowed.
-            /// </summary>
-            public void ToggleFullScreen()
-            {
-                SwinGame.Core.ToggleFullScreen();
-            }
+        /// <summary>
+        /// Draws the current drawing to the screen. This must be called to display
+        ///	anything to the screen. This will draw all drawing operations, as well
+        ///	as the text being entered by the user.
+        /// </summary>
+        public void RefreshScreen_WithFrame(int TargetFPS)
+        {
+            SwinGame.Core.RefreshScreen(TargetFPS);
+        }
 
-            /// <summary>
-            /// Draws the current drawing to the screen. This must be called to display
-            ///	anything to the screen. This will draw all drawing operations, as well
-            ///	as the text being entered by the user.
-            /// </summary>
-        public void RefreshScreen(int TargetFPS)
-            {
-                SwinGame.Core.RefreshScreen(TargetFPS);
-            }
+        public void RefreshScreen()
+        {
+            SwinGame.Core.RefreshScreen();
+        }
 
-            /// <summary>
-            /// Saves the current screen a bitmap file. The file will be saved into the
-            ///	current directory.
-            /// <param name="basename">The base name for the screen shot</param>
-            public void TakeScreenshot(String basename)
-            {
-                SwinGame.Core.TakeScreenshot(basename);
-            }
+        
+        /// <summary>
+        /// Saves the current screen a bitmap file. The file will be saved into the
+        ///	current directory.
+        /// <param name="basename">The base name for the screen shot</param>
+        public void TakeScreenshot(String basename)
+        {
+            SwinGame.Core.TakeScreenshot(basename);
+        }
 
-            /// <summary>
-            /// Gets the Screen's Width
-            /// </summary>
-            /// <returns>The Screen Width</returns>
-            public int ScreenWidth()
-            {
-                return SwinGame.Core.ScreenWidth();
-            }
+        /// <summary>
+        /// Gets the Screen's Width
+        /// </summary>
+        /// <returns>The Screen Width</returns>
+        public int ScreenWidth()
+        {
+            return SwinGame.Core.ScreenWidth();
+        }
 
-            /// <summary>
-            /// Gets the Screen's Height
-            /// </summary>
-            /// <returns>The Screen Height</returns>
-            public int ScreenHeight()
-            {
-                return SwinGame.Core.ScreenHeight();
-            }
+        /// <summary>
+        /// Gets the Screen's Height
+        /// </summary>
+        /// <returns>The Screen Height</returns>
+        public int ScreenHeight()
+        {
+            return SwinGame.Core.ScreenHeight();
+        }
 
-            /// <summary>
-            /// Gets the Color when the user enters the amount of red, green, blue and alpha
-            /// </summary>
-            /// <param name="red">The amount of red (0 - 255)</param>
-            /// <param name="green">The amount of green (0 - 255)</param>
-            /// <param name="blue">The amount of blue (0 - 255)</param>
-            /// <param name="alpha">The amount of alpha (0 - 255)</param>
-            /// <returns>Color</returns>
-            public Color GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha)
-            {
-                return SwinGame.Core.GetColor( red, green, blue, alpha);
-            }
+        /// <summary>
+        /// Gets the Color when the user enters the amount of red, green, blue and alpha
+        /// </summary>
+        /// <param name="red">The amount of red (0 - 255)</param>
+        /// <param name="green">The amount of green (0 - 255)</param>
+        /// <param name="blue">The amount of blue (0 - 255)</param>
+        /// <param name="alpha">The amount of alpha (0 - 255)</param>
+        /// <returns>Color</returns>
+        public Color GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha)
+        {
+            return SwinGame.Core.GetColor( red, green, blue, alpha);
+        }
 
-            /// <summary>
-            /// Gets the Color when the user enters the amount of red, green and blue
-            /// </summary>
-            /// <param name="red">The amount of red (0 - 255)</param>
-            /// <param name="green">The amount of green (0 - 255)</param>
-            /// <param name="blue">The amount of blue (0 - 255)</param>
-            /// <returns>Color</returns>
-            public Color GetColor(Byte red, Byte green, Byte blue)
-            {
-                return SwinGame.Core.GetColor(red, green, blue);
-            }
-            /// <summary>
-            /// Returns the average framerate for the last 10 frames as an integer.
-            /// </summary>
-            /// <returns>The current average framerate</returns>
-            public int GetFramerate()
-            {
-                return SwinGame.Core.GetFramerate();
-            }
+        /// <summary>
+        /// Gets the Color when the user enters the amount of red, green and blue
+        /// </summary>
+        /// <param name="red">The amount of red (0 - 255)</param>
+        /// <param name="green">The amount of green (0 - 255)</param>
+        /// <param name="blue">The amount of blue (0 - 255)</param>
+        /// <returns>Color</returns>
+        public Color GetColor(Byte red, Byte green, Byte blue)
+        {
+            return SwinGame.Core.GetColor(red, green, blue);
+        }
+        /// <summary>
+        /// Returns the average framerate for the last 10 frames as an integer.
+        /// </summary>
+        /// <returns>The current average framerate</returns>
+        public int GetFramerate()
+        {
+            return SwinGame.Core.GetFramerate();
+        }
 
-            /// <summary>
-            /// Gets the number of milliseconds that have passed. This can be used to
-            ///	determine timing operations, such as updating the game elements.
-            /// </summary>
-            /// <returns>The number of milliseconds passed</returns>
-            public int GetTicks()
-            {
+        /// <summary>
+        /// Gets the number of milliseconds that have passed. This can be used to
+        ///	determine timing operations, such as updating the game elements.
+        /// </summary>
+        /// <returns>The number of milliseconds passed</returns>
+        public int GetTicks()
+        {
 
-                return (int)SwinGame.Core.GetTicks();
-            }
+            return (int)SwinGame.Core.GetTicks();
+        }
 
-            /// <summary>
-            /// /// Puts the process to sleep for a specified number of
-            /// milliseconds. This can be used to add delays into your
-            /// </summary>
-            /// <param name="time">The number of milliseconds to sleep</param>
-            /// <returns>Delay before returning</returns>
-            public int Sleep(int time)
-            {
-                return (int)SwinGame.Core.Sleep((UInt32)time);
-            }
+        /// <summary>
+        /// /// Puts the process to sleep for a specified number of
+        /// milliseconds. This can be used to add delays into your
+        /// </summary>
+        /// <param name="time">The number of milliseconds to sleep</param>
+        /// <returns>Delay before returning</returns>
+        public int Sleep(int time)
+        {
+            return (int)SwinGame.Core.Sleep((UInt32)time);
+        }
 
-            /// <summary>
-            /// Gets the resource to an image, sound, font or other type of resource
-            /// 
-            /// Entering ResourceKind.None into the kind parameters makes this function
-            /// look inside the base resource folder, while entering either, font, image
-            /// or sound, will make this function look inside their respective folders, 
-            /// image, font and sound folders.
-            /// </summary>
-            /// <param name="filename">filename that you need to get the path of</param>
-            /// <param name="kind">The type of resource it is</param>
-            /// <returns>A Path to the Resource</returns>
-            public String GetPathToResource(String filename, ResourceKind kind)
-            {
-                return SwinGame.Core.GetPathToResource(filename, (SwinGame.ResourceKind)kind);
-            }
+        /// <summary>
+        /// Gets the resource to an image, sound, font or other type of resource
+        /// 
+        /// Entering ResourceKind.None into the kind parameters makes this function
+        /// look inside the base resource folder, while entering either, font, image
+        /// or sound, will make this function look inside their respective folders, 
+        /// image, font and sound folders.
+        /// </summary>
+        /// <param name="filename">filename that you need to get the path of</param>
+        /// <param name="kind">The type of resource it is</param>
+        /// <returns>A Path to the Resource</returns>
+        public String GetPathToResource(String filename, ResourceKind kind)
+        {
+            return SwinGame.Core.GetPathToResource(filename, (SwinGame.ResourceKind)kind);
+        }
 
-            public String GetPathToResource_NoKind(String filename)
-            {
-                return SwinGame.Core.GetPathToResource(filename);
-            }
+        public String GetPathToResource_NoKind(String filename)
+        {
+            return SwinGame.Core.GetPathToResource(filename);
+        }
 
-            /// <summary>
-            /// Gets the Cos of an angle
-            /// </summary>
-            /// <param name="angle">Angle</param>
-            /// <returns>Cos</returns>
-            public Single Cos(Single angle)
-            {
-                return SwinGame.Core.Cos(angle);
-            }
+        /// <summary>
+        /// Gets the Cos of an angle
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <returns>Cos</returns>
+        public Single Cos(Single angle)
+        {
+            return SwinGame.Core.Cos(angle);
+        }
 
-            /// <summary>
-            /// Gets the Sin of an angle
-            /// </summary>
-            /// <param name="angle">Angle</param>
-            /// <returns>Sin</returns>
-            public Single Sin(Single angle)
-            {
-                return SwinGame.Core.Sin(angle);
-            }
+        /// <summary>
+        /// Gets the Sin of an angle
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <returns>Sin</returns>
+        public Single Sin(Single angle)
+        {
+            return SwinGame.Core.Sin(angle);
+        }
 
-            /// <summary>
-            /// Gets the Tan of an angle
-            /// </summary>
-            /// <param name="angle">Angle</param>
-            /// <returns>Tan</returns>
-            public Single Tan(Single angle)
-            {
-                return SwinGame.Core.Tan(angle);
-            }
+        /// <summary>
+        /// Gets the Tan of an angle
+        /// </summary>
+        /// <param name="angle">Angle</param>
+        /// <returns>Tan</returns>
+        public Single Tan(Single angle)
+        {
+            return SwinGame.Core.Tan(angle);
+        }
         
     }
 
