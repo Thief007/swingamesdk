@@ -758,7 +758,7 @@ implementation
 
 		if (p1.mass <= 0) or (p2.mass <= 0) then
 		begin
-			raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
+			RaiseSGSDKException('Collision with 0 or negative mass... ensure that mass is greater than 0');
 		end;
 			
 		colNormalAngle := CalculateAngle(p1, p2);
