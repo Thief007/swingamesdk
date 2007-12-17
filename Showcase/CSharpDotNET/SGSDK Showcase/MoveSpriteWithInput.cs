@@ -19,7 +19,7 @@ namespace SGSDK_Showcase
 
         public static void Run()
         {
-            ball = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
+            ball = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
             ball.xPos = 400;
             ball.yPos = 300;
 

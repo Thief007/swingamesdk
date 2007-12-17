@@ -21,7 +21,7 @@ namespace SGSDK_Showcase
         private static int[] tempIntegers;
         private static string tempString;
 
-        public static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource),18);
+        public static Font _Font = GameResources.GameFont("Courier");
 
         public static void Run()
         {

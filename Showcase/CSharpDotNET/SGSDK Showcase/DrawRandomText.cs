@@ -13,7 +13,7 @@ namespace SGSDK_Showcase
 {
     public static class DrawRandomText
     {
-        private static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+        private static Font _Font = GameResources.GameFont("Courier");
       
 
         public static void Run()

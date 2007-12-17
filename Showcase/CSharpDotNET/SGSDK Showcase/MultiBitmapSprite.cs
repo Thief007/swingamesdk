@@ -19,17 +19,15 @@ namespace SGSDK_Showcase
         private static Bitmap b2;
         private static Sprite sp1;
         private static Sprite sp2;
-        private static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+        private static Font _Font = GameResources.GameFont("Courier");
         
         public static void Run()
         {
 
-            b1 = Graphics.LoadBitmap(Core.GetPathToResource("Explosion.png", ResourceKind.ImageResource));
-            b2 = Graphics.LoadBitmap(Core.GetPathToResource("ship.png", ResourceKind.ImageResource));
+            b1 = GameResources.GameImage("Explosion");
+            b2 = GameResources.GameImage("Ship");
             sp1 = Graphics.CreateSprite(b1, 5,15,38, 38);
             sp2 = Graphics.CreateSprite(b2, 3,2,40,43);
-
-          
 
             sp1.xPos = 70;
             sp1.yPos = 100;

@@ -12,7 +12,7 @@ namespace SGSDK_Showcase
 {
     public static class MouseCursor
     {                    
-        private static Sprite ball = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png",ResourceKind.ImageResource)));
+        private static Sprite ball = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
         private static Vector position;
 
         public static void Run()

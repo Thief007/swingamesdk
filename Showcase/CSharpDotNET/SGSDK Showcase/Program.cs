@@ -26,14 +26,15 @@ namespace SGSDK_Showcase
             //Run Examples
 
             if (!Core.WindowCloseRequested())
-            {
-                
+            {   
+                /*
                 DrawLines.Run();
                 DrawRectangles.Run();
                 DrawCircles.Run();
                 DrawEllipses.Run();
                 DrawBitmaps.Run();
                 DrawSprites.Run();
+                 */
                 CollisionDetection.Run();
                 MoveSpriteWithInput.Run();
                 MouseCursor.Run();
@@ -46,10 +47,10 @@ namespace SGSDK_Showcase
                 MultiBitmapSprite.Run();
                 FollowExample.Run();
                 DrawCircleWithLine.Run();
-                
                 MapExample.Run();
             }
 
+            GameResources.FreeResources();
 
             //Closes the Audio System
             Audio.CloseAudio();

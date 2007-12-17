@@ -18,13 +18,13 @@ namespace SGSDK_Showcase
         private static Bitmap sea;
         private static Bitmap b2;
         private static Sprite ship;
-        private static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+        private static Font _Font = GameResources.GameFont("Courier");
         
         public static void Run()
         {
 
-            sea = Graphics.LoadBitmap(Core.GetPathToResource("sea.png", ResourceKind.ImageResource));
-            b2 = Graphics.LoadBitmap(Core.GetPathToResource("ship.png", ResourceKind.ImageResource));
+            sea = GameResources.GameImage("Sea");
+            b2 = GameResources.GameImage("Ship");
             ship = Graphics.CreateSprite(b2, 3,2,40,43);
 
             ship.xPos = 0;
