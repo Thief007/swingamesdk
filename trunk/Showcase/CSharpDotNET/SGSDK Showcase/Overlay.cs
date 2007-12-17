@@ -13,12 +13,12 @@ namespace SGSDK_Showcase
 {
     class Overlay
     {
-        private static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+        //private static Font _Font = GameResources.GameFont("Courier");
 
         public static void DrawOverlay(String title)
         {
             Graphics.FillRectangleOnScreen(Color.Black, 0, 0, 800, 50);
-            Text.DrawTextOnScreen(title, Color.White, _Font, (Core.ScreenWidth() / 2) - ((title.Length / 2) * 10), 20);
+            Text.DrawTextOnScreen(title, Color.White, GameResources.GameFont("Courier"), (Core.ScreenWidth() / 2) - ((title.Length / 2) * 10), 20);
         }
     }
 }

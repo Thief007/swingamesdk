@@ -21,8 +21,8 @@ namespace SGSDK_Showcase
         public static void Run()
         {
             Graphics.ClearScreen();
-            ball1 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
-            ball2 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball2.png", ResourceKind.ImageResource)));
+            ball1 = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+            ball2 = Graphics.CreateSprite(GameResources.GameImage("BallImage2"));
             ball1.Movement.SetTo(Physics.CreateVector((Single)3.0, (Single)3.0));
             ball2.Movement.SetTo(Physics.CreateVector((Single)3.0, (Single)3.0));
             ball1.Mass = 1;

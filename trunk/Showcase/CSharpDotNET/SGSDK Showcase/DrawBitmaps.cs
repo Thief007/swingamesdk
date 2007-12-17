@@ -19,8 +19,8 @@ namespace SGSDK_Showcase
         {
             Graphics.ClearScreen();
 
-            tempBitmap = Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource));
-            tempBitmap2 = Graphics.LoadBitmap(Core.GetPathToResource("ball2.png", ResourceKind.ImageResource));
+            tempBitmap = GameResources.GameImage("BallImage1");
+            tempBitmap2 = GameResources.GameImage("BallImage2");
             int i = 0;
 
 

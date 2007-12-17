@@ -14,6 +14,18 @@ namespace SGSDK_Showcase
 {
     public static class GameResources
     {
+        private static Bitmap[] _Images = new Bitmap[0];
+        private static Font[] _Fonts = new Font[0];
+        private static SoundEffect[] _Sounds = new SoundEffect[0];
+        private static Music[] _Music = new Music[0];
+        private static Map[] _Maps = new Map[0];
+
+        private static String[] _ImagesStr = new String[0];
+        private static String[] _FontsStr = new String[0];
+        private static String[] _SoundsStr = new String[0];
+        private static String[] _MusicStr = new String[0];
+        private static String[] _MapsStr = new String[0];
+
         private static Bitmap _Background;
         private static Bitmap _Animation;
         private static Font _LoadingFont;
@@ -29,25 +41,29 @@ namespace SGSDK_Showcase
             ShowLoadingScreen();
 
             ShowMessage("Loading fonts...", 0); 
-		    //LoadFonts();
+		    LoadFonts();
 		    Core.Sleep(500);
 		
 		    ShowMessage("Loading images...", 1);
-		    //LoadImages();
+		    LoadImages();
 		    Core.Sleep(500);
 		
 		    ShowMessage("Loading sounds...", 2);
-		    //LoadSounds();
+		    LoadSounds();
 		    Core.Sleep(500);
 		
 		    ShowMessage("Loading music...", 3);
-		    //LoadMusic();
+		    LoadMusic();
+		    Core.Sleep(500);
+
+            ShowMessage("Loading maps...", 4);
+		    LoadMaps();
 		    Core.Sleep(500);
 		
 		    //Add game level loading here...
 		
 		    Core.Sleep(500);
-		    ShowMessage("Game loaded...", 4);
+		    ShowMessage("Game loaded...", 5);
 		    Core.Sleep(500);
 		    EndLoadingScreen(width, height);
         }
@@ -105,6 +121,197 @@ namespace SGSDK_Showcase
 
             Core.ChangeScreenSize(width, height);
         }
- 
+
+        private static void NewMap(String mapName)
+        {
+            Array.Resize(ref _Maps, _Maps.Length + 1);
+            Array.Resize(ref _MapsStr, _MapsStr.Length + 1);
+            _Maps[_Maps.Length - 1] = MappyLoader.Loadmap(mapName);
+            _MapsStr[_Maps.Length - 1] = mapName;
+        }
+
+        private static void NewFont(String fontName, String filename, int size)
+        {
+            Array.Resize(ref _Fonts, _Fonts.Length + 1);
+            Array.Resize(ref _FontsStr, _FontsStr.Length + 1);
+            _Fonts[_Fonts.Length - 1] = Text.LoadFont(Core.GetPathToResource(filename, ResourceKind.FontResource), size);
+            _FontsStr[_FontsStr.Length - 1] = fontName;
+        }
+
+        private static void NewImage(String imageName, String filename)
+        {
+            Array.Resize(ref _Images, _Images.Length + 1);
+            Array.Resize(ref _ImagesStr, _ImagesStr.Length + 1);
+            _Images[_Images.Length - 1] = Graphics.LoadBitmap(Core.GetPathToResource(filename, ResourceKind.ImageResource));
+            _ImagesStr[_ImagesStr.Length - 1] = imageName;
+        }
+
+        private static void NewSound(String soundName, String filename)
+        {
+            Array.Resize(ref _Sounds, _Sounds.Length + 1);
+            Array.Resize(ref _SoundsStr, _SoundsStr.Length + 1);
+            _Sounds[_Sounds.Length - 1] = Audio.LoadSoundEffect(Core.GetPathToResource(filename, ResourceKind.SoundResource));
+            _SoundsStr[_SoundsStr.Length - 1] = soundName;
+        }
+
+        private static void NewMusic(String musicName, String filename)
+        {
+            Array.Resize(ref _Music, _Music.Length + 1);
+            Array.Resize(ref _MusicStr, _MusicStr.Length + 1);
+            _Music[_Music.Length - 1] = Audio.LoadMusic(Core.GetPathToResource(filename, ResourceKind.SoundResource));
+            _MusicStr[_Music.Length - 1] = musicName;
+        }
+
+        private static void LoadFonts()
+        {
+            NewFont("ArialLarge", "arial.ttf", 80);
+            NewFont("Courier", "cour.ttf", 16);
+        }
+
+        private static void FreeFonts()
+        {
+            for (int i = 0; i < _Fonts.Length - 1; i ++)
+            {
+                Text.FreeFont(ref _Fonts[i]);
+                _FontsStr[i] = String.Empty;
+            }
+        }
+
+        private static void LoadImages()
+        {
+            NewImage("BallImage1", "ball.png");
+		    NewImage("BallImage2", "ball2.png");
+		    NewImage("SmallBall", "ball_small.png");
+		    NewImage("Running", "running.png");
+		    NewImage("Explosion", "Explosion.png");
+		    NewImage("Ship", "ship.png");
+		    NewImage("Sea", "sea.png");
+        }
+
+        private static void FreeImages()
+        {
+            for (int i = 0; i < _Images.Length - 1; i ++)
+            {
+                Graphics.FreeBitmap(ref _Images[i]);
+                _ImagesStr[i] = String.Empty;
+            }
+        }
+
+        private static void LoadSounds()
+        {
+            NewSound("Shock", "shock.wav");   
+        }
+
+        private static void FreeSounds()
+        {
+            for (int i = 0; i < _Sounds.Length - 1; i ++)
+            {
+                Audio.FreeSoundEffect(ref  _Sounds[i]);
+                _SoundsStr[i] = String.Empty;
+            }
+        }
+
+        private static void LoadMusic()
+        {
+            NewMusic("Fast", "Fast.mp3");   
+        }
+
+        private static void FreeMusic()
+        {
+            for (int i = 0; i < _Music.Length - 1; i ++)
+            {
+                Audio.FreeMusic(ref _Music[i]);
+                _MusicStr[i] = String.Empty;
+            }
+        }
+
+        private static void LoadMaps()
+        {
+            NewMap("test");   
+        }
+
+        private static void FreeMaps()
+        {
+            for (int i = 0; i < _Maps.Length - 1; i ++)
+            {
+                MappyLoader.FreeMap(_Maps[i]);
+                _MapsStr[i] = String.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Frees All Resources
+        /// </summary>
+        public static void FreeResources()
+        {
+            FreeFonts();
+            FreeImages();
+            FreeMusic();
+            FreeSounds();
+            FreeMaps();
+        }
+
+        public static Font GameFont(String font)
+        {
+            for (int i = 0; i < _FontsStr.Length; i ++)
+            {
+                if (_FontsStr[i].Equals(font))
+                {
+                    return _Fonts[i];
+                }
+            }
+            throw new SwinGameException("Could not find Font " + font);
+        }
+
+        public static Bitmap GameImage(String image)
+        {
+            for (int i = 0; i < _ImagesStr.Length; i++)
+            {
+                if (_ImagesStr[i].Equals(image))
+                {
+                    return _Images[i];
+                }
+            }
+            throw new SwinGameException("Could not find Image " + image);
+        }
+
+        public static SoundEffect GameSound(String sound)
+        {
+            for (int i = 0; i < _SoundsStr.Length; i++)
+            {
+                if (_SoundsStr[i].Equals(sound))
+                {
+                    return _Sounds[i];
+                }
+            }
+            throw new SwinGameException("Could not find Sound " + sound);
+        }
+
+        public static Music GameMusic(String music)
+        {
+            for (int i = 0; i < _MusicStr.Length; i++)
+            {
+                if (_MusicStr[i].Equals(music))
+                {
+                    return _Music[i];
+                }
+            }
+            throw new SwinGameException("Could not find Music " + music);
+        }
+
+        public static Map GameMap(String map)
+        {
+            for (int i = 0; i < _MapsStr.Length; i++)
+            {
+                if (_MapsStr[i].Equals(map))
+                {
+                    return _Maps[i];
+                }
+            }
+            throw new SwinGameException("Could not find Map " + map);
+        }
+
+
+
     }
 }

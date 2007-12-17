@@ -29,7 +29,7 @@ namespace SGSDK_Showcase
         {
             Rotate = Physics.RotationMatrix((Single)180);
 
-            ball1 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball_small.png", ResourceKind.ImageResource)));
+            ball1 = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
             ball1.Movement.SetTo(Physics.CreateVector((Single)Movement, 0));
             ball1.Mass = 1;
        

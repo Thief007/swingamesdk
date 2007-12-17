@@ -16,7 +16,7 @@ namespace SGSDK_Showcase
 {
     public static class MapExample
     {
-        private static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+        private static Font _Font = GameResources.GameFont("Courier");
         private static Map _Map = new Map();
         private static Sprite[] _Balls;
         private static CollisionSide _CollisionSide;
@@ -26,12 +26,12 @@ namespace SGSDK_Showcase
         {
             Graphics.ClearScreen();
 
-            _Map = MappyLoader.Loadmap("test");
+            _Map = GameResources.GameMap("test");
             Array.Resize(ref _Balls, 2);
 
             for (int i = 0; i < 2; i++)
             {
-                _Balls[i] = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("Ball_small.png", ResourceKind.ImageResource)));
+                _Balls[i] = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
                 _Balls[i].Movement.SetTo(Physics.CreateVector(Randoms.GetRandomNumber(15),0));
                 _Balls[i].xPos = MappyLoader.EventPositionX(_Map, Event.Event1, i);
                 _Balls[i].yPos = MappyLoader.EventPositionY(_Map, Event.Event1, i);
@@ -81,11 +81,7 @@ namespace SGSDK_Showcase
                 for (int i = 0; i < 2; i++)
                 {
                     _Balls[i].Movement.SetTo(Physics.AddVectors(_Balls[i].Movement, _Gravity));
-                    Console.WriteLine(Convert.ToString(_Balls[i].Movement.X));
-                    Console.WriteLine(Convert.ToString(_Balls[i].Movement.Y));
                     _Balls[i].Movement.SetTo(Physics.MultiplyVector(_Balls[i].Movement, (float)0.995));
-                    Console.WriteLine(Convert.ToString(_Balls[i].Movement.X));
-                    Console.WriteLine(Convert.ToString(_Balls[i].Movement.Y));
                     Graphics.MoveSprite(_Balls[i], _Balls[i].Movement);
                 }
 

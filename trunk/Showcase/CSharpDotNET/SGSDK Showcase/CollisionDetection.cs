@@ -19,8 +19,7 @@ namespace SGSDK_Showcase
         private static int ySpeed1;
         private static int ySpeed2;
 
-        public static Font _Font = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
-
+        public static Font _Font = GameResources.GameFont("Courier");
 
         public static void Run()
         {
@@ -30,9 +29,9 @@ namespace SGSDK_Showcase
             xSpeed2 = 3;
             ySpeed1 = 3;
             ySpeed2 = 3;
-            
-            ball1 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball.png", ResourceKind.ImageResource)));
-            ball2 = Graphics.CreateSprite(Graphics.LoadBitmap(Core.GetPathToResource("ball2.png", ResourceKind.ImageResource)));
+
+            ball1 = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+            ball2 = Graphics.CreateSprite(GameResources.GameImage("BallImage2"));
 
             ball1.xPos = 0;
             ball1.yPos = 0;
