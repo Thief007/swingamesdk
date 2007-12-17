@@ -153,7 +153,7 @@ namespace SwinGameVB
         /// <param name="width">The width of the rectangle</param>
         /// <param name="height">The height of the rectangle</param>
         /// <returns>True if the sprite collides with the rectangle</returns>
-        public bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height)
+        public bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height)
         {
             return SwinGame.Physics.HasSpriteCollidedWithRect(theSprite.result, x, y, width, height);
         }
@@ -170,7 +170,7 @@ namespace SwinGameVB
         /// <param name="vwPrtX">The x offset of the screen's portal</param>
         /// <param name="vwPrtY">The y offset of the screen's portal</param>
         /// <returns>True if the sprite collides with the rectangle</returns>
-        public bool HasSpriteCollidedWithRect_ViewPort(Sprite theSprite, double x, double y, int width, int height, int vwPrtX, int vwPrtY)
+        public bool HasSpriteCollidedWithRect_ViewPort(Sprite theSprite, Single x, Single y, int width, int height, int vwPrtX, int vwPrtY)
         {
             return SwinGame.Physics.HasSpriteCollidedWithRect(theSprite.result, x + vwPrtX, y + vwPrtY, width, height);
         }
@@ -362,7 +362,10 @@ namespace SwinGameVB
         public Vector AddVectors(Vector v1, Vector v2)
         {
             Vector vector = new Vector();
-            vector.result = SwinGame.Physics.AddVectors(v1.result, v2.result);
+            vector.setW (v1.getW() + v2.getW());
+            vector.setX (v1.getX() + v2.getX());
+            vector.setY (v1.getY() + v2.getY());
+            //vector.result = SwinGame.Physics.AddVectors(v1.result, v2.result);
             return vector;
         }
 
@@ -415,7 +418,7 @@ namespace SwinGameVB
         /// <param name="maxMagnitude">The maximum magnitude of the vector.</param>
         /// <returns>A new vector with the same direction as theVector,
         ///	with a maximum magnitude of maxMagnitude</returns>
-        public Vector LimitVector(Vector theVector, double maxMagnitude)
+        public Vector LimitVector(Vector theVector, Single maxMagnitude)
         {
             Vector vector = new Vector();
             vector.result = SwinGame.Physics.LimitVector(theVector.result, maxMagnitude);
@@ -454,7 +457,7 @@ namespace SwinGameVB
         /// </summary>
         /// <param name="theVector">The vector to get the magnitude of</param>
         /// <returns>The magnitude of the vector</returns>
-        public double Magnitude(Vector theVector)
+        public Single Magnitude(Vector theVector)
         {
             return SwinGame.Physics.Magnitude(theVector.result);
         }
@@ -465,7 +468,7 @@ namespace SwinGameVB
         /// <param name="v1">The first Vector</param>
         /// <param name="v2">The Second Vector</param>
         /// <returns>The angle</returns>
-        public double DotProduct(Vector v1, Vector v2)
+        public Single DotProduct(Vector v1, Vector v2)
         {
             return SwinGame.Physics.DotProduct(v1.result, v2.result);
         }
@@ -476,7 +479,7 @@ namespace SwinGameVB
         /// <param name="v1">The vector to multiply</param>
         /// <param name="s1">The number to multiply the vector by</param>
         /// <returns>The multiplyed vector</returns>
-        public Vector MultiplyVector(Vector v1, double s1)
+        public Vector MultiplyVector(Vector v1, Single s1)
         {
             Vector vector = new Vector();
             vector.result = SwinGame.Physics.MultiplyVector(v1.result, s1);
@@ -491,12 +494,12 @@ namespace SwinGameVB
         /// <param name="x2"></param>
         /// <param name="y2"></param>
         /// <returns></returns>
-        public double CalculateAngle_Number(double x1, double y1, double x2, double y2)
+        public Single CalculateAngle_Number(Single x1, Single y1, Single x2, Single y2)
         {
             return SwinGame.Physics.CalculateAngle(x1, y1, x2, y2);
         }
 
-        public double CalculateAngle(Sprite sprite1, Sprite sprite2)
+        public Single CalculateAngle(Sprite sprite1, Sprite sprite2)
         {
             return SwinGame.Physics.CalculateAngle(sprite1.result, sprite2.result);
         }
@@ -578,8 +581,8 @@ namespace SwinGameVB
         void temp();
         bool HasSpriteCollidedX(Sprite theSprite, int x, CollisionDetectionRange range);
         bool HasSpriteCollidedY(Sprite theSprite, int y, CollisionDetectionRange range);
-        bool HasSpriteCollidedWithRect(Sprite theSprite, double x, double y, int width, int height);
-        bool HasSpriteCollidedWithRect_ViewPort(Sprite theSprite, double x, double y, int width, int height, int vwPrtX, int vwPrtY);
+        bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height);
+        bool HasSpriteCollidedWithRect_ViewPort(Sprite theSprite, Single x, Single y, int width, int height, int vwPrtX, int vwPrtY);
         bool HaveSpritesCollided(Sprite sprite1, Sprite sprite2);
         bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2);
         bool CollisionWithinBitmapImages_NoBound(Bitmap image1, int x1, int y1, Bitmap image2, int x2, int y2);
@@ -595,21 +598,21 @@ namespace SwinGameVB
         Vector SubtractVectors(Vector v1, Vector v2);
         Vector InvertVector(Vector theVector);
         Vector ChopVector(Vector theVector, int minX, int maxX, int minY, int maxY);
-        Vector LimitVector(Vector theVector, double maxMagnitude);
+        Vector LimitVector(Vector theVector, Single maxMagnitude);
         Vector GetUnitVector(Vector theVector);
         Vector IsZeroVector(Vector theVector);
-        double Magnitude(Vector theVector);
-        double DotProduct(Vector v1, Vector v2);
-        Vector MultiplyVector(Vector v1, double s1);
-        double CalculateAngle_Number(double x1, double y1, double x2, double y2);
-        double CalculateAngle(Sprite sprite1, Sprite sprite2);
+        Single Magnitude(Vector theVector);
+        Single DotProduct(Vector v1, Vector v2);
+        Vector MultiplyVector(Vector v1, Single s1);
+        Single CalculateAngle_Number(Single x1, Single y1, Single x2, Single y2);
+        Single CalculateAngle(Sprite sprite1, Sprite sprite2);
         Matrix2D TranslationMatric(Single dx, Single dy);
         Matrix2D ScaleMatrix(Single scale);
         Matrix2D RotationMatrix(Single deg);
         Matrix2D Multiply(Matrix2D m1, Matrix2D m2);
         Vector Multiply_Vector(Matrix2D m, Vector v);
         void VectorCollision(Sprite sprite1, Sprite sprite2);
-        Vector GetVectorFromAngle(float angle, float magnitude);
+        Vector GetVectorFromAngle(float angle, Single magnitude);
     }
 
 }

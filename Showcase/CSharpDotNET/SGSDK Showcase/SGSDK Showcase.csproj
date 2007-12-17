@@ -47,7 +47,6 @@
     <Compile Include="MapExample.cs" />
     <Compile Include="DrawCircleWithLines.cs" />
     <Compile Include="FollowSprite.cs" />
-    <Compile Include="DroppingBall.cs" />
     <Compile Include="DrawRandomText.cs" />
     <Compile Include="MultiBitmapSprite.cs" />
     <Compile Include="TextRead.cs" />

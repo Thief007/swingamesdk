@@ -16,7 +16,7 @@ namespace SwinGameVB
     [ClassInterface(ClassInterfaceType.None)]
     [Guid("BAA6049F-2DF5-4ced-8C0F-DBD3A8B6A754")]
     [ComVisible(true)]
-    public class Font : IFont
+    public class Fonts : IFont
     {
         private SwinGame.Font font;
         internal void Free()
@@ -85,9 +85,9 @@ namespace SwinGameVB
         /// <param name="fontName">The name of the font file to load from the file system</param>
         /// <param name="size">The point size of the font</param>
         /// <returns>The font loaded</returns>
-        public Font LoadFont(String fontName, int size)
+        public Fonts LoadFont(String fontName, int size)
         {
-            Font font = new Font();
+            Fonts font = new Fonts();
             font.result = SwinGame.Text.LoadFont(fontName, size);
             return font;
         }
@@ -98,7 +98,7 @@ namespace SwinGameVB
         /// </summary>
         /// <param name="font">The font to set the style of</param>
         /// <param name="style">The new style for the font, values can be read together</param>
-        public void SetFontStyle(Font font, FontStyle style)
+        public void SetFontStyle(Fonts font, FontStyle style)
         {
             SwinGame.Text.SetFontStyle(font.result, (SwinGame.FontStyle) style);
         }
@@ -107,7 +107,7 @@ namespace SwinGameVB
         /// Free a loaded font.
         /// </summary>
         /// <param name="fontToFree">The Font to free</param>
-        public void FreeFont(ref Font fontToFree)
+        public void FreeFont(ref Fonts fontToFree)
         {
             fontToFree.Free();
         }
@@ -123,7 +123,7 @@ namespace SwinGameVB
         /// <param name="theFont">The font used to draw the text</param>
         /// <param name="x">The x location to draw the text at (top left)</param>
         /// <param name="y">The y location to draw the text at (top left)</param>
-        public void DrawText_ToBitmap(Bitmap dest, String theText, int textColor, Font theFont, int x, int y)
+        public void DrawText_ToBitmap(Bitmap dest, String theText, int textColor, Fonts theFont, int x, int y)
         {
             Color color1 = Color.FromArgb(textColor);
             SwinGame.Text.DrawText(dest.result, theText, color1, theFont.result, x, y);
@@ -139,7 +139,7 @@ namespace SwinGameVB
         /// <param name="theFont">The font used to draw the text</param>
         /// <param name="x">The x location to draw the text at (top left)</param>
         /// <param name="y">The y location to draw the text at (top left)</param>
-        public void DrawText(String theText, int textColor, Font theFont, float x, float y)
+        public void DrawText(String theText, int textColor, Fonts theFont, float x, float y)
         {
             Color temp = Color.FromArgb(textColor);
             SwinGame.Text.DrawText(theText, temp, theFont.result, x, y);
@@ -159,7 +159,7 @@ namespace SwinGameVB
         /// <param name="y">The y location to draw the text at (top left)</param>
         /// <param name="w">The width of the region to draw inside</param>
         /// <param name="h">The height of the region to draw inside</param>
-        public void DrawTextLines(String theText, int textColor, int backColor, Font theFont, FontAlignment align, float x, float y, int w, int h)
+        public void DrawTextLines(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, float x, float y, int w, int h)
         {
             Color color1 = Color.FromArgb(textColor);
             Color color2 = Color.FromArgb(backColor);
@@ -181,7 +181,7 @@ namespace SwinGameVB
         /// <param name="y">The y location to draw the text at (top left)</param>
         /// <param name="w">The width of the region to draw inside</param>
         /// <param name="h">The height of the region to draw inside</param>
-        public void DrawTextLines_ToBitmap(Bitmap dest, String theText, int textColor, int backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        public void DrawTextLines_ToBitmap(Bitmap dest, String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, int x, int y, int w, int h)
         {
             Color color1 = Color.FromArgb(textColor);
             Color color2 = Color.FromArgb(backColor);
@@ -194,7 +194,7 @@ namespace SwinGameVB
         /// <param name="theText">The text to measure</param>
         /// <param name="theFont">The font used to draw the text</param>
         /// <returns>The width of the drawing in pixels</returns>
-        public int TextWidth(String theText, Font theFont)
+        public int TextWidth(String theText, Fonts theFont)
         {
             return SwinGame.Text.TextWidth(theText, theFont.result);
         }
@@ -205,7 +205,7 @@ namespace SwinGameVB
         /// <param name="theText">The text to measure</param>
         /// <param name="theFont">The font used to draw the text</param>
         /// <returns>The height of the drawing in pixels</returns>
-        public int TextHeight(String theText, Font theFont)
+        public int TextHeight(String theText, Fonts theFont)
         {
             return SwinGame.Text.TextHeight(theText, theFont.result);
         }
@@ -217,21 +217,22 @@ namespace SwinGameVB
         /// <param name="x">The x location to draw to</param>
         /// <param name="y">The y location to draw to</param>
         /// <param name="theFont">The font used to draw the framerate</param>
-        public void DrawFramerate(int x, int y, Font theFont)
+        public void DrawFramerate(int x, int y, Fonts theFont)
         {
             SwinGame.Text.DrawFramerate(x, y, theFont.result);
         }
 
-        public void DrawTextOnScreen(String theText, int textColor, Font theFont, int x, int y)
+        public void DrawTextOnScreen(String theText, int textColor, Fonts theFont, int x, int y)
         {
             Color color = Color.FromArgb(textColor);
             SwinGame.Text.DrawTextOnScreen(theText, color, theFont.result, x, y);
         }
         
-        public void DrawTextLinesOnScreen(String theText, int textColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
+        public void DrawTextLinesOnScreen(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, int x, int y, int w, int h)
         {
             Color color = Color.FromArgb(textColor);
-            SwinGame.Text.DrawTextLinesOnScreen(theText, color, theFont.result, (SwinGame.FontAlignment)align, x, y, w, h);
+            Color backcolor = Color.FromArgb(backColor);
+            SwinGame.Text.DrawTextLinesOnScreen(theText, color, backcolor, theFont.result, (SwinGame.FontAlignment)align, x, y, w, h);
         }
     }
 
@@ -239,18 +240,18 @@ namespace SwinGameVB
     [ComVisible(true)]
     public interface IText
     {
-        Font LoadFont(String fontName, int size);
-        void SetFontStyle(Font font, FontStyle style);
-        void FreeFont(ref Font fontToFree);
-        void DrawText_ToBitmap(Bitmap dest, String theText, int textColor, Font theFont, int x, int y);
-        void DrawText(String theText, int textColor, Font theFont, float x, float y);
-        void DrawTextLines(String theText, int textColor, int backColor, Font theFont, FontAlignment align, float x, float y, int w, int h);
-        void DrawTextLines_ToBitmap(Bitmap dest, String theText, int textColor, int backColor, Font theFont, FontAlignment align, int x, int y, int w, int h);
-        int TextWidth(String theText, Font theFont);
-        int TextHeight(String theText, Font theFont);
-        void DrawFramerate(int x, int y, Font theFont);
-        void DrawTextOnScreen(String theText, int textColor, Font theFont, int x, int y);
-        void DrawTextLinesOnScreen(String theText, int textColor, Font theFont, FontAlignment align, int x, int y, int w, int h);
+        Fonts LoadFont(String fontName, int size);
+        void SetFontStyle(Fonts font, FontStyle style);
+        void FreeFont(ref Fonts fontToFree);
+        void DrawText_ToBitmap(Bitmap dest, String theText, int textColor, Fonts theFont, int x, int y);
+        void DrawText(String theText, int textColor, Fonts theFont, float x, float y);
+        void DrawTextLines(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, float x, float y, int w, int h);
+        void DrawTextLines_ToBitmap(Bitmap dest, String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, int x, int y, int w, int h);
+        int TextWidth(String theText, Fonts theFont);
+        int TextHeight(String theText, Fonts theFont);
+        void DrawFramerate(int x, int y, Fonts theFont);
+        void DrawTextOnScreen(String theText, int textColor, Fonts theFont, int x, int y);
+        void DrawTextLinesOnScreen(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, int x, int y, int w, int h);
     }
 
 }

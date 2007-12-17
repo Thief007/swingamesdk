@@ -1061,6 +1061,11 @@ namespace SwinGameVB
             SwinGame.Graphics.UpdateSprite(sprite.result);
         }
 
+        public void UpdateSpriteAnimation(Sprite sprite)
+        {
+            SwinGame.Graphics.UpdateSpriteAnimation(sprite.result);
+        }
+
 
         // Screen ViewPort Functions
         /*
@@ -1233,6 +1238,7 @@ namespace SwinGameVB
         Sprite CreateSprite_Array([In] ref Bitmap[] startBitmap, [In] ref int[] framesPerCell);
         Sprite CreateSprite_ArrayFPC(Bitmap[] startBitmap, int framesPerCell, int frames);
         void UpdateSprite(Sprite sprite);
+        void UpdateSpriteAnimation(Sprite sprite);
        
 
 
