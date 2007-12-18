@@ -328,7 +328,7 @@ implementation
 	var
 		icon: PSDL_Surface;
 	begin
-		if (screenWidth < 1) and (screenHeight < 1) then
+		if (screenWidth < 1) or (screenHeight < 1) then
 		begin
 			RaiseSGSDKException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
 		end;
