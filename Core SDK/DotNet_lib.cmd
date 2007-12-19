@@ -17,6 +17,7 @@ set DOTNETbin=.\SGSDK.NET\src\bin\Debug\
 
 
 set ShowcaseDOTNET=..\Showcase\CSharpDotNET\SGSDK Showcase\lib\
+set RPGDEMO=..\Demos\C#\RPGDemo\lib\
 
 
 
@@ -41,6 +42,9 @@ if "%1"=="clean" goto cleaning
 	copy "%Output1%\*.dll" "%ShowcaseDOTNET%"
 	copy "%Output1%\*.xml" "%ShowcaseDOTNET%"
 
+	echo Copying to RPGDemo
+	copy "%Output1%\*.dll" "%RPGDEMO%"
+	copy "%Output1%\*.xml" "%RPGDEMO%"
 
 	echo Finished
 goto end

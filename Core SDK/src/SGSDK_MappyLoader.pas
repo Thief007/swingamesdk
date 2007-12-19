@@ -259,8 +259,9 @@ implementation
 				end;
 			end;
 			
-			{
+			
 			//Debug
+			{
 			for y := 0 to m.MapInfo.MapHeight - 1 do
 			begin
 				for x := 0 to m.MapInfo.MapWidth - 1 do
@@ -305,7 +306,8 @@ implementation
 		end;
 		
 		
-		{//Debug
+		//Debug
+		{
 		for y := 0 to m.MapInfo.MapHeight - 1 do
 		begin
 			for x := 0 to m.MapInfo.MapWidth - 1 do
@@ -315,8 +317,8 @@ implementation
 			end;
 			WriteLn('');
 		end;
-		ReadLn();}
-		
+		ReadLn();
+		}
 	end;
 	
 	procedure LoadBlockSprites(var m : Map; fileName : String);
@@ -494,11 +496,11 @@ implementation
 
 		for y := YStart to YEnd do
 		begin
-			if (y < m.MapInfo.MapHeight - 1) and (y > 0) then
+			if (y < m.MapInfo.MapHeight - 1) and (y > -1) then
 			begin
 				for x := XStart to XEnd do
 				begin
-					if (x < m.MapInfo.MapWidth - 1) and (x > 0) then
+					if (x < m.MapInfo.MapWidth - 1) and (x > -1) then
 					begin
 						if m.CollisionInfo.Collidable[y][x] = true then
 						begin
