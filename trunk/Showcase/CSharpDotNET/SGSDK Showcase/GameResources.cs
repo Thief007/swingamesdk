@@ -126,7 +126,7 @@ namespace SGSDK_Showcase
         {
             Array.Resize(ref _Maps, _Maps.Length + 1);
             Array.Resize(ref _MapsStr, _MapsStr.Length + 1);
-            _Maps[_Maps.Length - 1] = MappyLoader.Loadmap(mapName);
+            _Maps[_Maps.Length - 1] = MappyLoader.LoadMap(mapName);
             _MapsStr[_Maps.Length - 1] = mapName;
         }
 

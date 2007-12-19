@@ -17,33 +17,24 @@ namespace SGSDK_Showcase
         private static Sprite stopSprite;
         private static Sprite reverseOnceSprite;
 
-        private static Bitmap[] tempBitmaps;
         private static int[] tempIntegers;
-        private static string tempString;
 
         public static Font _Font = GameResources.GameFont("Courier");
 
         public static void Run()
         {
             Graphics.ClearScreen();
-            Array.Resize(ref tempBitmaps, 15);
-
-            for (int i = 0; i < 15; i++)
-            {
-                tempString = Convert.ToString(i);
-                tempBitmaps[i] = Graphics.LoadBitmap(Core.GetPathToResource("run" + tempString + ".png", ResourceKind.ImageResource));
-            }
 
             Array.Resize(ref tempIntegers, 15);
             for (int i = 0; i < 15; i++)
             {
-                tempIntegers[i] = 1;
+                tempIntegers[i] = 5;
             }
 
-            loopSprite = Graphics.CreateSprite(tempBitmaps, tempIntegers, SpriteEndingAction.Loop);
-            reverseSprite = Graphics.CreateSprite(tempBitmaps, tempIntegers, SpriteEndingAction.ReverseLoop);
-            stopSprite = Graphics.CreateSprite(tempBitmaps, tempIntegers, SpriteEndingAction.Stop);
-            reverseOnceSprite = Graphics.CreateSprite(tempBitmaps, tempIntegers, SpriteEndingAction.ReverseOnce);
+            loopSprite = Graphics.CreateSprite(GameResources.GameImage("Running"), true, tempIntegers, SpriteEndingAction.Loop, 80, 94);
+            reverseSprite = Graphics.CreateSprite(GameResources.GameImage("Running"), true, tempIntegers, SpriteEndingAction.ReverseLoop, 80, 94);
+            stopSprite = Graphics.CreateSprite(GameResources.GameImage("Running"), true, tempIntegers, SpriteEndingAction.Stop, 80, 94);
+            reverseOnceSprite = Graphics.CreateSprite(GameResources.GameImage("Running"), true, tempIntegers, SpriteEndingAction.ReverseOnce, 80, 94);
 
             loopSprite.xPos = 50;
 		    loopSprite.yPos = 200;
@@ -77,8 +68,6 @@ namespace SGSDK_Showcase
 
                 Core.ProcessEvents();
                 Core.RefreshScreen();
-
-                Core.Sleep(50);
 
                 if (Core.WindowCloseRequested())
                 {

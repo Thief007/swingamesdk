@@ -43,8 +43,6 @@ namespace SGSDK_Showcase
 
                 if (Physics.HaveSpritesCollided(ball1, ball2))
                 {
-                    Console.WriteLine("b1: {0},{1}", ball1.xPos, ball1.yPos);
-                    Console.WriteLine("b2: {0},{1}", ball2.xPos, ball2.yPos);
                     Physics.VectorCollision(ball1, ball2);
                 }
 
