@@ -299,6 +299,7 @@ namespace GameResources
 
         private static void LoadMaps()
         {
+            NewMap("Level1");
         }
 
     }
