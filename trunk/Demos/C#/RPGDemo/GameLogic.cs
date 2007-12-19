@@ -65,7 +65,7 @@ namespace GameProject
                 Core.ProcessEvents();
 
             } while (!Core.WindowCloseRequested());
-            Core.W
+
             //Free Resources and Close Audio, to end the program.
             Resources.FreeResources();
             Audio.CloseAudio();
