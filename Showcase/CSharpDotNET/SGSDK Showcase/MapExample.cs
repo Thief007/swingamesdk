@@ -62,7 +62,7 @@ namespace SGSDK_Showcase
                     Camera.MoveVisualArea(-2, 0);
                 }
 
-                MappyLoader.Drawmap(_Map);
+                MappyLoader.DrawMap(_Map);
 
                 for (int i = 0; i < 1; i++)
                 {
