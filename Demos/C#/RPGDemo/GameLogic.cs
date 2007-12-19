@@ -19,10 +19,34 @@ namespace GameProject
 {
     public static class GameLogic
     {
+        public static void MainGame()
+        {
+            //The Map
+            Map _Map = Resources.GameMap("Level1");
+
+            //Game Loop
+            do
+            {
+                //Clears the Screen to Black
+                Graphics.ClearScreen();
+
+                //Draw Map
+                MappyLoader.DrawMap(_Map);
+
+                //Draws the FrameRate
+                Text.DrawFramerate(550, 0, Resources.GameFont("Courier"));
+
+                //Refreshes the Screen and Processes Input Events
+                Core.RefreshScreen();
+                Core.ProcessEvents();
+
+            } while (!Core.WindowCloseRequested());
+        }
+
         public static void RunGame()
         {
             //Open a new Graphics Window
-            Core.OpenGraphicsWindow("Game", 800, 600);
+            Core.OpenGraphicsWindow("The Legend of the Tomato Quest", 800, 600);
             //Open Audio Device
             Audio.OpenAudio();
             //Load Resources
@@ -34,15 +58,14 @@ namespace GameProject
                 //Clears the Screen to Black
                 Graphics.ClearScreen();
 
-                //Hello World
-                Text.DrawText("Hello World", Color.White, Resources.GameFont("Courier"), 10, 10);
+                MainGame();
 
                 //Refreshes the Screen and Processes Input Events
                 Core.RefreshScreen();
                 Core.ProcessEvents();
 
             } while (!Core.WindowCloseRequested());
-
+            Core.W
             //Free Resources and Close Audio, to end the program.
             Resources.FreeResources();
             Audio.CloseAudio();

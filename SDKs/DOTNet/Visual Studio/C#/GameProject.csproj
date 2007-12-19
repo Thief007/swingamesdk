@@ -124,4 +124,10 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)resources\*" "$(TargetDir)resources\" /s/y/d/e
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
