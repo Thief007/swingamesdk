@@ -159,7 +159,7 @@ implementation
 	
 	procedure ShootPlayerBullet(var game : GameData);
 	const
-		BULLETSPEED = 1;
+		BULLETSPEED = 12;
 		DAMAGE = 3;
 	var
 		tempBullet : BulletData;
