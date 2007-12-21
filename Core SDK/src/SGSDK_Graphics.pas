@@ -182,27 +182,12 @@ interface
 	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
 	
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
-	
-	{procedure DrawSprites(spritesToDraw : SpriteCollection; 
-	              vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
-	
-	procedure DrawSprites(spritesToDraw : SpriteCollection); overload;
-	
-	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite);
-	
-	procedure ClearSpriteCollection(var toClear : SpriteCollection);
-	
-	procedure FreeSpriteCollection(var toFree : SpriteCollection);}
-
+		
 	procedure MoveSprite(spriteToMove: Sprite);
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
 		
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
-
-{	function IsSpriteOffscreen(theSprite : Sprite; vwPrtX, vwPrtY,
-															vwPrtWidth, vwPrtHeight : Integer) : Boolean; overload;
-}
 
 	//*****
 	//
@@ -860,6 +845,7 @@ implementation
 				if spriteToDraw.reverse then
 				begin
 					spriteToDraw.currentFrame := spriteToDraw.currentFrame - 1;
+					
 					if (spriteToDraw.currentFrame < Low(spriteToDraw.framesPerCell)) then
 					begin
 						if spriteToDraw.endingAction = ReverseOnce then
@@ -901,6 +887,9 @@ implementation
 				spriteToDraw.height := spriteToDraw.bitmaps[spriteToDraw.currentFrame].height;
 			end;
 		end;
+		
+		if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
+			UpdateSpriteAnimation(spriteToDraw);
 	end;
 	
 	procedure UpdateSprite(spriteToDraw: Sprite);
@@ -908,39 +897,7 @@ implementation
 		MoveSprite(spriteToDraw);
 		UpdateSpriteAnimation(spriteToDraw);
 	end;
-
-	/// Draws the sprite to the screen within a given view port.
-	///
-	///	@param spriteToDraw:		 The sprite to be drawn
-	///	@param vwPrtX, vwPrty: The x, y of the current view port (i.e. screen)
-	///	@param vwPrtWidth, vwPrtHeight:		The height and width of the view port
-	///
-	/// Side Effects:
-	///	- The sprite is drawn to the screen, if within view port
-{	procedure DrawSprite(spriteToDraw : Sprite; 
-               vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
-	var
-		tempWidth, tempHeight : Integer;
-	begin
-		//Don't draw if its offscreen
-		if IsSpriteOffscreen(spriteToDraw, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight)
-			 and (vwPrtWidth <> 0)
-			 and (vwPrtHeight <> 0) then exit;
-		if spriteToDraw.spriteKind <> AnimMultiSprite then
-		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame],
-							 	Trunc(spriteToDraw.xPos) - vwPrtX,
-							 	Trunc(spriteToDraw.yPos) - vwPrtY);
-		end
-		else
-		begin
-			tempWidth := spriteToDraw.currentFrame div spriteToDraw.cols * spriteToDraw.width;
-			tempHeight := spriteToDraw.currentFrame mod spriteToDraw.cols * spriteToDraw.height;
-			DrawBitmapPart(spriteToDraw.bitmaps[0], tempWidth, tempHeight, spriteToDraw.width, spriteToDraw.height,
-								Trunc(spriteToDraw.xPos) - vwPrtX, Trunc(spriteToDraw.yPos) - vwPrtY);
-		end;
-	end;
-}
+	
 	/// Draws a sprite to the screen, without using a view port.
 	///
 	///	@param spriteToDraw:		 The sprite to be drawn
