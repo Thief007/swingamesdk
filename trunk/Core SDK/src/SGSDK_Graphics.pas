@@ -669,6 +669,8 @@ implementation
 		tempIntegers: Array of Integer;
 		i: Integer;
 	begin
+		if framesPerCell <= 0 then
+			RaiseSGSDKException('Frames per cell must be larger than 0');
 		SetLength(tempIntegers, frames);
 		for i := 0 to High(tempIntegers) do
 		begin
@@ -832,11 +834,26 @@ implementation
 	/// Side Effects:
 	/// - Process the frame position depending on the sprite's setting
 	procedure UpdateSpriteAnimation(spriteToDraw : Sprite);
+	var
+		i : Integer;
+		notAllZero : Boolean;
 	begin
 		if spriteToDraw.hasEnded then exit;
 			
 		if spriteToDraw.spriteKind <> StaticSprite then
 		begin
+			notAllZero := true;
+			
+			for i := Low(spriteToDraw.framesPerCell) to High(spriteToDraw.framesPerCell) do begin
+				if spriteToDraw.framesPerCell[i] < 0 then
+					RaiseSGSDKException('Frames per cell must be 0 or positive');
+				if spriteToDraw.framesPerCell[i] > 0 then
+					notAllZero := false;
+			end;
+
+			if notAllZero then
+				RaiseSGSDKException('Frames per cell cannot be all the zero');
+			
 			spriteToDraw.frameCount := spriteToDraw.frameCount + 1;
 			
 			if spriteToDraw.frameCount >= spriteToDraw.framesPerCell[spriteToDraw.currentFrame] then
@@ -886,10 +903,9 @@ implementation
 				spriteToDraw.width := spriteToDraw.bitmaps[spriteToDraw.currentFrame].width;
 				spriteToDraw.height := spriteToDraw.bitmaps[spriteToDraw.currentFrame].height;
 			end;
+			if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
+				UpdateSpriteAnimation(spriteToDraw);
 		end;
-		
-		if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
-			UpdateSpriteAnimation(spriteToDraw);
 	end;
 	
 	procedure UpdateSprite(spriteToDraw: Sprite);
