@@ -197,6 +197,8 @@ implementation
 		try
 			i := Mix_PlayMusic(mus, loops);
 			if i <> -1 then soundChannels[i] := mus;
+			Mix_HaltMusic();
+			i := Mix_PlayMusic(mus, loops);
 		except
 			RaiseSGSDKException('Failed to play the specified music');
 		end;
