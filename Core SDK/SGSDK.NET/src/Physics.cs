@@ -137,12 +137,20 @@ namespace SwinGame
         /// <returns>True if the sprite is within the range requested</returns>
         public static bool HasSpriteCollidedX(Sprite theSprite, int x, CollisionDetectionRange range)
         {
-            bool temp = DLL_HasSpriteCollidedX(theSprite.Pointer, x, range);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HasSpriteCollidedX(theSprite.Pointer, x, range);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedY")]
@@ -156,12 +164,20 @@ namespace SwinGame
         /// <returns>True if the sprite is within the range requested</returns>
         public static bool HasSpriteCollidedY(Sprite theSprite, int y, CollisionDetectionRange range)
         {
-            bool temp = DLL_HasSpriteCollidedY(theSprite.Pointer, y, range);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HasSpriteCollidedY(theSprite.Pointer, y, range);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithRect")]
@@ -178,12 +194,20 @@ namespace SwinGame
         /// <returns>True if the sprite collides with the rectangle</returns>
         public static bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height)
         {
-            bool temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Determined if a sprite has collided with a given rectangle. The rectangles
@@ -199,12 +223,20 @@ namespace SwinGame
         /// <returns>True if the sprite collides with the rectangle</returns>
         public static bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height, int vwPrtX, int vwPrtY)
         {
-            bool temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x + vwPrtX, y + vwPrtY, width, height);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x + vwPrtX, y + vwPrtY, width, height);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveSpritesCollided")]
@@ -217,12 +249,20 @@ namespace SwinGame
         /// <returns>True if the sprites have collided.</returns>
         public static bool HaveSpritesCollided(Sprite sprite1, Sprite sprite2)
         {
-            bool temp = DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithBitmap")]
@@ -255,12 +295,20 @@ namespace SwinGame
         /// <returns>True if the bitmaps collide.</returns>
         public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2)
         {
-            bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Performs a collision detection within two bitmaps at the given x, y
@@ -276,12 +324,20 @@ namespace SwinGame
         /// <returns>True if the bitmaps collide.</returns>
         public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, Bitmap image2, int x2, int y2)
         {
-            bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap using pixel level
@@ -295,12 +351,20 @@ namespace SwinGame
         /// <returns>True if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, bool bounded)
         {
-            bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos,	 !theSprite.UsePixelCollision, theBitmap,	x, y, bounded);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x, y, bounded);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap. The x and y values
@@ -317,12 +381,20 @@ namespace SwinGame
         /// <returns> True if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, bool bounded, int vwPrtX, int vwPrtY)
         {
-            bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap. The x and y values
@@ -335,12 +407,20 @@ namespace SwinGame
         /// <returns> True if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y)
         {
-            bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x , y , true);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x, y, true);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Determines if a sprite has collided with a bitmap. The x and y values
@@ -356,12 +436,20 @@ namespace SwinGame
         /// <returns> True if the bitmap has collided with the sprite.</returns>
         public static bool HasSpriteCollidedWithBitmap(Sprite theSprite, Bitmap theBitmap, int x, int y, int vwPrtX, int vwPrtY)
         {
-            bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
 
@@ -382,12 +470,20 @@ namespace SwinGame
         /// <returns>True if the bitmaps collide.</returns>
         public static bool HaveBitmapsCollided(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2)
         {
-            bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Checks to see if two bitmaps have collided, this performs a bounded check
@@ -402,12 +498,20 @@ namespace SwinGame
         /// <returns>True if the bitmaps collide.</returns>
         public static bool HaveBitmapsCollided(Bitmap image1, int x1, int y1, Bitmap image2, int x2, int y2)
         {
-            bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", EntryPoint = "CreateVector")]
@@ -423,12 +527,20 @@ namespace SwinGame
         /// <returns>A new vector with values x and y</returns>
         public static Vector CreateVector(Single x, Single y, bool invertY)
         {
-            Vector temp = DLL_CreateVector(x, y, invertY);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_CreateVector(x, y, invertY);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         /// <summary>
@@ -439,12 +551,20 @@ namespace SwinGame
         /// <returns>A new vector with values x and y</returns>
         public static Vector CreateVector(Single x, Single y)
         {
-            Vector temp = DLL_CreateVector(x, y, false);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_CreateVector(x, y, false);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddVectors")]
@@ -457,12 +577,20 @@ namespace SwinGame
         /// <returns>v1 + v2</returns>
         public static Vector AddVectors(Vector v1, Vector v2)
         {
-            Vector temp = DLL_AddVectors(v1, v2);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_AddVectors(v1, v2);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SubtractVectors")]
@@ -475,12 +603,20 @@ namespace SwinGame
         /// <returns>v1 - v2</returns>
         public static Vector SubtractVectors(Vector v1, Vector v2)
         {
-            Vector temp = DLL_SubtractVectors(v1, v2);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_SubtractVectors(v1, v2);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "InvertVector")]
@@ -492,12 +628,20 @@ namespace SwinGame
         /// <returns>A new inverted vector</returns>
         public static Vector InvertVector(Vector theVector)
         {
-            Vector temp = DLL_InvertVector(theVector);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_InvertVector(theVector);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ChopVector")]
@@ -514,12 +658,20 @@ namespace SwinGame
         /// <returns>A new vector limited within that range</returns>
         public static Vector ChopVector(Vector theVector, int minX, int maxX, int minY, int maxY)
         {
-            Vector temp = DLL_ChopVector(theVector, minX, maxX, minY, maxY);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_ChopVector(theVector, minX, maxX, minY, maxY);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LimitVector")]
@@ -533,12 +685,20 @@ namespace SwinGame
         ///	with a maximum magnitude of maxMagnitude</returns>
         public static Vector LimitVector(Vector theVector, Single maxMagnitude)
         {
-            Vector temp = DLL_LimitVector(theVector, maxMagnitude);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_LimitVector(theVector, maxMagnitude);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetUnitVector")]
@@ -552,12 +712,20 @@ namespace SwinGame
         /// <returns>The unit vector from the passed in vector</returns>
         public static Vector GetUnitVector(Vector theVector)
         {
-            Vector temp = DLL_GetUnitVector(theVector);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_GetUnitVector(theVector);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsZeroVector")]
@@ -569,12 +737,20 @@ namespace SwinGame
         /// <returns>True if the vector has values 0, 0</returns>
         public static Vector IsZeroVector(Vector theVector)
         {
-            Vector temp = DLL_IsZeroVector(theVector);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_IsZeroVector(theVector);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Magnitude")]
@@ -587,12 +763,20 @@ namespace SwinGame
         /// <returns>The magnitude of the vector</returns>
         public static Single Magnitude(Vector theVector)
         {
-            Single temp = DLL_Magnitude(theVector);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Single temp = DLL_Magnitude(theVector);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DotProduct")]
@@ -605,12 +789,20 @@ namespace SwinGame
         /// <returns>The angle</returns>
         public static Single DotProduct(Vector v1, Vector v2)
         {
-            Single temp = DLL_DotProduct(v1, v2);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Single temp = DLL_DotProduct(v1, v2);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyVector")]
@@ -623,12 +815,20 @@ namespace SwinGame
         /// <returns>The multiplyed vector</returns>
         public static Vector MultiplyVector(Vector v1, Single s1)
         {
-            Vector temp = DLL_MultiplyVector(v1, s1);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_MultiplyVector(v1, s1);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleNumber")]
@@ -643,12 +843,20 @@ namespace SwinGame
         /// <returns>Angle Between Points</returns>
         public static Single CalculateAngle(Single x1, Single y1, Single x2, Single y2)
         {
-            Single temp = DLL_CalculateAngleNumber(x1, y1, x2, y2);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Single temp = DLL_CalculateAngleNumber(x1, y1, x2, y2);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleSprite")]
@@ -661,12 +869,20 @@ namespace SwinGame
         /// <returns>Angle Between Sprites</returns>
         public static Single CalculateAngle(Sprite sprite1, Sprite sprite2)
         {
-            Single temp = DLL_CalculateAngleSprite(sprite1.Pointer, sprite2.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Single temp = DLL_CalculateAngleSprite(sprite1.Pointer, sprite2.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TranslationMatrix")]
@@ -679,13 +895,21 @@ namespace SwinGame
         /// <returns>TranslationMatric</returns>
         public static Matrix2D TranslationMatric(Single dx, Single dy)
         {
-            Matrix2D temp = new Matrix2D();
-            temp.Pointer = DLL_TranslationMatric(dx, dy);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Matrix2D temp = new Matrix2D();
+                temp.Pointer = DLL_TranslationMatric(dx, dy);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScaleMatrix")]
@@ -697,13 +921,21 @@ namespace SwinGame
         /// <returns>Scale Matrix</returns>
         public static Matrix2D ScaleMatrix(Single scale)
         {
-            Matrix2D temp = new Matrix2D();
-            temp.Pointer = DLL_ScaleMatrix(scale);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Matrix2D temp = new Matrix2D();
+                temp.Pointer = DLL_ScaleMatrix(scale);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RotationMatrix")]
@@ -715,13 +947,21 @@ namespace SwinGame
         /// <returns>Rotation Matrix</returns>
         public static Matrix2D RotationMatrix(Single deg)
         {
-            Matrix2D temp = new Matrix2D();
-            temp.Pointer = DLL_RotationMatrix(deg);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Matrix2D temp = new Matrix2D();
+                temp.Pointer = DLL_RotationMatrix(deg);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2D")]
@@ -734,13 +974,21 @@ namespace SwinGame
         /// <returns>The combined Matrixes</returns>
         public static Matrix2D Multiply(Matrix2D m1, Matrix2D m2)
         {
-            Matrix2D temp = new Matrix2D();
-            temp.Pointer = DLL_Multiply(m1.Pointer, m2.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Matrix2D temp = new Matrix2D();
+                temp.Pointer = DLL_Multiply(m1.Pointer, m2.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
@@ -753,12 +1001,20 @@ namespace SwinGame
         /// <returns>The resulting Matrix2D</returns>
         public static Vector Multiply(Matrix2D m, Vector v)
         {
-            Vector temp = DLL_Multiply(m.Pointer, v);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_Multiply(m.Pointer, v);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
@@ -771,11 +1027,19 @@ namespace SwinGame
         /// <param name="sprite2">Sprite 2</param>
         public static void VectorCollision(Sprite sprite1, Sprite sprite2)
         {
-            DLL_VectorCollision(sprite1.Pointer, sprite2.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_VectorCollision(sprite1.Pointer, sprite2.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorFromAngle")]
@@ -788,12 +1052,20 @@ namespace SwinGame
         /// <returns>Vector</returns>
         public static Vector GetVectorFromAngle(float angle, float magnitude)
         {
-            Vector temp = DLL_GetVectorFromAngle(angle, magnitude);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_GetVectorFromAngle(angle, magnitude);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
     }
 }

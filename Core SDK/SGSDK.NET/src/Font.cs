@@ -87,13 +87,21 @@ namespace SwinGame
         /// <returns>The font loaded</returns>
         public static Font LoadFont(String fontName, int size)
         {
-            Font font;
-            font.Pointer = DLL_LoadFont(fontName, size);
-            if (ExceptionOccured())
+            try
             {
+                Font font;
+                font.Pointer = DLL_LoadFont(fontName, size);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return font;
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
-            return font;
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetFontStyle")]
@@ -106,9 +114,17 @@ namespace SwinGame
         /// <param name="style">The new style for the font, values can be read together</param>
         public static void SetFontStyle(Font font, FontStyle style)
         {
-            DLL_SetFontStyle(font.Pointer, style);
-            if (ExceptionOccured())
+            try
             {
+                DLL_SetFontStyle(font.Pointer, style);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -121,9 +137,17 @@ namespace SwinGame
         /// <param name="fontToFree">The Font to free</param>
         public static void FreeFont(ref Font fontToFree)
         {
-            DLL_FreeFont(ref fontToFree.Pointer);
-            if (ExceptionOccured())
+            try
             {
+                DLL_FreeFont(ref fontToFree.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -143,10 +167,18 @@ namespace SwinGame
         /// <param name="y">The y location to draw the text at (top left)</param>
         public static void DrawText(Bitmap dest, String theText, Color textColor, Font theFont, int x, int y)
         {
-            int color = textColor.ToArgb();
-            DLL_DrawText(dest.pointer, theText, (uint)color, theFont.Pointer, x, y);
-            if (ExceptionOccured())
+            try
             {
+                int color = textColor.ToArgb();
+                DLL_DrawText(dest.pointer, theText, (uint)color, theFont.Pointer, x, y);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -165,10 +197,18 @@ namespace SwinGame
         /// <param name="y">The y location to draw the text at (top left)</param>
         public static void DrawText( String theText, Color textColor, Font theFont, float x, float y)
         {
-            int color = textColor.ToArgb();
-            DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
-            if (ExceptionOccured())
+            try
             {
+                int color = textColor.ToArgb();
+                DLL_DrawText(theText, (uint)color, theFont.Pointer, x, y);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -191,11 +231,19 @@ namespace SwinGame
         /// <param name="h">The height of the region to draw inside</param>
         public static void DrawTextLines(String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, float x, float y, int w, int h)
         {
-            int color1 = textColor.ToArgb();
-            int color2 = backColor.ToArgb();
-            DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
-            if (ExceptionOccured())
+            try
             {
+                int color1 = textColor.ToArgb();
+                int color2 = backColor.ToArgb();
+                DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -219,11 +267,19 @@ namespace SwinGame
         /// <param name="h">The height of the region to draw inside</param>
         public static void DrawTextLines(Bitmap dest, String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
         {
-            int color1 = textColor.ToArgb();
-            int color2 = backColor.ToArgb();
-            DLL_DrawTextLines(dest.pointer, theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
-            if (ExceptionOccured())
+            try
             {
+                int color1 = textColor.ToArgb();
+                int color2 = backColor.ToArgb();
+                DLL_DrawTextLines(dest.pointer, theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -238,12 +294,20 @@ namespace SwinGame
         /// <returns>The width of the drawing in pixels</returns>
         public static int TextWidth(String theText, Font theFont)
         {
-            int temp = DLL_TextWidth(theText, theFont.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                int temp = DLL_TextWidth(theText, theFont.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextHeight")]
@@ -256,12 +320,20 @@ namespace SwinGame
         /// <returns>The height of the drawing in pixels</returns>
         public static int TextHeight(String theText, Font theFont)
         {
-            int temp = DLL_TextHeight(theText, theFont.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                int temp = DLL_TextHeight(theText, theFont.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawFramerate")]
@@ -275,9 +347,17 @@ namespace SwinGame
         /// <param name="theFont">The font used to draw the framerate</param>
         public static void DrawFramerate(int x, int y, Font theFont)
         {
-            DLL_DrawFramerate(x, y, theFont.Pointer);
-            if (ExceptionOccured())
+            try
             {
+                DLL_DrawFramerate(x, y, theFont.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -298,10 +378,18 @@ namespace SwinGame
         /// <param name="y">The y location to draw the text at (top left)</param>
         public static void DrawTextOnScreen(String theText, Color textColor, Font theFont, int x, int y)
         {
-            int color = textColor.ToArgb();
-            DLL_DrawTextOnScreen(theText, color, theFont.Pointer, x, y);
-            if (ExceptionOccured())
+            try
             {
+                int color = textColor.ToArgb();
+                DLL_DrawTextOnScreen(theText, color, theFont.Pointer, x, y);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }
@@ -324,11 +412,19 @@ namespace SwinGame
         /// <param name="h">The height of the region to draw inside</param>
         public static void DrawTextLinesOnScreen(String theText, Color textColor, Color backColor, Font theFont, FontAlignment align, int x, int y, int w, int h)
         {
-            int color = textColor.ToArgb();
-            int color2 = textColor.ToArgb();
-            DLL_DrawTextLinesOnScreen(theText, color, color2, theFont.Pointer, align, x, y, w ,h);
-            if (ExceptionOccured())
+            try
             {
+                int color = textColor.ToArgb();
+                int color2 = textColor.ToArgb();
+                DLL_DrawTextLinesOnScreen(theText, color, color2, theFont.Pointer, align, x, y, w, h);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
                 throw new SwinGameException(GetExceptionMessage());
             }  
         }

@@ -15,15 +15,21 @@ using Sprite = SwinGame.Sprite;
 
 using GameResources;
 
+
+
 namespace GameProject
 {
+
     public static class GameLogic
     {
+        const Event PLAYERSPAWN = Event.Event1; 
+
         public static void MainGame()
         {
             //The Map
             Map _Map = Resources.GameMap("Level1");
-
+            Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0));
+            
             //Game Loop
             do
             {
@@ -32,6 +38,12 @@ namespace GameProject
 
                 //Draw Map
                 MappyLoader.DrawMap(_Map);
+
+                Controller.UpdatePlayer(ref _Player, _Map);
+
+                Camera.FollowSprite(_Player.Sprite, 0, 0);
+
+                Graphics.DrawSprite(_Player.Sprite);
 
                 //Draws the FrameRate
                 Text.DrawFramerate(550, 0, Resources.GameFont("Courier"));
@@ -51,7 +63,7 @@ namespace GameProject
             Audio.OpenAudio();
             //Load Resources
             Resources.LoadResources();
-
+            
             //Game Loop
             do
             {
