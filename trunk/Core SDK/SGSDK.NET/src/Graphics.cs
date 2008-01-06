@@ -272,6 +272,8 @@ namespace SwinGame
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteKind(IntPtr pointer);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void SetSpriteKind(IntPtr pointer, int kind);
 
         /// <summary>
         /// Gets the Sprite Kind
@@ -282,23 +284,42 @@ namespace SwinGame
             {
                 return (SpriteKind)GetSpriteKind(Pointer);
             }
+            set
+            {
+                SetSpriteKind(Pointer, (int)value);
+            }
         }
 
-        /*
+        
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int[] GetSpriteFramesPerCell(IntPtr pointer);
+        private static extern int GetSpriteFramesPerCell(IntPtr pointer, int index);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void SetSpriteFramesPerCell(IntPtr pointer, int[] framesPerCell, int length);
 
         /// <summary>
         /// Gets the Frames per Cell
         /// </summary>
         public int[] FramesPerCell
         {
+            
             get
             {
-                return (int[])GetSpriteFramesPerCell(Pointer);
+                int[] temparray = new int[GetSpriteFrameCount(this.Pointer)];
+
+                for (int i = 0; i < GetSpriteFrameCount(this.Pointer); i++)
+                {
+                    temparray[i] = GetSpriteFramesPerCell(Pointer, i);
+                }
+                
+                return temparray;
+            }
+
+            set
+            {
+                SetSpriteFramesPerCell(Pointer, value, value.Length);
             }
         }
-        */
+        
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteCols(IntPtr pointer);
@@ -344,6 +365,8 @@ namespace SwinGame
 
 	    [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteendingAction(IntPtr pointer);
+        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void SetSpriteendingAction(IntPtr pointer, int endingAction);
 
         /// <summary>
         /// Gets the Ending Action
@@ -353,6 +376,10 @@ namespace SwinGame
             get
             {
                 return (SpriteEndingAction)GetSpriteendingAction(Pointer);
+            }
+            set
+            {
+                SetSpriteendingAction(Pointer, (int)value);
             }
         }
 

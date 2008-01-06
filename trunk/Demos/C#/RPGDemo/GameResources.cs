@@ -287,6 +287,7 @@ namespace GameResources
 
         private static void LoadImages()
         {
+            NewImage("Hero", "Hero.png");
         }
 
         private static void LoadSounds()

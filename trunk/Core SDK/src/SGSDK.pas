@@ -1139,9 +1139,20 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		result := Integer(surface.spriteKind);
 	end;
 	
-	function GetSpriteFramesPerCell(surface : Sprite): IntArray; cdecl; export;
+	procedure SetSpriteKind(surface : Sprite; kind : SpriteKind); cdecl; export;
 	begin
-		result := surface.framesPerCell;
+		surface.SpriteKind := kind;
+	end;
+	
+	procedure SetSpriteFramesPerCell(surface : Sprite; framesPerCell : IntArray; length : Integer); cdecl; export;
+	begin
+		SetLength(framesPerCell, length);
+		surface.framesPerCell := framesPerCell;
+	end;
+	
+	function GetSpriteFramesPerCell(surface : Sprite; ind : Integer): Integer; cdecl; export;
+	begin
+		result := surface.framesPerCell[ind];
 	end;
 	
 	function GetSpriteCols(surface : Sprite) : Integer; cdecl; export;
@@ -1156,12 +1167,18 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function GetSpriteFrameCount(surface : Sprite) : Integer; cdecl; export;
 	begin
-		result := surface.frameCount;
+		//result := surface.frameCount;
+		result := Length(surface.framesperCell);
 	end;
 	
 	function GetSpriteendingAction(surface : Sprite) : Integer; cdecl; export;
 	begin
 		result := Integer(surface.endingAction);
+	end;
+	
+	procedure SetSpriteendingAction(surface : Sprite; endingAction : SpriteEndingAction); cdecl; export;
+	begin
+		surface.endingAction := endingAction
 	end;
 	
 	function GetSpritehasEnded(surface : Sprite) : Boolean; cdecl; export;
@@ -1677,6 +1694,10 @@ exports
 	GetSpriteendingAction,
 	GetSpritehasEnded,
 	GetSpriteReverse,
+	
+	SetSpriteKind,
+	SetSpriteFramesPerCell,
+	SetSpriteendingAction,
 	
 	FreeSprite,
 	AddBitmapToSprite,

@@ -39,11 +39,19 @@ namespace SwinGame
         /// </summary>
         public static void OpenAudio()
         {
-            DLL_OpenAudio();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_OpenAudio();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="CloseAudio")]
@@ -53,11 +61,19 @@ namespace SwinGame
         /// </summary>
         public static void CloseAudio()
         {
-            DLL_CloseAudio();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_CloseAudio();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlaySoundEffect")]
@@ -71,11 +87,19 @@ namespace SwinGame
         /// <param name="loops">The number of times to play it</param>
         public static void PlaySoundEffect(SoundEffect effect, int loops)
         {
-            DLL_PlaySoundEffectLoop(effect.Pointer, loops);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_PlaySoundEffectLoop(effect.Pointer, loops);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
         /// <summary>
         /// Play the indicated sound effect a number of times
@@ -83,11 +107,19 @@ namespace SwinGame
         /// <param name="effect">The Sound Effect to play</param>
         public static void PlaySoundEffect(SoundEffect effect)
         {
-            DLL_PlaySoundEffect(effect.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_PlaySoundEffect(effect.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect")]
@@ -99,13 +131,21 @@ namespace SwinGame
         /// <returns>A SoundEffect</returns>
         public static SoundEffect LoadSoundEffect(String path)
         {
-            SoundEffect effect;
-            effect.Pointer = DLL_LoadSoundEffect(path);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                SoundEffect effect;
+                effect.Pointer = DLL_LoadSoundEffect(path);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return effect;
             }
-            return effect;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSoundEffect")]
@@ -116,11 +156,19 @@ namespace SwinGame
         /// <param name="effect">The effect to be freed from memory</param>
         public static void FreeSoundEffect(ref SoundEffect effect)
         {
-            DLL_FreeSoundEffect(ref effect.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_FreeSoundEffect(ref effect.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic")]
@@ -133,13 +181,21 @@ namespace SwinGame
         /// <returns>Music</returns>
         public static Music LoadMusic(String Path)
         {
-            Music music;
-            music.Pointer = DLL_LoadMusic(Path);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Music music;
+                music.Pointer = DLL_LoadMusic(Path);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return music;
             }
-            return music;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMusic")]
@@ -150,11 +206,19 @@ namespace SwinGame
         /// <param name="music">Music to be freed</param>
         public static void FreeMusic(ref Music music)
         {
-            DLL_FreeMusic(ref music.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_FreeMusic(ref music.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlayMusic")]
@@ -168,11 +232,19 @@ namespace SwinGame
         /// <param name="loops">The number of times to play it</param>
         public static void PlayMusic(Music music, int loops)
         {
-            DLL_PlayMusic(music.Pointer, loops);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_PlayMusic(music.Pointer, loops);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         /// <summary>
@@ -181,11 +253,19 @@ namespace SwinGame
         /// <param name="music">The Music to play</param>
         public static void PlayMusic(Music music)
         {
-            DLL_PlayMusic(music.Pointer,-1);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_PlayMusic(music.Pointer, -1);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSoundEffectPlaying")]
@@ -197,12 +277,20 @@ namespace SwinGame
         /// <returns>True if it is playing</returns>
         public static bool IsSoundEffectPlaying(SoundEffect effect)
         {
-            bool temp = DLL_IsSoundEffectPlaying(effect.Pointer);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_IsSoundEffectPlaying(effect.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsMusicPlaying")]
@@ -213,13 +301,21 @@ namespace SwinGame
         /// <param name="music">The music to check if it is playing</param>
         /// <returns>True if it is playing</returns>
         public static bool IsMusicPlaying(Music music)
-        {      
-            bool temp = DLL_IsMusicPlaying(music.Pointer);
-            if (ExceptionOccured())
+        {
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_IsMusicPlaying(music.Pointer);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopMusic")]
@@ -229,11 +325,19 @@ namespace SwinGame
         /// </summary>
         public static void StopMusic()
         {
-            DLL_StopMusic();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_StopMusic();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
         [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopSoundEffect")]
@@ -243,11 +347,19 @@ namespace SwinGame
         /// </summary>
         public static void StopSoundEffect()
         {
-            DLL_StopSoundEffect();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                DLL_StopSoundEffect();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
     }
