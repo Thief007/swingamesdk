@@ -141,6 +141,7 @@ implementation
 		NewImage('Map', 'map1.jpg');
 		NewImage('PlayerBullet', 'playerBullet.png');
 		NewImage('Enemy', 'enemy.png');
+		NewImage('EnemyBullet', 'EnemyBullet.png');
 		//NewImage('NoImages', 'Ufo.png');
 	end;
 

@@ -23,8 +23,12 @@ implementation
 		ShipData = record
 			theSprite : Sprite;
 			speed : Single;
+			health : Integer;
+			alive : Boolean;
+			time : Integer;
 			shootDelay, currentDelay : Integer;
 			maxMagazine, currentMagazine, reloadDelay: Integer;
+			offset : Integer;
 		end;
 		
 		BulletData = record
@@ -35,21 +39,12 @@ implementation
 			side : BulletSide;
 		end;
 		
-		EnemyData = record
-			theSprite : Sprite;
-			health : Integer;
-			alive : Boolean;
-			time : Integer;
-			shootDelay, currentDelay : Integer;
-			maxMagazine, currentMagazine, reloadDelay: Integer;
-		end;
-		
 		GameData = record
 			player : ShipData;
 			images : Array of Sprite;
 			bullets : Array of BulletData;
 			sounds : Array of SoundEffect;
-			enemies : Array of EnemyData;
+			enemies : Array of ShipData;
 			gameTimer : Integer;
 			music : Music;
 		end;
@@ -60,7 +55,7 @@ implementation
 	
 	procedure LoadEnemies(var game : GameData);
 	const
-		ENEMIES = 1;
+		ENEMIES = 3;
 	var
 		i : Integer;
 	begin
@@ -69,21 +64,23 @@ implementation
 			game.enemies[i].theSprite := CreateSprite(GameImage('Enemy'), 2, 2, 75, 85);
 			game.enemies[i].theSprite.xPos := -1 * game.enemies[i].theSprite.width;
 			game.enemies[i].theSprite.yPos := 0;
+			game.enemies[i].speed := 1;
 			game.enemies[i].health := 50;
-			game.enemies[i].time := 0;
+			game.enemies[i].time := i * 120;
 			game.enemies[i].alive := true;
-			game.player.shootDelay := 4;
-			game.player.currentDelay := game.player.shootDelay;
-			game.player.maxMagazine := 7;
-			game.player.currentMagazine := game.player.maxMagazine;
-			game.player.reloadDelay := 15;
+			game.enemies[i].shootDelay := 4;
+			game.enemies[i].currentDelay := game.enemies[i].shootDelay;
+			game.enemies[i].maxMagazine := 7;
+			game.enemies[i].currentMagazine := game.enemies[i].maxMagazine;
+			game.enemies[i].reloadDelay := 15;
+			game.enemies[i].offset := -75;
 		end;
 	end;
 	
 	procedure LoadGame(var game : GameData);
 	const
 		PLAYEROFFSET = 150;
-		BULLETCOUNT = 500;
+		BULLETCOUNT = 1000;
 		IMAGES = 2;
 		SOUNDEFFECTS = 1;
 	var
@@ -254,7 +251,6 @@ implementation
 		MovePlayerShip(game.player);
 		FixPosition(game.player.theSprite);
 		ShootPlayerBullet(game);
-		UpdateBullets(game.bullets);
 		DrawSprite(game.player.theSprite);
 		UpdateSpriteAnimation(game.player.theSprite);
 	end;
@@ -276,52 +272,45 @@ implementation
 		DrawSprite(images[1]);
 	end;
 	
-	procedure ShootEnemyBullet(var enemy : EnemyData);
+	procedure ShootEnemyBullet(var enemyToProcess : ShipData; var game : GameData);
 	const
-		BULLETSPEED = 12;
+		BULLETSPEED = 4;
 		DAMAGE = 1;
 	var
 		tempBullet : BulletData;
+		i : Integer;
 	begin
-		if enemy.currentMagazine <= 0 then
-			enemy.currentMagazine := enemy.currentMagazine - 1;
-		if enemy.currentDelay > 0 then
-			enemy.currentDelay := enemy.currentDelay - 1;
-		if enemy.currentMagazine < 1 then begin
-			if enemy.currentMagazine = -1 * enemy.reloadDelay then
-				enemy.currentMagazine := enemy.maxMagazine;
-		end	else if IsKeyPressed(VK_Z) and (enemy.currentDelay = 0) then begin
-			enemy.currentMagazine := enemy.currentMagazine - 1;
-			enemy.currentDelay := enemy.shootDelay;
-			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
-										Enemy, GetVectorFromAngle(90, BULLETSPEED));
-			DeployBullet(tempBullet, game.bullets);
-			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
-										Enemy, GetVectorFromAngle(75, BULLETSPEED));
-			DeployBullet(tempBullet, game.bullets);
-			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
-										Enemy, GetVectorFromAngle(105, BULLETSPEED));
-			DeployBullet(tempBullet, game.bullets);
-			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
-										Enemy, GetVectorFromAngle(60, BULLETSPEED));
-			DeployBullet(tempBullet, game.bullets);
-			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
-										Enemy, GetVectorFromAngle(120, BULLETSPEED));
-			DeployBullet(tempBullet, game.bullets);
+		if enemyToProcess.currentMagazine <= 0 then
+			enemyToProcess.currentMagazine := enemyToProcess.currentMagazine - 1;
+		if enemyToProcess.currentDelay > 0 then
+			enemyToProcess.currentDelay := enemyToProcess.currentDelay - 1;
+		if enemyToProcess.currentMagazine < 1 then begin
+			if enemyToProcess.currentMagazine = -1 * enemyToProcess.reloadDelay then
+				enemyToProcess.currentMagazine := enemyToProcess.maxMagazine;
+		end	else if enemyToProcess.currentDelay = 0 then begin
+			enemyToProcess.currentMagazine := enemyToProcess.currentMagazine - 1;
+			enemyToProcess.currentDelay := enemyToProcess.shootDelay;
+			for i := 0 to 18 do begin
+				tempBullet := CreateBullet('EnemyBullet', enemyToProcess, DAMAGE, Normal, 
+											Enemy, GetVectorFromAngle(60 + 15 * i + enemyToProcess.offset, BULLETSPEED));
+				DeployBullet(tempBullet, game.bullets);
+			end;
+			enemyToProcess.offset := enemyToProcess.offset + 10;
 		end;
 	end;
 	
 	procedure UpdateEnemies(var game : GameData);
-	const
-		ENEMYSPEED = 3;
 	var
 		i : Integer;
 	begin
 		for i := 0 to High(game.enemies) do begin
 			if (game.enemies[i].time <= game.gameTimer) and game.enemies[i].alive then begin
-				game.enemies[i].theSprite.xPos := game.enemies[i].theSprite.xPos + ENEMYSPEED;
-				if game.enemies[i].theSprite.xPos >= SCREENWIDTH then
+				game.enemies[i].theSprite.xPos := game.enemies[i].theSprite.xPos + game.enemies[i].speed;
+				if game.enemies[i].theSprite.xPos >= SCREENWIDTH then begin
 					game.enemies[i].alive := false;
+					continue;
+				end;
+				ShootEnemyBullet(game.enemies[i], game);
 				DrawSprite(game.enemies[i].theSprite);
 				UpdateSpriteAnimation(game.enemies[i].theSprite);
 			end;
@@ -337,6 +326,7 @@ implementation
 		repeat
 			ProcessEvents();
 			UpdateBackground(game.images);
+			UpdateBullets(game.bullets);
 			UpdateShip(game);
 			UpdateEnemies(game);
 			game.gameTimer := game.gameTimer + 1;
