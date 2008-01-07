@@ -35,13 +35,50 @@ implementation
 			side : BulletSide;
 		end;
 		
+		EnemyData = record
+			theSprite : Sprite;
+			health : Integer;
+			alive : Boolean;
+			time : Integer;
+			shootDelay, currentDelay : Integer;
+			maxMagazine, currentMagazine, reloadDelay: Integer;
+		end;
+		
 		GameData = record
 			player : ShipData;
 			images : Array of Sprite;
 			bullets : Array of BulletData;
 			sounds : Array of SoundEffect;
+			enemies : Array of EnemyData;
+			gameTimer : Integer;
 			music : Music;
 		end;
+	
+	const
+		SCREENWIDTH = 480;
+		SCREENHEIGHT = 600;
+	
+	procedure LoadEnemies(var game : GameData);
+	const
+		ENEMIES = 1;
+	var
+		i : Integer;
+	begin
+		SetLength(game.enemies, ENEMIES);
+		for i := 0 to Length(game.enemies) do begin
+			game.enemies[i].theSprite := CreateSprite(GameImage('Enemy'), 2, 2, 75, 85);
+			game.enemies[i].theSprite.xPos := -1 * game.enemies[i].theSprite.width;
+			game.enemies[i].theSprite.yPos := 0;
+			game.enemies[i].health := 50;
+			game.enemies[i].time := 0;
+			game.enemies[i].alive := true;
+			game.player.shootDelay := 4;
+			game.player.currentDelay := game.player.shootDelay;
+			game.player.maxMagazine := 7;
+			game.player.currentMagazine := game.player.maxMagazine;
+			game.player.reloadDelay := 15;
+		end;
+	end;
 	
 	procedure LoadGame(var game : GameData);
 	const
@@ -52,6 +89,8 @@ implementation
 	var
 		i : Integer;
 	begin
+		//Initialise enemies
+		LoadEnemies(game);
 		//Set the length of GameSpriteData to the number of sprites I have
 		SetLength(game.images, IMAGES);
 		game.player.theSprite := CreateSprite(GameImage('Ship'), 2, 2, 40, 43);
@@ -75,6 +114,7 @@ implementation
 		game.music := GameMusic('P8107');
 		SetLength(game.sounds, SOUNDEFFECTS);
 		game.sounds[0] := GameSound('Shoot');
+		game.gameTimer := 0;
 	end;
 
 	procedure UpdateEntityPosition(speed, angle : Single; var target : Sprite);
@@ -124,10 +164,10 @@ implementation
 		    theSprite.xPos := 0;
 		if theSprite.yPos < 0 then
 		    theSprite.yPos := 0;
-		if theSprite.xPos > ScreenWidth() - theSprite.Width then
-		    theSprite.xPos := ScreenWidth() - theSprite.Width;
-		if theSprite.yPos > ScreenHeight() - theSprite.Height then
-		    theSprite.yPos := ScreenHeight() - theSprite.Height;
+		if theSprite.xPos > SCREENWIDTH - theSprite.Width then
+		    theSprite.xPos := SCREENWIDTH - theSprite.Width;
+		if theSprite.yPos > SCREENHEIGHT - theSprite.Height then
+		    theSprite.yPos := SCREENHEIGHT - theSprite.Height;
 	end;
 	
 	procedure DeployBullet(bullet : BulletData; var bullets : Array of BulletData);
@@ -227,13 +267,65 @@ implementation
 		images[0].yPos := images[0].yPos + BACKGROUNDSPEED;
 		//Reset the position of the first background sprite if it has
 		//reachead the bottom
-		if images[0].yPos >= ScreenHeight() then
+		if images[0].yPos >= SCREENHEIGHT then
 			images[0].yPos := 0;
 		//Set the second background position so the background is seamless
-		images[1].yPos := images[0].yPos - ScreenHeight();
+		images[1].yPos := images[0].yPos - SCREENHEIGHT;
 		//Draw background sprites
 		DrawSprite(images[0]);
 		DrawSprite(images[1]);
+	end;
+	
+	procedure ShootEnemyBullet(var enemy : EnemyData);
+	const
+		BULLETSPEED = 12;
+		DAMAGE = 1;
+	var
+		tempBullet : BulletData;
+	begin
+		if enemy.currentMagazine <= 0 then
+			enemy.currentMagazine := enemy.currentMagazine - 1;
+		if enemy.currentDelay > 0 then
+			enemy.currentDelay := enemy.currentDelay - 1;
+		if enemy.currentMagazine < 1 then begin
+			if enemy.currentMagazine = -1 * enemy.reloadDelay then
+				enemy.currentMagazine := enemy.maxMagazine;
+		end	else if IsKeyPressed(VK_Z) and (enemy.currentDelay = 0) then begin
+			enemy.currentMagazine := enemy.currentMagazine - 1;
+			enemy.currentDelay := enemy.shootDelay;
+			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
+										Enemy, GetVectorFromAngle(90, BULLETSPEED));
+			DeployBullet(tempBullet, game.bullets);
+			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
+										Enemy, GetVectorFromAngle(75, BULLETSPEED));
+			DeployBullet(tempBullet, game.bullets);
+			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
+										Enemy, GetVectorFromAngle(105, BULLETSPEED));
+			DeployBullet(tempBullet, game.bullets);
+			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
+										Enemy, GetVectorFromAngle(60, BULLETSPEED));
+			DeployBullet(tempBullet, game.bullets);
+			tempBullet := CreateBullet('EnemyBullet', enemy, DAMAGE, Normal, 
+										Enemy, GetVectorFromAngle(120, BULLETSPEED));
+			DeployBullet(tempBullet, game.bullets);
+		end;
+	end;
+	
+	procedure UpdateEnemies(var game : GameData);
+	const
+		ENEMYSPEED = 3;
+	var
+		i : Integer;
+	begin
+		for i := 0 to High(game.enemies) do begin
+			if (game.enemies[i].time <= game.gameTimer) and game.enemies[i].alive then begin
+				game.enemies[i].theSprite.xPos := game.enemies[i].theSprite.xPos + ENEMYSPEED;
+				if game.enemies[i].theSprite.xPos >= SCREENWIDTH then
+					game.enemies[i].alive := false;
+				DrawSprite(game.enemies[i].theSprite);
+				UpdateSpriteAnimation(game.enemies[i].theSprite);
+			end;
+		end;
 	end;
 	
 	procedure MainGame();
@@ -246,15 +338,14 @@ implementation
 			ProcessEvents();
 			UpdateBackground(game.images);
 			UpdateShip(game);
+			UpdateEnemies(game);
+			game.gameTimer := game.gameTimer + 1;
 			RefreshScreen();
 		until WindowCloseRequested();
 		StopMusic();
 	end;
 
 	procedure Main();
-	const
-		SCREENWIDTH = 480;
-		SCREENHEIGHT = 600;
 	begin
 		OpenGraphicsWindow('EmptyYourMind1.1', SCREENWIDTH, SCREENHEIGHT);
 		LoadResources();

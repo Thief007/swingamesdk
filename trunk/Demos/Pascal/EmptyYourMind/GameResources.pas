@@ -140,6 +140,7 @@ implementation
 		NewImage('Ship', 'ship.png');
 		NewImage('Map', 'map1.jpg');
 		NewImage('PlayerBullet', 'playerBullet.png');
+		NewImage('Enemy', 'enemy.png');
 		//NewImage('NoImages', 'Ufo.png');
 	end;
 
