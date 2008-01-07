@@ -124,7 +124,11 @@ implementation
 	///	@returns:				The font loaded
 	function LoadFont(fontName: String; size: Integer): Font;
 	begin
-		result := TTF_OpenFont(PChar(fontName), size);
+		try
+			result := TTF_OpenFont(PChar(fontName), size);
+		except
+			RaiseSGSDKException('Unable to CreateFont: ' + TTF_GetError());
+		end;
 		if result = nil then
 		begin
 			RaiseSGSDKException('Unable to CreateFont: ' + TTF_GetError());
