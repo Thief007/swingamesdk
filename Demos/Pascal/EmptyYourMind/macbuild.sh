@@ -54,7 +54,7 @@ DoExitLink ()
 
 echo Compiling game
 
-mkdir -p /bin
+mkdir -p ./bin
 
 fpc $EXTRA_OPTS -XMSDL_main -Mdelphi -FE./bin -Fu./lib -s GameLauncher.pas 
 if [ $? != 0 ]; then DoExitCompile; fi

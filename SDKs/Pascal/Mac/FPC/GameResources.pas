@@ -172,7 +172,6 @@ implementation
 
 	procedure LoadMusics();
 	begin
-		NewMusic('Fast', 'Fast.mp3');
 		//NewMusic('NoMusic', 'sound.mp3');
 	end;
 
