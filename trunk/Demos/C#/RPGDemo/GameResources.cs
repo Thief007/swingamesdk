@@ -283,11 +283,19 @@ namespace GameResources
         {
             NewFont("ArialLarge", "arial.ttf", 80);
             NewFont("Courier", "cour.ttf", 16);
+
+            //Remove when added to tutorial
+            NewFont("Arial", "arial.ttf", 20);
         }
 
         private static void LoadImages()
         {
             NewImage("Hero", "Hero.png");
+
+            //Remove when added to tutorial
+            NewImage("Overlay", "Overlay.png");
+            NewImage("Health", "Health.png");
+            NewImage("HealthVial", "HealthVial.png");
         }
 
         private static void LoadSounds()

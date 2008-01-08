@@ -57,69 +57,117 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function WindowCloseRequested(): Integer; cdecl; export;
 	begin
-		if SGSDK_Core.WindowCloseRequested() then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Core.WindowCloseRequested() then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetIcon(iconFilename: PChar); cdecl; export;
 	begin
-		SGSDK_Core.SetIcon(iconFilename);
+		Try
+			SGSDK_Core.SetIcon(iconFilename);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure ChangeScreenSize(width, height: Integer); cdecl; export;
 	begin
-		SGSDK_Core.ChangeScreenSize(width, height);
+		Try
+			SGSDK_Core.ChangeScreenSize(width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure ToggleFullScreen(); cdecl; export;
 	begin
-		SGSDK_Core.ToggleFullScreen();
+		Try
+			SGSDK_Core.ToggleFullScreen();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure RefreshScreenWithFrame(TargetFPS : Integer); cdecl; export;
 	begin
-		SGSDK_Core.RefreshScreen(TargetFPS);
+		Try
+			SGSDK_Core.RefreshScreen(TargetFPS);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure RefreshScreen(); cdecl; export;
 	begin
-		SGSDK_Core.RefreshScreen();
+		Try
+			SGSDK_Core.RefreshScreen();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure TakeScreenshot(basename: PChar); cdecl; export;
 	begin
-		SGSDK_Core.TakeScreenshot(basename);
+		Try
+			SGSDK_Core.TakeScreenshot(basename);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function  ScreenWidth(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Core.ScreenWidth();
+		Try
+			result := SGSDK_Core.ScreenWidth();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function  ScreenHeight(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Core.ScreenHeight();
+		Try
+			result := SGSDK_Core.ScreenHeight();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function ToSDLColor(color: UInt32): TSDL_Color; cdecl; export;
 	begin
-		result := SGSDK_Core.ToSDLColor(color);
+		Try
+			result := SGSDK_Core.ToSDLColor(color);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
 	begin
-		result := SGSDK_Core.GetColour(forBitmap, apiColor);
+		Try
+			result := SGSDK_Core.GetColour(forBitmap, apiColor);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetColourRGBA(red, green, blue, alpha: Byte) : Colour; cdecl; export;
 	begin
-		result := SGSDK_Core.GetColour(red, green, blue, alpha);
+		Try
+			result := SGSDK_Core.GetColour(red, green, blue, alpha);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	// function GetColour(red, green, blue : Byte) : Colour;
@@ -127,47 +175,83 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function GetFramerate(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Core.GetFramerate();
+		Try
+			result := SGSDK_Core.GetFramerate();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetTicks(): UInt32; cdecl; export;
 	begin
-		result := SGSDK_Core.GetTicks();
+		Try
+			result := SGSDK_Core.GetTicks();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure Sleep(time : UInt32); cdecl; export;
 	begin
-		SGSDK_Core.Sleep(time);
+		Try
+			SGSDK_Core.Sleep(time);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetPathToResourceWithKind(filename: PChar; kind: ResourceKind) : String; overload; cdecl; export;
 	begin
-		result := SGSDK_Core.GetPathToResource(filename, kind);
+		Try
+			result := SGSDK_Core.GetPathToResource(filename, kind);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetPathToResource(filename: PChar): String; overload; cdecl; export;
 	begin
-		result := SGSDK_Core.GetPathToResource(filename);
+		Try
+			result := SGSDK_Core.GetPathToResource(filename);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); cdecl; export;
 	begin
-		SGSDK_Core.RegisterEventProcessor(handle, handle2);
+		Try
+			SGSDK_Core.RegisterEventProcessor(handle, handle2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function Cos(angle: Single): Single; cdecl; export;
 	begin
-		result := SGSDK_Core.Cos(angle);
+		Try
+			result := SGSDK_Core.Cos(angle);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function Sin(angle: Single): Single; cdecl; export;
 	begin
-		result := SGSDK_Core.Sin(angle);
+		Try
+			result := SGSDK_Core.Sin(angle);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function Tan(angle: Single): Single; cdecl; export;
 	begin
-		result := SGSDK_Core.Tan(angle);
+		Try
+			result := SGSDK_Core.Tan(angle);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	//***************************************************
@@ -180,101 +264,145 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function GetMousePosition(): Vector; cdecl; export;
 	begin
-		result := SGSDK_Input.GetMousePosition();
+		Try
+			result := SGSDK_Input.GetMousePosition();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetMouseMovement(): Vector; cdecl; export;
 	begin
-		result := SGSDK_Input.GetMouseMovement();
+		Try
+			result := SGSDK_Input.GetMouseMovement();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function IsMouseDown(button: MouseButton): Integer; cdecl; export;
 	begin
-		if SGSDK_Input.IsMouseDown(button) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Input.IsMouseDown(button) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function IsMouseUp(button: MouseButton): Integer; cdecl; export;
 	begin
-		if SGSDK_Input.IsMouseUp(button) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Input.IsMouseUp(button) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function MouseWasClicked(button: MouseButton): Integer; cdecl; export;
 	begin
-		if SGSDK_Input.MouseWasClicked(button) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Input.MouseWasClicked(button) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 
 	procedure StartReadingText(textColor: Colour; maxLength: Integer;
 														 theFont: Font; x, y: Integer); cdecl; export;
 	begin
-		SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
+		Try
+			SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function IsReadingText(): Integer; cdecl; export;
 	begin
-		if SGSDK_Input.IsReadingText() then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Input.IsReadingText() then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function TextReadAsASCII(): String; cdecl; export;
 	begin
-		result := SGSDK_Input.TextReadAsASCII();
+		Try
+			result := SGSDK_Input.TextReadAsASCII();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function TextReadAsUNICODE(): WideString; cdecl; export;
 	begin
-		result := SGSDK_Input.TextReadAsUNICODE();
+		Try
+			result := SGSDK_Input.TextReadAsUNICODE();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
 	begin
-		if SGSDK_Input.IsKeyPressed(virtKeyCode) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Input.IsKeyPressed(virtKeyCode) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function WasKeyTyped(virtKeyCode: Integer): Integer; cdecl; export;
 	begin
-		if SGSDK_Input.WasKeyTyped(virtKeyCode) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Input.WasKeyTyped(virtKeyCode) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	//***************************************************
@@ -288,47 +416,83 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	procedure OpenAudio(); cdecl; export;
 	begin
-		SGSDK_Audio.OpenAudio();
+		Try
+			SGSDK_Audio.OpenAudio();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure CloseAudio(); cdecl; export;
 	begin
-		SGSDK_Audio.CloseAudio();
+		Try
+			SGSDK_Audio.CloseAudio();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function LoadSoundEffect(path: PChar): SoundEffect; cdecl; export;
 	begin
-		result := SGSDK_Audio.LoadSoundEffect(path);
+		Try
+			result := SGSDK_Audio.LoadSoundEffect(path);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function LoadMusic(path: PChar): Music; cdecl; export;
 	begin
-		result := SGSDK_Audio.LoadMusic(path);
+		Try
+			result := SGSDK_Audio.LoadMusic(path);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure FreeMusic(var mus: Music); cdecl; export;
 	begin
-		SGSDK_Audio.FreeMusic(mus);
+		Try
+			SGSDK_Audio.FreeMusic(mus);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure FreeSoundEffect(var effect: SoundEffect); cdecl; export;
 	begin
-		SGSDK_Audio.FreeSoundEffect(effect);
+		Try
+			SGSDK_Audio.FreeSoundEffect(effect);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
 	begin
-		SGSDK_Audio.PlaySoundEffect(effect);
+		Try
+			SGSDK_Audio.PlaySoundEffect(effect);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: Integer); cdecl; export;
 	begin
-		SGSDK_Audio.PlaySoundEffect(effect, loops);
+		Try
+			SGSDK_Audio.PlaySoundEffect(effect, loops);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure PlayMusic(mus: Music; loops: Integer); cdecl; export;
 	begin
-		SGSDK_Audio.PlayMusic(mus, loops);
+		Try
+			SGSDK_Audio.PlayMusic(mus, loops);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	//procedure PlayMusic1(mus: Music); cdecl; export;
@@ -338,36 +502,52 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	function IsMusicPlaying(): Integer; cdecl; export;
 	begin
-		if SGSDK_Audio.IsMusicPlaying() then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Audio.IsMusicPlaying() then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function IsSoundEffectPlaying(effect: SoundEffect): Integer; cdecl; export;
 	begin
-		if SGSDK_Audio.IsSoundEffectPlaying(effect) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Audio.IsSoundEffectPlaying(effect) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure StopSoundEffect(effect: SoundEffect); cdecl; export;
 	begin
-		SGSDK_Audio.StopSoundEffect(effect);
+		Try
+			SGSDK_Audio.StopSoundEffect(effect);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure StopMusic(); cdecl; export;
 	begin
-		SGSDK_Audio.StopMusic();
+		Try
+			SGSDK_Audio.StopMusic();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	//***************************************************
@@ -380,49 +560,81 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function LoadFont(fontName: PChar; size: Integer): Font; cdecl; export;
 	begin
-		result := SGSDK_Font.LoadFont(fontName, size)
+		Try
+			result := SGSDK_Font.LoadFont(fontName, size);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure SetFontStyle(font: Font; style: FontStyle); cdecl; export;
 	begin
-		SGSDK_Font.SetFontStyle(font, style);
+		Try
+			SGSDK_Font.SetFontStyle(font, style);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure FreeFont(var fontToFree: Font); cdecl; export;
 	begin
-		SGSDK_Font.FreeFont(fontToFree);
+		Try
+			SGSDK_Font.FreeFont(fontToFree);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawText(theText: PChar; textColor: Colour;
 					 theFont: Font; x, y: Single); cdecl; export;
 	begin
-		SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
+		Try
+			SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawTextLines(theText: PChar; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y: Single; w, h: Integer); cdecl; export;
 	begin
-		SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
+		Try
+			SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawTextOnScreen(theText: String; textColor: Colour;
 					 theFont: Font; x, y: Integer); cdecl; export;
 	begin
-		SGSDK_Font.DrawTextOnScreen(theText, textColor, theFont, x, y);
+		Try
+			SGSDK_Font.DrawTextOnScreen(theText, textColor, theFont, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); cdecl; export;
 	begin
-		SGSDK_Font.DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, x, y, w, h);
+		Try
+			SGSDK_Font.DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, x, y, w, h);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 							
 	procedure DrawTextOnBitmap(dest: Bitmap; theText: PChar; textColor: Colour;
 					theFont: Font; x, y: Integer); cdecl; export;
 	begin
-		SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
+		Try
+			SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawTextLinesOnBitmap(dest: Bitmap; theText: PChar;
@@ -430,22 +642,38 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); cdecl; export;
 	begin
-		SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
+		Try
+			SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function TextWidth(theText: PChar; theFont: Font): Integer; cdecl; export;
 	begin
-		result :=SGSDK_Font.TextWidth(theText, theFont);
+		Try
+			result :=SGSDK_Font.TextWidth(theText, theFont);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function TextHeight(theText: PChar; theFont: Font): Integer; cdecl; export;
 	begin
-		result := SGSDK_Font.TextHeight(theText, theFont);
+		Try
+			result := SGSDK_Font.TextHeight(theText, theFont);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawFramerate(x, y: Integer; font: Font); cdecl; export;
 	begin
-		SGSDK_Font.DrawFramerate(x, y, font);
+		Try
+			SGSDK_Font.DrawFramerate(x, y, font);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	//***************************************************
@@ -459,52 +687,68 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function HasSpriteCollidedX(theSprite : Sprite; x : Integer;
 								 range : CollisionDetectionRange):  Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function HasSpriteCollidedY(theSprite : Sprite; y : Integer;
 								 range : CollisionDetectionRange): Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.HasSpriteCollidedY(theSprite, y, range) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.HasSpriteCollidedY(theSprite, y, range) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
 		width, height : Integer): Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 		
 	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.HaveSpritesCollided(sprite1, sprite2) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.HaveSpritesCollided(sprite1, sprite2) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap;
@@ -582,14 +826,18 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		x2, y2: Integer; bounded2: Boolean)
 		: Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
@@ -611,19 +859,27 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		x2, y2: Integer; bounded2: Boolean)
 		: Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateVector(x,y : Single; invertY : boolean): Vector;  cdecl; export;
 	begin
-		result :=SGSDK_Physics.CreateVector(x, y, invertY);
+		Try
+			result :=SGSDK_Physics.CreateVector(x, y, invertY);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{function CreateVector1(x,y : Single): Vector;  cdecl; export;
@@ -633,74 +889,126 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	function AddVectors(v1, v2 : Vector): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.AddVectors(v1, v2);
+		Try
+			result :=SGSDK_Physics.AddVectors(v1, v2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function SubtractVectors(v1, v2 : Vector): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.SubtractVectors(v1, v2);
+		Try
+			result :=SGSDK_Physics.SubtractVectors(v1, v2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function InvertVector(v : Vector): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.InvertVector(v);
+		Try
+			result :=SGSDK_Physics.InvertVector(v);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
+		Try
+			result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function LimitVector(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
+		Try
+			result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function GetUnitVector(theVector : Vector): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.GetUnitVector(theVector);
+		Try
+			result :=SGSDK_Physics.GetUnitVector(theVector);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function IsZeroVector(theVector : Vector): Integer; cdecl; export;
 	begin
-		if SGSDK_Physics.IsZeroVector(theVector) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Physics.IsZeroVector(theVector) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function Magnitude(theVector : Vector): Single; cdecl; export;
 	begin
-		result :=SGSDK_Physics.Magnitude(theVector);
+		Try
+			result :=SGSDK_Physics.Magnitude(theVector);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function DotProduct(v1, v2: Vector): Single; cdecl; export;
 	begin
-		result :=SGSDK_Physics.DotProduct(v1, v2);
+		Try
+			result :=SGSDK_Physics.DotProduct(v1, v2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function MultiplyVector(v1: Vector; s1: Single): Vector; cdecl; export;
 	begin
-		result :=SGSDK_Physics.MultiplyVector(v1, s1);
+		Try
+			result :=SGSDK_Physics.MultiplyVector(v1, s1);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
  	function CalculateAngleNumber(x1, y1, x2, y2: Single): Single;  cdecl; export;
 	begin
-		result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
+		Try
+			result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  cdecl; export;
 	begin
-		result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
+		Try
+			result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetVectorFromAngle(angle, magnitude: Single): Vector; cdecl; export;
 	begin
-		result := SGSDK_Physics.GetVectorFromAngle(angle, magnitude);
+		Try
+			result := SGSDK_Physics.GetVectorFromAngle(angle, magnitude);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -709,65 +1017,100 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	var
 		p: Matrix2DPtr;
 	begin
-		new(p);
-		p^ := SGSDK_Physics.TranslationMatric(dx, dy);
-		result := p;
+		Try
+			new(p);
+			p^ := SGSDK_Physics.TranslationMatric(dx, dy);
+			result := p;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function ScaleMatrix(scale: Single): Matrix2DPtr; cdecl; export;
 	var
 		p: Matrix2DPtr;
 	begin
-		new(p);
-		p^ := SGSDK_Physics.ScaleMatrix(scale);
-		result := p;
+		Try
+			new(p);
+			p^ := SGSDK_Physics.ScaleMatrix(scale);
+			result := p;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function RotationMatrix(deg: Single): Matrix2DPtr; cdecl; export;
 	var
 		p: Matrix2DPtr;
-	begin		
-		new(p);
-		p^ := SGSDK_Physics.RotationMatrix(deg);
-		result := p;
+	begin
+		Try	
+			new(p);
+			p^ := SGSDK_Physics.RotationMatrix(deg);
+			result := p;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function MultiplyMatrix2D(m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
 	var
 		p: Matrix2DPtr;
 	begin
-		new(p);
-		p^ := SGSDK_Physics.Multiply(m1^, m2^);
-		result := p;
+		Try
+			new(p);
+			p^ := SGSDK_Physics.Multiply(m1^, m2^);
+			result := p;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function MultiplyMatrix2DAndVector(m: Matrix2DPtr; v: Vector): Vector; cdecl; export;
 	begin
-		result := SGSDK_Physics.Multiply(m^, v);
+		Try
+			result := SGSDK_Physics.Multiply(m^, v);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	
 	procedure VectorCollision(p1, p2 : Sprite); cdecl; export;
 	begin
-		
-		SGSDK_Physics.VectorCollision(p1, p2);
+		Try
+			SGSDK_Physics.VectorCollision(p1, p2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer): Single; cdecl; export;
 	begin
-		result := matrix^[x,y];
+		Try
+			result := matrix^[x,y];
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer; val: Single); cdecl; export;
 	begin
-		matrix^[x,y] := val;
+		Try
+			matrix^[x,y] := val;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure FreeMatrix2D(matrix: Matrix2DPtr); cdecl; export;
 	begin
-		Dispose(matrix);
-		matrix := nil;
+		Try
+			Dispose(matrix);
+			matrix := nil;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	
@@ -781,75 +1124,127 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function GetSpriteBitmap(surface: Sprite; id: Integer): Bitmap; cdecl; export;
 	begin
-		result := surface.bitmaps[id];
+		Try
+			result := surface.bitmaps[id];
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteX(surface: Sprite): Single; cdecl; export;
 	begin
-		result := surface.xPos;
+		Try
+			result := surface.xPos;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteX(surface: Sprite; val: Single); cdecl; export;
 	begin
-		surface.xPos := val;
+		Try
+			surface.xPos := val;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteY(surface: Sprite): Single; cdecl; export;
 	begin
-		result := surface.yPos;
+		Try
+			result := surface.yPos;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteY(surface: Sprite; val: Single); cdecl; export;
 	begin
-		surface.yPos := val;
+		Try
+			surface.yPos := val;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteCurrentFrame(surface: Sprite): Integer; cdecl; export;
 	begin
-		result := surface.currentFrame;
+		Try
+			result := surface.currentFrame;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteCurrentFrame(surface: Sprite; val: Integer); cdecl; export;
 	begin
-		surface.currentFrame := val;
+		Try
+			surface.currentFrame := val;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteUsePixelCollision(surface: Sprite): Integer; cdecl; export;
 	begin
-		if surface.usePixelCollision then
-		begin
-			result := -1
-		end
-		else
-		begin
-			result := 0
+		Try
+			if surface.usePixelCollision then
+			begin
+				result := -1
+			end
+			else
+			begin
+				result := 0
+			end;
+		Except
+			ErrorMessage := GetSGSDKException();
 		end;
 	end;
 	
 	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Boolean); cdecl; export;
 	begin
-		surface.usePixelCollision := val;
+		Try
+			surface.usePixelCollision := val;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect; cdecl; export;
 	begin
-		result := SGSDK_Graphics.NewSDLRect(x, y, w, h);
+		Try
+			result := SGSDK_Graphics.NewSDLRect(x, y, w, h);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateBitmap(width, height: Integer): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Graphics.CreateBitmap(width, height);
+		Try
+			result := SGSDK_Graphics.CreateBitmap(width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure OptimiseBitmap(surface: Bitmap); cdecl; export;
 	begin
-		SGSDK_Graphics.OptimiseBitmap(surface);
+		Try
+			SGSDK_Graphics.OptimiseBitmap(surface);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Boolean;
 								transparentColor: Colour): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
+		Try
+			result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	{function LoadBitmap(pathToBitmap : PChar): Bitmap; cdecl; export;
@@ -860,27 +1255,47 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	function LoadTransparentBitmap(pathToBitmap : PChar;
 								transparentColor : Colour): Bitmap; cdecl; export;
 	begin
-		result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
+		Try
+			result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure FreeBitmap(var bitmapToFree : Bitmap); cdecl; export;
 	begin
-		SGSDK_Graphics.FreeBitmap(bitmapToFree);
+		Try
+			SGSDK_Graphics.FreeBitmap(bitmapToFree);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetBitmapWidth(targetbitmap : Bitmap): Integer ; cdecl; export;
 	begin
-		result := targetbitmap.width;
+		Try
+			result := targetbitmap.width;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetBitmapHeight(targetbitmap : Bitmap): Integer; cdecl; export;
 	begin
-		result := targetbitmap.height;
+		Try
+			result := targetbitmap.height;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure ClearSurfaceWithColor(dest: Bitmap; toColour: Colour); cdecl; export;
 	begin
-		SGSDK_Graphics.ClearSurface(dest, toColour);
+		Try
+			SGSDK_Graphics.ClearSurface(dest, toColour);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	{procedure ClearSurface(dest: Bitmap); cdecl; export;
@@ -891,25 +1306,41 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
 		cdecl; export;
 	begin
-		SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
+		Try
+			SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawBitmapPartWithDestination(dest: Bitmap; bitmapToDraw: Bitmap;
 							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+		Try
+			SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: Integer);
 		cdecl; export;
 	begin
-		SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
+		Try
+			SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : Boolean;
 							xPos, yPos, width, height : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	{procedure DrawRectangle3(dest: Bitmap; theColour : Colour; xPos, yPos,
@@ -921,31 +1352,51 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure FillRectangleWithDestination(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawLineWithDestination(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
 					 xPosEnd, yPosEnd: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+		Try
+			SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawHorizontalLineWithDestination(dest: Bitmap; theColor: Color;
 								 y, x1, x2: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
+		Try
+			SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawVerticalLineWithDestination(dest: Bitmap; theColor: Color;
 							 x, y1, y2: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
+		Try
+			SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawCircleWithDestination(dest: Bitmap; theColour: Colour; filled: Boolean;
 							 xc, yc, radius: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, yc, radius);
+		Try
+			SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, yc, radius);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure DrawCircle3(dest: Bitmap; theColour: Colour;
@@ -963,7 +1414,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawEllipseWithDestination(dest: Bitmap; theColour: Colour; filled: Boolean;
 							xPos, yPos, width, height: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawEllipse(dest, theColour, filled, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.DrawEllipse(dest, theColour, filled, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure DrawEllipse3(dest: Bitmap; theColour: Colour;
@@ -982,7 +1437,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	procedure ClearScreen(toColour : Colour); cdecl; export;
 	begin
-		SGSDK_Graphics.ClearScreen(toColour);
+		Try
+			SGSDK_Graphics.ClearScreen(toColour);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure ClearScreen1(); cdecl; export;
@@ -992,24 +1451,40 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
+		Try
+			SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap;
 							srcX, srcY, srcW, srcH : Integer; x, y : Single); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+		Try
+			SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawPixel(theColour: Colour; x, y: Single); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawPixel(theColour, x, y);
+		Try
+			SGSDK_Graphics.DrawPixel(theColour, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawRectangle(theColour : Colour; filled : Boolean;
 							xPos, yPos: Single; width, height : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawRectangle(theColour, filled, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.DrawRectangle(theColour, filled, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure DrawRectangle1(theColour : Colour; xPos, yPos,
@@ -1027,23 +1502,39 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawLine(theColour: Colour; xPosStart, yPosStart,
 					 xPosEnd, yPosEnd: Single); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+		Try
+			SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
+		Try
+			SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
+		Try
+			SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure DrawCircle(theColour: Colour; filled: Boolean;
 						 xc, yc: Single; radius: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawCircle(theColour, filled, xc, yc, radius);
+		Try
+			SGSDK_Graphics.DrawCircle(theColour, filled, xc, yc, radius);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure DrawCircle1(theColour: Colour; xc, yc, radius: Integer); cdecl; export;
@@ -1059,7 +1550,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawEllipse(theColour: Colour; filled: Boolean;
 						xPos, yPos: Single; width, height: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawEllipse(theColour, filled, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.DrawEllipse(theColour, filled, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure DrawEllipse1(theColour: Colour;
@@ -1080,156 +1575,268 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function CreateSprite(startBitmap : Bitmap): Sprite; cdecl; export;
 	begin
-		result := SGSDK_Graphics.CreateSprite(startBitmap);
+		Try
+			result := SGSDK_Graphics.CreateSprite(startBitmap);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateSpriteMultiFPC(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite; cdecl; export;
 	begin
-		result := SGSDK_Graphics.CreateSprite(image,framesPerCell, frames, width, height);
+		Try
+			result := SGSDK_Graphics.CreateSprite(image,framesPerCell, frames, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateSpriteArrayFPC(bitlength : Integer; bitmaps: BitmapArray; framesPerCell, frames: Integer): Sprite; cdecl; export;
 	begin
-		SetLength(bitmaps, bitlength);
-		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, frames);
+		Try
+			SetLength(bitmaps, bitlength);
+			result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, frames);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
 	begin
-		SetLength(framesPerCell, length);
-		result := SGSDK_Graphics.CreateSprite(image, isMulti, framesPerCell, endingAction, width, height);
+		Try
+			SetLength(framesPerCell, length);
+			result := SGSDK_Graphics.CreateSprite(image, isMulti, framesPerCell, endingAction, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; width, height : Integer): Sprite; cdecl; export;
 	begin
-		SetLength(framesPerCell, length);
-		result := SGSDK_Graphics.CreateSprite(image, isMulti,framesPerCell, width, height);
+		Try
+			SetLength(framesPerCell, length);
+			result := SGSDK_Graphics.CreateSprite(image, isMulti,framesPerCell, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function CreateSpriteArrayEnding(bitlength : Integer; bitmaps : BitmapArray; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction): Sprite; cdecl; export;
 	begin
-		SetLength(bitmaps, bitlength);
-		SetLength(framesPerCell, length);
-		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, endingAction);
+		Try
+			SetLength(bitmaps, bitlength);
+			SetLength(framesPerCell, length);
+			result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, endingAction);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CreateSpriteArray(bitlength : Integer; bitmaps : BitmapArray; length : Integer; framesPerCell : IntArray): Sprite; cdecl; export;
 	begin
-		SetLength(bitmaps, bitlength);
-		SetLength(framesPerCell, length);
-		result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
+		Try
+			SetLength(bitmaps, bitlength);
+			SetLength(framesPerCell, length);
+			result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	// Update Sprite
 	
 	procedure UpdateSpriteAnimation(spriteToDraw : Sprite); cdecl; export;
 	begin
-		SGSDK_Graphics.UpdateSpriteAnimation(spriteToDraw);
+		Try
+			SGSDK_Graphics.UpdateSpriteAnimation(spriteToDraw);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure UpdateSprite(spriteToDraw : Sprite); cdecl; export;
 	begin
-		SGSDK_Graphics.UpdateSprite(spriteToDraw);
+		Try
+			SGSDK_Graphics.UpdateSprite(spriteToDraw);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	// Sprite Properties
 	
 	function GetSpriteKind(surface : Sprite): Integer; cdecl; export;
 	begin
-		result := Integer(surface.spriteKind);
+		Try
+			result := Integer(surface.spriteKind);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteKind(surface : Sprite; kind : SpriteKind); cdecl; export;
 	begin
-		surface.SpriteKind := kind;
+		Try
+			surface.SpriteKind := kind;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteFramesPerCell(surface : Sprite; framesPerCell : IntArray; length : Integer); cdecl; export;
 	begin
-		SetLength(framesPerCell, length);
-		surface.framesPerCell := framesPerCell;
+		Try
+			SetLength(framesPerCell, length);
+			surface.framesPerCell := framesPerCell;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteFramesPerCell(surface : Sprite; ind : Integer): Integer; cdecl; export;
 	begin
-		result := surface.framesPerCell[ind];
+		Try
+			result := surface.framesPerCell[ind];
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteCols(surface : Sprite) : Integer; cdecl; export;
 	begin
-		result := surface.cols;
+		Try
+			result := surface.cols;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteRow(surface : Sprite) : Integer; cdecl; export;
 	begin
-		result := surface.row;
+		Try
+			result := surface.row;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteFrameCount(surface : Sprite) : Integer; cdecl; export;
 	begin
 		//result := surface.frameCount;
-		result := Length(surface.framesperCell);
+		Try
+			result := Length(surface.framesperCell);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteendingAction(surface : Sprite) : Integer; cdecl; export;
 	begin
-		result := Integer(surface.endingAction);
+		Try
+			result := Integer(surface.endingAction);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteendingAction(surface : Sprite; endingAction : SpriteEndingAction); cdecl; export;
 	begin
-		surface.endingAction := endingAction
+		Try
+			surface.endingAction := endingAction;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpritehasEnded(surface : Sprite) : Boolean; cdecl; export;
 	begin
-		result := surface.hasEnded;
+		Try
+			result := surface.hasEnded;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteReverse(surface : Sprite) : Boolean; cdecl; export;
 	begin
-		result := surface.reverse;
+		Try
+			result := surface.reverse;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteMass(surface : Sprite) : Single; cdecl; export;
 	begin
-		result := surface.mass;
+		Try
+			result := surface.mass;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GetSpriteMovement(surface : Sprite) : Vector; cdecl; export;
 	begin
-		result := surface.movement;
+		Try
+			result := surface.movement;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteMass(surface : Sprite; mass : Single); cdecl; export;
 	begin
-		surface.mass := mass;
+		Try
+			surface.mass := mass;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetSpriteMovement(surface : Sprite; movement : Vector); cdecl; export;
 	begin
-		surface.movement := movement;
+		Try
+			surface.movement := movement;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
 	begin
-		SGSDK_Graphics.FreeSprite(spriteToFree);
+		Try
+			SGSDK_Graphics.FreeSprite(spriteToFree);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function AddBitmapToSprite(spriteToAddTo : Sprite;
 														 bitmapToAdd : Bitmap): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
+		Try
+			result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function CurrentHeight(sprite: Sprite): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.CurrentHeight(sprite);
+		Try
+			result := SGSDK_Graphics.CurrentHeight(sprite);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function CurrentWidth(sprite: Sprite): Integer; cdecl; export;
 	begin
-		result := SGSDK_Graphics.CurrentWidth(sprite);
+		Try
+			result := SGSDK_Graphics.CurrentWidth(sprite);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{procedure DrawSprite1(spriteToDraw : Sprite); cdecl; export;
@@ -1239,34 +1846,54 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	procedure DrawSprite(spriteToDraw : Sprite); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawSprite(spriteToDraw);
+		Try
+			SGSDK_Graphics.DrawSprite(spriteToDraw);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawSpriteOffSet(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
+		Try
+			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); cdecl; export;
 	begin
-		SGSDK_Graphics.MoveSprite(spriteToMove, movementVector);
+		Try
+			SGSDK_Graphics.MoveSprite(spriteToMove, movementVector);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
+		Try
+			SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	function IsSpriteOffscreen(theSprite : Sprite): Integer; cdecl; export;
 	begin
-		if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then
-		begin
-			result:= -1
-		end
-		else
-		begin
-			result:= 0
-		end
+		Try
+			if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then
+			begin
+				result:= -1
+			end
+			else
+			begin
+				result:= 0
+			end
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	{
@@ -1288,23 +1915,39 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcW, x ,y);
+		Try
+			SGSDK_Graphics.DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcW, x ,y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawBitmapOnScreen(bitmapToDraw, x ,y );
+		Try
+			SGSDK_Graphics.DrawBitmapOnScreen(bitmapToDraw, x ,y );
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawPixelOnScreen(theColour, x ,y);
+		Try
+			SGSDK_Graphics.DrawPixelOnScreen(theColour, x ,y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean;
 							xPos, yPos, width, height : Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 	{
@@ -1318,23 +1961,39 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart,
 					 xPosEnd, yPosEnd: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+		Try
+			SGSDK_Graphics.DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawHorizontalLineOnScreen(theColor, y, x1, x2);
+		Try
+			SGSDK_Graphics.DrawHorizontalLineOnScreen(theColor, y, x1, x2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawVerticalLineOnScreen(theColor, x, y1, y2);
+		Try
+			SGSDK_Graphics.DrawVerticalLineOnScreen(theColor, x, y1, y2);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean;
 						 xc, yc, radius: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawCircleOnScreen(theColour, filled, xc, yc, radius);
+		Try
+			SGSDK_Graphics.DrawCircleOnScreen(theColour, filled, xc, yc, radius);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	{
@@ -1347,7 +2006,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean;
 						xPos, yPos, width, height: Integer); cdecl; export;
 	begin
-		SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled, xPos, yPos, width, height);
+		Try
+			SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled, xPos, yPos, width, height);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	{
@@ -1363,57 +2026,101 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function XOffset(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Camera.XOffset();
+		Try
+			result := SGSDK_Camera.XOffset();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function YOffset(): Integer; cdecl; export;
 	begin
-		result := SGSDK_Camera.YOffset();
+		Try
+			result := SGSDK_Camera.YOffset();
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function ScreenX(x: Single): Integer; cdecl; export;
 	begin
-		result := SGSDK_Camera.ScreenX(x);
+		Try
+			result := SGSDK_Camera.ScreenX(x);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function ScreenY(y: Single): Integer; cdecl; export;
 	begin
-		result := SGSDK_Camera.ScreenY(y);
+		Try
+			result := SGSDK_Camera.ScreenY(y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GameX(x: Integer) : Single; cdecl; export;
 	begin
-		result := SGSDK_Camera.GameX(x);
+		Try
+			result := SGSDK_Camera.GameX(x);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function GameY(y: Integer) : Single; cdecl; export;
 	begin
-		result := SGSDK_Camera.GameY(y);
+		Try
+			result := SGSDK_Camera.GameY(y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function ToGameCoordinates(screenVector: Vector): Vector; cdecl; export;
 	begin
-		result := SGSDK_Camera.ToGameCoordinates(screenVector);
+		Try
+			result := SGSDK_Camera.ToGameCoordinates(screenVector);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure MoveVisualAreaWithVector(v: Vector); cdecl; export;
 	begin
-		SGSDK_Camera.MoveVisualArea(v);
+		Try
+			SGSDK_Camera.MoveVisualArea(v);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure MoveVisualArea(dx, dy: Single); cdecl; export;
 	begin
-		SGSDK_Camera.MoveVisualArea(dx, dy);
+		Try
+			SGSDK_Camera.MoveVisualArea(dx, dy);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure SetScreenOffset(x, y: Single); cdecl; export;
 	begin
-		SGSDK_Camera.SetScreenOffset(x, y);
+		Try
+			SGSDK_Camera.SetScreenOffset(x, y);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure FollowSprite(spr : Sprite; xOffset, yOffset : Integer); cdecl; export;
 	begin
-		SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
+		Try
+			SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -1426,41 +2133,69 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	var
 		p : MapPtr;
 	begin
-		new(p);
-		p^ := SGSDK_MappyLoader.LoadMap(fileName);
-		result := p;
+		Try
+			new(p);
+			p^ := SGSDK_MappyLoader.LoadMap(fileName);
+			result := p;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure DrawMap(m : MapPtr); cdecl; export;
 	begin
-		SGSDK_MappyLoader.DrawMap(m^);
+		Try
+			SGSDK_MappyLoader.DrawMap(m^);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function CollisionWithMapVector(m : MapPtr; spr : Sprite; vec: Vector): CollisionSide; cdecl; export;
 	begin
-		result := SGSDK_MappyLoader.CollisionWithMap(m^, spr, vec);
+		Try
+			result := SGSDK_MappyLoader.CollisionWithMap(m^, spr, vec);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function EventCount(m : MapPtr; event : Event): Integer; cdecl; export;
 	begin
-		result := SGSDK_MappyLoader.EventCount(m^, event);
+		Try
+			result := SGSDK_MappyLoader.EventCount(m^, event);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function EventPositionX(m : MapPtr; event : Event; eventnumber : Integer): Integer; cdecl; export;
 	begin
-		result := SGSDK_MappyLoader.EventPositionX(m^, event, eventnumber);
+		Try
+			result := SGSDK_MappyLoader.EventPositionX(m^, event, eventnumber);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	function EventPositionY(m : MapPtr; event : Event; eventnumber : Integer): Integer; cdecl; export;
 	begin
-		result := SGSDK_MappyLoader.EventPositionY(m^, event, eventnumber);
+		Try
+			result := SGSDK_MappyLoader.EventPositionY(m^, event, eventnumber);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 	
 	procedure FreeMap(m : MapPtr);
 	begin
-		SGSDK_MappyLoader.FreeMap(m^);
-		dispose(m);
-		m := nil;
+		Try
+			SGSDK_MappyLoader.FreeMap(m^);
+			dispose(m);
+			m := nil;
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
 	end;
 
 exports

@@ -28,7 +28,7 @@ namespace GameProject
         {
             //The Map
             Map _Map = Resources.GameMap("Level1");
-            Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0));
+            Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0),5,5,5);
             
             //Game Loop
             do
@@ -39,14 +39,27 @@ namespace GameProject
                 //Draw Map
                 MappyLoader.DrawMap(_Map);
 
+                //Update Player
                 Controller.UpdatePlayer(ref _Player, _Map);
 
+                //Follow the Player 
                 Camera.FollowSprite(_Player.Sprite, 0, 0);
 
+                //Draw the Player
                 Graphics.DrawSprite(_Player.Sprite);
+
+                //Refreshes the Characters Stats
+                Characters.RefreshCharacterStats(ref _Player);
+
+                //Runs the User Interface
+                UserInterface.RunUI(ref _Player);
+
+                //Draws the Help Text
+                Text.DrawTextOnScreen("Hit S to Open and Close the Stat Page", Color.White, Resources.GameFont("Courier"), 420, 580);
 
                 //Draws the FrameRate
                 Text.DrawFramerate(550, 0, Resources.GameFont("Courier"));
+
 
                 //Refreshes the Screen and Processes Input Events
                 Core.RefreshScreen();
