@@ -6,10 +6,11 @@ Usage()
 	exit 1
 }
 
-while getopts h:? o
+while getopts hd? o
 do
 	case "$o" in
 	h) Usage;;
+	d) EXTRA_OPTS="-g -gl -gc";;
 	[?]) Usage;;
 	esac
 done
@@ -23,11 +24,17 @@ else
 	Usage
 fi
 
+if [ ! -d ./bin ]
+then
+	echo "Creating bin folder"
+	mkdir ./bin
+fi
+
 echo "Building $PRODUCT_NAME"
 
 echo Compiling game
 
-fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib/Pas -FU./bin -o"$PRODUCT_NAME" GameLauncher.pas 
+fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas 
 
 echo Copying resources
 

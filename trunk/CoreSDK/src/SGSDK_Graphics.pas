@@ -905,11 +905,13 @@ implementation
 			end;
 			if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
 				UpdateSpriteAnimation(spriteToDraw);
+
+			if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
+				UpdateSpriteAnimation(spriteToDraw);
 		end;
 		
 		//Skip Fix
-			if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
-			UpdateSpriteAnimation(spriteToDraw);
+		//WriteLn('fpc: ', Length(spriteToDraw.framesPerCell), ' cc: ', spritetoDraw.currentFrame);
 	end;
 	
 	procedure UpdateSprite(spriteToDraw: Sprite);
