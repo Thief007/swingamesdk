@@ -289,19 +289,19 @@ begin
 	for cycle := 0 to 30 do RefreshScreen();		
 
 	totalScore := data.score + bonus;
-	temp := bonus mod 10;
-	data.score += bonus mod 10;
+	temp := bonus mod 99;
+	data.score += bonus mod 99;
 	
-	for cycle := 0 to bonus div 10 - 1 do
+	for cycle := 0 to bonus div 99 - 1 do
 	begin
 		ProcessEvents();
 		
-		temp += 10;
-		data.score += 10;
+		temp += 99;
+		data.score += 99;
 		
 		DrawScores();
 		
-		if cycle mod 10 = 0 then PlaySoundEffect(GameSound(CollectStarSound));
+		if cycle mod 99 = 0 then PlaySoundEffect(GameSound(CollectStarSound));
 	end;
 	
 	temp := bonus;
@@ -464,9 +464,10 @@ begin
 	if IsHighScore(data.score) then
 		data.state := EnterHighScoreState
 	else
+	begin
 		data.state := GameMenuState;
-		
-	data.score := 0;
+		data.score := 0;
+	end;
 end;
 
 procedure DoShowScoreboard(var data: GameDataType);
@@ -535,6 +536,7 @@ begin
 	end;
 
 	data.state := GameMenuState;
+	data.score := 0;
 end;
 
 procedure DoEnterLevel(var data: GameDataType);
@@ -642,7 +644,7 @@ begin
 		if WasKeyTyped(VK_RETURN) then
 		begin
 			case currentOption of
-				0: StartAtLevel(data, 1);
+				0: StartAtLevel(data, data.topLevel);
 				1: DoEnterLevel(data);
 				2: data.state := ShowScoreboardState;
 				3: data.state := ExitGameState;
@@ -705,6 +707,8 @@ begin
 
 	repeat
 		ProcessEvents();
+	
+		if IsSpecialKeyPressed() and WasKeyTyped(VK_F) then ToggleFullscreen();
 	
 		case data.state of
 			PlayingIntroState: DoPlayIntro(data);

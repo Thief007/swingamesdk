@@ -79,7 +79,11 @@ implementation
 	procedure OpenAudio();
 	begin
 		//WriteLn('Opening Mixer');
-		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
+		{$ifdef UNIX}
+		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) = -1 then
+		{$else}
+		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then			
+		{$endif}
 		begin
 			WriteLn('Errorm loading mixer...');
 			WriteLn(string(Mix_GetError));

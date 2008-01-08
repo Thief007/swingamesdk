@@ -3,10 +3,21 @@
 Output=`pwd`/bin/mac/
 MacFPCDir=`pwd`/../SDKs/Pascal/Mac/FPC/lib/
 LibDir=`pwd`/lib/mac
+CLEAN="N"
+EXTRA_OPTS="-O3"
+
+while getopts hdc o
+do
+	case "$o" in
+	d)  EXTRA_OPTS="-gw3 -gl -gp -godwarfsets -Ci -Co -Ct";;
+	h)  Usage;;
+	c)  CLEAN="Y"
+	esac
+done
 
 cd src/
 
-if [ $1 = "-clean" ]
+if [ $CLEAN = "Y" ]
 then
 	cd "$Output"
 	rm -f SGSDK_Core.*
@@ -25,24 +36,26 @@ then
 	rm -f SGSDK_Camera.*
 	echo Cleaned
 else
+	echo "Compiling with " $EXTRA_OPTS
+
 	mkdir -p "$Output"
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Core.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Core.pas
 	if [ $? != 0 ]; then echo "Error compiling Core"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Camera.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Camera.pas
 	if [ $? != 0 ]; then echo "Error compiling Camera"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Graphics.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Graphics.pas
 	if [ $? != 0 ]; then echo "Error compiling Graphics"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Font.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Font.pas
 	if [ $? != 0 ]; then echo "Error compiling Font"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Input.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Input.pas
 	if [ $? != 0 ]; then echo "Error compiling Input"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Physics.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Physics.pas
 	if [ $? != 0 ]; then echo "Error compiling Physics"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_Audio.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Audio.pas
 	if [ $? != 0 ]; then echo "Error compiling Audio"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_KeyCodes.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_KeyCodes.pas
 	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; exit 1; fi
-	fpc -Mdelphi -O3 -FE"$Output" SGSDK_MappyLoader.pas
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_MappyLoader.pas
 	if [ $? != 0 ]; then echo "Error compiling MappyLoader"; exit 1; fi
 	
 	echo "Copying to FPC"

@@ -290,6 +290,7 @@ interface
 		_Templates: Array [AlienFlightSpriteKind] of AlienFlightSpriteTemplate;
 		
 implementation
+	uses AlienFlightView;
 	
 	function MaxForegroundX(): Single;
 	begin
@@ -482,7 +483,7 @@ implementation
 		//Base
 		template.used := true;
 		template.isMulti := true; 
-		template.mass := 100.0;
+		template.mass := 1000.0;
 		template.endingAction := Loop;
 		template.framesPerCell := 10;
 		template.foreground := true;
@@ -858,10 +859,22 @@ implementation
 		end;
 	end;
 
-	procedure DestroySprite(var data: GameDataType; var obj: AlienFlightSprite);
+	procedure DestroySprite(var data: GameDataType; var obj: AlienFlightSprite; withMovement: Boolean); overload;
 	begin
-		obj.active := false;		
-		AddExplosion(data, obj.sprite.xPos, obj.sprite.yPos, obj.sprite.movement);
+		if obj.active then
+		begin
+			obj.active := false;		
+
+			if withMovement then
+				AddExplosion(data, obj.sprite.xPos, obj.sprite.yPos, obj.sprite.movement)
+			else
+				AddExplosion(data, obj.sprite.xPos, obj.sprite.yPos, CreateVector(0,0));
+		end;
+	end;
+	
+	procedure DestroySprite(var data: GameDataType; var obj: AlienFlightSprite); overload;
+	begin
+		DestroySprite(data, obj, true);
 	end;
 
 	function ApplyGravity(var data: GameDataType; sprt: Sprite; blkHole: AlienFlightSpritePtr; applyToMovement:Boolean): Boolean;
@@ -873,17 +886,19 @@ implementation
 		mt := Magnitude(temp);
 		result := false;
 		
-		if (mt > 0) and (mt <= 50.0) then
+		if (mt > 0) and (mt <= 25.0) then
 		begin
 			result := true;
 		end
-		else if (mt > 50.0) and (mt < blkHole^.values[BLACK_HOLE_SUCK_IDX]) then
+		else if (mt > 25.0) and (mt < blkHole^.values[BLACK_HOLE_SUCK_IDX]) then
 		begin
 			if applyToMovement then
 			begin
-				move := MultiplyVector(GetUnitVector(temp), 
-					(blkHole^.values[BLACK_HOLE_SUCK_IDX] - (blkHole^.values[BLACK_HOLE_SUCK_IDX] - mt)) 
+				//WriteLn((blkHole.sprite.mass) / (mt * mt));
+				move := MultiplyVector(GetUnitVector(temp), ((blkHole.sprite.mass) / (mt * mt)) * 5);
+{					(blkHole^.values[BLACK_HOLE_SUCK_IDX] - (blkHole^.values[BLACK_HOLE_SUCK_IDX] - mt)) 
 					* blkHole^.values[BLACK_HOLE_PULL_FACTOR_IDX] * 1/(BLACK_SUCK_TIME * 10));
+}				//WriteLn(' -> ', Magnitude(move));
 				sprt.movement := AddVectors(sprt.movement, move);	
 			end
 			else
@@ -902,7 +917,7 @@ implementation
 	begin
 		if ApplyGravity(data, sprt^.sprite, blkHole, true) then
 		begin
-			DestroySprite(data, sprt^);
+			DestroySprite(data, sprt^, false);
 		end;
 	end;
 	
@@ -925,6 +940,14 @@ implementation
 			if data.sprites[i].active and (@data.sprites[i] <> blkHole) and (data.sprites[i].kind <> BlackHoleKind) then
 			begin
 				ApplyGravitytoSprite(data, blkHole, @data.sprites[i]);
+			end;
+		end;
+		
+		for i := 0 to MAX_ANIMATIONS do
+		begin
+			if data.animations[i] <> nil then
+			begin
+				ApplyGravity(data, data.animations[i], blkHole, true);
 			end;
 		end;
 		
@@ -993,12 +1016,12 @@ implementation
 	end;
 		
 	procedure DoPlanetCollision(var p1, p2: AlienFlightSprite);
-{	var
-		colNormalAngle, a1, a2, optP: Single;
-		n: Vector;}
+	//var
+		//colNormalAngle, a1, a2, optP: Single;
+		//n: Vector;
 	begin
 		VectorCollision(p1.sprite, p2.sprite);
-		{colNormalAngle := CalculateAngle(p1.Sprite, p2.Sprite);
+{		colNormalAngle := CalculateAngle(p1.Sprite, p2.Sprite);
 		
 		//COLLISION RESPONSE
 		// n = vector connecting the centers of the balls.
@@ -1007,24 +1030,24 @@ implementation
 		
 		// now find the length of the components of each movement vectors
 		// along n, by using dot product.
-		a1 := DotProduct(p1.Movement, n);
+		a1 := DotProduct(p1.sprite.Movement, n);
 		//Local a1# = c.dx*nX  +  c.dy*nY
-		a2 := DotProduct(p2.Movement, n);
+		a2 := DotProduct(p2.sprite.Movement, n);
 		//Local a2# = c2.dx*nX +  c2.dy*nY
 		
 		// optimisedP = 2(a1 - a2)
 		//             ----------
 		//              m1 + m2
-		optP := (2.0 * (a1-a2)) / (p1.mass + p2.mass);
+		optP := (2.0 * (a1-a2)) / (p1.sprite.mass + p2.sprite.mass);
 		
 		// now find out the resultant vectors
 		// Local r1% = c1.v - optimisedP * mass2 * n
-		p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
-		p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
+		p1.sprite.movement.x := p1.sprite.movement.x - (optP * p2.sprite.mass * n.x);
+		p1.sprite.movement.y := p1.sprite.movement.y - (optP * p2.sprite.mass * n.y);
 		
 		// Local r2% = c2.v - optimisedP * mass1 * n
-		p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
-		p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);}
+		p2.sprite.movement.x := p2.sprite.movement.x + (optP * p1.sprite.mass * n.x);
+		p2.sprite.movement.y := p2.sprite.movement.y + (optP * p1.sprite.mass * n.y);}
 	end;
 	
 	procedure DoPlayerCollision(var data: GameDataType; var obj: AlienFlightSprite);
@@ -1127,18 +1150,19 @@ implementation
 	
 	procedure CheckCollisionBetweenSprites(var data: GameDataType);
 	var
-		i, j: Integer;
+		i, j, k: Integer;
 	begin
 		//For all sprites
 		for i := Low(data.sprites) to High(data.sprites) - 1 do
 		begin
-			if data.sprites[i].active then
+			if data.sprites[i].active and HasSpriteCollidedX(data.sprites[i].sprite, GameX(SCREEN_WIDTH), CollisionRangeLessThan) and
+				HasSpriteCollidedX(data.sprites[i].sprite, GameX(0), CollisionRangeGreaterThan) then
 			begin
 				//For all other sprites
 				for j := i + 1 to High(data.sprites) do
 				begin
 					//Check collisions between the i'th and j'th planet
-					if data.sprites[j].active and 
+					if data.sprites[j].active and
 						(not KindsMayCollide(data.sprites[i].kind, data.sprites[j].kind)) and
 						HaveSpritesCollided(data.sprites[i].sprite, data.sprites[j].sprite) then
 					begin
@@ -1152,12 +1176,31 @@ implementation
 							break; //cant collide any more...
 						end;
 						
-						{while HaveSpritesCollided(data.sprites[i].Sprite, data.sprites[j].Sprite) do}
+						if not (data.sprites[i].active and data.sprites[j].active) then exit;
+						
+						//if HaveSpritesCollided(data.sprites[i].Sprite, data.sprites[j].Sprite) then
 						begin
-							//WriteLn('Collision...');
 							MoveSprite(data.sprites[i].Sprite);
 							MoveSprite(data.sprites[j].Sprite);
 						end;
+						
+						{if HaveSpritesCollided(data.sprites[i].Sprite, data.sprites[j].Sprite) then
+						begin
+							
+							//WriteLn('Collision...');
+							if Magnitude(data.sprites[i].sprite.movement) > Magnitude(data.sprites[j].sprite.movement) then
+								MoveSprite(data.sprites[i].Sprite)
+							else
+								MoveSprite(data.sprites[j].Sprite);
+							
+							for k := 0 to 15 do
+								begin
+									DrawScreen(data, true, false);
+									OutlineSprite(data.sprites[i], ColorGreen);
+									OutlineSprite(data.sprites[j], ColorBlue);
+									RefreshScreen();
+								end;
+						end;}
 					end;
 				end;
 			end;
