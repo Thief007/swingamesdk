@@ -55,6 +55,7 @@ interface
 	function SelectedValue(const status: EditorStatusType; sprt: AlienFlightSpritePtr): Single;
 	function SelectedName(const status: EditorStatusType; sprt: AlienFlightSpritePtr): String;
 	function HasSelectedValue(const status: EditorStatusType; sprt: AlienFlightSpritePtr): boolean;
+	function IsSpecialKeyPressed(): Boolean;
 	
 	procedure InitEdit(out status: EditorStatusType; var data: GameDataType);
 	procedure EndEdit(var status: EditorStatusType; var data: GameDataType);

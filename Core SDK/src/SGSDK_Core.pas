@@ -473,12 +473,15 @@ implementation
 		oldScr: PSDL_Surface;
 	begin
 		oldScr := scr.surface;
+		
 		try
-			scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, 
-	                                   oldScr.flags xor SDL_FULLSCREEN);
-			SDL_FreeSurface(oldScr);
-		except
-			RaiseSGSDKException('Error occured while toggling fullscreen');
+			scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, oldScr.flags xor SDL_FULLSCREEN);
+			
+			//WriteLn(HexStr(scr.surface), ' ', HexStr(oldScr));
+			WriteLn('Bug with freeing surface on toggle Fullscreen... needs to be examined');
+			//SDL_FreeSurface(oldScr);
+		except on exc: Exception do
+			RaiseSGSDKException('Error occured while toggling fullscreen - ' + exc.message);
 		end;
 	end;
 	

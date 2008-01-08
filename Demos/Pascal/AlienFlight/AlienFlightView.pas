@@ -28,16 +28,14 @@ interface
 		
 	procedure DrawEditorStatus(const status: EditorStatusType);
 		
+	procedure OutlineSprite(const sprt: AlienFlightSprite; c: Color);
+		
 implementation
-	procedure DrawOutline(const status: EditorStatusType; const sprt: AlienFlightSprite);
+
+	procedure OutlineSprite(const sprt: AlienFlightSprite; c: Color);
 	var
 		x : Single;
-		c: Color;
 	begin
-		c := ColorWhite;
-		
-		if (status.selectedIdx < Length(status.selection)) and (@sprt = status.selection[status.selectedIdx]) then c := ColorYellow;
-		
 		if _Templates[sprt.kind].foreground then
 			DrawRectangle(c, sprt.sprite.xPos, sprt.sprite.yPos, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite))
 		else
@@ -45,6 +43,16 @@ implementation
 			x := Round(sprt.sprite.xPos - CalculateBackgroundX(XOffset()) + XOffset());
 			DrawRectangle(c, x, sprt.sprite.yPos, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite));
 		end;
+	end;
+
+	procedure DrawOutline(const status: EditorStatusType; const sprt: AlienFlightSprite);
+	var
+		c: Color;
+	begin
+		c := ColorWhite;
+		
+		if (status.selectedIdx < Length(status.selection)) and (@sprt = status.selection[status.selectedIdx]) then c := ColorYellow;
+		OutlineSprite(sprt, c);
 	end;
 
 	procedure DrawMessage(message: String);

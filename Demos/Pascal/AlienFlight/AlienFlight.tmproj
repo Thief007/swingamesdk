@@ -26,72 +26,56 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>8</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>389</integer>
+				<integer>58</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>308</integer>
+			<integer>49</integer>
 		</dict>
 		<key>AlienFlightModel.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>22</integer>
+				<integer>54</integer>
 				<key>line</key>
-				<integer>1269</integer>
+				<integer>884</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1244</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>9</integer>
-				<key>line</key>
-				<integer>1269</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>25</integer>
-				<key>line</key>
-				<integer>1269</integer>
-			</dict>
+			<integer>817</integer>
 		</dict>
 		<key>AlienFlightView.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>41</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>40</integer>
+				<integer>226</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>40</integer>
+			<integer>215</integer>
 		</dict>
 		<key>GameLogic.pas</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>19</integer>
+				<integer>73</integer>
 				<key>line</key>
-				<integer>47</integer>
+				<integer>710</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>147</integer>
+			<integer>694</integer>
 		</dict>
 		<key>GameResources.pas</key>
 		<dict>
@@ -100,86 +84,40 @@
 				<key>column</key>
 				<integer>2</integer>
 				<key>line</key>
-				<integer>264</integer>
+				<integer>313</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>241</integer>
+			<integer>297</integer>
 		</dict>
-		<key>Resources/level1.dat</key>
+		<key>macbuild.sh</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>1</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>40</integer>
-				<key>line</key>
-				<integer>1</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>1</integer>
-			</dict>
-		</dict>
-		<key>Resources/level2.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>37</integer>
-				<key>line</key>
-				<integer>1</integer>
+				<integer>50</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>Resources/level80.dat</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>37</integer>
-				<key>line</key>
-				<integer>1</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>50</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>GameLogic.pas</string>
 		<string>AlienFlightModel.pas</string>
-		<string>AlienFlightLevelEditor.pas</string>
-		<string>Resources/level80.dat</string>
-		<string>Resources/level1.dat</string>
-		<string>Resources/level2.dat</string>
 		<string>GameResources.pas</string>
 		<string>AlienFlightView.pas</string>
+		<string>GameLogic.pas</string>
+		<string>macbuild.sh</string>
+		<string>AlienFlightLevelEditor.pas</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
-	<false/>
+	<true/>
 	<key>windowFrame</key>
-	<string>{{55, 31}, {1096, 747}}</string>
+	<string>{{292, 131}, {1096, 747}}</string>
 </dict>
 </plist>

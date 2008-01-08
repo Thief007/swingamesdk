@@ -181,7 +181,7 @@ implementation
 	begin
 		for i := Low(_Music) to High(_Music) do
 		begin
-			FreeMusic(_Music[i]);
+			//FreeMusic(_Music[i]);
 		end;
 	end;
 	

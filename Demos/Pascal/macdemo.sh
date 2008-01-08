@@ -6,6 +6,8 @@ Usage()
 	exit 1
 }
 
+CLEAN="N"
+
 while getopts l:ch o
 do
 	case "$o" in
