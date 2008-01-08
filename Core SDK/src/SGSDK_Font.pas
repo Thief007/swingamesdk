@@ -129,10 +129,10 @@ implementation
 		except
 			RaiseSGSDKException('Unable to CreateFont: ' + TTF_GetError());
 		end;
-		if result = nil then
-		begin
-			RaiseSGSDKException('Unable to CreateFont: ' + TTF_GetError());
-		end;
+		//if result = nil then
+		//begin
+		//	RaiseSGSDKException('Unable to CreateFont: ' + TTF_GetError());
+		//end;
 	end;
 
 	/// Sets the style of the passed in font. This is time consuming, so load

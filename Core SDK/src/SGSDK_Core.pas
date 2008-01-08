@@ -173,12 +173,7 @@ interface
 		///	store animations, or the like. Sprite drawing operations will draw the
 		///	Sprite's current frame.
 		Sprite = ^SpriteData;
-		
-		/// Type: SpriteCollection
-		///
-		/// Array of sprites which can be passed to DrawSprites() to draw multiple
-		/// sprites at once.
-		/// SpriteCollection = Array of Sprite;
+			
 		
 	var
 		//Preset colours, do not change these values.
@@ -277,11 +272,12 @@ implementation
 	var
 		HasErrorOccured: Boolean = false;
 		ExceptionMessage: String;
-	
+		
 	procedure RaiseSGSDKException(msg: String);
 	begin
 		ExceptionMessage := msg;
 		HasErrorOccured := true;
+		
 		raise Exception.Create(msg);
 	end;
 	
@@ -328,6 +324,7 @@ implementation
 	var
 		icon: PSDL_Surface;
 	begin
+	
 		if (screenWidth < 1) or (screenHeight < 1) then
 		begin
 			RaiseSGSDKException('Screen Width and Height must be greater then 0 when opening a Graphical Window');

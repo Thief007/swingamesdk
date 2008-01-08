@@ -10,6 +10,8 @@
     <RootNamespace>GameProject</RootNamespace>
     <AssemblyName>TomatoQuest</AssemblyName>
     <ApplicationIcon>SwinGame.ico</ApplicationIcon>
+    <StartupObject>
+    </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +68,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UserInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\jpeg.dll">
