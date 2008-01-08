@@ -719,7 +719,7 @@ implementation
 		LoadResources();
 		Randomize();
 		ProcessEvents();
-		{DrawLines();
+		DrawLines();
 		if WindowCloseRequested() then exit;
 		DrawRectangles();
 		if WindowCloseRequested() then exit;
@@ -756,7 +756,7 @@ implementation
 		FollowSpriteExample();
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
-		If WindowCloseRequested() then exit;}
+		If WindowCloseRequested() then exit;
 		MapExample();
 		FreeResources();
 	end;
