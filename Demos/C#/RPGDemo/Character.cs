@@ -111,7 +111,7 @@ namespace GameProject
             temp.SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 2, 5, 49, 27);
             temp.Attacking = false;
 
-            //temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
+            temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
 
             return temp;
         }
@@ -124,7 +124,8 @@ namespace GameProject
                 {
                     case CharacterAnim.Top:
                         theCharacter.Attacking = true;
-                        theCharacter.SlashUp.CurrentFrame = 0;
+                        theCharacter.SlashUp.CurrentFrame = 3;
+                        
                         break;
                 }
             }
