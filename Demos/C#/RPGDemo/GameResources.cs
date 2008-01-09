@@ -296,10 +296,17 @@ namespace GameResources
             NewImage("Overlay", "Overlay.png");
             NewImage("Health", "Health.png");
             NewImage("HealthVial", "HealthVial.png");
+
+            NewImage("Slash Up", "Slash_up.png");
+            NewImage("Slash Down", "Slash_down.png");
+            NewImage("Slash Left", "Slash_left.png");
+            NewImage("Slash Right", "Slash_right.png");
+
         }
 
         private static void LoadSounds()
         {
+            NewSound("Swing", "Swing.wav");
         }
 
         private static void LoadMusic()

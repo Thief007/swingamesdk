@@ -24,6 +24,9 @@ namespace GameProject
     {
         const Event PLAYERSPAWN = Event.Event1; 
 
+        /// <summary>
+        /// Main Game Routine
+        /// </summary>
         public static void MainGame()
         {
             //The Map
@@ -68,6 +71,9 @@ namespace GameProject
             } while (!Core.WindowCloseRequested());
         }
 
+        /// <summary>
+        /// Main Loop
+        /// </summary>
         public static void RunGame()
         {
             //Open a new Graphics Window

@@ -64,6 +64,16 @@ namespace GameProject
 
         //Remove this when added to tutorial
         public Boolean Alive;
+
+        //Remove this when added to tutorial
+        public Sprite SlashUp;
+        public Sprite SlashDown;
+        public Sprite SlashLeft;
+        public Sprite SlashRight;
+
+        public Boolean Attacking;
+        public int Cooldown;
+
     }
 
     public static class Characters
@@ -94,7 +104,81 @@ namespace GameProject
             temp.Stats.Experience = 0;
             temp.Stats.ExperienceNextLevel = 100;
 
+            //Remove this when added to tutorial
+            temp.SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 2, 5, 28, 47);
+            temp.SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 2, 5, 28, 47);
+            temp.SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 2, 5, 49, 27);
+            temp.SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 2, 5, 49, 27);
+            temp.Attacking = false;
+
+            //temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
+
             return temp;
+        }
+
+        public static void InitiateAttack(ref Character theCharacter)
+        {
+            if (!theCharacter.Attacking)
+            {
+                switch (theCharacter.Anim)
+                {
+                    case CharacterAnim.Top:
+                        theCharacter.Attacking = true;
+                        theCharacter.SlashUp.CurrentFrame = 0;
+                        break;
+                }
+            }
+        }
+
+        public static void UpdateAttack(ref Character theCharacter)
+        {
+            //Update the position of the Upward Slash
+            theCharacter.SlashUp.xPos = theCharacter.Sprite.xPos;
+            theCharacter.SlashUp.yPos = theCharacter.Sprite.yPos;
+
+            //Update the Position of the Downward Slash
+            theCharacter.SlashDown.xPos = theCharacter.Sprite.xPos;
+            theCharacter.SlashDown.yPos = theCharacter.Sprite.yPos;
+
+            //Update the Position of the Left Slash
+            theCharacter.SlashLeft.xPos = theCharacter.Sprite.xPos;
+            theCharacter.SlashLeft.yPos = theCharacter.Sprite.yPos;
+
+            //Update the Position of the Right Slash
+            theCharacter.SlashRight.xPos = theCharacter.Sprite.xPos;
+            theCharacter.SlashRight.yPos = theCharacter.Sprite.yPos;
+
+            //Draw the Player Attacks
+            //Graphics.DrawSprite(_Player.SlashUp);
+            //Graphics.DrawSprite(_Player.SlashDown);
+            // Graphics.DrawSprite(_Player.SlashLeft);
+            //Graphics.DrawSprite(_Player.SlashRight);
+
+            if (theCharacter.Attacking)
+            {
+                //Remove when added to tutorial
+                if (!theCharacter.SlashUp.hasEnded)
+                {
+                    Graphics.UpdateSpriteAnimation(theCharacter.SlashUp);
+                    Graphics.DrawSprite(theCharacter.SlashUp);
+                }
+                else if (!theCharacter.SlashDown.hasEnded)
+                {
+                    Graphics.UpdateSpriteAnimation(theCharacter.SlashDown);
+                }
+                else if (!theCharacter.SlashLeft.hasEnded)
+                {
+                    Graphics.UpdateSpriteAnimation(theCharacter.SlashLeft);
+                }
+                else if (!theCharacter.SlashRight.hasEnded)
+                {
+                    Graphics.UpdateSpriteAnimation(theCharacter.SlashRight);
+                }
+                else
+                {
+                    theCharacter.Attacking = false;
+                }
+            }
         }
 
         public static void AddStat(ref Character theCharacter, String stat)
@@ -104,16 +188,19 @@ namespace GameProject
                 switch (stat)
                 {
                     case "Strength":
+                        //Add Strength
                         theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints - 1;
                         theCharacter.Attributes.Strength = theCharacter.Attributes.Strength + 1;
                         Core.Sleep(100);
                         break;
                     case "Agility":
+                        //Add Agility
                         theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints - 1;
                         theCharacter.Attributes.Agility = theCharacter.Attributes.Agility + 1;
                         Core.Sleep(100);
                         break;
                     case "Vitality":
+                        //Add Vitality
                         theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints - 1;
                         theCharacter.Attributes.Vitality = theCharacter.Attributes.Vitality + 1;
                         Core.Sleep(100);
@@ -221,6 +308,8 @@ namespace GameProject
                 }
                 Graphics.UpdateSpriteAnimation(theCharacter.Sprite);
             }
+
+            UpdateAttack(ref theCharacter);
         }
 
         private static void SetAnimationFrames(Sprite theSprite, int startingFrame, int startingIndex, int endingIndex)

@@ -37,11 +37,11 @@ namespace SwinGame
     //[StructLayout(LayoutKind.Sequential)]
     public class Matrix2D : IDisposable
     {
-        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
         private static extern void FreeMaxtrix2D(IntPtr maxtrix2d);
-        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
         private static extern Single GetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c);
-        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetMatrix2DElement")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetMatrix2DElement")]
         private static extern void SetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c, Single val); 
 
         internal IntPtr Pointer;
@@ -121,12 +121,12 @@ namespace SwinGame
     /// </summary>
     public class Physics
     {
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
 
-        [DllImport("lib/SGSDk.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedX")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedX")]
         private static extern bool DLL_HasSpriteCollidedX(IntPtr theSprite, int x, CollisionDetectionRange  range);
         /// <summary>
         /// Determines if a sprite has collided with a given x position.
@@ -153,7 +153,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedY")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedY")]
         private static extern bool DLL_HasSpriteCollidedY(IntPtr theSprite, int y ,CollisionDetectionRange range);
         /// <summary>
         /// Determines if a sprite has collided with a given y position.
@@ -180,7 +180,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithRect")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithRect")]
         private static extern bool DLL_HasSpriteCollidedWithRect(IntPtr theSprite, Single x, Single y, int width, int height);
         /// <summary>
         /// Determined if a sprite has collided with a given rectangle. The rectangles
@@ -239,7 +239,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveSpritesCollided")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveSpritesCollided")]
         private static extern bool DLL_HaveSpritesCollided(IntPtr sprite1, IntPtr sprite2);
         /// <summary>
         /// Determines if two sprites have collided.
@@ -265,9 +265,9 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithBitmap")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithBitmap")]
         private static extern bool DLL_HasSpriteCollidedWithBitmap();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithinBitmapImages")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithinBitmapImages")]
         private static extern bool DLL_CollisionWithinBitmapImages(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int x2, int y2, bool bounded2);
         /// <summary>
         ///  Performs a collision detection within two bitmaps at the given x, y
@@ -453,7 +453,7 @@ namespace SwinGame
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveBitmapsCollided")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveBitmapsCollided")]
         private static extern bool DLL_HaveBitmapsCollided(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int  x2, int y2, bool bounded2);
         /// <summary>
         /// Checks to see if two bitmaps have collided, this performs a bounded check
@@ -514,7 +514,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", EntryPoint = "CreateVector")]
+        [DllImport("lib\\SGSDK.dll", EntryPoint = "CreateVector")]
         private static extern Vector DLL_CreateVector(Single x, Single y, bool invertY);
         /// <summary>
         /// Creates a new vector with values x and y, possibly with an inverted y. The
@@ -567,7 +567,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddVectors")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddVectors")]
         private static extern Vector DLL_AddVectors(Vector v1, Vector v2);
         /// <summary>
         /// Adds the Vector v1 and the Vector v2.
@@ -593,7 +593,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SubtractVectors")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SubtractVectors")]
         private static extern Vector DLL_SubtractVectors(Vector v1, Vector v2);
         /// <summary>
         /// Subtracts the Vector v1 and the Vector v2.
@@ -619,7 +619,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "InvertVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "InvertVector")]
         private static extern Vector DLL_InvertVector(Vector theVector);
         /// <summary>
         /// Inverts the vector v. Changes the direction of the vector's x and y.
@@ -644,7 +644,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ChopVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ChopVector")]
         private static extern Vector DLL_ChopVector(Vector theVector, int minX, int maxX, int minY, int maxY);
         /// <summary>
         /// Limits the vector within the range min-max of X-Y. AVOID use... use
@@ -674,7 +674,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LimitVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LimitVector")]
         private static extern Vector DLL_LimitVector(Vector theVector, Single maxMagnitude);
         /// <summary>
         /// Limit the magnitude of a vector.
@@ -701,7 +701,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetUnitVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetUnitVector")]
         private static extern Vector DLL_GetUnitVector(Vector theVector);
         /// <summary>
         /// Gets the unit vector of the passed in vector. The unit vector has a
@@ -728,7 +728,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsZeroVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsZeroVector")]
         private static extern Vector DLL_IsZeroVector(Vector theVector);
         /// <summary>
         /// Indicates if the magnitude of the vector is 0.
@@ -753,7 +753,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Magnitude")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Magnitude")]
         private static extern Single DLL_Magnitude(Vector theVector);
         /// <summary>
         /// Returns the magnitude of a vector. The magnitude represents the length of
@@ -779,7 +779,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DotProduct")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DotProduct")]
         private static extern Single DLL_DotProduct(Vector v1, Vector v2);
         /// <summary>
         /// The Angle between two vectors
@@ -805,7 +805,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyVector")]
         private static extern Vector DLL_MultiplyVector(Vector v1, Single s1);
         /// <summary>
         /// Multiplies a Vector by a number
@@ -831,7 +831,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleNumber")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleNumber")]
         private static extern Single DLL_CalculateAngleNumber(Single x1, Single y1, Single x2, Single y2);
         /// <summary>
         /// Gets the Angle between two points 
@@ -859,7 +859,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleSprite")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CalculateAngleSprite")]
         private static extern Single DLL_CalculateAngleSprite(IntPtr sprite1, IntPtr sprite2);
         /// <summary>
         /// Calculates the Angle between 2 Sprites
@@ -885,7 +885,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TranslationMatrix")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TranslationMatrix")]
         private static extern IntPtr DLL_TranslationMatric(Single dx, Single dy);
         /// <summary>
         /// TranslationMatric
@@ -912,7 +912,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScaleMatrix")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScaleMatrix")]
         private static extern IntPtr DLL_ScaleMatrix(Single scale);
         /// <summary>
         /// ScaleMatrix
@@ -938,7 +938,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RotationMatrix")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RotationMatrix")]
         private static extern IntPtr DLL_RotationMatrix(Single deg);
         /// <summary>
         /// Rotation Matrix
@@ -964,7 +964,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2D")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2D")]
         private static extern IntPtr DLL_Multiply(IntPtr m1, IntPtr m2);//const
         /// <summary>
         /// Multiplies two matrixs 
@@ -991,7 +991,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
         private static extern Vector DLL_Multiply(IntPtr m, Vector v);//const
         /// <summary>
         /// Multiplies 1 Vector and 1 Matrix2D
@@ -1017,7 +1017,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
         private static extern void DLL_VectorCollision(IntPtr spr1, IntPtr spr2);
         /// <summary>
         /// Vector Collisions alters the vectors of two Sprites depending on
@@ -1042,7 +1042,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorFromAngle")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorFromAngle")]
         private static extern Vector DLL_GetVectorFromAngle(float angle, float magnitude);
         /// <summary>
         /// Gets a Vector from a Angle

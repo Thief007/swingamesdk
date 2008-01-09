@@ -469,12 +469,12 @@ namespace SwinGame
     /// </summary>
     public class Input
     {
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePosition")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePosition")]
         private static extern Vector DLL_GetMousePosition();
         /// <summary>
         /// Gets the Mouse Position
@@ -482,15 +482,23 @@ namespace SwinGame
         /// <returns>Vector representing the position of the mouse</returns>
         public static Vector GetMousePosition()
         {
-            Vector temp = DLL_GetMousePosition();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_GetMousePosition();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMouseMovement")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMouseMovement")]
         private static extern Vector DLL_GetMouseMovement();
         /// <summary>
         /// Gets the Movement of the mouse
@@ -498,15 +506,23 @@ namespace SwinGame
         /// <returns>Vector representing the movement of the mouse</returns>
         public static Vector GetMouseMovement()
         {
-            Vector temp = DLL_GetMouseMovement();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                Vector temp = DLL_GetMouseMovement();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseDown")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseDown")]
         private static extern bool DLL_IsMouseDown(MouseButton button);
         /// <summary>
         /// This function checks if the specified mouse button is
@@ -516,15 +532,23 @@ namespace SwinGame
         /// <returns>True if the mouse button is being clicked</returns>
         public static bool IsMouseDown(MouseButton button)
         {
-            bool temp = DLL_IsMouseDown(button);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_IsMouseDown(button);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;    
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseUp")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseUp")]
         private static extern bool DLL_IsMouseUp(MouseButton button);
         /// <summary>
         /// This function checks if the specified mouse button is not
@@ -534,15 +558,23 @@ namespace SwinGame
         /// <returns>True if the mouse button is not being clicked</returns>
         public static bool IsMouseUp(MouseButton button)
         {
-            bool temp = DLL_IsMouseUp(button);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_IsMouseUp(button);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MouseWasClicked")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MouseWasClicked")]
         private static extern bool DLL_MouseWasClicked(MouseButton button);
         /// <summary>
         /// This functions checks if the mouse button specified has
@@ -552,16 +584,24 @@ namespace SwinGame
         /// <returns>True if the mouse button has been clicked</returns>
         public static bool MouseWasClicked(MouseButton button)
         {
-            bool temp = DLL_MouseWasClicked(button);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_MouseWasClicked(button);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="StartReadingText")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="StartReadingText")]
         private static extern void DLL_StartReadingText(uint color, int maxLength, Font theFont, int x, int y);
         /// StartReadingText start the API reading a string values from the user.
 	    ///	Entry is completed when the user presses enter, and aborted with escape.
@@ -575,15 +615,23 @@ namespace SwinGame
 	    ///	@param x, y:			 The location at which to draw the text entered
         public static void StartReadingText(Color toColour, int maxLength, Font theFont, int x, int y)
         {
-            int color = toColour.ToArgb();
-            DLL_StartReadingText((uint)color, maxLength, theFont, x, y);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                int color = toColour.ToArgb();
+                DLL_StartReadingText((uint)color, maxLength, theFont, x, y);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
             }
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsReadingText")]  
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsReadingText")]  
 	    private static extern bool DLL_IsReadingText();
         /// <summary>
         /// IsReadingText indicates if the API is currently reading text from the
@@ -594,15 +642,23 @@ namespace SwinGame
         /// <returns>True while the API is reading text from the user</returns>
         public static bool IsReadingText()
         {
-            bool temp = DLL_IsReadingText();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_IsReadingText();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII")]
         private static extern String DLL_TextReadAsASCII();
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
@@ -612,15 +668,23 @@ namespace SwinGame
         /// <returns>The string entered by the user</returns>
         public static String TextReadAsASCII()
         {
-            String temp = DLL_TextReadAsASCII();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                String temp = DLL_TextReadAsASCII();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsUNICODE")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsUNICODE")]
         private static extern String DLL_TextReadAsUNICODE();
         /// <summary>
         /// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
@@ -629,15 +693,23 @@ namespace SwinGame
         /// <returns>The string entered by the user</returns>
         public static String TextReadAsUNICODE()
         {
-            String temp = DLL_TextReadAsUNICODE();
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                String temp = DLL_TextReadAsUNICODE();
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsKeyPressed")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsKeyPressed")]
         private static extern bool DLL_IsKeyPressed(Keys key);
         /// <summary>
         /// Returns true when the key requested is being held down. This is updated
@@ -648,15 +720,23 @@ namespace SwinGame
         /// <returns>True if the key is currently being held down</returns>
         public static bool IsKeyPressed(Keys key)
         {
-            bool temp = DLL_IsKeyPressed(key);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_IsKeyPressed(key);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="WasKeyTyped")]
+        [DllImport("lib\\SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="WasKeyTyped")]
         private static extern bool DLL_WasKeyTyped(Keys key);
         /// <summary>
         /// Returns true when a key is typed. This occurs when the key is pressed on the 
@@ -667,12 +747,20 @@ namespace SwinGame
         /// <returns>True if the key is pressed</returns>
         public static bool WasKeyTyped(Keys key)
         {
-            bool temp = DLL_WasKeyTyped(key);
-            if (ExceptionOccured())
+            try
             {
-                throw new SwinGameException(GetExceptionMessage());
+                bool temp = DLL_WasKeyTyped(key);
+                if (ExceptionOccured())
+                {
+                    throw new SwinGameException(GetExceptionMessage());
+                }
+                return temp;
             }
-            return temp;
+            catch (Exception)
+            {
+                //if (ExceptionOccured())
+                throw new SwinGameException(GetExceptionMessage());
+            }  
         }
     }
 }
