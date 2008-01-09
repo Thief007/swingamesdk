@@ -59,6 +59,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\fonts\arial.ttf" />
+    <None Include="Resources\fonts\cour.ttf" />
+    <None Include="Resources\sounds\SwinGameStart.ogg" />
+    <None Include="Resources\SwinGame.icns" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -66,6 +70,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="gpl-2.0.txt" />
     <Content Include="lib\jpeg.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -108,13 +113,23 @@
     <Content Include="lib\SGSDK.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="lib\SGSDK.NET.dll" />
+    <Content Include="lib\SGSDK.NET.XML" />
     <Content Include="lib\smpeg.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="lib\zlib1.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="ReadMe.txt" />
+    <Content Include="Resources\images\SplashBack.png" />
+    <Content Include="Resources\images\SwinGameAni.png" />
+    <Content Include="Resources\readme.txt" />
+    <Content Include="Resources\SwinGame.ico" />
     <Content Include="SwinGame.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\maps\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
