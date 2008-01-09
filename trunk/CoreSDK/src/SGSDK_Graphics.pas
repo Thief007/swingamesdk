@@ -176,6 +176,8 @@ interface
 
 	function CurrentWidth(sprite: Sprite): Integer; inline;
 	
+	procedure ReplayAnimation(theSprite : Sprite);
+	
 	procedure UpdateSprite(spriteToDraw : Sprite);
 	procedure UpdateSpriteAnimation(spriteToDraw : Sprite);
 
@@ -825,6 +827,12 @@ implementation
 	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
 	begin
 		DrawBitmap(scr, bitmapToDraw, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
+	end;
+	
+	procedure ReplayAnimation(theSprite : Sprite);
+	begin
+		theSprite.currentFrame := 0;
+		theSprite.hasEnded := false;
 	end;
 	
 	/// Update the frame position
