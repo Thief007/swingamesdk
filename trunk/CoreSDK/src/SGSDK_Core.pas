@@ -495,13 +495,17 @@ implementation
 	var
 		oldScr: PSDL_Surface;
 	begin
-		if (width < 1) or (height < 1) then begin
-			RaiseSGSDKException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
-		end;
-		oldScr := scr.surface;
 		try
-			scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
-			SDL_FreeSurface(oldScr);
+			if (width < 1) or (height < 1) then begin
+				RaiseSGSDKException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+			end;
+			oldScr := scr.surface;
+			try
+				scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+				SDL_FreeSurface(oldScr);
+			except
+				RaiseSGSDKException('Error occured while changing the screen size');
+			end;
 		except
 			RaiseSGSDKException('Error occured while changing the screen size');
 		end;
