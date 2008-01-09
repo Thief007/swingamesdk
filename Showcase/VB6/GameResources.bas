@@ -108,7 +108,7 @@ Private Sub ShowLoadingScreen()
     Set Animation = SwinGame.Graphics.CreateSprite_MultiFPC(SwinGame.Graphics.LoadBitmap(SwinGame.Core.GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource)), 4, 14, 712, 184)
     Call Animation.setX(41)
     Call Animation.setY(242)
-    Set Loadingfont = SwinGame.Text.LoadFont(SwinGame.Core.GetPathToResource("blah.tttf", ResourceKind_FontResource), 18)
+    Set Loadingfont = SwinGame.Text.LoadFont(SwinGame.Core.GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
     Set StartSound = SwinGame.Audio.LoadSoundEffect(SwinGame.Core.GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
     Call PlaySwinGameIntro
 End Sub
