@@ -22,7 +22,7 @@ Option Explicit
 
 Private Sub LoadFonts()
     'Add your fonts in here, eg
-    'Call NewFont("Courier", "cour.ttf", 16)
+    Call NewFont("Courier", "cour.ttf", 16)
     
 End Sub
 

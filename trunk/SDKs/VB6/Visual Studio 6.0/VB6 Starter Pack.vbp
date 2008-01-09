@@ -1,5 +1,6 @@
 Type=Exe
 Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\WINDOWS\system32\stdole2.tlb#OLE Automation
+Reference=*\G{38E867FD-9E0D-46C8-9C28-FFCEEFCBA7E4}#1.0#0#..\..\..\CoreSDK\SGSDKVB6\lib\com.SGSDKVB6.tlb#SGSDKVB6
 Module=Colour; Colour.bas
 Module=GameLauncher; GameLauncher.bas
 Module=GameLogic; GameLogic.bas
@@ -10,6 +11,7 @@ IconForm="Icon"
 Startup="Sub Main"
 HelpFile=""
 Title="VB6 Starter Pack"
+ExeName32="VB6 Starter Pack.exe"
 Command32=""
 Name="Project1"
 HelpContextID="0"
