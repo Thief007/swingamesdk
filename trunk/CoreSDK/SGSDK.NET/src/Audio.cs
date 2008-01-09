@@ -27,11 +27,6 @@ namespace SwinGame
     /// </summary>
     public class Audio
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
-        private static extern bool ExceptionOccured();
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        private static extern String GetExceptionMessage();
-
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="OpenAudio")]
         private static extern void DLL_OpenAudio();
         /// <summary>
@@ -42,15 +37,15 @@ namespace SwinGame
             try
             {
                 DLL_OpenAudio();
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -64,15 +59,15 @@ namespace SwinGame
             try
             {
                 DLL_CloseAudio();
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -90,15 +85,15 @@ namespace SwinGame
             try
             {
                 DLL_PlaySoundEffectLoop(effect.Pointer, loops);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
         /// <summary>
@@ -110,15 +105,15 @@ namespace SwinGame
             try
             {
                 DLL_PlaySoundEffect(effect.Pointer);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -135,16 +130,16 @@ namespace SwinGame
             {
                 SoundEffect effect;
                 effect.Pointer = DLL_LoadSoundEffect(path);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return effect;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -159,15 +154,15 @@ namespace SwinGame
             try
             {
                 DLL_FreeSoundEffect(ref effect.Pointer);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -185,16 +180,16 @@ namespace SwinGame
             {
                 Music music;
                 music.Pointer = DLL_LoadMusic(Path);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return music;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -209,15 +204,15 @@ namespace SwinGame
             try
             {
                 DLL_FreeMusic(ref music.Pointer);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -235,15 +230,15 @@ namespace SwinGame
             try
             {
                 DLL_PlayMusic(music.Pointer, loops);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -256,15 +251,15 @@ namespace SwinGame
             try
             {
                 DLL_PlayMusic(music.Pointer, -1);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -280,16 +275,16 @@ namespace SwinGame
             try
             {
                 bool temp = DLL_IsSoundEffectPlaying(effect.Pointer);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -305,16 +300,16 @@ namespace SwinGame
             try
             {
                 bool temp = DLL_IsMusicPlaying(music.Pointer);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -328,18 +323,18 @@ namespace SwinGame
             try
             {
                 DLL_StopMusic();
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
-
+        
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopSoundEffect")]
         private static extern void DLL_StopSoundEffect();
         /// <summary>
@@ -350,15 +345,15 @@ namespace SwinGame
             try
             {
                 DLL_StopSoundEffect();
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 

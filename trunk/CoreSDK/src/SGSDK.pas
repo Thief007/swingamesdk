@@ -27,11 +27,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		if SGSDK_Core.HasExceptionRaised() then
 		begin
-			result:= -1
+			result := -1
 		end
 		else
 		begin
-			result:= 0
+			result := 0
 		end;
 	end;
 	
