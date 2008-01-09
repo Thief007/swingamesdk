@@ -87,21 +87,19 @@ namespace SwinGameVB
         /// <returns>The font loaded</returns>
         public Fonts LoadFont(String fontName, int size)
         {
-            try
-            {
+            //try
+            //{
+                //System.Windows.Forms.MessageBox.Show("Loading " + fontName);
                 Fonts font = new Fonts();
                 font.result = SwinGame.Text.LoadFont(fontName, size);
+                //System.Windows.Forms.MessageBox.Show("Loaded " + fontName + " = " + font.result.ToString());
                 return font;
-            }
-            catch(Exception e)
-            {
-
-                System.Windows.Forms.MessageBox.Show(SwinGame.Core.Errormessage());//SwinGame.Core.GetExceptionMessage());
-                return null;
-            }
-            
-            
-        
+           //}
+            //catch(Exception e)
+            //{
+                //System.Windows.Forms.MessageBox.Show(e.Message);
+                //throw;
+            //}
         }
 
         /// <summary>

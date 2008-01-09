@@ -106,9 +106,9 @@ Private Sub ShowLoadingScreen()
     Set Animation = New SGSDKVB6.sprite
     Set StartSound = New SGSDKVB6.SoundEffect
     Set Animation = SwinGame.Graphics.CreateSprite_MultiFPC(SwinGame.Graphics.LoadBitmap(SwinGame.Core.GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource)), 4, 14, 712, 184)
-    Call Animation.SetX(41)
-    Call Animation.SetY(242)
-    Set Loadingfont = SwinGame.Text.LoadFont(SwinGame.Core.GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
+    Call Animation.setX(41)
+    Call Animation.setY(242)
+    Set Loadingfont = SwinGame.Text.LoadFont(SwinGame.Core.GetPathToResource("blah.tttf", ResourceKind_FontResource), 18)
     Set StartSound = SwinGame.Audio.LoadSoundEffect(SwinGame.Core.GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
     Call PlaySwinGameIntro
 End Sub
@@ -193,7 +193,7 @@ Private Sub NewMap(mapName As String)
         ReDim Preserve MapsStr(UBound(MapsStr, 1) + 1)
     End If
     Set Maps(UBound(Maps, 1)) = New Map
-    Set Maps(UBound(Maps, 1)) = MappyLoader.Loadmap(mapName)
+    Set Maps(UBound(Maps, 1)) = MappyLoader.LoadMap(mapName)
     MapsStr(UBound(Maps, 1)) = mapName
     '_Maps[High(_Maps)] := LoadMap(mapName);
     '_MapsStr[High(_MapsStr)] := mapName;

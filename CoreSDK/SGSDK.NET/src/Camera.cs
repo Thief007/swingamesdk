@@ -12,11 +12,6 @@ namespace SwinGame
     /// </summary>
     public class Camera
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
-        private static extern bool ExceptionOccured();
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        private static extern String GetExceptionMessage();
-
         // Screen ViewPort Functions
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "XOffset")]
@@ -30,16 +25,16 @@ namespace SwinGame
             try
             {
                 int temp = DLL_XOffset();
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -54,16 +49,16 @@ namespace SwinGame
             try
             {
                 int temp = DLL_YOffset();
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -79,16 +74,16 @@ namespace SwinGame
             try
             {
                 int temp = DLL_ScreenX(x);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -104,16 +99,16 @@ namespace SwinGame
             try
             {
                 int temp = DLL_ScreenY(y);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -129,16 +124,16 @@ namespace SwinGame
             try
             {
                 float temp = DLL_GameY(x);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -156,16 +151,16 @@ namespace SwinGame
             try
             {
                 float temp = DLL_GameY(y);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -182,16 +177,16 @@ namespace SwinGame
             try
             {
                 Vector temp = DLL_ToGameCoordinates(screenVector);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -208,15 +203,15 @@ namespace SwinGame
             try
             {
                 DLL_MoveVisualAreaWithVector(v);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
         /// <summary>
@@ -229,15 +224,15 @@ namespace SwinGame
             try
             {
                 DLL_MoveVisualArea(dx, dy);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -253,15 +248,15 @@ namespace SwinGame
             try
             {
                 DLL_SetScreenOffset(dx, dy);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
 
@@ -278,15 +273,15 @@ namespace SwinGame
             try
             {
                 DLL_FollowSprite(sprite.Pointer, xOffset, yOffset);
-                if (ExceptionOccured())
+                if (Core.ExceptionOccured())
                 {
-                    throw new SwinGameException(GetExceptionMessage());
+                    throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
             catch (Exception)
             {
-                //if (ExceptionOccured())
-                throw new SwinGameException(GetExceptionMessage());
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
     }
