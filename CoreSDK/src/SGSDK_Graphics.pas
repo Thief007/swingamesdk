@@ -839,7 +839,7 @@ implementation
 		notAllZero : Boolean;
 	begin
 		if spriteToDraw.hasEnded then exit;
-			
+		
 		if spriteToDraw.spriteKind <> StaticSprite then
 		begin
 			notAllZero := true;
