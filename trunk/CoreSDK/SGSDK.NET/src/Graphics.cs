@@ -12,7 +12,7 @@ namespace SwinGame
     /// </summary>
     public struct Sprite
     {
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetSpriteBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetSpriteBitmap")]
         private static extern Bitmap DLL_GetSpriteBitmap(IntPtr pointer, int id);
         /// <summary>
         /// Gets a Sprite's Bitmap
@@ -28,7 +28,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteX")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteX")]
         private static extern float DLL_GetSpriteX(IntPtr pointer);
         /// <summary>
         /// Gets a Sprites X Coordinate
@@ -43,7 +43,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteX")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteX")]
         private static extern void DLL_SetSpriteX(IntPtr pointer, float X);
         /// <summary>
         /// Sets a Sprite's X Coordinate
@@ -57,7 +57,7 @@ namespace SwinGame
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting X");
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteY")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteY")]
         private static extern float DLL_GetSpriteY(IntPtr pointer);
         /// <summary>
         /// Gets a Sprites Y Coordinate
@@ -72,7 +72,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteY")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteY")]
         private static extern void DLL_SetSpriteY(IntPtr pointer, float Y);
         /// <summary>
         /// Sets the Sprites Y Coordinate
@@ -86,7 +86,7 @@ namespace SwinGame
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting Y");
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteCurrentFrame")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteCurrentFrame")]
         private static extern int DLL_GetSpriteCurrentFrame(IntPtr pointer);
         /// <summary>
         /// Gets the Sprites Current Frame
@@ -101,7 +101,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteCurrentFrame")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteCurrentFrame")]
         private static extern void DLL_SetSpriteCurrentFrame(IntPtr pointer, int frame);
         /// <summary>
         /// Sets the Sprites Current Frame
@@ -115,7 +115,7 @@ namespace SwinGame
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting its Current Frame");
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetSpriteUsePixelCollision")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetSpriteUsePixelCollision")]
         private static extern bool DLL_GetSpriteUsePixelCollision(IntPtr pointer);
         /// <summary>
         /// Gets whether the Sprite is using Pixel Collision
@@ -130,7 +130,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteUsePixelCollision")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteUsePixelCollision")]
         private static extern void DLL_SetSpriteUsePixelCollision(IntPtr pointer, bool pixelcollision);
         /// <summary>
         /// Sets whether the Sprite will use Pixel Collision
@@ -144,7 +144,7 @@ namespace SwinGame
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting its Pixel Collision");
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteMass")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteMass")]
         private static extern float DLL_GetSpriteMass(IntPtr pointer);
         /// <summary>
         /// Gets the Sprites Mass
@@ -159,7 +159,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteMovement")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteMovement")]
         private static extern Vector DLL_GetSpriteMovement(IntPtr pointer);
 
         private static Vector GetSpriteMovement(IntPtr pointer)
@@ -169,7 +169,7 @@ namespace SwinGame
             return DLL_GetSpriteMovement(pointer);
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteMass")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteMass")]
         private static extern void DLL_SetSpriteMass(IntPtr pointer, Single mass);
         /// <summary>
         /// Sets the Sprites Mass
@@ -184,7 +184,7 @@ namespace SwinGame
 
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteMovement")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteMovement")]
         private static extern void DLL_SetSpriteMovement(IntPtr pointer, Vector movement);
 
         private static void SetSpriteMovement(IntPtr pointer, Vector movement)
@@ -270,9 +270,9 @@ namespace SwinGame
             }
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteKind(IntPtr pointer);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void SetSpriteKind(IntPtr pointer, int kind);
 
         /// <summary>
@@ -291,9 +291,9 @@ namespace SwinGame
         }
 
         
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteFramesPerCell(IntPtr pointer, int index);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void SetSpriteFramesPerCell(IntPtr pointer, int[] framesPerCell, int length);
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace SwinGame
         }
         
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteCols(IntPtr pointer);
 
         /// <summary>
@@ -335,7 +335,7 @@ namespace SwinGame
             }
         }
 	        
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteRow(IntPtr pointer);
 
         /// <summary>
@@ -349,7 +349,7 @@ namespace SwinGame
             }
         }
 	
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteFrameCount(IntPtr pointer);
 
         /// <summary>
@@ -363,9 +363,9 @@ namespace SwinGame
             }
         }
 
-	    [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+	    [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteendingAction(IntPtr pointer);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void SetSpriteendingAction(IntPtr pointer, int endingAction);
 
         /// <summary>
@@ -383,7 +383,7 @@ namespace SwinGame
             }
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpritehasEnded(IntPtr pointer);
 
         /// <summary>
@@ -404,7 +404,7 @@ namespace SwinGame
             }
         }
 	
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteReverse(IntPtr pointer);
 
         /// <summary>
@@ -588,12 +588,12 @@ namespace SwinGame
     /// </summary>
     public class Graphics
     {
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="CreateBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="CreateBitmap")]
         private static extern Bitmap DLL_CreateBitmap(int width, int height);
         /// <summary>
         /// Create a bitmap
@@ -620,7 +620,7 @@ namespace SwinGame
 
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="OptimiseBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="OptimiseBitmap")]
         private static extern void DLL_OptimiseBitmap(Bitmap surface);
         /// <summary>
         /// Optimise the specified bitmap
@@ -643,7 +643,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
         private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, bool transparent, uint transparentColor);
         /// <summary>
         /// Load the specified image file
@@ -696,7 +696,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadTransparentBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadTransparentBitmap")]
         private static extern IntPtr DLL_LoadTransparentBitmap(string pathToBitmap, uint transparentColor);
         /// <summary>
         /// Load an image with transparency
@@ -724,7 +724,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
         private static extern void DLL_FreeBitmap(ref IntPtr bitmapToFree);
         /// <summary>
         /// Free the specified bitmap
@@ -747,7 +747,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapWidth")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapWidth")]
         private static extern int DLL_GetBitmapWidth(IntPtr targetbitmap);
         /// <summary>
         /// Get the specified bitmap's width
@@ -772,7 +772,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapHeight")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapHeight")]
         private static extern int DLL_GetBitmapHeight(IntPtr targetbitmap);
         /// <summary>
         /// Get the specified bitmap's height
@@ -797,7 +797,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearSurfaceWithColor")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearSurfaceWithColor")]
         private static extern void DLL_ClearSurfaceWithColor(IntPtr dest, uint toColour);
         /// <summary>
         /// Clear the bitmap with the specified color
@@ -844,7 +844,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapWithDestination")]
         private static extern void DLL_DrawBitmapWithDestination(IntPtr dest, IntPtr bitmapToDraw, int x, int y);
         /// <summary>
         /// Draw bitmap to the specified bitmap
@@ -870,7 +870,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartWithDestination")]
         private static extern void DLL_DrawBitmapPartWithDestination(IntPtr dest, IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
         /// <summary>
         /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest)
@@ -900,7 +900,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelWithDestination")]
         private static extern void DLL_DrawPixelWithDestination(IntPtr dest, uint theColour, int x, int y);
         /// <summary>
         /// Draws a pixel onto the destination bitmap
@@ -926,7 +926,7 @@ namespace SwinGame
             }
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleWithDestination")]
         private static extern void DLL_DrawRectangleWithDestination(IntPtr dest, uint theColour, bool filled, int xPos, int yPos, int width, int height);
         /// <summary>
         /// Draws a rectangle on the destination bitmap
@@ -956,7 +956,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FillRectangleWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FillRectangleWithDestination")]
         private static extern void DLL_FillRectangleWithDestination(IntPtr dest, uint theColour, int xPos, int yPos, int width, int height);
         /// <summary>
         /// Draws a filled rectangle on the destination bitmap
@@ -1012,7 +1012,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineWithDestination")]
         private static extern void DLL_DrawLineWithDestination(IntPtr dest, uint theColour, int xPosStart, int yPosStart, int xPosEnd, int yPosEnd);
         /// <summary>
         /// Draws a line on the destination bitmap
@@ -1041,7 +1041,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineWithDestination")]
         private static extern void DLL_DrawHorizontalLineWithDestination(IntPtr dest, uint theColour, int y, int x1, int x2);
         /// <summary>
         /// Draws a horizontal line on the destination bitmap
@@ -1069,7 +1069,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineWithDestination")]
         private static extern void DLL_DrawVerticalLineWithDestination(IntPtr dest, uint theColour, int x, int y1, int y2);
         /// <summary>
         /// Draws a vertical line on the destination bitmap
@@ -1097,7 +1097,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleWithDestination")]
         private static extern void DLL_DrawCircleWithDestination(IntPtr dest, uint theColour, bool filled, int xc, int yc, int radius);
         /// <summary>
         /// Draws a circle centered on a given x, y location
@@ -1178,7 +1178,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseWithDestination")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseWithDestination")]
         private static extern void DLL_DrawEllipseWithDestination(IntPtr dest, uint theColour, bool filled, int xPos, int yPos, int width, int height);
         /// <summary>
         /// Draws a ellipse within a given rectangle on the dest bitmap
@@ -1262,7 +1262,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearScreen")]
         private static extern void DLL_ClearScreen(uint toColour);
         /// <summary>
         /// Clears the surface of the screen to the passed in color
@@ -1307,7 +1307,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmap")]
         private static extern void DLL_DrawBitmap(IntPtr bitmapToDraw, float x, float y);
         /// <summary>
         /// Draws one bitmap (bitmapToDraw) onto the screen
@@ -1332,7 +1332,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPart")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPart")]
         private static extern void DLL_DrawBitmapPart(IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, float x, float y);
         /// <summary>
         /// Draws part of a bitmap (bitmapToDraw) onto the screen
@@ -1361,7 +1361,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixel")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixel")]
         private static extern void DLL_DrawPixel(uint theColour, float x, float y);
         /// <summary>
         /// Draws a pixel onto the screen
@@ -1387,7 +1387,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangle")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangle")]
         private static extern void DLL_DrawRectangle(uint theColour, bool filled, float xPos, float yPos, int width, int height);
         /// <summary>
         /// Draws a rectangle on the screen
@@ -1468,7 +1468,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLine")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLine")]
         private static extern void DLL_DrawLine(uint theColour, float xPosStart, float yPosStart, float xPosEnd, float yPosEnd);
 
         /// <summary>
@@ -1497,7 +1497,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLine")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLine")]
         private static extern void DLL_DrawHorizontalLine(uint theColor, float y, float x1, float x2);
         /// <summary>
         /// Draws a horizontal line on the screen
@@ -1524,7 +1524,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLine")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLine")]
         private static extern void DLL_DrawVerticalLine(uint theColor, float x, float y1, float y2);
 
         /// <summary>
@@ -1552,7 +1552,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircle")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircle")]
         private static extern void DLL_DrawCircle(uint theColor, bool filled, float xc, float yc, int radius);
         /// <summary>
         /// Draws a circle centered on a given x, y location
@@ -1630,7 +1630,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipse")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipse")]
         private static extern void DLL_DrawEllipse(uint theColor, bool filled, float xPos, float yPos, int width, int height);
         /// <summary>
         /// Draws a ellipse within a given rectangle on the screen
@@ -1711,7 +1711,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSprite")]
         private static extern IntPtr DLL_CreateSprite(IntPtr startBitmap);
         /// <summary>
         /// Creates a sprites, and sets its firat bitmap
@@ -1737,7 +1737,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
         private static extern IntPtr DLL_FreeSprite(ref IntPtr spriteToFree);
         /// <summary>
         /// Frees a sprite, this does not free the sprite's bitmaps, which allows
@@ -1762,7 +1762,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddBitmapToSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddBitmapToSprite")]
         private static extern int DLL_AddBitmapToSprite(IntPtr spriteToAddTo, IntPtr bitmapToAdd);
         /// <summary>
         /// Sprites may contain multiple images. These images can be used for things
@@ -1790,7 +1790,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CurrentHeight")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CurrentHeight")]
         private static extern int DLL_CurrentHeight(IntPtr sprite);
         /// <summary>
         /// Returns the current height of the sprite
@@ -1815,7 +1815,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CurrentWidth")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CurrentWidth")]
         private static extern int DLL_CurrentWidth(IntPtr sprite); 
         /// <summary>
         /// Returns the current width of the sprite
@@ -1840,9 +1840,9 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprite")]
         private static extern void DLL_DrawSprite(IntPtr spriteToDraw);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpriteOffset")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpriteOffset")]
         private static extern void DLL_DrawSpriteOffset(IntPtr spriteToDraw, int xOffset, int yOffset);
         /// <summary>
         /// Draws the sprite to the screen within a given view port
@@ -1888,7 +1888,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSprite")]
         private static extern void DLL_MoveSprite(IntPtr spriteToMove, Vector movementVector);
         /// <summary>
         /// Moves a sprite based on information in a movement vector
@@ -1912,7 +1912,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteTo")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteTo")]
         private static extern void DLL_MoveSpriteTo(IntPtr spriteToMove, int x, int y);
         /// <summary>
         /// Moves a sprite to a given x,y location
@@ -1937,7 +1937,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreen")]
         private static extern int DLL_IsSpriteOffscreen(IntPtr theSprite);
         /// <summary>
         /// Determines if a sprite is off the screen
@@ -1972,7 +1972,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreenWithViewPort")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreenWithViewPort")]
         private static extern int DLL_IsSpriteOffscreenWithViewPort(IntPtr theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
         /// <summary>
         /// Determines if a sprite is off the screen. The view port of the screen
@@ -2014,7 +2014,7 @@ namespace SwinGame
 
         // Sprite Additions
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiEnding")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiEnding")]
         private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, Boolean isMulti, int length, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
         /// <summary>
         /// Creates a new Sprite
@@ -2045,7 +2045,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMulti")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMulti")]
         private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, Boolean isMulti, int length, int[] framesPerCell, int width, int height);
         /// <summary>
         /// Creates a new Sprite
@@ -2075,7 +2075,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiFPC")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiFPC")]
         private static extern IntPtr DLL_CreateSpriteMultiFPC(IntPtr startBitmap, int framesPerCell, int frames, int width, int height);
         /// <summary>
         /// Creates a Sprite
@@ -2105,7 +2105,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
         private static extern IntPtr DLL_CreateSpriteArrayEnding(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell, int endingAction);
         /// <summary>
         /// Creates a new Sprite
@@ -2140,7 +2140,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
         private static extern IntPtr DLL_CreateSpriteArray(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell);
         /// <summary>
         /// Creates a new Sprite
@@ -2173,7 +2173,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayFPC")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayFPC")]
         private static extern IntPtr DLL_CreateSpriteArrayFPC(int bitmaplength, IntPtr[] startBitmap, int framesPerCell, int frames);
         /// <summary>
         /// Creates a Sprite
@@ -2207,7 +2207,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSpriteAnimation")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSpriteAnimation")]
         private static extern void DLL_UpdateSpriteAnimation(IntPtr sprite);
         /// <summary>
         /// Updates the Sprites Animation
@@ -2230,7 +2230,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
         private static extern void DLL_UpdateSprite(IntPtr sprite);
         /// <summary>
         /// Updates the Sprites Animation and Movement
@@ -2253,7 +2253,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="DrawBitmapPartOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="DrawBitmapPartOnScreen")]
         private static extern void DLL_DrawBitmapPartOnScreen(IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
         /// <summary>
         /// Draws Part of a Bitmap On Screen
@@ -2282,7 +2282,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
         private static extern void DLL_DrawBitmapOnScreen(IntPtr bitmapToDraw, int x, int y);
         /// <summary>
         /// Draws Part of a Bitmap
@@ -2307,7 +2307,7 @@ namespace SwinGame
             }  
         }
         
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
         private static extern void DLL_DrawPixelOnScreen(int theColor, int x, int y);
         /// <summary>
         /// Draw a Pixel on the Screen
@@ -2333,7 +2333,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
         private static extern void DLL_DrawRectangleOnScreen(int theColor, bool filled, int x, int y, int width, int height);
         /// <summary>
         /// Draw a Rectangle on Screen
@@ -2387,7 +2387,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
         private static extern void DLL_DrawLineOnScreen(int theColor, int x, int y, int x2, int y2);
         /// <summary>
         /// Draws a Line on the Screen
@@ -2416,7 +2416,7 @@ namespace SwinGame
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
         private static extern void DLL_DrawHorizontalLineOnScreen(int theColor, int y, int x1, int x2);
         /// <summary>
         /// Draw Horizontal Line on Screen
@@ -2443,7 +2443,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
         private static extern void DLL_DrawVerticalLineOnScreen(int theColor, int x, int y1, int y2);
         /// <summary>
         /// Draws a Vertical Line on the Screen
@@ -2470,7 +2470,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
         private static extern void DLL_DrawCircleOnScreen(int theColor, bool filled, int xc, int yc, int radius);
         /// <summary>
         /// Draws a Circle on the Screen
@@ -2523,7 +2523,7 @@ namespace SwinGame
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
         private static extern void DLL_DrawEllipseOnScreen(int theColor, bool filled, int x, int y, int width, int height);
         /// <summary>
         /// Draws an Ellipse on the Screen

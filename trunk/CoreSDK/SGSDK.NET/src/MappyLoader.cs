@@ -174,12 +174,12 @@ namespace SwinGame
     /// </summary>
     public class MappyLoader
     {
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
         private static extern IntPtr DLL_LoadMap(String fileName);
         /// <summary>
         /// Loads a Map
@@ -205,7 +205,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawMap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawMap")]
         private static extern void DLL_DrawMap(IntPtr map);
         /// <summary>
         /// Draws the Map
@@ -228,7 +228,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithMapVector")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithMapVector")]
         private static extern CollisionSide DLL_CollisionWithMapVector(IntPtr map, IntPtr spr, Vector vec);
         /// <summary>
         /// Checks if a sprite collides with the map, and if so returns the side of the sprite that collided with the map.
@@ -281,7 +281,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventCount")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventCount")]
         private static extern int DLL_EventCount(IntPtr map, Event evnt);
         /// <summary>
         /// Gets the Number Events of an Event Type on a Map
@@ -307,7 +307,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventPositionX")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventPositionX")]
         private static extern int DLL_EventPositionX(IntPtr map, Event evnt, int eventnumber);
         /// <summary>
         /// Gets the Game X Coordinate of the Event
@@ -334,7 +334,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventPositionY")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventPositionY")]
         private static extern int DLL_EventPositionY(IntPtr map, Event evnt, int eventnumber);
         /// <summary>
         /// Gets the Game Y Coordinate of the Event
@@ -361,7 +361,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
         private static extern void DLL_FreeMap(IntPtr map);
 
         public static void FreeMap(Map map)

@@ -4,6 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 
 namespace SwinGameVB
 {
@@ -66,17 +67,25 @@ namespace SwinGameVB
     [ComVisible(true)]
     public class MappyLoader : IMappyLoader
     {
-        public Map Loadmap(String fileName)
+        public Map LoadMap(String fileName)
         {
             Map map = new Map();
-            map.result = SwinGame.MappyLoader.Loadmap(fileName);
+            map.result = SwinGame.MappyLoader.LoadMap(fileName);
             return map;
         }
 
 
-        public void Drawmap(Map map)
+        public void DrawMap(Map map)
         {
-            SwinGame.MappyLoader.Drawmap(map.result);
+            try
+            {
+                SwinGame.MappyLoader.DrawMap(map.result);
+            }
+            catch(Exception e)
+            {
+                System.Windows.Forms.MessageBox.Show(e.Message);
+
+            }
         }
 
         public CollisionSide CollisionWithMapVector(Map map, Sprite spr, Vector vec)
@@ -114,8 +123,8 @@ namespace SwinGameVB
     [ComVisible(true)]
     public interface IMappyLoader
     {
-        Map Loadmap(String fileName);
-        void Drawmap(Map map);
+        Map LoadMap(String fileName);
+        void DrawMap(Map map);
         CollisionSide CollisionWithMapVector(Map map, Sprite spr, Vector vec);
 
         CollisionSide CollisionWithMap(Map map, Sprite spr);

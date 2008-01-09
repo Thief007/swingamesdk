@@ -12,14 +12,14 @@ namespace SwinGame
     /// </summary>
     public class Camera
     {
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern String GetExceptionMessage();
 
         // Screen ViewPort Functions
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "XOffset")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "XOffset")]
         private static extern int DLL_XOffset();
         /// <summary>
         /// Gets the YOffset of the Screen
@@ -43,7 +43,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="YOffset")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="YOffset")]
         private static extern int DLL_YOffset();
         /// <summary>
         /// Gets the YOffset of the Screen
@@ -67,7 +67,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenX")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenX")]
         private static extern int DLL_ScreenX(float x);
         /// <summary>
         /// Gets the Screen X Coordinate
@@ -92,7 +92,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScreenY")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScreenY")]
         private static extern int DLL_ScreenY(float y);
         /// <summary>
         /// Gets the Screen Y Coordinate
@@ -117,7 +117,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GameX")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GameX")]
         private static extern float DLL_GameX(int x);
         /// <summary>
         /// Gets the Game X Coordinate
@@ -144,7 +144,7 @@ namespace SwinGame
 
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GameY")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GameY")]
         private static extern float DLL_GameY(int y);
         /// <summary>
         /// Gets the Game Y Coordinate
@@ -170,7 +170,7 @@ namespace SwinGame
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ToGameCoordinates")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ToGameCoordinates")]
         private static extern Vector DLL_ToGameCoordinates(Vector screenVector);
         /// <summary>
         /// Converts the Vector to Game Coordinates
@@ -195,9 +195,9 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveVisualAreaWithVector")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveVisualAreaWithVector")]
         private static extern void DLL_MoveVisualAreaWithVector(Vector v);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MoveVisualArea")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MoveVisualArea")]
         private static extern void DLL_MoveVisualArea(float dx, float dy);
         /// <summary>
         /// Moves the Camera's Visual Area
@@ -241,7 +241,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetScreenOffset")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetScreenOffset")]
         private static extern void DLL_SetScreenOffset(float dx, float dy);
         /// <summary>
         /// Sets the Screen Offset
@@ -265,7 +265,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FollowSprite")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FollowSprite")]
         private static extern void DLL_FollowSprite(IntPtr sprite, int xOffset, int yOffset);
         /// <summary>
         /// Makes the Camera Follow the Sprite

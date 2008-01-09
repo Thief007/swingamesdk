@@ -5,7 +5,7 @@ using SwinGame;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
-
+using System.Windows.Forms;
 namespace SwinGameVB
 {
     /// <summary>

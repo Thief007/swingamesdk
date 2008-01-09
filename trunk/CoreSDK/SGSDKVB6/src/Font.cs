@@ -5,7 +5,7 @@ using SwinGame;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
-
+using System.Windows.Forms;
 namespace SwinGameVB
 {
     /// <summary>
@@ -87,9 +87,21 @@ namespace SwinGameVB
         /// <returns>The font loaded</returns>
         public Fonts LoadFont(String fontName, int size)
         {
-            Fonts font = new Fonts();
-            font.result = SwinGame.Text.LoadFont(fontName, size);
-            return font;
+            try
+            {
+                Fonts font = new Fonts();
+                font.result = SwinGame.Text.LoadFont(fontName, size);
+                return font;
+            }
+            catch(Exception e)
+            {
+
+                System.Windows.Forms.MessageBox.Show(SwinGame.Core.Errormessage());//SwinGame.Core.GetExceptionMessage());
+                return null;
+            }
+            
+            
+        
         }
 
         /// <summary>

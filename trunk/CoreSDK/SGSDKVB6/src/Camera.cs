@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.IO;
-
+using System.Windows.Forms;
 namespace SwinGameVB
 {
     [ClassInterface(ClassInterfaceType.None)]

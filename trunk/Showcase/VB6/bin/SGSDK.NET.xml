@@ -383,14 +383,14 @@
             MappyLoader Class
             </summary>
         </member>
-        <member name="M:SwinGame.MappyLoader.Loadmap(System.String)">
+        <member name="M:SwinGame.MappyLoader.LoadMap(System.String)">
             <summary>
             Loads a Map
             </summary>
             <param name="fileName">Name of the map</param>
             <returns>Map</returns>
         </member>
-        <member name="M:SwinGame.MappyLoader.Drawmap(SwinGame.Map)">
+        <member name="M:SwinGame.MappyLoader.DrawMap(SwinGame.Map)">
             <summary>
             Draws the Map
             </summary>
@@ -1010,6 +1010,11 @@
         <member name="P:SwinGame.Sprite.SpriteKind">
             <summary>
             Gets the Sprite Kind
+            </summary>
+        </member>
+        <member name="P:SwinGame.Sprite.FramesPerCell">
+            <summary>
+            Gets the Frames per Cell
             </summary>
         </member>
         <member name="P:SwinGame.Sprite.Cols">
