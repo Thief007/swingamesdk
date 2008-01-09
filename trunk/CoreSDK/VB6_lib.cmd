@@ -13,10 +13,15 @@ echo Saving output to %Output1%
 
 set LibDir=%BaseDir%\SGSDK.NET\lib
 echo Getting libraries from %LibDir%
+if not exist %LibDir% mkdir %LibDir%
 
 set VB6bin=.\SGSDKVB6\src\bin\Debug\
 
 set ShowcaseVB6=..\Showcase\VB6\lib\
+if not exist %ShowcaseVB6% mkdir %ShowcaseVB6%
+
+set SDKVB6=..\SDKs\VB6\Visual Studio 6.0\lib\
+if not exist %SDKVB6% mkdir %SDKVB6%
 
 echo Doing %1
 
@@ -35,6 +40,10 @@ if "%1"=="clean" goto cleaning
 
 	echo Copying to Showcase
 	copy "%Output1%*" "%ShowcaseVB6%"
+
+	echo Copying to SDKVB6
+	echo %SDKVB6%
+	copy "%Output1%*" "%SDKVB6%"
 
 	echo Finished
 goto end

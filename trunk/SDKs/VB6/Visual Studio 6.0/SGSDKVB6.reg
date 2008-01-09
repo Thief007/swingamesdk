@@ -1,31 +1,5 @@
 REGEDIT4
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Camera]
-@="SwinGameVB.Camera"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Camera\CLSID]
-@="{3BE3481F-34BC-421A-9F0B-464B05188625}"
-
-[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}]
-@="SwinGameVB.Camera"
-
-[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\InprocServer32]
-@="mscoree.dll"
-"ThreadingModel"="Both"
-"Class"="SwinGameVB.Camera"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Camera"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\ProgId]
-@="SwinGameVB.Camera"
-
-[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-
 [HKEY_CLASSES_ROOT\SwinGameVB.SoundEffect]
 @="SwinGameVB.SoundEffect"
 
@@ -39,12 +13,12 @@ REGEDIT4
 @="mscoree.dll"
 "ThreadingModel"="Both"
 "Class"="SwinGameVB.SoundEffect"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{72A680BD-E34C-457C-8731-6E2F28195839}\InprocServer32\1.0.0.0]
 "Class"="SwinGameVB.SoundEffect"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{72A680BD-E34C-457C-8731-6E2F28195839}\ProgId]
@@ -65,12 +39,12 @@ REGEDIT4
 @="mscoree.dll"
 "ThreadingModel"="Both"
 "Class"="SwinGameVB.Music"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{71F9C2D2-D0F7-434F-9D15-C4D6DC471247}\InprocServer32\1.0.0.0]
 "Class"="SwinGameVB.Music"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{71F9C2D2-D0F7-434F-9D15-C4D6DC471247}\ProgId]
@@ -91,12 +65,12 @@ REGEDIT4
 @="mscoree.dll"
 "ThreadingModel"="Both"
 "Class"="SwinGameVB.Audio"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{5A3A1837-A7B4-4490-83ED-D18522B36651}\InprocServer32\1.0.0.0]
 "Class"="SwinGameVB.Audio"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{5A3A1837-A7B4-4490-83ED-D18522B36651}\ProgId]
@@ -104,226 +78,97 @@ REGEDIT4
 
 [HKEY_CLASSES_ROOT\CLSID\{5A3A1837-A7B4-4490-83ED-D18522B36651}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
-[HKEY_CLASSES_ROOT\Record\{D8B00F7C-D51C-4548-9108-E53D3DE1E9CD}\1.0.0.0]
-"Class"="SwinGameVB.CollisionDetectionRange"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
+[HKEY_CLASSES_ROOT\SwinGameVB.Camera]
+@="SwinGameVB.Camera"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Matrix2D]
-@="SwinGameVB.Matrix2D"
+[HKEY_CLASSES_ROOT\SwinGameVB.Camera\CLSID]
+@="{3BE3481F-34BC-421A-9F0B-464B05188625}"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Matrix2D\CLSID]
-@="{87C6F043-9E0A-4579-878D-EBD72F98554A}"
+[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}]
+@="SwinGameVB.Camera"
 
-[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}]
-@="SwinGameVB.Matrix2D"
-
-[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\InprocServer32]
+[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\InprocServer32]
 @="mscoree.dll"
 "ThreadingModel"="Both"
-"Class"="SwinGameVB.Matrix2D"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Class"="SwinGameVB.Camera"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Matrix2D"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Camera"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\ProgId]
-@="SwinGameVB.Matrix2D"
+[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\ProgId]
+@="SwinGameVB.Camera"
 
-[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+[HKEY_CLASSES_ROOT\CLSID\{3BE3481F-34BC-421A-9F0B-464B05188625}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Physics]
-@="SwinGameVB.Physics"
+[HKEY_CLASSES_ROOT\SwinGameVB.Fonts]
+@="SwinGameVB.Fonts"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Physics\CLSID]
-@="{2542698C-64CF-4767-B993-D9017D721444}"
+[HKEY_CLASSES_ROOT\SwinGameVB.Fonts\CLSID]
+@="{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}"
 
-[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}]
-@="SwinGameVB.Physics"
+[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}]
+@="SwinGameVB.Fonts"
 
-[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\InprocServer32]
+[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\InprocServer32]
 @="mscoree.dll"
 "ThreadingModel"="Both"
-"Class"="SwinGameVB.Physics"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Class"="SwinGameVB.Fonts"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Physics"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Fonts"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\ProgId]
-@="SwinGameVB.Physics"
+[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\ProgId]
+@="SwinGameVB.Fonts"
 
-[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
-[HKEY_CLASSES_ROOT\Record\{8455124C-A996-3FC9-9843-F109F1110F5B}\1.0.0.0]
-"Class"="SwinGameVB.MouseButton"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\Record\{F51F7D7F-C74D-3E03-8994-B9DF24E078F1}\1.0.0.0]
+"Class"="SwinGameVB.FontStyle"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\Record\{34ADC557-52D2-3118-9701-BBF594D88D4B}\1.0.0.0]
-"Class"="SwinGameVB.Keys"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\Record\{BE6F97CF-010E-39FE-A88A-B4D797843ACB}\1.0.0.0]
+"Class"="SwinGameVB.FontAlignment"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Input]
-@="SwinGameVB.Input"
+[HKEY_CLASSES_ROOT\SwinGameVB.Text]
+@="SwinGameVB.Text"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Input\CLSID]
-@="{61146386-9F07-497B-ACC4-D53D8A0A39D9}"
+[HKEY_CLASSES_ROOT\SwinGameVB.Text\CLSID]
+@="{41D03C97-481B-4904-8567-C34D3154B503}"
 
-[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}]
-@="SwinGameVB.Input"
+[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}]
+@="SwinGameVB.Text"
 
-[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\InprocServer32]
+[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\InprocServer32]
 @="mscoree.dll"
 "ThreadingModel"="Both"
-"Class"="SwinGameVB.Input"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Class"="SwinGameVB.Text"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Input"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Text"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\ProgId]
-@="SwinGameVB.Input"
+[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\ProgId]
+@="SwinGameVB.Text"
 
-[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Sprite]
-@="SwinGameVB.Sprite"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Sprite\CLSID]
-@="{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}"
-
-[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}]
-@="SwinGameVB.Sprite"
-
-[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\InprocServer32]
-@="mscoree.dll"
-"ThreadingModel"="Both"
-"Class"="SwinGameVB.Sprite"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Sprite"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\ProgId]
-@="SwinGameVB.Sprite"
-
-[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-
-[HKEY_CLASSES_ROOT\Record\{A2B86CBD-7671-434C-8E83-F07FC5F30A8B}\1.0.0.0]
-"Class"="SwinGameVB.SpriteKind"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\Record\{B9D7E783-40D2-4930-A560-2A98BFFD5D41}\1.0.0.0]
-"Class"="SwinGameVB.SpriteEndingAction"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Graphics]
-@="SwinGameVB.Graphics"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Graphics\CLSID]
-@="{D8E12F39-35E8-491B-8C4D-B84309B09C6B}"
-
-[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}]
-@="SwinGameVB.Graphics"
-
-[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\InprocServer32]
-@="mscoree.dll"
-"ThreadingModel"="Both"
-"Class"="SwinGameVB.Graphics"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Graphics"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\ProgId]
-@="SwinGameVB.Graphics"
-
-[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-
-[HKEY_CLASSES_ROOT\Record\{07BFC90F-1CCB-34CB-8CF1-B0DA0187FBCE}\1.0.0.0]
-"Class"="SwinGameVB.Event"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\Record\{BE872FC2-9995-3C35-ADB6-255F77DFB2DB}\1.0.0.0]
-"Class"="SwinGameVB.CollisionSide"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Map]
-@="SwinGameVB.Map"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.Map\CLSID]
-@="{7BA5F37F-0F56-4339-91AC-78A1B5037694}"
-
-[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}]
-@="SwinGameVB.Map"
-
-[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\InprocServer32]
-@="mscoree.dll"
-"ThreadingModel"="Both"
-"Class"="SwinGameVB.Map"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Map"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\ProgId]
-@="SwinGameVB.Map"
-
-[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
-
-[HKEY_CLASSES_ROOT\SwinGameVB.MappyLoader]
-@="SwinGameVB.MappyLoader"
-
-[HKEY_CLASSES_ROOT\SwinGameVB.MappyLoader\CLSID]
-@="{F13C547C-7712-4DA4-9933-167B0A98264C}"
-
-[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}]
-@="SwinGameVB.MappyLoader"
-
-[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\InprocServer32]
-@="mscoree.dll"
-"ThreadingModel"="Both"
-"Class"="SwinGameVB.MappyLoader"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.MappyLoader"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
-"RuntimeVersion"="v2.0.50727"
-
-[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\ProgId]
-@="SwinGameVB.MappyLoader"
-
-[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
 [HKEY_CLASSES_ROOT\Record\{A664B544-AA13-496C-B27D-800DE8C22439}\1.0.0.0]
 "Class"="SwinGameVB.ResourceKind"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\SwinGameVB.Bitmap]
@@ -339,12 +184,12 @@ REGEDIT4
 @="mscoree.dll"
 "ThreadingModel"="Both"
 "Class"="SwinGameVB.Bitmap"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{6939978A-4BD4-4C0F-94DC-ED66F9C359A1}\InprocServer32\1.0.0.0]
 "Class"="SwinGameVB.Bitmap"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{6939978A-4BD4-4C0F-94DC-ED66F9C359A1}\ProgId]
@@ -365,12 +210,12 @@ REGEDIT4
 @="mscoree.dll"
 "ThreadingModel"="Both"
 "Class"="SwinGameVB.Vector"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{EAFEC7C8-CAEB-4C00-9E45-EFF91F7DED5C}\InprocServer32\1.0.0.0]
 "Class"="SwinGameVB.Vector"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{EAFEC7C8-CAEB-4C00-9E45-EFF91F7DED5C}\ProgId]
@@ -391,12 +236,12 @@ REGEDIT4
 @="mscoree.dll"
 "ThreadingModel"="Both"
 "Class"="SwinGameVB.Core"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{696A5E07-D52D-4EE7-A2F9-B2387D17B56F}\InprocServer32\1.0.0.0]
 "Class"="SwinGameVB.Core"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
 [HKEY_CLASSES_ROOT\CLSID\{696A5E07-D52D-4EE7-A2F9-B2387D17B56F}\ProgId]
@@ -404,64 +249,219 @@ REGEDIT4
 
 [HKEY_CLASSES_ROOT\CLSID\{696A5E07-D52D-4EE7-A2F9-B2387D17B56F}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Fonts]
-@="SwinGameVB.Fonts"
+[HKEY_CLASSES_ROOT\SwinGameVB.Sprite]
+@="SwinGameVB.Sprite"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Fonts\CLSID]
-@="{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}"
+[HKEY_CLASSES_ROOT\SwinGameVB.Sprite\CLSID]
+@="{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}"
 
-[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}]
-@="SwinGameVB.Fonts"
+[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}]
+@="SwinGameVB.Sprite"
 
-[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\InprocServer32]
+[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\InprocServer32]
 @="mscoree.dll"
 "ThreadingModel"="Both"
-"Class"="SwinGameVB.Fonts"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Class"="SwinGameVB.Sprite"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Fonts"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Sprite"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\ProgId]
-@="SwinGameVB.Fonts"
+[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\ProgId]
+@="SwinGameVB.Sprite"
 
-[HKEY_CLASSES_ROOT\CLSID\{BAA6049F-2DF5-4CED-8C0F-DBD3A8B6A754}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+[HKEY_CLASSES_ROOT\CLSID\{4987E5FC-88C6-463F-B516-9F9EEFEE5BC4}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
-[HKEY_CLASSES_ROOT\Record\{93B21191-7C18-3B11-A0EF-78755E28A2FF}\1.0.0.0]
-"Class"="SwinGameVB.FontStyle"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\Record\{A2B86CBD-7671-434C-8E83-F07FC5F30A8B}\1.0.0.0]
+"Class"="SwinGameVB.SpriteKind"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\Record\{A7771D57-885B-384B-BA7F-C2CF8EB030B9}\1.0.0.0]
-"Class"="SwinGameVB.FontAlignment"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\Record\{B9D7E783-40D2-4930-A560-2A98BFFD5D41}\1.0.0.0]
+"Class"="SwinGameVB.SpriteEndingAction"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Text]
-@="SwinGameVB.Text"
+[HKEY_CLASSES_ROOT\SwinGameVB.Graphics]
+@="SwinGameVB.Graphics"
 
-[HKEY_CLASSES_ROOT\SwinGameVB.Text\CLSID]
-@="{41D03C97-481B-4904-8567-C34D3154B503}"
+[HKEY_CLASSES_ROOT\SwinGameVB.Graphics\CLSID]
+@="{D8E12F39-35E8-491B-8C4D-B84309B09C6B}"
 
-[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}]
-@="SwinGameVB.Text"
+[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}]
+@="SwinGameVB.Graphics"
 
-[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\InprocServer32]
+[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\InprocServer32]
 @="mscoree.dll"
 "ThreadingModel"="Both"
-"Class"="SwinGameVB.Text"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+"Class"="SwinGameVB.Graphics"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\InprocServer32\1.0.0.0]
-"Class"="SwinGameVB.Text"
-"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f3db3870d89e8794"
+[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Graphics"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
 "RuntimeVersion"="v2.0.50727"
 
-[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\ProgId]
-@="SwinGameVB.Text"
+[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\ProgId]
+@="SwinGameVB.Graphics"
 
-[HKEY_CLASSES_ROOT\CLSID\{41D03C97-481B-4904-8567-C34D3154B503}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+[HKEY_CLASSES_ROOT\CLSID\{D8E12F39-35E8-491B-8C4D-B84309B09C6B}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\Record\{B2900833-CA67-3020-9EBF-3ED87C5EC778}\1.0.0.0]
+"Class"="SwinGameVB.MouseButton"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\Record\{921E8207-5345-3964-AE60-98DB84A3D059}\1.0.0.0]
+"Class"="SwinGameVB.Keys"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Input]
+@="SwinGameVB.Input"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Input\CLSID]
+@="{61146386-9F07-497B-ACC4-D53D8A0A39D9}"
+
+[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}]
+@="SwinGameVB.Input"
+
+[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Input"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Input"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\ProgId]
+@="SwinGameVB.Input"
+
+[HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\Record\{B9D5EA09-7FBE-3F39-97BB-9128A3428B26}\1.0.0.0]
+"Class"="SwinGameVB.Event"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\Record\{33C088DA-B696-393E-9BED-03C370EDBB2B}\1.0.0.0]
+"Class"="SwinGameVB.CollisionSide"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Map]
+@="SwinGameVB.Map"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Map\CLSID]
+@="{7BA5F37F-0F56-4339-91AC-78A1B5037694}"
+
+[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}]
+@="SwinGameVB.Map"
+
+[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Map"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Map"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\ProgId]
+@="SwinGameVB.Map"
+
+[HKEY_CLASSES_ROOT\CLSID\{7BA5F37F-0F56-4339-91AC-78A1B5037694}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\SwinGameVB.MappyLoader]
+@="SwinGameVB.MappyLoader"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.MappyLoader\CLSID]
+@="{F13C547C-7712-4DA4-9933-167B0A98264C}"
+
+[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}]
+@="SwinGameVB.MappyLoader"
+
+[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.MappyLoader"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.MappyLoader"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\ProgId]
+@="SwinGameVB.MappyLoader"
+
+[HKEY_CLASSES_ROOT\CLSID\{F13C547C-7712-4DA4-9933-167B0A98264C}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\Record\{D8B00F7C-D51C-4548-9108-E53D3DE1E9CD}\1.0.0.0]
+"Class"="SwinGameVB.CollisionDetectionRange"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Matrix2D]
+@="SwinGameVB.Matrix2D"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Matrix2D\CLSID]
+@="{87C6F043-9E0A-4579-878D-EBD72F98554A}"
+
+[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}]
+@="SwinGameVB.Matrix2D"
+
+[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Matrix2D"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Matrix2D"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\ProgId]
+@="SwinGameVB.Matrix2D"
+
+[HKEY_CLASSES_ROOT\CLSID\{87C6F043-9E0A-4579-878D-EBD72F98554A}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Physics]
+@="SwinGameVB.Physics"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Physics\CLSID]
+@="{2542698C-64CF-4767-B993-D9017D721444}"
+
+[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}]
+@="SwinGameVB.Physics"
+
+[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Physics"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Physics"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\ProgId]
+@="SwinGameVB.Physics"
+
+[HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]

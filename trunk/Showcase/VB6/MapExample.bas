@@ -25,11 +25,11 @@ Public Sub MapExample()
         Set balls(i) = Graphics.CreateSprite(GameImage("SmallBall"))
         
         Call balls(i).SetMovementVector(Physics.CreateVector_NoInvert(Rnd * 15, 0))
-        Call balls(i).SetX(MappyLoader.EventPositionX(m, Event_Event1, i))
-        Call balls(i).SetY(MappyLoader.EventPositionY(m, Event_Event1, i))
-        'Call balls(i).SetMass(1)
+        Call balls(i).setX(MappyLoader.EventPositionX(m, Event_Event1, 0))
+        Call balls(i).setY(MappyLoader.EventPositionY(m, Event_Event1, 0 + i * 5))
+        Call balls(i).SetMass(1)
     Next i
-    Call gravity.setVector(Physics.CreateVector_NoInvert(0, 0.7)) '0.7
+    Call gravity.setVector(Physics.CreateVector_NoInvert(0, 0.7))
     Do Until SwinGame.MouseAndKey.IsKeyPressed(Keys_VK_N)
         If MouseAndKey.IsKeyPressed(Keys_VK_RIGHT) Then
             Call Camera.MoveVisualArea(2, 0)
@@ -43,11 +43,7 @@ Public Sub MapExample()
         If MouseAndKey.IsKeyPressed(Keys_VK_LEFT) Then
             Call Camera.MoveVisualArea(-2, 0)
         End If
-        Call MappyLoader.Drawmap(m)
-        Call Text.DrawText(balls(0).GetY, red, GameFont("Courier"), 10, 100)
-        Call Text.DrawText(balls(0).GetX, red, GameFont("Courier"), 10, 120)
-        Call Text.DrawText(balls(1).GetY, red, GameFont("Courier"), 10, 140)
-        Call Text.DrawText(balls(1).GetX, red, GameFont("Courier"), 10, 160)
+        Call MappyLoader.DrawMap(m)
         hit = False
         For i = 0 To UBound(balls, 1) - 1
             For j = i + 1 To UBound(balls, 1)

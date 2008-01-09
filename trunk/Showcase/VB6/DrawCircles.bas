@@ -3,8 +3,8 @@ Public Sub DrawCircles()
     Call SwinGame.Graphics.ClearScreen
     Do Until SwinGame.MouseAndKey.IsKeyPressed(Keys_VK_N)
         Call Randomize
-        Call SwinGame.Graphics.DrawCircleOnScreen(Colour.GetRandomColour, (Rnd * 800), (Rnd * 800), (Rnd * 800))
-        Call SwinGame.Graphics.FillCircleOnScreen(Colour.GetRandomColour, (Rnd * 800), (Rnd * 800), (Rnd * 800))
+        Call SwinGame.Graphics.DrawCircleOnScreen(Colour.GetRandomColour, (Rnd * 800 + 1), (Rnd * 800 + 1), (Rnd * 800 + 1))
+        Call SwinGame.Graphics.FillCircleOnScreen(Colour.GetRandomColour, (Rnd * 800 + 1), (Rnd * 800 + 1), (Rnd * 800 + 1))
         Call TitleDisplay.DrawOverlay("Drawing Circles Example")
         Call SwinGame.Core.ProcessEvents
         Call SwinGame.Core.RefreshScreen_WithFrame(60)
