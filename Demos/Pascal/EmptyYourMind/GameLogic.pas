@@ -11,6 +11,11 @@ implementation
 		SGSDK_KeyCodes;
 	
 	type
+		EnemyMovement = (
+			LeftToRight,
+			RightToLeft
+		);
+		
 		BulletKind = (
 			Normal
 		);
@@ -25,10 +30,13 @@ implementation
 			speed : Single;
 			health : Integer;
 			alive : Boolean;
-			time : Integer;
 			shootDelay, currentDelay : Integer;
 			maxMagazine, currentMagazine, reloadDelay: Integer;
-			offset : Integer;
+			//Enemy data
+			time, offset : Integer;
+			direction : EnemyMovement;
+			//The sprite data used for the player collision
+			theSpriteC : Sprite;
 		end;
 		
 		BulletData = record
@@ -53,43 +61,45 @@ implementation
 		SCREENWIDTH = 480;
 		SCREENHEIGHT = 600;
 	
-	procedure LoadEnemies(var game : GameData);
-	const
-		ENEMIES = 3;
-	var
-		i : Integer;
+	function CreateEnemy(yPos, time : Integer; direction : EnemyMovement) : ShipData;
 	begin
-		SetLength(game.enemies, ENEMIES);
-		for i := 0 to Length(game.enemies) do begin
-			game.enemies[i].theSprite := CreateSprite(GameImage('Enemy'), 2, 2, 75, 85);
-			game.enemies[i].theSprite.xPos := -1 * game.enemies[i].theSprite.width;
-			game.enemies[i].theSprite.yPos := 0;
-			game.enemies[i].speed := 1;
-			game.enemies[i].health := 50;
-			game.enemies[i].time := i * 120;
-			game.enemies[i].alive := true;
-			game.enemies[i].shootDelay := 4;
-			game.enemies[i].currentDelay := game.enemies[i].shootDelay;
-			game.enemies[i].maxMagazine := 7;
-			game.enemies[i].currentMagazine := game.enemies[i].maxMagazine;
-			game.enemies[i].reloadDelay := 15;
-			game.enemies[i].offset := -75;
+		result.theSprite := CreateSprite(GameImage('Enemy'), 2, 2, 75, 85);
+		//Initialise the enemy's position
+		result.theSprite.xPos := -1 * result.theSprite.width;
+		result.theSprite.yPos := 0;
+		result.speed := 1;
+		result.health := 50;
+		result.time := time;
+		result.alive := true;
+		result.shootDelay := 4;
+		result.currentDelay := result.shootDelay;
+		result.maxMagazine := 7;
+		result.currentMagazine := result.maxMagazine;
+		result.reloadDelay := 15;
+		result.offset := -75;
+		result.direction := direction;
+		result.theSprite.yPos := yPos;
+		//Fix the enemy's position if the direction is RightToLeft
+		if result.direction = RightToLeft then begin
+			result.theSprite.xPos := SCREENWIDTH;
+			result.speed := result.speed * -1;
 		end;
 	end;
 	
-	procedure LoadGame(var game : GameData);
+	procedure LoadEnemies(var game : GameData);
+	const
+		ENEMIES = 3;
+	begin
+		SetLength(game.enemies, ENEMIES);
+		game.enemies[0] := CreateEnemy(0, 15, LeftToRight);
+		game.enemies[1] := CreateEnemy(200, 650, RightToLeft);
+		game.enemies[2] := CreateEnemy(100, 1200, LeftToRight);
+	end;
+	
+	procedure LoadPlayer(var game : GameData);
 	const
 		PLAYEROFFSET = 150;
-		BULLETCOUNT = 1000;
-		IMAGES = 2;
-		SOUNDEFFECTS = 1;
-	var
-		i : Integer;
 	begin
-		//Initialise enemies
-		LoadEnemies(game);
-		//Set the length of GameSpriteData to the number of sprites I have
-		SetLength(game.images, IMAGES);
 		game.player.theSprite := CreateSprite(GameImage('Ship'), 2, 2, 40, 43);
 		game.player.theSprite.xPos := Round(ScreenWidth / 2 - game.player.theSprite.width / 2);
 		game.player.theSprite.yPos := ScreenHeight - PLAYEROFFSET;
@@ -99,6 +109,24 @@ implementation
 		game.player.maxMagazine := 7;
 		game.player.currentMagazine := game.player.maxMagazine;
 		game.player.reloadDelay := 15;
+		game.player.alive := true;
+		game.player.theSpriteC := CreateSprite(GameImage('ShipC'));
+		game.player.health := 1;
+	end;
+	
+	procedure LoadGame(var game : GameData);
+	const
+		BULLETCOUNT = 1000;
+		IMAGES = 2;
+		SOUNDEFFECTS = 2;
+	var
+		i : Integer;
+	begin
+		//Initialise enemies
+		LoadEnemies(game);
+		//Set the length of GameSpriteData to the number of sprites I have
+		SetLength(game.images, IMAGES);
+		LoadPlayer(game	);
 		//Create the background sprites from the loaded image
 		game.images[0] := CreateSprite(GameImage('Map'));
 		game.images[1] := CreateSprite(GameImage('Map'));
@@ -111,6 +139,7 @@ implementation
 		game.music := GameMusic('P8107');
 		SetLength(game.sounds, SOUNDEFFECTS);
 		game.sounds[0] := GameSound('Shoot');
+		game.sounds[1] := GameSound('Destroy');
 		game.gameTimer := 0;
 	end;
 
@@ -153,6 +182,9 @@ implementation
 		else if IsKeyPressed(VK_UP) and (not IsKeyPressed(VK_DOWN)) then
 			//if the only key being pressed is the up arrow key
 			player.theSprite.yPos := player.theSprite.yPos - player.speed;
+		//Move the collision sprite
+		player.theSpriteC.xPos := player.theSprite.xPos;
+		player.theSpriteC.yPos := player.theSprite.yPos;
 	end;
 
 	procedure FixPosition(var theSprite : Sprite);
@@ -196,7 +228,7 @@ implementation
 	
 	procedure ShootPlayerBullet(var game : GameData);
 	const
-		BULLETSPEED = 12;
+		BULLETSPEED = 13;
 		DAMAGE = 3;
 	var
 		tempBullet : BulletData;
@@ -246,11 +278,35 @@ implementation
 		end;
 	end;
 	
+	procedure ProcessShipCollision(var shipToProcess : ShipData; var game : GameData; shipSide : BulletSide);
+	var
+		i : Integer;
+		tempSprite : Sprite;
+	begin
+		for i := 0 to High(game.bullets) do begin
+			if game.bullets[i].alive  and not (game.bullets[i].side = shipSide) then begin
+				if shipSide = Enemy then
+					tempSprite := shipToProcess.theSprite
+				else
+					tempSprite := shipToProcess.theSpriteC;
+				if HaveSpritesCollided(game.bullets[i].theSprite, tempSprite) then begin
+					shipToProcess.health := shipToProcess.health - game.bullets[i].damage;
+					if shipToProcess.health <= 0 then begin
+						shipToProcess.alive := false;
+						PlaySoundEffect(game.sounds[1]);
+					end;
+					game.bullets[i].alive := false;
+				end;
+			end;
+		end;
+	end;
+	
 	procedure UpdateShip(var game : GameData);
 	begin
 		MovePlayerShip(game.player);
 		FixPosition(game.player.theSprite);
 		ShootPlayerBullet(game);
+		ProcessShipCollision(game.player, game, Player);
 		DrawSprite(game.player.theSprite);
 		UpdateSpriteAnimation(game.player.theSprite);
 	end;
@@ -274,7 +330,7 @@ implementation
 	
 	procedure ShootEnemyBullet(var enemyToProcess : ShipData; var game : GameData);
 	const
-		BULLETSPEED = 4;
+		BULLETSPEED = 3;
 		DAMAGE = 1;
 	var
 		tempBullet : BulletData;
@@ -287,13 +343,15 @@ implementation
 		if enemyToProcess.currentMagazine < 1 then begin
 			if enemyToProcess.currentMagazine = -1 * enemyToProcess.reloadDelay then
 				enemyToProcess.currentMagazine := enemyToProcess.maxMagazine;
-		end	else if enemyToProcess.currentDelay = 0 then begin
+		end else if enemyToProcess.currentDelay = 0 then begin
 			enemyToProcess.currentMagazine := enemyToProcess.currentMagazine - 1;
 			enemyToProcess.currentDelay := enemyToProcess.shootDelay;
+			//Enemy bullet pattern
 			for i := 0 to 18 do begin
 				tempBullet := CreateBullet('EnemyBullet', enemyToProcess, DAMAGE, Normal, 
-											Enemy, GetVectorFromAngle(60 + 15 * i + enemyToProcess.offset, BULLETSPEED));
+											Enemy, GetVectorFromAngle(60 + 20 * i + enemyToProcess.offset, BULLETSPEED));
 				DeployBullet(tempBullet, game.bullets);
+				PlaySoundEffect(game.sounds[2]);
 			end;
 			enemyToProcess.offset := enemyToProcess.offset + 10;
 		end;
@@ -306,10 +364,11 @@ implementation
 		for i := 0 to High(game.enemies) do begin
 			if (game.enemies[i].time <= game.gameTimer) and game.enemies[i].alive then begin
 				game.enemies[i].theSprite.xPos := game.enemies[i].theSprite.xPos + game.enemies[i].speed;
-				if game.enemies[i].theSprite.xPos >= SCREENWIDTH then begin
+				if IsSpriteOffscreen(game.enemies[i].theSprite) then begin
 					game.enemies[i].alive := false;
 					continue;
 				end;
+				ProcessShipCollision(game.enemies[i], game, Enemy);
 				ShootEnemyBullet(game.enemies[i], game);
 				DrawSprite(game.enemies[i].theSprite);
 				UpdateSpriteAnimation(game.enemies[i].theSprite);
@@ -331,6 +390,7 @@ implementation
 			UpdateEnemies(game);
 			game.gameTimer := game.gameTimer + 1;
 			RefreshScreen();
+			if not game.player.alive then break;
 		until WindowCloseRequested();
 		StopMusic();
 	end;
