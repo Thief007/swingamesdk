@@ -91,20 +91,6 @@
 			<key>firstVisibleLine</key>
 			<integer>297</integer>
 		</dict>
-		<key>macbuild.sh</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>8</integer>
-				<key>line</key>
-				<integer>50</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>50</integer>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
@@ -112,12 +98,11 @@
 		<string>GameResources.pas</string>
 		<string>AlienFlightView.pas</string>
 		<string>GameLogic.pas</string>
-		<string>macbuild.sh</string>
 		<string>AlienFlightLevelEditor.pas</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{292, 131}, {1096, 747}}</string>
+	<string>{{292, 90}, {978, 688}}</string>
 </dict>
 </plist>
