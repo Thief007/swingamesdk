@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using SwinGame;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace SwinGameVB
 {

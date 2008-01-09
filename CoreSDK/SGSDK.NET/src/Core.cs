@@ -64,9 +64,9 @@ namespace SwinGame
     {
         internal IntPtr pointer;
         
-        [DllImport("lib/SGSDK.dll")]
+        [DllImport("SGSDK.dll")]
         private static extern int GetBitmapWidth(IntPtr pointer);
-        [DllImport("lib/SGSDK.dll")]
+        [DllImport("SGSDK.dll")]
         private static extern int GetBitmapHeight(IntPtr pointer);
 
         /// <summary>
@@ -133,14 +133,25 @@ namespace SwinGame
     {
         // Debug Exception Code
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern bool ExceptionOccured();
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        private static extern String GetExceptionMessage();
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
+        public static extern String GetExceptionMessage();
+
+        private static string _ErrorMessage;
+
+        public static string Errormessage()
+        {
+            return _ErrorMessage;
+        }
+        internal static string ErrorMessage
+        {
+            set { value = _ErrorMessage; }
+        }
         
         // Code
 
-        [DllImport("lib/SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="OpenGraphicsWindow")]
+        [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="OpenGraphicsWindow")]
         private static extern void DLL_OpenGraphicsWindow(String caption, int width, int height);
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the
@@ -167,7 +178,7 @@ namespace SwinGame
             }     
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
         private static extern bool DLL_WindowCloseRequested();
         /// <summary>
         /// Checks to see if the window has been asked to close. You need to handle
@@ -193,7 +204,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ProcessEvents")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ProcessEvents")]
         private static extern void DLL_ProcessEvents();
         /// <summary>
         /// ProcessEvents allows the SwinGame API to react to user interactions. This
@@ -217,7 +228,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetIcon")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetIcon")]
         private static extern void DLL_SetIcon(String iconFilename);
         /// <summary>
         /// Sets the icon for the window. This must be called before openning the
@@ -242,7 +253,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ChangeScreenSize")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ChangeScreenSize")]
         private static extern void DLL_ChangeScreenSize(int width, int height);
         /// <summary>
         /// Changes the size of the screen.
@@ -266,7 +277,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ToggleFullScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ToggleFullScreen")]
         private static extern void DLL_ToggleFullScreen();
         /// <summary>
         /// Switches the application to full screen or back from full screen to
@@ -290,9 +301,9 @@ namespace SwinGame
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="RefreshScreenWithFrame")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="RefreshScreenWithFrame")]
         private static extern void DLL_RefreshScreenWithFrame(int TargetFPS);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RefreshScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RefreshScreen")]
         private static extern void DLL_RefreshScreen();
 
         /// <summary>
@@ -340,7 +351,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TakeScreenshot")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TakeScreenshot")]
         private static extern void DLL_TakeScreenshot(String basename);
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
@@ -364,7 +375,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenWidth")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenWidth")]
         private static extern int DLL_ScreenWidth();
         /// <summary>
         /// Gets the Screen's Width
@@ -388,7 +399,7 @@ namespace SwinGame
             }  
         }
 	
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenHeight")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="ScreenHeight")]
         private static extern int DLL_ScreenHeight();
         /// <summary>
         /// Gets the Screen's Height
@@ -412,7 +423,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetColourRGBA")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetColourRGBA")]
         private static extern int DLL_GetColor(Byte red, Byte green, Byte blue, Byte alpha);
         /// <summary>
         /// Gets the Color when the user enters the amount of red, green, blue and alpha
@@ -465,7 +476,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetFramerate")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetFramerate")]
         private static extern int DLL_GetFramerate();
         /// <summary>
         /// Returns the average framerate for the last 10 frames as an integer.
@@ -489,7 +500,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetTicks")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetTicks")]
         private static extern UInt32 DLL_GetTicks();
         /// <summary>
         /// Gets the number of milliseconds that have passed. This can be used to
@@ -514,7 +525,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Sleep")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Sleep")]
         private static extern UInt32 DLL_Sleep(UInt32 time);
         /// <summary>
         /// /// Puts the process to sleep for a specified number of
@@ -541,9 +552,9 @@ namespace SwinGame
         }
 
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithKind")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithKind")]
         private static extern String DLL_GetPathToResourceWithKind(String filename, ResourceKind kind);
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResource")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResource")]
         private static extern String DLL_GetPathToResource(String filename);
         /// <summary>
         /// Gets the resource to an image, sound, font or other type of resource
@@ -596,7 +607,7 @@ namespace SwinGame
             }  
         }
 	    
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Cos")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Cos")]
         private static extern Single DLL_Cos(Single angle);
         /// <summary>
         /// Gets the Cos of an angle
@@ -621,7 +632,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Sin")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Sin")]
         private static extern Single DLL_Sin(Single angle);
         /// <summary>
         /// Gets the Sin of an angle
@@ -646,7 +657,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("lib/SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Tan")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Tan")]
         private static extern Single DLL_Tan(Single angle);
         /// <summary>
         /// Gets the Tan of an angle

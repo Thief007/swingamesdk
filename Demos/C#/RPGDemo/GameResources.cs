@@ -281,7 +281,7 @@ namespace GameResources
 
         private static void LoadFonts()
         {
-            NewFont("ArialLarge", "arial.ttf", 80);
+            NewFont("ArialLarge", "arial.tttf", 80);
             NewFont("Courier", "cour.ttf", 16);
 
             //Remove when added to tutorial
