@@ -393,14 +393,7 @@ namespace SwinGame
         {
             get
             {
-                if (GetSpritehasEnded(Pointer) == -1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                return GetSpritehasEnded(Pointer) == -1;
             }
         }
 	
@@ -414,14 +407,7 @@ namespace SwinGame
         {
             get
             {
-                if (GetSpriteReverse(Pointer) == -1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return GetSpriteReverse(Pointer) == -1;
             }
         }
 
@@ -2217,7 +2203,7 @@ namespace SwinGame
         {
             try
             {
-                DLL_UpdateSprite(sprite.Pointer);
+                DLL_UpdateSpriteAnimation(sprite.Pointer);
                 if (ExceptionOccured())
                 {
                     throw new SwinGameException(GetExceptionMessage());

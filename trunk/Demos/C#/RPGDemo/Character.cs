@@ -112,6 +112,7 @@ namespace GameProject
             temp.Attacking = false;
 
             temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
+            temp.SlashUp.CurrentFrame = 0;
 
             return temp;
         }
@@ -124,7 +125,7 @@ namespace GameProject
                 {
                     case CharacterAnim.Top:
                         theCharacter.Attacking = true;
-                        theCharacter.SlashUp.CurrentFrame = 3;
+                        theCharacter.SlashUp.CurrentFrame = 0;
                         
                         break;
                 }

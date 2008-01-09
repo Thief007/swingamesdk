@@ -1748,19 +1748,25 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	function GetSpritehasEnded(surface : Sprite) : Boolean; cdecl; export;
+	function GetSpritehasEnded(surface : Sprite) : Integer; cdecl; export;
 	begin
 		Try
-			result := surface.hasEnded;
+			if surface.hasEnded then
+				result := -1
+			else
+				result := 0;
 		Except
 			ErrorMessage := GetSGSDKException();
 		end;
 	end;
 	
-	function GetSpriteReverse(surface : Sprite) : Boolean; cdecl; export;
+	function GetSpriteReverse(surface : Sprite) : Integer; cdecl; export;
 	begin
 		Try
-			result := surface.reverse;
+			if surface.reverse then
+				result := -1
+			else
+				result := 0;
 		Except
 			ErrorMessage := GetSGSDKException();
 		end;
