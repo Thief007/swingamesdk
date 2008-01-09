@@ -142,6 +142,7 @@ implementation
 		NewImage('PlayerBullet', 'playerBullet.png');
 		NewImage('Enemy', 'enemy.png');
 		NewImage('EnemyBullet', 'EnemyBullet.png');
+		NewImage('ShipC', 'shipC.png');
 		//NewImage('NoImages', 'Ufo.png');
 	end;
 
@@ -158,6 +159,7 @@ implementation
 	procedure LoadSounds();
 	begin
 		NewSound('Shoot', 'shoot.wav');
+		NewSound('Destroy', 'destroy.wav');
 		//NewSound('NoSound', 'sound.ogg');
 	end;
 	
