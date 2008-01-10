@@ -2211,6 +2211,29 @@ namespace SwinGame
             }  
         }
 
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ReplayAnimation")]
+        private static extern void DLL_ReplayAnimation(IntPtr sprite);
+        /// <summary>
+        /// Replays a Sprite's Animation, if it has stopped
+        /// </summary>
+        /// <param name="sprite">The Sprite</param>
+        public static void ReplayAnimation(Sprite sprite)
+        {
+            try
+            {
+                DLL_ReplayAnimation(sprite.Pointer);
+                if (Core.ExceptionOccured())
+                {
+                    throw new SwinGameException(Core.GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                //if (Core.ExceptionOccured())
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
         private static extern void DLL_UpdateSprite(IntPtr sprite);
         /// <summary>

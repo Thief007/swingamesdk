@@ -1902,6 +1902,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
+	procedure ReplayAnimation(theSprite : Sprite);cdecl; export;
+	begin
+		Try
+			SGSDK_Graphics.ReplayAnimation(theSprite);
+		Except
+			ErrorMessage := GetSGSDKException();
+		end;
+	end;
+	
 	{
 	function IsSpriteOffscreenWithViewPort(theSprite : Sprite; vwPrtX, vwPrtY,
 															vwPrtWidth, vwPrtHeight : Integer) : Integer; cdecl; export;
@@ -2435,6 +2444,7 @@ exports
 	GetSpriteendingAction,
 	GetSpritehasEnded,
 	GetSpriteReverse,
+	ReplayAnimation,
 	
 	SetSpriteKind,
 	SetSpriteFramesPerCell,
