@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cp -R -u ..\..\Base\All\resources\* .\FPC\Resources
+cp -R ../../Base/All/Resources ./FPC 
