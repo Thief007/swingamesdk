@@ -69,14 +69,14 @@ implementation
 	
 	procedure MoveVisualArea(v: Vector); overload;
 	begin
-		ScreenOffsetX += v.x;
-		ScreenOffsetY += v.y;
+		ScreenOffsetX := ScreenOffsetX + v.x;
+		ScreenOffsetY := ScreenOffsetY + v.y;
 	end;
-	
+
 	procedure MoveVisualArea(dx, dy: Single); overload;
 	begin
-		ScreenOffsetX += dx;
-		ScreenOffsetY += dy;		
+		ScreenOffsetX := ScreenOffsetX + dx;
+		ScreenOffsetY := ScreenOffsetY + dy;
 	end;
 	
 	procedure SetScreenOffset(x, y: Single);

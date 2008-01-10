@@ -185,8 +185,9 @@ interface
 	
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
 		
-	procedure MoveSprite(spriteToMove: Sprite);
-	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
+	procedure MoveSprite(spriteToMove: Sprite); overload;
+	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); overload;
+
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
 		
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
@@ -319,6 +320,8 @@ implementation
 		pixels, pixel: PUint32;
 		offset, pixelAddress: Uint32;
 	begin
+    result := 0;
+    
 		//Convert the pixels to 32 bit
 		pixels := surface.pixels;
 
@@ -410,6 +413,7 @@ implementation
 		loadedImage: PSDL_Surface;
 		correctedTransColor: Colour;
 	begin
+    result := nil;
 		loadedImage := IMG_Load(pchar(pathToBitmap));
 		
 		if loadedImage <> nil then
@@ -1086,7 +1090,7 @@ implementation
 	///
 	///	@param spriteToMove:		 The sprite to move
 	///	@param movementVector:	 The vector containing the movement details
-	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector);
+	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); overload;
 	begin
 		try
 			spriteToMove.xPos := spriteToMove.xPos + movementVector.x;
@@ -1113,7 +1117,7 @@ implementation
 		end;
 	end;
 	
-	procedure MoveSprite(spriteToMove: Sprite);
+	procedure MoveSprite(spriteToMove: Sprite); overload;
 	begin
 		try
 			spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
@@ -1132,10 +1136,13 @@ implementation
 	///  @returns:              A new bitmap
 	function CreateBitmap(width, height: Integer): Bitmap;
 	begin
-		if (width < 1) or (height < 1) then begin
+    result := nil;
+
+		if (width < 1) or (height < 1) then
 			RaiseSGSDKException('Bitmap width and height must be greater then 0');
-		end;
-		
+    if (baseSurface = nil) or (baseSurface.format = nil) then
+      RaiseSGSDKException('Unable to CreateBitmap as the window is not open');
+
 		try
 			New(result);
 
@@ -1144,11 +1151,13 @@ implementation
 				result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
 												 RMask, GMask, BMask, AMask);
 			end;
+
 			result.width := width;
 			result.height := height;
 			SDL_SetAlpha(result.surface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
 			SDL_FillRect(result.surface, nil, ColorTransparent);
 		except
+      Dispose(result);
 			RaiseSGSDKException('Failed to create a bitmap');
 		end;
 	end;
@@ -1581,7 +1590,8 @@ implementation
 		xRadius := width div 2;
 		yRadius := height div 2;
 
-		xPos += xRadius; yPos += yRadius;
+		xPos := xPos + xRadius;
+    yPos := yPos + yRadius;
 
 		twoASquare := 2 * (width shr 1) * (width shr 1);
 		twoBSquare := 2 * (height shr 1) * (height shr 1);
@@ -1695,8 +1705,8 @@ implementation
 		xRadius := width div 2;
 		yRadius := height div 2;
 		
-		xPos += xRadius;
-		yPos += yRadius;
+		xPos := xPos + xRadius;
+		yPos := yPos + yRadius;
 		
 		twoASquare := 2 * (width shr 1) * (width shr 1);
 		twoBSquare := 2 * (height shr 1) * (height shr 1);

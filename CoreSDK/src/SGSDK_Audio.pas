@@ -199,10 +199,12 @@ implementation
 		i: Integer;
 	begin
 		try
+			Mix_HaltMusic();
+
 			i := Mix_PlayMusic(mus, loops);
 			if i <> -1 then soundChannels[i] := mus;
-			Mix_HaltMusic();
-			i := Mix_PlayMusic(mus, loops);
+
+			//i := Mix_PlayMusic(mus, loops);
 		except
 			RaiseSGSDKException('Failed to play the specified music');
 		end;
@@ -223,9 +225,9 @@ implementation
 	var
 		i: Integer;
 	begin
-		try
-			result := false;
+		result := false;
 
+		try
 			for i := 0 to High(soundChannels) do
 			begin
 				if soundChannels[i] = effect then
@@ -257,6 +259,7 @@ implementation
 		try
 			result := Mix_PlayingMusic() <> 0;
 		except
+      result := false;
 			RaiseSGSDKException('Failed to check if the music is playing');
 		end;
 	end;
