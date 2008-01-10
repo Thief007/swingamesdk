@@ -17,7 +17,6 @@ using GameResources;
 
 namespace GameProject
 {
-    //Remove this when added to tutorial
     public struct Attibutes
     {
         public int Strength;
@@ -25,7 +24,6 @@ namespace GameProject
         public int Agility;
     }
 
-    //Remove this when added to tutorial
     public struct Stats
     {
         public int Attack;
@@ -58,11 +56,9 @@ namespace GameProject
         public Sprite Sprite;
         public CharacterAnim Anim;
 
-        //Remove this when added to tutorial
         public Stats Stats;
         public Attibutes Attributes;
 
-        //Remove this when added to tutorial
         public Boolean Alive;
 
         //Remove this when added to tutorial
@@ -70,6 +66,9 @@ namespace GameProject
         public Sprite SlashDown;
         public Sprite SlashLeft;
         public Sprite SlashRight;
+        public Sprite CurrentSlash;
+
+        public SoundEffect Swing;
 
         public Boolean Attacking;
         public int Cooldown;
@@ -89,44 +88,79 @@ namespace GameProject
             temp.Sprite.Movement.SetTo(Physics.CreateVector(0, 0));
             temp.Anim = CharacterAnim.None;
 
-            //Remove this when added to tutorial
             temp.Attributes.Strength = Strength;
             temp.Attributes.Vitality = Vitality;
             temp.Attributes.Agility = Agility;
 
-            //Remove this when added to tutorial
             RefreshCharacterStats(ref temp);
 
-            //Remove this when added to tutorial
             temp.Stats.Health = temp.Stats.MaxHealth;
-            temp.Stats.StatPoints = 20;
+            temp.Stats.StatPoints = 3;
             temp.Stats.Level = 1;
             temp.Stats.Experience = 0;
             temp.Stats.ExperienceNextLevel = 100;
 
             //Remove this when added to tutorial
-            temp.SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 2, 5, 28, 47);
-            temp.SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 2, 5, 28, 47);
-            temp.SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 2, 5, 49, 27);
-            temp.SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 2, 5, 49, 27);
+            temp.SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 1, 5, 28, 47);
+            temp.SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 1, 5, 27, 47);
+            temp.SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 1, 5, 49, 27);
+            temp.SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 1, 5, 49, 27);
+
+            //Set the Animations
+            temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
+            temp.SlashDown.EndingAction = SpriteEndingAction.Stop;
+            temp.SlashLeft.EndingAction = SpriteEndingAction.Stop;
+            temp.SlashRight.EndingAction = SpriteEndingAction.Stop;
+
             temp.Attacking = false;
 
-            temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
-            temp.SlashUp.CurrentFrame = 0;
+            temp.Swing = Resources.GameSound("Swing");
 
             return temp;
         }
 
         public static void InitiateAttack(ref Character theCharacter)
         {
-            if (!theCharacter.Attacking)
+            if (!theCharacter.Attacking && theCharacter.Cooldown == 0)
             {
+                //In each case, the Current Weapon is changed to the weapon that
+                //represents the direction the character is facing
+                //The sword's Animation is replayed
+                //The Characters Attacking State is set to true
+                //A Cooldown is set to down the character from spamming the attack
+                //Sound Effect is played
                 switch (theCharacter.Anim)
                 {
                     case CharacterAnim.Top:
+                        theCharacter.CurrentSlash = theCharacter.SlashUp;
+                        Graphics.ReplayAnimation(theCharacter.CurrentSlash);
                         theCharacter.Attacking = true;
-                        theCharacter.SlashUp.CurrentFrame = 0;
-                        
+                        theCharacter.Cooldown = 40;
+                        Audio.PlaySoundEffect(theCharacter.Swing);
+                        break;
+
+                    case CharacterAnim.Down:
+                        theCharacter.CurrentSlash = theCharacter.SlashDown;
+                        Graphics.ReplayAnimation(theCharacter.CurrentSlash);
+                        theCharacter.Attacking = true;
+                        theCharacter.Cooldown = 40;
+                        Audio.PlaySoundEffect(theCharacter.Swing);
+                        break;
+
+                    case CharacterAnim.Left:
+                        theCharacter.CurrentSlash = theCharacter.SlashLeft;
+                        Graphics.ReplayAnimation(theCharacter.CurrentSlash);
+                        theCharacter.Attacking = true;
+                        theCharacter.Cooldown = 40;
+                        Audio.PlaySoundEffect(theCharacter.Swing);
+                        break;
+
+                    case CharacterAnim.Right:
+                        theCharacter.CurrentSlash = theCharacter.SlashRight;
+                        Graphics.ReplayAnimation(theCharacter.CurrentSlash);
+                        theCharacter.Attacking = true;
+                        theCharacter.Cooldown = 40;
+                        Audio.PlaySoundEffect(theCharacter.Swing);
                         break;
                 }
             }
@@ -134,50 +168,49 @@ namespace GameProject
 
         public static void UpdateAttack(ref Character theCharacter)
         {
-            //Update the position of the Upward Slash
-            theCharacter.SlashUp.xPos = theCharacter.Sprite.xPos;
-            theCharacter.SlashUp.yPos = theCharacter.Sprite.yPos;
-
-            //Update the Position of the Downward Slash
-            theCharacter.SlashDown.xPos = theCharacter.Sprite.xPos;
-            theCharacter.SlashDown.yPos = theCharacter.Sprite.yPos;
-
-            //Update the Position of the Left Slash
-            theCharacter.SlashLeft.xPos = theCharacter.Sprite.xPos;
-            theCharacter.SlashLeft.yPos = theCharacter.Sprite.yPos;
-
-            //Update the Position of the Right Slash
-            theCharacter.SlashRight.xPos = theCharacter.Sprite.xPos;
-            theCharacter.SlashRight.yPos = theCharacter.Sprite.yPos;
-
-            //Draw the Player Attacks
-            //Graphics.DrawSprite(_Player.SlashUp);
-            //Graphics.DrawSprite(_Player.SlashDown);
-            // Graphics.DrawSprite(_Player.SlashLeft);
-            //Graphics.DrawSprite(_Player.SlashRight);
+            //Reduces the Cooldown to 0 slowly
+            if (theCharacter.Cooldown > 0)
+                theCharacter.Cooldown = theCharacter.Cooldown - 1;
 
             if (theCharacter.Attacking)
             {
                 //Remove when added to tutorial
-                if (!theCharacter.SlashUp.hasEnded)
+                if (!theCharacter.CurrentSlash.hasEnded)
                 {
-                    Graphics.UpdateSpriteAnimation(theCharacter.SlashUp);
-                    Graphics.DrawSprite(theCharacter.SlashUp);
-                }
-                else if (!theCharacter.SlashDown.hasEnded)
-                {
-                    Graphics.UpdateSpriteAnimation(theCharacter.SlashDown);
-                }
-                else if (!theCharacter.SlashLeft.hasEnded)
-                {
-                    Graphics.UpdateSpriteAnimation(theCharacter.SlashLeft);
-                }
-                else if (!theCharacter.SlashRight.hasEnded)
-                {
-                    Graphics.UpdateSpriteAnimation(theCharacter.SlashRight);
+                    //Update the position of the Sword
+                    //Each direction has a different offset, so that the sword is placed in the correct
+                    //position. When you do this for your game, its a matter of trial and error, until
+                    //you get the position you want.
+                    switch (theCharacter.Anim)
+                    {
+                        case CharacterAnim.Top:
+                            theCharacter.CurrentSlash.xPos = theCharacter.Sprite.xPos - (int)(theCharacter.Sprite.Width / 2);
+                            theCharacter.CurrentSlash.yPos = theCharacter.Sprite.yPos - (int)(theCharacter.Sprite.Height / 2) + 6;
+                            break;
+
+                        case CharacterAnim.Down:
+                            theCharacter.CurrentSlash.xPos = theCharacter.Sprite.xPos - (int)(theCharacter.Sprite.Width / 2);
+                            theCharacter.CurrentSlash.yPos = theCharacter.Sprite.yPos +(int)(theCharacter.Sprite.Height / 2) - 13;
+                            break;
+
+                        case CharacterAnim.Left:
+                            theCharacter.CurrentSlash.xPos = theCharacter.Sprite.xPos - (int)(theCharacter.Sprite.Width / 2);
+                            theCharacter.CurrentSlash.yPos = theCharacter.Sprite.yPos;
+                            break;
+
+                        case CharacterAnim.Right:
+                            theCharacter.CurrentSlash.xPos = theCharacter.Sprite.xPos - (int)(theCharacter.Sprite.Width / 2);
+                            theCharacter.CurrentSlash.yPos = theCharacter.Sprite.yPos;
+                            break;
+                    }
+
+                    //Update Sprite Animation and Draw the Sword Sprite
+                    Graphics.UpdateSpriteAnimation(theCharacter.CurrentSlash);
+                    Graphics.DrawSprite(theCharacter.CurrentSlash);
                 }
                 else
                 {
+                    //Set the Attacking state to false
                     theCharacter.Attacking = false;
                 }
             }
@@ -211,7 +244,6 @@ namespace GameProject
             }
         }
 
-        //Remove this when added to tutorial
         public static void RefreshCharacterStats(ref Character theCharacter)
         {
             //Health = Base(20) + Vitality * 6

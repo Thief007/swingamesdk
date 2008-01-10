@@ -42,6 +42,7 @@ namespace GameProject
                 Characters.MoveCharacter(thePlayer, theMap, 0, 0);
             }
 
+            //WIP
             if (Input.IsKeyPressed(SwinGame.Keys.VK_SPACE))
             {
                 Characters.InitiateAttack(ref thePlayer);

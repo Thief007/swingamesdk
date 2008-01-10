@@ -65,7 +65,6 @@ namespace GameProject
 
                 Text.DrawTextOnScreen("Stats", Color.White, Resources.GameFont("Arial"), 375, 5);
 
-
                 //If player has 50% or more health, health appears in green
                 //If player has 20% to 50% health, it appears in yellow
                 //Else player's health appears red.
