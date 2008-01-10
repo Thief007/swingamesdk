@@ -50,6 +50,7 @@ implementation
 			result := sdlManager.WasKeyTyped(virtKeyCode);
 		except
 			RaiseSGSDKException('Unable to check if the specified key was typed');
+      result := false;
 		end;
 	end;
 
@@ -117,6 +118,7 @@ implementation
 			result := sdlManager.IsReading;
 		except
 			RaiseSGSDKException('Unable to check if the program is reading text');
+      result := false;
 		end;
 	end;
 
@@ -182,6 +184,7 @@ implementation
 			SDL_BUTTON(Integer(button))) > 0;
 		except
 			RaiseSGSDKException('Failed to check if the mouse button is down');
+      result := false;
 		end;
 	end;
 	

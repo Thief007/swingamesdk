@@ -124,6 +124,8 @@ implementation
 	///	@returns:				The font loaded
 	function LoadFont(fontName: String; size: Integer): Font;
 	begin
+    result := nil;
+    
 		try
 			result := TTF_OpenFont(PChar(fontName), size);
 		except
@@ -189,9 +191,9 @@ implementation
 		n, w, h, i: Integer;
 		rect: TSDL_Rect;
 	begin
-		try
-			result := nil;
+		result := nil;
 
+		try
 			// If there's nothing to draw, return NULL
 			if (Length(str) = 0) or (font = nil) then exit;
 

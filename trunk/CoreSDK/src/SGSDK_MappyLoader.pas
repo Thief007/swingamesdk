@@ -290,7 +290,6 @@ implementation
 		end;
 		
 		smallest := m.MapInfo.NumberOfBlocks - 23;
-		temp := 0;
 		
 		for y := 0 to m.MapInfo.MapHeight - 1 do
 		begin

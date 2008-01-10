@@ -1,4 +1,4 @@
-unit SGSDK_Physics;
+﻿unit SGSDK_Physics;
 
 interface
 	uses
@@ -273,6 +273,8 @@ implementation
 	function HasSpriteCollidedX(theSprite: Sprite; x: Single; 
 	             range: CollisionDetectionRange): Boolean;
 	begin
+    result := false;
+    
 		if range = CollisionRangeEquals then
 			result := (x >= theSprite.xPos) and 
 	        (x <= theSprite.xPos + theSprite.width)
@@ -296,6 +298,8 @@ implementation
 	function HasSpriteCollidedY(theSprite : Sprite; y : Single; 
 								range : CollisionDetectionRange): Boolean;
 	begin
+    result := false;
+    
 		if range = CollisionRangeEquals then
 			result := (y >= theSprite.yPos) and 
 	       (y <= theSprite.yPos + theSprite.height)

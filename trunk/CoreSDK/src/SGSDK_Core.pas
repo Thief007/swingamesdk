@@ -342,10 +342,11 @@ implementation
 		end;
 
 		New(scr);
-		
 		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32,
 															 SDL_HWSURFACE or SDL_DOUBLEBUF);
-		
+
+    if scr = nil then RaiseSGSDKException('Unable to create window drawing surface... ' + SDL_GetError());
+
 		with scr.surface.format^ do
 		begin
 			baseSurface := SDL_CreateRGBSurface(SDL_SWSURFACE or SDL_SRCALPHA,
@@ -353,10 +354,6 @@ implementation
 											 RMask, GMask, BMask, SDL_Swap32($000000FF));
 		end;
 
-		if scr.surface = nil then
-		begin
-			RaiseSGSDKException('Error creating screen with SDL');
-		end;
 		SDL_WM_SetCaption(PChar(caption), nil);
 	end;
 	
@@ -372,10 +369,16 @@ implementation
 	
 	function ToSDLColor(color: UInt32): TSDL_Color;
 	begin
+    if (baseSurface = nil) or (baseSurface^.format = nil) then
+    begin
+      RaiseSGSDKException('Unable to get color as screen is not created.');
+    end;
+
 		try
 			SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
 		except
 			RaiseSGSDKException('Failed to convert the spceified colour to SDL colour format');
+      result.r := 0; result.g := 0; result.b := 0;
 		end;
 	end;
 	
@@ -516,24 +519,22 @@ implementation
 	/// @returns:	The screen's width
 	function ScreenWidth(): Integer;
 	begin
-		try
-			result := scr.surface.w;
-		except
-			RaiseSGSDKException('Could not obtain the screen width');
-		end;
+    if (scr = nil) or (scr.surface = nil) then
+      RaiseSGSDKException('Screen has not been created. Unable to get screen width.');
+
+		result := scr.surface.w;
 	end;
-	
+
 	/// Returns the height of the screen currently displayed.
 	///
 	/// @returns:	The screen's height
 	function ScreenHeight(): Integer;
 	begin
-		try
-			result := scr.surface.h;
-		except
-			RaiseSGSDKException('Could not obtain the screen height');
-		end;
-	end;	
+    if (scr = nil) or (scr.surface = nil) then
+      RaiseSGSDKException('Screen has not been created. Unable to get screen width.');
+
+		result := scr.surface.h;
+	end;
 	
 	/// Opens the graphical window so that it can be drawn onto. You can set the
 	///	icon for this window using SetIcon. The window itself is only drawn when
@@ -668,12 +669,15 @@ implementation
 	var
 		temp: TSDL_Color;
 	begin
-		try
-			temp := ToSDLColor(apiColor);
-			result := SDL_MapRGB(forBitmap.surface.format, temp.r, temp.g, temp.b);
-		except
-			RaiseSGSDKException('Error occured while mapping a color from a given bitmap');
-		end;
+    if (forBitmap = nil)
+      or (forBitmap.surface = nil)
+      or (forBitmap.surface.format = nil) then
+    begin
+      RaiseSGSDKException('Unable to get color as bitmap not specified');
+    end;
+
+		temp := ToSDLColor(apiColor);
+		result := SDL_MapRGB(forBitmap.surface.format, temp.r, temp.g, temp.b);
 	end;
 	
 	/// Gets a color given its RGBA components.
@@ -682,9 +686,13 @@ implementation
 	///	@returns: The matching colour
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;
 	begin
+    if (baseSurface = nil) or (baseSurface.format = nil) then
+      RaiseSGSDKException('Unable to CreateBitmap as the window is not open');
+
 		try
 			result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
 		except
+      result := ColorWhite;
 			RaiseSGSDKException('Error occured while trying to get a color from RGBA components');
 		end;
 	end;
@@ -807,6 +815,7 @@ implementation
 		try
 			result := sdlManager.HasQuit();
 		except
+      result := true;
 			RaiseSGSDKException('Error occured while trying to find out if the window has been requested to clode');
 		end;
 	end;
@@ -820,6 +829,7 @@ implementation
 		try
 			result := SDL_GetTicks();
 		except
+      result := 0;
 			RaiseSGSDKException('Error occured while trying to get ticks');
 		end;
 	end;
@@ -882,16 +892,16 @@ begin
 	//WriteLn('InitSDL');
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
-		WriteLn('Errorm loading sdl...');
-		WriteLn(string(SDL_GetError));
-		raise Exception.Create('Error initialising SDL. ' + string(SDL_GetError));
+    RaiseSGSDKException('Error loading sdl... ' + SDL_GetError());
 	end;
 	
-	SDL_EnableUNICODE(SDL_ENABLE);
-	
+	//Not needed anymore - SDL_EnableUNICODE(SDL_ENABLE);
+
 	sdlManager := TSDLManager.Create();
 	applicationPath := ExtractFileDir(ParamStr(0));
-	
+
+  scr := nil;
+  
 	//Load sound
 	{WriteLn('Opening Mixer');
 	if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
