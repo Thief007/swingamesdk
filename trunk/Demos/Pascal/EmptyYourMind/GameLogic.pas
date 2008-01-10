@@ -285,16 +285,19 @@ implementation
 	begin
 		for i := 0 to High(game.bullets) do begin
 			if game.bullets[i].alive  and not (game.bullets[i].side = shipSide) then begin
+				//Initialise the sprite used to check the collision
 				if shipSide = Enemy then
 					tempSprite := shipToProcess.theSprite
 				else
 					tempSprite := shipToProcess.theSpriteC;
 				if HaveSpritesCollided(game.bullets[i].theSprite, tempSprite) then begin
 					shipToProcess.health := shipToProcess.health - game.bullets[i].damage;
+					//Kill and play a sound effect if the health is lower than 0
 					if shipToProcess.health <= 0 then begin
 						shipToProcess.alive := false;
 						PlaySoundEffect(game.sounds[1]);
 					end;
+					//Kill the bullet collided
 					game.bullets[i].alive := false;
 				end;
 			end;
