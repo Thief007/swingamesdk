@@ -48,8 +48,8 @@ namespace GameProject
             Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0),5,5,5, true, true, true);
             Character[] _Healers = Healers.NewHealers("Healer", _Map, 1, 1, 1);
             Character[] _Critters = Enemy.NewEnemies("Critter", 1, _Map, 4, 5, 4, 20);
-            Character[] _Thieves = Enemy.NewEnemies("Theif", 2, _Map, 10, 6, 8, 40);
-            Character[] _Leader = Enemy.NewEnemies("TheifLeader", 3, _Map, 25, 15, 20, 400);
+            Character[] _Thieves = Enemy.NewEnemies("Thief", 2, _Map, 10, 6, 8, 40);
+            Character[] _Leader = Enemy.NewEnemies("ThiefLeader", 3, _Map, 25, 15, 20, 400);
 
             Character[] _TotalAI = new Character[0];
 
