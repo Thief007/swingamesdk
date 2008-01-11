@@ -75,16 +75,21 @@ namespace GameProject
                 {
 
                     //If the AI can move, it will move.
-                    if (theAI[i].CanMove)
+                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 200)
                     {
                         //Moves the AI
                         MoveAI(ref theAI[i], thePlayer, theMap);
                     }
                     //Otherwise the AI just points towards the player
-                    else
+                    else if (CalculateDistance(theAI[i], thePlayer) < 200)
                     {
                         //Points the AI towards the Player
                         PointAI(ref theAI[i], thePlayer);
+                    }
+
+                    if (theAI[i].CanAttack && CalculateDistance(theAI[i], thePlayer) < 30)
+                    {
+                        Characters.InitiateAttack(ref theAI[i]);
                     }
 
                     //Checks if the AI has collided with the player, and if so
@@ -126,5 +131,14 @@ namespace GameProject
                 Graphics.MoveSprite(theAI.Sprite, Physics.InvertVector(theAI.Sprite.Movement));
             }
         }
+
+        public static int CalculateDistance(Character character1, Character character2)
+        {
+            double distancex = character1.Sprite.xPos - character2.Sprite.xPos;
+            double distancey = character1.Sprite.yPos - character2.Sprite.yPos;
+
+            return (int)Math.Sqrt(Math.Pow(distancex, 2) + Math.Pow(distancey, 2));
+        }
+    
     }
 }

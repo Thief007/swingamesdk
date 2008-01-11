@@ -23,19 +23,19 @@ namespace GameProject
         {
             if (Input.IsKeyPressed(SwinGame.Keys.VK_UP))
             {
-                Characters.MoveCharacter(ref thePlayer, theMap, 0, -2);
+                Characters.MoveCharacter(ref thePlayer, theMap, 0, -8);
             }
             else if (Input.IsKeyPressed(SwinGame.Keys.VK_DOWN))
             {
-                Characters.MoveCharacter(ref thePlayer, theMap, 0, 2);
+                Characters.MoveCharacter(ref thePlayer, theMap, 0, 8);
             }
             else if (Input.IsKeyPressed(SwinGame.Keys.VK_LEFT))
             {
-                Characters.MoveCharacter(ref thePlayer, theMap, -2, 0);
+                Characters.MoveCharacter(ref thePlayer, theMap, -8, 0);
             }
             else if (Input.IsKeyPressed(SwinGame.Keys.VK_RIGHT))
             {
-                Characters.MoveCharacter(ref thePlayer, theMap, 2, 0);
+                Characters.MoveCharacter(ref thePlayer, theMap, 8, 0);
             }
             else
             {

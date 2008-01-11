@@ -32,7 +32,7 @@ namespace GameProject
             //Placing each healer at it's spawn point.
             for (int i = 0; i < healers.Length; i++)
             {
-                healers[i] = Characters.NewCharacter("Healer", MappyLoader.EventPositionX(map, HEALERSPAWN,i), MappyLoader.EventPositionY(map, HEALERSPAWN,i), Strength, Vitality, Agility, false, false, true);
+                healers[i] = Characters.NewCharacter(name, MappyLoader.EventPositionX(map, HEALERSPAWN,i), MappyLoader.EventPositionY(map, HEALERSPAWN,i), Strength, Vitality, Agility, false, false, true);
             }
 
             return healers;
