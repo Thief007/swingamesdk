@@ -296,9 +296,12 @@ namespace GameResources
             NewImage("Slash Down", "Slash_down.png");
             NewImage("Slash Left", "Slash_left.png");
             NewImage("Slash Right", "Slash_right.png");
-
-            //Remove when added
             NewImage("Healer", "Healer.png");
+
+            //Remove when added to tutorial
+            NewImage("Critter", "Critter.png");
+            NewImage("Thief", "Thief.png");
+            NewImage("ThiefLeader", "ThiefLeader.png");
         }
 
         private static void LoadSounds()

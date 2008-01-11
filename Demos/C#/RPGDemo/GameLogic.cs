@@ -33,6 +33,10 @@ namespace GameProject
             Map _Map = Resources.GameMap("Level1");
             Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0),5,5,5, true, true, true);
             Character[] _Healers = Healers.NewHealers("Healer", _Map, 1, 1, 1);
+            Character[] _Critters = Enemy.NewEnemies("Critter", 1, _Map, 4, 5, 4, 20);
+            Character[] _Thieves = Enemy.NewEnemies("Theif", 2, _Map, 10, 6, 8, 40);
+            Character[] _Leader = Enemy.NewEnemies("TheifLeader", 3, _Map, 25, 15, 20, 400);
+
             Character[] _TotalAI = new Character[0];
 
             //Resizes the Array so that it can include the Healers
@@ -40,7 +44,22 @@ namespace GameProject
             //Add the Healers
             _Healers.CopyTo(_TotalAI, 0);
 
+            //Resizes the Array so that it can include the Critters
+            Array.Resize(ref _TotalAI, _Healers.Length + _Critters.Length);
+            //Add the Critters
+            _Critters.CopyTo(_TotalAI, _Healers.Length - 1);
+
+            //Resizes the Array so that it can include the Thieves
+            Array.Resize(ref _TotalAI, _Healers.Length + _Critters.Length + _Thieves.Length);
+            //Add the Thieves
+            _Thieves.CopyTo(_TotalAI, _Healers.Length + _Critters.Length - 1);
+
+            //Resizes the Array so that it can include the Leader
+            Array.Resize(ref _TotalAI, _Healers.Length + _Critters.Length + _Thieves.Length + _Leader.Length);
+            //Add the Leader
+            _Leader.CopyTo(_TotalAI, _Healers.Length + _Critters.Length + _Thieves.Length - 1);
             //Game Loop
+
             do
             {
                 //Clears the Screen to Black
