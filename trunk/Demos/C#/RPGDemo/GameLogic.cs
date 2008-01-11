@@ -22,7 +22,7 @@ namespace GameProject
 
     public static class GameLogic
     {
-        const Event PLAYERSPAWN = Event.Event1; 
+        const Event PLAYERSPAWN = Event.Event1;
 
         /// <summary>
         /// Main Game Routine
@@ -31,8 +31,15 @@ namespace GameProject
         {
             //The Map
             Map _Map = Resources.GameMap("Level1");
-            Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0),5,5,5);
-            
+            Character _Player = Characters.NewCharacter("Hero", MappyLoader.EventPositionX(_Map, PLAYERSPAWN, 0), MappyLoader.EventPositionY(_Map, PLAYERSPAWN, 0),5,5,5, true, true, true);
+            Character[] _Healers = Healers.NewHealers("Healer", _Map, 1, 1, 1);
+            Character[] _TotalAI = new Character[0];
+
+            //Resizes the Array so that it can include the Healers
+            Array.Resize(ref _TotalAI, _Healers.Length);
+            //Add the Healers
+            _Healers.CopyTo(_TotalAI, 0);
+
             //Game Loop
             do
             {
@@ -47,6 +54,12 @@ namespace GameProject
 
                 //Follow the Player 
                 Camera.FollowSprite(_Player.Sprite, 0, 0);
+
+                //Updates the AI
+                AIController.UpdateAI(ref _TotalAI, _Player, _Map);
+
+                // If Player Collides with the AI, move them back.
+                AIController.PlayerCollideWithAI(ref _Player, _TotalAI);
 
                 //Draw the Player
                 Graphics.DrawSprite(_Player.Sprite);
