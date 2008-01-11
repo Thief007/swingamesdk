@@ -19,6 +19,9 @@ namespace GameProject
 {
     public static class AIController
     {
+        //Changes in here
+        //In Character, NewCharacter - pixel Collision
+
         private static void PointAI(ref Character theAI, Character thePlayer)
         {
             //If the player is above the AI, point the AI upward
@@ -40,7 +43,7 @@ namespace GameProject
             else if (theAI.Sprite.xPos < thePlayer.Sprite.xPos)
             {
                 Characters.SetAnimationFrames(theAI.Sprite, 4, 3, 5);
-            }           
+            }
         }
 
         private static void MoveAI(ref Character theAI, Character thePlayer, Map theMap)
@@ -75,13 +78,17 @@ namespace GameProject
                 {
 
                     //If the AI can move, it will move.
-                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 200)
+                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 350 && CalculateDistance(theAI[i], thePlayer) > 20)
                     {
                         //Moves the AI
                         MoveAI(ref theAI[i], thePlayer, theMap);
+                        //Checks if the AI has collided with the player, and if so
+                        //Moves the back
+                        AICollideWithPlayer(ref theAI[i], thePlayer);
+                        AICollideWithAI(ref theAI[i], theAI, i);
                     }
                     //Otherwise the AI just points towards the player
-                    else if (CalculateDistance(theAI[i], thePlayer) < 200)
+                    else if (CalculateDistance(theAI[i], thePlayer) < 300)
                     {
                         //Points the AI towards the Player
                         PointAI(ref theAI[i], thePlayer);
@@ -91,10 +98,6 @@ namespace GameProject
                     {
                         Characters.InitiateAttack(ref theAI[i]);
                     }
-
-                    //Checks if the AI has collided with the player, and if so
-                    //Moves the back
-                    AICollideWithPlayer(ref theAI[i], thePlayer);
 
                     //Updates the AI's Walking Animation
                     Characters.UpdateCharacterAnimation(ref theAI[i]);
@@ -132,6 +135,25 @@ namespace GameProject
             }
         }
 
+        public static void AICollideWithAI(ref Character theAI, Character[] allAI, int index)
+        {
+            for (int i = 0; i < allAI.Length; i++)
+            {
+                if (i != index)
+                {
+                    if (!Graphics.IsSpriteOffscreen(allAI[i].Sprite))
+                    {
+                        if (Physics.HaveSpritesCollided(theAI.Sprite, allAI[i].Sprite))
+                        {
+
+                            Graphics.MoveSprite(theAI.Sprite, Physics.InvertVector(theAI.Sprite.Movement));
+                        }
+                    }
+                }
+            }
+
+        }
+
         public static int CalculateDistance(Character character1, Character character2)
         {
             double distancex = character1.Sprite.xPos - character2.Sprite.xPos;
@@ -139,6 +161,6 @@ namespace GameProject
 
             return (int)Math.Sqrt(Math.Pow(distancex, 2) + Math.Pow(distancey, 2));
         }
-    
+
     }
 }
