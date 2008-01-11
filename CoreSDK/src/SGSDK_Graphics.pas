@@ -718,8 +718,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- The bitmaps is added to the bitmaps within the sprite.
-	function AddBitmapToSprite(spriteToAddTo : Sprite;
-														 bitmapToAdd : Bitmap): Integer;
+	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): Integer;
 	begin
 		//Resize the array
 		SetLength(spriteToAddTo.bitmaps, Length(spriteToAddTo.bitmaps) + 1);
@@ -982,99 +981,10 @@ implementation
 		end;		
 	end;
 
-
-	
-	{/// Draws the sprites to the screen within a given view port.
-	///
-	///	@param spritesToDraw:			The sprites to be drawn
-	///	@param vwPrtX, vwPrty:			The x, y of the current view port (i.e. screen)
-	///	@param vwPrtWidth, vwPrtHeight:	The height and width of the view port
-	///
-	/// Side Effects:
-	///	- The sprite is drawn to the screen, if within view port
-	procedure DrawSprites(spritesToDraw : SpriteCollection; 
-               vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer); overload;
-	var
-		i : Integer;
-	begin
-		for i := 0 to High(spritesToDraw) do
-		begin
-			DrawSprite(spritesToDraw[i], vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
-		end;
-	end;
-	
-	/// Draws a sprites to the screen, without using a view port.
-	///
-	///	@param spritesToDraw:		 The sprites to be drawn
-	///
-	/// Side Effects:
-	///	- The sprite is drawn to the screen, if within screen area
-	procedure DrawSprites(spritesToDraw : SpriteCollection); overload;
-	begin
-		DrawSprite(spritesToDraw, 0, 0, 0, 0);
-	end;
-	
-	/// Adds a specified sprite to a specified array of sprites.
-	///
-	/// @param addTo:				The array of sprites to add a sprite to
-	/// @param sprite:				The sprite to add
-	///
-	/// Side Effects:
-	/// - The sprite specified is added to the specified array
-	procedure AddSprite(var addTo : SpriteCollection; sprite : Sprite);
-	begin
-		SetLength(addTo, Length(addTo) + 1);
-		addTo[High(addTo)] := sprite;
-	end;
-	
-	/// Clear the sprite collection specified.
-	///
-	/// @param toClear:				The array of sprites to clear
-	///
-	/// Side Effects:
-	/// - The sprite collection is cleared.
-	procedure ClearSpriteCollection(var toClear : SpriteCollection);
-	begin
-		SetLength(toClear, 0);
-	end;
-	
-	/// Free the sprite collection specified.
-	///
-	/// @param toClear:				The array of sprites to free
-	///
-	/// Side Effects:
-	/// - The sprite collection is freed.
-	procedure FreeSpriteCollection(var toFree : SpriteCollection);
-	var
-		i : Integer;
-	begin
-		for i := 0 to High(toFree) do
-		begin
-			FreeSprite(toFree[i]);
-		end;
-	end;}
-
-	/// Determines if a sprite is off the screen. The view port of the screen
-	///	is defined in the vwPrt... parameters.
-	///
-	///	@param theSprite:			The sprite to check the position of
-	///	@param vwPrtX, vwPrty: The x, y of the current view port (i.e. screen)
-	///	@param vwPrtWidth, vwPrtHeight:		The height and width of the view port
-	///	@returns							 True if the sprite is off the screen
-	{function IsSpriteOffscreen(theSprite : Sprite; 
-              vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight : Integer): Boolean;
-	begin
-		if theSprite.xPos > vwPrtX + vwPrtWidth then result := true
-		else if theSprite.xPos + CurrentWidth(theSprite) < vwPrtX then result := true
-		else if theSprite.yPos > vwPrtY + vwPrtHeight then result := true
-		else if theSprite.yPos + CurrentHeight(theSprite) < vwPrtY then result := true
-		else result := false;
-	end;}
-
   	/// Determines if a sprite is off the screen.
 	///
 	///	@param theSprite:			The sprite to check the position of
-	///	@returns							 True if the sprite is off the screen
+	///	@returns					True if the sprite is off the screen
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean;
 	begin
 		//WriteLn(theSprite.xPos, ' -> ', SGSDK_Camera.SGSDK_Camera.ScreenX(theSprite.xPos));
