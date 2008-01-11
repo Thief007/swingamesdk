@@ -61,7 +61,6 @@ namespace GameProject
 
         public Boolean Alive;
 
-        //Remove this when added to tutorial
         public Sprite SlashUp;
         public Sprite SlashDown;
         public Sprite SlashLeft;
@@ -73,11 +72,14 @@ namespace GameProject
         public Boolean Attacking;
         public int Cooldown;
 
+        public Boolean CanAttack;
+        public Boolean CanMove;
+        public Boolean CanInteract;
     }
 
     public static class Characters
     {
-        public static Character NewCharacter(String name, int SpawnX, int SpawnY, int Strength, int Vitality, int Agility)
+        public static Character NewCharacter(String name, int SpawnX, int SpawnY, int Strength, int Vitality, int Agility, Boolean canMove, Boolean canAttack, Boolean canInteract)
         {
             Character temp = new Character();
             temp.Sprite = Graphics.CreateSprite(Resources.GameImage(name), 3, 12, 24, 32);
@@ -100,13 +102,11 @@ namespace GameProject
             temp.Stats.Experience = 0;
             temp.Stats.ExperienceNextLevel = 100;
 
-            //Remove this when added to tutorial
             temp.SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 1, 5, 28, 47);
             temp.SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 1, 5, 27, 47);
             temp.SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 1, 5, 49, 27);
             temp.SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 1, 5, 49, 27);
 
-            //Set the Animations
             temp.SlashUp.EndingAction = SpriteEndingAction.Stop;
             temp.SlashDown.EndingAction = SpriteEndingAction.Stop;
             temp.SlashLeft.EndingAction = SpriteEndingAction.Stop;
@@ -115,6 +115,10 @@ namespace GameProject
             temp.Attacking = false;
 
             temp.Swing = Resources.GameSound("Swing");
+
+            temp.CanMove = canMove;
+            temp.CanAttack = canAttack;
+            temp.CanInteract = canInteract;
 
             return temp;
         }
@@ -285,7 +289,7 @@ namespace GameProject
 
         }
 
-        public static void MoveCharacter(Character theCharacter, Map theMap, int moveX, int moveY)
+        public static void MoveCharacter(ref Character theCharacter, Map theMap, int moveX, int moveY)
         {
             //Create a Vector that represents the Sprites new movement
             Vector tempVector = Physics.CreateVector((float)moveX, (float)moveY);
@@ -346,7 +350,7 @@ namespace GameProject
             UpdateAttack(ref theCharacter);
         }
 
-        private static void SetAnimationFrames(Sprite theSprite, int startingFrame, int startingIndex, int endingIndex)
+        public static void SetAnimationFrames(Sprite theSprite, int startingFrame, int startingIndex, int endingIndex)
         {
             int[] tempintarr = new int[theSprite.FrameCount];
 
