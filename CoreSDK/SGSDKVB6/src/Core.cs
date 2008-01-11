@@ -166,8 +166,8 @@ namespace SwinGameVB
         void TakeScreenshot(String basename);
         int ScreenWidth();
         int ScreenHeight();
-        Color GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha);
-        Color GetColor(Byte red, Byte green, Byte blue);
+        int GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha);
+        int GetColor(Byte red, Byte green, Byte blue);
         int GetFramerate();
         int GetTicks();
         int Sleep(int time);
@@ -305,9 +305,10 @@ namespace SwinGameVB
         /// <param name="blue">The amount of blue (0 - 255)</param>
         /// <param name="alpha">The amount of alpha (0 - 255)</param>
         /// <returns>Color</returns>
-        public Color GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha)
+        public int GetColor_Alpha(Byte red, Byte green, Byte blue, Byte alpha)
         {
-            return SwinGame.Core.GetColor( red, green, blue, alpha);
+            Color temp = Color.FromArgb(red, green, blue, alpha);
+            return temp.ToArgb();
         }
 
         /// <summary>
@@ -317,9 +318,10 @@ namespace SwinGameVB
         /// <param name="green">The amount of green (0 - 255)</param>
         /// <param name="blue">The amount of blue (0 - 255)</param>
         /// <returns>Color</returns>
-        public Color GetColor(Byte red, Byte green, Byte blue)
+        public int GetColor(Byte red, Byte green, Byte blue)
         {
-            return SwinGame.Core.GetColor(red, green, blue);
+            Color temp = Color.FromArgb(red, green, blue);
+            return temp.ToArgb();
         }
         /// <summary>
         /// Returns the average framerate for the last 10 frames as an integer.

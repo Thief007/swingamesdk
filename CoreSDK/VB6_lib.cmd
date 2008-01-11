@@ -1,9 +1,19 @@
 @echo off
+color f0
+echo        +==============================================+
+echo        ¦                                              ¦
+echo        ¦ Please run with Visual Studio Command Prompt ¦
+echo        ¦                                              ¦
+echo        ¦       Please run DotNet_lib.cmd first        ¦
+echo        ¦                                              ¦
+echo        ¦                                              ¦
+echo        ¦            VB6 Must not be open!!            ¦
+echo        ¦                                              ¦
+echo        +==============================================+
 
-echo Please run with Visual Studio Command Prompt
-echo Please run DotNet_lib.cmd first
-
+ 
 pause
+color
 
 set BaseDir=%CD%
 echo Running script from %BaseDir%
@@ -23,6 +33,8 @@ if not exist %ShowcaseVB6% mkdir %ShowcaseVB6%
 set SDKVB6=..\SDKs\VB6\Visual Studio 6.0\lib\
 if not exist %SDKVB6% mkdir %SDKVB6%
 
+set airhocky=..\Demos\VB6\Air Hocky\lib
+
 echo Doing %1
 
 if "%1"=="clean" goto cleaning
@@ -40,6 +52,9 @@ if "%1"=="clean" goto cleaning
 
 	echo Copying to Showcase
 	copy "%Output1%*" "%ShowcaseVB6%"
+
+	echo Copying to air hocky
+	copy "%Output1%*" "%airhocky%"
 
 	echo Copying to SDKVB6
 	echo %SDKVB6%
