@@ -24,6 +24,20 @@ namespace GameProject
     {
         const Event PLAYERSPAWN = Event.Event1;
 
+        public static void AddRange(Character[] contentArray, ref Character[] toBeCopiedTo)
+        {
+            Array.Resize(ref toBeCopiedTo, toBeCopiedTo.Length + contentArray.Length);
+
+            if (contentArray.Length > 0)
+            {
+                for (int i = 0; i < contentArray.Length; i++)
+                {
+                    toBeCopiedTo[toBeCopiedTo.Length - contentArray.Length + i] = contentArray[i];
+                }
+            }
+
+        }
+
         /// <summary>
         /// Main Game Routine
         /// </summary>
@@ -39,6 +53,12 @@ namespace GameProject
 
             Character[] _TotalAI = new Character[0];
 
+            AddRange(_Healers, ref _TotalAI);
+            AddRange(_Critters, ref _TotalAI);
+            AddRange(_Thieves, ref _TotalAI);
+            AddRange(_Leader, ref _TotalAI);
+
+            /*
             //Resizes the Array so that it can include the Healers
             Array.Resize(ref _TotalAI, _Healers.Length);
             //Add the Healers
@@ -58,8 +78,10 @@ namespace GameProject
             Array.Resize(ref _TotalAI, _Healers.Length + _Critters.Length + _Thieves.Length + _Leader.Length);
             //Add the Leader
             _Leader.CopyTo(_TotalAI, _Healers.Length + _Critters.Length + _Thieves.Length - 1);
+            
+            */
+             
             //Game Loop
-
             do
             {
                 //Clears the Screen to Black

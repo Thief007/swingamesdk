@@ -20,9 +20,9 @@ namespace GameProject
     public static class Enemy
     {
         //Remove when added
-        const Event ENEMY1SPAWN = Event.Event1;
-        const Event ENEMY2SPAWN = Event.Event2;
-        const Event ENEMY3SPAWN = Event.Event3;
+        const Event ENEMY1SPAWN = Event.Event4;
+        const Event ENEMY2SPAWN = Event.Event5;
+        const Event ENEMY3SPAWN = Event.Event6;
 
         public static Character[] NewEnemies(String name, int Enemy, Map map, int Strength, int Vitality, int Agility, int Experience)
         {
