@@ -120,6 +120,8 @@ namespace GameProject
             temp.CanAttack = canAttack;
             temp.CanInteract = canInteract;
 
+            temp.Sprite.UsePixelCollision = false;
+
             return temp;
         }
 
