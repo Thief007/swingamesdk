@@ -130,7 +130,7 @@ namespace GameProject
 
                 //Stats
                 Text.DrawTextOnScreen("Attack: " + Convert.ToString(theCharacter.Stats.Attack), Color.White, Resources.GameFont("Arial"), 50, 240);
-                Text.DrawTextOnScreen("Defense: " + Convert.ToString(theCharacter.Stats.Defense), Color.White, Resources.GameFont("Arial"), 50, 260);
+                Text.DrawTextOnScreen("Defense: " + Convert.ToString(theCharacter.Stats.Defense) + "%", Color.White, Resources.GameFont("Arial"), 50, 260);
                 Text.DrawTextOnScreen("Evasion: " + Convert.ToString(theCharacter.Stats.Evasion) + "%", Color.White, Resources.GameFont("Arial"), 50, 280);
                 Text.DrawTextOnScreen("Critical Rate: " + Convert.ToString(theCharacter.Stats.CriticalRate) + "%", Color.White, Resources.GameFont("Arial"), 50, 300);
             }
