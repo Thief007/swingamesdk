@@ -78,7 +78,7 @@ namespace GameProject
                 {
 
                     //If the AI can move, it will move.
-                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 350 && CalculateDistance(theAI[i], thePlayer) > 20)
+                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 200 && CalculateDistance(theAI[i], thePlayer) > 20)
                     {
                         //Moves the AI
                         MoveAI(ref theAI[i], thePlayer, theMap);
@@ -88,7 +88,7 @@ namespace GameProject
                         AICollideWithAI(ref theAI[i], theAI, i);
                     }
                     //Otherwise the AI just points towards the player
-                    else if (CalculateDistance(theAI[i], thePlayer) < 300)
+                    else if (CalculateDistance(theAI[i], thePlayer) < 200)
                     {
                         //Points the AI towards the Player
                         PointAI(ref theAI[i], thePlayer);
