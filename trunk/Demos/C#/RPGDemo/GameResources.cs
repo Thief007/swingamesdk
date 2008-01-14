@@ -306,6 +306,9 @@ namespace GameResources
         {
             NewSound("Swing", "Swing.wav");
             NewSound("Heal", "Heal.wav");
+
+            NewSound("Critical", "Critical.wav");
+            NewSound("Hit", "Hit.wav");
         }
 
         private static void LoadMusic()
