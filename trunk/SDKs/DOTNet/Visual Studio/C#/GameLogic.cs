@@ -26,7 +26,7 @@ namespace GameProject
             //Open Audio Device
             Audio.OpenAudio();
             //Load Resources
-            Resources.LoadResources();
+            //Resources.LoadResources();
 
             //Game Loop
             do
@@ -34,8 +34,10 @@ namespace GameProject
                 //Clears the Screen to Black
                 Graphics.ClearScreen();
 
+		Graphics.FillRectangle(Color.Red, 0, 0, 50, 50);
+
                 //Hello World
-                Text.DrawText("Hello World", Color.White, Resources.GameFont("Courier"), 10, 10);
+                //Text.DrawText("Hello World", Color.White, Resources.GameFont("Courier"), 10, 10);
 
                 //Refreshes the Screen and Processes Input Events
                 Core.RefreshScreen();

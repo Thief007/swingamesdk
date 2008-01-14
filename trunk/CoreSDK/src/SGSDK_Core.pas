@@ -5,6 +5,8 @@ unit SGSDK_Core;
 	{$linklib SDLmain}
 {$ENDIF}
 
+{$PACKENUM 4}
+
 interface
 	uses
 		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
@@ -259,6 +261,10 @@ interface
 	function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
 
 	function GetPathToResource(filename: String): String; overload;
+
+	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
+
+	function GetPathToResourceWithBase(path, filename: String) : String; overload;
 
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 
@@ -853,46 +859,55 @@ implementation
 			RaiseSGSDKException('Could not register the event processor');
 		end;
 	end;
+
+	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
+	begin
+		case kind of
+		{$ifdef UNIX}
+			FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
+			SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
+			ImageResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
+			MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
+		{$else}
+			FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
+			SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
+			ImageResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
+			MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
+		{$endif}
+		end;
+	end;
+
+	function GetPathToResourceWithBase(path, filename: String) : String; overload;
+	begin
+		{$ifdef UNIX}
+			{$ifdef DARWIN}
+				result := path + '/../Resources/';
+			{$else}
+				result := path + '/Resources/';
+			{$endif}
+		{$else}
+		//Windows
+			result := path + '\resources\';
+		{$endif}
+		result := result + filename;
+	end;
 	
 	function GetPathToResource(filename: String): String; overload;
 	begin
-	{$ifdef UNIX}
-		{$ifdef DARWIN}
-			result := applicationPath + '/../Resources/';
-		{$else}
-			result := applicationPath + '/Resources/';
-		{$endif}
-	{$else}
-	//Windows
-		result := applicationPath + '\resources\';
-	{$endif}
-
-	result := result + filename;
+		result := GetPathToResourceWithBase(applicationPath, filename);
 	end;
 
 	function GetPathToResource(filename: String; kind: ResourceKind) : String; overload;
-	begin
-		case kind of
-			{$ifdef UNIX}
-				FontResource: result := GetPathToResource('fonts/' + filename);
-				SoundResource: result := GetPathToResource('sounds/' + filename);
-				ImageResource: result := GetPathToResource('images/' + filename);
-				MapResource: result := GetPathToResource('maps/' + filename);
-			{$else}
-				FontResource: result := GetPathToResource('fonts\' + filename);
-				SoundResource: result := GetPathToResource('sounds\' + filename);
-				ImageResource: result := GetPathToResource('images\' + filename);
-				MapResource: result := GetPathToResource('maps\' + filename);
-			{$endif}
+	begin	
+		result := GetPathToResourceWithBase(applicationPath, filename, kind);
 	end;
-end;
 		
 initialization
 begin
 	//WriteLn('InitSDL');
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
-    RaiseSGSDKException('Error loading sdl... ' + SDL_GetError());
+		RaiseSGSDKException('Error loading sdl... ' + SDL_GetError());
 	end;
 	
 	//Not needed anymore - SDL_EnableUNICODE(SDL_ENABLE);
@@ -900,7 +915,7 @@ begin
 	sdlManager := TSDLManager.Create();
 	applicationPath := ExtractFileDir(ParamStr(0));
 
-  scr := nil;
+	scr := nil;
   
 	//Load sound
 	{WriteLn('Opening Mixer');
