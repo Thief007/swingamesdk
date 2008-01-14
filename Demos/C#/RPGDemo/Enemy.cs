@@ -19,7 +19,6 @@ namespace GameProject
 {
     public static class Enemy
     {
-        //Remove when added
         const Event ENEMY1SPAWN = Event.Event4;
         const Event ENEMY2SPAWN = Event.Event5;
         const Event BOSSSPAWN = Event.Event3;

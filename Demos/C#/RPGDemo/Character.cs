@@ -51,6 +51,16 @@ namespace GameProject
         None
     }
 
+    public enum DamageType
+    {
+        Heal,
+        Enemy,
+        Player,
+        Critical,
+        Evade,
+        None,
+    }
+
     public struct Character
     {
         public Sprite Sprite;
@@ -75,6 +85,10 @@ namespace GameProject
         public Boolean CanAttack;
         public Boolean CanMove;
         public Boolean CanInteract;
+
+        public DamageType DamageType;
+        public int Damage;
+        public int StatusCooldown;
     }
 
     public static class Characters
@@ -97,7 +111,7 @@ namespace GameProject
             RefreshCharacterStats(ref temp);
 
             temp.Stats.Health = temp.Stats.MaxHealth;
-            temp.Stats.StatPoints = 3;
+            temp.Stats.StatPoints = 8;
             temp.Stats.Level = 1;
             temp.Stats.Experience = 0;
             temp.Stats.ExperienceNextLevel = 100;
@@ -112,6 +126,8 @@ namespace GameProject
             temp.SlashLeft.EndingAction = SpriteEndingAction.Stop;
             temp.SlashRight.EndingAction = SpriteEndingAction.Stop;
 
+            temp.CurrentSlash = temp.SlashUp;
+
             temp.Attacking = false;
 
             temp.Swing = Resources.GameSound("Swing");
@@ -121,6 +137,11 @@ namespace GameProject
             temp.CanInteract = canInteract;
 
             temp.Sprite.UsePixelCollision = false;
+            temp.Alive = true;
+
+            temp.Damage = 0;
+            temp.DamageType = DamageType.None;
+            temp.StatusCooldown = 0;
 
             return temp;
         }
@@ -221,6 +242,8 @@ namespace GameProject
                 }
             }
         }
+
+        
 
         public static void AddStat(ref Character theCharacter, String stat)
         {
@@ -369,6 +392,100 @@ namespace GameProject
             }
 
             theSprite.FramesPerCell = tempintarr;
+        }
+
+        public static void DamageCharacter(ref Character theCharacter, int healthamount, DamageType type)
+        {
+            //Heal Character
+            theCharacter.Stats.Health = theCharacter.Stats.Health - healthamount;
+
+            //Set the damage change
+            theCharacter.Damage = healthamount;
+
+            //Set the damage type
+            theCharacter.DamageType = type;
+
+            //Set the status change cooldown
+            theCharacter.StatusCooldown = 60;
+
+            //Play the Healing Sound effect
+            //Audio.PlaySoundEffect(Resources.GameSound("Heal"));
+        } 
+
+        public static void HealCharacter(ref Character theCharacter, int healthamount)
+        {
+            //Heal Character
+            theCharacter.Stats.Health = theCharacter.Stats.Health + healthamount;
+            
+            //Make sure his health isn't over the maximum
+            if (theCharacter.Stats.Health > theCharacter.Stats.MaxHealth)
+            {
+                //Set the health to the characters maximum health
+                theCharacter.Stats.Health = theCharacter.Stats.MaxHealth;
+            }
+
+            //Set the damage change
+            theCharacter.Damage = healthamount;
+
+            //Set the damage type
+            theCharacter.DamageType = DamageType.Heal;
+
+            //Set the status change cooldown
+            theCharacter.StatusCooldown = 60;
+
+            //Play the Healing Sound effect
+            Audio.PlaySoundEffect(Resources.GameSound("Heal"));
+        }
+
+        public static void UpdateCharacterStatus(ref Character theCharacter)
+        {
+            //if the characters status change cooldown is above 0
+            if (theCharacter.StatusCooldown > 0)
+            {
+                //Check which type of damage is being dealty
+                switch (theCharacter.DamageType)
+                {
+                    //Healing
+                    case DamageType.Heal:
+                        Text.DrawText(Convert.ToString(theCharacter.Damage),
+                            Color.LightGreen, Resources.GameFont("Arial"),
+                            (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 80 + theCharacter.StatusCooldown);
+                        break;
+             
+                    //Enemy Damage
+                    case DamageType.Enemy:
+                        Text.DrawText(Convert.ToString(theCharacter.Damage),
+                            Color.Red, Resources.GameFont("Arial"),
+                            (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 80 + theCharacter.StatusCooldown);
+                        break;
+
+                    //Player Damage
+                    case DamageType.Player:
+                        Text.DrawText(Convert.ToString(theCharacter.Damage),
+                            Color.White, Resources.GameFont("Arial"),
+                            (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 80 + theCharacter.StatusCooldown);
+                        break;
+
+                    case DamageType.Evade:
+                        Text.DrawText("Evaded",
+                            Color.Yellow, Resources.GameFont("Arial"),
+                            (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 80 + theCharacter.StatusCooldown);
+                        break;
+
+                    //Critical Hit
+                    case DamageType.Critical:
+                        Text.DrawText("Critical Hit!",
+                            Color.Orange, Resources.GameFont("Arial"),
+                            (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 110 + theCharacter.StatusCooldown);
+                        Text.DrawText(Convert.ToString(theCharacter.Damage),
+                            Color.Orange, Resources.GameFont("Arial"),
+                            (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 80 + theCharacter.StatusCooldown);
+                        break;
+                }
+
+                //Reduce status cooldown by 1
+                theCharacter.StatusCooldown = theCharacter.StatusCooldown - 1;
+            }
         }
     }
 }

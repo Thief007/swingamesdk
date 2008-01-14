@@ -336,49 +336,48 @@ implementation
 		f : Integer;
 	begin
 		//Screen Drawing Starting Point
-		XStart := round((GameX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 3));
-		YStart := round((GameY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 3));
+		XStart := round((GameX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
+		YStart := round((GameY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
 		
 		//Screen Drawing Ending point
-		XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 3));
-		YEnd := round(YStart + (SGSDK_Core.ScreenHeight() / m.MapInfo.BlockHeight) + (m.MapInfo.BlockHeight * 3));
+		XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));
+		YEnd := round(YStart + (SGSDK_Core.ScreenHeight() / m.MapInfo.BlockHeight) + (m.MapInfo.BlockHeight * 1));
+
 		
-		for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.CollisionLayer - m.MapInfo.EventLayer - 1 do
+		if YStart < 0 then YStart := 0;
+		if YStart >= m.MapInfo.MapHeight then exit;
+		if YEnd < 0 then exit;
+		if YEnd >= m.MapInfo.MapHeight then YEnd := m.MapInfo.MapHeight - 1;
+				
+		if XStart < 0 then XStart := 0;
+		if XStart >= m.MapInfo.MapWidth then exit;
+		if XEnd < 0 then exit;
+		if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
+			
+		for y := YStart  to YEnd do
 		begin
-			for y := YStart  to YEnd do
+			for x := XStart  to XEnd do
 			begin
-				if (y < m.MapInfo.MapHeight) and (y > -1) then
+				for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.CollisionLayer - m.MapInfo.EventLayer - 1 do
 				begin
-					for x := XStart  to XEnd do
-					begin
-						if (x < m.MapInfo.MapWidth) and (x > -1) then
-						begin
 					
-							if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
-							begin
-								m.Tiles.currentFrame := m.LayerInfo[l].Value[y][x] - 1;
-								
-								m.Tiles.xPos := x * m.MapInfo.BlockWidth;
-								m.Tiles.yPos := y * m.MapInfo.BlockHeight;
-								//DrawSprite(m.Tiles, CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
-								DrawSprite(m.Tiles);
-							end
-							else if (m.LayerInfo[l].Animation[y][x] = 1) then
-							begin
-								
-								m.Tiles.xPos := x * m.MapInfo.BlockWidth;
-                            	m.Tiles.yPos := y * m.MapInfo.BlockHeight;
-								
-                            	
-                            	f := round(m.Frame/10) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
-                            	m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[f] - 1;		
-								
-								DrawSprite(m.Tiles);
-							
-							end;
-							
-						end;
-					end;
+					if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
+					begin
+						m.Tiles.currentFrame := m.LayerInfo[l].Value[y][x] - 1;
+						m.Tiles.xPos := x * m.MapInfo.BlockWidth;
+						m.Tiles.yPos := y * m.MapInfo.BlockHeight;
+						//DrawSprite(m.Tiles, CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
+						DrawSprite(m.Tiles);
+					end
+					else if (m.LayerInfo[l].Animation[y][x] = 1) then
+					begin	
+						m.Tiles.xPos := x * m.MapInfo.BlockWidth;
+  						m.Tiles.yPos := y * m.MapInfo.BlockHeight;	
+                        f := round(m.Frame/10) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
+                        m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[f] - 1;		
+						DrawSprite(m.Tiles);
+						
+					end;	
 				end;
 			end;
 		end;

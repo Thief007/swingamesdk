@@ -68,33 +68,46 @@ namespace GameProject
             {
                 Characters.MoveCharacter(ref theAI, theMap, 1, 0);
             }
-        }
+        } 
 
         public static void UpdateAI(ref Character[] theAI, Character thePlayer, Map theMap)
-        {
+        {   
+            //Go through each AI
             for (int i = 0; i < theAI.Length; i++)
             {
-                if (!Graphics.IsSpriteOffscreen(theAI[i].Sprite))
+                //If the AI's Health is equal to, or below 0, the AI is no longer alive.
+                if (theAI[i].Stats.Health <= 0)
+                {
+                    theAI[i].Alive = false;
+                }
+
+                //If the AI is Onscreen and alive, contine.
+                if (!Graphics.IsSpriteOffscreen(theAI[i].Sprite) && theAI[i].Alive)
                 {
 
-                    //If the AI can move, it will move.
-                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 200 && CalculateDistance(theAI[i], thePlayer) > 20)
+                    //If the AI can move, and is within sight distance, move
+                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 300 && CalculateDistance(theAI[i], thePlayer) > 30)
                     {
                         //Moves the AI
                         MoveAI(ref theAI[i], thePlayer, theMap);
                         //Checks if the AI has collided with the player, and if so
                         //Moves the back
+
+                        //Check for collisions with the Player
                         AICollideWithPlayer(ref theAI[i], thePlayer);
+
+                        //Check for collisions with other AI
                         AICollideWithAI(ref theAI[i], theAI, i);
                     }
                     //Otherwise the AI just points towards the player
-                    else if (CalculateDistance(theAI[i], thePlayer) < 200)
+                    else if (CalculateDistance(theAI[i], thePlayer) < 300)
                     {
                         //Points the AI towards the Player
                         PointAI(ref theAI[i], thePlayer);
                     }
 
-                    if (theAI[i].CanAttack && CalculateDistance(theAI[i], thePlayer) < 30)
+                    //If the AI can attack, and is within attacking distance, attack
+                    if (theAI[i].CanAttack && CalculateDistance(theAI[i], thePlayer) < 45)
                     {
                         Characters.InitiateAttack(ref theAI[i]);
                     }
@@ -105,6 +118,9 @@ namespace GameProject
                     //Draws the AI
                     Graphics.DrawSprite(theAI[i].Sprite);
                 }
+
+                //Updates the AI's Status Notifications
+                Characters.UpdateCharacterStatus(ref theAI[i]);
             }
         }
 
@@ -113,14 +129,17 @@ namespace GameProject
             //Goes through all the AI
             for (int i = 0; i < theAI.Length; i++)
             {
-                //Checks if the Player has collided with an AI
-                if (Physics.HaveSpritesCollided(thePlayer.Sprite, theAI[i].Sprite))
+                if (!Graphics.IsSpriteOffscreen(theAI[i].Sprite) && theAI[i].Alive && CalculateDistance(thePlayer, theAI[i]) < 120)
                 {
-                    //Moves the Player back
-                    Graphics.MoveSprite(thePlayer.Sprite, Physics.InvertVector(thePlayer.Sprite.Movement));
-                    //We only want to move back once, to avoid glitches where
-                    //we bounce between 2 AI.
-                    return;
+                    //Checks if the Player has collided with an AI
+                    if (Physics.HaveSpritesCollided(thePlayer.Sprite, theAI[i].Sprite))
+                    {
+                        //Moves the Player back
+                        Graphics.MoveSprite(thePlayer.Sprite, Physics.InvertVector(thePlayer.Sprite.Movement));
+                        //We only want to move back once, to avoid glitches where
+                        //we bounce between 2 AI.
+                        return;
+                    }
                 }
             }
         }
@@ -137,21 +156,24 @@ namespace GameProject
 
         public static void AICollideWithAI(ref Character theAI, Character[] allAI, int index)
         {
+            //Go through all the AI
             for (int i = 0; i < allAI.Length; i++)
             {
+                //Skip the AI that is checking the other AI
                 if (i != index)
                 {
-                    if (!Graphics.IsSpriteOffscreen(allAI[i].Sprite))
+                    //Check that the AI is alive, Onscreen and within distance
+                    if (!Graphics.IsSpriteOffscreen(allAI[i].Sprite) && allAI[i].Alive && CalculateDistance(theAI,allAI[i]) < 120)
                     {
+                        //Check if the Sprites have Collided
                         if (Physics.HaveSpritesCollided(theAI.Sprite, allAI[i].Sprite))
                         {
-
+                            //Move the AI Back 1 Step
                             Graphics.MoveSprite(theAI.Sprite, Physics.InvertVector(theAI.Sprite.Movement));
                         }
                     }
                 }
             }
-
         }
 
         public static int CalculateDistance(Character character1, Character character2)
