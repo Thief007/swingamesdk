@@ -41,14 +41,12 @@ interface
 	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
 	procedure ClearSurface(dest: Bitmap); overload;
 	
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
-		overload;
+	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); overload;
 	
 	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap;
 							srcX, srcY, srcW, srcH, x, y : Integer); overload;
 	
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer);
-		overload;
+	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer); overload;
 
 	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean;
 							xPos, yPos, width, height : Integer); overload;
@@ -1357,7 +1355,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse in the screen
-	 procedure FillEllipseOnScreen(theColour: Colour; 
+	procedure FillEllipseOnScreen(theColour: Colour; 
                          xPos, yPos, width, height: Integer); overload;
 	begin
 		FillEllipse(scr, theColour, xPos, yPos, width, height);

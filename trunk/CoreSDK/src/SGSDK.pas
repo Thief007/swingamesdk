@@ -364,14 +364,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	function TextReadAsUNICODE(): WideString; cdecl; export;
+	{function TextReadAsUNICODE(): WideString; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Input.TextReadAsUNICODE();
 		Except
 			ErrorMessage := GetSGSDKException();
 		end;
-	end;
+	end;}
 	
 	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
 	begin
@@ -2261,7 +2261,7 @@ exports
 	StartReadingText,
 	IsReadingText,
 	TextReadAsASCII,
-	TextReadAsUNICODE,
+	//TextReadAsUNICODE,
 	IsKeyPressed,
 	WasKeyTyped,
 	

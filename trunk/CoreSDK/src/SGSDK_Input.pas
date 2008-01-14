@@ -31,7 +31,7 @@ interface
 
 	function IsReadingText(): Boolean;
 	function TextReadAsASCII(): String;
-	function TextReadAsUNICODE(): WideString;
+	//function TextReadAsUNICODE(): WideString;
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 
@@ -84,7 +84,7 @@ implementation
 		end;
 	end;
 
-  /// StartReadingText start the API reading a string values from the user.
+	/// StartReadingText start the API reading a string values from the user.
 	///	Entry is completed when the user presses enter, and aborted with escape.
 	///	If the user aborts entry the result is an empty string. Text entry is
 	///	updated as part of ProcessEvents, and is drawn to the screen as part of
@@ -106,7 +106,7 @@ implementation
 		end;
 	end;
 
-  /// IsReadingText indicates if the API is currently reading text from the
+	/// IsReadingText indicates if the API is currently reading text from the
 	///	user. Calling StartReadingText will set this to true, and it becomes
 	///	false when the user presses enter or escape. At this point you can
 	///	read the string entered as either ASCII or Unicode.
@@ -140,14 +140,14 @@ implementation
 	///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
 	///
 	///	@returns:	The string entered by the user
-	function TextReadAsUNICODE(): WideString;
+	{function TextReadAsUNICODE(): WideString;
 	begin
 		try
 			result := sdlManager.EnteredString;
 		except
 			RaiseSGSDKException('Unable to get the text entered as Unicode');
 		end;
-	end;
+	end;}
 
 	var _ButtonsClicked: Array [MouseButton] of Boolean;
 	
