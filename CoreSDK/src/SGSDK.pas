@@ -18,9 +18,9 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	
-	function GetExceptionMessage(): String; cdecl; export;
+	function GetExceptionMessage(): PChar; cdecl; export;
 	begin
-		result := ErrorMessage;
+		result := PChar(ErrorMessage);
 	end;
 	
 	function ExceptionOccured(): Integer; cdecl; export;
@@ -152,7 +152,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	function GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; overload; cdecl; export;
+	function GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.GetColour(forBitmap, apiColor);
@@ -200,23 +200,42 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	function GetPathToResourceWithKind(filename: PChar; kind: ResourceKind) : String; overload; cdecl; export;
+	function GetPathToResourceWithKind(filename: PChar; kind: ResourceKind) : PChar; cdecl; export;
 	begin
 		Try
-			result := SGSDK_Core.GetPathToResource(filename, kind);
+			result := PChar(SGSDK_Core.GetPathToResource(filename, kind));
 		Except
 			ErrorMessage := GetSGSDKException();
 		end;
 	end;
 	
-	function GetPathToResource(filename: PChar): String; overload; cdecl; export;
+	function GetPathToResource(filename: PChar): PChar; cdecl; export;
 	begin
 		Try
-			result := SGSDK_Core.GetPathToResource(filename);
+			result := PChar(SGSDK_Core.GetPathToResource(filename));
 		Except
 			ErrorMessage := GetSGSDKException();
 		end;
 	end;
+
+	function GetPathToResourceWithBaseAndKind(path, filename: PChar; kind: ResourceKind) : PChar; cdecl; export;
+	begin
+		try
+			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename, kind));
+		except
+			ErrorMessage := GetSGSDKException();
+		end;
+	end;
+
+	function GetPathToResourceWithBase(path, filename: PChar) : PChar; cdecl; export;
+	begin
+		try
+			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename));
+		except
+			ErrorMessage := GetSGSDKException();
+		end;
+	end;
+
 	
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); cdecl; export;
 	begin
@@ -355,24 +374,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	function TextReadAsASCII(): String; cdecl; export;
+	function TextReadAsASCII(): PChar; cdecl; export;
 	begin
 		Try
-			result := SGSDK_Input.TextReadAsASCII();
+			result := PChar(SGSDK_Input.TextReadAsASCII());
 		Except
 			ErrorMessage := GetSGSDKException();
 		end;
 	end;
-	
-	{function TextReadAsUNICODE(): WideString; cdecl; export;
-	begin
-		Try
-			result := SGSDK_Input.TextReadAsUNICODE();
-		Except
-			ErrorMessage := GetSGSDKException();
-		end;
-	end;}
-	
+		
 	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
 	begin
 		Try
@@ -606,7 +616,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 	
-	procedure DrawTextOnScreen(theText: String; textColor: Colour;
+	procedure DrawTextOnScreen(theText: PChar; textColor: Colour;
 					 theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		Try
@@ -616,7 +626,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 
-	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
+	procedure DrawTextLinesOnScreen(theText: PChar; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
 							x, y, w, h: Integer); cdecl; export;
 	begin
@@ -2213,6 +2223,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		end;
 	end;
 
+{$ifndef UNIX}
 exports
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -2240,6 +2251,8 @@ exports
 	Sleep,	
 	GetPathToResourceWithKind,
 	GetPathToResource,
+	GetPathToResourceWithBase,
+	GetPathToResourceWithBaseAndKind,
 	RegisterEventProcessor,	
 	Cos,
 	Sin,
@@ -2501,4 +2514,5 @@ exports
 	ExceptionOccured
 
 	;
+{$endif}
 end.

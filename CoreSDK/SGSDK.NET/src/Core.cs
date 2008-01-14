@@ -139,8 +139,13 @@ namespace SwinGame
         public static bool ExceptionOccured() { return DLL_ExceptionOccured() == -1; }
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        public static extern String GetExceptionMessage();
+        private static extern IntPtr DLL_GetExceptionMessage();
         
+	public static string GetExceptionMessage()
+	{
+		return Marshal.PtrToStringAnsi(DLL_GetExceptionMessage());
+	}
+
         // Code
 
         [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="OpenGraphicsWindow")]
@@ -545,10 +550,20 @@ namespace SwinGame
         }
 
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithKind")]
-        private static extern String DLL_GetPathToResourceWithKind(String filename, ResourceKind kind);
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResource")]
-        private static extern String DLL_GetPathToResource(String filename);
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
+        private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind(string path, string filename, ResourceKind kind);
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
+        private static extern IntPtr DLL_GetPathToResourceWithBase(string path, string filename);
+
+	private static readonly string appPath;
+
+	static Core()
+	{
+		appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+		appPath = System.IO.Path.GetDirectoryName(appPath);
+	}
+
         /// <summary>
         /// Gets the resource to an image, sound, font or other type of resource
         /// 
@@ -563,8 +578,8 @@ namespace SwinGame
         public static String GetPathToResource(String filename, ResourceKind kind)
         {
             try
-            {
-                String temp = DLL_GetPathToResourceWithKind(filename, kind);
+	    {
+		string temp = Marshal.PtrToStringAnsi(DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -586,7 +601,7 @@ namespace SwinGame
         {
             try
             {
-                String temp = DLL_GetPathToResource(filename);
+                String temp = Marshal.PtrToStringAnsi(DLL_GetPathToResourceWithBase(appPath, filename));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
