@@ -68,10 +68,12 @@ namespace GameProject
                                 //Check if AI score a Critical Hit
                                 else if (CheckEvasion(theAI[i], ref randomnumber))
                                 {
+                                    Audio.PlaySoundEffect(Resources.GameSound("Critical"));
                                     Characters.DamageCharacter(ref thePlayer, theAI[i].Stats.Attack * 3, DamageType.Critical);
                                 }
                                 else
                                 {
+                                    Audio.PlaySoundEffect(Resources.GameSound("Hit"));
                                     Characters.DamageCharacter(ref thePlayer, (theAI[i].Stats.Attack * (100 - thePlayer.Stats.Defense)) / 100, DamageType.Enemy);
                                 }
 
@@ -108,10 +110,12 @@ namespace GameProject
                                 //Check if Player score a Critical Hit
                                 else if (CheckCritical(thePlayer, ref randomnumber))
                                 {
+                                    Audio.PlaySoundEffect(Resources.GameSound("Critical"));
                                     Characters.DamageCharacter(ref theAI[i], thePlayer.Stats.Attack * 3, DamageType.Critical);
                                 }
                                 else
                                 {
+                                    Audio.PlaySoundEffect(Resources.GameSound("Hit"));
                                     Characters.DamageCharacter(ref theAI[i], (thePlayer.Stats.Attack * (100 - theAI[i].Stats.Defense)) / 100, DamageType.Player);
                                 }
 

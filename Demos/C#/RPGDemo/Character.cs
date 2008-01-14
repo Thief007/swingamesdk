@@ -298,6 +298,9 @@ namespace GameProject
             
                 //Give the Character some stat Points
                 theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints + 4;
+
+                //Give the Character his health back
+                theCharacter.Stats.Health = theCharacter.Stats.MaxHealth;
             }
             
             //Attack = Base(5) + (Stength * 2)
@@ -396,7 +399,7 @@ namespace GameProject
 
         public static void DamageCharacter(ref Character theCharacter, int healthamount, DamageType type)
         {
-            //Heal Character
+            //Damage Character
             theCharacter.Stats.Health = theCharacter.Stats.Health - healthamount;
 
             //Set the damage change
@@ -407,9 +410,6 @@ namespace GameProject
 
             //Set the status change cooldown
             theCharacter.StatusCooldown = 60;
-
-            //Play the Healing Sound effect
-            //Audio.PlaySoundEffect(Resources.GameSound("Heal"));
         } 
 
         public static void HealCharacter(ref Character theCharacter, int healthamount)
@@ -466,6 +466,7 @@ namespace GameProject
                             (int)theCharacter.Sprite.xPos, (int)theCharacter.Sprite.yPos - 80 + theCharacter.StatusCooldown);
                         break;
 
+                    //Evade an attack
                     case DamageType.Evade:
                         Text.DrawText("Evaded",
                             Color.Yellow, Resources.GameFont("Arial"),
