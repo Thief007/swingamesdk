@@ -30,6 +30,7 @@ namespace GameProject
             }
 
             DrawHealthBar(theCharacter);
+            DrawCharacterInformation(theCharacter);
             DrawStatsPage(ref theCharacter);
         }
 
@@ -50,6 +51,12 @@ namespace GameProject
             {
                 Graphics.DrawBitmapOnScreen(Resources.GameImage("Health"), 25 + (2 * i), 25);
             }
+        }
+
+        private static void DrawCharacterInformation(Character theCharacter)
+        {
+            Text.DrawTextOnScreen("Level: " + theCharacter.Stats.Level, Color.White, Resources.GameFont("Arial"), 20, 60);
+            Text.DrawTextOnScreen("Unused Stat Points: " + theCharacter.Stats.StatPoints, Color.Red, Resources.GameFont("Arial"), 20, 85);
         }
 
         private static void ToggleStatPage()

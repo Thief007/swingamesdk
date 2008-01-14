@@ -45,10 +45,12 @@
   <ItemGroup>
     <Compile Include="AIController.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="Combat.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="GameLogic.cs" />
     <Compile Include="Healer.cs" />
+    <Compile Include="Interaction.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GameResources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
