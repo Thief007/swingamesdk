@@ -292,10 +292,10 @@ namespace GameProject
 
                 //Find the remaining experience to carry over to the next level, and set characters experience to it.
                 theCharacter.Stats.Experience = theCharacter.Stats.Experience - theCharacter.Stats.ExperienceNextLevel;
-            
+
                 //Increase the amount of experience needed to get the next level
                 theCharacter.Stats.ExperienceNextLevel = (int)(theCharacter.Stats.ExperienceNextLevel * 1.5);
-            
+
                 //Give the Character some stat Points
                 theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints + 4;
 

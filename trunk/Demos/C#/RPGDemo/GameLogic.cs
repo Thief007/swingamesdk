@@ -87,12 +87,9 @@ namespace GameProject
                 //Updates the Characters Status Notifications
                 Characters.UpdateCharacterStatus(ref _Player);
 
-
-
+                //Combat Checks
                 Combat.AIHitPlayer(ref _Player, ref _TotalAI, ref _RandomNumber);
                 Combat.PlayerHitAI(ref _Player, ref _TotalAI, ref _RandomNumber);
-
-
 
                 //Draw the Player
                 Graphics.DrawSprite(_Player.Sprite);
