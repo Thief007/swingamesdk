@@ -22,7 +22,7 @@ namespace TomatoQuest
         public static void RunGame()
         {
             //Open a new Graphics Window
-            Core.OpenGraphicsWindow("Game", 800, 600);
+            Core.OpenGraphicsWindow("The Legend of the Tomato Quest", 640, 480);
             //Open Audio Device
             Audio.OpenAudio();
             //Load Resources

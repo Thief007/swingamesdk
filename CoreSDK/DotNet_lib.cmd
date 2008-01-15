@@ -18,6 +18,7 @@ set DOTNETbin=.\SGSDK.NET\src\bin\Debug\
 
 set ShowcaseDOTNET=..\Showcase\CSharpDotNET\SGSDK Showcase\lib\
 set RPGDEMO=..\Demos\C#\RPGDemo\lib\
+set TOMATO=..\Demos\C#\TomatoQuest\lib\
 
 set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
 set SDKVB=..\SDKs\DOTNet\Visual Studio\VB\lib\
@@ -42,6 +43,10 @@ if "%1"=="clean" goto cleaning
 	echo Copying to Showcase
 	copy "%Output1%\*.dll" "%ShowcaseDOTNET%"
 	copy "%Output1%\*.xml" "%ShowcaseDOTNET%"
+
+	echo Copying to TomatoQuest
+	copy "%Output1%\*.dll" "%TOMATO%"
+	copy "%Output1%\*.xml" "%TOMATO%"
 
 	echo Copying to RPGDemo
 	copy "%Output1%\*.dll" "%RPGDEMO%"
