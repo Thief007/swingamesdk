@@ -283,33 +283,14 @@ namespace GameResources
         {
             NewFont("ArialLarge", "arial.ttf", 80);
             NewFont("Courier", "cour.ttf", 16);
-            NewFont("Arial", "arial.ttf", 20);
         }
 
         private static void LoadImages()
         {
-            NewImage("Hero", "Hero.png");
-            NewImage("Overlay", "Overlay.png");
-            NewImage("Health", "Health.png");
-            NewImage("HealthVial", "HealthVial.png");
-            NewImage("Slash Up", "Slash_up.png");
-            NewImage("Slash Down", "Slash_down.png");
-            NewImage("Slash Left", "Slash_left.png");
-            NewImage("Slash Right", "Slash_right.png");
-            NewImage("Healer", "Healer.png");
-            NewImage("Critter", "Critter.png");
-            NewImage("Thief", "Thief.png");
-            NewImage("ThiefLeader", "ThiefLeader.png");
-
-            NewImage("Tomato", "Tomato.png");
         }
 
         private static void LoadSounds()
         {
-            NewSound("Swing", "Swing.wav");
-            NewSound("Heal", "Heal.wav");
-            NewSound("Critical", "Critical.wav");
-            NewSound("Hit", "Hit.wav");
         }
 
         private static void LoadMusic()
@@ -318,7 +299,6 @@ namespace GameResources
 
         private static void LoadMaps()
         {
-            NewMap("Level1");
         }
 
     }

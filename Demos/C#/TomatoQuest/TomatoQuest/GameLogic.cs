@@ -15,7 +15,7 @@ using Sprite = SwinGame.Sprite;
 
 using GameResources;
 
-namespace GameProject
+namespace TomatoQuest
 {
     public static class GameLogic
     {
@@ -33,9 +33,6 @@ namespace GameProject
             {
                 //Clears the Screen to Black
                 Graphics.ClearScreen();
-
-                //Hello World
-                Text.DrawText("Hello World", Color.White, Resources.GameFont("Courier"), 10, 10);
 
                 //Refreshes the Screen and Processes Input Events
                 Core.RefreshScreen();
