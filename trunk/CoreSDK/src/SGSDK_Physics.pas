@@ -102,7 +102,7 @@ interface
  	function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
 	function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
 
-	function TranslationMatric(dx, dy: Single): Matrix2D;
+	function TranslationMatrix(dx, dy: Single): Matrix2D;
 	function ScaleMatrix(scale: Single): Matrix2D;
 	function RotationMatrix(deg: Single): Matrix2D;
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
@@ -710,7 +710,7 @@ implementation
 		result[2, 2] := 1;
 	end;
 
-	function TranslationMatric(dx, dy: Single): Matrix2D;
+	function TranslationMatrix(dx, dy: Single): Matrix2D;
 	begin
 		result := ScaleMatrix(1);
 

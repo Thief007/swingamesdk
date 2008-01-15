@@ -1023,13 +1023,13 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	function TranslationMatric(dx, dy: Single): Matrix2DPtr; cdecl; export;
+	function TranslationMatrix(dx, dy: Single): Matrix2DPtr; cdecl; export;
 	var
 		p: Matrix2DPtr;
 	begin
 		Try
 			new(p);
-			p^ := SGSDK_Physics.TranslationMatric(dx, dy);
+			p^ := SGSDK_Physics.TranslationMatrix(dx, dy);
 			result := p;
 		Except
 			ErrorMessage := GetSGSDKException();
@@ -2358,7 +2358,7 @@ exports
 	MultiplyVector,
 	CalculateAngleNumber,
 	CalculateAngleSprite,
-	TranslationMatric,
+	TranslationMatrix,
 	ScaleMatrix,
 	RotationMatrix,
 	MultiplyMatrix2D,
