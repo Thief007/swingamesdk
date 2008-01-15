@@ -21,6 +21,11 @@ namespace TomatoQuest
     {
         private Map _Map;
 
+        public Map Map
+        {
+            get { return _Map; }
+        }
+
         //Level Constructor
         public Level(String levelName)
         {

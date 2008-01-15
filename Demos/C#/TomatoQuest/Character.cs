@@ -17,16 +17,34 @@ using GameResources;
 
 namespace TomatoQuest
 {
+    public enum CharacterAnim
+    {
+        Top,
+        Down,
+        Left,
+        Right,
+        None
+    }
+
+
     public class Character
     {
         //Constant
         const Event PLAYERSPAWN = Event.Event1;
 
         private Sprite _Sprite;
+        private CharacterAnim _Anim;
 
+        //Returns the Sprite
         public Sprite Sprite
         {
             get { return _Sprite; }
+        }
+
+        //Returns the Animation
+        public CharacterAnim Anim
+        {
+            get { return _Anim; }
         }
 
         //Character Constructor
@@ -38,6 +56,10 @@ namespace TomatoQuest
             //Position the Character
             _Sprite.xPos = SpawnX;
             _Sprite.yPos = SpawnY;
+
+            _Sprite.EndingAction = SpriteEndingAction.ReverseLoop;
+            _Sprite.Movement.SetTo(Physics.CreateVector(0, 0));
+            _Anim = CharacterAnim.None;
         }
 
         public void DrawCharacter()
@@ -46,6 +68,83 @@ namespace TomatoQuest
             Graphics.DrawSprite(_Sprite);
         }
 
+        public void MoveCharacter(Map theMap, int moveX, int moveY)
+        {
+            //Create a Vector that represents the Sprites new movement
+            Vector tempVector = Physics.CreateVector((float)moveX, (float)moveY);
+            _Sprite.Movement.SetTo(tempVector);
+
+            //Move Sprite to new Location
+            Graphics.MoveSprite(_Sprite, _Sprite.Movement);
+
+            //If Colliding with map, undo the movement.
+            if (MappyLoader.CollisionWithMap(theMap, _Sprite) != CollisionSide.None)
+            {
+                Graphics.MoveSprite(_Sprite, Physics.InvertVector(_Sprite.Movement));
+            }
+        }
+
+        private void SetAnimationFrames(int startingFrame, int startingIndex, int endingIndex)
+        {
+            int[] tempintarr = new int[_Sprite.FrameCount];
+
+            for (int i = 0; i < tempintarr.Length; i++)
+            {
+                tempintarr[i] = 0;
+            }
+
+            _Sprite.CurrentFrame = startingFrame;
+
+            for (int i = startingIndex; i < endingIndex + 1; i++)
+            {
+                tempintarr[i] = 7;
+            }
+
+            _Sprite.FramesPerCell = tempintarr;
+        }
+
+        public void UpdateCharacterAnimation()
+        {
+            if (_Sprite.Movement.Y < 0)
+            {
+                if (_Anim != CharacterAnim.Top)
+                {
+                    _Anim = CharacterAnim.Top;
+                    SetAnimationFrames(1, 0, 2);
+                }
+                Graphics.UpdateSpriteAnimation(_Sprite);
+            }
+
+            if (_Sprite.Movement.Y > 0)
+            {
+                if (_Anim != CharacterAnim.Down)
+                {
+                    _Anim = CharacterAnim.Down;
+                    SetAnimationFrames(7, 6, 8);
+                }
+                Graphics.UpdateSpriteAnimation(_Sprite);
+            }
+
+            if (_Sprite.Movement.X < 0)
+            {
+                if (_Anim != CharacterAnim.Left)
+                {
+                    _Anim = CharacterAnim.Left;
+                    SetAnimationFrames(10, 9, 11);
+                }
+                Graphics.UpdateSpriteAnimation(_Sprite);
+            }
+
+            if (_Sprite.Movement.X > 0)
+            {
+                if (_Anim != CharacterAnim.Right)
+                {
+                    _Anim = CharacterAnim.Right;
+                    SetAnimationFrames(4, 3, 5);
+                }
+                Graphics.UpdateSpriteAnimation(_Sprite);
+            }
+        }
     }
 }
 
