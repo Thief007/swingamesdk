@@ -69,9 +69,6 @@ namespace SwinGame
     /// </summary>
     public class Text
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        private static extern String GetExceptionMessage();
-
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFont")]
         private static extern IntPtr DLL_LoadFont(String fontName, int size);
         /// <summary>
@@ -224,8 +221,8 @@ namespace SwinGame
         {
             try
             {
-                int color1 = textColor.ToArgb();
-                int color2 = backColor.ToArgb();
+                //int color1 = textColor.ToArgb();
+                //int color2 = backColor.ToArgb();
                 DLL_DrawTextLines(theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
                 if (Core.ExceptionOccured())
                 {
@@ -260,8 +257,8 @@ namespace SwinGame
         {
             try
             {
-                int color1 = textColor.ToArgb();
-                int color2 = backColor.ToArgb();
+                //int color1 = textColor.ToArgb();
+                //int color2 = backColor.ToArgb();
                 DLL_DrawTextLines(dest.pointer, theText, (uint)textColor.ToArgb(), (uint)backColor.ToArgb(), theFont.Pointer, align, x, y, w, h);
                 if (Core.ExceptionOccured())
                 {

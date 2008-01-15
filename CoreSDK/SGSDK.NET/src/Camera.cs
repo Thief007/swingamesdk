@@ -123,7 +123,7 @@ namespace SwinGame
         {
             try
             {
-                float temp = DLL_GameY(x);
+                float temp = DLL_GameX(x);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
