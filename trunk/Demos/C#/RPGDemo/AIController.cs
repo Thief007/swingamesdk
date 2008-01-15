@@ -78,7 +78,12 @@ namespace GameProject
                 //If the AI's Health is equal to, or below 0, the AI is no longer alive.
                 if (theAI[i].Stats.Health <= 0)
                 {
-                    theAI[i].Alive = false;
+                     theAI[i].Alive = false;
+                }
+
+                if (!theAI[i].Alive && theAI[i].HasItem)
+                {
+                      Items.DropItem(ref theAI[i]);
                 }
 
                 //If the AI is Onscreen and alive, contine.

@@ -55,10 +55,14 @@ namespace GameProject
 
             Random _RandomNumber = new Random(System.DateTime.Now.Millisecond);
 
+            Item Tomato = Items.NewItem("Tomato");
+            Items.GiveCharacterItem(ref _Leader[0], Tomato);
+
             AddRange(_Healers, ref _TotalAI);
             AddRange(_Critters, ref _TotalAI);
             AddRange(_Thieves, ref _TotalAI);
             AddRange(_Leader, ref _TotalAI);
+
             
             //Game Loop
             do
@@ -106,6 +110,8 @@ namespace GameProject
                 //Draws the FrameRate
                 Text.DrawFramerate(200, 0, Resources.GameFont("Courier"));
 
+                //Draw the Tomato
+                Items.DrawItem(Tomato);
 
                 //Refreshes the Screen and Processes Input Events
                 Core.RefreshScreen();

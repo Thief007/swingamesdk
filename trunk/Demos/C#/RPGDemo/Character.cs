@@ -89,6 +89,9 @@ namespace GameProject
         public DamageType DamageType;
         public int Damage;
         public int StatusCooldown;
+
+        public Item Item;
+        public bool HasItem;
     }
 
     public static class Characters
@@ -142,6 +145,8 @@ namespace GameProject
             temp.Damage = 0;
             temp.DamageType = DamageType.None;
             temp.StatusCooldown = 0;
+
+            temp.HasItem = false;
 
             return temp;
         }
@@ -275,8 +280,8 @@ namespace GameProject
 
         public static void RefreshCharacterStats(ref Character theCharacter)
         {
-            //Health = Base(20) + Vitality * 6
-            theCharacter.Stats.MaxHealth = 20 + theCharacter.Attributes.Vitality * 6;
+            //Health = Base(20) + Vitality * 10
+            theCharacter.Stats.MaxHealth = 20 + theCharacter.Attributes.Vitality * 10;
 
             //If characters current health is over the new max health, reduce character health
             if (theCharacter.Stats.Health > theCharacter.Stats.MaxHealth)
@@ -297,14 +302,14 @@ namespace GameProject
                 theCharacter.Stats.ExperienceNextLevel = (int)(theCharacter.Stats.ExperienceNextLevel * 1.5);
 
                 //Give the Character some stat Points
-                theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints + 4;
+                theCharacter.Stats.StatPoints = theCharacter.Stats.StatPoints + 5;
 
                 //Give the Character his health back
                 theCharacter.Stats.Health = theCharacter.Stats.MaxHealth;
             }
             
-            //Attack = Base(5) + (Stength * 2)
-            theCharacter.Stats.Attack = 5 + (theCharacter.Attributes.Strength * 2);
+            //Attack = Base(5) + (Stength)
+            theCharacter.Stats.Attack = 5 + (theCharacter.Attributes.Strength);
 
             //Defense = Base(1) + Vitality
             theCharacter.Stats.Defense = 1 + theCharacter.Attributes.Vitality;

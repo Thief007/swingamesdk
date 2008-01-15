@@ -873,19 +873,19 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TranslationMatrix")]
-        private static extern IntPtr DLL_TranslationMatric(Single dx, Single dy);
+        private static extern IntPtr DLL_TranslationMatrix(Single dx, Single dy);
         /// <summary>
         /// TranslationMatric
         /// </summary>
         /// <param name="dx">Translation X</param>
         /// <param name="dy">Translation Y</param>
         /// <returns>TranslationMatric</returns>
-        public static Matrix2D TranslationMatric(Single dx, Single dy)
+        public static Matrix2D TranslationMatrix(Single dx, Single dy)
         {
             try
             {
                 Matrix2D temp = new Matrix2D();
-                temp.Pointer = DLL_TranslationMatric(dx, dy);
+                temp.Pointer = DLL_TranslationMatrix(dx, dy);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
