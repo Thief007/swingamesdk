@@ -50,14 +50,19 @@ namespace GameProject
 
         public static void AIHitPlayer(ref Character thePlayer, ref Character[] theAI, ref Random randomnumber)
         {
+            //Go through each AI
             for (int i = 0; i < theAI.Length; i++)
             {
+                //Check that the AI is alive, On screen, and is attacking
                 if (theAI[i].Alive && !Graphics.IsSpriteOffscreen(theAI[i].Sprite) && theAI[i].Attacking)
                 {
+                    //Check that the AI's attack animation is at the final frame
                     if (theAI[i].CurrentSlash.CurrentFrame == theAI[i].CurrentSlash.FramesPerCell.Length - 1)
                     {
+                        //Check that the AI and Player is within striking distance
                         if (AIController.CalculateDistance(thePlayer, theAI[i]) < 100)
                         {
+                            //Check that the AI sword sprite has collided with the player
                             if (Physics.HaveSpritesCollided(thePlayer.Sprite, theAI[i].CurrentSlash))
                             {
                                 //Check if Player evaded
@@ -71,12 +76,14 @@ namespace GameProject
                                     Audio.PlaySoundEffect(Resources.GameSound("Critical"));
                                     Characters.DamageCharacter(ref thePlayer, theAI[i].Stats.Attack * 3, DamageType.Critical);
                                 }
+                                //Ordinary Hit
                                 else
                                 {
                                     Audio.PlaySoundEffect(Resources.GameSound("Hit"));
                                     Characters.DamageCharacter(ref thePlayer, (theAI[i].Stats.Attack * (100 - thePlayer.Stats.Defense)) / 100, DamageType.Enemy);
                                 }
 
+                                //Set the attacking state to false
                                 theAI[i].Attacking = false;
                             }
                         }
@@ -113,17 +120,21 @@ namespace GameProject
                                     Audio.PlaySoundEffect(Resources.GameSound("Critical"));
                                     Characters.DamageCharacter(ref theAI[i], thePlayer.Stats.Attack * 3, DamageType.Critical);
                                 }
+                                //If its a normal Hit
                                 else
                                 {
                                     Audio.PlaySoundEffect(Resources.GameSound("Hit"));
                                     Characters.DamageCharacter(ref theAI[i], (thePlayer.Stats.Attack * (100 - theAI[i].Stats.Defense)) / 100, DamageType.Player);
                                 }
 
+                                //If the AI's health is less then 0, the AI has died
+                                //and so, the Player gains experience
                                 if (theAI[i].Stats.Health <= 0)
                                 {
                                     thePlayer.Stats.Experience = thePlayer.Stats.Experience + theAI[i].Stats.Experience;
                                 }
 
+                                //Set Players Attacking to false
                                 thePlayer.Attacking = false;
                             }
                         }
