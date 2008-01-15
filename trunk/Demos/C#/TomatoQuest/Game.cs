@@ -28,6 +28,9 @@ namespace TomatoQuest
         //Load the Player
         private Character _Player;
 
+        //Load the Player Controller
+        private Controller _Controller = new Controller();
+
         //Game Constructor
         public Game()
         {
@@ -38,6 +41,9 @@ namespace TomatoQuest
         {
             //Draw the Map
             _Map.DrawLevel();
+
+            //Update Player with Controls
+            _Controller.UpdateInput(_Player, _Map);
 
             //Draw Player
             _Player.DrawCharacter();

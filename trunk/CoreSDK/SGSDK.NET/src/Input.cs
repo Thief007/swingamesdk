@@ -679,6 +679,7 @@ namespace SwinGame
             }  
         }
 
+        /*
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsUNICODE")]
         private static extern String DLL_TextReadAsUNICODE();
         /// <summary>
@@ -703,6 +704,7 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
+        */
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsKeyPressed")]
         private static extern bool DLL_IsKeyPressed(Keys key);
