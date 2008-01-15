@@ -909,13 +909,22 @@ begin
 	begin
 		RaiseSGSDKException('Error loading sdl... ' + SDL_GetError());
 	end;
-	
+	//WriteLn('After InitSDL');
+		
 	//Not needed anymore - SDL_EnableUNICODE(SDL_ENABLE);
 
 	sdlManager := TSDLManager.Create();
-	applicationPath := ExtractFileDir(ParamStr(0));
+	WriteLn('After sdlManager');
+
+	try
+		applicationPath := ExtractFileDir(ParamStr(0));
+	except
+		WriteLn('Failed to get executable path');
+	end;
 
 	scr := nil;
+
+	//WriteLn('End initialization');
   
 	//Load sound
 	{WriteLn('Opening Mixer');

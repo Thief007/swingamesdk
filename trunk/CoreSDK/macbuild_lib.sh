@@ -36,13 +36,14 @@ then
 	rm -f SGSDK_KeyCodes.*
 	rm -f SGSDK_MappyLoader.*
 	rm -f SGSDK_Camera.*
+	rm -f libSGSDK.dylib
 	echo Cleaned
 else
 	echo "Compiling with " $EXTRA_OPTS
 
 	mkdir -p "$Output"
 	
-	if [ $SHARED_LIB = "N"]
+	if [ $SHARED_LIB = "N" ]
 	then
 		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Core.pas
 		if [ $? != 0 ]; then echo "Error compiling Core"; exit 1; fi
@@ -62,6 +63,14 @@ else
 		if [ $? != 0 ]; then echo "Error compiling KeyCodes"; exit 1; fi
 		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_MappyLoader.pas
 		if [ $? != 0 ]; then echo "Error compiling MappyLoader"; exit 1; fi
+			
+		echo "Copying to FPC"
+
+		mkdir -p "$MacFPCDir"
+
+		cp "$Output"/*.ppu "$MacFPCDir"
+		cp "$Output"/*.o "$MacFPCDir"
+		cp "$LibDir"/*.a "$MacFPCDir"
 	else
 		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fl./lib/mac -s SGSDK.pas
 		if [ $? != 0 ]; then echo "Error compiling SGSDK"; exit 1; fi
@@ -79,14 +88,6 @@ else
 		/usr/bin/strip -x "$Output"/libSGSDK.dylib
 		if [ $? != 0 ]; then echo "Error stripping libSGSDK.dylib"; exit 1; fi
 	fi
-	
-	echo "Copying to FPC"
-	
-	mkdir -p "$MacFPCDir"
-	
-	cp "$Output"/*.ppu "$MacFPCDir"
-	cp "$Output"/*.o "$MacFPCDir"
-	cp "$LibDir"/*.a "$MacFPCDir"
 	
 	echo "Finished"
 fi

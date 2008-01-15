@@ -148,6 +148,20 @@ namespace SwinGame
 
         // Code
 
+		#region "OS X compatibility"
+        [DllImport("/System/Library/Frameworks/Cocoa.framework/Cocoa", EntryPoint = "NSApplicationLoad")]
+        private static extern void NSApplicationLoad();
+
+        [DllImport("libobjc.dylib", EntryPoint = "objc_getClass")]
+        private static extern int objc_getClass(string name);
+        
+        [DllImport("libobjc.dylib", EntryPoint = "sel_registerName")]
+        private static extern int sel_registerName(string name);
+
+        [DllImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
+        private static extern int objc_msgSend(int self, int cmd);
+		#endregion
+
         [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="OpenGraphicsWindow")]
         private static extern void DLL_OpenGraphicsWindow(String caption, int width, int height);
         
@@ -163,6 +177,23 @@ namespace SwinGame
         /// <param name="height">Height of the Window</param>
         public static void OpenGraphicsWindow(String caption, int width, int height)
         {
+				try
+				{
+					//Console.WriteLine("Openning GW");
+				     ////Mac OSX code
+				     if (File.Exists("/System/Library/Frameworks/Cocoa.framework/Cocoa"))
+				     {
+							//Console.WriteLine("Loading Mac version");
+				         int NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
+				         objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
+				    		NSApplicationLoad();
+				     }
+				 }
+				 catch(Exception exc)
+				 {
+					Console.WriteLine("Error loading Mac: " + exc.Message);
+				 }
+
             try
             {
                 DLL_OpenGraphicsWindow(caption, width, height);
@@ -178,6 +209,7 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
         private static extern bool DLL_WindowCloseRequested();
+
         /// <summary>
         /// Checks to see if the window has been asked to close. You need to handle
         ///	this if you want the game to end when the window is closed. This value
@@ -421,8 +453,9 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetColourRGBA")]
-        private static extern int DLL_GetColor(Byte red, Byte green, Byte blue, Byte alpha);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetColourRGBA")]
+        //private static extern int DLL_GetColor(Byte red, Byte green, Byte blue, Byte alpha);
+        
         /// <summary>
         /// Gets the Color when the user enters the amount of red, green, blue and alpha
         /// </summary>
