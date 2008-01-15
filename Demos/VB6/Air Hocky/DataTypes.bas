@@ -6,14 +6,6 @@ Public Type Player
     Goal As Sprite
 End Type
 
-Public Enum GameState
-    AtMenu
-    StartingGame
-    PlayingGame
-    FinshedGame
-    Quit
-End Enum
-
 Public Type Table
     BackGround As Bitmap
     TableHorizontal As Sprite
@@ -21,10 +13,9 @@ Public Type Table
 End Type
 
 Public Type AirHockeyGame
-    Players(1) As Player
+    Players() As Player
     Ball As Sprite
     TablePics As Table
-    'state As GameState
 End Type
 
 

@@ -12,7 +12,7 @@ Private MusicsStr() As String
 Private MapsStr() As String
 
 
-Private Background As SGSDKVB6.Bitmap
+Private BackGround As SGSDKVB6.Bitmap
 Private Animation As SGSDKVB6.Sprite
 Private Loadingfont As SGSDKVB6.Fonts
 Private StartSound As SGSDKVB6.SoundEffect
@@ -21,17 +21,18 @@ Private StartSound As SGSDKVB6.SoundEffect
 Option Explicit
 
 Private Sub LoadFonts()
-    Call NewFont("ArialLarge", "arial.ttf", 80)
     Call NewFont("Courier", "cour.ttf", 16)
 End Sub
 
 Private Sub LoadImages()
-    Call NewImage("ball", "ball2.png")
+    Call NewImage("ball", "ball.png")
     Call NewImage("Table", "air_hocky_table.png")
     Call NewImage("TableHorizontal", "air_hocky_table_collision_horizontal.png")
     Call NewImage("TableVertical", "air_hocky_table_collision_vertical.png")
-    Call NewImage("AIGoal", "air_hocky_table_collision_AI_goal.png")
-    Call NewImage("PlayerGoal", "air_hocky_table_collision_player_goal.png")
+    Call NewImage("0goal", "air_hocky_table_collision_AI_goal.png")
+    Call NewImage("1goal", "air_hocky_table_collision_player_goal.png")
+    'Call NewImage("0bat", "player_bat.png")
+    'Call NewImage("1bat", "AI_bat.png")
 End Sub
 
 Private Sub LoadSounds()
@@ -97,15 +98,15 @@ Sub LoadResources()
 End Sub
 
 Private Sub ShowLoadingScreen()
-    Set Background = SwinGame.Graphics.LoadBitmap(SwinGame.Core.GetPathToResource("SplashBack.png", ResourceKind_ImageResource))
-    Call SwinGame.Graphics.DrawBitmap(Background, 0, 0)
+    Set BackGround = SwinGame.Graphics.LoadBitmap(SwinGame.Core.GetPathToResource("SplashBack.png", ResourceKind_ImageResource))
+    Call SwinGame.Graphics.DrawBitmap(BackGround, 0, 0)
     Call SwinGame.Core.RefreshScreen_WithFrame(60)
     Call SwinGame.Core.ProcessEvents
     Set Animation = New SGSDKVB6.Sprite
     Set StartSound = New SGSDKVB6.SoundEffect
     Set Animation = SwinGame.Graphics.CreateSprite_MultiFPC(SwinGame.Graphics.LoadBitmap(SwinGame.Core.GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource)), 4, 14, 712, 184)
-    Call Animation.SetX(41)
-    Call Animation.SetY(242)
+    Call Animation.setX(41)
+    Call Animation.setY(242)
     Set Loadingfont = SwinGame.Text.LoadFont(SwinGame.Core.GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
     Set StartSound = SwinGame.Audio.LoadSoundEffect(SwinGame.Core.GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
     Call PlaySwinGameIntro
@@ -117,7 +118,7 @@ Private Sub PlaySwinGameIntro()
      i = 0
     Do Until i = 55
         i = i + 1
-        Call SwinGame.Graphics.DrawBitmap(Background, 0, 0)
+        Call SwinGame.Graphics.DrawBitmap(BackGround, 0, 0)
         Call SwinGame.Graphics.DrawSprite(Animation)
         Call SwinGame.Graphics.UpdateSprite(Animation)
         Call SwinGame.Core.RefreshScreen_WithFrame(60)
@@ -137,7 +138,7 @@ Private Sub EndLoadingScreen()
     Call SwinGame.Graphics.ClearScreen
     Call SwinGame.Core.RefreshScreen_WithFrame(60)
     Call SwinGame.Text.FreeFont(Loadingfont)
-    Call SwinGame.Graphics.FreeBitmap(Background)
+    Call SwinGame.Graphics.FreeBitmap(BackGround)
     Call SwinGame.Graphics.FreeSprite(Animation)
     Call SwinGame.Audio.FreeSoundEffect(StartSound)
 End Sub
@@ -179,7 +180,7 @@ Private Sub NewMap(mapName As String)
     ReDim Preserve Maps(UBound(Maps, 1) + 1)
     ReDim Preserve MapsStr(UBound(MapsStr, 1) + 1)
     Set Maps(UBound(Maps, 1)) = New Map
-    Set Maps(UBound(Maps, 1)) = MappyLoader.Loadmap(mapName)
+    Set Maps(UBound(Maps, 1)) = MappyLoader.LoadMap(mapName)
     MapsStr(UBound(Maps, 1)) = mapName
 End Sub
 
