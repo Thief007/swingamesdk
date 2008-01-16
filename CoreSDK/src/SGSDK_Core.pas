@@ -202,8 +202,8 @@ interface
 		iconFile: String;
 		
 	procedure RaiseSGSDKException(msg: String);
-	function HasExceptionRaised(): Boolean;
-	function GetSGSDKException(): String;
+{	function HasExceptionRaised(): Boolean;
+	function GetSGSDKException(): String;}
 	
 	procedure ProcessEvents();
 	function WindowCloseRequested(): Boolean;
@@ -275,27 +275,28 @@ interface
 implementation
 	uses SysUtils, Math, Classes;
 	
-	var
+{	var
 		HasErrorOccured: Boolean = false;
-		ExceptionMessage: String;
+		ExceptionMessage: String;}
 		
 	procedure RaiseSGSDKException(msg: String);
 	begin
-		ExceptionMessage := msg;
-		HasErrorOccured := true;
+		//ExceptionMessage := msg;
+		//HasErrorOccured := true;
 		
 		raise Exception.Create(msg);
 	end;
 	
-	function HasExceptionRaised(): Boolean;
+{	function HasExceptionRaised(): Boolean;
 	begin
 		result := HasErrorOccured;
-	end;
+	end;}
 	
-	function GetSGSDKException(): String;
+{	function GetSGSDKException(): String;
 	begin
 		result := ExceptionMessage;
 	end;
+}
 	
 	/// ProcessEvents allows the SwinGame API to react to user interactions. This
 	///	routine checks the current keyboard and mouse states. This routine must
@@ -619,18 +620,22 @@ implementation
 		
 		while (difference < ((1 / TargetFPS) * 1000)) do
 		begin
-			//Sleep(1);
+			Sleep(1);
 			nowTime := GetTicks();
 			difference := nowTime - lastDrawUpdateTime;
 		end;	
 		
 		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
 		lastDrawUpdateTime := nowTime;
+
+
+
 		try
 			sdlManager.DrawCollectedText(scr.surface);
 		except
 			RaiseSGSDKException('Error occured while trying to draw collected text');
 		end;
+
 		try
 			SDL_Flip(scr.surface);
 		except
@@ -911,15 +916,15 @@ begin
 	end;
 	//WriteLn('After InitSDL');
 		
-	//Not needed anymore - SDL_EnableUNICODE(SDL_ENABLE);
+	SDL_EnableUNICODE(SDL_ENABLE);
 
 	sdlManager := TSDLManager.Create();
-	WriteLn('After sdlManager');
+	//WriteLn('After sdlManager');
 
 	try
 		applicationPath := ExtractFileDir(ParamStr(0));
 	except
-		WriteLn('Failed to get executable path');
+		//WriteLn('Failed to get executable path');
 	end;
 
 	scr := nil;

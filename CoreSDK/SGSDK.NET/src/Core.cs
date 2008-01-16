@@ -64,11 +64,6 @@ namespace SwinGame
     {
         internal IntPtr pointer;
         
-        [DllImport("SGSDK.dll")]
-        private static extern int GetBitmapWidth(IntPtr pointer);
-        [DllImport("SGSDK.dll")]
-        private static extern int GetBitmapHeight(IntPtr pointer);
-
         /// <summary>
         /// The Width of the Bitmap
         /// </summary>
@@ -136,15 +131,20 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern int DLL_ExceptionOccured();
 
-        public static bool ExceptionOccured() { return DLL_ExceptionOccured() == -1; }
+        /// <summary>
+        /// Indicates if an exception has occurred in the SwinGame Library. This is used to determine the error
+        /// The error message to be returned to the user.
+        /// </summary>
+        /// <returns>True if an error has occurred</returns>
+        internal static bool ExceptionOccured() { return DLL_ExceptionOccured() == -1; }
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
         private static extern IntPtr DLL_GetExceptionMessage();
         
-	public static string GetExceptionMessage()
-	{
-		return Marshal.PtrToStringAnsi(DLL_GetExceptionMessage());
-	}
+        internal static string GetExceptionMessage()
+        {
+           return Marshal.PtrToStringAnsi(DLL_GetExceptionMessage());
+        }
 
         // Code
 
@@ -208,7 +208,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
-        private static extern bool DLL_WindowCloseRequested();
+        private static extern int DLL_WindowCloseRequested();
 
         /// <summary>
         /// Checks to see if the window has been asked to close. You need to handle
@@ -220,7 +220,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = DLL_WindowCloseRequested();
+                bool temp = DLL_WindowCloseRequested() == -1;
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -589,13 +589,13 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
         private static extern IntPtr DLL_GetPathToResourceWithBase(string path, string filename);
 
-	private static readonly string appPath;
+			private static readonly string appPath;
 
-	static Core()
-	{
-		appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
-		appPath = System.IO.Path.GetDirectoryName(appPath);
-	}
+			static Core()
+			{
+				appPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+				appPath = System.IO.Path.GetDirectoryName(appPath);
+			}
 
         /// <summary>
         /// Gets the resource to an image, sound, font or other type of resource
@@ -612,7 +612,10 @@ namespace SwinGame
         {
             try
 	    {
-		string temp = Marshal.PtrToStringAnsi(DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind));
+			IntPtr addr = DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind);
+			Console.WriteLine(addr);
+			string temp = Marshal.PtrToStringAnsi(addr);
+			Console.WriteLine(temp + ":" + addr);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());

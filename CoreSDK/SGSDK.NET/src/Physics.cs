@@ -252,8 +252,6 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithBitmap")]
-        private static extern bool DLL_HasSpriteCollidedWithBitmap();
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithinBitmapImages")]
         private static extern bool DLL_CollisionWithinBitmapImages(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int x2, int y2, bool bounded2);
         /// <summary>
@@ -280,11 +278,11 @@ namespace SwinGame
         /// <param name="y2">The y location of image 2</param>
         /// <param name="bounded2">Indicates if image2 should use bounded collision</param>
         /// <returns>True if the bitmaps collide.</returns>
-        public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2)
+        public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, int bounded1, Bitmap image2, int x2, int y2, int bounded2)
         {
             try
             {
-                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
+                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, bounded1 == -1, image2.pointer, x2, y2, bounded2 == -1);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -340,7 +338,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x, y, bounded);
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x, y, (bounded?-1:0));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -370,7 +368,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x + vwPrtX, y + vwPrtY, (bounded?-1:0));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -396,7 +394,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x, y, true);
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x, y, -1);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -425,7 +423,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x + vwPrtX, y + vwPrtY, -1);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -441,7 +439,7 @@ namespace SwinGame
 
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveBitmapsCollided")]
-        private static extern bool DLL_HaveBitmapsCollided(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int  x2, int y2, bool bounded2);
+        private static extern bool DLL_HaveBitmapsCollided(IntPtr image1, int x1, int y1, int bounded1, IntPtr image2, int  x2, int y2, int bounded2);
         /// <summary>
         /// Checks to see if two bitmaps have collided, this performs a bounded check
         ///	then, if required, it performs a per pixel check on the colliding region.
@@ -459,7 +457,8 @@ namespace SwinGame
         {
             try
             {
-                bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, bounded1, image2.pointer, x2, y2, bounded2);
+                bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, (bounded1?-1:0), image2.pointer, x2, y2, (bounded2?-1:0));
+
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -487,7 +486,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
+                bool temp = DLL_HaveBitmapsCollided(image1.pointer, x1, y1, 0, image2.pointer, x2, y2, 0);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -502,7 +501,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", EntryPoint = "CreateVector")]
-        private static extern Vector DLL_CreateVector(Single x, Single y, bool invertY);
+        private static extern Vector DLL_CreateVector(Single x, Single y, int invertY);
         /// <summary>
         /// Creates a new vector with values x and y, possibly with an inverted y. The
         ///	inversion of the y value provides a convienient option for handling
@@ -516,7 +515,7 @@ namespace SwinGame
         {
             try
             {
-                Vector temp = DLL_CreateVector(x, y, invertY);
+                Vector temp = DLL_CreateVector(x, y, (invertY?-1:0));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -540,7 +539,7 @@ namespace SwinGame
         {
             try
             {
-                Vector temp = DLL_CreateVector(x, y, false);
+                Vector temp = DLL_CreateVector(x, y, 0);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());

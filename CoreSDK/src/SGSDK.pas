@@ -1,22 +1,87 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// This is the library interface to SwinGame SDK. This is
+// used by the non-pascal languages to interact with the
+// API.
+//
+// cdecl is used to ensure consistent calling contentions.
+// exports is required by windows, option in Mac, and not
+//     needed for unix.
+// Arrays are passed as pointers with the associated 
+//     length, then reconstructed here.
+// Errors are caught and the HasException must be set. See
+//     the TrapException routine.
+// Booleans are passed using Integer with -1 as true, any
+//     other value is false.
+//
+// Change History:
+//  
+//  - 2008-01-16: Andrew Cain: Modified exception handling.
+
 library SGSDK;
 
-uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera, SGSDK_MappyLoader, SysUtils;
+uses 
+	SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
+	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Camera, 
+	SGSDK_MappyLoader, SysUtils;
 
 	type
+		//IntPtr used to receive arrays
+		IntPtr = ^Integer;
+		//BitmapPtr used to receive Bitmap arrays
+		BitmapPtr = ^Bitmap;
+		
 		IntArray = Array of Integer;
 		BitmapArray = Array of Bitmap;
 		Matrix2DPtr = ^Matrix2D;
 		MapPtr = ^Map;
-	
+
+
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					Helper Methods
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
+	/// Copies the data from an array passed as a pointer
+	/// into a Pascal array
+	procedure PopulateIntArray(data: IntPtr; len: Integer; out arr: IntArray);
 	var
-		ErrorMessage: String;
+		i: Integer;
+	begin
+		SetLength(arr, len);
+
+		for i := 0 to len - 1 do
+		begin
+			arr[i] := (data + i)^;
+		end;
+	end;
 	
+	procedure PopulateBitmapArray(data: BitmapPtr; len: Integer; out arr: BitmapArray);
+	var
+		i: Integer;
+	begin
+		SetLength(arr, len);
+
+		for i := 0 to len - 1 do
+		begin
+			arr[i] := (data + i)^;
+		end;
+	end;
+
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Exception
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
+	var
+		ErrorMessage: String;
+		HasException: Boolean;		
 	
 	function GetExceptionMessage(): PChar; cdecl; export;
 	begin
@@ -25,14 +90,14 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	
 	function ExceptionOccured(): Integer; cdecl; export;
 	begin
-		if SGSDK_Core.HasExceptionRaised() then
-		begin
-			result := -1
-		end
-		else
-		begin
-			result := 0
-		end;
+		if HasException then result := -1
+		else result := 0;
+	end;
+	
+	procedure TrapException(exc: Exception);
+	begin
+		HasException := true;
+		ErrorMessage := exc.Message;
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -48,35 +113,39 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 
 	procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
 	begin
+		ErrorMessage := '';
+		HasException := false;
+		
 		Try
 			SGSDK_Core.OpenGraphicsWindow(caption, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
 	function WindowCloseRequested(): Integer; cdecl; export;
 	begin
-		Try
-			if SGSDK_Core.WindowCloseRequested() then
+		try
+			if not SGSDK_Core.WindowCloseRequested() then
 			begin
 				result:= -1
 			end
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		
+		result := -1;
 	end;
 	
 	procedure SetIcon(iconFilename: PChar); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.SetIcon(iconFilename);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -84,8 +153,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Core.ChangeScreenSize(width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -93,8 +161,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Core.ToggleFullScreen();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -102,8 +169,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Core.RefreshScreen(TargetFPS);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -111,8 +177,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Core.RefreshScreen();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -120,8 +185,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Core.TakeScreenshot(basename);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -129,74 +193,78 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Core.ScreenWidth();
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function  ScreenHeight(): Integer; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.ScreenHeight();
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function ToSDLColor(color: UInt32): TSDL_Color; cdecl; export;
-	begin
+	begin		
 		Try
 			result := SGSDK_Core.ToSDLColor(color);
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		
+		result := ColorWhite;		
 	end;
 	
 	function GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.GetColour(forBitmap, apiColor);
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := ColorWhite;
 	end;
 	
 	function GetColourRGBA(red, green, blue, alpha: Byte) : Colour; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.GetColour(red, green, blue, alpha);
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := ColorWhite;
 	end;
-	
-	// function GetColour(red, green, blue : Byte) : Colour;
-	// pass 255 into parameter 4
 	
 	function GetFramerate(): Integer; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.GetFramerate();
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function GetTicks(): UInt32; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.GetTicks();
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	procedure Sleep(time : UInt32); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.Sleep(time);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -204,73 +272,78 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := PChar(SGSDK_Core.GetPathToResource(filename, kind));
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function GetPathToResource(filename: PChar): PChar; cdecl; export;
 	begin
 		Try
 			result := PChar(SGSDK_Core.GetPathToResource(filename));
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := '';
 	end;
 
 	function GetPathToResourceWithBaseAndKind(path, filename: PChar; kind: ResourceKind) : PChar; cdecl; export;
 	begin
 		try
 			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename, kind));
-		except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := '';
 	end;
 
 	function GetPathToResourceWithBase(path, filename: PChar) : PChar; cdecl; export;
 	begin
 		try
 			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename));
-		except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := '';
 	end;
 
-	
-	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); cdecl; export;
+{	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.RegisterEventProcessor(handle, handle2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
-	
+}	
 	function Cos(angle: Single): Single; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.Cos(angle);
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function Sin(angle: Single): Single; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.Sin(angle);
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function Tan(angle: Single): Single; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.Tan(angle);
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	//***************************************************
@@ -285,18 +358,20 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Input.GetMousePosition();
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := CreateVector(0,0);
 	end;
 	
 	function GetMouseMovement(): Vector; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Input.GetMouseMovement();
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := CreateVector(0,0);
 	end;
 	
 	function IsMouseDown(button: MouseButton): Integer; cdecl; export;
@@ -309,10 +384,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function IsMouseUp(button: MouseButton): Integer; cdecl; export;
@@ -325,10 +401,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	function MouseWasClicked(button: MouseButton): Integer; cdecl; export;
@@ -341,20 +418,20 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := -1;
 	end;
 
 
 	procedure StartReadingText(textColor: Colour; maxLength: Integer;
-														 theFont: Font; x, y: Integer); cdecl; export;
+										theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -368,19 +445,21 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := 0;
 	end;
 	
 	function TextReadAsASCII(): PChar; cdecl; export;
 	begin
 		Try
 			result := PChar(SGSDK_Input.TextReadAsASCII());
-		Except
-			ErrorMessage := GetSGSDKException();
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := PChar('');
 	end;
 		
 	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
@@ -393,10 +472,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := 0;
 	end;
 	
 	function WasKeyTyped(virtKeyCode: Integer): Integer; cdecl; export;
@@ -409,10 +489,11 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			else
 			begin
 				result:= 0
-			end
-		Except
-			ErrorMessage := GetSGSDKException();
+			end;
+			exit;
+		Except on exc: Exception do TrapException(exc);
 		end;
+		result := 0;
 	end;
 	
 	//***************************************************
@@ -428,8 +509,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.OpenAudio();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -437,8 +517,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.CloseAudio();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -446,8 +525,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Audio.LoadSoundEffect(path);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -455,8 +533,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Audio.LoadMusic(path);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -464,8 +541,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.FreeMusic(mus);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -473,8 +549,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.FreeSoundEffect(effect);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -482,8 +557,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.PlaySoundEffect(effect);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -491,8 +565,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.PlaySoundEffect(effect, loops);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -500,8 +573,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.PlayMusic(mus, loops);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -521,8 +593,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -537,8 +608,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -546,8 +616,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.StopSoundEffect(effect);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -555,8 +624,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Audio.StopMusic();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -572,8 +640,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Font.LoadFont(fontName, size);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -581,8 +648,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.SetFontStyle(font, style);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -590,8 +656,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.FreeFont(fontToFree);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -600,8 +665,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -611,8 +675,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -621,8 +684,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawTextOnScreen(theText, textColor, theFont, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -632,8 +694,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, x, y, w, h);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 							
@@ -642,8 +703,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -654,8 +714,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -663,8 +722,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Font.TextWidth(theText, theFont);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -672,8 +730,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Font.TextHeight(theText, theFont);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -681,8 +738,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Font.DrawFramerate(x, y, font);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -706,8 +762,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -723,8 +778,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -740,8 +794,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 		
@@ -756,8 +809,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -832,12 +884,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;}
 
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer;
-		bounded1: Boolean; image2: Bitmap;
-		x2, y2: Integer; bounded2: Boolean)
+		bounded1: Integer; image2: Bitmap;
+		x2, y2: Integer; bounded2: Integer)
 		: Integer; cdecl; export;
 	begin
 		Try
-			if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
+			if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1 = -1, image2, x2, y2, bounded2 = -1) then
 			begin
 				result:= -1
 			end
@@ -845,8 +897,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -865,12 +916,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;}
 
 	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
-		bounded1: Boolean; image2: Bitmap;
-		x2, y2: Integer; bounded2: Boolean)
+		bounded1: Integer; image2: Bitmap;
+		x2, y2: Integer; bounded2: Integer)
 		: Integer; cdecl; export;
 	begin
 		Try
-			if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1, image2, x2, y2, bounded2) then
+			if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1 = -1, image2, x2, y2, bounded2 = -1) then
 			begin
 				result:= -1
 			end
@@ -878,17 +929,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	function CreateVector(x,y : Single; invertY : boolean): Vector;  cdecl; export;
+	function CreateVector(x,y : Single; invertY : Integer): Vector;  cdecl; export;
 	begin
 		Try
-			result :=SGSDK_Physics.CreateVector(x, y, invertY);
-		Except
-			ErrorMessage := GetSGSDKException();
+			result :=SGSDK_Physics.CreateVector(x, y, invertY = -1);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -901,8 +950,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.AddVectors(v1, v2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -910,8 +958,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.SubtractVectors(v1, v2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -919,8 +966,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.InvertVector(v);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -928,8 +974,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -937,8 +982,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -946,8 +990,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.GetUnitVector(theVector);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -962,8 +1005,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -971,8 +1013,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.Magnitude(theVector);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -980,8 +1021,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.DotProduct(v1, v2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -989,8 +1029,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.MultiplyVector(v1, s1);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -998,8 +1037,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1007,8 +1045,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1016,8 +1053,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Physics.GetVectorFromAngle(angle, magnitude);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1031,8 +1067,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			new(p);
 			p^ := SGSDK_Physics.TranslationMatrix(dx, dy);
 			result := p;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1044,8 +1079,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			new(p);
 			p^ := SGSDK_Physics.ScaleMatrix(scale);
 			result := p;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1057,8 +1091,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			new(p);
 			p^ := SGSDK_Physics.RotationMatrix(deg);
 			result := p;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1070,8 +1103,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			new(p);
 			p^ := SGSDK_Physics.Multiply(m1^, m2^);
 			result := p;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1079,8 +1111,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Physics.Multiply(m^, v);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1090,8 +1121,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Physics.VectorCollision(p1, p2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1099,8 +1129,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := matrix^[x,y];
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1108,8 +1137,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			matrix^[x,y] := val;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1118,8 +1146,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		Try
 			Dispose(matrix);
 			matrix := nil;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1136,8 +1163,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.bitmaps[id];
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1145,8 +1171,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.xPos;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1154,8 +1179,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			surface.xPos := val;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1163,8 +1187,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.yPos;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1172,8 +1195,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			surface.yPos := val;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1181,8 +1203,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.currentFrame;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1190,8 +1211,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			surface.currentFrame := val;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1206,17 +1226,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result := 0
 			end;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Boolean); cdecl; export;
+	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Integer); cdecl; export;
 	begin
 		Try
-			surface.usePixelCollision := val;
-		Except
-			ErrorMessage := GetSGSDKException();
+			surface.usePixelCollision := val = -1;
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1224,8 +1242,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.NewSDLRect(x, y, w, h);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1233,8 +1250,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.CreateBitmap(width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1242,18 +1258,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.OptimiseBitmap(surface);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Boolean;
+	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Integer;
 								transparentColor: Colour): Bitmap; cdecl; export;
 	begin
 		Try
-			result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
-		Except
-			ErrorMessage := GetSGSDKException();
+			result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent = -1, transparentColor);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1267,8 +1281,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1276,8 +1289,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.FreeBitmap(bitmapToFree);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1285,8 +1297,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := targetbitmap.width;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1294,8 +1305,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := targetbitmap.height;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1303,8 +1313,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.ClearSurface(dest, toColour);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1318,8 +1327,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1328,8 +1336,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1338,18 +1345,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : Boolean;
+	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : Integer;
 							xPos, yPos, width, height : Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawRectangle(dest, theColour, filled, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawRectangle(dest, theColour, filled = -1, xPos, yPos, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1364,8 +1369,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1374,8 +1378,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1384,8 +1387,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1394,18 +1396,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
-	procedure DrawCircleWithDestination(dest: Bitmap; theColour: Colour; filled: Boolean;
+	procedure DrawCircleWithDestination(dest: Bitmap; theColour: Colour; filled: Integer;
 							 xc, yc, radius: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawCircle(dest, theColour, filled, xc, yc, radius);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawCircle(dest, theColour, filled = -1, xc, yc, radius);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1421,13 +1421,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FillCircle(dest, theColour, xc, yc, radius);
 	end;}
 
-	procedure DrawEllipseWithDestination(dest: Bitmap; theColour: Colour; filled: Boolean;
+	procedure DrawEllipseWithDestination(dest: Bitmap; theColour: Colour; filled: Integer;
 							xPos, yPos, width, height: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawEllipse(dest, theColour, filled, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawEllipse(dest, theColour, filled = -1, xPos, yPos, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1449,8 +1448,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.ClearScreen(toColour);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1463,8 +1461,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1473,8 +1470,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1482,18 +1478,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawPixel(theColour, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
-	procedure DrawRectangle(theColour : Colour; filled : Boolean;
+	procedure DrawRectangle(theColour : Colour; filled : Integer;
 							xPos, yPos: Single; width, height : Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawRectangle(theColour, filled, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawRectangle(theColour, filled = -1, xPos, yPos, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1514,8 +1508,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1523,8 +1516,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1532,18 +1524,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean;
+	procedure DrawCircle(theColour: Colour; filled: Integer;
 						 xc, yc: Single; radius: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawCircle(theColour, filled, xc, yc, radius);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawCircle(theColour, filled = -1, xc, yc, radius);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1557,13 +1547,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		SGSDK_Graphics.FillCircle(theColour, xc, yc, radius);
 	end;}
 
-	procedure DrawEllipse(theColour: Colour; filled: Boolean;
+	procedure DrawEllipse(theColour: Colour; filled: Integer;
 						xPos, yPos: Single; width, height: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawEllipse(theColour, filled, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawEllipse(theColour, filled = -1, xPos, yPos, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1587,8 +1576,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.CreateSprite(startBitmap);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1596,60 +1584,71 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.CreateSprite(image,framesPerCell, frames, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	function CreateSpriteArrayFPC(bitlength : Integer; bitmaps: BitmapArray; framesPerCell, frames: Integer): Sprite; cdecl; export;
+	function CreateSpriteArrayFPC(bitLength: Integer; bitmaps: BitmapPtr; framesPerCell, frames: Integer): Sprite; cdecl; export;
+	var
+		bmps: BitmapArray;
 	begin
 		Try
-			SetLength(bitmaps, bitlength);
-			result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, frames);
-		Except
-			ErrorMessage := GetSGSDKException();
+			PopulateBitmapArray(bitmaps, bitLength, bmps);
+			
+			result := SGSDK_Graphics.CreateSprite(bmps, framesPerCell, frames);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	function CreateSpriteMultiEnding(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
+	function CreateSpriteMultiEnding(image : Bitmap; isMulti, length: Integer; framesPerCell: IntPtr; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
+	var
+		fpc: IntArray;
 	begin
-		Try
-			SetLength(framesPerCell, length);
-			result := SGSDK_Graphics.CreateSprite(image, isMulti, framesPerCell, endingAction, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Try	
+			PopulateIntArray(framesPerCell, length, fpc);
+
+			result := SGSDK_Graphics.CreateSprite(image, isMulti = -1, fpc, endingAction, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	function CreateSpriteMulti(image : Bitmap; isMulti : Boolean; length : Integer; framesPerCell : IntArray; width, height : Integer): Sprite; cdecl; export;
+	function CreateSpriteMulti(image : Bitmap; isMulti, length : Integer; framesPerCell : IntPtr; width, height : Integer): Sprite; cdecl; export;
+	var
+		fpc: IntArray;
 	begin
 		Try
-			SetLength(framesPerCell, length);
-			result := SGSDK_Graphics.CreateSprite(image, isMulti,framesPerCell, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			PopulateIntArray(framesPerCell, length, fpc);
+			
+			result := SGSDK_Graphics.CreateSprite(image, isMulti = -1, fpc, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
-	function CreateSpriteArrayEnding(bitlength : Integer; bitmaps : BitmapArray; length : Integer; framesPerCell : IntArray; endingAction : SpriteEndingAction): Sprite; cdecl; export;
+	function CreateSpriteArrayEnding(bitLength: Integer; bitmaps: BitmapPtr; length: Integer; framesPerCell: IntPtr; endingAction: SpriteEndingAction): Sprite; cdecl; export;
+	var
+		fpc: IntArray;
+		bmps: BitmapArray;
 	begin
 		Try
-			SetLength(bitmaps, bitlength);
-			SetLength(framesPerCell, length);
-			result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell, endingAction);
-		Except
-			ErrorMessage := GetSGSDKException();
+			PopulateBitmapArray(bitmaps, bitLength, bmps);
+			PopulateIntArray(framesPerCell, length, fpc);
+			
+			result := SGSDK_Graphics.CreateSprite(bmps, fpc, endingAction);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	function CreateSpriteArray(bitlength : Integer; bitmaps : BitmapArray; length : Integer; framesPerCell : IntArray): Sprite; cdecl; export;
+	function CreateSpriteArray(bitlength: Integer; bitmaps: BitmapPtr; length: Integer; framesPerCell: IntPtr): Sprite; cdecl; export;
+	var
+		fpc: IntArray;
+		bmps: BitmapArray;
 	begin
 		Try
-			SetLength(bitmaps, bitlength);
-			SetLength(framesPerCell, length);
-			result := SGSDK_Graphics.CreateSprite(bitmaps, framesPerCell);
-		Except
-			ErrorMessage := GetSGSDKException();
+			PopulateBitmapArray(bitmaps, bitLength, bmps);
+			PopulateIntArray(framesPerCell, length, fpc);
+			
+			result := SGSDK_Graphics.CreateSprite(bmps, fpc);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1659,8 +1658,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.UpdateSpriteAnimation(spriteToDraw);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1668,8 +1666,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.UpdateSprite(spriteToDraw);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1679,8 +1676,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := Integer(surface.spriteKind);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1688,18 +1684,19 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			surface.SpriteKind := kind;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	procedure SetSpriteFramesPerCell(surface : Sprite; framesPerCell : IntArray; length : Integer); cdecl; export;
+	procedure SetSpriteFramesPerCell(surface: Sprite; framesPerCell: IntPtr; length: Integer); cdecl; export;
+	var
+		fpc: IntArray;
 	begin
 		Try
-			SetLength(framesPerCell, length);
-			surface.framesPerCell := framesPerCell;
-		Except
-			ErrorMessage := GetSGSDKException();
+			PopulateIntArray(framesPerCell, length, fpc);
+			
+			surface.framesPerCell := fpc;
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1707,8 +1704,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.framesPerCell[ind];
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1716,8 +1712,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.cols;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1725,8 +1720,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.row;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1735,8 +1729,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 		//result := surface.frameCount;
 		Try
 			result := Length(surface.framesperCell);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1744,8 +1737,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := Integer(surface.endingAction);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1753,8 +1745,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			surface.endingAction := endingAction;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1765,8 +1756,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 				result := -1
 			else
 				result := 0;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1777,8 +1767,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 				result := -1
 			else
 				result := 0;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1786,8 +1775,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.mass;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1795,8 +1783,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := surface.movement;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1804,17 +1791,15 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			surface.mass := mass;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	procedure SetSpriteMovement(surface : Sprite; movement : Vector); cdecl; export;
+	procedure SetSpriteMovement(surface: Sprite; v : Vector); cdecl; export;
 	begin
 		Try
-			surface.movement := movement;
-		Except
-			ErrorMessage := GetSGSDKException();
+			surface^.movement := v;
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1822,8 +1807,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.FreeSprite(spriteToFree);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1832,8 +1816,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1841,8 +1824,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.CurrentHeight(sprite);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1850,8 +1832,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Graphics.CurrentWidth(sprite);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1864,8 +1845,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1873,8 +1853,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1882,8 +1861,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.MoveSprite(spriteToMove, movementVector);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1891,8 +1869,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1907,8 +1884,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			begin
 				result:= 0
 			end
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1916,8 +1892,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.ReplayAnimation(theSprite);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1942,8 +1917,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcW, x ,y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1951,8 +1925,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapOnScreen(bitmapToDraw, x ,y );
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1960,18 +1933,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawPixelOnScreen(theColour, x ,y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean;
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : Integer;
 							xPos, yPos, width, height : Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled = -1, xPos, yPos, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
@@ -1988,8 +1959,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -1997,8 +1967,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLineOnScreen(theColor, y, x1, x2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2006,18 +1975,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLineOnScreen(theColor, x, y1, y2);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Integer;
 						 xc, yc, radius: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawCircleOnScreen(theColour, filled, xc, yc, radius);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawCircleOnScreen(theColour, filled = -1, xc, yc, radius);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2028,13 +1995,12 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	end;
 	}
 	
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean;
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: Integer;
 						xPos, yPos, width, height: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled, xPos, yPos, width, height);
-		Except
-			ErrorMessage := GetSGSDKException();
+			SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled = -1, xPos, yPos, width, height);
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2053,8 +2019,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.XOffset();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2062,8 +2027,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.YOffset();
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2071,8 +2035,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.ScreenX(x);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2080,8 +2043,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.ScreenY(y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2089,8 +2051,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.GameX(x);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2098,8 +2059,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.GameY(y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2107,8 +2067,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_Camera.ToGameCoordinates(screenVector);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2116,8 +2075,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Camera.MoveVisualArea(v);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2125,8 +2083,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Camera.MoveVisualArea(dx, dy);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2134,8 +2091,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Camera.SetScreenOffset(x, y);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2143,8 +2099,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2154,25 +2109,24 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	
-	function LoadMap(fileName : PChar): MapPtr; cdecl; export;
+	function LoadMap(mapFile, imgFile : PChar): MapPtr; cdecl; export;
 	var
 		p : MapPtr;
 	begin
 		Try
 			new(p);
-			p^ := SGSDK_MappyLoader.LoadMap(fileName);
+			p^ := SGSDK_MappyLoader.LoadMapFiles(mapFile, imgFile);
 			result := p;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
 	procedure DrawMap(m : MapPtr); cdecl; export;
 	begin
 		Try
+			//WriteLn('DrawMAp');
 			SGSDK_MappyLoader.DrawMap(m^);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2180,8 +2134,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_MappyLoader.CollisionWithMap(m^, spr, vec);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2189,8 +2142,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_MappyLoader.EventCount(m^, event);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2198,8 +2150,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_MappyLoader.EventPositionX(m^, event, eventnumber);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2207,8 +2158,7 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 	begin
 		Try
 			result := SGSDK_MappyLoader.EventPositionY(m^, event, eventnumber);
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 	
@@ -2218,12 +2168,16 @@ uses SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Grap
 			SGSDK_MappyLoader.FreeMap(m^);
 			dispose(m);
 			m := nil;
-		Except
-			ErrorMessage := GetSGSDKException();
+		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
 
-{$ifndef UNIX}
+{$ifdef UNIX}
+	{$ifndef DARWIN}
+end.
+	{$endif}
+{$endif}
+
 exports
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -2514,5 +2468,5 @@ exports
 	ExceptionOccured
 
 	;
-{$endif}
 end.
+

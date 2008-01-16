@@ -615,9 +615,7 @@ implementation
 		
 		gravity := CreateVector(0, 0.7);
 		
-		repeat
-			ProcessEvents();
-			
+		repeat			
 			if IsKeyPressed(VK_RIGHT) then
 				MoveVisualArea(2, 0);
 			if IsKeyPressed(VK_LEFT) then
@@ -637,7 +635,7 @@ implementation
 					begin
 						if HaveSpritesCollided(balls[i], balls[j]) then
 						begin
-							MoveSprite(balls[i], InvertVector(balls[i].movement));
+							{MoveSprite(balls[i], InvertVector(balls[i].movement));
 							MoveSprite(balls[j], InvertVector(balls[j].movement));
 							tempVector1 := balls[i].movement;
 							tempVector2 := balls[j].movement;
@@ -651,7 +649,7 @@ implementation
 									tempVector1 := MultiplyVector(tempVector1, 0.5);
 									tempVector2 := MultiplyVector(tempVector2, 0.5);
 								end;
-							until (Magnitude(tempVector1) < 0.05) and (Magnitude(tempVector2) < 0.5);
+							until (Magnitude(tempVector1) < 0.05) and (Magnitude(tempVector2) < 0.5);}
 							VectorCollision(balls[i], balls[j]);
 						end;
 					end;
@@ -680,7 +678,8 @@ implementation
 			end;
 			DrawOverlay('MappyLoader Example');
 			DrawFramerate(0, 0, GameFont('Courier'));
-			RefreshScreen(10);
+			ProcessEvents();
+			RefreshScreen();
 			ClearScreen(ColorBlack);
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
