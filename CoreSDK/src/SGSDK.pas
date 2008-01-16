@@ -354,18 +354,19 @@ uses
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
-	procedure ShowMouse();
+	procedure ShowMouse(show : Integer); cdecl; export;
 	begin
 		try
-			SGSDK_Input.ShowMouse();
+			SGSDK_Input.ShowMouse(show = -1);
 		Except on exc: Exception  do TrapException(exc);
 		end;
 	end;
 	
-	procedure HideMouse();
+	function IsMouseShown(): Integer ; cdecl; export;
 	begin
 		try
-			SGSDK_Input.HideMouse();
+			if SGSDK_Input.IsMouseShown() then result := -1
+			else result := 0;
 		Except on exc: Exception  do TrapException(exc);
 		end;
 	end;
@@ -2255,8 +2256,9 @@ exports
 	IsKeyPressed,
 	WasKeyTyped,
 	ShowMouse,
-	HideMouse,
+	//HideMouse,
 	MoveMouse,
+	IsMouseShown,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *

@@ -35,39 +35,48 @@ interface
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 	
-	procedure MoveMouse(x : UInt16; y : UInt16);
+	procedure MoveMouse(x, y : UInt16);
 	
-	procedure ShowMouse();
+	procedure ShowMouse(); overload;
+	procedure ShowMouse(show : Boolean); overload;
 	procedure HideMouse();
+	function IsMouseShown(): Boolean;
 
 implementation
 	uses SysUtils, Math, Classes;
 	
-	procedure ShowMouse();
+	procedure ShowMouse(); overload;
 	begin
-		try
-			SDL_ShowCursor(1);
-		except
-			RaiseSGSDKException('Unable to show mouse');
-		end;
+		ShowMouse(true);
 	end;
 	
 	procedure HideMouse();
 	begin
+		ShowMouse(false);
+	end;
+	
+	procedure ShowMouse(show : Boolean); overload;
+	begin
 		try
-			SDL_ShowCursor(0);
+			if show then SDL_ShowCursor(1)
+			else SDL_ShowCursor(0);
 		except
-			RaiseSGSDKException('Unable to hide mouse');
+			RaiseSGSDKException('Unable to show or hide mouse');
 		end;
 	end;
 	
-	procedure MoveMouse(x : UInt16; y : UInt16);
+	procedure MoveMouse(x, y : UInt16);
 	begin
 		try
 			SDL_WarpMouse(x,y);
 		except
 			RaiseSGSDKException('Unable to move mouse');
 		end;
+	end;
+	
+	function IsMouseShown(): Boolean;
+	begin
+		result := SDL_ShowCursor(-1) = -1;
 	end;
 
 	/// Returns true when a key is typed. This occurs when the key is pressed on the 
