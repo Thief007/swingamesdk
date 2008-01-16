@@ -20,7 +20,12 @@
 //
 // Change History:
 //  
+//  Version 1.1:
+//  - 2008-01-16: James: Added Mouse input for MoveMouse + ShowMouse
 //  - 2008-01-16: Andrew Cain: Modified exception handling.
+//
+//  Version 1.0:
+//  - Various
 
 library SGSDK;
 
@@ -371,7 +376,7 @@ uses
 		end;
 	end;
 	
-	procedure MoveMouse(x : UInt16; y : UInt16);
+	procedure MoveMouse(x : UInt16; y : UInt16); cdecl; export;
 	begin
 		try
 			SGSDK_Input.MoveMouse(x,y);
@@ -2186,7 +2191,7 @@ uses
 		end;
 	end;
 	
-	procedure FreeMap(m : MapPtr);
+	procedure FreeMap(m : MapPtr); cdecl; export;
 	begin
 		Try
 			SGSDK_MappyLoader.FreeMap(m^);
