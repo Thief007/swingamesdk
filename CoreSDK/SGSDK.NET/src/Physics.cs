@@ -253,7 +253,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithinBitmapImages")]
-        private static extern bool DLL_CollisionWithinBitmapImages(IntPtr image1, int x1, int y1, bool bounded1, IntPtr image2, int x2, int y2, bool bounded2);
+        private static extern bool DLL_CollisionWithinBitmapImages(IntPtr image1, int x1, int y1, int bounded1, IntPtr image2, int x2, int y2, int bounded2);
         /// <summary>
         ///  Performs a collision detection within two bitmaps at the given x, y
         ///	locations. The bounded values indicate if each bitmap should use per
@@ -278,11 +278,11 @@ namespace SwinGame
         /// <param name="y2">The y location of image 2</param>
         /// <param name="bounded2">Indicates if image2 should use bounded collision</param>
         /// <returns>True if the bitmaps collide.</returns>
-        public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, int bounded1, Bitmap image2, int x2, int y2, int bounded2)
+        public static bool CollisionWithinBitmapImages(Bitmap image1, int x1, int y1, bool bounded1, Bitmap image2, int x2, int y2, bool bounded2)
         {
             try
             {
-                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, bounded1 == -1, image2.pointer, x2, y2, bounded2 == -1);
+                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, (bounded1?-1:0), image2.pointer, x2, y2, (bounded2?-1:0));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -311,7 +311,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, false, image2.pointer, x2, y2, false);
+                bool temp = DLL_CollisionWithinBitmapImages(image1.pointer, x1, y1, 0, image2.pointer, x2, y2, 0);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -338,7 +338,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x, y, (bounded?-1:0));
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x, y, bounded);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -368,7 +368,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x + vwPrtX, y + vwPrtY, (bounded?-1:0));
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, bounded);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -394,7 +394,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x, y, -1);
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x, y, true);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -423,7 +423,7 @@ namespace SwinGame
         {
             try
             {
-                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, (!theSprite.UsePixelCollision?-1:0), theBitmap, x + vwPrtX, y + vwPrtY, -1);
+                bool temp = CollisionWithinBitmapImages(theSprite[theSprite.CurrentFrame], (int)theSprite.xPos, (int)theSprite.yPos, !theSprite.UsePixelCollision, theBitmap, x + vwPrtX, y + vwPrtY, true);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
