@@ -163,11 +163,15 @@ namespace SwinGameVB
         /// <returns>Vector representing the movement of the mouse</returns>
         public Vector GetMouseMovement()
         {
+            SwinGame.Vector temp = new SwinGame.Vector();
+            temp = SwinGame.Input.GetMousePosition();
+
             Vector vector = new Vector();
             vector.setW(SwinGame.Input.GetMouseMovement().w);
-            vector.setX(SwinGame.Input.GetMouseMovement().x);
-            vector.setY(SwinGame.Input.GetMouseMovement().y);
+            vector.setX(temp.x - Core._LastMousePos.x);//SwinGame.Input.GetMouseMovement().x);
+            vector.setY(temp.y - Core._LastMousePos.y);//SwinGame.Input.GetMouseMovement().y);
             return vector;
+
         }
 
 
@@ -244,16 +248,6 @@ namespace SwinGameVB
         }
 
         /// <summary>
-        /// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
-        ///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
-        /// </summary>
-        /// <returns>The string entered by the user</returns>
-        public String TextReadAsUNICODE()
-        {
-            return SwinGame.Input.TextReadAsUNICODE();
-        }
-
-        /// <summary>
         /// Returns true when the key requested is being held down. This is updated
         ///	as part of the ProcessEvents call. Use the key codes from the KeyCodes
         ///	unit.
@@ -290,7 +284,6 @@ namespace SwinGameVB
         void StartReadingText(int toColour, int maxLength, Fonts theFont, int x, int y);
         bool IsReadingText();
         String TextReadAsASCII();
-        String TextReadAsUNICODE();
         bool IsKeyPressed(Keys key);
         bool WasKeyTyped(Keys key);
     }

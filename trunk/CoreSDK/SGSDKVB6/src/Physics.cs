@@ -504,10 +504,10 @@ namespace SwinGameVB
             return SwinGame.Physics.CalculateAngle(sprite1.result, sprite2.result);
         }
 
-        public Matrix2D TranslationMatric(Single dx, Single dy)
+        public Matrix2D TranslationMatrix(Single dx, Single dy)
         {
             Matrix2D temp = new Matrix2D();
-            temp.result = SwinGame.Physics.TranslationMatric(dx, dy);
+            temp.result = SwinGame.Physics.TranslationMatrix(dx, dy);
             return temp;
         }
 
@@ -606,7 +606,7 @@ namespace SwinGameVB
         Vector MultiplyVector(Vector v1, Single s1);
         Single CalculateAngle_Number(Single x1, Single y1, Single x2, Single y2);
         Single CalculateAngle(Sprite sprite1, Sprite sprite2);
-        Matrix2D TranslationMatric(Single dx, Single dy);
+        Matrix2D TranslationMatrix(Single dx, Single dy);
         Matrix2D ScaleMatrix(Single scale);
         Matrix2D RotationMatrix(Single deg);
         Matrix2D Multiply(Matrix2D m1, Matrix2D m2);

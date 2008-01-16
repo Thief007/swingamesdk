@@ -31,8 +31,8 @@ Private Sub LoadImages()
     Call NewImage("TableVertical", "air_hocky_table_collision_vertical.png")
     Call NewImage("0goal", "air_hocky_table_collision_AI_goal.png")
     Call NewImage("1goal", "air_hocky_table_collision_player_goal.png")
-    'Call NewImage("0bat", "player_bat.png")
-    'Call NewImage("1bat", "AI_bat.png")
+    Call NewImage("0bat", "player_bat.png")
+    Call NewImage("1bat", "AI_bat.png")
 End Sub
 
 Private Sub LoadSounds()
