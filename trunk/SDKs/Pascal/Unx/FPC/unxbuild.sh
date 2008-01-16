@@ -2,7 +2,13 @@
 
 Usage()
 {
-	echo "Usage: $0 productName"
+	echo Usage: $0 [-d] [-h] productName
+	echo
+	echo Compile the Pascal SwinGame with name "productName"
+	echo
+	echo Options:
+	echo   -d = Debug
+	echo   -h = Show usage
 	exit 1
 }
 
@@ -30,14 +36,20 @@ then
 	mkdir ./bin
 fi
 
-echo "Building $PRODUCT_NAME"
+echo __________________________________________________
+echo Building Linux version
+echo __________________________________________________	
+echo   Product Name $PRODUCT_NAME
+echo   Executable name $EXECUTABLE_NAME
+echo   Compiling with $EXTRA_OPTS
 
-echo Compiling game
+echo   ... Compiling game
 
 fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas 
 
-echo Copying resources
+echo   ... Copying resources
 
 cp -r Resources bin/
 
 rm ./bin/*.o ./bin/*.ppu
+echo    Finished
