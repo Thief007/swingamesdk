@@ -31,6 +31,22 @@ else
 	if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
 
 	echo Copying Resources
-	cp -R ./Resources ./bin/Debug
+	#cp -R ./Resources ./bin/Debug
+	
+	RESOURCE_DIR=./bin/Debug/Resources
+	SOURCE_RESOURCE=../Base/All/Resources
+	
+	mkdir ${RESOURCE_DIR}
+	mkdir ${RESOURCE_DIR}/fonts
+	mkdir ${RESOURCE_DIR}/images
+	mkdir ${RESOURCE_DIR}/sounds
+	mkdir ${RESOURCE_DIR}/maps
+
+	cp ${SOURCE_RESOURCE}/* ${RESOURCE_DIR} 
+	cp ${SOURCE_RESOURCE}/fonts/* ${RESOURCE_DIR}/fonts
+	cp ${SOURCE_RESOURCE}/images/* ${RESOURCE_DIR}/images
+	cp ${SOURCE_RESOURCE}/sounds/* ${RESOURCE_DIR}/sounds
+	cp ${SOURCE_RESOURCE}/sounds/* ${RESOURCE_DIR}/maps	
+	
 	if [ $? != 0 ]; then echo "Error copying resources"; exit 1; fi
 fi
