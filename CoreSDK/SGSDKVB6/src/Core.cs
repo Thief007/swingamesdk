@@ -178,6 +178,12 @@ namespace SwinGameVB
         Single Tan(Single angle);
     }
 
+    internal static class MousePos
+    {
+        //internal float x = SwinGame.Input.GetMousePosition().x;
+        //internal float y = SwinGame.Input.GetMousePosition().y;
+    }
+
     /// <summary>
         /// Core Class
         /// 
@@ -188,6 +194,8 @@ namespace SwinGameVB
     [ComVisible(true)]
     public class Core :ICore
     {
+        internal static SwinGame.Vector _LastMousePos = new SwinGame.Vector();
+           
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the
         ///	icon for this window using SetIcon. The window itself is only drawn when
@@ -199,7 +207,8 @@ namespace SwinGameVB
         /// <param name="width">Width of the Window</param>
         /// <param name="height">Height of the Window</param>
         public void OpenGraphicsWindow(String caption, int width, int height)
-        {   
+        {
+            _LastMousePos = SwinGame.Input.GetMousePosition();
             SwinGame.Core.OpenGraphicsWindow(caption, width, height);
         }
 
@@ -221,6 +230,7 @@ namespace SwinGameVB
         /// </summary>
         public void ProcessEvents()
         {
+            _LastMousePos = SwinGame.Input.GetMousePosition();
             SwinGame.Core.ProcessEvents();
         }
 
