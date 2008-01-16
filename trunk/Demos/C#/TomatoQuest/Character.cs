@@ -59,6 +59,17 @@ namespace TomatoQuest
         public int Experience;
         public int ExperienceNextLevel;
 
+        private Sprite SlashUp;
+        private Sprite SlashDown;
+        private Sprite SlashLeft;
+        private Sprite SlashRight;
+        public Sprite CurrentSlash;
+
+        public SoundEffect Swing;
+
+        public Boolean Attacking;
+        public int Cooldown;
+
         //Returns the Sprite
         public Sprite Sprite
         {
@@ -100,6 +111,22 @@ namespace TomatoQuest
             Level = 1;
             Experience = 0;
             ExperienceNextLevel = 100;
+
+            SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 1, 5, 28, 47);
+            SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 1, 5, 27, 47);
+            SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 1, 5, 49, 27);
+            SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 1, 5, 49, 27);
+
+            CurrentSlash = SlashUp;
+
+            SlashUp.EndingAction = SpriteEndingAction.Stop;
+            SlashDown.EndingAction = SpriteEndingAction.Stop;
+            SlashLeft.EndingAction = SpriteEndingAction.Stop;
+            SlashRight.EndingAction = SpriteEndingAction.Stop;
+
+            Attacking = false;
+
+            Swing = Resources.GameSound("Swing");
         }
 
         public void DrawCharacter()
@@ -193,6 +220,8 @@ namespace TomatoQuest
                 }
                 Graphics.UpdateSpriteAnimation(_Sprite);
             }
+
+            UpdateAttack();
         }
 
         public void AddAttribute(String attributeToAdd)
@@ -298,6 +327,106 @@ namespace TomatoQuest
 
             //Critical Rate = Base(1%) + (Luck)
             CriticalRate = 1 + Luck;
+        }
+
+        public void InitiateAttack()
+        {
+            //Checks if the character is not attacking, and his cooldown is 0
+            if (!Attacking && Cooldown == 0)
+            {
+                //In each case, the Current Weapon is changed to the weapon that
+                //represents the direction the character is facing
+                //The sword's Animation is replayed
+                //The Characters Attacking State is set to true
+                //A Cooldown is set to down the character from spamming the attack
+                //Sound Effect is played
+                switch (_Anim)
+                {
+                    case CharacterAnim.Top:
+                        CurrentSlash = SlashUp;
+                        Graphics.ReplayAnimation(CurrentSlash);
+                        Attacking = true;
+                        Cooldown = AttackSpeed;
+                        Audio.PlaySoundEffect(Swing);
+                        break;
+
+                    case CharacterAnim.Down:
+                        CurrentSlash = SlashDown;
+                        Graphics.ReplayAnimation(CurrentSlash);
+                        Attacking = true;
+                        Cooldown = AttackSpeed;
+                        Audio.PlaySoundEffect(Swing);
+                        break;
+
+                    case CharacterAnim.Left:
+                        CurrentSlash = SlashLeft;
+                        Graphics.ReplayAnimation(CurrentSlash);
+                        Attacking = true;
+                        Cooldown = AttackSpeed;
+                        Audio.PlaySoundEffect(Swing);
+                        break;
+
+                    case CharacterAnim.Right:
+                        CurrentSlash = SlashRight;
+                        Graphics.ReplayAnimation(CurrentSlash);
+                        Attacking = true;
+                        Cooldown = AttackSpeed;
+                        Audio.PlaySoundEffect(Swing);
+                        break;
+                }
+            }
+        }
+
+        public void UpdateAttack()
+        {
+            //If the Characters Cooldown is greater then 0
+            if (Cooldown > 0)
+                //Reduce Cooldown by 1
+                Cooldown--;
+
+            //If the Character is attacking
+            if (Attacking)
+            {
+                //Remove when added to tutorial
+                if (!CurrentSlash.hasEnded)
+                {
+                    //Update the position of the Sword
+                    //Each direction has a different offset, so that the sword is placed in the correct
+                    //position. When you do this for your game, its a matter of trial and error, until
+                    //you get the position you want.
+                    switch (_Anim)
+                    {
+                        case CharacterAnim.Top:
+                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
+                            CurrentSlash.yPos = _Sprite.yPos - (int)(_Sprite.Height / 2) + 6;
+                            break;
+
+                        case CharacterAnim.Down:
+                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
+                            CurrentSlash.yPos = _Sprite.yPos + (int)(_Sprite.Height / 2) - 13;
+                            break;
+
+                        case CharacterAnim.Left:
+                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
+                            CurrentSlash.yPos = _Sprite.yPos;
+                            break;
+
+                        case CharacterAnim.Right:
+                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
+                            CurrentSlash.yPos = _Sprite.yPos;
+                            break;
+                    }
+
+                    //Update Sprite Animation and Draw the Sword Sprite
+                    Graphics.UpdateSpriteAnimation(CurrentSlash);
+                    Graphics.DrawSprite(CurrentSlash);
+                }
+                else
+                {
+                    //Set the Attacking state to false
+                    Attacking = false;
+                }
+            }
         }
     }
 }
