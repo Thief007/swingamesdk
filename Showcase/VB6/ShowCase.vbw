@@ -23,5 +23,5 @@ VectorAngleExample = 132, 174, 989, 658, C
 FollowSpriteExample = 154, 203, 1011, 687, C
 MultiBitmapSprite = 0, 0, 857, 484, C
 DrawCircleWithLines = 22, 29, 879, 513, C
-MapExample = 66, 87, 923, 571, Z
+MapExample = 66, 87, 923, 571, 
 Icon = 0, 0, 0, 0, C, 22, 29, 877, 517, C

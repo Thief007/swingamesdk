@@ -759,5 +759,74 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }  
         }
+
+
+
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveMouse")]
+        private static extern void DLL_MoveMouse(UInt16 x, UInt16 y);
+        /// <summary>
+        /// This will move the mouse to the given x and y location
+        /// </summary>
+        /// <param name="x">The x pos to move the mouse to</param>
+        /// <param name="y">The y pos to move the mouse to</param>
+        public static void MoveMouse(UInt16 x, UInt16 y)
+        {
+            try
+            {
+                DLL_MoveMouse( x, y);
+                if (Core.ExceptionOccured())
+                {
+                    throw new SwinGameException(Core.GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HideMouse")]
+        private static extern void DLL_HideMouse();
+        /// <summary>
+        /// This will hide the mouse 
+        /// </summary>
+        public static void HideMouse()
+        {
+            try
+            {
+                DLL_HideMouse();
+                if (Core.ExceptionOccured())
+                {
+                    throw new SwinGameException(Core.GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ShowMouse")]
+        private static extern void DLL_ShowMouse();
+        /// <summary>
+        /// This will show the mouse 
+        /// </summary>
+        public static void ShowMouse()
+        {
+            try
+            {
+                DLL_ShowMouse();
+                if (Core.ExceptionOccured())
+                {
+                    throw new SwinGameException(Core.GetExceptionMessage());
+                }
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
+
     }
 }

@@ -708,6 +708,40 @@ implementation
 		ProcessEvents();
 	end;
 	
+	procedure MouseExample();
+	var
+		temp : Integer;
+	begin
+		temp := 0;
+		repeat
+			temp := temp + 1;
+			ProcessEvents();
+			if temp /50 = 1 then
+			begin
+				MoveMouse(ScreenWidth() div 2, ScreenHeight() div 2);
+				//writeln(GetMouseMovement.x, GetMouseMovement.y);
+			end;
+			if temp / 100 = 1 then
+			begin
+				HideMouse();
+			end;
+			if temp / 100 = 2 then
+			begin
+				ShowMouse();
+				temp := 0;
+			end;
+			
+			//writeln(temp);
+			
+			ClearScreen(ColorBlack);
+			DrawOverlay('Hidding, Showing and Moveing the mouse');
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+	
 	//The main procedure that controlls the game logic.
 	//
 	// SIDE EFFECTS:
@@ -718,7 +752,7 @@ implementation
 		LoadResources();
 		Randomize();
 		ProcessEvents();
-		DrawLines();
+		{DrawLines();
 		if WindowCloseRequested() then exit;
 		DrawRectangles();
 		if WindowCloseRequested() then exit;
@@ -756,7 +790,9 @@ implementation
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
 		If WindowCloseRequested() then exit;
-		MapExample();
+		MapExample();}
+		If WindowCloseRequested() then exit;
+		MouseExample();
 		FreeResources();
 	end;
 end.

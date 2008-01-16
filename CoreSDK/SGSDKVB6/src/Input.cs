@@ -270,6 +270,19 @@ namespace SwinGameVB
         {
             return SwinGame.Input.WasKeyTyped((SwinGame.Keys)key);
         }
+
+        public void ShowMouse()
+        {
+            SwinGame.Input.ShowMouse();
+        }
+        public void HideMouse()
+        {
+            SwinGame.Input.HideMouse();
+        }
+        public void MoveMouse(short x, short y)
+        {
+            SwinGame.Input.MoveMouse(x, y);
+        }
     }
 
     [Guid("AF53AFA1-8B04-46fb-8014-904BEF21D0EE")]
@@ -278,6 +291,11 @@ namespace SwinGameVB
     {
         Vector GetMousePosition();
         Vector GetMouseMovement();
+
+        void ShowMouse();
+        void HideMouse();
+        void MoveMouse(short x, short y);
+
         bool IsMouseDown(MouseButton button);
         bool IsMouseUp(MouseButton button);
         bool MouseWasClicked(MouseButton button);
