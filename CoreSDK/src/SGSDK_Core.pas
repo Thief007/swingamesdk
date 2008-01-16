@@ -826,7 +826,7 @@ implementation
 		try
 			result := sdlManager.HasQuit();
 		except
-      result := true;
+      		result := true;
 			RaiseSGSDKException('Error occured while trying to find out if the window has been requested to clode');
 		end;
 	end;

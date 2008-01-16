@@ -124,8 +124,9 @@ uses
 	
 	function WindowCloseRequested(): Integer; cdecl; export;
 	begin
+		result := -1;
 		try
-			if not SGSDK_Core.WindowCloseRequested() then
+			if SGSDK_Core.WindowCloseRequested() then
 			begin
 				result:= -1
 			end
@@ -137,8 +138,6 @@ uses
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
-		
-		result := -1;
 	end;
 	
 	procedure SetIcon(iconFilename: PChar); cdecl; export;

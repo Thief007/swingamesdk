@@ -4,7 +4,7 @@ echo __________________________________________________
 echo Copying Visual Studio Files
 echo __________________________________________________
 
-cp ..\Base\All\* ".\Visual Studio\C#"
+copy ..\Base\All\* ".\Visual Studio\C#"
 
 if exist ".\Visual Studio\C#\Resources" goto AfterMkDir
 
@@ -18,15 +18,15 @@ mkdir ".\Visual Studio\C#\Resources\maps"
 :AfterMkDir
 
 echo Copying Resources
-cp ..\Base\All\Resources\* ".\Visual Studio\C#\Resources"
-cp ..\Base\All\Resources\fonts\* ".\Visual Studio\C#\Resources\fonts"
-cp ..\Base\All\Resources\images\* ".\Visual Studio\C#\Resources\images"
-cp ..\Base\All\Resources\sounds\* ".\Visual Studio\C#\Resources\sounds"
+copy ..\Base\All\Resources\* ".\Visual Studio\C#\Resources"
+copy ..\Base\All\Resources\fonts\* ".\Visual Studio\C#\Resources\fonts"
+copy ..\Base\All\Resources\images\* ".\Visual Studio\C#\Resources\images"
+copy ..\Base\All\Resources\sounds\* ".\Visual Studio\C#\Resources\sounds"
 
 echo Copying Code
-cp ..\Base\DOTNet\*.cs ".\Visual Studio\C#"
-cp ..\Base\DOTNet\*.csproj ".\Visual Studio\C#"
+copy ..\Base\DOTNet\*.cs ".\Visual Studio\C#"
+copy ..\Base\DOTNet\*.csproj ".\Visual Studio\C#"
 
-if not exist ".\Visual Studio\C#\Properties" mkdir ./Mono/C#/Properties
+if not exist ".\Visual Studio\C#\Properties" mkdir ".\Visual Studio\C#\Properties"
 
-cp ..\Base\DOTNet\Properties\* ".\Visual Studio\C#\Properties"
+copy ..\Base\DOTNet\Properties\* ".\Visual Studio\C#\Properties"
