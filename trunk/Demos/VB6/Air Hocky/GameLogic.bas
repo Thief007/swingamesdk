@@ -24,6 +24,7 @@ Private Sub MovePlayer(Bat As Sprite)
     Call Bat.setX(MouseAndKey.GetMousePosition.getX - (Graphics.CurrentWidth(Bat) / 2))
     Call Bat.setY(MouseAndKey.GetMousePosition.getY - (Graphics.CurrentHeight(Bat) / 2))
     Call Bat.SetMovementVector(MouseAndKey.GetMouseMovement)
+    Call Bat.SetMovementVector(Physics.LimitVector(Bat.GetMovementVector, 20))
     MouseAndKey.GetMouseMovement
     If Bat.getX < 216 Then
         Call Bat.setX(216)
@@ -33,10 +34,10 @@ Private Sub MovePlayer(Bat As Sprite)
         Call Bat.setX(584 - Graphics.CurrentWidth(Bat))
         Call Bat.SetMovementX(0)
     End If
-    If Bat.getY < 300 Then
-        Call Bat.setY(300)
-        Call Bat.SetMovementY(0)
-    End If
+    'If Bat.getY < 300 Then
+    '    Call Bat.setY(300)
+    '    Call Bat.SetMovementY(0)
+    'End If
     If Bat.getY > 530 - Graphics.CurrentHeight(Bat) Then
         Call Bat.setY(530 - Graphics.CurrentHeight(Bat))
         Call Bat.SetMovementY(0)
@@ -72,7 +73,7 @@ Private Function CreateGame() As AirHockeyGame
     Set CreateGame.Ball = Graphics.CreateSprite(GameImage("ball"))
     Call CreateGame.Ball.SetUsePixelCollision(True)
     
-    Call CreateGame.Ball.SetMass(1)
+    Call CreateGame.Ball.SetMass(0.25)
     
     ReDim CreateGame.Players(1)
     CreateGame.Players(0) = CreatePlayer(0)
@@ -87,7 +88,7 @@ Private Function CreatePlayer(playernumber As Long) As Player
     Call CreatePlayer.Goal.SetUsePixelCollision(True)
     CreatePlayer.Score = 0
     
-    Call CreatePlayer.Bat.SetMass(2)
+    Call CreatePlayer.Bat.SetMass(0.5)
     
 End Function
 Private Function CreateTable() As Table
@@ -102,12 +103,27 @@ Private Function CreateTable() As Table
 End Function
 Private Sub MoveBall(Game As AirHockeyGame)
     Call KeepBallOnTable(Game)
-    Call Game.Ball.SetMovementVector(Physics.LimitVector(Game.Ball.GetMovementVector, 15))
+    Call Game.Ball.SetMovementVector(Physics.LimitVector(Game.Ball.GetMovementVector, 20))
     Call Game.Ball.SetMovementVector(Physics.Multiply_Vector(Physics.ScaleMatrix(0.995), Game.Ball.GetMovementVector))
     Call Graphics.MoveSprite(Game.Ball, Game.Ball.GetMovementVector)
     If Physics.HaveSpritesCollided(Game.Ball, Game.Players(0).Bat) Then
         Call Physics.VectorCollision(Game.Ball, Game.Players(0).Bat)
+        'Call RescueTheBallV2(Game)
     End If
+End Sub
+
+Private Sub RescueTheBallV2(Game As AirHockeyGame)
+    Call Graphics.MoveSprite(Game.Ball, Physics.InvertVector(Game.Ball.GetMovementVector))
+    Dim tempVector As Vector
+    Set tempVector = New Vector
+    Set tempVector = Game.Ball.GetMovementVector
+    Do Until Physics.Magnitude(tempVector) < 0.001
+        Call Graphics.MoveSprite(Game.Ball, tempVector)
+        If Physics.HaveSpritesCollided(Game.Ball, Game.Players(0).Bat) Then 'Or Physics.HaveSpritesCollided(Game.Ball, Game.Players(1).Bat) Then
+            Call Graphics.MoveSprite(Game.Ball, Physics.InvertVector(tempVector))
+        End If
+        Set tempVector = Physics.MultiplyVector(tempVector, 0.5)
+    Loop
 End Sub
 Private Sub KeepBallOnTable(Game As AirHockeyGame)
     If Physics.HaveSpritesCollided(Game.Ball, Game.TablePics.TableHorizontal) Then
@@ -123,16 +139,16 @@ End Sub
 
 Private Sub RescueTheBall(Game As AirHockeyGame)
     If Game.Ball.getX < 216 Then
-        Call Game.Ball.setX(216)
+        Call Game.Ball.setX(217)
     End If
     If Game.Ball.getX > 584 Then
-        Call Game.Ball.setX(584)
+        Call Game.Ball.setX(583)
     End If
     If Game.Ball.getY < 70 Then
-        Call Game.Ball.setY(70)
+        Call Game.Ball.setY(71)
     End If
     If Game.Ball.getY > 530 Then
-        Call Game.Ball.setY(530)
+        Call Game.Ball.setY(529)
     End If
 End Sub
 
