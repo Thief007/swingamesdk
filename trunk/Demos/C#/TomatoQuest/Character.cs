@@ -86,25 +86,31 @@ namespace TomatoQuest
 
         private void SetAnimationFrames(int startingFrame, int startingIndex, int endingIndex)
         {
+            //Create a new temporary Array, the size of the Frame Count
             int[] tempintarr = new int[_Sprite.FrameCount];
 
+            //Set all elements to 0
             for (int i = 0; i < tempintarr.Length; i++)
             {
                 tempintarr[i] = 0;
             }
 
+            //Sets the Current Frame
             _Sprite.CurrentFrame = startingFrame;
 
+            //Set the new Frame Values
             for (int i = startingIndex; i < endingIndex + 1; i++)
             {
                 tempintarr[i] = 7;
             }
 
+            //Set the Frames per cell to the new array
             _Sprite.FramesPerCell = tempintarr;
         }
 
         public void UpdateCharacterAnimation()
         {
+            //If the Sprite Movement is going Up, set the animation Up
             if (_Sprite.Movement.Y < 0)
             {
                 if (_Anim != CharacterAnim.Top)
@@ -115,6 +121,7 @@ namespace TomatoQuest
                 Graphics.UpdateSpriteAnimation(_Sprite);
             }
 
+            //If the Sprite Movement is going Down, set the animation Down
             if (_Sprite.Movement.Y > 0)
             {
                 if (_Anim != CharacterAnim.Down)
@@ -125,6 +132,7 @@ namespace TomatoQuest
                 Graphics.UpdateSpriteAnimation(_Sprite);
             }
 
+            //If the Sprite Movement is going Left, set the animation Left
             if (_Sprite.Movement.X < 0)
             {
                 if (_Anim != CharacterAnim.Left)
@@ -135,6 +143,7 @@ namespace TomatoQuest
                 Graphics.UpdateSpriteAnimation(_Sprite);
             }
 
+            //If the Sprite Movement is going Right, set the animation Right
             if (_Sprite.Movement.X > 0)
             {
                 if (_Anim != CharacterAnim.Right)
