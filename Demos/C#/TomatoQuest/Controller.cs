@@ -49,9 +49,14 @@ namespace TomatoQuest
                 thePlayer.MoveCharacter(theLevel.Map, 0, 0);
             }
 
+            //ADD THESE LINES
+            if (Input.IsKeyPressed(SwinGame.Keys.VK_SPACE))
+            {
+                thePlayer.InitiateAttack();
+            }
+
             //Update Character's Animation
             thePlayer.UpdateCharacterAnimation();
-    
         }
     }
 }
