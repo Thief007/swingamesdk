@@ -217,7 +217,9 @@ uses
 		Except on exc: Exception do TrapException(exc);
 		end;
 		
-		result := ColorWhite;		
+		result.r := 0;
+		result.g := 0;
+		result.b := 0;		
 	end;
 	
 	function GetColourBitmap(forBitmap: Bitmap; apiColor: Color): Colour; cdecl; export;
