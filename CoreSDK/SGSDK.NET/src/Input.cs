@@ -774,6 +774,7 @@ namespace SwinGame
         {
             try
             {
+                Console.WriteLine("C#: " + x + ":" + y);
                 DLL_MoveMouse( x, y);
                 if (Core.ExceptionOccured())
                 {
@@ -786,16 +787,26 @@ namespace SwinGame
             }
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HideMouse")]
-        private static extern void DLL_HideMouse();
         /// <summary>
         /// This will hide the mouse 
         /// </summary>
         public static void HideMouse()
         {
+            ShowMouse(false);
+        }
+
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ShowMouse")]
+        private static extern void DLL_ShowMouse(int show);
+      /// <summary>
+      /// Shows or hides the mouse
+      /// </summary>
+      /// <param name="show">if it is true it will show the mouse</param>
+        public static void ShowMouse(bool show)
+        {
             try
             {
-                DLL_HideMouse();
+                DLL_ShowMouse(show?-1:0);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -806,27 +817,22 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ShowMouse")]
-        private static extern void DLL_ShowMouse();
         /// <summary>
         /// This will show the mouse 
         /// </summary>
         public static void ShowMouse()
         {
-            try
-            {
-                DLL_ShowMouse();
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-            }
-            catch (Exception)
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            ShowMouse(true);
         }
-
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsMouseShown")]
+        private static extern int DLL_IsMouseShown();
+        /// <summary>
+        /// Checks to see if the mouse is shown
+        /// </summary>
+        /// <returns>returns true if the mouse is shown</returns>
+        public static bool IsMouseShown()
+        {
+            return DLL_IsMouseShown() == -1;
+        }
     }
 }
