@@ -22,9 +22,9 @@ namespace SwinGame
         /// <returns>Bitmap</returns>
         private static Bitmap GetSpriteBitmap(IntPtr pointer, int id)
         {
-            Bitmap temp = DLL_GetSpriteBitmap(pointer, id);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before getting its Bitmaps");
+            Bitmap temp = DLL_GetSpriteBitmap(pointer, id);
             return temp;
         }
 
@@ -37,9 +37,9 @@ namespace SwinGame
         /// <returns>X Coordinate</returns>
         private static float GetSpriteX(IntPtr pointer)
         {
-            float temp = DLL_GetSpriteX(pointer);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before getting X");
+            float temp = DLL_GetSpriteX(pointer);
             return temp;
         }
 
@@ -52,9 +52,9 @@ namespace SwinGame
         /// <param name="X">X Coordinate</param>
         private static void SetSpriteX(IntPtr pointer, float X)
         {
-            DLL_SetSpriteX(pointer, X);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting X");
+				DLL_SetSpriteX(pointer, X);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteY")]
@@ -66,9 +66,10 @@ namespace SwinGame
         /// <returns>Y Coordinate</returns>
         public static float GetSpriteY(IntPtr pointer)
         {
-            float temp = DLL_GetSpriteY(pointer);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before getting Y");
+				
+				float temp = DLL_GetSpriteY(pointer);
             return temp;
         }
 
@@ -81,9 +82,9 @@ namespace SwinGame
         /// <param name="Y">Y Coordinate</param>
         private static void SetSpriteY(IntPtr pointer, float Y)
         {
-            DLL_SetSpriteY(pointer, Y);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting Y");
+				DLL_SetSpriteY(pointer, Y);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteCurrentFrame")]
@@ -95,10 +96,10 @@ namespace SwinGame
         /// <returns>Frame</returns>
         private static int GetSpriteCurrentFrame(IntPtr pointer)
         {
-            int temp = DLL_GetSpriteCurrentFrame(pointer);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before getting its Current Frame");
-            return temp;
+            int temp = DLL_GetSpriteCurrentFrame(pointer);         
+   			return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteCurrentFrame")]
@@ -110,9 +111,9 @@ namespace SwinGame
         /// <param name="frame">Frame</param>
         private static void SetSpriteCurrentFrame(IntPtr pointer, int frame)
         {
-            DLL_SetSpriteCurrentFrame(pointer, frame);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting its Current Frame");
+            DLL_SetSpriteCurrentFrame(pointer, frame);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetSpriteUsePixelCollision")]
@@ -124,14 +125,14 @@ namespace SwinGame
         /// <returns>True or False</returns>
         private static bool GetSpriteUsePixelCollision(IntPtr pointer)
         {
-            bool temp = DLL_GetSpriteUsePixelCollision(pointer);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before getting its Pixel Collision");
+            bool temp = DLL_GetSpriteUsePixelCollision(pointer);
             return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetSpriteUsePixelCollision")]
-        private static extern void DLL_SetSpriteUsePixelCollision(IntPtr pointer, bool pixelcollision);
+        private static extern void DLL_SetSpriteUsePixelCollision(IntPtr pointer, int pixelcollision);
         /// <summary>
         /// Sets whether the Sprite will use Pixel Collision
         /// </summary>
@@ -139,9 +140,9 @@ namespace SwinGame
         /// <param name="pixelcollision">True of False</param>
         private static void SetSpriteUsePixelCollision(IntPtr pointer, bool pixelcollision)
         {
-            DLL_SetSpriteUsePixelCollision(pointer, pixelcollision);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting its Pixel Collision");
+            DLL_SetSpriteUsePixelCollision(pointer, (pixelcollision?-1:0));
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteMass")]
@@ -153,9 +154,9 @@ namespace SwinGame
         /// <returns>Mass</returns>
         private static float GetSpriteMass(IntPtr pointer)
         {
-            float temp = DLL_GetSpriteMass(pointer);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before Getting its Mass");
+            float temp = DLL_GetSpriteMass(pointer);
             return temp;
         }
 
@@ -178,10 +179,9 @@ namespace SwinGame
         /// <param name="mass">Mass</param>
         private static void SetSpriteMass(IntPtr pointer, Single mass)
         {
-            DLL_SetSpriteMass(pointer, mass);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting a Mass");
-
+            DLL_SetSpriteMass(pointer, mass);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteMovement")]
@@ -189,10 +189,9 @@ namespace SwinGame
 
         private static void SetSpriteMovement(IntPtr pointer, Vector movement)
         {
-            DLL_SetSpriteMovement(pointer, movement);
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before setting Movement");
-
+            DLL_SetSpriteMovement(pointer, movement);
         }
 
         internal IntPtr Pointer;
@@ -293,15 +292,15 @@ namespace SwinGame
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteFramesPerCell(IntPtr pointer, int index);
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void SetSpriteFramesPerCell(IntPtr pointer, int[] framesPerCell, int length);
+        private static extern void SetSpriteFramesPerCell(IntPtr pointer, [MarshalAs(UnmanagedType.LPArray)]int[] framesPerCell, int length);
 
         /// <summary>
         /// Gets the Frames per Cell
         /// </summary>
         public int[] FramesPerCell
-        {
-            
+        {            
             get
             {
                 int[] temparray = new int[GetSpriteFrameCount(this.Pointer)];
@@ -313,14 +312,12 @@ namespace SwinGame
                 
                 return temparray;
             }
-
             set
             {
                 SetSpriteFramesPerCell(Pointer, value, value.Length);
             }
         }
         
-
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteCols(IntPtr pointer);
 
@@ -363,9 +360,10 @@ namespace SwinGame
             }
         }
 
-	    [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+	     [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpriteendingAction(IntPtr pointer);
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        
+		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern void SetSpriteendingAction(IntPtr pointer, int endingAction);
 
         /// <summary>
@@ -403,7 +401,7 @@ namespace SwinGame
         /// <summary>
         /// Gets whether the Sprite is reversed
         /// </summary>
-        public Boolean Reverse
+        public bool Reverse
         {
             get
             {
@@ -474,6 +472,7 @@ namespace SwinGame
             /// <param name="v"></param>
             public void SetTo(Vector v)
             {
+					Console.WriteLine("Setting Movement");
                 SetSpriteMovement(_Data.Pointer, v);
             }
 
@@ -625,7 +624,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
-        private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, bool transparent, uint transparentColor);
+        private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, int transparent, uint transparentColor);
         /// <summary>
         /// Load the specified image file
         /// </summary>
@@ -637,7 +636,7 @@ namespace SwinGame
             {
                 Bitmap result;
                 int color = Color.Black.ToArgb();
-                result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, false, (uint)color);
+                result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -657,13 +656,13 @@ namespace SwinGame
         /// <param name="transparent">True if this image has transparent pixels</param>
         /// <param name="transparentColor">Color of the transparent pixels</param>
         /// <returns>New bitmap</returns>
-        public static Bitmap LoadBitmap(String pathToBitmap, Boolean transparent, Color transparentColor)
+        public static Bitmap LoadBitmap(String pathToBitmap, bool transparent, Color transparentColor)
         {
             try
             {
                 Bitmap result;
                 int color = transparentColor.ToArgb();
-                result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, transparent, (uint)color);
+                result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, (transparent?-1:0), (uint)color);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -707,6 +706,7 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
         private static extern void DLL_FreeBitmap(ref IntPtr bitmapToFree);
+
         /// <summary>
         /// Free the specified bitmap
         /// </summary>
@@ -908,7 +908,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleWithDestination")]
-        private static extern void DLL_DrawRectangleWithDestination(IntPtr dest, uint theColour, bool filled, int xPos, int yPos, int width, int height);
+        private static extern void DLL_DrawRectangleWithDestination(IntPtr dest, uint theColour, int filled, int xPos, int yPos, int width, int height);
         /// <summary>
         /// Draws a rectangle on the destination bitmap
         /// </summary>
@@ -924,7 +924,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, filled, xPos, yPos, width, height);
+                DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, (filled?-1:0), xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -980,7 +980,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, false, xPos, yPos, width, height);
+                DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, 0, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1079,7 +1079,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleWithDestination")]
-        private static extern void DLL_DrawCircleWithDestination(IntPtr dest, uint theColour, bool filled, int xc, int yc, int radius);
+        private static extern void DLL_DrawCircleWithDestination(IntPtr dest, uint theColour, int filled, int xc, int yc, int radius);
         /// <summary>
         /// Draws a circle centered on a given x, y location
         /// </summary>
@@ -1094,7 +1094,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawCircleWithDestination(dest.pointer, (uint)color, filled, xc, yc, radius);
+                DLL_DrawCircleWithDestination(dest.pointer, (uint)color, (filled?-1:0), xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1120,7 +1120,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawCircleWithDestination(dest.pointer, (uint)color, false, xc, yc, radius);
+                DLL_DrawCircleWithDestination(dest.pointer, (uint)color, 0, xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1146,7 +1146,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawCircleWithDestination(dest.pointer, (uint)color, true, xc, yc, radius);
+                DLL_DrawCircleWithDestination(dest.pointer, (uint)color, -1, xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1160,7 +1160,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseWithDestination")]
-        private static extern void DLL_DrawEllipseWithDestination(IntPtr dest, uint theColour, bool filled, int xPos, int yPos, int width, int height);
+        private static extern void DLL_DrawEllipseWithDestination(IntPtr dest, uint theColour, int filled, int xPos, int yPos, int width, int height);
         /// <summary>
         /// Draws a ellipse within a given rectangle on the dest bitmap
         /// </summary>
@@ -1176,7 +1176,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, filled, xPos, yPos, width, height);
+                DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, (filled?-1:0), xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1203,7 +1203,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, false, xPos, yPos, width, height);
+                DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, 0, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1230,7 +1230,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, true, xPos, yPos, width, height);
+                DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, -1, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1369,7 +1369,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangle")]
-        private static extern void DLL_DrawRectangle(uint theColour, bool filled, float xPos, float yPos, int width, int height);
+        private static extern void DLL_DrawRectangle(uint theColour, int filled, float xPos, float yPos, int width, int height);
         /// <summary>
         /// Draws a rectangle on the screen
         /// </summary>
@@ -1384,7 +1384,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawRectangle((uint)color, filled, xPos, yPos, width, height);
+                DLL_DrawRectangle((uint)color, (filled?-1:0), xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1410,7 +1410,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawRectangle((uint)color, false, xPos, yPos, width, height);
+                DLL_DrawRectangle((uint)color, 0, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1436,7 +1436,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawRectangle((uint)color, true, xPos, yPos, width, height);
+                DLL_DrawRectangle((uint)color, -1, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1534,7 +1534,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircle")]
-        private static extern void DLL_DrawCircle(uint theColor, bool filled, float xc, float yc, int radius);
+        private static extern void DLL_DrawCircle(uint theColor, int filled, float xc, float yc, int radius);
         /// <summary>
         /// Draws a circle centered on a given x, y location
         /// </summary>
@@ -1548,7 +1548,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawCircle((uint)color, filled, xc, yc, radius);
+                DLL_DrawCircle((uint)color, (filled?-1:0), xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1573,7 +1573,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawCircle((uint)color, false, xc, yc, radius);
+                DLL_DrawCircle((uint)color, 0, xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1598,7 +1598,7 @@ namespace SwinGame
             try
             {
                 int color = theColour.ToArgb();
-                DLL_DrawCircle((uint)color, true, xc, yc, radius);
+                DLL_DrawCircle((uint)color, -1, xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1612,7 +1612,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipse")]
-        private static extern void DLL_DrawEllipse(uint theColor, bool filled, float xPos, float yPos, int width, int height);
+        private static extern void DLL_DrawEllipse(uint theColor, int filled, float xPos, float yPos, int width, int height);
         /// <summary>
         /// Draws a ellipse within a given rectangle on the screen
         /// </summary>
@@ -1627,7 +1627,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawEllipse((uint)color, filled, xPos, yPos, width, height);
+                DLL_DrawEllipse((uint)color, (filled?-1:0), xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1653,7 +1653,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawEllipse((uint)color, false, xPos, yPos, width, height);
+                DLL_DrawEllipse((uint)color, 0, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1679,7 +1679,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawEllipse((uint)color, true, xPos, yPos, width, height);
+                DLL_DrawEllipse((uint)color, -1, xPos, yPos, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1996,7 +1996,7 @@ namespace SwinGame
         // Sprite Additions
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiEnding")]
-        private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, Boolean isMulti, int length, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, int isMulti, int length, [MarshalAs(UnmanagedType.LPArray)]int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
         /// <summary>
         /// Creates a new Sprite
         /// </summary>
@@ -2007,12 +2007,12 @@ namespace SwinGame
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public static Sprite CreateSprite(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
+        public static Sprite CreateSprite(Bitmap startBitmap, bool isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
         {
             try
             {
                 Sprite result;
-                result.Pointer = DLL_CreateSpriteMultiEnding(startBitmap.pointer, isMulti, framesPerCell.Length, framesPerCell, endingAction, width, height);
+                result.Pointer = DLL_CreateSpriteMultiEnding(startBitmap.pointer, (isMulti ? -1 : 0) , framesPerCell.Length, framesPerCell, endingAction, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2027,7 +2027,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMulti")]
-        private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, Boolean isMulti, int length, int[] framesPerCell, int width, int height);
+        private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, int isMulti, int length, [MarshalAs(UnmanagedType.LPArray)] int[] framesPerCell, int width, int height);
         /// <summary>
         /// Creates a new Sprite
         /// </summary>
@@ -2037,12 +2037,12 @@ namespace SwinGame
         /// <param name="width">The width of the Sprite</param>
         /// <param name="height">The height of the Sprite</param>
         /// <returns>A Sprite</returns>
-        public static Sprite CreateSprite(Bitmap startBitmap, Boolean isMulti, int[] framesPerCell, int width, int height)
+        public static Sprite CreateSprite(Bitmap startBitmap, bool isMulti, int[] framesPerCell, int width, int height)
         {
             try
             {
                 Sprite result;
-                result.Pointer = DLL_CreateSpriteMulti(startBitmap.pointer, isMulti, framesPerCell.Length, framesPerCell, width, height);
+                result.Pointer = DLL_CreateSpriteMulti(startBitmap.pointer, (isMulti?-1:0), framesPerCell.Length, framesPerCell, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2087,7 +2087,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
-        private static extern IntPtr DLL_CreateSpriteArrayEnding(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell, int endingAction);
+        private static extern IntPtr DLL_CreateSpriteArrayEnding(int bitmaplength, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] startBitmap, int length, [MarshalAs(UnmanagedType.LPArray)] int[] framesPerCell, int endingAction);
         /// <summary>
         /// Creates a new Sprite
         /// </summary>
@@ -2122,7 +2122,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
-        private static extern IntPtr DLL_CreateSpriteArray(int bitmaplength, IntPtr[] startBitmap, int length, int[] framesPerCell);
+        private static extern IntPtr DLL_CreateSpriteArray(int bitmaplength, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] startBitmap, int length, [MarshalAs(UnmanagedType.LPArray)] int[] framesPerCell);
         /// <summary>
         /// Creates a new Sprite
         /// </summary>
@@ -2155,7 +2155,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayFPC")]
-        private static extern IntPtr DLL_CreateSpriteArrayFPC(int bitmaplength, IntPtr[] startBitmap, int framesPerCell, int frames);
+        private static extern IntPtr DLL_CreateSpriteArrayFPC(int bitmaplength, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] startBitmap, int framesPerCell, int frames);
         /// <summary>
         /// Creates a Sprite
         /// </summary>
@@ -2338,7 +2338,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
-        private static extern void DLL_DrawRectangleOnScreen(int theColor, bool filled, int x, int y, int width, int height);
+        private static extern void DLL_DrawRectangleOnScreen(int theColor, int filled, int x, int y, int width, int height);
         /// <summary>
         /// Draw a Rectangle on Screen
         /// </summary>
@@ -2352,7 +2352,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawRectangleOnScreen(color, false, x, y, width, height);
+                DLL_DrawRectangleOnScreen(color, 0, x, y, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2378,7 +2378,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawRectangleOnScreen(color, true, x, y, width, height);
+                DLL_DrawRectangleOnScreen(color, -1, x, y, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2475,7 +2475,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
-        private static extern void DLL_DrawCircleOnScreen(int theColor, bool filled, int xc, int yc, int radius);
+        private static extern void DLL_DrawCircleOnScreen(int theColor, int filled, int xc, int yc, int radius);
         /// <summary>
         /// Draws a Circle on the Screen
         /// </summary>
@@ -2488,7 +2488,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawCircleOnScreen(color, false, xc, yc, radius);
+                DLL_DrawCircleOnScreen(color, 0, xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2513,7 +2513,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawCircleOnScreen(color, true, xc, yc, radius);
+                DLL_DrawCircleOnScreen(color, -1, xc, yc, radius);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2528,7 +2528,7 @@ namespace SwinGame
 
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
-        private static extern void DLL_DrawEllipseOnScreen(int theColor, bool filled, int x, int y, int width, int height);
+        private static extern void DLL_DrawEllipseOnScreen(int theColor, int filled, int x, int y, int width, int height);
         /// <summary>
         /// Draws an Ellipse on the Screen
         /// </summary>
@@ -2542,7 +2542,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawEllipseOnScreen(color, false, x, y, width, height);
+                DLL_DrawEllipseOnScreen(color, 0, x, y, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2568,7 +2568,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawEllipseOnScreen(color, true, x, y, width, height);
+                DLL_DrawEllipseOnScreen(color, -1, x, y, width, height);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());

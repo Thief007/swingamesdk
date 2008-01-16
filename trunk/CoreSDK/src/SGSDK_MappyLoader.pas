@@ -71,7 +71,8 @@ interface
         	Frame : Integer;
         end;
         
-		function LoadMap(fileName : String): Map;
+		function LoadMap(mapName : String): Map;
+		function LoadMapFiles(mapFile, imgFile: String): Map;
 		procedure DrawMap(var m : Map);
 		function CollisionWithMap(m: Map; var spr: Sprite; vec: Vector): CollisionSide; overload;
 		function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
@@ -325,7 +326,7 @@ implementation
 		fpc : Array of Integer;
 	begin
 		SetLength(fpc, m.MapInfo.NumberOfBlocks);
-		m.Tiles := CreateSprite(LoadBitmap(GetPathToResource(fileName + '.png', MapResource)), true, fpc, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+		m.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
 		m.Tiles.currentFrame := 0;
 	end;
 	
@@ -335,6 +336,10 @@ implementation
 		XStart, YStart, XEnd, YEnd : Integer;
 		f : Integer;
 	begin
+		
+		//WriteLn('GX, GY: ', GameX(0), ',' ,GameY(0));
+		//WriteLn('bw, bh: ', m.MapInfo.BlockWidth, ', ', m.MapInfo.BlockHeight);
+		
 		//Screen Drawing Starting Point
 		XStart := round((GameX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
 		YStart := round((GameY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
@@ -343,6 +348,8 @@ implementation
 		XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));
 		YEnd := round(YStart + (SGSDK_Core.ScreenHeight() / m.MapInfo.BlockHeight) + (m.MapInfo.BlockHeight * 1));
 
+		
+		//WriteLn('DrawMap ', XStart, ',', YStart, ' - ',  XEnd, ',', YEnd);
 		
 		if YStart < 0 then YStart := 0;
 		if YStart >= m.MapInfo.MapHeight then exit;
@@ -389,14 +396,27 @@ implementation
 			m.Frame := 0
 		end;
 	end;
+
+	function LoadMap(mapName: String): Map;
+	var
+		mapFile, imgFile: String;
+	begin
+		mapFile := GetPathToResource(mapName + '.sga', MapResource);
+		imgFile := GetPathToResource(mapName + '.png', MapResource);
+      
+		result := LoadMapFiles(mapFile, imgFile);
+	end;
 	
-	function LoadMap(fileName: String): Map;
+	function LoadMapFiles(mapFile, imgFile: String): Map;
 	var
 		filestream : text;
 		m : Map;
 	begin
+		if not FileExists(mapFile) then RaiseSGSDKException('Unable to locate map: ' + mapFile);
+		if not FileExists(imgFile) then RaiseSGSDKException('Unable to locate images: ' + imgFile);
+					
 		//Get File
-		assign(filestream, GetPathToResource(fileName + '.sga', MapResource));
+		assign(filestream, mapFile);
 		reset(filestream);
 		
 		//Load Map Content
@@ -407,7 +427,7 @@ implementation
 		LoadEventData(m, filestream);	
 		//Closes File
 		close(filestream);	
-		LoadBlockSprites(m, fileName);
+		LoadBlockSprites(m, imgFile);
 		m.Frame := 0;
 		result := m;
 	end;

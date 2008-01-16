@@ -10,7 +10,7 @@ type TSDLManager = class (TObject)
 	private
 		_quit: Boolean;
 		_readingString: Boolean;
-		_tempString: WideString;
+		_tempString: String;
 		_textSurface: PSDL_Surface;
 		_maxStringLen: Integer;
 		_font: PTTF_Font;
@@ -28,7 +28,7 @@ type TSDLManager = class (TObject)
 		function HasQuit(): Boolean;
 
 		property MaxStringLength: Integer read _maxStringLen write _maxStringLen;
-		property EnteredString: WideString read _tempString write _tempString;
+		property EnteredString: String read _tempString write _tempString;
 		property IsReading: Boolean read _readingString;
 
 		procedure DrawCollectedText(dest: PSDL_Surface);
@@ -81,7 +81,7 @@ implementation
 	
 	procedure TSDLManager.HandleKeydownEvent(event: PSDL_Event);
 	var
-		oldStr: WideString;
+		oldStr: String;
 	begin
 		SetLength(_KeyTyped, Length(_KeyTyped) + 1);
 		_KeyTyped[High(_KeyTyped)] := event.key.keysym.sym;
@@ -113,7 +113,7 @@ implementation
 					7..10, 13: ;
 					27: ;
 					else //Append the character
-						_tempString := _tempString + WideChar(event.key.keysym.unicode);
+						_tempString := _tempString + Char(event.key.keysym.unicode);
 				end;
 			end;
 
@@ -125,7 +125,7 @@ implementation
 
 				 //Render a new text surface
 				 if Length(_tempString) > 0 then
-					 _textSurface := TTF_RenderUNICODE_Blended(_font, PUint16(_tempString + '|'), _foreColor)
+					 _textSurface := TTF_RenderText_Blended(_font, PChar(_tempString + '|'), _foreColor)
 				 else
 					_textSurface := nil;
 			end;

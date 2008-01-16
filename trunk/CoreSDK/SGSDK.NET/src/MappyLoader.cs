@@ -175,18 +175,23 @@ namespace SwinGame
     public class MappyLoader
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
-        private static extern IntPtr DLL_LoadMap(String fileName);
-        /// <summary>
+        private static extern IntPtr DLL_LoadMap(string mapFile, string imgFile);
+     
+   	  /// <summary>
         /// Loads a Map
         /// </summary>
-        /// <param name="fileName">Name of the map</param>
+        /// <param name="mapName">Name of the map</param>
         /// <returns>Map</returns>
-        public static Map LoadMap(String fileName)
+        public static Map LoadMap(String mapName)
         {
             try
             {
+                string mapFile = Core.GetPathToResource(mapName + ".sga", ResourceKind.MapResource);
+					 string imgFile = Core.GetPathToResource(mapName + ".png", ResourceKind.MapResource);
+					
                 Map temp;
-                temp.Pointer = DLL_LoadMap(fileName);
+                temp.Pointer = DLL_LoadMap(mapFile, imgFile);
+
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -359,6 +364,11 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
         private static extern void DLL_FreeMap(IntPtr map);
 
+        /// <summary>
+        /// Free a loaded map. This ensures that the resources used by the Map are returned to the system.
+		  /// This must be called once you have finished using the Map.
+        /// </summary>
+        /// <param name="map">The Map to Free</param>
         public static void FreeMap(Map map)
         {
             try

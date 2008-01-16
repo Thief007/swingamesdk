@@ -99,6 +99,8 @@ implementation
 	begin
 		if theFont = nil then RaiseSGSDKException('The specified font to start reading text is nil');
 		if maxLength <= 0 then RaiseSGSDKException('Minimum length to start reading text is 1');
+		if IsReadingText() then RaiseSGSDKException('Already reading text, cannot start reading text again.');
+		
 		try
 			sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
 		except
