@@ -258,7 +258,7 @@ uses
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
-		result := -1;
+		result := 0;
 	end;
 	
 	procedure Sleep(time : UInt32); cdecl; export;

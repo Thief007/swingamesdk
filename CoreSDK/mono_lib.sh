@@ -35,8 +35,8 @@ CLEAN="N"
 while getopts ch o
 do
 	case "$o" in
-	c)  CLEAN="Y";;
-	h)  Usage();;
+	c)  CLEAN="Y" ;;
+	h)  Usage ;
 	esac
 done
 
@@ -87,12 +87,12 @@ then
 		echo __________________________________________________
 		echo   ... Copying Library to "$Output"
 		cp "$DOTNETbin"/*.dll "$Output"
-		cp "$DOTNETbin"/*.xml "$Output"
-		rm "$DOTNETbin/*"
+		cp "$DOTNETbin"/*.XML "$Output"
+		rm "$DOTNETbin"/*
 
 		echo   ... Copying to C# SDK
 		cp "$Output"/*.dll "$SDK"
-		cp "$Output"/*.xml "$SDK"
+		cp "$Output"/*.XML "$SDK"
 		cp "$Output"/*.dylib  "$SDK"
 	else
 		echo __________________________________________________
