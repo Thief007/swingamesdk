@@ -31,10 +31,13 @@ namespace TomatoQuest
         //Load the Player Controller
         private Controller _Controller = new Controller();
 
+        //Load The User Interface
+        private UserInterface _Interface = new UserInterface();
+
         //Game Constructor
         public Game()
         {
-            _Player = new Character("Hero", _Map.EventPositionX(PLAYERSPAWN, 0), _Map.EventPositionY(PLAYERSPAWN, 0));
+            _Player = new Character("Hero", _Map.EventPositionX(PLAYERSPAWN, 0), _Map.EventPositionY(PLAYERSPAWN, 0), 10, 10, 10, 10, 10);
         }
 
         public void Run()
@@ -48,8 +51,17 @@ namespace TomatoQuest
             //Draw Player
             _Player.DrawCharacter();
 
+            //Refresh Player Stats
+            _Player.RefreshCharacterStats();
+
             //Make the Camera follow the Player
             Camera.FollowSprite(_Player.Sprite, 0, 0);
+
+            //Run User Interface
+            _Interface.RunUI(_Player);
+
+            //User Stat Page Notification
+            Text.DrawTextOnScreen("Hit S to Open and Close the Stat Page", Color.White, Resources.GameFont("Courier"), 260, 460);
 
             //Draw the FrameRate
             Text.DrawFramerate(200, 0, Resources.GameFont("Courier"));  

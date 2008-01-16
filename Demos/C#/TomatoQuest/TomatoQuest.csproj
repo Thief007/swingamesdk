@@ -45,6 +45,7 @@
     <Compile Include="Controller.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameLogic.cs" />
+    <Compile Include="UserInterface.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GameResources.cs" />

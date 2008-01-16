@@ -283,11 +283,19 @@ namespace GameResources
         {
             NewFont("ArialLarge", "arial.ttf", 80);
             NewFont("Courier", "cour.ttf", 16);
+            NewFont("Arial", "arial.ttf", 20);
+            NewFont("SmallCourier", "cour.ttf", 11);
+
+            Text.SetFontStyle(Resources.GameFont("SmallCourier"), FontStyle.BoldFont);
         }
 
         private static void LoadImages()
         {
             NewImage("Hero", "Hero.png");
+            NewImage("Overlay", "Overlay.png");
+            NewImage("Health", "Health.png");
+            NewImage("Mana", "Mana.png");
+            NewImage("HealthVial", "HealthVial.png");
         }
 
         private static void LoadSounds()
