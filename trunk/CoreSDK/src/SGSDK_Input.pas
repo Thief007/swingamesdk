@@ -34,9 +34,41 @@ interface
 	//function TextReadAsUNICODE(): WideString;
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
+	
+	procedure MoveMouse(x : UInt16; y : UInt16);
+	
+	procedure ShowMouse();
+	procedure HideMouse();
 
 implementation
 	uses SysUtils, Math, Classes;
+	
+	procedure ShowMouse();
+	begin
+		try
+			SDL_ShowCursor(1);
+		except
+			RaiseSGSDKException('Unable to show mouse');
+		end;
+	end;
+	
+	procedure HideMouse();
+	begin
+		try
+			SDL_ShowCursor(0);
+		except
+			RaiseSGSDKException('Unable to hide mouse');
+		end;
+	end;
+	
+	procedure MoveMouse(x : UInt16; y : UInt16);
+	begin
+		try
+			SDL_WarpMouse(x,y);
+		except
+			RaiseSGSDKException('Unable to move mouse');
+		end;
+	end;
 
 	/// Returns true when a key is typed. This occurs when the key is pressed on the 
 	/// keyboard, and will not reoccur until it is released and pressed again. This

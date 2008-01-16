@@ -33,7 +33,7 @@ if not exist %ShowcaseVB6% mkdir %ShowcaseVB6%
 set SDKVB6=..\SDKs\VB6\Visual Studio 6.0\lib\
 if not exist %SDKVB6% mkdir %SDKVB6%
 
-set airhocky=..\Demos\VB6\Air Hocky\lib
+set airhocky=..\Demos\VB6\Air Hocky\lib\
 
 echo Doing %1
 

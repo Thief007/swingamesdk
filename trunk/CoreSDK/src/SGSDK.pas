@@ -354,7 +354,29 @@ uses
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
+	procedure ShowMouse();
+	begin
+		try
+			SGSDK_Input.ShowMouse();
+		Except on exc: Exception  do TrapException(exc);
+		end;
+	end;
 	
+	procedure HideMouse();
+	begin
+		try
+			SGSDK_Input.HideMouse();
+		Except on exc: Exception  do TrapException(exc);
+		end;
+	end;
+	
+	procedure MoveMouse(x : UInt16; y : UInt16);
+	begin
+		try
+			SGSDK_Input.MoveMouse(x,y);
+		Except on exc: Exception  do TrapException(exc);
+		end;
+	end;
 	function GetMousePosition(): Vector; cdecl; export;
 	begin
 		Try
@@ -2232,6 +2254,9 @@ exports
 	//TextReadAsUNICODE,
 	IsKeyPressed,
 	WasKeyTyped,
+	ShowMouse,
+	HideMouse,
+	MoveMouse,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
