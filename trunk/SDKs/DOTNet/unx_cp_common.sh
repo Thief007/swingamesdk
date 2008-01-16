@@ -1,5 +1,9 @@
 #!/bin/sh
 
+echo __________________________________________________
+echo Copying Mono Files
+echo __________________________________________________
+	
 cp ../Base/All/* ./Mono/C#
 
 if [ ! -d ./Mono/C#/Resources ]
@@ -9,6 +13,7 @@ then
 	mkdir ./Mono/C#/Resources/fonts
 	mkdir ./Mono/C#/Resources/images
 	mkdir ./Mono/C#/Resources/sounds
+	mkdir ./Mono/C#/Resources/maps
 fi
 
 echo Copying Resources
