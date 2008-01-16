@@ -43,14 +43,15 @@ namespace TomatoQuest
             {
                 thePlayer.MoveCharacter(theLevel.Map, 2, 0);
             }
+            //If no directional key is hit, don't move him
             else
             {
                 thePlayer.MoveCharacter(theLevel.Map, 0, 0);
             }
 
+            //Update Character's Animation
             thePlayer.UpdateCharacterAnimation();
-
-            
+    
         }
     }
 }

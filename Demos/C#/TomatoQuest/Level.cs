@@ -21,6 +21,7 @@ namespace TomatoQuest
     {
         private Map _Map;
 
+        //Returns the Map
         public Map Map
         {
             get { return _Map; }
