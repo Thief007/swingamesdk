@@ -29,9 +29,6 @@ namespace TomatoQuest
 
     public class Character
     {
-        //Constant
-        const Event PLAYERSPAWN = Event.Event1;
-
         private Sprite _Sprite;
         private CharacterAnim _Anim;
 
@@ -70,6 +67,10 @@ namespace TomatoQuest
         public Boolean Attacking;
         public int Cooldown;
 
+        public Boolean CanAttack;
+        public Boolean CanMove;
+        public Boolean CanInteract;
+
         //Returns the Sprite
         public Sprite Sprite
         {
@@ -83,7 +84,7 @@ namespace TomatoQuest
         }
 
         //Character Constructor
-        public Character(String name, int SpawnX, int SpawnY, int strength, int vitality, int agility, int intelligence, int luck)
+        public Character(String name, int SpawnX, int SpawnY, int strength, int vitality, int agility, int intelligence, int luck, Boolean canMove, Boolean canAttack, Boolean canInteract)
         {
             //Load the Character Sprite
             _Sprite = Graphics.CreateSprite(Resources.GameImage(name), 3, 12, 24, 32);
@@ -127,6 +128,10 @@ namespace TomatoQuest
             Attacking = false;
 
             Swing = Resources.GameSound("Swing");
+
+            CanMove = canMove;
+            CanAttack = canAttack;
+            CanInteract = canInteract;
         }
 
         public void DrawCharacter()
@@ -151,7 +156,7 @@ namespace TomatoQuest
             }
         }
 
-        private void SetAnimationFrames(int startingFrame, int startingIndex, int endingIndex)
+        public void SetAnimationFrames(int startingFrame, int startingIndex, int endingIndex)
         {
             //Create a new temporary Array, the size of the Frame Count
             int[] tempintarr = new int[_Sprite.FrameCount];

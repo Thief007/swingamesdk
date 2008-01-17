@@ -34,13 +34,17 @@
       <HintPath>lib\SGSDK.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AIController.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameLogic.cs" />
+    <Compile Include="Healer.cs" />
     <Compile Include="UserInterface.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Program.cs" />
