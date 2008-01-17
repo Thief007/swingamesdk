@@ -169,7 +169,14 @@ namespace TomatoQuest
 
             //Draws the Health Bar and the Stat Page
             DrawHealthBar(theCharacter);
+            DrawCharacterInformation(theCharacter);
             DrawStatsPage(theCharacter);
+        }
+
+        private void DrawCharacterInformation(Character theCharacter)
+        {
+            Text.DrawTextOnScreen("Level: " + theCharacter.Level, Color.White, Resources.GameFont("Arial"), 20, 60);
+            Text.DrawTextOnScreen("Unused Stat Points: " + theCharacter.StatPoints, Color.Red, Resources.GameFont("Arial"), 20, 85);
         }
     }
 }

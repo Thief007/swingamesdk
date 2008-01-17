@@ -51,6 +51,8 @@ namespace TomatoQuest
         //Load The User Interface
         private UserInterface _Interface = new UserInterface();
 
+        private Random _RandomNumber = new Random(System.DateTime.Now.Millisecond);
+
         //Game Constructor
         public Game()
         {
@@ -98,6 +100,14 @@ namespace TomatoQuest
 
             // If Player Collides with the AI, move them back.
             _AIController.PlayerCollideWithAI(_Player, _AI);
+
+            //Interact with Healers and Update Player Status
+            Interaction.InteractWithHealers(_Player, _Healers.Characters);
+            _Player.UpdateCharacterStatus();
+
+            //Combat
+            Combat.AIHitPlayer(_Player, _AI, _RandomNumber);
+            Combat.PlayerHitAI(_Player, _AI, _RandomNumber);
 
             //Run User Interface
             _Interface.RunUI(_Player);
