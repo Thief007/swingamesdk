@@ -163,7 +163,7 @@ namespace SwinGame
 		#endregion
 
         [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="OpenGraphicsWindow")]
-        private static extern void DLL_OpenGraphicsWindow(String caption, int width, int height);
+        private static extern void DLL_OpenGraphicsWindow([MarshalAs(UnmanagedType.LPStr)]String caption, int width, int height);
         
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the
@@ -259,7 +259,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="SetIcon")]
-        private static extern void DLL_SetIcon(String iconFilename);
+        private static extern void DLL_SetIcon([MarshalAs(UnmanagedType.LPStr)]String iconFilename);
         /// <summary>
         /// Sets the icon for the window. This must be called before openning the
         ///	graphics window. The icon is loaded as a bitmap, though this can be from
@@ -382,7 +382,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TakeScreenshot")]
-        private static extern void DLL_TakeScreenshot(String basename);
+        private static extern void DLL_TakeScreenshot([MarshalAs(UnmanagedType.LPStr)]String basename);
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
         ///	current directory.
@@ -584,10 +584,10 @@ namespace SwinGame
 
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
-        private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind(string path, string filename, ResourceKind kind);
+        private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, ResourceKind kind);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
-        private static extern IntPtr DLL_GetPathToResourceWithBase(string path, string filename);
+        private static extern IntPtr DLL_GetPathToResourceWithBase([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename);
 
 			private static readonly string appPath;
 

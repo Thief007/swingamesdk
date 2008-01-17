@@ -175,7 +175,7 @@ namespace SwinGame
     public class MappyLoader
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
-        private static extern IntPtr DLL_LoadMap(string mapFile, string imgFile);
+        private static extern IntPtr DLL_LoadMap([MarshalAs(UnmanagedType.LPStr)]string mapFile, [MarshalAs(UnmanagedType.LPStr)]string imgFile);
      
    	  /// <summary>
         /// Loads a Map

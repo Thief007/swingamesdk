@@ -733,9 +733,12 @@ implementation
 			
 			//writeln(temp);
 			
+			
 			ClearScreen(ColorBlack);
 			DrawOverlay('Hidding, Showing and Moveing the mouse');
+			takescreenshot('tmep');
 			RefreshScreen();
+			takescreenshot('tmep');
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		Sleep(500);

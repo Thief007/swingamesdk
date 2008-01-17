@@ -70,7 +70,7 @@ namespace SwinGame
     public class Text
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFont")]
-        private static extern IntPtr DLL_LoadFont(String fontName, int size);
+        private static extern IntPtr DLL_LoadFont([MarshalAs(UnmanagedType.LPStr)]String fontName, int size);
         /// <summary>
         /// Loads a font from file with the specified side. Fonts must be freed using
         ///	the FreeFont routine once finished with. Once the font is loaded you
@@ -141,7 +141,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
-        private static extern void DLL_DrawText(IntPtr dest , String theText, uint textColor, IntPtr theFont,int  x, int y);
+        private static extern void DLL_DrawText(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]String theText, uint textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// Draws texts to the destination bitmap. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -172,7 +172,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
-        private static extern void DLL_DrawText(String theText, uint textColor, IntPtr theFont, float x, float y);
+        private static extern void DLL_DrawText([MarshalAs(UnmanagedType.LPStr)]String theText, uint textColor, IntPtr theFont, float x, float y);
         /// <summary>
         /// Draws texts to the screen. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -202,7 +202,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLines")]
-        private static extern void DLL_DrawTextLines(String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,float x,float y,int w,int h);
+        private static extern void DLL_DrawTextLines([MarshalAs(UnmanagedType.LPStr)]String theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, float x, float y, int w, int h);
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
         ///	slow operation, so if the text is not frequently changing save it to a
@@ -237,7 +237,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
-        private static extern void DLL_DrawTextLines(IntPtr dest, String  theText, uint textColor,  uint backColor, IntPtr theFont,FontAlignment align,int x,int y,int w,int h);
+        private static extern void DLL_DrawTextLines(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]String theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);
         /// <summary>
         /// Draws multiple lines of text to the destination bitmap. This is a very
         ///	slow operation, so if the text is not frequently changing save it to a
@@ -273,7 +273,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextWidth")]
-        private static extern int DLL_TextWidth(String theText, IntPtr theFont);
+        private static extern int DLL_TextWidth([MarshalAs(UnmanagedType.LPStr)]String theText, IntPtr theFont);
         /// <summary>
         /// Calculates the width of a string when drawn with a given font.
         /// </summary>
@@ -299,7 +299,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextHeight")]
-        private static extern int DLL_TextHeight(String theText, IntPtr theFont);
+        private static extern int DLL_TextHeight([MarshalAs(UnmanagedType.LPStr)]String theText, IntPtr theFont);
         /// <summary>
         /// Calculates the height of a string when drawn with a given font.
         /// </summary>
@@ -353,7 +353,7 @@ namespace SwinGame
         // Draw Text on Screen Stuff
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen")]
-        private static extern void DLL_DrawTextOnScreen(String theText, int textColor, IntPtr theFont, int x, int y);
+        private static extern void DLL_DrawTextOnScreen([MarshalAs(UnmanagedType.LPStr)]String theText, int textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// /// Draws texts to the screen. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -383,7 +383,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen")]
-        private static extern void DLL_DrawTextLinesOnScreen(String theText, int textColor, int backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);   
+        private static extern void DLL_DrawTextLinesOnScreen([MarshalAs(UnmanagedType.LPStr)]String theText, int textColor, int backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);   
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
         ///	slow operation, so if the text is not frequently changing save it to a

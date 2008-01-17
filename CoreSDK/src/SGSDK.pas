@@ -1170,10 +1170,10 @@ uses
 		end;
 	end;
 	
-	procedure FreeMatrix2D(matrix: Matrix2DPtr); cdecl; export;
+	procedure FreeMatrix2D(var matrix: Matrix2DPtr); cdecl; export;
 	begin
 		Try
-			Dispose(matrix);
+			if matrix <> nil then Dispose(matrix);
 			matrix := nil;
 		Except on exc: Exception do TrapException(exc);
 		end;
