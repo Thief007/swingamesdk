@@ -38,13 +38,13 @@ namespace SwinGame
     public class Matrix2D : IDisposable
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
-        private static extern void FreeMaxtrix2D(IntPtr maxtrix2d);
+        private static extern void FreeMaxtrix2D(ref IntPtr maxtrix2d);
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
         private static extern Single GetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c);
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetMatrix2DElement")]
         private static extern void SetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c, Single val); 
 
-        internal IntPtr Pointer;
+        private IntPtr Pointer;
         private bool disposed = false;
 
         /// <summary>
@@ -71,21 +71,32 @@ namespace SwinGame
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)
         {
             if (!this.disposed)
             {
+                //System.Diagnostics.Debug.WriteLine("Disposing - " + Pointer);
                 if (disposing)
                 {
+                    GC.SuppressFinalize(this);
                 }
-                FreeMaxtrix2D(Pointer);
-                Pointer = IntPtr.Zero;
+                if (Pointer != IntPtr.Zero)
+                {
+                    FreeMaxtrix2D(ref Pointer);
+                    Pointer = IntPtr.Zero;
+                }
 
                 disposed = true;
             }
+        }
+
+        internal Matrix2D(IntPtr ptr)
+        {
+            if (ptr == IntPtr.Zero) throw new SwinGameException("Error Creating Matrix2D");
+            Pointer = ptr;
+            //System.Diagnostics.Debug.WriteLine("Creating " + ptr);
         }
 
         /// <summary>
@@ -94,6 +105,11 @@ namespace SwinGame
         ~Matrix2D()
         {
             Dispose(false);
+        }
+
+        public static implicit operator IntPtr (Matrix2D m)
+        {
+            return m.Pointer;
         }
 
         /*
@@ -500,7 +516,7 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("SGSDK.dll", EntryPoint = "CreateVector")]
+        [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint = "CreateVector")]
         private static extern Vector DLL_CreateVector(Single x, Single y, int invertY);
         /// <summary>
         /// Creates a new vector with values x and y, possibly with an inverted y. The
@@ -883,8 +899,7 @@ namespace SwinGame
         {
             try
             {
-                Matrix2D temp = new Matrix2D();
-                temp.Pointer = DLL_TranslationMatrix(dx, dy);
+                Matrix2D temp = new Matrix2D(DLL_TranslationMatrix(dx, dy));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -909,18 +924,17 @@ namespace SwinGame
         {
             try
             {
-                Matrix2D temp = new Matrix2D();
-                temp.Pointer = DLL_ScaleMatrix(scale);
+                Matrix2D temp = new Matrix2D(DLL_ScaleMatrix(scale));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(e.Message);
             }  
         }
 
@@ -935,8 +949,7 @@ namespace SwinGame
         {
             try
             {
-                Matrix2D temp = new Matrix2D();
-                temp.Pointer = DLL_RotationMatrix(deg);
+                Matrix2D temp = new Matrix2D(DLL_RotationMatrix(deg));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -962,8 +975,7 @@ namespace SwinGame
         {
             try
             {
-                Matrix2D temp = new Matrix2D();
-                temp.Pointer = DLL_Multiply(m1.Pointer, m2.Pointer);
+                Matrix2D temp = new Matrix2D(DLL_Multiply(m1, m2));
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -989,7 +1001,7 @@ namespace SwinGame
         {
             try
             {
-                Vector temp = DLL_Multiply(m.Pointer, v);
+                Vector temp = DLL_Multiply(m, v);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());

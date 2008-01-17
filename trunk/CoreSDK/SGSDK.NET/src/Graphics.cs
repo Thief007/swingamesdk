@@ -624,7 +624,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
-        private static extern IntPtr DLL_LoadBitmapWithTransparentColor(String pathToBitmap, int transparent, uint transparentColor);
+        private static extern IntPtr DLL_LoadBitmapWithTransparentColor([MarshalAs(UnmanagedType.LPStr)]String pathToBitmap, int transparent, uint transparentColor);
         /// <summary>
         /// Load the specified image file
         /// </summary>
@@ -677,7 +677,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadTransparentBitmap")]
-        private static extern IntPtr DLL_LoadTransparentBitmap(string pathToBitmap, uint transparentColor);
+        private static extern IntPtr DLL_LoadTransparentBitmap([MarshalAs(UnmanagedType.LPStr)]string pathToBitmap, uint transparentColor);
         /// <summary>
         /// Load an image with transparency
         /// </summary>

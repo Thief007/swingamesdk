@@ -279,9 +279,9 @@ namespace SwinGameVB
         {
             SwinGame.Input.HideMouse();
         }
-        public void MoveMouse(UInt16 x, UInt16 y)
+        public void MoveMouse(short x, short y)
         {
-            SwinGame.Input.MoveMouse(x, y);
+            SwinGame.Input.MoveMouse((UInt16)x, (UInt16)y);
         }
         public void ShowHideMouse(bool Show)
         {
@@ -302,7 +302,7 @@ namespace SwinGameVB
 
         void ShowMouse();
         void HideMouse();
-        void MoveMouse(UInt16 x, UInt16 y);
+        void MoveMouse(short x, short y);
         void ShowHideMouse(bool show);
         bool IsMouseShown();
 

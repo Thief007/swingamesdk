@@ -118,7 +118,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect")]
-        private static extern IntPtr DLL_LoadSoundEffect(String path);
+        private static extern IntPtr DLL_LoadSoundEffect([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Loads a SoundEffect
         /// </summary>
@@ -167,7 +167,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic")]
-        private static extern IntPtr DLL_LoadMusic(String path);
+        private static extern IntPtr DLL_LoadMusic([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Load music to play from the file system. Music can be in the form of a
         ///	wav, ogg, or mp3 file.
