@@ -301,6 +301,9 @@ namespace GameResources
             NewImage("Slash Left", "Slash_left.png");
             NewImage("Slash Right", "Slash_right.png");
             NewImage("Healer", "Healer.png");
+            NewImage("Critter", "Critter.png");
+            NewImage("Thief", "Thief.png");
+            NewImage("ThiefLeader", "ThiefLeader.png");
         }
 
         private static void LoadSounds()

@@ -19,27 +19,39 @@ namespace TomatoQuest
     {
         public void UpdateAI(List<Character> theAI, Character thePlayer, Map theMap)
         {
+            //Go through each AI
             for (int i = 0; i < theAI.Count; i++)
             {
-                if (!Graphics.IsSpriteOffscreen(theAI[i].Sprite))
+                //If the AI is Onscreen and alive, contine.
+                if (!Graphics.IsSpriteOffscreen(theAI[i].Sprite) && theAI[i].Alive)
                 {
 
-                    //If the AI can move, it will move.
-                    if (theAI[i].CanMove)
+                    //If the AI can move, and is within sight distance, move
+                    if (theAI[i].CanMove && CalculateDistance(theAI[i], thePlayer) < 300 && CalculateDistance(theAI[i], thePlayer) > 30)
                     {
                         //Moves the AI
                         MoveAI(theAI[i], thePlayer, theMap);
+                        //Checks if the AI has collided with the player, and if so
+                        //Moves the back
+
+                        //Check for collisions with the Player
+                        AICollideWithPlayer(theAI[i], thePlayer);
+
+                        //Check for collisions with other AI
+                        AICollideWithAI(theAI[i], theAI, i);
                     }
                     //Otherwise the AI just points towards the player
-                    else
+                    else if (CalculateDistance(theAI[i], thePlayer) < 300)
                     {
                         //Points the AI towards the Player
                         PointAI(theAI[i], thePlayer);
                     }
 
-                    //Checks if the AI has collided with the player, and if so
-                    //Moves the back
-                    AICollideWithPlayer(theAI[i], thePlayer);
+                    //If the AI can attack, and is within attacking distance, attack
+                    if (theAI[i].CanAttack && CalculateDistance(theAI[i], thePlayer) < 45)
+                    {
+                        theAI[i].InitiateAttack();
+                    }
 
                     //Updates the AI's Walking Animation
                     theAI[i].UpdateCharacterAnimation();
@@ -103,14 +115,17 @@ namespace TomatoQuest
             //Goes through all the AI
             for (int i = 0; i < theAI.Count; i++)
             {
-                //Checks if the Player has collided with an AI
-                if (Physics.HaveSpritesCollided(thePlayer.Sprite, theAI[i].Sprite))
+                if (!Graphics.IsSpriteOffscreen(theAI[i].Sprite) && theAI[i].Alive && CalculateDistance(thePlayer, theAI[i]) < 120)
                 {
-                    //Moves the Player back
-                    Graphics.MoveSprite(thePlayer.Sprite, Physics.InvertVector(thePlayer.Sprite.Movement));
-                    //We only want to move back once, to avoid glitches where
-                    //we bounce between 2 AI.
-                    return;
+                    //Checks if the Player has collided with an AI
+                    if (Physics.HaveSpritesCollided(thePlayer.Sprite, theAI[i].Sprite))
+                    {
+                        //Moves the Player back
+                        Graphics.MoveSprite(thePlayer.Sprite, Physics.InvertVector(thePlayer.Sprite.Movement));
+                        //We only want to move back once, to avoid glitches where
+                        //we bounce between 2 AI.
+                        return;
+                    }
                 }
             }
         }
@@ -122,6 +137,36 @@ namespace TomatoQuest
             {
                 //Moves the AI back 1 step
                 Graphics.MoveSprite(theAI.Sprite, Physics.InvertVector(theAI.Sprite.Movement));
+            }
+        }
+
+        public static int CalculateDistance(Character character1, Character character2)
+        {
+            double distancex = character1.Sprite.xPos - character2.Sprite.xPos;
+            double distancey = character1.Sprite.yPos - character2.Sprite.yPos;
+
+            return (int)Math.Sqrt(Math.Pow(distancex, 2) + Math.Pow(distancey, 2));
+        }
+
+        public void AICollideWithAI(Character theAI, List<Character> allAI, int index)
+        {
+            //Go through all the AI
+            for (int i = 0; i < allAI.Count; i++)
+            {
+                //Skip the AI that is checking the other AI
+                if (i != index)
+                {
+                    //Check that the AI is alive, Onscreen and within distance
+                    if (!Graphics.IsSpriteOffscreen(allAI[i].Sprite) && allAI[i].Alive && CalculateDistance(theAI, allAI[i]) < 120)
+                    {
+                        //Check if the Sprites have Collided
+                        if (Physics.HaveSpritesCollided(theAI.Sprite, allAI[i].Sprite))
+                        {
+                            //Move the AI Back 1 Step
+                            Graphics.MoveSprite(theAI.Sprite, Physics.InvertVector(theAI.Sprite.Movement));
+                        }
+                    }
+                }
             }
         }
     }

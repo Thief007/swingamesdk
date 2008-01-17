@@ -83,6 +83,22 @@ namespace TomatoQuest
             get { return _Anim; }
         }
 
+        //Returns if the Character is Alive
+        public bool Alive
+        {
+            get 
+            {
+                if (Health > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         //Character Constructor
         public Character(String name, int SpawnX, int SpawnY, int strength, int vitality, int agility, int intelligence, int luck, Boolean canMove, Boolean canAttack, Boolean canInteract)
         {
@@ -132,6 +148,8 @@ namespace TomatoQuest
             CanMove = canMove;
             CanAttack = canAttack;
             CanInteract = canInteract;
+            
+            _Sprite.UsePixelCollision = false;
         }
 
         public void DrawCharacter()
