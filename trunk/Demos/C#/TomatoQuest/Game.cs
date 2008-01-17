@@ -22,13 +22,24 @@ namespace TomatoQuest
         //Constant
         const Event PLAYERSPAWN = Event.Event1;
         const Event HEALERSPAWN = Event.Event2;
+        const Event ENEMY1SPAWN = Event.Event4;
+        const Event ENEMY2SPAWN = Event.Event5;
+        const Event BOSSSPAWN = Event.Event3;
 
         //Loads the Map at object creation
         private Level _Map = new Level("Level1");
 
         //Load the Player
         private Character _Player;
+
+        //Healer
         private Healers _Healers;
+
+        //Enemies
+        private Enemy _Critters;
+        private Enemy _Thieves;
+        private Enemy _Leader;
+
         private List<Character> _AI;
 
         //Load the Player Controller
@@ -48,11 +59,21 @@ namespace TomatoQuest
             //Load the Healers
             _Healers = new Healers("Healer", _Map, 1, 1, 1, 1, 1, HEALERSPAWN);
 
+            //Load the Enemies
+            _Critters = new Enemy("Critter", _Map, 5, 5, 4, 4, 5, ENEMY1SPAWN, 40);
+            _Thieves = new Enemy("Thief", _Map, 10, 8, 8, 4, 8, ENEMY2SPAWN, 120);
+            _Leader = new Enemy("ThiefLeader", _Map, 35, 45, 20, 20, 10, BOSSSPAWN, 1000);
+
             //Create the AI List
             _AI = new List<Character>();
 
             //Add the Healers to the total AI
             _AI.AddRange(_Healers.Characters);
+
+            //Add the AI to the total AI
+            _AI.AddRange(_Critters.Characters);
+            _AI.AddRange(_Thieves.Characters);
+            _AI.AddRange(_Leader.Characters);
         }
 
         public void Run()

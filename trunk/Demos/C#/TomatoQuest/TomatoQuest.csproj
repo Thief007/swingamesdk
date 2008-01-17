@@ -42,6 +42,7 @@
     <Compile Include="AIController.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="Enemy.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameLogic.cs" />
     <Compile Include="Healer.cs" />
