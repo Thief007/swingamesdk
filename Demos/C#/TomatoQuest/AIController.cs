@@ -59,6 +59,8 @@ namespace TomatoQuest
                     //Draws the AI
                     Graphics.DrawSprite(theAI[i].Sprite);
                 }
+
+                theAI[i].UpdateCharacterStatus();
             }
         }
 

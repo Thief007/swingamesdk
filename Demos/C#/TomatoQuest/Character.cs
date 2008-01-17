@@ -26,6 +26,15 @@ namespace TomatoQuest
         None
     }
 
+    public enum DamageType
+    {
+        Heal,
+        Enemy,
+        Player,
+        Critical,
+        Evade,
+        None,
+    }
 
     public class Character
     {
@@ -70,6 +79,10 @@ namespace TomatoQuest
         public Boolean CanAttack;
         public Boolean CanMove;
         public Boolean CanInteract;
+
+        public DamageType DamageType;
+        public int Damage;
+        public int StatusCooldown;
 
         //Returns the Sprite
         public Sprite Sprite
@@ -150,6 +163,11 @@ namespace TomatoQuest
             CanInteract = canInteract;
             
             _Sprite.UsePixelCollision = false;
+
+            //ADD THESE 3 LINES
+            Damage = 0;
+            DamageType = DamageType.None;
+            StatusCooldown = 0;
         }
 
         public void DrawCharacter()
@@ -307,24 +325,30 @@ namespace TomatoQuest
                 Mana = MaxMana;
             }
 
-            //if the players experience is equal or greater then the next experience level, character gains a new level.
-            if (Experience >= ExperienceNextLevel)
-            {
-                //Increase level by 1
-                Level++;
+        //if the players experience is equal or greater then the next experience level, character gains a new level.
+        if (Experience >= ExperienceNextLevel)
+        {
+            //Increase level by 1
+            Level++;
 
-                //Find the remaining experience to carry over to the next level, and set characters experience to it.
-                Experience = Experience - ExperienceNextLevel;
+            //Find the remaining experience to carry over to the next level, and set characters experience to it.
+            Experience = Experience - ExperienceNextLevel;
 
-                //Increase the amount of experience needed to get the next level
-                ExperienceNextLevel = (int)(ExperienceNextLevel * 1.5);
+            //Increase the amount of experience needed to get the next level
+            ExperienceNextLevel = (int)(ExperienceNextLevel * 1.5);
 
-                //Give the Character some stat Points
-                StatPoints = StatPoints + 5;
+            //Give the Character some stat Points
+            StatPoints = StatPoints + 5;
 
-                //Give the Character a skill point
-                SkillPoints++;
-            }
+            //Give the Character a skill point
+            SkillPoints++;
+
+            //Give the Character his health back
+            Health = MaxHealth;
+
+            //Give the Character his mana back
+            Mana = MaxMana;
+        }
 
             //Attack = Base(5) + Stength
             Attack = 5 + Strength;
@@ -451,6 +475,98 @@ namespace TomatoQuest
                 }
             }
         }
+
+        public void HealCharacter(int healthamount)
+        {
+            //Heal Character
+            Health = Health + healthamount;
+
+            //Make sure his health isn't over the maximum
+            if (Health > MaxHealth)
+            {
+                //Set the health to the characters maximum health
+                Health = MaxHealth;
+            }
+
+            //Set the damage change
+            Damage = healthamount;
+
+            //Set the damage type
+            DamageType = DamageType.Heal;
+
+            //Set the status change cooldown
+            StatusCooldown = 60;
+
+            //Play the Healing Sound effect
+            Audio.PlaySoundEffect(Resources.GameSound("Heal"));
+        }
+
+        public void UpdateCharacterStatus()
+        {
+            //if the characters status change cooldown is above 0
+            if (StatusCooldown > 0)
+            {
+                //Check which type of damage is being dealty
+                switch (DamageType)
+                {
+                    //Healing
+                    case DamageType.Heal:
+                        Text.DrawText(Convert.ToString(Damage),
+                            Color.LightGreen, Resources.GameFont("Arial"),
+                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                        break;
+
+                    //Enemy Damage
+                    case DamageType.Enemy:
+                        Text.DrawText(Convert.ToString(Damage),
+                            Color.Red, Resources.GameFont("Arial"),
+                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                        break;
+
+                    //Player Damage
+                    case DamageType.Player:
+                        Text.DrawText(Convert.ToString(Damage),
+                            Color.White, Resources.GameFont("Arial"),
+                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                        break;
+
+                    //Evade an attack
+                    case DamageType.Evade:
+                        Text.DrawText("Evaded",
+                            Color.White, Resources.GameFont("Arial"),
+                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                        break;
+
+                    //Critical Hit
+                    case DamageType.Critical:
+                        Text.DrawText("Critical Hit!",
+                            Color.Orange, Resources.GameFont("Arial"),
+                            (int)_Sprite.xPos, (int)_Sprite.yPos - 110 + StatusCooldown);
+                        Text.DrawText(Convert.ToString(Damage),
+                            Color.Orange, Resources.GameFont("Arial"),
+                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                        break;
+                }
+
+                //Reduce status cooldown by 1
+                StatusCooldown = StatusCooldown - 1;
+            }
+        }
+
+        public void DamageCharacter(int healthamount, DamageType type)
+        {
+            //Damage Character
+            Health = Health - healthamount;
+
+            //Set the damage change
+            Damage = healthamount;
+
+            //Set the damage type
+            DamageType = type;
+
+            //Set the status change cooldown
+            StatusCooldown = 60;
+        } 
     }
 }
 
