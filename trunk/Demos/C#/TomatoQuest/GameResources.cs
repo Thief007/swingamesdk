@@ -300,6 +300,7 @@ namespace GameResources
             NewImage("Slash Down", "Slash_down.png");
             NewImage("Slash Left", "Slash_left.png");
             NewImage("Slash Right", "Slash_right.png");
+            NewImage("Healer", "Healer.png");
         }
 
         private static void LoadSounds()

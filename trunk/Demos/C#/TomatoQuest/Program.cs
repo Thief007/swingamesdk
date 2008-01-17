@@ -10,7 +10,7 @@ using Font = SwinGame.Font;
 using FontStyle = SwinGame.FontStyle;
 using Sprite = SwinGame.Sprite;
 
-namespace RPGDemo
+namespace TomatoQuest
 {
     static class Program
     {
