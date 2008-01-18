@@ -1,25 +1,27 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_MappyLoader.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The MappyLoader unit is responsible for loading and
+// processing a Mappy data file exported using the Lua
+// script specifically written for SwinGame.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-17: Aki + Andrew: Refactor
+//  
+// Version 1.0:
+// - Various
+
 unit SGSDK_MappyLoader;
 
 interface
-	uses	SGSDK_Graphics, SGSDK_Camera, SGSDK_Physics,
-			SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
-			SDL_Mixer, SDL_TTF, SDLEventProcessing;
+	uses	SGSDK_Core, SGSDK_Physics;
 			
 	type
-		CollisionSide = (
-			Top,
-			Bottom,
-			Left,
-			Right,
-			TopLeft,
-			TopRight,
-			BottomLeft,
-			BottomRight,
-			LeftRight,
-			TopBottom,
-			None
-		);
-		
 		Event = (
 			Event1 = 0, Event2 = 1, Event3 = 2, Event4 = 3, Event5 = 4, Event6 = 5, Event7 = 6, Event8 = 7, Event9 = 8,
 			Event10 = 9, Event11 = 10, Event12 = 11, Event13 = 12, Event14 = 13, Event15 = 14, Event16 = 15, 
@@ -56,34 +58,38 @@ interface
             Collidable: Array of Array of Boolean;
         end;
         
-        EventData = record
-            Event: Array of Array of Event;
-        end;
-        
-        Map = record
+		EventDetails = record
+			x: Integer;
+			y: Integer;
+		end;
+
+        MapRecord = record
         	MapInfo : MapData;
         	AnimationInfo : Array of AnimationData;
         	Layerinfo : Array of LayerData;
         	CollisionInfo : CollisionData;
-        	EventInfo : EventData;
+        	EventInfo : Array [Event] of Array of EventDetails;
         	Tiles : Sprite;     	
         	Animate : Boolean;
         	Frame : Integer;
         end;
+		Map = ^MapRecord;
         
 		function LoadMap(mapName : String): Map;
 		function LoadMapFiles(mapFile, imgFile: String): Map;
-		procedure DrawMap(var m : Map);
-		function CollisionWithMap(m: Map; var spr: Sprite; vec: Vector): CollisionSide; overload;
-		function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
+		procedure DrawMap(m : Map);
+		function CollisionWithMap(m: Map; spr: Sprite; vec: Vector): CollisionSide; overload;
+		function CollisionWithMap(m: Map; spr: Sprite): CollisionSide; overload;
 		
-		function EventCount(m : Map; event : Event): Integer;
-		function EventPositionX(m : Map; event : Event; eventnumber : Integer): Integer;
-		function EventPositionY(m : Map; event : Event; eventnumber : Integer): Integer;
+		function EventCount(m : Map; eventType : Event): Integer;
+		function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
+		function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
 		
-		procedure FreeMap(m: Map);
+		procedure FreeMap(var m: Map);
 		
 implementation
+	uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera;
+
 	function ReadInt(var stream : text): UInt16;
 	var
 		c : char;
@@ -100,7 +106,7 @@ implementation
 		result := i + i2;	
 	end;
 	
-	procedure LoadMapInformation(var m : Map; var stream : text);
+	procedure LoadMapInformation(m : Map; var stream : text);
 	begin
 		m.MapInfo.MapWidth := ReadInt(stream);
         m.MapInfo.MapHeight := ReadInt(stream);
@@ -130,7 +136,7 @@ implementation
    		}
 	end;
 	
-	procedure LoadAnimationInformation(var m : Map; var stream : text);
+	procedure LoadAnimationInformation(m : Map; var stream : text);
 	var
 		i, j : Integer;
 	begin
@@ -179,7 +185,7 @@ implementation
 		end;
 	end;
 	
-	procedure LoadLayerData(var m : Map; var stream : text);
+	procedure LoadLayerData(m : Map; var stream : text);
 	var
 		l, y, x : Integer;
 	begin
@@ -236,7 +242,7 @@ implementation
 		
 	end;
 	
-	procedure LoadCollisionData(var m : Map; var stream : text);
+	procedure LoadCollisionData(m : Map; var stream : text);
 	var
 		y, x: Integer;
 	begin
@@ -279,29 +285,40 @@ implementation
 		end;
 	end;
 	
-	procedure LoadEventData(var m : Map; var stream : text);
+	procedure LoadEventData(m : Map; var stream : text);
 	var
-		y, x, smallest, temp: Integer;
+		py, px, smallestEventIdx, temp: Integer;
+		evt: Event;
 	begin
-		SetLength(m.EventInfo.Event, m.MapInfo.MapHeight);
+		//SetLength(m.EventInfo, High(Events));
 		
-		for y := 0 to m.MapInfo.MapHeight - 1 do
+		//SetLength(m.EventInfo.Event, m.MapInfo.MapHeight);
+		
+		{for y := 0 to m.MapInfo.MapHeight - 1 do
 		begin
 			SetLength(m.EventInfo.Event[y], m.MapInfo.MapWidth);
-		end;
+		end;}
 		
-		smallest := m.MapInfo.NumberOfBlocks - 23;
+		//The smallest "non-graphics" tile, i.e. the events
+		smallestEventIdx := m.MapInfo.NumberOfBlocks - 23;
 		
-		for y := 0 to m.MapInfo.MapHeight - 1 do
+		for py := 0 to m.MapInfo.MapHeight - 1 do
 		begin
-			for x := 0 to m.MapInfo.MapWidth - 1 do
+			for px := 0 to m.MapInfo.MapWidth - 1 do
 			begin
 				temp := ReadInt(stream);
+				evt := Event(temp - smallestEventIdx);
 				
-				if (temp - smallest) >= 0 then
-					m.EventInfo.Event[y][x] := Event(temp - smallest)
-				else
-					m.EventInfo.Event[y][x] := Event(25);
+				if (evt >= Event1) and (evt <= Event24) then 
+				begin
+					SetLength(m.EventInfo[evt], Length(m.EventInfo[evt]) + 1);
+					
+					with m.EventInfo[evt][High(m.EventInfo[evt])] do
+					begin
+						x := px;
+						y := py;
+					end;
+				end
 			end;
 		end;
 		
@@ -321,7 +338,7 @@ implementation
 		}
 	end;
 	
-	procedure LoadBlockSprites(var m : Map; fileName : String);
+	procedure LoadBlockSprites(m : Map; fileName : String);
 	var
 		fpc : Array of Integer;
 	begin
@@ -330,12 +347,13 @@ implementation
 		m.Tiles.currentFrame := 0;
 	end;
 	
-	procedure DrawMap(var m : Map);
+	procedure DrawMap(m : Map);
 	var
 		l, y ,x : Integer;
 		XStart, YStart, XEnd, YEnd : Integer;
 		f : Integer;
 	begin
+		if m = nil then raise Exception.Create('No Map supplied (nil)');
 		
 		//WriteLn('GX, GY: ', GameX(0), ',' ,GameY(0));
 		//WriteLn('bw, bh: ', m.MapInfo.BlockWidth, ', ', m.MapInfo.BlockHeight);
@@ -363,38 +381,29 @@ implementation
 			
 		for y := YStart  to YEnd do
 		begin
+			m.Tiles.yPos := y * m.MapInfo.BlockHeight;
 			for x := XStart  to XEnd do
 			begin
+				m.Tiles.xPos := x * m.MapInfo.BlockWidth;
 				for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.CollisionLayer - m.MapInfo.EventLayer - 1 do
 				begin
-					
 					if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
 					begin
 						m.Tiles.currentFrame := m.LayerInfo[l].Value[y][x] - 1;
-						m.Tiles.xPos := x * m.MapInfo.BlockWidth;
-						m.Tiles.yPos := y * m.MapInfo.BlockHeight;
 						//DrawSprite(m.Tiles, CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
 						DrawSprite(m.Tiles);
 					end
 					else if (m.LayerInfo[l].Animation[y][x] = 1) then
-					begin	
-						m.Tiles.xPos := x * m.MapInfo.BlockWidth;
-  						m.Tiles.yPos := y * m.MapInfo.BlockHeight;	
+					begin
                         f := round(m.Frame/10) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
                         m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[f] - 1;		
 						DrawSprite(m.Tiles);
-						
-					end;	
+					end;
 				end;
 			end;
 		end;
 		
-		m.Frame := m.Frame + 1;
-		
-		if m.Frame = 100 then
-		begin
-			m.Frame := 0
-		end;
+		m.Frame := (m.Frame + 1) mod 1000;
 	end;
 
 	function LoadMap(mapName: String): Map;
@@ -403,7 +412,7 @@ implementation
 	begin
 		mapFile := GetPathToResource(mapName + '.sga', MapResource);
 		imgFile := GetPathToResource(mapName + '.png', MapResource);
-      
+      	
 		result := LoadMapFiles(mapFile, imgFile);
 	end;
 	
@@ -412,32 +421,40 @@ implementation
 		filestream : text;
 		m : Map;
 	begin
-		if not FileExists(mapFile) then RaiseSGSDKException('Unable to locate map: ' + mapFile);
-		if not FileExists(imgFile) then RaiseSGSDKException('Unable to locate images: ' + imgFile);
+		if not FileExists(mapFile) then raise Exception.Create('Unable to locate map: ' + mapFile);
+		if not FileExists(imgFile) then raise Exception.Create('Unable to locate images: ' + imgFile);
 					
 		//Get File
 		assign(filestream, mapFile);
 		reset(filestream);
+		
+		//Create Map
+		New(m);
 		
 		//Load Map Content
 		LoadMapInformation(m, filestream);
 		LoadAnimationInformation(m, filestream);
 		LoadLayerData(m, filestream);
 		LoadCollisionData(m, filestream);
-		LoadEventData(m, filestream);	
+		LoadEventData(m, filestream);
+			
 		//Closes File
 		close(filestream);	
+		
 		LoadBlockSprites(m, imgFile);
 		m.Frame := 0;
 		result := m;
 	end;
 	
 	//Gets the number of Event of the specified type
-	function EventCount(m : Map; event : Event): Integer;
-	var
-		y, x, count : Integer;
+	function EventCount(m : Map; eventType : Event): Integer;
 	begin
-		count := 0;
+		if m = nil then raise Exception.Create('No Map supplied (nil)');
+		if (eventType < Event1) or (eventType > Event23) then raise Exception.Create('EventType is out of range');
+		
+		result := Length(m.EventInfo[eventType]);
+		
+		{count := 0;
 		
 		for y := 0 to m.MapInfo.MapWidth - 1 do
 		begin
@@ -447,15 +464,17 @@ implementation
 					count := count + 1;
 			end;
 		end;
-		result := count;
+		result := count;}
 	end;
 	
 	// Gets the Top Left X Coordinate of the Event
-	function EventPositionX(m : Map; event : Event; eventnumber : Integer): Integer;
-	var
-		y, x, count : Integer;
+	function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
 	begin
-		count := 0;
+		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType)) then raise Exception.Create('Event number is out of range');
+
+		result := m.EventInfo[eventType][eventnumber].x * m.MapInfo.BlockWidth;
+		
+		{count := 0;
 		
 		for y := 0 to m.MapInfo.MapWidth - 1 do
 		begin
@@ -472,15 +491,17 @@ implementation
 				end;
 			end;
 		end;
-		result := 0;
+		result := 0;}
 	end;
 	
 	// Gets the Top Left Y Coordinate of the Event
-	function EventPositionY(m : Map; event : Event; eventnumber : Integer): Integer;
-	var
-		y, x, count : Integer;
+	function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
 	begin
-		count := 0;
+		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType)) then raise Exception.Create('Event number is out of range');
+			
+		result := m.EventInfo[eventType][eventnumber].y * m.MapInfo.BlockHeight;
+		
+		{count := 0;
 		
 		for y := 0 to m.MapInfo.MapWidth - 1 do
 		begin
@@ -497,46 +518,53 @@ implementation
 				end;
 			end;
 		end;
-		result := 0;
+		result := 0;}
 	end;
 	
-	function BruteForceDetection(m : Map; var spr : Sprite): Boolean;
+	function BruteForceDetection(m: Map; spr: Sprite): Boolean;
 	const
 		SEARCH_RANGE = 0;
 	var
 		XStart, XEnd, YStart, YEnd : Integer;
-		y, x: Integer;
+		y, x, yCache: Integer;
 	begin
-		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		result := false;
+		
+		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
 		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
-		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
 		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+
+		if YStart < 0 then YStart := 0;
+		if YStart >= m.MapInfo.MapHeight then exit;
+		if YEnd < 0 then exit;
+		if YEnd >= m.MapInfo.MapHeight then YEnd := m.MapInfo.MapHeight - 1;
+				
+		if XStart < 0 then XStart := 0;
+		if XStart >= m.MapInfo.MapWidth then exit;
+		if XEnd < 0 then exit;
+		if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
 
 		for y := YStart to YEnd do
 		begin
-			if (y < m.MapInfo.MapHeight - 1) and (y > -1) then
+			yCache := y * m.MapInfo.BlockHeight;
+			
+			for x := XStart to XEnd do
 			begin
-				for x := XStart to XEnd do
+				if m.CollisionInfo.Collidable[y][x] = true then
 				begin
-					if (x < m.MapInfo.MapWidth - 1) and (x > -1) then
+					if HasSpriteCollidedWithRect(spr, 
+							 x * m.MapInfo.BlockWidth, 
+							 yCache, 
+							 m.MapInfo.BlockWidth, 
+							 m.MapInfo.BlockHeight) then
 					begin
-						if m.CollisionInfo.Collidable[y][x] = true then
-						begin
-							if HasSpriteCollidedWithRect(spr, 
-														 x * m.MapInfo.BlockWidth, 
-														 y * m.MapInfo.BlockHeight, 
-														 m.MapInfo.BlockWidth, 
-														 m.MapInfo.BlockHeight) then
-							begin
-								result := true;
-								exit;
-							end;
-						end;
+						result := true;
+						exit;
 					end;
 				end;
 			end;
 		end;
-		result := false;
 	end;
 	
 	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffSet, yOffSet: Integer): Boolean;
@@ -555,58 +583,112 @@ implementation
 		spr.yPos := spr.yPos - yOffset;
 	end;
 	
-	procedure PushSpriteOut(m : Map; var spr : Sprite; vec : Vector);
+
+	
+	procedure MoveOut(sprt: Sprite; movement: Vector; x, y, width, height: Integer);
+	var
+		side: CollisionSide;
+		kickVector, unitMove: Vector;
+		dotprd: Single;
+	begin
+{		side := GetCollisionFromVector(movement);
+		
+		case side of
+			Top, Left, TopLeft:	kickVector := CreateVector(sprt.xPos - x, sprt.yPos - y);
+			Bottom, BottomLeft:	kickVector := CreateVector(sprt.xPos - x, sprt.yPos - (y + height));
+			TopRight:			kickVector := CreateVector(sprt.xPos - (x + width), sprt.yPos - y);
+			Right, BottomRight:	kickVector := CreateVector(sprt.xPos - (x + width), sprt.yPos - (y + height));
+		end;
+		
+		kickVector := InvertVector(kickVector);
+		unitMove := GetUnitVector(movement);
+		
+		dotprd := DotProduct(kickVector, unitMove);
+
+		if side = BottomRight then
+		begin
+			WriteLn('Movement: ', movement.x:4:2, ',', movement.y:4:2);
+			WriteLn('Sprt X,Y: ', sprt.xPos:4:2, ',', sprt.yPos:4:2);
+			WriteLn('Sprt W,H: ', sprt.width, ',', sprt.height);
+			WriteLn('Block X,Y: ', x, ',', y);
+			WriteLn('Block W,H: ', width, ',', height);
+			WriteLn('Side: ', Integer(side));
+			WriteLn('To Top of Sprt: ', kickVector.x:4:2, ',', kickVector.y:4:2);
+			WriteLn('Dot Product: ', dotprd:4:2);
+		end;
+
+		kickVector := InvertVector(MultiplyVector(unitMove, dotprd));
+
+		if side = BottomRight then WriteLn('Kick: ', kickVector.x:4:2, ',', kickVector.y:4:2);
+		
+		MoveSprite(sprt, kickVector);
+}	end;
+	
+	procedure PushSpriteOut(m : Map; spr : Sprite; vec : Vector);
 	const
 		SEARCH_RANGE = 0;
 	var
 		XStart, XEnd, YStart, YEnd : Integer;
-		y, x: Integer;
-		tempVector: Vector;
+		y, x, yCache, xCache: Integer;
 	begin
-		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
 		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
-		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
 		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+
+		if YStart < 0 then YStart := 0;
+		if YStart >= m.MapInfo.MapHeight then exit;
+		if YEnd < 0 then exit;
+		if YEnd >= m.MapInfo.MapHeight then YEnd := m.MapInfo.MapHeight - 1;
+				
+		if XStart < 0 then XStart := 0;
+		if XStart >= m.MapInfo.MapWidth then exit;
+		if XEnd < 0 then exit;
+		if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
 
 		for y := YStart to YEnd do
 		begin
-			if (y < m.MapInfo.MapHeight - 1) and (y > 0) then
+			yCache := y * m.MapInfo.BlockHeight;
+			
+			for x := XStart to XEnd do
 			begin
-				for x := XStart to XEnd do
+				if m.CollisionInfo.Collidable[y][x] = true then
 				begin
-					if (x < m.MapInfo.MapWidth - 1) and (x > 0) then
+					xCache := x * m.MapInfo.BlockWidth;
+					
+					if HasSpriteCollidedWithRect(spr, 
+							 xCache, 
+							 yCache, 
+							 m.MapInfo.BlockWidth, 
+							 m.MapInfo.BlockHeight) then
 					begin
-						if m.CollisionInfo.Collidable[y][x] = true then
+						MoveOut(spr, vec, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+						
+{						if spr.usePixelCollision then
 						begin
-							if HasSpriteCollidedWithRect(spr, 
-														 x * m.MapInfo.BlockWidth, 
-														 y * m.MapInfo.BlockHeight, 
-														 m.MapInfo.BlockWidth, 
-														 m.MapInfo.BlockHeight) then
-							begin
-								MoveSprite(spr, InvertVector(vec));
-								tempVector := vec;
-								repeat
-									MoveSprite(spr, tempVector);
-									if HasSpriteCollidedWithRect(spr, 
-																 x * m.MapInfo.BlockWidth, 
-																 y * m.MapInfo.BlockHeight, 
-																 m.MapInfo.BlockWidth, 
-																 m.MapInfo.BlockHeight) then
-									begin
-										MoveSprite(spr, InvertVector(tempVector));
-										tempVector := MultiplyVector(tempVector, 0.5);
-									end;
-								until Magnitude(tempVector) < 0.1;
-							end;
-						end;
+							MoveSprite(spr, InvertVector(vec));
+							
+							tempVector := vec;
+							repeat
+								MoveSprite(spr, tempVector);
+								if HasSpriteCollidedWithRect(spr, 
+									 xCache, 
+									 yCache, 
+									 m.MapInfo.BlockWidth, 
+									 m.MapInfo.BlockHeight) then
+								begin
+									MoveSprite(spr, InvertVector(tempVector));
+									tempVector := MultiplyVector(tempVector, 0.5);
+								end;
+							until Magnitude(tempVector) < 0.1;
+						end;}
 					end;
 				end;
 			end;
 		end;
 	end;
 	
-	function CollisionWithMap(m: Map; var spr: Sprite; vec: vector): CollisionSide; overload;
+	function CollisionWithMap(m: Map; spr: Sprite; vec: vector): CollisionSide; overload;
 	type
 		Collisions = record
 			Top, Bottom, Left, Right: Boolean;
@@ -615,6 +697,9 @@ implementation
 		xOffset, yOffset: Integer;
 		col: Collisions;
 	begin
+		if m = nil then raise Exception.Create('No Map supplied (nil)');
+		if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
+		
 		xOffset := m.MapInfo.BlockWidth div 2;
 		yOffset := m.MapInfo.BlockHeight div 2;
 
@@ -710,13 +795,16 @@ implementation
 		end;
 	end;
 	
-	function CollisionWithMap(m: Map; var spr: Sprite): CollisionSide; overload;
+	function CollisionWithMap(m: Map; spr: Sprite): CollisionSide; overload;
 	begin
 		result := CollisionWithMap(m, spr, spr.movement);
 	end;
 	
-	procedure FreeMap(m: Map);
+	procedure FreeMap(var m: Map);
 	begin
 		FreeBitmap(m.Tiles.bitmaps[0]);
+		FreeSprite(m.Tiles);
+		Dispose(m);
+		m := nil;
 	end;
 end.

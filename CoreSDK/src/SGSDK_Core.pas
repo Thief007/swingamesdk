@@ -1,11 +1,27 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Core.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Core unit contains the main SwinGame routines and
+// data types. These will be required by any game using
+// the API.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-17: Aki + Andrew: Refactor
+//  
+// Version 1.0:
+// - Various
+
 unit SGSDK_Core;
 
 {$IFDEF UNIX}
 	{$linklib gcc}
 	{$linklib SDLmain}
 {$ENDIF}
-
-{$PACKENUM 4}
 
 interface
 	uses
@@ -30,7 +46,7 @@ interface
 		PI = 3.14159265359;
 	
 	type
-		UInt8	= sdl.UInt8;
+		UInt8  = sdl.UInt8;
 		UInt16 = sdl.UInt16;
 		UInt32 = sdl.UInt32;
 		UInt64 = sdl.UInt64;
@@ -100,10 +116,10 @@ interface
 	    /// given resource. Using these functions ensures that your resource
 	    /// paths are correct across platforms
 	    ResourceKind = (
-				FontResource,
-				ImageResource,
-				SoundResource,
-				MapResource
+			FontResource,
+			ImageResource,
+			SoundResource,
+			MapResource
 		);
 		
 		/// Record: SpriteKind
@@ -189,8 +205,7 @@ interface
 		scr: Bitmap;
 		applicationPath: String;   //global variable for optimisation...
 		sdlManager: TSDLManager;
-		
-			
+					
 		/// The base surface is used to get pixel format information for the
 		///	surfaces created. This is used to create colors etc.
 		baseSurface: PSDL_Surface;
@@ -201,15 +216,11 @@ interface
 		
 		iconFile: String;
 		
-	procedure RaiseSGSDKException(msg: String);
-{	function HasExceptionRaised(): Boolean;
-	function GetSGSDKException(): String;}
-	
 	procedure ProcessEvents();
 	function WindowCloseRequested(): Boolean;
 
 	//*****
-			//
+	//
 	// Graphical window routines.
 	//
 	//*****
@@ -218,8 +229,7 @@ interface
 	//
 
 	procedure SetIcon(iconFilename: String);
-	procedure OpenGraphicsWindow(caption : String;
-								 width : Integer; height : Integer); overload;
+	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); overload;
 	procedure OpenGraphicsWindow(caption : String); overload;
 
 	procedure ChangeScreenSize(width, height: Integer);
@@ -251,19 +261,13 @@ interface
 	function GetRGBFloatColor(r,g,b: Single): Color;
 	function GetHSBColor(hue, saturation, brightness: Single): Color;
 
-
 	function GetFramerate(): Integer;
-
 	function GetTicks(): UInt32;
-
 	procedure Sleep(time : UInt32);
 
 	function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
-
 	function GetPathToResource(filename: String): String; overload;
-
 	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
-
 	function GetPathToResourceWithBase(path, filename: String) : String; overload;
 
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
@@ -274,29 +278,6 @@ interface
 		
 implementation
 	uses SysUtils, Math, Classes;
-	
-{	var
-		HasErrorOccured: Boolean = false;
-		ExceptionMessage: String;}
-		
-	procedure RaiseSGSDKException(msg: String);
-	begin
-		//ExceptionMessage := msg;
-		//HasErrorOccured := true;
-		
-		raise Exception.Create(msg);
-	end;
-	
-{	function HasExceptionRaised(): Boolean;
-	begin
-		result := HasErrorOccured;
-	end;}
-	
-{	function GetSGSDKException(): String;
-	begin
-		result := ExceptionMessage;
-	end;
-}
 	
 	/// ProcessEvents allows the SwinGame API to react to user interactions. This
 	///	routine checks the current keyboard and mouse states. This routine must
@@ -331,11 +312,7 @@ implementation
 	var
 		icon: PSDL_Surface;
 	begin
-	
-		if (screenWidth < 1) or (screenHeight < 1) then
-		begin
-			RaiseSGSDKException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
-		end;
+		if (screenWidth < 1) or (screenHeight < 1) then raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
 	
 		if Length(iconFile) > 0 then
 		begin
@@ -344,15 +321,13 @@ implementation
 				SDL_WM_SetIcon(icon, 0);
 				SDL_FreeSurface(icon);
 			except
-				RaiseSGSDKException('The icon file specified could not be loaded');
+				raise Exception.Create('The icon file specified could not be loaded');
 			end;
 		end;
 
 		New(scr);
-		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32,
-															 SDL_HWSURFACE or SDL_DOUBLEBUF);
-
-    if scr = nil then RaiseSGSDKException('Unable to create window drawing surface... ' + SDL_GetError());
+		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
+    	if scr = nil then raise Exception.Create('Unable to create window drawing surface... ' + SDL_GetError());
 
 		with scr.surface.format^ do
 		begin
@@ -376,17 +351,12 @@ implementation
 	
 	function ToSDLColor(color: UInt32): TSDL_Color;
 	begin
-    if (baseSurface = nil) or (baseSurface^.format = nil) then
-    begin
-      RaiseSGSDKException('Unable to get color as screen is not created.');
-    end;
-
-		try
-			SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
-		except
-			RaiseSGSDKException('Failed to convert the spceified colour to SDL colour format');
-      result.r := 0; result.g := 0; result.b := 0;
+		if (baseSurface = nil) or (baseSurface^.format = nil) then
+		begin
+			raise Exception.Create('Unable to get color as screen is not created.');
 		end;
+
+		SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
 	end;
 	
 	//Used to initialise the Frame Per Second structure.
@@ -401,7 +371,7 @@ implementation
 	end;
 	
 	function GetRunningAverage(var runningArray : Array of UInt32;
-														 newNumber : UInt32; var index : Integer): Single;
+		  					   newNumber : UInt32; var index : Integer): Single;
 	var
 		loopCount : Integer;
 		sum : Double;
@@ -444,8 +414,8 @@ implementation
 		begin
 			//Get the running average
 			fpsInfo.average := GetRunningAverage(fpsInfo.valuesArray,
-																					 nowTime - lastUpdateTime,
-																					 fpsInfo.arrayIndex);;
+												 nowTime - lastUpdateTime,
+												 fpsInfo.arrayIndex);;
 			fpsInfo.High := fpsInfo.average;
 			fpsInfo.Low := fpsInfo.average;
 			fpsInfo.loopCount := fpsInfo.loopCount + 1;
@@ -487,11 +457,9 @@ implementation
 		try
 			scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, oldScr.flags xor SDL_FULLSCREEN);
 			
-			//WriteLn(HexStr(scr.surface), ' ', HexStr(oldScr));
-			WriteLn('Bug with freeing surface on toggle Fullscreen... needs to be examined');
-			//SDL_FreeSurface(oldScr);
+			if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
 		except on exc: Exception do
-			RaiseSGSDKException('Error occured while toggling fullscreen - ' + exc.message);
+			WriteLn('Bug with freeing surface on toggle Fullscreen... needs to be examined');
 		end;
 	end;
 	
@@ -505,20 +473,15 @@ implementation
 	var
 		oldScr: PSDL_Surface;
 	begin
-		try
-			if (width < 1) or (height < 1) then begin
-				RaiseSGSDKException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
-			end;
-			oldScr := scr.surface;
-			try
-				scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
-				SDL_FreeSurface(oldScr);
-			except
-				RaiseSGSDKException('Error occured while changing the screen size');
-			end;
-		except
-			RaiseSGSDKException('Error occured while changing the screen size');
-		end;
+    	if (scr = nil) or (scr.surface = nil) then
+      		raise Exception.Create('Screen has not been created. Unable to get screen width.');
+		if (width < 1) or (height < 1) then 
+			raise Exception.Create('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+		
+		oldScr := scr.surface;
+
+		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+		if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
 	end;
 	
 	/// Returns the width of the screen currently displayed.
@@ -526,8 +489,8 @@ implementation
 	/// @returns:	The screen's width
 	function ScreenWidth(): Integer;
 	begin
-    if (scr = nil) or (scr.surface = nil) then
-      RaiseSGSDKException('Screen has not been created. Unable to get screen width.');
+    	if (scr = nil) or (scr.surface = nil) then
+      		raise Exception.Create('Screen has not been created. Unable to get screen width.');
 
 		result := scr.surface.w;
 	end;
@@ -537,8 +500,8 @@ implementation
 	/// @returns:	The screen's height
 	function ScreenHeight(): Integer;
 	begin
-    if (scr = nil) or (scr.surface = nil) then
-      RaiseSGSDKException('Screen has not been created. Unable to get screen width.');
+    	if (scr = nil) or (scr.surface = nil) then
+      		raise Exception.Create('Screen has not been created. Unable to get screen width.');
 
 		result := scr.surface.h;
 	end;
@@ -555,36 +518,41 @@ implementation
 	///
 	/// Side Effects:
 	///	- A graphical window is opened
-	procedure OpenGraphicsWindow(caption : String; 
-	                              width : Integer; height : Integer); overload;
-	begin
-		InitSDL(caption, width, height);
-		InitFPSCalcInfo(renderFPSInfo);
+	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); overload;
+	begin		
+		if scr <> nil then
+      		raise Exception.Create('Screen has been created. Cannot create multiple windows.');
+    	
+		try
+			InitSDL(caption, width, height);
+			InitFPSCalcInfo(renderFPSInfo);
 	
-		//Init the colors
-		ColorWhite := GetColour(255, 255, 255, 255);
-		ColorGreen := GetColour(0, 255, 0, 255);
-		ColorBlue := GetColour(0, 0, 255, 255);
-		ColorBlack := GetColour(0, 0, 0, 255);
-		ColorRed := GetColour(255, 0, 0, 255);
-		ColorYellow := GetColour(255, 255, 0, 255);
-		ColorPink := GetColour(255, 20, 147, 255);
-		ColorTurquoise := GetColour(0, 206, 209, 255);
-		ColorGrey := GetColour(128, 128, 128, 255);
-		ColorMagenta := GetColour(255, 0, 255, 255);
-		ColorTransparent := GetColour(0, 0, 0, 0);
+			//Init the colors
+			ColorWhite := GetColour(255, 255, 255, 255);
+			ColorGreen := GetColour(0, 255, 0, 255);
+			ColorBlue := GetColour(0, 0, 255, 255);
+			ColorBlack := GetColour(0, 0, 0, 255);
+			ColorRed := GetColour(255, 0, 0, 255);
+			ColorYellow := GetColour(255, 255, 0, 255);
+			ColorPink := GetColour(255, 20, 147, 255);
+			ColorTurquoise := GetColour(0, 206, 209, 255);
+			ColorGrey := GetColour(128, 128, 128, 255);
+			ColorMagenta := GetColour(255, 0, 255, 255);
+			ColorTransparent := GetColour(0, 0, 0, 0);
 	
-		ColourWhite := ColorWhite;
-		ColourGreen := ColorGreen;
-		ColourBlue := ColorBlue;
-		ColourBlack := ColorBlack;
-		ColourRed := ColorRed;
-		ColourYellow := ColorYellow;
-		ColourPink := ColorPink;
-		ColourTurquoise := ColorTurquoise;
-		ColourGrey := ColorGrey;
-		ColourMagenta := ColorMagenta;
-		ColourTransparent := ColorTransparent;
+			ColourWhite := ColorWhite;
+			ColourGreen := ColorGreen;
+			ColourBlue := ColorBlue;
+			ColourBlack := ColorBlack;
+			ColourRed := ColorRed;
+			ColourYellow := ColorYellow;
+			ColourPink := ColorPink;
+			ColourTurquoise := ColorTurquoise;
+			ColourGrey := ColorGrey;
+			ColourMagenta := ColorMagenta;
+			ColourTransparent := ColorTransparent;
+		except on e: Exception do raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
+		end;
 	end;
 	
 	/// Opens the graphical window as an 800 x 600 window. See OpenGramhicsWinddow
@@ -593,7 +561,6 @@ implementation
 	///
 	/// Side Effects:
 	///	- A graphical window is opened
-	
 	procedure OpenGraphicsWindow(caption : String); overload;
 	begin
 		OpenGraphicsWindow(caption, 800,600);
@@ -627,21 +594,10 @@ implementation
 		
 		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
 		lastDrawUpdateTime := nowTime;
+		
+		sdlManager.DrawCollectedText(scr.surface);
 
-
-
-		try
-			sdlManager.DrawCollectedText(scr.surface);
-		except
-			RaiseSGSDKException('Error occured while trying to draw collected text');
-		end;
-
-		try
-			SDL_Flip(scr.surface);
-		except
-			RaiseSGSDKException('Error occured while trying to refresh the screen');
-		end;
-		//SDL_UpdateRect(scr,0,0,0,0);
+		SDL_Flip(scr.surface);
 	end;
 	
 	/// Saves the current screen a bitmap file. The file will be saved into the
@@ -656,17 +612,19 @@ implementation
 		filename: String;
 		i : Integer;
 	begin
-		filename := '' + basename + '.bmp';
+		filename := basename + '.bmp';
 		i := 1;
+
 		while FileExists(filename) do
 		begin
-			filename := '"./' + basename + IntToStr(i) + '.bmp"';
+			filename := basename + IntToStr(i) + '.bmp';
 			i := i + 1;
 		end;
+
 		try
 			SDL_SaveBMP(scr.surface, PChar(filename));
 		except
-			RaiseSGSDKException('Failed to save ' + basename + '.bmp');
+			raise Exception.Create('Failed to save ' + basename + '.bmp');
 		end;
 	end;
 	
@@ -680,12 +638,12 @@ implementation
 	var
 		temp: TSDL_Color;
 	begin
-    if (forBitmap = nil)
-      or (forBitmap.surface = nil)
-      or (forBitmap.surface.format = nil) then
-    begin
-      RaiseSGSDKException('Unable to get color as bitmap not specified');
-    end;
+		if (forBitmap = nil)
+			or (forBitmap.surface = nil)
+			or (forBitmap.surface.format = nil) then
+		begin
+			raise Exception.Create('Unable to get color as bitmap not specified');
+		end;
 
 		temp := ToSDLColor(apiColor);
 		result := SDL_MapRGB(forBitmap.surface.format, temp.r, temp.g, temp.b);
@@ -697,14 +655,13 @@ implementation
 	///	@returns: The matching colour
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;
 	begin
-    if (baseSurface = nil) or (baseSurface.format = nil) then
-      RaiseSGSDKException('Unable to CreateBitmap as the window is not open');
+		if (baseSurface = nil) or (baseSurface.format = nil) then
+			raise Exception.Create('Unable to CreateBitmap as the window is not open');
 
 		try
 			result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
 		except
-      result := ColorWhite;
-			RaiseSGSDKException('Error occured while trying to get a color from RGBA components');
+			raise Exception.Create('Error occured while trying to get a color from RGBA components');
 		end;
 	end;
 	
@@ -774,7 +731,7 @@ implementation
       	begin
       		// cyan domain; green descends
         	domainOffset := hue - 3.0 / 6;
-	       blue  := brightness;
+			blue  := brightness;
     	    red   := brightness * (1.0 - saturation);
         	green := blue - (brightness - red) * domainOffset * 6;
 	    end
@@ -788,11 +745,11 @@ implementation
       	end
       else
       begin
-      	 // magenta domain; blue descends
-        domainOffset := hue - 5.0 / 6;
-        red   := brightness;
-        green := brightness * (1.0 - saturation);
-        blue  := red - (brightness - green) * domainOffset * 6;
+		// magenta domain; blue descends
+		domainOffset := hue - 5.0 / 6;
+		red   := brightness;
+		green := brightness * (1.0 - saturation);
+		blue  := red - (brightness - green) * domainOffset * 6;
       end;
       
       result := GetRGBFloatColor(red, green, blue);
@@ -806,14 +763,9 @@ implementation
 	///
 	/// Side Effects
 	///	- Delay before returning
-	procedure Sleep(
-		time : UInt32);
+	procedure Sleep(time : UInt32);
 	begin
-		try
-			SDL_Delay(time);
-		except
-			RaiseSGSDKException('Error occured while trying to sleep');
-		end;
+		SDL_Delay(time);
 	end;
 	
 	/// Checks to see if the window has been asked to close. You need to handle
@@ -823,12 +775,7 @@ implementation
 	/// @returns : True if the window has been requested to close.
 	function WindowCloseRequested(): Boolean;
 	begin
-		try
-			result := sdlManager.HasQuit();
-		except
-      		result := true;
-			RaiseSGSDKException('Error occured while trying to find out if the window has been requested to clode');
-		end;
+		result := sdlManager.HasQuit();
 	end;
 	
 	/// Gets the number of milliseconds that have passed. This can be used to
@@ -837,12 +784,7 @@ implementation
 	///	@returns		 The number of milliseconds passed
 	function GetTicks(): UInt32;
 	begin
-		try
-			result := SDL_GetTicks();
-		except
-      result := 0;
-			RaiseSGSDKException('Error occured while trying to get ticks');
-		end;
+		result := SDL_GetTicks();
 	end;
 	
 	/// Returns the average framerate for the last 10 frames as an integer.
@@ -851,18 +793,14 @@ implementation
 	function GetFramerate(): Integer;
 	begin
 		if renderFPSInfo.average = 0 then
-			result := 9999
+			result := 60
 		else
 			result := Round(1000 / renderFPSInfo.average);
 	end;
 	
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 	begin
-		try
-			sdlManager.RegisterEventProcessor(handle, handle2);
-		except
-			RaiseSGSDKException('Could not register the event processor');
-		end;
+		sdlManager.RegisterEventProcessor(handle, handle2);
 	end;
 
 	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
@@ -909,43 +847,30 @@ implementation
 		
 initialization
 begin
-	//WriteLn('InitSDL');
+	//WriteLn('Start Init');
+	
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
-		RaiseSGSDKException('Error loading sdl... ' + SDL_GetError());
+		raise Exception.Create('Error loading sdl... ' + SDL_GetError());
 	end;
-	//WriteLn('After InitSDL');
 		
 	SDL_EnableUNICODE(SDL_ENABLE);
 
 	sdlManager := TSDLManager.Create();
-	//WriteLn('After sdlManager');
 
 	try
 		applicationPath := ExtractFileDir(ParamStr(0));
 	except
-		//WriteLn('Failed to get executable path');
+		applicationPath := '';
 	end;
 
 	scr := nil;
-
-	//WriteLn('End initialization');
-  
-	//Load sound
-	{WriteLn('Opening Mixer');
-	if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
-	begin
-		WriteLn('Errorm loading mixer...');
-		WriteLn(string(Mix_GetError));
-		//raise Exception.Create('Error openning audio device. ' + string(Mix_GetError));
-	end;
 	
-	WriteLn('Mixer Open');}
+	//WriteLn('End Init');
 end;
 
 finalization
 begin
-	//WriteLn('Closing Down');
 	if sdlManager <> nil then
 	begin
 		sdlManager.Free();
@@ -964,12 +889,7 @@ begin
 		scr := nil;
 	end;
 	
-	//WriteLn('Closing TTF');
-	//TTF_Quit();
-	//WriteLn('Closed TTF');
-	
-	//WriteLn('Quitting SDL');
 	SDL_Quit();
-	//WriteLn('Quit');
 end;
+
 end.

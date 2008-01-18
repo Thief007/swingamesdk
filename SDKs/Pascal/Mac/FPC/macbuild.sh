@@ -23,7 +23,7 @@ Usage()
 	echo
 	echo Options:
 	echo   -e = Set the name of the executable, defaults to productName
-	echo   -i = Set the name of the icon file (eg: Test for Test.icns)
+	echo   -i = Set the name of the icon file eg: Test for Test.icns
 	echo   -d = Debug
 	echo   -h = Show usage
 	exit 1

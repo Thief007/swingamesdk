@@ -2,7 +2,7 @@
 
 interface
 	uses
-		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
+		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera;
 
 	type
 	    /// type: Matrix2d
@@ -135,18 +135,13 @@ interface
 	
 	function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 
-	//function VectorOutOfRectFromPoint(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
-	function VectorOutOfRectFromPoint(const pnt: Point2D; rect: Rectangle; const movement: Vector): Vector;	
+	function VectorOutOfRectFromPoint(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
+	function VectorOutOfRectFromRect(x, y: Single; width, height: Integer; rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
+	function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 
-	function VectorOutOfRectFromRect(srcRect, targetRect: Rectangle; const movement: Vector) : Vector;	
-	//function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
-
-	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : boolean;
-	//function LineInsersectsWithRect(x1, y1, x2, y2, rectX, rectY: Single; width, height: Integer): boolean;
-	function LineInsersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
-	function LineInsersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
-	
-	function GetSideForCollisionTest (movement: Vector): CollisionSide;
+	function GetLineIntersectionPoint(x11, y11, x12, y12, x21, y21, x22, y22: Single; out x, y: Single) : boolean;
+	function LineInsersectsWithRect(x1, y1, x2, y2, rectX, rectY: Single; width, height: Integer): boolean;
+		
 implementation
 	uses
 		SysUtils, Math, Classes;
@@ -920,8 +915,7 @@ implementation
 
 	//rectCollisionSide: Which side will the circle hit the rectangle?
 
-//	function VectorOut(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector; rectCollisionSide: CollisionSide) : Vector;	
-	function VectorOut(const pnt: Point2D; const rect: Rectangle; const movement: Vector; rectCollisionSide: CollisionSide) : Vector;	
+	function VectorOut(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector; rectCollisionSide: CollisionSide) : Vector;	
 		function GetVectorDiagonal(edgeX, edgeY: Single): Vector;
 		var
 			toEdge: Vector;
@@ -932,12 +926,12 @@ implementation
 			mvOut := GetUnitVector(InvertVector(movement));
 			
 			//Do X
-			toEdge := CreateVector(edgeX - pnt.x, 0);
+			toEdge := CreateVector(edgeX - x, 0);
 			angle := CalculateAngleBetween(mvOut, toEdge);			
 			xMag := Magnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
 
 			//Do Y
-			toEdge := CreateVector(0, edgeY - pnt.y);
+			toEdge := CreateVector(0, edgeY - y);
 			angle := CalculateAngleBetween(mvOut, toEdge);			
 			yMag := Magnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
 					
@@ -953,39 +947,39 @@ implementation
 	begin		
 		case rectCollisionSide of
 			TopLeft: begin
-					if (pnt.x < rect.x) or (pnt.y < rect.y) then result := CreateVector(0,0)
-					else result := GetVectorDiagonal(rect.x, rect.y);
+					if (x < rectX) or (y < rectY) then result := CreateVector(0,0)
+					else result := GetVectorDiagonal(rectX, rectY);
 				end;
 			TopRight: begin
-					if (pnt.x > rect.x + rect.width) or (pnt.y < rect.y) then result := CreateVector(0,0)
-					else result := GetVectorDiagonal(rect.x + rect.width, rect.y);
+					if (x > rectX + rectWidth) or (y < rectY) then result := CreateVector(0,0)
+					else result := GetVectorDiagonal(rectX + rectWidth, rectY);
 				end;
 			BottomLeft:	begin
-					if (pnt.x < rect.x) or (pnt.y > rect.y + rect.height) then result := CreateVector(0,0)
-					else result := GetVectorDiagonal(rect.x, rect.y + rect.height);
+					if (x < rectX) or (y > rectY + rectHeight) then result := CreateVector(0,0)
+					else result := GetVectorDiagonal(rectX, rectY + rectHeight);
 				end;
 			BottomRight: begin
-					if (pnt.x > rect.x + rect.width) or (pnt.y > rect.y + rect.height) then result := CreateVector(0,0)
-					else result := GetVectorDiagonal(rect.x + rect.width, rect.y + rect.height);
+					if (x > rectX + rectWidth) or (y > rectY + rectHeight) then result := CreateVector(0,0)
+					else result := GetVectorDiagonal(rectX + rectWidth, rectY + rectHeight);
 				end;
 			Left: begin
-					if (pnt.x < rect.x) or (pnt.y < rect.y) or (pnt.y > rect.y + rect.height) then result := CreateVector(0, 0)
-					else result := CreateVector(rect.x - pnt.x - 1, 0);
+					if (x < rectX) or (y < rectY) or (y > rectY + rectHeight) then result := CreateVector(0, 0)
+					else result := CreateVector(rectX - x - 1, 0);
 					exit;
 				end;
 			Right: begin
-					if (pnt.x > rect.x + rect.width) or (pnt.y < rect.y) or (pnt.y > rect.y + rect.height) then result := CreateVector(0, 0)
-					else result := CreateVector(rect.x + rect.width - pnt.x + 1, 0);
+					if (x > rectX + rectWidth) or (y < rectY) or (y > rectY + rectHeight) then result := CreateVector(0, 0)
+					else result := CreateVector(rectX + rectWidth - x + 1, 0);
 					exit;
 				end;
 			Top: begin
-					if (pnt.y < rect.y) or (pnt.x < rect.x) or (pnt.x > rect.x + rect.width) then result := CreateVector(0, 0)
-					else result := CreateVector(0, rect.y - pnt.y - 1);
+					if (y < rectY) or (x < rectX) or (x > rectX + rectWidth) then result := CreateVector(0, 0)
+					else result := CreateVector(0, rectY - y - 1);
 					exit;
 				end;
 			Bottom: begin
-					if (pnt.y > rect.y + rect.height) or (pnt.x < rect.x) or (pnt.x > rect.x + rect.width) then result := CreateVector(0, 0)
-					else result := CreateVector(0, rect.y + rect.height + 1 - pnt.y);
+					if (y > rectY + rectHeight) or (x < rectX) or (x > rectX + rectWidth) then result := CreateVector(0, 0)
+					else result := CreateVector(0, rectY + rectHeight + 1 - y);
 					exit;
 				end;
 			else //Not moving... i.e. None
@@ -996,44 +990,40 @@ implementation
 	end;
 
 	//Vector needed to move from x, y out of rectangle assuming movement specified
-	//function VectorOutOfRectFromPoint(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
-	function VectorOutOfRectFromPoint(const pnt: Point2D; rect: Rectangle; const movement: Vector): Vector;	
+	function VectorOutOfRectFromPoint(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
 	begin
-		result := VectorOut(pnt, rect, movement, GetSideForCollisionTest(movement));
+		result := VectorOut(x, y, rectX, rectY, rectWidth, rectHeight, movement, GetSideForCollisionTest(movement));
 		
 		if (result.x = 0) and (result.y = 0) then exit;	
 
-//		if not LineInsersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then
-		if not LineInsersectsWithRect(LineFromVector(pnt, movement), rect) then
+		if not LineInsersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then
 			result := CreateVector(0, 0);
 	end;
 
-//	function VectorOutOfRectFromRect(x, y: Single; width, height: Integer; rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
-	function VectorOutOfRectFromRect(srcRect, targetRect: Rectangle; const movement: Vector) : Vector;	
+	function VectorOutOfRectFromRect(x, y: Single; width, height: Integer; rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
 	var
 		rectCollisionSide: CollisionSide;
-		p: Point2D; // p is the most distant point from the collision on srcRect
-		destRect: Rectangle;
+		px, py: Single;
 	begin
 		//Which side of the rectangle did we collide with.
 		rectCollisionSide := GetSideForCollisionTest(movement);
 		
-		p.x := srcRect.x; p.y := srcRect.y;
+		px := x; py := y;
 		
 		case rectCollisionSide of
 			//Hit top or left of wall... bottom right in
-			TopLeft: 		begin p.x := p.x + srcRect.width; p.y := p.y + srcRect.height;  end;
+			TopLeft: 		begin px := px + width; py := py + height;  end;
 			//Hit top or right of wall... bottom left in
-			TopRight:		p.y := p.y + srcRect.height;
+			TopRight:		py := py + height;
 			//Hit bottom or left of wall... top right in
-			BottomLeft:		p.x := p.x + srcRect.width;
+			BottomLeft:		px := px + width;
 			//Hit bottom or right of wall... top left is in
 			BottomRight: 	;
 			//Hit left of wall... right in
-			Left: 			p.x := p.x + srcRect.width;
+			Left: 			px := px + width;
 			Right: 			;                                   
 			//Hit top of wall... bottom in
-			Top: 			p.y := p.y + srcRect.height;
+			Top: 			py := py + height;
 			Bottom: 		;
 			None: begin 
 					result := CreateVector(0, 0);
@@ -1041,39 +1031,31 @@ implementation
 				end;
 		end;
 		
-//		result := VectorOut(px, py, rectX, rectY, rectWidth, rectHeight, movement, rectCollisionSide);
-		result := VectorOut(p, targetRect, movement, rectCollisionSide);
+		result := VectorOut(px, py, rectX, rectY, rectWidth, rectHeight, movement, rectCollisionSide);
 		
 		if (result.x = 0) and (result.y = 0) then exit;	
 
-//destRect := CreateRectangle(x + result.x, y + result.y, x + result.x + width, y + result.y + height);
-	 	destRect := RectangleAfterMove(srcRect, result);
-		
-		//Check diagonal miss...
+{		//Check sides
 		case rectCollisionSide of
-			//Hit top left, check bottom and right;
-			TopLeft: if (RectangleTop(destRect) > RectangleBottom(targetRect)) 	or 
-						(RectangleLeft(destRect) > RectangleRight(targetRect)) 	then result := CreateVector(0,0);
-			//Hit top right, check bottom and left
-			TopRight: if 	(RectangleTop(destRect) > RectangleBottom(targetRect))	or 
-							(RectangleRight(destRect) > RectangleLeft(targetRect))	then result := CreateVector(0,0);
-			//Hit bottom left, check top and right
-			BottomLeft: if 	(RectangleBottom(destRect) < RectangleTop(targetRect)) 	or 
-							(RectangleLeft(destRect) > RectangleRight(targetRect)) 	then result := CreateVector(0,0);
-			//Hit bottom right, check top and left
-			BottomRight: if (RectangleBottom(destRect) < RectangleTop(targetRect)) 	or 
-							(RectangleRight(destRect) > RectangleLeft(targetRect))	then result := CreateVector(0,0);
-		end		
+			//Hit left side of wall... we are travelling right
+			//  check 
+			Left, TopLeft, BottomLeft: begin px := 
+				
+			Right, TopRight, BottomRight:
+				if LineInsersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then exit;			
+		end
+		
+		if LineInsersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then exit;
+}		
+		
 	end;
 
-{	function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
+	function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 	begin
 		result := VectorOutOfRectFromRect(sprt.xPos, sprt.yPos, sprt.width, sprt.height, rectX, rectY, rectWidth, rectHeight, sprt.Movement);
 	end;
-}
 
-	//function GetLineIntersectionPoint(x11, y11, x12, y12, x21, y21, x22, y22: Single; out x, y: Single) : boolean;
-	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : boolean;
+	function GetLineIntersectionPoint(x11, y11, x12, y12, x21, y21, x22, y22: Single; out x, y: Single) : boolean;
 	var
 		// convert lines to the eqn
 		// c = ax + by
@@ -1081,53 +1063,35 @@ implementation
 		a2, b2, c2: Single;
 		det: Single;
 	begin
-		pnt.x := 0; pnt.y := 0;
+		x := 0; y := 0;
 		
 		//Convert lines to eqn c = ax + by
-		a1 := line1.endPoint.y - line1.startPoint.y; //y12 - y11;
-		b1 := line1.startPoint.x - line1.endPoint.y; //x11 - x12;
-		c1 := a1 * line1.startPoint.x + b1 * line1.startPoint.y; //a1 * x11 + b1 * y11;
+		a1 := y12 - y11;
+		b1 := x11 - x12;
+		c1 := a1 * x11 + b1 * y11;
 
-		a2 := line2.endPoint.y - line2.startPoint.y; //y22 - y21;
-		b2 := line2.startPoint.x - line2.endPoint.y; //x21 - x22;
-		c2 := a2 * line2.startPoint.x + b2 * line2.startPoint.y; //a2 * x21 + b2 * y21;
+		a2 := y22 - y21;
+		b2 := x21 - x22;
+		c2 := a2 * x21 + b2 * y21;
 		
 		det := (a1 * b2) - (a2 * b1);
 		
 		if det = 0 then result := false
 		else
 		begin
-			pnt.x := (b2*c1 - b1*c2) / det;
-	        pnt.y := (a1*c2 - a2*c1) / det;
+			x := (b2*c1 - b1*c2) / det;
+	        y := (a1*c2 - a2*c1) / det;
 			result := true;
 		end;		
 	end;
-
-	function LineInsersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
-	var
-		i: Integer;
-		pnt: Point2D;
-	begin
-		for i := 0 to High(lines) do
-		begin
-			if GetLineIntersectionPoint(target, lines[i], pnt) and IsPointOnLine(pnt, lines[i]) then
-			begin
-				result := true;
-				exit;
-			end;
-		end;
-		
-		result := false;
-	end;
 	
-	function LineInsersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
+	function LineInsersectsWithRect(x1, y1, x2, y2, rectX, rectY: Single; width, height: Integer): boolean;
+	const
+		DELTA = 0.01;
 	var
-		lines: LinesArray;
+		ix, iy: Single;
 	begin
-		lines := LinesFromRect(rect);
-		result := LineInsersectsWithLines(line, lines);
-		
-		{result := false;
+		result := false;
 		
 		if GetLineIntersectionPoint(x1, y1, x2, y2, rectX, rectY, rectX + width, rectY, ix, iy) then
 		begin
@@ -1171,7 +1135,8 @@ implementation
 				result := true;
 				exit;
 			end;			
-		end;}
-	end;  	
+		end;
+	end;  
+	
 end.
 

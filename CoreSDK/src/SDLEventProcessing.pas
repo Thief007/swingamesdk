@@ -1,3 +1,21 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 				SDLEventProcessing.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// This unit handles the processing of events and reading
+// of text for SwinGames.
+//
+// An object of the TSDLManager is created and managed in
+// SGSDK_Core. Only one instance should be used. This is
+// available in the sdlManager global variable.
+//
+// Change History:
+//
+//  Version 1.0:
+//  - Various
+
 unit SDLEventProcessing;
 
 interface
@@ -22,7 +40,7 @@ type TSDLManager = class (TObject)
 	public
 		procedure ProcessEvents();
 
-		constructor Create(); //caption: String; width, height: Integer);
+		constructor Create();
 		destructor Destroy(); override;
 
 		function HasQuit(): Boolean;
@@ -45,6 +63,7 @@ type TSDLManager = class (TObject)
 end;
 
 implementation
+
 	procedure TSDLManager.ProcessEvents();
 	var
 		event: TSDL_EVENT;

@@ -1,12 +1,25 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Audio.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Audio unit is responsible for managing SDL audio
+// this includes initialisation, loading, freeing, 
+// playing, and checking if playing.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-17: Aki + Andrew: Refactor
+//  
+// Version 1.0:
+// - Various
+
 unit SGSDK_Audio;
 
-{$IFDEF UNIX}
-	{$linklib gcc}
-	{$linklib SDLmain}
-{$ENDIF}
-
 interface
-	uses SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core;
+	uses SDL_Mixer, SDL, SGSDK_Core;
 	
 	type
 		/// Type: SoundEffect
@@ -26,6 +39,7 @@ interface
 		///	Also see the IsMusicPlaying routine.
 		Music = PMix_Music;
 
+
 	//*****
 	//
 	// Sound routines
@@ -39,31 +53,24 @@ interface
 	procedure CloseAudio();
 
 	function LoadSoundEffect(path: String): SoundEffect;
-
 	function LoadMusic(path: String): Music;
 
 	procedure FreeMusic(var mus: Music);
-
 	procedure FreeSoundEffect(var effect: SoundEffect);
 
 	procedure PlaySoundEffect(effect: SoundEffect); overload;
-
 	procedure PlaySoundEffect(effect: SoundEffect; loops: Integer); overload;
-
 	procedure PlayMusic(mus: Music; loops: Integer); overload;
-
 	procedure PlayMusic(mus: Music); overload;
 
 	function IsMusicPlaying(): Boolean;
-
 	function IsSoundEffectPlaying(effect: SoundEffect): Boolean;
 
 	procedure StopSoundEffect(effect: SoundEffect);
-
 	procedure StopMusic();
 
 implementation
-	uses SysUtils, Math, Classes;
+	uses SysUtils, Classes;
 			 
 	var
 		// Contains the sound channels used to determine if a sound is currently
@@ -78,29 +85,19 @@ implementation
 
 	procedure OpenAudio();
 	begin
-		//WriteLn('Opening Mixer');
-		{$ifdef UNIX}
-		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) = -1 then
+		{$ifdef DARWIN}
+		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
 		{$else}
 		if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then			
 		{$endif}
 		begin
-			WriteLn('Errorm loading mixer...');
-			WriteLn(string(Mix_GetError));
-			RaiseSGSDKException('Error openning audio device. ' + string(Mix_GetError));
+			raise Exception.Create('Error opening audio device: ' + string(Mix_GetError()));
 		end;
-		//WriteLn('Mixer Open');
 	end;
 	
 	procedure CloseAudio();
 	begin
-		//WriteLn('Closing Audio');
-		try
-			Mix_CloseAudio();
-		except
-			RaiseSGSDKException('Failed to close audio');
-		end;
-		//WriteLn('Closed Audio');	
+		Mix_CloseAudio();
 	end;
 	
 	/// Loads a sound effect from the file system. The sound effect can be in the
@@ -113,7 +110,7 @@ implementation
 		result := Mix_LoadWAV(pchar(path));
 		if result = nil then
 		begin
-			RaiseSGSDKException('Error loading sound effect: ' + SDL_GetError());
+			raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
 		end;
 	end;
 	
@@ -127,7 +124,7 @@ implementation
 		result := Mix_LoadMUS(pchar(path));
 		if result = nil then
 		begin
-			RaiseSGSDKException('Error loading sound effect: ' + SDL_GetError());
+			raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
 		end;
 	end;
 	
@@ -139,12 +136,8 @@ implementation
 	///	- Frees the sound effect
 	procedure FreeSoundEffect(var effect: SoundEffect);
 	begin
-		try
-			Mix_FreeChunk(effect);
-			effect := nil;
-		except
-			RaiseSGSDKException('Failed to free the specified sound effect');
-		end;
+		Mix_FreeChunk(effect);
+		effect := nil;
 	end;
 	
 	/// Free a music value. All loaded music values need to be freed.
@@ -155,12 +148,8 @@ implementation
 	///	- Music is freed
 	procedure FreeMusic(var mus: Music);
 	begin
-		try
-			Mix_FreeMusic(mus);
-			mus := nil;
-		except
-			RaiseSGSDKException('Failed to free the specified music');
-		end;
+		Mix_FreeMusic(mus);
+		mus := nil;
 	end;
 	
 	/// Play the indicated sound effect a number of times.
@@ -171,12 +160,8 @@ implementation
 	var
 		i: Integer;
 	begin
-		try
-			i := Mix_PlayChannel( -1, effect, loops );
-			if i <> -1 then soundChannels[i] := effect;
-		except
-			RaiseSGSDKException('Failed to play the specified sound effect');
-		end;
+		i := Mix_PlayChannel( -1, effect, loops );
+		if i <> -1 then soundChannels[i] := effect;
 	end;
 	
 	/// Play the indicated sound effect once.
@@ -198,16 +183,8 @@ implementation
 	var
 		i: Integer;
 	begin
-		try
-			Mix_HaltMusic();
-
-			i := Mix_PlayMusic(mus, loops);
-			if i <> -1 then soundChannels[i] := mus;
-
-			//i := Mix_PlayMusic(mus, loops);
-		except
-			RaiseSGSDKException('Failed to play the specified music');
-		end;
+		Mix_HaltMusic();
+		Mix_PlayMusic(mus, loops);
 	end;
 	
 	/// Start the indicating music playing. The music will continue to play
@@ -227,17 +204,13 @@ implementation
 	begin
 		result := false;
 
-		try
-			for i := 0 to High(soundChannels) do
+		for i := 0 to High(soundChannels) do
+		begin
+			if soundChannels[i] = effect then
 			begin
-				if soundChannels[i] = effect then
-				begin
-					result := Mix_Playing(i) <> 0;
-					break;
-				end;
+				result := Mix_Playing(i) <> 0;
+				break;
 			end;
-		except
-			RaiseSGSDKException('Failed to check if the specified sound effect is playing');
 		end;
 	end;
 
@@ -256,12 +229,7 @@ implementation
 	///	@returns		 True if the music is playing
 	function IsMusicPlaying(): Boolean;
 	begin
-		try
-			result := Mix_PlayingMusic() <> 0;
-		except
-      result := false;
-			RaiseSGSDKException('Failed to check if the music is playing');
-		end;
+		result := Mix_PlayingMusic() <> 0;
 	end;
 
 	/// Stop music from playing.
@@ -270,11 +238,7 @@ implementation
 	///	- Stops the currently playing music
 	procedure StopMusic();
 	begin
-		try
-			Mix_HaltMusic();
-		except
-			RaiseSGSDKException('Failed to halt music');
-		end;
+		Mix_HaltMusic();
 	end;
 
 	/// Stop playing sound effects
@@ -291,12 +255,8 @@ implementation
 		begin
 			if soundChannels[i] = effect then
 			begin
-				try
-					Mix_HaltChannel(i);
-				except
-					RaiseSGSDKException('Failed to halt the specified sound effect');
-				end;
-				break;
+				Mix_HaltChannel(i);
+				soundChannels[i] := nil;
 			end;
 		end;
 	end;
