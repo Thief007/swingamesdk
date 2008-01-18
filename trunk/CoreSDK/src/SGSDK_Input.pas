@@ -1,7 +1,24 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Input.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Input unit is responsible for input event
+// processing for mouse and keyboard actions.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-17: Aki + Andrew: Refactor
+//  
+// Version 1.0:
+// - Various
+
 unit SGSDK_Input;
 
 interface
-	uses	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Font, SGSDK_Physics;
+	uses SDL, SGSDK_Core, SGSDK_Font;
 
   	//
 	//
@@ -31,7 +48,6 @@ interface
 
 	function IsReadingText(): Boolean;
 	function TextReadAsASCII(): String;
-	//function TextReadAsUNICODE(): WideString;
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 	
@@ -43,7 +59,7 @@ interface
 	function IsMouseShown(): Boolean;
 
 implementation
-	uses SysUtils, Math, Classes;
+	uses SysUtils, Classes, SGSDK_Physics;
 	
 	procedure ShowMouse(); overload;
 	begin
@@ -61,17 +77,13 @@ implementation
 			if show then SDL_ShowCursor(1)
 			else SDL_ShowCursor(0);
 		except
-			RaiseSGSDKException('Unable to show or hide mouse');
+			raise Exception.Create('Unable to show or hide mouse');
 		end;
 	end;
 	
 	procedure MoveMouse(x, y : UInt16);
 	begin
-		try
-			SDL_WarpMouse(x,y);
-		except
-			RaiseSGSDKException('Unable to move mouse');
-		end;
+		SDL_WarpMouse(x,y);
 	end;
 	
 	function IsMouseShown(): Boolean;
@@ -87,12 +99,7 @@ implementation
 	/// @returns:					True if the key is pressed
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 	begin
-		try
-			result := sdlManager.WasKeyTyped(virtKeyCode);
-		except
-			RaiseSGSDKException('Unable to check if the specified key was typed');
-      result := false;
-		end;
+		result := sdlManager.WasKeyTyped(virtKeyCode);
 	end;
 
 	/// Returns true when the key requested is being held down. This is updated
@@ -107,11 +114,11 @@ implementation
 		intPtr: ^UInt8;
 	begin
 		keys := SDL_GetKeyState(nil);
-
+		
 		if keys <> nil then
 		begin
 			indexAddress := uint32(keys) + uint32(virtKeyCode);
-
+			
 			{$IFDEF FPC}
 				intPtr := PUInt8(indexAddress);
 			{$ELSE}
@@ -138,15 +145,11 @@ implementation
 	procedure StartReadingText(textColor: Colour; maxLength: Integer; 
                              theFont: Font; x, y: Integer);
 	begin
-		if theFont = nil then RaiseSGSDKException('The specified font to start reading text is nil');
-		if maxLength <= 0 then RaiseSGSDKException('Minimum length to start reading text is 1');
-		if IsReadingText() then RaiseSGSDKException('Already reading text, cannot start reading text again.');
+		if theFont = nil then raise Exception.Create('The specified font to start reading text is nil');
+		if maxLength <= 0 then raise Exception.Create('Minimum length to start reading text is 1');
+		if IsReadingText() then raise Exception.Create('Already reading text, cannot start reading text again.');
 		
-		try
-			sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
-		except
-			RaiseSGSDKException('Unable to start reading text');
-		end;
+		sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
 	end;
 
 	/// IsReadingText indicates if the API is currently reading text from the
@@ -157,12 +160,7 @@ implementation
 	///	@returns: True while the API is reading text from the user
 	function IsReadingText(): Boolean;
 	begin
-		try
-			result := sdlManager.IsReading;
-		except
-			RaiseSGSDKException('Unable to check if the program is reading text');
-      result := false;
-		end;
+		result := sdlManager.IsReading;
 	end;
 
  	/// TextReadAsASCII allows you to read the value of the string entered by the
@@ -172,63 +170,33 @@ implementation
 	///	@return:	 The string entered by the user
 	function TextReadAsASCII(): String;
 	begin
-		try
-			result := String(sdlManager.EnteredString);
-		except
-			RaiseSGSDKException('Unable to get the text entered as ASCII');
-		end;
+		result := String(sdlManager.EnteredString);
 	end;
-
-  	/// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
-	///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
-	///
-	///	@returns:	The string entered by the user
-	{function TextReadAsUNICODE(): WideString;
-	begin
-		try
-			result := sdlManager.EnteredString;
-		except
-			RaiseSGSDKException('Unable to get the text entered as Unicode');
-		end;
-	end;}
-
+	
 	var _ButtonsClicked: Array [MouseButton] of Boolean;
 	
 	function GetMousePosition(): Vector;
 	var
 		x, y: Integer;
 	begin
-		try
-			SDL_GetMouseState(x, y);
-			result := CreateVector(x, y);
-		except
-			RaiseSGSDKException('Failed to get the mouse position');
-		end;
+		SDL_GetMouseState(x, y);
+		result := CreateVector(x, y);
 	end;
 
 	function GetMouseMovement(): Vector;
 	var
 		x, y: Integer;
 	begin
-		try
-			SDL_GetRelativeMouseState(x, y);
-			result := CreateVector(x, y);
-		except
-			RaiseSGSDKException('Failed to get the mouse movement vector');
-		end;
+		SDL_GetRelativeMouseState(x, y);
+		result := CreateVector(x, y);
 	end;
 	
 	function IsMouseDown(button: MouseButton): Boolean;
 	var
 		x, y: Integer;
 	begin
-		try
-			result := (SDL_GetMouseState(x, y) and 
-			SDL_BUTTON(Integer(button))) > 0;
-		except
-			RaiseSGSDKException('Failed to check if the mouse button is down');
-      result := false;
-		end;
+		result := (SDL_GetMouseState(x, y) and 
+		SDL_BUTTON(Integer(button))) > 0;
 	end;
 	
 	function IsMouseUp(button: MouseButton): Boolean;
@@ -243,6 +211,7 @@ implementation
 	
 	procedure ProcessEvent(event: PSDL_Event; first: Boolean);
 	begin
+		if event = nil then exit;
 		if event^.type_ = SDL_MOUSEBUTTONUP then
 		begin
 			_ButtonsClicked[MouseButton(event^.button.button)] := true;
@@ -256,8 +225,7 @@ implementation
 	end;
 
 initialization
-	begin
-		RegisterEventProcessor(@ProcessEvent, @StartProcessEvents);
-	end;
-
+begin
+	RegisterEventProcessor(@ProcessEvent, @StartProcessEvents);
+end;
 end.

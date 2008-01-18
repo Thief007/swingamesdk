@@ -1,9 +1,29 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Graphics.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Graphics unit is responsible for all of the drawing
+// of anything to the screen or other surfaces. The
+// ...OnScreen routines draw directly onto the screen
+// ignoring the camera settings. The standard draw routines
+// draw to the screen using the camera settings. Finally the
+// overloaded drawing methods with a destination Bitmap will
+// draw onto the supplied bitmap.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-17: Aki + Andrew: Refactor
+//  
+// Version 1.0:
+// - Various
+
 unit SGSDK_Graphics;
 
 interface
-	uses	SDL, SGSDK_Core, Classes, SysUtils, SDL_image,
-			SDL_Mixer, SDL_TTF, SDLEventProcessing, SGSDK_Camera;
-		
+	uses SDL, SGSDK_Core, SDL_image;
 		
 	//*****
 	//
@@ -17,16 +37,10 @@ interface
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
 	
 	function CreateBitmap(width, height: Integer): Bitmap;
-	
-	procedure OptimiseBitmap(surface: Bitmap);
-	
-	function LoadBitmap(pathToBitmap: String; transparent: Boolean;
-								transparentColor: Colour): Bitmap; overload;
+	function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Colour): Bitmap; overload;
 	function LoadBitmap(pathToBitmap : String): Bitmap; overload;
-	
-	function LoadTransparentBitmap(pathToBitmap : String;
-								transparentColor : Colour): Bitmap; overload;
-	
+	function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Colour): Bitmap; overload;
+	procedure OptimiseBitmap(surface: Bitmap);
 	procedure FreeBitmap(var bitmapToFree : Bitmap);
 	
 	//*****
@@ -176,8 +190,8 @@ interface
 	
 	procedure ReplayAnimation(theSprite : Sprite);
 	
-	procedure UpdateSprite(spriteToDraw : Sprite);
-	procedure UpdateSpriteAnimation(spriteToDraw : Sprite);
+	procedure UpdateSprite(spriteToUpdate : Sprite);
+	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite);
 
 	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
 	
@@ -202,7 +216,7 @@ interface
 	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer);
 	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer);
 
-	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer); overload;
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer);
 
 	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean;
 							xPos, yPos, width, height : Integer); overload;
@@ -211,21 +225,21 @@ interface
 							width, height : Integer); overload;
 
 	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos,
-							width, height : Integer); overload;
+							width, height : Integer);
 
 	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); overload;
+					 xPosEnd, yPosEnd: Integer);
 
-	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); overload;
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer);
 
-	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); overload;
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer);
 
 	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean;
 						 xc, yc, radius: Integer); overload;
 
 	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
 
-	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer);
 
 	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean;
 						xPos, yPos, width, height: Integer); overload;
@@ -234,12 +248,13 @@ interface
 						xPos, yPos, width, height: Integer); overload;
 
 	procedure FillEllipseOnScreen(theColour: Colour;
-						xPos, yPos, width, height: Integer); overload;
+						xPos, yPos, width, height: Integer);
 
 
 	
 implementation
-
+	uses Classes, SysUtils, SGSDK_Camera;
+	
 	/// Clears the surface of the bitmap to the passed in color.
 	///
 	///	@param dest:		 The bitmap to clear
@@ -249,11 +264,9 @@ implementation
 	///	- dest's surface is set to the toColor
 	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
 	begin
-		try
-			SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColour);
-		except
-			RaiseSGSDKException('Error occured while trying to clear the bitmap you have specified');
-		end;
+		if dest = nil then raise Exception.Create('Cannot clear, destination bitmap not supplied (nil)');
+			
+		SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColour);
 	end;
 
  	/// Clears the surface of the bitmap to Black.
@@ -287,11 +300,11 @@ implementation
 		ClearScreen(ColorBlack);
 	end;
 
-
 	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
 	begin
 		if (w < 0) or (h < 0) then
-			RaiseSGSDKException('Width and height of a rectangle must be larger than 0');
+			raise Exception.Create('Width and height of a rectangle must be larger than 0');
+				
 		if w < 0 then
 		begin
 			result.x := x + w;
@@ -305,12 +318,9 @@ implementation
 			h := -h;
 		end
 		else result.y := y;
-		try
-			result.w := Word(w);
-			result.h := Word(h);
-		except
-			RaiseSGSDKException('Error occured while trying to create a SDL rectangle');
-		end;
+
+		result.w := Word(w);
+		result.h := Word(h);
 	end;
 	
 	function GetPixel32(surface: PSDL_Surface; x, y: Integer): Colour;
@@ -318,7 +328,7 @@ implementation
 		pixels, pixel: PUint32;
 		offset, pixelAddress: Uint32;
 	begin
-    result := 0;
+    	result := 0;
     
 		//Convert the pixels to 32 bit
 		pixels := surface.pixels;
@@ -340,7 +350,7 @@ implementation
 			3: result := pixel^ and $00ffffff;
 			4: result := pixel^;
 		else
-			RaiseSGSDKException('Unsuported bit format...');
+			raise Exception.Create('Unsuported bit format...');
 		end;
 		{$ELSE}
 		case surface.format.BytesPerPixel of
@@ -349,7 +359,7 @@ implementation
 			3: result := pixel^ and $ffffff00;
 			4: result := pixel^;
 		else
-			RaiseSGSDKException('Unsuporte bit format...')
+			raise Exception.Create('Unsuported bit format...')
 		end;
 		{$IFEND}
 	end;
@@ -359,8 +369,7 @@ implementation
 	//
 	// @param toSet	 A pointer to the Bitmap being set
 	// @param surface The surface with pixel data for this Bitmap
-	procedure SetNonTransparentPixels(toSet: Bitmap; surface: PSDL_Surface;
-																		transparentColor: Color);
+	procedure SetNonTransparentPixels(toSet: Bitmap; surface: PSDL_Surface; transparentColor: Color);
 	var
 		r, c: Integer;
 	begin
@@ -381,20 +390,16 @@ implementation
 		r, c: Integer;
 		hasAlpha: Boolean;
 	begin
-		try
-			SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
-			hasAlpha := surface.format.BytesPerPixel = 4;
+		SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
+		hasAlpha := surface.format.BytesPerPixel = 4;
 
-			for c := 0 to toSet.width - 1 do
+		for c := 0 to toSet.width - 1 do
+		begin
+			for r := 0 to toSet.height - 1 do
 			begin
-				for r := 0 to toSet.height - 1 do
-				begin
-					toSet.nonTransparentPixels[c, r] := hasAlpha and
-						((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
-				end;
+				toSet.nonTransparentPixels[c, r] := hasAlpha and
+					((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
 			end;
-		except
-			RaiseSGSDKException('Failed to set non alpha pixels');
 		end;
 	end;
 
@@ -405,22 +410,20 @@ implementation
 	/// @param transparent:      Indicates if transparency should be set
 	///	@param transparentColor: the color that will be transparent
 	///	@returns: A bitmap from the loaded file.
-	function LoadBitmap(pathToBitmap: String; transparent: Boolean;
-											 transparentColor: Colour): Bitmap; overload;
+	function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Colour): Bitmap; overload;
 	var
 		loadedImage: PSDL_Surface;
 		correctedTransColor: Colour;
 	begin
-    result := nil;
+		if not FileExists(pathToBitmap) then raise Exception.Create('Unable to locate bitmap ' + pathToBitmap);
+		
 		loadedImage := IMG_Load(pchar(pathToBitmap));
 		
 		if loadedImage <> nil then
 		begin
 			new(result);
-			if not transparent then
-				result.surface := SDL_DisplayFormatAlpha(loadedImage)
-			else
-				result.surface := SDL_DisplayFormat(loadedImage);
+			if not transparent then result.surface := SDL_DisplayFormatAlpha(loadedImage)
+			else result.surface := SDL_DisplayFormat(loadedImage);
 
 			result.width := result.surface.w;
 			result.height := result.surface.h;
@@ -428,28 +431,19 @@ implementation
 			if transparent then
 			begin
 				correctedTransColor := GetColour(result, transparentColor);
-				try
-					SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, 
-	                        correctedTransColor);
-				except
-					RaiseSGSDKException('Failed to set the colour key');
-				end;
+				SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
 				SetNonTransparentPixels(result, loadedImage, correctedTransColor);
 			end
 			else
 			begin
 				SetNonAlphaPixels(result, loadedImage);
 			end;
-			try
-				SDL_FreeSurface(loadedImage);
-			except
-				RaiseSGSDKException('Failed to free the specified SDL surface');
-			end;
+
+			SDL_FreeSurface(loadedImage);
 		end
 		else
 		begin
-			RaiseSGSDKException('Error loading image: ' + 
-                             pathToBitmap + ': ' + SDL_GetError());
+			raise Exception.Create('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
 		end;
 	end;
 
@@ -491,17 +485,10 @@ implementation
 		begin
 			if bitmapToFree.surface <> nil then
 			begin
-				//WriteLn('Freeing SDL Surface');
-				try
-					SDL_FreeSurface(bitmapToFree.surface);
-				except
-					RaiseSGSDKException('Failed to free the specified SDL surface');
-				end;
+				SDL_FreeSurface(bitmapToFree.surface);
 			end;
-			//WriteLn('Nilling bitmap surface');
 			bitmapToFree.surface := nil;
 
-			//WriteLn('Diposing Bitmap');
 			Dispose(bitmapToFree);
 			bitmapToFree := nil;
 		end;
@@ -520,17 +507,9 @@ implementation
 	var
 		i : Integer;
 	begin
-		if image = nil then begin
-			RaiseSGSDKException('No image specified to create a sprite');
-		end;
-		
-		if isMulti and (Length(framesPerCell) = 0) then begin
-			RaiseSGSDKException('No frames per cell defined');
-		end;
-		
-		if (width < 1) or (height < 1) then begin
-			RaiseSGSDKException('Sprite Width and Height must be greater then 0');
-		end;
+		if image = nil then raise Exception.Create('No image specified to create a sprite');
+		if isMulti and (Length(framesPerCell) = 0) then raise Exception.Create('No frames per cell defined');	
+		if (width < 1) or (height < 1) then raise Exception.Create('Sprite Width and Height must be greater then 0');
 		
 		New(result);
 		SetLength(result.bitmaps, 1);
@@ -545,6 +524,9 @@ implementation
 			SetLength(result.framesPerCell, Length(framesPerCell));
 			for i := 0 to High(framesPerCell) do
 			begin
+				if framesPerCell[i] < 0 then 
+					raise Exception.Create('Frames per cell must be larger than 0');
+				
 				result.framesPerCell[i] := framesPerCell[i];
 			end;
 		end
@@ -591,6 +573,8 @@ implementation
 		tempIntegers: Array of Integer;
 		i: Integer;
 	begin
+		if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
+		
 		SetLength(tempIntegers, frames);
 		for i := 0 to High(tempIntegers) do
 		begin
@@ -617,17 +601,12 @@ implementation
 	/// @param framesPerCell:	Array of Integer that defines the frames per cell
 	/// @param endingAction:	Ending action of this sprite when it finishes animating
 	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(bitmaps : Array of Bitmap; framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; overload;
+	function CreateSprite(bitmaps: Array of Bitmap; framesPerCell: Array of Integer; endingAction: SpriteEndingAction): Sprite; overload;
 	var
 		i : Integer;
 	begin
-		if Length(bitmaps) = 0 then begin
-			RaiseSGSDKException('No images specified to create a sprite');
-		end;
-		
-		if Length(framesPerCell) = 0 then begin
-			RaiseSGSDKException('No frames per cell defined');
-		end;
+		if Length(bitmaps) = 0 then raise Exception.Create('No images specified to create a sprite');
+		if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
 		
 		New(result);
 		result.xPos					:= 0;
@@ -635,17 +614,24 @@ implementation
 		result.currentFrame			:= 0;
 		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
+
 		SetLength(result.bitmaps, Length(bitmaps));
 		for i := 0 to High(bitmaps) do
 		begin
 			result.bitmaps[i] := bitmaps[i];
 		end;
+
 		result.spriteKind			:= AnimArraySprite;
+
 		SetLength(result.framesPerCell, Length(framesPerCell));
 		for i := 0 to High(framesPerCell) do
 		begin
+			if framesPerCell[i] <= 0 then 
+				raise Exception.Create('Frames per cell must be larger than 0');
+
 			result.framesPerCell[i] := framesPerCell[i];
 		end;
+
 		result.endingAction			:= endingAction;
 		result.width				:= bitmaps[0].width;
 		result.height				:= bitmaps[0].height;
@@ -673,13 +659,14 @@ implementation
 		tempIntegers: Array of Integer;
 		i: Integer;
 	begin
-		if framesPerCell <= 0 then
-			RaiseSGSDKException('Frames per cell must be larger than 0');
+		if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
+
 		SetLength(tempIntegers, frames);
 		for i := 0 to High(tempIntegers) do
 		begin
 			tempIntegers[i] := framesPerCell;
 		end;
+
 		result := CreateSprite(bitmaps, tempIntegers);
 	end;
 	
@@ -693,11 +680,6 @@ implementation
 	///	- The sprites details are cleaned up.
 	procedure FreeSprite(var spriteToFree : Sprite);
 	begin
-		//for index := 0 to High(spriteToFree.bitmaps) do
-		//begin
-		//	FreeBitmap(spriteToFree.bitmaps[index]);
-		//end;
-
 		if spriteToFree <> nil then
 		begin
 			SetLength(spriteToFree.bitmaps, 0);
@@ -718,6 +700,11 @@ implementation
 	///	- The bitmaps is added to the bitmaps within the sprite.
 	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): Integer;
 	begin
+		if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
+		if spriteToAddTo = nil then raise Exception.Create('No sprite to add to');
+		if spriteToAddTo.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
+		if spriteToAddTo.spriteKind = AnimArraySprite then raise Exception.Create('Cannot add bitmap to an animated array sprite');
+			
 		//Resize the array
 		SetLength(spriteToAddTo.bitmaps, Length(spriteToAddTo.bitmaps) + 1);
 
@@ -733,6 +720,8 @@ implementation
 	///	@returns					 The width of the sprite's current frame
 	function CurrentWidth(sprite: Sprite): Integer; inline;
 	begin
+		if sprite = nil then raise Exception.Create('No sprite supplied');
+
 		result := sprite.width;
 	end;
   
@@ -742,6 +731,8 @@ implementation
 	///	@returns					 The height of the sprite's current frame
 	function CurrentHeight(sprite: Sprite): Integer; inline;
 	begin
+		if sprite = nil then raise Exception.Create('No sprite supplied');
+
 		result := sprite.height;
 	end;
 
@@ -753,41 +744,37 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws the bitmapToDraw at the x,y location in the destination.
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
-    overload;
+	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); overload;
 	var
 		offset: SDL_Rect;
 	begin
+		if (dest = nil) or (bitmapToDraw = nil) then raise Exception.Create('No bitmap supplied');
+		
 		offset := NewSDLRect(x, y, 0, 0);
-		try
-			SDL_BlitSurface(bitmapToDraw.surface, nil, dest.surface, @offset);
-		except
-			RaiseSGSDKException('Failed to draw the specified bitmap');
-		end;
+		SDL_BlitSurface(bitmapToDraw.surface, nil, dest.surface, @offset);
 	end;
 
 	/// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest).
 	///
-	///	@param dest:				 The destination bitmap - not optimised!
+	///	@param dest:		 The destination bitmap - not optimised!
 	///	@param bitmapToDraw: The bitmap to be drawn onto the destination
 	///	@param srcX, srcY:	 The x,y offset to the area to copy in bitmapToDraw
 	///	@param srcW, srcH:	 The width and height of the area to copy
-	///	@param x,y:					The x,y location to draw the bitmap part to
+	///	@param x,y:			 The x,y location to draw the bitmap part to
 	///
 	/// Side Effects:
 	///	- Draws part of the bitmapToDraw at the x,y location in the destination.
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap;
-									 srcX, srcY, srcW, srcH, x, y : Integer); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); overload;
 	var
 		offset, source: SDL_Rect;
 	begin
+		if (dest = nil) or (bitmapToDraw = nil) then raise Exception.Create('No bitmap supplied');
+		if (srcW < 0) or (srcH < 0) then raise Exception.Create('Width and Height must be >= 0');
+		
 		offset := NewSDLRect(x, y, 0, 0);
 		source := NewSDLRect(srcX, srcY, srcW, srcH);
-		try
-			SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
-		except
-			RaiseSGSDKException('Failed to draw the specified part of the specified bitmap');
-		end;
+
+		SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
 	end;
 
 	/// Draws part of a bitmap (bitmapToDraw) onto the screen.
@@ -832,101 +819,105 @@ implementation
 	
 	procedure ReplayAnimation(theSprite : Sprite);
 	begin
+		if theSprite = nil then raise Exception.Create('No sprite supplied');
+
 		theSprite.currentFrame := 0;
 		theSprite.hasEnded := false;
+		theSprite.reverse := false;
+	end;
+	
+	procedure CycleFrame(spriteToUpdate: Sprite);
+		procedure EndAnimation(frame: Integer); inline;
+		begin
+			spriteToUpdate.currentFrame := frame;
+			spriteToUpdate.hasEnded := true;
+		end;
+		procedure SetAnimation(frame: Integer; reverse: Boolean); inline;
+		begin
+			spriteToUpdate.currentFrame := frame;
+			spriteToUpdate.reverse := reverse;
+		end;
+	begin
+		if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) then
+		begin
+			if (spriteToUpdate.endingAction = ReverseLoop) or (spriteToUpdate.endingAction = ReverseOnce) then
+				SetAnimation(spriteToUpdate.currentFrame - 1, true)
+			else if spriteToUpdate.endingAction = Loop then spriteToUpdate.currentFrame := 0
+			else if spriteToUpdate.endingAction = Stop then EndAnimation(High(spriteToUpdate.framesPerCell));
+		end
+		else if (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
+		begin
+			if spriteToUpdate.endingAction = ReverseOnce then EndAnimation(0)
+			else SetAnimation(1, false);
+		end;		
+	end;
+	
+	procedure MoveToNextFrame(spriteToUpdate: Sprite);
+	var
+		i, sum: Integer;
+		frameChange: Integer;
+	begin
+		//Check that they are all + or 0, at at least one is +
+		sum := 0;
+		for i := Low(spriteToUpdate.framesPerCell) to High(spriteToUpdate.framesPerCell) do
+		begin
+			if spriteToUpdate.framesPerCell[i] < 0 then raise Exception.Create('Frames per cell must be 0 or positive');
+			sum := sum + spriteToUpdate.framesPerCell[i];
+		end;
+
+		if sum = 0 then raise Exception.Create('Frames per cell cannot all be zero');
+		
+		//Reset the frame count.
+		spriteToUpdate.frameCount := 0;
+		
+		if spriteToUpdate.reverse then frameChange := -1
+		else frameChange := +1;
+			
+		spriteToUpdate.currentFrame := spriteToUpdate.currentFrame + frameChange;
+		
+		if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) or
+		   (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
+		begin
+			CycleFrame(spriteToUpdate);
+		end;
 	end;
 	
 	/// Update the frame position
 	///
-	/// @param spriteToDraw:	The sprite to be processed
+	/// @param spriteToUpdate:	The sprite to be processed
 	///
 	/// Side Effects:
 	/// - Process the frame position depending on the sprite's setting
-	procedure UpdateSpriteAnimation(spriteToDraw : Sprite);
-	var
-		i : Integer;
-		notAllZero : Boolean;
+	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite);
 	begin
-		if spriteToDraw.hasEnded then exit;
+		if spriteToUpdate = nil then raise Exception.Create('No sprite supplied');
+		if spriteToUpdate.hasEnded then exit;
+		if spriteToUpdate.spriteKind = StaticSprite then exit;
+				
+		spriteToUpdate.frameCount := spriteToUpdate.frameCount + 1;
 		
-		if spriteToDraw.spriteKind <> StaticSprite then
+		// If we are at the end of the current frame... need to move to the next frame
+		if spriteToUpdate.frameCount >= spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] then
 		begin
-			notAllZero := true;
+			MoveToNextFrame(spriteToUpdate);
 			
-			for i := Low(spriteToDraw.framesPerCell) to High(spriteToDraw.framesPerCell) do begin
-				if spriteToDraw.framesPerCell[i] < 0 then
-					RaiseSGSDKException('Frames per cell must be 0 or positive');
-				if spriteToDraw.framesPerCell[i] > 0 then
-					notAllZero := false;
+			while spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] = 0 do
+			begin
+				MoveToNextFrame(spriteToUpdate);
 			end;
 
-			if notAllZero then
-				RaiseSGSDKException('Frames per cell cannot be all the zero');
-			
-			spriteToDraw.frameCount := spriteToDraw.frameCount + 1;
-			
-			if spriteToDraw.frameCount >= spriteToDraw.framesPerCell[spriteToDraw.currentFrame] then
+			if spriteToUpdate.spriteKind = AnimArraySprite then
 			begin
-				spriteToDraw.frameCount := 0;
-				if spriteToDraw.reverse then
-				begin
-					spriteToDraw.currentFrame := spriteToDraw.currentFrame - 1;
-					
-					if (spriteToDraw.currentFrame < Low(spriteToDraw.framesPerCell)) then
-					begin
-						if spriteToDraw.endingAction = ReverseOnce then
-						begin
-							spriteToDraw.currentFrame := 0;
-							spriteToDraw.hasEnded := true;
-						end
-						else
-						begin
-							spriteToDraw.currentFrame := 1;
-							spriteToDraw.reverse := false;
-						end;
-					end;
-				end
-				else //going forward
-				begin
-					spriteToDraw.currentFrame := spriteToDraw.currentFrame + 1;
-					
-					if (spriteToDraw.currentFrame > High(spriteToDraw.framesPerCell)) then
-					begin
-						if (spriteToDraw.endingAction = ReverseLoop) or (spriteToDraw.endingAction = ReverseOnce) then
-						begin
-							spriteToDraw.reverse := true;
-							spriteToDraw.currentFrame := SpriteToDraw.currentFrame - 1;
-						end;
-						if spriteToDraw.endingAction = Loop then
-							spriteToDraw.currentFrame := 0;
-						if spriteToDraw.endingAction = Stop then
-						begin
-							spriteToDraw.currentFrame := High(SpriteToDraw.framesPerCell);
-							spriteToDraw.hasEnded := true;
-						end;
-					end;
-				end;
+				spriteToUpdate.width := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].width;
+				spriteToUpdate.height := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].height;
 			end;
-			if SpriteToDraw.spriteKind = AnimArraySprite then
-			begin
-				spriteToDraw.width := spriteToDraw.bitmaps[spriteToDraw.currentFrame].width;
-				spriteToDraw.height := spriteToDraw.bitmaps[spriteToDraw.currentFrame].height;
-			end;
-			if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
-				UpdateSpriteAnimation(spriteToDraw);
-
-			if spriteToDraw.framesPerCell[spriteToDraw.currentFrame] = 0 then
-				UpdateSpriteAnimation(spriteToDraw);
 		end;
-		
-		//Skip Fix
-		//WriteLn('fpc: ', Length(spriteToDraw.framesPerCell), ' cc: ', spritetoDraw.currentFrame);
 	end;
 	
-	procedure UpdateSprite(spriteToDraw: Sprite);
+	procedure UpdateSprite(spriteToUpdate: Sprite);
 	begin
-		MoveSprite(spriteToDraw);
-		UpdateSpriteAnimation(spriteToDraw);
+		MoveSprite(spriteToUpdate);
+		UpdateSpriteAnimation(spriteToUpdate);
 	end;
 	
 	/// Draws a sprite to the screen, without using a view port.
@@ -939,6 +930,8 @@ implementation
 	var
 		srcX, srcY: Integer; // the source x, y : i.e. the location of the current part for multi animations
 	begin
+		if spriteToDraw = nil then raise Exception.Create('No sprite supplied');
+		
 		if IsSpriteOffscreen(spriteToDraw) then exit;
 		
 		if spriteToDraw.spriteKind <> AnimMultiSprite then
@@ -954,8 +947,8 @@ implementation
 			end;
 			
 			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
-								spriteToDraw.width, spriteToDraw.height,
-								spriteToDraw.xPos, spriteToDraw.yPos);
+						   spriteToDraw.width, spriteToDraw.height,
+						   spriteToDraw.xPos, spriteToDraw.yPos);
 		end;
 	end;
 	
@@ -963,10 +956,11 @@ implementation
 	var
 		tempWidth, tempHeight: Integer;
 	begin
+		if spriteToDraw = nil then raise Exception.Create('No sprite supplied');
+		
 		if spriteToDraw.spriteKind <> AnimMultiSprite then
 		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], 
-				spriteToDraw.xPos + xOffset, spriteToDraw.yPos + yOffset);
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.xPos + xOffset, spriteToDraw.yPos + yOffset);
 		end
 		else
 		begin
@@ -974,9 +968,9 @@ implementation
 			tempHeight := spriteToDraw.currentFrame mod spriteToDraw.cols * spriteToDraw.height;
 			
 			DrawBitmapPartOnScreen(spriteToDraw.bitmaps[0], tempWidth, tempHeight, 
-								spriteToDraw.width, spriteToDraw.height,
-								Round(spriteToDraw.xPos + xOffset), Round(spriteToDraw.yPos + yOffset));
-		end;		
+								   spriteToDraw.width, spriteToDraw.height,
+								   Round(spriteToDraw.xPos + xOffset), Round(spriteToDraw.yPos + yOffset));
+		end;
 	end;
 
   	/// Determines if a sprite is off the screen.
@@ -985,7 +979,7 @@ implementation
 	///	@returns					True if the sprite is off the screen
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean;
 	begin
-		//WriteLn(theSprite.xPos, ' -> ', SGSDK_Camera.SGSDK_Camera.ScreenX(theSprite.xPos));
+		if theSprite = nil then raise Exception.Create('No sprite supplied');
 		
 		if SGSDK_Camera.ScreenX(theSprite.xPos) >= ScreenWidth() then result := true
 		else if SGSDK_Camera.ScreenX(theSprite.xPos) + CurrentWidth(theSprite) < 0 then result := true
@@ -1000,12 +994,10 @@ implementation
 	///	@param movementVector:	 The vector containing the movement details
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); overload;
 	begin
-		try
-			spriteToMove.xPos := spriteToMove.xPos + movementVector.x;
-			spriteToMove.yPos := spriteToMove.yPos + movementVector.y;
-		except
-			RaiseSGSDKException('Failed to move the specified sprite using the specified vector');
-		end;
+		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
+			
+		spriteToMove.xPos := spriteToMove.xPos + movementVector.x;
+		spriteToMove.yPos := spriteToMove.yPos + movementVector.y;
 	end;
 
 	/// Moves a sprite to a given x,y location.
@@ -1017,22 +1009,18 @@ implementation
 	///	- Moves the sprite, changing its x and y
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
 	begin
-		try
-			spriteToMove.xPos := x;
-			spriteToMove.yPos := y;
-		except
-			RaiseSGSDKException('Failed to move the specified sprite to the spceified coordinate');
-		end;
+		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
+		
+		spriteToMove.xPos := x;
+		spriteToMove.yPos := y;
 	end;
 	
 	procedure MoveSprite(spriteToMove: Sprite); overload;
 	begin
-		try
-			spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
-			spriteToMove.yPos := spriteToMove.yPos + spriteToMove.movement.y;
-		except
-			RaiseSGSDKException('Failed to move the specified sprite with the attached vector');
-		end;
+		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
+		
+		spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
+		spriteToMove.yPos := spriteToMove.yPos + spriteToMove.movement.y;
 	end;
 	
 	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
@@ -1044,30 +1032,29 @@ implementation
 	///  @returns:              A new bitmap
 	function CreateBitmap(width, height: Integer): Bitmap;
 	begin
-    result := nil;
-
 		if (width < 1) or (height < 1) then
-			RaiseSGSDKException('Bitmap width and height must be greater then 0');
-    if (baseSurface = nil) or (baseSurface.format = nil) then
-      RaiseSGSDKException('Unable to CreateBitmap as the window is not open');
+			raise Exception.Create('Bitmap width and height must be greater then 0');
+	    if (baseSurface = nil) or (baseSurface.format = nil) then
+	      	raise Exception.Create('Unable to CreateBitmap as the window is not open');
+		
+		New(result);
 
-		try
-			New(result);
-
-			with baseSurface.format^ do
-			begin
-				result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
-												 RMask, GMask, BMask, AMask);
-			end;
-
-			result.width := width;
-			result.height := height;
-			SDL_SetAlpha(result.surface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
-			SDL_FillRect(result.surface, nil, ColorTransparent);
-		except
-      Dispose(result);
-			RaiseSGSDKException('Failed to create a bitmap');
+		with baseSurface.format^ do
+		begin
+			result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
+											 RMask, GMask, BMask, AMask);
 		end;
+		
+		if result.surface = nil then
+		begin
+			Dispose(result);
+			raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
+		end;
+		
+		result.width := width;
+		result.height := height;
+		SDL_SetAlpha(result.surface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+		SDL_FillRect(result.surface, nil, ColorTransparent);
 	end;
 
 	/// Created bitmaps can be optimised for faster drawing to the screen. This
@@ -1083,14 +1070,12 @@ implementation
 	var
 		oldSurface: PSDL_Surface;
 	begin
-		try
-			oldSurface := surface.surface;
-			SetNonAlphaPixels(surface, oldSurface);
-			surface.surface := SDL_DisplayFormatAlpha(oldSurface);
-			SDL_FreeSurface(oldSurface);
-		except
-			RaiseSGSDKException('Failed to optimise the specified bitmap')
-		end;
+		if surface = nil then raise Exception.Create('No bitmap supplied');
+		
+		oldSurface := surface.surface;
+		SetNonAlphaPixels(surface, oldSurface);
+		surface.surface := SDL_DisplayFormatAlpha(oldSurface);
+		SDL_FreeSurface(oldSurface);
 	end;
 	
 	procedure PutPixel(surface: PSDL_Surface; x, y: Integer; color: Color);
@@ -1099,18 +1084,11 @@ implementation
 	  pixels: PUint32;
 	  addr: UInt32;
 	begin
-		try
-			if (x < 0) or (x >= surface.w) or (y < 0) or (y >= surface.h) then exit;
-
-			pixels := surface.pixels;
-			//addr := Integer(pixels) + (( y * surface.w ) + x) * surface.format.BytesPerPixel;
-			addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
-			bufp := PUint32(addr);
-			bufp^ := color;
-			//PixelColor(surface, x, y, ToSDLGFXColor(color));
-		except
-			RaiseSGSDKException('Failed to put pixel to the specified coordinate');
-		end;
+		if (x < 0) or (x >= surface.w) or (y < 0) or (y >= surface.h) then exit;
+		pixels := surface.pixels;
+		addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
+		bufp := PUint32(addr);
+		bufp^ := color;
 	end;
 	
 	/// Draws a pixel onto the screen.
@@ -1381,14 +1359,8 @@ implementation
 	procedure DrawRectangle(dest: Bitmap; theColour: Colour; filled : Boolean;
                           xPos, yPos, width, height : Integer); overload;
 	begin
-		if filled then
-		begin
-			FillRectangle(dest, theColour, xPos, yPos, width, height);
-		end
-		else
-		begin
-			DrawRectangle(dest, theColour, xPos, yPos, width, height);
-		end;
+		if filled then FillRectangle(dest, theColour, xPos, yPos, width, height)
+		else DrawRectangle(dest, theColour, xPos, yPos, width, height);
 	end;
 
 	/// Draws the outline of a rectangle on the destination bitmap.
@@ -1423,6 +1395,8 @@ implementation
 	var
 		rect: SDL_Rect;
 	begin
+		if dest = nil then raise Exception.Create('No destination bitmap supplied');
+		
 		if width < 0 then
 		begin
 			rect.x := xPos + width; //move back by width
@@ -1438,11 +1412,7 @@ implementation
 		rect.w := width;
 		rect.h := height;
 		
-		try
-			SDL_FillRect(dest.surface, @rect, theColour);
-		except
-			RaiseSGSDKException('Failed to fill rectangle');
-		end;
+		SDL_FillRect(dest.surface, @rect, theColour);
 	end;
 
 	/// Draws a ellipse within a given rectangle on the dest bitmap.
@@ -1458,14 +1428,8 @@ implementation
 	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean;
                         xPos, yPos, width, height: Integer); overload;
 	begin
-		if filled then
-		begin
-			FillEllipse(dest, theColour, xPos, yPos, width, height);
-		end
-		else
-		begin
-			DrawEllipse(dest, theColour, xPos, yPos, width, height);
-		end;
+		if filled then FillEllipse(dest, theColour, xPos, yPos, width, height)
+		else DrawEllipse(dest, theColour, xPos, yPos, width, height);
 	end;
 
 	/// Draws a ellipse outline within a given rectangle on the dest bitmap.
@@ -1487,20 +1451,16 @@ implementation
 		twoASquare, twoBSquare: Integer;
 		stoppingX, stoppingY: Integer;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw an ellipse is nil');
-		end;
-		
-		if (width < 1) or (height < 1) then begin
-			RaiseSGSDKException('Ellipse width and height must be greater then 0');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw an ellipse is nil');
+		if (width < 0) or (height < 0) then raise Exception.Create('Ellipse width and height must be greater then 0');
+		if (width = 0) or (height = 0) then exit;
 		
 		xRadius := width div 2;
 		yRadius := height div 2;
-
+		
 		xPos := xPos + xRadius;
-    yPos := yPos + yRadius;
-
+    	yPos := yPos + yRadius;
+		
 		twoASquare := 2 * (width shr 1) * (width shr 1);
 		twoBSquare := 2 * (height shr 1) * (height shr 1);
 
@@ -1575,12 +1535,8 @@ implementation
 			end;
 		end;
 		
-		try
-			// Unlock dest
-			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to unlock the bitmap');
-		end;
+		// Unlock dest
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
@@ -1602,13 +1558,9 @@ implementation
 		stoppingX, stoppingY: Integer;
 		xRadius, yRadius: Integer;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw an ellipse is nil');
-		end;
-		
-		if (width < 1) or (height < 1) then begin
-			RaiseSGSDKException('Ellipse width and height must be greater then 0');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw an ellipse is nil');
+		if (width < 0) or (height < 0) then raise Exception.Create('Ellipse width and height must be greater then 0');
+		if (width = 0) or (height = 0) then exit;
 		
 		xRadius := width div 2;
 		yRadius := height div 2;
@@ -1686,12 +1638,8 @@ implementation
 			end;
 		end;
 		
-		try
-			// Unlock dest
-			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to unlock the destination bitmap');
-		end;
+		// Unlock dest
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a vertical line on the destination bitmap.
@@ -1709,9 +1657,7 @@ implementation
 		bufP: PUInt32;
 		pixels: PUint32;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw a vertical line is nil');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
 		
 		w := dest.surface.w;
 		h := dest.surface.h;
@@ -1735,11 +1681,7 @@ implementation
 		addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
 		bufp := PUint32(addr);
 		
-		try
-			if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to lock the destination bitmap')
-		end;
+		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for y := y1 to y2 - 1 do
 		begin
@@ -1747,11 +1689,7 @@ implementation
 			bufp^ := theColor;
 		end;
 		
-		try
-			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to unlock the destination bitmap');
-		end;
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a horizontal line on the destination bitmap.
@@ -1763,15 +1701,13 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
-	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y,x1,x2: Integer);
+	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer);
 	var
 		w, h, x, addr: Integer;
 		bufP: PUInt32;
 		pixels: PUint32;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw a horizontal line is nil');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a horizontal line is nil');
 		
 		w := dest.surface.w;
 		h := dest.surface.h;
@@ -1795,11 +1731,7 @@ implementation
 		addr := UInt32(pixels) + ((UInt32(x1 - 1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch);
 		bufp := PUint32(addr);
 		
-		try
-			if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to lock the destination bitmap')
-		end;
+		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for x := x1 to x2 do
 		begin
@@ -1807,11 +1739,7 @@ implementation
 			bufp^ := theColor;
 		end;
 		
-		try
-			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to unlock the destination bitmap');
-		end;
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a line on the destination bitmap.
@@ -1830,9 +1758,7 @@ implementation
 		deltaX, deltaY: Integer;
 		xinc1, xinc2, yinc1, yinc2, den, num, numadd, numpixels, curpixel: Integer;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw a line is nil');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a line is nil');
 		
 		if xPosStart = xPosEnd then
 			DrawVerticalLine(dest, theColour, xPosStart, yPosStart, yPosEnd)
@@ -1922,25 +1848,15 @@ implementation
 	///	- Sets one pixel on the destination bitmap
 	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer); overload;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw a pixel is nil');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
 		
 		if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
 		
-		try
-			if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to lock the destination bitmap')
-		end;
+		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		PutPixel(dest.surface, x, y, theColour);
 		
-		try
-			if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-		except
-			RaiseSGSDKException('Failed to unlock the destination bitmap');
-		end;
+		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 	
 	/// Draws a circle centered on a given x, y location.
@@ -1956,10 +1872,8 @@ implementation
 	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean;
                        xc, yc, radius: Integer); overload;
 	begin
-		if filled then
-			FillCircle(dest, theColour, xc, yc, radius)
-		else
-			DrawCircle(dest, theColour, xc, yc, radius);
+		if filled then FillCircle(dest, theColour, xc, yc, radius)
+		else DrawCircle(dest, theColour, xc, yc, radius);
 	end;
 
 	/// Draws a circle outline centered on a given x, y location.
@@ -1971,19 +1885,15 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle in the dest bitmap
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer);
-   overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
 	var
 		x, y, p: Integer;
 		a, b, c, d, e, f, g, h: Integer;
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw a circle is nil');
-		end;
-		
-		if radius < 1 then begin
-			RaiseSGSDKException('Radius for a circle must be greater then 0');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a circle is nil');
+		if radius < 0 then raise Exception.Create('Radius for a circle must be greater then 0');
+
+		if radius = 0 then exit;
 		
 	  	x := 0;
 		y := radius;
@@ -2043,14 +1953,11 @@ implementation
 		a, b, c, d, e, f, g, h: Integer;
 		pb, pd: Integer; //previous values: to avoid drawing horizontal lines multiple times
 	begin
-		if dest = nil then begin
-			RaiseSGSDKException('The destination bitmap to draw a circle is nil');
-		end;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a circle is nil');
+		if radius < 0 then raise Exception.Create('Radius for a circle must be greater then 0');
 		
-		if radius < 1 then begin
-			RaiseSGSDKException('Radius for a circle must be greater then 0');
-		end;
-		
+		if radius = 0 then exit;
+
 		x := 0;
 		y := radius;
 		p := 3 - (radius shl 1);
@@ -2090,16 +1997,5 @@ implementation
 				y := y - 1;
 			end;
 		end;
-	end;
-  
-  	/// Returns the average framerate for the last 10 frames as an integer.
-	///
-	///	@returns		 The current average framerate
-	function GetFramerate(): Integer;
-	begin
-		if renderFPSInfo.average = 0 then
-			result := 9999
-		else
-			result := Round(1000 / renderFPSInfo.average);
 	end;
 end.

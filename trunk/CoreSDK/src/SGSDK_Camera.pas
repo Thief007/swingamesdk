@@ -1,8 +1,24 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Camera.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Camera unit is used to change the view port (ie 
+// the camera location.)
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-17: Aki + Andrew: Refactor
+//  
+// Version 1.0:
+// - Various
+
 unit SGSDK_Camera;
 
 interface
-	uses
-		SDL, SGSDK_Core, Classes, SysUtils, SDL_image, SDL_Mixer, SDL_TTF, SDLEventProcessing;
+	uses SGSDK_Core;
 
 	//*****
 	//
@@ -29,6 +45,7 @@ interface
 	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
 	
 implementation
+	uses Classes, SysUtils;
 
 	///
 	/// The screen offset variables
@@ -95,7 +112,7 @@ implementation
 	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
 	begin
 		if spr = nil then begin
-			RaiseSGSDKException('The target sprite to follow is nil');
+			raise Exception.Create('FollowSprite requires a target sprite. No sprite was provided (nil supplied)');
 		end;
 		MoveVisualArea(Round(ScreenX(spr.xPos) + spr.width / 2 - ScreenWidth() / 2) + Xoffset, 
 					   Round(ScreenY(spr.yPos) + spr.height / 2 - ScreenHeight() / 2) + Yoffset);

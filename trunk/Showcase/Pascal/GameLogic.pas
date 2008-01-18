@@ -8,7 +8,7 @@ implementation
 	GameResources,
 	SysUtils,
 	SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics,
-	SGSDK_KeyCodes, SGSDK_Camera, SGSDK_MappyLoader;
+	SGSDK_KeyCodes, SGSDK_Camera, SGSDK_MappyLoader, SGSDK_Shapes;
 	
 	procedure DrawOverlay(title : String);
 	begin
@@ -65,8 +65,8 @@ implementation
 	begin
 		ClearScreen();
 		repeat
-			DrawCircle(GetRandomColor(), Random(800), Random(800), Random(400));
-			FillCircle(GetRandomColor(), Random(800), Random(800), Random(400));
+			DrawCircle(GetRandomColor(), Random(800) + 1, Random(800) + 1, Random(400) + 1);
+			FillCircle(GetRandomColor(), Random(800) + 1, Random(800) + 1, Random(400) + 1);
 			DrawOverlay('Drawing Circles Example');
 			ProcessEvents();
 			RefreshScreen();
@@ -80,8 +80,8 @@ implementation
 	begin
 		ClearScreen();
 		repeat
-			DrawEllipse(GetRandomColor(), Random(800), Random(800), Random(400), Random(400));
-			FillEllipse(GetRandomColor(), Random(800), Random(800), Random(400), Random(400));
+			DrawEllipse(GetRandomColor(), Random(800) + 1, Random(800) + 1, Random(400) + 1, Random(400) + 1);
+			FillEllipse(GetRandomColor(), Random(800) + 1, Random(800) + 1, Random(400) + 1, Random(400) + 1);
 			DrawOverlay('Drawing Ellipses Example');
 			ProcessEvents();
 			RefreshScreen();
@@ -598,7 +598,7 @@ implementation
 		balls: Array of Sprite;
 		tempString: CollisionSide;
 		i, j : Integer;
-		gravity, tempVector1, tempVector2 : Vector;
+		gravity: Vector;
 	begin
 		m := GameMap('test');
 		
@@ -607,13 +607,16 @@ implementation
 		for i := 0 to High(balls) do
 		begin
 			balls[i] := CreateSprite(GameImage('SmallBall'));
-			balls[i].movement := CreateVector(Random(15),0);
+			balls[i].movement := CreateVector(3, 0);
 			balls[i].xPos := EventPositionX(m, Event1, i);
 			balls[i].yPos := EventPositionY(m, Event1, i);
+			
 			balls[i].mass := 1;
 		end;
 		
 		gravity := CreateVector(0, 0.7);
+		
+		WriteLn('Event Count (Event1): ', EventCount(m, Event1));
 		
 		repeat			
 			if IsKeyPressed(VK_RIGHT) then
@@ -735,15 +738,219 @@ implementation
 			
 			
 			ClearScreen(ColorBlack);
-			DrawOverlay('Hidding, Showing and Moveing the mouse');
-			takescreenshot('tmep');
+			DrawOverlay('Hiding, Showing and Moving the mouse');
 			RefreshScreen();
-			takescreenshot('tmep');
+
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
 		ProcessEvents();
 	end;
+	
+	procedure VectorExample1();
+	const
+		CX = 400;
+		CY = 300;
+		RADIUS = 10;
+		LINE_LENGTH = 100;
+	var
+		v1, v2: Vector;
+		angle, rot, v1a, v2a: Single;
+		rm : Matrix2D;
+	begin
+		v1 := CreateVector(LINE_LENGTH, 0);
+		v2 := CreateVector(0 , LINE_LENGTH);
+
+		repeat
+			ProcessEvents();			
+			ClearScreen(ColorBlack);
+			
+			DrawOverlay('Vector Calculations - Angle');
+
+			DrawCircle(ColorRed, CX, CY, RADIUS);
+			DrawLine(ColorRed, CX, CY, CX + v1.x, CY + v1.y);
+			DrawLine(ColorWhite, CX, CY, CX + v2.x, CY + v2.y);			
+			
+			angle := CalculateAngleBetween(v1, v2);
+			v1a := CalculateAngle(0, 0, v1.x, v1.y);
+			v2a := CalculateAngle(0, 0, v2.x, v2.y);
+			
+			DrawTextLines('Left/Right control White.' + EOL + 'Up/Down control Red.' + EOL + 'Space to align red with white.', ColorWhite, ColorBlack, GameFont('Courier'), AlignLeft, 10, 50, 200, 200);
+			
+			DrawText('White: ' + FloatToStr(v2a), ColorWhite, GameFont('Courier'), 650, 50);
+			DrawText('Red: ' + FloatToStr(v1a), ColorRed, GameFont('Courier'), 650, 70);
+			DrawText('Between: ' + FloatToStr(angle), ColorWhite, GameFont('Courier'), 650, 90);
+						
+			rot := 0;
+			
+			if IsKeyPressed(VK_LEFT) then
+				rot := 5
+			else if IsKeyPressed(VK_RIGHT) then
+				rot := -5;
+			
+			if rot <> 0 then
+			begin
+				rm := RotationMatrix(rot);
+				v2 := Multiply(rm, v2);
+			end;
+
+			rot := 0;
+
+			if IsKeyPressed(VK_UP) then
+				rot := 5
+			else if IsKeyPressed(VK_DOWN) then
+				rot := -5;
+			
+			if rot <> 0 then
+			begin
+				rm := RotationMatrix(rot);
+				v1 := Multiply(rm, v1);
+			end;
+			
+			if WasKeyTyped(VK_SPACE) then
+			begin
+				rm := RotationMatrix(angle);
+				v1 := Multiply(rm, v1);
+			end;
+			
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+
+	procedure VectorExample2();
+	const
+		RW = 200;
+		RH = 200;		
+		RX = (800 - RW) div 2;
+		RY = (600 - RH) div 2;
+	var
+		p: Point2D;
+		rect: Rectangle;
+		r, r2: Integer;
+		movement, mvOut: Vector;
+	begin
+		r := 1;
+		r2 := 2;		
+		
+		p := CreatePoint(100 + RX, 100 + RY);
+		rect := CreateRectangle(RX, RY, RW, RH);
+		
+		movement := CreateVector(100, 0);
+		
+		repeat
+			ProcessEvents();			
+			
+			if IsKeyPressed(VK_A) then movement := Multiply(RotationMatrix(-4.0), movement);
+			if IsKeyPressed(VK_Z) then movement := Multiply(RotationMatrix(4.0), movement);
+			
+			if IsKeyPressed(VK_UP) then p.y := p.y - 5;
+			if IsKeyPressed(VK_DOWN) then p.y := p.y + 5;
+			if IsKeyPressed(VK_LEFT) then p.x := p.x - 5;
+			if IsKeyPressed(VK_RIGHT) then p.x := p.x + 5;
+							
+			mvOut := VectorOutOfRectFromPoint(p, rect, movement);
+//			WriteLn('after Rotat: ', movement.x:4:2, ',', movement.y:4:2);			
+//			WriteLn('after mvOut: ', mvOut.x:4:2, ':', mvOut.y:4:2);
+
+			ClearScreen(ColorBlack);
+			DrawOverlay('Vector Calculations - Getting A Point Out Of A Rectangle');
+
+			DrawRectangle(ColorRed, RX, RY, RW, RH);			
+			DrawRectangle(ColorWhite, p.x - r, p.y - r, r2, r2);
+			DrawLine(ColorWhite, p.x, p.y, p.x + movement.x, p.y + movement.y);
+			
+			if not ((mvOut.x = 0) and (mvOut.y = 0)) then
+			begin
+				DrawLine(ColorGreen, p.x, p.y, p.x + mvOut.x, p.y + mvOut.y);
+			end;
+			
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+
+	procedure VectorExample3();
+	const
+		RW = 200;
+		RH = 200;		
+		RX = (800 - RW) div 2;
+		RY = (600 - RH) div 2;
+	var
+		mvRect, tgtRect: Rectangle;
+		
+		px, py: Single;
+		halfH, halfW: Integer;
+		movement, mvOut: Vector;
+		enterRectFrom: CollisionSide;
+	begin
+		halfW := 5; halfH := 10;
+		movement := CreateVector(100, 0);
+		
+		tgtRect := CreateRectangle(RX, RY, RW, RH);
+		mvRect := CreateRectangle(100 + RX, 100 + RY, 10, 20);
+		
+		repeat
+			ProcessEvents();			
+			
+			if IsKeyPressed(VK_A) then movement := Multiply(RotationMatrix(-4.0), movement);			
+			if IsKeyPressed(VK_Z) then movement := Multiply(RotationMatrix(4.0), movement);
+						
+			if IsKeyPressed(VK_UP) then mvRect.y := mvRect.y - 5;
+			if IsKeyPressed(VK_DOWN) then mvRect.y := mvRect.y + 5;
+			if IsKeyPressed(VK_LEFT) then mvRect.x := mvRect.x - 5;
+			if IsKeyPressed(VK_RIGHT) then mvRect.x := mvRect.x + 5;
+			
+			mvOut := VectorOutOfRectFromRect(mvRect, tgtRect, movement);
+			enterRectFrom := GetSideForCollisionTest(movement);
+			
+			// furthest point... default top-left
+			px := RectangleLeft(mvRect); 
+			py := RectangleTop(mvRect);
+			
+			case enterRectFrom of
+				//Hit top or left of wall... bottom right in
+				TopLeft: 		begin px := RectangleRight(mvRect); py := RectangleBottom(mvRect);  end;
+				//Hit top or right of wall... bottom left in
+				TopRight:		py := RectangleBottom(mvRect);
+				//Hit bottom or left of wall... top right in
+				BottomLeft:		px := RectangleRight(mvRect);
+				//Hit bottom or right of wall... top left is in
+				BottomRight: 	;
+				//Hit left of wall... right in
+				Left: 			px := RectangleRight(mvRect);
+				Right: 			;                                   
+				//Hit top of wall... bottom in
+				Top: 			py := RectangleBottom(mvRect);
+				Bottom: 		;
+			end;
+			
+			ClearScreen(ColorBlack);
+			DrawOverlay('Vector Calculations - Getting A Rectangle Out Of A Rectangle');
+			
+			DrawRectangle(ColorRed, RX, RY, RW, RH);			
+			DrawRectangle(ColorWhite, mvRect.x, mvRect.y, mvRect.width, mvRect.height);
+			DrawLine(ColorWhite, mvRect.x + halfW, mvRect.y + halfH, mvRect.x + halfW + movement.x, mvRect.y + halfH + movement.y);
+
+			if not ((mvOut.x = 0) and (mvOut.y = 0)) then
+			begin
+				DrawLine(ColorGrey, mvRect.x, mvRect.y, mvRect.x + mvOut.x, mvRect.y + mvOut.y);
+				DrawRectangle(ColorGreen, mvRect.x + mvOut.x, mvRect.y + mvOut.y, mvRect.width, mvRect.height);			
+				DrawLine(ColorGreen, px, py, px + mvOut.x, py + mvOut.y);
+			end;
+			
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+
+
 	
 	//The main procedure that controlls the game logic.
 	//
@@ -793,9 +1000,17 @@ implementation
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
 		If WindowCloseRequested() then exit;
-		MapExample();}
+		MapExample();
 		If WindowCloseRequested() then exit;
-		MouseExample();
+		MouseExample();	
+		If WindowCloseRequested() then exit;
+		VectorExample1();		}
+		If WindowCloseRequested() then exit;
+		VectorExample2();
+
+		If WindowCloseRequested() then exit;
+		VectorExample3();
+		
 		FreeResources();
 	end;
 end.
