@@ -142,9 +142,9 @@ interface
 	//function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 
 	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : boolean;
-	//function LineInsersectsWithRect(x1, y1, x2, y2, rectX, rectY: Single; width, height: Integer): boolean;
-	function LineInsersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
-	function LineInsersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
+	//function LineIntersectsWithRect(x1, y1, x2, y2, rectX, rectY: Single; width, height: Integer): boolean;
+	function LineIntersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
+	function LineIntersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
 	
 	function GetSideForCollisionTest (movement: Vector): CollisionSide;
 implementation
@@ -947,8 +947,6 @@ implementation
 			if outMag < 0 then outMag := 0;
 			
 			result := MultiplyVector(mvOut, outMag + 1);
-
-			WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);
 		end;		
 	begin		
 		case rectCollisionSide of
@@ -992,7 +990,9 @@ implementation
 				begin
 					result := CreateVector(0, 0);
 				end;
-		end;		
+		end;
+		
+		//WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2); //, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);		
 	end;
 
 	//Vector needed to move from x, y out of rectangle assuming movement specified
@@ -1003,8 +1003,8 @@ implementation
 		
 		if (result.x = 0) and (result.y = 0) then exit;	
 
-//		if not LineInsersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then
-		if not LineInsersectsWithRect(LineFromVector(pnt, movement), rect) then
+//		if not LineIntersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then
+		if not LineIntersectsWithRect(LineFromVector(pnt, movement), rect) then
 			result := CreateVector(0, 0);
 	end;
 
@@ -1053,16 +1053,16 @@ implementation
 		case rectCollisionSide of
 			//Hit top left, check bottom and right;
 			TopLeft: if (RectangleTop(destRect) > RectangleBottom(targetRect)) 	or 
-						(RectangleLeft(destRect) > RectangleRight(targetRect)) 	then result := CreateVector(0,0);
+							(RectangleLeft(destRect) > RectangleRight(targetRect)) 	then result := CreateVector(0,0);
 			//Hit top right, check bottom and left
 			TopRight: if 	(RectangleTop(destRect) > RectangleBottom(targetRect))	or 
-							(RectangleRight(destRect) > RectangleLeft(targetRect))	then result := CreateVector(0,0);
+								(RectangleRight(destRect) < RectangleLeft(targetRect))	then result := CreateVector(0,0);
 			//Hit bottom left, check top and right
-			BottomLeft: if 	(RectangleBottom(destRect) < RectangleTop(targetRect)) 	or 
-							(RectangleLeft(destRect) > RectangleRight(targetRect)) 	then result := CreateVector(0,0);
+			BottomLeft: if (RectangleBottom(destRect) < RectangleTop(targetRect)) 	or 
+								(RectangleLeft(destRect) > RectangleRight(targetRect)) 	then result := CreateVector(0,0);
 			//Hit bottom right, check top and left
-			BottomRight: if (RectangleBottom(destRect) < RectangleTop(targetRect)) 	or 
-							(RectangleRight(destRect) > RectangleLeft(targetRect))	then result := CreateVector(0,0);
+			BottomRight: if 	(RectangleBottom(destRect) < RectangleTop(targetRect)) 	or 
+									(RectangleRight(destRect) < RectangleLeft(targetRect))	then result := CreateVector(0,0);
 		end		
 	end;
 
@@ -1085,11 +1085,11 @@ implementation
 		
 		//Convert lines to eqn c = ax + by
 		a1 := line1.endPoint.y - line1.startPoint.y; //y12 - y11;
-		b1 := line1.startPoint.x - line1.endPoint.y; //x11 - x12;
+		b1 := line1.startPoint.x - line1.endPoint.x; //x11 - x12;
 		c1 := a1 * line1.startPoint.x + b1 * line1.startPoint.y; //a1 * x11 + b1 * y11;
 
 		a2 := line2.endPoint.y - line2.startPoint.y; //y22 - y21;
-		b2 := line2.startPoint.x - line2.endPoint.y; //x21 - x22;
+		b2 := line2.startPoint.x - line2.endPoint.x; //x21 - x22;
 		c2 := a2 * line2.startPoint.x + b2 * line2.startPoint.y; //a2 * x21 + b2 * y21;
 		
 		det := (a1 * b2) - (a2 * b1);
@@ -1103,15 +1103,21 @@ implementation
 		end;		
 	end;
 
-	function LineInsersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
+	function LineIntersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
 	var
 		i: Integer;
 		pnt: Point2D;
 	begin
+		//WriteLn('Rect Lines:');
+		
 		for i := 0 to High(lines) do
-		begin
+		begin			
 			if GetLineIntersectionPoint(target, lines[i], pnt) and IsPointOnLine(pnt, lines[i]) then
 			begin
+				
+{				WriteLn(	'   -  ', lines[i].startPoint.x:4:2, ',', lines[i].startPoint.y:4:2, 
+							'  to  ', lines[i].endPoint.x:4:2, ',', lines[i].endPoint.y:4:2);}
+				
 				result := true;
 				exit;
 			end;
@@ -1120,12 +1126,12 @@ implementation
 		result := false;
 	end;
 	
-	function LineInsersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
+	function LineIntersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
 	var
 		lines: LinesArray;
 	begin
 		lines := LinesFromRect(rect);
-		result := LineInsersectsWithLines(line, lines);
+		result := LineIntersectsWithLines(line, lines);
 		
 		{result := false;
 		
