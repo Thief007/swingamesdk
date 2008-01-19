@@ -51,7 +51,11 @@ namespace TomatoQuest
         //Load The User Interface
         private UserInterface _Interface = new UserInterface();
 
+        //Random number generator
         private Random _RandomNumber = new Random(System.DateTime.Now.Millisecond);
+
+        //List of Items
+        private List<Item> _Items = new List<Item>();
 
         //Game Constructor
         public Game()
@@ -76,6 +80,10 @@ namespace TomatoQuest
             _AI.AddRange(_Critters.Characters);
             _AI.AddRange(_Thieves.Characters);
             _AI.AddRange(_Leader.Characters);
+
+            _Items.Add(new Item("Tomato"));
+
+            Item.GiveCharacterItem(_Leader.Characters[0], _Items[0]);
         }
 
         public void Run()
@@ -108,6 +116,12 @@ namespace TomatoQuest
             //Combat
             Combat.AIHitPlayer(_Player, _AI, _RandomNumber);
             Combat.PlayerHitAI(_Player, _AI, _RandomNumber);
+
+            //Draw Items
+            for (int i = 0; i < _Items.Count; i++)
+            {
+                _Items[i].DrawItem();
+            }
 
             //Run User Interface
             _Interface.RunUI(_Player);

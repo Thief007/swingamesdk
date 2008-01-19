@@ -84,6 +84,8 @@ namespace TomatoQuest
         public int Damage;
         public int StatusCooldown;
 
+        public Inventory Inventory = new Inventory();
+
         //Returns the Sprite
         public Sprite Sprite
         {

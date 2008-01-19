@@ -24,7 +24,7 @@ namespace TomatoQuest
         {
             //Goes through each healer and creates a new character for each one
             //Placing each healer at it's spawn point.
-            for (int i = 0; i < MappyLoader.EventCount(map.Map, eventtype) - 1; i++)
+            for (int i = 0; i < MappyLoader.EventCount(map.Map, eventtype); i++)
             {
                 Characters.Add(new Character("Healer", map.EventPositionX(eventtype, i), map.EventPositionY(eventtype, i), Strength, Vitality, Agility, Intelligence, Luck, false, false, true));
             }
