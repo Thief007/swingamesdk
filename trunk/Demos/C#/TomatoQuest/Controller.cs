@@ -26,22 +26,22 @@ namespace TomatoQuest
             //If Up key is hit, move the character up
             if (Input.IsKeyPressed(SwinGame.Keys.VK_UP))
             {
-                thePlayer.MoveCharacter(theLevel.Map, 0, -2);
+                thePlayer.MoveCharacter(theLevel.Map, 0, -20);
             }
             //If Down key is hit, Move the character down
             else if (Input.IsKeyPressed(SwinGame.Keys.VK_DOWN))
             {
-                thePlayer.MoveCharacter(theLevel.Map, 0, 2);
+                thePlayer.MoveCharacter(theLevel.Map, 0, 20);
             }         
             //If Left key is hit, move the character left
             else if (Input.IsKeyPressed(SwinGame.Keys.VK_LEFT))
             {
-                thePlayer.MoveCharacter(theLevel.Map, -2, 0);
+                thePlayer.MoveCharacter(theLevel.Map, -20, 0);
             }
             //If Right key is hit, move the character right
             else if (Input.IsKeyPressed(SwinGame.Keys.VK_RIGHT))
             {
-                thePlayer.MoveCharacter(theLevel.Map, 2, 0);
+                thePlayer.MoveCharacter(theLevel.Map, 20, 0);
             }
             //If no directional key is hit, don't move him
             else

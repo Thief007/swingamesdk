@@ -59,6 +59,12 @@ namespace TomatoQuest
                     //Draws the AI
                     Graphics.DrawSprite(theAI[i].Sprite);
                 }
+                
+                if (theAI[i].Inventory.HasItems() && !theAI[i].Alive)
+                {
+                      theAI[i].Inventory.DropItems();
+                }
+                
 
                 theAI[i].UpdateCharacterStatus();
             }

@@ -304,6 +304,7 @@ namespace GameResources
             NewImage("Critter", "Critter.png");
             NewImage("Thief", "Thief.png");
             NewImage("ThiefLeader", "ThiefLeader.png");
+            NewImage("Tomato", "Tomato.png");
         }
 
         private static void LoadSounds()

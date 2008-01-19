@@ -26,7 +26,7 @@ namespace TomatoQuest
             //Placing each healer at it's spawn point.
             //Also giving each Enemy, experience, that will given to the player when
             //the player defeats the enemy.
-            for (int i = 0; i < MappyLoader.EventCount(map.Map, eventtype) - 1; i++)
+            for (int i = 0; i < MappyLoader.EventCount(map.Map, eventtype); i++)
             {
                 Characters.Add(new Character(name, map.EventPositionX(eventtype, i), map.EventPositionY(eventtype, i), Strength, Vitality, Agility, Intelligence, Luck, true, true, false));
                 Characters[i].Experience = Experience;

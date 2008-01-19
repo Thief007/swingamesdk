@@ -48,6 +48,8 @@
     <Compile Include="GameLogic.cs" />
     <Compile Include="Healer.cs" />
     <Compile Include="Interaction.cs" />
+    <Compile Include="Inventory.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="UserInterface.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="Program.cs" />
