@@ -65,8 +65,8 @@ implementation
 	begin
 		result.theSprite := CreateSprite(GameImage('Enemy'), 2, 2, 75, 85);
 		//Initialise the enemy's position
-		result.theSprite.xPos := -1 * result.theSprite.width;
-		result.theSprite.yPos := 0;
+		result.theSprite.x := -1 * result.theSprite.width;
+		result.theSprite.y := 0;
 		result.speed := 1;
 		result.health := 50;
 		result.time := time;
@@ -78,10 +78,10 @@ implementation
 		result.reloadDelay := 15;
 		result.offset := -75;
 		result.direction := direction;
-		result.theSprite.yPos := yPos;
+		result.theSprite.y := yPos;
 		//Fix the enemy's position if the direction is RightToLeft
 		if result.direction = RightToLeft then begin
-			result.theSprite.xPos := SCREENWIDTH;
+			result.theSprite.x := SCREENWIDTH;
 			result.speed := result.speed * -1;
 		end;
 	end;
@@ -101,8 +101,8 @@ implementation
 		PLAYEROFFSET = 150;
 	begin
 		game.player.theSprite := CreateSprite(GameImage('Ship'), 2, 2, 40, 43);
-		game.player.theSprite.xPos := Round(ScreenWidth / 2 - game.player.theSprite.width / 2);
-		game.player.theSprite.yPos := ScreenHeight - PLAYEROFFSET;
+		game.player.theSprite.x := Round(ScreenWidth / 2 - game.player.theSprite.width / 2);
+		game.player.theSprite.y := ScreenHeight - PLAYEROFFSET;
 		game.player.speed := 4;
 		game.player.shootDelay := 4;
 		game.player.currentDelay := game.player.shootDelay;
@@ -145,8 +145,8 @@ implementation
 
 	procedure UpdateEntityPosition(speed, angle : Single; var target : Sprite);
 	begin
-		target.xPos := target.xPos + speed * SGSDK_Core.Cos(angle);
-		target.yPos := target.yPos + speed * SGSDK_Core.Sin(angle);
+		target.x := target.x + speed * SGSDK_Core.Cos(angle);
+		target.y := target.y + speed * SGSDK_Core.Sin(angle);
 	end;
 
 	procedure MovePlayerShip(var player : ShipData);
@@ -162,7 +162,7 @@ implementation
 				UpdateEntityPosition(player.speed, 135, player.theSprite)
 			else if not IsKeyPressed(VK_RIGHT) then
 				//if the left arrow key is the only key being pressed
-				player.theSprite.xPos := player.theSprite.xPos - player.speed
+				player.theSprite.x := player.theSprite.x - player.speed
 		end
 		else if IsKeyPressed(VK_RIGHT) then
 		begin
@@ -174,29 +174,29 @@ implementation
 				//if the down arrow key is also being pressed
 				UpdateEntityPosition(player.speed, 45, player.theSprite)
 			//if the right key is the only key being pressed
-			else player.theSprite.xPos := player.theSprite.xPos + player.speed
+			else player.theSprite.x := player.theSprite.x + player.speed
 		end
 		else if IsKeyPressed(VK_DOWN) and (not IsKeyPressed(VK_UP)) then
 			//if the only key being pressed is the down arrow key
-			player.theSprite.yPos := player.theSprite.yPos + player.speed
+			player.theSprite.y := player.theSprite.y + player.speed
 		else if IsKeyPressed(VK_UP) and (not IsKeyPressed(VK_DOWN)) then
 			//if the only key being pressed is the up arrow key
-			player.theSprite.yPos := player.theSprite.yPos - player.speed;
+			player.theSprite.y := player.theSprite.y - player.speed;
 		//Move the collision sprite
-		player.theSpriteC.xPos := player.theSprite.xPos;
-		player.theSpriteC.yPos := player.theSprite.yPos;
+		player.theSpriteC.x := player.theSprite.x;
+		player.theSpriteC.y := player.theSprite.y;
 	end;
 
 	procedure FixPosition(var theSprite : Sprite);
 	begin
-		if theSprite.xPos < 0 then
-		    theSprite.xPos := 0;
-		if theSprite.yPos < 0 then
-		    theSprite.yPos := 0;
-		if theSprite.xPos > SCREENWIDTH - theSprite.Width then
-		    theSprite.xPos := SCREENWIDTH - theSprite.Width;
-		if theSprite.yPos > SCREENHEIGHT - theSprite.Height then
-		    theSprite.yPos := SCREENHEIGHT - theSprite.Height;
+		if theSprite.x < 0 then
+		    theSprite.x := 0;
+		if theSprite.y < 0 then
+		    theSprite.y := 0;
+		if theSprite.x > SCREENWIDTH - theSprite.Width then
+		    theSprite.x := SCREENWIDTH - theSprite.Width;
+		if theSprite.y > SCREENHEIGHT - theSprite.Height then
+		    theSprite.y := SCREENHEIGHT - theSprite.Height;
 	end;
 	
 	procedure DeployBullet(bullet : BulletData; var bullets : Array of BulletData);
@@ -217,8 +217,8 @@ implementation
 						  kind : BulletKind; side : BulletSide; vec : Vector) : BulletData;
 	begin
 		result.theSprite := CreateSprite(GameImage(imgName));
-		result.theSprite.xPos := shotFrom.theSprite.xPos + shotFrom.theSprite.width div 2 - result.theSprite.width div 2;
-		result.theSprite.yPos := shotFrom.theSprite.yPos + shotFrom.theSprite.height div 2 - result.theSprite.height div 2;
+		result.theSprite.x := shotFrom.theSprite.x + shotFrom.theSprite.width div 2 - result.theSprite.width div 2;
+		result.theSprite.y := shotFrom.theSprite.y + shotFrom.theSprite.height div 2 - result.theSprite.height div 2;
 		result.damage := damage;
 		result.alive := true;
 		result.side := side;
@@ -319,13 +319,13 @@ implementation
 		BACKGROUNDSPEED = 10;
 	begin
 		//Slide the first background sprite by the background speed
-		images[0].yPos := images[0].yPos + BACKGROUNDSPEED;
+		images[0].y := images[0].y + BACKGROUNDSPEED;
 		//Reset the position of the first background sprite if it has
 		//reachead the bottom
-		if images[0].yPos >= SCREENHEIGHT then
-			images[0].yPos := 0;
+		if images[0].y >= SCREENHEIGHT then
+			images[0].y := 0;
 		//Set the second background position so the background is seamless
-		images[1].yPos := images[0].yPos - SCREENHEIGHT;
+		images[1].y := images[0].y - SCREENHEIGHT;
 		//Draw background sprites
 		DrawSprite(images[0]);
 		DrawSprite(images[1]);
@@ -366,7 +366,7 @@ implementation
 	begin
 		for i := 0 to High(game.enemies) do begin
 			if (game.enemies[i].time <= game.gameTimer) and game.enemies[i].alive then begin
-				game.enemies[i].theSprite.xPos := game.enemies[i].theSprite.xPos + game.enemies[i].speed;
+				game.enemies[i].theSprite.x := game.enemies[i].theSprite.x + game.enemies[i].speed;
 				if IsSpriteOffscreen(game.enemies[i].theSprite) then begin
 					game.enemies[i].alive := false;
 					continue;

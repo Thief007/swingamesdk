@@ -114,8 +114,8 @@ implementation
 		if spr = nil then begin
 			raise Exception.Create('FollowSprite requires a target sprite. No sprite was provided (nil supplied)');
 		end;
-		MoveVisualArea(Round(ScreenX(spr.xPos) + spr.width / 2 - ScreenWidth() / 2) + Xoffset, 
-					   Round(ScreenY(spr.yPos) + spr.height / 2 - ScreenHeight() / 2) + Yoffset);
+		MoveVisualArea(Round(ScreenX(spr.x) + spr.width / 2 - ScreenWidth() / 2) + Xoffset, 
+					   Round(ScreenY(spr.y) + spr.height / 2 - ScreenHeight() / 2) + Yoffset);
 	end;
 
 end.

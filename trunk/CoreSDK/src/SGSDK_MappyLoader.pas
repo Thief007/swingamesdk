@@ -381,10 +381,10 @@ implementation
 			
 		for y := YStart  to YEnd do
 		begin
-			m.Tiles.yPos := y * m.MapInfo.BlockHeight;
+			m.Tiles.y := y * m.MapInfo.BlockHeight;
 			for x := XStart  to XEnd do
 			begin
-				m.Tiles.xPos := x * m.MapInfo.BlockWidth;
+				m.Tiles.x := x * m.MapInfo.BlockWidth;
 				for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.CollisionLayer - m.MapInfo.EventLayer - 1 do
 				begin
 					if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
@@ -530,10 +530,10 @@ implementation
 	begin
 		result := false;
 		
-		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
-		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
-		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
-		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+		XStart := round((spr.x / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
+		XEnd := round((spr.x / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		YStart := round((spr.y / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
+		YEnd := round((spr.y / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
 
 		if YStart < 0 then YStart := 0;
 		if YStart >= m.MapInfo.MapHeight then exit;
@@ -569,8 +569,8 @@ implementation
 	
 	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffSet, yOffSet: Integer): Boolean;
 	begin
-		spr.xPos := spr.xPos + xOffset;
-		spr.yPos := spr.yPos + yOffset;
+		spr.x := spr.x + xOffset;
+		spr.y := spr.y + yOffset;
 
 		if BruteForceDetection(m, spr) then
 		begin
@@ -579,8 +579,8 @@ implementation
 		else
 			result := false;
 
-		spr.xPos := spr.xPos - xOffset;
-		spr.yPos := spr.yPos - yOffset;
+		spr.x := spr.x - xOffset;
+		spr.y := spr.y - yOffset;
 	end;
 	
 
@@ -594,10 +594,10 @@ implementation
 {		side := GetCollisionFromVector(movement);
 		
 		case side of
-			Top, Left, TopLeft:	kickVector := CreateVector(sprt.xPos - x, sprt.yPos - y);
-			Bottom, BottomLeft:	kickVector := CreateVector(sprt.xPos - x, sprt.yPos - (y + height));
-			TopRight:			kickVector := CreateVector(sprt.xPos - (x + width), sprt.yPos - y);
-			Right, BottomRight:	kickVector := CreateVector(sprt.xPos - (x + width), sprt.yPos - (y + height));
+			Top, Left, TopLeft:	kickVector := CreateVector(sprt.x - x, sprt.y - y);
+			Bottom, BottomLeft:	kickVector := CreateVector(sprt.x - x, sprt.y - (y + height));
+			TopRight:			kickVector := CreateVector(sprt.x - (x + width), sprt.y - y);
+			Right, BottomRight:	kickVector := CreateVector(sprt.x - (x + width), sprt.y - (y + height));
 		end;
 		
 		kickVector := InvertVector(kickVector);
@@ -608,7 +608,7 @@ implementation
 		if side = BottomRight then
 		begin
 			WriteLn('Movement: ', movement.x:4:2, ',', movement.y:4:2);
-			WriteLn('Sprt X,Y: ', sprt.xPos:4:2, ',', sprt.yPos:4:2);
+			WriteLn('Sprt X,Y: ', sprt.x:4:2, ',', sprt.y:4:2);
 			WriteLn('Sprt W,H: ', sprt.width, ',', sprt.height);
 			WriteLn('Block X,Y: ', x, ',', y);
 			WriteLn('Block W,H: ', width, ',', height);
@@ -631,10 +631,10 @@ implementation
 		XStart, XEnd, YStart, YEnd : Integer;
 		y, x, yCache, xCache: Integer;
 	begin
-		XStart := round((spr.xPos / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
-		XEnd := round((spr.xPos / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
-		YStart := round((spr.yPos / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
-		YEnd := round((spr.yPos / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+		XStart := round((spr.x / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
+		XEnd := round((spr.x / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
+		YStart := round((spr.y / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
+		YEnd := round((spr.y / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
 
 		if YStart < 0 then YStart := 0;
 		if YStart >= m.MapInfo.MapHeight then exit;
