@@ -950,7 +950,79 @@ implementation
 		ProcessEvents();
 	end;
 
+	procedure CollisionExample2();
+	const
+		LCX = 400;
+		LCY = 300;
+	var
+		ball: Sprite;
+		line, normalLine: LineSegment;
+		normal, lineVec: Vector;
+		rot, x, y: Single;
+	
+		procedure ResetBall();
+		begin
+			ball.xPos := 400 - CurrentWidth(ball) div 2;
+			ball.yPos := 100;
+			ball.movement := CreateVector(0, 3);
+		end;
+	
+	begin
+		ball := CreateSprite(GameImage('SmallBall'));
+		ball.mass := 1;
 
+		ResetBall();
+		
+		lineVec := CreateVector(100, 0);				
+		line := CreateLine(300, 300, 500, 300);
+		
+		normal := MultiplyVector(LineNormal(line), 50);
+		normalLine := LineFromVector(MidPoint(line), normal);
+		
+		rot := 0;
+		repeat
+			ProcessEvents();			
+			
+			if IsKeyPressed(VK_LEFT) then rot := -4;			
+			if IsKeyPressed(VK_RIGHT) then rot := 4;
+
+			if rot <> 0 then
+			begin
+				lineVec := Multiply(RotationMatrix(rot), lineVec);
+				
+				x := LCX - lineVec.x;
+				y := LCY - lineVec.y;
+				
+				line := LineFromVector(x, y, Multiply(ScaleMatrix(2), lineVec));
+				normal := MultiplyVector(LineNormal(line), 50);
+				normalLine := LineFromVector(MidPoint(line), normal);
+				
+				rot := 0;
+			end;
+
+			UpdateSprite(ball);
+			
+			if IsSpriteOffscreen(ball) then ResetBall();
+
+			if CircleHasCollidedWithLine(ball, line) then
+			begin
+				CircleCollisionWithLine(ball, line);
+				UpdateSprite(ball);
+			end;
+			
+
+			ClearScreen(ColorBlack);
+			DrawOverlay('Circle Collision with Line');
+
+			DrawLine(ColorWhite, line);
+			DrawLine(ColorRed, normalLine);
+			DrawSprite(ball);
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
 	
 	//The main procedure that controlls the game logic.
 	//
@@ -1004,12 +1076,14 @@ implementation
 		If WindowCloseRequested() then exit;
 		MouseExample();	
 		If WindowCloseRequested() then exit;
-		VectorExample1();		}
+		VectorExample1();		
 		If WindowCloseRequested() then exit;
 		VectorExample2();
 
 		If WindowCloseRequested() then exit;
-		VectorExample3();
+		VectorExample3();}
+		
+		CollisionExample2();
 		
 		FreeResources();
 	end;

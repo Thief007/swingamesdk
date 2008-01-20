@@ -2,7 +2,8 @@
 
 interface
 	uses
-		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
+		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, 
+		SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
 
 	type
 	    /// type: Matrix2d
@@ -135,18 +136,19 @@ interface
 	
 	function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 
-	//function VectorOutOfRectFromPoint(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer; const movement: Vector) : Vector;	
 	function VectorOutOfRectFromPoint(const pnt: Point2D; rect: Rectangle; const movement: Vector): Vector;	
-
 	function VectorOutOfRectFromRect(srcRect, targetRect: Rectangle; const movement: Vector) : Vector;	
-	//function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 
 	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : boolean;
-	//function LineIntersectsWithRect(x1, y1, x2, y2, rectX, rectY: Single; width, height: Integer): boolean;
 	function LineIntersectsWithLines(target: LineSegment; lines: LinesArray): boolean;
 	function LineIntersectsWithRect(line: LineSegment; rect: Rectangle): boolean;
 	
 	function GetSideForCollisionTest (movement: Vector): CollisionSide;
+	
+	procedure CircularCollision(p1, p2: Sprite);
+	function CircleHasCollidedWithLine(p1: Sprite; line: LineSegment): Boolean;
+	procedure CircleCollisionWithLine(p1: Sprite; line: LineSegment);
+			
 implementation
 	uses
 		SysUtils, Math, Classes;
@@ -802,6 +804,11 @@ implementation
 	
 	
 	procedure VectorCollision(p1, p2: Sprite);
+	begin
+		CircularCollision(p1, p2);
+	end;
+
+	procedure CircularCollision(p1, p2: Sprite);
 	var
 		colNormalAngle, a1, a2, optP: Single;
 		n: Vector;
@@ -835,6 +842,36 @@ implementation
 		// Local r2% = c2.v - optimisedP * mass1 * n
 		p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
 		p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
+	end;
+	
+	function CircleHasCollidedWithLine(p1: Sprite; line: LineSegment): Boolean;
+	var
+		r: Single;
+		dist: Single;
+	begin
+		if CurrentWidth(p1) > CurrentHeight(p1) then
+			r := CurrentWidth(p1) div 2
+		else
+			r := CurrentHeight(p1) div 2;
+			
+		dist := DistancePointToLine(p1.xPos + r, p1.yPos + r, line);
+		result := dist < r;
+	end;
+	
+	procedure CircleCollisionWithLine(p1: Sprite; line: LineSegment);
+	var
+		angle, npx, npy, dotPod: Single;
+		normal: Vector;
+	begin
+		normal := LineNormal(line);
+		
+		dotPod := - DotProduct(normal, p1.movement);
+		
+		npx := dotPod * normal.x;
+		npy := dotPod * normal.y;
+		
+		p1.movement.x := p1.movement.x + 2 * npx;
+		p1.movement.y := p1.movement.y + 2 * npy;
 	end;
 	
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
@@ -1108,16 +1145,10 @@ implementation
 		i: Integer;
 		pnt: Point2D;
 	begin
-		//WriteLn('Rect Lines:');
-		
 		for i := 0 to High(lines) do
 		begin			
 			if GetLineIntersectionPoint(target, lines[i], pnt) and IsPointOnLine(pnt, lines[i]) then
 			begin
-				
-{				WriteLn(	'   -  ', lines[i].startPoint.x:4:2, ',', lines[i].startPoint.y:4:2, 
-							'  to  ', lines[i].endPoint.x:4:2, ',', lines[i].endPoint.y:4:2);}
-				
 				result := true;
 				exit;
 			end;
@@ -1132,52 +1163,6 @@ implementation
 	begin
 		lines := LinesFromRect(rect);
 		result := LineIntersectsWithLines(line, lines);
-		
-		{result := false;
-		
-		if GetLineIntersectionPoint(x1, y1, x2, y2, rectX, rectY, rectX + width, rectY, ix, iy) then
-		begin
-			//check segment:
-			if 	((iy >= rectY - DELTA) and (iy <= rectY + DELTA)) and
-				(ix >= rectX - DELTA) and (ix <= rectX + width + DELTA) then
-			begin
-				result := true;
-				exit;
-			end;
-		end;
-		
-		if GetLineIntersectionPoint(x1, y1, x2, y2, rectX, rectY, rectX, rectY + height, ix, iy) then
-		begin
-			//check segment:
-			if 	((ix >= rectX - DELTA) and (ix <= rectX + DELTA)) and
-				(iy >= rectY - DELTA) and (iy <= rectY + height + DELTA) then
-			begin
-				result := true;
-				exit;
-			end;	
-		end;
-		
-		if GetLineIntersectionPoint(x1, y1, x2, y2, rectX + width, rectY + height, rectX + width, rectY, ix, iy) then
-		begin
-			//check segment:
-			if 	((ix >= rectX + width - DELTA) and (ix <= rectX + width + DELTA)) and
-				(iy >= rectY - DELTA) and (iy <= rectY + height + DELTA) then
-			begin
-				result := true;
-				exit;
-			end;				
-		end;
-		
-		if GetLineIntersectionPoint(x1, y1, x2, y2, rectX + width, rectY + height, rectX, rectY + height, ix, iy) then
-		begin
-			//check segment:
-			if 	((iy >= rectY + height - DELTA) and (iy <= rectY + height + DELTA)) and
-				(ix >= rectX - DELTA) and (ix <= rectX + width + DELTA) then
-			begin
-				result := true;
-				exit;
-			end;			
-		end;}
 	end;  	
 end.
 

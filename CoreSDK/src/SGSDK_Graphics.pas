@@ -23,7 +23,7 @@
 unit SGSDK_Graphics;
 
 interface
-	uses SDL, SGSDK_Core, SDL_image;
+	uses SDL, SGSDK_Core, SDL_image, SGSDK_Shapes;
 		
 	//*****
 	//
@@ -57,8 +57,9 @@ interface
 	
 	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); overload;
 	
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap;
-							srcX, srcY, srcW, srcH, x, y : Integer); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; source: Rectangle; x, y : Integer); overload;
+
 	
 	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer); overload;
 
@@ -71,32 +72,24 @@ interface
 	procedure FillRectangle(dest: Bitmap; theColour : Colour; xPos, yPos,
 							width, height : Integer); overload;
 
-	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); overload;
+	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
+	procedure DrawLine(dest: Bitmap; theColour: Colour; line: LineSegment); overload;
 
-	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color;
-								 y, x1, x2: Integer); overload;
+	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer); overload;
 
-	procedure DrawVerticalLine(dest: Bitmap; theColor: Color;
-							 x, y1, y2: Integer); overload;
+	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: Integer); overload;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean;
-							 xc, yc, radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: Integer); overload;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour;
-							 xc, yc, radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
 
-	procedure FillCircle(dest: Bitmap; theColour: Colour;
-							 xc, yc, radius: Integer); overload;
+	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean;
-							xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: Integer); overload;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour;
-							xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: Integer); overload;
 	
-	procedure FillEllipse(dest: Bitmap; theColour: Colour;
-							xPos, yPos, width, height: Integer); overload;
+	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: Integer); overload;
 
 	//*****
 	//
@@ -130,14 +123,12 @@ interface
 							xPos, yPos: Single;
 							width, height : Integer); overload;
 
-	procedure DrawLine(theColour: Colour; xPosStart, yPosStart,
-					 		xPosEnd, yPosEnd: Single); overload;
+	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+	procedure DrawLine(theColour: Colour; line: LineSegment); overload;
 
-	procedure DrawHorizontalLine(theColor: Color; 
-							y, x1, x2: Single); overload;
+	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
 
-	procedure DrawVerticalLine(theColor: Color; 
-							x, y1, y2: Single); overload;
+	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
 
 	procedure DrawCircle(theColour: Colour; filled: Boolean;
 						 xc, yc: Single; radius: Integer); overload;
@@ -777,6 +768,11 @@ implementation
 		SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
 	end;
 
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; source: Rectangle; x, y : Integer); overload;
+	begin
+		DrawBitmapPart(dest, bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
+	end;
+
 	/// Draws part of a bitmap (bitmapToDraw) onto the screen.
 	///
 	///	@param bitmapToDraw: The bitmap to be drawn onto the screen
@@ -1177,17 +1173,26 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the screen
-	procedure DrawLineOnScreen(theColour: Colour; 
-                     xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
+	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
 	begin
 		DrawLine(scr, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
 	end;
 	
-	procedure DrawLine(theColour: Colour; 
-                     xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
 	begin
 		DrawLine(scr, theColour, SGSDK_Camera.ScreenX(xPosStart), SGSDK_Camera.ScreenY(yPosStart), SGSDK_Camera.ScreenX(xPosEnd), SGSDK_Camera.ScreenY(yPosEnd));
 	end;
+	
+	procedure DrawLine(theColour: Colour; line: LineSegment); overload;
+	begin
+		DrawLine(theColour, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y);
+	end;
+	
+	procedure DrawLine(dest: Bitmap; theColour: Colour; line: LineSegment); overload;
+	begin
+		DrawLine(dest, theColour, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
+	end;
+		
 
 	/// Draws a horizontal line on the screen.
 	///
@@ -1751,8 +1756,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
-	procedure DrawLine(dest: Bitmap; theColour: Colour;
-                     xPosStart, yPosStart, xPosEnd, yPosEnd: Integer);
+	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer);
 	var
 		x, y: Integer;
 		deltaX, deltaY: Integer;
