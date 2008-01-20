@@ -526,8 +526,10 @@ implementation
 			result.spriteKind := StaticSprite;
 		end;
 
-		result.xPos					:= 0;
-		result.yPos					:= 0;
+		result.x					:= 0;
+		result.y					:= 0;
+		result.xPos					:= @result.x;
+		result.yPos					:= @result.y;
 		result.currentFrame			:= 0;
 		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
@@ -600,8 +602,10 @@ implementation
 		if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
 		
 		New(result);
-		result.xPos					:= 0;
-		result.yPos					:= 0;
+		result.x					:= 0;
+		result.y					:= 0;
+		result.xPos					:= @result.x;
+		result.yPos					:= @result.y;
 		result.currentFrame			:= 0;
 		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
@@ -932,7 +936,7 @@ implementation
 		
 		if spriteToDraw.spriteKind <> AnimMultiSprite then
 		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.xPos, spriteToDraw.yPos);
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x, spriteToDraw.y);
 		end
 		else
 		begin
@@ -944,7 +948,7 @@ implementation
 			
 			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
 						   spriteToDraw.width, spriteToDraw.height,
-						   spriteToDraw.xPos, spriteToDraw.yPos);
+						   spriteToDraw.x, spriteToDraw.y);
 		end;
 	end;
 	
@@ -956,7 +960,7 @@ implementation
 		
 		if spriteToDraw.spriteKind <> AnimMultiSprite then
 		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.xPos + xOffset, spriteToDraw.yPos + yOffset);
+			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
 		end
 		else
 		begin
@@ -965,7 +969,7 @@ implementation
 			
 			DrawBitmapPartOnScreen(spriteToDraw.bitmaps[0], tempWidth, tempHeight, 
 								   spriteToDraw.width, spriteToDraw.height,
-								   Round(spriteToDraw.xPos + xOffset), Round(spriteToDraw.yPos + yOffset));
+								   Round(spriteToDraw.x + xOffset), Round(spriteToDraw.y + yOffset));
 		end;
 	end;
 
@@ -977,10 +981,10 @@ implementation
 	begin
 		if theSprite = nil then raise Exception.Create('No sprite supplied');
 		
-		if SGSDK_Camera.ScreenX(theSprite.xPos) >= ScreenWidth() then result := true
-		else if SGSDK_Camera.ScreenX(theSprite.xPos) + CurrentWidth(theSprite) < 0 then result := true
-		else if SGSDK_Camera.ScreenY(theSprite.yPos) >= ScreenHeight() then result := true
-		else if SGSDK_Camera.ScreenY(theSprite.yPos) + CurrentHeight(theSprite) < 0 then result := true
+		if SGSDK_Camera.ScreenX(theSprite.x) >= ScreenWidth() then result := true
+		else if SGSDK_Camera.ScreenX(theSprite.x) + CurrentWidth(theSprite) < 0 then result := true
+		else if SGSDK_Camera.ScreenY(theSprite.y) >= ScreenHeight() then result := true
+		else if SGSDK_Camera.ScreenY(theSprite.y) + CurrentHeight(theSprite) < 0 then result := true
 		else result := false;
 	end;
 
@@ -992,8 +996,8 @@ implementation
 	begin
 		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
 			
-		spriteToMove.xPos := spriteToMove.xPos + movementVector.x;
-		spriteToMove.yPos := spriteToMove.yPos + movementVector.y;
+		spriteToMove.x := spriteToMove.x + movementVector.x;
+		spriteToMove.y := spriteToMove.y + movementVector.y;
 	end;
 
 	/// Moves a sprite to a given x,y location.
@@ -1007,16 +1011,16 @@ implementation
 	begin
 		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
 		
-		spriteToMove.xPos := x;
-		spriteToMove.yPos := y;
+		spriteToMove.x := x;
+		spriteToMove.y := y;
 	end;
 	
 	procedure MoveSprite(spriteToMove: Sprite); overload;
 	begin
 		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
 		
-		spriteToMove.xPos := spriteToMove.xPos + spriteToMove.movement.x;
-		spriteToMove.yPos := spriteToMove.yPos + spriteToMove.movement.y;
+		spriteToMove.x := spriteToMove.x + spriteToMove.movement.x;
+		spriteToMove.y := spriteToMove.y + spriteToMove.movement.y;
 	end;
 	
 	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially

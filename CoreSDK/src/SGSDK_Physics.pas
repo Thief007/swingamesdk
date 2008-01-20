@@ -311,13 +311,13 @@ implementation
     result := false;
     
 		if range = CollisionRangeEquals then
-			result := (x >= theSprite.xPos) and 
-	        (x <= theSprite.xPos + theSprite.width)
+			result := (x >= theSprite.x) and 
+	        (x <= theSprite.x + theSprite.width)
 		else if range = CollisionRangeGreaterThan then
-			result := x <= theSprite.xPos + 
+			result := x <= theSprite.x + 
 	                    theSprite.width
 		else if range = CollisionRangeLessThan then
-			result := x >= theSprite.xPos
+			result := x >= theSprite.x
 		else
 			raise Exception.Create('Invalid Collision Range');
 	end;
@@ -336,13 +336,13 @@ implementation
     result := false;
     
 		if range = CollisionRangeEquals then
-			result := (y >= theSprite.yPos) and 
-	       (y <= theSprite.yPos + theSprite.height)
+			result := (y >= theSprite.y) and 
+	       (y <= theSprite.y + theSprite.height)
 		else if range = CollisionRangeGreaterThan then
-			result := y <= theSprite.yPos + 
+			result := y <= theSprite.y + 
 	                    theSprite.height
 		else if range = CollisionRangeLessThan then
-			result := y >= theSprite.yPos
+			result := y >= theSprite.y
 		else
 			raise Exception.Create('Invalid Collision Range');
 	end;
@@ -371,10 +371,10 @@ implementation
 		if theSprite = nil then raise Exception.Create('The specified sprite is nil');
 		if (width < 1) or (height < 1) then 
 			raise Exception.Create('Rectangle width and height must be greater then 0');
-		if theSprite.yPos + CurrentHeight(theSprite) <= y then result := false
-		else if theSprite.yPos >= y + height then result := false
-		else if theSprite.xPos + CurrentWidth(theSprite) <= x then result := false
-		else if theSprite.xPos >= x + width then result := false
+		if theSprite.y + CurrentHeight(theSprite) <= y then result := false
+		else if theSprite.y >= y + height then result := false
+		else if theSprite.x + CurrentWidth(theSprite) <= x then result := false
+		else if theSprite.x >= x + width then result := false
 		else result := true;
 	end;
 	
@@ -543,8 +543,8 @@ implementation
 			offY2 := 0;
 		end;
 		
-		result := CollisionWithinBitmapImages(bmp1, Round(sprite1.xPos), Round(sprite1.yPos), CurrentWidth(sprite1), CurrentHeight(sprite1), offX1, offY1, not sprite1.usePixelCollision, 
-											  bmp2, Round(sprite2.xPos), Round(sprite2.yPos), CurrentWidth(sprite2), CurrentHeight(sprite2), offX2, offY2, not sprite2.usePixelCollision);
+		result := CollisionWithinBitmapImages(bmp1, Round(sprite1.x), Round(sprite1.y), CurrentWidth(sprite1), CurrentHeight(sprite1), offX1, offY1, not sprite1.usePixelCollision, 
+											  bmp2, Round(sprite2.x), Round(sprite2.y), CurrentWidth(sprite2), CurrentHeight(sprite2), offX2, offY2, not sprite2.usePixelCollision);
 	end;
 
 	/// Checks to see if two bitmaps have collided, this performs a bounded check
@@ -597,7 +597,7 @@ implementation
 	///	@returns									 True if the sprites have collided.
 	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
 	begin
-		if not HasSpriteCollidedWithRect(sprite1, sprite2.xPos, sprite2.yPos, 
+		if not HasSpriteCollidedWithRect(sprite1, sprite2.x, sprite2.y, 
 	            CurrentWidth(sprite2), CurrentHeight(sprite2)) then
 		begin
 			result := false;
@@ -658,7 +658,7 @@ implementation
 			offX := 0;
 			offY := 0;
 		end;
-		result := CollisionWithinBitmapImages(bmp, Round(theSprite.xPos), Round(theSprite.yPos),
+		result := CollisionWithinBitmapImages(bmp, Round(theSprite.x), Round(theSprite.y),
 											  theSprite.width, theSprite.height,
 											  offX, offY,
 											  not theSprite.usePixelCollision, theBitmap,
@@ -781,10 +781,10 @@ implementation
 	var
 		cx1, cy1, cx2, cy2: Single;
 	begin
-		cx1 := sprite1.XPos + CurrentWidth(sprite1) / 2;
-		cy1 := sprite1.YPos + CurrentHeight(sprite1) / 2;
-		cx2 := sprite2.XPos + CurrentWidth(sprite2) / 2;
-		cy2 := sprite2.YPos + CurrentHeight(sprite2) / 2;
+		cx1 := sprite1.x + CurrentWidth(sprite1) / 2;
+		cy1 := sprite1.y + CurrentHeight(sprite1) / 2;
+		cx2 := sprite2.x + CurrentWidth(sprite2) / 2;
+		cy2 := sprite2.y + CurrentHeight(sprite2) / 2;
 	
 		result := CalculateAngle(cx1, cy1, cx2, cy2);
 	end;
@@ -854,13 +854,13 @@ implementation
 		else
 			r := CurrentHeight(p1) div 2;
 			
-		dist := DistancePointToLine(p1.xPos + r, p1.yPos + r, line);
+		dist := DistancePointToLine(p1.x + r, p1.y + r, line);
 		result := dist < r;
 	end;
 	
 	procedure CircleCollisionWithLine(p1: Sprite; line: LineSegment);
 	var
-		angle, npx, npy, dotPod: Single;
+		npx, npy, dotPod: Single;
 		normal: Vector;
 	begin
 		normal := LineNormal(line);
@@ -886,8 +886,8 @@ implementation
 		destWdiv2 := CurrentWidth(dest) div 2;
 		destHdiv2 := CurrentHeight(dest) div 2;
 		
-		pc := CreateVector(obj.xPos + objWdiv2, obj.yPos + objHdiv2);
-		wc := CreateVector(dest.xPos + destWdiv2, dest.yPos + destHdiv2);
+		pc := CreateVector(obj.x + objWdiv2, obj.y + objHdiv2);
+		wc := CreateVector(dest.x + destWdiv2, dest.y + destHdiv2);
 		v := SubtractVectors(wc, pc);
 		
 		{WriteLn('xy: ', x:4:2, ',', y:4:2);
@@ -1105,7 +1105,7 @@ implementation
 
 {	function VectorOutOfRectFromSprite(sprt: Sprite; rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector;
 	begin
-		result := VectorOutOfRectFromRect(sprt.xPos, sprt.yPos, sprt.width, sprt.height, rectX, rectY, rectWidth, rectHeight, sprt.Movement);
+		result := VectorOutOfRectFromRect(sprt.x, sprt.y, sprt.width, sprt.height, rectX, rectY, rectWidth, rectHeight, sprt.Movement);
 	end;
 }
 

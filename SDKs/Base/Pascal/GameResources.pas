@@ -409,8 +409,8 @@ implementation
 		ProcessEvents();
 
 		_Animation := CreateSprite(LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource)), 4, 14, 712, 184);
-		_Animation.xPos := 41;
-		_Animation.yPos := 242;
+		_Animation.x := 41;
+		_Animation.y := 242;
 		_LoadingFont := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);
 		_StartSound := LoadSoundEffect(GetPathToResource('SwinGameStart.ogg', SoundResource));
 

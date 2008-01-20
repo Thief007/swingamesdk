@@ -167,8 +167,10 @@ interface
 			bitmaps : Array of Bitmap;
 			spriteKind : SpriteKind;
 			framesPerCell : Array of Integer;
-			xPos : Single;
-			yPos : Single;
+			xPos : ^Single;
+			yPos : ^Single;
+			x : Single;
+			y : Single;
 			width : Integer;
 			height : Integer;
 			cols : Integer;
