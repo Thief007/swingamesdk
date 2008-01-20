@@ -20,25 +20,34 @@ uses SGSDK_Core;
 
 		LinesArray = Array of LineSegment;
 
-	function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single;
+	function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single; overload;
+	function DistancePointToLine(x, y: Single; const line: LineSegment): Single; overload;
+
 	function IsPointOnLine(const pnt: Point2D; const line: LineSegment): Boolean;
 
 	function CreatePoint(x, y: Single): Point2D;
 
-	function LinesFromRect(rect: Rectangle): LinesArray;
+	function LinesFromRect(const rect: Rectangle): LinesArray;
 	
 	function CreateLine(x1, y1, x2, y2: Single): LineSegment;
-	function LineFromVector(pnt: Point2D; mvt: Vector): LineSegment;
+	function LineFromVector(const pnt: Point2D; const mvt: Vector): LineSegment; overload;
+	function LineFromVector(x, y: Single; const mvt: Vector): LineSegment; overload;
+
+	function VectorNormal(const vect: Vector): Vector;
+	function LineNormal(const line: LineSegment): Vector;
+	function LineAsVector(const line: lineSegment): Vector;
+	
+	function MidPoint(const line: LineSegment): Point2D;
 
 	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle;
 	
-	function RectangleAfterMove(rect: Rectangle; move: Vector): Rectangle;
+	function RectangleAfterMove(const rect: Rectangle; const move: Vector): Rectangle;
 
-	function RectangleTop(rect: Rectangle): Single;
-	function RectangleBottom(rect: Rectangle): Single;
-	function RectangleLeft(rect: Rectangle): Single;
-	function RectangleRight(rect: Rectangle): Single;
-
+	function RectangleTop	(const rect: Rectangle): Single;
+	function RectangleBottom(const rect: Rectangle): Single;
+	function RectangleLeft	(const rect: Rectangle): Single;
+	function RectangleRight	(const rect: Rectangle): Single;
+	
 implementation
 	uses math, sysutils, classes;
 
@@ -54,13 +63,18 @@ implementation
 	//function SqLineMagnitude(const line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y: extended): extended;
 	function SqLineMagnitude(const line: LineSegment): Single; overload;
 	begin
-		result := 	(line.endPoint.x - line.startPoint.x) * (line.endPoint.x - line.startPoint.x) + 
+		result := (line.endPoint.x - line.startPoint.x) * (line.endPoint.x - line.startPoint.x) + 
 					(line.endPoint.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y);
 	end;
 	
-	function SqLineMagnitude(const x1, y1, x2, y2: single): single; overload;
+	function SqLineMagnitude(x1, y1, x2, y2: single): single; overload;
 	begin
 	 result := (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+	end;
+
+	function DistancePointToLine(x, y: Single; const line: LineSegment): Single; overload;
+	begin
+		result := DistancePointToLine(CreatePoint(x, y), line);
 	end;
 
 	//  pnt.x, pnt.y is the point to test.
@@ -73,7 +87,7 @@ implementation
 	//  Returns -1 on zero-valued denominator conditions to return an illegal distance. (
 	//    modification of Brandon Crosby's VBA code)
 	//function DistancePointLine(const pnt.x, pnt.y, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y: extended ): extended;
-	function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single;
+	function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single; overload;
 	var
 		sqLineMag,              // square of line's magnitude (see note in function LineMagnitude)
 		u: Single;              // see Paul Bourke's original article(s)
@@ -132,7 +146,7 @@ implementation
 		result.endPoint.y := y2;
 	end;
 	
-	function LinesFromRect(rect: Rectangle): LinesArray;
+	function LinesFromRect(const rect: Rectangle): LinesArray;
 	begin
 		SetLength(result, 4);
 		with rect do
@@ -150,40 +164,45 @@ implementation
 		result.y := y;
 	end;
 	
-	function LineFromVector(pnt: Point2D; mvt: Vector): LineSegment;
+	function LineFromVector(const pnt: Point2D; const mvt: Vector): LineSegment; overload;
 	begin
-		result.startPoint.x := pnt.x;
-		result.startPoint.y := pnt.y;
-		result.endPoint.x := pnt.x + mvt.x;
-		result.endPoint.y := pnt.y + mvt.y;
+		result := LineFromVector(pnt.x, pnt.Y, mvt);
 	end;
 	
-	function RectangleAfterMove(rect: Rectangle; move: Vector): Rectangle;
+	function LineFromVector(x, y: Single; const mvt: Vector): LineSegment; overload;
+	begin
+		result.startPoint.x := x;
+		result.startPoint.y := y;
+		result.endPoint.x := x + mvt.x;
+		result.endPoint.y := y + mvt.y;
+	end;
+	
+	function RectangleAfterMove(const rect: Rectangle; const move: Vector): Rectangle;
 	begin
 		result := rect;
 		result.x := result.x + move.x;
 		result.y := result.y + move.y;
 	end;
 	
-	function RectangleTop(rect: Rectangle): Single;
+	function RectangleTop(const rect: Rectangle): Single;
 	begin
 		if rect.height > 0 then result := rect.y
 		else result := rect.y + rect.height; //add negative height
 	end;
 	
-	function RectangleBottom(rect: Rectangle): Single;
+	function RectangleBottom(const rect: Rectangle): Single;
 	begin
 		if rect.height > 0 then result := rect.y + rect.height
 		else result := rect.y; //y is bottom most
 	end;
 
-	function RectangleLeft(rect: Rectangle): Single;
+	function RectangleLeft(const rect: Rectangle): Single;
 	begin
 		if rect.width > 0 then result := rect.x
 		else result := rect.x + rect.width; //add negative width
 	end;
 
-	function RectangleRight(rect: Rectangle): Single;
+	function RectangleRight(const rect: Rectangle): Single;
 	begin
 		if rect.width > 0 then result := rect.x + rect.width
 		else result := rect.x; //x is right most
@@ -195,5 +214,33 @@ implementation
 		result.y := y;
 		result.width := w;
 		result.height := h;
+	end;
+	
+	function LineAsVector(const line: lineSegment): Vector;
+	begin
+		result.x := line.endPoint.x - line.startPoint.x;
+		result.y := line.endPoint.y - line.startPoint.y;
+	end;
+	
+	function VectorNormal(const vect: Vector): Vector;
+	var		
+		sqrY, sqrX: Single;
+	begin
+		sqrX := vect.x * vect.x;
+		sqrY := vect.y * vect.y;
+		
+	   result.x := -vect.y / Sqrt(sqrY + sqrX);  // -S2y / ::sqrt(S2y*S2y + S2x*S2x);
+	   result.y := vect.x / Sqrt(sqrY + sqrX); // S2x / ::sqrt(S2y*S2y + S2x*S2x);
+	end;
+	
+	function LineNormal(const line: LineSegment): Vector;
+	begin
+		result := VectorNormal(LineAsVector(line));
+	end;
+	
+	function MidPoint(const line: LineSegment): Point2D;
+	begin
+		result.x := line.startPoint.x + (line.endPoint.x - line.startPoint.x) / 2; 
+		result.y := line.startPoint.y + (line.endPoint.y - line.startPoint.y) / 2;
 	end;
 end.
