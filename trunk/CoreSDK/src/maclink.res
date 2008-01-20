@@ -80,6 +80,7 @@ SGSDK.NET/lib/sdl_ttf.o
 SGSDK.NET/lib/SDLEventProcessing.o
 SGSDK.NET/lib/SGSDK_Camera.o
 SGSDK.NET/lib/SGSDK_MappyLoader.o
+SGSDK.NET/lib/SGSDK_Shapes.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/sysutils.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/types.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/pthreads/pthreads.o
