@@ -957,7 +957,7 @@ implementation
 	var
 		ball: Sprite;
 		line, normalLine: LineSegment;
-		normal, lineVec: Vector;
+		normal, lineVec, tempVec: Vector;
 		rot, x, y: Single;
 	
 		procedure ResetBall();
@@ -988,6 +988,7 @@ implementation
 
 			if rot <> 0 then
 			begin
+				tempVec := Multiply(RotationMatrix(rot), CreateVector(rot * 2.5, 0));
 				lineVec := Multiply(RotationMatrix(rot), lineVec);
 				
 				x := LCX - lineVec.x;
@@ -996,6 +997,13 @@ implementation
 				line := LineFromVector(x, y, Multiply(ScaleMatrix(2), lineVec));
 				normal := MultiplyVector(LineNormal(line), 50);
 				normalLine := LineFromVector(MidPoint(line), normal);
+				
+				if CircleHasCollidedWithLine(ball, line) then
+				begin
+					CircleCollisionWithLine(ball, line);
+					UpdateSprite(ball);
+					ball.movement := AddVectors(ball.movement, tempVec);
+				end;
 				
 				rot := 0;
 			end;
