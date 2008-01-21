@@ -18,7 +18,7 @@
 unit SGSDK_Input;
 
 interface
-	uses SDL, SGSDK_Core, SGSDK_Font;
+	uses SDL, SGSDK_Core, SGSDK_Font, SGSDK_Shapes;
 
   	//
 	//
@@ -36,7 +36,8 @@ interface
 				RightButton = SDL_BUTTON_RIGHT
 			);
 	
-	function GetMousePosition(): Vector;
+	function GetMousePositionAsVector(): Vector;
+	function GetMousePosition(): Point2D;
 	function GetMouseMovement(): Vector;
 	function IsMouseDown(button: MouseButton): Boolean;
 	function IsMouseUp(button: MouseButton): Boolean;
@@ -175,12 +176,20 @@ implementation
 	
 	var _ButtonsClicked: Array [MouseButton] of Boolean;
 	
-	function GetMousePosition(): Vector;
+	function GetMousePositionAsVector(): Vector;
 	var
 		x, y: Integer;
 	begin
 		SDL_GetMouseState(x, y);
 		result := CreateVector(x, y);
+	end;
+	
+	function GetMousePosition(): Point2D;
+	var
+		x, y: Integer;
+	begin
+		SDL_GetMouseState(x, y);
+		result := CreatePoint(x, y);		
 	end;
 
 	function GetMouseMovement(): Vector;

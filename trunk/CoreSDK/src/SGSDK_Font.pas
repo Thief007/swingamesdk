@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-21: Andrew: Added Point/Rectangle overloads
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
@@ -19,7 +20,7 @@ unit SGSDK_Font;
 
 interface
 	uses
-		SDL, SDL_TTF, SGSDK_Core;
+		SDL, SDL_TTF, SGSDK_Core, SGSDK_Shapes;
 	
 	type
 		/// Type: Font
@@ -76,19 +77,15 @@ interface
 	// These routines are used to draw directly to the screen.
 	//
 
-	procedure DrawTextOnScreen(theText: String; textColor: Colour;
-					 theFont: Font; x, y: Integer); overload;
+	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; x, y: Integer); overload;
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: Integer); overload;
+	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
 
-	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
-							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); overload;
-
-	procedure DrawText(theText: String; textColor: Colour;
-					 theFont: Font; x, y: Single); overload;
-
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
-							theFont: Font; align: FontAlignment;
-							x, y: Single; w, h: Integer); overload;
+	procedure DrawText(theText: String; textColor: Colour; theFont: Font; x, y: Single); overload;
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y: Single; w, h: Integer); overload;
+	procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
 
 	//*****
 	//
@@ -99,13 +96,11 @@ interface
 	// These routines are used to draw to a bitmap.
 	//
 
-	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour;
-					theFont: Font; x, y: Integer); overload;
-
-	procedure DrawTextLines(dest: Bitmap; theText: String;
-							textColor, backColor: Colour;
-							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); overload;
+	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; x, y: Integer); overload;
+	procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: Integer); overload;
+	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+		
 	//*****
 	//
 	// General routines
@@ -302,8 +297,7 @@ implementation
 	/// Side Effects:
 	///	- The text is drawn in the specified font, at the indicated location
 	///		in the destination bitmap.
-	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour;
-                     theFont: Font; x, y: Integer); overload;
+	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; x, y: Integer); overload;
 	var
 		color: TSDL_Color;
 		surface: PSDL_Surface;
@@ -323,6 +317,11 @@ implementation
 		SDL_BlitSurface(surface, nil, dest.surface, @offset);
 		SDL_FreeSurface(surface);
 	end;
+	
+	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	begin
+		DrawText(dest, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+	end;
 
 	/// Draws multiple lines of text to the destination bitmap. This is a very
 	///	slow operation, so if the text is not frequently changing save it to a
@@ -340,17 +339,19 @@ implementation
 	/// Side Effects:
 	///	- The text is drawn in the specified font, at the indicated location
 	///		in the destination bitmap.
-	procedure DrawTextLines(dest: Bitmap; theText: String;
-													textColor, backColor: Colour;
-													theFont: Font; align: FontAlignment;
-													x, y, w, h: Integer); overload;
+	procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: Integer); overload;
 	var
 		rect: TSDL_Rect;
 	begin
 		rect := NewSDLRect(x, y, w, h);
-		PrintStrings(dest.surface, theFont, theText, @rect,
-								 textColor, backColor, align);
+		PrintStrings(dest.surface, theFont, theText, @rect, textColor, backColor, align);
 	end;
+
+	procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+	begin
+		DrawTextLines(dest, theText, textColor, backColor, theFont, align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
+	end;
+
 
 	/// Draws multiple lines of text to the screen. This is a very
 	///	slow operation, so if the text is not frequently changing save it to a
@@ -367,21 +368,26 @@ implementation
 	/// Side Effects:
 	///	- The text is drawn in the specified font, at the indicated location
 	///		on the screen.
-	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour;
-													theFont: Font; align: FontAlignment;
-													x, y, w, h: Integer); overload;
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: Integer); overload;
 	begin
-		DrawTextLines(scr, theText, textColor, backColor, theFont, align, 
-                  x, y, w, h);
+		DrawTextLines(scr, theText, textColor, backColor, theFont, align, x, y, w, h);
+	end;
+	
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+	begin
+		DrawTextLines(scr, theText, textColor, backColor, theFont, align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
 	end;
 
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour;
-													theFont: Font; align: FontAlignment;
-													x, y:Single; w, h: Integer); overload;
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y:Single; w, h: Integer); overload;
 	begin
-		DrawTextLines(scr, theText, textColor, backColor, theFont, align, 
-                  ScreenX(x), ScreenY(y), w, h);
+		DrawTextLines(scr, theText, textColor, backColor, theFont, align, ScreenX(x), ScreenY(y), w, h);
 	end;
+
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+	begin
+		DrawTextLines(scr, theText, textColor, backColor, theFont, align, ScreenX(withinRect.x), ScreenY(withinRect.y), withinRect.width, withinRect.height);		
+	end;
+
 
 
 	/// Draws texts to the screen. Drawing text is a slow operation,
@@ -396,18 +402,25 @@ implementation
 	/// Side Effects:
 	///	- The text is drawn in the specified font, at the indicated location
 	///		on the screen.
-	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font;
-                     x, y: Integer);
+	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; x, y: Integer);
 	begin
 		DrawText(scr, theText, textColor, theFont, x, y);
 	end;
 
-	procedure DrawText(theText: String; textColor: Colour; theFont: Font;
-                     x, y: Single);
+	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	begin
+		DrawText(scr, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+	end;
+
+	procedure DrawText(theText: String; textColor: Colour; theFont: Font; x, y: Single);
 	begin
 		DrawText(scr, theText, textColor, theFont, ScreenX(x), ScreenY(y));
 	end;
-
+	
+	procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	begin
+		DrawText(scr, theText, textColor, theFont, ScreenX(pt.x), ScreenY(pt.y));		
+	end;
 	
 	/// Calculates the width of a string when drawn with a given font.
 	///

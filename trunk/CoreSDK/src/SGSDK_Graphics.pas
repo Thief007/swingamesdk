@@ -177,7 +177,6 @@ interface
 	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): Integer;
 
 	function CurrentHeight(sprite: Sprite): Integer; inline;
-
 	function CurrentWidth(sprite: Sprite): Integer; inline;
 	
 	procedure ReplayAnimation(theSprite : Sprite);

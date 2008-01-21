@@ -369,7 +369,7 @@ implementation
 	procedure MouseCursor();
 	var
 		ball : Sprite;
-		position : Vector;
+		position : Point2D;
 	begin
 		ball := CreateSprite(GameImage('BallImage1'));
         repeat
@@ -711,13 +711,14 @@ implementation
 	procedure VectorAngleExample();
 	var
 		pd: Sprite;
-		mousePos: Vector;
+		mousePos: Point2D;
 	begin
 		pd := CreateSprite(GameImage('BallImage1'));
 		repeat
 			ProcessEvents();
 			mousePos := GetMousePosition();
 			pd.movement := GetVectorFromAngle(CalculateAngle(pd.x + CurrentWidth(pd) / 2, pd.y + CurrentHeight(pd) / 2, mousePos.X, mousePos.Y), 2);
+			//pd.movement := LimitMagnitude(VectorFromCenterSpriteToPoint(pd, mousePos), 2);
 			MoveSprite(pd, pd.movement);
 			ClearScreen(ColorBlack);
 			DrawSprite(pd);
@@ -974,15 +975,24 @@ implementation
 		LCY = 300;
 	var
 		ball: Sprite;
-		line, normalLine: LineSegment;
-		normal, lineVec, tempVec: Vector;
-		rot, x, y: Single;
+		line, lineToPoint, normalLine: LineSegment;
+		normal, toLine, lineVec, tempVec: Vector;
+		rot, x, y, dist: Single;
+		intersect: Point2D;
+		pause : Boolean;
 	
 		procedure ResetBall();
 		begin
 			ball.x := 400 - CurrentWidth(ball) div 2;
 			ball.y := 100;
 			ball.movement := CreateVector(0, 3);
+		end;
+		
+		procedure UpdateLine();
+		begin
+			line := LineFromVector(x, y, Multiply(ScaleMatrix(2), lineVec));
+			normal := MultiplyVector(LineNormal(line), 50);			
+			normalLine := LineFromVector(MidPoint(line), normal);
 		end;
 	
 	begin
@@ -992,41 +1002,46 @@ implementation
 		ResetBall();
 		
 		lineVec := CreateVector(100, 0);				
-		line := CreateLine(300, 300, 500, 300);
-		
-		normal := MultiplyVector(LineNormal(line), 50);
-		normalLine := LineFromVector(MidPoint(line), normal);
+		x := LCX - lineVec.x;
+		y := LCY - lineVec.y;
+
+		UpdateLine();
 		
 		rot := 0;
 		repeat
+			pause := false;
 			ProcessEvents();			
 			
-			if IsKeyPressed(VK_LEFT) then rot := -4;			
-			if IsKeyPressed(VK_RIGHT) then rot := 4;
+			if IsKeyPressed(VK_LEFT) then rot := -3;			
+			if IsKeyPressed(VK_RIGHT) then rot := 3;
 
 			if rot <> 0 then
 			begin
-				tempVec := Multiply(RotationMatrix(rot), CreateVector(rot * 2.5, 0));
+				intersect := ClosestPointOnLine(CenterPoint(ball), line);
+				dist := Sqrt(Abs(DistanceBetween(intersect, MidPoint(line)))) / 4;
+				tempVec := Multiply(RotationMatrix(rot), CreateVector(rot * dist, 0));
 				lineVec := Multiply(RotationMatrix(rot), lineVec);
 				
 				x := LCX - lineVec.x;
 				y := LCY - lineVec.y;
-				
-				line := LineFromVector(x, y, Multiply(ScaleMatrix(2), lineVec));
-				normal := MultiplyVector(LineNormal(line), 50);
-				normalLine := LineFromVector(MidPoint(line), normal);
+
+				UpdateLine();
 				
 				if CircleHasCollidedWithLine(ball, line) then
 				begin
 					CircleCollisionWithLine(ball, line);
 					UpdateSprite(ball);
 					ball.movement := AddVectors(ball.movement, tempVec);
+					pause := true;
 				end;
-				
 				rot := 0;
 			end;
 
 			UpdateSprite(ball);
+			
+			intersect := ClosestPointOnLine(CenterPoint(ball), line);
+			toLine := VectorFromCenterSpriteToPoint(ball, intersect);
+			lineToPoint := LineFromVector(CenterPoint(ball), toLine);
 			
 			if IsSpriteOffscreen(ball) then ResetBall();
 
@@ -1034,16 +1049,20 @@ implementation
 			begin
 				CircleCollisionWithLine(ball, line);
 				UpdateSprite(ball);
+				pause := true;
 			end;
 			
-
 			ClearScreen(ColorBlack);
 			DrawOverlay('Circle Collision with Line');
 
 			DrawLine(ColorWhite, line);
 			DrawLine(ColorRed, normalLine);
+			DrawLine(ColorGrey, lineToPoint);
 			DrawSprite(ball);
 			RefreshScreen();
+			
+			if pause then Sleep(1000);
+			
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
 		Sleep(500);
@@ -1107,8 +1126,8 @@ implementation
 		VectorExample2();
 
 		If WindowCloseRequested() then exit;
-		VectorExample3();}
-		
+		VectorExample3();
+	}
 		CollisionExample2();
 		
 		FreeResources();
