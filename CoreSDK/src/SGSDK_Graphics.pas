@@ -16,6 +16,8 @@
 //
 // Version 1.1:
 // - 2008-01-17: Aki + Andrew: Refactor
+// - 2008-01-21: Aki: 40 overloads added for Point2D and 
+//   Rectangle support
 //  
 // Version 1.0:
 // - Various
