@@ -23,7 +23,11 @@ uses SGSDK_Core;
 
 	function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single; overload;
 	function DistancePointToLine(x, y: Single; const line: LineSegment): Single; overload;
-
+	function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
+	function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
+	
+	function CenterPoint(sprt: Sprite): Point2D;
+	
 	function IsPointOnLine(const pnt: Point2D; const line: LineSegment): Boolean;
 
 	function CreatePoint(x, y: Single): Point2D;
@@ -33,15 +37,16 @@ uses SGSDK_Core;
 	function CreateLine(x1, y1, x2, y2: Single): LineSegment;
 	function LineFromVector(const pnt: Point2D; const mvt: Vector): LineSegment; overload;
 	function LineFromVector(x, y: Single; const mvt: Vector): LineSegment; overload;
-
-	function VectorNormal(const vect: Vector): Vector;
-	function LineNormal(const line: LineSegment): Vector;
-	function LineAsVector(const line: lineSegment): Vector;
 	
 	function MidPoint(const line: LineSegment): Point2D;
 
-	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle;
-	
+	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle; overload;
+	function CreateRectangle(bmp: Bitmap): Rectangle; overload;
+	function CreateRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+	function CreateRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
+	function CreateRectangle(const pt: Point2D; width, height: Integer): Rectangle; overload;
+	function CreateRectangle(sprt: Sprite): Rectangle; overload;
+		
 	function RectangleAfterMove(const rect: Rectangle; const move: Vector): Rectangle;
 
 	function RectangleTop	(const rect: Rectangle): Single;
@@ -49,8 +54,12 @@ uses SGSDK_Core;
 	function RectangleLeft	(const rect: Rectangle): Single;
 	function RectangleRight	(const rect: Rectangle): Single;
 	
+	function RectanglesIntersect(const rect1, rect2: Rectangle): Boolean;
+	function Intersection(const rect1, rect2: Rectangle): Rectangle;
+	
+	function DistanceBetween(const pt1, pt2: Point2D): Single;
 implementation
-	uses math, sysutils, classes;
+	uses math, sysutils, classes, SGSDK_Graphics, SGSDK_Physics;
 
 	const
 		EPS    = 0.01;         // smallest positive value: less than that to be considered zero
@@ -100,7 +109,8 @@ implementation
 			raise Exception.Create('Cannot determine intersection point on line, line is too short');
 		end;
 
-		u := ( (pnt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (pnt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
+		//squared unit vector
+		u := ( (pnt.x - line.startPoint.x) * (line.endPoint.x - line.startPoint.x) + (pnt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
 
 		if (u < EPS) or (u > 1) then
 		begin
@@ -120,6 +130,41 @@ implementation
 
 		// finally convert to actual distance not its square
 		result := sqrt(result);
+	end;
+	
+	function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
+	begin
+		result := ClosestPointOnLine(CreatePoint(x, y), line);
+	end;
+	
+	function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
+	var
+		sqLineMag,              // square of line's magnitude (see note in function LineMagnitude)
+		u: Single;              // see Paul Bourke's original article(s)
+	begin
+		sqLineMag := SqLineMagnitude(line);
+		if SqLineMag < EPSEPS then
+		begin
+			raise Exception.Create('Cannot determine intersection point on line, line is too short');
+		end;
+
+		u := ( (fromPt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (fromPt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
+
+		if (u < EPS) or (u > 1) then
+		begin
+			//  Closest point does not fall within the line segment,
+			//    take the shorter distance to an endpoint
+			if SqLineMagnitude(fromPt.x, fromPt.y, line.startPoint.x, line.startPoint.y) < SqLineMagnitude(fromPt.x, fromPt.y, line.endPoint.x, line.endPoint.y) then
+				result := line.startPoint
+			else
+				result := line.endPoint;
+		end //  if (u < EPS) or (u > 1)
+		else
+		begin
+			//  Intersecting point is on the line, use the formula
+			result.x := line.startPoint.x + u * (line.endPoint.x - line.startPoint.x);
+			result.y := line.startPoint.y + u * (line.endPoint.y - line.startPoint.y);
+		end; //  else NOT (u < EPS) or (u > 1)
 	end;
 		
 		
@@ -163,6 +208,12 @@ implementation
 	begin
 		result.x := x;
 		result.y := y;
+	end;
+	
+	function CenterPoint(sprt: Sprite): Point2D;
+	begin
+		result.x := sprt.x + CurrentWidth(sprt) / 2;
+		result.y := sprt.y + CurrentHeight(sprt) / 2;
 	end;
 	
 	function LineFromVector(const pnt: Point2D; const mvt: Vector): LineSegment; overload;
@@ -209,7 +260,7 @@ implementation
 		else result := rect.x; //x is right most
 	end;
 
-	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle;
+	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle; overload;
 	begin
 		result.x := x;
 		result.y := y;
@@ -217,26 +268,29 @@ implementation
 		result.height := h;
 	end;
 	
-	function LineAsVector(const line: lineSegment): Vector;
+	function CreateRectangle(sprt: Sprite): Rectangle;
 	begin
-		result.x := line.endPoint.x - line.startPoint.x;
-		result.y := line.endPoint.y - line.startPoint.y;
+		result := CreateRectangle(sprt.x, sprt.y, CurrentWidth(sprt), CurrentHeight(sprt));
 	end;
 	
-	function VectorNormal(const vect: Vector): Vector;
-	var		
-		sqrY, sqrX: Single;
+	function CreateRectangle(const pt: Point2D; width, height: Integer): Rectangle; overload;
 	begin
-		sqrX := vect.x * vect.x;
-		sqrY := vect.y * vect.y;
-		
-	   result.x := -vect.y / Sqrt(sqrY + sqrX);  // -S2y / ::sqrt(S2y*S2y + S2x*S2x);
-	   result.y := vect.x / Sqrt(sqrY + sqrX); // S2x / ::sqrt(S2y*S2y + S2x*S2x);
+		result := CreateRectangle(pt.x, pt.y, width, height);
 	end;
 	
-	function LineNormal(const line: LineSegment): Vector;
+	function CreateRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
 	begin
-		result := VectorNormal(LineAsVector(line));
+		result := CreateRectangle(pt.x, pt.y, bmp.width, bmp.height);
+	end;
+	
+	function CreateRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+	begin
+		result := CreateRectangle(x, y, bmp.width, bmp.height);
+	end;
+	
+	function CreateRectangle(bmp: Bitmap): Rectangle; overload;
+	begin
+		result := CreateRectangle(0, 0, bmp);
 	end;
 	
 	function MidPoint(const line: LineSegment): Point2D;
@@ -244,4 +298,47 @@ implementation
 		result.x := line.startPoint.x + (line.endPoint.x - line.startPoint.x) / 2; 
 		result.y := line.startPoint.y + (line.endPoint.y - line.startPoint.y) / 2;
 	end;
+	
+	function RectanglesIntersect(const rect1, rect2: Rectangle): Boolean;
+	begin
+		if RectangleBottom(rect1) < RectangleTop(rect2) then result := false
+		else if RectangleTop(rect1) > RectangleBottom(rect2) then result := false
+		else if RectangleRight(rect1) < RectangleLeft(rect2) then result := false
+		else if RectangleLeft(rect1) > RectangleRight(rect2) then result := false
+		else result := true;
+	end;
+
+	function Intersection(const rect1, rect2: Rectangle): Rectangle;
+	var
+		r, l, b, t: Single;
+	begin
+		if RectangleBottom(rect1) > RectangleBottom(rect2) then b := RectangleBottom(rect2)
+		else b := RectangleBottom(rect1);
+
+		if RectangleTop(rect1) < RectangleTop(rect2) then t := RectangleTop(rect2)
+		else t := RectangleTop(rect1);
+
+		if RectangleRight(rect1) > RectangleRight(rect2) then r := RectangleRight(rect2)
+		else r := RectangleRight(rect1);
+
+		if RectangleLeft(rect1) < RectangleLeft(rect2) then l := RectangleLeft(rect2)
+		else l := RectangleLeft(rect1);
+		
+		if (r < l) or (b > t) then
+		begin
+			result := CreateRectangle(0, 0, 0, 0);
+			exit;
+		end;
+		
+		result := CreateRectangle(l, t, Round(r - l), Round(b - t));
+	end;
+	
+	function DistanceBetween(const pt1, pt2: Point2D): Single;
+	var
+		temp: Vector;
+	begin
+		temp := CreateVector(pt2.x - pt1.x, pt2.y - pt2.x);
+		result := Magnitude(temp);
+	end;
+
 end.

@@ -11,8 +11,8 @@
 // Change History:
 //
 // Version 1.1:
-// - 2008-01-17: Aki + Andrew: Refactor
 // - 2008-01-21: Aki: Implemented timer
+// - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
 // - Various

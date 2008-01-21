@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-21: Andrew: Added const to vector parameters.
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
@@ -36,13 +37,13 @@ interface
 	function ScreenY(y: Single): Integer;
 	function GameX(x: Integer) : Single;
 	function GameY(y: Integer) : Single;
-	function ToGameCoordinates(screenVector: Vector): Vector;
+	function ToGameCoordinates(const screenVector: Vector): Vector;
 		
-	procedure MoveVisualArea(v: Vector); overload;
+	procedure MoveVisualArea(const v: Vector); overload;
 	procedure MoveVisualArea(dx, dy: Single); overload;
 	procedure SetScreenOffset(x, y: Single);
 	
-	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
+	procedure FollowSprite(spr: Sprite; Xoffset, Yoffset: Integer);
 	
 implementation
 	uses Classes, SysUtils;
@@ -84,7 +85,7 @@ implementation
 		result := y + ScreenOffsetY;
 	end;
 	
-	procedure MoveVisualArea(v: Vector); overload;
+	procedure MoveVisualArea(const v: Vector); overload;
 	begin
 		ScreenOffsetX := ScreenOffsetX + v.x;
 		ScreenOffsetY := ScreenOffsetY + v.y;
@@ -102,7 +103,7 @@ implementation
 		ScreenOffsetY := y;
 	end;
 	
-	function ToGameCoordinates(screenVector: Vector): Vector;
+	function ToGameCoordinates(const screenVector: Vector): Vector;
 	begin
 		result.x := screenVector.x + ScreenOffsetX;
 		result.y := screenVector.y + ScreenOffsetY;
