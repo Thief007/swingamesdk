@@ -34,7 +34,7 @@ library SGSDK;
 
 uses 
 	SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SGSDK_Camera, 
+	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SGSDK_Camera, SGSDK_Shapes, 
 	SGSDK_MappyLoader, SysUtils;
 
 	type
@@ -384,7 +384,17 @@ uses
 		end;
 	end;
 
-	function GetMousePosition(): Vector; cdecl; export;
+	function GetMousePositionAsVector(): Vector; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Input.GetMousePositionAsVector();
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result.x := 0; result.y := 0;
+	end;
+
+	function GetMousePosition(): Point2D; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Input.GetMousePosition();
@@ -802,20 +812,6 @@ uses
 		result := 0;
 	end;
 
-	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer;
-		bounded1: Integer; image2: Bitmap;
-		x2, y2: Integer; bounded2: Integer)
-		: Integer; cdecl; export;
-	begin
-		Try
-			if SGSDK_Physics.CollisionWithinBitmapImages(image1, x1, y1, bounded1 = -1, image2, x2, y2, bounded2 = -1) then result := -1
-			else result := 0;
-			exit;
-		Except on exc: Exception do TrapException(exc);
-		end;
-		result := 0;
-	end;
-	
 	function CreateVector(x,y : Single; invertY : Integer): Vector;  cdecl; export;
 	begin
 		Try
@@ -856,20 +852,10 @@ uses
 		result.x := 0; result.y := 0;
 	end;
 
-	function ChopVector(theVector : Vector; minX, maxX, minY, maxY : Integer): Vector; cdecl; export;
+	function LimitMagnitude(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
 	begin
 		Try
-			result :=SGSDK_Physics.ChopVector(theVector, minX, maxX, minY, maxY);
-			exit;
-		Except on exc: Exception do TrapException(exc);
-		end;
-		result.x := 0; result.y := 0;
-	end;
-
-	function LimitVector(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
-	begin
-		Try
-			result :=SGSDK_Physics.LimitVector(theVector, maxMagnitude);
+			result := SGSDK_Physics.LimitMagnitude(theVector, maxMagnitude);
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -1079,7 +1065,7 @@ uses
 	function GetSpriteX(surface: Sprite): Single; cdecl; export;
 	begin
 		Try
-			result := surface.xPos;
+			result := surface.x;
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -1089,7 +1075,7 @@ uses
 	procedure SetSpriteX(surface: Sprite; val: Single); cdecl; export;
 	begin
 		Try
-			surface.xPos := val;
+			surface.x := val;
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
@@ -1097,7 +1083,7 @@ uses
 	function GetSpriteY(surface: Sprite): Single; cdecl; export;
 	begin
 		Try
-			result := surface.yPos;
+			result := surface.y;
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -1107,7 +1093,7 @@ uses
 	procedure SetSpriteY(surface: Sprite; val: Single); cdecl; export;
 	begin
 		Try
-			surface.yPos := val;
+			surface.y := val;
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
@@ -1953,9 +1939,16 @@ uses
 	end;
 	
 	function CollisionWithMapVector(m : Map; spr : Sprite; vec: Vector): CollisionSide; cdecl; export;
+	var
+		x, y: Integer;
 	begin
 		Try
-			result := SGSDK_MappyLoader.CollisionWithMap(m, spr, vec);
+			result := None;
+			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, x, y) then
+			begin
+				MoveSpriteOutOfTile(m, spr, x, y);
+				result := WillCollideOnSide(m, spr);
+			end;
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -2047,7 +2040,8 @@ exports
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
-	
+
+	GetMousePositionAsVector,
 	GetMousePosition,
 	GetMouseMovement,
 	IsMouseDown,
@@ -2117,13 +2111,11 @@ exports
 	HasSpriteCollidedWithRect,
 	HaveSpritesCollided,
 	HaveBitmapsCollided,
-	CollisionWithinBitmapImages,
 	CreateVector,
 	AddVectors,
 	SubtractVectors,
 	InvertVector,
-	ChopVector,
-	LimitVector,
+	LimitMagnitude,
 	GetUnitVector,
 	IsZeroVector,
 	Magnitude,

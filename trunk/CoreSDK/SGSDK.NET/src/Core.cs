@@ -610,23 +610,21 @@ namespace SwinGame
         /// <returns>A Path to the Resource</returns>
         public static String GetPathToResource(String filename, ResourceKind kind)
         {
-            try
-	    {
-			IntPtr addr = DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind);
-			Console.WriteLine(addr);
-			string temp = Marshal.PtrToStringAnsi(addr);
-			Console.WriteLine(temp + ":" + addr);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
-            }
-            catch (Exception)
-            {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+	        try
+		    {
+				IntPtr addr = DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind);
+				string temp = Marshal.PtrToStringAnsi(addr);
+	            if (Core.ExceptionOccured())
+	            {
+	                throw new SwinGameException(Core.GetExceptionMessage());
+	            }
+	        return temp;
+	        }
+	        catch (Exception)
+	        {
+	            //if (Core.ExceptionOccured())
+	            throw new SwinGameException(Core.GetExceptionMessage());
+	        }  
         }
         /// <summary>
         /// Gets the Path to a Resource in the base Resource folder.

@@ -180,8 +180,6 @@ implementation
 	///
 	/// Side Effect:
 	procedure PlayMusic(mus: Music; loops: Integer); overload;
-	var
-		i: Integer;
 	begin
 		Mix_HaltMusic();
 		Mix_PlayMusic(mus, loops);
