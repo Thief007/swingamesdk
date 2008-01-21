@@ -12,6 +12,7 @@
 //
 // Version 1.1:
 // - 2008-01-17: Aki + Andrew: Refactor
+// - 2008-01-21: Aki: Implemented timer
 //  
 // Version 1.0:
 // - Various
@@ -193,6 +194,15 @@ interface
 		///	store animations, or the like. Sprite drawing operations will draw the
 		///	Sprite's current frame.
 		Sprite = ^SpriteData;
+		
+		TimerData = record
+			startTicks : UInt32;
+			pausedTicks : UInt32;
+			paused : Boolean;
+			started : Boolean;
+		end;
+		
+		Timer = ^TimerData;
 			
 		
 	var
@@ -277,6 +287,13 @@ interface
 	function Cos(angle: Single): Single;
 	function Sin(angle: Single): Single;
 	function Tan(angle: Single): Single;
+	
+	function CreateTimer() : Timer;
+	procedure StartTimer(toStart : Timer);
+	procedure StopTimer(toStop : Timer);
+	procedure PauseTimer(toPause : Timer);
+	procedure UnpauseTimer(toUnpause : Timer);
+	function GetTimerTicks(toGet : Timer) : UInt32;
 		
 implementation
 	uses SysUtils, Math, Classes;
@@ -568,9 +585,16 @@ implementation
 		OpenGraphicsWindow(caption, 800,600);
 	end;
 	
-	procedure RefreshScreen(); inline; overload;
+	procedure RefreshScreen(); overload;
+	var
+		nowTime: UInt32;
 	begin
-		RefreshScreen(65);
+		nowTime := GetTicks();
+		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
+		lastDrawUpdateTime := nowTime;
+	
+		sdlManager.DrawCollectedText(scr.surface);
+		SDL_Flip(scr.surface);
 	end;
 	
 	/// Draws the current drawing to the screen. This must be called to display
@@ -845,6 +869,76 @@ implementation
 	function GetPathToResource(filename: String; kind: ResourceKind) : String; overload;
 	begin	
 		result := GetPathToResourceWithBase(applicationPath, filename, kind);
+	end;
+	
+	function CreateTimer() : Timer;
+	begin
+		New(result);
+		with result^ do
+		begin
+			startTicks := 0;
+			pausedTicks := 0;
+			paused := false;
+			started := false;
+		end;
+	end;
+	
+	procedure StartTimer(toStart : Timer);
+	begin
+		with toStart^ do
+		begin
+			started := true;
+			paused := false;
+			startTicks := SDL_GetTicks();
+		end;
+	end;
+	
+	procedure StopTimer(toStop : Timer);
+	begin
+		with toStop^ do
+		begin
+			started := false;
+			paused := false;
+		end;
+	end;
+	
+	procedure PauseTimer(toPause : Timer);
+	begin
+		with toPause^ do
+		begin
+			if started and (not paused) then
+			begin
+				paused := true;
+				pausedTicks := SDL_GetTicks() - startTicks;
+			end;
+		end;
+	end;
+	
+	procedure UnpauseTimer(toUnpause : Timer);
+	begin
+		with toUnpause^ do
+		begin
+			if paused then
+			begin
+				paused := false;
+				startTicks := SDL_GetTicks() - pausedTicks;
+				pausedTicks := 0;
+			end;
+		end;
+	end;
+	
+	function GetTimerTicks(toGet : Timer) : UInt32;
+	begin
+		with toGet^ do
+		begin
+			if started then
+			begin
+				if paused then result := pausedTicks
+				else result := SDL_GetTicks() - startTicks;
+				exit;
+			end;
+		end;
+		result := 0;
 	end;
 		
 initialization
