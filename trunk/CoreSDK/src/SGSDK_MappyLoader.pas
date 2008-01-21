@@ -12,14 +12,15 @@
 //
 // Version 1.1:
 // - 2008-01-17: Aki + Andrew: Refactor
-//  
+// - 2008-01-21: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide 
+//
 // Version 1.0:
 // - Various
 
 unit SGSDK_MappyLoader;
 
 interface
-	uses	SGSDK_Core, SGSDK_Physics;
+	uses	SGSDK_Core, SGSDK_Physics, SGSDK_Shapes;
 			
 	type
 		Event = (
@@ -78,8 +79,11 @@ interface
 		function LoadMap(mapName : String): Map;
 		function LoadMapFiles(mapFile, imgFile: String): Map;
 		procedure DrawMap(m : Map);
-		function CollisionWithMap(m: Map; spr: Sprite; vec: Vector): CollisionSide; overload;
-		function CollisionWithMap(m: Map; spr: Sprite): CollisionSide; overload;
+		
+		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
+		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: Integer): Boolean; overload;
+		function WillCollideOnSide(m: Map; spr: Sprite): CollisionSide;
+		procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: Integer);
 		
 		function EventCount(m : Map; eventType : Event): Integer;
 		function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
@@ -567,11 +571,12 @@ implementation
 		end;
 	end;
 	
-	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffSet, yOffSet: Integer): Boolean;
+	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffset, yOffset: Integer): Boolean;
 	begin
+	
 		spr.x := spr.x + xOffset;
 		spr.y := spr.y + yOffset;
-
+	
 		if BruteForceDetection(m, spr) then
 		begin
 			result := true;
@@ -585,13 +590,16 @@ implementation
 	
 
 	
-	procedure MoveOut(sprt: Sprite; movement: Vector; x, y, width, height: Integer);
+	function MoveOut(sprt: Sprite; movement: Vector; x, y, width, height: Integer): CollisionSide;
 	var
 		side: CollisionSide;
 		kickVector, unitMove: Vector;
 		dotprd: Single;
+		
+		sprRect, tgtRect : Rectangle;
 	begin
-{		side := GetCollisionFromVector(movement);
+
+		{side := GetSideForCollisionTest(movement);
 		
 		case side of
 			Top, Left, TopLeft:	kickVector := CreateVector(sprt.x - x, sprt.y - y);
@@ -605,200 +613,189 @@ implementation
 		
 		dotprd := DotProduct(kickVector, unitMove);
 
-		if side = BottomRight then
-		begin
-			WriteLn('Movement: ', movement.x:4:2, ',', movement.y:4:2);
-			WriteLn('Sprt X,Y: ', sprt.x:4:2, ',', sprt.y:4:2);
-			WriteLn('Sprt W,H: ', sprt.width, ',', sprt.height);
-			WriteLn('Block X,Y: ', x, ',', y);
-			WriteLn('Block W,H: ', width, ',', height);
-			WriteLn('Side: ', Integer(side));
-			WriteLn('To Top of Sprt: ', kickVector.x:4:2, ',', kickVector.y:4:2);
-			WriteLn('Dot Product: ', dotprd:4:2);
-		end;
-
-		kickVector := InvertVector(MultiplyVector(unitMove, dotprd));
-
-		if side = BottomRight then WriteLn('Kick: ', kickVector.x:4:2, ',', kickVector.y:4:2);
+		kickVector := InvertVector(MultiplyVector(unitMove, dotprd));}
+		
+		sprRect := CreateRectangle(sprt.x, sprt.y, sprt.width, sprt.height);
+		tgtRect := CreateRectangle(x, y, width, height);
+		
+		kickVector := VectorOutOfRectFromRect(sprRect, tgtRect, movement);
 		
 		MoveSprite(sprt, kickVector);
-}	end;
-	
-	procedure PushSpriteOut(m : Map; spr : Sprite; vec : Vector);
-	const
-		SEARCH_RANGE = 0;
-	var
-		XStart, XEnd, YStart, YEnd : Integer;
-		y, x, yCache, xCache: Integer;
-	begin
-		XStart := round((spr.x / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
-		XEnd := round((spr.x / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
-		YStart := round((spr.y / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
-		YEnd := round((spr.y / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
-
-		if YStart < 0 then YStart := 0;
-		if YStart >= m.MapInfo.MapHeight then exit;
-		if YEnd < 0 then exit;
-		if YEnd >= m.MapInfo.MapHeight then YEnd := m.MapInfo.MapHeight - 1;
-				
-		if XStart < 0 then XStart := 0;
-		if XStart >= m.MapInfo.MapWidth then exit;
-		if XEnd < 0 then exit;
-		if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
-
-		for y := YStart to YEnd do
-		begin
-			yCache := y * m.MapInfo.BlockHeight;
-			
-			for x := XStart to XEnd do
-			begin
-				if m.CollisionInfo.Collidable[y][x] = true then
-				begin
-					xCache := x * m.MapInfo.BlockWidth;
-					
-					if HasSpriteCollidedWithRect(spr, 
-							 xCache, 
-							 yCache, 
-							 m.MapInfo.BlockWidth, 
-							 m.MapInfo.BlockHeight) then
-					begin
-						MoveOut(spr, vec, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
-						
-{						if spr.usePixelCollision then
-						begin
-							MoveSprite(spr, InvertVector(vec));
-							
-							tempVector := vec;
-							repeat
-								MoveSprite(spr, tempVector);
-								if HasSpriteCollidedWithRect(spr, 
-									 xCache, 
-									 yCache, 
-									 m.MapInfo.BlockWidth, 
-									 m.MapInfo.BlockHeight) then
-								begin
-									MoveSprite(spr, InvertVector(tempVector));
-									tempVector := MultiplyVector(tempVector, 0.5);
-								end;
-							until Magnitude(tempVector) < 0.1;
-						end;}
-					end;
-				end;
-			end;
-		end;
+		
+		result := side;
 	end;
 	
-	function CollisionWithMap(m: Map; spr: Sprite; vec: vector): CollisionSide; overload;
+	function GetPotentialCollisions(m: Map; spr: Sprite): Rectangle;
+		function GetBoundingRectangle() : Rectangle;
+		var
+			startPoint, endPoint, searchRect: Rectangle;
+			startX, startY, endX, endY : Integer;
+		begin
+			startPoint := CreateRectangle( 	round( ((spr.x - spr.movement.x) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
+											round( ((spr.y - spr.movement.y) / m.MapInfo.BlockHeight) -1) * m.MapInfo.BlockHeight,
+											(round( spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
+											(round( spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
+											
+			endPoint := CreateRectangle( 	round((spr.x / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
+											round((spr.y / m.MapInfo.BlockHeight) - 1) * m.MapInfo.BlockHeight,
+											(round(spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
+											(round(spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
+			
+			//Encompassing Rectangle	
+			if startPoint.x < endPoint.x then
+			begin
+				startX := round(startPoint.x);
+				endX := round(endPoint.x + endPoint.width);
+			end
+			else
+			begin
+				startX := round(endPoint.x);
+				endX := round(startPoint.x + startPoint.width);
+			end;
+			
+			if startPoint.y < endPoint.y then
+			begin
+				startY := round(startPoint.y);
+				endY := round(endPoint.y + endPoint.height);
+			end
+			else
+			begin
+				startY := round(endPoint.y);
+				endY := round(startPoint.y + startPoint.height);
+			end;
+			
+			result := CreateRectangle( startX, startY, endX - startX, endY - startY);
+				
+			//Debug Info							
+			//DrawRectangle(ColorYellow, startPoint.x, startPoint.y, startPoint.width, startPoint.height);
+			//DrawRectangle(ColorWhite, endPoint.x, endPoint.y, endPoint.width, endPoint.height);
+			//DrawRectangle(ColorGreen, result.x, result.y, result.width, result.height);
+		end;
+	var
+		//Respresents the Rectangle that encompases both the Current and Previous positions of the Sprite.
+		searchRect : Rectangle;
+	begin
+		
+		//Gets the Bounding Collision Rectangle
+		searchRect := GetBoundingRectangle();
+		result := searchRect;
+			
+	end;
+
+	function WillCollideOnSide(m: Map; spr: Sprite): CollisionSide;
 	type
 		Collisions = record
 			Top, Bottom, Left, Right: Boolean;
 		end;
 	var
-		xOffset, yOffset: Integer;
-		col: Collisions;
+		col : Collisions;
+	begin
+		col.Right 	:= (spr.movement.x > 0) and BruteForceDetectionComponent(m, spr, spr.width, 0);
+		col.Left  	:= (spr.movement.x < 0) and BruteForceDetectionComponent(m, spr, -spr.width, 0);
+		col.Top		:= (spr.movement.y < 0) and BruteForceDetectionComponent(m, spr, 0, -spr.height);
+		col.Bottom	:= (spr.movement.y > 0) and BruteForceDetectionComponent(m, spr, 0, spr.height);
+
+		if col.Right and col.Bottom then result := BottomRight
+		else if col.Left and col.Bottom then result := BottomLeft
+		else if col.Right and col.Top then result := TopRight
+		else if col.Left and col.Top then result := TopLeft
+		else if col.Left then result := Left
+		else if col.Right then result := Right
+		else if col.Top then result := Top
+		else if col.Bottom then result := Bottom
+		else result := None;
+	end;
+	
+	procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: Integer);
 	begin
 		if m = nil then raise Exception.Create('No Map supplied (nil)');
 		if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
 		
-		xOffset := m.MapInfo.BlockWidth div 2;
-		yOffset := m.MapInfo.BlockHeight div 2;
+		MoveOut(spr, spr.movement, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+	end;
 
-		result := None;
-		
-		if BruteForceDetection(m, spr) then
-		begin
-			PushSpriteOut(m, spr, vec);
-		
-			if vec.x > 0 then begin
-				//Right
-				if BruteForceDetectionComponent(m, spr, xOffset, 0) then
-					col.Right := true
-				else col.Right := false;
-			end else col.Right := false;
-
-			if vec.x < 0 then begin
-				//Left
-				if BruteForceDetectionComponent(m, spr, xOffset * -1, 0) then
-					col.Left := true
-				else col.Left := false;
-			end else col.Left := false;
-
-			if vec.y < 0 then begin
-				//Top
-				if BruteForceDetectionComponent(m, spr, 0, yOffset * -1) then
-					col.Top := true
-				else col.Top := false;
-			end else col.Top := false;
-
-			if vec.y > 0 then begin
-				//Bottom
-				if BruteForceDetectionComponent(m, spr, 0, yOffset) then
-					col.Bottom := true
-				else col.Bottom := false;
-			end else col.Bottom := false;
-
-			//BottomRight
-			if (col.Right = col.Bottom) and (vec.x > 0) and (vec.y > 0) then
-			begin
-				result := BottomRight;
-				exit;
-			end;
-
-			//BottomLeft
-			if (col.Left = col.Bottom) and (vec.x < 0) and (vec.y > 0) then
-			begin
-				result := BottomLeft;
-				exit;
-			end;
-
-			//TopRight
-			if (col.Right = col.Top) and (vec.x > 0) and (vec.y < 0) then
-			begin
-				result := TopRight;
-				exit;
-			end;
-
-			//TopLeft
-			if (col.Left = col.Top) and (vec.x < 0) and (vec.y < 0) then
-			begin
-				result := TopLeft;
-				exit;
-			end;
-
-			//Left
-			if col.Left then
-			begin
-				result := Left;
-				exit;
-			end;
-
-			//Right
-			if col.Right then
-			begin
-				result := Right;
-				exit;
-			end;
-
-			//Top
-			if col.Top then
-			begin
-				result := Top;
-				exit;
-			end;
-
-			//Bottom
-			if col.Bottom then
-			begin
-				result := Bottom;
-				exit;
-			end;
-		end;
+	
+	function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
+	var
+		x, y : Integer;
+	begin
+		result := SpriteHasCollidedWithMapTile(m,spr, x, y);
 	end;
 	
-	function CollisionWithMap(m: Map; spr: Sprite): CollisionSide; overload;
+	function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: Integer): Boolean; overload;
+	var
+		y, x, yCache, dy, dx, i, j, initY, initX : Integer;
+		xStart, yStart, xEnd, yEnd : Integer;
+		rectSearch : Rectangle;
+		side : CollisionSide;
 	begin
-		result := CollisionWithMap(m, spr, spr.movement);
+	
+		if m = nil then raise Exception.Create('No Map supplied (nil)');
+		if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
+		
+		rectSearch := GetPotentialCollisions(m, spr);
+		side := GetSideForCollisionTest(spr.movement);
+		
+		yStart := round(rectSearch.y / m.MapInfo.BlockHeight);
+		yEnd := round((rectSearch.y + rectSearch.height) / m.MapInfo.BlockHeight);
+		xStart := round(rectSearch.x / m.MapInfo.BlockWidth);
+		xEnd := round((rectSearch.x + rectSearch.width) / m.MapInfo.BlockWidth);
+		
+		if yStart < 0 then yStart := 0;
+		if yStart >= m.MapInfo.MapHeight then exit;
+		if yEnd < 0 then exit;
+		if yEnd >= m.MapInfo.MapHeight then yEnd := m.MapInfo.MapHeight - 1;
+				
+		if xStart < 0 then xStart := 0;
+		if xStart >= m.MapInfo.MapWidth then exit;
+		if xEnd < 0 then exit;
+		if xEnd >= m.MapInfo.MapWidth then xEnd := m.MapInfo.MapWidth - 1;
+		
+		result := false;
+		
+		case side of
+			TopLeft: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+			TopRight: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
+			BottomLeft: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
+			BottomRight: begin dy := -1; dx := -1; initY := yEnd; initX := xEnd; end;
+			Top: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+			Bottom: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
+			Left: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+			Right: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
+			else
+				exit;
+		end;
+		
+		for i := yStart to yEnd do
+		begin
+			y := initY + (i - yStart) * dy;
+			yCache := y * m.MapInfo.BlockHeight;
+			for j := xStart to xEnd do
+			begin
+				x := initX + (j - xStart) * dx;
+				if m.CollisionInfo.Collidable[y][x] = true then
+				begin			
+					if HasSpriteCollidedWithRect(spr, 
+							 x * m.MapInfo.BlockWidth, 
+							 yCache, 
+							 m.MapInfo.BlockWidth, 
+							 m.MapInfo.BlockHeight) then
+					begin
+						result := true;
+						collidedX := x;
+						collidedY := y;
+						exit;
+					end;
+				end;
+			end;
+		end;
+		
+		collidedX := -1;
+		collidedY := -1;
+			
 	end;
+	
+	
 	
 	procedure FreeMap(var m: Map);
 	begin
@@ -807,4 +804,179 @@ implementation
 		Dispose(m);
 		m := nil;
 	end;
+	
 end.
+
+
+{function PushSpriteOutOfMap(m: Map; spr: Sprite; vec: vector): CollisionSide; overload;
+	type
+		Collisions = record
+			Top, Bottom, Left, Right: Boolean;
+		end;
+	var
+		y, x, yCache, dy, dx, i, j, initY, initX : Integer;
+		xStart, yStart, xEnd, yEnd : Integer;
+		rectSearch : Rectangle;
+		col : Collisions;
+		side : CollisionSide;
+	begin
+	
+		if m = nil then raise Exception.Create('No Map supplied (nil)');
+		if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
+		
+		result := None;
+		
+		rectSearch := GetPotentialCollisions(m, spr);
+		side := GetSideForCollisionTest(vec);
+		
+		yStart := round(rectSearch.y / m.MapInfo.BlockHeight);
+		yEnd := round((rectSearch.y + rectSearch.height) / m.MapInfo.BlockHeight);
+		xStart := round(rectSearch.x / m.MapInfo.BlockWidth);
+		xEnd := round((rectSearch.x + rectSearch.width) / m.MapInfo.BlockWidth);
+		
+		if yStart < 0 then yStart := 0;
+		if yStart >= m.MapInfo.MapHeight then exit;
+		if yEnd < 0 then exit;
+		if yEnd >= m.MapInfo.MapHeight then yEnd := m.MapInfo.MapHeight - 1;
+				
+		if xStart < 0 then xStart := 0;
+		if xStart >= m.MapInfo.MapWidth then exit;
+		if xEnd < 0 then exit;
+		if xEnd >= m.MapInfo.MapWidth then xEnd := m.MapInfo.MapWidth - 1;
+		
+		result := None;
+		
+		case side of
+			TopLeft: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+			TopRight: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
+			BottomLeft: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
+			BottomRight: begin dy := -1; dx := -1; initY := yEnd; initX := xEnd; end;
+			Top: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+			Bottom: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
+			Left: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+			Right: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
+			else
+				exit;
+		end;
+		
+		for i := yStart to yEnd do
+		begin
+			y := initY + (i - yStart) * dy;
+			yCache := y * m.MapInfo.BlockHeight;
+			for j := xStart to xEnd do
+			begin
+				x := initX + (j - xStart) * dx;
+				if m.CollisionInfo.Collidable[y][x] = true then
+				begin			
+					if HasSpriteCollidedWithRect(spr, 
+							 x * m.MapInfo.BlockWidth, 
+							 yCache, 
+							 m.MapInfo.BlockWidth, 
+							 m.MapInfo.BlockHeight) then
+					begin
+						MoveOut(spr, vec, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+						
+						{case col of
+							Bottom : result := Top;
+							Top : result := Bottom;
+							Right : result := Left;
+							Left : result := Right;
+							
+							TopLeft : result := BottomRight;
+							TopRight : result := BottomLeft;
+							BottomLeft : result := TopRight;
+							BottomRight : result := TopLeft;
+						end;}
+						
+						if vec.x > 0 then begin
+							//Right
+							if BruteForceDetectionComponent(m, spr, spr.width, 0) then
+								col.Right := true
+							else col.Right := false;
+						end else col.Right := false;
+			
+						if vec.x < 0 then begin
+							//Left
+							if BruteForceDetectionComponent(m, spr, -spr.width, 0) then
+								col.Left := true
+							else col.Left := false;
+						end else col.Left := false;
+			
+						if vec.y < 0 then begin
+							//Top
+							if BruteForceDetectionComponent(m, spr, 0, -spr.height) then
+								col.Top := true
+							else col.Top := false;
+						end else col.Top := false;
+			
+						if vec.y > 0 then begin
+							//Bottom
+							if BruteForceDetectionComponent(m, spr, 0, spr.height) then
+								col.Bottom := true
+							else col.Bottom := false;
+						end else col.Bottom := false;
+			
+						//BottomRight
+						if (col.Right = col.Bottom) and (vec.x > 0) and (vec.y > 0) then
+						begin
+							result := BottomRight;
+							exit;
+						end;
+			
+						//BottomLeft
+						if (col.Left = col.Bottom) and (vec.x < 0) and (vec.y > 0) then
+						begin
+							result := BottomLeft;
+							exit;
+						end;
+			
+						//TopRight
+						if (col.Right = col.Top) and (vec.x > 0) and (vec.y < 0) then
+						begin
+							result := TopRight;
+							exit;
+						end;
+			
+						//TopLeft
+						if (col.Left = col.Top) and (vec.x < 0) and (vec.y < 0) then
+						begin
+							result := TopLeft;
+							exit;
+						end;
+			
+						//Left
+						if col.Left then
+						begin
+							result := Left;
+							exit;
+						end;
+			
+						//Right
+						if col.Right then
+						begin
+							result := Right;
+							exit;
+						end;
+			
+						//Top
+						if col.Top then
+						begin
+							result := Top;
+							exit;
+						end;
+			
+						//Bottom
+						if col.Bottom then
+						begin
+							result := Bottom;
+							exit;
+						end;			
+
+						
+						exit;
+					end;
+				end;
+			end;
+		end;	
+			
+	end;}

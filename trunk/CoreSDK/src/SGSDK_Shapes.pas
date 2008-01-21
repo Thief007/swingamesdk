@@ -19,6 +19,7 @@ uses SGSDK_Core;
 			end;
 
 		LinesArray = Array of LineSegment;
+		RectArray = ARray of Rectangle;
 
 	function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single; overload;
 	function DistancePointToLine(x, y: Single; const line: LineSegment): Single; overload;
