@@ -117,8 +117,8 @@ implementation
 	procedure DrawSpriteCaption(sprite : Sprite; caption : String);
 	begin
 		DrawText(caption, ColorWhite, GameFont('Courier'), 
-			Round((sprite.xPos + CurrentWidth(sprite) / 2) - ((Length(caption) / 2) * 10)), 
-			Round(sprite.yPos + CurrentHeight(sprite)));
+			Round((sprite.x + CurrentWidth(sprite) / 2) - ((Length(caption) / 2) * 10)), 
+			Round(sprite.y + CurrentHeight(sprite)));
 	end;
 	
 	procedure DrawSprites();
@@ -133,14 +133,14 @@ implementation
 		stopSprite.endingAction := Stop;
 		reverseOnceSprite := CreateSprite(GameImage('Running'), 5, 15, 80, 94);
 		reverseOnceSprite.endingAction := ReverseOnce;
-		loopSprite.xPos := 50;
-		loopSprite.yPos := 200;
-		reverseSprite.xPos := 150;
-		reverseSprite.yPos := 200;
-		stopSprite.xPos := 350;
-		stopSprite.yPos := 200;
-		reverseOnceSprite.xPos := 450;
-		reverseOnceSprite.yPos := 200;
+		loopSprite.x := 50;
+		loopSprite.y := 200;
+		reverseSprite.x := 150;
+		reverseSprite.y := 200;
+		stopSprite.x := 350;
+		stopSprite.y := 200;
+		reverseOnceSprite.x := 450;
+		reverseOnceSprite.y := 200;
 		repeat
 			ClearScreen();
 			DrawSprite(loopSprite);
@@ -166,26 +166,26 @@ implementation
 	
 	procedure MoveBall(var ball : Sprite; var xSpeed, ySpeed : Integer);
 	begin
-		ball.xPos := ball.xPos + xSpeed;
-		ball.yPos := ball.yPos + ySpeed;
-		if ball.xPos > ScreenWidth() - CurrentWidth(ball) then
+		ball.x := ball.x + xSpeed;
+		ball.y := ball.y + ySpeed;
+		if ball.x > ScreenWidth() - CurrentWidth(ball) then
 		begin
-			ball.xPos := ScreenWidth() - CurrentWidth(ball);
+			ball.x := ScreenWidth() - CurrentWidth(ball);
 			xSpeed := -1 * xSpeed;
 		end;
-		if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
+		if ball.y > ScreenHeight() - CurrentHeight(ball) then
 		begin
-			ball.yPos := ScreenHeight() - CurrentHeight(ball);
+			ball.y := ScreenHeight() - CurrentHeight(ball);
 			ySpeed := -1 * ySpeed;
 		end;
-		if ball.xPos < 0 then
+		if ball.x < 0 then
 		begin
-			ball.xPos := 0;
+			ball.x := 0;
 			xSpeed := -1 * xSpeed;
 		end;
-		if ball.yPos < 0 then
+		if ball.y < 0 then
 		begin
-			ball.yPos := 0;
+			ball.y := 0;
 			ySpeed := -1 * ySpeed;
 		end;
 	end;
@@ -202,10 +202,10 @@ implementation
 		ySpeed2 := 3;
 		ball1 := CreateSprite(GameImage('BallImage1'));
 		ball2 := CreateSprite(GameImage('BallImage2'));
-		ball1.xPos := 0;
-		ball1.yPos := 0;
-		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
-		ball2.yPos := ScreenHeight() - CurrentHeight(ball2);
+		ball1.x := 0;
+		ball1.y := 0;
+		ball2.x := ScreenWidth() - CurrentWidth(ball2);
+		ball2.y := ScreenHeight() - CurrentHeight(ball2);
 		ball1.usePixelCollision := true;
 		ball2.usePixelCollision := true;
 		repeat
@@ -274,25 +274,25 @@ implementation
 	procedure MoveBallUsingVector(var ball : Sprite);
 	begin
 		MoveSprite(ball, ball.movement);
-		if ball.xPos > ScreenWidth() - CurrentWidth(ball) then
+		if ball.x > ScreenWidth() - CurrentWidth(ball) then
 		begin
 			ball.movement.x := ball.movement.x * -1;
-			ball.xPos := ScreenWidth() - CurrentWidth(ball);
+			ball.x := ScreenWidth() - CurrentWidth(ball);
 		end;
-		if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
+		if ball.y > ScreenHeight() - CurrentHeight(ball) then
 		begin
 			ball.movement.y := ball.movement.y * -1;
-			ball.yPos := ScreenHeight() - CurrentHeight(ball);
+			ball.y := ScreenHeight() - CurrentHeight(ball);
 		end;
-		if ball.xPos < 0 then
+		if ball.x < 0 then
 		begin
 			ball.movement.x := ball.movement.x * -1;
-			ball.xPos := 0;
+			ball.x := 0;
 		end;
-		if ball.yPos < 0 then
+		if ball.y < 0 then
 		begin
 			ball.movement.y := ball.movement.y * -1;
-			ball.yPos := 0;
+			ball.y := 0;
 		end;
 	end;
 	
@@ -307,10 +307,10 @@ implementation
 		ball2.movement := CreateVector(3, 3, true);
 		ball1.mass := 1;
 		ball2.mass := 5;
-		ball1.xPos := 0;
-		ball1.yPos := 0;
-		ball2.xPos := ScreenWidth() - CurrentWidth(ball2);
-		ball2.yPos := ScreenHeight() - CurrentHeight(ball2);
+		ball1.x := 0;
+		ball1.y := 0;
+		ball2.x := ScreenWidth() - CurrentWidth(ball2);
+		ball2.y := ScreenHeight() - CurrentHeight(ball2);
 		ball1.usePixelCollision := true;
 		ball2.usePixelCollision := true;
 		repeat
@@ -336,8 +336,8 @@ implementation
 		xSpeed, ySpeed : Integer;
 	begin
 		ball := CreateSprite(GameImage('BallImage1'));
-	    ball.xPos := 400;
-	    ball.yPos := 300;
+	    ball.x := 400;
+	    ball.y := 300;
 
 	    repeat
 	        xSpeed := 0;
@@ -353,8 +353,8 @@ implementation
 	            xSpeed := 3;
 
 	        DrawSprite(ball);
-	        ball.xPos := ball.xPos + xSpeed;
-			ball.yPos := ball.yPos + ySpeed;
+	        ball.x := ball.x + xSpeed;
+			ball.y := ball.y + ySpeed;
 
 	        DrawOverlay('Move Sprite with Arrow Keys Example');
 	        ProcessEvents();
@@ -382,8 +382,8 @@ implementation
 			
             if MouseWasClicked(LeftButton) then
             begin
-                ball.xPos := position.X - (CurrentWidth(ball) / 2);
-                ball.yPos := position.Y - (CurrentHeight(ball) / 2);
+                ball.x := position.X - (CurrentWidth(ball) / 2);
+                ball.y := position.Y - (CurrentHeight(ball) / 2);
                 DrawSprite(ball);
             end;
 
@@ -454,8 +454,8 @@ implementation
 		ball.movement := CreateVector(5, 0);
 		ball.mass := 1;
 
-		ball.xPos := 0;
-		ball.yPos := 0;
+		ball.x := 0;
+		ball.y := 0;
 		repeat
 			ClearScreen();
 
@@ -464,27 +464,27 @@ implementation
 
 			MoveSprite(ball, ball.movement);
 
-			if ball.xPos > ScreenWidth() - CurrentWidth(ball) then
+			if ball.x > ScreenWidth() - CurrentWidth(ball) then
 			begin
 				ball.movement.x := ball.movement.x * -1;
-				ball.xPos := ScreenWidth() - CurrentWidth(ball);
+				ball.x := ScreenWidth() - CurrentWidth(ball);
 			end;
-			if ball.yPos > ScreenHeight() - CurrentHeight(ball) then
+			if ball.y > ScreenHeight() - CurrentHeight(ball) then
 			begin
 				if ball.movement.y < 1 then
 					ball.movement.y := 0;
 				ball.movement.y := ball.movement.y * -1;
-				ball.yPos := ScreenHeight() - CurrentHeight(ball);
+				ball.y := ScreenHeight() - CurrentHeight(ball);
 			end;
-			if ball.xPos < 0 then
+			if ball.x < 0 then
 			begin
 				ball.movement.x := ball.movement.x * -1;
-				ball.xPos := 0;
+				ball.x := 0;
 			end;
-			if ball.yPos < 0 then
+			if ball.y < 0 then
 			begin
 				ball.movement.y := ball.movement.y * -1;
-				ball.yPos := 0;
+				ball.y := 0;
 			end;
 			DrawSprite(ball);
 
@@ -503,10 +503,10 @@ implementation
 	begin
 		sp1 := CreateSprite(GameImage('Explosion'), 5, 15, 38, 38);
 		sp2 := CreateSprite(GameImage('Ship'), 3, 2, 40, 43);
-		sp1.xPos := 70;
-		sp1.yPos := 100;
-		sp2.xPos := 80;
-		sp2.yPos := 110;
+		sp1.x := 70;
+		sp1.y := 100;
+		sp2.x := 80;
+		sp2.y := 110;
 		repeat
 			ProcessEvents();
 			ClearScreen(ColorBlack);
@@ -535,17 +535,17 @@ implementation
 	begin
 		Sea := GameImage('Sea');
 		Ship := CreateSprite(GameImage('Ship'), 3, 2, 40, 43);
-		Ship.xPos := 0;
-		Ship.yPos := 0;
+		Ship.x := 0;
+		Ship.y := 0;
 		repeat
 			if IsKeyPressed(VK_RIGHT) then
-				Ship.xPos := Ship.xPos + 4;
+				Ship.x := Ship.x + 4;
 			if IsKeyPressed(VK_DOWN) then
-				Ship.yPos := Ship.yPos + 4;
+				Ship.y := Ship.y + 4;
 			if IsKeyPressed(VK_UP) then
-				Ship.yPos := Ship.yPos - 4;
+				Ship.y := Ship.y - 4;
 			if IsKeyPressed(VK_LEFT) then
-				Ship.xPos := Ship.xPos - 4;
+				Ship.x := Ship.x - 4;
 			FollowSprite(Ship, 0, -150);
 			ProcessEvents();
 			ClearScreen();
@@ -597,19 +597,21 @@ implementation
 		m : Map;
 		balls: Array of Sprite;
 		tempString: CollisionSide;
-		i, j : Integer;
+		i, j, tx, ty : Integer;
 		gravity: Vector;
 	begin
 		m := GameMap('test');
 		
-		SetLength(balls, 2);
+		SetLength(balls, 3);
+		
+		Randomize();
 		
 		for i := 0 to High(balls) do
 		begin
 			balls[i] := CreateSprite(GameImage('SmallBall'));
-			balls[i].movement := CreateVector(3, 0);
-			balls[i].xPos := EventPositionX(m, Event1, i);
-			balls[i].yPos := EventPositionY(m, Event1, i);
+			balls[i].movement := CreateVector((i-1)*4, 0);
+			balls[i].x := EventPositionX(m, Event1, i);
+			balls[i].y := EventPositionY(m, Event1, i);
 			
 			balls[i].mass := 1;
 		end;
@@ -662,17 +664,33 @@ implementation
 			for i := 0 to High(balls) do
 			begin
 				balls[i].movement := AddVectors(balls[i].movement, gravity);
-				balls[i].movement := MultiplyVector(balls[i].movement, 0.995);
+				balls[i].movement := MultiplyVector(balls[i].movement, 0.99);
+				
 				MoveSprite(balls[i], balls[i].movement);
 			end;
 			
 			for i := 0 to High(balls) do
 			begin
-				tempString := CollisionWithMap(m, balls[i]);
-				if (tempString = Right) or (tempString = Left) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
-					balls[i].movement.x := balls[i].movement.x * -1;
-				if (tempString = Top) or (tempString = Bottom) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
-					balls[i].movement.y := balls[i].movement.y * -1;
+			
+				if SpriteHasCollidedWithMapTile(m, balls[i], tx, ty) then
+				begin
+					MoveSpriteOutOfTile(m, balls[i], tx, ty);
+					tempString := WillCollideOnSide(m, balls[i]);
+					if (tempString = Right) or (tempString = Left) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
+						balls[i].movement.x := balls[i].movement.x * -1;
+					if (tempString = Top) or (tempString = Bottom) or (tempString = TopLeft) or (tempString = TopRight) or (tempString = BottomLeft) or (tempString = BottomRight) then
+						balls[i].movement.y := balls[i].movement.y * -1;
+						
+					if tempString <> None then
+					begin
+						balls[i].movement := MultiplyVector(balls[i].movement, 0.9);
+						if Magnitude(balls[i].movement) < 3 then 
+						begin
+							balls[i].movement.x := 0; 
+							balls[i].movement.y := 0;
+						end;
+					end;
+				end;
 			end;
 			
 			for i := 0 to High(balls) do
@@ -682,7 +700,7 @@ implementation
 			DrawOverlay('MappyLoader Example');
 			DrawFramerate(0, 0, GameFont('Courier'));
 			ProcessEvents();
-			RefreshScreen();
+			RefreshScreen(60);
 			ClearScreen(ColorBlack);
 			if WindowCloseRequested() then exit;
 		until IsKeyPressed(VK_N);
@@ -699,7 +717,7 @@ implementation
 		repeat
 			ProcessEvents();
 			mousePos := GetMousePosition();
-			pd.movement := GetVectorFromAngle(CalculateAngle(pd.xPos + CurrentWidth(pd) / 2, pd.yPos + CurrentHeight(pd) / 2, mousePos.X, mousePos.Y), 2);
+			pd.movement := GetVectorFromAngle(CalculateAngle(pd.x + CurrentWidth(pd) / 2, pd.y + CurrentHeight(pd) / 2, mousePos.X, mousePos.Y), 2);
 			MoveSprite(pd, pd.movement);
 			ClearScreen(ColorBlack);
 			DrawSprite(pd);
@@ -962,8 +980,8 @@ implementation
 	
 		procedure ResetBall();
 		begin
-			ball.xPos := 400 - CurrentWidth(ball) div 2;
-			ball.yPos := 100;
+			ball.x := 400 - CurrentWidth(ball) div 2;
+			ball.y := 100;
 			ball.movement := CreateVector(0, 3);
 		end;
 	
@@ -1079,8 +1097,8 @@ implementation
 		FollowSpriteExample();
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
-		If WindowCloseRequested() then exit;
-		MapExample();
+		}If WindowCloseRequested() then exit;
+		MapExample();{
 		If WindowCloseRequested() then exit;
 		MouseExample();	
 		If WindowCloseRequested() then exit;
