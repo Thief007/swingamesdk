@@ -774,7 +774,6 @@ namespace SwinGame
         {
             try
             {
-                Console.WriteLine("C#: " + x + ":" + y);
                 DLL_MoveMouse( x, y);
                 if (Core.ExceptionOccured())
                 {

@@ -472,7 +472,6 @@ namespace SwinGame
             /// <param name="v"></param>
             public void SetTo(Vector v)
             {
-					Console.WriteLine("Setting Movement");
                 SetSpriteMovement(_Data.Pointer, v);
             }
 
