@@ -26,7 +26,7 @@ unit SGSDK_Core;
 
 interface
 	uses
-		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing;
+		SDL, SDL_Image, SDLEventProcessing;
 
 	const
 		{$IFDEF FPC}

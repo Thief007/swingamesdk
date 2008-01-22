@@ -11,8 +11,9 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
+// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide 
 // - 2008-01-17: Aki + Andrew: Refactor
-// - 2008-01-21: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide 
 //
 // Version 1.0:
 // - Various
@@ -573,7 +574,6 @@ implementation
 	
 	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffset, yOffset: Integer): Boolean;
 	begin
-	
 		spr.x := spr.x + xOffset;
 		spr.y := spr.y + yOffset;
 	

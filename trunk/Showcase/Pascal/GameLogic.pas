@@ -893,6 +893,109 @@ implementation
 		ProcessEvents();
 	end;
 
+	procedure VectorOutOfCircleExample();
+	const
+		RADIUS = 100;		
+		RX = 400;
+		RY = 300;
+	var
+		p, center: Point2D;
+		r, r2: Integer;
+		movement, mvOut: Vector;
+	begin
+		r := 1;
+		r2 := 2;		
+
+		p := CreatePoint(100 + RX, 100 + RY);
+		center := CreatePoint(RX, RY);
+		
+		movement := CreateVector(100, 0);
+
+		repeat
+			ProcessEvents();			
+
+			if IsKeyPressed(VK_A) then movement := Multiply(RotationMatrix(-4.0), movement);
+			if IsKeyPressed(VK_Z) then movement := Multiply(RotationMatrix(4.0), movement);
+
+			if IsKeyPressed(VK_UP) then p.y := p.y - 5;
+			if IsKeyPressed(VK_DOWN) then p.y := p.y + 5;
+			if IsKeyPressed(VK_LEFT) then p.x := p.x - 5;
+			if IsKeyPressed(VK_RIGHT) then p.x := p.x + 5;
+
+			mvOut := VectorOutOfCircleFromPoint(p, center, RADIUS, movement);
+			
+			ClearScreen(ColorBlack);
+			DrawOverlay('Vector Calculations - Getting A Point Out Of A Circle');
+
+			DrawCircle(ColorRed, center, RADIUS);			
+			DrawRectangle(ColorWhite, p.x - r, p.y - r, r2, r2);
+			DrawLine(ColorWhite, p.x, p.y, p.x + movement.x, p.y + movement.y);
+
+			if not ((mvOut.x = 0) and (mvOut.y = 0)) then
+			begin
+				DrawLine(ColorGreen, p.x, p.y, p.x + mvOut.x, p.y + mvOut.y);
+			end;
+
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+
+	procedure CircleOutOfCircleExample();
+	const
+		RADIUS = 100;
+		RADIUS2 = 10;		
+		RX = 400;
+		RY = 300;
+	var
+		p, center: Point2D;
+		r, r2: Integer;
+		movement, mvOut: Vector;
+	begin
+		r := 1;
+		r2 := 2;		
+
+		p := CreatePoint(100 + RX, 100 + RY);
+		center := CreatePoint(RX, RY);
+		
+		movement := CreateVector(100, 0);
+
+		repeat
+			ProcessEvents();			
+
+			if IsKeyPressed(VK_A) then movement := Multiply(RotationMatrix(-4.0), movement);
+			if IsKeyPressed(VK_Z) then movement := Multiply(RotationMatrix(4.0), movement);
+
+			if IsKeyPressed(VK_UP) then p.y := p.y - 5;
+			if IsKeyPressed(VK_DOWN) then p.y := p.y + 5;
+			if IsKeyPressed(VK_LEFT) then p.x := p.x - 5;
+			if IsKeyPressed(VK_RIGHT) then p.x := p.x + 5;
+
+			mvOut := VectorOutOfCircleFromCircle(p, RADIUS2, center, RADIUS, movement);
+			
+			ClearScreen(ColorBlack);
+			DrawOverlay('Vector Calculations - Getting A Circle Out Of A Circle');
+
+			DrawCircle(ColorRed, center, RADIUS);			
+			DrawCircle(ColorWhite, p, RADIUS2);
+			DrawLine(ColorWhite, p.x, p.y, p.x + movement.x, p.y + movement.y);
+
+			if not ((mvOut.x = 0) and (mvOut.y = 0)) then
+			begin
+				DrawLine(ColorGreen, p.x, p.y, p.x + mvOut.x, p.y + mvOut.y);
+				DrawCircle(ColorGreen, p.x + mvOut.x, p.y + mvOut.y, RADIUS2);
+			end;
+
+			RefreshScreen();
+			if WindowCloseRequested() then exit;
+		until IsKeyPressed(VK_N);
+		Sleep(500);
+		ProcessEvents();
+	end;
+
+
 	procedure VectorExample3();
 	const
 		RW = 200;
@@ -1096,8 +1199,8 @@ implementation
 		PlayMusicExample();
 		if WindowCloseRequested() then exit;
 		DrawRandomText();
-		if WindowCloseRequested() then exit;
-		DrawVectorCollision();
+		if WindowCloseRequested() then exit;}
+		DrawVectorCollision();{
 		if WindowCloseRequested() then exit;
 		MoveSpriteWithInput();
 		if WindowCloseRequested() then exit;
@@ -1116,8 +1219,8 @@ implementation
 		FollowSpriteExample();
 		If WindowCloseRequested() then exit;
 		DrawCircleWithLines();
-		}If WindowCloseRequested() then exit;
-		MapExample();{
+		If WindowCloseRequested() then exit;
+		MapExample();
 		If WindowCloseRequested() then exit;
 		MouseExample();	
 		If WindowCloseRequested() then exit;
@@ -1127,8 +1230,11 @@ implementation
 
 		If WindowCloseRequested() then exit;
 		VectorExample3();
-	}
+	
 		CollisionExample2();
+	}
+		VectorOutOfCircleExample();
+		CircleOutOfCircleExample();
 		
 		FreeResources();
 	end;

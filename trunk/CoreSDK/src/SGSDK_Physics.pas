@@ -1,4 +1,26 @@
-﻿unit SGSDK_Physics;
+﻿///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Physics.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Physics unit contains the code that is responsible
+// for performing collisions and vector maths.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-22: Andrew: Correct Circular Collision to
+//		handle situations where the balls have overlaped
+//		due to fast movement.
+// - 2008-01-21: Andrew: General refactoring, adding new collision routines
+//               using Rectangle and Point2D.
+// - 2008-01-18: Aki, Andrew, Stephen: Refactor
+//
+// Version 1.0:
+// - Various
+
+unit SGSDK_Physics;
 
 interface
 	uses
@@ -102,6 +124,9 @@ interface
 	function VectorOutOfRectFromPoint(const pnt: Point2D; const rect: Rectangle; const movement: Vector): Vector;	
 	function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector) : Vector;	
 	
+	function VectorOutOfCircleFromPoint(const pnt, center: Point2D; radius: Single; const movement: Vector): Vector;
+	function VectorOutOfCircleFromCircle(const pnt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
+		
 	function AddVectors(const v1, v2 : Vector): Vector;
 	function SubtractVectors(const v1, v2 : Vector): Vector;
 	function MultiplyVector(const v1: Vector; s1: Single): Vector;
@@ -121,6 +146,7 @@ interface
 	function Magnitude(const theVector : Vector): Single;
 
  	function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
+ 	function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
 	function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
 
 	function CalculateAngleBetween(const v1, v2: Vector): Single; overload;
@@ -826,6 +852,11 @@ implementation
 		end;
 	end;
 
+ 	function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
+	begin
+		result := CalculateAngle(pt1.x, pt1.y, pt2.x, pt2.y);
+	end;
+
 	function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
 	var
 		cx1, cy1, cx2, cy2: Single;
@@ -851,7 +882,7 @@ implementation
 		else if result <= -180 then result := result + 360
 	end;
 	
-	
+	//Version 1.0 code.
 	procedure VectorCollision(p1, p2: Sprite);
 	begin
 		CircularCollision(p1, p2);
@@ -859,6 +890,7 @@ implementation
 
 	procedure CircularCollision(p1, p2: Sprite);
 	var
+		p1c, p2c: Point2D;
 		colNormalAngle, a1, a2, optP: Single;
 		n: Vector;
 	begin
@@ -866,6 +898,30 @@ implementation
 		if (p1.mass <= 0) or (p2.mass <= 0) then
 		begin
 			raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
+		end;
+		
+		p1c := CenterPoint(p1);
+		p2c := CenterPoint(p2);
+		
+		if p1.mass < p2.mass then
+		begin
+			//move p1 out
+			if Magnitude(p1.movement) > 0 then
+				n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, p1.movement)
+			else
+				n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, VectorFromPoints(p1c, p2c));
+			p1.x := p1.x + n.x;
+			p1.y := p1.y + n.y;
+		end
+		else
+		begin
+			//move p2 out
+			if Magnitude(p2.movement) > 0 then
+				n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, p2.movement)
+			else
+				n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, VectorFromPoints(p2c, p1c));
+			p2.x := p2.x + n.x;
+			p2.y := p2.y + n.y;
 		end;
 			
 		colNormalAngle := CalculateAngle(p1, p2);
@@ -1108,9 +1164,57 @@ implementation
 		
 		if (result.x = 0) and (result.y = 0) then exit;	
 
-//		if not LineIntersectsWithRect(x, y, x + result.x, y + result.y, rectX, rectY, rectWidth, rectHeight) then
 		if not LineIntersectsWithRect(LineFromVector(pnt, movement), rect) then
 			result := CreateVector(0, 0);
+	end;
+
+	function VectorOutOfCircleFromPoint(const pnt, center: Point2D; radius: Single; const movement: Vector): Vector;
+	var
+		dx, dy, cx, cy: Single;
+		mag, a, b, c, det, t, mvOut: single;
+		ipt2: Point2D;
+	begin
+		if DistanceBetween(pnt, center) > radius then
+		begin
+			result := CreateVector(0, 0);
+			exit;
+		end;
+		
+		mag := Magnitude(movement);
+		
+		cx := center.x;				cy := center.y;
+
+		dx := movement.x; //x2 - pnt.x;
+		dy := movement.y; //y2 - pnt.y;
+		
+	   	a := dx * dx + dy * dy;
+	    b := 2 * (dx * (pnt.x - cx) + dy * (pnt.y - cy));
+	    c := (pnt.x - cx) * (pnt.x - cx) + (pnt.y - cy) * (pnt.y - cy) - radius * radius;
+	
+	    det := b * b - 4 * a * c;
+		
+		if (mag < 0.1) or (det <= 0) then
+		begin
+			result := CreateVector(0,0);
+		end
+		else
+		begin
+{			t := (-b + Sqrt(det)) / (2 * a);
+			ipt1.x := pnt.x + t * dx;
+	        ipt1.y := pnt.y + t * dy;}	
+	
+	        t := (-b - Sqrt(det)) / (2 * a);
+			ipt2.x := pnt.x + t * movement.x;
+	        ipt2.y := pnt.y + t * movement.y;
+	
+			mvOut := DistanceBetween(pnt, ipt2) + 1;
+			result := MultiplyVector(GetUnitVector(InvertVector(movement)), mvOut);
+		end;
+	end;
+
+	function VectorOutOfCircleFromCircle(const pnt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
+	begin
+		result := VectorOutOfCircleFromPoint(pnt, center, radius + radius2, movement);
 	end;
 
 	function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector) : Vector;	
