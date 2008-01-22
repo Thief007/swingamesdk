@@ -1,5 +1,12 @@
 #!/bin/sh
 
+DoExitCompile ()
+{ 
+	echo "An error occurred while compiling"; 
+	cat out.log
+	exit 1; 
+}
+
 Usage()
 {
 	echo Usage: [-c] [-h] [-d]
@@ -31,26 +38,30 @@ shift $((${OPTIND}-1))
 
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
-	FPCDir=`pwd`/../SDKs/Pascal/Mac/FPC/lib/
+	FPCDir=`pwd`/../SDKs/Pascal/Unx/FPC/lib/
+	FPCDir=`cd $FPCDir; pwd`
 	Output=`pwd`/bin/mac/
+	Output=`cd $Output; pwd`
 	LibDir=`pwd`/lib/mac
-
+	
 	if [ DEBUG = "Y" ]
 	then
 		EXTRA_OPTS="-gw3 -gl -gp -godwarfsets -Ci -Co -Ct"
 	fi
 
-	echo __________________________________________________
-	echo Building Mac version
-	echo __________________________________________________	
-	echo "   Output to $Output"
-	echo "   Copying to $FPCDir"
-	echo "   Copying library from $LibDir"
-	echo "   Compiling with " $EXTRA_OPTS
-
+	echo "__________________________________________________"
+	echo "Building Mac version"
+	echo "__________________________________________________"
+	echo "  Output to:        $Output"
+	echo "  Copying to:       $FPCDir"
+	echo "  Copying Library:  $LibDir"
+	echo "  Compiler Options: $EXTRA_OPTS"
+	echo "__________________________________________________"
+	
 else
 	Output=`pwd`/bin/unx/
-	UnxFPCDir=`pwd`/../SDKs/Pascal/Unx/FPC/lib/
+	FPCDir=`pwd`/../SDKs/Pascal/Unx/FPC/lib/
+	FPCDir=`cd $FPCDir; pwd`
 	LibDir=
 
 	if [ DEBUG = "Y" ]
@@ -58,53 +69,73 @@ else
 		EXTRA_OPTS="-g -Ci -Co -Ct"
 	fi
 	
-	echo __________________________________________________
-	echo Building Linux version
-	echo __________________________________________________	
-	echo "   Output to $Output"
-	echo "   Copying to $FPCDir"
-	echo "   Compiling with " $EXTRA_OPTS
+	echo "__________________________________________________"
+	echo "Building Linux version"
+	echo "__________________________________________________"	
+	echo "  Output to:        $Output"
+	echo "  Copying to:       $FPCDir"
+	echo "  Compiler Options: $EXTRA_OPTS"
+	echo "__________________________________________________"
 fi
 
 cd src/
 
 if [ $CLEAN = "Y" ]
 then
-	echo   ... Cleaning
+	echo "  ... Cleaning"
 	rm -rf "$Output"
 	mkdir -p "$Output"
 else
-	echo   ... Creating Output Location
+	echo "  ... Creating Output Location"
 	mkdir -p "$Output"
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Core.pas
-	if [ $? != 0 ]; then echo "Error compiling Core"; exit 1; fi
+	if [ -f out.log ]
+	then
+		rm -f out.log
+	fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Camera.pas
-	if [ $? != 0 ]; then echo "Error compiling Camera"; exit 1; fi
+	echo "  ... Compiling Core"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Core.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Core"; cat out.log; exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Graphics.pas
-	if [ $? != 0 ]; then echo "Error compiling Graphics"; exit 1; fi
+	echo "  ... Compiling KeyCodes"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_KeyCodes.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; cat out.log;  exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Font.pas
-	if [ $? != 0 ]; then echo "Error compiling Font"; exit 1; fi
+	echo "  ... Compiling Shapes"	
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Shapes.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Shapes"; cat out.log;  exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Input.pas
-	if [ $? != 0 ]; then echo "Error compiling Input"; exit 1; fi
+	echo "  ... Compiling Camera"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Camera.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Camera"; cat out.log;  exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Physics.pas
-	if [ $? != 0 ]; then echo "Error compiling Physics"; exit 1; fi
+	echo "  ... Compiling Graphics"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Graphics.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Graphics"; cat out.log;  exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_Audio.pas
-	if [ $? != 0 ]; then echo "Error compiling Audio"; exit 1; fi
+	echo "  ... Compiling Font"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Font.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Font"; cat out.log;  exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_KeyCodes.pas
-	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; exit 1; fi
+	echo "  ... Compiling Input"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Input.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Input"; cat out.log;  cat out.log;  exit 1; fi
 
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" SGSDK_MappyLoader.pas
-	if [ $? != 0 ]; then echo "Error compiling MappyLoader"; exit 1; fi
-			
-	echo "   ... Copying to FPC"
+	echo "  ... Compiling Physics"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Physics.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Physics"; cat out.log;  exit 1; fi
+
+	echo "  ... Compiling Audio"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Audio.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling Audio"; cat out.log;  exit 1; fi
+
+	echo "  ... Compiling MappyLoader"
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_MappyLoader.pas > out.log
+	if [ $? != 0 ]; then echo "Error compiling MappyLoader"; cat out.log;  exit 1; fi
+	
+	echo "  ... Output in out.log"		
+	echo "  ... Copying to FPC"
 
 	mkdir -p "$FPCDir"
 
@@ -113,9 +144,11 @@ else
 	
 	if [ ! -z $LibDir ]
 	then
-		echo "   ... Copying lib files"
+		echo "  ... Copying lib files"
 		cp "$LibDir"/*.a "$FPCDir"
 	fi
 fi
 
-echo "   Finished"
+echo "  Finished"
+echo "  Copied to ${FPCDir}"
+echo "__________________________________________________"

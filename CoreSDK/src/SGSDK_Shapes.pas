@@ -1,3 +1,20 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SGSDK_Shapes.pas
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Shapes unit contains the code for the bascic shapes
+// available in the SGDK : Point2D, LineSegment, and Rectangle,
+// and the code to create and manipulate these.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-21: Andrew: General refactoring, adding const and
+//		some extra overloads.
+// - 2008-01-18: Aki, Andrew, Stephen: Created initial version
+
 unit SGSDK_Shapes;
 
 interface
@@ -37,6 +54,8 @@ uses SGSDK_Core;
 	function CreateLine(x1, y1, x2, y2: Single): LineSegment;
 	function LineFromVector(const pnt: Point2D; const mvt: Vector): LineSegment; overload;
 	function LineFromVector(x, y: Single; const mvt: Vector): LineSegment; overload;
+	function LineFromVector(const mvt: Vector): LineSegment; overload;
+
 	
 	function MidPoint(const line: LineSegment): Point2D;
 
@@ -229,6 +248,11 @@ implementation
 		result.endPoint.y := y + mvt.y;
 	end;
 	
+	function LineFromVector(const mvt: Vector): LineSegment; overload;
+	begin
+		result := LineFromVector(0, 0, mvt);
+	end;
+	
 	function RectangleAfterMove(const rect: Rectangle; const move: Vector): Rectangle;
 	begin
 		result := rect;
@@ -337,7 +361,7 @@ implementation
 	var
 		temp: Vector;
 	begin
-		temp := CreateVector(pt2.x - pt1.x, pt2.y - pt2.x);
+		temp := CreateVector(pt2.x - pt1.x, pt2.y - pt1.y);
 		result := Magnitude(temp);
 	end;
 

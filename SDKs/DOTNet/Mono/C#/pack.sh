@@ -1,8 +1,8 @@
 #!/bin/sh
 
-echo __________________________________________________
-echo Package Mac Application
-echo __________________________________________________
+echo "__________________________________________________"
+echo "Package Mac Application"
+echo "__________________________________________________"
 
 Usage()
 {
@@ -40,11 +40,11 @@ else
 	Usage
 fi
 
-echo Creating Application Bundle
+echo "  Creating Application Bundle"
 
 if [ -d "$BIN_DIR/${PRODUCT_NAME}.app" ] 
 then
-	echo .. Removing Old Application
+	echo "  ... Removing Old Application"
 	rm -rf "$BIN_DIR/${PRODUCT_NAME}.app"
 fi
 
@@ -52,18 +52,18 @@ cd "$BIN_DIR"
 
 if [ -z ${EXECUTABLE_NAME} ]
 then
-	echo .. Finding Executable
+	echo "  ... Finding Executable"
 	EXECUTABLE_NAME=`ls *.exe`
 fi
 
-echo .. Packaging ${EXECUTABLE_NAME}
+echo "  ... Packaging ${EXECUTABLE_NAME}"
 
 macpack -m winforms -n ${PRODUCT_NAME} -r SGSDK.NET.dll -r libSGSDK.dylib ${EXECUTABLE_NAME}
 
-echo  .. Adding Resources
+echo "  ... Adding Resources"
 cp -R ../Resources/ "${PRODUCT_NAME}.app/Contents/Resources"
 
-echo .. Setting Application Information
+echo "  ... Setting Application Information"
 
 rm -f "${PRODUCT_NAME}.app/Contents/Info.plist"
 
@@ -94,9 +94,9 @@ echo "<?xml version='1.0' encoding='UTF-8'?>\
 </dict>\
 </plist>" >> "${PRODUCT_NAME}.app/Contents/Info.plist"
 
-echo .. Adding Package Information
+echo "  ... Adding Package Information"
 echo "APPLSWIN" >> "${PRODUCT_NAME}.app/Contents/PkgInfo"
 
-echo .. Created ${PRODUCT_NAME}.app
+echo "  Created ${PRODUCT_NAME}.app"
 
-echo __________________________________________________
+echo "__________________________________________________"

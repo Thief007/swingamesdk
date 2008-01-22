@@ -1,28 +1,32 @@
 #!/bin/sh
 
-echo __________________________________________________
-echo Copying Mono Files
-echo __________________________________________________
+echo "__________________________________________________"
+echo "Copying Mono Files"
+echo "__________________________________________________"
 	
 cp ../Base/All/* ./Mono/C#
 
-if [ ! -d ./Mono/C#/Resources ]
+if [ -d ./Mono/C#/Resources ]
 then
-	echo Creating Resources Directory
-	mkdir ./Mono/C#/Resources
-	mkdir ./Mono/C#/Resources/fonts
-	mkdir ./Mono/C#/Resources/images
-	mkdir ./Mono/C#/Resources/sounds
-	mkdir ./Mono/C#/Resources/maps
+echo "  ... Removing Old Resources Directory"
+	rm -rf ./Mono/C#/Resources
 fi
 
-echo Copying Resources
+echo "  ... Creating Resources Directory"
+mkdir ./Mono/C#/Resources
+mkdir ./Mono/C#/Resources/fonts
+mkdir ./Mono/C#/Resources/images
+mkdir ./Mono/C#/Resources/sounds
+mkdir ./Mono/C#/Resources/maps
+
+echo "  ... Copying Resources"
 cp ../Base/All/Resources/* ./Mono/C#/Resources 
 cp ../Base/All/Resources/fonts/* ./Mono/C#/Resources/fonts
 cp ../Base/All/Resources/images/* ./Mono/C#/Resources/images
 cp ../Base/All/Resources/sounds/* ./Mono/C#/Resources/sounds
+cp ../Base/All/Resources/maps/* ./Mono/C#/Resources/maps
 
-echo Copying Code
+echo "  ... Copying Code"
 cp ../Base/DOTNet/*.cs ./Mono/C#
 cp ../Base/DOTNet/*.csproj ./Mono/C#
 
@@ -31,3 +35,7 @@ then
 	mkdir ./Mono/C#/Properties
 fi
 cp ../Base/DOTNet/Properties/* ./Mono/C#/Properties
+
+
+echo "  Done"
+echo "__________________________________________________"
