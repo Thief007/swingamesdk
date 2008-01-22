@@ -22,6 +22,9 @@ Option Explicit
 
 Private Sub LoadFonts()
     Call NewFont("Courier", "cour.ttf", 16)
+    Call NewFont("CourierBigger", "cour.ttf", 25)
+    Call NewFont("ArialBig", "arial.ttf", 400)
+    Call NewFont("Comic", "comicbd.ttf", 25)
 End Sub
 
 Private Sub LoadImages()
@@ -33,10 +36,14 @@ Private Sub LoadImages()
     Call NewImage("1goal", "air_hocky_table_collision_player_goal.png")
     Call NewImage("0bat", "player_bat.png")
     Call NewImage("1bat", "AI_bat.png")
+    Call NewImage("Menu", "air_hockey_logo.png")
 End Sub
 
 Private Sub LoadSounds()
-
+    Call NewSound("Ball hit bat", "bosu06.wav")
+    Call NewSound("Ball hit side", "hit15.wav")
+    Call NewSound("Ball in goal", "koro00.wav")
+    Call NewSound("Bat hit side", "bosu07_b.wav")
 End Sub
 
 Private Sub LoadMusics()

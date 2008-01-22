@@ -16,6 +16,8 @@ Public Type AirHockeyGame
     Players() As Player
     Ball As Sprite
     TablePics As Table
+    Reset As Long
+    Resetting As Boolean
 End Type
 
 
