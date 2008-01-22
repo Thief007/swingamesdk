@@ -34,7 +34,7 @@ Usage()
 
 ICON=SwinGame
 EXTRA_OPTS="-O3"
-DEGUB="N"
+DEBUG="N"
 
 while getopts i:e:hd o
 do
@@ -157,6 +157,11 @@ then
 	
 	RESOURCE_DIR="./bin/${PRODUCT_NAME}.app/Contents/Resources"
 else
+	if [ DEBUG = "Y" ]
+	then
+		EXTRA_OPTS="-g -Ci -Co -Ct"
+	fi
+
 	echo "__________________________________________________"
 	echo "Building Linux version"
 	echo "__________________________________________________"	
