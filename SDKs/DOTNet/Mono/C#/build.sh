@@ -25,7 +25,7 @@ done
 
 shift $((${OPTIND}-1))
 
-if [ BUILD = "DEBUG" ]
+if [ $BUILD = "DEBUG" ]
 then
 	BUILD_OPT="/p:Configuration=Debug"
 	BIN_DIR="./bin/Debug"
@@ -39,12 +39,10 @@ then
 	echo "__________________________________________________"
 	echo "Building Mac version - $BUILD"
 	echo "__________________________________________________"
-	echo "   Running xbuild $1 ${BUILD_OPT}"
-	echo
+	echo " Running xbuild $1 ${BUILD_OPT}"
 	
-	xbuild $1 ${BUILD_OPT}
-	if [ $? != 0 ]; then echo "Error with xbuild"; exit 1; fi
-	echo "__________________________________________________"
+	xbuild $1 ${BUILD_OPT} > out.log
+	if [ $? != 0 ]; then echo "Error with xbuild"; cat out.log; exit 1; fi
 	
 	echo "  ... Copying Library Files"
 	cp ./lib/* ${BIN_DIR}
@@ -55,18 +53,16 @@ else
 	echo "__________________________________________________"
 	echo "Building Linux version - $BUILD"
 	echo "__________________________________________________"
-	echo "   Running xbuild $1 ${BUILD_OPT}"
-	echo
+	echo " Running xbuild $1 ${BUILD_OPT}"
 	
-	xbuild $1 ${BUILD_OPT}
-	if [ $? != 0 ]; then echo "Error with xbuild"; exit 1; fi
-	echo "__________________________________________________"
+	xbuild $1 ${BUILD_OPT} > out.log
+	if [ $? != 0 ]; then echo "Error with xbuild"; cat out.log; exit 1; fi
 
 	echo "  ... Copying Library Files"
 	cp ./lib/*  ${BIN_DIR}
 	if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
 
-	RESOURCE_DIR=./bin/Debug/Resources
+	RESOURCE_DIR=${BIN_DIR}/Resources
 fi
 
 SOURCE_RESOURCE=./Resources
@@ -94,20 +90,21 @@ if [ $? != 0 ]; then echo "Error creating sounds directory"; exit 1; fi
 mkdir ${RESOURCE_DIR}/maps
 if [ $? != 0 ]; then echo "Error creating maps directory"; exit 1; fi
 
-cp ${SOURCE_RESOURCE}/* ${RESOURCE_DIR}
+find ${SOURCE_RESOURCE} -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR} \;
 if [ $? != 0 ]; then echo "Error copying resources"; exit 1; fi
-	 
-cp ${SOURCE_RESOURCE}/fonts/* ${RESOURCE_DIR}/fonts
+
+find ${SOURCE_RESOURCE}/fonts -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/fonts \;
 if [ $? != 0 ]; then echo "Error copying fonts"; exit 1; fi
-	
-cp ${SOURCE_RESOURCE}/images/* ${RESOURCE_DIR}/images
+
+find ${SOURCE_RESOURCE}/images -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/images \;
 if [ $? != 0 ]; then echo "Error copying images"; exit 1; fi
-	
-cp ${SOURCE_RESOURCE}/sounds/* ${RESOURCE_DIR}/sounds
+
+find ${SOURCE_RESOURCE}/sounds -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/sounds \;
 if [ $? != 0 ]; then echo "Error copying sounds"; exit 1; fi
-	
-cp ${SOURCE_RESOURCE}/sounds/* ${RESOURCE_DIR}/maps	
+
+find ${SOURCE_RESOURCE}/maps -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/maps \;
 if [ $? != 0 ]; then echo "Error copying maps"; exit 1; fi
 
+echo "  Build to: ${BIN_DIR}"
 echo "  Finished"
 echo "__________________________________________________"

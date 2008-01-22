@@ -4,11 +4,12 @@ echo "__________________________________________________"
 echo "Copying Mono Files"
 echo "__________________________________________________"
 	
-cp ../Base/All/* ./Mono/C#
+# Copy all files from the Base folder to Mono.
+find ../Base/Al -maxdepth 1 -type f -exec cp {} ./Mono/C# \;
 
 if [ -d ./Mono/C#/Resources ]
 then
-echo "  ... Removing Old Resources Directory"
+	echo "  ... Removing Old Resources Directory"
 	rm -rf ./Mono/C#/Resources
 fi
 
@@ -20,11 +21,24 @@ mkdir ./Mono/C#/Resources/sounds
 mkdir ./Mono/C#/Resources/maps
 
 echo "  ... Copying Resources"
-cp ../Base/All/Resources/* ./Mono/C#/Resources 
-cp ../Base/All/Resources/fonts/* ./Mono/C#/Resources/fonts
-cp ../Base/All/Resources/images/* ./Mono/C#/Resources/images
-cp ../Base/All/Resources/sounds/* ./Mono/C#/Resources/sounds
-cp ../Base/All/Resources/maps/* ./Mono/C#/Resources/maps
+
+SOURCE_RESOURCE=../Base/All/Resources
+RESOURCE_DIR=./Mono/C#/Resources
+
+find ${SOURCE_RESOURCE} -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR} \;
+if [ $? != 0 ]; then echo "Error copying resources"; exit 1; fi
+
+find ${SOURCE_RESOURCE}/fonts -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/fonts \;
+if [ $? != 0 ]; then echo "Error copying fonts"; exit 1; fi
+
+find ${SOURCE_RESOURCE}/images -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/images \;
+if [ $? != 0 ]; then echo "Error copying images"; exit 1; fi
+
+find ${SOURCE_RESOURCE}/sounds -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/sounds \;
+if [ $? != 0 ]; then echo "Error copying sounds"; exit 1; fi
+
+find ${SOURCE_RESOURCE}/maps -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/maps \;
+if [ $? != 0 ]; then echo "Error copying maps"; exit 1; fi
 
 echo "  ... Copying Code"
 cp ../Base/DOTNet/*.cs ./Mono/C#
@@ -37,5 +51,5 @@ fi
 cp ../Base/DOTNet/Properties/* ./Mono/C#/Properties
 
 
-echo "  Done"
+echo "  Finished"
 echo "__________________________________________________"

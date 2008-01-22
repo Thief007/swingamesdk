@@ -26,22 +26,27 @@ else
 	Usage
 fi
 
+echo "__________________________________________________"
+echo "Building Mac version - $BUILD"
+echo "__________________________________________________"
+echo " Copying to ${DEMO_NAME}"
+echo "__________________________________________________"
 cd $DEMO_NAME
 
 if [ -d ./lib ] 
 then
-	echo "Removing old lib dir"
+	echo "  ... Removing old lib dir"
 	rm -rf ./lib
 fi
 
 if [ $CLEAN = "Y" ]
 then
-	echo "Removing build script"
-	rm unxbuild.sh
+	echo " ... Removing build script"
+	rm -f build.sh
 	exit 0
 fi
 
-echo "Making new lib folder"
+echo " ... Making new lib folder"
 mkdir ./lib
 
 #
@@ -54,9 +59,22 @@ fi
 
 LIB_PATH=../../../SDKs/Pascal/Unx/${LIB}
 
-echo "Copying lib from ${LIB_PATH}"
-cp  ${LIB_PATH}/lib/* ./lib
+if [ ! -d ${LIB_PATH} ]
+then
+	echo "ERROR: Cannot find library to copy"
+    echo " ${LIB_PATH}"
+	exit 1;
+fi
+
+LIB_PATH=`cd ${LIB_PATH}; pwd`
+
+echo " ... Copying lib from ${LIB_PATH}"
+# old: cp  ${LIB_PATH}/lib/* ./lib
+find ${LIB_PATH}/lib -maxdepth 1 -type f -exec cp {} ./lib \;
+
 cp  ${LIB_PATH}/build.sh .
 
+echo "  Finished"
+echo "__________________________________________________"
 
 

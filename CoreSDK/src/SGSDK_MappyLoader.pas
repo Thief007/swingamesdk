@@ -90,6 +90,8 @@ interface
 		function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
 		function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
 		
+		function CollisionWithMap(m : Map; spr : Sprite; vec: Vector): CollisionSide;
+		
 		procedure FreeMap(var m: Map);
 		
 implementation
@@ -780,4 +782,17 @@ implementation
 		Dispose(m);
 		m := nil;
 	end;
+	
+	function CollisionWithMap(m : Map; spr : Sprite; vec: Vector): CollisionSide;
+	var
+		x, y: Integer;
+	begin
+		result := None;
+		if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, x, y) then
+		begin
+			MoveSpriteOutOfTile(m, spr, x, y);
+			result := WillCollideOnSide(m, spr);
+		end;
+	end;
+	
 end.

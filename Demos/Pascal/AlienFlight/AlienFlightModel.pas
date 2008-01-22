@@ -693,7 +693,7 @@ implementation
 		
 		for i := Low(data.sprites) to High(data.sprites) do
 		begin
-			//WriteLn(data.sprites[i].sprite.xPos, ',', data.sprites[i].sprite.yPos, '  ', data.sprites[i].sprite.width, 'x', data.sprites[i].sprite.height);
+			//WriteLn(data.sprites[i].sprite.x, ',', data.sprites[i].sprite.y, '  ', data.sprites[i].sprite.width, 'x', data.sprites[i].sprite.height);
 			//WriteLn(x, ',', y, '  ', template.width, 'x', template.height);
 			
 			if (not KindsMayCollide(data.sprites[i].kind, kind)) and 
@@ -769,7 +769,7 @@ implementation
 	end;
 	
 	procedure AddAnimation(var data: GameDataType; bmp: Bitmap; 
-		xPos, yPos: Single; movementVec: Vector;
+		x, y: Single; movementVec: Vector;
 		srcWidth, srcHeight, cells, numFramesPerCell: Integer);
 	var
 		use, i: Integer;
@@ -785,8 +785,8 @@ implementation
 		
 		data.animations[use] := CreateSprite(bmp, true, fpCell, Stop, srcWidth, srcHeight);
 
-		data.animations[use]^.xPos := xPos; 
-		data.animations[use]^.yPos := yPos;
+		data.animations[use]^.x := x; 
+		data.animations[use]^.y := y;
 		
 		data.animations[use]^.movement := movementVec;
 		data.animations[use]^.mass := 1.0;
@@ -829,8 +829,8 @@ implementation
 		v.x *= 1 / steps;
 		v.y *= 1 / steps;
 		
-		x := obj.xPos + objWdiv2 - WARP_ANIMATION_PART_WIDTH div 2;
-		y := obj.yPos + objHdiv2 - WARP_ANIMATION_PART_WIDTH div 2;
+		x := obj.x + objWdiv2 - WARP_ANIMATION_PART_WIDTH div 2;
+		y := obj.y + objHdiv2 - WARP_ANIMATION_PART_WIDTH div 2;
 					
 		AddAnimation(data, GameImage(WarpImg), x, y, v, 90, 90, 5, WARP_FRAMES);
 	end;
@@ -866,9 +866,9 @@ implementation
 			obj.active := false;		
 
 			if withMovement then
-				AddExplosion(data, obj.sprite.xPos, obj.sprite.yPos, obj.sprite.movement)
+				AddExplosion(data, obj.sprite.x, obj.sprite.y, obj.sprite.movement)
 			else
-				AddExplosion(data, obj.sprite.xPos, obj.sprite.yPos, CreateVector(0,0));
+				AddExplosion(data, obj.sprite.x, obj.sprite.y, CreateVector(0,0));
 		end;
 	end;
 	
@@ -1000,8 +1000,8 @@ implementation
 			end
 			else
 			begin			
-				fgX := data.sprites[i].sprite.xPos - CalculateBackgroundX(XOffset());
-				fgY := data.sprites[i].sprite.yPos - YOffset();
+				fgX := data.sprites[i].sprite.x - CalculateBackgroundX(XOffset());
+				fgY := data.sprites[i].sprite.y - YOffset();
 				
 				//WriteLn(fgX:4:2, ',', fgY:4:2, ' - ', v.x:4:2, ',', v.y:4:2);
 				if VectorWithinRect(v, fgX, fgY, data.sprites[i].sprite.width, data.sprites[i].sprite.height) then
@@ -1248,7 +1248,7 @@ implementation
 			if false = atEnd then
 			begin
 				MoveVisualArea(mv, 0);
-				data.UfoSprite.xPos := data.UfoSprite.xPos + mv;
+				data.UfoSprite.x := data.UfoSprite.x + mv;
 			end
 			else
 			begin
@@ -1283,13 +1283,13 @@ implementation
 		maxY := SCREEN_HEIGHT - CurrentHeight(player);
 		maxX := minX + SCREEN_WIDTH - CurrentWidth(player);
 				
-		//WriteLn(minX:4:2, ' > ', player.xPos:4:2, ' < ', maxX:4:2);
+		//WriteLn(minX:4:2, ' > ', player.x:4:2, ' < ', maxX:4:2);
 				
-		if player.xPos < minX then player.xPos := minX
-		else if player.xPos > maxX then player.xPos := maxX;
+		if player.x < minX then player.x := minX
+		else if player.x > maxX then player.x := maxX;
 
-		if player.yPos < minY then player.yPos := minY
-		else if player.yPos > maxY then player.yPos := maxY;
+		if player.y < minY then player.y := minY
+		else if player.y > maxY then player.y := maxY;
 	end;
 	
 	procedure MovePlayer(var data: GameDataType; mulX, mulY: Single);
@@ -1312,8 +1312,8 @@ implementation
 		dx := (PLAYER_BASE_MOVE + boost) * mulX;			
 		dy := (PLAYER_BASE_MOVE + boost) * mulY;
 		
-		data.ufoSprite.xPos += dx;
-		data.ufoSprite.yPos += dy;
+		data.ufoSprite.x += dx;
+		data.ufoSprite.y += dy;
 				
 		UpdatePlayerLocation(data.ufoSprite, data);
 	end;
@@ -1358,8 +1358,8 @@ implementation
 		
 		SetScreenOffset(0, 0);
 
-		data.UfoSprite.xPos := (SCREEN_WIDTH - CurrentWidth(data.UfoSprite)) div 2;
-		data.UfoSprite.yPos := (SCREEN_HEIGHT - CurrentHeight(data.UfoSprite)) div 2;
+		data.UfoSprite.x := (SCREEN_WIDTH - CurrentWidth(data.UfoSprite)) div 2;
+		data.UfoSprite.y := (SCREEN_HEIGHT - CurrentHeight(data.UfoSprite)) div 2;
 	end;
 	
 	procedure CleanupGameData(var data: GameDataType);

@@ -93,7 +93,7 @@ begin
 	shieldInc := 1 / 160;
 	fuelInc := MAX_FUEL / 160;
 	
-	data.ufoSprite.xPos := -CurrentWidth(data.ufoSprite);
+	data.ufoSprite.x := -CurrentWidth(data.ufoSprite);
 	
 	while IsMusicPlaying() do
 	begin
@@ -233,7 +233,7 @@ begin
 		case data.sprites[i].kind of
 			BlackHoleKind: 
 			begin
-				if data.sprites[i].sprite.xPos < data.ufoSprite.xPos then
+				if data.sprites[i].sprite.x < data.ufoSprite.x then
 					blackholes += 1;
 			end;
 			StarKind:
@@ -404,8 +404,8 @@ var
 	i: Integer;
 	cx, cy: Single;
 begin
-	cx := data.ufoSprite.xPos + CurrentWidth(data.ufoSprite) / 2;
-	cy := data.ufoSprite.yPos + CurrentHeight(data.ufoSprite) / 2;
+	cx := data.ufoSprite.x + CurrentWidth(data.ufoSprite) / 2;
+	cy := data.ufoSprite.y + CurrentHeight(data.ufoSprite) / 2;
 	
 	cx -= 10; //move center
 	cy -= 10;	

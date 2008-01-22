@@ -1943,12 +1943,7 @@ uses
 		x, y: Integer;
 	begin
 		Try
-			result := None;
-			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, x, y) then
-			begin
-				MoveSpriteOutOfTile(m, spr, x, y);
-				result := WillCollideOnSide(m, spr);
-			end;
+			result := SGSDK_MappyLoader.CollisionWithMap(m, spr,vec);
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;

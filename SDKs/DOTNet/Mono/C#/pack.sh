@@ -97,6 +97,6 @@ echo "<?xml version='1.0' encoding='UTF-8'?>\
 echo "  ... Adding Package Information"
 echo "APPLSWIN" >> "${PRODUCT_NAME}.app/Contents/PkgInfo"
 
-echo "  Created ${PRODUCT_NAME}.app"
-
+echo "  Created ${BIN_DIR}/${PRODUCT_NAME}.app"
+echo "  Finished"
 echo "__________________________________________________"

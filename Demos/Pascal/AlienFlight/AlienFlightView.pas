@@ -37,11 +37,11 @@ implementation
 		x : Single;
 	begin
 		if _Templates[sprt.kind].foreground then
-			DrawRectangle(c, sprt.sprite.xPos, sprt.sprite.yPos, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite))
+			DrawRectangle(c, sprt.sprite.x, sprt.sprite.y, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite))
 		else
 		begin
-			x := Round(sprt.sprite.xPos - CalculateBackgroundX(XOffset()) + XOffset());
-			DrawRectangle(c, x, sprt.sprite.yPos, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite));
+			x := Round(sprt.sprite.x - CalculateBackgroundX(XOffset()) + XOffset());
+			DrawRectangle(c, x, sprt.sprite.y, CurrentWidth(sprt.sprite), CurrentHeight(sprt.sprite));
 		end;
 	end;
 
@@ -170,8 +170,8 @@ implementation
 		mag: Single;
 		change: Matrix2D;
 	begin
-		sx := sprite.xPos;
-		sy := sprite.yPos;
+		sx := sprite.x;
+		sy := sprite.y;
 		cx := sx + CurrentWidth(sprite) div 2;
 		cy := sy + CurrentHeight(sprite) div 2;
 		
@@ -203,9 +203,9 @@ implementation
 		begin
 			if _Templates[data.sprites[i].kind].foreground = false then
 			begin
-				scrX := Round(data.sprites[i].sprite.xPos - CalculateBackgroundX(XOffset()) + XOffset());
+				scrX := Round(data.sprites[i].sprite.x - CalculateBackgroundX(XOffset()) + XOffset());
 				
-				DrawBitmap(data.sprites[i].sprite.bitmaps[0], scrX, Round(data.sprites[i].sprite.yPos));
+				DrawBitmap(data.sprites[i].sprite.bitmaps[0], scrX, Round(data.sprites[i].sprite.y));
 				//DrawSprite(data.sprites[i].sprite, -bgx, -wy);
 			end;
 		end;
@@ -215,8 +215,8 @@ implementation
 	var
 		x, y: Single;
 	begin
-		x := data.UfoSprite.xPos;
-		y := data.UfoSprite.yPos;
+		x := data.UfoSprite.x;
+		y := data.UfoSprite.y;
 		DrawBitmap(data.ShieldBmp, x - SHIELD_OFFSET, y - SHIELD_OFFSET);
 		DrawSprite(data.UfoSprite);
 	end;
@@ -226,7 +226,7 @@ implementation
 		//WriteLn('DrawAlienFlightSprite');
 		if sprt.active then
 		begin
-			//WriteLn('- ', HexStr(sprt.sprite), ' ', sprt.sprite.xPos:4:2, ',', sprt.sprite.yPos:4:2, ' : ', Length(sprt.sprite.bitmaps), ' ', HexStr(sprt.sprite.bitmaps[0]));
+			//WriteLn('- ', HexStr(sprt.sprite), ' ', sprt.sprite.x:4:2, ',', sprt.sprite.y:4:2, ' : ', Length(sprt.sprite.bitmaps), ' ', HexStr(sprt.sprite.bitmaps[0]));
 			
 			DrawSprite(sprt.sprite);
 			//WriteLn(' - Drawn');
@@ -452,7 +452,7 @@ implementation
 
 				DrawOutline(status, status.selection[i]^);
 				DrawTextOnScreen(IntToStr(i), ColorRed, GameFont(Courier), x, y);
-				DrawText(IntToStr(i), ColorRed, GameFont(Courier), status.selection[i]^.sprite.xPos + status.selection[i]^.sprite.width, status.selection[i]^.sprite.yPos);
+				DrawText(IntToStr(i), ColorRed, GameFont(Courier), status.selection[i]^.sprite.x + status.selection[i]^.sprite.width, status.selection[i]^.sprite.y);
 			end;
 			
 			if various then
