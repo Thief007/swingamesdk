@@ -20,6 +20,7 @@ namespace TomatoQuest
         public Sprite Sprite;
         public bool Dropped;
 
+        //Item Constructor
         public Item(String name)
         {
             //Load the Sprite Image
@@ -32,13 +33,13 @@ namespace TomatoQuest
             Dropped = false;
         }
 
-        public static bool CharacterCollideWithItem(Character theCharacter, Item theItem)
+        public bool CharacterCollidedWithItem(Character theCharacter)
         {
             //Check if the Character is alive and the item is on the ground
-            if (theCharacter.Alive && theItem.Dropped)
+            if (theCharacter.Alive && Dropped)
             {
                 //Check if the Character and Item collide
-                if (Physics.HaveSpritesCollided(theCharacter.Sprite, theItem.Sprite))
+                if (Physics.HaveSpritesCollided(theCharacter.Sprite, Sprite))
                 {
                     return true;
                 }
@@ -50,7 +51,7 @@ namespace TomatoQuest
         public static void GiveCharacterItem(Character theCharacter, Item theItem)
         {
             //Add the Item to the Characters Inventory
-            theCharacter.Inventory.AddItem(theItem);
+            theCharacter.Item = theItem;
 
             //Set the Items dropped state to false
             theItem.Dropped = false;
@@ -63,6 +64,12 @@ namespace TomatoQuest
             {
                 Graphics.DrawSprite(Sprite);
             }
+        }
+
+        public void DropItem()
+        {
+            //Sets the Dropped Value of the item to true
+            Dropped = true;
         }
     }
 }

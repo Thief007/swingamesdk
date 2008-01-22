@@ -60,12 +60,11 @@ namespace TomatoQuest
                     Graphics.DrawSprite(theAI[i].Sprite);
                 }
                 
-                if (theAI[i].Inventory.HasItems() && !theAI[i].Alive)
+                if (theAI[i].CharacterHasItem() && !theAI[i].Alive)
                 {
-                      theAI[i].Inventory.DropItems();
+                    theAI[i].DropItems();
                 }
                 
-
                 theAI[i].UpdateCharacterStatus();
             }
         }

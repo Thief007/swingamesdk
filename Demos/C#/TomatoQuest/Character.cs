@@ -2,8 +2,6 @@ using System;
 using System.Drawing;
 using System.Collections.Generic;
 
-
-
 using SwinGame;
 using Graphics = SwinGame.Graphics;
 using Bitmap = SwinGame.Bitmap;
@@ -84,7 +82,7 @@ namespace TomatoQuest
         public int Damage;
         public int StatusCooldown;
 
-        public Inventory Inventory = new Inventory();
+        public Item Item;
 
         //Returns the Sprite
         public Sprite Sprite
@@ -568,7 +566,32 @@ namespace TomatoQuest
 
             //Set the status change cooldown
             StatusCooldown = 60;
-        } 
+        }
+
+        public bool CharacterHasItem()
+        {
+            //Return whether the character has an item
+            return (Item != null);
+        }
+
+        public void DropItems()
+        {
+            //If Character has an item, drop it.
+            if (Item != null)
+            {
+                //Puts the Item where the Character was
+                Item.Sprite.xPos = Sprite.xPos;
+                Item.Sprite.yPos = Sprite.yPos;
+
+                //Drops the Item
+                Item.DropItem();
+
+                //Makes sure the Character's Item value is null
+                Item = null;
+            }
+        }
+    
+
     }
 }
 

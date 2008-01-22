@@ -84,6 +84,9 @@ namespace TomatoQuest
             _Items.Add(new Item("Tomato"));
 
             Item.GiveCharacterItem(_Leader.Characters[0], _Items[0]);
+
+            EndGame.HasGameEnded = false;
+            EndGame.Victory = false;
         }
 
         public void Run()
@@ -117,15 +120,29 @@ namespace TomatoQuest
             Combat.AIHitPlayer(_Player, _AI, _RandomNumber);
             Combat.PlayerHitAI(_Player, _AI, _RandomNumber);
 
-            //Draw Items
+            //Process Items
             for (int i = 0; i < _Items.Count; i++)
             {
                 _Items[i].DrawItem();
+                if (_Items[i].CharacterCollidedWithItem(_Player) && Input.WasKeyTyped(Keys.VK_E))
+                {
+                    EndGame.HasGameEnded = true;
+                    EndGame.Victory = true;
+                }
+            }
+
+            if (!_Player.Alive)
+            {
+                EndGame.HasGameEnded = true;
+                EndGame.Victory = false;
             }
 
             //Run User Interface
             _Interface.RunUI(_Player);
 
+
+            //Pick Up Item Notification
+            Text.DrawTextOnScreen("Hit E to Pick up Items", Color.White, Resources.GameFont("Courier"), 260, 440);
             //User Stat Page Notification
             Text.DrawTextOnScreen("Hit S to Open and Close the Stat Page", Color.White, Resources.GameFont("Courier"), 260, 460);
 
