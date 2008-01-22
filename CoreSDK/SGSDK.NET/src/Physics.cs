@@ -176,10 +176,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -206,10 +205,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -235,10 +233,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -261,10 +258,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -305,10 +301,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -334,10 +329,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -361,10 +355,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -391,10 +384,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -417,10 +409,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -446,10 +437,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -481,10 +471,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -509,10 +498,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -538,10 +526,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -562,10 +549,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -588,10 +574,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -614,10 +599,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -639,10 +623,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -669,10 +652,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -696,10 +678,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -723,10 +704,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -748,10 +728,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -774,10 +753,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -800,10 +778,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -826,10 +803,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -854,10 +830,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -880,10 +855,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -906,10 +880,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -956,10 +929,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -982,10 +954,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1008,10 +979,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1028,16 +998,16 @@ namespace SwinGame
             try
             {
                 DLL_VectorCollision(sprite1.Pointer, sprite2.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetVectorFromAngle")]
@@ -1059,10 +1029,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
     }
