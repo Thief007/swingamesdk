@@ -44,7 +44,9 @@ namespace TomatoQuest
                 Core.RefreshScreen();
                 Core.ProcessEvents();
 
-            } while (!Core.WindowCloseRequested());
+            } while (!Core.WindowCloseRequested() && !EndGame.HasGameEnded);
+
+            EndGame.DisplayEndGameMessage();
 
             //Free Resources and Close Audio, to end the program.
             Resources.FreeResources();

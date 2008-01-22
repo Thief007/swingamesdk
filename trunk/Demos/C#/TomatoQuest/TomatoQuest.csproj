@@ -43,12 +43,12 @@
     <Compile Include="Character.cs" />
     <Compile Include="Combat.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="EndGame.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameLogic.cs" />
     <Compile Include="Healer.cs" />
     <Compile Include="Interaction.cs" />
-    <Compile Include="Inventory.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="UserInterface.cs" />
     <Compile Include="Level.cs" />
