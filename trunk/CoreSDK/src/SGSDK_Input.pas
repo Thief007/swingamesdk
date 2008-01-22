@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-22: James changed MoveMouse to Point2D
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
@@ -52,7 +53,8 @@ interface
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 	
-	procedure MoveMouse(x, y : UInt16);
+	//procedure MoveMouse(x, y : UInt16);
+	procedure MoveMouse(point: Point2D);
 	
 	procedure ShowMouse(); overload;
 	procedure ShowMouse(show : Boolean); overload;
@@ -82,9 +84,14 @@ implementation
 		end;
 	end;
 	
-	procedure MoveMouse(x, y : UInt16);
+	{procedure MoveMouse(x, y : UInt16);
 	begin
 		SDL_WarpMouse(x,y);
+	end;}
+	
+	procedure MoveMouse(point : Point2d);
+	begin
+		SDL_WarpMouse(Round(point.x), Round(point.y));
 	end;
 	
 	function IsMouseShown(): Boolean;

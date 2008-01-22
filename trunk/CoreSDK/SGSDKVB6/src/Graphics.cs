@@ -339,10 +339,11 @@ namespace SwinGameVB
         /// <param name="transparent">True if this image has transparent pixels</param>
         /// <param name="transparentColor">Color of the transparent pixels</param>
         /// <returns>New bitmap</returns>
-        public Bitmap LoadBitmap_Transparent(String pathToBitmap, Boolean transparent, Color transparentColor)
+        public Bitmap LoadBitmap_Transparent(String pathToBitmap, Boolean transparent, int transparentColor)
         {
             Bitmap result = new Bitmap();
-            result.result = SwinGame.Graphics.LoadBitmap(pathToBitmap, transparent, transparentColor);
+            Color color = Color.FromArgb(transparentColor);
+            result.result = SwinGame.Graphics.LoadBitmap(pathToBitmap, transparent, color);
             return result;
         }
 
@@ -352,10 +353,11 @@ namespace SwinGameVB
         /// <param name="pathToBitmap">Path to the image file</param>
         /// <param name="transparentColor">Color of the transparent pixels</param>
         /// <returns>New bitmap</returns>
-        public Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor)
+        public Bitmap LoadTransparentBitmap(string pathToBitmap, int transparentColor)
         {
             Bitmap result = new Bitmap();
-            result.result = SwinGame.Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
+            Color color = Color.FromArgb(transparentColor);
+            result.result = SwinGame.Graphics.LoadTransparentBitmap(pathToBitmap, color);
             return result;
         }
 
@@ -706,7 +708,7 @@ namespace SwinGameVB
         /// <param name="yPos">The y location to draw the rectangle at</param>
         /// <param name="width">The width of the rectangle</param>
         /// <param name="height">The height of the rectangle</param>
-        public void DrawRectangle(int theColour, float xPos, float yPos, int width, int height)
+        public void DrawRectangle_NoFill(int theColour, float xPos, float yPos, int width, int height)
         {
             Color color = Color.FromArgb(theColour);
             SwinGame.Graphics.DrawRectangle(color, false, xPos, yPos, width, height);
@@ -1172,6 +1174,18 @@ namespace SwinGameVB
             result.result = SwinGame.Graphics.CreateSprite(startBitmap.result, framesPerCell, frames, width, height);
             return result;
         }
+        public void DrawCircleOnScreen_Fill(int theColour, bool filled, int xc, int yc, int radius)
+        {
+            if (filled)
+            {
+                FillCircleOnScreen(theColour, xc, yc, radius);
+            }
+            else
+            {
+                DrawCircleOnScreen(theColour, xc, yc, radius);
+            }
+        }
+
     }
     
     [Guid("C261890B-D65E-4d4c-A7AA-F15FCC0F825A")]
@@ -1181,8 +1195,8 @@ namespace SwinGameVB
         Bitmap CreateBitmap(int width, int height);
         void OptimiseBitmap(Bitmap surface);
         Bitmap LoadBitmap(String pathToBitmap);
-        Bitmap LoadBitmap_Transparent(String pathToBitmap, Boolean transparent, Color transparentColor);
-        Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor);
+        Bitmap LoadBitmap_Transparent(String pathToBitmap, Boolean transparent, int transparentColor);
+        Bitmap LoadTransparentBitmap(string pathToBitmap, int transparentColor);
         void FreeBitmap(ref Bitmap bitmapToFree);
         int GetBitmapWidth(Bitmap targetbitmap);
         int GetBitmapHeight(Bitmap targetbitmap);
@@ -1209,7 +1223,7 @@ namespace SwinGameVB
         void DrawBitmapPart(Bitmap bitmapToDraw, int srcX, int srcY, int srcW, int srcH, float x, float y);
         void DrawPixel(int theColour, float x, float y);
         void DrawRectangle(int theColour, bool filled, float xPos, float yPos, int width, int height);
-        void DrawRectangle(int theColour, float xPos, float yPos, int width, int height);
+        void DrawRectangle_NoFill(int theColour, float xPos, float yPos, int width, int height);
         void FillRectangle(int theColour, float xPos, float yPos, int width, int height);
         void DrawLine(int theColour, float xPosStart, float yPosStart, float xPosEnd, float yPosEnd);
         void DrawHorizontalLine(int theColour, float y, float x1, float x2);
@@ -1255,6 +1269,8 @@ namespace SwinGameVB
         void FillCircleOnScreen(int theColour, int xc, int yc, int radius);
         void DrawEllipseOnScreen(int theColour, int x, int y, int width, int height);
         void FillEllipseOnScreen(int theColour, int x, int y, int width, int height);
+
+        void DrawCircleOnScreen_Fill(int theColour, bool filled, int xc, int yc, int radius);
     }
 
 }
