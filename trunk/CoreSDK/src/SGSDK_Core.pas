@@ -289,6 +289,7 @@ interface
 	function Tan(angle: Single): Single;
 	
 	function CreateTimer() : Timer;
+	procedure FreeTimer(var toFree: Timer);
 	procedure StartTimer(toStart : Timer);
 	procedure StopTimer(toStop : Timer);
 	procedure PauseTimer(toPause : Timer);
@@ -881,6 +882,12 @@ implementation
 			paused := false;
 			started := false;
 		end;
+	end;
+	
+	procedure FreeTimer(var toFree: Timer);
+	begin
+		Dispose(toFree);
+		toFree := nil;
 	end;
 	
 	procedure StartTimer(toStart : Timer);

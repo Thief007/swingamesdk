@@ -591,10 +591,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }
 
         }
@@ -610,16 +609,16 @@ namespace SwinGame
             try
             {
                 DLL_OptimiseBitmap(surface);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
@@ -642,10 +641,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
         /// <summary>
@@ -668,10 +666,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -696,10 +693,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -715,16 +711,16 @@ namespace SwinGame
             try
             {
                 DLL_FreeBitmap(ref bitmapToFree.pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapWidth")]
@@ -745,10 +741,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -770,10 +765,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -790,16 +784,16 @@ namespace SwinGame
             {
                 int color = toColour.ToArgb();
                 DLL_ClearSurfaceWithColor(dest.pointer, (uint)color);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -812,16 +806,16 @@ namespace SwinGame
             {
                 int color = Color.Black.ToArgb();
                 DLL_ClearSurfaceWithColor(dest.pointer, (uint)color);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapWithDestination")]
@@ -838,16 +832,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawBitmapWithDestination(dest.pointer, bitmapToDraw.pointer, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartWithDestination")]
@@ -868,16 +862,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawBitmapPartWithDestination(dest.pointer, bitmapToDraw.pointer, srcX, srcY, srcW, srcH, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelWithDestination")]
@@ -899,10 +893,9 @@ namespace SwinGame
                     throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }
         }
 
@@ -924,16 +917,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, (filled?-1:0), xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FillRectangleWithDestination")]
@@ -953,16 +946,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_FillRectangleWithDestination(dest.pointer, (uint)color, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -980,16 +973,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawRectangleWithDestination(dest.pointer, (uint)color, 0, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineWithDestination")]
@@ -1009,16 +1002,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawLineWithDestination(dest.pointer, (uint)color, xPosStart, yPosStart, xPosEnd, yPosEnd);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineWithDestination")]
@@ -1037,16 +1030,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawHorizontalLineWithDestination(dest.pointer, (uint)color, y, x1, x2);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineWithDestination")]
@@ -1065,16 +1058,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawVerticalLineWithDestination(dest.pointer, (uint)color, x, y1, y2);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleWithDestination")]
@@ -1094,16 +1087,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawCircleWithDestination(dest.pointer, (uint)color, (filled?-1:0), xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1120,16 +1113,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawCircleWithDestination(dest.pointer, (uint)color, 0, xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1146,16 +1139,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawCircleWithDestination(dest.pointer, (uint)color, -1, xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseWithDestination")]
@@ -1176,16 +1169,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, (filled?-1:0), xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1203,16 +1196,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, 0, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1230,16 +1223,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawEllipseWithDestination(dest.pointer, (uint)color, -1, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearScreen")]
@@ -1254,16 +1247,16 @@ namespace SwinGame
             {
                 int color = toColour.ToArgb();
                 DLL_ClearScreen((uint)color);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1275,16 +1268,16 @@ namespace SwinGame
             {
                 int color = Color.Black.ToArgb();
                 DLL_ClearScreen((uint)color);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmap")]
@@ -1300,16 +1293,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawBitmap(bitmapToDraw.pointer, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPart")]
@@ -1329,16 +1322,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawBitmapPart(bitmapToDraw.pointer, srcX, srcY, srcW, srcH, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixel")]
@@ -1355,16 +1348,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawPixel((uint)color, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangle")]
@@ -1384,16 +1377,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawRectangle((uint)color, (filled?-1:0), xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1410,16 +1403,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawRectangle((uint)color, 0, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1436,16 +1429,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawRectangle((uint)color, -1, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLine")]
@@ -1465,16 +1458,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawLine((uint)color, xPosStart, yPosStart, xPosEnd, yPosEnd);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLine")]
@@ -1492,16 +1485,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawHorizontalLine((uint)color, y, x1, x2);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLine")]
@@ -1520,16 +1513,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawVerticalLine((uint)color, x, y1, y2);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircle")]
@@ -1548,16 +1541,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawCircle((uint)color, (filled?-1:0), xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1573,16 +1566,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawCircle((uint)color, 0, xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1598,16 +1591,16 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawCircle((uint)color, -1, xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipse")]
@@ -1627,16 +1620,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawEllipse((uint)color, (filled?-1:0), xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1653,16 +1646,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawEllipse((uint)color, 0, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1679,16 +1672,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawEllipse((uint)color, -1, xPos, yPos, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSprite")]
@@ -1710,10 +1703,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1730,16 +1722,16 @@ namespace SwinGame
             try
             {
                 DLL_FreeSprite(ref spriteToFree.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddBitmapToSprite")]
@@ -1763,10 +1755,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1788,10 +1779,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1813,10 +1803,9 @@ namespace SwinGame
                 }
                 return temp;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1835,16 +1824,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawSpriteOffset(spriteToDraw.Pointer, xOffset, yOffset);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -1856,16 +1845,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawSprite(spriteToDraw.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSprite")]
@@ -1880,16 +1869,16 @@ namespace SwinGame
             try
             {
                 DLL_MoveSprite(spriteToMove.Pointer, movementVector);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteTo")]
@@ -1905,16 +1894,16 @@ namespace SwinGame
             try
             {
                 DLL_MoveSpriteTo(spriteToMove.Pointer, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreen")]
@@ -1945,10 +1934,9 @@ namespace SwinGame
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -1985,10 +1973,9 @@ namespace SwinGame
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2018,10 +2005,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2048,10 +2034,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2078,10 +2063,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2113,10 +2097,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2146,10 +2129,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2180,10 +2162,9 @@ namespace SwinGame
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }  
         }
 
@@ -2198,16 +2179,16 @@ namespace SwinGame
             try
             {
                 DLL_UpdateSpriteAnimation(sprite.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ReplayAnimation")]
@@ -2226,10 +2207,9 @@ namespace SwinGame
                     throw new SwinGameException(Core.GetExceptionMessage());
                 }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+                throw new SwinGameException(exc.Message);
             }
         }
 
@@ -2244,16 +2224,16 @@ namespace SwinGame
             try
             {
                 DLL_UpdateSprite(sprite.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="DrawBitmapPartOnScreen")]
@@ -2273,16 +2253,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawBitmapPartOnScreen(bitmapToDraw.pointer, srcX, srcY, srcW, srcH, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
@@ -2298,16 +2278,16 @@ namespace SwinGame
             try
             {
                 DLL_DrawBitmapOnScreen(bitmapToDraw.pointer, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
@@ -2324,16 +2304,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawPixelOnScreen(color, x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
@@ -2352,16 +2332,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawRectangleOnScreen(color, 0, x, y, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -2378,16 +2358,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawRectangleOnScreen(color, -1, x, y, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
@@ -2406,16 +2386,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawLineOnScreen(color, xPosStart, yPosStart, xPosEnd, yPosEnd);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
 
@@ -2434,16 +2414,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawHorizontalLineOnScreen(color, y, x1, x2);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
@@ -2461,16 +2441,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawVerticalLineOnScreen(color, x, y1, y2);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
@@ -2488,16 +2468,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawCircleOnScreen(color, 0, xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -2513,16 +2493,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawCircleOnScreen(color, -1, xc, yc, radius);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
 
@@ -2542,16 +2522,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawEllipseOnScreen(color, 0, x, y, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
 
         /// <summary>
@@ -2568,16 +2548,16 @@ namespace SwinGame
             {
                 int color = theColor.ToArgb();
                 DLL_DrawEllipseOnScreen(color, -1, x, y, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
-            catch (Exception)
+            catch (Exception exc)
             {
-                //if (Core.ExceptionOccured())
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
                 throw new SwinGameException(Core.GetExceptionMessage());
-            }  
+            }
         }
     }
 }

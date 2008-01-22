@@ -21,6 +21,11 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-01-22: Andrew: Fixes for version 1.1
+//                Removed PlaySoundEffect, can use PlaySoundEffectLoop
+//						Removed MoveVisualAreaWithVector, can use MoveVisualArea
+//						Removed Sin, Cos, Tan using system functions.
+//						Added Timer function (7)
 //  - 2008-01-17: Aki + Andrew: Refactor, fix error handling
 //  - 2008-01-16: James: Added Mouse input for MoveMouse + ShowMouse
 //  - 2008-01-16: Andrew Cain: Modified exception handling.
@@ -321,7 +326,7 @@ uses
 		result := '';
 	end;
 
-	function Cos(angle: Single): Single; cdecl; export;
+{	function Cos(angle: Single): Single; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.Cos(angle);
@@ -349,8 +354,68 @@ uses
 		Except on exc: Exception do TrapException(exc);
 		end;
 		result := -1;
+	end;}	
+	
+	function CreateTimer() : Timer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Core.CreateTimer();
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := nil;		
 	end;
 	
+	procedure FreeTimer(var toFree: Timer); cdecl; export;
+	begin
+		Try
+			SGSDK_Core.FreeTimer(toFree);
+		Except on exc: Exception do TrapException(exc);
+		end;		
+	end;
+	
+	procedure StartTimer(toStart : Timer); cdecl; export;
+	begin
+		Try
+			SGSDK_Core.StartTimer(toStart);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
+	procedure StopTimer(toStop : Timer); cdecl; export;
+	begin
+		Try
+			SGSDK_Core.StopTimer(toStop);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
+	procedure PauseTimer(toPause : Timer); cdecl; export;
+	begin
+		Try
+			SGSDK_Core.PauseTimer(toPause);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
+	procedure UnpauseTimer(toUnpause : Timer); cdecl; export;
+	begin
+		Try
+			SGSDK_Core.UnpauseTimer(toUnpause);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
+	function GetTimerTicks(toGet : Timer) : UInt32; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Core.GetTimerTicks(toGet);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := -1;						
+	end;
+
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
@@ -561,14 +626,14 @@ uses
 		end;
 	end;
 
-	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
+{	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
 	begin
 		Try
 			SGSDK_Audio.PlaySoundEffect(effect);
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
-	
+}	
 	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: Integer); cdecl; export;
 	begin
 		Try
@@ -1882,13 +1947,13 @@ uses
 		result.x := 0; result.y := 0;
 	end;
 	
-	procedure MoveVisualAreaWithVector(v: Vector); cdecl; export;
+{	procedure MoveVisualAreaWithVector(v: Vector); cdecl; export;
 	begin
 		Try
 			SGSDK_Camera.MoveVisualArea(v);
 		Except on exc: Exception do TrapException(exc);
 		end;
-	end;
+	end;}	
 	
 	procedure MoveVisualArea(dx, dy: Single); cdecl; export;
 	begin
@@ -1939,8 +2004,6 @@ uses
 	end;
 	
 	function CollisionWithMapVector(m : Map; spr : Sprite; vec: Vector): CollisionSide; cdecl; export;
-	var
-		x, y: Integer;
 	begin
 		Try
 			result := SGSDK_MappyLoader.CollisionWithMap(m, spr,vec);
@@ -2024,9 +2087,16 @@ exports
 	GetPathToResourceWithBase,
 	GetPathToResourceWithBaseAndKind,
 	RegisterEventProcessor,	
-	Cos,
+{	Cos,
 	Sin,
-	Tan,
+	Tan,}	
+	CreateTimer, {1.1}
+	FreeTimer, {1.1}
+	StartTimer, {1.1}
+	StopTimer, {1.1}
+	PauseTimer, {1.1}
+	UnpauseTimer, {1.1}
+	GetTimerTicks, {1.1}
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2065,7 +2135,6 @@ exports
 	LoadMusic,
 	FreeMusic,
 	FreeSoundEffect,
-	PlaySoundEffect,
 	PlayMusic,
 	PlaySoundEffectLoop,
 	IsMusicPlaying,
@@ -2222,7 +2291,7 @@ exports
 	GameX,
 	GameY,
 	ToGameCoordinates,
-	MoveVisualAreaWithVector,
+	//MoveVisualAreaWithVector,
 	MoveVisualArea,
 	SetScreenOffset,
 	FollowSprite,
