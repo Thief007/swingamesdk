@@ -31,6 +31,8 @@ namespace TomatoQuest
             //Creates the Game Object
             Game _Game = new Game();
 
+            StartGame.DisplayStartGameMessage();
+
             //Game Loop
             do
             {
