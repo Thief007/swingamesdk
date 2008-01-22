@@ -11,8 +11,7 @@
 //
 // Version 1.1:
 // - 2008-01-22: Andrew: Correct Circular Collision to
-//		handle situations where the balls have overlaped
-//		due to fast movement.
+//		handle situations where the balls have overlaped.
 // - 2008-01-21: Andrew: General refactoring, adding new collision routines
 //               using Rectangle and Point2D.
 // - 2008-01-18: Aki, Andrew, Stephen: Refactor
@@ -905,21 +904,22 @@ implementation
 		
 		if p1.mass < p2.mass then
 		begin
-			//move p1 out
+			{//move p1 out
 			if Magnitude(p1.movement) > 0 then
 				n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, p1.movement)
-			else
-				n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, VectorFromPoints(p1c, p2c));
+			else }
+			
+			n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, VectorFromPoints(p1c, p2c));
 			p1.x := p1.x + n.x;
 			p1.y := p1.y + n.y;
 		end
 		else
 		begin
 			//move p2 out
-			if Magnitude(p2.movement) > 0 then
+			{if Magnitude(p2.movement) > 0 then
 				n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, p2.movement)
-			else
-				n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, VectorFromPoints(p2c, p1c));
+			else}
+			n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, VectorFromPoints(p2c, p1c));
 			p2.x := p2.x + n.x;
 			p2.y := p2.y + n.y;
 		end;

@@ -225,7 +225,7 @@ implementation
 		//Writes:
 		//kind x y mass mX mY #values val1...
 		Write(output, Integer(sprt.kind), ' ', 
-			sprt.sprite.xPos:4:5, ' ', sprt.sprite.yPos:4:5, ' ',
+			sprt.sprite.x:4:5, ' ', sprt.sprite.y:4:5, ' ',
 			sprt.sprite.mass:4:2, ' ',
 			sprt.sprite.movement.x:4:5, ' ', sprt.sprite.movement.y:4:5, ' ', 
 			Length(sprt.values)
@@ -321,8 +321,8 @@ implementation
 				
 			sprt := status.selection[status.selectedIdx]^.sprite;
 			
-			cx := sprt.xPos + sprt.width div 2;
-			cy := sprt.yPos + sprt.height div 2;
+			cx := sprt.x + sprt.width div 2;
+			cy := sprt.y + sprt.height div 2;
 			
 			pos := CreateVector(cx, cy);
 			movement := Multiply(ScaleMatrix(1/50), SubtractVectors(ToGameCoordinates(clickedAt), pos));
@@ -347,15 +347,15 @@ implementation
 			if status.selectedIdx >= Length(status.selection) then status.selectedIdx := High(status.selection);
 			sprt := status.selection[status.selectedIdx]^.sprite;
 			
-			cx := sprt.xPos + sprt.width div 2;
-			cy := sprt.yPos + sprt.height div 2;
+			cx := sprt.x + sprt.width div 2;
+			cy := sprt.y + sprt.height div 2;
 			
 			pos := CreateVector(cx, cy);
 			offset := SubtractVectors(ToGameCoordinates(clickedAt), pos);
 			
 			for i := Low(status.selection) to High(status.selection) do
 			begin
-				if CanPlaceAt(status.dataPtr^, status.selection[i].kind, status.selection[i], sprt.xPos + offset.x, sprt.yPos + offset.y) then	
+				if CanPlaceAt(status.dataPtr^, status.selection[i].kind, status.selection[i], sprt.x + offset.x, sprt.y + offset.y) then	
 					MoveSprite(status.selection[i].sprite, offset);
 			end;
 		end;
@@ -419,13 +419,13 @@ implementation
 	procedure HandleUserInputAdding(var status: EditorStatusType);
 	begin
 		if MouseWasClicked(LeftButton) then 
-			AddSprite(status, GetMousePosition());
+			AddSprite(status, GetMousePositionAsVector());
 			
 		//Check for right click to edit...
 		if MouseWasClicked(RightButton) then
 		begin
 			SwitchToMode(status, EditingMode);
-			SelectSprite(status, GetMousePosition());
+			SelectSprite(status, GetMousePositionAsVector());
 		end;
 	end;
 
@@ -433,7 +433,7 @@ implementation
 	begin
 		//Right click selects
 		if MouseWasClicked(RightButton) then
-			SelectSprite(status, GetMousePosition());
+			SelectSprite(status, GetMousePositionAsVector());
 			
 		//Increase or Decrease Value
 		if WasKeyTyped(VK_ADD) or WasKeyTyped(VK_EQUALS) then
@@ -443,10 +443,10 @@ implementation
 
 		//Update movement
 		if IsSpecialKeyPressed() and IsMouseDown(LeftButton) then
-			DoSetMovement(status, GetMousePosition());
+			DoSetMovement(status, GetMousePositionAsVector());
 			
 		if (false = IsSpecialKeyPressed()) and MouseWasClicked(LeftButton) then //Move sprites
-			DoMove(status, GetMousePosition());	
+			DoMove(status, GetMousePositionAsVector());	
 			
 		//Switch to delete if delete pressed
 		if WasKeyTyped(VK_DELETE) or WasKeyTyped(VK_D) or WasKeyTyped(VK_BACK) then
@@ -473,7 +473,7 @@ implementation
 	begin
 		//Right click selects
 		if MouseWasClicked(RightButton) then
-			SelectSprite(status, GetMousePosition());
+			SelectSprite(status, GetMousePositionAsVector());
 			
 		//Delete selection
 		if WasKeyTyped(VK_DELETE) then
@@ -575,7 +575,7 @@ implementation
 		handled := false;
 		
 		//Check editor panel click
-		if MouseWasClicked(LeftButton) then CheckEditorClick(status, GetMousePosition(), handled);
+		if MouseWasClicked(LeftButton) then CheckEditorClick(status, GetMousePositionAsVector(), handled);
 		
 		if handled then exit;
 		
@@ -605,7 +605,7 @@ implementation
 		
 		//Handle change of state
 {		if MouseWasClicked(RightButton) then 
-			DoChangeToEditClick(status, GetMousePosition());
+			DoChangeToEditClick(status, GetMousePositionAsVector());
 		if WasKeyTyped(VK_M) and (status.Mode <> AddingMidBack) then
 			DoChangeAddMidBack(status);
 		if WasKeyTyped(VK_A) and (status.Mode <> AddingNewObstacles) then

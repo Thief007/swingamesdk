@@ -90,9 +90,12 @@ then
 	echo "  ... Cleaning"
 	rm -rf "$Output"
 	mkdir -p "$Output"
-else
-	echo "  ... Creating Output Location"
-	mkdir -p "$Output"
+else	
+	if [ ! -d $Output ]
+	then
+		echo "  ... Creating Output Location"
+		mkdir -p "$Output"
+	fi
 
 	if [ -f out.log ]
 	then
@@ -141,8 +144,6 @@ else
 	
 	echo "  ... Output in out.log"		
 	echo "  ... Copying to FPC"
-
-	mkdir -p "$FPCDir"
 
 	cp "$Output"/*.ppu "$FPCDir"
 	cp "$Output"/*.o "$FPCDir"
