@@ -36,12 +36,17 @@ done
 
 shift $((${OPTIND}-1))
 
+FPCDir=`pwd`/../SDKs/Pascal/Unx/FPC/lib/
+if [ ! -d $FPCDir ]
+then
+	mkdir -p $FPCDir
+fi
+FPCDir=`cd $FPCDir; pwd`
+
+
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
-	FPCDir=`pwd`/../SDKs/Pascal/Unx/FPC/lib/
-	FPCDir=`cd $FPCDir; pwd`
-	Output=`pwd`/bin/mac/
-	Output=`cd $Output; pwd`
+	Output=`pwd`/bin/mac/	
 	LibDir=`pwd`/lib/mac
 	
 	if [ DEBUG = "Y" ]
@@ -60,8 +65,8 @@ then
 	
 else
 	Output=`pwd`/bin/unx/
-	FPCDir=`pwd`/../SDKs/Pascal/Unx/FPC/lib/
-	FPCDir=`cd $FPCDir; pwd`
+	Output=`cd $Output; pwd`
+	
 	LibDir=
 
 	if [ DEBUG = "Y" ]

@@ -1182,7 +1182,7 @@ implementation
 		LoadResources();
 		Randomize();
 		ProcessEvents();
-		{DrawLines();
+		DrawLines();
 		if WindowCloseRequested() then exit;
 		DrawRectangles();
 		if WindowCloseRequested() then exit;
@@ -1199,8 +1199,8 @@ implementation
 		PlayMusicExample();
 		if WindowCloseRequested() then exit;
 		DrawRandomText();
-		if WindowCloseRequested() then exit;}
-		DrawVectorCollision();{
+		if WindowCloseRequested() then exit;
+		DrawVectorCollision();
 		if WindowCloseRequested() then exit;
 		MoveSpriteWithInput();
 		if WindowCloseRequested() then exit;
@@ -1232,7 +1232,7 @@ implementation
 		VectorExample3();
 	
 		CollisionExample2();
-	}
+	
 		VectorOutOfCircleExample();
 		CircleOutOfCircleExample();
 		

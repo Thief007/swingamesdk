@@ -56,7 +56,7 @@ LIB_PATH=../../../SDKs/Pascal/Unx/${LIB}
 
 echo "Copying lib from ${LIB_PATH}"
 cp  ${LIB_PATH}/lib/* ./lib
-cp  ${LIB_PATH}/unxbuild.sh .
+cp  ${LIB_PATH}/build.sh .
 
 
 
