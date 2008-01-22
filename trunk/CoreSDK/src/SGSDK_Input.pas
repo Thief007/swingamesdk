@@ -53,8 +53,8 @@ interface
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
 	
-	//procedure MoveMouse(x, y : UInt16);
-	procedure MoveMouse(point: Point2D);
+	procedure MoveMouse(x, y : UInt16);overload;
+	procedure MoveMouse(point: Point2D);overload;
 	
 	procedure ShowMouse(); overload;
 	procedure ShowMouse(show : Boolean); overload;
@@ -84,12 +84,12 @@ implementation
 		end;
 	end;
 	
-	{procedure MoveMouse(x, y : UInt16);
+	procedure MoveMouse(x, y : UInt16);overload;
 	begin
 		SDL_WarpMouse(x,y);
-	end;}
+	end;
 	
-	procedure MoveMouse(point : Point2d);
+	procedure MoveMouse(point : Point2d);overload;
 	begin
 		SDL_WarpMouse(Round(point.x), Round(point.y));
 	end;
