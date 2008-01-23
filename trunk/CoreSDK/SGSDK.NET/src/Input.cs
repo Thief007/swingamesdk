@@ -490,13 +490,13 @@ namespace SwinGame
     public class Input
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePositionAsVector")]
-        private static extern Vector DLL_GetMousePosition();
+        private static extern Vector DLL_GetMousePositionAsVector();
         /// <summary>
         /// Gets the current Mouse Position as a Vector, useful for finding out things such as if the mouse
         /// is hovering over a particular area of the screen.
         /// </summary>
         /// <returns>Vector representing the position of the mouse</returns>
-        public static Vector GetMousePosition()
+        public static Vector GetMousePositionAsVector()
         {
             Vector temp;
 
@@ -528,7 +528,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_GetMousePositionAsVector();
+                temp = DLL_GetMousePosition();
             }
             catch (Exception exc)
             {
@@ -821,7 +821,7 @@ namespace SwinGame
         {
             try
             {
-                DLL_MoveMouse(point.X , point.Y);
+                DLL_MoveMouse((ushort)point.X , (ushort)point.Y);
             }
             catch (Exception)
             {
