@@ -79,8 +79,8 @@ interface
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
 
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean;
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload;
 
 	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2: Bitmap; x2, y2: Integer): Boolean; overload;
 	function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; image2: Bitmap; const pt2: Point2D): Boolean; overload;

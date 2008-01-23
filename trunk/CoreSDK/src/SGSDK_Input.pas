@@ -43,10 +43,8 @@ interface
 	function IsMouseDown(button: MouseButton): Boolean;
 	function IsMouseUp(button: MouseButton): Boolean;
 	function MouseWasClicked(button: MouseButton): Boolean;
-
-
-	procedure StartReadingText(textColor: Colour; maxLength: Integer;
-							   theFont: Font; x, y: Integer);
+	
+	procedure StartReadingText(textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
 
 	function IsReadingText(): Boolean;
 	function TextReadAsASCII(): String;

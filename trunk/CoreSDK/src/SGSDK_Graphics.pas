@@ -186,7 +186,6 @@ interface
 
 	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
 	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
-	
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
 		
 	procedure MoveSprite(spriteToMove: Sprite); overload;
