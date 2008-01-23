@@ -416,7 +416,7 @@ uses
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
-		result := -1;						
+		result := 0;						
 	end;
 
 	//***************************************************
@@ -1772,7 +1772,7 @@ uses
 	procedure MoveSpriteItself(sprite: Sprite); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.MoveSprite(spriteToMove);
+			SGSDK_Graphics.MoveSprite(sprite);
 		Except on exc: Exception do TrapException(exc);
 		end;		
 	end;

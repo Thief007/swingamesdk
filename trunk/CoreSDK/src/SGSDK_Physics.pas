@@ -91,7 +91,6 @@ interface
 
 	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): Boolean; overload;
 	function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
-	function IsSpriteOnScreenAt(theSprite: Sprite; const v: Vector): Boolean; overload;
 
 	function CircleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean;
 	function RectangleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean; overload;
@@ -406,14 +405,6 @@ implementation
 	function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithRect(theSprite, GameX(Round(pt.x)), GameY(Round(pt.y)), 1, 1);
-	end;
-	
-	function IsSpriteOnScreenAt(theSprite: Sprite; const v: Vector): Boolean; overload;
-	var
-		gameVector: Vector;
-	begin
-		gameVector := ToGameCoordinates(v);
-		result := HasSpriteCollidedWithRect(theSprite, gameVector.x, gameVector.y, 1, 1);		
 	end;
 	
 	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
