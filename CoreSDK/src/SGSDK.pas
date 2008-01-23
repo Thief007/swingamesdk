@@ -2054,7 +2054,7 @@ uses
 	function SpriteHasCollidedWithMapTile(m : Map; spr : Sprite; out collidedX, collidedY : Integer): Integer; cdecl; export;
 	begin
 		Try
-			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, collidedX, collidedY) then result := -1;
+			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, collidedX, collidedY) then result := -1
 			else result := 0;
 			exit;
 		Except on exc: Exception do TrapException(exc);
