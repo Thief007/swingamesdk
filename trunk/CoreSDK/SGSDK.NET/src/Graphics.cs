@@ -15,6 +15,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-23: James : Fixed exceptions for functions
+//               Changed comments
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
 //               Refactored some methods, to limit routines exposed by DLL
@@ -195,7 +197,7 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetSpriteMass")]
         private static extern void DLL_SetSpriteMass(IntPtr pointer, Single mass);
         /// <summary>
-        /// Sets the Sprites Mass
+        /// Sets the Sprites Mass, this must be greater than 0
         /// </summary>
         /// <param name="pointer">Pointer</param>
         /// <param name="mass">Mass</param>
@@ -298,7 +300,7 @@ namespace SwinGame
         private static extern void SetSpriteKind(IntPtr pointer, int kind);
 
         /// <summary>
-        /// Gets the Sprite Kind
+        /// Gets the Sprite Kind of this sprite
         /// </summary>
         public SpriteKind SpriteKind
         {
@@ -320,7 +322,7 @@ namespace SwinGame
         private static extern void SetSpriteFramesPerCell(IntPtr pointer, [MarshalAs(UnmanagedType.LPArray)]int[] framesPerCell, int length);
 
         /// <summary>
-        /// Gets the Frames per Cell
+        /// Gets the Frames per Cell of this sprite
         /// </summary>
         public int[] FramesPerCell
         {            
@@ -345,7 +347,7 @@ namespace SwinGame
         private static extern int GetSpriteCols(IntPtr pointer);
 
         /// <summary>
-        /// Gets the number of Columns
+        /// Gets the number of Columns of this sprite
         /// </summary>
         public int Cols
         {
@@ -359,7 +361,7 @@ namespace SwinGame
         private static extern int GetSpriteRow(IntPtr pointer);
 
         /// <summary>
-        /// Gets the number of Rows
+        /// Gets the number of Rows of this sprite
         /// </summary>
         public int Rows
         {
@@ -373,7 +375,7 @@ namespace SwinGame
         private static extern int GetSpriteFrameCount(IntPtr pointer);
 
         /// <summary>
-        /// Gets the Frame Count
+        /// Gets the Frame Count of this sprite
         /// </summary>
         public int FrameCount
         {
@@ -390,7 +392,7 @@ namespace SwinGame
         private static extern void SetSpriteendingAction(IntPtr pointer, int endingAction);
 
         /// <summary>
-        /// Gets the Ending Action
+        /// Gets the Ending Action of this sprite
         /// </summary>
         public SpriteEndingAction EndingAction
         {
@@ -433,7 +435,7 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Movement
+        /// The movement of this sprite
         /// </summary>
         public MovementClass Movement
         {
@@ -444,7 +446,7 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Constructor
+        /// Constructor of this sprite
         /// </summary>
         public class MovementClass
         {
@@ -456,7 +458,7 @@ namespace SwinGame
             }
 
             /// <summary>
-            /// X
+            /// The movement of this sprite in the x direction
             /// </summary>
             public float X
             {
@@ -473,7 +475,7 @@ namespace SwinGame
             }
             
             /// <summary>
-            /// Y
+            /// The movement of this sprite in the y direction
             /// </summary>
             public float Y
             {
@@ -490,7 +492,7 @@ namespace SwinGame
             }
 
             /// <summary>
-            /// Sets the Movement
+            /// Sets the Movement of this sprite
             /// </summary>
             /// <param name="v"></param>
             public void SetTo(Vector v)
@@ -511,7 +513,7 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Gets the Width
+        /// Gets the Width of this sprite
         /// </summary>
         public int Width
         {
@@ -522,7 +524,7 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Gets the Height
+        /// Gets the Height of this sprite
         /// </summary>
         public int Height
         {
@@ -533,7 +535,7 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Gets and Sets the Mass
+        /// Gets and Sets this Mass
         /// </summary>
         public float Mass
         {
@@ -598,33 +600,37 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="CreateBitmap")]
         private static extern Bitmap DLL_CreateBitmap(int width, int height);
         /// <summary>
-        /// Create a bitmap
+        /// Create a blank bitmap of the given size. This is useful for caching drawing, 
+        /// for slower drawing operations.Most of the Drawing routines provide an 
+        /// option to specify what bitmap to draw onto.
         /// </summary>
         /// <param name="width">Width of a bitmap</param>
         /// <param name="height">Height of a bitmap</param>
         /// <returns>New bitmap</returns>
         public static Bitmap CreateBitmap(int width, int height)
         {
+            Bitmap temp;
             try
             {
-                Bitmap temp = DLL_CreateBitmap(width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_CreateBitmap(width, height);
+
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
             }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
 
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="OptimiseBitmap")]
         private static extern void DLL_OptimiseBitmap(Bitmap surface);
         /// <summary>
-        /// Optimise the specified bitmap
+        /// Optimise the specified bitmap. This will make the bitmap faster to be drawn to the screen
         /// </summary>
         /// <param name="surface">Bitmap to optimise</param>
         public static void OptimiseBitmap(Bitmap surface)
@@ -647,30 +653,34 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
         private static extern IntPtr DLL_LoadBitmapWithTransparentColor([MarshalAs(UnmanagedType.LPStr)]String pathToBitmap, int transparent, uint transparentColor);
         /// <summary>
-        /// Load the specified image file
+        /// Load the specified image file. Use the GetPathToResource methods from Core to
+        /// ensure that you load the file in a platform neutral way, enabling your game
+        /// to run on Windows, Mac, and Linux.
         /// </summary>
         /// <param name="pathToBitmap">Path to the image file</param>
         /// <returns>New bitmap</returns>
         public static Bitmap LoadBitmap(string pathToBitmap)
         {
+            Bitmap result;
             try
             {
-                Bitmap result;
                 int color = Color.Black.ToArgb();
-                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color), DLL_FreeBitmap);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
+                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color), DLL_FreeBitmap);  
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
         /// <summary>
-        /// Load the specified image file with a transparent color
+        /// Load the specified image file with a transparent color. Use the GetPathToResource methods from Core to
+        /// ensure that you load the file in a platform neutral way, enabling your game
+        /// to run on Windows, Mac, and Linux.
         /// </summary>
         /// <param name="pathToBitmap">Path to the image file</param>
         /// <param name="transparent">True if this image has transparent pixels</param>
@@ -678,55 +688,59 @@ namespace SwinGame
         /// <returns>New bitmap</returns>
         public static Bitmap LoadBitmap(String pathToBitmap, bool transparent, Color transparentColor)
         {
+            Bitmap result;
             try
             {
-                Bitmap result;
                 int color = transparentColor.ToArgb();
                 result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, (transparent?-1:0), (uint)color), DLL_FreeBitmap);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadTransparentBitmap")]
         private static extern IntPtr DLL_LoadTransparentBitmap([MarshalAs(UnmanagedType.LPStr)]string pathToBitmap, uint transparentColor);
         /// <summary>
-        /// Load an image with transparency
+        /// Load an image with transparency. Use the GetPathToResource methods from Core to
+        /// ensure that you load the file in a platform neutral way, enabling your game
+        /// to run on Windows, Mac, and Linux.
         /// </summary>
         /// <param name="pathToBitmap">Path to the image file</param>
         /// <param name="transparentColor">Color of the transparent pixels</param>
         /// <returns>New bitmap</returns>
         public static Bitmap LoadTransparentBitmap(string pathToBitmap, Color transparentColor)
         {
+            Bitmap result;
             try
             {
-                Bitmap result;
                 int color = transparentColor.ToArgb();
                 result.pointer = new SwinGamePointer(DLL_LoadTransparentBitmap(pathToBitmap, (uint)color), DLL_FreeBitmap);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
         private static extern void DLL_FreeBitmap(ref IntPtr bitmapToFree);
 
         /// <summary>
-        /// Free the specified bitmap
+        /// Frees a Bitmap From Memory. You need to ensure that all bitmaps
+        /// that you load are freed by the end of the game. This is usually done
+        /// when the program exits.
         /// </summary>
         /// <param name="bitmapToFree">Bitmap to free</param>
         public static void FreeBitmap(Bitmap bitmapToFree)
@@ -743,19 +757,20 @@ namespace SwinGame
         /// <returns>Width of the bitmap</returns>
         public static int GetBitmapWidth(Bitmap targetbitmap)
         {
+            int temp;
             try
             {
-                int temp = DLL_GetBitmapWidth(targetbitmap.pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_GetBitmapWidth(targetbitmap.pointer);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapHeight")]
@@ -767,25 +782,26 @@ namespace SwinGame
         /// <returns>Height of the bitmap</returns>
         public static int GetBitmapHeight(Bitmap targetbitmap)
         {
+            int temp;
             try
             {
-                int temp = DLL_GetBitmapHeight(targetbitmap.pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_GetBitmapHeight(targetbitmap.pointer);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearSurfaceWithColor")]
         private static extern void DLL_ClearSurfaceWithColor(IntPtr dest, uint toColour);
         /// <summary>
-        /// Clear the bitmap with the specified color
+        /// Clear the bitmap with the specified color.
         /// </summary>
         /// <param name="dest">Bitmap to clear</param>
         /// <param name="toColour">The color used to clear</param>
@@ -808,7 +824,7 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Clear the bitmap
+        /// Clear the bitmap to black
         /// </summary>
         /// <param name="dest">Bitmap to clear</param>
         public static void ClearSurface(Bitmap dest)
@@ -832,7 +848,7 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapWithDestination")]
         private static extern void DLL_DrawBitmapWithDestination(IntPtr dest, IntPtr bitmapToDraw, int x, int y);
         /// <summary>
-        /// Draw bitmap to the specified bitmap
+        /// Draw bitmap to the specified bitmap. You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">Bitmap to draw on</param>
         /// <param name="bitmapToDraw">Bitmap to draw</param>
@@ -858,7 +874,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartWithDestination")]
         private static extern void DLL_DrawBitmapPartWithDestination(IntPtr dest, IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
         /// <summary>
-        /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest)
+        /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest), this is faster than drawing 
+        /// the whole bitmap
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the destination</param>
@@ -885,10 +902,42 @@ namespace SwinGame
             }
         }
 
+        
+        
+
+
+        /// <summary>
+        /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest), this is faster than drawing 
+        /// the whole bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="bitmapToDraw">The bitmap to be drawn onto the destination</param>
+        /// <param name="source ">The possition and size of the bitmapToDraw</param>
+        /// <param name="x">The x location to draw the bitmap part to</param>
+        /// <param name="y">The y location to draw the bitmap part to</param>
+        public static void DrawBitmapPart(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, int x, int y)
+        {
+            DrawBitmapPart(dest, bitmapToDraw, source.X, source.Y, source.Width, source.Height, x, y);
+        }
+
+        /// <summary>
+        /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest), this is faster than drawing 
+        /// the whole bitmap
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="bitmapToDraw">The bitmap to be drawn onto the destination</param>
+        /// <param name="source ">The possition and size of the bitmapToDraw</param>
+        /// <param name="position ">The x,y location to draw the bitmap part to</param>
+        public static void DrawBitmapPart(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, Point2D position)
+        {
+            DrawBitmapPart(dest, bitmapToDraw, source.X, source.Y, source.Width, source.Height, (int)position.X, (int)position.Y);
+        }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelWithDestination")]
         private static extern void DLL_DrawPixelWithDestination(IntPtr dest, uint theColour, int x, int y);
         /// <summary>
-        /// Draws a pixel onto the destination bitmap
+        /// Draws a pixel onto the destination bitmap, You will often use 
+        /// the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the pixel</param>
@@ -913,7 +962,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleWithDestination")]
         private static extern void DLL_DrawRectangleWithDestination(IntPtr dest, uint theColour, int filled, int xPos, int yPos, int width, int height);
         /// <summary>
-        /// Draws a rectangle on the destination bitmap
+        /// Draws a rectangle on the destination bitmap, You will often use the 
+        /// bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the rectangle</param>
@@ -943,7 +993,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FillRectangleWithDestination")]
         private static extern void DLL_FillRectangleWithDestination(IntPtr dest, uint theColour, int xPos, int yPos, int width, int height);
         /// <summary>
-        /// Draws a filled rectangle on the destination bitmap
+        /// Draws a filled rectangle on the destination bitmap, You will often use 
+        /// the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the rectangle</param>
@@ -970,7 +1021,8 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws the outline of a rectangle on the destination bitmap
+        /// Draws the outline of a rectangle on the destination bitmap, You will often use 
+        /// the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the rectangle</param>
@@ -999,7 +1051,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineWithDestination")]
         private static extern void DLL_DrawLineWithDestination(IntPtr dest, uint theColour, int xPosStart, int yPosStart, int xPosEnd, int yPosEnd);
         /// <summary>
-        /// Draws a line on the destination bitmap
+        /// Draws a line on the destination bitmap, You will often use the 
+        /// bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the line</param>
@@ -1028,7 +1081,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineWithDestination")]
         private static extern void DLL_DrawHorizontalLineWithDestination(IntPtr dest, uint theColour, int y, int x1, int x2);
         /// <summary>
-        /// Draws a horizontal line on the destination bitmap
+        /// Draws a horizontal line on the destination bitmap, You will often use the 
+        /// bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the line</param>
@@ -1056,7 +1110,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineWithDestination")]
         private static extern void DLL_DrawVerticalLineWithDestination(IntPtr dest, uint theColour, int x, int y1, int y2);
         /// <summary>
-        /// Draws a vertical line on the destination bitmap
+        /// Draws a vertical line on the destination bitmap, You will often use the 
+        /// bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the line</param>
@@ -1084,7 +1139,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleWithDestination")]
         private static extern void DLL_DrawCircleWithDestination(IntPtr dest, uint theColour, int filled, int xc, int yc, int radius);
         /// <summary>
-        /// Draws a circle centered on a given x, y location
+        /// Draws a circle centered on a given x, y locationon on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the circle</param>
@@ -1111,7 +1167,23 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a circle outline centered on a given x, y location
+        /// Draws a circle centered on a given x, y locationon on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the circle</param>
+        /// <param name="filled">True to draw a filled circle, false for outline</param>
+        /// <param name="position">The x,y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void DrawCircle(Bitmap dest, Color theColour, bool filled, Point2D position, int radius)
+        {
+            DrawCircle(dest, theColour, filled, (int)position.X, (int)position.Y, radius);
+        }
+
+
+        /// <summary>
+        /// Draws a circle outline centered on a given x, y location on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the circle</param>
@@ -1137,7 +1209,21 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a filled circle centered on a given x, y location
+        /// Draws a circle outline centered on a given x, y location on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the circle</param>
+        /// <param name="position">The x,y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void DrawCircle(Bitmap dest, Color theColour, Point2D position, int radius)
+        {
+            DrawCircle(dest, theColour, (int)position.X, (int)position.Y, radius);
+        }
+
+        /// <summary>
+        /// Draws a filled circle centered on a given x, y location on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the circle</param>
@@ -1165,7 +1251,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseWithDestination")]
         private static extern void DLL_DrawEllipseWithDestination(IntPtr dest, uint theColour, int filled, int xPos, int yPos, int width, int height);
         /// <summary>
-        /// Draws a ellipse within a given rectangle on the dest bitmap
+        /// Draws a ellipse within a given rectangle on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the ellipse</param>
@@ -1191,9 +1278,21 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
-
         /// <summary>
-        /// Draws a ellipse outline within a given rectangle on the dest bitmap
+        /// Draws a ellipse within a given rectangle on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the ellipse</param>
+        /// <param name="filled">True to draw a filled ellipse, false for outline</param>
+        /// <param name="source">The locations and size to draw the ellipse to</param>
+        public static void DrawEllipse(Bitmap dest, Color theColour, bool filled, Rectangle source)
+        {
+            DrawEllipse(dest, theColour, filled,  source.X, source.Y,source.Width, source.Height);
+        }
+        /// <summary>
+        /// Draws a ellipse outline within a given rectangle on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the ellipse</param>
@@ -1220,7 +1319,20 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a filled ellipse within a given rectangle on the dest bitmap
+        /// Draws a ellipse outline within a given rectangle on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the ellipse</param>
+        /// <param name="source">The locations and size to draw the ellipse to</param>
+        public static void DrawEllipse(Bitmap dest, Color theColour, Rectangle source)
+        {
+            DrawEllipse(dest, theColour,  source.X, source.Y, source.Width, source.Height);
+        }
+
+        /// <summary>
+        /// Draws a filled ellipse within a given rectangle on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="theColour">The color to draw the ellipse</param>
@@ -1246,10 +1358,23 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Draws a filled ellipse within a given rectangle on the destination bitmap, 
+        /// You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="dest">The destination bitmap</param>
+        /// <param name="theColour">The color to draw the ellipse</param>
+        /// <param name="source">The locations and size to draw the ellipse to</param>
+        public static void FillEllipse(Bitmap dest, Color theColour, Rectangle source)
+        {
+            FillEllipse(dest, theColour, source.X, source.Y, source.Width, source.Height);
+        }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClearScreen")]
         private static extern void DLL_ClearScreen(uint toColour);
         /// <summary>
-        /// Clears the surface of the screen to the passed in color
+        /// Clears the surface of the screen to the passed in color, it is usefull to call this
+        /// every time you call RefreshScreen
         /// </summary>
         /// <param name="toColour">The colour to clear the bitmap to</param>
         public static void ClearScreen(Color toColour)
@@ -1271,7 +1396,8 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Clears the screen to Black
+        /// Clears the screen to Black, it is usefull to call this
+        /// every time you call RefreshScreen
         /// </summary>
         public static void ClearScreen()
         {
@@ -1294,7 +1420,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmap")]
         private static extern void DLL_DrawBitmap(IntPtr bitmapToDraw, float x, float y);
         /// <summary>
-        /// Draws one bitmap (bitmapToDraw) onto the screen
+        /// Draws one bitmap (bitmapToDraw) onto the screen, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
         /// <param name="x">The x location to draw the bitmap to</param>
@@ -1319,7 +1446,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPart")]
         private static extern void DLL_DrawBitmapPart(IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, float x, float y);
         /// <summary>
-        /// Draws part of a bitmap (bitmapToDraw) onto the screen
+        /// Draws part of a bitmap (bitmapToDraw) onto the screen, x and y are in game 
+        /// coordinates not screen coordinates, this is faster than DrawBitmap
+        /// if you don't want all of the bitmap to be shown
         /// </summary>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
         /// <param name="srcX">The x offset to the area to copy in bitmapToDraw</param>
@@ -1345,10 +1474,39 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Draws part of a bitmap (bitmapToDraw) onto the screen, x and y are in game 
+        /// coordinates not screen coordinates, this is faster than DrawBitmap
+        /// if you don't want all of the bitmap to be shown
+        /// </summary>
+        /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
+        /// <param name="source ">The possition and size of the bitmapToDraw</param>
+        /// <param name="x">The x location to draw the bitmap part to</param>
+        /// <param name="y">The y location to draw the bitmap part to</param>
+        public static void DrawBitmapPart(Bitmap bitmapToDraw,Rectangle source , float x, float y)
+        {
+            DrawBitmapPart(bitmapToDraw, source.X, source.Y, source.Width, source.Height, x, y);
+        }
+
+        /// <summary>
+        /// Draws part of a bitmap (bitmapToDraw) onto the screen, x and y are in game 
+        /// coordinates not screen coordinates, this is faster than DrawBitmap
+        /// if you don't want all of the bitmap to be shown
+        /// </summary>
+        /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
+        /// <param name="source ">The possition and size of the bitmapToDraw</param>
+        /// <param name="position ">The x,y location to draw the bitmap part to</param>
+        public static void DrawBitmapPart(Bitmap bitmapToDraw, Rectangle source, Point2D position)
+        {
+            DrawBitmapPart(bitmapToDraw, source.X, source.Y, source.Width, source.Height, position.X, position.Y);
+        }
+
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixel")]
         private static extern void DLL_DrawPixel(uint theColour, float x, float y);
         /// <summary>
-        /// Draws a pixel onto the screen
+        /// Draws a pixel onto the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the pixel</param>
         /// <param name="x">The x location to draw the pixel at</param>
@@ -1374,7 +1532,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangle")]
         private static extern void DLL_DrawRectangle(uint theColour, int filled, float xPos, float yPos, int width, int height);
         /// <summary>
-        /// Draws a rectangle on the screen
+        /// Draws a rectangle on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the rectangle</param>
         /// <param name="filled">True to draw a filled rectangle, false for outline</param>
@@ -1401,7 +1560,8 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws the outline of a rectangle on the screen
+        /// Draws the outline of a rectangle on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the rectangle</param>
         /// <param name="xPos">The x location to draw the rectangle at</param>
@@ -1427,7 +1587,8 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a filled rectangle on the screen
+        /// Draws a filled rectangle on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the rectangle</param>
         /// <param name="xPos">The x location to draw the rectangle at</param>
@@ -1456,7 +1617,8 @@ namespace SwinGame
         private static extern void DLL_DrawLine(uint theColour, float xPosStart, float yPosStart, float xPosEnd, float yPosEnd);
 
         /// <summary>
-        /// Draws a line on the screen
+        /// Draws a line on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the line</param>
         /// <param name="xPosStart">The x location to start the line at</param>
@@ -1484,7 +1646,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLine")]
         private static extern void DLL_DrawHorizontalLine(uint theColor, float y, float x1, float x2);
         /// <summary>
-        /// Draws a horizontal line on the screen
+        /// Draws a horizontal line on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColor">The color to draw the line</param>
         /// <param name="y">The y location of the line</param>
@@ -1512,7 +1675,8 @@ namespace SwinGame
         private static extern void DLL_DrawVerticalLine(uint theColor, float x, float y1, float y2);
 
         /// <summary>
-        /// Draws a vertical line on the screen
+        /// Draws a vertical line on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColor">The color to draw the line</param>
         /// <param name="x">The color to draw the line</param>
@@ -1539,7 +1703,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircle")]
         private static extern void DLL_DrawCircle(uint theColor, int filled, float xc, float yc, int radius);
         /// <summary>
-        /// Draws a circle centered on a given x, y location
+        /// Draws a circle centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColor">The color to draw the circle</param>
         /// <param name="filled">True to draw a filled circle, false for outline</param>
@@ -1565,7 +1730,21 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a circle outline centered on a given x, y location
+        /// Draws a circle centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">The color to draw the circle</param>
+        /// <param name="filled">True to draw a filled circle, false for outline</param>
+        /// <param name="position">The x,y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void DrawCircle(Color theColor, bool filled, Point2D position, int radius)
+        {
+            DrawCircle(theColor, filled, position.X, position.Y, radius);
+        }
+
+        /// <summary>
+        /// Draws a circle outline centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the circle</param>
         /// <param name="xc">The x location of the center of the circle</param>
@@ -1590,7 +1769,20 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a filled circle centered on a given x, y location
+        /// Draws a circle outline centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColour">The color to draw the circle</param>
+        /// <param name="position">The x,y location of the center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        public static void DrawCircle(Color theColour, Point2D position, int radius)
+        {
+            DrawCircle(theColour, position.X, position.Y, radius);
+        }
+
+        /// <summary>
+        /// Draws a filled circle centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColour">The color to draw the circle</param>
         /// <param name="xc">The x location of the center of the circle</param>
@@ -1617,7 +1809,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipse")]
         private static extern void DLL_DrawEllipse(uint theColor, int filled, float xPos, float yPos, int width, int height);
         /// <summary>
-        /// Draws a ellipse within a given rectangle on the screen
+        /// Draws a ellipse within a given rectangle on the screen, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColor">The color to draw the ellipse</param>
         /// <param name="filled">True to draw a filled ellipse, false for outline</param>
@@ -1644,7 +1837,21 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a ellipse outline within a given rectangle on the screen
+        /// Draws a ellipse within a given rectangle on the screen, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">The color to draw the ellipse</param>
+        /// <param name="filled">True to draw a filled ellipse, false for outline</param>
+        /// <param name="source">The location and size of the ellipse to draw</param>
+        public static void DrawEllipse(Color theColor, bool filled, Rectangle source)
+        {
+            DrawEllipse(theColor, filled, source.X, source.Y, source.Width, source.Height);
+        }
+
+
+        /// <summary>
+        /// Draws a ellipse outline within a given rectangle on the screen, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColor">The color to draw the ellipse</param>
         /// <param name="xPos">The x,y location of the top left of the ellipse</param>
@@ -1670,7 +1877,30 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a filled ellipse within a given rectangle on the screen
+        /// Draws a ellipse outline within a given rectangle on the screen, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">The color to draw the ellipse</param>
+        /// <param name="source">The location and size of the ellipse to draw</param>
+        public static void DrawEllipse(Color theColor, Rectangle source)
+        {
+            DrawEllipse(theColor, source.X, source.Y, source.Width, source.Height);
+        }
+
+
+        /// <summary>
+        /// Draws a filled ellipse within a given rectangle on the screen, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">The color to draw the ellipse</param>
+        /// <param name="source">The location and size of the ellipse to draw</param>
+        public static void FillEllipse(Color theColor, Rectangle source)
+        {
+            FillEllipse(theColor, source.X, source.Y, source.Width, source.Height);
+        }
+        /// <summary>
+        /// Draws a filled ellipse within a given rectangle on the screen, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="theColor">The color to draw the ellipse</param>
         /// <param name="xPos">The x location of the top left of the ellipse</param>
@@ -1688,7 +1918,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-  
+
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1698,26 +1928,26 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSprite")]
         private static extern IntPtr DLL_CreateSprite(IntPtr startBitmap);
         /// <summary>
-        /// Creates a sprites, and sets its firat bitmap
+        /// Creates a sprites, and sets its first bitmap, this is only good for non-animating sprites
         /// </summary>
         /// <param name="startBitmap">The sprites first bitmap (index 0)</param>
         /// <returns>A new sprite with this bitmap as its first bitmap</returns>
         public static Sprite CreateSprite(Bitmap startBitmap)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 result.Pointer = new SwinGamePointer(DLL_CreateSprite(startBitmap.pointer), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
@@ -1745,19 +1975,20 @@ namespace SwinGame
         /// <returns>the index of the added bitmap</returns>
         public static int AddBitmapToSprite(Sprite spriteToAddTo, Bitmap bitmapToAdd)
         {
+            int temp;
             try
             {
-                int temp = DLL_AddBitmapToSprite(spriteToAddTo.Pointer, bitmapToAdd.pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_AddBitmapToSprite(spriteToAddTo.Pointer, bitmapToAdd.pointer);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CurrentHeight")]
@@ -1769,19 +2000,20 @@ namespace SwinGame
         /// <returns>The height of the sprite's current frame</returns>
         public static int CurrentHeight(Sprite sprite)
         {
+            int temp;
             try
             {
-                int temp = DLL_CurrentHeight(sprite.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                 temp = DLL_CurrentHeight(sprite.Pointer);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CurrentWidth")]
@@ -1793,50 +2025,29 @@ namespace SwinGame
         /// <returns>The width of the sprite's current frame</returns>
         public static int CurrentWidth(Sprite sprite)
         {
+            int temp;
             try
             {
-                int temp = DLL_CurrentWidth(sprite.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                 temp = DLL_CurrentWidth(sprite.Pointer);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprite")]
         private static extern void DLL_DrawSprite(IntPtr spriteToDraw);
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpriteOffset")]
         private static extern void DLL_DrawSpriteOffset(IntPtr spriteToDraw, int xOffset, int yOffset);
-        /// <summary>
-        /// Draws the sprite to the screen within a given view port
-        /// </summary>
-        /// <param name="spriteToDraw">The sprite to be drawn</param>
-        /// <param name="xOffset">X Offset</param>
-        /// <param name="yOffset">Y Offset</param>
-        public static void DrawSprite(Sprite spriteToDraw, int xOffset, int yOffset)
-        {
-            try
-            {
-                DLL_DrawSpriteOffset(spriteToDraw.Pointer, xOffset, yOffset);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-  
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-        }
 
         /// <summary>
-        /// Draws a sprite to the screen, without using a view port
+        /// Draws a sprite to the game screen
         /// </summary>
         /// <param name="spriteToDraw">The sprite to be drawn</param>
         public static void DrawSprite(Sprite spriteToDraw)
@@ -1887,7 +2098,7 @@ namespace SwinGame
         /// Moves a sprite based on the movement vector that is associated
         /// with the sprite.
         /// </summary>
-        /// <param name="spriteToMove">The sprite to move</param>
+        /// <param name="ToMove">The sprite to move</param>
         public static void MoveSprite(Sprite toMove)
         {
             try
@@ -1908,7 +2119,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteTo")]
         private static extern void DLL_MoveSpriteTo(IntPtr spriteToMove, int x, int y);
         /// <summary>
-        /// Moves a sprite to a given x,y location
+        /// Moves a sprite to a given x,y location, x and y are in game 
+        /// coordinates not screen coordinates
         /// </summary>
         /// <param name="spriteToMove">the sprite being moved</param>
         /// <param name="x">the new location of the sprite</param>
@@ -1964,51 +2176,13 @@ namespace SwinGame
             }  
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOffscreenWithViewPort")]
-        private static extern int DLL_IsSpriteOffscreenWithViewPort(IntPtr theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
-        /// <summary>
-        /// Determines if a sprite is off the screen. The view port of the screen
-        ///	is defined in the vwPrt... parameters
-        /// </summary>
-        /// <param name="theSprite">The sprite to check the position of</param>
-        /// <param name="vwPrtX">The x of the current view port (i.e. screen)</param>
-        /// <param name="vwPrtY">The y of the current view port (i.e. screen)</param>
-        /// <param name="vwPrtWidth">The width of the view port</param>
-        /// <param name="vwPrtHeight">The height of the view port</param>
-        /// <returns>True if the sprite is off the screen</returns>
-        public static bool IsSpriteOffscreen(Sprite theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight)
-        {
-            try
-            {
-                if (DLL_IsSpriteOffscreenWithViewPort(theSprite.Pointer, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight) == -1)
-                {
-                    if (Core.ExceptionOccured())
-                    {
-                        throw new SwinGameException(Core.GetExceptionMessage());
-                    }
-                    return true;
-                }
-                else
-                {
-                    if (Core.ExceptionOccured())
-                    {
-                        throw new SwinGameException(Core.GetExceptionMessage());
-                    }
-                    return false;
-                }
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }  
-        }
-
         // Sprite Additions
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiEnding")]
         private static extern IntPtr DLL_CreateSpriteMultiEnding(IntPtr startBitmap, int isMulti, int length, [MarshalAs(UnmanagedType.LPArray)]int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
         /// <summary>
-        /// Creates a new Sprite
+        /// Creates a new Sprite. This version allows you to chose if you want a multi cell bitmap 
+        /// and pick the ending action
         /// </summary>
         /// <param name="startBitmap">Bitmap to add</param>
         /// <param name="isMulti">set to true if the bitmap is a tileset</param>
@@ -2019,26 +2193,26 @@ namespace SwinGame
         /// <returns>A Sprite</returns>
         public static Sprite CreateSprite(Bitmap startBitmap, bool isMulti, int[] framesPerCell, SpriteEndingAction endingAction, int width, int height)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiEnding(startBitmap.pointer, (isMulti ? -1 : 0), framesPerCell.Length, framesPerCell, endingAction, width, height), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMulti")]
         private static extern IntPtr DLL_CreateSpriteMulti(IntPtr startBitmap, int isMulti, int length, [MarshalAs(UnmanagedType.LPArray)] int[] framesPerCell, int width, int height);
         /// <summary>
-        /// Creates a new Sprite
+        /// Creates a new Sprite. This version allows you to chose if you want a multi cell bitmap
         /// </summary>
         /// <param name="startBitmap">Bitmap to add</param>
         /// <param name="isMulti">set to true if the bitmap is a tileset</param>
@@ -2048,26 +2222,26 @@ namespace SwinGame
         /// <returns>A Sprite</returns>
         public static Sprite CreateSprite(Bitmap startBitmap, bool isMulti, int[] framesPerCell, int width, int height)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 result.Pointer = new SwinGamePointer(DLL_CreateSpriteMulti(startBitmap.pointer, (isMulti?-1:0), framesPerCell.Length, framesPerCell, width, height), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteMultiFPC")]
         private static extern IntPtr DLL_CreateSpriteMultiFPC(IntPtr startBitmap, int framesPerCell, int frames, int width, int height);
         /// <summary>
-        /// Creates a Sprite
+        /// Creates a Sprite. This version allows you to pick the frames per cell
         /// </summary>
         /// <param name="startBitmap">StartBitmap</param>
         /// <param name="framesPerCell">Delay each frame</param>
@@ -2077,36 +2251,36 @@ namespace SwinGame
         /// <returns>Sprite</returns>
         public static Sprite CreateSprite(Bitmap startBitmap, int framesPerCell, int frames, int width, int height)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, frames, width, height), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayEnding")]
         private static extern IntPtr DLL_CreateSpriteArrayEnding(int bitmaplength, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] startBitmap, int length, [MarshalAs(UnmanagedType.LPArray)] int[] framesPerCell, int endingAction);
         /// <summary>
-        /// Creates a new Sprite
+        /// Creates a new Sprite. This version allows you to set how many times each frame is drawn
         /// </summary>
         /// <param name="startBitmap">Bitmap to add</param>
-        /// <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
+        /// <param name="framesPerCell">framesPerCell sets how many times each frame is drawn</param>
         /// <param name="endingAction">sets the ending action</param>
         /// <returns>A Sprite</returns>
         public static Sprite CreateSprite(Bitmap[] startBitmap, int[] framesPerCell, SpriteEndingAction endingAction)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 IntPtr[] temp = new IntPtr[startBitmap.Length];
 
                 for (int i = 0; i < startBitmap.Length; i++)
@@ -2115,31 +2289,31 @@ namespace SwinGame
                 }
 
                 result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayEnding(temp.Length, temp, framesPerCell.Length, framesPerCell, (int)endingAction), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArray")]
         private static extern IntPtr DLL_CreateSpriteArray(int bitmaplength, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] startBitmap, int length, [MarshalAs(UnmanagedType.LPArray)] int[] framesPerCell);
         /// <summary>
-        /// Creates a new Sprite
+        /// Creates a new Sprite with an array of bitmaps
         /// </summary>
         /// <param name="startBitmap">Bitmap to add</param>
         /// <param name="framesPerCell">framesPerCell sets howmany times each frame is drawn</param>
         /// <returns>A Sprite</returns>
         public static Sprite CreateSprite(Bitmap[] startBitmap, int[] framesPerCell)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 IntPtr[] temp = new IntPtr[startBitmap.Length];
 
                 for (int i = 0; i < startBitmap.Length; i++)
@@ -2147,22 +2321,22 @@ namespace SwinGame
                     temp[i] = startBitmap[i].pointer;
                 }
                 result.Pointer = new SwinGamePointer(DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateSpriteArrayFPC")]
         private static extern IntPtr DLL_CreateSpriteArrayFPC(int bitmaplength, [MarshalAs(UnmanagedType.LPArray)] IntPtr[] startBitmap, int framesPerCell, int frames);
         /// <summary>
-        /// Creates a Sprite
+        /// Creates a Sprite with an array of bitmaps and the frames per cell
         /// </summary>
         /// <param name="startBitmap">Start Bitmap</param>
         /// <param name="framesPerCell">Delay per Frame</param>
@@ -2170,9 +2344,9 @@ namespace SwinGame
         /// <returns>Sprite</returns>
         public static Sprite CreateSprite(Bitmap[] startBitmap, int framesPerCell, int frames)
         {
+            Sprite result;
             try
             {
-                Sprite result;
                 IntPtr[] temp = new IntPtr[startBitmap.Length];
 
                 for (int i = 0; i < startBitmap.Length; i++)
@@ -2180,22 +2354,22 @@ namespace SwinGame
                     temp[i] = startBitmap[i].pointer;
                 }
                 result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayFPC(temp.Length, temp, framesPerCell, frames), DLL_FreeSprite);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return result;
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return result; 
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSpriteAnimation")]
         private static extern void DLL_UpdateSpriteAnimation(IntPtr sprite);
         /// <summary>
-        /// Updates the Sprites Animation
+        /// Updates the Sprites Animation, this will move to the next frame in the sprite
         /// </summary>
         /// <param name="sprite">The Sprite</param>
         public static void UpdateSpriteAnimation(Sprite sprite)
@@ -2263,7 +2437,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="DrawBitmapPartOnScreen")]
         private static extern void DLL_DrawBitmapPartOnScreen(IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
         /// <summary>
-        /// Draws Part of a Bitmap On Screen
+        /// Draws Part of a Bitmap On Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="bitmapToDraw">Bitmap to Draw</param>
         /// <param name="srcX">Starting X on Bitmap</param>
@@ -2289,10 +2465,40 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Draws Part of a Bitmap On Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="bitmapToDraw">Bitmap to Draw</param>
+        /// <param name="source">The size of the bitmap to draw</param>
+        /// <param name="x">Screen X Position</param>
+        /// <param name="y">Screen Y Position</param>
+        public static void DrawBitmapPartOnScreen(Bitmap bitmapToDraw, Rectangle source, int x, int y)
+        {
+            DrawBitmapPartOnScreen(bitmapToDraw, source.X, source.Y, source.Width, source.Height, x, y);
+        }
+
+        /// <summary>
+        /// Draws Part of a Bitmap On Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="bitmapToDraw">Bitmap to Draw</param>
+        /// <param name="source">The size of the bitmap to draw</param>
+        /// <param name="position">Screen X,Y Position</param>
+        public static void DrawBitmapPartOnScreen(Bitmap bitmapToDraw, Rectangle source,Point2D position)
+        {
+            DrawBitmapPartOnScreen(bitmapToDraw, source.X, source.Y, source.Width, source.Height, (int)position.X, (int)position.Y);
+        }
+
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
         private static extern void DLL_DrawBitmapOnScreen(IntPtr bitmapToDraw, int x, int y);
         /// <summary>
-        /// Draws Part of a Bitmap
+        /// Draws Part of a Bitmap, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="bitmapToDraw">Bitmap to draw</param>
         /// <param name="x">X Position</param>
@@ -2317,7 +2523,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
         private static extern void DLL_DrawPixelOnScreen(int theColor, int x, int y);
         /// <summary>
-        /// Draw a Pixel on the Screen
+        /// Draw a Pixel on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color of Pixel</param>
         /// <param name="x">X Position</param>
@@ -2343,7 +2551,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
         private static extern void DLL_DrawRectangleOnScreen(int theColor, int filled, int x, int y, int width, int height);
         /// <summary>
-        /// Draw a Rectangle on Screen
+        /// Draw a Rectangle on Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="x">X Position</param>
@@ -2369,7 +2579,9 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a Filled Rectangle on the Screen
+        /// Draws a Filled Rectangle on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="x">X Position</param>
@@ -2397,7 +2609,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
         private static extern void DLL_DrawLineOnScreen(int theColor, int x, int y, int x2, int y2);
         /// <summary>
-        /// Draws a Line on the Screen
+        /// Draws a Line on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="xPosStart">X Start Coordinate</param>
@@ -2426,7 +2640,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
         private static extern void DLL_DrawHorizontalLineOnScreen(int theColor, int y, int x1, int x2);
         /// <summary>
-        /// Draw Horizontal Line on Screen
+        /// Draw Horizontal Line on Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="y">Y Position</param>
@@ -2453,7 +2669,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
         private static extern void DLL_DrawVerticalLineOnScreen(int theColor, int x, int y1, int y2);
         /// <summary>
-        /// Draws a Vertical Line on the Screen
+        /// Draws a Vertical Line on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="x">X Position</param>
@@ -2480,7 +2698,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
         private static extern void DLL_DrawCircleOnScreen(int theColor, int filled, int xc, int yc, int radius);
         /// <summary>
-        /// Draws a Circle on the Screen
+        /// Draws a Circle on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="xc">X Center Position</param>
@@ -2505,7 +2725,67 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a Filled Circle On Screen
+        /// Draws a Circle on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color</param>
+        /// <param name="position">The x, y location of the center of the circle</param>
+        /// <param name="radius">Radius</param>
+        public static void DrawCircleOnScreen(Color theColor, Point2D position, int radius)
+        {
+            DrawCircleOnScreen(theColor, (int)position.X, (int)position.Y, radius);
+        }
+
+        /// <summary>
+        /// Draws a Circle on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color</param>
+        /// <param name="filled">If true the circle will be filled</param>
+        /// <param name="xc">X Center Position</param>
+        /// <param name="yc">Y Center Position</param>
+        /// <param name="radius">Radius</param>
+        public static void DrawCircleOnScreen(Color theColor, Boolean filled,  int xc, int yc, int radius)
+        {
+            if (filled)
+            {
+                FillCircleOnScreen(theColor, xc, yc, radius);
+            }
+            else
+            {
+                DrawCircleOnScreen(theColor, xc, yc, radius);
+            }
+        }
+
+
+        /// <summary>
+        /// Draws a Circle on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color</param>
+        /// <param name="filled">If true the circle will be filled</param>
+        /// <param name="position">The x, y location of the center of the circle</param>
+        /// <param name="radius">Radius</param>
+        public static void DrawCircleOnScreen(Color theColor, Boolean filled, Point2D position, int radius)
+        {
+            if (filled)
+            {
+                FillCircleOnScreen(theColor, (int)position.X, (int)position.Y, radius);
+            }
+            else
+            {
+                DrawCircleOnScreen(theColor, (int)position.X, (int)position.Y, radius);
+            }
+        }
+
+
+        /// <summary>
+        /// Draws a Filled Circle On Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="xc">X Center Position</param>
@@ -2533,7 +2813,9 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
         private static extern void DLL_DrawEllipseOnScreen(int theColor, int filled, int x, int y, int width, int height);
         /// <summary>
-        /// Draws an Ellipse on the Screen
+        /// Draws an Ellipse on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="x">X Position</param>
@@ -2559,7 +2841,9 @@ namespace SwinGame
         }
 
         /// <summary>
-        /// Draws a Filled Ellipse On the Screen
+        /// Draws a Filled Ellipse On the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
         /// </summary>
         /// <param name="theColor">Color</param>
         /// <param name="x">X Position</param>
