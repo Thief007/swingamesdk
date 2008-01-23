@@ -79,13 +79,13 @@ interface
 
 	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; x, y: Integer); overload;
 	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: Integer); overload;
-	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
-	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
 
 	procedure DrawText(theText: String; textColor: Colour; theFont: Font; x, y: Single); overload;
 	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y: Single; w, h: Integer); overload;
-	procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+	procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
+	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
 
 	//*****
 	//

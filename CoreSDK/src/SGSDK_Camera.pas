@@ -10,6 +10,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-23: Andrew: Changed ToGameCoordinates to use Point2D
+//								 Added Point2D overload for SetScreenOffset
 // - 2008-01-21: Andrew: Added const to vector parameters.
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
@@ -19,7 +21,7 @@
 unit SGSDK_Camera;
 
 interface
-	uses SGSDK_Core;
+	uses SGSDK_Core, SGSDK_Shapes;
 
 	//*****
 	//
@@ -37,13 +39,15 @@ interface
 	function ScreenY(y: Single): Integer;
 	function GameX(x: Integer) : Single;
 	function GameY(y: Integer) : Single;
-	function ToGameCoordinates(const screenVector: Vector): Vector;
+	function ToGameCoordinates(const screenPoint: Point2D): Point2D; {changed in 1.1}
 		
 	procedure MoveVisualArea(const v: Vector); overload;
 	procedure MoveVisualArea(dx, dy: Single); overload;
-	procedure SetScreenOffset(x, y: Single);
+	procedure SetScreenOffset(x, y: Single); overload;
+	procedure SetScreenOffset(pt: Point2D); overload; {1.1}
 	
-	procedure FollowSprite(spr: Sprite; Xoffset, Yoffset: Integer);
+	procedure FollowSprite(spr: Sprite; Xoffset, Yoffset: Integer); overload;
+	procedure FollowSprite(spr: Sprite; const offset: Vector); overload;
 	
 implementation
 	uses Classes, SysUtils;
@@ -97,17 +101,22 @@ implementation
 		ScreenOffsetY := ScreenOffsetY + dy;
 	end;
 	
-	procedure SetScreenOffset(x, y: Single);
+	procedure SetScreenOffset(x, y: Single); overload;
 	begin
 		ScreenOffsetX := x;
 		ScreenOffsetY := y;
 	end;
-	
-	function ToGameCoordinates(const screenVector: Vector): Vector;
+
+	procedure SetScreenOffset(pt: Point2D); overload;
 	begin
-		result.x := screenVector.x + ScreenOffsetX;
-		result.y := screenVector.y + ScreenOffsetY;
-		result.w := screenVector.w;
+		ScreenOffsetX := pt.x;
+		ScreenOffsetY := pt.y;
+	end;
+	
+	function ToGameCoordinates(const screenPoint: Point2D): Point2D;
+	begin
+		result.x := screenPoint.x + ScreenOffsetX;
+		result.y := screenPoint.y + ScreenOffsetY;
 	end;
 	
 	procedure FollowSprite(spr : Sprite; Xoffset, Yoffset : Integer);
@@ -117,6 +126,11 @@ implementation
 		end;
 		MoveVisualArea(Round(ScreenX(spr.x) + spr.width / 2 - ScreenWidth() / 2) + Xoffset, 
 					   Round(ScreenY(spr.y) + spr.height / 2 - ScreenHeight() / 2) + Yoffset);
+	end;
+	
+	procedure FollowSprite(spr: Sprite; const offset: Vector); overload;
+	begin
+		FollowSprite(spr, Round(offset.x), Round(offset.y));
 	end;
 
 end.

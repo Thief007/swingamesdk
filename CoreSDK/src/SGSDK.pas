@@ -21,6 +21,9 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-01-23: Andrew: ToGameCoordinates - changed to use Point2D
+//					  	Added MoveSpriteItself
+//						Added Shapes code
 //  - 2008-01-22: Andrew: Fixes for version 1.1
 //                Removed PlaySoundEffect, can use PlaySoundEffectLoop
 //						Removed MoveVisualAreaWithVector, can use MoveVisualArea
@@ -1766,6 +1769,14 @@ uses
 		end;
 	end;
 
+	procedure MoveSpriteItself(sprite: Sprite); cdecl; export;
+	begin
+		Try
+			SGSDK_Graphics.MoveSprite(spriteToMove);
+		Except on exc: Exception do TrapException(exc);
+		end;		
+	end;
+
 	procedure MoveSprite(spriteToMove : Sprite; movementVector : Vector); cdecl; export;
 	begin
 		Try
@@ -1937,10 +1948,10 @@ uses
 		result := 0;
 	end;
 	
-	function ToGameCoordinates(screenVector: Vector): Vector; cdecl; export;
+	function ToGameCoordinates(screenPoint: Point2D): Point2D; cdecl; export;
 	begin
 		Try
-			result := SGSDK_Camera.ToGameCoordinates(screenVector);
+			result := SGSDK_Camera.ToGameCoordinates(screenPoint);
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -2077,6 +2088,57 @@ uses
 		end;
 	end;
 	
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					Shapes
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
+	function DistancePointToLine(x, y: Single; line: LineSegment): Single; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Shapes.DistancePointToLine(x, y, line);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;	
+		result := -1;	
+	end;
+	
+	function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Shapes.ClosestPointOnLine(x, y, line);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;	
+		result.x := -1;			
+		result.y := -1;
+	end;
+	
+	function CenterPoint(sprt: Sprite): Point2D; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Shapes.CenterPoint(sprt);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;	
+		result.x := -1;			
+		result.y := -1;		
+	end;
+	
+	function IsPointOnLine(pnt: Point2D; line: LineSegment): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Shapes.IsPointOnLine(pnt, line) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;	
+		result := 0;		
+	end;
+	
+	
+
 {$ifdef UNIX}
 	{$ifndef DARWIN}
 end.
@@ -2298,6 +2360,7 @@ exports
 	CurrentWidth,
 	DrawSprite,
 	DrawSpriteOffset,
+	MoveSpriteItself, {1.0 - missing added 1.1}
 	MoveSprite,
 	MoveSpriteTo,
 	IsSpriteOffscreen,
@@ -2338,6 +2401,17 @@ exports
 	SpriteHasCollidedWithMapTile,
 	WillCollideOnSide,
 	MoveSpriteOutOfTile,
+
+	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+	// 					Shapes
+	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
+	DistancePointToLine, {1.1}
+	ClosestPointOnLine, {1.1}
+	CenterPoint, {1.1}
+	IsPointOnLine, {1.1}
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+

@@ -200,7 +200,7 @@ interface
 			pausedTicks : UInt32;
 			paused : Boolean;
 			started : Boolean;
-		end;
+		end; {1.1}
 		
 		Timer = ^TimerData;
 			
@@ -288,13 +288,13 @@ interface
 	function Sin(angle: Single): Single;
 	function Tan(angle: Single): Single;
 	
-	function CreateTimer() : Timer;
-	procedure FreeTimer(var toFree: Timer);
-	procedure StartTimer(toStart : Timer);
-	procedure StopTimer(toStop : Timer);
-	procedure PauseTimer(toPause : Timer);
-	procedure UnpauseTimer(toUnpause : Timer);
-	function GetTimerTicks(toGet : Timer) : UInt32;
+	function CreateTimer() : Timer; {1.1}
+	procedure FreeTimer(var toFree: Timer); {1.1}
+	procedure StartTimer(toStart : Timer); {1.1}
+	procedure StopTimer(toStop : Timer); {1.1}
+	procedure PauseTimer(toPause : Timer); {1.1}
+	procedure UnpauseTimer(toUnpause : Timer); {1.1}
+	function GetTimerTicks(toGet : Timer) : UInt32; {1.1}
 		
 implementation
 	uses SysUtils, Math, Classes;
