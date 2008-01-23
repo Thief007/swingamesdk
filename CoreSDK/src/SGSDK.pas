@@ -1131,6 +1131,22 @@ uses
 		end;
 	end;
 	
+	procedure CircleCollisionWithLine(p1: Sprite; line: LineSegment); cdecl; export;
+	begin
+		Try
+			SGSDK_Physics.CircleCollisionWithLine(p1, line);
+		Except on exc: Exception do TrapException(exc);
+		end;		
+	end;
+
+	procedure CircularCollision(p1, p2: Sprite); cdecl; export;
+	begin
+		Try
+			SGSDK_Physics.CircularCollision(p1, p2);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+
 	function GetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer): Single; cdecl; export;
 	begin
 		Try
@@ -1158,7 +1174,7 @@ uses
 		end;
 	end;	
 
-	function VectorOutOfCircleFromPoint(pnt, center: Point2D; radius: Single; movement: Vector): Vector;
+	function VectorOutOfCircleFromPoint(pnt, center: Point2D; radius: Single; movement: Vector): Vector; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Physics.VectorOutOfCircleFromPoint(pnt, center, radius, movement);
@@ -1168,7 +1184,7 @@ uses
 		result := CreateVector(0,0);		
 	end;
 	
-	function VectorOutOfCircleFromCircle(pnt: Point2D; radius: Single; center: Point2D; radius2: Single; movement: Vector): Vector;
+	function VectorOutOfCircleFromCircle(pnt: Point2D; radius: Single; center: Point2D; radius2: Single; movement: Vector): Vector; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Physics.VectorOutOfCircleFromCircle(pnt, radius, center, radius2, movement);
@@ -1346,8 +1362,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer);
-		cdecl; export;
+	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
@@ -1364,8 +1379,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: Integer);
-		cdecl; export;
+	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
@@ -2204,7 +2218,7 @@ uses
 		result := 0;		
 	end;
 	
-	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : integer;
+	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : integer; cdecl; export;
 	begin
 		Try
 			if SGSDK_Shapes.GetLineIntersectionPoint(line1, line2, pnt) then result := -1
@@ -2215,7 +2229,7 @@ uses
 		result := 0;
 	end;
 	
-	function LineIntersectsWithLines(target: LineSegment; len: Integer; data: LineSegPtr): integer;
+	function LineIntersectsWithLines(target: LineSegment; len: Integer; data: LineSegPtr): integer; cdecl; export;
 	var
 		arr: LinesArray;
 	begin
@@ -2353,8 +2367,8 @@ exports
 	HasSpriteCollidedY,
 	HasSpriteCollidedWithRect,
 	HaveSpritesCollided,
-	HasSpriteCollidedWithBitmap,
-	HasSpriteCollidedWithBitmapPart,
+	HasSpriteCollidedWithBitmap, {1.1}
+	HasSpriteCollidedWithBitmapPart, {1.1}
 	HaveBitmapsCollided,
 	HaveBitmapPartsCollided,
 {	CreateVector,
@@ -2379,8 +2393,10 @@ exports
 	SetMatrix2DElement,
 	FreeMatrix2D,
 	//GetVectorFromAngle,
-	VectorOutOfCircleFromPoint,
-	VectorOutOfCircleFromCircle,
+	VectorOutOfCircleFromPoint, {1.1}
+	VectorOutOfCircleFromCircle, {1.1}
+	CircleCollisionWithLine, {1.1}
+	CircularCollision, {1.1}
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
