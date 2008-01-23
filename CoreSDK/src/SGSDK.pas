@@ -2050,7 +2050,33 @@ uses
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
-
+	
+	function SpriteHasCollidedWithMapTile(m : Map; spr : Sprite; out collidedX, collidedY : Integer): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, collidedX, collidedY) then result := -1;
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
+	function WillCollideOnSide(m: Map; spr : Sprite): CollisionSide; cdecl; export;
+	begin
+		Try
+			result := SGSDK_MappyLoader.WillCollideOnSide(m, spr);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
+	procedure MoveSpriteOutOfTile(m: Map; spr : Sprite; x, y : Integer); cdecl; export;
+	begin
+		Try
+			SGSDK_Mappyloader.MoveSpriteOutOfTile(m, spr, x, y);
+		Except on exc: Exception do TrapException(exc);
+		end;
+	end;
+	
 {$ifdef UNIX}
 	{$ifndef DARWIN}
 end.
@@ -2308,6 +2334,10 @@ exports
 	EventPositionX,
 	EventPositionY,
 	FreeMap,
+	//v1.1
+	SpriteHasCollidedWithMapTile,
+	WillCollideOnSide,
+	MoveSpriteOutOfTile,
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+

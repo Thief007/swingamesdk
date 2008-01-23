@@ -1,3 +1,25 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					MappyLoader
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The MappyLoader unit contains the Map related SwinGame
+// routines and the Map data type.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-23: Fixed Exceptions
+//               Added changes for 1.1 compatibility
+//               Added extra comments, and fixed code layout and line endings.
+//               Added SwinGamePointer for safer management of pointers.
+//               Added MoveSpriteOutOfTile
+//               Added WillCollideOnSide
+//               Added SpriteHasCollidedWithMapTile (2 overloads)
+// Version 1.0:
+// - Various
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -162,11 +184,13 @@ namespace SwinGame
     }
 
     /// <summary>
-    /// Map Structure
+    /// A Map is a tile based collection of sprites, that form a complete map. Map's can be animated,
+    /// and maps that are animated, animate automatically. Collisions between sprite and maps can also be
+    /// done, so your sprites do not go into collidable areas of the map.
     /// </summary>
     public struct Map
     {
-        internal IntPtr Pointer;
+        internal SwinGamePointer Pointer;
     }
 
     /// <summary>
@@ -176,40 +200,38 @@ namespace SwinGame
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
         private static extern IntPtr DLL_LoadMap([MarshalAs(UnmanagedType.LPStr)]string mapFile, [MarshalAs(UnmanagedType.LPStr)]string imgFile);
-     
-   	  /// <summary>
-        /// Loads a Map
+   	    /// <summary>
+        /// Loads a Map, using mapFile to indicate which map file to load.
         /// </summary>
         /// <param name="mapName">Name of the map</param>
         /// <returns>Map</returns>
         public static Map LoadMap(String mapName)
         {
+            Map temp;
             try
             {
                 string mapFile = Core.GetPathToResource(mapName + ".sga", ResourceKind.MapResource);
-					 string imgFile = Core.GetPathToResource(mapName + ".png", ResourceKind.MapResource);
+			    string imgFile = Core.GetPathToResource(mapName + ".png", ResourceKind.MapResource);
 					
-                Map temp;
-                temp.Pointer = DLL_LoadMap(mapFile, imgFile);
-
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp.Pointer = new SwinGamePointer(DLL_LoadMap(mapFile, imgFile), DLL_FreeMap);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawMap")]
         private static extern void DLL_DrawMap(IntPtr map);
         /// <summary>
-        /// Draws the Map
+        /// Draws the specified Map
         /// </summary>
-        /// <param name="map">Map</param>
+        /// <param name="map">Map to be drawn to the screen</param>
         public static void DrawMap(Map map)
         {
             try
@@ -219,8 +241,7 @@ namespace SwinGame
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }
-  
+            }  
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -230,150 +251,271 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CollisionWithMapVector")]
         private static extern CollisionSide DLL_CollisionWithMapVector(IntPtr map, IntPtr spr, Vector vec);
         /// <summary>
-        /// Checks if a sprite collides with the map, and if so returns the side of the sprite that collided with the map.
+        /// This function checks if the specified sprite has collided with the specified map.
+        /// This function will also move the sprite outside of the map automatically.
+        /// Useful for checking collisions, getting which side the collision has occured on, and for
+        /// moving the sprite out of the collidable areas of the map.
         /// This overload allows you to pass in a vector, which describes the movement of the sprite, if the sprites movement vector has
         /// not been used.
         /// </summary>
-        /// <param name="map">Map</param>
-        /// <param name="spr">Sprite</param>
-        /// <param name="vec">Vector</param>
+        /// <param name="map">Map to be checked for collisions</param>
+        /// <param name="spr">Sprite to be checked for collisions</param>
+        /// <param name="vec">Vector to be used</param>
         /// <returns>Collision Side</returns>
         public static CollisionSide CollisionWithMap(Map map, Sprite spr, Vector vec)
         {
+            CollisionSide temp;
+
             try
             {
-                CollisionSide temp = DLL_CollisionWithMapVector(map.Pointer, spr.Pointer, vec);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_CollisionWithMapVector(map.Pointer, spr.Pointer, vec);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
         
         /// <summary>
-        /// Checks if a sprite collides with the map, and if so returns the side of the sprite that collided with the map
+        /// This function checks if the specified sprite has collided with the specified map.
+        /// This function will also move the sprite outside of the map automatically.
+        /// Useful for checking collisions, getting which side the collision has occured on, and for
+        /// moving the sprite out of the collidable areas of the map.
         /// </summary>
-        /// <param name="map">Map</param>
-        /// <param name="spr">Sprite</param>
+        /// <param name="map">Map to be checked for collisions</param>
+        /// <param name="spr">Sprite to be checked for collisions</param>
         /// <returns>Collision Side</returns>
         public static CollisionSide CollisionWithMap(Map map, Sprite spr)
         {
+            CollisionSide temp;
             try
             {
-                CollisionSide temp = DLL_CollisionWithMapVector(map.Pointer, spr.Pointer, spr.Movement);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_CollisionWithMapVector(map.Pointer, spr.Pointer, spr.Movement);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventCount")]
         private static extern int DLL_EventCount(IntPtr map, Event evnt);
         /// <summary>
-        /// Gets the Number Events of an Event Type on a Map
+        /// This function returns the number of the specified Event type found in the Map specified.
         /// </summary>
-        /// <param name="map">Map</param>
-        /// <param name="evnt">Event Type</param>
-        /// <returns>Number of Events</returns>
+        /// <param name="map">Map to be checked</param>
+        /// <param name="evnt">Event Type to be checked</param>
+        /// <returns>Number of events of Event Type specified</returns>
         public static int EventCount(Map map, Event evnt)
         {
+            int temp;
             try
             {
-                int temp = DLL_EventCount(map.Pointer, evnt);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_EventCount(map.Pointer, evnt);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventPositionX")]
         private static extern int DLL_EventPositionX(IntPtr map, Event evnt, int eventnumber);
         /// <summary>
-        /// Gets the Game X Coordinate of the Event
+        /// Gets the X Coordinate of the Event specified. evnt is the Event Type that is to be searched
+        /// for, and eventnumber is the index of the event, since there can be more then 1 of each Event
+        /// Type.
         /// </summary>
-        /// <param name="map">Map</param>
+        /// <param name="map">Map containing the Event</param>
         /// <param name="evnt">Event Type</param>
         /// <param name="eventnumber">Event Index</param>
         /// <returns>Game X Coordinate</returns>
         public static int EventPositionX(Map map, Event evnt, int eventnumber)
         {
+            int temp;
+
             try
             {
-                int temp = DLL_EventPositionX(map.Pointer, evnt, eventnumber);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_EventPositionX(map.Pointer, evnt, eventnumber);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "EventPositionY")]
         private static extern int DLL_EventPositionY(IntPtr map, Event evnt, int eventnumber);
         /// <summary>
-        /// Gets the Game Y Coordinate of the Event
+        /// Gets the Y Coordinate of the Event specified. evnt is the Event Type that is to be searched
+        /// for, and eventnumber is the index of the event, since there can be more then 1 of each Event
+        /// Type.
         /// </summary>
-        /// <param name="map">Map</param>
+        /// <param name="map">Map containing the event</param>
         /// <param name="evnt">Event Type</param>
         /// <param name="eventnumber">Event Index</param>
         /// <returns>Game Y Coordinate</returns>
         public static int EventPositionY(Map map, Event evnt, int eventnumber)
         {
+            int temp;
+
             try
             {
-                int temp = DLL_EventPositionY(map.Pointer, evnt, eventnumber);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_EventPositionY(map.Pointer, evnt, eventnumber);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
-        private static extern void DLL_FreeMap(IntPtr map);
-
+        private static extern void DLL_FreeMap(ref IntPtr map);
         /// <summary>
         /// Free a loaded map. This ensures that the resources used by the Map are returned to the system.
-		  /// This must be called once you have finished using the Map.
+		/// This must be called once you have finished using the Map.
         /// </summary>
         /// <param name="map">The Map to Free</param>
         public static void FreeMap(Map map)
         {
+            map.Pointer.Free();
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SpriteHasCollidedWithMapTile")]
+        private static extern bool DLL_SpriteHasCollidedWithMapTile(IntPtr map, IntPtr spr, out int collidedX, out int collidedY);
+        /// <summary>
+        /// Checks whether the specified Sprite has collided with a map tile within the specified map.
+        /// If so, this method returns true, else false. This command can be used to determine whether
+        /// a Sprite has collided with the map, but also to find the x and y coordinate of the tile within
+        /// the map it collided with.
+        /// </summary>
+        /// <param name="map">The Map to be checked against for collisions</param>
+        /// <param name="spr">The Sprite to be checked against the map</param>
+        /// <param name="collidedX">The X Coordinate of the Tile that Sprite has collided with</param>
+        /// <param name="collidedY">The Y Coordinate of the Tile that Sprite has collided with</param>
+        /// <returns></returns>
+        public static bool SpriteHasCollidedWithMapTile(Map map, Sprite spr, out int collidedX, out int collidedY)
+        {
+            bool temp;
+
             try
             {
-                DLL_FreeMap(map.Pointer);
+                temp = DLL_SpriteHasCollidedWithMapTile(map.Pointer, spr.Pointer, out collidedX, out collidedY);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
             }
-  
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+        /// <summary>
+        /// Checks whether the specified Sprite has collided with a map tile within the specified map.
+        /// If so, this method returns true, else false. This command can be used to determine whether
+        /// a Sprite has collided with the map.
+        /// </summary>
+        /// <param name="map">The Map to be checked against for collisions</param>
+        /// <param name="spr">The Sprite to be checked against the map</param>
+        /// <returns></returns>
+        public static bool SpriteHasCollidedWithMapTile(Map map, Sprite spr)
+        {
+            bool temp;
+            int collidedX;
+            int collidedY;
+
+            try
+            {
+                temp = DLL_SpriteHasCollidedWithMapTile(map.Pointer, spr.Pointer, out collidedX, out collidedY);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WillCollideOnSide")]
+        private static extern CollisionSide DLL_WillCollideOnSide(IntPtr map, IntPtr spr);
+        /// <summary>
+        /// This function with find which side the Collision between a Sprite and Map has occurred on.
+        /// This can be used to make different choices depending on which side of the Map the Sprite has
+        /// hit.
+        /// </summary>
+        /// <param name="map">The map to be checked against collisions</param>
+        /// <param name="spr">The sprite to be checke against collisions</param>
+        /// <returns></returns>
+        public static CollisionSide WillCollideOnSide(Map map, Sprite spr)
+        {
+            CollisionSide temp;
+
+            try
+            {
+                temp = DLL_WillCollideOnSide(map.Pointer, spr.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteOutOfTile")]
+        private static extern void DLL_MoveSpriteOutOfTile(IntPtr map, IntPtr spr, int x, int y);
+        /// <summary>
+        /// This routine with move a specified sprite out the map's tile that is specified. This routine
+        /// moves the sprite so that is just outside of the tile in question.
+        /// </summary>
+        /// <param name="map">Map containing the tile that is to be checked against</param>
+        /// <param name="spr">Sprite to be moved out</param>
+        /// <param name="x">X Coordinate of the tile</param>
+        /// <param name="y">Y Coordinate of the tile</param>
+        /// <returns></returns>
+        public static void MoveSpriteOutOfTile(Map map, Sprite spr, int x, int y)
+        {
+            try
+            {
+                DLL_MoveSpriteOutOfTile(map.Pointer, spr.Pointer, x, y);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
