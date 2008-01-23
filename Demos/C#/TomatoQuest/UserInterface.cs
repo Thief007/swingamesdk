@@ -113,33 +113,33 @@ namespace TomatoQuest
                     //Check if the user is clicking inside a box, and if so, add the stat point appropriately
                     if (Input.MouseWasClicked(MouseButton.LeftButton))
                     {
-                        if (Input.GetMousePosition().x > 467 && Input.GetMousePosition().x < 487)
+                        if (Input.GetMousePosition().X > 467 && Input.GetMousePosition().X < 487)
                         {
-                            if (Input.GetMousePosition().y > 50 && Input.GetMousePosition().y < 70)
+                            if (Input.GetMousePosition().Y > 50 && Input.GetMousePosition().Y < 70)
                             {
                                 //Add Strength
                                 theCharacter.AddAttribute("Strength");
                             }
 
-                            if (Input.GetMousePosition().y > 70 && Input.GetMousePosition().y < 90)
+                            if (Input.GetMousePosition().Y > 70 && Input.GetMousePosition().Y < 90)
                             {
                                 //Add Vitality
                                 theCharacter.AddAttribute("Vitality");
                             }
 
-                            if (Input.GetMousePosition().y > 90 && Input.GetMousePosition().y < 110)
+                            if (Input.GetMousePosition().Y > 90 && Input.GetMousePosition().Y < 110)
                             {
                                 //Add Agility
                                 theCharacter.AddAttribute("Agility");
                             }
 
-                            if (Input.GetMousePosition().y > 110 && Input.GetMousePosition().y < 130)
+                            if (Input.GetMousePosition().Y > 110 && Input.GetMousePosition().Y < 130)
                             {
                                 //Add Agility
                                 theCharacter.AddAttribute("Intelligence");
                             }
 
-                            if (Input.GetMousePosition().y > 130 && Input.GetMousePosition().y < 150)
+                            if (Input.GetMousePosition().Y > 130 && Input.GetMousePosition().Y < 150)
                             {
                                 //Add Agility
                                 theCharacter.AddAttribute("Luck");

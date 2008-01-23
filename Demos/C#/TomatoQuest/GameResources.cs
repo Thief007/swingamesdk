@@ -114,10 +114,10 @@ namespace GameResources
         {
             Graphics.ClearScreen();
             Core.RefreshScreen();
-            Text.FreeFont(ref _LoadingFont);
-            Graphics.FreeBitmap(ref _Background);
-            Graphics.FreeBitmap(ref _Animation);
-            Audio.FreeSoundEffect(ref _StartSound);
+            Text.FreeFont(_LoadingFont);
+            Graphics.FreeBitmap(_Background);
+            Graphics.FreeBitmap(_Animation);
+            Audio.FreeSoundEffect(_StartSound);
 
             Core.ChangeScreenSize(width, height);
         }
@@ -166,7 +166,7 @@ namespace GameResources
         {
             for (int i = 0; i < _Fonts.Length - 1; i++)
             {
-                Text.FreeFont(ref _Fonts[i]);
+                Text.FreeFont(_Fonts[i]);
                 _FontsStr[i] = String.Empty;
             }
         }
@@ -175,7 +175,7 @@ namespace GameResources
         {
             for (int i = 0; i < _Images.Length - 1; i++)
             {
-                Graphics.FreeBitmap(ref _Images[i]);
+                Graphics.FreeBitmap(_Images[i]);
                 _ImagesStr[i] = String.Empty;
             }
         }
@@ -184,7 +184,7 @@ namespace GameResources
         {
             for (int i = 0; i < _Sounds.Length - 1; i++)
             {
-                Audio.FreeSoundEffect(ref  _Sounds[i]);
+                Audio.FreeSoundEffect(_Sounds[i]);
                 _SoundsStr[i] = String.Empty;
             }
         }
@@ -193,7 +193,7 @@ namespace GameResources
         {
             for (int i = 0; i < _Music.Length - 1; i++)
             {
-                Audio.FreeMusic(ref _Music[i]);
+                Audio.FreeMusic(_Music[i]);
                 _MusicStr[i] = String.Empty;
             }
         }

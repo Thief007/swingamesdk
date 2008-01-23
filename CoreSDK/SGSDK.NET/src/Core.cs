@@ -38,7 +38,8 @@ namespace SwinGame
         {
             Pointer = ptr;
             _ToFree = toFree;
-            _Freed = ptr != IntPtr.Zero;
+            _Freed = (ptr == IntPtr.Zero);
+			if(_Freed) throw new SwinGameException("Unable to create resource...");
         }
 
         public static implicit operator IntPtr(SwinGamePointer p)
@@ -64,7 +65,8 @@ namespace SwinGame
             }
             else
             {
-                throw new SwinGameException("You are attempting to Free a resource multiple times.");
+                Console.WriteLine("You are attempting to Free a resource multiple times.");
+                System.Diagnostics.Debug.WriteLine("You are attempting to Free a resource multiple times.");
             }
         }
 
@@ -78,7 +80,7 @@ namespace SwinGame
     /// </summary>
     public class SwinGameException : Exception
     {
-        internal SwinGameException(string message)
+        public SwinGameException(string message)
             : base(message)
         { }
     }
@@ -810,39 +812,32 @@ namespace SwinGame
             return temp;
         }
 
-        //        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="Cos")]
-        //        private static extern Single DLL_Cos(Single angle);
-
         private const float DEG_TO_RAD = 0.0174532925f;
 
         /// <summary>
         /// Gets the Cos of an angle
         /// </summary>
-        /// <param name="angle">Angle</param>
+        /// <param name="angle">Angle in degrees</param>
         /// <returns>Cos</returns>
         public static Single Cos(Single angle)
         {
             return (float)Math.Cos(angle * DEG_TO_RAD);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Sin")]
-        private static extern Single DLL_Sin(Single angle);
         /// <summary>
         /// Gets the Sin of an angle
         /// </summary>
-        /// <param name="angle">Angle</param>
+        /// <param name="angle">Angle in degrees</param>
         /// <returns>Sin</returns>
         public static Single Sin(Single angle)
         {
             return (float)Math.Sin(angle * DEG_TO_RAD);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Tan")]
-        private static extern Single DLL_Tan(Single angle);
         /// <summary>
         /// Gets the Tan of an angle
         /// </summary>
-        /// <param name="angle">Angle</param>
+        /// <param name="angle">Angle in degrees</param>
         /// <returns>Tan</returns>
         public static Single Tan(Single angle)
         {

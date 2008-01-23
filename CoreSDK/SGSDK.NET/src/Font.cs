@@ -152,7 +152,7 @@ namespace SwinGame
         /// Free a loaded font.
         /// </summary>
         /// <param name="fontToFree">The Font to free</param>
-        public static void FreeFont(ref Font fontToFree)
+        public static void FreeFont(Font fontToFree)
         {
             fontToFree.Pointer.Free();
         }

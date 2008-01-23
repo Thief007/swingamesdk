@@ -47,7 +47,7 @@ namespace SwinGame
 
     public class Shapes
     {
-        internal SGSDKRectangle ToSGSDKRect(Rectangle rect)
+        internal static SGSDKRectangle ToSGSDKRect(Rectangle rect)
         {
             SGSDKRectangle result;
             result.X = rect.X;
@@ -58,7 +58,7 @@ namespace SwinGame
             return result;
         }
 
-        internal Rectangle ToDrawingRect(SGSDKRectangle rect)
+        internal static Rectangle ToDrawingRect(SGSDKRectangle rect)
         {
             return new Rectangle((int)rect.X, (int)rect.Y, rect.Width, rect.Height);
         }
@@ -425,6 +425,110 @@ namespace SwinGame
         {
             Vector temp = Physics.CreateVector(pt2.X - pt1.X, pt2.Y - pt1.Y);
 		    return Physics.Magnitude(temp);
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetLineIntersectionPoint")]
+        private static extern int DLL_GetLineIntersectionPoint(LineSegment line1, LineSegment line2, out Point2D pnt);
+        /// <summary>
+        /// Gets the intersection point of two lines. The point is returned in the 
+        /// out parameter pnt, the function returns true if they intersect, otherwise
+        /// it returns false.
+        /// </summary>
+        /// <param name="line1">line 1</param>
+        /// <param name="line2">line 2</param>
+        /// <param name="pnt">output if they do intersect, in which case it is the intersection point</param>
+        /// <returns>true if the lines intersect</returns>
+        public static bool GetLineIntersectionPoint(LineSegment line1, LineSegment line2, out Point2D pnt)
+        {
+            bool temp;
+            try
+            {
+                temp = DLL_GetLineIntersectionPoint(line1, line2, out pnt) == -1;
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LineIntersectsWithLines")]
+        private static extern int DLL_LineIntersectsWithLines(LineSegment target, int len, [MarshalAs(UnmanagedType.LPArray)]LineSegment[] lines);
+        /// <summary>
+        /// Determines if a target line intersects with ANY of the lines in the array.
+        /// </summary>
+        /// <param name="target">the target line to check againt those in the array</param>
+        /// <param name="lines">the lines to check for intersections with</param>
+        /// <returns>true if the target line intersects with any of the lines in the array</returns>
+        public static bool LineIntersectsWithLines(LineSegment target, LineSegment[] lines)
+        {
+            bool temp;
+            try
+            {
+                temp = DLL_LineIntersectsWithLines(target, lines.Length, lines) == -1;
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        /// <summary>
+        /// Determines if a line intersects with a rectangle. For this to return
+        /// true the line must intersect with one of the borders. A line contained
+        /// wholely within the rectangle will return false.
+        /// </summary>
+        /// <param name="target">the target line to check</param>
+        /// <param name="rect">the rectangle to check for collisions with</param>
+        /// <returns>true if the line intersects with any of the borders of the rectangle</returns>
+        public static bool LineIntersectsWithRect(LineSegment target, Rectangle rect)
+        {
+            return LineIntersectsWithLines(target, LinesFromRect(rect));
+        }
+
+        public static bool PointIsWithinRect(Point2D v, float x, float y, float w, float h)
+        {
+		    if (v.X < x) return false;
+		    else if (v.X > x + w) return false;
+		    else if (v.Y < y) return false;
+		    else if (v.Y > y + h) return false;
+		    else return true;
+        }
+	
+	    public static bool PointIsWithinRect(Point2D v, Rectangle rect)
+        {
+		    return PointIsWithinRect(v, rect.X, rect.Y, rect.Width, rect.Height);		
+        }
+
+	    public static CollisionSide GetSideForCollisionTest(Vector movement)
+        {
+		    if(movement.X < 0) //Going Left...
+		    {
+			    if (movement.Y < 0) return CollisionSide.BottomRight;
+			    else if (movement.Y > 0) return CollisionSide.TopRight;
+			    else return CollisionSide.Right;
+		    }
+		    else if (movement.X > 0) //Going Right
+		    {
+			    if (movement.Y < 0) return CollisionSide.BottomLeft;
+			    else if (movement.Y > 0) return CollisionSide.TopLeft;
+			    else return CollisionSide.Left;			
+		    }
+		    else // Going Up or Down
+		    {
+                if (movement.Y < 0) return CollisionSide.Bottom;
+                else if (movement.Y > 0) return CollisionSide.Top;
+                else return CollisionSide.None;
+		    }
         }
     }
 }

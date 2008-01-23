@@ -111,7 +111,7 @@ then
 		rm "$Output"/*.ppu
 
 		cd $DOTNETlocn
-		xbuild $DOTNETproj
+		xbuild $DOTNETproj > ${BaseDir}/out.log
 
 		cp "$DOTNETbin"/*.dll "$Output"
 

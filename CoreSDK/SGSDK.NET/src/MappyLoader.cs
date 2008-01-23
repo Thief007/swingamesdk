@@ -10,13 +10,13 @@
 // Change History:
 //
 // Version 1.1:
-// - 2008-01-23: Fixed Exceptions
-//               Added changes for 1.1 compatibility
-//               Added extra comments, and fixed code layout and line endings.
-//               Added SwinGamePointer for safer management of pointers.
-//               Added MoveSpriteOutOfTile
-//               Added WillCollideOnSide
-//               Added SpriteHasCollidedWithMapTile (2 overloads)
+// - 2008-01-23: Stephen: Fixed Exceptions
+//                        Added changes for 1.1 compatibility
+//                        Added extra comments, and fixed code layout and line endings.
+//                        Added SwinGamePointer for safer management of pointers.
+//                        Added MoveSpriteOutOfTile
+//                        Added WillCollideOnSide
+//                        Added SpriteHasCollidedWithMapTile (2 overloads)
 // Version 1.0:
 // - Various
 

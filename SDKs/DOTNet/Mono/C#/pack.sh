@@ -97,6 +97,15 @@ echo "<?xml version='1.0' encoding='UTF-8'?>\
 echo "  ... Adding Package Information"
 echo "APPLSWIN" >> "${PRODUCT_NAME}.app/Contents/PkgInfo"
 
+echo "  ... Cleaning up"
+
+rm -rf ../Resources
+rm -f SGSDK.NET.dll
+rm -f libSGSDK.dylib
+rm -f ${EXECUTABLE_NAME}
+rm -f *.XML
+rm -f *.mdb
+
 echo "  Created ${BIN_DIR}/${PRODUCT_NAME}.app"
 echo "  Finished"
 echo "__________________________________________________"
