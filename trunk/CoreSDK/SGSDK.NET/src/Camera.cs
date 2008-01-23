@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					Camera
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -120,7 +120,7 @@ namespace SwinGame
         /// Converts a game y coordinate, to a screen coordinate. This is useful for
         /// determining where a game element is appearing on the screen.
         /// </summary>
-        /// <param name="x">Game y coordinate</param>
+        /// <param name="y">Game y coordinate</param>
         /// <returns>Screen y coordinate that matches the requested game y</returns>
         public static int ScreenY(float y)
         {
@@ -174,7 +174,7 @@ namespace SwinGame
         /// useful for determining what is at a given point on the screen, for example
         /// finding what game coordinate the user has clicked on.
         /// </summary>
-        /// <param name="x">Screen Y coordinate</param>
+        /// <param name="y">Screen Y coordinate</param>
         /// <returns>Game y coordinate that matches the screen coordinate</returns>
         public static float GameY(int y)
         {

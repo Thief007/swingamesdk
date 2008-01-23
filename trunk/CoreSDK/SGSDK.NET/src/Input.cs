@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					Input
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -901,9 +901,11 @@ namespace SwinGame
         /// <returns>returns true if the mouse is shown</returns>
         public static bool IsMouseShown()
         {
+            bool temp;
+
             try
             {
-                return DLL_IsMouseShown() == -1;
+                temp = DLL_IsMouseShown() == -1;
             }
             catch (Exception)
             {
@@ -913,6 +915,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+            return temp;
         }
     }
 }

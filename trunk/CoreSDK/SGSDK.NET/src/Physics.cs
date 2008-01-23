@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					Physics
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -168,19 +168,21 @@ namespace SwinGame
         /// <returns>True if the sprite is within the range requested</returns>
         public static bool HasSpriteCollidedY(Sprite theSprite, int y, CollisionDetectionRange range)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_HasSpriteCollidedY(theSprite.Pointer, y, range);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_HasSpriteCollidedY(theSprite.Pointer, y, range);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithRect")]
@@ -197,19 +199,21 @@ namespace SwinGame
         /// <returns>True if the sprite collides with the rectangle</returns>
         public static bool HasSpriteCollidedWithRect(Sprite theSprite, Single x, Single y, int width, int height)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
         
         /// <summary>
@@ -238,24 +242,25 @@ namespace SwinGame
         /// <returns>True if the sprites have collided.</returns>
         public static bool HaveSpritesCollided(Sprite sprite1, Sprite sprite2)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithBitmap")]
         private static extern int DLL_HasSpriteCollidedWithBitmap(IntPtr sprt, IntPtr bitmap, float x, float y, int bounded);
-
         /// <summary>
         /// Determines if a sprite has collided with a bitmap using pixel level
         ///	collision detection with the bitmap.
@@ -490,17 +495,31 @@ namespace SwinGame
         {
             return CreateVector(x, y, false);  
         }
-
+        /// <summary>
+        /// VectorFromPoints creates the vector from one point to the another point.
+        /// </summary>
+        /// <param name="p1">Point 1</param>
+        /// <param name="p2">Point 2</param>
+        /// <returns>Vector from Point 1 to Point 2</returns>
         public static Vector VectorFromPoints(Point2D p1, Point2D p2)
         {
             return CreateVector(p2.X - p1.X, p2.Y - p1.Y, false);
         }
-
+        /// <summary>
+        /// VectorFromCenterSpriteToPoint creates and returns the vector from centre of the sprite to the point.
+        /// </summary>
+        /// <param name="sprt">Sprite</param>
+        /// <param name="pnt">Point</param>
+        /// <returns>Vector from Sprite to Point</returns>
         public static Vector VectorFromCenterSpriteToPoint(Sprite sprt, Point2D pnt)
         {
             return VectorFromPoints(Shapes.CenterPoint(sprt), pnt);
         }
-
+        /// <summary>
+        /// LineAsVector converts the specified line to a vector.
+        /// </summary>
+        /// <param name="line">Line to convert to Vector</param>
+        /// <returns>Vector representation of the Line</returns>
         public static Vector LineAsVector(LineSegment line)
         {
             return VectorFromPoints(line.StartPoint, line.EndPoint);
@@ -516,7 +535,16 @@ namespace SwinGame
         {
             return CreateVector(magnitude * Core.Cos(angle), magnitude * Core.Sin(angle));
         }
-
+        /// <summary>
+        /// VectorFromPointToRectangle creates and returns the vector from the point to the rectangle.
+        /// </summary>
+        /// <param name="x">X Coordinate of the point</param>
+        /// <param name="y">Y Coordinate of the point</param>
+        /// <param name="rectX">X Coordinate of the Rectangle</param>
+        /// <param name="rectY">Y Coordinate of the Rectangle</param>
+        /// <param name="rectWidth">Width of the Rectangle</param>
+        /// <param name="rectHeight">Height of the Rectangle</param>
+        /// <returns>Vector from Point to Rectangle</returns>
         public static Vector VectorFromPointToRectangle(float x, float y, float rectX, float rectY, int rectWidth, int rectHeight)
 		{
             float px, py;
@@ -531,12 +559,23 @@ namespace SwinGame
 			
 		    return CreateVector(px - x, py - y);
         }
-
+        /// <summary>
+        /// VectorFromPointToRectangle creates and returns the vector from the point to the rectangle.
+        /// </summary>
+        /// <param name="x">X Coordinate of the point to rectangle</param>
+        /// <param name="y">Y Coordinate of the point to rectangle</param>
+        /// <param name="rect">Rectangle to get the vector</param>
+        /// <returns>Vector from point to rectangle</returns>
 	    public static Vector VectorFromPointToRectangle(float x, float y, Rectangle rect)
         {
 		    return VectorFromPointToRectangle(x, y, rect.X, rect.Y, rect.Width, rect.Height);
         }
-	
+	    /// <summary>
+        /// VectorFromPointToRectangle creates and returns the vector from the point to the rectangle.
+	    /// </summary>
+	    /// <param name="pt">Point to get Vector</param>
+	    /// <param name="rect">Rectangle to get Vector</param>
+	    /// <returns>Vector from point to rectangle</returns>
 	    public static Vector VectorFromPointToRectangle(Point2D pt, Rectangle rect)
         {
 		    return VectorFromPointToRectangle(pt.X, pt.Y, rect.X, rect.Y, rect.Width, rect.Height);
@@ -544,7 +583,15 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfCircleFromPoint")]
         private static extern Vector DLL_VectorOutOfCircleFromPoint(Point2D pnt, Point2D center, float radius, Vector movement);
-
+        /// <summary>
+        /// VectorOutOfCircleFromPoint calculates and returns the vector required to push the point out of the circle. 
+        /// You will need to specify the vector of the point when calling this routine.
+        /// </summary>
+        /// <param name="pnt">Point to calculate against</param>
+        /// <param name="center">Center of the Circle</param>
+        /// <param name="radius">Radius of the Cricle</param>
+        /// <param name="movement">Movement of the point</param>
+        /// <returns>Vector required to push the point out of the Circle</returns>
         public static Vector VectorOutOfCircleFromPoint(Point2D pnt, Point2D center, float radius, Vector movement)
         {
             Vector temp;
@@ -565,7 +612,16 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfCircleFromCircle")]
         private static extern Vector DLL_VectorOutOfCircleFromCircle(Point2D pnt, float radius1, Point2D center, float radius2, Vector movement);
-
+        /// <summary>
+        /// VectorOutOfCircleFromCircle calculates and returns the vector required to push the circle out of the another circle. 
+        /// You will need to specify the vector of the moving circle when calling this routine.
+        /// </summary>
+        /// <param name="pnt">Center of the first Circle</param>
+        /// <param name="radius1">Radius of the first Circle</param>
+        /// <param name="center">Center of the second Circle</param>
+        /// <param name="radius2">Radius of the second Circle</param>
+        /// <param name="movement">Movement of the first Circle</param>
+        /// <returns>Vector required to move the Circle outside of the second Circle</returns>
         public static Vector VectorOutOfCircleFromCircle(Point2D pnt, float radius1, Point2D center, float radius2, Vector movement)
         {
             Vector temp;
@@ -583,8 +639,6 @@ namespace SwinGame
             }
             return temp;
         }
-
-
 
         /// <summary>
         /// Adds the Vector v1 and the Vector v2.
@@ -638,7 +692,11 @@ namespace SwinGame
         {
             return (v1.X * v2.X) + (v1.Y * v2.Y);
         }
-
+        /// <summary>
+        /// VectorNormal returns the normal of the specified vector.
+        /// </summary>
+        /// <param name="vect">Vector to get normal from</param>
+        /// <returns>Normal of the Vector specified</returns>
         public static Vector VectorNormal(Vector vect)
         {	
 		    float sqrY, sqrX;
@@ -647,13 +705,15 @@ namespace SwinGame
 		
             return CreateVector( -vect.Y / (float)Math.Sqrt(sqrY + sqrX), vect.X / (float)Math.Sqrt(sqrY + sqrX));
         }	
-
+        /// <summary>
+        /// LineNormal returns the normal of the specified line.
+        /// </summary>
+        /// <param name="line">Line to get the normal from</param>
+        /// <returns>Normal of the Line specified</returns>
 	    public static Vector LineNormal(LineSegment line)
 	    {
 		    return VectorNormal(LineAsVector(line));
 	    }
-
-
 
         /// <summary>
         /// Inverts the vector v. Changes the direction of the vector's x and y.
@@ -768,7 +828,12 @@ namespace SwinGame
                 throw new SwinGameException(exc.Message);
             }  
         }
-
+        /// <summary>
+        /// Calculates the Angle between 2 Points
+        /// </summary>
+        /// <param name="p1">First Point to Calculate Angle</param>
+        /// <param name="p2">Second Point to Calculate Angle</param>
+        /// <returns>Angle Between the 2 Points</returns>
         public static float CalculateAngle(Point2D p1, Point2D p2)
         {
             return CalculateAngle(p1.X, p1.Y, p2.X, p2.Y);
@@ -785,6 +850,12 @@ namespace SwinGame
             return CalculateAngle(Shapes.CenterPoint(sprite1), Shapes.CenterPoint(sprite2));
         }
 
+        /// <summary>
+        /// Calculates the Angle between 2 Vectors
+        /// </summary>
+        /// <param name="v1">Vector 1</param>
+        /// <param name="v2">Vector 2</param>
+        /// <returns>Angle between the 2 Vectors</returns>
         public static float CalculateAngleBetween(Vector v1, Vector v2)
         {
             float result, t1, t2;
@@ -829,32 +900,34 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScaleMatrix")]
         private static extern IntPtr DLL_ScaleMatrix(Single scale);
         /// <summary>
-        /// ScaleMatrix
+        /// ScaleMatrix acquires a new Matrix which can be used to scale Vectors and Matrices
         /// </summary>
         /// <param name="scale">Scale Factor</param>
         /// <returns>Scale Matrix</returns>
         public static Matrix2D ScaleMatrix(Single scale)
         {
+            Matrix2D temp;
+
             try
             {
-                Matrix2D temp = new Matrix2D(DLL_ScaleMatrix(scale));
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = new Matrix2D(DLL_ScaleMatrix(scale));
             }
             catch (Exception e)
             {
                 //if (Core.ExceptionOccured())
                 throw new SwinGameException(e.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RotationMatrix")]
         private static extern IntPtr DLL_RotationMatrix(Single deg);
         /// <summary>
-        /// Rotation Matrix
+        /// Rotation Matrix gets the Matrix that allows you to rotate Vectors and Matrices
         /// </summary>
         /// <param name="deg">Degrees</param>
         /// <returns>Rotation Matrix</returns>
@@ -885,19 +958,21 @@ namespace SwinGame
         /// <returns>The combined Matrixes</returns>
         public static Matrix2D Multiply(Matrix2D m1, Matrix2D m2)
         {
+            Matrix2D temp;
+
             try
             {
-                Matrix2D temp = new Matrix2D(DLL_Multiply(m1, m2));
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = new Matrix2D(DLL_Multiply(m1, m2));
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MultiplyMatrix2DAndVector")]
@@ -910,26 +985,42 @@ namespace SwinGame
         /// <returns>The resulting Matrix2D</returns>
         public static Vector Multiply(Matrix2D m, Vector v)
         {
+            Vector temp;
+
             try
             {
-                Vector temp = DLL_Multiply(m, v);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_Multiply(m, v);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
-
+        /// <summary>
+        /// Calculates the Vector to get from the first Sprite to the second
+        /// </summary>
+        /// <param name="obj">Sprite to start the Vector from</param>
+        /// <param name="dest">Sprite to end the Vector</param>
+        /// <returns>Vector from Sprite 1 to Sprite 2</returns>
         public static Vector CalculateVectorFromTo(Sprite obj, Sprite dest)
         {
             return VectorFromPoints(Shapes.CenterPoint(obj), Shapes.CenterPoint(dest));
         }
-
+        /// <summary>
+        /// VectorIsWithinRect checks if the specified vector ends at the rectangle specified. 
+        /// The routine assumes that the vector starts from 0, 0.
+        /// </summary>
+        /// <param name="v">Vector to check if inside Rectangle</param>
+        /// <param name="x">X Coordinate of the Rectangle</param>
+        /// <param name="y">Y Coordinate of the Rectangle</param>
+        /// <param name="width">Width of the Rectangle</param>
+        /// <param name="height">Height of the Rectangle</param>
+        /// <returns>True if the Vector ends at the rectangle</returns>
         public bool VectorWithinRect(Vector v, float x, float y, int width, int height)
         {
             if (v.X < x) return false;
@@ -966,7 +1057,12 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircleCollisionWithLine")]
         private static extern void DLL_CircleCollisionWithLine(IntPtr spr1, LineSegment line);
-
+        /// <summary>
+        /// CircleCollisionWithLine calculates the after-effect from colliding with the line. 
+        /// It will directly modify the value of the specified sprite's vector.
+        /// </summary>
+        /// <param name="sprt">Sprite</param>
+        /// <param name="line">Line Segment</param>
         public static void CircleCollisionWithLine(Sprite sprt, LineSegment line)
         {
             try
@@ -986,7 +1082,13 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircularCollision")]
         private static extern void DLL_CircularCollision(IntPtr spr1, IntPtr spr2);
-
+        /// <summary>
+        /// CircularCollision is used to calculate an effect from a collision from two circular sprites. 
+        /// It takes their masses and their movement vectors in consideration. 
+        /// The routine will process the energy transfer as well.
+        /// </summary>
+        /// <param name="sprt1">Sprite 1</param>
+        /// <param name="sprt2">Sprite 2</param>
         public static void CircularCollision(Sprite sprt1, Sprite sprt2)
         {
             try

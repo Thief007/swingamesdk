@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					Graphics
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -1887,7 +1887,6 @@ namespace SwinGame
             DrawEllipse(theColor, source.X, source.Y, source.Width, source.Height);
         }
 
-
         /// <summary>
         /// Draws a filled ellipse within a given rectangle on the screen, x and y are in game 
         /// coordinates not screen coordinates
@@ -2098,7 +2097,7 @@ namespace SwinGame
         /// Moves a sprite based on the movement vector that is associated
         /// with the sprite.
         /// </summary>
-        /// <param name="ToMove">The sprite to move</param>
+        /// <param name="toMove">The sprite to move</param>
         public static void MoveSprite(Sprite toMove)
         {
             try
