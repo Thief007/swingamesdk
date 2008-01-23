@@ -1,9 +1,31 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					Graphics
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Graphics unit is responsible for all of the drawing
+// of anything to the screen or other surfaces. The
+// ...OnScreen routines draw directly onto the screen
+// ignoring the camera settings. The standard draw routines
+// draw to the screen using the camera settings. Finally the
+// overloaded drawing methods with a destination Bitmap will
+// draw onto the supplied bitmap.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-23: Andrew: Fixed exceptions
+//               Added changes for 1.1 compatibility
+//               Refactored some methods, to limit routines exposed by DLL
+//               Added extra comments, and fixed code layout and line endings.
+//               Using SwinGamePointer for safer management of pointers.
+// Version 1.0:
+// - Various
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 using System.Drawing;
-using System.IO;
 
 namespace SwinGame
 {
@@ -194,7 +216,8 @@ namespace SwinGame
             DLL_SetSpriteMovement(pointer, movement);
         }
 
-        internal IntPtr Pointer;
+        //internal IntPtr Pointer;
+        internal SwinGamePointer Pointer;
 
         /// <summary>
         /// Array of bitmaps this sprite contains
@@ -439,12 +462,12 @@ namespace SwinGame
             {
                 get
                 {
-                    return GetSpriteMovement(_Data.Pointer).x;
+                    return GetSpriteMovement(_Data.Pointer).X;
                 }
                 set
                 {
                     Vector v = GetSpriteMovement(_Data.Pointer);
-                    v.x = value;
+                    v.X = value;
                     SetSpriteMovement(_Data.Pointer, v);
                 }
             }
@@ -456,12 +479,12 @@ namespace SwinGame
             {
                 get
                 {
-                    return GetSpriteMovement(_Data.Pointer).y;
+                    return GetSpriteMovement(_Data.Pointer).Y;
                 }
                 set
                 {
                     Vector v = GetSpriteMovement(_Data.Pointer);
-                    v.y = value;
+                    v.Y = value;
                     SetSpriteMovement(_Data.Pointer, v);
                 }
             }
@@ -628,13 +651,13 @@ namespace SwinGame
         /// </summary>
         /// <param name="pathToBitmap">Path to the image file</param>
         /// <returns>New bitmap</returns>
-        public static Bitmap LoadBitmap(String pathToBitmap)
+        public static Bitmap LoadBitmap(string pathToBitmap)
         {
             try
             {
                 Bitmap result;
                 int color = Color.Black.ToArgb();
-                result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color);
+                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color), DLL_FreeBitmap);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -659,7 +682,7 @@ namespace SwinGame
             {
                 Bitmap result;
                 int color = transparentColor.ToArgb();
-                result.pointer = DLL_LoadBitmapWithTransparentColor(pathToBitmap, (transparent?-1:0), (uint)color);
+                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, (transparent?-1:0), (uint)color), DLL_FreeBitmap);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -686,7 +709,7 @@ namespace SwinGame
             {
                 Bitmap result;
                 int color = transparentColor.ToArgb();
-                result.pointer = DLL_LoadTransparentBitmap(pathToBitmap, (uint)color);
+                result.pointer = new SwinGamePointer(DLL_LoadTransparentBitmap(pathToBitmap, (uint)color), DLL_FreeBitmap);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -706,21 +729,9 @@ namespace SwinGame
         /// Free the specified bitmap
         /// </summary>
         /// <param name="bitmapToFree">Bitmap to free</param>
-        public static void FreeBitmap(ref Bitmap bitmapToFree)
+        public static void FreeBitmap(Bitmap bitmapToFree)
         {
-            try
-            {
-                DLL_FreeBitmap(ref bitmapToFree.pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-  
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            bitmapToFree.pointer.Free();
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapWidth")]
@@ -1696,7 +1707,7 @@ namespace SwinGame
             try
             {
                 Sprite result;
-                result.Pointer = DLL_CreateSprite(startBitmap.pointer);
+                result.Pointer = new SwinGamePointer(DLL_CreateSprite(startBitmap.pointer), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -1710,7 +1721,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
-        private static extern IntPtr DLL_FreeSprite(ref IntPtr spriteToFree);
+        private static extern void DLL_FreeSprite(ref IntPtr spriteToFree);
         /// <summary>
         /// Frees a sprite, this does not free the sprite's bitmaps, which allows
         ///	bitmaps to be shared between sprites. All created sprites need to be
@@ -1719,19 +1730,7 @@ namespace SwinGame
         /// <param name="spriteToFree">the sprite to free</param>
         public static void FreeSprite(ref Sprite spriteToFree)
         {
-            try
-            {
-                DLL_FreeSprite(ref spriteToFree.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-  
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            spriteToFree.Pointer.Free();
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "AddBitmapToSprite")]
@@ -1881,6 +1880,31 @@ namespace SwinGame
             }
         }
 
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteItself")]
+        private static extern void DLL_MoveSpriteItself(IntPtr spriteToMove);
+
+        /// <summary>
+        /// Moves a sprite based on the movement vector that is associated
+        /// with the sprite.
+        /// </summary>
+        /// <param name="spriteToMove">The sprite to move</param>
+        public static void MoveSprite(Sprite toMove)
+        {
+            try
+            {
+                DLL_MoveSpriteItself(toMove.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveSpriteTo")]
         private static extern void DLL_MoveSpriteTo(IntPtr spriteToMove, int x, int y);
         /// <summary>
@@ -1998,7 +2022,7 @@ namespace SwinGame
             try
             {
                 Sprite result;
-                result.Pointer = DLL_CreateSpriteMultiEnding(startBitmap.pointer, (isMulti ? -1 : 0) , framesPerCell.Length, framesPerCell, endingAction, width, height);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiEnding(startBitmap.pointer, (isMulti ? -1 : 0), framesPerCell.Length, framesPerCell, endingAction, width, height), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2027,7 +2051,7 @@ namespace SwinGame
             try
             {
                 Sprite result;
-                result.Pointer = DLL_CreateSpriteMulti(startBitmap.pointer, (isMulti?-1:0), framesPerCell.Length, framesPerCell, width, height);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMulti(startBitmap.pointer, (isMulti?-1:0), framesPerCell.Length, framesPerCell, width, height), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2056,7 +2080,7 @@ namespace SwinGame
             try
             {
                 Sprite result;
-                result.Pointer = DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, frames, width, height);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, frames, width, height), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2090,7 +2114,7 @@ namespace SwinGame
                     temp[i] = startBitmap[i].pointer;
                 }
 
-                result.Pointer = DLL_CreateSpriteArrayEnding(temp.Length, temp, framesPerCell.Length, framesPerCell, (int)endingAction);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayEnding(temp.Length, temp, framesPerCell.Length, framesPerCell, (int)endingAction), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2122,7 +2146,7 @@ namespace SwinGame
                 {
                     temp[i] = startBitmap[i].pointer;
                 }
-                result.Pointer = DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
@@ -2155,7 +2179,7 @@ namespace SwinGame
                 {
                     temp[i] = startBitmap[i].pointer;
                 }
-                result.Pointer = DLL_CreateSpriteArrayFPC(temp.Length, temp, framesPerCell, frames);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayFPC(temp.Length, temp, framesPerCell, frames), DLL_FreeSprite);
                 if (Core.ExceptionOccured())
                 {
                     throw new SwinGameException(Core.GetExceptionMessage());
