@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					Audio
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -22,10 +22,19 @@ using System.Drawing;
 
 namespace SwinGame
 {
+    /// <summary>
+    /// The Point is a data type that holds an X and Y Coordinate.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct Point2D
     {
+        /// <summary>
+        /// X Coordinate of the Point
+        /// </summary>
         public float X;
+        /// <summary>
+        /// Y Coordinate of the Point
+        /// </summary>
         public float Y;
     }
 
@@ -38,13 +47,26 @@ namespace SwinGame
         public int Height;
     }
 
+    /// <summary>
+    /// LineSegments are a data type that holds 2 Points, the Start and Ending Points of a Line
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     public struct LineSegment
     {
+        /// <summary>
+        /// Start Point of the Line Segment
+        /// </summary>
         public Point2D StartPoint;
+        /// <summary>
+        /// End Point of the Line Segment
+        /// </summary>
         public Point2D EndPoint;
     }
 
+    /// <summary>
+    /// The Shapes class contains all the routines, that deal with Shapes such as Rectangles, Circles
+    /// Lines etc.
+    /// </summary>
     public class Shapes
     {
         internal static SGSDKRectangle ToSGSDKRect(Rectangle rect)
@@ -137,7 +159,7 @@ namespace SwinGame
         /// <summary>
         /// Returns the closest point on a line to another point (x, y). 
         /// </summary>
-        /// <param name="pnt">The point to check from</param>
+        /// <param name="fromPt">The point to check from</param>
         /// <param name="line">the line to find the closest point on</param>
         /// <returns>the point on the line closest to the specified point (x,y)</returns>
         public static Point2D ClosestPointOnLine(Point2D fromPt, LineSegment line)
@@ -495,6 +517,15 @@ namespace SwinGame
             return LineIntersectsWithLines(target, LinesFromRect(rect));
         }
 
+        /// <summary>
+        /// Returns true if the Point is within the Rectangle specified
+        /// </summary>
+        /// <param name="v">Point</param>
+        /// <param name="x">X Coordinate of the Rectangle</param>
+        /// <param name="y">Y Coordinate of the Rectangle</param>
+        /// <param name="w">Width of the Rectangle</param>
+        /// <param name="h">Height of the Rectangle</param>
+        /// <returns>True if the Point is within the Rectangle</returns>
         public static bool PointIsWithinRect(Point2D v, float x, float y, float w, float h)
         {
 		    if (v.X < x) return false;
@@ -503,12 +534,22 @@ namespace SwinGame
 		    else if (v.Y > y + h) return false;
 		    else return true;
         }
-	
+	    /// <summary>
+        /// Returns true if the Point is within the Rectangle specified
+	    /// </summary>
+	    /// <param name="v">Point</param>
+	    /// <param name="rect">Rectangle</param>
+	    /// <returns>Returns true if the Point is within the Rectangle</returns>
 	    public static bool PointIsWithinRect(Point2D v, Rectangle rect)
         {
 		    return PointIsWithinRect(v, rect.X, rect.Y, rect.Width, rect.Height);		
         }
 
+        /// <summary>
+        /// Gets the Side of the other Object (e.g. Wall), that a Vector would collide with.
+        /// </summary>
+        /// <param name="movement">Vector to use in the Collision Side Test</param>
+        /// <returns>Side of the Collision of the Object</returns>
 	    public static CollisionSide GetSideForCollisionTest(Vector movement)
         {
 		    if(movement.X < 0) //Going Left...

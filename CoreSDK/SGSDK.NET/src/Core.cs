@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					Core
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -80,6 +80,10 @@ namespace SwinGame
     /// </summary>
     public class SwinGameException : Exception
     {
+        /// <summary>
+        /// SwinGameExceptions
+        /// </summary>
+        /// <param name="message">Exception Message</param>
         public SwinGameException(string message)
             : base(message)
         { }
