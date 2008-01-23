@@ -76,6 +76,14 @@ uses SGSDK_Core;
 	function Intersection(const rect1, rect2: Rectangle): Rectangle;
 	
 	function DistanceBetween(const pt1, pt2: Point2D): Single;
+	
+	function GetLineIntersectionPoint(const line1, line2: LineSegment; out pnt: Point2D) : boolean;
+	function LineIntersectsWithLines(const target: LineSegment; const lines: LinesArray): boolean;
+	function LineIntersectsWithRect(const line: LineSegment; const rect: Rectangle): boolean;
+
+	function PointIsWithinRect(const v: Point2D; x, y, w, h: Single): Boolean; overload;
+	function PointIsWithinRect(const v: Point2D; const rect: Rectangle): Boolean; overload;
+
 implementation
 	uses math, sysutils, classes, SGSDK_Graphics, SGSDK_Physics;
 
@@ -364,4 +372,72 @@ implementation
 		result := Magnitude(temp);
 	end;
 
+	function GetLineIntersectionPoint(const line1, line2: LineSegment; out pnt: Point2D) : boolean;
+	var
+		// convert lines to the eqn
+		// c = ax + by
+		a1, b1, c1: Single;
+		a2, b2, c2: Single;
+		det: Single;
+	begin
+		pnt.x := 0; pnt.y := 0;
+		
+		//Convert lines to eqn c = ax + by
+		a1 := line1.endPoint.y - line1.startPoint.y; //y12 - y11;
+		b1 := line1.startPoint.x - line1.endPoint.x; //x11 - x12;
+		c1 := a1 * line1.startPoint.x + b1 * line1.startPoint.y; //a1 * x11 + b1 * y11;
+
+		a2 := line2.endPoint.y - line2.startPoint.y; //y22 - y21;
+		b2 := line2.startPoint.x - line2.endPoint.x; //x21 - x22;
+		c2 := a2 * line2.startPoint.x + b2 * line2.startPoint.y; //a2 * x21 + b2 * y21;
+		
+		det := (a1 * b2) - (a2 * b1);
+		
+		if det = 0 then result := false
+		else
+		begin
+			pnt.x := (b2*c1 - b1*c2) / det;
+	        pnt.y := (a1*c2 - a2*c1) / det;
+			result := true;
+		end;		
+	end;
+
+	function LineIntersectsWithLines(const target: LineSegment; const lines: LinesArray): boolean;
+	var
+		i: Integer;
+		pnt: Point2D;
+	begin
+		for i := 0 to High(lines) do
+		begin			
+			if GetLineIntersectionPoint(target, lines[i], pnt) and IsPointOnLine(pnt, lines[i]) then
+			begin
+				result := true;
+				exit;
+			end;
+		end;
+		
+		result := false;
+	end;
+	
+	function LineIntersectsWithRect(const line: LineSegment; const rect: Rectangle): boolean;
+	var
+		lines: LinesArray;
+	begin
+		lines := LinesFromRect(rect);
+		result := LineIntersectsWithLines(line, lines);
+	end;
+	
+	function PointIsWithinRect(const v: Point2D; x, y, w, h: Single): Boolean; overload;
+	begin
+		if v.x < x then result := false
+		else if v.x > x + w then result := false
+		else if v.y < y then result := false
+		else if v.y > y + h then result := false
+		else result := true;
+	end;
+	
+	function PointIsWithinRect(const v: Point2D; const rect: Rectangle): Boolean; overload;
+	begin
+		result := PointIsWithinRect(v, rect.x, rect.y, rect.width, rect.height);		
+	end;
 end.

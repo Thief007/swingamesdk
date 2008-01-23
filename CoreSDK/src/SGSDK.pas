@@ -24,6 +24,7 @@
 //  - 2008-01-23: Andrew: ToGameCoordinates - changed to use Point2D
 //					  	Added MoveSpriteItself
 //						Added Shapes code
+//						Removed lots of Vector functions
 //  - 2008-01-22: Andrew: Fixes for version 1.1
 //                Removed PlaySoundEffect, can use PlaySoundEffectLoop
 //						Removed MoveVisualAreaWithVector, can use MoveVisualArea
@@ -51,6 +52,7 @@ uses
 		//BitmapPtr used to receive Bitmap arrays
 		BitmapPtr = ^Bitmap;
 		Matrix2DPtr = ^Matrix2D;
+		LineSegPtr = ^LineSegment;
 
 		IntArray = Array of Integer;
 		BitmapArray = Array of Bitmap;
@@ -79,6 +81,20 @@ uses
 	end;
 	
 	procedure PopulateBitmapArray(data: BitmapPtr; len: Integer; out arr: BitmapArray);
+	var
+		i: Integer;
+	begin
+		if len < 0 then raise Exception.Create('Length of array cannot be negative');
+
+		SetLength(arr, len);
+
+		for i := 0 to len - 1 do
+		begin
+			arr[i] := (data + i)^;
+		end;
+	end;
+
+	procedure PopulateLineSegmentArray(data: LineSegPtr; len: Integer; out arr: LinesArray);
 	var
 		i: Integer;
 	begin
@@ -865,11 +881,30 @@ uses
 		end;
 		result := 0;
 	end;
-
-	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer;
-		bounded1: Integer; image2: Bitmap;
-		x2, y2: Integer; bounded2: Integer)
-		: Integer; cdecl; export;
+	
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: Integer): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded = -1) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;		
+	end;
+	
+	function HasSpriteCollidedWithBitmapPart(theSprite: Sprite; theBitmap: Bitmap; pt: Point2D; src: Rectangle; bounded: Integer): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, pt, src, bounded = -1) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;		
+	end;
+	
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; bounded1: Integer; image2: Bitmap; x2, y2: Integer; bounded2: Integer): Integer; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1 = -1, image2, x2, y2, bounded2 = -1) then result := -1
@@ -879,8 +914,19 @@ uses
 		end;
 		result := 0;
 	end;
+	
+	function HaveBitmapPartsCollided(image1: Bitmap; pt1: Point2D; src1: Rectangle; bounded1: Integer; image2: Bitmap; pt2: Point2D; src2: Rectangle; bounded2: Integer): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.HaveBitmapsCollided(image1, pt1, src1, bounded1 = -1, image2, pt2, src2, bounded2 = -1) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
 
-	function CreateVector(x,y : Single; invertY : Integer): Vector;  cdecl; export;
+{	function CreateVector(x,y : Single; invertY : Integer): Vector;  cdecl; export;
 	begin
 		Try
 			result :=SGSDK_Physics.CreateVector(x, y, invertY = -1);
@@ -919,7 +965,7 @@ uses
 		end;
 		result.x := 0; result.y := 0;
 	end;
-
+}
 	function LimitMagnitude(theVector: Vector; maxMagnitude: Single): Vector; cdecl; export;
 	begin
 		Try
@@ -940,7 +986,7 @@ uses
 		result.x := 0; result.y := 0;
 	end;
 
-	function IsZeroVector(theVector : Vector): Integer; cdecl; export;
+{	function IsZeroVector(theVector : Vector): Integer; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.IsZeroVector(theVector) then result := -1
@@ -980,8 +1026,8 @@ uses
 		end;
 		result.x := 0; result.y := 0;
 	end;
-
- 	function CalculateAngleNumber(x1, y1, x2, y2: Single): Single;  cdecl; export;
+}
+ 	function CalculateAngle(x1, y1, x2, y2: Single): Single;  cdecl; export;
 	begin
 		Try
 			result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
@@ -991,7 +1037,7 @@ uses
 		result := -1;
 	end;
 	
-	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  cdecl; export;
+{	function CalculateAngleSprite(sprite1, sprite2: Sprite): Single;  cdecl; export;
 	begin
 		Try
 			result :=SGSDK_Physics.CalculateAngle(sprite1, sprite2);
@@ -1010,7 +1056,7 @@ uses
 		end;
 		result.x := 0; result.y := 0;
 	end;
-
+}
 	function TranslationMatrix(dx, dy: Single): Matrix2DPtr; cdecl; export;
 	var
 		p: Matrix2DPtr;
@@ -1111,6 +1157,27 @@ uses
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;	
+
+	function VectorOutOfCircleFromPoint(pnt, center: Point2D; radius: Single; movement: Vector): Vector;
+	begin
+		Try
+			result := SGSDK_Physics.VectorOutOfCircleFromPoint(pnt, center, radius, movement);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := CreateVector(0,0);		
+	end;
+	
+	function VectorOutOfCircleFromCircle(pnt: Point2D; radius: Single; center: Point2D; radius2: Single; movement: Vector): Vector;
+	begin
+		Try
+			result := SGSDK_Physics.VectorOutOfCircleFromCircle(pnt, radius, center, radius2, movement);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := CreateVector(0,0);				
+	end;
+
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2137,7 +2204,31 @@ uses
 		result := 0;		
 	end;
 	
+	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : integer;
+	begin
+		Try
+			if SGSDK_Shapes.GetLineIntersectionPoint(line1, line2, pnt) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;	
+		result := 0;
+	end;
 	
+	function LineIntersectsWithLines(target: LineSegment; len: Integer; data: LineSegPtr): integer;
+	var
+		arr: LinesArray;
+	begin
+		Try
+			PopulateLineSegmentArray(data, len, arr);
+			
+			if SGSDK_Shapes.LineIntersectsWithLines(target, arr) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;	
+		result := 0;
+	end;
 
 {$ifdef UNIX}
 	{$ifndef DARWIN}
@@ -2262,19 +2353,22 @@ exports
 	HasSpriteCollidedY,
 	HasSpriteCollidedWithRect,
 	HaveSpritesCollided,
+	HasSpriteCollidedWithBitmap,
+	HasSpriteCollidedWithBitmapPart,
 	HaveBitmapsCollided,
-	CreateVector,
+	HaveBitmapPartsCollided,
+{	CreateVector,
 	AddVectors,
 	SubtractVectors,
-	InvertVector,
+	InvertVector,}
 	LimitMagnitude,
 	GetUnitVector,
-	IsZeroVector,
-	Magnitude,
-	DotProduct,
-	MultiplyVector,
-	CalculateAngleNumber,
-	CalculateAngleSprite,
+	//IsZeroVector,
+	//Magnitude,
+	//DotProduct,
+	//MultiplyVector,
+	CalculateAngle,
+	//CalculateAngleSprite,
 	TranslationMatrix,
 	ScaleMatrix,
 	RotationMatrix,
@@ -2284,7 +2378,9 @@ exports
 	GetMatrix2DElement,
 	SetMatrix2DElement,
 	FreeMatrix2D,
-	GetVectorFromAngle,
+	//GetVectorFromAngle,
+	VectorOutOfCircleFromPoint,
+	VectorOutOfCircleFromCircle,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2412,6 +2508,9 @@ exports
 	ClosestPointOnLine, {1.1}
 	CenterPoint, {1.1}
 	IsPointOnLine, {1.1}
+	GetLineIntersectionPoint, {1.1}
+	LineIntersectsWithLines, {1.1}
+	
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
