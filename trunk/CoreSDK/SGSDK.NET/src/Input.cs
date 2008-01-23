@@ -649,7 +649,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="StartReadingText")]
-        private static extern void DLL_StartReadingText(uint color, int maxLength, Font theFont, int x, int y);
+        private static extern void DLL_StartReadingText(uint color, int maxLength, IntPtr theFont, int x, int y);
         /// <summary>
         ///  /// StartReadingText start the API reading a string values from the user.
         ///	Entry is completed when the user presses enter, and aborted with escape.
@@ -667,7 +667,7 @@ namespace SwinGame
             try
             {
                 int color = toColour.ToArgb();
-                DLL_StartReadingText((uint)color, maxLength, theFont, x, y);
+                DLL_StartReadingText((uint)color, maxLength, theFont.Pointer, x, y);
             }
             catch (Exception exc)
             {
@@ -710,6 +710,7 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII")]
         private static extern String DLL_TextReadAsASCII();
+
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
         ///	user as ASCII. See TextReasAsUNICODE, StartReadingText and IsReadingText
