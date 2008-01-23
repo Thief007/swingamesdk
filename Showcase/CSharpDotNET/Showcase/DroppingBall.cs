@@ -44,13 +44,13 @@ namespace SGSDK_Showcase
                     AirResistanceV = Physics.Multiply(Rotate, AirResistanceV);
                     falling = true;
                 }
-                if ((ball1.Movement.X < (Single)0.0) && (AirResistanceH.x < (Single)0.0))
+                if ((ball1.Movement.X < (Single)0.0) && (AirResistanceH.X < (Single)0.0))
                 {
                     //AirResistanceH = Physics.Multiply(Rotate, ref AirResistanceH);
                     AirResistanceH = Physics.InvertVector(AirResistanceH);
                     
                 }
-                if ((ball1.Movement.X > (Single)0.0) && (AirResistanceH.x > (Single)0.0))
+                if ((ball1.Movement.X > (Single)0.0) && (AirResistanceH.X > (Single)0.0))
                 {
                     //AirResistanceH = Physics.Multiply(Rotate, ref AirResistanceH);
                     AirResistanceH = Physics.InvertVector(AirResistanceH);

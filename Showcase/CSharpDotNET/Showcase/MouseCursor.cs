@@ -13,23 +13,22 @@ namespace SGSDK_Showcase
     public static class MouseCursor
     {                    
         private static Sprite ball = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
-        private static Vector position;
+        private static Point2D position;
 
         public static void Run()
         {
 
             do
             {
-
                 position = Input.GetMousePosition();
 
-                Graphics.DrawHorizontalLine(Color.White, (int)position.y, 0, 800);
-                Graphics.DrawVerticalLine(Color.White, (int)position.x, 0, 600);
+                Graphics.DrawHorizontalLine(Color.White, (int)position.Y, 0, 800);
+                Graphics.DrawVerticalLine(Color.White, (int)position.X, 0, 600);
 
                 if (Input.MouseWasClicked(MouseButton.LeftButton))
                 {
-                    ball.xPos = position.x - (Graphics.CurrentWidth(ball) / 2);
-                    ball.yPos = position.y - (Graphics.CurrentHeight(ball) / 2);
+                    ball.xPos = position.X - (Graphics.CurrentWidth(ball) / 2);
+                    ball.yPos = position.Y - (Graphics.CurrentHeight(ball) / 2);
                     Graphics.DrawSprite(ball);
                 }
 
