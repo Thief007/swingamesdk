@@ -158,19 +158,15 @@ interface
 	
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
 
-	function VectorWithinRect(const v: Vector; x, y, w, h: Single): Boolean;
-	
-	function GetLineIntersectionPoint(const line1, line2: LineSegment; out pnt: Point2D) : boolean;
-	function LineIntersectsWithLines(const target: LineSegment; const lines: LinesArray): boolean;
-	function LineIntersectsWithRect(const line: LineSegment; const rect: Rectangle): boolean;
+	function VectorIsWithinRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
+	function VectorIsWithinRect(const v: Vector; const rect: Rectangle): Boolean; overload;
 	
 	function GetSideForCollisionTest(const movement: Vector): CollisionSide;
 	
 	procedure VectorCollision(p1, p2: Sprite);
 	procedure CircleCollisionWithLine(p1: Sprite; const line: LineSegment);
 	procedure CircularCollision(p1, p2: Sprite);
-
-			
+		
 implementation
 	uses
 		SysUtils, Math, Classes;
@@ -206,13 +202,8 @@ implementation
 	end;
 	
 	function VectorFromCenterSpriteToPoint(fromSprt: Sprite; const pnt: Point2D): Vector;
-	var
-		cx, cy: Single;
 	begin
-		cx := fromSprt.x + CurrentWidth(fromSprt) / 2;
-		cy := fromSprt.y + CurrentHeight(fromSprt) / 2;
-		
-		result := CreateVector(pnt.x - cx, pnt.y - cy, false);		
+		result := VectorFromPoints(CenterPoint(fromSprt), pnt);		
 	end;
 
 	/// Adds v1 and v2.
@@ -279,7 +270,7 @@ implementation
 		if vectorMagnitude = 0 then
 			temp := 0
 		else
-			temp := 1 / Magnitude(theVector);
+			temp := 1 / vectorMagnitude; //Magnitude(theVector);
 
 		result.x := temp * theVector.x;
 		result.y := temp * theVector.y;
@@ -984,12 +975,12 @@ implementation
 	end;
 	
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
-	var
+{	var
 		destWdiv2, destHdiv2: Integer;
 		objWdiv2, objHdiv2: Integer;
-		v, pc, wc: Vector;
+		v, pc, wc: Vector;}
 	begin
-		objWdiv2 := CurrentWidth(obj) div 2;
+{		objWdiv2 := CurrentWidth(obj) div 2;
 		objHdiv2 := CurrentHeight(obj) div 2;
 											
 		destWdiv2 := CurrentWidth(dest) div 2;
@@ -998,13 +989,15 @@ implementation
 		pc := CreateVector(obj.x + objWdiv2, obj.y + objHdiv2);
 		wc := CreateVector(dest.x + destWdiv2, dest.y + destHdiv2);
 		v := SubtractVectors(wc, pc);
-		
+}		
 		{WriteLn('xy: ', x:4:2, ',', y:4:2);
 		WriteLn('pc: ', pc.x:4:2, ',', pc.y:4:2, ' - ', objWdiv2, ',', objHdiv2);
 		WriteLn('wc: ', wc.x:4:2, ',', wc.y:4:2, ' - ', destWdiv2, ',', destHdiv2);	
 		WriteLn('v : ', v.x:4:2, ',', v.y:4:2);}
 		
-		result := v;		
+//		result := v;		
+		
+		result := VectorFromPoints(CenterPoint(obj), CenterPoint(dest));
 	end;
 	
 	/// Create a vector from the angle and the magnitude.
@@ -1017,7 +1010,7 @@ implementation
 	end;
 	
 	/// Does the vector end within the rectangle
-	function VectorWithinRect(const v: Vector; x, y, w, h: Single): Boolean;
+	function VectorIsWithinRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
 	begin
 		if v.x < x then result := false
 		else if v.x > x + w then result := false
@@ -1026,6 +1019,11 @@ implementation
 		else result := true;
 	end;
 	
+	function VectorIsWithinRect(const v: Vector; const rect: Rectangle): Boolean; overload;
+	begin
+		result := VectorIsWithinRect(v, rect.x, rect.y, rect.width, rect.height);
+	end;
+		
 	//You need to test for collisions on the ...
 	function GetSideForCollisionTest (const movement: Vector): CollisionSide;
 	begin
@@ -1262,61 +1260,6 @@ implementation
 									(RectangleRight(destRect) < RectangleLeft(targetRect))	then result := CreateVector(0,0);
 		end		
 	end;
-
-	function GetLineIntersectionPoint(const line1, line2: LineSegment; out pnt: Point2D) : boolean;
-	var
-		// convert lines to the eqn
-		// c = ax + by
-		a1, b1, c1: Single;
-		a2, b2, c2: Single;
-		det: Single;
-	begin
-		pnt.x := 0; pnt.y := 0;
-		
-		//Convert lines to eqn c = ax + by
-		a1 := line1.endPoint.y - line1.startPoint.y; //y12 - y11;
-		b1 := line1.startPoint.x - line1.endPoint.x; //x11 - x12;
-		c1 := a1 * line1.startPoint.x + b1 * line1.startPoint.y; //a1 * x11 + b1 * y11;
-
-		a2 := line2.endPoint.y - line2.startPoint.y; //y22 - y21;
-		b2 := line2.startPoint.x - line2.endPoint.x; //x21 - x22;
-		c2 := a2 * line2.startPoint.x + b2 * line2.startPoint.y; //a2 * x21 + b2 * y21;
-		
-		det := (a1 * b2) - (a2 * b1);
-		
-		if det = 0 then result := false
-		else
-		begin
-			pnt.x := (b2*c1 - b1*c2) / det;
-	        pnt.y := (a1*c2 - a2*c1) / det;
-			result := true;
-		end;		
-	end;
-
-	function LineIntersectsWithLines(const target: LineSegment; const lines: LinesArray): boolean;
-	var
-		i: Integer;
-		pnt: Point2D;
-	begin
-		for i := 0 to High(lines) do
-		begin			
-			if GetLineIntersectionPoint(target, lines[i], pnt) and IsPointOnLine(pnt, lines[i]) then
-			begin
-				result := true;
-				exit;
-			end;
-		end;
-		
-		result := false;
-	end;
-	
-	function LineIntersectsWithRect(const line: LineSegment; const rect: Rectangle): boolean;
-	var
-		lines: LinesArray;
-	begin
-		lines := LinesFromRect(rect);
-		result := LineIntersectsWithLines(line, lines);
-	end;  	
 	
 	function LineAsVector(const line: lineSegment): Vector;
 	begin
