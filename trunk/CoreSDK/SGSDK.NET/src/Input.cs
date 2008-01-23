@@ -1,3 +1,23 @@
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					Input
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// The Input unit contains all the routines that deal with
+// the Mouse and Keyboard Inputs.
+//
+// Change History:
+//
+// Version 1.1:
+// - 2008-01-23: Fixed Exceptions
+//               Added changes for 1.1 compatibility
+//               Added extra comments, and fixed code layout and line endings.
+//               Added GetMousePosition - Point2D version.
+//               
+// Version 1.0:
+// - Various
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -463,106 +483,142 @@ namespace SwinGame
     }
     
     /// <summary>
-    /// Input Class
-    ///
-    /// Handles all the Mouse and Keyboard input functions
+    /// The Input class handles all Mouse and Keyboard Input related routines. Capable of detecting if a
+    /// key or mouse button has been typed, is being held down, is currently up, this set of routines
+    /// are extremely useful for user interaction within your games.
     /// </summary>
     public class Input
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePosition")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePositionAsVector")]
         private static extern Vector DLL_GetMousePosition();
         /// <summary>
-        /// Gets the Mouse Position
+        /// Gets the current Mouse Position as a Vector, useful for finding out things such as if the mouse
+        /// is hovering over a particular area of the screen.
         /// </summary>
         /// <returns>Vector representing the position of the mouse</returns>
         public static Vector GetMousePosition()
         {
+            Vector temp;
+
             try
             {
-                Vector temp = DLL_GetMousePosition();
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_GetMousePositionAsVector();
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMousePosition")]
+        private static extern Point2D DLL_GetMousePosition();
+        /// <summary>
+        /// Gets the current Mouse Position as a Point2D, useful for finding out things such as if the mouse
+        /// is hovering over a particular area of the screen.
+        /// </summary>
+        /// <returns>Point2D representing the Mouse Coordinates on the screen</returns>
+        public static Point2D GetMousePosition()
+        {
+            Point2D temp;
+
+            try
+            {
+                temp = DLL_GetMousePositionAsVector();
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMouseMovement")]
         private static extern Vector DLL_GetMouseMovement();
         /// <summary>
-        /// Gets the Movement of the mouse
+        /// Gets the Mouse Movement, useful for moving objects on the screen based on the movement of the
+        /// mouse.
         /// </summary>
         /// <returns>Vector representing the movement of the mouse</returns>
         public static Vector GetMouseMovement()
         {
+            Vector temp;
+
             try
             {
-                Vector temp = DLL_GetMouseMovement();
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_GetMouseMovement();
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseDown")]
         private static extern bool DLL_IsMouseDown(MouseButton button);
         /// <summary>
-        /// This function checks if the specified mouse button is
-        /// being clicked
+        /// This function checks if the specified mouse button is being clicked, this is useful for
+        /// ingame buttons, you could use this function to find if the user had hit the left mouse button.
         /// </summary>
         /// <param name="button">Mouse button to check</param>
         /// <returns>True if the mouse button is being clicked</returns>
         public static bool IsMouseDown(MouseButton button)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_IsMouseDown(button);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_IsMouseDown(button);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseUp")]
         private static extern bool DLL_IsMouseUp(MouseButton button);
         /// <summary>
         /// This function checks if the specified mouse button is not
-        /// being clicked
+        /// being clicked.
         /// </summary>
         /// <param name="button">Mouse button to check</param>
         /// <returns>True if the mouse button is not being clicked</returns>
         public static bool IsMouseUp(MouseButton button)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_IsMouseUp(button);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_IsMouseUp(button);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MouseWasClicked")]
@@ -575,34 +631,37 @@ namespace SwinGame
         /// <returns>True if the mouse button has been clicked</returns>
         public static bool MouseWasClicked(MouseButton button)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_MouseWasClicked(button);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_MouseWasClicked(button);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
-
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="StartReadingText")]
         private static extern void DLL_StartReadingText(uint color, int maxLength, Font theFont, int x, int y);
-        /// StartReadingText start the API reading a string values from the user.
-	    ///	Entry is completed when the user presses enter, and aborted with escape.
-	    ///	If the user aborts entry the result is an empty string. Text entry is
-	    ///	updated as part of ProcessEvents, and is drawn to the screen as part of
-	    ///	the RefreshScreen call.
-	    ///
-	    ///	@param textColor:	The color of the text entered by the user
-	    ///	@param maxLength:	The maximum length of the string the user can enter
-	    ///	@param theFont:		The font used to draw the text entered
-	    ///	@param x, y:			 The location at which to draw the text entered
+        /// <summary>
+        ///  /// StartReadingText start the API reading a string values from the user.
+        ///	Entry is completed when the user presses enter, and aborted with escape.
+        ///	If the user aborts entry the result is an empty string. Text entry is
+        ///	updated as part of ProcessEvents, and is drawn to the screen as part of
+        ///	the RefreshScreen call.
+        /// </summary>
+        /// <param name="toColour">The color of the text entered by the user</param>
+        /// <param name="maxLength">The maximum length of the string the user can enter</param>
+        /// <param name="theFont">The font used to draw the text entered</param>
+        /// <param name="x">The X location at which to draw the text entered</param>
+        /// <param name="y">The Y location at which to draw the text entered</param>
         public static void StartReadingText(Color toColour, int maxLength, Font theFont, int x, int y)
         {
             try
@@ -632,19 +691,21 @@ namespace SwinGame
         /// <returns>True while the API is reading text from the user</returns>
         public static bool IsReadingText()
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_IsReadingText();
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_IsReadingText();
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII")]
@@ -657,46 +718,22 @@ namespace SwinGame
         /// <returns>The string entered by the user</returns>
         public static String TextReadAsASCII()
         {
-            try
-            {
-                String temp = DLL_TextReadAsASCII();
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }  
-        }
+            String temp;
 
-        /*
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsUNICODE")]
-        private static extern String DLL_TextReadAsUNICODE();
-        /// <summary>
-        /// TextReadAsUNICODE returns the string entered by the user as UNICODE. See
-        ///	TextReadAsASCII, StartReadingText, and IsReadingText for more details.
-        /// </summary>
-        /// <returns>The string entered by the user</returns>
-        public static String TextReadAsUNICODE()
-        {
             try
             {
-                String temp = DLL_TextReadAsUNICODE();
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_TextReadAsASCII();
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
-        */
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsKeyPressed")]
         private static extern bool DLL_IsKeyPressed(Keys key);
@@ -709,19 +746,21 @@ namespace SwinGame
         /// <returns>True if the key is currently being held down</returns>
         public static bool IsKeyPressed(Keys key)
         {
+            bool temp;
+       
             try
             {
-                bool temp = DLL_IsKeyPressed(key);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_IsKeyPressed(key);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="WasKeyTyped")]
@@ -735,23 +774,22 @@ namespace SwinGame
         /// <returns>True if the key is pressed</returns>
         public static bool WasKeyTyped(Keys key)
         {
+            bool temp;
+
             try
             {
-                bool temp = DLL_WasKeyTyped(key);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-                return temp;
+                temp = DLL_WasKeyTyped(key);
             }
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }  
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
-
-
-
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MoveMouse")]
         private static extern void DLL_MoveMouse(UInt16 x, UInt16 y);
@@ -765,54 +803,95 @@ namespace SwinGame
             try
             {
                 DLL_MoveMouse( x, y);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
             catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
+        /// <summary>
+        /// This will move the mouse to the given Point
+        /// </summary>
+        /// <param name="point">The Point containing the position to move the mouse to</param>
+        public static void MoveMouse(Point2D point)
+        {
+            try
+            {
+                DLL_MoveMouse(point.X , point.Y);
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
 
         /// <summary>
-        /// This will hide the mouse 
+        /// This routine will Hide the mouse
         /// </summary>
         public static void HideMouse()
         {
-            ShowMouse(false);
+            try
+            {
+                ShowMouse(false);
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
         }
-
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ShowMouse")]
         private static extern void DLL_ShowMouse(int show);
-      /// <summary>
-      /// Shows or hides the mouse
-      /// </summary>
-      /// <param name="show">if it is true it will show the mouse</param>
+        /// <summary>
+        /// This routine Shows or Hides the mouse
+        /// </summary>
+        /// <param name="show">if it is true it will show the mouse</param>
         public static void ShowMouse(bool show)
         {
             try
             {
                 DLL_ShowMouse(show?-1:0);
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
             catch (Exception)
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
         }
         /// <summary>
-        /// This will show the mouse 
+        /// This routine will Show the Mouse
         /// </summary>
         public static void ShowMouse()
         {
-            ShowMouse(true);
+            try
+            {
+                ShowMouse(true);
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
         }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsMouseShown")]
         private static extern int DLL_IsMouseShown();
         /// <summary>
@@ -821,7 +900,18 @@ namespace SwinGame
         /// <returns>returns true if the mouse is shown</returns>
         public static bool IsMouseShown()
         {
-            return DLL_IsMouseShown() == -1;
+            try
+            {
+                return DLL_IsMouseShown() == -1;
+            }
+            catch (Exception)
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
         }
     }
 }
