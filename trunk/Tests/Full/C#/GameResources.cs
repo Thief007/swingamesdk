@@ -41,29 +41,29 @@ namespace Tests
 
             ShowMessage("Loading fonts...", 0); 
 		    LoadFonts();
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 		
 		    ShowMessage("Loading images...", 1);
 		    LoadImages();
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 		
 		    ShowMessage("Loading sounds...", 2);
 		    LoadSounds();
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 		
 		    ShowMessage("Loading music...", 3);
 		    LoadMusic();
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 
             ShowMessage("Loading maps...", 4);
 		    LoadMaps();
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 		
 		    //Add game level loading here...
 		
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 		    ShowMessage("Game loaded...", 5);
-		    Core.Sleep(500);
+		    Core.Sleep(50);
 		    EndLoadingScreen(width, height);
         }
 
@@ -83,7 +83,7 @@ namespace Tests
 
         public static void PlaySwinGameIntro()
         {
-            Core.Sleep(1000);
+            Core.Sleep(300);
 
             Audio.PlaySoundEffect(_StartSound);
 
@@ -99,7 +99,7 @@ namespace Tests
                 Core.ProcessEvents();
             }
 
-            Core.Sleep(1000);
+            Core.Sleep(300);
         }
 
         public static void ShowMessage(String message, int number)
