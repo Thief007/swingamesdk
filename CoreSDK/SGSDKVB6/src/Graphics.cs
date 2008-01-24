@@ -348,7 +348,7 @@ namespace SwinGameVB
         }
 
         /// <summary>
-        /// Load an image with transparency
+        /// Load an image with transparency 
         /// </summary>
         /// <param name="pathToBitmap">Path to the image file</param>
         /// <param name="transparentColor">Color of the transparent pixels</param>
@@ -915,10 +915,10 @@ namespace SwinGameVB
         /// <param name="vwPrtY">The y of the current view port (i.e. screen)</param>
         /// <param name="vwPrtWidth">The width of the view port</param>
         /// <param name="vwPrtHeight">The height of the view port</param>
-        public void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset)
-        {
-            SwinGame.Graphics.DrawSprite(spriteToDraw.result, xOffset, yOffset);
-        }
+        //public void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset)
+        //{
+        //    SwinGame.Graphics.DrawSprite(spriteToDraw.result, xOffset, yOffset);
+        //}
 
         /// <summary>
         /// Draws a sprite to the screen, without using a view port
@@ -970,10 +970,10 @@ namespace SwinGameVB
         /// <param name="vwPrtWidth">The width of the view port</param>
         /// <param name="vwPrtHeight">The height of the view port</param>
         /// <returns>True if the sprite is off the screen</returns>
-        public bool IsSpriteOffscreen_ViewPort(Sprite theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight)
-        {
-            return SwinGame.Graphics.IsSpriteOffscreen(theSprite.result, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
-        }
+        //public bool IsSpriteOffscreen_ViewPort(Sprite theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight)
+        //{
+        //    return SwinGame.Graphics.IsSpriteOffscreen(theSprite.result, vwPrtX, vwPrtY, vwPrtWidth, vwPrtHeight);
+        //}
 
         // Sprite Additions
 
@@ -1186,6 +1186,232 @@ namespace SwinGameVB
             }
         }
 
+        //-----------------------------------------------------------------------------------------
+        //                              Version 1.1
+        //-----------------------------------------------------------------------------------------
+        public void DrawEllipse_Rectangle(int theColor, Rectangle source)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColor);
+            SwinGame.Graphics.DrawEllipse(temp, source.result);
+        }
+        public void DrawEllipse_Fill_Rectangle(int theColor, bool filled, Rectangle source)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColor);
+            SwinGame.Graphics.DrawEllipse(temp, filled, source.result);
+        }
+        public void DrawEllipse_OnBitmap_Rectangle(Bitmap dest, int theColour, Rectangle source)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColour);
+            SwinGame.Graphics.DrawEllipse(dest.result,temp, source.result);
+        }
+        public void DrawEllipse_OnBitmap_Fill_Rectangle(Bitmap dest, int theColour, bool filled, Rectangle source)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColour);
+            SwinGame.Graphics.DrawEllipse(dest.result, temp, filled, source.result);
+        }
+        public void DrawCircleOnScreen_Point(int theColor, Point2D position, int radius)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColor);
+            SwinGame.Graphics.DrawCircleOnScreen( temp,  position.result, radius);
+        }
+        public void DrawCircleOnScreen_Fill_Point(int theColor, bool filled, Point2D position, int radius)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColor);
+            SwinGame.Graphics.DrawCircleOnScreen( temp, filled, position.result, radius);
+        }
+
+        public void DrawCircle_Point(int theColour, Point2D position, int radius)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColour);
+            SwinGame.Graphics.DrawCircle(temp,  position.result, radius);
+        }
+        public void DrawCircle_Fill_Point(int theColor, bool filled, Point2D position, int radius)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColor);
+            SwinGame.Graphics.DrawCircle(temp, filled, position.result, radius);
+        }
+        public void DrawCircle_OnBitmap_Point(Bitmap dest, int theColour, Point2D position, int radius)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColour);
+            SwinGame.Graphics.DrawCircle(dest.result,temp,  position.result, radius);
+        }
+        public void DrawCircle_OnBitmap_Fill_Point(Bitmap dest, int theColour, bool filled, Point2D position, int radius)
+        {
+            Color temp = new Color();
+            temp = Color.FromArgb(theColour);
+            SwinGame.Graphics.DrawCircle(dest.result, temp, filled, position.result, radius);
+        }
+
+        public void DrawBitmapPartOnScreen_Rectangle(Bitmap bitmapToDraw, Rectangle source, int x, int y)
+        {
+            SwinGame.Graphics.DrawBitmapPartOnScreen(bitmapToDraw.result, source.result, x, y);
+        }
+        public void DrawBitmapPartOnScreen_Point(Bitmap bitmapToDraw, Rectangle source, Point2D position)
+        {
+            SwinGame.Graphics.DrawBitmapPartOnScreen(bitmapToDraw.result, source.result, position.result);
+        }
+
+        public void DrawBitmapPart_OnBitmap_Point(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, Point2D position)
+        {
+            SwinGame.Graphics.DrawBitmapPart(dest.result, bitmapToDraw.result,source.result, position.result);
+        }
+        public void DrawBitmapPart_OnBitmap_Rectangle(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, int x, int y)
+        {
+            SwinGame.Graphics.DrawBitmapPart(dest.result, bitmapToDraw.result,source.result, x,y);
+        }
+        public void DrawBitmapPart_Rectangle(Bitmap bitmapToDraw, Rectangle source, int x, int y)
+        {
+            SwinGame.Graphics.DrawBitmapPart( bitmapToDraw.result,source.result, x,y);
+        }
+        public void DrawBitmapPart_Point(Bitmap bitmapToDraw, Rectangle source, Point2D position)
+        {
+            SwinGame.Graphics.DrawBitmapPart(bitmapToDraw.result,source.result, position.result);
+        }
+        public void DrawBitmapOnScreen_Point(Bitmap bitmapToDraw, Point2D position)
+        {
+            SwinGame.Graphics.DrawBitmapOnScreen(bitmapToDraw.result, position.result);
+        }
+
+        public void DrawBitmap_Point(Bitmap bitmapToDraw, Point2D position)
+        {
+            SwinGame.Graphics.DrawBitmap(bitmapToDraw.result,position.result);
+        }
+        public void DrawBitmap_OnBitmap_Point(Bitmap dest, Bitmap bitmapToDraw, Point2D position)
+        {
+            SwinGame.Graphics.DrawBitmap(dest.result, bitmapToDraw.result, position.result);
+        }
+
+        public void DrawRectangleOnScreen_Fill_Rectangle(int theColor, bool filled, Rectangle source)
+        {
+            SwinGame.Graphics.DrawRectangleOnScreen(Color.FromArgb(theColor), filled, source.result);
+        }
+        public void DrawRectangleOnScreen_Rectangle(int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.DrawRectangleOnScreen(Color.FromArgb(theColor),  source.result);
+        }
+        public void DrawRectangleOnScreen_Fill(int theColor, bool filled, int x, int y, int width, int height)
+        {
+            SwinGame.Graphics.DrawRectangleOnScreen(Color.FromArgb(theColor), filled, x,y,width,height);
+        }
+
+        public void DrawRectangle_Rectangle(int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.DrawRectangle(Color.FromArgb(theColor), source.result);
+        }
+        public void DrawRectangle_Fill_Rectangle(int theColor, bool filled, Rectangle source)
+        {
+            SwinGame.Graphics.DrawRectangle(Color.FromArgb(theColor),filled, source.result);
+        }
+        public void DrawRectangle_OnBitmap_Rectangle(Bitmap dest, int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.DrawRectangle(dest.result,Color.FromArgb(theColor), source.result);
+        }
+        public void DrawRectangle_OnBitmap_Fill_Rectangle(Bitmap dest, int theColor, bool filled, Rectangle source)
+        {
+            SwinGame.Graphics.DrawRectangle(dest.result,Color.FromArgb(theColor),filled, source.result);
+        }
+
+        public void DrawPixelOnScreen_Point(int theColor, Point2D position)
+        {
+            SwinGame.Graphics.DrawPixelOnScreen(Color.FromArgb(theColor), position.result);
+        }
+
+        public void DrawPixel_Point(int theColor, Point2D position)
+        {
+            SwinGame.Graphics.DrawPixel(Color.FromArgb(theColor), position.result);
+        }
+        public void DrawPixel_OnBitmap_Point(Bitmap dest, int theColor, Point2D position)
+        {
+            SwinGame.Graphics.DrawPixel(dest.result,Color.FromArgb(theColor), position.result);
+        }
+
+        public void DrawLineOnScreen_Line(int theColor, LineSegment line)
+        {
+            SwinGame.Graphics.DrawLineOnScreen(Color.FromArgb(theColor), line.result);
+        }
+
+        public void DrawLine_OnBitmap_Line(Bitmap dest, int theColor, LineSegment line)
+        {
+            SwinGame.Graphics.DrawLine(dest.result, Color.FromArgb(theColor), line.result);
+        }
+        public void DrawLine_Line(int theColor, LineSegment line)
+        {
+            SwinGame.Graphics.DrawLine( Color.FromArgb(theColor), line.result);
+        }
+
+        public void DrawEllipseOnScreen_Rectangle(int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.DrawEllipseOnScreen(Color.FromArgb(theColor), source.result);
+        }
+        public void DrawEllipseOnScreen_Fill_Rectangle(int theColor, bool filled, Rectangle source)
+        {
+            SwinGame.Graphics.DrawEllipseOnScreen(Color.FromArgb(theColor), filled, source.result);
+        }
+        public void DrawEllipseOnScreen_Fill(int theColor, bool filled, int x, int y, int width, int height)
+        {
+            SwinGame.Graphics.DrawEllipseOnScreen(Color.FromArgb(theColor), filled, x,y,width, height);
+        }
+
+        public void FillRectangleOnScreen_Rectangle(int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.FillRectangleOnScreen(Color.FromArgb(theColor), source.result);
+        }
+
+        public void FillRectangle_OnBitmap_Rectangle(Bitmap dest, int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.FillRectangle(dest.result, Color.FromArgb(theColor), source.result);
+        }
+        public void FillRectangle_Rectangle(int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.FillRectangle( Color.FromArgb(theColor), source.result);
+        }
+
+        public void FillEllipseOnScreen_Rectangle(int theColor, Rectangle source)
+        {
+            SwinGame.Graphics.FillEllipseOnScreen(Color.FromArgb(theColor), source.result);
+        }
+
+        public void FillEllipse_Rectangle(int theColour, Rectangle source)
+        {
+            SwinGame.Graphics.FillEllipse(Color.FromArgb(theColour), source.result);
+        }
+        public void FillEllipse_OnBitmap_Rectangle(Bitmap dest, int theColour, Rectangle source)
+        {
+            SwinGame.Graphics.FillEllipse(dest.result, Color.FromArgb(theColour), source.result);
+        }
+
+        public void FillCircleOnScreen_Point(int theColor, Point2D position, int radius)
+        {
+            SwinGame.Graphics.FillCircleOnScreen(Color.FromArgb(theColor), position.result, radius);
+        }
+
+        public void FillCircle_Point(int theColor, Point2D position, int radius)
+        {
+            SwinGame.Graphics.FillCircle(Color.FromArgb(theColor), position.result, radius);
+        }
+        public void FillCircle_OnBitmap_Point(Bitmap dest, int theColor, Point2D point, int radius)
+        {
+            SwinGame.Graphics.FillCircle(dest.result, Color.FromArgb(theColor), point.result, radius);
+        }
+
+        public void ReplayAnimation(Sprite sprite)
+        {
+            SwinGame.Graphics.ReplayAnimation(sprite.result);
+        }
+
+        public void MoveSprite_NoVector(Sprite spriteToMove)
+        {
+            SwinGame.Graphics.MoveSprite(spriteToMove.result);
+        }
     }
     
     [Guid("C261890B-D65E-4d4c-A7AA-F15FCC0F825A")]
@@ -1239,12 +1465,12 @@ namespace SwinGameVB
         int AddBitmapToSprite(Sprite spriteToAddTo, Bitmap bitmapToAdd);
         int CurrentHeight(Sprite sprite);
         int CurrentWidth(Sprite sprite);
-        void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset);
+        //void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset);
         void DrawSprite(Sprite spriteToDraw);
         void MoveSprite(Sprite spriteToMove, Vector movementVector);
         void MoveSpriteTo(Sprite spriteToMove, int x, int y);
         bool IsSpriteOffscreen(Sprite theSprite);
-        bool IsSpriteOffscreen_ViewPort(Sprite theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
+        //bool IsSpriteOffscreen_ViewPort(Sprite theSprite, int vwPrtX, int vwPrtY, int vwPrtWidth, int vwPrtHeight);
         Sprite CreateSprite_MultiEnding(Bitmap startBitmap, Boolean isMulti, [In] ref int[] framesPerCell, SpriteEndingAction endingAction, int width, int height);
         Sprite CreateSprite_Multi(Bitmap startBitmap, Boolean isMulti, [In] ref int[] framesPerCell, int width, int height);
         Sprite CreateSprite_MultiFPC(Bitmap startBitmap, int framesPerCell, int frames, int width, int height);
@@ -1271,6 +1497,57 @@ namespace SwinGameVB
         void FillEllipseOnScreen(int theColour, int x, int y, int width, int height);
 
         void DrawCircleOnScreen_Fill(int theColour, bool filled, int xc, int yc, int radius);
+
+        //-----------------------------------------------------------------------------------------
+        //                              Version 1.1
+        //-----------------------------------------------------------------------------------------
+        void DrawEllipse_Rectangle(int theColor, Rectangle source);
+        void DrawEllipse_Fill_Rectangle(int theColor, bool filled, Rectangle source);
+        void DrawEllipse_OnBitmap_Rectangle(Bitmap dest, int theColour, Rectangle source);
+        void DrawEllipse_OnBitmap_Fill_Rectangle(Bitmap dest, int theColour, bool filled, Rectangle source);
+        void DrawCircleOnScreen_Point(int theColor, Point2D position, int radius);
+        void DrawCircleOnScreen_Fill_Point(int theColor, bool filled, Point2D position, int radius);
+        void DrawCircle_Point(int theColour, Point2D position, int radius);
+        void DrawCircle_Fill_Point(int theColor, bool filled, Point2D position, int radius);
+        void DrawCircle_OnBitmap_Point(Bitmap dest, int theColour, Point2D position, int radius);
+        void DrawCircle_OnBitmap_Fill_Point(Bitmap dest, int theColour, bool filled, Point2D position, int radius);
+        void DrawBitmapPartOnScreen_Rectangle(Bitmap bitmapToDraw, Rectangle source, int x, int y);
+        void DrawBitmapPartOnScreen_Point(Bitmap bitmapToDraw, Rectangle source, Point2D position);
+        void DrawBitmapPart_OnBitmap_Point(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, Point2D position);
+        void DrawBitmapPart_OnBitmap_Rectangle(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, int x, int y);
+        void DrawBitmapPart_Rectangle(Bitmap bitmapToDraw, Rectangle source, int x, int y);
+        void DrawBitmapPart_Point(Bitmap bitmapToDraw, Rectangle source, Point2D position);
+        void DrawBitmapOnScreen_Point(Bitmap bitmapToDraw, Point2D position);
+        void DrawBitmap_Point(Bitmap bitmapToDraw, Point2D position);
+        void DrawBitmap_OnBitmap_Point(Bitmap dest, Bitmap bitmapToDraw, Point2D position);
+        void DrawRectangleOnScreen_Fill_Rectangle(int theColor, bool filled, Rectangle source);
+        void DrawRectangleOnScreen_Rectangle(int theColor, Rectangle source);
+        void DrawRectangleOnScreen_Fill(int theColor, bool filled, int x, int y, int width, int height);
+        void DrawRectangle_Rectangle(int theColor, Rectangle source);
+        void DrawRectangle_Fill_Rectangle(int theColor, bool filled, Rectangle source);
+        void DrawRectangle_OnBitmap_Rectangle(Bitmap dest, int theColor, Rectangle source);
+        void DrawRectangle_OnBitmap_Fill_Rectangle(Bitmap dest, int theColor, bool filled, Rectangle source);
+        void DrawPixelOnScreen_Point(int theColor, Point2D position);
+        void DrawPixel_Point(int theColor, Point2D position);
+        void DrawPixel_OnBitmap_Point(Bitmap dest, int theColor, Point2D position);
+        void DrawLineOnScreen_Line(int theColor, LineSegment line);
+        void DrawLine_OnBitmap_Line(Bitmap dest, int theColor, LineSegment line);
+        void DrawLine_Line(int theColor, LineSegment line);
+        void DrawEllipseOnScreen_Rectangle(int theColor, Rectangle source);
+        void DrawEllipseOnScreen_Fill_Rectangle(int theColor, bool filled, Rectangle source);
+        void DrawEllipseOnScreen_Fill(int theColor, bool filled, int x, int y, int width, int height);
+        void FillRectangleOnScreen_Rectangle(int theColor, Rectangle source);
+        void FillRectangle_OnBitmap_Rectangle(Bitmap dest, int theColor, Rectangle source);
+        void FillRectangle_Rectangle(int theColor, Rectangle source);
+        void FillEllipseOnScreen_Rectangle(int theColor, Rectangle source);
+        void FillEllipse_Rectangle(int theColour, Rectangle source);
+        void FillEllipse_OnBitmap_Rectangle(Bitmap dest, int theColour, Rectangle source);
+        void FillCircleOnScreen_Point(int theColor, Point2D position, int radius);
+        void FillCircle_Point(int theColor, Point2D position, int radius);
+        void FillCircle_OnBitmap_Point(Bitmap dest, int theColor, Point2D point, int radius);
+        void ReplayAnimation(Sprite sprite);
+        void MoveSprite_NoVector(Sprite spriteToMove);
+
     }
 
 }

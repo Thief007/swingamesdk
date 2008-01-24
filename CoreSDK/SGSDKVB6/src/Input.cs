@@ -148,12 +148,11 @@ namespace SwinGameVB
         /// Gets the Mouse Position
         /// </summary>
         /// <returns>Vector representing the position of the mouse</returns>
-        public Vector GetMousePosition()
+        public Point2D GetMousePosition()
         {
-            Vector vector = new Vector();
-            vector.setW(SwinGame.Input.GetMousePosition().w);
-            vector.setX(SwinGame.Input.GetMousePosition().x);
-            vector.setY(SwinGame.Input.GetMousePosition().y);
+            Point2D vector = new Point2D();
+            vector.SetX(SwinGame.Input.GetMousePosition().X);
+            vector.SetY(SwinGame.Input.GetMousePosition().Y);
             return vector;
         }
 
@@ -163,13 +162,12 @@ namespace SwinGameVB
         /// <returns>Vector representing the movement of the mouse</returns>
         public Vector GetMouseMovement()
         {
-            SwinGame.Vector temp = new SwinGame.Vector();
+            SwinGame.Point2D temp = new SwinGame.Point2D();
             temp = SwinGame.Input.GetMousePosition();
 
             Vector vector = new Vector();
-            vector.setW(SwinGame.Input.GetMouseMovement().w);
-            vector.setX(temp.x - Core._LastMousePos.x);//SwinGame.Input.GetMouseMovement().x);
-            vector.setY(temp.y - Core._LastMousePos.y);//SwinGame.Input.GetMouseMovement().y);
+            vector.setX(temp.X - Core._LastMousePos.X);//SwinGame.Input.GetMouseMovement().x);
+            vector.setY(temp.Y - Core._LastMousePos.Y);//SwinGame.Input.GetMouseMovement().y);
             return vector;
 
         }
@@ -297,7 +295,7 @@ namespace SwinGameVB
     [ComVisible(true)]
     public interface IInput
     {
-        Vector GetMousePosition();
+        Point2D GetMousePosition();
         Vector GetMouseMovement();
 
         void ShowMouse();
