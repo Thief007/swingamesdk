@@ -501,6 +501,16 @@ namespace SwinGame
         /// <param name="p1">Point 1</param>
         /// <param name="p2">Point 2</param>
         /// <returns>Vector from Point 1 to Point 2</returns>
+        /// <summary>
+        /// Creates a new vector from the origin to the indicated point.
+        /// </summary>
+        /// <param name="p1">The point</param>
+        /// <returns>A new vector from the origin (0,0) to pt (x,y)</returns>
+        public static Vector PointToVector(Point2D p1)
+        {
+            return CreateVector(p1.X, p1.Y, false);
+        }
+
         public static Vector VectorFromPoints(Point2D p1, Point2D p2)
         {
             return CreateVector(p2.X - p1.X, p2.Y - p1.Y, false);
