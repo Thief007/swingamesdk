@@ -55,7 +55,8 @@ namespace Tests
         private void DrawGeneralInstructions()
         {
             const string INST = "Press: [p]ass, [f]ail, [esc] skip suite, [n]ext test";
-            Text.DrawTextOnScreen(INST, Color.White, GameResources.GameFont("Courier"), Consts.GENERAL_INST_LEFT, Consts.GENERAL_INST_TOP);
+			Color fg = Color.FromArgb(255, 33, 118, 182);
+            Text.DrawTextOnScreen(INST, fg, GameResources.GameFont("Courier"), Consts.GENERAL_INST_LEFT, Consts.GENERAL_INST_TOP);
         }
 
         private void DrawTitle(string title)
