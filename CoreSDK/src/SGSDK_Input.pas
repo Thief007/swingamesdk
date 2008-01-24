@@ -114,28 +114,8 @@ implementation
 	///
 	///	@returns:	 True if the key is currently being held down
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
-	var
-		keys: PUint8;
-		indexAddress: uint32;
-		intPtr: ^UInt8;
 	begin
-		keys := SDL_GetKeyState(nil);
-		
-		if keys <> nil then
-		begin
-			indexAddress := uint32(keys) + uint32(virtKeyCode);
-			
-			{$IFDEF FPC}
-				intPtr := PUInt8(indexAddress);
-			{$ELSE}
-				intPtr := Ptr(indexAddress);
-			{$ENDIF}
-			result := intPtr^ = 1;
-		end
-		else
-		begin
-			result := false;
-		end;
+		result := sdlManager.IsKeyPressed(virtKeyCode);
 	end;
 
 	/// StartReadingText start the API reading a string values from the user.

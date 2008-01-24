@@ -823,7 +823,10 @@ implementation
 	/// @returns : True if the window has been requested to close.
 	function WindowCloseRequested(): Boolean;
 	begin
-		result := sdlManager.HasQuit();
+		if scr = nil then 
+			result := false
+		else
+			result := sdlManager.HasQuit();
 	end;
 	
 	/// Gets the number of milliseconds that have passed. This can be used to
