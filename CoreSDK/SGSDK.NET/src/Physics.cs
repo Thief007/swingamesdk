@@ -1210,6 +1210,62 @@ namespace SwinGame
             return VectorIsWithinRect(v, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfRectFromPoint")]
+        private static extern Vector DLL_VectorOutOfRectFromPoint(Point2D pnt, SGSDKRectangle rect, Vector movement);
+        /// <summary>
+        /// Gets the Vector out of a Rectangle from a Point
+        /// </summary>
+        /// <param name="pnt">Point</param>
+        /// <param name="rect">Rectangle</param>
+        /// <param name="movement">Movement of the Point</param>
+        /// <returns>The Vector out of the Rectangle</returns>
+        public static Vector VectorOutOfRectFromPoint(Point2D pnt, Rectangle rect, Vector movement)
+        {
+            Vector temp;
+            try
+            {
+                return DLL_VectorOutOfRectFromPoint(pnt, Shapes.ToSGSDKRect(rect), movement);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfRectFromRect")]
+        private static extern Vector DLL_VectorOutOfRectFromRect(SGSDKRectangle srcRect, SGSDKRectangle targetRect, Vector movement);
+        /// <summary>
+        /// Gets the Vector out of a Rectangle from a Rectangle
+        /// </summary>
+        /// <param name="srcRect">The Rectangle to get the Vector to move</param>
+        /// <param name="targetRect">The Rectangle to get out of</param>
+        /// <param name="movement">Movement of the first Rectangle</param>
+        /// <returns>The Vector out of the Rectangle</returns>
+        public static Vector VectorOutOfRectFromRect(Rectangle srcRect, Rectangle targetRect, Vector movement)
+        {
+            Vector temp;
+            try
+            {
+                return DLL_VectorOutOfRectFromRect(Shapes.ToSGSDKRect(srcRect), Shapes.ToSGSDKRect(targetRect), movement);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
         private static extern void DLL_VectorCollision(IntPtr spr1, IntPtr spr2);
         /// <summary>
