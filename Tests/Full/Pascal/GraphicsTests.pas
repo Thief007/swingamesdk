@@ -12,10 +12,56 @@ implementation
 		BOXDIM = 50;
 	
 	var
+		//Rectangle test variables
 		tempRect, tempRect2, tempRect3, tempRect4,
 		tempRect5, tempRect6: Rectangle;
 		smallScreen: Bitmap;
 		filled: Boolean;
+		//Circle test variables
+		curRadius: Integer;
+		tempPoint, tempPoint2, tempPoint3, tempPoint4,
+		tempPoint5, tempPoint6: Point2D;
+	
+	procedure TestDrawCircle(const drawIn: Rectangle);
+	begin
+		ClearSurface(smallScreen);
+		if IsKeyPressed(VK_RIGHT) then tempPoint.x := tempPoint.x + 2;
+		if IsKeyPressed(VK_LEFT) then tempPoint.x := tempPoint.x - 2;
+		if IsKeyPressed(VK_UP) then tempPoint.y := tempPoint.y - 2;
+		if IsKeyPressed(VK_DOWN) then tempPoint.y := tempPoint.y + 2;
+		if IsKeyPressed(VK_Z) then curRadius := curRadius - 1;
+		if IsKeyPressed(VK_X) then curRadius := curRadius + 1;
+		if WasKeyTyped(VK_T) then filled := filled = false;
+		
+		if curRadius < 0 then curRadius := 0;
+		if curRadius > 50 then curRadius := 50;
+		
+		DrawCircle(smallScreen, ColourGreen, filled, tempPoint, curRadius);
+		DrawCircle(smallScreen, ColourGreen, filled, Round(tempPoint.x + curRadius * 2), Round(tempPoint.y + curRadius * 2), curRadius);
+		DrawCircle(smallScreen, ColourGreen, Round(tempPoint.x), Round(tempPoint.y + curRadius * 2), curRadius);
+		tempPoint2.x := tempPoint.x + curRadius * 2;
+		tempPoint2.y := tempPoint.y;
+		DrawCircle(smallScreen, ColourGreen, tempPoint2, curRadius);
+		DrawBitmap(smallScreen, 0, 70);
+		
+		DrawCircle(ColourWhite, filled, curRadius, 70 + curRadius, curRadius);
+		tempPoint3.x := curRadius * 3;
+		tempPoint3.y := 70 + curRadius * 3;
+		DrawCircle(ColourWhite, filled, tempPoint3, curRadius);
+		DrawCircle(ColourWhite, curRadius, 70 + curRadius * 3, curRadius);
+		tempPoint4.x := curRadius * 3;
+		tempPoint4.y := 70 + curRadius;
+		DrawCircle(ColourWhite, tempPoint4, curRadius);
+		
+		DrawCircleOnScreen(ColourYellow, filled, curRadius, 580 - curRadius, curRadius);
+		tempPoint5.x := curRadius * 3;
+		tempPoint5.y := 580 - curRadius * 3;
+		DrawCircleOnScreen(ColourYellow, filled, tempPoint5, curRadius);
+		DrawCircleOnScreen(ColourYellow, curRadius, 580 - curRadius * 3, curRadius);
+		tempPoint6.x := curRadius * 3;
+		tempPoint6.y := 580 - curRadius;
+		DrawCircleOnScreen(ColourYellow, tempPoint6, curRadius);
+	end;
 	
 	procedure TestDrawRectangle(const drawIn: Rectangle);
 	begin
@@ -76,7 +122,7 @@ implementation
 		i: Integer;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 1);
+		SetLength(result.Tests, 2);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -87,7 +133,7 @@ implementation
 		begin
 			MethodBeingTested := 'DrawRectangle, DrawRectangleOnScreen, ClearSurface, DrawBitmap';
 			Instructions :=  'Use the arrow keys to move' + EOL + 'the green boxe.' + EOL + 'A : Shrink the box width' + EOL + 'S : Expand the box width'
-							 + EOL + 'Z : Shrink the box height' + EOL + 'X : Expand the box height' + EOL + 'T : Toggle filled';
+							 + EOL + 'Z : Shrink the box height' + EOL + 'X : Expand the box height' + EOL + 'T : Toggle fill';
 			tempRect := CreateRectangle(0, 0, 50, 50);
 			tempRect2 := CreateRectangle(0, 0, 50, 50);
 			tempRect3 := CreateRectangle(0, 70, 50, 50);
@@ -97,6 +143,20 @@ implementation
 			smallScreen := CreateBitmap(500, 510);
 			filled := false;
 			ToRun := @TestDrawRectangle;
+		end;
+		
+		with result.Tests[1] do
+		begin
+			MethodBeingTested := 'DrawCircle, DrawCircleOnScreen';
+			Instructions :=  'Use the arrow keys to move' + EOL + 'the green circles.' + EOL + 'Z : Shrink the circle radius' + EOL + 'X : Expand the circle radius' + EOL + 'T : Toggle fill';
+			tempPoint := CreatePoint(15, 15);
+			tempPoint2 := CreatePoint(0, 0);
+			tempPoint3 := CreatePoint(0, 0);
+			tempPoint4 := CreatePoint(0, 0);
+			tempPoint5 := CreatePoint(0, 0);
+			tempPoint6 := CreatePoint(0, 0);
+			curRadius := 15;
+			ToRun := @TestDrawCircle;
 		end;
 	end;
 	
