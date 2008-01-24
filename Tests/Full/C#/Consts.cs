@@ -17,6 +17,7 @@ namespace Tests
 		public const int METHOD_TOP = 91;
 		public const int METHOD_LEFT = 38;
 		public const int METHOD_HEIGHT = 15;
+		public const int METHOD_WIDTH = 600;
 		
 		public const int INSTRUCTION_WIDTH = 280;
 		public const int GENERAL_INST_HEIGHT = 20;

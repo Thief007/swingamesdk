@@ -103,7 +103,7 @@ namespace Tests
 
         private void DrawMethodBeingTested()
         {
-            Graphics.FillRectangleOnScreen(Color.Black, Consts.METHOD_LEFT, Consts.METHOD_TOP, Consts.SCREEN_WIDTH, Consts.METHOD_HEIGHT);
+            Graphics.FillRectangleOnScreen(Color.Black, Consts.METHOD_LEFT, Consts.METHOD_TOP, Consts.METHOD_WIDTH, Consts.METHOD_HEIGHT);
             Text.DrawTextOnScreen(MethodBeingTested, Color.White, GameResources.GameFont("Courier"), Consts.METHOD_LEFT, Consts.METHOD_TOP);
         }
 

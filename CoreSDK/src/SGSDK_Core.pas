@@ -887,7 +887,7 @@ implementation
 	
 	procedure FreeTimer(var toFree: Timer);
 	begin
-		Dispose(toFree);
+		if Assigned(toFree) then Dispose(toFree);
 		toFree := nil;
 	end;
 	

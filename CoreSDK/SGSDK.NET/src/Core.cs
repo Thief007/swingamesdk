@@ -39,8 +39,12 @@ namespace SwinGame
             Pointer = ptr;
             _ToFree = toFree;
             _Freed = (ptr == IntPtr.Zero);
-			if(_Freed) throw new SwinGameException("Unable to create resource...");
         }
+
+		  ~SwinGamePointer()
+		  {
+			    if (!_Freed)  InnerFree();
+		  }
 
         public static implicit operator IntPtr(SwinGamePointer p)
         {
@@ -49,6 +53,12 @@ namespace SwinGame
 
         internal void Free()
         {
+	         InnerFree();
+	         GC.SuppressFinalize(this);
+		  }
+		  
+		  internal void InnerFree()
+		  {
             if (false == _Freed)
             {
                 try

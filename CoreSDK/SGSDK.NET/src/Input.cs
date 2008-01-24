@@ -709,7 +709,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII")]
-        private static extern String DLL_TextReadAsASCII();
+        private static extern void DLL_TextReadAsASCII(out string ptr);
 
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
@@ -720,10 +720,13 @@ namespace SwinGame
         public static String TextReadAsASCII()
         {
             String temp;
+				//IntPtr ptr;
+				//int len;
 
             try
             {
-                temp = DLL_TextReadAsASCII();
+                DLL_TextReadAsASCII(out temp);
+					 
             }
             catch (Exception exc)
             {

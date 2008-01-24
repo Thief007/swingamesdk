@@ -38,7 +38,8 @@ implementation
 		SCREEN_HEIGHT = 600;
 		METHOD_TOP = 91;
 		METHOD_LEFT = 38;
-		METHOD_HEIGHT = 15;
+		METHOD_HEIGHT = 17;
+		METHOD_WIDTH = 600;
 		INSTRUCTION_WIDTH = 280;
 		
 		GENERAL_INST_HEIGHT = 20;
@@ -70,7 +71,7 @@ implementation
 
 	procedure DrawMethodBeingTested(methodBeingTested : String);
 	begin
-		FillRectangleOnScreen(ColorBlack, METHOD_LEFT, METHOD_TOP, SCREEN_WIDTH, METHOD_HEIGHT);
+		FillRectangleOnScreen(ColorBlack, METHOD_LEFT, METHOD_TOP, METHOD_WIDTH, METHOD_HEIGHT);
 	    DrawTextOnScreen(methodBeingTested, ColorWhite, GameFont('Courier'), METHOD_LEFT, METHOD_TOP);
 	end;
 
@@ -80,7 +81,7 @@ implementation
 	begin
 		rect := CreateRectangle(INSTRUCTION_LEFT, INSTRUCTION_TOP, INSTRUCTION_WIDTH, INSTRUCTION_HEIGHT);
 		FillRectangle(ColorBlack, rect);
-		DrawTextLines(instructions, ColorWhite, ColorBlack, GameFont('Courier'), AlignLeft, rect);
+		DrawTextLines(instructions, ColorWhite, ColorTransparent, GameFont('Courier'), AlignLeft, rect);
 	end;
 	
 	procedure DrawGeneralInstructions();
