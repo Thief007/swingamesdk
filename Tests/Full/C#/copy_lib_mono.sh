@@ -24,20 +24,23 @@ echo "  Copying Resources"
 SOURCE_RESOURCE=../Pascal/Resources
 RESOURCE_DIR=./Resources
 
-mkdir ${RESOURCE_DIR}
-if [ $? != 0 ]; then echo "Error creating resource directory"; exit 1; fi
+if [ ! -d ${RESOURCE_DIR} ]
+then
+	mkdir ${RESOURCE_DIR}
+	if [ $? != 0 ]; then echo "Error creating resource directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/fonts
-if [ $? != 0 ]; then echo "Error creating fonts directory"; exit 1; fi
+	mkdir ${RESOURCE_DIR}/fonts
+	if [ $? != 0 ]; then echo "Error creating fonts directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/images
-if [ $? != 0 ]; then echo "Error creating images directory"; exit 1; fi
+	mkdir ${RESOURCE_DIR}/images
+	if [ $? != 0 ]; then echo "Error creating images directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/sounds
-if [ $? != 0 ]; then echo "Error creating sounds directory"; exit 1; fi
+	mkdir ${RESOURCE_DIR}/sounds
+	if [ $? != 0 ]; then echo "Error creating sounds directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/maps
-if [ $? != 0 ]; then echo "Error creating maps directory"; exit 1; fi
+	mkdir ${RESOURCE_DIR}/maps
+	if [ $? != 0 ]; then echo "Error creating maps directory"; exit 1; fi
+fi
 
 #cp ${SOURCE_RESOURCE}/* ${RESOURCE_DIR}
 find ${SOURCE_RESOURCE} -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR} \;

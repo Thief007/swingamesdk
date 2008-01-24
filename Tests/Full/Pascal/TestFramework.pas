@@ -30,26 +30,29 @@ implementation
 	uses SGSDK_Input, SGSDK_Graphics, SGSDK_Font, SGSDK_Core, SGSDK_KeyCodes, GameResources;
 	
 	const
-		TITLE_TEXT_TOP = 10;
+		TITLE_TEXT_TOP = 26;
+		TITLE_TEXT_LEFT = 55;
+		
 		TITLE_HEIGHT = 50;
 		SCREEN_WIDTH = 800;
 		SCREEN_HEIGHT = 600;
-		METHOD_TOP = TITLE_HEIGHT + 5;
-		METHOD_LEFT = 5;
-		METHOD_HEIGHT = 20;
-		INSTRUCTION_WIDTH = 300;
+		METHOD_TOP = 91;
+		METHOD_LEFT = 38;
+		METHOD_HEIGHT = 15;
+		INSTRUCTION_WIDTH = 280;
+		
 		GENERAL_INST_HEIGHT = 20;
 
-		INSTRUCTION_LEFT = SCREEN_WIDTH - INSTRUCTION_WIDTH;
-		INSTRUCTION_TOP = TITLE_HEIGHT + METHOD_HEIGHT + 50;
-		INSTRUCTION_HEIGHT = SCREEN_HEIGHT - INSTRUCTION_TOP - GENERAL_INST_HEIGHT;
-		GENERAL_INST_LEFT = 5;
-		GENERAL_INST_TOP = SCREEN_HEIGHT - GENERAL_INST_HEIGHT;
-		GENERAL_INST_WIDTH = SCREEN_WIDTH;
-		TEST_IN_LEFT = 0;
-		TEST_IN_TOP = TITLE_HEIGHT + METHOD_HEIGHT;
-		TEST_IN_WIDTH = SCREEN_WIDTH - INSTRUCTION_WIDTH;
-		TEST_IN_HEIGHT = SCREEN_HEIGHT - TEST_IN_TOP - GENERAL_INST_HEIGHT;
+		INSTRUCTION_LEFT = 480;
+		INSTRUCTION_TOP = 145;
+		INSTRUCTION_HEIGHT = 280;
+		GENERAL_INST_LEFT = 38;
+		GENERAL_INST_TOP = 569;
+		//GENERAL_INST_WIDTH = SCREEN_WIDTH;
+		TEST_IN_LEFT = 23;
+		TEST_IN_TOP = 129;
+		TEST_IN_WIDTH = 418;
+		TEST_IN_HEIGHT = 418;
 
 	procedure InitTest(var test: TestSet);
 	begin
@@ -61,13 +64,13 @@ implementation
 	
 	procedure DrawTitle(title : String);
 	begin
-		FillRectangleOnScreen(ColorBlack, 0, 0, SCREEN_WIDTH, TITLE_HEIGHT);
-	    DrawTextOnScreen(title, ColorWhite, GameFont('CourierLarge'), Round((ScreenWidth() - TextWidth(title, GameFont('CourierLarge'))) / 2), TITLE_TEXT_TOP);
+		//FillRectangleOnScreen(ColorBlack, 0, 0, SCREEN_WIDTH, TITLE_HEIGHT);
+	    DrawTextOnScreen(title, ColorWhite, GameFont('CourierLarge'), TITLE_TEXT_LEFT, TITLE_TEXT_TOP);
 	end;
 
 	procedure DrawMethodBeingTested(methodBeingTested : String);
 	begin
-		FillRectangleOnScreen(ColorBlack, 0, METHOD_TOP, SCREEN_WIDTH, METHOD_HEIGHT);
+		FillRectangleOnScreen(ColorBlack, METHOD_LEFT, METHOD_TOP, SCREEN_WIDTH, METHOD_HEIGHT);
 	    DrawTextOnScreen(methodBeingTested, ColorWhite, GameFont('Courier'), METHOD_LEFT, METHOD_TOP);
 	end;
 
@@ -90,7 +93,7 @@ implementation
 
 	procedure RunTest(var test: TestSet; const drawIn: Rectangle);
 	begin
-		if test.ClearScreen then FillRectangle(ColorBlack, drawIn);	
+		if test.ClearScreen then DrawBitmapOnScreen(GameImage('BGA'), Round(drawIn.x), Round(drawIn.y));	
 		
 		DrawMethodBeingTested(test.MethodBeingTested);		
 		DrawInstructions(test.Instructions);
@@ -113,7 +116,9 @@ implementation
 			test.Done := true;
 		end;
 		
+		SetClip(drawIn);
 		test.ToRun(drawIn);
+		ResetClip();
 	end;
 
 	procedure RunTestSuite(const suite: TestSuite);
@@ -125,7 +130,7 @@ implementation
 		skip := false;
 		testDrawIn := CreateRectangle(TEST_IN_LEFT, TEST_IN_TOP, TEST_IN_WIDTH, TEST_IN_HEIGHT);
 		
-		ClearScreen();
+		DrawBitmapOnScreen(GameImage('BG'), 0, 0);
 		DrawTitle(suite.Title);
 		DrawGeneralInstructions();
 		
@@ -133,9 +138,9 @@ implementation
 		begin
 			repeat
 				ProcessEvents();
-									
+												
 				RunTest(suite.Tests[i], testDrawIn);
-				
+								
 				if WasKeyTyped(VK_ESCAPE) then skip := true;
 			
 				RefreshScreen();

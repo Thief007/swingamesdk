@@ -2124,6 +2124,24 @@ uses
 		end;
 	end;
 	
+	procedure SetClip(bmp: Bitmap; x, y, w, h: Integer); cdecl; export;
+	begin
+		Try
+			if bmp <> nil then SGSDK_Graphics.SetClip(bmp, x, y, w, h)
+			else SGSDK_Graphics.SetClip(x, y, w, h);
+		Except on exc: Exception do TrapException(exc);
+		end;		
+	end;
+
+	procedure ResetClip(bmp: Bitmap); cdecl; export;
+	begin
+		Try
+			if bmp <> nil then SGSDK_Graphics.ResetClip(bmp)
+			else SGSDK_Graphics.ResetClip();
+		Except on exc: Exception do TrapException(exc);
+		end;		
+	end;
+		
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					MappyLoader
@@ -2566,6 +2584,8 @@ exports
 	MoveVisualArea,
 	SetScreenOffset,
 	FollowSprite,
+	SetClip,
+	ResetClip,
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+

@@ -15,6 +15,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-24: Andrew: Added Clipping
+// - 2008-01-24: James: Version 1.1 overloads
 // - 2008-01-21: Aki: 40 overloads added for Point2D and 
 // - 2008-01-17: Aki + Andrew: Refactor
 //   Rectangle support
@@ -244,6 +246,18 @@ interface
 
 	procedure FillEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: Integer); overload;
 	procedure FillEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
+	
+	///
+	/// Clipping
+	///	
+	procedure SetClip(x, y, w, h: Integer); overload; {1.1}
+	procedure SetClip(r: Rectangle); overload; {1.1}
+
+	procedure SetClip(bmp: Bitmap; x, y, w, h: Integer); overload; {1.1}
+	procedure SetClip(bmp: Bitmap; r: Rectangle); overload; {1.1}
+
+	procedure ResetClip(); overload; {1.1}
+	procedure ResetClip(bmp: Bitmap); overload; {1.1}
 	
 implementation
 	uses Classes, SysUtils, SGSDK_Camera;
@@ -2181,5 +2195,40 @@ implementation
 	procedure FillEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
 	begin
 		FillEllipseOnScreen(theColour, Round(source.x), Round(source.y), source.width, source.height);
+	end;
+	
+	procedure ResetClip(bmp: Bitmap); overload;
+	begin
+		if bmp = nil then raise Exception.Create('Cannot reset clip, bmp must not be nil');
+		SDL_SetClipRect(bmp.surface, nil);
+	end;
+
+	procedure ResetClip(); overload;
+	begin
+		ResetClip(scr);
+	end;
+	
+	procedure SetClip(bmp: Bitmap; x, y, w, h: Integer); overload;
+	var
+		rect: SDL_Rect;
+	begin
+		if bmp = nil then raise Exception.Create('Cannot set clip, bmp must not be nil');
+		rect := NewSDLRect(x, y, w, h);
+		SDL_SetClipRect(bmp.surface, @rect);
+	end;
+	
+	procedure SetClip(bmp: Bitmap; r: Rectangle); overload;
+	begin
+		SetClip(bmp, Round(r.x), Round(r.y), r.width, r.height);
+	end;
+
+	procedure SetClip(x, y, w, h: Integer); overload;
+	begin
+		SetClip(scr, x, y, w, h);
+	end;
+	
+	procedure SetClip(r: Rectangle); overload;
+	begin
+		SetClip(scr, Round(r.x), Round(r.y), r.width, r.height);
 	end;
 end.

@@ -30,7 +30,8 @@ namespace Tests
 
             testDrawIn = Shapes.CreateRectangle(Consts.TEST_IN_LEFT, Consts.TEST_IN_TOP, Consts.TEST_IN_WIDTH, Consts.TEST_IN_HEIGHT);
 
-            Graphics.ClearScreen();
+            //Graphics.ClearScreen();
+			Graphics.DrawBitmapOnScreen(GameResources.GameImage("BG"), 0, 0);
             DrawTitle(Title);
             DrawGeneralInstructions();
 
@@ -59,8 +60,8 @@ namespace Tests
 
         private void DrawTitle(string title)
         {
-		    Graphics.FillRectangleOnScreen(Color.Black, 0, 0, Consts.SCREEN_WIDTH, Consts.TITLE_HEIGHT);
-	        Text.DrawTextOnScreen(title, Color.White, GameResources.GameFont("CourierLarge"), (int)((Consts.SCREEN_WIDTH - Text.TextWidth(title, GameResources.GameFont("CourierLarge"))) / 2), Consts.TITLE_TEXT_TOP);            
+		    //Graphics.FillRectangleOnScreen(Color.Black, 0, 0, Consts.SCREEN_WIDTH, Consts.TITLE_HEIGHT);
+	        Text.DrawTextOnScreen(title, Color.White, GameResources.GameFont("CourierLarge"), Consts.TITLE_TEXT_LEFT, Consts.TITLE_TEXT_TOP);            
         }
 
         public void Add(TestSet s)
