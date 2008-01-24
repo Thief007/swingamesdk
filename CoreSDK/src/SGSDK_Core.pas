@@ -270,6 +270,10 @@ interface
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;	
 	function GetColour(red, green, blue : Byte) : Colour; overload;
 
+	function GetColor(forBitmap: Bitmap; apiColor: Color): Colour; overload;
+	function GetColor(red, green, blue, alpha: Byte) : Colour; overload;	
+	function GetColor(red, green, blue : Byte) : Colour; overload;
+
 	function GetRGBFloatColor(r,g,b: Single): Color;
 	function GetHSBColor(hue, saturation, brightness: Single): Color;
 
@@ -655,6 +659,22 @@ implementation
 			raise Exception.Create('Failed to save ' + basename + '.bmp');
 		end;
 	end;
+	
+	function GetColor(forBitmap: Bitmap; apiColor: Color): Colour; overload;
+	begin
+		result := GetColour(forBitmap, apiColor);
+	end;
+	
+	function GetColor(red, green, blue, alpha: Byte) : Colour; overload;
+	begin
+		result := GetColour(red, green, blue, alpha);
+	end;
+		
+	function GetColor(red, green, blue : Byte) : Colour; overload;
+	begin
+		result := GetColour(red, green, blue);
+	end;
+	
 	
 	/// Maps a color from a given bitmap. This is used when determining color
 	///	keys for transparent images.

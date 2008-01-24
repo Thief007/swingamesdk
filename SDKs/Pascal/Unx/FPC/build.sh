@@ -80,6 +80,10 @@ then
 	then
 		echo "  ... Creating bin folder"
 		mkdir ./bin
+	else
+		rm bin/link.res
+		rm bin/*.o
+		rm bin/*.ppu
 	fi
 
 	echo "  ... Compiling Game"
@@ -170,6 +174,8 @@ else
 	echo "  Compiler Options: $EXTRA_OPTS"
 	echo "__________________________________________________"	
 	echo "  ... Compiling game"
+
+	rm ./bin/*.o ./bin/*.ppu
 
 	fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas 
 

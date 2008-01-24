@@ -27,7 +27,7 @@ interface
 		procedure InitTest(var test: TestSet);
 		procedure WriteReport(const suites: TestSuites);
 implementation
-	uses SGSDK_Input, SGSDK_Graphics, SGSDK_Font, SGSDK_Core, SGSDK_KeyCodes, GameResources;
+	uses SGSDK_Input, SGSDK_Graphics, SGSDK_Font, SGSDK_Core, SGSDK_KeyCodes, SGSDK_Camera, GameResources;
 	
 	const
 		TITLE_TEXT_TOP = 26;
@@ -87,8 +87,11 @@ implementation
 	procedure DrawGeneralInstructions();
 	const
 		INST = 'Press: [p]ass, [f]ail, [esc] skip suite, [n]ext test';
+	var
+		fg: Color;
 	begin
-	    DrawTextOnScreen(INST, ColorWhite, GameFont('Courier'), GENERAL_INST_LEFT, GENERAL_INST_TOP);
+		fg := GetColor(33, 118, 182, 255);
+	    DrawTextOnScreen(INST, fg, GameFont('Courier'), GENERAL_INST_LEFT, GENERAL_INST_TOP);
 	end;
 	
 
@@ -118,7 +121,9 @@ implementation
 		end;
 		
 		SetClip(drawIn);
+		SetScreenOffset(-drawIn.x, -drawIn.y);
 		test.ToRun(drawIn);
+		SetScreenOffset(0, 0);
 		ResetClip();
 	end;
 

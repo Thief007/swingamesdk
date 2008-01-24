@@ -87,7 +87,9 @@ namespace Tests
 		    if (Input.WasKeyTyped(Keys.VK_N)) Skip();
     		
 			Graphics.SetClip(drawIn);
+			Camera.SetScreenOffset(-drawIn.X, -drawIn.Y);
 		    ToRun(drawIn);
+			Camera.SetScreenOffset(0, 0);
 			Graphics.ResetClip();
         }
 
