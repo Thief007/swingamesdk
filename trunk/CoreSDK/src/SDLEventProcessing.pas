@@ -56,13 +56,62 @@ type TSDLManager = class (TObject)
 
 		procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 
+		function IsKeyPressed(virtKeyCode : Integer): Boolean;
+
 	private
-		procedure DoQuit;
+		procedure DoQuit();
+		procedure CheckQuit();
 		procedure HandleEvent(event: PSDL_Event);
 		procedure HandleKeydownEvent(event: PSDL_Event);
 end;
 
 implementation
+	
+	function TSDLManager.IsKeyPressed(virtKeyCode : Integer): Boolean;
+	var
+		keys: PUint8;
+		//indexAddress: uint32;
+		//intPtr: ^UInt8;
+	begin
+		keys := SDL_GetKeyState(nil);
+	
+		if keys <> nil then
+		begin
+			{indexAddress := uint32(keys) + uint32(virtKeyCode);
+		
+			{- $ IFDEF FPC
+				intPtr := PUInt8(indexAddress);
+			{- $ ELSE
+				intPtr := Ptr(indexAddress);
+			{- $ ENDIF
+			result := intPtr^ = 1;}
+			
+			result := (keys + virtKeyCode)^ = 1;
+			
+			if not result then
+			begin
+				if virtKeyCode = SDLK_LSUPER then result := (keys + SDLK_LMETA)^ = 1
+				else if virtKeyCode = SDLK_RSUPER then result := (keys + SDLK_RMETA)^ = 1;
+			end;
+		end
+		else
+		begin
+			result := false;
+		end;
+	end;
+
+	procedure TSDLManager.CheckQuit();
+	var
+		keys: PUInt8;
+	begin
+		keys := SDL_GetKeyState(nil);
+		
+		if ((keys + SDLK_LMETA)^ + (keys + SDLK_Q)^ = 2) or
+			((keys + SDLK_RMETA)^ + (keys + SDLK_Q)^ = 2) or
+			 ((keys + SDLK_LALT)^ + (keys + SDLK_F4)^ = 2) or
+			 ((keys + SDLK_RALT)^ + (keys + SDLK_F4)^ = 2)
+			then DoQuit()
+	end;
 
 	procedure TSDLManager.ProcessEvents();
 	var
@@ -82,6 +131,8 @@ implementation
 		begin
 			HandleEvent(@event);
 		end;
+
+		CheckQuit();
 	end;
 	
 	procedure TSDLManager.HandleEvent(event: PSDL_Event);
