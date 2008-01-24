@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-24: Stephen: Added Comments
 // - 2008-01-23: James : Fixed exceptions for functions
 //               Changed comments
 // - 2008-01-23: Andrew: Fixed exceptions
@@ -871,6 +872,27 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Draw bitmap to the specified bitmap. You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="dest">Bitmap to draw on</param>
+        /// <param name="bitmapToDraw">Bitmap to draw</param>
+        /// <param name="position">Position to Draw to</param>
+        public static void DrawBitmap(Bitmap dest, Bitmap bitmapToDraw, Point2D position)
+        {
+            DrawBitmap(dest, bitmapToDraw, (int)position.X, (int)position.Y);
+        }
+
+        /// <summary>
+        /// Draw bitmap to the specified bitmap. You will often use the bitmap from CreateBitmap to draw on.
+        /// </summary>
+        /// <param name="bitmapToDraw">Bitmap to draw</param>
+        /// <param name="position">Position to Draw to</param>
+        public static void DrawBitmap(Bitmap bitmapToDraw, Point2D position)
+        {
+            DrawBitmap(bitmapToDraw, (int)position.X, (int)position.Y);
+        }
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartWithDestination")]
         private static extern void DLL_DrawBitmapPartWithDestination(IntPtr dest, IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
         /// <summary>
@@ -1528,6 +1550,25 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
+        /// <summary>
+        /// Draws a pixel onto the screen at the given location
+        /// </summary>
+        /// <param name="dest">Destination Bitmap</param>
+        /// <param name="theColor">Color of the Pixel</param>
+        /// <param name="position">Position of Pixel</param>
+        public static void DrawPixel(Bitmap dest, Color theColor, Point2D position)
+        {
+            DrawPixel(dest, theColor, (int)position.X, (int)position.Y);
+        }
+        /// <summary>
+        /// Draws a pixel onto the screen at the given location
+        /// </summary>
+        /// <param name="theColor"></param>
+        /// <param name="position"></param>
+        public static void DrawPixel(Color theColor, Point2D position)
+        {
+            DrawPixel(theColor, (int)position.X, (int)position.Y);
+        }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangle")]
         private static extern void DLL_DrawRectangle(uint theColour, int filled, float xPos, float yPos, int width, int height);
@@ -1587,6 +1628,47 @@ namespace SwinGame
         }
 
         /// <summary>
+        /// Draws a Rectangle on a destination bitmap with the specified Color
+        /// </summary>
+        /// <param name="dest">Destination Bitmap</param>
+        /// <param name="theColor">Color of the Recangle</param>
+        /// <param name="filled">Filled Rectangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void DrawRectangle(Bitmap dest, Color theColor, bool filled, Rectangle source)
+        {
+            DrawRectangle(dest, theColor, filled, source.X, source.Y, source.Width, source.Height);
+        }
+        /// <summary>
+        /// Draws a Rectangle on a destination bitmap with the specified Color
+        /// </summary>
+        /// <param name="dest">Destination Bitmap</param>
+        /// <param name="theColor">Color of the Recangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void DrawRectangle(Bitmap dest, Color theColor, Rectangle source)
+        {
+            DrawRectangle(dest, theColor, source.X, source.Y, source.Width, source.Height);
+        }
+        /// <summary>
+        /// Draws a Rectangle on a destination bitmap with the specified Color
+        /// </summary>
+        /// <param name="theColor">Color of the Recangle</param>
+        /// <param name="filled">Filled Rectangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void DrawRectangle(Color theColor, bool filled, Rectangle source)
+        {
+            DrawRectangle(theColor, filled, source.X, source.Y, source.Width, source.Height);
+        }
+        /// <summary>
+        /// Draws a Rectangle on a destination bitmap with the specified Color
+        /// </summary>
+        /// <param name="theColor">Color of the Recangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void DrawRectangle(Color theColor, Rectangle source)
+        {
+            DrawRectangle(theColor, source.X, source.Y, source.Width, source.Height);
+        }
+
+        /// <summary>
         /// Draws a filled rectangle on the screen at the give location, x and y are in game 
         /// coordinates not screen coordinates
         /// </summary>
@@ -1611,6 +1693,27 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws a filled rectangle on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">Color of the Rectangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void FillRectangle(Color theColor, Rectangle source)
+        {
+            FillRectangle(theColor, source.X, source.Y, source.Width, source.Height);
+        }
+        /// <summary>
+        /// Draws a filled rectangle on the screen at the give location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="dest">Destination Bitmap</param>
+        /// <param name="theColor">Color of the Rectangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void FillRectangle(Bitmap dest, Color theColor, Rectangle source)
+        {
+            FillRectangle(dest, theColor, source.X, source.Y, source.Width, source.Height);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLine")]
@@ -1641,6 +1744,27 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws a line on the screen at the given location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="dest">Destination Bitmap</param>
+        /// <param name="theColor">Color of the Line</param>
+        /// <param name="line">Line</param>
+        public static void DrawLine(Bitmap dest, Color theColor, LineSegment line)
+        {
+            DrawLine(dest, theColor, (int)line.StartPoint.X, (int)line.StartPoint.Y, (int)line.EndPoint.X, (int)line.EndPoint.Y);
+        }
+        /// <summary>
+        /// Draws a line on the screen at the given location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">Color of the Line</param>
+        /// <param name="line">Line</param>
+        public static void DrawLine(Color theColor, LineSegment line)
+        {
+            DrawLine(theColor, (int)line.StartPoint.X, (int)line.StartPoint.Y, (int)line.EndPoint.X, (int)line.EndPoint.Y);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLine")]
@@ -1804,6 +1928,29 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws a filled circle centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="dest">Destination Bitmap</param>
+        /// <param name="theColor">Color of the Circle</param>
+        /// <param name="point">Position of the Circle</param>
+        /// <param name="radius">Radius of the Circle</param>
+        public static void FillCircle(Bitmap dest, Color theColor, Point2D point, int radius)
+        {
+            FillCircle(dest, theColor, (int)point.X, (int)point.Y, radius);
+        }
+        /// <summary>
+        /// Draws a filled circle centered on a given x, y location, x and y are in game 
+        /// coordinates not screen coordinates
+        /// </summary>
+        /// <param name="theColor">Color of the Circle</param>
+        /// <param name="position">Position of the Circle</param>
+        /// <param name="radius">Radius of the Circle</param>
+        public static void FillCircle(Color theColor, Point2D position, int radius)
+        {
+            FillCircle(theColor, position.X, position.Y, radius);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipse")]
@@ -2546,6 +2693,17 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
+        /// <summary>
+        /// Draw a Pixel on the Screen, it will always draw to the Point
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">The Color of the Pixel</param>
+        /// <param name="position">Position of the Pixel</param>
+        public static void DrawPixelOnScreen(Color theColor, Point2D position)
+        {
+            DrawPixelOnScreen(theColor, (int)position.X, (int)position.Y);
+        }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
         private static extern void DLL_DrawRectangleOnScreen(int theColor, int filled, int x, int y, int width, int height);
@@ -2578,6 +2736,54 @@ namespace SwinGame
         }
 
         /// <summary>
+        /// Draw a Rectangle on Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">The Color of the Rectangle</param>
+        /// <param name="filled">Filled Rectangle</param>
+        /// <param name="x">X Position</param>
+        /// <param name="y">Y Position</param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
+        public static void DrawRectangleOnScreen(Color theColor, bool filled, int x, int y, int width, int height)
+        {
+            if (filled)
+            {
+                FillRectangleOnScreen(theColor, x, y, width, height);
+            }
+            else
+            {
+                DrawRectangleOnScreen(theColor, x, y, width, height);
+            }
+        }
+
+        /// <summary>
+        /// Draw a Rectangle on Screen
+        /// This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">The Color of the Rectangle</param>
+        /// <param name="source">The Rectangle</param>
+        public static void DrawRectangleOnScreen(Color theColor, Rectangle source)
+        {
+            DrawRectangleOnScreen(theColor, source.X, source.Y, source.Width, source.Height);
+        }
+
+        /// <summary>
+        /// Draw a Rectangle on Screen
+        /// This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">The Color of the Rectangle</param>
+        /// <param name="filled">Filled Rectangle</param>
+        /// <param name="source">The Rectangle</param>
+        public static void DrawRectangleOnScreen(Color theColor, bool filled, Rectangle source)
+        {
+            DrawRectangleOnScreen(theColor, filled, source.X, source.Y, source.Width, source.Height);
+        }
+        
+        /// <summary>
         /// Draws a Filled Rectangle on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
         /// things like the user interface or overlays
@@ -2603,6 +2809,17 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws a Filled Rectangle on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color of the Rectangle</param>
+        /// <param name="source">Rectangle</param>
+        public static void FillRectangleOnScreen(Color theColor, Rectangle source)
+        {
+            FillRectangle(theColor, source.X, source.Y, source.Width, source.Height);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
@@ -2634,7 +2851,17 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
-
+        /// <summary>
+        /// Draws a Line on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color of the Line</param>
+        /// <param name="line">The Line</param>
+        public static void DrawLineOnScreen(Color theColor, LineSegment line)
+        {
+            DrawLineOnScreen(theColor, (int)line.StartPoint.X, (int)line.StartPoint.Y, (int)line.EndPoint.X, (int)line.EndPoint.Y);
+        }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
         private static extern void DLL_DrawHorizontalLineOnScreen(int theColor, int y, int x1, int x2);
@@ -2807,7 +3034,18 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
-
+        /// <summary>
+        /// Draws a Filled Circle On Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color of the Circle</param>
+        /// <param name="position">Position of the Circle</param>
+        /// <param name="radius">Radius of the Circle</param>
+        public static void FillCircleOnScreen(Color theColor, Point2D position, int radius)
+        {
+            FillCircleOnScreen(theColor, (int)position.X, (int)position.Y, radius);
+        }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
         private static extern void DLL_DrawEllipseOnScreen(int theColor, int filled, int x, int y, int width, int height);
@@ -2838,6 +3076,52 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
+        /// <summary>
+        /// Draws an Ellipse on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Ellipse Color</param>
+        /// <param name="filled">Filled Ellipse</param>
+        /// <param name="source">Rectangle</param>
+        public static void DrawEllipseOnScreen(Color theColor, bool filled, Rectangle source)
+        {
+            DrawEllipseOnScreen(theColor, filled, (int)source.X, (int)source.Y, (int)source.Width, (int)source.Height);
+        }
+        /// <summary>
+        /// Draws an Ellipse on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor"></param>
+        /// <param name="source"></param>
+        public static void DrawEllipseOnScreen(Color theColor, Rectangle source)
+        {
+            DrawEllipseOnScreen(theColor, (int)source.X, (int)source.Y, (int)source.Width, (int)source.Height);
+        }
+
+        /// <summary>
+        /// Draws an Ellipse on the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color of the Ellipse</param>
+        /// <param name="filled">Filled Ellipse</param>
+        /// <param name="x">X Coordinate</param>
+        /// <param name="y">Y Coordinate</param>
+        /// <param name="width">Width</param>
+        /// <param name="height">Height</param>
+        public static void DrawEllipseOnScreen(Color theColor, bool filled, int x, int y, int width, int height)
+        {
+            if (filled)
+            {
+                FillEllipseOnScreen(theColor, x, y, width, height);
+            }
+            else
+            {
+                DrawEllipseOnScreen(theColor, x, y, width, height);
+            }
+        }
 
         /// <summary>
         /// Draws a Filled Ellipse On the Screen, it will always draw to x, y 
@@ -2866,5 +3150,17 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
+        /// <summary>
+        /// Draws a Filled Ellipse On the Screen, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="theColor">Color of the Ellipse</param>
+        /// <param name="source">Ellipse</param>
+        public static void FillEllipseOnScreen(Color theColor, Rectangle source)
+        {
+            FillEllipseOnScreen(theColor, source.X, source.Y, source.Width, source.Height);
+        }
+        
     }
 }
