@@ -77,7 +77,7 @@ namespace Tests
 
         public void Run(Rectangle drawIn)
         {
-		    if (ClearScreen) Graphics.FillRectangle(Color.Black, drawIn);	
+		    if (ClearScreen) Graphics.DrawBitmapOnScreen(GameResources.GameImage("BGA"), (int)(drawIn.X), (int)(drawIn.Y));;	
     		
 		    DrawMethodBeingTested();		
 		    DrawInstructions();
@@ -86,7 +86,9 @@ namespace Tests
 		    if (Input.WasKeyTyped(Keys.VK_F)) Fail();
 		    if (Input.WasKeyTyped(Keys.VK_N)) Skip();
     		
+			Graphics.SetClip(drawIn);
 		    ToRun(drawIn);
+			Graphics.ResetClip();
         }
 
         private void DrawInstructions()
@@ -101,7 +103,7 @@ namespace Tests
 
         private void DrawMethodBeingTested()
         {
-            Graphics.FillRectangleOnScreen(Color.Black, 0, Consts.METHOD_TOP, Consts.SCREEN_WIDTH, Consts.METHOD_HEIGHT);
+            Graphics.FillRectangleOnScreen(Color.Black, Consts.METHOD_LEFT, Consts.METHOD_TOP, Consts.SCREEN_WIDTH, Consts.METHOD_HEIGHT);
             Text.DrawTextOnScreen(MethodBeingTested, Color.White, GameResources.GameFont("Courier"), Consts.METHOD_LEFT, Consts.METHOD_TOP);
         }
 

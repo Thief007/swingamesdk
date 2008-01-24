@@ -291,7 +291,7 @@ interface
 	procedure PauseTimer(toPause : Timer); {1.1}
 	procedure UnpauseTimer(toUnpause : Timer); {1.1}
 	function GetTimerTicks(toGet : Timer) : UInt32; {1.1}
-	
+
 	//Internal routines
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;

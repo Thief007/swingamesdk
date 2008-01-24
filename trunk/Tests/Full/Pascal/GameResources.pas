@@ -122,8 +122,8 @@ implementation
 	procedure LoadFonts();
 	begin
 		NewFont('ArialLarge', 'arial.ttf', 80);
-		NewFont('Courier', 'cour.ttf', 16);
-		NewFont('CourierLarge', 'cour.ttf', 24);
+		NewFont('Courier', 'cour.ttf', 15);
+		NewFont('CourierLarge', 'cour.ttf', 28);
 	end;
 
 	procedure FreeFonts();
@@ -145,6 +145,8 @@ implementation
 		NewImage('Explosion', 'Explosion.png');
 		NewImage('Ship', 'ship.png');
 		NewImage('Sea', 'sea.png');
+		NewImage('BGA', 'BackgroundDrawArea.png');
+		NewImage('BG', 'BackgroundMain.jpg');
 		//NewImage('NoImages', 'Ufo.png');
 	end;
 
