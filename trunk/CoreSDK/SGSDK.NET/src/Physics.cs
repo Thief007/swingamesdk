@@ -1190,13 +1190,24 @@ namespace SwinGame
         /// <param name="width">Width of the Rectangle</param>
         /// <param name="height">Height of the Rectangle</param>
         /// <returns>True if the Vector ends at the rectangle</returns>
-        public bool VectorWithinRect(Vector v, float x, float y, int width, int height)
+        public static bool VectorIsWithinRect(Vector v, float x, float y, int width, int height)
         {
             if (v.X < x) return false;
             else if (v.X > x + width) return false;
             else if (v.Y < y) return false;
             else if (v.Y > y + height) return false;
             else return true;
+        }
+        /// <summary>
+        /// VectorIsWithinRect checks if the specified vector ends at the rectangle specified. 
+        /// The routine assumes that the vector starts from 0, 0.
+        /// </summary>
+        /// <param name="v">Vector to check if inside Rectangle</param>
+        /// <param name="rectangle">Rectangle</param>
+        /// <returns>True if the Vector ends at the rectangle</returns>
+        public static bool VectorIsWithinRect(Vector v, Rectangle rectangle)
+        {
+            return VectorIsWithinRect(v, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
