@@ -21,7 +21,7 @@ namespace SwinGameVB
         private SwinGame.Font font;
         internal void Free()
         {
-            SwinGame.Text.FreeFont(ref font);
+            SwinGame.Text.FreeFont( font);
         }
         internal SwinGame.Font result
         {
@@ -244,6 +244,36 @@ namespace SwinGameVB
             Color backcolor = Color.FromArgb(backColor);
             SwinGame.Text.DrawTextLinesOnScreen(theText, color, backcolor, theFont.result, (SwinGame.FontAlignment)align, x, y, w, h);
         }
+
+        public void DrawText_ToBitmap_Point(Bitmap dest, String theText, int textColor, Fonts theFont, Point2D position)
+        {
+            DrawText_ToBitmap(dest, theText, textColor, theFont, (int)position.GetX(), (int)position.GetY());
+        }
+        public void DrawText_Point(String theText, int textColor, Fonts theFont, Point2D position)
+        {
+            DrawText(theText, textColor, theFont, position.GetX(), position.GetY());
+        }
+        public void DrawTextLines_Rectangle(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, Rectangle withinRec)
+        {
+            DrawTextLines(theText, textColor, backColor, theFont, align, (int)withinRec.GetX(), (int)withinRec.GetY(), (int)withinRec.GetWidth(), (int)withinRec.GetHeight());
+        }
+        public void DrawTextLines_ToBitmap_Rectangle(Bitmap dest, String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, Rectangle withinRec)
+        {
+            DrawTextLines_ToBitmap(dest, theText, textColor, backColor, theFont, align, (int)withinRec.GetX(), (int)withinRec.GetY(), (int)withinRec.GetWidth(), (int)withinRec.GetHeight());
+        }
+        public void DrawFramerate_Point(Point2D position, Fonts theFont)
+        {
+            DrawFramerate((int)position.GetX(), (int)position.GetY(), theFont);
+        }
+        public void DrawTextOnScreen_Point(String theText, int textColor, Fonts theFont, Point2D position)
+        {
+            DrawTextOnScreen(theText, textColor, theFont, (int)position.GetX(), (int)position.GetY());
+        }
+        public void DrawTextLinesOnScreen_Rectangle(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, Rectangle withinRect)
+        {
+            DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, (int)withinRect.GetX(), (int)withinRect.GetY(), (int)withinRect.GetWidth(), (int)withinRect.GetHeight());
+        }
+
     }
 
     [Guid("CF5F7CD4-6576-4862-ABB2-0A3B9B345B57")]
@@ -254,14 +284,23 @@ namespace SwinGameVB
         void SetFontStyle(Fonts font, FontStyle style);
         void FreeFont(ref Fonts fontToFree);
         void DrawText_ToBitmap(Bitmap dest, String theText, int textColor, Fonts theFont, int x, int y);
+        void DrawText_ToBitmap_Point(Bitmap dest, String theText, int textColor, Fonts theFont, Point2D position);
         void DrawText(String theText, int textColor, Fonts theFont, float x, float y);
+        void DrawText_Point(String theText, int textColor, Fonts theFont, Point2D position);
         void DrawTextLines(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, float x, float y, int w, int h);
+        void DrawTextLines_Rectangle(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, Rectangle withinRec);
         void DrawTextLines_ToBitmap(Bitmap dest, String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, int x, int y, int w, int h);
+        void DrawTextLines_ToBitmap_Rectangle(Bitmap dest, String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, Rectangle withinRec);
         int TextWidth(String theText, Fonts theFont);
         int TextHeight(String theText, Fonts theFont);
         void DrawFramerate(int x, int y, Fonts theFont);
+        void DrawFramerate_Point(Point2D position, Fonts theFont);
         void DrawTextOnScreen(String theText, int textColor, Fonts theFont, int x, int y);
+        void DrawTextOnScreen_Point(String theText, int textColor, Fonts theFont, Point2D position);
         void DrawTextLinesOnScreen(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, int x, int y, int w, int h);
+        void DrawTextLinesOnScreen_Rectangle(String theText, int textColor, int backColor, Fonts theFont, FontAlignment align, Rectangle withinRect);
+
     }
+
 
 }

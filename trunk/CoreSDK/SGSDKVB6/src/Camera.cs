@@ -29,11 +29,11 @@ namespace SwinGameVB
 
         public int XOffset()
         {
-            return SwinGame.Camera.XOffset();
+            return SwinGame.Camera.XOffset;
         }
         public int YOffset()
         {
-            return SwinGame.Camera.YOffset();
+            return SwinGame.Camera.YOffset;
         }
         public int ScreenX(float x)
         {
@@ -51,9 +51,9 @@ namespace SwinGameVB
         {
             return SwinGame.Camera.GameY(y);
         }
-        public Vector ToGameCoordinates(Vector screenVector)
+        public Point2D ToGameCoordinates(Point2D screenVector)
         {
-            Vector vector = new Vector();
+            Point2D vector = new Point2D();
             vector.result = SwinGame.Camera.ToGameCoordinates(screenVector.result);
             return vector;
         }
@@ -73,7 +73,7 @@ namespace SwinGameVB
         int ScreenY(float y);
         float GameX(int x);
         float GameY(int y);
-        Vector ToGameCoordinates(Vector screenVector);
+        Point2D ToGameCoordinates(Point2D screenVector);
         void MoveVisualArea_WithVecotr(Vector v);
         void MoveVisualArea(float dx, float dy);
         void SetScreenOffset(float dx, float dy);

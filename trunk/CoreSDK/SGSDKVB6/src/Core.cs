@@ -53,7 +53,7 @@ namespace SwinGameVB
 
         internal void Free()
         {
-            SwinGame.Graphics.FreeBitmap(ref bitmap);
+            SwinGame.Graphics.FreeBitmap(bitmap);
         }
 
         internal SwinGame.Bitmap result
@@ -115,27 +115,27 @@ namespace SwinGameVB
         }
         public Single getX()
         {
-            return vector.x;
+            return vector.X;
         }
         public void setX(Single value)
         {
-            vector.x = value;
+            vector.X = value;
         }
         public Single getY()
         {
-            return vector.y;
+            return vector.Y;
         }
         public void setY(Single value)
         {
-            vector.y = value;
+            vector.Y = value;
         }
         public Single getW()
         {
-            return vector.w;
+            return vector.W;
         }
         public void setW(Single value)
         {
-            vector.w = value;
+            vector.W = value;
         }
 
         internal SwinGame.Vector result
@@ -194,7 +194,7 @@ namespace SwinGameVB
     [ComVisible(true)]
     public class Core :ICore
     {
-        internal static SwinGame.Vector _LastMousePos = new SwinGame.Vector();
+        internal static SwinGame.Point2D _LastMousePos = new SwinGame.Point2D();
            
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the

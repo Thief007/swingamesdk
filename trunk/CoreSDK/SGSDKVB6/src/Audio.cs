@@ -18,7 +18,7 @@ namespace SwinGameVB
         private SwinGame.SoundEffect soundeffect;
         internal void Free()
         {
-            SwinGame.Audio.FreeSoundEffect(ref soundeffect);
+            SwinGame.Audio.FreeSoundEffect( soundeffect);
         }
         internal SwinGame.SoundEffect result
         {
@@ -50,7 +50,7 @@ namespace SwinGameVB
         private SwinGame.Music music;
         internal void Free()
         {
-            SwinGame.Audio.FreeMusic(ref music);
+            SwinGame.Audio.FreeMusic( music);
         }
         internal SwinGame.Music result
         {
@@ -199,9 +199,9 @@ namespace SwinGameVB
         }
 
         /// Stop playing sound effects
-        public void StopSoundEffect()
+        public void StopSoundEffect(SoundEffect effect)
         {
-            SwinGame.Audio.StopSoundEffect();
+            SwinGame.Audio.StopSoundEffect(effect.result);
         }
     }
 
@@ -226,6 +226,6 @@ namespace SwinGameVB
         bool IsSoundEffectPlaying(SoundEffect effect);
         bool IsMusicPlaying(Music music);
         void StopMusic();
-        void StopSoundEffect();
+        void StopSoundEffect(SoundEffect effect);
     }
 }

@@ -1,6 +1,6 @@
 Colour = 0, 0, 0, 0, C
 GameLauncher = 132, 174, 987, 662, 
-GameLogic = 22, 29, 877, 517, 
+GameLogic = 22, 29, 877, 517, Z
 GameResources = 66, 87, 921, 575, 
-SwinGame = 0, 0, 0, 0, C
+SwinGame = 88, 116, 941, 604, 
 Icon = 0, 0, 0, 0, C, 22, 29, 877, 517, C

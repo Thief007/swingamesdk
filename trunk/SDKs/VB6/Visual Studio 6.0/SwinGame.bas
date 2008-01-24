@@ -11,9 +11,13 @@ Public MouseAndKey As New SGSDKVB6.Input
 Public Physics As New SGSDKVB6.Physics
 Public Camera As New SGSDKVB6.Camera
 Public MappyLoader As New SGSDKVB6.MappyLoader
+Public DebugLog As New SGSDKVB6.Log
+Public Shapes As New SGSDKVB6.Shapes
 
 
 Sub Load()
+    Set Shapes = New SGSDKVB6.Shapes
+    Set DebugLog = New SGSDKVB6.Log
     Set Core = New SGSDKVB6.Core
     Set Graphics = New SGSDKVB6.Graphics
     Set Text = New SGSDKVB6.Text

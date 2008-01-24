@@ -7,6 +7,7 @@ Sub Run()
     
     
     
+    
     Call Core.OpenGraphicsWindow("VB6 Start Pack", 800, 600)
     Call Audio.OpenAudio
     Call LoadResources
