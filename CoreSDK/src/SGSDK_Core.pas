@@ -279,11 +279,7 @@ interface
 
 	function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
 	function GetPathToResource(filename: String): String; overload;
-	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
-	function GetPathToResourceWithBase(path, filename: String) : String; overload;
-
-	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-
+	
 	function Cos(angle: Single): Single;
 	function Sin(angle: Single): Single;
 	function Tan(angle: Single): Single;
@@ -295,7 +291,12 @@ interface
 	procedure PauseTimer(toPause : Timer); {1.1}
 	procedure UnpauseTimer(toUnpause : Timer); {1.1}
 	function GetTimerTicks(toGet : Timer) : UInt32; {1.1}
-		
+	
+	//Internal routines
+	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
+	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+	function GetPathToResourceWithBase(path, filename: String) : String; overload;
+	
 implementation
 	uses SysUtils, Math, Classes;
 	
