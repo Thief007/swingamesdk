@@ -443,7 +443,7 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen")]
         private static extern void DLL_DrawTextOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, int textColor, IntPtr theFont, int x, int y);
         /// <summary>
-        /// /// Draws texts to the screen. Drawing text is a slow operation,
+        /// Draws texts to the screen. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
         ///	good idea. Do not use this technique if the text changes frequently.
         /// </summary>
@@ -468,6 +468,19 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws texts to the screen. Drawing text is a slow operation,
+        ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
+        ///	good idea. Do not use this technique if the text changes frequently.
+        /// </summary>
+        /// <param name="theText">The text to be drawn onto the screen</param>
+        /// <param name="textColor">The color to draw the text</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <param name="point">The Top left Position of the Text to be drawn</param>
+        public static void DrawTextOnScreen(string theText, Color textColor, Font theFont, Point2D point)
+        {
+            DrawTextOnScreen(theText, textColor, theFont, (int)point.X, (int)point.Y);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen")]
@@ -503,6 +516,21 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws multiple lines of text to the screen. This is a very
+        ///	slow operation, so if the text is not frequently changing save it to a
+        ///	bitmap and draw that bitmap to screen instead.
+        /// </summary>
+        /// <param name="theText">The text to be drawn onto the destination</param>
+        /// <param name="textColor">The color to draw the text</param>
+        /// <param name="backColor">The color to draw behind the text</param>
+        /// <param name="theFont">The font used to draw the text</param>
+        /// <param name="align">The alignment for the text in the region</param>
+        /// <param name="rectangle">The Rectangle the Text will be within</param>
+        public static void DrawTextLinesOnScreen(string theText, Color textColor, Color backColor, Font theFont, FontAlignment align, Rectangle rectangle)
+        {
+            DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
     }
 }

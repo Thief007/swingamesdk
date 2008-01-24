@@ -1224,7 +1224,7 @@ namespace SwinGame
             Vector temp;
             try
             {
-                return DLL_VectorOutOfRectFromPoint(pnt, Shapes.ToSGSDKRect(rect), movement);
+                temp = DLL_VectorOutOfRectFromPoint(pnt, Shapes.ToSGSDKRect(rect), movement);
             }
             catch (Exception exc)
             {
@@ -1252,7 +1252,7 @@ namespace SwinGame
             Vector temp;
             try
             {
-                return DLL_VectorOutOfRectFromRect(Shapes.ToSGSDKRect(srcRect), Shapes.ToSGSDKRect(targetRect), movement);
+                temp = DLL_VectorOutOfRectFromRect(Shapes.ToSGSDKRect(srcRect), Shapes.ToSGSDKRect(targetRect), movement);
             }
             catch (Exception exc)
             {
