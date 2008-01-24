@@ -1226,6 +1226,26 @@ uses
 		end;
 		result := CreateVector(0,0);				
 	end;
+	
+	function VectorOutOfRectFromPoint(pnt: Point2D; rect: Rectangle; movement: Vector): Vector; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Physics.VectorOutOfRectFromPoint(pnt, rect, movement);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := CreateVector(0,0);
+	end;
+	
+	function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector) : Vector; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Physics.VectorOutOfRectFromRect(srcRect, targetRect, movement);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := CreateVector(0,0);
+	end;
 
 	
 	//***************************************************
@@ -2421,6 +2441,8 @@ exports
 	InvertVector,}
 	CircleHasCollidedWithLine,
 	RectangleHasCollidedWithLine,
+	VectorOutOfRectFromPoint,	
+	VectorOutOfRectFromRect,
 	LimitMagnitude,
 	GetUnitVector,
 	//IsZeroVector,
