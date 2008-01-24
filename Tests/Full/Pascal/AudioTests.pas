@@ -19,18 +19,40 @@ implementation
 		if WasKeyTyped(VK_L) then PlaySoundEffect(GameSound('Shock'), -1);
 	end;
 	
+	procedure TestPlayMusic(const drawIn: Rectangle);
+	begin
+		if WasKeyTyped(VK_A) then PlayMusic(GameMusic('Fast'));
+		if WasKeyTyped(VK_I) then 
+		begin	
+			if false = IsMusicPlaying() then PlayMusic(GameMusic('Fast'));
+		end;
+		if WasKeyTyped(VK_S) then StopMusic();
+		if WasKeyTyped(VK_L) then PlayMusic(GameMusic('Fast'), -1);
+	end;
+	
 	function GetAudioTests(): TestSuite;
+	var
+		i: Integer;
 	begin
 		result.Title := 'Audio Tests';
-		SetLength(result.Tests, 1);
+		SetLength(result.Tests, 2);
 		
-		InitTest(result.Tests[0]);
+		for i := 0 to High(result.Tests) do
+		begin
+			InitTest(result.Tests[i]);
+		end;
 		
 		with result.Tests[0] do
 		begin
 			MethodBeingTested := 'PlaySoundEffect, IsSoundEffectPlaying, StopSoundEffect';
 			Instructions := 'pl[a]y sound once' + EOL + 'play [i]f not playing' + EOL + '[s]top sound effect' + EOL + '[l]oop sound';
 			ToRun := @TestPlaySound;
+		end;
+		with result.Tests[1] do
+		begin
+			MethodBeingTested := 'PlayMusic, IsMusicPlaying, StopMusic';
+			Instructions := 'pl[a]y music once' + EOL + 'play [i]f not playing' + EOL + '[s]top music' + EOL + '[l]oop music';
+			ToRun := @TestPlayMusic;
 		end;
 	end;
 	

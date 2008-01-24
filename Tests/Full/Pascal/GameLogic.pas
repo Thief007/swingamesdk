@@ -7,7 +7,7 @@ implementation
 	uses
 	GameResources,
 	SysUtils,
-	SGSDK_Core, TestFramework, AudioTests;
+	SGSDK_Core, TestFramework, AudioTests, GraphicsTests;
 	
 	
 	type SuiteAdder = procedure (var suites: TestSuites);
@@ -23,6 +23,7 @@ implementation
 		SetLength(suites, 0);
 		
 		AddSuite(suites, @AddAudioSuite);
+		AddSuite(suites, @AddGraphicsSuite);
 	end;
 		
 	//The main procedure that controlls the game logic.
