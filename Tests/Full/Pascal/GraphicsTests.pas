@@ -22,6 +22,12 @@ implementation
 		tempPoint, tempPoint2, tempPoint3, tempPoint4,
 		tempPoint5, tempPoint6: Point2D;
 	
+	procedure TestFill(const drawIn: Rectangle);
+	begin
+		ClearSurface(smallScreen);
+		
+	end;
+	
 	procedure TestDrawEllipse(const drawIn: Rectangle);
 	begin
 		ClearSurface(smallScreen, ColourTransparent);
@@ -48,16 +54,16 @@ implementation
 		tempRect4.width := tempRect.width;
 		tempRect4.height := tempRect.height;
 		DrawEllipse(smallScreen, ColourGreen, tempRect4);
-		DrawBitmap(smallScreen, drawIn.x, drawIn.y);
+		DrawBitmap(smallScreen, 0, 0);
 
-		DrawEllipse(ColourWhite, filled, drawIn.x, drawIn.y, tempRect.width, tempRect.height);
-		tempRect2.x := tempRect.width + drawIn.x;
-		tempRect2.y := drawIn.y + tempRect.height;
+		DrawEllipse(ColourWhite, filled, 0, 0, tempRect.width, tempRect.height);
+		tempRect2.x := tempRect.width;
+		tempRect2.y := tempRect.height;
 		tempRect2.width := tempRect.width;
 		tempRect2.height := tempRect.height;
 		DrawEllipse(ColourWhite, filled, tempRect2);
-		DrawEllipse(ColourWhite, drawIn.x, drawIn.y + tempRect.height, tempRect.width, tempRect.height);
-		tempRect3.x := tempRect.width + drawIn.x;
+		DrawEllipse(ColourWhite, 0, tempRect.height, tempRect.width, tempRect.height);
+		tempRect3.x := tempRect.width;
 		tempRect3.width := tempRect.width;
 		tempRect3.height := tempRect.height;
 		DrawEllipse(ColourWhite, tempRect3);
@@ -96,15 +102,15 @@ implementation
 		tempPoint2.x := tempPoint.x + curRadius * 2;
 		tempPoint2.y := tempPoint.y;
 		DrawCircle(smallScreen, ColourGreen, tempPoint2, curRadius);
-		DrawBitmap(smallScreen, drawIn.x, drawIn.y);
+		DrawBitmap(smallScreen, 0, 0);
 		
-		DrawCircle(ColourWhite, filled, curRadius + drawIn.x, drawIn.y + curRadius, curRadius);
-		tempPoint3.x := curRadius * 3 + drawIn.x;
-		tempPoint3.y := drawIn.y + curRadius * 3;
+		DrawCircle(ColourWhite, filled, curRadius, curRadius, curRadius);
+		tempPoint3.x := curRadius * 3;
+		tempPoint3.y := curRadius * 3;
 		DrawCircle(ColourWhite, filled, tempPoint3, curRadius);
-		DrawCircle(ColourWhite, curRadius + drawIn.x, drawIn.y + curRadius * 3, curRadius);
-		tempPoint4.x := curRadius * 3 + drawIn.x;
-		tempPoint4.y := drawIn.y + curRadius;
+		DrawCircle(ColourWhite, curRadius, curRadius * 3, curRadius);
+		tempPoint4.x := curRadius * 3;
+		tempPoint4.y := curRadius;
 		DrawCircle(ColourWhite, tempPoint4, curRadius);
 		
 		DrawCircleOnScreen(ColourYellow, filled, Round(curRadius + drawIn.x), Round(RectangleBottom(drawIn) - curRadius) - 1, curRadius);
@@ -137,23 +143,23 @@ implementation
 		if tempRect.height > 100 then tempRect.height := 100;
 		
 		DrawRectangle(smallScreen, ColourGreen, filled, tempRect);
-		DrawRectangle(smallScreen, ColourGreen, filled, Round(tempRect.x + tempRect.width), Round(tempRect.y + tempRect.height), tempRect.width, tempRect.height);
+		DrawRectangle(smallScreen, ColourGreen, filled, Round(tempRect.width + tempRect.x), Round(tempRect.y + tempRect.height), tempRect.width, tempRect.height);
 		DrawRectangle(smallScreen, ColourGreen, Round(tempRect.x), Round(tempRect.y + tempRect.height), tempRect.width, tempRect.height);
 		tempRect4.x := tempRect.x + tempRect.width;
 		tempRect4.y := tempRect.y;
 		tempRect4.width := tempRect.width;
 		tempRect4.height := tempRect.height;
 		DrawRectangle(smallScreen, ColourGreen, tempRect4);
-		DrawBitmap(smallScreen, drawIn.x, drawIn.y);
+		DrawBitmap(smallScreen, 0, 0);
 		
-		DrawRectangle(ColourWhite, filled, drawIn.x, drawIn.y, tempRect.width, tempRect.height);
-		tempRect2.x := tempRect.width + drawIn.x;
-		tempRect2.y := drawIn.y + tempRect.height;
+		DrawRectangle(ColourWhite, filled, 0, 0, tempRect.width, tempRect.height);
+		tempRect2.x := tempRect.width;
+		tempRect2.y := tempRect.height;
 		tempRect2.width := tempRect.width;
 		tempRect2.height := tempRect.height;
 		DrawRectangle(ColourWhite, filled, tempRect2);
-		DrawRectangle(ColourWhite, drawIn.x, drawIn.y + tempRect.height, tempRect.width, tempRect.height);
-		tempRect3.x := tempRect.width + drawIn.x;
+		DrawRectangle(ColourWhite, 0, tempRect.height, tempRect.width, tempRect.height);
+		tempRect3.x := tempRect.width;
 		tempRect3.width := tempRect.width;
 		tempRect3.height := tempRect.height;
 		DrawRectangle(ColourWhite, tempRect3);
@@ -191,7 +197,6 @@ implementation
 								+ EOL + 'Z : Shrink the box height' + EOL + 'X : Expand the box height' + EOL + 'T : Toggle fill' + EOL
 								+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
 			tempRect := CreateRectangle(0, 0, 50, 50);
-			tempRect3 := CreateRectangle(0, 129, 50, 50);
 			tempRect4 := CreateRectangle(0, 0, 50, 50);
 			smallScreen := CreateBitmap(500, 510);
 			filled := false;
