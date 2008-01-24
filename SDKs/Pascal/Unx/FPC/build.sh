@@ -81,9 +81,9 @@ then
 		echo "  ... Creating bin folder"
 		mkdir ./bin
 	else
-		rm bin/link.res
-		rm bin/*.o
-		rm bin/*.ppu
+		rm bin/link.res 2> /dev/null
+		rm bin/*.o 2> /dev/null
+		rm bin/*.ppu 2> /dev/null
 	fi
 
 	echo "  ... Compiling Game"
@@ -175,7 +175,7 @@ else
 	echo "__________________________________________________"	
 	echo "  ... Compiling game"
 
-	rm ./bin/*.o ./bin/*.ppu
+	rm ./bin/*.o ./bin/*.ppu 2> /dev/null
 
 	fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas 
 
