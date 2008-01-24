@@ -249,6 +249,34 @@ namespace SwinGame
                 SetSpriteX(Pointer, value);
             }
         }
+        /// <summary>
+        /// X Position
+        /// </summary>
+        public float X
+        {
+            get
+            {
+                return xPos;
+            }
+            set
+            {
+                xPos = value;
+            }
+        }
+        /// <summary>
+        /// Y Position
+        /// </summary>
+        public float Y
+        {
+            get
+            {
+                return yPos;
+            }
+            set
+            {
+                yPos = value;
+            }
+        }
 
         /// <summary>
         /// Y position of this sprite
@@ -599,7 +627,7 @@ namespace SwinGame
     public class Graphics
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="CreateBitmap")]
-        private static extern Bitmap DLL_CreateBitmap(int width, int height);
+        private static extern IntPtr DLL_CreateBitmap(int width, int height);
         /// <summary>
         /// Create a blank bitmap of the given size. This is useful for caching drawing, 
         /// for slower drawing operations.Most of the Drawing routines provide an 
@@ -613,8 +641,7 @@ namespace SwinGame
             Bitmap temp;
             try
             {
-                temp = DLL_CreateBitmap(width, height);
-
+                temp.pointer = new SwinGamePointer(DLL_CreateBitmap(width, height), DLL_FreeBitmap);
             }
             catch (Exception exc)
             {

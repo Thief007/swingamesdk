@@ -16,12 +16,20 @@ set DOTNETsln=.\SGSDK.NET\src\
 set DOTNETbin=.\SGSDK.NET\src\bin\Debug\
 
 
-set ShowcaseDOTNET=..\Showcase\CSharpDotNET\SGSDK Showcase\lib\
-set RPGDEMO=..\Demos\C#\RPGDemo\lib\
+set ShowcaseDOTNET=..\Showcase\CSharpDotNET\Showcase\lib\
+if not exist "%ShowcaseDOTNET%" mkdir "%ShowcaseDOTNET%"
+Showcase\CSharpDotNET\Showcase
 set TOMATO=..\Demos\C#\TomatoQuest\lib\
+if not exist %TOMATO% mkdir %TOMATO%
 
 set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
+if not exist "%SDK%" mkdir "%SDK%"
+
 set SDKVB=..\SDKs\DOTNet\Visual Studio\VB\lib\
+if not exist "%SDKVB%" mkdir "%SDKVB%"
+
+set DOTNETTest=..\Tests\Full\C#\lib\
+if not exist %DOTNETTest% mkdir %DOTNETTest%
 
 echo Doing %1
 
@@ -48,10 +56,6 @@ if "%1"=="clean" goto cleaning
 	copy "%Output1%\*.dll" "%TOMATO%"
 	copy "%Output1%\*.xml" "%TOMATO%"
 
-	echo Copying to RPGDemo
-	copy "%Output1%\*.dll" "%RPGDEMO%"
-	copy "%Output1%\*.xml" "%RPGDEMO%"
-
 	echo Copying to C# SDK
 	copy "%Output1%\*.dll" "%SDK%"
 	copy "%Output1%\*.xml" "%SDK%"
@@ -59,6 +63,10 @@ if "%1"=="clean" goto cleaning
 	echo Copying to VB SDK
 	copy "%Output1%\*.dll" "%SDKVB%"
 	copy "%Output1%\*.xml" "%SDKVB%"
+
+	echo Copying to .NET Tests
+	copy "%Output1%\*.dll" "%DOTNETTest%"
+	copy "%Output1%\*.xml" "%DOTNETTest%"
 
 	echo Finished
 goto end
