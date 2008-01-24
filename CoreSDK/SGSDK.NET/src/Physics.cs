@@ -306,7 +306,6 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithBitmapPart")]
         private static extern int DLL_HasSpriteCollidedWithBitmapPart(IntPtr sprt, IntPtr bitmap, Point2D pt, SGSDKRectangle rect, int bounded);
-
         /// <summary>
         /// Determines if a sprte has collided with a bitmap. This version is used to check
         /// for collisions with a cell from the bitmap. The src rectangle defines the part of
@@ -336,6 +335,22 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
             return temp;
+        }
+        /// <summary>
+        /// Determines if a sprte has collided with a bitmap. This version is used to check
+        /// for collisions with a cell from the bitmap. The src rectangle defines the part of
+        /// the bitmap you want to check collisions with. This is usefull for checking
+        /// collisions between sprites and bitmaps you use to contain multiple cells
+        /// for animation etc.
+        /// </summary>
+        /// <param name="sprt">the sprite to check collision of</param>
+        /// <param name="bmp">the bitmap containing the cell you want to check</param>
+        /// <param name="pt">the pt, in game coordinates, of the bitmap cell</param>
+        /// <param name="bounded">set to true to perform a bounded box check, false for per pixel checks</param>
+        /// <returns>true if the sprite has collided with the bitmap cell</returns>
+        public static bool HasSpriteCollidedWithBitmap(Sprite sprt, Bitmap bmp, Point2D pt, bool bounded)
+        {
+            return HasSpriteCollidedWithBitmap(sprt, bmp, pt, Shapes.CreateRectangle(bmp), bounded);
         }
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveBitmapsCollided")]
@@ -628,9 +643,9 @@ namespace SwinGame
         /// <param name="x">X Position of the Bitmap</param>
         /// <param name="y">Y Position of the Bitmap</param>
         /// <param name="rectangle">Rectangle</param>
-        public static void HasBitmapCollidedWithRect(Bitmap bitmap, int x, int y, Rectangle rectangle)
+        public static bool HasBitmapCollidedWithRect(Bitmap bitmap, int x, int y, Rectangle rectangle)
         {
-            HasBitmapCollidedWithRect(bitmap, x, y, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+            return HasBitmapCollidedWithRect(bitmap, x, y, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOnScreenAt")]
