@@ -496,12 +496,6 @@ namespace SwinGame
             return CreateVector(x, y, false);  
         }
         /// <summary>
-        /// VectorFromPoints creates the vector from one point to the another point.
-        /// </summary>
-        /// <param name="p1">Point 1</param>
-        /// <param name="p2">Point 2</param>
-        /// <returns>Vector from Point 1 to Point 2</returns>
-        /// <summary>
         /// Creates a new vector from the origin to the indicated point.
         /// </summary>
         /// <param name="p1">The point</param>
@@ -510,7 +504,12 @@ namespace SwinGame
         {
             return CreateVector(p1.X, p1.Y, false);
         }
-
+        /// <summary>
+        /// Gets the Vector from 2 Points
+        /// </summary>
+        /// <param name="p1">Point 1</param>
+        /// <param name="p2">Point 2</param>
+        /// <returns>Vector</returns>
         public static Vector VectorFromPoints(Point2D p1, Point2D p2)
         {
             return CreateVector(p2.X - p1.X, p2.Y - p1.Y, false);
@@ -589,6 +588,112 @@ namespace SwinGame
 	    public static Vector VectorFromPointToRectangle(Point2D pt, Rectangle rect)
         {
 		    return VectorFromPointToRectangle(pt.X, pt.Y, rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasBitmapCollidedWithRect")]
+        private static extern bool DLL_HasBitmapCollidedWithRect(IntPtr bitmap, int x, int y, int width, int height);
+        /// <summary>
+        /// Returns true if the Bitmap has collided with the specified Rectangle
+        /// </summary>
+        /// <param name="bitmap">Bitmap</param>
+        /// <param name="x">X Position of the Bitmap</param>
+        /// <param name="y">Y Position of the Bitmap</param>
+        /// <param name="rectX">X Position of the Rectangle</param>
+        /// <param name="rectY">Y Position of the Rectangle</param>
+        /// <param name="width">Width of the Rectangle</param>
+        /// <param name="height">Height of the Rectangle</param>
+        /// <returns>True if the Bitmap Collides with the Rectangle</returns>
+        public static bool HasBitmapCollidedWithRect(Bitmap bitmap, int x, int y, int rectX, int rectY, int width, int height)
+        {
+            bool temp;
+
+            try
+            {
+                temp = DLL_HasBitmapCollidedWithRect(bitmap.pointer, x, y, width, height);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+        /// <summary>
+        /// Returns true if the Bitmap has collided with the specified Rectangle
+        /// </summary>
+        /// <param name="bitmap">Bitmap</param>
+        /// <param name="x">X Position of the Bitmap</param>
+        /// <param name="y">Y Position of the Bitmap</param>
+        /// <param name="rectangle">Rectangle</param>
+        public static void HasBitmapCollidedWithRect(Bitmap bitmap, int x, int y, Rectangle rectangle)
+        {
+            HasBitmapCollidedWithRect(bitmap, x, y, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOnScreenAt")]
+        private static extern bool DLL_IsSpriteOnScreenAt(IntPtr sprite, int x, int y);
+        /// <summary>
+        /// Checks if the Sprite is on Screen at the given Coordinates
+        /// </summary>
+        /// <param name="sprite">Sprite</param>
+        /// <param name="x">X Coordinate</param>
+        /// <param name="y">Y Coordinate</param>
+        /// <returns>True if the sprite is on screen at the coordinates</returns>
+        public static bool IsSpriteOnScreenAt(Sprite sprite, int x, int y)
+        {
+            bool temp;
+            try
+            {
+                temp = DLL_IsSpriteOnScreenAt(sprite.Pointer, x, y);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+        /// <summary>
+        /// Checks if the Sprite is on Screen at the given Coordinates
+        /// </summary>
+        /// <param name="sprite">Sprite</param>
+        /// <param name="point">Coordinates</param>
+        /// <returns>True if the Sprite is on Screen at the Coordinates</returns>
+        public static bool IsSpriteOnScreenAt(Sprite sprite, Point2D point)
+        {
+            return IsSpriteOnScreenAt(sprite, (int)point.X, (int)point.Y);
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircleHasCollidedWithLine")]
+        private static extern bool DLL_CircleHasCollidedWithLine(IntPtr sprite, Point2D point);
+        /// <summary>
+        /// Checks if the Sprite has Collided with the Line
+        /// </summary>
+        /// <param name="sprite">Sprite</param>
+        /// <param name="point">Point</param>
+        /// <returns>True if sprite collides with the line</returns>
+        public static bool CircleHasCollidedWithLine(Sprite sprite, Point2D point)
+        {
+            bool temp;
+            try
+            {
+                temp = DLL_CircleHasCollidedWithLine(sprite.Pointer, point);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfCircleFromPoint")]

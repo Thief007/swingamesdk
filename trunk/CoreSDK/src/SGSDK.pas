@@ -835,6 +835,28 @@ uses
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.IsSpriteOnScreenAt(theSprite, x, y) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
+	
+	function CircleHasCollidedWithLine(p1: Sprite; line: LineSegment): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.CircleHasCollidedWithLine(p1, line) then result := 1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
+	
 	function HasSpriteCollidedX(theSprite : Sprite; x : Integer;
 								 range : CollisionDetectionRange):  Integer; cdecl; export;
 	begin
@@ -2243,6 +2265,17 @@ uses
 		end;	
 		result := 0;
 	end;
+	
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.HasBitmapCollidedWithRect(image, x, y, rectX, rectY, rectWidth, rectHeight) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
 
 {$ifdef UNIX}
 	{$ifndef DARWIN}
@@ -2375,6 +2408,7 @@ exports
 	AddVectors,
 	SubtractVectors,
 	InvertVector,}
+	CircleHasCollidedWithLine,
 	LimitMagnitude,
 	GetUnitVector,
 	//IsZeroVector,
@@ -2397,6 +2431,7 @@ exports
 	VectorOutOfCircleFromCircle, {1.1}
 	CircleCollisionWithLine, {1.1}
 	CircularCollision, {1.1}
+	HasBitmapCollidedWithRect,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2476,6 +2511,7 @@ exports
 	MoveSprite,
 	MoveSpriteTo,
 	IsSpriteOffscreen,
+	IsSpriteOnScreenAt,
 	DrawBitmapPartOnScreen,
 	DrawBitmapOnScreen,
 	DrawPixelOnScreen,
