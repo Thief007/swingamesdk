@@ -158,7 +158,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
-        private static extern void DLL_DrawText(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, IntPtr theFont, int x, int y);
+        private static extern void DLL_DrawTextOnBitmap(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// Draws texts to the destination bitmap. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -175,7 +175,7 @@ namespace SwinGame
             try
             {
                 int color = textColor.ToArgb();
-                DLL_DrawText(dest.pointer, theText, (uint)color, theFont.Pointer, x, y);
+                DLL_DrawTextOnBitmap(dest.pointer, theText, (uint)color, theFont.Pointer, x, y);
             }
             catch (Exception exc)
             {
@@ -330,7 +330,6 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
         }
-
         /// <summary>
         /// Draws multiple lines of text to the destination bitmap. This is a very
         ///	slow operation, so if the text is not frequently changing save it to a

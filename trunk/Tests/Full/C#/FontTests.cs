@@ -60,8 +60,9 @@ namespace Tests
                 Text.DrawText(draw, "This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(0, 0));
                 SwinGame.Graphics.DrawBitmap(draw, 100, 140);
                 Text.DrawText(draw, "This is some Text", _TextColor, GameResources.GameFont("Courier"), 0, 0);
-                SwinGame.Graphics.DrawBitmap(draw, 100, 160);
-
+                SwinGame.Graphics.DrawBitmap(draw, 100, 240);
+                SwinGame.Graphics.DrawRectangle(draw, Color.White, Shapes.CreateRectangle(10, 10, 50, 50));
+                SwinGame.Graphics.DrawBitmap(draw, 100, 240);
                 //Text.DrawTextLines("This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 100, 140, 100, 100);
 
                 if (_x > 255) _x = 0;
