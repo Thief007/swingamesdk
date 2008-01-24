@@ -35,8 +35,8 @@ implementation
 		if IsKeyPressed(VK_X) then tempRect.height := tempRect.height + 2;
 		if WasKeyTyped(VK_T) then filled := filled = false;
 
-		if tempRect.width < 0 then tempRect.width := 0;
-		if tempRect.height < 0 then tempRect.height := 0;
+		if tempRect.width < -100 then tempRect.width := -100;
+		if tempRect.height < -100 then tempRect.height := -100;
 		if tempRect.width > 100 then tempRect.width := 100;
 		if tempRect.height > 100 then tempRect.height := 100;
 
@@ -131,8 +131,8 @@ implementation
 		if IsKeyPressed(VK_X) then tempRect.height := tempRect.height + 2;
 		if WasKeyTyped(VK_T) then filled := filled = false;
 		
-		if tempRect.width < 0 then tempRect.width := 0;
-		if tempRect.height < 0 then tempRect.height := 0;
+		if tempRect.width < -100 then tempRect.width := -100;
+		if tempRect.height < -100 then tempRect.height := -100;
 		if tempRect.width > 100 then tempRect.width := 100;
 		if tempRect.height > 100 then tempRect.height := 100;
 		
