@@ -1,9 +1,30 @@
 #!/bin/sh
 
-SOURCE_RESOURCE=../../Base/All/Resources
-RESOURCE_DIR=./FPC/Resources
+echo __________________________________________________
+echo Copying Mono Files
+echo __________________________________________________
 
-mkdir -p ${RESOURCE_DIR}
+if [ -d ./lib ] 
+then
+	echo "  Removing old lib dir"
+	rm -rf ./lib
+fi
+
+echo "  Making new lib folder"
+mkdir ./lib
+
+LIB_PATH=../../../SDKs/DOTNet/Mono/C#
+
+echo "  Copying lib from ${LIB_PATH}"
+cp  ${LIB_PATH}/lib/* ./lib
+cp  ${LIB_PATH}/*.sh .
+
+echo "  Copying Resources"
+
+SOURCE_RESOURCE=../Pascal/Resources
+RESOURCE_DIR=./Resources
+
+mkdir ${RESOURCE_DIR}
 if [ $? != 0 ]; then echo "Error creating resource directory"; exit 1; fi
 	
 mkdir ${RESOURCE_DIR}/fonts
@@ -38,4 +59,6 @@ if [ $? != 0 ]; then echo "Error copying sounds"; exit 1; fi
 find ${SOURCE_RESOURCE}/maps -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/maps \;
 if [ $? != 0 ]; then echo "Error copying maps"; exit 1; fi
 
-cp ../../Base/Pascal/*.pas ./FPC
+
+echo "  Finished"
+echo __________________________________________________
