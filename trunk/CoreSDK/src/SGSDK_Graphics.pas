@@ -2038,7 +2038,7 @@ implementation
 
 	procedure FillRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
 	begin
-		DrawRectangle(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
+		FillRectangle(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
 	end;
 
 	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: Integer); overload;
@@ -2068,7 +2068,7 @@ implementation
 
 	procedure FillEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
 	begin
-		DrawEllipse(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
+		FillEllipse(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
 	end;
 
 	procedure DrawBitmap(bitmapToDraw : Bitmap; const position : Point2D); overload;
