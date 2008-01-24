@@ -2642,7 +2642,7 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
         private static extern void DLL_DrawBitmapOnScreen(IntPtr bitmapToDraw, int x, int y);
         /// <summary>
-        /// Draws Part of a Bitmap, it will always draw to x, y 
+        /// Draws a Bitmap, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
         /// things like the user interface or overlays
         /// </summary>
@@ -2664,6 +2664,17 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+        /// <summary>
+        /// Draws a Bitmap, it will always draw to x, y 
+        /// regardless of the position of the camera. This is usefull for drawing 
+        /// things like the user interface or overlays
+        /// </summary>
+        /// <param name="bitmapToDraw">The Bitmap to draw</param>
+        /// <param name="position">The Position to draw the Bitmap</param>
+        public static void DrawBitmapOnScreen(Bitmap bitmapToDraw, Point2D position)
+        {
+            DrawBitmapOnScreen(bitmapToDraw, (int)position.X, (int)position.Y);
         }
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
