@@ -3,7 +3,7 @@ unit AlienFlightModel;
 interface
 	uses 
 		SysUtils, 
-		SGSDK_Core, SGSDK_Graphics, SGSDK_Audio, SGSDK_Physics, SGSDK_Camera,
+		SGSDK_Core, SGSDK_Graphics, SGSDK_Audio, SGSDK_Physics, SGSDK_Camera, SGSDK_Shapes,
 		GameResources;
 	
 	type
@@ -275,13 +275,13 @@ interface
 	function MaxForegroundX(): Single;
 	function SetupGameData(): GameDataType;	
 	
-	function CreateSpriteKind(idx: AlienFlightSpriteKind; worldOffset: Vector): AlienFlightSprite;	
-	function SpriteAtPoint(v: Vector; const data: GameDataType; out sprt: AlienFlightSpritePtr): Boolean;
+	function CreateSpriteKind(idx: AlienFlightSpriteKind; worldOffset: Point2D): AlienFlightSprite;	
+	function SpriteAtPoint(v: Point2D; const data: GameDataType; out sprt: AlienFlightSpritePtr): Boolean;
 	function CanPlaceAt(const data: GameDataType; kind: AlienFlightSpriteKind; sprite: AlienFlightSpritePtr; x, y: Single): Boolean;
 	function GetCollidedWarphole(const sprte: Sprite; const data: GameDataType): AlienFlightSpritePtr;
 		
 	procedure SetupTemplates();
-	procedure AddSpriteKind(var data: GameDataType; idx: AlienFlightSpriteKind; worldOffset: Vector);
+	procedure AddSpriteKind(var data: GameDataType; idx: AlienFlightSpriteKind; worldOffset: Point2D);
 	procedure DeleteSprite(var data: GameDataType; sprt: AlienFlightSpritePtr);
 		
 	procedure UpdateShieldBmp(var data: GameDataType);
@@ -594,7 +594,7 @@ implementation
 		result.x :=	CalculateBackgroundX(v.x);
 	end;
 
-	function CreateSpriteKind(idx: AlienFlightSpriteKind; worldOffset: Vector): AlienFlightSprite;
+	function CreateSpriteKind(idx: AlienFlightSpriteKind; worldOffset: Point2D): AlienFlightSprite;
 	var
 		i: Integer;
 		sprt: AlienFlightSprite;
@@ -649,7 +649,7 @@ implementation
 		
 		//Move into place
 		//if template.foreground then
-			MoveSprite(sprt.sprite, worldOffset);
+			MoveSprite(sprt.sprite, PointToVector(worldOffset));
 		//else
 		//	MoveSprite(sprt.sprite, ToBackground(worldOffset));
 			
@@ -658,7 +658,7 @@ implementation
 		//WriteLn(' - Moved to position');	
 	end;
 	
-	procedure AddSpriteKind(var data: GameDataType; idx: AlienFlightSpriteKind; worldOffset: Vector);
+	procedure AddSpriteKind(var data: GameDataType; idx: AlienFlightSpriteKind; worldOffset: Point2D);
 	begin
 		//Adjust to center point
 		worldOffset.x -= _Templates[idx].width / 2;
@@ -982,7 +982,7 @@ implementation
 		MoveVisualArea(dx, dy);
 	end;
 	
-	function SpriteAtPoint(v: Vector; const data: GameDataType; out sprt: AlienFlightSpritePtr): Boolean;
+	function SpriteAtPoint(v: Point2D; const data: GameDataType; out sprt: AlienFlightSpritePtr): Boolean;
 	var
 		i: Integer;
 		fgX, fgY: Single;
@@ -1004,7 +1004,7 @@ implementation
 				fgY := data.sprites[i].sprite.y - YOffset();
 				
 				//WriteLn(fgX:4:2, ',', fgY:4:2, ' - ', v.x:4:2, ',', v.y:4:2);
-				if VectorWithinRect(v, fgX, fgY, data.sprites[i].sprite.width, data.sprites[i].sprite.height) then
+				if VectorIsWithinRect(PointToVector(v), fgX, fgY, data.sprites[i].sprite.width, data.sprites[i].sprite.height) then
 				begin
 					result := true;
 					sprt := @data.sprites[i];

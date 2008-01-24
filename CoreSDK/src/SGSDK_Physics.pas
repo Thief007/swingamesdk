@@ -108,6 +108,7 @@ interface
 	function CreateVector(x,y : Single): Vector; overload;
 	function CreateVector(x,y : Single; invertY : boolean): Vector; overload;
 	
+	function PointToVector(const p1: Point2D): Vector;
 	function VectorFromPoints(const p1, p2: Point2D): Vector;
 	function VectorFromCenterSpriteToPoint(fromSprt: Sprite; const pnt: Point2D): Vector;
 	
@@ -194,6 +195,11 @@ implementation
 	function CreateVector(x,y : Single): Vector; overload;
 	begin
 		result := CreateVector(x, y, false);
+	end;
+
+	function PointToVector(const p1: Point2D): Vector;
+	begin
+		result := CreateVector(p1.x, p1.y);
 	end;
 
 	function VectorFromPoints(const p1, p2: Point2D): Vector;

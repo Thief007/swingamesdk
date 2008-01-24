@@ -63,6 +63,7 @@ interface
 	procedure HandleEditorInput(var status: EditorStatusType);
 
 implementation
+	uses SGSDK_Shapes;
 	
 	function SelectedName(const status: EditorStatusType; sprt: AlienFlightSpritePtr): String;
 	begin
@@ -172,7 +173,7 @@ implementation
 		name: String;
 		
 		kind : AlienFlightSpriteKind;
-		worldOffset: Vector;
+		worldOffset: Point2D;
 	begin
 		ReadLn(data, img, x, y, vx, vy, mass, space, name);
 
@@ -186,7 +187,7 @@ implementation
 			raise Exception.Create('Unknown img'); 
 		end;
 
-		worldOffset := CreateVector(x, y);
+		worldOffset := CreatePoint(x, y);
 		
 		sprt := CreateSpriteKind(kind, worldOffset);
 		sprt.sprite.movement := CreateVector(vx, vy);
@@ -197,13 +198,13 @@ implementation
 	var
 		i, count, kindIdx: Integer;
 		x, y, mass, mX, mY: Single;
-		worldOffset: Vector;
+		worldOffset: Point2D;
 	begin
 		//Reads:
 		//kind x y mass mX mY #values val1...
 		Read(output, kindIdx, x, y, mass, mX, mY, count);
 		
-		worldOffset := CreateVector(x, y);
+		worldOffset := CreatePoint(x, y);
 				
 		sprt := CreateSpriteKind(AlienFlightSpriteKind(kindIdx), worldOffset);
 		sprt.sprite.movement := CreateVector(mX, mY);
@@ -281,9 +282,9 @@ implementation
 		end;
 	end;
 	
-	procedure AddSprite(var status: EditorStatusType; screenOffset: Vector);
+	procedure AddSprite(var status: EditorStatusType; screenOffset: Point2D);
 	var
-		v: Vector;
+		v: Point2D;
 	begin
 		v := ToGameCoordinates(screenOffset);
 		
@@ -308,11 +309,12 @@ implementation
 		status.mode := mode;
 	end;
 	
-	procedure DoSetMovement(var status: EditorStatusType; clickedAt: Vector);
+	procedure DoSetMovement(var status: EditorStatusType; clickedAt: Point2D);
 	var
 		sprt: Sprite;
 		cx, cy: Single;
-		pos, movement: Vector;
+		pos: Point2D;
+		movement: Vector;
 		i: Integer;
 	begin
 		if Length(status.selection) > 0 then
@@ -324,8 +326,9 @@ implementation
 			cx := sprt.x + sprt.width div 2;
 			cy := sprt.y + sprt.height div 2;
 			
-			pos := CreateVector(cx, cy);
-			movement := Multiply(ScaleMatrix(1/50), SubtractVectors(ToGameCoordinates(clickedAt), pos));
+			pos := CreatePoint(cx, cy);
+			
+			movement := Multiply(ScaleMatrix(1/50), VectorFromPoints(pos, ToGameCoordinates(clickedAt)));
 			
 			for i := Low(status.selection) to High(status.selection) do
 			begin	
@@ -335,11 +338,12 @@ implementation
 		end;
 	end;
 	
-	procedure DoMove(var status: EditorStatusType; clickedAt: Vector);
+	procedure DoMove(var status: EditorStatusType; clickedAt: Point2D);
 	var
 		sprt: Sprite;
 		cx, cy: Single;
-		pos, offset: Vector;
+		pos: Point2D;
+		offset: Vector;
 		i: Integer;
 	begin
 		if Length(status.selection) > 0 then
@@ -350,8 +354,8 @@ implementation
 			cx := sprt.x + sprt.width div 2;
 			cy := sprt.y + sprt.height div 2;
 			
-			pos := CreateVector(cx, cy);
-			offset := SubtractVectors(ToGameCoordinates(clickedAt), pos);
+			pos := CreatePoint(cx, cy);
+			offset := VectorFromPoints(pos, ToGameCoordinates(clickedAt));
 			
 			for i := Low(status.selection) to High(status.selection) do
 			begin
@@ -378,7 +382,7 @@ implementation
 		status.selectedIdx := 0;
 	end;
 	
-	procedure SelectSprite(var status: EditorStatusType; v: Vector);
+	procedure SelectSprite(var status: EditorStatusType; v: Point2D);
 	var
 		temp: AlienFlightSpritePtr;
 		i: Integer;
@@ -419,13 +423,13 @@ implementation
 	procedure HandleUserInputAdding(var status: EditorStatusType);
 	begin
 		if MouseWasClicked(LeftButton) then 
-			AddSprite(status, GetMousePositionAsVector());
+			AddSprite(status, GetMousePosition());
 			
 		//Check for right click to edit...
 		if MouseWasClicked(RightButton) then
 		begin
 			SwitchToMode(status, EditingMode);
-			SelectSprite(status, GetMousePositionAsVector());
+			SelectSprite(status, GetMousePosition());
 		end;
 	end;
 
@@ -433,7 +437,7 @@ implementation
 	begin
 		//Right click selects
 		if MouseWasClicked(RightButton) then
-			SelectSprite(status, GetMousePositionAsVector());
+			SelectSprite(status, GetMousePosition());
 			
 		//Increase or Decrease Value
 		if WasKeyTyped(VK_ADD) or WasKeyTyped(VK_EQUALS) then
@@ -443,10 +447,10 @@ implementation
 
 		//Update movement
 		if IsSpecialKeyPressed() and IsMouseDown(LeftButton) then
-			DoSetMovement(status, GetMousePositionAsVector());
+			DoSetMovement(status, GetMousePosition());
 			
 		if (false = IsSpecialKeyPressed()) and MouseWasClicked(LeftButton) then //Move sprites
-			DoMove(status, GetMousePositionAsVector());	
+			DoMove(status, GetMousePosition());	
 			
 		//Switch to delete if delete pressed
 		if WasKeyTyped(VK_DELETE) or WasKeyTyped(VK_D) or WasKeyTyped(VK_BACK) then
@@ -473,7 +477,7 @@ implementation
 	begin
 		//Right click selects
 		if MouseWasClicked(RightButton) then
-			SelectSprite(status, GetMousePositionAsVector());
+			SelectSprite(status, GetMousePosition());
 			
 		//Delete selection
 		if WasKeyTyped(VK_DELETE) then
@@ -497,11 +501,11 @@ implementation
 		
 	procedure CheckChangeStateClick(var status: EditorStatusType; clickAt: Vector);
 	begin
-		if VectorWithinRect(clickAt, ADD_BUTTON_X, BUTTONS_TOP, BUTTON_WIDTH, BUTTON_HEIGHT) then
+		if VectorIsWithinRect(clickAt, ADD_BUTTON_X, BUTTONS_TOP, BUTTON_WIDTH, BUTTON_HEIGHT) then
 			SwitchToMode(status, AddingMode)
-		else if VectorWithinRect(clickAt, EDIT_BUTTON_X, BUTTONS_TOP, BUTTON_WIDTH, BUTTON_HEIGHT) then
+		else if VectorIsWithinRect(clickAt, EDIT_BUTTON_X, BUTTONS_TOP, BUTTON_WIDTH, BUTTON_HEIGHT) then
 			SwitchToMode(status, EditingMode)
-		else if VectorWithinRect(clickAt, DELETE_BUTTON_X, BUTTONS_TOP, BUTTON_WIDTH, BUTTON_HEIGHT) then
+		else if VectorIsWithinRect(clickAt, DELETE_BUTTON_X, BUTTONS_TOP, BUTTON_WIDTH, BUTTON_HEIGHT) then
 			SwitchToMode(status, DeletingMode);
 	end;
 	
@@ -517,7 +521,7 @@ implementation
 			x := (Integer(i) mod COLS) * EDITOR_ICON_WIDTH + EDITOR_DATA_BORDER;
 			y := ((Integer(i) - (Integer(i) mod COLS)) div COLS) * EDITOR_ICON_HEIGHT + SELECTION_Y;
 			
-			if VectorWithinRect(clickAt, x, y, EDITOR_ICON_WIDTH, EDITOR_ICON_HEIGHT) then
+			if VectorIsWithinRect(clickAt, x, y, EDITOR_ICON_WIDTH, EDITOR_ICON_HEIGHT) then
 			begin
 				if _Templates[i].used then status.currentSpriteKind := i;
 				
@@ -538,14 +542,14 @@ implementation
 			x := (i mod COLS) * EDITOR_ICON_WIDTH + EDITOR_DATA_BORDER;
 			y := ((i - (i mod COLS)) div COLS) * EDITOR_ICON_HEIGHT + SELECTION_Y;
 
-			if VectorWithinRect(clickAt, x, y, EDITOR_ICON_WIDTH, EDITOR_ICON_HEIGHT) then
+			if VectorIsWithinRect(clickAt, x, y, EDITOR_ICON_WIDTH, EDITOR_ICON_HEIGHT) then
 			begin
 				status.selectedIdx := i;
 				exit;
 			end;
 		end;
 		//Clear Selection
-		if VectorWithinRect(clickAt, CLEAR_BUTTON_X, CLEAR_BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT) then
+		if VectorIsWithinRect(clickAt, CLEAR_BUTTON_X, CLEAR_BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT) then
 			ClearSelection(status);
 	end;
 	
@@ -674,13 +678,13 @@ implementation
 	procedure CreateLevel(var data: GameDataType; level: Integer);
 	var
 		x, y: Single;
-		worldOffset: Vector;
+		worldOffset: Point2D;
 	begin
 		x := MaxForegroundX(); //CalculateForegroundX(GameImage(Background).width - SCREEN_WIDTH) + ((SCREEN_WIDTH * 3) div 4);
 		y := (SCREEN_HEIGHT - TOP_GAME_AREA) div 2 + TOP_GAME_AREA - _Templates[WarpHoleKind].Width div 2;
 		
 		data.currentLevel := level;
-		worldOffset := CreateVector(x, y);
+		worldOffset := CreatePoint(x, y);
 		
 		AddSpriteKind(data, WarpHoleKind, worldOffset);		
 		

@@ -105,7 +105,7 @@ then
 	echo "  ... Linking ${EXECUTABLE_NAME}"
 	#Removed -s option - if this crashes... maybe re-add it
 	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "${EXECUTABLE_NAME}" `cat bin/link.res` -lSDL -lSDL_mixer -lsmpeg -lSDL_image -lSDL_TTF -lSDL_gfx -lz -lstdc++ -ltiff -lpng12 -lSDLmain -logg -lfreetype -ljpeg -lvorbis -lvorbisenc -lvorbisfile -framework Cocoa -framework QuickTime -framework CoreFoundation -framework IOKit -framework AudioUnit -framework Carbon -framework OpenGL -lgcc -dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
-	if [ $? != 0 ]; then DoExitLink MyGame; fi
+	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
 
 	rm bin/link.res
 	rm bin/*.o
