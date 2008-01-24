@@ -183,9 +183,16 @@ implementation
 		subStr: String;
 		n, w, h, i: Integer;
 		rect: TSDL_Rect;
+		colorFG: TSDL_Color;
 	begin
-		result := nil;
+		if dest = nil then
+		begin
+			raise Exception.Create('Error Printing Strings: There was no surface.');
+		end;
 
+		result := nil;
+		colorFG := ToSDLColor(clrFg);
+		
 		// If there's nothing to draw, return NULL
 		if (Length(str) = 0) or (font = nil) then exit;
 
@@ -204,6 +211,7 @@ implementation
 
 			//Copy all except EOL
 			if n = 0 then subStr := str
+			else if n = 1 then subStr := ' '
 			else subStr := Copy(str, 1, n - 1);
 
 			//Remove the line from the original string
@@ -218,18 +226,14 @@ implementation
 
 			w := 0;
 			// Get the size of the rendered text.
-			TTF_SizeText(font, PChar(subStr), w, height);
+			if Length(subStr) > 0 then TTF_SizeText(font, PChar(subStr), w, height);
+			
 			if w > width then width := w;
 		end;
 
 		// Length(lines) = Number of Lines.
 		// we assume that height is the same for all lines.
 		height := (Length(lines) - 1) * lineSkip + height;
-
-		if dest = nil then
-		begin
-			raise Exception.Create('Error Printing Strings: There was no surface.');
-		end;
 
 		sText := CreateBitmap(width, height);
 		//ClearSurface(sText, clrBg);
@@ -238,7 +242,7 @@ implementation
 		for i := 0 to High(lines) do
 		begin
 			// The rendered text:
-			temp := TTF_RenderText_Blended( font, PChar(lines[i]), ToSDLColor(clrFg));
+			temp := TTF_RenderText_Blended( font, PChar(lines[i]), colorFG);
 
 			// Put it on the surface:
 			if IsSet(flags, AlignLeft) or
@@ -254,7 +258,7 @@ implementation
 				h := 0;
 
 				TTF_SizeText(font, PChar(lines[i]), w, h);
-				rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0);
+				rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
 			end
 			else if IsSet(flags, AlignRight) then
 			begin
@@ -298,24 +302,29 @@ implementation
 	///	- The text is drawn in the specified font, at the indicated location
 	///		in the destination bitmap.
 	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; x, y: Integer); overload;
-	var
+{	var
 		color: TSDL_Color;
 		surface: PSDL_Surface;
-		offset: TSDL_Rect;
+		offset: TSDL_Rect;}
+	var
+		rect: TSDL_Rect;
 	begin
-		if theFont = nil then begin
-			raise Exception.Create('The specified font is nil');
-		end;
-		
-		color := ToSDLColor(textColor);
+		if theFont = nil then raise Exception.Create('The specified font is nil');
+		if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
+			
+		{color := ToSDLColor(textColor);
 
 		offset.x := x;
 		offset.y := y;
 
 		surface := TTF_RenderText_Blended(theFont, PChar(theText), color);
-
+		
 		SDL_BlitSurface(surface, nil, dest.surface, @offset);
-		SDL_FreeSurface(surface);
+		SDL_FreeSurface(surface);}
+		
+		rect := NewSDLRect(x, y, TextWidth(theText, theFont), TextHeight(theText, theFont));
+		
+		PrintStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
 	end;
 	
 	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
@@ -490,8 +499,7 @@ implementation
 		Str(highest:4:1, temp2);
 		Str(lowest:4:1, temp3);
 
-		DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, 
-             textColour, font, x + 2, y + 2);
+		DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, font, x + 2, y + 2);
 	end;
 	
 initialization

@@ -45,7 +45,7 @@ implementation
 		with result.Tests[0] do
 		begin
 			MethodBeingTested := 'PlaySoundEffect, IsSoundEffectPlaying, StopSoundEffect';
-			Instructions := 'pl[a]y sound once' + EOL + 'play [i]f not playing' + EOL + '[s]top sound effect' + EOL + '[l]oop sound';
+			Instructions := 'pl[a]y sound once' + EOL + '' + EOL + 'play [i]f not playing' + EOL + '[s]top sound effect' + EOL + '[l]oop sound';
 			ToRun := @TestPlaySound;
 		end;
 		with result.Tests[1] do

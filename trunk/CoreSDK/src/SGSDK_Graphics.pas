@@ -475,8 +475,7 @@ implementation
 	///	@param pathToBitmap:		 the path to the bitmap to be loaded
 	///	@param transparentColor: the color that will be transparent
 	///	@returns: A bitmap from the loaded file.
-	function LoadTransparentBitmap(pathToBitmap : String;
-                                 transparentColor : Colour): Bitmap; overload;
+	function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Colour): Bitmap; overload;
 	begin
 		result := LoadBitmap(pathToBitmap, true, transparentColor);
 	end;
@@ -488,7 +487,7 @@ implementation
 	///	- the bitmap is freeed and can no longer be drawn
 	procedure FreeBitmap(var bitmapToFree : Bitmap);
 	begin
-		if bitmapToFree <> nil then
+		if Assigned(bitmapToFree) then
 		begin
 			if bitmapToFree.surface <> nil then
 			begin
@@ -691,7 +690,7 @@ implementation
 	///	- The sprites details are cleaned up.
 	procedure FreeSprite(var spriteToFree : Sprite);
 	begin
-		if spriteToFree <> nil then
+		if Assigned(spriteToFree) then
 		begin
 			SetLength(spriteToFree.bitmaps, 0);
 			Dispose(spriteToFree);
@@ -1096,8 +1095,12 @@ implementation
 	  bufP: PUInt32;
 	  pixels: PUint32;
 	  addr: UInt32;
+	  rect: TSDL_Rect;
 	begin
-		if (x < 0) or (x >= surface.w) or (y < 0) or (y >= surface.h) then exit;
+		SDL_GetClipRect(surface, @rect);
+		
+		if (x < rect.x) or (x >= rect.x + rect.w) or (y < rect.y) or (y >= rect.y + rect.h) then exit;
+		
 		pixels := surface.pixels;
 		addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
 		bufp := PUint32(addr);
@@ -1654,14 +1657,19 @@ implementation
 	///	- Draws a line in the dest bitmap
 	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: Integer);
 	var
-		w, h, y, addr: Integer;
+		w, h, b, r, y, addr: Integer;
 		bufP: PUInt32;
 		pixels: PUint32;
+		rect: TSDL_Rect;
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
 		
-		w := dest.surface.w;
-		h := dest.surface.h;
+		SDL_GetClipRect(dest.surface, @rect);
+		
+		w := rect.w; //dest.surface.w;
+		h := rect.h; //dest.surface.h;
+		b := h + rect.y;
+		r := rect.x + w;
 		
 		if y2 < y1 then  //swap y1 and y2
 		begin
@@ -1670,13 +1678,14 @@ implementation
 			y1 := y1 - y2;
 		end;
 		
-		if (x < 0) or (x > w - 1) or (y2 < 0) or (y1 > h - 1) then
+		//if (x < 0) or (x > w - 1) or (y2 < 0) or (y1 > h - 1) then
+		if (x < rect.x) or (x > r - 1) or (y2 < rect.y) or (y1 > b - 1) then
 		begin
 			exit;
 		end;
 		
-		if y1 < 0 then y1 := 0;
-		if y2 >= h then y2 := h - 1;
+		if y1 < rect.y then y1 := rect.y;
+		if y2 >= b then y2 := b - 1;
 		
 		pixels := dest.surface.pixels;
 		addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
@@ -1704,14 +1713,19 @@ implementation
 	///	- Draws a line in the dest bitmap
 	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer);
 	var
-		w, h, x, addr: Integer;
+		w, h, x, r, b, addr: Integer;
 		bufP: PUInt32;
 		pixels: PUint32;
+		rect: TSDL_Rect;
 	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a horizontal line is nil');
-		
-		w := dest.surface.w;
-		h := dest.surface.h;
+		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
+
+		SDL_GetClipRect(dest.surface, @rect);
+
+		w := rect.w; //dest.surface.w;
+		h := rect.h; //dest.surface.h;
+		b := h + rect.y;
+		r := rect.x + w;
 		
 		if x2 < x1 then //swap x1 and x2, x1 must be the leftmost endpoint
 		begin
@@ -1720,13 +1734,13 @@ implementation
 			x1 := x1 - x2;
 		end;
 		
-		if (x2 < 0) or (x1 > w - 1) or (y < 0) or (y > h - 1) then
+		if (x2 < rect.x) or (x1 > r - 1) or (y < rect.y) or (y > b - 1) then
 		begin
 			exit; //no single point of the line is on screen
 		end;
 		
-		if x1 < 0 then x1 := 0;
-		if x2 >= w then x2 := w - 1;
+		if x1 < rect.x then x1 := rect.x;
+		if x2 >= r then x2 := r - 1;
 		
 		pixels := dest.surface.pixels;
 		addr := UInt32(pixels) + ((UInt32(x1 - 1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch);

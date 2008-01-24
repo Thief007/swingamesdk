@@ -552,14 +552,17 @@ uses
 		result := 0;
 	end;
 	
-	function TextReadAsASCII(): PChar; cdecl; export;
+	procedure TextReadAsASCII(out txt: PChar); cdecl; export;
+	var
+		temp: String;
 	begin
+		temp := '';
 		Try
-			result := PChar(SGSDK_Input.TextReadAsASCII());
-			exit;
+			temp := SGSDK_Input.TextReadAsASCII();
 		Except on exc: Exception do TrapException(exc);
 		end;
-		result := PChar('');
+		txt := PChar(temp);
+		//len := Length(temp);
 	end;
 		
 	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
@@ -1201,7 +1204,7 @@ uses
 	procedure FreeMatrix2D(var matrix: Matrix2DPtr); cdecl; export;
 	begin
 		Try
-			if matrix <> nil then Dispose(matrix);
+			if Assigned(matrix) then Dispose(matrix);
 			matrix := nil;
 		Except on exc: Exception do TrapException(exc);
 		end;
