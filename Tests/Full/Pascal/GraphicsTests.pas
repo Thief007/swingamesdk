@@ -24,8 +24,56 @@ implementation
 	
 	procedure TestFill(const drawIn: Rectangle);
 	begin
-		ClearSurface(smallScreen);
+		ClearSurface(smallScreen, ColourTransparent);
 		
+		if IsKeyPressed(VK_RIGHT) then tempRect.x := tempRect.x + 2;
+		if IsKeyPressed(VK_LEFT) then tempRect.x := tempRect.x - 2;
+		if IsKeyPressed(VK_UP) then tempRect.y := tempRect.y - 2;
+		if IsKeyPressed(VK_DOWN) then tempRect.y := tempRect.y + 2;
+		if IsKeyPressed(VK_A) then tempRect.width := tempRect.width - 2;
+		if IsKeyPressed(VK_S) then tempRect.width := tempRect.width + 2;
+		if IsKeyPressed(VK_Z) then tempRect.height := tempRect.height - 2;
+		if IsKeyPressed(VK_X) then tempRect.height := tempRect.height + 2;
+		
+		if tempRect.width < 0 then tempRect.width := 0;
+		if tempRect.height < 0 then tempRect.height := 0;
+		if tempRect.width > 100 then tempRect.width := 100;
+		if tempRect.height > 100 then tempRect.height := 100;
+		
+		FillRectangle(smallScreen, ColourGreen, tempRect);
+		FillRectangle(smallScreen, ColourGreen, Round(tempRect.width + tempRect.x), Round(tempRect.y + tempRect.height), tempRect.width, tempRect.height);
+		FillEllipse(smallScreen, ColourGreen, Round(tempRect.x), Round(tempRect.y + tempRect.height), tempRect.width, tempRect.height);
+		tempRect4.x := tempRect.x + tempRect.width;
+		tempRect4.y := tempRect.y;
+		tempRect4.width := tempRect.width;
+		tempRect4.height := tempRect.height;
+		FillEllipse(smallScreen, ColourGreen, tempRect4);
+		DrawBitmap(smallScreen, 0, 0);
+		
+		FillRectangle(ColourWhite, 0, 0, tempRect.width, tempRect.height);
+		tempRect2.x := tempRect.width;
+		tempRect2.y := tempRect.height;
+		tempRect2.width := tempRect.width;
+		tempRect2.height := tempRect.height;
+		FillRectangle(ColourWhite, tempRect2);
+		FillEllipse(ColourWhite, 0, tempRect.height, tempRect.width, tempRect.height);
+		tempRect3.x := tempRect.width;
+		tempRect3.width := tempRect.width;
+		tempRect3.height := tempRect.height;
+		FillEllipse(ColourWhite, tempRect3);
+		
+		FillRectangleOnScreen(ColourYellow, Round(drawIn.x), Round(RectangleBottom(drawIn) - tempRect.height) - 1, tempRect.width, tempRect.height);
+		tempRect5.x := tempRect.width + drawIn.x;
+		tempRect5.y := RectangleBottom(drawIn) - tempRect.height * 2 - 1;
+		tempRect5.width := tempRect.width;
+		tempRect5.height := tempRect.height;
+		FillRectangleOnScreen(ColourYellow, tempRect5);
+		FillEllipseOnScreen(ColourYellow, Round(drawIn.x), Round(RectangleBottom(drawIn) - tempRect.height * 2) - 1, tempRect.width, tempRect.height);
+		tempRect6.x := tempRect.width + drawIn.x;
+		tempRect6.y := RectangleBottom(drawIn) - tempRect.height - 1;
+		tempRect6.width := tempRect.width;
+		tempRect6.height := tempRect.height;
+		FillEllipseOnScreen(ColourYellow, tempRect6);
 	end;
 	
 	procedure TestDrawEllipse(const drawIn: Rectangle);
@@ -41,8 +89,8 @@ implementation
 		if IsKeyPressed(VK_X) then tempRect.height := tempRect.height + 2;
 		if WasKeyTyped(VK_T) then filled := filled = false;
 
-		if tempRect.width < -100 then tempRect.width := -100;
-		if tempRect.height < -100 then tempRect.height := -100;
+		if tempRect.width < 0 then tempRect.width := 0;
+		if tempRect.height < 0 then tempRect.height := 0;
 		if tempRect.width > 100 then tempRect.width := 100;
 		if tempRect.height > 100 then tempRect.height := 100;
 
@@ -183,7 +231,7 @@ implementation
 		i: Integer;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 3);
+		SetLength(result.Tests, 4);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -220,6 +268,15 @@ implementation
 							+ EOL + 'Z : Shrink the ellipse height' + EOL + 'X : Expand the ellipse height' + EOL + 'T : Toggle fill' + EOL
 							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
 			ToRun := @TestDrawEllipse;
+		end;
+		
+		with result.Tests[3] do
+		begin
+			MethodBeingTested := 'FillRectangle, FillRectangleOnScreen, FillEllipse, FillEllipseOnScreen';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the green shapes.' + EOL + 'A : Shrink the shape width' + EOL + 'S : Expand the shape width'
+							+ EOL + 'Z : Shrink the shape height' + EOL + 'X : Expand the shape height' + EOL
+							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
+			ToRun := @TestFill;
 		end;
 	end;
 	
