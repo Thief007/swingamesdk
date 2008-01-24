@@ -352,6 +352,45 @@ namespace SwinGame
         {
             return HasSpriteCollidedWithBitmap(sprt, bmp, pt, Shapes.CreateRectangle(bmp), bounded);
         }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RectangleHasCollidedWithLine")]
+        private static extern bool DLL_RectangleHasCollidedWithLine(SGSDKRectangle rect, LineSegment line);
+        /// <summary>
+        /// Returns true if the Rectangle has collided with the line specified
+        /// </summary>
+        /// <param name="rect">Rectangle</param>
+        /// <param name="line">Line</param>
+        /// <returns>True if the Rectangle has collided with the line</returns>
+        public static bool RectangleHasCollidedWithLine(Rectangle rect, LineSegment line)
+        {
+            bool temp;
+
+            try
+            {
+                temp = DLL_RectangleHasCollidedWithLine(Shapes.ToSGSDKRect(rect), line);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+        /// <summary>
+        /// Returns true if the Sprite's Rectangle has collided with the line specified
+        /// </summary>
+        /// <param name="sprite">Sprite</param>
+        /// <param name="line">Line</param>
+        /// <returns>True if the Sprite has collided with the line</returns>
+        public static bool RectangleHasCollidedWithLine(Sprite sprite, LineSegment line)
+        {
+            
+            return RectangleHasCollidedWithLine(Shapes.CreateRectangle(sprite), line);
+        }
+
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveBitmapsCollided")]
         private static extern int DLL_HaveBitmapsCollided(IntPtr image1, int x1, int y1, int bounded1, IntPtr image2, int  x2, int y2, int bounded2);

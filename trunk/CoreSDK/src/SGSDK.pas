@@ -835,6 +835,17 @@ uses
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	function RectangleHasCollidedWithLine(rect: Rectangle; line: LineSegment): integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Physics.RectangleHasCollidedWithLine(rect, line) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
+	
 	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): integer; cdecl; export;
 	begin
 		Try
@@ -2409,6 +2420,7 @@ exports
 	SubtractVectors,
 	InvertVector,}
 	CircleHasCollidedWithLine,
+	RectangleHasCollidedWithLine,
 	LimitMagnitude,
 	GetUnitVector,
 	//IsZeroVector,
