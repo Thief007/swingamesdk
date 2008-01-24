@@ -297,7 +297,7 @@ namespace SwinGame
         }
 
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnBitmap")]
         private static extern void DLL_DrawTextLines(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);
         /// <summary>
         /// Draws multiple lines of text to the destination bitmap. This is a very
