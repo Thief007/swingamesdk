@@ -8,9 +8,6 @@ interface
 implementation
 	uses GameResources, SGSDK_Core, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font;
 	
-	const
-		BOXDIM = 50;
-	
 	var
 		//Rectangle test variables
 		tempRect, tempRect2, tempRect3, tempRect4,
@@ -22,7 +19,36 @@ implementation
 		tempPoint, tempPoint2, tempPoint3, tempPoint4,
 		tempPoint5, tempPoint6: Point2D;
 	
-	procedure TestFill(const drawIn: Rectangle);
+	procedure TestFill2(const drawIn: Rectangle);
+	begin
+		ClearSurface(smallScreen, ColourTransparent);
+		
+		if IsKeyPressed(VK_RIGHT) then tempPoint.x := tempPoint.x + 2;
+		if IsKeyPressed(VK_LEFT) then tempPoint.x := tempPoint.x - 2;
+		if IsKeyPressed(VK_UP) then tempPoint.y := tempPoint.y - 2;
+		if IsKeyPressed(VK_DOWN) then tempPoint.y := tempPoint.y + 2;
+		if IsKeyPressed(VK_Z) then curRadius := curRadius - 1;
+		if IsKeyPressed(VK_X) then curRadius := curRadius + 1;
+		
+		if curRadius < 0 then curRadius := 0;
+		if curRadius > 50 then curRadius := 50;
+		
+		FillCircle(smallScreen, ColourGreen, tempPoint, curRadius);
+		FillCircle(smallScreen, ColourGreen, Round(tempPoint.x + curRadius * 2), Round(tempPoint.y + curRadius * 2), curRadius);
+		DrawBitmap(smallScreen, 0, 0);
+		
+		FillCircle(ColourWhite, curRadius, curRadius, curRadius);
+		tempPoint3.x := curRadius * 3;
+		tempPoint3.y := curRadius * 3;
+		FillCircle(ColourWhite, tempPoint3, curRadius);
+		
+		FillCircleOnScreen(ColourYellow, Round(curRadius + drawIn.x), Round(RectangleBottom(drawIn) - curRadius) - 1, curRadius);
+		tempPoint5.x := curRadius * 3 + drawIn.x;
+		tempPoint5.y := RectangleBottom(drawIn) - curRadius * 3 - 1;
+		FillCircleOnScreen(ColourYellow, tempPoint5, curRadius);
+	end;
+	
+	procedure TestFill1(const drawIn: Rectangle);
 	begin
 		ClearSurface(smallScreen, ColourTransparent);
 		
@@ -231,7 +257,7 @@ implementation
 		i: Integer;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 4);
+		SetLength(result.Tests, 5);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -276,7 +302,16 @@ implementation
 			Instructions := 'Use the arrow keys to move' + EOL + 'the green shapes.' + EOL + 'A : Shrink the shape width' + EOL + 'S : Expand the shape width'
 							+ EOL + 'Z : Shrink the shape height' + EOL + 'X : Expand the shape height' + EOL
 							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
-			ToRun := @TestFill;
+			ToRun := @TestFill1;
+		end;
+		
+		with result.Tests[4] do
+		begin
+			MethodBeingTested := 'FillCircle, FillCircleOnScreen';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the green circles.' + EOL + 'A : Shrink the circle width' + EOL + 'S : Expand the circle width'
+							+ EOL + 'Z : Shrink the circle height' + EOL + 'X : Expand the circle height' + EOL
+							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
+			ToRun := @TestFill2;
 		end;
 	end;
 	
