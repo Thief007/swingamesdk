@@ -74,13 +74,20 @@ namespace Tests
                 "All Keyboard";
 
             private readonly static string INST =
-                "Instructions";
+                "Hit the [A] Key";
 
             public KeyBoardInputTest() : base(METHS, INST) { }
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
+                Text.DrawText("A Key Down : " + Convert.ToString(Input.IsKeyPressed(Keys.VK_A)), Color.White, GameResources.GameFont("Courier"), 10, 10);
+                Text.DrawText("A Key Up : " + Convert.ToString(!Input.IsKeyPressed(Keys.VK_A)), Color.White, GameResources.GameFont("Courier"), 10, 30);
+                Text.DrawText("A Key Typed : " + Convert.ToString(Input.WasKeyTyped(Keys.VK_A)), Color.White, GameResources.GameFont("Courier"), 10, 50);
 
+                Text.DrawText("Is Reading Text : " + Convert.ToString(Input.IsReadingText()), Color.White, GameResources.GameFont("Courier"), 10, 90);
+
+                //Input.StartReadingText(Color.White, 10, GameResources.GameFont("Courier"), 10, 110);
+                //Text.DrawText("You Entered : " + Convert.ToString(Input.TextReadAsASCII()), Color.White, GameResources.GameFont("Courier"), 10, 130);
             }
         }
     }
