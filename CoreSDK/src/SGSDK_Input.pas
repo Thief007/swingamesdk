@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Stephen: Fixed IsMouseShown
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: James changed MoveMouse to Point2D
 // - 2008-01-17: Aki + Andrew: Refactor
@@ -95,7 +96,7 @@ implementation
 	
 	function IsMouseShown(): Boolean;
 	begin
-		result := SDL_ShowCursor(-1) = -1;
+		result := SDL_ShowCursor(-1) = 1;
 	end;
 
 	/// Returns true when a key is typed. This occurs when the key is pressed on the 

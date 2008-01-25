@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-01-25: Stephen: Fixed IsMouseShown
 //  - 2008-01-23: Andrew: ToGameCoordinates - changed to use Point2D
 //					  	Added MoveSpriteItself
 //						Added Shapes code
@@ -452,12 +453,13 @@ uses
 	
 	function IsMouseShown(): Integer ; cdecl; export;
 	begin
-		result := -1;
 		try
 			if SGSDK_Input.IsMouseShown() then result := -1
 			else result := 0;
+			exit;
 		Except on exc: Exception  do TrapException(exc);
 		end;
+		result := -1;
 	end;
 	
 	procedure MoveMouse(x : UInt16; y : UInt16); cdecl; export;
