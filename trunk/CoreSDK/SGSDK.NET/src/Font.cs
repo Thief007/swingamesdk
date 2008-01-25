@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Andrew: Fixed DrawLinesToScreen
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
 //               Refactored some methods, to limit routines exposed by DLL
@@ -440,7 +441,7 @@ namespace SwinGame
         // Draw Text on Screen Stuff
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen")]
-        private static extern void DLL_DrawTextOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, int textColor, IntPtr theFont, int x, int y);
+        private static extern void DLL_DrawTextOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// Draws texts to the screen. Drawing text is a slow operation,
         ///	and drawing it to a bitmap, then drawing the bitmap to screen is a
@@ -456,7 +457,7 @@ namespace SwinGame
             try
             {
                 int color = textColor.ToArgb();
-                DLL_DrawTextOnScreen(theText, color, theFont.Pointer, x, y);
+                DLL_DrawTextOnScreen(theText, (uint)color, theFont.Pointer, x, y);
             }
             catch (Exception exc)
             {
@@ -483,7 +484,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen")]
-        private static extern void DLL_DrawTextLinesOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, int textColor, int backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);   
+        private static extern void DLL_DrawTextLinesOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);   
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
         ///	slow operation, so if the text is not frequently changing save it to a
@@ -502,8 +503,8 @@ namespace SwinGame
         {
             try
             {
-                int color = textColor.ToArgb();
-                int color2 = textColor.ToArgb();
+                uint color = (uint)textColor.ToArgb();
+                uint color2 = (uint)backColor.ToArgb();
                 DLL_DrawTextLinesOnScreen(theText, color, color2, theFont.Pointer, align, x, y, w, h);
             }
             catch (Exception exc)
