@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Stephen: Added Rectangle, Top, Bottom, Left, Right
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
 //               
@@ -570,6 +571,70 @@ namespace SwinGame
                 else if (movement.Y > 0) return CollisionSide.Top;
                 else return CollisionSide.None;
 		    }
+        }
+        /// <summary>
+        /// Returns the Top Side of the Rectangle
+        /// </summary>
+        /// <param name="rect">Rectangle</param>
+        /// <returns>Top Side</returns>
+        public static Single RectangleTop(Rectangle rect)
+        {
+            if (rect.Height > 0)
+            {
+                return rect.Y;
+            }
+            else
+            {
+                return rect.Y + rect.Height;
+            }
+        }
+        /// <summary>
+        /// Returns the Bottom side of the Rectangle
+        /// </summary>
+        /// <param name="rect">Rectangle</param>
+        /// <returns>Bottom Side</returns>
+        public static Single RectangleBottom(Rectangle rect)
+        {
+            if (rect.Height > 0)
+            {
+                return rect.Y + rect.Height;
+            }
+            else
+            {
+                return rect.Y;
+            }
+        }
+	    /// <summary>
+	    /// Returns the Left Hand side of the Rectangle
+	    /// </summary>
+	    /// <param name="rect">Rectangle</param>
+	    /// <returns>Left Hand Side</returns>
+        public static Single RectangleLeft(Rectangle rect)
+        {
+            if (rect.Width > 0)
+            {
+                return rect.X;
+            }
+            else
+            {
+                return rect.X + rect.Width;
+            }
+        }
+        /// <summary>
+        /// Returns the Right Hand Side of the Rectangle
+        /// </summary>
+        /// <param name="rect">Rectangle</param>
+        /// <returns>Right Hand Side</returns>
+        public static Single RectangleRight(Rectangle rect)
+        {
+            if (rect.Width > 0)
+            {
+                return rect.X + rect.Width;
+            }
+            else
+            {
+                return rect.X;
+            }
         }
     }
 }
