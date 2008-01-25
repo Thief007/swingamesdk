@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Correct Circular Collision to
 //		handle situations where the balls have overlaped.
 // - 2008-01-21: Andrew: General refactoring, adding new collision routines
@@ -23,8 +24,7 @@ unit SGSDK_Physics;
 
 interface
 	uses
-		SDL_Mixer, SDL, SDL_Image, SDL_TTF, SDLEventProcessing, SGSDK_Core, 
-		SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
+		SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
 
 	type
 	    /// type: Matrix2d

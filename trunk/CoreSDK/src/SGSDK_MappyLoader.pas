@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
 // - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide 
 // - 2008-01-17: Aki + Andrew: Refactor
@@ -786,13 +787,17 @@ implementation
 	function CollisionWithMap(m : Map; spr : Sprite; vec: Vector): CollisionSide;
 	var
 		x, y: Integer;
+		temp: Vector;
 	begin
 		result := None;
+		temp := spr.movement;
+		spr.movement := vec;
 		if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, x, y) then
 		begin
 			MoveSpriteOutOfTile(m, spr, x, y);
 			result := WillCollideOnSide(m, spr);
 		end;
+		spr.movement := temp;
 	end;
 	
 end.

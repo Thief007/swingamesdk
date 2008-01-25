@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: James changed MoveMouse to Point2D
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
@@ -165,6 +166,7 @@ implementation
 	var
 		x, y: Integer;
 	begin
+		x := 0; y := 0;
 		SDL_GetMouseState(x, y);
 		result := CreateVector(x, y);
 	end;
@@ -173,6 +175,7 @@ implementation
 	var
 		x, y: Integer;
 	begin
+		x := 0; y := 0;
 		SDL_GetMouseState(x, y);
 		result := CreatePoint(x, y);		
 	end;
@@ -181,6 +184,7 @@ implementation
 	var
 		x, y: Integer;
 	begin
+		x := 0; y := 0;
 		SDL_GetRelativeMouseState(x, y);
 		result := CreateVector(x, y);
 	end;
@@ -189,6 +193,7 @@ implementation
 	var
 		x, y: Integer;
 	begin
+		x := 0; y := 0;
 		result := (SDL_GetMouseState(x, y) and 
 		SDL_BUTTON(Integer(button))) > 0;
 	end;
