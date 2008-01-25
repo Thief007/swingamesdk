@@ -6,7 +6,7 @@ interface
 	procedure AddGraphicsSuite(var suites: TestSuites); 
 
 implementation
-	uses GameResources, SGSDK_Core, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font;
+	uses GameResources, SGSDK_Core, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font, SGSDK_Physics, SysUtils;
 	
 	var
 		//Rectangle test variables
@@ -18,6 +18,84 @@ implementation
 		curRadius: Integer;
 		tempPoint, tempPoint2, tempPoint3, tempPoint4,
 		tempPoint5, tempPoint6: Point2D;
+		//TestLines variables
+		angle: Integer;
+		tempLines: Array of LineSegment;
+		//Pixel
+		curCol: Colour;
+	
+	procedure TestPixels(const drawIn: Rectangle);
+	begin
+		if IsKeyPressed(VK_Z) then 
+		begin
+			ClearSurface(smallScreen, ColourTransparent);
+			ClearScreen(ColourTransparent);
+			DrawBitmapOnScreen(GameImage('BGA'), Round(drawIn.x), Round(drawIn.y))
+		end;
+		
+		if IsKeyPressed(VK_1) then curCol := GetColour(GetRed(curCol) + 5, GetGreen(curCol), GetBlue(curCol));
+		if IsKeyPressed(VK_2) then curCol := GetColour(GetRed(curCol), GetGreen(curCol) + 5, GetBlue(curCol));
+		if IsKeyPressed(VK_3) then curCol := GetColour(GetRed(curCol), GetGreen(curCol), GetBlue(curCol) + 5);
+		
+		FillRectangle(ColourBlack, 0, 0, 300, 45);
+		DrawText('Red   : ' + IntToStr(GetRed(curCol)), ColourRed, GameFont('Courier'), 0, 0);
+		DrawText('Green : ' + IntToStr(GetGreen(curCol)), ColourGreen, GameFont('Courier'), 0, 15);
+		DrawText('Blue  : ' + IntToStr(GetBlue(curCol)), ColourBlue, GameFont('Courier'), 0, 30);
+		
+		If IsMouseDown(LeftButton) then
+		begin
+			DrawPixel(smallScreen, curCol, CreatePoint(GetMousePosition().x - drawIn.x - 10, GetMousePosition().y - drawIn.y - 10));
+			DrawPixel(smallScreen, curCol, Round(GetMousePosition().x - drawIn.x + 10), Round(GetMousePosition().y - drawIn.y) - 10);
+		
+			DrawPixel(curCol, CreatePoint(GetMousePosition().x - 10 - drawIn.x, GetMousePosition().y - drawIn.y));
+			DrawPixel(curCol, Round(GetMousePosition().x - drawIn.x + 10), Round(GetMousePosition().y - drawIn.y));
+		
+			DrawPixelOnScreen(curCol, CreatePoint(GetMousePosition().x - 10, GetMousePosition().y + 10));
+			DrawPixelOnScreen(curCol, Round(GetMousePosition().x) + 10, Round(GetMousePosition().y) + 10);
+		end;
+		
+		DrawBitmap(smallScreen, 0, 0);
+	end;
+	
+	procedure TestLines(const drawIn: Rectangle);
+	var
+		i : Integer;
+	begin
+		ClearSurface(smallScreen, ColourTransparent);
+		
+		if IsKeyPressed(VK_RIGHT) then angle := +2;
+		if IsKeyPressed(VK_LEFT) then angle := -2;
+		
+		if angle <> 0 then
+		begin
+			for i := 1 to 6 do
+			begin
+				tempLines[i] := LineFromVector(tempLines[i].startPoint.x, tempLines[i].startPoint.y, Multiply(RotationMatrix(angle), LineAsVector(tempLines[i])));
+			end;
+		end;
+		
+		DrawHorizontalLine(smallScreen, ColourGreen, 100, 100, 350);
+		DrawVerticalLine(smallScreen, ColourGreen, 100, 100, 350);
+		DrawBitmap(smallScreen, 0, 0);
+		ClearSurface(smallScreen, ColourTransparent);
+		DrawLine(smallScreen, ColourWhite, tempLines[1]);
+		DrawLine(smallScreen, ColourWhite, Round(tempLines[3].startPoint.x), Round(tempLines[3].startPoint.y), Round(tempLines[3].endPoint.x), Round(tempLines[3].endPoint.y));
+		
+		DrawHorizontalLine(ColourGreen, 225, 100, 350);
+		DrawVerticalLine(ColourGreen, 225, 100, 350);
+		DrawHorizontalLineOnScreen(ColourGreen, Round(350 + drawIn.y), Round(100 + drawIn.x), Round(350 + drawIn.x));
+		DrawVerticalLineOnScreen(ColourGreen, Round(350 + drawIn.x), Round(100 + drawIn.y), Round(350 + drawIn.y));
+		
+		DrawLine(ColourWhite, tempLines[2]);
+		DrawLine(ColourWhite, tempLines[4].startPoint.x, tempLines[4].startPoint.y, tempLines[4].endPoint.x, tempLines[4].endPoint.y);
+		
+		DrawBitmap(smallScreen, 0, 0);
+		
+		DrawLineOnScreen(ColourWhite, tempLines[5]);
+		DrawLineOnScreen(ColourWhite, Round(tempLines[6].startPoint.x), Round(tempLines[6].startPoint.y), Round(tempLines[6].endPoint.x), Round(tempLines[6].endPoint.y));
+		
+		angle := 0;
+	end;
 	
 	procedure TestFill2(const drawIn: Rectangle);
 	begin
@@ -257,7 +335,7 @@ implementation
 		i: Integer;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 5);
+		SetLength(result.Tests, 7);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -272,7 +350,7 @@ implementation
 								+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
 			tempRect := CreateRectangle(0, 0, 50, 50);
 			tempRect4 := CreateRectangle(0, 0, 50, 50);
-			smallScreen := CreateBitmap(500, 510);
+			smallScreen := CreateBitmap(418, 418);
 			filled := false;
 			ToRun := @TestDrawRectangle;
 		end;
@@ -298,7 +376,7 @@ implementation
 		
 		with result.Tests[3] do
 		begin
-			MethodBeingTested := 'FillRectangle, FillRectangleOnScreen, FillEllipse, FillEllipseOnScreen';
+			MethodBeingTested := 'FillRectangle, FillEllipse';
 			Instructions := 'Use the arrow keys to move' + EOL + 'the green shapes.' + EOL + 'A : Shrink the shape width' + EOL + 'S : Expand the shape width'
 							+ EOL + 'Z : Shrink the shape height' + EOL + 'X : Expand the shape height' + EOL
 							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
@@ -312,6 +390,29 @@ implementation
 							+ EOL + 'Z : Shrink the circle height' + EOL + 'X : Expand the circle height' + EOL
 							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
 			ToRun := @TestFill2;
+		end;
+		
+		with result.Tests[5] do
+		begin
+			SetLength(tempLines, 7);
+			MethodBeingTested := 'All routines related to line, RotateMatrix, Multiply';
+			Instructions := 'Use the arrow keys to rotate' + EOL + 'the white lines';
+			tempLines[1] := LineFromVector(225, 225, GetVectorFromAngle(0, 125));
+			tempLines[2] := LineFromVector(225, 225, GetVectorFromAngle(60, 125));
+			tempLines[3] := LineFromVector(225, 225, GetVectorFromAngle(120, 125));
+			tempLines[4] := LineFromVector(225, 225, GetVectorFromAngle(180, 125));
+			tempLines[5] := LineFromVector(248, 354, GetVectorFromAngle(240, 125));
+			tempLines[6] := LineFromVector(248, 354, GetVectorFromAngle(300, 125));
+			ToRun := @TestLines;
+		end;
+		
+		with result.Tests[6] do
+		begin
+			MethodBeingTested := 'DrawPixel';
+			Instructions := 'Click and drag to draw with' + EOL + 'your mouse cursor.' + EOL + EOL + '1: Increment Blue' + EOL + '2: Increment Green' + EOL + '3: Inrrement Blue';
+			curCol := ColourWhite;
+			result.Tests[6].ClearScreen := false;
+			ToRun := @TestPixels;
 		end;
 	end;
 	
