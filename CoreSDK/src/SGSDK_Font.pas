@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-21: Andrew: Added Point/Rectangle overloads
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
@@ -445,6 +446,7 @@ implementation
 		y: Integer; //SizeText returns both... store and ignore y
 	begin
 		try
+			y := 0; result := 0;
 			TTF_SizeText(theFont, PChar(theText), result, y);
 		except
 			raise Exception.Create('Unable to get the text width');
@@ -461,6 +463,7 @@ implementation
 		w: Integer; //SizeText returns both... store and ignore w
 	begin
 		try
+			w := 0; result :=  0;
 			TTF_SizeText(theFont, PChar(theText), w, result);
 		except
 			raise Exception.Create('Unable to get the text height');

@@ -28,7 +28,7 @@ DOTNETbin="$BaseDir"/SGSDK.NET/src/bin/Debug
 
 SDK="${BaseDir}/../SDKs/DOTNet/Mono/C#/lib/"
 
-EXTRA_OPTS="-O3"
+EXTRA_OPTS="-O3 -Sewn -vwn"
 
 CLEAN="N"
 
@@ -44,9 +44,9 @@ shift $((${OPTIND}-1))
 
 if [ $CLEAN = "N" ]
 then
-	if [ -f {$BaseDir}/out.log ]
+	if [ -f ${BaseDir}/out.log ]
 	then
-		rm -f {$BaseDir}/out.log
+		rm -f ${BaseDir}/out.log
 	fi
 
 	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
@@ -60,7 +60,9 @@ then
 
 		echo "  ... Compiling Library"
 	
-		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -FU"$Output" -s ./src/SGSDK.pas > ${BaseDir}/out.log
+		echo "Compiling with $EXTRA_OPTS" >> ${BaseDir}/out.log
+	
+		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -FU"$Output" -s ./src/SGSDK.pas >> ${BaseDir}/out.log
 		if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
 	
 		#Assemble all of the .s files
@@ -86,7 +88,7 @@ then
 		cd $DOTNETlocn
 		
 		echo "  ... Compiling .NET Library"
-		xbuild $DOTNETproj > ${BaseDir}/out.log
+		xbuild $DOTNETproj >> ${BaseDir}/out.log
 		if [ $? != 0 ]; then echo "Error with xbuild"; cat ${BaseDir}/out.log; exit 1; fi
 			
 		echo "  ... Copying Library to $Output"
@@ -111,7 +113,7 @@ then
 		rm "$Output"/*.ppu
 
 		cd $DOTNETlocn
-		xbuild $DOTNETproj > ${BaseDir}/out.log
+		xbuild $DOTNETproj >> ${BaseDir}/out.log
 
 		cp "$DOTNETbin"/*.dll "$Output"
 

@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-25: Andrew: Fixed compiler hints for pointer use
 // - 2008-01-24: Andrew: Added Clipping
 // - 2008-01-24: James: Version 1.1 overloads
 // - 2008-01-21: Aki: 40 overloads added for Point2D and 
@@ -332,8 +333,8 @@ implementation
 	
 	function GetPixel32(surface: PSDL_Surface; x, y: Integer): Colour;
 	var
-		pixels, pixel: PUint32;
-		offset, pixelAddress: Uint32;
+		pixels, pixel, pixelAddress: PUint32;
+		offset: Uint32;
 	begin
     	result := 0;
     
@@ -342,7 +343,7 @@ implementation
 
 		//Get the requested pixel
 		offset := (( y * surface.w ) + x) * surface.format.BytesPerPixel;
-		pixelAddress := uint32(pixels) + offset;
+		pixelAddress := pixels + (offset div 4);
 
 		{$IFDEF FPC}
 			pixel := PUint32(pixelAddress);
@@ -1094,16 +1095,17 @@ implementation
 	var
 	  bufP: PUInt32;
 	  pixels: PUint32;
-	  addr: UInt32;
+	  //addr: UInt32;
 	  rect: TSDL_Rect;
 	begin
 		SDL_GetClipRect(surface, @rect);
 		
-		if (x < rect.x) or (x >= rect.x + rect.w) or (y < rect.y) or (y >= rect.y + rect.h) then exit;
+		if (x < rect.x) or (x >= rect.x + rect.w) or (y < rect.y) or (y >= rect.y + rect.h) or (x < 0) or (y < 0) then exit;
 		
 		pixels := surface.pixels;
-		addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
-		bufp := PUint32(addr);
+		//addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
+		//bufp := PUint32(addr);
+		bufp := pixels + (x * surface.format.BytesPerPixel div 4) + (y * surface.pitch div 4);
 		bufp^ := color;
 	end;
 	
@@ -1657,7 +1659,8 @@ implementation
 	///	- Draws a line in the dest bitmap
 	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: Integer);
 	var
-		w, h, b, r, y, addr: Integer;
+		w, h, b, r, y: Integer;
+		//addr: UInt32;
 		bufP: PUInt32;
 		pixels: PUint32;
 		rect: TSDL_Rect;
@@ -1688,14 +1691,16 @@ implementation
 		if y2 >= b then y2 := b - 1;
 		
 		pixels := dest.surface.pixels;
-		addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
-		bufp := PUint32(addr);
+		//addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
+		//bufp := PUint32(addr);
+		
+		bufp := pixels + (x * dest.surface.format.BytesPerPixel div 4) + (y1 * dest.surface.Pitch div 4);
 		
 		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for y := y1 to y2 - 1 do
 		begin
-			bufp := PUInt32(UInt32(bufp) + (dest.surface.pitch));
+			bufp := bufp + (dest.surface.pitch div 4);
 			bufp^ := theColor;
 		end;
 		
@@ -1713,7 +1718,8 @@ implementation
 	///	- Draws a line in the dest bitmap
 	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer);
 	var
-		w, h, x, r, b, addr: Integer;
+		w, h, x, r, b: Integer;
+		//addr: Pointer;
 		bufP: PUInt32;
 		pixels: PUint32;
 		rect: TSDL_Rect;
@@ -1741,11 +1747,15 @@ implementation
 		
 		if x1 < rect.x then x1 := rect.x;
 		if x2 >= r then x2 := r - 1;
+		if x1 < 0 then x1 := 0;
 		
 		pixels := dest.surface.pixels;
-		addr := UInt32(pixels) + ((UInt32(x1 - 1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch);
-		bufp := PUint32(addr);
-		
+
+		//addr := pixels + ((UInt32(x1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch) - 1;
+		//bufp := PUint32(addr);
+
+		bufp := pixels + (x1 * dest.surface.format.BytesPerPixel div 4) + (y * dest.surface.pitch div 4) - 1;
+				
 		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		for x := x1 to x2 do
