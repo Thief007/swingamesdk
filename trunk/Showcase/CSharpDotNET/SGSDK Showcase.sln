@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGSDK Showcase", "SGSDK Showcase\SGSDK Showcase.csproj", "{CEBE306C-2619-4A70-91E1-5517F7F3BA8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SGSDK Showcase", "Showcase\SGSDK Showcase.csproj", "{CEBE306C-2619-4A70-91E1-5517F7F3BA8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
