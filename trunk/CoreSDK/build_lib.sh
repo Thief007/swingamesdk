@@ -3,7 +3,7 @@
 DoExitCompile ()
 { 
 	echo "An error occurred while compiling"; 
-	cat out.log
+	cat ${BASEDIR}/out.log
 	exit 1; 
 }
 
@@ -20,10 +20,11 @@ Usage()
 	exit 0
 }
 
+BASEDIR=`pwd`
 CLEAN="N"
 SHARED_LIB="N"
-EXTRA_OPTS="-O3"
-DEGUB="N"
+EXTRA_OPTS="-O3 -Sewn -vwn"
+DEBUG="N"
 
 while getopts hdc o
 do
@@ -49,9 +50,9 @@ then
 	Output=`pwd`/bin/mac/	
 	LibDir=`pwd`/lib/mac
 	
-	if [ DEBUG = "Y" ]
+	if [ $DEBUG = "Y" ]
 	then
-		EXTRA_OPTS="-gw3 -gl -gp -godwarfsets -Ci -Co -Ct"
+		EXTRA_OPTS="-gw -gl -gp -Ci -Co -Ct -vwnh "
 	fi
 
 	echo "__________________________________________________"
@@ -71,7 +72,7 @@ else
 
 	if [ DEBUG = "Y" ]
 	then
-		EXTRA_OPTS="-g -Ci -Co -Ct"
+		EXTRA_OPTS="-g -Ci -Co -Ct -vwnh "
 	fi
 	
 	echo "__________________________________________________"
@@ -97,52 +98,52 @@ else
 		mkdir -p "$Output"
 	fi
 
-	if [ -f out.log ]
+	if [ -f ${BASEDIR}/out.log ]
 	then
-		rm -f out.log
+		rm -f ${BASEDIR}/out.log
 	fi
 
 	echo "  ... Compiling Core"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Core.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Core"; cat out.log; exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" SGSDK_Core.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Core"; cat ${BASEDIR}/out.log; exit 1; fi
 
 	echo "  ... Compiling KeyCodes"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_KeyCodes.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" SGSDK_KeyCodes.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Shapes"	
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Shapes.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Shapes"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Shapes.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Shapes"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Camera"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Camera.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Camera"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Camera.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Camera"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Graphics"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Graphics.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Graphics"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Graphics.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Graphics"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Font"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Font.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Font"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Font.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Font"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Input"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Input.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Input"; cat out.log;  cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Input.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Input"; cat ${BASEDIR}/out.log;  cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Physics"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Physics.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Physics"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Physics.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Physics"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling Audio"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_Audio.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling Audio"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_Audio.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling Audio"; cat ${BASEDIR}/out.log;  exit 1; fi
 
 	echo "  ... Compiling MappyLoader"
-	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output" -Sewn -vwn SGSDK_MappyLoader.pas > out.log
-	if [ $? != 0 ]; then echo "Error compiling MappyLoader"; cat out.log;  exit 1; fi
+	fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -Fu"$Output"  SGSDK_MappyLoader.pas >> ${BASEDIR}/out.log
+	if [ $? != 0 ]; then echo "Error compiling MappyLoader"; cat ${BASEDIR}/out.log;  exit 1; fi
 	
-	echo "  ... Output in out.log"		
+	echo "  ... Output in ${BASEDIR}/out.log"		
 	echo "  ... Copying to FPC"
 
 	cp "$Output"/*.ppu "$FPCDir"

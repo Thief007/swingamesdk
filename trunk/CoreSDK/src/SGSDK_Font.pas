@@ -184,6 +184,7 @@ implementation
 		n, w, h, i: Integer;
 		rect: TSDL_Rect;
 		colorFG: TSDL_Color;
+		bgTransparent: Boolean;
 	begin
 		if dest = nil then
 		begin
@@ -192,6 +193,7 @@ implementation
 
 		result := nil;
 		colorFG := ToSDLColor(clrFg);
+		bgTransparent := GetTransparency(clrBg) < 255;
 		
 		// If there's nothing to draw, return NULL
 		if (Length(str) = 0) or (font = nil) then exit;
@@ -236,13 +238,13 @@ implementation
 		height := (Length(lines) - 1) * lineSkip + height;
 
 		sText := CreateBitmap(width, height);
-		//ClearSurface(sText, clrBg);
+		ClearSurface(sText, clrBg);
 
 		// Actually render the text:
 		for i := 0 to High(lines) do
 		begin
 			// The rendered text:
-			temp := TTF_RenderText_Blended( font, PChar(lines[i]), colorFG);
+			temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
 
 			// Put it on the surface:
 			if IsSet(flags, AlignLeft) or
@@ -274,7 +276,7 @@ implementation
 			end;
 
 			// Render the current line. Ignore alpha in this draw
-			SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
+			if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
 			SDL_BlitSurface(temp, nil, sText.surface, @rect);
 
 			// Clean up:
@@ -282,7 +284,9 @@ implementation
 		end;
 
 		// Draw the text on top of that:
+		if not bgTransparent then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);	
 		SDL_BlitSurface(sText.surface, nil, dest, rc );
+		
 		FreeBitmap(sText);
 
 		result := nil;

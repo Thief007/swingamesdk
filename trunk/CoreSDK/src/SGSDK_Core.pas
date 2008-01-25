@@ -296,6 +296,14 @@ interface
 	procedure UnpauseTimer(toUnpause : Timer); {1.1}
 	function GetTimerTicks(toGet : Timer) : UInt32; {1.1}
 
+	//New for next version!
+	procedure GetComponents(color: Color; out r, g, b, a: byte);
+		
+	function GetTransparency(color: Color): byte;
+	function GetRed(color: Color): byte;
+	function GetGreen(color: Color): byte;
+	function GetBlue(color: Color): byte;
+		
 	//Internal routines
 	procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 	function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
@@ -658,6 +666,45 @@ implementation
 		except
 			raise Exception.Create('Failed to save ' + basename + '.bmp');
 		end;
+	end;
+	
+	procedure GetComponents(color: Color; out r, g, b, a: byte);
+	begin
+		if baseSurface = nil then raise Exception.Create('Cannot read screen format. Ensure window is open.');
+			
+		SDL_GetRGBA(color, baseSurface.Format, @r, @g, @b, @a);
+	end;
+	
+	function GetTransparency(color: Color): byte;
+	var
+		r,g,b,a: Byte;
+	begin
+		GetComponents(color, r, g, b, a);
+		result := a;
+	end;
+	
+	function GetRed(color: Color): byte;
+	var
+		r,g,b,a: Byte;
+	begin
+		GetComponents(color, r, g, b, a);
+		result := r;
+	end;
+	
+	function GetGreen(color: Color): byte;
+	var
+		r,g,b,a: Byte;
+	begin
+		GetComponents(color, r, g, b, a);
+		result := g;
+	end;
+	
+	function GetBlue(color: Color): byte;
+	var
+		r,g,b,a: Byte;
+	begin
+		GetComponents(color, r, g, b, a);
+		result := b;
 	end;
 	
 	function GetColor(forBitmap: Bitmap; apiColor: Color): Colour; overload;
