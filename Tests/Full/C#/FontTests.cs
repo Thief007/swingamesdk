@@ -33,7 +33,7 @@ namespace Tests
             private static int _y = 255;
             private static int _z = 255;
 
-            private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 200);
+            private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 32);
 
             public DrawText() : base(METHS, INST) { }
 
@@ -56,36 +56,36 @@ namespace Tests
                 }
 
                 //Draw Text
-                Text.DrawText("This is some Text", _TextColor, GameResources.GameFont("Courier"), 10, 10);
-                Text.DrawText("This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(10, 30));
+                Text.DrawText("1 This is some Text", _TextColor, GameResources.GameFont("Courier"), 10, 10);
+                Text.DrawText("2 This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(10, 30));
                 
                 //Draw Text On Bitmap
                 SwinGame.Graphics.ClearSurface(draw, Color.Black);
-                Text.DrawText(draw, "This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(0, 0));
+                Text.DrawText(draw, "3 This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(0, 0));
                 SwinGame.Graphics.DrawBitmap(draw, 10, 50);
-                SwinGame.Graphics.ClearSurface(draw, Color.Black);
-                Text.DrawText(draw, "This is some Text", _TextColor, GameResources.GameFont("Courier"), 0, 0);
+                SwinGame.Graphics.ClearSurface(draw, Color.Gray);
+                Text.DrawText(draw, "4 This is some Text", _TextColor, GameResources.GameFont("Courier"), 0, 0);
                 SwinGame.Graphics.DrawBitmap(draw, 10, 70);
 
                 //Draw Text On Screen
-                Text.DrawTextOnScreen("This is some Text", _TextColor, GameResources.GameFont("Courier"), 32, 220);
-                Text.DrawTextOnScreen("This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(32, 240));
+                Text.DrawTextOnScreen("5 This is some Text", _TextColor, GameResources.GameFont("Courier"), 32, 220);
+                Text.DrawTextOnScreen("6 This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(32, 240));
                 
                 //Draw Text Lines
-                Text.DrawTextLines("This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 10, 130, 100, 100);
-                Text.DrawTextLines("This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(10, 170, 100, 100));
+                Text.DrawTextLines("7 This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Transparent, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 10, 130, 100, 100);
+                Text.DrawTextLines("8 This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Green, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(10, 170, 100, 100));
 
                 //Draw Text Lines on Bitmap
-                SwinGame.Graphics.ClearSurface(draw, Color.Black);
-                Text.DrawTextLines(draw, "This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(0, 0, 100, 100));
+                SwinGame.Graphics.ClearSurface(draw, Color.Transparent);
+                Text.DrawTextLines(draw, "9 This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Gray, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(0, 0, 100, 100));
                 SwinGame.Graphics.DrawBitmap(draw, 10, 210);
-                SwinGame.Graphics.ClearSurface(draw, Color.Black);
-                Text.DrawTextLines(draw, "This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 0, 0, 100, 100);
+                SwinGame.Graphics.ClearSurface(draw, Color.Transparent);
+                Text.DrawTextLines(draw, "A This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Blue, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 0, 0, 100, 100);
                 SwinGame.Graphics.DrawBitmap(draw, 10, 250);
 
                 //Draw Text Lines on Screen
-                Text.DrawTextLinesOnScreen("This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 32, 440, 100, 100);
-                Text.DrawTextLinesOnScreen("This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Black, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(32, 480, 100, 100));
+                Text.DrawTextLinesOnScreen("B This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Transparent, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 32, 440, 100, 100);
+                Text.DrawTextLinesOnScreen("C This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Yellow, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(32, 480, 100, 100));
             }
         }
     }

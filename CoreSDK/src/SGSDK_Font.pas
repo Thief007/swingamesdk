@@ -285,7 +285,13 @@ implementation
 		end;
 
 		// Draw the text on top of that:
-		if not bgTransparent then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);	
+		
+		//
+		// TODO: DrawTextOnTransparent.... here you must call SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT)
+		// if bgTransparent :(
+		//
+		
+		if (not bgTransparent) then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);	
 		SDL_BlitSurface(sText.surface, nil, dest, rc );
 		
 		FreeBitmap(sText);

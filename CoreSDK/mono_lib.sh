@@ -32,11 +32,12 @@ EXTRA_OPTS="-O3 -Sewn -vwn"
 
 CLEAN="N"
 
-while getopts ch o
+while getopts chd o
 do
 	case "$o" in
 	c)  CLEAN="Y" ;;
-	h)  Usage ;
+	h)  Usage ;;
+	d)  EXTRA_OPTS="-vwn";;
 	esac
 done
 
