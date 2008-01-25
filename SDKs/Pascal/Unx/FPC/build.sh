@@ -39,10 +39,10 @@ DEBUG="N"
 while getopts i:e:hd o
 do
 	case "$o" in
-	i)	 ICON="$OPTARG";;
-	e)	 EXECUTABLE_NAME="$OPTARG";;
-	d)   DEBUG="Y";;
-	h)   Usage;;
+	i)	ICON="$OPTARG";;
+	e)	EXECUTABLE_NAME="$OPTARG";;
+	d)  DEBUG="Y";;
+	h)  Usage;;
 	esac
 done
 
@@ -62,9 +62,9 @@ fi
 
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
-	if [ DEBUG = "Y" ]
+	if [ $DEBUG = "Y" ]
 	then
-		EXTRA_OPTS="-gw3 -gl -gp -godwarfsets -Ci -Co -Ct"
+		EXTRA_OPTS="-gw -gl -gp -Ci -Co -Ct"
 	fi
 
 	echo "__________________________________________________"
@@ -111,10 +111,6 @@ then
 	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "${EXECUTABLE_NAME}" `cat bin/link.res` -lSDL -lSDL_mixer -lsmpeg -lSDL_image -lSDL_TTF -lSDL_gfx -lz -lstdc++ -ltiff -lpng12 -lSDLmain -logg -lfreetype -ljpeg -lvorbis -lvorbisenc -lvorbisfile -framework Cocoa -framework QuickTime -framework CoreFoundation -framework IOKit -framework AudioUnit -framework Carbon -framework OpenGL -lgcc -dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
 	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
 
-	rm bin/link.res
-	rm bin/*.o
-	rm bin/*.ppu
-
 	if [ -d ./bin/"${PRODUCT_NAME}.app" ] 
 	then
 		echo "  ... Removing old application"
@@ -129,6 +125,14 @@ then
 	mkdir ./bin/"${PRODUCT_NAME}.app/Contents/Resources"
 
 	mv "${EXECUTABLE_NAME}" "./bin/${PRODUCT_NAME}.app/Contents/MacOS/" 
+	
+	if [ $DEBUG = "N" ] 
+	then
+		rm bin/*.o
+	fi
+
+	rm bin/link.res
+	rm bin/*.ppu
 
 	echo "<?xml version='1.0' encoding='UTF-8'?>\
 	<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
@@ -161,7 +165,7 @@ then
 	
 	RESOURCE_DIR="./bin/${PRODUCT_NAME}.app/Contents/Resources"
 else
-	if [ DEBUG = "Y" ]
+	if [ $DEBUG = "Y" ]
 	then
 		EXTRA_OPTS="-g -Ci -Co -Ct"
 	fi
