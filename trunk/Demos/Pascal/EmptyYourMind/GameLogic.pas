@@ -392,7 +392,7 @@ implementation
 			UpdateShip(game);
 			UpdateEnemies(game);
 			game.gameTimer := game.gameTimer + 1;
-			RefreshScreen();
+			RefreshScreen(60);
 			if not game.player.alive then break;
 		until WindowCloseRequested();
 		StopMusic();
