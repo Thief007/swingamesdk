@@ -36,7 +36,7 @@ namespace Tests
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
                 Vector MouseMovement = SwinGame.Input.GetMouseMovement();
-                
+               
                 Text.DrawText("Mouse Position : " + Convert.ToString(SwinGame.Input.GetMousePosition().X) + ", " + Convert.ToString(SwinGame.Input.GetMousePosition().Y), Color.White, GameResources.GameFont("Courier"), 10, 10);
                 Text.DrawText("Mouse Movement : " + Convert.ToString(MouseMovement.X) + ", " + Convert.ToString(MouseMovement.Y), Color.White, GameResources.GameFont("Courier"), 10, 30);
 
@@ -74,7 +74,10 @@ namespace Tests
                 "All Keyboard";
 
             private readonly static string INST =
-                "Hit the [A] Key";
+                "Hit the [A] Key" + Environment.NewLine +
+                "[S]tart Reading Text";
+
+            private string _EnteredText;
 
             public KeyBoardInputTest() : base(METHS, INST) { }
 
@@ -86,8 +89,12 @@ namespace Tests
 
                 Text.DrawText("Is Reading Text : " + Convert.ToString(Input.IsReadingText()), Color.White, GameResources.GameFont("Courier"), 10, 90);
 
-                //Input.StartReadingText(Color.White, 10, GameResources.GameFont("Courier"), 10, 110);
-                //Text.DrawText("You Entered : " + Convert.ToString(Input.TextReadAsASCII()), Color.White, GameResources.GameFont("Courier"), 10, 130);
+                if (!Input.IsReadingText() && Input.WasKeyTyped(Keys.VK_S))
+                {
+                    Input.StartReadingText(Color.White, 10, GameResources.GameFont("Courier"), 35, 240);
+                }
+                _EnteredText = Input.TextReadAsASCII();
+                Text.DrawText("You Entered : " + _EnteredText, Color.White, GameResources.GameFont("Courier"), 10, 130);
             }
         }
     }
