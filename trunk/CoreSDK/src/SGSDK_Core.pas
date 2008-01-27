@@ -11,6 +11,9 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-27: Andrew: Implemented the Change of Screen size fix..
+// 			Found a different bug which means that the changes
+//			were not needed. Need to test in windows
 // - 2008-01-21: Aki: Implemented timer
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
@@ -490,7 +493,7 @@ implementation
 		try
 			scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, oldScr.flags xor SDL_FULLSCREEN);
 			
-			if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
+			//if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
 		except on exc: Exception do
 			WriteLn('Bug with freeing surface on toggle Fullscreen... needs to be examined');
 		end;
@@ -505,6 +508,7 @@ implementation
 	procedure ChangeScreenSize(width, height: Integer);
 	var
 		oldScr: PSDL_Surface;
+		toggle: Boolean;
 	begin
     	if (scr = nil) or (scr.surface = nil) then
       		raise Exception.Create('Screen has not been created. Unable to get screen width.');
@@ -512,9 +516,19 @@ implementation
 			raise Exception.Create('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
 		
 		oldScr := scr.surface;
-
+		toggle := (oldScr.flags and SDL_FULLSCREEN) = SDL_FULLSCREEN;
+		
+		{$ifndef UNIX}
+		//if toggle then ToggleFullScreen();
+		// Dont think these are needed.... check on windows
+		{$endif}
+		
 		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
-		if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
+		//if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
+		
+		{$ifndef UNIX}
+		//if toggle then ToggleFullScreen();
+		{$endif}
 	end;
 	
 	/// Returns the width of the screen currently displayed.
