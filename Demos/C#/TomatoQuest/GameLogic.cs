@@ -26,6 +26,9 @@ namespace TomatoQuest
             //Open Audio Device
             Audio.OpenAudio();
             //Load Resources
+
+				Core.ToggleFullScreen();
+				
             Resources.LoadResources();
 
             //Creates the Game Object
@@ -43,7 +46,7 @@ namespace TomatoQuest
                 _Game.Run();
 
                 //Refreshes the Screen and Processes Input Events
-                Core.RefreshScreen();
+                Core.RefreshScreen(65);
                 Core.ProcessEvents();
 
             } while (!Core.WindowCloseRequested() && !EndGame.HasGameEnded);
