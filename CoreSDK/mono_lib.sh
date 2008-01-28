@@ -26,11 +26,27 @@ DOTNETlocn="$BaseDir"/SGSDK.NET/src/
 DOTNETproj=SGSDK.NET.csproj
 DOTNETbin="$BaseDir"/SGSDK.NET/src/bin/Debug
 
-SDK="${BaseDir}/../SDKs/DOTNet/Mono/C#/lib/"
+SDKBase="${BaseDir}/../SDKs/DOTNet/Mono/"
 
 EXTRA_OPTS="-O3 -Sewn -vwn"
 
 CLEAN="N"
+
+function cpToSDK
+{
+	echo "  ... Copying to $1 SDK"
+
+	cp "$Output"/*.dll "$SDKBase/$1/lib"
+			if [ $? != 0 ]; then echo "Error copying DLL"; exit 1; fi
+	cp "$Output"/*.XML "$SDKBase/$1/lib"
+			if [ $? != 0 ]; then echo "Error copying XML"; exit 1; fi
+
+	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
+	then
+		cp "$Output"/*.dylib  "$SDKBase/$1/lib"
+				if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+	fi
+}
 
 while getopts chd o
 do
@@ -96,11 +112,6 @@ then
 		cp "$DOTNETbin"/*.dll "$Output"
 		cp "$DOTNETbin"/*.XML "$Output"
 		rm "$DOTNETbin"/*
-
-		echo "  ... Copying to C# SDK"
-		cp "$Output"/*.dll "$SDK"
-		cp "$Output"/*.XML "$SDK"
-		cp "$Output"/*.dylib  "$SDK"
 	else
 		echo "__________________________________________________"
 		echo "Building Linux version"
@@ -116,17 +127,16 @@ then
 		cd $DOTNETlocn
 		xbuild $DOTNETproj >> ${BaseDir}/out.log
 
-		cp "$DOTNETbin"/*.dll "$Output"
-
-		echo Copying to C# SDK
-		cp "$Output"/*.dll "$SDK"
-		cp "$Output"/*.so  "$SDK"	
+		cp "$DOTNETbin"/*.dll "$Output"	
 	fi
 else
 	rm -rf "$Output"
 	mkdir "$Output"
 	echo    ... Cleaned
 fi
+
+cpToSDK C#
+cpToSDK VB
 
 echo "  Finished"
 echo "__________________________________________________"

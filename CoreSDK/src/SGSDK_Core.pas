@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-28: Andrew: Fixed Toggle issue.
 // - 2008-01-27: Andrew: Implemented the Change of Screen size fix..
 // 			Found a different bug which means that the changes
 //			were not needed. Need to test in windows
@@ -508,7 +509,7 @@ implementation
 	procedure ChangeScreenSize(width, height: Integer);
 	var
 		oldScr: PSDL_Surface;
-		toggle: Boolean;
+		//toggle: Boolean;
 	begin
     	if (scr = nil) or (scr.surface = nil) then
       		raise Exception.Create('Screen has not been created. Unable to get screen width.');
@@ -516,7 +517,7 @@ implementation
 			raise Exception.Create('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
 		
 		oldScr := scr.surface;
-		toggle := (oldScr.flags and SDL_FULLSCREEN) = SDL_FULLSCREEN;
+		//toggle := (oldScr.flags and SDL_FULLSCREEN) = SDL_FULLSCREEN;
 		
 		{$ifndef UNIX}
 		//if toggle then ToggleFullScreen();
