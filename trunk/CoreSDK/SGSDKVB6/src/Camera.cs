@@ -61,6 +61,14 @@ namespace SwinGameVB
         {
             SwinGame.Camera.FollowSprite(sprite.result, xOffset, yOffset);
         }
+        public void FollowSprite(Sprite sprite, Vector offset)
+        {
+            SwinGame.Camera.FollowSprite(sprite.result, offset.result);
+        }
+        public void SetScreenOffset(Point2D pt)
+        {
+            SwinGame.Camera.SetScreenOffset(pt.result);
+        }
 
     }
     [Guid("5FEA3C94-A7BD-468b-A617-1C7004F711EC")]
@@ -78,5 +86,7 @@ namespace SwinGameVB
         void MoveVisualArea(float dx, float dy);
         void SetScreenOffset(float dx, float dy);
         void FollowSprite(Sprite sprite, int xOffset, int yOffset);
+        void FollowSprite(Sprite sprite, Vector offset);
+        void SetScreenOffset(Point2D pt);
     }
 }

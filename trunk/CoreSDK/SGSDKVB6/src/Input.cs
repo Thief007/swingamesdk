@@ -289,6 +289,12 @@ namespace SwinGameVB
         {
             return SwinGame.Input.IsMouseShown();
         }
+        public Vector GetMousePositionAsVector()
+        {
+            Vector temp = new Vector();
+            temp.result = SwinGame.Input.GetMousePositionAsVector();
+            return temp;
+        }
     }
 
     [Guid("AF53AFA1-8B04-46fb-8014-904BEF21D0EE")]
@@ -312,6 +318,7 @@ namespace SwinGameVB
         String TextReadAsASCII();
         bool IsKeyPressed(Keys key);
         bool WasKeyTyped(Keys key);
+        Vector GetMousePositionAsVector();
     }
 
 }

@@ -47,7 +47,7 @@ if "%1"=="clean" goto cleaning
 	copy "%VB6bin%*.xml" "%Output1%"
 
 	RegAsm %Output1%SGSDKVB6.dll /unregister
-	RegAsm %Output1%SGSDKVB6.dll /tlb:%Output1%com.SGSDKVB6.tlb
+	RegAsm %Output1%SGSDKVB6.dll /tlb:%Output1%com.SGSDKVB6.tlb /codebase
 	RegAsm %Output1%SGSDKVB6.dll /regfile:%Output1%SGSDKVB6.reg
 
 	echo Copying to Showcase

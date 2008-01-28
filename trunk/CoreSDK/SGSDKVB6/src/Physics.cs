@@ -552,7 +552,7 @@ namespace SwinGameVB
             return SwinGame.Physics.CalculateAngle(p1.result, p2.result);
         }
 
-        public bool IsSpriteOnScreenAt(Sprite theSprite, Point2D pt)
+        public bool IsSpriteOnScreenAt_Point(Sprite theSprite, Point2D pt)
         {
             return SwinGame.Physics.IsSpriteOnScreenAt(theSprite.result, pt.result);
         }
@@ -572,7 +572,7 @@ namespace SwinGameVB
         {
             return SwinGame.Physics.HaveBitmapsCollided(image1.result, pt1.result, src1.result, image2.result, pt2.result, src2.result);
         }
-        public bool HeveBitmapsCollided_Bounded_Rectangle(Bitmap image1, Point2D pt1, Rectangle src1, bool bounded1, Bitmap image2, Point2D pt2, Rectangle src2, bool bounded2)
+        public bool HaveBitmapsCollided_Bounded_Rectangle(Bitmap image1, Point2D pt1, Rectangle src1, bool bounded1, Bitmap image2, Point2D pt2, Rectangle src2, bool bounded2)
         {
             return SwinGame.Physics.HaveBitmapsCollided(image1.result, pt1.result, src1.result, bounded1, image2.result, pt2.result, src2.result, bounded2);
         }
@@ -617,7 +617,7 @@ namespace SwinGameVB
         {
             return SwinGame.Physics.RectangleHasCollidedWithLine(rect.result, line.result);
         }
-        public bool VectorIsWithinRect(Vector v, Rectangle rectangle)
+        public bool VectorIsWithinRect_Rectangle(Vector v, Rectangle rectangle)
         {
             return SwinGame.Physics.VectorIsWithinRect(v.result, rectangle.result);
         }
@@ -743,12 +743,12 @@ namespace SwinGameVB
         Vector CalculateVectorFromTo(Sprite obj, Sprite dest);
         float CalculateAngleBetween(Vector v1, Vector v2);
         float CalculateAngle_Point(Point2D p1, Point2D p2);
-        bool IsSpriteOnScreenAt(Sprite theSprite, Point2D pt);
+        bool IsSpriteOnScreenAt_Point(Sprite theSprite, Point2D pt);
         bool IsSpriteOnScreenAt(Sprite sprite, int x, int y);
         bool HaveBitmapsCollied_Point(Bitmap image1, Point2D pt1, Bitmap image2, Point2D pt2);
         bool HaveBitmapsCollied_Bounded_Point(Bitmap image1, Point2D pt1, bool bounded1, Bitmap image2, Point2D pt2, bool bounded2);
         bool HaveBitmapsCollided_Rectangle(Bitmap image1, Point2D pt1, Rectangle src1, Bitmap image2, Point2D pt2, Rectangle src2);
-        bool HeveBitmapsCollided_Bounded_Rectangle(Bitmap image1, Point2D pt1, Rectangle src1, bool bounded1, Bitmap image2, Point2D pt2, Rectangle src2, bool bounded2);
+        bool HaveBitmapsCollided_Bounded_Rectangle(Bitmap image1, Point2D pt1, Rectangle src1, bool bounded1, Bitmap image2, Point2D pt2, Rectangle src2, bool bounded2);
         bool HasSpriteCollidedWithRect_Rectangle(Sprite theSprite, Rectangle rect);
         bool HasSpriteCollidedWithBitmap_Bound_Rectangle(Sprite theSprite, Bitmap theBitmap, Point2D pt, Rectangle src, bool bounded);
         bool HasSpriteCollidedWithBitmap_Bound_Point(Sprite theSprite, Bitmap theBitmap, Point2D pt, bool bounded);
@@ -758,7 +758,7 @@ namespace SwinGameVB
         Vector LineAsVector(LineSegment line);
         bool RectangleHasCollidedWithLine(Sprite sprite, LineSegment line);
         bool RectangleHasCollidedWithLine_Rectangel(Rectangle rect, LineSegment line);
-        bool VectorIsWithinRect(Vector v, Rectangle rectangle);
+        bool VectorIsWithinRect_Rectangle(Vector v, Rectangle rectangle);
         bool VectorIsWithinRect(Vector v, float x, float y, int width, int height);
         Vector VectorOutOfCircleFromPoint(Point2D pnt, Point2D center, float radius, Vector movement);
         Vector VectorOutOfCircleFromCircle(Point2D pnt, float radius1, Point2D center, float radius2, Vector movement);

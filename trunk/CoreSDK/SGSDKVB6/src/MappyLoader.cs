@@ -77,14 +77,7 @@ namespace SwinGameVB
 
         public void DrawMap(Map map)
         {
-            try
-            {
-                SwinGame.MappyLoader.DrawMap(map.result);
-            }
-            catch(Exception e)
-            {
-                System.Windows.Forms.MessageBox.Show(e.Message);
-            }
+            SwinGame.MappyLoader.DrawMap(map.result);
         }
 
         public CollisionSide CollisionWithMapVector(Map map, Sprite spr, Vector vec)
@@ -116,6 +109,29 @@ namespace SwinGameVB
         {
             map.Free();
         }
+
+
+
+        public bool SpriteHasCollidedWithMapTile(Map map, Sprite spr, out int collidedX, out int collidedY)
+        {
+            return SwinGame.MappyLoader.SpriteHasCollidedWithMapTile(map.result, spr.result, out collidedX, out collidedY);
+        }
+
+        public bool SpriteHasCollidedWithMapTile(Map map, Sprite spr)
+        {
+            return SwinGame.MappyLoader.SpriteHasCollidedWithMapTile(map.result, spr.result);
+        }
+
+
+        public CollisionSide WillCollideOnSide(Map map, Sprite spr)
+        {
+            return (CollisionSide)SwinGame.MappyLoader.WillCollideOnSide(map.result, spr.result);
+        }
+
+        public void MoveSpriteOutOfTile(Map map, Sprite spr, int x, int y)
+        {
+            SwinGame.MappyLoader.MoveSpriteOutOfTile(map.result, spr.result, x, y);
+        }
     }
 
     [Guid("81A275EA-6F70-48a6-9DFC-656A7E81DDD5")]
@@ -135,5 +151,10 @@ namespace SwinGameVB
         int EventPositionY(Map map, Event evnt, int eventnumber);
 
         void FreeMap(Map Map);
+
+        bool SpriteHasCollidedWithMapTile(Map map, Sprite spr, out int collidedX, out int collidedY);
+        bool SpriteHasCollidedWithMapTile(Map map, Sprite spr);
+        CollisionSide WillCollideOnSide(Map map, Sprite spr);
+        void MoveSpriteOutOfTile(Map map, Sprite spr, int x, int y);
     }
 }
