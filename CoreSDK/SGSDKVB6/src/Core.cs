@@ -95,6 +95,31 @@ namespace SwinGameVB
 
     }
 
+    [ClassInterface(ClassInterfaceType.None)]
+    [Guid("1560B85C-B30C-44b0-BE27-4245AFDD01F7")]
+    [ComVisible(true)]
+    public class Timer
+    {
+        private SwinGame.Timer time;
+
+        internal SwinGame.Timer result
+        {
+            get
+            {
+                return time;
+            }
+            set
+            {
+                time = value;
+            }
+        }
+        internal void Free()
+        {
+            SwinGame.Core.FreeTimer(time);
+        }
+
+    }
+
     /// <summary>
     /// Vector Structure
     /// </summary>
@@ -176,6 +201,22 @@ namespace SwinGameVB
         Single Cos(Single angle);
         Single Sin(Single angle);
         Single Tan(Single angle);
+
+        //-----------------------------------------------------------------------------------------
+        //                              Version 1.1
+        //-----------------------------------------------------------------------------------------
+
+        void FreeTimer(Timer toFree);
+        Timer CreateTimer();
+        void PauseTimer(Timer toPause);
+        int GetTimerTicks(Timer toGet);
+        void StartTimer(Timer toStart);
+        void StopTimer(Timer toStop);
+        void UnpauseTimer(Timer toUnpause);
+        int GetRGBFloatColor(float red, float green, float blue);
+        int GetHSBColor(float hue, float saturation, float brightness);
+
+
     }
 
     internal static class MousePos
@@ -413,6 +454,53 @@ namespace SwinGameVB
         public Single Tan(Single angle)
         {
             return SwinGame.Core.Tan(angle);
+        }
+
+        //-----------------------------------------------------------------------------------------
+        //                              Version 1.1
+        //-----------------------------------------------------------------------------------------
+
+        public void FreeTimer(Timer toFree)
+        {
+            toFree.Free();
+        }
+        public Timer CreateTimer()
+        {
+            Timer temp = new Timer();
+            temp.result = SwinGame.Core.CreateTimer();
+            return temp;
+        }
+        public void PauseTimer(Timer toPause)
+        {
+            SwinGame.Core.PauseTimer(toPause.result);
+        }
+        public int GetTimerTicks(Timer toGet)
+        {
+            return (int)SwinGame.Core.GetTimerTicks(toGet.result);
+        }
+        public void StartTimer(Timer toStart)
+        {
+            SwinGame.Core.StartTimer(toStart.result);
+        }
+        public void StopTimer(Timer toStop)
+        {
+            SwinGame.Core.StopTimer(toStop.result);
+        }
+        public void UnpauseTimer(Timer toUnpause)
+        {
+            SwinGame.Core.UnpauseTimer(toUnpause.result);
+        }
+
+        public int GetRGBFloatColor(float red, float green, float blue)
+        {
+            return GetColor((byte)(red * 255), (byte)(green * 255), (byte)(blue * 255));
+ 
+        }
+
+        public int GetHSBColor(float hue, float saturation, float brightness)
+        {
+            Color temp =  SwinGame.Core.GetHSBColor(hue, saturation, brightness);
+            return temp.ToArgb();
         }
         
     }
