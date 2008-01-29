@@ -23,6 +23,42 @@ implementation
 		tempLines: Array of LineSegment;
 		//Pixel
 		curCol: Colour;
+		//BitmapTest
+		frameB: Array of Bitmap;
+		ship: Bitmap;
+		framePos: Point2D;
+	
+	procedure TestBitmap(const drawIn: Rectangle);
+	begin
+		if IsKeyPressed(VK_RIGHT) then framePos.x := framePos.x - 2;
+		if IsKeyPressed(VK_LEFT) then framePos.x := framePos.x + 2;
+		if IsKeyPressed(VK_UP) then framePos.y := framePos.y + 2;
+		if IsKeyPressed(VK_DOWN) then framePos.y := framePos.y - 2;
+		
+		ClearSurface(smallScreen, ColourBlack);
+		
+		DrawBitmap(smallScreen, frameB[0], CreatePoint(0, 0));
+		DrawBitmap(smallScreen, frameB[2], 278, 0);
+		
+		DrawBitmapPart(smallScreen, ship, CreateRectangle(framePos.x + 29, framePos.y + 50, 100, 100), CreatePoint(29, 50));
+		DrawBitmapPart(smallScreen, ship, CreateRectangle(framePos.x + 149, framePos.y + 50, 120, 100), 149, 50);
+		DrawBitmapPart(smallScreen, ship, Round(framePos.x + 289), Round(framePos.y + 50), 100, 100, 289, 50);
+		
+		DrawBitmap(smallScreen, 0, 0);
+		
+		DrawBitmap(frameB[1], CreatePoint(139, 0));
+		DrawBitmap(frameB[3], 0, 209);
+		DrawBitmapOnScreen(frameB[4], CreatePoint(139 + drawIn.x, 209 + drawIn.y));
+		DrawBitmapOnScreen(frameB[5], Round(278 + drawIn.x), Round(209 + drawIn.y));
+		
+		DrawBitmapPart(ship, CreateRectangle(framePos.x + 29, framePos.y + 159, 100, 100), 29, 159);
+		DrawBitmapPart(ship, CreateRectangle(framePos.x + 149, framePos.y + 159, 120, 100), CreatePoint(149, 159));
+		DrawBitmapPart(ship, Round(framePos.x + 289), Round(framePos.y + 159), 100, 100, 289, 159);
+		
+		DrawBitmapPartOnScreen(ship, CreateRectangle(framePos.x + 29, framePos.y + 268, 100, 100), Round(29 + drawIn.x), Round(268 + drawIn.y));
+		DrawBitmapPartOnScreen(ship, CreateRectangle(framePos.x + 149, framePos.y + 268, 120, 100), CreatePoint(149 + drawIn.x, 268 + drawIn.y));
+		DrawBitmapPartOnScreen(ship, Round(framePos.x + 289), Round(framePos.y + 268), 100, 100, Round(289 + drawIn.x), Round(268 + drawIn.y));
+	end;
 	
 	procedure TestPixels(const drawIn: Rectangle);
 	begin
@@ -335,7 +371,7 @@ implementation
 		i: Integer;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 7);
+		SetLength(result.Tests, 8);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -413,6 +449,22 @@ implementation
 			curCol := ColourWhite;
 			result.Tests[6].ClearScreen := false;
 			ToRun := @TestPixels;
+		end;
+		
+		with result.Tests[7] do
+		begin
+			MethodBeingTested := 'Bitmap routines';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the ship.';
+			SetLength(frameB, 6);
+			frameB[0] := GameImage('Frame1');
+			frameB[1] := GameImage('Frame2');
+			frameB[2] := GameImage('Frame3');
+			frameB[3] := GameImage('Frame4');
+			frameB[4] := GameImage('Frame5');
+			frameB[5] := GameImage('Frame6');
+			ship := GameImage('enShip');
+			framePos := CreatePoint(0, 0);
+			ToRun := @TestBitmap;
 		end;
 	end;
 	
