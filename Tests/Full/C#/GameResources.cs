@@ -229,7 +229,8 @@ namespace Tests
 
         private static void LoadMaps()
         {
-            NewMap("test");   
+            NewMap("test");
+            NewMap("test3");
         }
 
         private static void FreeMaps()

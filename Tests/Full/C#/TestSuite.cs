@@ -31,15 +31,20 @@ namespace Tests
             testDrawIn = Shapes.CreateRectangle(Consts.TEST_IN_LEFT, Consts.TEST_IN_TOP, Consts.TEST_IN_WIDTH, Consts.TEST_IN_HEIGHT);
 
             //Graphics.ClearScreen();
-			Graphics.DrawBitmapOnScreen(GameResources.GameImage("BG"), 0, 0);
-            DrawTitle(Title);
-            DrawGeneralInstructions();
+            //Graphics.DrawBitmapOnScreen(GameResources.GameImage("BG"), 0, 0);
+            //DrawTitle(Title);
+            //DrawGeneralInstructions();
 
 
             foreach (TestSet t in _Tests)
             {
                 do
                 {
+                    //Graphics.ClearScreen();
+                    Graphics.DrawBitmapOnScreen(GameResources.GameImage("BG"), 0, 0);
+                    DrawTitle(Title);
+                    DrawGeneralInstructions();
+
                     Core.ProcessEvents();
 
                     t.Run(testDrawIn);
