@@ -26,15 +26,13 @@ namespace Tests
         private class CollissionBitmapTest : TestSet
         {
             private readonly static string METHS =
-                "HaveSpriteCollidedWith...";
+                "HaveBitmapsCollided";
 
             private readonly static string INST =
-                "Arrow keys to move the bitmap " + Environment.NewLine + "around" + Environment.NewLine +
-                "Pink for bounded collissions" + Environment.NewLine +
-                "Blue for non bounded collissions";
-
+                "Arrow keys to move the bitmap " + Environment.NewLine + "around";
 
             private SwinGame.Bitmap smallball = GameResources.GameImage("SmallBall");
+            private SwinGame.Bitmap mediumball = GameResources.GameImage("BallImage1");
 
             private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 32);
 
@@ -61,6 +59,74 @@ namespace Tests
                 {
                     Y = Y - 1;
                 }
+                //HaveBitmapsCollided
+                Text.DrawText("All Bound", Color.White, GameResources.GameFont("Courier"), 10, 5);
+                if (Physics.HaveBitmapsCollided(mediumball, 10, 30, smallball, X, Y))
+                {
+                    Graphics.FillRectangle(Color.Pink, 5, 25, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 10, 30);
+                Graphics.DrawRectangle(Color.White, 10, 30, mediumball.Width, mediumball.Height);
+
+                if (Physics.HaveBitmapsCollided(mediumball, Shapes.CreatePoint(10, 150), smallball, Shapes.CreatePoint(X, Y)))
+                {
+                    Graphics.FillRectangle(Color.Pink, 5, 145, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 10, 150);
+                Graphics.DrawRectangle(Color.White, 10, 150, mediumball.Width, mediumball.Height);
+
+                if (Physics.HaveBitmapsCollided(mediumball, Shapes.CreatePoint(10, 270), Shapes.CreateRectangle(mediumball), smallball, Shapes.CreatePoint(X, Y), Shapes.CreateRectangle(smallball)))
+                {
+                    Graphics.FillRectangle(Color.Pink, 5, 265, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 10, 270);
+                Graphics.DrawRectangle(Color.White, 10, 270, mediumball.Width, mediumball.Height);
+
+
+
+                Text.DrawText("No Bound", Color.White, GameResources.GameFont("Courier"), 120, 5);
+                if (Physics.HaveBitmapsCollided(mediumball, 120, 30, false, smallball, X, Y, false))
+                {
+                    Graphics.FillRectangle(Color.Blue, 115, 25,  mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 120, 30);
+                Graphics.DrawRectangle(Color.White, 120, 30, mediumball.Width, mediumball.Height);
+
+                if (Physics.HaveBitmapsCollided(mediumball, Shapes.CreatePoint(120, 150),false, smallball, Shapes.CreatePoint(X, Y), false))
+                {
+                    Graphics.FillRectangle(Color.Blue, 115, 145, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 120, 150);
+                Graphics.DrawRectangle(Color.White, 120, 150, mediumball.Width, mediumball.Height);
+
+                if (Physics.HaveBitmapsCollided(mediumball, Shapes.CreatePoint(120, 270),Shapes.CreateRectangle(mediumball), false, smallball, Shapes.CreatePoint(X, Y),  Shapes.CreateRectangle(smallball),false))
+                {
+                    Graphics.FillRectangle(Color.Blue, 115, 265, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 120, 270);
+                Graphics.DrawRectangle(Color.White, 120, 270, mediumball.Width, mediumball.Height);
+
+
+
+
+                Text.DrawText("Big ball Bound", Color.White, GameResources.GameFont("Courier"), 240, 5);
+                if (Physics.HaveBitmapsCollided(mediumball, 240, 30, true, smallball, X, Y, false))
+                {
+                    Graphics.FillRectangle(Color.Blue, 235, 25, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 240, 30);
+                Graphics.DrawRectangle(Color.White, 240, 30, mediumball.Width, mediumball.Height);
+
+                Text.DrawText("small ball Bound", Color.White, GameResources.GameFont("Courier"), 240, 150);
+                if (Physics.HaveBitmapsCollided(mediumball, Shapes.CreatePoint(240, 170), false, smallball, Shapes.CreatePoint(X, Y), true))
+                {
+                    Graphics.FillRectangle(Color.Blue, 235, 165, mediumball.Height + 10, mediumball.Width + 10);
+                }
+                Graphics.DrawBitmap(mediumball, 240, 170);
+                Graphics.DrawRectangle(Color.White, 240, 170, mediumball.Width, mediumball.Height);
+
+
+
                 Graphics.DrawBitmap(smallball,X,Y);
                 Graphics.DrawRectangle(Color.White, X, Y, smallball.Width, smallball.Height);
             }
