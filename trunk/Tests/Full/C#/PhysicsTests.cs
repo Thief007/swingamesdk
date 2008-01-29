@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
+using Color = System.Drawing.Color;
 using SwinGame;
 using Graphics = SwinGame.Graphics;
 
@@ -17,7 +17,6 @@ namespace Tests
             result.Add(new CollisionSpriteTest());
             result.Add(new CollissionBitmapTest());
           
-
             list.Add(result);
         }
 

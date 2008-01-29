@@ -92,7 +92,7 @@ implementation
 		begin
 			DrawBitmap(_Background, 0, 0);
 			
-			DrawBitmapPart(_Animation, 0, i * 184, 712, 184, 41, 242);
+			DrawBitmapPart(_Animation, (i div 7) * 712, (i mod 7) * 184, 712, 184, 41, 242);
 			
 			Sleep(67);
 			

@@ -1362,8 +1362,7 @@ uses
 		end;
 	end;
 	
-	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Integer;
-								transparentColor: Colour): Bitmap; cdecl; export;
+	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Integer; transparentColor: Colour): Bitmap; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent = -1, transparentColor);
@@ -1373,8 +1372,7 @@ uses
 		result := nil;
 	end;
 	
-	function LoadTransparentBitmap(pathToBitmap : PChar;
-								transparentColor : Colour): Bitmap; cdecl; export;
+	function LoadTransparentBitmap(pathToBitmap : PChar; transparentColor : Colour): Bitmap; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);

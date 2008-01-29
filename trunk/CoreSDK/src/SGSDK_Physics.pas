@@ -168,9 +168,20 @@ interface
 	procedure CircleCollisionWithLine(p1: Sprite; const line: LineSegment);
 	procedure CircularCollision(p1, p2: Sprite);
 		
+	//INTERNAL: New for 1.2
+	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: Integer; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
+		
 implementation
 	uses
 		SysUtils, Math, Classes;
+
+	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
+	begin
+		result := (Length(image.nonTransparentPixels) = image.width)
+							and ((x >= 0) and (x < image.width))
+							and ((y >= 0) and (y < image.height))
+							and image.nonTransparentPixels[x, y];
+	end;
 
 	/// Creates a new vector with values x and y, possibly with an inverted y. The
 	///	inversion of the y value provides a convienient option for handling
@@ -359,15 +370,70 @@ implementation
 			raise Exception.Create('Invalid Collision Range');
 	end;
 
+	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: Integer; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
+	var
+		i, j: Integer;
+		left1, right1, left2, right2, overRight, overLeft: Integer;
+		top1, bottom1, top2, bottom2, overTop, overBottom: Integer;
+		yPixel1, xPixel1: Integer;
+	begin
+		result := RectanglesIntersect(CreateRectangle(x, y, srcRect.width, srcRect.height), rect);
+		if  bounded or (not result) then exit;
+		
+		//reset result
+		result := false;
+		
+		left1 := x;
+		right1 := x + srcRect.width - 1;
+		top1 := y;
+		bottom1 := y + srcRect.height - 1;
+
+		left2 := Round(rect.x);
+		right2 := Round(rect.x) + rect.width - 1;
+		top2 := Round(rect.y);
+		bottom2 := Round(rect.y) + rect.height - 1;
+
+		if bottom1 > bottom2 then overBottom := bottom2
+		else overBottom := bottom1;
+
+		if top1 < top2 then overTop := top2
+		else overTop := top1;
+
+		if right1 > right2 then overRight := right2
+		else overRight := right1;
+
+		if left1 < left2 then overLeft := left2
+		else overLeft := left1;
+
+		for i := overTop to overBottom do
+		begin
+			yPixel1 := i - top1 + Round(srcRect.y);
+
+			for j := overLeft to overRight do
+			begin
+				xPixel1 := j - left1 + Round(srcRect.x);
+
+				if IsPixelDrawnAtPoint(image, xPixel1, yPixel1) then
+				begin
+					result := true;
+					exit;
+				end;
+			end;
+		end;		
+	end;
+
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload;
 	begin
-		result := RectanglesIntersect(CreateRectangle(x, y, image), CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+		result := HasBitmapCollidedWithRect(image, x, y, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
 	end;
 
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
 	begin
-		result := RectanglesIntersect(CreateRectangle(x, y, image), rect);
+		//result := RectanglesIntersect(CreateRectangle(x, y, image), rect);
+		result := HasBitmapPartCollidedWithRect(image,x, y, CreateRectangle(x, y, image), false, rect);
 	end;
+	
+	
 
 	/// Determined if a sprite has collided with a given rectangle. The rectangles
 	///	coordinates are expressed in "world" coordinates.
@@ -378,15 +444,41 @@ implementation
 	///
 	///	@returns							 True if the sprite collides with the rectangle
 	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single; width, height : Integer): Boolean; overload;
+	var
+		bmp1: Bitmap;
+		offX1, offY1: Integer;
 	begin
 		if theSprite = nil then raise Exception.Create('The specified sprite is nil');
+		
 		if (width < 1) or (height < 1) then 
 			raise Exception.Create('Rectangle width and height must be greater then 0');
+		
 		if theSprite.y + CurrentHeight(theSprite) <= y then result := false
 		else if theSprite.y >= y + height then result := false
 		else if theSprite.x + CurrentWidth(theSprite) <= x then result := false
 		else if theSprite.x >= x + width then result := false
-		else result := true;
+		else
+		begin
+			if not theSprite.usePixelCollision then result := true
+			else
+			begin
+				if theSprite.spriteKind = AnimMultiSprite then
+				begin
+					offX1 := (theSprite.currentFrame mod theSprite.cols) * theSprite.width;
+					offY1 := (theSprite.currentFrame - (theSprite.currentFrame mod theSprite.cols)) div theSprite.cols * theSprite.height;
+					bmp1 := theSprite.bitmaps[0];
+				end
+				else
+				begin
+					bmp1 := theSprite.bitmaps[theSprite.currentFrame];
+					offX1 := 0;
+					offY1 := 0;
+				end;
+				result := HasBitmapPartCollidedWithRect(bmp1, Round(theSprite.x), Round(theSprite.y), 
+					CreateRectangle(offX1, offY1, theSprite.width, theSprite.height), 
+					theSprite.usePixelCollision = false, CreateRectangle(x, y, width, height));
+			end;
+		end;
 	end;
 
 	function HasSpriteCollidedWithRect(theSprite: Sprite; const rect: Rectangle): Boolean; overload;
@@ -404,14 +496,6 @@ implementation
 		result := HasSpriteCollidedWithRect(theSprite, GameX(Round(pt.x)), GameY(Round(pt.y)), 1, 1);
 	end;
 	
-	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
-	begin
-		result := (Length(image.nonTransparentPixels) = image.width)
-							and ((x >= 0) and (x < image.width))
-							and ((y >= 0) and (y < image.height))
-							and image.nonTransparentPixels[x, y];
-	end;
-
 	/// Performs a collision detection within two bitmaps at the given x, y
 	///	locations. The bounded values indicate if each bitmap should use per
 	///	pixel collision detection or a bounded collision detection. This version
@@ -452,7 +536,7 @@ implementation
 			raise Exception.Create('Bitmap width and height must be greater then 0');
 		
 		result := false;
-
+ 
 		left1 := x1;
 		right1 := x1 + w1 - 1;
 		top1 := y1;

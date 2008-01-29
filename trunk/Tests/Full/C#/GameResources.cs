@@ -91,7 +91,7 @@ namespace Tests
             {
                 Graphics.DrawBitmap(_Background, 0, 0);
 
-                Graphics.DrawBitmapPart(_Animation, 0, i * 184, 712, 184, 41, 242);
+                Graphics.DrawBitmapPart(_Animation, (i / 7) * 712, (i % 7) * 184, 712, 184, 41, 242);
 
                 Core.Sleep(67);
 
@@ -111,14 +111,15 @@ namespace Tests
 
         public static void EndLoadingScreen(int width, int height)
         {
+			Core.ChangeScreenSize(width, height);
             Graphics.ClearScreen();
             Core.RefreshScreen();
+			Core.ProcessEvents();
+			
+			Graphics.FreeBitmap(_Animation);
             Text.FreeFont(_LoadingFont);
             Graphics.FreeBitmap(_Background);
-            Graphics.FreeBitmap(_Animation);
             Audio.FreeSoundEffect(_StartSound);
-
-            Core.ChangeScreenSize(width, height);
         }
 
         private static void NewMap(String mapName)

@@ -92,7 +92,7 @@ namespace GameResources
             {
                 Graphics.DrawBitmap(_Background, 0, 0);
 
-                Graphics.DrawBitmapPart(_Animation, 0, i * 184, 712, 184, 41, 242);
+                Graphics.DrawBitmapPart(_Animation, (i / 7) * 712, (i % 7) * 184, 712, 184, 41, 242);
 
                 Core.Sleep(67);
 
