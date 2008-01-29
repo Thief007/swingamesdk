@@ -162,6 +162,19 @@ namespace Tests
             _MusicStr[_Music.Length - 1] = musicName;
         }
 
+        private static void NewTransparentColorImage(String imageName, String fileName, Color transColor)
+        {
+            Array.Resize(ref _Images, _Images.Length + 1);
+            Array.Resize(ref _ImagesStr, _ImagesStr.Length + 1);
+            _Images[_Images.Length - 1] = Graphics.LoadBitmap(Core.GetPathToResource(fileName, ResourceKind.ImageResource), true, transColor);
+            _ImagesStr[_ImagesStr.Length - 1] = imageName;
+        }
+
+        private static void NewTransparentColourImage(String imageName, String fileName, Color transColor)
+        {
+            NewTransparentColorImage(imageName, fileName, transColor);
+        }
+
         private static void LoadFonts()
         {
             NewFont("ArialLarge", "arial.ttf", 80);
@@ -190,6 +203,20 @@ namespace Tests
 			NewImage("BGA", "BackgroundDrawArea.png");
 			NewImage("BG", "BackgroundMain.png");
             NewImage("ExplosionBlue", "explosion_blue.jpg");
+
+            NewImage("Frame1", "F01.png");
+		    NewImage("Frame2", "F02.png");
+		    NewImage("Frame3", "F03.png");
+		    NewImage("Frame4", "F04.png");
+		    NewImage("Frame5", "F05.png");
+		    NewImage("Frame6", "F06.png");
+		    NewImage("enShip", "enShip.png");
+
+		    NewTransparentColourImage("BlueExplosion", "explosion_pro.jpg", Color.Black);
+		    for (int i = 0; i < 40; i++)
+		    {
+                NewTransparentColourImage("Explode_" + Convert.ToString(i), "explode_" + Convert.ToString(i) + ".jpg", Color.Black);
+		    }
         }
 
         private static void FreeImages()
