@@ -1,74 +1,82 @@
 @echo off
 
+echo __________________________________________________
+echo Creating .NET Library for SwinGame
+echo __________________________________________________
+
 echo Please run with Visual Studio Command Prompt
 
 set BaseDir=%CD%
-echo Running script from %BaseDir%
-
 set Output1=.\SGSDK.NET\lib\
-echo Saving output to %Output1%
-
 set LibDir=%BaseDir%\lib\Win
-echo Getting libraries from %LibDir%
 
 set DOTNETsln=.\SGSDK.NET\src\
-
 set DOTNETbin=.\SGSDK.NET\src\bin\Debug\
 
-
-set ShowcaseDOTNET=..\Showcase\CSharpDotNET\Showcase\lib\
-if not exist "%ShowcaseDOTNET%" mkdir "%ShowcaseDOTNET%"
-Showcase\CSharpDotNET\Showcase
-set TOMATO=..\Demos\C#\TomatoQuest\lib\
-if not exist %TOMATO% mkdir %TOMATO%
-
+set SDKVB=..\SDKs\DOTNet\Visual Studio\VB\lib\
 set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
+
+set EXTRA_OPTS="-O3 -Sewn -vwn"
+
+echo Running script from %BaseDir%
+echo Saving output to %Output1%
+echo Getting libraries from %LibDir%
+echo Saving C# SDK to %SDK%
+echo Saving VB.NET SDK to %SDKVB%
+echo Compiling SGSDK with %EXTRA_OPTS%
+echo __________________________________________________
+
+if not exist "%SDKVB%" mkdir "%SDKVB%"
 if not exist "%SDK%" mkdir "%SDK%"
 
-set SDKVB=..\SDKs\DOTNet\Visual Studio\VB\lib\
-if not exist "%SDKVB%" mkdir "%SDKVB%"
+REM set ShowcaseDOTNET=..\Showcase\CSharpDotNET\Showcase\lib\
+REM if not exist "%ShowcaseDOTNET%" mkdir "%ShowcaseDOTNET%"
 
-set DOTNETTest=..\Tests\Full\C#\lib\
-if not exist %DOTNETTest% mkdir %DOTNETTest%
+REM set TOMATO=..\Demos\C#\TomatoQuest\lib\
+REM if not exist %TOMATO% mkdir %TOMATO%
 
-echo Doing %1
+REM set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
+REM if not exist "%SDK%" mkdir "%SDK%"
+
+REM set DOTNETTest=..\Tests\Full\C#\lib\
+REM if not exist %DOTNETTest% mkdir %DOTNETTest%
+
+REM echo Doing %1
+
+if exist out.log del /q out.log
 
 if "%1"=="clean" goto cleaning
-
-	fpc -v0 -Mdelphi -FE"%Output1%" .\src\SGSDK.pas
+	echo   Compiling SGSDK.dll
+	fpc -v0 -Mdelphi -FE"%Output1%" .\src\SGSDK.pas >> out.log
+	if ERRORLEVEL 1 goto error
 	
-	copy "%LibDir%\*.dll" "%Output1%"
+	echo   Copying library to output
+	copy "%LibDir%\*.dll" "%Output1%" >> out.log
+	if ERRORLEVEL 1 goto error
+	
+	echo   Cleaning up library compile
+	del /Q "%Output1%\*.o" >> out.log
+	del /Q "%Output1%\*.ppu" >> out.log
+	del /Q "%Output1%\*.a" >> out.log
 
-	del /Q "%Output1%\*.o"
-	del /Q "%Output1%\*.ppu"
-	del /Q "%Output1%\*.a"
+	echo   Compiling SGSDK.NET.dll
+	msbuild "SGSDK.NET\src\SGSDK.NET.sln" >> out.log
 
-	msbuild "SGSDK.NET\src\SGSDK.NET.sln"
+	echo   Copying dll to output
+	copy "%DOTNETbin%\*.dll" "%Output1%" >> out.log
+	copy "%DOTNETbin%\*.xml" "%Output1%" >> out.log
 
-	copy "%DOTNETbin%\*.dll" "%Output1%"
-	copy "%DOTNETbin%\*.xml" "%Output1%"
+	echo   Copying to C# SDK
+	copy "%Output1%\*.dll" "%SDK%" >> out.log
+	copy "%Output1%\*.xml" "%SDK%" >> out.log
 
-	echo Copying to Showcase
-	copy "%Output1%\*.dll" "%ShowcaseDOTNET%"
-	copy "%Output1%\*.xml" "%ShowcaseDOTNET%"
+	echo   Copying to VB SDK
+	copy "%Output1%\*.dll" "%SDKVB%" >> out.log
+	copy "%Output1%\*.xml" "%SDKVB%" >> out.log
 
-	echo Copying to TomatoQuest
-	copy "%Output1%\*.dll" "%TOMATO%"
-	copy "%Output1%\*.xml" "%TOMATO%"
+	echo   Finished
+echo __________________________________________________
 
-	echo Copying to C# SDK
-	copy "%Output1%\*.dll" "%SDK%"
-	copy "%Output1%\*.xml" "%SDK%"
-
-	echo Copying to VB SDK
-	copy "%Output1%\*.dll" "%SDKVB%"
-	copy "%Output1%\*.xml" "%SDKVB%"
-
-	echo Copying to .NET Tests
-	copy "%Output1%\*.dll" "%DOTNETTest%"
-	copy "%Output1%\*.xml" "%DOTNETTest%"
-
-	echo Finished
 goto end
 
 :cleaning
@@ -77,4 +85,11 @@ goto end
 	del /Q "%Output1%\libimp*.*"
 	del /Q "%Output1%\smpeg.*"
 	echo Cleaned
+
+goto end
+
+:error
+	echo An error occurred
+	type out.log
+
 :end 

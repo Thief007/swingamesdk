@@ -1,41 +1,73 @@
 @echo off
 
+echo __________________________________________________
+echo Creating Pascal Library for SwinGame
+echo __________________________________________________
+
 set BaseDir=%CD%
-echo Running script from %BaseDir%
-
 set Output=.\bin\Win
-echo Saving output to %Output%
-
 set WinFPCDir=%BaseDir%\..\SDKs\Pascal\Win\FPC\lib\
-echo Copying to FPC Win at %WinFPCDir%
-
 set LibDir=%BaseDir%\lib\Win
-echo Getting libraries from %LibDir%
+set EXTRA_OPTS="-g -Sewn -vwn"
 
-echo Doing %1
+echo Running script from %BaseDir%
+echo Saving output to %Output%
+echo Copying to FPC Win at %WinFPCDir%
+echo Getting libraries from %LibDir%
+echo Compiling with %EXTRA_OPTS%
+echo __________________________________________________
+
 
 if "%1"=="clean" goto cleaning
 
-REM - else build
-	mkdir "%Output%"
+	if exist out.log del /q out.log
+	if not exist "%Output%" mkdir "%Output%" >> out.log
 
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Core.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Graphics.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Font.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Input.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Physics.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Audio.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_KeyCodes.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_MappyLoader.pas
-	fpc -v0 -g -Mdelphi -FE"%Output%" .\src\SGSDK_Camera.pas
+	echo   Compiling Core
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Core.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Shapes
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Shapes.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Graphics
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Graphics.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Font
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Font.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Input
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Input.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Physics
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Physics.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Audio
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Audio.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling KeyCodes
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_KeyCodes.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling MappyLoader
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_MappyLoader.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	echo   Compiling Camera
+	fpc %EXTRA_OPTS% -Mdelphi -FE"%Output%" -Fu"$Output" .\src\SGSDK_Camera.pas >> out.log
+	if ERRORLEVEL 1 goto error
+	
+	echo   Copying to FPC
+	if not exist "%WinFPCDir%" mkdir "%WinFPCDir%" >> out.log
+	if ERRORLEVEL 1 goto error
+	
+	copy "%Output%\*.ppu" "%WinFPCDir%" >> out.log
+	if ERRORLEVEL 1 goto error
+	copy "%Output%\*.o" "%WinFPCDir%" >> out.log
+	if ERRORLEVEL 1 goto error
+	copy "%LibDir%\*.dll" "%WinFPCDir%" >> out.log
+	if ERRORLEVEL 1 goto error
 
-	echo Copying to FPC
-	mkdir "%WinFPCDir%"
-	copy "%Output%\*.ppu" "%WinFPCDir%"
-	copy "%Output%\*.o" "%WinFPCDir%"
-	copy "%LibDir%\*.dll" "%WinFPCDir%"
+	echo   Finished
+	echo __________________________________________________
 
-	echo Finished
 goto end
 
 :cleaning
