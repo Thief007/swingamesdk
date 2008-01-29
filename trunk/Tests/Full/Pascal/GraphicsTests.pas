@@ -37,7 +37,9 @@ implementation
 		var
 			vec: Vector;
 			tempX, tempY: Single;
+			curAction: SpriteEndingAction;
 		begin
+			curAction := sprites[currentSpr].endingAction;
 			vec := sprites[currentSpr].movement;
 			ReplayAnimation(sprites[currentSpr]);
 			tempX := sprites[currentSpr].x;
@@ -46,12 +48,19 @@ implementation
 			sprites[currentSpr].movement := vec;
 			sprites[currentSpr].x := tempX;
 			sprites[currentSpr].y := tempY;
+			sprites[currentSpr].endingAction := curAction;
 		end;
 		
 		procedure ResetPos();
 		begin
 			sprites[currentSpr].movement := CreateVector(0, 0);
 			MoveSpriteTo(sprites[currentSpr], 0, 0);
+		end;
+		
+		procedure ChangeAnim(act: SpriteEndingAction);
+		begin
+			sprites[currentSpr].endingAction := act;
+			ReplayAnimation(sprites[currentSpr]);
 		end;
 	begin
 		if IsKeyPressed(VK_1) then ChangeSprite(0);
@@ -66,6 +75,10 @@ implementation
 		if IsKeyPressed(VK_UP) then sprites[currentSpr].movement := AddVectors(sprites[currentSpr].movement, CreateVector(0, -1));
 		if IsKeyPressed(VK_DOWN) then sprites[currentSpr].movement := AddVectors(sprites[currentSpr].movement, CreateVector(0, 1));
 		if IsKeyPressed(VK_M) then ResetPos();
+		if IsKeyPressed(VK_Q) then ChangeAnim(Loop);
+		if IsKeyPressed(VK_W) then ChangeAnim(ReverseLoop);
+		if IsKeyPressed(VK_E) then ChangeAnim(ReverseOnce);
+		if IsKeyPressed(VK_R) then ChangeAnim(Stop);
 		
 		sprites[currentSpr].movement := MultiplyVector(sprites[currentSpr].movement, 0.95);
 		sprites[currentSpr].movement := LimitMagnitude(sprites[currentSpr].movement, 5);
@@ -529,7 +542,8 @@ implementation
 				explodeAnim[i] := GameImage('Explode_' + IntToStr(i));
 			end;
 			MethodBeingTested := 'Sprite routines';
-			Instructions := 'Use the number keys from' + EOL + '1 to 7 to change the sprite.' + EOL + 'Use the arrow keys to' + EOL + 'move the sprite.' + EOL + 'Use the M key to reset the' + EOL + 'position of the sprite.';
+			Instructions := 'Use the number keys from' + EOL + '1 to 7 to change the sprite.' + EOL + 'Use the arrow keys to' + EOL + 'move the sprite.' + EOL + 'Use the M key to reset the' + EOL + 'position of the sprite.'
+							+ EOL + 'Press Q to change the animation' + EOL + 'to Loop.'+ EOL + 'Press W to change the animation' + EOL + 'to ReverseLoop.'+ EOL + 'Press E to change the animation' + EOL + 'to ReverseOnce.'+ EOL + 'Press R to change the animation' + EOL + 'to Stop.';
 			SetLength(sprites, 7);
 			sprites[0] := CreateSprite(GameImage('BlueExplosion'), true, fps, Loop, 180, 180);
 			sprites[1] := CreateSprite(GameImage('BlueExplosion'), true, fps, 180, 180);
