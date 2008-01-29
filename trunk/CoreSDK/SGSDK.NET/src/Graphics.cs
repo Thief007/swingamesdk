@@ -1031,9 +1031,6 @@ namespace SwinGame
             {
                 int color = theColour.ToArgb();
                 DLL_DrawPixelWithDestination(dest.pointer, (uint)color, x, y);
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
             }
             catch (Exception exc)
             {

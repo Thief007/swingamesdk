@@ -45,6 +45,7 @@
     <Compile Include="Consts.cs" />
     <Compile Include="CoreTests.cs" />
     <Compile Include="FontTests.cs" />
+    <Compile Include="GraphicsTests.cs" />
     <Compile Include="IGameTestLoader.cs" />
     <Compile Include="InputTests.cs" />
     <Compile Include="MappyTests.cs" />
