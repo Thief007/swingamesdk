@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
 //               Refactored some methods, to limit routines exposed by DLL
@@ -26,7 +27,7 @@ using System.Drawing;
 
 namespace SwinGame
 {
-    internal delegate void FreeDelegate(ref IntPtr toFree);
+    internal delegate void FreeDelegate(IntPtr toFree);
 
     internal class SwinGamePointer
     {
@@ -63,7 +64,8 @@ namespace SwinGame
             {
                 try
                 {
-                    _ToFree(ref Pointer);
+                    _ToFree(Pointer);
+						 Pointer = IntPtr.Zero;
                     _Freed = true;
                 }
                 catch (Exception e) { throw new SwinGameException(e.Message); }
@@ -887,7 +889,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeTimer")]
-        private static extern void DLL_FreeTimer(ref IntPtr timer);
+        private static extern void DLL_FreeTimer(IntPtr timer);
 
         /// <summary>
         /// Free a timer that you have created. Ensure that you only free the timer

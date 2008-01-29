@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-25: Andrew: Fixed DrawLinesToScreen
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
@@ -148,7 +149,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeFont")]
-        private static extern void DLL_FreeFont(ref IntPtr fontToFree);
+        private static extern void DLL_FreeFont(IntPtr fontToFree);
         /// <summary>
         /// Free a loaded font.
         /// </summary>

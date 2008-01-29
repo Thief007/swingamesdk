@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-29: Andrew: Fixed MAtrix2D dispose - removed
 // - 2008-01-23: Andrew: Fixed exceptions
 //    Added changes for 1.1 compatibility
 //    Refactored some methods, to limit routines exposed by DLL
@@ -50,18 +51,19 @@ namespace SwinGame
     /// used to apply these changes to vectors.
     /// </summary>
     //[StructLayout(LayoutKind.Sequential)]
-    public class Matrix2D : IDisposable
+    public class Matrix2D
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
-        private static extern void FreeMaxtrix2D(ref IntPtr maxtrix2d);
+        private static extern void FreeMaxtrix2D(IntPtr maxtrix2d);
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
         private static extern Single GetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c);
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetMatrix2DElement")]
         private static extern void SetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c, Single val); 
 
         //private IntPtr Pointer;
         private SwinGamePointer Pointer;
-        private bool disposed = false;
 
         /// <summary>
         /// Gets an element from the Matrix2D
@@ -81,43 +83,10 @@ namespace SwinGame
             }
         }
 
-        /// <summary>
-        /// Disposes the 2D Matrix
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                //System.Diagnostics.Debug.WriteLine("Disposing - " + Pointer);
-                if (disposing)
-                {
-                    GC.SuppressFinalize(this);
-                }
-                
-                Pointer.Free();
-
-                disposed = true;
-            }
-        }
-
         internal Matrix2D(IntPtr ptr)
         {
-            if (ptr == IntPtr.Zero) 
-                throw new SwinGameException("Error Creating Matrix2D");
+            if (ptr == IntPtr.Zero) throw new SwinGameException("Error Creating Matrix2D");
             Pointer = new SwinGamePointer(ptr, FreeMaxtrix2D);
-        }
-
-        /// <summary>
-        /// Garbage Collection Disposal
-        /// </summary>
-        ~Matrix2D()
-        {
-            Dispose(false);
         }
 
         /// <summary>
