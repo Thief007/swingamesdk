@@ -79,7 +79,6 @@ implementation
   // PARAMETERS:
   // - imageName: name to call image in _images. Used when you access the image.
   // - fileName: name of the image file to load. Must be in resources/images
-  // - size: Size of image to load
   //
   // SIDE EFFECTS:
   // - Loads the image from file into _Images
@@ -90,13 +89,43 @@ implementation
 		_Images[High(_Images)] := LoadBitmap(GetPathToResource(fileName, ImageResource));
 		_ImagesStr[High(_ImagesStr)] := imageName;
 	end;
+	
+  // Creates a new image with transparent key colour.
+  //
+  // PARAMETERS:
+  // - imageName: name to call image in _images. Used when you access the image.
+  // - fileName: name of the image file to load. Must be in resources/images
+  // - transColour: colour of a pixel to be transparent
+  //
+  // SIDE EFFECTS:
+  // - Loads the image from file into _Images with transparent key colour
+	procedure NewTransparentColourImage(imageName, fileName: String; transColour: Colour);
+	begin
+		SetLength(_Images, Length(_Images) + 1);
+		SetLength(_ImagesStr, Length(_ImagesStr) + 1);
+		_Images[High(_Images)] := LoadBitmap(GetPathToResource(fileName, ImageResource), true, transColour);
+		_ImagesStr[High(_ImagesStr)] := imageName;
+	end;
+	
+  // Creates a new image with transparent key color.
+  //
+  // PARAMETERS:
+  // - imageName: name to call image in _images. Used when you access the image.
+  // - fileName: name of the image file to load. Must be in resources/images
+  // - transColor: color of a pixel to be transparent
+  //
+  // SIDE EFFECTS:
+  // - Loads the image from file into _Images with transparent key color
+	procedure NewTransparentColorImage(imageName, fileName: String; transColor: Color);
+	begin
+		NewTransparentColourImage(imageName, fileName, transColor);
+	end;
 
   // Creates a new sound.
   //
   // PARAMETERS:
   // - soundName: name to call sound in _sounds. Used when you access the sound.
   // - fileName: name of the sound file to load. Must be in resources/sounds
-  // - size: Size of sound to load
   //
   // SIDE EFFECTS:
   // - Loads the sound from file into _sounds
@@ -113,7 +142,6 @@ implementation
   // PARAMETERS:
   // - musicName: name to call music in _musics. Used when you access the music.
   // - fileName: name of the music file to load. Must be in resources/musics
-  // - size: Size of music to load
   //
   // SIDE EFFECTS:
   // - Loads the music from file into _musics
