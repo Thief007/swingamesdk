@@ -43,9 +43,11 @@
   <ItemGroup>
     <Compile Include="AudioTests.cs" />
     <Compile Include="Consts.cs" />
+    <Compile Include="CoreTests.cs" />
     <Compile Include="FontTests.cs" />
     <Compile Include="IGameTestLoader.cs" />
     <Compile Include="InputTests.cs" />
+    <Compile Include="MappyTests.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="TestSet.cs" />
     <Compile Include="TestSuite.cs" />
