@@ -714,8 +714,7 @@ implementation
 		if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
 		if spriteToAddTo = nil then raise Exception.Create('No sprite to add to');
 		if spriteToAddTo.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
-		if spriteToAddTo.spriteKind = AnimArraySprite then raise Exception.Create('Cannot add bitmap to an animated array sprite');
-			
+					
 		//Resize the array
 		SetLength(spriteToAddTo.bitmaps, Length(spriteToAddTo.bitmaps) + 1);
 

@@ -31,6 +31,27 @@ implementation
 		sprites: Array of Sprite;
 		explodeAnim: Array of Bitmap;
 		currentSpr: Integer;
+		//AddBitmapToSprite
+		numSprite: Sprite;
+		curNum: Integer;
+	
+	procedure TestAddBitmap(const drawIn: Rectangle);
+	var
+		tempBitmap: Bitmap;
+	begin
+		if WasKeyTyped(VK_SPACE) then
+		begin
+			curNum := curNum + 1;
+			tempBitmap := CreateBitmap(121, 120);
+			DrawCircle(tempBitmap, ColourWhite, true, 60, 60, 60);
+			DrawTextLines(tempBitmap, IntToStr(curNum), ColourBlack, ColourTransparent, GameFont('ArialLarge'), AlignCenter, CreateRectangle(tempBitmap));
+			AddBitmapToSprite(numSprite, tempBitmap);
+			SetLength(numSprite.framesPerCell, Length(numSprite.framesPerCell) + 1);
+			numSprite.framesPerCell[High(numSprite.framesPerCell)] := 10;
+		end;
+		DrawSprite(numSprite);
+		UpdateSpriteAnimation(numSprite);
+	end;
 	
 	procedure TestSprite(const drawIn: Rectangle);
 		procedure ChangeSprite(changeTo: Integer);
@@ -434,9 +455,10 @@ implementation
 	var
 		i: Integer;
 		fps: Array of Integer;
+		tempBitmap: Array of Bitmap;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 9);
+		SetLength(result.Tests, 10);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -553,6 +575,21 @@ implementation
 			sprites[5] := CreateSprite(explodeAnim, fps);
 			sprites[6] := CreateSprite(explodeAnim, 2, 40);
 			ToRun := @TestSprite;
+		end;
+		
+		with result.Tests[9] do
+		begin
+			SetLength(tempBitmap, 1);
+			MethodBeingTested := 'AddBitmapToSprite';
+			Instructions := 'Press Space to add an' + EOL + 'another bitmap.';
+			curNum := 1;
+			tempBitmap[0] := CreateBitmap(121, 120);
+			DrawCircle(tempBitmap[0], ColourWhite, true, 60, 60, 60);
+			DrawTextLines(tempBitmap[0], '1', ColourBlack, ColourTransparent, GameFont('ArialLarge'), AlignCenter, CreateRectangle(tempBitmap[0]));
+			numSprite := CreateSprite(tempBitmap, 10, 1);
+			numSprite.x := 149;
+			numSprite.y := 149;
+			ToRun := @TestAddBitmap;
 		end;
 	end;
 	
