@@ -147,6 +147,13 @@ implementation
 		NewImage('Sea', 'sea.png');
 		NewImage('BGA', 'BackgroundDrawArea.png');
 		NewImage('BG', 'BackgroundMain.png');
+		NewImage('Frame1', 'F01.png');
+		NewImage('Frame2', 'F02.png');
+		NewImage('Frame3', 'F03.png');
+		NewImage('Frame4', 'F04.png');
+		NewImage('Frame5', 'F05.png');
+		NewImage('Frame6', 'F06.png');
+		NewImage('enShip', 'enShip.png');
 		//NewImage('NoImages', 'Ufo.png');
 	end;
 
