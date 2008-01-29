@@ -188,6 +188,7 @@ namespace Tests
 		    NewImage("Sea", "sea.png");
 			NewImage("BGA", "BackgroundDrawArea.png");
 			NewImage("BG", "BackgroundMain.png");
+            NewImage("ExplosionBlue", "explosion_blue.jpg");
         }
 
         private static void FreeImages()

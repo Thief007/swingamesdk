@@ -48,6 +48,7 @@
     <Compile Include="IGameTestLoader.cs" />
     <Compile Include="InputTests.cs" />
     <Compile Include="MappyTests.cs" />
+    <Compile Include="PhysicsTests.cs" />
     <Compile Include="Random.cs" />
     <Compile Include="TestSet.cs" />
     <Compile Include="TestSuite.cs" />
