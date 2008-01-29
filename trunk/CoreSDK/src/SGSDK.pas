@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-01-29: Andrew: Removed var from the Free routines
 //  - 2008-01-25: Stephen: Fixed IsMouseShown
 //  - 2008-01-23: Andrew: ToGameCoordinates - changed to use Point2D
 //					  	Added MoveSpriteItself
@@ -386,7 +387,7 @@ uses
 		result := nil;		
 	end;
 	
-	procedure FreeTimer(var toFree: Timer); cdecl; export;
+	procedure FreeTimer(toFree: Timer); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.FreeTimer(toFree);
@@ -634,7 +635,7 @@ uses
 		result := nil;
 	end;
 
-	procedure FreeMusic(var mus: Music); cdecl; export;
+	procedure FreeMusic(mus: Music); cdecl; export;
 	begin
 		Try
 			SGSDK_Audio.FreeMusic(mus);
@@ -642,7 +643,7 @@ uses
 		end;
 	end;
 
-	procedure FreeSoundEffect(var effect: SoundEffect); cdecl; export;
+	procedure FreeSoundEffect(effect: SoundEffect); cdecl; export;
 	begin
 		Try
 			SGSDK_Audio.FreeSoundEffect(effect);
@@ -738,7 +739,7 @@ uses
 		end;
 	end;
 
-	procedure FreeFont(var fontToFree: Font); cdecl; export;
+	procedure FreeFont(fontToFree: Font); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.FreeFont(fontToFree);
@@ -1203,7 +1204,7 @@ uses
 		end;
 	end;
 	
-	procedure FreeMatrix2D(var matrix: Matrix2DPtr); cdecl; export;
+	procedure FreeMatrix2D(matrix: Matrix2DPtr); cdecl; export;
 	begin
 		Try
 			if Assigned(matrix) then Dispose(matrix);
@@ -1382,7 +1383,7 @@ uses
 		result := nil;
 	end;
 	
-	procedure FreeBitmap(var bitmapToFree : Bitmap); cdecl; export;
+	procedure FreeBitmap(bitmapToFree : Bitmap); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.FreeBitmap(bitmapToFree);
@@ -1851,7 +1852,7 @@ uses
 		end;
 	end;
 
-	procedure FreeSprite(var spriteToFree : Sprite); cdecl; export;
+	procedure FreeSprite(spriteToFree : Sprite); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.FreeSprite(spriteToFree);
@@ -2209,7 +2210,7 @@ uses
 		result := -1;
 	end;
 	
-	procedure FreeMap(var m : Map); cdecl; export;
+	procedure FreeMap(m : Map); cdecl; export;
 	begin
 		Try
 			SGSDK_MappyLoader.FreeMap(m);

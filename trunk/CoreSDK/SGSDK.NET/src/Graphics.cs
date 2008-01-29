@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-24: Andrew: Moved DLL calls together (some), adding Clipping
 // - 2008-01-24: Stephen: Added Comments
 // - 2008-01-23: James : Fixed exceptions for functions
@@ -663,7 +664,7 @@ namespace SwinGame
         private static extern IntPtr DLL_LoadTransparentBitmap([MarshalAs(UnmanagedType.LPStr)]string pathToBitmap, uint transparentColor);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
-        private static extern void DLL_FreeBitmap(ref IntPtr bitmapToFree);
+        private static extern void DLL_FreeBitmap(IntPtr bitmapToFree);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapWidth")]
         private static extern int DLL_GetBitmapWidth(IntPtr targetbitmap);
@@ -2156,7 +2157,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
-        private static extern void DLL_FreeSprite(ref IntPtr spriteToFree);
+        private static extern void DLL_FreeSprite(IntPtr spriteToFree);
         /// <summary>
         /// Frees a sprite, this does not free the sprite's bitmaps, which allows
         ///	bitmaps to be shared between sprites. All created sprites need to be

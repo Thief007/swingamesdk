@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Stephen: Fixed Exceptions
 //                        Added changes for 1.1 compatibility
 //                        Added extra comments, and fixed code layout and line endings.
@@ -395,7 +396,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
-        private static extern void DLL_FreeMap(ref IntPtr map);
+        private static extern void DLL_FreeMap(IntPtr map);
         /// <summary>
         /// Free a loaded map. This ensures that the resources used by the Map are returned to the system.
 		/// This must be called once you have finished using the Map.
