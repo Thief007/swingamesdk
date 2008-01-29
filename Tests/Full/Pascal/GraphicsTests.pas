@@ -27,6 +27,57 @@ implementation
 		frameB: Array of Bitmap;
 		ship: Bitmap;
 		framePos: Point2D;
+		//SpriteTest
+		sprites: Array of Sprite;
+		explodeAnim: Array of Bitmap;
+		currentSpr: Integer;
+	
+	procedure TestSprite(const drawIn: Rectangle);
+		procedure ChangeSprite(changeTo: Integer);
+		var
+			vec: Vector;
+			tempX, tempY: Single;
+		begin
+			vec := sprites[currentSpr].movement;
+			ReplayAnimation(sprites[currentSpr]);
+			tempX := sprites[currentSpr].x;
+			tempY := sprites[currentSpr].y;
+			currentSpr := changeTo;
+			sprites[currentSpr].movement := vec;
+			sprites[currentSpr].x := tempX;
+			sprites[currentSpr].y := tempY;
+		end;
+		
+		procedure ResetPos();
+		begin
+			sprites[currentSpr].movement := CreateVector(0, 0);
+			MoveSpriteTo(sprites[currentSpr], 0, 0);
+		end;
+	begin
+		if IsKeyPressed(VK_1) then ChangeSprite(0);
+		if IsKeyPressed(VK_2) then ChangeSprite(1);
+		if IsKeyPressed(VK_3) then ChangeSprite(2);
+		if IsKeyPressed(VK_4) then ChangeSprite(3);
+		if IsKeyPressed(VK_5) then ChangeSprite(4);
+		if IsKeyPressed(VK_6) then ChangeSprite(5);
+		if IsKeyPressed(VK_7) then ChangeSprite(6);
+		if IsKeyPressed(VK_LEFT) then sprites[currentSpr].movement := AddVectors(sprites[currentSpr].movement, CreateVector(-1, 0));
+		if IsKeyPressed(VK_RIGHT) then sprites[currentSpr].movement := AddVectors(sprites[currentSpr].movement, CreateVector(1, 0));
+		if IsKeyPressed(VK_UP) then sprites[currentSpr].movement := AddVectors(sprites[currentSpr].movement, CreateVector(0, -1));
+		if IsKeyPressed(VK_DOWN) then sprites[currentSpr].movement := AddVectors(sprites[currentSpr].movement, CreateVector(0, 1));
+		if IsKeyPressed(VK_M) then ResetPos();
+		
+		sprites[currentSpr].movement := MultiplyVector(sprites[currentSpr].movement, 0.95);
+		sprites[currentSpr].movement := LimitMagnitude(sprites[currentSpr].movement, 5);
+		
+		DrawSprite(sprites[currentSpr]);
+		UpdateSprite(sprites[currentSpr]);
+		
+		if IsSpriteOffscreen(sprites[currentSpr]) then
+		begin
+			DrawText('The sprite is not on the screen', ColourWhite, GameFont('Courier'), 0, 0);
+		end;
+	end;
 	
 	procedure TestBitmap(const drawIn: Rectangle);
 	begin
@@ -369,9 +420,10 @@ implementation
 	function GetGraphicsTests(): TestSuite;
 	var
 		i: Integer;
+		fps: Array of Integer;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 8);
+		SetLength(result.Tests, 9);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -465,6 +517,28 @@ implementation
 			ship := GameImage('enShip');
 			framePos := CreatePoint(0, 0);
 			ToRun := @TestBitmap;
+		end;
+		
+		with result.Tests[8] do
+		begin
+			SetLength(fps, 40);
+			SetLength(explodeAnim, 40);
+			for i := 0 to 39 do
+			begin
+				fps[i] := 2;
+				explodeAnim[i] := GameImage('Explode_' + IntToStr(i));
+			end;
+			MethodBeingTested := 'Sprite routines';
+			Instructions := 'Use the number keys from' + EOL + '1 to 7 to change the sprite.' + EOL + 'Use the arrow keys to' + EOL + 'move the sprite.' + EOL + 'Use the M key to reset the' + EOL + 'position of the sprite.';
+			SetLength(sprites, 7);
+			sprites[0] := CreateSprite(GameImage('BlueExplosion'), true, fps, Loop, 180, 180);
+			sprites[1] := CreateSprite(GameImage('BlueExplosion'), true, fps, 180, 180);
+			sprites[2] := CreateSprite(GameImage('BlueExplosion'), 2, 40, 180, 180);
+			sprites[3] := CreateSprite(GameImage('BallImage1'));
+			sprites[4] := CreateSprite(explodeAnim, fps, Loop);
+			sprites[5] := CreateSprite(explodeAnim, fps);
+			sprites[6] := CreateSprite(explodeAnim, 2, 40);
+			ToRun := @TestSprite;
 		end;
 	end;
 	

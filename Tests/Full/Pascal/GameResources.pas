@@ -103,6 +103,19 @@ implementation
 		_ImagesStr[High(_ImagesStr)] := imageName;
 	end;
 	
+	procedure NewTransparentColourImage(imageName, fileName: String; transColour: Colour);
+	begin
+		SetLength(_Images, Length(_Images) + 1);
+		SetLength(_ImagesStr, Length(_ImagesStr) + 1);
+		_Images[High(_Images)] := LoadBitmap(GetPathToResource(fileName, ImageResource), true, transColour);
+		_ImagesStr[High(_ImagesStr)] := imageName;
+	end;
+	
+	procedure NewTransparentColorImage(imageName, fileName: String; transColor: Color);
+	begin
+		NewTransparentColourImage(imageName, fileName, transColor);
+	end;
+	
 	procedure NewSound(soundName, fileName: String);
 	begin
 		SetLength(_Sounds, Length(_Sounds) + 1);
@@ -137,6 +150,8 @@ implementation
 	end;
 
 	procedure LoadImages();
+	var
+		i: Integer;
 	begin
 		NewImage('BallImage1', 'ball.png');
 		NewImage('BallImage2', 'ball2.png');
@@ -154,6 +169,11 @@ implementation
 		NewImage('Frame5', 'F05.png');
 		NewImage('Frame6', 'F06.png');
 		NewImage('enShip', 'enShip.png');
+		NewTransparentColourImage('BlueExplosion', 'explosion_pro.jpg', ColourBlack);
+		for i := 0 to 39 do
+		begin
+			NewTransparentColourImage('Explode_' + IntToStr(i), 'explode_' + IntToStr(i) + '.jpg', ColourBlack);
+		end;
 		//NewImage('NoImages', 'Ufo.png');
 	end;
 
