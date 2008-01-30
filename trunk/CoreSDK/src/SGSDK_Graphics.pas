@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed DrawRectangle
 // - 2008-01-25: Andrew: Fixed compiler hints for pointer use
 // - 2008-01-24: Andrew: Added Clipping
 // - 2008-01-24: James: Version 1.1 overloads
@@ -1386,10 +1387,10 @@ implementation
 	///	- Draws a rectangle in the dest bitmap
 	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : Integer); overload;
 	begin
-		DrawHorizontalLine(dest, theColour, yPos, xPos, xPos + width);
-		DrawHorizontalLine(dest, theColour, yPos + height, xPos, xPos + width);
-		DrawVerticalLine(dest, theColour, xPos, yPos, yPos + height);
-		DrawVerticalLine(dest, theColour, xPos + width, yPos, yPos + height);
+		DrawHorizontalLine(dest, theColour, yPos, xPos, xPos + width - 1);
+		DrawHorizontalLine(dest, theColour, yPos + height - 1, xPos, xPos + width - 1);
+		DrawVerticalLine(dest, theColour, xPos, yPos, yPos + height - 1);
+		DrawVerticalLine(dest, theColour, xPos + width - 1, yPos, yPos + height - 1);
 	end;
 
 	/// Draws a filled rectangle on the destination bitmap.
