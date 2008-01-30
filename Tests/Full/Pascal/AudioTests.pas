@@ -21,13 +21,13 @@ implementation
 	
 	procedure TestPlayMusic(const drawIn: Rectangle);
 	begin
-		if WasKeyTyped(VK_A) then PlayMusic(GameMusic('Fast'));
+		if WasKeyTyped(VK_A) then PlayMusic(GameMusic('Fast'), 1);
 		if WasKeyTyped(VK_I) then 
 		begin	
 			if false = IsMusicPlaying() then PlayMusic(GameMusic('Fast'));
 		end;
 		if WasKeyTyped(VK_S) then StopMusic();
-		if WasKeyTyped(VK_L) then PlayMusic(GameMusic('Fast'), -1);
+		if WasKeyTyped(VK_L) then PlayMusic(GameMusic('Fast'));
 	end;
 	
 	function GetAudioTests(): TestSuite;
