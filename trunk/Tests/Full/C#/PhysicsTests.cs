@@ -258,7 +258,10 @@ namespace Tests
                 "RectangleHasCollidedWithLine";
 
             private readonly static string INST =
-                "Arrow keys to move the rectangle" + Environment.NewLine + "of  around" + Environment.NewLine;
+                "Arrow Up/Down to change Vector1 X" + Environment.NewLine +
+                "Arrow Left/Right to change" + Environment.NewLine +"Vector1 Y" + Environment.NewLine +
+                "Arrow W/S to change Vector2 X" + Environment.NewLine +
+                "Arrow A/D to change Vector2 Y" + Environment.NewLine;
 
 
             private SwinGame.Vector v1 = Physics.CreateVector(2,2);
@@ -401,7 +404,9 @@ namespace Tests
 
             private readonly static string INST =
                 "Arrow keys to change the vector" + Environment.NewLine + "of  the big ball" + Environment.NewLine +
-                "AWSD keys to change the vector" + Environment.NewLine + "of  the small ball";
+                "AWSD keys to change the vector" + Environment.NewLine + "of  the small ball" + Environment.NewLine+
+                "Space to do the collision of " + Environment.NewLine +
+                "the two balls";
 
 
             private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
@@ -721,7 +726,7 @@ namespace Tests
 
             private Sprite ship = Graphics.CreateSprite(GameResources.GameImage("Ship"),1,2,40,43);
 
-            private Sprite explosion = Graphics.CreateSprite(/*GameResources.GameImage("Explosion")*/Graphics.LoadBitmap(Core.GetPathToResource("explosion_blue.jpg", ResourceKind.ImageResource), true, Color.Black), 20, 40, 72, 72);
+            private Sprite explosion = Graphics.CreateSprite(GameResources.GameImage("BlueExplosion2"), 20, 40, 72, 72);
             
 
             private SwinGame.Bitmap smallball = GameResources.GameImage("SmallBall");
