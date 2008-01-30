@@ -212,6 +212,16 @@ namespace Tests
 		        SwinGame.Graphics.DrawLineOnScreen(Color.White, tempLines[5]);
 		        SwinGame.Graphics.DrawLineOnScreen(Color.White, (int)(tempLines[6].StartPoint.X), (int)(tempLines[6].StartPoint.Y), (int)(tempLines[6].EndPoint.X), (int)(tempLines[6].EndPoint.Y));
 		
+                for (int i = 1; i < 5; i++)
+		        {
+			        SwinGame.Graphics.DrawLine(Color.White, Shapes.LineFromVector(tempLines[i].EndPoint, Physics.MultiplyVector(Physics.LineNormal(tempLines[i]), 10)));
+		        }
+
+                for (int i = 5; i < 7; i++)
+                {
+                    SwinGame.Graphics.DrawLineOnScreen(Color.White, Shapes.LineFromVector(tempLines[i].EndPoint, Physics.MultiplyVector(Physics.VectorNormal(Physics.LineAsVector(tempLines[i])), 10)));
+                }
+
 		        angle = 0;
             }
         }
