@@ -153,6 +153,7 @@ implementation
 	var
 		i: Integer;
 	begin
+		NewImage('SmallBall', 'ball_small.png');
 		NewImage('BallImage1', 'ball.png');
 		NewImage('BallImage2', 'ball2.png');
 		NewImage('SmallBall', 'ball_small.png');
