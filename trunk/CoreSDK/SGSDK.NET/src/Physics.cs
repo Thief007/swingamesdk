@@ -415,7 +415,7 @@ namespace SwinGame
         /// <returns>True if the bitmaps collide.</returns>
         public static bool HaveBitmapsCollided(Bitmap image1, int x1, int y1, Bitmap image2, int x2, int y2)
         {
-            return HaveBitmapsCollided(image1, x1, y1, true,image2, x2, y2, true);
+            return HaveBitmapsCollided(image1, x1, y1, false,image2, x2, y2, false);
         }
 
         /// <summary>
