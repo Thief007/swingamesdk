@@ -429,8 +429,8 @@ implementation
 
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
 	begin
-		//result := RectanglesIntersect(CreateRectangle(x, y, image), rect);
-		result := HasBitmapPartCollidedWithRect(image,x, y, CreateRectangle(x, y, image), false, rect);
+		//result := RectanglesIntersect(CreateRectangle(x, y, image), rect)
+		result := HasBitmapPartCollidedWithRect(image, x, y, CreateRectangle(0, 0, image), false, rect);
 	end;
 	
 	
@@ -673,7 +673,7 @@ implementation
 	///
 	///	@returns					True if the bitmaps collide.
 	///
-	function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer;bounded1: Boolean; image2: Bitmap; x2, y2: Integer; bounded2: Boolean): Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer; bounded1: Boolean; image2: Bitmap; x2, y2: Integer; bounded2: Boolean): Boolean; overload;
 	begin
 		if not HasBitmapCollidedWithRect(image1, x1, y1, x2, y2, image2.width, image2.height) then
 		begin
