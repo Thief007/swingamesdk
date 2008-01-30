@@ -9,10 +9,8 @@ implementation
 	uses GameResources, SGSDK_Core, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font, SGSDK_Physics, SGSDK_Mappyloader, SysUtils;
 	
 	var
-		draw: Bitmap;
 		_Map: Map;
 		_Ball: Sprite;
-		_BoundingRect: Rectangle;
 		_TileX, _TileY: Integer;
 	
 	procedure TestMappy(const drawIn: Rectangle);
@@ -29,9 +27,6 @@ implementation
 
 		MoveSprite(_Ball);
 		DrawSprite(_Ball);
-
-		_BoundingRect.X := Round(_Ball.X);
-		_BoundingRect.Y := Round(_Ball.Y);
 
 		if SpriteHasCollidedWithMapTile(_Map, _Ball, _TileX, _TileY) then
 		begin
@@ -75,11 +70,9 @@ implementation
 			MethodBeingTested := 'Mappy Collisions';
 			Instructions := '[Arrow Keys] Move Ball' + EOL +
 	        				'[M]ove Ball out of Map';
-			draw := CreateBitmap(300, 32);
 			_Map := GameMap('test3');
 			ToRun := @TestMappy;
 			_Ball := CreateSprite(GameImage('SmallBall'));
-			_BoundingRect := CreateRectangle(0, 0, 30, 30);
 			_TileX := 0; _TileY := 0;
 		end;
 	end;
