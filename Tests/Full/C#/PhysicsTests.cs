@@ -17,18 +17,107 @@ namespace Tests
             TestSuite result = new TestSuite("Physics Tests");
             result.Add(new CollisionSpriteTest());
             result.Add(new CollissionBitmapTest());
+			result.Add(new CircleCollissionTest());
 				result.Add(new VectorAngle());
 				result.Add(new PointOutOfRect());				
-          
+
             list.Add(result);
         }
 
         #endregion
 
+
+        private class CircleCollissionTest : TestSet
+        {
+            private readonly static string METHS =
+                "HaveBitmapsCollided, CircleHasCollidedWithLine, GetUnitVector, RotationMatrix...";
+
+            private readonly static string INST =
+                "Arrow keys to move the sprite " + Environment.NewLine + "around" +Environment.NewLine+
+                "AWSD keys to change the vector " + Environment.NewLine;
+
+
+            private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
+            private SwinGame.Bitmap mediumball = GameResources.GameImage("BallImage1");
+
+            private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 32);
+
+            public CircleCollissionTest() : base(METHS, INST) 
+            {
+                ball.Movement.X = 1;
+                ball.Movement.Y = 1;
+            }
+
+            private int X = 0;
+            private int Y = 0;
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                if (Input.IsKeyPressed(Keys.VK_LEFT))
+                {
+                    ball.X = ball.X - 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_RIGHT))
+                {
+                    ball.X = ball.X + 1;
+                }
+
+                if (Input.IsKeyPressed(Keys.VK_S))
+                {
+                    if (Physics.Magnitude(ball.Movement) > 2)
+                    {
+                        ball.Movement.SetTo(Physics.MultiplyVector(Physics.GetUnitVector(ball.Movement), Physics.Magnitude(ball.Movement) - 1));
+                    }
+                }
+                if (Input.IsKeyPressed(Keys.VK_DOWN))
+                {
+                    ball.Y = ball.Y + 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_UP))
+                {
+                    ball.Y = ball.Y - 1;
+                }
+
+                if (Input.IsKeyPressed(Keys.VK_W))
+                {
+                    ball.Movement.SetTo(Physics.MultiplyVector(Physics.GetUnitVector(ball.Movement), Physics.Magnitude(ball.Movement) + 1));
+                }
+                if (Input.IsKeyPressed(Keys.VK_A))
+                {
+                    ball.Movement.SetTo(Physics.Multiply(Physics.RotationMatrix(1),ball.Movement));
+                }
+                if (Input.IsKeyPressed(Keys.VK_D))
+                {
+                    ball.Movement.SetTo(Physics.Multiply(Physics.RotationMatrix(-1),ball.Movement));
+                }
+                //CircleHasCollidedWithLine
+                if (Physics.CircleHasCollidedWithLine(ball, Shapes.CreateLine(300, 0, 300, 418)))
+                {
+                    Graphics.FillRectangle(Color.LightCyan, 298, 0, 5, 418);
+                }
+                Graphics.DrawVerticalLine(Color.Red, 300, 0, 418);
+
+                //CircleHasCollidedWithLine
+                if (Physics.CircleHasCollidedWithLine(ball, Shapes.CreateLine(300, 0, 300, 418)) && Input.IsKeyPressed(Keys.VK_SPACE))
+                {
+                    Physics.CircleCollisionWithLine(ball, Shapes.CreateLine(300, 0, 300, 418));
+                    Graphics.UpdateSprite(ball);
+                }
+                
+
+                Graphics.DrawSprite(ball);
+                float tempX = ball.X + (Graphics.CurrentWidth(ball) /2);
+                float tempY = ball.Y + (Graphics.CurrentHeight(ball) / 2);
+                Graphics.DrawLine(Color.RoyalBlue, tempX, tempY, tempX + ball.Movement.X, tempY + ball.Movement.Y);
+                Graphics.DrawRectangle(Color.White, ball.X, ball.Y, Graphics.CurrentWidth(ball), Graphics.CurrentHeight(ball));
+            }
+        }
+
+
         private class CollissionBitmapTest : TestSet
         {
             private readonly static string METHS =
-                "HaveBitmapsCollided";
+                "HaveBitmapsCollided, HasBitmapCollidedWithRect";
 
             private readonly static string INST =
                 "Arrow keys to move the bitmap " + Environment.NewLine + "around";
@@ -68,6 +157,7 @@ namespace Tests
                     Graphics.FillRectangle(Color.Pink, 5, 25, mediumball.Height + 10, mediumball.Width + 10);
                 }
                 Graphics.DrawBitmap(mediumball, 10, 30);
+                
                 Graphics.DrawRectangle(Color.White, 10, 30, mediumball.Width, mediumball.Height);
 
                 if (Physics.HaveBitmapsCollided(mediumball, Shapes.CreatePoint(10, 150), smallball, Shapes.CreatePoint(X, Y)))
@@ -126,6 +216,20 @@ namespace Tests
                 }
                 Graphics.DrawBitmap(mediumball, 240, 170);
                 Graphics.DrawRectangle(Color.White, 240, 170, mediumball.Width, mediumball.Height);
+
+                //HasBitmapCollidedWithRect
+                Graphics.DrawRectangle(Color.DarkGreen, 400, 350, 10, 10);
+                if (Physics.HasBitmapCollidedWithRect(smallball, X, Y, 400, 350, 10, 10))
+                {
+                    Graphics.FillRectangle(Color.LightGreen, 400, 350, 10, 10);
+                }
+
+                Graphics.DrawRectangle(Color.DarkGreen, 400, 365, 10, 10);
+                if (Physics.HasBitmapCollidedWithRect(smallball, X, Y, Shapes.CreateRectangle(400, 365, 10, 10)))
+                {
+                    Graphics.FillRectangle(Color.LightGreen, 400, 365, 10, 10);
+                }
+
 
 
 
@@ -245,24 +349,28 @@ namespace Tests
                     Graphics.DrawRectangle(Color.Pink, true, 5, 95, smallball.Width + 10, smallball.Height + 10);
                 }
                 Graphics.DrawBitmap(smallball, 10, 100);
+                Graphics.DrawRectangle(Color.White, 10, 100, smallball.Width, smallball.Height);
 
                 if (Physics.HasSpriteCollidedWithBitmap(ship, smallball, 10, 150, false))
                 {
                     Graphics.DrawRectangle(Color.Blue, true, 5, 145, smallball.Width + 10, smallball.Height + 10);
                 }
                 Graphics.DrawBitmap(smallball, 10, 150);
+                Graphics.DrawRectangle(Color.White, 10, 150, smallball.Width, smallball.Height);
                 //using points
                 if (Physics.HasSpriteCollidedWithBitmap(ship, smallball, Shapes.CreatePoint(70,100),Shapes.CreateRectangle(smallball), false))
                 {
                     Graphics.DrawRectangle(Color.Blue, true, 65, 95, smallball.Width + 10, smallball.Height + 10);
                 }
                 Graphics.DrawBitmap(smallball, 70, 100);
+                Graphics.DrawRectangle(Color.White, 70, 100, smallball.Width, smallball.Height);
 
                 if (Physics.HasSpriteCollidedWithBitmap(ship, smallball, Shapes.CreatePoint(70, 150), false))
                 {
                     Graphics.DrawRectangle(Color.Blue, true, 65, 145, smallball.Width + 10, smallball.Height + 10);
                 }
                 Graphics.DrawBitmap(smallball, 70, 150);
+                Graphics.DrawRectangle(Color.White, 70, 150, smallball.Width, smallball.Height);
 
 
                 Graphics.DrawSprite(ship);

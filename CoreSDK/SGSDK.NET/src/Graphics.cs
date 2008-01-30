@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: James: Fixed DLL calls, fixed bitmap returning from sprite
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-24: Andrew: Moved DLL calls together (some), adding Clipping
 // - 2008-01-24: Stephen: Added Comments
@@ -46,7 +47,7 @@ namespace SwinGame
         private static extern int GetSpriteReverse(IntPtr pointer);
 	
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetSpriteBitmap")]
-        private static extern Bitmap DLL_GetSpriteBitmap(IntPtr pointer, int id);
+        private static extern IntPtr DLL_GetSpriteBitmap(IntPtr pointer, int id);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetSpriteX")]
         private static extern float DLL_GetSpriteX(IntPtr pointer);
@@ -106,10 +107,10 @@ namespace SwinGame
         private static extern int GetSpriteFrameCount(IntPtr pointer);
 
 	    [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int GetSpriteendingAction(IntPtr pointer);
+        private static extern int GetSpriteEndingAction(IntPtr pointer);
         
 		[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void SetSpriteendingAction(IntPtr pointer, int endingAction);
+        private static extern void SetSpriteEndingAction(IntPtr pointer, int endingAction);
 
         /// <summary>
         /// Gets a Sprite's Bitmap
@@ -121,7 +122,8 @@ namespace SwinGame
         {
             if (pointer == IntPtr.Zero)
                 throw new SwinGameException("The Sprite has not been created. Ensure that the sprite is created before getting its Bitmaps");
-            Bitmap temp = DLL_GetSpriteBitmap(pointer, id);
+            Bitmap temp = new Bitmap();
+            temp.pointer = new SwinGamePointer(DLL_GetSpriteBitmap(pointer, id));
             return temp;
         }
 
@@ -446,11 +448,11 @@ namespace SwinGame
         {
             get
             {
-                return (SpriteEndingAction)GetSpriteendingAction(Pointer);
+                return (SpriteEndingAction)GetSpriteEndingAction(Pointer);
             }
             set
             {
-                SetSpriteendingAction(Pointer, (int)value);
+                SetSpriteEndingAction(Pointer, (int)value);
             }
         }
 

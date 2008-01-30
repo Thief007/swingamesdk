@@ -32,7 +32,7 @@ namespace SwinGameVB
     [ClassInterface(ClassInterfaceType.None)]
     [Guid("87C6F043-9E0A-4579-878D-EBD72F98554A")]
     [ComVisible(true)]
-    public class Matrix2D : IMatrix2D, IDisposable
+    public class Matrix2D : IMatrix2D
     {
         private SwinGame.Matrix2D marrix2D;
         internal SwinGame.Matrix2D result
@@ -59,47 +59,7 @@ namespace SwinGameVB
             
         }
 
-        public void Dispose()
-        {
-            marrix2D.Dispose();
-            //Dispose(true);
-            //GC.SuppressFinalize(this);
-        }
-        /*
-        private void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                if (disposing)
-                {
-                }
-                FreeMaxtrix2D(Pointer);
-                Pointer = IntPtr.Zero;
 
-                disposed = true;
-            }
-        }
-
-        ~Matrix2D()
-        {
-            Dispose(false);
-        }
-
-        /*
-
-        public Matrix2D IdentityMatrix
-        {
-            get
-            {
-                Matrix2D result;
-                result._Matrix2D = new float[3, 3];
-                result[0, 0] = 1;
-                result[1, 1] = 1;
-
-                return result;
-            }
-        }
-         */
     }
     [Guid("354E0F76-E669-4f54-9D80-E204FF559F15")]
     [ComVisible(true)]
@@ -107,7 +67,6 @@ namespace SwinGameVB
     {
         float GetMaxtrix2DElement(int r, int c);
         void SetMaxtrix2DElement(float value, int r, int c);
-        void Dispose();
     }
 
 
@@ -525,9 +484,9 @@ namespace SwinGameVB
             SwinGame.Physics.CircularCollision(sprt1.result, sprt2.result);
         }
 
-        public bool CircleHasCollidedWithLine(Sprite sprite, Point2D point)
+        public bool CircleHasCollidedWithLine(Sprite sprite, LineSegment line)
         {
-            return SwinGame.Physics.CircleHasCollidedWithLine(sprite.result, point.result);
+            return SwinGame.Physics.CircleHasCollidedWithLine(sprite.result, line.result);
         }
 
         public void CircleCollisionWithLine(Sprite sprt, LineSegment line)
@@ -738,7 +697,7 @@ namespace SwinGameVB
 
 
         void CircularCollision(Sprite sprt1, Sprite sprt2);
-        bool CircleHasCollidedWithLine(Sprite sprite, Point2D point);
+        bool CircleHasCollidedWithLine(Sprite sprite, LineSegment line);
         void CircleCollisionWithLine(Sprite sprt, LineSegment line);
         Vector CalculateVectorFromTo(Sprite obj, Sprite dest);
         float CalculateAngleBetween(Vector v1, Vector v2);
