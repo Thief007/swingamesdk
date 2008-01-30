@@ -317,10 +317,10 @@ implementation
 			ClearScreen();
 			DrawSprite(ball1);
 			DrawSprite(ball2);
-			if HaveSpritesCollided(ball1, ball2) then
-				VectorCollision(ball1, ball2);
+			if HaveSpritesCollided(ball1, ball2) then VectorCollision(ball1, ball2);
 			MoveBallUsingVector(ball1);
 			MoveBallUsingVector(ball2);
+			
 			DrawOverlay('Vector Collision Example');
 			ProcessEvents();
 			RefreshScreen();
