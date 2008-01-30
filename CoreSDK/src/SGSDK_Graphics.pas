@@ -555,6 +555,7 @@ implementation
 		result.width				:= width;
 		result.height				:= height;
 		result.reverse				:= false;
+		result.movement				:= CreateVector(0,0);
 	end;
 	
 	/// Creates a sprites, and sets its first bitmap.
@@ -625,6 +626,7 @@ implementation
 		result.currentFrame			:= 0;
 		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
+		result.movement				:= CreateVector(0,0);
 
 		SetLength(result.bitmaps, Length(bitmaps));
 		for i := 0 to High(bitmaps) do

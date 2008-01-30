@@ -530,7 +530,7 @@ implementation
 		i, j, xPixel1, yPixel1, xPixel2, yPixel2: Integer;
 	begin
 		if (image1 = nil) or (image2 = nil) then
-			raise Exception.Create('One or both of the spceified bitmaps are nil');
+			raise Exception.Create('One or both of the specified bitmaps are nil');
 		
 		if (w1 < 1) or (h1 < 1) or (w2 < 1) or (h2 < 1) then
 			raise Exception.Create('Bitmap width and height must be greater then 0');
