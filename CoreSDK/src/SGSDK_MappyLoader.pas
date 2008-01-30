@@ -744,7 +744,7 @@ implementation
 			Left: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
 			Right: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
 			else
-				exit;
+			begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
 		end;
 		
 		for i := yStart to yEnd do
