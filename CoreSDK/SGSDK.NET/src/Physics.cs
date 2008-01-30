@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Changed CircleHasCollidedWithLine to take a 
 //    LineSegement insted of a Point2D
 // - 2008-01-29: Andrew: Fixed MAtrix2D dispose - removed
@@ -55,9 +56,6 @@ namespace SwinGame
     //[StructLayout(LayoutKind.Sequential)]
     public class Matrix2D
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
-        private static extern void FreeMaxtrix2D(IntPtr maxtrix2d);
-
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMatrix2DElement")]
         private static extern Single GetMaxtrix2DElement(IntPtr maxtrix2d, int r, int c);
 
@@ -88,7 +86,7 @@ namespace SwinGame
         internal Matrix2D(IntPtr ptr)
         {
             if (ptr == IntPtr.Zero) throw new SwinGameException("Error Creating Matrix2D");
-            Pointer = new SwinGamePointer(ptr, FreeMaxtrix2D);
+            Pointer = new SwinGamePointer(ptr, PtrKind.Matrix);
         }
 
         /// <summary>
@@ -110,7 +108,7 @@ namespace SwinGame
     public class Physics
     {
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedX")]
-        private static extern bool DLL_HasSpriteCollidedX(IntPtr theSprite, int x, CollisionDetectionRange  range);
+        private static extern int DLL_HasSpriteCollidedX(IntPtr theSprite, int x, CollisionDetectionRange  range);
         /// <summary>
         /// Determines if a sprite has collided with a given x position.
         /// </summary>
@@ -120,7 +118,15 @@ namespace SwinGame
         /// <returns>True if the sprite is within the range requested</returns>
         public static bool HasSpriteCollidedX(Sprite theSprite, int x, CollisionDetectionRange range)
         {
-            bool temp = DLL_HasSpriteCollidedX(theSprite.Pointer, x, range);
+            bool temp;
+				try
+				{
+					temp = DLL_HasSpriteCollidedX(theSprite.Pointer, x, range) == -1;
+				} catch(Exception exc)
+				{
+					throw new SwinGameException(exc.Message);
+				}
+				
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -129,7 +135,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedY")]
-        private static extern bool DLL_HasSpriteCollidedY(IntPtr theSprite, int y ,CollisionDetectionRange range);
+        private static extern int DLL_HasSpriteCollidedY(IntPtr theSprite, int y ,CollisionDetectionRange range);
         /// <summary>
         /// Determines if a sprite has collided with a given y position.
         /// </summary>
@@ -143,7 +149,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_HasSpriteCollidedY(theSprite.Pointer, y, range);
+                temp = DLL_HasSpriteCollidedY(theSprite.Pointer, y, range) == -1;
             }
             catch (Exception exc)
             {
@@ -157,7 +163,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasSpriteCollidedWithRect")]
-        private static extern bool DLL_HasSpriteCollidedWithRect(IntPtr theSprite, Single x, Single y, int width, int height);
+        private static extern int DLL_HasSpriteCollidedWithRect(IntPtr theSprite, Single x, Single y, int width, int height);
         /// <summary>
         /// Determined if a sprite has collided with a given rectangle. The rectangles
         ///	coordinates are expressed in "world" coordinates.
@@ -174,7 +180,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height);
+                temp = DLL_HasSpriteCollidedWithRect(theSprite.Pointer, x, y, width, height) == -1;
             }
             catch (Exception exc)
             {
@@ -200,7 +206,7 @@ namespace SwinGame
         }
         
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HaveSpritesCollided")]
-        private static extern bool DLL_HaveSpritesCollided(IntPtr sprite1, IntPtr sprite2);
+        private static extern int DLL_HaveSpritesCollided(IntPtr sprite1, IntPtr sprite2);
 
         /// <summary>
         /// Determines if two sprites have collided. Sprites have collided when
@@ -217,7 +223,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer);
+                temp = DLL_HaveSpritesCollided(sprite1.Pointer, sprite2.Pointer) == -1;
             }
             catch (Exception exc)
             {
@@ -325,7 +331,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RectangleHasCollidedWithLine")]
-        private static extern bool DLL_RectangleHasCollidedWithLine(SGSDKRectangle rect, LineSegment line);
+        private static extern int DLL_RectangleHasCollidedWithLine(SGSDKRectangle rect, LineSegment line);
         /// <summary>
         /// Returns true if the Rectangle has collided with the line specified
         /// </summary>
@@ -338,7 +344,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_RectangleHasCollidedWithLine(Shapes.ToSGSDKRect(rect), line);
+                temp = DLL_RectangleHasCollidedWithLine(Shapes.ToSGSDKRect(rect), line) == -1;
             }
             catch (Exception exc)
             {
@@ -616,7 +622,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasBitmapCollidedWithRect")]
-        private static extern bool DLL_HasBitmapCollidedWithRect(IntPtr bitmap, int x, int y, int width, int height);
+        private static extern int DLL_HasBitmapCollidedWithRect(IntPtr bitmap, int x, int y, int width, int height);
         /// <summary>
         /// Returns true if the Bitmap has collided with the specified Rectangle
         /// </summary>
@@ -634,7 +640,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_HasBitmapCollidedWithRect(bitmap.pointer, x, y, width, height);
+                temp = DLL_HasBitmapCollidedWithRect(bitmap.pointer, x, y, width, height) == -1;
             }
             catch (Exception exc)
             {
@@ -659,7 +665,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSpriteOnScreenAt")]
-        private static extern bool DLL_IsSpriteOnScreenAt(IntPtr sprite, int x, int y);
+        private static extern int DLL_IsSpriteOnScreenAt(IntPtr sprite, int x, int y);
         /// <summary>
         /// Checks if the Sprite is on Screen at the given Coordinates
         /// </summary>
@@ -672,7 +678,7 @@ namespace SwinGame
             bool temp;
             try
             {
-                temp = DLL_IsSpriteOnScreenAt(sprite.Pointer, x, y);
+                temp = DLL_IsSpriteOnScreenAt(sprite.Pointer, x, y) == -1;
             }
             catch (Exception exc)
             {
@@ -696,7 +702,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircleHasCollidedWithLine")]
-        private static extern bool DLL_CircleHasCollidedWithLine(IntPtr sprite, LineSegment line);
+        private static extern int DLL_CircleHasCollidedWithLine(IntPtr sprite, LineSegment line);
         /// <summary>
         /// Checks if the Sprite has Collided with the Line
         /// </summary>
@@ -708,7 +714,7 @@ namespace SwinGame
             bool temp;
             try
             {
-                temp = DLL_CircleHasCollidedWithLine(sprite.Pointer, line);
+                temp = DLL_CircleHasCollidedWithLine(sprite.Pointer, line) == -1;
             }
             catch (Exception exc)
             {

@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Fixed DLL calls, fixed bitmap returning from sprite
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-24: Andrew: Moved DLL calls together (some), adding Clipping
@@ -657,16 +658,13 @@ namespace SwinGame
         private static extern IntPtr DLL_CreateBitmap(int width, int height);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="OptimiseBitmap")]
-        private static extern void DLL_OptimiseBitmap(Bitmap surface);
+        private static extern void DLL_OptimiseBitmap(IntPtr surface);
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadBitmapWithTransparentColor", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_LoadBitmapWithTransparentColor([MarshalAs(UnmanagedType.LPStr)]String pathToBitmap, int transparent, uint transparentColor);
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadTransparentBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadTransparentBitmap", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_LoadTransparentBitmap([MarshalAs(UnmanagedType.LPStr)]string pathToBitmap, uint transparentColor);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
-        private static extern void DLL_FreeBitmap(IntPtr bitmapToFree);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetBitmapWidth")]
         private static extern int DLL_GetBitmapWidth(IntPtr targetbitmap);
@@ -693,7 +691,7 @@ namespace SwinGame
             Bitmap temp;
             try
             {
-                temp.pointer = new SwinGamePointer(DLL_CreateBitmap(width, height), DLL_FreeBitmap);
+                temp.pointer = new SwinGamePointer(DLL_CreateBitmap(width, height), PtrKind.Image);
             }
             catch (Exception exc)
             {
@@ -715,7 +713,7 @@ namespace SwinGame
         {
             try
             {
-                DLL_OptimiseBitmap(surface);
+                DLL_OptimiseBitmap(surface.pointer);
             }
             catch (Exception exc)
             {
@@ -741,7 +739,7 @@ namespace SwinGame
             try
             {
                 int color = Color.Black.ToArgb();
-                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color), DLL_FreeBitmap);  
+                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, 0, (uint)color), PtrKind.Image);  
             }
             catch (Exception exc)
             {
@@ -768,7 +766,7 @@ namespace SwinGame
             try
             {
                 int color = transparentColor.ToArgb();
-                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, (transparent?-1:0), (uint)color), DLL_FreeBitmap);
+                result.pointer = new SwinGamePointer(DLL_LoadBitmapWithTransparentColor(pathToBitmap, (transparent?-1:0), (uint)color), PtrKind.Image);
             }
             catch (Exception exc)
             {
@@ -795,7 +793,7 @@ namespace SwinGame
             try
             {
                 int color = transparentColor.ToArgb();
-                result.pointer = new SwinGamePointer(DLL_LoadTransparentBitmap(pathToBitmap, (uint)color), DLL_FreeBitmap);
+                result.pointer = new SwinGamePointer(DLL_LoadTransparentBitmap(pathToBitmap, (uint)color), PtrKind.Image);
             }
             catch (Exception exc)
             {
@@ -2142,7 +2140,7 @@ namespace SwinGame
             Sprite result;
             try
             {
-                result.Pointer = new SwinGamePointer(DLL_CreateSprite(startBitmap.pointer), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSprite(startBitmap.pointer), PtrKind.Sprite);
             }
             catch (Exception exc)
             {
@@ -2155,8 +2153,6 @@ namespace SwinGame
             return result;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
-        private static extern void DLL_FreeSprite(IntPtr spriteToFree);
         /// <summary>
         /// Frees a sprite, this does not free the sprite's bitmaps, which allows
         ///	bitmaps to be shared between sprites. All created sprites need to be
@@ -2401,7 +2397,7 @@ namespace SwinGame
             Sprite result;
             try
             {
-                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiEnding(startBitmap.pointer, (isMulti ? -1 : 0), framesPerCell.Length, framesPerCell, endingAction, width, height), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiEnding(startBitmap.pointer, (isMulti ? -1 : 0), framesPerCell.Length, framesPerCell, endingAction, width, height), PtrKind.Sprite);
             }
             catch (Exception exc)
             {
@@ -2430,7 +2426,7 @@ namespace SwinGame
             Sprite result;
             try
             {
-                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMulti(startBitmap.pointer, (isMulti?-1:0), framesPerCell.Length, framesPerCell, width, height), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMulti(startBitmap.pointer, (isMulti?-1:0), framesPerCell.Length, framesPerCell, width, height), PtrKind.Sprite);
             }
             catch (Exception exc)
             {
@@ -2459,7 +2455,7 @@ namespace SwinGame
             Sprite result;
             try
             {
-                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, frames, width, height), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteMultiFPC(startBitmap.pointer, framesPerCell, frames, width, height), PtrKind.Sprite);
             }
             catch (Exception exc)
             {
@@ -2493,7 +2489,7 @@ namespace SwinGame
                     temp[i] = startBitmap[i].pointer;
                 }
 
-                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayEnding(temp.Length, temp, framesPerCell.Length, framesPerCell, (int)endingAction), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayEnding(temp.Length, temp, framesPerCell.Length, framesPerCell, (int)endingAction), PtrKind.Sprite);
             }
             catch (Exception exc)
             {
@@ -2525,7 +2521,7 @@ namespace SwinGame
                 {
                     temp[i] = startBitmap[i].pointer;
                 }
-                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArray(temp.Length, temp, framesPerCell.Length, framesPerCell), PtrKind.Sprite);
             }
             catch (Exception exc)
             {
@@ -2558,7 +2554,7 @@ namespace SwinGame
                 {
                     temp[i] = startBitmap[i].pointer;
                 }
-                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayFPC(temp.Length, temp, framesPerCell, frames), DLL_FreeSprite);
+                result.Pointer = new SwinGamePointer(DLL_CreateSpriteArrayFPC(temp.Length, temp, framesPerCell, frames), PtrKind.Sprite);
             }
             catch (Exception exc)
             {

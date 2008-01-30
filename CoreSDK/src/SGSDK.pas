@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-01-30: Andrew: Fixed String Marshalling and Free
 //  - 2008-01-29: Andrew: Removed var from the Free routines
 //  - 2008-01-25: Stephen: Fixed IsMouseShown
 //  - 2008-01-23: Andrew: ToGameCoordinates - changed to use Point2D
@@ -53,7 +54,13 @@ uses
 		IntPtr = ^Integer;
 		//BitmapPtr used to receive Bitmap arrays
 		BitmapPtr = ^Bitmap;
-		Matrix2DPtr = ^Matrix2D;
+		
+		Matrix2DData = record
+				data: Matrix2D;
+				free: Boolean;
+			end;
+		
+		Matrix2DPtr = ^Matrix2DData;
 		LineSegPtr = ^LineSegment;
 
 		IntArray = Array of Integer;
@@ -1096,13 +1103,26 @@ uses
 		result.x := 0; result.y := 0;
 	end;
 }
+
+	procedure NewMatrix(out p: Matrix2DPtr);
+	begin
+		new(p);
+		p^.Free := false;
+	end;
+	
+	procedure CheckMatrix(m: Matrix2DPtr);
+	begin
+		if not Assigned(m) then raise Exception.Create('Matrix is not valid');
+		if m^.free then raise Exception.Create('Using a freed matrix'); 
+	end;
+
 	function TranslationMatrix(dx, dy: Single): Matrix2DPtr; cdecl; export;
 	var
 		p: Matrix2DPtr;
 	begin
 		Try
-			new(p);
-			p^ := SGSDK_Physics.TranslationMatrix(dx, dy);
+			NewMatrix(p);
+			p^.data := SGSDK_Physics.TranslationMatrix(dx, dy);
 			result := p;
 			exit;
 		Except on exc: Exception do TrapException(exc);
@@ -1115,8 +1135,8 @@ uses
 		p: Matrix2DPtr;
 	begin
 		Try
-			new(p);
-			p^ := SGSDK_Physics.ScaleMatrix(scale);
+			NewMatrix(p);
+			p^.Data := SGSDK_Physics.ScaleMatrix(scale);
 			result := p;
 			exit;
 		Except on exc: Exception do TrapException(exc);
@@ -1129,8 +1149,8 @@ uses
 		p: Matrix2DPtr;
 	begin
 		Try	
-			new(p);
-			p^ := SGSDK_Physics.RotationMatrix(deg);
+			NewMatrix(p);
+			p^.Data := SGSDK_Physics.RotationMatrix(deg);
 			result := p;
 			exit;
 		Except on exc: Exception do TrapException(exc);
@@ -1138,13 +1158,13 @@ uses
 		result := nil;
 	end;
 	
-	function MultiplyMatrix2D(m1, m2: Matrix2DPtr): Matrix2DPtr; cdecl; export;
+	function MultiplyMatrix2D(m1, m2: Matrix2DPtr): Pointer; cdecl; export;
 	var
 		p: Matrix2DPtr;
 	begin
 		Try
-			new(p);
-			p^ := SGSDK_Physics.Multiply(m1^, m2^);
+			NewMatrix(p);
+			p^.Data := SGSDK_Physics.Multiply(m1^.Data, m2^.Data);
 			result := p;
 			exit;
 		Except on exc: Exception do TrapException(exc);
@@ -1155,7 +1175,9 @@ uses
 	function MultiplyMatrix2DAndVector(m: Matrix2DPtr; v: Vector): Vector; cdecl; export;
 	begin
 		Try
-			result := SGSDK_Physics.Multiply(m^, v);
+			CheckMatrix(m);
+				
+			result := SGSDK_Physics.Multiply(m^.Data, v);
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -1189,7 +1211,9 @@ uses
 	function GetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer): Single; cdecl; export;
 	begin
 		Try
-			result := matrix^[x,y];
+			CheckMatrix(matrix);
+			
+			result := matrix^.Data[x, y];
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
@@ -1199,7 +1223,9 @@ uses
 	procedure SetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer; val: Single); cdecl; export;
 	begin
 		Try
-			matrix^[x,y] := val;
+			CheckMatrix(matrix);
+			
+			matrix^.Data[x,y] := val;
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
@@ -1207,8 +1233,8 @@ uses
 	procedure FreeMatrix2D(matrix: Matrix2DPtr); cdecl; export;
 	begin
 		Try
-			if Assigned(matrix) then Dispose(matrix);
-			matrix := nil;
+			CheckMatrix(matrix);
+			Dispose(matrix);
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;	
@@ -1386,7 +1412,7 @@ uses
 	procedure FreeBitmap(bitmapToFree : Bitmap); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.FreeBitmap(bitmapToFree);
+			//SGSDK_Graphics.FreeBitmap(bitmapToFree);
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
@@ -1855,7 +1881,7 @@ uses
 	procedure FreeSprite(spriteToFree : Sprite); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.FreeSprite(spriteToFree);
+			//SGSDK_Graphics.FreeSprite(spriteToFree);
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;
@@ -2213,7 +2239,7 @@ uses
 	procedure FreeMap(m : Map); cdecl; export;
 	begin
 		Try
-			SGSDK_MappyLoader.FreeMap(m);
+			//SGSDK_MappyLoader.FreeMap(m);
 		Except on exc: Exception do TrapException(exc);
 		end;
 	end;

@@ -517,19 +517,8 @@ implementation
 			raise Exception.Create('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
 		
 		oldScr := scr.surface;
-		//toggle := (oldScr.flags and SDL_FULLSCREEN) = SDL_FULLSCREEN;
-		
-		{$ifndef UNIX}
-		//if toggle then ToggleFullScreen();
-		// Dont think these are needed.... check on windows
-		{$endif}
 		
 		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
-		//if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
-		
-		{$ifndef UNIX}
-		//if toggle then ToggleFullScreen();
-		{$endif}
 	end;
 	
 	/// Returns the width of the screen currently displayed.

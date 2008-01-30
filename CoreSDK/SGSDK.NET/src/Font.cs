@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-25: Andrew: Fixed DrawLinesToScreen
 // - 2008-01-23: Andrew: Fixed exceptions
@@ -95,7 +96,7 @@ namespace SwinGame
     /// </summary>
     public class Text
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFont")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadFont", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_LoadFont([MarshalAs(UnmanagedType.LPStr)]string fontName, int size);
         /// <summary>
         /// Loads a font from file with the specified side. Fonts must be freed using
@@ -111,7 +112,7 @@ namespace SwinGame
             Font font;
 				try
 				{
-            	font.Pointer = new SwinGamePointer(DLL_LoadFont(fontName, size), DLL_FreeFont);
+            	font.Pointer = new SwinGamePointer(DLL_LoadFont(fontName, size), PtrKind.Font);
 				}catch(Exception exc) 
 				{ 
 					throw new SwinGameException(exc.Message); 
@@ -148,8 +149,6 @@ namespace SwinGame
             }
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeFont")]
-        private static extern void DLL_FreeFont(IntPtr fontToFree);
         /// <summary>
         /// Free a loaded font.
         /// </summary>
@@ -159,7 +158,7 @@ namespace SwinGame
             fontToFree.Pointer.Free();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnBitmap", CharSet=CharSet.Ansi)]
         private static extern void DLL_DrawTextOnBitmap(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// Draws texts to the destination bitmap. Drawing text is a slow operation,
@@ -205,7 +204,7 @@ namespace SwinGame
             DrawText(dest, theText, textColor, theFont, (int)pnt.X, (int)pnt.Y);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawText", CharSet=CharSet.Ansi)]
         private static extern void DLL_DrawText([MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, IntPtr theFont, float x, float y);
         /// <summary>
         /// Draws texts to the screen. Drawing text is a slow operation,
@@ -249,7 +248,7 @@ namespace SwinGame
             DrawText(theText, textColor, theFont, pnt.X, pnt.Y);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLines")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLines", CharSet=CharSet.Ansi)]
         private static extern void DLL_DrawTextLines([MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, float x, float y, int w, int h);
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
@@ -299,7 +298,7 @@ namespace SwinGame
         }
 
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnBitmap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnBitmap", CharSet=CharSet.Ansi)]
         private static extern void DLL_DrawTextLines(IntPtr dest, [MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);
         /// <summary>
         /// Draws multiple lines of text to the destination bitmap. This is a very
@@ -349,7 +348,7 @@ namespace SwinGame
             DrawTextLines(dest, theText, textColor, backColor, theFont, align, rect.X, rect.Y, rect.Width, rect.Height);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextWidth")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextWidth", CharSet=CharSet.Ansi)]
         private static extern int DLL_TextWidth([MarshalAs(UnmanagedType.LPStr)]string theText, IntPtr theFont);
         /// <summary>
         /// Calculates the width of a string when drawn with a given font.
@@ -376,7 +375,7 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextHeight")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TextHeight", CharSet=CharSet.Ansi)]
         private static extern int DLL_TextHeight([MarshalAs(UnmanagedType.LPStr)]string theText, IntPtr theFont);
         /// <summary>
         /// Calculates the height of a string when drawn with a given font.
@@ -441,7 +440,7 @@ namespace SwinGame
 
         // Draw Text on Screen Stuff
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextOnScreen", CharSet=CharSet.Ansi)]
         private static extern void DLL_DrawTextOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, IntPtr theFont, int x, int y);
         /// <summary>
         /// Draws texts to the screen. Drawing text is a slow operation,
@@ -484,7 +483,7 @@ namespace SwinGame
             DrawTextOnScreen(theText, textColor, theFont, (int)point.X, (int)point.Y);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTextLinesOnScreen", CharSet=CharSet.Ansi)]
         private static extern void DLL_DrawTextLinesOnScreen([MarshalAs(UnmanagedType.LPStr)]string theText, uint textColor, uint backColor, IntPtr theFont, FontAlignment align, int x, int y, int w, int h);   
         /// <summary>
         /// Draws multiple lines of text to the screen. This is a very
