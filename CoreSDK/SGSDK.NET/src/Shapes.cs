@@ -165,7 +165,7 @@ namespace SwinGame
         /// <returns>the point on the line closest to the specified point (x,y)</returns>
         public static Point2D ClosestPointOnLine(Point2D fromPt, LineSegment line)
         {
-            return ClosestPointOnLine(fromPt, line);
+            return ClosestPointOnLine(fromPt.X, fromPt.Y, line);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CenterPoint")]
