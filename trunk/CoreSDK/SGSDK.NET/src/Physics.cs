@@ -10,6 +10,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: James: Changed CircleHasCollidedWithLine to take a 
+//    LineSegement insted of a Point2D
 // - 2008-01-29: Andrew: Fixed MAtrix2D dispose - removed
 // - 2008-01-23: Andrew: Fixed exceptions
 //    Added changes for 1.1 compatibility
@@ -694,19 +696,19 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircleHasCollidedWithLine")]
-        private static extern bool DLL_CircleHasCollidedWithLine(IntPtr sprite, Point2D point);
+        private static extern bool DLL_CircleHasCollidedWithLine(IntPtr sprite, LineSegment line);
         /// <summary>
         /// Checks if the Sprite has Collided with the Line
         /// </summary>
         /// <param name="sprite">Sprite</param>
-        /// <param name="point">Point</param>
+        /// <param name="line">Line</param>
         /// <returns>True if sprite collides with the line</returns>
-        public static bool CircleHasCollidedWithLine(Sprite sprite, Point2D point)
+        public static bool CircleHasCollidedWithLine(Sprite sprite, LineSegment line)
         {
             bool temp;
             try
             {
-                temp = DLL_CircleHasCollidedWithLine(sprite.Pointer, point);
+                temp = DLL_CircleHasCollidedWithLine(sprite.Pointer, line);
             }
             catch (Exception exc)
             {

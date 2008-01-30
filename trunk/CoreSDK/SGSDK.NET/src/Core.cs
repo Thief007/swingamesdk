@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: James: Added extra constructor for SwinGamePointer
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
@@ -42,9 +43,17 @@ namespace SwinGame
             _Freed = (ptr == IntPtr.Zero);
         }
 
+        internal SwinGamePointer(IntPtr ptr)
+        {
+            Pointer = ptr;
+            _ToFree = null;
+            _Freed = true;
+            GC.SuppressFinalize(this);
+        }
+
 		  ~SwinGamePointer()
 		  {
-			    if (!_Freed)  InnerFree();
+	        if (!_Freed)  InnerFree();
 		  }
 
         public static implicit operator IntPtr(SwinGamePointer p)
