@@ -2889,7 +2889,7 @@ namespace SwinGame
         /// <param name="source">Rectangle</param>
         public static void FillRectangleOnScreen(Color theColor, Rectangle source)
         {
-            FillRectangle(theColor, source.X, source.Y, source.Width, source.Height);
+            FillRectangleOnScreen(theColor, source.X, source.Y, source.Width, source.Height);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
