@@ -85,7 +85,7 @@ implementation
  	var
  		i : Integer;
  	begin
-        Sleep(100);
+      Sleep(400);
 		
 		PlaySoundEffect(_StartSound);
 		for i:= 0 to 13 do
@@ -99,7 +99,7 @@ implementation
 			RefreshScreen();
 			ProcessEvents();			
 		end;
-		Sleep(1000);
+		Sleep(1500);
  	end;
  	
 	procedure ShowLoadingScreen();
@@ -125,6 +125,8 @@ implementation
 	
 	procedure EndLoadingScreen();
 	begin
+		ProcessEvents();
+		Sleep(500);
 		ClearScreen();
 		RefreshScreen();
 		FreeFont(_LoadingFont);

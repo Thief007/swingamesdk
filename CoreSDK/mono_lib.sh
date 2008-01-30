@@ -36,10 +36,16 @@ function cpToSDK
 {
 	echo "  ... Copying to $1 SDK"
 
-	cp "$Output"/*.dll "$SDKBase/$1/lib"
-			if [ $? != 0 ]; then echo "Error copying DLL"; exit 1; fi
-	cp "$Output"/*.XML "$SDKBase/$1/lib"
-			if [ $? != 0 ]; then echo "Error copying XML"; exit 1; fi
+	if [ ! -d "$SDKBase/$1/lib/" ]
+	then
+		mkdir -p "$SDKBase/$1/lib/"
+	fi
+
+	cp "$Output"/*.dll "$SDKBase/$1/lib/"
+	if [ $? != 0 ]; then echo "Error copying DLL"; exit 1; fi
+	
+	cp "$Output"/*.XML "$SDKBase/$1/lib/"
+	if [ $? != 0 ]; then echo "Error copying XML"; exit 1; fi
 
 	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 	then

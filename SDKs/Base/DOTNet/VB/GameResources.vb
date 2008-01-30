@@ -76,7 +76,7 @@ Public Class GameResources
             Core.ProcessEvents()
         Next i
 
-        Core.Sleep(400)
+        Core.Sleep(1500)
 
     End Sub
 
@@ -87,6 +87,8 @@ Public Class GameResources
     End Sub
 
     Private Sub EndLoadingScreen(ByVal width As Integer, ByVal height As Integer)
+		Core.ProcessEvents()
+		Core.Sleep(500)
         Graphics.ClearScreen()
         Core.RefreshScreen()
         Text.FreeFont(_LoadingFont)

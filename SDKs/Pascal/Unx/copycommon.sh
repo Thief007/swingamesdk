@@ -3,6 +3,11 @@
 SOURCE_RESOURCE=../../Base/All/Resources
 RESOURCE_DIR=./FPC/Resources
 
+if [ -d ${RESOURCE_DIR} ]
+then
+	rm -rf ${RESOURCE_DIR}
+fi
+
 mkdir -p ${RESOURCE_DIR}
 if [ $? != 0 ]; then echo "Error creating resource directory"; exit 1; fi
 	
