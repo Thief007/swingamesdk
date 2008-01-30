@@ -31,7 +31,7 @@ implementation
 		DrawText('0, 0', ColourRed, GameFont('Courier'), 0, 0);
 		DrawTextOnScreen('Ship Position: ' + FloatToStr(GameX(ScreenX(shipSprite.x))) + ', ' + FloatToStr(GameY(ScreenY(shipSprite.y))), ColourRed, GameFont('Courier'), Round(drawIn.x), Round(drawIn.y));
 		DrawTextOnScreen('Ship Position On Screen: ' + FloatToStr(ScreenX(shipSprite.x)) + ', ' + FloatToStr(ScreenY(shipSprite.y)), ColourRed, GameFont('Courier'), Round(drawIn.x), Round(drawIn.y) + 15);
-		DrawTextOnScreen('Camera Offset: ' + IntToStr(XOffset) + ', ' + IntToStr(YOffset), ColourRed, GameFont('Courier'), Round(drawIn.x), Round(drawIn.y) + 30);
+		DrawTextOnScreen('Camera Offset: ' + IntToStr(XOffset()) + ', ' + IntToStr(YOffset()), ColourRed, GameFont('Courier'), Round(drawIn.x), Round(drawIn.y) + 30);
 		
 		
 		DrawSprite(shipSprite);
