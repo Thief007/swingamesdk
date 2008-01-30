@@ -22,6 +22,7 @@ namespace Tests
             result.Add(new TestFill1());
             result.Add(new TestFill2());
             result.Add(new TestSprite());
+            result.Add(new TestAddBitmap());
             list.Add(result);
         }
 
@@ -702,6 +703,58 @@ namespace Tests
                 SwinGame.Graphics.ReplayAnimation(sprites[currentSpr]);  
             }
 		
+        }
+
+        private class TestAddBitmap : TestSet
+        {
+            private readonly static string METHS =
+                "AddBitmapToSprite";
+
+            private readonly static string INST =
+                "Press Space to add an" + Environment.NewLine +
+                "another bitmap.";
+
+            private SwinGame.Bitmap smallScreen = SwinGame.Graphics.CreateBitmap(418, 418);
+            private SwinGame.Bitmap[] tempBitmap;
+            private SwinGame.Bitmap testingBitmap;
+            private Sprite numSprite;
+            private int curNum = 1;
+
+            private int[] fps;
+
+            public TestAddBitmap()
+                : base(METHS, INST)
+            {
+                Array.Resize(ref tempBitmap, 1);
+                tempBitmap[0] = SwinGame.Graphics.CreateBitmap(121, 120);
+                SwinGame.Graphics.DrawCircle(tempBitmap[0], Color.White, true, 60, 60, 60);
+			    Text.DrawTextLines(tempBitmap[0], "1", Color.Black, Color.Transparent, GameResources.GameFont("ArialLarge"), FontAlignment.AlignCenter, Shapes.CreateRectangle(tempBitmap[0]));
+			    numSprite = SwinGame.Graphics.CreateSprite(tempBitmap, 10, 1);
+			    numSprite.X = 149;
+			    numSprite.Y = 149;
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle drawIn)
+            {
+                if (Input.WasKeyTyped(Keys.VK_SPACE))
+		        {
+			        curNum = curNum + 1;
+                    testingBitmap = SwinGame.Graphics.CreateBitmap(121, 120);
+                    SwinGame.Graphics.DrawCircle(testingBitmap, Color.White, true, 60, 60, 60);
+                    Text.DrawTextLines(testingBitmap, Convert.ToString(curNum), Color.Black, Color.Transparent, GameResources.GameFont("ArialLarge"), FontAlignment.AlignCenter, Shapes.CreateRectangle(testingBitmap));
+                    SwinGame.Graphics.AddBitmapToSprite(numSprite, testingBitmap);
+
+                    fps = numSprite.FramesPerCell;
+
+                    Array.Resize(ref fps, fps.Length + 1);
+			        fps[fps.Length - 1] = 10;
+
+                    numSprite.FramesPerCell = fps;
+		        }
+
+                SwinGame.Graphics.DrawSprite(numSprite);
+                SwinGame.Graphics.UpdateSpriteAnimation(numSprite);
+            }
         }
     }
 }
