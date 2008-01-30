@@ -10,7 +10,7 @@
 // Change History:
 //
 // Version 1.1:
-// - 2008-01-30: Andrew: Fixed String Marshalling
+// - 2008-01-30: Andrew: Fixed String Marshalling and TextRead
 // - 2008-01-23: Fixed Exceptions
 //               Added changes for 1.1 compatibility
 //               Added extra comments, and fixed code layout and line endings.
@@ -710,7 +710,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII", CharSet=CharSet.Ansi)]
-        private static extern void DLL_TextReadAsASCII([MarshalAs(UnmanagedType.LPStr)] StringBuilder ptr);
+        private static extern void DLL_TextReadAsASCII(out IntPtr ptr);
 
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
@@ -723,9 +723,9 @@ namespace SwinGame
             String temp;
             try
             {
-					 StringBuilder sb = new StringBuilder();
-                DLL_TextReadAsASCII(sb);
-					 temp = sb.ToString();
+					 IntPtr ptr;
+                DLL_TextReadAsASCII(out ptr);
+					 temp = Marshal.PtrToStringAnsi(ptr);
             }
             catch (Exception exc)
             {
