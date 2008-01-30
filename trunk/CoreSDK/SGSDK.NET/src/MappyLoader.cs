@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Stephen: Fixed Exceptions
 //                        Added changes for 1.1 compatibility
@@ -199,9 +200,10 @@ namespace SwinGame
     /// </summary>
     public class MappyLoader
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="LoadMap", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_LoadMap([MarshalAs(UnmanagedType.LPStr)]string mapFile, [MarshalAs(UnmanagedType.LPStr)]string imgFile);
-   	    /// <summary>
+
+   	  /// <summary>
         /// Loads a Map, using mapFile to indicate which map file to load.
         /// </summary>
         /// <param name="mapName">Name of the map</param>
@@ -214,7 +216,7 @@ namespace SwinGame
                 string mapFile = Core.GetPathToResource(mapName + ".sga", ResourceKind.MapResource);
 			    string imgFile = Core.GetPathToResource(mapName + ".png", ResourceKind.MapResource);
 					
-                temp.Pointer = new SwinGamePointer(DLL_LoadMap(mapFile, imgFile), DLL_FreeMap);
+                temp.Pointer = new SwinGamePointer(DLL_LoadMap(mapFile, imgFile), PtrKind.Map);
             }
             catch (Exception exc)
             {
@@ -395,8 +397,6 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
-        private static extern void DLL_FreeMap(IntPtr map);
         /// <summary>
         /// Free a loaded map. This ensures that the resources used by the Map are returned to the system.
 		/// This must be called once you have finished using the Map.
@@ -408,7 +408,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SpriteHasCollidedWithMapTile")]
-        private static extern bool DLL_SpriteHasCollidedWithMapTile(IntPtr map, IntPtr spr, out int collidedX, out int collidedY);
+        private static extern int DLL_SpriteHasCollidedWithMapTile(IntPtr map, IntPtr spr, out int collidedX, out int collidedY);
         /// <summary>
         /// Checks whether the specified Sprite has collided with a map tile within the specified map.
         /// If so, this method returns true, else false. This command can be used to determine whether
@@ -426,7 +426,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_SpriteHasCollidedWithMapTile(map.Pointer, spr.Pointer, out collidedX, out collidedY);
+                temp = DLL_SpriteHasCollidedWithMapTile(map.Pointer, spr.Pointer, out collidedX, out collidedY) == -1;
             }
             catch (Exception exc)
             {
@@ -454,7 +454,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_SpriteHasCollidedWithMapTile(map.Pointer, spr.Pointer, out collidedX, out collidedY);
+                temp = DLL_SpriteHasCollidedWithMapTile(map.Pointer, spr.Pointer, out collidedX, out collidedY) == -1;
             }
             catch (Exception exc)
             {

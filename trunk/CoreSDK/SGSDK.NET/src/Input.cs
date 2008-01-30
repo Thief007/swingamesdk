@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling
 // - 2008-01-23: Fixed Exceptions
 //               Added changes for 1.1 compatibility
 //               Added extra comments, and fixed code layout and line endings.
@@ -568,7 +569,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseDown")]
-        private static extern bool DLL_IsMouseDown(MouseButton button);
+        private static extern int DLL_IsMouseDown(MouseButton button);
         /// <summary>
         /// This function checks if the specified mouse button is being clicked, this is useful for
         /// ingame buttons, you could use this function to find if the user had hit the left mouse button.
@@ -581,7 +582,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_IsMouseDown(button);
+                temp = DLL_IsMouseDown(button) == -1;
             }
             catch (Exception exc)
             {
@@ -595,7 +596,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsMouseUp")]
-        private static extern bool DLL_IsMouseUp(MouseButton button);
+        private static extern int DLL_IsMouseUp(MouseButton button);
         /// <summary>
         /// This function checks if the specified mouse button is not
         /// being clicked.
@@ -608,7 +609,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_IsMouseUp(button);
+                temp = DLL_IsMouseUp(button) == -1;
             }
             catch (Exception exc)
             {
@@ -622,7 +623,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="MouseWasClicked")]
-        private static extern bool DLL_MouseWasClicked(MouseButton button);
+        private static extern int DLL_MouseWasClicked(MouseButton button);
         /// <summary>
         /// This functions checks if the mouse button specified has
         /// been clicked.
@@ -635,7 +636,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_MouseWasClicked(button);
+                temp = DLL_MouseWasClicked(button) == -1;
             }
             catch (Exception exc)
             {
@@ -681,7 +682,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsReadingText")]  
-	    private static extern bool DLL_IsReadingText();
+	    private static extern int DLL_IsReadingText();
         /// <summary>
         /// IsReadingText indicates if the API is currently reading text from the
         ///	user. Calling StartReadingText will set this to true, and it becomes
@@ -695,7 +696,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_IsReadingText();
+                temp = DLL_IsReadingText() == -1;
             }
             catch (Exception exc)
             {
@@ -708,8 +709,8 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII")]
-        private static extern void DLL_TextReadAsASCII(out string ptr);
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII", CharSet=CharSet.Ansi)]
+        private static extern void DLL_TextReadAsASCII([MarshalAs(UnmanagedType.LPStr)] StringBuilder ptr);
 
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
@@ -720,13 +721,11 @@ namespace SwinGame
         public static String TextReadAsASCII()
         {
             String temp;
-				//IntPtr ptr;
-				//int len;
-
             try
             {
-                DLL_TextReadAsASCII(out temp);
-					 
+					 StringBuilder sb = new StringBuilder();
+                DLL_TextReadAsASCII(sb);
+					 temp = sb.ToString();
             }
             catch (Exception exc)
             {
@@ -740,7 +739,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="IsKeyPressed")]
-        private static extern bool DLL_IsKeyPressed(Keys key);
+        private static extern int DLL_IsKeyPressed(int key);
         /// <summary>
         /// Returns true when the key requested is being held down. This is updated
         ///	as part of the ProcessEvents call. Use the key codes from the KeyCodes
@@ -754,7 +753,7 @@ namespace SwinGame
        
             try
             {
-                temp = DLL_IsKeyPressed(key);
+                temp = DLL_IsKeyPressed((int)key) == -1;
             }
             catch (Exception exc)
             {
@@ -768,7 +767,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="WasKeyTyped")]
-        private static extern bool DLL_WasKeyTyped(Keys key);
+        private static extern int DLL_WasKeyTyped(int key);
         /// <summary>
         /// Returns true when a key is typed. This occurs when the key is pressed on the 
         /// keyboard, and will not reoccur until it is released and pressed again. This
@@ -782,7 +781,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_WasKeyTyped(key);
+                temp = DLL_WasKeyTyped((int)key) == -1;
             }
             catch (Exception exc)
             {

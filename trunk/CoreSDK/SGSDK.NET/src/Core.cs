@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Added extra constructor for SwinGamePointer
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Andrew: Fixed exceptions
@@ -23,37 +24,54 @@
 // - Various
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
 namespace SwinGame
 {
-    internal delegate void FreeDelegate(IntPtr toFree);
+    //internal delegate void FreeDelegate(IntPtr toFree);
+	internal enum PtrKind
+	{
+		Image,
+		Font,
+		Sound,
+		Music,
+		Map,
+		Sprite,
+		Matrix,
+		Timer,
+		Copy
+	}
+
+	internal struct PointerData
+	{
+		public PtrKind kind;
+		public IntPtr ptr;
+	}
 
     internal class SwinGamePointer
     {
-        private FreeDelegate _ToFree;
+        //private FreeDelegate _ToFree;
+		  private PtrKind _Kind;
         private bool _Freed;
         internal IntPtr Pointer;
 
-        internal SwinGamePointer(IntPtr ptr, FreeDelegate toFree)
+        internal SwinGamePointer(IntPtr ptr, PtrKind kind)
         {
             Pointer = ptr;
-            _ToFree = toFree;
+				_Kind = kind;
             _Freed = (ptr == IntPtr.Zero);
         }
 
-        internal SwinGamePointer(IntPtr ptr)
+        internal SwinGamePointer(IntPtr ptr) : this (ptr, PtrKind.Copy)
         {
-            Pointer = ptr;
-            _ToFree = null;
-            _Freed = true;
             GC.SuppressFinalize(this);
         }
 
 		  ~SwinGamePointer()
 		  {
-	        if (!_Freed)  InnerFree();
+	        Core.RegisterDelete(Pointer, _Kind);
 		  }
 
         public static implicit operator IntPtr(SwinGamePointer p)
@@ -63,34 +81,15 @@ namespace SwinGame
 
         internal void Free()
         {
-	         InnerFree();
+				Core.DoFree(Pointer, _Kind);
+				
 	         GC.SuppressFinalize(this);
+
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
 		  }
-		  
-		  internal void InnerFree()
-		  {
-            if (false == _Freed)
-            {
-                try
-                {
-                    _ToFree(Pointer);
-						 Pointer = IntPtr.Zero;
-                    _Freed = true;
-                }
-                catch (Exception e) { throw new SwinGameException(e.Message); }
-
-                if (Core.ExceptionOccured())
-                {
-                    throw new SwinGameException(Core.GetExceptionMessage());
-                }
-            }
-            else
-            {
-                Console.WriteLine("You are attempting to Free a resource multiple times.");
-                System.Diagnostics.Debug.WriteLine("You are attempting to Free a resource multiple times.");
-            }
-        }
-
     }
 
     /// <summary>
@@ -109,6 +108,7 @@ namespace SwinGame
             : base(message)
         { }
     }
+
     /// <summary>
     /// ResourceKind
     ///
@@ -238,6 +238,82 @@ namespace SwinGame
     /// </summary>
     public class Core
     {
+	
+	    [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
+       private static extern void DLL_FreeMaxtrix2D(IntPtr maxtrix2d);
+   
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSoundEffect")]
+       private static extern void DLL_FreeSoundEffect(IntPtr effect);
+
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMusic")]
+       private static extern void DLL_FreeMusic(IntPtr effect);
+
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeTimer")]
+       private static extern void DLL_FreeTimer(IntPtr timer);
+
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeFont")]
+       private static extern void DLL_FreeFont(IntPtr fontToFree);
+
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
+       private static extern void DLL_FreeBitmap(IntPtr bitmapToFree);
+
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
+       private static extern void DLL_FreeSprite(IntPtr spriteToFree);
+
+       [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
+       private static extern void DLL_FreeMap(IntPtr map);
+	
+		  private static List<PointerData> _ToFree = new List<PointerData>();
+	
+		  internal static void RegisterDelete(IntPtr ptr, PtrKind kind)
+		  {
+				PointerData pd = new PointerData();
+				pd.ptr = ptr;
+				pd.kind = kind;
+				
+				lock(_ToFree)
+				{
+					_ToFree.Add(pd);
+				}
+		  }
+		
+		  private static void FreeAnythingToFree()
+		  {
+				lock(_ToFree)
+				{
+					foreach(PointerData pd in _ToFree)
+					{
+						DoFree(pd.ptr, pd.kind);
+					}
+					_ToFree.Clear();
+				}
+		  }
+	
+		  internal static void DoFree(IntPtr ptr, PtrKind kind)
+		  {
+			try
+			{
+				switch(kind)
+				{
+					case PtrKind.Image: DLL_FreeBitmap(ptr); break;
+					case PtrKind.Sound: DLL_FreeSoundEffect(ptr); break;
+					case PtrKind.Music: DLL_FreeMusic(ptr); break;
+					case PtrKind.Map: DLL_FreeMap(ptr); break;
+					case PtrKind.Timer: DLL_FreeTimer(ptr); break;
+					case PtrKind.Font: DLL_FreeFont(ptr); break;
+					case PtrKind.Sprite: DLL_FreeSprite(ptr); break;
+					case PtrKind.Matrix: DLL_FreeMaxtrix2D(ptr); break;
+				}
+			}
+			catch (Exception e) 
+			{ 
+				Console.WriteLine("Error in DoFree: {0}", e); 
+			}
+			
+			if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
+        }
+	
+	
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
         private static extern int DLL_ExceptionOccured();
 
@@ -272,7 +348,7 @@ namespace SwinGame
         private static extern int objc_msgSend(int self, int cmd);
         #endregion
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OpenGraphicsWindow")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OpenGraphicsWindow", CharSet=CharSet.Ansi)]
         private static extern void DLL_OpenGraphicsWindow([MarshalAs(UnmanagedType.LPStr)]String caption, int width, int height);
 
         /// <summary>
@@ -374,14 +450,17 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
+
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+				
+				FreeAnythingToFree();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetIcon")]
-        private static extern void DLL_SetIcon([MarshalAs(UnmanagedType.LPStr)]String iconFilename);
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetIcon", CharSet=CharSet.Ansi)]
+        private static extern void DLL_SetIcon([MarshalAs(UnmanagedType.LPStr)]string iconFilename);
         /// <summary>
         /// Sets the icon for the window. This must be called before openning the
         ///	graphics window. The icon is loaded as a bitmap, though this can be from
@@ -507,7 +586,7 @@ namespace SwinGame
             }
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TakeScreenshot")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TakeScreenshot", CharSet=CharSet.Ansi)]
         private static extern void DLL_TakeScreenshot([MarshalAs(UnmanagedType.LPStr)]String basename);
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
@@ -770,10 +849,10 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, ResourceKind kind);
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_GetPathToResourceWithBase([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename);
 
         private static readonly string appPath;
@@ -884,7 +963,7 @@ namespace SwinGame
             Timer temp;
             try
             {
-                temp.Ptr = new SwinGamePointer(DLL_CreateTimer(), DLL_FreeTimer);
+                temp.Ptr = new SwinGamePointer(DLL_CreateTimer(), PtrKind.Timer);
             }
             catch (Exception exc)
             {
@@ -896,9 +975,6 @@ namespace SwinGame
             }
             return temp;
         }
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeTimer")]
-        private static extern void DLL_FreeTimer(IntPtr timer);
 
         /// <summary>
         /// Free a timer that you have created. Ensure that you only free the timer

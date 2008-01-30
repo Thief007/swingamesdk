@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
@@ -129,7 +130,7 @@ namespace SwinGame
             PlaySoundEffect(effect, 0);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_LoadSoundEffect([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Loads a SoundEffect from file. Use the GetPathToResource methods from Core to
@@ -144,7 +145,7 @@ namespace SwinGame
 
             try
             {
-                effect.Pointer = new SwinGamePointer(DLL_LoadSoundEffect(path), DLL_FreeSoundEffect);
+                effect.Pointer = new SwinGamePointer(DLL_LoadSoundEffect(path), PtrKind.Sound);
             }
             catch (Exception exc)
             {
@@ -159,8 +160,6 @@ namespace SwinGame
             return effect;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSoundEffect")]
-        private static extern void DLL_FreeSoundEffect(IntPtr effect);
         /// <summary>
         /// Frees a Sound Effect From Memory. You need to ensure that all sound effects
         /// that you load are freed by the end of the game. This is usually done
@@ -172,7 +171,7 @@ namespace SwinGame
             effect.Pointer.Free();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic")]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic", CharSet=CharSet.Ansi)]
         private static extern IntPtr DLL_LoadMusic([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Load music to play from the file system. Music can be in the form of a
@@ -188,7 +187,7 @@ namespace SwinGame
 
             try
             {
-                music.Pointer = new SwinGamePointer(DLL_LoadMusic(Path), DLL_FreeMusic);
+                music.Pointer = new SwinGamePointer(DLL_LoadMusic(Path), PtrKind.Music);
             }
             catch (Exception exc)
             {
@@ -201,8 +200,6 @@ namespace SwinGame
             return music;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMusic")]
-        private static extern void DLL_FreeMusic(IntPtr effect);
         /// <summary>
         /// Free a music value. All loaded music values need to be freed by the
         /// end of the program. This is usually done when the program exits.
