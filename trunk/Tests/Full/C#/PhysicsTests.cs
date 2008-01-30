@@ -47,7 +47,7 @@ namespace Tests
                 "VectorIsWithinRect";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine
+                "Mouse to move vector" + Environment.NewLine
                 ;
 
             public VectorIsWithinRectTest()
@@ -503,7 +503,8 @@ namespace Tests
 
             private readonly static string INST =
                 "Arrow keys to move the sprite " + Environment.NewLine + "around" +Environment.NewLine+
-                "AWSD keys to change the vector " + Environment.NewLine;
+                "AWSD keys to change the vector " + Environment.NewLine+
+                "Space to move ball out of line";
 
 
             private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
