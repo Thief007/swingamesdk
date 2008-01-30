@@ -169,7 +169,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CenterPoint")]
-        private static extern Point2D DLL_CenterPoint(Sprite sprt);
+        private static extern Point2D DLL_CenterPoint(IntPtr sprt);
 
         /// <summary>
         /// Returns the center point of the sprite. This does not take into
@@ -183,7 +183,7 @@ namespace SwinGame
             Point2D temp;
             try
             {
-                temp = DLL_CenterPoint(sprt);
+                temp = DLL_CenterPoint(sprt.Pointer);
             }
             catch (Exception exc)
             {
