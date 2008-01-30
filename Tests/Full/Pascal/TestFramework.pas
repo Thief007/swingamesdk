@@ -71,7 +71,7 @@ implementation
 
 	procedure DrawMethodBeingTested(methodBeingTested : String);
 	begin
-		FillRectangleOnScreen(ColorBlack, METHOD_LEFT, METHOD_TOP, METHOD_WIDTH, METHOD_HEIGHT);
+		FillRectangleOnScreen(ColorBlack, METHOD_LEFT, METHOD_TOP, METHOD_WIDTH + 100, METHOD_HEIGHT);
 	    DrawTextOnScreen(methodBeingTested, ColorWhite, GameFont('Courier'), METHOD_LEFT, METHOD_TOP);
 	end;
 
@@ -79,7 +79,7 @@ implementation
 	var
 		rect: Rectangle;
 	begin
-		rect := CreateRectangle(INSTRUCTION_LEFT, INSTRUCTION_TOP, INSTRUCTION_WIDTH, INSTRUCTION_HEIGHT);
+		rect := CreateRectangle(INSTRUCTION_LEFT, INSTRUCTION_TOP, INSTRUCTION_WIDTH + 20, INSTRUCTION_HEIGHT);
 		FillRectangle(ColorBlack, rect);
 		DrawTextLines(instructions, ColorWhite, ColorTransparent, GameFont('Courier'), AlignLeft, rect);
 	end;
