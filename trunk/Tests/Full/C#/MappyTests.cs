@@ -36,8 +36,6 @@ namespace Tests
             private Map _Map = GameResources.GameMap("test3");
             private Sprite _Ball = SwinGame.Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
 
-            private Rectangle _BoundingRect = Shapes.CreateRectangle(0, 0, 30, 30);
-
             private int _TileX = 0;
             private int _TileY = 0;
 
@@ -55,9 +53,6 @@ namespace Tests
 
                 SwinGame.Graphics.MoveSprite(_Ball);
                 SwinGame.Graphics.DrawSprite(_Ball);
-
-                _BoundingRect.X = (int)_Ball.X;
-                _BoundingRect.Y = (int)_Ball.Y;
 
                 if (MappyLoader.SpriteHasCollidedWithMapTile(_Map, _Ball, out _TileX, out _TileY))
                 {
