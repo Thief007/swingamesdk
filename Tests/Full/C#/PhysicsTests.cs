@@ -20,13 +20,312 @@ namespace Tests
 			result.Add(new CircleCollissionTest());
             result.Add(new CircleCollissionTest2());
             result.Add(new RectangleCollissionTest());
+            result.Add(new VectorMathsTest());
+            result.Add(new SpriteTests());
+            result.Add(new PointTest());
+            result.Add(new TranslationTest());
+            result.Add(new VectorIsWithinRectTest());
 				result.Add(new VectorAngle());
-				result.Add(new PointOutOfRect());				
+				result.Add(new PointOutOfRect());
+                result.Add(new RectOutOfRect());
+                result.Add(new PointOutOfCircle());
+                result.Add(new CircleOutOfCircle());
 
             list.Add(result);
         }
 
         #endregion
+
+        private class VectorIsWithinRectTest : TestSet
+        {
+            private SwinGame.Point2D point = Shapes.CreatePoint(100, 100);
+            private Rectangle rect = Shapes.CreateRectangle(100, 200, 50, 50);
+
+            private Rectangle rect2 = Shapes.CreateRectangle(300, 200, 50, 50);
+
+            private readonly static string METHS =
+                "VectorIsWithinRect";
+
+            private readonly static string INST =
+                "Arrows move point" + Environment.NewLine
+                ;
+
+            public VectorIsWithinRectTest()
+                : base(METHS, INST)
+            {
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+
+                if (Input.IsKeyPressed(Keys.VK_UP)) point.Y = point.Y - 1;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) point.Y = point.Y + 1;
+                if (Input.IsKeyPressed(Keys.VK_LEFT)) point.X = point.X - 1;
+                if (Input.IsKeyPressed(Keys.VK_RIGHT)) point.X = point.X + 1;
+
+
+
+            }
+
+        }
+
+
+        private class TranslationTest : TestSet
+        {
+            private SwinGame.Point2D point = Shapes.CreatePoint(100, 100);
+            private SwinGame.Point2D point2 = Shapes.CreatePoint(150, 150);
+            private SwinGame.Point2D temp = Shapes.CreatePoint(150, 150);
+            private Rectangle rect = Shapes.CreateRectangle(200, 200, 50, 50);
+            private Matrix2D m;
+            private Vector v;
+
+            private readonly static string METHS =
+                "VectorFromPoints, VectorFromPointToRectangle";
+
+            private readonly static string INST =
+                "Arrows move point" + Environment.NewLine
+                ;
+
+            public TranslationTest()
+                : base(METHS, INST)
+            {
+
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                if (Input.IsKeyPressed(Keys.VK_SPACE))
+                {
+
+                    v = Physics.PointToVector(point2);
+                    m =  Physics.TranslationMatrix(-point.X,-point.Y);
+                    m = Physics.Multiply(Physics.RotationMatrix(5), m);
+                    v = Physics.Multiply(m, v);
+                    temp = Shapes.CreatePoint( v.X,  v.X);
+                }
+
+                Graphics.FillRectangle(Color.White, point.X - 1, point.Y - 1, 3, 3);
+                Graphics.FillRectangle(Color.Red, point2.X - 1, point2.Y - 1, 3, 3);
+                Graphics.FillRectangle(Color.Blue, temp.X - 1, temp.Y - 1, 3, 3);
+
+
+            }
+
+        }
+
+
+        private class PointTest : TestSet
+        {
+            private SwinGame.Point2D point = Shapes.CreatePoint(100, 100);
+            private SwinGame.Point2D point2 = Shapes.CreatePoint(150, 150);
+            private Rectangle rect = Shapes.CreateRectangle(200, 200, 50, 50);
+
+            private readonly static string METHS =
+                "VectorFromPoints, VectorFromPointToRectangle";
+
+            private readonly static string INST =
+                "Arrows move point" + Environment.NewLine 
+                ;
+
+            public PointTest()
+                : base(METHS, INST)
+            {
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+
+                if (Input.IsKeyPressed(Keys.VK_UP)) point.Y = point.Y - 1;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) point.Y = point.Y + 1;
+                if (Input.IsKeyPressed(Keys.VK_LEFT)) point.X = point.X - 1;
+                if (Input.IsKeyPressed(Keys.VK_RIGHT)) point.X = point.X + 1;
+
+                Vector temp = Physics.VectorFromPoints(point, point2);
+                Text.DrawText("Vector from Point to Point X:" +temp.X+", Y:"+temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 10);
+
+                temp = Physics.VectorFromPointToRectangle(point, rect);
+                Text.DrawText("Vector from Point to Rectangle X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 30);
+
+                temp = Physics.VectorFromPointToRectangle(point.X, point.Y, rect);
+                Text.DrawText("Vector from Point to Rectangle X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 50);
+
+                temp = Physics.VectorFromPointToRectangle(point.X,point.Y, rect.X,rect.Y,rect.Width,rect.Height);
+                Text.DrawText("Vector from Point to Rectangle X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 70);
+
+                Graphics.DrawRectangle(Color.Red, rect);
+                Graphics.FillRectangle(Color.Red, point2.X - 1, point2.Y - 1, 3, 3);
+                Graphics.FillRectangle(Color.White, point.X - 1, point.Y - 1, 3, 3);
+
+                temp = Physics.PointToVector(point);
+                Text.DrawText("Vector from Point X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 90);                
+
+            }
+
+        }
+
+
+        private class SpriteTests : TestSet
+        {
+            private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
+            private SwinGame.Sprite bigball = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+
+
+            private readonly static string METHS =
+                "CalculateAngle, IsSpriteOnScreenAt, CalculateVectorFromTo, VectorFromCenterSpriteToPoint";
+
+            private readonly static string INST =
+                "Arrows move small ball" + Environment.NewLine +
+                     "ASDW move large ball" + Environment.NewLine 
+                ;
+
+            public SpriteTests()
+                : base(METHS, INST)
+            {
+                ball.xPos = 100;
+                ball.yPos = 300;
+                bigball.xPos = 200;
+                bigball.yPos = 300;
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+
+                if (Input.IsKeyPressed(Keys.VK_UP)) ball.Y = ball.Y - 1;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) ball.Y = ball.Y + 1;
+                if (Input.IsKeyPressed(Keys.VK_LEFT)) ball.X = ball.X - 1;
+                if (Input.IsKeyPressed(Keys.VK_RIGHT)) ball.X = ball.X + 1;
+
+                if (Input.IsKeyPressed(Keys.VK_W)) bigball.Y = bigball.Y - 1;
+                if (Input.IsKeyPressed(Keys.VK_S)) bigball.Y = bigball.Y + 1;
+                if (Input.IsKeyPressed(Keys.VK_A)) bigball.X = bigball.X - 1;
+                if (Input.IsKeyPressed(Keys.VK_D)) bigball.X = bigball.X + 1;
+
+                Graphics.DrawSprite(bigball);
+                Graphics.DrawSprite(ball);
+                //IsSpriteOnScreenAt
+                if (Physics.IsSpriteOnScreenAt(ball, Shapes.CreatePoint(Camera.ScreenX(209), Camera.ScreenY(209))))
+                {
+                    Text.DrawText("The small ball is on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 10);
+                    Text.DrawText("at X:209, Y:209    X:" + ball.xPos + ", Y:" + ball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 30);
+
+                }
+                else
+                {
+                    Text.DrawText("The small ball is not on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 10);
+                    Text.DrawText("at X:209, Y:209    X:" + ball.xPos + ", Y:" + ball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 30);
+                }
+                if (Physics.IsSpriteOnScreenAt(bigball, (int)Camera.ScreenX(209), (int)Camera.ScreenY(209)))
+                {
+                    Text.DrawText("The large ball is on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 50);
+                    Text.DrawText("at X:209, Y:209    X:" + bigball.xPos + ", Y:" + bigball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 70);
+                }
+                else
+                {
+                    Text.DrawText("The large ball is not on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 50);
+                    Text.DrawText("at X:209, Y:209    X:" + bigball.xPos + ", Y:" + bigball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 70);
+                }
+                Graphics.DrawPixel(Color.White, 209, 209);
+                //CalculateAngle
+                Single temp = Physics.CalculateAngle(ball, bigball);
+                //Text.DrawText(Shapes.CenterPoint(ball).X + ", " + Shapes.CenterPoint(ball).Y + " "+ Shapes.CenterPoint(bigball).X + ", " + Shapes.CenterPoint(bigball).Y, Color.White, GameResources.GameFont("Courier"), 10, 110);
+                Text.DrawText("The angle betwen the balls is " + temp, Color.White, GameResources.GameFont("Courier"), 10, 90);
+
+                //CalculateVectorFromTo
+                Vector tempV = Physics.CalculateVectorFromTo(ball, bigball);
+                Text.DrawText("The vector from the small ball ", Color.White, GameResources.GameFont("Courier"), 10, 110);
+                Text.DrawText("to the large ball is X:" + tempV.X + ", Y:" + tempV.Y, Color.White, GameResources.GameFont("Courier"), 10, 130);
+
+                //VectorFromCenterSpriteToPoint
+                tempV = Physics.VectorFromCenterSpriteToPoint(ball, Shapes.CreatePoint(100, 200));
+                Text.DrawText("Vector from ball to point X:" + tempV.X + ", Y:" + tempV.Y, Color.White, GameResources.GameFont("Courier"), 10, 150);
+                Graphics.FillRectangle(Color.Red, 100 - 1, 200 - 1, 3, 3);
+            }
+
+        }
+
+
+        private class VectorMathsTest : TestSet
+        {
+            private readonly static string METHS =
+                "RectangleHasCollidedWithLine";
+
+            private readonly static string INST =
+                "Arrow keys to move the rectangle" + Environment.NewLine + "of  around" + Environment.NewLine;
+
+
+            private SwinGame.Vector v1 = Physics.CreateVector(2,2);
+            private SwinGame.Vector v2 = Physics.CreateVector(2, 2, true);
+
+            private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 32);
+
+            public VectorMathsTest()
+                : base(METHS, INST)
+            {
+
+
+            }
+
+
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                if (Input.IsKeyPressed(Keys.VK_LEFT))
+                {
+                    v1.Y = v1.Y - 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_RIGHT))
+                {
+                    v1.Y = v1.Y + 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_DOWN))
+                {
+                    v1.X = v1.X - 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_UP))
+                {
+                    v1.X = v1.X + 1;
+                }
+
+                if (Input.IsKeyPressed(Keys.VK_A))
+                {
+                    v2.Y = v2.Y - 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_D))
+                {
+                    v2.Y = v2.Y + 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_S))
+                {
+                    v2.X = v2.X - 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_W))
+                {
+                    v2.X = v2.X + 1;
+                }
+
+                Text.DrawText("Vector 1 = X:" + v1.X + ", Y:" + v1.Y, Color.White, GameResources.GameFont("Courier"), 10, 10);
+                Text.DrawText("Vector 2 = X:" + v2.X + ", Y:" + v2.Y, Color.White, GameResources.GameFont("Courier"), 10, 30);
+                Vector temp = Physics.AddVectors(v1, v2);
+                Text.DrawText("Vector 1 + Vector 2 = X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 50);
+                temp = Physics.SubtractVectors(v1, v2);
+                Text.DrawText("Vector 1 - Vector 2 = X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 70);
+                temp = Physics.LimitMagnitude(v1, 20);
+                Text.DrawText("limt Vector 1 to 20 = X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 90);
+                temp = Physics.InvertVector(v1);
+                Text.DrawText("Vector 1 inverted = X:" + temp.X + ", Y:" + temp.Y, Color.White, GameResources.GameFont("Courier"), 10, 110);
+                if (Physics.IsZeroVector(v1))
+                {
+                    Text.DrawText("Vector 1 is zero", Color.White, GameResources.GameFont("Courier"), 10, 130);
+                }
+                else
+                {
+                    Text.DrawText("Vector 1 is not zero", Color.White, GameResources.GameFont("Courier"), 10, 130);
+
+                }
+
+            }
+        }
+
 
         private class RectangleCollissionTest : TestSet
         {
@@ -540,7 +839,7 @@ namespace Tests
             }
         }
 
-			private class VectorAngle : TestSet
+		private class VectorAngle : TestSet
 			{
 				private readonly static int CX = 209;
 				private readonly static int CY = 209;
@@ -609,7 +908,7 @@ namespace Tests
 				}				
 			}
 
-			private class PointOutOfRect : TestSet
+		private class PointOutOfRect : TestSet
 			{
 				private readonly static int RW = 100;
 				private readonly static int RH = 100;
@@ -672,5 +971,251 @@ namespace Tests
 				}
 				
 			}
+
+        private class RectOutOfRect : TestSet
+        {
+            private readonly static int RW = 100;
+            private readonly static int RH = 100;
+            private readonly static int RX = 159;
+            private readonly static int RY = 159;
+            private readonly static int LINE_LENGTH = 100;
+		
+
+            private Single px, py;
+            private int halfH, halfW;
+            private CollisionSide enterRectFrom;
+            private Rectangle mvRect, tgtRect;
+            private Vector movement, mvOut;
+
+            private readonly static string METHS =
+                "VectorOutOfRectFromRect";
+
+            private readonly static string INST =
+                "Arrows move point" + Environment.NewLine +
+                     "A/Z rotate movement" + Environment.NewLine +
+                "Space move point out";
+
+            public RectOutOfRect()
+                : base(METHS, INST)
+            {
+
+                movement = Physics.CreateVector(100, 0);
+                halfH = 10;
+                halfW = 5;
+
+		        movement = Physics.CreateVector(100, 0);
+		
+		        tgtRect = Shapes.CreateRectangle(RX, RY, RW, RH);
+                mvRect = Shapes.CreateRectangle(100 + RX, 100 + RY, 10, 20);
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                int r = 1, r2 = 2;
+
+                if (Input.IsKeyPressed(Keys.VK_A)) movement = Physics.Multiply(Physics.RotationMatrix(-4.0f), movement);
+                if (Input.IsKeyPressed(Keys.VK_Z)) movement = Physics.Multiply(Physics.RotationMatrix(4.0f), movement);
+
+                if (Input.IsKeyPressed(Keys.VK_UP)) mvRect.Y = mvRect.Y - 5;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) mvRect.Y = mvRect.Y + 5;
+                if (Input.IsKeyPressed(Keys.VK_LEFT)) mvRect.X = mvRect.X - 5;
+                if (Input.IsKeyPressed(Keys.VK_RIGHT)) mvRect.X = mvRect.X + 5;
+
+                mvOut = Physics.VectorOutOfRectFromRect(mvRect, tgtRect, movement);
+
+                enterRectFrom = Shapes.GetSideForCollisionTest(movement);
+                
+			    px = Shapes.RectangleLeft(mvRect); 
+			    py = Shapes.RectangleTop(mvRect);
+                switch (enterRectFrom)
+	            {
+		            case CollisionSide.Bottom:
+                     break;
+                    case CollisionSide.BottomLeft:
+                        px = Shapes.RectangleRight(mvRect);
+                     break;
+                    case CollisionSide.BottomRight:
+                     break;
+                    case CollisionSide.Left:
+                        px = Shapes.RectangleRight(mvRect);
+                     break;
+                    case CollisionSide.LeftRight:
+                     break;
+                    case CollisionSide.None:
+                     break;
+                    case CollisionSide.Right:
+                     break;
+                    case CollisionSide.Top:
+                        py = Shapes.RectangleBottom(mvRect);
+                     break;
+                    case CollisionSide.TopBottom:
+                     break;
+                    case CollisionSide.TopLeft:
+                        
+                        px = Shapes.RectangleRight(mvRect);
+                        py = Shapes.RectangleBottom(mvRect);
+                     break;
+                    case CollisionSide.TopRight:
+                        py = Shapes.RectangleBottom(mvRect);
+                     break;default:
+                     break;
+	            }
+
+                if (Input.IsKeyPressed(Keys.VK_SPACE))
+                {
+                    mvRect.Y += (int)mvOut.Y;
+                    mvRect.X += (int)mvOut.X;
+                    mvOut = Physics.CreateVector(0, 0);
+                }
+
+                Graphics.ClearScreen(Color.Black);
+
+                Graphics.DrawRectangle(Color.Red, RX, RY, RW, RH);
+                Graphics.DrawRectangle(Color.White, mvRect.X , mvRect.Y , mvRect.Width, mvRect.Height);
+                Graphics.DrawLine(Color.White, mvRect.X + halfW, mvRect.Y + halfH, mvRect.X + halfW + movement.X, mvRect.Y + halfH + movement.Y);
+
+                if (false == ((mvOut.X == 0) && (mvOut.Y == 0)))
+                {
+
+                    Graphics.DrawLine(Color.Gray, mvRect.X, mvRect.Y, mvRect.X + mvOut.X, mvRect.Y + mvOut.Y);
+                    Graphics.DrawRectangle(Color.Green, mvRect.X + mvOut.X, mvRect.Y + mvOut.Y, mvRect.Width, mvRect.Height);
+                    Graphics.DrawLine(Color.Green, px, py, px + mvOut.X , py + mvOut.Y );
+
+                }
+
+            }
+
+        }
+
+
+        private class PointOutOfCircle : TestSet
+        {
+            private readonly static int CR = 100;
+            private readonly static int CX = 209;
+            private readonly static int CY = 209;
+            private readonly static int LINE_LENGTH = 100;
+
+            private Point2D p, c;
+            private Vector movement, mvOut;
+
+            private readonly static string METHS =
+                "VectorOutOfCircleFromPoint";
+
+            private readonly static string INST =
+                "Arrows move point" + Environment.NewLine +
+                     "A/Z rotate movement" + Environment.NewLine +
+                "Space move point out";
+
+            public PointOutOfCircle()
+                : base(METHS, INST)
+            {
+                p = Shapes.CreatePoint(100 / 2 + CX, 100 / 2 + CY);
+                c = Shapes.CreatePoint(CX, CY);
+
+                movement = Physics.CreateVector(100, 0);
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                int r = 1, r2 = 2;
+
+                if (Input.IsKeyPressed(Keys.VK_A)) movement = Physics.Multiply(Physics.RotationMatrix(-4.0f), movement);
+                if (Input.IsKeyPressed(Keys.VK_Z)) movement = Physics.Multiply(Physics.RotationMatrix(4.0f), movement);
+
+                if (Input.IsKeyPressed(Keys.VK_UP)) p.Y = p.Y - 5;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) p.Y = p.Y + 5;
+                if (Input.IsKeyPressed(Keys.VK_LEFT)) p.X = p.X - 5;
+                if (Input.IsKeyPressed(Keys.VK_RIGHT)) p.X = p.X + 5;
+
+                mvOut = Physics.VectorOutOfCircleFromPoint(p, c, CR, movement);
+
+                if (Input.IsKeyPressed(Keys.VK_SPACE))
+                {
+                    p.Y += mvOut.Y;
+                    p.X += mvOut.X;
+                    mvOut = Physics.CreateVector(0, 0);
+                }
+
+                //Graphics.ClearScreen(Color.Black);
+
+                Graphics.DrawCircle(Color.Red, CX, CY, CR);
+                Graphics.DrawRectangle(Color.White, p.X - r, p.Y - r, r2, r2);
+                Graphics.DrawLine(Color.White, p.X, p.Y, p.X + movement.X, p.Y + movement.Y);
+
+                if (false == ((mvOut.X == 0) && (mvOut.Y == 0)))
+                {
+                    Graphics.DrawLine(Color.Green, p.X, p.Y, p.X + mvOut.X, p.Y + mvOut.Y);
+                }
+
+            }
+
+        }
+
+
+        private class CircleOutOfCircle : TestSet
+        {
+            private readonly static int CR = 100;
+            private readonly static int CX = 209;
+            private readonly static int CY = 209;
+            private readonly static int LINE_LENGTH = 100;
+            private readonly static int PR = 10;
+
+            private Point2D p, c;
+            private Vector movement, mvOut;
+
+            private readonly static string METHS =
+                "VectorOutOfCircleFromCircle";
+
+            private readonly static string INST =
+                "Arrows move point" + Environment.NewLine +
+                     "A/Z rotate movement" + Environment.NewLine +
+                "Space move point out";
+
+            public CircleOutOfCircle()
+                : base(METHS, INST)
+            {
+                p = Shapes.CreatePoint(100 / 2 + CX, 100 / 2 + CY);
+                c = Shapes.CreatePoint(CX, CY);
+
+                movement = Physics.CreateVector(100, 0);
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                int r = 1, r2 = 2;
+
+                if (Input.IsKeyPressed(Keys.VK_A)) movement = Physics.Multiply(Physics.RotationMatrix(-4.0f), movement);
+                if (Input.IsKeyPressed(Keys.VK_Z)) movement = Physics.Multiply(Physics.RotationMatrix(4.0f), movement);
+
+                if (Input.IsKeyPressed(Keys.VK_UP)) p.Y = p.Y - 5;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) p.Y = p.Y + 5;
+                if (Input.IsKeyPressed(Keys.VK_LEFT)) p.X = p.X - 5;
+                if (Input.IsKeyPressed(Keys.VK_RIGHT)) p.X = p.X + 5;
+
+                mvOut = Physics.VectorOutOfCircleFromCircle(p,PR, c, CR, movement);
+
+                if (Input.IsKeyPressed(Keys.VK_SPACE))
+                {
+                    p.Y += mvOut.Y;
+                    p.X += mvOut.X;
+                    mvOut = Physics.CreateVector(0, 0);
+                }
+
+
+                Graphics.DrawCircle(Color.Red, CX, CY, CR);
+                Graphics.DrawCircle(Color.White, p.X, p.Y, PR);
+                Graphics.DrawLine(Color.White, p.X, p.Y, p.X + movement.X, p.Y + movement.Y);
+
+                if (false == ((mvOut.X == 0) && (mvOut.Y == 0)))
+                {
+                    Graphics.DrawLine(Color.Green, p.X, p.Y, p.X + mvOut.X, p.Y + mvOut.Y);
+                    Graphics.DrawCircle(Color.Green, p.X + mvOut.X, p.Y + mvOut.Y, PR);
+                }
+
+            }
+
+        }
+
     }
+
 }
