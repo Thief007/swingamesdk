@@ -2526,6 +2526,7 @@ exports
 	DrawVerticalLineWithDestination,
 	DrawCircleWithDestination,
 	DrawEllipseWithDestination,
+	FillRectangleWithDestination,
 	ClearScreen,
 	DrawBitmap,
 	DrawBitmapPart,

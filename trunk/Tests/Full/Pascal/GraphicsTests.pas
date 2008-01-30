@@ -509,7 +509,7 @@ implementation
 		with result.Tests[4] do
 		begin
 			MethodBeingTested := 'FillCircle, FillCircleOnScreen';
-			Instructions := 'Use the arrow keys to move' + EOL + 'the green circles.' + EOL + 'A : Shrink the circle width' + EOL + 'S : Expand the circle width'
+			Instructions := 'Use the arrow keys to move' + EOL + 'the green circles.'
 							+ EOL + 'Z : Shrink the circle height' + EOL + 'X : Expand the circle height' + EOL
 							+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
 			ToRun := @TestFill2;
