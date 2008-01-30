@@ -18,6 +18,8 @@ namespace Tests
             result.Add(new CollisionSpriteTest());
             result.Add(new CollissionBitmapTest());
 			result.Add(new CircleCollissionTest());
+            result.Add(new CircleCollissionTest2());
+            result.Add(new RectangleCollissionTest());
 				result.Add(new VectorAngle());
 				result.Add(new PointOutOfRect());				
 
@@ -25,6 +27,166 @@ namespace Tests
         }
 
         #endregion
+
+        private class RectangleCollissionTest : TestSet
+        {
+            private readonly static string METHS =
+                "RectangleHasCollidedWithLine";
+
+            private readonly static string INST =
+                "Arrow keys to move the rectangle" + Environment.NewLine + "of  around" + Environment.NewLine;
+
+
+            private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
+            private SwinGame.Sprite bigball = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+
+            private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 32);
+
+            public RectangleCollissionTest()
+                : base(METHS, INST)
+            {
+
+
+            }
+
+
+            private int X = 0;
+            private int Y = 0;
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                if (Input.IsKeyPressed(Keys.VK_LEFT))
+                {
+                    X = X - 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_RIGHT))
+                {
+                    X = X + 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_DOWN))
+                {
+                    Y = Y + 1;
+                }
+                if (Input.IsKeyPressed(Keys.VK_UP))
+                {
+                    Y = Y - 1;
+                }
+                //RectangleHasCollidedWithLine
+                if (Physics.RectangleHasCollidedWithLine(Shapes.CreateRectangle(X,Y, 50,50), Shapes.CreateLine(100, 0, 100, 418)))
+                {
+                    Graphics.FillRectangle(Color.Red, 98, 0, 5, 418);
+                }
+                if (Physics.RectangleHasCollidedWithLine(Shapes.CreateRectangle(X, Y, 50, 50), Shapes.CreateLine(200, 0, 200, 418)))
+                {
+                    Graphics.FillRectangle(Color.Red, 198, 0, 5, 418);
+                }
+                Graphics.DrawRectangle(Color.White, Shapes.CreateRectangle(X, Y, 50, 50));
+                Graphics.DrawLine(Color.Yellow, Shapes.CreateLine(100, 0, 100, 418));
+                Graphics.DrawLine(Color.Yellow, Shapes.CreateLine(200, 0, 200, 418));
+            }
+        }
+
+
+        private class CircleCollissionTest2 : TestSet
+        {
+            private readonly static string METHS =
+                "CircularCollision";
+
+            private readonly static string INST =
+                "Arrow keys to change the vector" + Environment.NewLine + "of  the big ball" + Environment.NewLine +
+                "AWSD keys to change the vector" + Environment.NewLine + "of  the small ball";
+
+
+            private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
+            private SwinGame.Sprite bigball = Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+
+            private static SwinGame.Bitmap draw = SwinGame.Graphics.CreateBitmap(300, 32);
+
+            public CircleCollissionTest2()
+                : base(METHS, INST)
+            {
+                ball.Movement.X = 1;
+                ball.Movement.Y = 1;
+                ball.Mass = 1;
+                ball.X = 150;
+                ball.Y = 150;
+                bigball.Movement.X = 1;
+                bigball.Movement.Y = 1;
+                bigball.Mass = 5;
+                bigball.X = 155;
+                bigball.Y = 155;
+            }
+
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                if (Input.IsKeyPressed(Keys.VK_DOWN))
+                {
+                    if (Physics.Magnitude(bigball.Movement) > 2)
+                    {
+                        bigball.Movement.SetTo(Physics.MultiplyVector(Physics.GetUnitVector(bigball.Movement), Physics.Magnitude(bigball.Movement) - 1));
+                    }
+                }
+                if (Input.IsKeyPressed(Keys.VK_UP))
+                {
+                    bigball.Movement.SetTo(Physics.MultiplyVector(Physics.GetUnitVector(bigball.Movement), Physics.Magnitude(bigball.Movement) + 1));
+                }
+                if (Input.IsKeyPressed(Keys.VK_LEFT))
+                {
+                    bigball.Movement.SetTo(Physics.Multiply(Physics.RotationMatrix(-1), bigball.Movement));
+                }
+                if (Input.IsKeyPressed(Keys.VK_RIGHT))
+                {
+                    bigball.Movement.SetTo(Physics.Multiply(Physics.RotationMatrix(1), bigball.Movement));
+                }
+
+                if (Input.IsKeyPressed(Keys.VK_S))
+                {
+                    if (Physics.Magnitude(ball.Movement) > 2)
+                    {
+                        ball.Movement.SetTo(Physics.MultiplyVector(Physics.GetUnitVector(ball.Movement), Physics.Magnitude(ball.Movement) - 1));
+                    }
+                }
+                if (Input.IsKeyPressed(Keys.VK_W))
+                {
+                    ball.Movement.SetTo(Physics.MultiplyVector(Physics.GetUnitVector(ball.Movement), Physics.Magnitude(ball.Movement) + 1));
+                }
+                if (Input.IsKeyPressed(Keys.VK_A))
+                {
+                    ball.Movement.SetTo(Physics.Multiply(Physics.RotationMatrix(-1), ball.Movement));
+                }
+                if (Input.IsKeyPressed(Keys.VK_D))
+                {
+                    ball.Movement.SetTo(Physics.Multiply(Physics.RotationMatrix(1), ball.Movement));
+                }
+                if (Input.WasKeyTyped(Keys.VK_SPACE))
+                {
+                    if (Physics.HaveSpritesCollided(ball, bigball))
+                    {
+                        Physics.CircularCollision(ball, bigball);
+                        Graphics.UpdateSprite(ball);
+                        Graphics.UpdateSprite(bigball);
+                    }
+                    else
+                    {
+                        ball.X = 150;
+                        ball.Y = 150;
+                        bigball.X = 155;
+                        bigball.Y = 155;
+                    }
+                }
+
+                Graphics.DrawSprite(bigball);
+                Graphics.DrawSprite(ball);
+                float tempX = ball.X + (Graphics.CurrentWidth(ball) / 2);
+                float tempY = ball.Y + (Graphics.CurrentHeight(ball) / 2);
+                float bigtempX = bigball.X + (Graphics.CurrentWidth(bigball) / 2);
+                float bigtempY = bigball.Y + (Graphics.CurrentHeight(bigball) / 2);
+                Graphics.DrawLine(Color.RoyalBlue, tempX, tempY, tempX + ball.Movement.X, tempY + ball.Movement.Y);
+                Graphics.DrawLine(Color.RoyalBlue, bigtempX, bigtempY, bigtempX + bigball.Movement.X, bigtempY + bigball.Movement.Y);
+                //Graphics.DrawRectangle(Color.White, ball.X, ball.Y, Graphics.CurrentWidth(ball), Graphics.CurrentHeight(ball));
+            }
+        }
 
 
         private class CircleCollissionTest : TestSet
