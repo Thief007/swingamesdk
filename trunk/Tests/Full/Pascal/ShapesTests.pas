@@ -104,11 +104,12 @@ implementation
 		begin
 			tempLine := LinesFromRect(staticRect1)[i];
 			
-			{if GetLineIntersectionPoint(movLine, tempLine, tempPoint) then
+			
+			if GetLineIntersectionPoint(movLine, tempLine, tempPoint) then
 			begin
 				DrawCircle(ColourRed, tempPoint, 5);
 				points[i] := tempPoint;
-			end;}
+			end;
 			
 			if IsPointOnLine(movLine.startPoint, tempLine) or IsPointOnLine(movLine.endPoint, tempLine) then
 			begin

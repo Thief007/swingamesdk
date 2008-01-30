@@ -255,8 +255,13 @@ implementation
 		WriteLn(FloatToStr(line.startPoint.y) + ' = ' + FloatToStr(m) + ' * ' + FloatToStr(line.startPoint.x) + ' ' + FloatToStr(c));
 		WriteLn(IntToStr(Round(lx)) + ',' + FloatToStr(pnt.y));
 		WriteLn(FloatToStr(pnt.x) + ',' + IntToStr(Round(ly)));
-		if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) and PointIsWithinRect(CreatePoint(lx, pnt.y), RectFromLine()) then result := true;
-		//if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) then result := true;
+		
+		if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) and PointIsWithinRect(CreatePoint(lx, pnt.y), RectFromLine()) then
+		begin
+			//if (pnt.x < lx + 1) and (pnt.x > lx - 1) and (pnt.y < ly + 1) and (pnt.y > ly + 1) then result := true;
+			
+			if ((pnt.x - lx < 1) and (pnt.x - lx > -1)) or ((pnt.y - ly < 1) and (pnt.y - ly > -1)) then result := true 
+		end;
 		
 		{u := ( (pnt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (pnt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
 		
