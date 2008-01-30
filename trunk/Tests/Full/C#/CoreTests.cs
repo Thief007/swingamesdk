@@ -66,6 +66,7 @@ namespace Tests
                 {
                     Core.StartTimer(_Timer);
                     _HasTimerStarted = true;
+						  _IsTimerRunning = true;
                 }
             }
         }

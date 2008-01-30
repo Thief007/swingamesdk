@@ -31,6 +31,7 @@ implementation
 			begin
 				StartTimer(_Timer);
 				_HasTimerStarted := true;
+				_IsTimerRunning := true;
 			end;
 		end;
 		
