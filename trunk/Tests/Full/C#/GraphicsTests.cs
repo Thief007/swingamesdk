@@ -106,7 +106,7 @@ namespace Tests
                 base.ClearScreen = false;
             }
 
-            private Color _curCol = Color.Transparent;
+            private Color _curCol = Color.White;
             private SwinGame.Bitmap smallScreen = SwinGame.Graphics.CreateBitmap(418, 418);
             private Boolean started = false;
 
@@ -138,7 +138,7 @@ namespace Tests
                 if (Input.IsMouseDown(MouseButton.LeftButton))
                 {
                     SwinGame.Graphics.DrawPixel(smallScreen, _curCol, Shapes.CreatePoint(Input.GetMousePosition().X - toDrawIn.X - 10, Input.GetMousePosition().Y - toDrawIn.Y - 10)); 
-                    SwinGame.Graphics.DrawPixel(smallScreen, _curCol, (int)(Input.GetMousePosition().X - toDrawIn.X - 10), (int)(Input.GetMousePosition().Y- toDrawIn.Y - 10));   
+                    SwinGame.Graphics.DrawPixel(smallScreen, _curCol, (int)(Input.GetMousePosition().X - toDrawIn.X + 10), (int)(Input.GetMousePosition().Y- toDrawIn.Y - 10));   
                 
                     SwinGame.Graphics.DrawPixel(_curCol, Shapes.CreatePoint(Input.GetMousePosition().X - 10 - toDrawIn.X, Input.GetMousePosition().Y - toDrawIn.Y));
                     SwinGame.Graphics.DrawPixel(_curCol, (int)(Input.GetMousePosition().X - toDrawIn.X + 10), (int)(Input.GetMousePosition().Y - toDrawIn.Y));
