@@ -817,6 +817,22 @@ implementation
 	/// @param m1, m2:   the two matrix to multiply
 	/// @returns:        the result of multiplying these matrix
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
+		{procedure ShowMatrix(const m: Matrix2D);
+		var
+			i, j: Integer;
+		begin
+			WriteLn('---');
+			for i := 0 to 2 do
+			begin
+				Write('|');
+				for j := 0 to 2 do
+				begin
+					Write(' ', m[i,j]);
+				end;
+				WriteLn('|');
+			end;
+			WriteLn('---');
+		end;}
 	begin
 		  //unwound for performance optimisation
 	  	result[0, 0] := m1[0, 0] * m2[0, 0] +
@@ -848,6 +864,43 @@ implementation
 		result[2, 2] := m1[2, 0] * m2[0, 2] +
 						m1[2, 1] * m2[1, 2] +
 						m1[2, 2] * m2[2, 2];
+
+	  	{result[0, 0] := m1[0, 0] * m2[0, 0] +
+		  					 m1[1, 0] * m2[0, 1] +
+	  						 m1[2, 0] * m2[0, 2];
+		result[0, 1] := m1[0, 0] * m2[1, 0] +
+							 m1[1, 0] * m2[1, 1] +
+							 m1[2, 0] * m2[1, 2];
+		result[0, 2] := m1[0, 0] * m2[2, 0] +
+							 m1[1, 0] * m2[2, 1] +
+							 m1[2, 0] * m2[2, 2];
+
+		result[1, 0] := m1[0, 1] * m2[0, 0] +
+							 m1[1, 1] * m2[0, 1] +
+							 m1[2, 1] * m2[0, 2];
+		result[1, 1] := m1[0, 1] * m2[1, 0] +
+							 m1[1, 1] * m2[1, 1] +
+							 m1[2, 1] * m2[1, 2];
+		result[1, 2] := m1[0, 1] * m2[2, 0] +
+							 m1[1, 1] * m2[2, 1] +
+							 m1[2, 1] * m2[2, 2];
+
+		result[2, 0] := m1[0, 2] * m2[0, 0] +
+							 m1[1, 2] * m2[0, 1] +
+							 m1[2, 2] * m2[0, 2];
+		result[2, 1] := m1[0, 2] * m2[1, 0] +
+							 m1[1, 2] * m2[1, 1] +
+							 m1[2, 2] * m2[1, 2];
+		result[2, 2] := m1[0, 2] * m2[2, 0] +
+							 m1[1, 2] * m2[2, 1] +
+							 m1[2, 2] * m2[2, 2];
+		WriteLn('m1');
+		ShowMatrix(m1);
+		WriteLn('m2');
+		ShowMatrix(m2);
+		WriteLn('result');
+		ShowMatrix(result);
+		WriteLn('end...');}
 	end;
 
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;

@@ -80,19 +80,18 @@ namespace Tests
 
         private class TranslationTest : TestSet
         {
-            private SwinGame.Point2D point = Shapes.CreatePoint(100, 100);
-            private SwinGame.Point2D point2 = Shapes.CreatePoint(150, 150);
-            private SwinGame.Point2D temp = Shapes.CreatePoint(150, 150);
-            private Rectangle rect = Shapes.CreateRectangle(200, 200, 50, 50);
+            private SwinGame.Point2D point = Shapes.CreatePoint(209, 209);
+            private SwinGame.Point2D point2 = Shapes.CreatePoint(309, 209);
+            private SwinGame.Point2D temp = Shapes.CreatePoint(309, 209);
             private Matrix2D m;
             private Vector v;
+				private float rot = 0.0f;
 
             private readonly static string METHS =
-                "VectorFromPoints, VectorFromPointToRectangle";
+                "Matrix Multiplication, Translation";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine
-                ;
+                "Space to Rotate by 45deg";
 
             public TranslationTest()
                 : base(METHS, INST)
@@ -102,21 +101,23 @@ namespace Tests
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
-                if (Input.IsKeyPressed(Keys.VK_SPACE))
+                if (Input.WasKeyTyped(Keys.VK_SPACE))
                 {
-
+						  rot = (rot + 45) % 360;
                     v = Physics.PointToVector(point2);
-                    m =  Physics.TranslationMatrix(-point.X,-point.Y);
-                    m = Physics.Multiply(Physics.RotationMatrix(5), m);
-                    v = Physics.Multiply(m, v);
-                    temp = Shapes.CreatePoint( v.X,  v.X);
+                    m = Physics.TranslationMatrix(-point.X,-point.Y);
+						  m = Physics.Multiply(Physics.RotationMatrix(rot), m);
+						  m = Physics.Multiply(Physics.TranslationMatrix(point.X,point.Y), m);
+						  v = Physics.Multiply(m, v);
+                    temp = Shapes.CreatePoint( v.X,  v.Y);
                 }
 
+					 Graphics.DrawLine(Color.Gray, point.X, point.Y, point2.X, point2.Y);
+					 Graphics.DrawLine(Color.Gray, point.X, point.Y, temp.X, temp.Y);
+										
                 Graphics.FillRectangle(Color.White, point.X - 1, point.Y - 1, 3, 3);
                 Graphics.FillRectangle(Color.Red, point2.X - 1, point2.Y - 1, 3, 3);
                 Graphics.FillRectangle(Color.Blue, temp.X - 1, temp.Y - 1, 3, 3);
-
-
             }
 
         }
@@ -132,13 +133,11 @@ namespace Tests
                 "VectorFromPoints, VectorFromPointToRectangle";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine 
-                ;
+                "Arrows move point" + Environment.NewLine;
 
             public PointTest()
                 : base(METHS, INST)
-            {
-            }
+            { }
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
