@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-31: Andrew: Fixed Line Drawing Issue
 // - 2008-01-30: Andrew: Fixed DrawRectangle
 // - 2008-01-25: Andrew: Fixed compiler hints for pointer use
 // - 2008-01-24: Andrew: Added Clipping
@@ -1700,10 +1701,10 @@ implementation
 		
 		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
-		for y := y1 to y2 - 1 do
+		for y := y1 to y2 do
 		begin
-			bufp := bufp + (dest.surface.pitch div 4);
 			bufp^ := theColor;
+			bufp := bufp + (dest.surface.pitch div 4);
 		end;
 		
 		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
