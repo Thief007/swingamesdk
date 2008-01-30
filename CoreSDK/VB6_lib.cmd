@@ -23,7 +23,7 @@ set Output1=.\SGSDKVB6\lib\
 set LibDir=%BaseDir%\SGSDK.NET\lib
 
 set SDKVB6=..\SDKs\VB6\Visual Studio 6.0\lib\
-if not exist %SDKVB6% mkdir %SDKVB6%
+if not exist "%SDKVB6%" mkdir "%SDKVB6%"
 
 set VB6bin=.\SGSDKVB6\src\bin\Debug\
 

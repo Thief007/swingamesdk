@@ -1412,6 +1412,31 @@ namespace SwinGameVB
         {
             SwinGame.Graphics.MoveSprite(spriteToMove.result);
         }
+
+        public void SetClip(int x, int y, int width, int height)
+        {
+            SwinGame.Graphics.SetClip(x, y, width, height);
+        }
+        public void SetClip_Rectangle(Rectangle rect)
+        {
+            SwinGame.Graphics.SetClip(rect.result);
+        }
+        public void SetClip_Bitmap(Bitmap bmp, Rectangle rect)
+        {
+            SwinGame.Graphics.SetClip(bmp.result, rect.result);
+        }
+        public void SetClip_Bitmap_Int(Bitmap bmp, int x, int y, int width, int height)
+        {
+            SwinGame.Graphics.SetClip(bmp.result, x, y, width, height);
+        }
+        public void ResetClip()
+        {
+            SwinGame.Graphics.ResetClip();
+        }
+        public void ResetClip_Bitmap(Bitmap bmp)
+        {
+            SwinGame.Graphics.ResetClip(bmp.result);
+        }
     }
     
     [Guid("C261890B-D65E-4d4c-A7AA-F15FCC0F825A")]
@@ -1547,6 +1572,13 @@ namespace SwinGameVB
         void FillCircle_OnBitmap_Point(Bitmap dest, int theColor, Point2D point, int radius);
         void ReplayAnimation(Sprite sprite);
         void MoveSprite_NoVector(Sprite spriteToMove);
+
+        void SetClip(int x, int y, int width, int height);
+        void SetClip_Rectangle(Rectangle rect);
+        void SetClip_Bitmap(Bitmap bmp, Rectangle rect);
+        void SetClip_Bitmap_Int(Bitmap bmp, int x, int y, int width, int height);
+        void ResetClip();
+        void ResetClip_Bitmap(Bitmap bmp);
 
     }
 

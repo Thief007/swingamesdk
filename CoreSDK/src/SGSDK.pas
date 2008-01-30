@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//	- 2008-01-30: James: CircleHasCollidedWithLine changed to return -1
 //  - 2008-01-30: Andrew: Fixed String Marshalling and Free
 //  - 2008-01-29: Andrew: Removed var from the Free routines
 //  - 2008-01-25: Stephen: Fixed IsMouseShown
@@ -873,7 +874,7 @@ uses
 	function CircleHasCollidedWithLine(p1: Sprite; line: LineSegment): Integer; cdecl; export;
 	begin
 		Try
-			if SGSDK_Physics.CircleHasCollidedWithLine(p1, line) then result := 1
+			if SGSDK_Physics.CircleHasCollidedWithLine(p1, line) then result := -1
 			else result := 0;
 			exit;
 		Except on exc: Exception do TrapException(exc);
