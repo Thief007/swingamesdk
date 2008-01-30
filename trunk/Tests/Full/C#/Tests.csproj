@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AudioTests.cs" />
+    <Compile Include="CameraTests.cs" />
     <Compile Include="Consts.cs" />
     <Compile Include="CoreTests.cs" />
     <Compile Include="FontTests.cs" />
