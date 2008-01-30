@@ -61,12 +61,12 @@ namespace Tests
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
                 Music se = GameResources.GameMusic("Fast");
-                if (Input.WasKeyTyped(Keys.VK_A)) Audio.PlayMusic(se);
+                if (Input.WasKeyTyped(Keys.VK_A)) Audio.PlayMusic(se, 1);
                 if (Input.WasKeyTyped(Keys.VK_I))
                     if (false == Audio.IsMusicPlaying(se))
                         Audio.PlayMusic(se);
                 if (Input.WasKeyTyped(Keys.VK_S)) Audio.StopMusic();
-                if (Input.WasKeyTyped(Keys.VK_L)) Audio.PlayMusic(se, -1);
+                if (Input.WasKeyTyped(Keys.VK_L)) Audio.PlayMusic(se);
             }
         }
     }

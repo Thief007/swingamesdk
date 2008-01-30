@@ -34,6 +34,8 @@ implementation
 		//AddBitmapToSprite
 		numSprite: Sprite;
 		curNum: Integer;
+		//flag
+		TP: Boolean = false;
 	
 	procedure TestAddBitmap(const drawIn: Rectangle);
 	var
@@ -146,19 +148,26 @@ implementation
 	end;
 	
 	procedure TestPixels(const drawIn: Rectangle);
-	begin
-		if IsKeyPressed(VK_Z) then 
+		procedure ClearStuff();
 		begin
 			ClearSurface(smallScreen, ColourTransparent);
 			ClearScreen(ColourTransparent);
-			DrawBitmapOnScreen(GameImage('BGA'), Round(drawIn.x), Round(drawIn.y))
+			DrawBitmapOnScreen(GameImage('BGA'), Round(drawIn.x), Round(drawIn.y));
 		end;
+	begin
+		if not TP then
+		begin
+			ClearStuff();
+			TP := true;
+		end;
+		
+		if IsKeyPressed(VK_Z) then ClearStuff();
 		
 		if IsKeyPressed(VK_1) then curCol := GetColour(GetRed(curCol) + 5, GetGreen(curCol), GetBlue(curCol));
 		if IsKeyPressed(VK_2) then curCol := GetColour(GetRed(curCol), GetGreen(curCol) + 5, GetBlue(curCol));
 		if IsKeyPressed(VK_3) then curCol := GetColour(GetRed(curCol), GetGreen(curCol), GetBlue(curCol) + 5);
 		
-		FillRectangle(ColourBlack, 0, 0, 300, 45);
+		FillRectangle(ColourBlack, 0, 0, 100, 45);
 		DrawText('Red   : ' + IntToStr(GetRed(curCol)), ColourRed, GameFont('Courier'), 0, 0);
 		DrawText('Green : ' + IntToStr(GetGreen(curCol)), ColourGreen, GameFont('Courier'), 0, 15);
 		DrawText('Blue  : ' + IntToStr(GetBlue(curCol)), ColourBlue, GameFont('Courier'), 0, 30);
