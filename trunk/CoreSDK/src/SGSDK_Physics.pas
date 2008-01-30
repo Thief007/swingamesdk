@@ -11,6 +11,8 @@
 //
 // Version 1.1:
 // - 2008-01-30: Andrew: Fixed rectangle collision with bitmap
+//                     : Fixed vector out for 0, 90, 180, 270 deg
+//					   : Fixed GetSideForCollisionTest for same deg of movement
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Correct Circular Collision to
 //		handle situations where the balls have overlaped.
@@ -52,8 +54,6 @@ interface
 			TopRight,
 			BottomLeft,
 			BottomRight,
-			LeftRight,
-			TopBottom,
 			None
 		);
 
@@ -1179,23 +1179,24 @@ implementation
 		
 	//You need to test for collisions on the ...
 	function GetSideForCollisionTest (const movement: Vector): CollisionSide;
+	const SMALL = 0.1; //The delta for the check
 	begin
-		if movement.x < 0 then //Going Left...
+		if movement.x < -SMALL then //Going Left...
 		begin
-			if movement.y < 0 then result := BottomRight
-			else if movement.y > 0 then result := TopRight
+			if movement.y < -SMALL then result := BottomRight
+			else if movement.y > SMALL then result := TopRight
 			else result := Right;
 		end
-		else if movement.x > 0 then //Going Right
+		else if movement.x > SMALL then //Going Right
 		begin
-			if movement.y < 0 then result := BottomLeft
-			else if movement.y > 0 then result := TopLeft
+			if movement.y < -SMALL then result := BottomLeft
+			else if movement.y > SMALL then result := TopLeft
 			else result := Left;			
 		end
 		else // Going Up or Down
 		begin
-			if movement.y < 0 then result := Bottom
-			else if movement.y > 0 then result := Top
+			if movement.y < -SMALL then result := Bottom
+			else if movement.y > SMALL then result := Top
 			else result := None;
 		end;
 	end;
@@ -1368,6 +1369,7 @@ implementation
 		//Which side of the rectangle did we collide with.
 		rectCollisionSide := GetSideForCollisionTest(movement);
 		
+		//Get the top left out - default then adjust for other points out
 		p.x := srcRect.x; p.y := srcRect.y;
 		
 		case rectCollisionSide of
@@ -1380,16 +1382,33 @@ implementation
 			//Hit bottom or right of wall... top left is in
 			BottomRight: 	;
 			//Hit left of wall... right in
-			Left: 			p.x := p.x + srcRect.width;
-			Right: 			;                                   
+			Left:
+				begin
+			 		p.x := p.x + srcRect.width;
+					if srcRect.y < targetRect.y then	p.y := p.y + srcRect.height;
+				end;
+			Right:
+				begin
+					if srcRect.y < targetRect.y then	p.y := p.y + srcRect.height;
+				end;
 			//Hit top of wall... bottom in
-			Top: 			p.y := p.y + srcRect.height;
-			Bottom: 		;
+			Top:
+				begin
+					p.y := p.y + srcRect.height;
+					if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
+				end;
+			Bottom: //hit bottom of wall get the top out
+				begin
+					if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
+				end;
+			
 			None: begin 
 					result := CreateVector(0, 0);
 					exit; 
 				end;
-		end;
+		end; //end case
+		
+		//WriteLn('p = ', p.x, ',', p.y);
 		
 		result := VectorOut(p, targetRect, movement, rectCollisionSide);
 		

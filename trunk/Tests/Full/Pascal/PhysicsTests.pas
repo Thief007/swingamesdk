@@ -738,46 +738,62 @@ implementation
 		if not ROOR then
 		begin
 			movement := CreateVector(100, 0);
-            halfH := 10;
-            halfW := 5;
+         halfH := 10;
+         halfW := 5;
 
-	        movement := CreateVector(100, 0);
+	      movement := CreateVector(100, 0);
 	
-	        tgtRect := CreateRectangle(RX, RY, RW, RH);
-            mvRect := CreateRectangle(100 + RX, 100 + RY, 10, 20);
+	      tgtRect := CreateRectangle(RX, RY, RW, RH);
+         mvRect := CreateRectangle(100 + RX, 100 + RY, 10, 20);
 			ROOR := true;
 		end;
 
-        if (IsKeyPressed(VK_A)) then movement := Multiply(RotationMatrix(-4.0), movement);
-        if (IsKeyPressed(VK_Z)) then movement := Multiply(RotationMatrix(4.0), movement);
+		if (IsKeyPressed(VK_A)) then movement := Multiply(RotationMatrix(-4.0), movement);
+		if (IsKeyPressed(VK_Z)) then movement := Multiply(RotationMatrix(4.0), movement);
 
-        if (IsKeyPressed(VK_UP)) then mvRect.Y := mvRect.Y - 5;
-        if (IsKeyPressed(VK_DOWN)) then mvRect.Y := mvRect.Y + 5;
-        if (IsKeyPressed(VK_LEFT)) then mvRect.X := mvRect.X - 5;
-        if (IsKeyPressed(VK_RIGHT)) then mvRect.X := mvRect.X + 5;
+		if (WasKeyTyped(VK_0)) then movement := CreateVector(100, 0);
+		if (WasKeyTyped(VK_9)) then movement := Multiply(RotationMatrix(90.0), CreateVector(100, 0));
+		if (WasKeyTyped(VK_8)) then movement := Multiply(RotationMatrix(180.0), CreateVector(100, 0));
+		if (WasKeyTyped(VK_2)) then movement := Multiply(RotationMatrix(-90.0), CreateVector(100, 0));
 
-        mvOut := VectorOutOfRectFromRect(mvRect, tgtRect, movement);
+		if (IsKeyPressed(VK_UP)) then mvRect.Y := mvRect.Y - 5;
+		if (IsKeyPressed(VK_DOWN)) then mvRect.Y := mvRect.Y + 5;
+		if (IsKeyPressed(VK_LEFT)) then mvRect.X := mvRect.X - 5;
+		if (IsKeyPressed(VK_RIGHT)) then mvRect.X := mvRect.X + 5;
 
-        enterRectFrom := GetSideForCollisionTest(movement);
+		mvOut := VectorOutOfRectFromRect(mvRect, tgtRect, movement);
+		enterRectFrom := GetSideForCollisionTest(movement);
         
 	    px := RectangleLeft(mvRect); 
 	    py := RectangleTop(mvRect);
-        case enterRectFrom of
-			Bottom, BottomLeft: px := RectangleRight(mvRect);
-			BottomRight, Left: px := RectangleRight(mvRect);
-			LeftRight, None, Right, Top: py := RectangleBottom(mvRect);
-			TopBottom, TopLeft:
-			begin
-			    px := RectangleRight(mvRect);
-			    py := RectangleBottom(mvRect);
-			end;
+	
+       case enterRectFrom of
+			BottomLeft: px := RectangleRight(mvRect);
+			BottomRight: ;//px := RectangleRight(mvRect);
+			TopLeft:
+				begin
+				    px := RectangleRight(mvRect);
+				    py := RectangleBottom(mvRect);
+				end;
 			TopRight: py := RectangleBottom(mvRect);
+			Bottom: if px < RX then px := RectangleRight(mvRect);
+			Right: if py < RY then py := RectangleBottom(mvRect);
+			Left:
+				begin
+				    px := RectangleRight(mvRect);
+ 					 if py < RY then py := RectangleBottom(mvRect);
+				end;
+			Top:
+			 	begin
+					py := RectangleBottom(mvRect);
+					if px < RX then px := RectangleRight(mvRect);
+			 	end;
         end;
 
         if (IsKeyPressed(VK_SPACE)) then
         begin
-            mvRect.Y := mvRect.Y + Round(mvOut.Y);
-            mvRect.X += mvRect.X + Round(mvOut.X);
+            mvRect.Y := mvRect.Y + mvOut.Y;
+            mvRect.X := mvRect.X + mvOut.X;
             mvOut := CreateVector(0, 0);
         end;
 
@@ -789,10 +805,9 @@ implementation
 
         if (false = ((mvOut.X = 0) and (mvOut.Y = 0))) then
         begin
-
             DrawLine(GetColor(100, 100, 100), mvRect.X, mvRect.Y, mvRect.X + mvOut.X, mvRect.Y + mvOut.Y);
             DrawRectangle(ColourGreen, mvRect.X + mvOut.X, mvRect.Y + mvOut.Y, mvRect.Width, mvRect.Height);
-            DrawLine(ColourGreen, px, py, px + mvOut.X , py + mvOut.Y );
+            DrawCircle(ColourRed, px, py, 2);
         end;
 	end;
 	
@@ -845,8 +860,6 @@ implementation
 	end;
 	
 	procedure CircleOutOfCircle(const drawIn: Rectangle);
-	var
-		r, r2: Integer;
 	const
 		CR = 100;
 	    CX = 209;
@@ -1033,8 +1046,12 @@ implementation
 		begin
 			MethodBeingTested := 'VectorOutOfRectFromRect';
 			Instructions := 'Arrows move point' + EOL +
-	             'A/Z rotate movement' + EOL +
-	        'Space move point out';
+	            'A/Z rotate movement' + EOL +
+	        		'Space move rect out' + EOL + EOL +
+					'0 = set move to 0 deg' + EOL +
+					'9 = set move to 90 deg' + EOL +
+					'8 = set move to 180 deg' + EOL +
+					'2 = set move to 270 deg' + EOL;
 			ToRun := @RectOutOfRect;
 		end;
 		
