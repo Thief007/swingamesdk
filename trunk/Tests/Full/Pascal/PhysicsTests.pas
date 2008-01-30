@@ -305,10 +305,41 @@ implementation
 	    DrawRectangle(ColourWhite, ball.X, ball.Y, CurrentWidth(ball), CurrentHeight(ball));
 	end;
 	
+	var toggleRunCircle: Boolean = false;
+	
 	procedure CircleCollissionTest2(const drawIn: Rectangle);
 	var
 		tempX, tempY, bigtempX, bigtempY: Single;
+		
+		procedure MoveBallUsingVector(var ball : Sprite);
+		begin
+			MoveSprite(ball, ball.movement);
+			
+			if ball.x > drawIn.width - CurrentWidth(ball) then
+			begin
+				ball.movement.x := -ball.movement.x;
+				ball.x := drawIn.width - CurrentWidth(ball);
+			end;
+			if ball.y > drawIn.height - CurrentHeight(ball) then
+			begin
+				ball.movement.y := -ball.movement.y;
+				ball.y := drawIn.height - CurrentHeight(ball);
+			end;
+			if ball.x < drawIn.x then
+			begin
+				ball.movement.x := -ball.movement.x;
+				ball.x := drawIn.x;
+			end;
+			if ball.y < 0 then
+			begin
+				ball.movement.y := -ball.movement.y;
+				ball.y := 0;
+			end;
+		end;
+
 	begin
+		if WasKeyTyped(VK_T) then toggleRunCircle := not toggleRunCircle;
+			
 		if (IsKeyPressed(VK_DOWN)) then
         begin
             if (Magnitude(bigball.Movement) > 2) then
@@ -348,7 +379,7 @@ implementation
         begin
             ball.Movement := Multiply(RotationMatrix(1), ball.Movement);
         end;
-        if (WasKeyTyped(VK_SPACE)) then
+        if (not toggleRunCircle) and (WasKeyTyped(VK_SPACE)) then
         begin
             if (HaveSpritesCollided(ball, bigball)) then
             begin
@@ -364,6 +395,18 @@ implementation
                 bigball.Y := 155;
             end;
         end;
+        if toggleRunCircle then
+		  begin
+           MoveBallUsingVector(ball);
+           MoveBallUsingVector(bigball);
+
+           if (HaveSpritesCollided(ball, bigball)) then
+           begin
+               CircularCollision(ball, bigball);
+               UpdateSprite(ball);
+               UpdateSprite(bigball);
+           end;				
+		  end;
 
         DrawSprite(bigball);
         DrawSprite(ball);
