@@ -6,7 +6,7 @@ interface
 	procedure AddShapesSuite(var suites: TestSuites); 
 
 implementation
-	uses GameResources, SGSDK_Core, SGSDK_Audio, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Physics, SGSDK_Font, SysUtils;
+	uses GameResources, SGSDK_Core, SGSDK_Audio, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Physics, SGSDK_Font, SysUtils, SGSDK_Camera;
 	
 	var
 		staticRect1, staticRect2, movRect: Rectangle;
@@ -116,11 +116,11 @@ implementation
 			end;
 		end;
 		
-		{DrawLine(ColourRed, CreateLine(100, 100, 150, 150));
-		if IsPointOnLine(GetMousePosition(), CreateLine(100, 100, 150, 150)) then
+		DrawLine(ColourRed, CreateLine(100, 100, 150, 150));
+		if IsPointOnLine(CreatePoint(GameX(Round(GetMousePosition().X)), GameY(Round(GetMousePosition().Y))), CreateLine(100, 100, 150, 150)) then
 		begin
 			DrawText('on the line', ColourWhite, GameFont('Courier'), 100, 100);
-		end;}
+		end;
 		
 		if IsKeyPressed(VK_1) then ShowDistance(0);
 		if IsKeyPressed(VK_2) then ShowDistance(1);
