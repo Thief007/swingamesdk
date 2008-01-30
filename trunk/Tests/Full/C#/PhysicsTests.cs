@@ -38,10 +38,10 @@ namespace Tests
 
         private class VectorIsWithinRectTest : TestSet
         {
-            private SwinGame.Point2D point = Shapes.CreatePoint(100, 100);
-            private Rectangle rect = Shapes.CreateRectangle(100, 200, 50, 50);
+            private Rectangle rect = Shapes.CreateRectangle(100, 200, 25, 25);
 
             private Rectangle rect2 = Shapes.CreateRectangle(300, 200, 50, 50);
+            private Vector v = Physics.CreateVector(2,2);
 
             private readonly static string METHS =
                 "VectorIsWithinRect";
@@ -58,13 +58,21 @@ namespace Tests
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
 
-                if (Input.IsKeyPressed(Keys.VK_UP)) point.Y = point.Y - 1;
-                if (Input.IsKeyPressed(Keys.VK_DOWN)) point.Y = point.Y + 1;
-                if (Input.IsKeyPressed(Keys.VK_LEFT)) point.X = point.X - 1;
-                if (Input.IsKeyPressed(Keys.VK_RIGHT)) point.X = point.X + 1;
-
-
-
+                v = Input.GetMousePositionAsVector();
+                v.X = Camera.GameX((int)v.X);
+                v.Y = Camera.GameY((int)v.Y);
+                
+                Graphics.DrawRectangle(Color.Red, rect);
+                Graphics.DrawRectangle(Color.Red, rect2);
+                if (Physics.VectorIsWithinRect(v, rect))
+                {
+                    Graphics.FillRectangle(Color.Yellow, rect);
+                }
+                if (Physics.VectorIsWithinRect(v, rect2.X, rect2.Y, rect2.Width, rect2.Height))
+                {
+                    Graphics.FillRectangle(Color.Yellow, rect2);
+                }
+                Graphics.DrawLine(Color.White, 0, 0, v.X, v.Y);
             }
 
         }
