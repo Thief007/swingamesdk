@@ -994,7 +994,7 @@ namespace SwinGame
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the destination</param>
-        /// <param name="source ">The possition and size of the bitmapToDraw</param>
+        /// <param name="source">The possition and size of the bitmapToDraw</param>
         /// <param name="x">The x location to draw the bitmap part to</param>
         /// <param name="y">The y location to draw the bitmap part to</param>
         public static void DrawBitmapPart(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, int x, int y)
@@ -1008,8 +1008,8 @@ namespace SwinGame
         /// </summary>
         /// <param name="dest">The destination bitmap</param>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the destination</param>
-        /// <param name="source ">The possition and size of the bitmapToDraw</param>
-        /// <param name="position ">The x,y location to draw the bitmap part to</param>
+        /// <param name="source">The possition and size of the bitmapToDraw</param>
+        /// <param name="position">The x,y location to draw the bitmap part to</param>
         public static void DrawBitmapPart(Bitmap dest, Bitmap bitmapToDraw, Rectangle source, Point2D position)
         {
             DrawBitmapPart(dest, bitmapToDraw, source.X, source.Y, source.Width, source.Height, (int)position.X, (int)position.Y);
@@ -3268,6 +3268,7 @@ namespace SwinGame
 		/// Sets the clipping rectangle to the specified values. Any drawing outside of
 		/// this area is ignored.
 		/// </summary>
+        /// <param name="bmp">Bitmap to clip</param>
         /// <param name="rect">the clipping rectangle</param>
 		public static void SetClip(Bitmap bmp, Rectangle rect)
 		{
