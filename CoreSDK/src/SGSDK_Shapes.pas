@@ -195,19 +195,73 @@ implementation
 		
 		
 	function IsPointOnLine(const pnt: Point2D; const line: LineSegment): Boolean;
+		function RectFromLine(): Rectangle;
+		var
+			x, y, width, height : Single;
+		begin
+
+			if line.startPoint.x < line.endpoint.x then
+			begin
+				x := line.startPoint.x;
+				width := line.endPoint.x - line.startPoint.x;
+			end
+			else
+			begin
+				x := line.endPoint.x;
+				width := line.startPoint.x - line.endPoint.x;
+			end;
+			
+			if line.startPoint.y < line.endpoint.y then
+			begin
+				y := line.startPoint.y;
+				height := line.endPoint.y - line.startPoint.y;
+			end
+			else
+			begin
+				y := line.endPoint.y;
+				height := line.startPoint.y - line.endPoint.y;
+			end;
+
+			result := CreateRectangle(Round(x), Round(y), Round(width), Round(height));
+			DrawRectangle(ColourWhite, result);
+		end;
 	var
 		sqLineMag,              // square of line's magnitude (see note in function LineMagnitude)
-		u: Single;              // see Paul Bourke's original article(s)
+		//u: Single;              // see Paul Bourke's original article(s)
+
+		lx, ly, m, c : Single;
 	begin
+	
+		result := false;
+	
+		//Lines Magnitude must be at least 0.0001
 		sqLineMag := SqLineMagnitude(line);
 		if SqLineMag < EPSEPS then
 		begin
 			raise Exception.Create('Cannot determine if point is on line, line is too short');
 		end;
-
-		u := ( (pnt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (pnt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
+					
+		//Obtain the other variables for the Line Algorithm
+		if line.endPoint.x = line.startPoint.x then exit;
+		if line.endPoint.y = line.startPoint.y then exit;
 		
-		result := (u >= EPS) and (u <= 1);
+		m := (line.endPoint.y - line.startPoint.y) / (line.endPoint.x - line.startPoint.x);
+
+		c := line.startPoint.y - (m * line.startPoint.x);
+
+		ly := (m*pnt.x) + c;
+		lx := (pnt.y - c) / m;
+		
+		WriteLn(FloatToStr(line.startPoint.y) + ' = ' + FloatToStr(m) + ' * ' + FloatToStr(line.startPoint.x) + ' ' + FloatToStr(c));
+		WriteLn(IntToStr(Round(lx)) + ',' + FloatToStr(pnt.y));
+		WriteLn(FloatToStr(pnt.x) + ',' + IntToStr(Round(ly)));
+		if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) and PointIsWithinRect(CreatePoint(lx, pnt.y), RectFromLine()) then result := true;
+		//if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) then result := true;
+		
+		{u := ( (pnt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (pnt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
+		
+		result := (u >= EPS) and (u <= 1);}
+		
 	end;
 		
 	function CreateLine(x1, y1, x2, y2: Single): LineSegment;
