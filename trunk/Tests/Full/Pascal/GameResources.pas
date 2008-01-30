@@ -26,7 +26,7 @@ implementation
 		_MapsStr: Array of String;
 
 		_Background: Bitmap;
-		_Animation: Sprite;
+		_Animation: Bitmap;
 		_LoadingFont: Font;
 		_StartSound: SoundEffect;
 
@@ -35,12 +35,12 @@ implementation
 		i : Integer;
 	begin
 		PlaySoundEffect(_StartSound);
-		for i:= 0 to 55 do
+		for i:= 0 to 13 do
 		begin
 			DrawBitmap(_Background, 0, 0);
-			DrawSprite(_Animation);
-			UpdateSprite(_Animation);
+			DrawBitmapPart(_Animation, (i div 7) * 712, (i mod 7) * 184, 712, 184, 41, 242);
 			RefreshScreen(60);
+			Sleep(67);
 			ProcessEvents();			
 		end;
 		Sleep(1500);
@@ -53,9 +53,7 @@ implementation
 		RefreshScreen(60);
 		ProcessEvents();
 
-		_Animation := CreateSprite(LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource)), 4, 14, 712, 184);
-		_Animation.x := 41;
-		_Animation.y := 242;
+		_Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource));
 		_LoadingFont := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);
 		_StartSound := LoadSoundEffect(GetPathToResource('SwinGameStart.ogg', SoundResource));
 
@@ -71,11 +69,13 @@ implementation
 
 	procedure EndLoadingScreen();
 	begin
+		ProcessEvents();
+		Sleep(500);
 		ClearScreen();
 		RefreshScreen(60);
 		FreeFont(_LoadingFont);
 		FreeBitmap(_Background);
-		FreeSprite(_Animation);
+		FreeBitmap(_Animation);
 		FreeSoundEffect(_StartSound);
 	end;
 	
@@ -261,11 +261,11 @@ implementation
 		LoadMusics();
 		Sleep(50);
 		
-		ShowMessage('Loading maps...', 3);
+		ShowMessage('Loading maps...', 4);
 		LoadMaps();
 		Sleep(50);
 
-		ShowMessage('Game loaded...', 4);
+		ShowMessage('Game loaded...', 5);
 		Sleep(50);
 		EndLoadingScreen();
 

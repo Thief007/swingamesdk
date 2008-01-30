@@ -14,7 +14,7 @@ Private MapsStr() As String
 Private img As Long
 
 Private Background As SGSDKVB6.Bitmap
-Private Animation As SGSDKVB6.sprite
+Private Animation As SGSDKVB6.Bitmap
 Private Loadingfont As SGSDKVB6.font
 Private StartSound As SGSDKVB6.SoundEffect
 
@@ -66,84 +66,86 @@ Sub LoadResources()
     ReDim MapsStr(0)
 
     Dim oldW, oldH As Long
-    oldW = SwinGame.Core.ScreenHeight
-    oldH = SwinGame.Core.ScreenWidth
-    Call SwinGame.Core.ChangeScreenSize(800, 600)
+    oldW = Core.ScreenHeight
+    oldH = Core.ScreenWidth
+    Call Core.ChangeScreenSize(800, 600)
     Call ShowLoadingScreen
     Call ShowMessage("Loading fonts...", 0)
     Call LoadFonts
-    Call SwinGame.Core.Sleep(50)
+    Call Core.Sleep(50)
 
     Call ShowMessage("Loading images...", 1)
     Call LoadImages
-    Call SwinGame.Core.Sleep(50)
+    Call Core.Sleep(50)
 
     Call ShowMessage("Loading sounds...", 2)
     Call LoadSounds
-    Call SwinGame.Core.Sleep(50)
+    Call Core.Sleep(50)
 
     Call ShowMessage("Loading music...", 3)
     Call LoadMusics
-    Call SwinGame.Core.Sleep(50)
+    Call Core.Sleep(50)
    
-    Call ShowMessage("Loading maps...", 3)
+    Call ShowMessage("Loading maps...", 4)
     Call LoadMaps
-    Call SwinGame.Core.Sleep(50)
+    Call Core.Sleep(50)
     
     
     'Add game level loading here...
-    Call SwinGame.Core.Sleep(50)
-    Call ShowMessage("Game loaded...", 4)
-    Call SwinGame.Core.Sleep(50)
+    Call Core.Sleep(50)
+    Call ShowMessage("Game loaded...", 5)
+    Call Core.Sleep(50)
     Call EndLoadingScreen
 
-    Call SwinGame.Core.ChangeScreenSize(oldH, oldW)
+    Call Core.ChangeScreenSize(oldH, oldW)
 End Sub
 
 Private Sub ShowLoadingScreen()
-    Set Background = SwinGame.Graphics.LoadBitmap(GetPathToResource("SplashBack.png", ResourceKind_ImageResource))
-    Call SwinGame.Graphics.DrawBitmap(Background, 0, 0)
-    Call SwinGame.Core.RefreshScreen(60)
-    Call SwinGame.Core.ProcessEvents
-    Set Animation = New SGSDKVB6.sprite
+    Set Background = Graphics.LoadBitmap(GetPathToResource("SplashBack.png", ResourceKind_ImageResource))
+    Call Graphics.DrawBitmap(Background, 0, 0)
+    Call Core.RefreshScreen(60)
+    Call Core.ProcessEvents
     Set StartSound = New SGSDKVB6.SoundEffect
-    Set Animation = SwinGame.Graphics.CreateSprite_MultiFPC(SwinGame.Graphics.LoadBitmap(GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource)), 4, 14, 712, 184)
-    Call Animation.SetX(41)
-    Call Animation.SetY(242)
-    Set Loadingfont = SwinGame.Text.LoadFont(GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
-    Set StartSound = SwinGame.Audio.LoadSoundEffect(GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
+    Set Animation = Graphics.LoadBitmap(GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource))
+    Set Loadingfont = Text.LoadFont(GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
+    Set StartSound = Audio.LoadSoundEffect(GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
     Call PlaySwinGameIntro
 End Sub
 
 Private Sub PlaySwinGameIntro()
     Dim i As Long
-    Call SwinGame.Audio.PlaySoundEffect(StartSound)
+    Call Audio.PlaySoundEffect(StartSound)
      i = 0
-    Do Until i = 55
-        i = i + 1
-        Call SwinGame.Graphics.DrawBitmap(Background, 0, 0)
-        Call SwinGame.Graphics.DrawSprite(Animation)
-        Call SwinGame.Graphics.UpdateSprite(Animation)
-        Call SwinGame.Core.RefreshScreen(60)
-        Call SwinGame.Core.ProcessEvents
+    Do Until i = 14
+        Call Graphics.DrawBitmap(Background, 0, 0)
+
+		Call Graphics.DrawBitmapPart(Animation, (i \ 7) * 712, (i mod 7) * 184, 712, 184, 41, 242);
+
+        Call Core.RefreshScreen_WithFrame(60)
+        Call Core.ProcessEvents
+		Call Core.Sleep(67)
+		i = i + 1
     Loop
-    Call SwinGame.Core.Sleep(1500)
+    Call Core.Sleep(1500)
 End Sub
 
 Private Sub ShowMessage(message As String, number As Long)
-    Call SwinGame.Text.DrawText(message, red, Loadingfont, 240, 20 + (25 * number))
-    Call SwinGame.Core.RefreshScreen(60)
-    Call SwinGame.Core.ProcessEvents
+    Call Text.DrawText(message, red, Loadingfont, 240, 20 + (25 * number))
+    Call Core.RefreshScreen(60)
+    Call Core.ProcessEvents
 End Sub
 
 
 Private Sub EndLoadingScreen()
-    Call SwinGame.Graphics.ClearScreen
-    Call SwinGame.Core.RefreshScreen(60)
-    Call SwinGame.Text.FreeFont(Loadingfont)
-    Call SwinGame.Graphics.FreeBitmap(Background)
-    Call SwinGame.Graphics.FreeSprite(Animation)
-    Call SwinGame.Audio.FreeSoundEffect(StartSound)
+	Call Core.ProcessEvents()
+	Call Core.Sleep(500)
+
+    Call Graphics.ClearScreen
+    Call Core.RefreshScreen(60)
+    Call Text.FreeFont(Loadingfont)
+    Call Graphics.FreeBitmap(Background)
+    Call Graphics.FreeSprite(Animation)
+    Call Audio.FreeSoundEffect(StartSound)
 End Sub
 
 
@@ -151,7 +153,7 @@ Private Sub NewFont(fontName As String, fileName As String, size As Long)
     ReDim Preserve Fonts(UBound(Fonts, 1) + 1)
     ReDim Preserve FontsStr(UBound(FontsStr, 1) + 1)
     Set Fonts(UBound(Fonts, 1)) = New SGSDKVB6.font
-    Set Fonts(UBound(Fonts, 1)) = SwinGame.Text.LoadFont(GetPathToResource(fileName, ResourceKind_FontResource), size)
+    Set Fonts(UBound(Fonts, 1)) = Text.LoadFont(GetPathToResource(fileName, ResourceKind_FontResource), size)
     FontsStr(UBound(FontsStr, 1)) = fontName
 End Sub
 
@@ -161,7 +163,7 @@ Private Sub NewImage(imageName As String, fileName As String)
     ReDim Preserve Images(UBound(Images, 1) + 1)
     ReDim Preserve ImagesStr(UBound(ImagesStr, 1) + 1)
     Set Images(UBound(ImagesStr, 1)) = New SGSDKVB6.Bitmap
-    Set Images(UBound(ImagesStr, 1)) = SwinGame.Graphics.LoadBitmap(GetPathToResource(fileName, ResourceKind_ImageResource))
+    Set Images(UBound(ImagesStr, 1)) = Graphics.LoadBitmap(GetPathToResource(fileName, ResourceKind_ImageResource))
     ImagesStr(UBound(ImagesStr, 1)) = imageName
 End Sub
     
@@ -169,7 +171,7 @@ Private Sub NewSound(soundName As String, fileName As String)
     ReDim Preserve Sounds(UBound(Sounds, 1) + 1)
     ReDim Preserve SoundsStr(UBound(SoundsStr, 1) + 1)
     Set Sounds(UBound(Sounds, 1)) = New SGSDKVB6.SoundEffect
-    Set Sounds(UBound(Sounds, 1)) = SwinGame.Audio.LoadSoundEffect(GetPathToResource(fileName, ResourceKind_SoundResource))
+    Set Sounds(UBound(Sounds, 1)) = Audio.LoadSoundEffect(GetPathToResource(fileName, ResourceKind_SoundResource))
     SoundsStr(UBound(SoundsStr, 1)) = soundName
 End Sub
 
@@ -177,7 +179,7 @@ Private Sub NewMusic(musicName As String, fileName As String)
     ReDim Preserve Musics(UBound(Musics, 1) + 1)
     ReDim Preserve MusicsStr(UBound(MusicsStr, 1) + 1)
     Set Musics(UBound(Musics, 1)) = New SGSDKVB6.music
-    Set Musics(UBound(Musics, 1)) = SwinGame.Audio.LoadMusic(GetPathToResource(fileName, ResourceKind_SoundResource))
+    Set Musics(UBound(Musics, 1)) = Audio.LoadMusic(GetPathToResource(fileName, ResourceKind_SoundResource))
     MusicsStr(UBound(MusicsStr, 1)) = musicName
 End Sub
 
@@ -193,7 +195,7 @@ End Sub
 Public Sub FreeFonts()
     Dim i As Long
     For i = (LBound(Fonts, 1)) To (UBound(Fonts, 1))
-        Call SwinGame.Text.FreeFont(Fonts(i))
+        Call Text.FreeFont(Fonts(i))
     Next i
 End Sub
 
@@ -202,7 +204,7 @@ End Sub
 Public Sub FreeImages()
     Dim i As Long
     For i = (LBound(Images, 1)) To (UBound(Images, 1))
-        Call SwinGame.Graphics.FreeBitmap(Images(i))
+        Call Graphics.FreeBitmap(Images(i))
     Next i
 End Sub
 
@@ -211,7 +213,7 @@ End Sub
 Public Sub FreeSounds()
     Dim i As Long
     For i = (LBound(Sounds, 1)) To (UBound(Sounds, 1))
-        Call SwinGame.Audio.FreeSoundEffect(Sounds(i))
+        Call Audio.FreeSoundEffect(Sounds(i))
     Next i
 End Sub
 
@@ -220,7 +222,7 @@ End Sub
 Public Sub FreeMusics()
     Dim i As Long
     For i = (LBound(Musics, 1)) To (UBound(Musics, 1))
-        Call SwinGame.Audio.FreeMusic(Musics(i))
+        Call Audio.FreeMusic(Musics(i))
     Next i
 End Sub
 
