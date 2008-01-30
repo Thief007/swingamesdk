@@ -172,14 +172,6 @@ namespace SwinGame
         /// </summary>
         BottomRight,
         /// <summary>
-        /// LeftRight
-        /// </summary>
-        LeftRight,
-        /// <summary>
-        /// TopBottom
-        /// </summary>
-        TopBottom,
-        /// <summary>
         /// None
         /// </summary>
         None

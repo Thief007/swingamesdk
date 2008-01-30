@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Added const to vector param, increased search for collision tests
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
 // - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide 
@@ -91,7 +92,7 @@ interface
 		function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
 		function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
 		
-		function CollisionWithMap(m : Map; spr : Sprite; vec: Vector): CollisionSide;
+		function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
 		
 		procedure FreeMap(var m: Map);
 		
@@ -610,13 +611,14 @@ implementation
 			startPoint, endPoint: Rectangle;
 			startX, startY, endX, endY : Integer;
 		begin
-			startPoint := CreateRectangle( 	round( ((spr.x - spr.movement.x) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
+			startPoint := CreateRectangle( 	
+											round( ((spr.x - spr.movement.x) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
 											round( ((spr.y - spr.movement.y) / m.MapInfo.BlockHeight) -1) * m.MapInfo.BlockHeight,
 											(round( spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
 											(round( spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
 											
-			endPoint := CreateRectangle( 	round((spr.x / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
-											round((spr.y / m.MapInfo.BlockHeight) - 1) * m.MapInfo.BlockHeight,
+			endPoint := CreateRectangle( 	round(((spr.x + spr.width) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
+											round(((spr.y + spr.height) / m.MapInfo.BlockHeight) - 1) * m.MapInfo.BlockHeight,
 											(round(spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
 											(round(spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
 			
@@ -784,7 +786,7 @@ implementation
 		m := nil;
 	end;
 	
-	function CollisionWithMap(m : Map; spr : Sprite; vec: Vector): CollisionSide;
+	function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
 	var
 		x, y: Integer;
 		temp: Vector;
