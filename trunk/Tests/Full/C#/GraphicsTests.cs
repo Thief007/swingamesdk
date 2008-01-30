@@ -21,6 +21,7 @@ namespace Tests
             result.Add(new TestDrawEllipse());
             result.Add(new TestFill1());
             result.Add(new TestFill2());
+            result.Add(new TestSprite());
             list.Add(result);
         }
 
@@ -589,6 +590,118 @@ namespace Tests
 		        tempPoint5.Y = Shapes.RectangleBottom(drawIn) - curRadius * 3 - 1;
                 SwinGame.Graphics.FillCircleOnScreen(Color.Yellow, tempPoint5, curRadius);
             }
+        }
+
+        private class TestSprite : TestSet
+        {
+            private readonly static string METHS =
+                "Sprite routines";
+
+            private readonly static string INST =
+                "Use the number keys from" + Environment.NewLine +
+                "1 to 7 to change the sprite." + Environment.NewLine +
+                "Use the arrow keys to" + Environment.NewLine +
+                "move the sprite." + Environment.NewLine +
+                "Use the M key to reset the" + Environment.NewLine +
+                "position of the sprite." + Environment.NewLine +
+                "Press Q to change the animation" + Environment.NewLine +
+                "to Loop." + Environment.NewLine +
+                "Press W to change the animation" + Environment.NewLine +
+                "to ReverseLoop." + Environment.NewLine +
+                "Press E to change the animation" + Environment.NewLine +
+                "to ReverseOnce." + Environment.NewLine +
+                "Press R to change the animation" + Environment.NewLine +
+                "to Stop." + Environment.NewLine;
+
+            private SwinGame.Bitmap smallScreen = SwinGame.Graphics.CreateBitmap(418, 418);
+            private int[] fps;
+            private SwinGame.Bitmap[] explodeAnim;
+            private Sprite[] sprites;
+            private int currentSpr;
+
+            public TestSprite()
+                : base(METHS, INST)
+            {
+                Array.Resize(ref fps, 40);
+                Array.Resize(ref explodeAnim, 40);
+
+                for (int i = 0; i < 40; i++)
+                {
+                    fps[i] = 2;
+                    explodeAnim[i] = GameResources.GameImage("Explode_" + Convert.ToString(i));
+                }
+
+                Array.Resize(ref sprites, 7);
+
+                sprites[0] = SwinGame.Graphics.CreateSprite(GameResources.GameImage("BlueExplosion"), true, fps, SpriteEndingAction.Loop, 180, 180);
+                sprites[1] = SwinGame.Graphics.CreateSprite(GameResources.GameImage("BlueExplosion"), true, fps, 180, 180);
+                sprites[2] = SwinGame.Graphics.CreateSprite(GameResources.GameImage("BlueExplosion"), 2, 40, 180, 180);
+                sprites[3] = SwinGame.Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+                sprites[4] = SwinGame.Graphics.CreateSprite(explodeAnim, fps, SpriteEndingAction.Loop);
+                sprites[5] = SwinGame.Graphics.CreateSprite(explodeAnim, fps);
+                sprites[6] = SwinGame.Graphics.CreateSprite(explodeAnim, 2, 40);
+            }
+
+            protected override void ToRun(System.Drawing.Rectangle drawIn)
+            {
+		        if (Input.IsKeyPressed(Keys.VK_1)) ChangeSprite(0);
+		        if (Input.IsKeyPressed(Keys.VK_2)) ChangeSprite(1);
+		        if (Input.IsKeyPressed(Keys.VK_3)) ChangeSprite(2);
+		        if (Input.IsKeyPressed(Keys.VK_4)) ChangeSprite(3);
+		        if (Input.IsKeyPressed(Keys.VK_5)) ChangeSprite(4);
+		        if (Input.IsKeyPressed(Keys.VK_6)) ChangeSprite(5);
+		        if (Input.IsKeyPressed(Keys.VK_7)) ChangeSprite(6);
+		        if (Input.IsKeyPressed(Keys.VK_LEFT)) sprites[currentSpr].Movement.SetTo(Physics.AddVectors(sprites[currentSpr].Movement, Physics.CreateVector(-1, 0)));
+		        if (Input.IsKeyPressed(Keys.VK_RIGHT)) sprites[currentSpr].Movement.SetTo(Physics.AddVectors(sprites[currentSpr].Movement, Physics.CreateVector(1, 0)));
+		        if (Input.IsKeyPressed(Keys.VK_UP)) sprites[currentSpr].Movement.SetTo(Physics.AddVectors(sprites[currentSpr].Movement, Physics.CreateVector(0, -1)));
+		        if (Input.IsKeyPressed(Keys.VK_DOWN)) sprites[currentSpr].Movement.SetTo(Physics.AddVectors(sprites[currentSpr].Movement, Physics.CreateVector(0, 1)));
+		        if (Input.IsKeyPressed(Keys.VK_M)) ResetPos();
+		        if (Input.IsKeyPressed(Keys.VK_Q)) ChangeAnim(SpriteEndingAction.Loop);
+		        if (Input.IsKeyPressed(Keys.VK_W)) ChangeAnim(SpriteEndingAction.ReverseLoop);
+		        if (Input.IsKeyPressed(Keys.VK_E)) ChangeAnim(SpriteEndingAction.ReverseOnce);
+		        if (Input.IsKeyPressed(Keys.VK_R)) ChangeAnim(SpriteEndingAction.Stop);
+        		
+		        sprites[currentSpr].Movement.SetTo(Physics.MultiplyVector(sprites[currentSpr].Movement, (float)0.95));
+		        sprites[currentSpr].Movement.SetTo(Physics.LimitMagnitude(sprites[currentSpr].Movement, 5));
+        		
+		        SwinGame.Graphics.DrawSprite(sprites[currentSpr]);
+		        SwinGame.Graphics.UpdateSprite(sprites[currentSpr]);
+        		
+		        if (SwinGame.Graphics.IsSpriteOffscreen(sprites[currentSpr]))
+		        {
+			        Text.DrawText("The sprite is not on the screen", Color.White, GameResources.GameFont("Courier"), 0, 0);
+                }
+            }
+
+            private void ChangeSprite(int ChangeTo)
+            {
+                SpriteEndingAction curAction = sprites[currentSpr].EndingAction;
+                Vector vec = sprites[currentSpr].Movement;
+                SwinGame.Graphics.ReplayAnimation(sprites[currentSpr]);
+
+                Single tempX = sprites[currentSpr].X;
+                Single tempY = sprites[currentSpr].Y;
+
+                currentSpr = ChangeTo;
+
+                sprites[currentSpr].Movement.SetTo(vec);
+                sprites[currentSpr].X = tempX;
+			    sprites[currentSpr].Y = tempY;
+			    sprites[currentSpr].EndingAction = curAction;
+            }
+		
+            private void ResetPos()
+            {
+                sprites[currentSpr].Movement.SetTo(Physics.CreateVector(0,0));
+                SwinGame.Graphics.MoveSpriteTo(sprites[currentSpr], 0, 0);
+            }
+
+            private void ChangeAnim(SpriteEndingAction act)
+            {
+                sprites[currentSpr].EndingAction = act;
+                SwinGame.Graphics.ReplayAnimation(sprites[currentSpr]);  
+            }
+		
         }
     }
 }

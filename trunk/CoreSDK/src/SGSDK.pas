@@ -2557,7 +2557,7 @@ exports
 	ReplayAnimation,
 	SetSpriteKind,
 	SetSpriteFramesPerCell,
-	SetSpriteendingAction,
+	SetSpriteEndingAction,
 	FreeSprite,
 	AddBitmapToSprite,
 	CurrentHeight,
