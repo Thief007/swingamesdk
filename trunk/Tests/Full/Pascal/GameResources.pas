@@ -196,6 +196,7 @@ implementation
 	procedure LoadMaps();
 	begin
 		NewMap('test');
+		NewMap('test3');
 	end;
 	
 	procedure FreeSounds();
