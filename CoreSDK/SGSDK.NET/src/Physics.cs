@@ -11,6 +11,7 @@
 //
 // Version 1.1:
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
+//                     : Fixed Rectangle/Bitmap Collision
 // - 2008-01-30: James: Changed CircleHasCollidedWithLine to take a 
 //    LineSegement insted of a Point2D
 // - 2008-01-29: Andrew: Fixed MAtrix2D dispose - removed
@@ -622,7 +623,8 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "HasBitmapCollidedWithRect")]
-        private static extern int DLL_HasBitmapCollidedWithRect(IntPtr bitmap, int x, int y, int width, int height);
+        private static extern int DLL_HasBitmapCollidedWithRect(IntPtr bitmap, int x, int y, int rx, int ry, int width, int height);
+
         /// <summary>
         /// Returns true if the Bitmap has collided with the specified Rectangle
         /// </summary>
@@ -640,7 +642,7 @@ namespace SwinGame
 
             try
             {
-                temp = DLL_HasBitmapCollidedWithRect(bitmap.pointer, x, y, width, height) == -1;
+                temp = DLL_HasBitmapCollidedWithRect(bitmap.pointer, x, y, rectX, rectY, width, height) == -1;
             }
             catch (Exception exc)
             {
