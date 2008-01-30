@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed Print strings for EOL as last char
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-21: Andrew: Added Point/Rectangle overloads
 // - 2008-01-17: Aki + Andrew: Refactor
@@ -216,6 +217,8 @@ implementation
 			if n = 0 then subStr := str
 			else if n = 1 then subStr := ' '
 			else subStr := Copy(str, 1, n - 1);
+
+			if Length(subStr) < 1 then subStr := ' ';
 
 			//Remove the line from the original string
 			if n <> 0 then

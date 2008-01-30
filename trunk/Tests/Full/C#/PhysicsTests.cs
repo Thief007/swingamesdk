@@ -625,10 +625,10 @@ namespace Tests
                     Y = Y - 1;
                 }
                 //HaveBitmapsCollided
-                Text.DrawText("All Bound", Color.White, GameResources.GameFont("Courier"), 10, 5);
+                Text.DrawText("Default", Color.White, GameResources.GameFont("Courier"), 10, 5);
                 if (Physics.HaveBitmapsCollided(mediumball, 10, 30, smallball, X, Y))
                 {
-                    Graphics.FillRectangle(Color.Pink, 5, 25, mediumball.Height + 10, mediumball.Width + 10);
+                    Graphics.FillRectangle(Color.Blue, 5, 25, mediumball.Height + 10, mediumball.Width + 10);
                 }
                 Graphics.DrawBitmap(mediumball, 10, 30);
                 

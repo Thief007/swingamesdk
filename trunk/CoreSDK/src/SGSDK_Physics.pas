@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-30: Andrew: Fixed rectangle collision with bitmap
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Correct Circular Collision to
 //		handle situations where the balls have overlaped.
@@ -79,6 +80,8 @@ interface
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
 
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload; {New for 1.2}
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload;
 
@@ -422,19 +425,26 @@ implementation
 		end;		
 	end;
 
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
+	begin
+		result := HasBitmapPartCollidedWithRect(image, x, y, CreateRectangle(0, 0, image), bounded, rect);
+	end;
+	
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload; {New for 1.2}
+	begin
+		result := HasBitmapCollidedWithRect(image, x, y, bounded, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+	end;
+
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload;
 	begin
-		result := HasBitmapCollidedWithRect(image, x, y, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+		result := HasBitmapCollidedWithRect(image, x, y, false, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
 	end;
 
 	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
 	begin
-		//result := RectanglesIntersect(CreateRectangle(x, y, image), rect)
-		result := HasBitmapPartCollidedWithRect(image, x, y, CreateRectangle(0, 0, image), false, rect);
+		result := HasBitmapCollidedWithRect(image, x, y, false, rect);
 	end;
 	
-	
-
 	/// Determined if a sprite has collided with a given rectangle. The rectangles
 	///	coordinates are expressed in "world" coordinates.
 	///
@@ -675,7 +685,7 @@ implementation
 	///
 	function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer; bounded1: Boolean; image2: Bitmap; x2, y2: Integer; bounded2: Boolean): Boolean; overload;
 	begin
-		if not HasBitmapCollidedWithRect(image1, x1, y1, x2, y2, image2.width, image2.height) then
+		if not HasBitmapCollidedWithRect(image1, x1, y1, true, x2, y2, image2.width, image2.height) then
 		begin
 			result := false;
 			exit;
@@ -696,7 +706,7 @@ implementation
 	
 	function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; const src2: Rectangle; bounded2: Boolean): Boolean; overload;
 	begin
-		if not HasBitmapCollidedWithRect(image1, Round(pt1.x), Round(pt1.y), Round(pt2.x), Round(pt2.y), src2.width, src2.height) then
+		if not HasBitmapCollidedWithRect(image1, Round(pt1.x), Round(pt1.y), true, Round(pt2.x), Round(pt2.y), src2.width, src2.height) then
 		begin
 			result := false;
 			exit;
