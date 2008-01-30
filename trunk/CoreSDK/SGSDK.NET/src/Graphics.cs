@@ -651,8 +651,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int GetSpritehasEnded(IntPtr pointer);
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int GetSpriteReverse(IntPtr pointer);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        //private static extern int GetSpriteReverse(IntPtr pointer);
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="CreateBitmap")]
         private static extern IntPtr DLL_CreateBitmap(int width, int height);
@@ -1559,7 +1559,7 @@ namespace SwinGame
         /// if you don't want all of the bitmap to be shown
         /// </summary>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
-        /// <param name="source ">The possition and size of the bitmapToDraw</param>
+        /// <param name="source">The possition and size of the bitmapToDraw</param>
         /// <param name="x">The x location to draw the bitmap part to</param>
         /// <param name="y">The y location to draw the bitmap part to</param>
         public static void DrawBitmapPart(Bitmap bitmapToDraw,Rectangle source , float x, float y)
@@ -1573,8 +1573,8 @@ namespace SwinGame
         /// if you don't want all of the bitmap to be shown
         /// </summary>
         /// <param name="bitmapToDraw">The bitmap to be drawn onto the screen</param>
-        /// <param name="source ">The possition and size of the bitmapToDraw</param>
-        /// <param name="position ">The x,y location to draw the bitmap part to</param>
+        /// <param name="source">The possition and size of the bitmapToDraw</param>
+        /// <param name="position">The x,y location to draw the bitmap part to</param>
         public static void DrawBitmapPart(Bitmap bitmapToDraw, Rectangle source, Point2D position)
         {
             DrawBitmapPart(bitmapToDraw, source.X, source.Y, source.Width, source.Height, position.X, position.Y);
@@ -2244,8 +2244,8 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprite")]
         private static extern void DLL_DrawSprite(IntPtr spriteToDraw);
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpriteOffset")]
-        private static extern void DLL_DrawSpriteOffset(IntPtr spriteToDraw, int xOffset, int yOffset);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpriteOffset")]
+        //private static extern void DLL_DrawSpriteOffset(IntPtr spriteToDraw, int xOffset, int yOffset);
 
         /// <summary>
         /// Draws a sprite to the game screen

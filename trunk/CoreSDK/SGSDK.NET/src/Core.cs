@@ -53,15 +53,15 @@ namespace SwinGame
     internal class SwinGamePointer
     {
         //private FreeDelegate _ToFree;
-		  private PtrKind _Kind;
-        private bool _Freed;
+		private PtrKind _Kind;
+        //private bool _Freed;
         internal IntPtr Pointer;
 
         internal SwinGamePointer(IntPtr ptr, PtrKind kind)
         {
             Pointer = ptr;
-				_Kind = kind;
-            _Freed = (ptr == IntPtr.Zero);
+			_Kind = kind;
+            //_Freed = (ptr == IntPtr.Zero);
         }
 
         internal SwinGamePointer(IntPtr ptr) : this (ptr, PtrKind.Copy)
