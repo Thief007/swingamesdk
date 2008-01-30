@@ -648,8 +648,8 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ResetClip")]
         private static extern void DLL_ResetClip(IntPtr bmp);
     
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int GetSpritehasEnded(IntPtr pointer);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+        //private static extern int GetSpritehasEnded(IntPtr pointer);
 
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         //private static extern int GetSpriteReverse(IntPtr pointer);
