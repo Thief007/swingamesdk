@@ -1052,16 +1052,12 @@ namespace Tests
                     case CollisionSide.Left:
                         px = Shapes.RectangleRight(mvRect);
                      break;
-                    case CollisionSide.LeftRight:
-                     break;
                     case CollisionSide.None:
                      break;
                     case CollisionSide.Right:
                      break;
                     case CollisionSide.Top:
                         py = Shapes.RectangleBottom(mvRect);
-                     break;
-                    case CollisionSide.TopBottom:
                      break;
                     case CollisionSide.TopLeft:
                         
