@@ -54,6 +54,7 @@ namespace Tests
 		    NewImage("enShip", "enShip.png");
 
 		    NewTransparentColourImage("BlueExplosion", "explosion_pro.jpg", Color.Black);
+            NewTransparentColourImage("BlueExplosion2", "explosion_blue.jpg", Color.Black);
 		    for (int i = 0; i < 40; i++)
 		    {
                 NewTransparentColourImage("Explode_" + Convert.ToString(i), "explode_" + Convert.ToString(i) + ".jpg", Color.Black);
