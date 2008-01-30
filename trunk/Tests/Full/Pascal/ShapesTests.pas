@@ -114,12 +114,13 @@ implementation
 			begin
 				DrawLine(ColourYellow, tempLine);
 			end;
-			
-			{if IsPointOnLine(GetMousePosition(), tempLine) then
-			begin
-				DrawText('on the line', ColourWhite, GameFont('Courier'), 100, 100);
-			end;}
 		end;
+		
+		{DrawLine(ColourRed, CreateLine(100, 100, 150, 150));
+		if IsPointOnLine(GetMousePosition(), CreateLine(100, 100, 150, 150)) then
+		begin
+			DrawText('on the line', ColourWhite, GameFont('Courier'), 100, 100);
+		end;}
 		
 		if IsKeyPressed(VK_1) then ShowDistance(0);
 		if IsKeyPressed(VK_2) then ShowDistance(1);

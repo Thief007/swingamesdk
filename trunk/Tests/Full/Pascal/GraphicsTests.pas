@@ -215,6 +215,16 @@ implementation
 		DrawLineOnScreen(ColourWhite, tempLines[5]);
 		DrawLineOnScreen(ColourWhite, Round(tempLines[6].startPoint.x), Round(tempLines[6].startPoint.y), Round(tempLines[6].endPoint.x), Round(tempLines[6].endPoint.y));
 		
+		for i := 1 to 4 do
+		begin
+			DrawLine(ColourWhite, LineFromVector(tempLines[i].endPoint, MultiplyVector(LineNormal(tempLines[i]), 10)));
+		end;
+		
+		for i := 5 to 6 do
+		begin
+			DrawLineOnScreen(ColourWhite, LineFromVector(tempLines[i].endPoint, MultiplyVector(VectorNormal(LineAsVector(tempLines[i])), 10)));
+		end;
+		
 		angle := 0;
 	end;
 	
