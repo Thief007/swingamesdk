@@ -59,7 +59,8 @@ implementation
 			tempPoint: Point2D;
 			i: Integer;
 			points: Array of Point2D;
-			tempLine: LineSegment;
+			mp: Point2D; //mouse
+			tempLine, diag: LineSegment;
 		
 		procedure MoveLine(xOffset, yOffset: Integer);
 		begin
@@ -77,13 +78,14 @@ implementation
 	begin
 		SetLength(points, 4);
 		
+		mp := CreatePoint(GameX(Round(GetMousePosition().X)), GameY(Round(GetMousePosition().Y)));
+		
 		if IsKeyPressed(VK_LEFT) then MoveLine(-2, 0);
 		if IsKeyPressed(VK_RIGHT) then MoveLine(2, 0);
 		if IsKeyPressed(VK_UP) then MoveLine(0, -2);
 		if IsKeyPressed(VK_DOWN) then MoveLine(0, 2);
 		
-		if PointIsWithinRect(movLine.startPoint, staticRect1) or PointIsWithinRect(movLine.endPoint, staticRect1) then
-			rectCol := ColourRed
+		if PointIsWithinRect(movLine.startPoint, staticRect1) or PointIsWithinRect(movLine.endPoint, staticRect1) then rectCol := ColourRed
 		else rectCol := ColourWhite;
 		
 		if LineIntersectsWithLines(movLine, LinesFromRect(staticRect1)) and LineIntersectsWithRect(movLine, staticRect1) then
@@ -92,6 +94,7 @@ implementation
 		end;
 		
 		DrawLine(ColourWhite, movLine);
+		If IsPointOnLine(mp, movLine) then DrawCircle(ColorGreen, mp, 5);
 		
 		DrawHorizontalLine(ColourGreen, RectangleTop(staticRect1), 0, ScreenWidth());
 		DrawHorizontalLine(ColourGreen, RectangleBottom(staticRect1), 0, ScreenWidth());
@@ -104,23 +107,30 @@ implementation
 		begin
 			tempLine := LinesFromRect(staticRect1)[i];
 			
-			
 			if GetLineIntersectionPoint(movLine, tempLine, tempPoint) then
 			begin
-				DrawCircle(ColourRed, tempPoint, 5);
 				points[i] := tempPoint;
+				
+				if IsPointOnLine(tempPoint, movLine) then	DrawCircle(ColorGreen, tempPoint, 5)
+				else if IsPointOnLine(tempPoint, tempLine) then DrawCircle(ColorWhite, tempPoint, 5)
+				else DrawCircle(ColourRed, tempPoint, 5);
+				
+				if IsPointOnLine(mp, tempLine) then	DrawCircle(ColorGreen, mp, 5);
 			end;
 			
-			if IsPointOnLine(movLine.startPoint, tempLine) or IsPointOnLine(movLine.endPoint, tempLine) then
+{			if IsPointOnLine(movLine.startPoint, tempLine) or IsPointOnLine(movLine.endPoint, tempLine) then
 			begin
 				DrawLine(ColourYellow, tempLine);
-			end;
+				DrawCircle(ColorWhite, )
+			end;}
 		end;
 		
-		DrawLine(ColourRed, CreateLine(100, 100, 150, 150));
-		if IsPointOnLine(CreatePoint(GameX(Round(GetMousePosition().X)), GameY(Round(GetMousePosition().Y))), CreateLine(100, 100, 150, 150)) then
+		diag := CreateLine(RectangleLeft(staticRect1), RectangleTop(staticRect1), RectangleRight(staticRect1), RectangleBottom(staticRect1));
+		
+		DrawLine(rectCol, diag);
+		if IsPointOnLine(mp, diag) then
 		begin
-			DrawText('on the line', ColourWhite, GameFont('Courier'), 100, 100);
+			DrawCircle(ColorGreen, mp, 5);
 		end;
 		
 		if IsKeyPressed(VK_1) then ShowDistance(0);

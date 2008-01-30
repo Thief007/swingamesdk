@@ -11,6 +11,9 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-01-31: Andrew: Fixed IsPointOnLine
+//                     : Added RectangleAroundLine
+// - 2008-01-31: Stephen: Partial fix of IsPointOnLine
 // - 2008-01-21: Andrew: General refactoring, adding const and
 //		some extra overloads.
 // - 2008-01-18: Aki, Andrew, Stephen: Created initial version
@@ -64,7 +67,9 @@ uses SGSDK_Core;
 	function CreateRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
 	function CreateRectangle(const pt: Point2D; width, height: Integer): Rectangle; overload;
 	function CreateRectangle(sprt: Sprite): Rectangle; overload;
-		
+	
+	function RectangleAroundLine(const line: LineSegment): Rectangle; {New 1.2}
+	
 	function RectangleAfterMove(const rect: Rectangle; const move: Vector): Rectangle;
 
 	function RectangleTop	(const rect: Rectangle): Single;
@@ -192,46 +197,70 @@ implementation
 			result.y := line.startPoint.y + u * (line.endPoint.y - line.startPoint.y);
 		end; //  else NOT (u < EPS) or (u > 1)
 	end;
+
+	function RectangleAroundLine(const line: LineSegment): Rectangle;
+{	var
+		x, y, width, height : Single;}
+	begin
+		result.x := Min(line.startPoint.x, line.endPoint.x);
+		result.y := Min(line.startPoint.y, line.endPoint.y);
+		result.width := Round(Max(line.startPoint.x, line.endPoint.x) - result.x);
+		result.height := Round(Max(line.startPoint.y, line.endPoint.y) - result.y);
+				
+{		if line.startPoint.x < line.endpoint.x then
+		begin
+			x := line.startPoint.x;
+			width := line.endPoint.x - line.startPoint.x;
+		end
+		else
+		begin
+			x := line.endPoint.x;
+			width := line.startPoint.x - line.endPoint.x;
+		end;
 		
+		if line.startPoint.y < line.endpoint.y then
+		begin
+			y := line.startPoint.y;
+			height := line.endPoint.y - line.startPoint.y;
+		end
+		else
+		begin
+			y := line.endPoint.y;
+			height := line.startPoint.y - line.endPoint.y;
+		end;
+
+		result := CreateRectangle(Round(x), Round(y), Round(width), Round(height));
+		DrawRectangle(ColourWhite, result);}
+	end;
 		
 	function IsPointOnLine(const pnt: Point2D; const line: LineSegment): Boolean;
-		function RectFromLine(): Rectangle;
+	const SMALL = 0.9;
+		function SimpleComparisonXSame(): Boolean;
 		var
-			x, y, width, height : Single;
+			minY, maxY: Single;
 		begin
-
-			if line.startPoint.x < line.endpoint.x then
-			begin
-				x := line.startPoint.x;
-				width := line.endPoint.x - line.startPoint.x;
-			end
-			else
-			begin
-				x := line.endPoint.x;
-				width := line.startPoint.x - line.endPoint.x;
-			end;
+			minY := Min(line.startPoint.y, line.endPoint.Y);
+			maxY := Max(line.startPoint.y, line.endPoint.Y);
 			
-			if line.startPoint.y < line.endpoint.y then
-			begin
-				y := line.startPoint.y;
-				height := line.endPoint.y - line.startPoint.y;
-			end
-			else
-			begin
-				y := line.endPoint.y;
-				height := line.startPoint.y - line.endPoint.y;
-			end;
-
-			result := CreateRectangle(Round(x), Round(y), Round(width), Round(height));
-			DrawRectangle(ColourWhite, result);
+			result := 
+				(pnt.x >= line.startPoint.x - SMALL) and (pnt.x <= line.startPoint.x + SMALL) and
+				(pnt.y >= minY) and (pnt.y <= maxY);
+		end;
+		
+		function SimpleComparisonYSame(): Boolean;
+		var
+			minX, maxX: Single;
+		begin
+			minX := Min(line.startPoint.x, line.endPoint.x);
+			maxX := Max(line.startPoint.x, line.endPoint.x);
+			
+			result := 
+				(pnt.y >= line.startPoint.y - SMALL) and (pnt.y <= line.startPoint.y + SMALL) and
+				(pnt.x >= minX) and (pnt.x <= maxX);
 		end;
 	var
-		sqLineMag,              // square of line's magnitude (see note in function LineMagnitude)
-		//u: Single;              // see Paul Bourke's original article(s)
-
-		lx, ly, m, c : Single;
+		sqLineMag, lx, ly, m, c : Single;
 	begin
-	
 		result := false;
 	
 		//Lines Magnitude must be at least 0.0001
@@ -242,27 +271,41 @@ implementation
 		end;
 					
 		//Obtain the other variables for the Line Algorithm
-		if line.endPoint.x = line.startPoint.x then exit;
-		if line.endPoint.y = line.startPoint.y then exit;
+		if line.endPoint.x = line.startPoint.x then
+		begin
+			result := SimpleComparisonXSame();
+			exit;
+		end;
+		if line.endPoint.y = line.startPoint.y then
+		begin
+			result := SimpleComparisonYSame();
+			exit;			
+		end;
 		
 		m := (line.endPoint.y - line.startPoint.y) / (line.endPoint.x - line.startPoint.x);
-
 		c := line.startPoint.y - (m * line.startPoint.x);
 
-		ly := (m*pnt.x) + c;
+		ly := (m * pnt.x) + c;
 		lx := (pnt.y - c) / m;
 		
-		WriteLn(FloatToStr(line.startPoint.y) + ' = ' + FloatToStr(m) + ' * ' + FloatToStr(line.startPoint.x) + ' ' + FloatToStr(c));
-		WriteLn(IntToStr(Round(lx)) + ',' + FloatToStr(pnt.y));
-		WriteLn(FloatToStr(pnt.x) + ',' + IntToStr(Round(ly)));
+		//WriteLn('lx,ly = px,py', lx, ',', ly, ' = ', pnt.x, ',', pnt.y);
 		
-		if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) and PointIsWithinRect(CreatePoint(lx, pnt.y), RectFromLine()) then
+		result := (lx >= pnt.x - SMALL) and (lx <= pnt.x + SMALL) and (ly >= pnt.y - SMALL) and (ly <= pnt.y + SMALL)
+		 and PointIsWithinRect(pnt, RectangleAroundLine(line));
+		
+		{WriteLn(FloatToStr(line.startPoint.y) + ' = ' + FloatToStr(m) + ' * ' + FloatToStr(line.startPoint.x) + ' ' + FloatToStr(c));
+		WriteLn(IntToStr(Round(lx)) + ',' + FloatToStr(pnt.y));
+		WriteLn(FloatToStr(pnt.x) + ',' + IntToStr(Round(ly)));}
+
+		
+		
+{		if PointIsWithinRect(CreatePoint(pnt.x, ly), RectFromLine()) and PointIsWithinRect(CreatePoint(lx, pnt.y), RectFromLine()) then
 		begin
 			//if (pnt.x < lx + 1) and (pnt.x > lx - 1) and (pnt.y < ly + 1) and (pnt.y > ly + 1) then result := true;
 			
 			if ((pnt.x - lx < 1) and (pnt.x - lx > -1)) or ((pnt.y - ly < 1) and (pnt.y - ly > -1)) then result := true 
 		end;
-		
+}		
 		{u := ( (pnt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (pnt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
 		
 		result := (u >= EPS) and (u <= 1);}
@@ -329,24 +372,24 @@ implementation
 	function RectangleTop(const rect: Rectangle): Single;
 	begin
 		if rect.height > 0 then result := rect.y
-		else result := rect.y + rect.height; //add negative height
+		else result := rect.y + rect.height - 1; //add negative height
 	end;
 	
 	function RectangleBottom(const rect: Rectangle): Single;
 	begin
-		if rect.height > 0 then result := rect.y + rect.height
+		if rect.height > 0 then result := rect.y + rect.height - 1
 		else result := rect.y; //y is bottom most
 	end;
 
 	function RectangleLeft(const rect: Rectangle): Single;
 	begin
 		if rect.width > 0 then result := rect.x
-		else result := rect.x + rect.width; //add negative width
+		else result := rect.x + rect.width - 1; //add negative width
 	end;
 
 	function RectangleRight(const rect: Rectangle): Single;
 	begin
-		if rect.width > 0 then result := rect.x + rect.width
+		if rect.width > 0 then result := rect.x + rect.width - 1
 		else result := rect.x; //x is right most
 	end;
 
