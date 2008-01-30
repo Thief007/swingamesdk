@@ -261,7 +261,7 @@ interface
 	procedure ResetClip(bmp: Bitmap); overload; {1.1}
 	
 implementation
-	uses Classes, SysUtils, SGSDK_Camera;
+	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics;
 	
 	/// Clears the surface of the bitmap to the passed in color.
 	///
