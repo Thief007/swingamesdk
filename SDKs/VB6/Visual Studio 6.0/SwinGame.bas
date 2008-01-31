@@ -25,5 +25,7 @@ Sub Load()
     Set Physics = New SGSDKVB6.Physics
     Set Camera = New SGSDKVB6.Camera
     Set MouseAndKey = New SGSDKVB6.Input
-    Set MappyLoader = New MappyLoader
+    Set MappyLoader = New SGSDKVB6.MappyLoader
+    Set DebugLog = New SGSDKVB6.Log
+    Set Shapes = New SGSDKVB6.Shapes
 End Sub

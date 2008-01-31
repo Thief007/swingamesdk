@@ -416,6 +416,7 @@ namespace Tests
 
             private SwinGameVB.Sprite ball =Consts.Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
             private SwinGameVB.Sprite bigball =Consts.Graphics.CreateSprite(GameResources.GameImage("BallImage1"));
+            private bool toggleRunCircle = false;
 
             private static SwinGameVB.Bitmap draw = Consts.Graphics.CreateBitmap(300, 32);
 
@@ -437,6 +438,28 @@ namespace Tests
 
             protected override void ToRun(Rectangle toDrawIn)
             {
+
+                if (Consts.Input.WasKeyTyped(Keys.VK_T)) toggleRunCircle = ! toggleRunCircle;
+
+                if (Consts.Input.IsKeyPressed(Keys.VK_DOWN))
+                {
+                    if (Consts.Physics.Magnitude(bigball.GetMovementVector()) > 2)
+                    {
+                        bigball.SetMovementVector(Consts.Physics.MultiplyVector(Consts.Physics.GetUnitVector(bigball.GetMovementVector()), Consts.Physics.Magnitude(bigball.GetMovementVector()) - 1));
+                    }
+                }
+                if (Consts.Input.IsKeyPressed(Keys.VK_UP))
+                {
+                    bigball.SetMovementVector(Consts.Physics.MultiplyVector(Consts.Physics.GetUnitVector(bigball.GetMovementVector()), Consts.Physics.Magnitude(bigball.GetMovementVector()) + 1));
+                }
+                if (Consts.Input.IsKeyPressed(Keys.VK_LEFT))
+                {
+                    bigball.SetMovementVector(Consts.Physics.Multiply_Vector(Consts.Physics.RotationMatrix(-1), bigball.GetMovementVector()));
+                }
+                if (Consts.Input.IsKeyPressed(Keys.VK_RIGHT))
+                {
+                    bigball.SetMovementVector( Consts.Physics.Multiply_Vector(Consts.Physics.RotationMatrix(1), bigball.GetMovementVector()));
+                }
                 if (Consts.Input.IsKeyPressed(Keys.VK_DOWN))
                 {
                     if (Consts.Physics.Magnitude(bigball.GetMovementVector()) > 2)
@@ -476,7 +499,7 @@ namespace Tests
                 {
                     ball.SetMovementVector(Consts.Physics.Multiply_Vector(Consts.Physics.RotationMatrix(1), ball.GetMovementVector()));
                 }
-                if (Consts.Input.WasKeyTyped(Keys.VK_SPACE))
+                if (Consts.Input.WasKeyTyped(Keys.VK_SPACE) && !toggleRunCircle)
                 {
                     if (Consts.Physics.HaveSpritesCollided(ball, bigball))
                     {
@@ -492,6 +515,18 @@ namespace Tests
                         bigball.SetY(155);
                     }
                 }
+                if (toggleRunCircle)
+                {
+                    MoveBallUsingVector(ball, toDrawIn);
+                    MoveBallUsingVector(bigball, toDrawIn);
+
+                    if (Consts.Physics.HaveSpritesCollided(ball, bigball))
+                    {
+                        Consts.Physics.CircularCollision(ball, bigball);
+                        Consts.Graphics.UpdateSprite(ball);
+                        Consts.Graphics.UpdateSprite(bigball);
+                    }
+                }
 
                Consts.Graphics.DrawSprite(bigball);
                Consts.Graphics.DrawSprite(ball);
@@ -502,6 +537,32 @@ namespace Tests
                 Consts.Graphics.DrawLine(Color.RoyalBlue.ToArgb(), tempX, tempY, tempX + ball.GetMovementVector().getX(), tempY + ball.GetMovementVector().getY());
                 Consts.Graphics.DrawLine(Color.RoyalBlue.ToArgb(), bigtempX, bigtempY, bigtempX + bigball.GetMovementVector().getX(), bigtempY + bigball.GetMovementVector().getY());
                 //Graphics.DrawRectangle(Color.White.ToArgb(), ball.GetX(), ball.GetY(),Consts.GraphicsCurrentWidth(ball),Consts.GraphicsCurrentHeight(ball));
+            }
+
+            public void MoveBallUsingVector(Sprite ball, Rectangle drawIn)
+            {
+                Consts.Graphics.MoveSprite(ball, ball.GetMovementVector());
+
+                if (ball.GetX() > drawIn.GetWidth() - Consts.Graphics.CurrentWidth(ball))
+                {
+                    ball.SetMovementX( -ball.GetMovementX());
+                    ball.SetX( drawIn.GetWidth() - Consts.Graphics.CurrentWidth(ball));
+                }
+                if (ball.GetY() > drawIn.GetHeight() - Consts.Graphics.CurrentHeight(ball))
+                {
+                    ball.SetMovementY( -ball.GetMovementY());
+                    ball.SetY(drawIn.GetHeight() - Consts.Graphics.CurrentHeight(ball));
+                }
+                if (ball.GetX() < drawIn.GetX())
+                {
+                    ball.SetMovementX( - ball.GetMovementX());
+                    ball.SetX(  drawIn.GetX());
+                }
+                if (ball.GetY() < 0)
+                {
+                    ball.SetMovementY( - ball.GetMovementY());
+                    ball.SetY( 0);
+                }
             }
         }
 

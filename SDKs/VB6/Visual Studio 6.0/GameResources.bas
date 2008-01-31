@@ -23,6 +23,7 @@ Option Explicit
 Private Sub LoadFonts()
     'Add your fonts in here, eg
     Call NewFont("Courier", "cour.ttf", 16)
+    Call NewFont("ArialLarge", "arial.ttf", 80)
     
 End Sub
 
@@ -107,7 +108,7 @@ Private Sub ShowLoadingScreen()
     Call Core.ProcessEvents
 
     Set StartSound = New SGSDKVB6.SoundEffect
-    Set Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource)
+    Set Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource))
     Set Loadingfont = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
     Set StartSound = Audio.LoadSoundEffect(Core.GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
     Call PlaySwinGameIntro
@@ -119,13 +120,13 @@ Private Sub PlaySwinGameIntro()
      i = 0
     Do Until i = 14
         Call Graphics.DrawBitmap(Background, 0, 0)
-		
-		Call Graphics.DrawBitmapPart(Animation, (i \ 7) * 712, (i mod 7) * 184, 712, 184, 41, 242);
+                
+                Call Graphics.DrawBitmapPart(Animation, (i \ 7) * 712, (i Mod 7) * 184, 712, 184, 41, 242)
         
         Call Core.RefreshScreen_WithFrame(60)
         Call Core.ProcessEvents
-		Call Core.Sleep(67)
-		i = i + 1
+                Call Core.Sleep(67)
+                i = i + 1
     Loop
     Call Core.Sleep(1500)
 End Sub
@@ -138,14 +139,14 @@ End Sub
 
 
 Private Sub EndLoadingScreen()
-	Call Core.ProcessEvents()
-	Call Core.Sleep(500)
+        Call Core.ProcessEvents
+        Call Core.Sleep(500)
 
     Call Graphics.ClearScreen
     Call Core.RefreshScreen_WithFrame(60)
     Call Text.FreeFont(Loadingfont)
     Call Graphics.FreeBitmap(Background)
-    Call Graphics.FreeSprite(Animation)
+    Call Graphics.FreeBitmap(Animation)
     Call Audio.FreeSoundEffect(StartSound)
 End Sub
 
@@ -186,7 +187,7 @@ Private Sub NewMap(mapName As String)
     ReDim Preserve Maps(UBound(Maps, 1) + 1)
     ReDim Preserve MapsStr(UBound(MapsStr, 1) + 1)
     Set Maps(UBound(Maps, 1)) = New Map
-    Set Maps(UBound(Maps, 1)) = MappyLoader.Loadmap(mapName)
+    Set Maps(UBound(Maps, 1)) = MappyLoader.LoadMap(mapName)
     MapsStr(UBound(Maps, 1)) = mapName
 End Sub
 

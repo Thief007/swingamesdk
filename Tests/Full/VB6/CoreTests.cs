@@ -40,7 +40,7 @@ namespace Tests
                 StartTimer();
 
                 if (Consts.Input.WasKeyTyped(Keys.VK_S)) ToggleTimer();
-                if (Consts.Input.WasKeyTyped(Keys.VK_R))Consts.Core.StartTimer(_Timer);
+                if (Consts.Input.WasKeyTyped(Keys.VK_R)) Consts.Core.StartTimer(_Timer);
 
                 Consts.Text.DrawText(Convert.ToString(Consts.Core.GetTimerTicks(_Timer)), Color.White.ToArgb(), GameResources.GameFont("Courier"), 10, 10);
 
@@ -50,11 +50,11 @@ namespace Tests
             {
                 if (_IsTimerRunning)
                 {
-                   Consts.Core.PauseTimer(_Timer);
+                    Consts.Core.PauseTimer(_Timer);
                 }
                 else
                 {
-                   Consts.Core.UnpauseTimer(_Timer);
+                    Consts.Core.UnpauseTimer(_Timer);
                 }
 
                 _IsTimerRunning = !_IsTimerRunning;
@@ -64,8 +64,9 @@ namespace Tests
             {
                 if (!_HasTimerStarted)
                 {
-                   Consts.Core.StartTimer(_Timer);
+                    Consts.Core.StartTimer(_Timer);
                     _HasTimerStarted = true;
+                    _IsTimerRunning = true;
                 }
             }
         }
