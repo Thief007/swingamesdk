@@ -43,7 +43,7 @@ then
 	mkdir -p ${BIN_DIR}
 fi
 	
-	vbnc /noconfig /debug:full /debug+ /out:${BIN_DIR}/GameProject.exe GameLogic.vb GameResources.vb "My Project/AssemblyInfo.vb" SwinGame.vb /target:winexe /win32icon:SwinGame.ico /define:CONFIG="Debug",DEBUG=-1,TRACE=-1,_MyType="WindowsFormsWithCustomSubMain",PLATFORM="AnyCPU" /imports:SwinGame /imports:Microsoft.VisualBasic /imports:System /imports:System.Collections /imports:System.Collections.Generic /imports:System.Drawing /imports:System.Diagnostics /imports:System.Windows.Forms /main:GameProject.GameLogic /rootnamespace:GameProject /r:lib/SGSDK.NET.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.dll > out.log
+	vbnc /noconfig /debug:full /debug+ /out:${BIN_DIR}/GameProject.exe *.vb "My Project/AssemblyInfo.vb" /target:winexe /win32icon:SwinGame.ico /define:CONFIG="Debug",DEBUG=-1,TRACE=-1,_MyType="WindowsFormsWithCustomSubMain",PLATFORM="AnyCPU" /imports:SwinGame /imports:Microsoft.VisualBasic /imports:System /imports:System.Collections /imports:System.Collections.Generic /imports:System.Drawing /imports:System.Diagnostics /main:GameProject.GameLogic /rootnamespace:GameProject /r:lib/SGSDK.NET.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.dll > out.log
 	if [ $? != 0 ]; then echo "Error with vbnc"; cat out.log; exit 1; fi
 	
 	echo "  ... Copying Library Files"
