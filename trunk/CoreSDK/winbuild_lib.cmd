@@ -76,4 +76,10 @@ goto end
 	del /Q "%Output%\libimp*.*"
 	del /Q "%Output%\smpeg.*"
 	echo Cleaned
+goto end
+
+:error
+	echo An error occurred
+	type out.log
+
 :end 

@@ -16,6 +16,9 @@ set DOTNETbin=.\SGSDK.NET\src\bin\Debug\
 set SDKVB=..\SDKs\DOTNet\Visual Studio\VB\lib\
 set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
 
+set CLSDKVB=..\SDKs\DOTNet\Command Line\VB\lib\
+set CLSDK=..\SDKs\DOTNet\Command Line\C#\lib\
+
 set EXTRA_OPTS="-O3 -Sewn -vwn"
 
 echo Running script from %BaseDir%
@@ -28,20 +31,8 @@ echo __________________________________________________
 
 if not exist "%SDKVB%" mkdir "%SDKVB%"
 if not exist "%SDK%" mkdir "%SDK%"
-
-REM set ShowcaseDOTNET=..\Showcase\CSharpDotNET\Showcase\lib\
-REM if not exist "%ShowcaseDOTNET%" mkdir "%ShowcaseDOTNET%"
-
-REM set TOMATO=..\Demos\C#\TomatoQuest\lib\
-REM if not exist %TOMATO% mkdir %TOMATO%
-
-REM set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
-REM if not exist "%SDK%" mkdir "%SDK%"
-
-REM set DOTNETTest=..\Tests\Full\C#\lib\
-REM if not exist %DOTNETTest% mkdir %DOTNETTest%
-
-REM echo Doing %1
+if not exist "%CLSDKVB%" mkdir "%CLSDKVB%"
+if not exist "%CLSDK%" mkdir "%CLSDK%"
 
 if exist out.log del /q out.log
 
@@ -57,7 +48,6 @@ if "%1"=="clean" goto cleaning
 	echo   Cleaning up library compile
 	del /Q "%Output1%\*.o" >> out.log
 	del /Q "%Output1%\*.ppu" >> out.log
-	del /Q "%Output1%\*.a" >> out.log
 
 	echo   Compiling SGSDK.NET.dll
 	msbuild "SGSDK.NET\src\SGSDK.NET.sln" >> out.log
@@ -66,13 +56,21 @@ if "%1"=="clean" goto cleaning
 	copy "%DOTNETbin%\*.dll" "%Output1%" >> out.log
 	copy "%DOTNETbin%\*.xml" "%Output1%" >> out.log
 
-	echo   Copying to C# SDK
+	echo   Copying to VS C# SDK
 	copy "%Output1%\*.dll" "%SDK%" >> out.log
 	copy "%Output1%\*.xml" "%SDK%" >> out.log
 
-	echo   Copying to VB SDK
+	echo   Copying to VS VB SDK
 	copy "%Output1%\*.dll" "%SDKVB%" >> out.log
 	copy "%Output1%\*.xml" "%SDKVB%" >> out.log
+
+	echo   Copying to CL C# SDK
+	copy "%Output1%\*.dll" "%CLSDK%" >> out.log
+	copy "%Output1%\*.xml" "%CLSDK%" >> out.log
+
+	echo   Copying to CL VB SDK
+	copy "%Output1%\*.dll" "%CLSDKVB%" >> out.log
+	copy "%Output1%\*.xml" "%CLSDKVB%" >> out.log
 
 	echo   Finished
 echo __________________________________________________
