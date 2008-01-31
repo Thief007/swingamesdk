@@ -961,9 +961,9 @@ implementation
 		with result.Tests[0] do
 		begin
 			MethodBeingTested := 'HasSpriteCollidedWith..., HaveSpritesCollided';
-			Instructions := 'Arrow keys to move the sprite ' + EOL + 'around' + EOL +
-            				'Pink for bounded collisions' + EOL +
-            				'Blue for non bounded' + EOL + 'collisions';
+			Instructions := 'Use the arrow keys to move the' + EOL + 'sprite around.' + EOL +
+							'The sprite with red rectangle' + EOL + 'uses bounded collisions.' + EOL +
+							'The sprite with blue rectangle' + EOL + 'uses non-bounded collisions.';
 			ship := CreateSprite(GameImage('Ship'),1,2,40,43);
 			explosion := CreateSprite(LoadBitmap(GetPathToResource('explosion_blue.jpg', ImageResource), true, ColourBlack), 20, 40, 72, 72);
 			smallball := GameImage('SmallBall');
@@ -973,62 +973,57 @@ implementation
 		with result.Tests[1] do
 		begin
 			MethodBeingTested := 'HaveBitmapsCollided, HasBitmapCollidedWithRect';
-			Instructions := 'Arrow to move the bitmap ' + EOL + 'around';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the sprite.' + EOL + 
+							'This test is used to check' + EOL + 'if the collision works properly.';
 			mediumball := GameImage('BallImage1');
-			X := 0;
-			Y := 0;
+			X := 0; Y := 0;
 			ToRun := @CollissionBitmapTest;
 		end;
 		
 		with result.Tests[2] do
 		begin
 			MethodBeingTested := 'HaveBitmapsCollided, CircleHasCollidedWithLine, GetUnitVector, RotationMatrix';
-			Instructions := 'Arrow keys to move the sprite ' + EOL + 'around' +EOL+
-						    'AWSD keys to change the vector ' + EOL+
-						    'Space to move ball out of line';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the sprite.' +EOL+ 'The blue line represents the' + EOL + 'vector of the sprite.' + EOL +
+							'A, D: Rotate the vector.' + EOL + 'W, S: Increase or decrese the' + EOL + 'magnitude.' + EOL + 
+							'Space: Move ball out of line' + EOL + 'if colliding.';
 			ball := CreateSprite(GameImage('SmallBall'));
-			X := 0;
-			Y := 0;
-			ball.Movement.X := 1;
-            ball.Movement.Y := 1;
+			X := 0; Y := 0;
+			ball.Movement.X := 1; ball.Movement.Y := 1;
 			ToRun := @CircleCollissionTest;
 		end;
 		
 		with result.Tests[3] do
 		begin
 			MethodBeingTested := 'CircularCollision';
-			Instructions := 'Arrow keys to change the vector' + EOL + 'of  the big ball' + EOL +
-					        'AWSD keys to change the vector' + EOL + 'of  the small ball' + EOL+
-					        'Space to do the collision of ' + EOL +
-					        'the two balls';
+			Instructions := 'Use the following keys to run' + EOL +'the test:' + EOL + EOL + 'UP, DOWN: Increase or decrease' + EOL + 'the vector of the big ball.' + EOL +
+							'LEFT, RIGHT: Rotate the vector' + EOL + 'of the big ball.' + EOL + EOL + 'W, S: Increase or decrease' + EOL + 'the vector of the small ball.' + EOL +
+							'A, D: Rotate the vector of' + EOL + 'the small ball' + EOL + EOL +
+							'T: Toggle the collision test' + EOL + 'SPACE: See the effect';
 			bigball := CreateSprite(GameImage('BallImage1'));
-			ball.Movement.X := 1;
-	        ball.Movement.Y := 1;
+			ball.Movement.X := 1; ball.Movement.Y := 1;
 	        ball.Mass := 1;
-	        ball.X := 150;
-	        ball.Y := 150;
-	        bigball.Movement.X := 1;
-	        bigball.Movement.Y := 1;
+	        ball.X := 150; ball.Y := 150;
+	        bigball.Movement.X := 1; bigball.Movement.Y := 1;
 	        bigball.Mass := 5;
-	        bigball.X := 155;
-	        bigball.Y := 155;
+	        bigball.X := 155; bigball.Y := 155;
 			ToRun := @CircleCollissionTest2;
 		end;
 		
 		with result.Tests[4] do
 		begin
 			MethodBeingTested := 'RectangleHasCollidedWithLine';
-			Instructions := 'Arrow keys to move the rectangle' + EOL + 'around';
+			Instructions := 'This test is used to test the' + EOL + 'collision between the rectangle' + EOL + 'and a line.' + EOL + EOL + 'Use the arrow keys to move the' + EOL + 'rectangle around.';
 			ToRun := @RectangleCollisionTest;
 		end;
 		
 		with result.Tests[5] do
 		begin
 			MethodBeingTested := 'RectangleHasCollidedWithLine';
-			Instructions := 'Arrow Up/Down to change Vector1 X' + EOL +
-					        'Arrow Left/Right to change' + EOL +'Vector1 Y' + EOL +
-					        'Arrow W/S to change Vector2 X' + EOL +
-					        'Arrow A/D to change Vector2 Y';
+			Instructions := 'This test is used to test the' + EOL + 'mathematical calculation of' + EOL + 'a vector.' + EOL + EOL +
+							'UP, DOWN: Change Vector1 X' + EOL +
+							'LEFT, RIGHT: Change Vector1 Y' + EOL + EOL +
+							'W, S: Change Vector2 X' + EOL +
+							'A, D: Change Vector2 Y';
 			v1 := CreateVector(2,2);
 			v2 := CreateVector(2, 2, true);
 			ToRun := @VectorMathsTest;
@@ -1037,15 +1032,15 @@ implementation
 		with result.Tests[6] do
 		begin
 			MethodBeingTested := 'Calculate angle and vector, IsSpriteOnScreenAt, VectorFromCenterSpriteToPoint';
-			Instructions := 'Arrows move small ball' + EOL +
-                 'ASDW move large ball';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the small ball.' + EOL + EOL +
+							'Use the ASDW keys to move' + EOL + 'the large ball.';
 			ToRun := @SpriteTests;
 		end;
 		
 		with result.Tests[7] do
 		begin
 			MethodBeingTested := 'VectorFromPoints, VectorFromPointToRectangle';
-			Instructions := 'Arrows move point';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the point around.';
 			point := CreatePoint(100, 100);
 		    point2 := CreatePoint(150, 150);
 		    rect := CreateRectangle(200, 200, 50, 50);
@@ -1055,64 +1050,64 @@ implementation
 		with result.Tests[8] do
 		begin
 			MethodBeingTested := 'Matrix Multiplication, Translation';
-			Instructions := 'Space to Rotate by 45deg';
+			Instructions := 'Press Space to Rotate the vector' + EOL + 'by 45 degrees.';
 			ToRun := @TranslationTest;
 		end;
 		
 		with result.Tests[9] do
 		begin
 			MethodBeingTested := 'VectorIsWithinRect';
-			Instructions := 'Mouse to move vector';
+			Instructions := 'This test is used to check if' + EOL + 'a vector is within a rectangle.' + EOL + EOL + 
+							'Use the Mouse to change' + EOL + 'the vector';
 			ToRun := @VectorIsWithinRectTest;
 		end;
 		
 		with result.Tests[10] do
 		begin
 			MethodBeingTested := 'CalculateAngle, Matrix Multiply, Rotation Matrix';
-			Instructions := 'Left/Right controls White' + EOL +
-							'Up/Down controls Red' + EOL +
-					        'Space moved red over white' + EOL +
-					        'Blue for non bounded collissions';
+			Instructions := 'LEFT, RIGHT: Control the white' + EOL + 'line.' + EOL +
+							'UP, DOWN: Control the red line' + EOL +
+							'Space: Move the red over white';
 			ToRun := @VectorAngle;
 		end;
 		
 		with result.Tests[11] do
 		begin
 			MethodBeingTested := 'VectorOutOfRectFromPoint';
-			Instructions := 'Arrows move point' + EOL +
-							'A/Z rotate movement' + EOL +
-	        				'Space move point out';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the point.' + EOL +
+							'A, Z: Rotate the movement' + EOL +
+							'Space: Move the point out';
 			ToRun := @PointOutOfRect;
 		end;
 		
 		with result.Tests[12] do
 		begin
 			MethodBeingTested := 'VectorOutOfRectFromRect';
-			Instructions := 'Arrows move point' + EOL +
-	            'A/Z rotate movement' + EOL +
-	        		'Space move rect out' + EOL + EOL +
-					'0 = set move to 0 deg' + EOL +
-					'9 = set move to 90 deg' + EOL +
-					'8 = set move to 180 deg' + EOL +
-					'2 = set move to 270 deg' + EOL;
+			Instructions := 'Use the arrow keys to move' + EOL + 'the point.' + EOL +
+							'A, Z: Rotate the movement' + EOL +
+							'Space: Move the rectangle out' + EOL + EOL +
+							'0 = set movement to 0 degrees' + EOL +
+							'9 = set movement to 90 degrees' + EOL +
+							'8 = set movement to 180 degrees' + EOL +
+							'2 = set movement to 270 degrees' + EOL;
 			ToRun := @RectOutOfRect;
 		end;
 		
 		with result.Tests[13] do
 		begin
 			MethodBeingTested := 'VectorOutOfCircleFromPoint';
-			Instructions := 'Arrows move point' + EOL +
-	             'A/Z rotate movement' + EOL +
-	        'Space move point out';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the point.' + EOL +
+							'A, Z: Rotate the movement' + EOL +
+							'Space: Move the point out';
 			ToRun := @PointOutOfCircle;
 		end;
 		
 		with result.Tests[14] do
 		begin
 			MethodBeingTested := 'VectorOutOfCircleFromCircle';
-			Instructions := 'Arrows move point' + EOL +
-                 'A/Z rotate movement' + EOL +
-            'Space move point out';
+			Instructions := 'Use the arrow keys to move' + EOL + 'the point.' + EOL +
+							'A, Z: Rotate the movement' + EOL +
+							'Space: Move the point out';
 			ToRun := @CircleOutOfCircle;
 		end;
 	end;
