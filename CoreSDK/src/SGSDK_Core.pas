@@ -251,7 +251,7 @@ interface
 	procedure ChangeScreenSize(width, height: Integer);
 	procedure ToggleFullScreen();
 
-	procedure RefreshScreen(); inline; overload;	
+	procedure RefreshScreen(); overload;	
 	procedure RefreshScreen(TargetFPS : Integer); overload;
 
 	procedure TakeScreenshot(basename: String);
@@ -429,8 +429,7 @@ implementation
 			index := Low(runningArray);
 	end;
 	
-	procedure DoFPSCalculations(var fpsInfo : FPSCalcInfo; 
-	                             nowTime, lastUpdateTime : UInt32);
+	procedure DoFPSCalculations(var fpsInfo : FPSCalcInfo; nowTime, lastUpdateTime : UInt32);
 	begin
 		//Populate the running average for the first 10 calcs
 		if fpsInfo.loopCount < 10 then

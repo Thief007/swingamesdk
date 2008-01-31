@@ -712,7 +712,7 @@ implementation
 		rectSearch : Rectangle;
 		side : CollisionSide;
 	begin
-	
+	  result := false;
 		if m = nil then raise Exception.Create('No Map supplied (nil)');
 		if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
 		

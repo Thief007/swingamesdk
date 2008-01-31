@@ -19,7 +19,8 @@ uses
   SGSDK_Input in '..\src\SGSDK_Input.pas',
   SGSDK_KeyCodes in '..\src\SGSDK_KeyCodes.pas',
   SGSDK_MappyLoader in '..\src\SGSDK_MappyLoader.pas',
-  SGSDK_Physics in '..\src\SGSDK_Physics.pas';
+  SGSDK_Physics in '..\src\SGSDK_Physics.pas',
+  SGSDK_Shapes in '..\src\SGSDK_Shapes.pas';
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
