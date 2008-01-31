@@ -46,9 +46,8 @@ namespace Tests
             private readonly static string METHS =
                 "VectorIsWithinRect";
 
-            private readonly static string INST =
-                "Mouse to move vector" + Environment.NewLine
-                ;
+            private readonly static string INST = "This test is used to check if" + Environment.NewLine + "a vector is within a rectangle." + Environment.NewLine + Environment.NewLine + 
+								"Use the Mouse to change" + Environment.NewLine + "the vector";
 
             public VectorIsWithinRectTest()
                 : base(METHS, INST)
@@ -90,8 +89,7 @@ namespace Tests
             private readonly static string METHS =
                 "Matrix Multiplication, Translation";
 
-            private readonly static string INST =
-                "Space to Rotate by 45deg";
+            private readonly static string INST = "Press Space to Rotate the vector" + Environment.NewLine + "by 45 degrees.";
 
             public TranslationTest()
                 : base(METHS, INST)
@@ -133,7 +131,7 @@ namespace Tests
                 "VectorFromPoints, VectorFromPointToRectangle";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine;
+                Instructions := "Use the arrow keys to move" + Environment.NewLine + "the point around.";
 
             public PointTest()
                 : base(METHS, INST)
@@ -181,9 +179,8 @@ namespace Tests
                 "CalculateAngle, IsSpriteOnScreenAt, CalculateVectorFromTo, VectorFromCenterSpriteToPoint";
 
             private readonly static string INST =
-                "Arrows move small ball" + Environment.NewLine +
-                     "ASDW move large ball" + Environment.NewLine 
-                ;
+                "Use the arrow keys to move" + Environment.NewLine + "the small ball." + Environment.NewLine + Environment.NewLine +
+								"Use the ASDW keys to move" + Environment.NewLine + "the large ball.";
 
             public SpriteTests()
                 : base(METHS, INST)
@@ -257,10 +254,11 @@ namespace Tests
                 "RectangleHasCollidedWithLine";
 
             private readonly static string INST =
-                "Arrow Up/Down to change Vector1 X" + Environment.NewLine +
-                "Arrow Left/Right to change" + Environment.NewLine +"Vector1 Y" + Environment.NewLine +
-                "Arrow W/S to change Vector2 X" + Environment.NewLine +
-                "Arrow A/D to change Vector2 Y" + Environment.NewLine;
+                "This test is used to test the" + Environment.NewLine + "mathematical calculation of" + Environment.NewLine + "a vector." + Environment.NewLine + Environment.NewLine +
+								"UP, DOWN: Change Vector1 X" + Environment.NewLine +
+								"LEFT, RIGHT: Change Vector1 Y" + Environment.NewLine + Environment.NewLine +
+								"W, S: Change Vector2 X" + Environment.NewLine +
+								"A, D: Change Vector2 Y";
 
 
             private SwinGame.Vector v1 = Physics.CreateVector(2,2);
@@ -343,7 +341,7 @@ namespace Tests
                 "RectangleHasCollidedWithLine";
 
             private readonly static string INST =
-                "Arrow keys to move the rectangle" + Environment.NewLine + "of  around" + Environment.NewLine;
+				"This test is used to test the" + Environment.NewLine + "collision between the rectangle" + Environment.NewLine + "and a line." + Environment.NewLine + Environment.NewLine + "Use the arrow keys to move the" + Environment.NewLine + "rectangle around.";
 
 
             private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
@@ -402,10 +400,10 @@ namespace Tests
                 "CircularCollision";
 
             private readonly static string INST =
-                "Arrow keys to change the vector" + Environment.NewLine + "of  the big ball" + Environment.NewLine +
-                "AWSD keys to change the vector" + Environment.NewLine + "of  the small ball" + Environment.NewLine+
-                "Space to do the collision of " + Environment.NewLine +
-                "the two balls";
+                "Use the following keys to run" + Environment.NewLine +"the test:" + Environment.NewLine + Environment.NewLine + "UP, DOWN: Increase or decrease" + Environment.NewLine + "the vector of the big ball." + Environment.NewLine +
+								"LEFT, RIGHT: Rotate the vector" + Environment.NewLine + "of the big ball." + Environment.NewLine + Environment.NewLine + "W, S: Increase or decrease" + Environment.NewLine + "the vector of the small ball." + Environment.NewLine +
+								"A, D: Rotate the vector of" + Environment.NewLine + "the small ball" + Environment.NewLine + Environment.NewLine +
+								"T: Toggle the collision test" + Environment.NewLine + "SPACE: See the effect";
 
 
             private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
@@ -506,9 +504,9 @@ namespace Tests
                 "HaveBitmapsCollided, CircleHasCollidedWithLine, GetUnitVector, RotationMatrix...";
 
             private readonly static string INST =
-                "Arrow keys to move the sprite " + Environment.NewLine + "around" +Environment.NewLine+
-                "AWSD keys to change the vector " + Environment.NewLine+
-                "Space to move ball out of line";
+                "Use the arrow keys to move" + Environment.NewLine + "the sprite." +Environment.NewLine+ "The blue line represents the" + Environment.NewLine + "vector of the sprite." + Environment.NewLine +
+								"A, D: Rotate the vector." + Environment.NewLine + "W, S: Increase or decrese the" + Environment.NewLine + "magnitude." + Environment.NewLine + 
+								"Space: Move ball out of line" + Environment.NewLine + "if colliding.";
 
 
             private SwinGame.Sprite ball = Graphics.CreateSprite(GameResources.GameImage("SmallBall"));
@@ -594,7 +592,8 @@ namespace Tests
                 "HaveBitmapsCollided, HasBitmapCollidedWithRect";
 
             private readonly static string INST =
-                "Arrow keys to move the bitmap " + Environment.NewLine + "around";
+                "Use the arrow keys to move" + Environment.NewLine + "the sprite." + Environment.NewLine + 
+								"This test is used to check" + Environment.NewLine + "if the collision works properly.";
 
             private SwinGame.Bitmap smallball = GameResources.GameImage("SmallBall");
             private SwinGame.Bitmap mediumball = GameResources.GameImage("BallImage1");
@@ -719,9 +718,9 @@ namespace Tests
                 "HasSpriteCollidedWith..., HaveSpritesCollided";
 
             private readonly static string INST =
-                "Arrow keys to move the sprite "+ Environment.NewLine +"around"+ Environment.NewLine +
-                "Pink for bounded collissions"+ Environment.NewLine +
-                "Blue for non bounded collissions";
+                "Use the arrow keys to move the" + Environment.NewLine + "sprite around." + Environment.NewLine +
+								"The sprite with red rectangle" + Environment.NewLine + "uses bounded collisions." + Environment.NewLine +
+								"The sprite with blue rectangle" + Environment.NewLine + "uses non-bounded collisions.";
 
             private Sprite ship = Graphics.CreateSprite(GameResources.GameImage("Ship"),1,2,40,43);
 
@@ -865,10 +864,9 @@ namespace Tests
                 "CalculateAngle, Matrix Multiply, Rotation Matrix";
 
             private readonly static string INST =
-                "Left/Right controls White" + Environment.NewLine +
-					 "Up/Down controls Red" + Environment.NewLine +
-                "Space moved red over white" + Environment.NewLine +
-                "Blue for non bounded collissions";
+                "LEFT, RIGHT: Control the white" + Environment.NewLine + "line." + Environment.NewLine +
+								"UP, DOWN: Control the red line" + Environment.NewLine +
+								"Space: Move the red over white";
 
             public VectorAngle() : base(METHS, INST) 
 				{
@@ -937,9 +935,9 @@ namespace Tests
                 "VectorOutOfRectFromPoint";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine +
-					 "A/Z rotate movement" + Environment.NewLine +
-                "Space move point out";
+                "Use the arrow keys to move" + Environment.NewLine + "the point." + Environment.NewLine +
+								"A, Z: Rotate the movement" + Environment.NewLine +
+								"Space: Move the point out";
 
             public PointOutOfRect() : base(METHS, INST) 
 				{
@@ -1004,9 +1002,13 @@ namespace Tests
                 "VectorOutOfRectFromRect";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine +
-                     "A/Z rotate movement" + Environment.NewLine +
-                "Space move point out";
+                "Use the arrow keys to move" + Environment.NewLine + "the point." + Environment.NewLine +
+								"A, Z: Rotate the movement" + Environment.NewLine +
+								"Space: Move the rectangle out" + Environment.NewLine + Environment.NewLine +
+								"0 = set movement to 0 degrees" + Environment.NewLine +
+								"9 = set movement to 90 degrees" + Environment.NewLine +
+								"8 = set movement to 180 degrees" + Environment.NewLine +
+								"2 = set movement to 270 degrees" + Environment.NewLine;
 
             public RectOutOfRect()
                 : base(METHS, INST)
@@ -1111,9 +1113,9 @@ namespace Tests
                 "VectorOutOfCircleFromPoint";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine +
-                     "A/Z rotate movement" + Environment.NewLine +
-                "Space move point out";
+                "Use the arrow keys to move" + Environment.NewLine + "the point." + Environment.NewLine +
+								"A, Z: Rotate the movement" + Environment.NewLine +
+								"Space: Move the point out";
 
             public PointOutOfCircle()
                 : base(METHS, INST)
@@ -1176,9 +1178,9 @@ namespace Tests
                 "VectorOutOfCircleFromCircle";
 
             private readonly static string INST =
-                "Arrows move point" + Environment.NewLine +
-                     "A/Z rotate movement" + Environment.NewLine +
-                "Space move point out";
+                "Use the arrow keys to move" + Environment.NewLine + "the point." + Environment.NewLine +
+								"A, Z: Rotate the movement" + Environment.NewLine +
+								"Space: Move the point out";
 
             public CircleOutOfCircle()
                 : base(METHS, INST)
