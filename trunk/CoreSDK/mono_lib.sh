@@ -22,11 +22,11 @@ Usage()
 BaseDir=`pwd`
 Output="$BaseDir"/SGSDK.NET/lib
 	
-DOTNETlocn="$BaseDir"/SGSDK.NET/src/
+DOTNETlocn="$BaseDir"/SGSDK.NET/src
 DOTNETproj=SGSDK.NET.csproj
 DOTNETbin="$BaseDir"/SGSDK.NET/src/bin/Debug
 
-SDKBase="${BaseDir}/../SDKs/DOTNet/Mono/"
+SDKBase="${BaseDir}/../SDKs/DOTNet/Mono"
 
 EXTRA_OPTS="-O3 -Sewn -vwn"
 
@@ -36,9 +36,9 @@ function cpToSDK
 {
 	echo "  ... Copying to $1 SDK"
 
-	if [ ! -d "$SDKBase/$1/lib/" ]
+	if [ ! -d "$SDKBase/${1}/lib/" ]
 	then
-		mkdir -p "$SDKBase/$1/lib/"
+		mkdir -p "$SDKBase/${1}/lib/"
 	fi
 
 	cp "$Output"/*.dll "$SDKBase/$1/lib/"
