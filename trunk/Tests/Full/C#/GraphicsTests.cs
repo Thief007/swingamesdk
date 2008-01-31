@@ -129,7 +129,7 @@ namespace Tests
                 if (Input.IsKeyPressed(Keys.VK_2)) _curCol = Core.GetColor(_curCol.R, (byte)(_curCol.G + 5), _curCol.B);
                 if (Input.IsKeyPressed(Keys.VK_3)) _curCol = Core.GetColor(_curCol.R, _curCol.G, (byte)(_curCol.B + 5));
 
-                SwinGame.Graphics.FillRectangle(Color.Black, 0, 0, 300, 45);
+                SwinGame.Graphics.FillRectangle(Color.Black, 0, 0, 100, 45);
 
                 Text.DrawText("Red   : " + Convert.ToString(_curCol.R), Color.Red, GameResources.GameFont("Courier"), 0, 0);
 		        Text.DrawText("Green : " + Convert.ToString(_curCol.G), Color.Green, GameResources.GameFont("Courier"), 0, 15);

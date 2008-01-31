@@ -118,7 +118,7 @@ namespace Tests
         {
             _Background = Graphics.LoadBitmap(Core.GetPathToResource("SplashBack.png", ResourceKind.ImageResource));
             Graphics.DrawBitmap(_Background, 0, 0);
-            Core.RefreshScreen();
+            Core.RefreshScreen(65);
             Core.ProcessEvents();
 
 		    _Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind.ImageResource));

@@ -123,7 +123,7 @@ namespace SwinGameVB
         /// Frees a Sound Effect From Memory
         /// </summary>
         /// <param name="effect">The effect to be freed from memory</param>
-        public void FreeSoundEffect(ref SoundEffect effect)
+        public void FreeSoundEffect(SoundEffect effect)
         {
             effect.Free();
         }
@@ -145,7 +145,7 @@ namespace SwinGameVB
         /// Free a music value. All loaded music values need to be freed.
         /// </summary>
         /// <param name="music">Music to be freed</param>
-        public void FreeMusic(ref Music music)
+        public void FreeMusic(Music music)
         {
             music.Free();
         }
@@ -217,10 +217,10 @@ namespace SwinGameVB
 
         SoundEffect LoadSoundEffect(String path);
 
-        void FreeSoundEffect(ref SoundEffect effect);
+        void FreeSoundEffect(SoundEffect effect);
 
         Music LoadMusic(String Path);
-        void FreeMusic(ref Music music);
+        void FreeMusic(Music music);
         void PlayMusic_Loop(Music music, int loops);
         void PlayMusic(Music music);
         bool IsSoundEffectPlaying(SoundEffect effect);

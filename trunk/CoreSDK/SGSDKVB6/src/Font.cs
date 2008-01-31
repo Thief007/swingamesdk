@@ -117,7 +117,7 @@ namespace SwinGameVB
         /// Free a loaded font.
         /// </summary>
         /// <param name="fontToFree">The Font to free</param>
-        public void FreeFont(ref Fonts fontToFree)
+        public void FreeFont(Fonts fontToFree)
         {
             fontToFree.Free();
         }
@@ -282,7 +282,7 @@ namespace SwinGameVB
     {
         Fonts LoadFont(String fontName, int size);
         void SetFontStyle(Fonts font, FontStyle style);
-        void FreeFont(ref Fonts fontToFree);
+        void FreeFont(Fonts fontToFree);
         void DrawText_ToBitmap(Bitmap dest, String theText, int textColor, Fonts theFont, int x, int y);
         void DrawText_ToBitmap_Point(Bitmap dest, String theText, int textColor, Fonts theFont, Point2D position);
         void DrawText(String theText, int textColor, Fonts theFont, float x, float y);
