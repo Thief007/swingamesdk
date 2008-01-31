@@ -335,8 +335,6 @@ implementation
 	///	@returns				True if the sprite is within the range requested
 	function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
 	begin
-    	result := false;
-    
 		if range = CollisionRangeEquals then
 			result := (x >= theSprite.x) and 
 	        (x <= theSprite.x + theSprite.width)
@@ -359,8 +357,6 @@ implementation
 	///	@returns				True if the sprite is within the range requested
 	function HasSpriteCollidedY(theSprite: Sprite; y : Single; range : CollisionDetectionRange): Boolean;
 	begin
-    	result := false;
-    
 		if range = CollisionRangeEquals then
 			result := (y >= theSprite.y) and 
 	       (y <= theSprite.y + theSprite.height)

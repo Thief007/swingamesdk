@@ -1,6 +1,6 @@
 @echo off
 
-if not exist .\Delphi\resources mkdir .\Delphi\resources
+if not exist .\Delphi\Resources mkdir .\Delphi\Resources
 
-cp -R -u ..\..\Base\All\resources\* .\Delphi\resources
+cp -R -u ..\..\Base\All\Resources\* .\Delphi\Resources
 cp -R -u ..\..\Base\Pascal\*.pas .\Delphi

@@ -261,8 +261,6 @@ implementation
 	var
 		sqLineMag, lx, ly, m, c : Single;
 	begin
-		result := false;
-	
 		//Lines Magnitude must be at least 0.0001
 		sqLineMag := SqLineMagnitude(line);
 		if SqLineMag < EPSEPS then

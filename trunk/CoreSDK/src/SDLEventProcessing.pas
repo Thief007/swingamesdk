@@ -70,29 +70,39 @@ implementation
 	function TSDLManager.IsKeyPressed(virtKeyCode : Integer): Boolean;
 	var
 		keys: PUint8;
-		//indexAddress: uint32;
-		//intPtr: ^UInt8;
+    {$IFNDEF FPC}
+		indexAddress: uint32;
+		intPtr: ^UInt8;
+    {$ENDIF}
 	begin
 		keys := SDL_GetKeyState(nil);
 	
 		if keys <> nil then
 		begin
 			{indexAddress := uint32(keys) + uint32(virtKeyCode);
-		
+
 			{- $ IFDEF FPC
 				intPtr := PUInt8(indexAddress);
 			{- $ ELSE
 				intPtr := Ptr(indexAddress);
 			{- $ ENDIF
 			result := intPtr^ = 1;}
-			
-			result := (keys + virtKeyCode)^ = 1;
-			
+
+      {$IFDEF FPC}
+			  result := (keys + virtKeyCode)^ = 1;
+			{$ELSE}
+        indexAddress := uint32(keys) + uint32(virtKeyCode);
+        intPtr := Ptr(indexAddress);
+        result := intPtr^ = 1;
+      {$ENDIF}
+
+      {$IFDEF FPC}
 			if not result then
 			begin
 				if virtKeyCode = SDLK_LSUPER then result := (keys + SDLK_LMETA)^ = 1
 				else if virtKeyCode = SDLK_RSUPER then result := (keys + SDLK_RMETA)^ = 1;
 			end;
+      {$ENDIF}
 		end
 		else
 		begin
@@ -101,16 +111,22 @@ implementation
 	end;
 
 	procedure TSDLManager.CheckQuit();
+  {$IFDEF FPC}
 	var
 		keys: PUInt8;
+  {$ENDIF}
 	begin
-		keys := SDL_GetKeyState(nil);
-		
+    {$IFDEF FPC}
+ 		keys := SDL_GetKeyState(nil);
 		if ((keys + SDLK_LMETA)^ + (keys + SDLK_Q)^ = 2) or
 			((keys + SDLK_RMETA)^ + (keys + SDLK_Q)^ = 2) or
 			 ((keys + SDLK_LALT)^ + (keys + SDLK_F4)^ = 2) or
 			 ((keys + SDLK_RALT)^ + (keys + SDLK_F4)^ = 2)
 			then DoQuit()
+    {$ELSE}
+    if IsKeyPressed(SDLK_LALT) and IsKeyPressed(SDLK_F4)
+      then DoQuit()
+    {$ENDIF}
 	end;
 
 	procedure TSDLManager.ProcessEvents();
