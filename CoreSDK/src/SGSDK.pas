@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-01-31: Stephen: Fixed SetSpriteEndingAction
 //	- 2008-01-30: James: CircleHasCollidedWithLine changed to return -1
 //  - 2008-01-30: Andrew: Fixed String Marshalling and Free
 //  - 2008-01-29: Andrew: Removed var from the Free routines
@@ -1813,7 +1814,7 @@ uses
 		result := -1;
 	end;
 	
-	procedure SetSpriteendingAction(surface : Sprite; endingAction : SpriteEndingAction); cdecl; export;
+	procedure SetSpriteEndingAction(surface : Sprite; endingAction : SpriteEndingAction); cdecl; export;
 	begin
 		Try
 			surface.endingAction := endingAction;
