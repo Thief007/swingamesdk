@@ -8,4 +8,4 @@ In VB6 under the file menu there is the option make "Insert project name here".e
 This will create an executable. Once you have created an executable, run "copyresources.cmd".
 This will create a bin folder with your game inside it.
 
-For the game to run on another computer u must first run SGSDKVB6.reg.
+For the game to run on another computer you must first run SGSDKVB6.reg on it.
