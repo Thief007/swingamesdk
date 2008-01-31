@@ -40,12 +40,16 @@ namespace TomatoQuest
 
                 if (Victory)
                 {
-                    Text.DrawTextLinesOnScreen("... and so the Hero had \r\n found the tomato, only to find \r\n the tomato was rotten... \r\n The End.",
+                    Text.DrawTextLinesOnScreen("... and so the Hero had" + Environment.NewLine +
+                        "found the tomato, only to find" + Environment.NewLine +
+                        "the tomato was rotten..." + Environment.NewLine +
+                        "The End.",
                                 Color.White, Color.Black, Resources.GameFont("Arial"), FontAlignment.AlignCenter, 150, 200, 360, 400);
                 }
                 else
                 {
-                    Text.DrawTextLinesOnScreen("... and the Hero was never \r\n heard from again...",
+                    Text.DrawTextLinesOnScreen("... and the Hero was never" + Environment.NewLine +
+                        "heard from again...",
                                 Color.White, Color.Black, Resources.GameFont("Arial"), FontAlignment.AlignCenter, 150, 200, 360, 400);
                 }
 

@@ -43,7 +43,7 @@
   <ItemGroup>
     <Import Include="Color = System.Drawing.Color" />
     <Import Include="Microsoft.VisualBasic" />
-    <Import Include="Rectangle = System.Drawing.Color" />
+    <Import Include="Rectangle = System.Drawing.Rectangle" />
     <Import Include="SwinGame" />
     <Import Include="System" />
     <Import Include="System.Collections" />
