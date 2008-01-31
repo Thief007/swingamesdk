@@ -1,4 +1,4 @@
-SwinGameSDK v1.00
+SwinGameSDK v1.10
 ----------------------------------------
 Go to
 http://www.swingame.com/
