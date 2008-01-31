@@ -178,7 +178,7 @@ namespace SwinGameVB
 
     [Guid("430227DE-A525-4880-9B6A-5A1634A10200")]
     [ComVisible(true)]
-    public interface ICore
+    public interface ICore 
     {
         void OpenGraphicsWindow(String caption, int width, int height);
         bool WindowCloseRequested();

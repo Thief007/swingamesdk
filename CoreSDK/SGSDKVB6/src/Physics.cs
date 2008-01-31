@@ -521,7 +521,7 @@ namespace SwinGameVB
         }
         public bool HaveBitmapsCollied_Point(Bitmap image1, Point2D pt1, Bitmap image2, Point2D pt2)
         {
-            return SwinGame.Physics.HaveBitmapsCollided(image1.result, pt1.result, image1.result, pt2.result);
+            return SwinGame.Physics.HaveBitmapsCollided(image1.result, pt1.result, image2.result, pt2.result);
         }
         public bool HaveBitmapsCollied_Bounded_Point(Bitmap image1, Point2D pt1, bool bounded1, Bitmap image2, Point2D pt2, bool bounded2)
         {

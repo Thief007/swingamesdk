@@ -131,7 +131,7 @@ namespace Tests
                 "VectorFromPoints, VectorFromPointToRectangle";
 
             private readonly static string INST =
-                Instructions := "Use the arrow keys to move" + Environment.NewLine + "the point around.";
+                "Use the arrow keys to move" + Environment.NewLine + "the point around.";
 
             public PointTest()
                 : base(METHS, INST)

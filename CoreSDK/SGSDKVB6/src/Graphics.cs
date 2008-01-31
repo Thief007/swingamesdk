@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using SwinGame;
+using SwinGameVB;
 using System.Runtime.InteropServices;
-using System.Drawing;
+using Color = System.Drawing.Color;
 using System.IO;
 
 namespace SwinGameVB
@@ -148,8 +148,24 @@ namespace SwinGameVB
         /// </summary>
         public SpriteEndingAction GetEndingAction()
         {
-                return (SwinGameVB.SpriteEndingAction)sprite.EndingAction;
+                return (SpriteEndingAction)sprite.EndingAction;
             
+        }
+
+        public void SetEndingAction(SpriteEndingAction value)
+        {
+            sprite.EndingAction = (SwinGame.SpriteEndingAction)value;
+
+        }
+
+        public int[] GetFramesPerCell()
+        {
+            return sprite.FramesPerCell;
+        }
+
+        public void SetFramesPerCell([In] ref int[] value)
+        {
+             sprite.FramesPerCell = value;
         }
 
         /// <summary>
@@ -213,6 +229,16 @@ namespace SwinGameVB
         {
                 return sprite.Mass;
         }
+
+        public float GetWidth()
+        {
+            return sprite.Width;
+        }
+
+        public float GetHeight()
+        {
+            return sprite.Height;
+        }
     }
 
     [Guid("AE234F8A-BAFD-4f42-8090-5054216847EB")]
@@ -243,6 +269,14 @@ namespace SwinGameVB
         Vector GetMovementVector();
         void SetMass(float value);
         float GetMass();
+
+        void SetEndingAction(SpriteEndingAction value);
+
+        int[] GetFramesPerCell();
+        void SetFramesPerCell([In] ref int[] value);
+        float GetWidth();
+        float GetHeight();
+        
     }
 
     [Guid("A2B86CBD-7671-434c-8E83-F07FC5F30A8B")]
@@ -365,7 +399,7 @@ namespace SwinGameVB
         /// Free the specified bitmap
         /// </summary>
         /// <param name="bitmapToFree">Bitmap to free</param>
-        public void FreeBitmap(ref Bitmap bitmapToFree)
+        public void FreeBitmap( Bitmap bitmapToFree)
         {
             bitmapToFree.Free();
         }
@@ -869,7 +903,7 @@ namespace SwinGameVB
         ///	freed.
         /// </summary>
         /// <param name="spriteToFree">the sprite to free</param>
-        public void FreeSprite(ref Sprite spriteToFree)
+        public void FreeSprite(Sprite spriteToFree)
         {
             spriteToFree.Free();
         }
@@ -1448,7 +1482,7 @@ namespace SwinGameVB
         Bitmap LoadBitmap(String pathToBitmap);
         Bitmap LoadBitmap_Transparent(String pathToBitmap, Boolean transparent, int transparentColor);
         Bitmap LoadTransparentBitmap(string pathToBitmap, int transparentColor);
-        void FreeBitmap(ref Bitmap bitmapToFree);
+        void FreeBitmap(Bitmap bitmapToFree);
         int GetBitmapWidth(Bitmap targetbitmap);
         int GetBitmapHeight(Bitmap targetbitmap);
         void ClearSurface_Colour(Bitmap dest, int toColour);
@@ -1486,7 +1520,7 @@ namespace SwinGameVB
         void DrawEllipse_NoFill(int theColour, float xPos, float yPos, int width, int height);
         void FillEllipse(int theColour, float xPos, float yPos, int width, int height);
         Sprite CreateSprite(Bitmap startBitmap);
-        void FreeSprite(ref Sprite spriteToFree);
+        void FreeSprite(Sprite spriteToFree);
         int AddBitmapToSprite(Sprite spriteToAddTo, Bitmap bitmapToAdd);
         int CurrentHeight(Sprite sprite);
         int CurrentWidth(Sprite sprite);
@@ -1581,5 +1615,5 @@ namespace SwinGameVB
         void ResetClip_Bitmap(Bitmap bmp);
 
     }
-
 }
+
