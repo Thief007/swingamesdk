@@ -11,14 +11,18 @@ using FontStyle = SwinGame.FontStyle;
 
 namespace GameResources
 {
+    /// <summary>
+    /// The Resources Class stores all of the Games Media Resources, such as Images, Fonts
+    /// Sounds, Music, and Maps.
+    /// </summary>
     public static class Resources
     {
 
-		  private static Dictionary<string, Bitmap> _Images = new Dictionary<string, Bitmap>();
-		  private static Dictionary<string, Font> _Fonts = new Dictionary<string, Font>();
-		  private static Dictionary<string, SoundEffect> _Sounds = new Dictionary<string, SoundEffect>();
-		  private static Dictionary<string, Music> _Music = new Dictionary<string, Music>();
-		  private static Dictionary<string, Map> _Maps = new Dictionary<string, Map>();
+        private static Dictionary<string, Bitmap> _Images = new Dictionary<string, Bitmap>();
+        private static Dictionary<string, Font> _Fonts = new Dictionary<string, Font>();
+        private static Dictionary<string, SoundEffect> _Sounds = new Dictionary<string, SoundEffect>();
+        private static Dictionary<string, Music> _Music = new Dictionary<string, Music>();
+        private static Dictionary<string, Map> _Maps = new Dictionary<string, Map>();
 
         private static Bitmap _Background;
         private static Bitmap _Animation;
@@ -47,6 +51,9 @@ namespace GameResources
         {
         }
 
+        /// <summary>
+        /// Loads Resources
+        /// </summary>
         public static void LoadResources()
         {
             int width = Core.ScreenWidth();
@@ -84,7 +91,7 @@ namespace GameResources
             EndLoadingScreen(width, height);
         }
 
-        public static void ShowLoadingScreen()
+        private static void ShowLoadingScreen()
         {
             _Background = Graphics.LoadBitmap(Core.GetPathToResource("SplashBack.png", ResourceKind.ImageResource));
             Graphics.DrawBitmap(_Background, 0, 0);
@@ -98,7 +105,7 @@ namespace GameResources
             PlaySwinGameIntro();
         }
 
-        public static void PlaySwinGameIntro()
+        private static void PlaySwinGameIntro()
         {
             Core.Sleep(400);
 
@@ -119,17 +126,17 @@ namespace GameResources
             Core.Sleep(1500);
         }
 
-        public static void ShowMessage(String message, int number)
+        private static void ShowMessage(String message, int number)
         {
             Text.DrawText(message, Color.Red, _LoadingFont, 240, 20 + (25 * number));
             Core.RefreshScreen();
             Core.ProcessEvents();
         }
 
-        public static void EndLoadingScreen(int width, int height)
+        private static void EndLoadingScreen(int width, int height)
         {
-				Core.ProcessEvents();
-				Core.Sleep(500);
+			Core.ProcessEvents();
+			Core.Sleep(500);
             Graphics.ClearScreen();
             Core.RefreshScreen();
             Text.FreeFont(_LoadingFont);
@@ -155,7 +162,7 @@ namespace GameResources
 				_Images.Add(imageName, Graphics.LoadBitmap(Core.GetPathToResource(filename, ResourceKind.ImageResource)));
         }
 
-		  private static void NewTransparentColorImage(String imageName, String fileName, Color transColor)
+		private static void NewTransparentColorImage(String imageName, String fileName, Color transColor)
         {
             _Images.Add(imageName, Graphics.LoadBitmap(Core.GetPathToResource(fileName, ResourceKind.ImageResource), true, transColor));
         }
@@ -233,26 +240,51 @@ namespace GameResources
             FreeMaps();
         }
 
+        /// <summary>
+        /// Gets the Desired Font from the Loaded Resources
+        /// </summary>
+        /// <param name="font">Font to Get</param>
+        /// <returns>The Font</returns>
         public static Font GameFont(String font)
         {
             return _Fonts[font];
         }
 
+        /// <summary>
+        /// Gets the Desired Image from the Loaded Resources
+        /// </summary>
+        /// <param name="image">Image to Get</param>
+        /// <returns>The Image</returns>
         public static Bitmap GameImage(String image)
         {
 				return _Images[image];
         }
 
+        /// <summary>
+        /// Gets the Desired Sound from the Loaded Resources
+        /// </summary>
+        /// <param name="sound">Sound to Get</param>
+        /// <returns>The Sound</returns>
         public static SoundEffect GameSound(String sound)
         {
             return _Sounds[sound];
         }
 
+        /// <summary>
+        /// Gets the Desired Music from the Loaded Resources
+        /// </summary>
+        /// <param name="music">Music to get</param>
+        /// <returns>The Music</returns>
         public static Music GameMusic(String music)
         {
             return _Music[music];
         }
 
+        /// <summary>
+        /// Gets the Desired Map from the Loaded Resources
+        /// </summary>
+        /// <param name="map">Map to get</param>
+        /// <returns>The map</returns>
         public static Map GameMap(String map)
         {
             return _Maps[map];

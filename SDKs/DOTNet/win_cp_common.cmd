@@ -4,47 +4,102 @@ echo __________________________________________________
 echo Copying Visual Studio Files
 echo __________________________________________________
 
-copy ..\Base\All\* ".\Visual Studio\C#"
+if exist out.log del /q out.log
 
-if exist ".\Visual Studio\C#\Resources" goto AfterMkDir
+set VSCS=.\Visual Studio\C#
+set VSVB=.\Visual Studio\VB
+set CLCS=.\Command Line\C#
+set CLVB=.\Command Line\VB
 
-echo Creating Resources Directory
-mkdir ".\Visual Studio\C#\Resources"
-mkdir ".\Visual Studio\C#\Resources\fonts"
-mkdir ".\Visual Studio\C#\Resources\images"
-mkdir ".\Visual Studio\C#\Resources\sounds"
-mkdir ".\Visual Studio\C#\Resources\maps"
+set FromCS=..\Base\DOTNet\C#
+set FromVB=..\Base\DOTNet\VB
+
+set ExtraCS=Properties
+set ExtraVB=My Project
+
+set SDK=%VSCS%
+set CodeFrom=%FromCS%
+set ExtraFolder=%ExtraCS%
+
+:docopy
+
+echo   Copying files to %SDK%
+copy ..\Base\All\* "%SDK%" >> out.log
+if ERRORLEVEL 1 goto error
+
+if exist "%SDK%\Resources" goto AfterMkDir
+
+echo   Creating Folder %SDK%\Resources
+mkdir "%SDK%\Resources" >> out.log
+if ERRORLEVEL 1 goto error
+
+mkdir "%SDK%\Resources\fonts" >> out.log
+if ERRORLEVEL 1 goto error
+
+mkdir "%SDK%\Resources\images" >> out.log
+if ERRORLEVEL 1 goto error
+
+mkdir "%SDK%\Resources\sounds" >> out.log
+if ERRORLEVEL 1 goto error
+
+mkdir "%SDK%\Resources\maps" >> out.log
+if ERRORLEVEL 1 goto error
 
 :AfterMkDir
-if exist ".\Visual Studio\VB\Resources" goto AfterMkDir2
 
-mkdir ".\Visual Studio\VB\Resources"
-mkdir ".\Visual Studio\VB\Resources\fonts"
-mkdir ".\Visual Studio\VB\Resources\images"
-mkdir ".\Visual Studio\VB\Resources\sounds"
-mkdir ".\Visual Studio\VB\Resources\maps"
+echo   Copying Resources to %SDK%\Resources
+copy ..\Base\All\Resources\* "%SDK%\Resources" >> out.log
+if ERRORLEVEL 1 goto error
+copy ..\Base\All\Resources\fonts\* "%SDK%\Resources\fonts" >> out.log
+if ERRORLEVEL 1 goto error
+copy ..\Base\All\Resources\images\* "%SDK%\Resources\images" >> out.log
+if ERRORLEVEL 1 goto error
+copy ..\Base\All\Resources\sounds\* "%SDK%\Resources\sounds" >> out.log
+if ERRORLEVEL 1 goto error
+REM copy ..\Base\All\Resources\maps\* "%SDK%\Resources\maps" >> out.log
+REM if ERRORLEVEL 1 goto error
 
-:AfterMkDir2
+echo   Copying Code to %SDK%
+copy "%CodeFrom%\*.*" "%SDK%" >> out.log
+if ERRORLEVEL 1 goto error
 
-echo Copying Resources
-copy ..\Base\All\Resources\* ".\Visual Studio\C#\Resources"
-copy ..\Base\All\Resources\fonts\* ".\Visual Studio\C#\Resources\fonts"
-copy ..\Base\All\Resources\images\* ".\Visual Studio\C#\Resources\images"
-copy ..\Base\All\Resources\sounds\* ".\Visual Studio\C#\Resources\sounds"
+if not exist "%SDK%\%ExtraFolder%" mkdir "%SDK%\%ExtraFolder%"
+if ERRORLEVEL 1 goto error
 
-copy ..\Base\All\Resources\* ".\Visual Studio\VB\Resources"
-copy ..\Base\All\Resources\fonts\* ".\Visual Studio\VB\Resources\fonts"
-copy ..\Base\All\Resources\images\* ".\Visual Studio\VB\Resources\images"
-copy ..\Base\All\Resources\sounds\* ".\Visual Studio\VB\Resources\sounds"
+copy "%CodeFrom%\%ExtraFolder%\*" "%SDK%\%ExtraFolder%" >> out.log
+if ERRORLEVEL 1 goto error
 
-echo Copying Code
-copy ..\Base\DOTNet\C#\*.cs ".\Visual Studio\C#"
-copy ..\Base\DOTNet\C#\*.csproj ".\Visual Studio\C#"
+echo   Finished %SDK%
+echo ....
 
-echo Copying Code
-copy ..\Base\DOTNet\VB\*.vb ".\Visual Studio\VB"
-copy ..\Base\DOTNet\VB\*.vbproj ".\Visual Studio\VB"
+if "%SDK%" == "%VSCS%" goto CPCLCS
+if "%SDK%" == "%CLCS%" goto CPVSVB
+if "%SDK%" == "%VSVB%" goto CPCLVB
+goto end
 
-if not exist ".\Visual Studio\C#\Properties" mkdir ".\Visual Studio\C#\Properties"
+:CPCLCS
+	set SDK=%CLCS%
+	set CodeFrom=%FromCS%
+	set ExtraFolder=%ExtraCS%
+	goto docopy
 
-copy ..\Base\DOTNet\Properties\* ".\Visual Studio\C#\Properties"
+:CPVSVB
+	set SDK=%VSVB%
+	set CodeFrom=%FromVB%
+	set ExtraFolder=%ExtraVB%
+	goto docopy
+
+:CPCLVB
+	set SDK=%CLVB%
+	set CodeFrom=%FromVB%
+	set ExtraFolder=%ExtraVB%
+	goto docopy
+
+
+goto end
+
+:error
+	echo An error occurred log in out.log
+
+:end 
+echo __________________________________________________
