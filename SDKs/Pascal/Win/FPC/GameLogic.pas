@@ -1,3 +1,11 @@
+///
+/// GameLogic.pas
+///
+/// --------------------------------------
+///	 This file contains the logic for your
+///  game. The Main procedure is called from
+///  the game launcher. 
+/// --------------------------------------
 unit GameLogic;
 
 interface
@@ -25,7 +33,7 @@ uses
   
       //Draw screen
 	  ClearScreen(ColorBlack);
-      
+
       FillRectangle(ColorRed, 20, 200, 200, 100);
       FillRectangle(ColorGreen, 220, 200, 200, 100);
       FillRectangle(ColorBlue, 420, 200, 200, 100);

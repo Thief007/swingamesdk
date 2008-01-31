@@ -27,7 +27,7 @@ namespace TomatoQuest
             Audio.OpenAudio();
             //Load Resources
 
-				Core.ToggleFullScreen();
+				//Core.ToggleFullScreen();
 				
             Resources.LoadResources();
 
