@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function cpTo {
+cpTo() {
 	BASE_DIR=./Mono/${1}
 	BASE_DIR=`cd ${BASE_DIR}; pwd`
 	if [ $? != 0 ]; then echo "Cannot find dir for $1 - ${BASE_DIR}"; exit 1; fi
@@ -71,7 +71,7 @@ echo "__________________________________________________"
 echo "Copying Mono Files"
 echo "__________________________________________________"
 
-cpTo C#
+cpTo "C#"
 cpTo VB
 
 echo "  Finished"

@@ -179,9 +179,16 @@ else
 	echo "__________________________________________________"	
 	echo "  ... Compiling game"
 
-	rm ./bin/*.o ./bin/*.ppu 2> /dev/null
+	if [ ! -d ./bin ]
+	then
+		echo "  ... Creating bin folder"
+		mkdir ./bin
+	else
+		rm ./bin/*.o ./bin/*.ppu 2> /dev/null
+	fi
 
-	fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas 
+	fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas >> out.log
+	if [ $? != 0 ]; then DoExitCompile; fi
 
 	rm ./bin/*.o ./bin/*.ppu
 

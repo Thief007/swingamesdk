@@ -31,24 +31,18 @@ else
 	BIN_DIR="./bin/Release"
 fi
 
+if [ ! -d ${BIN_DIR} ]
+then
+	mkdir -p ${BIN_DIR}
+fi
+
+
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
 	echo "__________________________________________________"
 	echo "Building Mac version - $BUILD"
 	echo "__________________________________________________"
 	echo " Running vbnc"
-	
-if [ ! -d ${BIN_DIR} ]
-then
-	mkdir -p ${BIN_DIR}
-fi
-	
-	vbnc /noconfig /debug:full /debug+ /out:${BIN_DIR}/GameProject.exe *.vb "My Project/AssemblyInfo.vb" /target:winexe /win32icon:SwinGame.ico /define:CONFIG="Debug",DEBUG=-1,TRACE=-1,_MyType="WindowsFormsWithCustomSubMain",PLATFORM="AnyCPU" /imports:SwinGame /imports:Microsoft.VisualBasic /imports:System /imports:System.Collections /imports:System.Collections.Generic /imports:System.Drawing /imports:System.Diagnostics /main:GameProject.GameLogic /rootnamespace:GameProject /r:lib/SGSDK.NET.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.dll > out.log
-	if [ $? != 0 ]; then echo "Error with vbnc"; cat out.log; exit 1; fi
-	
-	echo "  ... Copying Library Files"
-	cp ./lib/* ${BIN_DIR}
-	if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
 
 	RESOURCE_DIR=./bin/Resources
 else
@@ -56,16 +50,16 @@ else
 	echo "Building Linux version - $BUILD"
 	echo "__________________________________________________"
 	echo " Running xbuild $1 ${BUILD_OPT}"
-	
-	xbuild $1 ${BUILD_OPT} > out.log
-	if [ $? != 0 ]; then echo "Error with xbuild"; cat out.log; exit 1; fi
-
-	echo "  ... Copying Library Files"
-	cp ./lib/*  ${BIN_DIR}
-	if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
 
 	RESOURCE_DIR=${BIN_DIR}/Resources
 fi
+
+	vbnc /noconfig /debug:full /debug+ /out:${BIN_DIR}/GameProject.exe *.vb "My Project/AssemblyInfo.vb" /target:winexe /win32icon:SwinGame.ico /define:CONFIG="Debug",DEBUG=-1,TRACE=-1,_MyType="WindowsFormsWithCustomSubMain",PLATFORM="AnyCPU" /imports:SwinGame /imports:Microsoft.VisualBasic /imports:System /imports:System.Collections /imports:System.Collections.Generic /imports:System.Drawing /imports:System.Diagnostics /main:GameProject.GameLogic /rootnamespace:GameProject /r:lib/SGSDK.NET.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.dll > out.log
+	if [ $? != 0 ]; then echo "Error with vbnc"; cat out.log; exit 1; fi
+	
+echo "  ... Copying Library Files"
+cp ./lib/* ${BIN_DIR}
+if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
 
 SOURCE_RESOURCE=./Resources
 
