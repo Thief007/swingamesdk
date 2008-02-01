@@ -32,7 +32,7 @@ EXTRA_OPTS="-O3 -Sewn -vwn"
 
 CLEAN="N"
 
-function cpToSDK
+cpToSDK()
 {
 	echo "  ... Copying to $1 SDK"
 
@@ -45,12 +45,14 @@ function cpToSDK
 	if [ $? != 0 ]; then echo "Error copying DLL"; exit 1; fi
 	
 	cp "$Output"/*.XML "$SDKBase/$1/lib/"
-	if [ $? != 0 ]; then echo "Error copying XML"; exit 1; fi
 
 	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 	then
 		cp "$Output"/*.dylib  "$SDKBase/$1/lib"
-				if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+		if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+	else
+		cp "$Output"/*.so  "$SDKBase/$1/lib"
+		if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
 	fi
 }
 
@@ -79,11 +81,10 @@ then
 		echo "__________________________________________________"
 		echo "  Running script from $BaseDir"
 		echo "  Saving output to $Output"
+		echo "  Compiling with $EXTRA_OPTS"
 		echo "__________________________________________________"
 
 		echo "  ... Compiling Library"
-	
-		echo "Compiling with $EXTRA_OPTS" >> ${BaseDir}/out.log
 	
 		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -FU"$Output" -s ./src/SGSDK.pas >> ${BaseDir}/out.log
 		if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
@@ -124,16 +125,19 @@ then
 		echo "__________________________________________________"
 		echo "  Running script from $BaseDir"
 		echo "  Saving output to $Output"
-
-		fpc -v0 -g -Mdelphi $EXTRA_OPTS -FE"$Output" ./src/SGSDK.pas
+		echo "__________________________________________________"
+		
+		fpc -v0 -g -Mdelphi $EXTRA_OPTS -FE"$Output" ./src/SGSDK.pas >> out.log
+		if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
 
 		rm "$Output"/*.o
 		rm "$Output"/*.ppu
 
 		cd $DOTNETlocn
 		xbuild $DOTNETproj >> ${BaseDir}/out.log
-
+		if [ $? != 0 ]; then echo "Error with xbuild"; cat ${BaseDir}/out.log; exit 1; fi
 		cp "$DOTNETbin"/*.dll "$Output"	
+		cp "$DOTNETbin"/*.XML "$Output"	
 	fi
 else
 	rm -rf "$Output"
@@ -141,7 +145,7 @@ else
 	echo    ... Cleaned
 fi
 
-cpToSDK C#
+cpToSDK "C#"
 cpToSDK VB
 
 echo "  Finished"
