@@ -17,38 +17,47 @@ Sub Run()
     Set scaleBat = Physics.ScaleMatrix(0.9)
     Set scaleBall = Physics.ScaleMatrix(0.98)
     Call StartUp
-    Dim Game As AirHockeyGame
-    Game = CreateGame
+    Dim game As AirHockeyGame
+    game = CreateGame
     Call SplashScreen
-    Call StartBall(Game)
-    'Call Core.ToggleFullScreen
+    Call StartBall(game)
     Do Until MouseAndKey.IsKeyPressed(Keys_VK_ESCAPE) Or Core.WindowCloseRequested()
-        Call MoveBall(Game)
-        Call MoveBat(Game)
-        Call Draw(Game)
+        Call MoveBall(game)
+        Call MoveBat(game)
+        Call Draw(game)
         If MouseAndKey.IsKeyPressed(Keys_VK_P) Then
             Call MouseAndKey.ShowHideMouse(True)
-            Call Pause
+            Call Pause(game)
             Call MouseAndKey.ShowHideMouse(False)
         End If
         If MouseAndKey.IsKeyPressed(Keys_VK_R) Then
-            Game.Resetting = True
-            Call Reset(Game)
+            game.Resetting = True
+            Call Reset(game)
         End If
-        If Game.Resetting Then
-            Call Reset(Game)
+        If game.Resetting Then
+            Call Reset(game)
         End If
+        
         Call Core.RefreshScreen_WithFrame(60)
         Call Core.ProcessEvents
     Loop
     Call ShutDown
 End Sub
-Private Sub Pause()
-    Do Until MouseAndKey.IsKeyPressed(Keys_VK_RETURN) Or MouseAndKey.IsKeyPressed(Keys_VK_ESCAPE) Or Core.WindowCloseRequested()
+Private Sub Pause(game As AirHockeyGame)
+    Do Until MouseAndKey.IsKeyPressed(Keys_VK_RETURN) Or MouseAndKey.IsKeyPressed(Keys_VK_ESCAPE) Or Core.WindowCloseRequested() Or MouseAndKey.IsKeyPressed(Keys_VK_N)
+        Call Core.ProcessEvents
         Call Graphics.DrawBitmap(GameImage("Menu"), 0, 0)
         Call Text.DrawText("Paused, press 'Enter'", white, GameFont("Comic"), 265, 460)
+        Call Text.DrawText("For a new game press 'N'", white, GameFont("Comic"), 240, 490)
         Call Core.RefreshScreen_WithFrame(60)
-        Call Core.ProcessEvents
+        
+        If MouseAndKey.IsKeyPressed(Keys_VK_N) Then
+            game.Reset = 200
+            game.Players(0).Score = 0
+            game.Players(1).Score = 0
+            game.Resetting = True
+            Call Reset(game)
+        End If
     Loop
 End Sub
 
@@ -84,53 +93,53 @@ Private Sub SplashScreen()
     Loop
 End Sub
 
-Private Sub Reset(Game As AirHockeyGame)
+Private Sub Reset(game As AirHockeyGame)
     Dim i As Long
-    Game.Reset = Game.Reset + 1
-    If Game.Reset < 60 Then
+    game.Reset = game.Reset + 1
+    If game.Reset < 60 Then
         Call Text.DrawText("3", yellow, GameFont("ArialBig"), 390, 80)
     Else
-        If Game.Reset < 120 Then
+        If game.Reset < 120 Then
             Call Text.DrawText("2", yellow, GameFont("ArialBig"), 390, 80)
         Else
-            If Game.Reset < 180 Then
+            If game.Reset < 180 Then
                 Call Text.DrawText("1", yellow, GameFont("ArialBig"), 390, 80)
             Else
-                Game.Reset = 0
-                Game.Resetting = False
-                Call StartBall(Game)
+                game.Reset = 0
+                game.Resetting = False
+                Call StartBall(game)
                 For i = 0 To 1
-                    Call Game.Players(i).Bat.setX(CenterOfTable - Graphics.CurrentWidth(Game.Players(i).Bat) / 2)
-                    Call Game.Players(i).Bat.setY(100 - 360 * (i - 1))
-                    Call Game.Players(i).Bat.SetMovementVector(Physics.CreateVector_NoInvert(0, 0))
+                    Call game.Players(i).Bat.setX(CenterOfTable - Graphics.CurrentWidth(game.Players(i).Bat) / 2)
+                    Call game.Players(i).Bat.setY(100 - 360 * (i - 1))
+                    Call game.Players(i).Bat.SetMovementVector(Physics.CreateVector_NoInvert(0, 0))
                 Next i
             End If
         End If
     End If
 End Sub
-Private Sub MoveBat(Game As AirHockeyGame)
-    Call MovePlayer(Game.Players(0).Bat)
-    Call MoveAI(Game.Players(1).Bat, Game.Ball)
+Private Sub MoveBat(game As AirHockeyGame)
+    Call MovePlayer(game.Players(0).Bat)
+    Call MoveAI(game.Players(1).Bat, game.Ball)
     Dim i As Long
     For i = 0 To 1
-        Call Game.Players(i).Bat.SetMovementVector(Physics.Multiply_Vector(scaleBat, Game.Players(i).Bat.GetMovementVector))
-        Call Graphics.MoveSprite(Game.Players(i).Bat, Game.Players(i).Bat.GetMovementVector)
-        If Physics.HaveSpritesCollided(Game.Players(i).Bat, Game.TablePics.TableHorizontal) Or Physics.HaveSpritesCollided(Game.Players(i).Bat, Game.TablePics.TableVertical) Then
+        Call game.Players(i).Bat.SetMovementVector(Physics.Multiply_Vector(scaleBat, game.Players(i).Bat.GetMovementVector))
+        Call Graphics.MoveSprite(game.Players(i).Bat, game.Players(i).Bat.GetMovementVector)
+        If Physics.HaveSpritesCollided(game.Players(i).Bat, game.TablePics.TableHorizontal) Or Physics.HaveSpritesCollided(game.Players(i).Bat, game.TablePics.TableVertical) Then
             Call Audio.PlaySoundEffect(GameSound("Bat hit side"))
         End If
         'side
-        If Game.Players(i).Bat.getX < LeftOfTable Then
-            Call Game.Players(i).Bat.setX(LeftOfTable + 1)
-            Call Game.Players(i).Bat.SetMovementX(Game.Players(i).Bat.GetMovementX * -1)
+        If game.Players(i).Bat.getX < LeftOfTable Then
+            Call game.Players(i).Bat.setX(LeftOfTable + 1)
+            Call game.Players(i).Bat.SetMovementX(game.Players(i).Bat.GetMovementX * -1)
         End If
-        If Game.Players(i).Bat.getX > RightOfTable - Graphics.CurrentWidth(Game.Players(i).Bat) Then
-            Call Game.Players(i).Bat.setX(RightOfTable - Graphics.CurrentWidth(Game.Players(i).Bat) - 1)
-            Call Game.Players(i).Bat.SetMovementX(Game.Players(i).Bat.GetMovementX * -1)
+        If game.Players(i).Bat.getX > RightOfTable - Graphics.CurrentWidth(game.Players(i).Bat) Then
+            Call game.Players(i).Bat.setX(RightOfTable - Graphics.CurrentWidth(game.Players(i).Bat) - 1)
+            Call game.Players(i).Bat.SetMovementX(game.Players(i).Bat.GetMovementX * -1)
         End If
     Next i
     'top and bottom sides
-    Call BottomHalf(Game.Players(0).Bat)
-    Call TopHalf(Game.Players(1).Bat)
+    Call BottomHalf(game.Players(0).Bat)
+    Call TopHalf(game.Players(1).Bat)
 
 
 End Sub
@@ -217,32 +226,32 @@ Private Sub AIDefence(Bat As Sprite, Ball As Sprite)
     End If
 End Sub
 Private Sub MovePlayer(Bat As Sprite)
-    Call Bat.SetMovementVector(Physics.AddVectors(Bat.GetMovementVector, Physics.MultiplyVector(MouseAndKey.GetMouseMovement, 0.02)))
+    Call Bat.SetMovementVector(Physics.AddVectors(Bat.GetMovementVector, Physics.MultiplyVector(MouseAndKey.GetMouseMovement, 0.03)))
     Call MouseAndKey.HideMouse
     Call MouseAndKey.MoveMouse(Core.ScreenWidth / 2, Core.ScreenHeight / 2)
 
     Call Core.ProcessEvents
 End Sub
-Private Sub Draw(Game As AirHockeyGame)
+Private Sub Draw(game As AirHockeyGame)
     Call Graphics.ClearScreen_ToColour(Core.GetColor(159, 207, 241))
-    Call Graphics.DrawBitmap(Game.TablePics.BackGround, 0, 0)
-    Call Graphics.DrawSprite(Game.Ball)
-    Call Graphics.DrawSprite(Game.Players(0).Bat)
-    Call Graphics.DrawSprite(Game.Players(1).Bat)
+    Call Graphics.DrawBitmap(game.TablePics.BackGround, 0, 0)
+    Call Graphics.DrawSprite(game.Ball)
+    Call Graphics.DrawSprite(game.Players(0).Bat)
+    Call Graphics.DrawSprite(game.Players(1).Bat)
     Call Text.DrawText("Red", black, GameFont("CourierBigger"), 120, 165)
     Call Text.DrawText("Blue", black, GameFont("CourierBigger"), 120, 345)
-    Call Text.DrawText(Game.Players(1).Score, black, GameFont("CourierBigger"), 135, 210)
-    Call Text.DrawText(Game.Players(0).Score, black, GameFont("CourierBigger"), 135, 390)
+    Call Text.DrawText(game.Players(1).Score, black, GameFont("CourierBigger"), 135, 210)
+    Call Text.DrawText(game.Players(0).Score, black, GameFont("CourierBigger"), 135, 390)
 End Sub
-Private Sub StartBall(Game As AirHockeyGame)
+Private Sub StartBall(game As AirHockeyGame)
     Dim x As Long
     Dim y As Long
-    Call Game.Ball.setX(CenterOfTable - (Graphics.CurrentWidth(Game.Ball) / 2))
-    Call Game.Ball.setY(MiddleOfTable - (Graphics.CurrentHeight(Game.Ball) / 2))
+    Call game.Ball.setX(CenterOfTable - (Graphics.CurrentWidth(game.Ball) / 2))
+    Call game.Ball.setY(MiddleOfTable - (Graphics.CurrentHeight(game.Ball) / 2))
     Call Randomize
     x = Int(Rnd * 7) - 3
     y = Int(Rnd * 7) - 3
-    Call Game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(x, y))
+    Call game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(x, y))
 End Sub
 Private Function CreateGame() As AirHockeyGame
     CreateGame.TablePics = CreateTable
@@ -284,64 +293,63 @@ Private Function CreateTable() As Table
     Call CreateTable.TableVertical.SetUsePixelCollision(True)
     Call CreateTable.TableHorizontal.SetUsePixelCollision(True)
 End Function
-Private Sub MoveBall(Game As AirHockeyGame)
-    Call KeepBallOnTable(Game)
-    Call Game.Ball.SetMovementVector(Physics.LimitVector(Game.Ball.GetMovementVector, 25))
-    Call Game.Ball.SetMovementVector(Physics.Multiply_Vector(scaleBall, Game.Ball.GetMovementVector))
-    Call Graphics.MoveSprite(Game.Ball, Game.Ball.GetMovementVector)
+Private Sub MoveBall(game As AirHockeyGame)
+    Call KeepBallOnTable(game)
+    Call game.Ball.SetMovementVector(Physics.LimitMagnitude(game.Ball.GetMovementVector, 15)) '25
+    Call game.Ball.SetMovementVector(Physics.Multiply_Vector(scaleBall, game.Ball.GetMovementVector))
+    Call Graphics.MoveSprite(game.Ball, game.Ball.GetMovementVector)
     Dim i As Long
     For i = 0 To 1
-        If Physics.HaveSpritesCollided(Game.Ball, Game.Players(i).Bat) Then
-            Call Physics.VectorCollision(Game.Ball, Game.Players(i).Bat)
+        If Physics.HaveSpritesCollided(game.Ball, game.Players(i).Bat) Then
+            Call Physics.VectorCollision(game.Ball, game.Players(i).Bat)
             Call Audio.PlaySoundEffect(GameSound("Ball hit bat"))
         End If
     Next i
-    If Physics.HaveSpritesCollided(Game.Ball, Game.Players(0).Goal) Then
-        Game.Players(0).Score = Game.Players(0).Score + 1
-        Game.Resetting = True
+    If Physics.HaveSpritesCollided(game.Ball, game.Players(0).Goal) Then
+        game.Players(0).Score = game.Players(0).Score + 1
+        game.Resetting = True
         Call Audio.PlaySoundEffect(GameSound("Ball in goal"))
-        Call Game.Ball.setX(2000)
-        Call Game.Ball.setY(2000)
-        Call Game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(0, 0))
+        Call game.Ball.setX(2000)
+        Call game.Ball.setY(2000)
+        Call game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(0, 0))
     End If
-    If Physics.HaveSpritesCollided(Game.Ball, Game.Players(1).Goal) Then
-        Game.Players(1).Score = Game.Players(1).Score + 1
-        Game.Resetting = True
+    If Physics.HaveSpritesCollided(game.Ball, game.Players(1).Goal) Then
+        game.Players(1).Score = game.Players(1).Score + 1
+        game.Resetting = True
         Call Audio.PlaySoundEffect(GameSound("Ball in goal"))
-        Call Game.Ball.setX(2000)
-        Call Game.Ball.setY(2000)
-        Call Game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(0, 0))
+        Call game.Ball.setX(2000)
+        Call game.Ball.setY(2000)
+        Call game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(0, 0))
     End If
-
 End Sub
 
 
-Private Sub KeepBallOnTable(Game As AirHockeyGame)
-    If Physics.HaveSpritesCollided(Game.Ball, Game.TablePics.TableHorizontal) Then
-        Call RescueTheBall(Game)
-        Call Game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(Game.Ball.GetMovementX, Game.Ball.GetMovementY * -1))
+Private Sub KeepBallOnTable(game As AirHockeyGame)
+    If Physics.HaveSpritesCollided(game.Ball, game.TablePics.TableHorizontal) Then
+        Call RescueTheBall(game)
+        Call game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(game.Ball.GetMovementX, game.Ball.GetMovementY * -1))
         Call Audio.PlaySoundEffect(GameSound("Ball hit side"))
     End If
     
-    If Physics.HaveSpritesCollided(Game.Ball, Game.TablePics.TableVertical) Then
-        Call RescueTheBall(Game)
-        Call Game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(Game.Ball.GetMovementX * -1, Game.Ball.GetMovementY))
+    If Physics.HaveSpritesCollided(game.Ball, game.TablePics.TableVertical) Then
+        Call RescueTheBall(game)
+        Call game.Ball.SetMovementVector(Physics.CreateVector_NoInvert(game.Ball.GetMovementX * -1, game.Ball.GetMovementY))
         Call Audio.PlaySoundEffect(GameSound("Ball hit side"))
     End If
 End Sub
 
-Private Sub RescueTheBall(Game As AirHockeyGame)
-    If Game.Ball.getX < LeftOfTable Then
-        Call Game.Ball.setX(LeftOfTable + 1)
+Private Sub RescueTheBall(game As AirHockeyGame)
+    If game.Ball.getX < LeftOfTable Then
+        Call game.Ball.setX(LeftOfTable + 1)
     End If
-    If (Game.Ball.getX + Graphics.CurrentWidth(Game.Ball)) > RightOfTable Then
-        Call Game.Ball.setX(RightOfTable - Graphics.CurrentWidth(Game.Ball) - 1)
+    If (game.Ball.getX + Graphics.CurrentWidth(game.Ball)) > RightOfTable Then
+        Call game.Ball.setX(RightOfTable - Graphics.CurrentWidth(game.Ball) - 1)
     End If
-    If Game.Ball.getY < TopOfTable Then
-        Call Game.Ball.setY(TopOfTable - 1)
+    If game.Ball.getY < TopOfTable Then
+        Call game.Ball.setY(TopOfTable - 1)
     End If
-    If (Game.Ball.getY + Graphics.CurrentHeight(Game.Ball)) > BottomOfTable Then
-        Call Game.Ball.setY(BottomOfTable - Graphics.CurrentHeight(Game.Ball) - 1)
+    If (game.Ball.getY + Graphics.CurrentHeight(game.Ball)) > BottomOfTable Then
+        Call game.Ball.setY(BottomOfTable - Graphics.CurrentHeight(game.Ball) - 1)
     End If
 End Sub
 
