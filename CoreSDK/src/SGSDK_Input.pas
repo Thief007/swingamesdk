@@ -10,9 +10,10 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-02-13: James: changed MoveMouse so it dosnt generate mouse movemnt event
 // - 2008-01-25: Stephen: Fixed IsMouseShown
 // - 2008-01-25: Andrew: Fixed compiler hints
-// - 2008-01-22: James changed MoveMouse to Point2D
+// - 2008-01-22: James: changed MoveMouse to Point2D
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
@@ -87,11 +88,13 @@ implementation
 	procedure MoveMouse(x, y : UInt16);overload;
 	begin
 		SDL_WarpMouse(x,y);
+		GetMouseMovement();
 	end;
 	
 	procedure MoveMouse(point : Point2d);overload;
 	begin
 		SDL_WarpMouse(Round(point.x), Round(point.y));
+		GetMouseMovement();
 	end;
 	
 	function IsMouseShown(): Boolean;
