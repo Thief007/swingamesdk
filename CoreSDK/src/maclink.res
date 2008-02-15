@@ -1,6 +1,4 @@
--L.
 -L/usr/lib/
--L/usr/X11R6/lib
 -L/usr/lib/gcc/i686-apple-darwin9/4.0.1/
 -L/usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/
 -L/usr/local/lib/fpc/2.2.1/units/i386-darwin/zvt/
@@ -64,23 +62,8 @@
 -L/usr/local/lib/fpc/2.2.1/units/i386-darwin/aspell/
 -L/usr/local/lib/fpc/2.2.1/units/i386-darwin/
 -L/usr/local/bin/
-SGSDK.NET/lib/SGSDK.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/system.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/objpas.o
-SGSDK.NET/lib/SGSDK_Core.o
-SGSDK.NET/lib/SGSDK_Input.o
-SGSDK.NET/lib/SGSDK_Audio.o
-SGSDK.NET/lib/SGSDK_Font.o
-SGSDK.NET/lib/SGSDK_Physics.o
-SGSDK.NET/lib/SGSDK_Graphics.o
-SGSDK.NET/lib/sdl_mixer.o
-SGSDK.NET/lib/sdl.o
-SGSDK.NET/lib/sdl_image.o
-SGSDK.NET/lib/sdl_ttf.o
-SGSDK.NET/lib/SDLEventProcessing.o
-SGSDK.NET/lib/SGSDK_Camera.o
-SGSDK.NET/lib/SGSDK_MappyLoader.o
-SGSDK.NET/lib/SGSDK_Shapes.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/sysutils.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/types.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/pthreads/pthreads.o
@@ -98,32 +81,29 @@ SGSDK.NET/lib/SGSDK_Shapes.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/errors.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/sysconst.o
 /usr/local/lib/fpc/2.2.1/units/i386-darwin/rtl/math.o
+SGSDK.NET/lib/SGSDK.o
+SGSDK.NET/lib/SGSDK_Core.o
+SGSDK.NET/lib/SGSDK_Input.o
+SGSDK.NET/lib/SGSDK_Audio.o
+SGSDK.NET/lib/SGSDK_Font.o
+SGSDK.NET/lib/SGSDK_Physics.o
+SGSDK.NET/lib/SGSDK_Graphics.o
+SGSDK.NET/lib/sdl_mixer.o
+SGSDK.NET/lib/sdl.o
+SGSDK.NET/lib/sdl_image.o
+SGSDK.NET/lib/sdl_ttf.o
+SGSDK.NET/lib/SGSDK_Camera.o
+SGSDK.NET/lib/SGSDK_Shapes.o
+SGSDK.NET/lib/SGSDK_MappyLoader.o
+SGSDK.NET/lib/SDLEventProcessing.o
 -lgcc
 -lpthread
 -lc
--lSDL 
--lSDL_mixer
--lSDL_image 
--lSDL_TTF
--lSDL_gfx
--lsmpeg
--lz
--lstdc++
--ltiff
--lpng12
--logg
--lfreetype
--ljpeg
--lvorbis
--lvorbisenc
--lvorbisfile
--framework Cocoa
--framework QuickTime
--framework CoreFoundation
--framework IOKit
--framework AudioUnit
--framework Carbon
--framework OpenGL
--dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
 -read_only_relocs
 suppress
+-F./lib/mac
+-framework SDL
+-framework SDL_image
+-framework SDL_mixer
+-framework SDL_ttf	
+-framework Cocoa

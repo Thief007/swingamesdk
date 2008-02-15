@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#
+# Copy Resources by file to avoid SVN details
+#
+
 SOURCE_RESOURCE=../../Base/All/Resources
 RESOURCE_DIR=./FPC/Resources
 

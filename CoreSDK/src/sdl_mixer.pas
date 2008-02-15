@@ -1,7 +1,7 @@
 unit sdl_mixer;
 {******************************************************************************}
 {
-  $Id: sdl_mixer.pas,v 1.18 2007/05/29 21:31:44 savage Exp $
+  $Id: sdl_mixer.pas,v 1.20 2007/12/20 22:37:17 savage Exp $
   
 }
 {                                                                              }
@@ -91,6 +91,12 @@ unit sdl_mixer;
 {                                                                              }
 {
   $Log: sdl_mixer.pas,v $
+  Revision 1.20  2007/12/20 22:37:17  savage
+  Added SKYOS support, thanks to Sebastian-Torsten Tillmann
+
+  Revision 1.19  2007/12/05 22:53:57  savage
+  Better Mac OS X support for Frameworks.
+
   Revision 1.18  2007/05/29 21:31:44  savage
   Changes as suggested by Almindor for 64bit compatibility.
 
@@ -158,8 +164,10 @@ uses
   gpc,
 {$ENDIF}
 {$IFNDEF DARWIN}
+{$IFNDEF SKYOS}
 {$IFNDEF no_smpeg}
   smpeg,
+{$ENDIF}  
 {$ENDIF}
 {$ENDIF}
   sdl;
@@ -183,6 +191,7 @@ const
 
 {$IFDEF MACOS}
   SDL_MixerLibName = 'SDL_mixer';
+  {$linklib libSDL_mixer}
 {$ENDIF}
 
   {* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL *}
@@ -448,7 +457,9 @@ type
       3 : ( midi : TMidiSong );
       4 : ( ogg : POGG_music );
       {$IFNDEF DARWIN}
+      {$IFNDEF SKYOS}
       5 : ( mp3 : PSMPEG );
+      {$ENDIF}
       {$ENDIF}
   end;
 

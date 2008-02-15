@@ -1,6 +1,6 @@
 unit sdl_image;
 {
-  $Id: sdl_image.pas,v 1.14 2007/05/29 21:31:13 savage Exp $
+  $Id: sdl_image.pas,v 1.15 2007/12/05 22:52:23 savage Exp $
   
 }
 {******************************************************************************}
@@ -83,6 +83,9 @@ unit sdl_image;
 {                                                                              }
 {
   $Log: sdl_image.pas,v $
+  Revision 1.15  2007/12/05 22:52:23  savage
+  Better Mac OS X support for Frameworks.
+
   Revision 1.14  2007/05/29 21:31:13  savage
   Changes as suggested by Almindor for 64bit compatibility.
 
@@ -158,6 +161,7 @@ const
 
 {$IFDEF MACOS}
   SDL_ImageLibName = 'SDL_image';
+  {$linklib libSDL_image}
 {$ENDIF}
 
   // Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
@@ -165,7 +169,7 @@ const
 {$EXTERNALSYM SDL_IMAGE_MAJOR_VERSION}
   SDL_IMAGE_MINOR_VERSION = 2;
 {$EXTERNALSYM SDL_IMAGE_MINOR_VERSION}
-  SDL_IMAGE_PATCHLEVEL    = 5;
+  SDL_IMAGE_PATCHLEVEL    = 6;
 {$EXTERNALSYM SDL_IMAGE_PATCHLEVEL}
 
 { This macro can be used to fill a version structure with the compile-time

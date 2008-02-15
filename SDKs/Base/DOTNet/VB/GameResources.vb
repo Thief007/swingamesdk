@@ -82,6 +82,8 @@ Public Module GameResources
 
     Dim _Background As Bitmap
     Dim _Animation As Bitmap
+    Dim _LoaderFull As Bitmap
+    Dim _LoaderEmpty As Bitmap
     Dim _LoadingFont As Font
     Dim _StartSound As SoundEffect
 
@@ -133,21 +135,26 @@ Public Module GameResources
         Core.ProcessEvents()
 
         _Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind.ImageResource))
-        _LoadingFont = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18)
+        _LoadingFont = Text.LoadFont(Core.GetPathToResource("arial.ttf", ResourceKind.FontResource), 12)
         _StartSound = Audio.LoadSoundEffect(Core.GetPathToResource("SwinGameStart.ogg", ResourceKind.SoundResource))
+
+		_LoaderFull = Graphics.LoadBitmap(Core.GetPathToResource("loader_full.png", ResourceKind.ImageResource))
+		_LoaderEmpty = Graphics.LoadBitmap(Core.GetPathToResource("loader_empty.png", ResourceKind.ImageResource))
 
         PlaySwinGameIntro()
     End Sub
 
     Private Sub PlaySwinGameIntro()
-        Core.Sleep(400)
+		const ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11
+
         Audio.PlaySoundEffect(_StartSound)
+        Core.Sleep(200)
 
         Dim i As Integer
-        For i = 0 To 13
-            Graphics.DrawBitmap(_Background, 0, 0)
-            Graphics.DrawBitmapPart(_Animation, (i \ 7) * 712, (i Mod 7) * 184, 712, 184, 41, 242)
-            Core.Sleep(67)
+        For i = 0 To ANI_CELL_COUNT - 1
+	        Graphics.DrawBitmap(_Background, 0, 0)
+	        Graphics.DrawBitmapPart(_Animation, (i \ ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H, ANI_W, ANI_H, ANI_X, ANI_Y)
+	        Core.Sleep(20)
             Core.RefreshScreen()
             Core.ProcessEvents()
         Next i
@@ -157,7 +164,16 @@ Public Module GameResources
     End Sub
 
     Private Sub ShowMessage(ByVal message As String, ByVal number As Integer)
-        Text.DrawText(message, Color.Red, _LoadingFont, 240, 20 + (25 * number))
+		const TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453
+		
+		Dim fullW As Integer
+
+		fullW = 260 * number \ STEPS
+		Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y)
+		Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y)
+				
+		Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH)
+
         Core.RefreshScreen()
         Core.ProcessEvents()
     End Sub

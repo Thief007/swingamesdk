@@ -71,6 +71,8 @@ interface
  	function ImageID(bmp: Bitmap): GameImages;
  
 implementation
+	uses SGSDK_KeyCodes, SGSDK_Input;
+	
 	var
 		_Images: Array [GameImages] of Bitmap;
 		_Fonts: Array [GameFonts] of Font;
@@ -108,6 +110,14 @@ implementation
 		DrawBitmap(_Background, 0, 0);
 		RefreshScreen();
 		ProcessEvents();
+		
+		if IsKeyPressed(VK_P) then
+		begin
+			repeat
+				RefreshScreen();
+				ProcessEvents();			
+			until WasKeyTyped(VK_SPACE) or WasKeyTyped(VK_RETURN);
+		end;
 		
 		_Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource));
 		_LoadingFont := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);

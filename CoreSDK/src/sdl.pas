@@ -1,6 +1,6 @@
 unit sdl;
 {
-  $Id: sdl.pas,v 1.34 2007/08/26 23:50:53 savage Exp $
+  $Id: sdl.pas,v 1.38 2008/01/26 10:09:32 savage Exp $
 
 }
 {******************************************************************************}
@@ -168,6 +168,18 @@ unit sdl;
 {                                                                              }
 {
   $Log: sdl.pas,v $
+  Revision 1.38  2008/01/26 10:09:32  savage
+  Added SDL_BUTTON_X1 and SDL_BUTTON_X2 constants for extended mouse buttons. Now makes SDL v1.2.13 compliant.
+
+  Revision 1.37  2007/12/20 22:36:56  savage
+  Added SKYOS support, thanks to Sebastian-Torsten Tillmann
+
+  Revision 1.36  2007/12/05 22:52:04  savage
+  Better Mac OS X support for Frameworks.
+
+  Revision 1.35  2007/12/02 22:41:13  savage
+  Change for Mac OS X to link to SDL Framework
+
   Revision 1.34  2007/08/26 23:50:53  savage
   Jonas supplied another fix.
 
@@ -308,10 +320,13 @@ uses
 
 {$IFDEF UNIX}
   {$IFDEF FPC}
+  {$IFNDEF SKYOS}
   pthreads,
+  {$ENDIF}
   baseunix,
   {$IFNDEF GP2X}
   {$IFNDEF DARWIN}
+  {$IFNDEF SKYOS}
   unix,
   {$ELSE}
   unix;
@@ -319,10 +334,15 @@ uses
   {$ELSE}
   unix;
   {$ENDIF}
+  {$ELSE}
+  unix;
+  {$ENDIF}
   {$IFNDEF GP2X}
   {$IFNDEF DARWIN}
+  {$IFNDEF SKYOS}
   x,
   xlib;
+  {$ENDIF}
   {$ENDIF}
   {$ENDIF}
   {$ELSE}
@@ -342,8 +362,7 @@ const
 
 {$IFDEF UNIX}
 {$IFDEF DARWIN}
-  SDLLibName = 'libSDL.dylib';
-  {$linklib libSDL}
+  SDLLibName = 'libSDL-1.2.0.dylib';
 {$ELSE}
   {$IFDEF FPC}
   SDLLibName = 'libSDL.so';
@@ -355,6 +374,7 @@ const
 
 {$IFDEF MACOS}
   SDLLibName = 'SDL';
+  {$linklib libSDL}
 {$ENDIF}
 
 {$IFDEF NDS}
@@ -372,7 +392,7 @@ const
 {$EXTERNALSYM SDL_MAJOR_VERSION}
   SDL_MINOR_VERSION = 2;
 {$EXTERNALSYM SDL_MINOR_VERSION}
-  SDL_PATCHLEVEL    = 12;
+  SDL_PATCHLEVEL    = 13;
 {$EXTERNALSYM SDL_PATCHLEVEL}
 
   // SDL.h constants
@@ -1284,25 +1304,36 @@ SDLK_GP2X_CLICK = 18;
     Button 1:	Left mouse button
     Button 2:	Middle mouse button
     Button 3:	Right mouse button
-    Button 4:	Mouse Wheel Up
-    Button 5:	Mouse Wheel Down
+    Button 4:	Mouse Wheel Up (may also be a real button)
+    Button 5:	Mouse Wheel Down (may also be a real button)
+    Button 6:	Mouse X1 (may also be a real button)
+    Button 7:	Mouse X2 (may also be a real button)
   }
-  SDL_BUTTON_LEFT = 1;
+  SDL_BUTTON_LEFT      = 1;
 {$EXTERNALSYM SDL_BUTTON_LEFT}
-  SDL_BUTTON_MIDDLE = 2;
+  SDL_BUTTON_MIDDLE    = 2;
 {$EXTERNALSYM SDL_BUTTON_MIDDLE}
-  SDL_BUTTON_RIGHT = 3;
+  SDL_BUTTON_RIGHT     = 3;
 {$EXTERNALSYM SDL_BUTTON_RIGHT}
-  SDL_BUTTON_WHEELUP = 4;
+  SDL_BUTTON_WHEELUP   = 4;
 {$EXTERNALSYM SDL_BUTTON_WHEELUP}
   SDL_BUTTON_WHEELDOWN = 5;
 {$EXTERNALSYM SDL_BUTTON_WHEELDOWN}
+  SDL_BUTTON_X1        = 6;
+{$EXTERNALSYM SDL_BUTTON_X1}
+  SDL_BUTTON_X2        = 7;
+{$EXTERNALSYM SDL_BUTTON_X2}
+
   SDL_BUTTON_LMASK = SDL_PRESSED shl (SDL_BUTTON_LEFT - 1);
 {$EXTERNALSYM SDL_BUTTON_LMASK}
   SDL_BUTTON_MMASK = SDL_PRESSED shl (SDL_BUTTON_MIDDLE - 1);
 {$EXTERNALSYM SDL_BUTTON_MMASK}
-  SDL_BUTTON_RMask = SDL_PRESSED shl (SDL_BUTTON_RIGHT - 1);
-{$EXTERNALSYM SDL_BUTTON_RMask}
+  SDL_BUTTON_RMASK = SDL_PRESSED shl (SDL_BUTTON_RIGHT - 1);
+{$EXTERNALSYM SDL_BUTTON_RMASK}
+  SDL_BUTTON_X1MASK = SDL_PRESSED shl (SDL_BUTTON_X1 - 1);
+{$EXTERNALSYM SDL_BUTTON_X1MASK}
+  SDL_BUTTON_X2MASK = SDL_PRESSED shl (SDL_BUTTON_X2 - 1);
+{$EXTERNALSYM SDL_BUTTON_X2MASK}
 
   // SDL_active.h constants
   // The available application states
@@ -1811,7 +1842,9 @@ type
     {$IFDEF FPC}
     {$IFNDEF GP2X}
     {$IFNDEF DARWIN}
+    {$IFNDEF SKYOS}
     event : TXEvent;
+    {$ENDIF}
     {$ENDIF}
     {$ENDIF}
     {$ELSE}
@@ -1842,6 +1875,7 @@ type
 {$IFDEF Unix}
   {$IFNDEF GP2X}
   {$IFNDEF DARWIN}
+  {$IFNDEF SKYOS}
   TX11 = record
     display : PDisplay;	// The X11 display
     window : TWindow ;		// The X11 display window */
@@ -1859,6 +1893,7 @@ type
   end;
   {$ENDIF}
   {$ENDIF}
+  {$ENDIF}
   
   PSDL_SysWMinfo = ^TSDL_SysWMinfo;
   TSDL_SysWMinfo = record
@@ -1866,7 +1901,9 @@ type
      subsystem : TSDL_SysWm;
      {$IFNDEF GP2X}
      {$IFNDEF DARWIN}
+     {$IFNDEF SKYOS}
      X11 : TX11;
+     {$ENDIF}
      {$ENDIF}
      {$ENDIF}
   end;

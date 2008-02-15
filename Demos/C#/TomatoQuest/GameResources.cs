@@ -64,6 +64,7 @@ namespace GameResources
 
         private static void LoadMusic()
         {
+				NewMusic("Theme", "TomatoQuest.mp3");
         }
 
         private static void LoadMaps()

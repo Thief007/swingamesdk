@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-31: Andrew: Fixed Line Drawing Issue
 // - 2008-01-30: Andrew: Fixed DrawRectangle
 // - 2008-01-25: Andrew: Fixed compiler hints for pointer use
@@ -261,7 +262,13 @@ interface
 
 	procedure ResetClip(); overload; {1.1}
 	procedure ResetClip(bmp: Bitmap); overload; {1.1}
-	
+		
+	//
+	// Additions in 1.1.1
+	//
+	function GetPixel(bmp: Bitmap; x, y: Integer): Colour;
+	function GetPixelFromScreen(x, y: Integer): Colour;
+		
 implementation
 	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics;
 	
@@ -377,6 +384,22 @@ implementation
 		end;
 		{$IFEND}
 	end;
+	
+	function GetPixel(bmp: Bitmap; x, y: Integer): Colour;
+	begin
+		if (x < 0) or (x >= bmp.width) or (y < 0) or (y >= bmp.height) then
+		begin
+			result := 0;
+			exit;
+		end;
+		
+		result := GetPixel32(bmp.surface, x, y);
+	end;
+	
+	function GetPixelFromScreen(x, y: Integer): Colour;
+	begin
+		result := GetPixel(scr, x, y);
+	end;	
 
 	// Sets the non-transparent pixels in a Bitmap. This is then used for
 	// collision detection, allowing the original surface to be optimised.

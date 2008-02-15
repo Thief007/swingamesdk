@@ -88,7 +88,7 @@ then
 
 	echo "  ... Compiling Game"
 	
-	fpc $EXTRA_OPTS -XMSDL_main -Mdelphi -FE./bin -Fu./lib -s GameLauncher.pas > out.log
+	fpc $EXTRA_OPTS -Mdelphi -FE./bin -Fu./lib -s GameLauncher.pas > out.log
 	if [ $? != 0 ]; then DoExitCompile; fi
 	rm -f out.log
 
@@ -108,7 +108,7 @@ then
 
 	echo "  ... Linking ${EXECUTABLE_NAME}"
 	#Removed -s option - if this crashes... maybe re-add it
-	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "${EXECUTABLE_NAME}" `cat bin/link.res` -lSDL -lSDL_mixer -lsmpeg -lSDL_image -lSDL_TTF -lSDL_gfx -lz -lstdc++ -ltiff -lpng12 -lSDLmain -logg -lfreetype -ljpeg -lvorbis -lvorbisenc -lvorbisfile -framework Cocoa -framework QuickTime -framework CoreFoundation -framework IOKit -framework AudioUnit -framework Carbon -framework OpenGL -lgcc -dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib
+	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "${EXECUTABLE_NAME}" `cat bin/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf
 	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
 
 	if [ -d ./bin/"${PRODUCT_NAME}.app" ] 
@@ -119,11 +119,15 @@ then
 
 	echo "  ... Creating Application Bundle"
 
-	mkdir ./bin/"${PRODUCT_NAME}.app"
-	mkdir ./bin/"${PRODUCT_NAME}.app/Contents"
-	mkdir ./bin/"${PRODUCT_NAME}.app/Contents/MacOS"
-	mkdir ./bin/"${PRODUCT_NAME}.app/Contents/Resources"
+	mkdir "./bin/${PRODUCT_NAME}.app"
+	mkdir "./bin/${PRODUCT_NAME}.app/Contents"
+	mkdir "./bin/${PRODUCT_NAME}.app/Contents/MacOS"
+	mkdir "./bin/${PRODUCT_NAME}.app/Contents/Resources"
+	mkdir "./bin/${PRODUCT_NAME}.app/Contents/Frameworks"
 
+	echo "  ... Added Private Frameworks"
+	cp -R ./lib/*.framework "./bin/${PRODUCT_NAME}.app/Contents/Frameworks/"
+	
 	mv "${EXECUTABLE_NAME}" "./bin/${PRODUCT_NAME}.app/Contents/MacOS/" 
 	
 	if [ $DEBUG = "N" ] 

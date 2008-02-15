@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#
+# Compiles the library and copys into the FPC
+# SDK folder.
+#
+
 DoExitCompile ()
 { 
 	echo "An error occurred while compiling"; 
@@ -43,7 +48,8 @@ then
 	mkdir -p $FPCDir
 fi
 FPCDir=`cd $FPCDir; pwd`
-
+rm -rf "${FPCDir}"
+mkdir -p "${FPCDir}"
 
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
@@ -92,6 +98,10 @@ then
 	rm -rf "$Output"
 	mkdir -p "$Output"
 else	
+	#
+	# Compile and copy to SDKs
+	#
+
 	if [ ! -d $Output ]
 	then
 		echo "  ... Creating Output Location"
@@ -152,7 +162,23 @@ else
 	if [ ! -z $LibDir ]
 	then
 		echo "  ... Copying lib files"
-		cp "$LibDir"/*.a "$FPCDir"
+		
+		if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
+		then
+			pushd . > /dev/null
+			cd "${LibDir}"
+			
+			#
+			# Copying frameworks ... files to SDK
+			#
+			find . -type d \! -path *.svn* \! -name . -exec mkdir "${FPCDir}/{}" \;
+			if [ $? != 0 ]; then echo "Error creating framework directories"; cat ${BASEDIR}/out.log;  exit 1; fi
+			
+			find . \! -type d \! -path *.svn* -exec cp -R {} "${FPCDir}/{}" \;
+			if [ $? != 0 ]; then echo "Error copying framework files"; cat ${BASEDIR}/out.log;  exit 1; fi
+								
+			popd > /dev/null
+		fi
 	fi
 fi
 
