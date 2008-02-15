@@ -39,6 +39,8 @@ implementation
 
 		_Background: Bitmap;
 		_Animation: Bitmap;
+		_LoaderEmpty: Bitmap;
+		_LoaderFull: Bitmap;
 		_LoadingFont: Font;
 		_StartSound: SoundEffect;
 
@@ -408,17 +410,27 @@ implementation
   // - Draws the background and animation
   // - Refreshes screen
 	procedure PlaySwinGameIntro();
+	const
+		ANI_X = 143;
+		ANI_Y = 134;
+		ANI_W = 546;
+		ANI_H = 327;
+		ANI_V_CELL_COUNT = 6;
+		ANI_CELL_COUNT = 11;
 	var
 		i : Integer;
 	begin
 		PlaySoundEffect(_StartSound);
-		for i:= 0 to 13 do
+		Sleep(200);
+		for i:= 0 to ANI_CELL_COUNT - 1 do
 		begin
 			DrawBitmap(_Background, 0, 0);
-			DrawBitmapPart(_Animation, (i div 7) * 712, (i mod 7) * 184, 712, 184, 41, 242);
-			RefreshScreen(60);
+			DrawBitmapPart(_Animation, 
+				(i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
+				ANI_W, ANI_H, ANI_X, ANI_Y);
+			RefreshScreen();
 			ProcessEvents();
-			Sleep(67);
+			Sleep(20);
 		end;
 		Sleep(1500);
 	end;
@@ -437,7 +449,9 @@ implementation
 		ProcessEvents();
 
 		_Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource));
-		_LoadingFont := LoadFont(GetPathToResource('cour.ttf', FontResource), 18);
+		_LoaderEmpty := LoadBitmap(GetPathToResource('loader_empty.png', ImageResource));
+		_LoaderFull := LoadBitmap(GetPathToResource('loader_full.png', ImageResource));
+		_LoadingFont := LoadFont(GetPathToResource('arial.ttf', FontResource), 12);
 		_StartSound := LoadSoundEffect(GetPathToResource('SwinGameStart.ogg', SoundResource));
 
 		PlaySwinGameIntro();
@@ -450,8 +464,19 @@ implementation
   // - Draws text to the screen
   // - Refreshes screen
 	procedure ShowMessage(message: String; number: Integer);
+	const
+		TX = 310; TY = 493; 
+		TW = 200; TH = 25;
+		STEPS = 5;
+		BG_X = 279; BG_Y = 453;
+	var
+		fullW: Integer;
 	begin
-		DrawText(message, ColorRed, _LoadingFont, 240, 20 + (25 * number));
+		fullW := 260 * number div STEPS;
+		DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
+		DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
+				
+		DrawTextLines(message, ColorWhite, ColorTransparent, _LoadingFont, AlignCenter, TX, TY, TW, TH);
 		RefreshScreen(60);
 		ProcessEvents();
 	end;
@@ -488,28 +513,29 @@ implementation
 
 		//Remove sleeps once "real" game resources are being loaded
 		ShowLoadingScreen();
-		ShowMessage('Loading fonts...', 0);
+				
+		ShowMessage('loading fonts', 0);
 		LoadFonts();
-		Sleep(50);
+		Sleep(100);
 
-		ShowMessage('Loading images...', 1);
+		ShowMessage('loading images', 1);
 		LoadImages();
-		Sleep(50);
+		Sleep(100);
 
-		ShowMessage('Loading sounds...', 2);
+		ShowMessage('loading sounds', 2);
 		LoadSounds();
-		Sleep(50);
+		Sleep(100);
 
-		ShowMessage('Loading music...', 3);
+		ShowMessage('loading music', 3);
 		LoadMusics();
-		Sleep(50);
+		Sleep(100);
 
-		ShowMessage('Loading maps...', 4);
+		ShowMessage('loading maps', 4);
 		LoadMaps();
-		Sleep(50);
+		Sleep(100);
 
-		ShowMessage('Game loaded...', 5);
-		Sleep(50);
+		ShowMessage('SwinGame loaded', 5);
+		Sleep(100);
 		EndLoadingScreen();
 
 		ChangeScreenSize(oldW, oldH);

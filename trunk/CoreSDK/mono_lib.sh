@@ -21,7 +21,8 @@ Usage()
 
 BaseDir=`pwd`
 Output="$BaseDir"/SGSDK.NET/lib
-	
+Libs=
+
 DOTNETlocn="$BaseDir"/SGSDK.NET/src
 DOTNETproj=SGSDK.NET.csproj
 DOTNETbin="$BaseDir"/SGSDK.NET/src/bin/Debug
@@ -36,11 +37,12 @@ cpToSDK()
 {
 	echo "  ... Copying to $1 SDK"
 
-	if [ ! -d "$SDKBase/${1}/lib/" ]
+	if [ -d "$SDKBase/${1}/lib/" ]
 	then
-		mkdir -p "$SDKBase/${1}/lib/"
+		rm -rf "$SDKBase/${1}/lib/"
 	fi
-
+	mkdir -p "$SDKBase/${1}/lib/"
+	
 	cp "$Output"/*.dll "$SDKBase/$1/lib/"
 	if [ $? != 0 ]; then echo "Error copying DLL"; exit 1; fi
 	
@@ -50,6 +52,18 @@ cpToSDK()
 	then
 		cp "$Output"/*.dylib  "$SDKBase/$1/lib"
 		if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+		
+		pushd . > /dev/null
+		cd "${Libs}"
+		
+		#
+		# Copying frameworks ... files to SDK
+		#
+		echo "  ... Adding private Frameworks"
+		find . -type d \! -path *.svn* \! -name . -exec mkdir "$SDKBase/${1}/lib/{}" \;		
+		find . \! -type d \! -path *.svn* -exec cp -R {} "$SDKBase/${1}/lib/{}" \;
+							
+		popd > /dev/null		
 	else
 		cp "$Output"/*.so  "$SDKBase/$1/lib"
 		if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
@@ -76,11 +90,14 @@ then
 
 	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 	then
+		Libs=${BaseDir}/lib/mac
+		
 		echo "__________________________________________________"
 		echo "Building Mac version"
 		echo "__________________________________________________"
 		echo "  Running script from $BaseDir"
 		echo "  Saving output to $Output"
+		echo "  Copying Frameworks from $Libs"
 		echo "  Compiling with $EXTRA_OPTS"
 		echo "__________________________________________________"
 
@@ -101,7 +118,7 @@ then
 		done
 
 		echo "  ... Linking Library"
-		/usr/bin/libtool  -dynamic -L./lib/mac -L"$Output" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK.dylib" `cat ./src/maclink.res`
+		/usr/bin/libtool  -dynamic -L"$Output" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK.dylib" `cat ./src/maclink.res`
 		if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
 	
 		rm "$Output"/*.o

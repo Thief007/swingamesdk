@@ -59,9 +59,36 @@ fi
 echo "  ... Packaging ${EXECUTABLE_NAME}"
 
 macpack -m winforms -n ${PRODUCT_NAME} -r SGSDK.NET.dll -r libSGSDK.dylib ${EXECUTABLE_NAME}
+#mkdir "${PRODUCT_NAME}.app"
+#mkdir "${PRODUCT_NAME}.app/Contents"
+#mkdir "${PRODUCT_NAME}.app/Contents/MacOS"
+#mkdir "${PRODUCT_NAME}.app/Contents/Resources"
+mkdir "${PRODUCT_NAME}.app/Contents/Frameworks"
+
+# cp SGSDK.NET.dll "${PRODUCT_NAME}.app/Contents/MacOS"
+# cp libSGSDK.dylib "${PRODUCT_NAME}.app/Contents/MacOS"
+# cp ${EXECUTABLE_NAME} "${PRODUCT_NAME}.app/Contents/MacOS"
+if [ -f "${EXECUTABLE_NAME}.mdb" ]
+then
+	cp "${EXECUTABLE_NAME}.mdb" "${PRODUCT_NAME}.app/Contents/MacOS"
+fi
 
 echo "  ... Adding Resources"
 cp -R ../Resources/ "${PRODUCT_NAME}.app/Contents/Resources"
+
+echo "  ... Added Private Frameworks"
+cp -R ../Frameworks/* "${PRODUCT_NAME}.app/Contents/Frameworks/"
+
+pushd . >> /dev/null
+
+cd "${PRODUCT_NAME}.app/Contents/Resources"
+ln -s ../Frameworks Frameworks
+
+popd >> /dev/null
+
+#
+# Creating App info
+#
 
 echo "  ... Setting Application Information"
 
@@ -100,6 +127,7 @@ echo "APPLSWIN" >> "${PRODUCT_NAME}.app/Contents/PkgInfo"
 echo "  ... Cleaning up"
 
 rm -rf ../Resources
+rm -rf ../Frameworks
 rm -f SGSDK.NET.dll
 rm -f libSGSDK.dylib
 rm -f ${EXECUTABLE_NAME}

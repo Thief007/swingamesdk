@@ -44,6 +44,15 @@ then
 	echo "__________________________________________________"
 	echo " Running vbnc"
 
+	FRAMEWORK_DIR=./bin/Frameworks
+	
+	if [ -d $FRAMEWORK_DIR ]
+	then
+		rm -rf "$FRAMEWORK_DIR"
+	fi
+	mkdir -p $FRAMEWORK_DIR
+	cp -R ./lib/*.framework $FRAMEWORK_DIR
+
 	RESOURCE_DIR=./bin/Resources
 else
 	echo "__________________________________________________"
@@ -58,8 +67,17 @@ fi
 	if [ $? != 0 ]; then echo "Error with vbnc"; cat out.log; exit 1; fi
 	
 echo "  ... Copying Library Files"
-cp ./lib/* ${BIN_DIR}
+cp ./lib/*.dll ${BIN_DIR}
 if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
+then
+	cp ./lib/*.dylib ${BIN_DIR}
+	if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+else
+	cp ./lib/*.so ${BIN_DIR}
+	if [ $? != 0 ]; then echo "Error copying library"; exit 1; fi
+fi
 
 SOURCE_RESOURCE=./Resources
 

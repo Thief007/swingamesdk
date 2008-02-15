@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Fixed DLL calls, fixed bitmap returning from sprite
 // - 2008-01-29: Andrew: Removed ref from Free
@@ -647,6 +648,13 @@ namespace SwinGame
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ResetClip")]
         private static extern void DLL_ResetClip(IntPtr bmp);
+
+		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+		  private static extern int DLL_GetPixel(IntPtr bmp, int x, int y);
+		  
+		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+		  private static extern int DLL_GetPixelFromScreen(int x, int y);
+
     
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
         //private static extern int GetSpritehasEnded(IntPtr pointer);
@@ -1014,6 +1022,31 @@ namespace SwinGame
         {
             DrawBitmapPart(dest, bitmapToDraw, source.X, source.Y, source.Width, source.Height, (int)position.X, (int)position.Y);
         }
+
+			public static Color GetPixel(Bitmap from, int x, int y)
+			{
+				try
+            {
+                return Color.FromArgb(DLL_GetPixel(from.pointer, x, y));
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+			}
+
+			public static Color GetPixelFromScreen(int x, int y)
+			{
+				try
+            {
+                return Color.FromArgb(DLL_GetPixelFromScreen(x, y));
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+			}
+
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelWithDestination")]
         private static extern void DLL_DrawPixelWithDestination(IntPtr dest, uint theColour, int x, int y);

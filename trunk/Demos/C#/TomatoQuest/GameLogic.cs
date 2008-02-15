@@ -26,10 +26,12 @@ namespace TomatoQuest
             //Open Audio Device
             Audio.OpenAudio();
             //Load Resources
-
-				//Core.ToggleFullScreen();
 				
             Resources.LoadResources();
+
+				Audio.PlayMusic(Resources.GameMusic("Theme"));
+
+				Core.ToggleFullScreen();
 
             //Creates the Game Object
             Game _Game = new Game();

@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 //  - 2008-01-31: Stephen: Fixed SetSpriteEndingAction
 //	- 2008-01-30: James: CircleHasCollidedWithLine changed to return -1
 //  - 2008-01-30: Andrew: Fixed String Marshalling and Free
@@ -1290,6 +1291,34 @@ uses
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
+	//
+	// Version 1.1.1
+	//
+	
+	function GetPixel(bmp: Bitmap; x, y: Integer): Colour; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Graphics.GetPixel(bmp, x, y);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
+
+	function GetPixelFromScreen(x, y: Integer): Colour; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Graphics.GetPixelFromScreen(x, y);
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		result := 0;
+	end;
+
+	
+	//
+	// Version 1 and 1.1
+	//
 	function GetSpriteBitmap(surface: Sprite; id: Integer): Bitmap; cdecl; export;
 	begin
 		Try
@@ -2524,6 +2553,8 @@ exports
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
+	GetPixelFromScreen,
+	GetPixel,
 	GetSpriteBitmap,
 	GetSpriteX,
 	GetSpriteY,

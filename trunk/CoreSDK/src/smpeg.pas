@@ -1,7 +1,7 @@
 unit smpeg;
 {******************************************************************************}
 {
-  $Id: smpeg.pas,v 1.11 2007/05/20 20:32:45 savage Exp $
+  $Id: smpeg.pas,v 1.12 2007/12/05 22:54:30 savage Exp $
   
 }
 {                                                                              }
@@ -101,6 +101,9 @@ unit smpeg;
 {                                                                              }
 {
   $Log: smpeg.pas,v $
+  Revision 1.12  2007/12/05 22:54:30  savage
+  Better Mac OS X support for Frameworks.
+
   Revision 1.11  2007/05/20 20:32:45  savage
   Initial Changes to Handle 64 Bits
 
@@ -178,6 +181,7 @@ const
 
 {$IFDEF MACOS}
   SmpegLibName = 'smpeg';
+  {$linklib libsmpeg}
 {$ENDIF}
 
 //------------------------------------------------------------------------------

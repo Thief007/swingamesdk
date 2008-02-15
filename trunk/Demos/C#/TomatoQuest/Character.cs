@@ -142,10 +142,10 @@ namespace TomatoQuest
             Experience = 0;
             ExperienceNextLevel = 100;
 
-            SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 1, 5, 28, 47);
-            SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 1, 5, 27, 47);
-            SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 1, 5, 49, 27);
-            SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 1, 5, 49, 27);
+            SlashUp = Graphics.CreateSprite(Resources.GameImage("Slash Up"), 2, 5, 28, 47);
+            SlashDown = Graphics.CreateSprite(Resources.GameImage("Slash Down"), 2, 5, 27, 47);
+            SlashLeft = Graphics.CreateSprite(Resources.GameImage("Slash Left"), 2, 5, 49, 27);
+            SlashRight = Graphics.CreateSprite(Resources.GameImage("Slash Right"), 2, 5, 49, 27);
 
             CurrentSlash = SlashUp;
 

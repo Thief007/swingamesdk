@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>currentDocument</key>
-	<string>AlienFlightModel.pas</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -20,89 +18,10 @@
 	<key>fileHierarchyDrawerWidth</key>
 	<integer>289</integer>
 	<key>metaData</key>
-	<dict>
-		<key>AlienFlightLevelEditor.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>1</integer>
-				<key>line</key>
-				<integer>58</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>49</integer>
-		</dict>
-		<key>AlienFlightModel.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>54</integer>
-				<key>line</key>
-				<integer>884</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>817</integer>
-		</dict>
-		<key>AlienFlightView.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>21</integer>
-				<key>line</key>
-				<integer>226</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>215</integer>
-		</dict>
-		<key>GameLogic.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>73</integer>
-				<key>line</key>
-				<integer>710</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>694</integer>
-		</dict>
-		<key>GameResources.pas</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>2</integer>
-				<key>line</key>
-				<integer>313</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>297</integer>
-		</dict>
-	</dict>
-	<key>openDocuments</key>
-	<array>
-		<string>AlienFlightModel.pas</string>
-		<string>GameResources.pas</string>
-		<string>AlienFlightView.pas</string>
-		<string>GameLogic.pas</string>
-		<string>AlienFlightLevelEditor.pas</string>
-	</array>
+	<dict/>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{292, 90}, {978, 688}}</string>
+	<string>{{334, 161}, {978, 688}}</string>
 </dict>
 </plist>

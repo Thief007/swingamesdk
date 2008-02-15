@@ -1,6 +1,6 @@
 unit sdl_ttf;
 {
-  $Id: sdl_ttf.pas,v 1.18 2007/06/01 11:16:33 savage Exp $
+  $Id: sdl_ttf.pas,v 1.19 2007/12/05 22:54:20 savage Exp $
 
 }
 {******************************************************************************}
@@ -87,6 +87,9 @@ unit sdl_ttf;
 {                                                                              }
 {
   $Log: sdl_ttf.pas,v $
+  Revision 1.19  2007/12/05 22:54:20  savage
+  Better Mac OS X support for Frameworks.
+
   Revision 1.18  2007/06/01 11:16:33  savage
   Added IFDEF UNIX for Workaround.
 
@@ -193,6 +196,7 @@ const
 
 {$IFDEF MACOS}
   SDLttfLibName = 'SDL_ttf';
+  {$linklib libSDL_ttf}
 {$ENDIF}
 
   {* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL *}
@@ -200,7 +204,7 @@ const
 {$EXTERNALSYM SDL_TTF_MAJOR_VERSION}
   SDL_TTF_MINOR_VERSION = 0;
 {$EXTERNALSYM SDL_TTF_MINOR_VERSION}
-  SDL_TTF_PATCHLEVEL = 8;
+  SDL_TTF_PATCHLEVEL = 9;
 {$EXTERNALSYM SDL_TTF_PATCHLEVEL}
 
   // Backwards compatibility

@@ -27,7 +27,7 @@ else
 fi
 
 echo "__________________________________________________"
-echo "Building Mac version - $BUILD"
+echo " Copying Mac and Unix version"
 echo "__________________________________________________"
 echo " Copying to ${DEMO_NAME}"
 echo "__________________________________________________"
@@ -69,10 +69,9 @@ fi
 LIB_PATH=`cd ${LIB_PATH}; pwd`
 
 echo " ... Copying lib from ${LIB_PATH}"
-# old: cp  ${LIB_PATH}/lib/* ./lib
-find ${LIB_PATH}/lib -maxdepth 1 -type f -exec cp {} ./lib \;
-
-cp  ${LIB_PATH}/build.sh .
+# old: find ${LIB_PATH}/lib -maxdepth 1 -type f -exec cp {} ./lib \;
+cp -R ${LIB_PATH}/lib/* ./lib
+cp    ${LIB_PATH}/build.sh .
 
 echo "  Finished"
 echo "__________________________________________________"

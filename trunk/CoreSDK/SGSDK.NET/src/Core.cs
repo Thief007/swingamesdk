@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-02-16: Andrew: Removed Mac OS Boot code - now in Pascal...
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Added extra constructor for SwinGamePointer
 // - 2008-01-29: Andrew: Removed ref from Free
@@ -334,20 +335,6 @@ namespace SwinGame
 
         // Code
 
-        #region "OS X compatibility"
-        [DllImport("/System/Library/Frameworks/Cocoa.framework/Cocoa", EntryPoint = "NSApplicationLoad")]
-        private static extern void NSApplicationLoad();
-
-        [DllImport("libobjc.dylib", EntryPoint = "objc_getClass")]
-        private static extern int objc_getClass(string name);
-
-        [DllImport("libobjc.dylib", EntryPoint = "sel_registerName")]
-        private static extern int sel_registerName(string name);
-
-        [DllImport("libobjc.dylib", EntryPoint = "objc_msgSend")]
-        private static extern int objc_msgSend(int self, int cmd);
-        #endregion
-
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OpenGraphicsWindow", CharSet=CharSet.Ansi)]
         private static extern void DLL_OpenGraphicsWindow([MarshalAs(UnmanagedType.LPStr)]String caption, int width, int height);
 
@@ -376,23 +363,6 @@ namespace SwinGame
         /// <param name="height">Height of the Window</param>
         public static void OpenGraphicsWindow(String caption, int width, int height)
         {
-            try
-            {
-                //Console.WriteLine("Openning GW");
-                ////Mac OSX code
-                if (System.IO.File.Exists("/System/Library/Frameworks/Cocoa.framework/Cocoa"))
-                {
-                    //Console.WriteLine("Loading Mac version");
-                    int NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
-                    objc_msgSend(NSAutoreleasePool, sel_registerName("new"));
-                    NSApplicationLoad();
-                }
-            }
-            catch (Exception exc)
-            {
-                Console.WriteLine("Error loading Mac: " + exc.Message);
-            }
-
             try
             {
                 DLL_OpenGraphicsWindow(caption, width, height);

@@ -11,6 +11,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-02-16: Andrew: Added Mac boot support, and 
+//                       Fixed scr bitmap to have width and height
 // - 2008-01-28: Andrew: Fixed Toggle issue.
 // - 2008-01-27: Andrew: Implemented the Change of Screen size fix..
 // 			Found a different bug which means that the changes
@@ -25,7 +27,6 @@ unit SGSDK_Core;
 
 {$IFDEF UNIX}
 	{$linklib gcc}
-	{$linklib SDLmain}
 {$ENDIF}
 
 interface
@@ -363,6 +364,8 @@ implementation
 		end;
 
 		New(scr);
+		scr.width := screenWidth;
+		scr.height := screenHeight;
 		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
     	if scr = nil then raise Exception.Create('Unable to create window drawing surface... ' + SDL_GetError());
 
@@ -518,6 +521,8 @@ implementation
 		oldScr := scr.surface;
 		
 		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+		scr.width := width;
+		scr.height := height;
 	end;
 	
 	/// Returns the width of the screen currently displayed.
@@ -541,6 +546,16 @@ implementation
 
 		result := scr.surface.h;
 	end;
+
+	{$ifdef DARWIN}
+		{$linklib libobjc.dylib}
+		
+   procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
+   function objc_getClass(name: PChar): Integer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
+   function sel_registerName(name: PChar): Integer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
+   function objc_msgSend(self, cmd: Integer): Integer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
+
+	{$endif}		
 	
 	/// Opens the graphical window so that it can be drawn onto. You can set the
 	///	icon for this window using SetIcon. The window itself is only drawn when
@@ -559,7 +574,7 @@ implementation
 		if scr <> nil then
       		raise Exception.Create('Screen has been created. Cannot create multiple windows.');
     	
-		try
+		try         
 			InitSDL(caption, width, height);
 			InitFPSCalcInfo(renderFPSInfo);
 	
@@ -1021,10 +1036,23 @@ implementation
 		end;
 		result := 0;
 	end;
+
+{$ifdef DARWIN}
+var
+	NSAutoreleasePool: Integer;
+{$endif}
+
 		
 initialization
 begin
 	//WriteLn('Start Init');
+
+	{$ifdef DARWIN}
+    //WriteLn('Loading Mac version');
+    NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
+    objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+    NSApplicationLoad();
+   {$endif}
 	
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin

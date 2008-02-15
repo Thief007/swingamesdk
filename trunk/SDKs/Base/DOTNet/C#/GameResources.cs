@@ -26,6 +26,8 @@ namespace GameResources
 
         private static Bitmap _Background;
         private static Bitmap _Animation;
+        private static Bitmap _LoaderFull;
+        private static Bitmap _LoaderEmpty;
         private static Font _LoadingFont;
         private static SoundEffect _StartSound;
 
@@ -99,25 +101,30 @@ namespace GameResources
             Core.ProcessEvents();
 
             _Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind.ImageResource));
-            _LoadingFont = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind.FontResource), 18);
+            _LoadingFont = Text.LoadFont(Core.GetPathToResource("arial.ttf", ResourceKind.FontResource), 12);
             _StartSound = Audio.LoadSoundEffect(Core.GetPathToResource("SwinGameStart.ogg", ResourceKind.SoundResource));
 
+				_LoaderFull = Graphics.LoadBitmap(Core.GetPathToResource("loader_full.png", ResourceKind.ImageResource));
+				_LoaderEmpty = Graphics.LoadBitmap(Core.GetPathToResource("loader_empty.png", ResourceKind.ImageResource));
+				
             PlaySwinGameIntro();
         }
 
         private static void PlaySwinGameIntro()
         {
-            Core.Sleep(400);
-
+				const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
+	
             Audio.PlaySoundEffect(_StartSound);
 
-            for (int i = 0; i < 14; i++)
+            Core.Sleep(200);
+
+            for (int i = 0; i < ANI_CELL_COUNT; i++)
             {
                 Graphics.DrawBitmap(_Background, 0, 0);
 
-                Graphics.DrawBitmapPart(_Animation, (i / 7) * 712, (i % 7) * 184, 712, 184, 41, 242);
+                Graphics.DrawBitmapPart(_Animation, (i / ANI_V_CELL_COUNT) * ANI_W, (i % ANI_V_CELL_COUNT) * ANI_H, ANI_W, ANI_H, ANI_X, ANI_Y);
 
-                Core.Sleep(67);
+                Core.Sleep(20);
 
                 Core.RefreshScreen();
                 Core.ProcessEvents();
@@ -128,7 +135,13 @@ namespace GameResources
 
         private static void ShowMessage(String message, int number)
         {
-            Text.DrawText(message, Color.Red, _LoadingFont, 240, 20 + (25 * number));
+				const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
+
+				int fullW = 260 * number / STEPS;
+				Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
+				Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
+
+				Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
             Core.RefreshScreen();
             Core.ProcessEvents();
         }
