@@ -32,9 +32,65 @@ Usage()
 	exit 1
 }
 
+# Parameters: 
+# 1: arch
+DoMacCompile()
+{
+	echo "  ... Compiling Game - $1"
+	if [ ! -d bin/${1} ] 
+	then
+		mkdir bin/${1}
+	else
+		rm bin/${1}/link.res 2>> /dev/null
+		rm bin/${1}/*.o 2>> /dev/null
+		rm bin/${1}/*.ppu 2>> /dev/null
+		rm bin/${1}/*.s 2>> /dev/null
+	fi
+
+	${FPC_BIN}  $EXTRA_OPTS -Mdelphi -FE./bin/${1} -Fi./bin/${1} -Fu./lib/${1} -s GameLauncher.pas > out.log
+	if [ $? != 0 ]; then DoExitCompile; fi
+	rm -f out.log
+
+	#Remove the pascal assembler script
+	rm bin/${1}/ppas.sh
+
+	echo "  ... Assembling for $1"
+
+	#Assemble all of the .s files
+	for file in `find . | grep [.]s$` #`ls *.s`
+	do
+		/usr/bin/as -o ${file%.s}.o $file -arch ${1}
+		if [ $? != 0 ]; then DoExitAsm $file; fi
+		rm $file
+	done
+
+	echo "  ... Linking ${EXECUTABLE_NAME}"
+	#Removed -s option - if this crashes... maybe re-add it
+	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o bin/${1}/"${EXECUTABLE_NAME}" `cat bin/${1}/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf
+	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
+	
+	rm bin/${1}/link.res
+	rm bin/${1}/*.ppu 2>> /dev/null
+		
+	if [ $DEBUG = "N" ] 
+	then
+		rm bin/${1}/*.o
+	fi	
+}
+
+# Combine the two architectures
+DoLipo()
+{
+	lipo -arch ${1} bin/${1}/${EXECUTABLE_NAME} -arch ${2} bin/${2}/${EXECUTABLE_NAME} -output bin/${EXECUTABLE_NAME} -create
+	
+	rm -rf bin/${1}
+	rm -rf bin/${2}
+}
+
 ICON=SwinGame
 EXTRA_OPTS="-O3"
 DEBUG="N"
+FPC_BIN=`which fpc`
 
 while getopts i:e:hd o
 do
@@ -81,35 +137,17 @@ then
 		echo "  ... Creating bin folder"
 		mkdir ./bin
 	else
-		rm bin/link.res 2> /dev/null
-		rm bin/*.o 2> /dev/null
-		rm bin/*.ppu 2> /dev/null
+		rm bin/link.res 2>> /dev/null
+		rm bin/*.o 2>> /dev/null
+		rm bin/*.ppu 2>> /dev/null
 	fi
 
-	echo "  ... Compiling Game"
-	
-	fpc $EXTRA_OPTS -Mdelphi -FE./bin -Fu./lib -s GameLauncher.pas > out.log
-	if [ $? != 0 ]; then DoExitCompile; fi
-	rm -f out.log
+	FPC_BIN=`which ppc386`
+	DoMacCompile "i386"
+	FPC_BIN=`which ppcppc`
+	DoMacCompile "ppc"
 
-	#Remove the pascal assembler script
-	rm bin/ppas.sh
-
-	echo "  ... Assembling $PRODUCT_NAME from:"
-
-	#Assemble all of the .s files
-	for file in `find . | grep [.]s$` #`ls *.s`
-	do
-		echo "  ... - $file"
-		/usr/bin/as -o ${file%.s}.o $file -arch i386
-		if [ $? != 0 ]; then DoExitAsm $file; fi
-		rm $file
-	done
-
-	echo "  ... Linking ${EXECUTABLE_NAME}"
-	#Removed -s option - if this crashes... maybe re-add it
-	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "${EXECUTABLE_NAME}" `cat bin/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf
-	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
+	DoLipo "i386" "ppc"
 
 	if [ -d ./bin/"${PRODUCT_NAME}.app" ] 
 	then
@@ -128,16 +166,8 @@ then
 	echo "  ... Added Private Frameworks"
 	cp -R ./lib/*.framework "./bin/${PRODUCT_NAME}.app/Contents/Frameworks/"
 	
-	mv "${EXECUTABLE_NAME}" "./bin/${PRODUCT_NAME}.app/Contents/MacOS/" 
+	mv bin/"${EXECUTABLE_NAME}" "./bin/${PRODUCT_NAME}.app/Contents/MacOS/" 
 	
-	if [ $DEBUG = "N" ] 
-	then
-		rm bin/*.o
-	fi
-
-	rm bin/link.res
-	rm bin/*.ppu
-
 	echo "<?xml version='1.0' encoding='UTF-8'?>\
 	<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
 	<plist version=\"1.0\">\
@@ -191,7 +221,7 @@ else
 		rm ./bin/*.o ./bin/*.ppu 2> /dev/null
 	fi
 
-	fpc -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas >> out.log
+	${FPC_BIN}  -XMSDL_main -Mdelphi -FE./bin -Fu./lib -FU./bin -o"$PRODUCT_NAME" $EXTRA_OPTS GameLauncher.pas >> out.log
 	if [ $? != 0 ]; then DoExitCompile; fi
 
 	rm ./bin/*.o ./bin/*.ppu
