@@ -23,6 +23,8 @@ BaseDir=`pwd`
 Output="$BaseDir"/SGSDK.NET/lib
 Libs=
 
+FPC_BIN=`which fpc`
+
 DOTNETlocn="$BaseDir"/SGSDK.NET/src
 DOTNETproj=SGSDK.NET.csproj
 DOTNETbin="$BaseDir"/SGSDK.NET/src/bin/Debug
@@ -70,6 +72,58 @@ cpToSDK()
 	fi
 }
 
+#
+# Compile for Mac - manually assembles and links files
+# 1 is arch
+doCompile()
+{
+	if [ -d "${Output}" ]
+	then
+		rm "${Output}"/*.o
+		rm "${Output}"/*.s
+		rm "${Output}"/*.ppu
+		rm "${Output}"/link.res
+		rm "${Output}"/ppas.sh
+	else
+		mkdir "${Output}" 
+	fi
+
+	$FPC_BIN -Mdelphi $EXTRA_OPTS -FE"${Output}" -FU"${Output}" -s ./src/SGSDK.pas >> ${BaseDir}/out.log
+	if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
+
+	#Assemble all of the .s files
+	echo "  ... Assembling library for $1"
+	
+	for file in `find ${Output} | grep [.]s$` #`ls *.s`
+	do
+		/usr/bin/as -o ${file%.s}.o $file -arch $1
+		if [ $? != 0 ]; then DoExitAsm $file; fi
+		rm $file
+	done
+
+	echo "  ... Linking Library"
+	/usr/bin/libtool  -arch_only ${1} -dynamic -L"${Output}" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK${1}.dylib" `cat ./src/maclink${1}.res`
+	if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
+		
+	rm "${Output}"/*.o
+	rm "${Output}"/*.s
+	rm "${Output}"/*.ppu
+	rm "${Output}"/link.res
+	rm "${Output}"/ppas.sh
+}
+
+# 
+# Create fat dylib
+# 
+doLipo()
+{
+	echo "  ... Creating Universal Binary"
+	lipo -arch ${1} "$Output/libSGSDK${1}.dylib" -arch ${2} "$Output/libSGSDK${2}.dylib" -output "$Output/libSGSDK.dylib" -create
+
+	rm -rf "$Output/libSGSDK${1}.dylib"
+	rm -rf "$Output/libSGSDK${2}.dylib"
+}
+
 while getopts chd o
 do
 	case "$o" in
@@ -102,30 +156,15 @@ then
 		echo "__________________________________________________"
 
 		echo "  ... Compiling Library"
-	
-		fpc -Mdelphi $EXTRA_OPTS -FE"$Output" -FU"$Output" -s ./src/SGSDK.pas >> ${BaseDir}/out.log
-		if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
-	
-		#Assemble all of the .s files
-		echo "  ... Assembling library from : "
 
-		for file in `find $Output | grep [.]s$` #`ls *.s`
-		do
-			echo "  ... - $file"
-			/usr/bin/as -o ${file%.s}.o $file -arch i386
-			if [ $? != 0 ]; then DoExitAsm $file; fi
-			rm $file
-		done
-
-		echo "  ... Linking Library"
-		/usr/bin/libtool  -dynamic -L"$Output" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK.dylib" `cat ./src/maclink.res`
-		if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
+		FPC_BIN=`which ppcppc`
+		doCompile "ppc"
+		
+		FPC_BIN=`which ppc386`
+		doCompile "i386"
+		
+		doLipo "i386" "ppc"
 	
-		rm "$Output"/*.o
-		rm "$Output"/*.ppu
-		rm "$Output"/link.res
-		rm "$Output"/ppas.sh
-
 		cd $DOTNETlocn
 		
 		echo "  ... Compiling .NET Library"
