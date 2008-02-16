@@ -79,11 +79,11 @@ doCompile()
 {
 	if [ -d "${Output}" ]
 	then
-		rm "${Output}"/*.o
-		rm "${Output}"/*.s
-		rm "${Output}"/*.ppu
-		rm "${Output}"/link.res
-		rm "${Output}"/ppas.sh
+		rm "${Output}"/*.o 2>> /dev/null
+		rm "${Output}"/*.s 2>> /dev/null
+		rm "${Output}"/*.ppu 2>> /dev/null
+		rm "${Output}"/link.res 2>> /dev/null
+		rm "${Output}"/ppas.sh 2>> /dev/null
 	else
 		mkdir "${Output}" 
 	fi
@@ -102,14 +102,14 @@ doCompile()
 	done
 
 	echo "  ... Linking Library"
-	/usr/bin/libtool  -arch_only ${1} -dynamic -L"${Output}" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK${1}.dylib" `cat ./src/maclink${1}.res`
+	/usr/bin/libtool  -arch_only ${1} -dynamic -L"${Output}" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK${1}.dylib" `cat ./src/maclink${1}.res` -current_version 1.1.1
 	if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
 		
-	rm "${Output}"/*.o
-	rm "${Output}"/*.s
-	rm "${Output}"/*.ppu
-	rm "${Output}"/link.res
-	rm "${Output}"/ppas.sh
+	rm "${Output}"/*.o 2>> /dev/null
+	rm "${Output}"/*.s 2>> /dev/null
+	rm "${Output}"/*.ppu 2>> /dev/null
+	rm "${Output}"/link.res 2>> /dev/null
+	rm "${Output}"/ppas.sh 2>> /dev/null
 }
 
 # 
