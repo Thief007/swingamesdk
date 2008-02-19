@@ -495,6 +495,8 @@ implementation
 		FreeFont(_LoadingFont);
 		FreeBitmap(_Background);
 		FreeBitmap(_Animation);
+    FreeBitmap(_LoaderEmpty);
+    FreeBitmap(_LoaderFull);
 		FreeSoundEffect(_StartSound);
 	end;
 

@@ -4,16 +4,29 @@ Imports System.Collections.Generic
 Public Module GameResources
 
     Private Sub LoadFonts()
-        NewFont("ArialLarge", "arial.ttf", 80)
         NewFont("Courier", "cour.ttf", 16)
+        NewFont("CourierBigger", "cour.ttf", 25)
+        NewFont("ArialBig", "arial.ttf", 400)
+        NewFont("Comic", "comicbd.ttf", 25)
     End Sub
 
     Private Sub LoadImages()
-
+        NewImage("ball", "ball.png")
+        NewImage("Table", "air_hocky_table.png")
+        NewImage("TableHorizontal", "air_hocky_table_collision_horizontal.png")
+        NewImage("TableVertical", "air_hocky_table_collision_vertical.png")
+        NewImage("0goal", "air_hocky_table_collision_AI_goal.png")
+        NewImage("1goal", "air_hocky_table_collision_player_goal.png")
+        NewImage("0bat", "player_bat.png")
+        NewImage("1bat", "AI_bat.png")
+        NewImage("Menu", "air_hockey_logo.png")
     End Sub
 
     Private Sub LoadSounds()
-
+        NewSound("Ball hit bat", "bosu06.wav")
+        NewSound("Ball hit side", "hit15.wav")
+        NewSound("Ball in goal", "koro00.wav")
+        NewSound("Bat hit side", "bosu07_b.wav")
     End Sub
 
     Private Sub LoadMusic()
@@ -160,7 +173,6 @@ Public Module GameResources
         Next i
 
         Core.Sleep(1500)
-
     End Sub
 
     Private Sub ShowMessage(ByVal message As String, ByVal number As Integer)

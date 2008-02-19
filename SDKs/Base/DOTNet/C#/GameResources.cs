@@ -135,26 +135,28 @@ namespace GameResources
 
         private static void ShowMessage(String message, int number)
         {
-				const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
+						const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
 
-				int fullW = 260 * number / STEPS;
-				Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
-				Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
+						int fullW = 260 * number / STEPS;
+						Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
+						Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
 
-				Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
+						Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
             Core.RefreshScreen();
             Core.ProcessEvents();
         }
 
         private static void EndLoadingScreen(int width, int height)
         {
-			Core.ProcessEvents();
-			Core.Sleep(500);
+						Core.ProcessEvents();
+						Core.Sleep(500);
             Graphics.ClearScreen();
             Core.RefreshScreen();
             Text.FreeFont(_LoadingFont);
             Graphics.FreeBitmap(_Background);
             Graphics.FreeBitmap(_Animation);
+		        Graphics.FreeBitmap(_LoaderEmpty);
+		        Graphics.FreeBitmap(_LoaderFull);
             Audio.FreeSoundEffect(_StartSound);
 
             Core.ChangeScreenSize(width, height);
