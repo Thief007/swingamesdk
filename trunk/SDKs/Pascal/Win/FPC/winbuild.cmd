@@ -23,7 +23,8 @@ if errorlevel 1 goto error
 
 mkdir bin
 
-fpc -Mdelphi -FE.\bin -Fu.\lib -o"%PRODUCT_NAME%" GameLauncher.pas
+fpc -Mdelphi -FE.\bin -Fu.\lib -Fo.\lib -o"%PRODUCT_NAME%" GameLauncher.pas
+
 if errorlevel 1 goto error
 
 del /q .\bin\*.o .\bin\*.ppu
