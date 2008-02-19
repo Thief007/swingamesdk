@@ -17,20 +17,6 @@ namespace GameResources
     /// </summary>
     public static class Resources
     {
-
-        private static Dictionary<string, Bitmap> _Images = new Dictionary<string, Bitmap>();
-        private static Dictionary<string, Font> _Fonts = new Dictionary<string, Font>();
-        private static Dictionary<string, SoundEffect> _Sounds = new Dictionary<string, SoundEffect>();
-        private static Dictionary<string, Music> _Music = new Dictionary<string, Music>();
-        private static Dictionary<string, Map> _Maps = new Dictionary<string, Map>();
-
-        private static Bitmap _Background;
-        private static Bitmap _Animation;
-        private static Bitmap _LoaderFull;
-        private static Bitmap _LoaderEmpty;
-        private static Font _LoadingFont;
-        private static SoundEffect _StartSound;
-
         private static void LoadFonts()
         {
             NewFont("ArialLarge", "arial.ttf", 80);
@@ -52,6 +38,19 @@ namespace GameResources
         private static void LoadMaps()
         {
         }
+
+        private static Dictionary<string, Bitmap> _Images = new Dictionary<string, Bitmap>();
+        private static Dictionary<string, Font> _Fonts = new Dictionary<string, Font>();
+        private static Dictionary<string, SoundEffect> _Sounds = new Dictionary<string, SoundEffect>();
+        private static Dictionary<string, Music> _Music = new Dictionary<string, Music>();
+        private static Dictionary<string, Map> _Maps = new Dictionary<string, Map>();
+
+        private static Bitmap _Background;
+        private static Bitmap _Animation;
+        private static Bitmap _LoaderFull;
+        private static Bitmap _LoaderEmpty;
+        private static Font _LoadingFont;
+        private static SoundEffect _StartSound;
 
         /// <summary>
         /// Loads Resources
@@ -112,7 +111,7 @@ namespace GameResources
 
         private static void PlaySwinGameIntro()
         {
-				const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
+						const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
 	
             Audio.PlaySoundEffect(_StartSound);
 
