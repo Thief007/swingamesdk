@@ -80,12 +80,12 @@ Public Module GameResources
     Private _Music As New Dictionary(Of String, Music)
     Private _Maps As New Dictionary(Of String, Map)
 
-    Dim _Background As Bitmap
-    Dim _Animation As Bitmap
-    Dim _LoaderFull As Bitmap
-    Dim _LoaderEmpty As Bitmap
-    Dim _LoadingFont As Font
-    Dim _StartSound As SoundEffect
+    Private _Background As Bitmap
+    Private _Animation As Bitmap
+    Private _LoaderFull As Bitmap
+    Private _LoaderEmpty As Bitmap
+    Private _LoadingFont As Font
+    Private _StartSound As SoundEffect
 
     ''' <summary>
     ''' The Resources Class stores all of the Games Media Resources, such as Images, Fonts
@@ -186,6 +186,8 @@ Public Module GameResources
         Text.FreeFont(_LoadingFont)
         Graphics.FreeBitmap(_Background)
         Graphics.FreeBitmap(_Animation)
+        Graphics.FreeBitmap(_LoaderEmpty)
+        Graphics.FreeBitmap(_LoaderFull)
         Audio.FreeSoundEffect(_StartSound)
         Core.ChangeScreenSize(width, height)
     End Sub

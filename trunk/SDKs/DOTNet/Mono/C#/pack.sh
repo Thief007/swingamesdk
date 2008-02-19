@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Move to src dir
+APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
+APP_PATH=`cd "$APP_PATH"; pwd` 
+cd $APP_PATH
+
 echo "__________________________________________________"
 echo "Package Mac Application"
 echo "__________________________________________________"
@@ -58,7 +63,7 @@ fi
 
 echo "  ... Packaging ${EXECUTABLE_NAME}"
 
-macpack -m winforms -n ${PRODUCT_NAME} -r SGSDK.NET.dll -r libSGSDK.dylib ${EXECUTABLE_NAME}
+macpack -m winforms -n "${PRODUCT_NAME}" -r SGSDK.NET.dll -r libSGSDK.dylib "${EXECUTABLE_NAME}"
 #mkdir "${PRODUCT_NAME}.app"
 #mkdir "${PRODUCT_NAME}.app/Contents"
 #mkdir "${PRODUCT_NAME}.app/Contents/MacOS"
@@ -70,7 +75,7 @@ mkdir "${PRODUCT_NAME}.app/Contents/Frameworks"
 # cp ${EXECUTABLE_NAME} "${PRODUCT_NAME}.app/Contents/MacOS"
 if [ -f "${EXECUTABLE_NAME}.mdb" ]
 then
-	cp "${EXECUTABLE_NAME}.mdb" "${PRODUCT_NAME}.app/Contents/MacOS"
+	cp "${EXECUTABLE_NAME}.mdb" "${PRODUCT_NAME}.app/Contents/Resources"
 fi
 
 echo "  ... Adding Resources"
@@ -130,7 +135,7 @@ rm -rf ../Resources
 rm -rf ../Frameworks
 rm -f SGSDK.NET.dll
 rm -f libSGSDK.dylib
-rm -f ${EXECUTABLE_NAME}
+rm -f "${EXECUTABLE_NAME}"
 rm -f *.XML
 rm -f *.mdb
 
