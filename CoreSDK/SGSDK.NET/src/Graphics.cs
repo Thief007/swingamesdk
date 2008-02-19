@@ -547,14 +547,19 @@ namespace SwinGame
             }
 
             /// <summary>
-            /// Implicit Operator
+            /// Implicit cast of the Movement to a Vector
             /// </summary>
             /// <param name="mc">Movement Class</param>
             /// <returns>Vector</returns>
             public static implicit operator Vector(MovementClass mc)
             {
-                return GetSpriteMovement(mc._Data.Pointer);
+                return mc.AsVector();
             }
+
+			public Vector AsVector()
+			{
+				return GetSpriteMovement(_Data.Pointer);
+			}
 
         }
 

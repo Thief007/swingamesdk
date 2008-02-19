@@ -31,7 +31,7 @@ mkdir ./lib
 LIB_PATH=../../../SDKs/DOTNet/Mono/C#
 
 echo "   Copying lib from ${LIB_PATH}"
-cp  ${LIB_PATH}/lib/* ./lib
+cp  -R ${LIB_PATH}/lib/* ./lib
 cp  ${LIB_PATH}/*.sh .
 
 echo "   Finished"
