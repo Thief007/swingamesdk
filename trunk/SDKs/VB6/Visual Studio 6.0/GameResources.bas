@@ -124,17 +124,16 @@ Private Sub PlaySwinGameIntro()
             
     Dim i As Long
     Call Audio.PlaySoundEffect(StartSound)
-     i = 0
-    Do Until i = ANI_CELL_COUNT - 1
+    
+    For i = 0 To ANI_CELL_COUNT - 1
         Call Graphics.DrawBitmap(Background, 0, 0)
                 
         Call Graphics.DrawBitmapPart(Animation, (i \ ANI_V_CELL_COUNT) * ANI_W, (i Mod ANI_V_CELL_COUNT) * ANI_H, ANI_W, ANI_H, ANI_X, ANI_Y)
         Call Core.Sleep(20)
         Call Core.RefreshScreen
         Call Core.ProcessEvents
-                Call Core.Sleep(67)
-                i = i + 1
-    Loop
+        i = i + 1
+    Next
     Call Core.Sleep(1500)
 End Sub
 
