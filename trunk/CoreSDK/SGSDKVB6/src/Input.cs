@@ -168,6 +168,7 @@ namespace SwinGameVB
             Vector vector = new Vector();
             vector.setX(temp.X - Core._LastMousePos.X);//SwinGame.Input.GetMouseMovement().x);
             vector.setY(temp.Y - Core._LastMousePos.Y);//SwinGame.Input.GetMouseMovement().y);
+            Core._LastMousePos = SwinGame.Input.GetMousePosition();
             return vector;
 
         }
@@ -280,6 +281,7 @@ namespace SwinGameVB
         public void MoveMouse(short x, short y)
         {
             SwinGame.Input.MoveMouse((UInt16)x, (UInt16)y);
+            Core._LastMousePos = SwinGame.Input.GetMousePosition();
         }
         public void ShowHideMouse(bool Show)
         {

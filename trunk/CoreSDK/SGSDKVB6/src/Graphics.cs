@@ -1471,6 +1471,18 @@ namespace SwinGameVB
         {
             SwinGame.Graphics.ResetClip(bmp.result);
         }
+        public int GetPixel(Bitmap from, int x, int y)
+        {
+            Color temp = SwinGame.Graphics.GetPixel(from.result, x, y);
+            return temp.ToArgb();
+        }
+
+        public int GetPixelFromScreen(int x, int y)
+        {
+            Color temp = SwinGame.Graphics.GetPixelFromScreen( x, y);
+            return temp.ToArgb();
+        }
+
     }
     
     [Guid("C261890B-D65E-4d4c-A7AA-F15FCC0F825A")]
@@ -1613,7 +1625,9 @@ namespace SwinGameVB
         void SetClip_Bitmap_Int(Bitmap bmp, int x, int y, int width, int height);
         void ResetClip();
         void ResetClip_Bitmap(Bitmap bmp);
+        int GetPixel(Bitmap from, int x, int y);
 
+        int GetPixelFromScreen(int x, int y);
     }
 }
 
