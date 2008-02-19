@@ -10,8 +10,9 @@ Private FontsStr() As String
 Private SoundsStr() As String
 Private MusicsStr() As String
 Private MapsStr() As String
-
-
+    
+Private LoaderFull As SGSDKVB6.Bitmap
+Private LoaderEmpty As SGSDKVB6.Bitmap
 Private Background As SGSDKVB6.Bitmap
 Private Animation As SGSDKVB6.Bitmap
 Private Loadingfont As SGSDKVB6.Fonts
@@ -73,57 +74,63 @@ Sub LoadResources()
     Call ShowLoadingScreen
     Call ShowMessage("Loading fonts...", 0)
     Call LoadFonts
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
 
     Call ShowMessage("Loading images...", 1)
     Call LoadImages
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
 
     Call ShowMessage("Loading sounds...", 2)
     Call LoadSounds
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
 
     Call ShowMessage("Loading music...", 3)
     Call LoadMusics
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
    
     Call ShowMessage("Loading maps...", 4)
     Call LoadMaps
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
     
     
     'Add game level loading here...
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
     Call ShowMessage("Game loaded...", 5)
-    Call Core.Sleep(50)
+    Call Core.Sleep(100)
     Call EndLoadingScreen
-
     Call Core.ChangeScreenSize(oldH, oldW)
 End Sub
 
 Private Sub ShowLoadingScreen()
     Set Background = Graphics.LoadBitmap(Core.GetPathToResource("SplashBack.png", ResourceKind_ImageResource))
     Call Graphics.DrawBitmap(Background, 0, 0)
-    Call Core.RefreshScreen_WithFrame(60)
+    Call Core.RefreshScreen
     Call Core.ProcessEvents
 
     Set StartSound = New SGSDKVB6.SoundEffect
     Set Animation = Graphics.LoadBitmap(Core.GetPathToResource("SwinGameAni.png", ResourceKind_ImageResource))
-    Set Loadingfont = Text.LoadFont(Core.GetPathToResource("cour.ttf", ResourceKind_FontResource), 18)
+    Set Loadingfont = Text.LoadFont(Core.GetPathToResource("arial.ttf", ResourceKind_FontResource), 12)
     Set StartSound = Audio.LoadSoundEffect(Core.GetPathToResource("SwinGameStart.ogg", ResourceKind_SoundResource))
+    Set LoaderFull = Graphics.LoadBitmap(Core.GetPathToResource("loader_full.png", ResourceKind_ImageResource))
+    Set LoaderEmpty = Graphics.LoadBitmap(Core.GetPathToResource("loader_empty.png", ResourceKind_ImageResource))
+
     Call PlaySwinGameIntro
 End Sub
 
 Private Sub PlaySwinGameIntro()
+    Const ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11
+
+    Call Core.Sleep(200)
+            
     Dim i As Long
     Call Audio.PlaySoundEffect(StartSound)
      i = 0
-    Do Until i = 14
+    Do Until i = ANI_CELL_COUNT - 1
         Call Graphics.DrawBitmap(Background, 0, 0)
                 
-                Call Graphics.DrawBitmapPart(Animation, (i \ 7) * 712, (i Mod 7) * 184, 712, 184, 41, 242)
-        
-        Call Core.RefreshScreen_WithFrame(60)
+        Call Graphics.DrawBitmapPart(Animation, (i \ ANI_V_CELL_COUNT) * ANI_W, (i Mod ANI_V_CELL_COUNT) * ANI_H, ANI_W, ANI_H, ANI_X, ANI_Y)
+        Call Core.Sleep(20)
+        Call Core.RefreshScreen
         Call Core.ProcessEvents
                 Call Core.Sleep(67)
                 i = i + 1
@@ -132,22 +139,33 @@ Private Sub PlaySwinGameIntro()
 End Sub
 
 Private Sub ShowMessage(message As String, number As Long)
-    Call Text.DrawText(message, red, Loadingfont, 240, 20 + (25 * number))
-    Call Core.RefreshScreen_WithFrame(60)
-    Call Core.ProcessEvents
+        Const TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453
+        
+        Dim fullW As Integer
+
+        fullW = 260 * number \ STEPS
+        Call Graphics.DrawBitmap(LoaderEmpty, BG_X, BG_Y)
+        Call Graphics.DrawBitmapPart(LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y)
+                
+        Call Text.DrawTextLines(message, white, transparent, Loadingfont, FontAlignment_AlignCenter, TX, TY, TW, TH)
+
+        Call Core.RefreshScreen
+        Call Core.ProcessEvents
 End Sub
 
 
 Private Sub EndLoadingScreen()
-        Call Core.ProcessEvents
-        Call Core.Sleep(500)
+    Call Core.ProcessEvents
+    Call Core.Sleep(500)
 
     Call Graphics.ClearScreen
-    Call Core.RefreshScreen_WithFrame(60)
+    Call Core.RefreshScreen
     Call Text.FreeFont(Loadingfont)
     Call Graphics.FreeBitmap(Background)
     Call Graphics.FreeBitmap(Animation)
     Call Audio.FreeSoundEffect(StartSound)
+    Call Graphics.FreeBitmap(LoaderEmpty)
+    Call Graphics.FreeBitmap(LoaderFull)
 End Sub
 
 

@@ -271,7 +271,6 @@ namespace SwinGameVB
         /// </summary>
         public void ProcessEvents()
         {
-            _LastMousePos = SwinGame.Input.GetMousePosition();
             SwinGame.Core.ProcessEvents();
         }
 
