@@ -71,7 +71,7 @@ DoMacCompile()
 
 	echo "  ... Linking ${EXECUTABLE_NAME}"
 	#Removed -s option - if this crashes... maybe re-add it
-	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o bin/${1}/"${EXECUTABLE_NAME}" `cat bin/${1}/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf
+	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "bin/${1}/${EXECUTABLE_NAME}" `cat bin/${1}/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf
 	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
 	
 	rm bin/${1}/link.res
@@ -86,10 +86,10 @@ DoMacCompile()
 # Combine the two architectures
 DoLipo()
 {
-	lipo -arch ${1} bin/${1}/${EXECUTABLE_NAME} -arch ${2} bin/${2}/${EXECUTABLE_NAME} -output bin/${EXECUTABLE_NAME} -create
+	lipo -arch ${1} "bin/${1}/${EXECUTABLE_NAME}" -arch ${2} "bin/${2}/${EXECUTABLE_NAME}" -output "bin/${EXECUTABLE_NAME}" -create
 	
-	rm -rf bin/${1}
-	rm -rf bin/${2}
+	rm -rf "bin/${1}"
+	rm -rf "bin/${2}"
 }
 
 ICON=SwinGame
@@ -236,51 +236,49 @@ fi
 
 SOURCE_RESOURCE="./Resources"
 
-if [ -d ${RESOURCE_DIR} ]
+if [ -d "${RESOURCE_DIR}" ]
 then
 	echo "  ... Removing Old Resources"
-	rm -rf ${RESOURCE_DIR}
+	rm -rf "${RESOURCE_DIR}"
 fi
 
 echo "  ... Copying Resources"
 
-mkdir ${RESOURCE_DIR}
+mkdir "${RESOURCE_DIR}"
 if [ $? != 0 ]; then echo "Error creating resource directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/fonts
+mkdir "${RESOURCE_DIR}/fonts"
 if [ $? != 0 ]; then echo "Error creating fonts directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/images
+mkdir "${RESOURCE_DIR}/images"
 if [ $? != 0 ]; then echo "Error creating images directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/sounds
+mkdir "${RESOURCE_DIR}/sounds"
 if [ $? != 0 ]; then echo "Error creating sounds directory"; exit 1; fi
 	
-mkdir ${RESOURCE_DIR}/maps
+mkdir "${RESOURCE_DIR}/maps"
 if [ $? != 0 ]; then echo "Error creating maps directory"; exit 1; fi
 
 #cp ${SOURCE_RESOURCE}/* ${RESOURCE_DIR}
-find ${SOURCE_RESOURCE} -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR} \;
+find ${SOURCE_RESOURCE} -maxdepth 1 -type f -exec cp {} "${RESOURCE_DIR}" \;
 if [ $? != 0 ]; then echo "Error copying resources"; exit 1; fi
 	 
 #cp ${SOURCE_RESOURCE}/fonts/* ${RESOURCE_DIR}/fonts
-find ${SOURCE_RESOURCE}/fonts -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/fonts \;
+find ${SOURCE_RESOURCE}/fonts -maxdepth 1 -type f -exec cp {} "${RESOURCE_DIR}/fonts" \;
 if [ $? != 0 ]; then echo "Error copying fonts"; exit 1; fi
 	
 #cp ${SOURCE_RESOURCE}/images/* ${RESOURCE_DIR}/images
-find ${SOURCE_RESOURCE}/images -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/images \;
+find ${SOURCE_RESOURCE}/images -maxdepth 1 -type f -exec cp {} "${RESOURCE_DIR}/images" \;
 if [ $? != 0 ]; then echo "Error copying images"; exit 1; fi
 	
 #cp ${SOURCE_RESOURCE}/sounds/* ${RESOURCE_DIR}/sounds
-find ${SOURCE_RESOURCE}/sounds -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/sounds \;
+find ${SOURCE_RESOURCE}/sounds -maxdepth 1 -type f -exec cp {} "${RESOURCE_DIR}/sounds" \;
 if [ $? != 0 ]; then echo "Error copying sounds"; exit 1; fi
 	
 #cp ${SOURCE_RESOURCE}/maps/* ${RESOURCE_DIR}/maps	
-find ${SOURCE_RESOURCE}/maps -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/maps \;
+find ${SOURCE_RESOURCE}/maps -maxdepth 1 -type f -exec cp {} "${RESOURCE_DIR}/maps" \;
 if [ $? != 0 ]; then echo "Error copying maps"; exit 1; fi
 
 echo "  Finished"
 echo "__________________________________________________"
-
-echo   Finished
 	
