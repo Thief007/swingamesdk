@@ -64,6 +64,8 @@ if "%1"=="clean" goto cleaning
 	if ERRORLEVEL 1 goto error
 	copy "%LibDir%\*.dll" "%WinFPCDir%" >> out.log
 	if ERRORLEVEL 1 goto error
+	copy "%LibDir%\*.a" "%WinFPCDir%" >> out.log
+	if ERRORLEVEL 1 goto error
 
 	echo   Finished
 	echo __________________________________________________
