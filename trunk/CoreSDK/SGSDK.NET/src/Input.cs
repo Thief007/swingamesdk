@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-02-22: Andrew: Changed to GetMouseXY
 // - 2008-01-30: Andrew: Fixed String Marshalling and TextRead
 // - 2008-01-23: Fixed Exceptions
 //               Added changes for 1.1 compatibility
@@ -490,8 +491,12 @@ namespace SwinGame
     /// </summary>
     public class Input
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePositionAsVector")]
-        private static extern Vector DLL_GetMousePositionAsVector();
+	      [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMouseXY")]
+	      private static extern void DLL_GetMouseXY(out float x, out float y);
+
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePositionAsVector")]
+        //private static extern Vector DLL_GetMousePositionAsVector();
+
         /// <summary>
         /// Gets the current Mouse Position as a Vector, useful for finding out things such as if the mouse
         /// is hovering over a particular area of the screen.
@@ -499,11 +504,15 @@ namespace SwinGame
         /// <returns>Vector representing the position of the mouse</returns>
         public static Vector GetMousePositionAsVector()
         {
-            Vector temp;
-
+            Vector temp = new Vector();
+						float x, y;
+						
             try
             {
-                temp = DLL_GetMousePositionAsVector();
+								DLL_GetMouseXY(out x, out y);
+                temp.X = x;
+								temp.Y = y;
+								temp.W = 1;
             }
             catch (Exception exc)
             {
@@ -516,8 +525,9 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMousePosition")]
-        private static extern Point2D DLL_GetMousePosition();
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMousePosition")]
+        //private static extern Point2D DLL_GetMousePosition();
+
         /// <summary>
         /// Gets the current Mouse Position as a Point2D, useful for finding out things such as if the mouse
         /// is hovering over a particular area of the screen.
@@ -525,11 +535,14 @@ namespace SwinGame
         /// <returns>Point2D representing the Mouse Coordinates on the screen</returns>
         public static Point2D GetMousePosition()
         {
-            Point2D temp;
-
+            Point2D temp = new Point2D();
+						float x, y;
+						
             try
             {
-                temp = DLL_GetMousePosition();
+                DLL_GetMouseXY(out x, out y);
+								temp.X = x;
+								temp.Y = y;
             }
             catch (Exception exc)
             {

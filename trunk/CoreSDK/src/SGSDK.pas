@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-02-22: Andrew: Changed to GetMouseXY
 //  - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 //  - 2008-01-31: Stephen: Fixed SetSpriteEndingAction
 //	- 2008-01-30: James: CircleHasCollidedWithLine changed to return -1
@@ -481,26 +482,51 @@ uses
 		end;
 	end;
 
-	function GetMousePositionAsVector(): Vector; cdecl; export;
+	procedure GetMouseXY(out x: Single; out y: Single); cdecl; export;
+	var
+		myPt: Point2D;
 	begin
 		Try
+			myPt := SGSDK_Input.GetMousePosition();
+			
+			x := myPt.x;
+			y := myPt.y;
+			
+			exit;
+		Except on exc: Exception do TrapException(exc);
+		end;
+		
+		x := 0; 
+		y := 0;
+	end;
+
+{
+	function GetMousePositionAsVector(): Vector; cdecl; export;
+	begin
+		WriteLn('GetMousePositionAsVector dll');
+		Try
 			result := SGSDK_Input.GetMousePositionAsVector();
+			WriteLn('End GetMousePositionAsVector dll');
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
 		result.x := 0; result.y := 0;
+		WriteLn('Failed GetMousePositionAsVector dll');
 	end;
 
 	function GetMousePosition(): Point2D; cdecl; export;
 	begin
+		WriteLn('GetMousePosition dll');
 		Try
 			result := SGSDK_Input.GetMousePosition();
+			WriteLn('End GetMousePosition dll');
 			exit;
 		Except on exc: Exception do TrapException(exc);
 		end;
 		result.x := 0; result.y := 0;
+		WriteLn('Failed GetMousePosition dll');
 	end;
-	
+}	
 	function GetMouseMovement(): Vector; cdecl; export;
 	begin
 		Try
@@ -2442,8 +2468,9 @@ exports
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 
-	GetMousePositionAsVector,
-	GetMousePosition,
+	//GetMousePositionAsVector,
+	//GetMousePosition,
+	GetMouseXY,
 	GetMouseMovement,
 	IsMouseDown,
 	IsMouseUp,
