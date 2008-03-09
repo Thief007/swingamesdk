@@ -252,6 +252,7 @@ namespace GameResources
             FreeMusic();
             FreeSounds();
             FreeMaps();
+            Core.ProcessEvents();
         }
 
         /// <summary>

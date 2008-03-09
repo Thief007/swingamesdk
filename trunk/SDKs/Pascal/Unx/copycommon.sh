@@ -51,4 +51,5 @@ if [ $? != 0 ]; then echo "Error copying sounds"; exit 1; fi
 find ${SOURCE_RESOURCE}/maps -maxdepth 1 -type f -exec cp {} ${RESOURCE_DIR}/maps \;
 if [ $? != 0 ]; then echo "Error copying maps"; exit 1; fi
 
+cp ../../Base/All/*.txt ./FPC
 cp ../../Base/Pascal/*.pas ./FPC

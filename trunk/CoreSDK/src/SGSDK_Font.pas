@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-01-30: Andrew: Fixed Print strings for EOL as last char
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-21: Andrew: Added Point/Rectangle overloads
@@ -148,6 +149,7 @@ implementation
 	///	- The font's style is changed
 	procedure SetFontStyle(font: Font; style: FontStyle);
 	begin
+	  if not Assigned(font) then raise Exception.Create('No font supplied');
 		TTF_SetFontStyle(font, Integer(style));
 	end;
 
@@ -454,6 +456,7 @@ implementation
 	var
 		y: Integer; //SizeText returns both... store and ignore y
 	begin
+	  if not Assigned(theFont) then raise Exception.Create('No font supplied');
 		try
 			y := 0; result := 0;
 			TTF_SizeText(theFont, PChar(theText), result, y);
@@ -471,6 +474,7 @@ implementation
 	var
 		w: Integer; //SizeText returns both... store and ignore w
 	begin
+	  if not Assigned(theFont) then raise Exception.Create('No font supplied');
 		try
 			w := 0; result :=  0;
 			TTF_SizeText(theFont, PChar(theText), w, result);
@@ -493,8 +497,10 @@ implementation
 		textColour : Colour;
 		average, highest, lowest : Single;
 	begin
+	  if not Assigned(font) then raise Exception.Create('No font supplied');
+	  
 		//Draw framerates
-		DrawRectangleOnScreen(ColourBlack, true, x, y, x + 200, y + 16);
+		//DrawRectangleOnScreen(ColourBlack, true, x, y, x + 200, y + 16);
 
 		if renderFPSInfo.average = 0 then
 			average := 9999

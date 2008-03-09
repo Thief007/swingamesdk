@@ -261,5 +261,6 @@ Public Module GameResources
         FreeMusic()
         FreeSounds()
         FreeMaps()
+		Core.ProcessEvents()
     End Sub
 End Module

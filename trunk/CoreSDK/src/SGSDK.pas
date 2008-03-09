@@ -21,6 +21,8 @@
 // Change History:
 //  
 //  Version 1.1:
+// - 2008-03-09: Andrew: Added extra exception handling data
+//                       Added DrawSprite offsets
 //  - 2008-02-22: Andrew: Changed to GetMouseXY
 //  - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 //  - 2008-01-31: Stephen: Fixed SetSpriteEndingAction
@@ -142,10 +144,13 @@ uses
 		else result := 0;
 	end;
 	
-	procedure TrapException(exc: Exception);
+	procedure TrapException(exc: Exception; fromMethod: String);
 	begin
 		HasException := true;
-		ErrorMessage := exc.Message;
+		if Assigned(exc) then
+		  ErrorMessage := 'Error from ' + fromMethod + ' - ' + exc.Message
+		else
+		  ErrorMessage := 'Unknown error from ' + fromMethod + ' - ' + exc.Message
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -158,7 +163,7 @@ uses
 	begin
 		try
 			SGSDK_Core.ProcessEvents();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ProcessEvents');
 		end;		
 	end;
 
@@ -169,7 +174,7 @@ uses
 		
 		Try
 			SGSDK_Core.OpenGraphicsWindow(caption, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'OpenGraphicsWindow');
 		end;
 	end;
 	
@@ -185,7 +190,7 @@ uses
 			begin
 				result:= 0
 			end;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'WindowCloseRequested');
 		end;
 	end;
 	
@@ -193,7 +198,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.SetIcon(iconFilename);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetIcon');
 		end;
 	end;
 	
@@ -201,7 +206,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.ChangeScreenSize(width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ChangeScreenSize');
 		end;
 	end;
 	
@@ -209,7 +214,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.ToggleFullScreen();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ToggleFullScreen');
 		end;
 	end;
 	
@@ -217,7 +222,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.RefreshScreen(TargetFPS);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'RefreshScreen');
 		end;
 	end;
 	
@@ -225,7 +230,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.RefreshScreen();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'RefreshScreen');
 		end;
 	end;
 	
@@ -233,7 +238,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.TakeScreenshot(basename);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'TakeScreenshot');
 		end;
 	end;
 	
@@ -242,7 +247,7 @@ uses
 		Try
 			result := SGSDK_Core.ScreenWidth();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ScreenWidth');
 		end;
 		result := -1;
 	end;
@@ -252,7 +257,7 @@ uses
 		Try
 			result := SGSDK_Core.ScreenHeight();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ScreenHeight');
 		end;
 		result := -1;
 	end;
@@ -262,7 +267,7 @@ uses
 		Try
 			result := SGSDK_Core.ToSDLColor(color);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ToSDLColor');
 		end;
 		
 		result.r := 0;
@@ -275,7 +280,7 @@ uses
 		Try
 			result := SGSDK_Core.GetColour(forBitmap, apiColor);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetColour - from bitmap');
 		end;
 		result := ColorWhite;
 	end;
@@ -285,7 +290,7 @@ uses
 		Try
 			result := SGSDK_Core.GetColour(red, green, blue, alpha);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetColor - RGBA');
 		end;
 		result := ColorWhite;
 	end;
@@ -295,7 +300,7 @@ uses
 		Try
 			result := SGSDK_Core.GetFramerate();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetFramerate');
 		end;
 		result := -1;
 	end;
@@ -305,7 +310,7 @@ uses
 		Try
 			result := SGSDK_Core.GetTicks();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetTicks');
 		end;
 		result := 0;
 	end;
@@ -314,7 +319,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.Sleep(time);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'Sleep');
 		end;
 	end;
 	
@@ -323,7 +328,7 @@ uses
 		Try
 			result := PChar(SGSDK_Core.GetPathToResource(filename, kind));
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetPathToResource - with kind');
 		end;
 		result := -1;
 	end;
@@ -333,7 +338,7 @@ uses
 		Try
 			result := PChar(SGSDK_Core.GetPathToResource(filename));
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetPathToResource');
 		end;
 		result := '';
 	end;
@@ -343,7 +348,7 @@ uses
 		try
 			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename, kind));
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetPathToResource with kind and base');
 		end;
 		result := '';
 	end;
@@ -353,7 +358,7 @@ uses
 		try
 			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename));
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetPathToResource with base');
 		end;
 		result := '';
 	end;
@@ -393,7 +398,7 @@ uses
 		Try
 			result := SGSDK_Core.CreateTimer();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateTimer');
 		end;
 		result := nil;		
 	end;
@@ -402,7 +407,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.FreeTimer(toFree);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeTimer');
 		end;		
 	end;
 	
@@ -410,7 +415,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.StartTimer(toStart);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'StartTimer');
 		end;
 	end;
 	
@@ -418,7 +423,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.StopTimer(toStop);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'StopTimer');
 		end;
 	end;
 	
@@ -426,7 +431,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.PauseTimer(toPause);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'PauseTimer');
 		end;
 	end;
 	
@@ -434,7 +439,7 @@ uses
 	begin
 		Try
 			SGSDK_Core.UnpauseTimer(toUnpause);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'UnpauseTimer');
 		end;
 	end;
 	
@@ -443,7 +448,7 @@ uses
 		Try
 			result := SGSDK_Core.GetTimerTicks(toGet);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetTimerTicks');
 		end;
 		result := 0;						
 	end;
@@ -459,7 +464,7 @@ uses
 	begin
 		try
 			SGSDK_Input.ShowMouse(show = -1);
-		Except on exc: Exception  do TrapException(exc);
+		Except on exc: Exception  do TrapException(exc, 'ShowMouse');
 		end;
 	end;
 	
@@ -469,7 +474,7 @@ uses
 			if SGSDK_Input.IsMouseShown() then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception  do TrapException(exc);
+		Except on exc: Exception  do TrapException(exc, 'IsMouseShown');
 		end;
 		result := -1;
 	end;
@@ -478,7 +483,7 @@ uses
 	begin
 		try
 			SGSDK_Input.MoveMouse(x,y);
-		Except on exc: Exception  do TrapException(exc);
+		Except on exc: Exception  do TrapException(exc, 'MoveMouse');
 		end;
 	end;
 
@@ -493,7 +498,7 @@ uses
 			y := myPt.y;
 			
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetMouseXY');
 		end;
 		
 		x := 0; 
@@ -532,7 +537,7 @@ uses
 		Try
 			result := SGSDK_Input.GetMouseMovement();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetMouseMovement');
 		end;
 		result.x := 0; result.y := 0;
 	end;
@@ -543,7 +548,7 @@ uses
 			if SGSDK_Input.IsMouseDown(button) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsMouseDown');
 		end;
 		result := -1;
 	end;
@@ -554,7 +559,7 @@ uses
 			if SGSDK_Input.IsMouseUp(button) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsMouseUp');
 		end;
 		result := -1;
 	end;
@@ -565,7 +570,7 @@ uses
 			if SGSDK_Input.MouseWasClicked(button) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'WasMouseClicked');
 		end;
 		result := -1;
 	end;
@@ -576,7 +581,7 @@ uses
 	begin
 		Try
 			SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'StartReadingText');
 		end;
 	end;
 
@@ -586,7 +591,7 @@ uses
 			if SGSDK_Input.IsReadingText() then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsReadingText');
 		end;
 		result := 0;
 	end;
@@ -598,7 +603,7 @@ uses
 		temp := '';
 		Try
 			temp := SGSDK_Input.TextReadAsASCII();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'TextReadAsASCII');
 		end;
 		txt := PChar(temp);
 		//len := Length(temp);
@@ -610,7 +615,7 @@ uses
 			if SGSDK_Input.IsKeyPressed(virtKeyCode) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsKeyPressed');
 		end;
 		result := 0;
 	end;
@@ -621,7 +626,7 @@ uses
 			if SGSDK_Input.WasKeyTyped(virtKeyCode) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'WasKeyTyped');
 		end;
 		result := 0;
 	end;
@@ -639,7 +644,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.OpenAudio();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'OpenAudio');
 		end;
 	end;
 	
@@ -647,7 +652,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.CloseAudio();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CloseAudio');
 		end;
 	end;
 	
@@ -656,7 +661,7 @@ uses
 		Try
 			result := SGSDK_Audio.LoadSoundEffect(path);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LoadSoundEffect');
 		end;
 		result := nil;
 	end;
@@ -666,7 +671,7 @@ uses
 		Try
 			result := SGSDK_Audio.LoadMusic(path);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LoadMusic');
 		end;
 		result := nil;
 	end;
@@ -675,7 +680,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.FreeMusic(mus);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeMusic');
 		end;
 	end;
 
@@ -683,7 +688,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.FreeSoundEffect(effect);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeSoundEffect');
 		end;
 	end;
 
@@ -699,7 +704,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.PlaySoundEffect(effect, loops);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'PlaySoundEffect loop');
 		end;
 	end;
 
@@ -707,7 +712,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.PlayMusic(mus, loops);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'PlayMusic');
 		end;
 	end;
 
@@ -717,7 +722,7 @@ uses
 			if SGSDK_Audio.IsMusicPlaying() then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsMusicPlaying');
 		end;
 		result := 0;
 	end;
@@ -728,7 +733,7 @@ uses
 			if SGSDK_Audio.IsSoundEffectPlaying(effect) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsSoundEffectPlaying');
 		end;
 		result := 0;
 	end;
@@ -737,7 +742,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.StopSoundEffect(effect);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'StopSoundEffect');
 		end;
 	end;
 
@@ -745,7 +750,7 @@ uses
 	begin
 		Try
 			SGSDK_Audio.StopMusic();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'StopMusic');
 		end;
 	end;
 	
@@ -762,7 +767,7 @@ uses
 		Try
 			result := SGSDK_Font.LoadFont(fontName, size);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LoadFont');
 		end;
 		result := nil;
 	end;
@@ -771,7 +776,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.SetFontStyle(font, style);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetFontStyle');
 		end;
 	end;
 
@@ -779,7 +784,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.FreeFont(fontToFree);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeFont');
 		end;
 	end;
 	
@@ -788,7 +793,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawText');
 		end;
 	end;
 
@@ -798,7 +803,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawTextLines');
 		end;
 	end;
 	
@@ -807,7 +812,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawTextOnScreen(theText, textColor, theFont, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawTextOnScreen');
 		end;
 	end;
 
@@ -817,7 +822,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, x, y, w, h);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawTextLinesOnScreen');
 		end;
 	end;
 							
@@ -826,7 +831,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawTextOnBitmap');
 		end;
 	end;
 
@@ -837,7 +842,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawTextLinesOnBitmap');
 		end;
 	end;
 
@@ -846,7 +851,7 @@ uses
 		Try
 			result :=SGSDK_Font.TextWidth(theText, theFont);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'TextWidth');
 		end;
 		result := -1;
 	end;
@@ -856,7 +861,7 @@ uses
 		Try
 			result := SGSDK_Font.TextHeight(theText, theFont);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'TextHeight');
 		end;
 		result := -1;
 	end;
@@ -865,7 +870,7 @@ uses
 	begin
 		Try
 			SGSDK_Font.DrawFramerate(x, y, font);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawFramerate');
 		end;
 	end;
 	
@@ -883,7 +888,7 @@ uses
 			if SGSDK_Physics.RectangleHasCollidedWithLine(rect, line) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'RectangleHasCollidedWithLine');
 		end;
 		result := 0;
 	end;
@@ -894,7 +899,7 @@ uses
 			if SGSDK_Physics.IsSpriteOnScreenAt(theSprite, x, y) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsSpriteOnScreenAt');
 		end;
 		result := 0;
 	end;
@@ -905,7 +910,7 @@ uses
 			if SGSDK_Physics.CircleHasCollidedWithLine(p1, line) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CircleHasCollidedWithLine');
 		end;
 		result := 0;
 	end;
@@ -917,7 +922,7 @@ uses
 			if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HasSpriteCollidedX');
 		end;
 		result := 0;
 	end;
@@ -929,7 +934,7 @@ uses
 			if SGSDK_Physics.HasSpriteCollidedY(theSprite, y, range) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HasSpriteCollidedY');
 		end;
 		result := 0;
 	end;
@@ -941,7 +946,7 @@ uses
 			if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HasSpriteCollidedWithRect');
 		end;
 		result := 0;
 	end;
@@ -952,7 +957,7 @@ uses
 			if SGSDK_Physics.HaveSpritesCollided(sprite1, sprite2) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HaveSpritesCollided');
 		end;
 		result := 0;
 	end;
@@ -963,7 +968,7 @@ uses
 			if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded = -1) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HasSpriteCollidedWithBitmap');
 		end;
 		result := 0;		
 	end;
@@ -974,7 +979,7 @@ uses
 			if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, pt, src, bounded = -1) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HasSpriteCollidedWithBitmapPart');
 		end;
 		result := 0;		
 	end;
@@ -985,7 +990,7 @@ uses
 			if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1 = -1, image2, x2, y2, bounded2 = -1) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HaveBitmapsCollided');
 		end;
 		result := 0;
 	end;
@@ -996,7 +1001,7 @@ uses
 			if SGSDK_Physics.HaveBitmapsCollided(image1, pt1, src1, bounded1 = -1, image2, pt2, src2, bounded2 = -1) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HaveBitmapPartsCollided');
 		end;
 		result := 0;
 	end;
@@ -1046,7 +1051,7 @@ uses
 		Try
 			result := SGSDK_Physics.LimitMagnitude(theVector, maxMagnitude);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LimitMagnitude');
 		end;
 		result.x := 0; result.y := 0;
 	end;
@@ -1056,7 +1061,7 @@ uses
 		Try
 			result :=SGSDK_Physics.GetUnitVector(theVector);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetUnitVector');
 		end;
 		result.x := 0; result.y := 0;
 	end;
@@ -1107,7 +1112,7 @@ uses
 		Try
 			result :=SGSDK_Physics.CalculateAngle(x1, y1, x2, y2);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CalculateAngle');
 		end;
 		result := -1;
 	end;
@@ -1154,7 +1159,7 @@ uses
 			p^.data := SGSDK_Physics.TranslationMatrix(dx, dy);
 			result := p;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'TranslationMatrix');
 		end;
 		result := nil;
 	end;
@@ -1168,7 +1173,7 @@ uses
 			p^.Data := SGSDK_Physics.ScaleMatrix(scale);
 			result := p;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ScaleMatrix');
 		end;
 		result := nil;
 	end;
@@ -1182,7 +1187,7 @@ uses
 			p^.Data := SGSDK_Physics.RotationMatrix(deg);
 			result := p;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'RotationMatrix');
 		end;
 		result := nil;
 	end;
@@ -1196,7 +1201,7 @@ uses
 			p^.Data := SGSDK_Physics.Multiply(m1^.Data, m2^.Data);
 			result := p;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MultiplyMatrix2DAndVector');
 		end;
 		result := nil;
 	end;
@@ -1208,7 +1213,7 @@ uses
 				
 			result := SGSDK_Physics.Multiply(m^.Data, v);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MultiplyMatrix2DAndVector');
 		end;
 		result.x := 0; result.y := 0;
 	end;
@@ -1217,7 +1222,7 @@ uses
 	begin
 		Try
 			SGSDK_Physics.VectorCollision(p1, p2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'VectorCollision');
 		end;
 	end;
 	
@@ -1225,7 +1230,7 @@ uses
 	begin
 		Try
 			SGSDK_Physics.CircleCollisionWithLine(p1, line);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CircleCollisionWithLine');
 		end;		
 	end;
 
@@ -1233,7 +1238,7 @@ uses
 	begin
 		Try
 			SGSDK_Physics.CircularCollision(p1, p2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CircularCollision');
 		end;
 	end;
 
@@ -1244,7 +1249,7 @@ uses
 			
 			result := matrix^.Data[x, y];
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetMatrix2DElement');
 		end;
 		result := -1;
 	end;
@@ -1255,7 +1260,7 @@ uses
 			CheckMatrix(matrix);
 			
 			matrix^.Data[x,y] := val;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetMatrix2DElement');
 		end;
 	end;
 	
@@ -1264,7 +1269,7 @@ uses
 		Try
 			CheckMatrix(matrix);
 			Dispose(matrix);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeMatrix2D');
 		end;
 	end;	
 
@@ -1273,7 +1278,7 @@ uses
 		Try
 			result := SGSDK_Physics.VectorOutOfCircleFromPoint(pnt, center, radius, movement);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'VectorOutOfCircleFromPoint');
 		end;
 		result := CreateVector(0,0);		
 	end;
@@ -1283,7 +1288,7 @@ uses
 		Try
 			result := SGSDK_Physics.VectorOutOfCircleFromCircle(pnt, radius, center, radius2, movement);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'VectorOutOfCircleFromCircle');
 		end;
 		result := CreateVector(0,0);				
 	end;
@@ -1293,7 +1298,7 @@ uses
 		Try
 			result := SGSDK_Physics.VectorOutOfRectFromPoint(pnt, rect, movement);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'VectorOutOfRectFromPoint');
 		end;
 		result := CreateVector(0,0);
 	end;
@@ -1303,7 +1308,7 @@ uses
 		Try
 			result := SGSDK_Physics.VectorOutOfRectFromRect(srcRect, targetRect, movement);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'VectorOutOfRectFromRect');
 		end;
 		result := CreateVector(0,0);
 	end;
@@ -1326,7 +1331,7 @@ uses
 		Try
 			result := SGSDK_Graphics.GetPixel(bmp, x, y);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetPixel');
 		end;
 		result := 0;
 	end;
@@ -1336,7 +1341,7 @@ uses
 		Try
 			result := SGSDK_Graphics.GetPixelFromScreen(x, y);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetPixelFromScreen');
 		end;
 		result := 0;
 	end;
@@ -1350,7 +1355,7 @@ uses
 		Try
 			result := surface.bitmaps[id];
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteBitmap');
 		end;
 		result := nil;
 	end;
@@ -1360,7 +1365,7 @@ uses
 		Try
 			result := surface.x;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteX');
 		end;
 		result := -1;
 	end;
@@ -1369,7 +1374,7 @@ uses
 	begin
 		Try
 			surface.x := val;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteX');
 		end;
 	end;
 	
@@ -1378,7 +1383,7 @@ uses
 		Try
 			result := surface.y;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteY');
 		end;
 		result := -1;
 	end;
@@ -1387,7 +1392,7 @@ uses
 	begin
 		Try
 			surface.y := val;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteY');
 		end;
 	end;
 	
@@ -1396,7 +1401,7 @@ uses
 		Try
 			result := surface.currentFrame;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteCurrentFrame');
 		end;
 		result := -1;
 	end;
@@ -1405,7 +1410,7 @@ uses
 	begin
 		Try
 			surface.currentFrame := val;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteCurrentFrame');
 		end;
 	end;
 	
@@ -1415,7 +1420,7 @@ uses
 			if surface.usePixelCollision then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteUsePixelCollision');
 		end;
 		result := 0;
 	end;
@@ -1424,7 +1429,7 @@ uses
 	begin
 		Try
 			surface.usePixelCollision := val = -1;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteUsePixelCollision');
 		end;
 	end;
 		
@@ -1433,7 +1438,7 @@ uses
 		Try
 			result := SGSDK_Graphics.CreateBitmap(width, height);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateBitmap');
 		end;
 		result := nil;
 	end;
@@ -1442,7 +1447,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.OptimiseBitmap(surface);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'OptimiseBitmap');
 		end;
 	end;
 	
@@ -1451,7 +1456,7 @@ uses
 		Try
 			result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent = -1, transparentColor);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LoadBitmapWithTransparentColor');
 		end;
 		result := nil;
 	end;
@@ -1461,7 +1466,7 @@ uses
 		Try
 			result := SGSDK_Graphics.LoadTransparentBitmap(pathToBitmap, transparentColor);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LoadTransparentBitmap');
 		end;
 		result := nil;
 	end;
@@ -1470,7 +1475,7 @@ uses
 	begin
 		Try
 			//SGSDK_Graphics.FreeBitmap(bitmapToFree);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeBitmap');
 		end;
 	end;
 	
@@ -1479,7 +1484,7 @@ uses
 		Try
 			result := targetbitmap.width;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetBitmapWidth');
 		end;
 		result := -1;
 	end;
@@ -1489,7 +1494,7 @@ uses
 		Try
 			result := targetbitmap.height;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetBitmapHeight');
 		end;
 		result := -1;
 	end;
@@ -1498,7 +1503,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.ClearSurface(dest, toColour);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ClearSurfaceWithColor');
 		end;
 	end;
 	
@@ -1506,7 +1511,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawBitmapWithDestination');
 		end;
 	end;
 	
@@ -1515,7 +1520,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawBitmapPartWithDestination');
 		end;
 	end;
 	
@@ -1523,7 +1528,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawPixelWithDestination');
 		end;
 	end;
 	
@@ -1532,7 +1537,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangle(dest, theColour, filled = -1, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawRectangleWithDestination');
 		end;
 	end;
 	
@@ -1541,7 +1546,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FillRectangleWithDestination');
 		end;
 	end;
 
@@ -1550,7 +1555,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawLineWithDestination');
 		end;
 	end;
 
@@ -1559,7 +1564,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawHorizontalLineWithDestination');
 		end;
 	end;
 
@@ -1568,7 +1573,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawVerticalLineWithDestination');
 		end;
 	end;
 
@@ -1577,7 +1582,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawCircle(dest, theColour, filled = -1, xc, yc, radius);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawCircleWithDestination');
 		end;
 	end;
 
@@ -1586,7 +1591,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawEllipse(dest, theColour, filled = -1, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawEllipseWithDestination');
 		end;
 	end;
 
@@ -1594,7 +1599,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.ClearScreen(toColour);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ClearScreen');
 		end;
 	end;
 
@@ -1602,7 +1607,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmap(bitmapToDraw, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawBitmap');
 		end;
 	end;
 
@@ -1611,7 +1616,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawBitmapPart');
 		end;
 	end;
 	
@@ -1619,7 +1624,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawPixel(theColour, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawPixel');
 		end;
 	end;
 
@@ -1628,7 +1633,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangle(theColour, filled = -1, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawRectangle');
 		end;
 	end;
 
@@ -1637,7 +1642,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawLine');
 		end;
 	end;
 
@@ -1645,7 +1650,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLine(theColor, y, x1, x2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawHorizontalLine');
 		end;
 	end;
 
@@ -1653,7 +1658,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLine(theColor, x, y1, y2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawVerticalLine');
 		end;
 	end;
 
@@ -1662,7 +1667,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawCircle(theColour, filled = -1, xc, yc, radius);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawCircle');
 		end;
 	end;
 
@@ -1671,7 +1676,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawEllipse(theColour, filled = -1, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawEllipse');
 		end;
 	end;
 
@@ -1684,7 +1689,7 @@ uses
 		Try
 			result := SGSDK_Graphics.CreateSprite(startBitmap);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSprite');
 		end;
 		result := nil;
 	end;
@@ -1694,7 +1699,7 @@ uses
 		Try
 			result := SGSDK_Graphics.CreateSprite(image,framesPerCell, frames, width, height);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSprite');
 		end;
 		result := nil;
 	end;
@@ -1708,7 +1713,7 @@ uses
 			
 			result := SGSDK_Graphics.CreateSprite(bmps, framesPerCell, frames);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSpriteArrayFPC');
 		end;
 		result := nil;
 	end;
@@ -1722,7 +1727,7 @@ uses
 
 			result := SGSDK_Graphics.CreateSprite(image, isMulti = -1, fpc, endingAction, width, height);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSpriteMultiEnding');
 		end;
 		result := nil;
 	end;
@@ -1736,7 +1741,7 @@ uses
 			
 			result := SGSDK_Graphics.CreateSprite(image, isMulti = -1, fpc, width, height);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSpriteMulti');
 		end;
 		result := nil;
 	end;
@@ -1752,7 +1757,7 @@ uses
 			
 			result := SGSDK_Graphics.CreateSprite(bmps, fpc, endingAction);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSpriteArrayEnding');
 		end;
 		result := nil;
 	end;
@@ -1768,7 +1773,7 @@ uses
 			
 			result := SGSDK_Graphics.CreateSprite(bmps, fpc);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CreateSpriteArray');
 		end;
 		result := nil;
 	end;
@@ -1777,7 +1782,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.UpdateSpriteAnimation(spriteToDraw);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'UpdateSpriteAnimation');
 		end;
 	end;
 	
@@ -1785,7 +1790,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.UpdateSprite(spriteToDraw);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'UpdateSprite');
 		end;
 	end;
 	
@@ -1794,7 +1799,7 @@ uses
 		Try
 			result := Integer(surface.spriteKind);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteKind');
 		end;
 		result := -1;
 	end;
@@ -1803,7 +1808,7 @@ uses
 	begin
 		Try
 			surface.SpriteKind := kind;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteKind');
 		end;
 	end;
 	
@@ -1815,7 +1820,7 @@ uses
 			PopulateIntArray(framesPerCell, length, fpc);
 			
 			surface.framesPerCell := fpc;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteFramesPerCell');
 		end;
 	end;
 	
@@ -1824,7 +1829,7 @@ uses
 		Try
 			result := surface.framesPerCell[ind];
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteFramesPerCell');
 		end;
 		result := -1;
 	end;
@@ -1834,7 +1839,7 @@ uses
 		Try
 			result := surface.cols;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteCols');
 		end;
 		result := -1;
 	end;
@@ -1844,7 +1849,7 @@ uses
 		Try
 			result := surface.row;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteRow');
 		end;
 		result := -1;
 	end;
@@ -1854,7 +1859,7 @@ uses
 		Try
 			result := Length(surface.framesperCell);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteFrameCount');
 		end;
 		result := -1;
 	end;
@@ -1864,7 +1869,7 @@ uses
 		Try
 			result := Integer(surface.endingAction);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteEndingAction');
 		end;
 		result := -1;
 	end;
@@ -1873,7 +1878,7 @@ uses
 	begin
 		Try
 			surface.endingAction := endingAction;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteEndingAction');
 		end;
 	end;
 	
@@ -1883,7 +1888,7 @@ uses
 			if surface.hasEnded then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteHasEnded');
 		end;
 		result := -1;
 	end;
@@ -1894,7 +1899,7 @@ uses
 			if surface.reverse then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteReverse');
 		end;
 		result := -1
 	end;
@@ -1904,7 +1909,7 @@ uses
 		Try
 			result := surface.mass;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteMass');
 		end;
 		result := -1;
 	end;
@@ -1914,7 +1919,7 @@ uses
 		Try
 			result := surface.movement;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetSpriteMovement');
 		end;
 		result.x := 0; result.y := 0;
 	end;
@@ -1923,7 +1928,7 @@ uses
 	begin
 		Try
 			surface.mass := mass;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteMass');
 		end;
 	end;
 	
@@ -1931,7 +1936,7 @@ uses
 	begin
 		Try
 			surface^.movement := v;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetSpriteMovement');
 		end;
 	end;
 
@@ -1939,7 +1944,7 @@ uses
 	begin
 		Try
 			//SGSDK_Graphics.FreeSprite(spriteToFree);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeSprite');
 		end;
 	end;
 
@@ -1949,7 +1954,7 @@ uses
 		Try
 			result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'AddBitmapToSprite');
 		end;
 		result := -1;
 	end;
@@ -1959,7 +1964,7 @@ uses
 		Try
 			result := SGSDK_Graphics.CurrentHeight(sprite);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CurrentHeight');
 		end;
 		result := -1;
 	end;
@@ -1969,32 +1974,32 @@ uses
 		Try
 			result := SGSDK_Graphics.CurrentWidth(sprite);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CurrentWidth');
 		end;
 		result := -1;
 	end;
 
-	procedure DrawSprite(spriteToDraw : Sprite); cdecl; export;
+	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: Integer); cdecl; export;
 	begin
 		Try
-			SGSDK_Graphics.DrawSprite(spriteToDraw);
-		Except on exc: Exception do TrapException(exc);
+			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
+		Except on exc: Exception do TrapException(exc, 'DrawSprite');
 		end;
 	end;
 	
-	procedure DrawSpriteOffSet(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
+{	procedure DrawSpriteOffSet(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
 		Except on exc: Exception do TrapException(exc);
 		end;
-	end;
-
+	end;}
+	
 	procedure MoveSpriteItself(sprite: Sprite); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.MoveSprite(sprite);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MoveSprite');
 		end;		
 	end;
 
@@ -2002,7 +2007,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.MoveSprite(spriteToMove, movementVector);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MoveSprite');
 		end;
 	end;
 
@@ -2010,7 +2015,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MoveSpriteTo');
 		end;
 	end;
 
@@ -2020,7 +2025,7 @@ uses
 			if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsSpriteOffscreen');
 		end;
 		result := -1;
 	end;
@@ -2029,7 +2034,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.ReplayAnimation(theSprite);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ReplayAnimation');
 		end;
 	end;
 	
@@ -2037,7 +2042,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcH, x ,y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawBitmapPartOnScreen');
 		end;
 	end;
 	
@@ -2045,7 +2050,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapOnScreen(bitmapToDraw, x ,y );
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawBitmapOnScreen');
 		end;
 	end;
 	
@@ -2053,7 +2058,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawPixelOnScreen(theColour, x ,y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawPixelOnScreen');
 		end;
 	end;
 	
@@ -2062,7 +2067,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled = -1, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawRectangleOnScreen');
 		end;
 	end;
 
@@ -2071,7 +2076,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawLineOnScreen');
 		end;
 	end;
 	
@@ -2079,7 +2084,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLineOnScreen(theColor, y, x1, x2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawHorizontalLineOnScreen');
 		end;
 	end;
 	
@@ -2087,7 +2092,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLineOnScreen(theColor, x, y1, y2);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawVerticalLineOnScreen');
 		end;
 	end;
 	
@@ -2096,7 +2101,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawCircleOnScreen(theColour, filled = -1, xc, yc, radius);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawCircleOnScreen');
 		end;
 	end;
 	
@@ -2105,7 +2110,7 @@ uses
 	begin
 		Try
 			SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled = -1, xPos, yPos, width, height);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawEllipseOnScreen');
 		end;
 	end;
 	
@@ -2114,7 +2119,7 @@ uses
 		Try
 			result := SGSDK_Camera.XOffset();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'XOffset');
 		end;
 		result := 0;
 	end;
@@ -2124,7 +2129,7 @@ uses
 		Try
 			result := SGSDK_Camera.YOffset();
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'YOffset');
 		end;
 		result := 0;
 	end;
@@ -2134,7 +2139,7 @@ uses
 		Try
 			result := SGSDK_Camera.ScreenX(x);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ScreenX');
 		end;
 		result := 0;
 	end;
@@ -2144,7 +2149,7 @@ uses
 		Try
 			result := SGSDK_Camera.ScreenY(y);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ScreenY');
 		end;
 		result := 0;
 	end;
@@ -2154,7 +2159,7 @@ uses
 		Try
 			result := SGSDK_Camera.GameX(x);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GameX');
 		end;
 		result := 0;
 	end;
@@ -2164,7 +2169,7 @@ uses
 		Try
 			result := SGSDK_Camera.GameY(y);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GameY');
 		end;
 		result := 0;
 	end;
@@ -2174,7 +2179,7 @@ uses
 		Try
 			result := SGSDK_Camera.ToGameCoordinates(screenPoint);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ToGameCoordinates');
 		end;
 		result.x := 0; result.y := 0;
 	end;
@@ -2191,7 +2196,7 @@ uses
 	begin
 		Try
 			SGSDK_Camera.MoveVisualArea(dx, dy);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MoveVisualArea');
 		end;
 	end;
 	
@@ -2199,7 +2204,7 @@ uses
 	begin
 		Try
 			SGSDK_Camera.SetScreenOffset(x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetScreenOffset');
 		end;
 	end;
 	
@@ -2207,7 +2212,7 @@ uses
 	begin
 		Try
 			SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FollowSprite');
 		end;
 	end;
 	
@@ -2216,7 +2221,7 @@ uses
 		Try
 			if bmp <> nil then SGSDK_Graphics.SetClip(bmp, x, y, w, h)
 			else SGSDK_Graphics.SetClip(x, y, w, h);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SetClip');
 		end;		
 	end;
 
@@ -2225,7 +2230,7 @@ uses
 		Try
 			if bmp <> nil then SGSDK_Graphics.ResetClip(bmp)
 			else SGSDK_Graphics.ResetClip();
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ResetClip');
 		end;		
 	end;
 		
@@ -2240,7 +2245,7 @@ uses
 		Try
 			result := SGSDK_MappyLoader.LoadMapFiles(mapFile, imgFile);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LoadMap');
 		end;
 		result := nil;
 	end;
@@ -2249,7 +2254,7 @@ uses
 	begin
 		Try
 			SGSDK_MappyLoader.DrawMap(m);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawMap');
 		end;
 	end;
 	
@@ -2258,7 +2263,7 @@ uses
 		Try
 			result := SGSDK_MappyLoader.CollisionWithMap(m, spr,vec);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CollisionWithMap');
 		end;
 		result := CollisionSide(-1);
 	end;
@@ -2268,7 +2273,7 @@ uses
 		Try
 			result := SGSDK_MappyLoader.EventCount(m, event);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'EventCount');
 		end;
 		result := -1;
 	end;
@@ -2278,7 +2283,7 @@ uses
 		Try
 			result := SGSDK_MappyLoader.EventPositionX(m, event, eventnumber);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'EventPositionX');
 		end;
 		result := -1;
 	end;
@@ -2288,7 +2293,7 @@ uses
 		Try
 			result := SGSDK_MappyLoader.EventPositionY(m, event, eventnumber);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'EventPositionY');
 		end;
 		result := -1;
 	end;
@@ -2297,7 +2302,7 @@ uses
 	begin
 		Try
 			//SGSDK_MappyLoader.FreeMap(m);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'FreeMap');
 		end;
 	end;
 	
@@ -2307,7 +2312,7 @@ uses
 			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, collidedX, collidedY) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'SpriteHasCollidedWithMapTile');
 		end;
 	end;
 	
@@ -2315,7 +2320,7 @@ uses
 	begin
 		Try
 			result := SGSDK_MappyLoader.WillCollideOnSide(m, spr);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'WillCollideOnSide');
 		end;
 	end;
 	
@@ -2323,7 +2328,7 @@ uses
 	begin
 		Try
 			SGSDK_Mappyloader.MoveSpriteOutOfTile(m, spr, x, y);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'MoveSpriteOutOfTile');
 		end;
 	end;
 	
@@ -2338,7 +2343,7 @@ uses
 		Try
 			result := SGSDK_Shapes.DistancePointToLine(x, y, line);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DistancePointToLine');
 		end;	
 		result := -1;	
 	end;
@@ -2348,7 +2353,7 @@ uses
 		Try
 			result := SGSDK_Shapes.ClosestPointOnLine(x, y, line);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'ClosestPointOnLine');
 		end;	
 		result.x := -1;			
 		result.y := -1;
@@ -2359,7 +2364,7 @@ uses
 		Try
 			result := SGSDK_Shapes.CenterPoint(sprt);
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'CenterPoint');
 		end;	
 		result.x := -1;			
 		result.y := -1;		
@@ -2371,7 +2376,7 @@ uses
 			if SGSDK_Shapes.IsPointOnLine(pnt, line) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'IsPointOnLine');
 		end;	
 		result := 0;		
 	end;
@@ -2382,7 +2387,7 @@ uses
 			if SGSDK_Shapes.GetLineIntersectionPoint(line1, line2, pnt) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'GetLineIntersectionPoint');
 		end;	
 		result := 0;
 	end;
@@ -2397,7 +2402,7 @@ uses
 			if SGSDK_Shapes.LineIntersectsWithLines(target, arr) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'LineIntersectsWithLines');
 		end;	
 		result := 0;
 	end;
@@ -2408,7 +2413,7 @@ uses
 			if SGSDK_Physics.HasBitmapCollidedWithRect(image, x, y, rectX, rectY, rectWidth, rectHeight) then result := -1
 			else result := 0;
 			exit;
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'HasBitmapCollidedWithRect');
 		end;
 		result := 0;
 	end;
@@ -2649,7 +2654,7 @@ exports
 	CurrentHeight,
 	CurrentWidth,
 	DrawSprite,
-	DrawSpriteOffset,
+	//DrawSpriteOffset,
 	MoveSpriteItself, {1.0 - missing added 1.1}
 	MoveSprite,
 	MoveSpriteTo,

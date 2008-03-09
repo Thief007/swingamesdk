@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
@@ -160,6 +161,8 @@ implementation
 	var
 		i: Integer;
 	begin
+	  if not Assigned(effect) then raise Exception.Create('Sound not supplied');
+	  
 		i := Mix_PlayChannel( -1, effect, loops );
 		if i <> -1 then soundChannels[i] := effect;
 	end;
@@ -182,6 +185,8 @@ implementation
 	procedure PlayMusic(mus: Music; loops: Integer); overload;
 	begin
 		Mix_HaltMusic();
+
+		if not Assigned(mus) then raise Exception.Create('Music not supplied');
 		Mix_PlayMusic(mus, loops);
 	end;
 	

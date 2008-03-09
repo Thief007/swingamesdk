@@ -1,5 +1,5 @@
 ----------------------------------------
-SwinGameSDK version 1.1.1
+SwinGameSDK version 1.1.2
 ----------------------------------------
 Go to http://www.swingame.com/
 for documentations and details.

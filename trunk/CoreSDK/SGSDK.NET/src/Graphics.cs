@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-09: Andrew: Added DrawSprite with offsets
 // - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Fixed DLL calls, fixed bitmap returning from sprite
@@ -2281,7 +2282,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSprite")]
-        private static extern void DLL_DrawSprite(IntPtr spriteToDraw);
+        private static extern void DLL_DrawSprite(IntPtr spriteToDraw, int offsetX, int offsetY);
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawSpriteOffset")]
         //private static extern void DLL_DrawSpriteOffset(IntPtr spriteToDraw, int xOffset, int yOffset);
 
@@ -2291,9 +2292,14 @@ namespace SwinGame
         /// <param name="spriteToDraw">The sprite to be drawn</param>
         public static void DrawSprite(Sprite spriteToDraw)
         {
+            DrawSprite(spriteToDraw, 0, 0);   
+        }
+        
+        public static void DrawSprite(Sprite spriteToDraw, int xOffset, int yOffset)
+        {
             try
             {
-                DLL_DrawSprite(spriteToDraw.Pointer);
+                DLL_DrawSprite(spriteToDraw.Pointer, xOffset, yOffset);
             }
             catch (Exception exc)
             {
