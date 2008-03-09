@@ -4,12 +4,14 @@ Imports System.Collections.Generic
 Public Module GameResources
 
     Private Sub LoadFonts()
-        NewFont("ArialLarge", "arial.ttf", 80)
-        NewFont("Courier", "cour.ttf", 16)
+        'NewFont("ArialLarge", "arial.ttf", 80)
+        'NewFont("Courier", "cour.ttf", 16)
     End Sub
 
     Private Sub LoadImages()
-
+	  NewImage("Aircraft", "Aircraft.png")
+	  NewImage("AircraftShadow", "AircraftShadow.png")
+	  NewImage("Background", "Background.png")
     End Sub
 
     Private Sub LoadSounds()
@@ -80,12 +82,12 @@ Public Module GameResources
     Private _Music As New Dictionary(Of String, Music)
     Private _Maps As New Dictionary(Of String, Map)
 
-    Private _Background As Bitmap
-    Private _Animation As Bitmap
-    Private _LoaderFull As Bitmap
-    Private _LoaderEmpty As Bitmap
-    Private _LoadingFont As Font
-    Private _StartSound As SoundEffect
+    Dim _Background As Bitmap
+    Dim _Animation As Bitmap
+    Dim _LoaderFull As Bitmap
+    Dim _LoaderEmpty As Bitmap
+    Dim _LoadingFont As Font
+    Dim _StartSound As SoundEffect
 
     ''' <summary>
     ''' The Resources Class stores all of the Games Media Resources, such as Images, Fonts
@@ -186,8 +188,6 @@ Public Module GameResources
         Text.FreeFont(_LoadingFont)
         Graphics.FreeBitmap(_Background)
         Graphics.FreeBitmap(_Animation)
-        Graphics.FreeBitmap(_LoaderEmpty)
-        Graphics.FreeBitmap(_LoaderFull)
         Audio.FreeSoundEffect(_StartSound)
         Core.ChangeScreenSize(width, height)
     End Sub

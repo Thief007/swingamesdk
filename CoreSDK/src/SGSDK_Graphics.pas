@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-09: Andrew: Fixed DrawSprite with Offset
 // - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-31: Andrew: Fixed Line Drawing Issue
 // - 2008-01-30: Andrew: Fixed DrawRectangle
@@ -387,6 +388,8 @@ implementation
 	
 	function GetPixel(bmp: Bitmap; x, y: Integer): Colour;
 	begin
+	  if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
+	  
 		if (x < 0) or (x >= bmp.width) or (y < 0) or (y >= bmp.height) then
 		begin
 			result := 0;
@@ -970,10 +973,11 @@ implementation
 	/// Side Effects:
 	///	- The sprite is drawn to the screen, if within screen area
 	procedure DrawSprite(spriteToDraw: Sprite); overload;
-	var
-		srcX, srcY: Integer; // the source x, y : i.e. the location of the current part for multi animations
+	//var
+	//	srcX, srcY: Integer; // the source x, y : i.e. the location of the current part for multi animations
 	begin
-		if spriteToDraw = nil then raise Exception.Create('No sprite supplied');
+	  DrawSprite(spriteToDraw, 0, 0);
+		{if spriteToDraw = nil then raise Exception.Create('No sprite supplied');
 		
 		if IsSpriteOffscreen(spriteToDraw) then exit;
 		
@@ -992,14 +996,14 @@ implementation
 			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
 						   spriteToDraw.width, spriteToDraw.height,
 						   spriteToDraw.x, spriteToDraw.y);
-		end;
+		end;}
 	end;
 	
-	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
+	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: Integer); overload;
 	var
-		tempWidth, tempHeight: Integer;
+		srcX, srcY: Integer;
 	begin
-		if spriteToDraw = nil then raise Exception.Create('No sprite supplied');
+		if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
 		
 		if spriteToDraw.spriteKind <> AnimMultiSprite then
 		begin
@@ -1007,12 +1011,15 @@ implementation
 		end
 		else
 		begin
-			tempWidth := spriteToDraw.currentFrame div spriteToDraw.cols * spriteToDraw.width;
-			tempHeight := spriteToDraw.currentFrame mod spriteToDraw.cols * spriteToDraw.height;
+			with spriteToDraw^ do
+			begin
+				srcX := (currentFrame mod cols) * width;
+				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+			end;
 			
-			DrawBitmapPartOnScreen(spriteToDraw.bitmaps[0], tempWidth, tempHeight, 
+			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
 								   spriteToDraw.width, spriteToDraw.height,
-								   Round(spriteToDraw.x + xOffset), Round(spriteToDraw.y + yOffset));
+								   spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
 		end;
 	end;
 
@@ -1037,7 +1044,7 @@ implementation
 	///	@param movementVector:	 The vector containing the movement details
 	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
 	begin
-		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
+		if not Assigned(spriteToMove) then raise Exception.Create('No sprite supplied');
 			
 		spriteToMove.x := spriteToMove.x + movementVector.x;
 		spriteToMove.y := spriteToMove.y + movementVector.y;

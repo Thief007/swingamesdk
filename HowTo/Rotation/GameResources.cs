@@ -9,14 +9,27 @@ using Font = SwinGame.Font;
 using FontStyle = SwinGame.FontStyle;
 
 
-namespace GameResources
+namespace GameProject
 {
     /// <summary>
     /// The Resources Class stores all of the Games Media Resources, such as Images, Fonts
     /// Sounds, Music, and Maps.
     /// </summary>
-    public static class Resources
+    public static class GameResources
     {
+        private static Dictionary<string, Bitmap> _Images = new Dictionary<string, Bitmap>();
+        private static Dictionary<string, Font> _Fonts = new Dictionary<string, Font>();
+        private static Dictionary<string, SoundEffect> _Sounds = new Dictionary<string, SoundEffect>();
+        private static Dictionary<string, Music> _Music = new Dictionary<string, Music>();
+        private static Dictionary<string, Map> _Maps = new Dictionary<string, Map>();
+
+        private static Bitmap _Background;
+        private static Bitmap _Animation;
+        private static Bitmap _LoaderFull;
+        private static Bitmap _LoaderEmpty;
+        private static Font _LoadingFont;
+        private static SoundEffect _StartSound;
+
         private static void LoadFonts()
         {
             NewFont("ArialLarge", "arial.ttf", 80);
@@ -25,6 +38,9 @@ namespace GameResources
 
         private static void LoadImages()
         {
+      		  NewImage("Aircraft", "Aircraft.png");
+      		  NewImage("AircraftShadow", "AircraftShadow.png");
+      		  NewImage("Background", "Background.png");
         }
 
         private static void LoadSounds()
@@ -38,19 +54,6 @@ namespace GameResources
         private static void LoadMaps()
         {
         }
-
-        private static Dictionary<string, Bitmap> _Images = new Dictionary<string, Bitmap>();
-        private static Dictionary<string, Font> _Fonts = new Dictionary<string, Font>();
-        private static Dictionary<string, SoundEffect> _Sounds = new Dictionary<string, SoundEffect>();
-        private static Dictionary<string, Music> _Music = new Dictionary<string, Music>();
-        private static Dictionary<string, Map> _Maps = new Dictionary<string, Map>();
-
-        private static Bitmap _Background;
-        private static Bitmap _Animation;
-        private static Bitmap _LoaderFull;
-        private static Bitmap _LoaderEmpty;
-        private static Font _LoadingFont;
-        private static SoundEffect _StartSound;
 
         /// <summary>
         /// Loads Resources
@@ -111,7 +114,7 @@ namespace GameResources
 
         private static void PlaySwinGameIntro()
         {
-						const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
+				const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
 	
             Audio.PlaySoundEffect(_StartSound);
 
@@ -134,28 +137,26 @@ namespace GameResources
 
         private static void ShowMessage(String message, int number)
         {
-						const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
+				const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
 
-						int fullW = 260 * number / STEPS;
-						Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
-						Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
+				int fullW = 260 * number / STEPS;
+				Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
+				Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
 
-						Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
+				Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
             Core.RefreshScreen();
             Core.ProcessEvents();
         }
 
         private static void EndLoadingScreen(int width, int height)
         {
-						Core.ProcessEvents();
-						Core.Sleep(500);
+			Core.ProcessEvents();
+			Core.Sleep(500);
             Graphics.ClearScreen();
             Core.RefreshScreen();
             Text.FreeFont(_LoadingFont);
             Graphics.FreeBitmap(_Background);
             Graphics.FreeBitmap(_Animation);
-		        Graphics.FreeBitmap(_LoaderEmpty);
-		        Graphics.FreeBitmap(_LoaderFull);
             Audio.FreeSoundEffect(_StartSound);
 
             Core.ChangeScreenSize(width, height);
@@ -252,7 +253,6 @@ namespace GameResources
             FreeMusic();
             FreeSounds();
             FreeMaps();
-            Core.ProcessEvents();
         }
 
         /// <summary>

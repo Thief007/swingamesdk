@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-09: Andrew: Relaxed exception handling on Free actions
 // - 2008-02-16: Andrew: Removed Mac OS Boot code - now in Pascal...
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-30: James: Added extra constructor for SwinGamePointer
@@ -82,15 +83,9 @@ namespace SwinGame
 
         internal void Free()
         {
-				Core.DoFree(Pointer, _Kind);
-				
-	         GC.SuppressFinalize(this);
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-		  }
+			Core.DoFree(Pointer, _Kind);		
+	        GC.SuppressFinalize(this);
+		}
     }
 
     /// <summary>
@@ -311,7 +306,9 @@ namespace SwinGame
 				Console.WriteLine("Error in DoFree: {0}", e); 
 			}
 			
-			if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
+			//Report issue, but continue...
+			Console.WriteLine(Core.GetExceptionMessage());
+			//if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
         }
 	
 	

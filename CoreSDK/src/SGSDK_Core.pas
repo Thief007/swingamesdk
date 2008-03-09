@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-02-16: Andrew: Added Mac boot support, and 
 //                       Fixed scr bitmap to have width and height
 // - 2008-01-28: Andrew: Fixed Toggle issue.
@@ -981,6 +982,7 @@ implementation
 	
 	procedure StartTimer(toStart : Timer);
 	begin
+	  if not Assigned(toStart) then raise Exception.Create('No timer supplied');
 		with toStart^ do
 		begin
 			started := true;
@@ -991,6 +993,7 @@ implementation
 	
 	procedure StopTimer(toStop : Timer);
 	begin
+	  if not Assigned(toStop) then raise Exception.Create('No timer supplied');
 		with toStop^ do
 		begin
 			started := false;
@@ -1000,6 +1003,7 @@ implementation
 	
 	procedure PauseTimer(toPause : Timer);
 	begin
+	  if not Assigned(toPause) then raise Exception.Create('No timer supplied');
 		with toPause^ do
 		begin
 			if started and (not paused) then
@@ -1012,6 +1016,7 @@ implementation
 	
 	procedure UnpauseTimer(toUnpause : Timer);
 	begin
+	  if not Assigned(toUnpause) then raise Exception.Create('No timer supplied');
 		with toUnpause^ do
 		begin
 			if paused then
@@ -1025,6 +1030,8 @@ implementation
 	
 	function GetTimerTicks(toGet : Timer) : UInt32;
 	begin
+	  if not Assigned(toGet) then raise Exception.Create('No timer supplied');
+	  	    
 		with toGet^ do
 		begin
 			if started then
