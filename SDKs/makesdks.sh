@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 VERSION="1.1.2"
 VERSION_TXT="1-1-2"
@@ -27,25 +27,34 @@ cd "$APP_PATH"
 pack() {
 	BASE_SDK_DIR="${APP_PATH}/SGSDK-${VERSION_TXT}-${2}-${FILE_OS}"
 	SDK_DIR=${BASE_SDK_DIR}/SwinGame
-		
-	if [ -f "${BASE_SDK_DIR}.dmg" ]
-	then
-		echo "  Removing old SDK - ${BASE_SDK_DIR}.dmg"
-		rm "${BASE_SDK_DIR}.dmg"
+	
+	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
+	then	
+		if [ -f "${BASE_SDK_DIR}.dmg" ]
+		then
+			echo "  Removing old SDK - ${BASE_SDK_DIR}.dmg"
+			rm "${BASE_SDK_DIR}.dmg"
+		fi
+	else
+		if [ -f "${BASE_SDK_DIR}.tar.gz" ]
+		then
+			echo "  Removing old SDK - ${BASE_SDK_DIR}.tar.gz"
+			rm "${BASE_SDK_DIR}.tar.gz"
+		fi
 	fi
 	
 	if [ -d "${BASE_SDK_DIR}" ]
 	then
-		rm -rf "${BASE_SDK_DIR}"		
+		rm -rf "${BASE_SDK_DIR}"	
 	fi
 	
-	mkdir -p "$SDK_DIR"
+	mkdir -p "${SDK_DIR}"
 	pushd . >> /dev/null
 
 	cd "$1"
 
 	echo "  Copying SDK to temporary location"	
-	find . -type d ! -path *.svn* ! -path */bin/* -mindepth 1 -exec mkdir "${SDK_DIR}/{}" \;
+	find . -mindepth 1 -type d ! -path *.svn* ! -path */bin/* -exec mkdir "${SDK_DIR}/{}" \;
 	find . -type f ! -path *.svn* ! -path */bin/* -exec cp "{}" "${SDK_DIR}/{}" \;
 
 	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
@@ -54,7 +63,8 @@ pack() {
 		hdiutil create -srcfolder "${BASE_SDK_DIR}" "${BASE_SDK_DIR}.dmg" >> /dev/null
 	else
 		echo "  Combining files and zipping"
-		tar -cvf "${BASE_SDK_DIR}.tar"
+		cd ${BASE_SDK_DIR}
+		tar -cf "${BASE_SDK_DIR}.tar" "SwinGame"
 		gzip "${BASE_SDK_DIR}.tar"
 	fi
 
