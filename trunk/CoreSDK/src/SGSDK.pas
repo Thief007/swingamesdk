@@ -2655,7 +2655,7 @@ exports
 	CurrentHeight,
 	CurrentWidth,
 	DrawSprite,
-	DrawSpriteOffset,
+	//DrawSpriteOffset,
 	MoveSpriteItself, {1.0 - missing added 1.1}
 	MoveSprite,
 	MoveSpriteTo,
