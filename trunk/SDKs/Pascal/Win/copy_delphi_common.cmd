@@ -2,5 +2,6 @@
 
 if not exist .\Delphi\Resources mkdir .\Delphi\Resources
 
-cp -R -u ..\..\Base\All\Resources\* .\Delphi\Resources
-cp -R -u ..\..\Base\Pascal\*.pas .\Delphi
+copy ..\..\Base\All\* .\Delphi\
+xcopy ..\..\Base\All\Resources\* .\Delphi\Resources /e /y /q
+xcopy ..\..\Base\Pascal\*.pas .\Delphi /e /y /q

@@ -2,5 +2,7 @@
 
 if not exist .\FPC\Resources mkdir .\FPC\Resources
 
-cp -R -u ..\..\Base\All\Resources\* .\FPC\Resources
-cp -R -u ..\..\Base\Pascal\*.pas .\FPC
+
+copy ..\..\Base\All\* .\FPC\
+xcopy ..\..\Base\All\Resources\* .\FPC\Resources /e /y /q
+xcopy ..\..\Base\Pascal\*.pas .\FPC /e /y /q
