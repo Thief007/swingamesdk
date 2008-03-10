@@ -21,7 +21,8 @@
 // Change History:
 //  
 //  Version 1.1:
-// - 2008-03-09: Andrew: Added extra exception handling data
+//  - 2008-03-10: Andrew: Fixed case of TakeScreenshot
+//  - 2008-03-09: Andrew: Added extra exception handling data
 //                       Added DrawSprite offsets
 //  - 2008-02-22: Andrew: Changed to GetMouseXY
 //  - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
@@ -234,7 +235,7 @@ uses
 		end;
 	end;
 	
-	procedure TakeScreenshot(basename: PChar); cdecl; export;
+	procedure TakeScreenShot(basename: PChar); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.TakeScreenshot(basename);
@@ -1987,13 +1988,13 @@ uses
 		end;
 	end;
 	
-{	procedure DrawSpriteOffSet(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
+	procedure DrawSpriteOffset(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
 		Except on exc: Exception do TrapException(exc);
 		end;
-	end;}
+	end;
 	
 	procedure MoveSpriteItself(sprite: Sprite); cdecl; export;
 	begin
@@ -2654,7 +2655,7 @@ exports
 	CurrentHeight,
 	CurrentWidth,
 	DrawSprite,
-	//DrawSpriteOffset,
+	DrawSpriteOffset,
 	MoveSpriteItself, {1.0 - missing added 1.1}
 	MoveSprite,
 	MoveSpriteTo,
