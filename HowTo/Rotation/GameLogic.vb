@@ -30,7 +30,7 @@ Module GameLogic
     End sub
 
     public Sub Draw()
-        //Draw screen
+        'Draw screen
         Graphics.ClearScreen(Color.Black)
         Graphics.DrawBitmap(GameResources.GameImage("Background"), 0, 0)
 
