@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-10: Andrew: Fixed case on TakeScreenshot
 // - 2008-03-09: Andrew: Relaxed exception handling on Free actions
 // - 2008-02-16: Andrew: Removed Mac OS Boot code - now in Pascal...
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
@@ -553,7 +554,7 @@ namespace SwinGame
             }
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TakeScreenshot", CharSet=CharSet.Ansi)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TakeScreenShot", CharSet=CharSet.Ansi)]
         private static extern void DLL_TakeScreenshot([MarshalAs(UnmanagedType.LPStr)]String basename);
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
