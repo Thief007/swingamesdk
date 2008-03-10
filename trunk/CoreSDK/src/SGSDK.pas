@@ -1988,13 +1988,13 @@ uses
 		end;
 	end;
 	
-	procedure DrawSpriteOffset(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
+	{procedure DrawSpriteOffset(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'DrawSpriteOffset');
 		end;
-	end;
+	end;}
 	
 	procedure MoveSpriteItself(sprite: Sprite); cdecl; export;
 	begin
