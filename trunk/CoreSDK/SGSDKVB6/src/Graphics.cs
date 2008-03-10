@@ -949,10 +949,10 @@ namespace SwinGameVB
         /// <param name="vwPrtY">The y of the current view port (i.e. screen)</param>
         /// <param name="vwPrtWidth">The width of the view port</param>
         /// <param name="vwPrtHeight">The height of the view port</param>
-        //public void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset)
-        //{
-        //    SwinGame.Graphics.DrawSprite(spriteToDraw.result, xOffset, yOffset);
-        //}
+        public void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset)
+        {
+            SwinGame.Graphics.DrawSprite(spriteToDraw.result, xOffset, yOffset);
+        }
 
         /// <summary>
         /// Draws a sprite to the screen, without using a view port
@@ -1536,7 +1536,7 @@ namespace SwinGameVB
         int AddBitmapToSprite(Sprite spriteToAddTo, Bitmap bitmapToAdd);
         int CurrentHeight(Sprite sprite);
         int CurrentWidth(Sprite sprite);
-        //void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset);
+        void DrawSprite_WithOffset(Sprite spriteToDraw, int xOffset, int yOffset);
         void DrawSprite(Sprite spriteToDraw);
         void MoveSprite(Sprite spriteToMove, Vector movementVector);
         void MoveSpriteTo(Sprite spriteToMove, int x, int y);
