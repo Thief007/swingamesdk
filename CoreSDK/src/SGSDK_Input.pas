@@ -37,7 +37,11 @@ interface
 		MouseButton = (
 				LeftButton = SDL_BUTTON_LEFT,
 				MiddleButton = SDL_BUTTON_MIDDLE,
-				RightButton = SDL_BUTTON_RIGHT
+				RightButton = SDL_BUTTON_RIGHT,
+				WheelUpButton = SDL_BUTTON_WHEELUP,
+				WheelDownButton = SDL_BUTTON_WHEELDOWN,
+				MouseX1Button = SDL_BUTTON_X1,
+				MouseX2Button = SDL_BUTTON_X2
 			);
 	
 	function GetMousePositionAsVector(): Vector;
@@ -198,8 +202,7 @@ implementation
 		x, y: Integer;
 	begin
 		x := 0; y := 0;
-		result := (SDL_GetMouseState(x, y) and 
-		SDL_BUTTON(Integer(button))) > 0;
+		result := (SDL_GetMouseState(x, y) and SDL_BUTTON(Integer(button))) > 0;
 	end;
 	
 	function IsMouseUp(button: MouseButton): Boolean;
@@ -215,6 +218,7 @@ implementation
 	procedure ProcessEvent(event: PSDL_Event; first: Boolean);
 	begin
 		if event = nil then exit;
+		
 		if event^.type_ = SDL_MOUSEBUTTONUP then
 		begin
 			_ButtonsClicked[MouseButton(event^.button.button)] := true;
@@ -222,9 +226,14 @@ implementation
 	end;
 	
 	procedure StartProcessEvents();
+	var
+		b: MouseButton;
 	begin
-		_ButtonsClicked[LeftButton] := false;
-		_ButtonsClicked[RightButton] := false;
+		for b := LeftButton to MouseX2Button do
+			_ButtonsClicked[b] := false;
+			
+		//_ButtonsClicked[LeftButton] := false;
+		//_ButtonsClicked[RightButton] := false;
 	end;
 
 initialization

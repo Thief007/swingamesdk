@@ -9,6 +9,7 @@ implementation
 	uses GameResources, SGSDK_Input, SGSDK_Core, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font, SysUtils;
 	
 	var
+		scroll: Integer;
 		MouseMovement: Vector;
 		_EnteredText: String;
 	
@@ -22,6 +23,8 @@ implementation
         if WasKeyTyped(VK_H) then HideMouse();
         if WasKeyTyped(VK_S) then ShowMouse();
         if IsKeyPressed(VK_C) then MoveMouse(400, 300);
+				if MouseWasClicked(WheelUpButton) then scroll += 1;
+				if MouseWasClicked(WheelDownButton) then scroll -= 1;
 
         DrawLineOnScreen(GetColor(120, 177, 250), CreateLine(GetMousePosition().X, 0, GetMousePosition().X, 600));
         DrawLineOnScreen(GetColor(120, 177, 250), CreateLine(0, GetMousePosition().Y, 800, GetMousePosition().Y));
@@ -29,6 +32,8 @@ implementation
         DrawText('Is Left Mouse Button Down : ' + BoolToStr(IsMouseDown(LeftButton)), ColourWhite, GameFont('Courier'), 10, 50);
         DrawText('Was Left Mouse Button Clicked : ' + BoolToStr(MouseWasClicked(LeftButton)), ColourWhite, GameFont('Courier'), 10, 70);
         DrawText('Is Mouse Cursor Shown : ' + BoolToStr(IsMouseShown()), ColourWhite, GameFont('Courier'), 10, 90);
+
+				DrawText('Scroll : ' + IntToStr(scroll), ColourWhite, GameFont('Courier'), 10, 140);	
 	end;
 	
 	procedure KeyboardInputTest(const drawIn: Rectangle);
@@ -80,6 +85,8 @@ implementation
 	
 	procedure AddInputSuite(var suites: TestSuites);
 	begin
+		scroll := 0;
+		
 		suites[High(suites)] := GetInputTests();
 	end;
 
