@@ -18,7 +18,9 @@ namespace SwinGameVB
         MiddleButton = 2,
         RightButton = 3,
         MouseWheelUp = 4,
-        MouseWheelDown = 5
+        MouseWheelDown = 5,
+				MouseX1Button = 6,
+				MouseX2Button = 7
     }
 
     /// <summary>

@@ -54,7 +54,15 @@ namespace SwinGame
         /// <summary>
         /// Mouse Wheel Down
         /// </summary>
-        MouseWheelDown = 5
+        MouseWheelDown = 5,
+				/// <summary>
+        /// Mouse extended button 1
+        /// </summary>
+        MouseX1Button = 6,
+				/// <summary>
+        /// Mouse extended button 2
+        /// </summary>
+        MouseX2Button = 7
     }
     
     /// <summary>
