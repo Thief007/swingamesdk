@@ -127,7 +127,7 @@ begin
 			2950 .. 3050: DrawReadyIn('.. 1 ..');
 		end;
 		
-		if cycle > 200 then RefreshScreen()
+		if cycle > 200 then RefreshScreen(60)
 		else Sleep(0);
 			
 		cycle += 1;
@@ -142,7 +142,7 @@ begin
 		for i := 0 to WARP_FRAMES do
 		begin	
 			ClearScreen(ColorWhite);
-			RefreshScreen();
+			RefreshScreen(60);
 			Sleep(15);
 		
 			DrawScreen(data, false);	
@@ -221,7 +221,7 @@ var
 		DrawTextIn(FormatFloat('0%', progress * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, LEVEL_Y, 100, 40);
 		DrawTextIn(FormatFloat('0 ', blackholes), ColorWhite, GameFont(WelcomeFont), DATA_X, BLACKHOLE_Y, 100, 40);
 		DrawTextIn(FormatFloat('0', temp), ColorWhite, GameFont(WelcomeFont), DATA_X, BONUS_Y, 100, 40);		
-		RefreshScreen();
+		RefreshScreen(60);
 	end;
 begin
 	starUseCount := 0; pickupUseCount := 0;
@@ -262,31 +262,31 @@ begin
 	
 	DrawScreen(data, false, false);
 	DrawBitmapOnScreen(GameImage(LevelSummaryMenu), MENU_X, MENU_Y);
-	RefreshScreen();
+	RefreshScreen(60);
 	
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 	DrawTextIn(FormatFloat('0%', stars * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, STARS_Y, 100, 40);
 	
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 	DrawTextIn(FormatFloat('0%', shield * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, SHIELD_Y, 100, 40);
 
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 	DrawTextIn(FormatFloat('0%', fuel * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, FUEL_Y, 100, 40);
 
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 	DrawTextIn(FormatFloat('0%', pickups * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, PICKUP_Y, 100, 40);
 
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 	DrawTextIn(FormatFloat('0', blackholes), ColorWhite, GameFont(WelcomeFont), DATA_X, BLACKHOLE_Y, 100, 40);
 
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 	DrawTextIn(FormatFloat('0%', progress * 100), ColorWhite, GameFont(WelcomeFont), DATA_X, LEVEL_Y, 100, 40);
 
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 
 	bonus := Round(MAX_BONUS * (stars + shield * progress + fuel * progress + pickups * progress + blackholes));
 
-	for cycle := 0 to 30 do RefreshScreen();		
+	for cycle := 0 to 30 do RefreshScreen(60);		
 
 	totalScore := data.score + bonus;
 	temp := bonus mod 99;
@@ -308,7 +308,7 @@ begin
 	data.score := totalScore;
 	DrawScores();
 			
-	for cycle := 0 to 90 do RefreshScreen();
+	for cycle := 0 to 90 do RefreshScreen(60);
 end;
 
 procedure DoWarpLevel(var data: GameDataType);
@@ -336,14 +336,14 @@ begin
 		DrawScreen(data, false);	
 		
 		ClearScreen(ColorWhite);
-		RefreshScreen();
+		RefreshScreen(60);
 		Sleep(15);
 	end;
 	
 	DoLevelSummary(data);
 	
 	ClearScreen(ColorBlack);
-	RefreshScreen();
+	RefreshScreen(60);
 	Sleep(1500);
 	PlaySoundEffect(GameSound(SirenSound));
 	Sleep(2100);
@@ -354,7 +354,7 @@ begin
 	for i := 0 to WARP_FRAMES do
 	begin	
 		ClearScreen(ColorWhite);
-		RefreshScreen();
+		RefreshScreen(60);
 		Sleep(15);
 		
 		DrawScreen(data, false);	
@@ -458,7 +458,7 @@ begin
 		DrawBackScene(data, false);
 		DrawMessage(message);
 		DrawHud(data);
-		RefreshScreen();
+		RefreshScreen(60);
 	until WasKeyTyped(VK_RETURN) or WindowCloseRequested();
 	
 	if IsHighScore(data.score) then
@@ -500,7 +500,7 @@ begin
 	
 	repeat
 		ProcessEvents();
-		RefreshScreen();
+		RefreshScreen(60);
 
 		if WasKeyTyped(VK_RETURN) or WasKeyTyped(VK_ESCAPE) then
 		begin
@@ -525,7 +525,7 @@ begin
 		DrawScreen(data, false, false);
 		DrawBitmapOnScreen(GameImage(EnterNameMenu), MENU_X, MENU_Y);
 						
-		RefreshScreen();
+		RefreshScreen(60);
 	end;
 
 	name := TextReadAsASCII();
@@ -561,7 +561,7 @@ begin
 			if length(message) > 0 then
 				DrawTextIn(message, ColorWhite, GameFont(WelcomeFont), MENU_X, MENU_Y + 350, 400, 50);
 				
-			RefreshScreen();
+			RefreshScreen(60);
 		end;
 	
 		level := TextReadAsASCII();
@@ -639,7 +639,7 @@ begin
 	
 		DrawScreen(data, false, false);
 		DrawBitmapOnScreen(bmp, MENU_X, MENU_Y);
-		RefreshScreen();
+		RefreshScreen(60);
 		
 		if WasKeyTyped(VK_RETURN) then
 		begin

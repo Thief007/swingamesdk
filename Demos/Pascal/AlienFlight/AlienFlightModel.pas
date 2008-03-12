@@ -1198,7 +1198,7 @@ implementation
 									DrawScreen(data, true, false);
 									OutlineSprite(data.sprites[i], ColorGreen);
 									OutlineSprite(data.sprites[j], ColorBlue);
-									RefreshScreen();
+									RefreshScreen(60);
 								end;
 						end;}
 					end;

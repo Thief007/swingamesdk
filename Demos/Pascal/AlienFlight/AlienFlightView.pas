@@ -380,7 +380,7 @@ implementation
 		DrawUfo(data);
 		DrawOverlay(data);
 		
-		if refresh then RefreshScreen();
+		if refresh then RefreshScreen(60);
 	end;
 	
 	procedure DrawAddingMode(const status: EditorStatusType);
@@ -498,7 +498,7 @@ implementation
 
 		DrawOverlay(data);
 
-		RefreshScreen();
+		RefreshScreen(60);
 				
 {		if status.currentObstacle <> nil then
 		begin
@@ -511,7 +511,7 @@ implementation
 		DrawCurrentSprite(status.currentSprite);
 }		//TODO: DrawOutline(status.dataPtr^, status.currentObstacle.sprite);
 
-{		RefreshScreen();}
+{		RefreshScreen(60);}
 	end;
 
 	
