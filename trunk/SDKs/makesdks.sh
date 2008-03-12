@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION="1.1.2"
-VERSION_TXT="1-1-2"
+VERSION="1.1.3"
+VERSION_TXT="1-1-3"
 
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
