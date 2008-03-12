@@ -19,6 +19,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -103,6 +104,8 @@
     <None Include="lib\zlib1.dll">
     </None>
     <Content Include="ReadMe.txt" />
+    <Content Include="Resources\images\loader_empty.png" />
+    <Content Include="Resources\images\loader_full.png" />
     <Content Include="Resources\images\SplashBack.png" />
     <Content Include="Resources\images\SwinGameAni.png" />
     <Content Include="Resources\readme.txt" />
