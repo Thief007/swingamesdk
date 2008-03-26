@@ -107,7 +107,7 @@ doCompile()
 	done
 
 	echo "  ... Linking Library"
-	/usr/bin/libtool  -arch_only ${1} -dynamic -L"${Output}" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK${1}.dylib" `cat ./src/maclink${1}.res` -current_version 1.1.1
+	/usr/bin/libtool  -arch_only ${1} -dynamic -L"${Output}" -search_paths_first -multiply_defined suppress -o "$Output/libSGSDK${1}.dylib" `cat ./src/maclink${1}.res` `cat ./src/dotnetlink.res` -current_version 1.1.1
 	if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
 		
 	rm "${Output}"/*.o 2>> /dev/null
