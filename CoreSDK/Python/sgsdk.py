@@ -3,8 +3,6 @@ import sys
 from ctypes import * 
 from sgsdk_types import *
 
-print sys.platform
-
 if sys.platform == "win32":
     sgsdk = CDLL("sgsdk\SGSDK.dll")   #to check
 elif sys.platform == "darwin":
