@@ -86,7 +86,7 @@ echo "  ... Adding Resources"
 cp -R ./Resources/ "${PRODUCT_NAME}.app/Contents/Resources"
 
 echo "  ... Added Private Frameworks"
-cp -R ./sgsdk/Frameworks/* "${PRODUCT_NAME}.app/Contents/Frameworks/"
+cp -R ./Frameworks/* "${PRODUCT_NAME}.app/Contents/Frameworks/"
 
 pushd . >> /dev/null
 
