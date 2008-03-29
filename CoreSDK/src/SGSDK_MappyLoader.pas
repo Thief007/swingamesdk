@@ -11,6 +11,9 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-03-29: Stephen: 	MapData record now contains GapX, GapY, StaggerX, StaggerY, Isometric
+//							LoadMapInformation, now loads the new isometric related data
+//							DrawMap now draws isometric tiles with their correct offsets							
 // - 2008-01-30: Andrew: Added const to vector param, increased search for collision tests
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
@@ -43,6 +46,11 @@ interface
             NumberOfAnimations: Integer;
             CollisionLayer: Integer;
             EventLayer: Integer;
+            GapX : Integer;
+            GapY : Integer;
+            StaggerX : Integer;
+            StaggerY : Integer;
+            Isometric : Boolean;
         end;
 		
         AnimationData = record
@@ -126,6 +134,15 @@ implementation
         m.MapInfo.NumberOfLayers := ReadInt(stream);
         m.MapInfo.CollisionLayer := ReadInt(stream);
    		m.MapInfo.EventLayer := ReadInt(stream);
+   		m.MapInfo.GapX := ReadInt(stream);
+   		m.MapInfo.GapY := ReadInt(stream);
+   		m.MapInfo.StaggerX := ReadInt(stream);
+   		m.MapInfo.StaggerY := ReadInt(stream);
+   		
+   		if ((m.MapInfo.StaggerX = 0) and (m.MapInfo.StaggerY = 0)) then
+   			m.MapInfo.Isometric := false
+   		else
+   			m.MapInfo.Isometric := true
    		
    		{
    		//Debug
@@ -200,31 +217,34 @@ implementation
 	begin
 	
 		SetLength(m.LayerInfo, m.MapInfo.NumberOfLayers - m.MapInfo.Collisionlayer - m.MapInfo.EventLayer);
-		
+
 		for y := 0 to Length(m.LayerInfo) - 1 do
 		begin
+	
 			SetLength(m.LayerInfo[y].Animation, m.MapInfo.MapHeight);
 			SetLength(m.LayerInfo[y].Value, m.MapInfo.MapHeight);
 			
 			for x := 0 to m.MapInfo.MapHeight - 1 do
 			begin
+	
 				SetLength(m.LayerInfo[y].Animation[x], m.MapInfo.MapWidth);
 				SetLength(m.LayerInfo[y].Value[x], m.MapInfo.MapWidth);
 			end;
 		end;
-		
+
 		for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.Collisionlayer - m.MapInfo.Eventlayer - 1 do
 		begin
 			for y := 0 to m.MapInfo.MapHeight - 1 do
 			begin
 				for x := 0 to m.MapInfo.MapWidth - 1 do
 				begin
+	
 					m.LayerInfo[l].Animation[y][x] := ReadInt(stream);
 					m.LayerInfo[l].Value[y][x] := ReadInt(stream);
 				end;
 			end;
 		end;
-		
+
 		{
 		//Debug
 		WriteLn('Layer Information');
@@ -387,13 +407,34 @@ implementation
 		if XStart >= m.MapInfo.MapWidth then exit;
 		if XEnd < 0 then exit;
 		if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
-			
+		
+		
+		
 		for y := YStart  to YEnd do
 		begin
-			m.Tiles.y := y * m.MapInfo.BlockHeight;
+			//GapX and GapY = The distance between each tile (rectangular), can be different to the normal width and height of the block
+			//StaggerX and StaggerY = The isometric Offset
+		
+		
+			//Isometric Offset for Y
+			if (m.MapInfo.Isometric = true) then
+				m.Tiles.y := y * m.MapInfo.StaggerY
+			else
+				m.Tiles.y := y * m.MapInfo.BlockHeight;	
+		
 			for x := XStart  to XEnd do
 			begin
-				m.Tiles.x := x * m.MapInfo.BlockWidth;
+				
+				//Isometric Offset for X
+				if (m.MapInfo.Isometric = true) then
+				begin
+					m.Tiles.x := x * m.MapInfo.GapX;
+					if ((y MOD 2) = 1) then
+						m.Tiles.x += m.MapInfo.StaggerX;
+				end
+				else
+					m.Tiles.x := x * m.MapInfo.BlockWidth;
+				
 				for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.CollisionLayer - m.MapInfo.EventLayer - 1 do
 				begin
 					if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
@@ -445,8 +486,7 @@ implementation
 		LoadAnimationInformation(m, filestream);
 		LoadLayerData(m, filestream);
 		LoadCollisionData(m, filestream);
-		LoadEventData(m, filestream);
-			
+		LoadEventData(m, filestream);	
 		//Closes File
 		close(filestream);	
 		
