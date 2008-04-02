@@ -11,6 +11,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Removed gap loading as mappy support has not been updated on the web, and this version
+//                       is unable to read the old files. 
 // - 2008-03-29: Stephen: 	MapData record now contains GapX, GapY, StaggerX, StaggerY, Isometric
 //							LoadMapInformation, now loads the new isometric related data
 //							DrawMap now draws isometric tiles with their correct offsets							
@@ -134,10 +136,10 @@ implementation
         m.MapInfo.NumberOfLayers := ReadInt(stream);
         m.MapInfo.CollisionLayer := ReadInt(stream);
    		m.MapInfo.EventLayer := ReadInt(stream);
-   		m.MapInfo.GapX := ReadInt(stream);
-   		m.MapInfo.GapY := ReadInt(stream);
-   		m.MapInfo.StaggerX := ReadInt(stream);
-   		m.MapInfo.StaggerY := ReadInt(stream);
+   		m.MapInfo.GapX := 0; //ReadInt(stream);
+   		m.MapInfo.GapY := 0; //ReadInt(stream);
+   		m.MapInfo.StaggerX := 0; //ReadInt(stream);
+   		m.MapInfo.StaggerY := 0; //ReadInt(stream);
    		
    		if ((m.MapInfo.StaggerX = 0) and (m.MapInfo.StaggerY = 0)) then
    			m.MapInfo.Isometric := false
