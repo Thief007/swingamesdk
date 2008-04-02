@@ -331,8 +331,8 @@ namespace SwinGame
         /// <returns>True if an error has occurred</returns>
         internal static bool ExceptionOccured() { return DLL_ExceptionOccured() == -1; }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        private static extern void DLL_GetExceptionMessage([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder result);
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage", CharSet = CharSet.Ansi)]
+        private static extern void DLL_GetExceptionMessage([Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
 
         internal static string GetExceptionMessage()
         {
@@ -830,12 +830,12 @@ namespace SwinGame
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
         //private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, ResourceKind kind);
 
-				[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
+				[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind", CharSet=CharSet.Ansi)]
 				private static extern void DLL_GetPathToResourceWithBaseAndKind(
 					[MarshalAs(UnmanagedType.LPStr)]string path, 
 					[MarshalAs(UnmanagedType.LPStr)]string filename, 
 					ResourceKind kind, 
-					[MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder result);
+					[Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
 
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
         //private static extern IntPtr DLL_GetPathToResourceWithBase([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename);
