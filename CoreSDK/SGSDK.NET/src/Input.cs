@@ -770,7 +770,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII", CharSet=CharSet.Ansi)]
-        private static extern void DLL_TextReadAsASCII([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder result);
+        private static extern void DLL_TextReadAsASCII([Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
 
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
