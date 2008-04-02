@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using SwinGame;
-using System.Drawing;
+using Color = System.Drawing.Color;
 
 namespace Tests
 {
@@ -13,6 +13,7 @@ namespace Tests
         public void AddTo(List<TestSuite> list)
         {
             TestSuite result = new TestSuite("Core Tests");
+            result.Add(new MemoryTest());
             result.Add(new TimerTest());
             result.Add(new ScreenTest());
             list.Add(result);
@@ -68,6 +69,52 @@ namespace Tests
                     _HasTimerStarted = true;
 						  _IsTimerRunning = true;
                 }
+            }
+        }
+
+        private class MemoryTest : TestSet
+        {
+            private readonly static string METHS =
+                "Memory Tests";
+
+            private readonly static string INST =
+                "[1] Bitmaps" + Environment.NewLine +
+                "[2] Sounds" + Environment.NewLine +
+                "[3] Fonts" + Environment.NewLine +
+                "[4] Sprite" + Environment.NewLine +
+                "[5] Matrix" + Environment.NewLine +
+                "[6] Timer" + Environment.NewLine +
+                "Toggle Full [S]creen";
+
+						private int _Test = 1;
+						private int _Count = 0;
+						private string _Snd;
+
+            public MemoryTest() : base(METHS, INST) 
+						{
+							_Snd = Core.GetPathToResource("shock2.wav", ResourceKind.SoundResource);
+						}
+
+            protected override void ToRun(System.Drawing.Rectangle toDrawIn)
+            {
+                if (Input.WasKeyTyped(Keys.VK_1)) { _Test = 1; _Count = 0; }
+                if (Input.WasKeyTyped(Keys.VK_2)) { _Test = 2; _Count = 0; }
+
+								_Count++;
+								
+								switch(_Test)
+								{
+									case 1:
+										Text.DrawText("Testing Bitmap Free... " + _Count, Color.White, GameResources.GameFont("Courier"), 10, 10);
+										Bitmap b = Graphics.CreateBitmap(100, 100);
+										Graphics.FreeBitmap(b);
+										break;
+									case 2:
+										Text.DrawText("Testing Sound Free... " + _Count, Color.White, GameResources.GameFont("Courier"), 10, 10);
+										SoundEffect s = Audio.LoadSoundEffect(_Snd);
+										Audio.FreeSoundEffect(s);
+										break;
+								}
             }
         }
 

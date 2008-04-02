@@ -11,6 +11,9 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Added resource type other
+//                       Fixed error reporting on Free
+//                       Fixed code that returns strings - now use buffer - GetPath... and Exception Message
 // - 2008-03-10: Andrew: Fixed case on TakeScreenshot
 // - 2008-03-09: Andrew: Relaxed exception handling on Free actions
 // - 2008-02-16: Andrew: Removed Mac OS Boot code - now in Pascal...
@@ -131,6 +134,10 @@ namespace SwinGame
         /// Indicates a Map Resource
         /// </summary>
         MapResource,
+        /// <summary>
+        /// Other resouces, located directly in the resource folder
+        /// </summary>
+				OtherResource,
         /// <summary>
         /// Indicates a No Resource
         /// </summary>
@@ -301,16 +308,17 @@ namespace SwinGame
 					case PtrKind.Sprite: DLL_FreeSprite(ptr); break;
 					case PtrKind.Matrix: DLL_FreeMaxtrix2D(ptr); break;
 				}
+				
+				if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
 			}
 			catch (Exception e) 
 			{ 
 				Console.WriteLine("Error in DoFree: {0}", e); 
+
+				//Report issue, but continue...
+				Console.WriteLine(Core.GetExceptionMessage());
 			}
-			
-			//Report issue, but continue...
-			Console.WriteLine(Core.GetExceptionMessage());
-			//if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
-        }
+     }
 	
 	
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
@@ -324,11 +332,13 @@ namespace SwinGame
         internal static bool ExceptionOccured() { return DLL_ExceptionOccured() == -1; }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage")]
-        private static extern IntPtr DLL_GetExceptionMessage();
+        private static extern void DLL_GetExceptionMessage([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder result);
 
         internal static string GetExceptionMessage()
         {
-            return Marshal.PtrToStringAnsi(DLL_GetExceptionMessage());
+						System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+            DLL_GetExceptionMessage(sb);
+						return sb.ToString();
         }
 
         // Code
@@ -817,11 +827,18 @@ namespace SwinGame
             return temp;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind", CharSet=CharSet.Ansi)]
-        private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, ResourceKind kind);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
+        //private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, ResourceKind kind);
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase", CharSet=CharSet.Ansi)]
-        private static extern IntPtr DLL_GetPathToResourceWithBase([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename);
+				[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
+				private static extern void DLL_GetPathToResourceWithBaseAndKind(
+					[MarshalAs(UnmanagedType.LPStr)]string path, 
+					[MarshalAs(UnmanagedType.LPStr)]string filename, 
+					ResourceKind kind, 
+					[MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder result);
+
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
+        //private static extern IntPtr DLL_GetPathToResourceWithBase([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename);
 
         private static readonly string appPath;
 
@@ -844,11 +861,16 @@ namespace SwinGame
         /// <returns>A Path to the Resource</returns>
         public static String GetPathToResource(String filename, ResourceKind kind)
         {
+						//Console.WriteLine("Getting path to {0} kind {1} at {2}", filename, kind.ToString(), appPath);
             string temp;
             try
             {
-                IntPtr addr = DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind);
-                temp = Marshal.PtrToStringAnsi(addr);
+                //IntPtr addr = DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind);
+								//Console.WriteLine(" READ STRING AT = {0}", addr.ToString());
+								//temp = Marshal.PtrToStringAnsi(addr);
+								System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+								DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind, sb);
+								temp = sb.ToString();
             }
             catch (Exception)
             {
@@ -868,20 +890,7 @@ namespace SwinGame
         /// <returns>A Path to the Resource</returns>
         public static String GetPathToResource(String filename)
         {
-            string temp;
-            try
-            {
-                temp = Marshal.PtrToStringAnsi(DLL_GetPathToResourceWithBase(appPath, filename));
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return GetPathToResource(filename, ResourceKind.OtherResource);
         }
 
         private const float DEG_TO_RAD = 0.0174532925f;

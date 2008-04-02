@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Added extra key codes
 // - 2008-01-17: Aki + Andrew: Refactor
 //  
 // Version 1.0:
@@ -134,7 +135,8 @@ const
 	VK_QUESTION =  SDLK_QUESTION;
 	VK_AT =  SDLK_AT;
  	VK_COMMA = SDLK_COMMA;
-
+	VK_SLASH = SDLK_SLASH;
+	
 implementation
 
 end.

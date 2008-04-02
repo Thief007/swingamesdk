@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Fixed GetPixel and GetPixel from Screen
 // - 2008-03-09: Andrew: Added DrawSprite with offsets
 // - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
@@ -655,10 +656,10 @@ namespace SwinGame
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ResetClip")]
         private static extern void DLL_ResetClip(IntPtr bmp);
 
-		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPixel")]
 		  private static extern int DLL_GetPixel(IntPtr bmp, int x, int y);
 		  
-		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl)]
+		  [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPixelFromScreen")]
 		  private static extern int DLL_GetPixelFromScreen(int x, int y);
 
     

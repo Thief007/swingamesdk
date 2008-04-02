@@ -15,6 +15,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Fixed issues related to freeing images
+//						 Fixed transparent pixels for non 32bit images
 // - 2008-03-09: Andrew: Fixed DrawSprite with Offset
 // - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-31: Andrew: Fixed Line Drawing Issue
@@ -437,8 +439,7 @@ implementation
 		begin
 			for r := 0 to toSet.height - 1 do
 			begin
-				toSet.nonTransparentPixels[c, r] := hasAlpha and
-					((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
+				toSet.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
 			end;
 		end;
 	end;
@@ -464,6 +465,10 @@ implementation
 			new(result);
 			if not transparent then result.surface := SDL_DisplayFormatAlpha(loadedImage)
 			else result.surface := SDL_DisplayFormat(loadedImage);
+			//result.surface := loadedImage;
+			
+			//WriteLn('Loaded ', pathToBitmap);
+			//WriteLn('  at ', HexStr(result.surface));
 
 			result.width := result.surface.w;
 			result.height := result.surface.h;
@@ -479,7 +484,7 @@ implementation
 				SetNonAlphaPixels(result, loadedImage);
 			end;
 
-			SDL_FreeSurface(loadedImage);
+			if loadedImage <> result.surface then SDL_FreeSurface(loadedImage);
 		end
 		else
 		begin
@@ -522,11 +527,14 @@ implementation
 	begin
 		if Assigned(bitmapToFree) then
 		begin
-			if bitmapToFree.surface <> nil then
+			if Assigned(bitmapToFree^.surface) then
 			begin
-				SDL_FreeSurface(bitmapToFree.surface);
+				//WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
+				SDL_FreeSurface(bitmapToFree^.surface);
 			end;
-			bitmapToFree.surface := nil;
+			bitmapToFree^.surface := nil;
+
+			//SetLength(bitmapToFree^.nonTransparentPixels, 0, 0);
 
 			Dispose(bitmapToFree);
 			bitmapToFree := nil;

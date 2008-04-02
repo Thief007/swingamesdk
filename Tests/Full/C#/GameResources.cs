@@ -175,12 +175,16 @@ namespace Tests
 	          Graphics.ClearScreen();
 	          Core.RefreshScreen();
 	          Text.FreeFont(_LoadingFont);
+	          
 	          Graphics.FreeBitmap(_Background);
 	          Graphics.FreeBitmap(_Animation);
 		        Graphics.FreeBitmap(_LoaderEmpty);
 		        Graphics.FreeBitmap(_LoaderFull);
+	          
 	          Audio.FreeSoundEffect(_StartSound);
 	          Core.ChangeScreenSize(width, height);
+						
+						Core.ProcessEvents();
         }
 
         private static void NewMap(String mapName)

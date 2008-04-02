@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Added handling of other resources
 // - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-02-16: Andrew: Added Mac boot support, and 
 //                       Fixed scr bitmap to have width and height
@@ -126,7 +127,8 @@ interface
 			FontResource,
 			ImageResource,
 			SoundResource,
-			MapResource
+			MapResource,
+			OtherResource
 		);
 		
 		/// Record: SpriteKind
@@ -934,6 +936,8 @@ implementation
 			ImageResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
 			MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
 		{$endif}
+
+			else result := GetPathToResourceWithBase(path, filename);
 		end;
 	end;
 
