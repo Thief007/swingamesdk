@@ -133,7 +133,16 @@ namespace SwinGameVB
         VK_LALT = 308,
         VK_RMENU = 309,
         VK_RALT = 307,
-        VK_EQUALS = 61
+        VK_EQUALS = 61,
+				 VK_COLON = 58,
+				 VK_SEMICOLON = 59,
+				 VK_LESS = 60,
+				 VK_GREATER = 62,
+				 VK_QUESTION = 63,
+				 VK_AT = 64,
+				 VK_COMMA = 44,
+				 VK_PERIOD = 46,
+				 VK_SLASH =47
     }
 
     /// <summary>

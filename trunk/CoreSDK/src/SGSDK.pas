@@ -21,6 +21,9 @@
 // Change History:
 //  
 //  Version 1.1:
+//  - 2008-04-02: Andrew: Fixed error reporting, 
+//                        Fixed returning strings - now uses buffer
+//												Fixed calles to Free
 //  - 2008-03-10: Andrew: Fixed case of TakeScreenshot
 //  - 2008-03-09: Andrew: Added extra exception handling data
 //                       Added DrawSprite offsets
@@ -54,7 +57,7 @@ library SGSDK;
 uses 
 	SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SGSDK_Camera, SGSDK_Shapes, 
-	SGSDK_MappyLoader, SysUtils;
+	SGSDK_MappyLoader, SysUtils, Strings;
 
 	type
 		//IntPtr used to receive arrays
@@ -134,9 +137,9 @@ uses
 		ErrorMessage: String;
 		HasException: Boolean;		
 	
-	function GetExceptionMessage(): PChar; cdecl; export;
+	procedure GetExceptionMessage(result: PChar); cdecl; export;
 	begin
-		result := PChar(ErrorMessage);
+		StrCopy(result, PChar(ErrorMessage));
 	end;
 	
 	function ExceptionOccured(): Integer; cdecl; export;
@@ -147,11 +150,13 @@ uses
 	
 	procedure TrapException(exc: Exception; fromMethod: String);
 	begin
+		//WriteLn('Trapping error...');
 		HasException := true;
+		
 		if Assigned(exc) then
-		  ErrorMessage := 'Error from ' + fromMethod + ' - ' + exc.Message
+	  	ErrorMessage := 'Error from ' + fromMethod + ' - ' + exc.Message
 		else
-		  ErrorMessage := 'Unknown error from ' + fromMethod + ' - ' + exc.Message
+	  	ErrorMessage := 'Unknown error from ' + fromMethod
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -324,6 +329,7 @@ uses
 		end;
 	end;
 	
+	{
 	function GetPathToResourceWithKind(filename: PChar; kind: ResourceKind) : PChar; cdecl; export;
 	begin
 		Try
@@ -331,7 +337,7 @@ uses
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetPathToResource - with kind');
 		end;
-		result := -1;
+		result := PChar('');
 	end;
 	
 	function GetPathToResource(filename: PChar): PChar; cdecl; export;
@@ -341,28 +347,64 @@ uses
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetPathToResource');
 		end;
-		result := '';
+		result := PChar('');
 	end;
-
-	function GetPathToResourceWithBaseAndKind(path, filename: PChar; kind: ResourceKind) : PChar; cdecl; export;
+	}
+	
+	procedure GetPathToResourceWithBaseAndKind(path, filename: PChar; kind: ResourceKind; result: PChar); cdecl; export;
+	var
+		temp: String;
+		pTemp: PChar;
 	begin
 		try
-			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename, kind));
+			//WriteLn('GetPathToResourceWithBaseAndKind: ', path, ' - ', Integer(kind));
+			temp := SGSDK_Core.GetPathToResourceWithBase(path, filename, kind);
+			//WriteLn(temp);
+			pTemp := PChar(temp);
+			//WriteLn(pTemp);
+			
+			StrCopy(result, pTemp);
+			//WriteLn(result);
+			
+			//WriteLn(' RETURN ', Integer(Pointer(result)), result);
+			
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetPathToResource with kind and base');
 		end;
-		result := '';
+		StrCopy(result, PChar(''));
 	end;
 
-	function GetPathToResourceWithBase(path, filename: PChar) : PChar; cdecl; export;
+	{function GetPathToResourceWithBaseAndKind(path, filename: PChar; kind: ResourceKind) : PChar; cdecl; export;
+	var
+		temp: String;
 	begin
 		try
-			result := PChar(SGSDK_Core.GetPathToResourceWithBase(path, filename));
+			//Write('GetPathToResourceWithBaseAndKind: ', path, ' - ', Integer(kind));
+			temp := SGSDK_Core.GetPathToResourceWithBase(path, filename, kind);
+			result := PChar(temp);
+			WriteLn(' RETURN ', Integer(Pointer(result)), result);
+			
+			exit;
+		Except on exc: Exception do TrapException(exc, 'GetPathToResource with kind and base');
+		end;
+		result := PChar('');
+	end;}
+
+	{procedure GetPathToResourceWithBase(path, filename, result: PChar); cdecl; export;
+	var
+		temp: String;
+		pTemp: PChar;
+	begin
+		try
+			temp := SGSDK_Core.GetPathToResourceWithBase(path, filename);
+			pTemp := PChar(temp);
+			
+			StrCopy(result, pTemp);
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetPathToResource with base');
 		end;
-		result := '';
-	end;
+		result := PChar('');
+	end;}
 
 {	function Cos(angle: Single): Single; cdecl; export;
 	begin
@@ -597,17 +639,18 @@ uses
 		result := 0;
 	end;
 	
-	procedure TextReadAsASCII(out txt: PChar); cdecl; export;
+	procedure TextReadAsASCII(result: PChar); cdecl; export;
 	var
 		temp: String;
 	begin
 		temp := '';
 		Try
 			temp := SGSDK_Input.TextReadAsASCII();
+			StrCopy(result, PChar(temp));
+			exit;
 		Except on exc: Exception do TrapException(exc, 'TextReadAsASCII');
 		end;
-		txt := PChar(temp);
-		//len := Length(temp);
+		StrCopy(result, PChar(''));
 	end;
 		
 	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
@@ -659,11 +702,15 @@ uses
 	
 	function LoadSoundEffect(path: PChar): SoundEffect; cdecl; export;
 	begin
+		//WriteLn('Loading ', path);
 		Try
 			result := SGSDK_Audio.LoadSoundEffect(path);
+			//WriteLn('Ending load sound effect');
 			exit;
 		Except on exc: Exception do TrapException(exc, 'LoadSoundEffect');
 		end;
+
+		//WriteLn('Failed load sound effect');
 		result := nil;
 	end;
 	
@@ -1475,7 +1522,7 @@ uses
 	procedure FreeBitmap(bitmapToFree : Bitmap); cdecl; export;
 	begin
 		Try
-			//SGSDK_Graphics.FreeBitmap(bitmapToFree);
+			SGSDK_Graphics.FreeBitmap(bitmapToFree);
 		Except on exc: Exception do TrapException(exc, 'FreeBitmap');
 		end;
 	end;
@@ -1944,7 +1991,7 @@ uses
 	procedure FreeSprite(spriteToFree : Sprite); cdecl; export;
 	begin
 		Try
-			//SGSDK_Graphics.FreeSprite(spriteToFree);
+			SGSDK_Graphics.FreeSprite(spriteToFree);
 		Except on exc: Exception do TrapException(exc, 'FreeSprite');
 		end;
 	end;
@@ -2302,7 +2349,7 @@ uses
 	procedure FreeMap(m : Map); cdecl; export;
 	begin
 		Try
-			//SGSDK_MappyLoader.FreeMap(m);
+			SGSDK_MappyLoader.FreeMap(m);
 		Except on exc: Exception do TrapException(exc, 'FreeMap');
 		end;
 	end;
@@ -2450,10 +2497,11 @@ exports
 	GetFramerate,	
 	GetTicks,	
 	Sleep,	
-	GetPathToResourceWithKind,
-	GetPathToResource,
-	GetPathToResourceWithBase,
+	//GetPathToResourceWithKind,
 	GetPathToResourceWithBaseAndKind,
+	//GetPathToResource,
+	//GetPathToResourceWithBase,
+	//GetPathToResourceWithBaseAndKind,
 	RegisterEventProcessor,	
 {	Cos,
 	Sin,

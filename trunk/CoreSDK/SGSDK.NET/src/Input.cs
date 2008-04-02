@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Andrew: Added extra characters to key input
 // - 2008-02-22: Andrew: Changed to GetMouseXY
 // - 2008-01-30: Andrew: Fixed String Marshalling and TextRead
 // - 2008-01-23: Fixed Exceptions
@@ -489,7 +490,45 @@ namespace SwinGame
         /// <summary>
         /// Equals
         /// </summary>
-	    VK_EQUALS = 61
+	    VK_EQUALS = 61,
+			
+			/// <summary>
+      /// Colon
+      /// </summary>
+			 VK_COLON = 58,
+				/// <summary>
+       /// Semicolon
+       /// </summary>
+			 VK_SEMICOLON = 59,
+				/// <summary>
+       /// Less than
+       /// </summary>
+			 VK_LESS = 60,
+				/// <summary>
+       /// Greater than
+       /// </summary>
+			 VK_GREATER = 62,
+				/// <summary>
+       /// Question ?
+       /// </summary>
+			 VK_QUESTION = 63,
+			 /// <summary>
+       /// At @
+       /// </summary>
+			 VK_AT = 64,
+
+			 /// <summary>
+       /// Comma ,
+       /// </summary>			
+			 VK_COMMA = 44,
+			 /// <summary>
+       /// Period .
+       /// </summary>
+			 VK_PERIOD = 46,
+			 /// <summary>
+       /// Slash /
+       /// </summary>
+			 VK_SLASH = 47
     }
     
     /// <summary>
@@ -731,7 +770,7 @@ namespace SwinGame
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII", CharSet=CharSet.Ansi)]
-        private static extern void DLL_TextReadAsASCII(out IntPtr ptr);
+        private static extern void DLL_TextReadAsASCII([MarshalAs(UnmanagedType.LPTStr)] System.Text.StringBuilder result);
 
         /// <summary>
         /// TextReadAsASCII allows you to read the value of the string entered by the
@@ -744,9 +783,9 @@ namespace SwinGame
             String temp;
             try
             {
-					 IntPtr ptr;
-                DLL_TextReadAsASCII(out ptr);
-					 temp = Marshal.PtrToStringAnsi(ptr);
+					 			System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+                DLL_TextReadAsASCII(sb);
+					 			temp = sb.ToString();
             }
             catch (Exception exc)
             {
