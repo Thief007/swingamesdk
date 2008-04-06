@@ -11,6 +11,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-02: Stephen:	Added MapWidth(), MapHeight(), BlockWidth(), BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
+//							LoadIsometricInformation(), LoadMapv2(), various bug fixes
 // - 2008-04-02: Andrew: Removed gap loading as mappy support has not been updated on the web, and this version
 //                       is unable to read the old files. 
 // - 2008-03-29: Stephen: 	MapData record now contains GapX, GapY, StaggerX, StaggerY, Isometric
@@ -90,7 +92,8 @@ interface
 		Map = ^MapRecord;
         
 		function LoadMap(mapName : String): Map;
-		function LoadMapFiles(mapFile, imgFile: String): Map;
+		function LoadMapv2(mapName : String) : Map;
+		function LoadMapFiles(mapFile, imgFile: String; version : Integer): Map;
 		procedure DrawMap(m : Map);
 		
 		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
@@ -103,6 +106,15 @@ interface
 		function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
 		
 		function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
+		
+		function MapWidth(m : Map): Integer;
+		function MapHeight(m : Map): Integer;
+		function BlockWidth(m : Map): Integer;
+		function BlockHeight(m : Map): Integer;
+		function GapX(m : Map): Integer;
+		function GapY(m : Map): Integer;
+		function StaggerX(m : Map): Integer;
+		function StaggerY(m : Map): Integer;
 		
 		procedure FreeMap(var m: Map);
 		
@@ -136,15 +148,11 @@ implementation
         m.MapInfo.NumberOfLayers := ReadInt(stream);
         m.MapInfo.CollisionLayer := ReadInt(stream);
    		m.MapInfo.EventLayer := ReadInt(stream);
-   		m.MapInfo.GapX := 0; //ReadInt(stream);
-   		m.MapInfo.GapY := 0; //ReadInt(stream);
-   		m.MapInfo.StaggerX := 0; //ReadInt(stream);
-   		m.MapInfo.StaggerY := 0; //ReadInt(stream);
-   		
-   		if ((m.MapInfo.StaggerX = 0) and (m.MapInfo.StaggerY = 0)) then
-   			m.MapInfo.Isometric := false
-   		else
-   			m.MapInfo.Isometric := true
+   		m.MapInfo.GapX := 0;
+   		m.MapInfo.GapY := 0;
+   		m.MapInfo.StaggerX := 0;
+   		m.MapInfo.StaggerY := 0;
+   		m.MapInfo.Isometric := false;
    		
    		{
    		//Debug
@@ -163,6 +171,28 @@ implementation
    		ReadLn();
    		}
 	end;
+	
+	procedure LoadIsometricInformation(m : Map; var stream : text);
+	begin
+		m.MapInfo.GapX := ReadInt(stream);
+   		m.MapInfo.GapY := ReadInt(stream);
+   		m.MapInfo.StaggerX := ReadInt(stream);
+   		m.MapInfo.StaggerY := ReadInt(stream);
+	
+		if ((m.MapInfo.StaggerX = 0) and (m.MapInfo.StaggerY = 0)) then
+   			m.MapInfo.Isometric := false
+   		else
+   			m.MapInfo.Isometric := true;
+   			
+   		if (m.MapInfo.Isometric = false) then
+   		begin
+   			m.MapInfo.GapX := 0;
+   			m.MapInfo.GapY := 0;
+   			m.MapInfo.StaggerX := 0;
+   			m.MapInfo.StaggerY := 0;
+   		end;
+	end;
+	
 	
 	procedure LoadAnimationInformation(m : Map; var stream : text);
 	var
@@ -465,10 +495,20 @@ implementation
 		mapFile := GetPathToResource(mapName + '.sga', MapResource);
 		imgFile := GetPathToResource(mapName + '.png', MapResource);
       	
-		result := LoadMapFiles(mapFile, imgFile);
+		result := LoadMapFiles(mapFile, imgFile, 1);
 	end;
 	
-	function LoadMapFiles(mapFile, imgFile: String): Map;
+	function LoadMapv2(mapName: String): Map;
+	var
+		mapFile, imgFile: String;
+	begin
+		mapFile := GetPathToResource(mapName + '.sg2', MapResource);
+		imgFile := GetPathToResource(mapName + '.png', MapResource);
+      	
+		result := LoadMapFiles(mapFile, imgFile, 2);
+	end;
+	
+	function LoadMapFiles(mapFile, imgFile: String; version : Integer): Map;
 	var
 		filestream : text;
 		m : Map;
@@ -485,6 +525,8 @@ implementation
 		
 		//Load Map Content
 		LoadMapInformation(m, filestream);
+		if (version = 2) then
+			LoadIsometricInformation(m, filestream);
 		LoadAnimationInformation(m, filestream);
 		LoadLayerData(m, filestream);
 		LoadCollisionData(m, filestream);
@@ -501,7 +543,7 @@ implementation
 	function EventCount(m : Map; eventType : Event): Integer;
 	begin
 		if m = nil then raise Exception.Create('No Map supplied (nil)');
-		if (eventType < Event1) or (eventType > Event23) then raise Exception.Create('EventType is out of range');
+		if (eventType < Event1) or (eventType > Event24) then raise Exception.Create('EventType is out of range');
 		
 		result := Length(m.EventInfo[eventType]);
 		
@@ -521,55 +563,33 @@ implementation
 	// Gets the Top Left X Coordinate of the Event
 	function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
 	begin
-		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType)) then raise Exception.Create('Event number is out of range');
+		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
 
-		result := m.EventInfo[eventType][eventnumber].x * m.MapInfo.BlockWidth;
-		
-		{count := 0;
-		
-		for y := 0 to m.MapInfo.MapWidth - 1 do
+		if (m.MapInfo.Isometric = true) then
 		begin
-			for x := 0 to m.MapInfo.MapHeight - 1 do
-			begin
-				if event = m.EventInfo.Event[y][x] then
-				begin
-					if eventnumber = count then
-					begin
-						result := x * m.MapInfo.BlockWidth;
-						exit;
-					end;
-					count := count + 1;
-				end;
-			end;
-		end;
-		result := 0;}
+			result := m.EventInfo[eventType][eventnumber].x * m.MapInfo.GapX;
+			if ((m.EventInfo[eventType][eventnumber].y MOD 2) = 1) then
+				result := result + m.MapInfo.StaggerX;
+			end
+			
+		else
+			result := m.EventInfo[eventType][eventnumber].x * m.MapInfo.BlockWidth;
+		
 	end;
 	
 	// Gets the Top Left Y Coordinate of the Event
 	function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
 	begin
-		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType)) then raise Exception.Create('Event number is out of range');
-			
-		result := m.EventInfo[eventType][eventnumber].y * m.MapInfo.BlockHeight;
+		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
 		
-		{count := 0;
-		
-		for y := 0 to m.MapInfo.MapWidth - 1 do
+		if (m.MapInfo.Isometric = true) then
 		begin
-			for x := 0 to m.MapInfo.MapHeight - 1 do
-			begin
-				if event = m.EventInfo.Event[y][x] then
-				begin
-					if eventnumber = count then
-					begin
-						result := y * m.MapInfo.BlockHeight;
-						exit;
-					end;
-					count := count + 1;
-				end;
-			end;
+			result := m.EventInfo[eventType][eventnumber].y * m.MapInfo.StaggerY;
+		end
+		else			
+		begin
+			result := m.EventInfo[eventType][eventnumber].y * m.MapInfo.BlockHeight;
 		end;
-		result := 0;}
 	end;
 	
 	function BruteForceDetection(m: Map; spr: Sprite): Boolean;
@@ -842,6 +862,46 @@ implementation
 			result := WillCollideOnSide(m, spr);
 		end;
 		spr.movement := temp;
+	end;
+	
+	function MapWidth(m : Map): Integer;
+	begin
+		result := m.MapInfo.MapWidth;
+	end;
+	
+	function MapHeight(m : Map): Integer;
+	begin
+		result := m.MapInfo.MapHeight;
+	end;
+	
+	function BlockWidth(m : Map): Integer;
+	begin
+		result := m.MapInfo.BlockWidth;
+	end;
+	
+	function BlockHeight(m : Map): Integer;
+	begin
+		result := m.MapInfo.BlockHeight;
+	end;
+	
+	function GapX(m : Map): Integer;
+	begin
+		result := m.MapInfo.GapX;
+	end;
+	
+	function GapY(m : Map): Integer;
+	begin
+		result := m.MapInfo.GapY;
+	end;
+	
+	function StaggerX(m : Map): Integer;
+	begin
+		result := m.MapInfo.StaggerX;
+	end;
+	
+	function StaggerY(m : Map): Integer;
+	begin
+		result := m.MapInfo.StaggerY;
 	end;
 	
 end.
