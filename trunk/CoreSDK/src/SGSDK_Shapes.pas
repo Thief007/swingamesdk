@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-08: Stephen: Added Triangle Record, and CreateTriangle()x2
 // - 2008-01-31: Andrew: Fixed IsPointOnLine
 //                     : Added RectangleAroundLine
 // - 2008-01-31: Stephen: Partial fix of IsPointOnLine
@@ -37,6 +38,12 @@ uses SGSDK_Core;
 				startPoint: Point2D;
 				endPoint: Point2D;
 			end;
+			
+		Triangle = record
+			pointA: Point2D;
+			pointB: Point2D;
+			pointC: Point2D;
+		end;
 
 		LinesArray = Array of LineSegment;
 
@@ -67,6 +74,10 @@ uses SGSDK_Core;
 	function CreateRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
 	function CreateRectangle(const pt: Point2D; width, height: Integer): Rectangle; overload;
 	function CreateRectangle(sprt: Sprite): Rectangle; overload;
+	
+	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
+	function CreateTriangle(a, b, c: Point2D): Triangle; overload;
+	function IsPointInTriangle(point : Point2D; triangle : Triangle): Boolean;
 	
 	function RectangleAroundLine(const line: LineSegment): Rectangle; {New 1.2}
 	
@@ -422,6 +433,52 @@ implementation
 	function CreateRectangle(bmp: Bitmap): Rectangle; overload;
 	begin
 		result := CreateRectangle(0, 0, bmp);
+	end;
+	
+	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
+	begin
+		result := CreateTriangle(CreatePoint(ax, ay), CreatePoint(bx, by), CreatePoint(cx, cy));
+	end;
+	
+	function CreateTriangle(a, b, c: Point2D): Triangle; overload;
+	begin
+		result.pointA := a;
+		result.pointB := b;
+		result.pointC := c;
+	end;
+	
+	function IsPointInTriangle(point : Point2D; triangle : Triangle): Boolean;
+	var
+		v0, v1, v2 : Vector;
+		a, b, c, p: Vector;
+		dot00, dot01, dot02, dot11, dot12 : Single;
+		invDenom, u, v: Single;
+	begin
+		//Convert Points to vectors
+		p := PointToVector(point);
+		a := PointToVector(triangle.pointA);
+		b := PointToVector(triangle.pointB);
+		c := PointToVector(triangle.pointC);
+		
+		// Compute vectors    
+		v0 := SubtractVectors(c, a);
+		v1 := SubtractVectors(b, a);
+		v2 := SubtractVectors(p, a);
+	
+		// Compute dot products
+		dot00 := DotProduct(v0, v0);
+		dot01 := DotProduct(v0, v1);
+		dot02 := DotProduct(v0, v2);
+		dot11 := DotProduct(v1, v1);
+		dot12 := DotProduct(v1, v2);
+	
+		// Compute barycentric coordinates
+		invDenom := 1 / (dot00 * dot11 - dot01 * dot01);
+		u := (dot11 * dot02 - dot01 * dot12) * invDenom;
+		v := (dot00 * dot12 - dot01 * dot02) * invDenom;
+		
+		// Check if point is in triangle
+		result := ((u > 0) and (v > 0) and (u + v < 1));
 	end;
 	
 	function MidPoint(const line: LineSegment): Point2D;
