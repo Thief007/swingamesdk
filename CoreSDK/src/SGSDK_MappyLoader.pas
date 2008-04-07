@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-08: Stephen: 	Added TilesWide(), TilesHigh()
 // - 2008-04-02: Stephen:	Added MapWidth(), MapHeight(), BlockWidth(), BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
 //							LoadIsometricInformation(), LoadMapv2(), various bug fixes
 // - 2008-04-02: Andrew: Removed gap loading as mappy support has not been updated on the web, and this version
@@ -115,6 +116,8 @@ interface
 		function GapY(m : Map): Integer;
 		function StaggerX(m : Map): Integer;
 		function StaggerY(m : Map): Integer;
+		function TilesWide(m : Map): Integer;
+		function TilesHigh(m : Map): Integer;
 		
 		procedure FreeMap(var m: Map);
 		
@@ -904,4 +907,13 @@ implementation
 		result := m.MapInfo.StaggerY;
 	end;
 	
+	function TilesWide(m : Map): Integer;
+	begin
+		result := round(m.MapInfo.MapWidth / m.MapInfo.BlockWidth);
+	end;
+	
+	function TilesHigh(m : Map): Integer;
+	begin
+		result := round(m.MapInfo.MapHeight / m.MapInfo.BlockHeight);
+	end;
 end.

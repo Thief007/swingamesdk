@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-08: Stephen: Added DrawTriangle()
 // - 2008-04-02: Andrew: Fixed issues related to freeing images
 //						 Fixed transparent pixels for non 32bit images
 // - 2008-03-09: Andrew: Fixed DrawSprite with Offset
@@ -142,6 +143,8 @@ interface
 
 	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
 	procedure DrawLine(theColour: Colour; const line: LineSegment); overload;
+	
+	procedure DrawTriangle(theColour: Colour; triangle: Triangle);
 
 	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
 
@@ -1257,6 +1260,13 @@ implementation
 	procedure DrawLine(dest: Bitmap; theColour: Colour; const line: LineSegment); overload;
 	begin
 		DrawLine(dest, theColour, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
+	end;
+	
+	procedure DrawTriangle(theColour: Colour; triangle: Triangle);
+	begin
+		DrawLine(theColour, triangle.pointA.x, triangle.pointA.y, triangle.pointB.x, triangle.pointB.y);
+		DrawLine(theColour, triangle.pointA.x, triangle.pointA.y, triangle.pointC.x, triangle.pointC.y);
+		DrawLine(theColour, triangle.pointC.x, triangle.pointC.y, triangle.pointB.x, triangle.pointB.y);
 	end;
 	
 	/// Draws a horizontal line on the screen.
