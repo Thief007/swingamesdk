@@ -42,6 +42,7 @@ interface
 		);
 		
 		MapData = record
+			Version: Integer;
             MapWidth: Integer;
             MapHeight: Integer;
             BlockWidth: Integer;
@@ -93,8 +94,7 @@ interface
 		Map = ^MapRecord;
         
 		function LoadMap(mapName : String): Map;
-		function LoadMapv2(mapName : String) : Map;
-		function LoadMapFiles(mapFile, imgFile: String; version : Integer): Map;
+		function LoadMapFiles(mapFile, imgFile: String): Map;
 		procedure DrawMap(m : Map);
 		
 		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
@@ -116,8 +116,6 @@ interface
 		function GapY(m : Map): Integer;
 		function StaggerX(m : Map): Integer;
 		function StaggerY(m : Map): Integer;
-		function TilesWide(m : Map): Integer;
-		function TilesHigh(m : Map): Integer;
 		
 		procedure FreeMap(var m: Map);
 		
@@ -141,8 +139,23 @@ implementation
 	end;
 	
 	procedure LoadMapInformation(m : Map; var stream : text);
+	var
+		header: Integer;
 	begin
-		m.MapInfo.MapWidth := ReadInt(stream);
+		header := ReadInt(stream);
+		
+		if header = 0 then
+		begin
+			m.MapInfo.Version := ReadInt(stream);
+			m.MapInfo.MapWidth := ReadInt(stream);
+		end
+		else
+		begin
+			m.MapInfo.Version := 1;
+			m.MapInfo.MapWidth := header;
+		end;
+	
+		//m.MapInfo.MapWidth := ReadInt(stream);
         m.MapInfo.MapHeight := ReadInt(stream);
         m.MapInfo.BlockWidth := ReadInt(stream);
         m.MapInfo.BlockHeight := ReadInt(stream);
@@ -498,20 +511,10 @@ implementation
 		mapFile := GetPathToResource(mapName + '.sga', MapResource);
 		imgFile := GetPathToResource(mapName + '.png', MapResource);
       	
-		result := LoadMapFiles(mapFile, imgFile, 1);
+		result := LoadMapFiles(mapFile, imgFile);
 	end;
 	
-	function LoadMapv2(mapName: String): Map;
-	var
-		mapFile, imgFile: String;
-	begin
-		mapFile := GetPathToResource(mapName + '.sg2', MapResource);
-		imgFile := GetPathToResource(mapName + '.png', MapResource);
-      	
-		result := LoadMapFiles(mapFile, imgFile, 2);
-	end;
-	
-	function LoadMapFiles(mapFile, imgFile: String; version : Integer): Map;
+	function LoadMapFiles(mapFile, imgFile: String): Map;
 	var
 		filestream : text;
 		m : Map;
@@ -525,10 +528,10 @@ implementation
 		
 		//Create Map
 		New(m);
-		
+
 		//Load Map Content
 		LoadMapInformation(m, filestream);
-		if (version = 2) then
+		if (m.MapInfo.Version > 1) then
 			LoadIsometricInformation(m, filestream);
 		LoadAnimationInformation(m, filestream);
 		LoadLayerData(m, filestream);
@@ -540,6 +543,8 @@ implementation
 		LoadBlockSprites(m, imgFile);
 		m.Frame := 0;
 		result := m;
+		
+		WriteLn(m.MapInfo.Version);
 	end;
 	
 	//Gets the number of Event of the specified type
@@ -906,14 +911,5 @@ implementation
 	begin
 		result := m.MapInfo.StaggerY;
 	end;
-	
-	function TilesWide(m : Map): Integer;
-	begin
-		result := round(m.MapInfo.MapWidth / m.MapInfo.BlockWidth);
-	end;
-	
-	function TilesHigh(m : Map): Integer;
-	begin
-		result := round(m.MapInfo.MapHeight / m.MapInfo.BlockHeight);
-	end;
+
 end.
