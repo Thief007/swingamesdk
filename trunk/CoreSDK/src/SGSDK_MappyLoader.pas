@@ -931,7 +931,7 @@ implementation
 		end;
 	end;
 	
-	function GetTilePositionFromPoint(point: Point2D; m: Map): Point2D;
+	function GetTileFromPoint(point: Point2D; m: Map): Point2D;
 	var
 		x, y, tx, ty : Integer;
 		
@@ -965,10 +965,37 @@ implementation
 					tx := x * m.MapInfo.BlockWidth;
 					
 				if IsPointInTile(point, tx, ty, m) then
-					result := CreatePoint(tx,ty);
+					result := CreatePoint(x,y);
 			end;
 		end;
 	
+	end;
+	
+	function GetTilePosition(m : Map; coord : Point2D): Point2D;
+	var
+		tx, ty : Single;
+	begin
+	
+		if (coord.x < 0) or (coord.x > m.MapInfo.MapWidth - 1) then raise Exception.Create('Invalid x index');
+		if (coord.y < 0) or (coord.y > m.MapInfo.MapHeight - 1) then raise Exception.Create('Invalid y index');
+		
+		//Isometric Offset for Y
+		if (m.MapInfo.Isometric = true) then
+			ty := coord.y * m.MapInfo.StaggerY
+		else
+			ty := coord.y * m.MapInfo.BlockHeight;	
+				
+		//Isometric Offset for X
+		if (m.MapInfo.Isometric = true) then
+		begin
+			tx := coord.x * m.MapInfo.GapX;
+			if ((coord.y MOD 2) = 1) then
+				tx += m.MapInfo.StaggerX;
+			end
+			else
+				tx := coord.x * m.MapInfo.BlockWidth;
+				
+		result := CreatePoint(tx, ty);
 	end;
 
 end.
