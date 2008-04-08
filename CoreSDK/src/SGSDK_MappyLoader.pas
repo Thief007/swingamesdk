@@ -911,5 +911,64 @@ implementation
 	begin
 		result := m.MapInfo.StaggerY;
 	end;
+	
+	function IsPointInTile(point: Point2D; x, y: Integer; m : Map): Boolean;
+	var
+		tri1, tri2 : Triangle;
+	begin
+		result := false;
+	
+		if m.MapInfo.Isometric then
+		begin
+			//Create Triangles
+			tri1 := CreateTriangle(x, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
+    		tri2 := CreateTriangle(x + m.MapInfo.BlockWidth, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
+    		if IsPointInTriangle(point, tri1) or IsPointInTriangle(point, tri2) then result := true;
+		end
+		else
+		begin
+			result := PointIsWithinRect(point, x, y, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+		end;
+	end;
+	
+	function GetTilePositionFromPoint(point: Point2D; m: Map): Point2D;
+	var
+		x, y, tx, ty : Integer;
+		
+	begin
+		//Returns -1,-1 if no tile has this point
+		result := CreatePoint(-1,-1);
+	
+		for y := 0  to m.MapInfo.MapHeight - 1 do
+		begin
+			//GapX and GapY = The distance between each tile (rectangular), can be different to the normal width and height of the block
+			//StaggerX and StaggerY = The isometric Offset
+		
+		
+			//Isometric Offset for Y
+			if (m.MapInfo.Isometric = true) then
+				ty := y * m.MapInfo.StaggerY
+			else
+				ty := y * m.MapInfo.BlockHeight;	
+		
+			for x := 0  to m.MapInfo.MapWidth - 1  do
+			begin
+				
+				//Isometric Offset for X
+				if (m.MapInfo.Isometric = true) then
+				begin
+					tx := x * m.MapInfo.GapX;
+					if ((y MOD 2) = 1) then
+						tx += m.MapInfo.StaggerX;
+				end
+				else
+					tx := x * m.MapInfo.BlockWidth;
+					
+				if IsPointInTile(point, tx, ty, m) then
+					result := CreatePoint(tx,ty);
+			end;
+		end;
+	
+	end;
 
 end.
