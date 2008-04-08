@@ -41,6 +41,16 @@ interface
 			Event24 = 23
 		);
 		
+		Tile = record
+			xIndex: Integer;
+			yIndex: Integer;
+			topCorner: Point2D;
+			pointA: Point2D;
+			pointB: Point2D;
+			pointC: Point2D;
+			pointD: Point2D;
+		end;
+		
 		MapData = record
 			Version: Integer;
             MapWidth: Integer;
@@ -116,6 +126,9 @@ interface
 		function GapY(m : Map): Integer;
 		function StaggerX(m : Map): Integer;
 		function StaggerY(m : Map): Integer;
+		
+		function GetTileFromPoint(point: Point2D; m: Map): Tile;
+		function GetEventAtTile(m : Map; xIndex, yIndex: Integer): Event;
 		
 		procedure FreeMap(var m: Map);
 		
@@ -544,7 +557,7 @@ implementation
 		m.Frame := 0;
 		result := m;
 		
-		WriteLn(m.MapInfo.Version);
+		//WriteLn(m.MapInfo.Version);
 	end;
 	
 	//Gets the number of Event of the specified type
@@ -912,6 +925,7 @@ implementation
 		result := m.MapInfo.StaggerY;
 	end;
 	
+	//Determines whether the specified point is within the tile provided
 	function IsPointInTile(point: Point2D; x, y: Integer; m : Map): Boolean;
 	var
 		tri1, tri2 : Triangle;
@@ -931,24 +945,31 @@ implementation
 		end;
 	end;
 	
-	function GetTileFromPoint(point: Point2D; m: Map): Point2D;
+	
+	//This function will get the tile that is under the given point2D, isometric maps are taken into consideration.
+	//The function will return a Tile, which gives the x,y Index that the tile occurs in the map structure, also
+	//the top-right corner of the tile, and the 4 points that construct the tile.
+	//Note that for Isometric tiles, the 4 points will form a diamond.
+	function GetTileFromPoint(point: Point2D; m: Map): Tile;
 	var
 		x, y, tx, ty : Integer;
 		
 	begin
 		//Returns -1,-1 if no tile has this point
-		result := CreatePoint(-1,-1);
+		result.xIndex := -1;
+		result.yIndex := -1;
+		result.topCorner := CreatePoint(0,0);
+		result.PointA := CreatePoint(0,0);
+		result.PointB := CreatePoint(0,0);
+		result.PointC := CreatePoint(0,0);
+		result.PointD := CreatePoint(0,0);
 	
 		for y := 0  to m.MapInfo.MapHeight - 1 do
 		begin
-			//GapX and GapY = The distance between each tile (rectangular), can be different to the normal width and height of the block
-			//StaggerX and StaggerY = The isometric Offset
-		
-		
 			//Isometric Offset for Y
-			if (m.MapInfo.Isometric = true) then
+			if (m.MapInfo.Isometric = true) then 
 				ty := y * m.MapInfo.StaggerY
-			else
+			else 
 				ty := y * m.MapInfo.BlockHeight;	
 		
 			for x := 0  to m.MapInfo.MapWidth - 1  do
@@ -965,37 +986,52 @@ implementation
 					tx := x * m.MapInfo.BlockWidth;
 					
 				if IsPointInTile(point, tx, ty, m) then
-					result := CreatePoint(x,y);
+				begin
+					if (m.MapInfo.Isometric = true) then
+					begin
+						result.xIndex := x;
+						result.yIndex := y;
+						result.topCorner := CreatePoint(tx, ty);
+						result.PointA := CreatePoint(tx, ty + m.MapInfo.BlockHeight / 2);
+						result.PointB := CreatePoint(tx + m.MapInfo.BlockWidth / 2, ty);
+						result.PointC := CreatePoint(tx + m.MapInfo.BlockWidth / 2, ty + m.MapInfo.BlockHeight);
+						result.PointD := CreatePoint(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight / 2);
+					exit;
+					end
+					else
+					begin
+						result.xIndex := x;
+						result.yIndex := y;
+						result.topCorner := CreatePoint(tx,ty);
+						result.PointA := CreatePoint(tx, ty);
+						result.PointB := CreatePoint(tx + m.MapInfo.BlockWidth, ty);
+						result.PointC := CreatePoint(tx, ty + m.MapInfo.BlockHeight);
+						result.PointD := CreatePoint(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight);
+					end;
+				end;
 			end;
 		end;
 	
 	end;
 	
-	function GetTilePosition(m : Map; coord : Point2D): Point2D;
+	//Returns the Event of the tile at the given index's.
+	//Note, that if the tile does not have an event, this function will return Event(-1)
+	function GetEventAtTile(m : Map; xIndex, yIndex: Integer): Event;
 	var
-		tx, ty : Single;
+		i, j: Integer;
 	begin
+		result := Event(-1);
 	
-		if (coord.x < 0) or (coord.x > m.MapInfo.MapWidth - 1) then raise Exception.Create('Invalid x index');
-		if (coord.y < 0) or (coord.y > m.MapInfo.MapHeight - 1) then raise Exception.Create('Invalid y index');
-		
-		//Isometric Offset for Y
-		if (m.MapInfo.Isometric = true) then
-			ty := coord.y * m.MapInfo.StaggerY
-		else
-			ty := coord.y * m.MapInfo.BlockHeight;	
-				
-		//Isometric Offset for X
-		if (m.MapInfo.Isometric = true) then
+		for i := 0  to 23 do
 		begin
-			tx := coord.x * m.MapInfo.GapX;
-			if ((coord.y MOD 2) = 1) then
-				tx += m.MapInfo.StaggerX;
-			end
-			else
-				tx := coord.x * m.MapInfo.BlockWidth;
-				
-		result := CreatePoint(tx, ty);
+			if (Length(m.EventInfo[Event(i)]) > 0) then
+			begin
+				for j := 0 to (Length(m.EventInfo[Event(i)]) - 1) do
+				begin
+					if (m.EventInfo[Event(i)][j].x = xIndex) and (m.EventInfo[Event(i)][j].y = yIndex) then begin result := Event(i); exit; end;
+				end;
+			end;	
+		end;
 	end;
 
 end.
