@@ -197,6 +197,32 @@ REGEDIT4
 
 [HKEY_CLASSES_ROOT\CLSID\{6939978A-4BD4-4C0F-94DC-ED66F9C359A1}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
+[HKEY_CLASSES_ROOT\SwinGameVB.Timer]
+@="SwinGameVB.Timer"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Timer\CLSID]
+@="{1560B85C-B30C-44B0-BE27-4245AFDD01F7}"
+
+[HKEY_CLASSES_ROOT\CLSID\{1560B85C-B30C-44B0-BE27-4245AFDD01F7}]
+@="SwinGameVB.Timer"
+
+[HKEY_CLASSES_ROOT\CLSID\{1560B85C-B30C-44B0-BE27-4245AFDD01F7}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Timer"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{1560B85C-B30C-44B0-BE27-4245AFDD01F7}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Timer"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{1560B85C-B30C-44B0-BE27-4245AFDD01F7}\ProgId]
+@="SwinGameVB.Timer"
+
+[HKEY_CLASSES_ROOT\CLSID\{1560B85C-B30C-44B0-BE27-4245AFDD01F7}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
 [HKEY_CLASSES_ROOT\SwinGameVB.Vector]
 @="SwinGameVB.Vector"
 
@@ -347,6 +373,32 @@ REGEDIT4
 
 [HKEY_CLASSES_ROOT\CLSID\{61146386-9F07-497B-ACC4-D53D8A0A39D9}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
 
+[HKEY_CLASSES_ROOT\SwinGameVB.Log]
+@="SwinGameVB.Log"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Log\CLSID]
+@="{E13C55B0-B303-4520-881D-D21CCFE421C4}"
+
+[HKEY_CLASSES_ROOT\CLSID\{E13C55B0-B303-4520-881D-D21CCFE421C4}]
+@="SwinGameVB.Log"
+
+[HKEY_CLASSES_ROOT\CLSID\{E13C55B0-B303-4520-881D-D21CCFE421C4}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Log"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{E13C55B0-B303-4520-881D-D21CCFE421C4}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Log"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{E13C55B0-B303-4520-881D-D21CCFE421C4}\ProgId]
+@="SwinGameVB.Log"
+
+[HKEY_CLASSES_ROOT\CLSID\{E13C55B0-B303-4520-881D-D21CCFE421C4}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
 [HKEY_CLASSES_ROOT\Record\{B9D5EA09-7FBE-3F39-97BB-9128A3428B26}\1.0.0.0]
 "Class"="SwinGameVB.Event"
 "Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
@@ -465,3 +517,107 @@ REGEDIT4
 @="SwinGameVB.Physics"
 
 [HKEY_CLASSES_ROOT\CLSID\{2542698C-64CF-4767-B993-D9017D721444}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Point2D]
+@="SwinGameVB.Point2D"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Point2D\CLSID]
+@="{767BEEFF-A826-4C7F-B30C-C448CDB1BA1E}"
+
+[HKEY_CLASSES_ROOT\CLSID\{767BEEFF-A826-4C7F-B30C-C448CDB1BA1E}]
+@="SwinGameVB.Point2D"
+
+[HKEY_CLASSES_ROOT\CLSID\{767BEEFF-A826-4C7F-B30C-C448CDB1BA1E}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Point2D"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{767BEEFF-A826-4C7F-B30C-C448CDB1BA1E}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Point2D"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{767BEEFF-A826-4C7F-B30C-C448CDB1BA1E}\ProgId]
+@="SwinGameVB.Point2D"
+
+[HKEY_CLASSES_ROOT\CLSID\{767BEEFF-A826-4C7F-B30C-C448CDB1BA1E}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\SwinGameVB.LineSegment]
+@="SwinGameVB.LineSegment"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.LineSegment\CLSID]
+@="{E4845722-BA74-49A9-8B88-1137A2136D5A}"
+
+[HKEY_CLASSES_ROOT\CLSID\{E4845722-BA74-49A9-8B88-1137A2136D5A}]
+@="SwinGameVB.LineSegment"
+
+[HKEY_CLASSES_ROOT\CLSID\{E4845722-BA74-49A9-8B88-1137A2136D5A}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.LineSegment"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{E4845722-BA74-49A9-8B88-1137A2136D5A}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.LineSegment"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{E4845722-BA74-49A9-8B88-1137A2136D5A}\ProgId]
+@="SwinGameVB.LineSegment"
+
+[HKEY_CLASSES_ROOT\CLSID\{E4845722-BA74-49A9-8B88-1137A2136D5A}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Rectangle]
+@="SwinGameVB.Rectangle"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Rectangle\CLSID]
+@="{4F80A984-F1D8-4F63-B78D-B957615A6400}"
+
+[HKEY_CLASSES_ROOT\CLSID\{4F80A984-F1D8-4F63-B78D-B957615A6400}]
+@="SwinGameVB.Rectangle"
+
+[HKEY_CLASSES_ROOT\CLSID\{4F80A984-F1D8-4F63-B78D-B957615A6400}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Rectangle"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{4F80A984-F1D8-4F63-B78D-B957615A6400}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Rectangle"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{4F80A984-F1D8-4F63-B78D-B957615A6400}\ProgId]
+@="SwinGameVB.Rectangle"
+
+[HKEY_CLASSES_ROOT\CLSID\{4F80A984-F1D8-4F63-B78D-B957615A6400}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Shapes]
+@="SwinGameVB.Shapes"
+
+[HKEY_CLASSES_ROOT\SwinGameVB.Shapes\CLSID]
+@="{ADD251D7-953F-4CCD-8232-7AFCBA4FCB52}"
+
+[HKEY_CLASSES_ROOT\CLSID\{ADD251D7-953F-4CCD-8232-7AFCBA4FCB52}]
+@="SwinGameVB.Shapes"
+
+[HKEY_CLASSES_ROOT\CLSID\{ADD251D7-953F-4CCD-8232-7AFCBA4FCB52}\InprocServer32]
+@="mscoree.dll"
+"ThreadingModel"="Both"
+"Class"="SwinGameVB.Shapes"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{ADD251D7-953F-4CCD-8232-7AFCBA4FCB52}\InprocServer32\1.0.0.0]
+"Class"="SwinGameVB.Shapes"
+"Assembly"="SGSDKVB6, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d"
+"RuntimeVersion"="v2.0.50727"
+
+[HKEY_CLASSES_ROOT\CLSID\{ADD251D7-953F-4CCD-8232-7AFCBA4FCB52}\ProgId]
+@="SwinGameVB.Shapes"
+
+[HKEY_CLASSES_ROOT\CLSID\{ADD251D7-953F-4CCD-8232-7AFCBA4FCB52}\Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}]
