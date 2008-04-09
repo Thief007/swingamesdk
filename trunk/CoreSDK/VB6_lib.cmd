@@ -23,6 +23,8 @@ set Output1=.\SGSDKVB6\lib\
 set LibDir=%BaseDir%\SGSDK.NET\lib
 
 set SDKVB6=..\SDKs\VB6\Visual Studio 6.0\lib\
+set SDKVB6Base=..\SDKs\VB6\Visual Studio 6.0
+
 if not exist "%SDKVB6%" mkdir "%SDKVB6%"
 
 set VB6bin=.\SGSDKVB6\src\bin\Debug\
@@ -71,6 +73,8 @@ if "%1"=="clean" goto cleaning
 
 	echo Copying to SDKVB6
 	copy "%Output1%*" "%SDKVB6%" >> out.log
+	if ERRORLEVEL 1 goto error
+	copy "%Output1%SGSDKVB6.reg" "%SDKVB6Base%"
 	if ERRORLEVEL 1 goto error
 
 	echo Finished
