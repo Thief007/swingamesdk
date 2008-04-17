@@ -769,6 +769,35 @@ namespace SwinGame
             return temp;
         }
 
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="EndReadingText", CharSet=CharSet.Ansi)]
+        private static extern void DLL_EndReadingText([Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
+
+        /// <summary>
+        /// Terminates the reading of strings from the user and returns the string they entered. 
+				/// This string can still be read using TextReadAsASCII.
+        /// </summary>
+        /// <returns>The string entered by the user</returns>
+				public static String EndReadingText()
+				{
+          String temp;
+          try
+          {
+				 			System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+              DLL_EndReadingText(sb);
+				 			temp = sb.ToString();
+          }
+          catch (Exception exc)
+          {
+              throw new SwinGameException(exc.Message);
+          }
+          if (Core.ExceptionOccured())
+          {
+              throw new SwinGameException(Core.GetExceptionMessage());
+          }
+          return temp;					
+				}
+
+
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="TextReadAsASCII", CharSet=CharSet.Ansi)]
         private static extern void DLL_TextReadAsASCII([Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
 

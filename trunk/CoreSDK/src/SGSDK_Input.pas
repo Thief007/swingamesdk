@@ -9,6 +9,9 @@
 //
 // Change History:
 //
+// Version 1.1.5:
+// - 2008-04-18: Andrew: Added EndTextRead
+//
 // Version 1.1:
 // - 2008-02-13: James: changed MoveMouse so it dosnt generate mouse movemnt event
 // - 2008-01-25: Stephen: Fixed IsMouseShown
@@ -52,7 +55,8 @@ interface
 	function MouseWasClicked(button: MouseButton): Boolean;
 	
 	procedure StartReadingText(textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
-
+	function 	EndReadingText(): String;
+	
 	function IsReadingText(): Boolean;
 	function TextReadAsASCII(): String;
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
@@ -156,6 +160,11 @@ implementation
 	function IsReadingText(): Boolean;
 	begin
 		result := sdlManager.IsReading;
+	end;
+	
+	function EndReadingText(): String;
+	begin
+		result := sdlManager.EndReadingText();
 	end;
 
  	/// TextReadAsASCII allows you to read the value of the string entered by the

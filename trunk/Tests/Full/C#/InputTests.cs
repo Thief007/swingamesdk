@@ -93,7 +93,16 @@ namespace Tests
                 {
                     Input.StartReadingText(Color.White, 10, GameResources.GameFont("Courier"), 35, 240);
                 }
-                _EnteredText = Input.TextReadAsASCII();
+
+								if (Input.IsReadingText() && Input.MouseWasClicked(MouseButton.LeftButton))
+								{
+									_EnteredText = Input.EndReadingText();
+								}
+								else 
+								{
+									_EnteredText = Input.TextReadAsASCII();
+								}
+								
                 Text.DrawText("You Entered : " + _EnteredText, Color.White, GameResources.GameFont("Courier"), 10, 130);
             }
         }
