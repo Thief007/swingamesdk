@@ -218,11 +218,13 @@ namespace SwinGameVB
             return SwinGame.Input.MouseWasClicked((SwinGame.MouseButton)button);
         }
 
+				/// <summary>
         /// StartReadingText start the API reading a string values from the user.
         ///	Entry is completed when the user presses enter, and aborted with escape.
         ///	If the user aborts entry the result is an empty string. Text entry is
         ///	updated as part of ProcessEvents, and is drawn to the screen as part of
         ///	the RefreshScreen call.
+				/// </summary>
         ///
         ///	@param textColor:	The color of the text entered by the user
         ///	@param maxLength:	The maximum length of the string the user can enter
@@ -233,6 +235,15 @@ namespace SwinGameVB
             Color color = Color.FromArgb(toColour);
             SwinGame.Input.StartReadingText(color, maxLength, theFont.result, x, y);
         }
+
+				/// <summary>
+        /// Ends reading text from the user and returns the string entered.
+				/// </summary>
+        /// <returns>The String entered by the user</returns>
+				public string EndReadingText()
+				{
+						return SwinGame.Input.EndReadingText();
+				}
 
         /// <summary>
         /// IsReadingText indicates if the API is currently reading text from the

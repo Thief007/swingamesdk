@@ -20,7 +20,11 @@
 //
 // Change History:
 //  
-//  Version 1.1:
+//  Version 1.1.5
+//   - 2008-04-18: Andrew: 	Added version number
+//													Added EndReadingText
+//
+//  Pre Version 1.1.5...
 //  - 2008-04-02: Andrew: Fixed error reporting, 
 //                        Fixed returning strings - now uses buffer
 //												Fixed calles to Free
@@ -29,6 +33,7 @@
 //                       Added DrawSprite offsets
 //  - 2008-02-22: Andrew: Changed to GetMouseXY
 //  - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
+//  Version 1.1:
 //  - 2008-01-31: Stephen: Fixed SetSpriteEndingAction
 //	- 2008-01-30: James: CircleHasCollidedWithLine changed to return -1
 //  - 2008-01-30: Andrew: Fixed String Marshalling and Free
@@ -82,6 +87,18 @@ uses
 	// 					Helper Methods
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
+
+	//Version number: MMmmrr
+	// Major = MM
+	// Minor = mm
+	// Revision = rr
+	
+	function DLLVersion(): Integer; cdecl; export;
+	begin
+		result := 10105;
+	end;
+	
 
 	/// Copies the data from an array passed as a pointer
 	/// into a Pascal array
@@ -618,7 +635,6 @@ uses
 		result := -1;
 	end;
 
-
 	procedure StartReadingText(textColor: Colour; maxLength: Integer;
 										theFont: Font; x, y: Integer); cdecl; export;
 	begin
@@ -637,6 +653,20 @@ uses
 		Except on exc: Exception do TrapException(exc, 'IsReadingText');
 		end;
 		result := 0;
+	end;
+	
+	procedure EndReadingText(result: PChar); cdecl; export;
+	var
+		temp: String;
+	begin
+			temp := '';
+			Try
+				temp := SGSDK_Input.EndReadingText();
+				StrCopy(result, PChar(temp));
+				exit;
+			Except on exc: Exception do TrapException(exc, 'EndReadingText');
+			end;
+			StrCopy(result, PChar(''));
 	end;
 	
 	procedure TextReadAsASCII(result: PChar); cdecl; export;
@@ -2530,6 +2560,7 @@ exports
 	IsMouseUp,
 	MouseWasClicked,
 	StartReadingText,
+	EndReadingText, {1.1.5}
 	IsReadingText,
 	TextReadAsASCII,
 	IsKeyPressed,
@@ -2768,6 +2799,7 @@ exports
 	// 					Error Handling
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+	DLLVersion,
 	GetExceptionMessage,
 	ExceptionOccured;
 end.

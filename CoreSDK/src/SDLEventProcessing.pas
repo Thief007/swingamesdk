@@ -13,6 +13,9 @@
 //
 // Change History:
 //
+// Version 1.1.5:
+// - 2008-04-18: Andrew: Added EndTextRead
+//
 //  Version 1.0:
 //  - Various
 
@@ -51,6 +54,7 @@ type TSDLManager = class (TObject)
 
 		procedure DrawCollectedText(dest: PSDL_Surface);
 		procedure StartReadingText(textColor: TSDL_Color; maxLength: Integer; theFont: PTTF_Font; x, y: Integer);
+		function 	EndReadingText(): String;
 
 		function WasKeyTyped(keyCode: Integer): Boolean;
 
@@ -216,6 +220,12 @@ implementation
 					_textSurface := nil;
 			end;
 		end;
+	end;
+	
+	function TSDLManager.EndReadingText(): String;
+	begin
+		_readingString := false;
+		result := _tempString;
 	end;
 	
 	procedure TSDLManager.DrawCollectedText(dest: PSDL_Surface);

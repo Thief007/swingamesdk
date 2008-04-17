@@ -48,7 +48,12 @@ implementation
 		begin
 		    StartReadingText(ColourWhite, 10, GameFont('Courier'), 35, 240);
 		end;
-		_EnteredText := TextReadAsASCII();
+		
+		if IsReadingText() and MouseWasClicked(LeftButton) then
+			_EnteredText := EndReadingText()
+		else
+			_EnteredText := TextReadAsASCII();
+		
 		DrawText('You Entered : ' + _EnteredText, ColourWhite, GameFont('Courier'), 10, 130);
 	end;
 	
@@ -78,7 +83,8 @@ implementation
 		begin
 			MethodBeingTested := 'All Keyboard';
 			Instructions := 'Hit the [A] Key' + EOL +
-            				'[S]tart Reading Text';
+            				'[S]tart Reading Text' + EOL + 
+										'Click mouse to end reading text';
 			ToRun := @KeyboardInputTest;
 		end;
 	end;
