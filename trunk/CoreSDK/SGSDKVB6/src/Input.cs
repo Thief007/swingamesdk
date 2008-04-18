@@ -240,10 +240,10 @@ namespace SwinGameVB
         /// Ends reading text from the user and returns the string entered.
 				/// </summary>
         /// <returns>The String entered by the user</returns>
-				public string EndReadingText()
-				{
-						return SwinGame.Input.EndReadingText();
-				}
+        public string EndReadingText()
+        {
+            return SwinGame.Input.EndReadingText();
+        }
 
         /// <summary>
         /// IsReadingText indicates if the API is currently reading text from the
@@ -337,7 +337,10 @@ namespace SwinGameVB
         bool IsMouseDown(MouseButton button);
         bool IsMouseUp(MouseButton button);
         bool MouseWasClicked(MouseButton button);
+
         void StartReadingText(int toColour, int maxLength, Fonts theFont, int x, int y);
+        string EndReadingText();
+
         bool IsReadingText();
         String TextReadAsASCII();
         bool IsKeyPressed(Keys key);
