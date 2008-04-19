@@ -3386,5 +3386,30 @@ namespace SwinGame
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
 		}
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTriangle")]
+        private static extern void DLL_DrawTriangle(int theColor, Triangle triangle);
+        /// <summary>
+        /// Draws the specified Triangle to the screen
+        /// </summary>
+        /// <param name="theColor">The color of the triangle</param>
+        /// <param name="triangle">The triangle to be drawn</param>
+        public static void DrawTriangle(Color theColor, Triangle triangle)
+        {
+            try
+            {
+                int color = theColor.ToArgb();
+                DLL_DrawTriangle(color, triangle);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+  
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+        }
     }
 }

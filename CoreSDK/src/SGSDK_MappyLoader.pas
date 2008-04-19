@@ -14,7 +14,6 @@
 // - 2008-04-18: Andrew:	Fix extensions to work with Delphi.
 //
 // Version 1.1:
-// - 2008-04-08: Stephen: 	Added TilesWide(), TilesHigh()
 // - 2008-04-02: Stephen:	Added MapWidth(), MapHeight(), BlockWidth(), BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
 //							LoadIsometricInformation(), LoadMapv2(), various bug fixes
 // - 2008-04-02: Andrew: Removed gap loading as mappy support has not been updated on the web, and this version
