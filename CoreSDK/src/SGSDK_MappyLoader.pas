@@ -44,6 +44,7 @@ interface
 			Event24 = 23
 		);
 		
+		//New
 		Tile = record
 			xIndex: Integer;
 			yIndex: Integer;

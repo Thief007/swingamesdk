@@ -2410,6 +2410,112 @@ uses
 		end;
 	end;
 	
+	//New!
+	function MapWidth(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.MapWidth(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'MapWidth');
+		end;
+		result := -1;
+	end;
+	
+	function MapHeight(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.MapHeight(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'MapHeight');
+		end;
+		result := -1;
+	end;
+	
+	function BlockWidth(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.BlockWidth(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'BlockWidth');
+		end;
+		result := 01;
+	end;
+	
+	function BlockHeight(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.BlockHeight(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'BlockHeight');
+		end;
+		result := -1;
+	end;
+	
+	function GapX(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.GapX(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'GapX');
+		end;
+		result := -1;
+	end;
+	
+	function GapY(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.GapY(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'GapY');
+		end;
+		result := -1;
+	end;
+	
+	function StaggerX(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.StaggerX(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'StaggerX');
+		end;
+		result := -1;
+	end;
+	
+	function StaggerY(m : Map): Integer; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.StaggerY(m);
+			exit;
+		Except on exc: Exception do TrapException(exc, 'StaggerY');
+		end;
+		result := -1;
+	end;
+	
+	function GetTileFromPoint(point: Point2D; m: Map): Tile; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Mappyloader.GetTileFromPoint(point, m);
+		Except on exc: Exception do TrapException(exc, 'GetTileFromPoint');
+		end;
+		result.xIndex := -1;
+		result.yIndex := -1;
+		result.topCorner := SGSDK_Shapes.CreatePoint(0,0);
+		result.PointA := SGSDK_Shapes.CreatePoint(0,0);
+		result.PointB := SGSDK_Shapes.CreatePoint(0,0);
+		result.PointC := SGSDK_Shapes.CreatePoint(0,0);
+		result.PointD := SGSDK_Shapes.CreatePoint(0,0);
+	end;
+	
+	function GetEventAtTile(m : Map; xIndex, yIndex: Integer): Integer; cdecl; export;
+	begin
+		Try
+			result := Integer(SGSDK_Mappyloader.GetEventAtTile(m, xIndex, yIndex));
+			exit;
+		Except on exc: Exception do TrapException(exc, 'GetEventAtTile');
+		end;
+		result := -1;
+	end;
+	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Shapes
@@ -2493,6 +2599,25 @@ uses
 			exit;
 		Except on exc: Exception do TrapException(exc, 'HasBitmapCollidedWithRect');
 		end;
+		result := 0;
+	end;
+	
+	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; cdecl; export;
+	begin
+		Try
+			result := SGSDK_Shapes.CreateTriangle(ax, ay, bx, by, cx, cy);
+		Except on exc: Exception do TrapException(exc, 'CreateTriangle');
+		end;
+	end;
+	
+	function IsPointInTriangle(point : Point2D; triangle : Triangle): Integer; cdecl; export;
+	begin
+		Try
+			if SGSDK_Shapes.IsPointInTriangle(point, triangle) then result := -1
+			else result := 0;
+			exit;
+		Except on exc: Exception do TrapException(exc, 'IsPointInTriangle');
+		end;	
 		result := 0;
 	end;
 
@@ -2779,6 +2904,17 @@ exports
 	SpriteHasCollidedWithMapTile,
 	WillCollideOnSide,
 	MoveSpriteOutOfTile,
+	//v1.1.5
+	MapWidth,
+	MapHeight,
+	BlockWidth,
+	BlockHeight,
+	GapX,
+	GapY,
+	StaggerX,
+	StaggerY,
+	GetTileFromPoint,
+	GetEventAtTile,
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -2792,6 +2928,8 @@ exports
 	IsPointOnLine, {1.1}
 	GetLineIntersectionPoint, {1.1}
 	LineIntersectsWithLines, {1.1}
+	CreateTriangle, {1.1.5}
+	IsPointInTriangle, {1.1.5}
 	
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
