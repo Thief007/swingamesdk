@@ -11,6 +11,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-19: Stephen: Added CreateTriangle and IsPointInTriangle
+// - 2008-04-19: Stephen: Added Triangle Struct
 // - 2008-01-25: Stephen: Added Rectangle, Top, Bottom, Left, Right
 // - 2008-01-23: Andrew: Fixed exceptions
 //               Added changes for 1.1 compatibility
@@ -23,6 +25,26 @@ using System.Drawing;
 
 namespace SwinGame
 {
+    /// <summary>
+    /// A Triangle is a data type that holds 3 points, that when connected, form a triangle
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Triangle
+    {
+        /// <summary>
+        /// First Point Coordinate of the Triangle
+        /// </summary>
+        public Point2D pointA;
+        /// <summary>
+        /// Second Point Coordinate of the Triangle
+        /// </summary>
+        public Point2D pointB;
+        /// <summary>
+        /// Third Point Coordinate of the Triangle
+        /// </summary>
+        public Point2D pointC;
+    }
+
     /// <summary>
     /// The Point is a data type that holds an X and Y Coordinate.
     /// </summary>
@@ -635,6 +657,73 @@ namespace SwinGame
             {
                 return rect.X;
             }
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateTriangle")]
+        private static extern Triangle DLL_CreateTriangle(Single ax, Single ay, Single bx, Single by, Single cx, Single cy);
+        /// <summary>
+        /// Creates a Triangle from the points given
+        /// </summary>
+        /// <param name="ax">PointA X Coordinate</param>
+        /// <param name="ay">PointA Y Coordinate</param>
+        /// <param name="bx">PointB X Coordinate</param>
+        /// <param name="by">PointB Y Coordinate</param>
+        /// <param name="cx">PointC X Coordinate</param>
+        /// <param name="cy">PointC Y Coordinate</param>
+        /// <returns></returns>
+        public static Triangle CreateTriangle(Single ax, Single ay, Single bx, Single by, Single cx, Single cy)
+        {
+            Triangle temp;
+            try
+            {
+                temp = DLL_CreateTriangle(ax, ay, bx, by, cx, cy);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+        /// <summary>
+        /// Creates a Triangl from the points given
+        /// </summary>
+        /// <param name="a">PointA</param>
+        /// <param name="b">PointB</param>
+        /// <param name="c">PointC</param>
+        /// <returns></returns>
+        public static Triangle CreateTriangle(Point2D a, Point2D b, Point2D c)
+        {
+            return CreateTriangle(a.X, a.Y, b.X, b.Y, c.X, c.Y);
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsPointInTriangle")]
+        private static extern int DLL_IsPointInTriangle(Point2D point, Triangle triangle);
+        /// <summary>
+        /// This function will return true if the given point can be found within the given triangle
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <param name="triangle">Triangle</param>
+        /// <returns>True if the point is in the Triangle</returns>
+        public static bool IsPointInTriangle(Point2D point, Triangle triangle)
+        {
+            bool temp;
+            try
+            {
+                temp = DLL_IsPointInTriangle(point, triangle) == -1;
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
     }
 }

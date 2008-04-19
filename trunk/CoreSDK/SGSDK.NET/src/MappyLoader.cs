@@ -10,6 +10,8 @@
 // Change History:
 //
 // Version 1.1:
+// - 2008-04-19: Stephen: Added new Isometric methods
+// - 2008-04-19: Stephen: Added Tile Struct
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-29: Andrew: Removed ref from Free
 // - 2008-01-23: Stephen: Fixed Exceptions
@@ -31,6 +33,43 @@ using System.IO;
 
 namespace SwinGame
 {
+    /// <summary>
+    /// A Tile structure, contains the index in which the tile occurs in the map, and also the 4 points that create
+    /// the tiles shape, Square/Rectangular or Isometric
+    /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
+    public struct Tile
+    {
+        /// <summary>
+        /// X Index of the tile, this indicates what row the tile exists on
+        /// </summary>
+        public int xIndex;
+        /// <summary>
+        /// Y Index of the tile, this indicates what column the tile exists on
+        /// </summary>
+        public int yIndex;
+        /// <summary>
+        /// The top right hand coordinate of the Tile
+        /// </summary>
+        public Point2D topCorner;
+        /// <summary>
+        /// The first point of the tile
+        /// </summary>
+        public Point2D pointA;
+        /// <summary>
+        /// The second point of the tile
+        /// </summary>
+        public Point2D pointB;
+        /// <summary>
+        /// The third point of the tile
+        /// </summary>
+        public Point2D pointC;
+        /// <summary>
+        /// The fourth point of the tile
+        /// </summary>
+        public Point2D pointD;
+    }
+
     /// <summary>
     /// MappyLoader Events
     /// </summary>
@@ -513,6 +552,253 @@ namespace SwinGame
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MapWidth")]
+        private static extern int DLL_MapWidth(IntPtr map);
+        /// <summary>
+        /// This function will return the width of the map in tiles.
+        /// Example: using a 10x12 map, this function will return 10.
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int MapWidth(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_MapWidth(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "MapHeight")]
+        private static extern int DLL_MapHeight(IntPtr map);
+        /// <summary>
+        /// This function will return the height of the map in tiles.
+        /// Example: using a 10x12 map, this function will return 12.
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int MapHeight(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_MapHeight(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "BlockWidth")]
+        private static extern int DLL_BlockWidth(IntPtr map);
+        /// <summary>
+        /// This function will return the width of the map blocks
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int BlockWidth(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_BlockWidth(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "BlockHeight")]
+        private static extern int DLL_BlockHeight(IntPtr map);
+        /// <summary>
+        /// This function will return the width of the map blocks
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int BlockHeight(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_BlockHeight(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GapX")]
+        private static extern int DLL_GapX(IntPtr map);
+        /// <summary>
+        /// This function will return the horizontal gap between tiles in ISOMETRIC maps
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int GapX(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_GapX(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GapY")]
+        private static extern int DLL_GapY(IntPtr map);
+        /// <summary>
+        /// This function will return the vertical gap between tiles in ISOMETRIC maps
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int GapY(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_GapY(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StaggerX")]
+        private static extern int DLL_StaggerX(IntPtr map);
+        /// <summary>
+        /// This function will return the horizontal offset for ISOMETRIC maps
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int StaggerX(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_StaggerX(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StaggerY")]
+        private static extern int DLL_StaggerY(IntPtr map);
+        /// <summary>
+        /// This function will return the vertical offset for ISOMETRIC maps
+        /// </summary>
+        /// <param name="map">The Map</param>
+        public static int StaggerY(Map map)
+        {
+            int temp;
+            try
+            {
+                temp = DLL_StaggerY(map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetTileFromPoint")]
+        private static extern Tile DLL_GetTileFromPoint(Point2D point, IntPtr map);
+        /// <summary>
+        /// This function will get the tile that contains the given point, if no tile exists that
+        /// contains the point, a tile with both indexes as -1 and Points(0,0) will be returned.
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <param name="map">The Map</param>
+        public static Tile GetTileFromPoint(Point2D point, Map map)
+        {
+            Tile temp;
+            try
+            {
+                temp = DLL_GetTileFromPoint(point, map.Pointer);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
+        }
+
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetEventAtTile")]
+        private static extern Event DLL_GetEventAtTile(IntPtr map, int xIndex, int yIndex);
+        /// <summary>
+        /// This function will return the Event of the tile within the map. The number 255 will be
+        /// returned if there is no event on this tile, or there is no tile at the given x and y index
+        /// </summary>
+        /// <param name="map">The Map</param>
+        /// <param name="xIndex">The X Index of the Tile</param>
+        /// <param name="yIndex">The Y Index of the Tile</param>
+        public static Event GetEventAtTile(Map map, int xIndex, int yIndex)
+        {
+            Event temp;
+            try
+            {
+                temp = DLL_GetEventAtTile(map.Pointer, xIndex, yIndex);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+            return temp;
         }
     }
 }
