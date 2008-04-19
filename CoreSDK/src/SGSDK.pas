@@ -2506,6 +2506,7 @@ uses
 	begin
 		Try
 			result := SGSDK_Mappyloader.GetTileFromPoint(point, m);
+			exit;
 		Except on exc: Exception do TrapException(exc, 'GetTileFromPoint');
 		end;
 		result.xIndex := -1;
