@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1.5
+//   - 2008-04-19: Aki: Added DrawTriangle method
 //   - 2008-04-19: Aki: Added methods for new mappy loader and shapes methods
 //   - 2008-04-18: Andrew: 	Added version number
 //													Added EndReadingText
@@ -1758,6 +1759,15 @@ uses
 		Except on exc: Exception do TrapException(exc, 'DrawEllipse');
 		end;
 	end;
+	
+	//Version 1.1.5
+	procedure DrawTriangle(theColour: Colour; triangle: Triangle); cdecl; export;
+	begin
+		Try
+			SGSDK_Graphics.DrawTriangle(theColour, triangle);
+		Except on exc: Exception do TrapException(exc, 'DrawTriangle');
+		end;
+	end;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 								Animated Sprite Additions
@@ -2888,6 +2898,7 @@ exports
 	FollowSprite,
 	SetClip,
 	ResetClip,
+	DrawTriangle, {1.1.5}
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
