@@ -38,7 +38,8 @@ uses SGSDK_Core;
 				startPoint: Point2D;
 				endPoint: Point2D;
 			end;
-			
+		
+		//new
 		Triangle = record
 			pointA: Point2D;
 			pointB: Point2D;
