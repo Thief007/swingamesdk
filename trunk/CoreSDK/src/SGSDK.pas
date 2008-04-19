@@ -21,6 +21,7 @@
 // Change History:
 //  
 //  Version 1.1.5
+//   - 2008-04-19: Aki: Added methods for new mappy loader and shapes methods
 //   - 2008-04-18: Andrew: 	Added version number
 //													Added EndReadingText
 //
