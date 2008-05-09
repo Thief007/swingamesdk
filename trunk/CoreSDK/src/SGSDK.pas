@@ -20,9 +20,11 @@
 //
 // Change History:
 //  
-//  Version 1.1.5
+//  Version 1.1.6 - in progress
+//	 - 2008-05-09: Andrew: Added debug tracing code
 //   - 2008-04-19: Aki: Added DrawTriangle method
 //   - 2008-04-19: Aki: Added methods for new mappy loader and shapes methods
+//  Version 1.1.5 - released
 //   - 2008-04-18: Andrew: 	Added version number
 //													Added EndReadingText
 //
@@ -57,14 +59,14 @@
 //  Version 1.0:
 //  - Various
 
-{$PACKENUM 4}
+{$I SwinGame.inc}
 
 library SGSDK;
 
 uses 
 	SGSDK_Core, SGSDK_Input, SGSDK_Audio, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
 	SDL_Mixer, SDL, SDL_Image, SDL_TTF, SGSDK_Camera, SGSDK_Shapes, 
-	SGSDK_MappyLoader, SysUtils, Strings;
+	SGSDK_MappyLoader, SysUtils, Strings, SwinGameTrace;
 
 	type
 		//IntPtr used to receive arrays
@@ -98,7 +100,7 @@ uses
 	
 	function DLLVersion(): Integer; cdecl; export;
 	begin
-		result := 10105;
+		result := 10106;
 	end;
 	
 
@@ -145,7 +147,7 @@ uses
 			arr[i] := (data + i)^;
 		end;
 	end;
-
+	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					Exception
@@ -169,13 +171,16 @@ uses
 	
 	procedure TrapException(exc: Exception; fromMethod: String);
 	begin
-		//WriteLn('Trapping error...');
 		HasException := true;
 		
 		if Assigned(exc) then
-	  	ErrorMessage := 'Error from ' + fromMethod + ' - ' + exc.Message
+	  		ErrorMessage := 'Error from ' + fromMethod + ' - ' + exc.Message
 		else
-	  	ErrorMessage := 'Unknown error from ' + fromMethod
+	  		ErrorMessage := 'Unknown error from ' + fromMethod;
+
+	  	{$IFDEF TRACE}
+			Trace('SGSDK.dll', 'Error', fromMethod, ErrorMessage);
+		{$ENDIF}
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -186,14 +191,25 @@ uses
 	
 	procedure ProcessEvents(); cdecl; export;
 	begin
+	  	{$IFDEF TRACE}
+			TraceEnter('SGSDK.dll', 'ProcessEvents');
+		{$ENDIF}
+
 		try
 			SGSDK_Core.ProcessEvents();
 		Except on exc: Exception do TrapException(exc, 'ProcessEvents');
-		end;		
+		end;	
+			
+	  	{$IFDEF TRACE}
+			TraceExit('SGSDK.dll', 'ProcessEvents');
+		{$ENDIF}
 	end;
 
 	procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
 	begin
+	  	{$IFDEF TRACE}
+			TraceEnter('SGSDK.dll', 'OpenGraphicsWindow ', String(caption) + ': W' + IntToStr(width) + ': H' + IntToStr(height));
+		{$ENDIF}
 		ErrorMessage := '';
 		HasException := false;
 		
@@ -201,6 +217,10 @@ uses
 			SGSDK_Core.OpenGraphicsWindow(caption, width, height);
 		Except on exc: Exception do TrapException(exc, 'OpenGraphicsWindow');
 		end;
+		
+	  	{$IFDEF TRACE}
+			TraceExit('SGSDK.dll', 'OpenGraphicsWindow');
+		{$ENDIF}		
 	end;
 	
 	function WindowCloseRequested(): Integer; cdecl; export;

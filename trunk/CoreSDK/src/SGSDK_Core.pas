@@ -10,6 +10,8 @@
 //
 // Change History:
 //
+// Version 1.1.6: in progress
+// - 2008-05-09: Andrew: Added tracing for OpenGraphicsWindow
 // Version 1.1:
 // - 2008-04-02: Andrew: Added handling of other resources
 // - 2008-03-09: Andrew: Added extra exception handling
@@ -35,6 +37,8 @@ interface
 	uses
 		SDL, SDL_Image, SDLEventProcessing;
 
+	{$I SwinGame.inc}
+		
 	const
 		{$IFDEF FPC}
 			EOL = LineEnding;
@@ -318,7 +322,7 @@ interface
 	function GetPathToResourceWithBase(path, filename: String) : String; overload;
 	
 implementation
-	uses SysUtils, Math, Classes;
+	uses SysUtils, Math, Classes, SwinGameTrace;
 	
 	/// ProcessEvents allows the SwinGame API to react to user interactions. This
 	///	routine checks the current keyboard and mouse states. This routine must
@@ -353,6 +357,10 @@ implementation
 	var
 		icon: PSDL_Surface;
 	begin
+		{$IFDEF TRACE}
+			TraceEnter('SGSDK_Core', 'InitSDL');
+		{$ENDIF}
+
 		if (screenWidth < 1) or (screenHeight < 1) then raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
 	
 		if Length(iconFile) > 0 then
@@ -380,6 +388,9 @@ implementation
 		end;
 
 		SDL_WM_SetCaption(PChar(caption), nil);
+		{$IFDEF TRACE}
+			TraceExit('SGSDK_Core', 'InitSDL');
+		{$ENDIF}
 	end;
 	
 	procedure ClearArray(var theArray: Array of UInt32);
@@ -573,7 +584,11 @@ implementation
 	/// Side Effects:
 	///	- A graphical window is opened
 	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); overload;
-	begin		
+	begin
+		{$IFDEF TRACE}
+			TraceEnter('SGSDK_Core', 'OpenGraphicsWindow', caption + ': W' + IntToStr(width) + ': H' + IntToStr(height));
+		{$ENDIF}
+		
 		if scr <> nil then
       		raise Exception.Create('Screen has been created. Cannot create multiple windows.');
     	
@@ -607,6 +622,10 @@ implementation
 			ColourTransparent := ColorTransparent;
 		except on e: Exception do raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
 		end;
+		
+		{$IFDEF TRACE}
+			TraceExit('SGSDK_Core', 'OpenGraphicsWindow');
+		{$ENDIF}
 	end;
 	
 	/// Opens the graphical window as an 800 x 600 window. See OpenGramhicsWinddow
@@ -1056,7 +1075,9 @@ var
 		
 initialization
 begin
-	//WriteLn('Start Init');
+	{$IFDEF TRACE}
+		TraceEnter('SGSDK_Core', 'initialization');
+	{$ENDIF}
 
 	{$ifdef DARWIN}
     //WriteLn('Loading Mac version');
@@ -1082,11 +1103,17 @@ begin
 
 	scr := nil;
 	
-	//WriteLn('End Init');
+	{$IFDEF TRACE}
+		TraceExit('SGSDK_Core', 'initialization');
+	{$ENDIF}
 end;
 
 finalization
 begin
+	{$IFDEF TRACE}
+		TraceEnter('SGSDK_Core', 'finalization');
+	{$ENDIF}
+
 	if sdlManager <> nil then
 	begin
 		sdlManager.Free();
@@ -1106,6 +1133,10 @@ begin
 	end;
 	
 	SDL_Quit();
+	
+	{$IFDEF TRACE}
+		TraceExit('SGSDK_Core', 'finalization');
+	{$ENDIF}
 end;
 
 end.
