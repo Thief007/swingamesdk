@@ -19,7 +19,7 @@ set SDK=..\SDKs\DOTNet\Visual Studio\C#\lib\
 set CLSDKVB=..\SDKs\DOTNet\Command Line\VB\lib\
 set CLSDK=..\SDKs\DOTNet\Command Line\C#\lib\
 
-set EXTRA_OPTS="-O3 -Sewn -vwn"
+set EXTRA_OPTS="-O3 -Sewn -vwn -wr"
 
 echo Running script from %BaseDir%
 echo Saving output to %Output1%

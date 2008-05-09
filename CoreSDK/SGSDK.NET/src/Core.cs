@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace SwinGame
 {
@@ -329,16 +330,20 @@ namespace SwinGame
         /// The error message to be returned to the user.
         /// </summary>
         /// <returns>True if an error has occurred</returns>
-        internal static bool ExceptionOccured() { return DLL_ExceptionOccured() == -1; }
+        internal static bool ExceptionOccured() 
+        { 
+            return DLL_ExceptionOccured() == -1; 
+        }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage", CharSet = CharSet.Ansi)]
         private static extern void DLL_GetExceptionMessage([Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
 
         internal static string GetExceptionMessage()
         {
-						System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
             DLL_GetExceptionMessage(sb);
-						return sb.ToString();
+            Trace.WriteLine("Error... " + sb.ToString());
+			return sb.ToString();
         }
 
         // Code
@@ -371,6 +376,7 @@ namespace SwinGame
         /// <param name="height">Height of the Window</param>
         public static void OpenGraphicsWindow(String caption, int width, int height)
         {
+            Trace.WriteLine("Enter OpenGraphicsWindow");
             try
             {
                 DLL_OpenGraphicsWindow(caption, width, height);
@@ -382,6 +388,8 @@ namespace SwinGame
 
             if (Core.ExceptionOccured())
                 throw new SwinGameException(Core.GetExceptionMessage());
+
+            Trace.WriteLine("Exit OpenGraphicsWindow");
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
