@@ -8,7 +8,7 @@ using Font = SwinGame.Font;
 using FontStyle = SwinGame.FontStyle;
 using Sprite = SwinGame.Sprite;
 
-namespace RPGDemo
+namespace GameProject
 {
     static class Program
     {
@@ -18,7 +18,7 @@ namespace RPGDemo
         [STAThread]
         static void Main()
         {
-            GameProject.GameLogic.RunGame();
+            GameLogic.RunGame();
         }
     }
 }
