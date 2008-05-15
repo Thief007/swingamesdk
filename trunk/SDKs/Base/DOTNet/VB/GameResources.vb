@@ -31,7 +31,11 @@ Public Module GameResources
     ''' <returns>The Font Loaded with this Name</returns>
     ''' <remarks></remarks>
     Public Function GameFont(ByVal font As String) As Font
-        Return _Fonts(font)
+        Try
+            Return _Fonts(font)
+        Catch e As Exception
+            Throw New Exception("Cannot find font " + font, e)
+        End Try
     End Function
 
     ''' <summary>
@@ -41,7 +45,11 @@ Public Module GameResources
     ''' <returns>The image loaded with this name</returns>
     ''' <remarks></remarks>
     Public Function GameImage(ByVal image As String) As Bitmap
-        Return _Images(image)
+        Try
+            Return _Images(image)
+        Catch e As Exception
+            Throw New Exception("Cannot find image " + image, e)
+        End Try
     End Function
 
     ''' <summary>
@@ -51,7 +59,11 @@ Public Module GameResources
     ''' <returns>The sound with this name</returns>
     ''' <remarks></remarks>
     Public Function GameSound(ByVal sound As String) As SoundEffect
-        Return _Sounds(sound)
+        Try
+            Return _Sounds(sound)
+        Catch e As Exception
+            Throw New Exception("Cannot find sound " + sound, e)
+        End Try
     End Function
 
     ''' <summary>
@@ -61,7 +73,11 @@ Public Module GameResources
     ''' <returns>The music with this name</returns>
     ''' <remarks></remarks>
     Public Function GameMusic(ByVal music As String) As Music
-        Return _Music(music)
+        Try
+            Return _Music(music)
+        Catch e As Exception
+            Throw New Exception("Cannot find music " + music, e)
+        End Try
     End Function
 
     ''' <summary>
@@ -71,7 +87,11 @@ Public Module GameResources
     ''' <returns>The map with this name</returns>
     ''' <remarks></remarks>
     Public Function GameMap(ByVal map As String) As Map
-        Return _Maps(map)
+        Try
+            Return _Maps(map)
+        Catch e As Exception
+            Throw New Exception("Cannot find map " + map, e)
+        End Try
     End Function
 
     Private _Images As New Dictionary(Of String, Bitmap)

@@ -8,8 +8,7 @@ using Bitmap = SwinGame.Bitmap;
 using Font = SwinGame.Font;
 using FontStyle = SwinGame.FontStyle;
 
-
-namespace GameResources
+namespace GameProject
 {
     /// <summary>
     /// The Resources Class stores all of the Games Media Resources, such as Images, Fonts
@@ -103,16 +102,16 @@ namespace GameResources
             _LoadingFont = Text.LoadFont(Core.GetPathToResource("arial.ttf", ResourceKind.FontResource), 12);
             _StartSound = Audio.LoadSoundEffect(Core.GetPathToResource("SwinGameStart.ogg", ResourceKind.SoundResource));
 
-				_LoaderFull = Graphics.LoadBitmap(Core.GetPathToResource("loader_full.png", ResourceKind.ImageResource));
-				_LoaderEmpty = Graphics.LoadBitmap(Core.GetPathToResource("loader_empty.png", ResourceKind.ImageResource));
-				
+            _LoaderFull = Graphics.LoadBitmap(Core.GetPathToResource("loader_full.png", ResourceKind.ImageResource));
+            _LoaderEmpty = Graphics.LoadBitmap(Core.GetPathToResource("loader_empty.png", ResourceKind.ImageResource));
+
             PlaySwinGameIntro();
         }
 
         private static void PlaySwinGameIntro()
         {
-						const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
-	
+            const int ANI_X = 143, ANI_Y = 134, ANI_W = 546, ANI_H = 327, ANI_V_CELL_COUNT = 6, ANI_CELL_COUNT = 11;
+
             Audio.PlaySoundEffect(_StartSound);
 
             Core.Sleep(200);
@@ -134,28 +133,28 @@ namespace GameResources
 
         private static void ShowMessage(String message, int number)
         {
-						const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
+            const int TX = 310, TY = 493, TW = 200, TH = 25, STEPS = 5, BG_X = 279, BG_Y = 453;
 
-						int fullW = 260 * number / STEPS;
-						Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
-						Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
+            int fullW = 260 * number / STEPS;
+            Graphics.DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
+            Graphics.DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
 
-						Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
+            Text.DrawTextLines(message, Color.White, Color.Transparent, _LoadingFont, FontAlignment.AlignCenter, TX, TY, TW, TH);
             Core.RefreshScreen();
             Core.ProcessEvents();
         }
 
         private static void EndLoadingScreen(int width, int height)
         {
-						Core.ProcessEvents();
-						Core.Sleep(500);
+            Core.ProcessEvents();
+            Core.Sleep(500);
             Graphics.ClearScreen();
             Core.RefreshScreen();
             Text.FreeFont(_LoadingFont);
             Graphics.FreeBitmap(_Background);
             Graphics.FreeBitmap(_Animation);
-		        Graphics.FreeBitmap(_LoaderEmpty);
-		        Graphics.FreeBitmap(_LoaderFull);
+            Graphics.FreeBitmap(_LoaderEmpty);
+            Graphics.FreeBitmap(_LoaderFull);
             Audio.FreeSoundEffect(_StartSound);
 
             Core.ChangeScreenSize(width, height);
@@ -163,20 +162,20 @@ namespace GameResources
 
         private static void NewMap(String mapName)
         {
-				_Maps.Add(mapName, MappyLoader.LoadMap(mapName));
+            _Maps.Add(mapName, MappyLoader.LoadMap(mapName));
         }
 
         private static void NewFont(String fontName, String filename, int size)
         {
-				_Fonts.Add(fontName, Text.LoadFont(Core.GetPathToResource(filename, ResourceKind.FontResource), size));
+            _Fonts.Add(fontName, Text.LoadFont(Core.GetPathToResource(filename, ResourceKind.FontResource), size));
         }
 
         private static void NewImage(String imageName, String filename)
         {
-				_Images.Add(imageName, Graphics.LoadBitmap(Core.GetPathToResource(filename, ResourceKind.ImageResource)));
+            _Images.Add(imageName, Graphics.LoadBitmap(Core.GetPathToResource(filename, ResourceKind.ImageResource)));
         }
 
-		private static void NewTransparentColorImage(String imageName, String fileName, Color transColor)
+        private static void NewTransparentColorImage(String imageName, String fileName, Color transColor)
         {
             _Images.Add(imageName, Graphics.LoadBitmap(Core.GetPathToResource(fileName, ResourceKind.ImageResource), true, transColor));
         }
@@ -188,40 +187,40 @@ namespace GameResources
 
         private static void NewSound(String soundName, String filename)
         {
-				_Sounds.Add(soundName, Audio.LoadSoundEffect(Core.GetPathToResource(filename, ResourceKind.SoundResource)));
+            _Sounds.Add(soundName, Audio.LoadSoundEffect(Core.GetPathToResource(filename, ResourceKind.SoundResource)));
         }
 
         private static void NewMusic(String musicName, String filename)
         {
-				_Music.Add(musicName, Audio.LoadMusic(Core.GetPathToResource(filename, ResourceKind.SoundResource)));
+            _Music.Add(musicName, Audio.LoadMusic(Core.GetPathToResource(filename, ResourceKind.SoundResource)));
         }
 
         private static void FreeFonts()
         {
-            foreach(Font f in _Fonts.Values)
+            foreach (Font f in _Fonts.Values)
             {
                 Text.FreeFont(f);
             }
-				_Fonts.Clear();
+            _Fonts.Clear();
         }
 
         private static void FreeImages()
         {
-            foreach(Bitmap b in _Images.Values)
+            foreach (Bitmap b in _Images.Values)
             {
                 Graphics.FreeBitmap(b);
                 //_ImagesStr[i] = String.Empty;
             }
-				_Images.Clear();
+            _Images.Clear();
         }
 
         private static void FreeSounds()
         {
-            foreach(SoundEffect ef in _Sounds.Values)
+            foreach (SoundEffect ef in _Sounds.Values)
             {
                 Audio.FreeSoundEffect(ef);
             }
-				_Sounds.Clear();
+            _Sounds.Clear();
         }
 
         private static void FreeMusic()
@@ -230,7 +229,7 @@ namespace GameResources
             {
                 Audio.FreeMusic(m);
             }
-				_Music.Clear();
+            _Music.Clear();
         }
 
         private static void FreeMaps()
@@ -239,7 +238,7 @@ namespace GameResources
             {
                 MappyLoader.FreeMap(m);
             }
-				_Maps.Clear();
+            _Maps.Clear();
         }
 
         /// <summary>
@@ -262,7 +261,14 @@ namespace GameResources
         /// <returns>The Font</returns>
         public static Font GameFont(String font)
         {
-            return _Fonts[font];
+            try
+            {
+                return _Fonts[font];
+            }
+            catch (Exception e)
+            { 
+                throw new Exception("Cannot find font " + font, e);
+            }
         }
 
         /// <summary>
@@ -272,7 +278,14 @@ namespace GameResources
         /// <returns>The Image</returns>
         public static Bitmap GameImage(String image)
         {
-				return _Images[image];
+            try
+            {
+                return _Images[image];
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Cannot find image " + image, e);
+            }
         }
 
         /// <summary>
@@ -282,7 +295,14 @@ namespace GameResources
         /// <returns>The Sound</returns>
         public static SoundEffect GameSound(String sound)
         {
-            return _Sounds[sound];
+            try
+            {
+                return _Sounds[sound];
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Cannot find sound " + sound, e);
+            }
         }
 
         /// <summary>
@@ -292,7 +312,15 @@ namespace GameResources
         /// <returns>The Music</returns>
         public static Music GameMusic(String music)
         {
-            return _Music[music];
+            try
+            {
+                return _Music[music];
+            }            
+            catch (Exception e)
+            { 
+                throw new Exception("Cannot find music " + music, e);
+            }
+
         }
 
         /// <summary>
@@ -302,7 +330,14 @@ namespace GameResources
         /// <returns>The map</returns>
         public static Map GameMap(String map)
         {
-            return _Maps[map];
+            try
+            {
+                return _Maps[map];
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Cannot find map " + map, e);
+            }
         }
     }
 }
