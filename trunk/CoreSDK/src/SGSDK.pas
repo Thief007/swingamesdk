@@ -207,8 +207,9 @@ uses
 
 	procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
 	begin
-	  	{$IFDEF TRACE}
-			TraceEnter('SGSDK.dll', 'OpenGraphicsWindow ', String(caption) + ': W' + IntToStr(width) + ': H' + IntToStr(height));
+	  {$IFDEF TRACE}
+			TraceEnter('SGSDK.dll', 'OpenGraphicsWindow');
+			Trace('SGSDK.dll', 'parameters', 'OpenGraphicsWindow', String(caption) + ': W' + IntToStr(width) + ': H' + IntToStr(height));
 		{$ENDIF}
 		ErrorMessage := '';
 		HasException := false;

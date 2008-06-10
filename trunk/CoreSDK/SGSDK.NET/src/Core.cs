@@ -340,16 +340,17 @@ namespace SwinGame
 
         internal static string GetExceptionMessage()
         {
+            Trace.WriteLine("Enter GetExceptionMessage");
             System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
             DLL_GetExceptionMessage(sb);
-            Trace.WriteLine("Error... " + sb.ToString());
+            Trace.WriteLine("Exit GetExceptionMessage... " + sb.ToString());
 			return sb.ToString();
         }
 
         // Code
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OpenGraphicsWindow", CharSet=CharSet.Ansi)]
-        private static extern void DLL_OpenGraphicsWindow([MarshalAs(UnmanagedType.LPStr)]String caption, int width, int height);
+        private static extern void DLL_OpenGraphicsWindow([MarshalAs(UnmanagedType.LPStr)]string caption, int width, int height);
 
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the
@@ -374,7 +375,7 @@ namespace SwinGame
         /// <param name="caption">Caption for the Window</param>
         /// <param name="width">Width of the Window</param>
         /// <param name="height">Height of the Window</param>
-        public static void OpenGraphicsWindow(String caption, int width, int height)
+        public static void OpenGraphicsWindow(string caption, int width, int height)
         {
             Trace.WriteLine("Enter OpenGraphicsWindow");
             try
@@ -383,11 +384,12 @@ namespace SwinGame
             }
             catch (Exception exc)
             {
+                Trace.WriteLine("Exception in OpenGraphicsWindow");
                 throw new SwinGameException(exc.Message);
             }
-
-            if (Core.ExceptionOccured())
-                throw new SwinGameException(Core.GetExceptionMessage());
+            Trace.WriteLine("End OpenGraphicsWindow... checking errors");
+            
+            if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
 
             Trace.WriteLine("Exit OpenGraphicsWindow");
         }

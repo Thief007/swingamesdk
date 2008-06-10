@@ -55,7 +55,8 @@ pack() {
 
 	echo "  Copying SDK to temporary location"	
 	find . -mindepth 1 -type d ! -path *.svn* ! -path */bin/* -exec mkdir "${SDK_DIR}/{}" \;
-	find . -type f ! -path *.svn* ! -path */bin/* -exec cp "{}" "${SDK_DIR}/{}" \;
+	find . ! -type d ! -path *.svn* ! -path */bin/* -exec cp -R -p "{}" "${SDK_DIR}/{}" \;
+	
 
 	if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 	then

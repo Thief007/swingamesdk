@@ -1,3 +1,3 @@
 
-{$DEFINE TRACE}
+{-- $ DEFINE TRACE}
 {$PACKENUM 4}
