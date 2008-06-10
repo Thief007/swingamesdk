@@ -13,3 +13,4 @@ Python/lib/SGSDK_Camera.o
 Python/lib/SGSDK_Shapes.o
 Python/lib/SGSDK_MappyLoader.o
 Python/lib/SDLEventProcessing.o
+Python/lib/SwinGameTrace.o
