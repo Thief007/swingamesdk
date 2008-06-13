@@ -1,0 +1,34 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package swingame;
+
+import java.awt.Color;
+
+/**
+ *
+ * @author acain
+ */
+public class Graphics 
+{
+    private static native void drawPixel(int color, float x, float y);
+    
+    public static void drawPixel(Color color, float x, float y)
+    {
+        drawPixel(color.getRGB(), x, y);
+    }
+    
+    private static native void clearScreen(int color);
+    
+    public static void clearScreen(Color color)
+    {
+        clearScreen(color.getRGB());
+    }
+    
+    public static void clearScreen()
+    {
+        clearScreen(Color.BLACK);
+    }
+}
