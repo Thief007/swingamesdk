@@ -14,15 +14,13 @@ import java.awt.Point;
 public class Input 
 {
     public static native void getMousePosition(Point p);
-
     public static Point getMousePosition() 
     {
         Point p = new Point();
-        getMousePosition(p);
-        
+        getMousePosition(p);        
         return p;
     }
     
     public static native boolean mouseWasClicked(int LEFT_BUTTON);
-    
+    public static native boolean wasKeyTyped(int key);    
 }
