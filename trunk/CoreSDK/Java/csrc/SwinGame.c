@@ -7,11 +7,14 @@ void OpenGraphicsWindow(const char *caption, jint width, jint height);
 jint WindowCloseRequested();
 void ProcessEvents();
 void RefreshScreen();
-
+void RefreshScreenWithFrame(jint rate);
 void DrawRectangle(jint theColour, jint filled, float xPos, float yPos, jint width, jint height);
 void ClearScreen(jint theColor);
+jint ScreenWidth();
+jint ScreenHeight();
 
 jint IsKeyPressed(jint key);
+jint WasKeyTyped(jint key);
 jint MouseWasClicked(jint btn);
 void GetMouseXY(float *x, float *y);
 void DrawPixel(jint theColor, float xPos, float yPos);
@@ -62,8 +65,7 @@ JNIEXPORT jboolean JNICALL Java_swingame_Core_windowCloseRequested
  * Method:    ProcessEvents
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_swingame_Core_processEvents
-  (JNIEnv *env, jclass cls)
+JNIEXPORT void JNICALL Java_swingame_Core_processEvents (JNIEnv *env, jclass cls)
 {
     ProcessEvents();
 }
@@ -73,11 +75,36 @@ JNIEXPORT void JNICALL Java_swingame_Core_processEvents
  * Method:    RefreshScreen
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_swingame_Core_refreshScreen
-  (JNIEnv *env, jclass cls)
+JNIEXPORT void JNICALL Java_swingame_Core_refreshScreen__ (JNIEnv *env, jclass cls)
 {
     RefreshScreen();
 }
+
+JNIEXPORT void JNICALL Java_swingame_Core_refreshScreen__I (JNIEnv *env, jclass cls, jint rate)
+{
+	RefreshScreenWithFrame(rate);
+}
+
+/*
+ * Class:     swingame_Core
+ * Method:    screenHeight
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_swingame_Core_screenHeight (JNIEnv *env, jclass cls)
+{
+	return ScreenHeight();
+}
+
+/*
+ * Class:     swingame_Core
+ * Method:    screenWidth
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_swingame_Core_screenWidth(JNIEnv *env, jclass cls)
+{
+	return ScreenWidth();
+}
+
 
 /*
  * Class:     swingame_Audio
@@ -120,6 +147,17 @@ JNIEXPORT void JNICALL Java_swingame_Graphics_clearScreen (JNIEnv *env, jclass c
 }
 
 /*
+ * Class:     swingame_Graphics
+ * Method:    fillRectangle
+ * Signature: (IFFII)V
+ */
+JNIEXPORT void JNICALL Java_swingame_Graphics_fillRectangle (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
+{
+	DrawRectangle(color, -1, x, y, w, h);
+}
+
+
+/*
  * Class:     swingame_Input
  * Method:    getMousePosition
  * Signature: (Ljava/awt/Point;)V
@@ -147,5 +185,16 @@ JNIEXPORT void JNICALL Java_swingame_Input_getMousePosition (JNIEnv *env, jclass
 JNIEXPORT jboolean JNICALL Java_swingame_Input_mouseWasClicked (JNIEnv *env, jclass cls, jint btn)
 {
     //return JNI_TRUE;
-    return MouseWasClicked(btn) ? JNI_TRUE : JNI_FALSE;
+    return MouseWasClicked(btn) != 0  ? JNI_TRUE : JNI_FALSE;
 }
+
+/*
+ * Class:     swingame_Input
+ * Method:    wasKeyTyped
+ * Signature: (I)Z
+ */
+JNIEXPORT jboolean JNICALL Java_swingame_Input_wasKeyTyped (JNIEnv *env, jclass cls, jint key)
+{
+	return WasKeyTyped(key) ? JNI_TRUE : JNI_FALSE;
+}
+

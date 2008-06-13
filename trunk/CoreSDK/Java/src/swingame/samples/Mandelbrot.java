@@ -63,19 +63,17 @@ public class Mandelbrot
     
     public static void drawMandelbrot(float setX, float setY, float setWidth, float setHeight)
     {
-        int x, y;
         Color color;
         float scaleWidth, scaleHeight;
         
         scaleWidth = setWidth / SCREEN_WIDTH;
         scaleHeight = setHeight / SCREEN_HEIGHT;
-
-        for (x = 0; x < SCREEN_WIDTH; x++)
+        
+        for (int x = 0; x < SCREEN_WIDTH; x++)
         {
-            for (y = 0; y < SCREEN_HEIGHT; y++)
+            for (int y = 0; y < SCREEN_HEIGHT; y++)
             {   
                 color = mandelbrotColor(setX + x * scaleWidth, setY + y * scaleHeight);
-
                 Graphics.drawPixel(color, x, y);
             }
         }
@@ -121,7 +119,7 @@ public class Mandelbrot
 		drawMandelbrot(setX, setY, setWidth, setHeight);
             }
 
-            Core.refreshScreen();
+            Core.refreshScreen(60);
         } while (false == Core.windowCloseRequested());
 
         //Resources.FreeResources()
