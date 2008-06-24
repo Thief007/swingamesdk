@@ -1,5 +1,7 @@
 package swingame;
 
+import java.awt.Color;
+
 /**
  * <<Class summary>>
  *
@@ -37,8 +39,6 @@ public final class Core
     
     public static void main(String args[])
     {
-        //javax.swing.JFrame jf = new javax.swing.JFrame();
-        
         openGraphicsWindow("Hello Java World", 800, 600);
         
         do
@@ -46,7 +46,47 @@ public final class Core
             processEvents();
             refreshScreen();
         } while ( false == windowCloseRequested());
+    }
+    
+    /**
+    * Returns the hue component of the passed in color.
+    *
+    * @param c  The color to get the Hue of
+    * @return The hue of the color c
+    */
+    public static float getHue(Color c)
+    {
+        float[] f;
         
-        //jf.setVisible(true);
+        f = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+        return f[0];
+    }
+    
+    /**
+    * Returns the saturation component of the passed in color.
+    *
+    * @param c  The color to get the saturation of
+    * @return The saturation of the color c
+    */
+    public static float getSaturation(Color c)
+    {
+        float[] f;
+        
+        f = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+        return f[1];
+    }
+    
+    /**
+    * Returns the brightness component of the passed in color.
+    *
+    * @param c  The color to get the Brightness of
+    * @return The brightness of the color c
+    */
+    public static float getBrightness(Color c)
+    {
+        float[] f;
+        
+        f = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+        return f[2];
     }
 }

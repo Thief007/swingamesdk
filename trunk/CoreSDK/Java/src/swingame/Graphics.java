@@ -25,6 +25,12 @@ public class Graphics
         drawPixel(color.getRGB(), x, y);
     }
     
+    private static native void drawLine(int color, float x, float y, float x1, float y1);
+    public static void drawLine(Color color, float x, float y, float xEnd, float yEnd)
+    {
+        drawLine(color.getRGB(), x, y, xEnd, yEnd);
+    }
+    
     private static native void clearScreen(int color);    
     public static void clearScreen(Color color)
     {
