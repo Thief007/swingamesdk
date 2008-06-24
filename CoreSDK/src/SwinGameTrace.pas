@@ -35,7 +35,7 @@ interface
 implementation
 	uses SysUtils;
 	
-	var indentLevel: Integer;
+	//var indentLevel: Integer;
 
 	{$IFDEF Trace}
 	{$Info SwinGame Tracing Enabled}

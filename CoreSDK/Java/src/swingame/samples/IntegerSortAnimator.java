@@ -17,21 +17,21 @@ import swingame.Keys;
  */
 public class IntegerSortAnimator 
 {
-    private final int _Max;
-    private int[] _Data;
+    private final int _max;
+    private int[] _data;
     
     public IntegerSortAnimator(int count, int max)
     {
-	_Max = max;
-        _Data = new int[count];
-	Randomize();
+	    _max = max;
+        _data = new int[count];
+	    Randomize();
     }
 
     public void Randomize() 
     {
-        for(int i = 0; i < _Data.length; i++)
+        for(int i = 0; i < _data.length; i++)
         {
-            _Data[i] = (int)(Math.random() * _Max);
+            _data[i] = (int)(Math.random() * _max);
         }
     }
     
@@ -39,14 +39,14 @@ public class IntegerSortAnimator
     {
         Graphics.clearScreen();
 
-        int w = (int)(Core.screenWidth() / _Data.length);
-        float scaleHeight = Core.screenHeight() / (float)_Max;
+        int w = (int)(Core.screenWidth() / _data.length);
+        float scaleHeight = Core.screenHeight() / (float)_max;
 
-        for(int i = 0; i < _Data.length; i++)
+        for(int i = 0; i < _data.length; i++)
         {         
                 float x = w * i;
-                float y = (_Max - _Data[i]) * scaleHeight;
-                int h = (int)Math.ceil(_Data[i] * scaleHeight);
+                float y = (_max - _data[i]) * scaleHeight;
+                int h = (int)Math.ceil(_data[i] * scaleHeight);
 
                 Graphics.fillRectangle(Color.RED, x, y, w, h);
         }
@@ -56,7 +56,7 @@ public class IntegerSortAnimator
     
     public void Sort()
     {
-        for(int i = _Data.length - 1; i >= 0; i--)
+        for(int i = _data.length - 1; i >= 0; i--)
         {
             for(int j = 0; j < i; j++)
             {
@@ -64,11 +64,11 @@ public class IntegerSortAnimator
                 if(Core.windowCloseRequested()) return;
                 if(Input.wasKeyTyped(Keys.VK_ESCAPE)) return;
                 
-                if(_Data[j] > _Data[j+1])
+                if(_data[j] > _data[j+1])
                 {
-                    int temp = _Data[j];
-                    _Data[j] = _Data[j+1];
-                    _Data[j+1] = temp;
+                    int temp = _data[j];
+                    _data[j] = _data[j+1];
+                    _data[j+1] = temp;
                     ShowData();
                 }
             }

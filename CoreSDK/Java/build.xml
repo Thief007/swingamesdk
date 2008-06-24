@@ -1,0 +1,41 @@
+<project name="SwinGame" default="compile">
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="bin.dir" value="${basedir}/bin"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="nativelib.dir" value="${basedir}/clib"/>
+
+    <path id="libraries">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="clean">
+        <delete dir="${bin.dir}"/>
+        <mkdir dir="${bin.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean, copy-resources">
+      <javac srcdir="${src.dir}"
+             destdir="${bin.dir}"
+             classpathref="libraries"/>
+    </target>
+
+    <target name="copy-resources">
+        <copy todir="${bin.dir}">
+			<fileset dir="${nativelib.dir}" />
+            <fileset dir="${src.dir}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="run" depends="compile">
+	    <java fork="true" classname="swingame.samples.ShapeDrawer" classpathref="libraries">
+	        <classpath path="${bin.dir}"/>
+			<sysproperty key="java.library.path"
+			                   value="${bin.dir}"
+			                   />
+	    </java>
+	</target>
+</project>

@@ -198,3 +198,7 @@ JNIEXPORT jboolean JNICALL Java_swingame_Input_wasKeyTyped (JNIEnv *env, jclass 
 	return WasKeyTyped(key) ? JNI_TRUE : JNI_FALSE;
 }
 
+JNIEXPORT jboolean JNICALL Java_swingame_Input_isKeyPressed (JNIEnv *env, jclass cls, jint key)
+{
+    return IsKeyPressed(key) ? JNI_TRUE : JNI_FALSE;
+}

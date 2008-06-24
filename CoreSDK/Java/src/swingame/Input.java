@@ -21,6 +21,7 @@ public class Input
         return p;
     }
     
-    public static native boolean mouseWasClicked(int LEFT_BUTTON);
+    public static native boolean mouseWasClicked(int button);
     public static native boolean wasKeyTyped(int key);    
+    public static native boolean isKeyPressed(int key);
 }
