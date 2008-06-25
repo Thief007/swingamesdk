@@ -24,10 +24,10 @@ public class IntegerSortAnimator
     {
 	    _max = max;
         _data = new int[count];
-	    Randomize();
+	    randomize();
     }
 
-    public void Randomize() 
+    public void randomize() 
     {
         for(int i = 0; i < _data.length; i++)
         {
@@ -35,7 +35,7 @@ public class IntegerSortAnimator
         }
     }
     
-    public void ShowData()
+    public void showData()
     {
         Graphics.clearScreen();
 
@@ -54,7 +54,12 @@ public class IntegerSortAnimator
         Core.refreshScreen(60);
     }
     
-    public void Sort()
+    public void sort()
+    {
+        sort(true);
+    }
+    
+    public void sort(boolean show)
     {
         for(int i = _data.length - 1; i >= 0; i--)
         {
@@ -69,7 +74,7 @@ public class IntegerSortAnimator
                     int temp = _data[j];
                     _data[j] = _data[j+1];
                     _data[j+1] = temp;
-                    ShowData();
+                    if(show) showData();
                 }
             }
         }

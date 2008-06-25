@@ -138,7 +138,7 @@ import swingame.MouseButton;
                  addNewShape(Input.getMousePosition());
              }
          }
-
+         
          if (Input.mouseWasClicked(MouseButton.RIGHT_BUTTON))
          {
              selectShape(Input.getMousePosition());

@@ -34,10 +34,10 @@ public class SortVisualiser
         {
             Core.processEvents();
 
-            if(Input.wasKeyTyped(Keys.VK_R)) sa.Randomize();
-            if(Input.wasKeyTyped(Keys.VK_S)) sa.Sort();
+            if(Input.wasKeyTyped(Keys.VK_R)) sa.randomize();
+            if(Input.wasKeyTyped(Keys.VK_S)) sa.sort();
             
-            sa.ShowData();
+            sa.showData();
             
             Core.refreshScreen(60);
         } while (false == Core.windowCloseRequested());
