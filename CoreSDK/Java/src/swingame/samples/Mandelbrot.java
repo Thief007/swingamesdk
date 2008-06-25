@@ -57,7 +57,7 @@ public class Mandelbrot
   
             if (hue > 1) hue = hue - 1;
   
-            return Color.getHSBColor(hue, 1.0f, 0.9f);
+            return Core.getHSBColor(hue, 1.0f, 0.9f);
         }
     }
     

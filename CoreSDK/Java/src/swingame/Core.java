@@ -28,6 +28,11 @@ public final class Core
     //procedure RefreshScreen(); cdecl; export;
     public static native void refreshScreen();
     
+    public static Color getHSBColor(float hue, float saturation, float brightness)
+    {
+        return Color.getHSBColor(hue, saturation, brightness);
+    }
+    
     static
     {        
         try

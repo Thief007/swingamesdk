@@ -134,7 +134,7 @@ do
 	case "$o" in
 	c)  CLEAN="Y" ;;
 	h)  Usage ;;
-	d)  EXTRA_OPTS="-vwn";;
+	d)  EXTRA_OPTS="-vwn -gw";;
 	esac
 done
 

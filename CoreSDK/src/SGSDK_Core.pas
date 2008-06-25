@@ -1070,6 +1070,7 @@ implementation
 {$ifdef DARWIN}
 var
 	NSAutoreleasePool: Integer;
+	pool: Integer;
 {$endif}
 
 		
@@ -1082,7 +1083,9 @@ begin
 	{$ifdef DARWIN}
     //WriteLn('Loading Mac version');
     NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
-    objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+    pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+    //WriteLn('NSAutoReleasePool=', NSAutoReleasePool, ' pool = ', pool);
+    objc_msgSend(pool, sel_registerName('init'));
     NSApplicationLoad();
    {$endif}
 	
@@ -1096,7 +1099,11 @@ begin
 	sdlManager := TSDLManager.Create();
 
 	try
-		applicationPath := ExtractFileDir(ParamStr(0));
+	  if ParamCount() >= 0 then
+		  applicationPath := ExtractFileDir(ParamStr(0))
+		else
+		  applicationPath := '';
+		  
 	except
 		applicationPath := '';
 	end;
