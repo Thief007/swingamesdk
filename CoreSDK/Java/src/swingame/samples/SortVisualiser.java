@@ -18,6 +18,11 @@ public class SortVisualiser
 {
     public static void main(String[] args)
     {
+        runGame();
+    }
+    
+    public static void runGame()
+    {
         //Open a new Graphics Window
         Core.openGraphicsWindow("Sort Visualiser", 800, 600);
 
@@ -27,9 +32,10 @@ public class SortVisualiser
         //Load Resources
         //Resources.LoadResources();
 
-        IntegerSortAnimator sa = new IntegerSortAnimator(80, 100);            
+        IntegerSortAnimator2 sa = new IntegerSortAnimator2(80, 100);            
 
         //Game loop
+        sa.sort();
         do
         {
             Core.processEvents();

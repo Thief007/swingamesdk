@@ -18,6 +18,11 @@ public final class ShapeDrawer
 {
     public static void main(String args[])
     {
+        runGame();
+    }
+    
+    public static void runGame()
+    {
         //Open a new Graphics Window
         Core.openGraphicsWindow("Shape Drawer", 800, 600);
         //Open Audio Device

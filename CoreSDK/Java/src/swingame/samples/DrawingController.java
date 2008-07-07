@@ -17,18 +17,16 @@ import swingame.MouseButton;
  */
  public class DrawingController
  {
-     private class DrawingElements
+     private enum DrawingElements
      {
-         public static final int LINE = 0;
-         public static final int RECTANGLE = 1;
-         public static final int ELLIPSE = 2;
+         LINE, RECTANGLE, ELLIPSE;
      }
 
      private final int _defaultWidth = 10;
      private final int _defaultHeight = 10;
      private static final Color _defaultColor = Color.RED;
 
-     private int _adding = DrawingElements.RECTANGLE;
+     private DrawingElements _adding = DrawingElements.RECTANGLE;
      private Drawing _controlling;
 
      public Drawing getControlling()
@@ -104,8 +102,8 @@ import swingame.MouseButton;
          Shape s;
          switch (_adding)
          {
-             case DrawingElements.RECTANGLE: s = new Rectangle(); break;
-             case DrawingElements.LINE: s = new Line(); break;
+             case RECTANGLE: s = new Rectangle(); break;
+             case LINE: s = new Line(); break;
              default: return;
          }
 

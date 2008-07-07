@@ -12,10 +12,11 @@ import swingame.Keys;
  * 
  * @author acain
  */
-public class IntegerSortAnimator 
+public class IntegerSortAnimator2 
 {
     private final int _max;
     private int[] _data;
+    private SortAlgorithm _sortWith;
     
     /**
     * Creates a new IntegerSortAnimator with an specified number of 
@@ -24,8 +25,9 @@ public class IntegerSortAnimator
     * @param count  The number of values to store in this animator
     * @param max    The largest value that can be stored in the data for this animator
     */
-    public IntegerSortAnimator(int count, int max)
+    public IntegerSortAnimator2(int count, int max)
     {
+        _sortWith = new BubbleSort();
 	    _max = max;
         _data = new int[count];
 	    randomize();
@@ -95,26 +97,6 @@ public class IntegerSortAnimator
     */
     public void sort(boolean show)    
     {
-        for(int i = _data.length - 1; i >= 0; i--)
-        {
-            for(int j = 0; j < i; j++)
-            {
-                if(show)
-                {
-                    Core.processEvents();
-                    if(Core.windowCloseRequested()) return;
-                    if(Input.wasKeyTyped(Keys.VK_ESCAPE)) return;
-                }
-                
-                if(_data[j] > _data[j+1])
-                {
-                    int temp = _data[j];
-                    _data[j] = _data[j+1];
-                    _data[j+1] = temp;
-                    
-                    if(show) showData();
-                }
-            }
-        }
+        _sortWith.sort(this, show);
     }
 }
