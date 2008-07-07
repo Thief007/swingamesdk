@@ -31,7 +31,7 @@
     </target>
     
     <target name="run" depends="compile">
-	    <java fork="true" classname="swingame.samples.ShapeDrawer" classpathref="libraries">
+	    <java fork="true" classname="swingame.samples.SortVisualiser" classpathref="libraries">
 	        <classpath path="${bin.dir}"/>
 			<sysproperty key="java.library.path"
 			                   value="${bin.dir}"
