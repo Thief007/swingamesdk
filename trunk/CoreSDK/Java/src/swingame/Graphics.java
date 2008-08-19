@@ -18,6 +18,13 @@ public class Graphics
     {
         fillRectangle(color.getRGB(), x, y, w, h);
     }
+
+    private static native void fillEllipse(int color, float x, float y, int w, int h);    
+    public static void fillEllipse(Color color, float x, float y, int w, int h) 
+    {
+        fillEllipse(color.getRGB(), x, y, w, h);
+    }
+
     
     private static native void drawPixel(int color, float x, float y);    
     public static void drawPixel(Color color, float x, float y)

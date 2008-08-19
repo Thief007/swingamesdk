@@ -9,6 +9,7 @@ void ProcessEvents();
 void RefreshScreen();
 void RefreshScreenWithFrame(jint rate);
 void DrawRectangle(jint theColour, jint filled, float xPos, float yPos, jint width, jint height);
+void DrawEllipse(jint theColour, jint filled, float xPos, float yPos, jint width, jint height);
 void ClearScreen(jint theColor);
 jint ScreenWidth();
 jint ScreenHeight();
@@ -160,6 +161,11 @@ JNIEXPORT void JNICALL Java_swingame_Graphics_clearScreen (JNIEnv *env, jclass c
 JNIEXPORT void JNICALL Java_swingame_Graphics_fillRectangle (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
 {
 	DrawRectangle(color, -1, x, y, w, h);
+}
+
+JNIEXPORT void JNICALL Java_swingame_Graphics_fillEllipse (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
+{
+	DrawEllipse(color, -1, x, y, w, h);
 }
 
 
