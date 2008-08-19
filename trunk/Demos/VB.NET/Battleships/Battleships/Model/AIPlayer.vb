@@ -1,76 +1,75 @@
 ''' <summary>
+''' Location can store the location of the last hit made by an
+''' AI Player. The use of which determines the difficulty.
+''' </summary>
+Protected Class Location
+    Private _Row As Integer
+    Private _Column As Integer
+
+    ''' <summary>
+    ''' The row of the shot
+    ''' </summary>
+    ''' <value>The row of the shot</value>
+    ''' <returns>The row of the shot</returns>
+    Public Property Row() As Integer
+        Get
+            Return _Row
+        End Get
+        Set(ByVal value As Integer)
+            _Row = value
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' The column of the shot
+    ''' </summary>
+    ''' <value>The column of the shot</value>
+    ''' <returns>The column of the shot</returns>
+    Public Property Column() As Integer
+        Get
+            Return _Column
+        End Get
+        Set(ByVal value As Integer)
+            _Column = value
+        End Set
+    End Property
+
+    ''' <summary>
+    ''' Sets the last hit made to the local variables
+    ''' </summary>
+    ''' <param name="row">the row of the location</param>
+    ''' <param name="column">the column of the location</param>
+    Public Sub New(ByVal row As Integer, ByVal column As Integer)
+        _Column = column
+        _Row = row
+    End Sub
+
+    ''' <summary>
+    ''' Check if two locations are equal
+    ''' </summary>
+    ''' <param name="this">location 1</param>
+    ''' <param name="other">location 2</param>
+    ''' <returns>true if location 1 and location 2 are at the same spot</returns>
+    Public Shared Operator =(ByVal this As Location, ByVal other As Location) As Boolean
+        Return this IsNot Nothing AndAlso other IsNot Nothing AndAlso this.Row = other.Row AndAlso this.Column = other.Column
+    End Operator
+
+    ''' <summary>
+    ''' Check if two locations are not equal
+    ''' </summary>
+    ''' <param name="this">location 1</param>
+    ''' <param name="other">location 2</param>
+    ''' <returns>true if location 1 and location 2 are not at the same spot</returns>
+    Public Shared Operator <>(ByVal this As Location, ByVal other As Location) As Boolean
+        Return this Is Nothing OrElse other Is Nothing OrElse this.Row <> other.Row OrElse this.Column <> other.Column
+    End Operator
+End Class
+
+''' <summary>
 ''' The AIPlayer is a type of player. It can readomly deploy ships, it also has the
 ''' functionality to generate coordinates and shoot at tiles
 ''' </summary>
 Public MustInherit Class AIPlayer : Inherits Player
-
-    ''' <summary>
-    ''' Location can store the location of the last hit made by an
-    ''' AI Player. The use of which determines the difficulty.
-    ''' </summary>
-    Protected Class Location
-        Private _Row As Integer
-        Private _Column As Integer
-
-        ''' <summary>
-        ''' The row of the shot
-        ''' </summary>
-        ''' <value>The row of the shot</value>
-        ''' <returns>The row of the shot</returns>
-        Public Property Row() As Integer
-            Get
-                Return _Row
-            End Get
-            Set(ByVal value As Integer)
-                _Row = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' The column of the shot
-        ''' </summary>
-        ''' <value>The column of the shot</value>
-        ''' <returns>The column of the shot</returns>
-        Public Property Column() As Integer
-            Get
-                Return _Column
-            End Get
-            Set(ByVal value As Integer)
-                _Column = value
-            End Set
-        End Property
-
-        ''' <summary>
-        ''' Sets the last hit made to the local variables
-        ''' </summary>
-        ''' <param name="row">the row of the location</param>
-        ''' <param name="column">the column of the location</param>
-        Public Sub New(ByVal row As Integer, ByVal column As Integer)
-            _Column = column
-            _Row = row
-        End Sub
-
-        ''' <summary>
-        ''' Check if two locations are equal
-        ''' </summary>
-        ''' <param name="this">location 1</param>
-        ''' <param name="other">location 2</param>
-        ''' <returns>true if location 1 and location 2 are at the same spot</returns>
-        Public Shared Operator =(ByVal this As Location, ByVal other As Location) As Boolean
-            Return this IsNot Nothing AndAlso other IsNot Nothing AndAlso this.Row = other.Row AndAlso this.Column = other.Column
-        End Operator
-
-        ''' <summary>
-        ''' Check if two locations are not equal
-        ''' </summary>
-        ''' <param name="this">location 1</param>
-        ''' <param name="other">location 2</param>
-        ''' <returns>true if location 1 and location 2 are not at the same spot</returns>
-        Public Shared Operator <>(ByVal this As Location, ByVal other As Location) As Boolean
-            Return this Is Nothing OrElse other Is Nothing OrElse this.Row <> other.Row OrElse this.Column <> other.Column
-        End Operator
-    End Class
-
 
     Public Sub New(ByVal game As BattleShipsGame)
         MyBase.New(game)

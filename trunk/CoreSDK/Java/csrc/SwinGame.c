@@ -18,6 +18,7 @@ jint WasKeyTyped(jint key);
 jint MouseWasClicked(jint btn);
 void GetMouseXY(float *x, float *y);
 void DrawPixel(jint theColor, float xPos, float yPos);
+void DrawLine(jint theColor, float xPos, float yPos, float x1pos, float y1pos);
 
 void OpenAudio();
 void CloseAudio();
@@ -134,6 +135,11 @@ JNIEXPORT void JNICALL Java_swingame_Audio_closeAudio (JNIEnv *env, jclass cls)
 JNIEXPORT void JNICALL Java_swingame_Graphics_drawPixel (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y)
 {
     DrawPixel(color, x, y);
+}
+
+JNIEXPORT void JNICALL Java_swingame_Graphics_drawLine (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jfloat x1, jfloat y1)
+{
+    DrawLine(color, x, y, x1, y1);
 }
 
 /*

@@ -157,7 +157,7 @@ Public Class Player : Implements IEnumerable(Of Ship)
     ''' has.
     ''' </summary>
     ''' <returns>A Ship enumerator</returns>
-    Public Function GetShipEnumerator() As IEnumerator(Of Ship) Implements IEnumerable(Of Battleships.Ship).GetEnumerator
+    Public Function GetShipEnumerator() As IEnumerator(Of Ship) Implements IEnumerable(Of Ship).GetEnumerator
         Dim result(_Ships.Values.Count) As Ship
         _Ships.Values.CopyTo(result, 0)
         Dim lst As New List(Of Ship)
