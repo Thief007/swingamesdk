@@ -38,7 +38,7 @@
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SGSDK.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d, processorArchitecture=MSIL">
+    <Reference Include="SGSDK.NET">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\SGSDK.NET.dll</HintPath>
     </Reference>
