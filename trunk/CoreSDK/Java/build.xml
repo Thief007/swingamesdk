@@ -18,7 +18,10 @@
     <target name="compile" depends="clean, copy-resources">
       <javac srcdir="${src.dir}"
              destdir="${bin.dir}"
-             classpathref="libraries"/>
+             classpathref="libraries">
+             
+             <compilerarg value="-Xlint"/>             
+         </javac>
     </target>
 
     <target name="copy-resources">
@@ -31,11 +34,10 @@
     </target>
     
     <target name="run" depends="compile">
-	    <java fork="true" classname="swingame.samples.Mandelbrot" classpathref="libraries">
+	    <java fork="true" classname="swingame.samples.Test" classpathref="libraries">
 	        <classpath path="${bin.dir}"/>
 			<sysproperty key="java.library.path"
-			                   value="${bin.dir}"
-			                   />
+			                   value="${bin.dir}"/>
 	    </java>
 	</target>
 </project>
