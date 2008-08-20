@@ -10,9 +10,7 @@ import java.awt.Color;
  */
 public final class Core 
 {
-    //procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
     public static native void openGraphicsWindow(String caption, int width, int height);
-
     public static native void refreshScreen(int frameRate);
 
     public static native int screenHeight();
