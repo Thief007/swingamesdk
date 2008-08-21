@@ -18,7 +18,7 @@ public class Keys
         /// <summary>
         /// Tab
         /// </summary>
-	public static final int VK_TAB = 9;
+	    public static final int VK_TAB = 9;
         /// <summary>
         /// Clear
         /// </summary>

@@ -7,7 +7,6 @@ package swingame.samples;
 
 import java.awt.Color;
 import java.awt.Point;
-import swingame.Audio;
 import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
@@ -91,11 +90,6 @@ public class Mandelbrot
         //Open a new Graphics Window
         Core.openGraphicsWindow("Mandelbrot", SCREEN_WIDTH, SCREEN_HEIGHT);
 
-        //Open Audio Device
-        Audio.openAudio();
-
-        //Load Resources
-        //Resources.LoadResources();
 
         drawMandelbrot(setX, setY, setWidth, setHeight);
 
@@ -122,7 +116,6 @@ public class Mandelbrot
             Core.refreshScreen(60);
         } while (false == Core.windowCloseRequested());
 
-        //Resources.FreeResources()
-        Audio.closeAudio();
+        Core.close();
     }
 }

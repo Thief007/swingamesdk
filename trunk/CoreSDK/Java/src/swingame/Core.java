@@ -2,6 +2,9 @@ package swingame;
 
 import java.awt.Color;
 
+import swingame.emulator.EmulatedCore;
+import swingame.platform.NativeCore;
+
 /**
  * <<Class summary>>
  *
@@ -10,34 +13,26 @@ import java.awt.Color;
  */
 public final class Core 
 {
-    public static native void openGraphicsWindow(String caption, int width, int height);
-    public static native void refreshScreen(int frameRate);
-
-    public static native int screenHeight();
-
-    public static native int screenWidth();
+    private static CoreAdapter _ca = new EmulatedCore();
     
-    //function WindowCloseRequested(): Integer; cdecl; export;
-    public static native boolean windowCloseRequested();
+    public static void useNative()
+    {
+        _ca = new NativeCore();
+        Graphics.useNative();
+        Input.useNative();
+    }
     
-    //procedure ProcessEvents(); cdecl; export;
-    public static native void processEvents();
-    
-    //procedure RefreshScreen(); cdecl; export;
-    public static native void refreshScreen();
+    public static void openGraphicsWindow(String caption, int width, int height) { _ca.openGraphicsWindow(caption, width, height); }
+    public static void refreshScreen(int frameRate) { _ca.refreshScreen(frameRate); }
+    public static int screenHeight() { return _ca.screenHeight(); }
+    public static int screenWidth() { return _ca.screenWidth(); }
+    public static boolean windowCloseRequested() { return _ca.windowCloseRequested(); }
+    public static void processEvents() { _ca.processEvents(); }
+    public static void refreshScreen() { _ca.refreshScreen(); }
     
     public static Color getHSBColor(float hue, float saturation, float brightness)
     {
         return Color.getHSBColor(hue, saturation, brightness);
-    }
-    
-    static
-    {        
-        try
-        {
-            System.loadLibrary("JavaSwinGame");
-        }
-        finally { System.out.println("Loaded it... really"); }
     }
     
     public static void main(String args[])
@@ -91,5 +86,10 @@ public final class Core
         
         f = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
         return f[2];
+    }
+    
+    public static void close()
+    {
+        _ca.close();
     }
 }

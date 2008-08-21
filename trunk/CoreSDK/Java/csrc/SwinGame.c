@@ -1,7 +1,6 @@
-#include "swingame_Core.h"
-#include "swingame_Audio.h"
-#include "swingame_Graphics.h"
-#include "swingame_Input.h"
+#include "swingame_platform_NativeCore.h"
+#include "swingame_platform_NativeGraphics.h"
+#include "swingame_platform_NativeInput.h"
 
 void OpenGraphicsWindow(const char *caption, jint width, jint height);
 jint WindowCloseRequested();
@@ -40,11 +39,11 @@ void CloseAudio();
 }*/
 
 /*
- * Class:     swingame_Core
+ * Class:     swingame_platform_NativeCore_n_1
  * Method:    OpenGraphicsWindow
  * Signature: (Ljava/lang/String;II)V
  */
-JNIEXPORT void JNICALL Java_swingame_Core_openGraphicsWindow(JNIEnv *env, jclass cls, jstring caption, jint width, jint height)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeCore_n_1openGraphicsWindow(JNIEnv *env, jclass cls, jstring caption, jint width, jint height)
 {
     const char *lCaption = (*env)->GetStringUTFChars(env, caption, NULL);
     OpenGraphicsWindow(lCaption, width, height);
@@ -52,129 +51,107 @@ JNIEXPORT void JNICALL Java_swingame_Core_openGraphicsWindow(JNIEnv *env, jclass
 }
 
 /*
- * Class:     swingame_Core
+ * Class:     swingame_platform_NativeCore_n_1
  * Method:    WindowCloseRequested
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_swingame_Core_windowCloseRequested
-  (JNIEnv *env, jclass cls)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeCore_n_1windowCloseRequested(JNIEnv *env, jclass cls)
 {
     return (WindowCloseRequested() != 0 ? JNI_TRUE : JNI_FALSE);
 }
 
 /*
- * Class:     swingame_Core
+ * Class:     swingame_platform_NativeCore_n_1
  * Method:    ProcessEvents
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_swingame_Core_processEvents (JNIEnv *env, jclass cls)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeCore_n_1processEvents (JNIEnv *env, jclass cls)
 {
     ProcessEvents();
 }
 
 /*
- * Class:     swingame_Core
+ * Class:     swingame_platform_NativeCore_n_1
  * Method:    RefreshScreen
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_swingame_Core_refreshScreen__ (JNIEnv *env, jclass cls)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeCore_n_1refreshScreen__ (JNIEnv *env, jclass cls)
 {
     RefreshScreen();
 }
 
-JNIEXPORT void JNICALL Java_swingame_Core_refreshScreen__I (JNIEnv *env, jclass cls, jint rate)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeCore_n_1refreshScreen__I (JNIEnv *env, jclass cls, jint rate)
 {
 	RefreshScreenWithFrame(rate);
 }
 
 /*
- * Class:     swingame_Core
+ * Class:     swingame_platform_NativeCore_n_1
  * Method:    screenHeight
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_swingame_Core_screenHeight (JNIEnv *env, jclass cls)
+JNIEXPORT jint JNICALL Java_swingame_platform_NativeCore_n_1screenHeight (JNIEnv *env, jclass cls)
 {
 	return ScreenHeight();
 }
 
 /*
- * Class:     swingame_Core
+ * Class:     swingame_platform_NativeCore_n_1
  * Method:    screenWidth
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_swingame_Core_screenWidth(JNIEnv *env, jclass cls)
+JNIEXPORT jint JNICALL Java_swingame_platform_NativeCore_n_1screenWidth(JNIEnv *env, jclass cls)
 {
 	return ScreenWidth();
 }
 
-
 /*
- * Class:     swingame_Audio
- * Method:    openAudio
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_swingame_Audio_openAudio (JNIEnv *env, jclass cls)
-{
-    OpenAudio();
-}
-
-/*
- * Class:     swingame_Audio
- * Method:    closeAudio
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_swingame_Audio_closeAudio (JNIEnv *env, jclass cls)
-{
-    CloseAudio();
-}
-
-/*
- * Class:     swingame_Graphics
+ * Class:     swingame_platform_NativeGraphics
  * Method:    drawPixel
  * Signature: (IFF)V
  */
-JNIEXPORT void JNICALL Java_swingame_Graphics_drawPixel (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeGraphics_n_1drawPixel (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y)
 {
     DrawPixel(color, x, y);
 }
 
-JNIEXPORT void JNICALL Java_swingame_Graphics_drawLine (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jfloat x1, jfloat y1)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeGraphics_n_1drawLine (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jfloat x1, jfloat y1)
 {
     DrawLine(color, x, y, x1, y1);
 }
 
 /*
- * Class:     swingame_Graphics
+ * Class:     swingame_platform_NativeGraphics
  * Method:    clearScreen
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_swingame_Graphics_clearScreen (JNIEnv *env, jclass cls, jint color)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeGraphics_n_1clearScreen (JNIEnv *env, jclass cls, jint color)
 {
     ClearScreen(color);
 }
 
 /*
- * Class:     swingame_Graphics
+ * Class:     swingame_platform_NativeGraphics
  * Method:    fillRectangle
  * Signature: (IFFII)V
  */
-JNIEXPORT void JNICALL Java_swingame_Graphics_fillRectangle (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeGraphics_n_1fillRectangle (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
 {
 	DrawRectangle(color, -1, x, y, w, h);
 }
 
-JNIEXPORT void JNICALL Java_swingame_Graphics_fillEllipse (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeGraphics_n_1fillEllipse (JNIEnv *env, jclass cls, jint color, jfloat x, jfloat y, jint w, jint h)
 {
 	DrawEllipse(color, -1, x, y, w, h);
 }
 
 
 /*
- * Class:     swingame_Input
+ * Class:     swingame_platform_NativeInput
  * Method:    getMousePosition
  * Signature: (Ljava/awt/Point;)V
  */
-JNIEXPORT void JNICALL Java_swingame_Input_getMousePosition (JNIEnv *env, jclass cls, jobject pnt)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeInput_n_1getMousePosition (JNIEnv *env, jclass cls, jobject pnt)
 {
     float x, y;
     jdouble dx, dy;
@@ -190,27 +167,27 @@ JNIEXPORT void JNICALL Java_swingame_Input_getMousePosition (JNIEnv *env, jclass
 }
 
 /*
- * Class:     swingame_Input
+ * Class:     swingame_platform_NativeInput
  * Method:    mouseWasClicked
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_swingame_Input_mouseWasClicked (JNIEnv *env, jclass cls, jint btn)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1mouseWasClicked (JNIEnv *env, jclass cls, jint btn)
 {
     //return JNI_TRUE;
     return MouseWasClicked(btn) != 0  ? JNI_TRUE : JNI_FALSE;
 }
 
 /*
- * Class:     swingame_Input
+ * Class:     swingame_platform_NativeInput
  * Method:    wasKeyTyped
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_swingame_Input_wasKeyTyped (JNIEnv *env, jclass cls, jint key)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1wasKeyTyped (JNIEnv *env, jclass cls, jint key)
 {
 	return WasKeyTyped(key) ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT jboolean JNICALL Java_swingame_Input_isKeyPressed (JNIEnv *env, jclass cls, jint key)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1isKeyPressed (JNIEnv *env, jclass cls, jint key)
 {
     return IsKeyPressed(key) ? JNI_TRUE : JNI_FALSE;
 }

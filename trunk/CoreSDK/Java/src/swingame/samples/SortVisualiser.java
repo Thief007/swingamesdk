@@ -5,7 +5,6 @@
 
 package swingame.samples;
 
-import swingame.Audio;
 import swingame.Core;
 import swingame.Input;
 import swingame.Keys;
@@ -26,12 +25,6 @@ public class SortVisualiser
         //Open a new Graphics Window
         Core.openGraphicsWindow("Sort Visualiser", 800, 600);
 
-        //Open Audio Device
-        Audio.openAudio();
-
-        //Load Resources
-        //Resources.LoadResources();
-
         IntegerSortAnimator2 sa = new IntegerSortAnimator2(80, 100);            
 
         //Game loop
@@ -47,8 +40,7 @@ public class SortVisualiser
             
             Core.refreshScreen(60);
         } while (false == Core.windowCloseRequested());
-
-        //Resources.FreeResources()
-        Audio.closeAudio();
+        
+        Core.close();
     }
 }
