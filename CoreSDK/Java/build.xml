@@ -18,7 +18,7 @@
     <target name="compile" depends="clean, copy-resources">
       <javac srcdir="${src.dir}"
              destdir="${bin.dir}"
-             classpathref="libraries"/>
+             classpathref="libraries">
              
              <compilerarg value="-Xlint"/>             
          </javac>
@@ -26,10 +26,17 @@
 
     <target name="copy-resources">
         <copy todir="${bin.dir}">
-			<fileset dir="${nativelib.dir}" />
+			<fileset dir="${nativelib.dir}">
+				<include name="*.dll" />
+			</fileset>
             <fileset dir="${src.dir}">
                 <exclude name="**/*.java"/>
             </fileset>
+        </copy>
+        <copy todir="${basedir}">
+			<fileset dir="${nativelib.dir}">
+				<include name="*.dll" />
+			</fileset>
         </copy>
     </target>
     

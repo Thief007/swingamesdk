@@ -20,7 +20,7 @@ public final class Test
     public static void main(String[] args)
     {
         //Use the native library using: 
-        Core.useNative();
+        //Core.useNative();
         
         Core.openGraphicsWindow("Hello World", 800, 600);
         
