@@ -26,6 +26,8 @@ import swingame.Keys;
  */
 public final class EmulatedWindow extends Frame
 {
+	static final long serialVersionUID = -2221879713450231845L;
+	
     private Point _mouse = new Point(0,0);
     private Image _backImage;
     private Image _nextImage;
