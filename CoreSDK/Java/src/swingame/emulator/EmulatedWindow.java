@@ -75,7 +75,7 @@ public final class EmulatedWindow extends Frame
                 public void keyReleased(KeyEvent e)
                 {
                     _next.keyState[mapKey(e.getKeyCode())] = EventStateData.KEY_PRESSED;
-                    System.out.println("Type " + e.getKeyCode() + " " + Keys.VK_SPACE + " " + _next.keyState[mapKey(Keys.VK_SPACE)]);
+                    //System.out.println("Type " + e.getKeyCode() + " " + Keys.VK_SPACE + " " + _next.keyState[mapKey(Keys.VK_SPACE)]);
                 }
             });
     }
