@@ -15,7 +15,7 @@ import swingame.Keys;
  * @author   &lt;&gt;
  * @version $Rev$
  */
-public final class Test 
+public final class Sample
 {
     public static void main(String[] args)
     {
