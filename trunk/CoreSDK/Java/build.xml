@@ -9,9 +9,21 @@
             <include name="*.jar"/>
         </fileset>
     </path>
+    
+    <path id="testClasspath">
+    	<pathelement location="${bin.dir}" />
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
 
     <target name="clean">
         <delete dir="${bin.dir}"/>
+        <delete>
+			<fileset dir="${basedir}">
+				<include name="*.dll" />
+			</fileset>
+        </delete>
         <mkdir dir="${bin.dir}"/>
     </target>
 
@@ -41,11 +53,25 @@
     </target>
     
     <target name="run" depends="compile">
-		    <java fork="true" classname="swingame.samples.Test" classpathref="libraries">
+		    <java fork="true" classname="swingame.samples.Mandelbrot" classpathref="libraries">
 	        <classpath path="${bin.dir}"/>
 			<sysproperty key="java.library.path"
 			                   value="${bin.dir}"
 			                   />
 	    </java>
 	</target>
+    
+    <target name="test" description="run the junit tests" depends="compile">
+  		<junit outputtoformatters="false" fork="on" haltonfailure="no" printsummary="yes">
+    	<formatter type="plain" usefile="false"/>
+    	<classpath refid="testClasspath" />
+    	<batchtest>
+			<fileset dir="${src.dir}">
+				<include name="**/*Test.java" />
+			</fileset>
+    	</batchtest>
+  </junit>
+
+</target>
+
 </project>
