@@ -63,7 +63,7 @@ public class IntegerSortAnimator2
     {
         Graphics.clearScreen();
 
-        int w = (int)(Core.screenWidth() / _data.length);
+        int w = Core.screenWidth() / _data.length;
         float scaleHeight = Core.screenHeight() / (float)_max;
 
         for(int i = 0; i < _data.length; i++)
