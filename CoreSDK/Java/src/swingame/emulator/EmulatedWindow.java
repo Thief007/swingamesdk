@@ -65,7 +65,7 @@ public final class EmulatedWindow extends Frame
         addMouseListener( new MouseAdapter() {
                 public void mouseClicked(MouseEvent e)
                 {
-                    System.out.println("Click " + mapButton(e.getButton()) + " " + MouseButton.RIGHT_BUTTON);
+                    //System.out.println("Click " + mapButton(e.getButton()) + " " + MouseButton.RIGHT_BUTTON);
                     _next.buttonClicked[mapButton(e.getButton()) - 1] = true;
                 }
             });
