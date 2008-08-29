@@ -1,6 +1,7 @@
 <project name="SwinGame" default="compile">
     <property name="src.dir" value="${basedir}/src"/>
     <property name="bin.dir" value="${basedir}/bin"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="nativelib.dir" value="${basedir}/clib"/>
 
@@ -18,6 +19,7 @@
     </path>
 
     <target name="clean">
+        <delete dir="${dist.dir}"/>
         <delete dir="${bin.dir}"/>
         <delete>
 			<fileset dir="${basedir}">
@@ -25,6 +27,7 @@
 			</fileset>
         </delete>
         <mkdir dir="${bin.dir}"/>
+        <mkdir dir="${dist.dir}"/>
     </target>
 
     <target name="compile" depends="clean, copy-resources">
@@ -34,6 +37,10 @@
              
              <compilerarg value="-Xlint"/>             
          </javac>
+    </target>
+    
+    <target name="dist" depends="compile">
+        <jar destfile="${dist.dir}/SwinGame.jar" basedir="${bin.dir}"/>
     </target>
 
     <target name="copy-resources">
