@@ -10,17 +10,14 @@ import swingame.Input;
 import swingame.Keys;
 
 /**
+ * The SortVisualiser is a program that provides a visual animation
+ * of the process involved in sorting data.
  *
  * @author acain
  */
 public class SortVisualiser 
 {
     public static void main(String[] args)
-    {
-        runGame();
-    }
-    
-    public static void runGame()
     {
         //Open a new Graphics Window
         Core.openGraphicsWindow("Sort Visualiser", 800, 600);
