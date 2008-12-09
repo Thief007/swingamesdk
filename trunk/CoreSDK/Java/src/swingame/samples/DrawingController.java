@@ -59,7 +59,9 @@ import swingame.MouseButton;
          Shape s = _controlling.getSelectedShape();
          if (s != null)
          {
-             float h = Core.getHue(s.getColor()) / 360.0f;
+             float h = Core.getHue(s.getColor());
+             
+             System.out.println("Hue: " + h);
              
              h += 0.01f;
              if (h > 1) h = h - 1;
@@ -129,7 +131,7 @@ import swingame.MouseButton;
          {
              if (Input.isKeyPressed(Keys.VK_SHIFT))
              {
-                 moveTo(Input.getMousePosition());
+                 moveTo((Point)Input.getMousePosition().clone());
              }
              else
              {

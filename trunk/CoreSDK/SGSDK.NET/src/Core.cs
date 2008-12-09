@@ -340,10 +340,10 @@ namespace SwinGame
 
         internal static string GetExceptionMessage()
         {
-            Trace.WriteLine("Enter GetExceptionMessage");
+            //Trace.WriteLine("Enter GetExceptionMessage");
             System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
             DLL_GetExceptionMessage(sb);
-            Trace.WriteLine("Exit GetExceptionMessage... " + sb.ToString());
+            //Trace.WriteLine("Exit GetExceptionMessage... " + sb.ToString());
 			return sb.ToString();
         }
 
@@ -377,21 +377,21 @@ namespace SwinGame
         /// <param name="height">Height of the Window</param>
         public static void OpenGraphicsWindow(string caption, int width, int height)
         {
-            Trace.WriteLine("Enter OpenGraphicsWindow");
+            //Trace.WriteLine("Enter OpenGraphicsWindow");
             try
             {
                 DLL_OpenGraphicsWindow(caption, width, height);
             }
             catch (Exception exc)
             {
-                Trace.WriteLine("Exception in OpenGraphicsWindow");
+                //Trace.WriteLine("Exception in OpenGraphicsWindow");
                 throw new SwinGameException(exc.Message);
             }
-            Trace.WriteLine("End OpenGraphicsWindow... checking errors");
+            //Trace.WriteLine("End OpenGraphicsWindow... checking errors");
             
             if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
 
-            Trace.WriteLine("Exit OpenGraphicsWindow");
+            //Trace.WriteLine("Exit OpenGraphicsWindow");
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]

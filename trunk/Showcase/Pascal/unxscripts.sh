@@ -50,7 +50,7 @@ LIB_PATH=`cd ${LIB_PATH}; pwd`
 
 echo "  ... Copying lib from ${LIB_PATH}"
 
-cp  ${LIB_PATH}/lib/* ./lib
+cp  -R ${LIB_PATH}/lib/* ./lib
 cp  ${LIB_PATH}/build.sh .
 
 echo "  Finished"

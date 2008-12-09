@@ -10,7 +10,10 @@
 //
 // Change History:
 //
-// Version 1.1.6: in progress
+// Version 2: inm progress
+// - 2008-12-09: Andrew: Added in correction to fix issue with FPC 2.2.2 on Mac.
+//
+// Version 1.1.6:
 // - 2008-05-09: Andrew: Added tracing for OpenGraphicsWindow
 // Version 1.1:
 // - 2008-04-02: Andrew: Added handling of other resources
@@ -1079,21 +1082,31 @@ begin
 	{$IFDEF TRACE}
 		TraceEnter('SGSDK_Core', 'initialization');
 	{$ENDIF}
-
+	
 	{$ifdef DARWIN}
-    //WriteLn('Loading Mac version');
+		{$IFDEF Trace}
+	    TraceIf(tlInfo, 'SGSDK_Core', 'Info', 'initialization', 'Loading Mac version');
+    {$ENDIF}
+
+    //FIX: Error with Mac and FPC 2.2.2
+  	SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
+  	
     NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
     pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
-    //WriteLn('NSAutoReleasePool=', NSAutoReleasePool, ' pool = ', pool);
+
     objc_msgSend(pool, sel_registerName('init'));
     NSApplicationLoad();
    {$endif}
 	
 	if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
 	begin
+  	{$IFDEF Trace}
+	  TraceIf(tlError, 'SGSDK_Core', 'Error Loading SDL', 'initialization', SDL_GetError());
+	  {$ENDIF}
 		raise Exception.Create('Error loading sdl... ' + SDL_GetError());
 	end;
 		
+	//Unicode required by input manager.
 	SDL_EnableUNICODE(SDL_ENABLE);
 
 	sdlManager := TSDLManager.Create();

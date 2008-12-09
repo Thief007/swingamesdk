@@ -14,3 +14,4 @@ SGSDK.NET/lib/SGSDK_Shapes.o
 SGSDK.NET/lib/SGSDK_MappyLoader.o
 SGSDK.NET/lib/SDLEventProcessing.o
 SGSDK.NET/lib/SwinGameTrace.o
+SGSDK.NET/lib/sdl_gfx.o

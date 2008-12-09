@@ -14,6 +14,9 @@
 //
 // Change History:
 //
+// Version 2.0: in progress
+// - 2008-12-09: Andrew: Started transition to SDL_gfx
+//
 // Version 1.1:
 // - 2008-04-08: Stephen: Added DrawTriangle()
 // - 2008-04-02: Andrew: Fixed issues related to freeing images
@@ -276,7 +279,7 @@ interface
 	function GetPixelFromScreen(x, y: Integer): Colour;
 		
 implementation
-	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics;
+	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
 	
 	/// Clears the surface of the bitmap to the passed in color.
 	///
@@ -1140,26 +1143,28 @@ implementation
 	end;
 	
 	procedure PutPixel(surface: PSDL_Surface; x, y: Integer; color: Color);
-	var
-	  bufP: PUInt32;
-	  pixels: PUint32;
-	  rect: TSDL_Rect;
+	//var
+	  //bufP: PUInt32;
+	  //pixels: PUint32;
+	  //rect: TSDL_Rect;
     {$IFNDEF FPC}
-   	  addr: UInt32;
+   	  //addr: UInt32;
     {$ENDIF}
 	begin
-		SDL_GetClipRect(surface, @rect);
-		
-		if (x < rect.x) or (x >= rect.x + rect.w) or (y < rect.y) or (y >= rect.y + rect.h) or (x < 0) or (y < 0) then exit;
-		
-		pixels := surface.pixels;
-    {$IFDEF FPC}
-  		bufp := pixels + (x * surface.format.BytesPerPixel div 4) + (y * surface.pitch div 4);
-    {$ELSE}
-		  addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
-		  bufp := PUint32(addr);
-    {$ENDIF}
-		bufp^ := color;
+//		SDL_GetClipRect(surface, @rect);
+//		
+//		if (x < rect.x) or (x >= rect.x + rect.w) or (y < rect.y) or (y >= rect.y + rect.h) or (x < 0) or (y < 0) then exit;
+//		
+//		pixels := surface.pixels;
+//    {$IFDEF FPC}
+//  		bufp := pixels + (x * surface.format.BytesPerPixel div 4) + (y * surface.pitch div 4);
+//    {$ELSE}
+//		  addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
+//		  bufp := PUint32(addr);
+//    {$ENDIF}
+//		bufp^ := color;
+
+    pixelColor(surface, x, y, color);
 	end;
 	
 	/// Draws a pixel onto the screen.
@@ -1787,58 +1792,59 @@ implementation
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
 	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer);
-	var
-		w, h, x, r, b: Integer;
-		bufP: PUInt32;
-		pixels: PUint32;
-		rect: TSDL_Rect;
-    {$IFNDEF FPC}
-    addr: UInt32;
-    {$ENDIF}
+	//var
+	//	w, h, x, r, b: Integer;
+	//	bufP: PUInt32;
+	//	pixels: PUint32;
+	//	rect: TSDL_Rect;
+  //  {$IFNDEF FPC}
+  //  addr: UInt32;
+  //  {$ENDIF}
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
+		hlineColor(dest.surface, x1, x2, y, theColor);
 
-		SDL_GetClipRect(dest.surface, @rect);
-
-		w := rect.w; //dest.surface.w;
-		h := rect.h; //dest.surface.h;
-		b := h + rect.y;
-		r := rect.x + w;
-		
-		if x2 < x1 then //swap x1 and x2, x1 must be the leftmost endpoint
-		begin
-			x1 := x1 + x2;
-			x2 := x1 - x2;
-			x1 := x1 - x2;
-		end;
-		
-		if (x2 < rect.x) or (x1 > r - 1) or (y < rect.y) or (y > b - 1) then
-		begin
-			exit; //no single point of the line is on screen
-		end;
-		
-		if x1 < rect.x then x1 := rect.x;
-		if x2 >= r then x2 := r - 1;
-		if x1 < 0 then x1 := 0;
-		
-		pixels := dest.surface.pixels;
-
-    {$IFDEF FPC}
-      bufp := pixels + (x1 * dest.surface.format.BytesPerPixel div 4) + (y * dest.surface.pitch div 4) - 1;
-    {$ELSE}
-		  addr := UInt32(pixels) + ((UInt32(x1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch) - 1;
-		  bufp := PUint32(addr);
-    {$ENDIF}
-
-		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-		
-		for x := x1 to x2 do
-		begin
-			Inc(bufp);
-			bufp^ := theColor;
-		end;
-		
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+	//	SDL_GetClipRect(dest.surface, @rect);
+//
+//		w := rect.w; //dest.surface.w;
+//		h := rect.h; //dest.surface.h;
+//		b := h + rect.y;
+//		r := rect.x + w;
+//		
+//		if x2 < x1 then //swap x1 and x2, x1 must be the leftmost endpoint
+//		begin
+//			x1 := x1 + x2;
+//			x2 := x1 - x2;
+//			x1 := x1 - x2;
+//		end;
+//		
+//		if (x2 < rect.x) or (x1 > r - 1) or (y < rect.y) or (y > b - 1) then
+//		begin
+//			exit; //no single point of the line is on screen
+//		end;
+//		
+//		if x1 < rect.x then x1 := rect.x;
+//		if x2 >= r then x2 := r - 1;
+//		if x1 < 0 then x1 := 0;
+//		
+//		pixels := dest.surface.pixels;
+//
+//    {$IFDEF FPC}
+//      bufp := pixels + (x1 * dest.surface.format.BytesPerPixel div 4) + (y * dest.surface.pitch div 4) - 1;
+//    {$ELSE}
+//		  addr := UInt32(pixels) + ((UInt32(x1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch) - 1;
+//		  bufp := PUint32(addr);
+//    {$ENDIF}
+//
+//		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+//		
+//		for x := x1 to x2 do
+//		begin
+//			Inc(bufp);
+//			bufp^ := theColor;
+//		end;
+//		
+//		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 
 	/// Draws a line on the destination bitmap.
