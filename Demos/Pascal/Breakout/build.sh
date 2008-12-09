@@ -71,7 +71,7 @@ DoMacCompile()
 
 	echo "  ... Linking ${EXECUTABLE_NAME}"
 	#Removed -s option - if this crashes... maybe re-add it
-	/usr/bin/ld /usr/lib/crt1.o -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "bin/${1}/${EXECUTABLE_NAME}" `cat bin/${1}/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf -framework SDL_gfx
+	/usr/bin/ld  -L./lib -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -L. -o "bin/${1}/${EXECUTABLE_NAME}" `cat bin/${1}/link.res` -framework Cocoa -F./lib -framework SDL -framework SDL_image -framework SDL_mixer -framework SDL_ttf
 	if [ $? != 0 ]; then DoExitLink ${EXECUTABLE_NAME}; fi
 	
 	rm bin/${1}/link.res
