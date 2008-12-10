@@ -48,20 +48,20 @@ implementation
 		DrawTextOnScreen('6 This is some Text', _TextColor, GameFont('Courier'), CreatePoint(32, 240));
 
 		//Draw Text Lines
-		DrawTextLines('7 This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourTransparent, GameFont('Courier'), AlignCenter, 10, 130, 100, 100);
-		DrawTextLines('8 This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourGreen, GameFont('Courier'), AlignCenter, CreateRectangle(10, 170, 100, 100));
+		DrawTextLines('7 This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourTransparent, GameFont('Courier'), AlignCenter, 10, 130, 200, 10);
+		DrawTextLines('8 This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourGreen, GameFont('Courier'), AlignCenter, CreateRectangle(10, 170, 200, 100));
 
 		//Draw Text Lines on Bitmap
 		ClearSurface(draw, ColourTransparent);
-		DrawTextLines(draw, '9 This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, GetColour(100, 100, 100), GameFont('Courier'), AlignCenter, CreateRectangle(0, 0, 100, 100));
+		DrawTextLines(draw, '9 This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, GetColour(100, 100, 100), GameFont('Courier'), AlignCenter, CreateRectangle(0, 0, 200, 100));
 		DrawBitmap(draw, 10, 210);
 		ClearSurface(draw, ColourTransparent);
-		DrawTextLines(draw, 'A This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourBlue, GameFont('Courier'), AlignCenter, 0, 0, 100, 100);
+		DrawTextLines(draw, 'A This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourBlue, GameFont('Courier'), AlignCenter, 0, 0, 200, 100);
 		DrawBitmap(draw, 10, 250);
 
 		//Draw Text Lines on Screen
-		DrawTextLinesOnScreen('B This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourTransparent, GameFont('Courier'), AlignCenter, 32, 440, 100, 100);
-		DrawTextLinesOnScreen('C This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourYellow, GameFont('Courier'), AlignCenter, CreateRectangle(32, 480, 100, 100));
+		DrawTextLinesOnScreen('B This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourTransparent, GameFont('Courier'), AlignCenter, 32, 440, 200, 100);
+		DrawTextLinesOnScreen('C This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourYellow, GameFont('Courier'), AlignCenter, CreateRectangle(32, 480, 200, 100));
 	end;
 
 	function GetFontTests(): TestSuite;

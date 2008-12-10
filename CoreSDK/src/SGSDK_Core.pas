@@ -10,7 +10,12 @@
 //
 // Change History:
 //
-// Version 2: inm progress
+// Version 2: in progress
+// - 2008-12-10: Andrew: Added Matrix type to Core.
+//                       Removed W from Vector
+//                       Added Rotate and Zoom to Sprite
+//						 Moved to manual double buffer
+//						 Added matrix to allow matrix manipulation in Shapes package
 // - 2008-12-09: Andrew: Added in correction to fix issue with FPC 2.2.2 on Mac.
 //
 // Version 1.1.6:
@@ -61,6 +66,35 @@ interface
 		PI = 3.14159265359;
 	
 	type
+	    /// type: Matrix2d
+	    ///
+	    ///  This record is used to represent transformations that can be
+	    ///  used to apply these changes to vectors.
+		Matrix2D = Array [0..2,0..2] of Single;
+
+		/// Enumeration: CollisionDetectionRanges
+		///	This is used to indicate the kind of collision being checked with the
+		///	Sprite collision routines. 
+		CollisionDetectionRange = (
+				CollisionRangeEquals			= 0,
+				CollisionRangeGreaterThan = 1,
+				CollisionRangeLessThan		= 2
+			);
+
+		CollisionSide = (
+			Top,
+			Bottom,
+			Left,
+			Right,
+			TopLeft,
+			TopRight,
+			BottomLeft,
+			BottomRight,
+			None
+		);
+
+	
+	type
 		UInt8  = sdl.UInt8;
 		UInt16 = sdl.UInt16;
 		UInt32 = sdl.UInt32;
@@ -98,7 +132,7 @@ interface
 		///	- y: The y value of the vector
 		///	- w: Required for transformation
 		Vector = record
-			x, y, w : Single;
+			x, y: Single;
 		end;
 		
 		/// Record: BitmapData
@@ -199,6 +233,8 @@ interface
 			reverse : Boolean;
 			movement : Vector;
 			mass 	 : Single;
+			rotation: Single;
+			zoom: Single;
 		end;
 		
 		/// Type: Sprite
@@ -228,6 +264,7 @@ interface
 		ColourPink, ColorPink, ColourTurquoise, ColorTurquoise,
 		ColourGrey, ColorGrey, ColourMagenta, ColorMagenta: Color;
 		ColorTransparent, ColourTransparent: Color;
+		ColorLightGrey, ColourLightGrey: Color;
 		
 		scr: Bitmap;
 		applicationPath: String;   //global variable for optimisation...
@@ -327,6 +364,9 @@ interface
 implementation
 	uses SysUtils, Math, Classes, SwinGameTrace;
 	
+	var
+	  trueScr: PSDL_Surface;
+	
 	/// ProcessEvents allows the SwinGame API to react to user interactions. This
 	///	routine checks the current keyboard and mouse states. This routine must
 	///	be called frequently within your game loop to enable user interaction.
@@ -354,6 +394,27 @@ implementation
 		result := Math.Tan(DegToRad(angle));
 	end;
 	
+	procedure SetupScr();
+	begin
+	  if scr = nil then New(scr)
+	  else if (scr.surface <> nil) then SDL_FreeSurface(scr.surface);
+	  
+    with trueScr.format^ do
+    begin
+    	scr.surface := SDL_CreateRGBSurface(SDL_HWSURFACE, ScreenWidth(), ScreenHeight(), 32, 
+    		                          RMask, GMask, BMask, SDL_Swap32($000000FF));
+
+      //Turn off alpha blending for when scr is blit onto trueScr
+    	SDL_SetAlpha(scr.surface, 0, 255);
+		  SDL_FillRect(scr.surface, @scr.surface.clip_rect, ColourLightGrey);
+		  		    	
+    	baseSurface := scr.surface;
+    	
+    	scr.width := trueScr.w;
+    	scr.height := trueScr.h;
+    end;
+	end;
+	
 	/// Sets up the graphical window for the specified width and height.
 	/// Sets the caption of the window, and the icon if one is specified.
 	procedure InitSDL(caption: String; screenWidth, screenHeight: Integer);
@@ -376,19 +437,11 @@ implementation
 				raise Exception.Create('The icon file specified could not be loaded');
 			end;
 		end;
+		
+		trueScr := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
+    if trueScr = nil then raise Exception.Create('Unable to create window drawing surface... ' + SDL_GetError());
 
-		New(scr);
-		scr.width := screenWidth;
-		scr.height := screenHeight;
-		scr.surface := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
-    	if scr = nil then raise Exception.Create('Unable to create window drawing surface... ' + SDL_GetError());
-
-		with scr.surface.format^ do
-		begin
-			baseSurface := SDL_CreateRGBSurface(SDL_SWSURFACE or SDL_SRCALPHA,
-											 1, 1, 32,
-											 RMask, GMask, BMask, SDL_Swap32($000000FF));
-		end;
+    SetupScr();
 
 		SDL_WM_SetCaption(PChar(caption), nil);
 		{$IFDEF TRACE}
@@ -508,14 +561,12 @@ implementation
 	var
 		oldScr: PSDL_Surface;
 	begin
-		oldScr := scr.surface;
+		oldScr := trueScr;
 		
 		try
-			scr.surface := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, oldScr.flags xor SDL_FULLSCREEN);
-			
-			//if oldScr <> scr.surface then SDL_FreeSurface(oldScr);
+			trueScr := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, oldScr.flags xor SDL_FULLSCREEN);
+			//Remember... trueScr is a pointer to screen buffer, not a "surface"!
 		except on exc: Exception do
-			WriteLn('Bug with freeing surface on toggle Fullscreen... needs to be examined');
 		end;
 	end;
 	
@@ -530,16 +581,17 @@ implementation
 		oldScr: PSDL_Surface;
 		//toggle: Boolean;
 	begin
-    	if (scr = nil) or (scr.surface = nil) then
-      		raise Exception.Create('Screen has not been created. Unable to get screen width.');
+    if (scr = nil) then
+      raise Exception.Create('Screen has not been created. Unable to get screen width.');
+        
 		if (width < 1) or (height < 1) then 
 			raise Exception.Create('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
 		
-		oldScr := scr.surface;
+		if (width = ScreenWidth()) and (height = ScreenHeight()) then exit;
 		
-		scr.surface := SDL_SetVideoMode(width, height, 32, oldScr.flags);
-		scr.width := width;
-		scr.height := height;
+		oldScr := trueScr;
+		trueScr := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+		SetupScr();
 	end;
 	
 	/// Returns the width of the screen currently displayed.
@@ -547,10 +599,10 @@ implementation
 	/// @returns:	The screen's width
 	function ScreenWidth(): Integer;
 	begin
-    	if (scr = nil) or (scr.surface = nil) then
+    	if (trueScr = nil) then
       		raise Exception.Create('Screen has not been created. Unable to get screen width.');
 
-		result := scr.surface.w;
+		result := trueScr.w;
 	end;
 
 	/// Returns the height of the screen currently displayed.
@@ -558,10 +610,10 @@ implementation
 	/// @returns:	The screen's height
 	function ScreenHeight(): Integer;
 	begin
-    	if (scr = nil) or (scr.surface = nil) then
+    	if (trueScr = nil) then
       		raise Exception.Create('Screen has not been created. Unable to get screen width.');
 
-		result := scr.surface.h;
+		result := trueScr.h;
 	end;
 
 	{$ifdef DARWIN}
@@ -611,6 +663,7 @@ implementation
 			ColorGrey := GetColour(128, 128, 128, 255);
 			ColorMagenta := GetColour(255, 0, 255, 255);
 			ColorTransparent := GetColour(0, 0, 0, 0);
+			ColorLightGrey := GetColour(20, 20, 20, 255);
 	
 			ColourWhite := ColorWhite;
 			ColourGreen := ColorGreen;
@@ -623,6 +676,7 @@ implementation
 			ColourGrey := ColorGrey;
 			ColourMagenta := ColorMagenta;
 			ColourTransparent := ColorTransparent;
+			ColourLightGrey := ColorLightGrey;
 		except on e: Exception do raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
 		end;
 		
@@ -645,13 +699,15 @@ implementation
 	procedure RefreshScreen(); overload;
 	var
 		nowTime: UInt32;
-	begin
+	begin	  		
 		nowTime := GetTicks();
 		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
 		lastDrawUpdateTime := nowTime;
 	
 		sdlManager.DrawCollectedText(scr.surface);
-		SDL_Flip(scr.surface);
+		
+		SDL_BlitSurface(scr.surface, nil, trueScr, nil);
+		SDL_Flip(trueScr);
 	end;
 	
 	/// Draws the current drawing to the screen. This must be called to display
@@ -679,8 +735,9 @@ implementation
 		lastDrawUpdateTime := nowTime;
 		
 		sdlManager.DrawCollectedText(scr.surface);
-
-		SDL_Flip(scr.surface);
+		
+    SDL_BlitSurface(scr.surface, nil, trueScr, nil);
+		SDL_Flip(trueScr);
 	end;
 	
 	/// Saves the current screen a bitmap file. The file will be saved into the
@@ -794,7 +851,7 @@ implementation
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;
 	begin
 		if (baseSurface = nil) or (baseSurface.format = nil) then
-			raise Exception.Create('Unable to CreateBitmap as the window is not open');
+			raise Exception.Create('Unable to GetColour as the window is not open');
 
 		try
 			result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
@@ -1122,6 +1179,7 @@ begin
 	end;
 
 	scr := nil;
+	baseSurface := nil;
 	
 	{$IFDEF TRACE}
 		TraceExit('SGSDK_Core', 'initialization');
@@ -1142,14 +1200,13 @@ begin
 
 	if scr <> nil then
 	begin
-		if scr.surface <> nil then
-		begin
-			SDL_FreeSurface(scr.surface);
-		end;
-		scr.surface := nil;
-
+	  if scr.surface <> nil then
+		  SDL_FreeSurface(scr.surface);
+		
 		Dispose(scr);
 		scr := nil;
+		//scr and baseSurface are now the same!
+		baseSurface := nil;
 	end;
 	
 	SDL_Quit();

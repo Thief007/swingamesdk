@@ -10,6 +10,9 @@
 //
 // Change History:
 //
+// Version 2:
+// - 2008-12-10: Andrew: Removed W from Vector...
+//
 // Version 1.1:
 // - 2008-04-02: Andrew: Added resource type other
 //                       Fixed error reporting on Free
@@ -186,7 +189,7 @@ namespace SwinGame
     {
         private Single _X;
         private Single _Y;
-        private Single _W;
+        //private Single _W;
 
         /// <summary>
         /// The X Component of the Vector, i.e. the movement 
@@ -215,8 +218,8 @@ namespace SwinGame
         /// </summary>
         public Single W
         {
-            get { return _W; }
-            set { _W = value; }
+            get { return 1; //_W; }
+            //set { _W = value; }
         }
     }
 

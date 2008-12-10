@@ -17,6 +17,11 @@ import swingame.Keys;
  */
 public class SortVisualiser 
 {
+    /**
+    * The entry point for the program.
+    *
+    * @param args   Command line arguments - not used
+    */
     public static void main(String[] args)
     {
         //Open a new Graphics Window
@@ -25,7 +30,7 @@ public class SortVisualiser
         IntegerSortAnimator2 sa = new IntegerSortAnimator2(80, 100);            
 
         //Game loop
-        sa.sort();
+        sa.sort();      // Sort when it starts
         do
         {
             Core.processEvents();

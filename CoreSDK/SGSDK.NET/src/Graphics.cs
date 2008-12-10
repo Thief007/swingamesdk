@@ -14,6 +14,9 @@
 //
 // Change History:
 //
+// Version 2.0:
+// - 2008-12-09: Andrew: Changed Triangle to an array.
+//
 // Version 1.1:
 // - 2008-04-02: Andrew: Fixed GetPixel and GetPixel from Screen
 // - 2008-03-09: Andrew: Added DrawSprite with offsets
@@ -3388,7 +3391,7 @@ namespace SwinGame
 		}
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTriangle")]
-        private static extern void DLL_DrawTriangle(int theColor, Triangle triangle);
+        private static extern void DLL_DrawTriangle(int theColor, [MarshalAs(UnmanagedType.LPArray)]Point2D[] points);
         /// <summary>
         /// Draws the specified Triangle to the screen
         /// </summary>
@@ -3399,7 +3402,7 @@ namespace SwinGame
             try
             {
                 int color = theColor.ToArgb();
-                DLL_DrawTriangle(color, triangle);
+                DLL_DrawTriangle(color, triangle.ToArray());
             }
             catch (Exception exc)
             {
