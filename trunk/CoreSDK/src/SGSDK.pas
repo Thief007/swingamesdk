@@ -19,6 +19,9 @@
 //     other value is false.
 //
 // Change History:
+//
+// Version 2.0:
+// - 2008-12-10: Andrew: Changed Triangle to Array.
 //  
 //  Version 1.1.6 - in progress
 //	 - 2008-05-09: Andrew: Added debug tracing code
@@ -146,6 +149,14 @@ uses
 		begin
 			arr[i] := (data + i)^;
 		end;
+	end;
+	
+	procedure PopulateTriangle(data: ^Point2D; out tri: Triangle);
+	begin
+    for i := 0 to 2 do
+    begin
+      tri[i] := (data + i)^;
+    end;
 	end;
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -1782,10 +1793,13 @@ uses
 	end;
 	
 	//Version 1.1.5
-	procedure DrawTriangle(theColour: Colour; triangle: Triangle); cdecl; export;
+	procedure DrawTriangle(theColour: Colour; firstPoint: ^Point2D); cdecl; export;
+	var
+	  tri: Triangle;
 	begin
 		Try
-			SGSDK_Graphics.DrawTriangle(theColour, triangle);
+		  PopulateTriangle(firstPoint, tri);
+			SGSDK_Graphics.DrawTriangle(theColour, tri);
 		Except on exc: Exception do TrapException(exc, 'DrawTriangle');
 		end;
 	end;

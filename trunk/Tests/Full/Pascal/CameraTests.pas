@@ -25,6 +25,9 @@ implementation
 		if IsKeyPressed(VK_D) then MoveVisualArea(CreateVector(20, 0));
 		if IsKeyPressed(VK_W) then MoveVisualArea(0, -20);
 		if IsKeyPressed(VK_S) then MoveVisualArea(0, 20);		
+		  
+		if IsKeyPressed(VK_COMMA) then shipSprite.rotation += 5;
+		if IsKeyPressed(VK_PERIOD) then shipSprite.rotation -= 5;
 		if follow then FollowSprite(shipSprite, Round(400 - drawIn.x - drawIn.width / 2), -50);
 		
 		DrawBitmap(bgImage, 0, 0);

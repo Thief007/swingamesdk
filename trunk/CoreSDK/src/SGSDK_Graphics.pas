@@ -15,6 +15,11 @@
 // Change History:
 //
 // Version 2.0: in progress
+// - 2008-12-10: Andrew: Moved primitive drawing to SDL_gfx
+//						 Added rotation and zoom to Sprite + Sprite Drawing
+//						 Added RotateZoomBitmap
+//						 Added MakeOpaque and MakeTransparent to allow multiple blending
+//						 Added extra triangle drawing code
 // - 2008-12-09: Andrew: Started transition to SDL_gfx
 //
 // Version 1.1:
@@ -147,10 +152,28 @@ interface
 	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
 	procedure DrawLine(theColour: Colour; const line: LineSegment); overload;
 	
-	procedure DrawTriangle(theColour: Colour; triangle: Triangle);
+  procedure DrawTriangle(theColour: Colour; filled: Boolean; const triangle: Triangle); overload; //In tests
+	procedure DrawTriangle(theColour: Colour; const triangle: Triangle); overload; //In tests
+	procedure FillTriangle(theColour: Colour; const triangle: Triangle); overload; //In tests
+
+  procedure DrawTriangleOnScreen(theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
+	procedure DrawTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
+	procedure FillTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
+	  
+  procedure DrawTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+
+  procedure DrawTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //In tests
+  procedure FillTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //In tests
+		  
+  procedure DrawTriangle(dest: Bitmap; theColour: Colour; filled: Boolean; const triangle: Triangle); overload; //In tests
+	procedure DrawTriangle(dest: Bitmap; theColour: Colour; const triangle: Triangle); overload; //In tests
+	procedure FillTriangle(dest: Bitmap; theColour: Colour; const triangle: Triangle); overload; //In tests
+
+  procedure DrawTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //in tests
+  procedure FillTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //in tests
 
 	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
-
 	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
 
 	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: Integer); overload;
@@ -272,14 +295,32 @@ interface
 	procedure ResetClip(); overload; {1.1}
 	procedure ResetClip(bmp: Bitmap); overload; {1.1}
 		
-	//
-	// Additions in 1.1.1
-	//
 	function GetPixel(bmp: Bitmap; x, y: Integer): Colour;
 	function GetPixelFromScreen(x, y: Integer): Colour;
+
+  //
+  // Alpha blendings adjusting code
+  //
+  procedure MakeOpaque(bmp: Bitmap);
+	procedure MakeTransparent(bmp: Bitmap);
+	  
+	//
+	// Rotate and Zoom
+	//
+	function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
+	procedure SetupBitmapForCollisions(src: Bitmap);
 		
 implementation
 	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
+	
+	/// Converts the passed in SwinGame color to a Color used by SDL_GFX
+	function ToGfxColor(val: Color): Color;
+	var
+	  r, g, b, a: Byte;
+  begin
+    GetComponents(val, r, g, b, a);
+    result := (r shl 24) or (g shl 16) or (b shl 8) or a;
+  end;
 	
 	/// Clears the surface of the bitmap to the passed in color.
 	///
@@ -588,20 +629,22 @@ implementation
 			result.spriteKind := StaticSprite;
 		end;
 
-		result.x					:= 0;
-		result.y					:= 0;
-		result.xPos					:= @result.x;
-		result.yPos					:= @result.y;
-		result.currentFrame			:= 0;
+		result.x					    := 0;
+		result.y					    := 0;
+		result.xPos					  := @result.x;
+		result.yPos					  := @result.y;
+		result.currentFrame		:= 0;
 		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
 		result.bitmaps[0]			:= image;
 		result.frameCount			:= 0;
-		result.endingAction			:= endingAction;
-		result.width				:= width;
-		result.height				:= height;
+		result.endingAction		:= endingAction;
+		result.width				  := width;
+		result.height				  := height;
 		result.reverse				:= false;
 		result.movement				:= CreateVector(0,0);
+		result.rotation       := 0;
+		result.zoom           := 1;
 	end;
 	
 	/// Creates a sprites, and sets its first bitmap.
@@ -673,7 +716,9 @@ implementation
 		result.usePixelCollision	:= true;
 		result.hasEnded				:= false;
 		result.movement				:= CreateVector(0,0);
-
+		result.rotation       := 0;
+		result.zoom           := 1;
+		
 		SetLength(result.bitmaps, Length(bitmaps));
 		for i := 0 to High(bitmaps) do
 		begin
@@ -987,54 +1032,65 @@ implementation
 	/// Side Effects:
 	///	- The sprite is drawn to the screen, if within screen area
 	procedure DrawSprite(spriteToDraw: Sprite); overload;
-	//var
-	//	srcX, srcY: Integer; // the source x, y : i.e. the location of the current part for multi animations
 	begin
 	  DrawSprite(spriteToDraw, 0, 0);
-		{if spriteToDraw = nil then raise Exception.Create('No sprite supplied');
-		
-		if IsSpriteOffscreen(spriteToDraw) then exit;
-		
-		if spriteToDraw.spriteKind <> AnimMultiSprite then
-		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x, spriteToDraw.y);
-		end
-		else
-		begin
-			with spriteToDraw^ do
-			begin
-				srcX := (currentFrame mod cols) * width;
-				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
-			end;
-			
-			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
-						   spriteToDraw.width, spriteToDraw.height,
-						   spriteToDraw.x, spriteToDraw.y);
-		end;}
 	end;
 	
 	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: Integer); overload;
 	var
 		srcX, srcY: Integer;
+		dest, dest2: Bitmap;
 	begin
 		if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
 		
-		if spriteToDraw.spriteKind <> AnimMultiSprite then
+		if (spriteToDraw.rotation <> 0) or (spriteToDraw.zoom <> 1) then
 		begin
-			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+			dest := CreateBitmap(spriteToDraw.width, spriteToDraw.height);
+  		
+  		if spriteToDraw.spriteKind <> AnimMultiSprite then
+  		begin
+  			DrawBitmap(dest, spriteToDraw.bitmaps[spriteToDraw.currentFrame], 0, 0);
+  		end
+  		else
+  		begin
+  			with spriteToDraw^ do
+  			begin
+  				srcX := (currentFrame mod cols) * width;
+  				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+  			end;
+        
+        MakeOpaque(spriteToDraw.bitmaps[0]);
+  			DrawBitmapPart(dest, spriteToDraw.bitmaps[0], srcX, srcY, 
+  								   spriteToDraw.width, spriteToDraw.height,
+  								   0, 0);
+        MakeTransparent(spriteToDraw.bitmaps[0]);
+  		end;
+  		
+  		dest2 := RotateZoomBitmap(dest, spriteToDraw.rotation, spriteToDraw.zoom);
+
+  		DrawBitmap(dest2, spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+  		FreeBitmap(dest);
+  		FreeBitmap(dest2);
 		end
 		else
 		begin
-			with spriteToDraw^ do
-			begin
-				srcX := (currentFrame mod cols) * width;
-				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
-			end;
+  		if spriteToDraw.spriteKind <> AnimMultiSprite then
+  		begin
+  			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+  		end
+  		else
+  		begin
+  			with spriteToDraw^ do
+  			begin
+  				srcX := (currentFrame mod cols) * width;
+  				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+  			end;
 			
-			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
-								   spriteToDraw.width, spriteToDraw.height,
-								   spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
-		end;
+  			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
+  								   spriteToDraw.width, spriteToDraw.height,
+  								   spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+  		end;
+  	end;
 	end;
 
   	/// Determines if a sprite is off the screen.
@@ -1117,8 +1173,18 @@ implementation
 		
 		result.width := width;
 		result.height := height;
-		SDL_SetAlpha(result.surface, SDL_SRCALPHA, SDL_ALPHA_OPAQUE);
+		SDL_SetAlpha(result.surface, SDL_SRCALPHA, 0);
 		SDL_FillRect(result.surface, nil, ColorTransparent);
+	end;
+	
+	procedure MakeOpaque(bmp: Bitmap);
+	begin
+	  SDL_SetAlpha(bmp.surface, 0, 255);
+	end;
+
+	procedure MakeTransparent(bmp: Bitmap);
+	begin
+	  SDL_SetAlpha(bmp.surface, SDL_SRCALPHA, 0);
 	end;
 
 	/// Created bitmaps can be optimised for faster drawing to the screen. This
@@ -1143,28 +1209,8 @@ implementation
 	end;
 	
 	procedure PutPixel(surface: PSDL_Surface; x, y: Integer; color: Color);
-	//var
-	  //bufP: PUInt32;
-	  //pixels: PUint32;
-	  //rect: TSDL_Rect;
-    {$IFNDEF FPC}
-   	  //addr: UInt32;
-    {$ENDIF}
 	begin
-//		SDL_GetClipRect(surface, @rect);
-//		
-//		if (x < rect.x) or (x >= rect.x + rect.w) or (y < rect.y) or (y >= rect.y + rect.h) or (x < 0) or (y < 0) then exit;
-//		
-//		pixels := surface.pixels;
-//    {$IFDEF FPC}
-//  		bufp := pixels + (x * surface.format.BytesPerPixel div 4) + (y * surface.pitch div 4);
-//    {$ELSE}
-//		  addr := UInt32(pixels) + (UInt32(x) * surface.format.BytesPerPixel) + (Uint32(y) * surface.pitch) ;
-//		  bufp := PUint32(addr);
-//    {$ENDIF}
-//		bufp^ := color;
-
-    pixelColor(surface, x, y, color);
+    pixelColor(surface, x, y, ToGfxColor(color));
 	end;
 	
 	/// Draws a pixel onto the screen.
@@ -1266,13 +1312,85 @@ implementation
 	begin
 		DrawLine(dest, theColour, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
 	end;
+
+  procedure DrawTriangle(theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
+  begin
+    if filled then FillTriangle(theColour, triangle)
+    else DrawTriangle(theColour, triangle);
+  end;
+
+  procedure DrawTriangle(dest: Bitmap; theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
+  begin
+    if filled then FillTriangle(dest, theColour, triangle)
+    else DrawTriangle(dest, theColour, triangle);
+  end;
 	
-	procedure DrawTriangle(theColour: Colour; triangle: Triangle);
+	procedure DrawTriangle(dest: Bitmap; theColour: Colour; const triangle: Triangle); overload;
 	begin
-		DrawLine(theColour, triangle.pointA.x, triangle.pointA.y, triangle.pointB.x, triangle.pointB.y);
-		DrawLine(theColour, triangle.pointA.x, triangle.pointA.y, triangle.pointC.x, triangle.pointC.y);
-		DrawLine(theColour, triangle.pointC.x, triangle.pointC.y, triangle.pointB.x, triangle.pointB.y);
+    DrawTriangle(dest, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
 	end;
+
+  procedure DrawTriangleOnScreen(theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
+  begin
+    if filled then FillTriangleOnScreen(theColour, triangle) 
+    else DrawTriangleOnScreen(theColour, triangle);
+  end;
+
+	procedure DrawTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
+	begin
+    DrawTriangle(scr, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+	end;
+
+	procedure DrawTriangle(theColour: Colour; const triangle: Triangle); overload;
+	begin
+    DrawTriangle(theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+	end;
+	
+	procedure DrawTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+	begin
+	  DrawTriangle(scr, theColour, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
+	end;
+	
+	procedure DrawTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+	begin
+    DrawTriangle(scr, theColour, x1, y1, x2, y2, x3, y3);
+	end;
+
+	procedure DrawTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+	begin
+    aatrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColour));
+	end;
+
+	procedure FillTriangle(dest: Bitmap; theColour: Color; const triangle: Triangle); overload;
+	begin
+    FillTriangle(dest, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+	end;
+	
+	procedure FillTriangle(theColour: Colour; const triangle: Triangle); overload;
+	begin
+    FillTriangle(theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+	end;
+
+	procedure FillTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+	begin
+	  FillTriangle(scr, theColour, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
+	end;
+	
+	procedure FillTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
+	begin
+    FillTriangle(scr, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+	end;
+	
+	procedure FillTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+	begin
+    FillTriangle(scr, theColour, x1, y1, x2, y2, x3, y3);
+	end;
+
+	procedure FillTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+	begin
+    filledTrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(theColour));
+	end;
+
 	
 	/// Draws a horizontal line on the screen.
 	///
@@ -1450,10 +1568,8 @@ implementation
 	///	- Draws a rectangle in the dest bitmap
 	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : Integer); overload;
 	begin
-		DrawHorizontalLine(dest, theColour, yPos, xPos, xPos + width - 1);
-		DrawHorizontalLine(dest, theColour, yPos + height - 1, xPos, xPos + width - 1);
-		DrawVerticalLine(dest, theColour, xPos, yPos, yPos + height - 1);
-		DrawVerticalLine(dest, theColour, xPos + width - 1, yPos, yPos + height - 1);
+	  if dest = nil then raise Exception.Create('No destination bitmap supplied');
+	  rectangleColor(dest.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColour));
 	end;
 
 	/// Draws a filled rectangle on the destination bitmap.
@@ -1486,7 +1602,8 @@ implementation
 		rect.w := width;
 		rect.h := height;
 		
-		SDL_FillRect(dest.surface, @rect, theColour);
+		//SDL_FillRect(dest.surface, @rect, theColour);
+		boxColor(dest.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(theColour));
 	end;
 
 	/// Draws a ellipse within a given rectangle on the dest bitmap.
@@ -1516,99 +1633,12 @@ implementation
 	///	- Draws a ellipse in the dest bitmap
 	procedure DrawEllipse(dest: Bitmap; theColour: Colour;  xPos, yPos, width, height: Integer); overload;
 	var
-		x, y: Integer;
-		xRadius, yRadius: Integer;
-		xChange, yChange: Integer;
-		ellipseError: Integer;
-		twoASquare, twoBSquare: Integer;
-		stoppingX, stoppingY: Integer;
+	  halfWidth, halfHeight: Sint16;
 	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw an ellipse is nil');
-		if (width < 0) or (height < 0) then raise Exception.Create('Ellipse width and height must be greater then 0');
-		if (width = 0) or (height = 0) then exit;
-		
-		xRadius := width div 2;
-		yRadius := height div 2;
-		
-		xPos := xPos + xRadius;
-    	yPos := yPos + yRadius;
-		
-		twoASquare := 2 * (width shr 1) * (width shr 1);
-		twoBSquare := 2 * (height shr 1) * (height shr 1);
-
-		// 1st set of points
-		x := (width shr 1) - 1;  // radius zero == draw nothing
-		y := 0;
-
-		xChange := (height shr 1) * (height shr 1) * (1 - 2 * (width shr 1));
-		yChange := (width shr 1) * (width shr 1);
-
-		ellipseError := 0;
-
-		stoppingX := twoBSquare * (width shr 1);
-		stoppingY := 0;
-
-		//Lock dest
-		if SDL_MUSTLOCK(dest.surface) then
-		begin
-			if SDL_LockSurface(dest.surface) < 0 then exit;
-		end;
-
-		// Plot four ellipse points by iteration
-		while stoppingX > stoppingY do
-		begin
-			PutPixel(dest.surface, xPos + x, yPos + y, theColour);
-			PutPixel(dest.surface, xPos - x, yPos + y, theColour);
-			PutPixel(dest.surface, xPos + x, yPos - y, theColour);
-			PutPixel(dest.surface, xPos - x, yPos - y, theColour);
-
-			y := y + 1;
-			stoppingY := stoppingY + twoASquare;
-			ellipseError := ellipseError + Ychange;
-			yChange := yChange + twoASquare;
-
-			if (2 * ellipseError + xChange) > 0 then
-			begin
-				x := x - 1;
-				stoppingX := stoppingX - twoBSquare;
-				ellipseError := ellipseError + xChange;
-				xChange := xChange + twoBSquare;
-			end;
-		end;
-
-		// 2nd set of points
-		x := 0;
-		y := (height shr 1) - 1;  //radius zero == draw nothing
-		xChange := (height shr 1) * (height shr 1);
-		yChange := (width shr 1) * (width shr 1) * (1 - 2 * (height shr 1));
-		ellipseError := 0;
-		stoppingX := 0;
-		stoppingY := twoASquare * (height shr 1);
-
-		//Plot four ellipse points by iteration
-		while stoppingX < stoppingY do
-		begin
-			PutPixel(dest.surface, xPos + x, yPos + y, theColour);
-			PutPixel(dest.surface, xPos - x, yPos + y, theColour);
-			PutPixel(dest.surface, xPos + x, yPos - y, theColour);
-			PutPixel(dest.surface, xPos - x, yPos - y, theColour);
-
-			x := x + 1;
-			stoppingX := stoppingX + twoBSquare;
-			ellipseError := ellipseError + xChange;
-			xChange := xChange + twoBSquare;
-			
-			if (2 * ellipseError + yChange) > 0 then
-			begin
-				y := y - 1;
-				stoppingY := stoppingY - TwoASquare;
-				ellipseError := ellipseError + yChange;
-				yChange := yChange + twoASquare;
-			end;
-		end;
-		
-		// Unlock dest
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+	  halfWidth := width div 2;
+	  halfHeight := height div 2;
+	  
+	  aaellipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColour));
 	end;
 
 	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
@@ -1622,97 +1652,14 @@ implementation
 	///	- Draws a ellipse in the dest bitmap
 	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: Integer);
 	var
-		x, y: Integer;
-		xChange, yChange: Integer;
-		ellipseError: Integer;
-		twoASquare, twoBSquare: Integer;
-		stoppingX, stoppingY: Integer;
-		xRadius, yRadius: Integer;
+	  halfWidth, halfHeight: Sint16;
 	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw an ellipse is nil');
-		if (width < 0) or (height < 0) then raise Exception.Create('Ellipse width and height must be greater then 0');
-		if (width = 0) or (height = 0) then exit;
-		
-		xRadius := width div 2;
-		yRadius := height div 2;
-		
-		xPos := xPos + xRadius;
-		yPos := yPos + yRadius;
-		
-		twoASquare := 2 * (width shr 1) * (width shr 1);
-		twoBSquare := 2 * (height shr 1) * (height shr 1);
-		
-		// 1st set of points
-		x := (width shr 1) - 1;  // radius zero == draw nothing
-		y := 0;
-		
-		xChange := (height shr 1) * (height shr 1) * (1 - 2 * (width shr 1));
-		yChange := (width shr 1) * (width shr 1);
-		
-		ellipseError := 0;
-		
-		stoppingX := twoBSquare * (width shr 1);
-		stoppingY := 0;
-		
-		//Lock dest
-		if SDL_MUSTLOCK(dest.surface) then
-		begin
-			if SDL_LockSurface(dest.surface) < 0 then exit;
-		end;
-		
-		// Plot four ellipse points by iteration
-		while stoppingX > stoppingY do
-		begin
-			DrawHorizontalLine(dest, theColour, yPos + y, xPos - x, xPos + x);
-			DrawHorizontalLine(dest, theColour, yPos - y, xPos - x, xPos + x);
-			
-			y := y + 1;
-			stoppingY := stoppingY + twoASquare;
-			ellipseError := ellipseError + Ychange;
-			yChange := yChange + twoASquare;
-			
-			if (2 * ellipseError + xChange) > 0 then
-			begin
-				x := x - 1;
-				stoppingX := stoppingX - twoBSquare;
-				ellipseError := ellipseError + xChange;
-				xChange := xChange + twoBSquare;
-			end;
-		end;
-		
-		// 2nd set of points
-		x := 0;
-		y := (height shr 1) - 1;  //radius zero == draw nothing
-		xChange := (height shr 1) * (height shr 1);
-		yChange := (width shr 1) * (width shr 1) * (1 - 2 * (height shr 1));
-		ellipseError := 0;
-		stoppingX := 0;
-		stoppingY := twoASquare * (height shr 1);
-		
-		//Plot four ellipse points by iteration
-		while stoppingX < stoppingY do
-		begin
-			DrawHorizontalLine(dest, theColour, yPos + y, xPos - x, xPos + x);
-			DrawHorizontalLine(dest, theColour, yPos - y, xPos - x, xPos + x);
-			
-			x := x + 1;
-			stoppingX := stoppingX + twoBSquare;
-			ellipseError := ellipseError + xChange;
-			xChange := xChange + twoBSquare;
-			
-			if (2 * ellipseError + yChange) > 0 then
-			begin
-				y := y - 1;
-				stoppingY := stoppingY - TwoASquare;
-				ellipseError := ellipseError + yChange;
-				yChange := yChange + twoASquare;
-			end;
-		end;
-		
-		// Unlock dest
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-	end;
+	  halfWidth := width div 2;
+	  halfHeight := height div 2;
 
+	  filledEllipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColour));
+	end;
+	
 	/// Draws a vertical line on the destination bitmap.
 	///
 	///	@param dest:				 The destination bitmap - not optimised!
@@ -1723,63 +1670,9 @@ implementation
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
 	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: Integer);
-	var
-		w, h, b, r, y: Integer;
-		bufP: PUInt32;
-		pixels: PUint32;
-		rect: TSDL_Rect;
-    {$IFNDEF FPC}
-      addr: UInt32;
-    {$ENDIF}
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
-		
-		SDL_GetClipRect(dest.surface, @rect);
-		
-		w := rect.w; //dest.surface.w;
-		h := rect.h; //dest.surface.h;
-		b := h + rect.y;
-		r := rect.x + w;
-		
-		if y2 < y1 then  //swap y1 and y2
-		begin
-			y1 := y1 + y2;
-			y2 := y1 - y2;
-			y1 := y1 - y2;
-		end;
-		
-		//if (x < 0) or (x > w - 1) or (y2 < 0) or (y1 > h - 1) then
-		if (x < rect.x) or (x > r - 1) or (y2 < rect.y) or (y1 > b - 1) then
-		begin
-			exit;
-		end;
-		
-		if y1 < rect.y then y1 := rect.y;
-		if y2 >= b then y2 := b - 1;
-		
-		pixels := dest.surface.pixels;
-    {$IFDEF FPC}
-   		bufp := pixels + (x * dest.surface.format.BytesPerPixel div 4) + (y1 * dest.surface.Pitch div 4);
-    {$ELSE}
-		  addr := UInt32(pixels) + (UInt32(x) * dest.surface.format.BytesPerPixel) + (UInt32(y1) * dest.surface.Pitch);
-		  bufp := PUint32(addr);
-    {$ENDIF}
-
-
-		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-		
-		for y := y1 to y2 do
-		begin
-			bufp^ := theColor;
-      {$IFDEF FPC}
-  			bufp := bufp + (dest.surface.pitch div 4);
-      {$ELSE}
-        addr := addr + dest.surface.pitch;
-        bufp := PUInt32(addr);
-      {$ENDIF}
-		end;
-		
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+    vlineColor(dest.surface, x, y1, y2, ToGfxColor(theColor));
 	end;
 
 	/// Draws a horizontal line on the destination bitmap.
@@ -1792,59 +1685,10 @@ implementation
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
 	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer);
-	//var
-	//	w, h, x, r, b: Integer;
-	//	bufP: PUInt32;
-	//	pixels: PUint32;
-	//	rect: TSDL_Rect;
-  //  {$IFNDEF FPC}
-  //  addr: UInt32;
-  //  {$ENDIF}
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
-		hlineColor(dest.surface, x1, x2, y, theColor);
-
-	//	SDL_GetClipRect(dest.surface, @rect);
-//
-//		w := rect.w; //dest.surface.w;
-//		h := rect.h; //dest.surface.h;
-//		b := h + rect.y;
-//		r := rect.x + w;
-//		
-//		if x2 < x1 then //swap x1 and x2, x1 must be the leftmost endpoint
-//		begin
-//			x1 := x1 + x2;
-//			x2 := x1 - x2;
-//			x1 := x1 - x2;
-//		end;
-//		
-//		if (x2 < rect.x) or (x1 > r - 1) or (y < rect.y) or (y > b - 1) then
-//		begin
-//			exit; //no single point of the line is on screen
-//		end;
-//		
-//		if x1 < rect.x then x1 := rect.x;
-//		if x2 >= r then x2 := r - 1;
-//		if x1 < 0 then x1 := 0;
-//		
-//		pixels := dest.surface.pixels;
-//
-//    {$IFDEF FPC}
-//      bufp := pixels + (x1 * dest.surface.format.BytesPerPixel div 4) + (y * dest.surface.pitch div 4) - 1;
-//    {$ELSE}
-//		  addr := UInt32(pixels) + ((UInt32(x1)) * dest.surface.format.BytesPerPixel) + (UInt32(y) * dest.surface.pitch) - 1;
-//		  bufp := PUint32(addr);
-//    {$ENDIF}
-//
-//		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-//		
-//		for x := x1 to x2 do
-//		begin
-//			Inc(bufp);
-//			bufp^ := theColor;
-//		end;
-//		
-//		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		  
+		hlineColor(dest.surface, x1, x2, y, ToGfxColor(theColor));
 	end;
 
 	/// Draws a line on the destination bitmap.
@@ -1857,89 +1701,8 @@ implementation
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
 	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer);
-	var
-		x, y: Integer;
-		deltaX, deltaY: Integer;
-		xinc1, xinc2, yinc1, yinc2, den, num, numadd, numpixels, curpixel: Integer;
 	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a line is nil');
-		
-		if xPosStart = xPosEnd then
-			DrawVerticalLine(dest, theColour, xPosStart, yPosStart, yPosEnd)
-		else if yPosStart = yPosEnd then
-			DrawHorizontalLine(dest, theColour, yPosStart, xPosStart, xPosEnd)
-		else
-		begin
-		  	deltax := abs(xPosEnd - xPosStart);			// The difference between the x's
-			deltay := abs(yPosEnd - yPosStart);			// The difference between the y's
-			
-			x := xPosStart;								// Start x off at the first pixel
-			y := yPosStart;								// Start y off at the first pixel
-			
-			if xPosEnd >= xPosStart then				// The x-values are increasing
-			begin
-				xinc1 := 1;
-				xinc2 := 1;
-			end
-			else										// The x-values are decreasing
-			begin
-				xinc1 := -1;
-				xinc2 := -1;
-			end;
-			
-			if yPosEnd >= yPosStart then				// The y-values are increasing
-			begin
-				yinc1 := 1;
-				yinc2 := 1;
-			end
-			else										// The y-values are decreasing
-			begin
-				yinc1 := -1;
-				yinc2 := -1;
-			end;
-			
-			if deltax >= deltay then 					// There is at least one x-value for every y-value
-			begin
-				xinc1 := 0;								// Don't change the x when numerator >= denominator
-				yinc2 := 0;								// Don't change the y for every iteration
-				
-				den := deltax;
-				
-				num := deltax div 2;
-				
-				numadd := deltay;
-				
-				numpixels := deltax;					// There are more x-values than y-values
-			end
-			else										// There is at least one y-value for every x-value
-			begin
-				xinc2 := 0;								// Don't change the x for every iteration
-				yinc1 := 0;								// Don't change the y when numerator >= denominator
-				den := deltay;
-				num := deltay div 2;
-				
-				numadd := deltax;
-				
-				numpixels := deltay;					// There are more y-values than x-values
-			end;
-			
-			for curpixel := 0 to numpixels do
-			begin
-				PutPixel(dest.surface, x, y, theColour);// Draw the current pixel
-				
-				num := num + numadd;					// Increase the numerator by the top of the fraction
-				
-				if num >= den then						// Check if numerator >= denominator
-				begin
-					num := num - den;					// Calculate the new numerator value
-					x := x + xinc1;						// Change the x as appropriate
-					y := y + yinc1;						// Change the y as appropriate
-				end;
-				
-				x := x + xinc2;							// Change the x as appropriate
-				y := y + yinc2;							// Change the y as appropriate
-			end;
-		end;
+	  aalineColor(dest.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColour));
 	end;
 
  	/// Draws a pixel onto the destination bitmap.
@@ -1956,11 +1719,11 @@ implementation
 		
 		if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+		//if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
 		
 		PutPixel(dest.surface, x, y, theColour);
 		
-		if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+		//if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
 	end;
 	
 	/// Draws a circle centered on a given x, y location.
@@ -1989,55 +1752,8 @@ implementation
 	/// Side Effects:
 	///	- Draws a Circle in the dest bitmap
 	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
-	var
-		x, y, p: Integer;
-		a, b, c, d, e, f, g, h: Integer;
 	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a circle is nil');
-		if radius < 0 then raise Exception.Create('Radius for a circle must be greater then 0');
-
-		if radius = 0 then exit;
-		
-	  	x := 0;
-		y := radius;
-		p := 3 - (radius shl 1);
-		
-		while x <= y do
-		begin
-			a := xc + x; //8 pixels can be calculated at once thanks to the symmetry
-			b := yc + y;
-			c := xc - x;
-			d := yc - y;
-			e := xc + y;
-			f := yc + x;
-			g := xc - y;
-			h := yc - x;
-			
-			PutPixel(dest.surface, a, b, theColour);
-			PutPixel(dest.surface, c, d, theColour);
-			PutPixel(dest.surface, e, f, theColour);
-			PutPixel(dest.surface, g, f, theColour);
-			
-			if x > 0 then //avoid drawing pixels at same position as the other ones
-			begin
-				PutPixel(dest.surface, a, d, theColour);
-				PutPixel(dest.surface, c, b, theColour);
-				PutPixel(dest.surface, e, h, theColour);
-				PutPixel(dest.surface, g, h, theColour);
-			end;
-			
-			if p < 0 then
-			begin
-				p := p + (x shl 2) + 6;
-				x := x + 1;
-			end
-			else
-			begin
-				p := p + ((x - y) shl 2) + 10;
-				x := x + 1;
-				y := y - 1;
-			end;
-		end;
+	  aacircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColour));
 	end;
 
 	/// Draws a filled circle centered on a given x, y location.
@@ -2050,56 +1766,16 @@ implementation
 	/// Side Effects:
 	///	- Draws a Circle in the dest bitmap
 	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer);
-	var
-		x, y, p: Integer;
-		a, b, c, d, e, f, g, h: Integer;
-		pb, pd: Integer; //previous values: to avoid drawing horizontal lines multiple times
 	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a circle is nil');
-		if radius < 0 then raise Exception.Create('Radius for a circle must be greater then 0');
-		
-		if radius = 0 then exit;
-
-		x := 0;
-		y := radius;
-		p := 3 - (radius shl 1);
-		
-		pb := -1;
-		pd := -1;
-		
-		while x <= y do
-		begin
-			// write data
-			a := xc + x;
-			b := yc + y;
-			c := xc - x;
-			d := yc - y;
-			e := xc + y;
-			f := yc + x;
-			g := xc - y;
-			h := yc - x;
-			
-			if b <> pb then DrawHorizontalLine(dest, theColour, b, a, c);
-			if d <> pd then DrawHorizontalLine(dest, theColour, d, a, c);
-			if f <> b  then DrawHorizontalLine(dest, theColour, f, e, g);
-			if (h <> d) and (h <> f) then DrawHorizontalLine(dest, theColour, h, e, g);
-			
-			pb := b;
-			pd := d;
-			
-			if p < 0 then
-			begin
-				p := p + (x shl 2) + 6;
-				x := x + 1;
-			end
-			else
-			begin
-				p := p + ((x - y) shl 2) + 10;
-				x := x + 1;
-				y := y - 1;
-			end;
-		end;
+	  filledCircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColour));
 	end;
+	
+	
+	
+	//**********
+	// Overloaded draw methods...
+	//**********
+	
 	
 	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; const position: Point2D); overload;
 	begin
@@ -2334,5 +2010,21 @@ implementation
 	procedure SetClip(r: Rectangle); overload;
 	begin
 		SetClip(scr, Round(r.x), Round(r.y), r.width, r.height);
+	end;
+	
+	function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
+	begin
+    New(result);
+    result.surface := rotozoomSurface(src.surface, degRot, zoom, 1);
+    result.width := result.surface.w;
+    result.height := result.surface.h;
+	end;
+	
+	procedure SetupBitmapForCollisions(src: Bitmap);
+	begin
+	  if Length(src.nonTransparentPixels) <> 0 then exit;
+	    
+    SetNonAlphaPixels(src, src.surface);
+    OptimiseBitmap(src);
 	end;
 end.

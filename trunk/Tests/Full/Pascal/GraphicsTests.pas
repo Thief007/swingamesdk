@@ -122,7 +122,10 @@ implementation
 		if IsKeyPressed(VK_UP) then framePos.y := framePos.y + 2;
 		if IsKeyPressed(VK_DOWN) then framePos.y := framePos.y - 2;
 		
-		ClearSurface(smallScreen, ColourBlack);
+		MakeOpaque(frameB[0]);
+		MakeOpaque(frameB[2]);
+		MakeOpaque(ship);
+		//ClearSurface(smallScreen, ColourBlack);
 		
 		DrawBitmap(smallScreen, frameB[0], CreatePoint(0, 0));
 		DrawBitmap(smallScreen, frameB[2], 278, 0);
@@ -132,6 +135,8 @@ implementation
 		DrawBitmapPart(smallScreen, ship, Round(framePos.x + 289), Round(framePos.y + 50), 100, 100, 289, 50);
 		
 		DrawBitmap(smallScreen, 0, 0);
+		
+		MakeTransparent(ship);
 		
 		DrawBitmap(frameB[1], CreatePoint(139, 0));
 		DrawBitmap(frameB[3], 0, 209);
@@ -151,7 +156,7 @@ implementation
 		procedure ClearStuff();
 		begin
 			ClearSurface(smallScreen, ColourTransparent);
-			ClearScreen(ColourTransparent);
+			ClearScreen(ColorBlack);
 			DrawBitmapOnScreen(GameImage('BGA'), Round(drawIn.x), Round(drawIn.y));
 		end;
 	begin
@@ -470,6 +475,122 @@ implementation
 		DrawRectangleOnScreen(ColourYellow, tempRect6);
 	end;
 	
+  //*************************************
+  //
+  // Variables for testing rotate and zoom Drawing
+  // 
+  //*************************************
+  var
+    zoom, rotate: Single;
+
+	procedure TestRotBmp(const drawIn: Rectangle);
+	var
+	  bmp: Bitmap;
+	begin
+		if IsKeyPressed(VK_RIGHT) then rotate += 1;
+		if IsKeyPressed(VK_LEFT) then rotate -= 1;
+		if IsKeyPressed(VK_UP) then zoom += 0.1;
+		if IsKeyPressed(VK_DOWN) then zoom -= 0.1;
+	  
+	  bmp := RotateZoomBitmap(GameImage('Ship'), rotate, zoom);
+	  DrawBitmap(bmp, 200, 200);
+	  FreeBitmap(bmp);
+	end;
+
+  //*************************************
+  //
+  // Variables for testing triangle Drawing
+  // 
+  //*************************************
+  var
+    greenTriangle, whiteTriangle, yellowTriangle: Triangle;
+    triangleRotDeg, triangleScale: Single;
+
+  procedure TestDrawTriangle(const drawIn: Rectangle);
+  var
+    tempTriangle: Triangle;
+    m: Matrix2D;
+    midPoint: Point2D;
+    tempColor: Color;
+    
+    procedure OffsetTempTriangle(const forTriangle: Triangle);
+    begin
+  		tempTriangle := forTriangle;
+  		m := Multiply(TranslationMatrix(tempTriangle[1].x, 0), m);
+  		ApplyMatrix(m, tempTriangle);
+    end;
+    
+    procedure SetupTempTriangle(const forTriangle: Triangle);
+    begin
+  		tempTriangle := forTriangle;
+
+      midPoint := TriangleBarycenter(tempTriangle);
+  		m := TranslationMatrix(-midPoint.x, -midPoint.y);
+  		m := Multiply(ScaleMatrix(triangleScale), m);
+  		m := Multiply(RotationMatrix(triangleRotDeg), m);
+  		m := Multiply(TranslationMatrix(midPoint.x + tempTriangle[1].x, midPoint.y), m);
+  		//m := TranslationMatrix(tempTriangle[1].x, 0);
+  		ApplyMatrix(m, tempTriangle);
+    end;
+	begin
+	  tempColor := GetColor(0, 255, 0, 120);
+		ClearSurface(smallScreen, ColourTransparent);
+		//WriteLn(scr.surface.format^.amask);
+
+    if IsKeyPressed(VK_UP) then triangleScale += 0.1;
+    if IsKeyPressed(VK_DOWN) then triangleScale -= 0.1;
+		if WasKeyTyped(VK_T) then filled := filled = false;
+    if IsKeyPressed(VK_LEFT) then triangleRotDeg += 5;
+    if IsKeyPressed(VK_RIGHT) then triangleRotDeg -= 5;
+
+		DrawTriangle(smallScreen, ColourGreen, filled, greenTriangle);
+
+    SetupTempTriangle(greenTriangle);
+		DrawTriangle(smallScreen, tempColor, tempTriangle);
+
+    OffsetTempTriangle(greenTriangle);
+		DrawTriangle(smallScreen, tempColor, tempTriangle[0].x, tempTriangle[0].y, tempTriangle[1].x, tempTriangle[1].y, tempTriangle[2].x, tempTriangle[2].y);
+
+    OffsetTempTriangle(greenTriangle);
+		FillTriangle(smallScreen, tempColor, tempTriangle);
+
+    OffsetTempTriangle(greenTriangle);
+		FillTriangle(smallScreen, tempColor, tempTriangle[0].x, tempTriangle[0].y, tempTriangle[1].x, tempTriangle[1].y, tempTriangle[2].x, tempTriangle[2].y);
+
+		DrawTriangle(ColourWhite, filled, whiteTriangle);
+		
+		tempColor := GetColor(255, 255, 255, 120);
+		
+		SetupTempTriangle(whiteTriangle);
+		DrawTriangle(tempColor, tempTriangle);
+		
+		OffsetTempTriangle(whiteTriangle);
+		DrawTriangle(tempColor, tempTriangle[0].x, tempTriangle[0].y, tempTriangle[1].x, tempTriangle[1].y, tempTriangle[2].x, tempTriangle[2].y);
+
+    OffsetTempTriangle(whiteTriangle);
+		FillTriangle(tempColor, tempTriangle);
+
+    OffsetTempTriangle(whiteTriangle);
+		FillTriangle(tempColor, tempTriangle[0].x, tempTriangle[0].y, tempTriangle[1].x, tempTriangle[1].y, tempTriangle[2].x, tempTriangle[2].y);
+		DrawBitmap(smallScreen, 0, 0);
+		
+    DrawTriangleOnScreen(ColorYellow, filled, yellowTriangle);
+		tempColor := GetColor(255, 255, 0, 120);
+		
+		SetupTempTriangle(yellowTriangle);
+		DrawTriangleOnScreen(tempColor, tempTriangle);
+		
+		OffsetTempTriangle(yellowTriangle);
+		DrawTriangleOnScreen(tempColor, tempTriangle[0].x, tempTriangle[0].y, tempTriangle[1].x, tempTriangle[1].y, tempTriangle[2].x, tempTriangle[2].y);
+
+    OffsetTempTriangle(yellowTriangle);
+		FillTriangleOnScreen(tempColor, tempTriangle);
+
+    OffsetTempTriangle(yellowTriangle);
+		FillTriangleOnScreen(tempColor, tempTriangle[0].x, tempTriangle[0].y, tempTriangle[1].x, tempTriangle[1].y, tempTriangle[2].x, tempTriangle[2].y);
+	end;
+
+	
 	function GetGraphicsTests(): TestSuite;
 	var
 		i: Integer;
@@ -477,7 +598,7 @@ implementation
 		tempBitmap: Array of Bitmap;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 10);
+		SetLength(result.Tests, 12);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -609,6 +730,29 @@ implementation
 			numSprite.x := 149;
 			numSprite.y := 149;
 			ToRun := @TestAddBitmap;
+		end;
+		
+		with result.Tests[10] do
+		begin
+			MethodBeingTested := 'DrawTriangle, DrawTriangleOnScreen, ClearSurface, DrawBitmap';
+			Instructions := 	'Use the arrow keys to move' + EOL + 'the green triangles.' + EOL + 'T : Toggle fill' + EOL
+								+ 'White : Normal' + EOL + 'Green : On destination bitmap' + EOL + 'Yellow: On screen';
+			greenTriangle := CreateTriangle(0, 200, 50, 200, 50, 150);
+			whiteTriangle := CreateTriangle(0, 0, 50, 0, 50, 50);
+			yellowTriangle := CreateTriangle(0, 400, 50, 400, 50, 450);
+			triangleRotDeg := 0;
+			triangleScale := 1;
+			filled := false;
+			ToRun := @TestDrawTriangle;
+		end;
+		
+		with result.Tests[11] do
+		begin
+			MethodBeingTested := 'RotateZoomBitmap';
+			Instructions := 	'Use the arrow keys to move';
+			zoom := 1;
+			rotate := 0;
+			ToRun := @TestRotBmp;
 		end;
 	end;
 	

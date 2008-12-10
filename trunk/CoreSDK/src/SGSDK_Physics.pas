@@ -1,4 +1,4 @@
-﻿///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					SGSDK_Physics.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -8,6 +8,9 @@
 // for performing collisions and vector maths.
 //
 // Change History:
+//
+// Version 2.0:
+// - 2008-12-10: Andrew: Moved types to Core
 //
 // Version 1.1:
 // - 2008-01-30: Andrew: Fixed rectangle collision with bitmap
@@ -28,35 +31,6 @@ unit SGSDK_Physics;
 interface
 	uses
 		SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
-
-	type
-	    /// type: Matrix2d
-	    ///
-	    ///  This record is used to represent transformations that can be
-	    ///  used to apply these changes to vectors.
-		Matrix2D = Array [0..2,0..2] of Single;
-
-		/// Enumeration: CollisionDetectionRanges
-		///	This is used to indicate the kind of collision being checked with the
-		///	Sprite collision routines. 
-		CollisionDetectionRange = (
-				CollisionRangeEquals			= 0,
-				CollisionRangeGreaterThan = 1,
-				CollisionRangeLessThan		= 2
-			);
-			
-		CollisionSide = (
-			Top,
-			Bottom,
-			Left,
-			Right,
-			TopLeft,
-			TopRight,
-			BottomLeft,
-			BottomRight,
-			None
-		);
-
 			
 	//*****
 	//
@@ -159,7 +133,8 @@ interface
 
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
-	
+	function Multiply(const m: Matrix2D; const v: Point2D): Point2D; overload;
+		
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
 
 	function VectorIsWithinRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
@@ -199,7 +174,7 @@ implementation
 
 		result.x := x;
 		result.y := y;
-		result.w := 1;
+		//result.w := 1;
 	end;
 
 	/// Creates a new vector with values x and y.
@@ -911,9 +886,15 @@ implementation
 
 	function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
 	begin
-		result.x := v.x * m[0, 0] + v.y * m[0,1] + v.w * m[0,2];
-		result.y := v.x * m[1, 0] + v.y * m[1,1] + v.w * m[1,2];
-		result.w := 1;
+		result.x := v.x * m[0, 0] + v.y * m[0,1] + m[0,2]; //+ v.w * m[0,2];
+		result.y := v.x * m[1, 0] + v.y * m[1,1] + m[1,2]; //+ v.w * m[1,2];
+		//result.w := 1;
+	end;
+
+	function Multiply(const m: Matrix2D; const v: Point2D): Point2D; overload;
+	begin
+		result.x := v.x * m[0, 0] + v.y * m[0,1] + m[0,2];
+		result.y := v.x * m[1, 0] + v.y * m[1,1] + m[1,2];
 	end;
 
 	function RotationMatrix(deg: Single): Matrix2D;

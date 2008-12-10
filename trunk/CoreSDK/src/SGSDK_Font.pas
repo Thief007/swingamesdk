@@ -9,6 +9,9 @@
 //
 // Change History:
 //
+// Version 2.0:
+// - 2008-12-10: Andrew: Fixed printing of string
+//
 // Version 1.1:
 // - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-01-30: Andrew: Fixed Print strings for EOL as last char
@@ -177,8 +180,8 @@ implementation
  	///  * It does not pad the text.
  	///  * If CREATE_SURFACE is NOT passed, the function returns NULL,
 	///  * otherwise, it returns an SDL_Surface pointer.
-	function PrintStrings(dest: PSDL_Surface; font: Font; str: String; 
-	         rc: PSDL_Rect; clrFg, clrBg:Color; flags:FontAlignment) : PSDL_Surface;
+	procedure PrintStrings(dest: PSDL_Surface; font: Font; str: String; 
+	         rc: PSDL_Rect; clrFg, clrBg:Color; flags:FontAlignment);
 	var
 		sText: Bitmap;
 		temp: PSDL_Surface;
@@ -195,7 +198,6 @@ implementation
 			raise Exception.Create('Error Printing Strings: There was no surface.');
 		end;
 
-		result := nil;
 		colorFG := ToSDLColor(clrFg);
 		bgTransparent := GetTransparency(clrBg) < 255;
 		
@@ -290,18 +292,11 @@ implementation
 		end;
 
 		// Draw the text on top of that:
-		
-		//
-		// TODO: DrawTextOnTransparent.... here you must call SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT)
-		// if bgTransparent :(
-		//
-		
+		rect.x := 0; rect.y := 0; rect.w := rc.w; rect.h := rc.h;
 		if (not bgTransparent) then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);	
-		SDL_BlitSurface(sText.surface, nil, dest, rc );
+		SDL_BlitSurface(sText.surface, @rect, dest, rc );
 		
 		FreeBitmap(sText);
-
-		result := nil;
 	end;
 
 	/// Draws texts to the destination bitmap. Drawing text is a slow operation,

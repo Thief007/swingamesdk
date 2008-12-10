@@ -1,6 +1,6 @@
 //-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-// 					Audio
+// 					Shapes
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -9,6 +9,9 @@
 // and the code to create and manipulate these.
 //
 // Change History:
+//
+// Version 2.0:
+// - 2008-12-10: Andrew: Changed Triangle to have indexer, and array conversion.
 //
 // Version 1.1:
 // - 2008-04-19: Stephen: Added CreateTriangle and IsPointInTriangle
@@ -43,6 +46,22 @@ namespace SwinGame
         /// Third Point Coordinate of the Triangle
         /// </summary>
         public Point2D pointC;
+        
+        public Point2D this[int index]
+        {
+            switch(index)
+            {
+                case 0: return pointA;
+                case 1: return pointB;
+                case 2: return pointC;
+                else: throw new IndexOutOfRangeException();
+            }
+        }
+        
+        public Point2D[] ToArray()
+        {
+            return new Point2D[] {pointA, pointB, pointC};
+        }
     }
 
     /// <summary>

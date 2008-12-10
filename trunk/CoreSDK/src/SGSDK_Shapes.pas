@@ -10,8 +10,15 @@
 //
 // Change History:
 //
-// Version 1.1:
+// Version 2.0:
+// - 2008-12-10: Andrew: Fixed version history
+//						 Changed Triangle to Array
+//						 Added TriangleBarycenter
+//						 Added ApplyMatrix to Triangle
+// Version 1.1.6:
 // - 2008-04-08: Stephen: Added Triangle Record, and CreateTriangle()x2
+//
+// Version 1.1:
 // - 2008-01-31: Andrew: Fixed IsPointOnLine
 //                     : Added RectangleAroundLine
 // - 2008-01-31: Stephen: Partial fix of IsPointOnLine
@@ -40,11 +47,7 @@ uses SGSDK_Core;
 			end;
 		
 		//new
-		Triangle = record
-			pointA: Point2D;
-			pointB: Point2D;
-			pointC: Point2D;
-		end;
+		Triangle = array [0..2] of Point2D;
 
 		LinesArray = Array of LineSegment;
 
@@ -77,8 +80,13 @@ uses SGSDK_Core;
 	function CreateRectangle(sprt: Sprite): Rectangle; overload;
 	
 	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
-	function CreateTriangle(a, b, c: Point2D): Triangle; overload;
-	function IsPointInTriangle(point : Point2D; triangle : Triangle): Boolean;
+	function CreateTriangle(const a, b, c: Point2D): Triangle; overload;
+	
+	function TriangleBarycenter(const aTriangle: Triangle): Point2D;
+	
+	procedure ApplyMatrix(const m: Matrix2D; var toTrangle: Triangle);
+	
+	function IsPointInTriangle(const point : Point2D; const triangle : Triangle): Boolean;
 	
 	function RectangleAroundLine(const line: LineSegment): Rectangle; {New 1.2}
 	
@@ -441,14 +449,14 @@ implementation
 		result := CreateTriangle(CreatePoint(ax, ay), CreatePoint(bx, by), CreatePoint(cx, cy));
 	end;
 	
-	function CreateTriangle(a, b, c: Point2D): Triangle; overload;
+	function CreateTriangle(const a, b, c: Point2D): Triangle; overload;
 	begin
-		result.pointA := a;
-		result.pointB := b;
-		result.pointC := c;
+		result[0] := a;
+		result[1] := b;
+		result[2] := c;
 	end;
 	
-	function IsPointInTriangle(point : Point2D; triangle : Triangle): Boolean;
+	function IsPointInTriangle(const point : Point2D; const triangle : Triangle): Boolean;
 	var
 		v0, v1, v2 : Vector;
 		a, b, c, p: Vector;
@@ -457,9 +465,9 @@ implementation
 	begin
 		//Convert Points to vectors
 		p := PointToVector(point);
-		a := PointToVector(triangle.pointA);
-		b := PointToVector(triangle.pointB);
-		c := PointToVector(triangle.pointC);
+		a := PointToVector(triangle[0]);
+		b := PointToVector(triangle[1]);
+		c := PointToVector(triangle[2]);
 		
 		// Compute vectors    
 		v0 := SubtractVectors(c, a);
@@ -480,6 +488,19 @@ implementation
 		
 		// Check if point is in triangle
 		result := ((u > 0) and (v > 0) and (u + v < 1));
+	end;
+	
+	procedure ApplyMatrix(const m: Matrix2D; var toTrangle: Triangle);
+	begin
+    toTrangle[0] := Multiply(m, toTrangle[0]);
+    toTrangle[1] := Multiply(m, toTrangle[1]);
+    toTrangle[2] := Multiply(m, toTrangle[2]);
+	end;
+	
+	function TriangleBarycenter(const aTriangle: Triangle): Point2D;
+	begin
+    result.x := (aTriangle[0].x + aTriangle[1].x + aTriangle[2].x) / 3;
+    result.y := (aTriangle[0].y + aTriangle[1].y + aTriangle[2].y) / 3;
 	end;
 	
 	function MidPoint(const line: LineSegment): Point2D;

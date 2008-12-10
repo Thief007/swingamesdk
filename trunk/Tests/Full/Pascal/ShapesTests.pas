@@ -139,12 +139,27 @@ implementation
 		if IsKeyPressed(VK_4) then ShowDistance(3);
 	end;
 	
+	procedure TestTriangle(const drawIn: Rectangle);
+	var
+	  tri: Triangle;
+	  baryPnt: Point2D;
+	begin
+	  tri[0] := CreatePoint(100, 100);
+	  tri[1] := CreatePoint(100, 150);
+	  tri[2] := CreatePoint(150, 150);
+	  
+	  baryPnt := TriangleBarycenter(tri);
+	  
+	  DrawTriangle(ColorWhite, tri);
+	  DrawCircle(ColorRed, baryPnt, 2);
+	end;
+	
 	function GetShapesTests(): TestSuite;
 	var
 		i: Integer;
 	begin
 		result.Title := 'Shapes Tests';
-		SetLength(result.Tests, 2);
+		SetLength(result.Tests, 3);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -169,6 +184,13 @@ implementation
 			Instructions := 'Use the arrow keys to move' + EOL + 'the line';
 			movLine := CreateLine(200, 200, 250, 250);
 			ToRun := @TestShapes2;
+		end;
+		
+    with result.Tests[2] do
+		begin
+			MethodBeingTested := 'Triangle Tests';
+			Instructions := 'Red circle = Barycenter';
+			ToRun := @TestTriangle;
 		end;
 	end;
 	

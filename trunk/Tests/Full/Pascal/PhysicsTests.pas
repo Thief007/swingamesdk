@@ -11,6 +11,7 @@ implementation
 	var
 		ship, explosion, ball, bigball: Sprite;
 		smallball, mediumball: Bitmap;
+		rotShip: Bitmap;
 		X, Y: Integer;
 		v1, v2, v, movement, mvOut: Vector;
 		SprSt: Boolean = false;
@@ -169,7 +170,6 @@ implementation
 	        FillRectangle(ColourBlue, 5, 25, mediumball.Height + 10, mediumball.Width + 10);
 	    end;
 	    DrawBitmap(mediumball, 10, 30);
-
 	    DrawRectangle(ColourWhite, 10, 30, mediumball.Width, mediumball.Height);
 
 	    if (HaveBitmapsCollided(mediumball, CreatePoint(10, 150), smallball, CreatePoint(X, Y))) then
@@ -238,6 +238,12 @@ implementation
 	    begin
 	        FillRectangle(ColourGreen, 400, 365, 10, 10);
 	    end;
+	    
+	    if (HaveBitmapsCollided(rotShip, 250, 300, smallball, X, Y)) then
+	    begin
+	        FillRectangle(ColourBlue, 245, 295, rotShip.Height + 10, rotShip.Width + 10);
+	    end;
+	    DrawBitmap(rotShip, 250, 300);
 		
 	    DrawBitmap(smallball,X,Y);
 	    DrawRectangle(ColourWhite, X, Y, smallball.Width, smallball.Height);
@@ -976,6 +982,8 @@ implementation
 			Instructions := 'Use the arrow keys to move' + EOL + 'the sprite.' + EOL + 
 							'This test is used to check' + EOL + 'if the collision works properly.';
 			mediumball := GameImage('BallImage1');
+			rotShip := RotateZoomBitmap(GameImage('Ship'), 45, 1.5);
+			SetupBitmapForCollisions(rotShip);
 			X := 0; Y := 0;
 			ToRun := @CollissionBitmapTest;
 		end;
