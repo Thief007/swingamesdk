@@ -8,7 +8,7 @@ set BaseDir=%CD%
 set LibOutput=.\bin\Win
 set WinFPCDir=%BaseDir%\..\SDKs\Pascal\Win\FPC\lib\
 set LibDir=%BaseDir%\lib\Win
-set EXTRA_OPTS="-g -Sewn -vwn -wr"
+set EXTRA_OPTS=-g -Sewn -vwn -WR
 
 echo Running script from %BaseDir%
 echo Saving output to %LibOutput%
