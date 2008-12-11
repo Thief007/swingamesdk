@@ -14,17 +14,23 @@ implementation
 		follow: Boolean;
 	
 	procedure TestCamera(const drawIn: Rectangle);
+	var
+	  mvmt: Vector;
 	begin
-		if IsKeyPressed(VK_RIGHT) then shipSprite.x := shipSprite.x + 4;
-		if IsKeyPressed(VK_DOWN) then shipSprite.y := shipSprite.y + 4;
-		if IsKeyPressed(VK_UP) then shipSprite.y := shipSprite.y - 4;
-		if IsKeyPressed(VK_LEFT) then shipSprite.x := shipSprite.x - 4;
+	  mvmt := CreateVector(0,0);
+	  
+		if IsKeyPressed(VK_RIGHT) then mvmt.x := mvmt.x + 4;
+		if IsKeyPressed(VK_DOWN) then mvmt.y := mvmt.y + 4;
+		if IsKeyPressed(VK_UP) then mvmt.y := mvmt.y - 4;
+		if IsKeyPressed(VK_LEFT) then mvmt.x := mvmt.x - 4;
 		if IsKeyPressed(VK_U) then follow := false;
 		if IsKeyPressed(VK_I) then follow := true;
 		if IsKeyPressed(VK_A) then MoveVisualArea(CreateVector(-20, 0));
 		if IsKeyPressed(VK_D) then MoveVisualArea(CreateVector(20, 0));
 		if IsKeyPressed(VK_W) then MoveVisualArea(0, -20);
-		if IsKeyPressed(VK_S) then MoveVisualArea(0, 20);		
+		if IsKeyPressed(VK_S) then MoveVisualArea(0, 20);
+		  
+	  MoveSprite(shipSprite, mvmt);	
 		  
 		if IsKeyPressed(VK_COMMA) then shipSprite.rotation += 5;
 		if IsKeyPressed(VK_PERIOD) then shipSprite.rotation -= 5;

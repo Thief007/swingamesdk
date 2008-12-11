@@ -215,6 +215,7 @@ interface
 		/// - reverse: True if this sprite's animation is reversing
 		SpriteData = record
 			bitmaps : Array of Bitmap;
+			bufferBmp: Bitmap;
 			spriteKind : SpriteKind;
 			framesPerCell : Array of Integer;
 			xPos : ^Single;
@@ -234,7 +235,9 @@ interface
 			movement : Vector;
 			mass 	 : Single;
 			rotation: Single;
+			bufferedRotation: Single;
 			zoom: Single;
+			bufferedZoom: Single;
 		end;
 		
 		/// Type: Sprite
