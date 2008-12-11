@@ -49,12 +49,15 @@ namespace SwinGame
         
         public Point2D this[int index]
         {
-            switch(index)
+            get
             {
-                case 0: return pointA;
-                case 1: return pointB;
-                case 2: return pointC;
-                else: throw new IndexOutOfRangeException();
+                switch(index)
+                {
+                    case 0: return pointA;
+                    case 1: return pointB;
+                    case 2: return pointC;
+                    default: throw new IndexOutOfRangeException();
+                }
             }
         }
         

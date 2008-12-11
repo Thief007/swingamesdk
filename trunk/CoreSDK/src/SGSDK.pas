@@ -76,6 +76,7 @@ uses
 		IntPtr = ^Integer;
 		//BitmapPtr used to receive Bitmap arrays
 		BitmapPtr = ^Bitmap;
+		Point2DPtr = ^Point2D;
 		
 		Matrix2DData = record
 				data: Matrix2D;
@@ -103,7 +104,7 @@ uses
 	
 	function DLLVersion(): Integer; cdecl; export;
 	begin
-		result := 10106;
+		result := 20000;
 	end;
 	
 
@@ -151,7 +152,9 @@ uses
 		end;
 	end;
 	
-	procedure PopulateTriangle(data: ^Point2D; out tri: Triangle);
+	procedure PopulateTriangle(data: Point2DPtr; out tri: Triangle);
+	var
+	  i: Integer;
 	begin
     for i := 0 to 2 do
     begin
@@ -1792,8 +1795,8 @@ uses
 		end;
 	end;
 	
-	//Version 1.1.5
-	procedure DrawTriangle(theColour: Colour; firstPoint: ^Point2D); cdecl; export;
+	//Version 1.1.6
+	procedure DrawTriangle(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 	var
 	  tri: Triangle;
 	begin
@@ -1803,6 +1806,64 @@ uses
 		Except on exc: Exception do TrapException(exc, 'DrawTriangle');
 		end;
 	end;
+	
+	//Version 2
+	procedure DrawTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+	var
+	  tri: Triangle;
+	begin
+		Try
+		  PopulateTriangle(firstPoint, tri);
+			SGSDK_Graphics.DrawTriangleOnScreen(theColour, tri);
+		Except on exc: Exception do TrapException(exc, 'DrawTriangleOnScreen');
+		end;
+	end;
+
+	procedure DrawTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+	var
+	  tri: Triangle;
+	begin
+		Try
+		  PopulateTriangle(firstPoint, tri);
+			SGSDK_Graphics.DrawTriangle(dest, theColour, tri);
+		Except on exc: Exception do TrapException(exc, 'DrawTriangleWithDestination');
+		end;
+	end;
+	
+	procedure FillTriangle(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+	var
+	  tri: Triangle;
+	begin
+		Try
+		  PopulateTriangle(firstPoint, tri);
+			SGSDK_Graphics.FillTriangle(theColour, tri);
+		Except on exc: Exception do TrapException(exc, 'FillTriangle');
+		end;
+	end;
+	
+	procedure FillTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+	var
+	  tri: Triangle;
+	begin
+		Try
+		  PopulateTriangle(firstPoint, tri);
+			SGSDK_Graphics.FillTriangleOnScreen(theColour, tri);
+		Except on exc: Exception do TrapException(exc, 'FillTriangleOnScreen');
+		end;
+	end;
+
+	procedure FillTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+	var
+	  tri: Triangle;
+	begin
+		Try
+		  PopulateTriangle(firstPoint, tri);
+			SGSDK_Graphics.FillTriangle(dest, theColour, tri);
+		Except on exc: Exception do TrapException(exc, 'FillTriangleWithDestination');
+		end;
+	end;
+	
+	
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 								Animated Sprite Additions
@@ -2935,6 +2996,11 @@ exports
 	SetClip,
 	ResetClip,
 	DrawTriangle, {1.1.5}
+	DrawTriangleWithDestination,
+	DrawTriangleOnScreen,
+	FillTriangle,
+	FillTriangleWithDestination,
+	FillTriangleOnScreen,
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
