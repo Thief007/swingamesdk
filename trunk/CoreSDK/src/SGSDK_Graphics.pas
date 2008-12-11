@@ -645,6 +645,9 @@ implementation
 		result.movement				:= CreateVector(0,0);
 		result.rotation       := 0;
 		result.zoom           := 1;
+		result.bufferedRotation := 0;
+		result.bufferedZoom   := 1;
+		result.bufferBmp      := nil;
 	end;
 	
 	/// Creates a sprites, and sets its first bitmap.
@@ -718,14 +721,20 @@ implementation
 		result.movement				:= CreateVector(0,0);
 		result.rotation       := 0;
 		result.zoom           := 1;
+		result.bufferedRotation := 0;
+		result.bufferedZoom   := 1;
+		result.bufferBmp      := nil;	
+		result.endingAction			:= endingAction;
+		result.width				:= bitmaps[0].width;
+		result.height				:= bitmaps[0].height;
+		result.reverse				:= false;
+		result.spriteKind			:= AnimArraySprite;
 		
 		SetLength(result.bitmaps, Length(bitmaps));
 		for i := 0 to High(bitmaps) do
 		begin
 			result.bitmaps[i] := bitmaps[i];
 		end;
-
-		result.spriteKind			:= AnimArraySprite;
 
 		SetLength(result.framesPerCell, Length(framesPerCell));
 		for i := 0 to High(framesPerCell) do
@@ -735,11 +744,6 @@ implementation
 
 			result.framesPerCell[i] := framesPerCell[i];
 		end;
-
-		result.endingAction			:= endingAction;
-		result.width				:= bitmaps[0].width;
-		result.height				:= bitmaps[0].height;
-		result.reverse				:= false;
 	end;
 	
 	/// Creates a sprites ans set bitmaps.
@@ -774,6 +778,38 @@ implementation
 		result := CreateSprite(bitmaps, tempIntegers);
 	end;
 	
+	procedure UpdateSpriteBuffers(sprt: Sprite);
+	var
+	  dest: Bitmap; //temporary surface
+	  srcX, srcY: Integer; //for image parts
+	begin
+	  if (sprt.rotation = sprt.bufferedRotation) and (sprt.zoom = sprt.bufferedZoom) then exit;
+	  if (sprt.bufferBmp <> nil) then FreeBitmap(sprt.bufferBmp);
+	  if (sprt.rotation = 0) and (sprt.zoom = 1) then exit; //no need to transform
+
+	  //Draw non-transformed bitmap onto temp surface
+		dest := CreateBitmap(sprt.width, sprt.height);
+		
+		if sprt.spriteKind <> AnimMultiSprite then
+			DrawBitmap(dest, sprt.bitmaps[sprt.currentFrame], 0, 0)
+		else
+		begin
+			with sprt^ do
+			begin
+				srcX := (currentFrame mod cols) * width;
+				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+			end;
+      
+      MakeOpaque(sprt.bitmaps[0]);
+			DrawBitmapPart(dest, sprt.bitmaps[0], srcX, srcY, sprt.width, sprt.height, 0, 0);
+      MakeTransparent(sprt.bitmaps[0]);
+		end;
+		
+		sprt.bufferBmp := RotateZoomBitmap(dest, sprt.rotation, sprt.zoom);
+
+		FreeBitmap(dest);
+	end;
+	
 	/// Frees a sprite, this does not free the sprite's bitmaps, which allows
 	///	bitmaps to be shared between sprites. All created sprites need to be
 	///	freed.
@@ -786,7 +822,14 @@ implementation
 	begin
 		if Assigned(spriteToFree) then
 		begin
+		  //Free bitmaps
 			SetLength(spriteToFree.bitmaps, 0);
+
+      //Free buffered rotation image
+			if spriteToFree.bufferBmp <> nil then FreeBitmap(spriteToFree.bufferBmp);
+			spriteToFree.bufferBmp := nil;
+
+      //Dispose sprite
 			Dispose(spriteToFree);
 			spriteToFree := nil;
 		end;
@@ -1036,41 +1079,21 @@ implementation
 	  DrawSprite(spriteToDraw, 0, 0);
 	end;
 	
+	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
+	begin
+		DrawSprite(spriteToDraw, Round(position.x), Round(position.y));
+	end;
+	
 	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: Integer); overload;
 	var
 		srcX, srcY: Integer;
-		dest, dest2: Bitmap;
 	begin
 		if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
-		
+
 		if (spriteToDraw.rotation <> 0) or (spriteToDraw.zoom <> 1) then
 		begin
-			dest := CreateBitmap(spriteToDraw.width, spriteToDraw.height);
-  		
-  		if spriteToDraw.spriteKind <> AnimMultiSprite then
-  		begin
-  			DrawBitmap(dest, spriteToDraw.bitmaps[spriteToDraw.currentFrame], 0, 0);
-  		end
-  		else
-  		begin
-  			with spriteToDraw^ do
-  			begin
-  				srcX := (currentFrame mod cols) * width;
-  				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
-  			end;
-        
-        MakeOpaque(spriteToDraw.bitmaps[0]);
-  			DrawBitmapPart(dest, spriteToDraw.bitmaps[0], srcX, srcY, 
-  								   spriteToDraw.width, spriteToDraw.height,
-  								   0, 0);
-        MakeTransparent(spriteToDraw.bitmaps[0]);
-  		end;
-  		
-  		dest2 := RotateZoomBitmap(dest, spriteToDraw.rotation, spriteToDraw.zoom);
-
-  		DrawBitmap(dest2, spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
-  		FreeBitmap(dest);
-  		FreeBitmap(dest2);
+		  UpdateSpriteBuffers(spriteToDraw);
+		  DrawBitmap(spriteToDraw.bufferBmp, spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
 		end
 		else
 		begin
@@ -1113,11 +1136,21 @@ implementation
 	///	@param spriteToMove:		 The sprite to move
 	///	@param movementVector:	 The vector containing the movement details
 	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
+	var
+	  mvmt: Vector;
+	  trans: Matrix2D;
 	begin
 		if not Assigned(spriteToMove) then raise Exception.Create('No sprite supplied');
-			
-		spriteToMove.x := spriteToMove.x + movementVector.x;
-		spriteToMove.y := spriteToMove.y + movementVector.y;
+		
+		if spriteToMove.rotation <> 0 then
+		begin
+		  trans := RotationMatrix(-spriteToMove.rotation);
+		  mvmt := Multiply(trans, movementVector);
+		end
+		else  mvmt := movementVector;
+		
+		spriteToMove.x := spriteToMove.x + mvmt.x;
+		spriteToMove.y := spriteToMove.y + mvmt.y;
 	end;
 
 	/// Moves a sprite to a given x,y location.
@@ -1137,10 +1170,7 @@ implementation
 	
 	procedure MoveSprite(spriteToMove: Sprite); overload;
 	begin
-		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
-		
-		spriteToMove.x := spriteToMove.x + spriteToMove.movement.x;
-		spriteToMove.y := spriteToMove.y + spriteToMove.movement.y;
+	  MoveSprite(spriteToMove, spriteToMove.movement);
 	end;
 	
 	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
@@ -1900,11 +1930,6 @@ implementation
 	procedure FillEllipse(theColour: Colour; const source: Rectangle); overload;
 	begin
 		FillEllipse(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
-
-	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
-	begin
-		DrawSprite(spriteToDraw, Round(position.x), Round(position.y));
 	end;
 
 	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : Integer); overload;
