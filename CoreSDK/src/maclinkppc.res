@@ -93,4 +93,5 @@ suppress
 -framework SDL_image
 -framework SDL_mixer
 -framework SDL_ttf	
+-framework SDL_gfx
 -framework Cocoa

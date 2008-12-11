@@ -218,7 +218,7 @@ namespace SwinGame
         /// </summary>
         public Single W
         {
-            get { return 1; //_W; }
+            get { return 1; } //_W; }
             //set { _W = value; }
         }
     }
@@ -322,7 +322,7 @@ namespace SwinGame
 				//Report issue, but continue...
 				Console.WriteLine(Core.GetExceptionMessage());
 			}
-     }
+        }
 	
 	
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
@@ -1098,4 +1098,5 @@ namespace SwinGame
             return temp;
         }
     }
+
 }

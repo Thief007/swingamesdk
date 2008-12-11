@@ -513,7 +513,6 @@ namespace SwinGame
             Vector result = new Vector();
             result.X = x;
             result.Y = invertY?-y:y;
-            result.W = 1;
             return result;
         }
 

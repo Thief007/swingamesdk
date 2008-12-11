@@ -559,7 +559,6 @@ namespace SwinGame
 								DLL_GetMouseXY(out x, out y);
                 temp.X = x;
 								temp.Y = y;
-								temp.W = 1;
             }
             catch (Exception exc)
             {
