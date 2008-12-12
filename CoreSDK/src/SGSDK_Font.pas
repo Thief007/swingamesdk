@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 2.0:
+// - 2008-12-12: Andrew: Added simple string printing
 // - 2008-12-10: Andrew: Fixed printing of string
 //
 // Version 1.1:
@@ -93,6 +94,19 @@ interface
 	procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
 	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
 
+  
+	//*****
+	//
+	// Simple text drawing routines
+	//
+	//*****
+	//
+	// These routines are used to draw text without a TTF.
+	//
+  procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;
+  procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
+  procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
+    
 	//*****
 	//
 	// Bitmap drawing routines
@@ -122,7 +136,7 @@ interface
 	procedure DrawFramerate(x, y: Integer; font: Font);
 	
 implementation
-	uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera;
+	uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx;
 	
 	/// Loads a font from file with the specified side. Fonts must be freed using
 	///	the FreeFont routine once finished with. Once the font is loaded you
@@ -518,6 +532,21 @@ implementation
 
 		DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, font, x + 2, y + 2);
 	end;
+	
+  procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;
+  begin
+    DrawText(scr, theText, textColor, ScreenX(x), ScreenY(y));
+  end;
+  
+  procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
+  begin
+    DrawText(scr, theText, textColor, x, y);
+  end;
+  
+  procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
+  begin
+    stringColor(dest.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
+  end;
 	
 initialization
 begin

@@ -21,6 +21,7 @@
 // Change History:
 //
 // Version 2.0:
+// - 2008-12-12: Andrew: Added simple string drawing
 // - 2008-12-10: Andrew: Changed Triangle to Array.
 //  
 //  Version 1.1.6 - in progress
@@ -903,8 +904,31 @@ uses
 		end;
 	end;
 	
-	procedure DrawText(theText: PChar; textColor: Colour;
-					 theFont: Font; x, y: Single); cdecl; export;
+  procedure DrawSimpleText(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
+  begin
+		Try
+			SGSDK_Font.DrawText(theText, textColor, x, y);
+		Except on exc: Exception do TrapException(exc, 'DrawSimpleText');
+		end;
+  end;
+  
+  procedure DrawSimpleTextOnScreen(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
+  begin
+		Try
+			SGSDK_Font.DrawTextOnScreen(theText, textColor, x, y);
+		Except on exc: Exception do TrapException(exc, 'DrawSimpleTextOnScreen');
+		end;    
+  end;
+  
+  procedure DrawSimpleTextOn(dest: Bitmap; theText: PChar; textColor: Color; x, y: Single); cdecl; export;
+	begin
+		Try
+			SGSDK_Font.DrawText(dest, theText, textColor, x, y);
+		Except on exc: Exception do TrapException(exc, 'DrawSimpleTextOn');
+		end;    	 
+	end;
+	
+	procedure DrawText(theText: PChar; textColor: Colour; theFont: Font; x, y: Single); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawText(theText, textColor, theFont, x, y);
@@ -2843,6 +2867,9 @@ exports
 	TextWidth,
 	TextHeight,
 	DrawFramerate,
+	DrawSimpleText,
+	DrawSimpleTextOnScreen,
+	DrawSimpleTextOn,
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *

@@ -58,10 +58,15 @@ implementation
 		ClearSurface(draw, ColourTransparent);
 		DrawTextLines(draw, 'A This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourBlue, GameFont('Courier'), AlignCenter, 0, 0, 200, 100);
 		DrawBitmap(draw, 10, 250);
-
 		//Draw Text Lines on Screen
 		DrawTextLinesOnScreen('B This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourTransparent, GameFont('Courier'), AlignCenter, 32, 440, 200, 100);
 		DrawTextLinesOnScreen('C This is some Text Lines' + EOL + '** This is some Text Lines **', _TextColor, ColourYellow, GameFont('Courier'), AlignCenter, CreateRectangle(32, 480, 200, 100));
+	
+		DrawText('D This is some simple text', _TextColor, 32, 380);
+		ClearSurface(draw, ColorBlack);
+		DrawText(draw, 'E This is some simple text', _TextColor, 0, 0);
+		DrawBitmap(draw, 200, 400);
+		DrawTextOnScreen('F This is some simple text', _TextColor, 32, 500);
 	end;
 
 	function GetFontTests(): TestSuite;
