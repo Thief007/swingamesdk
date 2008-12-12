@@ -46,12 +46,12 @@ namespace SwinGame
         /// Third Point Coordinate of the Triangle
         /// </summary>
         public Point2D pointC;
-        
+
         public Point2D this[int index]
         {
             get
             {
-                switch(index)
+                switch (index)
                 {
                     case 0: return pointA;
                     case 1: return pointB;
@@ -60,10 +60,10 @@ namespace SwinGame
                 }
             }
         }
-        
+
         public Point2D[] ToArray()
         {
-            return new Point2D[] {pointA, pointB, pointC};
+            return new Point2D[] { pointA, pointB, pointC };
         }
     }
 
@@ -291,21 +291,21 @@ namespace SwinGame
         public static LineSegment[] LinesFromRect(Rectangle rect)
         {
             LineSegment[] result = new LineSegment[4];
-   			result[0] = CreateLine(rect.Left, rect.Top, rect.Right, rect.Top);
-			result[1] = CreateLine(rect.Left, rect.Top, rect.Left, rect.Bottom);
-			result[2] = CreateLine(rect.Right, rect.Top, rect.Right, rect.Bottom);
-			result[3] = CreateLine(rect.Left, rect.Bottom, rect.Right, rect.Bottom);   
+            result[0] = CreateLine(rect.Left, rect.Top, rect.Right, rect.Top);
+            result[1] = CreateLine(rect.Left, rect.Top, rect.Left, rect.Bottom);
+            result[2] = CreateLine(rect.Right, rect.Top, rect.Right, rect.Bottom);
+            result[3] = CreateLine(rect.Left, rect.Bottom, rect.Right, rect.Bottom);
             return result;
         }
 
-	    /// <summary>
-	    /// Creates a line from x1,y1 to x2,y2.
-	    /// </summary>
-	    /// <param name="x1">the x value of the starting point</param>
-	    /// <param name="y1">the y value of the starting point</param>
-	    /// <param name="x2">the x value of the ending point</param>
-	    /// <param name="y2">the y value of the ending point</param>
-	    /// <returns>A line from point x1,y1 to point x2, y2</returns>
+        /// <summary>
+        /// Creates a line from x1,y1 to x2,y2.
+        /// </summary>
+        /// <param name="x1">the x value of the starting point</param>
+        /// <param name="y1">the y value of the starting point</param>
+        /// <param name="x2">the x value of the ending point</param>
+        /// <param name="y2">the y value of the ending point</param>
+        /// <returns>A line from point x1,y1 to point x2, y2</returns>
         public static LineSegment CreateLine(float x1, float y1, float x2, float y2)
         {
             LineSegment result;
@@ -364,8 +364,8 @@ namespace SwinGame
         public static Point2D MidPoint(LineSegment line)
         {
             Point2D result;
-		    result.X = line.StartPoint.X + (line.EndPoint.X - line.StartPoint.X) / 2; 
-		    result.Y = line.StartPoint.Y + (line.EndPoint.Y - line.StartPoint.Y) / 2;
+            result.X = line.StartPoint.X + (line.EndPoint.X - line.StartPoint.X) / 2;
+            result.Y = line.StartPoint.Y + (line.EndPoint.Y - line.StartPoint.Y) / 2;
             return result;
         }
 
@@ -491,7 +491,7 @@ namespace SwinGame
         public static float DistanceBetween(Point2D pt1, Point2D pt2)
         {
             Vector temp = Physics.CreateVector(pt2.X - pt1.X, pt2.Y - pt1.Y);
-		    return Physics.Magnitude(temp);
+            return Physics.Magnitude(temp);
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetLineIntersectionPoint")]
@@ -573,21 +573,21 @@ namespace SwinGame
         /// <returns>True if the Point is within the Rectangle</returns>
         public static bool PointIsWithinRect(Point2D v, float x, float y, float w, float h)
         {
-		    if (v.X < x) return false;
-		    else if (v.X > x + w) return false;
-		    else if (v.Y < y) return false;
-		    else if (v.Y > y + h) return false;
-		    else return true;
+            if (v.X < x) return false;
+            else if (v.X > x + w) return false;
+            else if (v.Y < y) return false;
+            else if (v.Y > y + h) return false;
+            else return true;
         }
-	    /// <summary>
+        /// <summary>
         /// Returns true if the Point is within the Rectangle specified
-	    /// </summary>
-	    /// <param name="v">Point</param>
-	    /// <param name="rect">Rectangle</param>
-	    /// <returns>Returns true if the Point is within the Rectangle</returns>
-	    public static bool PointIsWithinRect(Point2D v, Rectangle rect)
+        /// </summary>
+        /// <param name="v">Point</param>
+        /// <param name="rect">Rectangle</param>
+        /// <returns>Returns true if the Point is within the Rectangle</returns>
+        public static bool PointIsWithinRect(Point2D v, Rectangle rect)
         {
-		    return PointIsWithinRect(v, rect.X, rect.Y, rect.Width, rect.Height);		
+            return PointIsWithinRect(v, rect.X, rect.Y, rect.Width, rect.Height);
         }
 
         /// <summary>
@@ -595,26 +595,26 @@ namespace SwinGame
         /// </summary>
         /// <param name="movement">Vector to use in the Collision Side Test</param>
         /// <returns>Side of the Collision of the Object</returns>
-	    public static CollisionSide GetSideForCollisionTest(Vector movement)
+        public static CollisionSide GetSideForCollisionTest(Vector movement)
         {
-		    if(movement.X < 0) //Going Left...
-		    {
-			    if (movement.Y < 0) return CollisionSide.BottomRight;
-			    else if (movement.Y > 0) return CollisionSide.TopRight;
-			    else return CollisionSide.Right;
-		    }
-		    else if (movement.X > 0) //Going Right
-		    {
-			    if (movement.Y < 0) return CollisionSide.BottomLeft;
-			    else if (movement.Y > 0) return CollisionSide.TopLeft;
-			    else return CollisionSide.Left;			
-		    }
-		    else // Going Up or Down
-		    {
+            if (movement.X < 0) //Going Left...
+            {
+                if (movement.Y < 0) return CollisionSide.BottomRight;
+                else if (movement.Y > 0) return CollisionSide.TopRight;
+                else return CollisionSide.Right;
+            }
+            else if (movement.X > 0) //Going Right
+            {
+                if (movement.Y < 0) return CollisionSide.BottomLeft;
+                else if (movement.Y > 0) return CollisionSide.TopLeft;
+                else return CollisionSide.Left;
+            }
+            else // Going Up or Down
+            {
                 if (movement.Y < 0) return CollisionSide.Bottom;
                 else if (movement.Y > 0) return CollisionSide.Top;
                 else return CollisionSide.None;
-		    }
+            }
         }
         /// <summary>
         /// Returns the Top Side of the Rectangle
@@ -648,11 +648,11 @@ namespace SwinGame
                 return rect.Y;
             }
         }
-	    /// <summary>
-	    /// Returns the Left Hand side of the Rectangle
-	    /// </summary>
-	    /// <param name="rect">Rectangle</param>
-	    /// <returns>Left Hand Side</returns>
+        /// <summary>
+        /// Returns the Left Hand side of the Rectangle
+        /// </summary>
+        /// <param name="rect">Rectangle</param>
+        /// <returns>Left Hand Side</returns>
         public static Single RectangleLeft(Rectangle rect)
         {
             if (rect.Width > 0)
