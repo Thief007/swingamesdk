@@ -130,7 +130,7 @@ namespace SwinGame
             PlaySoundEffect(effect, 0);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect", CharSet=CharSet.Ansi)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect", CharSet = CharSet.Ansi)]
         private static extern IntPtr DLL_LoadSoundEffect([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Loads a SoundEffect from file. Use the GetPathToResource methods from Core to
@@ -171,7 +171,7 @@ namespace SwinGame
             effect.Pointer.Free();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic", CharSet=CharSet.Ansi)]
+        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic", CharSet = CharSet.Ansi)]
         private static extern IntPtr DLL_LoadMusic([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Load music to play from the file system. Music can be in the form of a
