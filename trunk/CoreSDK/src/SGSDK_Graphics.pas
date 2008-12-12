@@ -310,6 +310,8 @@ interface
 	function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
 	procedure SetupBitmapForCollisions(src: Bitmap);
 		
+	//Private	
+	function ToGfxColor(val: Color): Color;
 implementation
 	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
 	
