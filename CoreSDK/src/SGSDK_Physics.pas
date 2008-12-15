@@ -26,6 +26,8 @@
 // Version 1.0:
 // - Various
 
+{$I SwinGame.inc}
+
 unit SGSDK_Physics;
 
 interface
@@ -151,7 +153,7 @@ interface
 		
 implementation
 	uses
-		SysUtils, Math, Classes;
+		SysUtils, Math, Classes, SwinGameTrace;
 
 	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
 	begin
@@ -168,13 +170,21 @@ implementation
 	///	@param x, y			Initial values for the vector
 	///	@param invertY	 Indicates if the y value should be inverted.
 	///	@returns				 A new vector with values x and y
-	function CreateVector(x,y : Single; invertY : boolean): Vector; overload;
+	function CreateVector(x, y: Single; invertY : boolean): Vector; overload;
 	begin
+	  {$IFDEF TRACE}
+			TraceEnter('SGSDK_Physics', 'CreateVector');
+		{$ENDIF}
+
 		if invertY then y := y * -1;
 
 		result.x := x;
 		result.y := y;
 		//result.w := 1;
+		
+	  {$IFDEF TRACE}
+			TraceExit('SGSDK_Physics', 'CreateVector');
+		{$ENDIF}
 	end;
 
 	/// Creates a new vector with values x and y.

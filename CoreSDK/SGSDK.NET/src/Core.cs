@@ -188,15 +188,15 @@ namespace SwinGame
     [StructLayout(LayoutKind.Sequential)]
     public struct Vector
     {
-        private Single _X;
-        private Single _Y;
+        private float _X;
+        private float _Y;
         //private Single _W;
 
         /// <summary>
         /// The X Component of the Vector, i.e. the movement 
         /// in the X direction
         /// </summary>
-        public Single X
+        public float X
         {
             get { return _X; }
             set { _X = value; }
@@ -206,21 +206,10 @@ namespace SwinGame
         /// The Y Component of the Vector, i.e. the movement
         /// in the Y direction
         /// </summary>
-        public Single Y
+        public float Y
         {
             get { return _Y; }
             set { _Y = value; }
-        }
-
-        /// <summary>
-        /// The W Component of the Vector. This is used when the
-        /// vector is rotated, scaled, or translated. You dont need
-        /// to modify its value.
-        /// </summary>
-        public Single W
-        {
-            get { return 1; } //_W; }
-            //set { _W = value; }
         }
     }
 

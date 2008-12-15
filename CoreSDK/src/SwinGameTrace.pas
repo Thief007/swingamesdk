@@ -35,10 +35,11 @@ interface
 implementation
 	uses SysUtils;
 	
-	//var indentLevel: Integer;
-
 	{$IFDEF Trace}
 	{$Info SwinGame Tracing Enabled}
+	
+	var indentLevel: Integer;
+	
 	procedure Trace(unitname, action, routine, message: String);
 	var
 		output: Text;

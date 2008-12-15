@@ -631,13 +631,24 @@ uses
 	end;
 }	
 	function GetMouseMovement(): Vector; cdecl; export;
+	var
+	  vec: Vector;
 	begin
+	  {$IFDEF TRACE}
+			TraceEnter('SGSDK.dll', 'GetMouseMovement');
+		{$ENDIF}
+
 		Try
-			result := SGSDK_Input.GetMouseMovement();
+		  SGSDK_Input.GetMouseMovement();
+			result.x := vec.x; result.y := vec.y;
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetMouseMovement');
 		end;
 		result.x := 0; result.y := 0;
+	  	{$IFDEF TRACE}
+			TraceExit('SGSDK.dll', 'GetMouseMovement');
+		{$ENDIF}
+
 	end;
 	
 	function IsMouseDown(button: MouseButton): Integer; cdecl; export;

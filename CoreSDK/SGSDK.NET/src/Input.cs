@@ -538,7 +538,7 @@ namespace SwinGame
     /// </summary>
     public class Input
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetMouseXY")]
+        [DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint = "GetMouseXY")]
         private static extern void DLL_GetMouseXY(out float x, out float y);
 
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint="GetMousePositionAsVector")]

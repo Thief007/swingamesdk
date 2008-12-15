@@ -378,7 +378,10 @@ implementation
 	///	- Reads user interaction events
 	///	- Updates keys down, text input, etc.
 	procedure ProcessEvents();
+	var
+	  x, y: Integer;
 	begin
+	  SDL_GetRelativeMouseState(x, y);
 		sdlManager.ProcessEvents();
 	end;
 	
