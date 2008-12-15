@@ -1,4 +1,4 @@
-7///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					SGSDK.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -684,12 +684,19 @@ uses
 		result := -1;
 	end;
 
-	procedure StartReadingText(textColor: Colour; maxLength: Integer;
-										theFont: Font; x, y: Integer); cdecl; export;
+	procedure StartReadingText(textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
 		Except on exc: Exception do TrapException(exc, 'StartReadingText');
+		end;
+	end;
+
+	procedure StartReadingTextWithText(text: PChar; textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer); cdecl; export;
+	begin
+		Try
+			SGSDK_Input.StartReadingTextWithText(text, textColor, maxLength, theFont, x, y);
+		Except on exc: Exception do TrapException(exc, 'StartReadingTextWithText');
 		end;
 	end;
 
@@ -1778,8 +1785,7 @@ uses
 		end;
 	end;
 
-	procedure DrawRectangle(theColour : Colour; filled : Integer;
-							xPos, yPos: Single; width, height : Integer); cdecl; export;
+	procedure DrawRectangle(theColour : Colour; filled : Integer; xPos, yPos: Single; width, height : Integer); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangle(theColour, filled = -1, xPos, yPos, width, height);
@@ -1787,8 +1793,7 @@ uses
 		end;
 	end;
 
-	procedure DrawLine(theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Single); cdecl; export;
+	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawLine(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);

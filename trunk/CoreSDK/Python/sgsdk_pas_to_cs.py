@@ -5,7 +5,7 @@
 # Andrew Cain, Dec 15 2008
 
 # See __main__ section at the end of this file
-from sgsdk_cs_types import sgsdk_types
+from sgsdk_cs_types import sgsdk_types, sgsdk_cs_mods
 
 def ReadAndStripMethodsFromPasFile(filename):
     # open .pas file
@@ -93,10 +93,22 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
         arg_bits = []
         for param in params:
             if param:
-                varnames, vartype = param.split(':')
+                vardata, vartype = param.split(':')
                 vartype = vartype.strip()
+                vardata = vardata.strip()
+                if vardata.find('out ') == 0: 
+                    modifier = 'out'
+                    varnames = vardata.replace('out ', '')
+                else:
+                    if vardata.find('var ') == 0:
+                        modifier = 'var'
+                        varnames = vardata.replace('var ', '')
+                    else:
+                        varnames = vardata
+                        modifier = ''
+                    
                 for varname in varnames.split(','):
-                    arg_bits.append((varname.strip(),vartype))
+                    arg_bits.append((modifier,varname.strip(),vartype))
                     sg_types.add(vartype)
         # # print method details (mainly for debug)
         # print '\t', name
@@ -135,8 +147,8 @@ def WriteSigTypesToFile(filename,sig_type_set):
 def args_to_str(args):
     str = []
     for arg in args:
-        name,type = arg
-        str.append("%s %s" % (type, name)) 
+        modifier, name,type = arg
+        str.append("%s%s %s" % (sgsdk_cs_mods[modifier], type, name)) 
         #str.append("%s" % type) 
     return ', '.join(str)
 
@@ -147,7 +159,7 @@ def CreateAndSaveSignatures(filename,sig_tuples):
         sig['retn'] = sgsdk_types[sig['retn']]
         new_args = []
         for arg in sig['args']:
-            new_args.append((arg[0],sgsdk_types[arg[1]]))
+            new_args.append((arg[0],arg[1],sgsdk_types[arg[2]]))
         sig['args'] = new_args
     
 #    DistancePointToLine = sgsdk.DistancePointToLine # function reference

@@ -53,6 +53,7 @@ type TSDLManager = class (TObject)
 		property IsReading: Boolean read _readingString;
 
 		procedure DrawCollectedText(dest: PSDL_Surface);
+		procedure SetText(text: String);
 		procedure StartReadingText(textColor: TSDL_Color; maxLength: Integer; theFont: PTTF_Font; x, y: Integer);
 		function 	EndReadingText(): String;
 
@@ -211,7 +212,7 @@ implementation
 			if oldStr <> _tempString then
 			begin
 				 //Free the old surface
-				 SDL_FreeSurface( _textSurface );
+			  if _textSurface <> nil then SDL_FreeSurface( _textSurface );
 
 				 //Render a new text surface
 				 if Length(_tempString) > 0 then
@@ -220,6 +221,20 @@ implementation
 					_textSurface := nil;
 			end;
 		end;
+	end;
+	
+	procedure TSDLManager.SetText(text: String);
+	begin
+	  _tempString := text;
+	  
+		 //Free the old surface
+	  if _textSurface <> nil then SDL_FreeSurface( _textSurface );
+
+		 //Render a new text surface
+		 if Length(_tempString) > 0 then
+			 _textSurface := TTF_RenderText_Blended(_font, PChar(_tempString + '|'), _foreColor)
+		 else
+			_textSurface := nil;
 	end;
 	
 	function TSDLManager.EndReadingText(): String;

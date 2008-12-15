@@ -96,7 +96,13 @@ def VectorOfAngle(angle, magnitude):
 #------------------------------------------------------------------------------
 # Mapping of Pascal Types (dll types) to C# Types
 #------------------------------------------------------------------------------
-    
+
+sgsdk_cs_mods = {
+    'out': '[Out] out ',
+    'var': 'ref ',
+    '': ''
+}
+
 # define a dictionary mapping between swingame types and output types
 sgsdk_types = {
     'Bitmap': 'Bitmap', # ^BitmapData (pointer)
