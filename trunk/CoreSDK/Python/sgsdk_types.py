@@ -74,6 +74,9 @@ class LineSegment(Structure):
     _fields_ = ("startPoint", Point2D), ("endPoint", Point2D)
 
 
+class Tile(Structure):
+    _fields_ = ('xIndex', c_int), ('yIndex', c_int), ('topCorner', Point2D), ('pointA', Point2D), ('pointB', Point2D), ('pointC', Point2D), ('pointD', Point2D)
+
 #------------------------------------------------------------------------------
 # Vector Methods (not in sgsdk.. atm)
 
@@ -131,6 +134,8 @@ sgsdk_types = {
     'UInt16': 'c_uint16',
     'UInt32': 'c_uint32',
     'Vector': 'Vector', #record
+    'Point2DPtr': 'c_void_p', #pointer to Point2D data
+    'Tile': 'Tile', #record
     'None': 'None'
  }
  
