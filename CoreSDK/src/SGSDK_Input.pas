@@ -57,6 +57,7 @@ interface
 	function MouseWasClicked(button: MouseButton): Boolean;
 	
 	procedure StartReadingText(textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
+  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
 	function 	EndReadingText(): String;
 	
 	function IsReadingText(): Boolean;
@@ -151,6 +152,12 @@ implementation
 		if IsReadingText() then raise Exception.Create('Already reading text, cannot start reading text again.');
 		
 		sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
+	end;
+	
+  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
+	begin
+	  StartReadingText(textColor, maxLength, theFont, x, y);
+	  sdlManager.SetText(text);
 	end;
 
 	/// IsReadingText indicates if the API is currently reading text from the

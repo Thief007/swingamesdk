@@ -46,7 +46,7 @@ implementation
 
 		if (not IsReadingText()) and (WasKeyTyped(VK_S)) then
 		begin
-		    StartReadingText(ColourWhite, 10, GameFont('Courier'), 35, 240);
+		    StartReadingTextWithText('Hello', ColourWhite, 10, GameFont('Courier'), 35, 240);
 		end;
 		
 		if IsReadingText() and MouseWasClicked(LeftButton) then
