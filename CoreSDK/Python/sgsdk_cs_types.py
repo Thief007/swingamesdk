@@ -94,49 +94,49 @@ def VectorOfAngle(angle, magnitude):
     return Vector(magnitude * cos(angle), magnitude * sin(angle), 1)
 
 #------------------------------------------------------------------------------
-# Mapping of Pascal Types (dll types) to Python Types (using ctypes)
+# Mapping of Pascal Types (dll types) to C# Types
 #------------------------------------------------------------------------------
     
-# define a dictionary mapping between swingame types and ctypes
+# define a dictionary mapping between swingame types and output types
 sgsdk_types = {
-    'Bitmap': 'c_void_p', # ^BitmapData (pointer)
-    'BitmapPtr': 'c_void_p',
-    'Byte': 'c_byte',
+    'Bitmap': 'Bitmap', # ^BitmapData (pointer)
+    'BitmapPtr': 'IntPtr',
+    'Byte': 'byte',
     'CollisionDetectionRange': 'CollisionDetectionRange', #enum
     'CollisionSide': 'CollisionSide', #enum
-    'Colour': 'c_uint32', # RGBA c_byte*4
-    'Color': 'c_uint32', # same as Colour
+    'Colour': 'uint', # RGBA c_byte*4
+    'Color': 'uint', # same as Colour
     'Event': 'EventKind', 
-    'Font': 'c_void_p', # PTTF_Font
+    'Font': 'IntPtr', # PTTF_Font
     'FontAlignment': 'FontAlignment', #enum (specified values)
     'FontStyle': 'FontStyle', #enum
-    'Integer': 'c_int',
-    'integer': 'c_int',
-    'IntPtr': 'c_void_p', # ^Integer (pointer)
+    'Integer': 'int',
+    'integer': 'int',
+    'IntPtr': 'IntPtr', # ^Integer (pointer)
     'LineSegment': 'LineSegment', # record
-    'LineSegPtr': 'c_void_p',
-    'Map': 'c_void_p', # ^MapRecord (pointer)
-    'Matrix2DPtr': 'c_void_p',
+    'LineSegPtr': 'IntPtr',
+    'Map': 'IntPtr', # ^MapRecord (pointer)
+    'Matrix2DPtr': 'IntPtr',
     'MouseButton': 'MouseButton', #enum
-    'Music': 'c_void_p', # PMix_Music
-    'PChar': 'c_char_p', # null terminated string
+    'Music': 'IntPtr', # PMix_Music
+    'PChar': '[MarshalAs(UnmanagedType.LPStr)]string', # null terminated string
     'Point2D': 'Point2D', # record
-    'Pointer': 'c_void_p',
+    'Pointer': 'IntPtr',
     'ResourceKind': 'ResourceKind', #enum
     'Rectangle': 'Rectangle', # record
-    'SoundEffect': 'c_void_p', #PMix_Chunk               
+    'SoundEffect': 'IntPtr', #PMix_Chunk               
     'SpriteEndingAction': 'SpriteEndingAction', #enum
-    'Sprite': 'c_void_p', # ^SpriteData (pointer)
+    'Sprite': 'IntPtr', # ^SpriteData (pointer)
     'SpriteKind': 'SpriteKind', #enum
-    'Single': 'c_float',
-    'Timer': 'c_void_p', # ^TimerData (pointer)
-    'TSDL_Color': 'c_uint32',
+    'Single': 'float',
+    'Timer': 'IntPtr', # ^TimerData (pointer)
+    'TSDL_Color': 'uint',
     'UInt16': 'c_uint16',
-    'UInt32': 'c_uint32',
+    'UInt32': 'uint',
     'Vector': 'Vector', #record
-    'Point2DPtr': 'c_void_p', #pointer to Point2D data
+    'Point2DPtr': 'IntPtr', #pointer to Point2D data
     'Tile': 'Tile', #record
-    'None': 'None'
+    'None': 'void'
  }
  
 

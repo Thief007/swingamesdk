@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+7///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					SGSDK.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -2745,18 +2745,23 @@ uses
 		result := 0;
 	end;
 	
-	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; cdecl; export;
+{	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Shapes.CreateTriangle(ax, ay, bx, by, cx, cy);
 		Except on exc: Exception do TrapException(exc, 'CreateTriangle');
 		end;
 	end;
-	
-	function IsPointInTriangle(point : Point2D; triangle : Triangle): Integer; cdecl; export;
+}	
+
+	function IsPointInTriangle(point : Point2D; triangle : Point2DPtr): Integer; cdecl; export;
+  var
+    tri: Triangle;
 	begin
+	  PopulateTriangle(triangle, tri);
+	  
 		Try
-			if SGSDK_Shapes.IsPointInTriangle(point, triangle) then result := -1
+			if SGSDK_Shapes.IsPointInTriangle(point, tri) then result := -1
 			else result := 0;
 			exit;
 		Except on exc: Exception do TrapException(exc, 'IsPointInTriangle');
