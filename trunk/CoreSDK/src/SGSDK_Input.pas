@@ -1,4 +1,4 @@
-///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 // 					SGSDK_Input.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
@@ -21,6 +21,8 @@
 //  
 // Version 1.0:
 // - Various
+
+{$I SwinGame.inc}
 
 unit SGSDK_Input;
 
@@ -71,7 +73,7 @@ interface
 	function IsMouseShown(): Boolean;
 
 implementation
-	uses SysUtils, Classes, SGSDK_Physics;
+	uses SysUtils, Classes, SGSDK_Physics, SwinGameTrace;
 	
 	procedure ShowMouse(); overload;
 	begin
@@ -201,9 +203,18 @@ implementation
 	var
 		x, y: Integer;
 	begin
-		x := 0; y := 0;
+	  {$IFDEF TRACE}
+			TraceEnter('SGSDK_Input', 'GetMouseMovement');
+		{$ENDIF}
+	  
+		x := 0; 
+		y := 0;
 		SDL_GetRelativeMouseState(x, y);
-		result := CreateVector(x, y);
+		result := CreateVector(Single(x), Single(y));
+		
+	  {$IFDEF TRACE}
+			TraceExit('SGSDK_Input', 'GetMouseMovement');
+		{$ENDIF}
 	end;
 	
 	function IsMouseDown(button: MouseButton): Boolean;
