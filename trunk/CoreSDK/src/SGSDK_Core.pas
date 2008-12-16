@@ -226,7 +226,7 @@ interface
 			height : Integer;
 			cols : Integer;
 			row : Integer;
-			frameCount : Integer;
+			frameCount : Single;
 			currentFrame : Integer;
 			usePixelCollision: Boolean;
 			endingAction : SpriteEndingAction;
