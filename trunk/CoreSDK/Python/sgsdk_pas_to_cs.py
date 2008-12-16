@@ -5,7 +5,7 @@
 # Andrew Cain, Dec 15 2008
 
 # See __main__ section at the end of this file
-from sgsdk_cs_types import sgsdk_types, sgsdk_cs_mods
+from sgsdk_cs_types import sgsdk_types, sgsdk_cs_mods, sgsdk_special_types
 
 def ReadAndStripMethodsFromPasFile(filename):
     # open .pas file
@@ -27,7 +27,8 @@ def ReadAndStripMethodsFromPasFile(filename):
         if line.find('}') >= 0: in_comment = False
         # start of a method?
         if not in_comment:
-            if line.find('function') == 0 or line.find('procedure') == 0:
+            # //## is a "special" comment used to indicate out parameters using pointers, etc.
+            if line.find('//##') == 0 or line.find('function') == 0 or line.find('procedure') == 0:
                 method_count += 1
                 in_method = True
             # end of a method?
@@ -70,10 +71,19 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
     sig_names = [] # just the names
     # store the types we discover (alert later if we don't know what to do about them)
     sg_types = set() #set of unique types
-                
+    param_special = '' #from //##????| - starts with //## ends with |
+               
     for line in signatures:
+        line = line.strip()
         line = line.replace('  ',' ') # consistent spaces
-        line = line.replace('; cdecl; export;','') #  remove unwanted bits
+        line = line.replace('; cdecl; export;','') #  remove unwanted bits from end
+        
+        if line.find('//##') == 0:
+            line = line.replace('//##', '') #remove start
+            param_special, line = line.split('|'); #split on end
+        else:
+            param_special=''
+            
         # method arguments
         pos0 = line.find(' ')
         pos1 = line.find('(')
@@ -106,9 +116,23 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
                     else:
                         varnames = vardata
                         modifier = ''
-                    
+                
+                i = 0
                 for varname in varnames.split(','):
-                    arg_bits.append((modifier,varname.strip(),vartype))
+                    # modifier may be var or our
+                    # varname is the name of the parameter
+                    # vartype is the read variable type
+                    # spc_type is the special type read from //##
+                    #   it will be _ or o used to link with sgsdk_special_types
+                    
+                    if len(param_special) == 0:
+                        spc_type = '_'
+                    else:
+                        spc_type = param_special[i]
+                        #keep track of index
+                        i = i + 1
+                    
+                    arg_bits.append((modifier, varname.strip(), vartype, spc_type))
                     sg_types.add(vartype)
         # # print method details (mainly for debug)
         # print '\t', name
@@ -147,7 +171,8 @@ def WriteSigTypesToFile(filename,sig_type_set):
 def args_to_str(args):
     str = []
     for arg in args:
-        modifier, name,type = arg
+        # print arg
+        modifier, name, type = arg
         str.append("%s%s %s" % (sgsdk_cs_mods[modifier], type, name)) 
         #str.append("%s" % type) 
     return ', '.join(str)
@@ -159,7 +184,7 @@ def CreateAndSaveSignatures(filename,sig_tuples):
         sig['retn'] = sgsdk_types[sig['retn']]
         new_args = []
         for arg in sig['args']:
-            new_args.append((arg[0],arg[1],sgsdk_types[arg[2]]))
+            new_args.append((arg[0], arg[1], sgsdk_special_types[arg[3]][arg[2]]))
         sig['args'] = new_args
     
 #    DistancePointToLine = sgsdk.DistancePointToLine # function reference
@@ -185,7 +210,7 @@ namespace SwinGame
     names = []
     for sig in sig_tuples:
         name, args, retn = sig['name'], sig['args'], sig['retn']
-        f.write('\t\t[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "%s", CharSet = CharSet.Ansi)]\n' % (name))
+        f.write('\t\t[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="%s", CharSet=CharSet.Ansi)]\n' % (name))
         f.write('\t\tinternal %s %s(%s);' % (retn, name, args_to_str(args)))
         #f.write('%s = sgsdk.%s\n' % (name, name))
         #f.write('%s.argtypes = [%s]\n' % (name, args_to_str(args)))
