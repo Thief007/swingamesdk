@@ -219,16 +219,20 @@ interface
 	
 	procedure ReplayAnimation(theSprite : Sprite);
 	
-	procedure UpdateSprite(spriteToUpdate : Sprite);
-	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite);
+	procedure UpdateSprite(spriteToUpdate: Sprite); overload;
+	procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
 
 	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
 	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
 		
 	procedure MoveSprite(spriteToMove: Sprite); overload;
-	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
-
+	procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
+	procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector); overload;
+	procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector; pct: Single); overload;
+	  
 	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
 	
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
@@ -1021,20 +1025,26 @@ implementation
 			CycleFrame(spriteToUpdate);
 		end;
 	end;
+
+	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+	begin
+	  UpdateSpriteAnimation(spriteToUpdate, 1.0);
+	end;
 	
 	/// Update the frame position
 	///
 	/// @param spriteToUpdate:	The sprite to be processed
+	/// @param pct: Percentage to update
 	///
 	/// Side Effects:
 	/// - Process the frame position depending on the sprite's setting
-	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite);
+	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
 	begin
 		if spriteToUpdate = nil then raise Exception.Create('No sprite supplied');
 		if spriteToUpdate.hasEnded then exit;
 		if spriteToUpdate.spriteKind = StaticSprite then exit;
 				
-		spriteToUpdate.frameCount := spriteToUpdate.frameCount + 1;
+		spriteToUpdate.frameCount := spriteToUpdate.frameCount + pct;
 		
 		// If we are at the end of the current frame... need to move to the next frame
 		if spriteToUpdate.frameCount >= spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] then
@@ -1053,11 +1063,16 @@ implementation
 			end;
 		end;
 	end;
-	
-	procedure UpdateSprite(spriteToUpdate: Sprite);
+
+	procedure UpdateSprite(spriteToUpdate: Sprite); overload;
 	begin
-		MoveSprite(spriteToUpdate);
-		UpdateSpriteAnimation(spriteToUpdate);
+	  UpdateSprite(spriteToUpdate, 1.0);
+	end;
+	
+	procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+	begin
+		MoveSprite(spriteToUpdate, pct);
+		UpdateSpriteAnimation(spriteToUpdate, pct);
 	end;
 	
 	/// Draws a sprite to the screen, without using a view port.
@@ -1123,11 +1138,16 @@ implementation
 		else result := false;
 	end;
 
+	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
+	begin
+	  MoveSprite(spriteToMove, movementVector, 1.0);
+	end;
+
 	/// Moves a sprite based on information in a movement vector.
 	///
 	///	@param spriteToMove:		 The sprite to move
 	///	@param movementVector:	 The vector containing the movement details
-	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
+	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector; pct: Single); overload;
 	var
 	  mvmt: Vector;
 	  trans: Matrix2D;
@@ -1141,8 +1161,8 @@ implementation
 		end
 		else  mvmt := movementVector;
 		
-		spriteToMove.x := spriteToMove.x + mvmt.x;
-		spriteToMove.y := spriteToMove.y + mvmt.y;
+		spriteToMove.x := spriteToMove.x + (pct * mvmt.x);
+		spriteToMove.y := spriteToMove.y + (pct * mvmt.y);
 	end;
 
 	/// Moves a sprite to a given x,y location.
@@ -1159,10 +1179,15 @@ implementation
 		spriteToMove.x := x;
 		spriteToMove.y := y;
 	end;
-	
+
 	procedure MoveSprite(spriteToMove: Sprite); overload;
 	begin
-	  MoveSprite(spriteToMove, spriteToMove.movement);
+	  MoveSprite(spriteToMove, 1.0);
+	end;	
+	
+	procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
+	begin
+	  MoveSprite(spriteToMove, spriteToMove.movement, pct);
 	end;
 	
 	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
