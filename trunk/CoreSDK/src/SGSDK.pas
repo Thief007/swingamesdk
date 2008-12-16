@@ -21,6 +21,10 @@
 // Change History:
 //
 // Version 2.0:
+// - 2008-12-17: Andrew: Moved "new" methods to the bottom... makes it easier to identify new functionality for other code (C#).
+//                       Added new functions and procedures, to map to new functionality
+//                       Replaced all platform specific integers to LongInt (i.e. int32)
+//                       Remove const parameters - they were not passed by reference in calling code!
 // - 2008-12-12: Andrew: Added simple string drawing
 // - 2008-12-10: Andrew: Changed Triangle to Array.
 //  
@@ -74,7 +78,7 @@ uses
 
 	type
 		//IntPtr used to receive arrays
-		IntPtr = ^Integer;
+		IntPtr = ^LongInt;
 		//BitmapPtr used to receive Bitmap arrays
 		BitmapPtr = ^Bitmap;
 		Point2DPtr = ^Point2D;
@@ -87,7 +91,7 @@ uses
 		Matrix2DPtr = ^Matrix2DData;
 		LineSegPtr = ^LineSegment;
 
-		IntArray = Array of Integer;
+		IntArray = Array of LongInt;
 		BitmapArray = Array of Bitmap;
 
 
@@ -103,7 +107,7 @@ uses
 	// Minor = mm
 	// Revision = rr
 	
-	function DLLVersion(): Integer; cdecl; export;
+	function DLLVersion(): LongInt; cdecl; export;
 	begin
 		result := 20000;
 	end;
@@ -111,9 +115,9 @@ uses
 
 	/// Copies the data from an array passed as a pointer
 	/// into a Pascal array
-	procedure PopulateIntArray(data: IntPtr; len: Integer; out arr: IntArray);
+	procedure PopulateIntArray(data: IntPtr; len: LongInt; out arr: IntArray);
 	var
-		i: Integer;
+		i: LongInt;
 	begin
 		if len < 0 then raise Exception.Create('Length of array cannot be negative');
 			
@@ -125,9 +129,9 @@ uses
 		end;
 	end;
 	
-	procedure PopulateBitmapArray(data: BitmapPtr; len: Integer; out arr: BitmapArray);
+	procedure PopulateBitmapArray(data: BitmapPtr; len: LongInt; out arr: BitmapArray);
 	var
-		i: Integer;
+		i: LongInt;
 	begin
 		if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -139,9 +143,9 @@ uses
 		end;
 	end;
 
-	procedure PopulateLineSegmentArray(data: LineSegPtr; len: Integer; out arr: LinesArray);
+	procedure PopulateLineSegmentArray(data: LineSegPtr; len: LongInt; out arr: LinesArray);
 	var
-		i: Integer;
+		i: LongInt;
 	begin
 		if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -155,7 +159,7 @@ uses
 	
 	procedure PopulateTriangle(data: Point2DPtr; out tri: Triangle);
 	var
-	  i: Integer;
+	  i: LongInt;
 	begin
     for i := 0 to 2 do
     begin
@@ -181,7 +185,7 @@ uses
 		StrCopy(result, PChar(ErrorMessage));
 	end;
 	
-	function ExceptionOccured(): Integer; cdecl; export;
+	function ExceptionOccured(): LongInt; cdecl; export;
 	begin
 		if HasException then result := -1
 		else result := 0;
@@ -223,7 +227,7 @@ uses
 		{$ENDIF}
 	end;
 
-	procedure OpenGraphicsWindow(caption : PChar; width : Integer; height : Integer); cdecl; export;
+	procedure OpenGraphicsWindow(caption : PChar; width : LongInt; height : LongInt); cdecl; export;
 	begin
 	  {$IFDEF TRACE}
 			TraceEnter('SGSDK.dll', 'OpenGraphicsWindow');
@@ -242,7 +246,7 @@ uses
 		{$ENDIF}		
 	end;
 	
-	function WindowCloseRequested(): Integer; cdecl; export;
+	function WindowCloseRequested(): LongInt; cdecl; export;
 	begin
 		result := -1;
 		try
@@ -266,7 +270,7 @@ uses
 		end;
 	end;
 	
-	procedure ChangeScreenSize(width, height: Integer); cdecl; export;
+	procedure ChangeScreenSize(width, height: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.ChangeScreenSize(width, height);
@@ -282,7 +286,7 @@ uses
 		end;
 	end;
 	
-	procedure RefreshScreenWithFrame(TargetFPS : Integer); cdecl; export;
+	procedure RefreshScreenWithFrame(TargetFPS : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Core.RefreshScreen(TargetFPS);
@@ -306,7 +310,7 @@ uses
 		end;
 	end;
 	
-	function  ScreenWidth(): Integer; cdecl; export;
+	function  ScreenWidth(): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.ScreenWidth();
@@ -316,7 +320,7 @@ uses
 		result := -1;
 	end;
 	
-	function  ScreenHeight(): Integer; cdecl; export;
+	function  ScreenHeight(): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.ScreenHeight();
@@ -359,7 +363,7 @@ uses
 		result := ColorWhite;
 	end;
 	
-	function GetFramerate(): Integer; cdecl; export;
+	function GetFramerate(): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Core.GetFramerate();
@@ -562,7 +566,7 @@ uses
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
-	procedure ShowMouse(show : Integer); cdecl; export;
+	procedure ShowMouse(show : LongInt); cdecl; export;
 	begin
 		try
 			SGSDK_Input.ShowMouse(show = -1);
@@ -570,7 +574,7 @@ uses
 		end;
 	end;
 	
-	function IsMouseShown(): Integer ; cdecl; export;
+	function IsMouseShown(): LongInt ; cdecl; export;
 	begin
 		try
 			if SGSDK_Input.IsMouseShown() then result := -1
@@ -643,7 +647,7 @@ uses
 		{$ENDIF}
 
 		Try
-		  SGSDK_Input.GetMouseMovement();
+		  vec := SGSDK_Input.GetMouseMovement();
 			result.x := vec.x; result.y := vec.y;
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetMouseMovement');
@@ -655,7 +659,7 @@ uses
 
 	end;
 	
-	function IsMouseDown(button: MouseButton): Integer; cdecl; export;
+	function IsMouseDown(button: MouseButton): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Input.IsMouseDown(button) then result := -1
@@ -666,7 +670,7 @@ uses
 		result := -1;
 	end;
 	
-	function IsMouseUp(button: MouseButton): Integer; cdecl; export;
+	function IsMouseUp(button: MouseButton): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Input.IsMouseUp(button) then result := -1
@@ -677,7 +681,7 @@ uses
 		result := -1;
 	end;
 	
-	function MouseWasClicked(button: MouseButton): Integer; cdecl; export;
+	function MouseWasClicked(button: MouseButton): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Input.MouseWasClicked(button) then result := -1
@@ -688,7 +692,7 @@ uses
 		result := -1;
 	end;
 
-	procedure StartReadingText(textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer); cdecl; export;
+	procedure StartReadingText(textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Input.StartReadingText(textColor, maxLength, theFont, x, y);
@@ -696,15 +700,7 @@ uses
 		end;
 	end;
 
-	procedure StartReadingTextWithText(text: PChar; textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer); cdecl; export;
-	begin
-		Try
-			SGSDK_Input.StartReadingTextWithText(text, textColor, maxLength, theFont, x, y);
-		Except on exc: Exception do TrapException(exc, 'StartReadingTextWithText');
-		end;
-	end;
-
-	function IsReadingText(): Integer; cdecl; export;
+	function IsReadingText(): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Input.IsReadingText() then result := -1
@@ -745,7 +741,7 @@ uses
 		StrCopy(result, PChar(''));
 	end;
 		
-	function IsKeyPressed(virtKeyCode : Integer): Integer; cdecl; export;
+	function IsKeyPressed(virtKeyCode : LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Input.IsKeyPressed(virtKeyCode) then result := -1
@@ -756,7 +752,7 @@ uses
 		result := 0;
 	end;
 	
-	function WasKeyTyped(virtKeyCode: Integer): Integer; cdecl; export;
+	function WasKeyTyped(virtKeyCode: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Input.WasKeyTyped(virtKeyCode) then result := -1
@@ -832,15 +828,15 @@ uses
 		end;
 	end;
 
-{	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
+	procedure PlaySoundEffect(effect: SoundEffect); cdecl; export;
 	begin
 		Try
 			SGSDK_Audio.PlaySoundEffect(effect);
-		Except on exc: Exception do TrapException(exc);
+		Except on exc: Exception do TrapException(exc, 'PlaySoundEffect');
 		end;
 	end;
-}	
-	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: Integer); cdecl; export;
+	
+	procedure PlaySoundEffectLoop(effect: SoundEffect; loops: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Audio.PlaySoundEffect(effect, loops);
@@ -848,7 +844,7 @@ uses
 		end;
 	end;
 
-	procedure PlayMusic(mus: Music; loops: Integer); cdecl; export;
+	procedure PlayMusic(mus: Music; loops: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Audio.PlayMusic(mus, loops);
@@ -856,7 +852,8 @@ uses
 		end;
 	end;
 
-	function IsMusicPlaying(): Integer; cdecl; export;
+
+	function IsMusicPlaying(): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Audio.IsMusicPlaying() then result := -1
@@ -867,7 +864,7 @@ uses
 		result := 0;
 	end;
 
-	function IsSoundEffectPlaying(effect: SoundEffect): Integer; cdecl; export;
+	function IsSoundEffectPlaying(effect: SoundEffect): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Audio.IsSoundEffectPlaying(effect) then result := -1
@@ -902,7 +899,7 @@ uses
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function LoadFont(fontName: PChar; size: Integer): Font; cdecl; export;
+	function LoadFont(fontName: PChar; size: LongInt): Font; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Font.LoadFont(fontName, size);
@@ -927,31 +924,7 @@ uses
 		Except on exc: Exception do TrapException(exc, 'FreeFont');
 		end;
 	end;
-	
-  procedure DrawSimpleText(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
-  begin
-		Try
-			SGSDK_Font.DrawText(theText, textColor, x, y);
-		Except on exc: Exception do TrapException(exc, 'DrawSimpleText');
-		end;
-  end;
-  
-  procedure DrawSimpleTextOnScreen(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
-  begin
-		Try
-			SGSDK_Font.DrawTextOnScreen(theText, textColor, x, y);
-		Except on exc: Exception do TrapException(exc, 'DrawSimpleTextOnScreen');
-		end;    
-  end;
-  
-  procedure DrawSimpleTextOn(dest: Bitmap; theText: PChar; textColor: Color; x, y: Single); cdecl; export;
-	begin
-		Try
-			SGSDK_Font.DrawText(dest, theText, textColor, x, y);
-		Except on exc: Exception do TrapException(exc, 'DrawSimpleTextOn');
-		end;    	 
-	end;
-	
+		
 	procedure DrawText(theText: PChar; textColor: Colour; theFont: Font; x, y: Single); cdecl; export;
 	begin
 		Try
@@ -962,7 +935,7 @@ uses
 
 	procedure DrawTextLines(theText: PChar; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y: Single; w, h: Integer); cdecl; export;
+							x, y: Single; w, h: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawTextLines(theText, textColor, backColor, theFont, align, x, y, w, h);
@@ -971,7 +944,7 @@ uses
 	end;
 	
 	procedure DrawTextOnScreen(theText: PChar; textColor: Colour;
-					 theFont: Font; x, y: Integer); cdecl; export;
+					 theFont: Font; x, y: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawTextOnScreen(theText, textColor, theFont, x, y);
@@ -981,7 +954,7 @@ uses
 
 	procedure DrawTextLinesOnScreen(theText: PChar; textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); cdecl; export;
+							x, y, w, h: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawTextLinesOnScreen(theText, textColor, backColor, theFont, align, x, y, w, h);
@@ -990,7 +963,7 @@ uses
 	end;
 							
 	procedure DrawTextOnBitmap(dest: Bitmap; theText: PChar; textColor: Colour;
-					theFont: Font; x, y: Integer); cdecl; export;
+					theFont: Font; x, y: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawText(dest, theText, textColor, theFont, x, y);
@@ -1001,7 +974,7 @@ uses
 	procedure DrawTextLinesOnBitmap(dest: Bitmap; theText: PChar;
 							textColor, backColor: Colour;
 							theFont: Font; align: FontAlignment;
-							x, y, w, h: Integer); cdecl; export;
+							x, y, w, h: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawTextLines(dest, theText, textColor, backColor, theFont, align, x, y, w, h);
@@ -1009,7 +982,7 @@ uses
 		end;
 	end;
 
-	function TextWidth(theText: PChar; theFont: Font): Integer; cdecl; export;
+	function TextWidth(theText: PChar; theFont: Font): LongInt; cdecl; export;
 	begin
 		Try
 			result :=SGSDK_Font.TextWidth(theText, theFont);
@@ -1019,7 +992,7 @@ uses
 		result := -1;
 	end;
 
-	function TextHeight(theText: PChar; theFont: Font): Integer; cdecl; export;
+	function TextHeight(theText: PChar; theFont: Font): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Font.TextHeight(theText, theFont);
@@ -1029,7 +1002,7 @@ uses
 		result := -1;
 	end;
 
-	procedure DrawFramerate(x, y: Integer; font: Font); cdecl; export;
+	procedure DrawFramerate(x, y: LongInt; font: Font); cdecl; export;
 	begin
 		Try
 			SGSDK_Font.DrawFramerate(x, y, font);
@@ -1045,7 +1018,7 @@ uses
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	function RectangleHasCollidedWithLine(rect: Rectangle; line: LineSegment): integer; cdecl; export;
+	function RectangleHasCollidedWithLine(rect: Rectangle; line: LineSegment): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.RectangleHasCollidedWithLine(rect, line) then result := -1
@@ -1056,7 +1029,7 @@ uses
 		result := 0;
 	end;
 	
-	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): integer; cdecl; export;
+	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.IsSpriteOnScreenAt(theSprite, x, y) then result := -1
@@ -1067,7 +1040,7 @@ uses
 		result := 0;
 	end;
 	
-	function CircleHasCollidedWithLine(p1: Sprite; line: LineSegment): Integer; cdecl; export;
+	function CircleHasCollidedWithLine(p1: Sprite; line: LineSegment): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.CircleHasCollidedWithLine(p1, line) then result := -1
@@ -1078,8 +1051,8 @@ uses
 		result := 0;
 	end;
 	
-	function HasSpriteCollidedX(theSprite : Sprite; x : Integer;
-								 range : CollisionDetectionRange):  Integer; cdecl; export;
+	function HasSpriteCollidedX(theSprite : Sprite; x : LongInt;
+								 range : CollisionDetectionRange):  LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HasSpriteCollidedX(theSprite, x, range) then result := -1
@@ -1090,8 +1063,8 @@ uses
 		result := 0;
 	end;
 
-	function HasSpriteCollidedY(theSprite : Sprite; y : Integer;
-								 range : CollisionDetectionRange): Integer; cdecl; export;
+	function HasSpriteCollidedY(theSprite : Sprite; y : LongInt;
+								 range : CollisionDetectionRange): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HasSpriteCollidedY(theSprite, y, range) then result := -1
@@ -1103,7 +1076,7 @@ uses
 	end;
 
 	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single;
-		width, height : Integer): Integer; cdecl; export;
+		width, height : LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HasSpriteCollidedWithRect(theSprite, x, y, width, height) then result := -1
@@ -1114,7 +1087,7 @@ uses
 		result := 0;
 	end;
 		
-	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Integer; cdecl; export;
+	function HaveSpritesCollided(sprite1, sprite2 : Sprite): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HaveSpritesCollided(sprite1, sprite2) then result := -1
@@ -1125,7 +1098,7 @@ uses
 		result := 0;
 	end;
 	
-	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: Integer): Integer; cdecl; export;
+	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, bounded = -1) then result := -1
@@ -1136,7 +1109,7 @@ uses
 		result := 0;		
 	end;
 	
-	function HasSpriteCollidedWithBitmapPart(theSprite: Sprite; theBitmap: Bitmap; pt: Point2D; src: Rectangle; bounded: Integer): Integer; cdecl; export;
+	function HasSpriteCollidedWithBitmapPart(theSprite: Sprite; theBitmap: Bitmap; pt: Point2D; src: Rectangle; bounded: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HasSpriteCollidedWithBitmap(theSprite, theBitmap, pt, src, bounded = -1) then result := -1
@@ -1147,7 +1120,7 @@ uses
 		result := 0;		
 	end;
 	
-	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; bounded1: Integer; image2: Bitmap; x2, y2: Integer; bounded2: Integer): Integer; cdecl; export;
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; bounded1: LongInt; image2: Bitmap; x2, y2: LongInt; bounded2: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HaveBitmapsCollided(image1, x1, y1, bounded1 = -1, image2, x2, y2, bounded2 = -1) then result := -1
@@ -1158,7 +1131,7 @@ uses
 		result := 0;
 	end;
 	
-	function HaveBitmapPartsCollided(image1: Bitmap; pt1: Point2D; src1: Rectangle; bounded1: Integer; image2: Bitmap; pt2: Point2D; src2: Rectangle; bounded2: Integer): Integer; cdecl; export;
+	function HaveBitmapPartsCollided(image1: Bitmap; pt1: Point2D; src1: Rectangle; bounded1: LongInt; image2: Bitmap; pt2: Point2D; src2: Rectangle; bounded2: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HaveBitmapsCollided(image1, pt1, src1, bounded1 = -1, image2, pt2, src2, bounded2 = -1) then result := -1
@@ -1169,7 +1142,7 @@ uses
 		result := 0;
 	end;
 
-{	function CreateVector(x,y : Single; invertY : Integer): Vector;  cdecl; export;
+{	function CreateVector(x,y : Single; invertY : LongInt): Vector;  cdecl; export;
 	begin
 		Try
 			result :=SGSDK_Physics.CreateVector(x, y, invertY = -1);
@@ -1229,7 +1202,7 @@ uses
 		result.x := 0; result.y := 0;
 	end;
 
-{	function IsZeroVector(theVector : Vector): Integer; cdecl; export;
+{	function IsZeroVector(theVector : Vector): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.IsZeroVector(theVector) then result := -1
@@ -1405,7 +1378,7 @@ uses
 		end;
 	end;
 
-	function GetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer): Single; cdecl; export;
+	function GetMatrix2DElement(matrix: Matrix2DPtr; x, y: LongInt): Single; cdecl; export;
 	begin
 		Try
 			CheckMatrix(matrix);
@@ -1417,7 +1390,7 @@ uses
 		result := -1;
 	end;
 	
-	procedure SetMatrix2DElement(matrix: Matrix2DPtr; x, y: Integer; val: Single); cdecl; export;
+	procedure SetMatrix2DElement(matrix: Matrix2DPtr; x, y: LongInt; val: Single); cdecl; export;
 	begin
 		Try
 			CheckMatrix(matrix);
@@ -1466,7 +1439,7 @@ uses
 		result := CreateVector(0,0);
 	end;
 	
-	function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector) : Vector; cdecl; export;
+	function VectorOutOfRectFromRect(srcRect, targetRect: Rectangle; movement: Vector) : Vector; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Physics.VectorOutOfRectFromRect(srcRect, targetRect, movement);
@@ -1489,7 +1462,7 @@ uses
 	// Version 1.1.1
 	//
 	
-	function GetPixel(bmp: Bitmap; x, y: Integer): Colour; cdecl; export;
+	function GetPixel(bmp: Bitmap; x, y: LongInt): Colour; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.GetPixel(bmp, x, y);
@@ -1499,7 +1472,7 @@ uses
 		result := 0;
 	end;
 
-	function GetPixelFromScreen(x, y: Integer): Colour; cdecl; export;
+	function GetPixelFromScreen(x, y: LongInt): Colour; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.GetPixelFromScreen(x, y);
@@ -1513,7 +1486,7 @@ uses
 	//
 	// Version 1 and 1.1
 	//
-	function GetSpriteBitmap(surface: Sprite; id: Integer): Bitmap; cdecl; export;
+	function GetSpriteBitmap(surface: Sprite; id: LongInt): Bitmap; cdecl; export;
 	begin
 		Try
 			result := surface.bitmaps[id];
@@ -1559,7 +1532,7 @@ uses
 		end;
 	end;
 	
-	function GetSpriteCurrentFrame(surface: Sprite): Integer; cdecl; export;
+	function GetSpriteCurrentFrame(surface: Sprite): LongInt; cdecl; export;
 	begin
 		Try
 			result := surface.currentFrame;
@@ -1569,7 +1542,7 @@ uses
 		result := -1;
 	end;
 	
-	procedure SetSpriteCurrentFrame(surface: Sprite; val: Integer); cdecl; export;
+	procedure SetSpriteCurrentFrame(surface: Sprite; val: LongInt); cdecl; export;
 	begin
 		Try
 			surface.currentFrame := val;
@@ -1577,7 +1550,7 @@ uses
 		end;
 	end;
 	
-	function GetSpriteUsePixelCollision(surface: Sprite): Integer; cdecl; export;
+	function GetSpriteUsePixelCollision(surface: Sprite): LongInt; cdecl; export;
 	begin
 		Try
 			if surface.usePixelCollision then result := -1
@@ -1588,7 +1561,7 @@ uses
 		result := 0;
 	end;
 	
-	procedure SetSpriteUsePixelCollision(surface: Sprite; val: Integer); cdecl; export;
+	procedure SetSpriteUsePixelCollision(surface: Sprite; val: LongInt); cdecl; export;
 	begin
 		Try
 			surface.usePixelCollision := val = -1;
@@ -1596,7 +1569,7 @@ uses
 		end;
 	end;
 		
-	function CreateBitmap(width, height: Integer): Bitmap; cdecl; export;
+	function CreateBitmap(width, height: LongInt): Bitmap; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.CreateBitmap(width, height);
@@ -1614,7 +1587,7 @@ uses
 		end;
 	end;
 	
-	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: Integer; transparentColor: Colour): Bitmap; cdecl; export;
+	function LoadBitmapWithTransparentColor(pathToBitmap: PChar; transparent: LongInt; transparentColor: Colour): Bitmap; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.LoadBitmap(pathToBitmap, transparent = -1, transparentColor);
@@ -1642,7 +1615,7 @@ uses
 		end;
 	end;
 	
-	function GetBitmapWidth(targetbitmap : Bitmap): Integer ; cdecl; export;
+	function GetBitmapWidth(targetbitmap : Bitmap): LongInt ; cdecl; export;
 	begin
 		Try
 			result := targetbitmap.width;
@@ -1652,7 +1625,7 @@ uses
 		result := -1;
 	end;
 	
-	function GetBitmapHeight(targetbitmap : Bitmap): Integer; cdecl; export;
+	function GetBitmapHeight(targetbitmap : Bitmap): LongInt; cdecl; export;
 	begin
 		Try
 			result := targetbitmap.height;
@@ -1670,7 +1643,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); cdecl; export;
+	procedure DrawBitmapWithDestination(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmap(dest, bitmapToDraw, x, y);
@@ -1679,7 +1652,7 @@ uses
 	end;
 	
 	procedure DrawBitmapPartWithDestination(dest: Bitmap; bitmapToDraw: Bitmap;
-							srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+							srcX, srcY, srcW, srcH, x, y : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPart(dest, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
@@ -1687,7 +1660,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: Integer); cdecl; export;
+	procedure DrawPixelWithDestination(dest: Bitmap; theColour: Colour; x, y: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawPixel(dest, theColour, x, y);
@@ -1695,8 +1668,8 @@ uses
 		end;
 	end;
 	
-	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : Integer;
-							xPos, yPos, width, height : Integer); cdecl; export;
+	procedure DrawRectangleWithDestination(dest: Bitmap; theColour : Colour; filled : LongInt;
+							xPos, yPos, width, height : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangle(dest, theColour, filled = -1, xPos, yPos, width, height);
@@ -1705,7 +1678,7 @@ uses
 	end;
 	
 	procedure FillRectangleWithDestination(dest: Bitmap; theColour : Colour; xPos, yPos,
-							width, height : Integer); cdecl; export;
+							width, height : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.FillRectangle(dest, theColour, xPos, yPos, width, height);
@@ -1714,7 +1687,7 @@ uses
 	end;
 
 	procedure DrawLineWithDestination(dest: Bitmap; theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); cdecl; export;
+					 xPosEnd, yPosEnd: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawLine(dest, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
@@ -1723,7 +1696,7 @@ uses
 	end;
 
 	procedure DrawHorizontalLineWithDestination(dest: Bitmap; theColor: Color;
-								 y, x1, x2: Integer); cdecl; export;
+								 y, x1, x2: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLine(dest, theColor, y, x1, x2);
@@ -1732,7 +1705,7 @@ uses
 	end;
 
 	procedure DrawVerticalLineWithDestination(dest: Bitmap; theColor: Color;
-							 x, y1, y2: Integer); cdecl; export;
+							 x, y1, y2: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLine(dest, theColor, x, y1, y2);
@@ -1740,8 +1713,8 @@ uses
 		end;
 	end;
 
-	procedure DrawCircleWithDestination(dest: Bitmap; theColour: Colour; filled: Integer;
-							 xc, yc, radius: Integer); cdecl; export;
+	procedure DrawCircleWithDestination(dest: Bitmap; theColour: Colour; filled: LongInt;
+							 xc, yc, radius: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawCircle(dest, theColour, filled = -1, xc, yc, radius);
@@ -1749,8 +1722,8 @@ uses
 		end;
 	end;
 
-	procedure DrawEllipseWithDestination(dest: Bitmap; theColour: Colour; filled: Integer;
-							xPos, yPos, width, height: Integer); cdecl; export;
+	procedure DrawEllipseWithDestination(dest: Bitmap; theColour: Colour; filled: LongInt;
+							xPos, yPos, width, height: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawEllipse(dest, theColour, filled = -1, xPos, yPos, width, height);
@@ -1775,7 +1748,7 @@ uses
 	end;
 
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap;
-							srcX, srcY, srcW, srcH : Integer; x, y : Single); cdecl; export;
+							srcX, srcY, srcW, srcH : LongInt; x, y : Single); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
@@ -1791,7 +1764,7 @@ uses
 		end;
 	end;
 
-	procedure DrawRectangle(theColour : Colour; filled : Integer; xPos, yPos: Single; width, height : Integer); cdecl; export;
+	procedure DrawRectangle(theColour : Colour; filled : LongInt; xPos, yPos: Single; width, height : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangle(theColour, filled = -1, xPos, yPos, width, height);
@@ -1823,8 +1796,8 @@ uses
 		end;
 	end;
 
-	procedure DrawCircle(theColour: Colour; filled: Integer;
-						 xc, yc: Single; radius: Integer); cdecl; export;
+	procedure DrawCircle(theColour: Colour; filled: LongInt;
+						 xc, yc: Single; radius: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawCircle(theColour, filled = -1, xc, yc, radius);
@@ -1832,8 +1805,8 @@ uses
 		end;
 	end;
 
-	procedure DrawEllipse(theColour: Colour; filled: Integer;
-						xPos, yPos: Single; width, height: Integer); cdecl; export;
+	procedure DrawEllipse(theColour: Colour; filled: LongInt;
+						xPos, yPos: Single; width, height: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawEllipse(theColour, filled = -1, xPos, yPos, width, height);
@@ -1853,64 +1826,6 @@ uses
 		end;
 	end;
 	
-	//Version 2
-	procedure DrawTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
-	var
-	  tri: Triangle;
-	begin
-		Try
-		  PopulateTriangle(firstPoint, tri);
-			SGSDK_Graphics.DrawTriangleOnScreen(theColour, tri);
-		Except on exc: Exception do TrapException(exc, 'DrawTriangleOnScreen');
-		end;
-	end;
-
-	procedure DrawTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
-	var
-	  tri: Triangle;
-	begin
-		Try
-		  PopulateTriangle(firstPoint, tri);
-			SGSDK_Graphics.DrawTriangle(dest, theColour, tri);
-		Except on exc: Exception do TrapException(exc, 'DrawTriangleWithDestination');
-		end;
-	end;
-	
-	procedure FillTriangle(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
-	var
-	  tri: Triangle;
-	begin
-		Try
-		  PopulateTriangle(firstPoint, tri);
-			SGSDK_Graphics.FillTriangle(theColour, tri);
-		Except on exc: Exception do TrapException(exc, 'FillTriangle');
-		end;
-	end;
-	
-	procedure FillTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
-	var
-	  tri: Triangle;
-	begin
-		Try
-		  PopulateTriangle(firstPoint, tri);
-			SGSDK_Graphics.FillTriangleOnScreen(theColour, tri);
-		Except on exc: Exception do TrapException(exc, 'FillTriangleOnScreen');
-		end;
-	end;
-
-	procedure FillTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
-	var
-	  tri: Triangle;
-	begin
-		Try
-		  PopulateTriangle(firstPoint, tri);
-			SGSDK_Graphics.FillTriangle(dest, theColour, tri);
-		Except on exc: Exception do TrapException(exc, 'FillTriangleWithDestination');
-		end;
-	end;
-	
-	
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 								Animated Sprite Additions
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1925,7 +1840,7 @@ uses
 		result := nil;
 	end;
 	
-	function CreateSpriteMultiFPC(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite; cdecl; export;
+	function CreateSpriteMultiFPC(image: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.CreateSprite(image,framesPerCell, frames, width, height);
@@ -1935,7 +1850,7 @@ uses
 		result := nil;
 	end;
 	
-	function CreateSpriteArrayFPC(bitLength: Integer; bitmaps: BitmapPtr; framesPerCell, frames: Integer): Sprite; cdecl; export;
+	function CreateSpriteArrayFPC(bitLength: LongInt; bitmaps: BitmapPtr; framesPerCell, frames: LongInt): Sprite; cdecl; export;
 	var
 		bmps: BitmapArray;
 	begin
@@ -1949,7 +1864,7 @@ uses
 		result := nil;
 	end;
 	
-	function CreateSpriteMultiEnding(image : Bitmap; isMulti, length: Integer; framesPerCell: IntPtr; endingAction : SpriteEndingAction; width : Integer; height : Integer): Sprite; cdecl; export;
+	function CreateSpriteMultiEnding(image : Bitmap; isMulti, length: LongInt; framesPerCell: IntPtr; endingAction : SpriteEndingAction; width : LongInt; height : LongInt): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
 	begin
@@ -1963,7 +1878,7 @@ uses
 		result := nil;
 	end;
 	
-	function CreateSpriteMulti(image : Bitmap; isMulti, length : Integer; framesPerCell : IntPtr; width, height : Integer): Sprite; cdecl; export;
+	function CreateSpriteMulti(image : Bitmap; isMulti, length : LongInt; framesPerCell : IntPtr; width, height : LongInt): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
 	begin
@@ -1977,7 +1892,7 @@ uses
 		result := nil;
 	end;
 
-	function CreateSpriteArrayEnding(bitLength: Integer; bitmaps: BitmapPtr; length: Integer; framesPerCell: IntPtr; endingAction: SpriteEndingAction): Sprite; cdecl; export;
+	function CreateSpriteArrayEnding(bitLength: LongInt; bitmaps: BitmapPtr; length: LongInt; framesPerCell: IntPtr; endingAction: SpriteEndingAction): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
 		bmps: BitmapArray;
@@ -1993,7 +1908,7 @@ uses
 		result := nil;
 	end;
 	
-	function CreateSpriteArray(bitlength: Integer; bitmaps: BitmapPtr; length: Integer; framesPerCell: IntPtr): Sprite; cdecl; export;
+	function CreateSpriteArray(bitlength: LongInt; bitmaps: BitmapPtr; length: LongInt; framesPerCell: IntPtr): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
 		bmps: BitmapArray;
@@ -2025,10 +1940,10 @@ uses
 		end;
 	end;
 	
-	function GetSpriteKind(surface : Sprite): Integer; cdecl; export;
+	function GetSpriteKind(surface : Sprite): LongInt; cdecl; export;
 	begin
 		Try
-			result := Integer(surface.spriteKind);
+			result := LongInt(surface.spriteKind);
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetSpriteKind');
 		end;
@@ -2043,7 +1958,7 @@ uses
 		end;
 	end;
 	
-	procedure SetSpriteFramesPerCell(surface: Sprite; framesPerCell: IntPtr; length: Integer); cdecl; export;
+	procedure SetSpriteFramesPerCell(surface: Sprite; framesPerCell: IntPtr; length: LongInt); cdecl; export;
 	var
 		fpc: IntArray;
 	begin
@@ -2055,7 +1970,7 @@ uses
 		end;
 	end;
 	
-	function GetSpriteFramesPerCell(surface : Sprite; ind : Integer): Integer; cdecl; export;
+	function GetSpriteFramesPerCell(surface : Sprite; ind : LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			result := surface.framesPerCell[ind];
@@ -2065,7 +1980,7 @@ uses
 		result := -1;
 	end;
 	
-	function GetSpriteCols(surface : Sprite) : Integer; cdecl; export;
+	function GetSpriteCols(surface : Sprite) : LongInt; cdecl; export;
 	begin
 		Try
 			result := surface.cols;
@@ -2075,7 +1990,7 @@ uses
 		result := -1;
 	end;
 	
-	function GetSpriteRow(surface : Sprite) : Integer; cdecl; export;
+	function GetSpriteRow(surface : Sprite) : LongInt; cdecl; export;
 	begin
 		Try
 			result := surface.row;
@@ -2085,7 +2000,7 @@ uses
 		result := -1;
 	end;
 	
-	function GetSpriteFrameCount(surface : Sprite) : Integer; cdecl; export;
+	function GetSpriteFrameCount(surface : Sprite) : LongInt; cdecl; export;
 	begin
 		Try
 			result := Length(surface.framesperCell);
@@ -2095,10 +2010,10 @@ uses
 		result := -1;
 	end;
 	
-	function GetSpriteEndingAction(surface : Sprite) : Integer; cdecl; export;
+	function GetSpriteEndingAction(surface : Sprite) : LongInt; cdecl; export;
 	begin
 		Try
-			result := Integer(surface.endingAction);
+			result := LongInt(surface.endingAction);
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetSpriteEndingAction');
 		end;
@@ -2113,7 +2028,7 @@ uses
 		end;
 	end;
 	
-	function GetSpritehasEnded(surface : Sprite) : Integer; cdecl; export;
+	function GetSpritehasEnded(surface : Sprite) : LongInt; cdecl; export;
 	begin
 		Try
 			if surface.hasEnded then result := -1
@@ -2124,7 +2039,7 @@ uses
 		result := -1;
 	end;
 	
-	function GetSpriteReverse(surface : Sprite) : Integer; cdecl; export;
+	function GetSpriteReverse(surface : Sprite) : LongInt; cdecl; export;
 	begin
 		Try
 			if surface.reverse then result := -1
@@ -2180,7 +2095,7 @@ uses
 	end;
 
 	function AddBitmapToSprite(spriteToAddTo : Sprite;
-							   bitmapToAdd : Bitmap): Integer; cdecl; export;
+							   bitmapToAdd : Bitmap): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.AddBitmapToSprite(spriteToAddTo, bitmapToAdd);
@@ -2190,7 +2105,7 @@ uses
 		result := -1;
 	end;
 
-	function CurrentHeight(sprite: Sprite): Integer; cdecl; export;
+	function CurrentHeight(sprite: Sprite): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.CurrentHeight(sprite);
@@ -2200,7 +2115,7 @@ uses
 		result := -1;
 	end;
 
-	function CurrentWidth(sprite: Sprite): Integer; cdecl; export;
+	function CurrentWidth(sprite: Sprite): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Graphics.CurrentWidth(sprite);
@@ -2210,7 +2125,7 @@ uses
 		result := -1;
 	end;
 
-	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: Integer); cdecl; export;
+	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
@@ -2218,7 +2133,7 @@ uses
 		end;
 	end;
 	
-	{procedure DrawSpriteOffset(spriteToDraw : Sprite; xOffset, yOffset: Integer); cdecl; export;
+	{procedure DrawSpriteOffset(spriteToDraw : Sprite; xOffset, yOffset: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawSprite(spriteToDraw, xOffset, yOffset);
@@ -2242,7 +2157,7 @@ uses
 		end;
 	end;
 
-	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer); cdecl; export;
+	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.MoveSpriteTo(SpriteToMove, x, y);
@@ -2250,7 +2165,7 @@ uses
 		end;
 	end;
 
-	function IsSpriteOffscreen(theSprite : Sprite): Integer; cdecl; export;
+	function IsSpriteOffscreen(theSprite : Sprite): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Graphics.IsSpriteOffscreen(theSprite) then result := -1
@@ -2269,7 +2184,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); cdecl; export;
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcH, x ,y);
@@ -2277,7 +2192,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer); cdecl; export;
+	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawBitmapOnScreen(bitmapToDraw, x ,y );
@@ -2285,7 +2200,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer); cdecl; export;
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawPixelOnScreen(theColour, x ,y);
@@ -2293,8 +2208,8 @@ uses
 		end;
 	end;
 	
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Integer;
-							xPos, yPos, width, height : Integer); cdecl; export;
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : LongInt;
+							xPos, yPos, width, height : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawRectangleOnScreen(theColour, filled = -1, xPos, yPos, width, height);
@@ -2303,7 +2218,7 @@ uses
 	end;
 
 	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart,
-					 xPosEnd, yPosEnd: Integer); cdecl; export;
+					 xPosEnd, yPosEnd: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
@@ -2311,7 +2226,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); cdecl; export;
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawHorizontalLineOnScreen(theColor, y, x1, x2);
@@ -2319,7 +2234,7 @@ uses
 		end;
 	end;
 	
-	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); cdecl; export;
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawVerticalLineOnScreen(theColor, x, y1, y2);
@@ -2327,8 +2242,8 @@ uses
 		end;
 	end;
 	
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Integer;
-						 xc, yc, radius: Integer); cdecl; export;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: LongInt;
+						 xc, yc, radius: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawCircleOnScreen(theColour, filled = -1, xc, yc, radius);
@@ -2336,8 +2251,8 @@ uses
 		end;
 	end;
 	
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Integer;
-						xPos, yPos, width, height: Integer); cdecl; export;
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: LongInt;
+						xPos, yPos, width, height: LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Graphics.DrawEllipseOnScreen(theColour, filled = -1, xPos, yPos, width, height);
@@ -2345,7 +2260,7 @@ uses
 		end;
 	end;
 	
-	function XOffset(): Integer; cdecl; export;
+	function XOffset(): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Camera.XOffset();
@@ -2355,7 +2270,7 @@ uses
 		result := 0;
 	end;
 	
-	function YOffset(): Integer; cdecl; export;
+	function YOffset(): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Camera.YOffset();
@@ -2365,7 +2280,7 @@ uses
 		result := 0;
 	end;
 	
-	function ScreenX(x: Single): Integer; cdecl; export;
+	function ScreenX(x: Single): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Camera.ScreenX(x);
@@ -2375,7 +2290,7 @@ uses
 		result := 0;
 	end;
 	
-	function ScreenY(y: Single): Integer; cdecl; export;
+	function ScreenY(y: Single): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Camera.ScreenY(y);
@@ -2385,7 +2300,7 @@ uses
 		result := 0;
 	end;
 	
-	function GameX(x: Integer) : Single; cdecl; export;
+	function GameX(x: LongInt) : Single; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Camera.GameX(x);
@@ -2395,7 +2310,7 @@ uses
 		result := 0;
 	end;
 	
-	function GameY(y: Integer) : Single; cdecl; export;
+	function GameY(y: LongInt) : Single; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Camera.GameY(y);
@@ -2439,7 +2354,7 @@ uses
 		end;
 	end;
 	
-	procedure FollowSprite(spr : Sprite; xOffset, yOffset : Integer); cdecl; export;
+	procedure FollowSprite(spr : Sprite; xOffset, yOffset : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Camera.FollowSprite(spr, xOffset, yOffset);
@@ -2447,7 +2362,7 @@ uses
 		end;
 	end;
 	
-	procedure SetClip(bmp: Bitmap; x, y, w, h: Integer); cdecl; export;
+	procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); cdecl; export;
 	begin
 		Try
 			if bmp <> nil then SGSDK_Graphics.SetClip(bmp, x, y, w, h)
@@ -2499,30 +2414,30 @@ uses
 		result := CollisionSide(-1);
 	end;
 	
-	function EventCount(m : Map; event : Event): Integer; cdecl; export;
+	function EventCount(m : Map; anEvent: Event): LongInt; cdecl; export;
 	begin
 		Try
-			result := SGSDK_MappyLoader.EventCount(m, event);
+			result := SGSDK_MappyLoader.EventCount(m, anEvent);
 			exit;
 		Except on exc: Exception do TrapException(exc, 'EventCount');
 		end;
 		result := -1;
 	end;
 	
-	function EventPositionX(m : Map; event : Event; eventnumber : Integer): Integer; cdecl; export;
+	function EventPositionX(m : Map; anEvent : Event; eventnumber : LongInt): LongInt; cdecl; export;
 	begin
 		Try
-			result := SGSDK_MappyLoader.EventPositionX(m, event, eventnumber);
+			result := SGSDK_MappyLoader.EventPositionX(m, anEvent, eventnumber);
 			exit;
 		Except on exc: Exception do TrapException(exc, 'EventPositionX');
 		end;
 		result := -1;
 	end;
 	
-	function EventPositionY(m : Map; event : Event; eventnumber : Integer): Integer; cdecl; export;
+	function EventPositionY(m : Map; anEvent : Event; eventnumber : LongInt): LongInt; cdecl; export;
 	begin
 		Try
-			result := SGSDK_MappyLoader.EventPositionY(m, event, eventnumber);
+			result := SGSDK_MappyLoader.EventPositionY(m, anEvent, eventnumber);
 			exit;
 		Except on exc: Exception do TrapException(exc, 'EventPositionY');
 		end;
@@ -2537,7 +2452,7 @@ uses
 		end;
 	end;
 	
-	function SpriteHasCollidedWithMapTile(m : Map; spr : Sprite; out collidedX, collidedY : Integer): Integer; cdecl; export;
+	function SpriteHasCollidedWithMapTile(m : Map; spr : Sprite; out collidedX, collidedY : LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, collidedX, collidedY) then result := -1
@@ -2555,7 +2470,7 @@ uses
 		end;
 	end;
 	
-	procedure MoveSpriteOutOfTile(m: Map; spr : Sprite; x, y : Integer); cdecl; export;
+	procedure MoveSpriteOutOfTile(m: Map; spr : Sprite; x, y : LongInt); cdecl; export;
 	begin
 		Try
 			SGSDK_Mappyloader.MoveSpriteOutOfTile(m, spr, x, y);
@@ -2564,7 +2479,7 @@ uses
 	end;
 	
 	//New!
-	function MapWidth(m : Map): Integer; cdecl; export;
+	function MapWidth(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.MapWidth(m);
@@ -2574,7 +2489,7 @@ uses
 		result := -1;
 	end;
 	
-	function MapHeight(m : Map): Integer; cdecl; export;
+	function MapHeight(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.MapHeight(m);
@@ -2584,7 +2499,7 @@ uses
 		result := -1;
 	end;
 	
-	function BlockWidth(m : Map): Integer; cdecl; export;
+	function BlockWidth(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.BlockWidth(m);
@@ -2594,7 +2509,7 @@ uses
 		result := 01;
 	end;
 	
-	function BlockHeight(m : Map): Integer; cdecl; export;
+	function BlockHeight(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.BlockHeight(m);
@@ -2604,7 +2519,7 @@ uses
 		result := -1;
 	end;
 	
-	function GapX(m : Map): Integer; cdecl; export;
+	function GapX(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.GapX(m);
@@ -2614,7 +2529,7 @@ uses
 		result := -1;
 	end;
 	
-	function GapY(m : Map): Integer; cdecl; export;
+	function GapY(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.GapY(m);
@@ -2624,7 +2539,7 @@ uses
 		result := -1;
 	end;
 	
-	function StaggerX(m : Map): Integer; cdecl; export;
+	function StaggerX(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.StaggerX(m);
@@ -2634,7 +2549,7 @@ uses
 		result := -1;
 	end;
 	
-	function StaggerY(m : Map): Integer; cdecl; export;
+	function StaggerY(m : Map): LongInt; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Mappyloader.StaggerY(m);
@@ -2660,10 +2575,10 @@ uses
 		result.PointD := SGSDK_Shapes.CreatePoint(0,0);
 	end;
 	
-	function GetEventAtTile(m : Map; xIndex, yIndex: Integer): Integer; cdecl; export;
+	function GetEventAtTile(m : Map; xIndex, yIndex: LongInt): LongInt; cdecl; export;
 	begin
 		Try
-			result := Integer(SGSDK_Mappyloader.GetEventAtTile(m, xIndex, yIndex));
+			result := LongInt(SGSDK_Mappyloader.GetEventAtTile(m, xIndex, yIndex));
 			exit;
 		Except on exc: Exception do TrapException(exc, 'GetEventAtTile');
 		end;
@@ -2686,7 +2601,7 @@ uses
 		result := -1;	
 	end;
 	
-	function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; cdecl; export;
+	function ClosestPointOnLine(x, y: Single; line: LineSegment): Point2D; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Shapes.ClosestPointOnLine(x, y, line);
@@ -2708,7 +2623,7 @@ uses
 		result.y := -1;		
 	end;
 	
-	function IsPointOnLine(pnt: Point2D; line: LineSegment): Integer; cdecl; export;
+	function IsPointOnLine(pnt: Point2D; line: LineSegment): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Shapes.IsPointOnLine(pnt, line) then result := -1
@@ -2719,7 +2634,7 @@ uses
 		result := 0;		
 	end;
 	
-	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : integer; cdecl; export;
+	function GetLineIntersectionPoint(line1, line2: LineSegment; out pnt: Point2D) : LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Shapes.GetLineIntersectionPoint(line1, line2, pnt) then result := -1
@@ -2730,7 +2645,7 @@ uses
 		result := 0;
 	end;
 	
-	function LineIntersectsWithLines(target: LineSegment; len: Integer; data: LineSegPtr): integer; cdecl; export;
+	function LineIntersectsWithLines(target: LineSegment; len: LongInt; data: LineSegPtr): LongInt; cdecl; export;
 	var
 		arr: LinesArray;
 	begin
@@ -2745,7 +2660,7 @@ uses
 		result := 0;
 	end;
 	
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Integer; cdecl; export;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): LongInt; cdecl; export;
 	begin
 		Try
 			if SGSDK_Physics.HasBitmapCollidedWithRect(image, x, y, rectX, rectY, rectWidth, rectHeight) then result := -1
@@ -2756,7 +2671,8 @@ uses
 		result := 0;
 	end;
 	
-{	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; cdecl; export;
+{
+	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; cdecl; export;
 	begin
 		Try
 			result := SGSDK_Shapes.CreateTriangle(ax, ay, bx, by, cx, cy);
@@ -2765,11 +2681,11 @@ uses
 	end;
 }	
 
-	function IsPointInTriangle(point : Point2D; triangle : Point2DPtr): Integer; cdecl; export;
-  var
-    tri: Triangle;
+	function IsPointInTriangle(point: Point2D; inTriangle: Point2DPtr): LongInt; cdecl; export;
+	var
+	  tri: Triangle;
 	begin
-	  PopulateTriangle(triangle, tri);
+	  PopulateTriangle(inTriangle, tri);
 	  
 		Try
 			if SGSDK_Shapes.IsPointInTriangle(point, tri) then result := -1
@@ -2779,6 +2695,181 @@ uses
 		end;	
 		result := 0;
 	end;
+
+
+//***
+//
+// New in verson 2
+//
+//***
+
+procedure StartReadingTextWithText(text: PChar; textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt); cdecl; export;
+begin
+	Try
+		SGSDK_Input.StartReadingTextWithText(text, textColor, maxLength, theFont, x, y);
+	Except on exc: Exception do TrapException(exc, 'StartReadingTextWithText');
+	end;
+end;
+
+procedure DrawSimpleText(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Font.DrawText(theText, textColor, x, y);
+	Except on exc: Exception do TrapException(exc, 'DrawSimpleText');
+	end;
+end;
+
+procedure DrawSimpleTextOnScreen(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Font.DrawTextOnScreen(theText, textColor, x, y);
+	Except on exc: Exception do TrapException(exc, 'DrawSimpleTextOnScreen');
+	end;    
+end;
+
+procedure DrawSimpleTextOn(dest: Bitmap; theText: PChar; textColor: Color; x, y: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Font.DrawText(dest, theText, textColor, x, y);
+	Except on exc: Exception do TrapException(exc, 'DrawSimpleTextOn');
+	end;    	 
+end;
+
+procedure DrawTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+var
+  tri: Triangle;
+begin
+	Try
+	  PopulateTriangle(firstPoint, tri);
+		SGSDK_Graphics.DrawTriangleOnScreen(theColour, tri);
+	Except on exc: Exception do TrapException(exc, 'DrawTriangleOnScreen');
+	end;
+end;
+
+procedure DrawTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+var
+  tri: Triangle;
+begin
+	Try
+	  PopulateTriangle(firstPoint, tri);
+		SGSDK_Graphics.DrawTriangle(dest, theColour, tri);
+	Except on exc: Exception do TrapException(exc, 'DrawTriangleWithDestination');
+	end;
+end;
+
+procedure FillTriangle(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+var
+  tri: Triangle;
+begin
+	Try
+	  PopulateTriangle(firstPoint, tri);
+		SGSDK_Graphics.FillTriangle(theColour, tri);
+	Except on exc: Exception do TrapException(exc, 'FillTriangle');
+	end;
+end;
+
+procedure FillTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+var
+  tri: Triangle;
+begin
+	Try
+	  PopulateTriangle(firstPoint, tri);
+		SGSDK_Graphics.FillTriangleOnScreen(theColour, tri);
+	Except on exc: Exception do TrapException(exc, 'FillTriangleOnScreen');
+	end;
+end;
+
+procedure FillTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
+var
+  tri: Triangle;
+begin
+	Try
+	  PopulateTriangle(firstPoint, tri);
+		SGSDK_Graphics.FillTriangle(dest, theColour, tri);
+	Except on exc: Exception do TrapException(exc, 'FillTriangleWithDestination');
+	end;
+end;
+
+procedure UpdateSpriteAnimationPct(spriteToDraw: Sprite; pct: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Graphics.UpdateSpriteAnimation(spriteToDraw, pct);
+	Except on exc: Exception do TrapException(exc, 'UpdateSpriteAnimationPct');
+	end;
+end;
+
+procedure UpdateSpritePct(spriteToDraw: Sprite; pct: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Graphics.UpdateSprite(spriteToDraw, pct);
+	Except on exc: Exception do TrapException(exc, 'UpdateSpritePct');
+	end;
+end;
+
+procedure PlaySoundEffectLoopVolume(effect: SoundEffect; loops: LongInt; vol: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Audio.PlaySoundEffect(effect, loops, vol);
+	Except on exc: Exception do TrapException(exc, 'PlaySoundEffectLoopVolume');
+	end;
+end;
+
+procedure SetMusicVolume(vol: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Audio.SetMusicVolume(vol);
+	Except on exc: Exception do TrapException(exc, 'SetMusicVolume');
+	end;  
+end;
+
+function MusicVolume(): Single; cdecl; export;
+begin
+	Try
+		result := SGSDK_Audio.MusicVolume();
+	Except on exc: Exception do TrapException(exc, 'MusicVolume');
+	end;    
+end;
+
+procedure MakeOpaque(bmp: Bitmap); cdecl; export;
+begin
+	Try
+		SGSDK_Graphics.MakeOpaque(bmp);
+	Except on exc: Exception do TrapException(exc, 'MakeOpaque');
+	end;      
+end;
+
+procedure MakeTransparent(bmp: Bitmap); cdecl; export;
+begin
+	Try
+		SGSDK_Graphics.MakeTransparent(bmp);
+	Except on exc: Exception do TrapException(exc, 'MakeTransparent');
+	end;        
+end;
+
+function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap; cdecl; export;
+begin
+	Try
+		result := SGSDK_Graphics.RotateZoomBitmap(src, degRot, zoom);
+	Except on exc: Exception do TrapException(exc, 'RotateZoomBitmap');
+	end;          
+end;
+
+procedure SetupBitmapForCollisions(src: Bitmap); cdecl; export;
+begin
+  Try
+		SGSDK_Graphics.SetupBitmapForCollisions(src);
+	Except on exc: Exception do TrapException(exc, 'SetupBitmapForCollisions');
+	end;
+end;
+
+function AKeyWasPressed(): LongInt; cdecl; export;
+begin
+  Try
+		if SGSDK_Input.AKeyWasPressed() then result := 1
+		else result := 0;
+	Except on exc: Exception do TrapException(exc, 'AKeyWasPressed');
+	end;  
+end;
 
 {$ifdef UNIX}
 	{$ifndef DARWIN}
@@ -2869,10 +2960,13 @@ exports
 	FreeSoundEffect,
 	PlayMusic,
 	PlaySoundEffectLoop,
+	PlaySoundEffectLoopVolume, // new in 2
 	IsMusicPlaying,
 	IsSoundEffectPlaying,
 	StopSoundEffect,
 	StopMusic,
+	SetMusicVolume, // new in 2
+	MusicVolume, // new in 2
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2894,9 +2988,9 @@ exports
 	TextWidth,
 	TextHeight,
 	DrawFramerate,
-	DrawSimpleText,
-	DrawSimpleTextOnScreen,
-	DrawSimpleTextOn,
+	DrawSimpleText, // new in 2
+	DrawSimpleTextOnScreen, // new in 2
+	DrawSimpleTextOn, // new in 2
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -3050,11 +3144,13 @@ exports
 	SetClip,
 	ResetClip,
 	DrawTriangle, {1.1.5}
-	DrawTriangleWithDestination,
-	DrawTriangleOnScreen,
-	FillTriangle,
-	FillTriangleWithDestination,
-	FillTriangleOnScreen,
+	DrawTriangleWithDestination, // new in 2
+	DrawTriangleOnScreen, // new in 2
+	FillTriangle, // new in 2
+	FillTriangleWithDestination, // new in 2
+	FillTriangleOnScreen, // new in 2
+	MakeTransparent, // new in 2
+	MakeOpaque, //new in 2
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -3096,7 +3192,7 @@ exports
 	IsPointOnLine, {1.1}
 	GetLineIntersectionPoint, {1.1}
 	LineIntersectsWithLines, {1.1}
-	CreateTriangle, {1.1.5}
+	//CreateTriangle, {1.1.5}
 	IsPointInTriangle, {1.1.5}
 	
 

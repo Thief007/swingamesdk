@@ -116,8 +116,9 @@ sgsdk_types = {
     'Font': 'IntPtr', # PTTF_Font
     'FontAlignment': 'FontAlignment', #enum (specified values)
     'FontStyle': 'FontStyle', #enum
-    'Integer': 'int',
-    'integer': 'int',
+    #'Integer': 'int',
+    #'integer': 'int',
+    'LongInt': 'int',
     'IntPtr': 'IntPtr', # ^Integer (pointer)
     'LineSegment': 'LineSegment', # record
     'LineSegPtr': 'IntPtr',

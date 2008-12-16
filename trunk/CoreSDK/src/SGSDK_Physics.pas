@@ -48,7 +48,7 @@ interface
 	function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
 	function HasSpriteCollidedY(theSprite: Sprite; y: Single; range: CollisionDetectionRange): Boolean;
 
-	function HasSpriteCollidedWithRect(theSprite: Sprite; x, y: Single; width, height: Integer): Boolean; overload;
+	function HasSpriteCollidedWithRect(theSprite: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
 	function HasSpriteCollidedWithRect(theSprite: Sprite; const rect: Rectangle): Boolean; overload;
 
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: Boolean): Boolean; overload;
@@ -56,19 +56,19 @@ interface
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
 
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload; {New for 1.2}
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
 
-	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2: Bitmap; x2, y2: Integer): Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; image2: Bitmap; x2, y2: LongInt): Boolean; overload;
 	function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; image2: Bitmap; const pt2: Point2D): Boolean; overload;
-	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; bounded1: Boolean; image2: Bitmap; x2, y2: Integer; bounded2: Boolean): Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; bounded1: Boolean; image2: Bitmap; x2, y2: LongInt; bounded2: Boolean): Boolean; overload;
 	function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; bounded2: Boolean): Boolean; overload;
 	function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; image2: Bitmap; const pt2: Point2D; const src2: Rectangle): Boolean; overload;
 	function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; const src2: Rectangle; bounded2: Boolean): Boolean; overload;
 
-	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): Boolean; overload;
+	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): Boolean; overload;
 	function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
 
 	function CircleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean;
@@ -95,7 +95,7 @@ interface
 
 	function GetVectorFromAngle(angle, magnitude: Single): Vector;
 
-	function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector; overload;
+	function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt) : Vector; overload;
 	function VectorFromPointToRectangle(x, y: Single; const rect: Rectangle): Vector; overload;
 	function VectorFromPointToRectangle(const pt: Point2D; const rect: Rectangle): Vector; overload;
 
@@ -149,13 +149,13 @@ interface
 	procedure CircularCollision(p1, p2: Sprite);
 		
 	//INTERNAL: New for 1.2
-	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: Integer; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
+	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: LongInt; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
 		
 implementation
 	uses
 		SysUtils, Math, Classes, SwinGameTrace;
 
-	function IsPixelDrawnAtPoint(image: Bitmap; x, y: Integer) : Boolean;
+	function IsPixelDrawnAtPoint(image: Bitmap; x, y: LongInt) : Boolean;
 	begin
 		result := (Length(image.nonTransparentPixels) = image.width)
 							and ((x >= 0) and (x < image.width))
@@ -354,12 +354,12 @@ implementation
 			raise Exception.Create('Invalid Collision Range');
 	end;
 
-	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: Integer; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
+	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: LongInt; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
 	var
-		i, j: Integer;
-		left1, right1, left2, right2, overRight, overLeft: Integer;
-		top1, bottom1, top2, bottom2, overTop, overBottom: Integer;
-		yPixel1, xPixel1: Integer;
+		i, j: LongInt;
+		left1, right1, left2, right2, overRight, overLeft: LongInt;
+		top1, bottom1, top2, bottom2, overTop, overBottom: LongInt;
+		yPixel1, xPixel1: LongInt;
 	begin
 		result := RectanglesIntersect(CreateRectangle(x, y, srcRect.width, srcRect.height), rect);
 		if  bounded or (not result) then exit;
@@ -406,22 +406,22 @@ implementation
 		end;		
 	end;
 
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
 	begin
 		result := HasBitmapPartCollidedWithRect(image, x, y, CreateRectangle(0, 0, image), bounded, rect);
 	end;
 	
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload; {New for 1.2}
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
 	begin
 		result := HasBitmapCollidedWithRect(image, x, y, bounded, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
 	end;
 
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: Integer): Boolean; overload;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
 	begin
 		result := HasBitmapCollidedWithRect(image, x, y, false, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
 	end;
 
-	function HasBitmapCollidedWithRect(image: Bitmap; x, y: Integer; const rect: Rectangle): Boolean; overload;
+	function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
 	begin
 		result := HasBitmapCollidedWithRect(image, x, y, false, rect);
 	end;
@@ -434,10 +434,10 @@ implementation
 	///	@param width, height:	The width and height of the rectangle
 	///
 	///	@returns							 True if the sprite collides with the rectangle
-	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single; width, height : Integer): Boolean; overload;
+	function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single; width, height : LongInt): Boolean; overload;
 	var
 		bmp1: Bitmap;
-		offX1, offY1: Integer;
+		offX1, offY1: LongInt;
 	begin
 		if theSprite = nil then raise Exception.Create('The specified sprite is nil');
 		
@@ -477,7 +477,7 @@ implementation
 		result := HasSpriteCollidedWithRect(theSprite, rect.x, rect.y, rect.width, rect.height);
 	end;
 	
-	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: Integer): Boolean; overload;
+	function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): Boolean; overload;
 	begin
 		result := HasSpriteCollidedWithRect(theSprite, GameX(x), GameY(y), 1, 1);
 	end;
@@ -510,15 +510,15 @@ implementation
 	///	@returns					True if the bitmaps collide.
 	///	
 	function CollisionWithinBitmapImages(
-	           image1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: Integer; bounded1: Boolean;
-			   image2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: Integer; bounded2: Boolean
+	           image1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: LongInt; bounded1: Boolean;
+			   image2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: LongInt; bounded2: Boolean
 			) : Boolean; overload;
 	var
-		left1, left2, overLeft: Integer;
-		right1, right2, overRight: Integer;
-		top1, top2, overTop: Integer;
-		bottom1, bottom2, overBottom: Integer;
-		i, j, xPixel1, yPixel1, xPixel2, yPixel2: Integer;
+		left1, left2, overLeft: LongInt;
+		right1, right2, overRight: LongInt;
+		top1, top2, overTop: LongInt;
+		bottom1, bottom2, overBottom: LongInt;
+		i, j, xPixel1, yPixel1, xPixel2, yPixel2: LongInt;
 	begin
 		if (image1 = nil) or (image2 = nil) then
 			raise Exception.Create('One or both of the specified bitmaps are nil');
@@ -571,8 +571,8 @@ implementation
 	end;
 
 	function CollisionWithinBitmapImages(
-				image1: Bitmap; x1, y1: Integer; bounded1: Boolean;
-				image2: Bitmap; x2, y2: Integer; bounded2: Boolean)
+				image1: Bitmap; x1, y1: LongInt; bounded1: Boolean;
+				image2: Bitmap; x2, y2: LongInt; bounded2: Boolean)
 				: Boolean; overload;
 	begin
 		result := CollisionWithinBitmapImages(image1, x1, y1, image1.width, image1.height, 0, 0, bounded1, 
@@ -589,7 +589,7 @@ implementation
 	///
 	///	@returns				True if the bitmaps collide.
 	///
-	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: Integer; image2: Bitmap; x2, y2: Integer): Boolean; overload;
+	function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: LongInt; image2: Bitmap; x2, y2: LongInt): Boolean; overload;
 	begin
 		result := CollisionWithinBitmapImages(image1, x1, y1, false, image2, x2, y2, false);
 	end;
@@ -597,7 +597,7 @@ implementation
 	function CollisionWithinSpriteImages(sprite1, sprite2: Sprite): Boolean;
 	var
 		bmp1, bmp2: Bitmap;
-		offX1, offY1, offX2, offY2: Integer;
+		offX1, offY1, offX2, offY2: LongInt;
 	begin
 		if (sprite1 = nil) or (sprite2 = nil) then
 			raise Exception.Create('One of the sprites specified is nil');
@@ -643,7 +643,7 @@ implementation
 	///
 	///	@returns					True if the bitmaps collide.
 	///
-	function HaveBitmapsCollided(image1: Bitmap; x1, y1: Integer; image2 : Bitmap; x2, y2: Integer): Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; image2 : Bitmap; x2, y2: LongInt): Boolean; overload;
 	begin
 		result := HaveBitmapsCollided(image1, x1, y1, false, image2, x2, y2, false);
 	end;
@@ -664,7 +664,7 @@ implementation
 	///
 	///	@returns					True if the bitmaps collide.
 	///
-	function HaveBitmapsCollided(image1: Bitmap; x1,y1: Integer; bounded1: Boolean; image2: Bitmap; x2, y2: Integer; bounded2: Boolean): Boolean; overload;
+	function HaveBitmapsCollided(image1: Bitmap; x1,y1: LongInt; bounded1: Boolean; image2: Bitmap; x2, y2: LongInt; bounded2: Boolean): Boolean; overload;
 	begin
 		if not HasBitmapCollidedWithRect(image1, x1, y1, true, x2, y2, image2.width, image2.height) then
 		begin
@@ -748,7 +748,7 @@ implementation
 	function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
 	var
 		bmp: Bitmap;
-		offX, offY: Integer;
+		offX, offY: LongInt;
 	begin
 		if not HasSpriteCollidedWithRect(theSprite, pt.x, pt.y, src.width, src.height) then
 		begin
@@ -810,7 +810,7 @@ implementation
 	function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
 		{procedure ShowMatrix(const m: Matrix2D);
 		var
-			i, j: Integer;
+			i, j: LongInt;
 		begin
 			WriteLn('---');
 			for i := 0 to 2 do
@@ -1116,8 +1116,8 @@ implementation
 	
 	function CalculateVectorFromTo(obj, dest: Sprite): Vector;
 {	var
-		destWdiv2, destHdiv2: Integer;
-		objWdiv2, objHdiv2: Integer;
+		destWdiv2, destHdiv2: LongInt;
+		objWdiv2, objHdiv2: LongInt;
 		v, pc, wc: Vector;}
 	begin
 {		objWdiv2 := CurrentWidth(obj) div 2;
@@ -1188,7 +1188,7 @@ implementation
 		end;
 	end;
 	
-	function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: Integer) : Vector; overload;
+	function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt) : Vector; overload;
 	var
 		px, py: Single;
 	begin
