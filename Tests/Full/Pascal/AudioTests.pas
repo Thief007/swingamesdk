@@ -31,11 +31,11 @@ implementation
 		
 		if IsKeyPressed(VK_UP) then 
 		begin
-		  if MusicVolume() <= 0.9 then SetMusicVolume(MusicVolume() + 0.1);
+		  SetMusicVolume(MusicVolume() + 0.01);
 		end;
 		if IsKeyPressed(VK_DOWN) then 
 		begin
-		  SetMusicVolume(MusicVolume() - 0.1);
+		  SetMusicVolume(MusicVolume() - 0.01);
 		end;
 		
 		DrawText('Volume ' + FloatToStr(MusicVolume()), ColorWhite, 100, 100);
