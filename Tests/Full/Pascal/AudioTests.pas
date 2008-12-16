@@ -6,7 +6,7 @@ interface
 	procedure AddAudioSuite(var suites: TestSuites); 
 
 implementation
-	uses GameResources, SGSDK_Core, SGSDK_Audio, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes;
+	uses GameResources, SGSDK_Core, SGSDK_Audio, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font, SysUtils;
 	
 	procedure TestPlaySound(const drawIn: Rectangle);
 	begin
@@ -28,6 +28,17 @@ implementation
 		end;
 		if WasKeyTyped(VK_S) then StopMusic();
 		if WasKeyTyped(VK_L) then PlayMusic(GameMusic('Fast'));
+		
+		if IsKeyPressed(VK_UP) then 
+		begin
+		  if MusicVolume() <= 0.9 then SetMusicVolume(MusicVolume() + 0.1);
+		end;
+		if IsKeyPressed(VK_DOWN) then 
+		begin
+		  SetMusicVolume(MusicVolume() - 0.1);
+		end;
+		
+		DrawText('Volume ' + FloatToStr(MusicVolume()), ColorWhite, 100, 100);
 	end;
 	
 	function GetAudioTests(): TestSuite;

@@ -320,6 +320,7 @@ interface
 	//
 
 	function ToSDLColor(color: UInt32): TSDL_Color;
+	function ToGfxColor(val: Color): Color;
 
 	function GetColour(forBitmap: Bitmap; apiColor: Color): Colour; overload;
 	function GetColour(red, green, blue, alpha: Byte) : Colour; overload;	
@@ -365,7 +366,7 @@ interface
 	function GetPathToResourceWithBase(path, filename: String) : String; overload;
 	
 implementation
-	uses SysUtils, Math, Classes, SwinGameTrace;
+	uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx;
 	
 	var
 	  trueScr: PSDL_Surface;
@@ -448,8 +449,8 @@ implementation
     if trueScr = nil then raise Exception.Create('Unable to create window drawing surface... ' + SDL_GetError());
 
     SetupScr();
-
 		SDL_WM_SetCaption(PChar(caption), nil);
+
 		{$IFDEF TRACE}
 			TraceExit('SGSDK_Core', 'InitSDL');
 		{$ENDIF}
@@ -475,6 +476,15 @@ implementation
 		SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
 	end;
 	
+	/// Converts the passed in SwinGame color to a Color used by SDL_GFX
+	function ToGfxColor(val: Color): Color;
+	var
+	  r, g, b, a: Byte;
+  begin
+    GetComponents(val, r, g, b, a);
+    result := (r shl 24) or (g shl 16) or (b shl 8) or a;
+  end;
+	
 	//Used to initialise the Frame Per Second structure.
 	procedure InitFPSCalcInfo(var fpsInfo : FPSCalcInfo);
 	begin
@@ -486,8 +496,7 @@ implementation
 		fpsInfo.Average := 1000000;
 	end;
 	
-	function GetRunningAverage(var runningArray : Array of UInt32;
-		  					   newNumber : UInt32; var index : Integer): Single;
+	function GetRunningAverage(var runningArray : Array of UInt32; newNumber : UInt32; var index : Integer): Single;
 	var
 		loopCount : Integer;
 		sum : Double;
@@ -669,7 +678,7 @@ implementation
 			ColorGrey := GetColour(128, 128, 128, 255);
 			ColorMagenta := GetColour(255, 0, 255, 255);
 			ColorTransparent := GetColour(0, 0, 0, 0);
-			ColorLightGrey := GetColour(20, 20, 20, 255);
+			ColorLightGrey := GetColour(200, 200, 200, 255);
 	
 			ColourWhite := ColorWhite;
 			ColourGreen := ColorGreen;
@@ -683,6 +692,10 @@ implementation
 			ColourMagenta := ColorMagenta;
 			ColourTransparent := ColorTransparent;
 			ColourLightGrey := ColorLightGrey;
+			
+			SDL_FillRect(scr.surface, nil, ColorGrey);
+			stringColor(scr.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
+      RefreshScreen();
 		except on e: Exception do raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
 		end;
 		
@@ -706,14 +719,14 @@ implementation
 	var
 		nowTime: UInt32;
 	begin	  		
-		nowTime := GetTicks();
-		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
-		lastDrawUpdateTime := nowTime;
-	
-		sdlManager.DrawCollectedText(scr.surface);
-		
+	  //Draw then delay
+	  sdlManager.DrawCollectedText(scr.surface);		
 		SDL_BlitSurface(scr.surface, nil, trueScr, nil);
 		SDL_Flip(trueScr);
+		
+		nowTime := GetTicks();
+		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
+		lastDrawUpdateTime := nowTime;	
 	end;
 	
 	/// Draws the current drawing to the screen. This must be called to display
@@ -727,6 +740,10 @@ implementation
 		nowTime: UInt32;
 		difference : UInt32;
 	begin
+	  sdlManager.DrawCollectedText(scr.surface);		
+    SDL_BlitSurface(scr.surface, nil, trueScr, nil);
+		SDL_Flip(trueScr);
+		
 		nowTime := GetTicks();
 		difference := nowTime - lastDrawUpdateTime;
 		
@@ -738,12 +755,7 @@ implementation
 		end;	
 		
 		DoFPSCalculations(renderFPSInfo, nowTime, lastDrawUpdateTime);
-		lastDrawUpdateTime := nowTime;
-		
-		sdlManager.DrawCollectedText(scr.surface);
-		
-    SDL_BlitSurface(scr.surface, nil, trueScr, nil);
-		SDL_Flip(trueScr);
+		lastDrawUpdateTime := nowTime;		
 	end;
 	
 	/// Saves the current screen a bitmap file. The file will be saved into the
