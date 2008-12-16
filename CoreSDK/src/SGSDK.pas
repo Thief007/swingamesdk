@@ -173,6 +173,9 @@ uses
 		ErrorMessage: String;
 		HasException: Boolean;		
 	
+	//Special comments = //##???? o = out, _ = normal parameter position
+	
+	//##o|
 	procedure GetExceptionMessage(result: PChar); cdecl; export;
 	begin
 		StrCopy(result, PChar(ErrorMessage));
@@ -406,6 +409,7 @@ uses
 	end;
 	}
 	
+	//##___o|
 	procedure GetPathToResourceWithBaseAndKind(path, filename: PChar; kind: ResourceKind; result: PChar); cdecl; export;
 	var
 		temp: String;
@@ -711,6 +715,7 @@ uses
 		result := 0;
 	end;
 	
+	//##o|
 	procedure EndReadingText(result: PChar); cdecl; export;
 	var
 		temp: String;
@@ -725,6 +730,7 @@ uses
 			StrCopy(result, PChar(''));
 	end;
 	
+	//##o|
 	procedure TextReadAsASCII(result: PChar); cdecl; export;
 	var
 		temp: String;
@@ -2777,7 +2783,7 @@ uses
 {$ifdef UNIX}
 	{$ifndef DARWIN}
 end.
-	{$endif}
+	{$endif}  
 {$endif}
 
 exports

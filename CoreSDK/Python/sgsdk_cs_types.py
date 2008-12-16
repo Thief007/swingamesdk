@@ -145,6 +145,11 @@ sgsdk_types = {
     'None': 'void'
  }
  
+sgsdk_special_types = {
+     'o': { 'PChar': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuffer'},
+     '_': sgsdk_types
+ }
+ 
 
 class _Keys(object):
     def __init__(self): 
