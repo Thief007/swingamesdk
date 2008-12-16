@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 2.2.2:
+// - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-16: Andrew: Added WasAKeyPressed
 //
 // Version 1.1.5:
@@ -59,14 +60,14 @@ interface
 	function IsMouseUp(button: MouseButton): Boolean;
 	function MouseWasClicked(button: MouseButton): Boolean;
 	
-	procedure StartReadingText(textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
-  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
+	procedure StartReadingText(textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt);
 	function 	EndReadingText(): String;
 	
 	function IsReadingText(): Boolean;
 	function TextReadAsASCII(): String;
-	function IsKeyPressed(virtKeyCode : Integer): Boolean;
-	function WasKeyTyped(virtKeyCode: Integer): Boolean;
+	function IsKeyPressed(virtKeyCode : LongInt): Boolean;
+	function WasKeyTyped(virtKeyCode: LongInt): Boolean;
 	function AKeyWasPressed(): Boolean;
 	
 	procedure MoveMouse(x, y : UInt16);overload;
@@ -123,7 +124,7 @@ implementation
 	///
 	/// @param:	virtKeyCode			the code of the key to check
 	/// @returns:					True if the key is pressed
-	function WasKeyTyped(virtKeyCode: Integer): Boolean;
+	function WasKeyTyped(virtKeyCode: LongInt): Boolean;
 	begin
 		result := sdlManager.WasKeyTyped(virtKeyCode);
 	end;
@@ -133,7 +134,7 @@ implementation
 	///	unit.
 	///
 	///	@returns:	 True if the key is currently being held down
-	function IsKeyPressed(virtKeyCode : Integer): Boolean;
+	function IsKeyPressed(virtKeyCode : LongInt): Boolean;
 	begin
 		result := sdlManager.IsKeyPressed(virtKeyCode);
 	end;
@@ -153,8 +154,8 @@ implementation
 	///	@param maxLength:	The maximum length of the string the user can enter
 	///	@param theFont:		The font used to draw the text entered
 	///	@param x, y:			 The location at which to draw the text entered
-	procedure StartReadingText(textColor: Colour; maxLength: Integer; 
-                             theFont: Font; x, y: Integer);
+	procedure StartReadingText(textColor: Colour; maxLength: LongInt; 
+                             theFont: Font; x, y: LongInt);
 	begin
 		if theFont = nil then raise Exception.Create('The specified font to start reading text is nil');
 		if maxLength <= 0 then raise Exception.Create('Minimum length to start reading text is 1');
@@ -163,7 +164,7 @@ implementation
 		sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
 	end;
 	
-  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: Integer; theFont: Font; x, y: Integer);
+  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt);
 	begin
 	  StartReadingText(textColor, maxLength, theFont, x, y);
 	  sdlManager.SetText(text);
@@ -199,7 +200,7 @@ implementation
 	
 	function GetMousePositionAsVector(): Vector;
 	var
-		x, y: Integer;
+		x, y: LongInt;
 	begin
 		x := 0; y := 0;
 		SDL_GetMouseState(x, y);
@@ -208,7 +209,7 @@ implementation
 	
 	function GetMousePosition(): Point2D;
 	var
-		x, y: Integer;
+		x, y: LongInt;
 	begin
 		x := 0; y := 0;
 		SDL_GetMouseState(x, y);
@@ -217,7 +218,7 @@ implementation
 
 	function GetMouseMovement(): Vector;
 	var
-		x, y: Integer;
+		x, y: LongInt;
 	begin
 	  {$IFDEF TRACE}
 			TraceEnter('SGSDK_Input', 'GetMouseMovement');
@@ -235,10 +236,10 @@ implementation
 	
 	function IsMouseDown(button: MouseButton): Boolean;
 	var
-		x, y: Integer;
+		x, y: LongInt;
 	begin
 		x := 0; y := 0;
-		result := (SDL_GetMouseState(x, y) and SDL_BUTTON(Integer(button))) > 0;
+		result := (SDL_GetMouseState(x, y) and SDL_BUTTON(LongInt(button))) > 0;
 	end;
 	
 	function IsMouseUp(button: MouseButton): Boolean;

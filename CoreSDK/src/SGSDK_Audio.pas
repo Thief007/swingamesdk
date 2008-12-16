@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 2.0:
+// - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-16: Andrew: Added volume controls
 //
 // Version 1.1:
@@ -161,7 +162,7 @@ implementation
 	
 	procedure SetMusicVolume(vol: Single);
 	var
-	  newVol: Integer;
+	  newVol: LongInt;
 	begin
 	  if (vol < 0) then vol := 0
 	  else if vol > 1 then vol := 1;

@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 2.0:
+// - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-10: Andrew: Fixed version history
 //						 Changed Triangle to Array
 //						 Added TriangleBarycenter
@@ -38,7 +39,7 @@ uses SGSDK_Core;
 			
 		Rectangle = record
 				x, y: Single;
-				width, height: Integer;
+				width, height: LongInt;
 			end;
 			
 		LineSegment = record
@@ -72,11 +73,11 @@ uses SGSDK_Core;
 	
 	function MidPoint(const line: LineSegment): Point2D;
 
-	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle; overload;
+	function CreateRectangle(x, y: Single; w, h: LongInt): Rectangle; overload;
 	function CreateRectangle(bmp: Bitmap): Rectangle; overload;
 	function CreateRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
 	function CreateRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
-	function CreateRectangle(const pt: Point2D; width, height: Integer): Rectangle; overload;
+	function CreateRectangle(const pt: Point2D; width, height: LongInt): Rectangle; overload;
 	function CreateRectangle(sprt: Sprite): Rectangle; overload;
 	
 	function CreateTriangle(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
@@ -411,7 +412,7 @@ implementation
 		else result := rect.x; //x is right most
 	end;
 
-	function CreateRectangle(x, y: Single; w, h: Integer): Rectangle; overload;
+	function CreateRectangle(x, y: Single; w, h: LongInt): Rectangle; overload;
 	begin
 		result.x := x;
 		result.y := y;
@@ -424,7 +425,7 @@ implementation
 		result := CreateRectangle(sprt.x, sprt.y, CurrentWidth(sprt), CurrentHeight(sprt));
 	end;
 	
-	function CreateRectangle(const pt: Point2D; width, height: Integer): Rectangle; overload;
+	function CreateRectangle(const pt: Point2D; width, height: LongInt): Rectangle; overload;
 	begin
 		result := CreateRectangle(pt.x, pt.y, width, height);
 	end;
@@ -583,7 +584,7 @@ implementation
 
 	function LineIntersectsWithLines(const target: LineSegment; const lines: LinesArray): boolean;
 	var
-		i: Integer;
+		i: LongInt;
 		pnt: Point2D;
 	begin
 		for i := 0 to High(lines) do

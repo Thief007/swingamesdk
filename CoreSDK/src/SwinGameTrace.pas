@@ -10,7 +10,10 @@
 //
 // Change History:
 //  
-//  Version 1.1.6: - in progress
+// Version 2:
+// - 2008-12-17: Andrew: Moved all integers to LongInt
+//
+//  Version 1.1.6:
 //   - 2008-05-09: Andrew: Introduced unit
 
 unit SwinGameTrace;
@@ -38,7 +41,7 @@ implementation
 	{$IFDEF Trace}
 	{$Info SwinGame Tracing Enabled}
 	
-	var indentLevel: Integer;
+	var indentLevel: LongInt;
 	
 	procedure Trace(unitname, action, routine, message: String);
 	var
@@ -54,7 +57,7 @@ implementation
 	
 	procedure TraceIf(tl: TraceLevel; unitname, action, routine, message: String);
 	begin
-		if TRACE_LEVEL >= Integer(tl) then
+		if TRACE_LEVEL >= LongInt(tl) then
 			Trace(unitname, action, routine, message);
 	end;
 	

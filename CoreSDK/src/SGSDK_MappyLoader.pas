@@ -10,6 +10,9 @@
 //
 // Change History:
 //
+// Version 2:
+// - 2008-12-17: Andrew: Moved all integers to LongInt
+//
 // Version 1.1.5:
 // - 2008-04-18: Andrew:	Fix extensions to work with Delphi.
 //
@@ -45,8 +48,8 @@ interface
 		
 		//New
 		Tile = record
-			xIndex: Integer;
-			yIndex: Integer;
+			xIndex: LongInt;
+			yIndex: LongInt;
 			topCorner: Point2D;
 			pointA: Point2D;
 			pointB: Point2D;
@@ -55,34 +58,34 @@ interface
 		end;
 		
 		MapData = record
-			Version: Integer;
-            MapWidth: Integer;
-            MapHeight: Integer;
-            BlockWidth: Integer;
-            BlockHeight: Integer;
-            NumberOfBlocks: Integer;
-            NumberOfLayers: Integer;
-            NumberOfAnimations: Integer;
-            CollisionLayer: Integer;
-            EventLayer: Integer;
-            GapX : Integer;
-            GapY : Integer;
-            StaggerX : Integer;
-            StaggerY : Integer;
+			Version: LongInt;
+            MapWidth: LongInt;
+            MapHeight: LongInt;
+            BlockWidth: LongInt;
+            BlockHeight: LongInt;
+            NumberOfBlocks: LongInt;
+            NumberOfLayers: LongInt;
+            NumberOfAnimations: LongInt;
+            CollisionLayer: LongInt;
+            EventLayer: LongInt;
+            GapX : LongInt;
+            GapY : LongInt;
+            StaggerX : LongInt;
+            StaggerY : LongInt;
             Isometric : Boolean;
         end;
 		
         AnimationData = record
-            AnimationNumber: Integer;
-            Delay: Integer;
-            NumberOfFrames: Integer;
-            Frame: Array of Integer;
-            CurrentFrame : Integer;
+            AnimationNumber: LongInt;
+            Delay: LongInt;
+            NumberOfFrames: LongInt;
+            Frame: Array of LongInt;
+            CurrentFrame : LongInt;
         end;
         
         LayerData = record
-            Animation: Array of Array of Integer;
-            Value: Array of Array of Integer;
+            Animation: Array of Array of LongInt;
+            Value: Array of Array of LongInt;
         end;
         
         CollisionData = record
@@ -90,8 +93,8 @@ interface
         end;
         
 		EventDetails = record
-			x: Integer;
-			y: Integer;
+			x: LongInt;
+			y: LongInt;
 		end;
 
         MapRecord = record
@@ -102,7 +105,7 @@ interface
         	EventInfo : Array [Event] of Array of EventDetails;
         	Tiles : Sprite;     	
         	Animate : Boolean;
-        	Frame : Integer;
+        	Frame : LongInt;
         end;
 		Map = ^MapRecord;
         
@@ -111,27 +114,27 @@ interface
 		procedure DrawMap(m : Map);
 		
 		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
-		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: Integer): Boolean; overload;
+		function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
 		function WillCollideOnSide(m: Map; spr: Sprite): CollisionSide;
-		procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: Integer);
+		procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: LongInt);
 		
-		function EventCount(m : Map; eventType : Event): Integer;
-		function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
-		function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
+		function EventCount(m : Map; eventType : Event): LongInt;
+		function EventPositionX(m : Map; eventType : Event; eventnumber : LongInt): LongInt;
+		function EventPositionY(m : Map; eventType : Event; eventnumber : LongInt): LongInt;
 		
 		function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
 		
-		function MapWidth(m : Map): Integer;
-		function MapHeight(m : Map): Integer;
-		function BlockWidth(m : Map): Integer;
-		function BlockHeight(m : Map): Integer;
-		function GapX(m : Map): Integer;
-		function GapY(m : Map): Integer;
-		function StaggerX(m : Map): Integer;
-		function StaggerY(m : Map): Integer;
+		function MapWidth(m : Map): LongInt;
+		function MapHeight(m : Map): LongInt;
+		function BlockWidth(m : Map): LongInt;
+		function BlockHeight(m : Map): LongInt;
+		function GapX(m : Map): LongInt;
+		function GapY(m : Map): LongInt;
+		function StaggerX(m : Map): LongInt;
+		function StaggerY(m : Map): LongInt;
 		
 		function GetTileFromPoint(point: Point2D; m: Map): Tile;
-		function GetEventAtTile(m : Map; xIndex, yIndex: Integer): Event;
+		function GetEventAtTile(m : Map; xIndex, yIndex: LongInt): Event;
 		
 		procedure FreeMap(var m: Map);
 		
@@ -142,21 +145,21 @@ implementation
 	var
 		c : char;
 		c2 : char;
-		i : Integer;
-		i2 : Integer;
+		i : LongInt;
+		i2 : LongInt;
 	begin
 		Read(stream ,c);
 		Read(stream ,c2);
 		
-		i := Integer(c);
-		i2 := Integer(c2) * 256;
+		i := LongInt(c);
+		i2 := LongInt(c2) * 256;
 		
 		result := i + i2;	
 	end;
 	
 	procedure LoadMapInformation(m : Map; var stream : text);
 	var
-		header: Integer;
+		header: LongInt;
 	begin
 		header := ReadInt(stream);
 		
@@ -228,7 +231,7 @@ implementation
 	
 	procedure LoadAnimationInformation(m : Map; var stream : text);
 	var
-		i, j : Integer;
+		i, j : LongInt;
 	begin
 	
 		if m.MapInfo.NumberOfAnimations > 0 then
@@ -277,7 +280,7 @@ implementation
 	
 	procedure LoadLayerData(m : Map; var stream : text);
 	var
-		l, y, x : Integer;
+		l, y, x : LongInt;
 	begin
 	
 		SetLength(m.LayerInfo, m.MapInfo.NumberOfLayers - m.MapInfo.Collisionlayer - m.MapInfo.EventLayer);
@@ -337,7 +340,7 @@ implementation
 	
 	procedure LoadCollisionData(m : Map; var stream : text);
 	var
-		y, x: Integer;
+		y, x: LongInt;
 	begin
 		if m.MapInfo.CollisionLayer = 1 then
 		begin
@@ -380,7 +383,7 @@ implementation
 	
 	procedure LoadEventData(m : Map; var stream : text);
 	var
-		py, px, smallestEventIdx, temp: Integer;
+		py, px, smallestEventIdx, temp: LongInt;
 		evt: Event;
 	begin
 		//SetLength(m.EventInfo, High(Events));
@@ -423,7 +426,7 @@ implementation
 			for x := 0 to m.MapInfo.MapWidth - 1 do
 			begin
 				Write(' ');
-				Write(Integer(m.EventInfo.Event[y][x]));
+				Write(LongInt(m.EventInfo.Event[y][x]));
 			end;
 			WriteLn('');
 		end;
@@ -433,7 +436,7 @@ implementation
 	
 	procedure LoadBlockSprites(m : Map; fileName : String);
 	var
-		fpc : Array of Integer;
+		fpc : Array of LongInt;
 	begin
 		SetLength(fpc, m.MapInfo.NumberOfBlocks);
 		m.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
@@ -442,9 +445,9 @@ implementation
 	
 	procedure DrawMap(m : Map);
 	var
-		l, y ,x : Integer;
-		XStart, YStart, XEnd, YEnd : Integer;
-		f : Integer;
+		l, y ,x : LongInt;
+		XStart, YStart, XEnd, YEnd : LongInt;
+		f : LongInt;
 	begin
 		if m = nil then raise Exception.Create('No Map supplied (nil)');
 		
@@ -564,7 +567,7 @@ implementation
 	end;
 	
 	//Gets the number of Event of the specified type
-	function EventCount(m : Map; eventType : Event): Integer;
+	function EventCount(m : Map; eventType : Event): LongInt;
 	begin
 		if m = nil then raise Exception.Create('No Map supplied (nil)');
 		if (eventType < Event1) or (eventType > Event24) then raise Exception.Create('EventType is out of range');
@@ -585,7 +588,7 @@ implementation
 	end;
 	
 	// Gets the Top Left X Coordinate of the Event
-	function EventPositionX(m : Map; eventType : Event; eventnumber : Integer): Integer;
+	function EventPositionX(m : Map; eventType : Event; eventnumber : LongInt): LongInt;
 	begin
 		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
 
@@ -602,7 +605,7 @@ implementation
 	end;
 	
 	// Gets the Top Left Y Coordinate of the Event
-	function EventPositionY(m : Map; eventType : Event; eventnumber : Integer): Integer;
+	function EventPositionY(m : Map; eventType : Event; eventnumber : LongInt): LongInt;
 	begin
 		if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
 		
@@ -620,8 +623,8 @@ implementation
 	const
 		SEARCH_RANGE = 0;
 	var
-		XStart, XEnd, YStart, YEnd : Integer;
-		y, x, yCache: Integer;
+		XStart, XEnd, YStart, YEnd : LongInt;
+		y, x, yCache: LongInt;
 	begin
 		result := false;
 		
@@ -662,7 +665,7 @@ implementation
 		end;
 	end;
 	
-	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffset, yOffset: Integer): Boolean;
+	function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffset, yOffset: LongInt): Boolean;
 	begin
 		spr.x := spr.x + xOffset;
 		spr.y := spr.y + yOffset;
@@ -678,7 +681,7 @@ implementation
 		spr.y := spr.y - yOffset;
 	end;
 	
-	procedure MoveOut(sprt: Sprite; movement: Vector; x, y, width, height: Integer);
+	procedure MoveOut(sprt: Sprite; movement: Vector; x, y, width, height: LongInt);
 	var
 		kickVector: Vector;
 		sprRect, tgtRect : Rectangle;
@@ -695,7 +698,7 @@ implementation
 		function GetBoundingRectangle() : Rectangle;
 		var
 			startPoint, endPoint: Rectangle;
-			startX, startY, endX, endY : Integer;
+			startX, startY, endX, endY : LongInt;
 		begin
 			startPoint := CreateRectangle( 	
 											round( ((spr.x - spr.movement.x) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
@@ -773,7 +776,7 @@ implementation
 		else result := None;
 	end;
 	
-	procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: Integer);
+	procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: LongInt);
 	begin
 		if m = nil then raise Exception.Create('No Map supplied (nil)');
 		if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
@@ -786,15 +789,15 @@ implementation
 	
 	function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
 	var
-		x, y : Integer;
+		x, y : LongInt;
 	begin
 		result := SpriteHasCollidedWithMapTile(m,spr, x, y);
 	end;
 	
-	function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: Integer): Boolean; overload;
+	function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
 	var
-		y, x, yCache, dy, dx, i, j, initY, initX : Integer;
-		xStart, yStart, xEnd, yEnd : Integer;
+		y, x, yCache, dy, dx, i, j, initY, initX : LongInt;
+		xStart, yStart, xEnd, yEnd : LongInt;
 		rectSearch : Rectangle;
 		side : CollisionSide;
 	begin
@@ -874,7 +877,7 @@ implementation
 	
 	function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
 	var
-		x, y: Integer;
+		x, y: LongInt;
 		temp: Vector;
 	begin
 		result := None;
@@ -888,48 +891,48 @@ implementation
 		spr.movement := temp;
 	end;
 	
-	function MapWidth(m : Map): Integer;
+	function MapWidth(m : Map): LongInt;
 	begin
 		result := m.MapInfo.MapWidth;
 	end;
 	
-	function MapHeight(m : Map): Integer;
+	function MapHeight(m : Map): LongInt;
 	begin
 		result := m.MapInfo.MapHeight;
 	end;
 	
-	function BlockWidth(m : Map): Integer;
+	function BlockWidth(m : Map): LongInt;
 	begin
 		result := m.MapInfo.BlockWidth;
 	end;
 	
-	function BlockHeight(m : Map): Integer;
+	function BlockHeight(m : Map): LongInt;
 	begin
 		result := m.MapInfo.BlockHeight;
 	end;
 	
-	function GapX(m : Map): Integer;
+	function GapX(m : Map): LongInt;
 	begin
 		result := m.MapInfo.GapX;
 	end;
 	
-	function GapY(m : Map): Integer;
+	function GapY(m : Map): LongInt;
 	begin
 		result := m.MapInfo.GapY;
 	end;
 	
-	function StaggerX(m : Map): Integer;
+	function StaggerX(m : Map): LongInt;
 	begin
 		result := m.MapInfo.StaggerX;
 	end;
 	
-	function StaggerY(m : Map): Integer;
+	function StaggerY(m : Map): LongInt;
 	begin
 		result := m.MapInfo.StaggerY;
 	end;
 	
 	//Determines whether the specified point is within the tile provided
-	function IsPointInTile(point: Point2D; x, y: Integer; m : Map): Boolean;
+	function IsPointInTile(point: Point2D; x, y: LongInt; m : Map): Boolean;
 	var
 		tri1, tri2 : Triangle;
 	begin
@@ -955,7 +958,7 @@ implementation
 	//Note that for Isometric tiles, the 4 points will form a diamond.
 	function GetTileFromPoint(point: Point2D; m: Map): Tile;
 	var
-		x, y, tx, ty : Integer;
+		x, y, tx, ty : LongInt;
 		
 	begin
 		//Returns -1,-1 if no tile has this point
@@ -1019,9 +1022,9 @@ implementation
 	
 	//Returns the Event of the tile at the given index's.
 	//Note, that if the tile does not have an event, this function will return Event(-1)
-	function GetEventAtTile(m : Map; xIndex, yIndex: Integer): Event;
+	function GetEventAtTile(m : Map; xIndex, yIndex: LongInt): Event;
 	var
-		i, j: Integer;
+		i, j: LongInt;
 	begin
 		result := Event(-1);
 	

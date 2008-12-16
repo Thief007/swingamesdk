@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 2: in progress
+// - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-10: Andrew: Added Matrix type to Core.
 //                       Removed W from Vector
 //                       Added Rotate and Zoom to Sprite
@@ -106,7 +107,7 @@ interface
 		/// Frames per second calculations.
 		FPSCalcInfo = record
 			valuesArray : Array [0..9] of UInt32;
-			arrayIndex, loopCount : Integer;
+			arrayIndex, loopCount : LongInt;
 			high, low, average : Single;
 		end;
 
@@ -144,7 +145,7 @@ interface
 		/// - nonTransparentPixels: Array used to determine pixel based collisions
 		BitmapData = record
 			surface: PSDL_Surface;
-			width, height: Integer;
+			width, height: LongInt;
 			nonTransparentPixels: Array of Array of Boolean;
 		end;
 
@@ -217,17 +218,17 @@ interface
 			bitmaps : Array of Bitmap;
 			bufferBmp: Bitmap;
 			spriteKind : SpriteKind;
-			framesPerCell : Array of Integer;
+			framesPerCell : Array of LongInt;
 			xPos : ^Single;
 			yPos : ^Single;
 			x : Single;
 			y : Single;
-			width : Integer;
-			height : Integer;
-			cols : Integer;
-			row : Integer;
+			width : LongInt;
+			height : LongInt;
+			cols : LongInt;
+			row : LongInt;
 			frameCount : Single;
-			currentFrame : Integer;
+			currentFrame : LongInt;
 			usePixelCollision: Boolean;
 			endingAction : SpriteEndingAction;
 			hasEnded : Boolean;
@@ -296,19 +297,19 @@ interface
 	//
 
 	procedure SetIcon(iconFilename: String);
-	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); overload;
+	procedure OpenGraphicsWindow(caption : String; width : LongInt; height : LongInt); overload;
 	procedure OpenGraphicsWindow(caption : String); overload;
 
-	procedure ChangeScreenSize(width, height: Integer);
+	procedure ChangeScreenSize(width, height: LongInt);
 	procedure ToggleFullScreen();
 
 	procedure RefreshScreen(); overload;	
-	procedure RefreshScreen(TargetFPS : Integer); overload;
+	procedure RefreshScreen(TargetFPS : LongInt); overload;
 
 	procedure TakeScreenshot(basename: String);
 
-	function  ScreenWidth(): Integer;
-	function  ScreenHeight(): Integer;
+	function  ScreenWidth(): LongInt;
+	function  ScreenHeight(): LongInt;
 
 	//*****
 	//
@@ -333,7 +334,7 @@ interface
 	function GetRGBFloatColor(r,g,b: Single): Color;
 	function GetHSBColor(hue, saturation, brightness: Single): Color;
 
-	function GetFramerate(): Integer;
+	function GetFramerate(): LongInt;
 	function GetTicks(): UInt32;
 	procedure Sleep(time : UInt32);
 
@@ -380,7 +381,7 @@ implementation
 	///	- Updates keys down, text input, etc.
 	procedure ProcessEvents();
 	var
-	  x, y: Integer;
+	  x, y: LongInt;
 	begin
 	  SDL_GetRelativeMouseState(x, y);
 		sdlManager.ProcessEvents();
@@ -424,7 +425,7 @@ implementation
 	
 	/// Sets up the graphical window for the specified width and height.
 	/// Sets the caption of the window, and the icon if one is specified.
-	procedure InitSDL(caption: String; screenWidth, screenHeight: Integer);
+	procedure InitSDL(caption: String; screenWidth, screenHeight: LongInt);
 	var
 		icon: PSDL_Surface;
 	begin
@@ -458,7 +459,7 @@ implementation
 	
 	procedure ClearArray(var theArray: Array of UInt32);
 	var
-		index : Integer;
+		index : LongInt;
 	begin
 		for index := Low(theArray) to High(theArray) do
 		begin
@@ -496,9 +497,9 @@ implementation
 		fpsInfo.Average := 1000000;
 	end;
 	
-	function GetRunningAverage(var runningArray : Array of UInt32; newNumber : UInt32; var index : Integer): Single;
+	function GetRunningAverage(var runningArray : Array of UInt32; newNumber : UInt32; var index : LongInt): Single;
 	var
-		loopCount : Integer;
+		loopCount : LongInt;
 		sum : Double;
 	begin
 		sum := 0;
@@ -591,7 +592,7 @@ implementation
 	///
 	/// Side Effects:
 	/// - The screen changes to the specified size
-	procedure ChangeScreenSize(width, height: Integer);
+	procedure ChangeScreenSize(width, height: LongInt);
 	var
 		oldScr: PSDL_Surface;
 		//toggle: Boolean;
@@ -612,7 +613,7 @@ implementation
 	/// Returns the width of the screen currently displayed.
 	///
 	/// @returns:	The screen's width
-	function ScreenWidth(): Integer;
+	function ScreenWidth(): LongInt;
 	begin
     	if (trueScr = nil) then
       		raise Exception.Create('Screen has not been created. Unable to get screen width.');
@@ -623,7 +624,7 @@ implementation
 	/// Returns the height of the screen currently displayed.
 	///
 	/// @returns:	The screen's height
-	function ScreenHeight(): Integer;
+	function ScreenHeight(): LongInt;
 	begin
     	if (trueScr = nil) then
       		raise Exception.Create('Screen has not been created. Unable to get screen width.');
@@ -635,9 +636,9 @@ implementation
 		{$linklib libobjc.dylib}
 		
    procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
-   function objc_getClass(name: PChar): Integer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
-   function sel_registerName(name: PChar): Integer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
-   function objc_msgSend(self, cmd: Integer): Integer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
+   function objc_getClass(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
+   function sel_registerName(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
+   function objc_msgSend(self, cmd: LongInt): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
 
 	{$endif}		
 	
@@ -653,7 +654,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- A graphical window is opened
-	procedure OpenGraphicsWindow(caption : String; width : Integer; height : Integer); overload;
+	procedure OpenGraphicsWindow(caption : String; width : LongInt; height : LongInt); overload;
 	begin
 		{$IFDEF TRACE}
 			TraceEnter('SGSDK_Core', 'OpenGraphicsWindow', caption + ': W' + IntToStr(width) + ': H' + IntToStr(height));
@@ -735,7 +736,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- The current drawing is shown on the screen.
-	procedure RefreshScreen(TargetFPS : Integer); overload;
+	procedure RefreshScreen(TargetFPS : LongInt); overload;
 	var
 		nowTime: UInt32;
 		difference : UInt32;
@@ -768,7 +769,7 @@ implementation
 	procedure TakeScreenShot(basename: String);
 	var
 		filename: String;
-		i : Integer;
+		i : LongInt;
 	begin
 		filename := basename + '.bmp';
 		i := 1;
@@ -1006,7 +1007,7 @@ implementation
 	/// Returns the average framerate for the last 10 frames as an integer.
 	///
 	///	@returns		 The current average framerate
-	function GetFramerate(): Integer;
+	function GetFramerate(): LongInt;
 	begin
 		if renderFPSInfo.average = 0 then
 			result := 60
@@ -1147,8 +1148,8 @@ implementation
 
 {$ifdef DARWIN}
 var
-	NSAutoreleasePool: Integer;
-	pool: Integer;
+	NSAutoreleasePool: LongInt;
+	pool: LongInt;
 {$endif}
 
 		

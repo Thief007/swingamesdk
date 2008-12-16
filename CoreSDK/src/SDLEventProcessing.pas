@@ -14,6 +14,7 @@
 // Change History:
 //
 // Version 2.0.0:
+// - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-16: Andrew: Added any key press
 //                       Added SetText
 //
@@ -38,11 +39,11 @@ type TSDLManager = class (TObject)
 		_readingString: Boolean;
 		_tempString: String;
 		_textSurface: PSDL_Surface;
-		_maxStringLen: Integer;
+		_maxStringLen: LongInt;
 		_font: PTTF_Font;
 		_foreColor: TSDL_Color;
-		_x, _y: Integer;
-		_KeyTyped: Array of Integer;
+		_x, _y: LongInt;
+		_KeyTyped: Array of LongInt;
 		_EventProcessors: Array of EventProcessPtr;
 		_EventStartProcessors: Array of EventStartProcessPtr;
 	public
@@ -53,20 +54,20 @@ type TSDLManager = class (TObject)
 
 		function HasQuit(): Boolean;
 
-		property MaxStringLength: Integer read _maxStringLen write _maxStringLen;
+		property MaxStringLength: LongInt read _maxStringLen write _maxStringLen;
 		property EnteredString: String read _tempString write _tempString;
 		property IsReading: Boolean read _readingString;
 
 		procedure DrawCollectedText(dest: PSDL_Surface);
 		procedure SetText(text: String);
-		procedure StartReadingText(textColor: TSDL_Color; maxLength: Integer; theFont: PTTF_Font; x, y: Integer);
+		procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; x, y: LongInt);
 		function 	EndReadingText(): String;
 
-		function WasKeyTyped(keyCode: Integer): Boolean;
+		function WasKeyTyped(keyCode: LongInt): Boolean;
 
 		procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 
-		function IsKeyPressed(virtKeyCode : Integer): Boolean;
+		function IsKeyPressed(virtKeyCode : LongInt): Boolean;
 	  function WasAKeyPressed(): Boolean;
 	private
 		procedure DoQuit();
@@ -82,7 +83,7 @@ implementation
 	  result := _keyPressed;
 	end;
 	
-	function TSDLManager.IsKeyPressed(virtKeyCode : Integer): Boolean;
+	function TSDLManager.IsKeyPressed(virtKeyCode : LongInt): Boolean;
 	var
 		keys: PUint8;
     {$IFNDEF FPC}
@@ -147,7 +148,7 @@ implementation
 	procedure TSDLManager.ProcessEvents();
 	var
 		event: TSDL_EVENT;
-		i: Integer;
+		i: LongInt;
 	begin
 	  _keyPressed := false;
 		SetLength(_KeyTyped, 0);
@@ -168,7 +169,7 @@ implementation
 	end;
 	
 	procedure TSDLManager.HandleEvent(event: PSDL_Event);
-	var i : Integer;
+	var i : LongInt;
 	begin
 		case event.type_ of
 			SDL_QUITEV: DoQuit();
@@ -268,7 +269,7 @@ implementation
 		end;
 	end;
 	
-	procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: Integer; theFont: PTTF_Font; x: Integer; y: Integer);
+	procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; x: LongInt; y: LongInt);
 	begin
 		if _textSurface <> nil then
 		begin
@@ -310,8 +311,8 @@ implementation
 		result := _quit;
 	end;
 	
-	function TSDLManager.WasKeyTyped(keyCode: Integer): Boolean;
-	var i : Integer;
+	function TSDLManager.WasKeyTyped(keyCode: LongInt): Boolean;
+	var i : LongInt;
 	begin
 		result := false;
 	

@@ -15,6 +15,7 @@
 // Change History:
 //
 // Version 2.0: in progress
+// - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-10: Andrew: Moved primitive drawing to SDL_gfx
 //						 Added rotation and zoom to Sprite + Sprite Drawing
 //						 Added RotateZoomBitmap
@@ -54,9 +55,9 @@ interface
 	// These routines are used to load resources, and to free them.
 	//
 	
-	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
+	function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
 	
-	function CreateBitmap(width, height: Integer): Bitmap;
+	function CreateBitmap(width, height: LongInt): Bitmap;
 	function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Colour): Bitmap; overload;
 	function LoadBitmap(pathToBitmap : String): Bitmap; overload;
 	function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Colour): Bitmap; overload;
@@ -75,47 +76,47 @@ interface
 	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
 	procedure ClearSurface(dest: Bitmap); overload;
 	
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); overload;
+	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); overload;
 	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; const position : Point2D); overload;
 	
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); overload;
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : Integer); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : LongInt); overload;
 	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; const position: Point2D); overload;
 	
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer); overload;
+	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: LongInt); overload;
 	procedure DrawPixel(dest: Bitmap; theColour: Colour; const position: Point2D); overload;
 
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
 	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean; const source: Rectangle); overload;
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height: Integer); overload;
+	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height: LongInt); overload;
 	procedure DrawRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
 
-	procedure FillRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : Integer); overload;
+	procedure FillRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : LongInt); overload;
 	procedure FillRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
 
-	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
+	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
 	procedure DrawLine(dest: Bitmap; theColour: Colour; const line: LineSegment); overload;
 
-	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer); overload;
+	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt); overload;
 
-	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: Integer); overload;
+	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt); overload;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: Integer); overload;
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: LongInt); overload;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
 
-	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
-	procedure FillCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: Integer); overload;
+	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt); overload;
+	procedure FillCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
 	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; const source: Rectangle); overload;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: LongInt); overload;
 	procedure DrawEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
 	
-	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: Integer); overload;
+	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: LongInt); overload;
 	procedure FillEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
 
 	//*****
@@ -133,20 +134,20 @@ interface
 	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
 	procedure DrawBitmap(bitmapToDraw : Bitmap; const position : Point2D); overload;
 
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: Integer; x, y : Single); overload;
+	procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; x, y : Single); overload;
 	procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; const position : Point2D); overload;
 	
 	procedure DrawPixel(theColour: Colour; x, y: Single); overload;
 	procedure DrawPixel(theColour: Colour; const position: Point2D); overload;
 
-	procedure DrawRectangle(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: Integer); overload;
+	procedure DrawRectangle(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
 	procedure DrawRectangle(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
 
-	procedure DrawRectangle(theColour: Colour; xPos, yPos: Single; width, height: Integer); overload;
+	procedure DrawRectangle(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
 	procedure DrawRectangle(theColour: Colour; const source: Rectangle); overload;
 
-	procedure FillRectangle(theColour: Colour; xPos, yPos: Single; width, height: Integer); overload;
+	procedure FillRectangle(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
 	procedure FillRectangle(theColour: Colour; const source: Rectangle); overload;
 
 	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
@@ -176,21 +177,21 @@ interface
 	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
 	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: Integer); overload;
-	procedure DrawCircle(theColour: Colour; filled: Boolean; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+	procedure DrawCircle(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
 
-	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
-	procedure DrawCircle(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
+	procedure DrawCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 
-	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
-	procedure FillCircle(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
+	procedure FillCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 
-	procedure DrawEllipse(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: Integer); overload;
+	procedure DrawEllipse(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
 	procedure DrawEllipse(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	procedure DrawEllipse(theColour: Colour; xPos, yPos: Single; width, height: Integer); overload;
+	procedure DrawEllipse(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
 	procedure DrawEllipse(theColour: Colour; const source: Rectangle); overload;
 
-	procedure FillEllipse(theColour: Colour; xPos, yPos: Single; width, height: Integer); overload;
+	procedure FillEllipse(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
 	procedure FillEllipse(theColour: Colour; const source: Rectangle); overload;
 
 	//*****
@@ -202,20 +203,20 @@ interface
 	// These routines are used to work with Sprites within your game.
 	//
 
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of Integer; endingAction : SpriteEndingAction; width, height : Integer): Sprite; overload;
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of Integer; width, height : Integer): Sprite; overload;
-	function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: Integer): Sprite; overload;
+	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; width, height : LongInt): Sprite; overload;
+	function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
 	function CreateSprite(image : Bitmap): Sprite; overload;
-	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of Integer; endingAction : SpriteEndingAction): Sprite; overload;
-	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of Integer): Sprite; overload;
-	function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : Integer): Sprite; overload;
+	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction): Sprite; overload;
+	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
+	function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : LongInt): Sprite; overload;
 
 	procedure FreeSprite(var spriteToFree : Sprite);
 
-	function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): Integer;
+	function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): LongInt;
 
-	function CurrentHeight(sprite: Sprite): Integer; inline;
-	function CurrentWidth(sprite: Sprite): Integer; inline;
+	function CurrentHeight(sprite: Sprite): LongInt; inline;
+	function CurrentWidth(sprite: Sprite): LongInt; inline;
 	
 	procedure ReplayAnimation(theSprite : Sprite);
 	
@@ -224,7 +225,7 @@ interface
 	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
 	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
 
-	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: Integer); overload;
+	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: LongInt); overload;
 	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
 	procedure DrawSprite(spriteToDraw : Sprite); overload;
 		
@@ -233,7 +234,7 @@ interface
 	procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector); overload;
 	procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector; pct: Single); overload;
 	  
-	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
+	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
 	
 	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
 
@@ -246,61 +247,61 @@ interface
 	//
 	// These routines are used to move the visual window.
 	//
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); overload;
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : Integer); overload;
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : LongInt); overload;
 	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; const position: Point2D); overload;
 	
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer); overload;
+	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); overload;
 	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; const position : Point2D); overload;
 	
-	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer); overload;
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: LongInt); overload;
 	procedure DrawPixelOnScreen(theColour: Colour; const position: Point2D); overload;
 
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
 	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; const source : Rectangle); overload;
-	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
 	procedure DrawRectangleOnScreen(theColour : Colour; const source : Rectangle); overload;
 
-	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : Integer); overload;
+	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
 	procedure FillRectangleOnScreen(theColour : Colour; const source : Rectangle); overload;
 
-	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
+	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
 	procedure DrawLineOnScreen(theColour: Colour; const line: LineSegment); overload;
 
-	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer);
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt);
 
-	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer);
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt);
 
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; xc, yc, radius: Integer); overload;
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; const position: Point2D; radius: Integer); overload;
-	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
-	procedure DrawCircleOnScreen(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 
-	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
-	procedure FillCircleOnScreen(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
+	procedure FillCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
 	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	procedure DrawEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: LongInt); overload;
 	procedure DrawEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
 
-	procedure FillEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: Integer); overload;
+	procedure FillEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: LongInt); overload;
 	procedure FillEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
 	
 	///
 	/// Clipping
 	///	
-	procedure SetClip(x, y, w, h: Integer); overload; {1.1}
+	procedure SetClip(x, y, w, h: LongInt); overload; {1.1}
 	procedure SetClip(r: Rectangle); overload; {1.1}
 
-	procedure SetClip(bmp: Bitmap; x, y, w, h: Integer); overload; {1.1}
+	procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload; {1.1}
 	procedure SetClip(bmp: Bitmap; r: Rectangle); overload; {1.1}
 
 	procedure ResetClip(); overload; {1.1}
 	procedure ResetClip(bmp: Bitmap); overload; {1.1}
 		
-	function GetPixel(bmp: Bitmap; x, y: Integer): Colour;
-	function GetPixelFromScreen(x, y: Integer): Colour;
+	function GetPixel(bmp: Bitmap; x, y: LongInt): Colour;
+	function GetPixelFromScreen(x, y: LongInt): Colour;
 
   //
   // Alpha blendings adjusting code
@@ -363,7 +364,7 @@ implementation
 		ClearScreen(ColorBlack);
 	end;
 
-	function NewSDLRect(x, y, w, h: Integer): SDL_Rect;
+	function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
 	begin
 		if (w < 0) or (h < 0) then
 			raise Exception.Create('Width and height of a rectangle must be larger than 0');
@@ -386,7 +387,7 @@ implementation
 		result.h := Word(h);
 	end;
 	
-	function GetPixel32(surface: PSDL_Surface; x, y: Integer): Colour;
+	function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Colour;
 	var
     pixel, pixels: PUint32;
     offset: Uint32;
@@ -431,7 +432,7 @@ implementation
 		{$IFEND}
 	end;
 	
-	function GetPixel(bmp: Bitmap; x, y: Integer): Colour;
+	function GetPixel(bmp: Bitmap; x, y: LongInt): Colour;
 	begin
 	  if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
 	  
@@ -444,7 +445,7 @@ implementation
 		result := GetPixel32(bmp.surface, x, y);
 	end;
 	
-	function GetPixelFromScreen(x, y: Integer): Colour;
+	function GetPixelFromScreen(x, y: LongInt): Colour;
 	begin
 		result := GetPixel(scr, x, y);
 	end;	
@@ -456,7 +457,7 @@ implementation
 	// @param surface The surface with pixel data for this Bitmap
 	procedure SetNonTransparentPixels(toSet: Bitmap; surface: PSDL_Surface; transparentColor: Color);
 	var
-		r, c: Integer;
+		r, c: LongInt;
 	begin
 		SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
 
@@ -472,7 +473,7 @@ implementation
 
 	procedure SetNonAlphaPixels(toSet: Bitmap; surface: PSDL_Surface);
 	var
-		r, c: Integer;
+		r, c: LongInt;
 		hasAlpha: Boolean;
 	begin
 		SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
@@ -588,14 +589,14 @@ implementation
 	///
 	///	@param startBitmap:		The sprites first bitmap (index 0)
 	/// @param isMulti:			True if the bitmap specified is a multi bitmap
-	/// @param framesPerCell:	Array of Integer that defines the frames per cell
+	/// @param framesPerCell:	Array of LongInt that defines the frames per cell
 	/// @param endingAction:	This sprite's ending action (Loop, ReverseLoop or Stop)
 	/// @param width, height:	Width and height of this sprite
 	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of Integer; 
-		endingAction : SpriteEndingAction; width, height : Integer): Sprite; overload;
+	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
+		endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
 	var
-		i : Integer;
+		i : LongInt;
 	begin
 		if image = nil then raise Exception.Create('No image specified to create a sprite');
 		if isMulti and (Length(framesPerCell) = 0) then raise Exception.Create('No frames per cell defined');	
@@ -650,11 +651,11 @@ implementation
 	///
 	///	@param image:			The sprites first bitmap (index 0)
 	/// @param isMulti:			True if the bitmap specified is a multi bitmap
-	/// @param framesPerCell:	Array of Integer that defines the frames per cell
+	/// @param framesPerCell:	Array of LongInt that defines the frames per cell
 	/// @param width, height:	Width and height of this sprite
 	///	@returns:				A new sprite
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of Integer; 
-		width, height : Integer): Sprite; overload;
+	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
+		width, height : LongInt): Sprite; overload;
 	begin
 		result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
 	end;
@@ -666,10 +667,10 @@ implementation
 	/// @param frames:			Number of frames this sprite contains
 	/// @param width, height:	Width and height of this sprite
 	///	@returns:				A new sprite
-	function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: Integer): Sprite; overload;
+	function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
 	var
-		tempIntegers: Array of Integer;
-		i: Integer;
+		tempIntegers: Array of LongInt;
+		i: LongInt;
 	begin
 		if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
 		
@@ -687,7 +688,7 @@ implementation
 	///	@returns:				A new sprite with this bitmap as its first bitmap
 	function CreateSprite(image : Bitmap): Sprite; overload;
 	var
-		empty : Array of Integer;
+		empty : Array of LongInt;
 	begin
 		SetLength(empty, 0);
 		result := CreateSprite(image, false, empty, image.width, image.height);
@@ -699,9 +700,9 @@ implementation
 	/// @param framesPerCell:	Array of Integer that defines the frames per cell
 	/// @param endingAction:	Ending action of this sprite when it finishes animating
 	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(const bitmaps: Array of Bitmap; const framesPerCell: Array of Integer; endingAction: SpriteEndingAction): Sprite; overload;
+	function CreateSprite(const bitmaps: Array of Bitmap; const framesPerCell: Array of LongInt; endingAction: SpriteEndingAction): Sprite; overload;
 	var
-		i : Integer;
+		i : LongInt;
 	begin
 		if Length(bitmaps) = 0 then raise Exception.Create('No images specified to create a sprite');
 		if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
@@ -747,7 +748,7 @@ implementation
 	///	@param bitmaps:			The array of bitmaps
 	/// @param framesPerCell:	Array of Integer that defines the frames per cell
 	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of Integer): Sprite; overload;
+	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
 	begin
 		result := CreateSprite(bitmaps, framesPerCell, Loop);
 	end;
@@ -758,10 +759,10 @@ implementation
 	/// @param framesPerCell:	Number of frames per cell
 	/// @param frames:			Number of frames this sprite contains
 	///	@returns:				A new sprite
-	function CreateSprite(const bitmaps: Array of Bitmap; framesPerCell, frames: Integer): Sprite; overload;
+	function CreateSprite(const bitmaps: Array of Bitmap; framesPerCell, frames: LongInt): Sprite; overload;
 	var
-		tempIntegers: Array of Integer;
-		i: Integer;
+		tempIntegers: Array of LongInt;
+		i: LongInt;
 	begin
 		if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
 
@@ -777,7 +778,7 @@ implementation
 	procedure UpdateSpriteBuffers(sprt: Sprite);
 	var
 	  dest: Bitmap; //temporary surface
-	  srcX, srcY: Integer; //for image parts
+	  srcX, srcY: LongInt; //for image parts
 	begin
 	  if (sprt.rotation = sprt.bufferedRotation) and (sprt.zoom = sprt.bufferedZoom) then exit;
 	  if (sprt.bufferBmp <> nil) then FreeBitmap(sprt.bufferBmp);
@@ -841,7 +842,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- The bitmaps is added to the bitmaps within the sprite.
-	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): Integer;
+	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): LongInt;
 	begin
 		if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
 		if spriteToAddTo = nil then raise Exception.Create('No sprite to add to');
@@ -860,7 +861,7 @@ implementation
 	///
 	///	@param sprite:		 The sprite to get the width of
 	///	@returns					 The width of the sprite's current frame
-	function CurrentWidth(sprite: Sprite): Integer; inline;
+	function CurrentWidth(sprite: Sprite): LongInt; inline;
 	begin
 		if sprite = nil then raise Exception.Create('No sprite supplied');
 
@@ -871,7 +872,7 @@ implementation
 	///
 	///	@param sprite:		 The sprite to get the height of
 	///	@returns					 The height of the sprite's current frame
-	function CurrentHeight(sprite: Sprite): Integer; inline;
+	function CurrentHeight(sprite: Sprite): LongInt; inline;
 	begin
 		if sprite = nil then raise Exception.Create('No sprite supplied');
 
@@ -886,7 +887,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws the bitmapToDraw at the x,y location in the destination.
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : Integer); overload;
+	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); overload;
 	var
 		offset: SDL_Rect;
 	begin
@@ -906,7 +907,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws part of the bitmapToDraw at the x,y location in the destination.
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
 	var
 		offset, source: SDL_Rect;
 	begin
@@ -919,7 +920,7 @@ implementation
 		SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
 	end;
 
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : Integer); overload;
+	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : LongInt); overload;
 	begin
 		DrawBitmapPart(dest, bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
 	end;
@@ -934,12 +935,12 @@ implementation
 	/// Side Effects:
 	///	- Draws part of the bitmapToDraw at the x,y location on the screen.
 	///	- Effected by visible window
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : Integer); overload;
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
 	begin
 		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
 	end;
 
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: Integer; x, y : Single); overload;
+	procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
 	begin
 		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
 	end;
@@ -951,7 +952,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws the bitmapToDraw at the x,y location on the screen.
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : Integer); overload;
+	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); overload;
 	begin
 		DrawBitmap(scr, bitmapToDraw, x, y);
 	end;
@@ -971,12 +972,12 @@ implementation
 	end;
 	
 	procedure CycleFrame(spriteToUpdate: Sprite);
-		procedure EndAnimation(frame: Integer);
+		procedure EndAnimation(frame: LongInt);
 		begin
 			spriteToUpdate.currentFrame := frame;
 			spriteToUpdate.hasEnded := true;
 		end;
-		procedure SetAnimation(frame: Integer; reverse: Boolean);
+		procedure SetAnimation(frame: LongInt; reverse: Boolean);
 		begin
 			spriteToUpdate.currentFrame := frame;
 			spriteToUpdate.reverse := reverse;
@@ -998,8 +999,8 @@ implementation
 	
 	procedure MoveToNextFrame(spriteToUpdate: Sprite);
 	var
-		i, sum: Integer;
-		frameChange: Integer;
+		i, sum: LongInt;
+		frameChange: LongInt;
 	begin
 		//Check that they are all + or 0, at at least one is +
 		sum := 0;
@@ -1091,9 +1092,9 @@ implementation
 		DrawSprite(spriteToDraw, Round(position.x), Round(position.y));
 	end;
 	
-	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: Integer); overload;
+	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: LongInt); overload;
 	var
-		srcX, srcY: Integer;
+		srcX, srcY: LongInt;
 	begin
 		if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
 
@@ -1172,7 +1173,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Moves the sprite, changing its x and y
-	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : Integer);
+	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
 	begin
 		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
 		
@@ -1197,7 +1198,7 @@ implementation
 	///
 	///  @param width, height:  The width and height of the surface
 	///  @returns:              A new bitmap
-	function CreateBitmap(width, height: Integer): Bitmap;
+	function CreateBitmap(width, height: LongInt): Bitmap;
 	begin
 		if (width < 1) or (height < 1) then
 			raise Exception.Create('Bitmap width and height must be greater then 0');
@@ -1255,7 +1256,7 @@ implementation
 		SDL_FreeSurface(oldSurface);
 	end;
 	
-	procedure PutPixel(surface: PSDL_Surface; x, y: Integer; color: Color);
+	procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
 	begin
     pixelColor(surface, x, y, ToGfxColor(color));
 	end;
@@ -1267,7 +1268,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Sets one pixel on the screen
-	procedure DrawPixelOnScreen(theColour: Colour; x, y: Integer);
+	procedure DrawPixelOnScreen(theColour: Colour; x, y: LongInt);
 	begin
 		DrawPixel(scr, theColour, x, y);
 	end;
@@ -1286,12 +1287,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
 	begin
 		DrawRectangle(scr, theColour, filled, xPos, yPos, width, height);
 	end;
 
-	procedure DrawRectangle(theColour : Colour; filled : Boolean; xPos, yPos: Single; width, height : Integer); overload;
+	procedure DrawRectangle(theColour : Colour; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
 	begin
 		DrawRectangle(scr, theColour, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
@@ -1304,12 +1305,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle on the screen
-	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
 	begin
 		DrawRectangle(scr, theColour, xPos, yPos, width, height);
 	end;
 	
-	procedure DrawRectangle(theColour: Colour; xPos, yPos: Single; width, height : Integer); overload;
+	procedure DrawRectangle(theColour: Colour; xPos, yPos: Single; width, height : LongInt); overload;
 	begin
 		DrawRectangle(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
@@ -1322,12 +1323,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle on the screen
-	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : Integer); overload;
+	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
 	begin
 		FillRectangle(scr, theColour, xPos, yPos, width, height);
 	end;
 
-	procedure FillRectangle(theColour : Colour; xPos, yPos: Single; width, height : Integer); overload;
+	procedure FillRectangle(theColour : Colour; xPos, yPos: Single; width, height : LongInt); overload;
 	begin
 		FillRectangle(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
@@ -1340,7 +1341,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the screen
-	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer); overload;
+	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
 	begin
 		DrawLine(scr, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
 	end;
@@ -1447,7 +1448,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line on the screen
-	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: Integer); overload;
+	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt); overload;
 	begin
 		DrawHorizontalLine(scr, theColor, y, x1, x2);
 	end;
@@ -1465,7 +1466,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line on the screen
-	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: Integer); overload;
+	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt); overload;
 	begin
 		DrawVerticalLine(scr, theColor, x, y1, y2);
 	end;
@@ -1484,12 +1485,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle on the screen
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; xc, yc, radius: Integer); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
 	begin
 		DrawCircle(scr, theColour, filled, xc, yc, radius);
 	end;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
 	begin
 		DrawCircle(scr, theColour, filled, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
 	end;
@@ -1503,12 +1504,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle on the screen
-	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
 	begin
 		DrawCircle(scr, theColour, xc, yc, radius);
 	end;
 
-	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
 	begin
 		DrawCircle(scr, theColour, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
 	end;
@@ -1521,12 +1522,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle on the screen
-	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
 	begin
 		FillCircle(scr, theColour, xc, yc, radius);
 	end;
 
-	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: Integer); overload;
+	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
 	begin
 		FillCircle(scr, theColour, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
 	end;
@@ -1540,12 +1541,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse on the screen
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
 	begin
 		DrawEllipse(scr, theColour, filled, xPos, yPos, width, height);
 	end;
 
-	procedure DrawEllipse(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: Integer); overload;
+	procedure DrawEllipse(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
 	begin
 		DrawEllipse(scr, theColour, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
@@ -1558,12 +1559,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse on the screen
-	procedure DrawEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: LongInt); overload;
 	begin
 		DrawEllipse(scr, theColour, xPos, yPos, width, height);
 	end;
 
-	procedure DrawEllipse(theColour: Colour; xPos, yPos: Single; width, height: Integer); overload;
+	procedure DrawEllipse(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
 	begin
 		DrawEllipse(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
@@ -1577,12 +1578,12 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse in the screen
-	procedure FillEllipseOnScreen(theColour: Colour;  xPos, yPos, width, height: Integer); overload;
+	procedure FillEllipseOnScreen(theColour: Colour;  xPos, yPos, width, height: LongInt); overload;
 	begin
 		FillEllipse(scr, theColour, xPos, yPos, width, height);
 	end;
 
-	procedure FillEllipse(theColour: Colour;  xPos, yPos: Single; width, height: Integer); overload;
+	procedure FillEllipse(theColour: Colour;  xPos, yPos: Single; width, height: LongInt); overload;
 	begin
 		FillEllipse(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
 	end;
@@ -1598,7 +1599,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangle(dest: Bitmap; theColour: Colour; filled : Boolean; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangle(dest: Bitmap; theColour: Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
 	begin
 		if filled then FillRectangle(dest, theColour, xPos, yPos, width, height)
 		else DrawRectangle(dest, theColour, xPos, yPos, width, height);
@@ -1613,7 +1614,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : Integer); overload;
+	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : LongInt); overload;
 	begin
 	  if dest = nil then raise Exception.Create('No destination bitmap supplied');
 	  rectangleColor(dest.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColour));
@@ -1628,7 +1629,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a rectangle in the dest bitmap
-	procedure FillRectangle(dest: Bitmap; theColour : Colour;  xPos, yPos, width, height : Integer);
+	procedure FillRectangle(dest: Bitmap; theColour : Colour;  xPos, yPos, width, height : LongInt);
 	var
 		rect: SDL_Rect;
 	begin
@@ -1663,7 +1664,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse in the dest bitmap
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
 	begin
 		if filled then FillEllipse(dest, theColour, xPos, yPos, width, height)
 		else DrawEllipse(dest, theColour, xPos, yPos, width, height);
@@ -1678,7 +1679,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse in the dest bitmap
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour;  xPos, yPos, width, height: Integer); overload;
+	procedure DrawEllipse(dest: Bitmap; theColour: Colour;  xPos, yPos, width, height: LongInt); overload;
 	var
 	  halfWidth, halfHeight: Sint16;
 	begin
@@ -1697,7 +1698,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a ellipse in the dest bitmap
-	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: Integer);
+	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: LongInt);
 	var
 	  halfWidth, halfHeight: Sint16;
 	begin
@@ -1716,7 +1717,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
-	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: Integer);
+	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt);
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
     vlineColor(dest.surface, x, y1, y2, ToGfxColor(theColor));
@@ -1731,7 +1732,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
-	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: Integer);
+	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt);
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
 		  
@@ -1747,7 +1748,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a line in the dest bitmap
-	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Integer);
+	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
 	begin
 	  aalineColor(dest.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColour));
 	end;
@@ -1760,7 +1761,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Sets one pixel on the destination bitmap
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: Integer); overload;
+	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: LongInt); overload;
 	begin
 		if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
 		
@@ -1783,7 +1784,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle in the dest bitmap
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
 	begin
 		if filled then FillCircle(dest, theColour, xc, yc, radius)
 		else DrawCircle(dest, theColour, xc, yc, radius);
@@ -1798,7 +1799,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle in the dest bitmap
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt); overload;
 	begin
 	  aacircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColour));
 	end;
@@ -1812,7 +1813,7 @@ implementation
 	///
 	/// Side Effects:
 	///	- Draws a Circle in the dest bitmap
-	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: Integer);
+	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt);
 	begin
 	  filledCircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColour));
 	end;
@@ -1854,17 +1855,17 @@ implementation
 		FillRectangle(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
 	end;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: LongInt); overload;
 	begin
 		DrawCircle(dest, theColour, filled, Round(point.x), Round(point.y), radius);
 	end;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: Integer); overload;
+	procedure DrawCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
 	begin
 		DrawCircle(dest, theColour, Round(point.x), Round(point.y), radius);
 	end;
 
-	procedure FillCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: Integer); overload;
+	procedure FillCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
 	begin
 		FillCircle(dest, theColour, Round(point.x), Round(point.y), radius);
 	end;
@@ -1919,17 +1920,17 @@ implementation
 		FillRectangle(theColour, Round(source.x), Round(source.y), source.width, source.height);
 	end;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
 	begin
 		DrawCircle(theColour, filled, Round(position.x), Round(position.y), radius);
 	end;
 
-	procedure DrawCircle(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 	begin
 		DrawCircle(theColour, Round(position.x), Round(position.y), radius);
 	end;
 
-	procedure FillCircle(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure FillCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 	begin
 		FillCircle(theColour, position.x, position.y, radius);
 	end;
@@ -1949,7 +1950,7 @@ implementation
 		FillEllipse(theColour, Round(source.x), Round(source.y), source.width, source.height);
 	end;
 
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : Integer); overload;
+	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : LongInt); overload;
 	begin
 		DrawBitmapPartOnScreen(bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
 	end;
@@ -1989,17 +1990,17 @@ implementation
 		DrawLineOnScreen(theColour, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
 	end;
 
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
 	begin
 		DrawCircleOnScreen(theColour, filled, Round(position.x), Round(position.y), radius);
 	end;
 
-	procedure DrawCircleOnScreen(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure DrawCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 	begin
 		DrawCircleOnScreen(theColour, Round(position.x), Round(position.y), radius);
 	end;
 
-	procedure FillCircleOnScreen(theColour: Colour; const position: Point2D; radius: Integer); overload;
+	procedure FillCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
 	begin
 		FillCircleOnScreen(theColour, Round(position.x), Round(position.y), radius);
 	end;
@@ -2030,7 +2031,7 @@ implementation
 		ResetClip(scr);
 	end;
 	
-	procedure SetClip(bmp: Bitmap; x, y, w, h: Integer); overload;
+	procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
 	var
 		rect: SDL_Rect;
 	begin
@@ -2044,7 +2045,7 @@ implementation
 		SetClip(bmp, Round(r.x), Round(r.y), r.width, r.height);
 	end;
 
-	procedure SetClip(x, y, w, h: Integer); overload;
+	procedure SetClip(x, y, w, h: LongInt); overload;
 	begin
 		SetClip(scr, x, y, w, h);
 	end;
