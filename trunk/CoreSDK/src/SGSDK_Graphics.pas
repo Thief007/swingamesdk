@@ -309,20 +309,10 @@ interface
 	//
 	function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
 	procedure SetupBitmapForCollisions(src: Bitmap);
-		
-	//Private	
-	function ToGfxColor(val: Color): Color;
+
 implementation
 	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
-	
-	/// Converts the passed in SwinGame color to a Color used by SDL_GFX
-	function ToGfxColor(val: Color): Color;
-	var
-	  r, g, b, a: Byte;
-  begin
-    GetComponents(val, r, g, b, a);
-    result := (r shl 24) or (g shl 16) or (b shl 8) or a;
-  end;
+
 	
 	/// Clears the surface of the bitmap to the passed in color.
 	///

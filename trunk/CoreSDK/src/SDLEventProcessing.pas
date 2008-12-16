@@ -13,6 +13,10 @@
 //
 // Change History:
 //
+// Version 2.0.0:
+// - 2008-12-16: Andrew: Added any key press
+//                       Added SetText
+//
 // Version 1.1.5:
 // - 2008-04-18: Andrew: Added EndTextRead
 //
@@ -30,6 +34,7 @@ type EventStartProcessPtr = procedure();
 type TSDLManager = class (TObject)
 	private
 		_quit: Boolean;
+		_keyPressed: Boolean;
 		_readingString: Boolean;
 		_tempString: String;
 		_textSurface: PSDL_Surface;
@@ -62,7 +67,7 @@ type TSDLManager = class (TObject)
 		procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
 
 		function IsKeyPressed(virtKeyCode : Integer): Boolean;
-
+	  function WasAKeyPressed(): Boolean;
 	private
 		procedure DoQuit();
 		procedure CheckQuit();
@@ -71,6 +76,11 @@ type TSDLManager = class (TObject)
 end;
 
 implementation
+	
+	function TSDLManager.WasAKeyPressed(): Boolean;
+	begin
+	  result := _keyPressed;
+	end;
 	
 	function TSDLManager.IsKeyPressed(virtKeyCode : Integer): Boolean;
 	var
@@ -139,6 +149,7 @@ implementation
 		event: TSDL_EVENT;
 		i: Integer;
 	begin
+	  _keyPressed := false;
 		SetLength(_KeyTyped, 0);
 
 		for i := 0 to High(_EventProcessors) do
@@ -174,6 +185,7 @@ implementation
 	var
 		oldStr: String;
 	begin
+	  _keyPressed := true;
 		SetLength(_KeyTyped, Length(_KeyTyped) + 1);
 		_KeyTyped[High(_KeyTyped)] := event.key.keysym.sym;
 
@@ -277,6 +289,7 @@ implementation
 	constructor TSDLManager.Create();
 	begin
 		_quit := false;
+		_keyPressed := false;
 		_textSurface := nil;
 		_readingString := false;
 	end;

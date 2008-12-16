@@ -32,8 +32,10 @@ implementation
         DrawText('Is Left Mouse Button Down : ' + BoolToStr(IsMouseDown(LeftButton)), ColourWhite, GameFont('Courier'), 10, 50);
         DrawText('Was Left Mouse Button Clicked : ' + BoolToStr(MouseWasClicked(LeftButton)), ColourWhite, GameFont('Courier'), 10, 70);
         DrawText('Is Mouse Cursor Shown : ' + BoolToStr(IsMouseShown()), ColourWhite, GameFont('Courier'), 10, 90);
-
+        
 				DrawText('Scroll : ' + IntToStr(scroll), ColourWhite, GameFont('Courier'), 10, 140);	
+				
+				DrawText('A key was pressed : ' + BoolToStr(AKeyWasPressed()), ColourWhite, 10, 160);
 	end;
 	
 	procedure KeyboardInputTest(const drawIn: Rectangle);

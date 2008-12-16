@@ -9,6 +9,9 @@
 //
 // Change History:
 //
+// Version 2.2.2:
+// - 2008-12-16: Andrew: Added WasAKeyPressed
+//
 // Version 1.1.5:
 // - 2008-04-18: Andrew: Added EndTextRead
 //
@@ -64,6 +67,7 @@ interface
 	function TextReadAsASCII(): String;
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	function WasKeyTyped(virtKeyCode: Integer): Boolean;
+	function AKeyWasPressed(): Boolean;
 	
 	procedure MoveMouse(x, y : UInt16);overload;
 	procedure MoveMouse(point: Point2D);overload;
@@ -132,6 +136,11 @@ implementation
 	function IsKeyPressed(virtKeyCode : Integer): Boolean;
 	begin
 		result := sdlManager.IsKeyPressed(virtKeyCode);
+	end;
+	
+	function AKeyWasPressed(): Boolean;
+	begin
+	 result := sdlManager.WasAKeyPressed();
 	end;
 
 	/// StartReadingText start the API reading a string values from the user.

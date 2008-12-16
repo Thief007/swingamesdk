@@ -10,6 +10,9 @@
 //
 // Change History:
 //
+// Version 2.0:
+// - 2008-12-16: Andrew: Added volume controls
+//
 // Version 1.1:
 // - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-01-17: Aki + Andrew: Refactor
@@ -60,9 +63,12 @@ interface
 	procedure FreeSoundEffect(var effect: SoundEffect);
 
 	procedure PlaySoundEffect(effect: SoundEffect); overload;
-	procedure PlaySoundEffect(effect: SoundEffect; loops: Integer); overload;
-	procedure PlayMusic(mus: Music; loops: Integer); overload;
+	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
+	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; volume: Single); overload;
+	procedure PlayMusic(mus: Music; loops: LongInt); overload;
 	procedure PlayMusic(mus: Music); overload;
+	procedure SetMusicVolume(vol: Single);
+	function MusicVolume(): Single;
 
 	function IsMusicPlaying(): Boolean;
 	function IsSoundEffectPlaying(effect: SoundEffect): Boolean;
@@ -153,18 +159,42 @@ implementation
 		mus := nil;
 	end;
 	
+	procedure SetMusicVolume(vol: Single);
+	begin
+	  WriteLn(vol);
+	  
+	  if (vol < 0) or (vol > 1) then raise Exception.Create('Volume must be between 0 and 1');
+
+    Mix_VolumeMusic(LongInt(vol * 128));
+	end;
+	
+	function MusicVolume(): Single;
+	begin
+	 result := Mix_VolumeMusic(-1) / 128;
+	end;
+	
+	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; volume: Single); overload;
+	var
+		i: LongInt;
+	begin
+	  if not Assigned(effect) then raise Exception.Create('Sound not supplied');
+	  if (volume < 0) or (volume > 1) then raise Exception.Create('Volume must be between 0 and 1');
+	  
+		i := Mix_PlayChannel( -1, effect, loops);
+		if i <> -1 then
+		begin
+		  Mix_Volume(i, LongInt(volume * 128));
+		  soundChannels[i] := effect;
+		end;
+	end;
+	
 	/// Play the indicated sound effect a number of times.
 	///
 	///	@param effect		 the effect to play
 	///	@param loops			The number of times to play it
-	procedure PlaySoundEffect(effect: SoundEffect; loops: Integer); overload;
-	var
-		i: Integer;
+	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
 	begin
-	  if not Assigned(effect) then raise Exception.Create('Sound not supplied');
-	  
-		i := Mix_PlayChannel( -1, effect, loops );
-		if i <> -1 then soundChannels[i] := effect;
+	 PlaySoundEffect(effect, loops, 1.0)
 	end;
 	
 	/// Play the indicated sound effect once.
@@ -172,7 +202,7 @@ implementation
 	///	@param effect		 the effect to play
 	procedure PlaySoundEffect(effect: SoundEffect); overload;
 	begin
-		PlaySoundEffect(effect, 0);
+		PlaySoundEffect(effect, 0, 1.0);
 	end;
 	
 	/// Start the indicating music playing. The music will loop the indicated
@@ -182,7 +212,7 @@ implementation
 	///	@param loops		 The number of times to loop the music
 	///
 	/// Side Effect:
-	procedure PlayMusic(mus: Music; loops: Integer); overload;
+	procedure PlayMusic(mus: Music; loops: LongInt); overload;
 	begin
 		Mix_HaltMusic();
 
@@ -203,7 +233,7 @@ implementation
 
 	function IsSoundPlaying(effect: Pointer): Boolean;
 	var
-		i: Integer;
+		i: LongInt;
 	begin
 		result := false;
 
@@ -252,7 +282,7 @@ implementation
 	///	- The sound stops playing
 	procedure StopSoundEffect(effect: SoundEffect);
 	var
-		i: Integer;
+		i: LongInt;
 	begin
 		for i := 0 to High(soundChannels) do
 		begin
