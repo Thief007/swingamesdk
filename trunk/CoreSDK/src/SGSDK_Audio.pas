@@ -64,7 +64,7 @@ interface
 
 	procedure PlaySoundEffect(effect: SoundEffect); overload;
 	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
-	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; volume: Single); overload;
+	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; vol: Single); overload;
 	procedure PlayMusic(mus: Music; loops: LongInt); overload;
 	procedure PlayMusic(mus: Music); overload;
 	procedure SetMusicVolume(vol: Single);
@@ -160,12 +160,17 @@ implementation
 	end;
 	
 	procedure SetMusicVolume(vol: Single);
+	var
+	  newVol: Integer;
 	begin
-	  WriteLn(vol);
-	  
-	  if (vol < 0) or (vol > 1) then raise Exception.Create('Volume must be between 0 and 1');
+	  if (vol < 0) then vol := 0
+	  else if vol > 1 then vol := 1;
 
-    Mix_VolumeMusic(LongInt(vol * 128));
+    newVol := Trunc(vol * 128);
+    
+    //WriteLn('newVol ', vol:4:2, ' = ', newVol);
+    
+    Mix_VolumeMusic(newVol);
 	end;
 	
 	function MusicVolume(): Single;
@@ -173,17 +178,18 @@ implementation
 	 result := Mix_VolumeMusic(-1) / 128;
 	end;
 	
-	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; volume: Single); overload;
+	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; vol: Single); overload;
 	var
 		i: LongInt;
 	begin
 	  if not Assigned(effect) then raise Exception.Create('Sound not supplied');
-	  if (volume < 0) or (volume > 1) then raise Exception.Create('Volume must be between 0 and 1');
+	  if (vol < 0) then vol := 0
+	  else if vol > 1 then vol := 1;
 	  
 		i := Mix_PlayChannel( -1, effect, loops);
 		if i <> -1 then
 		begin
-		  Mix_Volume(i, LongInt(volume * 128));
+		  Mix_Volume(i, Trunc(vol * 128));
 		  soundChannels[i] := effect;
 		end;
 	end;
