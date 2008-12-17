@@ -257,6 +257,8 @@ namespace Tests
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
+                Color myGreen = Color.FromArgb(60, Color.Green);
+
                 SwinGame.Graphics.ClearSurface(smallScreen, Color.Transparent);
 		
 		        if (Input.IsKeyPressed(Keys.VK_RIGHT)) tempRect.X = tempRect.X + 2;
@@ -273,15 +275,15 @@ namespace Tests
 		        if (tempRect.Height < -100) tempRect.Height = -100;
 		        if (tempRect.Width > 100) tempRect.Width = 100;
 		        if (tempRect.Height > 100) tempRect.Height = 100;
-		
-		        SwinGame.Graphics.DrawRectangle(smallScreen, Color.Green, filled, tempRect);
-		        SwinGame.Graphics.DrawRectangle(smallScreen, Color.Green, filled, (int)(tempRect.Width + tempRect.X), (int)(tempRect.Y + tempRect.Height), tempRect.Width, tempRect.Height);
-		        SwinGame.Graphics.DrawRectangle(smallScreen, Color.Green, (int)(tempRect.X), (int)(tempRect.Y + tempRect.Height), tempRect.Width, tempRect.Height);
+
+                SwinGame.Graphics.DrawRectangle(smallScreen, myGreen, filled, tempRect);
+                SwinGame.Graphics.DrawRectangle(smallScreen, myGreen, filled, (int)(tempRect.Width + tempRect.X), (int)(tempRect.Y + tempRect.Height), tempRect.Width, tempRect.Height);
+                SwinGame.Graphics.DrawRectangle(smallScreen, myGreen, (int)(tempRect.X), (int)(tempRect.Y + tempRect.Height), tempRect.Width, tempRect.Height);
 		        tempRect4.X = tempRect.X + tempRect.Width;
 		        tempRect4.Y = tempRect.Y;
 		        tempRect4.Width = tempRect.Width;
 		        tempRect4.Height = tempRect.Height;
-		        SwinGame.Graphics.DrawRectangle(smallScreen, Color.Green, tempRect4);
+		        SwinGame.Graphics.DrawRectangle(smallScreen, myGreen, tempRect4);
 		        SwinGame.Graphics.DrawBitmap(smallScreen, 0, 0);
         		
 		        SwinGame.Graphics.DrawRectangle(Color.White, filled, 0, 0, tempRect.Width, tempRect.Height);

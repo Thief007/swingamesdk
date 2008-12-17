@@ -7,6 +7,7 @@
     <DocumentationFile>bin\Debug\SGSDK.NET.XML</DocumentationFile>
     <OutputPath>bin\Debug\</OutputPath>
     <AssemblyName>SGSDK.NET</AssemblyName>
+    <ProjectGuid>{B2FAE683-ABBE-44CF-AD02-A237CCCF7E5E}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,7 +24,8 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -31,26 +33,42 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\SGSDK.NET.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audio.cs" />
+    <Compile Include="Bitmap.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="MappyLoader.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="Graphics.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Music.cs" />
     <Compile Include="Physics.cs" />
+    <Compile Include="PointerData.cs" />
+    <Compile Include="PointerKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceKind.cs" />
+    <Compile Include="sgsdk.cs" />
     <Compile Include="Shapes.cs" />
+    <Compile Include="SoundEffect.cs" />
+    <Compile Include="Sprite.cs" />
+    <Compile Include="SpriteEndingAction.cs" />
+    <Compile Include="SpriteKind.cs" />
+    <Compile Include="SwinGameException.cs" />
+    <Compile Include="SwinGamePointer.cs" />
+    <Compile Include="Vector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

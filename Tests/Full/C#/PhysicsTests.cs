@@ -185,10 +185,10 @@ namespace Tests
             public SpriteTests()
                 : base(METHS, INST)
             {
-                ball.xPos = 100;
-                ball.yPos = 300;
-                bigball.xPos = 200;
-                bigball.yPos = 300;
+                ball.X = 100;
+                ball.Y = 300;
+                bigball.X = 200;
+                bigball.Y = 300;
             }
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
@@ -210,23 +210,23 @@ namespace Tests
                 if (Physics.IsSpriteOnScreenAt(ball, Shapes.CreatePoint(Camera.ScreenX(209), Camera.ScreenY(209))))
                 {
                     Text.DrawText("The small ball is on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 10);
-                    Text.DrawText("at X:209, Y:209    X:" + ball.xPos + ", Y:" + ball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 30);
+                    Text.DrawText("at X:209, Y:209    X:" + ball.X + ", Y:" + ball.Y, Color.White, GameResources.GameFont("Courier"), 10, 30);
 
                 }
                 else
                 {
                     Text.DrawText("The small ball is not on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 10);
-                    Text.DrawText("at X:209, Y:209    X:" + ball.xPos + ", Y:" + ball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 30);
+                    Text.DrawText("at X:209, Y:209    X:" + ball.X + ", Y:" + ball.Y, Color.White, GameResources.GameFont("Courier"), 10, 30);
                 }
                 if (Physics.IsSpriteOnScreenAt(bigball, (int)Camera.ScreenX(209), (int)Camera.ScreenY(209)))
                 {
                     Text.DrawText("The large ball is on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 50);
-                    Text.DrawText("at X:209, Y:209    X:" + bigball.xPos + ", Y:" + bigball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 70);
+                    Text.DrawText("at X:209, Y:209    X:" + bigball.X + ", Y:" + bigball.Y, Color.White, GameResources.GameFont("Courier"), 10, 70);
                 }
                 else
                 {
                     Text.DrawText("The large ball is not on the screen ", Color.White, GameResources.GameFont("Courier"), 10, 50);
-                    Text.DrawText("at X:209, Y:209    X:" + bigball.xPos + ", Y:" + bigball.yPos, Color.White, GameResources.GameFont("Courier"), 10, 70);
+                    Text.DrawText("at X:209, Y:209    X:" + bigball.X + ", Y:" + bigball.Y, Color.White, GameResources.GameFont("Courier"), 10, 70);
                 }
                 Graphics.DrawPixel(Color.White, 209, 209);
                 //CalculateAngle

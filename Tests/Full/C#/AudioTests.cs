@@ -29,7 +29,8 @@ namespace Tests
                 "pl[a]y sound once" + Environment.NewLine + 
                 "play [i]f not playing" + Environment.NewLine + 
                 "[s]top sound effect" + Environment.NewLine + 
-                "[l]oop sound";
+                "[l]oop sound" + Environment.NewLine +
+                "play at 25% [v]olume";
 
             public PlaySoundEffectTest() : base(METHS, INST){}
 
@@ -42,6 +43,7 @@ namespace Tests
                         Audio.PlaySoundEffect(se);
 		        if(Input.WasKeyTyped(Keys.VK_S)) Audio.StopSoundEffect(se);
 		        if(Input.WasKeyTyped(Keys.VK_L)) Audio.PlaySoundEffect(se, -1);
+                if (Input.WasKeyTyped(Keys.VK_V)) se.Play(0.25f);
             }
         }
 
@@ -54,7 +56,8 @@ namespace Tests
                 "pl[a]y musix once" + Environment.NewLine +
                 "play [i]f not playing" + Environment.NewLine +
                 "[s]top music" + Environment.NewLine +
-                "[l]oop music";
+                "[l]oop music" + Environment.NewLine +
+                "[up/down] to change volume";
 
             public PlayMusicTest() : base(METHS, INST) { }
 
@@ -63,10 +66,14 @@ namespace Tests
                 Music se = GameResources.GameMusic("Fast");
                 if (Input.WasKeyTyped(Keys.VK_A)) Audio.PlayMusic(se, 1);
                 if (Input.WasKeyTyped(Keys.VK_I))
-                    if (false == Audio.IsMusicPlaying(se))
+                    if (false == Audio.IsMusicPlaying())
                         Audio.PlayMusic(se);
                 if (Input.WasKeyTyped(Keys.VK_S)) Audio.StopMusic();
                 if (Input.WasKeyTyped(Keys.VK_L)) Audio.PlayMusic(se);
+                if (Input.IsKeyPressed(Keys.VK_UP)) Music.Volume += 0.01f;
+                if (Input.IsKeyPressed(Keys.VK_DOWN)) Music.Volume -= 0.01f;
+
+
             }
         }
     }
