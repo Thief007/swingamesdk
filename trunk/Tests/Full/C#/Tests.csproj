@@ -4,7 +4,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7B2FDCA5-5ECA-4851-A1A9-90D0BA43138E}</ProjectGuid>
+    <ProjectGuid>{CEBE306C-2619-4A70-91E1-5517F7F3BA8B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GameProject</RootNamespace>
@@ -57,10 +57,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-      <None Include="Resources\fonts\arial.ttf" />
-      <None Include="Resources\fonts\cour.ttf" />
-      <None Include="Resources\sounds\SwinGameStart.ogg" />
-      <None Include="Resources\SwinGame.icns" />
+    <None Include="Resources\fonts\arial.ttf" />
+    <None Include="Resources\fonts\cour.ttf" />
+    <None Include="Resources\sounds\SwinGameStart.ogg" />
+    <None Include="Resources\SwinGame.icns" />
     <Content Include="gpl-2.0.txt" />
     <None Include="lib\jpeg.dll">
     </None>

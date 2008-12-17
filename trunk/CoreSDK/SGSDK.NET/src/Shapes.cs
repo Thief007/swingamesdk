@@ -441,7 +441,7 @@ namespace SwinGame
         /// <returns>A rectangle to surround the sprite</returns>
         public static Rectangle CreateRectangle(Sprite sprt)
         {
-            return CreateRectangle(sprt.xPos, sprt.yPos, sprt.Width, sprt.Height);
+            return CreateRectangle(sprt.X, sprt.Y, sprt.Width, sprt.Height);
         }
 
         /// <summary>

@@ -10,6 +10,10 @@
 //
 // Change History:
 //
+// Version 2:
+// - 2008-12-17: Andrew: Moved out other types
+//                       Moved to SGSDK
+//
 // Version 1.1:
 // - 2008-01-30: Andrew: Fixed String Marshalling and Free
 // - 2008-01-29: Andrew: Removed ref from Free
@@ -28,78 +32,28 @@ using System.Runtime.InteropServices;
 namespace SwinGame
 {
     /// <summary>
-    /// Sound Effect Structure
-    /// </summary>
-    public struct SoundEffect
-    {
-        //internal IntPtr Pointer;
-        internal SwinGamePointer Pointer;
-    }
-
-    /// <summary>
-    /// The Music structure is used to hold music that can then be
-    /// played and stopped by SwinGame. You need to ensure that you free
-    /// all music at the end of the program (or when you no longer need it)
-    /// </summary>
-    public struct Music
-    {
-        //internal IntPtr Pointer;
-        internal SwinGamePointer Pointer;
-    }
-
-    /// <summary>
     /// The Audio class contains the code to play sound effects and music.
     /// </summary>
     public class Audio
     {
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OpenAudio")]
-        private static extern void DLL_OpenAudio();
         /// <summary>
         /// Opens the Audio System for SwinGameSDK. This must be called before any sound
         /// can be played. Usually this is at the start of your program.
         /// </summary>
         public static void OpenAudio()
         {
-            try
-            {
-                DLL_OpenAudio();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.OpenAudio();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CloseAudio")]
-        private static extern void DLL_CloseAudio();
         /// <summary>
         /// Closes the Audio system. This should be done at the end of your program to 
         /// ensure that it closes safely.
         /// </summary>
         public static void CloseAudio()
         {
-            try
-            {
-                DLL_CloseAudio();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.CloseAudio();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlaySoundEffectLoop")]
-        private static extern void DLL_PlaySoundEffectLoop(IntPtr effect, int loops);
         /// <summary>
         /// Play the indicated sound effect a number of times.
         /// </summary>
@@ -107,20 +61,9 @@ namespace SwinGame
         /// <param name="loops">The number of times to play it. -1 plays it infinitely</param>
         public static void PlaySoundEffect(SoundEffect effect, int loops)
         {
-            try
-            {
-                DLL_PlaySoundEffectLoop(effect.Pointer, loops);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.PlaySoundEffectLoop(effect, loops);
         }
+
         /// <summary>
         /// Play the indicated sound effect once.
         /// </summary>
@@ -130,8 +73,6 @@ namespace SwinGame
             PlaySoundEffect(effect, 0);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadSoundEffect", CharSet = CharSet.Ansi)]
-        private static extern IntPtr DLL_LoadSoundEffect([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Loads a SoundEffect from file. Use the GetPathToResource methods from Core to
         /// ensure that you load the file in a platform neutral way, enabling your game
@@ -141,23 +82,7 @@ namespace SwinGame
         /// <returns>A SoundEffect</returns>
         public static SoundEffect LoadSoundEffect(string path)
         {
-            SoundEffect effect;
-
-            try
-            {
-                effect.Pointer = new SwinGamePointer(DLL_LoadSoundEffect(path), PtrKind.Sound);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-
-            return effect;
+            return new SoundEffect(SGSDK.LoadSoundEffect(path));
         }
 
         /// <summary>
@@ -168,11 +93,9 @@ namespace SwinGame
         /// <param name="effect">The effect to be freed from memory</param>
         public static void FreeSoundEffect(SoundEffect effect)
         {
-            effect.Pointer.Free();
+            effect.Dispose();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LoadMusic", CharSet = CharSet.Ansi)]
-        private static extern IntPtr DLL_LoadMusic([MarshalAs(UnmanagedType.LPStr)]String path);
         /// <summary>
         /// Load music to play from the file system. Music can be in the form of a
         ///	wav, ogg, or mp3 file. Use the GetPathToResource methods from Core to
@@ -181,23 +104,9 @@ namespace SwinGame
         /// </summary>
         /// <param name="Path">Path to Music file</param>
         /// <returns>Music</returns>
-        public static Music LoadMusic(String Path)
+        public static Music LoadMusic(String path)
         {
-            Music music;
-
-            try
-            {
-                music.Pointer = new SwinGamePointer(DLL_LoadMusic(Path), PtrKind.Music);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return music;
+            return new Music(path);
         }
 
         /// <summary>
@@ -207,11 +116,9 @@ namespace SwinGame
         /// <param name="music">Music to be freed</param>
         public static void FreeMusic(Music music)
         {
-            music.Pointer.Free();
+            music.Dispose();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PlayMusic")]
-        private static extern void DLL_PlayMusic(IntPtr music, int loops);
         /// <summary>
         /// Play the indicated music effect a number of times
         /// The loops paramater can use anything starting from -1, 
@@ -221,19 +128,7 @@ namespace SwinGame
         /// <param name="loops">The number of times to play it</param>
         public static void PlayMusic(Music music, int loops)
         {
-            try
-            {
-                DLL_PlayMusic(music.Pointer, loops);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            music.Play(loops);
         }
 
         /// <summary>
@@ -243,11 +138,9 @@ namespace SwinGame
         /// <param name="music">The Music to play</param>
         public static void PlayMusic(Music music)
         {
-            PlayMusic(music, -1);
+            music.Play();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsSoundEffectPlaying")]
-        private static extern bool DLL_IsSoundEffectPlaying(IntPtr effect);
         /// <summary>
         /// This function checks whether a sound is playing. 
         /// </summary>
@@ -255,91 +148,51 @@ namespace SwinGame
         /// <returns>True if it is playing</returns>
         public static bool IsSoundEffectPlaying(SoundEffect effect)
         {
-            bool temp;
-            try
-            {
-                temp = DLL_IsSoundEffectPlaying(effect.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return effect.IsPlaying();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsMusicPlaying")]
-        private static extern bool DLL_IsMusicPlaying(IntPtr music);
         /// <summary>
         /// This function checks whether music is playing
         /// </summary>
-        /// <param name="music">The music to check if it is playing</param>
         /// <returns>True if it is playing</returns>
-        public static bool IsMusicPlaying(Music music)
+        public static bool IsMusicPlaying()
         {
-            bool temp;
-            try
-            {
-                temp = DLL_IsMusicPlaying(music.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return Music.IsPlaying();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopMusic")]
-        private static extern void DLL_StopMusic();
         /// <summary>
         /// Stops the current music from playing.
         /// </summary>
         public static void StopMusic()
         {
-            try
-            {
-                DLL_StopMusic();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.StopMusic();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopSoundEffect")]
-        private static extern void DLL_StopSoundEffect(IntPtr effect);
         /// <summary>
         /// Stop playing the indicated sound effect.
         /// </summary>
         /// <param name="effect">The effect to stop playing.</param>
         public static void StopSoundEffect(SoundEffect effect)
         {
-            try
-            {
-                DLL_StopSoundEffect(effect.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            effect.Stop();
         }
 
+        /// <summary>
+        /// Returns the current playback volume of the music.
+        /// </summary>
+        /// <returns>A value between 0 and 1.0 that represents the percentage volume of the music</returns>
+        public static float MusicVolume()
+        {
+            return Music.Volume;
+        }
+
+        /// <summary>
+        /// Sets the playback volume of the music.
+        /// </summary>
+        /// <param name="level">the level of the music as a percentage. 0 for no music, 1 for 100% volume.</param>
+        public static void SetMusicVolume(float level)
+        {
+            Music.Volume = level;
+        }
     }
 }
