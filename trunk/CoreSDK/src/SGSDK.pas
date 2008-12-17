@@ -177,7 +177,7 @@ uses
 		ErrorMessage: String;
 		HasException: Boolean;		
 	
-	//Special comments = //##???? o = out, _ = normal parameter position
+	//Special comments = //##????| o = out, a = array, _ = normal parameter position
 	
 	//##o|
 	procedure GetExceptionMessage(result: PChar); cdecl; export;
@@ -1815,6 +1815,8 @@ uses
 	end;
 	
 	//Version 1.1.6
+	
+	//##_a|
 	procedure DrawTriangle(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 	var
 	  tri: Triangle;
@@ -1850,6 +1852,7 @@ uses
 		result := nil;
 	end;
 	
+	//##_a__|
 	function CreateSpriteArrayFPC(bitLength: LongInt; bitmaps: BitmapPtr; framesPerCell, frames: LongInt): Sprite; cdecl; export;
 	var
 		bmps: BitmapArray;
@@ -1864,6 +1867,7 @@ uses
 		result := nil;
 	end;
 	
+	//##___a___|
 	function CreateSpriteMultiEnding(image : Bitmap; isMulti, length: LongInt; framesPerCell: IntPtr; endingAction : SpriteEndingAction; width : LongInt; height : LongInt): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
@@ -1878,6 +1882,7 @@ uses
 		result := nil;
 	end;
 	
+	//##___a__|
 	function CreateSpriteMulti(image : Bitmap; isMulti, length : LongInt; framesPerCell : IntPtr; width, height : LongInt): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
@@ -1892,6 +1897,7 @@ uses
 		result := nil;
 	end;
 
+  //##_a_a_|
 	function CreateSpriteArrayEnding(bitLength: LongInt; bitmaps: BitmapPtr; length: LongInt; framesPerCell: IntPtr; endingAction: SpriteEndingAction): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
@@ -1908,6 +1914,7 @@ uses
 		result := nil;
 	end;
 	
+	//##_a_a|
 	function CreateSpriteArray(bitlength: LongInt; bitmaps: BitmapPtr; length: LongInt; framesPerCell: IntPtr): Sprite; cdecl; export;
 	var
 		fpc: IntArray;
@@ -1958,6 +1965,7 @@ uses
 		end;
 	end;
 	
+	//##_a_|
 	procedure SetSpriteFramesPerCell(surface: Sprite; framesPerCell: IntPtr; length: LongInt); cdecl; export;
 	var
 		fpc: IntArray;
@@ -2645,6 +2653,7 @@ uses
 		result := 0;
 	end;
 	
+	//##__a|
 	function LineIntersectsWithLines(target: LineSegment; len: LongInt; data: LineSegPtr): LongInt; cdecl; export;
 	var
 		arr: LinesArray;
@@ -2681,6 +2690,7 @@ uses
 	end;
 }	
 
+  //##_a|
 	function IsPointInTriangle(point: Point2D; inTriangle: Point2DPtr): LongInt; cdecl; export;
 	var
 	  tri: Triangle;
@@ -2735,6 +2745,7 @@ begin
 	end;    	 
 end;
 
+//##_a|
 procedure DrawTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 var
   tri: Triangle;
@@ -2746,6 +2757,7 @@ begin
 	end;
 end;
 
+//##__a|
 procedure DrawTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 var
   tri: Triangle;
@@ -2757,6 +2769,7 @@ begin
 	end;
 end;
 
+//##_a|
 procedure FillTriangle(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 var
   tri: Triangle;
@@ -2768,6 +2781,7 @@ begin
 	end;
 end;
 
+//##_a|
 procedure FillTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 var
   tri: Triangle;
@@ -2779,6 +2793,7 @@ begin
 	end;
 end;
 
+//##__a|
 procedure FillTriangleWithDestination(dest: Bitmap; theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 var
   tri: Triangle;
@@ -2959,6 +2974,7 @@ exports
 	FreeMusic,
 	FreeSoundEffect,
 	PlayMusic,
+	PlaySoundEffect,
 	PlaySoundEffectLoop,
 	PlaySoundEffectLoopVolume, // new in 2
 	IsMusicPlaying,

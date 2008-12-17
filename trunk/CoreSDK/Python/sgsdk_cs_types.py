@@ -106,7 +106,7 @@ sgsdk_cs_mods = {
 # define a dictionary mapping between swingame types and output types
 sgsdk_types = {
     'Bitmap': 'IntPtr', # ^BitmapData (pointer)
-    'BitmapPtr': '[MarshalAs(UnmanagedType.LPArray)] IntPtr[]',
+    ##'BitmapPtr': '[MarshalAs(UnmanagedType.LPArray)] IntPtr[]',
     'Byte': 'byte',
     'CollisionDetectionRange': 'int', #enum
     'CollisionSide': 'int', #enum
@@ -119,9 +119,9 @@ sgsdk_types = {
     #'Integer': 'int',
     #'integer': 'int',
     'LongInt': 'int',
-    'IntPtr': '[MarshalAs(UnmanagedType.LPArray)] int[]', # ^Integer (pointer)
+    #'IntPtr': '[MarshalAs(UnmanagedType.LPArray)] int[]', # ^Integer (pointer)
     'LineSegment': 'LineSegment', # record
-    'LineSegPtr': 'IntPtr',
+    #'LineSegPtr': 'IntPtr',
     'Map': 'IntPtr', # ^MapRecord (pointer)
     'Matrix2DPtr': 'IntPtr',
     'MouseButton': 'MouseButton', #enum
@@ -141,13 +141,19 @@ sgsdk_types = {
     'UInt16': 'UInt16',
     'UInt32': 'uint',
     'Vector': 'Vector', #record
-    'Point2DPtr': 'IntPtr', #pointer to Point2D data
+    #'Point2DPtr': 'IntPtr', #pointer to Point2D data
     'Tile': 'Tile', #record
     'None': 'void'
  }
  
 sgsdk_special_types = {
      'o': { 'PChar': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder'},
+     'a': {
+        'Point2DPtr': '[MarshalAs(UnmanagedType.LPArray)] Point2D[]',
+        'IntPtr': '[MarshalAs(UnmanagedType.LPArray)] int[]', # ^Integer (pointer)
+        'BitmapPtr': '[MarshalAs(UnmanagedType.LPArray)] IntPtr[]',
+        'LineSegPtr': '[MarshalAs(UnmanagedType.LPArray)] LineSegment[]'
+},
      '_': sgsdk_types
  }
  

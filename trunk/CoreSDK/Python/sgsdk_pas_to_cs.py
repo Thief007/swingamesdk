@@ -81,6 +81,8 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
         if line.find('//##') == 0:
             line = line.replace('//##', '') #remove start
             param_special, line = line.split('|'); #split on end
+            
+            #print param_special
         else:
             param_special=''
             
@@ -101,6 +103,8 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
         # break up the arguments into types
         params = args.split(';')
         arg_bits = []
+        paramIdx = 0
+        
         for param in params:
             if param:
                 vardata, vartype = param.split(':')
@@ -117,7 +121,6 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
                         varnames = vardata
                         modifier = ''
                 
-                i = 0
                 for varname in varnames.split(','):
                     # modifier may be var or our
                     # varname is the name of the parameter
@@ -125,12 +128,16 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
                     # spc_type is the special type read from //##
                     #   it will be _ or o used to link with sgsdk_special_types
                     
+                    # print name, '\t', varname, '\t', paramIdx
+                    
                     if len(param_special) == 0:
                         spc_type = '_'
                     else:
-                        spc_type = param_special[i]
-                        #keep track of index
-                        i = i + 1
+                        spc_type = param_special[paramIdx]
+                        #print paramIdx, '\t', spc_type, '\t', param_special
+                        
+                    #keep track of index
+                    paramIdx = paramIdx + 1
                     
                     arg_bits.append((modifier, varname.strip(), vartype, spc_type))
                     sg_types.add(vartype)
@@ -193,6 +200,7 @@ def CreateAndSaveSignatures(filename,sig_tuples):
         sig['retn'] = sgsdk_types[sig['retn']]
         new_args = []
         for arg in sig['args']:
+            #print arg[1], '\t', arg[3]
             new_args.append((arg[0], arg[1], sgsdk_special_types[arg[3]][arg[2]]))
         sig['args'] = new_args
     
@@ -219,7 +227,7 @@ namespace SwinGame
     internal class SGSDK
     {
 '''
-    f.write(header)
+    f.write(header) 
     names = []
     for sig in sig_tuples:
         name, args, retn = sig['name'], sig['args'], sig['retn']
