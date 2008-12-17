@@ -105,21 +105,21 @@ sgsdk_cs_mods = {
 
 # define a dictionary mapping between swingame types and output types
 sgsdk_types = {
-    'Bitmap': 'Bitmap', # ^BitmapData (pointer)
-    'BitmapPtr': 'IntPtr',
+    'Bitmap': 'IntPtr', # ^BitmapData (pointer)
+    'BitmapPtr': '[MarshalAs(UnmanagedType.LPArray)] IntPtr[]',
     'Byte': 'byte',
-    'CollisionDetectionRange': 'CollisionDetectionRange', #enum
-    'CollisionSide': 'CollisionSide', #enum
+    'CollisionDetectionRange': 'int', #enum
+    'CollisionSide': 'int', #enum
     'Colour': 'uint', # RGBA c_byte*4
     'Color': 'uint', # same as Colour
-    'Event': 'EventKind', 
+    'Event': 'Event', 
     'Font': 'IntPtr', # PTTF_Font
-    'FontAlignment': 'FontAlignment', #enum (specified values)
-    'FontStyle': 'FontStyle', #enum
+    'FontAlignment': 'int', #enum (specified values)
+    'FontStyle': 'int', #enum
     #'Integer': 'int',
     #'integer': 'int',
     'LongInt': 'int',
-    'IntPtr': 'IntPtr', # ^Integer (pointer)
+    'IntPtr': '[MarshalAs(UnmanagedType.LPArray)] int[]', # ^Integer (pointer)
     'LineSegment': 'LineSegment', # record
     'LineSegPtr': 'IntPtr',
     'Map': 'IntPtr', # ^MapRecord (pointer)
@@ -129,16 +129,16 @@ sgsdk_types = {
     'PChar': '[MarshalAs(UnmanagedType.LPStr)]string', # null terminated string
     'Point2D': 'Point2D', # record
     'Pointer': 'IntPtr',
-    'ResourceKind': 'ResourceKind', #enum
-    'Rectangle': 'Rectangle', # record
+    'ResourceKind': 'int', #enum
+    'Rectangle': 'SGSDKRectangle', # record
     'SoundEffect': 'IntPtr', #PMix_Chunk               
-    'SpriteEndingAction': 'SpriteEndingAction', #enum
+    'SpriteEndingAction': 'int', #enum
     'Sprite': 'IntPtr', # ^SpriteData (pointer)
-    'SpriteKind': 'SpriteKind', #enum
+    'SpriteKind': 'int', #enum
     'Single': 'float',
     'Timer': 'IntPtr', # ^TimerData (pointer)
     'TSDL_Color': 'uint',
-    'UInt16': 'c_uint16',
+    'UInt16': 'UInt16',
     'UInt32': 'uint',
     'Vector': 'Vector', #record
     'Point2DPtr': 'IntPtr', #pointer to Point2D data
@@ -147,7 +147,7 @@ sgsdk_types = {
  }
  
 sgsdk_special_types = {
-     'o': { 'PChar': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuffer'},
+     'o': { 'PChar': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder'},
      '_': sgsdk_types
  }
  
