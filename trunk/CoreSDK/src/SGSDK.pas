@@ -2886,6 +2886,55 @@ begin
 	end;  
 end;
 
+//##a|
+function TriangleBarycenter(firstPoint: Point2DPtr): Point2D; cdecl; export;
+var
+  tri: Triangle;
+begin
+  Try
+    PopulateTriangle(firstPoint, tri);
+    result := SGSDK_Shapes.TriangleBarycenter(tri);
+  Except on exc: Exception do TrapException(exc, 'TriangleBarycenter');
+  end;  
+end;
+
+//##_ao!
+procedure ApplyMatrixToTriangle(m: Matrix2DPtr; pnt: Point2DPtr; var result: Point2DPtr);
+var
+  tri: Triangle;
+begin
+  Try
+    PopulateTriangle(pnt, tri);
+    SGSDK_Shapes.ApplyMatrix(m.data, tri);
+    result^ := tri[0];
+    (result + 1)^ := tri[1];
+    (result + 2)^ := tri[2];
+  Except on exc: Exception do TrapException(exc, 'TriangleBarycenter');
+  end;    
+end;
+
+procedure SetSpriteRotation(s: Sprite; rot: Single); cdecl; export;
+begin
+  s.rotation := rot;
+end;
+
+function GetSpriteRotation(s: Sprite): Single; cdecl; export;
+begin
+  result := s.rotation;
+end;
+
+procedure SetSpriteZoom(s: Sprite; zoom: Single); cdecl; export;
+begin
+  s.zoom := zoom;
+end;
+
+function GetSpriteZoom(s: Sprite): Single; cdecl; export;
+begin
+  result := s.zoom;
+end;
+
+
+
 {$ifdef UNIX}
 	{$ifndef DARWIN}
 end.
@@ -3167,6 +3216,10 @@ exports
 	FillTriangleOnScreen, // new in 2
 	MakeTransparent, // new in 2
 	MakeOpaque, //new in 2
+	SetSpriteRotation, //2
+	GetSpriteRotation, //2
+	SetSpriteZoom, //2
+	GetSpriteRotation, //2
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -3210,6 +3263,8 @@ exports
 	LineIntersectsWithLines, {1.1}
 	//CreateTriangle, {1.1.5}
 	IsPointInTriangle, {1.1.5}
+	TriangleBarycenter, //2
+	ApplyMatrixToTriangle, //2
 	
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
