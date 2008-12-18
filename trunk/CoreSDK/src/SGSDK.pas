@@ -2899,7 +2899,7 @@ begin
 end;
 
 //##_ao!
-procedure ApplyMatrixToTriangle(m: Matrix2DPtr; pnt: Point2DPtr; var result: Point2DPtr);
+procedure ApplyMatrixToTriangle(m: Matrix2DPtr; pnt: Point2DPtr; var result: Point2DPtr); cdecl; export;
 var
   tri: Triangle;
 begin
