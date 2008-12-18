@@ -61,16 +61,37 @@ namespace SwinGame
         /// <param name="loops">The number of times to play it. -1 plays it infinitely</param>
         public static void PlaySoundEffect(SoundEffect effect, int loops)
         {
-            SGSDK.PlaySoundEffectLoop(effect, loops);
+            effect.Play(loops);
         }
 
+        /// <summary>
+        /// Play the indicated sound effect a number of times.
+        /// </summary>
+        /// <param name="effect">The Sound Effect to play</param>
+        /// <param name="loops">The number of times to play it. -1 plays it infinitely</param>
+        /// <param name="vol">The volume to play the effect at, 1 = 100%</param>
+        public static void PlaySoundEffect(SoundEffect effect, int loops, float vol)
+        {
+            effect.Play(loops, vol);
+        }
+
+        /// <summary>
+        /// Play the indicated sound effect at a given volume.
+        /// </summary>
+        /// <param name="effect">The Sound Effect to play</param>
+        /// <param name="vol">The volume to play the effect at, 1 = 100%</param>
+        public static void PlaySoundEffect(SoundEffect effect, float vol)
+        {
+            effect.Play(vol);
+        }
+        
         /// <summary>
         /// Play the indicated sound effect once.
         /// </summary>
         /// <param name="effect">The Sound Effect to play</param>
         public static void PlaySoundEffect(SoundEffect effect)
         {
-            PlaySoundEffect(effect, 0);
+            effect.Play();
         }
 
         /// <summary>

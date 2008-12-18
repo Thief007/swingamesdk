@@ -49,11 +49,19 @@
     <Compile Include="Audio.cs" />
     <Compile Include="Bitmap.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="CollisionDetectionRange.cs" />
+    <Compile Include="CollisionSide.cs" />
+    <Compile Include="Event.cs" />
+    <Compile Include="Keys.cs" />
+    <Compile Include="LineSegment.cs" />
+    <Compile Include="Map.cs" />
     <Compile Include="MappyLoader.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="Graphics.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Matrix2D.cs" />
+    <Compile Include="MouseButton.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Physics.cs" />
     <Compile Include="PointerData.cs" />
@@ -68,6 +76,7 @@
     <Compile Include="SpriteKind.cs" />
     <Compile Include="SwinGameException.cs" />
     <Compile Include="SwinGamePointer.cs" />
+    <Compile Include="Tile.cs" />
     <Compile Include="Vector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

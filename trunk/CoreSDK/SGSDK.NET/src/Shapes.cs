@@ -93,22 +93,6 @@ namespace SwinGame
     }
 
     /// <summary>
-    /// LineSegments are a data type that holds 2 Points, the Start and Ending Points of a Line
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct LineSegment
-    {
-        /// <summary>
-        /// Start Point of the Line Segment
-        /// </summary>
-        public Point2D StartPoint;
-        /// <summary>
-        /// End Point of the Line Segment
-        /// </summary>
-        public Point2D EndPoint;
-    }
-
-    /// <summary>
     /// The Shapes class contains all the routines, that deal with Shapes such as Rectangles, Circles
     /// Lines etc.
     /// </summary>
@@ -212,8 +196,8 @@ namespace SwinGame
             return ClosestPointOnLine(fromPt.X, fromPt.Y, line);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CenterPoint")]
-        private static extern Point2D DLL_CenterPoint(IntPtr sprt);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CenterPoint")]
+        //private static extern Point2D DLL_CenterPoint(IntPtr sprt);
 
         /// <summary>
         /// Returns the center point of the sprite. This does not take into
@@ -224,20 +208,7 @@ namespace SwinGame
         /// <returns></returns>
         public static Point2D CenterPoint(Sprite sprt)
         {
-            Point2D temp;
-            try
-            {
-                temp = DLL_CenterPoint(sprt.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return sprt.CenterPoint;
         }
 
         [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsPointOnLine")]

@@ -46,7 +46,6 @@ namespace Tests
                 shipSprite.Y = 100;
             }
 
-
             protected override void ToRun(System.Drawing.Rectangle drawIn)
             {
                 if (Input.IsKeyPressed(Keys.VK_RIGHT))  shipSprite.X = shipSprite.X + 4;
