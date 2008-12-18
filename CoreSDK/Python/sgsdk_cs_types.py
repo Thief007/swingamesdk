@@ -147,7 +147,10 @@ sgsdk_types = {
  }
  
 sgsdk_special_types = {
-     'o': { 'PChar': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder'},
+     'o': { 
+        'PChar': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder',
+        'Point2D': 'Point2D'
+},
      'a': {
         'Point2DPtr': '[MarshalAs(UnmanagedType.LPArray)] Point2D[]',
         'IntPtr': '[MarshalAs(UnmanagedType.LPArray)] int[]', # ^Integer (pointer)
