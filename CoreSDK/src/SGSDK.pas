@@ -3219,7 +3219,7 @@ exports
 	SetSpriteRotation, //2
 	GetSpriteRotation, //2
 	SetSpriteZoom, //2
-	GetSpriteRotation, //2
+	GetSpriteZoom, //2
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
