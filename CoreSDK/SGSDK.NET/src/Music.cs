@@ -19,6 +19,10 @@ namespace SwinGame
             Pointer = new SwinGamePointer(devPtr, PtrKind.Music);
         }
 
+        /// <summary>
+        /// Loads a music file from a give file path.
+        /// </summary>
+        /// <param name="path">The path to the music file to load.</param>
         public Music(string path) : this(SGSDK.LoadMusic(path)) { }
 
         /// <summary>
@@ -50,6 +54,9 @@ namespace SwinGame
 
         #region IDisposable Members
 
+        /// <summary>
+        /// Clear the system resources used for this music.
+        /// </summary>
         public void Dispose()
         {
             if (Pointer != null) Pointer.Free();

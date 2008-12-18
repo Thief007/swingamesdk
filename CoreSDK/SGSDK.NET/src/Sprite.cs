@@ -612,6 +612,10 @@ namespace SwinGame
                 return mc.AsVector();
             }
 
+            /// <summary>
+            /// Turns the movement data into a vector.
+            /// </summary>
+            /// <returns>A vector representing the movement data</returns>
             public Vector AsVector()
             {
                 return SGSDK.GetSpriteMovement(_Data.Pointer);
@@ -802,8 +806,6 @@ namespace SwinGame
         /// consideration the shape of the bitmap being drawn, just returns
         /// the center point of the sprites bounding rectangle.
         /// </summary>
-        /// <param name="sprt">The sprite to get the center point of.</param>
-        /// <returns></returns>
         public Point2D CenterPoint
         {
             get
@@ -841,6 +843,17 @@ namespace SwinGame
         public Vector VectorTo(Sprite dest)
         {
             return Physics.VectorFromPoints(CenterPoint, dest.CenterPoint);
+        }
+
+        /// <summary>
+        /// "Bounce" the two Sprites off each other, based on their mass and 
+        /// movement. This alters the vectors of two Sprites depending on
+        /// the movement and mass of each sprite.
+        /// </summary>
+        /// <param name="other">the other sprite</param>
+        public void BounceOff(Sprite other)
+        {
+            SGSDK.VectorCollision(this, other);
         }
 
     }

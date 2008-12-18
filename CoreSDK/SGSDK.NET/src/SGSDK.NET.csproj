@@ -8,17 +8,20 @@
     <OutputPath>bin\Debug\</OutputPath>
     <AssemblyName>SGSDK.NET</AssemblyName>
     <ProjectGuid>{B2FAE683-ABBE-44CF-AD02-A237CCCF7E5E}</ProjectGuid>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>SGSDK.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\SGSDK.NET.XML</DocumentationFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugType>pdbonly</DebugType>
@@ -64,11 +67,13 @@
     <Compile Include="MouseButton.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Physics.cs" />
+    <Compile Include="Point2D.cs" />
     <Compile Include="PointerData.cs" />
     <Compile Include="PointerKind.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceKind.cs" />
     <Compile Include="sgsdk.cs" />
+    <Compile Include="SGSDKRectangle.cs" />
     <Compile Include="Shapes.cs" />
     <Compile Include="SoundEffect.cs" />
     <Compile Include="Sprite.cs" />
@@ -77,7 +82,11 @@
     <Compile Include="SwinGameException.cs" />
     <Compile Include="SwinGamePointer.cs" />
     <Compile Include="Tile.cs" />
+    <Compile Include="Triangle.cs" />
     <Compile Include="Vector.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SGSDK.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -203,13 +203,11 @@ namespace SwinGame
         /// VectorIsWithinRect checks if the specified vector ends at the rectangle specified. 
         /// The routine assumes that the vector starts from 0, 0.
         /// </summary>
-        /// <param name="v">Vector to check if inside Rectangle</param>
         /// <param name="rectangle">Rectangle</param>
         /// <returns>True if the Vector ends at the rectangle</returns>
         public bool IsWithinRect(Rectangle rectangle)
         {
             return IsWithinRect(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
-
     }
 }

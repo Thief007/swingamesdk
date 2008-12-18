@@ -1171,6 +1171,12 @@ namespace SwinGame
             DrawSprite(spriteToDraw, 0, 0);
         }
 
+        /// <summary>
+        /// Draw the sprite to the sccreen at an offset from its actual position.
+        /// </summary>
+        /// <param name="spriteToDraw">the sprite to draw</param>
+        /// <param name="xOffset">the x offset for drawing the sprite</param>
+        /// <param name="yOffset">the y offset for drawing the sprite</param>
         public static void DrawSprite(Sprite spriteToDraw, int xOffset, int yOffset)
         {
             spriteToDraw.Draw(xOffset, yOffset);

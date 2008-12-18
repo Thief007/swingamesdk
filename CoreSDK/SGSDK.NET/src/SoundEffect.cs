@@ -18,6 +18,10 @@ namespace SwinGame
             Pointer = new SwinGamePointer(devPtr, PtrKind.Sound);
         }
 
+        /// <summary>
+        /// Load a sound effect from a path.
+        /// </summary>
+        /// <param name="path">the path to the sound effect</param>
         public SoundEffect(string path) : this(SGSDK.LoadSoundEffect(path)) {}
 
         /// <summary>

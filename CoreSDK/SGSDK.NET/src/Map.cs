@@ -41,7 +41,6 @@ namespace SwinGame
         /// <summary>
         /// Draws the specified Map
         /// </summary>
-        /// <param name="map">Map to be drawn to the screen</param>
         public void Draw()
         {
             SGSDK.DrawMap(this);
@@ -91,7 +90,6 @@ namespace SwinGame
         /// for, and eventnumber is the index of the event, since there can be more then 1 of each Event
         /// Type.
         /// </summary>
-        /// <param name="map">Map containing the Event</param>
         /// <param name="evnt">Event Type</param>
         /// <param name="eventnumber">Event Index</param>
         /// <returns>Game X Coordinate</returns>
