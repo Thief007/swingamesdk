@@ -463,9 +463,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="GetPathToResourceWithBaseAndKind", CharSet=CharSet.Ansi)]
-		private static extern void DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, int kind, [MarshalAs(UnmanagedType.LPStr)]string result);
+		private static extern void DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, int kind, [MarshalAs(UnmanagedType.LPStr), Out] StringBuilder result);
 
-		public static void GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, int kind, [MarshalAs(UnmanagedType.LPStr)]string result)
+		public static void GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, int kind, [MarshalAs(UnmanagedType.LPStr), Out] StringBuilder result)
 		{
 			try
 			{
@@ -3037,9 +3037,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="DrawTriangle", CharSet=CharSet.Ansi)]
-		private static extern void DLL_DrawTriangle(uint theColour, IntPtr firstPoint);
+		private static extern void DLL_DrawTriangle(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
 
-		public static void DrawTriangle(uint theColour, IntPtr firstPoint)
+		public static void DrawTriangle(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
 		{
 			try
 			{
@@ -4888,9 +4888,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="LineIntersectsWithLines", CharSet=CharSet.Ansi)]
-		private static extern int DLL_LineIntersectsWithLines(LineSegment target, int len, IntPtr data);
+		private static extern int DLL_LineIntersectsWithLines(LineSegment target, int len, [MarshalAs(UnmanagedType.LPArray)] LineSegment[] data);
 
-		public static int LineIntersectsWithLines(LineSegment target, int len, IntPtr data)
+		public static int LineIntersectsWithLines(LineSegment target, int len, [MarshalAs(UnmanagedType.LPArray)] LineSegment[] data)
 		{
 			int localResult;
 			try
@@ -4936,9 +4936,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="IsPointInTriangle", CharSet=CharSet.Ansi)]
-		private static extern int DLL_IsPointInTriangle(Point2D point, IntPtr inTriangle);
+		private static extern int DLL_IsPointInTriangle(Point2D point, [MarshalAs(UnmanagedType.LPArray)] Point2D[] inTriangle);
 
-		public static int IsPointInTriangle(Point2D point, IntPtr inTriangle)
+		public static int IsPointInTriangle(Point2D point, [MarshalAs(UnmanagedType.LPArray)] Point2D[] inTriangle)
 		{
 			int localResult;
 			try
@@ -5044,9 +5044,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="DrawTriangleOnScreen", CharSet=CharSet.Ansi)]
-		private static extern void DLL_DrawTriangleOnScreen(uint theColour, IntPtr firstPoint);
+		private static extern void DLL_DrawTriangleOnScreen(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
 
-		public static void DrawTriangleOnScreen(uint theColour, IntPtr firstPoint)
+		public static void DrawTriangleOnScreen(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
 		{
 			try
 			{
@@ -5065,9 +5065,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="DrawTriangleWithDestination", CharSet=CharSet.Ansi)]
-		private static extern void DLL_DrawTriangleWithDestination(IntPtr dest, uint theColour, IntPtr firstPoint);
+		private static extern void DLL_DrawTriangleWithDestination(IntPtr dest, uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
 
-		public static void DrawTriangleWithDestination(IntPtr dest, uint theColour, IntPtr firstPoint)
+		public static void DrawTriangleWithDestination(IntPtr dest, uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
 		{
 			try
 			{
@@ -5086,9 +5086,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="FillTriangle", CharSet=CharSet.Ansi)]
-		private static extern void DLL_FillTriangle(uint theColour, IntPtr firstPoint);
+		private static extern void DLL_FillTriangle(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
 
-		public static void FillTriangle(uint theColour, IntPtr firstPoint)
+		public static void FillTriangle(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
 		{
 			try
 			{
@@ -5107,9 +5107,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="FillTriangleOnScreen", CharSet=CharSet.Ansi)]
-		private static extern void DLL_FillTriangleOnScreen(uint theColour, IntPtr firstPoint);
+		private static extern void DLL_FillTriangleOnScreen(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
 
-		public static void FillTriangleOnScreen(uint theColour, IntPtr firstPoint)
+		public static void FillTriangleOnScreen(uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
 		{
 			try
 			{
@@ -5128,9 +5128,9 @@ namespace SwinGame
 
 
 		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="FillTriangleWithDestination", CharSet=CharSet.Ansi)]
-		private static extern void DLL_FillTriangleWithDestination(IntPtr dest, uint theColour, IntPtr firstPoint);
+		private static extern void DLL_FillTriangleWithDestination(IntPtr dest, uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
 
-		public static void FillTriangleWithDestination(IntPtr dest, uint theColour, IntPtr firstPoint)
+		public static void FillTriangleWithDestination(IntPtr dest, uint theColour, [MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
 		{
 			try
 			{
@@ -5365,8 +5365,5 @@ namespace SwinGame
 			return localResult;
 
 		}
-
-
-
     }
 }

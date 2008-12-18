@@ -1353,31 +1353,21 @@ namespace SwinGame
             sprite.ReplayAnimation();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
-        private static extern void DLL_UpdateSprite(IntPtr sprite);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UpdateSprite")]
+        //private static extern void DLL_UpdateSprite(IntPtr sprite);
+
         /// <summary>
         /// Updates the Sprites Animation and Movement
         /// </summary>
         /// <param name="sprite">The Sprite</param>
         public static void UpdateSprite(Sprite sprite)
         {
-            try
-            {
-                DLL_UpdateSprite(sprite.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            sprite.Update();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartOnScreen")]
-        private static extern void DLL_DrawBitmapPartOnScreen(IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapPartOnScreen")]
+        //private static extern void DLL_DrawBitmapPartOnScreen(IntPtr bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y);
+
         /// <summary>
         /// Draws Part of a Bitmap On Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1392,19 +1382,7 @@ namespace SwinGame
         /// <param name="y">Screen Y Position</param>
         public static void DrawBitmapPartOnScreen(Bitmap bitmapToDraw, int srcX, int srcY, int srcW, int srcH, int x, int y)
         {
-            try
-            {
-                DLL_DrawBitmapPartOnScreen(bitmapToDraw.pointer, srcX, srcY, srcW, srcH, x, y);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            bitmapToDraw.DrawPartOnScreen(srcX, srcY, srcW, srcH, x, y);
         }
 
         /// <summary>
@@ -1418,7 +1396,7 @@ namespace SwinGame
         /// <param name="y">Screen Y Position</param>
         public static void DrawBitmapPartOnScreen(Bitmap bitmapToDraw, Rectangle source, int x, int y)
         {
-            DrawBitmapPartOnScreen(bitmapToDraw, source.X, source.Y, source.Width, source.Height, x, y);
+            bitmapToDraw.DrawPartOnScreen(source, x, y);
         }
 
         /// <summary>
@@ -1431,12 +1409,13 @@ namespace SwinGame
         /// <param name="position">Screen X,Y Position</param>
         public static void DrawBitmapPartOnScreen(Bitmap bitmapToDraw, Rectangle source, Point2D position)
         {
-            DrawBitmapPartOnScreen(bitmapToDraw, source.X, source.Y, source.Width, source.Height, (int)position.X, (int)position.Y);
+            bitmapToDraw.DrawPartOnScreen(source, position);
         }
 
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
-        private static extern void DLL_DrawBitmapOnScreen(IntPtr bitmapToDraw, int x, int y);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawBitmapOnScreen")]
+        //private static extern void DLL_DrawBitmapOnScreen(IntPtr bitmapToDraw, int x, int y);
+
         /// <summary>
         /// Draws a Bitmap, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1447,20 +1426,9 @@ namespace SwinGame
         /// <param name="y">Y Position</param>
         public static void DrawBitmapOnScreen(Bitmap bitmapToDraw, int x, int y)
         {
-            try
-            {
-                DLL_DrawBitmapOnScreen(bitmapToDraw.pointer, x, y);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            bitmapToDraw.DrawOnScreen(x, y);
         }
+
         /// <summary>
         /// Draws a Bitmap, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1470,11 +1438,12 @@ namespace SwinGame
         /// <param name="position">The Position to draw the Bitmap</param>
         public static void DrawBitmapOnScreen(Bitmap bitmapToDraw, Point2D position)
         {
-            DrawBitmapOnScreen(bitmapToDraw, (int)position.X, (int)position.Y);
+            bitmapToDraw.DrawOnScreen(position);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
-        private static extern void DLL_DrawPixelOnScreen(int theColor, int x, int y);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawPixelOnScreen")]
+        //private static extern void DLL_DrawPixelOnScreen(int theColor, int x, int y);
+
         /// <summary>
         /// Draw a Pixel on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1485,21 +1454,10 @@ namespace SwinGame
         /// <param name="y">Y Position</param>
         public static void DrawPixelOnScreen(Color theColor, int x, int y)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawPixelOnScreen(color, x, y);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawPixelOnScreen((uint)color, x, y);
         }
+
         /// <summary>
         /// Draw a Pixel on the Screen, it will always draw to the Point
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1512,8 +1470,9 @@ namespace SwinGame
             DrawPixelOnScreen(theColor, (int)position.X, (int)position.Y);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
-        private static extern void DLL_DrawRectangleOnScreen(int theColor, int filled, int x, int y, int width, int height);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawRectangleOnScreen")]
+        //private static extern void DLL_DrawRectangleOnScreen(int theColor, int filled, int x, int y, int width, int height);
+
         /// <summary>
         /// Draw a Rectangle on Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1526,20 +1485,8 @@ namespace SwinGame
         /// <param name="height">Height</param>
         public static void DrawRectangleOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawRectangleOnScreen(color, 0, x, y, width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawRectangleOnScreen((uint)color, 0, x, y, width, height);
         }
 
         /// <summary>
@@ -1602,21 +1549,10 @@ namespace SwinGame
         /// <param name="height">Height</param>
         public static void FillRectangleOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawRectangleOnScreen(color, -1, x, y, width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawRectangleOnScreen((uint)color, -1, x, y, width, height);
         }
+
         /// <summary>
         /// Draws a Filled Rectangle on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1629,8 +1565,9 @@ namespace SwinGame
             FillRectangleOnScreen(theColor, source.X, source.Y, source.Width, source.Height);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
-        private static extern void DLL_DrawLineOnScreen(int theColor, int x, int y, int x2, int y2);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawLineOnScreen")]
+        //private static extern void DLL_DrawLineOnScreen(int theColor, int x, int y, int x2, int y2);
+
         /// <summary>
         /// Draws a Line on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1643,21 +1580,10 @@ namespace SwinGame
         /// <param name="yPosEnd">Y End Coordinate</param>
         public static void DrawLineOnScreen(Color theColor, int xPosStart, int yPosStart, int xPosEnd, int yPosEnd)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawLineOnScreen(color, xPosStart, yPosStart, xPosEnd, yPosEnd);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawLineOnScreen((uint)color, xPosStart, yPosStart, xPosEnd, yPosEnd);
         }
+
         /// <summary>
         /// Draws a Line on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1670,8 +1596,9 @@ namespace SwinGame
             DrawLineOnScreen(theColor, (int)line.StartPoint.X, (int)line.StartPoint.Y, (int)line.EndPoint.X, (int)line.EndPoint.Y);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
-        private static extern void DLL_DrawHorizontalLineOnScreen(int theColor, int y, int x1, int x2);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawHorizontalLineOnScreen")]
+        //private static extern void DLL_DrawHorizontalLineOnScreen(int theColor, int y, int x1, int x2);
+
         /// <summary>
         /// Draw Horizontal Line on Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1683,24 +1610,13 @@ namespace SwinGame
         /// <param name="x2">X Ending Coordinate</param>
         public static void DrawHorizontalLineOnScreen(Color theColor, int y, int x1, int x2)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawHorizontalLineOnScreen(color, y, x1, x2);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawHorizontalLineOnScreen((uint)color, y, x1, x2);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
-        private static extern void DLL_DrawVerticalLineOnScreen(int theColor, int x, int y1, int y2);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawVerticalLineOnScreen")]
+        //private static extern void DLL_DrawVerticalLineOnScreen(int theColor, int x, int y1, int y2);
+
         /// <summary>
         /// Draws a Vertical Line on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1712,24 +1628,13 @@ namespace SwinGame
         /// <param name="y2">Y Ending Coordinate</param>
         public static void DrawVerticalLineOnScreen(Color theColor, int x, int y1, int y2)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawVerticalLineOnScreen(color, x, y1, y2);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawVerticalLineOnScreen((uint)color, x, y1, y2);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
-        private static extern void DLL_DrawCircleOnScreen(int theColor, int filled, int xc, int yc, int radius);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawCircleOnScreen")]
+        //private static extern void DLL_DrawCircleOnScreen(int theColor, int filled, int xc, int yc, int radius);
+
         /// <summary>
         /// Draws a Circle on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1741,20 +1646,8 @@ namespace SwinGame
         /// <param name="radius">Radius</param>
         public static void DrawCircleOnScreen(Color theColor, int xc, int yc, int radius)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawCircleOnScreen(color, 0, xc, yc, radius);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawCircleOnScreen((uint)color, 0, xc, yc, radius);
         }
 
         /// <summary>
@@ -1826,21 +1719,10 @@ namespace SwinGame
         /// <param name="radius">Radius</param>
         public static void FillCircleOnScreen(Color theColor, int xc, int yc, int radius)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawCircleOnScreen(color, -1, xc, yc, radius);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawCircleOnScreen((uint)color, -1, xc, yc, radius);
         }
+
         /// <summary>
         /// Draws a Filled Circle On Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1854,8 +1736,9 @@ namespace SwinGame
             FillCircleOnScreen(theColor, (int)position.X, (int)position.Y, radius);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
-        private static extern void DLL_DrawEllipseOnScreen(int theColor, int filled, int x, int y, int width, int height);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawEllipseOnScreen")]
+        //private static extern void DLL_DrawEllipseOnScreen(int theColor, int filled, int x, int y, int width, int height);
+
         /// <summary>
         /// Draws an Ellipse on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1868,21 +1751,10 @@ namespace SwinGame
         /// <param name="height">Height</param>
         public static void DrawEllipseOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawEllipseOnScreen(color, 0, x, y, width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawEllipseOnScreen((uint)color, 0, x, y, width, height);
         }
+
         /// <summary>
         /// Draws an Ellipse on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1895,6 +1767,7 @@ namespace SwinGame
         {
             DrawEllipseOnScreen(theColor, filled, (int)source.X, (int)source.Y, (int)source.Width, (int)source.Height);
         }
+
         /// <summary>
         /// Draws an Ellipse on the Screen, it will always draw to x, y 
         /// regardless of the position of the camera. This is usefull for drawing 
@@ -1942,20 +1815,8 @@ namespace SwinGame
         /// <param name="height">Height</param>
         public static void FillEllipseOnScreen(Color theColor, int x, int y, int width, int height)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawEllipseOnScreen(color, -1, x, y, width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawEllipseOnScreen((uint)color, -1, x, y, width, height);
         }
 
         /// <summary>
@@ -1980,19 +1841,7 @@ namespace SwinGame
         /// <param name="height">Height of clipping rectangle</param>
         public static void SetClip(int x, int y, int width, int height)
         {
-            try
-            {
-                DLL_SetClip(IntPtr.Zero, x, y, width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.SetClip(IntPtr.Zero, x, y, width, height);
         }
 
         /// <summary>
@@ -2027,19 +1876,7 @@ namespace SwinGame
         /// <param name="height">Height of clipping rectangle</param>
         public static void SetClip(Bitmap bmp, int x, int y, int width, int height)
         {
-            try
-            {
-                DLL_SetClip(bmp.pointer, x, y, width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.SetClip(bmp.pointer, x, y, width, height);
         }
 
         /// <summary>
@@ -2047,19 +1884,7 @@ namespace SwinGame
         /// </summary>
         public static void ResetClip()
         {
-            try
-            {
-                DLL_ResetClip(IntPtr.Zero);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.ResetClip(IntPtr.Zero);
         }
 
         /// <summary>
@@ -2068,44 +1893,145 @@ namespace SwinGame
         /// <param name="bmp">The bitmap to clip drawing operations on</param>
         public static void ResetClip(Bitmap bmp)
         {
-            try
-            {
-                DLL_ResetClip(bmp.pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.ResetClip(bmp.pointer);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTriangle")]
-        private static extern void DLL_DrawTriangle(int theColor, [MarshalAs(UnmanagedType.LPArray)]Point2D[] points);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTriangle")]
+        //private static extern void DLL_DrawTriangle(int theColor, [MarshalAs(UnmanagedType.LPArray)]Point2D[] points);
+
         /// <summary>
         /// Draws the specified Triangle to the screen
         /// </summary>
         /// <param name="theColor">The color of the triangle</param>
-        /// <param name="triangle">The triangle to be drawn</param>
+        /// <param name="triangle">The triangle to be drawn, with game co-ordinates</param>
         public static void DrawTriangle(Color theColor, Triangle triangle)
         {
-            try
-            {
-                int color = theColor.ToArgb();
-                DLL_DrawTriangle(color, triangle.ToArray());
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
+            int color = theColor.ToArgb();
+            SGSDK.DrawTriangle((uint)color, triangle.ToArray());
+        }
 
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+        /// <summary>
+        /// Draws the specified Triangle to the screen
+        /// </summary>
+        /// <param name="theColor">The color of the triangle</param>
+        /// <param name="triangle">The triangle to be drawn, with screen co-ordinates</param>
+        public static void DrawTriangleOnScreen(Color theColor, Triangle triangle)
+        {
+            int color = theColor.ToArgb();
+            SGSDK.DrawTriangleOnScreen((uint)color, triangle.ToArray());
+        }
+
+        /// <summary>
+        /// Draws a triangle onto a supplied bitmap.
+        /// </summary>
+        /// <param name="dest">the bitmap to draw onto</param>
+        /// <param name="theColor">the color of the triangle</param>
+        /// <param name="triangle">the triangle to draw</param>
+        public static void DrawTriangleOn(Bitmap dest, Color theColor, Triangle triangle)
+        {
+            int color = theColor.ToArgb();
+            SGSDK.DrawTriangleWithDestination(dest, (uint)color, triangle.ToArray());
+        }
+
+        /// <summary>
+        /// Draws a filled triangle, with given game coordinates
+        /// </summary>
+        /// <param name="theColor">The color of the triangle</param>
+        /// <param name="triangle">The triangle to be drawn, with game co-ordinates</param>
+        public static void FillTriangle(Color theColor, Triangle triangle)
+        {
+            int color = theColor.ToArgb();
+            SGSDK.FillTriangle((uint)color, triangle.ToArray());
+        }
+
+        /// <summary>
+        /// Draws a filled Triangle to the screen
+        /// </summary>
+        /// <param name="theColor">The color of the triangle</param>
+        /// <param name="triangle">The triangle to be drawn, with screen co-ordinates</param>
+        public static void FillTriangleOnScreen(Color theColor, Triangle triangle)
+        {
+            int color = theColor.ToArgb();
+            SGSDK.FillTriangleOnScreen((uint)color, triangle.ToArray());
+        }
+
+        /// <summary>
+        /// Draws a filled triangle onto a supplied bitmap.
+        /// </summary>
+        /// <param name="dest">the bitmap to draw onto</param>
+        /// <param name="theColor">the color of the triangle</param>
+        /// <param name="triangle">the triangle to draw</param>
+        public static void FillTriangleOn(Bitmap dest, Color theColor, Triangle triangle)
+        {
+            int color = theColor.ToArgb();
+            SGSDK.FillTriangleWithDestination(dest, (uint)color, triangle.ToArray());
+        }
+
+        /// <summary>
+        /// Updates the sprite, the percentage indicates the
+        /// percentage of a full update.
+        /// </summary>
+        /// <param name="spriteToUpdate">the sprite to update</param>
+        /// <param name="pct">the percentage to update</param>
+        public static void UpdateSprite(Sprite spriteToUpdate, float pct)
+        {
+            spriteToUpdate.Update(pct);
+        }
+
+        /// <summary>
+        /// Updates the sprite's animation, the percentage indicates the
+        /// percentage of a full update.
+        /// </summary>
+        /// <param name="spriteToUpdate">the sprite to update</param>
+        /// <param name="pct">the percentage to update</param>
+        public static void UpdateSpriteAnimation(Sprite spriteToUpdate, float pct)
+        {
+            spriteToUpdate.UpdateAnimation(pct);
+        }
+
+        /// <summary>
+        /// Turn off alpha blending so that this bitmap can appear when
+        /// drawn onto an already transparent bitmap.
+        /// </summary>
+        /// <param name="bmp">the bitmap to make opaque</param>
+        public static void MakeBitmapOpaque(Bitmap bmp)
+        {
+            bmp.MakeOpaque();
+        }
+
+        /// <summary>
+        /// Turns alpha blending back on for a bitmap. This reverses the
+        /// MakeOpaque process.
+        /// </summary>
+        /// <param name="bmp">The bitmap to make transparent</param>
+        public void MakeBitmapTransparent(Bitmap bmp)
+        {
+            bmp.MakeTransparent();
+        }
+
+        /// <summary>
+        /// Rotate and zoom the passed in bitmap, returning a new
+        /// bitmap at the given rotation.
+        /// </summary>
+        /// <param name="deg">the amount to rotate (in degrees)</param>
+        /// <param name="scale">the amount to scale the bitmap</param>
+        /// <param name="source">the source bitmap to rotate and scale</param>
+        /// <returns>The new bitmap, rotated and zoomed</returns>
+        public Bitmap RotateZoom(Bitmap source, int deg, float scale)
+        {
+            return source.RotateZoom(deg, scale);
+        }
+
+        /// <summary>
+        /// Sets up a bitmap so that collisions will work at a pixel level.
+        /// This does not need to be called on loaded bitmaps, only on
+        /// dynamically created bitmaps, and bitmaps created using
+        /// rotate and zoom.
+        /// </summary>
+        /// <param name="bmp">The bitmap to setup collisions for</param>
+        public void SetupBitmapForCollisions(Bitmap bmp)
+        {
+            bmp.SetupForCollisions();
         }
     }
 }

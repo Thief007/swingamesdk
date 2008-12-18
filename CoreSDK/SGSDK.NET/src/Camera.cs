@@ -9,6 +9,7 @@
 //
 // Change History:
 //
+// Version 2:
 // - 2008-12-17: Andrew: Moved to SGSDK
 //
 // Version 1.1:

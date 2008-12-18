@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace SwinGame
 {
@@ -639,5 +640,208 @@ namespace SwinGame
         {
             SGSDK.ReplayAnimation(this);
         }
+
+        /// <summary>
+        /// Updates the Sprites Animation and Movement
+        /// </summary>
+        public void Update()
+        {
+            SGSDK.UpdateSprite(this);
+        }
+
+        ///<summary>
+        /// Updates a sprite a given percentage
+        ///</summary>
+        ///<param name="pct">the percentage to update the sprite, 1 = 100%</param>
+        public void Update(float pct)
+        {
+            SGSDK.UpdateSpritePct(this, pct);
+        }
+
+        ///<summary>
+        /// Updates a sprite's animation by a given percentage
+        ///</summary>
+        ///<param name="pct">the percentage to update the sprite, 1 = 100%</param>
+        public void UpdateAnimation(float pct)
+        {
+            SGSDK.UpdateSpriteAnimationPct(this, pct);
+        }
+
+        /// <summary>
+        /// Move the Camera to center on the Sprite. This must be called each time
+        /// you move the sprite if you want the camera to follow that sprite. The offsets
+        /// allow you to move the sprite from direct center, for example if yOffset is set
+        /// to +10 the sprite will appear 10 pixels below center.
+        /// </summary>
+        /// <param name="xOffset">The x offset from center</param>
+        /// <param name="yOffset">The y offset from center</param>
+        public void CenterCamera(int xOffset, int yOffset)
+        {
+            SGSDK.FollowSprite(this, xOffset, yOffset);
+        }
+
+        /// <summary>
+        /// Determines if a sprite has collided with a given x position.
+        /// </summary>
+        /// <param name="x">The x location to check collision with</param>
+        /// <param name="range">The kind of check to perform less, larger or equal.</param>
+        /// <returns>True if the sprite is within the range requested</returns>
+        public bool HasCollidedX(int x, CollisionDetectionRange range)
+        {
+            return SGSDK.HasSpriteCollidedX(this, x, (int)range) == -1;
+        }
+
+        /// <summary>
+        /// Determines if a sprite has collided with a given y position.
+        /// </summary>
+        /// <param name="y">The y location to check collision with</param>
+        /// <param name="range">The kind of check to perform less, larger or equal.</param>
+        /// <returns>True if the sprite is within the range requested</returns>
+        public bool HasCollidedY(int y, CollisionDetectionRange range)
+        {
+            return SGSDK.HasSpriteCollidedY(this, y, (int)range) == -1;
+        }
+
+        /// <summary>
+        /// Determined if a sprite has collided with a given rectangle. The rectangles
+        ///	coordinates are expressed in "world" coordinates.
+        /// </summary>
+        /// <param name="x">The x location of the rectangle</param>
+        /// <param name="y">The y location of the rectangle</param>
+        /// <param name="width">The width of the rectangle</param>
+        /// <param name="height">The height of the rectangle</param>
+        /// <returns>True if the sprite collides with the rectangle</returns>
+        public bool HasCollidedWithRect(Single x, Single y, int width, int height)
+        {
+            return SGSDK.HasSpriteCollidedWithRect(this, x, y, width, height) == -1;
+        }
+
+        /// <summary>
+        /// Determined if a sprite has collided with a given rectangle. The rectangles
+        ///	coordinates must be expressed in "game" coordinates.
+        /// </summary>
+        /// <param name="rect">The rectangle to check collisions with</param>
+        /// <returns>True if the sprite collides with the rectangle</returns>
+        public bool HasCollidedWithRect(Rectangle rect)
+        {
+            return HasCollidedWithRect(rect.X, rect.Y, rect.Width, rect.Height);
+        }
+
+        /// <summary>
+        /// Determines if two sprites have collided. Sprites have collided when
+        /// their images overlap. You may want to consider separating these if you
+        /// are performing any "bounce" like activities. Separation is part of the
+        /// collision code in many cases.
+        /// </summary>
+        /// <param name="other">The other sprite to check.</param>
+        /// <returns>True if the sprites have collided.</returns>
+        public bool HasCollidedWith(Sprite other)
+        {
+            return SGSDK.HaveSpritesCollided(this, other) == -1;
+        }
+
+        /// <summary>
+        /// Determines if a sprite has collided with a bitmap using pixel level
+        ///	collision detection with the bitmap.
+        /// </summary>
+        /// <param name="theBitmap">The bitmap image to check for collision</param>
+        /// <param name="x">The x location of the bitmap</param>
+        /// <param name="y">The y location of the bitmap</param>
+        /// <param name="bounded">Indicates if theBitmap should use bounded collision</param>
+        /// <returns>True if the bitmap has collided with the sprite.</returns>
+        public bool HasCollidedWithBitmap(Bitmap theBitmap, float x, float y, bool bounded)
+        {
+            return SGSDK.HasSpriteCollidedWithBitmap(this, theBitmap, x, y, (bounded ? -1 : 0)) == -1;
+        }
+
+        /// <summary>
+        /// Determines if a sprte has collided with a bitmap. This version is used to check
+        /// for collisions with a cell from the bitmap. The src rectangle defines the part of
+        /// the bitmap you want to check collisions with. This is usefull for checking
+        /// collisions between sprites and bitmaps you use to contain multiple cells
+        /// for animation etc.
+        /// </summary>
+        /// <param name="bmp">the bitmap containing the cell you want to check</param>
+        /// <param name="pt">the pt, in game coordinates, of the bitmap cell</param>
+        /// <param name="src">the rectangle containing the portion of the bitmap to check</param>
+        /// <param name="bounded">set to true to perform a bounded box check, false for per pixel checks</param>
+        /// <returns>true if the sprite has collided with the bitmap cell</returns>
+        public bool HasCollidedWithBitmap(Bitmap bmp, Point2D pt, Rectangle src, bool bounded)
+        {
+            return SGSDK.HasSpriteCollidedWithBitmapPart(this, bmp, pt, Shapes.ToSGSDKRect(src), (bounded ? -1 : 0)) == -1;
+        }
+
+        /// <summary>
+        /// Determines if a sprte has collided with a bitmap. This version is used to check
+        /// for collisions with a cell from the bitmap. The src rectangle defines the part of
+        /// the bitmap you want to check collisions with. This is usefull for checking
+        /// collisions between sprites and bitmaps you use to contain multiple cells
+        /// for animation etc.
+        /// </summary>
+        /// <param name="bmp">the bitmap containing the cell you want to check</param>
+        /// <param name="pt">the pt, in game coordinates, of the bitmap cell</param>
+        /// <param name="bounded">set to true to perform a bounded box check, false for per pixel checks</param>
+        /// <returns>true if the sprite has collided with the bitmap cell</returns>
+        public bool HasCollidedWithBitmap(Bitmap bmp, Point2D pt, bool bounded)
+        {
+            return HasCollidedWithBitmap(bmp, pt, Shapes.CreateRectangle(bmp), bounded);
+        }
+
+        /// <summary>
+        /// Creates and returns the vector from centre of the sprite to the point.
+        /// </summary>
+        /// <param name="pnt">Point</param>
+        /// <returns>Vector from Sprite to Point</returns>
+        public Vector VectorFromCenterToPoint(Point2D pnt)
+        {
+            return Physics.VectorFromPoints(CenterPoint, pnt);
+        }
+
+        /// <summary>
+        /// Returns the center point of the sprite. This does not take into
+        /// consideration the shape of the bitmap being drawn, just returns
+        /// the center point of the sprites bounding rectangle.
+        /// </summary>
+        /// <param name="sprt">The sprite to get the center point of.</param>
+        /// <returns></returns>
+        public Point2D CenterPoint
+        {
+            get
+            {
+                return SGSDK.CenterPoint(this);
+            }
+        }
+
+        /// <summary>
+        /// Checks if the Sprite is on Screen at the given Coordinates
+        /// </summary>
+        /// <param name="x">X Coordinate</param>
+        /// <param name="y">Y Coordinate</param>
+        /// <returns>True if the sprite is on screen at the coordinates</returns>
+        public bool IsOnScreenAt(int x, int y)
+        {
+            return SGSDK.IsSpriteOnScreenAt(this, x, y) == -1;
+        }
+
+        /// <summary>
+        /// Checks if the Sprite is on Screen at the given Coordinates
+        /// </summary>
+        /// <param name="point">Coordinates</param>
+        /// <returns>True if the Sprite is on Screen at the Coordinates</returns>
+        public bool IsOnScreenAt(Point2D point)
+        {
+            return IsOnScreenAt((int)point.X, (int)point.Y);
+        }
+
+        /// <summary>
+        /// Calculates the Vector to get from the first Sprite to the second
+        /// </summary>
+        /// <param name="dest">Sprite to end the Vector</param>
+        /// <returns>Vector from Sprite 1 to Sprite 2</returns>
+        public Vector VectorTo(Sprite dest)
+        {
+            return Physics.VectorFromPoints(CenterPoint, dest.CenterPoint);
+        }
+
     }
 }
