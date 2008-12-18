@@ -1916,6 +1916,12 @@ namespace SwinGame
             SGSDK.DrawTriangle((uint)color, triangle.ToArray());
         }
 
+        public static void DrawTriangle(Color theColor, bool filled, Triangle triangle)
+        {
+            if (filled) FillTriangle(theColor, triangle);
+            else DrawTriangle(theColor, triangle);
+        }
+
         /// <summary>
         /// Draws the specified Triangle to the screen
         /// </summary>
@@ -1925,6 +1931,12 @@ namespace SwinGame
         {
             int color = theColor.ToArgb();
             SGSDK.DrawTriangleOnScreen((uint)color, triangle.ToArray());
+        }
+
+        public static void DrawTriangleOnScreen(Color theColor, bool filled, Triangle triangle)
+        {
+            if (filled) FillTriangleOnScreen(theColor, triangle);
+            else DrawTriangle(theColor, triangle);
         }
 
         /// <summary>
@@ -1938,6 +1950,13 @@ namespace SwinGame
             int color = theColor.ToArgb();
             SGSDK.DrawTriangleWithDestination(dest, (uint)color, triangle.ToArray());
         }
+
+        public static void DrawTriangleOn(Bitmap dest, Color theColor, bool filled, Triangle triangle)
+        {
+            if (filled) FillTriangleOn(dest, theColor, triangle);
+            else DrawTriangleOn(dest, theColor, triangle);
+        }
+
 
         /// <summary>
         /// Draws a filled triangle, with given game coordinates

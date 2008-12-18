@@ -856,5 +856,29 @@ namespace SwinGame
             SGSDK.VectorCollision(this, other);
         }
 
+        public float Rotation
+        {
+            get
+            {
+                return SGSDK.GetSpriteRotation(this);
+            }
+            set
+            {
+                SGSDK.SetSpriteRotation(this, value);
+            }
+        }
+
+        public float Zoom
+        {
+            get
+            {
+                return SGSDK.GetSpriteZoom(this);
+            }
+            set
+            {
+                SGSDK.SetSpriteZoom(this, value);
+            }            
+        }
+
     }
 }

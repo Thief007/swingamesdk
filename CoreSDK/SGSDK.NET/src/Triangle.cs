@@ -79,6 +79,17 @@ namespace SwinGame
             return SGSDK.IsPointInTriangle(point, this.ToArray()) == -1;
         }
 
+        public Point2D Barycenter()
+        {
+            return SGSDK.TriangleBarycenter(this.ToArray());
+        }
+
+        public void ApplyMatrix(Matrix2D m)
+        {
+            Point2D[] data = this.ToArray();
+            SGSDK.ApplyMatrixToTriangle(m, data, out PointA, out PointB, out PointC);
+        }
+
         internal Point2D[] ToArray()
         {
             return new Point2D[] { PointA, PointB, PointC };

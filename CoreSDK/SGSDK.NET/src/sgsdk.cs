@@ -5365,5 +5365,143 @@ namespace SwinGame
 			return localResult;
 
 		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="TriangleBarycenter", CharSet=CharSet.Ansi)]
+		private static extern Point2D DLL_TriangleBarycenter([MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint);
+
+		public static Point2D TriangleBarycenter([MarshalAs(UnmanagedType.LPArray)] Point2D[] firstPoint)
+		{
+			Point2D localResult;
+			try
+			{
+				localResult = DLL_TriangleBarycenter( firstPoint);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+			return localResult;
+
+		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="ApplyMatrixToTriangle", CharSet=CharSet.Ansi)]
+		private static extern void DLL_ApplyMatrixToTriangle(IntPtr m, [MarshalAs(UnmanagedType.LPArray)] Point2D[] pnt, [Out] out Point2D pA, [Out] out Point2D pB, [Out] out Point2D pC);
+
+		public static void ApplyMatrixToTriangle(IntPtr m, [MarshalAs(UnmanagedType.LPArray)] Point2D[] pnt, [Out] out Point2D pA, [Out] out Point2D pB, [Out] out Point2D pC)
+		{
+			try
+			{
+				DLL_ApplyMatrixToTriangle( m,  pnt, out pA, out pB, out pC);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="SetSpriteRotation", CharSet=CharSet.Ansi)]
+		private static extern void DLL_SetSpriteRotation(IntPtr s, float rot);
+
+		public static void SetSpriteRotation(IntPtr s, float rot)
+		{
+			try
+			{
+				DLL_SetSpriteRotation( s,  rot);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="GetSpriteRotation", CharSet=CharSet.Ansi)]
+		private static extern float DLL_GetSpriteRotation(IntPtr s);
+
+		public static float GetSpriteRotation(IntPtr s)
+		{
+			float localResult;
+			try
+			{
+				localResult = DLL_GetSpriteRotation( s);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+			return localResult;
+
+		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="SetSpriteZoom", CharSet=CharSet.Ansi)]
+		private static extern void DLL_SetSpriteZoom(IntPtr s, float zoom);
+
+		public static void SetSpriteZoom(IntPtr s, float zoom)
+		{
+			try
+			{
+				DLL_SetSpriteZoom( s,  zoom);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="GetSpriteZoom", CharSet=CharSet.Ansi)]
+		private static extern float DLL_GetSpriteZoom(IntPtr s);
+
+		public static float GetSpriteZoom(IntPtr s)
+		{
+			float localResult;
+			try
+			{
+				localResult = DLL_GetSpriteZoom( s);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+            
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+			return localResult;
+
+		}
+
+
+
     }
 }
