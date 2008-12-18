@@ -2898,17 +2898,17 @@ begin
   end;  
 end;
 
-//##_ao!
-procedure ApplyMatrixToTriangle(m: Matrix2DPtr; pnt: Point2DPtr; var result: Point2DPtr); cdecl; export;
+//##_aooo|
+procedure ApplyMatrixToTriangle(m: Matrix2DPtr; pnt: Point2DPtr; out pA, pB, pC: Point2D); cdecl; export;
 var
   tri: Triangle;
 begin
   Try
     PopulateTriangle(pnt, tri);
     SGSDK_Shapes.ApplyMatrix(m.data, tri);
-    result^ := tri[0];
-    (result + 1)^ := tri[1];
-    (result + 2)^ := tri[2];
+    pA := tri[0];
+    pB := tri[1];
+    pC := tri[2];
   Except on exc: Exception do TrapException(exc, 'TriangleBarycenter');
   end;    
 end;
