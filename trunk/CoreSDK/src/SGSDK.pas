@@ -2949,39 +2949,39 @@ exports
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 	
-	OpenGraphicsWindow,
-	WindowCloseRequested,
-	ProcessEvents,
-	SetIcon,
-	ChangeScreenSize,
-	ToggleFullScreen,
-	RefreshScreenWithFrame,
-	RefreshScreen,
-	TakeScreenShot,
-	ScreenWidth,
-	ScreenHeight,
-	ToSDLColor,
-	GetColourBitmap,	
-	GetColourRGBA,
-	GetFramerate,	
-	GetTicks,	
-	Sleep,	
+	OpenGraphicsWindow name 'OpenGraphicsWindow',
+	WindowCloseRequested name 'WindowCloseRequested',
+	ProcessEvents name 'ProcessEvents',
+	SetIcon name 'SetIcon',
+	ChangeScreenSize name 'ChangeScreenSize',
+	ToggleFullScreen name 'ToggleFullScreen',
+	RefreshScreenWithFrame name 'RefreshScreenWithFrame',
+	RefreshScreen name 'RefreshScreen',
+	TakeScreenShot name 'TakeScreenShot',
+	ScreenWidth name 'ScreenWidth',
+	ScreenHeight name 'ScreenHeight',
+	ToSDLColor name 'ToSDLColor',
+	GetColourBitmap name 'GetColourBitmap',	
+	GetColourRGBA name 'GetColourRGBA',
+	GetFramerate name 'GetFramerate',	
+	GetTicks name 'GetTicks',	
+	Sleep name 'Sleep',	
 	//GetPathToResourceWithKind,
-	GetPathToResourceWithBaseAndKind,
+	GetPathToResourceWithBaseAndKind name 'GetPathToResourceWithBaseAndKind',
 	//GetPathToResource,
 	//GetPathToResourceWithBase,
 	//GetPathToResourceWithBaseAndKind,
-	RegisterEventProcessor,	
+	RegisterEventProcessor name 'RegisterEventProcessor',	
 {	Cos,
 	Sin,
 	Tan,}	
-	CreateTimer, {1.1}
-	FreeTimer, {1.1}
-	StartTimer, {1.1}
-	StopTimer, {1.1}
-	PauseTimer, {1.1}
-	UnpauseTimer, {1.1}
-	GetTimerTicks, {1.1}
+	CreateTimer name 'CreateTimer', {1.1}
+	FreeTimer name 'FreeTimer', {1.1}
+	StartTimer name 'StartTimer', {1.1}
+	StopTimer name 'StopTimer', {1.1}
+	PauseTimer name 'PauseTimer', {1.1}
+	UnpauseTimer name 'UnpauseTimer', {1.1}
+	GetTimerTicks name 'GetTimerTicks', {1.1}
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -2993,20 +2993,20 @@ exports
 
 	//GetMousePositionAsVector,
 	//GetMousePosition,
-	GetMouseXY,
-	GetMouseMovement,
-	IsMouseDown,
-	IsMouseUp,
-	MouseWasClicked,
-	StartReadingText,
-	EndReadingText, {1.1.5}
-	IsReadingText,
-	TextReadAsASCII,
-	IsKeyPressed,
-	WasKeyTyped,
-	ShowMouse,
-	MoveMouse,
-	IsMouseShown,
+	GetMouseXY name 'GetMouseXY',
+	GetMouseMovement name 'GetMouseMovement',
+	IsMouseDown name 'IsMouseDown',
+	IsMouseUp name 'IsMouseUp',
+	MouseWasClicked name 'MouseWasClicked',
+	StartReadingText name 'StartReadingText',
+	EndReadingText name 'EndReadingText', {1.1.5}
+	IsReadingText name 'IsReadingText',
+	TextReadAsASCII name 'TextReadAsASCII',
+	IsKeyPressed name 'IsKeyPressed',
+	WasKeyTyped name 'WasKeyTyped',
+	ShowMouse name 'ShowMouse',
+	MoveMouse name 'MoveMouse',
+	IsMouseShown name 'IsMouseShown',
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -3016,22 +3016,22 @@ exports
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	OpenAudio,
-	CloseAudio,
-	LoadSoundEffect,
-	LoadMusic,
-	FreeMusic,
-	FreeSoundEffect,
-	PlayMusic,
-	PlaySoundEffect,
-	PlaySoundEffectLoop,
-	PlaySoundEffectLoopVolume, // new in 2
-	IsMusicPlaying,
-	IsSoundEffectPlaying,
-	StopSoundEffect,
-	StopMusic,
-	SetMusicVolume, // new in 2
-	MusicVolume, // new in 2
+	OpenAudio name 'OpenAudio',
+	CloseAudio name 'CloseAudio',
+	LoadSoundEffect name 'LoadSoundEffect',
+	LoadMusic name 'LoadMusic',
+	FreeMusic name 'FreeMusic',
+	FreeSoundEffect name 'FreeSoundEffect',
+	PlayMusic name 'PlayMusic',
+	PlaySoundEffect name 'PlaySoundEffect',
+	PlaySoundEffectLoop name 'PlaySoundEffectLoop',
+	PlaySoundEffectLoopVolume name 'PlaySoundEffectLoopVolume', // new in 2
+	IsMusicPlaying name 'IsMusicPlaying',
+	IsSoundEffectPlaying name 'IsSoundEffectPlaying',
+	StopSoundEffect name 'StopSoundEffect',
+	StopMusic name 'StopMusic',
+	SetMusicVolume name 'SetMusicVolume', // new in 2
+	MusicVolume name 'MusicVolume', // new in 2
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -3041,21 +3041,21 @@ exports
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
 	
-	LoadFont,
-	SetFontStyle,
-	FreeFont,
-	DrawText,
-	DrawTextLines,
-	DrawTextOnBitmap,
-	DrawTextLinesOnBitmap,
-	DrawTextOnScreen,
-	DrawTextLinesOnScreen,
-	TextWidth,
-	TextHeight,
-	DrawFramerate,
-	DrawSimpleText, // new in 2
-	DrawSimpleTextOnScreen, // new in 2
-	DrawSimpleTextOn, // new in 2
+	LoadFont name 'LoadFont',
+	SetFontStyle name 'SetFontStyle',
+	FreeFont name 'FreeFont',
+	DrawText name 'DrawText',
+	DrawTextLines name 'DrawTextLines',
+	DrawTextOnBitmap name 'DrawTextOnBitmap',
+	DrawTextLinesOnBitmap name 'DrawTextLinesOnBitmap',
+	DrawTextOnScreen name 'DrawTextOnScreen',
+	DrawTextLinesOnScreen name 'DrawTextLinesOnScreen',
+	TextWidth name 'TextWidth',
+	TextHeight name 'TextHeight',
+	DrawFramerate name 'DrawFramerate',
+	DrawSimpleText name 'DrawSimpleText', // new in 2
+	DrawSimpleTextOnScreen name 'DrawSimpleTextOnScreen', // new in 2
+	DrawSimpleTextOn name 'DrawSimpleTextOn', // new in 2
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -3064,45 +3064,45 @@ exports
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
-	HasSpriteCollidedX,
-	HasSpriteCollidedY,
-	HasSpriteCollidedWithRect,
-	HaveSpritesCollided,
-	HasSpriteCollidedWithBitmap, {1.1}
-	HasSpriteCollidedWithBitmapPart, {1.1}
-	HaveBitmapsCollided,
-	HaveBitmapPartsCollided,
+	HasSpriteCollidedX name 'HasSpriteCollidedX',
+	HasSpriteCollidedY name 'HasSpriteCollidedY',
+	HasSpriteCollidedWithRect name 'HasSpriteCollidedWithRect',
+	HaveSpritesCollided name 'HaveSpritesCollided',
+	HasSpriteCollidedWithBitmap name 'HasSpriteCollidedWithBitmap', {1.1}
+	HasSpriteCollidedWithBitmapPart name 'HasSpriteCollidedWithBitmapPart', {1.1}
+	HaveBitmapsCollided name 'HaveBitmapsCollided',
+	HaveBitmapPartsCollided name 'HaveBitmapPartsCollided',
 {	CreateVector,
 	AddVectors,
 	SubtractVectors,
 	InvertVector,}
-	CircleHasCollidedWithLine,
-	RectangleHasCollidedWithLine,
-	VectorOutOfRectFromPoint,	
-	VectorOutOfRectFromRect,
-	LimitMagnitude,
-	GetUnitVector,
+	CircleHasCollidedWithLine name 'CircleHasCollidedWithLine',
+	RectangleHasCollidedWithLine name 'RectangleHasCollidedWithLine',
+	VectorOutOfRectFromPoint name 'VectorOutOfRectFromPoint',	
+	VectorOutOfRectFromRect name 'VectorOutOfRectFromRect',
+	LimitMagnitude name 'LimitMagnitude',
+	GetUnitVector name 'GetUnitVector',
 	//IsZeroVector,
 	//Magnitude,
 	//DotProduct,
 	//MultiplyVector,
-	CalculateAngle,
+	CalculateAngle name 'CalculateAngle',
 	//CalculateAngleSprite,
-	TranslationMatrix,
-	ScaleMatrix,
-	RotationMatrix,
-	MultiplyMatrix2D,
-	MultiplyMatrix2DAndVector,
-	VectorCollision,
-	GetMatrix2DElement,
-	SetMatrix2DElement,
-	FreeMatrix2D,
+	TranslationMatrix name 'TranslationMatrix',
+	ScaleMatrix name 'ScaleMatrix',
+	RotationMatrix name 'RotationMatrix',
+	MultiplyMatrix2D name 'MultiplyMatrix2D',
+	MultiplyMatrix2DAndVector name 'MultiplyMatrix2DAndVector',
+	VectorCollision name 'VectorCollision',
+	GetMatrix2DElement name 'GetMatrix2DElement',
+	SetMatrix2DElement name 'SetMatrix2DElement',
+	FreeMatrix2D name 'FreeMatrix2D',
 	//GetVectorFromAngle,
-	VectorOutOfCircleFromPoint, {1.1}
-	VectorOutOfCircleFromCircle, {1.1}
-	CircleCollisionWithLine, {1.1}
-	CircularCollision, {1.1}
-	HasBitmapCollidedWithRect,
+	VectorOutOfCircleFromPoint name 'VectorOutOfCircleFromPoint', {1.1}
+	VectorOutOfCircleFromCircle name 'VectorOutOfCircleFromCircle', {1.1}
+	CircleCollisionWithLine name 'CircleCollisionWithLine', {1.1}
+	CircularCollision name 'CircularCollision', {1.1}
+	HasBitmapCollidedWithRect name 'HasBitmapCollidedWithRect',
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -3111,143 +3111,143 @@ exports
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
 	//***************************************************
-	GetPixelFromScreen,
-	GetPixel,
-	GetSpriteBitmap,
-	GetSpriteX,
-	GetSpriteY,
-	GetSpriteCurrentFrame,
-	GetSpriteUsePixelCollision,
-	SetSpriteX,
-	SetSpriteY,
-	SetSpriteCurrentFrame,
-	SetSpriteUsePixelCollision,
-	GetSpriteMass,
-	GetSpriteMovement,
-	SetSpriteMass,
-	SetSpriteMovement,
-	CreateBitmap,
-	OptimiseBitmap,
-	LoadBitmapWithTransparentColor,
-	LoadTransparentBitmap,
-	FreeBitmap,
-	GetBitmapWidth,
-	GetBitmapHeight,
-	ClearSurfaceWithColor,
-	DrawBitmapWithDestination,
-	DrawBitmapPartWithDestination,
-	DrawPixelWithDestination,
-	DrawRectangleWithDestination,
-	DrawLineWithDestination,
-	DrawHorizontalLineWithDestination,
-	DrawVerticalLineWithDestination,
-	DrawCircleWithDestination,
-	DrawEllipseWithDestination,
-	FillRectangleWithDestination,
-	ClearScreen,
-	DrawBitmap,
-	DrawBitmapPart,
-	DrawPixel,
-	DrawRectangle,
-	DrawLine,
-	DrawHorizontalLine,
-	DrawVerticalLine,
-	DrawCircle,
-	DrawEllipse,
-	CreateSprite,
-	CreateSpriteMulti,
-	CreateSpriteMultiEnding,
-	CreateSpriteArray,
-	CreateSpriteArrayEnding,
-	CreateSpriteMultiFPC,
-	CreateSpriteArrayFPC,
-	UpdateSpriteAnimation,
-	UpdateSprite,
-	GetSpriteKind,	
-	GetSpriteFramesPerCell,
-	GetSpriteCols,
-	GetSpriteRow,
-	GetSpriteFrameCount,
-	GetSpriteEndingAction,
-	GetSpritehasEnded,
-	GetSpriteReverse,
-	ReplayAnimation,
-	SetSpriteKind,
-	SetSpriteFramesPerCell,
-	SetSpriteEndingAction,
-	FreeSprite,
-	AddBitmapToSprite,
-	CurrentHeight,
-	CurrentWidth,
-	DrawSprite,
+	GetPixelFromScreen name 'GetPixelFromScreen',
+	GetPixel name 'GetPixel',
+	GetSpriteBitmap name 'GetSpriteBitmap',
+	GetSpriteX name 'GetSpriteX',
+	GetSpriteY name 'GetSpriteY',
+	GetSpriteCurrentFrame name 'GetSpriteCurrentFrame',
+	GetSpriteUsePixelCollision name 'GetSpriteUsePixelCollision',
+	SetSpriteX name 'SetSpriteX',
+	SetSpriteY name 'SetSpriteY',
+	SetSpriteCurrentFrame name 'SetSpriteCurrentFrame',
+	SetSpriteUsePixelCollision name 'SetSpriteUsePixelCollision',
+	GetSpriteMass name 'GetSpriteMass',
+	GetSpriteMovement name 'GetSpriteMovement',
+	SetSpriteMass name 'SetSpriteMass',
+	SetSpriteMovement name 'SetSpriteMovement',
+	CreateBitmap name 'CreateBitmap',
+	OptimiseBitmap name 'OptimiseBitmap',
+	LoadBitmapWithTransparentColor name 'LoadBitmapWithTransparentColor',
+	LoadTransparentBitmap name 'LoadTransparentBitmap',
+	FreeBitmap name 'FreeBitmap',
+	GetBitmapWidth name 'GetBitmapWidth',
+	GetBitmapHeight name 'GetBitmapHeight',
+	ClearSurfaceWithColor name 'ClearSurfaceWithColor',
+	DrawBitmapWithDestination name 'DrawBitmapWithDestination',
+	DrawBitmapPartWithDestination name 'DrawBitmapPartWithDestination',
+	DrawPixelWithDestination name 'DrawPixelWithDestination',
+	DrawRectangleWithDestination name 'DrawRectangleWithDestination',
+	DrawLineWithDestination name 'DrawLineWithDestination',
+	DrawHorizontalLineWithDestination name 'DrawHorizontalLineWithDestination',
+	DrawVerticalLineWithDestination name 'DrawVerticalLineWithDestination',
+	DrawCircleWithDestination name 'DrawCircleWithDestination',
+	DrawEllipseWithDestination name 'DrawEllipseWithDestination',
+	FillRectangleWithDestination name 'FillRectangleWithDestination',
+	ClearScreen name 'ClearScreen',
+	DrawBitmap name 'DrawBitmap',
+	DrawBitmapPart name 'DrawBitmapPart',
+	DrawPixel name 'DrawPixel',
+	DrawRectangle name 'DrawRectangle',
+	DrawLine name 'DrawLine',
+	DrawHorizontalLine name 'DrawHorizontalLine',
+	DrawVerticalLine name 'DrawVerticalLine',
+	DrawCircle name 'DrawCircle',
+	DrawEllipse name 'DrawEllipse',
+	CreateSprite name 'CreateSprite',
+	CreateSpriteMulti name 'CreateSpriteMulti',
+	CreateSpriteMultiEnding name 'CreateSpriteMultiEnding',
+	CreateSpriteArray name 'CreateSpriteArray',
+	CreateSpriteArrayEnding name 'CreateSpriteArrayEnding',
+	CreateSpriteMultiFPC name 'CreateSpriteMultiFPC',
+	CreateSpriteArrayFPC name 'CreateSpriteArrayFPC',
+	UpdateSpriteAnimation name 'UpdateSpriteAnimation',
+	UpdateSprite name 'UpdateSprite',
+	GetSpriteKind name 'GetSpriteKind',	
+	GetSpriteFramesPerCell name 'GetSpriteFramesPerCell',
+	GetSpriteCols name 'GetSpriteCols',
+	GetSpriteRow name 'GetSpriteRow',
+	GetSpriteFrameCount name 'GetSpriteFrameCount',
+	GetSpriteEndingAction name 'GetSpriteEndingAction',
+	GetSpritehasEnded name 'GetSpritehasEnded',
+	GetSpriteReverse name 'GetSpriteReverse',
+	ReplayAnimation name 'ReplayAnimation',
+	SetSpriteKind name 'SetSpriteKind',
+	SetSpriteFramesPerCell name 'SetSpriteFramesPerCell',
+	SetSpriteEndingAction name 'SetSpriteEndingAction',
+	FreeSprite name 'FreeSprite',
+	AddBitmapToSprite name 'AddBitmapToSprite',
+	CurrentHeight name 'CurrentHeight',
+	CurrentWidth name 'CurrentWidth',
+	DrawSprite name 'DrawSprite',
 	//DrawSpriteOffset,
-	MoveSpriteItself, {1.0 - missing added 1.1}
-	MoveSprite,
-	MoveSpriteTo,
-	IsSpriteOffscreen,
-	IsSpriteOnScreenAt,
-	DrawBitmapPartOnScreen,
-	DrawBitmapOnScreen,
-	DrawPixelOnScreen,
-	DrawRectangleOnScreen,
-	DrawLineOnScreen,
-	DrawHorizontalLineOnScreen,
-	DrawVerticalLineOnScreen,
-	DrawCircleOnScreen,
-	DrawEllipseOnScreen,
-	XOffset,
-	YOffset,
-	ScreenX,
-	ScreenY,
-	GameX,
-	GameY,
-	ToGameCoordinates,
+	MoveSpriteItself name 'MoveSpriteItself', {1.0 - missing added 1.1}
+	MoveSprite name 'MoveSprite',
+	MoveSpriteTo name 'MoveSpriteTo',
+	IsSpriteOffscreen name 'IsSpriteOffscreen',
+	IsSpriteOnScreenAt name 'IsSpriteOnScreenAt',
+	DrawBitmapPartOnScreen name 'DrawBitmapPartOnScreen',
+	DrawBitmapOnScreen name 'DrawBitmapOnScreen',
+	DrawPixelOnScreen name 'DrawPixelOnScreen',
+	DrawRectangleOnScreen name 'DrawRectangleOnScreen',
+	DrawLineOnScreen name 'DrawLineOnScreen',
+	DrawHorizontalLineOnScreen name 'DrawHorizontalLineOnScreen',
+	DrawVerticalLineOnScreen name 'DrawVerticalLineOnScreen',
+	DrawCircleOnScreen name 'DrawCircleOnScreen',
+	DrawEllipseOnScreen name 'DrawEllipseOnScreen',
+	XOffset name 'XOffset',
+	YOffset name 'YOffset',
+	ScreenX name 'ScreenX',
+	ScreenY name 'ScreenY',
+	GameX name 'GameX',
+	GameY name 'GameY',
+	ToGameCoordinates name 'ToGameCoordinates',
 	//MoveVisualAreaWithVector,
-	MoveVisualArea,
-	SetScreenOffset,
-	FollowSprite,
-	SetClip,
-	ResetClip,
-	DrawTriangle, {1.1.5}
-	DrawTriangleWithDestination, // new in 2
-	DrawTriangleOnScreen, // new in 2
-	FillTriangle, // new in 2
-	FillTriangleWithDestination, // new in 2
-	FillTriangleOnScreen, // new in 2
-	MakeTransparent, // new in 2
-	MakeOpaque, //new in 2
-	SetSpriteRotation, //2
-	GetSpriteRotation, //2
-	SetSpriteZoom, //2
-	GetSpriteZoom, //2
+	MoveVisualArea name 'MoveVisualArea',
+	SetScreenOffset name 'SetScreenOffset',
+	FollowSprite name 'FollowSprite',
+	SetClip name 'SetClip',
+	ResetClip name 'ResetClip',
+	DrawTriangle name 'DrawTriangle', {1.1.5}
+	DrawTriangleWithDestination name 'DrawTriangleWithDestination', // new in 2
+	DrawTriangleOnScreen name 'DrawTriangleOnScreen', // new in 2
+	FillTriangle name 'FillTriangle', // new in 2
+	FillTriangleWithDestination name 'FillTriangleWithDestination', // new in 2
+	FillTriangleOnScreen name 'FillTriangleOnScreen', // new in 2
+	MakeTransparent name 'MakeTransparent', // new in 2
+	MakeOpaque name 'MakeOpaque', //new in 2
+	SetSpriteRotation name 'SetSpriteRotation', //2
+	GetSpriteRotation name 'GetSpriteRotation', //2
+	SetSpriteZoom name 'SetSpriteZoom', //2
+	GetSpriteZoom name 'GetSpriteZoom', //2
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
 	// 					MappyLoader
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
-	LoadMap,
-	DrawMap,
-	CollisionWithMapVector,
-	EventCount,
-	EventPositionX,
-	EventPositionY,
-	FreeMap,
+	LoadMap name 'LoadMap',
+	DrawMap name 'DrawMap',
+	CollisionWithMapVector name 'CollisionWithMapVector',
+	EventCount name 'EventCount',
+	EventPositionX name 'EventPositionX',
+	EventPositionY name 'EventPositionY',
+	FreeMap name 'FreeMap',
 	//v1.1
-	SpriteHasCollidedWithMapTile,
-	WillCollideOnSide,
-	MoveSpriteOutOfTile,
+	SpriteHasCollidedWithMapTile name 'SpriteHasCollidedWithMapTile',
+	WillCollideOnSide name 'WillCollideOnSide',
+	MoveSpriteOutOfTile name 'MoveSpriteOutOfTile',
 	//v1.1.5
-	MapWidth,
-	MapHeight,
-	BlockWidth,
-	BlockHeight,
-	GapX,
-	GapY,
-	StaggerX,
-	StaggerY,
-	GetTileFromPoint,
-	GetEventAtTile,
+	MapWidth name 'MapWidth',
+	MapHeight name 'MapHeight',
+	BlockWidth name 'BlockWidth',
+	BlockHeight name 'BlockHeight',
+	GapX name 'GapX',
+	GapY name 'GapY',
+	StaggerX name 'StaggerX',
+	StaggerY name 'StaggerY',
+	GetTileFromPoint name 'GetTileFromPoint',
+	GetEventAtTile name 'GetEventAtTile',
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
@@ -3255,16 +3255,16 @@ exports
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 
-	DistancePointToLine, {1.1}
-	ClosestPointOnLine, {1.1}
-	CenterPoint, {1.1}
-	IsPointOnLine, {1.1}
-	GetLineIntersectionPoint, {1.1}
-	LineIntersectsWithLines, {1.1}
+	DistancePointToLine name 'DistancePointToLine', {1.1}
+	ClosestPointOnLine name 'ClosestPointOnLine', {1.1}
+	CenterPoint name 'CenterPoint', {1.1}
+	IsPointOnLine name 'IsPointOnLine', {1.1}
+	GetLineIntersectionPoint name 'GetLineIntersectionPoint', {1.1}
+	LineIntersectsWithLines name 'LineIntersectsWithLines', {1.1}
 	//CreateTriangle, {1.1.5}
-	IsPointInTriangle, {1.1.5}
-	TriangleBarycenter, //2
-	ApplyMatrixToTriangle, //2
+	IsPointInTriangle name 'IsPointInTriangle', {1.1.5}
+	TriangleBarycenter name 'TriangleBarycenter', //2
+	ApplyMatrixToTriangle name 'ApplyMatrixToTriangle', //2
 	
 
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
@@ -3272,8 +3272,8 @@ exports
 	// 					Error Handling
 	//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 	//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
-	DLLVersion,
-	GetExceptionMessage,
-	ExceptionOccured;
+	DLLVersion name 'DLLVersion',
+	GetExceptionMessage name 'GetExceptionMessage',
+	ExceptionOccured name 'ExceptionOccured';
 end.
 
