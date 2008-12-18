@@ -862,8 +862,9 @@ namespace SwinGame
             return VectorIsWithinRect(v, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfRectFromPoint")]
-        private static extern Vector DLL_VectorOutOfRectFromPoint(Point2D pnt, SGSDKRectangle rect, Vector movement);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfRectFromPoint")]
+        //private static extern Vector DLL_VectorOutOfRectFromPoint(Point2D pnt, SGSDKRectangle rect, Vector movement);
+
         /// <summary>
         /// Gets the Vector out of a Rectangle from a Point
         /// </summary>
@@ -873,25 +874,12 @@ namespace SwinGame
         /// <returns>The Vector out of the Rectangle</returns>
         public static Vector VectorOutOfRectFromPoint(Point2D pnt, Rectangle rect, Vector movement)
         {
-            Vector temp;
-            try
-            {
-                temp = DLL_VectorOutOfRectFromPoint(pnt, Shapes.ToSGSDKRect(rect), movement);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.VectorOutOfRectFromPoint(pnt, Shapes.ToSGSDKRect(rect), movement);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfRectFromRect")]
-        private static extern Vector DLL_VectorOutOfRectFromRect(SGSDKRectangle srcRect, SGSDKRectangle targetRect, Vector movement);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorOutOfRectFromRect")]
+        //private static extern Vector DLL_VectorOutOfRectFromRect(SGSDKRectangle srcRect, SGSDKRectangle targetRect, Vector movement);
+
         /// <summary>
         /// Gets the Vector out of a Rectangle from a Rectangle
         /// </summary>
@@ -901,25 +889,12 @@ namespace SwinGame
         /// <returns>The Vector out of the Rectangle</returns>
         public static Vector VectorOutOfRectFromRect(Rectangle srcRect, Rectangle targetRect, Vector movement)
         {
-            Vector temp;
-            try
-            {
-                temp = DLL_VectorOutOfRectFromRect(Shapes.ToSGSDKRect(srcRect), Shapes.ToSGSDKRect(targetRect), movement);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.VectorOutOfRectFromRect(Shapes.ToSGSDKRect(srcRect), Shapes.ToSGSDKRect(targetRect), movement);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
-        private static extern void DLL_VectorCollision(IntPtr spr1, IntPtr spr2);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "VectorCollision")]
+        //private static extern void DLL_VectorCollision(IntPtr spr1, IntPtr spr2);
+
         /// <summary>
         /// Vector Collisions alters the vectors of two Sprites depending on
         /// the movement and mass of each sprute.
@@ -928,23 +903,12 @@ namespace SwinGame
         /// <param name="sprite2">Sprite 2</param>
         public static void VectorCollision(Sprite sprite1, Sprite sprite2)
         {
-            try
-            {
-                DLL_VectorCollision(sprite1.Pointer, sprite2.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            sprite1.BounceOff(sprite2);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircleCollisionWithLine")]
-        private static extern void DLL_CircleCollisionWithLine(IntPtr spr1, LineSegment line);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircleCollisionWithLine")]
+        //private static extern void DLL_CircleCollisionWithLine(IntPtr spr1, LineSegment line);
+
         /// <summary>
         /// CircleCollisionWithLine calculates the after-effect from colliding with the line. 
         /// It will directly modify the value of the specified sprite's vector.
@@ -953,23 +917,12 @@ namespace SwinGame
         /// <param name="line">Line Segment</param>
         public static void CircleCollisionWithLine(Sprite sprt, LineSegment line)
         {
-            try
-            {
-                DLL_CircleCollisionWithLine(sprt.Pointer, line);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.CircleCollisionWithLine(sprt.Pointer, line);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircularCollision")]
-        private static extern void DLL_CircularCollision(IntPtr spr1, IntPtr spr2);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CircularCollision")]
+        //private static extern void DLL_CircularCollision(IntPtr spr1, IntPtr spr2);
+
         /// <summary>
         /// CircularCollision is used to calculate an effect from a collision from two circular sprites. 
         /// It takes their masses and their movement vectors in consideration. 
@@ -979,19 +932,7 @@ namespace SwinGame
         /// <param name="sprt2">Sprite 2</param>
         public static void CircularCollision(Sprite sprt1, Sprite sprt2)
         {
-            try
-            {
-                DLL_CircularCollision(sprt1.Pointer, sprt2.Pointer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.CircularCollision(sprt1.Pointer, sprt2.Pointer);
         }
     }
 }

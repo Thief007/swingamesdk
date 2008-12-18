@@ -45,7 +45,7 @@ namespace SwinGame
         /// ensure that you load the file in a platform neutral way, enabling your game
         /// to run on Windows, Mac, and Linux.
         /// </summary>
-        /// <param name="pathToBitmap">Path to the image file</param>
+        /// <param name="path">Path to the image file</param>
         public Bitmap(String path)
         {
             int color = Color.Black.ToArgb();

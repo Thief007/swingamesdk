@@ -11,6 +11,8 @@
 // Change History:
 //
 // Version 2.0:
+// - 2008-12-18: Andrew: Moved out other types
+//                       Moved to SGSDK
 // - 2008-12-10: Andrew: Changed Triangle to have indexer, and array conversion.
 //
 // Version 1.1:
@@ -28,70 +30,6 @@ using System.Drawing;
 
 namespace SwinGame
 {
-    /// <summary>
-    /// A Triangle is a data type that holds 3 points, that when connected, form a triangle
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Triangle
-    {
-        /// <summary>
-        /// First Point Coordinate of the Triangle
-        /// </summary>
-        public Point2D pointA;
-        /// <summary>
-        /// Second Point Coordinate of the Triangle
-        /// </summary>
-        public Point2D pointB;
-        /// <summary>
-        /// Third Point Coordinate of the Triangle
-        /// </summary>
-        public Point2D pointC;
-
-        public Point2D this[int index]
-        {
-            get
-            {
-                switch (index)
-                {
-                    case 0: return pointA;
-                    case 1: return pointB;
-                    case 2: return pointC;
-                    default: throw new IndexOutOfRangeException();
-                }
-            }
-        }
-
-        public Point2D[] ToArray()
-        {
-            return new Point2D[] { pointA, pointB, pointC };
-        }
-    }
-
-    /// <summary>
-    /// The Point is a data type that holds an X and Y Coordinate.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct Point2D
-    {
-        /// <summary>
-        /// X Coordinate of the Point
-        /// </summary>
-        public float X;
-        /// <summary>
-        /// Y Coordinate of the Point
-        /// </summary>
-        public float Y;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct SGSDKRectangle
-    {
-        public float X;
-        public float Y;
-        public int Width;
-        public int Height;
-    }
-
     /// <summary>
     /// The Shapes class contains all the routines, that deal with Shapes such as Rectangles, Circles
     /// Lines etc.
@@ -114,8 +52,8 @@ namespace SwinGame
             return new Rectangle((int)rect.X, (int)rect.Y, rect.Width, rect.Height);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DistancePointToLine")]
-        private static extern float DLL_DistancePointToLine(float x, float y, LineSegment line);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DistancePointToLine")]
+        //private static extern float DLL_DistancePointToLine(float x, float y, LineSegment line);
 
         /// <summary>
         /// Returns the shortest distance from a given point (x,y) to
@@ -128,20 +66,7 @@ namespace SwinGame
         /// on the line</returns>
         public static float DistancePointToLine(float x, float y, LineSegment line)
         {
-            float temp;
-            try
-            {
-                temp = DLL_DistancePointToLine(x, y, line);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.DistancePointToLine(x, y, line);
         }
 
         /// <summary>
@@ -157,8 +82,8 @@ namespace SwinGame
             return DistancePointToLine(pnt.X, pnt.Y, line);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClosestPointOnLine")]
-        private static extern Point2D DLL_ClosestPointOnLine(float x, float y, LineSegment line);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ClosestPointOnLine")]
+        //private static extern Point2D DLL_ClosestPointOnLine(float x, float y, LineSegment line);
 
         /// <summary>
         /// Returns the closest point on a line to another point (x, y). 
@@ -169,20 +94,7 @@ namespace SwinGame
         /// <returns>the point on the line closest to the specified point (x,y)</returns>
         public static Point2D ClosestPointOnLine(float x, float y, LineSegment line)
         {
-            Point2D temp;
-            try
-            {
-                temp = DLL_ClosestPointOnLine(x, y, line);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.ClosestPointOnLine(x, y, line);
         }
 
         /// <summary>
@@ -211,8 +123,8 @@ namespace SwinGame
             return sprt.CenterPoint;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsPointOnLine")]
-        private static extern int DLL_IsPointOnLine(Point2D pnt, LineSegment line);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsPointOnLine")]
+        //private static extern int DLL_IsPointOnLine(Point2D pnt, LineSegment line);
 
         /// <summary>
         /// Determines if a point exists on a line.
@@ -222,20 +134,7 @@ namespace SwinGame
         /// <returns>true if pnt is on the line</returns>
         public static bool IsPointOnLine(Point2D pnt, LineSegment line)
         {
-            bool temp;
-            try
-            {
-                temp = DLL_IsPointOnLine(pnt, line) == -1;
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.IsPointOnLine(pnt, line) == -1;
         }
 
         /// <summary>
@@ -465,8 +364,9 @@ namespace SwinGame
             return Physics.Magnitude(temp);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetLineIntersectionPoint")]
-        private static extern int DLL_GetLineIntersectionPoint(LineSegment line1, LineSegment line2, out Point2D pnt);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetLineIntersectionPoint")]
+        //private static extern int DLL_GetLineIntersectionPoint(LineSegment line1, LineSegment line2, out Point2D pnt);
+
         /// <summary>
         /// Gets the intersection point of two lines. The point is returned in the 
         /// out parameter pnt, the function returns true if they intersect, otherwise
@@ -478,24 +378,12 @@ namespace SwinGame
         /// <returns>true if the lines intersect</returns>
         public static bool GetLineIntersectionPoint(LineSegment line1, LineSegment line2, out Point2D pnt)
         {
-            bool temp;
-            try
-            {
-                temp = DLL_GetLineIntersectionPoint(line1, line2, out pnt) == -1;
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.GetLineIntersectionPoint(line1, line2, out pnt) == -1;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LineIntersectsWithLines")]
-        private static extern int DLL_LineIntersectsWithLines(LineSegment target, int len, [MarshalAs(UnmanagedType.LPArray)]LineSegment[] lines);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LineIntersectsWithLines")]
+        //private static extern int DLL_LineIntersectsWithLines(LineSegment target, int len, [MarshalAs(UnmanagedType.LPArray)]LineSegment[] lines);
+
         /// <summary>
         /// Determines if a target line intersects with ANY of the lines in the array.
         /// </summary>
@@ -504,20 +392,7 @@ namespace SwinGame
         /// <returns>true if the target line intersects with any of the lines in the array</returns>
         public static bool LineIntersectsWithLines(LineSegment target, LineSegment[] lines)
         {
-            bool temp;
-            try
-            {
-                temp = DLL_LineIntersectsWithLines(target, lines.Length, lines) == -1;
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.LineIntersectsWithLines(target, lines.Length, lines) == -1;
         }
 
         /// <summary>
@@ -550,6 +425,7 @@ namespace SwinGame
             else if (v.Y > y + h) return false;
             else return true;
         }
+
         /// <summary>
         /// Returns true if the Point is within the Rectangle specified
         /// </summary>
@@ -587,6 +463,7 @@ namespace SwinGame
                 else return CollisionSide.None;
             }
         }
+
         /// <summary>
         /// Returns the Top Side of the Rectangle
         /// </summary>
@@ -603,6 +480,7 @@ namespace SwinGame
                 return rect.Y + rect.Height;
             }
         }
+
         /// <summary>
         /// Returns the Bottom side of the Rectangle
         /// </summary>
@@ -619,6 +497,7 @@ namespace SwinGame
                 return rect.Y;
             }
         }
+
         /// <summary>
         /// Returns the Left Hand side of the Rectangle
         /// </summary>
@@ -635,6 +514,7 @@ namespace SwinGame
                 return rect.X + rect.Width;
             }
         }
+
         /// <summary>
         /// Returns the Right Hand Side of the Rectangle
         /// </summary>
@@ -652,8 +532,9 @@ namespace SwinGame
             }
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateTriangle")]
-        private static extern Triangle DLL_CreateTriangle(Single ax, Single ay, Single bx, Single by, Single cx, Single cy);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateTriangle")]
+        //private static extern Triangle DLL_CreateTriangle(Single ax, Single ay, Single bx, Single by, Single cx, Single cy);
+
         /// <summary>
         /// Creates a Triangle from the points given
         /// </summary>
@@ -666,21 +547,9 @@ namespace SwinGame
         /// <returns></returns>
         public static Triangle CreateTriangle(Single ax, Single ay, Single bx, Single by, Single cx, Single cy)
         {
-            Triangle temp;
-            try
-            {
-                temp = DLL_CreateTriangle(ax, ay, bx, by, cx, cy);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return new Triangle(ax, ay, bx, by, cx, cy);
         }
+
         /// <summary>
         /// Creates a Triangl from the points given
         /// </summary>
@@ -693,8 +562,9 @@ namespace SwinGame
             return CreateTriangle(a.X, a.Y, b.X, b.Y, c.X, c.Y);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsPointInTriangle")]
-        private static extern int DLL_IsPointInTriangle(Point2D point, Triangle triangle);
+        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsPointInTriangle")]
+        //private static extern int DLL_IsPointInTriangle(Point2D point, Triangle triangle);
+
         /// <summary>
         /// This function will return true if the given point can be found within the given triangle
         /// </summary>
@@ -703,20 +573,7 @@ namespace SwinGame
         /// <returns>True if the point is in the Triangle</returns>
         public static bool IsPointInTriangle(Point2D point, Triangle triangle)
         {
-            bool temp;
-            try
-            {
-                temp = DLL_IsPointInTriangle(point, triangle) == -1;
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return triangle.IsPointInTriangle(point);
         }
     }
 }

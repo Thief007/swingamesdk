@@ -123,7 +123,7 @@ namespace SwinGame
         /// ensure that you load the file in a platform neutral way, enabling your game
         /// to run on Windows, Mac, and Linux.
         /// </summary>
-        /// <param name="Path">Path to Music file</param>
+        /// <param name="path">Path to Music file</param>
         /// <returns>Music</returns>
         public static Music LoadMusic(String path)
         {
