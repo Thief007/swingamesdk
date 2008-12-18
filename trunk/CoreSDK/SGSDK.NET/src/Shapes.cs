@@ -575,5 +575,15 @@ namespace SwinGame
         {
             return triangle.IsPointInTriangle(point);
         }
+
+        public static Point2D TriangleBarycenter(Triangle triangle)
+        {
+            return triangle.Barycenter();
+        }
+
+        public static void ApplyMatrix(Matrix2D m, ref Triangle triangle)
+        {
+            triangle.ApplyMatrix(m);
+        }
     }
 }

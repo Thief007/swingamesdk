@@ -48,16 +48,24 @@ namespace Tests
 
             protected override void ToRun(System.Drawing.Rectangle drawIn)
             {
-                if (Input.IsKeyPressed(Keys.VK_RIGHT))  shipSprite.X = shipSprite.X + 4;
-		        if (Input.IsKeyPressed(Keys.VK_DOWN))  shipSprite.Y = shipSprite.Y + 4;
-		        if (Input.IsKeyPressed(Keys.VK_UP))  shipSprite.Y = shipSprite.Y - 4;
-		        if (Input.IsKeyPressed(Keys.VK_LEFT))  shipSprite.X = shipSprite.X - 4;
+                shipSprite.Movement.X = 0f;
+                shipSprite.Movement.Y = 0f;
+
+                if (Input.IsKeyPressed(Keys.VK_RIGHT))  shipSprite.Movement.X = 1;
+		        if (Input.IsKeyPressed(Keys.VK_DOWN))  shipSprite.Movement.Y = 1;
+		        if (Input.IsKeyPressed(Keys.VK_UP))  shipSprite.Movement.Y = -1;
+		        if (Input.IsKeyPressed(Keys.VK_LEFT))  shipSprite.Movement.X = -1;
+
+                shipSprite.Update();
+
 		        if (Input.IsKeyPressed(Keys.VK_U))  follow = false;
 		        if (Input.IsKeyPressed(Keys.VK_I))  follow = true;
 		        if (Input.IsKeyPressed(Keys.VK_A))  Camera.MoveVisualArea(Physics.CreateVector(-20, 0));
                 if (Input.IsKeyPressed(Keys.VK_D)) Camera.MoveVisualArea(Physics.CreateVector(20, 0));
                 if (Input.IsKeyPressed(Keys.VK_W)) Camera.MoveVisualArea(0, -20);
-                if (Input.IsKeyPressed(Keys.VK_S)) Camera.MoveVisualArea(0, 20);		
+                if (Input.IsKeyPressed(Keys.VK_S)) Camera.MoveVisualArea(0, 20);
+                if (Input.IsKeyPressed(Keys.VK_PERIOD)) shipSprite.Rotation += 1f;
+                if (Input.IsKeyPressed(Keys.VK_COMMA)) shipSprite.Rotation -= 1f;
 		        if (follow) Camera.FollowSprite(shipSprite, (int)(400 - drawIn.X - drawIn.Width / 2), -50);
         		
 		        SwinGame.Graphics.DrawBitmap(bgImage, 0, 0);
