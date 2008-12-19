@@ -1,0 +1,9 @@
+D:\Work\Projects\HelloWorld\HelloWorld\bin\Debug\HelloWorld.exe
+D:\Work\Projects\HelloWorld\HelloWorld\bin\Debug\HelloWorld.pdb
+D:\Work\Projects\HelloWorld\HelloWorld\bin\Debug\HelloWorld.xml
+D:\Work\Projects\HelloWorld\HelloWorld\bin\Debug\SGSDK.NET.dll
+D:\Work\Projects\HelloWorld\HelloWorld\bin\Debug\SGSDK.NET.xml
+D:\Work\Projects\HelloWorld\HelloWorld\obj\Debug\ResolveAssemblyReference.cache
+D:\Work\Projects\HelloWorld\HelloWorld\obj\Debug\HelloWorld.exe
+D:\Work\Projects\HelloWorld\HelloWorld\obj\Debug\HelloWorld.xml
+D:\Work\Projects\HelloWorld\HelloWorld\obj\Debug\HelloWorld.pdb
