@@ -1,0 +1,52 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Try
+</name>
+</assembly>
+<members>
+<member name="M:Try.GameResources.GameFont(System.String)">
+	<summary>
+ Gets a Font Loaded in the Resources
+ </summary>
+	<param name="font">Name of Font</param>
+	<returns>The Font Loaded with this Name</returns>
+	<remarks></remarks>
+</member><member name="M:Try.GameResources.GameImage(System.String)">
+	<summary>
+ Gets an Image loaded in the Resources
+ </summary>
+	<param name="image">Name of image</param>
+	<returns>The image loaded with this name</returns>
+	<remarks></remarks>
+</member><member name="M:Try.GameResources.GameSound(System.String)">
+	<summary>
+ Gets an sound loaded in the Resources
+ </summary>
+	<param name="sound">Name of sound</param>
+	<returns>The sound with this name</returns>
+	<remarks></remarks>
+</member><member name="M:Try.GameResources.GameMusic(System.String)">
+	<summary>
+ Gets the music loaded in the Resources
+ </summary>
+	<param name="music">Name of music</param>
+	<returns>The music with this name</returns>
+	<remarks></remarks>
+</member><member name="M:Try.GameResources.GameMap(System.String)">
+	<summary>
+ Gets a map loaded in the Resources
+ </summary>
+	<param name="map">Name of map</param>
+	<returns>The map with this name</returns>
+	<remarks></remarks>
+</member><member name="M:Try.GameResources.LoadResources">
+	<summary>
+ The Resources Class stores all of the Games Media Resources, such as Images, Fonts
+ Sounds, Music, and Maps.
+ </summary>
+	<remarks></remarks>
+</member>
+</members>
+</doc>
