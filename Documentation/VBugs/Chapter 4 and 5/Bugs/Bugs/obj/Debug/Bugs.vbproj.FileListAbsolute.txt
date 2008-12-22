@@ -1,9 +1,0 @@
-D:\Work\Projects\Bugs\Bugs\bin\Debug\Bugs.exe
-D:\Work\Projects\Bugs\Bugs\bin\Debug\Bugs.pdb
-D:\Work\Projects\Bugs\Bugs\bin\Debug\Bugs.xml
-D:\Work\Projects\Bugs\Bugs\bin\Debug\SGSDK.NET.dll
-D:\Work\Projects\Bugs\Bugs\bin\Debug\SGSDK.NET.xml
-D:\Work\Projects\Bugs\Bugs\obj\Debug\ResolveAssemblyReference.cache
-D:\Work\Projects\Bugs\Bugs\obj\Debug\Bugs.exe
-D:\Work\Projects\Bugs\Bugs\obj\Debug\Bugs.xml
-D:\Work\Projects\Bugs\Bugs\obj\Debug\Bugs.pdb

@@ -1,9 +1,0 @@
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\bin\Debug\Hello World Solutions.exe
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\bin\Debug\Hello World Solutions.pdb
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\bin\Debug\Hello World Solutions.xml
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\bin\Debug\SGSDK.NET.dll
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\bin\Debug\SGSDK.NET.xml
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\obj\Debug\ResolveAssemblyReference.cache
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\obj\Debug\Hello World Solutions.exe
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\obj\Debug\Hello World Solutions.xml
-D:\Work\Projects\Hello World Solutions\Hello World Solutions\obj\Debug\Hello World Solutions.pdb
