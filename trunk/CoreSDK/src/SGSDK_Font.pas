@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 2.0:
+// - 2009-01-05: Andrew: Added Unicode rendering
 // - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-12: Andrew: Added simple string printing
 // - 2008-12-10: Andrew: Fixed printing of string
@@ -86,14 +87,21 @@ interface
 	//
 
 	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; x, y: LongInt); overload;
-	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
 	procedure DrawTextOnScreen(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
-	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
+  procedure DrawText(theText: String; textColor: Colour; theFont: Font; x, y: Single); overload;
+  procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
 
-	procedure DrawText(theText: String; textColor: Colour; theFont: Font; x, y: Single); overload;
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y: Single; w, h: LongInt); overload;
-	procedure DrawText(theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
-	procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
+	procedure DrawUnicodeOnScreen(theText: WideString; textColor: Colour; theFont: Font; x, y: LongInt); overload;
+	procedure DrawUnicodeOnScreen(theText: WideString; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
+  procedure DrawUnicode(theText: WideString; textColor: Colour; theFont: Font; x, y: Single); overload;
+  procedure DrawUnicode(theText: WideString; textColor: Colour; theFont: Font; const pt: Point2D); overload; {1.1}
+
+  
+  procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
+	procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
+  procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; x, y: Single; w, h: LongInt); overload;
+  procedure DrawTextLines(theText: String; textColor, backColor: Colour; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
+
 
   
 	//*****
@@ -131,8 +139,11 @@ interface
 	// These routines are used for general purposes.
 	//
 
-	function TextWidth(theText: String; theFont: Font): LongInt;
-	function TextHeight(theText: String; theFont: Font): LongInt;
+	function TextWidth(theText: String; theFont: Font): LongInt; overload;
+	function TextHeight(theText: String; theFont: Font): LongInt; overload;
+
+	function TextWidth(theText: WideString; theFont: Font): LongInt; overload;
+	function TextHeight(theText: WideString; theFont: Font): LongInt; overload;
 	
 	procedure DrawFramerate(x, y: LongInt; font: Font);
 	
@@ -193,10 +204,7 @@ implementation
 	/// This function prints "str" with font "font" and color "clrFg"
  	///  * onto a rectangle of color "clrBg".
  	///  * It does not pad the text.
- 	///  * If CREATE_SURFACE is NOT passed, the function returns NULL,
-	///  * otherwise, it returns an SDL_Surface pointer.
-	procedure PrintStrings(dest: PSDL_Surface; font: Font; str: String; 
-	         rc: PSDL_Rect; clrFg, clrBg:Color; flags:FontAlignment);
+	procedure PrintStrings(dest: PSDL_Surface; font: Font; str: String; rc: PSDL_Rect; clrFg, clrBg:Color; flags:FontAlignment);
 	var
 		sText: Bitmap;
 		temp: PSDL_Surface;
@@ -268,7 +276,8 @@ implementation
 		begin
 			// The rendered text:
 			temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
-
+      //temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
+      
 			// Put it on the surface:
 			if IsSet(flags, AlignLeft) or
 				 (not (IsSet(flags, AlignCenter) or
@@ -314,6 +323,130 @@ implementation
 		FreeBitmap(sText);
 	end;
 
+	/// This function prints "str" with font "font" and color "clrFg"
+ 	///  * onto a rectangle of color "clrBg".
+ 	///  * It does not pad the text.
+	procedure PrintWideStrings(dest: PSDL_Surface; font: Font; str: WideString; rc: PSDL_Rect; clrFg, clrBg:Color; flags:FontAlignment);
+	var
+		sText: Bitmap;
+		temp: PSDL_Surface;
+		lineSkip, width, height: LongInt;
+		lines: Array of String;
+		subStr: String;
+		n, w, h, i: LongInt;
+		rect: TSDL_Rect;
+		colorFG: TSDL_Color;
+		bgTransparent: Boolean;
+	begin
+		if dest = nil then
+		begin
+			raise Exception.Create('Error Printing Strings: There was no surface.');
+		end;
+
+		colorFG := ToSDLColor(clrFg);
+		bgTransparent := GetTransparency(clrBg) < 255;
+		
+		// If there's nothing to draw, return NULL
+		if (Length(str) = 0) or (font = nil) then exit;
+
+		// This is the surface that everything is printed to.
+		lineSkip	:= TTF_FontLineSkip( font );
+		width		 := rc.w;
+		height		:= 10;
+		SetLength(lines, 1);
+
+		// Break the String into its lines:
+		n := -1; i := 0;
+		while n <> 0 do
+		begin
+			// Get until either "\n" or "\0":
+			n := Pos(eol, str);
+
+			//Copy all except EOL
+			if n = 0 then subStr := str
+			else if n = 1 then subStr := ' '
+			else subStr := Copy(str, 1, n - 1);
+
+			if Length(subStr) < 1 then subStr := ' ';
+
+			//Remove the line from the original string
+			if n <> 0 then
+			begin
+				str := Copy( str, n + Length(eol), Length(str)); //excess not copied...
+			end;
+
+			i := i + 1;
+			SetLength(lines, i);
+			lines[i - 1] := subStr;
+
+			w := 0;
+			
+			// Get the size of the rendered text.
+			if Length(subStr) > 0 then TTF_SizeUNICODE(font, PUint16(subStr), w, height);
+			  
+			//Keep widest rendered text size
+			if w > width then width := w;
+		end;
+
+		// Length(lines) = Number of Lines.
+		// we assume that height is the same for all lines.
+		height := (Length(lines) - 1) * lineSkip + height;
+
+		sText := CreateBitmap(width, height);
+		ClearSurface(sText, clrBg);
+
+		// Actually render the text:
+		for i := 0 to High(lines) do
+		begin
+			// The rendered text:
+			//temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
+      temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
+      
+			// Put it on the surface:
+			if IsSet(flags, AlignLeft) or
+				 (not (IsSet(flags, AlignCenter) or
+							 IsSet(flags, AlignRight))) then
+			begin
+				// If it's specifically LEFT or none of the others:
+				rect := NewSDLRect(0,i*lineSkip,0,0);
+			end
+			else if IsSet(flags, AlignCenter) then
+			begin
+				w := 0;
+				h := 0;
+
+				TTF_SizeUNICODE(font, PUInt16(lines[i]), w, h);
+				rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
+			end
+			else if IsSet(flags, AlignRight) then
+			begin
+				w := 0;
+				h := 0;
+
+				TTF_SizeUNICODE(font, PUInt16(lines[i]), w, h);
+				rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
+			end
+			else
+			begin
+				raise Exception.Create('Invalid font alignment');
+			end;
+
+			// Render the current line. Ignore alpha in this draw
+			if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
+			SDL_BlitSurface(temp, nil, sText.surface, @rect);
+
+			// Clean up:
+			SDL_FreeSurface(temp);
+		end;
+
+		// Draw the text on top of that:
+		rect.x := 0; rect.y := 0; rect.w := rc.w; rect.h := rc.h;
+		if (not bgTransparent) then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);	
+		SDL_BlitSurface(sText.surface, @rect, dest, rc );
+		
+		FreeBitmap(sText);
+	end;
+
 	/// Draws texts to the destination bitmap. Drawing text is a slow operation,
 	///	and drawing it to a bitmap, then drawing the bitmap to screen is a
 	///	good idea. Do not use this technique if the text changes frequently.
@@ -328,35 +461,37 @@ implementation
 	///	- The text is drawn in the specified font, at the indicated location
 	///		in the destination bitmap.
 	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; x, y: LongInt); overload;
-{	var
-		color: TSDL_Color;
-		surface: PSDL_Surface;
-		offset: TSDL_Rect;}
 	var
 		rect: TSDL_Rect;
 	begin
 		if theFont = nil then raise Exception.Create('The specified font is nil');
 		if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
 			
-		{color := ToSDLColor(textColor);
-
-		offset.x := x;
-		offset.y := y;
-
-		surface := TTF_RenderText_Blended(theFont, PChar(theText), color);
-		
-		SDL_BlitSurface(surface, nil, dest.surface, @offset);
-		SDL_FreeSurface(surface);}
-		
-		rect := NewSDLRect(x, y, TextWidth(theText, theFont), TextHeight(theText, theFont));
-		
+		rect := NewSDLRect(x, y, TextWidth(theText, theFont), TextHeight(theText, theFont));		
 		PrintStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
+	end;
+
+	procedure DrawUnicode(dest: Bitmap; theText: WideString; textColor: Colour; theFont: Font; x, y: LongInt); overload;
+	var
+		rect: TSDL_Rect;
+	begin
+		if theFont = nil then raise Exception.Create('The specified font is nil');
+		if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
+			
+		rect := NewSDLRect(x, y, TextWidth(theText, theFont), TextHeight(theText, theFont));		
+		PrintWideStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
 	end;
 	
 	procedure DrawText(dest: Bitmap; theText: String; textColor: Colour; theFont: Font; const pt: Point2D); overload;
 	begin
 		DrawText(dest, theText, textColor, theFont, Round(pt.x), Round(pt.y));
 	end;
+
+	procedure DrawUnicode(dest: Bitmap; theText: WideString; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	begin
+		DrawUnicode(dest, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+	end;
+
 
 	/// Draws multiple lines of text to the destination bitmap. This is a very
 	///	slow operation, so if the text is not frequently changing save it to a
@@ -447,6 +582,17 @@ implementation
 		DrawText(scr, theText, textColor, theFont, Round(pt.x), Round(pt.y));
 	end;
 
+	procedure DrawUnicodeOnScreen(theText: WideString; textColor: Colour; theFont: Font; x, y: LongInt);
+	begin
+		DrawUnicode(scr, theText, textColor, theFont, x, y);
+	end;
+
+	procedure DrawUnicodeOnScreen(theText: WideString; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	begin
+		DrawUnicode(scr, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+	end;
+
+
 	procedure DrawText(theText: String; textColor: Colour; theFont: Font; x, y: Single);
 	begin
 		DrawText(scr, theText, textColor, theFont, ScreenX(x), ScreenY(y));
@@ -456,13 +602,24 @@ implementation
 	begin
 		DrawText(scr, theText, textColor, theFont, ScreenX(pt.x), ScreenY(pt.y));		
 	end;
+
+	procedure DrawUnicode(theText: WideString; textColor: Colour; theFont: Font; x, y: Single);
+	begin
+		DrawUnicode(scr, theText, textColor, theFont, ScreenX(x), ScreenY(y));
+	end;
+	
+	procedure DrawUnicode(theText: WideString; textColor: Colour; theFont: Font; const pt: Point2D); overload;
+	begin
+		DrawUnicode(scr, theText, textColor, theFont, ScreenX(pt.x), ScreenY(pt.y));		
+	end;
+
 	
 	/// Calculates the width of a string when drawn with a given font.
 	///
 	///	@param theText:		The text to measure
 	///	@param theFont:		The font used to draw the text
 	///	@returns					 The width of the drawing in pixels
-	function TextWidth(theText: String; theFont: Font): LongInt;
+	function TextWidth(theText: String; theFont: Font): LongInt; overload;
 	var
 		y: LongInt; //SizeText returns both... store and ignore y
 	begin
@@ -475,12 +632,26 @@ implementation
 		end;
 	end;
 
+	function TextWidth(theText: WideString; theFont: Font): LongInt; overload;
+	var
+		y: LongInt; //SizeText returns both... store and ignore y
+	begin
+	  if not Assigned(theFont) then raise Exception.Create('No font supplied');
+		try
+			y := 0; result := 0;
+			TTF_SizeUNICODE(theFont, PUInt16(theText), result, y);
+		except
+			raise Exception.Create('Unable to get the text width');
+		end;
+	end;
+
+
 	/// Calculates the height of a string when drawn with a given font.
 	///
 	///	@param theText:		The text to measure
 	///	@param theFont:		The font used to draw the text
 	///	@returns					 The height of the drawing in pixels
-	function TextHeight(theText: String; theFont: Font): LongInt;
+	function TextHeight(theText: String; theFont: Font): LongInt; overload;
 	var
 		w: LongInt; //SizeText returns both... store and ignore w
 	begin
@@ -488,6 +659,19 @@ implementation
 		try
 			w := 0; result :=  0;
 			TTF_SizeText(theFont, PChar(theText), w, result);
+		except
+			raise Exception.Create('Unable to get the text height');
+		end;
+	end;
+
+	function TextHeight(theText: WideString; theFont: Font): LongInt; overload;
+	var
+		w: LongInt; //SizeText returns both... store and ignore w
+	begin
+	  if not Assigned(theFont) then raise Exception.Create('No font supplied');
+		try
+			w := 0; result :=  0;
+			TTF_SizeUNICODE(theFont, PUInt16(theText), w, result);
 		except
 			raise Exception.Create('Unable to get the text height');
 		end;
@@ -507,10 +691,7 @@ implementation
 		textColour : Colour;
 		average, highest, lowest : Single;
 	begin
-	  if not Assigned(font) then raise Exception.Create('No font supplied');
-	  
 		//Draw framerates
-		//DrawRectangleOnScreen(ColourBlack, true, x, y, x + 200, y + 16);
 
 		if renderFPSInfo.average = 0 then
 			average := 9999
@@ -531,7 +712,10 @@ implementation
 		Str(highest:4:1, temp2);
 		Str(lowest:4:1, temp3);
 
-		DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, font, x + 2, y + 2);
+    if not Assigned(font) then
+      DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, x + 2, y + 2)
+    else
+		  DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, font, x + 2, y + 2);
 	end;
 	
   procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;
