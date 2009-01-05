@@ -52,8 +52,8 @@ namespace GameProject
 
             Piece moving = null;
             int i = 0, atStep = 0;
-
             Queue<Piece> steps = null;
+                        
 
             //Game Loop
             do
