@@ -1,0 +1,77 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7B2FDCA5-5ECA-4851-A1A9-90D0BA43138E}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GameProject</RootNamespace>
+    <AssemblyName>GameProject</AssemblyName>
+    <ApplicationIcon>SwinGame.ico</ApplicationIcon>
+    <OutputPath>bin\Debug\</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <AssemblyName>GameProject</AssemblyName>
+  </PropertyGroup>
+ <!-- <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>GameProject</AssemblyName>
+    <RootNamespace>GameProject</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <ApplicationIcon>SwinGame.ico</ApplicationIcon>
+  </PropertyGroup> -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>GameProject</AssemblyName>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>GameProject</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <ApplicationIcon>SwinGame.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SGSDK.NET">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\SGSDK.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GameLogic.cs" />
+    <Compile Include="Ant.cs" />
+    <Compile Include="Path.cs" />
+    <Compile Include="Route.cs" />
+    <Compile Include="City.cs" />
+    <Compile Include="RandomMap.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Colony.cs" />
+    <Compile Include="GameResources.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)Resources\*" "$(TargetDir)resources\" /s/y/d/e
+xcopy "$(ProjectDir)lib\*" "$(TargetDir)" /s/y/d/e</PostBuildEvent>
+    <ProjectGuid>{7B2FDCA5-5ECA-4851-A1A9-90D0BA43138E}</ProjectGuid>
+    <RootNamespace>GameProject</RootNamespace>
+  </PropertyGroup>
+</Project>
