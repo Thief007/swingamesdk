@@ -67,6 +67,8 @@ implementation
 		DrawText(draw, 'E This is some simple text', _TextColor, 0, 0);
 		DrawBitmap(draw, 200, 400);
 		DrawTextOnScreen('F This is some simple text', _TextColor, 32, 500);
+
+		DrawUnicode(' G =  快来和我一起享受TOM免费邮箱吧！ 看看除了1.5G，还有什么', _TextColor, GameFont('Courier'), 0, 200);
 	end;
 
 	function GetFontTests(): TestSuite;
