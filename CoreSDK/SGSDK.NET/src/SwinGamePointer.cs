@@ -1,3 +1,17 @@
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					SwinGamePointer
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// Change History:
+//
+// Version 2.0:
+// - 2009-01-20: Andrew: Added version histroy 
+//                       to newly created classes
+//
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,7 +50,8 @@ namespace SwinGame
 
         internal void Free()
         {
-            Core.DoFree(Pointer, _Kind);
+            //Core.DoFree(Pointer, _Kind);
+            Core.RegisterDelete(Pointer, _Kind);
             GC.SuppressFinalize(this);
         }
     }

@@ -576,11 +576,22 @@ namespace SwinGame
             return triangle.IsPointInTriangle(point);
         }
 
+        /// <summary>
+        /// Canculates the Barycenter of the passed in Triangle.
+        /// </summary>
+        /// <param name="triangle">The triangle to get the Barycenter of</param>
+        /// <returns>The center point of the triangle (Barycenter)</returns>
         public static Point2D TriangleBarycenter(Triangle triangle)
         {
             return triangle.Barycenter();
         }
 
+        /// <summary>
+        /// Apply the passed in matrix to all of the points in the passed in triangle. The
+        /// passed in Triangle's data will be changed using the details from the Matrix.
+        /// </summary>
+        /// <param name="m">the matrix containing the translations to be applied to the triangle</param>
+        /// <param name="triangle">the triangle to alter</param>
         public static void ApplyMatrix(Matrix2D m, ref Triangle triangle)
         {
             triangle.ApplyMatrix(m);

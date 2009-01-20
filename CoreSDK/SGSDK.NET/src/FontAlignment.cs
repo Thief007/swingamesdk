@@ -1,6 +1,6 @@
 //-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-// 					Mouse Button
+// 					Font Alignment
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -19,37 +19,23 @@ using System.Text;
 namespace SwinGame
 {
     /// <summary>
-    /// Mouse Buttons
+    /// Use font alignment for certain drawing operations. With these
+    ///	operations you specify the area to draw in as well as the alignment
+    ///	within that area. See DrawTextLines.
     /// </summary>
-    public enum MouseButton
+    public enum FontAlignment
     {
         /// <summary>
-        /// Left Mouse Button
+        /// Align to the Left
         /// </summary>
-        LeftButton = 1,
+        AlignLeft = 1,
         /// <summary>
-        /// Middle Mouse Button
+        /// Align to Center
         /// </summary>
-        MiddleButton = 2,
+        AlignCenter = 2,
         /// <summary>
-        /// Right Mouse Button
+        /// Align to the Right
         /// </summary>
-        RightButton = 3,
-        /// <summary>
-        /// Mouse Wheel Up
-        /// </summary>
-        MouseWheelUp = 4,
-        /// <summary>
-        /// Mouse Wheel Down
-        /// </summary>
-        MouseWheelDown = 5,
-        /// <summary>
-        /// Mouse extended button 1
-        /// </summary>
-        MouseX1Button = 6,
-        /// <summary>
-        /// Mouse extended button 2
-        /// </summary>
-        MouseX2Button = 7
+        AlignRight = 4
     }
 }

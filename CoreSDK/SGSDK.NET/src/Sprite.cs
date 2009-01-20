@@ -1,3 +1,17 @@
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					Sprite
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// Change History:
+//
+// Version 2.0:
+// - 2009-01-20: Andrew: Added version histroy 
+//                       to newly created classes
+//
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -856,6 +870,9 @@ namespace SwinGame
             SGSDK.VectorCollision(this, other);
         }
 
+        /// <summary>
+        /// Indicates the degrees of rotation for this Sprite.
+        /// </summary>
         public float Rotation
         {
             get
@@ -868,6 +885,9 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Indicates the current Zoom amount for the Sprite.
+        /// </summary>
         public float Zoom
         {
             get

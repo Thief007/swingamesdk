@@ -1,6 +1,6 @@
 //-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-// 					Resource Kind
+// 					Font Style
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -19,37 +19,29 @@ using System.Text;
 namespace SwinGame
 {
     /// <summary>
-    /// ResourceKind
-    ///
-    /// Use this with the resource path functions to get the path to a
-    /// given resource. Using these functions ensures that your resource
-    /// paths are correct across platforms
+    /// Use font styles to set the style of a font. Setting the style is time
+    ///	consuming, so create alternative font variables for each different
+    ///	style you want to work with. Note that these values can be logical
+    ///	ORed together to combine styles, e.g. BoldFont or ItalicFont = both
+    ///	bold and italic.
     /// </summary>
-    public enum ResourceKind
+    public enum FontStyle
     {
         /// <summary>
-        /// Indicates a Font Resource
+        /// Normal Font
         /// </summary>
-        FontResource,
+        NormalFont = 0,
         /// <summary>
-        /// Indicates a Image Resource
+        /// Bold Font
         /// </summary>
-        ImageResource,
+        BoldFont = 1,
         /// <summary>
-        /// Indicates a Sound Resource
+        /// Italic Font
         /// </summary>
-        SoundResource,
+        ItalicFont = 2,
         /// <summary>
-        /// Indicates a Map Resource
+        /// Underline Font
         /// </summary>
-        MapResource,
-        /// <summary>
-        /// Other resouces, located directly in the resource folder
-        /// </summary>
-        OtherResource,
-        /// <summary>
-        /// Indicates a No Resource
-        /// </summary>
-        None
+        UnderlineFont = 4
     }
 }

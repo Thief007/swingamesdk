@@ -11,7 +11,7 @@
 // Change History:
 //
 // Version 2:
-// - 2008-12-17: Andrew: Moved out other types
+// - 2009-1-20: Andrew: Moved out other types
 //                       Moved to SGSDK
 // - 2008-12-10: Andrew: Removed W from Vector...
 //
@@ -39,23 +39,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Diagnostics;
+using System.Text;
 
 namespace SwinGame
 {
-    /// <summary>
-    /// Timers can be used to perform time based actions. You can
-    /// create a number of timers, and each can be started, stopped,
-    /// paused, etc. You can then read the number of ticks that have
-    /// occurred since the timer was started, when paused this wont increase
-    /// until it is unpaused. Ticks are measured in milliseconds, 1/1000 of
-    /// a second.
-    /// </summary>
-    public struct Timer
-    {
-        //internal IntPtr Pointer;
-        internal SwinGamePointer Ptr;
-    }
-
     /// <summary>
     /// Core Class
     /// 
@@ -65,33 +52,14 @@ namespace SwinGame
     /// </summary>
     public class Core
     {
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMatrix2D")]
-        private static extern void DLL_FreeMaxtrix2D(IntPtr maxtrix2d);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSoundEffect")]
-        private static extern void DLL_FreeSoundEffect(IntPtr effect);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMusic")]
-        private static extern void DLL_FreeMusic(IntPtr effect);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeTimer")]
-        private static extern void DLL_FreeTimer(IntPtr timer);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeFont")]
-        private static extern void DLL_FreeFont(IntPtr fontToFree);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeBitmap")]
-        private static extern void DLL_FreeBitmap(IntPtr bitmapToFree);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeSprite")]
-        private static extern void DLL_FreeSprite(IntPtr spriteToFree);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "FreeMap")]
-        private static extern void DLL_FreeMap(IntPtr map);
-
         private static List<PointerData> _ToFree = new List<PointerData>();
 
+        /// <summary>
+        /// Registers the pointer with SwinGame core to have the memory freed.
+        /// This is done to ensure freeing is done on a single thread.
+        /// </summary>
+        /// <param name="ptr">the pointer to register</param>
+        /// <param name="kind">the type of the pointer</param>
         internal static void RegisterDelete(IntPtr ptr, PtrKind kind)
         {
             PointerData pd = new PointerData();
@@ -104,6 +72,9 @@ namespace SwinGame
             }
         }
 
+        /// <summary>
+        /// Free all pointers awaiting deletion.
+        /// </summary>
         private static void FreeAnythingToFree()
         {
             lock (_ToFree)
@@ -116,36 +87,33 @@ namespace SwinGame
             }
         }
 
-        internal static void DoFree(IntPtr ptr, PtrKind kind)
+        /// <summary>
+        /// Frees the memory associated with a pointer. Only called from
+        /// FreeAnythingToFree...
+        /// </summary>
+        /// <param name="ptr">the pointer to free</param>
+        /// <param name="kind">the type of data being freed</param>
+        private static void DoFree(IntPtr ptr, PtrKind kind)
         {
             try
             {
                 switch (kind)
                 {
-                    case PtrKind.Image: DLL_FreeBitmap(ptr); break;
-                    case PtrKind.Sound: DLL_FreeSoundEffect(ptr); break;
-                    case PtrKind.Music: DLL_FreeMusic(ptr); break;
-                    case PtrKind.Map: DLL_FreeMap(ptr); break;
-                    case PtrKind.Timer: DLL_FreeTimer(ptr); break;
-                    case PtrKind.Font: DLL_FreeFont(ptr); break;
-                    case PtrKind.Sprite: DLL_FreeSprite(ptr); break;
-                    case PtrKind.Matrix: DLL_FreeMaxtrix2D(ptr); break;
+                    case PtrKind.Image: SGSDK.FreeBitmap(ptr); break;
+                    case PtrKind.Sound: SGSDK.FreeSoundEffect(ptr); break;
+                    case PtrKind.Music: SGSDK.FreeMusic(ptr); break;
+                    case PtrKind.Map: SGSDK.FreeMap(ptr); break;
+                    case PtrKind.Timer: SGSDK.FreeTimer(ptr); break;
+                    case PtrKind.Font: SGSDK.FreeFont(ptr); break;
+                    case PtrKind.Sprite: SGSDK.FreeSprite(ptr); break;
+                    case PtrKind.Matrix: SGSDK.FreeMatrix2D(ptr); break;
                 }
-
-                if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error in DoFree: {0}", e);
-
-                //Report issue, but continue...
-                Console.WriteLine(Core.GetExceptionMessage());
             }
         }
-
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ExceptionOccured")]
-        private static extern int DLL_ExceptionOccured();
 
         /// <summary>
         /// Indicates if an exception has occurred in the SwinGame Library. This is used to determine the error
@@ -154,25 +122,17 @@ namespace SwinGame
         /// <returns>True if an error has occurred</returns>
         internal static bool ExceptionOccured()
         {
-            return DLL_ExceptionOccured() == -1;
+            return SGSDK.ExceptionOccured() == -1;
         }
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetExceptionMessage", CharSet = CharSet.Ansi)]
-        private static extern void DLL_GetExceptionMessage([Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
 
         internal static string GetExceptionMessage()
         {
             //Trace.WriteLine("Enter GetExceptionMessage");
             System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
-            DLL_GetExceptionMessage(sb);
+            SGSDK.GetExceptionMessage(sb);
             //Trace.WriteLine("Exit GetExceptionMessage... " + sb.ToString());
             return sb.ToString();
         }
-
-        // Code
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "OpenGraphicsWindow", CharSet = CharSet.Ansi)]
-        private static extern void DLL_OpenGraphicsWindow([MarshalAs(UnmanagedType.LPStr)]string caption, int width, int height);
 
         /// <summary>
         /// Opens the graphical window so that it can be drawn onto. You can set the
@@ -199,25 +159,8 @@ namespace SwinGame
         /// <param name="height">Height of the Window</param>
         public static void OpenGraphicsWindow(string caption, int width, int height)
         {
-            //Trace.WriteLine("Enter OpenGraphicsWindow");
-            try
-            {
-                DLL_OpenGraphicsWindow(caption, width, height);
-            }
-            catch (Exception exc)
-            {
-                //Trace.WriteLine("Exception in OpenGraphicsWindow");
-                throw new SwinGameException(exc.Message);
-            }
-            //Trace.WriteLine("End OpenGraphicsWindow... checking errors");
-
-            if (Core.ExceptionOccured()) throw new SwinGameException(Core.GetExceptionMessage());
-
-            //Trace.WriteLine("Exit OpenGraphicsWindow");
+            SGSDK.OpenGraphicsWindow(caption, width, height);
         }
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WindowCloseRequested")]
-        private static extern int DLL_WindowCloseRequested();
 
         /// <summary>
         /// Checks to see if the window has been asked to close. You need to handle
@@ -227,24 +170,9 @@ namespace SwinGame
         /// <returns>Returns true if the window has been requested to close</returns>
         public static bool WindowCloseRequested()
         {
-            bool temp;
-            try
-            {
-                temp = DLL_WindowCloseRequested() == -1;
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.WindowCloseRequested() == -1;
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ProcessEvents")]
-        private static extern void DLL_ProcessEvents();
         /// <summary>
         /// ProcessEvents allows the SwinGame API to react to user interactions. This
         ///	routine checks the current keyboard and mouse states. This routine must
@@ -252,25 +180,10 @@ namespace SwinGame
         /// </summary>
         public static void ProcessEvents()
         {
-            try
-            {
-                DLL_ProcessEvents();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-
+            SGSDK.ProcessEvents();
             FreeAnythingToFree();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "SetIcon", CharSet = CharSet.Ansi)]
-        private static extern void DLL_SetIcon([MarshalAs(UnmanagedType.LPStr)]string iconFilename);
         /// <summary>
         /// Sets the icon for the window. This must be called before openning the
         ///	graphics window. The icon is loaded as a bitmap, though this can be from
@@ -279,23 +192,9 @@ namespace SwinGame
         /// <param name="iconFilename">The name of the file to load as the image icon</param>
         public static void SetIcon(String iconFilename)
         {
-            try
-            {
-                DLL_SetIcon(iconFilename);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.SetIcon(iconFilename);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ChangeScreenSize")]
-        private static extern void DLL_ChangeScreenSize(int width, int height);
         /// <summary>
         /// Changes the size of the screen.
         /// </summary>
@@ -303,23 +202,9 @@ namespace SwinGame
         /// <param name="height">New height of the Screen</param>
         public static void ChangeScreenSize(int width, int height)
         {
-            try
-            {
-                DLL_ChangeScreenSize(width, height);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.ChangeScreenSize(width, height);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ToggleFullScreen")]
-        private static extern void DLL_ToggleFullScreen();
         /// <summary>
         /// Switches the application to full screen or back from full screen to
         ///	windowed. Develop your game as a Windowed application until you are sure
@@ -328,26 +213,8 @@ namespace SwinGame
         /// </summary>
         public static void ToggleFullScreen()
         {
-            try
-            {
-                DLL_ToggleFullScreen();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.ToggleFullScreen();
         }
-
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RefreshScreenWithFrame")]
-        private static extern void DLL_RefreshScreenWithFrame(int TargetFPS);
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "RefreshScreen")]
-        private static extern void DLL_RefreshScreen();
 
         /// <summary>
         /// Draws the current drawing to the screen. This must be called to display
@@ -358,19 +225,7 @@ namespace SwinGame
         ///  to ensure that this framerate is not exceeded.</param>
         public static void RefreshScreen(int TargetFPS)
         {
-            try
-            {
-                DLL_RefreshScreenWithFrame(TargetFPS);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.RefreshScreenWithFrame(TargetFPS);
         }
 
         /// <summary>
@@ -381,23 +236,9 @@ namespace SwinGame
         /// </summary>
         public static void RefreshScreen()
         {
-            try
-            {
-                DLL_RefreshScreen();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.RefreshScreen();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "TakeScreenShot", CharSet = CharSet.Ansi)]
-        private static extern void DLL_TakeScreenshot([MarshalAs(UnmanagedType.LPStr)]String basename);
         /// <summary>
         /// Saves the current screen a bitmap file. The file will be saved into the
         ///	current directory.
@@ -405,67 +246,25 @@ namespace SwinGame
         /// <param name="basename">The base name for the screen shot</param>
         public static void TakeScreenshot(string basename)
         {
-            try
-            {
-                DLL_TakeScreenshot(basename);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            SGSDK.TakeScreenShot(basename);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScreenWidth")]
-        private static extern int DLL_ScreenWidth();
         /// <summary>
         /// Gets the Screen's Width
         /// </summary>
         /// <returns>The Screen Width</returns>
         public static int ScreenWidth()
         {
-            int temp;
-            try
-            {
-                temp = DLL_ScreenWidth();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.ScreenWidth();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "ScreenHeight")]
-        private static extern int DLL_ScreenHeight();
         /// <summary>
         /// Gets the Screen's Height
         /// </summary>
         /// <returns>The Screen Height</returns>
         public static int ScreenHeight()
         {
-            int temp;
-            try
-            {
-                temp = DLL_ScreenHeight();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.ScreenHeight();
         }
 
         /// <summary>
@@ -584,32 +383,15 @@ namespace SwinGame
             return GetRGBFloatColor(red, green, blue);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetFramerate")]
-        private static extern int DLL_GetFramerate();
         /// <summary>
         /// Returns the average framerate for the last 10 frames as an integer.
         /// </summary>
         /// <returns>The current average framerate</returns>
         public static int GetFramerate()
         {
-            int temp;
-            try
-            {
-                temp = DLL_GetFramerate();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.GetFramerate();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetTicks")]
-        private static extern UInt32 DLL_GetTicks();
         /// <summary>
         /// Gets the number of milliseconds that have passed. This can be used to
         ///	determine timing operations, such as updating the game elements.
@@ -617,61 +399,23 @@ namespace SwinGame
         /// <returns>The number of milliseconds passed</returns>
         public static UInt32 GetTicks()
         {
-            UInt32 temp;
-            try
-            {
-                temp = DLL_GetTicks();
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return SGSDK.GetTicks();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Sleep")]
-        private static extern UInt32 DLL_Sleep(UInt32 time);
         /// <summary>
-        /// /// Puts the process to sleep for a specified number of
+        /// Puts the process to sleep for a specified number of
         /// milliseconds. This can be used to add delays into your
+        /// game.
         /// </summary>
         /// <param name="time">The number of milliseconds to sleep</param>
-        /// <returns>Delay before returning</returns>
-        public static UInt32 Sleep(UInt32 time)
+        public static void Sleep(UInt32 time)
         {
-            UInt32 temp;
-            try
-            {
-                temp = DLL_Sleep(time);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            SGSDK.Sleep(time);
         }
 
-        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind")]
-        //private static extern IntPtr DLL_GetPathToResourceWithBaseAndKind([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename, ResourceKind kind);
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBaseAndKind", CharSet = CharSet.Ansi)]
-        private static extern void DLL_GetPathToResourceWithBaseAndKind(
-            [MarshalAs(UnmanagedType.LPStr)]string path,
-            [MarshalAs(UnmanagedType.LPStr)]string filename,
-            ResourceKind kind,
-            [Out, MarshalAs(UnmanagedType.LPStr)] System.Text.StringBuilder result);
-
-        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetPathToResourceWithBase")]
-        //private static extern IntPtr DLL_GetPathToResourceWithBase([MarshalAs(UnmanagedType.LPStr)]string path, [MarshalAs(UnmanagedType.LPStr)]string filename);
-
+        /// <summary>
+        /// The path to the application... used in loading resources
+        /// </summary>
         private static readonly string appPath;
 
         static Core()
@@ -693,26 +437,11 @@ namespace SwinGame
         /// <returns>A Path to the Resource</returns>
         public static String GetPathToResource(String filename, ResourceKind kind)
         {
-            //Console.WriteLine("Getting path to {0} kind {1} at {2}", filename, kind.ToString(), appPath);
-            string temp;
-            try
-            {
-                //IntPtr addr = DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind);
-                //Console.WriteLine(" READ STRING AT = {0}", addr.ToString());
-                //temp = Marshal.PtrToStringAnsi(addr);
-                System.Text.StringBuilder sb = new System.Text.StringBuilder(2048);
-                DLL_GetPathToResourceWithBaseAndKind(appPath, filename, kind, sb);
-                temp = sb.ToString();
-            }
-            catch (Exception)
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            StringBuilder sb = new StringBuilder(2048);
+
+            SGSDK.GetPathToResourceWithBaseAndKind(appPath, filename, (int)kind, sb);
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -757,9 +486,6 @@ namespace SwinGame
             return (float)Math.Tan(angle * DEG_TO_RAD);
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "CreateTimer")]
-        private static extern IntPtr DLL_CreateTimer();
-
         /// <summary>
         /// Creates a new Timer that you can start, stop, read, etc. Timers
         /// are useful for implementing time based movement rather than framerate
@@ -769,20 +495,7 @@ namespace SwinGame
         /// <returns>A new timer</returns>
         public static Timer CreateTimer()
         {
-            Timer temp;
-            try
-            {
-                temp.Ptr = new SwinGamePointer(DLL_CreateTimer(), PtrKind.Timer);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return new Timer();
         }
 
         /// <summary>
@@ -792,11 +505,8 @@ namespace SwinGame
         /// <param name="toFree">The timer to be freed</param>
         public static void FreeTimer(Timer toFree)
         {
-            toFree.Ptr.Free();
+            toFree.Dispose();
         }
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StartTimer")]
-        private static extern void DLL_StartTimer(IntPtr timer);
 
         /// <summary>
         /// Start the timer ticking. The timer's value will now increase with time.
@@ -804,22 +514,9 @@ namespace SwinGame
         /// <param name="toStart">the timer to start</param>
         public static void StartTimer(Timer toStart)
         {
-            try
-            {
-                DLL_StartTimer((IntPtr)toStart.Ptr);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            toStart.Start();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "StopTimer")]
-        private static extern void DLL_StopTimer(IntPtr timer);
         /// <summary>
         /// Stop a timer. If the timer is restarted it will now reset back
         /// to 0 ticks.
@@ -827,22 +524,9 @@ namespace SwinGame
         /// <param name="toStop">The timer to stop</param>
         public static void StopTimer(Timer toStop)
         {
-            try
-            {
-                DLL_StopTimer((IntPtr)toStop.Ptr);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            toStop.Stop();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "PauseTimer")]
-        private static extern void DLL_PauseTimer(IntPtr timer);
         /// <summary>
         /// Pause the timer. Reading the timer will now give the same value until
         /// the timer is unpaused, at which point it will continue from where
@@ -851,47 +535,30 @@ namespace SwinGame
         /// <param name="toPause"> the timer to pause</param>
         public static void PauseTimer(Timer toPause)
         {
-            try
-            {
-                DLL_PauseTimer((IntPtr)toPause.Ptr);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            toPause.Pause();
         }
-
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "UnpauseTimer")]
-        private static extern void DLL_UnpauseTimer(IntPtr timer);
 
         /// <summary>
         /// Resume a paused timer. The timer will continue from where it was up to
         /// when it was paused.
         /// </summary>
         /// <param name="toUnpause">The timer to resume</param>
+        [Obsolete("Use ResumeTimer")]
         public static void UnpauseTimer(Timer toUnpause)
         {
-            try
-            {
-                DLL_UnpauseTimer((IntPtr)toUnpause.Ptr);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
+            toUnpause.Resume();
         }
 
-        [DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "GetTimerTicks")]
-        private static extern UInt32 DLL_GetTimerTicks(IntPtr timer);
-
+        /// <summary>
+        /// Resume a paused timer. The timer will continue from where it was up to
+        /// when it was paused.
+        /// </summary>
+        /// <param name="toUnpause">The timer to resume</param>
+        public static void ResumeTimer(Timer toUnpause)
+        {
+            toUnpause.Resume();
+        }
+        
         /// <summary>
         /// Get the number of ticks (milliseconds) that have passed since
         /// the timer was started. When paused this will return the same 
@@ -901,20 +568,7 @@ namespace SwinGame
         /// <returns></returns>
         public static UInt32 GetTimerTicks(Timer toGet)
         {
-            UInt32 temp;
-            try
-            {
-                temp = DLL_GetTimerTicks((IntPtr)toGet.Ptr);
-            }
-            catch (Exception exc)
-            {
-                throw new SwinGameException(exc.Message);
-            }
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
-            return temp;
+            return toGet.Ticks;
         }
     }
 }

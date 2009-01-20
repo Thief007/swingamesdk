@@ -1902,9 +1902,6 @@ namespace SwinGame
             SGSDK.ResetClip(bmp.pointer);
         }
 
-        //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "DrawTriangle")]
-        //private static extern void DLL_DrawTriangle(int theColor, [MarshalAs(UnmanagedType.LPArray)]Point2D[] points);
-
         /// <summary>
         /// Draws the specified Triangle to the screen
         /// </summary>
@@ -1916,6 +1913,12 @@ namespace SwinGame
             SGSDK.DrawTriangle((uint)color, triangle.ToArray());
         }
 
+        /// <summary>
+        /// Draws a triangle at the indicated location.
+        /// </summary>
+        /// <param name="theColor">the color of the triangle</param>
+        /// <param name="filled">if true the triangle is drawn as a filled triangle, otherwise only the outline is drawn.</param>
+        /// <param name="triangle">the triangle to draw</param>
         public static void DrawTriangle(Color theColor, bool filled, Triangle triangle)
         {
             if (filled) FillTriangle(theColor, triangle);
@@ -1933,10 +1936,16 @@ namespace SwinGame
             SGSDK.DrawTriangleOnScreen((uint)color, triangle.ToArray());
         }
 
+        /// <summary>
+        /// Draws the specified Triangle to the screen
+        /// </summary>
+        /// <param name="theColor">The color of the triangle</param>
+        /// <param name="filled">If true the triangle is drawn as a filled triangle, otherwise only the outline is drawn.</param>
+        /// <param name="triangle">The triangle to be drawn, with screen co-ordinates</param>
         public static void DrawTriangleOnScreen(Color theColor, bool filled, Triangle triangle)
         {
             if (filled) FillTriangleOnScreen(theColor, triangle);
-            else DrawTriangle(theColor, triangle);
+            else DrawTriangleOnScreen(theColor, triangle);
         }
 
         /// <summary>
@@ -1951,6 +1960,13 @@ namespace SwinGame
             SGSDK.DrawTriangleWithDestination(dest, (uint)color, triangle.ToArray());
         }
 
+        /// <summary>
+        /// Draws a triangle onto a supplied bitmap.
+        /// </summary>
+        /// <param name="dest">the bitmap to draw onto</param>
+        /// <param name="theColor">the color of the triangle</param>
+        /// <param name="filled">If true the triangle is drawn as a filled triangle, otherwise only the outline is drawn.</param>
+        /// <param name="triangle">the triangle to draw</param>
         public static void DrawTriangleOn(Bitmap dest, Color theColor, bool filled, Triangle triangle)
         {
             if (filled) FillTriangleOn(dest, theColor, triangle);

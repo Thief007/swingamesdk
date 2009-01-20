@@ -55,7 +55,7 @@ namespace Tests
                 }
                 else
                 {
-                    Core.UnpauseTimer(_Timer);
+                    Core.ResumeTimer(_Timer);
                 }
 
                 _IsTimerRunning = !_IsTimerRunning;

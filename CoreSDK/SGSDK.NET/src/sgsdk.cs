@@ -26,7 +26,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -49,11 +49,6 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
-            }
 		}
 
 
@@ -70,11 +65,6 @@ namespace SwinGame
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }
-            
-            if (Core.ExceptionOccured())
-            {
-                throw new SwinGameException(Core.GetExceptionMessage());
             }
 			return localResult;
 
@@ -94,7 +84,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -115,7 +105,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -137,7 +127,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -160,7 +150,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -181,7 +171,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -202,7 +192,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -223,7 +213,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -244,7 +234,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -265,7 +255,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -287,7 +277,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -311,7 +301,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -335,7 +325,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -359,7 +349,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -383,7 +373,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -407,7 +397,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -431,7 +421,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -454,7 +444,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -475,7 +465,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -497,7 +487,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -520,7 +510,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -541,7 +531,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -562,7 +552,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -583,7 +573,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -604,7 +594,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -626,7 +616,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -649,7 +639,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -671,7 +661,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -694,7 +684,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -715,7 +705,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -737,7 +727,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -761,7 +751,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -785,7 +775,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -809,7 +799,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -832,7 +822,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -854,7 +844,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -877,7 +867,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -898,7 +888,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -920,7 +910,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -944,7 +934,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -967,7 +957,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -988,7 +978,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1010,7 +1000,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1034,7 +1024,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1057,7 +1047,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1078,7 +1068,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1099,7 +1089,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1120,7 +1110,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1141,7 +1131,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1163,7 +1153,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1187,7 +1177,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1210,7 +1200,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1231,7 +1221,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1253,7 +1243,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1276,7 +1266,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1297,7 +1287,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1318,7 +1308,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1339,7 +1329,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1360,7 +1350,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1381,7 +1371,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1402,7 +1392,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1423,7 +1413,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1445,7 +1435,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1469,7 +1459,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1492,7 +1482,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1514,7 +1504,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1538,7 +1528,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1562,7 +1552,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1586,7 +1576,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1610,7 +1600,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1634,7 +1624,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1658,7 +1648,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1682,7 +1672,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1706,7 +1696,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1730,7 +1720,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1754,7 +1744,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1778,7 +1768,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1802,7 +1792,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1826,7 +1816,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1850,7 +1840,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1874,7 +1864,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1898,7 +1888,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1922,7 +1912,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1946,7 +1936,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1969,7 +1959,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -1990,7 +1980,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2011,7 +2001,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2033,7 +2023,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2056,7 +2046,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2077,7 +2067,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2099,7 +2089,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2123,7 +2113,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2147,7 +2137,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2171,7 +2161,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2195,7 +2185,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2219,7 +2209,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2243,7 +2233,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2267,7 +2257,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2290,7 +2280,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2312,7 +2302,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2335,7 +2325,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2357,7 +2347,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2380,7 +2370,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2402,7 +2392,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2425,7 +2415,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2447,7 +2437,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2470,7 +2460,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2492,7 +2482,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2516,7 +2506,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2539,7 +2529,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2561,7 +2551,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2585,7 +2575,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2608,7 +2598,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2629,7 +2619,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2650,7 +2640,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2671,7 +2661,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2692,7 +2682,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2713,7 +2703,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2734,7 +2724,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2755,7 +2745,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2776,7 +2766,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2797,7 +2787,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2818,7 +2808,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2839,7 +2829,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2860,7 +2850,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2881,7 +2871,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2902,7 +2892,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2923,7 +2913,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2944,7 +2934,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2965,7 +2955,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -2986,7 +2976,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3007,7 +2997,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3028,7 +3018,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3049,7 +3039,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3071,7 +3061,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3095,7 +3085,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3119,7 +3109,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3143,7 +3133,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3167,7 +3157,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3191,7 +3181,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3215,7 +3205,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3238,7 +3228,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3259,7 +3249,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3281,7 +3271,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3304,7 +3294,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3325,7 +3315,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3347,7 +3337,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3371,7 +3361,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3395,7 +3385,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3419,7 +3409,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3443,7 +3433,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3466,7 +3456,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3488,7 +3478,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3512,7 +3502,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3536,7 +3526,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3560,7 +3550,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3583,7 +3573,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3604,7 +3594,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3625,7 +3615,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3647,7 +3637,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3671,7 +3661,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3695,7 +3685,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3718,7 +3708,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3739,7 +3729,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3760,7 +3750,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3781,7 +3771,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3803,7 +3793,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3826,7 +3816,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3847,7 +3837,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3868,7 +3858,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3889,7 +3879,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3910,7 +3900,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3931,7 +3921,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3952,7 +3942,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3973,7 +3963,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -3994,7 +3984,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4015,7 +4005,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4037,7 +4027,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4061,7 +4051,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4085,7 +4075,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4109,7 +4099,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4133,7 +4123,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4157,7 +4147,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4181,7 +4171,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4204,7 +4194,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4225,7 +4215,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4246,7 +4236,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4267,7 +4257,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4288,7 +4278,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4310,7 +4300,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4333,7 +4323,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4355,7 +4345,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4379,7 +4369,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4403,7 +4393,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4427,7 +4417,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4450,7 +4440,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4472,7 +4462,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4496,7 +4486,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4519,7 +4509,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4541,7 +4531,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4565,7 +4555,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4589,7 +4579,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4613,7 +4603,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4637,7 +4627,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4661,7 +4651,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4685,7 +4675,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4709,7 +4699,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4733,7 +4723,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4757,7 +4747,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4781,7 +4771,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4805,7 +4795,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4829,7 +4819,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4853,7 +4843,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4877,7 +4867,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4901,7 +4891,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4925,7 +4915,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4949,7 +4939,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4972,7 +4962,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -4993,7 +4983,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5014,7 +5004,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5035,7 +5025,28 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
+            if (Core.ExceptionOccured())
+            {
+                throw new SwinGameException(Core.GetExceptionMessage());
+            }
+		}
+
+
+		[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="DrawSimpleFramerate", CharSet=CharSet.Ansi)]
+		private static extern void DLL_DrawSimpleFramerate(int x, int y);
+
+		public static void DrawSimpleFramerate(int x, int y)
+		{
+			try
+			{
+				DLL_DrawSimpleFramerate( x,  y);
+            }
+            catch (Exception exc)
+            {
+                throw new SwinGameException(exc.Message);
+            }
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5056,7 +5067,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5077,7 +5088,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5098,7 +5109,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5119,7 +5130,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5140,7 +5151,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5161,7 +5172,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5182,7 +5193,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5203,7 +5214,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5224,7 +5235,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5246,7 +5257,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5269,7 +5280,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5290,7 +5301,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5312,7 +5323,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5335,7 +5346,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5357,7 +5368,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5381,7 +5392,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5404,7 +5415,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5425,7 +5436,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5447,7 +5458,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5470,7 +5481,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
@@ -5492,7 +5503,7 @@ namespace SwinGame
             {
                 throw new SwinGameException(exc.Message);
             }
-            
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());

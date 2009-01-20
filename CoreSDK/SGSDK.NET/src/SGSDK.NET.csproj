@@ -55,12 +55,15 @@
     <Compile Include="CollisionDetectionRange.cs" />
     <Compile Include="CollisionSide.cs" />
     <Compile Include="Event.cs" />
+    <Compile Include="Font.cs" />
+    <Compile Include="FontAlignment.cs" />
+    <Compile Include="FontStyle.cs" />
     <Compile Include="Keys.cs" />
     <Compile Include="LineSegment.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MappyLoader.cs" />
     <Compile Include="Core.cs" />
-    <Compile Include="Font.cs" />
+    <Compile Include="Text.cs" />
     <Compile Include="Graphics.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Matrix2D.cs" />
@@ -82,6 +85,7 @@
     <Compile Include="SwinGameException.cs" />
     <Compile Include="SwinGamePointer.cs" />
     <Compile Include="Tile.cs" />
+    <Compile Include="Timer.cs" />
     <Compile Include="Triangle.cs" />
     <Compile Include="Vector.cs" />
   </ItemGroup>
