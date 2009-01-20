@@ -34,51 +34,41 @@ Module GameLogic
             SwinGame.Graphics.ClearScreen(Color.White)
 
             Graphics.DrawSprite(bug)
-
             Graphics.UpdateSprite(bug)
 
             Graphics.DrawSprite(bug1)
-
             Graphics.UpdateSprite(bug1)
 
             If bug.X + bug.Width >= Core.ScreenWidth Then
                 bug.Movement.X = -0.5
-                Audio.PlaySoundEffect(GameSound("hit"))
             End If
 
             If bug.X <= 0 Then
                 bug.Movement.X = 0.5
-                Audio.PlaySoundEffect(GameSound("hit"))
             End If
 
             If bug.Y + bug.Height >= Core.ScreenHeight Then
                 bug.Movement.Y = -0.5
-                Audio.PlaySoundEffect(GameSound("hit"))
             End If
 
             If bug.Y <= 0 Then
                 bug.Movement.Y = 0.5
-                Audio.PlaySoundEffect(GameSound("hit"))
             End If
 
             If bug1.X + bug1.Width >= Core.ScreenWidth Then
                 bug1.Movement.X = -0.5
-                Audio.PlaySoundEffect(GameSound("hit1"))
             End If
 
             If bug1.X <= 0 Then
                 bug1.Movement.X = 0.5
-                Audio.PlaySoundEffect(GameSound("hit1"))
             End If
 
             If bug1.Y + bug1.Height >= Core.ScreenHeight Then
                 bug1.Movement.Y = -0.5
-                Audio.PlaySoundEffect(GameSound("hit1"))
             End If
 
             If bug1.Y <= 0 Then
                 bug1.Movement.Y = 0.5
-                Audio.PlaySoundEffect(GameSound("hit1"))
             End If
 
 
