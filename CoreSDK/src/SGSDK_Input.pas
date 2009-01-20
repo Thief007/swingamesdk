@@ -204,11 +204,7 @@ implementation
 	begin
 		x := 0; y := 0;
 		SDL_GetMouseState(x, y);
-		{$IFDEF FPC}
-		result := CreateVector(Single(x), Single(y));
-		{$ELSE}
 	  result := CreateVector(x, y);
-		{$ENDIF}
 	end;
 	
 	function GetMousePosition(): Point2D;
