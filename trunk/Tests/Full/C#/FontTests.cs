@@ -55,6 +55,8 @@ namespace Tests
                    _TextColor = Core.GetColor((byte)_x, (byte)(_y*_x), (byte)(_z*_x*_y));
                 }
 
+                Text.DrawFramerate(30, 520);
+
                 //Draw Text
                 Text.DrawText("1 This is some Text", _TextColor, GameResources.GameFont("Courier"), 10, 10);
                 Text.DrawText("2 This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(10, 30));
@@ -63,9 +65,15 @@ namespace Tests
                 SwinGame.Graphics.ClearSurface(draw, Color.Black);
                 Text.DrawText(draw, "3 This is some Text", _TextColor, GameResources.GameFont("Courier"), Shapes.CreatePoint(0, 0));
                 SwinGame.Graphics.DrawBitmap(draw, 10, 50);
+
                 SwinGame.Graphics.ClearSurface(draw, Color.Gray);
                 Text.DrawText(draw, "4 This is some Text", _TextColor, GameResources.GameFont("Courier"), 0, 0);
                 SwinGame.Graphics.DrawBitmap(draw, 10, 70);
+
+                SwinGame.Graphics.ClearSurface(draw, Color.Black);
+                Text.DrawText(draw, "Simple Text on BMP", _TextColor, 0, 0);
+                SwinGame.Graphics.DrawBitmap(draw, 210, 270);
+                
 
                 //Draw Text On Screen
                 Text.DrawTextOnScreen("5 This is some Text", _TextColor, GameResources.GameFont("Courier"), 32, 220);
@@ -86,6 +94,9 @@ namespace Tests
                 //Draw Text Lines on Screen
                 Text.DrawTextLinesOnScreen("B This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Transparent, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, 32, 440, 100, 100);
                 Text.DrawTextLinesOnScreen("C This is some Text Lines" + Environment.NewLine + "** This is some Text Lines **", _TextColor, Color.Yellow, GameResources.GameFont("Courier"), FontAlignment.AlignCenter, Shapes.CreateRectangle(32, 480, 100, 100));
+
+                Text.DrawText("Hello World", _TextColor, 210, 210);
+                Text.DrawTextOnScreen("Hello Screen", _TextColor, 225, 310);
             }
         }
     }

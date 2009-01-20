@@ -520,8 +520,8 @@ namespace Tests
                 ball.Movement.Y = 1;
             }
 
-            private int X = 0;
-            private int Y = 0;
+            //private int X = 0;
+            //private int Y = 0;
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
@@ -925,7 +925,7 @@ namespace Tests
 				private readonly static int RH = 100;
 				private readonly static int RX = 159;
 				private readonly static int RY = 159;
-				private readonly static int LINE_LENGTH = 100;
+				//private readonly static int LINE_LENGTH = 100;
 				
 				private Point2D p;
 				private Rectangle rect;
@@ -989,7 +989,7 @@ namespace Tests
             private readonly static int RH = 100;
             private readonly static int RX = 159;
             private readonly static int RY = 159;
-            private readonly static int LINE_LENGTH = 100;
+            //private readonly static int LINE_LENGTH = 100;
 		
 
             private Single px, py;
@@ -1026,7 +1026,7 @@ namespace Tests
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
-                int r = 1, r2 = 2;
+                //int r = 1, r2 = 2;
 
                 if (Input.IsKeyPressed(Keys.VK_A)) movement = Physics.Multiply(Physics.RotationMatrix(-4.0f), movement);
                 if (Input.IsKeyPressed(Keys.VK_Z)) movement = Physics.Multiply(Physics.RotationMatrix(4.0f), movement);
@@ -1104,7 +1104,7 @@ namespace Tests
             private readonly static int CR = 100;
             private readonly static int CX = 209;
             private readonly static int CY = 209;
-            private readonly static int LINE_LENGTH = 100;
+            //private readonly static int LINE_LENGTH = 100;
 
             private Point2D p, c;
             private Vector movement, mvOut;
@@ -1168,7 +1168,7 @@ namespace Tests
             private readonly static int CR = 100;
             private readonly static int CX = 209;
             private readonly static int CY = 209;
-            private readonly static int LINE_LENGTH = 100;
+            //private readonly static int LINE_LENGTH = 100;
             private readonly static int PR = 10;
 
             private Point2D p, c;
@@ -1193,7 +1193,7 @@ namespace Tests
 
             protected override void ToRun(System.Drawing.Rectangle toDrawIn)
             {
-                int r = 1, r2 = 2;
+                //int r = 1, r2 = 2;
 
                 if (Input.IsKeyPressed(Keys.VK_A)) movement = Physics.Multiply(Physics.RotationMatrix(-4.0f), movement);
                 if (Input.IsKeyPressed(Keys.VK_Z)) movement = Physics.Multiply(Physics.RotationMatrix(4.0f), movement);

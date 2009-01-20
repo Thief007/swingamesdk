@@ -1,3 +1,17 @@
+//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
+//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+// 					Triangle
+//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//
+// Change History:
+//
+// Version 2.0:
+// - 2009-01-20: Andrew: Added version histroy 
+//                       to newly created classes
+//
+//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -79,11 +93,20 @@ namespace SwinGame
             return SGSDK.IsPointInTriangle(point, this.ToArray()) == -1;
         }
 
+        /// <summary>
+        /// Canculates the Barycenter of the passed in Triangle.
+        /// </summary>
+        /// <returns>The center point of the triangle (Barycenter)</returns>
         public Point2D Barycenter()
         {
             return SGSDK.TriangleBarycenter(this.ToArray());
         }
 
+        /// <summary>
+        /// Apply the passed in matrix to all of the points in the passed in triangle. The
+        /// passed in Triangle's data will be changed using the details from the Matrix.
+        /// </summary>
+        /// <param name="m">the matrix containing the translations to be applied to the triangle</param>
         public void ApplyMatrix(Matrix2D m)
         {
             Point2D[] data = this.ToArray();

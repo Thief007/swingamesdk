@@ -10,6 +10,7 @@
 // Change History:
 //
 // Version 2:
+// - 2009-01-20: Andrew: Moved to using new Font class.
 // - 2008-12-18: Andrew: Moved to SGSDK
 //
 // Version 1.1:
@@ -149,7 +150,7 @@ namespace SwinGame
         public static void StartReadingText(Color toColour, int maxLength, Font theFont, int x, int y)
         {
             int color = toColour.ToArgb();
-            SGSDK.StartReadingText((uint)color, maxLength, theFont.Pointer, x, y);
+            SGSDK.StartReadingText((uint)color, maxLength, theFont, x, y);
         }
 
         //[DllImport("SGSDK.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "IsReadingText")]
@@ -315,7 +316,7 @@ namespace SwinGame
         public void StartReadingTextWithText(string text, Color toColour, int maxLength, Font theFont, int x, int y)
         {
             int color = toColour.ToArgb();
-            SGSDK.StartReadingTextWithText(text, (uint)color, maxLength, theFont.Pointer, x, y);
+            SGSDK.StartReadingTextWithText(text, (uint)color, maxLength, theFont, x, y);
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Tests
             private LineSegment movLine = Shapes.CreateLine(200, 200, 250, 250);
             private Point2D tempPoint;
             private Point2D[] points;
-            private int i;
+            //private int i;
             private LineSegment tempLine;
             private Color rectCol;
 
