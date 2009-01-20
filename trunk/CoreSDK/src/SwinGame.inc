@@ -1,3 +1,5 @@
 
 {-- $ DEFINE TRACE}
-{$PACKENUM 4}
+{$IFDEF FPC}
+  {$PACKENUM 4}
+{$ENDIF}

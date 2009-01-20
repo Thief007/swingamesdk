@@ -227,7 +227,7 @@ implementation
 		x := 0; 
 		y := 0;
 		SDL_GetRelativeMouseState(x, y);
-		result := CreateVector(Single(x), Single(y));
+		result := CreateVector(x, y);
 		
 	  {$IFDEF TRACE}
 			TraceExit('SGSDK_Input', 'GetMouseMovement');
