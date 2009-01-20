@@ -145,7 +145,8 @@ interface
 	function TextWidth(theText: WideString; theFont: Font): LongInt; overload;
 	function TextHeight(theText: WideString; theFont: Font): LongInt; overload;
 	
-	procedure DrawFramerate(x, y: LongInt; font: Font);
+	procedure DrawFramerate(x, y: LongInt; font: Font); overload;
+	procedure DrawFramerate(x, y: LongInt); overload;
 	
 implementation
 	uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx;
@@ -677,6 +678,30 @@ implementation
 		end;
 	end;
 	
+	procedure CalculateFramerate(out average, highest, lowest: String; out textColour: Color);
+	var
+	  avg, hi, lo: Single;
+	begin
+		if renderFPSInfo.average = 0 then
+			avg := 9999
+		else
+			avg := (1000 / renderFPSInfo.average);
+		
+		lo := (1000 / renderFPSInfo.high);
+		hi := (1000 / renderFPSInfo.low);
+
+		Str(avg:4:1, average);
+		Str(hi:4:1, highest);
+		Str(lo:4:1, lowest);	 
+
+		if avg < 30 then
+			textColour := ColourRed
+		else if avg < 50 then
+			textColour := ColourYellow
+		else
+			textColour := ColourGreen;
+	end;
+	
 	/// Draws the frame rate using the specified font at the indicated x, y.
 	///	Draws the FPS (min, max) current average
 	///
@@ -685,37 +710,23 @@ implementation
 	///
 	/// Side Effects:
 	///	- Framerate is drawn to the screen
-	procedure DrawFramerate(x, y: LongInt; font: Font);
+	procedure DrawFramerate(x, y: LongInt; font: Font); overload;
 	var
-		temp, temp2, temp3 : String;
 		textColour : Colour;
-		average, highest, lowest : Single;
+		average, highest, lowest : String;
 	begin
 		//Draw framerates
-
-		if renderFPSInfo.average = 0 then
-			average := 9999
-		else
-			average := (1000 / renderFPSInfo.average);
-		
-		lowest	:= (1000 / renderFPSInfo.high);
-		highest := (1000 / renderFPSInfo.low);
-
-		if average < 30 then
-			textColour := ColourRed
-		else if average < 50 then
-			textColour := ColourYellow
-		else
-			textColour := ColourGreen;
-
-		Str(average:4:1, temp);
-		Str(highest:4:1, temp2);
-		Str(lowest:4:1, temp3);
+    CalculateFramerate(average, highest, lowest, textColour);
 
     if not Assigned(font) then
-      DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, x + 2, y + 2)
+      DrawTextOnScreen('FPS: (' + highest + ', ' + lowest + ') ' + average, textColour, x + 2, y + 2)
     else
-		  DrawTextOnScreen('FPS: (' + temp3 + ', ' + temp2 + ') ' + temp, textColour, font, x + 2, y + 2);
+		  DrawTextOnScreen('FPS: (' + highest + ', ' + lowest + ') ' + average, textColour, font, x + 2, y + 2);
+	end;
+	
+	procedure DrawFramerate(x, y: LongInt); overload;
+	begin
+	 DrawFramerate(x, y, nil);
 	end;
 	
   procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;

@@ -72,7 +72,8 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
     # store the types we discover (alert later if we don't know what to do about them)
     sg_types = set() #set of unique types
     param_special = '' #from //##????| - starts with //## ends with |
-               
+    exc = '' # after args ! = dont trap exceptions...
+    
     for line in signatures:
         line = line.strip()
         line = line.replace('  ',' ') # consistent spaces
@@ -80,11 +81,15 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
         
         if line.find('//##') == 0:
             line = line.replace('//##', '') #remove start
+            if line.find('!') == 0:
+                exc = '!'
+                line = line.replace('!', '');
+                
             param_special, line = line.split('|'); #split on end
-            
             #print param_special
         else:
-            param_special=''
+            param_special = ''
+            exc = ''
             
         # method arguments
         pos0 = line.find(' ')
@@ -150,7 +155,8 @@ def ExtractTuplesAndTypesFromSignatures(signatures):
         sig_tuples.append({'name':name,
                            'type':type,
                            'args':arg_bits,
-                           'retn':retn})
+                           'retn':retn,
+                           'exc':exc})
     return sig_tuples, sg_types 
 
 
@@ -230,7 +236,8 @@ namespace SwinGame
     f.write(header) 
     names = []
     for sig in sig_tuples:
-        name, args, retn = sig['name'], sig['args'], sig['retn']
+        name, args, retn, exc = sig['name'], sig['args'], sig['retn'], sig['exc']
+        
         f.write('\t\t[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="%s", CharSet=CharSet.Ansi)]\n' % (name))
         f.write('\t\tprivate static extern %s DLL_%s(%s);\n' % (retn, name, args_to_str(args)))
         
@@ -250,13 +257,20 @@ namespace SwinGame
             catch (Exception exc)
             {
                 throw new SwinGameException(exc.Message);
-            }
+            }'''
             
+        f.write(body)
+
+        body = '''
+        
             if (Core.ExceptionOccured())
             {
                 throw new SwinGameException(Core.GetExceptionMessage());
             }'''        
-        f.write(body)
+        
+        #If we cant find the ! in exc
+        if exc.find('!') < 0:
+            f.write(body)
         
         if retn.find('void') < 0:
             f.write('\n\t\t\treturn localResult;\n')
