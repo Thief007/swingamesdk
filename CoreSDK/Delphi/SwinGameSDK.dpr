@@ -20,7 +20,8 @@ uses
   SGSDK_KeyCodes in '..\src\SGSDK_KeyCodes.pas',
   SGSDK_MappyLoader in '..\src\SGSDK_MappyLoader.pas',
   SGSDK_Physics in '..\src\SGSDK_Physics.pas',
-  SGSDK_Shapes in '..\src\SGSDK_Shapes.pas';
+  SGSDK_Shapes in '..\src\SGSDK_Shapes.pas',
+  SwinGameTrace in '..\src\SwinGameTrace.pas';
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }

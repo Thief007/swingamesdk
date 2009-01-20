@@ -1,7 +1,7 @@
 @echo off
 
-set VERSION=1.1.5
-set VERSION_TXT=1-1-5
+set VERSION=2.0
+set VERSION_TXT=2-0
 
 echo __________________________________________________
 echo  Creating WIN SDKs for - %VERSION%
