@@ -21,7 +21,6 @@
 // Change History:
 //
 // Version 2.0:
-// - 2009-01-20: Andrew: Added ! to indicate not to check for exceptions in the ExceptionOccurred function of generated code (C#).
 // - 2008-12-17: Andrew: Moved "new" methods to the bottom... makes it easier to identify new functionality for other code (C#).
 //                       Added new functions and procedures, to map to new functionality
 //                       Replaced all platform specific integers to LongInt (i.e. int32)
@@ -178,20 +177,14 @@ uses
 		ErrorMessage: String;
 		HasException: Boolean;		
 	
-	//
-	// For convertion scripts
-	//
 	//Special comments = //##????| o = out, a = array, _ = normal parameter position
-	//                 = if this is preceded by a ! then exceptions are not checked and thrown (used for exception handling routines)
 	
-	//##!o|
+	//##o|
 	procedure GetExceptionMessage(result: PChar); cdecl; export;
 	begin
 		StrCopy(result, PChar(ErrorMessage));
 	end;
 	
-	//Dont trap exceptions for this method...
-	//##!|
 	function ExceptionOccured(): LongInt; cdecl; export;
 	begin
 		if HasException then result := -1
@@ -2752,14 +2745,6 @@ begin
 	end;    	 
 end;
 
-procedure DrawSimpleFramerate(x, y: LongInt); cdecl; export;
-begin
-	Try
-		SGSDK_Font.DrawFramerate(x, y);
-	Except on exc: Exception do TrapException(exc, 'DrawSimpleFramerate');
-	end;
-end;
-
 //##_a|
 procedure DrawTriangleOnScreen(theColour: Colour; firstPoint: Point2DPtr); cdecl; export;
 var
@@ -3022,6 +3007,8 @@ exports
 	ShowMouse name 'ShowMouse',
 	MoveMouse name 'MoveMouse',
 	IsMouseShown name 'IsMouseShown',
+	StartReadingTextWithText name 'StartReadingTextWithText', //2
+	AKeyWasPressed name 'AKeyWasPressed', //2
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -3068,7 +3055,6 @@ exports
 	TextWidth name 'TextWidth',
 	TextHeight name 'TextHeight',
 	DrawFramerate name 'DrawFramerate',
-	DrawSimpleFramerate name 'DrawSimpleFramerate', //new in 2
 	DrawSimpleText name 'DrawSimpleText', // new in 2
 	DrawSimpleTextOnScreen name 'DrawSimpleTextOnScreen', // new in 2
 	DrawSimpleTextOn name 'DrawSimpleTextOn', // new in 2
@@ -3236,6 +3222,11 @@ exports
 	GetSpriteRotation name 'GetSpriteRotation', //2
 	SetSpriteZoom name 'SetSpriteZoom', //2
 	GetSpriteZoom name 'GetSpriteZoom', //2
+	RotateZoomBitmap name 'RotateZoomBitmap', //2
+	SetupBitmapForCollisions name 'SetupBitmapForCollisions', //2
+	UpdateSpriteAnimationPct name 'UpdateSpriteAnimationPct', //2
+	UpdateSpritePct name 'UpdateSpritePct', //2
+
 	
 	///-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 	//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
