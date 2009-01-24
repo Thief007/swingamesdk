@@ -2729,7 +2729,7 @@ begin
 	end;
 end;
 
-procedure DrawSimpleFramerate(x, y: Single); cdecl; export;
+procedure DrawSimpleFramerate(x, y: LongInt); cdecl; export;
 begin
 	Try
 		SGSDK_Font.DrawFramerate(x, y);
