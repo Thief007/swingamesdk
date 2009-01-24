@@ -2729,6 +2729,15 @@ begin
 	end;
 end;
 
+procedure DrawSimpleFramerate(x, y: Single); cdecl; export;
+begin
+	Try
+		SGSDK_Font.DrawFramerate(x, y);
+	Except on exc: Exception do TrapException(exc, 'DrawSimpleFramerate');
+	end;
+end;
+
+
 procedure DrawSimpleTextOnScreen(theText: PChar; textColor: Color; x, y: Single); cdecl; export;
 begin
 	Try
@@ -3058,6 +3067,7 @@ exports
 	DrawSimpleText name 'DrawSimpleText', // new in 2
 	DrawSimpleTextOnScreen name 'DrawSimpleTextOnScreen', // new in 2
 	DrawSimpleTextOn name 'DrawSimpleTextOn', // new in 2
+	DrawSimpleFramerate name 'DrawSimpleFramerate', //new in 2
 	
 	//***************************************************
 	//* * * * * * * * * * * * * * * * * * * * * * * * * *
