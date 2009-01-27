@@ -2,7 +2,7 @@ Module GameLogic
 
     Public Sub Main()
         'Opens a new Graphics Window
-        Core.OpenGraphicsWindow("Bug!", 800, 600)
+        Core.OpenGraphicsWindow("Buggy Loves Food!", 800, 600)
 
         'Open Audio Device
         Audio.OpenAudio()
