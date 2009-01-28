@@ -156,12 +156,11 @@ Module GameLogic
 
             'if "m" was typed - stop or start music
             If Input.WasKeyTyped(SwinGame.Keys.VK_M) Then
-                Select Case Audio.IsMusicPlaying()
-                    Case True
-                        Audio.StopMusic()
-                    Case False
-                        Audio.PlayMusic(GameMusic("lion"), -1)
-                End Select
+                If Audio.IsMusicPlaying() = True Then
+                    Audio.StopMusic()
+                Else
+                    Audio.PlayMusic(GameMusic("lion"), -1)
+                End If
             End If
 
             If Input.IsKeyPressed(SwinGame.Keys.VK_UP) Then
