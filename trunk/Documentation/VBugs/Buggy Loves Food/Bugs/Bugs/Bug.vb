@@ -39,6 +39,7 @@
     Public Sub CheckAndEat(ByVal myFood As Food)
         If Physics.HaveSpritesCollided(bug, myFood.foodSprite) Then
             myFood.WasEaten()
+
         End If
     End Sub
 

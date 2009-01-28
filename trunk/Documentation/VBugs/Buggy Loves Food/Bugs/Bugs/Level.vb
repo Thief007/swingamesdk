@@ -9,11 +9,13 @@
         Me.background = GameImage(levelName)
         levelFood = New List(Of Food)
         createTime = 0
+        score = 0
     End Sub
 
     Public Sub Draw()
         Graphics.DrawBitmap(background, 0, 0)
         Text.DrawText(levelName, Color.Black, GameFont("Courier"), 0, 0)
+        Text.DrawText("Score:  " & score, Color.Black, GameFont("Courier"), 100, 0)
 
         For Each myFood In levelFood
             myFood.Draw()
