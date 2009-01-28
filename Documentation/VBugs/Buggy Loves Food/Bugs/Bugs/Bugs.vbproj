@@ -121,11 +121,13 @@
     <Content Include="ReadMe.txt" />
     <Content Include="Resources\images\apple.png" />
     <Content Include="Resources\images\apple3.png" />
+    <Content Include="Resources\images\applef.png" />
     <Content Include="Resources\images\background.bmp" />
     <Content Include="Resources\images\loader_empty.png" />
     <Content Include="Resources\images\loader_full.png" />
     <Content Include="Resources\images\SplashBack.png" />
     <Content Include="Resources\images\SwinGameAni.png" />
+    <Content Include="Resources\images\Level 2!.png" />
     <Content Include="Resources\readme.txt" />
     <Content Include="Resources\SwinGame.ico" />
     <Content Include="SwinGame.ico" />

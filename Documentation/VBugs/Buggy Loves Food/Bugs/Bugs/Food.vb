@@ -58,6 +58,8 @@
             foodSprite.EndingAction = SpriteEndingAction.Stop
             foodSprite.X = x
             foodSprite.Y = y
+
+            score = score + 1
         End If
     End Sub
 
