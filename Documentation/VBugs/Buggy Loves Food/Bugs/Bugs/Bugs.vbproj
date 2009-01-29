@@ -59,8 +59,11 @@
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
     <Import Include="System.Diagnostics" />
+    <Import Include="System.IO" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apple.vb" />
+    <Compile Include="BadFood.vb" />
     <Compile Include="Bug.vb" />
     <Compile Include="Food.vb" />
     <Compile Include="GameLogic.vb" />
@@ -123,6 +126,8 @@
     <Content Include="Resources\images\apple3.png" />
     <Content Include="Resources\images\applef.png" />
     <Content Include="Resources\images\background.bmp" />
+    <Content Include="Resources\images\badapple.png" />
+    <Content Include="Resources\images\badapple1.png" />
     <Content Include="Resources\images\loader_empty.png" />
     <Content Include="Resources\images\loader_full.png" />
     <Content Include="Resources\images\SplashBack.png" />
@@ -130,6 +135,7 @@
     <Content Include="Resources\images\Level 2!.png" />
     <Content Include="Resources\readme.txt" />
     <Content Include="Resources\SwinGame.ico" />
+    <Content Include="Resources\Level.txt" />
     <Content Include="SwinGame.ico" />
   </ItemGroup>
   <ItemGroup>

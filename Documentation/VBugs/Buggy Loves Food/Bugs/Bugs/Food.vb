@@ -1,21 +1,23 @@
 ﻿Public Class Food
 
     Public foodSprite As Sprite
+    Public eatenImg As Bitmap
     Private timeCreated As Integer
     Private timeToDie As Integer
     Private isDying As Boolean
     Public isDead As Boolean
     Public isEaten As Boolean
 
-    Public Sub New(ByVal time As Integer)
+    Public Sub New(ByVal time As Integer, ByVal img As Bitmap, ByVal toEat As Bitmap)
         timeCreated = time
         timeToDie = timeCreated + (Rnd() * 10000)
 
         isDying = False
         isDead = False
         isEaten = False
+        eatenImg = toEat
 
-        foodSprite = Graphics.CreateSprite(GameImage("appleap"), 20, 6, 57, 43)
+        foodSprite = Graphics.CreateSprite(img, 20, 6, 57, 43)
         foodSprite.EndingAction = SpriteEndingAction.Stop
         foodSprite.X = Rnd() * (Core.ScreenWidth() - foodSprite.Width)
         foodSprite.Y = Rnd() * (Core.ScreenHeight() - foodSprite.Height)
@@ -25,6 +27,7 @@
         If Not isDead Then
             Graphics.DrawSprite(foodSprite)
         End If
+
     End Sub
 
     Public Sub Update(ByVal time As Integer)
@@ -44,6 +47,8 @@
             'Starting from the 5th frame
             foodSprite.CurrentFrame = 5
         End If
+
+
     End Sub
 
     Public Sub WasEaten()
@@ -54,24 +59,17 @@
             y = foodSprite.Y
             foodSprite.Dispose()
 
-            foodSprite = Graphics.CreateSprite(GameImage("applean"), 20, 6, 57, 43)
+            foodSprite = Graphics.CreateSprite(eatenImg, 20, 6, 57, 43)
             foodSprite.EndingAction = SpriteEndingAction.Stop
             foodSprite.X = x
             foodSprite.Y = y
 
-            score = score + 1
+            AddScore()
         End If
     End Sub
 
-    'Public Sub eatApple()
-    '    Dim applean As Sprite
-    '    applean = Graphics.CreateSprite(GameImage("applean"), 20, 6, 57, 43)
-    '    applean.X = apple.X
-    '    applean.Y = apple.Y
-    '    apple = applean
-    '    Graphics.DrawSprite(applean)
-    '    Graphics.UpdateSpriteAnimation(applean)
-    '    apple.EndingAction = SpriteEndingAction.Stop
+    Public Overridable Sub AddScore()
+        score = score + 1
+    End Sub
 
-    'End Sub
 End Class

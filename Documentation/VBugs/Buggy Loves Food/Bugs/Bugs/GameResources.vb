@@ -14,9 +14,11 @@ Public Module GameResources
         NewImage("deadBug", "deadBug.png")
         NewImage("apple", "apple1.png")
         NewImage("applean", "apple.png")
-        NewImage("Level 1", "background.bmp")
+        NewImage("Background1", "background.bmp")
         NewImage("appleap", "apple3.png")
-        NewImage("Level 2", "Level 2!.png")
+        NewImage("Background2", "Level 2!.png")
+        NewImage("badApple", "badapple.png")
+        NewImage("badApple1", "badapple1.png")
     End Sub
 
     Private Sub LoadSounds()
