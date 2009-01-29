@@ -3,27 +3,34 @@
     Public levelName As String
     Public levelFood As List(Of Food)
     Public createTime As Integer
+    Public percentBad As Double
+    Public timeToCompleteLevel As Integer
+    Public scoreToCompleteLevel As Integer
 
-    Public Sub New(ByVal levelName As String)
+
+
+    Public Sub New(ByVal levelName As String, ByVal background As String)
         Me.levelName = levelName
-        Me.background = GameImage(levelName)
+        Me.background = GameImage(background)
         levelFood = New List(Of Food)
         createTime = 0
-        score = 0
+        percentBad = 0.1
     End Sub
 
     Public Sub Draw()
         Graphics.DrawBitmap(background, 0, 0)
-        Text.DrawText(levelName, Color.Black, GameFont("Courier"), 0, 0)
-        Text.DrawText("Score:  " & score, Color.Black, GameFont("Courier"), 100, 0)
+        Text.DrawText("Level Name: " & levelName, Color.Black, GameFont("Courier"), 0, 0)
+        Text.DrawText("Score:  " & score, Color.Black, GameFont("Courier"), 550, 0)
 
         For Each myFood In levelFood
             myFood.Draw()
         Next
+
     End Sub
 
     Public Sub Update(ByVal time As Integer)
         Dim toRemove As New List(Of Food)
+        Dim toRemoveBad As New List(Of Food)
 
         For Each myFood In levelFood
             myFood.Update(time)
@@ -38,8 +45,18 @@
         Next
 
         If createTime < time Then
-            levelFood.Add(New Food(time))
+            AddFood(time)
             createTime = time + 1000
+        End If
+
+
+    End Sub
+
+    Public Sub AddFood(ByVal time As Integer)
+        If Rnd() < percentBad Then
+            levelFood.Add(New BadFood(time))
+        Else
+            levelFood.Add(New Apple(time))
         End If
     End Sub
 
@@ -49,21 +66,26 @@
                 myBug.CheckAndEat(myFood)
             End If
         Next
+
     End Sub
 
-    'Public Function calculateScore(ByVal myBug As Sprite, ByVal apple As Sprite) As Integer
-    '    If Physics.HaveSpritesCollided(myBug, apple) Then
-    '        score = score + 1
-    '        apple.eatApple()
-    '        Return score
-    '    End If
+    Function CheckEndLevel(ByVal gameTimer As Timer) As Boolean
+        If Core.GetTimerTicks(gameTimer) > 10000 And score < 5 Then
+            Core.StopTimer(gameTimer)
+            Return True
+        Else
+            Return False
+        End If
+    End Function
 
-    'End Function
-
-    'Public Sub displayScore()
-    '    Text.DrawText("Score:", Color.Black, GameFont("Courier"), 20, 50)
-    '    Text.DrawText(score, Color.Black, GameFont("Courier"), 150, 50)
-    'End Sub
-
+    Public Sub endLevel()
+        Do
+            Graphics.ClearScreen(Color.Black)
+            Text.DrawText("Press Enter to Start Again...", Color.White, GameFont("Courier"), 200, 200)
+            Core.RefreshScreen(30)
+            Core.ProcessEvents()
+        Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
+        score = 0
+    End Sub
 
 End Class
