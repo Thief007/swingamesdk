@@ -9,20 +9,23 @@ Module GameLogic
     Public Sub DrawLevelEnd()
         Do
             Graphics.ClearScreen(Color.White)
-            Text.DrawText("You Loose!", Color.Green, GameFont("ArialLarge"), 200, 200)
-            Text.DrawText("Level " & level, Color.Green, GameFont("Arial"), 300, 300)
-            Text.DrawText("Press ENTER to start", Color.Green, GameFont("Arial"), 180, 500)
+            Text.DrawText("YOU ", Color.Green, GameFont("bear"), 80, 150)
+            Text.DrawText("LOOOOSE!", Color.Red, GameFont("bear_huge"), 275, 125)
+            Text.DrawText("Level " & level, Color.Green, GameFont("cat_scratch"), 300, 340)
+            Text.DrawText("Press ENTER to start", Color.Green, GameFont("cat_scratch"), 180, 480)
             Core.RefreshScreen(30)
             Core.ProcessEvents()
         Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
         score = 0
+        level = 1
+        LevelSetUp()
     End Sub
 
     Public Sub DrawLevelStart()
         For i = 1 To 22
             Graphics.ClearScreen(Color.White)
-            Text.DrawText("Level " & level, Color.Green, GameFont("ArialLarge"), 300, 200)
-            Text.DrawText("Score: " & score, Color.Green, GameFont("Arial"), 320, 300)
+            Text.DrawText("Level " & level, Color.Green, GameFont("bear"), 280, 200)
+            Text.DrawText("Score: " & score, Color.Green, GameFont("cat_scratch"), 320, 300)
             Core.RefreshScreen(30)
             Core.ProcessEvents()
         Next
@@ -61,12 +64,11 @@ Module GameLogic
     Public Sub ControlMusic()
         'if "m" was typed - stop or start music
         If Input.WasKeyTyped(SwinGame.Keys.VK_M) Then
-            Select Case Audio.IsMusicPlaying()
-                Case True
-                    Audio.StopMusic()
-                Case False
-                    Audio.PlayMusic(GameMusic("lion"), -1)
-            End Select
+            If Audio.IsMusicPlaying() = True Then
+                Audio.StopMusic()
+            Else
+                Audio.PlayMusic(GameMusic("lion"), -1)
+            End If
         End If
     End Sub
 
@@ -118,8 +120,8 @@ Module GameLogic
 
             time = (endLevelAt - Core.GetTimerTicks(gameTimer)) / 100
 
-            Text.DrawText("Bugs killed: " & score, Color.Green, GameFont("Courier"), 2, 2)
-            Text.DrawText("Time: " & time, Color.Green, GameFont("Courier"), 700, 2)
+            Text.DrawText("Bugs killed: " & score, Color.Green, GameFont("comic"), 2, 2)
+            Text.DrawText("Time: " & time, Color.Green, GameFont("comic"), 730, 2)
 
             For Each Bug In listBugs
                 Bug.Draw()
