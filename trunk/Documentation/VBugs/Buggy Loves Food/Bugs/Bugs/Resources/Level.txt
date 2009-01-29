@@ -1,0 +1,2 @@
+﻿Crazy Apples, Background1, 1000, 10000, 5, 0.0
+Beware the Evil Apples!, Background2, 1000, 10000, 5, 0.2
