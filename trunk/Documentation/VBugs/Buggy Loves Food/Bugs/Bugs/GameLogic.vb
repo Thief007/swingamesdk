@@ -25,9 +25,17 @@ Module GameLogic
             newLevel.percentBad = Val(parts(5))
 
             Levels.Add(newLevel)
+
         End While
     End Sub
 
+    Public Sub NextLevel()
+        For i = 1 To 40
+            Graphics.ClearScreen(Color.White)
+            Text.DrawText("Next Level!", Color.Black, GameFont("Courier"), 300, 200)
+            Core.RefreshScreen(60)
+        Next
+    End Sub
 
     Public Sub Main()
         'Opens a new Graphics Window
@@ -68,22 +76,11 @@ Module GameLogic
             currentLevel.CheckCollisions(myBug)
 
             If currentLevel.CheckEndLevel(gameTimer) Then
+                NextLevel()
                 level = level + 1
                 currentLevel = Levels(level)
                 Core.StartTimer(gameTimer)
             End If
-
-            'If score >= 5 Then
-            '    Core.StopTimer(gameTimer)
-            '    Core.StartTimer(gameTimer)
-            '    level2.Draw()
-            '    level2.Update(Core.GetTimerTicks(gameTimer))
-            '    myBug.Draw()
-            '    myBug.Update()
-            '    myBug.MoveBug()
-            '    level2.CheckCollisions(myBug)
-            'End If
-
 
             'Refreshes the Screen and Processes Input Events
             Core.RefreshScreen()

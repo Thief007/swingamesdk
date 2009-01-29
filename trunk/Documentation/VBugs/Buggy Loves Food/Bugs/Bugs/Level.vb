@@ -7,8 +7,6 @@
     Public timeToCompleteLevel As Integer
     Public scoreToCompleteLevel As Integer
 
-
-
     Public Sub New(ByVal levelName As String, ByVal background As String)
         Me.levelName = levelName
         Me.background = GameImage(background)
@@ -70,7 +68,7 @@
     End Sub
 
     Function CheckEndLevel(ByVal gameTimer As Timer) As Boolean
-        If Core.GetTimerTicks(gameTimer) > 10000 And score < 5 Then
+        If Core.GetTimerTicks(gameTimer) > timeToCompleteLevel Or score >= scoreToCompleteLevel Then
             Core.StopTimer(gameTimer)
             Return True
         Else
@@ -87,5 +85,16 @@
         Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
         score = 0
     End Sub
+
+    Public Sub endGame()
+        Do
+            Graphics.ClearScreen(Color.Black)
+            Text.DrawText("You WON!!!!", Color.White, GameFont("Courier"), 200, 200)
+            Core.RefreshScreen(30)
+            Core.ProcessEvents()
+        Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
+
+    End Sub
+
 
 End Class
