@@ -1,7 +1,7 @@
 ﻿Public Class BadFood : Inherits Food
 
     Public Sub New(ByVal time As Integer)
-        MyBase.New(time, GameImage("badApple"), GameImage("badApple"))
+        MyBase.New(time, GameImage("badApple"), GameImage("badApplean"))
     End Sub
 
     Public Overrides Sub AddScore()

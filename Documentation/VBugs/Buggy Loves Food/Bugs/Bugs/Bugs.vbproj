@@ -63,8 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Apple.vb" />
-    <Compile Include="BadFood.vb" />
+    <Compile Include="Banana.vb" />
     <Compile Include="Bug.vb" />
+    <Compile Include="BadFood.vb" />
     <Compile Include="Food.vb" />
     <Compile Include="GameLogic.vb" />
     <Compile Include="GameResources.vb" />
@@ -81,6 +82,7 @@
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
     <None Include="Resources\fonts\arial.ttf" />
+    <None Include="Resources\fonts\BUMBAZO.TTF" />
     <None Include="Resources\fonts\CALAVERA.TTF" />
     <None Include="Resources\fonts\canker!.ttf" />
     <None Include="Resources\fonts\CHANKENS.TTF" />
@@ -132,6 +134,10 @@
     <Content Include="Resources\images\background.bmp" />
     <Content Include="Resources\images\badapple.png" />
     <Content Include="Resources\images\badapple1.png" />
+    <Content Include="Resources\images\badapplean.png" />
+    <Content Include="Resources\images\banana.png" />
+    <Content Include="Resources\images\bananaan.png" />
+    <Content Include="Resources\images\bananaap.png" />
     <Content Include="Resources\images\loader_empty.png" />
     <Content Include="Resources\images\loader_full.png" />
     <Content Include="Resources\images\looser.png" />

@@ -4,6 +4,7 @@
     Public levelFood As List(Of Food)
     Public createTime As Integer
     Public percentBad As Double
+    Public bananapercent As Double
     Public timeToCompleteLevel As Integer
     Public scoreToCompleteLevel As Integer
 
@@ -13,6 +14,7 @@
         levelFood = New List(Of Food)
         createTime = 0
         percentBad = 0.1
+        bananapercent = 0.1
     End Sub
 
     Public Sub Draw()
@@ -51,11 +53,28 @@
     End Sub
 
     Public Sub AddFood(ByVal time As Integer)
-        If Rnd() < percentBad Then
+        Dim val As Double
+        val = Rnd()
+
+        If val < percentBad Then
             levelFood.Add(New BadFood(time))
         Else
-            levelFood.Add(New Apple(time))
+            val = Rnd()
+            If val < bananapercent Then
+                levelFood.Add(New Banana(time))
+            Else
+                levelFood.Add(New Apple(time))
+            End If
         End If
+
+        'Select Case Rnd()
+        '    Case Rnd() < percentBad
+        '        levelFood.Add(New BadFood(time))
+        '    Case Rnd() < bananapercent
+        '        levelFood.Add(New BadFood(time))
+        '    Case Else
+        '        levelFood.Add(New Apple(time))
+        'End Select
     End Sub
 
     Public Sub CheckCollisions(ByVal myBug As Bug)
