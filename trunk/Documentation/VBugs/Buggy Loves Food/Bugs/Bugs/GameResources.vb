@@ -20,9 +20,9 @@ Public Module GameResources
         NewImage("deadBug", "deadBug.png")
         NewImage("apple", "apple1.png")
         NewImage("applean", "apple.png")
-        NewImage("Background1", "background.bmp")
+        'NewImage("Background1", "background.bmp")
         NewImage("appleap", "apple3.png")
-        NewImage("Background2", "Level 2!.png")
+        'NewImage("Background2", "Level 2!.png")
         NewImage("badApple", "badapple.png")
         NewImage("badApple1", "badapple1.png")
         NewImage("winner", "winner.png")
@@ -31,6 +31,8 @@ Public Module GameResources
         NewImage("bananaap", "bananaap.png")
         NewImage("bananaan", "bananaan.png")
         NewImage("badApplean", "badApplean.png")
+        NewImage("Background1", "level1.png")
+        NewImage("Background2", "level2.png")
     End Sub
 
     Private Sub LoadSounds()
