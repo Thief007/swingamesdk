@@ -3,6 +3,8 @@ Module GameLogic
     Public score As Integer
     Private Levels As List(Of Level)
 
+
+
     Public Sub LoadLevels()
         Levels = New List(Of Level)
 
@@ -25,14 +27,14 @@ Module GameLogic
             newLevel.percentBad = Val(parts(5))
 
             Levels.Add(newLevel)
-
         End While
     End Sub
 
     Public Sub NextLevel()
         For i = 1 To 40
-            Graphics.ClearScreen(Color.White)
-            Text.DrawText("Next Level!", Color.Black, GameFont("Courier"), 300, 200)
+            Graphics.ClearScreen()
+            Graphics.DrawBitmap(GameImage("nextlevel"), 0, 0)
+            Text.DrawText("Next Level!", Color.White, GameFont("canker"), 300, 250)
             Core.RefreshScreen(60)
         Next
     End Sub
@@ -76,15 +78,39 @@ Module GameLogic
             currentLevel.CheckCollisions(myBug)
 
             If currentLevel.CheckEndLevel(gameTimer) Then
-                NextLevel()
-                level = level + 1
-                currentLevel = Levels(level)
-                Core.StartTimer(gameTimer)
+                If score < currentLevel.scoreToCompleteLevel Then
+                    Do
+                        Graphics.ClearScreen()
+                        Graphics.DrawBitmap(GameImage("looser"), 0, 0)
+
+                        Text.DrawText("You LOSE!", Color.White, GameFont("GR"), 250, 100)
+                        Text.DrawText("Score  " & score, Color.White, GameFont("GRlittle"), 340, 250)
+                        Core.RefreshScreen(30)
+                        Core.ProcessEvents()
+                    Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
+                Else
+                    NextLevel()
+                    level = level + 1
+                End If
+                If currentLevel.levelName = "Beware the Evil Apples!" And score >= currentLevel.scoreToCompleteLevel Then
+                    Do
+                        Graphics.ClearScreen()
+                        Graphics.DrawBitmap(GameImage("winner"), 0, 0)
+                        Text.DrawText("You WON!!!!", Color.White, GameFont("cankerbig"), 100, 100)
+                        Text.DrawText("Score: " & score, Color.White, GameFont("Courier"), 200, 300)
+                        Core.RefreshScreen(30)
+                        Core.ProcessEvents()
+                    Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
+                Else
+                    currentLevel = Levels(level)
+                    Core.StartTimer(gameTimer)
+                End If
             End If
 
-            'Refreshes the Screen and Processes Input Events
-            Core.RefreshScreen()
-            Core.ProcessEvents()
+
+                'Refreshes the Screen and Processes Input Events
+                Core.RefreshScreen()
+                Core.ProcessEvents()
         Loop Until SwinGame.Core.WindowCloseRequested() = True
 
         'Free Resources and Close Audio, to end the program.
