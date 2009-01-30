@@ -86,15 +86,4 @@
         score = 0
     End Sub
 
-    Public Sub endGame()
-        Do
-            Graphics.ClearScreen(Color.Black)
-            Text.DrawText("You WON!!!!", Color.White, GameFont("Courier"), 200, 200)
-            Core.RefreshScreen(30)
-            Core.ProcessEvents()
-        Loop Until Input.WasKeyTyped(Keys.VK_RETURN) Or SwinGame.Core.WindowCloseRequested() = True
-
-    End Sub
-
-
 End Class

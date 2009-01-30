@@ -6,6 +6,10 @@ Public Module GameResources
     Private Sub LoadFonts()
         NewFont("ArialLarge", "arial.ttf", 80)
         NewFont("Courier", "cour.ttf", 16)
+        NewFont("GR", "GruntReaper.ttf", 100)
+        NewFont("GRlittle", "GruntReaper.ttf", 30)
+        NewFont("canker", "canker!.ttf", 80)
+        NewFont("cankerbig", "canker!.ttf", 200)
     End Sub
 
     Private Sub LoadImages()
@@ -19,6 +23,9 @@ Public Module GameResources
         NewImage("Background2", "Level 2!.png")
         NewImage("badApple", "badapple.png")
         NewImage("badApple1", "badapple1.png")
+        NewImage("winner", "winner.png")
+        NewImage("looser", "looser.png")
+        NewImage("nextlevel", "nextlevel.png")
     End Sub
 
     Private Sub LoadSounds()

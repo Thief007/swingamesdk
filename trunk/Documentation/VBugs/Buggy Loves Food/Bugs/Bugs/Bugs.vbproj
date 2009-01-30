@@ -81,7 +81,11 @@
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
     <None Include="Resources\fonts\arial.ttf" />
+    <None Include="Resources\fonts\CALAVERA.TTF" />
+    <None Include="Resources\fonts\canker!.ttf" />
+    <None Include="Resources\fonts\CHANKENS.TTF" />
     <None Include="Resources\fonts\cour.ttf" />
+    <None Include="Resources\fonts\GruntReaper.ttf" />
     <None Include="Resources\sounds\SwinGameStart.ogg" />
     <None Include="Resources\SwinGame.icns" />
   </ItemGroup>
@@ -130,9 +134,12 @@
     <Content Include="Resources\images\badapple1.png" />
     <Content Include="Resources\images\loader_empty.png" />
     <Content Include="Resources\images\loader_full.png" />
+    <Content Include="Resources\images\looser.png" />
+    <Content Include="Resources\images\nextlevel.png" />
     <Content Include="Resources\images\SplashBack.png" />
     <Content Include="Resources\images\SwinGameAni.png" />
     <Content Include="Resources\images\Level 2!.png" />
+    <Content Include="Resources\images\winner.png" />
     <Content Include="Resources\readme.txt" />
     <Content Include="Resources\SwinGame.ico" />
     <Content Include="Resources\Level.txt" />
