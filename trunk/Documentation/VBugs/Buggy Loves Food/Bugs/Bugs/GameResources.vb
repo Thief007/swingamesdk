@@ -10,6 +10,8 @@ Public Module GameResources
         NewFont("GRlittle", "GruntReaper.ttf", 30)
         NewFont("canker", "canker!.ttf", 80)
         NewFont("cankerbig", "canker!.ttf", 200)
+        NewFont("bumbazo", "BUMBAZO.ttf", 80)
+        NewFont("bumbazolittle", "BUMBAZO.ttf", 40)
     End Sub
 
     Private Sub LoadImages()
@@ -26,6 +28,9 @@ Public Module GameResources
         NewImage("winner", "winner.png")
         NewImage("looser", "looser.png")
         NewImage("nextlevel", "nextlevel.png")
+        NewImage("bananaap", "bananaap.png")
+        NewImage("bananaan", "bananaan.png")
+        NewImage("badApplean", "badApplean.png")
     End Sub
 
     Private Sub LoadSounds()

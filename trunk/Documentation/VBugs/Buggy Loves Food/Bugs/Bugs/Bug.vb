@@ -17,23 +17,22 @@
         Graphics.UpdateSprite(bug)
     End Sub
 
-    Public Sub MoveBug()
-        If Input.IsKeyPressed(SwinGame.Keys.VK_W) Then
-            bug.Y = bug.Y - 1
+    Public Sub MoveBug(ByVal level As Integer)
+        If Input.IsKeyPressed(SwinGame.Keys.VK_UP) Then
+            bug.Y = bug.Y - (level * 0.5 + 1)
         End If
 
-        If Input.IsKeyPressed(SwinGame.Keys.VK_S) Then
-            bug.Y = bug.Y + 1
+        If Input.IsKeyPressed(SwinGame.Keys.VK_DOWN) Then
+            bug.Y = bug.Y + (level * 0.5 + 1)
         End If
 
-        If Input.IsKeyPressed(SwinGame.Keys.VK_D) Then
-            bug.X = bug.X + 1
+        If Input.IsKeyPressed(SwinGame.Keys.VK_RIGHT) Then
+            bug.X = bug.X + (level * 0.5 + 1)
         End If
 
-        If Input.IsKeyPressed(SwinGame.Keys.VK_A) Then
-            bug.X = bug.X - 1
+        If Input.IsKeyPressed(SwinGame.Keys.VK_LEFT) Then
+            bug.X = bug.X - (level * 0.5 + 1)
         End If
-
     End Sub
 
     Public Sub CheckAndEat(ByVal myFood As Food)
