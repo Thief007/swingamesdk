@@ -138,6 +138,8 @@
     <Content Include="Resources\images\banana.png" />
     <Content Include="Resources\images\bananaan.png" />
     <Content Include="Resources\images\bananaap.png" />
+    <Content Include="Resources\images\level1.png" />
+    <Content Include="Resources\images\level2.png" />
     <Content Include="Resources\images\loader_empty.png" />
     <Content Include="Resources\images\loader_full.png" />
     <Content Include="Resources\images\looser.png" />
