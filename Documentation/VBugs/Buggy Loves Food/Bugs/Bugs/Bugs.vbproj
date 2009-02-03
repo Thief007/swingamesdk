@@ -149,6 +149,12 @@
     <Content Include="Resources\images\Level 2!.png" />
     <Content Include="Resources\images\winner.png" />
     <Content Include="Resources\readme.txt" />
+    <Content Include="Resources\sounds\choke.wav" />
+    <Content Include="Resources\sounds\cricket.wav" />
+    <Content Include="Resources\sounds\crunch.wav" />
+    <Content Include="Resources\sounds\eat.wav" />
+    <Content Include="Resources\sounds\EvilLaugh.wav" />
+    <Content Include="Resources\sounds\spooky.mp3" />
     <Content Include="Resources\SwinGame.ico" />
     <Content Include="Resources\Level.txt" />
     <Content Include="SwinGame.ico" />

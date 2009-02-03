@@ -38,11 +38,17 @@ Public Module GameResources
     Private Sub LoadSounds()
         NewSound("hit", "hit20.wav")
         NewSound("hit1", "hit1.wav")
+        NewSound("buggyeats", "eat.wav")
+        NewSound("choke", "choke.wav")
+        NewSound("crunch", "crunch.wav")
+        NewSound("cricket", "cricket.wav")
+        NewSound("EvilLaugh", "EvilLaugh.wav")
     End Sub
 
     Private Sub LoadMusic()
         NewMusic("air", "Air - Photograph.mp3")
         NewMusic("lion", "lion.mp3")
+        NewMusic("lose", "spooky.mp3")
     End Sub
 
     Private Sub LoadMaps()
