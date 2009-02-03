@@ -1,0 +1,9 @@
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\bin\Debug\Try.exe
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\bin\Debug\Try.pdb
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\bin\Debug\Try.xml
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\bin\Debug\SGSDK.NET.dll
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\bin\Debug\SGSDK.NET.xml
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\obj\Debug\ResolveAssemblyReference.cache
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\obj\Debug\Try.exe
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\obj\Debug\Try.xml
+D:\Work\Repository\Documentation\VBugs\Chapter 2\Try\Try\obj\Debug\Try.pdb

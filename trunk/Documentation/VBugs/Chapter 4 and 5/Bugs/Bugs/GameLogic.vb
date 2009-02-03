@@ -8,6 +8,7 @@ Module GameLogic
 
         'Load Resources
         LoadResources()
+        Input.ShowMouse(False) 'hides the original ouse pointer
 
         'BUG 1 INFORMATION!!!!
         'bug 1 variable
@@ -111,7 +112,7 @@ Module GameLogic
 
 
             'draws the mouse pointer on the screen.
-            Input.ShowMouse(False) 'hides the original ouse pointer
+
             mousePoint = Input.GetMousePosition() 'gets mouse position at a time
             Graphics.DrawBitmapOnScreen(GameImage("target"), mousePoint.X - 20, mousePoint.Y - 20) 'draws the new mouse pointer
 
