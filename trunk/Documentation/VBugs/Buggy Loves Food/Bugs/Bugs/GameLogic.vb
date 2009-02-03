@@ -37,6 +37,7 @@ Module GameLogic
         For i = 1 To 40
             Graphics.ClearScreen()
             Graphics.DrawBitmap(GameImage("nextlevel"), 0, 0)
+            Audio.PlaySoundEffect(GameSound("cricket"))
             Text.DrawText("Next Level!", Color.White, GameFont("canker"), 300, 250)
             Core.RefreshScreen(60)
         Next
@@ -121,7 +122,6 @@ Module GameLogic
         Do
             Graphics.ClearScreen()
             Graphics.DrawBitmap(GameImage("looser"), 0, 0)
-
             Text.DrawText("You LOSE!", Color.White, GameFont("GR"), 250, 100)
             Text.DrawText("Score  " & score, Color.White, GameFont("GRlittle"), 340, 250)
             Core.RefreshScreen(30)

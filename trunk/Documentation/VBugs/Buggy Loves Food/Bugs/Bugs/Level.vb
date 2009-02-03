@@ -30,7 +30,6 @@
 
     Public Sub Update(ByVal time As Integer)
         Dim toRemove As New List(Of Food)
-        Dim toRemoveBad As New List(Of Food)
 
         For Each myFood In levelFood
             myFood.Update(time)
@@ -48,8 +47,6 @@
             AddFood(time)
             createTime = time + 1000
         End If
-
-
     End Sub
 
     Public Sub AddFood(ByVal time As Integer)
@@ -95,7 +92,7 @@
         End If
     End Function
 
-    Public Sub endLevel()
+    Public Sub EndLevel()
         Do
             Graphics.ClearScreen(Color.Black)
             Text.DrawText("Press Enter to Start Again...", Color.White, GameFont("Courier"), 200, 200)
