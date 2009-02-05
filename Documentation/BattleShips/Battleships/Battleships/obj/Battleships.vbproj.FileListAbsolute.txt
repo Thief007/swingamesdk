@@ -1,9 +1,0 @@
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\bin\Debug\Battleships.exe
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\bin\Debug\Battleships.pdb
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\bin\Debug\Battleships.xml
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\bin\Debug\SGSDK.NET.dll
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\bin\Debug\SGSDK.NET.xml
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\obj\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\obj\Debug\Battleships.exe
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\obj\Debug\Battleships.xml
-C:\Documents and Settings\rmercer\My Documents\Battleships Tutorial\Battleships\Battleships\obj\Debug\Battleships.pdb
