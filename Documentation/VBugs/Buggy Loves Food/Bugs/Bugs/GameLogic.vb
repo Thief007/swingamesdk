@@ -34,7 +34,7 @@ Module GameLogic
     End Sub
 
     Public Sub NextLevel()
-        For i = 1 To 40
+        For i As Integer = 1 To 40
             Graphics.ClearScreen()
             Graphics.DrawBitmap(GameImage("nextlevel"), 0, 0)
             Audio.PlaySoundEffect(GameSound("cricket"))
