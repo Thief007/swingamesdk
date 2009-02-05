@@ -22,7 +22,7 @@
         Text.DrawText("Level Name: " & levelName, Color.Black, GameFont("Courier"), 0, 0)
         Text.DrawText("Score:  " & score, Color.Black, GameFont("Courier"), 550, 0)
 
-        For Each myFood In levelFood
+        For Each myFood As Food In levelFood
             myFood.Draw()
         Next
 
@@ -31,15 +31,15 @@
     Public Sub Update(ByVal time As Integer)
         Dim toRemove As New List(Of Food)
 
-        For Each myFood In levelFood
+        For Each myFood As Food In levelFood
             myFood.Update(time)
-            If myFood.IsDead Then
+            If myFood.isDead Then
                 toRemove.Add(myFood)
             End If
         Next
 
         'Remove all the food that is dead
-        For Each myFood In toRemove
+        For Each myFood As Food In toRemove
             levelFood.Remove(myFood)
         Next
 
@@ -75,7 +75,7 @@
     End Sub
 
     Public Sub CheckCollisions(ByVal myBug As Bug)
-        For Each myFood In levelFood
+        For Each myFood As Food In levelFood
             If Not myFood.isDead And Not myFood.isEaten Then
                 myBug.CheckAndEat(myFood)
             End If
