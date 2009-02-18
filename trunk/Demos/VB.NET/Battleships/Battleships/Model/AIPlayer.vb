@@ -2,7 +2,7 @@
 ''' Location can store the location of the last hit made by an
 ''' AI Player. The use of which determines the difficulty.
 ''' </summary>
-Protected Class Location
+Class Location
     Private _Row As Integer
     Private _Column As Integer
 
@@ -73,7 +73,6 @@ Public MustInherit Class AIPlayer : Inherits Player
 
     Public Sub New(ByVal game As BattleShipsGame)
         MyBase.New(game)
-        RandomizeDeployment()
     End Sub
 
     ''' <summary>

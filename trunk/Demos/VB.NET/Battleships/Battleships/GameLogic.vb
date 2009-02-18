@@ -9,6 +9,7 @@ Module GameLogic
         'Load Resources
         LoadResources()
 
+        'TODO: Step 10: Play music here
         Audio.PlayMusic(GameMusic("Background"))
 
         'Game Loop
@@ -17,13 +18,11 @@ Module GameLogic
             DrawScreen()
         Loop Until SwinGame.Core.WindowCloseRequested() = True Or CurrentState = GameState.Quitting
 
-        'Show Credits
-
+        'TODO: Step 10: Stop playing music here
         Audio.StopMusic()
+
         'Free Resources and Close Audio, to end the program.
         FreeResources()
         Audio.CloseAudio()
-
     End Sub
-
 End Module

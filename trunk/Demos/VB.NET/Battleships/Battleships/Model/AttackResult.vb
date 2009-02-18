@@ -5,6 +5,8 @@ Public Class AttackResult
     Private _Value As ResultOfAttack
     Private _Ship As Ship
     Private _Text As String
+    Private _Row As Integer
+    Private _Column As Integer
 
     ''' <summary>
     ''' The result of the attack
@@ -41,13 +43,33 @@ Public Class AttackResult
     End Property
 
     ''' <summary>
+    ''' The row where the attack occurred
+    ''' </summary>
+    Public ReadOnly Property Row() As Integer
+        Get
+            Return _Row
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' The column where the attack occurred
+    ''' </summary>
+    Public ReadOnly Property Column() As Integer
+        Get
+            Return _Column
+        End Get
+    End Property
+
+    ''' <summary>
     ''' Set the _Value to the PossibleAttack value
     ''' </summary>
     ''' <param name="value">either hit, miss, destroyed, shotalready</param>
-    Public Sub New(ByVal value As ResultOfAttack, ByVal text As String)
+    Public Sub New(ByVal value As ResultOfAttack, ByVal text As String, ByVal row As Integer, ByVal column As Integer)
         _Value = value
         _Text = text
         _Ship = Nothing
+        _Row = row
+        _Column = column
     End Sub
 
     ''' <summary>
@@ -55,8 +77,8 @@ Public Class AttackResult
     ''' </summary>
     ''' <param name="value">either hit, miss, destroyed, shotalready</param>
     ''' <param name="ship">the ship information</param>
-    Public Sub New(ByVal value As ResultOfAttack, ByVal ship As Ship, ByVal text As String)
-        Me.New(value, text)
+    Public Sub New(ByVal value As ResultOfAttack, ByVal ship As Ship, ByVal text As String, ByVal row As Integer, ByVal column As Integer)
+        Me.New(value, text, row, column)
         _Ship = ship
     End Sub
 
@@ -68,6 +90,7 @@ Public Class AttackResult
         If _Ship Is Nothing Then
             Return Text
         End If
+
         Return Text + " " + _Ship.Name
     End Function
 End Class

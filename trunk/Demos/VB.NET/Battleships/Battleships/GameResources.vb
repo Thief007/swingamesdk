@@ -5,28 +5,47 @@ Public Module GameResources
 
     Private Sub LoadFonts()
         NewFont("ArialLarge", "arial.ttf", 80)
-        NewFont("Courier", "cour.ttf", 16)
+        NewFont("Courier", "cour.ttf", 14)
         NewFont("CourierSmall", "cour.ttf", 8)
         NewFont("Menu", "ffaccess.ttf", 8)
     End Sub
 
     Private Sub LoadImages()
+        'Backgrounds
         NewImage("Menu", "main_page.jpg")
-        NewImage("Discovery", "discovery.jpg")
+        NewImage("Discovery", "discover.jpg")
         NewImage("Deploy", "deploy.jpg")
+
+        'Deployment
+        NewImage("LeftRightButton", "deploy_dir_button_horiz.png")
+        NewImage("UpDownButton", "deploy_dir_button_vert.png")
+        NewImage("SelectedShip", "deploy_button_hl.png")
+        NewImage("PlayButton", "deploy_play_button.png")
+        NewImage("RandomButton", "deploy_randomize_button.png")
+
+        'Ships
+        For i As Integer = 1 To 5
+            NewImage("ShipLR" & i, "ship_deploy_horiz_" & i & ".png")
+            NewImage("ShipUD" & i, "ship_deploy_vert_" & i & ".png")
+        Next
+
+        'Explosions
+        NewImage("Explosion", "explosion.png")
+        NewImage("Splash", "splash.png")
+
     End Sub
 
     Private Sub LoadSounds()
         NewSound("Error", "error.wav")
         NewSound("Hit", "hit.wav")
         NewSound("Sink", "sink.wav")
-        NewSound("Siren", "siren.wav")
         NewSound("Miss", "watershot.wav")
         NewSound("Winner", "winner.wav")
         NewSound("Lose", "lose.wav")
     End Sub
 
     Private Sub LoadMusic()
+        'TODO: Step 10: Load background music here
         NewMusic("Background", "horrordrone.mp3")
     End Sub
 

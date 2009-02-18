@@ -10,11 +10,13 @@ Module UtilityFunctions
     Public Const FIELD_WIDTH As Integer = 418
     Public Const FIELD_HEIGHT As Integer = 418
 
+    Public Const MESSAGE_TOP As Integer = 548
+
     Public Const CELL_WIDTH As Integer = 40
     Public Const CELL_HEIGHT As Integer = 40
     Public Const CELL_GAP As Integer = 2
 
-    Public Const SHIP_GAP As Integer = 2
+    Public Const SHIP_GAP As Integer = 3
 
     Private ReadOnly SMALL_SEA As Color = Color.FromArgb(255, 6, 60, 94)
     Private ReadOnly SMALL_SHIP As Color = Color.Gray
@@ -29,6 +31,10 @@ Module UtilityFunctions
     Private ReadOnly OUTLINE_COLOR As Color = Color.FromArgb(255, 5, 55, 88)
     Private ReadOnly SHIP_FILL_COLOR As Color = Color.Gray
     Private ReadOnly SHIP_OUTLINE_COLOR As Color = Color.White
+    Private ReadOnly MESSAGE_COLOR As Color = Color.FromArgb(255, 2, 167, 252)
+
+    Public Const ANIMATION_CELLS As Integer = 7
+    Public Const FRAMES_PER_CELL As Integer = 3
 
     ''' <summary>
     ''' Determines if the mouse is in a given rectangle.
@@ -137,6 +143,7 @@ Module UtilityFunctions
         End If
 
         Dim shipHeight, shipWidth As Integer
+        Dim shipName As String
 
         'Draw the ships
         For Each s As Ship In thePlayer
@@ -145,16 +152,22 @@ Module UtilityFunctions
             colLeft = left + (cellGap + cellWidth) * s.Column + SHIP_GAP
 
             If s.Direction = Direction.LeftRight Then
+                shipName = "ShipLR" & s.Size
                 shipHeight = cellHeight - (SHIP_GAP * 2)
                 shipWidth = (cellWidth + cellGap) * s.Size - (SHIP_GAP * 2) - cellGap
             Else
                 'Up down
+                shipName = "ShipUD" & s.Size
                 shipHeight = (cellHeight + cellGap) * s.Size - (SHIP_GAP * 2) - cellGap
                 shipWidth = cellWidth - (SHIP_GAP * 2)
             End If
 
-            Graphics.FillRectangle(SHIP_FILL_COLOR, colLeft, rowTop, shipWidth, shipHeight)
-            Graphics.DrawRectangle(SHIP_OUTLINE_COLOR, colLeft, rowTop, shipWidth, shipHeight)
+            If Not small Then
+                Graphics.DrawBitmap(GameImage(shipName), colLeft, rowTop)
+            Else
+                Graphics.FillRectangle(SHIP_FILL_COLOR, colLeft, rowTop, shipWidth, shipHeight)
+                Graphics.DrawRectangle(SHIP_OUTLINE_COLOR, colLeft, rowTop, shipWidth, shipHeight)
+            End If
         Next
     End Sub
 
@@ -174,15 +187,20 @@ Module UtilityFunctions
         End Set
     End Property
 
-    'Draws the message to the screen
+    ''' <summary>
+    ''' Draws the message to the screen
+    ''' </summary>
     Public Sub DrawMessage()
-        Text.DrawText(Message, Color.White, GameFont("Menu"), FIELD_LEFT, FIELD_TOP - 20)
+        Text.DrawText(Message, MESSAGE_COLOR, GameFont("Courier"), FIELD_LEFT, MESSAGE_TOP)
     End Sub
 
     ''' <summary>
     ''' Draws the background for the current state of the game
     ''' </summary>
     Public Sub DrawBackground()
+
+        'TODO: Step 9: Draw background images here
+
         Select Case CurrentState
             Case GameState.ViewingMainMenu, GameState.ViewingGameMenu, GameState.AlteringSettings, GameState.ViewingHighScores
                 Graphics.DrawBitmap(GameImage("Menu"), 0, 0)
@@ -195,5 +213,54 @@ Module UtilityFunctions
         End Select
 
         Text.DrawFramerate(675, 585, GameFont("CourierSmall"))
+    End Sub
+
+    Public Sub AddExplosion(ByVal row As Integer, ByVal col As Integer)
+        AddAnimation(row, col, "Explosion")
+    End Sub
+
+    Public Sub AddSplash(ByVal row As Integer, ByVal col As Integer)
+        AddAnimation(row, col, "Splash")
+    End Sub
+
+    Private _Animations As New List(Of Sprite)()
+
+    Private Sub AddAnimation(ByVal row As Integer, ByVal col As Integer, ByVal image As String)
+        Dim s As Sprite
+
+        s = Graphics.CreateSprite(GameImage(image), FRAMES_PER_CELL, ANIMATION_CELLS, 40, 40)
+        s.EndingAction = SpriteEndingAction.Stop
+        s.X = FIELD_LEFT + col * (CELL_WIDTH + CELL_GAP)
+        s.Y = FIELD_TOP + row * (CELL_HEIGHT + CELL_GAP)
+
+        _Animations.Add(s)
+    End Sub
+
+    Public Sub UpdateAnimations()
+        Dim ended As New List(Of Sprite)()
+        For Each s As Sprite In _Animations
+            Graphics.UpdateSprite(s)
+            If s.hasEnded Then
+                ended.Add(s)
+            End If
+        Next
+
+        For Each s As Sprite In ended
+            _Animations.Remove(s)
+            Graphics.FreeSprite(s)
+        Next
+    End Sub
+
+    Public Sub DrawAnimations()
+        For Each s As Sprite In _Animations
+            Graphics.DrawSprite(s)
+        Next
+    End Sub
+
+    Public Sub DrawAnimationSequence()
+        For i As Integer = 1 To ANIMATION_CELLS * FRAMES_PER_CELL
+            UpdateAnimations()
+            DrawScreen()
+        Next
     End Sub
 End Module

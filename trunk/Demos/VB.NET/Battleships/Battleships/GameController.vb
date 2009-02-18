@@ -81,7 +81,7 @@ Public Module GameController
 
         _human = New Player(_theGame)
 
-        AddHandler _human.PlayerGrid.Changed, AddressOf GridChanged
+        'AddHandler _human.PlayerGrid.Changed, AddressOf GridChanged
         AddHandler _ai.PlayerGrid.Changed, AddressOf GridChanged
         AddHandler _theGame.AttackCompleted, AddressOf AttackCompleted
 
@@ -93,7 +93,7 @@ Public Module GameController
     ''' </summary>
 
     Private Sub EndGame()
-        RemoveHandler _human.PlayerGrid.Changed, AddressOf GridChanged
+        'RemoveHandler _human.PlayerGrid.Changed, AddressOf GridChanged
         RemoveHandler _ai.PlayerGrid.Changed, AddressOf GridChanged
         RemoveHandler _theGame.AttackCompleted, AddressOf AttackCompleted
     End Sub
@@ -109,6 +109,27 @@ Public Module GameController
         Core.RefreshScreen()
     End Sub
 
+    Private Sub PlayHitSequence(ByVal row As Integer, ByVal column As Integer, ByVal showAnimation As Boolean)
+        'TODO: Step 11: Add explosion animation if showAnimation is true
+        If showAnimation Then
+            AddExplosion(row, column)
+        End If
+
+        Audio.PlaySoundEffect(GameSound("Hit"))
+
+        DrawAnimationSequence()
+    End Sub
+
+    Private Sub PlayMissSequence(ByVal row As Integer, ByVal column As Integer, ByVal showAnimation As Boolean)
+        If showAnimation Then
+            AddSplash(row, column)
+        End If
+
+        Audio.PlaySoundEffect(GameSound("Miss"))
+
+        DrawAnimationSequence()
+    End Sub
+
     ''' <summary>
     ''' Listens for attacks to be completed.
     ''' </summary>
@@ -118,24 +139,22 @@ Public Module GameController
     ''' Displays a message, plays sound and redraws the screen
     ''' </remarks>
     Private Sub AttackCompleted(ByVal sender As Object, ByVal result As AttackResult)
-        If _theGame.Player Is HumanPlayer Then
+        Dim isHuman As Boolean
+        isHuman = _theGame.Player Is HumanPlayer
+
+        If isHuman Then
             Message = "You " & result.ToString()
         Else
-            Message = "The computer " & result.ToString()
+            Message = "The AI " & result.ToString()
         End If
-
-        DrawScreen()
 
         Select Case result.Value
             Case ResultOfAttack.Destroyed
-                Audio.PlaySoundEffect(GameSound("Hit"))
-                Core.Sleep(10)
+                PlayHitSequence(result.Row, result.Column, isHuman)
                 Audio.PlaySoundEffect(GameSound("Sink"))
-                Core.Sleep(200)
 
             Case ResultOfAttack.GameOver
-                Audio.PlaySoundEffect(GameSound("Hit"))
-                Core.Sleep(10)
+                PlayHitSequence(result.Row, result.Column, isHuman)
                 Audio.PlaySoundEffect(GameSound("Sink"))
 
                 While Audio.IsSoundEffectPlaying(GameSound("Sink"))
@@ -150,9 +169,9 @@ Public Module GameController
                 End If
 
             Case ResultOfAttack.Hit
-                Audio.PlaySoundEffect(GameSound("Hit"))
+                PlayHitSequence(result.Row, result.Column, isHuman)
             Case ResultOfAttack.Miss
-                Audio.PlaySoundEffect(GameSound("Miss"))
+                PlayMissSequence(result.Row, result.Column, isHuman)
             Case ResultOfAttack.ShotAlready
                 Audio.PlaySoundEffect(GameSound("Error"))
         End Select
@@ -245,6 +264,8 @@ Public Module GameController
             Case GameState.ViewingHighScores
                 HandleHighScoreInput()
         End Select
+
+        UpdateAnimations()
     End Sub
 
     ''' <summary>
@@ -273,7 +294,9 @@ Public Module GameController
                 DrawHighScores()
         End Select
 
-        Core.RefreshScreen()
+        DrawAnimations()
+
+        Core.RefreshScreen(60)
     End Sub
 
     ''' <summary>

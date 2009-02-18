@@ -22,6 +22,10 @@ Public Class Ship
     ''' <returns>The type of ship</returns>
     Public ReadOnly Property Name() As String
         Get
+            If _shipName = ShipName.AircraftCarrier Then
+                Return "Aircraft Carrier"
+            End If
+
             Return _shipName.ToString()
         End Get
     End Property

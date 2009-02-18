@@ -15,9 +15,9 @@ Module EndingGameController
         DrawSmallField(HumanPlayer.PlayerGrid, HumanPlayer)
 
         If HumanPlayer.IsDestroyed Then
-            Text.DrawTextLines("YOU LOSE!", Color.White, Color.Transparent, GameFont("ArialLarge"), FontAlignment.AlignCenter, 0, 0, Core.ScreenWidth(), Core.ScreenHeight())
+            Text.DrawTextLines("YOU LOSE!", Color.White, Color.Transparent, GameFont("ArialLarge"), FontAlignment.AlignCenter, 0, 250, Core.ScreenWidth(), Core.ScreenHeight())
         Else
-            Text.DrawTextLines("-- WINNER --", Color.White, Color.Transparent, GameFont("ArialLarge"), FontAlignment.AlignCenter, 0, 0, Core.ScreenWidth(), Core.ScreenHeight())
+            Text.DrawTextLines("-- WINNER --", Color.White, Color.Transparent, GameFont("ArialLarge"), FontAlignment.AlignCenter, 0, 250, Core.ScreenWidth(), Core.ScreenHeight())
         End If
     End Sub
 

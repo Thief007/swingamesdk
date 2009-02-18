@@ -77,7 +77,7 @@ Public Class BattleShipsGame
 
         'Will exit the game when all players ships are destroyed
         If _players(otherPlayer).IsDestroyed Then
-            newAttack = New AttackResult(ResultOfAttack.GameOver, newAttack.Ship, newAttack.Text)
+            newAttack = New AttackResult(ResultOfAttack.GameOver, newAttack.Ship, newAttack.Text, row, col)
         End If
 
         RaiseEvent AttackCompleted(Me, newAttack)

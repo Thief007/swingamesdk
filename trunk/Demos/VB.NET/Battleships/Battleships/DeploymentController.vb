@@ -5,20 +5,26 @@ Imports SwinGame
 ''' during the deployment phase.
 ''' </summary>
 Module DeploymentController
-    Private Const SHIPS_TOP As Integer = 95
+    Private Const SHIPS_TOP As Integer = 98
     Private Const SHIPS_LEFT As Integer = 20
     Private Const SHIPS_HEIGHT As Integer = 90
     Private Const SHIPS_WIDTH As Integer = 300
 
-    Private Const GO_BUTTON_LEFT As Integer = 534
-    Private Const GO_BUTTON_TOP As Integer = 551
-    Private Const GO_BUTTON_WIDTH As Integer = 48
-    Private Const GO_BUTTON_HEIGHT As Integer = 37
+    Private Const TOP_BUTTONS_TOP As Integer = 72
+    Private Const TOP_BUTTONS_HEIGHT As Integer = 46
+
+    Private Const PLAY_BUTTON_LEFT As Integer = 693
+    Private Const PLAY_BUTTON_WIDTH As Integer = 80    
+
+    Private Const UP_DOWN_BUTTON_LEFT As Integer = 410
+    Private Const LEFT_RIGHT_BUTTON_LEFT As Integer = 350
+
+    Private Const RANDOM_BUTTON_LEFT As Integer = 547
+    Private Const RANDOM_BUTTON_WIDTH As Integer = 51
+
+    Private Const DIR_BUTTONS_WIDTH As Integer = 47
 
     Private Const TEXT_OFFSET As Integer = 5
-
-    Const UP_DOWN_BUTTON_LEFT As Integer = 410
-    Const LEFT_RIGHT_BUTTON_LEFT As Integer = 350
 
     Private _currentDirection As Direction = Direction.UpDown
     Private _selectedShip As ShipName = ShipName.Tug
@@ -32,10 +38,6 @@ Module DeploymentController
     ''' deployment
     ''' </remarks>
     Public Sub HandleDeploymentInput()
-        Const DIR_BUTTONS_TOP As Integer = 80
-        Const DIR_BUTTONS_WIDTH As Integer = 47
-        Const DIR_BUTTONS_HEIGHT As Integer = 26
-
         If Input.WasKeyTyped(Keys.VK_ESCAPE) Then
             AddNewState(GameState.ViewingGameMenu)
         End If
@@ -60,12 +62,14 @@ Module DeploymentController
                 DoDeployClick()
             End If
 
-            If HumanPlayer.ReadyToDeploy And IsMouseInRectangle(GO_BUTTON_LEFT, GO_BUTTON_TOP, GO_BUTTON_WIDTH, GO_BUTTON_HEIGHT) Then
+            If HumanPlayer.ReadyToDeploy And IsMouseInRectangle(PLAY_BUTTON_LEFT, TOP_BUTTONS_TOP, PLAY_BUTTON_WIDTH, TOP_BUTTONS_HEIGHT) Then
                 EndDeployment()
-            ElseIf IsMouseInRectangle(UP_DOWN_BUTTON_LEFT, DIR_BUTTONS_TOP, DIR_BUTTONS_WIDTH, DIR_BUTTONS_HEIGHT) Then
+            ElseIf IsMouseInRectangle(UP_DOWN_BUTTON_LEFT, TOP_BUTTONS_TOP, DIR_BUTTONS_WIDTH, TOP_BUTTONS_HEIGHT) Then
                 _currentDirection = Direction.UpDown
-            ElseIf IsMouseInRectangle(LEFT_RIGHT_BUTTON_LEFT, DIR_BUTTONS_TOP, DIR_BUTTONS_WIDTH, DIR_BUTTONS_HEIGHT) Then
+            ElseIf IsMouseInRectangle(LEFT_RIGHT_BUTTON_LEFT, TOP_BUTTONS_TOP, DIR_BUTTONS_WIDTH, TOP_BUTTONS_HEIGHT) Then
                 _currentDirection = Direction.LeftRight
+            ElseIf IsMouseInRectangle(RANDOM_BUTTON_LEFT, TOP_BUTTONS_TOP, RANDOM_BUTTON_WIDTH, TOP_BUTTONS_HEIGHT) Then
+                HumanPlayer.RandomizeDeployment()
             End If
         End If
     End Sub
@@ -108,12 +112,15 @@ Module DeploymentController
     Public Sub DrawDeployment()
         DrawField(HumanPlayer.PlayerGrid, HumanPlayer, True)
 
+        'Draw the Left/Right and Up/Down buttons
         If _currentDirection = Direction.LeftRight Then
-            Text.DrawText("U/D", Color.Gray, GameFont("Menu"), UP_DOWN_BUTTON_LEFT, 80)
-            Text.DrawText("L/R", Color.White, GameFont("Menu"), LEFT_RIGHT_BUTTON_LEFT, 80)
+            Graphics.DrawBitmap(GameImage("LeftRightButton"), LEFT_RIGHT_BUTTON_LEFT, TOP_BUTTONS_TOP)
+            'Text.DrawText("U/D", Color.Gray, GameFont("Menu"), UP_DOWN_BUTTON_LEFT, TOP_BUTTONS_TOP)
+            'Text.DrawText("L/R", Color.White, GameFont("Menu"), LEFT_RIGHT_BUTTON_LEFT, TOP_BUTTONS_TOP)
         Else
-            Text.DrawText("U/D", Color.White, GameFont("Menu"), UP_DOWN_BUTTON_LEFT, 80)
-            Text.DrawText("L/R", Color.Gray, GameFont("Menu"), LEFT_RIGHT_BUTTON_LEFT, 80)
+            Graphics.DrawBitmap(GameImage("UpDownButton"), LEFT_RIGHT_BUTTON_LEFT, TOP_BUTTONS_TOP)
+            'Text.DrawText("U/D", Color.White, GameFont("Menu"), UP_DOWN_BUTTON_LEFT, TOP_BUTTONS_TOP)
+            'Text.DrawText("L/R", Color.Gray, GameFont("Menu"), LEFT_RIGHT_BUTTON_LEFT, TOP_BUTTONS_TOP)
         End If
 
         'DrawShips
@@ -122,20 +129,25 @@ Module DeploymentController
             i = Int(sn) - 1
             If i >= 0 Then
                 If sn = _selectedShip Then
-                    Graphics.FillRectangle(Color.LightBlue, SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT, SHIPS_WIDTH, SHIPS_HEIGHT)
-                Else
-                    Graphics.FillRectangle(Color.Gray, SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT, SHIPS_WIDTH, SHIPS_HEIGHT)
+                    Graphics.DrawBitmap(GameImage("SelectedShip"), SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT)
+                    '    Graphics.FillRectangle(Color.LightBlue, SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT, SHIPS_WIDTH, SHIPS_HEIGHT)
+                    'Else
+                    '    Graphics.FillRectangle(Color.Gray, SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT, SHIPS_WIDTH, SHIPS_HEIGHT)
                 End If
 
-                Graphics.DrawRectangle(Color.Black, SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT, SHIPS_WIDTH, SHIPS_HEIGHT)
-                Text.DrawText(sn.ToString(), Color.Black, GameFont("Courier"), SHIPS_LEFT + TEXT_OFFSET, SHIPS_TOP + i * SHIPS_HEIGHT)
+                'Graphics.DrawRectangle(Color.Black, SHIPS_LEFT, SHIPS_TOP + i * SHIPS_HEIGHT, SHIPS_WIDTH, SHIPS_HEIGHT)
+                'Text.DrawText(sn.ToString(), Color.Black, GameFont("Courier"), SHIPS_LEFT + TEXT_OFFSET, SHIPS_TOP + i * SHIPS_HEIGHT)
+
             End If
         Next
 
         If HumanPlayer.ReadyToDeploy Then
-            Graphics.FillRectangle(Color.LightBlue, GO_BUTTON_LEFT, GO_BUTTON_TOP, GO_BUTTON_WIDTH, GO_BUTTON_HEIGHT)
-            Text.DrawText("GO", Color.Black, GameFont("Courier"), GO_BUTTON_LEFT + TEXT_OFFSET, GO_BUTTON_TOP)
+            Graphics.DrawBitmap(GameImage("PlayButton"), PLAY_BUTTON_LEFT, TOP_BUTTONS_TOP)
+            'Graphics.FillRectangle(Color.LightBlue, PLAY_BUTTON_LEFT, PLAY_BUTTON_TOP, PLAY_BUTTON_WIDTH, PLAY_BUTTON_HEIGHT)
+            'Text.DrawText("PLAY", Color.Black, GameFont("Courier"), PLAY_BUTTON_LEFT + TEXT_OFFSET, PLAY_BUTTON_TOP)
         End If
+
+        Graphics.DrawBitmap(GameImage("RandomButton"), RANDOM_BUTTON_LEFT, TOP_BUTTONS_TOP)
 
         DrawMessage()
     End Sub

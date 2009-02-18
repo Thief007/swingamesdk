@@ -109,7 +109,7 @@ Module HighScoreController
 
         If _Scores.Count = 0 Then LoadScores()
 
-        Text.DrawText("High Scores", Color.White, GameFont("Courier"), SCORES_LEFT, SCORES_HEADING)
+        Text.DrawText("   High Scores   ", Color.White, GameFont("Courier"), SCORES_LEFT, SCORES_HEADING)
 
         'For all of the scores
         For i As Integer = 0 To _Scores.Count - 1
@@ -119,9 +119,9 @@ Module HighScoreController
 
             'for scores 1 - 9 use 01 - 09
             If i < 9 Then
-                Text.DrawText("0" & (i + 1) & ": " & s.Name & " " & s.Value, Color.White, GameFont("Courier"), SCORES_LEFT, SCORES_TOP + i * SCORE_GAP)
+                Text.DrawText(" " & (i + 1) & ":   " & s.Name & "   " & s.Value, Color.White, GameFont("Courier"), SCORES_LEFT, SCORES_TOP + i * SCORE_GAP)
             Else
-                Text.DrawText(i + 1 & ": " & s.Name & " " & s.Value, Color.White, GameFont("Courier"), SCORES_LEFT, SCORES_TOP + i * SCORE_GAP)
+                Text.DrawText(i + 1 & ":   " & s.Name & "   " & s.Value, Color.White, GameFont("Courier"), SCORES_LEFT, SCORES_TOP + i * SCORE_GAP)
             End If
         Next
     End Sub
@@ -170,7 +170,7 @@ Module HighScoreController
             s.Name = Input.TextReadAsASCII()
 
             If s.Name.Length < 3 Then
-                s.Name = s.Name & New String(CChar(" "), s.Name.Length - 3)
+                s.Name = s.Name & New String(CChar(" "), 3 - s.Name.Length)
             End If
 
             _Scores.RemoveAt(_Scores.Count - 1)
