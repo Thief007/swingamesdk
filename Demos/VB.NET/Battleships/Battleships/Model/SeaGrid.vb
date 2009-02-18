@@ -12,7 +12,7 @@ Public Class SeaGrid
     Private Const _WIDTH As Integer = 10
     Private Const _HEIGHT As Integer = 10
 
-    Private _GameTiles(0 To Width - 1, 0 To Height - 1) As Tile
+    Private _GameTiles(,) As Tile
     Private _Ships As Dictionary(Of ShipName, Ship)
     Private _ShipsKilled As Integer = 0
 
@@ -83,6 +83,8 @@ Public Class SeaGrid
     ''' SeaGrid constructor, a seagrid has a number of tiles stored in an array
     ''' </summary>
     Public Sub New(ByVal ships As Dictionary(Of ShipName, Ship))
+		Redim _GameTiles(Width - 1, Height - 1)
+		
         'fill array with empty Tiles
         For i As Integer = 0 To Width - 1
             For j As Integer = 0 To Height - 1
@@ -161,25 +163,25 @@ Public Class SeaGrid
         Try
             'tile is already hit
             If _GameTiles(row, col).Shot Then
-                Return New AttackResult(ResultOfAttack.ShotAlready, "have already attacked [" & col & "," & row & "]!")
+                Return New AttackResult(ResultOfAttack.ShotAlready, "have already attacked [" & col & "," & row & "]!", row, col)
             End If
 
             _GameTiles(row, col).Shoot()
 
             'there is no ship on the tile
             If _GameTiles(row, col).Ship Is Nothing Then
-                Return New AttackResult(ResultOfAttack.Miss, "missed")
+                Return New AttackResult(ResultOfAttack.Miss, "missed", row, col)
             End If
 
             'all ship's tiles have been destroyed
             If _GameTiles(row, col).Ship.IsDestroyed Then
                 _GameTiles(row, col).Shot = True
                 _ShipsKilled += 1
-                Return New AttackResult(ResultOfAttack.Destroyed, _GameTiles(row, col).Ship, "destroyed the")
+                Return New AttackResult(ResultOfAttack.Destroyed, _GameTiles(row, col).Ship, "destroyed the enemy's", row, col)
             End If
 
             'else hit but not destroyed
-            Return New AttackResult(ResultOfAttack.Hit, "hit something!")
+            Return New AttackResult(ResultOfAttack.Hit, "hit something!", row, col)
         Finally
             RaiseEvent Changed(Me, EventArgs.Empty)
         End Try

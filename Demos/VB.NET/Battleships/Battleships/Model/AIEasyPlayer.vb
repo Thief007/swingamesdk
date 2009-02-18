@@ -43,6 +43,18 @@ Public Class AIEasyPlayer : Inherits AIPlayer
                 Case 2 : _nextLocation = New Location(row, col + 1)
                 Case 3 : _nextLocation = New Location(row, col - 1)
             End Select
+
+            If _nextLocation.Row < 0 Then
+                _nextLocation.Row = 0
+            ElseIf _nextLocation.Row >= PlayerGrid.Height Then
+                _nextLocation.Row = PlayerGrid.Height - 1
+            End If
+
+            If _nextLocation.Column < 0 Then
+                _nextLocation.Column = 0
+            ElseIf _nextLocation.Column >= PlayerGrid.Width Then
+                _nextLocation.Column = PlayerGrid.Width - 1
+            End If
         End If
     End Sub
 
