@@ -1,9 +1,0 @@
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\bin\Debug\HelloWorld.exe
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\bin\Debug\HelloWorld.pdb
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\bin\Debug\HelloWorld.xml
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\bin\Debug\SGSDK.NET.dll
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\bin\Debug\SGSDK.NET.xml
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\obj\Debug\ResolveAssemblyReference.cache
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\obj\Debug\HelloWorld.exe
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\obj\Debug\HelloWorld.xml
-D:\Work\Repository\Documentation\VBugs\Chapter 3\HelloWorld\HelloWorld\obj\Debug\HelloWorld.pdb

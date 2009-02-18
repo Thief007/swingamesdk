@@ -1,0 +1,9 @@
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\bin\Debug\Chapter 6 Solution.exe
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\bin\Debug\Chapter 6 Solution.pdb
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\bin\Debug\Chapter 6 Solution.xml
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\bin\Debug\SGSDK.NET.dll
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\bin\Debug\SGSDK.NET.xml
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\obj\Debug\Chapter 6 Solution.exe
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\obj\Debug\Chapter 6 Solution.xml
+C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 6 Solution\Chapter 6 Solution\obj\Debug\Chapter 6 Solution.pdb
