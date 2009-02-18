@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{96D40303-73BD-4E3C-B8F1-1A8C48C8A2E8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <StartupObject>Sub Main</StartupObject>
+    <RootNamespace>SwinGame_VB1</RootNamespace>
+    <AssemblyName>Chapter 1 Solution</AssemblyName>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
+    <ApplicationIcon>SwinGame.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OptionExplicit>On</OptionExplicit>
+    <OptionCompare>Binary</OptionCompare>
+    <OptionStrict>Off</OptionStrict>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>Chapter 1 Solution.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>Chapter 1 Solution.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="SGSDK.NET, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bf3f7f1d850fd13d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Local Settings\Application Data\Temporary Projects\SwinGame VB1\lib\SGSDK.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="Color = System.Drawing.Color" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="Rectangle = System.Drawing.Rectangle" />
+    <Import Include="SwinGame" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.IO" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="GameLogic.vb" />
+    <Compile Include="GameResources.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="Resources\fonts\arial.ttf" />
+    <None Include="Resources\fonts\cour.ttf" />
+    <None Include="Resources\sounds\SwinGameStart.ogg" />
+    <None Include="Resources\SwinGame.icns" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gpl-2.0.txt" />
+    <Content Include="lib\jpeg.dll">
+    </Content>
+    <Content Include="lib\libfreetype-6.dll">
+    </Content>
+    <Content Include="lib\libogg-0.dll">
+    </Content>
+    <Content Include="lib\libpng12-0.dll">
+    </Content>
+    <Content Include="lib\libtiff-3.dll">
+    </Content>
+    <Content Include="lib\libvorbis-0.dll">
+    </Content>
+    <Content Include="lib\libvorbisfile-3.dll">
+    </Content>
+    <Content Include="lib\ogg.dll">
+    </Content>
+    <Content Include="lib\SDL.dll">
+    </Content>
+    <Content Include="lib\SDL_gfx.dll">
+    </Content>
+    <Content Include="lib\SDL_image.dll">
+    </Content>
+    <Content Include="lib\SDL_mixer.dll">
+    </Content>
+    <Content Include="lib\SDL_ttf.dll">
+    </Content>
+    <Content Include="lib\SGSDK.dll">
+    </Content>
+    <Content Include="lib\SGSDK.NET.dll" />
+    <Content Include="lib\SGSDK.NET.XML" />
+    <Content Include="lib\smpeg.dll">
+    </Content>
+    <Content Include="lib\zlib1.dll">
+    </Content>
+    <Content Include="ReadMe.txt" />
+    <Content Include="Resources\images\loader_empty.png" />
+    <Content Include="Resources\images\loader_full.png" />
+    <Content Include="Resources\images\SplashBack.png" />
+    <Content Include="Resources\images\SwinGameAni.png" />
+    <Content Include="Resources\readme.txt" />
+    <Content Include="Resources\SwinGame.ico" />
+    <Content Include="SwinGame.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\maps\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)resources\*" "$(TargetDir)resources\" /s/y/d/e
+xcopy "$(ProjectDir)lib\*" "$(TargetDir)" /s/y/d/e</PostBuildEvent>
+  </PropertyGroup>
+</Project>

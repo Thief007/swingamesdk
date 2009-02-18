@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Chapter 7 Solution", "Chapter 7 Solution\Chapter 7 Solution.vbproj", "{BAB701EE-74C3-400E-BE57-1C6689C6EFAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BAB701EE-74C3-400E-BE57-1C6689C6EFAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAB701EE-74C3-400E-BE57-1C6689C6EFAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAB701EE-74C3-400E-BE57-1C6689C6EFAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAB701EE-74C3-400E-BE57-1C6689C6EFAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
