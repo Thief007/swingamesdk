@@ -34,8 +34,8 @@ Module GameLogic
         'Playing music in the loop of infinity
         Audio.PlayMusic(GameMusic("lion"), -1)
 
-        'Point2D variable declaration - for mouse position
 
+        'play the sound effect hit
         Audio.PlaySoundEffect(GameSound("hit"), 3)
         Audio.PlaySoundEffect(GameSound("hit"), 10, 5)
 
@@ -106,6 +106,7 @@ Module GameLogic
                 End If
             End If
 
+            'if up and down are hit then turn the volume up and down
             If Input.IsKeyPressed(SwinGame.Keys.VK_UP) Then
                 Audio.SetMusicVolume(Audio.MusicVolume + 0.01F)
             End If
