@@ -1,9 +1,0 @@
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\bin\Debug\SwinGame VB1.exe
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\bin\Debug\SwinGame VB1.pdb
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\bin\Debug\SwinGame VB1.xml
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\bin\Debug\SGSDK.NET.dll
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\bin\Debug\SGSDK.NET.xml
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\obj\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\obj\Debug\SwinGame VB1.exe
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\obj\Debug\SwinGame VB1.xml
-C:\Documents and Settings\rmercer\Local Settings\Application Data\Temporary Projects\SwinGame VB1\obj\Debug\SwinGame VB1.pdb
