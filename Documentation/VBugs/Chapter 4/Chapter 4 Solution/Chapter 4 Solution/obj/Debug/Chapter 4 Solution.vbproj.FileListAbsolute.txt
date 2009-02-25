@@ -1,9 +1,0 @@
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\bin\Debug\Chapter 4 Solution.exe
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\bin\Debug\Chapter 4 Solution.pdb
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\bin\Debug\Chapter 4 Solution.xml
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\bin\Debug\SGSDK.NET.dll
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\bin\Debug\SGSDK.NET.xml
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\obj\Debug\ResolveAssemblyReference.cache
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\obj\Debug\Chapter 4 Solution.exe
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\obj\Debug\Chapter 4 Solution.xml
-C:\Documents and Settings\rmercer\My Documents\Visual Studio 2008\Projects\Chapter 4 Solution\Chapter 4 Solution\obj\Debug\Chapter 4 Solution.pdb
