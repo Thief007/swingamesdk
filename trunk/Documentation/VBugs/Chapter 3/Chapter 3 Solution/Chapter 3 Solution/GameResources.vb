@@ -4,11 +4,13 @@ Imports System.Collections.Generic
 Public Module GameResources
 
     Private Sub LoadFonts()
+        'loads the fonts
         NewFont("ArialLarge", "arial.ttf", 80)
         NewFont("Courier", "cour.ttf", 16)
     End Sub
 
     Private Sub LoadImages()
+        'loads the images
         NewImage("sprite", "sprite.png")
     End Sub
 
