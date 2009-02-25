@@ -15,12 +15,16 @@ Module GameLogic
             'Clears the Screen to Black
             SwinGame.Graphics.ClearScreen()
 
+            'Draws the background image
             Graphics.DrawBitmap(GameImage("back"), 0, 0)
 
+            'draws the photo image
             Graphics.DrawBitmap(GameImage("photo"), 100, 30)
 
+            'Draws the text to the screen
             Text.DrawText("I'm a cool bug!", Color.Black, GameFont("BeanTown"), 450, 10)
 
+            'Draws the 3 rectangles
             Graphics.FillRectangle(Color.FromArgb(255, 255, 0, 0), 700, 500, 100, 100)
             Graphics.FillRectangle(Color.FromArgb(30, 0, 255, 0), 600, 500, 100, 100)
             Graphics.FillRectangle(Color.FromArgb(0, 0, 0, 255), 500, 500, 100, 100)
