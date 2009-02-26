@@ -28,7 +28,7 @@ namespace GameProject
             //Load Resources
             Resources.LoadResources();
             
-            Board b = new Board(1000000);
+            Board b = new Board(1000);
             int i = 0;
             
             //Game Loop
