@@ -47,7 +47,7 @@ then
 	echo " Running xbuild $1 ${BUILD_OPT}"
 	
 	#xbuild $1 ${BUILD_OPT} > out.log
-	 gmcs /out:bin/Debug/GameProject.exe *.cs  /target:winexe /reference:System.dll /reference:System.Drawing.dll /reference:lib/SGSDK.NET.dll > out.log 2> out.log
+	 gmcs /out:bin/Debug/GameProject.exe *.cs ./Properties/*.cs  /target:winexe /reference:System.dll /reference:System.Drawing.dll /reference:lib/SGSDK.NET.dll > out.log 2> out.log
 	if [ $? != 0 ]; then echo "Error during compilation"; cat out.log; exit 1; fi
 	
 	echo "  ... Copying Library Files"
