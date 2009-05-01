@@ -1,3 +1,5 @@
+{$IFNDEF UNIX}{$APPTYPE GUI}{$ENDIF}
+
 program MyGame;
 uses
   SGSDK_Audio, GameLogic in 'GameLogic.pas'; {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF} 
