@@ -38,7 +38,7 @@ if exist out.log del /q out.log
 
 if "%1"=="clean" goto cleaning
 	echo   Compiling SGSDK.dll
-	fpc -v0 -Mdelphi -FE"%Output1%" .\src\SGSDK.pas >> out.log
+	fpc -v0 -O3 -WR -WB -Mdelphi -FE"%Output1%" .\src\SGSDK.pas >> out.log
 	if ERRORLEVEL 1 goto error
 	
 	echo   Copying library to output
