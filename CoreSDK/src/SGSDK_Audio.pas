@@ -10,6 +10,10 @@
 //
 // Change History:
 //
+// Version 2.1:
+// - 2009-05-19: Andrew:  Added PlaySoundEffect with volume
+//                        Added meta comments
+//
 // Version 2.0:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-16: Andrew: Added volume controls
@@ -27,54 +31,302 @@ interface
 	uses SDL_Mixer, SDL, SGSDK_Core;
 	
 	type
-		/// Type: SoundEffect
+	  /// The SoundEffect type is used to refer to sound effects that can be played
+	  /// by the SwinGame audio code. Sound effects are loaded with 
+	  /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
+	  /// released using `FreeMusic`.
+	  ///
+	  /// SwinGame will mix the audio from multiple sound effects, making it possible
+	  /// to play multiple SoundEffects, or even to play the one SoundEffect multiple
+	  /// times.
+	  ///
+	  /// You can check if a SoundEffect is currently playing using 
+	  /// `IsSoundEffectPlaying`. 
+	  /// 
+	  /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
+	  /// instances of this one sound effect from playing.
+	  ///
+		/// @note Use `Music` for background music for your games.
 		///
-		/// Use sound effects to play sounds in a game. Load sound effects using th
-		///	LoadSoundEffect routine. You can then PlaySoundEffect to start the
-		///	effect playing.
-		///
-		/// NOTE: Do not use this to play music, see the Music type.
+		/// @uname SoundEffect
 		SoundEffect = PMix_Chunk;
 
-		/// Type: Music
+	  /// The SoundEffect type is used to refer to sound effects that can be played
+	  /// by the SwinGame audio code. Sound effects are loaded with 
+	  /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
+	  /// released using `FreeMusic`.
+	  ///
+	  /// SwinGame will mix the audio from multiple sound effects, making it possible
+	  /// to play multiple SoundEffects, or even to play the one SoundEffect multiple
+	  /// times.
+	  ///
+	  /// You can check if a SoundEffect is currently playing using 
+	  /// `IsSoundEffectPlaying`. 
+	  /// 
+	  /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
+	  /// instances of this one sound effect from playing.
+	  ///
+		/// @note Use `SoundEffect` for the foreground sound effects of for your games.
 		///
-		/// Background music is played on a loop. Use this music type
-		/// for variables that refer to music that can be played. You can load
-		///	these using LoadMusic, play with PlayMusic, and stop with StopMusic.
-		///	Also see the IsMusicPlaying routine.
+		/// @uname Music
 		Music = PMix_Music;
 
-
-	//*****
-	//
-	// Sound routines
-	//
-	//*****
-	//
-	// These routines are used to work with sound effects and music within the
-	// game API.
-	//
+  /// OpenAudio is used to initialise the SwinGame audio code. This should be called
+  /// at the start of your programs code, and is usually coded into the starting 
+  /// project templates. After initialising the audio code you can load and play `Music` 
+  /// using `LoadMusic` and `PlayMusic', load and play `SoundEffect`s using 
+  /// `LoadSoundEffect` and `PlaySoundEffect`. At the end of the program you need to
+  /// call `CloseAudio` to ensure that the audio code is correctly terminated.
+  ///
+  /// @lib OpenAudio
+  /// @uname OpenAudio
 	procedure OpenAudio();
+
+  /// CloseAudio is used to clean up the resources used by SwinGame audio. If 
+  /// `OpenAudio` is called, this must be called to return the resources used
+  /// before the program terminates.
+  ///
+  /// @lib CloseAudio
+  /// @uname CloseAudio
 	procedure CloseAudio();
 
+  /// Loads the `SoundEffect` from the supplied path. To ensure that your game
+  /// is able to work across multiple platforms correctly ensure that you use
+  /// `GetPathToResource` to get the full path to the files in the projects 
+  /// resources folder.
+  ///
+  /// LoadSoundEffect can load wav and ogg audio files.
+  ///
+  /// `FreeSoundEffect` should be called to free the resources used by the 
+  /// `SoundEffect` data once the resource is no longer needed.
+  ///
+  /// @param path the path to the sound effect file to load. 
+  ///
+  /// @lib LoadSoundEffect
+  /// @uname LoadSoundEffect
+  ///
+  /// @class SoundEffect
+  /// @constructor
 	function LoadSoundEffect(path: String): SoundEffect;
+
+  /// Loads the `Music` from the supplied path. To ensure that your game
+  /// is able to work across multiple platforms correctly ensure that you use
+  /// `GetPathToResource` to get the full path to the files in the projects 
+  /// resources folder.
+  ///
+  /// LoadMusic can load mp3, wav and ogg audio files.
+  ///
+  /// `FreeMusic` should be called to free the resources used by the 
+  /// `Music` data once the resource is no longer needed.
+  ///
+  /// @param path the path to the music file to load.
+  ///
+  /// @lib LoadMusic
+  /// @uname LoadMusic
+  ///
+  /// @class Music
+  /// @constructor
 	function LoadMusic(path: String): Music;
 
+  /// Frees the resources used by a `Music` resource. All loaded
+  /// `Music` should be freed once it is no longer needed. 
+  ///
+  /// @lib FreeMusic
+  /// @uname FreeMusic
+  ///
+  /// @class Music
+  /// @dispose
 	procedure FreeMusic(var mus: Music);
+
+  /// Frees the resources used by a `SoundEffect` resource. All loaded
+  /// `SoundEffect`s should be freed once it is no longer needed.
+  ///
+  /// @lib FreeSoundEffect
+  /// @uname FreeSoundEffect
+  ///
+  /// @class SoundEffect
+  /// @dispose
 	procedure FreeSoundEffect(var effect: SoundEffect);
 
+  /// There are several versions of PlaySoundEffect that can be used to control
+  /// the way the sound effect plays, allowing you to control its volume and 
+  /// the number of times the code loops. In all cases the started sound effect
+  /// is mixed with the currently playing sound effects and music.
+  ///
+  /// With this version of PlaySoundEffect, the started sound effect will be 
+  /// played at full volume.
+  ///
+  /// @param effect The effect indicates which sound effect to start playing. This
+  ///               effect is played once at its full volume.
+  ///
+  /// @lib PlaySoundEffect
+  /// @uname PlaySoundEffect
+  ///
+  /// @class SoundEffect
+  /// @method Play
 	procedure PlaySoundEffect(effect: SoundEffect); overload;
+	  
+	/// This version of PlaySoundEffect allows you to indicate the number of times
+	/// the sound effect is repeated. Setting the loops parameter to -1 will cause
+	/// the sound effect to be looped infinitely, setting it to a value larger than
+	/// 0 repeats the sound effect the number of times indicated. This means that 
+	/// setting loops to 1 causes the `SoundEffect` to be played twice.
+	/// 
+  /// @param effect The effect indicates which sound effect to start playing. This
+  ///               effect is played once at its full volume.
+  ///
+  /// @param loops Controls the number of times the sound effect is played.
+  ///
+	/// @lib PlaySoundEffectLoop
+	/// @uname PlaySoundEffectLoop
+  ///
+  /// @class SoundEffect
+  /// @overload Play PlayWithLoops
 	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
+	  	  
+	/// This version of PlaySoundEffect allows you to control the volume of the 
+	/// sounds playback. The vol parameter will take a value between 0 and 1 indicating
+	/// the percentage of full volume to play at, for example, 0.1 playes the sound effect
+	/// at 10% of its original volume.
+	///
+  /// @param effect The effect indicates which sound effect to start playing. 
+  /// @param vol Indicates the percentage of the original volume to play the 
+  ///            `SoundEffect` at. This must be between 0 and 1.
+  ///
+	/// @lib PlaySoundEffectLoopVolume(effect, 0, vol)
+	/// @uname PlaySoundEffectWithVolume
+	/// @version 2.1
+  ///
+  /// @class SoundEffect
+  /// @overload Play PlayWithVolume
+	procedure PlaySoundEffect(effect: SoundEffect; vol: Single); overload;
+	
+	/// This version of PlaySoundEffect allows you to control both the number
+	/// of times the `SoundEffect` is repeated, and its playback volume.
+	///
+  /// @param effect The effect indicates which sound effect to start playing. 
+  /// @param loops Controls the number of times the sound effect is played.
+  /// @param vol Indicates the percentage of the original volume to play the 
+  ///            `SoundEffect` at. This must be between 0 and 1.
+  ///
+  /// @lib PlaySoundEffectLoopVolume
+	/// @uname PlaySoundEffectWithLoopAndVolume
+	/// @version 2.0
+	///
+	/// @class SoundEffect
+	/// @overload Play PlayWithLoopsAndVolume
 	procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; vol: Single); overload;
-	procedure PlayMusic(mus: Music; loops: LongInt); overload;
+
+  /// PlayMusic starts playing a `Music` resource. SwinGame only allows one music resource 
+  /// to be played at a time. Starting to play a new music resource will stop the currently playing music track.
+  /// You can also stop the music by calling `StopMusic`.
+  ///
+  /// By default SwinGame starts playing the music at its full volume. This can be controlled by calling 
+  /// `SetMusicVolume`. The current volume can be checked with `MusicVolume`.
+  ///
+  /// To test if a `Music` resource is currently playing you can use the `IsMusicPlaying` function.
+  ///
+  /// This version of PlayMusic can be used to play background music that is looped infinitely.
+  /// The currently playing music is stopped and the new music resource will start playing, and will
+  /// repeat until `StopMusic` is called, or another resource is played. 
+  ///
+  /// @param mus The `Music` resource to play.
+  ///
+  /// @lib PlayMusic(mus, -1)
+  /// @uname PlayMusic
+  ///
+  /// @class Music
+  /// @method Play
 	procedure PlayMusic(mus: Music); overload;
+
+  /// This version of PlayMusic allows you to control the number of times the `Music` 
+  /// resource is repeated. It starts playing the supplied `Music` resource, repeating it the numder of times
+  /// specified in the loops parameter. Setting loops to 0 plays the music through once. Setting 
+  /// loops to -1 repeats the music infinitely, other values larger than 0 indicate the number of 
+  /// times that the music should be repeated.
+  ///
+  /// @param mus The `Music` resource to be played.
+  /// @param loops The number of times that the music should be repeated, for example, setting
+  ///              loops to 1 causes the music to be played through twice.
+  ///
+  /// @lib PlayMusic
+  /// @uname PlayMusicWithLoops
+  ///
+  /// @class Music
+  /// @overload Play PlayWithLoops
+	procedure PlayMusic(mus: Music; loops: LongInt); overload;
+
+  /// This procedure allows you to set the volume of the currently playing music. The vol
+  /// parameter indicates the percentage of the original volume, for example, 0.1 sets the
+  /// playback volume to 10% of its full volume.
+  ///
+  /// @param vol Indicates the percentage of the original volume to play the 
+  ///            `Music` at. This must be between 0 and 1, e.g. 0.1 is 10%.
+  ///
+  /// @lib SetMusicVolume
+  /// @uname SetMusicVolume
+  ///
+  /// @class Music
+  /// @setter Volume
 	procedure SetMusicVolume(vol: Single);
+
+  /// This function returns the current volume of the music. This will be
+  /// a value between 0 and 1, with 1 indicating 100% of the `Music` resources
+  /// volume.
+  ///
+  /// @returns The volume of the currently playing music.
+  ///
+  /// @lib MusicVolume
+  /// @uname MusicVolume
+  ///
+  /// @class Music
+  /// @getter Volume
 	function MusicVolume(): Single;
 
+  /// This function indicates if music is currently playing. As only one music 
+  /// resource can be playing at a time this does not need to be told which
+  /// music resource to check for.
+  ///
+  /// @returns true if the music is playing
+  ///
+  /// @lib IsMusicPlaying
+  /// @uname IsMusicPlaying
+  ///
+  /// @class Music
+  /// @static IsPlaying
 	function IsMusicPlaying(): Boolean;
+	
+  /// This function can be used to check if a sound effect is currently 
+  /// playing. 
+  ///
+  /// @param effect The sound effect to check.
+  /// @returns true if the effect `SoundEffect` is playing.
+  ///
+  /// @lib IsSoundEffectPlaying
+  /// @uname IsSoundEffectPlaying
+  ///
+  /// @class SoundEffect
+  /// @method IsPlaying
 	function IsSoundEffectPlaying(effect: SoundEffect): Boolean;
 
+  /// Stops all occurances of the effect `SoundEffect` that is currently playing.
+  ///
+  /// @param effect The sound to stop.
+  ///
+  /// @lib StopSoundEffect
+  /// @uname StopSoundEffect
+  ///
+  /// @class SoundEffect
+  /// @method Stop
 	procedure StopSoundEffect(effect: SoundEffect);
+
+  /// Stops playing the current music resource.
+  ///
+  /// @lib StopMusic
+  /// @uname StopMusic
+  ///
+  /// @class Music
+  /// @static Stop
 	procedure StopMusic();
 
 implementation
@@ -210,6 +462,11 @@ implementation
 	procedure PlaySoundEffect(effect: SoundEffect); overload;
 	begin
 		PlaySoundEffect(effect, 0, 1.0);
+	end;
+	
+	procedure PlaySoundEffect(effect: SoundEffect; vol: Single); overload;
+	begin
+	 PlaySoundEffect(effect, 0, vol);
 	end;
 	
 	/// Start the indicating music playing. The music will loop the indicated
