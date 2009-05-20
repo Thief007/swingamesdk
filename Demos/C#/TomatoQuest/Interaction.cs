@@ -35,7 +35,7 @@ namespace TomatoQuest
                         switch (thePlayer.Anim)
                         {
                             case CharacterAnim.Down:
-                                if (thePlayer.Sprite.yPos + thePlayer.Sprite.Height <= Healers[i].Sprite.yPos)
+                                if (thePlayer.Sprite.Y + thePlayer.Sprite.Height <= Healers[i].Sprite.Y)
                                 {
                                     thePlayer.HealCharacter(20);
                                     Healers[i].Cooldown = 100;
@@ -43,7 +43,7 @@ namespace TomatoQuest
                                 break;
 
                             case CharacterAnim.Top:
-                                if (thePlayer.Sprite.yPos >= Healers[i].Sprite.yPos + Healers[i].Sprite.Height)
+                                if (thePlayer.Sprite.Y >= Healers[i].Sprite.Y + Healers[i].Sprite.Height)
                                 {
                                     thePlayer.HealCharacter(20);
                                     Healers[i].Cooldown = 100;
@@ -51,7 +51,7 @@ namespace TomatoQuest
                                 break;
 
                             case CharacterAnim.Left:
-                                if (thePlayer.Sprite.xPos >= Healers[i].Sprite.xPos + Healers[i].Sprite.Width)
+                                if (thePlayer.Sprite.X >= Healers[i].Sprite.X + Healers[i].Sprite.Width)
                                 {
                                     thePlayer.HealCharacter(20);
                                     Healers[i].Cooldown = 100;
@@ -59,7 +59,7 @@ namespace TomatoQuest
                                 break;
 
                             case CharacterAnim.Right:
-                                if (thePlayer.Sprite.xPos + thePlayer.Sprite.Width <= Healers[i].Sprite.xPos)
+                                if (thePlayer.Sprite.X + thePlayer.Sprite.Width <= Healers[i].Sprite.X)
                                 {
                                     thePlayer.HealCharacter(20);
                                     Healers[i].Cooldown = 100;

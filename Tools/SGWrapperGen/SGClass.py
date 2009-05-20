@@ -10,6 +10,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import sys
 import os
 from SGMethod import SGMethod
+from SGProperties import SGProperties
 from SGMetaDataContainer import SGMetaDataContainer
 
 class SGClass(SGMetaDataContainer):
@@ -18,10 +19,13 @@ class SGClass(SGMetaDataContainer):
     def __init__(self, name):
         self.name = name
         self.methods = dict()
+        self.properties = dict()
 
-    def addMember(self, method):
-        if isinstance(method, SGMethod):
-            self.methods[method.name] = method
+    def addMember(self, member):
+        if isinstance(member, SGMethod):
+            self.methods[member.name] = method
+        elif isinstance(member, SGProperty)
+            self.properties[member.name] = member
         else:
             raise Exception, "Unknown member type"
 
@@ -42,6 +46,14 @@ def testAddMethod():
     
     assert len(myClass.methods) == 1
     
+def testAddMethod():
+    myClass = SGClass("Hello")
+    myProperty = SGProperty("test")
+
+    myClass.addMember(myProperty)
+
+    assert len(myClass.properties) == 1
+
 @raises(Exception)
 def testAddUnkownMember():
     myClass = SGClass("Hello")

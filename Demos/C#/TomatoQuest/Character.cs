@@ -119,8 +119,8 @@ namespace TomatoQuest
             _Sprite = Graphics.CreateSprite(Resources.GameImage(name), 3, 12, 24, 32);
 
             //Position the Character
-            _Sprite.xPos = SpawnX;
-            _Sprite.yPos = SpawnY;
+            _Sprite.X = SpawnX;
+            _Sprite.Y = SpawnY;
 
             _Sprite.EndingAction = SpriteEndingAction.ReverseLoop;
             _Sprite.Movement.SetTo(Physics.CreateVector(0, 0));
@@ -444,23 +444,23 @@ namespace TomatoQuest
                     switch (_Anim)
                     {
                         case CharacterAnim.Top:
-                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
-                            CurrentSlash.yPos = _Sprite.yPos - (int)(_Sprite.Height / 2) + 6;
+                            CurrentSlash.X = _Sprite.X - (int)(_Sprite.Width / 2);
+                            CurrentSlash.Y = _Sprite.Y - (int)(_Sprite.Height / 2) + 6;
                             break;
 
                         case CharacterAnim.Down:
-                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
-                            CurrentSlash.yPos = _Sprite.yPos + (int)(_Sprite.Height / 2) - 13;
+                            CurrentSlash.X = _Sprite.X - (int)(_Sprite.Width / 2);
+                            CurrentSlash.Y = _Sprite.Y + (int)(_Sprite.Height / 2) - 13;
                             break;
 
                         case CharacterAnim.Left:
-                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
-                            CurrentSlash.yPos = _Sprite.yPos;
+                            CurrentSlash.X = _Sprite.X - (int)(_Sprite.Width / 2);
+                            CurrentSlash.Y = _Sprite.Y;
                             break;
 
                         case CharacterAnim.Right:
-                            CurrentSlash.xPos = _Sprite.xPos - (int)(_Sprite.Width / 2);
-                            CurrentSlash.yPos = _Sprite.yPos;
+                            CurrentSlash.X = _Sprite.X - (int)(_Sprite.Width / 2);
+                            CurrentSlash.Y = _Sprite.Y;
                             break;
                     }
 
@@ -513,38 +513,38 @@ namespace TomatoQuest
                     case DamageType.Heal:
                         Text.DrawText(Convert.ToString(Damage),
                             Color.LightGreen, Resources.GameFont("Arial"),
-                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                            (int)_Sprite.X, (int)_Sprite.Y - 80 + StatusCooldown);
                         break;
 
                     //Enemy Damage
                     case DamageType.Enemy:
                         Text.DrawText(Convert.ToString(Damage),
                             Color.Red, Resources.GameFont("Arial"),
-                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                            (int)_Sprite.X, (int)_Sprite.Y - 80 + StatusCooldown);
                         break;
 
                     //Player Damage
                     case DamageType.Player:
                         Text.DrawText(Convert.ToString(Damage),
                             Color.White, Resources.GameFont("Arial"),
-                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                            (int)_Sprite.X, (int)_Sprite.Y - 80 + StatusCooldown);
                         break;
 
                     //Evade an attack
                     case DamageType.Evade:
                         Text.DrawText("Evaded",
                             Color.White, Resources.GameFont("Arial"),
-                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                            (int)_Sprite.X, (int)_Sprite.Y - 80 + StatusCooldown);
                         break;
 
                     //Critical Hit
                     case DamageType.Critical:
                         Text.DrawText("Critical Hit!",
                             Color.Orange, Resources.GameFont("Arial"),
-                            (int)_Sprite.xPos, (int)_Sprite.yPos - 110 + StatusCooldown);
+                            (int)_Sprite.X, (int)_Sprite.Y - 110 + StatusCooldown);
                         Text.DrawText(Convert.ToString(Damage),
                             Color.Orange, Resources.GameFont("Arial"),
-                            (int)_Sprite.xPos, (int)_Sprite.yPos - 80 + StatusCooldown);
+                            (int)_Sprite.X, (int)_Sprite.Y - 80 + StatusCooldown);
                         break;
                 }
 
@@ -580,8 +580,8 @@ namespace TomatoQuest
             if (Item != null)
             {
                 //Puts the Item where the Character was
-                Item.Sprite.xPos = Sprite.xPos;
-                Item.Sprite.yPos = Sprite.yPos;
+                Item.Sprite.X = Sprite.X;
+                Item.Sprite.Y = Sprite.Y;
 
                 //Drops the Item
                 Item.DropItem();
