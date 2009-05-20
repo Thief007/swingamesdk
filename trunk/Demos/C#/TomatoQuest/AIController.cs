@@ -72,22 +72,22 @@ namespace TomatoQuest
         private void PointAI(Character theAI, Character thePlayer)
         {
             //If the player is above the AI, point the AI upward
-            if (theAI.Sprite.yPos > thePlayer.Sprite.yPos)
+            if (theAI.Sprite.Y > thePlayer.Sprite.Y)
             {
                 theAI.SetAnimationFrames(1, 0, 2);
             }
             //If the player is below the AI, point the AI down
-            else if (theAI.Sprite.yPos < thePlayer.Sprite.yPos)
+            else if (theAI.Sprite.Y < thePlayer.Sprite.Y)
             {
                 theAI.SetAnimationFrames(7, 6, 8);
             }
             //If the player is to the left the AI, point the AI to the left
-            else if (theAI.Sprite.xPos > thePlayer.Sprite.xPos)
+            else if (theAI.Sprite.X > thePlayer.Sprite.X)
             {
                 theAI.SetAnimationFrames(10, 9, 11);
             }
             //If the player is to the right the AI, point the AI to the right
-            else if (theAI.Sprite.xPos < thePlayer.Sprite.xPos)
+            else if (theAI.Sprite.X < thePlayer.Sprite.X)
             {
                 theAI.SetAnimationFrames(4, 3, 5);
             }
@@ -96,22 +96,22 @@ namespace TomatoQuest
         private void MoveAI(Character theAI, Character thePlayer, Map theMap)
         {
             //If the player is above the AI, move the AI upward
-            if (theAI.Sprite.yPos > thePlayer.Sprite.yPos)
+            if (theAI.Sprite.Y > thePlayer.Sprite.Y)
             {
                 theAI.MoveCharacter(theMap, 0, -1);
             }
             //If the player is below the AI, move the AI down
-            else if (theAI.Sprite.yPos < thePlayer.Sprite.yPos)
+            else if (theAI.Sprite.Y < thePlayer.Sprite.Y)
             {
                 theAI.MoveCharacter(theMap, 0, 1);
             }
             //If the player is to the left the AI, move the AI to the left
-            else if (theAI.Sprite.xPos > thePlayer.Sprite.xPos)
+            else if (theAI.Sprite.X > thePlayer.Sprite.X)
             {
                 theAI.MoveCharacter(theMap, -1, 0);
             }
             //If the player is to the right the AI, move the AI to the right
-            else if (theAI.Sprite.xPos < thePlayer.Sprite.xPos)
+            else if (theAI.Sprite.X < thePlayer.Sprite.X)
             {
                 theAI.MoveCharacter(theMap, 1, 0);
             }
@@ -149,8 +149,8 @@ namespace TomatoQuest
 
         public static int CalculateDistance(Character character1, Character character2)
         {
-            double distancex = character1.Sprite.xPos - character2.Sprite.xPos;
-            double distancey = character1.Sprite.yPos - character2.Sprite.yPos;
+            double distancex = character1.Sprite.X - character2.Sprite.X;
+            double distancey = character1.Sprite.Y - character2.Sprite.Y;
 
             return (int)Math.Sqrt(Math.Pow(distancex, 2) + Math.Pow(distancey, 2));
         }
