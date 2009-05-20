@@ -25,6 +25,13 @@
 // Version 1.0:
 // - Various
 
+/// SwinGame's Audio is responsible for loading and
+/// playing music and sound effects. The main functionality
+/// exists in `LoadMusic`, `PlayMusic`, `LoadSoundEffect`, and
+/// `PlaySoundEffect`. Associated with these are the
+/// `Music` and `SoundEffect` types.
+///
+/// @class Audio
 unit SGSDK_Audio;
 
 interface
@@ -48,6 +55,7 @@ interface
 	  ///
 		/// @note Use `Music` for background music for your games.
 		///
+		/// @class SoundEffect
 		/// @uname SoundEffect
 		SoundEffect = PMix_Chunk;
 
@@ -68,6 +76,7 @@ interface
 	  ///
 		/// @note Use `SoundEffect` for the foreground sound effects of for your games.
 		///
+		/// @class Music
 		/// @uname Music
 		Music = PMix_Music;
 

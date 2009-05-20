@@ -15,6 +15,9 @@ class SGMetaDataContainer:
     def __init__(self):
         self.tags = {}
 
+    def addDocumentation(self, doc):
+        self.doc = doc
+        
     def addTag(self, tag):
         self.tags[tag.title] = tag
 
