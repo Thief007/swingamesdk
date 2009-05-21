@@ -19,10 +19,15 @@ class SGMethod(SGMetaDataContainer):
         self.params = []
         self.param_cache = {}
         self.set_return_type(None)
+        self.set_uname(name)
+    
+    def set_uname(self, uname):
+        """sets the unique name for the method, defaults to name"""
+        self.set_tag('uname', [uname])
     
     def set_as_static(self):
         """Set this as a static method"""
-        self.addTag('static')
+        self.set_tag('static')
     
     def is_static(self):
         """Checks if this is a static method, returns True if static."""
@@ -31,7 +36,7 @@ class SGMethod(SGMetaDataContainer):
     
     def set_return_type(self, type_name):
         """Sets the return type to type."""
-        self.addTag('returns', [type_name])
+        self.set_tag('returns', [type_name])
     
     def return_type(self):
         """Gets the SGMethod's return type"""
@@ -71,7 +76,7 @@ def test_method_creation():
     
     assert my_method.name == "Test"
     assert len(my_method.params) == 0
-    assert len(my_method.tags) == 1 #return type
+    assert len(my_method.tags) == 2 #return type + uname
     assert my_method.return_type() == None
 
 def test_static_methods():
