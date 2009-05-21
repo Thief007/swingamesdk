@@ -11,11 +11,11 @@ import sys
 import os
 
 
-class SGTag:
+class SGTag(object):
     def __init__(self, title, other=[]):
         self.title = title
         self.other = other
-
+    
 
 
 def testTagCreation():
