@@ -19,21 +19,21 @@ class SGParameter(SGMetaDataContainer):
         self.setType(None)
     
     def setAsOutput():
-        addTag('output')
+        set_tag('output')
     
     def isOutput(self):
         #print self.tags.keys()
         return 'output' in self.tags.keys()
     
     def setAsArray():
-        addTag('array')
+        set_tag('array')
     
     def isArray(self):
         #print self.tags.keys()
         return 'array' in self.tags.keys()
     
     def setType(self, type):
-        self.addTag('type', [type])
+        self.set_tag('type', [type])
     
     def type(self):
         return self.tags['type'].other[0]
@@ -56,7 +56,7 @@ def testStaticMethods():
     myMethod = SGMethod("Test")
     assert False == myMethod.isStatic()
     
-    myMethod.addTag("static")
+    myMethod.set_tag("static")
     assert myMethod.isStatic()
 
 def testReturnTypes():

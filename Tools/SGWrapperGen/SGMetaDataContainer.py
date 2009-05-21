@@ -7,55 +7,63 @@ Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
-import sys
-import os
-
 class SGMetaDataContainer(object):
-    def __init__(self):
-        self.tags = {}
+    """A container for meta data tag information"""
     
-    def addDocumentation(self, doc):
+    def __init__(self):
+        """initialise the container setting up the tags dictionary"""
+        self.tags = {}
+        self.doc = ""
+    
+    def add_doc(self, doc):
+        """adds documentation to the meta data container"""
         self.doc = doc
     
-    def addTag(self, tag, other = []):
+    def set_tag(self, tag, other = None):
+        """sets the tag for the meta data container with optional other data.
+           
+           parameters:
+           tag = name or SGTag object, 
+           other = list of data (default None)"""
         if isinstance(tag, SGTag):
             print "Adding tag ", tag.title, " for ", tag
             self.tags[tag.title] = tag
         else:
-            self.addTag(SGTag(tag, other))
+            self.set_tag(SGTag(tag, other))
     
 
-
-from nose.tools import *
 from SGTag import SGTag
 
-def testMetaDataCreation():
+def test_meta_data_creation():
+    """tests the basic construction of the container"""
     cont = SGMetaDataContainer()
     
     assert len(cont.tags) == 0
 
 
-def testMetaDataCreationWithTag():
+def test_md_creation_with_tag():
+    """tests the setting of a tag"""
     cont = SGMetaDataContainer()
     tag = SGTag("tag")
     
-    cont.addTag(tag)
+    cont.set_tag(tag)
     
     assert len(cont.tags) == 1
     assert cont.tags["tag"] == tag
     assert "tag" in cont.tags
 
 
-def testAddTagData():
+def test_set_tag_data():
+    """tests the creation of tags using passed in data"""
     cont = SGMetaDataContainer()
     
-    cont.addTag(10)
+    cont.set_tag(10)
     assert 10 in cont.tags
     
-    cont.addTag("test")
+    cont.set_tag("test")
     assert "test" in cont.tags
     
-    cont.addTag("blah", ["blah"])
+    cont.set_tag("blah", ["blah"])
     assert "blah" == cont.tags["blah"].other[0]
 
 
