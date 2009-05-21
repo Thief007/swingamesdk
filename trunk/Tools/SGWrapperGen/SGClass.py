@@ -10,13 +10,14 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import sys
 import os
 from SGMethod import SGMethod
-from SGProperties import SGProperties
+from SGProperty import SGProperty
 from SGMetaDataContainer import SGMetaDataContainer
 
 class SGClass(SGMetaDataContainer):
     """Represents a class in the comment meta language."""
 
     def __init__(self, name):
+        SGMetaDataContainer.__init__(self)
         self.name = name
         self.methods = dict()
         self.properties = dict()
@@ -24,7 +25,7 @@ class SGClass(SGMetaDataContainer):
     def addMember(self, member):
         if isinstance(member, SGMethod):
             self.methods[member.name] = method
-        elif isinstance(member, SGProperty)
+        elif isinstance(member, SGProperty):
             self.properties[member.name] = member
         else:
             raise Exception, "Unknown member type"

@@ -10,8 +10,9 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import sys
 import os
 
+import SGMetaDataContainer
 
-class SGProperty:
+class SGProperty(SGMetaDataContainer.SGMetaDataContainer):
     def __init__(self, name):
         self.name = name
 
