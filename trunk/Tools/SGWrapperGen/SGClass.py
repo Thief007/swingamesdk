@@ -4,62 +4,128 @@
 SGClass.py
 
 Created by Andrew Cain on 2009-05-20.
-Copyright (c) 2009 __MyCompanyName__. All rights reserved.
+Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
-import sys
-import os
 from SGMethod import SGMethod
 from SGProperty import SGProperty
+from SGField import SGField
 from SGMetaDataContainer import SGMetaDataContainer
 
 class SGClass(SGMetaDataContainer):
     """Represents a class in the comment meta language."""
-
+    
     def __init__(self, name):
+        """Initialise the class, setting its name"""
         SGMetaDataContainer.__init__(self)
         self.name = name
         self.methods = dict()
         self.properties = dict()
-
-    def addMember(self, member):
+        self.fields = dict()
+    
+    def add_member(self, member):
+        """Add a member (method, property) to the class"""
         if isinstance(member, SGMethod):
-            self.methods[member.name] = method
+            self.methods[member.name] = member
         elif isinstance(member, SGProperty):
             self.properties[member.name] = member
+        elif isinstance(member, SGField):
+            self.fields[member.name] = member
         else:
             raise Exception, "Unknown member type"
+    
+    def set_as_static(self):
+        """sets the class as static, deny object creation"""
+        self.set_tag('static')
+    
+    def is_static(self):
+        """returns true if this should be a static class"""
+        return 'static' in self.tags
+    
+    def set_as_struct(self):
+        """sets the class as a struct"""
+        self.set_tag('struct')
+    
+    def is_struct(self):
+        """returns true if this should be a struct"""
+        return 'struct' in self.tags
+    
+    def set_has_pointer(self):
+        """indicates that this class is a wrapper around a pointer value"""
+        self.set_tag('has_pointer')
+    
+    def has_pointer(self):
+        """indicates if this class is a wrapper for a SG pointer"""
+        return 'has_pointer' in self.tags
+    
 
 import nose
-from nose.tools import * 
+from nose.tools import raises 
 
-def testClassCreation():
-    myClass = SGClass("Hello")
+def test_class_creation():
+    """test basic class creation"""
+    my_class = SGClass("Hello")
     
-    assert myClass.name == "Hello"
-    assert len(myClass.methods) == 0
-    
-def testAddMethod():
-    myClass = SGClass("Hello")
-    myMethod = SGMethod("test")
-    
-    myClass.addMember(myMethod)
-    
-    assert len(myClass.methods) == 1
-    
-def testAddMethod():
-    myClass = SGClass("Hello")
-    myProperty = SGProperty("test")
+    assert my_class.name == "Hello"
+    assert len(my_class.methods) == 0
 
-    myClass.addMember(myProperty)
+def test_add_method():
+    """test adding a method to a class"""
+    my_class = SGClass("Hello")
+    my_method = SGMethod("test")
+    
+    my_class.add_member(my_method)
+    
+    assert len(my_class.methods) == 1
 
-    assert len(myClass.properties) == 1
+def test_add_property():
+    """test adding a property to the class"""
+    my_class = SGClass("Hello")
+    my_property = SGProperty("test")
+    
+    my_class.add_member(my_property)
+    
+    assert len(my_class.properties) == 1
+
+def test_add_field():
+    """test adding a field to the class"""
+    my_class = SGClass("Hello")
+    my_field = SGField("test")
+    
+    my_class.add_member(my_field)
+    
+    assert len(my_class.fields) == 1
 
 @raises(Exception)
-def testAddUnkownMember():
-    myClass = SGClass("Hello")
-    myClass.addMember("Hello")
-        
+def test_add_unkown_member():
+    """test adding some unknown member type to the class, expects to fail"""
+    my_class = SGClass("Hello")
+    my_class.add_member("Hello")
+
+def test_static_class():
+    """tests the creation of a static class"""
+    my_class = SGClass("Hello")
+    assert False == my_class.is_static()
+    
+    my_class.set_as_static()
+    assert my_class.is_static()
+
+def test_struct():
+    """tests the creation of a struct"""
+    my_class = SGClass("Hello")
+    assert False == my_class.is_struct()
+    
+    my_class.set_as_struct()
+    assert my_class.is_struct()
+
+def test_has_pointer():
+    """tests the creation of a class used to wrap a pointer"""
+    my_class = SGClass("SoundEffect")
+    assert False == my_class.has_pointer()
+    
+    my_class.set_has_pointer()
+    assert my_class.has_pointer()
+
 if __name__ == '__main__':
-    import nose
     nose.run()
+    

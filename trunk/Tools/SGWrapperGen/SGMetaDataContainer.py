@@ -4,7 +4,7 @@
 SGMetaDataContainer.py
 
 Created by Andrew Cain on 2009-05-20.
-Copyright (c) 2009 __MyCompanyName__. All rights reserved.
+Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
 class SGMetaDataContainer(object):
