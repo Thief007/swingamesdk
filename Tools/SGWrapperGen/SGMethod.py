@@ -134,12 +134,15 @@ class SGMethod(SGMetaDataContainer):
     
     def __str__(self):
         if self.return_type() != None:
-            result = self.return_type() + ' ' + self.name + '('
+            result = self.return_type() + ' '
         else:
-            result = 'void ' + self.name + '('
+            result = 'void '
         
-        if len(self.params) > 0:
-            result += reduce(lambda f, s: f + ', ' + s, map(lambda n: n.name, self.params))
+        result += self.name + '('
+        
+        if self.params:
+            result += ', '.join([n.name for n in self.params])
+            #result += reduce(lambda f, s: f + ', ' + s, [n.name for n in self.params])
         
         result += ')'
         
