@@ -18,6 +18,7 @@ from SGParameter import *
 from SGProperty import *
 from SGLibrary import *
 from SGField import *
+from SGPasTokeniser import *
 
 if __name__ == '__main__':
     nose.main()
