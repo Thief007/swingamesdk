@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Tokeniser.py
+SGPasTokeniser.py
 
 Created by Andrew Cain on 2009-05-26.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
-COMMMENT = 200
-
 class SGPasTokeniser():
     
-    def __init__(self, filename):
+    def __init__(self):
+        self.pas_lines = []
+        self._char_no = -1
+        self._line_no = 0 #starts at first line
+    
+    def tokenise(self, filename):
         '''Initialises the tokeniser with the details from
         the passed in filename.
         '''
@@ -26,8 +29,6 @@ class SGPasTokeniser():
         self._char_no = -1
         self._line_no = 0 #starts at first line
         self._token_val = 'none'
-        pass
-        
     
     def _next_char(self):
         '''Returns the next character from the input file'''
@@ -79,6 +80,7 @@ class SGPasTokeniser():
         if cha matches the following character, then read that character
         and return True, otherwise return False
         '''
+        #print 'matching and reading', cha, ' = ', self._peek(1)
         if self._peek(1) == cha:
             self._next_char()
             return True
@@ -89,6 +91,37 @@ class SGPasTokeniser():
         result = self.pas_lines[self._line_no][self._char_no + 1:-1]
         self._advance_line()
         return result.strip()
+    
+    def read_to_end_of_comment(self):
+        cha = self._next_char();
+        result = ''
+        line = ''
+        while True:
+            if cha == '@': #end at start of attribute
+                self._char_no -= 1
+                return result.strip()
+            elif cha == '\n': #skip to new line
+                #test for start for start of meta comment
+                self._advance_line()
+                
+                cha = self._next_char();
+                while cha == ' ' or cha == '\t':
+                    cha = self._next_char();
+                
+                self._char_no -= 1 #back up from last character
+                
+                if self._peek(3) != '///':
+                    return result.strip()
+                else:
+                    self._char_no += 3
+                if line == '':
+                    result += '\n'
+                line = ''
+            else:
+                line += cha
+                result += cha
+            cha = self._next_char();
+        
     
     def next_token(self):
         '''Returns the current token'''
@@ -103,19 +136,19 @@ class SGPasTokeniser():
             elif (t in '1234567890'): #is digit
                 return ['number', self._read_matching(t, lambda cha: cha in '1234567890.')]
             elif (t == '/'): #start of comment
-                temp = self._read_matching(t, lambda cha: cha in '/@')
-                temp = temp.strip() #remove surrounding white space
-                
-                if temp == '//':
-                    comment = self.read_to_eol()
-                    return ['comment', comment]
-                elif temp == '///':
-                    comment = self.read_to_eol()
-                    return ['meta comment', comment]
-                elif temp == '///@':
-                    return ['attribute', None]
+                if self._match_and_read('/'):
+                    if self._match_and_read('/'):
+                        kind = 'meta comment'
+                        comment = self.read_to_end_of_comment()
+                    else:
+                        kind = 'comment'
+                        comment = self.read_to_eol()
+                    return [kind, comment]
                 else:
-                    return ['error', temp]
+                    return ['error', t]
+            elif t == '@':
+                name = self._read_matching('', lambda cha: cha.isalnum() or cha in '_')
+                return ['attribute', name]
             elif t.isalpha():
                 name = self._read_matching(t, lambda cha: cha.isalnum() or cha in '_')
                 return ['id', name]
@@ -137,8 +170,10 @@ class SGPasTokeniser():
 def test_basic():
     lines = ['// Hello World\n', '/// Special Comment\n', '///@test(attr)\n', 
         '12345 123.45\n', '{ test multi line 1234\n', 'comments} end\n', 
-        '///@another(attr,attr2) \'a\'\'end\'']
-    tokeniser = SGPasTokeniser(lines)
+        '/// @another(attr,attr2) \'a\'\'end\'']
+    tokeniser = SGPasTokeniser()
+    
+    tokeniser.tokenise(lines)
     
     token = tokeniser.next_token()
     print token
@@ -151,10 +186,6 @@ def test_basic():
     token = tokeniser.next_token()
     print token
     assert token[0] == 'attribute'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'id'
     assert token[1] == 'test'
     
     token = tokeniser.next_token()
@@ -193,11 +224,11 @@ def test_basic():
     
     token = tokeniser.next_token()
     print token
-    assert token[0] == 'attribute'
+    assert token[0] == 'meta comment'
     
     token = tokeniser.next_token()
     print token
-    assert token[0] == 'id'
+    assert token[0] == 'attribute'
     assert token[1] == 'another'
     
     token = tokeniser.next_token()
