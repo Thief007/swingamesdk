@@ -14,25 +14,28 @@ Created by Andrew Cain on 2009-05-25.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 '''
 
+from SGPasTokeniser import SGPasTokeniser
+
 DEBUG = False
 
-types = {
-  'function': None,
-  'procedure': None,
-  'comment line': None,
-  'attribute': None,
-  'none': None
-}
 
-class SGToken():
-    def __init__(self):
-        self._id = 'none'
 
-def read_token(pas_lines):
-    pass
 
 def main():
-    pass
+    tokeniser = SGPasTokeniser('../../CoreSDK/src/SGSDK_Audio.pas')
+    tok = tokeniser.next_token()
+    while tok[1] != 'implementation':
+        print tok
+        if tok[0] == 'attribute':
+            tok = tokeniser.next_token()
+            print tok
+            if tok[1] == 'param':
+                tok = tokeniser.next_token()
+                print tok
+                print tokeniser.read_to_eol()
+            elif tok[1] == 'note':
+                print tokeniser.read_to_eol()
+        tok = tokeniser.next_token()
 
 
 if __name__ == '__main__':
