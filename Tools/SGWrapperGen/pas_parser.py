@@ -15,6 +15,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 '''
 
 from SGPasTokeniser import SGPasTokeniser
+from SGPasParser import SGPasParser
 
 DEBUG = False
 
@@ -22,7 +23,8 @@ DEBUG = False
 
 
 def main():
-    tokeniser = SGPasTokeniser('../../CoreSDK/src/SGSDK_Audio.pas')
+    tokeniser = SGPasTokeniser()
+    tokeniser.tokenise('../../CoreSDK/src/SGSDK_Audio.pas')
     tok = tokeniser.next_token()
     while tok[1] != 'implementation':
         print tok
@@ -36,8 +38,9 @@ def main():
             elif tok[1] == 'note':
                 print tokeniser.read_to_eol()
         tok = tokeniser.next_token()
-
+    
+    parser = SGPasParser()
+    parser.parse('../../CoreSDK/src/SGSDK_Audio.pas')
 
 if __name__ == '__main__':
     main()
-
