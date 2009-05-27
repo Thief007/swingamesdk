@@ -36,7 +36,7 @@ class SGClass(SGMetaDataContainer):
     
     def set_as_static(self):
         """sets the class as static, deny object creation"""
-        self.set_tag('static')
+        self.set_tag('static', True)
     
     def is_static(self):
         """returns true if this should be a static class"""
@@ -57,6 +57,14 @@ class SGClass(SGMetaDataContainer):
     def has_pointer(self):
         """indicates if this class is a wrapper for a SG pointer"""
         return 'has_pointer' in self.tags
+    
+    def __str__(self):
+        '''returns a string representation of the class'''
+        name = 'struct ' + self.name if self.is_struct() else 'class ' + self.name
+        name = 'static ' + name if self.is_static() else name
+
+        
+        return name
     
 
 import nose
