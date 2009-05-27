@@ -18,10 +18,15 @@ class SGMetaDataContainer(object):
         """initialise the container setting up the tags dictionary"""
         self.tags = {}
         self.doc = ""
+        self.notes = []
     
     def add_doc(self, doc):
         """adds documentation to the meta data container"""
         self.doc = doc
+    
+    def add_note(self, note):
+        '''Adds a note to the node'''
+        self.notes.append(note)
     
     def set_tag(self, tag, other = None):
         """sets the tag for the meta data container with optional other data.
