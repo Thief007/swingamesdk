@@ -13,6 +13,7 @@ class SGPasTokeniser():
         self.pas_lines = []
         self._char_no = -1
         self._line_no = 0 #starts at first line
+        self._filename = 'supplied data'
     
     def tokenise(self, filename):
         '''Initialises the tokeniser with the details from
@@ -22,6 +23,7 @@ class SGPasTokeniser():
         if isinstance(filename, list):
             self.pas_lines = filename
         else:
+            self._filename = filename
             f = open(filename)
             self.pas_lines = f.readlines()
             f.close()
@@ -29,6 +31,9 @@ class SGPasTokeniser():
         self._char_no = -1
         self._line_no = 0 #starts at first line
         self._token_val = 'none'
+    
+    def line_details(self):
+        return 'line %d in %s' % (self._line_no + 1, self._filename)
     
     def _next_char(self):
         '''Returns the next character from the input file'''

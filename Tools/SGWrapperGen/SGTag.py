@@ -16,7 +16,8 @@ class SGTag(object):
         self.title = title
         self.other = other
     
-
+    def __str__(self):
+        return 'Tag<%s> %s = %s' % (hex(id(self)),self.title, str(self.other))
 
 def testTagCreation():
     myTag = SGTag("tag", ["Hello", "World"]);

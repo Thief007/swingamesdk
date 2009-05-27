@@ -7,6 +7,10 @@ Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
+import logging
+
+logger = logging.getLogger("SGWrapperGen")
+
 class SGMetaDataContainer(object):
     """A container for meta data tag information"""
     
@@ -26,7 +30,7 @@ class SGMetaDataContainer(object):
            tag = name or SGTag object, 
            other = list of data (default None)"""
         if isinstance(tag, SGTag):
-            print "Adding tag ", tag.title, " for ", tag
+            logger.info("Adding tag %s for %s", tag.title, str(tag))
             self.tags[tag.title] = tag
         else:
             self.set_tag(SGTag(tag, other))
