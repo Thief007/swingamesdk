@@ -157,7 +157,7 @@ class SGPasTokeniser():
             elif t.isalpha():
                 name = self._read_matching(t, lambda cha: cha.isalnum() or cha in '_')
                 return ['id', name]
-            elif t in '(),:;{':
+            elif t in '(),:;{=':
                 if t == '(' and self._peek(1) == '*':
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
                     return ['comment', comment[:-2]]

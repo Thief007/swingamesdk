@@ -19,15 +19,22 @@ class SGPasParser():
     def __init__(self):
         self._tokeniser = SGPasTokeniser()
         self._processors = {
-            'unit': self.process_unit,
             'attribute': self.process_attribute,
             'comment': self.process_comment,
             'meta comment': self.process_meta_comment
         }
+        self._file_processors = {
+            'unit': self.process_unit
+        }
         self._attribute_processors = {
             'param': self.process_param_attribute,
-            'class': self.process_class_attribute,
-            'static': self.process_static_attribute
+            'class': self.process_id_attribute,
+            'static': self.process_static_attribute,
+            'note': self.process_note_attribute,
+            'uname': self.process_id_attribute
+        }
+        self._block_header_processors = {
+            'type': self.process_block_types
         }
         self._lookahead_toks = []
         self._meta_comments = []
@@ -44,17 +51,21 @@ class SGPasParser():
         tok = self._next_token()
         
         if tok[0] == 'id' and tok[1] in ['unit','library']:
-            self._processors[tok[1]](tok)
+            self._file_processors[tok[1]](tok)
         else:
             logger.error('Parse error: found %s expected unit or library', tok[1])
             sys.exit(-1)
     
     def _next_token(self):
-        if len(self._lookahead_toks) > 0:
-            current_token = self._lookahead_toks[0]
-            self._lookahead_toks = self._lookahead_toks[1:]
-        else:
-            current_token = self._tokeniser.next_token()
+        current_token = None
+        while current_token == None or current_token[0] == 'comment':
+            if len(self._lookahead_toks) > 0:
+                current_token = self._lookahead_toks[0]
+                self._lookahead_toks = self._lookahead_toks[1:]
+            else:
+                current_token = self._tokeniser.next_token()
+            if current_token[0] == 'comment':
+                logger.info('Skipping comment: %s', current_token[1])
         return current_token
     
     def _lookahead(self,count=1):
@@ -64,13 +75,31 @@ class SGPasParser():
     
     def _match_token(self, token_kind, token_value = None):
         global logger
+        
         tok = self._next_token()
         
-        if not(tok[0] == token_kind or (token_value == None or token_value == tok[1])):
+        if tok[0] != token_kind and (token_value != None or token_value != tok[1]):
             logger.error('Parse error: found a %s (%s) expected a %s', tok[0], tok[1], token_kind)
             sys.exit(-1)
             
         logger.info('Matched token %s (%s)', tok[0], tok[1])
+        return tok
+    
+    def _match_one_token(self, token_kind_lst):
+        global logger
+        
+        matched = False
+        tok = self._next_token()
+        
+        for token_kind,token_value in token_kind_lst:
+            if tok[0] == token_kind and (token_value == None or token_value == tok[1]):
+                matched = True
+                logger.info('Matched %s with %s', tok[0], tok[1])
+                break
+            
+        if not matched:
+            logger.error('Parser error: unexpected %s (%s) expected %s', tok[0], tok[1], token_kind_lst)
+            sys.exit(-1)
         return tok
     
     def process_meta_comments(self):
@@ -132,7 +161,18 @@ class SGPasParser():
             #Process the body of the unit's interface
             self.process_meta_comments() #read next elements meta comments... if any
             tok = self._lookahead()[0] #check the next token
-            break
+            
+            if tok[0] == 'id' and tok[1] == 'implementation':
+                logger.info('Found end of unit\'s interface')
+                break
+            
+            #interface contains types, functions, procedures, var, const
+            tok = self._match_one_token([['id','type'],
+                ['id','function'],
+                ['id','procedure'],
+                ['id','const'],
+                ['id','var']])
+            self._block_header_processors[tok[1]](unit, tok);
         
         logger.info('Finished processing unit. Resulting class is:\n%s', str(unit))
         pass
@@ -208,17 +248,41 @@ class SGPasParser():
                 logger.error('Parser Error: expected unit name but found %s at %s', tok[1], self._tokeniser.line_details())
                 sys.exit(-1)
     
-    def process_class_attribute(self, token):
-        tok = self._match_token('id') #load id of class
-        self._add_attribute('class', tok[1])
+    def process_id_attribute(self, token):
+        '''Process an attribute that is followed by a single identifier'''
+        tok = self._match_token('id') #load id of thing...
+        self._add_attribute(token[1], tok[1])
     
     def process_static_attribute(self, token):
         self._add_attribute('static', True)
+    
+    def process_note_attribute(self, token):
+        self._add_attribute('note', self._tokeniser.read_to_end_of_comment())
+    
+    def process_value_attribute(self, token):
+        self._add_attribute(token[0], token[1])
     
     def process_meta_comment(self, token):
         global logger
         logger.info('Processing meta comment: %s', token[1])
         self._meta_comments.append(token[1])
+        pass
+        
+    def process_block_types(self, block, token):
+        global logger
+        logger.info('Processing block types')
+        
+        self.process_meta_comments()
+        tok = self._match_token('id')
+        
+        type_name = tok[1]
+        
+        tok = self._match_token('token','=')
+        
+        # id = type;
+        # id = record ... end;
+        # id = array [...] of ...;
+        # id = ( ... )
         pass
 
 if __name__ == '__main__':
