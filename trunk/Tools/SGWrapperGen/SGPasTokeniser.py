@@ -108,7 +108,7 @@ class SGPasTokeniser():
             elif cha == '\n': #skip to new line
                 #test for start for start of meta comment
                 self._advance_line()
-                
+                result += '\n'
                 cha = self._next_char();
                 while cha == ' ' or cha == '\t':
                     cha = self._next_char();
@@ -119,8 +119,6 @@ class SGPasTokeniser():
                     return result.strip()
                 else:
                     self._char_no += 3
-                if line == '':
-                    result += '\n'
                 line = ''
             else:
                 line += cha
@@ -152,10 +150,10 @@ class SGPasTokeniser():
                 else:
                     return ['error', t]
             elif t == '@':
-                name = self._read_matching('', lambda cha: cha.isalnum() or cha in '_')
+                name = self._read_matching('', lambda cha: cha.isalnum() or cha == '_')
                 return ['attribute', name]
             elif t.isalpha():
-                name = self._read_matching(t, lambda cha: cha.isalnum() or cha in '_')
+                name = self._read_matching(t, lambda cha: cha.isalnum() or cha == '_')
                 return ['id', name]
             elif t in '(),:;{=':
                 if t == '(' and self._peek(1) == '*':

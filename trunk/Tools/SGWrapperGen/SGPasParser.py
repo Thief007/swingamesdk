@@ -29,9 +29,12 @@ class SGPasParser():
         self._attribute_processors = {
             'param': self.process_param_attribute,
             'class': self.process_id_attribute,
-            'static': self.process_static_attribute,
+            'static': self.process_true_attribute,
+            'struct': self.process_true_attribute,
+            #'has_pointer': self.process_true_attribute,
             'note': self.process_note_attribute,
-            'uname': self.process_id_attribute
+            'uname': self.process_id_attribute,
+            'field': self.process_parameter_list_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types
@@ -70,7 +73,10 @@ class SGPasParser():
     
     def _lookahead(self,count=1):
         while len(self._lookahead_toks) < count:
-            self._lookahead_toks.append(self._tokeniser.next_token())
+            current_token = self._tokeniser.next_token()
+            while current_token[0] == 'comment':
+                current_token = self._tokeniser.next_token()
+            self._lookahead_toks.append(current_token)
         return self._lookahead_toks
     
     def _match_token(self, token_kind, token_value = None):
@@ -98,7 +104,7 @@ class SGPasParser():
                 break
             
         if not matched:
-            logger.error('Parser error: unexpected %s (%s) expected %s', tok[0], tok[1], token_kind_lst)
+            logger.error('Parser error: unexpected %s(%s) expected %s', tok[0], tok[1], map(lambda n: '%s(%s)' % (n[0],n[1]),token_kind_lst))
             sys.exit(-1)
         return tok
     
@@ -106,6 +112,7 @@ class SGPasParser():
         self._meta_comments = []
         self._attributes = {}
         tok = self._lookahead(1)[0] #_next_token()
+        
         attrs_started = False
         while tok[0] in ['meta comment','attribute','comment']:
             if tok[0] == 'attribute': 
@@ -133,6 +140,8 @@ class SGPasParser():
         name = self._get_attribute('class', unit_name)
         logger.info('Creating class: %s', name)
         unit = SGClass(name)
+        
+        map(lambda f: unit.add_doc(f), self._meta_comments)
         
         if name in self._classes:
             logger.error('Parser error: found a second declaration of %s from unit %s', name, tok[1])
@@ -175,7 +184,6 @@ class SGPasParser():
             self._block_header_processors[tok[1]](unit, tok);
         
         logger.info('Finished processing unit. Resulting class is:\n%s', str(unit))
-        pass
     
     def process_comment(self, token):
         global logger
@@ -253,8 +261,21 @@ class SGPasParser():
         tok = self._match_token('id') #load id of thing...
         self._add_attribute(token[1], tok[1])
     
-    def process_static_attribute(self, token):
-        self._add_attribute('static', True)
+    def process_parameter_list_attribute(self, token):
+        '''Process an attribute that is followed  by an id and a type'''
+        #id [, ids] : type
+        tok = self._match_token('id')
+        param_name = tok[1]
+        #todo: proper type matching...
+        tok = self._match_token('id')
+        type_name = tok[1] #todo: should be matching type for this...
+        
+        params = [[paam_name, type_name]]
+        
+        self._add_attribute('params', params)
+    
+    def process_true_attribute(self, token):
+        self._add_attribute(token[1], True)
     
     def process_note_attribute(self, token):
         self._add_attribute('note', self._tokeniser.read_to_end_of_comment())
@@ -278,13 +299,41 @@ class SGPasParser():
         type_name = tok[1]
         
         tok = self._match_token('token','=')
+        self._parse_type()
+        
         
         # id = type;
         # id = record ... end;
         # id = array [...] of ...;
         # id = ( ... )
         pass
-
+    
+    def _parse_type(self):
+        '''Parse a type from the next token, returns type details.'''
+        global logger
+        
+        tok = self._lookahead(1)[0]
+        
+        if tok[0] == 'token' and tok[1] == '(':
+            print 'enum'
+            sys.exit(-2)
+        elif tok[0] == 'id':
+            if tok[1] == 'record':
+                print 'record'
+                sys.exit(-2)
+            elif tok[1] == 'array':
+                print 'array'
+                sys.exit(-2)
+            else:
+                self._parse_type_simple();
+                
+        else:
+            logger.error('Parser Error, unknown type %s(%s)', tok[0], tok[1])
+    
+    def _parse_type_simple(self):
+        print 'simple'
+        exit(-2)
+    
 if __name__ == '__main__':
     import nose
     nose.run()

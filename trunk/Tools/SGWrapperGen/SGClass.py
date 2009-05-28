@@ -64,7 +64,7 @@ class SGClass(SGMetaDataContainer):
         name = 'static ' + name if self.is_static() else name
 
         
-        return name
+        return '%s\n%s' % (self.doc, name)
     
 
 import nose
