@@ -13,7 +13,7 @@ pas_parser.py
 Created by Andrew Cain on 2009-05-25.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 '''
-
+    
 import logging
 import sys
 from SGPasTokeniser import SGPasTokeniser
