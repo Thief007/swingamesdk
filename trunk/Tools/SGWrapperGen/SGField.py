@@ -15,17 +15,20 @@ class SGField(SGMetaDataContainer.SGMetaDataContainer):
     def __init__(self, name):
         """initialises the Field setting its name."""
         
-        SGMetaDataContainer.SGMetaDataContainer.__init__(self)
+        SGMetaDataContainer.SGMetaDataContainer.__init__(self, ['type'])
         
         self.name = name
+        self.data_type = 'unknown'
     
-    def set_data_type(self, type_name):
-        """Sets the data type of the field."""
-        self.set_tag('type', [type_name])
+    data_type = property(lambda self: self['type'].other, lambda self,type: self.set_tag('type', type), None, "The data type of the field.")
     
-    def data_type(self):
-        """Gets the SGField's data type"""
-        return self.tags['type'].other[0]
+    def __str__(self):
+        '''Return a string representation of the fielf'''
+        return '%s %s' % (self.data_type, self.name)
+    
+    def __repr__(self):
+        '''Return a string representation of the fielf'''
+        return '%s %s' % (self.data_type, self.name)
     
 
 from SGMethod import SGMethod
@@ -40,10 +43,10 @@ def test_field_with_type():
     """tests creating a field with a type"""
     my_field = SGField("name")
     
-    my_field.set_data_type("String")
+    my_field.data_type = "String"
     
     assert my_field.name == "name"
-    assert my_field.data_type() == "String"
+    assert my_field.data_type == "String"
 
 if __name__ == '__main__':
     import nose

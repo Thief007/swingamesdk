@@ -15,8 +15,8 @@ class SGLibrary(SGMetaDataContainer):
     
     def __init__(self):
         """Initialise the library"""
-        SGMetaDataContainer.__init__(self)
-        self.methods = dict()
+        SGMetaDataContainer.__init__(self, [])
+        self.methods = {}
     
     def add_method(self, member):
         """Add a method to the library"""
@@ -38,9 +38,11 @@ def test_library_creation():
 def test_add_method():
     """test adding a method to a library"""
     my_library = SGLibrary()
-    my_method = SGMethod("test")
+    my_method = SGMethod('test')
     
     my_library.add_method(my_method)
+    
+    print my_library.methods
     
     assert len(my_library.methods) == 1
     assert my_method == my_library.methods["test"]
