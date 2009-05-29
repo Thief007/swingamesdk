@@ -35,13 +35,16 @@ class SGPasParser():
             'class': self.process_id_attribute,
             'static': self.process_true_attribute,
             'struct': self.process_true_attribute,
-            'lib':self.process_id_attribute,
+            'lib':self.process_lib_attribute,
             #'has_pointer': self.process_true_attribute,
             'note': self.process_note_attribute,
             'uname': self.process_id_attribute,
             'field': self.process_field_attribute,
             'constructor': self.process_true_attribute,
-            'dispose': self.process_true_attribute
+            'dispose': self.process_true_attribute,
+            'method': self.process_id_attribute,
+            'overload': self.process_id_id_attribute,
+            'version': self.process_number_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -106,13 +109,18 @@ class SGPasParser():
             self._lookahead_toks.append(current_token)
         return self._lookahead_toks
     
+    def _match_lookahead(self, token_kind, token_value = None):
+        token = self._lookahead(1)[0]
+        result = token[0] == token_kind and (token_value == None or token_value == token[1])
+        return result
+    
     def _match_token(self, token_kind, token_value = None):
         global logger
         
         tok = self._next_token()
         
         if tok[0] != token_kind and (token_value != None or token_value != tok[1]):
-            logger.error('Parse error: found a %s (%s) expected a %s', tok[0], tok[1], token_kind)
+            logger.error('Parse error: found a %s (%s) expected %s (%s)', tok[0], tok[1], token_kind, token_value)
             sys.exit(-1)
             
         logger.debug('Matched token %s (%s)', tok[0], tok[1])
@@ -303,6 +311,12 @@ class SGPasParser():
                 logger.error('Parser Error: expected unit name but found %s at %s', tok[1], self._tokeniser.line_details())
                 sys.exit(-1)
     
+    def process_id_id_attribute(self, token):
+        '''Process an attribute that is followed by a two identifiers'''
+        tok1 = self._match_token('id') #load id of thing...
+        tok2 = self._match_token('id') #load id of thing...
+        self._add_attribute(token[1], [tok1[1], tok2[1]])
+    
     def process_id_attribute(self, token):
         '''Process an attribute that is followed by a single identifier'''
         tok = self._match_token('id') #load id of thing...
@@ -337,6 +351,38 @@ class SGPasParser():
     
     def process_true_attribute(self, token):
         self._add_attribute(token[1], True)
+    
+    def process_number_attribute(self, token):
+        tok = self._match_token('number')
+        self._add_attribute(token[1], tok[1])
+    
+    def process_lib_attribute(self, token):
+        '''process a method attribute'''
+        name_tok = self._match_token('id')
+        
+        method = SGMethod(name_tok[1])
+        
+        next = self._lookahead(1)[0]
+        if next[0] == 'token' and next[1] == '(':
+            open_tok = self._match_token('token', '(')
+            
+            while True:
+                if self._match_lookahead('attribute', 'value'):
+                    attr = self._next_token()
+                    value = self._next_token()
+                    method.params.append(value)
+                elif not self._match_lookahead('id'): 
+                    break
+                else:
+                    param = self._next_token()
+                    #add parameter (actually.. argument)
+                    method.create_parameter(param[1])
+                
+                if not self._match_lookahead('token', ','): break;
+                comma = self._next_token()
+                
+            close_tok = self._match_token('token', ')')
+        self._add_attribute('lib', method)
     
     def process_note_attribute(self, token):
         self._add_attribute('note', self._tokeniser.read_to_end_of_comment())
@@ -438,20 +484,26 @@ class SGPasParser():
         
         self._add_attribute('name', name_tok[1]) #name comes from function/procedure
         method = self._create_model_element(SGMethod)
-        logger.info('Adding method %s.%s', block.name, method.name)
         
         #look for parameters
-        param_tok, other_tok = self._lookahead(2)
-        if param_tok[0] == 'id':
-            if other_tok[0] == 'id': #first one is a modifier
-                modifier_tok = self._next_token()
-                exit(-1)
-            param_tok = self._next_token()
-            colon_tok = self._match_token('token', ':')
-            the_type = self._read_type_usage()
-            param = method.create_parameter(param_tok[1])
-            param.data_type = the_type
-            logger.info('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
+        while True:
+            param_tok, other_tok = self._lookahead(2)
+            if param_tok[0] == 'id':
+                if other_tok[0] == 'id': #first one is a modifier
+                    modifier = self._next_token()[1]
+                else:
+                    modifier = None
+                param_tok = self._next_token()
+                colon_tok = self._match_token('token', ':')
+                the_type = self._read_type_usage()
+                param = method.create_parameter(param_tok[1])
+                param.data_type = the_type
+                param.modifier = modifier
+                logger.info('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
+                if self._match_lookahead('token', ';'):
+                    self._next_token()
+                else: break
+            else: break
         
         close_tok = self._match_token('token', ')')
         
@@ -461,7 +513,14 @@ class SGPasParser():
             method.return_type = the_type
             logger.info('Set return type of method %s to %s', method.name, method.return_type)
         
+        logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())
+        
         end_tok = self._match_token('token', ';')
+        
+        #check overload ;
+        if self._match_lookahead('id', 'overload'):
+            self._next_token();
+            self._match_token('token', ';')
         
         block.add_member(method)
     

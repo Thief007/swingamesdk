@@ -18,7 +18,7 @@ class SGMetaDataContainer(object):
         """initialise the container setting up the tags dictionary"""
         self._known_tags = known_tags
         
-        for known in ['note','name']: self._known_tags.append(known)
+        for known in ['note','name','version']: self._known_tags.append(known)
         
         self.tags = {}
         self.doc = ""
@@ -63,6 +63,7 @@ class SGMetaDataContainer(object):
         self.tags[key] = value
     
     name = property(lambda self: self['name'].other, lambda self,name: self.set_tag('name', name), None, "The name of the element.")
+    version = property(lambda self: self['version'].other, lambda self,version: self.set_tag('version', version), None, "The version of the element.")
 
 from SGTag import SGTag
 

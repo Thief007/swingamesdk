@@ -132,13 +132,13 @@ class SGPasTokeniser():
         while (True):
             t = self._next_char();
             
-            if (t == ' ' or t == '\t'): #ignore white space
+            if t == ' ' or t == '\t': #ignore white space
                 pass
-            elif (t == '\n'): #advance to next line
+            elif t == '\n': #advance to next line
                 self._advance_line()
-            elif (t in '1234567890'): #is digit
+            elif t in '1234567890': #is digit
                 return ['number', self._read_matching(t, lambda cha: cha in '1234567890.')]
-            elif (t == '/'): #start of comment
+            elif t == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
                         kind = 'meta comment'
@@ -155,6 +155,11 @@ class SGPasTokeniser():
             elif t.isalpha():
                 name = self._read_matching(t, lambda cha: cha.isalnum() or cha == '_')
                 return ['id', name]
+            elif t in '-+':
+                if self._peek(1) in '1234567890':
+                    return ['number', self._read_matching(t, lambda cha: cha in '1234567890.')]
+                else:
+                    return ['token',t]
             elif t in '(),:;{=':
                 if t == '(' and self._peek(1) == '*':
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
