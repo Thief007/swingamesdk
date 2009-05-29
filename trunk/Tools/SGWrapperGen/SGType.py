@@ -21,6 +21,7 @@ class SGType(SGMetaDataContainer):
         """Initialise the type, setting its name"""
         SGMetaDataContainer.__init__(self, ['fields','class','uname'])
         self.name = name
+        self.set_tag('fields', [])
     
     def __str__(self):
         '''String rep'''

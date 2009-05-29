@@ -18,7 +18,9 @@ class SGMethod(SGMetaDataContainer):
     """A SGMethod represents a function or a procedure in SwinGame."""
     def __init__(self, name):
         """Initialise the SGMethod, setting its name."""
-        SGMetaDataContainer.__init__(self, ['lib','uname','static','operator','constructor','return_type','calls','class','dispose'])
+        SGMetaDataContainer.__init__(self, ['lib','uname','static','operator',
+            'constructor','return_type','calls','class','dispose','method',
+            'overload'])
         self.name = name
         self.params = []
         self.param_cache = {}
@@ -150,17 +152,24 @@ class SGMethod(SGMetaDataContainer):
         
         return args
     
+    def param_string(self):
+        if self.params: 
+            return ', '.join([str(n) for n in self.params])
+        else: return ''
+    
     def __str__(self):
-        if self.return_type() != None:
-            result = self.return_type() + ' '
+        if self.return_type != None:
+            result = self.return_type + ' '
         else:
             result = 'void '
         
         result += self.name + '('
         
-        if self.params:
-            result += ', '.join([n.name for n in self.params])
+        # if self.params:
+        #     result += ', '.join([n.name for n in self.params])
             #result += reduce(lambda f, s: f + ', ' + s, [n.name for n in self.params])
+        
+        result += self.param_string()
         
         result += ')'
         
@@ -180,7 +189,7 @@ def test_method_creation():
     assert my_method.name == "Test"
     assert len(my_method.params) == 0
     assert len(my_method.tags) == 3 #return name, type + uname
-    assert my_method.return_type() == None
+    assert my_method.return_type == None
 
 def test_static_methods():
     """test the creation of a static method"""
@@ -211,8 +220,8 @@ def test_return_types():
     """test the return type value"""
     my_method = SGMethod("Test")
     
-    my_method.set_return_type("SoundEffect")
-    assert my_method.return_type() == "SoundEffect"
+    my_method.return_type = "SoundEffect"
+    assert my_method.return_type == "SoundEffect"
 
 def test_parameter_cache():
     """test the parmeter cache process"""

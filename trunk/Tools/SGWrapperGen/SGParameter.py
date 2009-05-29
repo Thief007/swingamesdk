@@ -14,9 +14,10 @@ class SGParameter(SGMetaDataContainer):
     
     def __init__(self, name):
         """initialise the parameter with a name, sets type to None"""
-        SGMetaDataContainer.__init__(self, ['type'])
+        SGMetaDataContainer.__init__(self, ['type','modifier'])
         self.name = name
         self.data_type = None
+        self.modifier = None
     
     def set_as_output(self):
         """marks this as an output parameter"""
@@ -36,8 +37,11 @@ class SGParameter(SGMetaDataContainer):
         #print self.tags.keys()
         return 'array' in self.tags.keys()
     
-    data_type = property(lambda self: self['type'].other, lambda self,the_type: self.set_tag('type', the_type), None, "The data type of the parameter.")    
-
+    def __str__(self):
+        return '%s%s %s'%(self.modifier + ' ' if self.modifier != None else '', self.data_type, self.name)
+    
+    data_type = property(lambda self: self['type'].other, lambda self,the_type: self.set_tag('type', the_type), None, "The data type of the parameter.")
+    modifier = property(lambda self: self['modifier'].other, lambda self,modifier: self.set_tag('modifier', modifier), None, "The modifier of the parameter.")
 #
 # Test methods
 #
