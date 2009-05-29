@@ -14,8 +14,12 @@ logger = logging.getLogger("SGWrapperGen")
 class SGMetaDataContainer(object):
     """A container for meta data tag information"""
     
-    def __init__(self):
+    def __init__(self, known_tags = []):
         """initialise the container setting up the tags dictionary"""
+        self._known_tags = known_tags
+        
+        for known in ['note','name']: self._known_tags.append(known)
+        
         self.tags = {}
         self.doc = ""
         self.notes = []
@@ -29,17 +33,36 @@ class SGMetaDataContainer(object):
         self.notes.append(note)
     
     def set_tag(self, tag, other = None):
-        """sets the tag for the meta data container with optional other data.
+        '''sets the tag for the meta data container with optional other data.
            
            parameters:
            tag = name or SGTag object, 
-           other = list of data (default None)"""
+           other = list of data (default None)
+        '''
+        global logger
+        
         if isinstance(tag, SGTag):
-            logger.info("Adding tag %s for %s", tag.title, str(tag))
+            self._check_known_tags(tag)
+            logger.debug("Adding %s", str(tag))
             self.tags[tag.title] = tag
         else:
             self.set_tag(SGTag(tag, other))
     
+    def _check_known_tags(self, tag):
+        if not tag.title in self._known_tags:
+            global logger
+            logger.error('Unknown tag @%s added for %s', tag.title, str(self.__class__))
+    
+    def keys(self):
+        return self.tags.keys()
+    
+    def __getitem__(self, key):
+        return self.tags[key]
+    
+    def __setitem__(self, key, value):
+        self.tags[key] = value
+    
+    name = property(lambda self: self['name'].other, lambda self,name: self.set_tag('name', name), None, "The name of the element.")
 
 from SGTag import SGTag
 

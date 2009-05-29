@@ -7,18 +7,22 @@ Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
+import logging
+
 from SGMetaDataContainer import SGMetaDataContainer
 from SGParameter import SGParameter
+
+logger = logging.getLogger("SGWrapperGen")
 
 class SGMethod(SGMetaDataContainer):
     """A SGMethod represents a function or a procedure in SwinGame."""
     def __init__(self, name):
         """Initialise the SGMethod, setting its name."""
-        SGMetaDataContainer.__init__(self)
+        SGMetaDataContainer.__init__(self, ['lib','uname','static','operator','constructor','return_type','calls','class','dispose'])
         self.name = name
         self.params = []
         self.param_cache = {}
-        self.set_return_type(None)
+        self.return_type = None
         self.set_uname(name)
     
     def set_uname(self, uname):
@@ -54,13 +58,15 @@ class SGMethod(SGMetaDataContainer):
         """returns the operator this method overloads"""
         return self.tags['operator'].other[0]
     
-    def set_return_type(self, type_name):
-        """Sets the return type to type."""
-        self.set_tag('returns', [type_name])
+    # def set_return_type(self, type_name):
+    #     """Sets the return type to type."""
+    #     self.set_tag('returns', [type_name])
+    # 
+    # def return_type(self):
+    #     """Gets the SGMethod's return type"""
+    #     return self.tags['returns'].other[0]
     
-    def return_type(self):
-        """Gets the SGMethod's return type"""
-        return self.tags['returns'].other[0]
+    return_type = property(lambda self: self['return_type'].other, lambda self,return_type: self.set_tag('return_type', return_type), None, "The return type of the method.")
     
     def cache_parameter(self, param):
         """
@@ -91,6 +97,18 @@ class SGMethod(SGMetaDataContainer):
             if par.name == name:
                 return True
         return False
+    
+    def set_tag(self, title, other = []):
+        global logger
+        if title == "params":
+            logger.debug('Intercepted setting params tag')
+            for param in other:
+                to_add = SGParameter(param[0])
+                to_add.add_doc(param[1])
+                logger.debug('caching parameter %s - %s', to_add.name, to_add.doc)
+                self.cache_parameter(to_add)
+        else:
+            super(SGMethod,self).set_tag(title, other)
     
     def calls(self, method, args=None):
         """indicate which method this method calls, and args if any"""
@@ -161,7 +179,7 @@ def test_method_creation():
     
     assert my_method.name == "Test"
     assert len(my_method.params) == 0
-    assert len(my_method.tags) == 2 #return type + uname
+    assert len(my_method.tags) == 3 #return name, type + uname
     assert my_method.return_type() == None
 
 def test_static_methods():

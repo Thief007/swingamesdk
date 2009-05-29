@@ -7,17 +7,21 @@ Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
+import logging
+
 from SGMethod import SGMethod
 from SGProperty import SGProperty
 from SGField import SGField
 from SGMetaDataContainer import SGMetaDataContainer
+
+logger = logging.getLogger("SGWrapperGen")
 
 class SGClass(SGMetaDataContainer):
     """Represents a class in the comment meta language."""
     
     def __init__(self, name):
         """Initialise the class, setting its name"""
-        SGMetaDataContainer.__init__(self)
+        SGMetaDataContainer.__init__(self, ['static','struct','class'])
         self.name = name
         self.methods = dict()
         self.properties = dict()
@@ -25,11 +29,14 @@ class SGClass(SGMetaDataContainer):
     
     def add_member(self, member):
         """Add a member (method, property) to the class"""
+        global logger
+        
         if isinstance(member, SGMethod):
             self.methods[member.name] = member
         elif isinstance(member, SGProperty):
             self.properties[member.name] = member
         elif isinstance(member, SGField):
+            logger.info('Adding field (%s) %s.%s', member.data_type, self.name, member.name)
             self.fields[member.name] = member
         else:
             raise Exception, "Unknown member type"
@@ -50,19 +57,19 @@ class SGClass(SGMetaDataContainer):
         """returns true if this should be a struct"""
         return 'struct' in self.tags
     
-    def set_has_pointer(self):
-        """indicates that this class is a wrapper around a pointer value"""
-        self.set_tag('has_pointer')
-    
-    def has_pointer(self):
-        """indicates if this class is a wrapper for a SG pointer"""
-        return 'has_pointer' in self.tags
+    def setup_from(self, the_type):
+        global logger
+        
+        fields = the_type.fields
+        
+        for field in fields:
+            self.add_member(field)
     
     def __str__(self):
         '''returns a string representation of the class'''
         name = 'struct ' + self.name if self.is_struct() else 'class ' + self.name
         name = 'static ' + name if self.is_static() else name
-
+        
         
         return '%s\n%s' % (self.doc, name)
     
@@ -126,14 +133,14 @@ def test_struct():
     my_class.set_as_struct()
     assert my_class.is_struct()
 
-def test_has_pointer():
-    """tests the creation of a class used to wrap a pointer"""
-    my_class = SGClass("SoundEffect")
-    assert False == my_class.has_pointer()
-    
-    my_class.set_has_pointer()
-    assert my_class.has_pointer()
-
+# def test_has_pointer():
+#     """tests the creation of a class used to wrap a pointer"""
+#     my_class = SGClass("SoundEffect")
+#     assert False == my_class.has_pointer()
+#     
+#     my_class.set_has_pointer()
+#     assert my_class.has_pointer()
+# 
 if __name__ == '__main__':
     nose.run()
     
