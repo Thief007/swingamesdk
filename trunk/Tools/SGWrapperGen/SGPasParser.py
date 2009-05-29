@@ -144,6 +144,7 @@ class SGPasParser():
         return tok
     
     def process_meta_comments(self):
+        logger.debug('starting to process meta comments: clearing old comments and attributes')
         self._meta_comments = []
         self._attributes = {}
         tok = self._lookahead(1)[0] #_next_token()
@@ -200,7 +201,7 @@ class SGPasParser():
         tok = self._match_token('token', ';')
         
         #interface - ignore comments
-        self._skip_comments('unit ' + unit_name + '\'s interface')
+        #self._skip_comments('unit ' + unit_name + '\'s interface')
         self._match_token('id', 'interface')
         
         #check 'uses'
@@ -210,9 +211,12 @@ class SGPasParser():
             self.process_uses_clause(tok)
             logger.info('-' * 70)
         
+        
         while True:
+            logger.debug('At start of loop to process elements in unit')
+            if self._match_lookahead('meta comment'): self.process_meta_comments()
+            
             #Process the body of the unit's interface
-            self.process_meta_comments() #read next elements meta comments... if any
             tok = self._lookahead()[0] #check the next token
             
             if tok[0] == 'id' and tok[1] == 'implementation':
@@ -290,11 +294,11 @@ class SGPasParser():
         
         #unit_list = unit_name[, unit_list]
         while True:
-            self._skip_comments('unit in uses clause')
+            #self._skip_comments('unit in uses clause')
             tok = self._next_token()
             if tok[0] == 'id':
                 logger.info('Found using unit %s', tok[1])
-                self._skip_comments('unit in uses clause')
+                #self._skip_comments('unit in uses clause')
                 
                 #found a token/unit
                 next_tok = self._next_token()
@@ -365,24 +369,25 @@ class SGPasParser():
         next = self._lookahead(1)[0]
         if next[0] == 'token' and next[1] == '(':
             open_tok = self._match_token('token', '(')
-            
+            args = []
             while True:
                 if self._match_lookahead('attribute', 'value'):
                     attr = self._next_token()
                     value = self._next_token()
-                    method.params.append(value)
+                    args.append(value[1])
                 elif not self._match_lookahead('id'): 
                     break
                 else:
-                    param = self._next_token()
-                    #add parameter (actually.. argument)
-                    method.create_parameter(param[1])
+                    arg = self._next_token()
+                    args.append(method.create_parameter(arg[1]))
                 
                 if not self._match_lookahead('token', ','): break;
                 comma = self._next_token()
                 
             close_tok = self._match_token('token', ')')
-        self._add_attribute('lib', method)
+        else: args = None
+        
+        self._add_attribute('calls', [method, args])
     
     def process_note_attribute(self, token):
         self._add_attribute('note', self._tokeniser.read_to_end_of_comment())
@@ -403,7 +408,6 @@ class SGPasParser():
         while True:
             self.process_meta_comments()
             tok1, tok2 = self._lookahead(2)
-            
             if tok2[0] != 'token' or tok2[1] != '=' or tok1[0] != 'id':
                 logger.debug('At end of block types')
                 break
@@ -477,8 +481,6 @@ class SGPasParser():
     
     def process_method_decl(self, block, token):
         '''block is the block that contains the method, token is the first token'''
-        #global logger
-        
         name_tok = self._match_token('id') #name of function/procedure
         open_tok = self._match_token('token', '(')
         
@@ -499,7 +501,7 @@ class SGPasParser():
                 param = method.create_parameter(param_tok[1])
                 param.data_type = the_type
                 param.modifier = modifier
-                logger.info('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
+                logger.debug('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
                 if self._match_lookahead('token', ';'):
                     self._next_token()
                 else: break
@@ -514,6 +516,7 @@ class SGPasParser():
             logger.info('Set return type of method %s to %s', method.name, method.return_type)
         
         logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())
+        method.check_call_validity()
         
         end_tok = self._match_token('token', ';')
         

@@ -18,7 +18,7 @@ class SGMethod(SGMetaDataContainer):
     """A SGMethod represents a function or a procedure in SwinGame."""
     def __init__(self, name):
         """Initialise the SGMethod, setting its name."""
-        SGMetaDataContainer.__init__(self, ['lib','uname','static','operator',
+        SGMetaDataContainer.__init__(self, ['uname','static','operator',
             'constructor','return_type','calls','class','dispose','method',
             'overload'])
         self.name = name
@@ -101,7 +101,6 @@ class SGMethod(SGMetaDataContainer):
         return False
     
     def set_tag(self, title, other = []):
-        global logger
         if title == "params":
             logger.debug('Intercepted setting params tag')
             for param in other:
@@ -120,7 +119,7 @@ class SGMethod(SGMetaDataContainer):
         """Validate that the call is correctly configured, raises exception on error"""
         method = self.tags['calls'].other[0]
         args = self.tags['calls'].other[1]
-        called_params = method.params
+        #called_params = method.params
         
         if args == None:
             args = self.params
@@ -131,12 +130,14 @@ class SGMethod(SGMetaDataContainer):
                 if isinstance(arg, SGParameter) and not self.has_parameter(arg.name):
                     raise Exception("Cannot match parameter " + arg.name + 
                         " in call to " + str(method) + " from " + str(self))
-        
-        if len(args) != len(called_params):
-            raise Exception("Error in call wrapper," + 
-                " insufficient arguments for call to " + 
-                str(method) + 
-                " from " + str(self))
+        # 
+        # print args
+        # 
+        # if len(args) != len(called_params):
+        #     raise Exception("Error in call wrapper," + 
+        #         " insufficient arguments for call to " + 
+        #         str(method) + 
+        #         " from " + str(self))
     
     def method_called(self):
         """returns the method that this method needs to call"""
