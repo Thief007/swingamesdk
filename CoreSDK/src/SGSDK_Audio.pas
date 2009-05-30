@@ -303,7 +303,8 @@ interface
   ///@uname IsMusicPlaying
   ///
   ///@class Music
-  ///@static IsPlaying
+  ///@static
+  ///@method IsPlaying
   function IsMusicPlaying(): Boolean;
   
   /// This function can be used to check if a sound effect is currently 
@@ -336,7 +337,8 @@ interface
   ///@uname StopMusic
   ///
   ///@class Music
-  ///@static Stop
+  ///@static
+  ///@method Stop
   procedure StopMusic();
 
 implementation

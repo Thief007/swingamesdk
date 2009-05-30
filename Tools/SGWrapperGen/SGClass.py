@@ -74,6 +74,17 @@ class SGClass(SGMetaDataContainer):
         return '%s\n%s' % (self.doc, name)
     
 
+_classes = {}
+
+def find_or_add_class(name):
+    '''finds or creates and adds a class with the indicated name'''
+    if name in _classes.keys():
+        return _classes[name]
+    else:
+        result = SGClass(name)
+        _classes[name] = result
+        return result
+
 import nose
 from nose.tools import raises 
 

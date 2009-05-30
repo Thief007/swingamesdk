@@ -11,7 +11,7 @@ import logging
 import sys
 
 from SGPasTokeniser import SGPasTokeniser
-from SGClass import SGClass
+from SGClass import SGClass, find_or_add_class
 from SGType import SGType
 from SGField import SGField
 from SGMethod import SGMethod
@@ -31,7 +31,7 @@ class SGPasParser():
             'unit': self.process_unit
         }
         self._attribute_processors = {
-            'param': self.process_param_attribute,
+            'param': self.process_id_and_comment_attribute,
             'class': self.process_id_attribute,
             'static': self.process_true_attribute,
             'struct': self.process_true_attribute,
@@ -44,7 +44,10 @@ class SGPasParser():
             'dispose': self.process_true_attribute,
             'method': self.process_id_attribute,
             'overload': self.process_id_id_attribute,
-            'version': self.process_number_attribute
+            'version': self.process_number_attribute,
+            'setter': self.process_id_attribute,
+            'getter': self.process_id_attribute,
+            'returns': self.process_comment_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -220,7 +223,8 @@ class SGPasParser():
             tok = self._lookahead()[0] #check the next token
             
             if tok[0] == 'id' and tok[1] == 'implementation':
-                logger.debug('Found end of unit\'s interface')
+                logger.info('Found end of unit\'s interface')
+                logger.info('-' * 70)
                 break
             
             #interface contains types, functions, procedures, var, const
@@ -278,12 +282,17 @@ class SGPasParser():
         self._check_meta_comments(0, desc)
         self._check_attributes([], desc)
     
-    def process_param_attribute(self, token):
-        '''read the parameter attribute and attach comments etc as attributes'''
+    def process_id_and_comment_attribute(self, token):
+        '''read the id and attach comments etc as attributes'''
         param_tok = self._match_token('id')
         doc_tok = self._tokeniser.read_to_end_of_comment()
-        self._append_attribute('param', [param_tok[1], doc_tok])
+        self._append_attribute(token[1], [param_tok[1], doc_tok])
     
+    def process_comment_attribute(self, token):
+        '''read the id and attach comments etc as attributes'''
+        doc_tok = self._tokeniser.read_to_end_of_comment()
+        self._add_attribute(token[1], doc_tok)
+
     def _skip_comments(self, desc):
         self.process_meta_comments()
         self._check_non_commented(desc)
@@ -401,7 +410,7 @@ class SGPasParser():
         self._meta_comments.append(token[1])
     
     def process_block_types(self, block, token):
-        global logger
+        '''Reads the types within a type declaration'''
         logger.info('Processing types')
         logger.info('-' * 70)
         
@@ -422,26 +431,17 @@ class SGPasParser():
             
             if 'class' in the_type.keys(): 
                 self.add_class(the_type)
-        
-        # id = type;
-        # id = record ... end;
-        # id = array [...] of ...;
-        # id = ( ... )
     
     def add_class(self, the_type):
-        global logger
-        
         logger.info('-' * 60)
         logger.info('Adding class %s', the_type.name)
-        new_class = SGClass(the_type.name)
+        new_class = find_or_add_class(the_type.name)
         new_class.setup_from(the_type)
         
         self._classes[the_type.name] = new_class
     
     def _parse_type_declaration(self, the_type):
         '''Parse a type from the next token, add details to the_type.'''
-        global logger
-        
         tok = self._lookahead(1)[0]
         
         if tok[0] == 'token' and tok[1] == '(':
@@ -461,7 +461,6 @@ class SGPasParser():
             logger.error('Parser Error, unknown type %s(%s)', tok[0], tok[1])
     
     def _parse_type_simple(self, the_type):
-        global logger
         tok = self._match_token('id')
         type_name = tok[1]
         
