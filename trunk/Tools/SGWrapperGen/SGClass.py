@@ -26,14 +26,18 @@ class SGClass(SGMetaDataContainer):
         self.methods = dict()
         self.properties = dict()
         self.fields = dict()
+        self.is_static = False
     
     def add_member(self, member):
         """Add a member (method, property) to the class"""
         global logger
         
         if isinstance(member, SGMethod):
-            self.methods[member.name] = member
+            logger.info('Adding method %s.%s(%s)', self.name, member.name, member.param_string())
+            if self.is_static: member.is_static = True
+            self.methods[member.signature] = member
         elif isinstance(member, SGProperty):
+            logger.info('Adding property %s.%s', self.name, member.name)
             self.properties[member.name] = member
         elif isinstance(member, SGField):
             logger.info('Adding field (%s) %s.%s', member.data_type, self.name, member.name)
@@ -41,13 +45,16 @@ class SGClass(SGMetaDataContainer):
         else:
             raise Exception, "Unknown member type"
     
-    def set_as_static(self):
-        """sets the class as static, deny object creation"""
-        self.set_tag('static', True)
+    def del_member(self, member):
+        if isinstance(member, SGMethod):
+            del(self.methods[member.name])
+        else:
+            raise Exception, "Unknown member type"
+        
     
-    def is_static(self):
-        """returns true if this should be a static class"""
-        return 'static' in self.tags
+    is_static = property(lambda self: self['static'].other, 
+        lambda self,value: self.set_tag('static', value), 
+        None, 'Is the method associated with a class.')
     
     def set_as_struct(self):
         """sets the class as a struct"""
@@ -68,22 +75,22 @@ class SGClass(SGMetaDataContainer):
     def __str__(self):
         '''returns a string representation of the class'''
         name = 'struct ' + self.name if self.is_struct() else 'class ' + self.name
-        name = 'static ' + name if self.is_static() else name
+        name = 'static ' + name if self.is_static else name
         
         
         return '%s\n%s' % (self.doc, name)
     
-
-_classes = {}
-
-def find_or_add_class(name):
-    '''finds or creates and adds a class with the indicated name'''
-    if name in _classes.keys():
-        return _classes[name]
-    else:
-        result = SGClass(name)
-        _classes[name] = result
-        return result
+    def visit_methods(self, visitor):
+        for key, method in self.methods.items():
+            visitor(method)
+    
+    def visit_fields(self, visitor):
+        for key, field in self.fields.items():
+            visitor(field, key == self.fields.keys()[-1])
+    
+    def visit_properties(self, visitor):
+        for key, prop in self.properties.items():
+            visitor(prop, key == self.properties.keys()[-1])
 
 import nose
 from nose.tools import raises 
@@ -131,10 +138,10 @@ def test_add_unkown_member():
 def test_static_class():
     """tests the creation of a static class"""
     my_class = SGClass("Hello")
-    assert False == my_class.is_static()
+    assert False == my_class.is_static
     
-    my_class.set_as_static()
-    assert my_class.is_static()
+    my_class.is_static = True
+    assert my_class.is_static
 
 def test_struct():
     """tests the creation of a struct"""

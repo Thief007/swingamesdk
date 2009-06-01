@@ -51,7 +51,7 @@ def test_parameter_creation():
     my_param = SGParameter("test")
     
     assert my_param.name == "test"
-    assert len(my_param.tags) == 2 #type,name
+    assert len(my_param.tags) == 3 #type,name,modifier
     assert my_param.data_type == None
 
 def test_output_param():
@@ -73,10 +73,10 @@ def test_array_param():
 def test_type_param():
     """tests the setting of a parameters type"""
     my_param = SGParameter("Test")
-    assert None == my_param.type()
+    assert None == my_param.data_type
     
-    my_param.set_type("SoundEffect")
-    assert "SoundEffect" == my_param.type()
+    my_param.data_type = "SoundEffect"
+    assert "SoundEffect" == my_param.data_type
 
 if __name__ == '__main__':
     import nose

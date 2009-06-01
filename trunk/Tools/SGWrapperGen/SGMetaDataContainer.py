@@ -64,6 +64,11 @@ class SGMetaDataContainer(object):
     
     name = property(lambda self: self['name'].other, lambda self,name: self.set_tag('name', name), None, "The name of the element.")
     version = property(lambda self: self['version'].other, lambda self,version: self.set_tag('version', version), None, "The version of the element.")
+    
+    def visit(self, visitor):
+        visitor(self)
+    
+
 
 from SGTag import SGTag
 
