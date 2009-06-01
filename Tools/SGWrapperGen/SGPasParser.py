@@ -11,13 +11,12 @@ import logging
 import sys
 
 from SGPasTokeniser import SGPasTokeniser
-from SGClass import SGClass, find_or_add_class
+from SGClass import SGClass
 from SGType import SGType
 from SGField import SGField
 from SGMethod import SGMethod
-import SGType
-
-logger = logging.getLogger("SGWrapperGen")
+from sgcache import find_or_add_class, find_or_add_type, logger
+from SGType import SGType
 
 class SGPasParser():
     def __init__(self):
@@ -42,7 +41,7 @@ class SGPasParser():
             'field': self.process_field_attribute,
             'constructor': self.process_true_attribute,
             'dispose': self.process_true_attribute,
-            'method': self.process_id_attribute,
+            'method': self.process_method_attribute,
             'overload': self.process_id_id_attribute,
             'version': self.process_number_attribute,
             'setter': self.process_id_attribute,
@@ -57,6 +56,7 @@ class SGPasParser():
         self._lookahead_toks = []
         self._meta_comments = []
         self._attributes = {}
+        self._ordered_attributes = []
         self._classes = {}
     
     def parse(self, filename):
@@ -77,19 +77,28 @@ class SGPasParser():
     def _apply_attributes_to(self, model_element):
         map(lambda f: model_element.add_doc(f), self._meta_comments)
         
-        for attr_name in self._attributes.keys():
-            model_element.set_tag(attr_name, self._attributes[attr_name])
+        for attr_name, attr in self._ordered_attributes:
+            model_element.set_tag(attr_name, attr)
+        
+        #add all meta comments to the model_element
+        map(lambda f: model_element.add_doc(f), self._meta_comments)
         
         self._attributes = {}
+        self._ordered_attributes = []
         self._meta_comments = []
     
     def _create_model_element(self, kind):
         global logger
         
         name = self._get_attribute('name')
-        result = kind(name)
+        if kind == SGClass:
+            result = find_or_add_class(name)
+        elif kind == SGType:
+            result = find_or_add_type(name)
+        else:
+            result = kind(name)
         logger.debug('Creating model element: %s with kind:%s', name, kind)
-        self._apply_attributes_to(result)
+        #self._apply_attributes_to(result)
         return result
     
     def _next_token(self):
@@ -148,8 +157,8 @@ class SGPasParser():
     
     def process_meta_comments(self):
         logger.debug('starting to process meta comments: clearing old comments and attributes')
-        self._meta_comments = []
-        self._attributes = {}
+        #self._meta_comments = []
+        #self._attributes = {}
         tok = self._lookahead(1)[0] #_next_token()
         
         attrs_started = False
@@ -181,23 +190,17 @@ class SGPasParser():
                 
         #Create the unit
         unit = self._create_model_element(SGClass)
+        unit.is_static = True
         logger.info('Creating class %s', unit.name)
         
         #logger.info('Creating class: %s', name)
         #unit = SGClass(name)
-        
-        map(lambda f: unit.add_doc(f), self._meta_comments)
         
         if name in self._classes:
             logger.error('Parser error: found a second declaration of %s from unit %s', name, tok[1])
             sys.exit(-1)
         
         self._classes[tok[1]] = unit
-        
-        #if self._get_attribute('static', False):
-        #    logger.info('Making class %s static', name)
-        #    unit.set_as_static()
-        
         self._apply_attributes_to(unit)
         
         #unit name;
@@ -251,15 +254,17 @@ class SGPasParser():
     def _append_attribute(self, attr, val):
         global logger
         logger.debug('Appending attribute %s with value %s to %s',attr,val, attr + 's')
-        if attr in self._attributes.keys():
+        if (attr + 's') in self._attributes.keys():
             self._attributes[attr + 's'].append(val)
         else:
             self._attributes[attr + 's'] = [val]
+            self._ordered_attributes.append([attr + 's', [val]]) #will this work?
     
     def _add_attribute(self, attr, val):
         global logger
         logger.debug('Adding attribute %s with value %s',attr,val)
         self._attributes[attr] = val
+        self._ordered_attributes.append([attr, val])
     
     def _get_attribute(self, attr, default=None):
         if attr in self._attributes:
@@ -343,7 +348,7 @@ class SGPasParser():
         #todo: proper type matching...
         tok = self._match_token('token', ':')
         tok = self._match_token('id')
-        the_type = SGType.find_or_add_type(tok[1]) #todo: should be matching type for this...
+        the_type = find_or_add_type(tok[1]) #todo: should be matching type for this...
         
         field.data_type = the_type
         self._append_attribute('field', field)
@@ -369,19 +374,27 @@ class SGPasParser():
         tok = self._match_token('number')
         self._add_attribute(token[1], tok[1])
     
+    def process_method_attribute(self, token):
+        name_tok = self._match_token('id')
+        
+        method = SGMethod(name_tok[1])
+        self._add_attribute('clone', method)
+    
     def process_lib_attribute(self, token):
         '''process a method attribute'''
         name_tok = self._match_token('id')
         
         method = SGMethod(name_tok[1])
+        method.in_class = find_or_add_class('lib')
+        method.in_class.add_member(method)
         
         next = self._lookahead(1)[0]
         if next[0] == 'token' and next[1] == '(':
             open_tok = self._match_token('token', '(')
             args = []
             while True:
-                if self._match_lookahead('attribute', 'value'):
-                    attr = self._next_token()
+                if self._match_lookahead('number') or self._match_lookahead('string'):
+                    #attr = self._next_token()
                     value = self._next_token()
                     args.append(value[1])
                 elif not self._match_lookahead('id'): 
@@ -425,7 +438,7 @@ class SGPasParser():
             type_name = tok[1]
             
             tok = self._match_token('token','=')
-            the_type = SGType.find_or_add_type(type_name)
+            the_type = find_or_add_type(type_name)
             
             self._parse_type_declaration(the_type)
             
@@ -469,14 +482,14 @@ class SGPasParser():
         
         self._apply_attributes_to(the_type)
         
-        return SGType.find_or_add_type(tok[1])
+        return find_or_add_type(tok[1])
     
     def _read_type_usage(self):
         '''Read a type identifier, or array of type, etc. and return a SGType'''
         #todo: finish this!!!
         
         id_tok = self._match_token('id')
-        return SGType.find_or_add_type(id_tok[1])
+        return find_or_add_type(id_tok[1])
     
     def process_method_decl(self, block, token):
         '''block is the block that contains the method, token is the first token'''
@@ -514,16 +527,17 @@ class SGPasParser():
             method.return_type = the_type
             logger.info('Set return type of method %s to %s', method.name, method.return_type)
         
-        logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())
-        method.check_call_validity()
-        
         end_tok = self._match_token('token', ';')
         
         #check overload ;
         if self._match_lookahead('id', 'overload'):
             self._next_token();
             self._match_token('token', ';')
+            self._add_attribute('overload', True)
         
+        #logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())
+        self._apply_attributes_to(method)
+        method.check_call_validity()
         block.add_member(method)
     
 if __name__ == '__main__':

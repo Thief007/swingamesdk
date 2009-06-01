@@ -10,9 +10,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import logging
 
 from SGMetaDataContainer import SGMetaDataContainer
-
-_loaded_types = {}
-logger = logging.getLogger("SGWrapperGen")
+from sgcache import logger
 
 class SGType(SGMetaDataContainer):
     """Represents a data type."""
@@ -27,20 +25,10 @@ class SGType(SGMetaDataContainer):
         '''String rep'''
         return self.name
     
+    def __repr__(self):
+        return self.name
+    
     fields = property(lambda self: self['fields'].other, None, None, "The fields for the type.")
-
-def find_or_add_type(name):
-    global _loaded_types
-    global logger
-    
-    if name in _loaded_types:
-        return _loaded_types[name]
-    else:
-        logger.info('Created Type %s', name)
-        result = SGType(name)
-        _loaded_types[name] = result
-        return result
-    
 
 def main():
   pass

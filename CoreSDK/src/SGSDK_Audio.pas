@@ -203,7 +203,7 @@ interface
   ///@param vol Indicates the percentage of the original volume to play the 
   ///            `SoundEffect` at. This must be between 0 and 1.
   ///
-  ///@lib PlaySoundEffectLoopVolume(effect, @value 0, vol)
+  ///@lib PlaySoundEffectLoopVolume(effect, 0, vol)
   ///@uname PlaySoundEffectWithVolume
   ///@version 2.1
   ///
@@ -242,7 +242,7 @@ interface
   ///
   ///@param mus The `Music` resource to play.
   ///
-  ///@lib PlayMusic(mus, @value -1)
+  ///@lib PlayMusic(mus, -1)
   ///@uname PlayMusic
   ///
   ///@class Music
@@ -277,6 +277,7 @@ interface
   ///@uname SetMusicVolume
   ///
   ///@class Music
+  ///@static
   ///@setter Volume
   procedure SetMusicVolume(vol: Single);
 
@@ -290,6 +291,7 @@ interface
   ///@uname MusicVolume
   ///
   ///@class Music
+  ///@static
   ///@getter Volume
   function MusicVolume(): Single;
 
