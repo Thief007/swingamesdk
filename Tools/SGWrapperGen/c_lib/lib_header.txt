@@ -5,3 +5,5 @@
 *
 * Link with the SGSDK library (SGSDK.dll, libSGSDK.so, or libSGSDK.dylib)
 */
+
+void GetExceptionMessage(char *result);

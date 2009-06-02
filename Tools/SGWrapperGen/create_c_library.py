@@ -50,10 +50,14 @@ def type_visitor(the_type):
     return _type_switcher[the_type.name if the_type != None else None]
 
 def param_visitor(the_param, last):
-    return '%s: %s%s' % (the_param.name, _type_switcher[the_param.data_type.name], '; ' if not last else '')
+    return '%s%s %s%s' % (
+        _type_switcher[the_param.data_type.name], 
+        '*' if the_param.modifier in ['var','out'] else '',
+        the_param.name,
+        ', ' if not last else '')
 
 def method_visitor(the_method, file_writer):
-    file_writer.write('%(return_type)s %(name)s();' % the_method.to_keyed_dict(param_visitor, type_visitor)) 
+    file_writer.write('%(return_type)s %(name)s(%(params)s);' % the_method.to_keyed_dict(param_visitor, type_visitor)) 
     file_writer.writeln('\n')
 
 def file_visitor(the_file):
@@ -68,9 +72,9 @@ def file_visitor(the_file):
     file_writer = FileWriter('./out/%s.h'% the_file.name)
     file_writer.write(_header)
     
-    for a_file in the_file.uses:
-        if a_file.name != None:
-            file_writer.writeln(_lib_import_header % {'name': a_file.name})
+    # for a_file in the_file.uses:
+    #     if a_file.name != None:
+    #         file_writer.writeln(_lib_import_header % {'name': a_file.name})
     
     #visit the methods of the library
     the_file.members[0].visit_methods(lambda the_method: method_visitor(the_method, file_writer))

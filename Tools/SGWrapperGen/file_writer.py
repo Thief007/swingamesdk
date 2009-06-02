@@ -25,7 +25,7 @@ class FileWriter(object):
         self.out_file.write('%s%s' % ('  ' * self._indent, data)),
     
     def writeln(self,data=''):
-        self.out_file.write('%s%s' % ('  ' * self._indent, data))
+        self.out_file.write('%s%s\n' % ('  ' * self._indent, data))
     
     def close(self):
         self.out_file.close()
