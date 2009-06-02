@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-SGClass.py
+sgcodemodule.py
 
 Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 Swinburne. All rights reserved.
@@ -16,22 +16,21 @@ from SGMetaDataContainer import SGMetaDataContainer
 
 logger = logging.getLogger("SGWrapperGen")
 
-class SGClass(SGMetaDataContainer):
+class SGCodeModule(SGMetaDataContainer):
     """Represents a class in the comment meta language."""
     
     def __init__(self, name):
         """Initialise the class, setting its name"""
-        SGMetaDataContainer.__init__(self, ['static','struct','class'])
+        super(SGCodeModule,self).__init__(['static','module_kind'])
         self.name = name
         self.methods = dict()
         self.properties = dict()
         self.fields = dict()
         self.is_static = False
+        self.module_kind = 'unknown'
     
     def add_member(self, member):
         """Add a member (method, property) to the class"""
-        global logger
-        
         if isinstance(member, SGMethod):
             logger.info('Adding method %s.%s(%s)', self.name, member.name, member.param_string())
             if self.is_static: member.is_static = True
@@ -40,7 +39,7 @@ class SGClass(SGMetaDataContainer):
             logger.info('Adding property %s.%s', self.name, member.name)
             self.properties[member.name] = member
         elif isinstance(member, SGField):
-            logger.info('Adding field (%s) %s.%s', member.data_type, self.name, member.name)
+            logger.info('Adding field %s.%s', self.name, member.name)
             self.fields[member.name] = member
         else:
             raise Exception, "Unknown member type"
@@ -50,11 +49,29 @@ class SGClass(SGMetaDataContainer):
             del(self.methods[member.name])
         else:
             raise Exception, "Unknown member type"
-        
+    
+    def set_tag(self, title, other = None):
+        if title == 'class':
+            self.module_kind = 'class'
+        else:
+            super(SGCodeModule,self).set_tag(title, other)
     
     is_static = property(lambda self: self['static'].other, 
         lambda self,value: self.set_tag('static', value), 
         None, 'Is the method associated with a class.')
+    
+    module_kind = property(lambda self: self['module_kind'].other, 
+        lambda self,value: self.set_tag('module_kind', value), 
+        None, 'The kind of code module this represents (class,module,library).')
+    
+    is_class = property(lambda self: self.module_kind == 'class', 
+        None, None, 'Is the module a class?')
+    
+    is_library = property(lambda self: self.module_kind == 'library', 
+        None, None, 'Is the module a library?')
+    
+    is_module = property(lambda self: self.module_kind == 'module', 
+        None, None, 'Is the module a module?')
     
     def set_as_struct(self):
         """sets the class as a struct"""
@@ -65,12 +82,11 @@ class SGClass(SGMetaDataContainer):
         return 'struct' in self.tags
     
     def setup_from(self, the_type):
-        global logger
-        
         fields = the_type.fields
-        
         for field in fields:
             self.add_member(field)
+        if the_type['class']:
+            self.module_kind = 'class'
     
     def __str__(self):
         '''returns a string representation of the class'''
@@ -97,14 +113,14 @@ from nose.tools import raises
 
 def test_class_creation():
     """test basic class creation"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     
     assert my_class.name == "Hello"
     assert len(my_class.methods) == 0
 
 def test_add_method():
     """test adding a method to a class"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     my_method = SGMethod("test")
     
     my_class.add_member(my_method)
@@ -113,7 +129,7 @@ def test_add_method():
 
 def test_add_property():
     """test adding a property to the class"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     my_property = SGProperty("test")
     
     my_class.add_member(my_property)
@@ -122,7 +138,7 @@ def test_add_property():
 
 def test_add_field():
     """test adding a field to the class"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     my_field = SGField("test")
     
     my_class.add_member(my_field)
@@ -132,12 +148,12 @@ def test_add_field():
 @raises(Exception)
 def test_add_unkown_member():
     """test adding some unknown member type to the class, expects to fail"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     my_class.add_member("Hello")
 
 def test_static_class():
     """tests the creation of a static class"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     assert False == my_class.is_static
     
     my_class.is_static = True
@@ -145,7 +161,7 @@ def test_static_class():
 
 def test_struct():
     """tests the creation of a struct"""
-    my_class = SGClass("Hello")
+    my_class = SGCodeModule("Hello")
     assert False == my_class.is_struct()
     
     my_class.set_as_struct()
@@ -153,7 +169,7 @@ def test_struct():
 
 # def test_has_pointer():
 #     """tests the creation of a class used to wrap a pointer"""
-#     my_class = SGClass("SoundEffect")
+#     my_class = SGCodeModule("SoundEffect")
 #     assert False == my_class.has_pointer()
 #     
 #     my_class.set_has_pointer()

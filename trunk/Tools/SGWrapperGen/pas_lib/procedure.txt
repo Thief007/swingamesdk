@@ -1,0 +1,16 @@
+procedure %(name)s(%(params)s); cdecl; export;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('SGSDK.dll', '%(name)s');
+  {$ENDIF}
+
+  try
+    %(calls.file.pascal_name)s.%(calls.name)s(%(calls.args)s);
+  Except on exc: Exception do 
+    TrapException(exc, '%(name)s');
+  end;  
+  
+  {$IFDEF TRACE}
+    TraceExit('SGSDK.dll', '%(name)s');
+  {$ENDIF}
+end;

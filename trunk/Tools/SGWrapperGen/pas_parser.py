@@ -18,9 +18,10 @@ import logging
 import sys
 from SGPasTokeniser import SGPasTokeniser
 from SGPasParser import SGPasParser
-from sgcache import all_classes
-from SGClass import SGClass
+from sgcache import all_classes, find_or_add_file
+from sgcodemodule import SGCodeModule
 from SGMethod import SGMethod
+from sgfile import SGFile
 
 DEBUG = False
 
@@ -53,8 +54,9 @@ def param_visitor(element, last):
         ',' if not last else ''), 
 
 def method_visitor(element):
-    print '\tpublic %s%s %s(' % (
+    print '\tpublic %s%s%s %s(' % (
         'static ' if element.is_static else '',
+        'extern ' if element.is_external else '',
         element.return_type if element.return_type != None else 'void' , 
         element.name),
     
@@ -75,8 +77,8 @@ def visitor(element):
 def main():
     logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
-    tokeniser = SGPasTokeniser()
-    tokeniser.tokenise('../../CoreSDK/src/SGSDK_Audio.pas')
+    # tokeniser = SGPasTokeniser()
+    # tokeniser.tokenise('../../CoreSDK/src/SGSDK_Audio.pas')
     # tok = tokeniser.next_token()
     # while tok[1] != 'implementation':
     #     print tok
@@ -92,7 +94,13 @@ def main():
     #     tok = tokeniser.next_token()
     # 
     parser = SGPasParser()
-    parser.parse('../../CoreSDK/src/SGSDK_Audio.pas')
+    
+    files = [
+            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas')
+        ]
+    
+    for a_file in files:
+        parser.parse(a_file)
     
     for key,each_class in all_classes().items():
         each_class.visit(visitor)

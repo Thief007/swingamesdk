@@ -14,11 +14,11 @@ logger = logging.getLogger("SGWrapperGen")
 class SGMetaDataContainer(object):
     """A container for meta data tag information"""
     
-    def __init__(self, known_tags = []):
+    def __init__(self, known_tags = None):
         """initialise the container setting up the tags dictionary"""
-        self._known_tags = known_tags
+        self._known_tags = known_tags if known_tags != None else []
         
-        for known in ['note','name','version']: self._known_tags.append(known)
+        for known in ['note','name','version','in_file']: self._known_tags.append(known)
         
         self.tags = {}
         self.doc = ""
@@ -63,6 +63,7 @@ class SGMetaDataContainer(object):
         self.tags[key] = value
     
     name = property(lambda self: self['name'].other, lambda self,name: self.set_tag('name', name), None, "The name of the element.")
+    in_file = property(lambda self: self['in_file'].other, lambda self,value: self.set_tag('in_file', value), None, "The file containing the element.")
     version = property(lambda self: self['version'].other, lambda self,version: self.set_tag('version', version), None, "The version of the element.")
     
     def visit(self, visitor):

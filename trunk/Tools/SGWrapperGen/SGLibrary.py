@@ -7,21 +7,23 @@ Created by Andrew Cain on 2009-05-22.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
-from SGMethod import SGMethod
-from SGMetaDataContainer import SGMetaDataContainer
+from sgcodemodule import SGCodeModule
 
-class SGLibrary(SGMetaDataContainer):
+class SGLibrary(SGCodeModule):
     """Represents the SwinGame SDK library."""
     
     def __init__(self):
         """Initialise the library"""
-        SGMetaDataContainer.__init__(self, [])
-        self.methods = {}
+        super(SGLibrary,self).__init__('SGSDKLib')
+        self.is_static = True
     
-    def add_method(self, member):
+    def add_member(self, member):
         """Add a method to the library"""
+        from SGMethod import SGMethod
+        
         if isinstance(member, SGMethod):
-            self.methods[member.name] = member
+            member.is_external = True
+            super(SGLibrary,self).add_member(member)
         else:
             raise Exception, "Unknown member type"
     
@@ -37,15 +39,16 @@ def test_library_creation():
 
 def test_add_method():
     """test adding a method to a library"""
+    from SGMethod import SGMethod
     my_library = SGLibrary()
     my_method = SGMethod('test')
     
-    my_library.add_method(my_method)
+    my_library.add_member(my_method)
     
     print my_library.methods
     
     assert len(my_library.methods) == 1
-    assert my_method == my_library.methods["test"]
+    assert my_method == my_library.methods[("test", ())]
 
 @raises(Exception)
 def test_add_unkown_member():

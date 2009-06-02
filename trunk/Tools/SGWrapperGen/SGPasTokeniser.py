@@ -7,6 +7,8 @@ Created by Andrew Cain on 2009-05-26.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
+from sgcache import logger
+
 class SGPasTokeniser():
     
     def __init__(self):
@@ -21,8 +23,10 @@ class SGPasTokeniser():
         '''
         
         if isinstance(filename, list):
+            logger.debug('Tokenising list')
             self.pas_lines = filename
         else:
+            logger.debug('Tokenising %s', filename)
             self._filename = filename
             f = open(filename)
             self.pas_lines = f.readlines()
