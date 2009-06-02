@@ -314,7 +314,6 @@ class SGPasParser():
         
         while True:
             tok = self._match_token('id')
-            print tok
             self._current_file.uses.append(find_or_add_file(tok[1]))
             logger.debug('Found using unit %s', tok[1])
             

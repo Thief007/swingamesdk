@@ -36,7 +36,7 @@ class SGMethod(SGMetaDataContainer):
         self.called_by_lib = False
         self.set_tag('calls', None)
     
-    def to_keyed_dict(self, param_visitor):
+    def to_keyed_dict(self, param_visitor, type_visitor = None):
         '''Returns a dictionary containing the details of this function/procedure
         
         The param_visitor is called to convert each parameter to a string. 
@@ -44,7 +44,7 @@ class SGMethod(SGMetaDataContainer):
         '''
         result = {}
         result['name'] = self.name
-        result['return_type'] = self.return_type
+        result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type)
         result['params'] = self.param_string(param_visitor)
         result['calls.file.pascal_name'] = self.method_called().in_class.in_file.pascal_name
         result['calls.file.name'] = self.method_called().in_class.in_file.name
