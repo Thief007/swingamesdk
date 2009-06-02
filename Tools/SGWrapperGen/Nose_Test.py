@@ -11,7 +11,7 @@ import nose
 from nose.tools import * 
 
 from SGMethod import *
-from SGClass import *
+from sgcodemodule import *
 from SGMetaDataContainer import *
 from SGTag import *
 from SGParameter import *

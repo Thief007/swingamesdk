@@ -11,11 +11,11 @@ import logging
 import sys
 
 from SGPasTokeniser import SGPasTokeniser
-from SGClass import SGClass
+from sgcodemodule import SGCodeModule
 from SGType import SGType
 from SGField import SGField
 from SGMethod import SGMethod
-from sgcache import find_or_add_class, find_or_add_type, logger
+from sgcache import find_or_add_class, find_or_add_type, logger, find_or_add_file
 from SGType import SGType
 
 class SGPasParser():
@@ -57,11 +57,13 @@ class SGPasParser():
         self._meta_comments = []
         self._attributes = {}
         self._ordered_attributes = []
-        self._classes = {}
+        self._current_file = None
+        # self._classes = {}
+        
     
-    def parse(self, filename):
-        global logger
-        self._tokeniser.tokenise(filename)
+    def parse(self, a_file):
+        self._current_file = a_file
+        self._tokeniser.tokenise(a_file.filename)
         
         #read the meta comments before the node
         self.process_meta_comments()
@@ -75,14 +77,14 @@ class SGPasParser():
             sys.exit(-1)
     
     def _apply_attributes_to(self, model_element):
-        map(lambda f: model_element.add_doc(f), self._meta_comments)
-        
+        #apply all attributes
         for attr_name, attr in self._ordered_attributes:
             model_element.set_tag(attr_name, attr)
         
         #add all meta comments to the model_element
         map(lambda f: model_element.add_doc(f), self._meta_comments)
         
+        #clear all 
         self._attributes = {}
         self._ordered_attributes = []
         self._meta_comments = []
@@ -91,12 +93,16 @@ class SGPasParser():
         global logger
         
         name = self._get_attribute('name')
-        if kind == SGClass:
+        if kind == SGCodeModule:
             result = find_or_add_class(name)
+            if not result in self._current_file.members:
+                self._current_file.members.append(result)
         elif kind == SGType:
             result = find_or_add_type(name)
         else:
             result = kind(name)
+            
+        result.in_file = self._current_file
         logger.debug('Creating model element: %s with kind:%s', name, kind)
         #self._apply_attributes_to(result)
         return result
@@ -189,18 +195,19 @@ class SGPasParser():
         self._check_meta_comments(1, 'unit ' + unit_name + '\'s declaration')
                 
         #Create the unit
-        unit = self._create_model_element(SGClass)
+        unit = self._create_model_element(SGCodeModule)
+        unit.module_kind = 'module'
         unit.is_static = True
         logger.info('Creating class %s', unit.name)
         
         #logger.info('Creating class: %s', name)
-        #unit = SGClass(name)
+        #unit = SGCodeModule(name)
         
-        if name in self._classes:
-            logger.error('Parser error: found a second declaration of %s from unit %s', name, tok[1])
-            sys.exit(-1)
-        
-        self._classes[tok[1]] = unit
+        # if name in self._classes:
+        #     logger.error('Parser error: found a second declaration of %s from unit %s', name, tok[1])
+        #     sys.exit(-1)
+        # 
+        # self._classes[tok[1]] = unit
         self._apply_attributes_to(unit)
         
         #unit name;
@@ -246,7 +253,6 @@ class SGPasParser():
         pass
     
     def process_attribute(self, token):
-        global logger
         logger.debug('Processing attribute: %s', token[1])
         self._attribute_processors[token[1]](token)
         pass
@@ -306,27 +312,18 @@ class SGPasParser():
         '''Read the list of units referred to be the uses clause'''
         self._check_non_commented('uses clause')
         
-        #unit_list = unit_name[, unit_list]
         while True:
-            #self._skip_comments('unit in uses clause')
-            tok = self._next_token()
-            if tok[0] == 'id':
-                logger.info('Found using unit %s', tok[1])
-                #self._skip_comments('unit in uses clause')
-                
-                #found a token/unit
-                next_tok = self._next_token()
-                if next_tok[0] == 'token':
-                    if next_tok[1] == ';': 
-                        break; #found end
-                    elif next_tok[1] != ',':
-                        logger.error('Parser Error: expected , or ; but found %s at %s', next_tok[1], self._tokeniser.line_details())
-                        sys.exit(-1)
-                else:
-                    logger.error('Parser Error: expected , or ; but found %s at %s', next_tok[1], self._tokeniser.line_details())
-                    sys.exit(-1)
-            else:
-                logger.error('Parser Error: expected unit name but found %s at %s', tok[1], self._tokeniser.line_details())
+            tok = self._match_token('id')
+            print tok
+            self._current_file.uses.append(find_or_add_file(tok[1]))
+            logger.debug('Found using unit %s', tok[1])
+            
+            #found a token/unit
+            next_tok = self._match_token('token')
+            if next_tok[1] == ';': 
+                break; #found end
+            elif next_tok[1] != ',':
+                logger.error('Parser Error: expected , or ; but found %s at %s', next_tok[1], self._tokeniser.line_details())
                 sys.exit(-1)
     
     def process_id_id_attribute(self, token):
@@ -390,6 +387,7 @@ class SGPasParser():
         
         next = self._lookahead(1)[0]
         if next[0] == 'token' and next[1] == '(':
+            #the lib attr has arguments
             open_tok = self._match_token('token', '(')
             args = []
             while True:
@@ -449,9 +447,11 @@ class SGPasParser():
         logger.info('-' * 60)
         logger.info('Adding class %s', the_type.name)
         new_class = find_or_add_class(the_type.name)
+        if not new_class in self._current_file.members:
+            self._current_file.members.append(new_class)
         new_class.setup_from(the_type)
-        
-        self._classes[the_type.name] = new_class
+        # 
+        # self._classes[the_type.name] = new_class
     
     def _parse_type_declaration(self, the_type):
         '''Parse a type from the next token, add details to the_type.'''
@@ -496,8 +496,11 @@ class SGPasParser():
         name_tok = self._match_token('id') #name of function/procedure
         open_tok = self._match_token('token', '(')
         
+        #add class!
         self._add_attribute('name', name_tok[1]) #name comes from function/procedure
         method = self._create_model_element(SGMethod)
+        method.called_by_lib = True
+        method.in_class = block
         
         #look for parameters
         while True:
@@ -525,7 +528,7 @@ class SGPasParser():
             colon_tok = self._match_token('token', ':')
             the_type = self._read_type_usage()
             method.return_type = the_type
-            logger.info('Set return type of method %s to %s', method.name, method.return_type)
+            logger.debug('Set return type of method %s to %s', method.name, method.return_type)
         
         end_tok = self._match_token('token', ';')
         
@@ -537,7 +540,8 @@ class SGPasParser():
         
         #logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())
         self._apply_attributes_to(method)
-        method.check_call_validity()
+        method.complete_method_processing()
+        
         block.add_member(method)
     
 if __name__ == '__main__':

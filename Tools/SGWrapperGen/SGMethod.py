@@ -8,21 +8,21 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
 import logging
+import sys
 
 from SGMetaDataContainer import SGMetaDataContainer
 from SGParameter import SGParameter
 from SGProperty import SGProperty
-from sgcache import find_or_add_class
-
-logger = logging.getLogger("SGWrapperGen")
+from sgcache import find_or_add_class, logger
 
 class SGMethod(SGMetaDataContainer):
     """A SGMethod represents a function or a procedure in SwinGame."""
     def __init__(self, name):
         """Initialise the SGMethod, setting its name."""
         SGMetaDataContainer.__init__(self, ['uname','static','operator',
-            'is_constructor','return_type','calls','class','dispose','method',
-            'overload','returns','setter','getter'])
+            'is_constructor','return_type','calls','other_class','dispose',
+            'method','overload','returns','setter','getter','is_external', 
+            'called_by_lib', 'my_class'])
         self.name = name
         self.uname = name
         self.params = []
@@ -32,6 +32,27 @@ class SGMethod(SGMetaDataContainer):
         self.in_class = None
         self.is_static = False
         self.is_constructor = False
+        self.is_external = False
+        self.called_by_lib = False
+        self.set_tag('calls', None)
+    
+    def to_keyed_dict(self, param_visitor):
+        '''Returns a dictionary containing the details of this function/procedure
+        
+        The param_visitor is called to convert each parameter to a string. 
+        param_visitor(the_param, last)
+        '''
+        result = {}
+        result['name'] = self.name
+        result['return_type'] = self.return_type
+        result['params'] = self.param_string(param_visitor)
+        result['calls.file.pascal_name'] = self.method_called().in_class.in_file.pascal_name
+        result['calls.file.name'] = self.method_called().in_class.in_file.name
+        result['calls.file.filename'] = self.method_called().in_class.in_file.filename
+        result['calls.class'] = self.method_called().in_class.name
+        result['calls.name'] = self.method_called().name
+        result['calls.args'] = self.args_string_for_called_method()
+        return result
     
     name = property(lambda self: self['name'].other, 
         lambda self,name: self.set_tag('name', name), 
@@ -45,6 +66,10 @@ class SGMethod(SGMetaDataContainer):
         lambda self,value: self.set_tag('static', value), 
         None, 'Is the method associated with a class.')
     
+    called_by_lib = property(lambda self: self['called_by_lib'].other, 
+        lambda self,value: self.set_tag('called_by_lib', value), 
+        None, 'Is the method associated with a class.')
+    
     operator = property(lambda self: self['operator'].other, 
         lambda self,value: self.set_tag('operator', value), 
         None, 'Is the method an operator overload?')
@@ -53,9 +78,17 @@ class SGMethod(SGMetaDataContainer):
         lambda self,value: self.set_tag('is_constructor', value), 
         None, 'Is the method a constructor?')
     
-    in_class = property(lambda self: self['class'].other, 
-        lambda self,value: self.set_tag('class', value), 
+    is_external = property(lambda self: self['is_external'].other, 
+        lambda self,value: self.set_tag('is_external', value), 
+        None, 'Is the method from the library?')
+    
+    in_class = property(lambda self: self['my_class'].other, 
+        lambda self,value: self.set_tag('my_class', value), 
         None, 'the class containing the method')
+    
+    other_class = property(lambda self: self['other_class'].other, 
+        lambda self,value: self.set_tag('other_class', value), 
+        None, 'the class of this methods clone')
     
     return_type = property(lambda self: self['return_type'].other, 
         lambda self,return_type: self.set_tag('return_type', return_type), 
@@ -146,15 +179,20 @@ class SGMethod(SGMetaDataContainer):
                 logger.debug('caching parameter %s - %s', to_add.name, to_add.doc)
                 self.cache_parameter(to_add)
         elif title == "class":
-            from SGClass import SGClass
+            #the class indicates that the @method is for this other class...
+            from sgcodemodule import SGCodeModule
+            from SGLibrary import SGLibrary
             if other == None: 
                 super(SGMethod,self).set_tag(title, None)
                 return
-            elif isinstance(other, SGClass):
-                my_class = other
+            elif isinstance(other, SGCodeModule):
+                other_class = other
+            elif isinstance(other, SGLibrary):
+                other_class = other
             else:
-                my_class = find_or_add_class(other)
-            super(SGMethod,self).set_tag(title, my_class)
+                other_class = find_or_add_class(other)
+            
+            super(SGMethod,self).set_tag('other_class', other_class)
         elif title == 'getter' or title == 'setter':
             if self.in_class == None:
                 logger.error('Model Error: Method (%s) %s is not in a class...', title, self.name)
@@ -196,16 +234,33 @@ class SGMethod(SGMetaDataContainer):
             other.is_static = self.is_static
         else:
             other.params = self.params[1:]
-        other.in_class = self.in_class
+        other.in_class = self.other_class
     
     def calls(self, method, args=None):
         """indicate which method this method calls, and args if any"""
+        if not self['calls'].other == None:
+            logger.error('Model Error: Changing method called')
+            sys.exit(-1)
         self.set_tag('calls', [method, args])
+    
+    def complete_method_processing(self):
+        args = self.tags['calls'].other[1]
+        called_by_lib = self.called_by_lib and args == None
+        
+        self.check_call_validity()
+        
+        if called_by_lib:
+            logger.debug('setting up library call of %s', self)
+            method = self.tags['calls'].other[0]
+            method.calls(self, method.params)
+        
     
     def check_call_validity(self):
         """Validate that the call is correctly configured, raises exception on error"""
         method = self.tags['calls'].other[0]
         args = self.tags['calls'].other[1]
+        
+        logger.debug('checking %s calling %s with %s', self, method, args)
         
         method.return_type = self.return_type
         
@@ -224,28 +279,38 @@ class SGMethod(SGMetaDataContainer):
         """returns the method that this method needs to call"""
         return self.tags['calls'].other[0]
     
+    def args_string_for_called_method(self):
+        args = self.args_for_method_call()
+        
+        return ','.join([ a.name for a in args ])
+    
     def args_for_method_call(self):
         """returns the argument call list for the called method"""
         args = self.tags['calls'].other[1]
-
+        
         if args == None:
             self.set_tag('calls', [self.tags['calls'].other[0], self.params])
             args = self.tags['calls'].other[1]
         
         return args
     
-    def param_string(self):
+    def param_string(self, param_visitor = None):
         if self.params: 
-            return ', '.join([str(n) for n in self.params])
+            if param_visitor == None:
+                return ', '.join([str(n) for n in self.params])
+            else:
+                return ''.join([param_visitor(param, param == self.params[-1]) for param in self.params])
+                #i.e. map(lambda param: param_visitor(param, param == self.params[-1]), self.params)
         else: return ''
     
     def __str__(self):
         if self.return_type != None:
-            result = str(self.return_type) + ' '
+            result = str(self.return_type.name) + ' '
         else:
             result = 'void '
         
-        result += str(self.in_class) + '.'
+        if self.in_class != None:
+            result += self.in_class.name + '.'
         result += self.name + '('
         result += self.param_string()
         result += ')'

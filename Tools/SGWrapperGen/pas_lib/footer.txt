@@ -1,0 +1,4 @@
+    DLLVersion name 'DLLVersion',
+    GetExceptionMessage name 'GetExceptionMessage',
+    ExceptionOccured name 'ExceptionOccured';
+end.
