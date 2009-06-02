@@ -61,7 +61,12 @@ def _load_data():
     f.close()
 
 def param_visitor(the_param, last):
-    return '%s: %s%s' % (the_param.name, _type_switcher[the_param.data_type.name], '; ' if not last else '')
+    return '%s%s: %s%s' % (
+        the_param.modifier + ' ' if the_param.modifier != None else '',
+        the_param.name, 
+        _type_switcher[the_param.data_type.name], 
+        '; ' if not last else ''
+        )
 
 def method_visitor(the_method):
     global _procedure_lines, _function_lines, _names

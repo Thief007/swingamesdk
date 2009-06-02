@@ -7,6 +7,8 @@
 
 library %(name)s;
   uses SysUtils, Strings, SwinGameTrace,
+    SGSDK_Input, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
+    SDL_Image, SDL_TTF, SGSDK_Camera, SGSDK_Shapes, SGSDK_MappyLoader,
     %(uses)s
 
   var
