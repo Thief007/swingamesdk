@@ -7,6 +7,7 @@ Created by Andrew Cain on 2009-05-22.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
+from sgcache import find_or_add_file, logger
 from sgcodemodule import SGCodeModule
 
 class SGLibrary(SGCodeModule):
@@ -16,6 +17,8 @@ class SGLibrary(SGCodeModule):
         """Initialise the library"""
         super(SGLibrary,self).__init__('SGSDKLib')
         self.is_static = True
+        self.version = 0
+        self.in_file = find_or_add_file('SGSDK')
     
     def add_member(self, member):
         """Add a method to the library"""
@@ -23,9 +26,19 @@ class SGLibrary(SGCodeModule):
         
         if isinstance(member, SGMethod):
             member.is_external = True
+            member.name = 'sg_' + member.name
+            member.uname = 'sg_' + member.uname
+            member.in_file = find_or_add_file('SGSDK')
             super(SGLibrary,self).add_member(member)
         else:
             raise Exception, "Unknown member type"
+    
+    def find_method(self, uname):
+        for key, method in self.methods.items():
+            if method.uname == 'sg_' + uname: 
+                print 'found', method.uname, method.params
+                return method
+        return None
     
 
 import nose

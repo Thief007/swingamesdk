@@ -26,12 +26,12 @@ class SGFile(object):
     members = property(lambda self: self._members, 
         None, None, 'The members within this file.')
     
-    def visit(self, visitor):
-        visitor(self)
+    def visit(self, visitor, other):
+        visitor(self, other)
     
-    def visit_members(self, visitor):
+    def visit_members(self, visitor, other):
         for member in self.members:
-            visitor(member)
+            visitor(member, other)
     
     def uses_str(self, visitor):
         return '%s;' % ', '.join([ visitor(a_file) for a_file in self.uses ])

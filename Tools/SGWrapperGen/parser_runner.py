@@ -13,14 +13,15 @@ from SGPasParser import SGPasParser
 def run_for_all_units(file_visitor):
     parser = SGPasParser()
     
+    lib_file = find_or_add_file('SGSDK','SGSDK_Lib','./sgsdk.pas')
+    
     files = [
+            lib_file,
             find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas')
         ]
     
-    for a_file in files:
+    for a_file in files[1:]:
         parser.parse(a_file)
-    
-    lib_file = find_or_add_file('SGSDK','SGSDK_Lib','./sgsdk.pas')
     
     for key,each_file in all_files().items():
         if each_file != lib_file: lib_file.uses.append(each_file)
@@ -31,7 +32,7 @@ def run_for_all_units(file_visitor):
     
     for each_file in files:
         logger.debug('Visiting file %s', each_file.name)
-        each_file.visit(file_visitor)
+        each_file.visit(file_visitor, None)
     
 
 def main():

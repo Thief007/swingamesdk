@@ -14,18 +14,23 @@ library %(name)s;
   var
     ErrorMessage: String;
     HasException: Boolean;    
-
-  procedure GetExceptionMessage(result: PChar); cdecl; export;
+  
+  function sg_DLLVersion(): LongInt; cdecl; export;
+  begin
+    result := %(version)s;
+  end;
+  
+  procedure sg_GetExceptionMessage(result: PChar); cdecl; export;
   begin
     StrCopy(result, PChar(ErrorMessage));
   end;
-
-  function ExceptionOccured(): LongInt; cdecl; export;
+  
+  function sg_ExceptionOccured(): LongInt; cdecl; export;
   begin
     if HasException then result := -1
     else result := 0;
   end;
-
+  
   procedure TrapException(exc: Exception; fromMethod: String);
   begin
     HasException := true;
@@ -38,10 +43,5 @@ library %(name)s;
     {$IFDEF TRACE}
       Trace('SGSDK.dll', 'Error', fromMethod, ErrorMessage);
     {$ENDIF}
-  end;
-  
-  function DLLVersion(): LongInt; cdecl; export;
-  begin
-    result := %(version)s;
   end;
   

@@ -92,7 +92,7 @@ def file_visitor(the_file):
     my_writer.writeln(_header % { 
         'name' : the_file.pascal_name, 
         'uses' : the_file.uses_str(lambda a_file: a_file.pascal_name), 
-        'version' : 200000
+        'version' : the_file.members[0].version #version from library
         })
     my_writer.indent();
     
