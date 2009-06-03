@@ -18,6 +18,7 @@ import logging
 import sys
 from SGPasTokeniser import SGPasTokeniser
 from SGPasParser import SGPasParser
+from SGParameter import SGParameter
 from sgcache import all_classes, find_or_add_file
 from sgcodemodule import SGCodeModule
 from SGMethod import SGMethod
@@ -52,6 +53,12 @@ def param_visitor(element, last, other):
         element.data_type,
         element.name, 
         ',' if not last else ''), 
+    
+def arg_visitor(arg, last, other):
+    print '%s%s'%(
+        arg.name if isinstance(arg, SGParameter) else arg,
+        ',' if not last else ''), 
+    
 
 def method_visitor(element, other):
     print '\t<@%s> %s%s%s %s(' % (
@@ -64,8 +71,8 @@ def method_visitor(element, other):
     element.visit_params(param_visitor, other)
     
     print ')' 
-    print '\t\t-> in_file ', element.in_file
-    print '\t\t-> calls ',
+    print '\t\t-> in_file\t', element.in_file
+    print '\t\t-> calls',
     
     if element.method_called() == None:
         print '???'
@@ -78,12 +85,12 @@ def method_visitor(element, other):
         element.method_called().return_type if element.method_called().return_type != None else 'void' , 
         element.method_called().name),
     
-    #element.visit_params(param_visitor)
+    element.method_called().visit_params(param_visitor, other)
     
     print ') from ', element.method_called().in_file
     
-    print '\t\t--> called params ', 
-    element.method_called().visit_params(param_visitor, other)
+    print '\t\t-> args\t\t', 
+    element.visit_args(arg_visitor, other)
     print '\n'
 
 def visitor(element):

@@ -31,6 +31,7 @@ _procedure_lines = None
 _function_lines = None
 _exports_header = ''
 _module_c_method = ''
+_module_c_function = ''
 
 _type_switcher = {
     #Pascal type: what it maps to
@@ -63,6 +64,7 @@ _names = []
 def _load_data():
     global _lib_import_header, _header
     global _module_header_header, _module_c_header, _module_c_method
+    global _module_c_function
     
     f = open('./c_lib/lib_import_header.txt')
     _lib_import_header = f.read()
@@ -83,11 +85,15 @@ def _load_data():
     f = open('./c_lib/module_c_method.txt')
     _module_c_method = f.read()
     f.close()
+    
+    f = open('./c_lib/module_c_function.txt')
+    _module_c_function = f.read()
+    f.close()
 
 def arg_visitor(the_arg, arg_type):
     '''Called for each argument in a call, performs required mappings'''
     
-    print the_arg, arg_type
+    print 'arg details: ', the_arg, arg_type
     
     if arg_type.name in _data_switcher:
         #convert data using pattern from _data_switcher
@@ -125,7 +131,12 @@ def method_visitor(the_method, other):
     other['header writer'].writeln('\n')
     
     if other['c writer'] != None: 
-        other['c writer'].write(_module_c_method % details)
+        if the_method.is_function:
+            #%(calls.name)s(%(calls.args)s)
+            details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, the_method.return_type)
+            other['c writer'].write(_module_c_function % details)
+        else:
+            other['c writer'].write(_module_c_method % details)
 
 def write_c_lib_adapter(the_file):
     '''Write the c library adapter - header file that matches DLL'''
@@ -222,7 +233,7 @@ def file_visitor(the_file, other):
         write_c_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     _load_data()    
     parser_runner.run_for_all_units(file_visitor)

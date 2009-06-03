@@ -1,5 +1,5 @@
-%(return_type)s%(uname)s(%(params)s)
+void %(uname)s(%(params)s)
 {
-    return %(calls.name)s(%(calls.args)s);
+    %(calls.name)s(%(calls.args)s);
 }
 

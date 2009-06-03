@@ -36,7 +36,7 @@ class SGLibrary(SGCodeModule):
     def find_method(self, uname):
         for key, method in self.methods.items():
             if method.uname == 'sg_' + uname: 
-                print 'found', method.uname, method.params
+                # print 'found', method.uname, method.params
                 return method
         return None
     
