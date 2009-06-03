@@ -32,6 +32,7 @@ class SGPasParser():
         self._attribute_processors = {
             'param': self.process_id_and_comment_attribute,
             'class': self.process_id_attribute,
+            'module': self.process_id_attribute,
             'static': self.process_true_attribute,
             'struct': self.process_true_attribute,
             'lib':self.process_lib_attribute,
@@ -42,11 +43,12 @@ class SGPasParser():
             'constructor': self.process_true_attribute,
             'dispose': self.process_true_attribute,
             'method': self.process_method_attribute,
-            'overload': self.process_id_id_attribute,
+            'overload': self.process_overload_attribute,
             'version': self.process_number_attribute,
             'setter': self.process_id_attribute,
             'getter': self.process_id_attribute,
-            'returns': self.process_comment_attribute
+            'returns': self.process_comment_attribute,
+            'swingame': self.process_swingame_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -184,7 +186,7 @@ class SGPasParser():
     def process_unit(self, token):
         tok = self._match_token('id')
         unit_name = tok[1]
-        name = self._get_attribute('class', unit_name)
+        name = self._get_attribute('module', unit_name)
         self._add_attribute('name',name)
         
         logger.info('-' * 70)
@@ -227,6 +229,8 @@ class SGPasParser():
         
         while True:
             logger.debug('At start of loop to process elements in unit')
+            #read comments if they follow this position, otherwise leave 
+            #  attributes as they are
             if self._match_lookahead('meta comment'): self.process_meta_comments()
             
             #Process the body of the unit's interface
@@ -366,9 +370,10 @@ class SGPasParser():
     def process_true_attribute(self, token):
         self._add_attribute(token[1], True)
     
-    def process_number_attribute(self, token):
+    def process_swingame_attribute(self, token):
         tok = self._match_token('number')
-        self._add_attribute(token[1], tok[1])
+        lib = find_or_add_class('lib')
+        lib.version = tok[1]
     
     def process_method_attribute(self, token):
         name_tok = self._match_token('id')
@@ -376,13 +381,37 @@ class SGPasParser():
         method = SGMethod(name_tok[1])
         self._add_attribute('clone', method)
     
-    def process_lib_attribute(self, token):
-        '''process a method attribute'''
+    def process_overload_attribute(self, token):
         name_tok = self._match_token('id')
+        uname_tok = self._match_token('id')
         
         method = SGMethod(name_tok[1])
-        method.in_class = find_or_add_class('lib')
-        method.in_class.add_member(method)
+        method.uname = uname_tok[1]
+        self._add_attribute('clone', method)
+    
+    def process_lib_attribute(self, token):
+        '''
+        process a lib attribute = what to call in the library
+        
+        Steps: 
+        1: find method (and possibly args)
+        2: find method in library (all names are unique here)
+        3: read in args
+        4: add attribute 'calls' to indicate the processed method calls the
+           method from the library
+        '''
+        #find method
+        name_tok = self._match_token('id')
+        uname = name_tok[1]
+        
+        #search in library
+        the_lib = find_or_add_class('lib')
+        
+        method = the_lib.find_method(uname)
+        if method == None: 
+            method = SGMethod(uname)
+            method.in_class = the_lib
+            method.in_class.add_member(method)
         
         next = self._lookahead(1)[0]
         if next[0] == 'token' and next[1] == '(':
@@ -413,6 +442,10 @@ class SGPasParser():
     
     def process_value_attribute(self, token):
         self._add_attribute(token[0], token[1])
+    
+    def process_number_attribute(self, token):
+        num_tok = self._match_token('number')
+        self._add_attribute(token[1], num_tok[1])
     
     def process_meta_comment(self, token):
         global logger
@@ -491,13 +524,18 @@ class SGPasParser():
         return find_or_add_type(id_tok[1])
     
     def process_method_decl(self, block, token):
-        '''block is the block that contains the method, token is the first token'''
+        '''process a method read from a unit.
+        
+        block is the block that contains the method, token is the first token.
+        At the end of this the method has been read in and added to block.
+        '''
         name_tok = self._match_token('id') #name of function/procedure
         open_tok = self._match_token('token', '(')
         
         #add class!
         self._add_attribute('name', name_tok[1]) #name comes from function/procedure
         method = self._create_model_element(SGMethod)
+        #print '** %s -> %s' % (method.name, method.in_file.name)
         method.called_by_lib = True
         method.in_class = block
         

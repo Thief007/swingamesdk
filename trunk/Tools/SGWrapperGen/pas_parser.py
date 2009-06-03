@@ -25,7 +25,7 @@ from sgfile import SGFile
 
 DEBUG = False
 
-def property_visitor(element, last):
+def property_visitor(element, last, other):
     print '\tpublic %s%s %s'%(
         'static ' if element.is_static else '',
         element.data_type,
@@ -33,49 +33,71 @@ def property_visitor(element, last):
         )
     print '\t{'
     print '\t',
-    method_visitor(element.getter)
+    method_visitor(element.getter, other)
     print '\t',
-    method_visitor(element.setter)
+    method_visitor(element.setter, other)
     print '\t}'
     if last: print
 
-def field_visitor(element, last):
+def field_visitor(element, last, other):
     print '\tprivate %s %s;'%(
         element.data_type,
         element.name
         )
     if last: print
 
-def param_visitor(element, last):
+def param_visitor(element, last, other):
     print '%s%s %s%s'%(
         '' if element.modifier == None else element.modifier + ' ',
         element.data_type,
         element.name, 
         ',' if not last else ''), 
 
-def method_visitor(element):
-    print '\tpublic %s%s%s %s(' % (
+def method_visitor(element, other):
+    print '\t<@%s> %s%s%s %s(' % (
+        hex(id(element)),
         'static ' if element.is_static else '',
         'extern ' if element.is_external else '',
         element.return_type if element.return_type != None else 'void' , 
-        element.name),
+        element.uname),
     
-    element.visit_params(param_visitor)
+    element.visit_params(param_visitor, other)
     
-    print ')'
+    print ')' 
+    print '\t\t-> in_file ', element.in_file
+    print '\t\t-> calls ',
+    
+    if element.method_called() == None:
+        print '???'
+        return
+    
+    print '\t<@%s> %s%s%s %s(' % (
+        hex(id(element.method_called())),
+        'static ' if element.method_called().is_static else '',
+        'extern ' if element.method_called().is_external else '',
+        element.method_called().return_type if element.method_called().return_type != None else 'void' , 
+        element.method_called().name),
+    
+    #element.visit_params(param_visitor)
+    
+    print ') from ', element.method_called().in_file
+    
+    print '\t\t--> called params ', 
+    element.method_called().visit_params(param_visitor, other)
+    print '\n'
 
 def visitor(element):
     if element.is_static:
         print 'static',
     print 'class %s' % element.name
     print '{'
-    element.visit_fields(field_visitor)
-    element.visit_properties(property_visitor)
-    element.visit_methods(method_visitor)
+    element.visit_fields(field_visitor, None)
+    element.visit_properties(property_visitor, None)
+    element.visit_methods(method_visitor, None)
     print '}'
 
 def main():
-    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     # tokeniser = SGPasTokeniser()
     # tokeniser.tokenise('../../CoreSDK/src/SGSDK_Audio.pas')

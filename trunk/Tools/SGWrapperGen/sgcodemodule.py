@@ -53,6 +53,8 @@ class SGCodeModule(SGMetaDataContainer):
     def set_tag(self, title, other = None):
         if title == 'class':
             self.module_kind = 'class'
+        elif title == 'module':
+            self.module_kind = 'module'
         else:
             super(SGCodeModule,self).set_tag(title, other)
     
@@ -93,20 +95,22 @@ class SGCodeModule(SGMetaDataContainer):
         name = 'struct ' + self.name if self.is_struct() else 'class ' + self.name
         name = 'static ' + name if self.is_static else name
         
-        
-        return '%s\n%s' % (self.doc, name)
+        #return '%s\n%s' % (self.doc, name)
+        return name
     
-    def visit_methods(self, visitor):
+    def visit_methods(self, visitor, other):
+        logger.debug('visiting method of %s' % self.name)
         for key, method in self.methods.items():
-            visitor(method)
+            logger.debug('visiting method %s' % method.uname)
+            visitor(method, other)
     
-    def visit_fields(self, visitor):
+    def visit_fields(self, visitor, other):
         for key, field in self.fields.items():
-            visitor(field, key == self.fields.keys()[-1])
+            visitor(field, key == self.fields.keys()[-1], other)
     
-    def visit_properties(self, visitor):
+    def visit_properties(self, visitor, other):
         for key, prop in self.properties.items():
-            visitor(prop, key == self.properties.keys()[-1])
+            visitor(prop, key == self.properties.keys()[-1], other)
 
 import nose
 from nose.tools import raises 
