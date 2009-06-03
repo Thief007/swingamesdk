@@ -21,8 +21,8 @@ class SGMethod(SGMetaDataContainer):
         """Initialise the SGMethod, setting its name."""
         SGMetaDataContainer.__init__(self, ['uname','static','operator',
             'is_constructor','return_type','calls','other_class','dispose',
-            'method','overload','returns','setter','getter','is_external', 
-            'called_by_lib', 'my_class'])
+            'method','overload','returns','is_setter','is_getter','is_external', 
+            'called_by_lib', 'my_class', 'class_method','in_property'])
         self.name = name
         self.uname = name
         self.params = []
@@ -33,8 +33,12 @@ class SGMethod(SGMetaDataContainer):
         self.is_static = False
         self.is_constructor = False
         self.is_external = False
+        self.is_getter = False
+        self.is_setter = False
+        self.in_property = None
         self.called_by_lib = False
         self.set_tag('calls', None)
+        self.class_method = None
     
     def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None):
         '''Returns a dictionary containing the details of this function/procedure
@@ -54,7 +58,7 @@ class SGMethod(SGMetaDataContainer):
         result['calls.name'] = self.method_called().name
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         return result
-    
+
     name = property(lambda self: self['name'].other, 
         lambda self,name: self.set_tag('name', name), 
         None, 'The name of the method.')
@@ -62,6 +66,18 @@ class SGMethod(SGMetaDataContainer):
     uname = property(lambda self: self['uname'].other, 
         lambda self,uname: self.set_tag('uname', uname), 
         None, 'The uname of the method.')
+    
+    in_property = property(lambda self: self['in_property'].other, 
+        lambda self,value: self.set_tag('in_property', value), 
+        None, 'The property the method is in (or None).')
+    
+    is_setter = property(lambda self: self['is_setter'].other, 
+        lambda self,value: self.set_tag('is_setter', value), 
+        None, 'The method is a setter.')
+    
+    is_getter = property(lambda self: self['is_getter'].other, 
+        lambda self,value: self.set_tag('is_getter', value), 
+        None, 'The method is a getter.')
     
     is_static = property(lambda self: self['static'].other, 
         lambda self,value: self.set_tag('static', value), 
@@ -95,51 +111,17 @@ class SGMethod(SGMetaDataContainer):
         lambda self,return_type: self.set_tag('return_type', return_type), 
         None, "The return type of the method.")
     
+    class_method = property(lambda self: self['class_method'].other, 
+        lambda self,return_type: self.set_tag('class_method', return_type), 
+        None, "The class method that duplicates this methods behaviour.")
+    
+    is_function = property (lambda self: self.return_type != None,
+        None, None, 'The method is a function'
+        )
+    
     @property
     def signature(self):
         return (self.name, tuple([(p.modifier + ' ' if p.modifier != None else '') + str(p.data_type) for p in self.params]))
-    
-    # def set_uname(self, uname):
-    #     """sets the unique name for the method, defaults to name"""
-    #     self.set_tag('uname', [uname])
-    
-    # def set_as_static(self):
-    #     """Set this as a static method"""
-    #     self.set_tag('static')
-    
-    # def is_static(self):
-    #     """Checks if this is a static method, returns True if static."""
-    #     #print self.tags.keys()
-    #     return 'static' in self.tags.keys()
-    
-    # def set_as_operator(self, operator):
-    #     """Set this as a method representing an operator overload"""
-    #     self.set_tag('operator', [operator])
-    # 
-
-    def is_operator(self):
-        """Checks if this is an operator overload."""
-        return self.operator != None
-    
-    # def set_as_constructor(self):
-    #     """Set this as a method representing a constructor"""
-    #     self.set_tag('constructor')
-    # 
-    # def is_constructor(self):
-    #     """Checks if this is a constructor."""
-    #     return 'constructor' in self.tags.keys()
-    # 
-    # def operator(self):
-    #     """returns the operator this method overloads"""
-    #     return self.tags['operator'].other[0]
-    
-    # def set_return_type(self, type_name):
-    #     """Sets the return type to type."""
-    #     self.set_tag('returns', [type_name])
-    # 
-    # def return_type(self):
-    #     """Gets the SGMethod's return type"""
-    #     return self.tags['returns'].other[0]
     
     def cache_parameter(self, param):
         """
@@ -195,52 +177,20 @@ class SGMethod(SGMetaDataContainer):
             
             super(SGMethod,self).set_tag('other_class', other_class)
         elif title == 'getter' or title == 'setter':
-            if self.other_class == None:
-                logger.error('Model Error: Method (%s) %s is not in a class...', title, self.name)
-                exit(-1)
-            
-            if other in self.other_class.properties.keys():
-                prop = self.other_class.properties[other]
-            else:
-                prop = SGProperty(other)
-                prop.in_class = self.other_class;
-                prop.is_static = self.is_static;
-                prop.in_file = self.in_file
-                self.other_class.add_member(prop)
-            
-            if title == 'getter':
-                method = SGMethod('get')
-                self.clone_to(method)
-                prop.getter = method
-            else:
-                method = SGMethod('set')
-                self.clone_to(method)
-                prop.setter = method
-            
-            method.calls(self)
-            method.complete_method_processing()
-            
-            super(SGMethod,self).set_tag(title, other)
-        elif title == 'clone':
-            self.clone_to(other)
-            other.in_class.add_member(other)
-            if not other.is_static:
-                args = ['pointer']
-            else:
-                args = []
-            args.extend(other.params)
-            other.calls(self.method_called(), args)
-            
-            logger.debug('Setting up call: %s calls %s with args %s', other,
-                other.method_called(), other.args_for_method_call())
-            
-            other.complete_method_processing()
+            # 1: mark as getter/setter
+            super(SGMethod,self).set_tag('is_' + title, True) 
+            # 2: set property name
+            self.in_property = other
+            # 3: mark for later processing
+            class_method = SGMethod(other + ' ' + title)
+            super(SGMethod,self).set_tag('class_method', class_method)
         elif title == 'constructor':
             const = SGMethod(self.other_class.name)
             const.is_constructor = True
-            self.clone_to(const)
-            const.in_class.add_member(const)
-            const.calls(self.method_called(), const.params)
+            super(SGMethod,self).set_tag('class_method', const)
+            # self.clone_to(const)
+            # const.in_class.add_member(const)
+            # const.calls(self.method_called(), const.params)
             
         else:
             super(SGMethod,self).set_tag(title, other)
@@ -263,44 +213,141 @@ class SGMethod(SGMetaDataContainer):
             assert(False)
         self.set_tag('calls', [method, args])
     
-    def complete_method_processing(self):
+    def setup_lib_method(self, lib_method):
         '''
-        Set up the call from the library to this method if marked.
-        Check the call's validity
-        '''
-        if self.uname == 'PlaySoundEffectWithVolume':
-            print 'here', self
-            
-        args = self.tags['calls'].other[1] #read the arguments
-        called_by_lib = self.called_by_lib and (args == None or len(args) == 0) 
-            #there is a lib marker, and not overloaded call
+        Setup the library method
         
-        self.check_call_validity()
+        Set:
+            return type
+            parameters
+            calls
+        '''
+        args = self.args_for_method_call() #lib is called method
+        
+        #we are called if there is a lib marker, and we have no other args
+        called_by_lib = self.called_by_lib and args == self.params 
         
         if called_by_lib: #Set up the call from the library to this method
-            logger.debug('Setting library to call %s', self)
-            method = self.tags['calls'].other[0] #the method called...
-            method.calls(self, method.params) #..calls this method at other end
+            logger.debug('Setting %s in library to call %s', lib_method, self)
+            lib_method.return_type = self.return_type #set return type
+            lib_method.calls(self, self.params) #..calls this method at other end
+            lib_method.params = self.params #add parameters
         
     
-    def check_call_validity(self):
-        """
-        Validate that the call is correctly configured, die on error.
-        """
+    def create_and_add_property(self, class_method):
+        '''
+        The added class method is actually a property, so
+        create and add a property or update the existing property.
+        '''
+        property_name = self.in_property
+        #get or create the property
+        if property_name in self.other_class.properties:
+            prop = self.other_class.properties[property_name]
+        else:
+            prop = SGProperty(property_name)
+            prop.in_class = self.other_class;
+            prop.is_static = self.is_static;
+            prop.in_file = self.in_file
+            #add property to class
+            self.other_class.add_member(prop)
+        
+        #setup name of method and its position in the property
+        if self.is_getter:
+            class_method.name = 'get' + property_name
+            prop.getter = class_method
+        elif self.is_setter:
+            class_method.name = 'set' + property_name
+            prop.setter = class_method
+        else:
+            assert(False, '{Property is not a getter or a setter}')
+        #change uname as well...
+        class_method.uname = class_method.name
+    
+    def setup_class_method(self, class_method):
+        '''
+        Setup the class's method.
+        
+        The class method is a clone of the current method, in 
+        a class wrapper. This comes from @method or @overload
+        in the pascal source.
+        
+        Steps:
+            1: clone self to class_method
+            2: add it to its class or property
+            3: alter args (add pointer field access)
+        '''
+        
+        self.clone_to(class_method) #copy self into other
+        
+        #if the class method is actually a property...
+        if self.is_getter or self.is_setter:
+            self.create_and_add_property(class_method)
+        else:
+            class_method.in_class.add_member(class_method) #add to its class
+        
+        #static methods and constructors directly call the method
+        #  instance methods change the first argument for the pointer field
+        if class_method.is_static or class_method.is_constructor:
+            #use self's args - i.e. it calls the method in the same way
+            args = self.args_for_method_call()
+        else:  #other is an instance (with ptr)
+            args = ['pointer'] #add extra first argument
+            #add in self's arguments (-1st which is pointer)
+            args.extend(self.args_for_method_call()[1:])
+        
+        #set class method to call the same method this does
+        class_method.calls(self.method_called(), args)
+        
+        logger.debug('Setting up call: %s calls %s with args %s', class_method,
+            class_method.method_called(), class_method.args_for_method_call())
+        
+        class_method.check_arguments()
+    
+    def complete_method_processing(self):
+        '''
+        This is called on methods that are read by the parser from the 
+        Pascal file.
+        
+        Set up the call from the library to this method if marked.
+        Check the call's validity
+        
+        Steps:
+            1: Get other methods related to this one
+            2: Set parameters on library method (if called)
+        '''
+        
+        #Get other methods
+        lib_method = self.method_called()
+        class_method = self.class_method
+        
+        #check rules
+        assert(lib_method != None, 'Found method %s without lib' % self)
+        
+        #set up library method
+        self.setup_lib_method(lib_method)
+        
+        #set up class method
+        if class_method != None:
+            self.setup_class_method(class_method)
+        
+        # Cant check here... need to wait until all are read
+        # self.check_call_validity()
+        # class_method.check_call_validity()
+    
+    def check_arguments(self):
+        '''
+        Ensure that the arguments in the call match the available parameters,
+        if no arguments are provided copy across read in parameters
+        '''
         called_method = self.tags['calls'].other[0] #get called method
-        args = self.tags['calls'].other[1]
+        args = self.tags['calls'].other[1] #the arguments self passes to the method
         
-        logger.debug('checking %s calling %s with %s', self, called_method, args)
-        
-        called_method.return_type = self.return_type
+        logger.debug('checking arguments used by %s calling %s (%s)', self, called_method, args)
         
         if args == None:
             args = self.params
-            if len(called_method.params) == 0:
-                logger.debug('Adding parameters from %s to %s', self.uname, called_method.uname)
-                called_method.params = self.params
             logger.debug('Altering call to supply arguments that map to parameters: %s', self)
-            self.set_tag('calls', [called_method, args])
+            self.set_tag('calls', [called_method, args]) # change the tag for 'calls' to have args
         else:
             #check that the args match params
             for arg in args:
@@ -308,6 +355,37 @@ class SGMethod(SGMetaDataContainer):
                     assert(self.has_parameter(arg.name), 
                         "Cannot match parameter " + str(arg) + 
                         " in call to " + str(called_method) + " from " + str(self))
+    
+    def check_call_validity(self):
+        '''
+        Check that the call has the right number of arguments
+        '''        
+        
+        called_method = self.tags['calls'].other[0] #get called method
+        args = self.tags['calls'].other[1]
+        params = called_method.params
+        
+        assert(len(args) == len(params), 'Error in %s calling %s', self.uname, called_method.uname)
+        
+        # 
+        # logger.debug('checking %s calling %s with %s', self, called_method, args)
+        # 
+        # called_method.return_type = self.return_type
+        # 
+        # if args == None:
+        #     args = self.params
+        #     if len(called_method.params) == 0:
+        #         logger.debug('Adding parameters from %s to %s', self.uname, called_method.uname)
+        #         called_method.params = self.params
+        #     logger.debug('Altering call to supply arguments that map to parameters: %s', self)
+        #     self.set_tag('calls', [called_method, args])
+        # else:
+        #     #check that the args match params
+        #     for arg in args:
+        #         if isinstance(arg, SGParameter):
+        #             assert(self.has_parameter(arg.name), 
+        #                 "Cannot match parameter " + str(arg) + 
+        #                 " in call to " + str(called_method) + " from " + str(self))
     
     def method_called(self):
         """returns the method that this method needs to call"""
@@ -318,7 +396,7 @@ class SGMethod(SGMetaDataContainer):
     
     def args_string_for_called_method(self, arg_visitor = None):
         args = self.args_for_method_call()
-        print self.method_called()
+        #print self.method_called()
         params = self.method_called().params
         
         arg_list = [ a.name if isinstance(a, SGParameter) else a for a in args ]
@@ -332,6 +410,7 @@ class SGMethod(SGMetaDataContainer):
         args = self.tags['calls'].other[1]
         
         if args == None:
+            assert(False, 'Args should be set')
             self.set_tag('calls', [self.tags['calls'].other[0], self.params])
             args = self.tags['calls'].other[1]
         
@@ -354,7 +433,7 @@ class SGMethod(SGMetaDataContainer):
         
         if self.in_class != None:
             result += self.in_class.name + '.'
-        result += self.name + '('
+        result += self.uname + '('
         result += self.param_string()
         result += ')'
         
@@ -363,6 +442,12 @@ class SGMethod(SGMetaDataContainer):
     def visit_params(self, visitor, other):
         for param in self.params:
             visitor(param, param == self.params[-1], other)
+    
+    def visit_args(self, visitor, other):
+        args = self.args_for_method_call()
+        for arg in args:
+            visitor(arg, arg == args[-1], other)
+    
 
 #
 # Test methods
@@ -385,15 +470,6 @@ def test_static_methods():
     
     my_method.is_static = True
     assert my_method.is_static
-
-def test_operator_methods():
-    """test the creation of a operator overload method"""
-    my_method = SGMethod("Multiply")
-    assert False == my_method.is_operator()
-    
-    my_method.operator = '*'
-    assert my_method.is_operator
-    assert '*' == my_method.operator
 
 def test_constructor_methods():
     """test the creation of a constructor"""

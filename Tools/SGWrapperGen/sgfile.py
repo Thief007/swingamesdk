@@ -36,6 +36,9 @@ class SGFile(object):
     def uses_str(self, visitor):
         return '%s;' % ', '.join([ visitor(a_file) for a_file in self.uses ])
     
+    def __repr__(self):
+        return self.pascal_name
+    
 def main():
   pass
 

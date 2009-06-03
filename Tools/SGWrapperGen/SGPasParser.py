@@ -79,6 +79,10 @@ class SGPasParser():
             sys.exit(-1)
     
     def _apply_attributes_to(self, model_element):
+        '''
+        Processing of the model element is complete, now apply
+        all of the attributes we read in the order they were read
+        '''
         #apply all attributes
         for attr_name, attr in self._ordered_attributes:
             model_element.set_tag(attr_name, attr)
@@ -379,7 +383,7 @@ class SGPasParser():
         name_tok = self._match_token('id')
         
         method = SGMethod(name_tok[1])
-        self._add_attribute('clone', method)
+        self._add_attribute('class_method', method)
     
     def process_overload_attribute(self, token):
         name_tok = self._match_token('id')
@@ -387,7 +391,7 @@ class SGPasParser():
         
         method = SGMethod(name_tok[1])
         method.uname = uname_tok[1]
-        self._add_attribute('clone', method)
+        self._add_attribute('class_method', method)
     
     def process_lib_attribute(self, token):
         '''
@@ -406,31 +410,30 @@ class SGPasParser():
         
         #search in library
         the_lib = find_or_add_class('lib')
-        
         method = the_lib.find_method(uname)
         if method == None: 
             method = SGMethod(uname)
             method.in_class = the_lib
             method.in_class.add_member(method)
         
-        next = self._lookahead(1)[0]
-        if next[0] == 'token' and next[1] == '(':
+        if self._match_lookahead('token', '('):
             #the lib attr has arguments
             open_tok = self._match_token('token', '(')
             args = []
             while True:
+                #argument is a number, or an identifier
                 if self._match_lookahead('number') or self._match_lookahead('string'):
-                    #attr = self._next_token()
                     value = self._next_token()
                     args.append(value[1])
-                elif not self._match_lookahead('id'): 
-                    break
-                else:
+                elif self._match_lookahead('id'): 
                     arg = self._next_token()
                     args.append(method.create_parameter(arg[1]))
+                else:
+                    assert(False, 'Error in arguments') 
                 
+                #if not comma following - end args
                 if not self._match_lookahead('token', ','): break;
-                comma = self._next_token()
+                comma = self._next_token() #read comma
                 
             close_tok = self._match_token('token', ')')
         else: args = None
