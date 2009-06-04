@@ -15,8 +15,7 @@ from sgcodemodule import SGCodeModule
 from SGType import SGType
 from SGField import SGField
 from SGMethod import SGMethod
-from sgcache import find_or_add_class, find_or_add_type, logger, find_or_add_file
-from SGType import SGType
+from sgcache import find_or_add_class, find_or_add_type, logger, find_or_add_file, all_types
 
 class SGPasParser():
     def __init__(self):
@@ -112,13 +111,13 @@ class SGPasParser():
             if not result in self._current_file.members:
                 self._current_file.members.append(result)
         elif kind == SGType:
-            result = find_or_add_type(name)
+            assert False
+            #result = find_or_add_type(name)
         else:
             result = kind(name)
             
         result.in_file = self._current_file
         logger.debug('Creating model element: %s with kind:%s', name, kind)
-        #self._apply_attributes_to(result)
         return result
     
     def _next_token(self):
@@ -141,9 +140,11 @@ class SGPasParser():
             self._lookahead_toks.append(current_token)
         return self._lookahead_toks
     
-    def _match_lookahead(self, token_kind, token_value = None):
+    def _match_lookahead(self, token_kind, token_value = None, consume = False):
         token = self._lookahead(1)[0]
-        result = token[0] == token_kind and (token_value == None or token_value == token[1])
+        result = token[0] == token_kind and (token_value == None or token_value == token[1].lower())
+        if consume and result:
+            self._match_token(token_kind, token_value)
         return result
     
     def _match_token(self, token_kind, token_value = None):
@@ -231,7 +232,7 @@ class SGPasParser():
         self._apply_attributes_to(unit)
         
         #unit name;
-        tok = self._match_token('token', ';')
+        tok = self._match_token('symbol', ';')
         
         #interface - ignore comments
         #self._skip_comments('unit ' + unit_name + '\'s interface')
@@ -341,7 +342,7 @@ class SGPasParser():
             logger.debug('Found using unit %s', tok[1])
             
             #found a token/unit
-            next_tok = self._match_token('token')
+            next_tok = self._match_token('symbol')
             if next_tok[1] == ';': 
                 break; #found end
             elif next_tok[1] != ',':
@@ -361,14 +362,17 @@ class SGPasParser():
         self._add_attribute(token[1], tok[1])
     
     def process_field_attribute(self, token):
-        global logger
+        '''
+        Have encountered @field - create a field for the generated class to use
+        '''
         tok = self._match_token('id') #field name
         field = SGField(tok[1])
         
         #todo: proper type matching...
-        tok = self._match_token('token', ':')
-        tok = self._match_token('id')
-        the_type = find_or_add_type(tok[1]) #todo: should be matching type for this...
+        tok = self._match_token('symbol', ':')
+        #tok = self._match_token('id')
+        #the_type = find_or_add_type(tok[1]) #todo: should be matching type for this...
+        the_type = self._read_type_usage()
         
         field.data_type = the_type
         self._append_attribute('field', field)
@@ -418,9 +422,9 @@ class SGPasParser():
             method.in_class = the_lib
             method.in_class.add_member(method)
         
-        if self._match_lookahead('token', '('):
+        if self._match_lookahead('symbol', '(', True):
             #the lib attr has arguments
-            open_tok = self._match_token('token', '(')
+            # open_tok = self._match_token('symbol', '(')
             args = []
             while True:
                 #argument is a number, or an identifier
@@ -434,10 +438,10 @@ class SGPasParser():
                     assert(False, 'Error in arguments') 
                 
                 #if not comma following - end args
-                if not self._match_lookahead('token', ','): break;
+                if not self._match_lookahead('symbol', ','): break;
                 comma = self._next_token() #read comma
                 
-            close_tok = self._match_token('token', ')')
+            close_tok = self._match_token('symbol', ')')
         else: args = None
         
         self._add_attribute('calls', [method, args])
@@ -462,17 +466,18 @@ class SGPasParser():
         logger.info('Processing types')
         logger.info('-' * 70)
         
+        #following type... in pascal
         while True:
             self.process_meta_comments()
             tok1, tok2 = self._lookahead(2)
-            if tok2[0] != 'token' or tok2[1] != '=' or tok1[0] != 'id':
+            #looking for... type_name = 
+            if tok2[0] != 'symbol' or tok2[1] != '=' or tok1[0] != 'id':
                 logger.debug('At end of block types')
                 break
             
-            tok = self._match_token('id')
-            type_name = tok[1]
+            type_name = self._match_token('id')[1] #read the types name
+            self._match_token('symbol','=') #read the =
             
-            tok = self._match_token('token','=')
             the_type = find_or_add_type(type_name)
             
             self._parse_type_declaration(the_type)
@@ -491,43 +496,73 @@ class SGPasParser():
         # self._classes[the_type.name] = new_class
     
     def _parse_type_declaration(self, the_type):
-        '''Parse a type from the next token, add details to the_type.'''
+        '''
+        Parse a type from the next token, add details to the_type.
+        this is called for each type declaration... type_name = BLAH
+        Need to process BLAH and add details to the_type
+        '''
+        #check what kind of type it is...
         tok = self._lookahead(1)[0]
         
-        if tok[0] == 'token' and tok[1] == '(':
-            print 'enum'
-            sys.exit(-2)
+        if tok[0] == 'symbol' and tok[1] == '(':
+            values = []
+            self._match_token('symbol', '(')
+            while not self._match_token('symbol',')'):
+                values.append(self._match_token('id')[1])
+                #consume commas
+                self._match_lookahead('symbol', ',', True)
         elif tok[0] == 'id':
-            if tok[1] == 'record':
+            if tok[1].lower() == 'record':
                 print 'record'
                 sys.exit(-2)
-            elif tok[1] == 'array':
-                print 'array'
-                sys.exit(-2)
+            elif tok[1].lower() == 'array':
+                the_type.clone(self._read_type_usage())
             else:
-                self._parse_type_simple(the_type);
-                
+                other_id = self._match_token('id')[1]
+                other_type = find_or_add_type(other_id)
+                the_type.related_type = other_type
         else:
             logger.error('Parser Error %s: unknown type %s(%s)', 
                 self._tokeniser.line_details(), tok[0], tok[1])
-    
-    def _parse_type_simple(self, the_type):
-        tok = self._match_token('id')
-        type_name = tok[1]
-        
-        self._match_token('token', ';')
-        logger.debug('Simple type using %s', tok[1])
-        
+                
+        logger.info('Setup type %s = %s', the_type, the_type.related_type)
         self._apply_attributes_to(the_type)
-        
-        return find_or_add_type(tok[1])
+        self._match_token('symbol', ';')
     
     def _read_type_usage(self):
         '''Read a type identifier, or array of type, etc. and return a SGType'''
         #todo: finish this!!!
         
-        id_tok = self._match_token('id')
-        return find_or_add_type(id_tok[1])
+        if self._match_lookahead('id', 'array', True):
+            #found an array
+            dimensions = []
+            # array [0..n,0..m] of
+            if self._match_lookahead('symbol', '[', True):
+                while True:
+                    low_idx = self._match_token('number')[1]
+                    self._match_token('symbol', '.')
+                    self._match_token('symbol', '.')
+                    high_idx = self._match_token('number')[1]
+                    dimensions.append((low_idx,high_idx))
+                    
+                    if self._match_lookahead('symbol', ']', True):
+                        break
+                    self._match_token('symbol', ',')
+            # of type...
+            self._match_token('id', 'of')
+            nested_type = self._read_type_usage() #recursive call
+            
+            name = nested_type.name + '[]' * len(dimensions)
+            was_new = not name in all_types()
+            
+            result = find_or_add_type(name)
+            if was_new:
+                result.dimensions = dimensions
+                result.nested_type = nested_type
+            return result
+        else:
+            id_tok = self._match_token('id')
+            return find_or_add_type(id_tok[1])
     
     def process_method_decl(self, block, token):
         '''process a method read from a unit.
@@ -536,7 +571,7 @@ class SGPasParser():
         At the end of this the method has been read in and added to block.
         '''
         name_tok = self._match_token('id') #name of function/procedure
-        open_tok = self._match_token('token', '(')
+        open_tok = self._match_token('symbol', '(')
         
         #add class!
         self._add_attribute('name', name_tok[1]) #name comes from function/procedure
@@ -555,12 +590,12 @@ class SGPasParser():
                     modifier = None
                 param_toks = [self._match_token('id')]
                 
-                while self._match_lookahead('token', ','):
+                while self._match_lookahead('symbol', ','):
                     #there is a list of parameters
                     self._next_token() #consume ,
                     param_toks.append(self._match_token('id'))
                 
-                colon_tok = self._match_token('token', ':')
+                colon_tok = self._match_token('symbol', ':')
                 the_type = self._read_type_usage()
                 
                 for param_tok in param_toks:
@@ -569,25 +604,25 @@ class SGPasParser():
                     param.modifier = modifier
                     logger.debug('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
                 
-                if self._match_lookahead('token', ';'):
+                if self._match_lookahead('symbol', ';'):
                     self._next_token()
                 else: break
             else: break
         
-        close_tok = self._match_token('token', ')')
+        close_tok = self._match_token('symbol', ')')
         
         if token[1] == 'function': #return return details
-            colon_tok = self._match_token('token', ':')
+            colon_tok = self._match_token('symbol', ':')
             the_type = self._read_type_usage()
             method.return_type = the_type
             logger.debug('Set return type of method %s to %s', method.name, method.return_type)
         
-        end_tok = self._match_token('token', ';')
+        end_tok = self._match_token('symbol', ';')
         
         #check overload ;
         if self._match_lookahead('id', 'overload'):
             self._next_token();
-            self._match_token('token', ';')
+            self._match_token('symbol', ';')
             self._add_attribute('overload', True)
         
         #logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())

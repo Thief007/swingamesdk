@@ -16,6 +16,9 @@ def all_classes():
 def all_files():
     return _files
 
+def all_types():
+    return _loaded_types;
+
 def find_or_add_class(name):
     '''finds or creates and adds a class with the indicated name'''
     if name == None: return None

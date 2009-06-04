@@ -17,9 +17,16 @@ class SGType(SGMetaDataContainer):
     
     def __init__(self, name):
         """Initialise the type, setting its name"""
-        SGMetaDataContainer.__init__(self, ['fields','class','uname'])
+        SGMetaDataContainer.__init__(self, ['fields',
+            'class','uname', 'dimensions','nested_type', 'related_type',
+            'pointer_wrapper', 'data_wrapper'])
         self.name = name
         self.set_tag('fields', [])
+        self.dimensions = None
+        self.related_type = None
+        self.pointer_wrapper = False
+        self.data_wrapper = False
+        self.values = None
     
     def __str__(self):
         '''String rep'''
@@ -28,7 +35,40 @@ class SGType(SGMetaDataContainer):
     def __repr__(self):
         return self.name
     
+    def clone(self, other):
+        '''Clones all but name'''
+        self.set_tag('fields',other.fields)
+        self.dimensions = other.dimensions
+        self.related_type = other
+    
     fields = property(lambda self: self['fields'].other, None, None, "The fields for the type.")
+    
+    dimensions = property(lambda self: self['dimensions'].other, 
+        lambda self, value: self.set_tag('dimensions', value), 
+        None, 'The dimensions of this if it is an array')
+    
+    nested_type = property(lambda self: self['nested_type'].other, 
+        lambda self, value: self.set_tag('nested_type', value), 
+        None, 'The other type contained within this type eg. array of ...')
+    
+    related_type = property(lambda self: self['related_type'].other, 
+        lambda self, value: self.set_tag('related_type', value), 
+        None, 'The other type this one relates to')
+    
+    pointer_wrapper = property(lambda self: self['pointer_wrapper'].other, 
+        lambda self, value: self.set_tag('pointer_wrapper', value), 
+        None, 'This type wraps a pointer')
+    
+    data_wrapper = property(lambda self: self['data_wrapper'].other, 
+        lambda self, value: self.set_tag('data_wrapper', value), 
+        None, 'This type wraps a pointer')
+    
+    values = property(lambda self: self['values'].other, 
+        lambda self, value: self.set_tag('values', value), 
+        None, 'The values for a enumeration')
+    
+    is_array = property(lambda self: self.dimensions != None, None, None, 'Indicates that this type is an array')
+    is_enum = property(lambda self: self.values != None, None, None, 'Indicates that this type is an enumeration')
 
 def main():
   pass
