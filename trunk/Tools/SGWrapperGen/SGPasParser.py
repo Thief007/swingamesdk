@@ -552,8 +552,10 @@ class SGPasParser():
                 
         if the_type.related_type != None:
             logger.info('Setup type %s = %s', the_type, the_type.related_type)
-        else:
+        elif the_type.is_enum:
             logger.info('Setup type %s = %s', the_type, the_type.values)
+        else:
+            logger.info('Setup type %s = %s', the_type, the_type.fields)
         self._apply_attributes_to(the_type)
         self._match_token('symbol', ';')
     
