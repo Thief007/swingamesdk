@@ -165,7 +165,7 @@ class SGPasTokeniser():
             elif t == '\n': #advance to next line
                 self._advance_line()
             elif t in '1234567890': #is digit
-                return ['number', self._read_matching(t, lambda cha: cha in '1234567890.')]
+                return ['number', self._read_matching(t, lambda cha: cha in '1234567890' or (cha == '.' and self._peek(1) in '1234567890'))]
             elif t == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
@@ -188,7 +188,7 @@ class SGPasTokeniser():
                     return ['number', self._read_matching(t, lambda cha: cha in '1234567890.')]
                 else:
                     return ['token',t]
-            elif t in '(),:;{=':
+            elif t in '(),:;{=[].':
                 if t == '(' and self._peek(1) == '*':
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
                     return ['comment', comment[:-2]]
