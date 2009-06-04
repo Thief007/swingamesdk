@@ -19,7 +19,7 @@ class SGType(SGMetaDataContainer):
         """Initialise the type, setting its name"""
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
-            'pointer_wrapper', 'data_wrapper'])
+            'pointer_wrapper', 'data_wrapper', 'values'])
         self.name = name
         self.set_tag('fields', [])
         self.dimensions = None
