@@ -187,7 +187,7 @@ class SGPasTokeniser():
                 if self._peek(1) in '1234567890':
                     return ('number', self._read_matching(t, lambda cha: cha in '1234567890.'))
                 else:
-                    return ('token',t)
+                    return ('symbol',t)
             elif t in '(),:;{=[].':
                 if t == '(' and self._peek(1) == '*':
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
@@ -195,7 +195,7 @@ class SGPasTokeniser():
                 elif t == '{':
                     comment = self._read_until('', lambda temp: temp[-1:] == '}')
                     return ('comment', comment[:-1])
-                return ('token', t)
+                return ('symbol', t)
             elif t == '\'':
                 string = self._read_until('', lambda temp: (temp[-1:] == '\'') and (not self._match_and_read('\'')))
                 return ('string', string[:-1])
@@ -228,37 +228,35 @@ def test_basic():
     assert_next_token(t, ('comment', 'Hello World'))
     assert_next_token(t, ('meta comment', 'Special Comment'))
     assert_next_token(t, ('attribute', 'test'))
-    assert_next_token(t, ('token', '('))
+    assert_next_token(t, ('symbol', '('))
     assert_next_token(t, ('id', 'attr'))
-    assert_next_token(t, ('token', ')'))
+    assert_next_token(t, ('symbol', ')'))
     assert_next_token(t, ('number', '12345'))
     assert_next_token(t, ('number', '123.45'))
     assert_next_token(t, ('comment', ' test multi line 1234\ncomments'))
     assert_next_token(t, ('id', 'end'))
     assert_next_token(t, ('meta comment', ''))
     assert_next_token(t, ('attribute', 'another'))
-    assert_next_token(t, ('token', '('))
+    assert_next_token(t, ('symbol', '('))
     assert_next_token(t, ('id', 'attr'))
-    assert_next_token(t, ('token', ','))
+    assert_next_token(t, ('symbol', ','))
     assert_next_token(t, ('id', 'attr2'))
-    assert_next_token(t, ('token', ')'))
+    assert_next_token(t, ('symbol', ')'))
     assert_next_token(t, ('string', 'a\'end'))
 
     assert_next_token(t, ('number', '0'))
-    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('symbol', '.'))
     
     assert_next_token(t, ('number', '2'))
-    assert_next_token(t, ('token', '.'))
-    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('symbol', '.'))
+    assert_next_token(t, ('symbol', '.'))
     assert_next_token(t, ('number', '5'))
 
     assert_next_token(t, ('number', '3'))
     assert_next_token(t, ('id', 'a'))
     
-    assert_next_token(t, ('number', '2'))
-    assert_next_token(t, ('token', '.'))
-    assert_next_token(t, ('number', '1'))
-    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('number', '2.1'))
+    assert_next_token(t, ('symbol', '.'))
     assert_next_token(t, ('number', '2'))
 
 
