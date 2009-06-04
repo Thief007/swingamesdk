@@ -18,8 +18,8 @@ class SGPasTokeniser():
         self._filename = 'supplied data'
     
     def tokenise(self, filename):
-        '''Initialises the tokeniser with the details from the passed in 
-        filename.
+        '''Initialises the tokeniser with characters loaded from the specified 
+        filename. Call `next_token` process each token.
         '''
         
         if isinstance(filename, list):
@@ -67,7 +67,7 @@ class SGPasTokeniser():
         result = start
         cha = self._next_char();
         #print 'matching', cha
-        while match_fn(cha):
+        while match_fn(cha, result):
             result += cha
             cha = self._next_char();
             #print 'matching', cha
@@ -155,17 +155,43 @@ class SGPasTokeniser():
         
     
     def next_token(self):
-        '''Returns the current token'''
+        '''Find and return a tuple with the next token details. Tuple contains 
+        the token (type, value) as strings. The token types and details are: 
+        
+            number,       # such as 1234, 123.45, -123, +123.4
+            comment,      # single // or multi-line (* ... *), { ... } 
+            meta comment, # start with /// ...
+            id,           # identifier name starting with alpha, including 
+                          # alpha-numeric characters and the _ character
+            attribute,    # name starting with @... inside meta comment block 
+                          # follows the id name character rules
+            symbol,       # one of '+-:;,.()'
+        
+        '''
+        
+        def num_match(cha, tmp):
+            '''Checks for a number in format ##, ##.#. Returns False when at the 
+            end of a number.'''
+            if cha in '1234567890':
+                return True
+            elif cha == '.' and '.' not in tmp:
+                return self._peek(1) in '1234567890'
+            else:
+                return False
         
         while (True):
             t = self._next_char();
             
+            # Ignore white space characters
             if t == ' ' or t == '\t': #ignore white space
                 pass
-            elif t == '\n': #advance to next line
+            # Move to next line (if at end of line)
+            elif t == '\n': 
                 self._advance_line()
+            # Numbers (int or float style format
             elif t in '1234567890': #is digit
-                return ('number', self._read_matching(t, lambda cha: cha in '1234567890' or (cha == '.' and self._peek(1) in '1234567890')))
+                return ('number', self._read_matching(t, num_match))
+            # Comment, single line // or meta comment line ///
             elif t == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
@@ -177,17 +203,21 @@ class SGPasTokeniser():
                     return (kind, comment)
                 else:
                     return ('error', t)
+            # Attribute identified by an @ symbol then a name
             elif t == '@':
-                name = self._read_matching('', lambda cha: cha.isalnum() or cha == '_')
+                name = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
                 return ('attribute', name)
+            # Identifier (id) of alphanumeric characters including 
             elif t.isalpha():
-                name = self._read_matching(t, lambda cha: cha.isalnum() or cha == '_')
+                name = self._read_matching(t, lambda cha, tmp: cha.isalnum() or cha == '_')
                 return ('id', name)
+            # Sign modifier for a number value?
             elif t in '-+':
                 if self._peek(1) in '1234567890':
-                    return ('number', self._read_matching(t, lambda cha: cha in '1234567890.'))
+                    return ('number', self._read_matching(t, num_match))
                 else:
                     return ('symbol',t)
+            # Symbol, possibly a block comment identifier
             elif t in '(),:;{=[].':
                 if t == '(' and self._peek(1) == '*':
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
@@ -196,10 +226,13 @@ class SGPasTokeniser():
                     comment = self._read_until('', lambda temp: temp[-1:] == '}')
                     return ('comment', comment[:-1])
                 return ('symbol', t)
-            elif t == '\'':
-                string = self._read_until('', lambda temp: (temp[-1:] == '\'') and (not self._match_and_read('\'')))
+            # Catch any single quotes inside a string value.
+            elif t == "'":
+                string = self._read_until('', lambda temp: (temp[-1:] == "'") and (not self._match_and_read("'")))
                 return ('string', string[:-1])
+            # Hmm.. unknown token. What did we forget? 
             else:
+                logger.error("Unknown token type: "+t)
                 return ('error', t)
     
     
@@ -219,7 +252,8 @@ def test_basic():
         '{ test multi line 1234\n', 
         'comments} end\n', 
         '/// @another(attr,attr2) \'a\'\'end\'',
-        '0. 2..5 3a 0.1.2\n', 
+        '0. 2..5 3a 0.1.2\n',
+        """'''blah'''""", 
     ]
     t = SGPasTokeniser()
     
@@ -227,14 +261,18 @@ def test_basic():
     
     assert_next_token(t, ('comment', 'Hello World'))
     assert_next_token(t, ('meta comment', 'Special Comment'))
+
     assert_next_token(t, ('attribute', 'test'))
     assert_next_token(t, ('symbol', '('))
     assert_next_token(t, ('id', 'attr'))
     assert_next_token(t, ('symbol', ')'))
+    
     assert_next_token(t, ('number', '12345'))
     assert_next_token(t, ('number', '123.45'))
+    
     assert_next_token(t, ('comment', ' test multi line 1234\ncomments'))
     assert_next_token(t, ('id', 'end'))
+    
     assert_next_token(t, ('meta comment', ''))
     assert_next_token(t, ('attribute', 'another'))
     assert_next_token(t, ('symbol', '('))
@@ -255,15 +293,13 @@ def test_basic():
     assert_next_token(t, ('number', '3'))
     assert_next_token(t, ('id', 'a'))
     
-    assert_next_token(t, ('number', '2.1'))
+    assert_next_token(t, ('number', '0.1'))
     assert_next_token(t, ('symbol', '.'))
     assert_next_token(t, ('number', '2'))
-
-
-
+    
+    assert_next_token(t, ('string', "'blah'"))
+    
 
 if __name__ == '__main__':
-    #import nose
-    #nose.run()
     test_basic()
 
