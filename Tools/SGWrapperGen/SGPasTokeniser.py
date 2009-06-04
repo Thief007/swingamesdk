@@ -18,8 +18,8 @@ class SGPasTokeniser():
         self._filename = 'supplied data'
     
     def tokenise(self, filename):
-        '''Initialises the tokeniser with the details from
-        the passed in filename.
+        '''Initialises the tokeniser with the details from the passed in 
+        filename.
         '''
         
         if isinstance(filename, list):
@@ -37,10 +37,11 @@ class SGPasTokeniser():
         self._token_val = 'none'
     
     def line_details(self):
+        '''Return string with line no. and filename details.'''
         return 'line %d in %s' % (self._line_no + 1, self._filename)
     
     def _next_char(self):
-        '''Returns the next character from the input file'''
+        '''Returns the next character from the input file.'''
         self._char_no += 1
         #print self._char_no, ' ', self._line_no
         if len(self.pas_lines[self._line_no]) <= self._char_no:
@@ -48,6 +49,8 @@ class SGPasTokeniser():
         return self.pas_lines[self._line_no][self._char_no]
     
     def _peek(self, chars):
+        '''Return a string with next number of "chars" line or \\n if at or 
+        past the line end. '''
         if len(self.pas_lines[self._line_no]) <= self._char_no + 1:
             result = '\n'
         else:
@@ -56,6 +59,11 @@ class SGPasTokeniser():
         return result
     
     def _read_matching(self, start, match_fn):
+        '''Return a string starting with the "start" character and moving
+        along the current line (increasing self._char_no) until the match_fn 
+        returns True on the current new character of the line. Result does 
+        *not* include the last matched character. 
+        '''
         result = start
         cha = self._next_char();
         #print 'matching', cha
@@ -67,10 +75,17 @@ class SGPasTokeniser():
         return result
         
     def _advance_line(self):
+        '''Move the line index to the next line. Reset the line character no to
+        the initial value (-1).'''
         self._line_no += 1
         self._char_no = -1
     
     def _read_until(self, start, end_fn):
+        '''Return a string starting with (and including) the "start" character
+        and moving along the stream of file characters (across multiple lines 
+        if needed) and stopping when the end_fn returns True on the current result
+        of characters. 
+        '''
         result = start
         cha = self._next_char();
         result += cha
@@ -85,9 +100,9 @@ class SGPasTokeniser():
         return result
     
     def _match_and_read(self, cha):
-        '''
-        if cha matches the following character, then read that character
-        and return True, otherwise return False
+        '''Looks at (peeks) the next character so see if it matches `cha`. 
+        If `cha` does match then the character cursor is moved and True is 
+        returned, otherwise False is returned.
         '''
         #print 'matching and reading', cha, ' = ', self._peek(1)
         if self._peek(1) == cha:
@@ -97,11 +112,20 @@ class SGPasTokeniser():
             return False
     
     def read_to_eol(self):
+        '''Read and return a string with the rest of the current line, 
+        stripped of any starting or trailing whitespace characters. The cursor 
+        is advanced to the next line.
+        '''
         result = self.pas_lines[self._line_no][self._char_no + 1:-1]
         self._advance_line()
         return result.strip()
     
     def read_to_end_of_comment(self):
+        '''Read and return a string starting from the current cursor position
+        and reading up to end of the "comment" section. The end of a comment is
+        indicated by the discovery of either an attribute (starting with "@"), 
+        or the end of the comment section. Leading whitespace is stripped. 
+        '''
         cha = self._next_char();
         result = ''
         line = ''
@@ -178,11 +202,19 @@ class SGPasTokeniser():
             else:
                 return ['error', t]
     
+    
+#==============================================================================
 
 def test_basic():
-    lines = ['// Hello World\n', '/// Special Comment\n', '///@test(attr)\n', 
-        '12345 123.45\n', '{ test multi line 1234\n', 'comments} end\n', 
-        '/// @another(attr,attr2) \'a\'\'end\'']
+    lines = [
+        '// Hello World\n', 
+        '/// Special Comment\n', 
+        '///@test(attr)\n', 
+        '12345 123.45\n', 
+        '{ test multi line 1234\n', 
+        'comments} end\n', 
+        '/// @another(attr,attr2) \'a\'\'end\''
+    ]
     tokeniser = SGPasTokeniser()
     
     tokeniser.tokenise(lines)
