@@ -21,7 +21,7 @@ class SGCodeModule(SGMetaDataContainer):
     
     def __init__(self, name):
         """Initialise the class, setting its name"""
-        super(SGCodeModule,self).__init__(['static','module_kind'])
+        super(SGCodeModule,self).__init__(['static','module_kind','data_wrapper','pointer_wrapper'])
         self.name = name
         self.methods = dict()
         self.properties = dict()
@@ -60,7 +60,15 @@ class SGCodeModule(SGMetaDataContainer):
     
     is_static = property(lambda self: self['static'].other, 
         lambda self,value: self.set_tag('static', value), 
-        None, 'Is the method associated with a class.')
+        None, 'Is the class static (no instance members).')
+    
+    is_pointer_wrapper = property(lambda self: self['pointer_wrapper'].other, 
+        lambda self,value: self.set_tag('pointer_wrapper', value), 
+        None, 'Does the class wrap a pointer in SwinGame')
+    
+    is_data_wrapper = property(lambda self: self['data_wrapper'].other, 
+        lambda self,value: self.set_tag('data_wrapper', value), 
+        None, 'Does the class wrap data from SwinGame')
     
     module_kind = property(lambda self: self['module_kind'].other, 
         lambda self,value: self.set_tag('module_kind', value), 

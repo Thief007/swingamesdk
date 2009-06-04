@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-// 					SGSDK_Graphics.pas
+//          SGSDK_Graphics.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -17,16 +17,16 @@
 // Version 2.0: in progress
 // - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-10: Andrew: Moved primitive drawing to SDL_gfx
-//						 Added rotation and zoom to Sprite + Sprite Drawing
-//						 Added RotateZoomBitmap
-//						 Added MakeOpaque and MakeTransparent to allow multiple blending
-//						 Added extra triangle drawing code
+//             Added rotation and zoom to Sprite + Sprite Drawing
+//             Added RotateZoomBitmap
+//             Added MakeOpaque and MakeTransparent to allow multiple blending
+//             Added extra triangle drawing code
 // - 2008-12-09: Andrew: Started transition to SDL_gfx
 //
 // Version 1.1:
 // - 2008-04-08: Stephen: Added DrawTriangle()
 // - 2008-04-02: Andrew: Fixed issues related to freeing images
-//						 Fixed transparent pixels for non 32bit images
+//             Fixed transparent pixels for non 32bit images
 // - 2008-03-09: Andrew: Fixed DrawSprite with Offset
 // - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
 // - 2008-01-31: Andrew: Fixed Line Drawing Issue
@@ -44,2030 +44,2030 @@
 unit SGSDK_Graphics;
 
 interface
-	uses SDL, SGSDK_Core, SDL_image, SGSDK_Shapes;
-		
-	//*****
-	//
-	// Resource loading and freeing routines
-	//
-	//*****
-	//
-	// These routines are used to load resources, and to free them.
-	//
-	
-	function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
-	
-	function CreateBitmap(width, height: LongInt): Bitmap;
-	function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Colour): Bitmap; overload;
-	function LoadBitmap(pathToBitmap : String): Bitmap; overload;
-	function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Colour): Bitmap; overload;
-	procedure OptimiseBitmap(surface: Bitmap);
-	procedure FreeBitmap(var bitmapToFree : Bitmap);
-	
-	//*****
-	//
-	// Bitmap drawing routines
-	//
-	//*****
-	//
-	// These routines are used to draw to a bitmap.
-	//
+  uses SDL, SGSDK_Core, SDL_image, SGSDK_Shapes;
+    
+  //*****
+  //
+  // Resource loading and freeing routines
+  //
+  //*****
+  //
+  // These routines are used to load resources, and to free them.
+  //
+  
+  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
+  
+  function CreateBitmap(width, height: LongInt): Bitmap;
+  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
+  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
+  procedure OptimiseBitmap(surface: Bitmap);
+  procedure FreeBitmap(var bitmapToFree : Bitmap);
+  
+  //*****
+  //
+  // Bitmap drawing routines
+  //
+  //*****
+  //
+  // These routines are used to draw to a bitmap.
+  //
 
-	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
-	procedure ClearSurface(dest: Bitmap); overload;
-	
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); overload;
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; const position : Point2D); overload;
-	
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : LongInt); overload;
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; const position: Point2D); overload;
-	
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: LongInt); overload;
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; const position: Point2D); overload;
+  procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
+  procedure ClearSurface(dest: Bitmap); overload;
+  
+  procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); overload;
+  procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; const position : Point2D); overload;
+  
+  procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; const position: Point2D); overload;
+  
+  procedure DrawPixel(dest: Bitmap; theColor: Color; x, y: LongInt); overload;
+  procedure DrawPixel(dest: Bitmap; theColor: Color; const position: Point2D); overload;
 
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean; const source: Rectangle); overload;
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height: LongInt); overload;
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; filled : Boolean; const source: Rectangle); overload;
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
 
-	procedure FillRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : LongInt); overload;
-	procedure FillRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
+  procedure FillRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
 
-	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
-	procedure DrawLine(dest: Bitmap; theColour: Colour; const line: LineSegment); overload;
+  procedure DrawLine(dest: Bitmap; theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLine(dest: Bitmap; theColor: Color; const line: LineSegment); overload;
 
-	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt); overload;
+  procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt); overload;
 
-	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt); overload;
+  procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt); overload;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt); overload;
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
 
-	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt); overload;
-	procedure FillCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; const source: Rectangle); overload;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: LongInt); overload;
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
-	
-	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: LongInt); overload;
-	procedure FillEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
+  
+  procedure FillEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
 
-	//*****
-	//
-	// Screen drawing routines
-	//
-	//*****
-	//
-	// These routines are used to to the View Area on the screen.
-	//
+  //*****
+  //
+  // Screen drawing routines
+  //
+  //*****
+  //
+  // These routines are used to to the View Area on the screen.
+  //
 
-	procedure ClearScreen(); overload;
-	procedure ClearScreen(toColour : Colour); overload;
+  procedure ClearScreen(); overload;
+  procedure ClearScreen(toColor : Color); overload;
 
-	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
-	procedure DrawBitmap(bitmapToDraw : Bitmap; const position : Point2D); overload;
+  procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
+  procedure DrawBitmap(bitmapToDraw : Bitmap; const position : Point2D); overload;
 
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; x, y : Single); overload;
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; const position : Point2D); overload;
-	
-	procedure DrawPixel(theColour: Colour; x, y: Single); overload;
-	procedure DrawPixel(theColour: Colour; const position: Point2D); overload;
+  procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+  procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; x, y : Single); overload;
+  procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; const position : Point2D); overload;
+  
+  procedure DrawPixel(theColor: Color; x, y: Single); overload;
+  procedure DrawPixel(theColor: Color; const position: Point2D); overload;
 
-	procedure DrawRectangle(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
-	procedure DrawRectangle(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawRectangle(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawRectangle(theColor: Color; filled: Boolean; const source: Rectangle); overload;
 
-	procedure DrawRectangle(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
-	procedure DrawRectangle(theColour: Colour; const source: Rectangle); overload;
+  procedure DrawRectangle(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawRectangle(theColor: Color; const source: Rectangle); overload;
 
-	procedure FillRectangle(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
-	procedure FillRectangle(theColour: Colour; const source: Rectangle); overload;
+  procedure FillRectangle(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure FillRectangle(theColor: Color; const source: Rectangle); overload;
 
-	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
-	procedure DrawLine(theColour: Colour; const line: LineSegment); overload;
-	
-  procedure DrawTriangle(theColour: Colour; filled: Boolean; const triangle: Triangle); overload; //In tests
-	procedure DrawTriangle(theColour: Colour; const triangle: Triangle); overload; //In tests
-	procedure FillTriangle(theColour: Colour; const triangle: Triangle); overload; //In tests
+  procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+  procedure DrawLine(theColor: Color; const line: LineSegment); overload;
+  
+  procedure DrawTriangle(theColor: Color; filled: Boolean; const triangle: Triangle); overload; //In tests
+  procedure DrawTriangle(theColor: Color; const triangle: Triangle); overload; //In tests
+  procedure FillTriangle(theColor: Color; const triangle: Triangle); overload; //In tests
 
-  procedure DrawTriangleOnScreen(theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
-	procedure DrawTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
-	procedure FillTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
-	  
-  procedure DrawTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-  procedure FillTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  procedure DrawTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+    
+  procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
 
-  procedure DrawTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //In tests
-  procedure FillTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //In tests
-		  
-  procedure DrawTriangle(dest: Bitmap; theColour: Colour; filled: Boolean; const triangle: Triangle); overload; //In tests
-	procedure DrawTriangle(dest: Bitmap; theColour: Colour; const triangle: Triangle); overload; //In tests
-	procedure FillTriangle(dest: Bitmap; theColour: Colour; const triangle: Triangle); overload; //In tests
+  procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload; //In tests
+  procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload; //In tests
+      
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const triangle: Triangle); overload; //In tests
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload; //In tests
+  procedure FillTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload; //In tests
 
-  procedure DrawTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //in tests
-  procedure FillTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload; //in tests
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload; //in tests
+  procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload; //in tests
 
-	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
-	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
+  procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
+  procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
-	procedure DrawCircle(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(theColor: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
 
-	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
-	procedure DrawCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
 
-	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
-	procedure FillCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
 
-	procedure DrawEllipse(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
-	procedure DrawEllipse(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	procedure DrawEllipse(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
-	procedure DrawEllipse(theColour: Colour; const source: Rectangle); overload;
+  procedure DrawEllipse(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(theColor: Color; const source: Rectangle); overload;
 
-	procedure FillEllipse(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
-	procedure FillEllipse(theColour: Colour; const source: Rectangle); overload;
+  procedure FillEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure FillEllipse(theColor: Color; const source: Rectangle); overload;
 
-	//*****
-	//
-	// Sprite routines
-	//
-	//*****
-	//
-	// These routines are used to work with Sprites within your game.
-	//
+  //*****
+  //
+  // Sprite routines
+  //
+  //*****
+  //
+  // These routines are used to work with Sprites within your game.
+  //
 
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; width, height : LongInt): Sprite; overload;
-	function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
-	function CreateSprite(image : Bitmap): Sprite; overload;
-	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction): Sprite; overload;
-	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
-	function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : LongInt): Sprite; overload;
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; width, height : LongInt): Sprite; overload;
+  function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
+  function CreateSprite(image : Bitmap): Sprite; overload;
+  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction): Sprite; overload;
+  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
+  function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : LongInt): Sprite; overload;
 
-	procedure FreeSprite(var spriteToFree : Sprite);
+  procedure FreeSprite(var spriteToFree : Sprite);
 
-	function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): LongInt;
+  function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): LongInt;
 
-	function CurrentHeight(sprite: Sprite): LongInt; inline;
-	function CurrentWidth(sprite: Sprite): LongInt; inline;
-	
-	procedure ReplayAnimation(theSprite : Sprite);
-	
-	procedure UpdateSprite(spriteToUpdate: Sprite); overload;
-	procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
-	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
-	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
+  function CurrentHeight(sprite: Sprite): LongInt; inline;
+  function CurrentWidth(sprite: Sprite): LongInt; inline;
+  
+  procedure ReplayAnimation(theSprite : Sprite);
+  
+  procedure UpdateSprite(spriteToUpdate: Sprite); overload;
+  procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
 
-	procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: LongInt); overload;
-	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
-	procedure DrawSprite(spriteToDraw : Sprite); overload;
-		
-	procedure MoveSprite(spriteToMove: Sprite); overload;
-	procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
-	procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector); overload;
-	procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector; pct: Single); overload;
-	  
-	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
-	
-	function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
+  procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: LongInt); overload;
+  procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
+  procedure DrawSprite(spriteToDraw : Sprite); overload;
+    
+  procedure MoveSprite(spriteToMove: Sprite); overload;
+  procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
+  procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector); overload;
+  procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector; pct: Single); overload;
+    
+  procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
+  
+  function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
 
-	//*****
-	//
-	// Draws elements directly onto the screen, ignoring the visible window
-	// setting.
-	//
-	//*****
-	//
-	// These routines are used to move the visual window.
-	//
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : LongInt); overload;
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; const position: Point2D); overload;
-	
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); overload;
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; const position : Point2D); overload;
-	
-	procedure DrawPixelOnScreen(theColour: Colour; x, y: LongInt); overload;
-	procedure DrawPixelOnScreen(theColour: Colour; const position: Point2D); overload;
+  //*****
+  //
+  // Draws elements directly onto the screen, ignoring the visible window
+  // setting.
+  //
+  //*****
+  //
+  // These routines are used to move the visual window.
+  //
+  procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; const position: Point2D); overload;
+  
+  procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); overload;
+  procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; const position : Point2D); overload;
+  
+  procedure DrawPixelOnScreen(theColor: Color; x, y: LongInt); overload;
+  procedure DrawPixelOnScreen(theColor: Color; const position: Point2D); overload;
 
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; const source : Rectangle); overload;
-	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
-	procedure DrawRectangleOnScreen(theColour : Colour; const source : Rectangle); overload;
+  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  procedure DrawRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
 
-	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
-	procedure FillRectangleOnScreen(theColour : Colour; const source : Rectangle); overload;
+  procedure FillRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
 
-	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
-	procedure DrawLineOnScreen(theColour: Colour; const line: LineSegment); overload;
+  procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLineOnScreen(theColor: Color; const line: LineSegment); overload;
 
-	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt);
+  procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt);
 
-	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt);
+  procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt);
 
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
-	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
-	procedure DrawCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
+  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  procedure DrawCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
 
-	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
-	procedure FillCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  procedure FillCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
 
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	procedure DrawEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: LongInt); overload;
-	procedure DrawEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
+  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
 
-	procedure FillEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: LongInt); overload;
-	procedure FillEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
-	
-	///
-	/// Clipping
-	///	
-	procedure SetClip(x, y, w, h: LongInt); overload; {1.1}
-	procedure SetClip(r: Rectangle); overload; {1.1}
+  procedure FillEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  
+  ///
+  /// Clipping
+  /// 
+  procedure SetClip(x, y, w, h: LongInt); overload; {1.1}
+  procedure SetClip(r: Rectangle); overload; {1.1}
 
-	procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload; {1.1}
-	procedure SetClip(bmp: Bitmap; r: Rectangle); overload; {1.1}
+  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload; {1.1}
+  procedure SetClip(bmp: Bitmap; r: Rectangle); overload; {1.1}
 
-	procedure ResetClip(); overload; {1.1}
-	procedure ResetClip(bmp: Bitmap); overload; {1.1}
-		
-	function GetPixel(bmp: Bitmap; x, y: LongInt): Colour;
-	function GetPixelFromScreen(x, y: LongInt): Colour;
+  procedure ResetClip(); overload; {1.1}
+  procedure ResetClip(bmp: Bitmap); overload; {1.1}
+    
+  function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
+  function GetPixelFromScreen(x, y: LongInt): Color;
 
   //
   // Alpha blendings adjusting code
   //
   procedure MakeOpaque(bmp: Bitmap);
-	procedure MakeTransparent(bmp: Bitmap);
-	  
-	//
-	// Rotate and Zoom
-	//
-	function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
-	procedure SetupBitmapForCollisions(src: Bitmap);
+  procedure MakeTransparent(bmp: Bitmap);
+    
+  //
+  // Rotate and Zoom
+  //
+  function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
+  procedure SetupBitmapForCollisions(src: Bitmap);
 
 implementation
-	uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
+  uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
 
-	
-	/// Clears the surface of the bitmap to the passed in color.
-	///
-	///	@param dest:		 The bitmap to clear
-	///	@param toColour: The colour to clear the bitmap to
-	///
-	/// Side Effects:
-	///	- dest's surface is set to the toColor
-	procedure ClearSurface(dest: Bitmap; toColour: Colour); overload;
-	begin
-		if dest = nil then raise Exception.Create('Cannot clear, destination bitmap not supplied (nil)');
-			
-		SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColour);
-	end;
+  
+  /// Clears the surface of the bitmap to the passed in color.
+  ///
+  /// @param dest:     The bitmap to clear
+  /// @param toColor: The colour to clear the bitmap to
+  ///
+  /// Side Effects:
+  /// - dest's surface is set to the toColor
+  procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
+  begin
+    if dest = nil then raise Exception.Create('Cannot clear, destination bitmap not supplied (nil)');
+      
+    SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColor);
+  end;
 
- 	/// Clears the surface of the bitmap to Black.
-	///
-	///	@param dest:		 The bitmap to clear
-	///
-	/// Side Effects:
-	///	- dest's surface is set to black
-	procedure ClearSurface(dest: Bitmap); overload;
-	begin
-		ClearSurface(dest, ColorBlack);
-	end;
+  /// Clears the surface of the bitmap to Black.
+  ///
+  /// @param dest:     The bitmap to clear
+  ///
+  /// Side Effects:
+  /// - dest's surface is set to black
+  procedure ClearSurface(dest: Bitmap); overload;
+  begin
+    ClearSurface(dest, ColorBlack);
+  end;
 
-	/// Clears the surface of the screen to the passed in color.
-	///
-	///	@param toColour: The colour to clear the bitmap to
-	///
-	/// Side Effects:
-	///	- Screen's surface is set to the toColor
-	procedure ClearScreen(toColour : Colour); overload;
-	begin
-		ClearSurface(scr, toColour);
-	end;
+  /// Clears the surface of the screen to the passed in color.
+  ///
+  /// @param toColor: The colour to clear the bitmap to
+  ///
+  /// Side Effects:
+  /// - Screen's surface is set to the toColor
+  procedure ClearScreen(toColor : Color); overload;
+  begin
+    ClearSurface(scr, toColor);
+  end;
 
-	/// Clears the screen to Black.
-	///
-	/// Side Effects:
-	///	- screen's surface is set to black
-	procedure ClearScreen(); overload;
-	begin
-		ClearScreen(ColorBlack);
-	end;
+  /// Clears the screen to Black.
+  ///
+  /// Side Effects:
+  /// - screen's surface is set to black
+  procedure ClearScreen(); overload;
+  begin
+    ClearScreen(ColorBlack);
+  end;
 
-	function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
-	begin
-		if (w < 0) or (h < 0) then
-			raise Exception.Create('Width and height of a rectangle must be larger than 0');
-				
-		if w < 0 then
-		begin
-			result.x := x + w;
-			w := -w;
-		end
-		else result.x := x;
+  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
+  begin
+    if (w < 0) or (h < 0) then
+      raise Exception.Create('Width and height of a rectangle must be larger than 0');
+        
+    if w < 0 then
+    begin
+      result.x := x + w;
+      w := -w;
+    end
+    else result.x := x;
 
-		if h < 0 then
-		begin
-			result.y := y + h;
-			h := -h;
-		end
-		else result.y := y;
+    if h < 0 then
+    begin
+      result.y := y + h;
+      h := -h;
+    end
+    else result.y := y;
 
-		result.w := Word(w);
-		result.h := Word(h);
-	end;
-	
-	function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Colour;
-	var
+    result.w := Word(w);
+    result.h := Word(h);
+  end;
+  
+  function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
+  var
     pixel, pixels: PUint32;
     offset: Uint32;
   {$IFDEF FPC}
-		pixelAddress: PUint32;
+    pixelAddress: PUint32;
   {$ELSE}
     pixelAddress: UInt32;
   {$ENDIF}
-	begin
-		//Convert the pixels to 32 bit
-		pixels := surface.pixels;
+  begin
+    //Convert the pixels to 32 bit
+    pixels := surface.pixels;
 
-		//Get the requested pixel
-		offset := (( y * surface.w ) + x) * surface.format.BytesPerPixel;
+    //Get the requested pixel
+    offset := (( y * surface.w ) + x) * surface.format.BytesPerPixel;
 
-		{$IFDEF FPC}
+    {$IFDEF FPC}
       pixelAddress := pixels + (offset div 4);
-			pixel := PUint32(pixelAddress);
-		{$ELSE}
+      pixel := PUint32(pixelAddress);
+    {$ELSE}
       pixelAddress := UInt32(pixels) + offset;
-			pixel := Ptr(pixelAddress);
-		{$ENDIF}
+      pixel := Ptr(pixelAddress);
+    {$ENDIF}
 
-		{$IF SDL_BYTEORDER = SDL_BIG_ENDIAN }
-		case surface.format.BytesPerPixel of
-			1: result := pixel^ and $000000ff;
-			2: result := pixel^ and $0000ffff;
-			3: result := pixel^ and $00ffffff;
-			4: result := pixel^;
-		else
-			raise Exception.Create('Unsuported bit format...');
-		end;
-		{$ELSE}
-		case surface.format.BytesPerPixel of
-			1: result := pixel^ and $ff000000;
-			2: result := pixel^ and $ffff0000;
-			3: result := pixel^ and $ffffff00;
-			4: result := pixel^;
-		else
-			raise Exception.Create('Unsuported bit format...')
-		end;
-		{$IFEND}
-	end;
-	
-	function GetPixel(bmp: Bitmap; x, y: LongInt): Colour;
-	begin
-	  if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
-	  
-		if (x < 0) or (x >= bmp.width) or (y < 0) or (y >= bmp.height) then
-		begin
-			result := 0;
-			exit;
-		end;
-		
-		result := GetPixel32(bmp.surface, x, y);
-	end;
-	
-	function GetPixelFromScreen(x, y: LongInt): Colour;
-	begin
-		result := GetPixel(scr, x, y);
-	end;	
+    {$IF SDL_BYTEORDER = SDL_BIG_ENDIAN }
+    case surface.format.BytesPerPixel of
+      1: result := pixel^ and $000000ff;
+      2: result := pixel^ and $0000ffff;
+      3: result := pixel^ and $00ffffff;
+      4: result := pixel^;
+    else
+      raise Exception.Create('Unsuported bit format...');
+    end;
+    {$ELSE}
+    case surface.format.BytesPerPixel of
+      1: result := pixel^ and $ff000000;
+      2: result := pixel^ and $ffff0000;
+      3: result := pixel^ and $ffffff00;
+      4: result := pixel^;
+    else
+      raise Exception.Create('Unsuported bit format...')
+    end;
+    {$IFEND}
+  end;
+  
+  function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
+  begin
+    if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
+    
+    if (x < 0) or (x >= bmp.width) or (y < 0) or (y >= bmp.height) then
+    begin
+      result := 0;
+      exit;
+    end;
+    
+    result := GetPixel32(bmp.surface, x, y);
+  end;
+  
+  function GetPixelFromScreen(x, y: LongInt): Color;
+  begin
+    result := GetPixel(scr, x, y);
+  end;  
 
-	// Sets the non-transparent pixels in a Bitmap. This is then used for
-	// collision detection, allowing the original surface to be optimised.
-	//
-	// @param toSet	 A pointer to the Bitmap being set
-	// @param surface The surface with pixel data for this Bitmap
-	procedure SetNonTransparentPixels(toSet: Bitmap; surface: PSDL_Surface; transparentColor: Color);
-	var
-		r, c: LongInt;
-	begin
-		SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
+  // Sets the non-transparent pixels in a Bitmap. This is then used for
+  // collision detection, allowing the original surface to be optimised.
+  //
+  // @param toSet  A pointer to the Bitmap being set
+  // @param surface The surface with pixel data for this Bitmap
+  procedure SetNonTransparentPixels(toSet: Bitmap; surface: PSDL_Surface; transparentColor: Color);
+  var
+    r, c: LongInt;
+  begin
+    SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
 
-		for c := 0 to toSet.width - 1 do
-		begin
-			for r := 0 to toSet.height - 1 do
-			begin
-				toSet.nonTransparentPixels[c, r] :=
-					(GetPixel32(surface, c, r) <> transparentColor);
-			end;
-		end;
-	end;
+    for c := 0 to toSet.width - 1 do
+    begin
+      for r := 0 to toSet.height - 1 do
+      begin
+        toSet.nonTransparentPixels[c, r] :=
+          (GetPixel32(surface, c, r) <> transparentColor);
+      end;
+    end;
+  end;
 
-	procedure SetNonAlphaPixels(toSet: Bitmap; surface: PSDL_Surface);
-	var
-		r, c: LongInt;
-		hasAlpha: Boolean;
-	begin
-		SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
-		hasAlpha := surface.format.BytesPerPixel = 4;
+  procedure SetNonAlphaPixels(toSet: Bitmap; surface: PSDL_Surface);
+  var
+    r, c: LongInt;
+    hasAlpha: Boolean;
+  begin
+    SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
+    hasAlpha := surface.format.BytesPerPixel = 4;
 
-		for c := 0 to toSet.width - 1 do
-		begin
-			for r := 0 to toSet.height - 1 do
-			begin
-				toSet.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
-			end;
-		end;
-	end;
+    for c := 0 to toSet.width - 1 do
+    begin
+      for r := 0 to toSet.height - 1 do
+      begin
+        toSet.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
+      end;
+    end;
+  end;
 
-	/// Loads a bitmap from a given path, with the indicated transparent color.
-	/// This loads both transparent and non-transparent bitmaps.
-	///
-	///	@param pathToBitmap:		 the path to the bitmap to be loaded
-	/// @param transparent:      Indicates if transparency should be set
-	///	@param transparentColor: the color that will be transparent
-	///	@returns: A bitmap from the loaded file.
-	function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Colour): Bitmap; overload;
-	var
-		loadedImage: PSDL_Surface;
-		correctedTransColor: Colour;
-	begin
-		if not FileExists(pathToBitmap) then raise Exception.Create('Unable to locate bitmap ' + pathToBitmap);
-		
-		loadedImage := IMG_Load(pchar(pathToBitmap));
-		
-		if loadedImage <> nil then
-		begin
-			new(result);
-			if not transparent then result.surface := SDL_DisplayFormatAlpha(loadedImage)
-			else result.surface := SDL_DisplayFormat(loadedImage);
-			//result.surface := loadedImage;
-			
-			//WriteLn('Loaded ', pathToBitmap);
-			//WriteLn('  at ', HexStr(result.surface));
+  /// Loads a bitmap from a given path, with the indicated transparent color.
+  /// This loads both transparent and non-transparent bitmaps.
+  ///
+  /// @param pathToBitmap:     the path to the bitmap to be loaded
+  /// @param transparent:      Indicates if transparency should be set
+  /// @param transparentColor: the color that will be transparent
+  /// @returns: A bitmap from the loaded file.
+  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+  var
+    loadedImage: PSDL_Surface;
+    correctedTransColor: Color;
+  begin
+    if not FileExists(pathToBitmap) then raise Exception.Create('Unable to locate bitmap ' + pathToBitmap);
+    
+    loadedImage := IMG_Load(pchar(pathToBitmap));
+    
+    if loadedImage <> nil then
+    begin
+      new(result);
+      if not transparent then result.surface := SDL_DisplayFormatAlpha(loadedImage)
+      else result.surface := SDL_DisplayFormat(loadedImage);
+      //result.surface := loadedImage;
+      
+      //WriteLn('Loaded ', pathToBitmap);
+      //WriteLn('  at ', HexStr(result.surface));
 
-			result.width := result.surface.w;
-			result.height := result.surface.h;
+      result.width := result.surface.w;
+      result.height := result.surface.h;
 
-			if transparent then
-			begin
-				correctedTransColor := GetColour(result, transparentColor);
-				SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
-				SetNonTransparentPixels(result, loadedImage, correctedTransColor);
-			end
-			else
-			begin
-				SetNonAlphaPixels(result, loadedImage);
-			end;
+      if transparent then
+      begin
+        correctedTransColor := GetColor(result, transparentColor);
+        SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+        SetNonTransparentPixels(result, loadedImage, correctedTransColor);
+      end
+      else
+      begin
+        SetNonAlphaPixels(result, loadedImage);
+      end;
 
-			if loadedImage <> result.surface then SDL_FreeSurface(loadedImage);
-		end
-		else
-		begin
-			raise Exception.Create('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
-		end;
-	end;
+      if loadedImage <> result.surface then SDL_FreeSurface(loadedImage);
+    end
+    else
+    begin
+      raise Exception.Create('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
+    end;
+  end;
 
-	/// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
-	///	the screen. Bitmaps can be of bmp, jpeg, gif, png, etc. Images may also
-	///	contain alpha values, which will be drawn correctly by the API. All
-	///	bitmaps must be freed using the FreeBitmap once you are finished with
-	///	them.
-	///
-	///	@param pathToBitmap:	 The path to the bitmap file to open.
-	///	@returns: A bitmap from the loaded file
-	function LoadBitmap(pathToBitmap : String): Bitmap; overload;
-	begin
-		result := LoadBitmap(pathToBitmap, false, ColorBlack);
-	end;
+  /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
+  /// the screen. Bitmaps can be of bmp, jpeg, gif, png, etc. Images may also
+  /// contain alpha values, which will be drawn correctly by the API. All
+  /// bitmaps must be freed using the FreeBitmap once you are finished with
+  /// them.
+  ///
+  /// @param pathToBitmap:   The path to the bitmap file to open.
+  /// @returns: A bitmap from the loaded file
+  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
+  begin
+    result := LoadBitmap(pathToBitmap, false, ColorBlack);
+  end;
 
- 	/// Loads a bitmap with a transparent color key. The transparent color is then
-	///	setup as the color key to ensure the image is drawn correctly. Alpha
-	///	values of Images loaded in this way will be ignored. All bitmaps must be
-	///	freed using the FreeBitmap once you are finished with them.
-	///
-	///	@param pathToBitmap:		 the path to the bitmap to be loaded
-	///	@param transparentColor: the color that will be transparent
-	///	@returns: A bitmap from the loaded file.
-	function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Colour): Bitmap; overload;
-	begin
-		result := LoadBitmap(pathToBitmap, true, transparentColor);
-	end;
+  /// Loads a bitmap with a transparent color key. The transparent color is then
+  /// setup as the color key to ensure the image is drawn correctly. Alpha
+  /// values of Images loaded in this way will be ignored. All bitmaps must be
+  /// freed using the FreeBitmap once you are finished with them.
+  ///
+  /// @param pathToBitmap:     the path to the bitmap to be loaded
+  /// @param transparentColor: the color that will be transparent
+  /// @returns: A bitmap from the loaded file.
+  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
+  begin
+    result := LoadBitmap(pathToBitmap, true, transparentColor);
+  end;
 
-	/// Frees a loaded bitmap. Use this when you will no longer be drawing the
-	///	bitmap, and when the program exits.
-	///
-	/// Side Effects:
-	///	- the bitmap is freeed and can no longer be drawn
-	procedure FreeBitmap(var bitmapToFree : Bitmap);
-	begin
-		if Assigned(bitmapToFree) then
-		begin
-			if Assigned(bitmapToFree^.surface) then
-			begin
-				//WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
-				SDL_FreeSurface(bitmapToFree^.surface);
-			end;
-			bitmapToFree^.surface := nil;
+  /// Frees a loaded bitmap. Use this when you will no longer be drawing the
+  /// bitmap, and when the program exits.
+  ///
+  /// Side Effects:
+  /// - the bitmap is freeed and can no longer be drawn
+  procedure FreeBitmap(var bitmapToFree : Bitmap);
+  begin
+    if Assigned(bitmapToFree) then
+    begin
+      if Assigned(bitmapToFree^.surface) then
+      begin
+        //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
+        SDL_FreeSurface(bitmapToFree^.surface);
+      end;
+      bitmapToFree^.surface := nil;
 
-			//SetLength(bitmapToFree^.nonTransparentPixels, 0, 0);
+      //SetLength(bitmapToFree^.nonTransparentPixels, 0, 0);
 
-			Dispose(bitmapToFree);
-			bitmapToFree := nil;
-		end;
-	end;
-	
-	/// Creates a sprites, and sets its first bitmap.
-	///
-	///	@param startBitmap:		The sprites first bitmap (index 0)
-	/// @param isMulti:			True if the bitmap specified is a multi bitmap
-	/// @param framesPerCell:	Array of LongInt that defines the frames per cell
-	/// @param endingAction:	This sprite's ending action (Loop, ReverseLoop or Stop)
-	/// @param width, height:	Width and height of this sprite
-	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
-		endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
-	var
-		i : LongInt;
-	begin
-		if image = nil then raise Exception.Create('No image specified to create a sprite');
-		if isMulti and (Length(framesPerCell) = 0) then raise Exception.Create('No frames per cell defined');	
-		if (width < 1) or (height < 1) then raise Exception.Create('Sprite Width and Height must be greater then 0');
-		
-		New(result);
-		SetLength(result.bitmaps, 1);
-		
-		if isMulti then
-		begin
-			result.spriteKind := AnimMultiSprite;
-			
-			result.cols := image.width div width;
-			result.row := image.height div height;
-			
-			SetLength(result.framesPerCell, Length(framesPerCell));
-			for i := 0 to High(framesPerCell) do
-			begin
-				if framesPerCell[i] < 0 then 
-					raise Exception.Create('Frames per cell must be larger than 0');
-				
-				result.framesPerCell[i] := framesPerCell[i];
-			end;
-		end
-		else
-		begin
-			result.spriteKind := StaticSprite;
-		end;
+      Dispose(bitmapToFree);
+      bitmapToFree := nil;
+    end;
+  end;
+  
+  /// Creates a sprites, and sets its first bitmap.
+  ///
+  /// @param startBitmap:   The sprites first bitmap (index 0)
+  /// @param isMulti:     True if the bitmap specified is a multi bitmap
+  /// @param framesPerCell: Array of LongInt that defines the frames per cell
+  /// @param endingAction:  This sprite's ending action (Loop, ReverseLoop or Stop)
+  /// @param width, height: Width and height of this sprite
+  /// @returns:       A new sprite with this bitmap as its first bitmap
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
+    endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+  var
+    i : LongInt;
+  begin
+    if image = nil then raise Exception.Create('No image specified to create a sprite');
+    if isMulti and (Length(framesPerCell) = 0) then raise Exception.Create('No frames per cell defined'); 
+    if (width < 1) or (height < 1) then raise Exception.Create('Sprite Width and Height must be greater then 0');
+    
+    New(result);
+    SetLength(result.bitmaps, 1);
+    
+    if isMulti then
+    begin
+      result.spriteKind := AnimMultiSprite;
+      
+      result.cols := image.width div width;
+      result.row := image.height div height;
+      
+      SetLength(result.framesPerCell, Length(framesPerCell));
+      for i := 0 to High(framesPerCell) do
+      begin
+        if framesPerCell[i] < 0 then 
+          raise Exception.Create('Frames per cell must be larger than 0');
+        
+        result.framesPerCell[i] := framesPerCell[i];
+      end;
+    end
+    else
+    begin
+      result.spriteKind := StaticSprite;
+    end;
 
-		result.x					    := 0;
-		result.y					    := 0;
-		result.xPos					  := @result.x;
-		result.yPos					  := @result.y;
-		result.currentFrame		:= 0;
-		result.usePixelCollision	:= true;
-		result.hasEnded				:= false;
-		result.bitmaps[0]			:= image;
-		result.frameCount			:= 0;
-		result.endingAction		:= endingAction;
-		result.width				  := width;
-		result.height				  := height;
-		result.reverse				:= false;
-		result.movement				:= CreateVector(0,0);
-		result.rotation       := 0;
-		result.zoom           := 1;
-		result.bufferedRotation := 0;
-		result.bufferedZoom   := 1;
-		result.bufferBmp      := nil;
-	end;
-	
-	/// Creates a sprites, and sets its first bitmap.
-	///
-	///	@param image:			The sprites first bitmap (index 0)
-	/// @param isMulti:			True if the bitmap specified is a multi bitmap
-	/// @param framesPerCell:	Array of LongInt that defines the frames per cell
-	/// @param width, height:	Width and height of this sprite
-	///	@returns:				A new sprite
-	function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
-		width, height : LongInt): Sprite; overload;
-	begin
-		result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
-	end;
-	
-	/// Creates a sprites, and sets its first bitmap.
-	///
-	///	@param image:		The sprites first bitmap (index 0)
-	/// @param framesPerCell:	Number of frames per cell
-	/// @param frames:			Number of frames this sprite contains
-	/// @param width, height:	Width and height of this sprite
-	///	@returns:				A new sprite
-	function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
-	var
-		tempIntegers: Array of LongInt;
-		i: LongInt;
-	begin
-		if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
-		
-		SetLength(tempIntegers, frames);
-		for i := 0 to High(tempIntegers) do
-		begin
-			tempIntegers[i] := framesPerCell;
-		end;
-		result := CreateSprite(image, true, tempIntegers, width, height);
-	end;
+    result.x              := 0;
+    result.y              := 0;
+    // result.xPos            := @result.x;
+    // result.yPos            := @result.y;
+    result.currentFrame   := 0;
+    result.usePixelCollision  := true;
+    result.hasEnded       := false;
+    result.bitmaps[0]     := image;
+    result.frameCount     := 0;
+    result.endingAction   := endingAction;
+    result.width          := width;
+    result.height         := height;
+    result.reverse        := false;
+    result.movement       := CreateVector(0,0);
+    result.rotation       := 0;
+    result.zoom           := 1;
+    result.bufferedRotation := 0;
+    result.bufferedZoom   := 1;
+    result.bufferBmp      := nil;
+  end;
+  
+  /// Creates a sprites, and sets its first bitmap.
+  ///
+  /// @param image:     The sprites first bitmap (index 0)
+  /// @param isMulti:     True if the bitmap specified is a multi bitmap
+  /// @param framesPerCell: Array of LongInt that defines the frames per cell
+  /// @param width, height: Width and height of this sprite
+  /// @returns:       A new sprite
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
+    width, height : LongInt): Sprite; overload;
+  begin
+    result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
+  end;
+  
+  /// Creates a sprites, and sets its first bitmap.
+  ///
+  /// @param image:   The sprites first bitmap (index 0)
+  /// @param framesPerCell: Number of frames per cell
+  /// @param frames:      Number of frames this sprite contains
+  /// @param width, height: Width and height of this sprite
+  /// @returns:       A new sprite
+  function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
+  var
+    tempIntegers: Array of LongInt;
+    i: LongInt;
+  begin
+    if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
+    
+    SetLength(tempIntegers, frames);
+    for i := 0 to High(tempIntegers) do
+    begin
+      tempIntegers[i] := framesPerCell;
+    end;
+    result := CreateSprite(image, true, tempIntegers, width, height);
+  end;
 
-	/// Creates a sprites, and sets its first bitmap.
-	///
-	///	@param image:			The sprites first bitmap (index 0)
-	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(image : Bitmap): Sprite; overload;
-	var
-		empty : Array of LongInt;
-	begin
-		SetLength(empty, 0);
-		result := CreateSprite(image, false, empty, image.width, image.height);
-	end;
-	
-	/// Creates a sprites ans set bitmaps.
-	///
-	///	@param bitmaps:			The array of bitmaps
-	/// @param framesPerCell:	Array of Integer that defines the frames per cell
-	/// @param endingAction:	Ending action of this sprite when it finishes animating
-	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(const bitmaps: Array of Bitmap; const framesPerCell: Array of LongInt; endingAction: SpriteEndingAction): Sprite; overload;
-	var
-		i : LongInt;
-	begin
-		if Length(bitmaps) = 0 then raise Exception.Create('No images specified to create a sprite');
-		if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
-		
-		New(result);
-		result.x					:= 0;
-		result.y					:= 0;
-		result.xPos					:= @result.x;
-		result.yPos					:= @result.y;
-		result.currentFrame			:= 0;
-		result.usePixelCollision	:= true;
-		result.hasEnded				:= false;
-		result.movement				:= CreateVector(0,0);
-		result.rotation       := 0;
-		result.zoom           := 1;
-		result.bufferedRotation := 0;
-		result.bufferedZoom   := 1;
-		result.bufferBmp      := nil;	
-		result.endingAction			:= endingAction;
-		result.width				:= bitmaps[0].width;
-		result.height				:= bitmaps[0].height;
-		result.reverse				:= false;
-		result.spriteKind			:= AnimArraySprite;
-		
-		SetLength(result.bitmaps, Length(bitmaps));
-		for i := 0 to High(bitmaps) do
-		begin
-			result.bitmaps[i] := bitmaps[i];
-		end;
+  /// Creates a sprites, and sets its first bitmap.
+  ///
+  /// @param image:     The sprites first bitmap (index 0)
+  /// @returns:       A new sprite with this bitmap as its first bitmap
+  function CreateSprite(image : Bitmap): Sprite; overload;
+  var
+    empty : Array of LongInt;
+  begin
+    SetLength(empty, 0);
+    result := CreateSprite(image, false, empty, image.width, image.height);
+  end;
+  
+  /// Creates a sprites ans set bitmaps.
+  ///
+  /// @param bitmaps:     The array of bitmaps
+  /// @param framesPerCell: Array of Integer that defines the frames per cell
+  /// @param endingAction:  Ending action of this sprite when it finishes animating
+  /// @returns:       A new sprite with this bitmap as its first bitmap
+  function CreateSprite(const bitmaps: Array of Bitmap; const framesPerCell: Array of LongInt; endingAction: SpriteEndingAction): Sprite; overload;
+  var
+    i : LongInt;
+  begin
+    if Length(bitmaps) = 0 then raise Exception.Create('No images specified to create a sprite');
+    if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
+    
+    New(result);
+    result.x          := 0;
+    result.y          := 0;
+    // result.xPos          := @result.x;
+    // result.yPos          := @result.y;
+    result.currentFrame     := 0;
+    result.usePixelCollision  := true;
+    result.hasEnded       := false;
+    result.movement       := CreateVector(0,0);
+    result.rotation       := 0;
+    result.zoom           := 1;
+    result.bufferedRotation := 0;
+    result.bufferedZoom   := 1;
+    result.bufferBmp      := nil; 
+    result.endingAction     := endingAction;
+    result.width        := bitmaps[0].width;
+    result.height       := bitmaps[0].height;
+    result.reverse        := false;
+    result.spriteKind     := AnimArraySprite;
+    
+    SetLength(result.bitmaps, Length(bitmaps));
+    for i := 0 to High(bitmaps) do
+    begin
+      result.bitmaps[i] := bitmaps[i];
+    end;
 
-		SetLength(result.framesPerCell, Length(framesPerCell));
-		for i := 0 to High(framesPerCell) do
-		begin
-			if framesPerCell[i] <= 0 then 
-				raise Exception.Create('Frames per cell must be larger than 0');
+    SetLength(result.framesPerCell, Length(framesPerCell));
+    for i := 0 to High(framesPerCell) do
+    begin
+      if framesPerCell[i] <= 0 then 
+        raise Exception.Create('Frames per cell must be larger than 0');
 
-			result.framesPerCell[i] := framesPerCell[i];
-		end;
-	end;
-	
-	/// Creates a sprites ans set bitmaps.
-	///
-	///	@param bitmaps:			The array of bitmaps
-	/// @param framesPerCell:	Array of Integer that defines the frames per cell
-	///	@returns:				A new sprite with this bitmap as its first bitmap
-	function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
-	begin
-		result := CreateSprite(bitmaps, framesPerCell, Loop);
-	end;
-	
-	/// Creates a sprites, and sets its first bitmap.
-	///
-	///	@param bitmaps:			The array of bitmaps
-	/// @param framesPerCell:	Number of frames per cell
-	/// @param frames:			Number of frames this sprite contains
-	///	@returns:				A new sprite
-	function CreateSprite(const bitmaps: Array of Bitmap; framesPerCell, frames: LongInt): Sprite; overload;
-	var
-		tempIntegers: Array of LongInt;
-		i: LongInt;
-	begin
-		if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
+      result.framesPerCell[i] := framesPerCell[i];
+    end;
+  end;
+  
+  /// Creates a sprites ans set bitmaps.
+  ///
+  /// @param bitmaps:     The array of bitmaps
+  /// @param framesPerCell: Array of Integer that defines the frames per cell
+  /// @returns:       A new sprite with this bitmap as its first bitmap
+  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
+  begin
+    result := CreateSprite(bitmaps, framesPerCell, Loop);
+  end;
+  
+  /// Creates a sprites, and sets its first bitmap.
+  ///
+  /// @param bitmaps:     The array of bitmaps
+  /// @param framesPerCell: Number of frames per cell
+  /// @param frames:      Number of frames this sprite contains
+  /// @returns:       A new sprite
+  function CreateSprite(const bitmaps: Array of Bitmap; framesPerCell, frames: LongInt): Sprite; overload;
+  var
+    tempIntegers: Array of LongInt;
+    i: LongInt;
+  begin
+    if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
 
-		SetLength(tempIntegers, frames);
-		for i := 0 to High(tempIntegers) do
-		begin
-			tempIntegers[i] := framesPerCell;
-		end;
+    SetLength(tempIntegers, frames);
+    for i := 0 to High(tempIntegers) do
+    begin
+      tempIntegers[i] := framesPerCell;
+    end;
 
-		result := CreateSprite(bitmaps, tempIntegers);
-	end;
-	
-	procedure UpdateSpriteBuffers(sprt: Sprite);
-	var
-	  dest: Bitmap; //temporary surface
-	  srcX, srcY: LongInt; //for image parts
-	begin
-	  if (sprt.rotation = sprt.bufferedRotation) and (sprt.zoom = sprt.bufferedZoom) then exit;
-	  if (sprt.bufferBmp <> nil) then FreeBitmap(sprt.bufferBmp);
-	  if (sprt.rotation = 0) and (sprt.zoom = 1) then exit; //no need to transform
+    result := CreateSprite(bitmaps, tempIntegers);
+  end;
+  
+  procedure UpdateSpriteBuffers(sprt: Sprite);
+  var
+    dest: Bitmap; //temporary surface
+    srcX, srcY: LongInt; //for image parts
+  begin
+    if (sprt.rotation = sprt.bufferedRotation) and (sprt.zoom = sprt.bufferedZoom) then exit;
+    if (sprt.bufferBmp <> nil) then FreeBitmap(sprt.bufferBmp);
+    if (sprt.rotation = 0) and (sprt.zoom = 1) then exit; //no need to transform
 
-	  //Draw non-transformed bitmap onto temp surface
-		dest := CreateBitmap(sprt.width, sprt.height);
-		
-		if sprt.spriteKind <> AnimMultiSprite then
-			DrawBitmap(dest, sprt.bitmaps[sprt.currentFrame], 0, 0)
-		else
-		begin
-			with sprt^ do
-			begin
-				srcX := (currentFrame mod cols) * width;
-				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
-			end;
+    //Draw non-transformed bitmap onto temp surface
+    dest := CreateBitmap(sprt.width, sprt.height);
+    
+    if sprt.spriteKind <> AnimMultiSprite then
+      DrawBitmap(dest, sprt.bitmaps[sprt.currentFrame], 0, 0)
+    else
+    begin
+      with sprt^ do
+      begin
+        srcX := (currentFrame mod cols) * width;
+        srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+      end;
       
       MakeOpaque(sprt.bitmaps[0]);
-			DrawBitmapPart(dest, sprt.bitmaps[0], srcX, srcY, sprt.width, sprt.height, 0, 0);
+      DrawBitmapPart(dest, sprt.bitmaps[0], srcX, srcY, sprt.width, sprt.height, 0, 0);
       MakeTransparent(sprt.bitmaps[0]);
-		end;
-		
-		sprt.bufferBmp := RotateZoomBitmap(dest, sprt.rotation, sprt.zoom);
+    end;
+    
+    sprt.bufferBmp := RotateZoomBitmap(dest, sprt.rotation, sprt.zoom);
 
-		FreeBitmap(dest);
-	end;
-	
-	/// Frees a sprite, this does not free the sprite's bitmaps, which allows
-	///	bitmaps to be shared between sprites. All created sprites need to be
-	///	freed.
-	///
-	///	@param spriteToFree:		 the sprite to free
-	///
-	/// Side Effects:
-	///	- The sprites details are cleaned up.
-	procedure FreeSprite(var spriteToFree : Sprite);
-	begin
-		if Assigned(spriteToFree) then
-		begin
-		  //Free bitmaps
-			SetLength(spriteToFree.bitmaps, 0);
+    FreeBitmap(dest);
+  end;
+  
+  /// Frees a sprite, this does not free the sprite's bitmaps, which allows
+  /// bitmaps to be shared between sprites. All created sprites need to be
+  /// freed.
+  ///
+  /// @param spriteToFree:     the sprite to free
+  ///
+  /// Side Effects:
+  /// - The sprites details are cleaned up.
+  procedure FreeSprite(var spriteToFree : Sprite);
+  begin
+    if Assigned(spriteToFree) then
+    begin
+      //Free bitmaps
+      SetLength(spriteToFree.bitmaps, 0);
 
       //Free buffered rotation image
-			if spriteToFree.bufferBmp <> nil then FreeBitmap(spriteToFree.bufferBmp);
-			spriteToFree.bufferBmp := nil;
+      if spriteToFree.bufferBmp <> nil then FreeBitmap(spriteToFree.bufferBmp);
+      spriteToFree.bufferBmp := nil;
 
       //Dispose sprite
-			Dispose(spriteToFree);
-			spriteToFree := nil;
-		end;
-	end;
+      Dispose(spriteToFree);
+      spriteToFree := nil;
+    end;
+  end;
 
-	/// Sprites may contain multiple images. These images can be used for things
-	///	line animation, facing, etc. This routine adds a bitmap to a sprite,
-	///	returning the index of the added bitmap.
-	///
-	///	@param spriteToAddTo:		the sprite to add the bitmap to
-	///	@param bitmapToAdd:			the bitmap to add to the sprite
-	///	@returns :							 the index of the added bitmap
-	///
-	/// Side Effects:
-	///	- The bitmaps is added to the bitmaps within the sprite.
-	function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): LongInt;
-	begin
-		if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
-		if spriteToAddTo = nil then raise Exception.Create('No sprite to add to');
-		if spriteToAddTo.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
-					
-		//Resize the array
-		SetLength(spriteToAddTo.bitmaps, Length(spriteToAddTo.bitmaps) + 1);
+  /// Sprites may contain multiple images. These images can be used for things
+  /// line animation, facing, etc. This routine adds a bitmap to a sprite,
+  /// returning the index of the added bitmap.
+  ///
+  /// @param spriteToAddTo:   the sprite to add the bitmap to
+  /// @param bitmapToAdd:     the bitmap to add to the sprite
+  /// @returns :               the index of the added bitmap
+  ///
+  /// Side Effects:
+  /// - The bitmaps is added to the bitmaps within the sprite.
+  function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): LongInt;
+  begin
+    if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
+    if spriteToAddTo = nil then raise Exception.Create('No sprite to add to');
+    if spriteToAddTo.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
+          
+    //Resize the array
+    SetLength(spriteToAddTo.bitmaps, Length(spriteToAddTo.bitmaps) + 1);
 
-		//Add the values to the array
-		spriteToAddTo.bitmaps[High(spriteToAddTo.bitmaps)] := bitmapToAdd;
+    //Add the values to the array
+    spriteToAddTo.bitmaps[High(spriteToAddTo.bitmaps)] := bitmapToAdd;
 
-		result := High(spriteToAddTo.bitmaps);
-	end;
+    result := High(spriteToAddTo.bitmaps);
+  end;
 
-	/// Returns the current width of the sprite.
-	///
-	///	@param sprite:		 The sprite to get the width of
-	///	@returns					 The width of the sprite's current frame
-	function CurrentWidth(sprite: Sprite): LongInt; inline;
-	begin
-		if sprite = nil then raise Exception.Create('No sprite supplied');
+  /// Returns the current width of the sprite.
+  ///
+  /// @param sprite:     The sprite to get the width of
+  /// @returns           The width of the sprite's current frame
+  function CurrentWidth(sprite: Sprite): LongInt; inline;
+  begin
+    if sprite = nil then raise Exception.Create('No sprite supplied');
 
-		result := sprite.width;
-	end;
+    result := sprite.width;
+  end;
   
-	/// Returns the current height of the sprite.
-	///
-	///	@param sprite:		 The sprite to get the height of
-	///	@returns					 The height of the sprite's current frame
-	function CurrentHeight(sprite: Sprite): LongInt; inline;
-	begin
-		if sprite = nil then raise Exception.Create('No sprite supplied');
+  /// Returns the current height of the sprite.
+  ///
+  /// @param sprite:     The sprite to get the height of
+  /// @returns           The height of the sprite's current frame
+  function CurrentHeight(sprite: Sprite): LongInt; inline;
+  begin
+    if sprite = nil then raise Exception.Create('No sprite supplied');
 
-		result := sprite.height;
-	end;
+    result := sprite.height;
+  end;
 
- 	/// Draws one bitmap (bitmapToDraw) onto another bitmap (dest).
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param bitmapToDraw: The bitmap to be drawn onto the destination
-	///	@param x,y:					The x,y location to draw the bitmap to
-	///
-	/// Side Effects:
-	///	- Draws the bitmapToDraw at the x,y location in the destination.
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); overload;
-	var
-		offset: SDL_Rect;
-	begin
-		if (dest = nil) or (bitmapToDraw = nil) then raise Exception.Create('No bitmap supplied');
-		
-		offset := NewSDLRect(x, y, 0, 0);
-		SDL_BlitSurface(bitmapToDraw.surface, nil, dest.surface, @offset);
-	end;
+  /// Draws one bitmap (bitmapToDraw) onto another bitmap (dest).
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param bitmapToDraw: The bitmap to be drawn onto the destination
+  /// @param x,y:         The x,y location to draw the bitmap to
+  ///
+  /// Side Effects:
+  /// - Draws the bitmapToDraw at the x,y location in the destination.
+  procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; x, y : LongInt); overload;
+  var
+    offset: SDL_Rect;
+  begin
+    if (dest = nil) or (bitmapToDraw = nil) then raise Exception.Create('No bitmap supplied');
+    
+    offset := NewSDLRect(x, y, 0, 0);
+    SDL_BlitSurface(bitmapToDraw.surface, nil, dest.surface, @offset);
+  end;
 
-	/// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest).
-	///
-	///	@param dest:		 The destination bitmap - not optimised!
-	///	@param bitmapToDraw: The bitmap to be drawn onto the destination
-	///	@param srcX, srcY:	 The x,y offset to the area to copy in bitmapToDraw
-	///	@param srcW, srcH:	 The width and height of the area to copy
-	///	@param x,y:			 The x,y location to draw the bitmap part to
-	///
-	/// Side Effects:
-	///	- Draws part of the bitmapToDraw at the x,y location in the destination.
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-	var
-		offset, source: SDL_Rect;
-	begin
-		if (dest = nil) or (bitmapToDraw = nil) then raise Exception.Create('No bitmap supplied');
-		if (srcW < 0) or (srcH < 0) then raise Exception.Create('Width and Height must be >= 0');
-		
-		offset := NewSDLRect(x, y, 0, 0);
-		source := NewSDLRect(srcX, srcY, srcW, srcH);
+  /// Draws part of a bitmap (bitmapToDraw) onto another bitmap (dest).
+  ///
+  /// @param dest:     The destination bitmap - not optimised!
+  /// @param bitmapToDraw: The bitmap to be drawn onto the destination
+  /// @param srcX, srcY:   The x,y offset to the area to copy in bitmapToDraw
+  /// @param srcW, srcH:   The width and height of the area to copy
+  /// @param x,y:      The x,y location to draw the bitmap part to
+  ///
+  /// Side Effects:
+  /// - Draws part of the bitmapToDraw at the x,y location in the destination.
+  procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  var
+    offset, source: SDL_Rect;
+  begin
+    if (dest = nil) or (bitmapToDraw = nil) then raise Exception.Create('No bitmap supplied');
+    if (srcW < 0) or (srcH < 0) then raise Exception.Create('Width and Height must be >= 0');
+    
+    offset := NewSDLRect(x, y, 0, 0);
+    source := NewSDLRect(srcX, srcY, srcW, srcH);
 
-		SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
-	end;
+    SDL_BlitSurface(bitmapToDraw.surface, @source, dest.surface, @offset);
+  end;
 
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : LongInt); overload;
-	begin
-		DrawBitmapPart(dest, bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
-	end;
+  procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  begin
+    DrawBitmapPart(dest, bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
+  end;
 
-	/// Draws part of a bitmap (bitmapToDraw) onto the screen.
-	///
-	///	@param bitmapToDraw: The bitmap to be drawn onto the screen
-	///	@param srcX, srcY:	The x,y offset to the area to copy in bitmapToDraw
-	///	@param srcW, srcH:	The width and height of the area to copy
-	///	@param x,y:				The x,y location to draw the bitmap part to
-	///
-	/// Side Effects:
-	///	- Draws part of the bitmapToDraw at the x,y location on the screen.
-	///	- Effected by visible window
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-	begin
-		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
-	end;
+  /// Draws part of a bitmap (bitmapToDraw) onto the screen.
+  ///
+  /// @param bitmapToDraw: The bitmap to be drawn onto the screen
+  /// @param srcX, srcY:  The x,y offset to the area to copy in bitmapToDraw
+  /// @param srcW, srcH:  The width and height of the area to copy
+  /// @param x,y:       The x,y location to draw the bitmap part to
+  ///
+  /// Side Effects:
+  /// - Draws part of the bitmapToDraw at the x,y location on the screen.
+  /// - Effected by visible window
+  procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  begin
+    DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, x, y);
+  end;
 
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
-	begin
-		DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
-	end;
+  procedure DrawBitmapPart(bitmapToDraw : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+  begin
+    DrawBitmapPart(scr, bitmapToDraw, srcX, srcY, srcW, srcH, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
+  end;
 
-	/// Draws one bitmap (bitmapToDraw) onto the screen.
-	///
-	///	@param bitmapToDraw:	The bitmap to be drawn onto the screen
-	///	@param x,y:				The x,y location to draw the bitmap to
-	///
-	/// Side Effects:
-	///	- Draws the bitmapToDraw at the x,y location on the screen.
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); overload;
-	begin
-		DrawBitmap(scr, bitmapToDraw, x, y);
-	end;
+  /// Draws one bitmap (bitmapToDraw) onto the screen.
+  ///
+  /// @param bitmapToDraw:  The bitmap to be drawn onto the screen
+  /// @param x,y:       The x,y location to draw the bitmap to
+  ///
+  /// Side Effects:
+  /// - Draws the bitmapToDraw at the x,y location on the screen.
+  procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; x, y : LongInt); overload;
+  begin
+    DrawBitmap(scr, bitmapToDraw, x, y);
+  end;
 
-	procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
-	begin
-		DrawBitmap(scr, bitmapToDraw, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
-	end;
-	
-	procedure ReplayAnimation(theSprite : Sprite);
-	begin
-		if theSprite = nil then raise Exception.Create('No sprite supplied');
+  procedure DrawBitmap(bitmapToDraw : Bitmap; x, y : Single); overload;
+  begin
+    DrawBitmap(scr, bitmapToDraw, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
+  end;
+  
+  procedure ReplayAnimation(theSprite : Sprite);
+  begin
+    if theSprite = nil then raise Exception.Create('No sprite supplied');
 
-		theSprite.currentFrame := 0;
-		theSprite.hasEnded := false;
-		theSprite.reverse := false;
-	end;
-	
-	procedure CycleFrame(spriteToUpdate: Sprite);
-		procedure EndAnimation(frame: LongInt);
-		begin
-			spriteToUpdate.currentFrame := frame;
-			spriteToUpdate.hasEnded := true;
-		end;
-		procedure SetAnimation(frame: LongInt; reverse: Boolean);
-		begin
-			spriteToUpdate.currentFrame := frame;
-			spriteToUpdate.reverse := reverse;
-		end;
-	begin
-		if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) then
-		begin
-			if (spriteToUpdate.endingAction = ReverseLoop) or (spriteToUpdate.endingAction = ReverseOnce) then
-				SetAnimation(spriteToUpdate.currentFrame - 1, true)
-			else if spriteToUpdate.endingAction = Loop then spriteToUpdate.currentFrame := 0
-			else if spriteToUpdate.endingAction = Stop then EndAnimation(High(spriteToUpdate.framesPerCell));
-		end
-		else if (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
-		begin
-			if spriteToUpdate.endingAction = ReverseOnce then EndAnimation(0)
-			else SetAnimation(1, false);
-		end;		
-	end;
-	
-	procedure MoveToNextFrame(spriteToUpdate: Sprite);
-	var
-		i, sum: LongInt;
-		frameChange: LongInt;
-	begin
-		//Check that they are all + or 0, at at least one is +
-		sum := 0;
-		for i := Low(spriteToUpdate.framesPerCell) to High(spriteToUpdate.framesPerCell) do
-		begin
-			if spriteToUpdate.framesPerCell[i] < 0 then raise Exception.Create('Frames per cell must be 0 or positive');
-			sum := sum + spriteToUpdate.framesPerCell[i];
-		end;
+    theSprite.currentFrame := 0;
+    theSprite.hasEnded := false;
+    theSprite.reverse := false;
+  end;
+  
+  procedure CycleFrame(spriteToUpdate: Sprite);
+    procedure EndAnimation(frame: LongInt);
+    begin
+      spriteToUpdate.currentFrame := frame;
+      spriteToUpdate.hasEnded := true;
+    end;
+    procedure SetAnimation(frame: LongInt; reverse: Boolean);
+    begin
+      spriteToUpdate.currentFrame := frame;
+      spriteToUpdate.reverse := reverse;
+    end;
+  begin
+    if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) then
+    begin
+      if (spriteToUpdate.endingAction = ReverseLoop) or (spriteToUpdate.endingAction = ReverseOnce) then
+        SetAnimation(spriteToUpdate.currentFrame - 1, true)
+      else if spriteToUpdate.endingAction = Loop then spriteToUpdate.currentFrame := 0
+      else if spriteToUpdate.endingAction = Stop then EndAnimation(High(spriteToUpdate.framesPerCell));
+    end
+    else if (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
+    begin
+      if spriteToUpdate.endingAction = ReverseOnce then EndAnimation(0)
+      else SetAnimation(1, false);
+    end;    
+  end;
+  
+  procedure MoveToNextFrame(spriteToUpdate: Sprite);
+  var
+    i, sum: LongInt;
+    frameChange: LongInt;
+  begin
+    //Check that they are all + or 0, at at least one is +
+    sum := 0;
+    for i := Low(spriteToUpdate.framesPerCell) to High(spriteToUpdate.framesPerCell) do
+    begin
+      if spriteToUpdate.framesPerCell[i] < 0 then raise Exception.Create('Frames per cell must be 0 or positive');
+      sum := sum + spriteToUpdate.framesPerCell[i];
+    end;
 
-		if sum = 0 then raise Exception.Create('Frames per cell cannot all be zero');
-		
-		//Reset the frame count.
-		spriteToUpdate.frameCount := 0;
-		
-		if spriteToUpdate.reverse then frameChange := -1
-		else frameChange := +1;
-			
-		spriteToUpdate.currentFrame := spriteToUpdate.currentFrame + frameChange;
-		
-		if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) or
-		   (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
-		begin
-			CycleFrame(spriteToUpdate);
-		end;
-	end;
+    if sum = 0 then raise Exception.Create('Frames per cell cannot all be zero');
+    
+    //Reset the frame count.
+    spriteToUpdate.frameCount := 0;
+    
+    if spriteToUpdate.reverse then frameChange := -1
+    else frameChange := +1;
+      
+    spriteToUpdate.currentFrame := spriteToUpdate.currentFrame + frameChange;
+    
+    if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) or
+       (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
+    begin
+      CycleFrame(spriteToUpdate);
+    end;
+  end;
 
-	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
-	begin
-	  UpdateSpriteAnimation(spriteToUpdate, 1.0);
-	end;
-	
-	/// Update the frame position
-	///
-	/// @param spriteToUpdate:	The sprite to be processed
-	/// @param pct: Percentage to update
-	///
-	/// Side Effects:
-	/// - Process the frame position depending on the sprite's setting
-	procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
-	begin
-		if spriteToUpdate = nil then raise Exception.Create('No sprite supplied');
-		if spriteToUpdate.hasEnded then exit;
-		if spriteToUpdate.spriteKind = StaticSprite then exit;
-				
-		spriteToUpdate.frameCount := spriteToUpdate.frameCount + pct;
-		
-		// If we are at the end of the current frame... need to move to the next frame
-		if spriteToUpdate.frameCount >= spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] then
-		begin
-			MoveToNextFrame(spriteToUpdate);
-			
-			while spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] = 0 do
-			begin
-				MoveToNextFrame(spriteToUpdate);
-			end;
+  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+  begin
+    UpdateSpriteAnimation(spriteToUpdate, 1.0);
+  end;
+  
+  /// Update the frame position
+  ///
+  /// @param spriteToUpdate:  The sprite to be processed
+  /// @param pct: Percentage to update
+  ///
+  /// Side Effects:
+  /// - Process the frame position depending on the sprite's setting
+  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
+  begin
+    if spriteToUpdate = nil then raise Exception.Create('No sprite supplied');
+    if spriteToUpdate.hasEnded then exit;
+    if spriteToUpdate.spriteKind = StaticSprite then exit;
+        
+    spriteToUpdate.frameCount := spriteToUpdate.frameCount + pct;
+    
+    // If we are at the end of the current frame... need to move to the next frame
+    if spriteToUpdate.frameCount >= spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] then
+    begin
+      MoveToNextFrame(spriteToUpdate);
+      
+      while spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] = 0 do
+      begin
+        MoveToNextFrame(spriteToUpdate);
+      end;
 
-			if spriteToUpdate.spriteKind = AnimArraySprite then
-			begin
-				spriteToUpdate.width := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].width;
-				spriteToUpdate.height := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].height;
-			end;
-		end;
-	end;
+      if spriteToUpdate.spriteKind = AnimArraySprite then
+      begin
+        spriteToUpdate.width := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].width;
+        spriteToUpdate.height := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].height;
+      end;
+    end;
+  end;
 
-	procedure UpdateSprite(spriteToUpdate: Sprite); overload;
-	begin
-	  UpdateSprite(spriteToUpdate, 1.0);
-	end;
-	
-	procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
-	begin
-		MoveSprite(spriteToUpdate, pct);
-		UpdateSpriteAnimation(spriteToUpdate, pct);
-	end;
-	
-	/// Draws a sprite to the screen, without using a view port.
-	///
-	///	@param spriteToDraw:		 The sprite to be drawn
-	///
-	/// Side Effects:
-	///	- The sprite is drawn to the screen, if within screen area
-	procedure DrawSprite(spriteToDraw: Sprite); overload;
-	begin
-	  DrawSprite(spriteToDraw, 0, 0);
-	end;
-	
-	procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
-	begin
-		DrawSprite(spriteToDraw, Round(position.x), Round(position.y));
-	end;
-	
-	procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: LongInt); overload;
-	var
-		srcX, srcY: LongInt;
-	begin
-		if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
+  procedure UpdateSprite(spriteToUpdate: Sprite); overload;
+  begin
+    UpdateSprite(spriteToUpdate, 1.0);
+  end;
+  
+  procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+  begin
+    MoveSprite(spriteToUpdate, pct);
+    UpdateSpriteAnimation(spriteToUpdate, pct);
+  end;
+  
+  /// Draws a sprite to the screen, without using a view port.
+  ///
+  /// @param spriteToDraw:     The sprite to be drawn
+  ///
+  /// Side Effects:
+  /// - The sprite is drawn to the screen, if within screen area
+  procedure DrawSprite(spriteToDraw: Sprite); overload;
+  begin
+    DrawSprite(spriteToDraw, 0, 0);
+  end;
+  
+  procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
+  begin
+    DrawSprite(spriteToDraw, Round(position.x), Round(position.y));
+  end;
+  
+  procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: LongInt); overload;
+  var
+    srcX, srcY: LongInt;
+  begin
+    if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
 
-		if (spriteToDraw.rotation <> 0) or (spriteToDraw.zoom <> 1) then
-		begin
-		  UpdateSpriteBuffers(spriteToDraw);
-		  DrawBitmap(spriteToDraw.bufferBmp, spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
-		end
-		else
-		begin
-  		if spriteToDraw.spriteKind <> AnimMultiSprite then
-  		begin
-  			DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
-  		end
-  		else
-  		begin
-  			with spriteToDraw^ do
-  			begin
-  				srcX := (currentFrame mod cols) * width;
-  				srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
-  			end;
-			
-  			DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
-  								   spriteToDraw.width, spriteToDraw.height,
-  								   spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
-  		end;
-  	end;
-	end;
+    if (spriteToDraw.rotation <> 0) or (spriteToDraw.zoom <> 1) then
+    begin
+      UpdateSpriteBuffers(spriteToDraw);
+      DrawBitmap(spriteToDraw.bufferBmp, spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+    end
+    else
+    begin
+      if spriteToDraw.spriteKind <> AnimMultiSprite then
+      begin
+        DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+      end
+      else
+      begin
+        with spriteToDraw^ do
+        begin
+          srcX := (currentFrame mod cols) * width;
+          srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
+        end;
+      
+        DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
+                     spriteToDraw.width, spriteToDraw.height,
+                     spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+      end;
+    end;
+  end;
 
-  	/// Determines if a sprite is off the screen.
-	///
-	///	@param theSprite:			The sprite to check the position of
-	///	@returns					True if the sprite is off the screen
-	function IsSpriteOffscreen(theSprite : Sprite): Boolean;
-	begin
-		if theSprite = nil then raise Exception.Create('No sprite supplied');
-		
-		if SGSDK_Camera.ScreenX(theSprite.x) >= ScreenWidth() then result := true
-		else if SGSDK_Camera.ScreenX(theSprite.x) + CurrentWidth(theSprite) < 0 then result := true
-		else if SGSDK_Camera.ScreenY(theSprite.y) >= ScreenHeight() then result := true
-		else if SGSDK_Camera.ScreenY(theSprite.y) + CurrentHeight(theSprite) < 0 then result := true
-		else result := false;
-	end;
+    /// Determines if a sprite is off the screen.
+  ///
+  /// @param theSprite:     The sprite to check the position of
+  /// @returns          True if the sprite is off the screen
+  function IsSpriteOffscreen(theSprite : Sprite): Boolean;
+  begin
+    if theSprite = nil then raise Exception.Create('No sprite supplied');
+    
+    if SGSDK_Camera.ScreenX(theSprite.x) >= ScreenWidth() then result := true
+    else if SGSDK_Camera.ScreenX(theSprite.x) + CurrentWidth(theSprite) < 0 then result := true
+    else if SGSDK_Camera.ScreenY(theSprite.y) >= ScreenHeight() then result := true
+    else if SGSDK_Camera.ScreenY(theSprite.y) + CurrentHeight(theSprite) < 0 then result := true
+    else result := false;
+  end;
 
-	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
-	begin
-	  MoveSprite(spriteToMove, movementVector, 1.0);
-	end;
+  procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
+  begin
+    MoveSprite(spriteToMove, movementVector, 1.0);
+  end;
 
-	/// Moves a sprite based on information in a movement vector.
-	///
-	///	@param spriteToMove:		 The sprite to move
-	///	@param movementVector:	 The vector containing the movement details
-	procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector; pct: Single); overload;
-	var
-	  mvmt: Vector;
-	  trans: Matrix2D;
-	begin
-		if not Assigned(spriteToMove) then raise Exception.Create('No sprite supplied');
-		
-		if spriteToMove.rotation <> 0 then
-		begin
-		  trans := RotationMatrix(-spriteToMove.rotation);
-		  mvmt := Multiply(trans, movementVector);
-		end
-		else  mvmt := movementVector;
-		
-		spriteToMove.x := spriteToMove.x + (pct * mvmt.x);
-		spriteToMove.y := spriteToMove.y + (pct * mvmt.y);
-	end;
+  /// Moves a sprite based on information in a movement vector.
+  ///
+  /// @param spriteToMove:     The sprite to move
+  /// @param movementVector:   The vector containing the movement details
+  procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector; pct: Single); overload;
+  var
+    mvmt: Vector;
+    trans: Matrix2D;
+  begin
+    if not Assigned(spriteToMove) then raise Exception.Create('No sprite supplied');
+    
+    if spriteToMove.rotation <> 0 then
+    begin
+      trans := RotationMatrix(-spriteToMove.rotation);
+      mvmt := Multiply(trans, movementVector);
+    end
+    else  mvmt := movementVector;
+    
+    spriteToMove.x := spriteToMove.x + (pct * mvmt.x);
+    spriteToMove.y := spriteToMove.y + (pct * mvmt.y);
+  end;
 
-	/// Moves a sprite to a given x,y location.
-	///
-	///	@param spriteToMove:		 the sprite being moved
-	///	@param x, y:						 the new location of the sprite
-	///
-	/// Side Effects:
-	///	- Moves the sprite, changing its x and y
-	procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
-	begin
-		if spriteToMove = nil then raise Exception.Create('No sprite supplied');
-		
-		spriteToMove.x := x;
-		spriteToMove.y := y;
-	end;
+  /// Moves a sprite to a given x,y location.
+  ///
+  /// @param spriteToMove:     the sprite being moved
+  /// @param x, y:             the new location of the sprite
+  ///
+  /// Side Effects:
+  /// - Moves the sprite, changing its x and y
+  procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
+  begin
+    if spriteToMove = nil then raise Exception.Create('No sprite supplied');
+    
+    spriteToMove.x := x;
+    spriteToMove.y := y;
+  end;
 
-	procedure MoveSprite(spriteToMove: Sprite); overload;
-	begin
-	  MoveSprite(spriteToMove, 1.0);
-	end;	
-	
-	procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
-	begin
-	  MoveSprite(spriteToMove, spriteToMove.movement, pct);
-	end;
-	
-	/// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
-	///	transparent and can be used as the target for various drawing operations.
-	///	Once you have drawn the desired image onto the bitmap you can call
-	///	OptimiseBitmap to optimise the surface.
-	///
-	///  @param width, height:  The width and height of the surface
-	///  @returns:              A new bitmap
-	function CreateBitmap(width, height: LongInt): Bitmap;
-	begin
-		if (width < 1) or (height < 1) then
-			raise Exception.Create('Bitmap width and height must be greater then 0');
-	    if (baseSurface = nil) or (baseSurface.format = nil) then
-	      	raise Exception.Create('Unable to CreateBitmap as the window is not open');
-		
-		New(result);
+  procedure MoveSprite(spriteToMove: Sprite); overload;
+  begin
+    MoveSprite(spriteToMove, 1.0);
+  end;  
+  
+  procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
+  begin
+    MoveSprite(spriteToMove, spriteToMove.movement, pct);
+  end;
+  
+  /// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
+  /// transparent and can be used as the target for various drawing operations.
+  /// Once you have drawn the desired image onto the bitmap you can call
+  /// OptimiseBitmap to optimise the surface.
+  ///
+  ///  @param width, height:  The width and height of the surface
+  ///  @returns:              A new bitmap
+  function CreateBitmap(width, height: LongInt): Bitmap;
+  begin
+    if (width < 1) or (height < 1) then
+      raise Exception.Create('Bitmap width and height must be greater then 0');
+      if (baseSurface = nil) or (baseSurface.format = nil) then
+          raise Exception.Create('Unable to CreateBitmap as the window is not open');
+    
+    New(result);
 
-		with baseSurface.format^ do
-		begin
-			result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
-											 RMask, GMask, BMask, AMask);
-		end;
-		
-		if result.surface = nil then
-		begin
-			Dispose(result);
-			raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
-		end;
-		
-		result.width := width;
-		result.height := height;
-		SDL_SetAlpha(result.surface, SDL_SRCALPHA, 0);
-		SDL_FillRect(result.surface, nil, ColorTransparent);
-	end;
-	
-	procedure MakeOpaque(bmp: Bitmap);
-	begin
-	  SDL_SetAlpha(bmp.surface, 0, 255);
-	end;
+    with baseSurface.format^ do
+    begin
+      result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
+                       RMask, GMask, BMask, AMask);
+    end;
+    
+    if result.surface = nil then
+    begin
+      Dispose(result);
+      raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
+    end;
+    
+    result.width := width;
+    result.height := height;
+    SDL_SetAlpha(result.surface, SDL_SRCALPHA, 0);
+    SDL_FillRect(result.surface, nil, ColorTransparent);
+  end;
+  
+  procedure MakeOpaque(bmp: Bitmap);
+  begin
+    SDL_SetAlpha(bmp.surface, 0, 255);
+  end;
 
-	procedure MakeTransparent(bmp: Bitmap);
-	begin
-	  SDL_SetAlpha(bmp.surface, SDL_SRCALPHA, 0);
-	end;
+  procedure MakeTransparent(bmp: Bitmap);
+  begin
+    SDL_SetAlpha(bmp.surface, SDL_SRCALPHA, 0);
+  end;
 
-	/// Created bitmaps can be optimised for faster drawing to the screen. This
-	///	optimisation should be called only once after all drawing to the bitmap
-	///	is complete. Optimisation should not be used if the bitmap is to be
-	///	drawn to in the future. All loaded bitmaps are optimised during loading.
-	///
-	///	@param surface:	The bitmap to be optimised
-	///
-	/// Side Effects:
-	///	- Bitmap is optimised, and should not be used to draw onto in the future
-	procedure OptimiseBitmap(surface: Bitmap);
-	var
-		oldSurface: PSDL_Surface;
-	begin
-		if surface = nil then raise Exception.Create('No bitmap supplied');
-		
-		oldSurface := surface.surface;
-		SetNonAlphaPixels(surface, oldSurface);
-		surface.surface := SDL_DisplayFormatAlpha(oldSurface);
-		SDL_FreeSurface(oldSurface);
-	end;
-	
-	procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
-	begin
+  /// Created bitmaps can be optimised for faster drawing to the screen. This
+  /// optimisation should be called only once after all drawing to the bitmap
+  /// is complete. Optimisation should not be used if the bitmap is to be
+  /// drawn to in the future. All loaded bitmaps are optimised during loading.
+  ///
+  /// @param surface: The bitmap to be optimised
+  ///
+  /// Side Effects:
+  /// - Bitmap is optimised, and should not be used to draw onto in the future
+  procedure OptimiseBitmap(surface: Bitmap);
+  var
+    oldSurface: PSDL_Surface;
+  begin
+    if surface = nil then raise Exception.Create('No bitmap supplied');
+    
+    oldSurface := surface.surface;
+    SetNonAlphaPixels(surface, oldSurface);
+    surface.surface := SDL_DisplayFormatAlpha(oldSurface);
+    SDL_FreeSurface(oldSurface);
+  end;
+  
+  procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
+  begin
     pixelColor(surface, x, y, ToGfxColor(color));
-	end;
-	
-	/// Draws a pixel onto the screen.
-	///
-	///	@param theColor:		 The color to draw the pixel
-	///	@param x,y:					The x,y location to draw the pixel at
-	///
-	/// Side Effects:
-	///	- Sets one pixel on the screen
-	procedure DrawPixelOnScreen(theColour: Colour; x, y: LongInt);
-	begin
-		DrawPixel(scr, theColour, x, y);
-	end;
-
-	procedure DrawPixel(theColour: Colour; x, y: Single); overload;
-	begin
-		DrawPixelOnScreen(theColour, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
-	end;
-
-	/// Draws a rectangle on the screen.
-	///
-	///	@param theColor:		 The color to draw the rectangle
-	///	@param filled:			 True to draw a filled rectangle, false for outline
-	///	@param xPos,yPos:		The x,y location to draw the rectangle at
-	///	@param width,height: The width and height of the rectangle
-	///
-	/// Side Effects:
-	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
-	begin
-		DrawRectangle(scr, theColour, filled, xPos, yPos, width, height);
-	end;
-
-	procedure DrawRectangle(theColour : Colour; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
-	begin
-		DrawRectangle(scr, theColour, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
-	end;
-
-	/// Draws the outline of a rectangle on the screen.
-	///
-	///	@param theColor:		 The color to draw the rectangle
-	///	@param xPos,yPos:		The x,y location to draw the rectangle at
-	///	@param width,height: The width and height of the rectangle
-	///
-	/// Side Effects:
-	///	- Draws a rectangle on the screen
-	procedure DrawRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
-	begin
-		DrawRectangle(scr, theColour, xPos, yPos, width, height);
-	end;
-	
-	procedure DrawRectangle(theColour: Colour; xPos, yPos: Single; width, height : LongInt); overload;
-	begin
-		DrawRectangle(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
-	end;
-
-	/// Draws a filled rectangle on the screen.
-	///
-	///	@param theColor:		 The color to draw the rectangle
-	///	@param xPos,yPos:		The x,y location to draw the rectangle at
-	///	@param width,height: The width and height of the rectangle
-	///
-	/// Side Effects:
-	///	- Draws a rectangle on the screen
-	procedure FillRectangleOnScreen(theColour : Colour; xPos, yPos, width, height : LongInt); overload;
-	begin
-		FillRectangle(scr, theColour, xPos, yPos, width, height);
-	end;
-
-	procedure FillRectangle(theColour : Colour; xPos, yPos: Single; width, height : LongInt); overload;
-	begin
-		FillRectangle(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
-	end;
-
-	/// Draws a line on the screen.
-	///
-	///	@param theColor:		 The color to draw the line
-	///	@param xPosStart,yPosStart: The x,y location to start the line at
-	///	@param xPosEnd, yPosEnd:		The x,y location to end the line at
-	///
-	/// Side Effects:
-	///	- Draws a line in the screen
-	procedure DrawLineOnScreen(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
-	begin
-		DrawLine(scr, theColour, xPosStart, yPosStart, xPosEnd, yPosEnd);
-	end;
-	
-	procedure DrawLine(theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
-	begin
-		DrawLine(scr, theColour, SGSDK_Camera.ScreenX(xPosStart), SGSDK_Camera.ScreenY(yPosStart), SGSDK_Camera.ScreenX(xPosEnd), SGSDK_Camera.ScreenY(yPosEnd));
-	end;
-	
-	procedure DrawLine(theColour: Colour; const line: LineSegment); overload;
-	begin
-		DrawLine(theColour, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y);
-	end;
-	
-	procedure DrawLine(dest: Bitmap; theColour: Colour; const line: LineSegment); overload;
-	begin
-		DrawLine(dest, theColour, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
-	end;
-
-  procedure DrawTriangle(theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
+  end;
+  
+  /// Draws a pixel onto the screen.
+  ///
+  /// @param theColor:     The color to draw the pixel
+  /// @param x,y:         The x,y location to draw the pixel at
+  ///
+  /// Side Effects:
+  /// - Sets one pixel on the screen
+  procedure DrawPixelOnScreen(theColor: Color; x, y: LongInt);
   begin
-    if filled then FillTriangle(theColour, triangle)
-    else DrawTriangle(theColour, triangle);
+    DrawPixel(scr, theColor, x, y);
   end;
 
-  procedure DrawTriangle(dest: Bitmap; theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
+  procedure DrawPixel(theColor: Color; x, y: Single); overload;
   begin
-    if filled then FillTriangle(dest, theColour, triangle)
-    else DrawTriangle(dest, theColour, triangle);
-  end;
-	
-	procedure DrawTriangle(dest: Bitmap; theColour: Colour; const triangle: Triangle); overload;
-	begin
-    DrawTriangle(dest, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
-	end;
-
-  procedure DrawTriangleOnScreen(theColour: Colour; filled: Boolean; const triangle: Triangle); overload;
-  begin
-    if filled then FillTriangleOnScreen(theColour, triangle) 
-    else DrawTriangleOnScreen(theColour, triangle);
+    DrawPixelOnScreen(theColor, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y));
   end;
 
-	procedure DrawTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
-	begin
-    DrawTriangle(scr, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
-	end;
+  /// Draws a rectangle on the screen.
+  ///
+  /// @param theColor:     The color to draw the rectangle
+  /// @param filled:       True to draw a filled rectangle, false for outline
+  /// @param xPos,yPos:   The x,y location to draw the rectangle at
+  /// @param width,height: The width and height of the rectangle
+  ///
+  /// Side Effects:
+  /// - Draws a rectangle in the dest bitmap
+  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  begin
+    DrawRectangle(scr, theColor, filled, xPos, yPos, width, height);
+  end;
 
-	procedure DrawTriangle(theColour: Colour; const triangle: Triangle); overload;
-	begin
-    DrawTriangle(theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
-	end;
-	
-	procedure DrawTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-	begin
-	  DrawTriangle(scr, theColour, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
-	end;
-	
-	procedure DrawTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-	begin
-    DrawTriangle(scr, theColour, x1, y1, x2, y2, x3, y3);
-	end;
+  procedure DrawRectangle(theColor : Color; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
+  begin
+    DrawRectangle(scr, theColor, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
+  end;
 
-	procedure DrawTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-	begin
-    aatrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColour));
-	end;
+  /// Draws the outline of a rectangle on the screen.
+  ///
+  /// @param theColor:     The color to draw the rectangle
+  /// @param xPos,yPos:   The x,y location to draw the rectangle at
+  /// @param width,height: The width and height of the rectangle
+  ///
+  /// Side Effects:
+  /// - Draws a rectangle on the screen
+  procedure DrawRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  begin
+    DrawRectangle(scr, theColor, xPos, yPos, width, height);
+  end;
+  
+  procedure DrawRectangle(theColor: Color; xPos, yPos: Single; width, height : LongInt); overload;
+  begin
+    DrawRectangle(scr, theColor, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
+  end;
 
-	procedure FillTriangle(dest: Bitmap; theColour: Color; const triangle: Triangle); overload;
-	begin
-    FillTriangle(dest, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
-	end;
-	
-	procedure FillTriangle(theColour: Colour; const triangle: Triangle); overload;
-	begin
-    FillTriangle(theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
-	end;
+  /// Draws a filled rectangle on the screen.
+  ///
+  /// @param theColor:     The color to draw the rectangle
+  /// @param xPos,yPos:   The x,y location to draw the rectangle at
+  /// @param width,height: The width and height of the rectangle
+  ///
+  /// Side Effects:
+  /// - Draws a rectangle on the screen
+  procedure FillRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  begin
+    FillRectangle(scr, theColor, xPos, yPos, width, height);
+  end;
 
-	procedure FillTriangle(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-	begin
-	  FillTriangle(scr, theColour, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
-	end;
-	
-	procedure FillTriangleOnScreen(theColour: Colour; const triangle: Triangle); overload;
-	begin
-    FillTriangle(scr, theColour, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
-	end;
-	
-	procedure FillTriangleOnScreen(theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-	begin
-    FillTriangle(scr, theColour, x1, y1, x2, y2, x3, y3);
-	end;
+  procedure FillRectangle(theColor : Color; xPos, yPos: Single; width, height : LongInt); overload;
+  begin
+    FillRectangle(scr, theColor, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
+  end;
 
-	procedure FillTriangle(dest: Bitmap; theColour: Colour; x1, y1, x2, y2, x3, y3: Single); overload;
-	begin
-    filledTrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(theColour));
-	end;
+  /// Draws a line on the screen.
+  ///
+  /// @param theColor:     The color to draw the line
+  /// @param xPosStart,yPosStart: The x,y location to start the line at
+  /// @param xPosEnd, yPosEnd:    The x,y location to end the line at
+  ///
+  /// Side Effects:
+  /// - Draws a line in the screen
+  procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  begin
+    DrawLine(scr, theColor, xPosStart, yPosStart, xPosEnd, yPosEnd);
+  end;
+  
+  procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+  begin
+    DrawLine(scr, theColor, SGSDK_Camera.ScreenX(xPosStart), SGSDK_Camera.ScreenY(yPosStart), SGSDK_Camera.ScreenX(xPosEnd), SGSDK_Camera.ScreenY(yPosEnd));
+  end;
+  
+  procedure DrawLine(theColor: Color; const line: LineSegment); overload;
+  begin
+    DrawLine(theColor, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y);
+  end;
+  
+  procedure DrawLine(dest: Bitmap; theColor: Color; const line: LineSegment); overload;
+  begin
+    DrawLine(dest, theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
+  end;
 
-	
-	/// Draws a horizontal line on the screen.
-	///
-	///	@param theColor:		 The color to draw the line
-	///	@param y:						The y location of the line
-	///	@param x1, x2:			 The starting and ending x value of the line
-	///
-	/// Side Effects:
-	///	- Draws a line on the screen
-	procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt); overload;
-	begin
-		DrawHorizontalLine(scr, theColor, y, x1, x2);
-	end;
+  procedure DrawTriangle(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  begin
+    if filled then FillTriangle(theColor, triangle)
+    else DrawTriangle(theColor, triangle);
+  end;
 
-	procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
-	begin
-		DrawHorizontalLine(scr, theColor, SGSDK_Camera.ScreenY(y), SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenX(x2));
-	end;
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  begin
+    if filled then FillTriangle(dest, theColor, triangle)
+    else DrawTriangle(dest, theColor, triangle);
+  end;
+  
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload;
+  begin
+    DrawTriangle(dest, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+  end;
 
-	/// Draws a vertical line on the screen.
-	///
-	///	@param theColor:		 The color to draw the line
-	///	@param x:						The x location of the line
-	///	@param y1, y2:			 The starting and ending y value of the line
-	///
-	/// Side Effects:
-	///	- Draws a line on the screen
-	procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt); overload;
-	begin
-		DrawVerticalLine(scr, theColor, x, y1, y2);
-	end;
+  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  begin
+    if filled then FillTriangleOnScreen(theColor, triangle) 
+    else DrawTriangleOnScreen(theColor, triangle);
+  end;
 
-	procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
-	begin
-		DrawVerticalLine(scr, theColor, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenY(y2));
-	end;
+  procedure DrawTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+  begin
+    DrawTriangle(scr, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+  end;
 
-	/// Draws a circle centered on a given x, y location.
-	///
-	///	@param theColor:		 The color to draw the circle
-	///	@param filled:			 True to draw a filled circle, false for outline
-	///	@param xc,yc:				The x,y location of the center of the circle
-	///	@param radius:			 The radius of the circle
-	///
-	/// Side Effects:
-	///	- Draws a Circle on the screen
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
-	begin
-		DrawCircle(scr, theColour, filled, xc, yc, radius);
-	end;
+  procedure DrawTriangle(theColor: Color; const triangle: Triangle); overload;
+  begin
+    DrawTriangle(theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+  end;
+  
+  procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  begin
+    DrawTriangle(scr, theColor, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
+  end;
+  
+  procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  begin
+    DrawTriangle(scr, theColor, x1, y1, x2, y2, x3, y3);
+  end;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
-	begin
-		DrawCircle(scr, theColour, filled, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
-	end;
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  begin
+    aatrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColor));
+  end;
 
+  procedure FillTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload;
+  begin
+    FillTriangle(dest, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+  end;
+  
+  procedure FillTriangle(theColor: Color; const triangle: Triangle); overload;
+  begin
+    FillTriangle(theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+  end;
 
-	/// Draws a circle outline centered on a given x, y location.
-	///
-	///	@param theColor:		 The color to draw the circle
-	///	@param xc,yc:				The x,y location of the center of the circle
-	///	@param radius:			 The radius of the circle
-	///
-	/// Side Effects:
-	///	- Draws a Circle on the screen
-	procedure DrawCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
-	begin
-		DrawCircle(scr, theColour, xc, yc, radius);
-	end;
+  procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  begin
+    FillTriangle(scr, theColor, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
+  end;
+  
+  procedure FillTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+  begin
+    FillTriangle(scr, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+  end;
+  
+  procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  begin
+    FillTriangle(scr, theColor, x1, y1, x2, y2, x3, y3);
+  end;
 
-	procedure DrawCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
-	begin
-		DrawCircle(scr, theColour, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
-	end;
+  procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  begin
+    filledTrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(theColor));
+  end;
 
-	/// Draws a filled circle centered on a given x, y location.
-	///
-	///	@param theColor:		 The color to draw the circle
-	///	@param xc,yc:				The x,y location of the center of the circle
-	///	@param radius:			 The radius of the circle
-	///
-	/// Side Effects:
-	///	- Draws a Circle on the screen
-	procedure FillCircleOnScreen(theColour: Colour; xc, yc, radius: LongInt); overload;
-	begin
-		FillCircle(scr, theColour, xc, yc, radius);
-	end;
+  
+  /// Draws a horizontal line on the screen.
+  ///
+  /// @param theColor:     The color to draw the line
+  /// @param y:           The y location of the line
+  /// @param x1, x2:       The starting and ending x value of the line
+  ///
+  /// Side Effects:
+  /// - Draws a line on the screen
+  procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt); overload;
+  begin
+    DrawHorizontalLine(scr, theColor, y, x1, x2);
+  end;
 
-	procedure FillCircle(theColour: Colour; xc, yc: Single; radius: LongInt); overload;
-	begin
-		FillCircle(scr, theColour, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
-	end;
+  procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
+  begin
+    DrawHorizontalLine(scr, theColor, SGSDK_Camera.ScreenY(y), SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenX(x2));
+  end;
 
-	/// Draws a ellipse within a given rectangle on the screen.
-	///
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param filled:			 True to draw a filled ellipse, false for outline
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse on the screen
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-	begin
-		DrawEllipse(scr, theColour, filled, xPos, yPos, width, height);
-	end;
+  /// Draws a vertical line on the screen.
+  ///
+  /// @param theColor:     The color to draw the line
+  /// @param x:           The x location of the line
+  /// @param y1, y2:       The starting and ending y value of the line
+  ///
+  /// Side Effects:
+  /// - Draws a line on the screen
+  procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt); overload;
+  begin
+    DrawVerticalLine(scr, theColor, x, y1, y2);
+  end;
 
-	procedure DrawEllipse(theColour: Colour; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
-	begin
-		DrawEllipse(scr, theColour, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
-	end;
+  procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
+  begin
+    DrawVerticalLine(scr, theColor, SGSDK_Camera.ScreenX(x), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenY(y2));
+  end;
 
-	/// Draws a ellipse outline within a given rectangle on the screen.
-	///
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse on the screen
-	procedure DrawEllipseOnScreen(theColour: Colour; xPos, yPos, width, height: LongInt); overload;
-	begin
-		DrawEllipse(scr, theColour, xPos, yPos, width, height);
-	end;
+  /// Draws a circle centered on a given x, y location.
+  ///
+  /// @param theColor:     The color to draw the circle
+  /// @param filled:       True to draw a filled circle, false for outline
+  /// @param xc,yc:       The x,y location of the center of the circle
+  /// @param radius:       The radius of the circle
+  ///
+  /// Side Effects:
+  /// - Draws a Circle on the screen
+  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
+  begin
+    DrawCircle(scr, theColor, filled, xc, yc, radius);
+  end;
 
-	procedure DrawEllipse(theColour: Colour; xPos, yPos: Single; width, height: LongInt); overload;
-	begin
-		DrawEllipse(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
-	end;
-
-
-	/// Draws a filled ellipse within a given rectangle on the screen.
-	///
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse in the screen
-	procedure FillEllipseOnScreen(theColour: Colour;  xPos, yPos, width, height: LongInt); overload;
-	begin
-		FillEllipse(scr, theColour, xPos, yPos, width, height);
-	end;
-
-	procedure FillEllipse(theColour: Colour;  xPos, yPos: Single; width, height: LongInt); overload;
-	begin
-		FillEllipse(scr, theColour, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
-	end;
+  procedure DrawCircle(theColor: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  begin
+    DrawCircle(scr, theColor, filled, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
+  end;
 
 
-	/// Draws a rectangle on the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the rectangle
-	///	@param filled:			 True to draw a filled rectangle, false for outline
-	///	@param xPos,yPos:		The x,y location to draw the rectangle at
-	///	@param width,height: The width and height of the rectangle
-	///
-	/// Side Effects:
-	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangle(dest: Bitmap; theColour: Colour; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
-	begin
-		if filled then FillRectangle(dest, theColour, xPos, yPos, width, height)
-		else DrawRectangle(dest, theColour, xPos, yPos, width, height);
-	end;
+  /// Draws a circle outline centered on a given x, y location.
+  ///
+  /// @param theColor:     The color to draw the circle
+  /// @param xc,yc:       The x,y location of the center of the circle
+  /// @param radius:       The radius of the circle
+  ///
+  /// Side Effects:
+  /// - Draws a Circle on the screen
+  procedure DrawCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  begin
+    DrawCircle(scr, theColor, xc, yc, radius);
+  end;
 
-	/// Draws the outline of a rectangle on the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the rectangle
-	///	@param xPos,yPos:		The x,y location to draw the rectangle at
-	///	@param width,height: The width and height of the rectangle
-	///
-	/// Side Effects:
-	///	- Draws a rectangle in the dest bitmap
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; xPos, yPos, width, height : LongInt); overload;
-	begin
-	  if dest = nil then raise Exception.Create('No destination bitmap supplied');
-	  rectangleColor(dest.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColour));
-	end;
+  procedure DrawCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
+  begin
+    DrawCircle(scr, theColor, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
+  end;
 
-	/// Draws a filled rectangle on the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the rectangle
-	///	@param xPos,yPos:		The x,y location to draw the rectangle at
-	///	@param width,height: The width and height of the rectangle
-	///
-	/// Side Effects:
-	///	- Draws a rectangle in the dest bitmap
-	procedure FillRectangle(dest: Bitmap; theColour : Colour;  xPos, yPos, width, height : LongInt);
-	var
-		rect: SDL_Rect;
-	begin
-		if dest = nil then raise Exception.Create('No destination bitmap supplied');
-		
-		if width < 0 then
-		begin
-			rect.x := xPos + width; //move back by width
-			width := -width;
-		end else rect.x := xPos;
-		
-		if height < 0 then
-		begin
-			rect.y := yPos + height; //move up by height
-			height := -height;
-		end else rect.y := yPos;
-		
-		rect.w := width;
-		rect.h := height;
-		
-		//SDL_FillRect(dest.surface, @rect, theColour);
-		boxColor(dest.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(theColour));
-	end;
+  /// Draws a filled circle centered on a given x, y location.
+  ///
+  /// @param theColor:     The color to draw the circle
+  /// @param xc,yc:       The x,y location of the center of the circle
+  /// @param radius:       The radius of the circle
+  ///
+  /// Side Effects:
+  /// - Draws a Circle on the screen
+  procedure FillCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  begin
+    FillCircle(scr, theColor, xc, yc, radius);
+  end;
 
-	/// Draws a ellipse within a given rectangle on the dest bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param filled:			 True to draw a filled ellipse, false for outline
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse in the dest bitmap
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-	begin
-		if filled then FillEllipse(dest, theColour, xPos, yPos, width, height)
-		else DrawEllipse(dest, theColour, xPos, yPos, width, height);
-	end;
+  procedure FillCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
+  begin
+    FillCircle(scr, theColor, SGSDK_Camera.ScreenX(xc), SGSDK_Camera.ScreenY(yc), radius);
+  end;
 
-	/// Draws a ellipse outline within a given rectangle on the dest bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse in the dest bitmap
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour;  xPos, yPos, width, height: LongInt); overload;
-	var
-	  halfWidth, halfHeight: Sint16;
-	begin
-	  halfWidth := width div 2;
-	  halfHeight := height div 2;
-	  
-	  aaellipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColour));
-	end;
+  /// Draws a ellipse within a given rectangle on the screen.
+  ///
+  /// @param theColor:     The color to draw the ellipse
+  /// @param filled:       True to draw a filled ellipse, false for outline
+  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
+  /// @param width,height: The width and height of the ellipse
+  ///
+  /// Side Effects:
+  /// - Draws a ellipse on the screen
+  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  begin
+    DrawEllipse(scr, theColor, filled, xPos, yPos, width, height);
+  end;
 
-	/// Draws a filled ellipse within a given rectangle on the dest bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the ellipse
-	///	@param xPos,yPos:		The x,y location of the top left of the ellipse
-	///	@param width,height: The width and height of the ellipse
-	///
-	/// Side Effects:
-	///	- Draws a ellipse in the dest bitmap
-	procedure FillEllipse(dest: Bitmap; theColour: Colour; xPos, yPos, width, height: LongInt);
-	var
-	  halfWidth, halfHeight: Sint16;
-	begin
-	  halfWidth := width div 2;
-	  halfHeight := height div 2;
+  procedure DrawEllipse(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  begin
+    DrawEllipse(scr, theColor, filled, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
+  end;
 
-	  filledEllipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColour));
-	end;
-	
-	/// Draws a vertical line on the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the line
-	///	@param x:						The x location of the line
-	///	@param y1, y2:			 The starting and ending y value of the line
-	///
-	/// Side Effects:
-	///	- Draws a line in the dest bitmap
-	procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt);
-	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
+  /// Draws a ellipse outline within a given rectangle on the screen.
+  ///
+  /// @param theColor:     The color to draw the ellipse
+  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
+  /// @param width,height: The width and height of the ellipse
+  ///
+  /// Side Effects:
+  /// - Draws a ellipse on the screen
+  procedure DrawEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  begin
+    DrawEllipse(scr, theColor, xPos, yPos, width, height);
+  end;
+
+  procedure DrawEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  begin
+    DrawEllipse(scr, theColor, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
+  end;
+
+
+  /// Draws a filled ellipse within a given rectangle on the screen.
+  ///
+  /// @param theColor:     The color to draw the ellipse
+  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
+  /// @param width,height: The width and height of the ellipse
+  ///
+  /// Side Effects:
+  /// - Draws a ellipse in the screen
+  procedure FillEllipseOnScreen(theColor: Color;  xPos, yPos, width, height: LongInt); overload;
+  begin
+    FillEllipse(scr, theColor, xPos, yPos, width, height);
+  end;
+
+  procedure FillEllipse(theColor: Color;  xPos, yPos: Single; width, height: LongInt); overload;
+  begin
+    FillEllipse(scr, theColor, SGSDK_Camera.ScreenX(xPos), SGSDK_Camera.ScreenY(yPos), width, height);
+  end;
+
+
+  /// Draws a rectangle on the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the rectangle
+  /// @param filled:       True to draw a filled rectangle, false for outline
+  /// @param xPos,yPos:   The x,y location to draw the rectangle at
+  /// @param width,height: The width and height of the rectangle
+  ///
+  /// Side Effects:
+  /// - Draws a rectangle in the dest bitmap
+  procedure DrawRectangle(dest: Bitmap; theColor: Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  begin
+    if filled then FillRectangle(dest, theColor, xPos, yPos, width, height)
+    else DrawRectangle(dest, theColor, xPos, yPos, width, height);
+  end;
+
+  /// Draws the outline of a rectangle on the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the rectangle
+  /// @param xPos,yPos:   The x,y location to draw the rectangle at
+  /// @param width,height: The width and height of the rectangle
+  ///
+  /// Side Effects:
+  /// - Draws a rectangle in the dest bitmap
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  begin
+    if dest = nil then raise Exception.Create('No destination bitmap supplied');
+    rectangleColor(dest.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColor));
+  end;
+
+  /// Draws a filled rectangle on the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the rectangle
+  /// @param xPos,yPos:   The x,y location to draw the rectangle at
+  /// @param width,height: The width and height of the rectangle
+  ///
+  /// Side Effects:
+  /// - Draws a rectangle in the dest bitmap
+  procedure FillRectangle(dest: Bitmap; theColor : Color;  xPos, yPos, width, height : LongInt);
+  var
+    rect: SDL_Rect;
+  begin
+    if dest = nil then raise Exception.Create('No destination bitmap supplied');
+    
+    if width < 0 then
+    begin
+      rect.x := xPos + width; //move back by width
+      width := -width;
+    end else rect.x := xPos;
+    
+    if height < 0 then
+    begin
+      rect.y := yPos + height; //move up by height
+      height := -height;
+    end else rect.y := yPos;
+    
+    rect.w := width;
+    rect.h := height;
+    
+    //SDL_FillRect(dest.surface, @rect, theColor);
+    boxColor(dest.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(theColor));
+  end;
+
+  /// Draws a ellipse within a given rectangle on the dest bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the ellipse
+  /// @param filled:       True to draw a filled ellipse, false for outline
+  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
+  /// @param width,height: The width and height of the ellipse
+  ///
+  /// Side Effects:
+  /// - Draws a ellipse in the dest bitmap
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  begin
+    if filled then FillEllipse(dest, theColor, xPos, yPos, width, height)
+    else DrawEllipse(dest, theColor, xPos, yPos, width, height);
+  end;
+
+  /// Draws a ellipse outline within a given rectangle on the dest bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the ellipse
+  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
+  /// @param width,height: The width and height of the ellipse
+  ///
+  /// Side Effects:
+  /// - Draws a ellipse in the dest bitmap
+  procedure DrawEllipse(dest: Bitmap; theColor: Color;  xPos, yPos, width, height: LongInt); overload;
+  var
+    halfWidth, halfHeight: Sint16;
+  begin
+    halfWidth := width div 2;
+    halfHeight := height div 2;
+    
+    aaellipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
+  end;
+
+  /// Draws a filled ellipse within a given rectangle on the dest bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the ellipse
+  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
+  /// @param width,height: The width and height of the ellipse
+  ///
+  /// Side Effects:
+  /// - Draws a ellipse in the dest bitmap
+  procedure FillEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt);
+  var
+    halfWidth, halfHeight: Sint16;
+  begin
+    halfWidth := width div 2;
+    halfHeight := height div 2;
+
+    filledEllipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
+  end;
+  
+  /// Draws a vertical line on the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the line
+  /// @param x:           The x location of the line
+  /// @param y1, y2:       The starting and ending y value of the line
+  ///
+  /// Side Effects:
+  /// - Draws a line in the dest bitmap
+  procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt);
+  begin
+    if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
     vlineColor(dest.surface, x, y1, y2, ToGfxColor(theColor));
-	end;
+  end;
 
-	/// Draws a horizontal line on the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the line
-	///	@param y:						The y location of the line
-	///	@param x1, x2:			 The starting and ending x value of the line
-	///
-	/// Side Effects:
-	///	- Draws a line in the dest bitmap
-	procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt);
-	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
-		  
-		hlineColor(dest.surface, x1, x2, y, ToGfxColor(theColor));
-	end;
+  /// Draws a horizontal line on the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the line
+  /// @param y:           The y location of the line
+  /// @param x1, x2:       The starting and ending x value of the line
+  ///
+  /// Side Effects:
+  /// - Draws a line in the dest bitmap
+  procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt);
+  begin
+    if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
+      
+    hlineColor(dest.surface, x1, x2, y, ToGfxColor(theColor));
+  end;
 
-	/// Draws a line on the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the line
-	///	@param xPosStart,yPosStart: The x,y location to start the line at
-	///	@param xPosEnd, yPosEnd:		The x,y location to end the line at
-	///
-	/// Side Effects:
-	///	- Draws a line in the dest bitmap
-	procedure DrawLine(dest: Bitmap; theColour: Colour; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
-	begin
-	  aalineColor(dest.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColour));
-	end;
+  /// Draws a line on the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the line
+  /// @param xPosStart,yPosStart: The x,y location to start the line at
+  /// @param xPosEnd, yPosEnd:    The x,y location to end the line at
+  ///
+  /// Side Effects:
+  /// - Draws a line in the dest bitmap
+  procedure DrawLine(dest: Bitmap; theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
+  begin
+    aalineColor(dest.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColor));
+  end;
 
- 	/// Draws a pixel onto the destination bitmap.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the pixel
-	///	@param x,y:					The x,y location to draw the pixel at
-	///
-	/// Side Effects:
-	///	- Sets one pixel on the destination bitmap
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; x, y: LongInt); overload;
-	begin
-		if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
-		
-		if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
-		
-		//if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
-		
-		PutPixel(dest.surface, x, y, theColour);
-		
-		//if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
-	end;
-	
-	/// Draws a circle centered on a given x, y location.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the circle
-	///	@param filled:			 True to draw a filled circle, false for outline
-	///	@param xc,yc:				The x,y location of the center of the circle
-	///	@param radius:			 The radius of the circle
-	///
-	/// Side Effects:
-	///	- Draws a Circle in the dest bitmap
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; xc, yc, radius: LongInt); overload;
-	begin
-		if filled then FillCircle(dest, theColour, xc, yc, radius)
-		else DrawCircle(dest, theColour, xc, yc, radius);
-	end;
+  /// Draws a pixel onto the destination bitmap.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the pixel
+  /// @param x,y:         The x,y location to draw the pixel at
+  ///
+  /// Side Effects:
+  /// - Sets one pixel on the destination bitmap
+  procedure DrawPixel(dest: Bitmap; theColor: Color; x, y: LongInt); overload;
+  begin
+    if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
+    
+    if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
+    
+    //if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+    
+    PutPixel(dest.surface, x, y, theColor);
+    
+    //if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+  end;
+  
+  /// Draws a circle centered on a given x, y location.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the circle
+  /// @param filled:       True to draw a filled circle, false for outline
+  /// @param xc,yc:       The x,y location of the center of the circle
+  /// @param radius:       The radius of the circle
+  ///
+  /// Side Effects:
+  /// - Draws a Circle in the dest bitmap
+  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
+  begin
+    if filled then FillCircle(dest, theColor, xc, yc, radius)
+    else DrawCircle(dest, theColor, xc, yc, radius);
+  end;
 
-	/// Draws a circle outline centered on a given x, y location.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the circle
-	///	@param xc,yc:				The x,y location of the center of the circle
-	///	@param radius:			 The radius of the circle
-	///
-	/// Side Effects:
-	///	- Draws a Circle in the dest bitmap
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt); overload;
-	begin
-	  aacircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColour));
-	end;
+  /// Draws a circle outline centered on a given x, y location.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the circle
+  /// @param xc,yc:       The x,y location of the center of the circle
+  /// @param radius:       The radius of the circle
+  ///
+  /// Side Effects:
+  /// - Draws a Circle in the dest bitmap
+  procedure DrawCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
+  begin
+    aacircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColor));
+  end;
 
-	/// Draws a filled circle centered on a given x, y location.
-	///
-	///	@param dest:				 The destination bitmap - not optimised!
-	///	@param theColor:		 The color to draw the circle
-	///	@param xc,yc:				The x,y location of the center of the circle
-	///	@param radius:			 The radius of the circle
-	///
-	/// Side Effects:
-	///	- Draws a Circle in the dest bitmap
-	procedure FillCircle(dest: Bitmap; theColour: Colour; xc, yc, radius: LongInt);
-	begin
-	  filledCircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColour));
-	end;
-	
-	
-	
-	//**********
-	// Overloaded draw methods...
-	//**********
-	
-	
-	procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; const position: Point2D); overload;
-	begin
-		DrawBitmap(dest, bitmapToDraw, Round(position.x), Round(position.y));
-	end;
+  /// Draws a filled circle centered on a given x, y location.
+  ///
+  /// @param dest:         The destination bitmap - not optimised!
+  /// @param theColor:     The color to draw the circle
+  /// @param xc,yc:       The x,y location of the center of the circle
+  /// @param radius:       The radius of the circle
+  ///
+  /// Side Effects:
+  /// - Draws a Circle in the dest bitmap
+  procedure FillCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt);
+  begin
+    filledCircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColor));
+  end;
+  
+  
+  
+  //**********
+  // Overloaded draw methods...
+  //**********
+  
+  
+  procedure DrawBitmap(dest: Bitmap; bitmapToDraw: Bitmap; const position: Point2D); overload;
+  begin
+    DrawBitmap(dest, bitmapToDraw, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; const position: Point2D); overload;
-	begin
-		DrawBitmapPart(dest, bitmapToDraw, source, Round(position.x), Round(position.y));
-	end;
+  procedure DrawBitmapPart(dest: Bitmap; bitmapToDraw: Bitmap; const source: Rectangle; const position: Point2D); overload;
+  begin
+    DrawBitmapPart(dest, bitmapToDraw, source, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawPixel(dest: Bitmap; theColour: Colour; const position : Point2D); overload;
-	begin
-		DrawPixel(dest, theColour, Round(position.x), Round(position.y));
-	end;
+  procedure DrawPixel(dest: Bitmap; theColor: Color; const position : Point2D); overload;
+  begin
+    DrawPixel(dest, theColor, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; filled : Boolean; const source: Rectangle); overload;
-	begin
-		DrawRectangle(dest, theColour, filled, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; filled : Boolean; const source: Rectangle); overload;
+  begin
+    DrawRectangle(dest, theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
-	begin
-		DrawRectangle(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
+  begin
+    DrawRectangle(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure FillRectangle(dest: Bitmap; theColour : Colour; const source: Rectangle); overload;
-	begin
-		FillRectangle(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure FillRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
+  begin
+    FillRectangle(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; filled: Boolean; const point: Point2D; radius: LongInt); overload;
-	begin
-		DrawCircle(dest, theColour, filled, Round(point.x), Round(point.y), radius);
-	end;
+  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
+  begin
+    DrawCircle(dest, theColor, filled, Round(point.x), Round(point.y), radius);
+  end;
 
-	procedure DrawCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
-	begin
-		DrawCircle(dest, theColour, Round(point.x), Round(point.y), radius);
-	end;
+  procedure DrawCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
+  begin
+    DrawCircle(dest, theColor, Round(point.x), Round(point.y), radius);
+  end;
 
-	procedure FillCircle(dest: Bitmap; theColour: Colour; const point: Point2D; radius: LongInt); overload;
-	begin
-		FillCircle(dest, theColour, Round(point.x), Round(point.y), radius);
-	end;
+  procedure FillCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
+  begin
+    FillCircle(dest, theColor, Round(point.x), Round(point.y), radius);
+  end;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	begin
-		DrawEllipse(dest, theColour, filled, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  begin
+    DrawEllipse(dest, theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
-	begin
-		DrawEllipse(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
+  begin
+    DrawEllipse(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure FillEllipse(dest: Bitmap; theColour: Colour; const source: Rectangle); overload;
-	begin
-		FillEllipse(dest, theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure FillEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
+  begin
+    FillEllipse(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawBitmap(bitmapToDraw : Bitmap; const position : Point2D); overload;
-	begin
-		DrawBitmap(bitmapToDraw, Round(position.x), Round(position.y));
-	end;
+  procedure DrawBitmap(bitmapToDraw : Bitmap; const position : Point2D); overload;
+  begin
+    DrawBitmap(bitmapToDraw, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; x, y : Single); overload;
-	begin
-		DrawBitmapPart(bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
-	end;
+  procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; x, y : Single); overload;
+  begin
+    DrawBitmapPart(bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
+  end;
 
-	procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; const position : Point2D); overload;
-	begin
-		DrawBitmapPart(bitmapToDraw, source, Round(position.x), Round(position.y));
-	end;
+  procedure DrawBitmapPart(bitmapToDraw : Bitmap; const source : Rectangle; const position : Point2D); overload;
+  begin
+    DrawBitmapPart(bitmapToDraw, source, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawPixel(theColour: Colour; const position: Point2D); overload;
-	begin
-		DrawPixel(theColour, Round(position.x), Round(position.y));
-	end;
+  procedure DrawPixel(theColor: Color; const position: Point2D); overload;
+  begin
+    DrawPixel(theColor, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawRectangle(theColour : Colour; filled : Boolean; const source : Rectangle); overload;
-	begin
-		DrawRectangle(theColour, filled, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawRectangle(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  begin
+    DrawRectangle(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawRectangle(theColour : Colour; const source : Rectangle); overload;
-	begin
-		DrawRectangle(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawRectangle(theColor : Color; const source : Rectangle); overload;
+  begin
+    DrawRectangle(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure FillRectangle(theColour : Colour; const source : Rectangle); overload;
-	begin
-		FillRectangle(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure FillRectangle(theColor : Color; const source : Rectangle); overload;
+  begin
+    FillRectangle(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawCircle(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
-	begin
-		DrawCircle(theColour, filled, Round(position.x), Round(position.y), radius);
-	end;
+  procedure DrawCircle(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  begin
+    DrawCircle(theColor, filled, Round(position.x), Round(position.y), radius);
+  end;
 
-	procedure DrawCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
-	begin
-		DrawCircle(theColour, Round(position.x), Round(position.y), radius);
-	end;
+  procedure DrawCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  begin
+    DrawCircle(theColor, Round(position.x), Round(position.y), radius);
+  end;
 
-	procedure FillCircle(theColour: Colour; const position: Point2D; radius: LongInt); overload;
-	begin
-		FillCircle(theColour, position.x, position.y, radius);
-	end;
+  procedure FillCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  begin
+    FillCircle(theColor, position.x, position.y, radius);
+  end;
 
-	procedure DrawEllipse(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	begin
-		DrawEllipse(theColour, filled, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawEllipse(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  begin
+    DrawEllipse(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawEllipse(theColour: Colour; const source: Rectangle); overload;
-	begin
-		DrawEllipse(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawEllipse(theColor: Color; const source: Rectangle); overload;
+  begin
+    DrawEllipse(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure FillEllipse(theColour: Colour; const source: Rectangle); overload;
-	begin
-		FillEllipse(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure FillEllipse(theColor: Color; const source: Rectangle); overload;
+  begin
+    FillEllipse(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : LongInt); overload;
-	begin
-		DrawBitmapPartOnScreen(bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
-	end;
+  procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  begin
+    DrawBitmapPartOnScreen(bitmapToDraw, Round(source.x), Round(source.y), source.width, source.height, x, y);
+  end;
 
-	procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; const position: Point2D); overload;
-	begin
-		DrawBitmapPartOnScreen(bitmapToDraw, source, Round(position.x), Round(position.y));
-	end;
+  procedure DrawBitmapPartOnScreen(bitmapToDraw : Bitmap; const source: Rectangle; const position: Point2D); overload;
+  begin
+    DrawBitmapPartOnScreen(bitmapToDraw, source, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; const position : Point2D); overload;
-	begin
-		DrawBitmapOnScreen(bitmapToDraw, Round(position.x), Round(position.y))
-	end;
+  procedure DrawBitmapOnScreen(bitmapToDraw : Bitmap; const position : Point2D); overload;
+  begin
+    DrawBitmapOnScreen(bitmapToDraw, Round(position.x), Round(position.y))
+  end;
 
-	procedure DrawPixelOnScreen(theColour: Colour; const position: Point2D); overload;
-	begin
-		DrawPixelOnScreen(theColour, Round(position.x), Round(position.y));
-	end;
+  procedure DrawPixelOnScreen(theColor: Color; const position: Point2D); overload;
+  begin
+    DrawPixelOnScreen(theColor, Round(position.x), Round(position.y));
+  end;
 
-	procedure DrawRectangleOnScreen(theColour : Colour; filled : Boolean; const source : Rectangle); overload;
-	begin
-		DrawRectangleOnScreen(theColour, filled, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  begin
+    DrawRectangleOnScreen(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawRectangleOnScreen(theColour : Colour; const source : Rectangle); overload;
-	begin
-		DrawRectangleOnScreen(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
+  begin
+    DrawRectangleOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure FillRectangleOnScreen(theColour : Colour; const source : Rectangle); overload;
-	begin
-		FillRectangleOnScreen(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure FillRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
+  begin
+    FillRectangleOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawLineOnScreen(theColour: Colour; const line: LineSegment); overload;
-	begin
-		DrawLineOnScreen(theColour, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
-	end;
+  procedure DrawLineOnScreen(theColor: Color; const line: LineSegment); overload;
+  begin
+    DrawLineOnScreen(theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
+  end;
 
-	procedure DrawCircleOnScreen(theColour: Colour; filled: Boolean; const position: Point2D; radius: LongInt); overload;
-	begin
-		DrawCircleOnScreen(theColour, filled, Round(position.x), Round(position.y), radius);
-	end;
+  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  begin
+    DrawCircleOnScreen(theColor, filled, Round(position.x), Round(position.y), radius);
+  end;
 
-	procedure DrawCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
-	begin
-		DrawCircleOnScreen(theColour, Round(position.x), Round(position.y), radius);
-	end;
+  procedure DrawCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  begin
+    DrawCircleOnScreen(theColor, Round(position.x), Round(position.y), radius);
+  end;
 
-	procedure FillCircleOnScreen(theColour: Colour; const position: Point2D; radius: LongInt); overload;
-	begin
-		FillCircleOnScreen(theColour, Round(position.x), Round(position.y), radius);
-	end;
+  procedure FillCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  begin
+    FillCircleOnScreen(theColor, Round(position.x), Round(position.y), radius);
+  end;
 
-	procedure DrawEllipseOnScreen(theColour: Colour; filled: Boolean; const source: Rectangle); overload;
-	begin
-		DrawEllipseOnScreen(theColour, filled, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  begin
+    DrawEllipseOnScreen(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure DrawEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
-	begin
-		DrawEllipseOnScreen(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
+  procedure DrawEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  begin
+    DrawEllipseOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
 
-	procedure FillEllipseOnScreen(theColour: Colour; const source: Rectangle); overload;
-	begin
-		FillEllipseOnScreen(theColour, Round(source.x), Round(source.y), source.width, source.height);
-	end;
-	
-	procedure ResetClip(bmp: Bitmap); overload;
-	begin
-		if bmp = nil then raise Exception.Create('Cannot reset clip, bmp must not be nil');
-		SDL_SetClipRect(bmp.surface, nil);
-	end;
+  procedure FillEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  begin
+    FillEllipseOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+  end;
+  
+  procedure ResetClip(bmp: Bitmap); overload;
+  begin
+    if bmp = nil then raise Exception.Create('Cannot reset clip, bmp must not be nil');
+    SDL_SetClipRect(bmp.surface, nil);
+  end;
 
-	procedure ResetClip(); overload;
-	begin
-		ResetClip(scr);
-	end;
-	
-	procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
-	var
-		rect: SDL_Rect;
-	begin
-		if bmp = nil then raise Exception.Create('Cannot set clip, bmp must not be nil');
-		rect := NewSDLRect(x, y, w, h);
-		SDL_SetClipRect(bmp.surface, @rect);
-	end;
-	
-	procedure SetClip(bmp: Bitmap; r: Rectangle); overload;
-	begin
-		SetClip(bmp, Round(r.x), Round(r.y), r.width, r.height);
-	end;
+  procedure ResetClip(); overload;
+  begin
+    ResetClip(scr);
+  end;
+  
+  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
+  var
+    rect: SDL_Rect;
+  begin
+    if bmp = nil then raise Exception.Create('Cannot set clip, bmp must not be nil');
+    rect := NewSDLRect(x, y, w, h);
+    SDL_SetClipRect(bmp.surface, @rect);
+  end;
+  
+  procedure SetClip(bmp: Bitmap; r: Rectangle); overload;
+  begin
+    SetClip(bmp, Round(r.x), Round(r.y), r.width, r.height);
+  end;
 
-	procedure SetClip(x, y, w, h: LongInt); overload;
-	begin
-		SetClip(scr, x, y, w, h);
-	end;
-	
-	procedure SetClip(r: Rectangle); overload;
-	begin
-		SetClip(scr, Round(r.x), Round(r.y), r.width, r.height);
-	end;
-	
-	function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
-	begin
+  procedure SetClip(x, y, w, h: LongInt); overload;
+  begin
+    SetClip(scr, x, y, w, h);
+  end;
+  
+  procedure SetClip(r: Rectangle); overload;
+  begin
+    SetClip(scr, Round(r.x), Round(r.y), r.width, r.height);
+  end;
+  
+  function RotateZoomBitmap(src: Bitmap; degRot, zoom: Single): Bitmap;
+  begin
     New(result);
     result.surface := rotozoomSurface(src.surface, degRot, zoom, 1);
     result.width := result.surface.w;
     result.height := result.surface.h;
-	end;
-	
-	procedure SetupBitmapForCollisions(src: Bitmap);
-	begin
-	  if Length(src.nonTransparentPixels) <> 0 then exit;
-	    
+  end;
+  
+  procedure SetupBitmapForCollisions(src: Bitmap);
+  begin
+    if Length(src.nonTransparentPixels) <> 0 then exit;
+      
     SetNonAlphaPixels(src, src.surface);
     OptimiseBitmap(src);
-	end;
+  end;
 end.

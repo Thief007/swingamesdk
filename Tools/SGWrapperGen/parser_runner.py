@@ -17,7 +17,8 @@ def run_for_all_units(file_visitor):
     
     files = [
             lib_file,
-            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas')
+            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
+            find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas')
         ]
     
     for a_file in files[1:]:
@@ -27,8 +28,6 @@ def run_for_all_units(file_visitor):
         if each_file != lib_file: lib_file.uses.append(each_file)
     
     lib_file.members.append(find_or_add_class('lib'))
-    
-    files.append(lib_file)
     
     for each_file in files:
         logger.debug('Visiting file %s', each_file.name)

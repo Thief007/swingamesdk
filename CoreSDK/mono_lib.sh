@@ -93,7 +93,8 @@ doCompile()
 		mkdir "${Output}" 
 	fi
 
-	$FPC_BIN -Mdelphi $EXTRA_OPTS -FE"${Output}" -FU"${Output}" -s ./src/SGSDK.pas >> ${BaseDir}/out.log
+	#$FPC_BIN -Mdelphi $EXTRA_OPTS -FE"${Output}" -FU"${Output}" -s ./src/SGSDK.pas >> ${BaseDir}/out.log
+	$FPC_BIN -Mdelphi $EXTRA_OPTS -FE"${Output}" -FU"${Output}" -s ./src/sgsdk1.pas >> ${BaseDir}/out.log
 	if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
 
 	#Assemble all of the .s files
