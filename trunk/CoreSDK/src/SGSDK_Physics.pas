@@ -45,8 +45,8 @@ interface
 
 	function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
 
-	function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
-	function HasSpriteCollidedY(theSprite: Sprite; y: Single; range: CollisionDetectionRange): Boolean;
+  // function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
+  // function HasSpriteCollidedY(theSprite: Sprite; y: Single; range: CollisionDetectionRange): Boolean;
 
 	function HasSpriteCollidedWithRect(theSprite: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
 	function HasSpriteCollidedWithRect(theSprite: Sprite; const rect: Rectangle): Boolean; overload;
@@ -154,6 +154,9 @@ interface
 implementation
 	uses
 		SysUtils, Math, Classes, SwinGameTrace;
+		
+	const 
+	  DEG_TO_RAD = 0.0174532925;
 
 	function IsPixelDrawnAtPoint(image: Bitmap; x, y: LongInt) : Boolean;
 	begin
@@ -318,19 +321,19 @@ implementation
 	///	@param range:			The kind of check to perform less, larger or equal.
 	///
 	///	@returns				True if the sprite is within the range requested
-	function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
-	begin
-		if range = CollisionRangeEquals then
-			result := (x >= theSprite.x) and 
-	        (x <= theSprite.x + theSprite.width)
-		else if range = CollisionRangeGreaterThan then
-			result := x <= theSprite.x + 
-	                    theSprite.width
-		else if range = CollisionRangeLessThan then
-			result := x >= theSprite.x
-		else
-			raise Exception.Create('Invalid Collision Range');
-	end;
+  // function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
+  // begin
+  //  if range = CollisionRangeEquals then
+  //    result := (x >= theSprite.x) and 
+  //         (x <= theSprite.x + theSprite.width)
+  //  else if range = CollisionRangeGreaterThan then
+  //    result := x <= theSprite.x + 
+  //                     theSprite.width
+  //  else if range = CollisionRangeLessThan then
+  //    result := x >= theSprite.x
+  //  else
+  //    raise Exception.Create('Invalid Collision Range');
+  // end;
 
 	/// Determines if a sprite has collided with a given y position. The x and y
 	///	values are in "world" coordinates.
@@ -340,19 +343,19 @@ implementation
 	///	@param range:			The kind of check to perform less, larger or equal.
 	///
 	///	@returns				True if the sprite is within the range requested
-	function HasSpriteCollidedY(theSprite: Sprite; y : Single; range : CollisionDetectionRange): Boolean;
-	begin
-		if range = CollisionRangeEquals then
-			result := (y >= theSprite.y) and 
-	       (y <= theSprite.y + theSprite.height)
-		else if range = CollisionRangeGreaterThan then
-			result := y <= theSprite.y + 
-	                    theSprite.height
-		else if range = CollisionRangeLessThan then
-			result := y >= theSprite.y
-		else
-			raise Exception.Create('Invalid Collision Range');
-	end;
+  // function HasSpriteCollidedY(theSprite: Sprite; y : Single; range : CollisionDetectionRange): Boolean;
+  // begin
+  //  if range = CollisionRangeEquals then
+  //    result := (y >= theSprite.y) and 
+  //        (y <= theSprite.y + theSprite.height)
+  //  else if range = CollisionRangeGreaterThan then
+  //    result := y <= theSprite.y + 
+  //                     theSprite.height
+  //  else if range = CollisionRangeLessThan then
+  //    result := y >= theSprite.y
+  //  else
+  //    raise Exception.Create('Invalid Collision Range');
+  // end;
 
 	function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: LongInt; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean; overload;
 	var

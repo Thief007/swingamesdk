@@ -141,7 +141,7 @@ interface
 implementation
 	uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera;
 
-	function ReadInt(var stream : text): UInt16;
+	function ReadInt(var stream : text): Word;
 	var
 		c : char;
 		c2 : char;

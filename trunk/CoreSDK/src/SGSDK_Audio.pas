@@ -10,6 +10,11 @@
 //
 // Change History:
 //
+// Version 3:
+// - 2009-06-04: Andrew:  Finished processing comments.
+//                        Added fading capabilities.
+//                        Fixed comments in implementation.
+//
 // Version 2.1:
 // - 2009-05-19: Andrew:  Added PlaySoundEffect with volume
 //                        Added meta comments
@@ -31,12 +36,13 @@
 /// `PlaySoundEffect`. Associated with these are the
 /// `Music` and `SoundEffect` types.
 ///
-///@class Audio
+///@module Audio
 ///@static
+///@swingame 030000
 unit SGSDK_Audio;
 
 interface
-  uses SDL_Mixer, SDL, {blah} SGSDK_Core; //test
+  uses SDL_Mixer, SDL, SGSDK_Core;
   
   type
     /// The SoundEffect type is used to refer to sound effects that can be played
@@ -57,6 +63,7 @@ interface
     ///@note Use `Music` for background music for your games.
     ///
     ///@class SoundEffect
+    ///@pointer_wrapper
     ///@field pointer: pointer
     SoundEffect = PMix_Chunk;
 
@@ -78,6 +85,7 @@ interface
     ///@note Use `SoundEffect` for the foreground sound effects of for your games.
     ///
     ///@class Music
+    ///@pointer_wrapper
     ///@field pointer: pointer
     Music = PMix_Music;
 
@@ -179,13 +187,14 @@ interface
   /// This version of PlaySoundEffect allows you to indicate the number of times
   /// the sound effect is repeated. Setting the loops parameter to -1 will cause
   /// the sound effect to be looped infinitely, setting it to a value larger than
-  /// 0 repeats the sound effect the number of times indicated. This means that 
-  /// setting loops to 1 causes the `SoundEffect` to be played twice.
+  /// 0 plays the sound effect the number of times indicated, calling with a 
+  /// value of 0 means the sound effect is not played.
   /// 
   ///@param effect The effect indicates which sound effect to start playing. This
   ///               effect is played once at its full volume.
   ///
-  ///@param loops Controls the number of times the sound effect is played.
+  ///@param loops Controls the number of times the sound effect is played. -1
+  ///               means the sound effect is repeated infinitely.
   ///
   ///@lib PlaySoundEffectLoop
   ///@uname PlaySoundEffectLoop
@@ -203,7 +212,7 @@ interface
   ///@param vol Indicates the percentage of the original volume to play the 
   ///            `SoundEffect` at. This must be between 0 and 1.
   ///
-  ///@lib PlaySoundEffectLoopVolume(effect, 0, vol)
+  ///@lib PlaySoundEffectLoopVolume(effect, 1, vol)
   ///@uname PlaySoundEffectWithVolume
   ///@version 2.1
   ///
@@ -248,16 +257,14 @@ interface
   ///@class Music
   ///@method Play
   procedure PlayMusic(mus: Music); overload;
-
+  
   /// This version of PlayMusic allows you to control the number of times the `Music` 
   /// resource is repeated. It starts playing the supplied `Music` resource, repeating it the numder of times
-  /// specified in the loops parameter. Setting loops to 0 plays the music through once. Setting 
-  /// loops to -1 repeats the music infinitely, other values larger than 0 indicate the number of 
-  /// times that the music should be repeated.
+  /// specified in the loops parameter. Setting loops to -1 repeats the music infinitely, other values 
+  /// larger than 0 indicate the number of times that the music should be played.
   ///
   ///@param mus The `Music` resource to be played.
-  ///@param loops The number of times that the music should be repeated, for example, setting
-  ///              loops to 1 causes the music to be played through twice.
+  ///@param loops The number of times that the music should be played, -1 for repeat infinitely
   ///
   ///@lib PlayMusic
   ///@uname PlayMusicWithLoops
@@ -265,7 +272,36 @@ interface
   ///@class Music
   ///@overload Play PlayWithLoops
   procedure PlayMusic(mus: Music; loops: LongInt); overload;
+  
+  /// Fades the music in over a number of milliseconds, and then continues to play the music repeatedly
+  /// until the program ends or the music is stopped. The music fades from 0 volume up to the currently
+  /// set music volume.
+  /// 
+  ///@param mus The `Music` resource to be played.
+  ///@param ms The number of milliseconds over which to fade the music in to the current music volume.
+  ///
+  ///@lib FadeMusicIn(mus, -1, ms)
+  ///@uname FadeMusicIn
+  ///
+  ///@class Music
+  ///@method FadeIn
+  procedure FadeMusicIn(mus: Music; ms: LongInt); overload;
 
+  /// This version of FadeMusicIn fades the music in then plays the 'Music' for a given
+  /// number of loops.   Setting loops to -1 repeats the music infinitely, other values 
+  /// larger than 0 indicate the number of times that the music should be played.
+  ///
+  ///@param mus The `Music` resource to be played.
+  ///@param loops The number of times that the music should be played, -1 for repeat infinitely
+  ///@param ms The number of milliseconds over which to fade the music in to the current music volume.
+  ///
+  ///@lib FadeMusicIn
+  ///@uname FadeMusicInWithLoops
+  ///
+  ///@class Music
+  ///@overload FadeIn FadeInWithLoops
+  procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
+  
   /// This procedure allows you to set the volume of the currently playing music. The vol
   /// parameter indicates the percentage of the original volume, for example, 0.1 sets the
   /// playback volume to 10% of its full volume.
@@ -280,7 +316,7 @@ interface
   ///@static
   ///@setter Volume
   procedure SetMusicVolume(vol: Single);
-
+  
   /// This function returns the current volume of the music. This will be
   /// a value between 0 and 1, with 1 indicating 100% of the `Music` resources
   /// volume.
@@ -294,7 +330,7 @@ interface
   ///@static
   ///@getter Volume
   function MusicVolume(): Single;
-
+  
   /// This function indicates if music is currently playing. As only one music 
   /// resource can be playing at a time this does not need to be told which
   /// music resource to check for.
@@ -342,7 +378,18 @@ interface
   ///@static
   ///@method Stop
   procedure StopMusic();
-
+  
+  /// Fades the currently playing music out over a number of milli seconds.
+  ///
+  ///@param ms The number of milliseconds over which to fade the music to 0 volume.
+  ///
+  ///@lib FadeMusicOut
+  ///
+  ///@class Music
+  ///@static
+  ///@method FadeOut
+  procedure FadeMusicOut(ms: LongInt);
+  
 implementation
   uses SysUtils, Classes;
        
@@ -350,13 +397,7 @@ implementation
     // Contains the sound channels used to determine if a sound is currently
     // playing and enables us to stop the sound, check if it is playing etc.
     soundChannels: Array[0..7] of Pointer;
-
-  //*******
-  //
-  // Sound routines
-  //
-  //*******
-
+  
   procedure OpenAudio();
   begin
     {$ifdef DARWIN}
@@ -374,11 +415,6 @@ implementation
     Mix_CloseAudio();
   end;
   
-  /// Loads a sound effect from the file system. The sound effect can be in the
-  /// form of a wav, ogg, or mp3 file.
-  ///
-  /// @param path     The path to the file to load
-  /// @returns         The sound effect
   function LoadSoundEffect(path: String): SoundEffect;
   begin
     result := Mix_LoadWAV(pchar(path));
@@ -388,11 +424,6 @@ implementation
     end;
   end;
   
-  /// Load music to play from the file system. Music can be in the form of a
-  /// wav, ogg, or mp3 file.
-  ///
-  /// @param path     The path to the file to be loaded
-  /// @returns         The loaded music value
   function LoadMusic(path: String): Music;
   begin
     result := Mix_LoadMUS(pchar(path));
@@ -402,27 +433,15 @@ implementation
     end;
   end;
   
-  /// Free a sound effect. All loaded sound effects need to be freed.
-  ///
-  /// @param effect   The effect to be freed.
-  ///
-  /// Side Effect:
-  /// - Frees the sound effect
   procedure FreeSoundEffect(var effect: SoundEffect);
   begin
-    Mix_FreeChunk(effect);
+    if assigned(effect) then Mix_FreeChunk(effect);
     effect := nil;
   end;
   
-  /// Free a music value. All loaded music values need to be freed.
-  ///
-  /// @param mus     The musi to be freed
-  ///
-  /// Side Effect:
-  /// - Music is freed
   procedure FreeMusic(var mus: Music);
   begin
-    Mix_FreeMusic(mus);
+    if assigned(mus) then Mix_FreeMusic(mus);
     mus := nil;
   end;
   
@@ -432,11 +451,9 @@ implementation
   begin
     if (vol < 0) then vol := 0
     else if vol > 1 then vol := 1;
-
+    
+    //SDL music volume is 0 - 128
     newVol := Trunc(vol * 128);
-    
-    //WriteLn('newVol ', vol:4:2, ' = ', newVol);
-    
     Mix_VolumeMusic(newVol);
   end;
   
@@ -450,9 +467,17 @@ implementation
     i: LongInt;
   begin
     if not Assigned(effect) then raise Exception.Create('Sound not supplied');
+    //dont play if loops = 0
+    if loops = 0 then exit;
+    
+    //correct volume to be between 0 and 1
     if (vol < 0) then vol := 0
     else if vol > 1 then vol := 1;
     
+    //alter repeats for multiple loops
+    if loops > 1 then loops -= 1;
+    
+    //play the effect, seaching for a channel
     i := Mix_PlayChannel( -1, effect, loops);
     if i <> -1 then
     begin
@@ -461,60 +486,55 @@ implementation
     end;
   end;
   
-  /// Play the indicated sound effect a number of times.
-  ///
-  /// @param effect    the effect to play
-  /// @param loops      The number of times to play it
   procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
   begin
-   PlaySoundEffect(effect, loops, 1.0)
+    PlaySoundEffect(effect, loops, 1.0)
   end;
   
-  /// Play the indicated sound effect once.
-  ///
-  /// @param effect    the effect to play
   procedure PlaySoundEffect(effect: SoundEffect); overload;
   begin
-    PlaySoundEffect(effect, 0, 1.0);
+    PlaySoundEffect(effect, 1, 1.0);
   end;
   
   procedure PlaySoundEffect(effect: SoundEffect; vol: Single); overload;
   begin
-   PlaySoundEffect(effect, 0, vol);
+   PlaySoundEffect(effect, 1, vol);
   end;
   
-  /// Start the indicating music playing. The music will loop the indicated
-  /// number of times.
-  ///
-  /// @param mus       The music to begin to play
-  /// @param loops     The number of times to loop the music
-  ///
-  /// Side Effect:
   procedure PlayMusic(mus: Music; loops: LongInt); overload;
   begin
-    Mix_HaltMusic();
-
+    //Mix_HaltMusic();
     if not Assigned(mus) then raise Exception.Create('Music not supplied');
     Mix_PlayMusic(mus, loops);
   end;
   
-  /// Start the indicating music playing. The music will continue to play
-  /// until stopped.
-  ///
-  /// @param mus       The music to begin to play
-  ///
-  /// Side Effect:
   procedure PlayMusic(mus: Music); overload;
   begin
     PlayMusic(mus, -1);
   end;
-
+  
+  procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
+  begin
+    if not Assigned(mus) then raise Exception.Create('Music not supplied');
+    Mix_FadeInMusic(mus, loops, ms);
+  end;
+  
+  procedure FadeMusicIn(mus: Music; ms: LongInt); overload;
+  begin
+    FadeMusicIn(mus, -1, ms)
+  end;
+  
+  procedure FadeMusicOut(ms: LongInt);
+  begin
+    Mix_FadeOutMusic(ms);
+  end;
+  
   function IsSoundPlaying(effect: Pointer): Boolean;
   var
     i: LongInt;
   begin
     result := false;
-
+    
     for i := 0 to High(soundChannels) do
     begin
       if soundChannels[i] = effect then
@@ -524,40 +544,22 @@ implementation
       end;
     end;
   end;
-
-  /// Determines if a sound effect is playing
-  ///
-  /// @param effect   The sound effect check if playing
-  /// @return         True if the sound effect is playing
+  
   function IsSoundEffectPlaying(effect: SoundEffect): Boolean;
   begin
     result := IsSoundPlaying(effect);
   end;
-
-  /// Determines if the indicated music is playing.
-  ///
-  /// @param mus   The music to check if playing
-  /// @returns     True if the music is playing
+  
   function IsMusicPlaying(): Boolean;
   begin
     result := Mix_PlayingMusic() <> 0;
   end;
-
-  /// Stop music from playing.
-  ///
-  /// Side Effects:
-  /// - Stops the currently playing music
+  
   procedure StopMusic();
   begin
     Mix_HaltMusic();
   end;
-
-  /// Stop playing sound effects
-  ///
-  /// @param effect:   The sound effect to be stopped
-  ///
-  /// Side Effects:
-  /// - The sound stops playing
+  
   procedure StopSoundEffect(effect: SoundEffect);
   var
     i: LongInt;

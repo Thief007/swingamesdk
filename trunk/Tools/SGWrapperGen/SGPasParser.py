@@ -48,7 +48,9 @@ class SGPasParser():
             'setter': self.process_id_attribute,
             'getter': self.process_id_attribute,
             'returns': self.process_comment_attribute,
-            'swingame': self.process_swingame_attribute
+            'swingame': self.process_swingame_attribute,
+            'pointer_wrapper': self.process_true_attribute,
+            'data_wrapper': self.process_true_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -64,6 +66,11 @@ class SGPasParser():
         
     
     def parse(self, a_file):
+        #clear all existing data
+        self._lookahead_toks = []
+        self._meta_comments = []
+        self._attributes = {}
+        self._ordered_attributes = []
         self._current_file = a_file
         self._tokeniser.tokenise(a_file.filename)
         
@@ -75,8 +82,9 @@ class SGPasParser():
         if tok[0] == 'id' and tok[1] in ['unit','library']:
             self._file_processors[tok[1]](tok)
         else:
-            logger.error('Parse error: found %s expected unit or library', tok[1])
-            sys.exit(-1)
+            logger.error('Parse Error %s: found %s expected unit or library', 
+                self._tokeniser.line_details(), tok[1])
+            assert(False)
     
     def _apply_attributes_to(self, model_element):
         '''
@@ -144,8 +152,10 @@ class SGPasParser():
         tok = self._next_token()
         
         if tok[0] != token_kind and (token_value != None or token_value != tok[1]):
-            logger.error('Parse error: found a %s (%s) expected %s (%s)', tok[0], tok[1], token_kind, token_value)
-            sys.exit(-1)
+            logger.error('Parse Error %s: found a %s (%s) expected %s (%s)', 
+                self._tokeniser.line_details(), 
+                tok[0], tok[1], token_kind, token_value)
+            assert(False)
             
         logger.debug('Matched token %s (%s)', tok[0], tok[1])
         return tok
@@ -163,8 +173,11 @@ class SGPasParser():
                 break
             
         if not matched:
-            logger.error('Parser error: unexpected %s(%s) expected %s', tok[0], tok[1], map(lambda n: '%s(%s)' % (n[0],n[1]),token_kind_lst))
-            sys.exit(-1)
+            logger.error('Parser Error %s: unexpected %s(%s) expected %s', 
+                self._tokeniser.line_details(), 
+                tok[0], tok[1], 
+                map(lambda n: '%s(%s)' % (n[0],n[1]),token_kind_lst))
+            assert(False)
         return tok
     
     def process_meta_comments(self):
@@ -180,8 +193,9 @@ class SGPasParser():
             if attrs_started and tok[0] == 'meta comment':
                 tok = self._next_token() #actually read token
                 if len(tok[1]) > 0:
-                    logger.error('Parser Error: Found additional meta comment after start of attributes at %s', self._tokeniser.line_details())
-                    sys.exit(-1)
+                    logger.error('Parser Error %s: Found additional meta comment after start of attributes', 
+                        self._tokeniser.line_details())
+                    assert(False)
             else:
                 tok = self._next_token() #actually read token
                 self._processors[tok[0]](tok)
@@ -294,7 +308,8 @@ class SGPasParser():
     def _check_meta_comments(self, count, desc):
         global logger
         if len(self._meta_comments) != count:
-            logger.error('Parser Error: expected %d but foung %d meta comments for %s at %s', count, len(self._meta_comments), desc, self._tokeniser.line_details())
+            logger.error('Parser Error %s: expected %d but foung %d meta comments for %s', 
+                self._tokeniser.line_details(), count, len(self._meta_comments), desc)
             sys.exit(-1)
     
     def _check_non_commented(self, desc):
@@ -330,7 +345,8 @@ class SGPasParser():
             if next_tok[1] == ';': 
                 break; #found end
             elif next_tok[1] != ',':
-                logger.error('Parser Error: expected , or ; but found %s at %s', next_tok[1], self._tokeniser.line_details())
+                logger.error('Parser Error %s: expected , or ; but found %s at %s', 
+                    self._tokeniser.line_details(), next_tok[1])
                 sys.exit(-1)
     
     def process_id_id_attribute(self, token):
@@ -356,20 +372,6 @@ class SGPasParser():
         
         field.data_type = the_type
         self._append_attribute('field', field)
-    
-    def process_parameter_list_attribute(self, token): #deprecated
-        '''Process an attribute that is followed  by an id and a type'''
-        #id [, ids] : type
-        tok = self._match_token('id')
-        param_name = tok[1]
-        #todo: proper type matching...
-        tok = self._match_token('token', ':')
-        tok = self._match_token('id')
-        type_name = tok[1] #todo: should be matching type for this...
-        
-        params = [[param_name, type_name]]
-        
-        self._add_attribute('params', params)
     
     def process_true_attribute(self, token):
         self._add_attribute(token[1], True)
@@ -506,7 +508,8 @@ class SGPasParser():
                 self._parse_type_simple(the_type);
                 
         else:
-            logger.error('Parser Error, unknown type %s(%s)', tok[0], tok[1])
+            logger.error('Parser Error %s: unknown type %s(%s)', 
+                self._tokeniser.line_details(), tok[0], tok[1])
     
     def _parse_type_simple(self, the_type):
         tok = self._match_token('id')
@@ -550,13 +553,22 @@ class SGPasParser():
                     modifier = self._next_token()[1]
                 else:
                     modifier = None
-                param_tok = self._next_token()
+                param_toks = [self._match_token('id')]
+                
+                while self._match_lookahead('token', ','):
+                    #there is a list of parameters
+                    self._next_token() #consume ,
+                    param_toks.append(self._match_token('id'))
+                
                 colon_tok = self._match_token('token', ':')
                 the_type = self._read_type_usage()
-                param = method.create_parameter(param_tok[1])
-                param.data_type = the_type
-                param.modifier = modifier
-                logger.debug('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
+                
+                for param_tok in param_toks:
+                    param = method.create_parameter(param_tok[1])
+                    param.data_type = the_type
+                    param.modifier = modifier
+                    logger.debug('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
+                
                 if self._match_lookahead('token', ';'):
                     self._next_token()
                 else: break

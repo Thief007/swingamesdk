@@ -60,8 +60,8 @@ interface
 	function IsMouseUp(button: MouseButton): Boolean;
 	function MouseWasClicked(button: MouseButton): Boolean;
 	
-	procedure StartReadingText(textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt);
-  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt);
+	procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
 	function 	EndReadingText(): String;
 	
 	function IsReadingText(): Boolean;
@@ -154,7 +154,7 @@ implementation
 	///	@param maxLength:	The maximum length of the string the user can enter
 	///	@param theFont:		The font used to draw the text entered
 	///	@param x, y:			 The location at which to draw the text entered
-	procedure StartReadingText(textColor: Colour; maxLength: LongInt; 
+	procedure StartReadingText(textColor: Color; maxLength: LongInt; 
                              theFont: Font; x, y: LongInt);
 	begin
 		if theFont = nil then raise Exception.Create('The specified font to start reading text is nil');
@@ -164,7 +164,7 @@ implementation
 		sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
 	end;
 	
-  procedure StartReadingTextWithText(text: String; textColor: Colour; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
 	begin
 	  StartReadingText(textColor, maxLength, theFont, x, y);
 	  sdlManager.SetText(text);

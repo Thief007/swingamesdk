@@ -68,7 +68,7 @@ def param_visitor(the_param, last):
         '; ' if not last else ''
         )
 
-def method_visitor(the_method):
+def method_visitor(the_method, other):
     global _procedure_lines, _function_lines, _names
     if the_method.return_type == None: 
         lines = _procedure_lines
@@ -81,13 +81,15 @@ def method_visitor(the_method):
         my_writer.write(line % the_method.to_keyed_dict(param_visitor)) 
     my_writer.writeln('\n')
 
-def file_visitor(the_file):
+def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
     global _header, _footer, _exports_header, _export_line, _names
         
     if the_file.name != 'SGSDK_Lib':
         logger.info('skipping %s', the_file.name)
         return
+    
+    logger.info('Creating Pascal Library')
     
     my_writer.writeln(_header % { 
         'name' : the_file.pascal_name, 
@@ -97,7 +99,7 @@ def file_visitor(the_file):
     my_writer.indent();
     
     #visit the methods of the library
-    the_file.members[0].visit_methods(method_visitor)
+    the_file.members[0].visit_methods(method_visitor, None)
     
     #write out exports
     my_writer.writeln(_exports_header)

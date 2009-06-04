@@ -1,0 +1,37 @@
+
+--                                 Change Log                                --
+
+SwinGame Software Development Kit
+Version 3
+
+
+Suggestions:
+* Close/Open Window (forum)
+* Group Apply (cw)
+* Change Movement to dx,dy ? (cw)
+* - Add SpriteVelocity -> Vector
+* - SetSpriteVelocity(Vector) or (x,y)
+* - SpritePosition -> Point2D
+* - SetSpritePosition(Point2S) or (dx,dy)
+* - SpriteSpeed -> float
+* - SpriteHeading -> float (angle)
+* Change window title (forum)
+
+** New to Version 3 **
+  General:
+  - Commented functions in API
+  
+  Audio:
+  - Added ability to fade music in and out. FadeMusicIn, FadeMusicOut
+  
+** Changes to Version 2 **
+  Audio changes:
+  - Loops changes to be the number of times played, rather than the number of
+    times repeated. PlaySoundEffect(x, 2) now plays twice not three times
+  - Playing Music no longer calls StopMusic, though only one music can be playing at a time..
+  
+  Core changes:
+  - Removed HasSpriteCollidedX, HasSpriteCollidedY
+  - Removed PosX, PosY from Sprite.
+  - Removed Colour, and all associated functions - standardised to use Color
+  

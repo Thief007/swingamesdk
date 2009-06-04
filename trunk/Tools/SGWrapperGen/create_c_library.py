@@ -36,7 +36,7 @@ _module_c_function = ''
 _type_switcher = {
     #Pascal type: what it maps to
     'Single': 'float ',
-    'LongInt': 'long ',
+    'LongInt': 'int ',
     'SoundEffect': 'SoundEffect ',
     'Music': 'Music ',
     'String': 'char *',
@@ -51,11 +51,11 @@ _data_switcher = {
 
 _adapter_type_switcher = {
     'Single': 'float ',
-    'LongInt': 'long ',
+    'LongInt': 'int ',
     'SoundEffect': 'void *',
     'Music': 'void *',
     'String': 'char *',
-    'Boolean': 'long ',
+    'Boolean': 'int ',
     None: 'void '
 }
 
@@ -92,9 +92,6 @@ def _load_data():
 
 def arg_visitor(the_arg, arg_type):
     '''Called for each argument in a call, performs required mappings'''
-    
-    print 'arg details: ', the_arg, arg_type
-    
     if arg_type.name in _data_switcher:
         #convert data using pattern from _data_switcher
         return _data_switcher[arg_type.name] % the_arg
