@@ -165,7 +165,7 @@ class SGPasTokeniser():
             elif t == '\n': #advance to next line
                 self._advance_line()
             elif t in '1234567890': #is digit
-                return ['number', self._read_matching(t, lambda cha: cha in '1234567890' or (cha == '.' and self._peek(1) in '1234567890'))]
+                return ('number', self._read_matching(t, lambda cha: cha in '1234567890' or (cha == '.' and self._peek(1) in '1234567890')))
             elif t == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
@@ -174,138 +174,98 @@ class SGPasTokeniser():
                     else:
                         kind = 'comment'
                         comment = self.read_to_eol()
-                    return [kind, comment]
+                    return (kind, comment)
                 else:
-                    return ['error', t]
+                    return ('error', t)
             elif t == '@':
                 name = self._read_matching('', lambda cha: cha.isalnum() or cha == '_')
-                return ['attribute', name]
+                return ('attribute', name)
             elif t.isalpha():
                 name = self._read_matching(t, lambda cha: cha.isalnum() or cha == '_')
-                return ['id', name]
+                return ('id', name)
             elif t in '-+':
                 if self._peek(1) in '1234567890':
-                    return ['number', self._read_matching(t, lambda cha: cha in '1234567890.')]
+                    return ('number', self._read_matching(t, lambda cha: cha in '1234567890.'))
                 else:
-                    return ['token',t]
+                    return ('token',t)
             elif t in '(),:;{=[].':
                 if t == '(' and self._peek(1) == '*':
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
-                    return ['comment', comment[:-2]]
+                    return ('comment', comment[:-2])
                 elif t == '{':
                     comment = self._read_until('', lambda temp: temp[-1:] == '}')
-                    return ['comment', comment[:-1]]
-                return ['token', t]
+                    return ('comment', comment[:-1])
+                return ('token', t)
             elif t == '\'':
                 string = self._read_until('', lambda temp: (temp[-1:] == '\'') and (not self._match_and_read('\'')))
-                return ['string', string[:-1]]
+                return ('string', string[:-1])
             else:
-                return ['error', t]
+                return ('error', t)
     
     
 #==============================================================================
 
 def test_basic():
+    
+    def assert_next_token(tokeniser, result):
+        token = tokeniser.next_token()
+        assert token == result, "Token: "+str(token) + " Expected: "+str(result)
+    
     lines = [
         '// Hello World\n', 
         '/// Special Comment\n', 
         '///@test(attr)\n', 
-        '12345 123.45\n', 
+        '12345 123.45\n',
         '{ test multi line 1234\n', 
         'comments} end\n', 
-        '/// @another(attr,attr2) \'a\'\'end\''
+        '/// @another(attr,attr2) \'a\'\'end\'',
+        '0. 2..5 3a 0.1.2\n', 
     ]
-    tokeniser = SGPasTokeniser()
+    t = SGPasTokeniser()
     
-    tokeniser.tokenise(lines)
+    t.tokenise(lines)
     
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'comment'
+    assert_next_token(t, ('comment', 'Hello World'))
+    assert_next_token(t, ('meta comment', 'Special Comment'))
+    assert_next_token(t, ('attribute', 'test'))
+    assert_next_token(t, ('token', '('))
+    assert_next_token(t, ('id', 'attr'))
+    assert_next_token(t, ('token', ')'))
+    assert_next_token(t, ('number', '12345'))
+    assert_next_token(t, ('number', '123.45'))
+    assert_next_token(t, ('comment', ' test multi line 1234\ncomments'))
+    assert_next_token(t, ('id', 'end'))
+    assert_next_token(t, ('meta comment', ''))
+    assert_next_token(t, ('attribute', 'another'))
+    assert_next_token(t, ('token', '('))
+    assert_next_token(t, ('id', 'attr'))
+    assert_next_token(t, ('token', ','))
+    assert_next_token(t, ('id', 'attr2'))
+    assert_next_token(t, ('token', ')'))
+    assert_next_token(t, ('string', 'a\'end'))
+
+    assert_next_token(t, ('number', '0'))
+    assert_next_token(t, ('token', '.'))
     
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'meta comment'
+    assert_next_token(t, ('number', '2'))
+    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('number', '5'))
+
+    assert_next_token(t, ('number', '3'))
+    assert_next_token(t, ('id', 'a'))
     
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'attribute'
-    assert token[1] == 'test'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'token'
-    assert token[1] == '('
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'id'
-    assert token[1] == 'attr'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'token'
-    assert token[1] == ')'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'number'
-    assert token[1] == '12345'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'number'
-    assert token[1] == '123.45'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'comment'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'id'
-    assert token[1] == 'end'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'meta comment'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'attribute'
-    assert token[1] == 'another'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'token'
-    assert token[1] == '('
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'id'
-    assert token[1] == 'attr'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'token'
-    assert token[1] == ','
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'id'
-    assert token[1] == 'attr2'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'token'
-    assert token[1] == ')'
-    
-    token = tokeniser.next_token()
-    print token
-    assert token[0] == 'string'
-    assert token[1] == 'a\'end'
+    assert_next_token(t, ('number', '2'))
+    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('number', '1'))
+    assert_next_token(t, ('token', '.'))
+    assert_next_token(t, ('number', '2'))
+
+
+
 
 if __name__ == '__main__':
-    import nose
-    nose.run()
+    #import nose
+    #nose.run()
+    test_basic()
 
