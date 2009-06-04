@@ -68,7 +68,7 @@ interface
     ///
     ///@class Matrix2D
     ///@data_wrapper
-    ///@field data: array[3,3] of Single
+    ///@field data: array[0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
     
     // /// Enumeration: CollisionDetectionRanges

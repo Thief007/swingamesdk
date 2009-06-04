@@ -495,6 +495,26 @@ class SGPasParser():
         # 
         # self._classes[the_type.name] = new_class
     
+    def _read_variable_list(self):
+        '''
+        reads in a list of variables. i.e. 
+        name, name2: type
+        This expects at least one variable
+        '''
+        names = []
+        
+        #read name, name... :
+        while True:
+            name = self._match_token('id')[1]
+            names.append(name)
+            if self._match_lookahead('symbol', ':', True): break
+            self._match_token('symbol', ',') #comma separated
+        
+        #read ...: the_type
+        the_type = self._read_type_usage()
+        #expand out so each is is its own
+        return [(name, the_type) for name in names]
+    
     def _parse_type_declaration(self, the_type):
         '''
         Parse a type from the next token, add details to the_type.
@@ -502,30 +522,38 @@ class SGPasParser():
         Need to process BLAH and add details to the_type
         '''
         #check what kind of type it is...
-        tok = self._lookahead(1)[0]
-        
-        if tok[0] == 'symbol' and tok[1] == '(':
+        if self._match_lookahead('symbol', '(', True):
             values = []
-            self._match_token('symbol', '(')
-            while not self._match_token('symbol',')'):
+            while not self._match_lookahead('symbol',')'):
                 values.append(self._match_token('id')[1])
-                #consume commas
-                self._match_lookahead('symbol', ',', True)
-        elif tok[0] == 'id':
-            if tok[1].lower() == 'record':
-                print 'record'
-                sys.exit(-2)
-            elif tok[1].lower() == 'array':
-                the_type.clone(self._read_type_usage())
-            else:
-                other_id = self._match_token('id')[1]
-                other_type = find_or_add_type(other_id)
-                the_type.related_type = other_type
+                self._match_lookahead('symbol', ',', True) #consume commas
+            self._match_token('symbol',')') #read close bracket
+            the_type.values = tuple(values)
+        elif self._match_lookahead('id', 'record', True):
+            #record field: Type end;
+            while not self._match_lookahead('id', 'end', True):
+                #read field
+                variables = self._read_variable_list()
+                self._match_token('symbol', ';')
+                for name, data_type in variables:
+                    field = SGField(name)
+                    field.data_type = data_type
+                    the_type.fields.append(field)
+        elif self._match_lookahead('id', 'array'):
+            the_type.clone(self._read_type_usage())
+        elif self._match_lookahead('id'):
+            other_id = self._match_token('id')[1]
+            other_type = find_or_add_type(other_id)
+            the_type.related_type = other_type
         else:
+            tok = self._next_token()
             logger.error('Parser Error %s: unknown type %s(%s)', 
                 self._tokeniser.line_details(), tok[0], tok[1])
                 
-        logger.info('Setup type %s = %s', the_type, the_type.related_type)
+        if the_type.related_type != None:
+            logger.info('Setup type %s = %s', the_type, the_type.related_type)
+        else:
+            logger.info('Setup type %s = %s', the_type, the_type.values)
         self._apply_attributes_to(the_type)
         self._match_token('symbol', ';')
     
