@@ -7,6 +7,7 @@ Created by Andrew Cain on 2009-05-26.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
+import logging
 from sgcache import logger
 
 class SGPasTokeniser():
@@ -14,6 +15,7 @@ class SGPasTokeniser():
     def __init__(self):
         self.pas_lines = []
         self._char_no = -1
+        self._token_start = -1
         self._line_no = 0 #starts at first line
         self._filename = 'supplied data'
     
@@ -38,7 +40,7 @@ class SGPasTokeniser():
     
     def line_details(self):
         '''Return string with line no. and filename details.'''
-        return 'line %d in %s' % (self._line_no + 1, self._filename)
+        return 'char %d line %d in %s' % (self._token_start + 1, self._line_no + 1, self._filename)
     
     def _next_char(self):
         '''Returns the next character from the input file.'''
@@ -181,6 +183,7 @@ class SGPasTokeniser():
         
         while (True):
             t = self._next_char();
+            self._token_start = self._char_no
             
             # Ignore white space characters
             if t == ' ' or t == '\t': #ignore white space
@@ -189,8 +192,10 @@ class SGPasTokeniser():
             elif t == '\n': 
                 self._advance_line()
             # Numbers (int or float style format
-            elif t in '1234567890': #is digit
-                return ('number', self._read_matching(t, num_match))
+            elif t in '1234567890' or (t in '-+' and self._peek(1) in '1234567890'): #is digit or +/-
+                result = ('number', self._read_matching(t, num_match))
+                logger.debug('Tokenisier: read %s - %s', result[0], result[1])
+                return result
             # Comment, single line // or meta comment line ///
             elif t == '/': #start of comment
                 if self._match_and_read('/'):
@@ -200,42 +205,50 @@ class SGPasTokeniser():
                     else:
                         kind = 'comment'
                         comment = self.read_to_eol()
-                    return (kind, comment)
+                    result = (kind, comment)
                 else:
-                    return ('error', t)
+                    result = ('error', t)
+                logger.debug('Tokenisier: read %s', result[0])
+                return result
             # Attribute identified by an @ symbol then a name
             elif t == '@':
                 name = self._read_matching('', lambda cha, tmp: cha.isalnum() or cha == '_')
-                return ('attribute', name)
+                result = ('attribute', name)
+                logger.debug('Tokenisier: read %s - %s', result[0], result[1])
+                return result
             # Identifier (id) of alphanumeric characters including 
             elif t.isalpha():
                 name = self._read_matching(t, lambda cha, tmp: cha.isalnum() or cha == '_')
-                return ('id', name)
-            # Sign modifier for a number value?
-            elif t in '-+':
-                if self._peek(1) in '1234567890':
-                    return ('number', self._read_matching(t, num_match))
-                else:
-                    return ('symbol',t)
-            # Symbol, possibly a block comment identifier
-            elif t in '(),:;{=[].':
-                if t == '(' and self._peek(1) == '*':
+                result = ('id', name)
+                logger.debug('Tokenisier: read %s - %s', result[0], result[1])
+                return result
+            #Bound Comment
+            elif t == '{' or (t == '(' and self._peek(1) == '*'):
+                if t == '(' and self._match_and_read('*'):
                     comment = self._read_until('', lambda temp: temp[-2:] == '*)')
-                    return ('comment', comment[:-2])
+                    result = ('comment', comment[:-2])
                 elif t == '{':
                     comment = self._read_until('', lambda temp: temp[-1:] == '}')
-                    return ('comment', comment[:-1])
-                return ('symbol', t)
+                    result = ('comment', comment[:-1])
+                logger.log(logging.DEBUG, 'Tokenisier: read %s', result[0])
+                return result
+            # Symbol
+            elif t in '(),:;=[].^+-':
+                result = ('symbol', t)
+                logger.debug('Tokenisier: read %s - %s', result[0], result[1])
+                return result
             # Catch any single quotes inside a string value.
             elif t == "'":
                 string = self._read_until('', lambda temp: (temp[-1:] == "'") and (not self._match_and_read("'")))
-                return ('string', string[:-1])
+                result = ('string', string[:-1])
+                logger.debug('Tokenisier: read %s - %s', result[0], result[1])
+                return result
             # Hmm.. unknown token. What did we forget? 
             else:
                 logger.error("Unknown token type: "+t)
                 return ('error', t)
     
-    
+
 #==============================================================================
 
 def test_basic():
@@ -251,9 +264,10 @@ def test_basic():
         '12345 123.45\n',
         '{ test multi line 1234\n', 
         'comments} end\n', 
-        '/// @another(attr,attr2) \'a\'\'end\'',
+        '/// @another(attr,attr2) \'a\'\'end\'\n',
         '0. 2..5 3a 0.1.2\n',
-        """'''blah'''""", 
+        """'''blah'''\n""",
+        '^test (* comment *)'
     ]
     t = SGPasTokeniser()
     
@@ -299,6 +313,9 @@ def test_basic():
     
     assert_next_token(t, ('string', "'blah'"))
     
+    assert_next_token(t, ('symbol', "^"))
+    assert_next_token(t, ('id', "test"))
+    assert_next_token(t, ('comment', " comment "))
 
 if __name__ == '__main__':
     test_basic()

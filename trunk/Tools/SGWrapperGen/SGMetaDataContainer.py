@@ -18,11 +18,12 @@ class SGMetaDataContainer(object):
         """initialise the container setting up the tags dictionary"""
         self._known_tags = known_tags if known_tags != None else []
         
-        for known in ['note','name','version','in_file']: self._known_tags.append(known)
+        for known in ['note','name','version','in_file', 'ignore']: self._known_tags.append(known)
         
         self.tags = {}
         self.doc = ""
         self.notes = []
+        self.is_ignored = False
     
     def add_doc(self, doc):
         """adds documentation to the meta data container"""
@@ -39,19 +40,17 @@ class SGMetaDataContainer(object):
            tag = name or SGTag object, 
            other = list of data (default None)
         '''
-        global logger
-        
         if isinstance(tag, SGTag):
             self._check_known_tags(tag)
-            logger.debug("Adding %s", str(tag))
+            logger.log(logging.DEBUG - 1, "MetaData  : Adding %s", str(tag))
             self.tags[tag.title] = tag
         else:
             self.set_tag(SGTag(tag, other))
     
     def _check_known_tags(self, tag):
         if not tag.title in self._known_tags:
-            global logger
-            logger.error('Unknown tag @%s added for %s', tag.title, str(self.__class__))
+            logger.error('Model Error: Unknown tag @%s added for %s', tag.title, str(self.__class__))
+            assert False
     
     def keys(self):
         return self.tags.keys()
@@ -63,6 +62,7 @@ class SGMetaDataContainer(object):
         self.tags[key] = value
     
     name = property(lambda self: self['name'].other, lambda self,name: self.set_tag('name', name), None, "The name of the element.")
+    is_ignored = property(lambda self: self['ignore'].other, lambda self,value: self.set_tag('ignore', value), None, "The element is ignored?")
     in_file = property(lambda self: self['in_file'].other, lambda self,value: self.set_tag('in_file', value), None, "The file containing the element.")
     version = property(lambda self: self['version'].other, lambda self,version: self.set_tag('version', version), None, "The version of the element.")
     

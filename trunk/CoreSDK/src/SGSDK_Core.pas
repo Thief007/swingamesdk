@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-06-05: Andrew: Moved out shared data/functions
 // - 2009-06-04: Andrew:  Started on processing comments.
 //
 // Version 2:
@@ -53,7 +54,7 @@ unit SGSDK_Core;
 {$ENDIF}
 
 interface
-  uses SDL, SDL_Image, SDLEventProcessing;
+  uses SDL, SDL_Image;
   
   {$I SwinGame.inc}
   
@@ -70,15 +71,6 @@ interface
     ///@data_wrapper
     ///@field data: array[0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
-    
-    // /// Enumeration: CollisionDetectionRanges
-    // /// This is used to indicate the kind of collision being checked with the
-    // /// Sprite collision routines. 
-    // CollisionDetectionRange = (
-    //     CollisionRangeEquals      = 0,
-    //     CollisionRangeGreaterThan = 1,
-    //     CollisionRangeLessThan    = 2
-    //   );
     
     /// The CollisionSide enumeration is used to indicate the side a collision
     /// has occurred on.
@@ -108,7 +100,6 @@ interface
     ///
     /// - x: The x value of the vector
     /// - y: The y value of the vector
-    /// - w: Required for transformation
     Vector = record
       x, y: Single;
     end;
@@ -142,7 +133,7 @@ interface
       /// Use this with the resource path functions to get the path to a
       /// given resource. Using these functions ensures that your resource
       /// paths are correct across platforms
-      ResourceKind = (
+    ResourceKind = (
       FontResource,
       ImageResource,
       SoundResource,
@@ -240,15 +231,6 @@ interface
   procedure ProcessEvents();
   function WindowCloseRequested(): Boolean;
 
-  //*****
-  //
-  // Graphical window routines.
-  //
-  //*****
-  //
-  // These routines are used to setup and work with the graphical window.
-  //
-
   procedure SetIcon(iconFilename: String);
   procedure OpenGraphicsWindow(caption : String; width : LongInt; height : LongInt); overload;
   procedure OpenGraphicsWindow(caption : String); overload;
@@ -264,18 +246,6 @@ interface
   function  ScreenWidth(): LongInt;
   function  ScreenHeight(): LongInt;
 
-  //*****
-  //
-  // General routines
-  //
-  //*****
-  //
-  // These routines are used for general purposes.
-  //
-
-  function ToSDLColor(color: UInt32): TSDL_Color;
-  function ToGfxColor(val: Color): Color;
-  
   function GetColor(forBitmap: Bitmap; apiColor: Color): Color; overload;
   function GetColor(red, green, blue, alpha: Byte) : Color; overload;  
   function GetColor(red, green, blue : Byte) : Color; overload;
@@ -311,8 +281,6 @@ interface
   
   procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);  
   
-  //Internal routines
-  procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
   function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
   function GetPathToResourceWithBase(path, filename: String) : String; overload;
 
@@ -322,24 +290,9 @@ interface
     ColorBlack, ColorYellow, ColorPink, ColorTurquoise,
     ColorGrey, ColorMagenta, ColorTransparent,
     ColorLightGrey: Color;
-    
-    ///@ignore
-    scr: Bitmap;
-    ///@ignore
-    applicationPath: String;
-    
-    ///@ignore
-    sdlManager: TSDLManager;
-          
-    // The base surface is used to get pixel format information for the
-    // surfaces created. This is used to create colors etc.
-    ///@ignore
-    baseSurface: PSDL_Surface;
-    
-    iconFile: String;
   
 implementation
-  uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx;
+  uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx, sg_Shared, SDLEventProcessing;
 
   /// Record: FPSCalcInfo
   ///
@@ -450,25 +403,6 @@ implementation
     begin
       theArray[index] := 0;
     end;
-  end;
-  
-  function ToSDLColor(color: UInt32): TSDL_Color;
-  begin
-    if (baseSurface = nil) or (baseSurface^.format = nil) then
-    begin
-      raise Exception.Create('Unable to get color as screen is not created.');
-    end;
-
-    SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
-  end;
-  
-  /// Converts the passed in SwinGame color to a Color used by SDL_GFX
-  function ToGfxColor(val: Color): Color;
-  var
-    r, g, b, a: Byte;
-  begin
-    GetComponents(val, r, g, b, a);
-    result := (r shl 24) or (g shl 16) or (b shl 8) or a;
   end;
   
   //Used to initialise the Frame Per Second structure.
@@ -974,11 +908,6 @@ implementation
       result := Round(1000 / renderFPSInfo.average);
   end;
   
-  procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-  begin
-    sdlManager.RegisterEventProcessor(handle, handle2);
-  end;
-
   function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
   begin
     case kind of

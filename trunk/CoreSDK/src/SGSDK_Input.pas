@@ -9,6 +9,9 @@
 //
 // Change History:
 //
+// Version 3.0:
+// - 2009-06-05: Andrew: Using sg_Shared
+//
 // Version 2.2.2:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-16: Andrew: Added WasAKeyPressed
@@ -79,7 +82,7 @@ interface
 	function IsMouseShown(): Boolean;
 
 implementation
-	uses SysUtils, Classes, SGSDK_Physics, SwinGameTrace;
+	uses SysUtils, Classes, SGSDK_Physics, SwinGameTrace, sg_Shared;
 	
 	procedure ShowMouse(); overload;
 	begin

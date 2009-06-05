@@ -155,11 +155,11 @@ class SGMethod(SGMetaDataContainer):
     
     def set_tag(self, title, other = None):
         if title == "params":
-            logger.debug('Intercepted setting params tag')
+            logger.debug('Method    : Intercepted setting params tag')
             for param in other:
                 to_add = SGParameter(param[0])
                 to_add.add_doc(param[1])
-                logger.debug('caching parameter %s - %s', to_add.name, to_add.doc)
+                logger.debug('Method    : Caching parameter %s - %s', to_add.name, to_add.doc)
                 self.cache_parameter(to_add)
         elif title == "class":
             #the class indicates that the @method is for this other class...
@@ -210,7 +210,7 @@ class SGMethod(SGMetaDataContainer):
         """indicate which method this method calls, and args if any"""
         if not self['calls'].other == None:
             logger.error('Model Error: Changing method called')
-            assert(False)
+            assert False
         self.set_tag('calls', [method, args])
     
     def setup_lib_method(self, lib_method):
@@ -228,7 +228,7 @@ class SGMethod(SGMetaDataContainer):
         called_by_lib = self.called_by_lib and args == self.params 
         
         if called_by_lib: #Set up the call from the library to this method
-            logger.debug('Setting %s in library to call %s', lib_method, self)
+            logger.debug('Method    : Setting %s in library to call %s', lib_method, self)
             lib_method.return_type = self.return_type #set return type
             lib_method.calls(self, self.params) #..calls this method at other end
             lib_method.params = self.params #add parameters
@@ -298,7 +298,7 @@ class SGMethod(SGMetaDataContainer):
         #set class method to call the same method this does
         class_method.calls(self.method_called(), args)
         
-        logger.debug('Setting up call: %s calls %s with args %s', class_method,
+        logger.debug('Method    : Setting up call: %s calls %s with args %s', class_method,
             class_method.method_called(), class_method.args_for_method_call())
         
         class_method.check_arguments()
@@ -316,18 +316,26 @@ class SGMethod(SGMetaDataContainer):
             2: Set parameters on library method (if called)
         '''
         
+        logger.info(' Method    : Completing processing of %s', self)
+        
         #Get other methods
         lib_method = self.method_called()
         class_method = self.class_method
         
         #check rules
-        assert(lib_method != None, 'Found method %s without lib' % self)
+        if lib_method == None:
+            if 'ignore' not in self.tags:
+                logger.warning('Method Waring: Found method %s without lib', self)
+            return
+        
+        logger.info(' Method    : %s calls %s', self.name, lib_method.name)
         
         #set up library method
         self.setup_lib_method(lib_method)
         
         #set up class method
         if class_method != None:
+            logger.info(' Method    : %s is also %s', self.name, class_method)
             self.setup_class_method(class_method)
         
         # Cant check here... need to wait until all are read
@@ -342,50 +350,20 @@ class SGMethod(SGMetaDataContainer):
         called_method = self.tags['calls'].other[0] #get called method
         args = self.tags['calls'].other[1] #the arguments self passes to the method
         
-        logger.debug('checking arguments used by %s calling %s (%s)', self, called_method, args)
+        logger.debug('Method    : Checking arguments used by %s calling %s (%s)', self, called_method, args)
         
         if args == None:
             args = self.params
-            logger.debug('Altering call to supply arguments that map to parameters: %s', self)
+            logger.debug('Method    : Altering call to supply arguments that map to parameters: %s', self)
             self.set_tag('calls', [called_method, args]) # change the tag for 'calls' to have args
         else:
             #check that the args match params
+            assert(len(args) == len(called_method.params), 'Error in %s calling %s', self.uname, called_method.uname)
             for arg in args:
                 if isinstance(arg, SGParameter):
                     assert(self.has_parameter(arg.name), 
                         "Cannot match parameter " + str(arg) + 
                         " in call to " + str(called_method) + " from " + str(self))
-    
-    def check_call_validity(self):
-        '''
-        Check that the call has the right number of arguments
-        '''        
-        
-        called_method = self.tags['calls'].other[0] #get called method
-        args = self.tags['calls'].other[1]
-        params = called_method.params
-        
-        assert(len(args) == len(params), 'Error in %s calling %s', self.uname, called_method.uname)
-        
-        # 
-        # logger.debug('checking %s calling %s with %s', self, called_method, args)
-        # 
-        # called_method.return_type = self.return_type
-        # 
-        # if args == None:
-        #     args = self.params
-        #     if len(called_method.params) == 0:
-        #         logger.debug('Adding parameters from %s to %s', self.uname, called_method.uname)
-        #         called_method.params = self.params
-        #     logger.debug('Altering call to supply arguments that map to parameters: %s', self)
-        #     self.set_tag('calls', [called_method, args])
-        # else:
-        #     #check that the args match params
-        #     for arg in args:
-        #         if isinstance(arg, SGParameter):
-        #             assert(self.has_parameter(arg.name), 
-        #                 "Cannot match parameter " + str(arg) + 
-        #                 " in call to " + str(called_method) + " from " + str(self))
     
     def method_called(self):
         """returns the method that this method needs to call"""

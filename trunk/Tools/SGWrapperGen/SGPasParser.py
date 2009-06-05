@@ -33,7 +33,7 @@ class SGPasParser():
             'class': self.process_id_attribute,
             'module': self.process_id_attribute,
             'static': self.process_true_attribute,
-            'struct': self.process_true_attribute,
+            'struct': self.process_id_attribute,
             'lib':self.process_lib_attribute,
             #'has_pointer': self.process_true_attribute,
             'note': self.process_note_attribute,
@@ -49,12 +49,14 @@ class SGPasParser():
             'returns': self.process_comment_attribute,
             'swingame': self.process_swingame_attribute,
             'pointer_wrapper': self.process_true_attribute,
-            'data_wrapper': self.process_true_attribute
+            'data_wrapper': self.process_true_attribute,
+            'ignore': self.process_true_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
             'procedure': self.process_method_decl,
-            'function': self.process_method_decl
+            'function': self.process_method_decl,
+            'var': self.process_variable_decl
         }
         self._lookahead_toks = []
         self._meta_comments = []
@@ -83,7 +85,7 @@ class SGPasParser():
         else:
             logger.error('Parse Error %s: found %s expected unit or library', 
                 self._tokeniser.line_details(), tok[1])
-            assert(False)
+            assert False
     
     def _apply_attributes_to(self, model_element):
         '''
@@ -103,8 +105,6 @@ class SGPasParser():
         self._meta_comments = []
     
     def _create_model_element(self, kind):
-        global logger
-        
         name = self._get_attribute('name')
         if kind == SGCodeModule:
             result = find_or_add_class(name)
@@ -117,7 +117,7 @@ class SGPasParser():
             result = kind(name)
             
         result.in_file = self._current_file
-        logger.debug('Creating model element: %s with kind:%s', name, kind)
+        logger.debug('Parser    : Creating model element: %s with kind:%s', name, kind)
         return result
     
     def _next_token(self):
@@ -129,10 +129,11 @@ class SGPasParser():
             else:
                 current_token = self._tokeniser.next_token()
             if current_token[0] == 'comment':
-                logger.debug('Skipping comment: %s', current_token[1])
+                logger.debug('Parser    : Skipping comment: %s', current_token[1])
         return current_token
     
     def _lookahead(self,count=1):
+        logger.debug('Parser    : Looking ahead %d', count)
         while len(self._lookahead_toks) < count:
             current_token = self._tokeniser.next_token()
             while current_token[0] == 'comment':
@@ -141,6 +142,9 @@ class SGPasParser():
         return self._lookahead_toks
     
     def _match_lookahead(self, token_kind, token_value = None, consume = False):
+        logger.debug('Parser    : Looking to find %s (%s)%s', token_kind, 
+            token_value if token_value != None else 'any',
+            ' will consume' if consume else '')
         token = self._lookahead(1)[0]
         result = token[0] == token_kind and (token_value == None or token_value == token[1].lower())
         if consume and result:
@@ -148,29 +152,25 @@ class SGPasParser():
         return result
     
     def _match_token(self, token_kind, token_value = None):
-        global logger
-        
         tok = self._next_token()
         
         if tok[0] != token_kind and (token_value != None or token_value != tok[1]):
             logger.error('Parse Error %s: found a %s (%s) expected %s (%s)', 
                 self._tokeniser.line_details(), 
                 tok[0], tok[1], token_kind, token_value)
-            assert(False)
+            assert False
             
-        logger.debug('Matched token %s (%s)', tok[0], tok[1])
+        logger.debug('Parser    : Matched token %s (%s)', tok[0], tok[1])
         return tok
     
     def _match_one_token(self, token_kind_lst):
-        global logger
-        
         matched = False
         tok = self._next_token()
         
         for token_kind,token_value in token_kind_lst:
             if tok[0] == token_kind and (token_value == None or token_value == tok[1]):
                 matched = True
-                logger.debug('Matched %s with %s', tok[0], tok[1])
+                logger.debug('Parser    : Matched %s with %s', tok[0], tok[1])
                 break
             
         if not matched:
@@ -178,11 +178,11 @@ class SGPasParser():
                 self._tokeniser.line_details(), 
                 tok[0], tok[1], 
                 map(lambda n: '%s(%s)' % (n[0],n[1]),token_kind_lst))
-            assert(False)
+            assert False
         return tok
     
     def process_meta_comments(self):
-        logger.debug('starting to process meta comments: clearing old comments and attributes')
+        logger.debug('Parser    : Starting to process meta comments: clearing old comments and attributes')
         #self._meta_comments = []
         #self._attributes = {}
         tok = self._lookahead(1)[0] #_next_token()
@@ -196,7 +196,7 @@ class SGPasParser():
                 if len(tok[1]) > 0:
                     logger.error('Parser Error %s: Found additional meta comment after start of attributes', 
                         self._tokeniser.line_details())
-                    assert(False)
+                    assert False
             else:
                 tok = self._next_token() #actually read token
                 self._processors[tok[0]](tok)
@@ -209,7 +209,7 @@ class SGPasParser():
         self._add_attribute('name',name)
         
         logger.info('-' * 70)
-        logger.info('Processing unit: %s', unit_name)
+        logger.info(' Parser    : Processing unit: %s', unit_name)
         logger.info('-' * 70)
         
         #self._check_attributes(['class','static'],'unit ' + unit_name)
@@ -219,16 +219,8 @@ class SGPasParser():
         unit = self._create_model_element(SGCodeModule)
         unit.module_kind = 'module'
         unit.is_static = True
-        logger.info('Creating class %s', unit.name)
+        logger.info(' Parser    : Creating class %s', unit.name)
         
-        #logger.info('Creating class: %s', name)
-        #unit = SGCodeModule(name)
-        
-        # if name in self._classes:
-        #     logger.error('Parser error: found a second declaration of %s from unit %s', name, tok[1])
-        #     sys.exit(-1)
-        # 
-        # self._classes[tok[1]] = unit
         self._apply_attributes_to(unit)
         
         #unit name;
@@ -247,7 +239,7 @@ class SGPasParser():
         
         
         while True:
-            logger.debug('At start of loop to process elements in unit')
+            logger.debug('Parser    : At start of loop to process elements in unit')
             #read comments if they follow this position, otherwise leave 
             #  attributes as they are
             if self._match_lookahead('meta comment'): self.process_meta_comments()
@@ -256,7 +248,7 @@ class SGPasParser():
             tok = self._lookahead()[0] #check the next token
             
             if tok[0] == 'id' and tok[1] == 'implementation':
-                logger.info('Found end of unit\'s interface')
+                logger.info(' Parser    : Found end of unit\'s interface')
                 logger.info('-' * 70)
                 break
             
@@ -268,21 +260,17 @@ class SGPasParser():
                 ['id','var']])
             self._block_header_processors[tok[1]](unit, tok);
         
-        logger.debug('Finished processing unit. Resulting class is:\n%s', str(unit))
+        logger.info(' Parser    : Finished processing unit. Resulting class is:\n%s', str(unit))
     
     def process_comment(self, token):
-        global logger
-        logger.debug('Processing comment: %s', token[1])
-        pass
+        logger.log(logging.DEBUG - 1, 'Parser    : Processing comment: %s', token[1])
     
     def process_attribute(self, token):
-        logger.debug('Processing attribute: %s', token[1])
+        logger.debug('Parser    : Processing attribute: %s', token[1])
         self._attribute_processors[token[1]](token)
-        pass
     
     def _append_attribute(self, attr, val):
-        global logger
-        logger.debug('Appending attribute %s with value %s to %s',attr,val, attr + 's')
+        logger.debug('Parser    : Appending attribute %s with value %s to %s',attr,val, attr + 's')
         if (attr + 's') in self._attributes.keys():
             self._attributes[attr + 's'].append(val)
         else:
@@ -290,8 +278,7 @@ class SGPasParser():
             self._ordered_attributes.append([attr + 's', [val]]) #will this work?
     
     def _add_attribute(self, attr, val):
-        global logger
-        logger.debug('Adding attribute %s with value %s',attr,val)
+        logger.debug('Parser    : Adding attribute %s with value %s',attr,val)
         self._attributes[attr] = val
         self._ordered_attributes.append([attr, val])
     
@@ -301,13 +288,11 @@ class SGPasParser():
         return default
     
     def _check_attributes(self, attrs, desc):
-        global logger
         for key in self._attributes.keys():
             if not key in attrs:
                 logger.warning('Parser Warning: found unknown attribute %s while processing %s at %s',key,desc, self._tokeniser.line_details())
     
     def _check_meta_comments(self, count, desc):
-        global logger
         if len(self._meta_comments) != count:
             logger.error('Parser Error %s: expected %d but foung %d meta comments for %s', 
                 self._tokeniser.line_details(), count, len(self._meta_comments), desc)
@@ -339,7 +324,7 @@ class SGPasParser():
         while True:
             tok = self._match_token('id')
             self._current_file.uses.append(find_or_add_file(tok[1]))
-            logger.debug('Found using unit %s', tok[1])
+            logger.debug('Parser    : Found using unit %s', tok[1])
             
             #found a token/unit
             next_tok = self._match_token('symbol')
@@ -419,6 +404,7 @@ class SGPasParser():
         method = the_lib.find_method(uname)
         if method == None: 
             method = SGMethod(uname)
+            method.in_file = self._current_file
             method.in_class = the_lib
             method.in_class.add_member(method)
         
@@ -435,7 +421,9 @@ class SGPasParser():
                     arg = self._next_token()
                     args.append(method.create_parameter(arg[1]))
                 else:
-                    assert(False, 'Error in arguments') 
+                    logger.error('Parser Error %s: Invalid token in arguments',
+                        self.line_details())
+                    assert False
                 
                 #if not comma following - end args
                 if not self._match_lookahead('symbol', ','): break;
@@ -457,13 +445,12 @@ class SGPasParser():
         self._add_attribute(token[1], num_tok[1])
     
     def process_meta_comment(self, token):
-        global logger
-        logger.debug('Processing meta comment: %s', token[1])
+        logger.log(logging.DEBUG - 1, 'Parser    : Processing meta comment: %s', token[1])
         self._meta_comments.append(token[1])
     
     def process_block_types(self, block, token):
         '''Reads the types within a type declaration'''
-        logger.info('Processing types')
+        logger.info(' Parser    : Processing types')
         logger.info('-' * 70)
         
         #following type... in pascal
@@ -472,7 +459,8 @@ class SGPasParser():
             tok1, tok2 = self._lookahead(2)
             #looking for... type_name = 
             if tok2[0] != 'symbol' or tok2[1] != '=' or tok1[0] != 'id':
-                logger.debug('At end of block types')
+                logger.info('-' * 70)
+                logger.debug('Parser    : At end of block types')
                 break
             
             type_name = self._match_token('id')[1] #read the types name
@@ -482,18 +470,15 @@ class SGPasParser():
             
             self._parse_type_declaration(the_type)
             
-            if 'class' in the_type.keys(): 
-                self.add_class(the_type)
+            if 'class' or 'struct' in the_type.keys():
+                self._add_class(the_type)
     
-    def add_class(self, the_type):
-        logger.info('-' * 60)
-        logger.info('Adding class %s', the_type.name)
+    def _add_class(self, the_type):
+        logger.info(' Parser    : Adding class %s', the_type.name)
         new_class = find_or_add_class(the_type.name)
-        if not new_class in self._current_file.members:
+        if new_class not in self._current_file.members:
             self._current_file.members.append(new_class)
         new_class.setup_from(the_type)
-        # 
-        # self._classes[the_type.name] = new_class
     
     def _read_variable_list(self):
         '''
@@ -539,7 +524,8 @@ class SGPasParser():
                     field = SGField(name)
                     field.data_type = data_type
                     the_type.fields.append(field)
-        elif self._match_lookahead('id', 'array'):
+        elif self._match_lookahead('id', 'array') or self._match_lookahead('symbol', '^'):
+            #is pointer or array
             the_type.clone(self._read_type_usage())
         elif self._match_lookahead('id'):
             other_id = self._match_token('id')[1]
@@ -549,13 +535,14 @@ class SGPasParser():
             tok = self._next_token()
             logger.error('Parser Error %s: unknown type %s(%s)', 
                 self._tokeniser.line_details(), tok[0], tok[1])
+            assert False
                 
         if the_type.related_type != None:
-            logger.info('Setup type %s = %s', the_type, the_type.related_type)
+            logger.info(' Parser    : Setup type %s = %s', the_type, the_type.related_type)
         elif the_type.is_enum:
-            logger.info('Setup type %s = %s', the_type, the_type.values)
+            logger.info(' Parser    : Setup type %s = %s', the_type, the_type.values)
         else:
-            logger.info('Setup type %s = %s', the_type, the_type.fields)
+            logger.info(' Parser    : Setup type %s = %s', the_type, the_type.fields)
         self._apply_attributes_to(the_type)
         self._match_token('symbol', ';')
     
@@ -578,11 +565,14 @@ class SGPasParser():
                     if self._match_lookahead('symbol', ']', True):
                         break
                     self._match_token('symbol', ',')
+            else:
+                dimensions.append((0,'n - 1'))
+            
             # of type...
             self._match_token('id', 'of')
             nested_type = self._read_type_usage() #recursive call
             
-            name = nested_type.name + '[]' * len(dimensions)
+            name = nested_type.name + ''.join(['[%s..%s]' % (low_idx, high_idx) for low_idx, high_idx in dimensions])
             was_new = not name in all_types()
             
             result = find_or_add_type(name)
@@ -590,9 +580,56 @@ class SGPasParser():
                 result.dimensions = dimensions
                 result.nested_type = nested_type
             return result
+        elif self._match_lookahead('symbol', '^', True):
+            other_id = self._match_token('id')[1]
+            other_type = find_or_add_type(other_id)
+            
+            name = '^' + other_type.name
+            
+            was_new = not name in all_types()
+            
+            result = find_or_add_type(name)
+            if was_new:
+                result.is_pointer = True
+                result.related_type = other_type
+            return result
         else:
             id_tok = self._match_token('id')
             return find_or_add_type(id_tok[1])
+    
+    def process_variable_decl(self, block, token):
+        '''
+        '''
+        
+        while True:
+            names = [self._match_token('id')[1]] #the name of the var
+            
+            while self._match_lookahead('symbol', ',', True): #separated by ,'s
+                names.append(self._match_token('id')[1]) #add next name.
+            
+            self._match_token('symbol',':') # ... : type
+            the_type = self._read_type_usage()
+            self._match_token('symbol', ';')
+            
+            #apply type to all names, and add to block as field
+            for name in names:
+                field = SGField(name)
+                self._apply_attributes_to(field)
+                field.is_static = True #these are globals
+                field.data_type = the_type
+                
+                if not field.is_ignored:
+                    block.add_member(field)
+                else:
+                    logger.info('Parser    : Ignoring field %s', name)
+            
+            #read the next batch of comments
+            self.process_meta_comments()
+            
+            #variable list is ended by ...
+            tok = self._lookahead(1)[0]
+            if tok[1].lower() in ['function', 'procedure', 'type', 'var', 'const', 'implementation']:
+                break
     
     def process_method_decl(self, block, token):
         '''process a method read from a unit.
@@ -632,7 +669,7 @@ class SGPasParser():
                     param = method.create_parameter(param_tok[1])
                     param.data_type = the_type
                     param.modifier = modifier
-                    logger.debug('Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
+                    logger.debug('Parser    : Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
                 
                 if self._match_lookahead('symbol', ';'):
                     self._next_token()
@@ -645,7 +682,7 @@ class SGPasParser():
             colon_tok = self._match_token('symbol', ':')
             the_type = self._read_type_usage()
             method.return_type = the_type
-            logger.debug('Set return type of method %s to %s', method.name, method.return_type)
+            logger.debug('Parser    : Set return type of method %s to %s', method.name, method.return_type)
         
         end_tok = self._match_token('symbol', ';')
         

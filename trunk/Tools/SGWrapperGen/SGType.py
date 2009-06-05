@@ -19,7 +19,8 @@ class SGType(SGMetaDataContainer):
         """Initialise the type, setting its name"""
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
-            'pointer_wrapper', 'data_wrapper', 'values'])
+            'pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
+            'struct'])
         self.name = name
         self.set_tag('fields', [])
         self.dimensions = None
@@ -27,6 +28,9 @@ class SGType(SGMetaDataContainer):
         self.pointer_wrapper = False
         self.data_wrapper = False
         self.values = None
+        self.is_pointer = False
+        self.is_class = False
+        self.is_struct = False
     
     def __str__(self):
         '''String rep'''
@@ -39,6 +43,7 @@ class SGType(SGMetaDataContainer):
         '''Clones all but name'''
         self.set_tag('fields',other.fields)
         self.dimensions = other.dimensions
+        self.is_pointer = other.is_pointer
         self.related_type = other
     
     fields = property(lambda self: self['fields'].other, None, None, "The fields for the type.")
@@ -46,6 +51,18 @@ class SGType(SGMetaDataContainer):
     dimensions = property(lambda self: self['dimensions'].other, 
         lambda self, value: self.set_tag('dimensions', value), 
         None, 'The dimensions of this if it is an array')
+    
+    is_pointer = property(lambda self: self['is_pointer'].other, 
+        lambda self, value: self.set_tag('is_pointer', value), 
+        None, 'The type is a pointer to its related type')
+    
+    is_class = property(lambda self: self['class'].other, 
+        lambda self, value: self.set_tag('class', value), 
+        None, 'The type is class')
+    
+    is_struct = property(lambda self: self['struct'].other, 
+        lambda self, value: self.set_tag('struct', value), 
+        None, 'The type is struct')
     
     nested_type = property(lambda self: self['nested_type'].other, 
         lambda self, value: self.set_tag('nested_type', value), 

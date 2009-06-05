@@ -14,7 +14,10 @@
 //
 // Change History:
 //
-// Version 2.0: in progress
+// Version 3.0:
+// - 2009-06-05: Andrew: Using sg_Shared
+//
+// Version 2.0:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-10: Andrew: Moved primitive drawing to SDL_gfx
 //             Added rotation and zoom to Sprite + Sprite Drawing
@@ -316,8 +319,7 @@ interface
   procedure SetupBitmapForCollisions(src: Bitmap);
 
 implementation
-  uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx;
-
+  uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx, sg_Shared;
   
   /// Clears the surface of the bitmap to the passed in color.
   ///

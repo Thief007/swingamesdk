@@ -9,6 +9,9 @@
 //
 // Change History:
 //
+// Version 3.0:
+// - 2009-06-05: Andrew: Using sg_Shared
+//
 // Version 2.0:
 // - 2009-01-05: Andrew: Added Unicode rendering
 // - 2008-12-17: Andrew: Moved all integers to LongInt
@@ -149,7 +152,7 @@ interface
   procedure DrawFramerate(x, y: LongInt); overload;
   
 implementation
-  uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx;
+  uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx, sg_Shared;
   
   const EOL = LineEnding;
   
