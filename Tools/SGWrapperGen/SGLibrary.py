@@ -26,8 +26,8 @@ class SGLibrary(SGCodeModule):
         
         if isinstance(member, SGMethod):
             member.is_external = True
-            member.name = 'sg_' + member.name
-            member.uname = 'sg_' + member.uname
+            member.name = 'sg_%s_%s' % (member.in_file.name, member.name)
+            member.uname = 'sg_%s_%s' % (member.in_file.name, member.uname)
             member.in_file = find_or_add_file('SGSDK')
             super(SGLibrary,self).add_member(member)
         else:

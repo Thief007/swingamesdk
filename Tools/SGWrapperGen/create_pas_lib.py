@@ -114,7 +114,7 @@ def file_visitor(the_file, other):
     my_writer.close()
 
 def main():
-    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     _load_data()    
     parser_runner.run_for_all_units(file_visitor)

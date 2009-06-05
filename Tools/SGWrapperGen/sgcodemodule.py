@@ -32,17 +32,18 @@ class SGCodeModule(SGMetaDataContainer):
     def add_member(self, member):
         """Add a member (method, property) to the class"""
         if isinstance(member, SGMethod):
-            logger.info('Adding method %s.%s(%s)', self.name, member.name, member.param_string())
+            logger.info(' Code Modul: Adding method %s.%s(%s)', self.name, member.name, member.param_string())
             if self.is_static: member.is_static = True
             self.methods[member.signature] = member
         elif isinstance(member, SGProperty):
-            logger.info('Adding property %s.%s', self.name, member.name)
+            logger.info(' Code Modul: Adding property %s.%s', self.name, member.name)
             self.properties[member.name] = member
         elif isinstance(member, SGField):
-            logger.info('Adding field %s.%s', self.name, member.name)
+            logger.info(' Code Modul: Adding field %s.%s', self.name, member.name)
             self.fields[member.name] = member
         else:
-            raise Exception, "Unknown member type"
+            logger.error('Model Error: Unknown member type')
+            assert False
     
     def del_member(self, member):
         if isinstance(member, SGMethod):
@@ -55,6 +56,8 @@ class SGCodeModule(SGMetaDataContainer):
             self.module_kind = 'class'
         elif title == 'module':
             self.module_kind = 'module'
+        elif title == 'struct':
+            self.module_kind = 'struct'
         else:
             super(SGCodeModule,self).set_tag(title, other)
     
@@ -83,13 +86,8 @@ class SGCodeModule(SGMetaDataContainer):
     is_module = property(lambda self: self.module_kind == 'module', 
         None, None, 'Is the module a module?')
     
-    def set_as_struct(self):
-        """sets the class as a struct"""
-        self.set_tag('struct')
-    
-    def is_struct(self):
-        """returns true if this should be a struct"""
-        return 'struct' in self.tags
+    is_struct = property(lambda self: self.module_kind == 'struct', 
+        None, None, 'Is the module a structure?')
     
     def setup_from(self, the_type):
         fields = the_type.fields
@@ -100,16 +98,16 @@ class SGCodeModule(SGMetaDataContainer):
     
     def __str__(self):
         '''returns a string representation of the class'''
-        name = 'struct ' + self.name if self.is_struct() else 'class ' + self.name
+        name = 'struct ' + self.name if self.is_struct else 'class ' + self.name
         name = 'static ' + name if self.is_static else name
         
         #return '%s\n%s' % (self.doc, name)
         return name
     
     def visit_methods(self, visitor, other):
-        logger.debug('visiting method of %s' % self.name)
+        logger.debug('Code Modul: Visiting method of %s' % self.name)
         for key, method in self.methods.items():
-            logger.debug('visiting method %s' % method.uname)
+            logger.debug('Code Modul: Visiting method %s' % method.uname)
             visitor(method, other)
     
     def visit_fields(self, visitor, other):
