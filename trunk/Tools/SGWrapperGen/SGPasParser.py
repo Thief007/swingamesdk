@@ -31,6 +31,7 @@ class SGPasParser():
         self._attribute_processors = {
             'param': self.process_id_and_comment_attribute,
             'class': self.process_id_attribute,
+            'enum': self.process_id_attribute,
             'module': self.process_id_attribute,
             'static': self.process_true_attribute,
             'struct': self.process_id_attribute,

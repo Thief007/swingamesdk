@@ -20,7 +20,7 @@ class SGType(SGMetaDataContainer):
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
             'pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
-            'struct'])
+            'struct', 'enum'])
         self.name = name
         self.set_tag('fields', [])
         self.dimensions = None

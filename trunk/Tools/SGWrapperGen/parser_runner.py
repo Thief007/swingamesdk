@@ -17,8 +17,8 @@ def run_for_all_units(file_visitor):
     
     files = [
             lib_file,
-            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas')
-          #  find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas')
+            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
+            find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas')
         ]
     
     for a_file in files[1:]:

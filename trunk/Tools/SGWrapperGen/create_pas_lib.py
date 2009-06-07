@@ -23,11 +23,17 @@ _procedure_lines = None
 _function_lines = None
 _exports_header = ''
 _type_switcher = {
-    'Single': 'Single',
-    'LongInt': 'LongInt',
-    'SoundEffect': 'SoundEffect',
-    'Music': 'Music',
-    'String': 'PChar'
+    'single': 'Single',
+    'longint': 'LongInt',
+    'soundeffect': 'SoundEffect',
+    'music': 'Music',
+    'string': 'String',
+    'color': 'LongWord',
+    'timer': 'Timer',
+    'byte': 'Byte',
+    'resourcekind': 'ResourceKind',
+    'uint32': 'UInt32',
+    'bitmap': 'Bitmap'
 }
 
 _names = []
@@ -64,7 +70,7 @@ def param_visitor(the_param, last):
     return '%s%s: %s%s' % (
         the_param.modifier + ' ' if the_param.modifier != None else '',
         the_param.name, 
-        _type_switcher[the_param.data_type.name], 
+        _type_switcher[the_param.data_type.name.lower()], 
         '; ' if not last else ''
         )
 
