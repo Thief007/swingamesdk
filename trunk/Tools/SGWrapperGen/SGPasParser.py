@@ -110,11 +110,13 @@ class SGPasParser():
             result = find_or_add_class(name)
             if not result in self._current_file.members:
                 self._current_file.members.append(result)
+                result.file_line_details = self._tokeniser.line_details()
         elif kind == SGType:
             assert False
             #result = find_or_add_type(name)
         else:
             result = kind(name)
+            result.file_line_details = self._tokeniser.line_details()
             
         result.in_file = self._current_file
         logger.debug('Parser    : Creating model element: %s with kind:%s', name, kind)
@@ -154,7 +156,7 @@ class SGPasParser():
     def _match_token(self, token_kind, token_value = None):
         tok = self._next_token()
         
-        if tok[0] != token_kind and (token_value != None or token_value != tok[1]):
+        if tok[0] != token_kind or (token_value != None and token_value != tok[1].lower()):
             logger.error('Parse Error %s: found a %s (%s) expected %s (%s)', 
                 self._tokeniser.line_details(), 
                 tok[0], tok[1], token_kind, token_value)
@@ -396,12 +398,14 @@ class SGPasParser():
            method from the library
         '''
         #find method
-        name_tok = self._match_token('id')
-        uname = name_tok[1]
+        uname = self._match_token('id')[1]
         
         #search in library
         the_lib = find_or_add_class('lib')
-        method = the_lib.find_method(uname)
+        method = the_lib.find_method(uname, self._current_file.name)
+        if 'OpenGraphicsWindow' in uname:
+            print 'HERE', uname, method
+        
         if method == None: 
             method = SGMethod(uname)
             method.in_file = self._current_file
@@ -409,28 +413,21 @@ class SGPasParser():
             method.in_class.add_member(method)
         
         if self._match_lookahead('symbol', '(', True):
+            self._add_attribute('called_by_lib', False)
             #the lib attr has arguments
             # open_tok = self._match_token('symbol', '(')
             args = []
-            while True:
-                #argument is a number, or an identifier
-                if self._match_lookahead('number') or self._match_lookahead('string'):
-                    value = self._next_token()
-                    args.append(value[1])
-                elif self._match_lookahead('id'): 
-                    arg = self._next_token()
-                    args.append(method.create_parameter(arg[1]))
-                else:
-                    logger.error('Parser Error %s: Invalid token in arguments',
-                        self.line_details())
-                    assert False
-                
-                #if not comma following - end args
-                if not self._match_lookahead('symbol', ','): break;
-                comma = self._next_token() #read comma
-                
+            if not self._match_lookahead('symbol', ')'):
+                while True:
+                    #args are ids, number, or strings
+                    args.append(self._match_one_token([('id',None), ('number', None), ('string', None)]))
+                    
+                    #if not comma following - end args
+                    if not self._match_lookahead('symbol', ',', True): break;
             close_tok = self._match_token('symbol', ')')
-        else: args = None
+        else: 
+            args = None
+            self._add_attribute('called_by_lib', True)
         
         self._add_attribute('calls', [method, args])
     
@@ -453,16 +450,10 @@ class SGPasParser():
         logger.info(' Parser    : Processing types')
         logger.info('-' * 70)
         
+        self.process_meta_comments()
+        
         #following type... in pascal
         while True:
-            self.process_meta_comments()
-            tok1, tok2 = self._lookahead(2)
-            #looking for... type_name = 
-            if tok2[0] != 'symbol' or tok2[1] != '=' or tok1[0] != 'id':
-                logger.info('-' * 70)
-                logger.debug('Parser    : At end of block types')
-                break
-            
             type_name = self._match_token('id')[1] #read the types name
             self._match_token('symbol','=') #read the =
             
@@ -472,6 +463,15 @@ class SGPasParser():
             
             if 'class' or 'struct' in the_type.keys():
                 self._add_class(the_type)
+            
+            self.process_meta_comments()
+            
+            tok1, tok2 = self._lookahead(2)
+            #looking for... type_name = 
+            if tok2[0] != 'symbol' or tok2[1] != '=' or tok1[0] != 'id':
+                logger.info('-' * 70)
+                logger.debug('Parser    : At end of block types')
+                break
     
     def _add_class(self, the_type):
         logger.info(' Parser    : Adding class %s', the_type.name)
@@ -640,15 +640,13 @@ class SGPasParser():
         name_tok = self._match_token('id') #name of function/procedure
         open_tok = self._match_token('symbol', '(')
         
-        #add class!
+        #add to the class (e.g. Core module: which creates lib + other)
         self._add_attribute('name', name_tok[1]) #name comes from function/procedure
         method = self._create_model_element(SGMethod)
-        #print '** %s -> %s' % (method.name, method.in_file.name)
-        method.called_by_lib = True
         method.in_class = block
         
         #look for parameters
-        while True:
+        while not self._match_lookahead('symbol', ')'): #consume ) at end
             param_tok, other_tok = self._lookahead(2)
             if param_tok[0] == 'id':
                 if other_tok[0] == 'id': #first one is a modifier
@@ -656,27 +654,25 @@ class SGPasParser():
                 else:
                     modifier = None
                 param_toks = [self._match_token('id')]
-                
-                while self._match_lookahead('symbol', ','):
+            
+                while self._match_lookahead('symbol', ',', True):
                     #there is a list of parameters
-                    self._next_token() #consume ,
                     param_toks.append(self._match_token('id'))
-                
+            
                 colon_tok = self._match_token('symbol', ':')
                 the_type = self._read_type_usage()
-                
+            
                 for param_tok in param_toks:
                     param = method.create_parameter(param_tok[1])
                     param.data_type = the_type
                     param.modifier = modifier
                     logger.debug('Parser    : Adding parameter %s (%s) to %s', param.name, param.data_type, method.name)
-                
-                if self._match_lookahead('symbol', ';'):
-                    self._next_token()
-                else: break
-            else: break
+            
+                if not self._match_lookahead('symbol', ';', True): break
+            else:
+                logger.error('Parser    : Error in parameter list %s', self._tokeniser.line_details())
         
-        close_tok = self._match_token('symbol', ')')
+        self._match_token('symbol', ')')
         
         if token[1] == 'function': #return return details
             colon_tok = self._match_token('symbol', ':')
@@ -687,8 +683,7 @@ class SGPasParser():
         end_tok = self._match_token('symbol', ';')
         
         #check overload ;
-        if self._match_lookahead('id', 'overload'):
-            self._next_token();
+        if self._match_lookahead('id', 'overload', True):
             self._match_token('symbol', ';')
             self._add_attribute('overload', True)
         

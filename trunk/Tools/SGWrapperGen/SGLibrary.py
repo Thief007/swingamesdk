@@ -33,13 +33,21 @@ class SGLibrary(SGCodeModule):
         else:
             raise Exception, "Unknown member type"
     
-    def find_method(self, uname):
+    def find_method(self, uname, file_name):
         for key, method in self.methods.items():
-            if method.uname == 'sg_' + uname: 
-                # print 'found', method.uname, method.params
+            if method.uname == 'sg_%s_%s' % (file_name, uname): 
+                logger.debug('Library   : Found match for %s', method.uname)
                 return method
         return None
     
+    def check_methods(self):
+        #for all methods in the library
+        for key, method in self.methods.items():
+            #check the methods arguments
+            method.check_arguments()
+            for caller in method.called_by:
+                #check that the methods that call the library
+                caller.check_arguments()
 
 import nose
 from nose.tools import raises 

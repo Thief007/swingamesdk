@@ -19,7 +19,7 @@ import sys
 from SGPasTokeniser import SGPasTokeniser
 from SGPasParser import SGPasParser
 from SGParameter import SGParameter
-from sgcache import all_classes, find_or_add_file
+from sgcache import all_classes, find_or_add_file, find_or_add_class
 from sgcodemodule import SGCodeModule
 from SGMethod import SGMethod
 from sgfile import SGFile
@@ -104,7 +104,7 @@ def visitor(element):
     print '}'
 
 def main():
-    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     # tokeniser = SGPasTokeniser()
     # tokeniser.tokenise('../../CoreSDK/src/SGSDK_Audio.pas')
@@ -131,6 +131,8 @@ def main():
     
     for a_file in files:
         parser.parse(a_file)
+    
+    find_or_add_class('lib').check_methods()
     
     for key,each_class in all_classes().items():
         each_class.visit(visitor)

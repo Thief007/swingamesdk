@@ -9,8 +9,11 @@ cd "$APP_PATH"
 SWINGAME_PATH=`cd ../..; pwd`
 OUT_DIR="${SWINGAME_PATH}/bin/lib"
 TMP_DIR="${SWINGAME_PATH}/tmp"
-LIBS=
-SDK_SRC_DIR=`cd ${SWINGAME_PATH}/CoreSDK/src; pwd`
+SDK_SRC_DIR="${SWINGAME_PATH}/CoreSDK/src"
+FRAMEWORK_DIR="${SWINGAME_PATH}/CoreSDK/lib/mac"
+LOG_FILE="${APP_PATH}/out.log"
+
+PYTHON_SCRIPT_DIR=${SWINGAME_PATH}/Tools/SGWrapperGen
 
 FPC_BIN=`which fpc`
 
@@ -52,6 +55,12 @@ CleanTmp()
     fi
 }
 
+CreateLibrary()
+{
+    cd ${PYTHON_SCRIPT_DIR}
+    python create_pas_lib.py
+}
+
 #
 # Compile for Mac - manually assembles and links files
 # argument 1 is arch
@@ -60,9 +69,9 @@ doCompile()
 {
     CleanTmp
     
-    ${FPC_BIN} -Mdelphi $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s ${SDK_SRC_DIR}/sgsdk1.pas >> ${APP_PATH}/out.log
+    ${FPC_BIN} -Mdelphi $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s ${SDK_SRC_DIR}/sgsdk1.pas >> ${LOG_FILE}
     
-    if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${APP_PATH}/out.log; exit 1; fi
+    if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
 
     #Assemble all of the .s files
     echo "  ... Assembling library for $1"
@@ -75,14 +84,12 @@ doCompile()
     done
 
     echo "  ... Linking Library"
-    /usr/bin/libtool -install_name ./libSGSDK.dylib  -arch_only ${1} -dynamic -L"${TMP_DIR}" -search_paths_first -multiply_defined suppress -o "${TMP_DIR}/libSGSDK${1}.dylib" `cat ${SDK_SRC_DIR}/maclink${1}.res` `ls ${TMP_DIR}/*.o` -current_version 2.0
+    FRAMEWORKS=`ls ${FRAMEWORK_DIR} | awk -F . '{print "-framework "$1}'`
+
+    /usr/bin/libtool -install_name ./libSGSDK.dylib  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${TMP_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version 2.0 -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
-        
-    #rm "${Output}"/*.o 2>> /dev/null
-    rm "${Output}"/*.s 2>> /dev/null
-    rm "${Output}"/*.ppu 2>> /dev/null
-    rm "${Output}"/link.res 2>> /dev/null
-    rm "${Output}"/ppas.sh 2>> /dev/null
+    
+    CleanTmp
 }
 
 # 
@@ -91,10 +98,10 @@ doCompile()
 doLipo()
 {
     echo "  ... Creating Universal Binary"
-    lipo -arch ${1} "$Output/libSGSDK${1}.dylib" -arch ${2} "$Output/libSGSDK${2}.dylib" -output "$Output/libSGSDK.dylib" -create
+    lipo -arch ${1} "${TMP_DIR}/libSGSDK${1}.dylib" -arch ${2} "${TMP_DIR}/libSGSDK${2}.dylib" -output "${OUT_DIR}/libSGSDK.dylib" -create
 
-    rm -rf "$Output/libSGSDK${1}.dylib"
-    rm -rf "$Output/libSGSDK${2}.dylib"
+    rm -rf "${TMP_DIR}/libSGSDK${1}.dylib"
+    rm -rf "${TMP_DIR}/libSGSDK${2}.dylib"
 }
 
 while getopts chd o
@@ -110,26 +117,30 @@ shift $((${OPTIND}-1))
 
 if [ $CLEAN = "N" ]
 then
-    if [ -f ${BaseDir}/out.log ]
+    if [ ! -d "${OUT_DIR}" ]
     then
-        rm -f ${BaseDir}/out.log
+        mkdir -p "${OUT_DIR}"
     fi
-
+    if [ -f "${LOG_FILE}" ]
+    then
+        rm -f "${LOG_FILE}"
+    fi
+    
     if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
     then
-        Libs=${BaseDir}/lib/mac
-        
         echo "__________________________________________________"
         echo "Building Mac version"
         echo "__________________________________________________"
-        echo "  Running script from $BaseDir"
-        echo "  Saving output to $Output"
-        echo "  Copying Frameworks from $Libs"
+        echo "  Running script from $APP_PATH"
+        echo "  Saving output to $OUT_DIR"
+        echo "  Copying Frameworks from ${FRAMEWORK_DIR}"
         echo "  Compiling with $EXTRA_OPTS"
         echo "__________________________________________________"
-
+        
+        echo "  ... Creating Pascal Library"
+        CreateLibrary >> ${LOG_FILE}
+        
         echo "  ... Compiling Library"
-
         FPC_BIN=`which ppcppc`
         doCompile "ppc"
         
@@ -137,45 +148,30 @@ then
         doCompile "i386"
         
         doLipo "i386" "ppc"
-    
-        cd $DOTNETlocn
-        
-        echo "  ... Compiling .NET Library"
-        xbuild $DOTNETproj >> ${BaseDir}/out.log
-        if [ $? != 0 ]; then echo "Error with xbuild"; cat ${BaseDir}/out.log; exit 1; fi
-            
-        echo "  ... Copying Library to $Output"
-        cp "$DOTNETbin"/*.dll "$Output"
-        cp "$DOTNETbin"/*.XML "$Output"
-        rm "$DOTNETbin"/*
     else
         echo "__________________________________________________"
         echo "Building Linux version"
         echo "__________________________________________________"
-        echo "  Running script from $BaseDir"
-        echo "  Saving output to $Output"
+        echo "  Running script from $APP_PATH"
+        echo "  Saving output to $OUT_DIR"
+        echo "  Compiling with $EXTRA_OPTS"
         echo "__________________________________________________"
         
-        fpc -v0 -g -Mdelphi $EXTRA_OPTS -FE"$Output" ./src/SGSDK.pas >> out.log
-        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${BaseDir}/out.log; exit 1; fi
-
-        rm "$Output"/*.o
-        rm "$Output"/*.ppu
-
-        cd $DOTNETlocn
-        xbuild $DOTNETproj >> ${BaseDir}/out.log
-        if [ $? != 0 ]; then echo "Error with xbuild"; cat ${BaseDir}/out.log; exit 1; fi
-        cp "$DOTNETbin"/*.dll "$Output" 
-        cp "$DOTNETbin"/*.XML "$Output" 
+        echo "  ... Creating Pascal Library"
+        CreateLibrary >> ${LOG_FILE}
+        
+        echo "  ... Compiling Library"
+        fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk1.pas >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
+        
+        CleanTmp
     fi
 else
-    rm -rf "$Output"
-    mkdir "$Output"
+    CleanTmp
+    rm -rf "${OUT_DIR}"
+    mkdir "${OUT_DIR}"
     echo    ... Cleaned
 fi
-
-cpToSDK "C#"
-cpToSDK VB
 
 echo "  Finished"
 echo "__________________________________________________"
