@@ -21,8 +21,9 @@ class SGCodeModule(SGMetaDataContainer):
     
     def __init__(self, name):
         """Initialise the class, setting its name"""
-        super(SGCodeModule,self).__init__(['static','module_kind','data_wrapper','pointer_wrapper'])
+        super(SGCodeModule,self).__init__(['static','module_kind','data_wrapper','pointer_wrapper', 'type_name'])
         self.name = name
+        self.type_name = name
         self.methods = dict()
         self.properties = dict()
         self.fields = dict()
@@ -54,10 +55,14 @@ class SGCodeModule(SGMetaDataContainer):
     def set_tag(self, title, other = None):
         if title == 'class':
             self.module_kind = 'class'
+            super(SGCodeModule,self).set_tag('name', other)
+            super(SGCodeModule,self).set_tag('uname', other)
         elif title == 'module':
             self.module_kind = 'module'
+            super(SGCodeModule,self).set_tag('name', other)
         elif title == 'struct':
             self.module_kind = 'struct'
+            super(SGCodeModule,self).set_tag('name', other)
         else:
             super(SGCodeModule,self).set_tag(title, other)
     
@@ -77,6 +82,10 @@ class SGCodeModule(SGMetaDataContainer):
         lambda self,value: self.set_tag('module_kind', value), 
         None, 'The kind of code module this represents (class,module,library).')
     
+    type_name = property(lambda self: self['type_name'].other, 
+        lambda self,value: self.set_tag('type_name', value), 
+        None, 'The name of the type in Pascal.')
+    
     is_class = property(lambda self: self.module_kind == 'class', 
         None, None, 'Is the module a class?')
     
@@ -93,8 +102,15 @@ class SGCodeModule(SGMetaDataContainer):
         fields = the_type.fields
         for field in fields:
             self.add_member(field)
-        if the_type['class']:
+        if the_type.is_class:
             self.module_kind = 'class'
+            self.name = the_type['class'].other
+        elif the_type.is_struct:
+            self.module_kind = 'struct'
+            self.name = the_type['struct'].other
+        else:
+            logger.warning('Code Modul: Unknown type kind for %s', self.name)
+        
     
     def __str__(self):
         '''returns a string representation of the class'''
@@ -103,6 +119,11 @@ class SGCodeModule(SGMetaDataContainer):
         
         #return '%s\n%s' % (self.doc, name)
         return name
+    
+    def get_field(self, name):
+        if name in self.fields:
+            return self.fields[name]
+        return None
     
     def visit_methods(self, visitor, other):
         logger.debug('Code Modul: Visiting method of %s' % self.name)

@@ -58,11 +58,6 @@ interface
   
   {$I SwinGame.inc}
   
-  // const
-  //   EOL = LineEnding;
-  //   DEG_TO_RAD = 0.0174532925;
-  //   PI = 3.14159265359;
-  
   type
     /// In SwinGame, Matrices can be used to combine together a number of
     /// operations that need to be performed on Vectors.
@@ -86,53 +81,41 @@ interface
       None
     );
     
-    /// Type : Color
-    ///
     /// The color type is used within the SwinGameAPI to store color values.
-    /// This is the same as the Color type.
+    /// The color values are represented as 32bit RGBA values where R stores the 
+    /// color's red component, G stores the green component, B stores the blue 
+    /// component and A stores an alpha value representing the opacity (transparency)
+    ///  of the of the color.
     Color = UInt32;
     
-    /// Record: Vector
-    ///
-    /// Use Vectors to represent x, y vectors. Vectors can be used to store
-    /// values such as movement data. Vectors are stored using floating point
-    /// values in order to allow mathematical operations.
-    ///
-    /// - x: The x value of the vector
-    /// - y: The y value of the vector
+    /// Vectors represent a direction and distance, stored as x,y components.
     Vector = record
       x, y: Single;
     end;
     
-    /// Record: BitmapData
+    /// Bitmap data stores the data associated with a Bitmap. Each bitmap contains
+    /// a pointer to the bitmap color information (surface), its width, height,
+    /// and a mask storing the non-transparent pixels that is used for pixel level
+    /// collision checking.
     ///
-    /// NOTE: Do not use BitmapData directly, use Bitmap.
-    ///
-    /// - surface: The bitmap's surface, containing the data to be drawn
-    /// - width, height: The size of the surface
-    /// - nonTransparentPixels: Array used to determine pixel based collisions
+    /// @note Do not use BitmapData directly, use Bitmap.
     BitmapData = record
       surface: PSDL_Surface;
       width, height: LongInt;
       nonTransparentPixels: Array of Array of Boolean;
     end;
 
-    /// Type: Bitmap
-    ///
     /// The bitmap type is a pointer to a BitmapData. The BitmapData record
     /// contains the data used by the SwinGame API to represent
     /// bitmaps. You can create new bitmaps in memory for drawing operatings
-    /// using the CreateBitmap function. This can then be optimised for drawing
-    /// to the screen using the OptimiseBitmap routine. Also see the DrawBitmap
+    /// using the `CreateBitmap` function. This can then be optimised for drawing
+    /// to the screen using the `OptimiseBitmap` routine. Also see the `DrawBitmap`
     /// routines.
-    
     Bitmap = ^BitmapData;
     
-      /// Record: ResourceKind
-      ///
-      /// Use this with the resource path functions to get the path to a
-      /// given resource. Using these functions ensures that your resource
-      /// paths are correct across platforms
+    /// Use this with the resource path functions to get the path to a
+    /// given resource. Using these functions ensures that your resource
+    /// paths are correct across different platforms
     ResourceKind = (
       FontResource,
       ImageResource,
@@ -141,23 +124,31 @@ interface
       OtherResource
     );
     
-    /// Record: SpriteKind
-    ///
-    /// It is used to determine how a sprite should act.
-    /// StaticSprite will not animate at all.
-    /// AnimArraySprite will animate using an array of bitmaps.
-    /// AnimMultiSprite will animate using a single bitmap with multiple
-    /// frames.
+    /// The sprite kind is used to indicate the type for each Sprite. This controls
+    /// the update behaviour of the Sprite. A StaticSprite will not animate at all and
+    /// the update sprite only performs sprite movement. An AnimArraySprite will animate
+    /// using an array of bitmaps in addition to updating the Sprite's position, where as
+    ///  a AnimMultiSprite will animate using a single bitmap which contains multiple
+    /// frames. The sprite kind is determined when the `Sprite` is created. The
+    /// `SpriteEndingAction` values are used in conjuncture with the `SpriteKind` to
+    /// control the behaviour of the animation.
     SpriteKind = (
       StaticSprite,
       AnimArraySprite,
       AnimMultiSprite
     );
     
-    /// Record: SpriteEndingAction
-    ///
-    /// It is used to determine what this sprite should do when it finishes
-    /// animating.
+    /// The sprite ending action is used to determine what action is peformed when a 
+    /// sprite gets to the end of its frames in its animation. Loop indicates that the 
+    /// sprite will restart the animation from the first frame resulting in the animation
+    /// being looped repeatedly. ReverseLoop also loops the animation, but rather than
+    /// returning to the first frame the ReverseLoop option indicates that the animation
+    /// should play backwards until it gets to the start of the cells. With ReverseLoop the 
+    /// animation will play forward, then backward, then forward, etc. repeatedly. To 
+    /// reverse the animation without looping the ReverseOnce can be used. This plays the
+    /// animation forward once, then back once, then stops. Finally, the Stop option means
+    /// that the animation stops once it gets to the end of the framces. Once an animation
+    /// stops sprite will be drawn as the last frame in the animation.
     SpriteEndingAction = (
       Loop,
       ReverseLoop,
@@ -165,8 +156,6 @@ interface
       Stop
     );
     
-    /// Record: Sprite
-    ///
     /// NOTE: Do not use SpriteData directly. Use Sprite.
     ///
     /// - bitmaps: The array of bitmaps related to the Sprite
@@ -184,7 +173,6 @@ interface
     /// - reverse: True if this sprite's animation is reversing
     ///
     ///@struct SpriteData
-    ///
     SpriteData = record
       bitmaps : Array of Bitmap;
       bufferBmp: Bitmap;
@@ -210,8 +198,6 @@ interface
       bufferedZoom: Single;
     end;
     
-    /// Type: Sprite
-    ///
     /// Sprites are used to represent Sprites drawn to the screen. Create a
     /// sprite using the CreateSprite function, and free it when complete with
     /// the FreeSprite function. The sprite contain a number of bitmaps used to
@@ -219,6 +205,7 @@ interface
     /// Sprite's current frame.
     Sprite = ^SpriteData;
     
+    ///@struct TimerData
     TimerData = record
       startTicks : UInt32;
       pausedTicks : UInt32;
@@ -227,61 +214,133 @@ interface
     end; {1.1}
     
     Timer = ^TimerData;
-      
+  
+  /// @lib ProcessEvents
   procedure ProcessEvents();
+  
+  // @lib WindowCloseRequested
   function WindowCloseRequested(): Boolean;
-
+  
+  /// @lib SetIcon
   procedure SetIcon(iconFilename: String);
-  procedure OpenGraphicsWindow(caption : String; width : LongInt; height : LongInt); overload;
+  
+  /// @lib OpenGraphicsWindow
+  /// @uname OpenGraphicsWindow
+  procedure OpenGraphicsWindow(caption: String; width, height: LongInt); overload;
+  
+  /// @lib OpenGraphicsWindow(caption, 800, 600)
+  /// @uname OpenGraphicsWindow800x600
   procedure OpenGraphicsWindow(caption : String); overload;
-
+  
+  /// @lib ChangeScreenSize
   procedure ChangeScreenSize(width, height: LongInt);
+  
+  /// @lib ToggleFullScreen
   procedure ToggleFullScreen();
-
+  
+  /// @lib RefreshScreen
   procedure RefreshScreen(); overload;  
+  
+  /// @lib RefreshScreenRestrictFPS
+  /// @uname RefreshScreenRestrictFPS 
   procedure RefreshScreen(TargetFPS : LongInt); overload;
-
+  
+  /// @lib TakeScreenshot
   procedure TakeScreenshot(basename: String);
-
+  
+  /// @lib ScreenWidth
   function  ScreenWidth(): LongInt;
+  
+  /// @lib ScreenHeight
   function  ScreenHeight(): LongInt;
-
+  
+  /// @lib GetColorForBitmap
+  /// @uname GetColorForBitmap
   function GetColor(forBitmap: Bitmap; apiColor: Color): Color; overload;
+  
+  /// @lib GetColor
   function GetColor(red, green, blue, alpha: Byte) : Color; overload;  
+  
+  /// @lib GetColor(red, green, blue, 255)
+  /// @uname GetColorRGB
   function GetColor(red, green, blue : Byte) : Color; overload;
   
+  /// @lib GetComponents
   procedure GetComponents(color: Color; out r, g, b, a: byte);
   
+  /// @lib GetRGBFloatColor
   function GetRGBFloatColor(r,g,b: Single): Color;
+  
+  /// @lib GetHSBColor
   function GetHSBColor(hue, saturation, brightness: Single): Color;
   
+  /// @lib GetFramerate
   function GetFramerate(): LongInt;
+  
+  /// @lib GetTicks
   function GetTicks(): UInt32;
+  
+  /// @lib Sleep
   procedure Sleep(time : UInt32);
   
+  /// @lib GetPathToResource
   function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
+  
+  /// @lib GetPathToOtherResource
+  /// @uname GetPathToOtherResource
   function GetPathToResource(filename: String): String; overload;
   
+  /// @lib Cos
   function Cos(angle: Single): Single;
+  
+  /// @lib Sin
   function Sin(angle: Single): Single;
+  
+  /// @lib Tan
   function Tan(angle: Single): Single;
   
-  function CreateTimer() : Timer; {1.1}
-  procedure FreeTimer(var toFree: Timer); {1.1}
-  procedure StartTimer(toStart : Timer); {1.1}
-  procedure StopTimer(toStop : Timer); {1.1}
-  procedure PauseTimer(toPause : Timer); {1.1}
-  procedure UnpauseTimer(toUnpause : Timer); {1.1}
-  function GetTimerTicks(toGet : Timer) : UInt32; {1.1}
+  /// @lib CreateTimer
+  function CreateTimer() : Timer;
   
+  /// @lib FreeTimer
+  procedure FreeTimer(var toFree: Timer);
+  
+  /// @lib StartTimer
+  procedure StartTimer(toStart : Timer);
+  
+  /// @lib StopTimer
+  procedure StopTimer(toStop : Timer);
+  
+  /// @lib PauseTimer
+  procedure PauseTimer(toPause : Timer);
+  
+  /// @lib UnpauseTimer
+  procedure UnpauseTimer(toUnpause : Timer);
+  
+  /// @lib GetTimerTicks
+  function GetTimerTicks(toGet : Timer) : UInt32;
+  
+  /// @lib GetTransparency
   function GetTransparency(color: Color): byte;
+  
+  /// @lib GetRed
   function GetRed(color: Color): byte;
+  
+  /// @lib GetGreen
   function GetGreen(color: Color): byte;
+  
+  /// @lib GetBlue
   function GetBlue(color: Color): byte;
   
+  /// @lib CalculateFramerate
   procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);  
   
+  /// @lib GetPathToResourceWithBaseAndKind
+  /// @uname GetPathToResourceWithBase
   function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+  
+  /// @lib GetPathToOtherResourceWithBase
+  /// @uname GetPathToOtherResourceWithBase
   function GetPathToResourceWithBase(path, filename: String) : String; overload;
 
   var

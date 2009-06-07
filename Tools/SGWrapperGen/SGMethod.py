@@ -22,11 +22,11 @@ class SGMethod(SGMetaDataContainer):
         SGMetaDataContainer.__init__(self, ['uname','static','operator',
             'is_constructor','return_type','calls','other_class','dispose',
             'method','overload','returns','is_setter','is_getter','is_external', 
-            'called_by_lib', 'my_class', 'class_method','in_property'])
+            'called_by_lib', 'my_class', 'class_method','in_property', 'called_by'])
         self.name = name
         self.uname = name
         self.params = []
-        self.param_cache = {}
+        #self.param_cache = {}
         self.return_type = None
         self.operator = None
         self.in_class = None
@@ -39,6 +39,8 @@ class SGMethod(SGMetaDataContainer):
         self.called_by_lib = False
         self.set_tag('calls', None)
         self.class_method = None
+        self.other_class = None
+        self.called_by = []
     
     def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None):
         '''Returns a dictionary containing the details of this function/procedure
@@ -87,6 +89,10 @@ class SGMethod(SGMetaDataContainer):
         lambda self,value: self.set_tag('called_by_lib', value), 
         None, 'Is the method associated with a class.')
     
+    called_by = property(lambda self: self['called_by'].other, 
+        lambda self,value: self.set_tag('called_by', value), 
+        None, 'The methods that call this method.')
+    
     operator = property(lambda self: self['operator'].other, 
         lambda self,value: self.set_tag('operator', value), 
         None, 'Is the method an operator overload?')
@@ -123,26 +129,21 @@ class SGMethod(SGMetaDataContainer):
     def signature(self):
         return (self.name, tuple([(p.modifier + ' ' if p.modifier != None else '') + str(p.data_type) for p in self.params]))
     
-    def cache_parameter(self, param):
-        """
-        Adds a parameter to a temporary cache during loading of the Method.
-        
-        The cache does not need to be loaded in the methods parameter order.
-        Parameters are then loaded using createParameter
-        """
-        
-        self.param_cache[param.name] = param
+    # def cache_parameter(self, param):
+    #     """
+    #     Adds a parameter to a temporary cache during loading of the Method.
+    #     
+    #     The cache does not need to be loaded in the methods parameter order.
+    #     Parameters are then loaded using createParameter
+    #     """
+    #     
+    #     self.param_cache[param.name] = param
     
     def create_parameter(self, name):
         """creates a new parameter with the indicated name, or fetches it from 
         the cache. The new parameter is returned, and added to the params 
         list."""
-        if name in self.param_cache:
-            result = self.param_cache[name]
-            del self.param_cache[name]
-        else:
-            result = SGParameter(name)
-        
+        result = SGParameter(name)
         self.params.append(result)
         return result
     
@@ -155,12 +156,20 @@ class SGMethod(SGMetaDataContainer):
     
     def set_tag(self, title, other = None):
         if title == "params":
-            logger.debug('Method    : Intercepted setting params tag')
-            for param in other:
-                to_add = SGParameter(param[0])
-                to_add.add_doc(param[1])
-                logger.debug('Method    : Caching parameter %s - %s', to_add.name, to_add.doc)
-                self.cache_parameter(to_add)
+            #process parameter comments
+            for param_details in other:
+                param_name = param_details[0]
+                param_doc = param_details[1]
+                
+                done = False
+                for param in self.params:
+                    if param.name == param_name:
+                        param.add_doc(param_doc)
+                        done = True
+                        break
+                if not done:
+                    logger.error('Method    : Unable to find parameter %s for %s', param_name, self.uname)
+                    assert False
         elif title == "class":
             #the class indicates that the @method is for this other class...
             from sgcodemodule import SGCodeModule
@@ -188,10 +197,6 @@ class SGMethod(SGMetaDataContainer):
             const = SGMethod(self.other_class.name)
             const.is_constructor = True
             super(SGMethod,self).set_tag('class_method', const)
-            # self.clone_to(const)
-            # const.in_class.add_member(const)
-            # const.calls(self.method_called(), const.params)
-            
         else:
             super(SGMethod,self).set_tag(title, other)
     
@@ -199,6 +204,7 @@ class SGMethod(SGMetaDataContainer):
         #dont copy uname...
         other.in_file = self.in_file
         other.return_type = self.return_type
+        other.file_line_details = self.file_line_details
         if self.is_static or other.is_constructor:
             other.params = self.params
             other.is_static = self.is_static
@@ -213,6 +219,29 @@ class SGMethod(SGMetaDataContainer):
             assert False
         self.set_tag('calls', [method, args])
     
+    def process_args(self):
+        '''
+        Convert args to parameters, fields, and literals
+        '''
+        new_args = []
+        args = self.tags['calls'].other[1]
+        if args == None: return
+        for argv in args:
+            if argv[0] in ['number', 'string']:
+                new_args.append(argv[1])
+            elif argv[0] in ['id']:
+                param = self.get_parameter(argv[1])
+                if param != None:
+                    new_args.append(param)
+                else:
+                    field = self.in_class.get_field(argv[1])
+                    if field != None:
+                        new_args.append(field)
+                    else:
+                        logger.error('Method    : Error cannot find %s in method %s', argv[1], self.uname)
+                        assert False
+        self.tags['calls'].other[1] = new_args
+    
     def setup_lib_method(self, lib_method):
         '''
         Setup the library method
@@ -222,17 +251,21 @@ class SGMethod(SGMetaDataContainer):
             parameters
             calls
         '''
+        self.process_args()
         args = self.args_for_method_call() #lib is called method
         
         #we are called if there is a lib marker, and we have no other args
         called_by_lib = self.called_by_lib and args == self.params 
+        
+        if lib_method.file_line_details == None:
+            lib_method.file_line_details = []
+        lib_method.file_line_details.append(self.file_line_details)
         
         if called_by_lib: #Set up the call from the library to this method
             logger.debug('Method    : Setting %s in library to call %s', lib_method, self)
             lib_method.return_type = self.return_type #set return type
             lib_method.calls(self, self.params) #..calls this method at other end
             lib_method.params = self.params #add parameters
-        
     
     def create_and_add_property(self, class_method):
         '''
@@ -276,7 +309,6 @@ class SGMethod(SGMetaDataContainer):
             2: add it to its class or property
             3: alter args (add pointer field access)
         '''
-        
         self.clone_to(class_method) #copy self into other
         
         #if the class method is actually a property...
@@ -301,7 +333,13 @@ class SGMethod(SGMetaDataContainer):
         logger.debug('Method    : Setting up call: %s calls %s with args %s', class_method,
             class_method.method_called(), class_method.args_for_method_call())
         
-        class_method.check_arguments()
+        class_method._create_other_params_from_args()
+    
+    def get_parameter(self, name):
+        for par in self.params:
+            if par.name == name:
+                return par
+        return None
     
     def complete_method_processing(self):
         '''
@@ -315,8 +353,9 @@ class SGMethod(SGMetaDataContainer):
             1: Get other methods related to this one
             2: Set parameters on library method (if called)
         '''
-        
         logger.info(' Method    : Completing processing of %s', self)
+        
+        self.params = tuple(self.params)
         
         #Get other methods
         lib_method = self.method_called()
@@ -330,6 +369,8 @@ class SGMethod(SGMetaDataContainer):
         
         logger.info(' Method    : %s calls %s', self.name, lib_method.name)
         
+        lib_method.called_by.append(self)
+        
         #set up library method
         self.setup_lib_method(lib_method)
         
@@ -337,12 +378,13 @@ class SGMethod(SGMetaDataContainer):
         if class_method != None:
             logger.info(' Method    : %s is also %s', self.name, class_method)
             self.setup_class_method(class_method)
+            lib_method.called_by.append(class_method) #library is also called by class
         
         # Cant check here... need to wait until all are read
         # self.check_call_validity()
         # class_method.check_call_validity()
     
-    def check_arguments(self):
+    def _create_other_params_from_args(self):
         '''
         Ensure that the arguments in the call match the available parameters,
         if no arguments are provided copy across read in parameters
@@ -354,16 +396,42 @@ class SGMethod(SGMetaDataContainer):
         
         if args == None:
             args = self.params
+            if len(args) != len(called_method.params):
+                logger.error('Error in %s calling %s', self.uname, called_method.uname)
+                assert False
             logger.debug('Method    : Altering call to supply arguments that map to parameters: %s', self)
             self.set_tag('calls', [called_method, args]) # change the tag for 'calls' to have args
         else:
             #check that the args match params
             assert(len(args) == len(called_method.params), 'Error in %s calling %s', self.uname, called_method.uname)
             for arg in args:
-                if isinstance(arg, SGParameter):
-                    assert(self.has_parameter(arg.name), 
-                        "Cannot match parameter " + str(arg) + 
-                        " in call to " + str(called_method) + " from " + str(self))
+                if isinstance(arg, SGParameter) and not self.has_parameter(arg.name):
+                    logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(called_method), self)
+                    assert False
+    
+    def check_arguments(self):
+        '''
+        Ensure that the arguments in the call match the available parameters,
+        if no arguments are provided copy across read in parameters
+        '''
+        if self.tags['calls'].other == None:
+            logger.error('Method    : Method %s does not call anything. Check attributes. %s', self.uname, self.file_line_details)
+            assert False
+        
+        called_method = self.tags['calls'].other[0] #get called method
+        args = self.tags['calls'].other[1] #the arguments self passes to the method
+        
+        logger.debug('Method    : Checking arguments used by %s calling %s (%s)', self, called_method, args)
+        
+        if len(args) != len(called_method.params):
+            logger.error('Method    : Error in %s calling %s', self.uname, called_method.uname)
+            assert False
+        
+        for arg in args:
+            if isinstance(arg, SGParameter):
+                if not self.has_parameter(arg.name):
+                    logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(called_method), self)
+                    assert False
     
     def method_called(self):
         """returns the method that this method needs to call"""
@@ -463,27 +531,6 @@ def test_return_types():
     
     my_method.return_type = "SoundEffect"
     assert my_method.return_type == "SoundEffect"
-
-def test_parameter_cache():
-    """test the parmeter cache process"""
-    my_method = SGMethod("Test")
-    prm = SGParameter("p1")
-    
-    my_method.cache_parameter(prm)
-    
-    assert my_method.param_cache["p1"] == prm
-    
-    prm0 = my_method.create_parameter("p0")
-    prm1 = my_method.create_parameter("p1")
-    prm2 = my_method.create_parameter("p2")
-    
-    assert prm == prm1
-    print prm1
-    assert my_method.params[1] == prm
-    assert my_method.params[0] == prm0
-    assert my_method.params[2] == prm2
-    
-    assert len(my_method.param_cache) == 0
 
 def test_basic_method_call_wrapper():
     """test the creation of a simple method wrapper"""

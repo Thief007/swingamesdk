@@ -177,7 +177,7 @@ interface
   ///@param effect The effect indicates which sound effect to start playing. This
   ///               effect is played once at its full volume.
   ///
-  ///@lib PlaySoundEffect
+  ///@lib PlaySoundEffectLoop(effect,1)
   ///@uname PlaySoundEffect
   ///
   ///@class SoundEffect

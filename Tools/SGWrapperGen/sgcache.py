@@ -1,4 +1,3 @@
-
 import logging
 
 _files = {}
@@ -30,7 +29,8 @@ def find_or_add_class(name):
         from SGLibrary import SGLibrary
         logger.debug('Cache     : Created class %s', name)
         if name == 'lib': result = SGLibrary()
-        else: result = SGCodeModule(name)
+        else: 
+            result = SGCodeModule(name)
         _classes[name] = result
         return result
 
