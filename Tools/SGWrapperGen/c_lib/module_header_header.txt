@@ -7,3 +7,6 @@
 */
 
 #include <stdbool.h>
+
+#ifndef %(pascal_name)s
+#define %(pascal_name)s

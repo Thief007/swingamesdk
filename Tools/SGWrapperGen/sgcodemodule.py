@@ -21,14 +21,19 @@ class SGCodeModule(SGMetaDataContainer):
     
     def __init__(self, name):
         """Initialise the class, setting its name"""
-        super(SGCodeModule,self).__init__(['static','module_kind','data_wrapper','pointer_wrapper', 'type_name'])
+        super(SGCodeModule,self).__init__(['static','module_kind',
+            'data_wrapper','pointer_wrapper', 'type_name',
+            'values'])
         self.name = name
         self.type_name = name
         self.methods = dict()
         self.properties = dict()
         self.fields = dict()
+        self.values = list()
         self.is_static = False
         self.module_kind = 'unknown'
+        self.is_pointer_wrapper = False
+        self.is_data_wrapper = False
     
     def add_member(self, member):
         """Add a member (method, property) to the class"""
@@ -63,6 +68,9 @@ class SGCodeModule(SGMetaDataContainer):
         elif title == 'struct':
             self.module_kind = 'struct'
             super(SGCodeModule,self).set_tag('name', other)
+        elif title == 'enum':
+            self.module_kind = 'enum'
+            super(SGCodeModule,self).set_tag('name', other)
         else:
             super(SGCodeModule,self).set_tag(title, other)
     
@@ -86,6 +94,10 @@ class SGCodeModule(SGMetaDataContainer):
         lambda self,value: self.set_tag('type_name', value), 
         None, 'The name of the type in Pascal.')
     
+    values = property(lambda self: self['values'].other, 
+        lambda self,value: self.set_tag('values', value), 
+        None, 'The values of an enum member.')
+    
     is_class = property(lambda self: self.module_kind == 'class', 
         None, None, 'Is the module a class?')
     
@@ -94,6 +106,9 @@ class SGCodeModule(SGMetaDataContainer):
     
     is_module = property(lambda self: self.module_kind == 'module', 
         None, None, 'Is the module a module?')
+    
+    is_enum = property(lambda self: self.module_kind == 'enum', 
+        None, None, 'Is the module a enum?')
     
     is_struct = property(lambda self: self.module_kind == 'struct', 
         None, None, 'Is the module a structure?')
@@ -105,12 +120,21 @@ class SGCodeModule(SGMetaDataContainer):
         if the_type.is_class:
             self.module_kind = 'class'
             self.name = the_type['class'].other
+            self.uname = self.name
+            self.is_pointer_wrapper = the_type.pointer_wrapper
+            self.is_data_wrapper = the_type.data_wrapper
         elif the_type.is_struct:
             self.module_kind = 'struct'
             self.name = the_type['struct'].other
+            self.uname = self.name
+            self.fields = the_type.fields
+        elif the_type.is_enum:
+            self.module_kind = 'enum'
+            self.name = the_type['enum'].other
+            self.uname = self.name
+            self.values = the_type.values
         else:
             logger.warning('Code Modul: Unknown type kind for %s', self.name)
-        
     
     def __str__(self):
         '''returns a string representation of the class'''

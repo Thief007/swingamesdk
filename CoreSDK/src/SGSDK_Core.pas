@@ -69,6 +69,8 @@ interface
     
     /// The CollisionSide enumeration is used to indicate the side a collision
     /// has occurred on.
+    ///
+    /// @enum CollisionSide
     CollisionSide = (
       Top,
       Bottom,
@@ -86,9 +88,15 @@ interface
     /// color's red component, G stores the green component, B stores the blue 
     /// component and A stores an alpha value representing the opacity (transparency)
     ///  of the of the color.
+    ///
+    /// @class Color
+    /// @data_wrapper
+    /// @field data: UInt32
     Color = UInt32;
     
     /// Vectors represent a direction and distance, stored as x,y components.
+    ///
+    /// @struct Vector
     Vector = record
       x, y: Single;
     end;
@@ -99,6 +107,7 @@ interface
     /// collision checking.
     ///
     /// @note Do not use BitmapData directly, use Bitmap.
+    /// @struct BitmapData
     BitmapData = record
       surface: PSDL_Surface;
       width, height: LongInt;
@@ -111,11 +120,17 @@ interface
     /// using the `CreateBitmap` function. This can then be optimised for drawing
     /// to the screen using the `OptimiseBitmap` routine. Also see the `DrawBitmap`
     /// routines.
+    ///
+    /// @class Bitmap
+    /// @pointer_wrapper
+    /// @field pointer: ^BitmapData
     Bitmap = ^BitmapData;
     
     /// Use this with the resource path functions to get the path to a
     /// given resource. Using these functions ensures that your resource
     /// paths are correct across different platforms
+    ///
+    /// @enum ResourceKind
     ResourceKind = (
       FontResource,
       ImageResource,
@@ -132,6 +147,8 @@ interface
     /// frames. The sprite kind is determined when the `Sprite` is created. The
     /// `SpriteEndingAction` values are used in conjuncture with the `SpriteKind` to
     /// control the behaviour of the animation.
+    ///
+    /// @enum SpriteKind
     SpriteKind = (
       StaticSprite,
       AnimArraySprite,
@@ -149,6 +166,8 @@ interface
     /// animation forward once, then back once, then stops. Finally, the Stop option means
     /// that the animation stops once it gets to the end of the framces. Once an animation
     /// stops sprite will be drawn as the last frame in the animation.
+    ///
+    /// @enum SpriteEndingAction
     SpriteEndingAction = (
       Loop,
       ReverseLoop,
@@ -203,6 +222,10 @@ interface
     /// the FreeSprite function. The sprite contain a number of bitmaps used to
     /// store animations, or the like. Sprite drawing operations will draw the
     /// Sprite's current frame.
+    ///
+    /// @class Sprite
+    /// @pointer_wrapper
+    /// @field pointer: ^SpriteData
     Sprite = ^SpriteData;
     
     ///@struct TimerData
@@ -213,12 +236,16 @@ interface
       started : Boolean;
     end; {1.1}
     
+    /// @class Timer
+    /// @pointer_wrapper
+    /// @field pointer: ^TimerData
     Timer = ^TimerData;
   
   /// @lib ProcessEvents
   procedure ProcessEvents();
   
-  // @lib WindowCloseRequested
+  /// @lib WindowCloseRequested
+  /// @uname WindowCloseRequested
   function WindowCloseRequested(): Boolean;
   
   /// @lib SetIcon

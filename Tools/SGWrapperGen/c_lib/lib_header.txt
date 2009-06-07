@@ -6,6 +6,9 @@
 * Link with the SGSDK library (SGSDK.dll, libSGSDK.so, or libSGSDK.dylib)
 */
 
+#ifndef SGSDK
+#define SGSDK
+
 void sg_GetExceptionMessage(char *result);
 
 long sg_ExceptionOccured();

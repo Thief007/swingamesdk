@@ -51,7 +51,7 @@ class SGMethod(SGMetaDataContainer):
         result = {}
         result['name'] = self.name
         result['uname'] = self.uname
-        result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type)
+        result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type) 
         result['params'] = self.param_string(param_visitor)
         result['calls.file.pascal_name'] = self.method_called().in_class.in_file.pascal_name
         result['calls.file.name'] = self.method_called().in_class.in_file.name
@@ -210,7 +210,11 @@ class SGMethod(SGMetaDataContainer):
             other.is_static = self.is_static
         else:
             other.params = self.params[1:]
-        other.in_class = self.other_class
+        
+        if self.other_class != None:
+            other.in_class = self.other_class
+        else:
+            other.in_class = self.in_class
     
     def calls(self, method, args=None):
         """indicate which method this method calls, and args if any"""
@@ -363,9 +367,8 @@ class SGMethod(SGMetaDataContainer):
         
         #check rules
         if lib_method == None:
-            if 'ignore' not in self.tags:
-                logger.warning('Method Waring: Found method %s without lib', self)
-            return
+            logger.error('Method    : Found method %s without lib', self)
+            assert False
         
         logger.info(' Method    : %s calls %s', self.name, lib_method.name)
         
