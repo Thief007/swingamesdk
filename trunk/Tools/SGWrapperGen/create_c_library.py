@@ -14,6 +14,8 @@ import parser_runner
 from sgcache import logger
 from print_writer import PrintWriter
 from file_writer import FileWriter
+from SGType import SGType
+from SGParameter import SGParameter
 
 #my_writer = PrintWriter()
 #my_writer = FileWriter('../../CoreSDK/src/sgsdk1.pas')
@@ -42,7 +44,7 @@ _type_switcher = {
         'longint': 'int %s',
         'soundeffect': 'SoundEffect %s',
         'music': 'Music %s',
-        'string': 'char *%s',
+        'string': 'const char *%s',
         'boolean': 'bool %s',
         'byte': 'unsigned char %s',
         'timer': 'Timer %s',
@@ -67,7 +69,8 @@ _type_switcher = {
     'var' : {
         'soundeffect': 'SoundEffect *%s',
         'music': 'Music *%s',
-        'timer': 'Timer *%s'
+        'timer': 'Timer *%s',
+        'string': 'char *%s'
     },
     'out' : {
         'string': 'char *%s',
@@ -88,7 +91,7 @@ _adapter_type_switcher = {
         'longint': 'int %s',
         'soundeffect': 'void *%s',
         'music': 'void *%s',
-        'string': 'char *%s',
+        'string': 'const char *%s',
         'boolean': 'int %s',
         'byte': 'unsigned char %s',
         'color': 'unsigned int %s',
@@ -102,7 +105,8 @@ _adapter_type_switcher = {
         'soundeffect': 'void *%s',
         'music': 'void *%s',
         'timer': 'void *%s',
-        'byte': 'unsigned char *%s'
+        'byte': 'unsigned char *%s',
+        'string': 'char *%s'
     },
     'out': {
         'string': 'char *%s',
@@ -151,11 +155,16 @@ def _load_data():
     _module_c_function = f.read()
     f.close()
 
-def arg_visitor(the_arg, for_param):
+def arg_visitor(the_arg, for_param_or_type):
     '''Called for each argument in a call, performs required mappings'''
-    if for_param.data_type.name in _data_switcher:
+    if isinstance(for_param_or_type, SGType):
+        the_type = for_param_or_type
+    else:
+        the_type = for_param_or_type.data_type
+        
+    if the_type.name in _data_switcher:
         #convert data using pattern from _data_switcher
-        return _data_switcher[for_param.data_type.name] % the_arg
+        return _data_switcher[the_type.name] % the_arg
     else:
         return the_arg
 
@@ -238,7 +247,7 @@ def write_c_type_for(member, other):
         #typedef struct %s_struct { } struct;
         writer = other['header writer']
         writer.write('typedef struct %s_struct { \n' % member.name)
-        for field in member.fields:
+        for key, field in member.fields.items():
             writer.writeln('    %s;' % type_visitor(field.data_type) % field.name)
         writer.writeln('} %s;\n' % member.name)
     elif member.is_enum:
@@ -300,8 +309,30 @@ def write_c_lib_module(the_file):
     c_file_writer.close()
     header_file_writer.close()
 
+def post_parse_process(the_file):
+    if the_file.name == 'SGSDK_Lib':
+        return
+    
+    logger.info('Post Processing %s for C wrapper creation', the_file.name)
+    
+    for member in the_file.members:
+        for key, method in member.methods.items():
+            if method.method_called.was_function:
+                #convert string return types
+                result_param = SGParameter('result')
+                result_param.data_type = method.return_type
+                result_param.modifier = 'var'
+                param_list = list(method.params)
+                param_list.append(result_param)
+                method.params = tuple(param_list)
+                arg_list = list(method.args)
+                arg_list.append(result_param)
+                method.args = arg_list
+                method.return_type = None
+
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
+    post_parse_process(the_file)
     if the_file.name == 'SGSDK_Lib':
         logger.info('Creating C Library Adapter %s.h', the_file.name)
         write_c_lib_adapter(the_file)
@@ -310,11 +341,10 @@ def file_visitor(the_file, other):
         write_c_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
-    _load_data()    
+    _load_data()
     parser_runner.run_for_all_units(file_visitor)
-
 
 if __name__ == '__main__':
     main()

@@ -74,20 +74,20 @@ def method_visitor(element, other):
     print '\t\t-> in_file\t', element.in_file
     print '\t\t-> calls',
     
-    if element.method_called() == None:
+    if element.method_called == None:
         print '???'
         return
     
     print '\t<@%s> %s%s%s %s(' % (
-        hex(id(element.method_called())),
-        'static ' if element.method_called().is_static else '',
-        'extern ' if element.method_called().is_external else '',
-        element.method_called().return_type if element.method_called().return_type != None else 'void' , 
-        element.method_called().name),
+        hex(id(element.method_called)),
+        'static ' if element.method_called.is_static else '',
+        'extern ' if element.method_called.is_external else '',
+        element.method_called.return_type if element.method_called.return_type != None else 'void' , 
+        element.method_called.name),
     
-    element.method_called().visit_params(param_visitor, other)
+    element.method_called.visit_params(param_visitor, other)
     
-    print ') from ', element.method_called().in_file
+    print ') from ', element.method_called.in_file
     
     print '\t\t-> args\t\t', 
     element.visit_args(arg_visitor, other)
