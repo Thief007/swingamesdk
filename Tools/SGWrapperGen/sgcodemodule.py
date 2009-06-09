@@ -29,6 +29,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.methods = dict()
         self.properties = dict()
         self.fields = dict()
+        self.field_list = list()
         self.values = list()
         self.is_static = False
         self.module_kind = 'unknown'
@@ -47,6 +48,7 @@ class SGCodeModule(SGMetaDataContainer):
         elif isinstance(member, SGField):
             logger.info(' Code Modul: Adding field %s.%s', self.name, member.name)
             self.fields[member.name] = member
+            self.field_list.append(member)
         else:
             logger.error('Model Error: Unknown member type')
             assert False
@@ -127,7 +129,6 @@ class SGCodeModule(SGMetaDataContainer):
             self.module_kind = 'struct'
             self.name = the_type['struct'].other
             self.uname = self.name
-            self.fields = the_type.fields
         elif the_type.is_enum:
             self.module_kind = 'enum'
             self.name = the_type['enum'].other
@@ -156,8 +157,8 @@ class SGCodeModule(SGMetaDataContainer):
             visitor(method, other)
     
     def visit_fields(self, visitor, other):
-        for key, field in self.fields.items():
-            visitor(field, key == self.fields.keys()[-1], other)
+        for field in self.field_list:
+            visitor(field, field == self.field_list[-1], other)
     
     def visit_properties(self, visitor, other):
         for key, prop in self.properties.items():

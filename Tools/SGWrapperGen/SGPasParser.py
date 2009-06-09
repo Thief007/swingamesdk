@@ -428,7 +428,8 @@ class SGPasParser():
             args = None
             self._add_attribute('called_by_lib', True)
         
-        self._add_attribute('calls', [method, args])
+        self._add_attribute('method_called', method)
+        self._add_attribute('args', args)
     
     def process_note_attribute(self, token):
         self._add_attribute('note', self._tokeniser.read_to_end_of_comment())

@@ -32,8 +32,6 @@ def method_process_visitor(the_method, other):
         
         the_method.return_type = None
         the_method.was_function = True
-        
-        print the_method.name, the_method.was_function
 
 def post_parse_process(the_file):
     '''Create temporary variables for out/var string parameters, and string return types'''

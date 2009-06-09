@@ -70,7 +70,6 @@ def _load_data():
     
     f = open('./pas_lib/function_as_procedure.txt')
     _function_as_procedure = f.readlines()
-    print _function_as_procedure
     f.close()
 
 def param_visitor(the_param, last):

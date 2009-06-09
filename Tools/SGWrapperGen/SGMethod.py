@@ -20,9 +20,10 @@ class SGMethod(SGMetaDataContainer):
     def __init__(self, name):
         """Initialise the SGMethod, setting its name."""
         SGMetaDataContainer.__init__(self, ['uname','static','operator',
-            'is_constructor','return_type','calls','other_class','dispose',
+            'is_constructor','return_type','other_class','dispose',
             'method','overload','returns','is_setter','is_getter','is_external', 
-            'called_by_lib', 'my_class', 'class_method','in_property', 'called_by'])
+            'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
+            'method_called', 'args'])
         self.name = name
         self.uname = name
         self.params = list()
@@ -37,7 +38,8 @@ class SGMethod(SGMetaDataContainer):
         self.is_setter = False
         self.in_property = None
         self.called_by_lib = False
-        self.set_tag('calls', None)
+        self.method_called = None
+        self.args = None
         self.class_method = None
         self.other_class = None
         self.called_by = list()
@@ -56,11 +58,11 @@ class SGMethod(SGMetaDataContainer):
         result['uname'] = self.uname
         result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type) 
         result['params'] = self.param_string(param_visitor)
-        result['calls.file.pascal_name'] = self.method_called().in_class.in_file.pascal_name
-        result['calls.file.name'] = self.method_called().in_class.in_file.name
-        result['calls.file.filename'] = self.method_called().in_class.in_file.filename
-        result['calls.class'] = self.method_called().in_class.name
-        result['calls.name'] = self.method_called().name
+        result['calls.file.pascal_name'] = self.method_called.in_class.in_file.pascal_name
+        result['calls.file.name'] = self.method_called.in_class.in_file.name
+        result['calls.file.filename'] = self.method_called.in_class.in_file.filename
+        result['calls.class'] = self.method_called.in_class.name
+        result['calls.name'] = self.method_called.name
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         
         return result
@@ -128,6 +130,14 @@ class SGMethod(SGMetaDataContainer):
     is_function = property (lambda self: self.return_type != None,
         None, None, 'The method is a function'
         )
+    
+    args = property(lambda self: self['args'].other, 
+        lambda self,value: self.set_tag('args', value), 
+        None, "The arguments passed to the method called by this method.")
+    
+    method_called = property(lambda self: self['method_called'].other, 
+        lambda self,value: self.set_tag('method_called', value), 
+        None, "The method called by this method.")
     
     @property
     def signature(self):
@@ -222,18 +232,22 @@ class SGMethod(SGMetaDataContainer):
     
     def calls(self, method, args=None):
         """indicate which method this method calls, and args if any"""
-        if not self['calls'].other == None:
+        if self.method_called != None:
             logger.error('Model Error: Changing method called')
             assert False
-        self.set_tag('calls', [method, args])
+        #self.set_tag('calls', (method, args))
+        self.method_called = method
+        self.args = args
     
-    def process_args(self):
+    def _process_args(self):
         '''
         Convert args to parameters, fields, and literals
         '''
-        new_args = []
-        args = self.tags['calls'].other[1]
-        if args == None: return
+        new_args = list()
+        args = self.args
+        if args == None:
+            self.args = self.params
+            return
         for argv in args:
             if argv[0] in ['number', 'string']:
                 new_args.append(argv[1])
@@ -248,7 +262,8 @@ class SGMethod(SGMetaDataContainer):
                     else:
                         logger.error('Method    : Error cannot find %s in method %s', argv[1], self.uname)
                         assert False
-        self.tags['calls'].other[1] = new_args
+        #self.tags['calls'].other[1] = new_args
+        self.args = new_args
     
     def setup_lib_method(self, lib_method):
         '''
@@ -259,17 +274,14 @@ class SGMethod(SGMetaDataContainer):
             parameters
             calls
         '''
-        self.process_args()
-        args = self.args_for_method_call() #lib is called method
-        
-        #we are called if there is a lib marker, and we have no other args
-        called_by_lib = self.called_by_lib and args == self.params 
+        self._process_args()
+        args = self.args #lib is called method
         
         if lib_method.file_line_details == None:
             lib_method.file_line_details = []
         lib_method.file_line_details.append(self.file_line_details)
         
-        if called_by_lib: #Set up the call from the library to this method
+        if self.called_by_lib: #Set up the call from the library to this method
             logger.debug('Method    : Setting %s in library to call %s', lib_method, self)
             lib_method.return_type = self.return_type #set return type
             lib_method.calls(self, self.params) #..calls this method at other end
@@ -329,17 +341,18 @@ class SGMethod(SGMetaDataContainer):
         #  instance methods change the first argument for the pointer field
         if class_method.is_static or class_method.is_constructor:
             #use self's args - i.e. it calls the method in the same way
-            args = self.args_for_method_call()
+            args = self.args
         else:  #other is an instance (with ptr)
             args = ['pointer'] #add extra first argument
             #add in self's arguments (-1st which is pointer)
-            args.extend(self.args_for_method_call()[1:])
+            if self.args != None:
+                args.extend(self.args[1:])
         
         #set class method to call the same method this does
-        class_method.calls(self.method_called(), args)
+        class_method.calls(self.method_called, args)
         
         logger.debug('Method    : Setting up call: %s calls %s with args %s', class_method,
-            class_method.method_called(), class_method.args_for_method_call())
+            class_method.method_called, class_method.args)
         
         class_method._create_other_params_from_args()
     
@@ -366,7 +379,7 @@ class SGMethod(SGMetaDataContainer):
         self.params = tuple(self.params)
         
         #Get other methods
-        lib_method = self.method_called()
+        lib_method = self.method_called
         class_method = self.class_method
         
         #check rules
@@ -396,24 +409,25 @@ class SGMethod(SGMetaDataContainer):
         Ensure that the arguments in the call match the available parameters,
         if no arguments are provided copy across read in parameters
         '''
-        called_method = self.tags['calls'].other[0] #get called method
-        args = self.tags['calls'].other[1] #the arguments self passes to the method
+        method_called = self.method_called #self.tags['calls'].other[0] #get called method
+        args = self.args #self.tags['calls'].other[1] #the arguments self passes to the method
         
-        logger.debug('Method    : Checking arguments used by %s calling %s (%s)', self, called_method, args)
+        logger.debug('Method    : Checking arguments used by %s calling %s (%s)', self, method_called, args)
         
         if args == None:
             args = self.params
-            if len(args) != len(called_method.params):
-                logger.error('Error in %s calling %s', self.uname, called_method.uname)
-                assert False
+            # if len(args) != len(method_called.params):
+            #     print args[0], method_called.params
+            #     logger.error('Error in %s calling %s', self.uname, method_called.uname)
+            #     assert False
             logger.debug('Method    : Altering call to supply arguments that map to parameters: %s', self)
-            self.set_tag('calls', [called_method, args]) # change the tag for 'calls' to have args
+            self.args = args
         else:
             #check that the args match params
-            assert(len(args) == len(called_method.params), 'Error in %s calling %s', self.uname, called_method.uname)
+            assert(len(args) == len(method_called.params), 'Error in %s calling %s', self.uname, method_called.uname)
             for arg in args:
                 if isinstance(arg, SGParameter) and not self.has_parameter(arg.name):
-                    logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(called_method), self)
+                    logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(method_called), self)
                     assert False
     
     def check_arguments(self):
@@ -421,53 +435,35 @@ class SGMethod(SGMetaDataContainer):
         Ensure that the arguments in the call match the available parameters,
         if no arguments are provided copy across read in parameters
         '''
-        if self.tags['calls'].other == None:
+        if self.method_called == None:
             logger.error('Method    : Method %s does not call anything. Check attributes. %s', self.uname, self.file_line_details)
             assert False
         
-        called_method = self.tags['calls'].other[0] #get called method
-        args = self.tags['calls'].other[1] #the arguments self passes to the method
+        method_called = self.method_called #get called method
+        args = self.args #the arguments self passes to the method
         
-        logger.debug('Method    : Checking arguments used by %s calling %s (%s)', self, called_method, args)
+        logger.debug('Method    : Checking arguments used by %s calling %s (%s)', self, method_called, args)
         
-        if len(args) != len(called_method.params):
-            logger.error('Method    : Error in %s calling %s', self.uname, called_method.uname)
+        if len(args) != len(method_called.params):
+            logger.error('Method    : Error in %s calling %s', self.uname, method_called.uname)
             assert False
         
         for arg in args:
             if isinstance(arg, SGParameter):
                 if not self.has_parameter(arg.name):
-                    logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(called_method), self)
+                    logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(method_called), self)
                     assert False
     
-    def method_called(self):
-        """returns the method that this method needs to call"""
-        if self.tags['calls'].other != None:
-            return self.tags['calls'].other[0]
-        else:
-            return None
-    
     def args_string_for_called_method(self, arg_visitor = None):
-        args = self.args_for_method_call()
-        #print self.method_called()
-        params = self.method_called().params
+        args = self.args
+        #print self.method_called
+        params = self.method_called.params
         
         arg_list = [ a.name if isinstance(a, SGParameter) else a for a in args ]
         if arg_visitor != None:
             return ','.join([ arg_visitor(a, params[i]) for i,a in enumerate(arg_list) ])
         else:
             return ','.join(arg_list)
-    
-    def args_for_method_call(self):
-        """returns the argument call list for the called method"""
-        args = self.tags['calls'].other[1]
-        
-        if args == None:
-            assert(False, 'Args should be set')
-            self.set_tag('calls', [self.tags['calls'].other[0], self.params])
-            args = self.tags['calls'].other[1]
-        
-        return args
     
     def param_string(self, param_visitor = None):
         if self.params: 
@@ -497,7 +493,7 @@ class SGMethod(SGMetaDataContainer):
             visitor(param, param == self.params[-1], other)
     
     def visit_args(self, visitor, other):
-        args = self.args_for_method_call()
+        args = self.args
         for arg in args:
             visitor(arg, arg == args[-1], other)
     
@@ -547,8 +543,8 @@ def test_basic_method_call_wrapper():
     my_method.calls(other_method)
     my_method.check_call_validity();
     
-    assert other_method == my_method.method_called()
-    assert len(my_method.args_for_method_call()) == 0
+    assert other_method == my_method.method_called
+    assert len(my_method.args) == 0
 
 def test_wrapper_with_params():
     """test the creation of a method wrapper with one parameter in call"""
@@ -560,9 +556,9 @@ def test_wrapper_with_params():
     my_method.calls(other_method)
     my_method.check_call_validity();
     
-    assert other_method == my_method.method_called()
-    assert len(my_method.args_for_method_call()) == 1
-    assert par == my_method.args_for_method_call()[0]
+    assert other_method == my_method.method_called
+    assert len(my_method.args) == 1
+    assert par == my_method.args[0]
 
 def test_wrapper_with_args():
     """test the creation of a method wrapper with non-default args"""
@@ -573,10 +569,10 @@ def test_wrapper_with_args():
     my_method.calls(other_method, ['"test"'])
     my_method.check_call_validity();
     
-    assert other_method == my_method.method_called()
-    assert len(my_method.args_for_method_call()) == 1
-    assert par1 != my_method.args_for_method_call()[0]
-    assert '"test"' == my_method.args_for_method_call()[0]
+    assert other_method == my_method.method_called
+    assert len(my_method.args) == 1
+    assert par1 != my_method.args[0]
+    assert '"test"' == my_method.args[0]
     
 
 # @raises(Exception)
