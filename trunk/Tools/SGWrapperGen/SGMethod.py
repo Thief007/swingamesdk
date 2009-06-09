@@ -25,7 +25,7 @@ class SGMethod(SGMetaDataContainer):
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by'])
         self.name = name
         self.uname = name
-        self.params = []
+        self.params = list()
         #self.param_cache = {}
         self.return_type = None
         self.operator = None
@@ -40,7 +40,10 @@ class SGMethod(SGMetaDataContainer):
         self.set_tag('calls', None)
         self.class_method = None
         self.other_class = None
-        self.called_by = []
+        self.called_by = list()
+        
+        self.local_vars = list()
+        self.was_function = False
     
     def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None):
         '''Returns a dictionary containing the details of this function/procedure
@@ -59,6 +62,7 @@ class SGMethod(SGMetaDataContainer):
         result['calls.class'] = self.method_called().in_class.name
         result['calls.name'] = self.method_called().name
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
+        
         return result
 
     name = property(lambda self: self['name'].other, 
@@ -450,7 +454,7 @@ class SGMethod(SGMetaDataContainer):
         
         arg_list = [ a.name if isinstance(a, SGParameter) else a for a in args ]
         if arg_visitor != None:
-            return ','.join([ arg_visitor(a, params[i].data_type) for i,a in enumerate(arg_list) ])
+            return ','.join([ arg_visitor(a, params[i]) for i,a in enumerate(arg_list) ])
         else:
             return ','.join(arg_list)
     
