@@ -214,12 +214,12 @@ interface
 		GAME_AREA_HEIGHT = (SCREEN_HEIGHT - HEADING_HEIGHT - 2 * BORDER_Y);
 		TOP_GAME_AREA = HEADING_HEIGHT + BORDER_Y;
 		
-		SCROLL_PIXELS 	= 2;
-		BKG_MULT 		= 5;		//How much slower is background?
+		SCROLL_PIXELS 	= 7;
+		BKG_MULT 		= 10 / SCROLL_PIXELS;		//How much slower is background?
 		BASE_SPEED 		= 0.5;
 		SPEED_MUL		= 0.3;
 		SPEED_LEVEL_MUL = 0.05;
-		PLAYER_BASE_MOVE = 3;
+		PLAYER_BASE_MOVE = 5;
 		
 		MAX_FUEL = 150;
 		FUEL_BOOST = 2; //Cost of boost per frame

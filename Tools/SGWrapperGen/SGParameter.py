@@ -14,10 +14,11 @@ class SGParameter(SGMetaDataContainer):
     
     def __init__(self, name):
         """initialise the parameter with a name, sets type to None"""
-        SGMetaDataContainer.__init__(self, ['type','modifier'])
+        SGMetaDataContainer.__init__(self, ['type','modifier','maps_result'])
         self.name = name
         self.data_type = None
         self.modifier = None
+        self.maps_result = False
     
     def set_as_output(self):
         """marks this as an output parameter"""
@@ -42,6 +43,9 @@ class SGParameter(SGMetaDataContainer):
     
     data_type = property(lambda self: self['type'].other, lambda self,the_type: self.set_tag('type', the_type), None, "The data type of the parameter.")
     modifier = property(lambda self: self['modifier'].other, lambda self,modifier: self.set_tag('modifier', modifier), None, "The modifier of the parameter.")
+    maps_result = property(lambda self: self['maps_result'].other, 
+        lambda self,value: self.set_tag('maps_result', value), 
+        None, "The parameter wraps the result of a function.")
 #
 # Test methods
 #

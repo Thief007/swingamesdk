@@ -79,7 +79,7 @@ _type_switcher = {
 
 _data_switcher = {
     #Pascal type: what values of this type switch to %s = data value
-    'Boolean': '%s == -1'
+    'Boolean': '%s != 0'
 }
 
 _adapter_type_switcher = {
@@ -151,11 +151,11 @@ def _load_data():
     _module_c_function = f.read()
     f.close()
 
-def arg_visitor(the_arg, arg_type):
+def arg_visitor(the_arg, for_param):
     '''Called for each argument in a call, performs required mappings'''
-    if arg_type.name in _data_switcher:
+    if for_param.data_type.name in _data_switcher:
         #convert data using pattern from _data_switcher
-        return _data_switcher[arg_type.name] % the_arg
+        return _data_switcher[for_param.data_type.name] % the_arg
     else:
         return the_arg
 
@@ -226,11 +226,9 @@ def write_c_type_for(member, other):
     
     if member.is_class:
         #convert to resource pointer
-        print member, member.is_pointer_wrapper
         if member.is_pointer_wrapper:
             assert len(member.fields) == 1
             the_type = member.fields['pointer'].data_type
-            print the_type
             other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type, None) % member.name)
         elif member.is_data_wrapper:
             assert len(member.fields) == 1

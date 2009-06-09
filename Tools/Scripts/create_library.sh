@@ -115,15 +115,17 @@ done
 
 shift $((${OPTIND}-1))
 
+if [ -f "${LOG_FILE}" ]
+then
+    rm -f "${LOG_FILE}"
+fi
+
+
 if [ $CLEAN = "N" ]
 then
     if [ ! -d "${OUT_DIR}" ]
     then
         mkdir -p "${OUT_DIR}"
-    fi
-    if [ -f "${LOG_FILE}" ]
-    then
-        rm -f "${LOG_FILE}"
     fi
     
     if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
@@ -139,7 +141,8 @@ then
         
         echo "  ... Creating Pascal Library"
         CreateLibrary >> ${LOG_FILE}
-        
+        if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
+            
         echo "  ... Compiling Library"
         FPC_BIN=`which ppcppc`
         doCompile "ppc"
@@ -159,6 +162,7 @@ then
         
         echo "  ... Creating Pascal Library"
         CreateLibrary >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
         echo "  ... Compiling Library"
         fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk1.pas >> ${LOG_FILE}

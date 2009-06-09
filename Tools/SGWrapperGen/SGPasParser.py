@@ -404,8 +404,6 @@ class SGPasParser():
         #search in library
         the_lib = find_or_add_class('lib')
         method = the_lib.find_method(uname, self._current_file.name)
-        if 'OpenGraphicsWindow' in uname:
-            print 'HERE', uname, method
         
         if method == None: 
             method = SGMethod(uname)
