@@ -29,6 +29,7 @@ namespace SwinGame
         /// X Coordinate of the Point
         /// </summary>
         public float X;
+        
         /// <summary>
         /// Y Coordinate of the Point
         /// </summary>

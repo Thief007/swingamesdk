@@ -6,30 +6,10 @@
 {$I SwinGame.inc}
 
 library %(name)s;
-  uses SysUtils, Strings, SwinGameTrace,
+  uses SysUtils, Strings, SwinGameTrace, sg_Shared,
     SGSDK_Input, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
     SDL_TTF, SGSDK_Camera, SGSDK_Shapes, SGSDK_MappyLoader,
     %(uses)s
-
-  var
-    ErrorMessage: String;
-    HasException: Boolean;    
-  
-  function sg_DLLVersion(): LongInt; cdecl; export;
-  begin
-    result := %(version)s;
-  end;
-  
-  procedure sg_GetExceptionMessage(result: PChar); cdecl; export;
-  begin
-    StrCopy(result, PChar(ErrorMessage));
-  end;
-  
-  function sg_ExceptionOccured(): LongInt; cdecl; export;
-  begin
-    if HasException then result := -1
-    else result := 0;
-  end;
   
   procedure TrapException(exc: Exception; fromMethod: String);
   begin

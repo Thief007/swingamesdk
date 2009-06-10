@@ -131,7 +131,7 @@ def method_visitor(the_method, other):
     
     for line in lines:
         my_writer.write(line % data) 
-    my_writer.writeln('\n')
+    my_writer.write('\n')
 
 def post_parse_process(the_lib):
     logger.info('Post Processing library for Pascal library creation')
@@ -168,7 +168,11 @@ def file_visitor(the_file, other):
     my_writer.writeln(_exports_header)
     my_writer.indent()
     for name in _names:
-        my_writer.write(_export_line % {'name': name})
+        if name == _names[-1]:
+            my_writer.write((_export_line % {'name': name})[:-2])
+            my_writer.write(';')
+        else:
+            my_writer.write(_export_line % {'name': name})
     
     my_writer.outdent();
     my_writer.outdent();

@@ -51,6 +51,8 @@ namespace SwinGame
         /// </summary>
         public static void CloseAudio()
         {
+            //ensure that all music is freed before closing audio
+            Core.ProcessEvents();
             SGSDK.CloseAudio();
         }
 
