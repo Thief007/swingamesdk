@@ -1,4 +1,1 @@
-    sg_DLLVersion name 'sg_DLLVersion',
-    sg_GetExceptionMessage name 'sg_GetExceptionMessage',
-    sg_ExceptionOccured name 'sg_ExceptionOccured';
 end.

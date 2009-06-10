@@ -33,6 +33,12 @@ interface
     // surfaces created. This is used to create colors etc.
     ///@ignore
     baseSurface: PSDL_Surface;
+    
+    ErrorMessage: String;
+    HasException: Boolean;
+    
+  const
+    DLL_VERSION = 300000;
   
 implementation
   uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx;

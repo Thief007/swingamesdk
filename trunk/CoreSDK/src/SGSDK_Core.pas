@@ -369,7 +369,15 @@ interface
   /// @lib GetPathToOtherResourceWithBase
   /// @uname GetPathToOtherResourceWithBase
   function GetPathToResourceWithBase(path, filename: String) : String; overload;
-
+  
+  /// @lib DLLVersion
+  function DLLVersion(): LongInt;
+  
+  /// @lib GetExceptionMessage
+  function GetExceptionMessage(): String;
+  
+  /// @lib HasExceptionOccured
+  function HasExceptionOccured(): Boolean;
   var
     //Preset colours, do not change these values.
     ColorBlue, ColorGreen, ColorRed, ColorWhite,
@@ -379,7 +387,23 @@ interface
   
 implementation
   uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx, sg_Shared, SDLEventProcessing;
-
+  
+  function DLLVersion(): LongInt;
+  begin
+    result := DLL_VERSION;
+  end;
+  
+  function GetExceptionMessage(): String;
+  begin
+    result := ErrorMessage;
+  end;
+  
+  function HasExceptionOccured(): Boolean;
+  begin
+    result := HasException;
+  end;
+  
+  
   /// Record: FPSCalcInfo
   ///
   /// This record contains details required for the
