@@ -35,7 +35,15 @@ _type_switcher = {
     'byte': 'Byte',
     'resourcekind': 'ResourceKind',
     'uint32': 'UInt32',
-    'bitmap': 'Bitmap'
+    'bitmap': 'Bitmap',
+    'matrix2d': 'Matrix2D',
+    'triangle': 'Triangle',
+    'linesegment': 'LineSegment',
+    'point2d': 'Point2D',
+    'vector': 'Vector',
+    'rectangle': 'Rectangle',
+    'sprite': 'Sprite',
+    'linesarray': 'LinesArray'
 }
 
 _names = []
@@ -100,7 +108,7 @@ def method_visitor(the_method, other):
     data = the_method.to_keyed_dict(param_visitor, arg_visitor = arg_visitor)
     
     if the_method.was_function:
-        if the_method.params[-1].data_type.name.lower() != 'string':
+        if the_method.params[-1].data_type.name.lower() not in ['string', 'triangle', 'linesarray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure
@@ -119,8 +127,13 @@ def method_visitor(the_method, other):
                 temp_process_result += '\n      StrCopy(%s, PChar(%s));' % (local_var.name[:-5], local_var.name)
             elif local_var.data_type.name.lower() == 'color':
                 temp_process_result += '\n      %s := %s;' % (local_var.name[:-5], local_var.name)
+            elif local_var.data_type.name.lower() == 'triangle':
+                temp_process_result += '\n      TriCopy(%s, %s);' % (local_var.name[:-5], local_var.name)
+            elif local_var.data_type.name.lower() == 'linesarray':
+                temp_process_result += '\n      LinesCopy(%s, %s);' % (local_var.name[:-5], local_var.name)
             else:
                 logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
+                assert False
         data['vars'] = temp[:-1]
         data['process_result'] = temp_process_result
     else:
@@ -139,7 +152,7 @@ def post_parse_process(the_lib):
     for key, method in the_lib.methods.items():
         for param in method.params:
             if param.modifier in ['var', 'out']:
-                if param.data_type.name.lower() in ['string','color']:
+                if param.data_type.name.lower() in ['string','color'] or param.maps_result:
                     local_var = SGParameter(param.name + '_temp')
                     local_var.data_type = param.data_type
                     method.local_vars.append(local_var)

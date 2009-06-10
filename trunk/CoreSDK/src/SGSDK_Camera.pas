@@ -21,6 +21,7 @@
 // Version 1.0:
 // - Various
 
+///@module Camera
 unit SGSDK_Camera;
 
 interface
@@ -34,7 +35,7 @@ interface
   //
   // These routines are used to move the visual window.
   //
-
+  
   function XOffset(): LongInt;
   function YOffset(): LongInt;
   

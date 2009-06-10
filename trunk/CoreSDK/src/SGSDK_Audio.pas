@@ -96,16 +96,14 @@ interface
   /// `LoadSoundEffect` and `PlaySoundEffect`. At the end of the program you need to
   /// call `CloseAudio` to ensure that the audio code is correctly terminated.
   ///
-  ///@lib OpenAudio
-  ///@uname OpenAudio
+  ///@lib
   procedure OpenAudio();
 
   /// CloseAudio is used to clean up the resources used by SwinGame audio. If 
   /// `OpenAudio` is called, this must be called to return the resources used
   /// before the program terminates.
   ///
-  ///@lib CloseAudio
-  ///@uname CloseAudio
+  ///@lib
   procedure CloseAudio();
 
   /// Loads the `SoundEffect` from the supplied path. To ensure that your game
@@ -120,8 +118,7 @@ interface
   ///
   ///@param path the path to the sound effect file to load. 
   ///
-  ///@lib LoadSoundEffect
-  ///@uname LoadSoundEffect
+  ///@lib
   ///
   ///@class SoundEffect
   ///@constructor
@@ -139,8 +136,7 @@ interface
   ///
   ///@param path the path to the music file to load.
   ///
-  ///@lib LoadMusic
-  ///@uname LoadMusic
+  ///@lib
   ///
   ///@class Music
   ///@constructor
@@ -149,8 +145,7 @@ interface
   /// Frees the resources used by a `Music` resource. All loaded
   /// `Music` should be freed once it is no longer needed. 
   ///
-  ///@lib FreeMusic
-  ///@uname FreeMusic
+  ///@lib
   ///
   ///@class Music
   ///@dispose
@@ -159,8 +154,7 @@ interface
   /// Frees the resources used by a `SoundEffect` resource. All loaded
   /// `SoundEffect`s should be freed once it is no longer needed.
   ///
-  ///@lib FreeSoundEffect
-  ///@uname FreeSoundEffect
+  ///@lib
   ///
   ///@class SoundEffect
   ///@dispose
@@ -177,7 +171,7 @@ interface
   ///@param effect The effect indicates which sound effect to start playing. This
   ///               effect is played once at its full volume.
   ///
-  ///@lib PlaySoundEffectLoop(effect,1)
+  ///@lib PlaySoundEffectWithLoopAndVolume(effect,1,1.0)
   ///@uname PlaySoundEffect
   ///
   ///@class SoundEffect
@@ -196,8 +190,8 @@ interface
   ///@param loops Controls the number of times the sound effect is played. -1
   ///               means the sound effect is repeated infinitely.
   ///
-  ///@lib PlaySoundEffectLoop
-  ///@uname PlaySoundEffectLoop
+  ///@lib PlaySoundEffectWithLoopAndVolume(effect, loops, 1.0)
+  ///@uname PlaySoundEffectWithLoop
   ///
   ///@class SoundEffect
   ///@overload Play PlayWithLoops
@@ -212,7 +206,7 @@ interface
   ///@param vol Indicates the percentage of the original volume to play the 
   ///            `SoundEffect` at. This must be between 0 and 1.
   ///
-  ///@lib PlaySoundEffectLoopVolume(effect, 1, vol)
+  ///@lib PlaySoundEffectWithLoopAndVolume(effect, 1, vol)
   ///@uname PlaySoundEffectWithVolume
   ///@version 2.1
   ///
@@ -228,8 +222,7 @@ interface
   ///@param vol Indicates the percentage of the original volume to play the 
   ///            `SoundEffect` at. This must be between 0 and 1.
   ///
-  ///@lib PlaySoundEffectLoopVolume
-  ///@uname PlaySoundEffectWithLoopAndVolume
+  ///@lib PlaySoundEffectWithLoopAndVolume
   ///@version 2.0
   ///
   ///@class SoundEffect
@@ -251,7 +244,7 @@ interface
   ///
   ///@param mus The `Music` resource to play.
   ///
-  ///@lib PlayMusic(mus, -1)
+  ///@lib PlayMusicWithLoops(mus, -1)
   ///@uname PlayMusic
   ///
   ///@class Music
@@ -266,8 +259,7 @@ interface
   ///@param mus The `Music` resource to be played.
   ///@param loops The number of times that the music should be played, -1 for repeat infinitely
   ///
-  ///@lib PlayMusic
-  ///@uname PlayMusicWithLoops
+  ///@lib PlayMusicWithLoops
   ///
   ///@class Music
   ///@overload Play PlayWithLoops
@@ -310,7 +302,6 @@ interface
   ///            `Music` at. This must be between 0 and 1, e.g. 0.1 is 10%.
   ///
   ///@lib SetMusicVolume
-  ///@uname SetMusicVolume
   ///
   ///@class Music
   ///@static
@@ -324,7 +315,6 @@ interface
   ///@returns The volume of the currently playing music.
   ///
   ///@lib MusicVolume
-  ///@uname MusicVolume
   ///
   ///@class Music
   ///@static
@@ -338,7 +328,6 @@ interface
   ///@returns true if the music is playing
   ///
   ///@lib IsMusicPlaying
-  ///@uname IsMusicPlaying
   ///
   ///@class Music
   ///@static
@@ -352,7 +341,6 @@ interface
   ///@returns true if the effect `SoundEffect` is playing.
   ///
   ///@lib IsSoundEffectPlaying
-  ///@uname IsSoundEffectPlaying
   ///
   ///@class SoundEffect
   ///@method IsPlaying
@@ -363,7 +351,6 @@ interface
   ///@param effect The sound to stop.
   ///
   ///@lib StopSoundEffect
-  ///@uname StopSoundEffect
   ///
   ///@class SoundEffect
   ///@method Stop
@@ -372,7 +359,6 @@ interface
   /// Stops playing the current music resource.
   ///
   ///@lib StopMusic
-  ///@uname StopMusic
   ///
   ///@class Music
   ///@static

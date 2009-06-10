@@ -233,7 +233,7 @@ class SGMethod(SGMetaDataContainer):
     def calls(self, method, args=None):
         """indicate which method this method calls, and args if any"""
         if self.method_called != None:
-            logger.error('Model Error: Changing method called')
+            logger.error('Model Error: Changing method called by %s', self.name)
             assert False
         #self.set_tag('calls', (method, args))
         self.method_called = method

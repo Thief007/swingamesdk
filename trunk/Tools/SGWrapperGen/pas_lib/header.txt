@@ -8,7 +8,7 @@
 library %(name)s;
   uses SysUtils, Strings, SwinGameTrace, sg_Shared,
     SGSDK_Input, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-    SDL_TTF, SGSDK_Camera, SGSDK_Shapes, SGSDK_MappyLoader,
+    SDL_TTF, SGSDK_Camera, SGSDK_MappyLoader,
     %(uses)s
   
   procedure TrapException(exc: Exception; fromMethod: String);
@@ -23,5 +23,25 @@ library %(name)s;
     {$IFDEF TRACE}
       Trace('SGSDK.dll', 'Error', fromMethod, ErrorMessage);
     {$ENDIF}
+  end;
+  
+  procedure TriCopy(var tri: Triangle; const fromTri: Triangle);
+  var
+    i: LongInt;
+  begin
+    for i := 0 to 2 do
+    begin
+      tri[i] := fromTri[i];
+    end;
+  end;
+  
+  procedure LinesCopy(var lines: LinesArray; const fromLines: LinesArray);
+  var
+    i: LongInt;
+  begin
+    for i := 0 to 2 do
+    begin
+      lines[i] := fromLines[i];
+    end;
   end;
   

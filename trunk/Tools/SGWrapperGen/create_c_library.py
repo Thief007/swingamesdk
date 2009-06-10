@@ -64,19 +64,40 @@ _type_switcher = {
         'longint[0..n - 1]': 'int *%s',
         'vector': 'Vector %s',
         'spriteendingaction': 'SpriteEndingAction %s',
+        'point2d': 'Point2D %s',
+        'point2d[0..2]': 'Point2D %s[3]',
+        '^linesegment': 'LineSegment *%s',
+        'linesegment': 'LineSegment %s',
+        'sprite': 'Sprite %s',
+        'rectangle': 'Rectangle %s',
+        'triangle': 'Triangle %s',
+        'linesarray': 'LinesArray %s',
         None: 'void %s'
+    },
+    'const' : {
+        'point2d': 'const Point2D *%s',
+        'linesegment': 'const LineSegment *%s',
+        'rectangle': 'const Rectangle *%s',
+        'matrix2d': 'const Matrix2D *%s',
+        'vector': 'const Vector *%s',
+        'linesarray': 'const LinesArray *%s',
+        'triangle': 'const Triangle *%s'
     },
     'var' : {
         'soundeffect': 'SoundEffect *%s',
         'music': 'Music *%s',
         'timer': 'Timer *%s',
-        'string': 'char *%s'
+        'string': 'char *%s',
+        'triangle': 'Triangle *%s',
+        'linesarray': 'LinesArray *%s'
     },
     'out' : {
         'string': 'char *%s',
         'byte': 'unsigned char *%s',
         'color': 'unsigned int *%s',
-        'timer': 'Timer *%s'
+        'timer': 'Timer *%s',
+        'point2d': 'Point2D *%s',
+        'triangle': 'Triangle *%s'
     }
 }
 
@@ -99,20 +120,40 @@ _adapter_type_switcher = {
         'resourcekind': 'int %s',
         'uint32': 'unsigned int %s',
         'bitmap': 'void *%s',
+        'rectangle': 'Rectangle %s',
+        'linesegment': 'LineSegment %s',
+        'triangle': 'Triangle %s',
+        'point2d': 'Point2D %s',
+        'sprite': 'Sprite %s',
+        'linesarray': 'LinesArray %s',
         None: 'void %s'
+    },
+    'const' : {
+        'point2d': 'const Point2D *%s',
+        'linesegment': 'const LineSegment *%s',
+        'rectangle': 'const Rectangle *%s',
+        'matrix2d': 'const Matrix2D *%s',
+        'triangle': 'const Triangle *%s',
+        'vector': 'const Vector *%s',
+        'linesarray': 'const LinesArray *%s',
     },
     'var': {
         'soundeffect': 'void *%s',
         'music': 'void *%s',
         'timer': 'void *%s',
         'byte': 'unsigned char *%s',
-        'string': 'char *%s'
+        'string': 'char *%s',
+        'triangle': 'Triangle *%s',
+        'linesarray': 'LinesArray *%s'
     },
     'out': {
         'string': 'char *%s',
         'byte': 'unsigned char *%s',
         'color': 'unsigned int *%s',
-        'timer': 'void *%s'    
+        'timer': 'void *%s',
+        'point2d': 'Point2D *%s',
+        'triangle': 'Triangle *%s',
+        'linesarray': 'LinesArray *%s'
     }
 }
 
@@ -170,15 +211,18 @@ def arg_visitor(the_arg, for_param_or_type):
 
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (links to DLL)'''
+    logger.debug('CREATE C  : Changing adapter type %s - %s', modifier, the_type)
     return _adapter_type_switcher[modifier][the_type.name.lower() if the_type != None else None]
 
 def adapter_param_visitor(the_param, last):
+    logger.debug('CREATE C  : Visiting adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
     return '%s%s' % (
         _adapter_type_switcher[the_param.modifier][the_param.data_type.name.lower()] % the_param.name,
         ', ' if not last else '')
 
 def type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame library'''
+    logger.debug('CREATE C  : Changing model type %s - %s', modifier, the_type)
     return _type_switcher[modifier][the_type.name.lower() if the_type != None else None]
 
 def param_visitor(the_param, last):
@@ -215,6 +259,12 @@ def write_c_lib_adapter(the_file):
         'param visitor': adapter_param_visitor,
         'arg visitor': None
     }
+    
+    for a_file in the_file.uses:
+        if a_file.name != None:
+            file_writer.writeln(_lib_import_header % {'name': a_file.name})
+    file_writer.writeln('')
+    
     the_file.members[0].visit_methods(method_visitor, other)
     file_writer.write(_footer)
     file_writer.close()
@@ -341,7 +391,7 @@ def file_visitor(the_file, other):
         write_c_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     _load_data()
     parser_runner.run_for_all_units(file_visitor)
