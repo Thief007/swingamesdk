@@ -15,7 +15,7 @@ def method_process_visitor(the_method, other):
     '''Process a method prior to rendering'''
     
     #Change functions with string return type to have a result property
-    if the_method.return_type != None and the_method.return_type.name.lower() == 'string':
+    if the_method.return_type != None and the_method.return_type.name.lower() in ['string', 'triangle', 'linesarray']:
         result_param = SGParameter('result')
         
         for param in the_method.params:
@@ -47,7 +47,8 @@ def run_for_all_units(file_visitor):
     files = [
             lib_file,
             find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
-            find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas')
+            find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas'),
+            find_or_add_file('SGSDK_Shapes', 'Shapes', '../../CoreSDK/src/SGSDK_Shapes.pas')
         ]
     
     for a_file in files[1:]:

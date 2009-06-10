@@ -8,10 +8,3 @@
 
 #ifndef SGSDK
 #define SGSDK
-
-void sg_GetExceptionMessage(char *result);
-
-long sg_ExceptionOccured();
-
-long sg_DLLVersion();
-

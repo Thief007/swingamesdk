@@ -387,6 +387,20 @@ class SGPasParser():
         method.uname = uname_tok[1]
         self._add_attribute('class_method', method)
     
+    def _setup_lib_method(self, uname):
+        the_lib = find_or_add_class('lib')
+        method = the_lib.find_method(uname, self._current_file.name)
+        
+        if method == None: 
+            method = SGMethod(uname)
+            method.in_file = self._current_file
+            method.in_class = the_lib
+            method.in_class.add_member(method)
+        
+        self._add_attribute('method_called', method)
+        
+        return method
+    
     def process_lib_attribute(self, token):
         '''
         process a lib attribute = what to call in the library
@@ -399,36 +413,34 @@ class SGPasParser():
            method from the library
         '''
         #find method
-        uname = self._match_token('id')[1]
-        
-        #search in library
-        the_lib = find_or_add_class('lib')
-        method = the_lib.find_method(uname, self._current_file.name)
-        
-        if method == None: 
-            method = SGMethod(uname)
-            method.in_file = self._current_file
-            method.in_class = the_lib
-            method.in_class.add_member(method)
-        
-        if self._match_lookahead('symbol', '(', True):
-            self._add_attribute('called_by_lib', False)
-            #the lib attr has arguments
-            # open_tok = self._match_token('symbol', '(')
-            args = []
-            if not self._match_lookahead('symbol', ')'):
-                while True:
-                    #args are ids, number, or strings
-                    args.append(self._match_one_token([('id',None), ('number', None), ('string', None)]))
-                    
-                    #if not comma following - end args
-                    if not self._match_lookahead('symbol', ',', True): break;
-            close_tok = self._match_token('symbol', ')')
-        else: 
+        if self._match_lookahead('id') and not (self._match_lookahead('id', 'procedure') or self._match_lookahead('id', 'function')):
+            uname = self._match_token('id')[1]
+            
+            self._setup_lib_method(uname)
+            
+            if self._match_lookahead('symbol', '(', True):
+                self._add_attribute('called_by_lib', False)
+                #the lib attr has arguments
+                args = list()
+                if not self._match_lookahead('symbol', ')'):
+                    while True:
+                        #args are ids, number, or strings
+                        args.append(self._match_one_token([('id',None), ('number', None), ('string', None)]))
+                        
+                        #if not comma following - end args
+                        if not self._match_lookahead('symbol', ',', True): break;
+                close_tok = self._match_token('symbol', ')')
+            else: 
+                args = None
+                self._add_attribute('called_by_lib', True)
+                self._add_attribute('uname', uname)
+        else:
+            #No id token... use method name
             args = None
+            method = None
             self._add_attribute('called_by_lib', True)
+            self._add_attribute('method_called', None)
         
-        self._add_attribute('method_called', method)
         self._add_attribute('args', args)
     
     def process_note_attribute(self, token):
@@ -688,7 +700,11 @@ class SGPasParser():
             self._add_attribute('overload', True)
         
         #logger.info('Adding method %s.%s(%s)', block.name, method.name, method.param_string())
+        if self._get_attribute('called_by_lib', False) and self._get_attribute('method_called') == None:
+            self._setup_lib_method(method.uname)
+        
         self._apply_attributes_to(method)
+        
         method.complete_method_processing()
         
         block.add_member(method)
