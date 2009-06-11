@@ -523,7 +523,11 @@ class SGPasParser():
         if self._match_lookahead('symbol', '(', True):
             values = []
             while not self._match_lookahead('symbol',')'):
-                values.append(self._match_token('id')[1])
+                temp = self._match_token('id')[1]
+                if self._match_lookahead('symbol', '=', True): #assigned value
+                    values.append('%s = %s' % (temp, self._match_token('number')[1]))
+                else:
+                    values.append(temp)
                 self._match_lookahead('symbol', ',', True) #consume commas
             self._match_token('symbol',')') #read close bracket
             the_type.values = tuple(values)

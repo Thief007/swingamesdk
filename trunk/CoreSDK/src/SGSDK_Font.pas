@@ -28,6 +28,8 @@
 // Version 1.0:
 // - Various
 
+///@module Text
+///@static
 unit SGSDK_Font;
 
 interface
@@ -35,120 +37,117 @@ interface
     SDL, SDL_TTF, SGSDK_Core, SGSDK_Shapes;
   
   type
-    /// Type: Font
-    ///
+    
     /// Fonts are used to render text to bitmaps and to the screen.
     /// Fonts must be loaded using the CreateFont routine. Also see the
     /// DrawText and DrawTextLines routines.
-    Font = PTTF_Font;
-
-     /// Enumeration: FontStyles
     ///
+    /// @class Font
+    ///@pointer_wrapper
+    ///@field pointer: pointer
+    Font = PTTF_Font;
+    
     /// Use font styles to set the style of a font. Setting the style is time
     /// consuming, so create alternative font variables for each different
     /// style you want to work with. Note that these values can be logical
     /// ORed together to combine styles, e.g. BoldFont or ItalicFont = both
     /// bold and italic.
-    FontStyle = (
-        NormalFont    = TTF_STYLE_NORMAL,
-        BoldFont    = TTF_STYLE_BOLD,
-        ItalicFont    = TTF_STYLE_ITALIC,
-        UnderlineFont   = TTF_STYLE_UNDERLINE
-      );
-
-    /// Enumeration: FontAlignment
     ///
+    /// @enum FontStyle
+    FontStyle = (
+        NormalFont      = 0,
+        BoldFont        = 1,
+        ItalicFont      = 2,
+        UnderlineFont   = 4
+      );
+    
     /// Use font alignment for certain drawing operations. With these
     /// operations you specify the area to draw in as well as the alignment
     /// within that area. See DrawTextLines.
+    ///
+    /// @enum FontAlignment
     FontAlignment = (
         AlignLeft   = 1,
         AlignCenter = 2,
         AlignRight  = 4
       );
-
-  //*****
-  //
-  // Resource loading and freeing routines
-  //
-  //*****
-  //
-  // These routines are used to load resources, and to free them.
-  //
-
+  
+  /// @lib
+  /// @class Font
+  /// @constructor
   function LoadFont(fontName: String; size: LongInt): Font;
-  procedure SetFontStyle(font: Font; style: FontStyle);
+  
+  /// @lib
+  /// @class Font
+  /// @dispose
   procedure FreeFont(var fontToFree: Font);
-
-  //*****
-  //
-  // Screen drawing routines
-  //
-  //*****
-  //
-  // These routines are used to draw directly to the screen.
-  //
-
+  
+  /// @lib
+  /// @class Font
+  /// @setter FontStyle
+  procedure SetFontStyle(font: Font; style: FontStyle);
+  
+  /// @lib
+  /// @class Font
+  /// @getter FontStyle
+  function GetFontStyle(font: Font): FontStyle;
+  
+  /// @lib
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; x, y: LongInt); overload;
-  procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload; {1.1}
+  /// @lib DrawTextOnScreenAtPoint
+  procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
+  /// @lib
   procedure DrawText(theText: String; textColor: Color; theFont: Font; x, y: Single); overload;
+  /// @lib DrawTextAtPoint
   procedure DrawText(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload; {1.1}
-
-  procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; x, y: LongInt); overload;
-  procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload; {1.1}
+  
+{  procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; x, y: LongInt); overload;
+  procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload;
   procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; x, y: Single); overload;
-  procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload; {1.1}
-
+  procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload; }
   
+  /// @lib
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
-  procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
+  /// @lib DrawTextLinesInRectOnScreen
+  procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+  /// @lib
   procedure DrawTextLines(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y: Single; w, h: LongInt); overload;
+  /// @lib DrawTextLinesInRect
   procedure DrawTextLines(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload; {1.1}
-
-
   
-  //*****
-  //
-  // Simple text drawing routines
-  //
-  //*****
-  //
-  // These routines are used to draw text without a TTF.
-  //
+  /// @lib DrawSimpleText
   procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;
+  /// @lib DrawSimpleTextOnScreen
   procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
+  /// @lib DrawSimpleTextOnBitmap
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
-    
-  //*****
-  //
-  // Bitmap drawing routines
-  //
-  //*****
-  //
-  // These routines are used to draw to a bitmap.
-  //
-
-  procedure DrawText(dest: Bitmap; theText: String; textColor: Color; theFont: Font; x, y: LongInt); overload;
-  procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
-  procedure DrawText(dest: Bitmap; theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
-  procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
-    
-  //*****
-  //
-  // General routines
-  //
-  //*****
-  //
-  // These routines are used for general purposes.
-  //
-
-  function TextWidth(theText: String; theFont: Font): LongInt; overload;
-  function TextHeight(theText: String; theFont: Font): LongInt; overload;
-
-  function TextWidth(theText: WideString; theFont: Font): LongInt; overload;
-  function TextHeight(theText: WideString; theFont: Font): LongInt; overload;
   
+  /// @lib DrawTextOnBitmap
+  procedure DrawText(dest: Bitmap; theText: String; textColor: Color; theFont: Font; x, y: LongInt); overload;
+  /// @lib DrawTextLinesOnBitmap
+  procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
+  /// @lib DrawTextOnBitmapAtPoint
+  procedure DrawText(dest: Bitmap; theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
+  /// @lib DrawTextLinesInRectOnBitmap
+  procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
+  
+  /// @lib
+  /// @class Font
+  /// @method TextWidth
+  function TextWidth(theFont: Font; theText: String): LongInt; overload;
+  
+  /// @lib
+  /// @class Font
+  /// @method TextHeight
+  function TextHeight(theFont: Font; theText: String): LongInt; overload;
+
+{  function TextWidth(theText: WideString; theFont: Font): LongInt; overload;
+  function TextHeight(theText: WideString; theFont: Font): LongInt; overload;
+}  
+  /// @lib
   procedure DrawFramerate(x, y: LongInt; font: Font); overload;
+  
+  /// @lib DrawFrameRateWithSimpleFont
   procedure DrawFramerate(x, y: LongInt); overload;
   
 implementation
@@ -186,6 +185,12 @@ implementation
   begin
     if not Assigned(font) then raise Exception.Create('No font supplied');
     TTF_SetFontStyle(font, LongInt(style));
+  end;
+  
+  function GetFontStyle(font: Font): FontStyle;
+  begin
+    if not Assigned(font) then raise Exception.Create('No font supplied');
+    result := FontStyle(TTF_GetFontStyle(font));
   end;
 
   /// Free a loaded font.
@@ -473,7 +478,7 @@ implementation
     if theFont = nil then raise Exception.Create('The specified font is nil');
     if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
       
-    rect := NewSDLRect(x, y, TextWidth(theText, theFont), TextHeight(theText, theFont));    
+    rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
     PrintStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
   end;
 
@@ -484,7 +489,7 @@ implementation
     if theFont = nil then raise Exception.Create('The specified font is nil');
     if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
       
-    rect := NewSDLRect(x, y, TextWidth(theText, theFont), TextHeight(theText, theFont));    
+    rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
     PrintWideStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
   end;
   
@@ -588,7 +593,7 @@ implementation
     DrawText(scr, theText, textColor, theFont, Round(pt.x), Round(pt.y));
   end;
 
-  procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; x, y: LongInt);
+  procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; x, y: LongInt); overload;
   begin
     DrawUnicode(scr, theText, textColor, theFont, x, y);
   end;
@@ -609,7 +614,7 @@ implementation
     DrawText(scr, theText, textColor, theFont, ScreenX(pt.x), ScreenY(pt.y));   
   end;
 
-  procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; x, y: Single);
+  procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; x, y: Single); overload;
   begin
     DrawUnicode(scr, theText, textColor, theFont, ScreenX(x), ScreenY(y));
   end;
@@ -625,7 +630,7 @@ implementation
   /// @param theText:   The text to measure
   /// @param theFont:   The font used to draw the text
   /// @returns           The width of the drawing in pixels
-  function TextWidth(theText: String; theFont: Font): LongInt; overload;
+  function TextWidth(theFont: Font; theText: String): LongInt; overload;
   var
     y: LongInt; //SizeText returns both... store and ignore y
   begin
@@ -657,7 +662,7 @@ implementation
   /// @param theText:   The text to measure
   /// @param theFont:   The font used to draw the text
   /// @returns           The height of the drawing in pixels
-  function TextHeight(theText: String; theFont: Font): LongInt; overload;
+  function TextHeight(theFont: Font; theText: String): LongInt; overload;
   var
     w: LongInt; //SizeText returns both... store and ignore w
   begin

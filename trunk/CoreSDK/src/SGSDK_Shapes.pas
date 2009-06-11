@@ -39,6 +39,11 @@ uses SGSDK_Core;
         x, y: Single;
       end;
     
+    ///@class Point2DPtr
+    ///@pointer_wrapper
+    ///@field pointer: ^Point2D
+    Point2DPtr = ^Point2D;
+    
     /// @struct Rectangle
     Rectangle = record
         x, y: Single;
@@ -57,9 +62,14 @@ uses SGSDK_Core;
     Triangle = array [0..2] of Point2D;
     
     ///@class LinesArray
-    ///@data_wrapper
-    ///@field data: ^LineSegment
+    ///@array_wrapper
+    ///@field data: LineSegmentPtr
     LinesArray = Array of LineSegment;
+    
+    ///@class LineSegmentPtr
+    ///@pointer_wrapper
+    ///@field pointer: ^LineSegment
+    LineSegmentPtr = ^LineSegment;
   
   /// @lib DistancePointToLine
   function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single; overload;
@@ -121,7 +131,7 @@ uses SGSDK_Core;
   procedure ApplyMatrix(const m: Matrix2D; var toTrangle: Triangle);
   
   /// @lib
-  function IsPointInTriangle(const point : Point2D; const triangle : Triangle): Boolean;
+  function IsPointInTriangle(const point : Point2D; const theTriangle : Triangle): Boolean;
   
   /// @lib
   function RectangleAroundLine(const line: LineSegment): Rectangle;
@@ -396,6 +406,10 @@ implementation
       result[2] := CreateLine(x + width, y, x + width, y + height);
       result[3] := CreateLine(x, y + height, x + width, y + height);
     end;
+    
+    writeln(hexstr(@rect));
+    writeln('rect ', rect.x, ':', rect.y, ' ', rect.width, 'x', rect.height);
+    writeln('[3] ', result[3].startPoint.x, ':' ,result[3].startPoint.y);
   end;
   
   function CreatePoint(x, y: Single): Point2D;
@@ -504,7 +518,7 @@ implementation
     result[2] := c;
   end;
   
-  function IsPointInTriangle(const point : Point2D; const triangle : Triangle): Boolean;
+  function IsPointInTriangle(const point : Point2D; const theTriangle : Triangle): Boolean;
   var
     v0, v1, v2 : Vector;
     a, b, c, p: Vector;
@@ -513,9 +527,9 @@ implementation
   begin
     //Convert Points to vectors
     p := PointToVector(point);
-    a := PointToVector(triangle[0]);
-    b := PointToVector(triangle[1]);
-    c := PointToVector(triangle[2]);
+    a := PointToVector(theTriangle[0]);
+    b := PointToVector(theTriangle[1]);
+    c := PointToVector(theTriangle[2]);
     
     // Compute vectors    
     v0 := SubtractVectors(c, a);

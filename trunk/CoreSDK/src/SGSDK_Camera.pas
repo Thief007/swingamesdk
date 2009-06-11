@@ -26,31 +26,35 @@ unit SGSDK_Camera;
 
 interface
   uses SGSDK_Core, SGSDK_Shapes;
-
-  //*****
-  //
-  // Visible Window management routines.
-  //
-  //*****
-  //
-  // These routines are used to move the visual window.
-  //
   
+  /// @lib
   function XOffset(): LongInt;
+  /// @lib
   function YOffset(): LongInt;
   
+  /// @lib
   function ScreenX(x: Single): LongInt;
+  /// @lib
   function ScreenY(y: Single): LongInt;
+  /// @lib
   function GameX(x: LongInt) : Single;
+  /// @lib
   function GameY(y: LongInt) : Single;
+  /// @lib
   function ToGameCoordinates(const screenPoint: Point2D): Point2D;
-    
+  
+  /// @lib
   procedure MoveVisualArea(const v: Vector); overload;
+  /// @lib MoveVisualAreaXY
   procedure MoveVisualArea(dx, dy: Single); overload;
+  /// @lib SetScreenOffsetXY
   procedure SetScreenOffset(x, y: Single); overload;
+  /// @lib
   procedure SetScreenOffset(pt: Point2D); overload;
   
+  /// @lib FollowSpriteWithXYOffset
   procedure FollowSprite(spr: Sprite; Xoffset, Yoffset: LongInt); overload;
+  /// @lib
   procedure FollowSprite(spr: Sprite; const offset: Vector); overload;
   
 implementation

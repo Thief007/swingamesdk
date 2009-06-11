@@ -43,7 +43,10 @@ _type_switcher = {
     'vector': 'Vector',
     'rectangle': 'Rectangle',
     'sprite': 'Sprite',
-    'linesarray': 'LineSegmentPtr'
+    'linesarray': 'LineSegmentPtr',
+    'font': 'Font',
+    'fontalignment': 'FontAlignment',
+    'fontstyle': 'FontStyle'
 }
 
 _names = []
