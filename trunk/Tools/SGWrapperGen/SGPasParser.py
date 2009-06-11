@@ -51,6 +51,7 @@ class SGPasParser():
             'swingame': self.process_swingame_attribute,
             'pointer_wrapper': self.process_true_attribute,
             'data_wrapper': self.process_true_attribute,
+            'array_wrapper': self.process_true_attribute,
             'ignore': self.process_true_attribute
         }
         self._block_header_processors = {

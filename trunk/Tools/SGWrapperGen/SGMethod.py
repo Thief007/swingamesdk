@@ -46,6 +46,7 @@ class SGMethod(SGMetaDataContainer):
         
         self.local_vars = list()
         self.was_function = False
+        self.has_length_params = False
     
     def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None):
         '''Returns a dictionary containing the details of this function/procedure
@@ -459,7 +460,7 @@ class SGMethod(SGMetaDataContainer):
         #print self.method_called
         params = self.method_called.params
         
-        arg_list = [ a.name if isinstance(a, SGParameter) else a for a in args ]
+        arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in args ]
         if arg_visitor != None:
             return ','.join([ arg_visitor(a, params[i]) for i,a in enumerate(arg_list) ])
         else:

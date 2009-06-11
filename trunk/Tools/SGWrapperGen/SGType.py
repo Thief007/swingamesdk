@@ -20,13 +20,15 @@ class SGType(SGMetaDataContainer):
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
             'pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
-            'struct', 'enum'])
+            'struct', 'enum', 'array_wrapper'])
         self.name = name
         self.set_tag('fields', [])
         self.dimensions = None
         self.related_type = None
+        self.nested_type = None
         self.pointer_wrapper = False
         self.data_wrapper = False
+        self.array_wrapper = False
         self.values = None
         self.is_pointer = False
         self.is_class = False
@@ -79,6 +81,11 @@ class SGType(SGMetaDataContainer):
     data_wrapper = property(lambda self: self['data_wrapper'].other, 
         lambda self, value: self.set_tag('data_wrapper', value), 
         None, 'This type wraps a pointer')
+    
+    array_wrapper = property(lambda self: self['array_wrapper'].other, 
+        lambda self, value: self.set_tag('array_wrapper', value), 
+        None, 'This type wraps a variable length array')
+    
     
     values = property(lambda self: self['values'].other, 
         lambda self, value: self.set_tag('values', value), 

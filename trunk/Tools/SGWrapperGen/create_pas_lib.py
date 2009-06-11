@@ -37,13 +37,13 @@ _type_switcher = {
     'uint32': 'UInt32',
     'bitmap': 'Bitmap',
     'matrix2d': 'Matrix2D',
-    'triangle': 'Triangle',
+    'triangle': 'Point2DPtr',
     'linesegment': 'LineSegment',
     'point2d': 'Point2D',
     'vector': 'Vector',
     'rectangle': 'Rectangle',
     'sprite': 'Sprite',
-    'linesarray': 'LinesArray'
+    'linesarray': 'LineSegmentPtr'
 }
 
 _names = []
@@ -81,12 +81,18 @@ def _load_data():
     f.close()
 
 def param_visitor(the_param, last):
-    if the_param.modifier == 'out' and the_param.data_type.name.lower() == 'string':
-        return 'var %s: %s%s' % (
+    if the_param.modifier in ['out','var', 'const'] and the_param.data_type.name.lower() in ['string','triangle']:
+        return '%s: %s%s' % (
             the_param.name, 
             _type_switcher[the_param.data_type.name.lower()], 
             '; ' if not last else ''
             )
+    elif the_param.modifier in ['const']:
+        return 'var %s: %s%s' % (
+            the_param.name, 
+            _type_switcher[the_param.data_type.name.lower()], 
+            '; ' if not last else ''
+            )        
     else:
         return '%s%s: %s%s' % (
             the_param.modifier + ' ' if the_param.modifier != None else '',
@@ -97,10 +103,10 @@ def param_visitor(the_param, last):
 
 def arg_visitor(the_arg, for_param):
     '''Ensures data type consistency for all var/out parameters'''
-    if for_param.modifier in ['var','out']:
-        #ensure exact same type for PChar and Color
-        if for_param.data_type.name.lower() in ['string', 'color']:
-            return the_arg + '_temp'
+    # if for_param.modifier in ['var','out']:
+    #     #ensure exact same type for PChar and Color
+    #     if for_param.data_type.name.lower() in ['string', 'color']:
+    #         return the_arg + '_temp'
         
     return the_arg
 
@@ -108,11 +114,15 @@ def method_visitor(the_method, other):
     data = the_method.to_keyed_dict(param_visitor, arg_visitor = arg_visitor)
     
     if the_method.was_function:
-        if the_method.params[-1].data_type.name.lower() not in ['string', 'triangle', 'linesarray']:
+        result_param = the_method.params[-1]
+        if not result_param.maps_result: #in case of returning var length array
+            result_param = the_method.params[-2]
+        
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure
-        data['return_type'] = _type_switcher[the_method.params[-1].data_type.name.lower()]
+        data['return_type'] = _type_switcher[result_param.data_type.name.lower()]
     elif the_method.return_type == None: 
         lines = _procedure_lines
     else: 
@@ -121,6 +131,7 @@ def method_visitor(the_method, other):
     if len(the_method.local_vars) > 0:
         temp = '\n  var\n'
         temp_process_result = ''
+        temp_process_params = ''
         for local_var in the_method.local_vars:
             temp += '    %s: %s;\n' % (local_var.name, local_var.data_type)
             if local_var.data_type.name.lower() == 'string':
@@ -128,17 +139,21 @@ def method_visitor(the_method, other):
             elif local_var.data_type.name.lower() == 'color':
                 temp_process_result += '\n      %s := %s;' % (local_var.name[:-5], local_var.name)
             elif local_var.data_type.name.lower() == 'triangle':
-                temp_process_result += '\n      TriCopy(%s, %s);' % (local_var.name[:-5], local_var.name)
+                temp_process_params += '\n      TriCopyFromPtr(%s, %s);' % (local_var.name, local_var.name[:-5])
+                temp_process_result += '\n      TriCopyToPtr(%s, %s);' % (local_var.name[:-5], local_var.name)
             elif local_var.data_type.name.lower() == 'linesarray':
-                temp_process_result += '\n      LinesCopy(%s, %s);' % (local_var.name[:-5], local_var.name)
+                temp_process_params += '\n      LineCopyFromPtr(%s, %s_len, %s);' % (local_var.name[:-5], local_var.name[:-5],local_var.name)
+                temp_process_result += '\n      LineCopyToPtr(%s, %s_len, %s);' % (local_var.name, local_var.name[:-5], local_var.name[:-5])
             else:
                 logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
                 assert False
         data['vars'] = temp[:-1]
         data['process_result'] = temp_process_result
+        data['process_params'] = temp_process_params
     else:
         data['vars'] = ''
         data['process_result'] = ''
+        data['process_params'] = ''
     
     _names.append(the_method.name)
     
@@ -151,11 +166,12 @@ def post_parse_process(the_lib):
     
     for key, method in the_lib.methods.items():
         for param in method.params:
-            if param.modifier in ['var', 'out']:
-                if param.data_type.name.lower() in ['string','color'] or param.maps_result:
-                    local_var = SGParameter(param.name + '_temp')
-                    local_var.data_type = param.data_type
-                    method.local_vars.append(local_var)
+            if param.maps_result or param.data_type.array_wrapper or param.data_type.name.lower() in ['triangle'] or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
+                local_var = SGParameter(param.name + '_temp')
+                local_var.data_type = param.data_type
+                method.local_vars.append(local_var)
+                param.maps_to_temp = True
+
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
@@ -194,7 +210,7 @@ def file_visitor(the_file, other):
     my_writer.close()
 
 def main():
-    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     _load_data()    
     parser_runner.run_for_all_units(file_visitor)
