@@ -23,7 +23,7 @@ class SGCodeModule(SGMetaDataContainer):
         """Initialise the class, setting its name"""
         super(SGCodeModule,self).__init__(['static','module_kind',
             'data_wrapper','pointer_wrapper', 'type_name',
-            'values'])
+            'values', 'array_wrapper'])
         self.name = name
         self.type_name = name
         self.methods = dict()
@@ -35,6 +35,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.module_kind = 'unknown'
         self.is_pointer_wrapper = False
         self.is_data_wrapper = False
+        self.is_array_wrapper = False
     
     def add_member(self, member):
         """Add a member (method, property) to the class"""
@@ -88,6 +89,10 @@ class SGCodeModule(SGMetaDataContainer):
         lambda self,value: self.set_tag('data_wrapper', value), 
         None, 'Does the class wrap data from SwinGame')
     
+    is_array_wrapper = property(lambda self: self['array_wrapper'].other, 
+        lambda self,value: self.set_tag('array_wrapper', value), 
+        None, 'Does the class wrap a variable length array of data from SwinGame')
+    
     module_kind = property(lambda self: self['module_kind'].other, 
         lambda self,value: self.set_tag('module_kind', value), 
         None, 'The kind of code module this represents (class,module,library).')
@@ -125,6 +130,7 @@ class SGCodeModule(SGMetaDataContainer):
             self.uname = self.name
             self.is_pointer_wrapper = the_type.pointer_wrapper
             self.is_data_wrapper = the_type.data_wrapper
+            self.is_array_wrapper = the_type.array_wrapper
         elif the_type.is_struct:
             self.module_kind = 'struct'
             self.name = the_type['struct'].other

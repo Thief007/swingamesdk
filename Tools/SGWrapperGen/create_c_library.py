@@ -65,6 +65,7 @@ _type_switcher = {
         'vector': 'Vector %s',
         'spriteendingaction': 'SpriteEndingAction %s',
         'point2d': 'Point2D %s',
+        '^point2d': 'Point2D *%s',
         'point2d[0..2]': 'Point2D %s[3]',
         '^linesegment': 'LineSegment *%s',
         'linesegment': 'LineSegment %s',
@@ -72,6 +73,7 @@ _type_switcher = {
         'rectangle': 'Rectangle %s',
         'triangle': 'Triangle %s',
         'linesarray': 'LinesArray %s',
+        'linesegmentptr': 'LineSegment *%s',
         None: 'void %s'
     },
     'const' : {
@@ -80,16 +82,16 @@ _type_switcher = {
         'rectangle': 'const Rectangle *%s',
         'matrix2d': 'const Matrix2D *%s',
         'vector': 'const Vector *%s',
-        'linesarray': 'const LinesArray *%s',
-        'triangle': 'const Triangle *%s'
+        'linesarray': 'const LinesArray %s',
+        'triangle': 'const Triangle %s'
     },
     'var' : {
         'soundeffect': 'SoundEffect *%s',
         'music': 'Music *%s',
         'timer': 'Timer *%s',
         'string': 'char *%s',
-        'triangle': 'Triangle *%s',
-        'linesarray': 'LinesArray *%s'
+        'triangle': 'Triangle %s',
+        'linesarray': 'LinesArray %s'
     },
     'out' : {
         'string': 'char *%s',
@@ -97,7 +99,7 @@ _type_switcher = {
         'color': 'unsigned int *%s',
         'timer': 'Timer *%s',
         'point2d': 'Point2D *%s',
-        'triangle': 'Triangle *%s'
+#        'triangle': 'Triangle *%s'
     }
 }
 
@@ -133,9 +135,9 @@ _adapter_type_switcher = {
         'linesegment': 'const LineSegment *%s',
         'rectangle': 'const Rectangle *%s',
         'matrix2d': 'const Matrix2D *%s',
-        'triangle': 'const Triangle *%s',
+        'triangle': 'const Triangle %s',
         'vector': 'const Vector *%s',
-        'linesarray': 'const LinesArray *%s',
+        'linesarray': 'const LinesArray %s',
     },
     'var': {
         'soundeffect': 'void *%s',
@@ -143,8 +145,8 @@ _adapter_type_switcher = {
         'timer': 'void *%s',
         'byte': 'unsigned char *%s',
         'string': 'char *%s',
-        'triangle': 'Triangle *%s',
-        'linesarray': 'LinesArray *%s'
+        'triangle': 'Triangle %s',
+        'linesarray': 'LinesArray %s'
     },
     'out': {
         'string': 'char *%s',
@@ -152,8 +154,8 @@ _adapter_type_switcher = {
         'color': 'unsigned int *%s',
         'timer': 'void *%s',
         'point2d': 'Point2D *%s',
-        'triangle': 'Triangle *%s',
-        'linesarray': 'LinesArray *%s'
+#        'triangle': 'Triangle *%s',
+        'linesarray': 'LinesArray %s'
     }
 }
 
@@ -273,10 +275,6 @@ def write_c_methods_for(member, other):
     '''Write out a single c member'''
     
     member.visit_methods(method_visitor, other)
-    
-    #check nothing else...
-    assert(len(member.fields) == 0, 'Error with number of fields in module')
-    assert(len(member.properties) == 0, 'Error with number of properties in module')
 
 def write_c_type_for(member, other):
     '''Write out a single c member'''
@@ -293,11 +291,15 @@ def write_c_type_for(member, other):
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
             other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
+        elif member.is_array_wrapper:
+            assert len(member.fields) == 1
+            the_type = member.fields['data'].data_type
+            other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
     elif member.is_struct:
         #typedef struct %s_struct { } struct;
         writer = other['header writer']
         writer.write('typedef struct %s_struct { \n' % member.name)
-        for key, field in member.fields.items():
+        for field in member.field_list:
             writer.writeln('    %s;' % type_visitor(field.data_type) % field.name)
         writer.writeln('} %s;\n' % member.name)
     elif member.is_enum:
@@ -307,10 +309,6 @@ def write_c_type_for(member, other):
             other['header writer'].write('%s' % val)
             if val != member.values[-1]: other['header writer'].write(', ')
         other['header writer'].writeln('} %s;\n' % member.name)
-    #check nothing else...
-    assert(len(member.fields) == 0, 'Error with number of fields in module')
-    assert(len(member.properties) == 0, 'Error with number of properties in module')
-
 
 def write_c_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''
@@ -379,6 +377,16 @@ def post_parse_process(the_file):
                 arg_list.append(result_param)
                 method.args = arg_list
                 method.return_type = None
+            if method.method_called.has_length_params:
+                #add length parameters to this method
+                for param in method.method_called.params:
+                    if param.is_length_param:
+                        param_list = list(method.params)
+                        param_list.append(param)
+                        method.params = tuple(param_list)
+                        arg_list = list(method.args)
+                        arg_list.append(param)
+                        method.args = arg_list
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
