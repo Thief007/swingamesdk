@@ -77,6 +77,8 @@ _type_switcher = {
         'font': 'Font %s',
         'fontalignment': 'FontAlignment %s',
         'fontstyle': 'FontStyle %s',
+        'mousebutton': 'MouseButton %s',
+        'uint16': 'unsigned short %s',
         None: 'void %s'
     },
     'const' : {
@@ -135,6 +137,9 @@ _adapter_type_switcher = {
         'font': 'void *%s',
         'fontalignment': 'int %s',
         'fontstyle': 'int %s',
+        'mousebutton': 'int %s',
+        'uint16': 'unsigned short %s',
+        'vector': 'Vector %s',
         None: 'void %s'
     },
     'const' : {
