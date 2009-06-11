@@ -35,6 +35,7 @@ _type_switcher = {
     'byte': 'Byte',
     'resourcekind': 'ResourceKind',
     'uint32': 'UInt32',
+    'uint16': 'UInt16',
     'bitmap': 'Bitmap',
     'matrix2d': 'Matrix2D',
     'triangle': 'Point2DPtr',
@@ -46,7 +47,9 @@ _type_switcher = {
     'linesarray': 'LineSegmentPtr',
     'font': 'Font',
     'fontalignment': 'FontAlignment',
-    'fontstyle': 'FontStyle'
+    'fontstyle': 'FontStyle',
+    'mousebutton': 'MouseButton',
+    'boolean': 'Boolean'
 }
 
 _names = []
