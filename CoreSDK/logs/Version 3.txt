@@ -35,3 +35,5 @@ Suggestions:
   - Removed PosX, PosY from Sprite.
   - Removed Colour, and all associated functions - standardised to use Color
   
+  Font changes:
+  - Changed order of parameters in TextWidth and TextHeight

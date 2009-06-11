@@ -71,6 +71,8 @@ def run_for_all_units(file_visitor):
             lib_file,
             find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
             find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas'),
+            find_or_add_file('SGSDK_Camera', 'Camera', '../../CoreSDK/src/SGSDK_Camera.pas'),
+            find_or_add_file('SGSDK_Font', 'Font', '../../CoreSDK/src/SGSDK_Font.pas'),
             find_or_add_file('SGSDK_Shapes', 'Shapes', '../../CoreSDK/src/SGSDK_Shapes.pas')
         ]
     

@@ -7,8 +7,8 @@
 
 library %(name)s;
   uses SysUtils, Strings, SwinGameTrace, sg_Shared,
-    SGSDK_Input, SGSDK_Font, SGSDK_Physics, SGSDK_Graphics,
-    SDL_TTF, SGSDK_Camera, SGSDK_MappyLoader,
+    SGSDK_Input, SGSDK_Physics, SGSDK_Graphics,
+    SGSDK_MappyLoader,
     %(uses)s
   
   procedure TrapException(exc: Exception; fromMethod: String);

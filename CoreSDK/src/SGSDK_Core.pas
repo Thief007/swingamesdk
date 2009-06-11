@@ -378,6 +378,7 @@ interface
   
   /// @lib HasExceptionOccured
   function HasExceptionOccured(): Boolean;
+  
   var
     //Preset colours, do not change these values.
     ColorBlue, ColorGreen, ColorRed, ColorWhite,

@@ -38,7 +38,6 @@
 ///
 ///@module Audio
 ///@static
-///@swingame 030000
 unit SGSDK_Audio;
 
 interface

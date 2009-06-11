@@ -74,6 +74,9 @@ _type_switcher = {
         'triangle': 'Triangle %s',
         'linesarray': 'LinesArray %s',
         'linesegmentptr': 'LineSegment *%s',
+        'font': 'Font %s',
+        'fontalignment': 'FontAlignment %s',
+        'fontstyle': 'FontStyle %s',
         None: 'void %s'
     },
     'const' : {
@@ -91,7 +94,8 @@ _type_switcher = {
         'timer': 'Timer *%s',
         'string': 'char *%s',
         'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s'
+        'linesarray': 'LinesArray %s',
+        'font': 'Font *%s'
     },
     'out' : {
         'string': 'char *%s',
@@ -128,6 +132,9 @@ _adapter_type_switcher = {
         'point2d': 'Point2D %s',
         'sprite': 'Sprite %s',
         'linesarray': 'LinesArray %s',
+        'font': 'void *%s',
+        'fontalignment': 'int %s',
+        'fontstyle': 'int %s',
         None: 'void %s'
     },
     'const' : {
@@ -146,7 +153,8 @@ _adapter_type_switcher = {
         'byte': 'unsigned char *%s',
         'string': 'char *%s',
         'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s'
+        'linesarray': 'LinesArray %s',
+        'font': 'void *%s'        
     },
     'out': {
         'string': 'char *%s',
