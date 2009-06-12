@@ -36,7 +36,7 @@
 unit SGSDK_Input;
 
 interface
-  uses SDL, SGSDK_Core, SGSDK_Font, SGSDK_Shapes;
+  uses SDL, SGSDK_Core, SGSDK_Font, SGSDK_Shapes, SGSDK_KeyCodes;
   
   type
     /// @enum MouseButton
@@ -75,9 +75,9 @@ interface
   /// @lib
   function TextReadAsASCII(): String;
   /// @lib
-  function IsKeyPressed(virtKeyCode : LongInt): Boolean;
+  function IsKeyPressed(virtKeyCode : KeyCode): Boolean;
   /// @lib
-  function WasKeyTyped(virtKeyCode: LongInt): Boolean;
+  function KeyWasTyped(virtKeyCode: KeyCode): Boolean;
   /// @lib
   function AKeyWasPressed(): Boolean;
   
@@ -141,9 +141,9 @@ implementation
   ///
   /// @param: virtKeyCode     the code of the key to check
   /// @returns:         True if the key is pressed
-  function WasKeyTyped(virtKeyCode: LongInt): Boolean;
+  function KeyWasTyped(virtKeyCode: KeyCode): Boolean;
   begin
-    result := sdlManager.WasKeyTyped(virtKeyCode);
+    result := sdlManager.WasKeyTyped(LongInt(virtKeyCode));
   end;
 
   /// Returns true when the key requested is being held down. This is updated
@@ -151,9 +151,9 @@ implementation
   /// unit.
   ///
   /// @returns:  True if the key is currently being held down
-  function IsKeyPressed(virtKeyCode : LongInt): Boolean;
+  function IsKeyPressed(virtKeyCode : keyCode): Boolean;
   begin
-    result := sdlManager.IsKeyPressed(virtKeyCode);
+    result := sdlManager.IsKeyPressed(LongInt(virtKeyCode));
   end;
   
   function AKeyWasPressed(): Boolean;
