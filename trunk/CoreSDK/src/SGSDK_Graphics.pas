@@ -90,7 +90,7 @@ interface
   /// @overload ClearSurface ClearSurfaceToColor
   procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
     
-  /// @lib ClearSurface(dest, ColorBlack)
+  /// @lib ClearSurfaceToBlack
   /// @class Bitmap
   /// @method ClearSurface
   procedure ClearSurface(dest: Bitmap); overload;
@@ -155,9 +155,9 @@ interface
   /// @lib DrawVerticalLineOnto
   procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt); overload;
   
-  /// @DrawOrFillCircleOnto
+  /// @lib DrawOrFillCircleOnto
   procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
-  /// @DrawOrFillCircleAtPointOnto
+  /// @lib DrawOrFillCircleAtPointOnto
   procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
   /// @lib DrawOrFillCircleOnto(dest, theColor, False, xc, yc, radius)
   /// @uname DrawCircleOnto
@@ -185,7 +185,7 @@ interface
   /// @lib DrawOrFillEllipseOnto(dest, theColor, True, xPos, yPos, width, height)
   /// @uname FillEllipseOnto
   procedure FillEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseOnto(dest, theColor, True, source)
+  /// @lib DrawOrFillEllipseInRectOnto(dest, theColor, True, source)
   /// @uname FillEllipseInRectOnto
   procedure FillEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
   
@@ -211,7 +211,7 @@ interface
   // These routines are used to to the View Area on the screen.
   //
   
-  /// @lib ClearScreen(ColorBlack)
+  /// @lib ClearScreenToBlack
   /// @uname ClearScreen
   procedure ClearScreen(); overload;
   /// @lib
@@ -317,41 +317,123 @@ interface
   //
   // These routines are used to work with Sprites within your game.
   //
-
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; width, height : LongInt): Sprite; overload;
-  function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
-  function CreateSprite(image : Bitmap): Sprite; overload;
-  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction): Sprite; overload;
-  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
-  function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : LongInt): Sprite; overload;
-
-  procedure FreeSprite(var spriteToFree : Sprite);
-
-  function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): LongInt;
-
-  function CurrentHeight(sprite: Sprite): LongInt; inline;
-  function CurrentWidth(sprite: Sprite): LongInt; inline;
   
+  /// @lib CreateAnimatedCellSpriteWithEndingAction
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+  /// @lib CreateAnimatedCellSprite
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; width, height : LongInt): Sprite; overload;
+  /// @lib CreateAnimatedCellSpriteWithSetFramesPerCell
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
+  /// @lib CreateBasicSprite
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(image : Bitmap): Sprite; overload;
+  /// @lib CreateAnimatedArraySpriteWithEndingAction
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction): Sprite; overload;
+  /// @lib CreateAnimatedArraySprite
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
+  /// @lib CreateAnimatedArraySpriteWithFramesPerCell
+  /// @class Sprite
+  /// @constructor
+  function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : LongInt): Sprite; overload;
+  
+  /// @lib
+  /// @class Sprite
+  /// @dispose
+  procedure FreeSprite(var spriteToFree : Sprite);
+  
+  /// @lib
+  /// @class Sprite
+  /// @method AddBitmap
+  function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): LongInt;
+  
+  /// @lib
+  /// @class Sprite
+  /// @getter Height
+  function CurrentHeight(sprite: Sprite): LongInt;
+  /// @lib
+  /// @class Sprite
+  /// @getter Width
+  function CurrentWidth(sprite: Sprite): LongInt;
+  
+  /// @lib
+  /// @class Sprite
+  /// @method ReplayAnimation
   procedure ReplayAnimation(theSprite : Sprite);
   
+  /// @lib UpdateSpritePct(spriteToUpdate, 1.0)
+  /// @uname UpdateSprite
+  /// @class Sprite
+  /// @method Update
   procedure UpdateSprite(spriteToUpdate: Sprite); overload;
+  /// @lib UpdateSpritePct
+  /// @class Sprite
+  /// @overload Update UpdatePct
   procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+  
+  /// @lib UpdateSpriteAnimationPct(spriteToUpdate, 1.0)
+  /// @uname UpdateSpriteAnimation
+  /// @class Sprite
+  /// @method UpdateAnimation
   procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+  /// @lib UpdateSpriteAnimationPct
+  /// @class Sprite
+  /// @overload UpdateAnimation UpdateAnimationPct
   procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
-
+  
+  /// @lib DrawSpriteOffsetXY
+  /// @class Sprite
+  /// @overload Draw DrawOffsetXY
   procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: LongInt); overload;
+  /// @lib DrawSpriteOffsetPoint
+  /// @class Sprite
+  /// @overload Draw DrawOffsetPoint
   procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
+  /// @lib DrawSpriteOffsetXY(spriteToDraw, 0, 0)
+  /// @uname DrawSprite
+  /// @class Sprite
+  /// @method Draw
   procedure DrawSprite(spriteToDraw : Sprite); overload;
     
+  /// @lib MoveSprite(spriteToMove, 1.0)
+  /// @uname MoveSprite
+  /// @class Sprite
+  /// @method Move
   procedure MoveSprite(spriteToMove: Sprite); overload;
+  /// @lib MoveSprite
+  /// @uname MoveSpritePct
+  /// @class Sprite
+  /// @overload Move MovePct
   procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
+  /// @lib MoveSpriteVecPct(spriteToMove, movementVector, 1.0)
+  /// @uname MoveSpriteVec
+  /// @class Sprite
+  /// @overload Move MoveVec
   procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector); overload;
+  /// @lib MoveSpriteVecPct
+  /// @class Sprite
+  ///@overload Move MoveVecPct
   procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector; pct: Single); overload;
-    
+  
+  /// @lib
+  /// @class Sprite
+  /// @method MoveTo
   procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
   
-  function IsSpriteOffscreen(theSprite : Sprite): Boolean; overload;
+  /// @lib
+  /// @class Sprite
+  /// @method IsOffscreen
+  function IsSpriteOffscreen(theSprite : Sprite): Boolean;
 
   //*****
   //
@@ -362,45 +444,93 @@ interface
   //
   // These routines are used to move the visual window.
   //
+  
+  /// @lib
+  /// @class Bitmap
+  /// @method DrawPartOnScreen
   procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  /// @lib DrawBitmapPartFromRectOnScreen
+  /// @class Bitmap
+  /// @overload DrawPartOnScreen DrawPartFromRectOnScreen
   procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  /// @lib DrawBitmapPartFromRectAtPointOnScreen
+  /// @class Bitmap
+  /// @overload DrawPartOnScreen DrawPartOnFromRectAtPointScreen
   procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; const position: Point2D); overload;
   
+  /// @lib
+  /// @class Bitmap
+  /// @method DrawOnScreen
   procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
+  /// @lib DrawBitmapAtPointOnScreen
+  /// @class Bitmap
+  /// @overload DrawOnScreen DrawAtPointOnSreen
   procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
   
+  /// @lib
   procedure DrawPixelOnScreen(theColor: Color; x, y: LongInt); overload;
+  /// @lib DrawPixelAtPointOnScreen
   procedure DrawPixelOnScreen(theColor: Color; const position: Point2D); overload;
-
+  
+  /// @lib DrawOrFillRectangleOnScreen
   procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
-  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  /// @lib DrawOrFillRectangleOnScreen(theColor, False, xPos, yPos, width, height)
+  /// @uname DrawRectangleOnScreen
   procedure DrawRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
-  procedure DrawRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
-
+  /// @lib DrawOrFillRectangleOnScreen(theColor, True, xPos, yPos, width, height)
+  /// @uname FillRectangleOnScreen
   procedure FillRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  /// @lib DrawOrFillRectangleRectOnScreen
+  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  /// @lib DrawOrFillRectangleRectOnScreen(theColor, False, source)
+  /// @uname DrawRectangleRectOnScreen
+  procedure DrawRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
+  /// @lib DrawOrFillRectangleRectOnScreen(theColor, True, source)
+  /// @uname FillRectangleRectOnScreen
   procedure FillRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
-
+  
+  /// @lib
   procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  /// @lib DrawLineSegmentOnScreen
   procedure DrawLineOnScreen(theColor: Color; const line: LineSegment); overload;
-
+  
+  /// @lib
   procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt);
-
+  /// @lib
   procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt);
-
+  
+  /// @lib DrawOrFillCircleOnScreen
   procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
-  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleOnScreen(theColor, False, xc, yc, radius)
+  /// @uname DrawCircleOnScreen
   procedure DrawCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
-  procedure DrawCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
-
+  /// @lib DrawOrFillCircleOnScreen(theColor, True, xc, yc, radius)
+  /// @uname FillCircleOnScreen
   procedure FillCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnScreen
+  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnScreen(theColor, False, position, radius)
+  /// @uname DrawCircleAtPointOnScreen
+  procedure DrawCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnScreen(theColor, True, position, radius)
+  /// @uname FillCircleAtPointOnScreen
   procedure FillCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
-
+  
+  /// @lib DrawOrFillEllipseOnScreen
   procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseOnScreen(theColor, False, xPos, yPos, width, height)
+  /// @uname DrawEllipseOnScreen
   procedure DrawEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
-  procedure DrawEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
-
+  /// @lib DrawOrFillEllipseOnScreen(theColor, True, xPos, yPos, width, height)
+  /// @uname FillEllipseOnScreen
   procedure FillEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseInRectOnScreen
+  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseInRectOnScreen(theColor, False, source)
+  /// @uname DrawEllipseInRectOnScreen
+  procedure DrawEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseInRectOnScreen(theColor, True, source)
+  /// @uname FillEllipseInRectOnScreen
   procedure FillEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
   
   /// @lib DrawOrFillTriangleOnScreen
@@ -415,7 +545,6 @@ interface
   procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPointsOnScreen
   procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
-
   
   //
   // Clipping
@@ -998,7 +1127,7 @@ implementation
   ///
   /// @param sprite:     The sprite to get the width of
   /// @returns           The width of the sprite's current frame
-  function CurrentWidth(sprite: Sprite): LongInt; inline;
+  function CurrentWidth(sprite: Sprite): LongInt;
   begin
     if sprite = nil then raise Exception.Create('No sprite supplied');
 
@@ -1009,7 +1138,7 @@ implementation
   ///
   /// @param sprite:     The sprite to get the height of
   /// @returns           The height of the sprite's current frame
-  function CurrentHeight(sprite: Sprite): LongInt; inline;
+  function CurrentHeight(sprite: Sprite): LongInt;
   begin
     if sprite = nil then raise Exception.Create('No sprite supplied');
 
