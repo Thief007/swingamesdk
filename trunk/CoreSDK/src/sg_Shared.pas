@@ -20,6 +20,7 @@ interface
   
   function ToSDLColor(color: UInt32): TSDL_Color;
   function ToGfxColor(val: Color): Color;
+  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
   
   procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
   
@@ -65,6 +66,29 @@ implementation
   procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
   begin
     sdlManager.RegisterEventProcessor(handle, handle2);
+  end;
+  
+  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
+  begin
+    if (w < 0) or (h < 0) then
+      raise Exception.Create('Width and height of a rectangle must be larger than 0');
+        
+    if w < 0 then
+    begin
+      result.x := x + w;
+      w := -w;
+    end
+    else result.x := x;
+
+    if h < 0 then
+    begin
+      result.y := y + h;
+      h := -h;
+    end
+    else result.y := y;
+
+    result.w := Word(w);
+    result.h := Word(h);
   end;
   
 end.
