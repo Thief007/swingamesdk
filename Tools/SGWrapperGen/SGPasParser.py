@@ -427,7 +427,7 @@ class SGPasParser():
                 if not self._match_lookahead('symbol', ')'):
                     while True:
                         #args are ids, number, or strings
-                        args.append(self._match_one_token([('id',None), ('number', None), ('string', None)]))
+                        args.append(self._match_one_token([('id',None), ('number', None), ('string', None), ('boolean', None)]))
                         
                         #if not comma following - end args
                         if not self._match_lookahead('symbol', ',', True): break;
@@ -453,7 +453,7 @@ class SGPasParser():
     
     def process_number_attribute(self, token):
         num_tok = self._match_token('number')
-        self._add_attribute(token[1], num_tok[1])
+        self._add_attribute(token[1], eval(num_tok[1]))
     
     def process_meta_comment(self, token):
         logger.log(logging.DEBUG - 1, 'Parser    : Processing meta comment: %s', token[1])

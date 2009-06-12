@@ -50,7 +50,10 @@ _type_switcher = {
     'fontstyle': 'FontStyle',
     'mousebutton': 'MouseButton',
     'boolean': 'Boolean',
-    'keycode': 'KeyCode'
+    'keycode': 'KeyCode',
+    'longint[0..n - 1]': 'array of LongInt',
+    'spriteendingaction': 'SpriteEndingAction',
+    'bitmap[0..n - 1]': 'array of Bitmap'
 }
 
 _names = []

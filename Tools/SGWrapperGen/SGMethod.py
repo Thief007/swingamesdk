@@ -256,7 +256,7 @@ class SGMethod(SGMetaDataContainer):
             self.args = self.params
             return
         for argv in args:
-            if argv[0] in ['number', 'string']:
+            if argv[0] in ['number', 'string', 'boolean']:
                 new_args.append(argv[1])
             elif argv[0] in ['id']:
                 param = self.get_parameter(argv[1])
@@ -269,6 +269,8 @@ class SGMethod(SGMetaDataContainer):
                     else:
                         logger.error('Method    : Error cannot find %s in method %s', argv[1], self.uname)
                         assert False
+            else:
+                logger.error('Method    : Error unknown type of argument in %s - %s', self.uname, argv[0])
         #self.tags['calls'].other[1] = new_args
         self.args = new_args
     
