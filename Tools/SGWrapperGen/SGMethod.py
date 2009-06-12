@@ -23,7 +23,7 @@ class SGMethod(SGMetaDataContainer):
             'is_constructor','return_type','other_class','dispose',
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
-            'method_called', 'args'])
+            'method_called', 'args', 'self'])
         self.name = name
         self.uname = name
         self.params = list()
@@ -43,6 +43,7 @@ class SGMethod(SGMetaDataContainer):
         self.class_method = None
         self.other_class = None
         self.called_by = list()
+        self.self_pos = 1
         
         self.local_vars = list()
         self.was_function = False
@@ -95,6 +96,10 @@ class SGMethod(SGMetaDataContainer):
     called_by_lib = property(lambda self: self['called_by_lib'].other, 
         lambda self,value: self.set_tag('called_by_lib', value), 
         None, 'Is the method associated with a class.')
+    
+    self_pos = property(lambda self: self['self'].other, 
+        lambda self,value: self.set_tag('self', value), 
+        None, 'The position of the self param in the method for a class method.')
     
     called_by = property(lambda self: self['called_by'].other, 
         lambda self,value: self.set_tag('called_by', value), 
@@ -224,7 +229,8 @@ class SGMethod(SGMetaDataContainer):
             other.params = self.params
             other.is_static = self.is_static
         else:
-            other.params = self.params[1:]
+            #remove the self parameter
+            other.params = self.params[0:self.self_pos - 1] + self.params[self.self_pos:]
         
         if self.other_class != None:
             other.in_class = self.other_class
@@ -342,15 +348,19 @@ class SGMethod(SGMetaDataContainer):
         #  instance methods change the first argument for the pointer field
         if class_method.is_static or class_method.is_constructor:
             #use self's args - i.e. it calls the method in the same way
-            args = self.args
+            args = list(self.args)
         else:  #other is an instance (with ptr)
-            args = ['pointer'] #add extra first argument
+            if self.args == None or len(self.args) < self.self_pos:
+                logger.error('Class method without arg for self pointer...')
+                assert False
+            
+            args = list(self.args)
+            #change the old argument for the self pointer
+            args[self.self_pos - 1] = 'pointer' #add extra first argument
             #add in self's arguments (-1st which is pointer)
-            if self.args != None:
-                args.extend(self.args[1:])
         
         #set class method to call the same method this does
-        class_method.calls(self.method_called, args)
+        class_method.calls(self.method_called, tuple(args))
         
         logger.debug('Method    : Setting up call: %s calls %s with args %s', class_method,
             class_method.method_called, class_method.args)

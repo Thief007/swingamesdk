@@ -219,7 +219,10 @@ class SGPasTokeniser():
             # Identifier (id) of alphanumeric characters including 
             elif t.isalpha():
                 name = self._read_matching(t, lambda cha, tmp: cha.isalnum() or cha == '_')
-                result = ('id', name)
+                if name.lower() in ['true','false']:
+                    result = ('boolean', name)
+                else:
+                    result = ('id', name)
                 logger.debug('Tokenisier: read %s - %s', result[0], result[1])
                 return result
             #Bound Comment
@@ -267,7 +270,8 @@ def test_basic():
         '/// @another(attr,attr2) \'a\'\'end\'\n',
         '0. 2..5 3a 0.1.2\n',
         """'''blah'''\n""",
-        '^test (* comment *)'
+        '^test (* comment *)\n',
+        'True False\n'
     ]
     t = SGPasTokeniser()
     
@@ -316,6 +320,9 @@ def test_basic():
     assert_next_token(t, ('symbol', "^"))
     assert_next_token(t, ('id', "test"))
     assert_next_token(t, ('comment', " comment "))
+    
+    assert_next_token(t, ('boolean', "True"))
+    assert_next_token(t, ('boolean', "False"))
 
 if __name__ == '__main__':
     test_basic()

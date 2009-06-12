@@ -52,7 +52,8 @@ class SGPasParser():
             'pointer_wrapper': self.process_true_attribute,
             'data_wrapper': self.process_true_attribute,
             'array_wrapper': self.process_true_attribute,
-            'ignore': self.process_true_attribute
+            'ignore': self.process_true_attribute,
+            'self': self.process_number_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
