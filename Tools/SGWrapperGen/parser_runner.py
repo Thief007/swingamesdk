@@ -74,7 +74,8 @@ def run_for_all_units(file_visitor):
             find_or_add_file('SGSDK_Camera', 'Camera', '../../CoreSDK/src/SGSDK_Camera.pas'),
             find_or_add_file('SGSDK_Font', 'Font', '../../CoreSDK/src/SGSDK_Font.pas'),
             find_or_add_file('SGSDK_Shapes', 'Shapes', '../../CoreSDK/src/SGSDK_Shapes.pas'),
-            find_or_add_file('SGSDK_Input', 'Input', '../../CoreSDK/src/SGSDK_Input.pas')
+            find_or_add_file('SGSDK_Input', 'Input', '../../CoreSDK/src/SGSDK_Input.pas'),
+            find_or_add_file('SGSDK_KeyCodes', 'Keys', '../../CoreSDK/src/SGSDK_KeyCodes.pas')
         ]
     
     for a_file in files[1:]:

@@ -49,7 +49,8 @@ _type_switcher = {
     'fontalignment': 'FontAlignment',
     'fontstyle': 'FontStyle',
     'mousebutton': 'MouseButton',
-    'boolean': 'Boolean'
+    'boolean': 'Boolean',
+    'keycode': 'KeyCode'
 }
 
 _names = []

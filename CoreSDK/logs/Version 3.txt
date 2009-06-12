@@ -37,3 +37,9 @@ Suggestions:
   
   Font changes:
   - Changed order of parameters in TextWidth and TextHeight
+  
+  Input changes:
+  - WasKeyTyped changes to KeyWasTyped
+  
+  KeyCode changes:
+  - New keycodes
