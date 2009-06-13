@@ -38,7 +38,7 @@ _type_switcher = {
     'uint16': 'UInt16',
     'bitmap': 'Bitmap',
     'matrix2d': 'Matrix2D',
-    'triangle': 'Point2DPtr',
+    'triangle': 'Triangle',
     'linesegment': 'LineSegment',
     'point2d': 'Point2D',
     'vector': 'Vector',
@@ -51,9 +51,24 @@ _type_switcher = {
     'mousebutton': 'MouseButton',
     'boolean': 'Boolean',
     'keycode': 'KeyCode',
-    'longint[0..n - 1]': 'array of LongInt',
+    'longintarray': 'LongIntPtr',
     'spriteendingaction': 'SpriteEndingAction',
-    'bitmap[0..n - 1]': 'array of Bitmap'
+    'bitmaparray': 'BitmapPtr'
+}
+
+# dictionary for start of method names for copying variable
+# length array data
+_array_copy_data = {
+    'linesarray': 'Line',
+    'bitmaparray': 'Bmp',
+    'longintarray': 'LongInt'
+}
+
+# dictionary for start of method names for copying fixed
+# length array data
+_array_copy_fixed_data = {
+    'triangle': 'Tri',
+    'matrix2d': 'Matrix'
 }
 
 _names = []
@@ -144,16 +159,17 @@ def method_visitor(the_method, other):
         temp_process_params = ''
         for local_var in the_method.local_vars:
             temp += '    %s: %s;\n' % (local_var.name, local_var.data_type)
-            if local_var.data_type.name.lower() == 'string':
+            type_name = local_var.data_type.name.lower()
+            if type_name == 'string':
                 temp_process_result += '\n      StrCopy(%s, PChar(%s));' % (local_var.name[:-5], local_var.name)
-            elif local_var.data_type.name.lower() == 'color':
+            elif type_name == 'color':
                 temp_process_result += '\n      %s := %s;' % (local_var.name[:-5], local_var.name)
-            elif local_var.data_type.name.lower() == 'triangle':
-                temp_process_params += '\n      TriCopyFromPtr(%s, %s);' % (local_var.name, local_var.name[:-5])
-                temp_process_result += '\n      TriCopyToPtr(%s, %s);' % (local_var.name[:-5], local_var.name)
-            elif local_var.data_type.name.lower() == 'linesarray':
-                temp_process_params += '\n      LineCopyFromPtr(%s, %s_len, %s);' % (local_var.name[:-5], local_var.name[:-5],local_var.name)
-                temp_process_result += '\n      LineCopyToPtr(%s, %s_len, %s);' % (local_var.name, local_var.name[:-5], local_var.name[:-5])
+            elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
+                temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
+                temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
+            elif type_name in _array_copy_data:
+                temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)
+                temp_process_result += '\n      %sCopyToPtr(%s, %s_len, %s);' % (_array_copy_data[type_name],local_var.name, local_var.name[:-5], local_var.name[:-5])
             else:
                 logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
                 assert False
@@ -176,7 +192,8 @@ def post_parse_process(the_lib):
     
     for key, method in the_lib.methods.items():
         for param in method.params:
-            if param.maps_result or param.data_type.array_wrapper or param.data_type.name.lower() in ['triangle'] or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
+            if param.maps_result or param.data_type.array_wrapper or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
+                logger.debug('Create lib: Adding local var of type %s to %s', param.data_type, method.uname)
                 local_var = SGParameter(param.name + '_temp')
                 local_var.data_type = param.data_type
                 method.local_vars.append(local_var)

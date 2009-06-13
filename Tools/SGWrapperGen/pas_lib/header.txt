@@ -7,7 +7,7 @@
 
 library %(name)s;
   uses SysUtils, Strings, SwinGameTrace, sg_Shared,
-    SGSDK_Physics, SGSDK_Graphics,
+    SGSDK_Physics,
     SGSDK_MappyLoader,
     %(uses)s
   
@@ -35,13 +35,42 @@ library %(name)s;
     end;
   end;
   
-  procedure TriCopyFromPtr(var fromTri: Triangle; tri: Point2DPtr);
+  procedure TriCopyFromPtr(var toTri: Triangle; tri: Point2DPtr);
   var
     i: LongInt;
   begin
     for i := 0 to 2 do
     begin
-      fromTri[i] := (tri + i)^;
+      toTri[i] := (tri + i)^;
+    end;
+  end;
+  
+  procedure MatrixCopyToPtr(matrix: SinglePtr; const fromMatrix: Matrix2D);
+  var
+    i, j: LongInt;
+  begin
+    for i := 0 to 2 do
+    begin
+      for j := 0 to 2 do
+      begin
+        WriteLn('From Matrix[', i, ',', j, '] = ', fromMatrix[i,j]);
+        (matrix + (i * 3) + j)^ := fromMatrix[i,j];
+      end;
+    end;
+  end;
+  
+  procedure MatrixCopyFromPtr(var toMatrix: Matrix2D; matrix: SinglePtr);
+  var
+    i, j: LongInt;
+  begin
+    for i := 0 to 2 do
+    begin
+      for j := 0 to 2 do
+      begin
+        toMatrix[i,j] := (matrix + (i * 3) + j)^;
+        
+        WriteLn('to Matrix[', i, ',', j, '] = ', toMatrix[i,j]);
+      end;
     end;
   end;
   
@@ -63,7 +92,59 @@ library %(name)s;
   var
     i: LongInt;
   begin
-    if len <> Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    
+    for i := Low(arr) to High(arr) do
+    begin
+      (data + i)^ := arr[i];
+    end;
+  end;
+  
+  procedure BmpCopyFromPtr(bmp: BitmapPtr; len: LongInt; out arr: BitmapArray);
+  var
+    i: LongInt;
+  begin
+    if len < 0 then raise Exception.Create('Length of array cannot be negative');
+
+    SetLength(arr, len);
+
+    for i := 0 to len - 1 do
+    begin
+      arr[i] := (bmp + i)^;
+    end;
+  end;
+  
+  procedure BmpCopyToPtr(const arr: BitmapArray; len: LongInt; bmp: BitmapPtr);
+  var
+    i: LongInt;
+  begin
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    
+    for i := Low(arr) to High(arr) do
+    begin
+      (bmp + i)^ := arr[i];
+    end;
+  end;
+  
+  procedure LongIntCopyFromPtr(data: LongIntPtr; len: LongInt; out arr: LongIntArray);
+  var
+    i: LongInt;
+  begin
+    if len < 0 then raise Exception.Create('Length of array cannot be negative');
+
+    SetLength(arr, len);
+
+    for i := 0 to len - 1 do
+    begin
+      arr[i] := (data + i)^;
+    end;
+  end;
+  
+  procedure LongIntCopyToPtr(const arr: LongIntArray; len: LongInt; data: LongIntPtr);
+  var
+    i: LongInt;
+  begin
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
     for i := Low(arr) to High(arr) do
     begin

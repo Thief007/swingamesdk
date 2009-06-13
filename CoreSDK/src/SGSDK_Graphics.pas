@@ -49,7 +49,28 @@
 unit SGSDK_Graphics;
 
 interface
-  uses SDL, SGSDK_Core, SDL_image, SGSDK_Shapes;
+  uses SDL, SGSDK_Core, SDL_Image, SGSDK_Shapes;
+  
+  type
+    /// @class BitmapArray
+    /// @array_wrapper
+    /// @field data: BitmapPtr
+    BitmapArray = array of Bitmap;
+    
+    /// @class BitmapPtr
+    /// @pointer_wrapper
+    /// @field pointer: ^Bitmap
+    BitmapPtr = ^Bitmap;
+    
+    /// @class LongIntArray
+    /// @array_wrapper
+    /// @field data: LongIntPtr
+    LongIntArray = array of LongInt;
+    
+    /// @class LongIntPtr
+    /// @pointer_wrapper
+    /// @field pointer: ^LongInt
+    LongIntPtr = ^LongInt;
   
   /// @lib
   function CreateBitmap(width, height: LongInt): Bitmap;
@@ -321,11 +342,11 @@ interface
   /// @lib CreateAnimatedCellSpriteWithEndingAction
   /// @class Sprite
   /// @constructor
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
   /// @lib CreateAnimatedCellSprite
   /// @class Sprite
   /// @constructor
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; width, height : LongInt): Sprite; overload;
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; width, height : LongInt): Sprite; overload;
   /// @lib CreateAnimatedCellSpriteWithSetFramesPerCell
   /// @class Sprite
   /// @constructor
@@ -337,15 +358,15 @@ interface
   /// @lib CreateAnimatedArraySpriteWithEndingAction
   /// @class Sprite
   /// @constructor
-  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt; endingAction : SpriteEndingAction): Sprite; overload;
+  function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction): Sprite; overload;
   /// @lib CreateAnimatedArraySprite
   /// @class Sprite
   /// @constructor
-  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
+  function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray): Sprite; overload;
   /// @lib CreateAnimatedArraySpriteWithFramesPerCell
   /// @class Sprite
   /// @constructor
-  function CreateSprite(const bitmaps : Array of Bitmap; framesPerCell, frames : LongInt): Sprite; overload;
+  function CreateSprite(const bitmaps : BitmapArray; framesPerCell, frames : LongInt): Sprite; overload;
   
   /// @lib
   /// @class Sprite
@@ -859,7 +880,7 @@ implementation
   /// @param endingAction:  This sprite's ending action (Loop, ReverseLoop or Stop)
   /// @param width, height: Width and height of this sprite
   /// @returns:       A new sprite with this bitmap as its first bitmap
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; 
     endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
   var
     i : LongInt;
@@ -920,7 +941,7 @@ implementation
   /// @param framesPerCell: Array of LongInt that defines the frames per cell
   /// @param width, height: Width and height of this sprite
   /// @returns:       A new sprite
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : Array of LongInt; 
+  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; 
     width, height : LongInt): Sprite; overload;
   begin
     result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
@@ -935,7 +956,7 @@ implementation
   /// @returns:       A new sprite
   function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
   var
-    tempIntegers: Array of LongInt;
+    tempIntegers: LongIntArray;
     i: LongInt;
   begin
     if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
@@ -954,7 +975,7 @@ implementation
   /// @returns:       A new sprite with this bitmap as its first bitmap
   function CreateSprite(image : Bitmap): Sprite; overload;
   var
-    empty : Array of LongInt;
+    empty : LongIntArray;
   begin
     SetLength(empty, 0);
     result := CreateSprite(image, false, empty, image.width, image.height);
@@ -966,7 +987,7 @@ implementation
   /// @param framesPerCell: Array of Integer that defines the frames per cell
   /// @param endingAction:  Ending action of this sprite when it finishes animating
   /// @returns:       A new sprite with this bitmap as its first bitmap
-  function CreateSprite(const bitmaps: Array of Bitmap; const framesPerCell: Array of LongInt; endingAction: SpriteEndingAction): Sprite; overload;
+  function CreateSprite(const bitmaps: BitmapArray; const framesPerCell: LongIntArray; endingAction: SpriteEndingAction): Sprite; overload;
   var
     i : LongInt;
   begin
@@ -1014,7 +1035,7 @@ implementation
   /// @param bitmaps:     The array of bitmaps
   /// @param framesPerCell: Array of Integer that defines the frames per cell
   /// @returns:       A new sprite with this bitmap as its first bitmap
-  function CreateSprite(const bitmaps : Array of Bitmap; const framesPerCell : Array of LongInt): Sprite; overload;
+  function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray): Sprite; overload;
   begin
     result := CreateSprite(bitmaps, framesPerCell, Loop);
   end;
@@ -1025,9 +1046,9 @@ implementation
   /// @param framesPerCell: Number of frames per cell
   /// @param frames:      Number of frames this sprite contains
   /// @returns:       A new sprite
-  function CreateSprite(const bitmaps: Array of Bitmap; framesPerCell, frames: LongInt): Sprite; overload;
+  function CreateSprite(const bitmaps: BitmapArray; framesPerCell, frames: LongInt): Sprite; overload;
   var
-    tempIntegers: Array of LongInt;
+    tempIntegers: LongIntArray;
     i: LongInt;
   begin
     if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
@@ -2324,7 +2345,7 @@ implementation
   function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
   begin
     New(result);
-    result.surface := rotozoomSurface(src.surface, degRot, zoom, 1);
+    result.surface := rotozoomSurface(src.surface, degRot, scale, 1);
     result.width := result.surface.w;
     result.height := result.surface.h;
   end;
