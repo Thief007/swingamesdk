@@ -79,6 +79,12 @@ _type_switcher = {
         'fontstyle': 'FontStyle %s',
         'mousebutton': 'MouseButton %s',
         'uint16': 'unsigned short %s',
+        '^single': 'float *%s',
+        'keycode': 'KeyCode %s',
+        'bitmapptr': 'Bitmap *%s',
+        '^bitmap': 'Bitmap *%s',
+        'longintptr': 'int *%s',
+        '^longint': 'int *%s',
         None: 'void %s'
     },
     'const' : {
@@ -88,7 +94,9 @@ _type_switcher = {
         'matrix2d': 'const Matrix2D *%s',
         'vector': 'const Vector *%s',
         'linesarray': 'const LinesArray %s',
-        'triangle': 'const Triangle %s'
+        'triangle': 'const Triangle %s',
+        'bitmaparray': 'const Bitmap *%s',
+        'longintarray': 'const int *%s'
     },
     'var' : {
         'soundeffect': 'SoundEffect *%s',
@@ -97,7 +105,9 @@ _type_switcher = {
         'string': 'char *%s',
         'triangle': 'Triangle %s',
         'linesarray': 'LinesArray %s',
-        'font': 'Font *%s'
+        'font': 'Font *%s',
+        'bitmap': 'Bitmap *%s',
+        'sprite': 'Sprite *%s'
     },
     'out' : {
         'string': 'char *%s',
@@ -140,6 +150,8 @@ _adapter_type_switcher = {
         'mousebutton': 'int %s',
         'uint16': 'unsigned short %s',
         'vector': 'Vector %s',
+        'spriteendingaction': 'SpriteEndingAction %s',
+        'keycode': 'KeyCode %s',
         None: 'void %s'
     },
     'const' : {
@@ -150,6 +162,8 @@ _adapter_type_switcher = {
         'triangle': 'const Triangle %s',
         'vector': 'const Vector *%s',
         'linesarray': 'const LinesArray %s',
+        'longintarray': 'const int *%s',
+        'bitmaparray': 'const Bitmap *%s'
     },
     'var': {
         'soundeffect': 'void *%s',
@@ -159,7 +173,9 @@ _adapter_type_switcher = {
         'string': 'char *%s',
         'triangle': 'Triangle %s',
         'linesarray': 'LinesArray %s',
-        'font': 'void *%s'        
+        'font': 'void *%s',
+        'bitmap': 'Bitmap *%s',
+        'sprite': 'Sprite *%s'
     },
     'out': {
         'string': 'char *%s',
