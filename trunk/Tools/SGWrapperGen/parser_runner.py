@@ -24,7 +24,7 @@ def method_process_visitor(the_method, other):
     '''Process a method prior to rendering'''
     
     #Change functions with string or array return type to have a result property
-    if the_method.return_type != None and the_method.return_type.name.lower() in ['string', 'triangle', 'linesarray']:
+    if the_method.return_type != None and (the_method.return_type.array_wrapper or the_method.return_type.name.lower() in ['string', 'triangle', 'matrix2d']):
         result_param = SGParameter('result')
         
         for param in the_method.params:
@@ -85,7 +85,9 @@ def run_for_all_units(file_visitor):
     find_or_add_class('lib').check_methods()
     
     for key,each_file in all_files().items():
-        if each_file != lib_file: lib_file.uses.append(each_file)
+        if each_file != lib_file: 
+            print 'HERE', each_file
+            lib_file.uses.append(each_file)
     
     lib_file.members.append(find_or_add_class('lib'))
     

@@ -67,6 +67,11 @@ interface
     ///@field data: array[0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
     
+    /// @class SinglePtr
+    /// @pointer_wrapper
+    /// @field pointer: ^Single
+    SinglePtr = ^Single;
+    
     /// The CollisionSide enumeration is used to indicate the side a collision
     /// has occurred on.
     ///
