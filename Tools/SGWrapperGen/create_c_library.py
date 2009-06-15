@@ -10,12 +10,12 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import logging
 import sys
 
-import parser_runner
-from sgcache import logger
-from print_writer import PrintWriter
-from file_writer import FileWriter
-from SGType import SGType
-from SGParameter import SGParameter
+from sg import parser_runner
+from sg.sg_cache import logger
+from sg.print_writer import PrintWriter
+from sg.file_writer import FileWriter
+from sg.sg_type import SGType
+from sg.sg_parameter import SGParameter
 
 #my_writer = PrintWriter()
 #my_writer = FileWriter('../../CoreSDK/src/sgsdk1.pas')
@@ -452,7 +452,7 @@ def file_visitor(the_file, other):
         write_c_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     _load_data()
     parser_runner.run_for_all_units(file_visitor)
