@@ -88,7 +88,6 @@ def run_for_all_units(file_visitor):
     
     for key,each_file in all_files().items():
         if each_file != lib_file: 
-            print 'HERE', each_file
             lib_file.uses.append(each_file)
     
     lib_file.members.append(find_or_add_class('lib'))
