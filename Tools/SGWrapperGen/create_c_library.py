@@ -185,14 +185,14 @@ _adapter_type_switcher = {
         'bitmaparray': 'const Bitmap *%s'
     },
     'var': {
-        'soundeffect': 'void *%s',
-        'music': 'void *%s',
-        'timer': 'void *%s',
+        'soundeffect': 'SoundEffect *%s',
+        'music': 'Music *%s',
+        'timer': 'Timer *%s',
         'byte': 'unsigned char *%s',
         'string': 'char *%s',
         'triangle': 'Triangle %s',
         'linesarray': 'LinesArray %s',
-        'font': 'void *%s',
+        'font': 'Font *%s',
         'bitmap': 'Bitmap *%s',
         'sprite': 'Sprite *%s',
         'map': 'Map *%s'
@@ -288,7 +288,7 @@ def method_visitor(the_method, other):
     
     other['header writer'].write('%(return_type)s' % details % details['uname'])
     other['header writer'].write('(%(params)s);' % details) 
-    other['header writer'].writeln('\n')
+    other['header writer'].writeln('')
     
     if other['c writer'] != None: 
         if the_method.is_function:
