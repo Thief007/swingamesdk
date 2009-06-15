@@ -10,9 +10,9 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import logging
 import sys
 
-from sgcache import find_or_add_file, find_or_add_class, find_or_add_type, all_files, logger
-from SGPasParser import SGPasParser
-from SGParameter import SGParameter
+from sg_cache import find_or_add_file, find_or_add_class, find_or_add_type, all_files, logger
+from sg_pas_parser import SGPasParser
+from sg_parameter import SGParameter
 
 def _add_parameter(the_method, param):
     param_list = list(the_method.params)

@@ -25,8 +25,8 @@ def find_or_add_class(name):
     if name in _classes:
         return _classes[name]
     else:
-        from sgcodemodule import SGCodeModule
-        from SGLibrary import SGLibrary
+        from sg_code_module import SGCodeModule
+        from sg_library import SGLibrary
         logger.debug('Cache     : Created class %s', name)
         if name == 'lib': result = SGLibrary()
         else: 
@@ -36,7 +36,7 @@ def find_or_add_class(name):
 
 def find_or_add_type(name):
     if name == None: return None
-    from SGType import SGType
+    from sg_type import SGType
     
     if name in _loaded_types:
         return _loaded_types[name]
@@ -50,7 +50,7 @@ def find_or_add_file(pascal_name, name=None, filename=None):
     '''finds or creates and adds a file with the indicated Pascal name'''
     if pascal_name == None: return None
     
-    from sgfile import SGFile
+    from sg_file import SGFile
     if pascal_name in _files:
         return _files[pascal_name]
     else:

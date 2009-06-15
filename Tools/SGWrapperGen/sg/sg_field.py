@@ -7,15 +7,15 @@ Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
-import SGMetaDataContainer
+from sg_metadata_container import SGMetaDataContainer
 
-class SGField(SGMetaDataContainer.SGMetaDataContainer):
+class SGField(SGMetaDataContainer):
     """Represents a Field, defining a getter and setter method"""
     
     def __init__(self, name):
         """initialises the Field setting its name."""
         
-        SGMetaDataContainer.SGMetaDataContainer.__init__(self, ['type'])
+        SGMetaDataContainer.__init__(self, ['type'])
         
         self.name = name
         self.data_type = 'unknown'
@@ -31,7 +31,7 @@ class SGField(SGMetaDataContainer.SGMetaDataContainer):
         return '%s %s' % (self.data_type, self.name)
     
 
-from SGMethod import SGMethod
+from sg_method import SGMethod
 
 def test_field_creation():
     """tests the creation of a basic field"""

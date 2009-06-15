@@ -75,7 +75,7 @@ class SGMetaDataContainer(object):
     
 
 
-from SGTag import SGTag
+from sg_tag import SGTag
 
 def test_meta_data_creation():
     """tests the basic construction of the container"""
