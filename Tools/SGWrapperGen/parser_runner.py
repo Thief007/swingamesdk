@@ -77,6 +77,7 @@ def run_for_all_units(file_visitor):
             find_or_add_file('SGSDK_Input', 'Input', '../../CoreSDK/src/SGSDK_Input.pas'),
             find_or_add_file('SGSDK_Graphics', 'Graphics', '../../CoreSDK/src/SGSDK_Graphics.pas'),
             find_or_add_file('SGSDK_Physics', 'Physics', '../../CoreSDK/src/SGSDK_Physics.pas'),
+            find_or_add_file('SGSDK_MappyLoader', 'MappyLoader', '../../CoreSDK/src/SGSDK_MappyLoader.pas'),
             find_or_add_file('SGSDK_KeyCodes', 'Keys', '../../CoreSDK/src/SGSDK_KeyCodes.pas')
         ]
     
