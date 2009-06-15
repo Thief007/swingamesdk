@@ -53,7 +53,9 @@ _type_switcher = {
     'keycode': 'KeyCode',
     'longintarray': 'LongIntPtr',
     'spriteendingaction': 'SpriteEndingAction',
-    'bitmaparray': 'BitmapPtr'
+    'bitmaparray': 'BitmapPtr',
+    'map': 'Map',
+    'event': 'Event'
 }
 
 # dictionary for start of method names for copying variable

@@ -86,6 +86,16 @@ _type_switcher = {
         'longintptr': 'int *%s',
         '^longint': 'int *%s',
         'collisionside': 'CollisionSide %s',
+        'longint[0..n - 1][0..n - 1]': 'int *%s',
+        'mapdata': 'MapData %s',
+        'animationdata[0..n - 1]': 'AnimationData *%s',
+        'layerdata[0..n - 1]': 'LayerData *%s',
+        'collisiondata': 'CollisionData %s',
+        'eventdetails[0..n - 1][0..23]': 'EventDetails *%s[24]',
+        '^maprecord': 'MapRecord *%s',
+        'map': 'Map %s',
+        'event': 'Event %s',
+        'tile': 'Tile %s',
         None: 'void %s'
     },
     'const' : {
@@ -109,7 +119,8 @@ _type_switcher = {
         'font': 'Font *%s',
         'bitmap': 'Bitmap *%s',
         'sprite': 'Sprite *%s',
-        'matrix2d': 'Matrix2D %s'
+        'matrix2d': 'Matrix2D %s',
+        'map': 'Map *%s'
     },
     'out' : {
         'string': 'char *%s',
@@ -118,6 +129,7 @@ _type_switcher = {
         'timer': 'Timer *%s',
         'point2d': 'Point2D *%s',
 #        'triangle': 'Triangle *%s'
+        'longint': 'int *%s'
     }
 }
 
@@ -156,6 +168,9 @@ _adapter_type_switcher = {
         'keycode': 'KeyCode %s',
         'matrix2d': 'Matrix2D %s',
         'collisionside': 'CollisionSide %s',
+        'map': 'MapRecord *%s',
+        'event': 'Event %s',
+        'tile': 'Tile %s',
         None: 'void %s'
     },
     'const' : {
@@ -179,7 +194,8 @@ _adapter_type_switcher = {
         'linesarray': 'LinesArray %s',
         'font': 'void *%s',
         'bitmap': 'Bitmap *%s',
-        'sprite': 'Sprite *%s'
+        'sprite': 'Sprite *%s',
+        'map': 'Map *%s'
     },
     'out': {
         'string': 'char *%s',
@@ -188,7 +204,8 @@ _adapter_type_switcher = {
         'timer': 'void *%s',
         'point2d': 'Point2D *%s',
 #        'triangle': 'Triangle *%s',
-        'linesarray': 'LinesArray %s'
+        'linesarray': 'LinesArray %s',
+        'longint': 'int *%s'
     }
 }
 
@@ -324,10 +341,13 @@ def write_c_type_for(member, other):
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
             other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
-        elif member.is_array_wrapper:
+        elif member.wraps_array:
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
             other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
+        else:
+            logger.error('CREATE C  : Unknown class type for %s', member.uname)
+            assert false
     elif member.is_struct:
         #typedef struct %s_struct { } struct;
         writer = other['header writer']
@@ -378,7 +398,7 @@ def write_c_lib_module(the_file):
         elif member.is_class or member.is_struct or member.is_enum:
             write_c_type_for(member, other)
         else:
-            assert(False, 'Got something I dont know')
+            assert False
     
     #process all methods
     for member in the_file.members:
