@@ -167,7 +167,12 @@ class SGCodeModule(SGMetaDataContainer):
     
     def visit_methods(self, visitor, other):
         logger.debug('Code Modul: Visiting method of %s' % self.name)
-        for key, method in self.methods.items():
+        
+        keys = self.methods.keys()
+        keys.sort()
+        
+        for key in keys :
+            method = self.methods[key]
             logger.debug('Code Modul: Visiting method %s' % method.uname)
             visitor(method, other)
     

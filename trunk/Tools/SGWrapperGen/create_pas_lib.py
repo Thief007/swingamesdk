@@ -167,12 +167,12 @@ def method_visitor(the_method, other):
             elif type_name == 'color':
                 temp_process_result += '\n      %s := %s;' % (local_var.name[:-5], local_var.name)
             elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
-                if local_var.modifier in [None, 'var', 'const']:
+                if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
                     temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
                 if local_var.modifier in ['var', 'out'] or local_var.maps_result:
                     temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
             elif type_name in _array_copy_data:
-                if local_var.modifier in [None, 'var', 'const']:
+                if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
                     temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)
                 if local_var.modifier in ['var', 'out'] or local_var.maps_result:
                     temp_process_result += '\n      %sCopyToPtr(%s, %s_len, %s);' % (_array_copy_data[type_name],local_var.name, local_var.name[:-5], local_var.name[:-5])

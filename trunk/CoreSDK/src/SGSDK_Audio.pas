@@ -460,7 +460,7 @@ implementation
     else if vol > 1 then vol := 1;
     
     //alter repeats for multiple loops
-    if loops > 1 then loops -= 1;
+    if loops >= 1 then loops -= 1;
     
     //play the effect, seaching for a channel
     i := Mix_PlayChannel( -1, effect, loops);
