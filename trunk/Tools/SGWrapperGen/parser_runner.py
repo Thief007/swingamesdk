@@ -24,7 +24,7 @@ def method_process_visitor(the_method, other):
     '''Process a method prior to rendering'''
     
     #Change functions with string or array return type to have a result property
-    if the_method.return_type != None and (the_method.return_type.array_wrapper or the_method.return_type.name.lower() in ['string', 'triangle', 'matrix2d']):
+    if the_method.return_type != None and (the_method.return_type.wraps_array or the_method.return_type.name.lower() in ['string']):
         result_param = SGParameter('result')
         
         for param in the_method.params:
@@ -76,6 +76,7 @@ def run_for_all_units(file_visitor):
             find_or_add_file('SGSDK_Shapes', 'Shapes', '../../CoreSDK/src/SGSDK_Shapes.pas'),
             find_or_add_file('SGSDK_Input', 'Input', '../../CoreSDK/src/SGSDK_Input.pas'),
             find_or_add_file('SGSDK_Graphics', 'Graphics', '../../CoreSDK/src/SGSDK_Graphics.pas'),
+            find_or_add_file('SGSDK_Physics', 'Physics', '../../CoreSDK/src/SGSDK_Physics.pas'),
             find_or_add_file('SGSDK_KeyCodes', 'Keys', '../../CoreSDK/src/SGSDK_KeyCodes.pas')
         ]
     

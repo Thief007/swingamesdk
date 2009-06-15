@@ -43,3 +43,6 @@ Suggestions:
   
   KeyCode changes:
   - New keycodes
+  
+  Physics changes:
+  - default bitmap/sprite collision now using pixel level collisions

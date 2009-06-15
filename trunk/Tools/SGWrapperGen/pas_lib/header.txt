@@ -7,7 +7,6 @@
 
 library %(name)s;
   uses SysUtils, Strings, SwinGameTrace, sg_Shared,
-    SGSDK_Physics,
     SGSDK_MappyLoader,
     %(uses)s
   
@@ -49,29 +48,39 @@ library %(name)s;
   var
     i, j: LongInt;
   begin
+    WriteLn('************************');
     for i := 0 to 2 do
     begin
+      Write('|  ');
       for j := 0 to 2 do
       begin
-        WriteLn('From Matrix[', i, ',', j, '] = ', fromMatrix[i,j]);
+        Write(fromMatrix[i,j]:4:2, '  ');
         (matrix + (i * 3) + j)^ := fromMatrix[i,j];
+        //matrix[i,j] := fromMatrix[i,j];
       end;
+      Writeln('|');
     end;
+    WriteLn('************************');
   end;
   
   procedure MatrixCopyFromPtr(var toMatrix: Matrix2D; matrix: SinglePtr);
   var
     i, j: LongInt;
   begin
+    WriteLn('************************');
     for i := 0 to 2 do
     begin
+      Write('|  ');
       for j := 0 to 2 do
       begin
         toMatrix[i,j] := (matrix + (i * 3) + j)^;
+        //toMatrix[i,j] := matrix[i,j];
         
-        WriteLn('to Matrix[', i, ',', j, '] = ', toMatrix[i,j]);
+        Write(toMatrix[i,j]:4:2, '  ');
       end;
+      Writeln('|');
     end;
+    WriteLn('************************');
   end;
   
   procedure LineCopyFromPtr(data: LineSegmentPtr; len: LongInt; out arr: LinesArray);

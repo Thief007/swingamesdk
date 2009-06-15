@@ -63,7 +63,7 @@ interface
     /// operations that need to be performed on Vectors.
     ///
     ///@class Matrix2D
-    ///@data_wrapper
+    ///@fixed_array_wrapper
     ///@field data: array[0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
     

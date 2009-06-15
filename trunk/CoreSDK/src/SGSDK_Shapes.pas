@@ -57,7 +57,7 @@ uses SGSDK_Core;
       end;
     
     ///@class Triangle
-    ///@data_wrapper
+    ///@fixed_array_wrapper
     ///@field data: array[0..2] of Point2D
     Triangle = array [0..2] of Point2D;
     
