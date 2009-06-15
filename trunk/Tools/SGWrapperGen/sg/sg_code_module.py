@@ -9,10 +9,10 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 
 import logging
 
-from SGMethod import SGMethod
-from SGProperty import SGProperty
-from SGField import SGField
-from SGMetaDataContainer import SGMetaDataContainer
+from sg_method import SGMethod
+from sg_property import SGProperty
+from sg_field import SGField
+from sg_metadata_container import SGMetaDataContainer
 
 logger = logging.getLogger("SGWrapperGen")
 

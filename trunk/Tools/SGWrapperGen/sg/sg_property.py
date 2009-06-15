@@ -7,10 +7,10 @@ Created by Andrew Cain on 2009-05-20.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
-from sgcache import logger
-import SGMetaDataContainer
+from sg_cache import logger
+from sg_metadata_container import SGMetaDataContainer 
 
-class SGProperty(SGMetaDataContainer.SGMetaDataContainer):
+class SGProperty(SGMetaDataContainer):
     """Represents a property, defining a getter and setter method"""
     
     def __init__(self, name):
@@ -19,7 +19,7 @@ class SGProperty(SGMetaDataContainer.SGMetaDataContainer):
         
         getter and setter are set to none
         """
-        SGMetaDataContainer.SGMetaDataContainer.__init__(self, ['getter','setter','data_type','class'])
+        SGMetaDataContainer.__init__(self, ['getter','setter','data_type','class'])
         
         self.name = name
         self.getter = None

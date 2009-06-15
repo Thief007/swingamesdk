@@ -9,8 +9,8 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 
 import logging
 
-from SGMetaDataContainer import SGMetaDataContainer
-from sgcache import logger
+from sg_metadata_container import SGMetaDataContainer
+from sg_cache import logger
 
 class SGType(SGMetaDataContainer):
     """Represents a data type."""

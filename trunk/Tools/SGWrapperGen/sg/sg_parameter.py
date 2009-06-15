@@ -7,7 +7,7 @@ Created by Andrew Cain on 2009-05-21.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
-from SGMetaDataContainer import SGMetaDataContainer
+from sg_metadata_container import SGMetaDataContainer
 
 class SGParameter(SGMetaDataContainer):
     """Represents a parameter to a method"""

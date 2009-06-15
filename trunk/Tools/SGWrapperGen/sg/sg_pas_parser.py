@@ -10,12 +10,12 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import logging
 import sys
 
-from SGPasTokeniser import SGPasTokeniser
-from sgcodemodule import SGCodeModule
-from SGType import SGType
-from SGField import SGField
-from SGMethod import SGMethod
-from sgcache import find_or_add_class, find_or_add_type, logger, find_or_add_file, all_types
+from sg_pas_tokeniser import SGPasTokeniser
+from sg_code_module import SGCodeModule
+from sg_type import SGType
+from sg_field import SGField
+from sg_method import SGMethod
+from sg_cache import find_or_add_class, find_or_add_type, logger, find_or_add_file, all_types
 
 class SGPasParser():
     def __init__(self):

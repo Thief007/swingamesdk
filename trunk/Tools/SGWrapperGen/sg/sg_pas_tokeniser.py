@@ -8,7 +8,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
 
 import logging
-from sgcache import logger
+from sg_cache import logger
 
 class SGPasTokeniser():
     

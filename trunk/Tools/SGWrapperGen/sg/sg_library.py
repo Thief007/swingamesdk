@@ -7,8 +7,8 @@ Created by Andrew Cain on 2009-05-22.
 Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
-from sgcache import find_or_add_file, logger
-from sgcodemodule import SGCodeModule
+from sg_cache import find_or_add_file, logger
+from sg_code_module import SGCodeModule
 
 class SGLibrary(SGCodeModule):
     """Represents the SwinGame SDK library."""
@@ -22,7 +22,7 @@ class SGLibrary(SGCodeModule):
     
     def add_member(self, member):
         """Add a method to the library"""
-        from SGMethod import SGMethod
+        from sg_method import SGMethod
         
         if isinstance(member, SGMethod):
             member.is_external = True
@@ -60,7 +60,7 @@ def test_library_creation():
 
 def test_add_method():
     """test adding a method to a library"""
-    from SGMethod import SGMethod
+    from sg_method import SGMethod
     my_library = SGLibrary()
     my_method = SGMethod('test')
     

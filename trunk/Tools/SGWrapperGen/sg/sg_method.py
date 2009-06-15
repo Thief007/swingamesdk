@@ -10,10 +10,10 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 import logging
 import sys
 
-from SGMetaDataContainer import SGMetaDataContainer
-from SGParameter import SGParameter
-from SGProperty import SGProperty
-from sgcache import find_or_add_class, logger
+from sg_metadata_container import SGMetaDataContainer
+from sg_parameter import SGParameter
+from sg_property import SGProperty
+from sg_cache import find_or_add_class, logger
 
 class SGMethod(SGMetaDataContainer):
     """A SGMethod represents a function or a procedure in SwinGame."""
@@ -192,8 +192,8 @@ class SGMethod(SGMetaDataContainer):
                     assert False
         elif title == "class":
             #the class indicates that the @method is for this other class...
-            from sgcodemodule import SGCodeModule
-            from SGLibrary import SGLibrary
+            from sg_code_module import SGCodeModule
+            from sg_library import SGLibrary
             if other == None: 
                 super(SGMethod,self).set_tag(title, None)
                 return
