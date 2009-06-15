@@ -47,37 +47,37 @@ library %(name)s;
   var
     i, j: LongInt;
   begin
-    WriteLn('************************');
+    //WriteLn('************************');
     for i := 0 to 2 do
     begin
-      Write('|  ');
+      //Write('|  ');
       for j := 0 to 2 do
       begin
-        Write(fromMatrix[i,j]:4:2, '  ');
+        //Write(fromMatrix[i,j]:4:2, '  ');
         (matrix + (i * 3) + j)^ := fromMatrix[i,j];
         //matrix[i,j] := fromMatrix[i,j];
       end;
-      Writeln('|');
+      //Writeln('|');
     end;
-    WriteLn('************************');
+    //WriteLn('************************');
   end;
   
   procedure MatrixCopyFromPtr(var toMatrix: Matrix2D; matrix: SinglePtr);
   var
     i, j: LongInt;
   begin
-    WriteLn('************************');
+    //WriteLn('************************');
     for i := 0 to 2 do
     begin
-      Write('|  ');
+      //Write('|  ');
       for j := 0 to 2 do
       begin
         toMatrix[i,j] := (matrix + (i * 3) + j)^;
         //toMatrix[i,j] := matrix[i,j];
         
-        Write(toMatrix[i,j]:4:2, '  ');
+        //Write(toMatrix[i,j]:4:2, '  ');
       end;
-      Writeln('|');
+      //Writeln('|');
     end;
     WriteLn('************************');
   end;
