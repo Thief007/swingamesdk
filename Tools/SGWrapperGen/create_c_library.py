@@ -85,6 +85,7 @@ _type_switcher = {
         '^bitmap': 'Bitmap *%s',
         'longintptr': 'int *%s',
         '^longint': 'int *%s',
+        'collisionside': 'CollisionSide %s',
         None: 'void %s'
     },
     'const' : {
@@ -107,7 +108,8 @@ _type_switcher = {
         'linesarray': 'LinesArray %s',
         'font': 'Font *%s',
         'bitmap': 'Bitmap *%s',
-        'sprite': 'Sprite *%s'
+        'sprite': 'Sprite *%s',
+        'matrix2d': 'Matrix2D %s'
     },
     'out' : {
         'string': 'char *%s',
@@ -152,6 +154,8 @@ _adapter_type_switcher = {
         'vector': 'Vector %s',
         'spriteendingaction': 'SpriteEndingAction %s',
         'keycode': 'KeyCode %s',
+        'matrix2d': 'Matrix2D %s',
+        'collisionside': 'CollisionSide %s',
         None: 'void %s'
     },
     'const' : {

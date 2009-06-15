@@ -211,13 +211,13 @@ interface
   procedure FillEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
   
   /// @lib DrawOrFillTriangleOnto
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const triangle: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnto(dest, theColor, False, triangle)
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnto(dest, theColor, False, tri)
   /// @uname DrawTriangleOnto
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnto(dest, theColor, True, triangle)
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnto(dest, theColor, True, tri)
   /// @uname FillTriangleOnto
-  procedure FillTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
   /// @lib DrawTriangleFromPointsOnto
   procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPointsOnto
@@ -279,13 +279,13 @@ interface
   procedure DrawLine(theColor: Color; const line: LineSegment); overload;
   
   /// @lib DrawOrFillTriangle
-  procedure DrawTriangle(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
-  /// @lib DrawOrFillTriangle(theColor, False, triangle)
+  procedure DrawTriangle(theColor: Color; filled: Boolean; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangle(theColor, False, tri)
   /// @uname DrawTriangle
-  procedure DrawTriangle(theColor: Color; const triangle: Triangle); overload;
-  /// @lib DrawOrFillTriangle(theColor, True, triangle)
+  procedure DrawTriangle(theColor: Color; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangle(theColor, True, tri)
   /// @uname FillTriangle
-  procedure FillTriangle(theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangle(theColor: Color; const tri: Triangle); overload;
   /// @lib DrawTriangleFromPoints
   procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPoints
@@ -555,13 +555,13 @@ interface
   procedure FillEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
   
   /// @lib DrawOrFillTriangleOnScreen
-  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnScreen(theColor, False, triangle)
+  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnScreen(theColor, False, tri)
   /// @uname DrawTriangleOnScreen
-  procedure DrawTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnScreen(theColor, True, triangle)
+  procedure DrawTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnScreen(theColor, True, tri)
   /// @uname FillTriangleOnScreen  
-  procedure FillTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
   /// @lib DrawTriangleFromPointsOnScreen
   procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPointsOnScreen
@@ -1648,37 +1648,37 @@ implementation
     DrawLine(dest, theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
   end;
 
-  procedure DrawTriangle(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  procedure DrawTriangle(theColor: Color; filled: Boolean; const tri: Triangle); overload;
   begin
-    if filled then FillTriangle(theColor, triangle)
-    else DrawTriangle(theColor, triangle);
+    if filled then FillTriangle(theColor, tri)
+    else DrawTriangle(theColor, tri);
   end;
 
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const tri: Triangle); overload;
   begin
-    if filled then FillTriangle(dest, theColor, triangle)
-    else DrawTriangle(dest, theColor, triangle);
+    if filled then FillTriangle(dest, theColor, tri)
+    else DrawTriangle(dest, theColor, tri);
   end;
   
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload;
+  procedure DrawTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(dest, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+    DrawTriangle(dest, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
-  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const triangle: Triangle); overload;
+  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const tri: Triangle); overload;
   begin
-    if filled then FillTriangleOnScreen(theColor, triangle) 
-    else DrawTriangleOnScreen(theColor, triangle);
+    if filled then FillTriangleOnScreen(theColor, tri) 
+    else DrawTriangleOnScreen(theColor, tri);
   end;
 
-  procedure DrawTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+  procedure DrawTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(scr, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+    DrawTriangle(scr, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
-  procedure DrawTriangle(theColor: Color; const triangle: Triangle); overload;
+  procedure DrawTriangle(theColor: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+    DrawTriangle(theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
   procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1696,14 +1696,14 @@ implementation
     aatrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColor));
   end;
 
-  procedure FillTriangle(dest: Bitmap; theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(dest, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+    FillTriangle(dest, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
-  procedure FillTriangle(theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangle(theColor: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+    FillTriangle(theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
   procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1711,9 +1711,9 @@ implementation
     FillTriangle(scr, theColor, SGSDK_Camera.ScreenX(x1), SGSDK_Camera.ScreenY(y1), SGSDK_Camera.ScreenX(x2), SGSDK_Camera.ScreenY(y2), SGSDK_Camera.ScreenX(x3), SGSDK_Camera.ScreenY(y3));
   end;
   
-  procedure FillTriangleOnScreen(theColor: Color; const triangle: Triangle); overload;
+  procedure FillTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(scr, theColor, triangle[0].x, triangle[0].y, triangle[1].x, triangle[1].y, triangle[2].x, triangle[2].y);
+    FillTriangle(scr, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
   procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;

@@ -52,6 +52,7 @@ class SGPasParser():
             'pointer_wrapper': self.process_true_attribute,
             'data_wrapper': self.process_true_attribute,
             'array_wrapper': self.process_true_attribute,
+            'fixed_array_wrapper': self.process_true_attribute,
             'ignore': self.process_true_attribute,
             'self': self.process_number_attribute
         }

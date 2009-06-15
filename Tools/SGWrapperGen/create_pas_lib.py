@@ -37,8 +37,8 @@ _type_switcher = {
     'uint32': 'UInt32',
     'uint16': 'UInt16',
     'bitmap': 'Bitmap',
-    'matrix2d': 'Matrix2D',
-    'triangle': 'Triangle',
+    'matrix2d': 'SinglePtr',
+    'triangle': 'Point2DPtr',
     'linesegment': 'LineSegment',
     'point2d': 'Point2D',
     'vector': 'Vector',
@@ -143,7 +143,7 @@ def method_visitor(the_method, other):
         if not result_param.maps_result: #in case of returning var length array
             result_param = the_method.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure
@@ -165,11 +165,15 @@ def method_visitor(the_method, other):
             elif type_name == 'color':
                 temp_process_result += '\n      %s := %s;' % (local_var.name[:-5], local_var.name)
             elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
-                temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
-                temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
+                if local_var.modifier in [None, 'var', 'const']:
+                    temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
+                if local_var.modifier in ['var', 'out'] or local_var.maps_result:
+                    temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
             elif type_name in _array_copy_data:
-                temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)
-                temp_process_result += '\n      %sCopyToPtr(%s, %s_len, %s);' % (_array_copy_data[type_name],local_var.name, local_var.name[:-5], local_var.name[:-5])
+                if local_var.modifier in [None, 'var', 'const']:
+                    temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)
+                if local_var.modifier in ['var', 'out'] or local_var.maps_result:
+                    temp_process_result += '\n      %sCopyToPtr(%s, %s_len, %s);' % (_array_copy_data[type_name],local_var.name, local_var.name[:-5], local_var.name[:-5])
             else:
                 logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
                 assert False
@@ -192,10 +196,12 @@ def post_parse_process(the_lib):
     
     for key, method in the_lib.methods.items():
         for param in method.params:
-            if param.maps_result or param.data_type.array_wrapper or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
+            if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
                 logger.debug('Create lib: Adding local var of type %s to %s', param.data_type, method.uname)
                 local_var = SGParameter(param.name + '_temp')
                 local_var.data_type = param.data_type
+                local_var.modifier = param.modifier
+                local_var.maps_result = param.maps_result
                 method.local_vars.append(local_var)
                 param.maps_to_temp = True
 
