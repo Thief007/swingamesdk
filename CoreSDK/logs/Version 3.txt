@@ -23,13 +23,7 @@ Suggestions:
   
   Audio:
   - Added ability to fade music in and out. FadeMusicIn, FadeMusicOut
-  Input:
-  - renamed IsKeyPressed to KeyDown
-  - renamed WasKeyTyped to KeyTyped
-  - renamed AKeyWasPressed to AnyKeyPressed
-  - renamed IsMouseDown and IsMouseUp to MouseDown and MouseUp respectively
-  - renamed MouseWasClicked to MouseClicked
-  - renamed IsMouseShown to MouseShown
+
   
 ** Changes to Version 2 **
   Audio changes:
@@ -46,10 +40,16 @@ Suggestions:
   - Changed order of parameters in TextWidth and TextHeight
   
   Input changes:
-  - WasKeyTyped changes to KeyWasTyped
+  - renamed IsKeyPressed to KeyDown
+  - renamed WasKeyTyped to KeyTyped
+  - renamed AKeyWasPressed to AnyKeyPressed
+  - renamed IsMouseDown and IsMouseUp to MouseDown and MouseUp respectively
+  - renamed MouseWasClicked to MouseClicked
+  - renamed IsMouseShown to MouseShown
   
   KeyCode changes:
-  - New keycodes
+  - renamed keycodes ie VK_BLAH to vk_BLAH (lots!) + some new codes + formatting/comments update
+    Note: this now uses SDL key codes rather than windows specific codes now.
   
   Physics changes:
   - default bitmap/sprite collision now using pixel level collisions
