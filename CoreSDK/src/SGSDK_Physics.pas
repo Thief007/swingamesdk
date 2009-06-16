@@ -613,12 +613,12 @@ implementation
   
   function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithRect(theSprite, GameX(x), GameY(y), 1, 1);
+    result := HasSpriteCollidedWithRect(theSprite, WorldX(x), WorldY(y), 1, 1);
   end;
   
   function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithRect(theSprite, GameX(Round(pt.x)), GameY(Round(pt.y)), 1, 1);
+    result := HasSpriteCollidedWithRect(theSprite, WorldX(Round(pt.x)), WorldY(Round(pt.y)), 1, 1);
   end;
   
   /// Performs a collision detection within two bitmaps at the given x, y

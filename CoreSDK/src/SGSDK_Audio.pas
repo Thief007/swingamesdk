@@ -2,7 +2,7 @@
 //          SGSDK_Audio.pas
 //=============================================================================
 // The Audio unit is responsible for managing SDL audio for music and sound 
-/// effects. This includes initialisation, loading, freeing, playing, and 
+// effects. This includes initialisation, loading, freeing, playing, and 
 // checking if music or sound is playing.
 //
 // Change History:

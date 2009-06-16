@@ -547,12 +547,12 @@ implementation
   begin
     if m = nil then raise Exception.Create('No Map supplied (nil)');
     
-    //WriteLn('GX, GY: ', GameX(0), ',' ,GameY(0));
+    //WriteLn('GX, GY: ', WorldX(0), ',' ,WorldY(0));
     //WriteLn('bw, bh: ', m.MapInfo.BlockWidth, ', ', m.MapInfo.BlockHeight);
     
     //Screen Drawing Starting Point
-    XStart := round((GameX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
-    YStart := round((GameY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
+    XStart := round((WorldX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
+    YStart := round((WorldY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
     
     //Screen Drawing Ending point
     XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));

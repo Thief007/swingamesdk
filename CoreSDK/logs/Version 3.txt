@@ -24,6 +24,8 @@ Suggestions:
   Audio:
   - Added ability to fade music in and out. FadeMusicIn, FadeMusicOut
 
+  Camera:
+  - added ToScreenCoordinates
   
 ** Changes to Version 2 **
   Audio changes:
@@ -53,3 +55,10 @@ Suggestions:
   
   Physics changes:
   - default bitmap/sprite collision now using pixel level collisions
+  
+  Camera changes:
+  - renamed XOffset and YOffset methods to CameraX and CameraY respectively
+  - renamed GameX and GameY method to WorldX and WorldY respectively
+  - renamed MoveVisualArea (overloaded) methods to MoveCameraBy
+  - renamed SetScreenOffset (overloaded) methods to MoveCameraTo
+  - renamed FollowSprite (overloaded) methods to CenterCameraOn 
