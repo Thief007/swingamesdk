@@ -82,6 +82,7 @@ doCompile()
         if [ $? != 0 ]; then DoExitAsm $file; fi
         rm $file
     done
+    
 
     echo "  ... Linking Library"
     FRAMEWORKS=`ls ${FRAMEWORK_DIR} | awk -F . '{print "-framework "$1}'`
@@ -130,14 +131,15 @@ then
     
     if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
     then
-        echo "__________________________________________________"
-        echo "Building Mac version"
-        echo "__________________________________________________"
+        echo "--------------------------------------------------"
+        echo "          Creating SwinGame Dynamic Library"
+        echo "                 for Mac OS X"
+        echo "--------------------------------------------------"
         echo "  Running script from $APP_PATH"
         echo "  Saving output to $OUT_DIR"
         echo "  Copying Frameworks from ${FRAMEWORK_DIR}"
         echo "  Compiling with $EXTRA_OPTS"
-        echo "__________________________________________________"
+        echo "--------------------------------------------------"
         
         echo "  ... Creating Pascal Library"
         CreateLibrary >> ${LOG_FILE}
@@ -152,13 +154,14 @@ then
         
         doLipo "i386" "ppc"
     else
-        echo "__________________________________________________"
-        echo "Building Linux version"
-        echo "__________________________________________________"
+        echo "--------------------------------------------------"
+        echo "          Creating SwinGame Dynamic Library"
+        echo "                 for Linux"
+        echo "--------------------------------------------------"
         echo "  Running script from $APP_PATH"
         echo "  Saving output to $OUT_DIR"
         echo "  Compiling with $EXTRA_OPTS"
-        echo "__________________________________________________"
+        echo "--------------------------------------------------"
         
         echo "  ... Creating Pascal Library"
         CreateLibrary >> ${LOG_FILE}
@@ -178,4 +181,4 @@ else
 fi
 
 echo "  Finished"
-echo "__________________________________________________"
+echo "--------------------------------------------------"
