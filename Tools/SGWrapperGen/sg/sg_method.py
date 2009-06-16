@@ -23,7 +23,7 @@ class SGMethod(SGMetaDataContainer):
             'is_constructor','return_type','other_class','dispose',
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
-            'method_called', 'args', 'self'])
+            'method_called', 'args', 'self', 'see', 'like'])
         self.name = name
         self.uname = name
         self.params = list()
