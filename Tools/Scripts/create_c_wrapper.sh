@@ -19,6 +19,7 @@ LIBARY_DIR=${SWINGAME_PATH}/bin/lib/
 
 GCC_BIN=`which gcc`
 LIBTOOL_BIN=`which libtool`
+AR_BIN=`which ar`
 
 CLEAN="N"
 
@@ -61,15 +62,15 @@ CreateCWrapper()
 # Compile for Mac - manually assembles and links files
 # argument 1 is arch
 #
-doCompile()
+doMacCompile()
 {
     CleanTmp
     
     echo "  ... Compiling for $1"
     for file in `find ${C_LIB_FILES_DIR} | grep [.]c$`
     do
-        name=${file##*/}
-        name=${name%%.c}
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
         echo "      ... Compiling ${name}"    
         ${GCC_BIN} -c -g -arch ${1} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SwinGame C wrapper"; cat ${LOG_FILE}; exit 1; fi
@@ -84,6 +85,28 @@ doCompile()
     CleanTmp
 }
 
+doLinuxCompile()
+{
+    CleanTmp
+    
+    for file in `find ${C_LIB_FILES_DIR} | grep [.]c$`
+    do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        echo "      ... Compiling ${name}"    
+        ${GCC_BIN} -c -g -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error compiling SwinGame C wrapper"; cat ${LOG_FILE}; exit 1; fi
+    done
+    
+    #Assemble all of the .s files
+    echo "  ... Creating archive"
+    
+    ${AR_BIN} cr ${OUT_DIR}/libSwinGame.a ${TMP_DIR}/*.o >> ${LOG_FILE}
+    if [ $? != 0 ]; then echo "Error creating archive"; cat ${LOG_FILE}; exit 1; fi
+    
+    CleanTmp
+}
+
 # 
 # Create fat dylib
 # 
@@ -92,8 +115,8 @@ doLipo()
     echo "  ... Creating Universal Binary"
     lipo -arch ${1} "${TMP_DIR}/libSwinGame_${1}.a" -arch ${2} "${TMP_DIR}/libSwinGame_${2}.a" -output "${OUT_DIR}/libSwinGame.a" -create
     
-    rm -rf "${TMP_DIR}/libSwinGame${1}.a"
-    rm -rf "${TMP_DIR}/libSwinGame${2}.a"
+    rm -f "${TMP_DIR}/libSwinGame_${1}.a"
+    rm -f "${TMP_DIR}/libSwinGame_${2}.a"
 }
 
 while getopts ch o
@@ -121,40 +144,36 @@ then
     
     if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
     then
-        echo "__________________________________________________"
-        echo "Building Mac version"
-        echo "__________________________________________________"
+        echo "--------------------------------------------------"
+        echo "          Creating SwinGame C Library"
+        echo "                 for Mac OS X"
+        echo "--------------------------------------------------"
         echo "  Running script from $APP_PATH"
         echo "  Saving output to $OUT_DIR"
-        echo "__________________________________________________"
-        
+        echo "--------------------------------------------------"
         echo "  ... Creating C wrapper library"
         CreateCWrapper >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
             
         echo "  ... Compiling Library"
-        doCompile "ppc"
-        doCompile "i386"
+        doMacCompile "ppc"
+        doMacCompile "i386"
         
         doLipo "i386" "ppc"
     else
-        echo "__________________________________________________"
-        echo "Building Linux version"
-        echo "__________________________________________________"
+        echo "--------------------------------------------------"
+        echo "          Creating SwinGame C Library"
+        echo "                 for Linux"
+        echo "--------------------------------------------------"
         echo "  Running script from $APP_PATH"
         echo "  Saving output to $OUT_DIR"
-        echo "  Compiling with $EXTRA_OPTS"
-        echo "__________________________________________________"
-        
-        echo "  ... Creating Pascal Library"
-        CreateLibrary >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
+        echo "--------------------------------------------------"
+        echo "  ... Creating C wrapper library"
+        CreateCWrapper >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
         
         echo "  ... Compiling Library"
-        fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk1.pas >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
-        
-        CleanTmp
+        doLinuxCompile
     fi
 else
     CleanTmp
@@ -164,4 +183,4 @@ else
 fi
 
 echo "  Finished"
-echo "__________________________________________________"
+echo "--------------------------------------------------"
