@@ -54,7 +54,9 @@ class SGPasParser():
             'array_wrapper': self.process_true_attribute,
             'fixed_array_wrapper': self.process_true_attribute,
             'ignore': self.process_true_attribute,
-            'self': self.process_number_attribute
+            'self': self.process_number_attribute,
+            'see': self.process_idlist_attribute,
+            'like': self.process_id_attribute,
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -352,9 +354,18 @@ class SGPasParser():
         tok = self._match_token('id') #load id of thing...
         self._add_attribute(token[1], tok[1])
     
-    def process_field_attribute(self, token):
+    def process_idlist_attribute(self, token):
+        '''Process an attribute followed by a list of comma separated identifiers.
+        eg. @see id1, id2 ...
         '''
-        Have encountered @field - create a field for the generated class to use
+        tok = self._match_token('id')
+        ids = [tok[1]]
+        while self._match_lookahead('symbol', ',', True):
+            ids.append(self._match_token('id')[1])
+        self._add_attribute(token[1], ids)  
+    
+    def process_field_attribute(self, token):
+        '''Have encountered @field - create a field for the generated class to use
         '''
         tok = self._match_token('id') #field name
         field = SGField(tok[1])
