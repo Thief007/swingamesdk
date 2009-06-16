@@ -23,6 +23,13 @@ Suggestions:
   
   Audio:
   - Added ability to fade music in and out. FadeMusicIn, FadeMusicOut
+  Input:
+  - renamed IsKeyPressed to KeyDown
+  - renamed WasKeyTyped to KeyTyped
+  - renamed AKeyWasPressed to AnyKeyPressed
+  - renamed IsMouseDown and IsMouseUp to MouseDown and MouseUp respectively
+  - renamed MouseWasClicked to MouseClicked
+  - renamed IsMouseShown to MouseShown
   
 ** Changes to Version 2 **
   Audio changes:
