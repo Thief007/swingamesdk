@@ -1,30 +1,31 @@
-//---------------------------------------------------/
-//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+//=============================================================================
 //          SGSDK_Physics.pas
-//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
-//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//=============================================================================
 //
-// The Physics unit contains the code that is responsible
-// for performing collisions and vector maths.
+// The Physics unit contains the code that is responsible for performing 
+// collisions and vector maths.
 //
 // Change History:
 //
+// Version 3.0:
+// - 2009-06-15: Andrew: Added meta tags
 // Version 2.0:
 // - 2008-12-10: Andrew: Moved types to Core
 //
 // Version 1.1:
 // - 2008-01-30: Andrew: Fixed rectangle collision with bitmap
 //                     : Fixed vector out for 0, 90, 180, 270 deg
-//             : Fixed GetSideForCollisionTest for same deg of movement
+//                     : Fixed GetSideForCollisionTest for same deg of movement
 // - 2008-01-25: Andrew: Fixed compiler hints
-// - 2008-01-22: Andrew: Correct Circular Collision to
-//    handle situations where the balls have overlaped.
+// - 2008-01-22: Andrew: Correct Circular Collision to handle situations where 
+//                       the balls have overlaped.
 // - 2008-01-21: Andrew: General refactoring, adding new collision routines
 //               using Rectangle and Point2D.
 // - 2008-01-18: Aki, Andrew, Stephen: Refactor
 //
 // Version 1.0:
 // - Various
+//=============================================================================
 
 {$I SwinGame.inc}
 
@@ -32,161 +33,223 @@
 /// @static
 unit SGSDK_Physics;
 
+//=============================================================================
 interface
+//=============================================================================
+
   uses
     SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
   
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // Collision detection routines
   //
-  //*****
-  //
   // These routines are used to detect collisions between sprites or bitmaps.
-  //
+  //---------------------------------------------------------------------------
   
   /// @lib
   function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
 
   // function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
   // function HasSpriteCollidedY(theSprite: Sprite; y: Single; range: CollisionDetectionRange): Boolean;
+  
+  //---------------------------------------------------------------------------
 
+  /// Determined if a sprite has collided with a given rectangle. The rectangles
+  /// coordinates are expressed in "world" coordinates.
+  ///
+  /// @param theSprite The sprite to check
+  /// @param x The x location of the rectangle
+  /// @param y The y location of the rectangle
+  /// @param width The width of the rectangle
+  /// @param height The height of the rectangle
+  /// @returns True if the sprite collides with the rectangle
+  ///
   /// @lib
   /// @class Sprite
   /// @method HasCollidedWithRect
   function HasSpriteCollidedWithRect(theSprite: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
+  
   /// @lib HasSpriteCollidedWithRectangle
   /// @class Sprite
   /// @overload HasCollidedWithRect HasCollidedWithRectangle
   function HasSpriteCollidedWithRect(theSprite: Sprite; const rect: Rectangle): Boolean; overload;
   
+  //---------------------------------------------------------------------------
+    
   /// @lib HasSpriteCollidedWithBitmapWithBounds
   /// @class Sprite
   /// @overload HasCollidedWithBitmap HasCollidedWithBitmapWithBounds
   function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: Boolean): Boolean; overload;
+  
   /// @lib HasSpriteCollidedWithBitmapAtPointWithBounds
   /// @class Sprite
   /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPointWithBounds
   function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; bounded: Boolean): Boolean; overload;
+  
   /// @lib HasSpriteCollidedWithBitmapWithBounds(theSprite, theBitmap, x, y, False)
   /// @uname HasSpriteCollidedWithBitmap
   /// @class Sprite
   /// @method HasCollidedWithBitmap
   function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
+  
   /// @lib HasSpriteCollidedWithBitmapAtPointWithBounds(theSprite, theBitmap, pt, False)
   /// @uname HasSpriteCollidedWithBitmapAtPoint
   /// @class Sprite
   /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPoint
   function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D): Boolean; overload;
+  
   /// @lib HasSpriteCollidedWithBitmapPart
   /// @class Sprite
   /// @overload HasSpriteCollidedWithBitmap HasCollidedWithBitmapPart
   function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
   
+  //---------------------------------------------------------------------------
+    
   /// @lib HasBitmapCollidedWithRectWithBounds
   /// @class Bitmap
   /// @overload HasCollidedWithRect HasCollidedWithRectWithBounds
   function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
+  
   /// @lib HasBitmapCollidedWithRectangleWithBounds
   /// @class Bitmap
   /// @overload HasCollidedWithRect HasCollisedWithRectangleWithBounds
   function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; const rect: Rectangle): Boolean; overload;
+  
   /// @lib HasBitmapCollidedWithRectWithBounds(image, x, y, False, rectX, rectY, rectWidth, rectHeight)
   /// @uname HasBitmapCollidedWithRect
   /// @class Bitmap
   /// @method HasCollidedWithRect
   function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
+  
   /// @lib HasBitmapCollidedWithRectangleWithBounds(image, x, y, False, rect)
   /// @uname HasBitmapCollidedWithRectangle
   /// @class Bitmap
   /// @overload HasCollidedWithRect HasCollidedWithRectangle
   function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
   
+  //---------------------------------------------------------------------------
+    
   /// @lib HaveBitmapsCollidedWithBounds(image1, x1, y1, False, image2, x2, y2, False)
   /// @uname HaveBitmapsCollided
   /// @class Bitmap
   /// @method HasCollidedWithBitmap
   function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; image2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  
   /// @lib HaveBitmapsAtPointsCollidedWithBounds(image1, pt1, False, image2, pt2, False)
   /// @uname HaveBitmapsAtPointsCollided
   /// @class Bitmap
   /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPoint
   function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; image2: Bitmap; const pt2: Point2D): Boolean; overload;
+  
   /// @lib HaveBitmapsCollidedWithBounds
   /// @class Bitmap
   /// @overload HasCollidedWithBitmap HasCollidedWithBitmapWithBounds
   function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; bounded1: Boolean; image2: Bitmap; x2, y2: LongInt; bounded2: Boolean): Boolean; overload;
+  
   /// @lib HaveBitmapsAtPointsCollidedWithBounds
   /// @class Bitmap
   /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPointWithBounds
   function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; bounded2: Boolean): Boolean; overload;
+  
   /// @lib HaveBitmapPartsCollidedWithBounds(image1, pt1, src1, False, image2, pt2, src2, False)
   /// @uname HaveBitmapPartsCollided
   /// @class Bitmap
   /// @overload HasCollidedWithBitmap HasPartCollidedWithBitmapPart
   function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; image2: Bitmap; const pt2: Point2D; const src2: Rectangle): Boolean; overload;
+  
   /// @lib HaveBitmapPartsCollidedWithBounds
   /// @class Bitmap
   /// @overload HasCollidedWithBitmap HasPartCollidedWithBitmapPartWithBounds
   function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; const src2: Rectangle; bounded2: Boolean): Boolean; overload;
   
+  //---------------------------------------------------------------------------
+    
   /// @lib
   /// @class Bitmap
   /// @method HasPartCollidedWithRect
   function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: LongInt; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean;
   
+  //---------------------------------------------------------------------------
+  
   /// @lib
   /// @class Sprite
   /// @method IsOnScreenAt
   function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): Boolean; overload;
+  
   /// @lib IsSpriteOnScreenAtPoint
   /// @class Sprite
   /// @overload IsOnScreenAt IsOnScreenAtPoint
   function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
   
+  //---------------------------------------------------------------------------
+
   /// @lib
   function CircleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean;
+  
   /// @lib SpriteRectangleHasCollidedWithLine
   function RectangleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean; overload;
+  
   /// @lib RectangleHasCollidedWithLine
   function RectangleHasCollidedWithLine(const rect: Rectangle; const line: LineSegment): Boolean; overload;
 
-  //*****
-  //
+
+
+  //---------------------------------------------------------------------------
   // Vector routines
   //
-  //*****
-  //
   // These routines are used to manipulate vectors in the API.
-  //
+  //---------------------------------------------------------------------------
   
+  /// Creates a new vector with values x and y. 
+  ///
+  /// @param x Initial x value for the vector
+  /// @param y Initial y value for the vector
+  /// @returns  A new vector with the specified x and y values
+  ///
   /// @lib CreateVector(x, y, False)
   /// @uname CreateVector
   function CreateVector(x,y : Single): Vector; overload;
   
+
+  /// Creates a new vector with the x and y values, and will invert y if 
+  /// specified as True. The inversion of the y value provides a convienient 
+  /// option for handling screen related vectors.
+  ///
+  /// @like CreateVector
+  /// @param invertY   Indicates if the y value should be inverted.
+  ///
   /// @lib
   /// @uname CreateVectorWithInvertY
   function CreateVector(x,y : Single; invertY : boolean): Vector; overload;
   
+  //---------------------------------------------------------------------------
+
   /// @lib
   function PointToVector(const p1: Point2D): Vector;
   /// @lib
   function VectorFromPoints(const p1, p2: Point2D): Vector;
   /// @lib
   function VectorFromCenterSpriteToPoint(fromSprt: Sprite; const pnt: Point2D): Vector;
-  
+
   /// @lib
   function LineAsVector(const line: lineSegment): Vector;
   /// @lib
   function GetVectorFromAngle(angle, magnitude: Single): Vector;
+  //TODO: REMOVE GET
+
+  //---------------------------------------------------------------------------
   
   /// @lib VectorFromPointToRect
   function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt) : Vector; overload;
+  
   /// @lib VectorFromPointToRectangle
   function VectorFromPointToRectangle(x, y: Single; const rect: Rectangle): Vector; overload;
+  
   /// @lib VectorFromPointPtToRectangle
   function VectorFromPointToRectangle(const pt: Point2D; const rect: Rectangle): Vector; overload;
   
+  //---------------------------------------------------------------------------
+
   /// @lib
   function VectorOutOfRectFromPoint(const pnt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
   
@@ -199,6 +262,8 @@ interface
   /// @lib
   function VectorOutOfCircleFromCircle(const pnt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
   
+  //---------------------------------------------------------------------------
+
   /// @lib
   function AddVectors(const v1, v2 : Vector): Vector;
   /// @lib
@@ -221,11 +286,15 @@ interface
   function IsZeroVector(const theVector : Vector): Boolean;
   /// @lib
   function Magnitude(const theVector : Vector): Single;
+
+  //---------------------------------------------------------------------------
   
   /// @lib
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
+  
   /// @lib CalculateAngleFromPoints
   function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
+  
   /// @lib CalculateAngleFromSprites
   /// @class Sprite
   /// @method AngleTo
@@ -233,17 +302,24 @@ interface
   
   /// @lib
   function CalculateAngleBetween(const v1, v2: Vector): Single; overload;
+
+
+  //---------------------------------------------------------------------------
+  // Matrix2D Operations
+  //---------------------------------------------------------------------------
   
   /// @lib
   /// @class Matrix2D
   /// @static
   /// @method TranslationMatrix
   function TranslationMatrix(dx, dy: Single): Matrix2D;
+  
   /// @lib
   /// @class Matrix2D
   /// @static
   /// @method ScaleMatrix
   function ScaleMatrix(scale: Single): Matrix2D;
+
   /// @lib
   /// @class Matrix2D
   /// @static
@@ -254,14 +330,19 @@ interface
   /// @class Matrix2D
   /// @method Multiply
   function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
+
   /// @lib MultiplyMatrixAndVector
   /// @class Matrix2D
   /// @overload Multiply MultiplyVector
   function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
+
   /// @lib MultiplyMatrixAndPoint
   /// @class Matrix2D
   /// @overload Multiply MultiplyPoint
   function Multiply(const m: Matrix2D; const v: Point2D): Point2D; overload;
+  
+  //---------------------------------------------------------------------------
+  
   
   /// @lib
   /// @class Sprite
@@ -281,8 +362,12 @@ interface
   procedure CircleCollisionWithLine(p1: Sprite; const line: LineSegment);
   /// @lib
   procedure CircularCollision(p1, p2: Sprite);
+
   
+//=============================================================================
 implementation
+//=============================================================================
+
   uses
     SysUtils, Math, Classes, SwinGameTrace;
     
@@ -297,13 +382,7 @@ implementation
               and image.nonTransparentPixels[x, y];
   end;
 
-  /// Creates a new vector with values x and y, possibly with an inverted y. The
-  /// inversion of the y value provides a convienient option for handling
-  /// screen related vectors.
-  ///
-  /// @param x, y     Initial values for the vector
-  /// @param invertY   Indicates if the y value should be inverted.
-  /// @returns         A new vector with values x and y
+
   function CreateVector(x, y: Single; invertY : boolean): Vector; overload;
   begin
     {$IFDEF TRACE}
@@ -321,10 +400,6 @@ implementation
     {$ENDIF}
   end;
 
-  /// Creates a new vector with values x and y.
-  ///
-  /// @param x, y     Initial values for the vector
-  /// @returns         A new vector with values x and y
   function CreateVector(x,y : Single): Vector; overload;
   begin
     result := CreateVector(x, y, false);
@@ -560,14 +635,6 @@ implementation
     result := HasBitmapCollidedWithRect(image, x, y, false, rect);
   end;
   
-  /// Determined if a sprite has collided with a given rectangle. The rectangles
-  /// coordinates are expressed in "world" coordinates.
-  ///
-  /// @param theSprite:     The sprite to check
-  /// @param x, y :         The x,y location of the rectangle
-  /// @param width, height: The width and height of the rectangle
-  ///
-  /// @returns               True if the sprite collides with the rectangle
   function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single; width, height : LongInt): Boolean; overload;
   var
     bmp1: Bitmap;
@@ -1575,5 +1642,6 @@ implementation
   begin
     result := VectorNormal(LineAsVector(line));
   end;
+  
 end.
 
