@@ -16,6 +16,8 @@ Suggestions:
 * - SpriteSpeed -> float
 * - SpriteHeading -> float (angle)
 * Change window title (forum)
+* Polygon type+drawing, matrix operations (translate + scale), collisions
+* Load resources from stream (eg. zip files of resources)
 
 ** New to Version 3 **
   General:
@@ -23,9 +25,10 @@ Suggestions:
   
   Audio:
   - Added ability to fade music in and out. FadeMusicIn, FadeMusicOut
-
+  
   Camera:
-  - added ToScreenCoordinates
+  - added ToScreen
+  - added CameraPos
   
 ** Changes to Version 2 **
   Audio changes:
@@ -55,10 +58,12 @@ Suggestions:
   
   Physics changes:
   - default bitmap/sprite collision now using pixel level collisions
+  - renamed GetUnitVector to UnitVector
   
   Camera changes:
   - renamed XOffset and YOffset methods to CameraX and CameraY respectively
   - renamed GameX and GameY method to WorldX and WorldY respectively
   - renamed MoveVisualArea (overloaded) methods to MoveCameraBy
   - renamed SetScreenOffset (overloaded) methods to MoveCameraTo
-  - renamed FollowSprite (overloaded) methods to CenterCameraOn 
+  - renamed FollowSprite (overloaded) methods to CenterCameraOn
+  - renamed ToWorldCoordinates and ToScreenCoordinates to ToWorld and ToScreen respectively 
