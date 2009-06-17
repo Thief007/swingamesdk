@@ -119,6 +119,20 @@ doLipo()
     rm -f "${TMP_DIR}/libSwinGame_${2}.a"
 }
 
+#
+# Copy header files to the out folder
+#
+doCopyHeaders()
+{
+    find ${C_LIB_FILES_DIR} -path \*.h -depth 1 ! -name \*SGSDK_Lib.h -exec cp {} ${OUT_DIR}/ \;
+}
+
+doCleanUp()
+{
+    rm ${C_LIB_FILES_DIR}/*.c
+    rm ${C_LIB_FILES_DIR}/*.h
+}
+
 while getopts ch o
 do
     case "$o" in
@@ -160,6 +174,10 @@ then
         doMacCompile "i386"
         
         doLipo "i386" "ppc"
+        
+        echo "  ... Copying headers"
+        doCopyHeaders
+        doCleanUp
     else
         echo "--------------------------------------------------"
         echo "          Creating SwinGame C Library"
@@ -174,6 +192,9 @@ then
         
         echo "  ... Compiling Library"
         doLinuxCompile
+        echo "  ... Copying headers"
+        doCopyHeaders
+        doCleanUp
     fi
 else
     CleanTmp
