@@ -59,6 +59,28 @@ Suggestions:
   Physics changes:
   - default bitmap/sprite collision now using pixel level collisions
   - renamed GetUnitVector to UnitVector
+  - renamed GetUnitVector to UnitVector
+  - renamed GetVectorFromAngle to VectorFromAngle
+  - renamed MultiplyVector to VectorMultiply
+  - renamed Multiply to MatrixMultiply
+  - renamed CalculateVectorFromTo to VectorFromTo
+  - renamed PointToVector to VectorFromPoint
+  - renamed CalculateAngleBetween to CalculateAngle
+  - renamed LimitMagnitude to LimitVector
+  - renamed VectorIsWithinRect to VectorInRect
+  - renamed RectangleHasCollidedWithLine to RectLineCollision
+  - renamed IsZeroVector to VectorIsZero
+  - renamed HasSpriteCollidedWithRect to SpriteRectCollision
+  - renamed HasSpriteCollidedWithBitmap to SpriteBitmapCollision
+  - renamed bounded (params) to bbox (or BBox in method)
+  - renamed HasBitmapCollidedWithRect with BitmapRectCollision
+  - renamed HasBitmapPartCollidedWithRect to BitmapPartRectCollision
+  - renamed VectorFromPointToRectangle to VectorFromPointToRect
+  - renamed CircleHasCollidedWithLine to CircleLineCollision
+  - renamed VectorCollision (was renamed to CircleCollision)
+  - renamed CircleCollisionWithLine to CollideCircleLine
+  - renamed CircularCollision to CollideCircles
+  - renamed Magnitude to VectorMagnitude
   
   Camera changes:
   - renamed XOffset and YOffset methods to CameraX and CameraY respectively
