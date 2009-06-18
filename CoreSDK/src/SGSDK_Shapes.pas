@@ -526,10 +526,10 @@ implementation
     invDenom, u, v: Single;
   begin
     //Convert Points to vectors
-    p := PointToVector(point);
-    a := PointToVector(theTriangle[0]);
-    b := PointToVector(theTriangle[1]);
-    c := PointToVector(theTriangle[2]);
+    p := VectorFromPoint(point);
+    a := VectorFromPoint(theTriangle[0]);
+    b := VectorFromPoint(theTriangle[1]);
+    c := VectorFromPoint(theTriangle[2]);
     
     // Compute vectors    
     v0 := SubtractVectors(c, a);
@@ -554,9 +554,9 @@ implementation
   
   procedure ApplyMatrix(const m: Matrix2D; var toTrangle: Triangle);
   begin
-    toTrangle[0] := Multiply(m, toTrangle[0]);
-    toTrangle[1] := Multiply(m, toTrangle[1]);
-    toTrangle[2] := Multiply(m, toTrangle[2]);
+    toTrangle[0] := MatrixMultiply(m, toTrangle[0]);
+    toTrangle[1] := MatrixMultiply(m, toTrangle[1]);
+    toTrangle[2] := MatrixMultiply(m, toTrangle[2]);
   end;
   
   function TriangleBarycenter(const aTriangle: Triangle): Point2D;
@@ -610,7 +610,7 @@ implementation
     temp: Vector;
   begin
     temp := CreateVector(pt2.x - pt1.x, pt2.y - pt1.y);
-    result := Magnitude(temp);
+    result := VectorMagnitude(temp);
   end;
 
   function GetLineIntersectionPoint(const line1, line2: LineSegment; out pnt: Point2D) : boolean;

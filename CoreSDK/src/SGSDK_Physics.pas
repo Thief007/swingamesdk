@@ -8,7 +8,36 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-06-17: Clinton: Comment cleanup (moved to interface) and new comments
+//                      : General parameter name cleanup/normalisation
+//                      : Renamed GetUnitVector to UnitVector
+//                      : Optimised LimitMagnitude (see renamed)
+//                      : Optimised VectorNormal
+//                      : Renamed GetVectorFromAngle to VectorFromAngle
+//                      : Renamed MultiplyVector to VectorMultiply
+//                      : Renamed Multiply to MatrixMultiply
+//                      : Renamed CalculateVectorFromTo to VectorFromTo
+//                      : Renamed PointToVector to VectorFromPoint
+//                      : Renamed CalculateAngleBetween to CalculateAngle
+//                      : Renamed LimitMagnitude to LimitVector
+//                      : Renamed VectorIsWithinRect to VectorInRect
+//                      : Renamed RectangleHasCollidedWithLine to RectLineCollision
+//                      : Renamed IsZeroVector to VectorIsZero
+//                      : Renamed HasSpriteCollidedWithRect to SpriteRectCollision
+//                      : Renamed HasSpriteCollidedWithBitmap to SpriteBitmapCollision
+//                      : Renamed bounded (params) to bbox (or BBox in method)
+//                      : Renamed HasBitmapCollidedWithRect with BitmapRectCollision
+//                      : Renamed HasBitmapPartCollidedWithRect to BitmapPartRectCollision
+//                      : Renamed VectorFromPointToRectangle to VectorFromPointToRect
+//                      : Renamed CircleHasCollidedWithLine to CircleLineCollision
+//                      : Removed VectorCollision (was renamed to CircleCollision)
+//                      : Renamed CircleCollisionWithLine to CollideCircleLine
+//                      : Renamed CircularCollision to CollideCircles
+//                      : Renamed Magnitude to VectorMagnitude
+//                      : Optimised VectorOutOfCircleFromPoint (slightly)
+// 
 // - 2009-06-15: Andrew: Added meta tags
+//
 // Version 2.0:
 // - 2008-12-10: Andrew: Moved types to Core
 //
@@ -40,24 +69,19 @@ interface
   uses
     SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
   
-  //---------------------------------------------------------------------------
-  // Collision detection routines
-  //
-  // These routines are used to detect collisions between sprites or bitmaps.
-  //---------------------------------------------------------------------------
   
+  //TODO:
   /// @lib
-  function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
-
-  // function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
-  // function HasSpriteCollidedY(theSprite: Sprite; y: Single; range: CollisionDetectionRange): Boolean;
-  
+  function HaveSpritesCollided(s1, s2: Sprite): Boolean;
+ 
+  //---------------------------------------------------------------------------
+  // Sprite <-> Rectangle Collision Detection
   //---------------------------------------------------------------------------
 
   /// Determined if a sprite has collided with a given rectangle. The rectangles
   /// coordinates are expressed in "world" coordinates.
   ///
-  /// @param theSprite The sprite to check
+  /// @param s The sprite to check
   /// @param x The x location of the rectangle
   /// @param y The y location of the rectangle
   /// @param width The width of the rectangle
@@ -66,227 +90,389 @@ interface
   ///
   /// @lib
   /// @class Sprite
-  /// @method HasCollidedWithRect
-  function HasSpriteCollidedWithRect(theSprite: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
+  /// @method RectCollision
+  function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
   
-  /// @lib HasSpriteCollidedWithRectangle
+  /// @lib SpriteRectCollision
   /// @class Sprite
-  /// @overload HasCollidedWithRect HasCollidedWithRectangle
-  function HasSpriteCollidedWithRect(theSprite: Sprite; const rect: Rectangle): Boolean; overload;
+  /// @overload RectCollision RectangleCollision
+  function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
   
   //---------------------------------------------------------------------------
-    
-  /// @lib HasSpriteCollidedWithBitmapWithBounds
+  // Sprite <-> Bitmap Collision Detection
+  //---------------------------------------------------------------------------
+
+  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``. 
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
+  /// pixel level testing is used.
+  ///
+  /// @lib SpriteBitmapBBoxCollision
   /// @class Sprite
-  /// @overload HasCollidedWithBitmap HasCollidedWithBitmapWithBounds
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: Boolean): Boolean; overload;
+  /// @overload BitmapCollision BitmapBBoxCollision
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
   
-  /// @lib HasSpriteCollidedWithBitmapAtPointWithBounds
+  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``. 
+  /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
+  /// pixel level testing is used.
+  ///
+  /// @lib SpriteBitmapAtPointBBoxCollision
   /// @class Sprite
-  /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPointWithBounds
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; bounded: Boolean): Boolean; overload;
+  /// @overload BitmapCollision BitmapAtPointBBoxCollision
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
   
-  /// @lib HasSpriteCollidedWithBitmapWithBounds(theSprite, theBitmap, x, y, False)
-  /// @uname HasSpriteCollidedWithBitmap
+  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
+  /// pixel level testing if required. 
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  ///
+  /// @lib SpriteBitmapBBoxCollision(s, bmp, x, y, False)
+  /// @uname SpriteBitmapCollision
   /// @class Sprite
-  /// @method HasCollidedWithBitmap
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
+  /// @method BitmapCollision
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
   
-  /// @lib HasSpriteCollidedWithBitmapAtPointWithBounds(theSprite, theBitmap, pt, False)
-  /// @uname HasSpriteCollidedWithBitmapAtPoint
+  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
+  /// pixel level testing if required. 
+  /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
+  ///
+  /// @lib SpriteBitmapAtPointBBoxCollision(s, bmp, pt, False)
+  /// @uname SpriteBitmapAtPointCollision
   /// @class Sprite
-  /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPoint
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D): Boolean; overload;
+  /// @overload BitmapCollision BitmapAtPointCollision
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
   
-  /// @lib HasSpriteCollidedWithBitmapPart
+  /// Determines if the `Sprite` ``s`` has collided with a part (``rect``) of 
+  /// the bitmap ``bmp`` using pixel level testing if required. 
+  /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// pixel level testing is used.
+  ///
+  /// @lib SpriteBitmapPartCollision
   /// @class Sprite
-  /// @overload HasSpriteCollidedWithBitmap HasCollidedWithBitmapPart
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
+  /// @overload BitmapCollision BitmapPartCollision
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle; bbox: Boolean): Boolean; overload;
   
   //---------------------------------------------------------------------------
-    
-  /// @lib HasBitmapCollidedWithRectWithBounds
-  /// @class Bitmap
-  /// @overload HasCollidedWithRect HasCollidedWithRectWithBounds
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-  
-  /// @lib HasBitmapCollidedWithRectangleWithBounds
-  /// @class Bitmap
-  /// @overload HasCollidedWithRect HasCollisedWithRectangleWithBounds
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; const rect: Rectangle): Boolean; overload;
-  
-  /// @lib HasBitmapCollidedWithRectWithBounds(image, x, y, False, rectX, rectY, rectWidth, rectHeight)
-  /// @uname HasBitmapCollidedWithRect
-  /// @class Bitmap
-  /// @method HasCollidedWithRect
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-  
-  /// @lib HasBitmapCollidedWithRectangleWithBounds(image, x, y, False, rect)
-  /// @uname HasBitmapCollidedWithRectangle
-  /// @class Bitmap
-  /// @overload HasCollidedWithRect HasCollidedWithRectangle
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
-  
+  // Bitmap <-> Rectangle Collision Tests
   //---------------------------------------------------------------------------
     
-  /// @lib HaveBitmapsCollidedWithBounds(image1, x1, y1, False, image2, x2, y2, False)
-  /// @uname HaveBitmapsCollided
+  /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The rectangles world position (``rectX`` and ``rectY``) and size 
+  /// (``rectWidth`` and ``rectHeight``) need to be provided.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// pixel level testing is used.
+  ///
+  /// @lib BitmapRectBBoxCollision
   /// @class Bitmap
-  /// @method HasCollidedWithBitmap
-  function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; image2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  /// @overload RectCollision RectBBoxCollision
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
   
-  /// @lib HaveBitmapsAtPointsCollidedWithBounds(image1, pt1, False, image2, pt2, False)
-  /// @uname HaveBitmapsAtPointsCollided
+  /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The rectangle ``rect`` needs to be provided (in world coordinates).
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// pixel level testing is used.
+  ///
+  /// @lib BitmapRectangleBBoxCollision
   /// @class Bitmap
-  /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPoint
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; image2: Bitmap; const pt2: Point2D): Boolean; overload;
+  /// @overload RectCollision RectangleBBoxCollision
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload;
   
-  /// @lib HaveBitmapsCollidedWithBounds
+  /// Returns True if the bitmap ``bmp`` has collided with the rectangle 
+  /// specified using pixel level testing if required.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The rectangles world position (``rectX`` and ``rectY``) and size 
+  /// (``rectWidth`` and ``rectHeight``) need to be provided.
+  ///
+  /// @lib BitmapRectBBoxCollision(bmp, x, y, False, rectX, rectY, rectWidth, rectHeight)
+  /// @uname BitmapRectCollision
   /// @class Bitmap
-  /// @overload HasCollidedWithBitmap HasCollidedWithBitmapWithBounds
-  function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; bounded1: Boolean; image2: Bitmap; x2, y2: LongInt; bounded2: Boolean): Boolean; overload;
+  /// @method RectCollision
+  function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
   
-  /// @lib HaveBitmapsAtPointsCollidedWithBounds
+  /// Returns True if the bitmap ``bmp`` has collided with the rectangle 
+  /// specified using pixel level testing if required.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The rectangle ``rect`` needs to be provided in world coordinates.
+  ///
+  /// @lib BitmapRectangleBBoxCollision(bmp, x, y, False, rect)
+  /// @uname BitmapRectangleCollision
   /// @class Bitmap
-  /// @overload HasCollidedWithBitmap HasCollidedWithBitmapAtPointWithBounds
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; bounded2: Boolean): Boolean; overload;
-  
-  /// @lib HaveBitmapPartsCollidedWithBounds(image1, pt1, src1, False, image2, pt2, src2, False)
-  /// @uname HaveBitmapPartsCollided
-  /// @class Bitmap
-  /// @overload HasCollidedWithBitmap HasPartCollidedWithBitmapPart
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; image2: Bitmap; const pt2: Point2D; const src2: Rectangle): Boolean; overload;
-  
-  /// @lib HaveBitmapPartsCollidedWithBounds
-  /// @class Bitmap
-  /// @overload HasCollidedWithBitmap HasPartCollidedWithBitmapPartWithBounds
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; const src2: Rectangle; bounded2: Boolean): Boolean; overload;
-  
-  //---------------------------------------------------------------------------
+  /// @overload RectCollision RectangleCollision
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
     
+  /// Returns True if a ``part`` (rectangle) of the bitmap ``bmp`` has collided 
+  /// with the rectangle (``rect``) specified.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The rectangle ``rect`` needs to be provided in world coordinates.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// pixel level testing is used.
+  ///
   /// @lib
   /// @class Bitmap
-  /// @method HasPartCollidedWithRect
-  function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: LongInt; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean;
+  /// @method PartRectCollision
+  function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
   
   //---------------------------------------------------------------------------
+  // Bitmap <-> Bitmap Collision Tests
+  //---------------------------------------------------------------------------
   
+  /// Returns True if two bitmaps have collided using per pixel testing if required. 
+  /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  ///
+  /// @lib BitmapsBBoxCollided(bmp1, x1, y1, False, bmp2, x2, y2, False)
+  /// @uname BitmapsCollided
+  /// @class Bitmap
+  /// @method BitmapCollision
+  function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  
+  /// Returns True if two bitmaps have collided using per pixel testing if required. 
+  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  ///
+  /// @lib BitmapsBBoxAtPointsCollided(bmp1, pt1, False, bmp2, pt2, False)
+  /// @uname BitmapsAtPointsCollided
+  /// @class Bitmap
+  /// @overload BitmapCollision BitmapAtPointCollision
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
+  
+  /// Returns True if two bitmaps have collided. 
+  /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
+  /// used, otherwise a longer per pixel check is used (if required) in the collision region. 
+  ///
+  /// @lib BitmapsBBoxCollided
+  /// @class Bitmap
+  /// @overload BitmapCollision BitmapBBoxCollision
+  function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
+  
+  /// Returns True if two bitmaps have collided using per pixel testing if required. 
+  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
+  /// used, otherwise a longer per pixel check is used (if required) in the collision region. 
+  ///
+  /// @lib BitmapsAtPointsBBoxCollided
+  /// @class Bitmap
+  /// @overload BitmapCollision BitmapAtPointsBBoxCollision
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; bbox2: Boolean): Boolean; overload;
+  
+  /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) of the two 
+  /// bitmaps (``bmp1`` and ``bmpt2``) have collided, using pixel level collision if required. 
+  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  ///
+  /// @lib BitmapsAtPointsBBoxCollided(bmp1, pt1, part1, False, bmp2, pt2, part2, False)
+  /// @uname BitmapPartsCollided
+  /// @class Bitmap
+  /// @overload BitmapCollision BitmapPartCollision
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
+  
+  /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) 
+  /// of the two bitmaps (``bmp1`` and ``bmpt2``) have collided. 
+  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps. 
+  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
+  /// used, otherwise a slower per pixel test is used (if required) in the collision region. 
+  ///
+  /// @lib BitmapsPartsBBoxCollided
+  /// @class Bitmap
+  /// @overload BitmapCollision BitmapPartsBBoxCollision
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
+  
+  
+  //---------------------------------------------------------------------------
+  // Sprite Screen Position Tests 
+  //---------------------------------------------------------------------------
+  
+  /// Returns True if a pixel of the `Sprite` ``s`` is at the world location
+  /// specified (``x`` and ``y``).
+  ///
   /// @lib
   /// @class Sprite
   /// @method IsOnScreenAt
-  function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): Boolean; overload;
+  function IsSpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
   
+  /// Returns True if a pixel of the `Sprite` ``s`` is at the world location
+  /// specified (``pt``).
+  ///
   /// @lib IsSpriteOnScreenAtPoint
   /// @class Sprite
   /// @overload IsOnScreenAt IsOnScreenAtPoint
-  function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
+  function IsSpriteOnScreenAt(s: Sprite; const pt: Point2D): Boolean; overload;
   
   //---------------------------------------------------------------------------
 
-  /// @lib
-  function CircleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean;
-  
-  /// @lib SpriteRectangleHasCollidedWithLine
-  function RectangleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean; overload;
-  
-  /// @lib RectangleHasCollidedWithLine
-  function RectangleHasCollidedWithLine(const rect: Rectangle; const line: LineSegment): Boolean; overload;
-
-
-
-  //---------------------------------------------------------------------------
-  // Vector routines
-  //
-  // These routines are used to manipulate vectors in the API.
-  //---------------------------------------------------------------------------
-  
-  /// Creates a new vector with values x and y. 
+  /// Returns True if the `Sprite` ``s``, represented by a bounding circle, has 
+  /// collided with a ``line``. The diameter for the bounding circle is 
+  /// based on the sprites width or height value -- whatever is largest.
   ///
-  /// @param x Initial x value for the vector
-  /// @param y Initial y value for the vector
-  /// @returns  A new vector with the specified x and y values
+  /// @lib SpriteRectLineCollision
+  function CircleLineCollision(p1: Sprite; const line: LineSegment): Boolean;
+  
+  /// Returns True if the bounding rectangle of the `Sprite` ``s`` has collided 
+  /// with the ``line`` specified.
+  ///
+  /// @lib SpriteRectLineCollision
+  function RectLineCollision(p1: Sprite; const line: LineSegment): Boolean; overload;
+  
+  /// Returns True if the rectangle ``rect`` provided has collided with the 
+  /// ``line``.
+  ///
+  /// @lib RectLineCollision
+  function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
+
+
+  //---------------------------------------------------------------------------
+  // Vector Creation and Operations
+  //---------------------------------------------------------------------------
+  
+  /// Returns a new `Vector` using the ``x`` and ``y`` values provided. 
   ///
   /// @lib CreateVector(x, y, False)
   /// @uname CreateVector
-  function CreateVector(x,y : Single): Vector; overload;
+  function CreateVector(x, y: Single): Vector; overload;
   
-
-  /// Creates a new vector with the x and y values, and will invert y if 
-  /// specified as True. The inversion of the y value provides a convienient 
-  /// option for handling screen related vectors.
-  ///
-  /// @like CreateVector
-  /// @param invertY   Indicates if the y value should be inverted.
+  
+  /// Creates a new `Vector` with the ``x`` and ``y`` values provided, and will 
+  /// invert the ``y`` value if the `invertY`` parameter is True. The inversion 
+  /// of the ``y`` value provides a convienient option for handling screen 
+  /// related vectors.
   ///
   /// @lib
   /// @uname CreateVectorWithInvertY
-  function CreateVector(x,y : Single; invertY : boolean): Vector; overload;
+  function CreateVector(x, y: Single; invertY: boolean): Vector; overload;
   
-  //---------------------------------------------------------------------------
-
+  /// Adds the two parameter vectors (``v1`` and ``v2``) together and returns 
+  /// the result as a new `Vector`.
+  ///
   /// @lib
-  function PointToVector(const p1: Point2D): Vector;
-  /// @lib
-  function VectorFromPoints(const p1, p2: Point2D): Vector;
-  /// @lib
-  function VectorFromCenterSpriteToPoint(fromSprt: Sprite; const pnt: Point2D): Vector;
-
-  /// @lib
-  function LineAsVector(const line: lineSegment): Vector;
-  /// @lib
-  function GetVectorFromAngle(angle, magnitude: Single): Vector;
-  //TODO: REMOVE GET
-
-  //---------------------------------------------------------------------------
+  function AddVectors(const v1, v2: Vector): Vector;
   
-  /// @lib VectorFromPointToRect
-  function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt) : Vector; overload;
-  
-  /// @lib VectorFromPointToRectangle
-  function VectorFromPointToRectangle(x, y: Single; const rect: Rectangle): Vector; overload;
-  
-  /// @lib VectorFromPointPtToRectangle
-  function VectorFromPointToRectangle(const pt: Point2D; const rect: Rectangle): Vector; overload;
-  
-  //---------------------------------------------------------------------------
-
+  /// Subtracts the second vector parameter (``v2``) from the first vector 
+  /// (``v1``) and returns the result as new `Vector`.
+  ///
   /// @lib
-  function VectorOutOfRectFromPoint(const pnt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
+  function SubtractVectors(const v1, v2: Vector): Vector;
   
+  /// Multiplies each component (``x`` and ``y`` values) of the ``v1`` vector 
+  /// by the ``s`` scalar value and returns the result as a new `Vector`.
+  /// 
   /// @lib
-  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector) : Vector;  
+  function VectorMultiply(const v: Vector; s: Single): Vector;
   
-  /// @lib
-  function VectorOutOfCircleFromPoint(const pnt, center: Point2D; radius: Single; const movement: Vector): Vector;
-  
-  /// @lib
-  function VectorOutOfCircleFromCircle(const pnt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
-  
-  //---------------------------------------------------------------------------
-
-  /// @lib
-  function AddVectors(const v1, v2 : Vector): Vector;
-  /// @lib
-  function SubtractVectors(const v1, v2 : Vector): Vector;
-  /// @lib
-  function MultiplyVector(const v1: Vector; s1: Single): Vector;
+  /// Calculates the dot product (scalar product) between the two vector 
+  /// parameters  rovided (``v1`` and ``v2``). It returns the result as a 
+  /// scalar value.
+  ///
+  /// If the result is 0.0 it means that the vectors are orthogonal (at right
+  /// angles to each other). If ``v1`` and ``v2`` are unit vectors (length of 
+  /// 1.0) and the dot product is 1.0, it means that ``v1`` and ``v2`` vectors 
+  /// are parallel.
+  ///
   /// @lib
   function DotProduct(const v1, v2: Vector): Single;
+  
+  /// Returns a new `Vector` that is perpendicular ("normal") to the parameter
+  /// vector ``v`` provided. The concept of a "normal" vector is usually 
+  /// extracted from (or associated with) a line. See `LineNormal`. 
+  ///
   /// @lib
-  function VectorNormal(const vect: Vector): Vector;
+  function VectorNormal(const v: Vector): Vector;
+  
+  /// Returns a unit vector (lenght is 1.0) that is "normal" (prependicular) to
+  /// the ``line`` parameter. A normal vector is useful for calculating the
+  /// result of a collision such as sprites bouncing off walls (lines).
   /// @lib
   function LineNormal(const line: LineSegment): Vector;
+  
+  /// Returns a new Vector that is an inverted version of the parameter 
+  /// vector (v). In other words, the -/+ sign of the x and y values are changed.
+  ///
   /// @lib
-  function InvertVector(const v : Vector): Vector;
+  function InvertVector(const v: Vector): Vector;
+  
+  /// Returns a new `Vector` that is a based on the parameter `v` however
+  /// its magnitude (length) will be limited (truncated) if it exceeds the 
+  /// specified limit value.
+  ///
   /// @lib
-  function LimitMagnitude(const theVector: Vector; maxMagnitude: Single): Vector;
-  /// @lib
-  function GetUnitVector(const theVector : Vector): Vector;
-  /// @lib
-  function IsZeroVector(const theVector : Vector): Boolean;
-  /// @lib
-  function Magnitude(const theVector : Vector): Single;
+  function LimitVector(const v: Vector; limit: Single): Vector;
 
+  /// Returns the unit vector of the parameter vector (v). The unit vector has a
+  /// magnitude of 1, resulting in a vector that indicates the direction of
+  /// the original vector.
+  ///
+  /// @lib
+  function UnitVector(const v: Vector): Vector;
+
+  /// Test to see if the ``x`` and ``y`` components of the provided vector 
+  /// parameter ``v`` are zero. 
+  /// 
+  /// @lib
+  function VectorIsZero(const v: Vector): Boolean;
+
+  /// Returns the magnitude (or "length") of the parameter vector (v) as a 
+  /// scalar value.
+  ///
+  /// @lib
+  function VectorMagnitude(const v: Vector): Single;
+  
+  /// Returns a new `Vector` created using the angle and magnitude (length). 
+  /// The angle and magnitude are scalar values and the angle is in degrees.
+  ///
+  /// @lib
+  function VectorFromAngle(angle, magnitude: Single): Vector;
+  
+  /// Returns a new `Vector` using the x and y value of a Point2D parameter.
+  ///
+  /// @lib
+  function VectorFromPoint(const p1: Point2D): Vector;
+  
+  /// Returns a `Vector` created from the difference from the ``p1`` to 
+  /// the second ``p2`` points (`Point2D`).
+  ///
+  /// @lib
+  function VectorFromPoints(const p1, p2: Point2D): Vector;
+  
+  /// Returns a `Vector` that is the difference in the position of two sprites 
+  /// (``s1`` and ``s2``). 
+  ///
+  /// @lib
+  /// @class Sprite
+  /// @method VectorTo
+  function VectorFromTo(s1, s2: Sprite): Vector;
+  
+  /// Returns a `Vector` that is the difference in location from the center of
+  /// the sprite ``s`` to the point ``pt``.
+  ///
+  /// @lib
+  function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
+  
+  /// Returns a new `Vector` created from the start and end points of a 
+  /// `lineSegment`. Useful for calculating angle vectors or extracting a 
+  /// normal vector (see `LineNormal`) for the line.
+  ///
+  /// @lib
+  function LineAsVector(const line: lineSegment): Vector;
+  
+
+
+
+  //---------------------------------------------------------------------------
+  
+  //TODO: are these really "point" in rect test?
+  
+  /// Return true if the vector (used as a point) is within the rectangle
+  /// @lib
+  function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
+
+  /// @lib VectorInRectangle
+  function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
+  
+  /// @lib
+  function GetSideForCollisionTest(const movement: Vector): CollisionSide;
+
+  //---------------------------------------------------------------------------
+  // Angle Calculation 
   //---------------------------------------------------------------------------
   
   /// @lib
@@ -298,14 +484,46 @@ interface
   /// @lib CalculateAngleFromSprites
   /// @class Sprite
   /// @method AngleTo
-  function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
+  function CalculateAngle(s1, s2: Sprite): Single; overload;
   
-  /// @lib
-  function CalculateAngleBetween(const v1, v2: Vector): Single; overload;
+  /// @lib CalculateAngleFromVectors
+  function CalculateAngle(const v1, v2: Vector): Single; overload;
+  
 
 
   //---------------------------------------------------------------------------
-  // Matrix2D Operations
+  
+  /// @lib VectorFromPointToRect
+  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
+  
+  /// @lib VectorFromPointToRect
+  function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
+  
+  /// @lib VectorFromPointPtToRectangle
+  function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
+  
+  //---------------------------------------------------------------------------
+
+  /// Determines the vector needed to move from x, y out of rectangle assuming movement specified
+  /// @lib
+  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
+  
+  /// @lib
+  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
+  
+  /// @lib
+  function VectorOutOfCircleFromPoint(const pt, center: Point2D; radius: Single; const movement: Vector): Vector;
+  
+  /// @lib
+  function VectorOutOfCircleFromCircle(const pt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
+  
+  //---------------------------------------------------------------------------
+
+
+
+  
+  //---------------------------------------------------------------------------
+  // Matrix2D Creation and Operations
   //---------------------------------------------------------------------------
   
   /// @lib
@@ -326,43 +544,44 @@ interface
   /// @method RotationMatrix
   function RotationMatrix(deg: Single): Matrix2D;
   
+  /// Multiplies the two `Matrix2D` parameters, ``m1`` by ``m2``, and returns
+  /// the result as a new `Matrix2D`. Use this to combine the effects to two 
+  /// matrix transformations.
+  ///
   /// @lib
   /// @class Matrix2D
   /// @method Multiply
-  function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
+  function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
 
-  /// @lib MultiplyMatrixAndVector
+  /// Multiplies the `Vector` parameter ``v`` with the `Matrix2D` ``m`` and 
+  /// returns the result as a `Vector`. Use this to transform the vector with 
+  /// the matrix (to apply scaling, rotation or translation effects).
+  ///
+  /// @lib MatrixMultiplyVector
   /// @class Matrix2D
   /// @overload Multiply MultiplyVector
-  function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
+  function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
 
-  /// @lib MultiplyMatrixAndPoint
+  /// Multiplies the Point2D parameter `pt` with the Matrix2D `m` and returns 
+  /// the result as a `Point2D`. Use this to transform the point with the 
+  /// matrix (to apply scaling, rotation or translation effects).
+  ///
+  /// @lib MatrixMultiplyPoint
   /// @class Matrix2D
   /// @overload Multiply MultiplyPoint
-  function Multiply(const m: Matrix2D; const v: Point2D): Point2D; overload;
+  function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
   
   //---------------------------------------------------------------------------
-  
-  
-  /// @lib
-  /// @class Sprite
-  /// @method VectorTo
-  function CalculateVectorFromTo(obj, dest: Sprite): Vector;
+  // Collision Effect Application ( angle + energy/mass transfer)
+  //---------------------------------------------------------------------------
   
   /// @lib
-  function VectorIsWithinRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
-  /// @lib VectorIsWithinRectangle
-  function VectorIsWithinRect(const v: Vector; const rect: Rectangle): Boolean; overload;
-  
+  procedure CollideCircleLine(p1: Sprite; const line: LineSegment);
   /// @lib
-  function GetSideForCollisionTest(const movement: Vector): CollisionSide;
-  /// @lib
-  procedure VectorCollision(p1, p2: Sprite);
-  /// @lib
-  procedure CircleCollisionWithLine(p1: Sprite; const line: LineSegment);
-  /// @lib
-  procedure CircularCollision(p1, p2: Sprite);
+  procedure CollideCircles(p1, p2: Sprite);
 
+  
+  
   
 //=============================================================================
 implementation
@@ -374,16 +593,16 @@ implementation
   const 
     DEG_TO_RAD = 0.0174532925;
 
-  function IsPixelDrawnAtPoint(image: Bitmap; x, y: LongInt) : Boolean;
+  function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
   begin
-    result := (Length(image.nonTransparentPixels) = image.width)
-              and ((x >= 0) and (x < image.width))
-              and ((y >= 0) and (y < image.height))
-              and image.nonTransparentPixels[x, y];
+    result := (Length(bmp.nonTransparentPixels) = bmp.width)
+              and ((x >= 0) and (x < bmp.width))
+              and ((y >= 0) and (y < bmp.height))
+              and bmp.nonTransparentPixels[x, y];
   end;
 
 
-  function CreateVector(x, y: Single; invertY : boolean): Vector; overload;
+  function CreateVector(x, y: Single; invertY: boolean): Vector; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('SGSDK_Physics', 'CreateVector');
@@ -400,12 +619,12 @@ implementation
     {$ENDIF}
   end;
 
-  function CreateVector(x,y : Single): Vector; overload;
+  function CreateVector(x, y: Single): Vector; overload;
   begin
     result := CreateVector(x, y, false);
   end;
 
-  function PointToVector(const p1: Point2D): Vector;
+  function VectorFromPoint(const p1: Point2D): Vector;
   begin
     result := CreateVector(p1.x, p1.y);
   end;
@@ -415,171 +634,141 @@ implementation
     result := CreateVector(p2.x - p1.x, p2.y - p1.y, false);
   end;
   
-  function VectorFromCenterSpriteToPoint(fromSprt: Sprite; const pnt: Point2D): Vector;
+  function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
   begin
-    result := VectorFromPoints(CenterPoint(fromSprt), pnt);   
+    result := VectorFromPoints(CenterPoint(s), pt);   
   end;
-
-  /// Adds v1 and v2.
-  ///
-  /// @param v1, v2     The vectors to work with
-  /// @returns        v1 + v2
-  function AddVectors(const v1, v2 : Vector): Vector;
+  
+  
+  //---------------------------------------------------------------------------
+  // Vector operations on Vectors (usally returning vectors)
+  //---------------------------------------------------------------------------
+  
+  function AddVectors(const v1, v2: Vector): Vector;
   begin
     result.x := v1.x + v2.x;
     result.y := v1.y + v2.y;
   end;
 
-  /// Subtracts v2 from v1 (i.e. v1 - v2).
-  ///
-  /// @param v1, v2     The vectors to work with
-  /// @returns        v1 - v2
-  function SubtractVectors(const v1, v2 : Vector): Vector;
+  function SubtractVectors(const v1, v2: Vector): Vector;
   begin
     result.x := v1.x - v2.x;
     result.y := v1.y - v2.y;
   end;
 
-  /// Inverts the vector v. Changes the direction of the vector's x and y.
-  ///
-  /// @param v     The vector to invert
-  /// @returns     A new inverted vector
-  function InvertVector(const v : Vector): Vector;
+  function VectorMultiply(const v: Vector; s: Single): Vector;
+  begin
+    result.x := v.x * s;
+    result.y := v.y * s;
+  end;
+
+  function InvertVector(const v: Vector): Vector;
   begin
     result.x := v.x * -1;
     result.y := v.y * -1;
   end;
-
-  /// Limit the magnitude of a vector.
-  ///
-  /// @param theVector:   The vector to limit
-  /// @param maxMagnitude:  The maximum magnitude of the vector.
-  /// @returns        A new vector with the same direction as theVector,
-  ///             with a maximum magnitude of maxMagnitude
-  function LimitMagnitude(const theVector: Vector; maxMagnitude: Single): Vector;
+  
+  function LimitVector(const v: Vector; limit: Single): Vector;
   var
     mag: Single;
+    tmp: Vector;
   begin
-    mag := Magnitude(theVector);
-
-    if mag > maxMagnitude then
-      result := Multiply(ScaleMatrix(maxMagnitude), GetUnitVector(theVector))
+    mag := VectorMagnitude(v);
+    if mag > limit then 
+    begin
+      tmp := UnitVector(v);
+      result.x := tmp.x * limit;
+      result.y := tmp.y * limit;
+      //result := VectorMultiply(UnitVector(v), limit);
+      //result := Multiply(ScaleMatrix(limit), GetUnitVector(v));
+    end
     else
-      result := theVector;
+      result := v;
   end;
-
-  /// Gets the unit vector of the passed in vector. The unit vector has a
-  /// magnitude of 1, resulting in a vector that indicates the direction of
-  /// the original vector.
-  ///
-  /// @param theVector     The vector to get the unit vector of
-  /// @returns             The unit vector from the passed in vector
-  function GetUnitVector(const theVector : Vector): Vector;
+  
+  function UnitVector(const v: Vector): Vector;
   var
-    temp : Double;
-    vectorMagnitude : Single;
+    mag, tmp: Single; 
   begin
-    vectorMagnitude := Magnitude(theVector);
-
-    if vectorMagnitude = 0 then
-      temp := 0
+    mag := VectorMagnitude(v);
+    
+    if mag = 0 then
+      tmp := 0
     else
-      temp := 1 / vectorMagnitude; //Magnitude(theVector);
-
-    result.x := temp * theVector.x;
-    result.y := temp * theVector.y;
+      tmp := 1 / mag; //VectorMagnitude(v);
+    
+    result.x := tmp * v.x;
+    result.y := tmp * v.y;
   end;
-
-  /// Indicates if the magnitude of the vector is 0.
-  ///
-  /// @param theVector      The vector to check
-  /// @returns          True if the vector has values 0, 0
-  function IsZeroVector(const theVector : Vector): Boolean;
+  
+  function VectorIsZero(const v: Vector): Boolean;
   begin
-    result := (theVector.x = 0) and (theVector.y = 0);
+    result := (v.x = 0) and (v.y = 0);
   end;
-
-  /// Returns the magnitude of a vector. The magnitude represents the length of
-  /// the vector.
-  ///
-  /// @param theVector      The vector to get the magnitude of
-  /// @returns          The magnitude of the vector
-  function Magnitude(const theVector : Vector): Single;
+  
+  function VectorMagnitude(const v: Vector): Single;
   begin
-    result := Sqrt((theVector.x * theVector.x) + (theVector.y * theVector.y));
+    result := Sqrt((v.x * v.x) + (v.y * v.y));
   end;
 
   function DotProduct(const v1, v2: Vector): Single;
   begin
     result := (v1.x * v2.x) + (v1.y * v2.y);
   end;
-
-  function MultiplyVector(const v1: Vector; s1: Single): Vector;
+  
+  function VectorFromTo(s1, s2: Sprite): Vector;
   begin
-    result.x := v1.x * s1;
-    result.y := v1.y * s1;
+    result := VectorFromPoints(CenterPoint(s1), CenterPoint(s2));
   end;
 
-  /// Determines if a sprite has collided with a given x position.
-  ///
-  /// @param theSprite:   The sprite to check
-  /// @param x:       The x location to check collision with
-  /// @param range:     The kind of check to perform less, larger or equal.
-  ///
-  /// @returns        True if the sprite is within the range requested
-  // function HasSpriteCollidedX(theSprite: Sprite; x: Single; range: CollisionDetectionRange): Boolean;
-  // begin
-  //  if range = CollisionRangeEquals then
-  //    result := (x >= theSprite.x) and 
-  //         (x <= theSprite.x + theSprite.width)
-  //  else if range = CollisionRangeGreaterThan then
-  //    result := x <= theSprite.x + 
-  //                     theSprite.width
-  //  else if range = CollisionRangeLessThan then
-  //    result := x >= theSprite.x
-  //  else
-  //    raise Exception.Create('Invalid Collision Range');
-  // end;
+  function VectorFromAngle(angle, magnitude: Single): Vector;
+  begin
+    result := CreateVector(magnitude * SGSDK_Core.Cos(angle), magnitude * SGSDK_Core.Sin(angle));
+  end;
 
-  /// Determines if a sprite has collided with a given y position. The x and y
-  /// values are in "world" coordinates.
-  ///
-  /// @param theSprite:   The sprite to check
-  /// @param y:       The y location to check collision with
-  /// @param range:     The kind of check to perform less, larger or equal.
-  ///
-  /// @returns        True if the sprite is within the range requested
-  // function HasSpriteCollidedY(theSprite: Sprite; y : Single; range : CollisionDetectionRange): Boolean;
-  // begin
-  //  if range = CollisionRangeEquals then
-  //    result := (y >= theSprite.y) and 
-  //        (y <= theSprite.y + theSprite.height)
-  //  else if range = CollisionRangeGreaterThan then
-  //    result := y <= theSprite.y + 
-  //                     theSprite.height
-  //  else if range = CollisionRangeLessThan then
-  //    result := y >= theSprite.y
-  //  else
-  //    raise Exception.Create('Invalid Collision Range');
-  // end;
+  function LineAsVector(const line: lineSegment): Vector;
+  begin
+    result.x := line.endPoint.x - line.startPoint.x;
+    result.y := line.endPoint.y - line.startPoint.y;
+  end;
 
-  function HasBitmapPartCollidedWithRect(image: Bitmap; x, y: LongInt; const srcRect: Rectangle; bounded: Boolean; const rect: Rectangle): Boolean;
+  function VectorNormal(const v: Vector): Vector;
+  var   
+    //sqrY, sqrX, 
+    tmp: Single;
+  begin
+    //sqrX := vect.x * vect.x;
+    //sqrY := vect.y * vect.y;
+    tmp := Sqrt( (v.x * v.x) + (v.y * v.y) );
+    result.x := -v.y / tmp; // -S2y / ::sqrt(S2y*S2y + S2x*S2x);
+    result.y :=  v.x / tmp; //  S2x / ::sqrt(S2y*S2y + S2x*S2x);
+  end;
+
+  function LineNormal(const line: LineSegment): Vector;
+  begin
+    result := VectorNormal(LineAsVector(line));
+  end;
+  
+  
+  //---------------------------------------------------------------------------
+
+  function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
   var
     i, j: LongInt;
     left1, right1, left2, right2, overRight, overLeft: LongInt;
     top1, bottom1, top2, bottom2, overTop, overBottom: LongInt;
     yPixel1, xPixel1: LongInt;
   begin
-    result := RectanglesIntersect(CreateRectangle(x, y, srcRect.width, srcRect.height), rect);
-    if  bounded or (not result) then exit;
+    result := RectanglesIntersect(CreateRectangle(x, y, part.width, part.height), rect);
+    if  bbox or (not result) then exit;
     
     //reset result
     result := false;
     
     left1 := x;
-    right1 := x + srcRect.width - 1;
+    right1 := x + part.width - 1;
     top1 := y;
-    bottom1 := y + srcRect.height - 1;
+    bottom1 := y + part.height - 1;
 
     left2 := Round(rect.x);
     right2 := Round(rect.x) + rect.width - 1;
@@ -600,13 +789,13 @@ implementation
 
     for i := overTop to overBottom do
     begin
-      yPixel1 := i - top1 + Round(srcRect.y);
+      yPixel1 := i - top1 + Round(part.y);
 
       for j := overLeft to overRight do
       begin
-        xPixel1 := j - left1 + Round(srcRect.x);
+        xPixel1 := j - left1 + Round(part.x);
 
-        if IsPixelDrawnAtPoint(image, xPixel1, yPixel1) then
+        if IsPixelDrawnAtPoint(bmp, xPixel1, yPixel1) then
         begin
           result := true;
           exit;
@@ -615,105 +804,106 @@ implementation
     end;    
   end;
 
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
   begin
-    result := HasBitmapPartCollidedWithRect(image, x, y, CreateRectangle(0, 0, image), bounded, rect);
+    result := BitmapPartRectCollision(bmp, x, y, CreateRectangle(0, 0, bmp), bbox, rect);
   end;
   
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; bounded: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
   begin
-    result := HasBitmapCollidedWithRect(image, x, y, bounded, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+    result := BitmapRectCollision(bmp, x, y, bbox, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
   end;
 
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
+  function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
   begin
-    result := HasBitmapCollidedWithRect(image, x, y, false, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+    result := BitmapRectCollision(bmp, x, y, false, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
   end;
 
-  function HasBitmapCollidedWithRect(image: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
   begin
-    result := HasBitmapCollidedWithRect(image, x, y, false, rect);
+    result := BitmapRectCollision(bmp, x, y, false, rect);
   end;
   
-  function HasSpriteCollidedWithRect(theSprite : Sprite; x, y : Single; width, height : LongInt): Boolean; overload;
+  function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
   var
-    bmp1: Bitmap;
+    bmp: Bitmap;
     offX1, offY1: LongInt;
   begin
-    if theSprite = nil then raise Exception.Create('The specified sprite is nil');
+    if s = nil then raise Exception.Create('The specified sprite is nil');
     
     if (width < 1) or (height < 1) then 
       raise Exception.Create('Rectangle width and height must be greater then 0');
     
-    if theSprite.y + CurrentHeight(theSprite) <= y then result := false
-    else if theSprite.y >= y + height then result := false
-    else if theSprite.x + CurrentWidth(theSprite) <= x then result := false
-    else if theSprite.x >= x + width then result := false
+    if s.y + CurrentHeight(s) <= y then result := false
+    else if s.y >= y + height then result := false
+    else if s.x + CurrentWidth(s) <= x then result := false
+    else if s.x >= x + width then result := false
     else
     begin
-      if not theSprite.usePixelCollision then result := true
+      if not s.usePixelCollision then result := true
       else
       begin
-        if theSprite.spriteKind = AnimMultiSprite then
+        if s.spriteKind = AnimMultiSprite then
         begin
-          offX1 := (theSprite.currentFrame mod theSprite.cols) * theSprite.width;
-          offY1 := (theSprite.currentFrame - (theSprite.currentFrame mod theSprite.cols)) div theSprite.cols * theSprite.height;
-          bmp1 := theSprite.bitmaps[0];
+          offX1 := (s.currentFrame mod s.cols) * s.width;
+          offY1 := (s.currentFrame - (s.currentFrame mod s.cols)) div s.cols * s.height;
+          bmp := s.bitmaps[0];
         end
         else
         begin
-          bmp1 := theSprite.bitmaps[theSprite.currentFrame];
+          bmp := s.bitmaps[s.currentFrame];
           offX1 := 0;
           offY1 := 0;
         end;
-        result := HasBitmapPartCollidedWithRect(bmp1, Round(theSprite.x), Round(theSprite.y), 
-          CreateRectangle(offX1, offY1, theSprite.width, theSprite.height), 
-          theSprite.usePixelCollision = false, CreateRectangle(x, y, width, height));
+        result := BitmapPartRectCollision(
+                    bmp, Round(s.x), Round(s.y), 
+                    CreateRectangle(offX1, offY1, s.width, s.height), 
+                    s.usePixelCollision = false, CreateRectangle(x, y, width, height));
       end;
     end;
   end;
 
-  function HasSpriteCollidedWithRect(theSprite: Sprite; const rect: Rectangle): Boolean; overload;
+  function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithRect(theSprite, rect.x, rect.y, rect.width, rect.height);
+    result := SpriteRectCollision(s, rect.x, rect.y, rect.width, rect.height);
   end;
   
-  function IsSpriteOnScreenAt(theSprite: Sprite; x, y: LongInt): Boolean; overload;
+  function IsSpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithRect(theSprite, WorldX(x), WorldY(y), 1, 1);
+    result := SpriteRectCollision(s, ToWorldX(x), ToWorldY(y), 1, 1);
   end;
   
-  function IsSpriteOnScreenAt(theSprite: Sprite; const pt: Point2D): Boolean; overload;
+  function IsSpriteOnScreenAt(s: Sprite; const pt: Point2D): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithRect(theSprite, WorldX(Round(pt.x)), WorldY(Round(pt.y)), 1, 1);
+    result := SpriteRectCollision(s, ToWorldX(Round(pt.x)), ToWorldY(Round(pt.y)), 1, 1);
   end;
   
   /// Performs a collision detection within two bitmaps at the given x, y
-  /// locations. The bounded values indicate if each bitmap should use per
-  /// pixel collision detection or a bounded collision detection. This version
+  /// locations. The bbox values indicate if each bitmap should use per
+  /// pixel collision detection or a bbox collision detection. This version
   /// uses pixel based checking at all times.
   ///
-  /// When both bitmaps are using bounded collision the routine checks to see
-  /// if the bitmap rectangles intersect. If one is bounded and the other is
+  /// When both bitmaps are using bbox collision the routine checks to see
+  /// if the bitmap rectangles intersect. If one is bbox and the other is
   /// pixel based the routine checks to see if a non-transparent pixel in the
-  /// pixel based image intersects with the bounds of the bounded image. If
+  /// pixel based image intersects with the bounds of the bbox image. If
   /// both are pixel based, the routine checks to see if two non-transparent
   /// pixels collide.
   ///
   /// Note: Bitmaps do not need to actually be drawn on the screen.
   ///
-  /// @param image1, image2: The bitmap images to check for collision
-  /// @param x1, y1:        The x,y location of image 1
-  /// @param bounded1:      Indicates if image1 should use bounded collision
-  /// @param x2, y2:        The x,y location of image 2
-  /// @param bounded2:      Indicates if image2 should use bounded collision
+  /// @param bmp1, bmp2: The bitmap images to check for collision
+  /// @param x1, y1:        The x,y location of bmp 1
+  /// @param bbox1:      Indicates if bmp1 should use bbox collision
+  /// @param x2, y2:        The x,y location of bmp 2
+  /// @param bbox2:      Indicates if bmp2 should use bbox collision
   ///
   /// @returns          True if the bitmaps collide.
   /// 
   function CollisionWithinBitmapImages(
-             image1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: LongInt; bounded1: Boolean;
-         image2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: LongInt; bounded2: Boolean
-      ) : Boolean; overload;
+             bmp1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: LongInt; bbox1: Boolean;
+             bmp2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: LongInt; bbox2: Boolean
+           ): Boolean; overload;
   var
     left1, left2, overLeft: LongInt;
     right1, right2, overRight: LongInt;
@@ -721,7 +911,7 @@ implementation
     bottom1, bottom2, overBottom: LongInt;
     i, j, xPixel1, yPixel1, xPixel2, yPixel2: LongInt;
   begin
-    if (image1 = nil) or (image2 = nil) then
+    if (bmp1 = nil) or (bmp2 = nil) then
       raise Exception.Create('One or both of the specified bitmaps are nil');
     
     if (w1 < 1) or (h1 < 1) or (w2 < 1) or (h2 < 1) then
@@ -761,8 +951,8 @@ implementation
         xPixel1 := j - left1 + offsetX1;
         xPixel2 := j - left2 + offsetX2;
 
-        if (bounded1 or IsPixelDrawnAtPoint(image1, xPixel1, yPixel1))
-           AND (bounded2 or IsPixelDrawnAtPoint(image2, xPixel2, yPixel2)) then
+        if (bbox1 or IsPixelDrawnAtPoint(bmp1, xPixel1, yPixel1))
+           AND (bbox2 or IsPixelDrawnAtPoint(bmp2, xPixel2, yPixel2)) then
         begin
           result := true;
           exit;
@@ -771,154 +961,133 @@ implementation
     end;
   end;
 
-  function CollisionWithinBitmapImages(
-        image1: Bitmap; x1, y1: LongInt; bounded1: Boolean;
-        image2: Bitmap; x2, y2: LongInt; bounded2: Boolean)
-        : Boolean; overload;
+  function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
   begin
-    result := CollisionWithinBitmapImages(image1, x1, y1, image1.width, image1.height, 0, 0, bounded1, 
-                        image2, x2, y2, image2.width, image2.height, 0, 0, bounded2);
+    result := CollisionWithinBitmapImages(
+                bmp1, x1, y1, bmp1.width, bmp1.height, 0, 0, bbox1, 
+                bmp2, x2, y2, bmp2.width, bmp2.height, 0, 0, bbox2);
   end;
 
   /// Performs a collision detection within two bitmaps at the given x, y
   /// locations using per pixel collision detection. This checks to see if
   /// two non-transparent pixels collide.
   ///
-  /// @param image1, image2:  The bitmap images to check for collision
-  /// @param x1, y1:      The x,y location of image 1
-  /// @param x2, y2:      The x,y location of image 2
+  /// @param bmp1, bmp2:  The bitmap images to check for collision
+  /// @param x1, y1:      The x,y location of bmp 1
+  /// @param x2, y2:      The x,y location of bmp 2
   ///
   /// @returns        True if the bitmaps collide.
   ///
-  function CollisionWithinBitmapImages(image1: Bitmap; x1, y1: LongInt; image2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
-    result := CollisionWithinBitmapImages(image1, x1, y1, false, image2, x2, y2, false);
+    result := CollisionWithinBitmapImages(bmp1, x1, y1, false, bmp2, x2, y2, false);
   end;
 
-  function CollisionWithinSpriteImages(sprite1, sprite2: Sprite): Boolean;
+  function CollisionWithinSpriteImages(s1, s2: Sprite): Boolean;
   var
     bmp1, bmp2: Bitmap;
     offX1, offY1, offX2, offY2: LongInt;
   begin
-    if (sprite1 = nil) or (sprite2 = nil) then
+    if (s1 = nil) or (s2 = nil) then
       raise Exception.Create('One of the sprites specified is nil');
     
-    if sprite1.spriteKind = AnimMultiSprite then
+    if s1.spriteKind = AnimMultiSprite then
     begin
-      offX1 := (sprite1.currentFrame mod sprite1.cols) * sprite1.width;
-      offY1 := (sprite1.currentFrame - (sprite1.currentFrame mod sprite1.cols)) div sprite1.cols * sprite1.height;
-      bmp1 := sprite1.bitmaps[0];
+      offX1 := (s1.currentFrame mod s1.cols) * s1.width;
+      offY1 := (s1.currentFrame - (s1.currentFrame mod s1.cols)) div s1.cols * s1.height;
+      bmp1 := s1.bitmaps[0];
     end
     else
     begin
-      bmp1 := sprite1.bitmaps[sprite1.currentFrame];
+      bmp1 := s1.bitmaps[s1.currentFrame];
       offX1 := 0;
       offY1 := 0;
     end;
     
-    if sprite2.spriteKind = AnimMultiSprite then
+    if s2.spriteKind = AnimMultiSprite then
     begin
-      offX2 := (sprite2.currentFrame mod sprite2.cols) * sprite2.width;
-      offY2 := (sprite2.currentFrame - (sprite2.currentFrame mod sprite2.cols)) div sprite2.cols * sprite2.height;
-      bmp2 := sprite2.bitmaps[0];
+      offX2 := (s2.currentFrame mod s2.cols) * s2.width;
+      offY2 := (s2.currentFrame - (s2.currentFrame mod s2.cols)) div s2.cols * s2.height;
+      bmp2 := s2.bitmaps[0];
     end
     else
     begin
-      bmp2 := sprite2.bitmaps[sprite2.currentFrame];
+      bmp2 := s2.bitmaps[s2.currentFrame];
       offX2 := 0;
       offY2 := 0;
     end;
     
-    result := CollisionWithinBitmapImages(bmp1, Round(sprite1.x), Round(sprite1.y), CurrentWidth(sprite1), CurrentHeight(sprite1), offX1, offY1, not sprite1.usePixelCollision, 
-                        bmp2, Round(sprite2.x), Round(sprite2.y), CurrentWidth(sprite2), CurrentHeight(sprite2), offX2, offY2, not sprite2.usePixelCollision);
+    result := CollisionWithinBitmapImages(
+                bmp1, Round(s1.x), Round(s1.y), CurrentWidth(s1), CurrentHeight(s1), 
+                offX1, offY1, not s1.usePixelCollision, 
+                bmp2, Round(s2.x), Round(s2.y), CurrentWidth(s2), CurrentHeight(s2), 
+                offX2, offY2, not s2.usePixelCollision);
   end;
 
-  /// Checks to see if two bitmaps have collided, this performs a bounded check
+  /// Checks to see if two bitmaps have collided, this performs a bbox check
   /// then, if required, it performs a per pixel check on the colliding region.
   ///
-  /// @param image1, image2: The bitmap images to check for collision
-  /// @param x1, y1:        The x,y location of image 1
-  /// @param bounded1:      Indicates if image1 should use bounded collision
-  /// @param x2, y2:        The x,y location of image 2
-  /// @param bounded2:      Indicates if image2 should use bounded collision
+  /// @param bmp1, bmp2: The bitmap images to check for collision
+  /// @param x1, y1:        The x,y location of bmp 1
+  /// @param bbox1:      Indicates if bmp1 should use bbox collision
+  /// @param x2, y2:        The x,y location of bmp 2
+  /// @param bbox2:      Indicates if bmp2 should use bbox collision
   ///
   /// @returns          True if the bitmaps collide.
   ///
-  function HaveBitmapsCollided(image1: Bitmap; x1, y1: LongInt; image2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
-    result := HaveBitmapsCollided(image1, x1, y1, false, image2, x2, y2, false);
+    result := BitmapsCollided(bmp1, x1, y1, false, bmp2, x2, y2, false);
   end;
 
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; image2: Bitmap; const pt2: Point2D): Boolean; overload;
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   begin
-    result := HaveBitmapsCollided(image1, Round(pt1.x), Round(pt1.y), false, image2, Round(pt2.x), Round(pt2.y), false);
+    result := BitmapsCollided(bmp1, Round(pt1.x), Round(pt1.y), false, 
+                                  bmp2, Round(pt2.x), Round(pt2.y), false);
   end;
 
-  /// Checks to see if two bitmaps have collided, this performs a bounded check
-  /// then, if required, it performs a per pixel check on the colliding region.
-  ///
-  /// @param image1, image2: The bitmap images to check for collision
-  /// @param x1, y1:        The x,y location of image 1
-  /// @param bounded1:      Indicates if image1 should use bounded collision
-  /// @param x2, y2:        The x,y location of image 2
-  /// @param bounded2:      Indicates if image2 should use bounded collision
-  ///
-  /// @returns          True if the bitmaps collide.
-  ///
-  function HaveBitmapsCollided(image1: Bitmap; x1,y1: LongInt; bounded1: Boolean; image2: Bitmap; x2, y2: LongInt; bounded2: Boolean): Boolean; overload;
+
+  function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
   begin
-    if not HasBitmapCollidedWithRect(image1, x1, y1, true, x2, y2, image2.width, image2.height) then
+    if not BitmapRectCollision(bmp1, x1, y1, true, x2, y2, bmp2.width, bmp2.height) then
+      result := false
+    else
+      result := CollisionWithinBitmapImages(bmp1, x1, y1, bbox1, bmp2, x2, y2, bbox2);
+  end;
+  
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
+  begin
+    result := BitmapsCollided(bmp1, pt1, part1, true, bmp2, pt2, part2, true);  
+  end;
+  
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; bbox2: Boolean): Boolean; overload;
+  begin
+    result := BitmapsCollided(bmp1, Round(pt1.x), Round(pt1.y), bbox1, bmp2, Round(pt2.x), Round(pt2.y), bbox2);
+  end;
+  
+  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
+  begin
+    if not BitmapRectCollision(bmp1, Round(pt1.x), Round(pt1.y), true, Round(pt2.x), Round(pt2.y), part2.width, part2.height) then
+      result := false
+    else if bbox1 and bbox2 then
+      result := true
+    else
+      result := CollisionWithinBitmapImages(
+                  bmp1, Round(pt1.x), Round(pt1.y), part1.width, part1.height, Round(part1.x), Round(part1.y), bbox1, 
+                  bmp2, Round(pt2.x), Round(pt2.y), part2.width, part2.height, Round(part2.x), Round(part2.y), bbox2);
+  end;
+
+  function HaveSpritesCollided(s1, s2: Sprite): Boolean;
+  begin
+    if not SpriteRectCollision(s1, s2.x, s2.y, s2.width, s2.height) then
     begin
       result := false;
       exit;
     end;
 
-    result := CollisionWithinBitmapImages(image1, x1, y1, bounded1, image2, x2, y2, bounded2);
-  end;
-  
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; image2: Bitmap; const pt2: Point2D; const src2: Rectangle): Boolean; overload;
-  begin
-    result := HaveBitmapsCollided(image1, pt1, src1, true, image2, pt2, src2, true);  
-  end;
-  
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; bounded2: Boolean): Boolean; overload;
-  begin
-    result := HaveBitmapsCollided(image1, Round(pt1.x), Round(pt1.y), bounded1, image2, Round(pt2.x), Round(pt2.y), bounded2);
-  end;
-  
-  function HaveBitmapsCollided(image1: Bitmap; const pt1: Point2D; const src1: Rectangle; bounded1: Boolean; image2: Bitmap; const pt2: Point2D; const src2: Rectangle; bounded2: Boolean): Boolean; overload;
-  begin
-    if not HasBitmapCollidedWithRect(image1, Round(pt1.x), Round(pt1.y), true, Round(pt2.x), Round(pt2.y), src2.width, src2.height) then
+    if s1.usePixelCollision or s2.usePixelCollision then
     begin
-      result := false;
-      exit;
-    end
-    else if bounded1 and bounded2 then
-    begin
-      result := true;
-      exit;
-    end;
-
-    result := CollisionWithinBitmapImages(image1, Round(pt1.x), Round(pt1.y), src1.width, src1.height, Round(src1.x), Round(src1.y), bounded1, 
-                        image2, Round(pt2.x), Round(pt2.y), src2.width, src2.height, Round(src2.x), Round(src2.y), bounded2);
-  end;
-
-  /// Determines if two sprites have collided.
-  ///
-  /// @param sprite1, sprite2:   The two sprites to check.
-  ///
-  /// @returns                   True if the sprites have collided.
-  function HaveSpritesCollided(sprite1, sprite2 : Sprite): Boolean;
-  begin
-    if not HasSpriteCollidedWithRect(sprite1, sprite2.x, sprite2.y, sprite2.width, sprite2.height) then
-    begin
-      result := false;
-      exit;
-    end;
-
-    if sprite1.usePixelCollision or sprite2.usePixelCollision then
-    begin
-      result := CollisionWithinSpriteImages(sprite1, sprite2);
+      result := CollisionWithinSpriteImages(s1, s2);
     end
     else
     begin
@@ -926,229 +1095,71 @@ implementation
     end;
   end;
 
-  /// Determines if a sprite has collided with a bitmap. The x and y values
-  /// are expressed in "world" coordinates.
-  ///
-  /// @param theSprite:     The sprite to check for collision
-  /// @param theBitmap:     The bitmap image to check for collision
-  /// @param x, y:        The x,y location of the bitmap
-  /// @param bounded:       Indicates if bitmap should use bounded collision
-  ///
-  /// @returns          True if the bitmap has collided with the sprite.
-  ///
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single): Boolean; overload;
+
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, x, y, false);
+    result := SpriteBitmapCollision(s, bmp, x, y, false);
   end;
 
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, pt.x, pt.y, false);
+    result := SpriteBitmapCollision(s, bmp, pt.x, pt.y, false);
   end;
   
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; const src: Rectangle; bounded: Boolean): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle; bbox: Boolean): Boolean; overload;
   var
-    bmp: Bitmap;
+    tmp: Bitmap;
     offX, offY: LongInt;
   begin
-    if not HasSpriteCollidedWithRect(theSprite, pt.x, pt.y, src.width, src.height) then
+    if not SpriteRectCollision(s, pt.x, pt.y, part.width, part.height) then
     begin
       result := false;
       exit;
     end
-    else if bounded then 
+    else if bbox then 
     begin
       result := true;
       exit;
     end;
 
-    if theSprite.spriteKind = AnimMultiSprite then
+    if s.spriteKind = AnimMultiSprite then
     begin
-      offX := (theSprite.currentFrame mod theSprite.cols) * theSprite.width;
-      offY := (theSprite.currentFrame - (theSprite.currentFrame mod theSprite.cols)) div theSprite.cols * theSprite.height;
-      bmp := theSprite.bitmaps[0];
+      offX := (s.currentFrame mod s.cols) * s.width;
+      offY := (s.currentFrame - (s.currentFrame mod s.cols)) div s.cols * s.height;
+      tmp := s.bitmaps[0];
     end
     else
     begin
-      bmp := theSprite.bitmaps[theSprite.currentFrame];
+      tmp := s.bitmaps[s.currentFrame];
       offX := 0;
       offY := 0;
     end;
     
-    result := CollisionWithinBitmapImages(bmp, Round(theSprite.x), Round(theSprite.y),
-                        theSprite.width, theSprite.height,
-                        offX, offY,
-                        not theSprite.usePixelCollision, theBitmap,
-                        Round(pt.x), Round(pt.y), src.width, src.height, Round(src.x), Round(src.y), bounded);
+    result := CollisionWithinBitmapImages(
+                tmp, Round(s.x), Round(s.y),  s.width, s.height, offX, offY, not s.usePixelCollision, 
+                bmp, Round(pt.x), Round(pt.y), part.width, part.height, Round(part.x), Round(part.y), bbox);
   end;
   
   /// Determines if a sprite has collided with a bitmap using pixel level
   /// collision detection with the bitmap.
   ///
-  /// @param theSprite:     The sprite to check for collision
-  /// @param theBitmap:     The bitmap image to check for collision
+  /// @param s:     The sprite to check for collision
+  /// @param bmp:     The bitmap image to check for collision
   /// @param x, y:           The x,y location of the bitmap
-  /// @param bounded        Indicates if theBitmap should use bounded collision
+  /// @param bbox        Indicates if bmp should use bbox collision
   ///
   /// @returns               True if the bitmap has collided with the sprite.
   ///
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; x, y: Single; bounded: Boolean): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, CreatePoint(x, y), CreateRectangle(theBitmap), bounded);
+    result := SpriteBitmapCollision(s, bmp, CreatePoint(x, y), CreateRectangle(bmp), bbox);
   end;
 
-  function HasSpriteCollidedWithBitmap(theSprite: Sprite; theBitmap: Bitmap; const pt: Point2D; bounded: Boolean): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
   begin
-    result := HasSpriteCollidedWithBitmap(theSprite, theBitmap, pt, CreateRectangle(theBitmap), bounded);
+    result := SpriteBitmapCollision(s, bmp, pt, CreateRectangle(bmp), bbox);
   end;
-
   
-  /// Multiply two matrix2d. Use this to combine the effects to two
-  ///  transformations.
-  ///
-  /// @param m1, m2:   the two matrix to multiply
-  /// @returns:        the result of multiplying these matrix
-  function Multiply(const m1, m2: Matrix2D): Matrix2D; overload;
-    {procedure ShowMatrix(const m: Matrix2D);
-    var
-      i, j: LongInt;
-    begin
-      WriteLn('---');
-      for i := 0 to 2 do
-      begin
-        Write('|');
-        for j := 0 to 2 do
-        begin
-          Write(' ', m[i,j]);
-        end;
-        WriteLn('|');
-      end;
-      WriteLn('---');
-    end;}
-  begin
-      //unwound for performance optimisation
-      result[0, 0] := m1[0, 0] * m2[0, 0] +
-              m1[0, 1] * m2[1, 0] +
-              m1[0, 2] * m2[2, 0];
-    result[0, 1] := m1[0, 0] * m2[0, 1] +
-            m1[0, 1] * m2[1, 1] +
-            m1[0, 2] * m2[2, 1];
-    result[0, 2] := m1[0, 0] * m2[0, 2] +
-            m1[0, 1] * m2[1, 2] +
-            m1[0, 2] * m2[2, 2];
-
-    result[1, 0] := m1[1, 0] * m2[0, 0] +
-            m1[1, 1] * m2[1, 0] +
-            m1[1, 2] * m2[2, 0];
-    result[1, 1] := m1[1, 0] * m2[0, 1] +
-            m1[1, 1] * m2[1, 1] +
-            m1[1, 2] * m2[2, 1];
-    result[1, 2] := m1[1, 0] * m2[0, 2] +
-            m1[1, 1] * m2[1, 2] +
-            m1[1, 2] * m2[2, 2];
-
-    result[2, 0] := m1[2, 0] * m2[0, 0] +
-            m1[2, 1] * m2[1, 0] +
-            m1[2, 2] * m2[2, 0];
-    result[2, 1] := m1[2, 0] * m2[0, 1] +
-            m1[2, 1] * m2[1, 1] +
-            m1[2, 2] * m2[2, 1];
-    result[2, 2] := m1[2, 0] * m2[0, 2] +
-            m1[2, 1] * m2[1, 2] +
-            m1[2, 2] * m2[2, 2];
-
-      {result[0, 0] := m1[0, 0] * m2[0, 0] +
-                 m1[1, 0] * m2[0, 1] +
-                 m1[2, 0] * m2[0, 2];
-    result[0, 1] := m1[0, 0] * m2[1, 0] +
-               m1[1, 0] * m2[1, 1] +
-               m1[2, 0] * m2[1, 2];
-    result[0, 2] := m1[0, 0] * m2[2, 0] +
-               m1[1, 0] * m2[2, 1] +
-               m1[2, 0] * m2[2, 2];
-
-    result[1, 0] := m1[0, 1] * m2[0, 0] +
-               m1[1, 1] * m2[0, 1] +
-               m1[2, 1] * m2[0, 2];
-    result[1, 1] := m1[0, 1] * m2[1, 0] +
-               m1[1, 1] * m2[1, 1] +
-               m1[2, 1] * m2[1, 2];
-    result[1, 2] := m1[0, 1] * m2[2, 0] +
-               m1[1, 1] * m2[2, 1] +
-               m1[2, 1] * m2[2, 2];
-
-    result[2, 0] := m1[0, 2] * m2[0, 0] +
-               m1[1, 2] * m2[0, 1] +
-               m1[2, 2] * m2[0, 2];
-    result[2, 1] := m1[0, 2] * m2[1, 0] +
-               m1[1, 2] * m2[1, 1] +
-               m1[2, 2] * m2[1, 2];
-    result[2, 2] := m1[0, 2] * m2[2, 0] +
-               m1[1, 2] * m2[2, 1] +
-               m1[2, 2] * m2[2, 2];
-    WriteLn('m1');
-    ShowMatrix(m1);
-    WriteLn('m2');
-    ShowMatrix(m2);
-    WriteLn('result');
-    ShowMatrix(result);
-    WriteLn('end...');}
-  end;
-
-  function Multiply(const m: Matrix2D; const v: Vector): Vector; overload;
-  begin
-    result.x := v.x * m[0, 0] + v.y * m[0,1] + m[0,2]; //+ v.w * m[0,2];
-    result.y := v.x * m[1, 0] + v.y * m[1,1] + m[1,2]; //+ v.w * m[1,2];
-    //result.w := 1;
-  end;
-
-  function Multiply(const m: Matrix2D; const v: Point2D): Point2D; overload;
-  begin
-    result.x := v.x * m[0, 0] + v.y * m[0,1] + m[0,2];
-    result.y := v.x * m[1, 0] + v.y * m[1,1] + m[1,2];
-  end;
-
-  function RotationMatrix(deg: Single): Matrix2D;
-  var
-    rads: Double;
-  begin
-    rads := -deg * DEG_TO_RAD;
-    
-    result[0, 0] := System.Cos(rads);
-    result[0, 1] := System.Sin(rads);
-    result[0, 2] := 0;
-    
-    result[1, 0] := -System.Sin(rads);
-    result[1, 1] := System.Cos(rads);
-    result[1, 2] := 0;
-    
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
-  end;
-
-  function ScaleMatrix(scale: Single): Matrix2D;
-  begin
-    result[0, 0] := scale;
-    result[0, 1] := 0;
-    result[0, 2] := 0;
-
-    result[1, 0] := 0;
-    result[1, 1] := scale;
-    result[1, 2] := 0;
-
-    result[2, 0] := 0;
-    result[2, 1] := 0;
-    result[2, 2] := 1;
-  end;
-
-  function TranslationMatrix(dx, dy: Single): Matrix2D;
-  begin
-    result := ScaleMatrix(1);
-
-    result[0, 2] := dx;
-    result[1, 2] := dy;
-  end;
 
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
   var
@@ -1179,19 +1190,19 @@ implementation
     result := CalculateAngle(pt1.x, pt1.y, pt2.x, pt2.y);
   end;
 
-  function CalculateAngle(sprite1, sprite2: Sprite): Single; overload;
+  function CalculateAngle(s1, s2: Sprite): Single; overload;
   var
     cx1, cy1, cx2, cy2: Single;
   begin
-    cx1 := sprite1.x + CurrentWidth(sprite1) / 2;
-    cy1 := sprite1.y + CurrentHeight(sprite1) / 2;
-    cx2 := sprite2.x + CurrentWidth(sprite2) / 2;
-    cy2 := sprite2.y + CurrentHeight(sprite2) / 2;
+    cx1 := s1.x + CurrentWidth(s1) / 2;
+    cy1 := s1.y + CurrentHeight(s1) / 2;
+    cx2 := s2.x + CurrentWidth(s2) / 2;
+    cy2 := s2.y + CurrentHeight(s2) / 2;
   
     result := CalculateAngle(cx1, cy1, cx2, cy2);
   end;
   
-  function CalculateAngleBetween(const v1, v2: Vector): Single; overload;
+  function CalculateAngle(const v1, v2: Vector): Single; overload;
   var
     t1, t2: Single;
   begin
@@ -1204,75 +1215,7 @@ implementation
     else if result <= -180 then result := result + 360
   end;
   
-  //Version 1.0 code.
-  procedure VectorCollision(p1, p2: Sprite);
-  begin
-    CircularCollision(p1, p2);
-  end;
-
-  procedure CircularCollision(p1, p2: Sprite);
-  var
-    p1c, p2c: Point2D;
-    colNormalAngle, a1, a2, optP: Single;
-    n: Vector;
-  begin
-
-    if (p1.mass <= 0) or (p2.mass <= 0) then
-    begin
-      raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
-    end;
-    
-    p1c := CenterPoint(p1);
-    p2c := CenterPoint(p2);
-    
-    if p1.mass < p2.mass then
-    begin
-      {//move p1 out
-      if Magnitude(p1.movement) > 0 then
-        n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, p1.movement)
-      else }
-      
-      n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, VectorFromPoints(p1c, p2c));
-      p1.x := p1.x + n.x;
-      p1.y := p1.y + n.y;
-    end
-    else
-    begin
-      //move p2 out
-      {if Magnitude(p2.movement) > 0 then
-        n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, p2.movement)
-      else}
-      n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, VectorFromPoints(p2c, p1c));
-      p2.x := p2.x + n.x;
-      p2.y := p2.y + n.y;
-    end;
-      
-    colNormalAngle := CalculateAngle(p1, p2);
-    //COLLISION RESPONSE
-    // n = vector connecting the centers of the balls.
-    // we are finding the components of the normalised vector n
-    n := CreateVector(Cos(colNormalAngle), Sin(colNormalAngle));
-    // now find the length of the components of each movement vectors
-    // along n, by using dot product.
-    a1 := DotProduct(p1.Movement, n);
-    //Local a1# = c.dx*nX  +  c.dy*nY
-    a2 := DotProduct(p2.Movement, n);
-    //Local a2# = c2.dx*nX +  c2.dy*nY
-    // optimisedP = 2(a1 - a2)
-    // ----------
-    // m1 + m2
-    optP := (2.0 * (a1-a2)) / (p1.mass + p2.mass);
-    // now find out the resultant vectors
-    // Local r1% = c1.v - optimisedP * mass2 * n
-    p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
-    p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
-    
-    // Local r2% = c2.v - optimisedP * mass1 * n
-    p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
-    p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
-  end;
-  
-  function CircleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean;
+  function CircleLineCollision(p1: Sprite; const line: LineSegment): Boolean;
   var
     r: Single;
     dist: Single;
@@ -1286,72 +1229,17 @@ implementation
     result := dist < r;
   end;
   
-  function RectangleHasCollidedWithLine(const rect: Rectangle; const line: LineSegment): Boolean; overload;
+  function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
   begin
     result := LineIntersectsWithLines(line, LinesFromRect(rect));
   end;
     
-  function RectangleHasCollidedWithLine(p1: Sprite; const line: LineSegment): Boolean; overload;
+  function RectLineCollision(p1: Sprite; const line: LineSegment): Boolean; overload;
   begin
-    result := RectangleHasCollidedWithLine(CreateRectangle(p1), line);
+    result := RectLineCollision(CreateRectangle(p1), line);
   end;
   
-  procedure CircleCollisionWithLine(p1: Sprite; const line: LineSegment);
-  var
-    npx, npy, dotPod: Single;
-    toLine: Vector;
-    intersect: Point2D;
-  begin
-    intersect := ClosestPointOnLine(CenterPoint(p1), line);
-    
-    toLine := GetUnitVector(VectorFromCenterSpriteToPoint(p1, intersect));
-    
-    dotPod := - DotProduct(toLine, p1.movement);
-    
-    npx := dotPod * toLine.x;
-    npy := dotPod * toLine.y;
-    
-    p1.movement.x := p1.movement.x + 2 * npx;
-    p1.movement.y := p1.movement.y + 2 * npy;
-  end;
-  
-  function CalculateVectorFromTo(obj, dest: Sprite): Vector;
-{ var
-    destWdiv2, destHdiv2: LongInt;
-    objWdiv2, objHdiv2: LongInt;
-    v, pc, wc: Vector;}
-  begin
-{   objWdiv2 := CurrentWidth(obj) div 2;
-    objHdiv2 := CurrentHeight(obj) div 2;
-                      
-    destWdiv2 := CurrentWidth(dest) div 2;
-    destHdiv2 := CurrentHeight(dest) div 2;
-    
-    pc := CreateVector(obj.x + objWdiv2, obj.y + objHdiv2);
-    wc := CreateVector(dest.x + destWdiv2, dest.y + destHdiv2);
-    v := SubtractVectors(wc, pc);
-}   
-    {WriteLn('xy: ', x:4:2, ',', y:4:2);
-    WriteLn('pc: ', pc.x:4:2, ',', pc.y:4:2, ' - ', objWdiv2, ',', objHdiv2);
-    WriteLn('wc: ', wc.x:4:2, ',', wc.y:4:2, ' - ', destWdiv2, ',', destHdiv2); 
-    WriteLn('v : ', v.x:4:2, ',', v.y:4:2);}
-    
-//    result := v;    
-    
-    result := VectorFromPoints(CenterPoint(obj), CenterPoint(dest));
-  end;
-  
-  /// Create a vector from the angle and the magnitude.
-  ///
-  /// @param angle:   Target angle
-  /// @param magnitude: Magnitude of the result vector
-  function GetVectorFromAngle(angle, magnitude: Single): Vector;
-  begin
-    result := CreateVector(magnitude * SGSDK_Core.Cos(angle), magnitude * SGSDK_Core.Sin(angle));
-  end;
-  
-  /// Does the vector end within the rectangle
-  function VectorIsWithinRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
+  function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
   begin
     if v.x < x then result := false
     else if v.x > x + w then result := false
@@ -1360,9 +1248,9 @@ implementation
     else result := true;
   end;
   
-  function VectorIsWithinRect(const v: Vector; const rect: Rectangle): Boolean; overload;
+  function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
   begin
-    result := VectorIsWithinRect(v, rect.x, rect.y, rect.width, rect.height);
+    result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
   end;
     
   //You need to test for collisions on the ...
@@ -1389,7 +1277,7 @@ implementation
     end;
   end;
   
-  function VectorFromPointToRectangle(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt) : Vector; overload;
+  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
   var
     px, py: Single;
   begin
@@ -1404,17 +1292,17 @@ implementation
     result := CreateVector(px - x, py - y);
   end;
 
-  function VectorFromPointToRectangle(x, y: Single; const rect: Rectangle) : Vector; overload;
+  function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
   begin
-    result := VectorFromPointToRectangle(x, y, rect.x, rect.y, rect.width, rect.height);
+    result := VectorFromPointToRect(x, y, rect.x, rect.y, rect.width, rect.height);
   end;
   
-  function VectorFromPointToRectangle(const pt: Point2D; const rect: Rectangle) : Vector; overload;
+  function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
   begin
-    result := VectorFromPointToRectangle(pt.x, pt.y, rect.x, rect.y, rect.width, rect.height);
+    result := VectorFromPointToRect(pt.x, pt.y, rect.x, rect.y, rect.width, rect.height);
   end;
   
-  function VectorOut(const pnt: Point2D; const rect: Rectangle; const movement: Vector; rectCollisionSide: CollisionSide) : Vector; 
+  function VectorOut(const pt: Point2D; const rect: Rectangle; const movement: Vector; rectCollisionSide: CollisionSide): Vector; 
     function GetVectorDiagonal(edgeX, edgeY: Single): Vector;
     var
       toEdge: Vector;
@@ -1422,61 +1310,61 @@ implementation
       mvOut: Vector;
       xMag, yMag, outMag: Single;
     begin
-      mvOut := GetUnitVector(InvertVector(movement));
+      mvOut := UnitVector(InvertVector(movement));
       
       //Do X
-      toEdge := CreateVector(edgeX - pnt.x, 0);
-      angle := CalculateAngleBetween(mvOut, toEdge);      
-      xMag := Magnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
+      toEdge := CreateVector(edgeX - pt.x, 0);
+      angle := CalculateAngle(mvOut, toEdge);      
+      xMag := VectorMagnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
 
       //Do Y
-      toEdge := CreateVector(0, edgeY - pnt.y);
-      angle := CalculateAngleBetween(mvOut, toEdge);      
-      yMag := Magnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
+      toEdge := CreateVector(0, edgeY - pt.y);
+      angle := CalculateAngle(mvOut, toEdge);      
+      yMag := VectorMagnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
           
       if (yMag < 0) or (xMag < yMag) then outMag := xMag
       else outMag := yMag;
       
       if outMag < 0 then outMag := 0;
       
-      result := MultiplyVector(mvOut, outMag + 1);
+      result := VectorMultiply(mvOut, outMag + 1);
     end;    
   begin   
     case rectCollisionSide of
       TopLeft: begin
-          if (pnt.x < rect.x) or (pnt.y < rect.y) then result := CreateVector(0,0)
+          if (pt.x < rect.x) or (pt.y < rect.y) then result := CreateVector(0,0)
           else result := GetVectorDiagonal(rect.x, rect.y);
         end;
       TopRight: begin
-          if (pnt.x > rect.x + rect.width) or (pnt.y < rect.y) then result := CreateVector(0,0)
+          if (pt.x > rect.x + rect.width) or (pt.y < rect.y) then result := CreateVector(0,0)
           else result := GetVectorDiagonal(rect.x + rect.width, rect.y);
         end;
       BottomLeft: begin
-          if (pnt.x < rect.x) or (pnt.y > rect.y + rect.height) then result := CreateVector(0,0)
+          if (pt.x < rect.x) or (pt.y > rect.y + rect.height) then result := CreateVector(0,0)
           else result := GetVectorDiagonal(rect.x, rect.y + rect.height);
         end;
       BottomRight: begin
-          if (pnt.x > rect.x + rect.width) or (pnt.y > rect.y + rect.height) then result := CreateVector(0,0)
+          if (pt.x > rect.x + rect.width) or (pt.y > rect.y + rect.height) then result := CreateVector(0,0)
           else result := GetVectorDiagonal(rect.x + rect.width, rect.y + rect.height);
         end;
       Left: begin
-          if (pnt.x < rect.x) or (pnt.y < rect.y) or (pnt.y > rect.y + rect.height) then result := CreateVector(0, 0)
-          else result := CreateVector(rect.x - pnt.x - 1, 0);
+          if (pt.x < rect.x) or (pt.y < rect.y) or (pt.y > rect.y + rect.height) then result := CreateVector(0, 0)
+          else result := CreateVector(rect.x - pt.x - 1, 0);
           exit;
         end;
       Right: begin
-          if (pnt.x > rect.x + rect.width) or (pnt.y < rect.y) or (pnt.y > rect.y + rect.height) then result := CreateVector(0, 0)
-          else result := CreateVector(rect.x + rect.width - pnt.x + 1, 0);
+          if (pt.x > rect.x + rect.width) or (pt.y < rect.y) or (pt.y > rect.y + rect.height) then result := CreateVector(0, 0)
+          else result := CreateVector(rect.x + rect.width - pt.x + 1, 0);
           exit;
         end;
       Top: begin
-          if (pnt.y < rect.y) or (pnt.x < rect.x) or (pnt.x > rect.x + rect.width) then result := CreateVector(0, 0)
-          else result := CreateVector(0, rect.y - pnt.y - 1);
+          if (pt.y < rect.y) or (pt.x < rect.x) or (pt.x > rect.x + rect.width) then result := CreateVector(0, 0)
+          else result := CreateVector(0, rect.y - pt.y - 1);
           exit;
         end;
       Bottom: begin
-          if (pnt.y > rect.y + rect.height) or (pnt.x < rect.x) or (pnt.x > rect.x + rect.width) then result := CreateVector(0, 0)
-          else result := CreateVector(0, rect.y + rect.height + 1 - pnt.y);
+          if (pt.y > rect.y + rect.height) or (pt.x < rect.x) or (pt.x > rect.x + rect.width) then result := CreateVector(0, 0)
+          else result := CreateVector(0, rect.y + rect.height + 1 - pt.y);
           exit;
         end;
       else //Not moving... i.e. None
@@ -1488,67 +1376,71 @@ implementation
     //WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2); //, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);   
   end;
 
-  //Vector needed to move from x, y out of rectangle assuming movement specified
-  function VectorOutOfRectFromPoint(const pnt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
+  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
   begin
-    result := VectorOut(pnt, rect, movement, GetSideForCollisionTest(movement));
+    result := VectorOut(pt, rect, movement, GetSideForCollisionTest(movement));
     
     if (result.x = 0) and (result.y = 0) then exit; 
 
-    if not LineIntersectsWithRect(LineFromVector(pnt, movement), rect) then
+    if not LineIntersectsWithRect(LineFromVector(pt, movement), rect) then
       result := CreateVector(0, 0);
   end;
 
-  function VectorOutOfCircleFromPoint(const pnt, center: Point2D; radius: Single; const movement: Vector): Vector;
+  function VectorOutOfCircleFromPoint(const pt, center: Point2D; radius: Single; const movement: Vector): Vector;
   var
     dx, dy, cx, cy: Single;
     mag, a, b, c, det, t, mvOut: single;
     ipt2: Point2D;
   begin
-    if DistanceBetween(pnt, center) > radius then
+    // If the point is not in the radius of the circle, return a zero vector 
+    if DistanceBetween(pt, center) > radius then
     begin
       result := CreateVector(0, 0);
       exit;
     end;
     
-    mag := Magnitude(movement);
-    
-    cx := center.x;       cy := center.y;
-
-    dx := movement.x; //x2 - pnt.x;
-    dy := movement.y; //y2 - pnt.y;
-    
-      a := dx * dx + dy * dy;
-      b := 2 * (dx * (pnt.x - cx) + dy * (pnt.y - cy));
-      c := (pnt.x - cx) * (pnt.x - cx) + (pnt.y - cy) * (pnt.y - cy) - radius * radius;
-  
-      det := b * b - 4 * a * c;
-    
-    if (mag < 0.1) or (det <= 0) then
+    // If the magnitude of movement is very small, return a zero vector
+    mag := VectorMagnitude(movement);
+    if mag < 0.1 then
     begin
-      result := CreateVector(0,0);
-    end
+      result := CreateVector(0, 0);
+      exit;
+    end;
+    
+    // Calculate the determinate (and components) from the center circle and 
+    // the point+movement details
+    cx := center.x;       
+    cy := center.y;
+    dx := movement.x; 
+    dy := movement.y; 
+    
+    a := dx * dx + dy * dy;
+    b := 2 * (dx * (pt.x - cx) + dy * (pt.y - cy));
+    c := (pt.x - cx) * (pt.x - cx) + (pt.y - cy) * (pt.y - cy) - radius * radius;
+
+    det := b * b - 4 * a * c;
+    
+    // If the determinate is very small, return a zero vector
+    if det <= 0 then
+      result := CreateVector(0, 0)
     else
     begin
-{     t := (-b + Sqrt(det)) / (2 * a);
-      ipt1.x := pnt.x + t * dx;
-          ipt1.y := pnt.y + t * dy;}  
+      // Calculate the vector required to "push" the vector out of the circle
+      t := (-b - Sqrt(det)) / (2 * a);
+      ipt2.x := pt.x + t * dx;
+      ipt2.y := pt.y + t * dy;
   
-          t := (-b - Sqrt(det)) / (2 * a);
-      ipt2.x := pnt.x + t * movement.x;
-          ipt2.y := pnt.y + t * movement.y;
-  
-      mvOut := DistanceBetween(pnt, ipt2) + 1;
-      result := MultiplyVector(GetUnitVector(InvertVector(movement)), mvOut);
+      mvOut := DistanceBetween(pt, ipt2) + 1;
+      result := VectorMultiply(UnitVector(InvertVector(movement)), mvOut);
     end;
   end;
 
-  function VectorOutOfCircleFromCircle(const pnt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
+  function VectorOutOfCircleFromCircle(const pt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
   begin
-    result := VectorOutOfCircleFromPoint(pnt, center, radius + radius2, movement);
+    result := VectorOutOfCircleFromPoint(pt, center, radius + radius2, movement);
   end;
 
-  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector) : Vector;  
+  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
   var
     rectCollisionSide: CollisionSide;
     p: Point2D; // p is the most distant point from the collision on srcRect
@@ -1621,27 +1513,197 @@ implementation
     end   
   end;
   
-  function LineAsVector(const line: lineSegment): Vector;
+
+
+  //----------------------------------------------------------------------------
+  // Matrix2D Creation and Operation / Translation of Point/Vector Types
+  //----------------------------------------------------------------------------
+
+  function RotationMatrix(deg: Single): Matrix2D;
+  var
+    rads: Double;
   begin
-    result.x := line.endPoint.x - line.startPoint.x;
-    result.y := line.endPoint.y - line.startPoint.y;
-  end;
-  
-  function VectorNormal(const vect: Vector): Vector;
-  var   
-    sqrY, sqrX: Single;
-  begin
-    sqrX := vect.x * vect.x;
-    sqrY := vect.y * vect.y;
+    rads := -deg * DEG_TO_RAD;
     
-     result.x := -vect.y / Sqrt(sqrY + sqrX);  // -S2y / ::sqrt(S2y*S2y + S2x*S2x);
-     result.y := vect.x / Sqrt(sqrY + sqrX); // S2x / ::sqrt(S2y*S2y + S2x*S2x);
+    result[0, 0] := System.Cos(rads);
+    result[0, 1] := System.Sin(rads);
+    result[0, 2] := 0;
+    
+    result[1, 0] := -System.Sin(rads);
+    result[1, 1] := System.Cos(rads);
+    result[1, 2] := 0;
+    
+    result[2, 0] := 0;
+    result[2, 1] := 0;
+    result[2, 2] := 1;
+  end;
+
+  function ScaleMatrix(scale: Single): Matrix2D;
+  begin
+    result[0, 0] := scale;
+    result[0, 1] := 0;
+    result[0, 2] := 0;
+
+    result[1, 0] := 0;
+    result[1, 1] := scale;
+    result[1, 2] := 0;
+
+    result[2, 0] := 0;
+    result[2, 1] := 0;
+    result[2, 2] := 1;
+  end;
+
+  function TranslationMatrix(dx, dy: Single): Matrix2D;
+  begin
+    result := ScaleMatrix(1);
+
+    result[0, 2] := dx;
+    result[1, 2] := dy;
+  end;
+
+  function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
+    // procedure ShowMatrix(const m: Matrix2D);
+    // var
+    //   i, j: LongInt;
+    // begin
+    //   WriteLn('---');
+    //   for i := 0 to 2 do
+    //   begin
+    //     Write('|');
+    //     for j := 0 to 2 do
+    //     begin
+    //       Write(' ', m[i,j]);
+    //     end;
+    //     WriteLn('|');
+    //   end;
+    //   WriteLn('---');
+    // end;
+  begin
+      //unwound for performance optimisation
+    result[0, 0] := m1[0, 0] * m2[0, 0] +
+                    m1[0, 1] * m2[1, 0] +
+                    m1[0, 2] * m2[2, 0];
+    result[0, 1] := m1[0, 0] * m2[0, 1] +
+                    m1[0, 1] * m2[1, 1] +
+                    m1[0, 2] * m2[2, 1];
+    result[0, 2] := m1[0, 0] * m2[0, 2] +
+                    m1[0, 1] * m2[1, 2] +
+                    m1[0, 2] * m2[2, 2];
+
+    result[1, 0] := m1[1, 0] * m2[0, 0] +
+                    m1[1, 1] * m2[1, 0] +
+                    m1[1, 2] * m2[2, 0];
+    result[1, 1] := m1[1, 0] * m2[0, 1] +
+                    m1[1, 1] * m2[1, 1] +
+                    m1[1, 2] * m2[2, 1];
+    result[1, 2] := m1[1, 0] * m2[0, 2] +
+                    m1[1, 1] * m2[1, 2] +
+                    m1[1, 2] * m2[2, 2];
+
+    result[2, 0] := m1[2, 0] * m2[0, 0] +
+                    m1[2, 1] * m2[1, 0] +
+                    m1[2, 2] * m2[2, 0];
+    result[2, 1] := m1[2, 0] * m2[0, 1] +
+                    m1[2, 1] * m2[1, 1] +
+                    m1[2, 2] * m2[2, 1];
+    result[2, 2] := m1[2, 0] * m2[0, 2] +
+                    m1[2, 1] * m2[1, 2] +
+                    m1[2, 2] * m2[2, 2];
+  end;
+
+  function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
+  begin
+    result.x := v.x * m[0,0]  +  v.y * m[0,1] + m[0,2]; 
+    result.y := v.x * m[1,0]  +  v.y * m[1,1] + m[1,2]; 
+  end;
+
+  function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
+  begin
+    result.x := pt.x * m[0,0] + pt.y * m[0,1] + m[0,2];
+    result.y := pt.x * m[1,0] + pt.y * m[1,1] + m[1,2];
+  end;
+
+
+
+  //----------------------------------------------------------------------------
+  // Collision Effect Application (angle + mass/energy transfer)
+  //----------------------------------------------------------------------------
+
+  procedure CollideCircleLine(p1: Sprite; const line: LineSegment);
+  var
+    npx, npy, dotPod: Single;
+    toLine: Vector;
+    intersect: Point2D;
+  begin
+    intersect := ClosestPointOnLine(CenterPoint(p1), line);
+
+    toLine := UnitVector(VectorFromCenterSpriteToPoint(p1, intersect));
+
+    dotPod := - DotProduct(toLine, p1.movement);
+
+    npx := dotPod * toLine.x;
+    npy := dotPod * toLine.y;
+
+    p1.movement.x := p1.movement.x + 2 * npx;
+    p1.movement.y := p1.movement.y + 2 * npy;
+  end;
+
+
+  procedure CollideCircles(p1, p2: Sprite);
+  var
+    p1c, p2c: Point2D;
+    colNormalAngle, a1, a2, optP: Single;
+    n: Vector;
+  begin
+
+    if (p1.mass <= 0) or (p2.mass <= 0) then
+    begin
+      raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
+    end;
+    
+    p1c := CenterPoint(p1);
+    p2c := CenterPoint(p2);
+    
+    if p1.mass < p2.mass then
+    begin
+      //move p1 out
+      n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, VectorFromPoints(p1c, p2c));
+      p1.x := p1.x + n.x;
+      p1.y := p1.y + n.y;
+    end
+    else
+    begin
+      //move p2 out
+      n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, VectorFromPoints(p2c, p1c));
+      p2.x := p2.x + n.x;
+      p2.y := p2.y + n.y;
+    end;
+      
+    colNormalAngle := CalculateAngle(p1, p2);
+    // COLLISION RESPONSE
+    // n = vector connecting the centers of the balls.
+    // we are finding the components of the normalised vector n
+    n := CreateVector(Cos(colNormalAngle), Sin(colNormalAngle));
+    // now find the length of the components of each movement vectors
+    // along n, by using dot product.
+    a1 := DotProduct(p1.Movement, n);
+    // Local a1# = c.dx*nX  +  c.dy*nY
+    a2 := DotProduct(p2.Movement, n);
+    // Local a2# = c2.dx*nX +  c2.dy*nY
+    // optimisedP = 2(a1 - a2)
+    // ----------
+    // m1 + m2
+    optP := (2.0 * (a1-a2)) / (p1.mass + p2.mass);
+    // now find out the resultant vectors
+    // Local r1% = c1.v - optimisedP * mass2 * n
+    p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
+    p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
+    // Local r2% = c2.v - optimisedP * mass1 * n
+    p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
+    p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
   end;
   
-  function LineNormal(const line: LineSegment): Vector;
-  begin
-    result := VectorNormal(LineAsVector(line));
-  end;
+  //----------------------------------------------------------------------------
   
 end.
 
