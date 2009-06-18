@@ -547,12 +547,12 @@ implementation
   begin
     if m = nil then raise Exception.Create('No Map supplied (nil)');
     
-    //WriteLn('GX, GY: ', WorldX(0), ',' ,WorldY(0));
+    //WriteLn('GX, GY: ', ToWorldX(0), ',' , ToWorldY(0));
     //WriteLn('bw, bh: ', m.MapInfo.BlockWidth, ', ', m.MapInfo.BlockHeight);
     
     //Screen Drawing Starting Point
-    XStart := round((WorldX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
-    YStart := round((WorldY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
+    XStart := round((ToWorldX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
+    YStart := round((ToWorldY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
     
     //Screen Drawing Ending point
     XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));
@@ -747,7 +747,7 @@ implementation
       begin
         if m.CollisionInfo.Collidable[y][x] = true then
         begin
-          if HasSpriteCollidedWithRect(spr, 
+          if SpriteRectCollision(spr, 
                x * m.MapInfo.BlockWidth, 
                yCache, 
                m.MapInfo.BlockWidth, 
@@ -943,7 +943,7 @@ implementation
         x := initX + (j - xStart) * dx;
         if m.CollisionInfo.Collidable[y][x] = true then
         begin     
-          if HasSpriteCollidedWithRect(spr, 
+          if SpriteRectCollision(spr, 
                x * m.MapInfo.BlockWidth, 
                yCache, 
                m.MapInfo.BlockWidth, 
