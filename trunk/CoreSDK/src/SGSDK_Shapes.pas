@@ -407,9 +407,9 @@ implementation
       result[3] := CreateLine(x, y + height, x + width, y + height);
     end;
     
-    writeln(hexstr(@rect));
-    writeln('rect ', rect.x, ':', rect.y, ' ', rect.width, 'x', rect.height);
-    writeln('[3] ', result[3].startPoint.x, ':' ,result[3].startPoint.y);
+//    writeln(hexstr(@rect));
+//    writeln('rect ', rect.x, ':', rect.y, ' ', rect.width, 'x', rect.height);
+//    writeln('[3] ', result[3].startPoint.x, ':' ,result[3].startPoint.y);
   end;
   
   function CreatePoint(x, y: Single): Point2D;

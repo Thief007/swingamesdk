@@ -532,10 +532,11 @@ implementation
   
   procedure LoadBlockSprites(m : Map; fileName : String);
   var
-    fpc : Array of LongInt;
+    fpc : LongIntArray; //Array of LongInt;
   begin
     SetLength(fpc, m.MapInfo.NumberOfBlocks);
-    m.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+    m.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
+                            m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
     m.Tiles.currentFrame := 0;
   end;
   

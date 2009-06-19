@@ -152,9 +152,13 @@ interface
   
 implementation
   uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx, sg_Shared;
-  
+
+  {$IFDEF FPC}
   const EOL = LineEnding;
-  
+  {$ElSE}
+  const EOL = '\n';
+  {$ENDIF}
+
   /// Loads a font from file with the specified side. Fonts must be freed using
   /// the FreeFont routine once finished with. Once the font is loaded you
   /// can set its style using SetFontStyle. Fonts are then used to draw and
