@@ -151,35 +151,35 @@ implementation
 
 	procedure MovePlayerShip(var player : ShipData);
 	begin
-		if IsKeyPressed(VK_LEFT) then
+		if KeyDown(VK_LEFT) then
 		begin
 			//if the left arrow key is being pressed
-			if IsKeyPressed(VK_UP) then
+			if KeyDown(VK_UP) then
 				//if the up arraw key is also being pressed
 				UpdateEntityPosition(player.speed, 225, player.theSprite)
-			else if IsKeyPressed(VK_DOWN) then
+			else if KeyDown(VK_DOWN) then
 				//if the up down key is also being pressed
 				UpdateEntityPosition(player.speed, 135, player.theSprite)
-			else if not IsKeyPressed(VK_RIGHT) then
+			else if not KeyDown(VK_RIGHT) then
 				//if the left arrow key is the only key being pressed
 				player.theSprite.x := player.theSprite.x - player.speed
 		end
-		else if IsKeyPressed(VK_RIGHT) then
+		else if KeyDown(VK_RIGHT) then
 		begin
 			//if the right arrow key is being pressed
-			if IsKeyPressed(VK_UP) then
+			if KeyDown(VK_UP) then
 				//if the up arrow key is also being pressed
 				UpdateEntityPosition(player.speed, 315, player.theSprite)
-			else if IsKeyPressed(VK_DOWN) then
+			else if KeyDown(VK_DOWN) then
 				//if the down arrow key is also being pressed
 				UpdateEntityPosition(player.speed, 45, player.theSprite)
 			//if the right key is the only key being pressed
 			else player.theSprite.x := player.theSprite.x + player.speed
 		end
-		else if IsKeyPressed(VK_DOWN) and (not IsKeyPressed(VK_UP)) then
+		else if KeyDown(VK_DOWN) and (not KeyDown(VK_UP)) then
 			//if the only key being pressed is the down arrow key
 			player.theSprite.y := player.theSprite.y + player.speed
-		else if IsKeyPressed(VK_UP) and (not IsKeyPressed(VK_DOWN)) then
+		else if KeyDown(VK_UP) and (not KeyDown(VK_DOWN)) then
 			//if the only key being pressed is the up arrow key
 			player.theSprite.y := player.theSprite.y - player.speed;
 		//Move the collision sprite
@@ -240,24 +240,24 @@ implementation
 		if game.player.currentMagazine < 1 then begin
 			if game.player.currentMagazine = -1 * game.player.reloadDelay then
 				game.player.currentMagazine := game.player.maxMagazine;
-		end	else if IsKeyPressed(VK_Z) and (game.player.currentDelay = 0) then begin
+		end	else if KeyDown(VK_Z) and (game.player.currentDelay = 0) then begin
 			game.player.currentMagazine := game.player.currentMagazine - 1;
 			game.player.currentDelay := game.player.shootDelay;
 			PlaySoundEffect(game.sounds[0]);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, GetVectorFromAngle(270, BULLETSPEED));
+										Player, VectorFromAngle(270, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, GetVectorFromAngle(255, BULLETSPEED));
+										Player, VectorFromAngle(255, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, GetVectorFromAngle(285, BULLETSPEED));
+										Player, VectorFromAngle(285, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, GetVectorFromAngle(240, BULLETSPEED));
+										Player, VectorFromAngle(240, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, GetVectorFromAngle(300, BULLETSPEED));
+										Player, VectorFromAngle(300, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 		end;
 	end;
@@ -352,7 +352,7 @@ implementation
 			//Enemy bullet pattern
 			for i := 0 to 18 do begin
 				tempBullet := CreateBullet('EnemyBullet', enemyToProcess, DAMAGE, Normal, 
-											Enemy, GetVectorFromAngle(60 + 20 * i + enemyToProcess.offset, BULLETSPEED));
+											Enemy, VectorFromAngle(60 + 20 * i + enemyToProcess.offset, BULLETSPEED));
 				DeployBullet(tempBullet, game.bullets);
 				PlaySoundEffect(game.sounds[2]);
 			end;
