@@ -515,8 +515,6 @@ class SGMethod(SGMetaDataContainer):
 # Test methods
 #
 
-from nose.tools import raises
-
 def test_method_creation():
     """test the creation of a basic SGMethod"""
     my_method = SGMethod("Test")
@@ -627,4 +625,6 @@ def test_wrapper_missing_default_args():
 
 if __name__ == '__main__':
     import nose
+    from nose.tools import raises
+    
     nose.run()
