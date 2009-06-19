@@ -599,29 +599,29 @@ def test_wrapper_with_args():
 #     my_method.calls(other_method, ['"test"'])
 #     my_method.check_call_validity();
 # 
-@raises(Exception)
-def test_wrapper_with_wrong_args():
-    """test creation of a method wrapper with args with no matching params"""
-    my_method = SGMethod("test")
-    par = my_method.create_parameter("p1")
-    
-    other_method = SGMethod("other")
-    par1 = other_method.create_parameter("par1")
-    
-    my_method.calls(other_method, [par1])
-    my_method.check_call_validity();
-
-@raises(Exception)
-def test_wrapper_missing_default_args():
-    """test the creation of a call with insufficient params to match args"""
-    my_method = SGMethod("test")
-    other_method = SGMethod("other")
-    par1 = other_method.create_parameter("par1")
-    
-    assert 2 == len(other_method.params)
-    
-    my_method.calls(other_method)
-    my_method.check_call_validity();
+# @raises(Exception)
+# def test_wrapper_with_wrong_args():
+#     """test creation of a method wrapper with args with no matching params"""
+#     my_method = SGMethod("test")
+#     par = my_method.create_parameter("p1")
+#     
+#     other_method = SGMethod("other")
+#     par1 = other_method.create_parameter("par1")
+#     
+#     my_method.calls(other_method, [par1])
+#     my_method.check_call_validity();
+# 
+# @raises(Exception)
+# def test_wrapper_missing_default_args():
+#     """test the creation of a call with insufficient params to match args"""
+#     my_method = SGMethod("test")
+#     other_method = SGMethod("other")
+#     par1 = other_method.create_parameter("par1")
+#     
+#     assert 2 == len(other_method.params)
+#     
+#     my_method.calls(other_method)
+#     my_method.check_call_validity();
 
 if __name__ == '__main__':
     import nose

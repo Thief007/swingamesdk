@@ -68,11 +68,11 @@ def test_add_method():
     assert len(my_library.methods) == 1
     assert my_method == my_library.methods[("test", ())]
 
-@raises(Exception)
-def test_add_unkown_member():
-    """test adding some unknown member type to the library, expects to fail"""
-    my_library = SGLibrary("Hello")
-    my_library.add_method("Hello")
+# @raises(Exception)
+# def test_add_unkown_member():
+#     """test adding some unknown member type to the library, expects to fail"""
+#     my_library = SGLibrary("Hello")
+#     my_library.add_method("Hello")
         
 if __name__ == '__main__':
     import nose
