@@ -49,9 +49,6 @@ class SGLibrary(SGCodeModule):
                 #check that the methods that call the library
                 caller.check_arguments()
 
-import nose
-from nose.tools import raises 
-
 def test_library_creation():
     """test basic library creation"""
     my_library = SGLibrary()
@@ -78,4 +75,7 @@ def test_add_unkown_member():
     my_library.add_method("Hello")
         
 if __name__ == '__main__':
+    import nose
+    from nose.tools import raises 
+
     nose.run()
