@@ -15,6 +15,8 @@ LOG_FILE="${APP_PATH}/out.log"
 
 PYTHON_SCRIPT_DIR=${SWINGAME_PATH}/Tools/SGWrapperGen
 
+VERSION=3.0
+
 FPC_BIN=`which fpc`
 
 EXTRA_OPTS="-O3 -Sewn -vwn"
@@ -87,7 +89,7 @@ doCompile()
     echo "  ... Linking Library"
     FRAMEWORKS=`ls ${FRAMEWORK_DIR} | awk -F . '{print "-framework "$1}'`
 
-    /usr/bin/libtool -install_name ./libSGSDK.dylib  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${TMP_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version 2.0 -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    /usr/bin/libtool -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${TMP_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
     
     CleanTmp
@@ -100,9 +102,67 @@ doLipo()
 {
     echo "  ... Creating Universal Binary"
     lipo -arch ${1} "${TMP_DIR}/libSGSDK${1}.dylib" -arch ${2} "${TMP_DIR}/libSGSDK${2}.dylib" -output "${OUT_DIR}/libSGSDK.dylib" -create
-
+    
     rm -rf "${TMP_DIR}/libSGSDK${1}.dylib"
     rm -rf "${TMP_DIR}/libSGSDK${2}.dylib"
+}
+
+#
+# Create Mac Framework
+#
+doCreateFramework()
+{
+    echo "  ... Creating Framework version ${VERSION}"
+    
+    VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
+    HEADER_DIR="${VERSION_DIR}/Headers"
+    RESOURCES_DIR="${VERSION_DIR}/Resources"
+    CURRENT_DIR="${OUT_DIR}/SGSDK.framework/Versions/Current"
+    
+    if [ ! -d "${OUT_DIR}/SGSDK.framework" ]
+    then
+        mkdir "${OUT_DIR}/SGSDK.framework"
+        mkdir "${OUT_DIR}/SGSDK.framework/Versions"
+    else
+        rm -rf "${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
+    fi
+    
+    
+    mkdir ${VERSION_DIR}
+    mkdir ${HEADER_DIR}
+    mkdir ${RESOURCES_DIR}
+    
+    mv "${PYTHON_SCRIPT_DIR}/out/SGSDK_lib.h" "${HEADER_DIR}/SGSDK.h"
+    mv "${OUT_DIR}/libSGSDK.dylib" "${VERSION_DIR}/SGSDK"
+    
+    echo "<?xml version='1.0' encoding='UTF-8'?>\
+    <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
+    <plist version=\"1.0\">\
+    <dict>\
+            <key>CFBundleName</key>\
+            <string>SGSDK</string>\
+            <key>CFBundleIdentifier</key>\
+            <string>au.edu.swinburne.SGSDK</string>\
+            <key>CFBundleVersion</key>\
+            <string>${VERSION}</string>\
+            <key>CFBundleDevelopmentRegion</key>\
+            <string>English</string>\
+            <key>CFBundleExecutable</key>\
+            <string>SGSDK</string>\
+            <key>CFBundleInfoDictionaryVersion</key>\
+            <string>6.0</string>\
+            <key>CFBundlePackageType</key>\
+            <string>FMWK</string>\
+            <key>CFBundleSignature</key>\
+            <string>SWIN</string>\
+    </dict>\
+    </plist>" >> "${RESOURCES_DIR}/Info.plist"
+    
+    cd "${OUT_DIR}/SGSDK.framework"    
+    ln -f -s "./${VERSION}" "./Versions/Current"
+    ln -f -s "./Versions/Current/Resources" "./Resources"
+    ln -f -s "./Versions/Current/Headers" "./Headers"
+    ln -f -s "./Versions/Current/SGSDK" "./SGSDK"
 }
 
 while getopts chd o
@@ -153,6 +213,8 @@ then
         doCompile "i386"
         
         doLipo "i386" "ppc"
+        
+        doCreateFramework
     else
         echo "--------------------------------------------------"
         echo "          Creating SwinGame Dynamic Library"

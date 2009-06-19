@@ -119,6 +119,28 @@ The following steps guide you through the process of installing the tools you ne
     SDL-image-devel
     
 
-2. Download the Free Pascal Compiler for Linux, making sure that you remember the version number of the compiler.
+2. Download the Free Pascal Compiler for Linux.
 3. Install the Free Pascal Compiler based on the type of file you downloaded. Typically this will involve using your package manager to install the downloaded ``deb`` file.
+4. Open a **Terminal** window
+5. Run the Free Pascal Compiler from the command line by typing the following:
+
+  .. sourcecode:: bash
+    
+      fpc
+
+6. Check the output generated, you should see listed the compilers name and version. You can press q to quit the output.
+7. Download the Pascal SwinGame library source code. This is the code for SwinGame, and includes a build script to create a library (shared object) for Linux.
+8. Extract the code from the downloaded ``tar.gz`` file.
+9. In the **Terminal** navigate to the directory containing the downloaded code.
+10. Compile the library by running the ``build.sh`` script, then install by running the ``install.sh`` script.
+11. 
+
+7. Download the Pascal SwinGame project template of your choice, making sure you download the version that matches the compiler you have installed. This will be a disk image that contains a basic Pascal project and the scripts you need to compile your game.
+8. Drag the files from the disk image to a location on your Mac.
+9. In the Terminal, navigate to the location where you extracted the zip file. This is done using ``cd ~/Documents/MyGame/etc``.
+10. Navigate into the *SwinGame* directory, you can do this using ``cd SwinGame``
+11. Run ``./build.sh Test``, this will execute the *build* script that is used to compile you game and to copy the resources to the appropriate locations. The *Test* part indicates the name of the application that will be created.
+12. Finally, to run the game type ``open ./bin/Test.app``. The *build* script places the compiled output in a *bin* directory [#]_. This command tells Mac OS to open the *Test* application from the bin directory. You can also run this using ``./bin/Test.app/Contents/MacOS/Test`` which is longer but will output any error messages into the terminal window. Alternatively you can view error messages by opening the *Console* application and viewing the *Console Messages*.
+
+When the game rungs you should see a splash screen, and a *Hello World* program start... you now have your machine correctly configured for creating SwinGames using Pascal.
 

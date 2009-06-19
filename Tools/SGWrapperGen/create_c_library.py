@@ -298,7 +298,7 @@ def method_visitor(the_method, other):
         else:
             other['c writer'].write(_module_c_method % details)
 
-def write_c_lib_adapter(the_file):
+def write_c_lib_header(the_file):
     '''Write the c library adapter - header file that matches DLL'''
     file_writer = FileWriter('./out/%s.h'% the_file.name)
     file_writer.write(_header)
@@ -411,6 +411,7 @@ def write_c_lib_module(the_file):
     header_file_writer.close()
 
 def post_parse_process(the_file):
+    ''' the c modules also wrap array return values and adds length parameters for arrays.'''
     if the_file.name == 'SGSDK_Lib':
         return
     
@@ -446,7 +447,7 @@ def file_visitor(the_file, other):
     post_parse_process(the_file)
     if the_file.name == 'SGSDK_Lib':
         logger.info('Creating C Library Adapter %s.h', the_file.name)
-        write_c_lib_adapter(the_file)
+        write_c_lib_header(the_file)
     else:
         logger.info('Creating C SwinGame Module %s', the_file.name)
         write_c_lib_module(the_file)
