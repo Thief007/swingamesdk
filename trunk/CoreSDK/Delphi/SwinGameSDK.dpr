@@ -21,7 +21,8 @@ uses
   SGSDK_MappyLoader in '..\src\SGSDK_MappyLoader.pas',
   SGSDK_Physics in '..\src\SGSDK_Physics.pas',
   SGSDK_Shapes in '..\src\SGSDK_Shapes.pas',
-  SwinGameTrace in '..\src\SwinGameTrace.pas';
+  SwinGameTrace in '..\src\SwinGameTrace.pas',
+  sg_Shared in '..\src\sg_Shared.pas';
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
