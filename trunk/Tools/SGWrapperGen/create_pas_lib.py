@@ -16,6 +16,8 @@ from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
 from sg.sg_parameter import SGParameter
 
+from create_c_library import write_c_lib_header
+
 #my_writer = PrintWriter()
 my_writer = FileWriter('../../CoreSDK/src/sgsdk1.pas')
 _header = ''
@@ -194,6 +196,7 @@ def method_visitor(the_method, other):
     my_writer.write('\n')
 
 def post_parse_process(the_lib):
+    '''Adds local variables for temporary values between type shifting eg. PChar -> String.'''
     logger.info('Post Processing library for Pascal library creation')
     
     for key, method in the_lib.methods.items():
@@ -213,6 +216,8 @@ def file_visitor(the_file, other):
     if the_file.name != 'SGSDK_Lib':
         logger.info('skipping %s', the_file.name)
         return
+    
+    write_c_lib_header(the_file)
     
     post_parse_process(the_file.members[0])
     
@@ -245,7 +250,7 @@ def file_visitor(the_file, other):
     my_writer.close()
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     _load_data()    
     parser_runner.run_for_all_units(file_visitor)

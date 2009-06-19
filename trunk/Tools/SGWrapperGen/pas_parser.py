@@ -16,13 +16,13 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
     
 import logging
 import sys
-from SGPasTokeniser import SGPasTokeniser
-from SGPasParser import SGPasParser
-from SGParameter import SGParameter
-from sgcache import all_classes, find_or_add_file, find_or_add_class
-from sgcodemodule import SGCodeModule
-from SGMethod import SGMethod
-from sgfile import SGFile
+
+from sg import parser_runner
+from sg.sg_cache import logger
+from sg.print_writer import PrintWriter
+from sg.file_writer import FileWriter
+from sg.sg_type import SGType
+from sg.sg_parameter import SGParameter
 
 DEBUG = False
 
@@ -61,6 +61,10 @@ def arg_visitor(arg, last, other):
     
 
 def method_visitor(element, other):
+    if element == None: 
+        print '\t NONE...'
+        return
+    
     print '\t<@%s> %s%s%s %s(' % (
         hex(id(element)),
         'static ' if element.is_static else '',
@@ -93,15 +97,16 @@ def method_visitor(element, other):
     element.visit_args(arg_visitor, other)
     print '\n'
 
-def visitor(element):
-    if element.is_static:
-        print 'static',
-    print 'class %s' % element.name
-    print '{'
-    element.visit_fields(field_visitor, None)
-    element.visit_properties(property_visitor, None)
-    element.visit_methods(method_visitor, None)
-    print '}'
+def visitor(the_file, other):
+    for element in the_file.members:
+        if element.is_static:
+            print 'static',
+        print 'class %s' % element.name
+        print '{'
+        element.visit_fields(field_visitor, None)
+        element.visit_properties(property_visitor, None)
+        element.visit_methods(method_visitor, None)
+        print '}'
 
 def main():
     logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
@@ -122,20 +127,22 @@ def main():
     #             print tokeniser.read_to_eol()
     #     tok = tokeniser.next_token()
     # 
-    parser = SGPasParser()
+    # parser = SGPasParser()
+    # 
+    # files = [
+    #         find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
+    #         find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas')
+    #     ]
+    # 
+    # for a_file in files:
+    #     parser.parse(a_file)
+    # 
+    # find_or_add_class('lib').check_methods()
+    # 
+    # for key,each_class in all_classes().items():
+    #     each_class.visit(visitor)
     
-    files = [
-            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
-            find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas')
-        ]
-    
-    for a_file in files:
-        parser.parse(a_file)
-    
-    find_or_add_class('lib').check_methods()
-    
-    for key,each_class in all_classes().items():
-        each_class.visit(visitor)
+    parser_runner.run_for_all_units(visitor)
 
 if __name__ == '__main__':
     main()

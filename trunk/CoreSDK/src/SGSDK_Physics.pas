@@ -93,7 +93,7 @@ interface
   /// @method RectCollision
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
   
-  /// @lib SpriteRectCollision
+  /// @lib SpriteRectangleCollision
   /// @class Sprite
   /// @overload RectCollision RectangleCollision
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
@@ -252,7 +252,7 @@ interface
   /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
   /// used, otherwise a longer per pixel check is used (if required) in the collision region. 
   ///
-  /// @lib BitmapsAtPointsBBoxCollided
+  /// @lib BitmapsBBoxAtPointsCollided
   /// @class Bitmap
   /// @overload BitmapCollision BitmapAtPointsBBoxCollision
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; bbox2: Boolean): Boolean; overload;
@@ -261,7 +261,7 @@ interface
   /// bitmaps (``bmp1`` and ``bmpt2``) have collided, using pixel level collision if required. 
   /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
   ///
-  /// @lib BitmapsAtPointsBBoxCollided(bmp1, pt1, part1, False, bmp2, pt2, part2, False)
+  /// @lib BitmapsPartsBBoxCollided(bmp1, pt1, part1, False, bmp2, pt2, part2, False)
   /// @uname BitmapPartsCollided
   /// @class Bitmap
   /// @overload BitmapCollision BitmapPartCollision
@@ -305,7 +305,7 @@ interface
   /// collided with a ``line``. The diameter for the bounding circle is 
   /// based on the sprites width or height value -- whatever is largest.
   ///
-  /// @lib SpriteRectLineCollision
+  /// @lib SpriteCircleLineCollision
   function CircleLineCollision(p1: Sprite; const line: LineSegment): Boolean;
   
   /// Returns True if the bounding rectangle of the `Sprite` ``s`` has collided 
@@ -496,7 +496,7 @@ interface
   /// @lib VectorFromPointToRect
   function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
   
-  /// @lib VectorFromPointToRect
+  /// @lib VectorFromPointToRectangle
   function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
   
   /// @lib VectorFromPointPtToRectangle

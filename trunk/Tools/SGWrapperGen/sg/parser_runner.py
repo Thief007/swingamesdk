@@ -25,6 +25,7 @@ def method_process_visitor(the_method, other):
     
     #Change functions with string or array return type to have a result property
     if the_method.return_type != None and (the_method.return_type.wraps_array or the_method.return_type.name.lower() in ['string']):
+        print 'PARS RUN PARAMS', [p.name for p in the_method.params]
         result_param = SGParameter('result')
         
         for param in the_method.params:
@@ -40,6 +41,7 @@ def method_process_visitor(the_method, other):
         
         the_method.return_type = None
         the_method.was_function = True
+        print 'PARS RUN PARAMS', [p.name for p in the_method.params]
         
     #Replace any variable length arrays
     orig_params = the_method.params
