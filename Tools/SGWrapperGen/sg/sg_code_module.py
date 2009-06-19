@@ -218,11 +218,11 @@ def test_add_field():
     
     assert len(my_class.fields) == 1
 
-@raises(Exception)
-def test_add_unkown_member():
-    """test adding some unknown member type to the class, expects to fail"""
-    my_class = SGCodeModule("Hello")
-    my_class.add_member("Hello")
+# @raises(Exception)
+# def test_add_unkown_member():
+#     """test adding some unknown member type to the class, expects to fail"""
+#     my_class = SGCodeModule("Hello")
+#     my_class.add_member("Hello")
 
 def test_static_class():
     """tests the creation of a static class"""
