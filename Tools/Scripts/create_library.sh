@@ -230,8 +230,14 @@ then
         if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
         echo "  ... Compiling Library"
-        fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk1.pas >> ${LOG_FILE}
+        fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk1.pas.${VERSION} >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
+        
+        echo " ... Installing Library"
+        mv "${OUT_DIR}/libSGSDK.so.${VERSION}" /usr/lib
+        ln -s -f "/usr/lib/libSGSDK.so.${VERSION}" /usr/lib/libSGSDK.so
+        
+        ldconfig -v - n
         
         CleanTmp
     fi

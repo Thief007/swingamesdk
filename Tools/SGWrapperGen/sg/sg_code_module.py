@@ -184,9 +184,6 @@ class SGCodeModule(SGMetaDataContainer):
         for key, prop in self.properties.items():
             visitor(prop, key == self.properties.keys()[-1], other)
 
-import nose
-from nose.tools import raises 
-
 def test_class_creation():
     """test basic class creation"""
     my_class = SGCodeModule("Hello")
@@ -252,5 +249,8 @@ def test_struct():
 #     assert my_class.has_pointer()
 # 
 if __name__ == '__main__':
+    import nose
+    from nose.tools import raises 
+    
     nose.run()
     
