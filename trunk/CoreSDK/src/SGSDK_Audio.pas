@@ -42,53 +42,8 @@ unit SGSDK_Audio;
 interface
 //=============================================================================
 
-  uses SDL_Mixer, SDL, SGSDK_Core;
+  uses sgTypes;
   
-  type
-    /// The `SoundEffect` type is used to refer to sound effects that can be 
-    /// played by the SwinGame audio code. Sound effects are loaded with 
-    /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
-    /// released using `FreeMusic`.
-    ///
-    /// SwinGame will mix the audio from multiple sound effects, making it 
-    /// possible to play multiple SoundEffects, or even to play the one 
-    /// SoundEffect multiple times.
-    ///
-    /// You can check if a SoundEffect is currently playing using 
-    /// `IsSoundEffectPlaying`. 
-    /// 
-    /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
-    /// instances of this one sound effect from playing.
-    ///
-    /// @note Use `Music` for background music for your games.
-    ///
-    /// @class SoundEffect
-    /// @pointer_wrapper
-    /// @field pointer: pointer
-    SoundEffect = PMix_Chunk;
-
-    /// The SoundEffect type is used to refer to sound effects that can be 
-    /// played by the SwinGame audio code. Sound effects are loaded with 
-    /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
-    /// released using `FreeMusic`.
-    ///
-    /// SwinGame will mix the audio from multiple sound effects, making it 
-    /// possible to play multiple SoundEffects, or even to play the one 
-    /// SoundEffect multiple times.
-    ///
-    /// You can check if a SoundEffect is currently playing using 
-    /// `IsSoundEffectPlaying`. 
-    /// 
-    /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
-    /// instances of this one sound effect from playing.
-    ///
-    /// @note Use `SoundEffect` for the foreground sound effects of for your games.
-    ///
-    /// @class Music
-    /// @pointer_wrapper
-    /// @field pointer: pointer
-    Music = PMix_Music;
-
   /// `OpenAudio` is used to initialise the SwinGame audio code. This should be
   /// called at the start of your programs code, and is usually coded into the 
   /// starting project templates. After initialising the audio code you can 
@@ -393,7 +348,8 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes;
+  uses 
+    SysUtils, Classes, SDL_Mixer, SDL, SGSDK_Core;
        
   var
     // Contains the sound channels used to determine if a sound is currently

@@ -16,7 +16,7 @@
 unit sg_Shared;
 
 interface
-  uses SDL, SDL_Image, SDLEventProcessing, SGSDK_Core;
+  uses SDL, SDL_Image, SDLEventProcessing, SGSDK_Core, sgTypes;
   
   function ToSDLColor(color: UInt32): TSDL_Color;
   function ToGfxColor(val: Color): Color;

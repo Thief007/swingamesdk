@@ -11,7 +11,7 @@ import logging
 import sys
 
 from sg import parser_runner
-from sg.sg_cache import logger
+from sg.sg_cache import logger, find_or_add_file
 from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
 from sg.sg_type import SGType
@@ -211,7 +211,7 @@ _adapter_type_switcher = {
 
 _names = []
 
-def _load_data():
+def load_data():
     global _lib_import_header, _header
     global _module_header_header, _module_c_header, _module_c_method
     global _module_c_function, _footer, _module_header_footer
@@ -298,7 +298,7 @@ def method_visitor(the_method, other):
         else:
             other['c writer'].write(_module_c_method % details)
 
-def write_c_lib_header(the_file):
+def write_c_lib_header(the_file, for_others = False):
     '''Write the c library adapter - header file that matches DLL'''
     file_writer = FileWriter('./out/%s.h'% the_file.name)
     file_writer.write(_header)
@@ -313,11 +313,13 @@ def write_c_lib_header(the_file):
     }
     
     for a_file in the_file.uses:
-        if a_file.name != None:
+        if a_file.name != None and ((not for_others) or (not a_file.has_body)):
             file_writer.writeln(_lib_import_header % {'name': a_file.name})
+
     file_writer.writeln('')
     
     the_file.members[0].visit_methods(method_visitor, other)
+    
     file_writer.write(_footer)
     file_writer.close()
 
@@ -366,17 +368,21 @@ def write_c_type_for(member, other):
 def write_c_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''
     header_file_writer = FileWriter('./out/%s.h'% the_file.name)
-    c_file_writer = FileWriter('./out/%s.c'% the_file.name)
+
+    if the_file.has_body:
+        c_file_writer = FileWriter('./out/%s.c'% the_file.name)
+    else: c_file_writer = None
     
     header_file_writer.writeln(_module_header_header % { 
         'name' : the_file.name,
         'pascal_name' : the_file.pascal_name
         })
     
-    c_file_writer.writeln(_module_c_header % { 
-        'name' : the_file.name,
-        'pascal_name' : the_file.pascal_name
-        })
+    if the_file.has_body:
+        c_file_writer.writeln(_module_c_header % { 
+            'name' : the_file.name,
+            'pascal_name' : the_file.pascal_name
+            })
     
     other = {
         'header writer': header_file_writer,
@@ -393,21 +399,22 @@ def write_c_lib_module(the_file):
     
     #process all types first so they appear at the top of the header files
     for member in the_file.members:
-        if member.is_module:
+        if member.is_module or member.is_header:
             pass
         elif member.is_class or member.is_struct or member.is_enum:
             write_c_type_for(member, other)
         else:
             assert False
-    
     #process all methods
     for member in the_file.members:
         if member.is_module:
             write_c_methods_for(member, other)
     
-    header_file_writer.write(_module_header_footer)
+    if the_file.has_body:
+        #close the c file
+        c_file_writer.close()
     
-    c_file_writer.close()
+    header_file_writer.write(_module_header_footer)    
     header_file_writer.close()
 
 def post_parse_process(the_file):
@@ -455,7 +462,7 @@ def file_visitor(the_file, other):
 def main():
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
-    _load_data()
+    load_data()
     parser_runner.run_for_all_units(file_visitor)
 
 if __name__ == '__main__':
