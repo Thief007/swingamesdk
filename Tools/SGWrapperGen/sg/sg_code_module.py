@@ -69,6 +69,10 @@ class SGCodeModule(SGMetaDataContainer):
         elif title == 'module':
             self.module_kind = 'module'
             super(SGCodeModule,self).set_tag('name', other)
+        elif title == 'header':
+            self.module_kind = 'header'
+            self['in_file'].other.has_body = False
+            super(SGCodeModule,self).set_tag('name', other)
         elif title == 'struct':
             self.module_kind = 'struct'
             super(SGCodeModule,self).set_tag('name', other)
@@ -118,6 +122,9 @@ class SGCodeModule(SGMetaDataContainer):
     
     is_module = property(lambda self: self.module_kind == 'module', 
         None, None, 'Is the module a module?')
+        
+    is_header = property(lambda self: self.module_kind == 'header', 
+        None, None, 'Is the module a header?')
     
     is_enum = property(lambda self: self.module_kind == 'enum', 
         None, None, 'Is the module a enum?')

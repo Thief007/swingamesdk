@@ -49,28 +49,7 @@
 unit SGSDK_Graphics;
 
 interface
-  uses SDL, SGSDK_Core, SDL_Image, SGSDK_Shapes;
-  
-  type
-    /// @class BitmapArray
-    /// @array_wrapper
-    /// @field data: BitmapPtr
-    BitmapArray = array of Bitmap;
-    
-    /// @class BitmapPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^Bitmap
-    BitmapPtr = ^Bitmap;
-    
-    /// @class LongIntArray
-    /// @array_wrapper
-    /// @field data: LongIntPtr
-    LongIntArray = array of LongInt;
-    
-    /// @class LongIntPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^LongInt
-    LongIntPtr = ^LongInt;
+  uses sgTypes;
   
   /// @lib
   function CreateBitmap(width, height: LongInt): Bitmap;
@@ -627,7 +606,8 @@ interface
   procedure SetupBitmapForCollisions(src: Bitmap);
 
 implementation
-  uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx, sg_Shared;
+  uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx, sg_Shared,
+       SDL, SGSDK_Core, SDL_Image, SGSDK_Shapes;
   
   /// Clears the surface of the bitmap to the passed in color.
   ///

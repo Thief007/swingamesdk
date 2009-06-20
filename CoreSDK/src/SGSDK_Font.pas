@@ -33,44 +33,8 @@
 unit SGSDK_Font;
 
 interface
-  uses
-    SDL, SDL_TTF, SGSDK_Core, SGSDK_Shapes;
   
-  type
-    
-    /// Fonts are used to render text to bitmaps and to the screen.
-    /// Fonts must be loaded using the CreateFont routine. Also see the
-    /// DrawText and DrawTextLines routines.
-    ///
-    /// @class Font
-    ///@pointer_wrapper
-    ///@field pointer: pointer
-    Font = PTTF_Font;
-    
-    /// Use font styles to set the style of a font. Setting the style is time
-    /// consuming, so create alternative font variables for each different
-    /// style you want to work with. Note that these values can be logical
-    /// ORed together to combine styles, e.g. BoldFont or ItalicFont = both
-    /// bold and italic.
-    ///
-    /// @enum FontStyle
-    FontStyle = (
-        NormalFont      = 0,
-        BoldFont        = 1,
-        ItalicFont      = 2,
-        UnderlineFont   = 4
-      );
-    
-    /// Use font alignment for certain drawing operations. With these
-    /// operations you specify the area to draw in as well as the alignment
-    /// within that area. See DrawTextLines.
-    ///
-    /// @enum FontAlignment
-    FontAlignment = (
-        AlignLeft   = 1,
-        AlignCenter = 2,
-        AlignRight  = 4
-      );
+  uses sgTypes;
   
   /// @lib
   /// @class Font
@@ -151,7 +115,8 @@ interface
   procedure DrawFramerate(x, y: LongInt); overload;
   
 implementation
-  uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx, sg_Shared;
+  uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx, sg_Shared, 
+       SDL, SDL_TTF, SGSDK_Core, SGSDK_Shapes;
 
   {$IFDEF FPC}
   const EOL = LineEnding;

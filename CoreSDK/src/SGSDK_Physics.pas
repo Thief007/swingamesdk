@@ -66,9 +66,7 @@ unit SGSDK_Physics;
 interface
 //=============================================================================
 
-  uses
-    SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
-  
+  uses sgTypes;
   
   //TODO:
   /// @lib
@@ -588,7 +586,8 @@ implementation
 //=============================================================================
 
   uses
-    SysUtils, Math, Classes, SwinGameTrace;
+    SysUtils, Math, Classes, SwinGameTrace,
+    SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
     
   const 
     DEG_TO_RAD = 0.0174532925;

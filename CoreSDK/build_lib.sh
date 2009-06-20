@@ -50,10 +50,6 @@ DoCompile()
 	${FPC_BIN} -Mdelphi $EXTRA_OPTS -FE"$1" -Fu"$1" SGSDK_Core.pas >> ${BASEDIR}/out.log
 	if [ $? != 0 ]; then echo "Error compiling Core"; cat ${BASEDIR}/out.log; exit 1; fi
 
-	echo "  ... Compiling KeyCodes"
-	${FPC_BIN} -Mdelphi $EXTRA_OPTS -FE"$1" -Fu"$1" SGSDK_KeyCodes.pas >> ${BASEDIR}/out.log
-	if [ $? != 0 ]; then echo "Error compiling KeyCodes"; cat ${BASEDIR}/out.log;  exit 1; fi
-
 	echo "  ... Compiling Shapes"	
 	${FPC_BIN} -Mdelphi $EXTRA_OPTS -FE"$1" -Fu"$1"  SGSDK_Shapes.pas >> ${BASEDIR}/out.log
 	if [ $? != 0 ]; then echo "Error compiling Shapes"; cat ${BASEDIR}/out.log;  exit 1; fi

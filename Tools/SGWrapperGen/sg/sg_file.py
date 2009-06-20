@@ -19,6 +19,7 @@ class SGFile(object):
         self.pascal_name = pascal_name
         self.name = name
         self.filename = filename
+        self.has_body = True
     
     uses = property(lambda self: self._uses, 
         None, None, 'The files that this file uses.')

@@ -31,45 +31,7 @@
 unit SGSDK_Shapes;
 
 interface
-uses SGSDK_Core;
-
-  type
-    /// @struct Point2D
-    Point2D = record
-        x, y: Single;
-      end;
-    
-    ///@class Point2DPtr
-    ///@pointer_wrapper
-    ///@field pointer: ^Point2D
-    Point2DPtr = ^Point2D;
-    
-    /// @struct Rectangle
-    Rectangle = record
-        x, y: Single;
-        width, height: LongInt;
-      end;
-    
-    /// @struct LineSegment
-    LineSegment = record
-        startPoint: Point2D;
-        endPoint: Point2D;
-      end;
-    
-    ///@class Triangle
-    ///@fixed_array_wrapper
-    ///@field data: array[0..2] of Point2D
-    Triangle = array [0..2] of Point2D;
-    
-    ///@class LinesArray
-    ///@array_wrapper
-    ///@field data: LineSegmentPtr
-    LinesArray = Array of LineSegment;
-    
-    ///@class LineSegmentPtr
-    ///@pointer_wrapper
-    ///@field pointer: ^LineSegment
-    LineSegmentPtr = ^LineSegment;
+  uses sgTypes;
   
   /// @lib DistancePointToLine
   function DistancePointToLine(const pnt: Point2D; const line: LineSegment): Single; overload;

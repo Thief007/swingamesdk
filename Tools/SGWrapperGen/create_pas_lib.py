@@ -16,10 +16,11 @@ from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
 from sg.sg_parameter import SGParameter
 
-from create_c_library import write_c_lib_header
+import create_c_library
+# import write_c_lib_header, _load_data
 
 #my_writer = PrintWriter()
-my_writer = FileWriter('../../CoreSDK/src/sgsdk1.pas')
+my_writer = FileWriter('../../Dist/Source/src/sgsdk.pas')
 _header = ''
 _footer = ''
 _procedure_lines = None
@@ -108,6 +109,8 @@ def _load_data():
     f = open('./pas_lib/function_as_procedure.txt')
     _function_as_procedure = f.readlines()
     f.close()
+    
+    create_c_library.load_data()
 
 def param_visitor(the_param, last):
     if the_param.modifier in ['out','var', 'const'] and the_param.data_type.name.lower() in ['string','triangle']:
@@ -213,15 +216,21 @@ def post_parse_process(the_lib):
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
+    
+    if the_file.name == 'sgTypes':
+        logger.info('Processing types in %s', the_file.name)
+        create_c_library.write_c_lib_module(the_file)
+        return
+        
     if the_file.name != 'SGSDK_Lib':
         logger.info('skipping %s', the_file.name)
         return
     
-    write_c_lib_header(the_file)
-    
     post_parse_process(the_file.members[0])
     
     logger.info('Creating Pascal Library')
+    
+    create_c_library.write_c_lib_header(the_file, True)
     
     my_writer.writeln(_header % { 
         'name' : the_file.pascal_name, 

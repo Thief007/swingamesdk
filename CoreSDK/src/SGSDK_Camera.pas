@@ -33,8 +33,8 @@ unit SGSDK_Camera;
 //=============================================================================
 interface
 //=============================================================================
-
-  uses SGSDK_Core, SGSDK_Shapes;
+  
+  uses sgTypes;
   
   //---------------------------------------------------------------------------
   // Camera - position
@@ -160,7 +160,7 @@ interface
 implementation
 //=============================================================================
 
-  uses Classes, SysUtils;
+  uses Classes, SysUtils, SGSDK_Core, SGSDK_Shapes;
 
   ///
   /// The screen offset variables
