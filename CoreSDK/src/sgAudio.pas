@@ -1,5 +1,5 @@
 //=============================================================================
-//          SGSDK_Audio.pas
+//          sgAudio.pas
 //=============================================================================
 // The Audio unit is responsible for managing SDL audio for music and sound 
 // effects. This includes initialisation, loading, freeing, playing, and 
@@ -36,7 +36,7 @@
 ///
 ///@module Audio
 ///@static
-unit SGSDK_Audio;
+unit sgAudio;
 
 //=============================================================================
 interface
@@ -349,7 +349,7 @@ implementation
 //=============================================================================
 
   uses 
-    SysUtils, Classes, SDL_Mixer, SDL, SGSDK_Core;
+    SysUtils, Classes, SDL_Mixer, SDL, sgCore;
        
   var
     // Contains the sound channels used to determine if a sound is currently

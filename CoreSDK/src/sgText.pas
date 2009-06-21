@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//          SGSDK_Font.pas
+//          sgText.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -10,7 +10,7 @@
 // Change History:
 //
 // Version 3.0:
-// - 2009-06-05: Andrew: Using sg_Shared
+// - 2009-06-05: Andrew: Using sgShared
 //
 // Version 2.0:
 // - 2009-01-05: Andrew: Added Unicode rendering
@@ -30,7 +30,7 @@
 
 ///@module Text
 ///@static
-unit SGSDK_Font;
+unit sgText;
 
 interface
   
@@ -115,8 +115,8 @@ interface
   procedure DrawFramerate(x, y: LongInt); overload;
   
 implementation
-  uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera, SDL_gfx, sg_Shared, 
-       SDL, SDL_TTF, SGSDK_Core, SGSDK_Shapes;
+  uses SysUtils, Classes, sgGraphics, sgCamera, SDL_gfx, sgShared, 
+       SDL, SDL_TTF, sgCore, sgShapes;
 
   {$IFDEF FPC}
   const EOL = LineEnding;

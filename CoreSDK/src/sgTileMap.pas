@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//          SGSDK_MappyLoader.pas
+//          sgTileMap.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -33,9 +33,9 @@
 // Version 1.0:
 // - Various
 
-///@module MappyLoader
+///@module TileMap
 ///@static
-unit SGSDK_MappyLoader;
+unit sgTileMap;
 
 interface
   uses  sgTypes;
@@ -153,8 +153,8 @@ interface
   procedure FreeMap(var m: Map);
   
 implementation
-  uses SysUtils, Classes, SGSDK_Graphics, SGSDK_Camera,
-       SGSDK_Core, SGSDK_Physics, SGSDK_Shapes;
+  uses SysUtils, Classes, sgGraphics, sgCamera,
+       sgCore, sgPhysics, sgShapes;
 
   function ReadInt(var stream : text): Word;
   var
@@ -475,8 +475,8 @@ implementation
     YStart := round((ToWorldY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
   
     //Screen Drawing Ending point
-    XEnd := round(XStart + (SGSDK_Core.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));
-    YEnd := round(YStart + (SGSDK_Core.ScreenHeight() / m.MapInfo.BlockHeight) + (m.MapInfo.BlockHeight * 1));
+    XEnd := round(XStart + (sgCore.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));
+    YEnd := round(YStart + (sgCore.ScreenHeight() / m.MapInfo.BlockHeight) + (m.MapInfo.BlockHeight * 1));
 
   
     //WriteLn('DrawMap ', XStart, ',', YStart, ' - ',  XEnd, ',', YEnd);
@@ -523,7 +523,7 @@ implementation
           if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
           begin
             m.Tiles.currentFrame := m.LayerInfo[l].Value[y][x] - 1;
-            //DrawSprite(m.Tiles, CameraX, CameraY, SGSDK_Core.ScreenWidth(), SGSDK_Core.ScreenHeight());
+            //DrawSprite(m.Tiles, CameraX, CameraY, sgCore.ScreenWidth(), sgCore.ScreenHeight());
             DrawSprite(m.Tiles);
           end
           else if (m.LayerInfo[l].Animation[y][x] = 1) then
@@ -899,7 +899,7 @@ implementation
     result := None;
     temp := spr.movement;
     spr.movement := vec;
-    if SGSDK_MappyLoader.SpriteHasCollidedWithMapTile(m, spr, x, y) then
+    if sgTileMap.SpriteHasCollidedWithMapTile(m, spr, x, y) then
     begin
       MoveSpriteOutOfTile(m, spr, x, y);
       result := WillCollideOnSide(m, spr);

@@ -71,15 +71,15 @@ def run_for_all_units(file_visitor):
     
     files = [
             lib_file,
-            find_or_add_file('SGSDK_Audio', 'Audio', '../../CoreSDK/src/SGSDK_Audio.pas'),
-            find_or_add_file('SGSDK_Core', 'Core', '../../CoreSDK/src/SGSDK_Core.pas'),
-            find_or_add_file('SGSDK_Camera', 'Camera', '../../CoreSDK/src/SGSDK_Camera.pas'),
-            find_or_add_file('SGSDK_Font', 'Font', '../../CoreSDK/src/SGSDK_Font.pas'),
-            find_or_add_file('SGSDK_Shapes', 'Shapes', '../../CoreSDK/src/SGSDK_Shapes.pas'),
-            find_or_add_file('SGSDK_Input', 'Input', '../../CoreSDK/src/SGSDK_Input.pas'),
-            find_or_add_file('SGSDK_Graphics', 'Graphics', '../../CoreSDK/src/SGSDK_Graphics.pas'),
-            find_or_add_file('SGSDK_Physics', 'Physics', '../../CoreSDK/src/SGSDK_Physics.pas'),
-            find_or_add_file('SGSDK_MappyLoader', 'MappyLoader', '../../CoreSDK/src/SGSDK_MappyLoader.pas'),
+            find_or_add_file('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
+            find_or_add_file('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
+            find_or_add_file('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
+            find_or_add_file('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
+            find_or_add_file('sgShapes', 'Shapes', '../../CoreSDK/src/sgShapes.pas'),
+            find_or_add_file('sgInput', 'Input', '../../CoreSDK/src/sgInput.pas'),
+            find_or_add_file('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
+            find_or_add_file('sgPhysics', 'Physics', '../../CoreSDK/src/sgPhysics.pas'),
+            find_or_add_file('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
             find_or_add_file('sgTypes', 'sgTypes', '../../CoreSDK/src/sgTypes.pas')
         ]
     

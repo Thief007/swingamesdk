@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//          sg_Shared.pas
+//          sgShared.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -13,10 +13,10 @@
 // - 2009-06-05: Andrew:  Created to house all globals
 //                        that are hidden from the library
 
-unit sg_Shared;
+unit sgShared;
 
 interface
-  uses SDL, SDL_Image, SDLEventProcessing, SGSDK_Core, sgTypes;
+  uses SDL, SDL_Image, SDLEventProcessing, sgCore, sgTypes;
   
   function ToSDLColor(color: UInt32): TSDL_Color;
   function ToGfxColor(val: Color): Color;

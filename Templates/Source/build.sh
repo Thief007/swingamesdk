@@ -15,7 +15,7 @@ LOG_FILE="${APP_PATH}/tmp/out.log"
 EXTRA_OPTS="-O3 -Sewn -vwn"
 VERSION=3.0
 CLEAN="N"
-INSTALL="NO"
+INSTALL="N"
 
 FPC_BIN=`which fpc`
 
@@ -295,10 +295,15 @@ then
         CleanTmp
     fi
 else
+    echo "--------------------------------------------------"
+    echo "              SwinGame Dynamic Library"
+    echo "--------------------------------------------------"
     CleanTmp
     rm -rf "${OUT_DIR}"
     mkdir "${OUT_DIR}"
     echo    ... Cleaned
+    echo "--------------------------------------------------"
+
 fi
 
 echo "  Finished"

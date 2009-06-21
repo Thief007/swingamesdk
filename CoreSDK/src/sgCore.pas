@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//          SGSDK_Core.pas
+//          sgCore.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -47,7 +47,7 @@
 ///
 /// @module Core
 /// @static
-unit SGSDK_Core;
+unit sgCore;
 
 {$IFDEF UNIX}
   {$linklib gcc}
@@ -205,7 +205,7 @@ interface
   
 implementation
   uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx, 
-       sg_Shared, SDLEventProcessing, SDL_Image;
+       sgShared, SDLEventProcessing, SDL_Image;
   
   
   function DLLVersion(): LongInt;
@@ -298,7 +298,7 @@ implementation
     icon: PSDL_Surface;
   begin
     {$IFDEF TRACE}
-      TraceEnter('SGSDK_Core', 'InitSDL');
+      TraceEnter('sgCore', 'InitSDL');
     {$ENDIF}
 
     if (screenWidth < 1) or (screenHeight < 1) then raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
@@ -321,7 +321,7 @@ implementation
     SDL_WM_SetCaption(PChar(caption), nil);
 
     {$IFDEF TRACE}
-      TraceExit('SGSDK_Core', 'InitSDL');
+      TraceExit('sgCore', 'InitSDL');
     {$ENDIF}
   end;
   
@@ -506,7 +506,7 @@ implementation
   procedure OpenGraphicsWindow(caption : String; width : LongInt; height : LongInt); overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('SGSDK_Core', 'OpenGraphicsWindow', caption + ': W' + IntToStr(width) + ': H' + IntToStr(height));
+      TraceEnter('sgCore', 'OpenGraphicsWindow', caption + ': W' + IntToStr(width) + ': H' + IntToStr(height));
     {$ENDIF}
     
     if scr <> nil then
@@ -537,7 +537,7 @@ implementation
     end;
     
     {$IFDEF TRACE}
-      TraceExit('SGSDK_Core', 'OpenGraphicsWindow');
+      TraceExit('sgCore', 'OpenGraphicsWindow');
     {$ENDIF}
   end;
   
@@ -999,12 +999,12 @@ var
 initialization
 begin
   {$IFDEF TRACE}
-    TraceEnter('SGSDK_Core', 'initialization');
+    TraceEnter('sgCore', 'initialization');
   {$ENDIF}
   
   {$ifdef DARWIN}
     {$IFDEF Trace}
-      TraceIf(tlInfo, 'SGSDK_Core', 'Info', 'initialization', 'Loading Mac version');
+      TraceIf(tlInfo, 'sgCore', 'Info', 'initialization', 'Loading Mac version');
     {$ENDIF}
 
     //FIX: Error with Mac and FPC 2.2.2
@@ -1020,7 +1020,7 @@ begin
   if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
   begin
     {$IFDEF Trace}
-    TraceIf(tlError, 'SGSDK_Core', 'Error Loading SDL', 'initialization', SDL_GetError());
+    TraceIf(tlError, 'sgCore', 'Error Loading SDL', 'initialization', SDL_GetError());
     {$ENDIF}
     raise Exception.Create('Error loading sdl... ' + SDL_GetError());
   end;
@@ -1044,14 +1044,14 @@ begin
   baseSurface := nil;
   
   {$IFDEF TRACE}
-    TraceExit('SGSDK_Core', 'initialization');
+    TraceExit('sgCore', 'initialization');
   {$ENDIF}
 end;
 
 finalization
 begin
   {$IFDEF TRACE}
-    TraceEnter('SGSDK_Core', 'finalization');
+    TraceEnter('sgCore', 'finalization');
   {$ENDIF}
 
   if sdlManager <> nil then
@@ -1074,7 +1074,7 @@ begin
   SDL_Quit();
   
   {$IFDEF TRACE}
-    TraceExit('SGSDK_Core', 'finalization');
+    TraceExit('sgCore', 'finalization');
   {$ENDIF}
 end;
 
