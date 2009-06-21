@@ -92,6 +92,7 @@ echo "--------------------------------------------------"
 if [ $BUILD = "Y" ]
 then
     echo ""
+    ${SOURCE_DIST_DIR}/build.sh -c
     
     if [ $INSTALL = "Y" ]
     then

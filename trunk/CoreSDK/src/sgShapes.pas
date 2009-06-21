@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//          SGSDK_Shapes.pas
+//          sgShapes.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -28,7 +28,7 @@
 // - 2008-01-18: Aki, Andrew, Stephen: Created initial version
 
 /// @module Shapes
-unit SGSDK_Shapes;
+unit sgShapes;
 
 interface
   uses sgTypes;
@@ -130,7 +130,7 @@ interface
   function PointIsWithinRect(const v: Point2D; const rect: Rectangle): Boolean; overload;
 
 implementation
-  uses math, sysutils, classes, SGSDK_Graphics, SGSDK_Physics;
+  uses math, sysutils, classes, sgGraphics, sgPhysics;
 
   const
     EPS    = 0.01;         // smallest positive value: less than that to be considered zero

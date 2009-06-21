@@ -1,6 +1,6 @@
 //---------------------------------------------------/
 //+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//          SGSDK_Graphics.pas
+//          sgGraphics.pas
 //+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
 //\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
 //
@@ -15,7 +15,7 @@
 // Change History:
 //
 // Version 3.0:
-// - 2009-06-05: Andrew: Using sg_Shared
+// - 2009-06-05: Andrew: Using sgShared
 //
 // Version 2.0:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
@@ -46,7 +46,7 @@
 
 /// @module sgGraphics
 /// @static
-unit SGSDK_Graphics;
+unit sgGraphics;
 
 interface
   uses sgTypes;
@@ -606,8 +606,8 @@ interface
   procedure SetupBitmapForCollisions(src: Bitmap);
 
 implementation
-  uses Classes, SysUtils, SGSDK_Camera, SGSDK_Physics, SDL_gfx, sg_Shared,
-       SDL, SGSDK_Core, SDL_Image, SGSDK_Shapes;
+  uses Classes, SysUtils, sgCamera, sgPhysics, SDL_gfx, sgShared,
+       SDL, sgCore, SDL_Image, sgShapes;
   
   /// Clears the surface of the bitmap to the passed in color.
   ///
@@ -1209,7 +1209,7 @@ implementation
 
   procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
   begin
-    DrawBitmapPart(scr, src, srcX, srcY, srcW, srcH, SGSDK_Camera.ToScreenX(x), SGSDK_Camera.ToScreenY(y));
+    DrawBitmapPart(scr, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
 
   /// Draws one bitmap (src) onto the screen.
@@ -1226,7 +1226,7 @@ implementation
 
   procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
   begin
-    DrawBitmap(scr, src, SGSDK_Camera.ToScreenX(x), SGSDK_Camera.ToScreenY(y));
+    DrawBitmap(scr, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
   
   procedure ReplayAnimation(theSprite : Sprite);
@@ -1399,10 +1399,10 @@ implementation
   begin
     if theSprite = nil then raise Exception.Create('No sprite supplied');
     
-    if SGSDK_Camera.ToScreenX(theSprite.x) >= ScreenWidth() then result := true
-    else if SGSDK_Camera.ToScreenX(theSprite.x) + CurrentWidth(theSprite) < 0 then result := true
-    else if SGSDK_Camera.ToScreenY(theSprite.y) >= ScreenHeight() then result := true
-    else if SGSDK_Camera.ToScreenY(theSprite.y) + CurrentHeight(theSprite) < 0 then result := true
+    if sgCamera.ToScreenX(theSprite.x) >= ScreenWidth() then result := true
+    else if sgCamera.ToScreenX(theSprite.x) + CurrentWidth(theSprite) < 0 then result := true
+    else if sgCamera.ToScreenY(theSprite.y) >= ScreenHeight() then result := true
+    else if sgCamera.ToScreenY(theSprite.y) + CurrentHeight(theSprite) < 0 then result := true
     else result := false;
   end;
 
@@ -1542,7 +1542,7 @@ implementation
 
   procedure DrawPixel(theColor: Color; x, y: Single); overload;
   begin
-    DrawPixelOnScreen(theColor, SGSDK_Camera.ToScreenX(x), SGSDK_Camera.ToScreenY(y));
+    DrawPixelOnScreen(theColor, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
 
   /// Draws a rectangle on the screen.
@@ -1561,7 +1561,7 @@ implementation
 
   procedure DrawRectangle(theColor : Color; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    DrawRectangle(scr, theColor, filled, SGSDK_Camera.ToScreenX(xPos), SGSDK_Camera.ToScreenY(yPos), width, height);
+    DrawRectangle(scr, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws the outline of a rectangle on the screen.
@@ -1579,7 +1579,7 @@ implementation
   
   procedure DrawRectangle(theColor: Color; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    DrawRectangle(scr, theColor, SGSDK_Camera.ToScreenX(xPos), SGSDK_Camera.ToScreenY(yPos), width, height);
+    DrawRectangle(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a filled rectangle on the screen.
@@ -1597,7 +1597,7 @@ implementation
 
   procedure FillRectangle(theColor : Color; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    FillRectangle(scr, theColor, SGSDK_Camera.ToScreenX(xPos), SGSDK_Camera.ToScreenY(yPos), width, height);
+    FillRectangle(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a line on the screen.
@@ -1615,7 +1615,7 @@ implementation
   
   procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
   begin
-    DrawLine(scr, theColor, SGSDK_Camera.ToScreenX(xPosStart), SGSDK_Camera.ToScreenY(yPosStart), SGSDK_Camera.ToScreenX(xPosEnd), SGSDK_Camera.ToScreenY(yPosEnd));
+    DrawLine(scr, theColor, sgCamera.ToScreenX(xPosStart), sgCamera.ToScreenY(yPosStart), sgCamera.ToScreenX(xPosEnd), sgCamera.ToScreenY(yPosEnd));
   end;
   
   procedure DrawLine(theColor: Color; const line: LineSegment); overload;
@@ -1663,7 +1663,7 @@ implementation
   
   procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    DrawTriangle(scr, theColor, SGSDK_Camera.ToScreenX(x1), SGSDK_Camera.ToScreenY(y1), SGSDK_Camera.ToScreenX(x2), SGSDK_Camera.ToScreenY(y2), SGSDK_Camera.ToScreenX(x3), SGSDK_Camera.ToScreenY(y3));
+    DrawTriangle(scr, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
   end;
   
   procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1688,7 +1688,7 @@ implementation
 
   procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    FillTriangle(scr, theColor, SGSDK_Camera.ToScreenX(x1), SGSDK_Camera.ToScreenY(y1), SGSDK_Camera.ToScreenX(x2), SGSDK_Camera.ToScreenY(y2), SGSDK_Camera.ToScreenX(x3), SGSDK_Camera.ToScreenY(y3));
+    FillTriangle(scr, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
   end;
   
   procedure FillTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
@@ -1722,7 +1722,7 @@ implementation
 
   procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
   begin
-    DrawHorizontalLine(scr, theColor, SGSDK_Camera.ToScreenY(y), SGSDK_Camera.ToScreenX(x1), SGSDK_Camera.ToScreenX(x2));
+    DrawHorizontalLine(scr, theColor, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
   end;
 
   /// Draws a vertical line on the screen.
@@ -1740,7 +1740,7 @@ implementation
 
   procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
   begin
-    DrawVerticalLine(scr, theColor, SGSDK_Camera.ToScreenX(x), SGSDK_Camera.ToScreenY(y1), SGSDK_Camera.ToScreenY(y2));
+    DrawVerticalLine(scr, theColor, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y1), sgCamera.ToScreenY(y2));
   end;
 
   /// Draws a circle centered on a given x, y location.
@@ -1759,7 +1759,7 @@ implementation
 
   procedure DrawCircle(theColor: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(scr, theColor, filled, SGSDK_Camera.ToScreenX(xc), SGSDK_Camera.ToScreenY(yc), radius);
+    DrawCircle(scr, theColor, filled, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
 
@@ -1778,7 +1778,7 @@ implementation
 
   procedure DrawCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(scr, theColor, SGSDK_Camera.ToScreenX(xc), SGSDK_Camera.ToScreenY(yc), radius);
+    DrawCircle(scr, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
   /// Draws a filled circle centered on a given x, y location.
@@ -1796,7 +1796,7 @@ implementation
 
   procedure FillCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    FillCircle(scr, theColor, SGSDK_Camera.ToScreenX(xc), SGSDK_Camera.ToScreenY(yc), radius);
+    FillCircle(scr, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
   /// Draws a ellipse within a given rectangle on the screen.
@@ -1815,7 +1815,7 @@ implementation
 
   procedure DrawEllipse(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    DrawEllipse(scr, theColor, filled, SGSDK_Camera.ToScreenX(xPos), SGSDK_Camera.ToScreenY(yPos), width, height);
+    DrawEllipse(scr, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a ellipse outline within a given rectangle on the screen.
@@ -1833,7 +1833,7 @@ implementation
 
   procedure DrawEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    DrawEllipse(scr, theColor, SGSDK_Camera.ToScreenX(xPos), SGSDK_Camera.ToScreenY(yPos), width, height);
+    DrawEllipse(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
 
@@ -1852,7 +1852,7 @@ implementation
 
   procedure FillEllipse(theColor: Color;  xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    FillEllipse(scr, theColor, SGSDK_Camera.ToScreenX(xPos), SGSDK_Camera.ToScreenY(yPos), width, height);
+    FillEllipse(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
 

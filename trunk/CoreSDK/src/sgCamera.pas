@@ -1,5 +1,5 @@
 //=============================================================================
-//          SGSDK_Camera.pas
+//          sgCamera.pas
 //=============================================================================
 //
 // The Camera unit is used to change the view port (ie the camera location.)
@@ -28,7 +28,7 @@
 //=============================================================================
 
 ///@module Camera
-unit SGSDK_Camera;
+unit sgCamera;
 
 //=============================================================================
 interface
@@ -160,7 +160,7 @@ interface
 implementation
 //=============================================================================
 
-  uses Classes, SysUtils, SGSDK_Core, SGSDK_Shapes;
+  uses Classes, SysUtils, sgCore, sgShapes;
 
   ///
   /// The screen offset variables

@@ -8,7 +8,7 @@
 // of text for SwinGames.
 //
 // An object of the TSDLManager is created and managed in
-// SGSDK_Core. Only one instance should be used. This is
+// sgCore. Only one instance should be used. This is
 // available in the sdlManager global variable.
 //
 // Change History:

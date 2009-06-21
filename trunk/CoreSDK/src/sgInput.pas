@@ -1,5 +1,5 @@
 //=============================================================================
-//          SGSDK_Input.pas
+//          sgInput.pas
 //=============================================================================
 //
 // This unit is responsible for input event processing for mouse visibility, 
@@ -11,7 +11,7 @@
 // Version 3.0:
 // - 2009-06-15: Clinton: renamed+removed Is/Was and placed Key/Mouse first 
 //                        moved and added meta comments, tweaked formatting.
-// - 2009-06-05: Andrew: Using sg_Shared
+// - 2009-06-05: Andrew: Using sgShared
 //
 // Version 2.2.2:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
@@ -35,7 +35,7 @@
 
 /// @module Input
 /// @static
-unit SGSDK_Input;
+unit sgInput;
 
 //=============================================================================
 interface
@@ -190,8 +190,8 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, SGSDK_Physics, SwinGameTrace, sg_Shared,
-       SGSDK_Core, SGSDK_Font, SGSDK_Shapes;
+  uses SysUtils, Classes, sgPhysics, SwinGameTrace, sgShared,
+       sgCore, sgText, sgShapes;
   
   //---------------------------------------------------------------------------
   
@@ -306,7 +306,7 @@ implementation
     x, y: LongInt;
   begin
     {$IFDEF TRACE}
-      TraceEnter('SGSDK_Input', 'GetMouseMovement');
+      TraceEnter('sgInput', 'GetMouseMovement');
     {$ENDIF}
     
     x := 0; 
@@ -315,7 +315,7 @@ implementation
     result := CreateVector(x, y);
     
     {$IFDEF TRACE}
-      TraceExit('SGSDK_Input', 'GetMouseMovement');
+      TraceExit('sgInput', 'GetMouseMovement');
     {$ENDIF}
   end;
   

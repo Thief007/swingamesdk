@@ -11,5 +11,4 @@ DIST_DIR="${SWINGAME_DIR}/Dist"
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 #Bundle the source and build it
-${SOURCE_DIST_DIR}/build.sh -c
 ${APP_PATH}/bundle_source.sh -b

@@ -1,5 +1,5 @@
 //=============================================================================
-//          SGSDK_Physics.pas
+//          sgPhysics.pas
 //=============================================================================
 //
 // The Physics unit contains the code that is responsible for performing 
@@ -60,7 +60,7 @@
 
 /// @module Physics
 /// @static
-unit SGSDK_Physics;
+unit sgPhysics;
 
 //=============================================================================
 interface
@@ -587,7 +587,7 @@ implementation
 
   uses
     SysUtils, Math, Classes, SwinGameTrace,
-    SGSDK_Core, SGSDK_Graphics, SGSDK_Camera, SGSDK_Shapes;
+    sgCore, sgGraphics, sgCamera, sgShapes;
     
   const 
     DEG_TO_RAD = 0.0174532925;
@@ -604,7 +604,7 @@ implementation
   function CreateVector(x, y: Single; invertY: boolean): Vector; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('SGSDK_Physics', 'CreateVector');
+      TraceEnter('sgPhysics', 'CreateVector');
     {$ENDIF}
 
     if invertY then y := y * -1;
@@ -614,7 +614,7 @@ implementation
     //result.w := 1;
     
     {$IFDEF TRACE}
-      TraceExit('SGSDK_Physics', 'CreateVector');
+      TraceExit('sgPhysics', 'CreateVector');
     {$ENDIF}
   end;
 
@@ -722,7 +722,7 @@ implementation
 
   function VectorFromAngle(angle, magnitude: Single): Vector;
   begin
-    result := CreateVector(magnitude * SGSDK_Core.Cos(angle), magnitude * SGSDK_Core.Sin(angle));
+    result := CreateVector(magnitude * sgCore.Cos(angle), magnitude * sgCore.Sin(angle));
   end;
 
   function LineAsVector(const line: lineSegment): Vector;
@@ -1314,12 +1314,12 @@ implementation
       //Do X
       toEdge := CreateVector(edgeX - pt.x, 0);
       angle := CalculateAngle(mvOut, toEdge);      
-      xMag := VectorMagnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
+      xMag := VectorMagnitude(toEdge) * 1 / sgCore.Cos(angle);
 
       //Do Y
       toEdge := CreateVector(0, edgeY - pt.y);
       angle := CalculateAngle(mvOut, toEdge);      
-      yMag := VectorMagnitude(toEdge) * 1 / SGSDK_Core.Cos(angle);
+      yMag := VectorMagnitude(toEdge) * 1 / sgCore.Cos(angle);
           
       if (yMag < 0) or (xMag < yMag) then outMag := xMag
       else outMag := yMag;
