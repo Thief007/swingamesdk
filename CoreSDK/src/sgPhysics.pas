@@ -758,7 +758,7 @@ implementation
     top1, bottom1, top2, bottom2, overTop, overBottom: LongInt;
     yPixel1, xPixel1: LongInt;
   begin
-    result := RectanglesIntersect(CreateRectangle(x, y, part.width, part.height), rect);
+    result := RectanglesIntersect(RectangleFrom(x, y, part.width, part.height), rect);
     if  bbox or (not result) then exit;
     
     //reset result
@@ -805,17 +805,17 @@ implementation
 
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
   begin
-    result := BitmapPartRectCollision(bmp, x, y, CreateRectangle(0, 0, bmp), bbox, rect);
+    result := BitmapPartRectCollision(bmp, x, y, RectangleFrom(0, 0, bmp), bbox, rect);
   end;
   
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
   begin
-    result := BitmapRectCollision(bmp, x, y, bbox, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+    result := BitmapRectCollision(bmp, x, y, bbox, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
   end;
 
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
   begin
-    result := BitmapRectCollision(bmp, x, y, false, CreateRectangle(rectX, rectY, rectWidth, rectHeight));
+    result := BitmapRectCollision(bmp, x, y, false, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
   end;
 
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
@@ -856,8 +856,8 @@ implementation
         end;
         result := BitmapPartRectCollision(
                     bmp, Round(s.x), Round(s.y), 
-                    CreateRectangle(offX1, offY1, s.width, s.height), 
-                    s.usePixelCollision = false, CreateRectangle(x, y, width, height));
+                    RectangleFrom(offX1, offY1, s.width, s.height),
+                    s.usePixelCollision = false, RectangleFrom(x, y, width, height));
       end;
     end;
   end;
@@ -1151,12 +1151,12 @@ implementation
   ///
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, CreatePoint(x, y), CreateRectangle(bmp), bbox);
+    result := SpriteBitmapCollision(s, bmp, PointFrom(x, y), RectangleFrom(bmp), bbox);
   end;
 
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, pt, CreateRectangle(bmp), bbox);
+    result := SpriteBitmapCollision(s, bmp, pt, RectangleFrom(bmp), bbox);
   end;
   
 
@@ -1224,18 +1224,18 @@ implementation
     else
       r := CurrentHeight(p1) div 2;
       
-    dist := DistancePointToLine(p1.x + r, p1.y + r, line);
+    dist := PointLineDistance(p1.x + r, p1.y + r, line);
     result := dist < r;
   end;
   
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
   begin
-    result := LineIntersectsWithLines(line, LinesFromRect(rect));
+    result := LineIntersectsLines(line, LinesFromRect(rect));
   end;
     
   function RectLineCollision(p1: Sprite; const line: LineSegment): Boolean; overload;
   begin
-    result := RectLineCollision(CreateRectangle(p1), line);
+    result := RectLineCollision(RectangleFrom(p1), line);
   end;
   
   function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
@@ -1381,7 +1381,7 @@ implementation
     
     if (result.x = 0) and (result.y = 0) then exit; 
 
-    if not LineIntersectsWithRect(LineFromVector(pt, movement), rect) then
+    if not LineIntersectsRect(LineFromVector(pt, movement), rect) then
       result := CreateVector(0, 0);
   end;
 
@@ -1392,7 +1392,7 @@ implementation
     ipt2: Point2D;
   begin
     // If the point is not in the radius of the circle, return a zero vector 
-    if DistanceBetween(pt, center) > radius then
+    if PointPointDistance(pt, center) > radius then
     begin
       result := CreateVector(0, 0);
       exit;
@@ -1429,7 +1429,7 @@ implementation
       ipt2.x := pt.x + t * dx;
       ipt2.y := pt.y + t * dy;
   
-      mvOut := DistanceBetween(pt, ipt2) + 1;
+      mvOut := PointPointDistance(pt, ipt2) + 1;
       result := VectorMultiply(UnitVector(InvertVector(movement)), mvOut);
     end;
   end;

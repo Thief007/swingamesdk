@@ -1,14 +1,15 @@
-//---------------------------------------------------/
-//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+//=============================================================================
 //          sgTileMap.pas
-//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
-//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//=============================================================================
 //
-// The MappyLoader unit is responsible for loading and
-// processing a Mappy data file exported using the Lua
-// script specifically written for SwinGame.
+// Responsible for loading and processing a "Mappy" data file exported using
+// the Lua script specifically written for SwinGame to create map files.
 //
 // Change History:
+//
+// Version 3.0:
+// - 2009-06-22: Clinton: Comment format, cleanup and new additions.
+// - 2009-06-17: Andrew: added meta tags, renamed from "mappy" to tilemap
 //
 // Version 2:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
@@ -20,51 +21,55 @@
 // - 2008-04-02: Stephen: Added MapWidth(), MapHeight(), BlockWidth(), BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
 //              LoadIsometricInformation(), LoadMapv2(), various bug fixes
 // - 2008-04-02: Andrew: Removed gap loading as mappy support has not been updated on the web, and this version
-//                       is unable to read the old files. 
+//                       is unable to read the old files.
 // - 2008-03-29: Stephen:   MapData record now contains GapX, GapY, StaggerX, StaggerY, Isometric
 //              LoadMapInformation, now loads the new isometric related data
-//              DrawMap now draws isometric tiles with their correct offsets              
+//              DrawMap now draws isometric tiles with their correct offsets
 // - 2008-01-30: Andrew: Added const to vector param, increased search for collision tests
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
-// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide 
+// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide
 // - 2008-01-17: Aki + Andrew: Refactor
 //
 // Version 1.0:
 // - Various
+//=============================================================================
 
 ///@module TileMap
 ///@static
 unit sgTileMap;
 
+//=============================================================================
 interface
+//=============================================================================
+
   uses  sgTypes;
-  
+
   /// @lib
   /// @class Map
   /// @constructor
   function LoadMap(mapName : String): Map;
-  
+
   /// @lib
   /// @class Map
   /// @constructor
   function LoadMapFiles(mapFile, imgFile: String): Map;
-  
+
   /// @lib
   /// @class Map
   /// @method Draw
   procedure DrawMap(m : Map);
-  
+
   /// @lib
   /// @class Map
   /// @method HasSpriteCollidedWithTile
   function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
-  
+
   /// @lib SpriteHasCollidedWithMapTileOutXY
   /// @class Map
   /// @overload  HasSpriteCollidedWithTile HasSpriteCollidedWithTileOutXY
   function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
-  
+
   /// @lib
   /// @class Map
   /// @method WillCollideOnSide
@@ -151,8 +156,12 @@ interface
   /// @class Map
   /// @dispose
   procedure FreeMap(var m: Map);
-  
+
+
+//=============================================================================
 implementation
+//=============================================================================
+
   uses SysUtils, Classes, sgGraphics, sgCamera,
        sgCore, sgPhysics, sgShapes;
 
@@ -702,8 +711,8 @@ implementation
     kickVector: Vector;
     sprRect, tgtRect : Rectangle;
   begin
-    sprRect := CreateRectangle(sprt);
-    tgtRect := CreateRectangle(x, y, width, height);
+    sprRect := RectangleFrom(sprt);
+    tgtRect := RectangleFrom(x, y, width, height);
   
     kickVector := VectorOutOfRectFromRect(sprRect, tgtRect, movement);
   
@@ -716,13 +725,13 @@ implementation
       startPoint, endPoint: Rectangle;
       startX, startY, endX, endY : LongInt;
     begin
-      startPoint := CreateRectangle(  
+      startPoint := RectangleFrom(
                       round( ((spr.x - spr.movement.x) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
                       round( ((spr.y - spr.movement.y) / m.MapInfo.BlockHeight) -1) * m.MapInfo.BlockHeight,
                       (round( spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
                       (round( spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
                     
-      endPoint := CreateRectangle(  round(((spr.x + spr.width) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
+      endPoint := RectangleFrom(  round(((spr.x + spr.width) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
                       round(((spr.y + spr.height) / m.MapInfo.BlockHeight) - 1) * m.MapInfo.BlockHeight,
                       (round(spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
                       (round(spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
@@ -750,7 +759,7 @@ implementation
         endY := round(startPoint.y + startPoint.height);
       end;
     
-      result := CreateRectangle( startX, startY, endX - startX, endY - startY);
+      result := RectangleFrom( startX, startY, endX - startX, endY - startY);
       
       //Debug Info              
       //DrawRectangle(ColorYellow, startPoint.x, startPoint.y, startPoint.width, startPoint.height);
@@ -957,13 +966,13 @@ implementation
     if m.MapInfo.Isometric then
     begin
       //Create Triangles
-      tri1 := CreateTriangle(x, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
-        tri2 := CreateTriangle(x + m.MapInfo.BlockWidth, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
-        if IsPointInTriangle(point, tri1) or IsPointInTriangle(point, tri2) then result := true;
+      tri1 := TriangleFrom(x, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
+        tri2 := TriangleFrom(x + m.MapInfo.BlockWidth, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
+        if PointInTriangle(point, tri1) or PointInTriangle(point, tri2) then result := true;
     end
     else
     begin
-      result := PointIsWithinRect(point, x, y, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+      result := PointInRect(point, x, y, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
     end;
   end;
 
@@ -980,11 +989,11 @@ implementation
     //Returns -1,-1 if no tile has this point
     result.xIndex := -1;
     result.yIndex := -1;
-    result.topCorner := CreatePoint(0,0);
-    result.PointA := CreatePoint(0,0);
-    result.PointB := CreatePoint(0,0);
-    result.PointC := CreatePoint(0,0);
-    result.PointD := CreatePoint(0,0);
+    result.topCorner := PointFrom(0,0);
+    result.PointA := PointFrom(0,0);
+    result.PointB := PointFrom(0,0);
+    result.PointC := PointFrom(0,0);
+    result.PointD := PointFrom(0,0);
 
     for y := 0  to m.MapInfo.MapHeight - 1 do
     begin
@@ -1013,22 +1022,22 @@ implementation
           begin
             result.xIndex := x;
             result.yIndex := y;
-            result.topCorner := CreatePoint(tx, ty);
-            result.PointA := CreatePoint(tx, ty + m.MapInfo.BlockHeight / 2);
-            result.PointB := CreatePoint(tx + m.MapInfo.BlockWidth / 2, ty);
-            result.PointC := CreatePoint(tx + m.MapInfo.BlockWidth / 2, ty + m.MapInfo.BlockHeight);
-            result.PointD := CreatePoint(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight / 2);
+            result.topCorner := PointFrom(tx, ty);
+            result.PointA := PointFrom(tx, ty + m.MapInfo.BlockHeight / 2);
+            result.PointB := PointFrom(tx + m.MapInfo.BlockWidth / 2, ty);
+            result.PointC := PointFrom(tx + m.MapInfo.BlockWidth / 2, ty + m.MapInfo.BlockHeight);
+            result.PointD := PointFrom(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight / 2);
           exit;
           end
           else
           begin
             result.xIndex := x;
             result.yIndex := y;
-            result.topCorner := CreatePoint(tx,ty);
-            result.PointA := CreatePoint(tx, ty);
-            result.PointB := CreatePoint(tx + m.MapInfo.BlockWidth, ty);
-            result.PointC := CreatePoint(tx, ty + m.MapInfo.BlockHeight);
-            result.PointD := CreatePoint(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight);
+            result.topCorner := PointFrom(tx,ty);
+            result.PointA := PointFrom(tx, ty);
+            result.PointB := PointFrom(tx + m.MapInfo.BlockWidth, ty);
+            result.PointC := PointFrom(tx, ty + m.MapInfo.BlockHeight);
+            result.PointD := PointFrom(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight);
           end;
         end;
       end;

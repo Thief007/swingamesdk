@@ -298,7 +298,7 @@ implementation
   begin
     x := 0; y := 0;
     SDL_GetMouseState(x, y);
-    result := CreatePoint(x, y);    
+    result := PointFrom(x, y);    
   end;
   
   function GetMouseMovement(): Vector;
