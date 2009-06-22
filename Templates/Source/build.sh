@@ -326,5 +326,8 @@ else
 
 fi
 
+rm -f ${LOG_FILE}
+rm -rf ${TMP_DIR}
+
 echo "  Finished"
 echo "--------------------------------------------------"
