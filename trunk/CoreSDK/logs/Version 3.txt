@@ -35,6 +35,19 @@ Suggestions:
   - added CameraPos
   
 ** Changes to Version 2 **
+  Units renamed:
+    SGSDK_Audio -> sgAudio
+    SGSDK_Camera -> sgCamera
+    SGSDK_Core -> sgCore
+    SGSDK_Graphics -> sgGraphics
+    SGSDK_Input -> sgInput
+    SGSDK_Physics -> sgPhysics
+    SGSDK_Shapes -> sgShapes
+    SGSDK_Font -> sgText
+    SGSDK_MappyLoader -> sgTileMap
+    
+  Moved all type declarations into sgTypes
+  
   Audio changes:
   - Loops changes to be the number of times played, rather than the number of
     times repeated. PlaySoundEffect(x, 2) now plays twice not three times
@@ -45,7 +58,7 @@ Suggestions:
   - Removed PosX, PosY from Sprite.
   - Removed Colour, and all associated functions - standardised to use Color
   
-  Font changes:
+  Text changes:
   - Changed order of parameters in TextWidth and TextHeight
   
   Input changes:
