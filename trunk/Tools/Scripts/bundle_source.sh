@@ -18,13 +18,15 @@ SDK_SRC="${SWINGAME_DIR}/CoreSDK/src"
 PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
 
 BUILD="N"
-INSTALL="N"
+EXTRA_OPTS=""
 
-while getopts bi o
+while getopts bid o
 do
     case "$o" in
-    b)  BUILD="Y" ;;
-    i)  INSTALL="Y" ;;
+    b)  BUILD="Y";;
+    d)  BUILD="Y"
+        EXTRA_OPTS="${EXTRA_OPTS} -d";;
+    i)  EXTRA_OPTS="${EXTRA_OPTS} -i local" ;;
     esac
 done
 
@@ -50,6 +52,7 @@ echo "          Creating Source Template"
 echo "              for Mac OS X and Linux"
 echo "--------------------------------------------------"
 echo "  Running script from $APP_PATH"
+echo "  Build options are ${EXTRA_OPTS}"
 echo "  Copying"
 echo "    from ${SDK_SRC}"
 echo "    to ${SOURCE_DIST_DIR}"
@@ -91,13 +94,8 @@ echo "--------------------------------------------------"
 
 if [ $BUILD = "Y" ]
 then
-    echo ""
+    echo
     ${SOURCE_DIST_DIR}/build.sh -c
-    
-    if [ $INSTALL = "Y" ]
-    then
-        ${SOURCE_DIST_DIR}/build.sh -i local
-    else
-        ${SOURCE_DIST_DIR}/build.sh
-    fi
+    echo
+    ${SOURCE_DIST_DIR}/build.sh ${EXTRA_OPTS}
 fi

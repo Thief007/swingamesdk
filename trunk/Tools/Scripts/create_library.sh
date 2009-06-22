@@ -10,5 +10,29 @@ SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 DIST_DIR="${SWINGAME_DIR}/Dist"
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
+INSTALL="N"
+EXTRA_OPTS=""
+
+
+while getopts hdi: o
+do
+    case "$o" in
+    c)  CLEAN="Y" ;;
+    h)  Usage ;;
+    d)  EXTRA_OPTS=" -d";;
+    i)  INSTALL="$OPTARG";;
+    [?]) print >&2 "Usage: $0 [-d] [-i local|global] [-h]"
+         exit -1;;
+    esac
+done
+
+shift $((${OPTIND}-1))
+
+echo "--------------------------------------------------"
+echo "          Creating SGSDK Library/Framework"
+echo "              for Mac OS X and Linux"
+echo "--------------------------------------------------"
+echo
+
 #Bundle the source and build it
-${APP_PATH}/bundle_source.sh -b
+${APP_PATH}/bundle_source.sh -b ${EXTRA_OPTS}

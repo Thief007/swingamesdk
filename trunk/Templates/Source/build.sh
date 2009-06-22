@@ -302,7 +302,6 @@ else
     rm -rf "${OUT_DIR}"
     mkdir "${OUT_DIR}"
     echo    ... Cleaned
-    echo "--------------------------------------------------"
 
 fi
 
