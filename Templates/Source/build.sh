@@ -233,6 +233,11 @@ then
             elif  [ $INSTALL = "global" ]
             then
                 TO_DIR=/Library/Frameworks
+		if [ "$(id -u)" != "0" ]
+		then
+			echo "Global install must be run by root user"
+			exit 1
+		fi
             else
                 echo "Unknown install type"
                 exit -1
@@ -281,17 +286,33 @@ then
         fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
-        mv "${OUT_DIR}/libSGSDK.so" "${OUT_DIR}/libSGSDK.so.${VERSION}"
+        mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
         
         if [ ! $INSTALL = "N" ]
         then
             echo "  ... Installing SwinGame"
-            mv -f "${OUT_DIR}/libSGSDK.so.${VERSION}" /usr/lib
-            ln -s -f "/usr/lib/libSGSDK.so.${VERSION}" /usr/lib/libSGSDK.so
-        
-            ldconfig -v - n
+	    if [ "$(id -u)" != "0" ]
+            then
+                echo "Install must be run by root user"
+                exit 1
+	    fi
+            mv -f "${OUT_DIR}/libsgsdk.so.${VERSION}" /usr/lib
+            ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" /usr/lib/libsgsdk.so
+
+            HEADER_DIR="/usr/include/sgsdk"
+            echo "  ... Headers going to ${HEADER_DIR}"
+            if [ ! -d ${HEADER_DIR} ]
+            then
+                echo "  ... Creating header directory"
+                mkdir -p ${HEADER_DIR}
+            fi
+
+            echo "  ... Copying header files"
+            cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/sgsdk.h"
+            cp "${SDK_SRC_DIR}/sgTypes.h" "${HEADER_DIR}/sgTypes.h"
+
+            /sbin/ldconfig -n /usr/lib
         fi
-        
         CleanTmp
     fi
 else
