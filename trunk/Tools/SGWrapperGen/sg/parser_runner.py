@@ -80,7 +80,7 @@ def run_for_all_units(file_visitor):
             find_or_add_file('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
             find_or_add_file('sgPhysics', 'Physics', '../../CoreSDK/src/sgPhysics.pas'),
             find_or_add_file('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
-            find_or_add_file('sgTypes', 'sgTypes', '../../CoreSDK/src/sgTypes.pas')
+            find_or_add_file('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas')
         ]
     
     for a_file in files[1:]:
