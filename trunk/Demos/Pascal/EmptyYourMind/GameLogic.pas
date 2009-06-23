@@ -7,8 +7,7 @@ implementation
 	uses
 		GameResources,
 		SysUtils,
-		SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics,
-		SGSDK_KeyCodes;
+		sgCore, sgText, sgAudio, sgGraphics, sgInput, sgPhysics, sgTypes, sgMath;
 	
 	type
 		EnemyMovement = (
@@ -145,8 +144,8 @@ implementation
 
 	procedure UpdateEntityPosition(speed, angle : Single; var target : Sprite);
 	begin
-		target.x := target.x + speed * SGSDK_Core.Cos(angle);
-		target.y := target.y + speed * SGSDK_Core.Sin(angle);
+		target.x := target.x + speed * sgCore.Cos(angle);
+		target.y := target.y + speed * sgCore.Sin(angle);
 	end;
 
 	procedure MovePlayerShip(var player : ShipData);
@@ -245,19 +244,19 @@ implementation
 			game.player.currentDelay := game.player.shootDelay;
 			PlaySoundEffect(game.sounds[0]);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFromAngle(270, BULLETSPEED));
+										Player, VectorFrom(270, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFromAngle(255, BULLETSPEED));
+										Player, VectorFrom(255, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFromAngle(285, BULLETSPEED));
+										Player, VectorFrom(285, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFromAngle(240, BULLETSPEED));
+										Player, VectorFrom(240, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFromAngle(300, BULLETSPEED));
+										Player, VectorFrom(300, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 		end;
 	end;
@@ -290,7 +289,7 @@ implementation
 					tempSprite := shipToProcess.theSprite
 				else
 					tempSprite := shipToProcess.theSpriteC;
-				if HaveSpritesCollided(game.bullets[i].theSprite, tempSprite) then begin
+				if SpritesCollided(game.bullets[i].theSprite, tempSprite) then begin
 					shipToProcess.health := shipToProcess.health - game.bullets[i].damage;
 					//Kill and play a sound effect if the health is lower than 0
 					if shipToProcess.health <= 0 then begin
@@ -354,7 +353,8 @@ implementation
 				tempBullet := CreateBullet('EnemyBullet', enemyToProcess, DAMAGE, Normal, 
 											Enemy, VectorFromAngle(60 + 20 * i + enemyToProcess.offset, BULLETSPEED));
 				DeployBullet(tempBullet, game.bullets);
-				PlaySoundEffect(game.sounds[2]);
+				//PlaySoundEffect(game.sounds[2]);
+        PlaySoundEffect(game.sounds[0]);
 			end;
 			enemyToProcess.offset := enemyToProcess.offset + 10;
 		end;
@@ -384,7 +384,7 @@ implementation
 		game : GameData;
 	begin
 		LoadGame(game);
-		PlayMusic(game.music);
+		//PlayMusic(game.music);
 		repeat
 			ProcessEvents();
 			UpdateBackground(game.images);
@@ -393,7 +393,13 @@ implementation
 			UpdateEnemies(game);
 			game.gameTimer := game.gameTimer + 1;
 			RefreshScreen(60);
-			if not game.player.alive then break;
+			if not game.player.alive then
+      begin
+        WriteLn('###');
+        break;
+      end;
+      // show the current framerate... see if it's broken
+      //WriteLn('FPS' + IntToStr(GetFramerate));
 		until WindowCloseRequested();
 		StopMusic();
 	end;

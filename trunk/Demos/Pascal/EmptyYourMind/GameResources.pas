@@ -1,7 +1,7 @@
 unit GameResources;
 
 interface
-	uses SysUtils, SGSDK_Core, SGSDK_Font, SGSDK_Audio, SGSDK_Graphics, SGSDK_Input, SGSDK_Physics, SGSDK_MappyLoader;
+	uses SysUtils, sgCore, sgText, sgTypes, sgAudio, sgGraphics, sgInput, sgPhysics, sgTileMap;
 
 	procedure LoadResources();
 	procedure FreeResources();
