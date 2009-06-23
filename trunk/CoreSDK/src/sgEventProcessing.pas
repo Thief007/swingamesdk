@@ -1,17 +1,17 @@
-//---------------------------------------------------/
-//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-//        SDLEventProcessing.pas
-//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
-//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//=============================================================================
+//  sgEventProcessing.pas
+//=============================================================================
 //
-// This unit handles the processing of events and reading
-// of text for SwinGames.
+// This unit handles the processing of events, including the reading of text 
+// for SwinGames. This unit and its code is not directly used by typical games.
 //
-// An object of the TSDLManager is created and managed in
-// sgCore. Only one instance should be used. This is
-// available in the sdlManager global variable.
+// An object of the TSDLManager is created and managed in sgCore. Only one 
+// instance should be used (essentially a "singleton" pattern), which is 
+// available in the sdlManager as a global variable.
 //
 // Change History:
+// Version 3:
+// - 2009-06-23: Clinton: Renamed file/unit, comment/format cleanup/tweaks
 //
 // Version 2.0.0:
 // - 2008-12-17: Andrew: Moved all integers to LongInt
@@ -23,16 +23,22 @@
 //
 //  Version 1.0:
 //  - Various
+//=============================================================================
 
-unit SDLEventProcessing;
+unit sgEventProcessing;
 
+//=============================================================================
 interface
+//=============================================================================
 uses Classes, SDL, SDL_Mixer, SysUtils, SDL_TTF;
 
-type EventProcessPtr = procedure(event: PSDL_Event);
-type EventStartProcessPtr = procedure();
+type 
+  
+  EventProcessPtr = procedure(event: PSDL_Event);
+  
+  EventStartProcessPtr = procedure();
 
-type TSDLManager = class (TObject)
+  TSDLManager = class(TObject)
   private
     _quit: Boolean;
     _keyPressed: Boolean;
@@ -76,7 +82,9 @@ type TSDLManager = class (TObject)
     procedure HandleKeydownEvent(event: PSDL_Event);
 end;
 
+//=============================================================================
 implementation
+//=============================================================================
   
   function TSDLManager.WasAKeyPressed(): Boolean;
   begin
