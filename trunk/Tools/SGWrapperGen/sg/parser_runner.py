@@ -67,7 +67,7 @@ def post_parse_process(the_file):
 def run_for_all_units(file_visitor):
     parser = SGPasParser()
     
-    lib_file = find_or_add_file('SGSDK','SGSDK_Lib','./sgsdk.pas')
+    lib_file = find_or_add_file('SGSDK','SGSDK','./sgsdk.pas')
     
     files = [
             lib_file,

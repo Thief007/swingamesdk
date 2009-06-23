@@ -124,7 +124,7 @@ doLipo()
 #
 doCopyHeaders()
 {
-    find ${C_LIB_FILES_DIR} -path \*.h -maxdepth 1 ! -name \*SGSDK_Lib.h -exec cp {} ${OUT_DIR}/ \;
+    find ${C_LIB_FILES_DIR} -path \*.h -maxdepth 1 ! -name \*SGSDK.h -exec cp {} ${OUT_DIR}/ \;
 }
 
 doCleanUp()

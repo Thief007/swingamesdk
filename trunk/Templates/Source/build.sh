@@ -152,7 +152,7 @@ doCreateFramework()
     mkdir ${RESOURCES_DIR}
     
     cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/SGSDK.h"
-    cp "${SDK_SRC_DIR}/sgTypes.h" "${HEADER_DIR}/sgTypes.h"
+    cp "${SDK_SRC_DIR}/Types.h" "${HEADER_DIR}/Types.h"
     mv "${OUT_DIR}/libSGSDK.dylib" "${VERSION_DIR}/SGSDK"
     
     echo "<?xml version='1.0' encoding='UTF-8'?>\
@@ -309,7 +309,7 @@ then
 
             echo "  ... Copying header files"
             cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/sgsdk.h"
-            cp "${SDK_SRC_DIR}/sgTypes.h" "${HEADER_DIR}/sgTypes.h"
+            cp "${SDK_SRC_DIR}/Types.h" "${HEADER_DIR}/Types.h"
 
             /sbin/ldconfig -n /usr/lib
         fi

@@ -6,7 +6,7 @@
 * Wrapping %(pascal_name)s.pas
 */
 
-#include "SGSDK_Lib.h"
+#include "SGSDK.h"
 #include "%(name)s.h"
 
 #define True 1
