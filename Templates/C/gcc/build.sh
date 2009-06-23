@@ -102,24 +102,25 @@ doLipo()
 
 doMacPackage()
 {
-    if [ -d ./bin/"${GAME_NAME}.app" ] 
+    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
+    if [ -d "${GAMEAPP_PATH}" ] 
     then
     	echo "  ... Removing old application"
-    	rm -rf ./bin/"${GAME_NAME}.app"
+    	rm -rf "${GAMEAPP_PATH}"
     fi
 
     echo "  ... Creating Application Bundle"
-
-    mkdir "./bin/${GAME_NAME}.app"
-    mkdir "./bin/${GAME_NAME}.app/Contents"
-    mkdir "./bin/${GAME_NAME}.app/Contents/MacOS"
-    mkdir "./bin/${GAME_NAME}.app/Contents/Resources"
-    mkdir "./bin/${GAME_NAME}.app/Contents/Frameworks"
+    
+    mkdir "${GAMEAPP_PATH}"
+    mkdir "${GAMEAPP_PATH}/Contents"
+    mkdir "${GAMEAPP_PATH}/Contents/MacOS"
+    mkdir "${GAMEAPP_PATH}/Contents/Resources"
+    mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
 
     echo "  ... Added Private Frameworks"
-    cp -R ./lib/*.framework "./bin/${GAME_NAME}.app/Contents/Frameworks/"
+    cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
-    mv bin/"${GAME_NAME}" "./bin/${GAME_NAME}.app/Contents/MacOS/" 
+    mv "${OUT_DIR}/${GAME_NAME}" "${APP_PATH}/bin/${GAME_NAME}.app/Contents/MacOS/" 
 
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
@@ -146,11 +147,11 @@ doMacPackage()
             <key>CSResourcesFileMapped</key>\
             <true/>\
     </dict>\
-    </plist>" >> "./bin/${GAME_NAME}.app/Contents/Info.plist"
+    </plist>" >> "${GAMEAPP_PATH}/Contents/Info.plist"
 
-    echo "APPLSWIN" >> "./bin/${GAME_NAME}.app/Contents/PkgInfo"
+    echo "APPLSWIN" >> "${GAMEAPP_PATH}/Contents/PkgInfo"
 
-    RESOURCE_DIR="./bin/${GAME_NAME}.app/Contents/Resources"
+    RESOURCE_DIR="${GAMEAPP_PATH}/Contents/Resources"
 }
 
 doLinuxCompile()
@@ -177,7 +178,30 @@ doLinuxCompile()
 
 doLinuxPackage()
 {
-    cp ./lib/libsgsdk.so "./bin/"
+    RESOURCE_DIR="${APP_PATH}/bin/"
+}
+
+copyWithoutSVN()
+{
+    FROM_DIR=$1
+    TO_DIR=$2
+    
+    cd "${FROM_DIR}"
+    
+    # Create directory structure
+    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -exec mkdir "${TO_DIR}/{}" \;
+    # Copy files and links
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
+}
+
+#
+# Copy Resources from standard location to $RESOURCE_DIR
+#
+doCopyResources()
+{
+    echo "  ... Copying Resources into $GAME_NAME"
+    
+    copyWithoutSVN "${APP_PATH}/Resources" "${RESOURCE_DIR}"
 }
 
 
@@ -207,13 +231,14 @@ then
         doMacPackage
     else
         echo "--------------------------------------------------"
-        echo "          Creating SwinGame C Library"
+        echo "          Creating $GAME_NAME"
         echo "                 for Linux"
         echo "--------------------------------------------------"
         echo "  Running script from $APP_PATH"
         echo "  Saving output to $OUT_DIR"
         echo "--------------------------------------------------"
         echo "  ... Creating C wrapper library"
+        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
         CreateCWrapper >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
         
@@ -222,6 +247,8 @@ then
         
         doLinuxPackage
     fi
+    
+    doCopyResources
 else
     CleanTmp
     rm -rf "${OUT_DIR}"

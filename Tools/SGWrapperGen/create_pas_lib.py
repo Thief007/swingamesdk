@@ -217,7 +217,7 @@ def post_parse_process(the_lib):
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
     
-    if the_file.name == 'sgTypes':
+    if the_file.name == 'Types':
         logger.info('Processing types in %s', the_file.name)
         create_c_library.write_c_lib_module(the_file)
         return

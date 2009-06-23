@@ -1,3 +1,9 @@
+// Change History:
+//
+// Version 3:
+// - 2009-06-23: Andrew: Created
+
+
 /// @module ResourceManager
 unit sgResourceManager;
 
@@ -66,13 +72,13 @@ implementation
     obj: tResourceContainer;
     bmp: Bitmap;
   begin
+    //WriteLn('Mapping bitmap... ', filename);
+    //WriteLn(name, '->', GetPathToResource(filename, ImageResource));
     bmp := LoadBitmap(GetPathToResource(filename, ImageResource));
-    WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
-    WriteLn(GetPathToResource(filename, ImageResource));
+    //WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
+    //WriteLn(GetPathToResource(filename, ImageResource));
     obj := tResourceContainer.Create(bmp);
     _Images.values[name] := obj;
-    
-    WriteLn(hex(_Images.values[name].Resource));
   end;
   
   procedure MapTransparentBitmap(name, filename: String; transparentColor: Color);
@@ -90,8 +96,8 @@ implementation
   
   function GetBitmap(name: String): Bitmap;
   begin
-    result := Bitmap(_Images.values[name].Resource);
-    WriteLn(name, ' => ', hexstr(result));
+    result := Bitmap(tResourceContainer(_Images.values[name]).Resource);
+    //WriteLn(name, ' => ', hexstr(result));
   end;
   
   procedure ReleaseBitmap(name: String);
@@ -570,6 +576,7 @@ implementation
 
 initialization
 begin
+  //WriteLn('Here...');
   _Images := tStringHash.Create(False, 1024);
 end;
 

@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-06-23: Andrew: Added getting and setting of AppPath
 // - 2009-06-05: Andrew: Moved out shared data/functions
 // - 2009-06-04: Andrew:  Started on processing comments.
 //
@@ -195,6 +196,11 @@ interface
   
   /// @lib HasExceptionOccured
   function HasExceptionOccured(): Boolean;
+  
+  /// @lib
+  procedure SetAppPath(path: String; withExe: Boolean);
+  /// @lib
+  function AppPath(): String;
   
   var
     //Preset colours, do not change these values.
@@ -608,20 +614,16 @@ implementation
   begin
     filename := basename + '.bmp';
     i := 1;
-
+    
     while FileExists(filename) do
     begin
       filename := basename + IntToStr(i) + '.bmp';
       i := i + 1;
     end;
-
-    try
-      if SDL_SaveBMP(scr.surface, PChar(filename)) = -1 then
-      begin
-       WriteLn(SDL_GetError());
-      end;
-    except
-      raise Exception.Create('Failed to save ' + basename + '.bmp');
+    
+    if SDL_SaveBMP(scr.surface, PChar(filename)) = -1 then
+    begin
+     raise Exception.Create('Failed to save ' + basename + '.bmp : ' + SDL_GetError());
     end;
   end;
   
@@ -986,7 +988,17 @@ implementation
     else
       textColor := ColorGreen;
   end;
-
+  
+  procedure SetAppPath(path: String; withExe: Boolean);
+  begin
+    if withExe then applicationPath := ExtractFileDir(path)
+    else applicationPath := path;
+  end;
+  
+  function AppPath(): String;
+  begin
+    result := applicationPath;
+  end;
 
 {$ifdef DARWIN}
 var
@@ -1028,13 +1040,11 @@ begin
   SDL_EnableUNICODE(SDL_ENABLE);
 
   sdlManager := TSDLManager.Create();
-
   try
     if ParamCount() >= 0 then
       applicationPath := ExtractFileDir(ParamStr(0))
     else
       applicationPath := '';
-      
   except
     applicationPath := '';
   end;
