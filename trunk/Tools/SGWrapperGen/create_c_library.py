@@ -101,11 +101,11 @@ _type_switcher = {
         'point2d': 'const Point2D *%s',
         'linesegment': 'const LineSegment *%s',
         'rectangle': 'const Rectangle *%s',
-        'matrix2d': 'const Matrix2D *%s',
+        'matrix2d': 'const Matrix2D %s',
         'vector': 'const Vector *%s',
         'linesarray': 'const LinesArray %s',
         'triangle': 'const Triangle %s',
-        'bitmaparray': 'const Bitmap *%s',
+        'bitmaparray': 'const Bitmap %s',
         'longintarray': 'const int *%s'
     },
     'var' : {
