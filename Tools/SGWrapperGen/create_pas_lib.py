@@ -222,7 +222,7 @@ def file_visitor(the_file, other):
         create_c_library.write_c_lib_module(the_file)
         return
         
-    if the_file.name != 'SGSDK_Lib':
+    if the_file.name != 'SGSDK':
         logger.info('skipping %s', the_file.name)
         return
     

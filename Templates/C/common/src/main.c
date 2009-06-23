@@ -1,4 +1,4 @@
-#include "sgTypes.h"
+#include "Types.h"
 #include "Audio.h"
 #include "Graphics.h"
 #include "Core.h"

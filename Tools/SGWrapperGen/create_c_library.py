@@ -17,8 +17,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-#my_writer = PrintWriter()
-#my_writer = FileWriter('../../CoreSDK/src/sgsdk1.pas')
+_out_path="../../Templates/C/common/lib"
 
 #templates for adapter
 _lib_import_header = ''
@@ -300,7 +299,7 @@ def method_visitor(the_method, other):
 
 def write_c_lib_header(the_file, for_others = False):
     '''Write the c library adapter - header file that matches DLL'''
-    file_writer = FileWriter('./out/%s.h'% the_file.name)
+    file_writer = FileWriter('%s/%s.h'% (_out_path, the_file.name))
     file_writer.write(_header)
     
     #visit the methods of the library
@@ -367,10 +366,10 @@ def write_c_type_for(member, other):
 
 def write_c_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''
-    header_file_writer = FileWriter('./out/%s.h'% the_file.name)
+    header_file_writer = FileWriter('%s/%s.h'% (_out_path, the_file.name))
 
     if the_file.has_body:
-        c_file_writer = FileWriter('./out/%s.c'% the_file.name)
+        c_file_writer = FileWriter('%s/%s.c'% (_out_path, the_file.name))
     else: c_file_writer = None
     
     header_file_writer.writeln(_module_header_header % { 
@@ -419,7 +418,7 @@ def write_c_lib_module(the_file):
 
 def post_parse_process(the_file):
     ''' the c modules also wrap array return values and adds length parameters for arrays.'''
-    if the_file.name == 'SGSDK_Lib':
+    if the_file.name == 'SGSDK':
         return
     
     logger.info('Post Processing %s for C wrapper creation', the_file.name)
@@ -452,7 +451,7 @@ def post_parse_process(the_file):
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
     post_parse_process(the_file)
-    if the_file.name == 'SGSDK_Lib':
+    if the_file.name == 'SGSDK':
         logger.info('Creating C Library Adapter %s.h', the_file.name)
         write_c_lib_header(the_file)
     else:

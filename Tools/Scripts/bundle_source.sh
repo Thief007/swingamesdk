@@ -6,14 +6,19 @@ cd "$APP_PATH"
 SWINGAME_DIR="${APP_PATH}/../../"
 SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 
+SDK_SRC="${SWINGAME_DIR}/CoreSDK/src"
+
 TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
+DIST_DIR="${SWINGAME_DIR}/Dist"
+
 SOURCE_TEMPLATE_DIR="${TEMPLATE_DIR}/Source"
 
-DIST_DIR="${SWINGAME_DIR}/Dist"
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 SRC_DIR="${SOURCE_DIST_DIR}/src"
-SDK_SRC="${SWINGAME_DIR}/CoreSDK/src"
+
+C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
+C_COMMON_LIB_DIR="${C_TEMPLATE_DIR}/common/lib"
 
 PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
 
@@ -39,13 +44,31 @@ fi
 
 mkdir -p ${SRC_DIR}
 
+#Functions
+
 CreateLibrary()
 {
     cd ${PYTHON_SCRIPT_DIR}
     python create_pas_lib.py
-    cp ${PYTHON_SCRIPT_DIR}/out/SGSDK_Lib.h ${SRC_DIR}/SGSDK.h
-    cp ${PYTHON_SCRIPT_DIR}/out/sgTypes.h ${SRC_DIR}/sgTypes.h
+    cp ${C_COMMON_LIB_DIR}/SGSDK.h ${SRC_DIR}/SGSDK.h
+    cp ${C_COMMON_LIB_DIR}/Types.h ${SRC_DIR}/Types.h
 }
+
+copyFrameworksWithoutSVN()
+{
+    FROM_DIR=$1
+    TO_DIR=$2
+    
+    cd "${FROM_DIR}"
+    
+    # Create directory structure
+    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -path \*.framework\* -exec mkdir "${TO_DIR}/{}" \;
+    # Copy files
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R {} "${TO_DIR}/{}"  \;
+
+}
+
+# Steps...
 
 echo "--------------------------------------------------"
 echo "          Creating Source Template"
@@ -85,7 +108,7 @@ if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
     echo "  Copying frameworks"
     rm -Rf "${LIB_DIR}"/*
-    cp -pRf "${FRAMEWORK_DIR}"/*.framework "${LIB_DIR}"
+    copyFrameworksWithoutSVN ${FRAMEWORK_DIR} ${LIB_DIR}
     if [ $? != 0 ]; then echo "Error copying frameworks."; exit 1; fi
 fi
 
