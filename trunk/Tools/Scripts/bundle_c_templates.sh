@@ -21,6 +21,7 @@ DIST_DIR="${SWINGAME_DIR}/Dist"
 C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
 C_DIST_DIR="${DIST_DIR}/C"
 
+COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
 COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/Common"
 
 GCC_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/gcc"
@@ -82,7 +83,7 @@ copyWithoutSVN()
     # Create directory structure
     find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -exec mkdir "${TO_DIR}/{}" \;
     # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R {} "${TO_DIR}/{}"  \;
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }
 
 #Step 1: Delete old dists if they exist
@@ -113,15 +114,16 @@ for arg in "${COPY_LIST[@]}"; do
     
     echo -n "  ... Copying to $name"
     
+    copyWithoutSVN "$COMMON_TEMPLATE_DIR" "$to"
     copyWithoutSVN "$COMMON_C_TEMPLATE_DIR" "$to"
     copyWithoutSVN "$from" "$to"
     
     if [ $OS = "Mac" ]; then
         echo " with library"
         #Copy SGSDK framework
-        cp -R "${SOURCE_DIST_DIR}/bin"/*.framework "${to}/lib"
+        cp -R -p "${SOURCE_DIST_DIR}/bin"/*.framework "${to}/lib"
         #Copy SDL frameworks
-        cp -R "${SOURCE_DIST_DIR}/lib"/*.framework "${to}/lib"
+        cp -R -p "${SOURCE_DIST_DIR}/lib"/*.framework "${to}/lib"
     else
         echo ""
     fi

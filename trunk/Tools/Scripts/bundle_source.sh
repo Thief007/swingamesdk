@@ -51,9 +51,9 @@ CreateLibrary()
     cd ${PYTHON_SCRIPT_DIR}
     python create_pas_lib.py
     if [ $? != 0 ]; then echo "Error creating Pascal library."; exit 1; fi
-    cp ${C_COMMON_LIB_DIR}/SGSDK.h ${SRC_DIR}/SGSDK.h
+    cp -p ${C_COMMON_LIB_DIR}/SGSDK.h ${SRC_DIR}/SGSDK.h
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
-    cp ${C_COMMON_LIB_DIR}/Types.h ${SRC_DIR}/Types.h
+    cp -p ${C_COMMON_LIB_DIR}/Types.h ${SRC_DIR}/Types.h
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
 }
 
@@ -67,7 +67,7 @@ copyFrameworksWithoutSVN()
     # Create directory structure
     find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -path \*.framework\* -exec mkdir "${TO_DIR}/{}" \;
     # Copy files
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R {} "${TO_DIR}/{}"  \;
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 
 }
 
