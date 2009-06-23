@@ -176,12 +176,12 @@ _adapter_type_switcher = {
         'point2d': 'const Point2D *%s',
         'linesegment': 'const LineSegment *%s',
         'rectangle': 'const Rectangle *%s',
-        'matrix2d': 'const Matrix2D *%s',
+        'matrix2d': 'const Matrix2D %s',
         'triangle': 'const Triangle %s',
         'vector': 'const Vector *%s',
         'linesarray': 'const LinesArray %s',
         'longintarray': 'const int *%s',
-        'bitmaparray': 'const Bitmap *%s'
+        'bitmaparray': 'const Bitmap %s'
     },
     'var': {
         'soundeffect': 'SoundEffect *%s',
