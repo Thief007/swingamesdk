@@ -161,24 +161,36 @@ interface
   function LineAsVector(const line: lineSegment): Vector;
   
   //---------------------------------------------------------------------------
-  // Angle Calculation 
+  // Angle Calculation
   //---------------------------------------------------------------------------
-  
+
   /// @lib
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
-  
+
   /// @lib CalculateAngleFromPoints
   function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
-  
+
   /// @lib CalculateAngleFromSprites
   /// @class Sprite
   /// @method AngleTo
   function CalculateAngle(s1, s2: Sprite): Single; overload;
-  
+
   /// @lib CalculateAngleFromVectors
   function CalculateAngle(const v1, v2: Vector): Single; overload;
-  
-  
+
+  //---------------------------------------------------------------------------
+  // Distance / Magnitude Calculation
+  //---------------------------------------------------------------------------
+
+  function LineMagnitudeSq(x1, y1, x2, y2: single): Single; overload;
+
+  function LineMagnitudeSq(const line: LineSegment): Single; overload;
+
+  /// @lib
+  function PointPointDistance(const pt1, pt2: Point2D): Single;
+
+
+
   //---------------------------------------------------------------------------
   // Matrix2D Creation and Operations
   //---------------------------------------------------------------------------
@@ -228,7 +240,10 @@ interface
   /// @overload Multiply MultiplyPoint
   function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
   
-  
+  /// @lib
+  procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
+
+
 //=============================================================================
 implementation
 //=============================================================================
@@ -446,6 +461,35 @@ implementation
     else if result <= -180 then result := result + 360
   end;
 
+
+  //----------------------------------------------------------------------------
+  // Distance / Magnitude Calculations
+  //----------------------------------------------------------------------------
+
+  //
+  //  Returns the square of the magnitude of the line
+  //    to cut down on unnecessary Sqrt when in many cases
+  //    DistancePointLine() squares the result
+  //
+  function LineMagnitudeSq(const line: LineSegment): Single; overload;
+  begin
+    result := (line.endPoint.x - line.startPoint.x) * (line.endPoint.x - line.startPoint.x) +
+              (line.endPoint.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y);
+  end;
+
+  function LineMagnitudeSq(x1, y1, x2, y2: single): single; overload;
+  begin
+   result := (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+  end;
+
+  function PointPointDistance(const pt1, pt2: Point2D): Single;
+  var
+    temp: Vector;
+  begin
+    temp := VectorFrom(pt2.x - pt1.x, pt2.y - pt1.y);
+    result := VectorMagnitude(temp);
+  end;
+  
   //----------------------------------------------------------------------------
   // Matrix2D Creation and Operation / Translation of Point/Vector Types
   //----------------------------------------------------------------------------
@@ -455,7 +499,7 @@ implementation
     rads: Double;
   begin
     rads := -deg * DEG_TO_RAD;
-  
+
     result[0, 0] := System.Cos(rads);
     result[0, 1] := System.Sin(rads);
     result[0, 2] := 0;
@@ -555,5 +599,11 @@ implementation
   end;
 
 
+  procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
+  begin
+    tri[0] := MatrixMultiply(m, tri[0]);
+    tri[1] := MatrixMultiply(m, tri[1]);
+    tri[2] := MatrixMultiply(m, tri[2]);
+  end;
 
 end.

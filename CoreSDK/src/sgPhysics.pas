@@ -603,7 +603,7 @@ implementation
         xPixel2 := j - left2 + offsetX2;
 
         if (bbox1 or IsPixelDrawnAtPoint(bmp1, xPixel1, yPixel1))
-           AND (bbox2 or IsPixelDrawnAtPoint(bmp2, xPixel2, yPixel2)) then
+           and (bbox2 or IsPixelDrawnAtPoint(bmp2, xPixel2, yPixel2)) then
         begin
           result := true;
           exit;
@@ -628,7 +628,6 @@ implementation
   /// @param x2, y2:      The x,y location of bmp 2
   ///
   /// @returns        True if the bitmaps collide.
-  ///
   function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
     result := CollisionWithinBitmapImages(bmp1, x1, y1, false, bmp2, x2, y2, false);
@@ -675,7 +674,7 @@ implementation
                 offX2, offY2, not s2.usePixelCollision);
   end;
 
-  /// Checks to see if two bitmaps have collided, this performs a bbox check
+  /// Checks to see if two bitmaps have collided, performs a bbox check
   /// then, if required, it performs a per pixel check on the colliding region.
   ///
   /// @param bmp1, bmp2: The bitmap images to check for collision
@@ -685,7 +684,6 @@ implementation
   /// @param bbox2:      Indicates if bmp2 should use bbox collision
   ///
   /// @returns          True if the bitmaps collide.
-  ///
   function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
     result := BitmapsCollided(bmp1, x1, y1, false, bmp2, x2, y2, false);
@@ -803,7 +801,7 @@ implementation
   ///
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, PointFrom(x, y), RectangleFrom(bmp), bbox);
+    result := SpriteBitmapCollision(s, bmp, PointAt(x, y), RectangleFrom(bmp), bbox);
   end;
 
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
@@ -970,7 +968,8 @@ implementation
         end;
     end;
     
-    //WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2); //, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);   
+    //WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2);
+    //, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);
   end;
 
   function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
@@ -1109,10 +1108,6 @@ implementation
                   (RectangleRight(destRect) < RectangleLeft(targetRect))  then result := VectorFrom(0,0);
     end   
   end;
-  
-
-
-
 
   //----------------------------------------------------------------------------
   // Collision Effect Application (angle + mass/energy transfer)

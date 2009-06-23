@@ -520,22 +520,22 @@ implementation
   ///   on the screen.
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
   begin
-    DrawTextLines(scr, theText, textColor, backColor, theFont, align, x, y, w, h);
+    DrawTextLines(screen, theText, textColor, backColor, theFont, align, x, y, w, h);
   end;
   
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   begin
-    DrawTextLines(scr, theText, textColor, backColor, theFont, align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
+    DrawTextLines(screen, theText, textColor, backColor, theFont, align, Round(withinRect.x), Round(withinRect.y), withinRect.width, withinRect.height);
   end;
 
   procedure DrawTextLines(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y:Single; w, h: LongInt); overload;
   begin
-    DrawTextLines(scr, theText, textColor, backColor, theFont, align, ToScreenX(x), ToScreenY(y), w, h);
+    DrawTextLines(screen, theText, textColor, backColor, theFont, align, ToScreenX(x), ToScreenY(y), w, h);
   end;
 
   procedure DrawTextLines(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   begin
-    DrawTextLines(scr, theText, textColor, backColor, theFont, align, ToScreenX(withinRect.x), ToScreenY(withinRect.y), withinRect.width, withinRect.height);   
+    DrawTextLines(screen, theText, textColor, backColor, theFont, align, ToScreenX(withinRect.x), ToScreenY(withinRect.y), withinRect.width, withinRect.height);
   end;
 
 
@@ -554,43 +554,43 @@ implementation
   ///   on the screen.
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; x, y: LongInt);
   begin
-    DrawText(scr, theText, textColor, theFont, x, y);
+    DrawText(screen, theText, textColor, theFont, x, y);
   end;
 
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawText(scr, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+    DrawText(screen, theText, textColor, theFont, Round(pt.x), Round(pt.y));
   end;
 
   procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; x, y: LongInt); overload;
   begin
-    DrawUnicode(scr, theText, textColor, theFont, x, y);
+    DrawUnicode(screen, theText, textColor, theFont, x, y);
   end;
 
   procedure DrawUnicodeOnScreen(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawUnicode(scr, theText, textColor, theFont, Round(pt.x), Round(pt.y));
+    DrawUnicode(screen, theText, textColor, theFont, Round(pt.x), Round(pt.y));
   end;
 
 
   procedure DrawText(theText: String; textColor: Color; theFont: Font; x, y: Single);
   begin
-    DrawText(scr, theText, textColor, theFont, ToScreenX(x), ToScreenY(y));
+    DrawText(screen, theText, textColor, theFont, ToScreenX(x), ToScreenY(y));
   end;
   
   procedure DrawText(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawText(scr, theText, textColor, theFont, ToScreenX(pt.x), ToScreenY(pt.y));   
+    DrawText(screen, theText, textColor, theFont, ToScreenX(pt.x), ToScreenY(pt.y));
   end;
 
   procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; x, y: Single); overload;
   begin
-    DrawUnicode(scr, theText, textColor, theFont, ToScreenX(x), ToScreenY(y));
+    DrawUnicode(screen, theText, textColor, theFont, ToScreenX(x), ToScreenY(y));
   end;
   
   procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
-    DrawUnicode(scr, theText, textColor, theFont, ToScreenX(pt.x), ToScreenY(pt.y));    
+    DrawUnicode(screen, theText, textColor, theFont, ToScreenX(pt.x), ToScreenY(pt.y));
   end;
 
   
@@ -686,12 +686,12 @@ implementation
   
   procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;
   begin
-    DrawText(scr, theText, textColor, ToScreenX(x), ToScreenY(y));
+    DrawText(screen, theText, textColor, ToScreenX(x), ToScreenY(y));
   end;
   
   procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
   begin
-    DrawText(scr, theText, textColor, x, y);
+    DrawText(screen, theText, textColor, x, y);
   end;
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
