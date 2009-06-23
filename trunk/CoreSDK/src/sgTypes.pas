@@ -165,7 +165,7 @@ interface
     /// @enum ResourceKind
     ResourceKind = (
       FontResource,
-      ImageResource,
+      BitmapResource,
       SoundResource,
       MapResource,
       OtherResource
