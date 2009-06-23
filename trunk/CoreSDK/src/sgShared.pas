@@ -1,5 +1,5 @@
 //=============================================================================
-//          sgShared.pas
+// sgShared.pas
 //=============================================================================
 //
 // The shared data and functions that are private to the SwinGame SDK. This 
@@ -10,6 +10,7 @@
 // Version 3:
 // - 2009-06-23: Clinton: Comment/format cleanup/tweaks
 //                      : Slight optimization to NewSDLRect (redundant code)
+//                      : Renamed scr to screen
 // - 2009-06-05: Andrew: Created to contain all globals that are hidden from 
 //                       the library
 //=============================================================================
@@ -47,7 +48,7 @@ interface
   var
     // This `Bitmap` wraps the an SDL image (and its double-buffered nature) 
     // which is used to contain the current "screen" rendered to the window.   
-    scr: Bitmap;
+    screen: Bitmap;
     
     // The full path location of the current executable (or script). This is 
     // particuarly useful when determining the path to resources (images, maps,

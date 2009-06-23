@@ -641,7 +641,7 @@ implementation
   /// - Screen's surface is set to the toColor
   procedure ClearScreen(toColor : Color); overload;
   begin
-    ClearSurface(scr, toColor);
+    ClearSurface(screen, toColor);
   end;
 
   /// Clears the screen to Black.
@@ -713,7 +713,7 @@ implementation
   
   function GetPixelFromScreen(x, y: LongInt): Color;
   begin
-    result := GetPixel(scr, x, y);
+    result := GetPixel(screen, x, y);
   end;  
 
   // Sets the non-transparent pixels in a Bitmap. This is then used for
@@ -1203,12 +1203,12 @@ implementation
   /// - Effected by visible window
   procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
   begin
-    DrawBitmapPart(scr, src, srcX, srcY, srcW, srcH, x, y);
+    DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, x, y);
   end;
 
   procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
   begin
-    DrawBitmapPart(scr, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
+    DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
 
   /// Draws one bitmap (src) onto the screen.
@@ -1220,12 +1220,12 @@ implementation
   /// - Draws the src at the x,y location on the screen.
   procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
   begin
-    DrawBitmap(scr, src, x, y);
+    DrawBitmap(screen, src, x, y);
   end;
 
   procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
   begin
-    DrawBitmap(scr, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
+    DrawBitmap(screen, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
   
   procedure ReplayAnimation(theSprite : Sprite);
@@ -1536,7 +1536,7 @@ implementation
   /// - Sets one pixel on the screen
   procedure DrawPixelOnScreen(theColor: Color; x, y: LongInt);
   begin
-    DrawPixel(scr, theColor, x, y);
+    DrawPixel(screen, theColor, x, y);
   end;
 
   procedure DrawPixel(theColor: Color; x, y: Single); overload;
@@ -1555,12 +1555,12 @@ implementation
   /// - Draws a rectangle in the dest bitmap
   procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
   begin
-    DrawRectangle(scr, theColor, filled, xPos, yPos, width, height);
+    DrawRectangle(screen, theColor, filled, xPos, yPos, width, height);
   end;
 
   procedure DrawRectangle(theColor : Color; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    DrawRectangle(scr, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawRectangle(screen, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws the outline of a rectangle on the screen.
@@ -1573,12 +1573,12 @@ implementation
   /// - Draws a rectangle on the screen
   procedure DrawRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
   begin
-    DrawRectangle(scr, theColor, xPos, yPos, width, height);
+    DrawRectangle(screen, theColor, xPos, yPos, width, height);
   end;
   
   procedure DrawRectangle(theColor: Color; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    DrawRectangle(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawRectangle(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a filled rectangle on the screen.
@@ -1591,12 +1591,12 @@ implementation
   /// - Draws a rectangle on the screen
   procedure FillRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
   begin
-    FillRectangle(scr, theColor, xPos, yPos, width, height);
+    FillRectangle(screen, theColor, xPos, yPos, width, height);
   end;
 
   procedure FillRectangle(theColor : Color; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    FillRectangle(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    FillRectangle(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a line on the screen.
@@ -1609,12 +1609,12 @@ implementation
   /// - Draws a line in the screen
   procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
   begin
-    DrawLine(scr, theColor, xPosStart, yPosStart, xPosEnd, yPosEnd);
+    DrawLine(screen, theColor, xPosStart, yPosStart, xPosEnd, yPosEnd);
   end;
   
   procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
   begin
-    DrawLine(scr, theColor, sgCamera.ToScreenX(xPosStart), sgCamera.ToScreenY(yPosStart), sgCamera.ToScreenX(xPosEnd), sgCamera.ToScreenY(yPosEnd));
+    DrawLine(screen, theColor, sgCamera.ToScreenX(xPosStart), sgCamera.ToScreenY(yPosStart), sgCamera.ToScreenX(xPosEnd), sgCamera.ToScreenY(yPosEnd));
   end;
   
   procedure DrawLine(theColor: Color; const line: LineSegment); overload;
@@ -1652,7 +1652,7 @@ implementation
 
   procedure DrawTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(scr, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(screen, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
   procedure DrawTriangle(theColor: Color; const tri: Triangle); overload;
@@ -1662,12 +1662,12 @@ implementation
   
   procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    DrawTriangle(scr, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
+    DrawTriangle(screen, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
   end;
   
   procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    DrawTriangle(scr, theColor, x1, y1, x2, y2, x3, y3);
+    DrawTriangle(screen, theColor, x1, y1, x2, y2, x3, y3);
   end;
 
   procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1687,17 +1687,17 @@ implementation
 
   procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    FillTriangle(scr, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
+    FillTriangle(screen, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
   end;
   
   procedure FillTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(scr, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(screen, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
   procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    FillTriangle(scr, theColor, x1, y1, x2, y2, x3, y3);
+    FillTriangle(screen, theColor, x1, y1, x2, y2, x3, y3);
   end;
 
   procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
@@ -1716,12 +1716,12 @@ implementation
   /// - Draws a line on the screen
   procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt); overload;
   begin
-    DrawHorizontalLine(scr, theColor, y, x1, x2);
+    DrawHorizontalLine(screen, theColor, y, x1, x2);
   end;
 
   procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
   begin
-    DrawHorizontalLine(scr, theColor, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
+    DrawHorizontalLine(screen, theColor, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
   end;
 
   /// Draws a vertical line on the screen.
@@ -1734,12 +1734,12 @@ implementation
   /// - Draws a line on the screen
   procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt); overload;
   begin
-    DrawVerticalLine(scr, theColor, x, y1, y2);
+    DrawVerticalLine(screen, theColor, x, y1, y2);
   end;
 
   procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
   begin
-    DrawVerticalLine(scr, theColor, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y1), sgCamera.ToScreenY(y2));
+    DrawVerticalLine(screen, theColor, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y1), sgCamera.ToScreenY(y2));
   end;
 
   /// Draws a circle centered on a given x, y location.
@@ -1753,12 +1753,12 @@ implementation
   /// - Draws a Circle on the screen
   procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
   begin
-    DrawCircle(scr, theColor, filled, xc, yc, radius);
+    DrawCircle(screen, theColor, filled, xc, yc, radius);
   end;
 
   procedure DrawCircle(theColor: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(scr, theColor, filled, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+    DrawCircle(screen, theColor, filled, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
 
@@ -1772,12 +1772,12 @@ implementation
   /// - Draws a Circle on the screen
   procedure DrawCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
   begin
-    DrawCircle(scr, theColor, xc, yc, radius);
+    DrawCircle(screen, theColor, xc, yc, radius);
   end;
 
   procedure DrawCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(scr, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+    DrawCircle(screen, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
   /// Draws a filled circle centered on a given x, y location.
@@ -1790,12 +1790,12 @@ implementation
   /// - Draws a Circle on the screen
   procedure FillCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
   begin
-    FillCircle(scr, theColor, xc, yc, radius);
+    FillCircle(screen, theColor, xc, yc, radius);
   end;
 
   procedure FillCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    FillCircle(scr, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+    FillCircle(screen, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
   /// Draws a ellipse within a given rectangle on the screen.
@@ -1809,12 +1809,12 @@ implementation
   /// - Draws a ellipse on the screen
   procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
   begin
-    DrawEllipse(scr, theColor, filled, xPos, yPos, width, height);
+    DrawEllipse(screen, theColor, filled, xPos, yPos, width, height);
   end;
 
   procedure DrawEllipse(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    DrawEllipse(scr, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawEllipse(screen, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a ellipse outline within a given rectangle on the screen.
@@ -1827,12 +1827,12 @@ implementation
   /// - Draws a ellipse on the screen
   procedure DrawEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
   begin
-    DrawEllipse(scr, theColor, xPos, yPos, width, height);
+    DrawEllipse(screen, theColor, xPos, yPos, width, height);
   end;
 
   procedure DrawEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    DrawEllipse(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawEllipse(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
 
@@ -1846,12 +1846,12 @@ implementation
   /// - Draws a ellipse in the screen
   procedure FillEllipseOnScreen(theColor: Color;  xPos, yPos, width, height: LongInt); overload;
   begin
-    FillEllipse(scr, theColor, xPos, yPos, width, height);
+    FillEllipse(screen, theColor, xPos, yPos, width, height);
   end;
 
   procedure FillEllipse(theColor: Color;  xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    FillEllipse(scr, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    FillEllipse(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
 
@@ -2294,7 +2294,7 @@ implementation
 
   procedure ResetClip(); overload;
   begin
-    ResetClip(scr);
+    ResetClip(screen);
   end;
   
   procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
@@ -2313,12 +2313,12 @@ implementation
 
   procedure SetClip(x, y, w, h: LongInt); overload;
   begin
-    SetClip(scr, x, y, w, h);
+    SetClip(screen, x, y, w, h);
   end;
   
   procedure SetClip(r: Rectangle); overload;
   begin
-    SetClip(scr, Round(r.x), Round(r.y), r.width, r.height);
+    SetClip(screen, Round(r.x), Round(r.y), r.width, r.height);
   end;
   
   function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;

@@ -988,11 +988,11 @@ implementation
     //Returns -1,-1 if no tile has this point
     result.xIndex := -1;
     result.yIndex := -1;
-    result.topCorner := PointFrom(0,0);
-    result.PointA := PointFrom(0,0);
-    result.PointB := PointFrom(0,0);
-    result.PointC := PointFrom(0,0);
-    result.PointD := PointFrom(0,0);
+    result.topCorner := PointAt(0,0);
+    result.PointA := PointAt(0,0);
+    result.PointB := PointAt(0,0);
+    result.PointC := PointAt(0,0);
+    result.PointD := PointAt(0,0);
 
     for y := 0  to m.MapInfo.MapHeight - 1 do
     begin
@@ -1021,22 +1021,22 @@ implementation
           begin
             result.xIndex := x;
             result.yIndex := y;
-            result.topCorner := PointFrom(tx, ty);
-            result.PointA := PointFrom(tx, ty + m.MapInfo.BlockHeight / 2);
-            result.PointB := PointFrom(tx + m.MapInfo.BlockWidth / 2, ty);
-            result.PointC := PointFrom(tx + m.MapInfo.BlockWidth / 2, ty + m.MapInfo.BlockHeight);
-            result.PointD := PointFrom(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight / 2);
+            result.topCorner := PointAt(tx, ty);
+            result.PointA := PointAt(tx, ty + m.MapInfo.BlockHeight / 2);
+            result.PointB := PointAt(tx + m.MapInfo.BlockWidth / 2, ty);
+            result.PointC := PointAt(tx + m.MapInfo.BlockWidth / 2, ty + m.MapInfo.BlockHeight);
+            result.PointD := PointAt(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight / 2);
           exit;
           end
           else
           begin
             result.xIndex := x;
             result.yIndex := y;
-            result.topCorner := PointFrom(tx,ty);
-            result.PointA := PointFrom(tx, ty);
-            result.PointB := PointFrom(tx + m.MapInfo.BlockWidth, ty);
-            result.PointC := PointFrom(tx, ty + m.MapInfo.BlockHeight);
-            result.PointD := PointFrom(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight);
+            result.topCorner := PointAt(tx,ty);
+            result.PointA := PointAt(tx, ty);
+            result.PointB := PointAt(tx + m.MapInfo.BlockWidth, ty);
+            result.PointC := PointAt(tx, ty + m.MapInfo.BlockHeight);
+            result.PointD := PointAt(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight);
           end;
         end;
       end;
