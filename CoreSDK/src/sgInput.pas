@@ -190,7 +190,7 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, SwinGameTrace, sgShared,
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared,
        sgCore, sgText, sgShapes;
   
   //---------------------------------------------------------------------------

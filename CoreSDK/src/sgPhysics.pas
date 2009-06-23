@@ -586,7 +586,7 @@ implementation
 //=============================================================================
 
   uses
-    SysUtils, Math, Classes, SwinGameTrace,
+    SysUtils, Math, Classes, sgTrace,
     sgCore, sgGraphics, sgCamera, sgShapes;
     
   const 

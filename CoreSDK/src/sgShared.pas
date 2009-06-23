@@ -16,7 +16,7 @@
 unit sgShared;
 
 interface
-  uses SDL, SDL_Image, SDLEventProcessing, sgCore, sgTypes;
+  uses SDL, SDL_Image, sgEventProcessing, sgCore, sgTypes;
   
   function ToSDLColor(color: UInt32): TSDL_Color;
   function ToGfxColor(val: Color): Color;
@@ -42,7 +42,7 @@ interface
     DLL_VERSION = 300000;
   
 implementation
-  uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx;
+  uses SysUtils, Math, Classes, sgTrace, SDL_gfx;
   
   function ToSDLColor(color: UInt32): TSDL_Color;
   begin
