@@ -34,4 +34,4 @@ echo "  Starting bundle and compile process..."
 echo
 
 #Bundle the source and build it
-${APP_PATH}/bundle_source.sh -b ${EXTRA_OPTS} 
+source ${APP_PATH}/bundle_source.sh -b ${EXTRA_OPTS} 
