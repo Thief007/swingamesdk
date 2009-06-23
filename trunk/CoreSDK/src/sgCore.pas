@@ -204,8 +204,7 @@ interface
     ColorLightGrey: Color;
   
 implementation
-  uses SysUtils, Math, Classes, SwinGameTrace, SDL_gfx, 
-       sgShared, SDLEventProcessing, SDL_Image;
+  uses SysUtils, Math, Classes, sgTrace, SDL_gfx, sgShared, sgEventProcessing, SDL_Image;
   
   
   function DLLVersion(): LongInt;
