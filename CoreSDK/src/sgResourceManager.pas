@@ -10,6 +10,8 @@ unit sgResourceManager;
 interface
   uses sgTypes;
   
+  //=============================================================================
+    
   /// @lib
   procedure MapBitmap(name, filename: String);
   
@@ -28,11 +30,79 @@ interface
   /// @lib
   procedure ReleaseAllBitmaps();
   
+  //=============================================================================
+  
+  /// @lib
+  procedure MapFont(name, filename: String; size: LongInt);
+  
+  /// @lib
+  function HasFont(name: String): Boolean;
+  
+  /// @lib
+  function GetFont(name: String): Font;
+  
+  /// @lib
+  procedure ReleaseFont(name: String);
+  
+  /// @lib
+  procedure ReleaseAllFonts();
+  
+  //=============================================================================
+  
+  /// @lib
+  procedure MapSoundEffect(name, filename: String);
+  
+  /// @lib
+  function HasSoundEffect(name: String): Boolean;
+  
+  /// @lib
+  function GetSoundEffect(name: String): SoundEffect;
+  
+  /// @lib
+  procedure ReleaseSoundEffect(name: String);
+  
+  /// @lib
+  procedure ReleaseAllSoundEffects();
+  
+  //=============================================================================
+  
+  /// @lib
+  procedure MapMusic(name, filename: String);
+  
+  /// @lib
+  function HasMusic(name: String): Boolean;
+  
+  /// @lib
+  function GetMusic(name: String): Music;
+  
+  /// @lib
+  procedure ReleaseMusic(name: String);
+  
+  /// @lib
+  procedure ReleaseAllMusic();
+  
+  //=============================================================================
+  
+  /// @lib
+  procedure MapTileMap(name, filename: String);
+  
+  /// @lib
+  function HasTileMap(name: String): Boolean;
+  
+  /// @lib
+  function GetTileMap(name: String): Map;
+  
+  /// @lib
+  procedure ReleaseTileMap(name: String);
+  
+  /// @lib
+  procedure ReleaseAllTileMaps();
+  
+  //=============================================================================
+  
   /// @lib
   procedure ReleaseAllResources();
   
-  // function GameFont(font: String): Font;
-  // function GameSound(sound: String): SoundEffect;
   // function GameMusic(music: String): Music;
   // function GameTileMap(mapName: String): Map;
  
@@ -60,12 +130,34 @@ implementation
   
   //=============================================================================
   
+  type ReleaseFunction = procedure(var res: Pointer);
+  
   var
-    _Images: tStringHash; //Array of Bitmap;
-    // _Fonts: Array of Font;
-    // _Sounds: Array of SoundEffect;
-    // _Music: Array of Music;
-    // _Maps: Array of Map;
+    _Images: tStringHash;
+    _Fonts: tStringHash;
+    _SoundEffects: tStringHash;
+    _Music: tStringHash;
+    _TileMaps: tStringHash;
+  
+  //=============================================================================
+  
+  procedure ReleaseAll(tbl: tStringHash; releaser: ReleaseFunction);
+  var
+    iter: tStrHashIterator;
+    res: Pointer;
+  begin
+    iter := tbl.getIterator();
+    
+    while iter.hasNext() do
+    begin
+      res := tResourceContainer(iter.value).resource;
+      releaser(res);
+    end;
+    
+    tbl.clear();
+  end;
+  
+  //=============================================================================
   
   procedure MapBitmap(name, filename: String);
   var
@@ -73,10 +165,10 @@ implementation
     bmp: Bitmap;
   begin
     //WriteLn('Mapping bitmap... ', filename);
-    //WriteLn(name, '->', GetPathToResource(filename, ImageResource));
-    bmp := LoadBitmap(GetPathToResource(filename, ImageResource));
+    //WriteLn(name, '->', GetPathToResource(filename, BitmapResource));
+    bmp := LoadBitmap(GetPathToResource(filename, BitmapResource));
     //WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
-    //WriteLn(GetPathToResource(filename, ImageResource));
+    //WriteLn(GetPathToResource(filename, BitmapResource));
     obj := tResourceContainer.Create(bmp);
     _Images.values[name] := obj;
   end;
@@ -85,7 +177,7 @@ implementation
   var
     obj: tResourceContainer;
   begin
-    obj := tResourceContainer.Create(LoadBitmap(GetPathToResource(filename, ImageResource), true, transparentColor));
+    obj := tResourceContainer.Create(LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor));
     _Images.values[name] := obj;
   end;
   
@@ -97,7 +189,6 @@ implementation
   function GetBitmap(name: String): Bitmap;
   begin
     result := Bitmap(tResourceContainer(_Images.values[name]).Resource);
-    //WriteLn(name, ' => ', hexstr(result));
   end;
   
   procedure ReleaseBitmap(name: String);
@@ -110,20 +201,169 @@ implementation
   end;
   
   procedure ReleaseAllBitmaps();
-  var
-    iter: tStrHashIterator;
-    bmp: Bitmap;
   begin
-    iter := _Images.getIterator();
-    
-    while iter.hasNext() do
-    begin
-      bmp := GetBitmap(iter.key);
-      FreeBitmap(bmp);
-    end;
-    
-    _Images.clear();
+    ReleaseAll(_Images, @FreeBitmap);
   end;
+  // var
+  //   iter: tStrHashIterator;
+  //   bmp: Bitmap;
+  // begin
+  //   iter := _Images.getIterator();
+  //   
+  //   while iter.hasNext() do
+  //   begin
+  //     bmp := GetBitmap(iter.key);
+  //     FreeBitmap(bmp);
+  //   end;
+  //   
+  //   _Images.clear();
+  // end;
+  
+  //=============================================================================
+  
+  procedure MapFont(name, filename: String; size: LongInt);
+  var
+    obj: tResourceContainer;
+    fnt: Font;
+  begin
+    fnt := LoadFont(GetPathToResource(filename, FontResource), size);
+    obj := tResourceContainer.Create(fnt);
+    _Fonts.values[name] := obj;
+  end;
+  
+  function HasFont(name: String): Boolean;
+  begin
+    result := _Fonts.containsKey(name);
+  end;
+  
+  function GetFont(name: String): Font;
+  begin
+    result := Font(tResourceContainer(_Fonts.values[name]).Resource);
+  end;
+  
+  procedure ReleaseFont(name: String);
+  var
+    fnt: Font;
+  begin
+    fnt := GetFont(name);
+    _Fonts.remove(name);
+    FreeFont(fnt);
+  end;
+  
+  procedure ReleaseAllFonts();
+  begin
+    ReleaseAll(_Fonts, @FreeFont);
+  end;
+  
+  //=============================================================================
+  
+  procedure MapSoundEffect(name, filename: String);
+  var
+    obj: tResourceContainer;
+    snd: SoundEffect;
+  begin
+    snd := LoadSoundEffect(GetPathToResource(filename, SoundResource));
+    obj := tResourceContainer.Create(snd);
+    _SoundEffects.values[name] := obj;
+  end;
+  
+  function HasSoundEffect(name: String): Boolean;
+  begin
+    result := _SoundEffects.containsKey(name);
+  end;
+  
+  function GetSoundEffect(name: String): SoundEffect;
+  begin
+    result := SoundEffect(tResourceContainer(_SoundEffects.values[name]).Resource);
+  end;
+  
+  procedure ReleaseSoundEffect(name: String);
+  var
+    snd: SoundEffect;
+  begin
+    snd := GetSoundEffect(name);
+    _SoundEffects.remove(name);
+    FreeSoundEffect(snd);
+  end;
+  
+  procedure ReleaseAllSoundEffects();
+  begin
+    ReleaseAll(_SoundEffects, @FreeSoundEffect);
+  end;
+  
+  //=============================================================================
+  
+  procedure MapMusic(name, filename: String);
+  var
+    obj: tResourceContainer;
+    mus: Music;
+  begin
+    mus := LoadMusic(GetPathToResource(filename, SoundResource));
+    obj := tResourceContainer.Create(mus);
+    _Music.values[name] := obj;
+  end;
+  
+  function HasMusic(name: String): Boolean;
+  begin
+    result := _Music.containsKey(name);
+  end;
+  
+  function GetMusic(name: String): Music;
+  begin
+    result := Music(tResourceContainer(_Music.values[name]).Resource);
+  end;
+  
+  procedure ReleaseMusic(name: String);
+  var
+    mus: Music;
+  begin
+    mus := GetMusic(name);
+    _Music.remove(name);
+    FreeMusic(mus);
+  end;
+  
+  procedure ReleaseAllMusic();
+  begin
+    ReleaseAll(_Music, @FreeMusic);
+  end;
+  
+  //=============================================================================
+  
+  procedure MapTileMap(name, filename: String);
+  var
+    obj: tResourceContainer;
+    theMap: Map;
+  begin
+    theMap := LoadMap(GetPathToResource(filename, MapResource));
+    obj := tResourceContainer.Create(theMap);
+    _TileMaps.values[name] := obj;
+  end;
+  
+  function HasTileMap(name: String): Boolean;
+  begin
+    result := _TileMaps.containsKey(name);
+  end;
+  
+  function GetTileMap(name: String): Map;
+  begin
+    result := Map(tResourceContainer(_TileMaps.values[name]).Resource);
+  end;
+  
+  procedure ReleaseTileMap(name: String);
+  var
+    theMap: Map;
+  begin
+    theMap := GetTileMap(name);
+    _TileMaps.remove(name);
+    FreeMap(theMap);
+  end;
+  
+  procedure ReleaseAllTileMaps();
+  begin
+    ReleaseAll(_TileMaps, @FreeMap);
+  end;
+  
+  //=============================================================================
   
   procedure ReleaseAllResources();
   begin
@@ -474,14 +714,14 @@ implementation
   // - Plays Intro
   // procedure ShowLoadingScreen();
   // begin
-  //   _Background := LoadBitmap(GetPathToResource('SplashBack.png', ImageResource));
+  //   _Background := LoadBitmap(GetPathToResource('SplashBack.png', BitmapResource));
   //   DrawBitmap(_Background, 0, 0);
   //   RefreshScreen(60);
   //   ProcessEvents();
   // 
-  //   _Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', ImageResource));
-  //   _LoaderEmpty := LoadBitmap(GetPathToResource('loader_empty.png', ImageResource));
-  //   _LoaderFull := LoadBitmap(GetPathToResource('loader_full.png', ImageResource));
+  //   _Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', BitmapResource));
+  //   _LoaderEmpty := LoadBitmap(GetPathToResource('loader_empty.png', BitmapResource));
+  //   _LoaderFull := LoadBitmap(GetPathToResource('loader_full.png', BitmapResource));
   //   _LoadingFont := LoadFont(GetPathToResource('arial.ttf', FontResource), 12);
   //   _StartSound := LoadSoundEffect(GetPathToResource('SwinGameStart.ogg', SoundResource));
   // 
@@ -578,6 +818,10 @@ initialization
 begin
   //WriteLn('Here...');
   _Images := tStringHash.Create(False, 1024);
+  _SoundEffects := tStringHash.Create(False, 1024);
+  _Fonts := tStringHash.Create(False, 1024);
+  _Music := tStringHash.Create(False, 1024);
+  _TileMaps := tStringHash.Create(False, 1024);
 end;
 
 end.

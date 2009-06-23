@@ -845,12 +845,12 @@ implementation
     {$ifdef UNIX}
       FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
       SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
-      ImageResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
+      BitmapResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
       MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
     {$else}
       FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
       SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
-      ImageResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
+      BitmapResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
       MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
     {$endif}
 
