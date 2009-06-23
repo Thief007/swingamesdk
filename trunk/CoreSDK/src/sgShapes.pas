@@ -160,7 +160,7 @@ interface
 implementation
 //=============================================================================
 
-  uses math, sysutils, classes, sgGraphics, sgPhysics;
+  uses math, sysutils, classes, sgGraphics, sgPhysics, sgMath;
 
   const
     EPS    = 0.01;         // smallest positive value: less than that to be considered zero
@@ -545,7 +545,7 @@ implementation
   var
     temp: Vector;
   begin
-    temp := CreateVector(pt2.x - pt1.x, pt2.y - pt1.y);
+    temp := VectorFrom(pt2.x - pt1.x, pt2.y - pt1.y);
     result := VectorMagnitude(temp);
   end;
 
