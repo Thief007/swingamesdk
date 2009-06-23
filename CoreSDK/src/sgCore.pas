@@ -54,7 +54,7 @@ unit sgCore;
 {$ENDIF}
 
 interface  
-  {$I SwinGame.inc}
+  {$I sgTrace.inc}
   
   uses sgTypes, SDL;
   
