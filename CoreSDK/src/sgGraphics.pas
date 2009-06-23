@@ -606,8 +606,7 @@ interface
   procedure SetupBitmapForCollisions(src: Bitmap);
 
 implementation
-  uses Classes, SysUtils, sgCamera, sgPhysics, SDL_gfx, sgShared,
-       SDL, sgCore, SDL_Image, sgShapes;
+  uses Classes, SysUtils, sgCamera, sgPhysics, sgMath, SDL_gfx, sgShared, SDL, sgCore, SDL_Image, sgShapes;
   
   /// Clears the surface of the bitmap to the passed in color.
   ///
@@ -906,7 +905,7 @@ implementation
     result.width          := width;
     result.height         := height;
     result.reverse        := false;
-    result.movement       := CreateVector(0,0);
+    result.movement       := VectorFrom(0,0);
     result.rotation       := 0;
     result.zoom           := 1;
     result.bufferedRotation := 0;
@@ -982,7 +981,7 @@ implementation
     result.currentFrame     := 0;
     result.usePixelCollision  := true;
     result.hasEnded       := false;
-    result.movement       := CreateVector(0,0);
+    result.movement       := VectorFrom(0,0);
     result.rotation       := 0;
     result.zoom           := 1;
     result.bufferedRotation := 0;

@@ -190,8 +190,7 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared,
-       sgCore, sgText, sgShapes;
+  uses SysUtils, Classes, sgPhysics, sgMath, sgTrace, sgShared, sgCore, sgText, sgShapes;
   
   //---------------------------------------------------------------------------
   
@@ -252,7 +251,7 @@ implementation
   begin
     x := 0; y := 0;
     SDL_GetMouseState(x, y);
-    result := CreateVector(x, y);
+    result := VectorFrom(x, y);
   end;
   
   procedure ShowMouse(); overload;
@@ -312,7 +311,7 @@ implementation
     x := 0; 
     y := 0;
     SDL_GetRelativeMouseState(x, y);
-    result := CreateVector(x, y);
+    result := VectorFrom(x, y);
     
     {$IFDEF TRACE}
       TraceExit('sgInput', 'GetMouseMovement');

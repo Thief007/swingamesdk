@@ -3,11 +3,11 @@
 //=============================================================================
 //
 // This unit handles the processing of events, including the reading of text 
-// for SwinGames. This unit and its code is not directly used by typical games.
+// for SwinGames. This unit and its code should not be used directly by games.
 //
-// An object of the TSDLManager is created and managed in sgCore. Only one 
-// instance should be used (essentially a "singleton" pattern), which is 
-// available in the sdlManager as a global variable.
+// An object of the TSDLManager class is created and managed in sgCore. Only 
+// one instance should ever be used (essentially a "singleton"  pattern), which
+// is stored in the sdlShared as a global variable.
 //
 // Change History:
 // Version 3:
