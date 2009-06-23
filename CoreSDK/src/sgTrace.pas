@@ -20,7 +20,7 @@ unit SwinGameTrace;
 
 interface
 
-	{$I SwinGame.inc}
+	{$I sgTrace.inc}
 
 	{$IFDEF Trace}
 		type
