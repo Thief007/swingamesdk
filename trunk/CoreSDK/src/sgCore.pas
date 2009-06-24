@@ -93,14 +93,14 @@ interface
   /// graphics window. The icon is loaded as a bitmap, though this can be from
   /// any kind of bitmap file.
   ///
-  /// @param iconFilename:   The name of the file to load as the images icon
+  /// @param filename The name of the file to load as the images icon
   ///
   ///Side Effects
   /// - The icon will be loaded and used as the windows icon when the window
   /// is opened.
   ///
-  /// @lib SetIcon
-  procedure SetIcon(iconFilename: String);
+  /// @lib
+  procedure SetIcon(filename: String);
 
   /// Opens the graphical window so that it can be drawn onto. You can set the
   /// icon for this window using SetIcon. The window itself is only drawn when
@@ -108,9 +108,9 @@ interface
   /// can toggle fullscreen using ToggleFullScreen. The window is closed when
   /// the application terminates.
   ///
-  /// @params caption: The caption for the window
-  /// @params width:   The width of the window
-  /// @params height: The height of the window
+  /// @param caption The caption for the window
+  /// @param width The width of the window
+  /// @param height The height of the window
   ///
   /// Side Effects:
   /// - A graphical window is opened
@@ -121,7 +121,7 @@ interface
 
   /// Opens the graphical window as an 800 x 600 window. See OpenGramhicsWinddow
   /// for more options.
-  /// @params caption: The caption for the window
+  /// @param caption: The caption for the window
   ///
   /// Side Effects:
   /// - A graphical window is opened
@@ -166,7 +166,7 @@ interface
   /// Saves the current screen a bitmap file. The file will be saved into the
   /// current directory.
   ///
-  /// @params basename   The base name for the screen shot. e.g. "GemCollector"
+  /// @param basename   The base name for the screen shot. e.g. "GemCollector"
   ///
   /// Side Effects:
   /// - Saves the current screen image to a bitmap file.
@@ -521,9 +521,9 @@ implementation
     {$ENDIF}
   end;
 
-  procedure SetIcon(iconFilename: String);
+  procedure SetIcon(filename: String);
   begin
-    iconFile := iconFilename;
+    iconFile := filename;
   end;
 
 
@@ -946,24 +946,6 @@ implementation
   begin
     result := System.Sin(DegToRad(angle));
   end;
-<<<<<<< .mine
-=======
-  
-  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
-  begin
-    case kind of
-    {$ifdef UNIX}
-      FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
-      SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
-      BitmapResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
-      MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
-    {$else}
-      FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
-      SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
-      BitmapResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
-      MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
-    {$endif}
->>>>>>> .r874
 
   function Tan(angle: Single): Single;
   begin
@@ -1060,24 +1042,24 @@ implementation
   // Resource Path and Application Path
   //----------------------------------------------------------------------------
 
-  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
   begin
     case kind of
     {$ifdef UNIX}
       FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
       SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
-      ImageResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
+      BitmapResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
       MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
     {$else}
       FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
       SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
-      ImageResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
+      BitmapResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
       MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
     {$endif}
-
       else result := GetPathToResourceWithBase(path, filename);
     end;
   end;
+
 
   function GetPathToResourceWithBase(path, filename: String): String; overload;
   begin

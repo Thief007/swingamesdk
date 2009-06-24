@@ -182,8 +182,10 @@ interface
   // Distance / Magnitude Calculation
   //---------------------------------------------------------------------------
 
+  /// @lib
   function LineMagnitudeSq(x1, y1, x2, y2: single): Single; overload;
 
+  /// @lib LineMagnitudeSqFromLine
   function LineMagnitudeSq(const line: LineSegment): Single; overload;
 
   /// @lib
