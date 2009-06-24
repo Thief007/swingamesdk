@@ -13,6 +13,9 @@
 //
 // Version 3.0: 
 // - 2009-06-24: Andrew : Renamed to sgGeometry and combined with Shapes
+//                        Moved CenterPoint to sgSprite.
+//                              VectorFromCenterSpriteToPoint
+//                              VectorFromTo
 // - 2009-06-23: Clinton: Created unit. Moved math routines from physics and
 //                        shapes units. 
 //----------------------------------------------------------------------------
@@ -43,9 +46,6 @@ interface
   function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
   /// @lib ClosestPointOnLine
   function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
-
-  /// @lib CenterPoint
-  function CenterPoint(s: Sprite): Point2D;
 
   /// @lib PointOnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
@@ -119,11 +119,16 @@ interface
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
   /// @lib
   function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
-
+  
   /// @lib PointInRectXY
-  function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;
-  /// @lib
+  function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;  
+  /// @lib 
   function PointInRect(const pt: Point2D; const rect: Rectangle): Boolean; overload;
+  
+  /// @lib PointXYInRectXY
+  function PointInRect(ptX, ptY, x, y, w, h: Single): Boolean; overload;
+  /// @lib PointXYInRect
+  function PointInRect(x, y: Single; const rect: Rectangle): Boolean; overload;
 
   
   //---------------------------------------------------------------------------
@@ -237,20 +242,6 @@ interface
   ///
   /// @lib
   function VectorFromPoints(const p1, p2: Point2D): Vector;
-  
-  /// Returns a `Vector` that is the difference in the position of two sprites 
-  /// (``s1`` and ``s2``). 
-  ///
-  /// @lib
-  /// @class Sprite
-  /// @method VectorTo
-  function VectorFromTo(s1, s2: Sprite): Vector;
-  
-  /// Returns a `Vector` that is the difference in location from the center of
-  /// the sprite ``s`` to the point ``pt``.
-  ///
-  /// @lib
-  function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
   
   /// Returns a new `Vector` created from the start and end points of a 
   /// `lineSegment`. Useful for calculating angle vectors or extracting a 
@@ -373,7 +364,7 @@ implementation
 
   uses 
     Classes, SysUtils, Math,  // system
-    sgCamera, sgGraphics;     // SwinGame
+    sgCamera, sgGraphics, sgSprites;     // SwinGame
   
   const 
     DEG_TO_RAD = 0.0174532925;
@@ -414,12 +405,6 @@ implementation
   begin
     result := VectorFrom(p2.x - p1.x, p2.y - p1.y, false);
   end;
-
-  function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
-  begin
-    result := VectorFromPoints(CenterPoint(s), pt);   
-  end;
-
 
   function AddVectors(const v1, v2: Vector): Vector;
   begin
@@ -491,11 +476,6 @@ implementation
   function DotProduct(const v1, v2: Vector): Single;
   begin
     result := (v1.x * v2.x) + (v1.y * v2.y);
-  end;
-
-  function VectorFromTo(s1, s2: Sprite): Vector;
-  begin
-    result := VectorFromPoints(CenterPoint(s1), CenterPoint(s2));
   end;
 
   function VectorFromAngle(angle, magnitude: Single): Vector;
@@ -928,12 +908,6 @@ implementation
     result.y := y;
   end;
 
-  function CenterPoint(s: Sprite): Point2D;
-  begin
-    result.x := s^.x + CurrentWidth(s) / 2;
-    result.y := s^.y + CurrentHeight(s) / 2;
-  end;
-  
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
   begin
     result := LineFromVector(pt.x, pt.Y, mv);
@@ -1181,4 +1155,19 @@ implementation
   begin
     result := PointInRect(pt, rect.x, rect.y, rect.width, rect.height);
   end;
+  
+  function PointInRect(ptX, ptY, x, y, w, h: Single): Boolean; overload;
+  begin
+    if ptX < x then result := false
+    else if ptX > x + w then result := false
+    else if ptY < y then result := false
+    else if ptY > y + h then result := false
+    else result := true;
+  end;
+  
+  function PointInRect(x, y: Single; const rect: Rectangle): Boolean; overload;
+  begin
+    result := PointInRect(x, y, rect.x, rect.y, rect.width, rect.height);
+  end;
+
 end.
