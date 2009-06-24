@@ -5,7 +5,7 @@
 
 
 /// @module ResourceManager
-unit sgResourceManager;
+unit sgResources;
 
 interface
   uses sgTypes;
