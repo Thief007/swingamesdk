@@ -350,7 +350,10 @@ interface
 implementation
 //----------------------------------------------------------------------------
 
-  uses SysUtils, Math, Classes, sgTrace, sgShared, sgEventProcessing, sgResources, SDL_Image, SDL_gfx;
+  uses 
+    SysUtils, Math, Classes, //System
+    SDL_Image, SDL_gfx, //SDL
+    sgTrace, sgShared, sgEventProcessing, sgResources; //SwinGame
 
   type
     // Details required for the Frames per second calculations.

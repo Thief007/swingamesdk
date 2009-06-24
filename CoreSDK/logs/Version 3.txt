@@ -34,6 +34,13 @@ Suggestions:
   - added ToScreen
   - added CameraPos
   
+  Resources: new unit
+  - added GetResources functions and procedures
+  - added new Map resource procedures to map names to resources
+  - added get resources by name
+  - added release resources by name
+  - added loading of resource bundles
+  
 ** Changes to Version 2 **
   Units renamed:
     SGSDK_Audio -> sgAudio
@@ -57,6 +64,7 @@ Suggestions:
   - Removed HasSpriteCollidedX, HasSpriteCollidedY
   - Removed PosX, PosY from Sprite.
   - Removed Colour, and all associated functions - standardised to use Color
+  - Moved GetResource procesures to sgResources
   
   Text changes:
   - Changed order of parameters in TextWidth and TextHeight

@@ -190,7 +190,7 @@ interface
 implementation
 //----------------------------------------------------------------------------
 
-  uses SysUtils, Classes, sgPhysics, sgMath, sgTrace, sgShared, sgCore, sgText, sgShapes;
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgCore, sgText, sgGeometry;
   
   //---------------------------------------------------------------------------
   

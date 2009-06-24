@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------
-//          sgPhysics, sgMath.pas
+//          sgPhysics.pas
 //----------------------------------------------------------------------------
 //
 // The Physics unit contains the code that is responsible for performing 
@@ -69,7 +69,7 @@ unit sgPhysics;
 interface
 //----------------------------------------------------------------------------
 
-  uses sgTypes, sgMath;
+  uses sgTypes;
   
   /// Returns ``true`` if the specifed `Sprites` (``s1`` and ``s2``) have 
   /// collided. Will use simple bounding box tests first, and low-level pixel
@@ -390,7 +390,7 @@ implementation
 
   uses
     SysUtils, {Math, Classes,} sgTrace,
-    sgCore, sgGraphics, sgCamera, sgShapes;
+    sgCore, sgGraphics, sgCamera, sgGeometry;
 
 
   function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
@@ -911,12 +911,12 @@ implementation
       //Do X
       toEdge := VectorFrom(edgeX - pt.x, 0);
       angle := CalculateAngle(mvOut, toEdge);      
-      xMag := VectorMagnitude(toEdge) * 1 / sgMath.Cos(angle);
+      xMag := VectorMagnitude(toEdge) * 1 / sgGeometry.Cos(angle);
 
       //Do Y
       toEdge := VectorFrom(0, edgeY - pt.y);
       angle := CalculateAngle(mvOut, toEdge);      
-      yMag := VectorMagnitude(toEdge) * 1 / sgMath.Cos(angle);
+      yMag := VectorMagnitude(toEdge) * 1 / sgGeometry.Cos(angle);
           
       if (yMag < 0) or (xMag < yMag) then outMag := xMag
       else outMag := yMag;

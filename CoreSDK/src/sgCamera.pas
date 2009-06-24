@@ -160,7 +160,7 @@ interface
 implementation
 //----------------------------------------------------------------------------
 
-  uses Classes, SysUtils, sgCore, sgShapes;
+  uses Classes, SysUtils, sgCore, sgGeometry;
 
   ///
   /// The screen offset variables
