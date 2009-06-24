@@ -350,7 +350,7 @@ interface
 implementation
 //----------------------------------------------------------------------------
 
-  uses SysUtils, Math, Classes, sgTrace, sgShared, sgEventProcessing, sgResourceManager, SDL_Image, SDL_gfx;
+  uses SysUtils, Math, Classes, sgTrace, sgShared, sgEventProcessing, sgResources, SDL_Image, SDL_gfx;
 
   type
     // Details required for the Frames per second calculations.
@@ -359,7 +359,7 @@ implementation
       pos, loops: LongInt;
       max, min, avg: Single;
     end;
-
+    
   var
     // Timing details related to calculating FPS
     _lastUpdateTime: UInt32;

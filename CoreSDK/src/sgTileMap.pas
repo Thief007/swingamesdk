@@ -169,7 +169,7 @@ interface
 implementation
 //----------------------------------------------------------------------------
 
-  uses SysUtils, Classes, sgGraphics, sgCamera, sgCore, sgPhysics, sgShapes, sgResourceManager;
+  uses SysUtils, Classes, sgGraphics, sgCamera, sgCore, sgPhysics, sgShapes, sgResources;
 
   function ReadInt(var stream : text): Word;
   var
