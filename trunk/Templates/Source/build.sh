@@ -89,10 +89,10 @@ doMacCompile()
 {
     CleanTmp
     
-    ${FPC_BIN} -Mdelphi $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
-    
+    ${FPC_BIN} -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
-
+    rm -f ${LOG_FILE}
+    
     #Assemble all of the .s files
     echo "  ... Assembling library for $1"
     
@@ -105,7 +105,7 @@ doMacCompile()
     
 
     echo "  ... Linking Library"
-    FRAMEWORKS=`ls ${FRAMEWORK_DIR} | awk -F . '{print "-framework "$1}'`
+    FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
 
     /usr/bin/libtool -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
@@ -233,11 +233,11 @@ then
             elif  [ $INSTALL = "global" ]
             then
                 TO_DIR=/Library/Frameworks
-		if [ "$(id -u)" != "0" ]
-		then
-			echo "Global install must be run by root user"
-			exit 1
-		fi
+        if [ "$(id -u)" != "0" ]
+        then
+            echo "Global install must be run by root user"
+            exit 1
+        fi
             else
                 echo "Unknown install type"
                 exit -1
@@ -283,7 +283,7 @@ then
         if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
         echo "  ... Compiling Library"
-        fpc -Mdelphi $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
         mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"

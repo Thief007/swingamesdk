@@ -167,7 +167,9 @@ interface
       FontResource,
       BitmapResource,
       SoundResource,
+      MusicResource,
       MapResource,
+      PanelResource,
       OtherResource
     );
 
@@ -335,13 +337,14 @@ interface
     ///
     /// @enum MouseButton
     MouseButton = (
-      LeftButton = 1,
-      MiddleButton = 2,
-      RightButton = 3,
-      WheelUpButton = 4,
-      WheelDownButton = 5,
-      MouseX1Button = 6,
-      MouseX2Button = 7
+      NoButton,
+      LeftButton,
+      MiddleButton,
+      RightButton,
+      WheelUpButton,
+      WheelDownButton,
+      MouseX1Button,
+      MouseX2Button
     );
 
     /// @enum KeyCode
@@ -676,8 +679,8 @@ interface
     /// @field pointer: ^MapRecord
     Map = ^MapRecord;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
 end.

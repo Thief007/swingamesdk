@@ -1,13 +1,13 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //  sgEventProcessing.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // This unit handles the processing of events, including the reading of text 
-// for SwinGames. This unit and its code should not be used directly by games.
+// for SwinGames. This unit and its code is not directly used by typical games.
 //
-// An object of the TSDLManager class is created and managed in sgCore. Only 
-// one instance should ever be used (essentially a "singleton"  pattern), which
-// is stored in the sdlShared as a global variable.
+// An object of the TSDLManager is created and managed in sgCore. Only one 
+// instance should be used (essentially a "singleton" pattern), which is 
+// available in the sdlManager as a global variable.
 //
 // Change History:
 // Version 3:
@@ -23,13 +23,13 @@
 //
 //  Version 1.0:
 //  - Various
-//=============================================================================
+//----------------------------------------------------------------------------
 
 unit sgEventProcessing;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 uses Classes, SDL, SDL_Mixer, SysUtils, SDL_TTF;
 
 type 
@@ -82,9 +82,9 @@ type
     procedure HandleKeydownEvent(event: PSDL_Event);
 end;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
   
   function TSDLManager.WasAKeyPressed(): Boolean;
   begin
@@ -103,15 +103,6 @@ implementation
   
     if keys <> nil then
     begin
-      {indexAddress := uint32(keys) + uint32(virtKeyCode);
-
-      {- $ IFDEF FPC
-        intPtr := PUInt8(indexAddress);
-      {- $ ELSE
-        intPtr := Ptr(indexAddress);
-      {- $ ENDIF
-      result := intPtr^ = 1;}
-
       {$IFDEF FPC}
         result := (keys + virtKeyCode)^ = 1;
       {$ELSE}
@@ -179,7 +170,7 @@ implementation
   procedure TSDLManager.HandleEvent(event: PSDL_Event);
   var i : LongInt;
   begin
-    case event.type_ of
+    case event^.type_ of
       SDL_QUITEV: DoQuit();
       SDL_KEYDOWN: HandleKeydownEvent(event);
     end;
@@ -196,36 +187,36 @@ implementation
   begin
     _keyPressed := true;
     SetLength(_KeyTyped, Length(_KeyTyped) + 1);
-    _KeyTyped[High(_KeyTyped)] := event.key.keysym.sym;
+    _KeyTyped[High(_KeyTyped)] := event^.key.keysym.sym;
 
     if _readingString then
     begin
       oldStr := _tempString;
 
       //If the key is not a control character
-      if (event.key.keysym.sym = SDLK_BACKSPACE) and (Length(_tempString) > 0)then
+      if (event^.key.keysym.sym = SDLK_BACKSPACE) and (Length(_tempString) > 0)then
       begin
          _tempString := Copy(_tempString, 1, Length(_tempString) - 1);
       end
-      else if event.key.keysym.sym = SDLK_RETURN then
+      else if event^.key.keysym.sym = SDLK_RETURN then
       begin
         _readingString := false;
       end
-      else if event.key.keysym.sym = SDLK_ESCAPE then
+      else if event^.key.keysym.sym = SDLK_ESCAPE then
       begin
         _tempString := '';
         _readingString := false;
       end
       else if Length(_tempString) < _maxStringLen then
       begin
-        case event.key.keysym.unicode of
+        case event^.key.keysym.unicode of
           //Skip non printable characters
           0: ;
           128..159: ;
           7..10, 13: ;
           27: ;
           else //Append the character
-            _tempString := _tempString + Char(event.key.keysym.unicode);
+            _tempString := _tempString + Char(event^.key.keysym.unicode);
         end;
       end;
 

@@ -10,7 +10,7 @@ unit sgResourceManager;
 interface
   uses sgTypes;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
     
   /// @lib
   procedure MapBitmap(name, filename: String);
@@ -30,7 +30,7 @@ interface
   /// @lib
   procedure ReleaseAllBitmaps();
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   /// @lib
   procedure MapFont(name, filename: String; size: LongInt);
@@ -47,7 +47,7 @@ interface
   /// @lib
   procedure ReleaseAllFonts();
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   /// @lib
   procedure MapSoundEffect(name, filename: String);
@@ -64,7 +64,7 @@ interface
   /// @lib
   procedure ReleaseAllSoundEffects();
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   /// @lib
   procedure MapMusic(name, filename: String);
@@ -81,7 +81,7 @@ interface
   /// @lib
   procedure ReleaseAllMusic();
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   /// @lib
   procedure MapTileMap(name, filename: String);
@@ -98,23 +98,84 @@ interface
   /// @lib
   procedure ReleaseAllTileMaps();
   
-  //=============================================================================
   
+  
+  //----------------------------------------------------------------------------
+  // Bundle handling routines
+  //----------------------------------------------------------------------------
+  
+  /// @lib
+  procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
+  
+  /// @lib LoadResourceBundle(name, True)
+  /// @uname LoadResourceBundleWithProgress
+  procedure LoadResourceBundle(name: String); overload;
+  
+  /// @lib
+  procedure ReleaseResourceBundle(name: String);
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Release all resources procedure
+  //----------------------------------------------------------------------------
   /// @lib
   procedure ReleaseAllResources();
   
-  //=============================================================================
   
-  // procedure LoadResourceBundle(name: String);
-  // 
-  // procedure FreeResourceBundle(name: String);
   
+  //----------------------------------------------------------------------------
+  // Resource Path and Application Path
+  //----------------------------------------------------------------------------
+  
+  /// @lib GetPathToResource
+  function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
+  
+  /// @lib GetPathToOtherResource
+  /// @uname GetPathToOtherResource
+  function GetPathToResource(filename: String): String; overload;
+  
+  /// @lib GetPathToResourceWithBaseAndKind
+  /// @uname GetPathToResourceWithBase
+  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+  
+  /// @lib GetPathToOtherResourceWithBase
+  /// @uname GetPathToOtherResourceWithBase
+  function GetPathToResourceWithBase(path, filename: String): String; overload;
+  
+  /// @lib
+  procedure SetAppPath(path: String; withExe: Boolean);
+  /// @lib
+  function AppPath(): String;
+  
+  
+  
+//----------------------------------------------------------------------------
 implementation
-  uses SysUtils, sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, stringhash;
+//----------------------------------------------------------------------------
   
-  //=============================================================================
+  uses SysUtils, sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, stringhash, strUtils, sgShared;
+  
+  //----------------------------------------------------------------------------
+  // Global variables for resource management.
+  //----------------------------------------------------------------------------
+  
+  var
+    _Images: tStringHash;
+    _Fonts: tStringHash;
+    _SoundEffects: tStringHash;
+    _Music: tStringHash;
+    _TileMaps: tStringHash;
+    _Bundles: tStringHash;
+  
+  
+  //----------------------------------------------------------------------------
+  // Private types
+  //----------------------------------------------------------------------------
   
   type 
+    // The resource contain is an object to hold the resource for the 
+    // hash table
     tResourceContainer = class(tObject)
     private
       resource_val : Pointer;
@@ -123,44 +184,135 @@ implementation
     
       property Resource: Pointer read resource_val;
     end;
-  
-    constructor tResourceContainer.create(data: Pointer);
-    begin
-      inherited create;
     
-      resource_val := data;
+    //
+    // Used in loading bundles
+    //
+    tResourceIdentifier = record
+        name, path: String;
+        size: Integer;
+        kind: ResourceKind;
+      end;
+    
+    //
+    // Used to store bundle details
+    //
+    tResourceBundle = class(tObject)
+    public
+      identifiers: array of tResourceIdentifier;
+      
+      constructor Create();
+      procedure add(res: tResourceIdentifier);
+      procedure LoadResources(showProgress: Boolean; kind: ResourceKind); overload;
+      procedure LoadResources(showProgress: Boolean); overload;
+      procedure ReleaseResources();
     end;
+    
+    //
+    // Used by release all
+    //
+    ReleaseFunction = procedure(name: String);
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
+  // Private type functions/procedures
+  //----------------------------------------------------------------------------
   
-  type ReleaseFunction = procedure(var res: Pointer);
+  constructor tResourceContainer.create(data: Pointer);
+  begin
+    inherited create;
+    resource_val := data;
+  end;
   
+  constructor tResourceBundle.create();
+  begin
+    inherited create;
+    SetLength(identifiers, 0);
+  end;
+  
+  procedure tResourceBundle.add(res: tResourceIdentifier);
+  begin
+    SetLength(identifiers, Length(identifiers) + 1);
+    identifiers[High(identifiers)] := res;
+  end;
+  
+  procedure tResourceBundle.LoadResources(showProgress: Boolean; kind: ResourceKind); overload;
   var
-    _Images: tStringHash;
-    _Fonts: tStringHash;
-    _SoundEffects: tStringHash;
-    _Music: tStringHash;
-    _TileMaps: tStringHash;
+    current: tResourceIdentifier;
+    i: Integer;
+  begin
+    for i := Low(identifiers) to High(identifiers) do
+    begin
+      current := identifiers[i];
+      
+      if current.kind = kind then
+      begin
+        case kind of
+          BitmapResource: MapBitmap(current.name, current.path);
+          FontResource:   MapFont(current.name, current.path, current.size);
+          SoundResource:  MapSoundEffect(current.name, current.path);
+          MusicResource:  MapMusic(current.name, current.path);
+          MapResource:    MapTileMap(current.name, current.path);
+        end;        
+      end;
+    end;
+  end;
   
-  //=============================================================================
+  procedure tResourceBundle.LoadResources(showProgress: Boolean); overload;
+  begin
+    LoadResources(showProgress, BitmapResource);
+    LoadResources(showProgress, FontResource);
+    LoadResources(showProgress, MusicResource);
+    LoadResources(showProgress, MapResource);
+    LoadResources(showProgress, SoundResource);
+  end;
+  
+  procedure tResourceBundle.ReleaseResources();
+  var
+    current: tResourceIdentifier;
+    i: Integer;
+  begin
+    for i := Low(identifiers) to High(identifiers) do
+    begin
+      current := identifiers[i];
+      
+      case current.kind of
+        BitmapResource: ReleaseBitmap(current.name);
+        FontResource:   ReleaseFont(current.name);
+        SoundResource:  ReleaseSoundEffect(current.name);
+        MusicResource:  ReleaseMusic(current.name);
+        MapResource:    ReleaseTileMap(current.name);
+      end;        
+    end;
+    SetLength(identifiers, 0);
+  end;
+  
+  //----------------------------------------------------------------------------
   
   procedure ReleaseAll(tbl: tStringHash; releaser: ReleaseFunction);
   var
     iter: tStrHashIterator;
-    res: Pointer;
+    names: array of String;
+    i: Integer;
   begin
+    SetLength(names, tbl.count);
     iter := tbl.getIterator();
+    i := 0;
     
     while iter.hasNext() do
     begin
-      res := tResourceContainer(iter.value).resource;
-      releaser(res);
+      names[i] := iter.key;
+      i += 1;
     end;
     
-    tbl.clear();
+    for i := Low(names) to High(names) do
+    begin
+      releaser(names[i]);
+    end;
+    
+    tbl.deleteAll();
   end;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   procedure MapBitmap(name, filename: String);
   var
@@ -173,7 +325,8 @@ implementation
     //WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
     //WriteLn(GetPathToResource(filename, BitmapResource));
     obj := tResourceContainer.Create(bmp);
-    _Images.values[name] := obj;
+    if not _Images.setValue(name, obj) then
+      raise Exception.create('Error loaded Bitmap resource twice, ' + name);
   end;
   
   procedure MapTransparentBitmap(name, filename: String; transparentColor: Color);
@@ -181,7 +334,8 @@ implementation
     obj: tResourceContainer;
   begin
     obj := tResourceContainer.Create(LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor));
-    _Images.values[name] := obj;
+    if not _Images.setValue(name, obj) then
+      raise Exception.create('Error loaded Bitmap resource twice, ' + name);
   end;
   
   function HasBitmap(name: String): Boolean;
@@ -199,13 +353,13 @@ implementation
     bmp: Bitmap;
   begin
     bmp := GetBitmap(name);
-    _Images.remove(name);
+    _Images.remove(name).Free();
     FreeBitmap(bmp);
   end;
   
   procedure ReleaseAllBitmaps();
   begin
-    ReleaseAll(_Images, @FreeBitmap);
+    ReleaseAll(_Images, @ReleaseBitmap);
   end;
   // var
   //   iter: tStrHashIterator;
@@ -222,7 +376,7 @@ implementation
   //   _Images.clear();
   // end;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   procedure MapFont(name, filename: String; size: LongInt);
   var
@@ -231,7 +385,8 @@ implementation
   begin
     fnt := LoadFont(GetPathToResource(filename, FontResource), size);
     obj := tResourceContainer.Create(fnt);
-    _Fonts.values[name] := obj;
+    if not _Fonts.setValue(name, obj) then
+      raise Exception.create('Error loaded Font resource twice, ' + name);
   end;
   
   function HasFont(name: String): Boolean;
@@ -249,16 +404,16 @@ implementation
     fnt: Font;
   begin
     fnt := GetFont(name);
-    _Fonts.remove(name);
+    _Fonts.remove(name).free();
     FreeFont(fnt);
   end;
   
   procedure ReleaseAllFonts();
   begin
-    ReleaseAll(_Fonts, @FreeFont);
+    ReleaseAll(_Fonts, @ReleaseFont);
   end;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   procedure MapSoundEffect(name, filename: String);
   var
@@ -267,7 +422,8 @@ implementation
   begin
     snd := LoadSoundEffect(GetPathToResource(filename, SoundResource));
     obj := tResourceContainer.Create(snd);
-    _SoundEffects.values[name] := obj;
+    if not _SoundEffects.setValue(name, obj) then
+      raise Exception.create('Error loaded Sound Effect resource twice, ' + name);
   end;
   
   function HasSoundEffect(name: String): Boolean;
@@ -285,16 +441,16 @@ implementation
     snd: SoundEffect;
   begin
     snd := GetSoundEffect(name);
-    _SoundEffects.remove(name);
+    _SoundEffects.remove(name).Free();
     FreeSoundEffect(snd);
   end;
   
   procedure ReleaseAllSoundEffects();
   begin
-    ReleaseAll(_SoundEffects, @FreeSoundEffect);
+    ReleaseAll(_SoundEffects, @ReleaseSoundEffect);
   end;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   procedure MapMusic(name, filename: String);
   var
@@ -303,7 +459,8 @@ implementation
   begin
     mus := LoadMusic(GetPathToResource(filename, SoundResource));
     obj := tResourceContainer.Create(mus);
-    _Music.values[name] := obj;
+    if not _Music.setValue(name, obj) then
+      raise Exception.create('Error loaded Music resource twice, ' + name);
   end;
   
   function HasMusic(name: String): Boolean;
@@ -321,16 +478,16 @@ implementation
     mus: Music;
   begin
     mus := GetMusic(name);
-    _Music.remove(name);
+    _Music.remove(name).Free();
     FreeMusic(mus);
   end;
   
   procedure ReleaseAllMusic();
   begin
-    ReleaseAll(_Music, @FreeMusic);
+    ReleaseAll(_Music, @ReleaseMusic);
   end;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   procedure MapTileMap(name, filename: String);
   var
@@ -339,7 +496,8 @@ implementation
   begin
     theMap := LoadMap(GetPathToResource(filename, MapResource));
     obj := tResourceContainer.Create(theMap);
-    _TileMaps.values[name] := obj;
+    if not _TileMaps.setValue(name, obj) then
+      raise Exception.create('Error loaded Map resource twice, ' + name);
   end;
   
   function HasTileMap(name: String): Boolean;
@@ -357,27 +515,101 @@ implementation
     theMap: Map;
   begin
     theMap := GetTileMap(name);
-    _TileMaps.remove(name);
+    _TileMaps.remove(name).Free();
     FreeMap(theMap);
   end;
   
   procedure ReleaseAllTileMaps();
   begin
-    ReleaseAll(_TileMaps, @FreeMap);
+    ReleaseAll(_TileMaps, @ReleaseTileMap);
   end;
   
-  //=============================================================================
+  //----------------------------------------------------------------------------
   
   procedure ReleaseAllResources();
   begin
-    // FreeFonts();
+    ReleaseAllFonts();
     ReleaseAllBitmaps();
-    // FreeMusics();
-    // FreeSounds();
-    // FreeMaps();
+    ReleaseAllMusic();
+    ReleaseAllSoundEffects();
+    ReleaseAllTileMaps();
+    _Bundles.deleteAll();
   end;
   
+  //----------------------------------------------------------------------------
   
+  function StringToResourceKind(kind: String): ResourceKind;
+  begin
+    if kind = 'BITMAP' then result := BitmapResource
+    else if kind = 'SOUND' then result := SoundResource
+    else if kind = 'MUSIC' then result := MusicResource
+    else if kind = 'FONT' then result := FontResource
+    else if kind = 'MAP' then result := MapResource
+    else if kind = 'PANEL' then result := PanelResource
+    else result := OtherResource;
+  end;
+  
+  procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
+  var
+    input: Text; //the bundle file
+    delim: TSysCharSet;
+    line: String;
+    i: Integer;
+    current: tResourceIdentifier;
+    bndl: tResourceBundle;
+  begin
+    Assign(input, GetPathToResource(name));
+    Reset(input);
+    
+    delim := [ ',' ]; //comma delimited
+    i := 0;
+    
+    bndl := tResourceBundle.Create();
+    
+    while not EOF(input) do
+    begin
+      i := i + 1;
+      ReadLn(input, line);
+      if Length(line) = 0 then continue;
+      
+      current.kind := StringToResourceKind(ExtractDelimited(0, line, delim));
+      current.name := ExtractDelimited(1, line, delim);
+      if Length(current.name) = 0 then 
+        raise Exception.Create('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
+      current.path := ExtractDelimited(2, line, delim);
+      if Length(current.path) = 0 then 
+        raise Exception.Create('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
+      if current.kind = FontResource then
+      begin
+        if not TryStrToInt(ExtractDelimited(3, line, delim), current.size) then
+          raise Exception.Create('Error loading resource bundle, no size supplied on line ' + IntToStr(i));
+      end
+      else current.size := 0;
+      
+      bndl.add(current);
+      
+      if not _Bundles.setValue(name, bndl) then //store bundle
+        raise Exception.create('Error loaded Bundle twice, ' + name);
+    end;
+    
+    bndl.LoadResources(showProgress);
+    
+    Close(input);
+  end;
+  
+  procedure LoadResourceBundle(name: String); overload;
+  begin
+    LoadResourceBundle(name, True);
+  end;
+  
+  procedure ReleaseResourceBundle(name: String);
+  var
+    bndl: tResourceBundle;
+  begin
+    bndl := tResourceBundle(_Bundles.remove(name));
+    bndl.ReleaseResources();
+    bndl.Free();
+  end;
   
   // Creates a new Mappy Map from mapFile file.
   //
@@ -816,15 +1048,75 @@ implementation
   // 
   //   ChangeScreenSize(oldW, oldH);
   // end;
+  //----------------------------------------------------------------------------
+  // Resource Path and Application Path
+  //----------------------------------------------------------------------------
+  
+  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+  begin
+    case kind of
+    {$ifdef UNIX}
+      FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
+      SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
+      BitmapResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
+      MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
+    {$else}
+      FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
+      SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
+      BitmapResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
+      MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
+    {$endif}
+      
+      else result := GetPathToResourceWithBase(path, filename);
+    end;
+  end;
+  
+  function GetPathToResourceWithBase(path, filename: String): String; overload;
+  begin
+    {$ifdef UNIX}
+      {$ifdef DARWIN}
+        result := path + '/../Resources/';
+      {$else}
+        result := path + '/Resources/';
+      {$endif}
+    {$else}
+    //Windows
+      result := path + '\resources\';
+    {$endif}
+    result := result + filename;
+  end;
+  
+  function GetPathToResource(filename: String): String; overload;
+  begin
+    result := GetPathToResourceWithBase(applicationPath, filename);
+  end;
+  
+  function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
+  begin
+    result := GetPathToResourceWithBase(applicationPath, filename, kind);
+  end;
+  
+  procedure SetAppPath(path: String; withExe: Boolean);
+  begin
+    if withExe then applicationPath := ExtractFileDir(path)
+    else applicationPath := path;
+  end;
+  
+  function AppPath(): String;
+  begin
+    result := applicationPath;
+  end;
+  
+  //---------------------------------------------------------------------------
 
 initialization
 begin
-  //WriteLn('Here...');
   _Images := tStringHash.Create(False, 1024);
   _SoundEffects := tStringHash.Create(False, 1024);
   _Fonts := tStringHash.Create(False, 1024);
   _Music := tStringHash.Create(False, 1024);
   _TileMaps := tStringHash.Create(False, 1024);
+  _Bundles := tStringHash.Create(False, 1024);
 end;
 
 end.

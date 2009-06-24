@@ -1,6 +1,6 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //          sgPhysics, sgMath.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // The Physics unit contains the code that is responsible for performing 
 // collisions and vector maths.
@@ -57,7 +57,7 @@
 //
 // Version 1.0:
 // - Various
-//=============================================================================
+//----------------------------------------------------------------------------
 
 {$I sgTrace.inc}
 
@@ -65,9 +65,9 @@
 /// @static
 unit sgPhysics;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses sgTypes, sgMath;
   
@@ -311,13 +311,13 @@ interface
   /// based on the sprites width or height value -- whatever is largest.
   ///
   /// @lib SpriteCircleLineCollision
-  function CircleLineCollision(p1: Sprite; const line: LineSegment): Boolean;
+  function CircleLineCollision(s: Sprite; const line: LineSegment): Boolean;
   
   /// Returns True if the bounding rectangle of the `Sprite` ``s`` has collided 
   /// with the ``line`` specified.
   ///
   /// @lib SpriteRectLineCollision
-  function RectLineCollision(p1: Sprite; const line: LineSegment): Boolean; overload;
+  function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
   
   /// Returns True if the rectangle ``rect`` provided has collided with the 
   /// ``line``.
@@ -378,16 +378,15 @@ interface
   //---------------------------------------------------------------------------
   
   /// @lib
-  procedure CollideCircleLine(p1: Sprite; const line: LineSegment);
+  procedure CollideCircleLine(s: Sprite; const line: LineSegment);
   /// @lib
-  procedure CollideCircles(p1, p2: Sprite);
-
+  procedure CollideCircles(s1, s2: Sprite);
   
   
   
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses
     SysUtils, {Math, Classes,} sgTrace,
@@ -396,10 +395,10 @@ implementation
 
   function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
   begin
-    result := (Length(bmp.nonTransparentPixels) = bmp.width)
-              and ((x >= 0) and (x < bmp.width))
-              and ((y >= 0) and (y < bmp.height))
-              and bmp.nonTransparentPixels[x, y];
+    result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
+              and ((x >= 0) and (x < bmp^.width))
+              and ((y >= 0) and (y < bmp^.height))
+              and bmp^.nonTransparentPixels[x, y];
   end;
 
 
@@ -488,31 +487,31 @@ implementation
     if (width < 1) or (height < 1) then 
       raise Exception.Create('Rectangle width and height must be greater then 0');
     
-    if s.y + CurrentHeight(s) <= y then result := false
-    else if s.y >= y + height then result := false
-    else if s.x + CurrentWidth(s) <= x then result := false
-    else if s.x >= x + width then result := false
+    if s^.y + CurrentHeight(s) <= y then result := false
+    else if s^.y >= y + height then result := false
+    else if s^.x + CurrentWidth(s) <= x then result := false
+    else if s^.x >= x + width then result := false
     else
     begin
-      if not s.usePixelCollision then result := true
+      if not s^.usePixelCollision then result := true
       else
       begin
-        if s.spriteKind = AnimMultiSprite then
+        if s^.spriteKind = AnimMultiSprite then
         begin
-          offX1 := (s.currentFrame mod s.cols) * s.width;
-          offY1 := (s.currentFrame - (s.currentFrame mod s.cols)) div s.cols * s.height;
-          bmp := s.bitmaps[0];
+          offX1 := (s^.currentFrame mod s^.cols) * s^.width;
+          offY1 := (s^.currentFrame - (s^.currentFrame mod s^.cols)) div s^.cols * s^.height;
+          bmp := s^.bitmaps[0];
         end
         else
         begin
-          bmp := s.bitmaps[s.currentFrame];
+          bmp := s^.bitmaps[s^.currentFrame];
           offX1 := 0;
           offY1 := 0;
         end;
         result := BitmapPartRectCollision(
-                    bmp, Round(s.x), Round(s.y), 
-                    RectangleFrom(offX1, offY1, s.width, s.height),
-                    s.usePixelCollision = false, RectangleFrom(x, y, width, height));
+                    bmp, Round(s^.x), Round(s^.y), 
+                    RectangleFrom(offX1, offY1, s^.width, s^.height),
+                    s^.usePixelCollision = false, RectangleFrom(x, y, width, height));
       end;
     end;
   end;
@@ -618,8 +617,8 @@ implementation
   function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
   begin
     result := CollisionWithinBitmapImages(
-                bmp1, x1, y1, bmp1.width, bmp1.height, 0, 0, bbox1, 
-                bmp2, x2, y2, bmp2.width, bmp2.height, 0, 0, bbox2);
+                bmp1, x1, y1, bmp1^.width, bmp1^.height, 0, 0, bbox1, 
+                bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0, bbox2);
   end;
 
   /// Performs a collision detection within two bitmaps at the given x, y
@@ -644,37 +643,37 @@ implementation
     if (s1 = nil) or (s2 = nil) then
       raise Exception.Create('One of the sprites specified is nil');
     
-    if s1.spriteKind = AnimMultiSprite then
+    if s1^.spriteKind = AnimMultiSprite then
     begin
-      offX1 := (s1.currentFrame mod s1.cols) * s1.width;
-      offY1 := (s1.currentFrame - (s1.currentFrame mod s1.cols)) div s1.cols * s1.height;
-      bmp1 := s1.bitmaps[0];
+      offX1 := (s1^.currentFrame mod s1^.cols) * s1^.width;
+      offY1 := (s1^.currentFrame - (s1^.currentFrame mod s1^.cols)) div s1^.cols * s1^.height;
+      bmp1 := s1^.bitmaps[0];
     end
     else
     begin
-      bmp1 := s1.bitmaps[s1.currentFrame];
+      bmp1 := s1^.bitmaps[s1^.currentFrame];
       offX1 := 0;
       offY1 := 0;
     end;
     
-    if s2.spriteKind = AnimMultiSprite then
+    if s2^.spriteKind = AnimMultiSprite then
     begin
-      offX2 := (s2.currentFrame mod s2.cols) * s2.width;
-      offY2 := (s2.currentFrame - (s2.currentFrame mod s2.cols)) div s2.cols * s2.height;
-      bmp2 := s2.bitmaps[0];
+      offX2 := (s2^.currentFrame mod s2^.cols) * s2^.width;
+      offY2 := (s2^.currentFrame - (s2^.currentFrame mod s2^.cols)) div s2^.cols * s2^.height;
+      bmp2 := s2^.bitmaps[0];
     end
     else
     begin
-      bmp2 := s2.bitmaps[s2.currentFrame];
+      bmp2 := s2^.bitmaps[s2^.currentFrame];
       offX2 := 0;
       offY2 := 0;
     end;
     
     result := CollisionWithinBitmapImages(
-                bmp1, Round(s1.x), Round(s1.y), CurrentWidth(s1), CurrentHeight(s1), 
-                offX1, offY1, not s1.usePixelCollision, 
-                bmp2, Round(s2.x), Round(s2.y), CurrentWidth(s2), CurrentHeight(s2), 
-                offX2, offY2, not s2.usePixelCollision);
+                bmp1, Round(s1^.x), Round(s1^.y), CurrentWidth(s1), CurrentHeight(s1), 
+                offX1, offY1, not s1^.usePixelCollision, 
+                bmp2, Round(s2^.x), Round(s2^.y), CurrentWidth(s2), CurrentHeight(s2), 
+                offX2, offY2, not s2^.usePixelCollision);
   end;
 
   /// Checks to see if two bitmaps have collided, performs a bbox check
@@ -701,7 +700,7 @@ implementation
 
   function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
   begin
-    if not BitmapRectCollision(bmp1, x1, y1, true, x2, y2, bmp2.width, bmp2.height) then
+    if not BitmapRectCollision(bmp1, x1, y1, true, x2, y2, bmp2^.width, bmp2^.height) then
       result := false
     else
       result := CollisionWithinBitmapImages(bmp1, x1, y1, bbox1, bmp2, x2, y2, bbox2);
@@ -731,13 +730,13 @@ implementation
 
   function SpritesCollided(s1, s2: Sprite): Boolean;
   begin
-    if not SpriteRectCollision(s1, s2.x, s2.y, s2.width, s2.height) then
+    if not SpriteRectCollision(s1, s2^.x, s2^.y, s2^.width, s2^.height) then
     begin
       result := false;
       exit;
     end;
 
-    if s1.usePixelCollision or s2.usePixelCollision then
+    if s1^.usePixelCollision or s2^.usePixelCollision then
     begin
       result := CollisionWithinSpriteImages(s1, s2);
     end
@@ -774,21 +773,21 @@ implementation
       exit;
     end;
 
-    if s.spriteKind = AnimMultiSprite then
+    if s^.spriteKind = AnimMultiSprite then
     begin
-      offX := (s.currentFrame mod s.cols) * s.width;
-      offY := (s.currentFrame - (s.currentFrame mod s.cols)) div s.cols * s.height;
-      tmp := s.bitmaps[0];
+      offX := (s^.currentFrame mod s^.cols) * s^.width;
+      offY := (s^.currentFrame - (s^.currentFrame mod s^.cols)) div s^.cols * s^.height;
+      tmp := s^.bitmaps[0];
     end
     else
     begin
-      tmp := s.bitmaps[s.currentFrame];
+      tmp := s^.bitmaps[s^.currentFrame];
       offX := 0;
       offY := 0;
     end;
     
     result := CollisionWithinBitmapImages(
-                tmp, Round(s.x), Round(s.y),  s.width, s.height, offX, offY, not s.usePixelCollision, 
+                tmp, Round(s^.x), Round(s^.y),  s^.width, s^.height, offX, offY, not s^.usePixelCollision, 
                 bmp, Round(pt.x), Round(pt.y), part.width, part.height, Round(part.x), Round(part.y), bbox);
   end;
   
@@ -812,18 +811,17 @@ implementation
     result := SpriteBitmapCollision(s, bmp, pt, RectangleFrom(bmp), bbox);
   end;
   
-
-  function CircleLineCollision(p1: Sprite; const line: LineSegment): Boolean;
+  function CircleLineCollision(s: Sprite; const line: LineSegment): Boolean;
   var
     r: Single;
     dist: Single;
   begin
-    if CurrentWidth(p1) > CurrentHeight(p1) then
-      r := CurrentWidth(p1) div 2
+    if CurrentWidth(s) > CurrentHeight(s) then
+      r := CurrentWidth(s) div 2
     else
-      r := CurrentHeight(p1) div 2;
+      r := CurrentHeight(s) div 2;
       
-    dist := PointLineDistance(p1.x + r, p1.y + r, line);
+    dist := PointLineDistance(s^.x + r, s^.y + r, line);
     result := dist < r;
   end;
   
@@ -832,9 +830,9 @@ implementation
     result := LineIntersectsLines(line, LinesFromRect(rect));
   end;
     
-  function RectLineCollision(p1: Sprite; const line: LineSegment): Boolean; overload;
+  function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
   begin
-    result := RectLineCollision(RectangleFrom(p1), line);
+    result := RectLineCollision(RectangleFrom(s), line);
   end;
   
   function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
@@ -913,12 +911,12 @@ implementation
       //Do X
       toEdge := VectorFrom(edgeX - pt.x, 0);
       angle := CalculateAngle(mvOut, toEdge);      
-      xMag := VectorMagnitude(toEdge) * 1 / sgCore.Cos(angle);
+      xMag := VectorMagnitude(toEdge) * 1 / sgMath.Cos(angle);
 
       //Do Y
       toEdge := VectorFrom(0, edgeY - pt.y);
       angle := CalculateAngle(mvOut, toEdge);      
-      yMag := VectorMagnitude(toEdge) * 1 / sgCore.Cos(angle);
+      yMag := VectorMagnitude(toEdge) * 1 / sgMath.Cos(angle);
           
       if (yMag < 0) or (xMag < yMag) then outMag := xMag
       else outMag := yMag;
@@ -1116,78 +1114,77 @@ implementation
   // Collision Effect Application (angle + mass/energy transfer)
   //----------------------------------------------------------------------------
 
-  procedure CollideCircleLine(p1: Sprite; const line: LineSegment);
+  procedure CollideCircleLine(s: Sprite; const line: LineSegment);
   var
     npx, npy, dotPod: Single;
     toLine: Vector;
     intersect: Point2D;
   begin
-    intersect := ClosestPointOnLine(CenterPoint(p1), line);
+    intersect := ClosestPointOnLine(CenterPoint(s), line);
 
-    toLine := UnitVector(VectorFromCenterSpriteToPoint(p1, intersect));
+    toLine := UnitVector(VectorFromCenterSpriteToPoint(s, intersect));
 
-    dotPod := - DotProduct(toLine, p1.movement);
+    dotPod := - DotProduct(toLine, s^.movement);
 
     npx := dotPod * toLine.x;
     npy := dotPod * toLine.y;
 
-    p1.movement.x := p1.movement.x + 2 * npx;
-    p1.movement.y := p1.movement.y + 2 * npy;
+    s^.movement.x := s^.movement.x + 2 * npx;
+    s^.movement.y := s^.movement.y + 2 * npy;
   end;
 
 
-  procedure CollideCircles(p1, p2: Sprite);
+  procedure CollideCircles(s1, s2: Sprite);
   var
-    p1c, p2c: Point2D;
+    s1c, s2c: Point2D;
     colNormalAngle, a1, a2, optP: Single;
     n: Vector;
   begin
-
-    if (p1.mass <= 0) or (p2.mass <= 0) then
+    if (s1^.mass <= 0) or (s2^.mass <= 0) then
     begin
       raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
     end;
     
-    p1c := CenterPoint(p1);
-    p2c := CenterPoint(p2);
+    s1c := CenterPoint(s1);
+    s2c := CenterPoint(s2);
     
-    if p1.mass < p2.mass then
+    if s1^.mass < s2^.mass then
     begin
-      //move p1 out
-      n := VectorOutOfCircleFromCircle(p1c, p1.width / 2, p2c, p2.width / 2, VectorFromPoints(p1c, p2c));
-      p1.x := p1.x + n.x;
-      p1.y := p1.y + n.y;
+      //move s1 out
+      n := VectorOutOfCircleFromCircle(s1c, s1^.width / 2, s2c, s2^.width / 2, VectorFromPoints(s1c, s2c));
+      s1^.x := s1^.x + n.x;
+      s1^.y := s1^.y + n.y;
     end
     else
     begin
-      //move p2 out
-      n := VectorOutOfCircleFromCircle(p2c, p2.width / 2, p1c, p1.width / 2, VectorFromPoints(p2c, p1c));
-      p2.x := p2.x + n.x;
-      p2.y := p2.y + n.y;
+      //move s2 out
+      n := VectorOutOfCircleFromCircle(s2c, s2^.width / 2, s1c, s1^.width / 2, VectorFromPoints(s2c, s1c));
+      s2^.x := s2^.x + n.x;
+      s2^.y := s2^.y + n.y;
     end;
       
-    colNormalAngle := CalculateAngle(p1, p2);
+    colNormalAngle := CalculateAngle(s1, s2);
     // COLLISION RESPONSE
     // n = vector connecting the centers of the balls.
     // we are finding the components of the normalised vector n
     n := VectorFrom(Cos(colNormalAngle), Sin(colNormalAngle));
     // now find the length of the components of each movement vectors
     // along n, by using dot product.
-    a1 := DotProduct(p1.Movement, n);
+    a1 := DotProduct(s1^.Movement, n);
     // Local a1# = c.dx*nX  +  c.dy*nY
-    a2 := DotProduct(p2.Movement, n);
+    a2 := DotProduct(s2^.Movement, n);
     // Local a2# = c2.dx*nX +  c2.dy*nY
     // optimisedP = 2(a1 - a2)
     // ----------
     // m1 + m2
-    optP := (2.0 * (a1-a2)) / (p1.mass + p2.mass);
+    optP := (2.0 * (a1-a2)) / (s1^.mass + s2^.mass);
     // now find out the resultant vectors
     // Local r1% = c1.v - optimisedP * mass2 * n
-    p1.movement.x := p1.movement.x - (optP * p2.mass * n.x);
-    p1.movement.y := p1.movement.y - (optP * p2.mass * n.y);
+    s1^.movement.x := s1^.movement.x - (optP * s2^.mass * n.x);
+    s1^.movement.y := s1^.movement.y - (optP * s2^.mass * n.y);
     // Local r2% = c2.v - optimisedP * mass1 * n
-    p2.movement.x := p2.movement.x + (optP * p1.mass * n.x);
-    p2.movement.y := p2.movement.y + (optP * p1.mass * n.y);
+    s2^.movement.x := s2^.movement.x + (optP * s1^.mass * n.x);
+    s2^.movement.y := s2^.movement.y + (optP * s1^.mass * n.y);
   end;
   
   //----------------------------------------------------------------------------

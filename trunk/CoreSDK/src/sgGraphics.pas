@@ -311,19 +311,19 @@ interface
   /// @lib CreateAnimatedCellSpriteWithEndingAction
   /// @class Sprite
   /// @constructor
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+  function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
   /// @lib CreateAnimatedCellSprite
   /// @class Sprite
   /// @constructor
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; width, height : LongInt): Sprite; overload;
+  function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; width, height : LongInt): Sprite; overload;
   /// @lib CreateAnimatedCellSpriteWithSetFramesPerCell
   /// @class Sprite
   /// @constructor
-  function CreateSprite(image : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
+  function CreateSprite(bmp : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
   /// @lib CreateBasicSprite
   /// @class Sprite
   /// @constructor
-  function CreateSprite(image : Bitmap): Sprite; overload;
+  function CreateSprite(bmp : Bitmap): Sprite; overload;
   /// @lib CreateAnimatedArraySpriteWithEndingAction
   /// @class Sprite
   /// @constructor
@@ -340,90 +340,90 @@ interface
   /// @lib
   /// @class Sprite
   /// @dispose
-  procedure FreeSprite(var spriteToFree : Sprite);
+  procedure FreeSprite(var s : Sprite);
   
   /// @lib
   /// @class Sprite
   /// @method AddBitmap
-  function AddBitmapToSprite(spriteToAddTo: Sprite; bitmapToAdd: Bitmap): LongInt;
+  function AddBitmapToSprite(s: Sprite; bitmapToAdd: Bitmap): LongInt;
   
   /// @lib
   /// @class Sprite
   /// @getter Height
-  function CurrentHeight(sprite: Sprite): LongInt;
+  function CurrentHeight(s: Sprite): LongInt;
   /// @lib
   /// @class Sprite
   /// @getter Width
-  function CurrentWidth(sprite: Sprite): LongInt;
+  function CurrentWidth(s: Sprite): LongInt;
   
   /// @lib
   /// @class Sprite
   /// @method ReplayAnimation
-  procedure ReplayAnimation(theSprite : Sprite);
+  procedure ReplayAnimation(s : Sprite);
   
-  /// @lib UpdateSpritePct(spriteToUpdate, 1.0)
+  /// @lib UpdateSpritePct(s, 1.0)
   /// @uname UpdateSprite
   /// @class Sprite
   /// @method Update
-  procedure UpdateSprite(spriteToUpdate: Sprite); overload;
+  procedure UpdateSprite(s: Sprite); overload;
   /// @lib UpdateSpritePct
   /// @class Sprite
   /// @overload Update UpdatePct
-  procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+  procedure UpdateSprite(s: Sprite; pct: Single); overload;
   
-  /// @lib UpdateSpriteAnimationPct(spriteToUpdate, 1.0)
+  /// @lib UpdateSpriteAnimationPct(s, 1.0)
   /// @uname UpdateSpriteAnimation
   /// @class Sprite
   /// @method UpdateAnimation
-  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+  procedure UpdateSpriteAnimation(s: Sprite); overload;
   /// @lib UpdateSpriteAnimationPct
   /// @class Sprite
   /// @overload UpdateAnimation UpdateAnimationPct
-  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
+  procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
   
   /// @lib DrawSpriteOffsetXY
   /// @class Sprite
   /// @overload Draw DrawOffsetXY
-  procedure DrawSprite(spriteToDraw : Sprite; xOffset, yOffset: LongInt); overload;
+  procedure DrawSprite(s : Sprite; xOffset, yOffset: LongInt); overload;
   /// @lib DrawSpriteOffsetPoint
   /// @class Sprite
   /// @overload Draw DrawOffsetPoint
-  procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
-  /// @lib DrawSpriteOffsetXY(spriteToDraw, 0, 0)
+  procedure DrawSprite(s : Sprite; const position: Point2D); overload;
+  /// @lib DrawSpriteOffsetXY(s, 0, 0)
   /// @uname DrawSprite
   /// @class Sprite
   /// @method Draw
-  procedure DrawSprite(spriteToDraw : Sprite); overload;
+  procedure DrawSprite(s : Sprite); overload;
     
-  /// @lib MoveSprite(spriteToMove, 1.0)
+  /// @lib MoveSprite(s, 1.0)
   /// @uname MoveSprite
   /// @class Sprite
   /// @method Move
-  procedure MoveSprite(spriteToMove: Sprite); overload;
+  procedure MoveSprite(s: Sprite); overload;
   /// @lib MoveSprite
   /// @uname MoveSpritePct
   /// @class Sprite
   /// @overload Move MovePct
-  procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
-  /// @lib MoveSpriteVecPct(spriteToMove, movementVector, 1.0)
+  procedure MoveSprite(s: Sprite; pct: Single); overload;
+  /// @lib MoveSpriteVecPct(s, movementVector, 1.0)
   /// @uname MoveSpriteVec
   /// @class Sprite
   /// @overload Move MoveVec
-  procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector); overload;
+  procedure MoveSprite(s : Sprite; const movementVector: Vector); overload;
   /// @lib MoveSpriteVecPct
   /// @class Sprite
   ///@overload Move MoveVecPct
-  procedure MoveSprite(spriteToMove : Sprite; const movementVector: Vector; pct: Single); overload;
+  procedure MoveSprite(s : Sprite; const movementVector: Vector; pct: Single); overload;
   
   /// @lib
   /// @class Sprite
   /// @method MoveTo
-  procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
+  procedure MoveSpriteTo(s : Sprite; x,y : LongInt);
   
   /// @lib
   /// @class Sprite
   /// @method IsOffscreen
-  function IsSpriteOffscreen(theSprite : Sprite): Boolean;
+  function IsSpriteOffscreen(s : Sprite): Boolean;
 
   //---------------------------------------------------------------------------
   // Draws elements directly onto the screen, ignoring the visible window
@@ -611,7 +611,7 @@ implementation
   procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
   begin
     if dest = nil then raise Exception.Create('Cannot clear, destination bitmap not supplied (nil)');
-    SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColor);
+    SDL_FillRect(dest^.surface, @dest^.surface^.clip_rect, toColor);
   end;
 
   /// Clears the surface of the bitmap to Black.
@@ -656,10 +656,10 @@ implementation
   {$ENDIF}
   begin
     //Convert the pixels to 32 bit
-    pixels := surface.pixels;
+    pixels := surface^.pixels;
 
     //Get the requested pixel
-    offset := (( y * surface.w ) + x) * surface.format.BytesPerPixel;
+    offset := (( y * surface^.w ) + x) * surface^.format^.BytesPerPixel;
 
     {$IFDEF FPC}
       pixelAddress := pixels + (offset div 4);
@@ -670,7 +670,7 @@ implementation
     {$ENDIF}
 
     {$IF SDL_BYTEORDER = SDL_BIG_ENDIAN }
-    case surface.format.BytesPerPixel of
+    case surface^.format^.BytesPerPixel of
       1: result := pixel^ and $000000ff;
       2: result := pixel^ and $0000ffff;
       3: result := pixel^ and $00ffffff;
@@ -679,7 +679,7 @@ implementation
       raise Exception.Create('Unsuported bit format...');
     end;
     {$ELSE}
-    case surface.format.BytesPerPixel of
+    case surface^.format^.BytesPerPixel of
       1: result := pixel^ and $ff000000;
       2: result := pixel^ and $ffff0000;
       3: result := pixel^ and $ffffff00;
@@ -694,13 +694,13 @@ implementation
   begin
     if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
     
-    if (x < 0) or (x >= bmp.width) or (y < 0) or (y >= bmp.height) then
+    if (x < 0) or (x >= bmp^.width) or (y < 0) or (y >= bmp^.height) then
     begin
       result := 0;
       exit;
     end;
     
-    result := GetPixel32(bmp.surface, x, y);
+    result := GetPixel32(bmp^.surface, x, y);
   end;
   
   function GetPixelFromScreen(x, y: LongInt): Color;
@@ -711,37 +711,37 @@ implementation
   // Sets the non-transparent pixels in a Bitmap. This is then used for
   // collision detection, allowing the original surface to be optimised.
   //
-  // @param toSet  A pointer to the Bitmap being set
+  // @param bmp  A pointer to the Bitmap being set
   // @param surface The surface with pixel data for this Bitmap
-  procedure SetNonTransparentPixels(toSet: Bitmap; surface: PSDL_Surface; transparentColor: Color);
+  procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
   var
     r, c: LongInt;
   begin
-    SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
+    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
 
-    for c := 0 to toSet.width - 1 do
+    for c := 0 to bmp^.width - 1 do
     begin
-      for r := 0 to toSet.height - 1 do
+      for r := 0 to bmp^.height - 1 do
       begin
-        toSet.nonTransparentPixels[c, r] :=
+        bmp^.nonTransparentPixels[c, r] :=
           (GetPixel32(surface, c, r) <> transparentColor);
       end;
     end;
   end;
 
-  procedure SetNonAlphaPixels(toSet: Bitmap; surface: PSDL_Surface);
+  procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
   var
     r, c: LongInt;
     hasAlpha: Boolean;
   begin
-    SetLength(toSet.nonTransparentPixels, toSet.width, toSet.height);
-    hasAlpha := surface.format.BytesPerPixel = 4;
+    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
+    hasAlpha := surface^.format^.BytesPerPixel = 4;
 
-    for c := 0 to toSet.width - 1 do
+    for c := 0 to bmp^.width - 1 do
     begin
-      for r := 0 to toSet.height - 1 do
+      for r := 0 to bmp^.height - 1 do
       begin
-        toSet.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
+        bmp^.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
       end;
     end;
   end;
@@ -765,20 +765,20 @@ implementation
     if loadedImage <> nil then
     begin
       new(result);
-      if not transparent then result.surface := SDL_DisplayFormatAlpha(loadedImage)
-      else result.surface := SDL_DisplayFormat(loadedImage);
-      //result.surface := loadedImage;
+      if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
+      else result^.surface := SDL_DisplayFormat(loadedImage);
+      //result^.surface := loadedImage;
       
       //WriteLn('Loaded ', pathToBitmap);
-      //WriteLn('  at ', HexStr(result.surface));
+      //WriteLn('  at ', HexStr(result^.surface));
 
-      result.width := result.surface.w;
-      result.height := result.surface.h;
+      result^.width := result^.surface^.w;
+      result^.height := result^.surface^.h;
 
       if transparent then
       begin
         correctedTransColor := GetColor(result, transparentColor);
-        SDL_SetColorKey(result.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+        SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
         SetNonTransparentPixels(result, loadedImage, correctedTransColor);
       end
       else
@@ -786,7 +786,7 @@ implementation
         SetNonAlphaPixels(result, loadedImage);
       end;
 
-      if loadedImage <> result.surface then SDL_FreeSurface(loadedImage);
+      if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
     end
     else
     begin
@@ -851,81 +851,81 @@ implementation
   /// @param endingAction:  This sprite's ending action (Loop, ReverseLoop or Stop)
   /// @param width, height: Width and height of this sprite
   /// @returns:       A new sprite with this bitmap as its first bitmap
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; 
+  function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; 
     endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
   var
     i : LongInt;
   begin
-    if image = nil then raise Exception.Create('No image specified to create a sprite');
+    if bmp = nil then raise Exception.Create('No image specified to create a sprite');
     if isMulti and (Length(framesPerCell) = 0) then raise Exception.Create('No frames per cell defined'); 
     if (width < 1) or (height < 1) then raise Exception.Create('Sprite Width and Height must be greater then 0');
     
     New(result);
-    SetLength(result.bitmaps, 1);
+    SetLength(result^.bitmaps, 1);
     
     if isMulti then
     begin
-      result.spriteKind := AnimMultiSprite;
+      result^.spriteKind := AnimMultiSprite;
       
-      result.cols := image.width div width;
-      result.row := image.height div height;
+      result^.cols := bmp^.width div width;
+      result^.row := bmp^.height div height;
       
-      SetLength(result.framesPerCell, Length(framesPerCell));
+      SetLength(result^.framesPerCell, Length(framesPerCell));
       for i := 0 to High(framesPerCell) do
       begin
         if framesPerCell[i] < 0 then 
           raise Exception.Create('Frames per cell must be larger than 0');
         
-        result.framesPerCell[i] := framesPerCell[i];
+        result^.framesPerCell[i] := framesPerCell[i];
       end;
     end
     else
     begin
-      result.spriteKind := StaticSprite;
+      result^.spriteKind := StaticSprite;
     end;
 
-    result.x              := 0;
-    result.y              := 0;
-    // result.xPos            := @result.x;
-    // result.yPos            := @result.y;
-    result.currentFrame   := 0;
-    result.usePixelCollision  := true;
-    result.hasEnded       := false;
-    result.bitmaps[0]     := image;
-    result.frameCount     := 0;
-    result.endingAction   := endingAction;
-    result.width          := width;
-    result.height         := height;
-    result.reverse        := false;
-    result.movement       := VectorFrom(0,0);
-    result.rotation       := 0;
-    result.zoom           := 1;
-    result.bufferedRotation := 0;
-    result.bufferedZoom   := 1;
-    result.bufferBmp      := nil;
+    result^.x              := 0;
+    result^.y              := 0;
+    // result^.xPos            := @result^.x;
+    // result^.yPos            := @result^.y;
+    result^.currentFrame   := 0;
+    result^.usePixelCollision  := true;
+    result^.hasEnded       := false;
+    result^.bitmaps[0]     := bmp;
+    result^.frameCount     := 0;
+    result^.endingAction   := endingAction;
+    result^.width          := width;
+    result^.height         := height;
+    result^.reverse        := false;
+    result^.movement       := VectorFrom(0,0);
+    result^.rotation       := 0;
+    result^.zoom           := 1;
+    result^.bufferedRotation := 0;
+    result^.bufferedZoom   := 1;
+    result^.bufferBmp      := nil;
   end;
   
   /// Creates a sprites, and sets its first bitmap.
   ///
-  /// @param image:     The sprites first bitmap (index 0)
+  /// @param bmp:     The sprites first bitmap (index 0)
   /// @param isMulti:     True if the bitmap specified is a multi bitmap
   /// @param framesPerCell: Array of LongInt that defines the frames per cell
   /// @param width, height: Width and height of this sprite
   /// @returns:       A new sprite
-  function CreateSprite(image : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; 
+  function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; 
     width, height : LongInt): Sprite; overload;
   begin
-    result := CreateSprite(image, isMulti, framesPerCell, Loop, width, height);
+    result := CreateSprite(bmp, isMulti, framesPerCell, Loop, width, height);
   end;
   
   /// Creates a sprites, and sets its first bitmap.
   ///
-  /// @param image:   The sprites first bitmap (index 0)
+  /// @param bmp:   The sprites first bitmap (index 0)
   /// @param framesPerCell: Number of frames per cell
   /// @param frames:      Number of frames this sprite contains
   /// @param width, height: Width and height of this sprite
   /// @returns:       A new sprite
-  function CreateSprite(image: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
+  function CreateSprite(bmp: Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
   var
     tempIntegers: LongIntArray;
     i: LongInt;
@@ -937,19 +937,19 @@ implementation
     begin
       tempIntegers[i] := framesPerCell;
     end;
-    result := CreateSprite(image, true, tempIntegers, width, height);
+    result := CreateSprite(bmp, true, tempIntegers, width, height);
   end;
 
   /// Creates a sprites, and sets its first bitmap.
   ///
-  /// @param image:     The sprites first bitmap (index 0)
+  /// @param bmp:     The sprites first bitmap (index 0)
   /// @returns:       A new sprite with this bitmap as its first bitmap
-  function CreateSprite(image : Bitmap): Sprite; overload;
+  function CreateSprite(bmp : Bitmap): Sprite; overload;
   var
     empty : LongIntArray;
   begin
     SetLength(empty, 0);
-    result := CreateSprite(image, false, empty, image.width, image.height);
+    result := CreateSprite(bmp, false, empty, bmp^.width, bmp^.height);
   end;
   
   /// Creates a sprites ans set bitmaps.
@@ -966,38 +966,38 @@ implementation
     if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
     
     New(result);
-    result.x          := 0;
-    result.y          := 0;
-    // result.xPos          := @result.x;
-    // result.yPos          := @result.y;
-    result.currentFrame     := 0;
-    result.usePixelCollision  := true;
-    result.hasEnded       := false;
-    result.movement       := VectorFrom(0,0);
-    result.rotation       := 0;
-    result.zoom           := 1;
-    result.bufferedRotation := 0;
-    result.bufferedZoom   := 1;
-    result.bufferBmp      := nil; 
-    result.endingAction     := endingAction;
-    result.width        := bitmaps[0].width;
-    result.height       := bitmaps[0].height;
-    result.reverse        := false;
-    result.spriteKind     := AnimArraySprite;
+    result^.x          := 0;
+    result^.y          := 0;
+    // result^.xPos          := @result^.x;
+    // result^.yPos          := @result^.y;
+    result^.currentFrame     := 0;
+    result^.usePixelCollision  := true;
+    result^.hasEnded       := false;
+    result^.movement       := VectorFrom(0,0);
+    result^.rotation       := 0;
+    result^.zoom           := 1;
+    result^.bufferedRotation := 0;
+    result^.bufferedZoom   := 1;
+    result^.bufferBmp      := nil; 
+    result^.endingAction     := endingAction;
+    result^.width        := bitmaps[0]^.width;
+    result^.height       := bitmaps[0]^.height;
+    result^.reverse        := false;
+    result^.spriteKind     := AnimArraySprite;
     
-    SetLength(result.bitmaps, Length(bitmaps));
+    SetLength(result^.bitmaps, Length(bitmaps));
     for i := 0 to High(bitmaps) do
     begin
-      result.bitmaps[i] := bitmaps[i];
+      result^.bitmaps[i] := bitmaps[i];
     end;
 
-    SetLength(result.framesPerCell, Length(framesPerCell));
+    SetLength(result^.framesPerCell, Length(framesPerCell));
     for i := 0 to High(framesPerCell) do
     begin
       if framesPerCell[i] <= 0 then 
         raise Exception.Create('Frames per cell must be larger than 0');
 
-      result.framesPerCell[i] := framesPerCell[i];
+      result^.framesPerCell[i] := framesPerCell[i];
     end;
   end;
   
@@ -1033,60 +1033,52 @@ implementation
     result := CreateSprite(bitmaps, tempIntegers);
   end;
   
-  procedure UpdateSpriteBuffers(sprt: Sprite);
+  procedure UpdateSpriteBuffers(s: Sprite);
   var
     dest: Bitmap; //temporary surface
     srcX, srcY: LongInt; //for image parts
   begin
-    if (sprt.rotation = sprt.bufferedRotation) and (sprt.zoom = sprt.bufferedZoom) then exit;
-    if (sprt.bufferBmp <> nil) then FreeBitmap(sprt.bufferBmp);
-    if (sprt.rotation = 0) and (sprt.zoom = 1) then exit; //no need to transform
+    if (s^.rotation = s^.bufferedRotation) and (s^.zoom = s^.bufferedZoom) then exit;
+    if (s^.bufferBmp <> nil) then FreeBitmap(s^.bufferBmp);
+    if (s^.rotation = 0) and (s^.zoom = 1) then exit; //no need to transform
 
     //Draw non-transformed bitmap onto temp surface
-    dest := CreateBitmap(sprt.width, sprt.height);
+    dest := CreateBitmap(s^.width, s^.height);
     
-    if sprt.spriteKind <> AnimMultiSprite then
-      DrawBitmap(dest, sprt.bitmaps[sprt.currentFrame], 0, 0)
+    if s^.spriteKind <> AnimMultiSprite then
+      DrawBitmap(dest, s^.bitmaps[s^.currentFrame], 0, 0)
     else
     begin
-      with sprt^ do
+      with s^ do
       begin
         srcX := (currentFrame mod cols) * width;
         srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
       end;
       
-      MakeOpaque(sprt.bitmaps[0]);
-      DrawBitmapPart(dest, sprt.bitmaps[0], srcX, srcY, sprt.width, sprt.height, 0, 0);
-      MakeTransparent(sprt.bitmaps[0]);
+      MakeOpaque(s^.bitmaps[0]);
+      DrawBitmapPart(dest, s^.bitmaps[0], srcX, srcY, s^.width, s^.height, 0, 0);
+      MakeTransparent(s^.bitmaps[0]);
     end;
     
-    sprt.bufferBmp := RotateScaleBitmap(dest, sprt.rotation, sprt.zoom);
+    s^.bufferBmp := RotateScaleBitmap(dest, s^.rotation, s^.zoom);
 
     FreeBitmap(dest);
   end;
   
-  /// Frees a sprite, this does not free the sprite's bitmaps, which allows
-  /// bitmaps to be shared between sprites. All created sprites need to be
-  /// freed.
-  ///
-  /// @param spriteToFree:     the sprite to free
-  ///
-  /// Side Effects:
-  /// - The sprites details are cleaned up.
-  procedure FreeSprite(var spriteToFree : Sprite);
+  procedure FreeSprite(var s : Sprite);
   begin
-    if Assigned(spriteToFree) then
+    if Assigned(s) then
     begin
       //Free bitmaps
-      SetLength(spriteToFree.bitmaps, 0);
-
+      SetLength(s^.bitmaps, 0);
+      
       //Free buffered rotation image
-      if spriteToFree.bufferBmp <> nil then FreeBitmap(spriteToFree.bufferBmp);
-      spriteToFree.bufferBmp := nil;
-
+      if s^.bufferBmp <> nil then FreeBitmap(s^.bufferBmp);
+      s^.bufferBmp := nil;
+      
       //Dispose sprite
-      Dispose(spriteToFree);
-      spriteToFree := nil;
+      Dispose(s);
+      s := nil;
     end;
   end;
 
@@ -1094,47 +1086,47 @@ implementation
   /// line animation, facing, etc. This routine adds a bitmap to a sprite,
   /// returning the index of the added bitmap.
   ///
-  /// @param spriteToAddTo:   the sprite to add the bitmap to
+  /// @param s:   the sprite to add the bitmap to
   /// @param bitmapToAdd:     the bitmap to add to the sprite
   /// @returns :               the index of the added bitmap
   ///
   /// Side Effects:
   /// - The bitmaps is added to the bitmaps within the sprite.
-  function AddBitmapToSprite(spriteToAddTo : Sprite; bitmapToAdd : Bitmap): LongInt;
+  function AddBitmapToSprite(s : Sprite; bitmapToAdd : Bitmap): LongInt;
   begin
     if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
-    if spriteToAddTo = nil then raise Exception.Create('No sprite to add to');
-    if spriteToAddTo.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
+    if s = nil then raise Exception.Create('No sprite to add to');
+    if s^.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
           
     //Resize the array
-    SetLength(spriteToAddTo.bitmaps, Length(spriteToAddTo.bitmaps) + 1);
+    SetLength(s^.bitmaps, Length(s^.bitmaps) + 1);
 
     //Add the values to the array
-    spriteToAddTo.bitmaps[High(spriteToAddTo.bitmaps)] := bitmapToAdd;
+    s^.bitmaps[High(s^.bitmaps)] := bitmapToAdd;
 
-    result := High(spriteToAddTo.bitmaps);
+    result := High(s^.bitmaps);
   end;
 
   /// Returns the current width of the sprite.
   ///
   /// @param sprite:     The sprite to get the width of
   /// @returns           The width of the sprite's current frame
-  function CurrentWidth(sprite: Sprite): LongInt;
+  function CurrentWidth(s: Sprite): LongInt;
   begin
-    if sprite = nil then raise Exception.Create('No sprite supplied');
-
-    result := sprite.width;
+    if s = nil then raise Exception.Create('No sprite supplied');
+    
+    result := s^.width;
   end;
   
   /// Returns the current height of the sprite.
   ///
   /// @param sprite:     The sprite to get the height of
   /// @returns           The height of the sprite's current frame
-  function CurrentHeight(sprite: Sprite): LongInt;
+  function CurrentHeight(s: Sprite): LongInt;
   begin
-    if sprite = nil then raise Exception.Create('No sprite supplied');
-
-    result := sprite.height;
+    if s = nil then raise Exception.Create('No sprite supplied');
+    
+    result := s^.height;
   end;
 
   /// Draws one bitmap (src) onto another bitmap (dest).
@@ -1152,7 +1144,7 @@ implementation
     if (dest = nil) or (src = nil) then raise Exception.Create('No bitmap supplied');
     
     offset := NewSDLRect(x, y, 0, 0);
-    SDL_BlitSurface(src.surface, nil, dest.surface, @offset);
+    SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
   end;
 
   /// Draws part of a bitmap (src) onto another bitmap (dest).
@@ -1175,7 +1167,7 @@ implementation
     offset := NewSDLRect(x, y, 0, 0);
     source := NewSDLRect(srcX, srcY, srcW, srcH);
 
-    SDL_BlitSurface(src.surface, @source, dest.surface, @offset);
+    SDL_BlitSurface(src^.surface, @source, dest^.surface, @offset);
   end;
 
   procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
@@ -1220,233 +1212,233 @@ implementation
     DrawBitmap(screen, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
   
-  procedure ReplayAnimation(theSprite : Sprite);
+  procedure ReplayAnimation(s : Sprite);
   begin
-    if theSprite = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then raise Exception.Create('No sprite supplied');
 
-    theSprite.currentFrame := 0;
-    theSprite.hasEnded := false;
-    theSprite.reverse := false;
+    s^.currentFrame := 0;
+    s^.hasEnded := false;
+    s^.reverse := false;
   end;
   
-  procedure CycleFrame(spriteToUpdate: Sprite);
+  procedure CycleFrame(s: Sprite);
     procedure EndAnimation(frame: LongInt);
     begin
-      spriteToUpdate.currentFrame := frame;
-      spriteToUpdate.hasEnded := true;
+      s^.currentFrame := frame;
+      s^.hasEnded := true;
     end;
     procedure SetAnimation(frame: LongInt; reverse: Boolean);
     begin
-      spriteToUpdate.currentFrame := frame;
-      spriteToUpdate.reverse := reverse;
+      s^.currentFrame := frame;
+      s^.reverse := reverse;
     end;
   begin
-    if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) then
+    if (s^.currentFrame > High(s^.framesPerCell)) then
     begin
-      if (spriteToUpdate.endingAction = ReverseLoop) or (spriteToUpdate.endingAction = ReverseOnce) then
-        SetAnimation(spriteToUpdate.currentFrame - 1, true)
-      else if spriteToUpdate.endingAction = Loop then spriteToUpdate.currentFrame := 0
-      else if spriteToUpdate.endingAction = Stop then EndAnimation(High(spriteToUpdate.framesPerCell));
+      if (s^.endingAction = ReverseLoop) or (s^.endingAction = ReverseOnce) then
+        SetAnimation(s^.currentFrame - 1, true)
+      else if s^.endingAction = Loop then s^.currentFrame := 0
+      else if s^.endingAction = Stop then EndAnimation(High(s^.framesPerCell));
     end
-    else if (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
+    else if (s^.currentFrame < Low(s^.framesPerCell)) then
     begin
-      if spriteToUpdate.endingAction = ReverseOnce then EndAnimation(0)
+      if s^.endingAction = ReverseOnce then EndAnimation(0)
       else SetAnimation(1, false);
     end;    
   end;
   
-  procedure MoveToNextFrame(spriteToUpdate: Sprite);
+  procedure MoveToNextFrame(s: Sprite);
   var
     i, sum: LongInt;
     frameChange: LongInt;
   begin
     //Check that they are all + or 0, at at least one is +
     sum := 0;
-    for i := Low(spriteToUpdate.framesPerCell) to High(spriteToUpdate.framesPerCell) do
+    for i := Low(s^.framesPerCell) to High(s^.framesPerCell) do
     begin
-      if spriteToUpdate.framesPerCell[i] < 0 then raise Exception.Create('Frames per cell must be 0 or positive');
-      sum := sum + spriteToUpdate.framesPerCell[i];
+      if s^.framesPerCell[i] < 0 then raise Exception.Create('Frames per cell must be 0 or positive');
+      sum := sum + s^.framesPerCell[i];
     end;
 
     if sum = 0 then raise Exception.Create('Frames per cell cannot all be zero');
     
     //Reset the frame count.
-    spriteToUpdate.frameCount := 0;
+    s^.frameCount := 0;
     
-    if spriteToUpdate.reverse then frameChange := -1
+    if s^.reverse then frameChange := -1
     else frameChange := +1;
       
-    spriteToUpdate.currentFrame := spriteToUpdate.currentFrame + frameChange;
+    s^.currentFrame := s^.currentFrame + frameChange;
     
-    if (spriteToUpdate.currentFrame > High(spriteToUpdate.framesPerCell)) or
-       (spriteToUpdate.currentFrame < Low(spriteToUpdate.framesPerCell)) then
+    if (s^.currentFrame > High(s^.framesPerCell)) or
+       (s^.currentFrame < Low(s^.framesPerCell)) then
     begin
-      CycleFrame(spriteToUpdate);
+      CycleFrame(s);
     end;
   end;
 
-  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite); overload;
+  procedure UpdateSpriteAnimation(s: Sprite); overload;
   begin
-    UpdateSpriteAnimation(spriteToUpdate, 1.0);
+    UpdateSpriteAnimation(s, 1.0);
   end;
   
   /// Update the frame position
   ///
-  /// @param spriteToUpdate:  The sprite to be processed
+  /// @param s:  The sprite to be processed
   /// @param pct: Percentage to update
   ///
   /// Side Effects:
   /// - Process the frame position depending on the sprite's setting
-  procedure UpdateSpriteAnimation(spriteToUpdate: Sprite; pct: Single); overload;
+  procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
   begin
-    if spriteToUpdate = nil then raise Exception.Create('No sprite supplied');
-    if spriteToUpdate.hasEnded then exit;
-    if spriteToUpdate.spriteKind = StaticSprite then exit;
+    if s = nil then raise Exception.Create('No sprite supplied');
+    if s^.hasEnded then exit;
+    if s^.spriteKind = StaticSprite then exit;
         
-    spriteToUpdate.frameCount := spriteToUpdate.frameCount + pct;
+    s^.frameCount := s^.frameCount + pct;
     
     // If we are at the end of the current frame... need to move to the next frame
-    if spriteToUpdate.frameCount >= spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] then
+    if s^.frameCount >= s^.framesPerCell[s^.currentFrame] then
     begin
-      MoveToNextFrame(spriteToUpdate);
+      MoveToNextFrame(s);
       
-      while spriteToUpdate.framesPerCell[spriteToUpdate.currentFrame] = 0 do
+      while s^.framesPerCell[s^.currentFrame] = 0 do
       begin
-        MoveToNextFrame(spriteToUpdate);
+        MoveToNextFrame(s);
       end;
 
-      if spriteToUpdate.spriteKind = AnimArraySprite then
+      if s^.spriteKind = AnimArraySprite then
       begin
-        spriteToUpdate.width := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].width;
-        spriteToUpdate.height := spriteToUpdate.bitmaps[spriteToUpdate.currentFrame].height;
+        s^.width := s^.bitmaps[s^.currentFrame]^.width;
+        s^.height := s^.bitmaps[s^.currentFrame]^.height;
       end;
     end;
   end;
 
-  procedure UpdateSprite(spriteToUpdate: Sprite); overload;
+  procedure UpdateSprite(s: Sprite); overload;
   begin
-    UpdateSprite(spriteToUpdate, 1.0);
+    UpdateSprite(s, 1.0);
   end;
   
-  procedure UpdateSprite(spriteToUpdate: Sprite; pct: Single); overload;
+  procedure UpdateSprite(s: Sprite; pct: Single); overload;
   begin
-    MoveSprite(spriteToUpdate, pct);
-    UpdateSpriteAnimation(spriteToUpdate, pct);
+    MoveSprite(s, pct);
+    UpdateSpriteAnimation(s, pct);
   end;
   
   /// Draws a sprite to the screen, without using a view port.
   ///
-  /// @param spriteToDraw:     The sprite to be drawn
+  /// @param s:     The sprite to be drawn
   ///
   /// Side Effects:
   /// - The sprite is drawn to the screen, if within screen area
-  procedure DrawSprite(spriteToDraw: Sprite); overload;
+  procedure DrawSprite(s: Sprite); overload;
   begin
-    DrawSprite(spriteToDraw, 0, 0);
+    DrawSprite(s, 0, 0);
   end;
   
-  procedure DrawSprite(spriteToDraw : Sprite; const position: Point2D); overload;
+  procedure DrawSprite(s : Sprite; const position: Point2D); overload;
   begin
-    DrawSprite(spriteToDraw, Round(position.x), Round(position.y));
+    DrawSprite(s, Round(position.x), Round(position.y));
   end;
   
-  procedure DrawSprite(spriteToDraw: Sprite; xOffset, yOffset: LongInt); overload;
+  procedure DrawSprite(s: Sprite; xOffset, yOffset: LongInt); overload;
   var
     srcX, srcY: LongInt;
   begin
-    if not Assigned(spriteToDraw) then raise Exception.Create('No sprite supplied');
+    if not Assigned(s) then raise Exception.Create('No sprite supplied');
 
-    if (spriteToDraw.rotation <> 0) or (spriteToDraw.zoom <> 1) then
+    if (s^.rotation <> 0) or (s^.zoom <> 1) then
     begin
-      UpdateSpriteBuffers(spriteToDraw);
-      DrawBitmap(spriteToDraw.bufferBmp, spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+      UpdateSpriteBuffers(s);
+      DrawBitmap(s^.bufferBmp, s^.x + xOffset, s^.y + yOffset);
     end
     else
     begin
-      if spriteToDraw.spriteKind <> AnimMultiSprite then
+      if s^.spriteKind <> AnimMultiSprite then
       begin
-        DrawBitmap(spriteToDraw.bitmaps[spriteToDraw.currentFrame], spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+        DrawBitmap(s^.bitmaps[s^.currentFrame], s^.x + xOffset, s^.y + yOffset);
       end
       else
       begin
-        with spriteToDraw^ do
+        with s^ do
         begin
           srcX := (currentFrame mod cols) * width;
           srcY := (currentFrame - (currentFrame mod cols)) div cols * height;
         end;
       
-        DrawBitmapPart(spriteToDraw.bitmaps[0], srcX, srcY, 
-                     spriteToDraw.width, spriteToDraw.height,
-                     spriteToDraw.x + xOffset, spriteToDraw.y + yOffset);
+        DrawBitmapPart(s^.bitmaps[0], srcX, srcY, 
+                     s^.width, s^.height,
+                     s^.x + xOffset, s^.y + yOffset);
       end;
     end;
   end;
 
     /// Determines if a sprite is off the screen.
   ///
-  /// @param theSprite:     The sprite to check the position of
+  /// @param s:     The sprite to check the position of
   /// @returns          True if the sprite is off the screen
-  function IsSpriteOffscreen(theSprite : Sprite): Boolean;
+  function IsSpriteOffscreen(s : Sprite): Boolean;
   begin
-    if theSprite = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then raise Exception.Create('No sprite supplied');
     
-    if sgCamera.ToScreenX(theSprite.x) >= ScreenWidth() then result := true
-    else if sgCamera.ToScreenX(theSprite.x) + CurrentWidth(theSprite) < 0 then result := true
-    else if sgCamera.ToScreenY(theSprite.y) >= ScreenHeight() then result := true
-    else if sgCamera.ToScreenY(theSprite.y) + CurrentHeight(theSprite) < 0 then result := true
+    if sgCamera.ToScreenX(s^.x) >= ScreenWidth() then result := true
+    else if sgCamera.ToScreenX(s^.x) + CurrentWidth(s) < 0 then result := true
+    else if sgCamera.ToScreenY(s^.y) >= ScreenHeight() then result := true
+    else if sgCamera.ToScreenY(s^.y) + CurrentHeight(s) < 0 then result := true
     else result := false;
   end;
 
-  procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector); overload;
+  procedure MoveSprite(s : Sprite; const movementVector : Vector); overload;
   begin
-    MoveSprite(spriteToMove, movementVector, 1.0);
+    MoveSprite(s, movementVector, 1.0);
   end;
 
   /// Moves a sprite based on information in a movement vector.
   ///
-  /// @param spriteToMove:     The sprite to move
+  /// @param s:     The sprite to move
   /// @param movementVector:   The vector containing the movement details
-  procedure MoveSprite(spriteToMove : Sprite; const movementVector : Vector; pct: Single); overload;
+  procedure MoveSprite(s : Sprite; const movementVector : Vector; pct: Single); overload;
   var
     mvmt: Vector;
     trans: Matrix2D;
   begin
-    if not Assigned(spriteToMove) then raise Exception.Create('No sprite supplied');
+    if not Assigned(s) then raise Exception.Create('No sprite supplied');
     
-    if spriteToMove.rotation <> 0 then
+    if s^.rotation <> 0 then
     begin
-      trans := RotationMatrix(-spriteToMove.rotation);
+      trans := RotationMatrix(-s^.rotation);
       mvmt := MatrixMultiply(trans, movementVector);
     end
     else  mvmt := movementVector;
     
-    spriteToMove.x := spriteToMove.x + (pct * mvmt.x);
-    spriteToMove.y := spriteToMove.y + (pct * mvmt.y);
+    s^.x := s^.x + (pct * mvmt.x);
+    s^.y := s^.y + (pct * mvmt.y);
   end;
 
   /// Moves a sprite to a given x,y location.
   ///
-  /// @param spriteToMove:     the sprite being moved
+  /// @param s:     the sprite being moved
   /// @param x, y:             the new location of the sprite
   ///
   /// Side Effects:
   /// - Moves the sprite, changing its x and y
-  procedure MoveSpriteTo(spriteToMove : Sprite; x,y : LongInt);
+  procedure MoveSpriteTo(s : Sprite; x,y : LongInt);
   begin
-    if spriteToMove = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then raise Exception.Create('No sprite supplied');
     
-    spriteToMove.x := x;
-    spriteToMove.y := y;
+    s^.x := x;
+    s^.y := y;
   end;
 
-  procedure MoveSprite(spriteToMove: Sprite); overload;
+  procedure MoveSprite(s: Sprite); overload;
   begin
-    MoveSprite(spriteToMove, 1.0);
+    MoveSprite(s, 1.0);
   end;  
   
-  procedure MoveSprite(spriteToMove: Sprite; pct: Single); overload;
+  procedure MoveSprite(s: Sprite; pct: Single); overload;
   begin
-    MoveSprite(spriteToMove, spriteToMove.movement, pct);
+    MoveSprite(s, s^.movement, pct);
   end;
   
   /// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
@@ -1460,37 +1452,37 @@ implementation
   begin
     if (width < 1) or (height < 1) then
       raise Exception.Create('Bitmap width and height must be greater then 0');
-      if (baseSurface = nil) or (baseSurface.format = nil) then
+      if (baseSurface = nil) or (baseSurface^.format = nil) then
           raise Exception.Create('Unable to CreateBitmap as the window is not open');
     
     New(result);
 
-    with baseSurface.format^ do
+    with baseSurface^.format^ do
     begin
-      result.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
+      result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
                        RMask, GMask, BMask, AMask);
     end;
     
-    if result.surface = nil then
+    if result^.surface = nil then
     begin
       Dispose(result);
       raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
     end;
     
-    result.width := width;
-    result.height := height;
-    SDL_SetAlpha(result.surface, SDL_SRCALPHA, 0);
-    SDL_FillRect(result.surface, nil, ColorTransparent);
+    result^.width := width;
+    result^.height := height;
+    SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
+    SDL_FillRect(result^.surface, nil, ColorTransparent);
   end;
   
   procedure MakeOpaque(bmp: Bitmap);
   begin
-    SDL_SetAlpha(bmp.surface, 0, 255);
+    SDL_SetAlpha(bmp^.surface, 0, 255);
   end;
 
   procedure MakeTransparent(bmp: Bitmap);
   begin
-    SDL_SetAlpha(bmp.surface, SDL_SRCALPHA, 0);
+    SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, 0);
   end;
 
   /// Created bitmaps can be optimised for faster drawing to the screen. This
@@ -1508,9 +1500,9 @@ implementation
   begin
     if surface = nil then raise Exception.Create('No bitmap supplied');
     
-    oldSurface := surface.surface;
+    oldSurface := surface^.surface;
     SetNonAlphaPixels(surface, oldSurface);
-    surface.surface := SDL_DisplayFormatAlpha(oldSurface);
+    surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
     SDL_FreeSurface(oldSurface);
   end;
   
@@ -1664,7 +1656,7 @@ implementation
 
   procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    aatrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColor));
+    aatrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColor));
   end;
 
   procedure FillTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
@@ -1694,7 +1686,7 @@ implementation
 
   procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    filledTrigonColor(dest.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(theColor));
+    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(theColor));
   end;
 
   
@@ -1875,7 +1867,7 @@ implementation
   procedure DrawRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height : LongInt); overload;
   begin
     if dest = nil then raise Exception.Create('No destination bitmap supplied');
-    rectangleColor(dest.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColor));
+    rectangleColor(dest^.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColor));
   end;
 
   /// Draws a filled rectangle on the destination bitmap.
@@ -1908,8 +1900,8 @@ implementation
     rect.w := width;
     rect.h := height;
     
-    //SDL_FillRect(dest.surface, @rect, theColor);
-    boxColor(dest.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(theColor));
+    //SDL_FillRect(dest^.surface, @rect, theColor);
+    boxColor(dest^.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(theColor));
   end;
 
   /// Draws a ellipse within a given rectangle on the dest bitmap.
@@ -1944,7 +1936,7 @@ implementation
     halfWidth := width div 2;
     halfHeight := height div 2;
     
-    aaellipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
+    aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
   end;
 
   /// Draws a filled ellipse within a given rectangle on the dest bitmap.
@@ -1963,7 +1955,7 @@ implementation
     halfWidth := width div 2;
     halfHeight := height div 2;
 
-    filledEllipseColor(dest.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
+    filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
   end;
   
   /// Draws a vertical line on the destination bitmap.
@@ -1978,7 +1970,7 @@ implementation
   procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt);
   begin
     if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
-    vlineColor(dest.surface, x, y1, y2, ToGfxColor(theColor));
+    vlineColor(dest^.surface, x, y1, y2, ToGfxColor(theColor));
   end;
 
   /// Draws a horizontal line on the destination bitmap.
@@ -1994,7 +1986,7 @@ implementation
   begin
     if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
       
-    hlineColor(dest.surface, x1, x2, y, ToGfxColor(theColor));
+    hlineColor(dest^.surface, x1, x2, y, ToGfxColor(theColor));
   end;
 
   /// Draws a line on the destination bitmap.
@@ -2008,7 +2000,7 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawLine(dest: Bitmap; theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
   begin
-    aalineColor(dest.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColor));
+    aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColor));
   end;
 
   /// Draws a pixel onto the destination bitmap.
@@ -2023,13 +2015,13 @@ implementation
   begin
     if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
     
-    if (x < 0) or (x >= dest.surface.w) or (y < 0) or (y >= dest.surface.h) then exit;
+    if (x < 0) or (x >= dest^.surface^.w) or (y < 0) or (y >= dest^.surface^.h) then exit;
     
-    //if SDL_MUSTLOCK(dest.surface) then SDL_LockSurface(dest.surface);
+    //if SDL_MUSTLOCK(dest^.surface) then SDL_LockSurface(dest^.surface);
     
-    PutPixel(dest.surface, x, y, theColor);
+    PutPixel(dest^.surface, x, y, theColor);
     
-    //if SDL_MUSTLOCK(dest.surface) then SDL_UnlockSurface(dest.surface);
+    //if SDL_MUSTLOCK(dest^.surface) then SDL_UnlockSurface(dest^.surface);
   end;
   
   /// Draws a circle centered on a given x, y location.
@@ -2059,7 +2051,7 @@ implementation
   /// - Draws a Circle in the dest bitmap
   procedure DrawCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
   begin
-    aacircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColor));
+    aacircleColor(dest^.surface, xc, yc, radius, ToGfxColor(theColor));
   end;
 
   /// Draws a filled circle centered on a given x, y location.
@@ -2073,7 +2065,7 @@ implementation
   /// - Draws a Circle in the dest bitmap
   procedure FillCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt);
   begin
-    filledCircleColor(dest.surface, xc, yc, radius, ToGfxColor(theColor));
+    filledCircleColor(dest^.surface, xc, yc, radius, ToGfxColor(theColor));
   end;
   
   
@@ -2281,7 +2273,7 @@ implementation
   procedure ResetClip(bmp: Bitmap); overload;
   begin
     if bmp = nil then raise Exception.Create('Cannot reset clip, bmp must not be nil');
-    SDL_SetClipRect(bmp.surface, nil);
+    SDL_SetClipRect(bmp^.surface, nil);
   end;
 
   procedure ResetClip(); overload;
@@ -2295,7 +2287,7 @@ implementation
   begin
     if bmp = nil then raise Exception.Create('Cannot set clip, bmp must not be nil');
     rect := NewSDLRect(x, y, w, h);
-    SDL_SetClipRect(bmp.surface, @rect);
+    SDL_SetClipRect(bmp^.surface, @rect);
   end;
   
   procedure SetClip(bmp: Bitmap; r: Rectangle); overload;
@@ -2316,16 +2308,16 @@ implementation
   function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
   begin
     New(result);
-    result.surface := rotozoomSurface(src.surface, degRot, scale, 1);
-    result.width := result.surface.w;
-    result.height := result.surface.h;
+    result^.surface := rotozoomSurface(src^.surface, degRot, scale, 1);
+    result^.width := result^.surface^.w;
+    result^.height := result^.surface^.h;
   end;
   
   procedure SetupBitmapForCollisions(src: Bitmap);
   begin
-    if Length(src.nonTransparentPixels) <> 0 then exit;
+    if Length(src^.nonTransparentPixels) <> 0 then exit;
       
-    SetNonAlphaPixels(src, src.surface);
+    SetNonAlphaPixels(src, src^.surface);
     OptimiseBitmap(src);
   end;
 end.

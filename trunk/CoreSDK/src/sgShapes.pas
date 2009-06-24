@@ -1,6 +1,6 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //          sgShapes.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // Contains the code for the bascic shapes available in the SGDK :
 //  * Point2D, LineSegment, and Rectangle,
@@ -45,14 +45,14 @@
 // - 2008-01-21: Andrew: General refactoring, adding const and
 //                       some extra overloads.
 // - 2008-01-18: Aki, Andrew, Stephen: Created initial version
-//=============================================================================
+//----------------------------------------------------------------------------
 
 /// @module Shapes
 unit sgShapes;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses sgTypes;
 
@@ -154,9 +154,9 @@ interface
   function PointInRect(const pt: Point2D; const rect: Rectangle): Boolean; overload;
 
 
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses math, sysutils, classes, sgGraphics, sgPhysics, sgMath;
 
@@ -340,8 +340,8 @@ implementation
 
   function CenterPoint(s: Sprite): Point2D;
   begin
-    result.x := s.x + CurrentWidth(s) / 2;
-    result.y := s.y + CurrentHeight(s) / 2;
+    result.x := s^.x + CurrentWidth(s) / 2;
+    result.y := s^.y + CurrentHeight(s) / 2;
   end;
   
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
@@ -403,7 +403,7 @@ implementation
   
   function RectangleFrom(s: Sprite): Rectangle;
   begin
-    result := RectangleFrom(s.x, s.y, CurrentWidth(s), CurrentHeight(s));
+    result := RectangleFrom(s^.x, s^.y, CurrentWidth(s), CurrentHeight(s));
   end;
   
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
@@ -413,12 +413,12 @@ implementation
   
   function RectangleFrom(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
   begin
-    result := RectangleFrom(pt.x, pt.y, bmp.width, bmp.height);
+    result := RectangleFrom(pt.x, pt.y, bmp^.width, bmp^.height);
   end;
   
   function RectangleFrom(x, y: Single; bmp: Bitmap): Rectangle; overload;
   begin
-    result := RectangleFrom(x, y, bmp.width, bmp.height);
+    result := RectangleFrom(x, y, bmp^.width, bmp^.height);
   end;
   
   function RectangleFrom(bmp: Bitmap): Rectangle; overload;

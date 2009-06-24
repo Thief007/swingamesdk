@@ -1,6 +1,6 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //          sgCamera.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // The Camera unit is used to change the view port (ie the camera location.)
 //
@@ -25,14 +25,14 @@
 //  
 // Version 1.0:
 // - Various
-//=============================================================================
+//----------------------------------------------------------------------------
 
 ///@module Camera
 unit sgCamera;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
   
   uses sgTypes;
   
@@ -94,15 +94,15 @@ interface
   /// and height) are taken into account. Use x and y offset of 0.0 if you want 
   /// the camera to be exaclty over the center of the sprite.
   ///
-  /// @param spr The sprite to center the camera on 
+  /// @param s The sprite to center the camera on 
   /// @param offsetX The amount of x axis offset for the camaera to use 
   /// @param offsetY The amount of y axis offset for the camaera to use 
   /// @lib CenterCameraOnWithXYOffset
-  procedure CenterCameraOn(spr: Sprite; offsetX, offsetY: LongInt); overload;
+  procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt); overload;
 
   /// @param offset The amount of offset from sprite center for the camera to use.  
   /// @lib
-  procedure CenterCameraOn(spr: Sprite; const offset: Vector); overload;
+  procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
   
   //---------------------------------------------------------------------------
   // World-To-Screen Translation
@@ -156,9 +156,9 @@ interface
   function ToWorld(const screenPoint: Point2D): Point2D;  
   
   
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses Classes, SysUtils, sgCore, sgShapes;
 
@@ -221,18 +221,18 @@ implementation
   // Camera - Sprite tracking
   //---------------------------------------------------------------------------
   
-  procedure CenterCameraOn(spr: Sprite; offsetX, offsetY: LongInt);
+  procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt);
   begin
-    if spr = nil then begin
-      raise Exception.Create('FollowSprite requires a target sprite. No sprite was provided (nil supplied)');
+    if s = nil then begin
+      raise Exception.Create('CenterCameraOn requires a target sprite. No sprite was provided (nil supplied)');
     end;
-    MoveCameraTo(Round(ToScreenX(spr.x) + spr.width / 2 - ScreenWidth() / 2) + offsetX, 
-                 Round(ToScreenY(spr.y) + spr.height / 2 - ScreenHeight() / 2) + offsetY);
+    MoveCameraTo(Round(ToScreenX(s^.x) + s^.width / 2 - ScreenWidth() / 2) + offsetX, 
+                 Round(ToScreenY(s^.y) + s^.height / 2 - ScreenHeight() / 2) + offsetY);
   end;
   
-  procedure CenterCameraOn(spr: Sprite; const offset: Vector); overload;
+  procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
   begin
-    CenterCameraOn(spr, Round(offset.x), Round(offset.y));
+    CenterCameraOn(s, Round(offset.x), Round(offset.y));
   end;
   
   //---------------------------------------------------------------------------

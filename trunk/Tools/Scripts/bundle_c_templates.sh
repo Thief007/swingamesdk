@@ -40,6 +40,8 @@ then
     
     if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
         source ${APP_PATH}/bundle_source.sh -b
+        echo
+        echo
         if [ $? != 0 ]; then echo "Error building SGSDK framework"; exit 1; fi
     fi
 fi
