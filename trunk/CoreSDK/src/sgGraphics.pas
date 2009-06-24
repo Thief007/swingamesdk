@@ -1,20 +1,17 @@
-//---------------------------------------------------/
-//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
+//=============================================================================
 //          sgGraphics.pas
-//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
-//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//=============================================================================
 //
-// The Graphics unit is responsible for all of the drawing
-// of anything to the screen or other surfaces. The
-// ...OnScreen routines draw directly onto the screen
-// ignoring the camera settings. The standard draw routines
-// draw to the screen using the camera settings. Finally the
-// overloaded drawing methods with a destination Bitmap will
-// draw onto the supplied bitmap.
+// The Graphics unit is responsible for all of the drawing of anything to the 
+// screen or other surfaces. The ...OnScreen routines draw directly onto the 
+// screen ignoring the camera settings. The standard draw routines draw to the 
+// screen using the camera settings. Finally the overloaded drawing methods 
+// with a destination Bitmap will draw onto the supplied bitmap.
 //
 // Change History:
 //
 // Version 3.0:
+// - 2009-06-23: Clinton: Comment format/cleanup
 // - 2009-06-05: Andrew: Using sgShared
 //
 // Version 2.0:
@@ -43,12 +40,16 @@
 //  
 // Version 1.0:
 // - Various
+//=============================================================================
 
 /// @module sgGraphics
 /// @static
 unit sgGraphics;
 
+//=============================================================================
 interface
+//=============================================================================
+
   uses sgTypes;
   
   /// @lib
@@ -77,13 +78,9 @@ interface
   /// @dispose
   procedure FreeBitmap(var bitmapToFree : Bitmap);
   
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // Bitmap drawing routines
-  //
-  //*****
-  //
-  // These routines are used to draw to a bitmap.
+  //---------------------------------------------------------------------------
   
   /// @lib
   /// @class Bitmap
@@ -202,14 +199,10 @@ interface
   /// @lib FillTriangleFromPointsOnto
   procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // Screen drawing routines
-  //
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // These routines are used to to the View Area on the screen.
-  //
   
   /// @lib ClearScreenToBlack
   /// @uname ClearScreen
@@ -309,12 +302,9 @@ interface
   /// @uname FillEllipseInRect
   procedure FillEllipse(theColor: Color; const source: Rectangle); overload;
 
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // Sprite routines
-  //
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // These routines are used to work with Sprites within your game.
   //
   
@@ -435,12 +425,10 @@ interface
   /// @method IsOffscreen
   function IsSpriteOffscreen(theSprite : Sprite): Boolean;
 
-  //*****
-  //
+  //---------------------------------------------------------------------------
   // Draws elements directly onto the screen, ignoring the visible window
   // setting.
-  //
-  //*****
+  //---------------------------------------------------------------------------
   //
   // These routines are used to move the visual window.
   //
@@ -546,10 +534,9 @@ interface
   /// @lib FillTriangleFromPointsOnScreen
   procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
-  //
+  //---------------------------------------------------------------------------
   // Clipping
-  //
-  
+  //---------------------------------------------------------------------------
   
   /// @lib
   procedure SetClip(x, y, w, h: LongInt); overload;
@@ -578,9 +565,9 @@ interface
   /// @lib
   function GetPixelFromScreen(x, y: LongInt): Color;
 
-  //
+  //---------------------------------------------------------------------------
   // Alpha blendings adjusting code
-  //
+  //---------------------------------------------------------------------------
   
   /// @lib
   /// @class Bitmap
@@ -591,9 +578,9 @@ interface
   /// @method MakeTransparent
   procedure MakeTransparent(bmp: Bitmap);
     
-  //
+  //---------------------------------------------------------------------------
   // Rotate and Zoom
-  //
+  //---------------------------------------------------------------------------
   
   /// @lib
   /// @class Bitmap
@@ -605,8 +592,14 @@ interface
   /// @method SetupForCollisions
   procedure SetupBitmapForCollisions(src: Bitmap);
 
+
+//=============================================================================
 implementation
-  uses Classes, SysUtils, sgCamera, sgPhysics, sgMath, SDL_gfx, sgShared, SDL, sgCore, SDL_Image, sgShapes;
+//=============================================================================
+
+  uses Classes, SysUtils, // system
+       SDL_gfx, SDL, SDL_Image, // sdl
+       sgCamera, sgPhysics, sgMath, sgShared, sgCore, sgShapes; //SwinGame
   
   /// Clears the surface of the bitmap to the passed in color.
   ///
@@ -618,7 +611,6 @@ implementation
   procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
   begin
     if dest = nil then raise Exception.Create('Cannot clear, destination bitmap not supplied (nil)');
-      
     SDL_FillRect(dest.surface, @dest.surface.clip_rect, toColor);
   end;
 

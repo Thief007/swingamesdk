@@ -18,10 +18,10 @@ Suggestions:
 * Change window title (forum)
 * Polygon type+drawing, matrix operations (translate + scale), collisions
 * Load resources from stream (eg. zip files of resources)
+* Sprite BB kind (circle, box, polygon)
 * sgUIControls - button, textarea, label, progress bar, dialog, inc/dec, file list
 * status bar
 * SwinGame Map Editor
-
 
 ** New to Version 3 **
   General:

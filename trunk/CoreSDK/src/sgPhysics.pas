@@ -10,6 +10,7 @@
 // Version 3.0:
 // - 2009-06-23: Clinton: Renamed VectorFrom to VectorFrom
 //                      : Renamed HaveSpritesCollided to SpritesCollided
+//                      : Move Vector/Angle/Matrix code to sgMath.pas unit
 // - 2009-06-17: Clinton: Comment cleanup (moved to interface) and new comments
 //                      : General parameter name cleanup/normalisation
 //                      : Renamed GetUnitVector to UnitVector
@@ -284,6 +285,8 @@ interface
   //---------------------------------------------------------------------------
   // Sprite Screen Position Tests 
   //---------------------------------------------------------------------------
+  //TODO: Remove dependance on Rectangles, and make pixel-only operation
+  //TODO: Move to sgCamera (or sgSprite?) once Rect tests removed
   
   /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
   /// specified (``x`` and ``y``) which is converted to a world location.
