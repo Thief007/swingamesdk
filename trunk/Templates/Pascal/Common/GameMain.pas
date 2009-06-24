@@ -15,7 +15,7 @@ begin
     FillRectangle(ColorWhite, 10, 10, 780, 580);
     
     RefreshScreen();
-  unit WindowCloseRequested();
+  until WindowCloseRequested();
   
   CloseAudio();
 end;

@@ -502,7 +502,7 @@ implementation
     try         
       _InitSDL(caption, width, height);
       _InitFPSData();
-
+      
       //Init the colors
       ColorWhite := GetColor(255, 255, 255, 255);
       ColorGreen := GetColor(0, 255, 0, 255);
@@ -516,16 +516,16 @@ implementation
       ColorMagenta := GetColor(255, 0, 255, 255);
       ColorTransparent := GetColor(0, 0, 0, 0);
       ColorLightGrey := GetColor(200, 200, 200, 255);
-
+      
       SDL_FillRect(screen^.surface, nil, ColorGrey);
       stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
       RefreshScreen();
-      
-      LoadResourceBundle('splash.txt', False);
     except on e: Exception do
       raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
     end;
-
+    
+    LoadResourceBundle('splash.txt', False);
+    
     {$IFDEF TRACE}
       TraceExit('sgCore', 'OpenGraphicsWindow');
     {$ENDIF}
@@ -1024,11 +1024,10 @@ begin
     {$ENDIF}
     raise Exception.Create('Error loading sdl... ' + SDL_GetError());
   end;
-
+  
   //Unicode required by input manager.
   SDL_EnableUNICODE(SDL_ENABLE);
-
-  sdlManager := TSDLManager.Create();
+  
   try
     if ParamCount() >= 0 then
       applicationPath := ExtractFileDir(ParamStr(0))
@@ -1055,12 +1054,6 @@ begin
   {$ENDIF}
   
   ReleaseResourceBundle('splash.txt');
-  
-  if sdlManager <> nil then
-  begin
-    sdlManager.Free();
-    sdlManager := nil;
-  end;
   
   if screen <> nil then
   begin

@@ -114,7 +114,8 @@ interface
   /// @lib
   procedure ReleaseResourceBundle(name: String);
   
-  
+  /// @lib
+  function HasResourceBundle(name: String): Boolean;
   
   //----------------------------------------------------------------------------
   // Release all resources procedure
@@ -570,29 +571,32 @@ implementation
     begin
       i := i + 1;
       ReadLn(input, line);
+      line := Trim(line);
       if Length(line) = 0 then continue;
       
-      current.kind := StringToResourceKind(ExtractDelimited(0, line, delim));
-      current.name := ExtractDelimited(1, line, delim);
+      current.kind := StringToResourceKind(ExtractDelimited(1, line, delim));
+      current.name := ExtractDelimited(2, line, delim);
       if Length(current.name) = 0 then 
         raise Exception.Create('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
-      current.path := ExtractDelimited(2, line, delim);
+      current.path := ExtractDelimited(3, line, delim);
       if Length(current.path) = 0 then 
         raise Exception.Create('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
       if current.kind = FontResource then
       begin
-        if not TryStrToInt(ExtractDelimited(3, line, delim), current.size) then
+        if not TryStrToInt(ExtractDelimited(4, line, delim), current.size) then
           raise Exception.Create('Error loading resource bundle, no size supplied on line ' + IntToStr(i));
       end
       else current.size := 0;
       
-      bndl.add(current);
+      //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
       
-      if not _Bundles.setValue(name, bndl) then //store bundle
-        raise Exception.create('Error loaded Bundle twice, ' + name);
+      bndl.add(current);
     end;
     
     bndl.LoadResources(showProgress);
+    
+    if not _Bundles.setValue(name, bndl) then //store bundle
+      raise Exception.create('Error loaded Bundle twice, ' + name);
     
     Close(input);
   end;
@@ -602,13 +606,21 @@ implementation
     LoadResourceBundle(name, True);
   end;
   
+  function HasResourceBundle(name: String): Boolean;
+  begin
+    result := _Bundles.containsKey(name);
+  end;
+  
   procedure ReleaseResourceBundle(name: String);
   var
     bndl: tResourceBundle;
   begin
-    bndl := tResourceBundle(_Bundles.remove(name));
-    bndl.ReleaseResources();
-    bndl.Free();
+    if HasResourceBundle(name) then
+    begin
+      bndl := tResourceBundle(_Bundles.remove(name));
+      bndl.ReleaseResources();
+      bndl.Free();
+    end;
   end;
   
   // Creates a new Mappy Map from mapFile file.

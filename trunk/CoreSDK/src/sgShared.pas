@@ -133,4 +133,16 @@ implementation
     result.h := Word(h);
   end;
   
+initialization
+begin
+  sdlManager := TSDLManager.Create();
+end;
+
+finalization
+  if sdlManager <> nil then
+  begin
+    sdlManager.Free();
+    sdlManager := nil;
+  end;
+
 end.

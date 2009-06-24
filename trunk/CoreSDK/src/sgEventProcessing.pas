@@ -292,6 +292,10 @@ implementation
     _keyPressed := false;
     _textSurface := nil;
     _readingString := false;
+    
+    SetLength(_EventProcessors, 0);
+    SetLength(_EventStartProcessors, 0);
+    WriteLn('AAA', Length(_EventStartProcessors));
   end;
   
   destructor TSDLManager.Destroy();
@@ -327,16 +331,22 @@ implementation
   
   procedure TSDLManager.RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
   begin
+    writeln('here1');
+    WriteLn(Length(_EventProcessors));
+    WriteLn(Length(_EventStartProcessors));
+    
     //if handle^ <> nil then
     begin
       SetLength(_EventProcessors, Length(_EventProcessors) + 1);
       _EventProcessors[High(_EventProcessors)] := handle;
     end;
+    writeln('here');
   
     //if handle2^ <> nil then
     begin
       SetLength(_EventStartProcessors, Length(_EventStartProcessors) + 1);
       _EventStartProcessors[High(_EventStartProcessors)] := handle2;
     end;  
+    writeln('here');
   end;
 end.

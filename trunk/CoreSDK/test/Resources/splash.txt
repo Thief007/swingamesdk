@@ -1,0 +1,6 @@
+BITMAP,SplashBack,SplashBack.jpg
+BITMAP,SwinGameAni,SwinGameAni.jpg
+BITMAP,LoaderEmpty,loader_empty.png
+BITMAP,LoaderFull,loader_full.png
+FONT,LoadingFont,arial.ttf,12
+SOUND,SwinGameStart,SwinGameStart.ogg
