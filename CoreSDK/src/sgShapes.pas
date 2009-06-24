@@ -244,7 +244,7 @@ implementation
     end; //  else NOT (u < EPS) or (u > 1)
   end;
 
-  function RectangleFrom(const line: LineSegment): Rectangle; overload
+  function RectangleFrom(const line: LineSegment): Rectangle; overload;
   begin
     result.x := Min(line.startPoint.x, line.endPoint.x);
     result.y := Min(line.startPoint.y, line.endPoint.y);
