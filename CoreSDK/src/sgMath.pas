@@ -1,6 +1,6 @@
 //=============================================================================
 //          sgMath.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // Contains code to create points, vectors and matrices and operations for use
 // between them (addition, multiplication). This unit is particularly useful 
@@ -14,16 +14,16 @@
 // Version 3.0: 
 // - 2009-06-23: Clinton: Created unit. Moved math routines from physics and
 //                        shapes units. 
-//=============================================================================
+//----------------------------------------------------------------------------
 
 
 /// @module Math
 /// @static
 unit sgMath;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses sgTypes;
   
@@ -244,13 +244,35 @@ interface
   
   /// @lib
   procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
-
-
-//=============================================================================
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Cos/Sin/Tan accepting degrees
+  //----------------------------------------------------------------------------
+  
+  /// Returns the cosine of the passed in angle (in degrees).
+  ///
+  /// @lib
+  function Cos(angle: Single): Single;
+  
+  /// Returns the sine of the passed in angle (in degrees).
+  ///
+  /// @lib
+  function Sin(angle: Single): Single;
+  
+  /// Returns the tangent of the passed in angle (in degrees).
+  ///
+  /// @lib
+  function Tan(angle: Single): Single;
+  
+  
+  
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
-  uses Math, sgCore, sgShapes, sgCamera, sgGraphics;
+  uses Math, sgShapes, sgCamera, sgGraphics;
   
   const 
     DEG_TO_RAD = 0.0174532925;
@@ -377,7 +399,7 @@ implementation
 
   function VectorFromAngle(angle, magnitude: Single): Vector;
   begin
-    result := VectorFrom(magnitude * sgCore.Cos(angle), magnitude * sgCore.Sin(angle));
+    result := VectorFrom(magnitude * sgMath.Cos(angle), magnitude * sgMath.Sin(angle));
   end;
 
   function LineAsVector(const line: lineSegment): Vector;
@@ -442,10 +464,10 @@ implementation
   var
     cx1, cy1, cx2, cy2: Single;
   begin
-    cx1 := s1.x + CurrentWidth(s1) / 2;
-    cy1 := s1.y + CurrentHeight(s1) / 2;
-    cx2 := s2.x + CurrentWidth(s2) / 2;
-    cy2 := s2.y + CurrentHeight(s2) / 2;
+    cx1 := s1^.x + CurrentWidth(s1) / 2;
+    cy1 := s1^.y + CurrentHeight(s1) / 2;
+    cx2 := s2^.x + CurrentWidth(s2) / 2;
+    cy2 := s2^.y + CurrentHeight(s2) / 2;
 
     result := CalculateAngle(cx1, cy1, cx2, cy2);
   end;
@@ -607,5 +629,25 @@ implementation
     tri[1] := MatrixMultiply(m, tri[1]);
     tri[2] := MatrixMultiply(m, tri[2]);
   end;
+  
+  //----------------------------------------------------------------------------
+  // Cos/Sin/Tan accepting degrees
+  //----------------------------------------------------------------------------
+  
+  function Cos(angle: Single): Single;
+  begin
+    result := System.Cos(DegToRad(angle));
+  end;
+  
+  function Sin(angle: Single): Single;
+  begin
+    result := System.Sin(DegToRad(angle));
+  end;
+  
+  function Tan(angle: Single): Single;
+  begin
+    result := Math.Tan(DegToRad(angle));
+  end;
+  
 
 end.

@@ -209,7 +209,7 @@ implementation
 
     // This is the surface that everything is printed to.
     lineSkip  := TTF_FontLineSkip( font );
-    width    := rc.w;
+    width    := rc^.w;
     height    := 10;
     SetLength(lines, 1);
 
@@ -289,16 +289,16 @@ implementation
 
       // Render the current line. Ignore alpha in this draw
       if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
-      SDL_BlitSurface(temp, nil, sText.surface, @rect);
+      SDL_BlitSurface(temp, nil, sText^.surface, @rect);
 
       // Clean up:
       SDL_FreeSurface(temp);
     end;
 
     // Draw the text on top of that:
-    rect.x := 0; rect.y := 0; rect.w := rc.w; rect.h := rc.h;
-    if (not bgTransparent) then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);  
-    SDL_BlitSurface(sText.surface, @rect, dest, rc );
+    rect.x := 0; rect.y := 0; rect.w := rc^.w; rect.h := rc^.h;
+    if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);  
+    SDL_BlitSurface(sText^.surface, @rect, dest, rc );
     
     FreeBitmap(sText);
   end;
@@ -331,7 +331,7 @@ implementation
 
     // This is the surface that everything is printed to.
     lineSkip  := TTF_FontLineSkip( font );
-    width    := rc.w;
+    width    := rc^.w;
     height    := 10;
     SetLength(lines, 1);
 
@@ -413,16 +413,16 @@ implementation
 
       // Render the current line. Ignore alpha in this draw
       if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
-      SDL_BlitSurface(temp, nil, sText.surface, @rect);
+      SDL_BlitSurface(temp, nil, sText^.surface, @rect);
 
       // Clean up:
       SDL_FreeSurface(temp);
     end;
 
     // Draw the text on top of that:
-    rect.x := 0; rect.y := 0; rect.w := rc.w; rect.h := rc.h;
-    if (not bgTransparent) then SDL_SetAlpha(sText.surface, 0, SDL_ALPHA_TRANSPARENT);  
-    SDL_BlitSurface(sText.surface, @rect, dest, rc );
+    rect.x := 0; rect.y := 0; rect.w := rc^.w; rect.h := rc^.h;
+    if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);  
+    SDL_BlitSurface(sText^.surface, @rect, dest, rc );
     
     FreeBitmap(sText);
   end;
@@ -448,7 +448,7 @@ implementation
     if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
       
     rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
-    PrintStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
+    PrintStrings(dest^.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
   end;
 
   procedure DrawUnicode(dest: Bitmap; theText: WideString; textColor: Color; theFont: Font; x, y: LongInt); overload;
@@ -459,7 +459,7 @@ implementation
     if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
       
     rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
-    PrintWideStrings(dest.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
+    PrintWideStrings(dest^.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
   end;
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
@@ -494,7 +494,7 @@ implementation
     rect: TSDL_Rect;
   begin
     rect := NewSDLRect(x, y, w, h);
-    PrintStrings(dest.surface, theFont, theText, @rect, textColor, backColor, align);
+    PrintStrings(dest^.surface, theFont, theText, @rect, textColor, backColor, align);
   end;
 
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
@@ -696,7 +696,7 @@ implementation
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
   begin
-    stringColor(dest.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
+    stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
   end;
   
 initialization

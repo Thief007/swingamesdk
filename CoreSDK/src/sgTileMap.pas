@@ -1,6 +1,6 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //          sgTileMap.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // Responsible for loading and processing a "Mappy" data file exported using
 // the Lua script specifically written for SwinGame to create map files.
@@ -40,15 +40,15 @@
 //
 // Version 1.0:
 // - Various
-//=============================================================================
+//----------------------------------------------------------------------------
 
 ///@module TileMap
 ///@static
 unit sgTileMap;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses  sgTypes;
 
@@ -70,22 +70,22 @@ interface
   /// @lib
   /// @class Map
   /// @method HasSpriteCollidedWithTile
-  function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
+  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite): Boolean; overload;
 
   /// @lib SpriteHasCollidedWithMapTileOutXY
   /// @class Map
   /// @overload  HasSpriteCollidedWithTile HasSpriteCollidedWithTileOutXY
-  function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
 
   /// @lib
   /// @class Map
   /// @method WillCollideOnSide
-  function WillCollideOnSide(m: Map; spr: Sprite): CollisionSide;
+  function WillCollideOnSide(m: Map; s: Sprite): CollisionSide;
   
   /// @lib
   /// @class Map
   /// @method MoveSpriteOutOfTile
-  procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: LongInt);
+  procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: LongInt);
   
   /// @lib
   /// @class Map
@@ -106,7 +106,7 @@ interface
   /// @class Sprite
   /// @self 2
   /// @method CollisionWithMap
-  function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
+  function CollisionWithMap(m : Map; s : Sprite; const vec: Vector): CollisionSide;
   
   /// @lib
   /// @class Map
@@ -165,11 +165,11 @@ interface
   procedure FreeMap(var m: Map);
 
 
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
-  uses SysUtils, Classes, sgGraphics, sgCamera, sgCore, sgPhysics, sgMath, sgShapes;
+  uses SysUtils, Classes, sgGraphics, sgCamera, sgCore, sgPhysics, sgShapes, sgResourceManager;
 
   function ReadInt(var stream : text): Word;
   var
@@ -195,43 +195,43 @@ implementation
   
     if header = 0 then
     begin
-      m.MapInfo.Version := ReadInt(stream);
-      m.MapInfo.MapWidth := ReadInt(stream);
+      m^.MapInfo.Version := ReadInt(stream);
+      m^.MapInfo.MapWidth := ReadInt(stream);
     end
     else
     begin
-      m.MapInfo.Version := 1;
-      m.MapInfo.MapWidth := header;
+      m^.MapInfo.Version := 1;
+      m^.MapInfo.MapWidth := header;
     end;
 
-    //m.MapInfo.MapWidth := ReadInt(stream);
-        m.MapInfo.MapHeight := ReadInt(stream);
-        m.MapInfo.BlockWidth := ReadInt(stream);
-        m.MapInfo.BlockHeight := ReadInt(stream);
-        m.MapInfo.NumberOfBlocks := ReadInt(stream);
-        m.MapInfo.NumberOfAnimations := ReadInt(stream);
-        m.MapInfo.NumberOfLayers := ReadInt(stream);
-        m.MapInfo.CollisionLayer := ReadInt(stream);
-      m.MapInfo.EventLayer := ReadInt(stream);
-      m.MapInfo.GapX := 0;
-      m.MapInfo.GapY := 0;
-      m.MapInfo.StaggerX := 0;
-      m.MapInfo.StaggerY := 0;
-      m.MapInfo.Isometric := false;
+    //m^.MapInfo.MapWidth := ReadInt(stream);
+        m^.MapInfo.MapHeight := ReadInt(stream);
+        m^.MapInfo.BlockWidth := ReadInt(stream);
+        m^.MapInfo.BlockHeight := ReadInt(stream);
+        m^.MapInfo.NumberOfBlocks := ReadInt(stream);
+        m^.MapInfo.NumberOfAnimations := ReadInt(stream);
+        m^.MapInfo.NumberOfLayers := ReadInt(stream);
+        m^.MapInfo.CollisionLayer := ReadInt(stream);
+      m^.MapInfo.EventLayer := ReadInt(stream);
+      m^.MapInfo.GapX := 0;
+      m^.MapInfo.GapY := 0;
+      m^.MapInfo.StaggerX := 0;
+      m^.MapInfo.StaggerY := 0;
+      m^.MapInfo.Isometric := false;
     
       {
       //Debug
       WriteLn('MapInformation');
       WriteLn('');
-      WriteLn(m.MapInfo.MapWidth);
-      WriteLn(m.MapInfo.MapHeight);
-      WriteLn(m.MapInfo.BlockWidth);
-      WriteLn(m.MapInfo.BlockHeight);
-      WriteLn(m.MapInfo.NumberOfBlocks);
-      WriteLn(m.MapInfo.NumberOfAnimations);
-      WriteLn(m.MapInfo.NumberOfLayers);
-      WriteLn(m.MapInfo.CollisionLayer);
-      WriteLn(m.MapInfo.EventLayer);
+      WriteLn(m^.MapInfo.MapWidth);
+      WriteLn(m^.MapInfo.MapHeight);
+      WriteLn(m^.MapInfo.BlockWidth);
+      WriteLn(m^.MapInfo.BlockHeight);
+      WriteLn(m^.MapInfo.NumberOfBlocks);
+      WriteLn(m^.MapInfo.NumberOfAnimations);
+      WriteLn(m^.MapInfo.NumberOfLayers);
+      WriteLn(m^.MapInfo.CollisionLayer);
+      WriteLn(m^.MapInfo.EventLayer);
       WriteLn('');
       ReadLn();
       }
@@ -239,22 +239,22 @@ implementation
 
   procedure LoadIsometricInformation(m : Map; var stream : text);
   begin
-    m.MapInfo.GapX := ReadInt(stream);
-      m.MapInfo.GapY := ReadInt(stream);
-      m.MapInfo.StaggerX := ReadInt(stream);
-      m.MapInfo.StaggerY := ReadInt(stream);
+    m^.MapInfo.GapX := ReadInt(stream);
+      m^.MapInfo.GapY := ReadInt(stream);
+      m^.MapInfo.StaggerX := ReadInt(stream);
+      m^.MapInfo.StaggerY := ReadInt(stream);
 
-    if ((m.MapInfo.StaggerX = 0) and (m.MapInfo.StaggerY = 0)) then
-        m.MapInfo.Isometric := false
+    if ((m^.MapInfo.StaggerX = 0) and (m^.MapInfo.StaggerY = 0)) then
+        m^.MapInfo.Isometric := false
       else
-        m.MapInfo.Isometric := true;
+        m^.MapInfo.Isometric := true;
       
-      if (m.MapInfo.Isometric = false) then
+      if (m^.MapInfo.Isometric = false) then
       begin
-        m.MapInfo.GapX := 0;
-        m.MapInfo.GapY := 0;
-        m.MapInfo.StaggerX := 0;
-        m.MapInfo.StaggerY := 0;
+        m^.MapInfo.GapX := 0;
+        m^.MapInfo.GapY := 0;
+        m^.MapInfo.StaggerX := 0;
+        m^.MapInfo.StaggerY := 0;
       end;
   end;
 
@@ -264,26 +264,26 @@ implementation
     i, j : LongInt;
   begin
 
-    if m.MapInfo.NumberOfAnimations > 0 then
+    if m^.MapInfo.NumberOfAnimations > 0 then
     begin
   
-      SetLength(m.AnimationInfo, m.MapInfo.NumberOfAnimations);
+      SetLength(m^.AnimationInfo, m^.MapInfo.NumberOfAnimations);
     
-      for i := 0 to m.MapInfo.NumberOfAnimations - 1 do
+      for i := 0 to m^.MapInfo.NumberOfAnimations - 1 do
       begin
       
-        m.AnimationInfo[i].AnimationNumber := i + 1;
-        m.AnimationInfo[i].Delay := ReadInt(stream);
-        m.AnimationInfo[i].NumberOfFrames := ReadInt(stream);
+        m^.AnimationInfo[i].AnimationNumber := i + 1;
+        m^.AnimationInfo[i].Delay := ReadInt(stream);
+        m^.AnimationInfo[i].NumberOfFrames := ReadInt(stream);
       
-        SetLength(m.AnimationInfo[i].Frame, m.AnimationInfo[i].NumberOfFrames);
+        SetLength(m^.AnimationInfo[i].Frame, m^.AnimationInfo[i].NumberOfFrames);
       
-        for j := 0 to m.AnimationInfo[i].NumberOfFrames - 1 do
+        for j := 0 to m^.AnimationInfo[i].NumberOfFrames - 1 do
         begin
-          m.AnimationInfo[i].Frame[j] := ReadInt(stream);
+          m^.AnimationInfo[i].Frame[j] := ReadInt(stream);
         end;
       
-        m.AnimationInfo[i].CurrentFrame := 0;
+        m^.AnimationInfo[i].CurrentFrame := 0;
       
       end;
     
@@ -291,15 +291,15 @@ implementation
       //Debug
       WriteLn('Animation Information');
       WriteLn('');
-      for i := 0 to m.MapInfo.NumberOfAnimations - 1 do
+      for i := 0 to m^.MapInfo.NumberOfAnimations - 1 do
       begin
-        WriteLn(m.AnimationInfo[i].AnimationNumber);
-        WriteLn(m.AnimationInfo[i].Delay);
-        WriteLn(m.AnimationInfo[i].NumberOfFrames);
+        WriteLn(m^.AnimationInfo[i].AnimationNumber);
+        WriteLn(m^.AnimationInfo[i].Delay);
+        WriteLn(m^.AnimationInfo[i].NumberOfFrames);
       
-        for j := 0 to m.AnimationInfo[i].NumberOfFrames - 1 do
+        for j := 0 to m^.AnimationInfo[i].NumberOfFrames - 1 do
         begin
-          WriteLn(m.AnimationInfo[i].Frame[j]);
+          WriteLn(m^.AnimationInfo[i].Frame[j]);
         end;
       end;
       WriteLn('');
@@ -313,31 +313,31 @@ implementation
     l, y, x : LongInt;
   begin
 
-    SetLength(m.LayerInfo, m.MapInfo.NumberOfLayers - m.MapInfo.Collisionlayer - m.MapInfo.EventLayer);
+    SetLength(m^.LayerInfo, m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.EventLayer);
 
-    for y := 0 to Length(m.LayerInfo) - 1 do
+    for y := 0 to Length(m^.LayerInfo) - 1 do
     begin
 
-      SetLength(m.LayerInfo[y].Animation, m.MapInfo.MapHeight);
-      SetLength(m.LayerInfo[y].Value, m.MapInfo.MapHeight);
+      SetLength(m^.LayerInfo[y].Animation, m^.MapInfo.MapHeight);
+      SetLength(m^.LayerInfo[y].Value, m^.MapInfo.MapHeight);
     
-      for x := 0 to m.MapInfo.MapHeight - 1 do
+      for x := 0 to m^.MapInfo.MapHeight - 1 do
       begin
 
-        SetLength(m.LayerInfo[y].Animation[x], m.MapInfo.MapWidth);
-        SetLength(m.LayerInfo[y].Value[x], m.MapInfo.MapWidth);
+        SetLength(m^.LayerInfo[y].Animation[x], m^.MapInfo.MapWidth);
+        SetLength(m^.LayerInfo[y].Value[x], m^.MapInfo.MapWidth);
       end;
     end;
 
-    for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.Collisionlayer - m.MapInfo.Eventlayer - 1 do
+    for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.Eventlayer - 1 do
     begin
-      for y := 0 to m.MapInfo.MapHeight - 1 do
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        for x := 0 to m.MapInfo.MapWidth - 1 do
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
         begin
 
-          m.LayerInfo[l].Animation[y][x] := ReadInt(stream);
-          m.LayerInfo[l].Value[y][x] := ReadInt(stream);
+          m^.LayerInfo[l].Animation[y][x] := ReadInt(stream);
+          m^.LayerInfo[l].Value[y][x] := ReadInt(stream);
         end;
       end;
     end;
@@ -345,18 +345,18 @@ implementation
     {
     //Debug
     WriteLn('Layer Information');
-    WriteLn(Length(m.Layerinfo));
+    WriteLn(Length(m^.Layerinfo));
     WriteLn('');
   
-    for l := 0 to Length(m.LayerInfo) - 1 do
+    for l := 0 to Length(m^.LayerInfo) - 1 do
     begin
-      for y := 0 to m.MapInfo.MapHeight - 1 do
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        for x := 0 to m.MapInfo.MapWidth - 1 do
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
         begin
-          Write(m.LayerInfo[l].Animation[y][x]);
+          Write(m^.LayerInfo[l].Animation[y][x]);
           Write(',');
-          Write(m.LayerInfo[l].Value[y][x]);
+          Write(m^.LayerInfo[l].Value[y][x]);
           Write(' ');
         end;
       end;
@@ -372,34 +372,34 @@ implementation
   var
     y, x: LongInt;
   begin
-    if m.MapInfo.CollisionLayer = 1 then
+    if m^.MapInfo.CollisionLayer = 1 then
     begin
-      SetLength(m.CollisionInfo.Collidable, m.MapInfo.MapHeight);
+      SetLength(m^.CollisionInfo.Collidable, m^.MapInfo.MapHeight);
     
-      for y := 0 to m.MapInfo.MapHeight - 1 do
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        SetLength(m.CollisionInfo.Collidable[y], m.MapInfo.MapWidth);
+        SetLength(m^.CollisionInfo.Collidable[y], m^.MapInfo.MapWidth);
       end;
     
-      for y := 0 to m.MapInfo.MapHeight - 1 do
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        for x := 0 to m.MapInfo.MapWidth - 1 do
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
         begin
           if ReadInt(stream) <> 0 then
-            m.CollisionInfo.Collidable[y][x] := true
+            m^.CollisionInfo.Collidable[y][x] := true
           else
-            m.CollisionInfo.Collidable[y][x] := false
+            m^.CollisionInfo.Collidable[y][x] := false
         end;
       end;
     
     
       //Debug
       {
-      for y := 0 to m.MapInfo.MapHeight - 1 do
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        for x := 0 to m.MapInfo.MapWidth - 1 do
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
         begin
-          if m.CollisionInfo.Collidable[y][x] = true then
+          if m^.CollisionInfo.Collidable[y][x] = true then
             Write('1')
           else
             Write('0')
@@ -416,30 +416,30 @@ implementation
     py, px, smallestEventIdx, temp: LongInt;
     evt: Event;
   begin
-    //SetLength(m.EventInfo, High(Events));
+    //SetLength(m^.EventInfo, High(Events));
   
-    //SetLength(m.EventInfo.Event, m.MapInfo.MapHeight);
+    //SetLength(m^.EventInfo.Event, m^.MapInfo.MapHeight);
   
-    {for y := 0 to m.MapInfo.MapHeight - 1 do
+    {for y := 0 to m^.MapInfo.MapHeight - 1 do
     begin
-      SetLength(m.EventInfo.Event[y], m.MapInfo.MapWidth);
+      SetLength(m^.EventInfo.Event[y], m^.MapInfo.MapWidth);
     end;}
   
     //The smallest "non-graphics" tile, i.e. the events
-    smallestEventIdx := m.MapInfo.NumberOfBlocks - 23;
+    smallestEventIdx := m^.MapInfo.NumberOfBlocks - 23;
   
-    for py := 0 to m.MapInfo.MapHeight - 1 do
+    for py := 0 to m^.MapInfo.MapHeight - 1 do
     begin
-      for px := 0 to m.MapInfo.MapWidth - 1 do
+      for px := 0 to m^.MapInfo.MapWidth - 1 do
       begin
         temp := ReadInt(stream);
         evt := Event(temp - smallestEventIdx);
       
         if (evt >= Event1) and (evt <= Event24) then 
         begin
-          SetLength(m.EventInfo[LongInt(evt)], Length(m.EventInfo[LongInt(evt)]) + 1);
+          SetLength(m^.EventInfo[LongInt(evt)], Length(m^.EventInfo[LongInt(evt)]) + 1);
         
-          with m.EventInfo[LongInt(evt)][High(m.EventInfo[LongInt(evt)])] do
+          with m^.EventInfo[LongInt(evt)][High(m^.EventInfo[LongInt(evt)])] do
           begin
             x := px;
             y := py;
@@ -451,12 +451,12 @@ implementation
   
     //Debug
     {
-    for y := 0 to m.MapInfo.MapHeight - 1 do
+    for y := 0 to m^.MapInfo.MapHeight - 1 do
     begin
-      for x := 0 to m.MapInfo.MapWidth - 1 do
+      for x := 0 to m^.MapInfo.MapWidth - 1 do
       begin
         Write(' ');
-        Write(LongInt(m.EventInfo.Event[y][x]));
+        Write(LongInt(m^.EventInfo.Event[y][x]));
       end;
       WriteLn('');
     end;
@@ -468,10 +468,10 @@ implementation
   var
     fpc : LongIntArray; //Array of LongInt;
   begin
-    SetLength(fpc, m.MapInfo.NumberOfBlocks);
-    m.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
-                            m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
-    m.Tiles.currentFrame := 0;
+    SetLength(fpc, m^.MapInfo.NumberOfBlocks);
+    m^.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
+                            m^.MapInfo.BlockWidth, m^.MapInfo.BlockHeight);
+    m^.Tiles^.currentFrame := 0;
   end;
 
   procedure DrawMap(m : Map);
@@ -483,28 +483,28 @@ implementation
     if m = nil then raise Exception.Create('No Map supplied (nil)');
   
     //WriteLn('GX, GY: ', ToWorldX(0), ',' , ToWorldY(0));
-    //WriteLn('bw, bh: ', m.MapInfo.BlockWidth, ', ', m.MapInfo.BlockHeight);
+    //WriteLn('bw, bh: ', m^.MapInfo.BlockWidth, ', ', m^.MapInfo.BlockHeight);
   
     //Screen Drawing Starting Point
-    XStart := round((ToWorldX(0) / m.MapInfo.BlockWidth) - (m.MapInfo.BlockWidth * 1));
-    YStart := round((ToWorldY(0) / m.MapInfo.BlockHeight) - (m.MapInfo.BlockHeight * 1));
+    XStart := round((ToWorldX(0) / m^.MapInfo.BlockWidth) - (m^.MapInfo.BlockWidth * 1));
+    YStart := round((ToWorldY(0) / m^.MapInfo.BlockHeight) - (m^.MapInfo.BlockHeight * 1));
   
     //Screen Drawing Ending point
-    XEnd := round(XStart + (sgCore.ScreenWidth() / m.MapInfo.BlockWidth) + (m.MapInfo.BlockWidth * 1));
-    YEnd := round(YStart + (sgCore.ScreenHeight() / m.MapInfo.BlockHeight) + (m.MapInfo.BlockHeight * 1));
+    XEnd := round(XStart + (sgCore.ScreenWidth() / m^.MapInfo.BlockWidth) + (m^.MapInfo.BlockWidth * 1));
+    YEnd := round(YStart + (sgCore.ScreenHeight() / m^.MapInfo.BlockHeight) + (m^.MapInfo.BlockHeight * 1));
 
   
     //WriteLn('DrawMap ', XStart, ',', YStart, ' - ',  XEnd, ',', YEnd);
   
     if YStart < 0 then YStart := 0;
-    if YStart >= m.MapInfo.MapHeight then exit;
+    if YStart >= m^.MapInfo.MapHeight then exit;
     if YEnd < 0 then exit;
-    if YEnd >= m.MapInfo.MapHeight then YEnd := m.MapInfo.MapHeight - 1;
+    if YEnd >= m^.MapInfo.MapHeight then YEnd := m^.MapInfo.MapHeight - 1;
       
     if XStart < 0 then XStart := 0;
-    if XStart >= m.MapInfo.MapWidth then exit;
+    if XStart >= m^.MapInfo.MapWidth then exit;
     if XEnd < 0 then exit;
-    if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
+    if XEnd >= m^.MapInfo.MapWidth then XEnd := m^.MapInfo.MapWidth - 1;
   
   
   
@@ -515,43 +515,43 @@ implementation
   
   
       //Isometric Offset for Y
-      if (m.MapInfo.Isometric = true) then
-        m.Tiles.y := y * m.MapInfo.StaggerY
+      if (m^.MapInfo.Isometric = true) then
+        m^.Tiles^.y := y * m^.MapInfo.StaggerY
       else
-        m.Tiles.y := y * m.MapInfo.BlockHeight; 
+        m^.Tiles^.y := y * m^.MapInfo.BlockHeight; 
   
       for x := XStart  to XEnd do
       begin
       
         //Isometric Offset for X
-        if (m.MapInfo.Isometric = true) then
+        if (m^.MapInfo.Isometric = true) then
         begin
-          m.Tiles.x := x * m.MapInfo.GapX;
+          m^.Tiles^.x := x * m^.MapInfo.GapX;
           if ((y MOD 2) = 1) then
-            m.Tiles.x := m.Tiles.x + m.MapInfo.StaggerX;
+            m^.Tiles^.x := m^.Tiles^.x + m^.MapInfo.StaggerX;
         end
         else
-          m.Tiles.x := x * m.MapInfo.BlockWidth;
+          m^.Tiles^.x := x * m^.MapInfo.BlockWidth;
       
-        for l := 0 to m.MapInfo.NumberOfLayers - m.MapInfo.CollisionLayer - m.MapInfo.EventLayer - 1 do
+        for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.CollisionLayer - m^.MapInfo.EventLayer - 1 do
         begin
-          if (m.LayerInfo[l].Animation[y][x] = 0) and (m.LayerInfo[l].Value[y][x] > 0) then
+          if (m^.LayerInfo[l].Animation[y][x] = 0) and (m^.LayerInfo[l].Value[y][x] > 0) then
           begin
-            m.Tiles.currentFrame := m.LayerInfo[l].Value[y][x] - 1;
-            //DrawSprite(m.Tiles, CameraX, CameraY, sgCore.ScreenWidth(), sgCore.ScreenHeight());
-            DrawSprite(m.Tiles);
+            m^.Tiles^.currentFrame := m^.LayerInfo[l].Value[y][x] - 1;
+            //DrawSprite(m^.Tiles, CameraX, CameraY, sgCore.ScreenWidth(), sgCore.ScreenHeight());
+            DrawSprite(m^.Tiles);
           end
-          else if (m.LayerInfo[l].Animation[y][x] = 1) then
+          else if (m^.LayerInfo[l].Animation[y][x] = 1) then
           begin
-                        f := round(m.Frame/10) mod (m.AnimationInfo[m.LayerInfo[l].Value[y][x]].NumberOfFrames);
-                        m.Tiles.currentFrame := m.AnimationInfo[m.LayerInfo[l].Value[y][x]].Frame[f] - 1;   
-            DrawSprite(m.Tiles);
+                        f := round(m^.Frame/10) mod (m^.AnimationInfo[m^.LayerInfo[l].Value[y][x]].NumberOfFrames);
+                        m^.Tiles^.currentFrame := m^.AnimationInfo[m^.LayerInfo[l].Value[y][x]].Frame[f] - 1;   
+            DrawSprite(m^.Tiles);
           end;
         end;
       end;
     end;
   
-    m.Frame := (m.Frame + 1) mod 1000;
+    m^.Frame := (m^.Frame + 1) mod 1000;
   end;
 
   function LoadMap(mapName: String): Map;
@@ -581,7 +581,7 @@ implementation
 
     //Load Map Content
     LoadMapInformation(m, filestream);
-    if (m.MapInfo.Version > 1) then
+    if (m^.MapInfo.Version > 1) then
       LoadIsometricInformation(m, filestream);
     LoadAnimationInformation(m, filestream);
     LoadLayerData(m, filestream);
@@ -591,10 +591,10 @@ implementation
     close(filestream);  
   
     LoadBlockSprites(m, imgFile);
-    m.Frame := 0;
+    m^.Frame := 0;
     result := m;
   
-    //WriteLn(m.MapInfo.Version);
+    //WriteLn(m^.MapInfo.Version);
   end;
 
   //Gets the number of Event of the specified type
@@ -603,15 +603,15 @@ implementation
     if m = nil then raise Exception.Create('No Map supplied (nil)');
     if (eventType < Event1) or (eventType > Event24) then raise Exception.Create('EventType is out of range');
   
-    result := Length(m.EventInfo[LongInt(eventType)]);
+    result := Length(m^.EventInfo[LongInt(eventType)]);
   
     {count := 0;
   
-    for y := 0 to m.MapInfo.MapWidth - 1 do
+    for y := 0 to m^.MapInfo.MapWidth - 1 do
     begin
-      for x := 0 to m.MapInfo.MapHeight - 1 do
+      for x := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        if event = m.EventInfo.Event[y][x] then
+        if event = m^.EventInfo.Event[y][x] then
           count := count + 1;
       end;
     end;
@@ -623,15 +623,15 @@ implementation
   begin
     if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
 
-    if (m.MapInfo.Isometric = true) then
+    if (m^.MapInfo.Isometric = true) then
     begin
-      result := m.EventInfo[LongInt(eventType)][eventnumber].x * m.MapInfo.GapX;
-      if ((m.EventInfo[LongInt(eventType)][eventnumber].y MOD 2) = 1) then
-        result := result + m.MapInfo.StaggerX;
+      result := m^.EventInfo[LongInt(eventType)][eventnumber].x * m^.MapInfo.GapX;
+      if ((m^.EventInfo[LongInt(eventType)][eventnumber].y MOD 2) = 1) then
+        result := result + m^.MapInfo.StaggerX;
       end
     
     else
-      result := m.EventInfo[LongInt(eventType)][eventnumber].x * m.MapInfo.BlockWidth;
+      result := m^.EventInfo[LongInt(eventType)][eventnumber].x * m^.MapInfo.BlockWidth;
   
   end;
 
@@ -640,17 +640,17 @@ implementation
   begin
     if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
   
-    if (m.MapInfo.Isometric = true) then
+    if (m^.MapInfo.Isometric = true) then
     begin
-      result := m.EventInfo[LongInt(eventType)][eventnumber].y * m.MapInfo.StaggerY;
+      result := m^.EventInfo[LongInt(eventType)][eventnumber].y * m^.MapInfo.StaggerY;
     end
     else      
     begin
-      result := m.EventInfo[LongInt(eventType)][eventnumber].y * m.MapInfo.BlockHeight;
+      result := m^.EventInfo[LongInt(eventType)][eventnumber].y * m^.MapInfo.BlockHeight;
     end;
   end;
 
-  function BruteForceDetection(m: Map; spr: Sprite): Boolean;
+  function BruteForceDetection(m: Map; s: Sprite): Boolean;
   const
     SEARCH_RANGE = 0;
   var
@@ -659,34 +659,34 @@ implementation
   begin
     result := false;
   
-    XStart := round((spr.x / m.MapInfo.BlockWidth) - ((spr.width / m.MapInfo.BlockWidth) - SEARCH_RANGE));
-    XEnd := round((spr.x / m.MapInfo.BlockWidth) + ((spr.width / m.MapInfo.BlockWidth) + SEARCH_RANGE));
-    YStart := round((spr.y / m.MapInfo.BlockHeight) - ((spr.height / m.MapInfo.BlockHeight) - SEARCH_RANGE));
-    YEnd := round((spr.y / m.MapInfo.BlockHeight) + ((spr.height / m.MapInfo.BlockHeight) + SEARCH_RANGE));
+    XStart := round((s^.x / m^.MapInfo.BlockWidth) - ((s^.width / m^.MapInfo.BlockWidth) - SEARCH_RANGE));
+    XEnd := round((s^.x / m^.MapInfo.BlockWidth) + ((s^.width / m^.MapInfo.BlockWidth) + SEARCH_RANGE));
+    YStart := round((s^.y / m^.MapInfo.BlockHeight) - ((s^.height / m^.MapInfo.BlockHeight) - SEARCH_RANGE));
+    YEnd := round((s^.y / m^.MapInfo.BlockHeight) + ((s^.height / m^.MapInfo.BlockHeight) + SEARCH_RANGE));
 
     if YStart < 0 then YStart := 0;
-    if YStart >= m.MapInfo.MapHeight then exit;
+    if YStart >= m^.MapInfo.MapHeight then exit;
     if YEnd < 0 then exit;
-    if YEnd >= m.MapInfo.MapHeight then YEnd := m.MapInfo.MapHeight - 1;
+    if YEnd >= m^.MapInfo.MapHeight then YEnd := m^.MapInfo.MapHeight - 1;
       
     if XStart < 0 then XStart := 0;
-    if XStart >= m.MapInfo.MapWidth then exit;
+    if XStart >= m^.MapInfo.MapWidth then exit;
     if XEnd < 0 then exit;
-    if XEnd >= m.MapInfo.MapWidth then XEnd := m.MapInfo.MapWidth - 1;
+    if XEnd >= m^.MapInfo.MapWidth then XEnd := m^.MapInfo.MapWidth - 1;
 
     for y := YStart to YEnd do
     begin
-      yCache := y * m.MapInfo.BlockHeight;
+      yCache := y * m^.MapInfo.BlockHeight;
     
       for x := XStart to XEnd do
       begin
-        if m.CollisionInfo.Collidable[y][x] = true then
+        if m^.CollisionInfo.Collidable[y][x] = true then
         begin
-          if SpriteRectCollision(spr, 
-               x * m.MapInfo.BlockWidth, 
+          if SpriteRectCollision(s, 
+               x * m^.MapInfo.BlockWidth, 
                yCache, 
-               m.MapInfo.BlockWidth, 
-               m.MapInfo.BlockHeight) then
+               m^.MapInfo.BlockWidth, 
+               m^.MapInfo.BlockHeight) then
           begin
             result := true;
             exit;
@@ -696,51 +696,51 @@ implementation
     end;
   end;
 
-  function BruteForceDetectionComponent(m : Map; var spr: Sprite; xOffset, yOffset: LongInt): Boolean;
+  function BruteForceDetectionComponent(m : Map; var s: Sprite; xOffset, yOffset: LongInt): Boolean;
   begin
-    spr.x := spr.x + xOffset;
-    spr.y := spr.y + yOffset;
+    s^.x := s^.x + xOffset;
+    s^.y := s^.y + yOffset;
 
-    if BruteForceDetection(m, spr) then
+    if BruteForceDetection(m, s) then
     begin
       result := true;
     end
     else
       result := false;
 
-    spr.x := spr.x - xOffset;
-    spr.y := spr.y - yOffset;
+    s^.x := s^.x - xOffset;
+    s^.y := s^.y - yOffset;
   end;
 
-  procedure MoveOut(sprt: Sprite; movement: Vector; x, y, width, height: LongInt);
+  procedure MoveOut(s: Sprite; movement: Vector; x, y, width, height: LongInt);
   var
     kickVector: Vector;
     sprRect, tgtRect : Rectangle;
   begin
-    sprRect := RectangleFrom(sprt);
+    sprRect := RectangleFrom(s);
     tgtRect := RectangleFrom(x, y, width, height);
   
     kickVector := VectorOutOfRectFromRect(sprRect, tgtRect, movement);
   
-    MoveSprite(sprt, kickVector);
+    MoveSprite(s, kickVector);
   end;
 
-  function GetPotentialCollisions(m: Map; spr: Sprite): Rectangle;
+  function GetPotentialCollisions(m: Map; s: Sprite): Rectangle;
     function GetBoundingRectangle() : Rectangle;
     var
       startPoint, endPoint: Rectangle;
       startX, startY, endX, endY : LongInt;
     begin
       startPoint := RectangleFrom(
-                      round( ((spr.x - spr.movement.x) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
-                      round( ((spr.y - spr.movement.y) / m.MapInfo.BlockHeight) -1) * m.MapInfo.BlockHeight,
-                      (round( spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
-                      (round( spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
+                      round( ((s^.x - s^.movement.x) / m^.MapInfo.BlockWidth) - 1) * m^.MapInfo.BlockWidth,
+                      round( ((s^.y - s^.movement.y) / m^.MapInfo.BlockHeight) -1) * m^.MapInfo.BlockHeight,
+                      (round( s^.width / m^.MapInfo.BlockWidth) + 2) * m^.MapInfo.BlockWidth,
+                      (round( s^.height / m^.MapInfo.BlockHeight) + 2) * m^.MapInfo.BlockHeight);
                     
-      endPoint := RectangleFrom(  round(((spr.x + spr.width) / m.MapInfo.BlockWidth) - 1) * m.MapInfo.BlockWidth,
-                      round(((spr.y + spr.height) / m.MapInfo.BlockHeight) - 1) * m.MapInfo.BlockHeight,
-                      (round(spr.width / m.MapInfo.BlockWidth) + 2) * m.MapInfo.BlockWidth,
-                      (round(spr.height / m.MapInfo.BlockHeight) + 2) * m.MapInfo.BlockHeight);
+      endPoint := RectangleFrom(  round(((s^.x + s^.width) / m^.MapInfo.BlockWidth) - 1) * m^.MapInfo.BlockWidth,
+                      round(((s^.y + s^.height) / m^.MapInfo.BlockHeight) - 1) * m^.MapInfo.BlockHeight,
+                      (round(s^.width / m^.MapInfo.BlockWidth) + 2) * m^.MapInfo.BlockWidth,
+                      (round(s^.height / m^.MapInfo.BlockHeight) + 2) * m^.MapInfo.BlockHeight);
     
       //Encompassing Rectangle  
       if startPoint.x < endPoint.x then
@@ -783,7 +783,7 @@ implementation
     
   end;
 
-  function WillCollideOnSide(m: Map; spr: Sprite): CollisionSide;
+  function WillCollideOnSide(m: Map; s: Sprite): CollisionSide;
   type
     Collisions = record
       Top, Bottom, Left, Right: Boolean;
@@ -791,10 +791,10 @@ implementation
   var
     col : Collisions;
   begin
-    col.Right   := (spr.movement.x > 0) and BruteForceDetectionComponent(m, spr, spr.width, 0);
-    col.Left    := (spr.movement.x < 0) and BruteForceDetectionComponent(m, spr, -spr.width, 0);
-    col.Top   := (spr.movement.y < 0) and BruteForceDetectionComponent(m, spr, 0, -spr.height);
-    col.Bottom  := (spr.movement.y > 0) and BruteForceDetectionComponent(m, spr, 0, spr.height);
+    col.Right   := (s^.movement.x > 0) and BruteForceDetectionComponent(m, s, s^.width, 0);
+    col.Left    := (s^.movement.x < 0) and BruteForceDetectionComponent(m, s, -s^.width, 0);
+    col.Top   := (s^.movement.y < 0) and BruteForceDetectionComponent(m, s, 0, -s^.height);
+    col.Bottom  := (s^.movement.y > 0) and BruteForceDetectionComponent(m, s, 0, s^.height);
 
     if col.Right and col.Bottom then result := BottomRight
     else if col.Left and col.Bottom then result := BottomLeft
@@ -807,25 +807,25 @@ implementation
     else result := None;
   end;
 
-  procedure MoveSpriteOutOfTile(m: Map; spr: Sprite; x, y: LongInt);
+  procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: LongInt);
   begin
     if m = nil then raise Exception.Create('No Map supplied (nil)');
-    if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
-    if (x < 0 ) or (x >= m.mapInfo.mapWidth) then raise Exception.Create('x is outside the bounds of the map');
-    if (y < 0 ) or (y >= m.mapInfo.mapWidth) then raise Exception.Create('y is outside the bounds of the map');
+    if s = nil then raise Exception.Create('No Sprite suppled (nil)');
+    if (x < 0 ) or (x >= m^.mapInfo.mapWidth) then raise Exception.Create('x is outside the bounds of the map');
+    if (y < 0 ) or (y >= m^.mapInfo.mapWidth) then raise Exception.Create('y is outside the bounds of the map');
         
-    MoveOut(spr, spr.movement, x * m.MapInfo.BlockWidth, y * m.MapInfo.BlockHeight, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+    MoveOut(s, s^.movement, x * m^.MapInfo.BlockWidth, y * m^.MapInfo.BlockHeight, m^.MapInfo.BlockWidth, m^.MapInfo.BlockHeight);
   end;
 
 
-  function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite): Boolean; overload;
+  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite): Boolean; overload;
   var
     x, y : LongInt;
   begin
-    result := SpriteHasCollidedWithMapTile(m,spr, x, y);
+    result := SpriteHasCollidedWithMapTile(m,s, x, y);
   end;
 
-  function SpriteHasCollidedWithMapTile(m: Map; spr: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
   var
     y, x, yCache, dy, dx, i, j, initY, initX : LongInt;
     xStart, yStart, xEnd, yEnd : LongInt;
@@ -834,25 +834,25 @@ implementation
   begin
     result := false;
     if m = nil then raise Exception.Create('No Map supplied (nil)');
-    if spr = nil then raise Exception.Create('No Sprite suppled (nil)');
+    if s = nil then raise Exception.Create('No Sprite suppled (nil)');
   
-    rectSearch := GetPotentialCollisions(m, spr);
-    side := GetSideForCollisionTest(spr.movement);
+    rectSearch := GetPotentialCollisions(m, s);
+    side := GetSideForCollisionTest(s^.movement);
   
-    yStart := round(rectSearch.y / m.MapInfo.BlockHeight);
-    yEnd := round((rectSearch.y + rectSearch.height) / m.MapInfo.BlockHeight);
-    xStart := round(rectSearch.x / m.MapInfo.BlockWidth);
-    xEnd := round((rectSearch.x + rectSearch.width) / m.MapInfo.BlockWidth);
+    yStart := round(rectSearch.y / m^.MapInfo.BlockHeight);
+    yEnd := round((rectSearch.y + rectSearch.height) / m^.MapInfo.BlockHeight);
+    xStart := round(rectSearch.x / m^.MapInfo.BlockWidth);
+    xEnd := round((rectSearch.x + rectSearch.width) / m^.MapInfo.BlockWidth);
   
     if yStart < 0 then yStart := 0;
-    if yStart >= m.MapInfo.MapHeight then exit;
+    if yStart >= m^.MapInfo.MapHeight then exit;
     if yEnd < 0 then exit;
-    if yEnd >= m.MapInfo.MapHeight then yEnd := m.MapInfo.MapHeight - 1;
+    if yEnd >= m^.MapInfo.MapHeight then yEnd := m^.MapInfo.MapHeight - 1;
       
     if xStart < 0 then xStart := 0;
-    if xStart >= m.MapInfo.MapWidth then exit;
+    if xStart >= m^.MapInfo.MapWidth then exit;
     if xEnd < 0 then exit;
-    if xEnd >= m.MapInfo.MapWidth then xEnd := m.MapInfo.MapWidth - 1;
+    if xEnd >= m^.MapInfo.MapWidth then xEnd := m^.MapInfo.MapWidth - 1;
   
     result := false;
   
@@ -872,17 +872,17 @@ implementation
     for i := yStart to yEnd do
     begin
       y := initY + (i - yStart) * dy;
-      yCache := y * m.MapInfo.BlockHeight;
+      yCache := y * m^.MapInfo.BlockHeight;
       for j := xStart to xEnd do
       begin
         x := initX + (j - xStart) * dx;
-        if m.CollisionInfo.Collidable[y][x] = true then
+        if m^.CollisionInfo.Collidable[y][x] = true then
         begin     
-          if SpriteRectCollision(spr, 
-               x * m.MapInfo.BlockWidth, 
+          if SpriteRectCollision(s, 
+               x * m^.MapInfo.BlockWidth, 
                yCache, 
-               m.MapInfo.BlockWidth, 
-               m.MapInfo.BlockHeight) then
+               m^.MapInfo.BlockWidth, 
+               m^.MapInfo.BlockHeight) then
           begin
             result := true;
             collidedX := x;
@@ -900,66 +900,66 @@ implementation
 
   procedure FreeMap(var m: Map);
   begin
-    FreeBitmap(m.Tiles.bitmaps[0]);
-    FreeSprite(m.Tiles);
+    FreeBitmap(m^.Tiles^.bitmaps[0]);
+    FreeSprite(m^.Tiles);
     Dispose(m);
     m := nil;
   end;
 
-  function CollisionWithMap(m : Map; spr : Sprite; const vec: Vector): CollisionSide;
+  function CollisionWithMap(m : Map; s : Sprite; const vec: Vector): CollisionSide;
   var
     x, y: LongInt;
     temp: Vector;
   begin
     result := None;
-    temp := spr.movement;
-    spr.movement := vec;
-    if sgTileMap.SpriteHasCollidedWithMapTile(m, spr, x, y) then
+    temp := s^.movement;
+    s^.movement := vec;
+    if sgTileMap.SpriteHasCollidedWithMapTile(m, s, x, y) then
     begin
-      MoveSpriteOutOfTile(m, spr, x, y);
-      result := WillCollideOnSide(m, spr);
+      MoveSpriteOutOfTile(m, s, x, y);
+      result := WillCollideOnSide(m, s);
     end;
-    spr.movement := temp;
+    s^.movement := temp;
   end;
 
   function MapWidth(m : Map): LongInt;
   begin
-    result := m.MapInfo.MapWidth;
+    result := m^.MapInfo.MapWidth;
   end;
 
   function MapHeight(m : Map): LongInt;
   begin
-    result := m.MapInfo.MapHeight;
+    result := m^.MapInfo.MapHeight;
   end;
 
   function BlockWidth(m : Map): LongInt;
   begin
-    result := m.MapInfo.BlockWidth;
+    result := m^.MapInfo.BlockWidth;
   end;
 
   function BlockHeight(m : Map): LongInt;
   begin
-    result := m.MapInfo.BlockHeight;
+    result := m^.MapInfo.BlockHeight;
   end;
 
   function GapX(m : Map): LongInt;
   begin
-    result := m.MapInfo.GapX;
+    result := m^.MapInfo.GapX;
   end;
 
   function GapY(m : Map): LongInt;
   begin
-    result := m.MapInfo.GapY;
+    result := m^.MapInfo.GapY;
   end;
 
   function StaggerX(m : Map): LongInt;
   begin
-    result := m.MapInfo.StaggerX;
+    result := m^.MapInfo.StaggerX;
   end;
 
   function StaggerY(m : Map): LongInt;
   begin
-    result := m.MapInfo.StaggerY;
+    result := m^.MapInfo.StaggerY;
   end;
 
   //Determines whether the specified point is within the tile provided
@@ -969,16 +969,16 @@ implementation
   begin
     result := false;
 
-    if m.MapInfo.Isometric then
+    if m^.MapInfo.Isometric then
     begin
       //Create Triangles
-      tri1 := TriangleFrom(x, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
-        tri2 := TriangleFrom(x + m.MapInfo.BlockWidth, y + m.MapInfo.BlockHeight / 2, x + m.MapInfo.BlockWidth / 2, y, x + m.MapInfo.BlockWidth / 2, y + m.MapInfo.BlockHeight);
+      tri1 := TriangleFrom(x, y + m^.MapInfo.BlockHeight / 2, x + m^.MapInfo.BlockWidth / 2, y, x + m^.MapInfo.BlockWidth / 2, y + m^.MapInfo.BlockHeight);
+        tri2 := TriangleFrom(x + m^.MapInfo.BlockWidth, y + m^.MapInfo.BlockHeight / 2, x + m^.MapInfo.BlockWidth / 2, y, x + m^.MapInfo.BlockWidth / 2, y + m^.MapInfo.BlockHeight);
         if PointInTriangle(point, tri1) or PointInTriangle(point, tri2) then result := true;
     end
     else
     begin
-      result := PointInRect(point, x, y, m.MapInfo.BlockWidth, m.MapInfo.BlockHeight);
+      result := PointInRect(point, x, y, m^.MapInfo.BlockWidth, m^.MapInfo.BlockHeight);
     end;
   end;
 
@@ -1001,38 +1001,38 @@ implementation
     result.PointC := PointAt(0,0);
     result.PointD := PointAt(0,0);
 
-    for y := 0  to m.MapInfo.MapHeight - 1 do
+    for y := 0  to m^.MapInfo.MapHeight - 1 do
     begin
       //Isometric Offset for Y
-      if (m.MapInfo.Isometric = true) then 
-        ty := y * m.MapInfo.StaggerY
+      if (m^.MapInfo.Isometric = true) then 
+        ty := y * m^.MapInfo.StaggerY
       else 
-        ty := y * m.MapInfo.BlockHeight;  
+        ty := y * m^.MapInfo.BlockHeight;  
   
-      for x := 0  to m.MapInfo.MapWidth - 1  do
+      for x := 0  to m^.MapInfo.MapWidth - 1  do
       begin
       
         //Isometric Offset for X
-        if (m.MapInfo.Isometric = true) then
+        if (m^.MapInfo.Isometric = true) then
         begin
-          tx := x * m.MapInfo.GapX;
+          tx := x * m^.MapInfo.GapX;
           if ((y MOD 2) = 1) then
-            tx := tx + m.MapInfo.StaggerX;
+            tx := tx + m^.MapInfo.StaggerX;
         end
         else
-          tx := x * m.MapInfo.BlockWidth;
+          tx := x * m^.MapInfo.BlockWidth;
         
         if IsPointInTile(point, tx, ty, m) then
         begin
-          if (m.MapInfo.Isometric = true) then
+          if (m^.MapInfo.Isometric = true) then
           begin
             result.xIndex := x;
             result.yIndex := y;
             result.topCorner := PointAt(tx, ty);
-            result.PointA := PointAt(tx, ty + m.MapInfo.BlockHeight / 2);
-            result.PointB := PointAt(tx + m.MapInfo.BlockWidth / 2, ty);
-            result.PointC := PointAt(tx + m.MapInfo.BlockWidth / 2, ty + m.MapInfo.BlockHeight);
-            result.PointD := PointAt(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight / 2);
+            result.PointA := PointAt(tx, ty + m^.MapInfo.BlockHeight / 2);
+            result.PointB := PointAt(tx + m^.MapInfo.BlockWidth / 2, ty);
+            result.PointC := PointAt(tx + m^.MapInfo.BlockWidth / 2, ty + m^.MapInfo.BlockHeight);
+            result.PointD := PointAt(tx + m^.MapInfo.BlockWidth, ty + m^.MapInfo.BlockHeight / 2);
           exit;
           end
           else
@@ -1041,9 +1041,9 @@ implementation
             result.yIndex := y;
             result.topCorner := PointAt(tx,ty);
             result.PointA := PointAt(tx, ty);
-            result.PointB := PointAt(tx + m.MapInfo.BlockWidth, ty);
-            result.PointC := PointAt(tx, ty + m.MapInfo.BlockHeight);
-            result.PointD := PointAt(tx + m.MapInfo.BlockWidth, ty + m.MapInfo.BlockHeight);
+            result.PointB := PointAt(tx + m^.MapInfo.BlockWidth, ty);
+            result.PointC := PointAt(tx, ty + m^.MapInfo.BlockHeight);
+            result.PointD := PointAt(tx + m^.MapInfo.BlockWidth, ty + m^.MapInfo.BlockHeight);
           end;
         end;
       end;
@@ -1061,11 +1061,11 @@ implementation
 
     for i := 0  to 23 do
     begin
-      if (Length(m.EventInfo[i]) > 0) then
+      if (Length(m^.EventInfo[i]) > 0) then
       begin
-        for j := 0 to (Length(m.EventInfo[i]) - 1) do
+        for j := 0 to (Length(m^.EventInfo[i]) - 1) do
         begin
-          if (m.EventInfo[i][j].x = xIndex) and (m.EventInfo[i][j].y = yIndex) then begin result := Event(i); exit; end;
+          if (m^.EventInfo[i][j].x = xIndex) and (m^.EventInfo[i][j].y = yIndex) then begin result := Event(i); exit; end;
         end;
       end;  
     end;

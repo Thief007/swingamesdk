@@ -18,36 +18,24 @@ PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
 TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
 DIST_DIR="${SWINGAME_DIR}/Dist"
 
-C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
-C_DIST_DIR="${DIST_DIR}/C"
+PAS_TEMPLATE_DIR="${TEMPLATE_DIR}/Pascal"
+PAS_DIST_DIR="${DIST_DIR}/Pascal"
 
 COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
-COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/Common"
+COMMON_PAS_TEMPLATE_DIR="${PAS_TEMPLATE_DIR}/Common"
 
-GCC_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/gcc"
-GCC_C_DIST_DIR="${C_DIST_DIR}/gcc"
-
-XCODE_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/xcode 3"
-XCODE_C_DIST_DIR="${C_DIST_DIR}/xcode 3"
+FPC_PAS_TEMPLATE_DIR="${PAS_TEMPLATE_DIR}/FPC"
+FPC_PAS_DIST_DIR="${PAS_DIST_DIR}/FPC"
 
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
-COPY_LIST=( "Command line gcc,${GCC_C_TEMPLATE_DIR},${GCC_C_DIST_DIR}" )
+COPY_LIST=( "Command line FPC,${FPC_PAS_TEMPLATE_DIR},${FPC_PAS_DIST_DIR}" )
 
-if [ $OS = "Mac" ]
-then
-    COPY_LIST=( "${COPY_LIST[@]}" "XCode 3,${XCODE_C_TEMPLATE_DIR},${XCODE_C_DIST_DIR}")
-    
-    if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
-        source ${APP_PATH}/bundle_source.sh -b
-        echo
-        echo
-        if [ $? != 0 ]; then echo "Error building SGSDK framework"; exit 1; fi
-    fi
-fi
-
+source ${APP_PATH}/bundle_source.sh
+echo
+echo
 echo "--------------------------------------------------"
-echo "          Creating SwinGame C Templates"
+echo "         Creating SwinGame Pascal Templates"
 echo "              for Mac OS X and Linux"
 echo "--------------------------------------------------"
 echo "  Will Create Templates for: "
@@ -59,21 +47,7 @@ done
 
 echo "--------------------------------------------------"
 
-echo " Python scripts at $PYTHON_SCRIPT_DIR"
-
-if [ $OS = "Mac" ]; then
-    echo "  Copying Library from Source dist"
-fi
-
-echo "--------------------------------------------------"
-
 # Functions...
-
-CreateCCode()
-{
-    cd ${PYTHON_SCRIPT_DIR}
-    python create_c_library.py
-}
 
 copyWithoutSVN()
 {
@@ -90,9 +64,9 @@ copyWithoutSVN()
 
 #Step 1: Delete old dists if they exist
 
-if [ -d $C_DIST_DIR ]; then
-    echo "  ... Removing old C dist"
-    rm -rf ${C_DIST_DIR}
+if [ -d $PAS_DIST_DIR ]; then
+    echo "  ... Removing old Pascal dist"
+    rm -rf ${PAS_DIST_DIR}
 fi
 
 #Step 2: Create dists
@@ -103,11 +77,7 @@ for arg in "${COPY_LIST[@]}"; do
     mkdir -p "${to}"
 done
 
-#Step 3: Create the C lib code
-echo "  ... Creating C library code"
-CreateCCode
-
-#Step 4: Copy common files to all
+#Step 3: Copy common files to all
 echo "  ... Copying files"
 for arg in "${COPY_LIST[@]}"; do
     name=`echo $arg | awk -F"," '{print $1}'`
@@ -117,13 +87,12 @@ for arg in "${COPY_LIST[@]}"; do
     echo -n "  ... Copying to $name"
     
     copyWithoutSVN "$COMMON_TEMPLATE_DIR" "$to"
-    copyWithoutSVN "$COMMON_C_TEMPLATE_DIR" "$to"
+    copyWithoutSVN "$COMMON_PAS_TEMPLATE_DIR" "$to"
     copyWithoutSVN "$from" "$to"
+    copyWithoutSVN "${SOURCE_DIST_DIR}/src" "${to}/lib"
     
     if [ $OS = "Mac" ]; then
         echo " with library"
-        #Copy SGSDK framework
-        cp -R -p "${SOURCE_DIST_DIR}/bin"/*.framework "${to}/lib"
         #Copy SDL frameworks
         cp -R -p "${SOURCE_DIST_DIR}/lib"/*.framework "${to}/lib"
     else

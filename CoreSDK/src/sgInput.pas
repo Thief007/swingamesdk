@@ -1,6 +1,6 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //  sgInput.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // This unit is responsible for input event processing for mouse visibility, 
 // movement and button clicks (including the scroll wheel as button clicks) and 
@@ -29,7 +29,7 @@
 //  
 // Version 1.0:
 // - Various
-//=============================================================================
+//----------------------------------------------------------------------------
 
 {$I sgTrace.inc}
 
@@ -37,9 +37,9 @@
 /// @static
 unit sgInput;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses SDL, sgTypes;
   
@@ -117,7 +117,7 @@ interface
   /// @param x         Screen x location at which to draw the text
   /// @param y         Screen y location at which to draw the text
   ///
-  /// @see StartReadingTextWithText, EndReadingText, IsReadingText
+  /// @see StartReadingTextWithText, EndReadingText, ReadingText
   /// @lib
   procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
   
@@ -134,17 +134,17 @@ interface
   /// @lib
   function EndReadingText(): String;
   
-  /// IsReadingText indicates if the API is currently reading text from the
+  /// ReadingText indicates if the API is currently reading text from the
   /// user. Calling StartReadingText will set this to true, and it becomes
   /// false when the user presses enter or escape. At this point you can
   /// read the string entered as either ASCII or Unicode.
   ///
   /// @returns True while the API is reading text from the user
   /// @lib
-  function IsReadingText(): Boolean;
+  function ReadingText(): Boolean;
   
   /// TextReadAsASCII allows you to read the value of the string entered by the
-  /// user as ASCII. See TextReasAsUNICODE, StartReadingText and IsReadingText
+  /// user as ASCII. See TextReasAsUNICODE, StartReadingText and ReadingText
   /// for more details.
   ///
   /// @returns The string entered by the user
@@ -186,9 +186,9 @@ interface
   /// @lib
   function KeyName(key: KeyCode): String;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
   uses SysUtils, Classes, sgPhysics, sgMath, sgTrace, sgShared, sgCore, sgText, sgShapes;
   
@@ -215,7 +215,7 @@ implementation
   begin
     if theFont = nil then raise Exception.Create('The specified font to start reading text is nil');
     if maxLength <= 0 then raise Exception.Create('Minimum length to start reading text is 1');
-    if IsReadingText() then raise Exception.Create('Already reading text, cannot start reading text again.');
+    if ReadingText() then raise Exception.Create('Already reading text, cannot start reading text again.');
     
     sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
   end;
@@ -226,7 +226,7 @@ implementation
     sdlManager.SetText(text);
   end;
   
-  function IsReadingText(): Boolean;
+  function ReadingText(): Boolean;
   begin
     result := sdlManager.IsReading;
   end;
@@ -336,7 +336,7 @@ implementation
     result := _ButtonsClicked[button];
   end;
   
-  procedure ProcessMouseEvent(event: PSDL_Event; first: Boolean);
+  procedure ProcessMouseEvent(event: PSDL_Event);
   begin
     if event = nil then exit;
     
@@ -608,7 +608,7 @@ implementation
   end;
 
 
-//=============================================================================
+//----------------------------------------------------------------------------
 
 initialization
 begin

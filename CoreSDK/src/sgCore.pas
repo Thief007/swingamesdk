@@ -1,6 +1,6 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 // sgCore.pas
-//=============================================================================
+//----------------------------------------------------------------------------
 //
 // The Core unit contains the main SwinGame routines and data types. These will
 // be required by any game using the API.
@@ -44,7 +44,7 @@
 //  
 // Version 1.0:
 // - Various
-//=============================================================================
+//----------------------------------------------------------------------------
 
 /// SwinGame's Core is responsible for core functionality such as creating
 /// the game window, coordinating event processing, and refreshing the
@@ -59,9 +59,9 @@ unit sgCore;
   {$linklib gcc}
 {$ENDIF}
 
-//=============================================================================
+//----------------------------------------------------------------------------
 interface
-//=============================================================================
+//----------------------------------------------------------------------------
 
   {$I sgTrace.inc}
 
@@ -115,7 +115,7 @@ interface
   /// Side Effects:
   /// - A graphical window is opened
   ///
-  /// @lib OpenGraphicsWindow
+  /// @lib
   /// @uname OpenGraphicsWindow
   procedure OpenGraphicsWindow(caption: String; width, height: LongInt); overload;
 
@@ -137,7 +137,7 @@ interface
   /// Side Effects:
   /// - The screen changes to the specified size
   ///
-  /// @lib ChangeScreenSize
+  /// @lib
   procedure ChangeScreenSize(width, height: LongInt);
 
   /// Switches the application to full screen or back from full screen to
@@ -222,13 +222,13 @@ interface
   /// Maps a color from a given bitmap. This is used when determining color
   /// keys for transparent images.
   ///
-  /// @param forBitmap:   the bitmap to get the color for
+  /// @param bmp:   the bitmap to get the color for
   /// @param apiColor:     The api color to match
   /// @returns:           The color matched to the bitmaps pixel format
   ///
   /// @lib GetColorForBitmap
   /// @uname GetColorForBitmap
-  function GetColor(forBitmap: Bitmap; apiColor: Color): Color; overload;
+  function GetColor(bmp: Bitmap; apiColor: Color): Color; overload;
 
   
   /// Gets a color given its RGBA components.
@@ -316,43 +316,6 @@ interface
 
 
   //----------------------------------------------------------------------------
-  // Resource Path and Application Path
-  //----------------------------------------------------------------------------
-
-  /// @lib GetPathToResource
-  function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
-
-  /// @lib GetPathToOtherResource
-  /// @uname GetPathToOtherResource
-  function GetPathToResource(filename: String): String; overload;
-
-  /// @lib GetPathToResourceWithBaseAndKind
-  /// @uname GetPathToResourceWithBase
-  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
-
-  /// @lib GetPathToOtherResourceWithBase
-  /// @uname GetPathToOtherResourceWithBase
-  function GetPathToResourceWithBase(path, filename: String): String; overload;
-
-  /// @lib
-  procedure SetAppPath(path: String; withExe: Boolean);
-  /// @lib
-  function AppPath(): String;
-
-  //----------------------------------------------------------------------------
-  // Cos/Sin/Tan accepting degrees
-  //----------------------------------------------------------------------------
-
-  /// @lib
-  function Cos(angle: Single): Single;
-
-  /// @lib
-  function Sin(angle: Single): Single;
-
-  /// @lib
-  function Tan(angle: Single): Single;
-
-  //----------------------------------------------------------------------------
   // Timers
   //----------------------------------------------------------------------------
 
@@ -383,11 +346,11 @@ interface
     ColorPink, ColorTurquoise, ColorGrey, ColorMagenta, ColorTransparent,
     ColorLightGrey: Color;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 implementation
-//=============================================================================
+//----------------------------------------------------------------------------
 
-  uses SysUtils, Math, Classes, sgTrace, SDL_gfx, sgShared, sgEventProcessing, SDL_Image;
+  uses SysUtils, Math, Classes, sgTrace, sgShared, sgEventProcessing, sgResourceManager, SDL_Image, SDL_gfx;
 
   type
     // Details required for the Frames per second calculations.
@@ -466,22 +429,22 @@ implementation
   procedure _SetupScreen();
   begin
     if screen = nil then New(screen)
-    else if (screen.surface <> nil) then SDL_FreeSurface(screen.surface);
+    else if (screen^.surface <> nil) then SDL_FreeSurface(screen^.surface);
 
-    with _screen.format^ do
+    with _screen^.format^ do
     begin
-      screen.surface := SDL_CreateRGBSurface(SDL_HWSURFACE,
+      screen^.surface := SDL_CreateRGBSurface(SDL_HWSURFACE,
                                              ScreenWidth(), ScreenHeight(), 32,
                                              RMask, GMask, BMask, SDL_Swap32($000000FF));
 
       //Turn off alpha blending for when scr is blit onto _screen
-      SDL_SetAlpha(screen.surface, 0, 255);
-      SDL_FillRect(screen.surface, @screen.surface.clip_rect, ColorLightGrey);
+      SDL_SetAlpha(screen^.surface, 0, 255);
+      SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, ColorLightGrey);
 
-      baseSurface := screen.surface;
+      baseSurface := screen^.surface;
 
-      screen.width := _screen.w;
-      screen.height := _screen.h;
+      screen^.width := _screen^.w;
+      screen^.height := _screen^.h;
     end;
   end;
 
@@ -554,9 +517,11 @@ implementation
       ColorTransparent := GetColor(0, 0, 0, 0);
       ColorLightGrey := GetColor(200, 200, 200, 255);
 
-      SDL_FillRect(screen.surface, nil, ColorGrey);
-      stringColor(screen.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
+      SDL_FillRect(screen^.surface, nil, ColorGrey);
+      stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
       RefreshScreen();
+      
+      LoadResourceBundle('splash.txt', False);
     except on e: Exception do
       raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
     end;
@@ -579,7 +544,7 @@ implementation
     oldScr := _screen;
 
     try
-      _screen := SDL_SetVideoMode(oldScr.w, oldScr.h, 32, oldScr.flags xor SDL_FULLSCREEN);
+      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
       //Remember... _screen is a pointer to screen buffer, not a "surface"!
     except on exc: Exception do
     end;
@@ -598,7 +563,7 @@ implementation
     if (width = ScreenWidth()) and (height = ScreenHeight()) then exit;
 
     oldScr := _screen;
-    _screen := SDL_SetVideoMode(width, height, 32, oldScr.flags);
+    _screen := SDL_SetVideoMode(width, height, 32, oldScr^.flags);
     _SetupScreen();
   end;
 
@@ -606,14 +571,14 @@ implementation
   begin
     if (_screen = nil) then
         raise Exception.Create('Screen has not been created. Unable to get screen width.');
-    result := _screen.w;
+    result := _screen^.w;
   end;
 
   function ScreenHeight(): LongInt;
   begin
     if (_screen = nil) then
         raise Exception.Create('Screen has not been created. Unable to get screen height.');
-    result := _screen.h;
+    result := _screen^.h;
   end;
 
   procedure TakeScreenShot(basename: String);
@@ -630,7 +595,7 @@ implementation
       i := i + 1;
     end;
 
-    if SDL_SaveBMP(screen.surface, PChar(filename)) = -1 then
+    if SDL_SaveBMP(screen^.surface, PChar(filename)) = -1 then
       raise Exception.Create('Failed to save ' + basename + '.bmp: ' + SDL_GetError());
   end;
 
@@ -756,8 +721,8 @@ implementation
     nowTime: UInt32;
   begin
     //Draw then delay
-    sdlManager.DrawCollectedText(screen.surface);
-    SDL_BlitSurface(screen.surface, nil, _screen, nil);
+    sdlManager.DrawCollectedText(screen^.surface);
+    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
     SDL_Flip(_screen);
 
     nowTime := GetTicks();
@@ -770,8 +735,8 @@ implementation
     nowTime: UInt32;
     delta: UInt32;
   begin
-    sdlManager.DrawCollectedText(screen.surface);
-    SDL_BlitSurface(screen.surface, nil, _screen, nil);
+    sdlManager.DrawCollectedText(screen^.surface);
+    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
     SDL_Flip(_screen);
     
     nowTime := GetTicks();
@@ -796,7 +761,7 @@ implementation
   begin
     if baseSurface = nil then
       raise Exception.Create('Cannot read screen format. Ensure window is open.');
-    SDL_GetRGBA(color, baseSurface.Format, @r, @g, @b, @a);
+    SDL_GetRGBA(color, baseSurface^.Format, @r, @g, @b, @a);
   end;
 
   function GetRed(color: Color): byte;
@@ -831,28 +796,28 @@ implementation
     result := a;
   end;
 
-  function GetColor(forBitmap: Bitmap; apiColor: Color): Color; overload;
+  function GetColor(bmp: Bitmap; apiColor: Color): Color; overload;
   var
     temp: TSDL_Color;
   begin
-    if (forBitmap = nil)
-      or (forBitmap.surface = nil)
-      or (forBitmap.surface.format = nil) then
+    if (bmp = nil)
+      or (bmp^.surface = nil)
+      or (bmp^.surface^.format = nil) then
     begin
       raise Exception.Create('Unable to get color as bitmap not specified');
     end;
 
     temp := ToSDLColor(apiColor);
-    result := SDL_MapRGB(forBitmap.surface.format, temp.r, temp.g, temp.b);
+    result := SDL_MapRGB(bmp^.surface^.format, temp.r, temp.g, temp.b);
   end;
 
   function GetColor(red, green, blue, alpha: Byte): Color; overload;
   begin
-    if (baseSurface = nil) or (baseSurface.format = nil) then
+    if (baseSurface = nil) or (baseSurface^.format = nil) then
       raise Exception.Create('Unable to GetColor as the window is not open');
 
     try
-      result := SDL_MapRGBA(baseSurface.format, red, green, blue, alpha);
+      result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
     except
       raise Exception.Create('Error occured while trying to get a color from RGBA components');
     end;
@@ -930,32 +895,11 @@ implementation
 
     result := GetRGBFloatColor(red, green, blue);
   end;
-
-
-
-  //----------------------------------------------------------------------------
-  // Cos/Sin/Tan accepting degrees
-  //----------------------------------------------------------------------------
-
-  function Cos(angle: Single): Single;
-  begin
-    result := System.Cos(DegToRad(angle));
-  end;
-
-  function Sin(angle: Single): Single;
-  begin
-    result := System.Sin(DegToRad(angle));
-  end;
-
-  function Tan(angle: Single): Single;
-  begin
-    result := Math.Tan(DegToRad(angle));
-  end;
-
+  
   //----------------------------------------------------------------------------
   // Timers
   //----------------------------------------------------------------------------
-
+  
   function CreateTimer(): Timer;
   begin
     New(result);
@@ -1038,66 +982,10 @@ implementation
     result := 0;
   end;
 
-  //----------------------------------------------------------------------------
-  // Resource Path and Application Path
-  //----------------------------------------------------------------------------
 
-  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind) : String; overload;
-  begin
-    case kind of
-    {$ifdef UNIX}
-      FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
-      SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
-      BitmapResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
-      MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
-    {$else}
-      FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
-      SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
-      BitmapResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
-      MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
-    {$endif}
-      else result := GetPathToResourceWithBase(path, filename);
-    end;
-  end;
-
-
-  function GetPathToResourceWithBase(path, filename: String): String; overload;
-  begin
-    {$ifdef UNIX}
-      {$ifdef DARWIN}
-        result := path + '/../Resources/';
-      {$else}
-        result := path + '/Resources/';
-      {$endif}
-    {$else}
-    //Windows
-      result := path + '\resources\';
-    {$endif}
-    result := result + filename;
-  end;
-
-  function GetPathToResource(filename: String): String; overload;
-  begin
-    result := GetPathToResourceWithBase(applicationPath, filename);
-  end;
-
-  function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
-  begin
-    result := GetPathToResourceWithBase(applicationPath, filename, kind);
-  end;
-
-  procedure SetAppPath(path: String; withExe: Boolean);
-  begin
-    if withExe then applicationPath := ExtractFileDir(path)
-    else applicationPath := path;
-  end;
-
-  function AppPath(): String;
-  begin
-    result := applicationPath;
-  end;
-
-  //---------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Global variables for Mac OS Autorelease Pool
+//----------------------------------------------------------------------------
 
 {$ifdef DARWIN}
 var
@@ -1106,7 +994,7 @@ var
 {$endif}
 
 
-//=============================================================================
+//----------------------------------------------------------------------------
 
 initialization
 begin
@@ -1158,25 +1046,27 @@ begin
   {$ENDIF}
 end;
 
-//=============================================================================
+//----------------------------------------------------------------------------
 
 finalization
 begin
   {$IFDEF TRACE}
     TraceEnter('sgCore', 'finalization');
   {$ENDIF}
-
+  
+  ReleaseResourceBundle('splash.txt');
+  
   if sdlManager <> nil then
   begin
     sdlManager.Free();
     sdlManager := nil;
   end;
-
+  
   if screen <> nil then
   begin
-    if screen.surface <> nil then
-      SDL_FreeSurface(screen.surface);
-
+    if screen^.surface <> nil then
+      SDL_FreeSurface(screen^.surface);
+    
     Dispose(screen);
     screen := nil;
     //scr and baseSurface are now the same!
