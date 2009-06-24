@@ -14,7 +14,7 @@
 //                      : Renamed private _fpsData, _screen and _lastUpdateTime
 //                      : Renamed private _InitFPSData and removed params
 //                      : Renamed FPSCalcInfo to FPSData, renamed internals
-///
+//
 // - 2009-06-23: Andrew: Added getting and setting of AppPath
 // - 2009-06-05: Andrew: Moved out shared data/functions
 // - 2009-06-04: Andrew: Started on processing comments.
