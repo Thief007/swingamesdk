@@ -116,7 +116,7 @@ interface
   
 implementation
   uses SysUtils, Classes, sgGraphics, sgCamera, SDL_gfx, sgShared, 
-       SDL, SDL_TTF, sgCore, sgShapes;
+       SDL, SDL_TTF, sgCore, sgGeometry;
 
   {$IFDEF FPC}
   const EOL = LineEnding;

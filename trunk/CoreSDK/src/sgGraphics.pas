@@ -599,7 +599,7 @@ implementation
 
   uses Classes, SysUtils, // system
        SDL_gfx, SDL, SDL_Image, // sdl
-       sgCamera, sgPhysics, sgMath, sgShared, sgCore, sgShapes; //SwinGame
+       sgCamera, sgPhysics, sgShared, sgCore, sgGeometry;
   
   /// Clears the surface of the bitmap to the passed in color.
   ///
