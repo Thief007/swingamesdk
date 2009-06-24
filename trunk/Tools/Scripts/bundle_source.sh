@@ -7,6 +7,7 @@ SWINGAME_DIR="${APP_PATH}/../../"
 SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 
 SDK_SRC="${SWINGAME_DIR}/CoreSDK/src"
+SDK_LIB_SRC="${SWINGAME_DIR}/CoreSDK/libsrc"
 
 TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
 DIST_DIR="${SWINGAME_DIR}/Dist"
@@ -81,6 +82,7 @@ echo "  Running script from $APP_PATH"
 echo "  Build options are ${EXTRA_OPTS}"
 echo "  Copying"
 echo "    from ${SDK_SRC}"
+echo "    and ${SDK_LIB_SRC}"
 echo "    to ${SOURCE_DIST_DIR}"
 if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
 then
@@ -102,6 +104,10 @@ echo "  Copying Pascal source"
 find ${SDK_SRC} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 find ${SDK_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
+if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+find ${SDK_LIB_SRC} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
+if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+find ${SDK_LIB_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
 echo "  Copying build script"

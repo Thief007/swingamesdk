@@ -103,9 +103,12 @@ interface
   /// @lib
   procedure ReleaseAllResources();
   
-  // function GameMusic(music: String): Music;
-  // function GameTileMap(mapName: String): Map;
- 
+  //=============================================================================
+  
+  // procedure LoadResourceBundle(name: String);
+  // 
+  // procedure FreeResourceBundle(name: String);
+  
 implementation
   uses SysUtils, sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, stringhash;
   
