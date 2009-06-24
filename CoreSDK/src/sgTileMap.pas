@@ -18,17 +18,24 @@
 // - 2008-04-18: Andrew:  Fix extensions to work with Delphi.
 //
 // Version 1.1:
-// - 2008-04-02: Stephen: Added MapWidth(), MapHeight(), BlockWidth(), BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
-//              LoadIsometricInformation(), LoadMapv2(), various bug fixes
-// - 2008-04-02: Andrew: Removed gap loading as mappy support has not been updated on the web, and this version
-//                       is unable to read the old files.
-// - 2008-03-29: Stephen:   MapData record now contains GapX, GapY, StaggerX, StaggerY, Isometric
-//              LoadMapInformation, now loads the new isometric related data
-//              DrawMap now draws isometric tiles with their correct offsets
+// - 2008-04-02: Stephen: Added MapWidth(), MapHeight(), BlockWidth(), 
+//                        BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
+//                        LoadIsometricInformation(), LoadMapv2(), 
+//                      : various bug fixes
+// - 2008-04-02: Andrew: Removed gap loading as mappy support has not been 
+//                       updated on the web, and this version is unable to 
+//                       read the old files.
+// - 2008-03-29: Stephen: MapData record now contains GapX, GapY, StaggerX, 
+//                        StaggerY, Isometric
+//                      : LoadMapInformation, now loads the new isometric related data
+//                      : DrawMap now draws isometric tiles with their correct offsets
 // - 2008-01-30: Andrew: Added const to vector param, increased search for collision tests
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
-// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, HasSpriteCollidedWithMapTile, MoveSpriteOutOfTile, WillCollideOnSide
+// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, 
+//                        - HasSpriteCollidedWithMapTile, 
+//                        - MoveSpriteOutOfTile, 
+//                        - WillCollideOnSide
 // - 2008-01-17: Aki + Andrew: Refactor
 //
 // Version 1.0:

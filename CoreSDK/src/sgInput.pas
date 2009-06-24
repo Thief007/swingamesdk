@@ -1,5 +1,5 @@
 //=============================================================================
-//          sgInput.pas
+//  sgInput.pas
 //=============================================================================
 //
 // This unit is responsible for input event processing for mouse visibility, 
