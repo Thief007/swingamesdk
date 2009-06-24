@@ -1,4 +1,4 @@
-program GameMain;
+program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
   sgTypes, sgCore, sgAudio, sgText, sgGraphics;
