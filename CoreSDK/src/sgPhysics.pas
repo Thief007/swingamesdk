@@ -219,6 +219,19 @@ interface
   function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
   
   //---------------------------------------------------------------------------
+  // Bitmap <-> Point
+  //---------------------------------------------------------------------------
+  
+  
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
+
+  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
+  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  
+  //---------------------------------------------------------------------------
   // Bitmap <-> Bitmap Collision Tests
   //---------------------------------------------------------------------------
   
@@ -281,31 +294,6 @@ interface
   /// @overload BitmapCollision BitmapPartsBBoxCollision
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
   
-  
-  //---------------------------------------------------------------------------
-  // Sprite Screen Position Tests 
-  //---------------------------------------------------------------------------
-  //TODO: Remove dependance on Rectangles, and make pixel-only operation
-  //TODO: Move to sgCamera (or sgSprite?) once Rect tests removed
-  
-  /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
-  /// specified (``x`` and ``y``) which is converted to a world location.
-  ///
-  /// @lib
-  /// @class Sprite
-  /// @method IsOnScreenAt
-  function IsSpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
-  
-  /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
-  /// specified (``pt``), which is converted to a world location.
-  ///
-  /// @lib IsSpriteOnScreenAtPoint
-  /// @class Sprite
-  /// @overload IsOnScreenAt IsOnScreenAtPoint
-  function IsSpriteOnScreenAt(s: Sprite; const pt: Point2D): Boolean; overload;
-  
-  //---------------------------------------------------------------------------
-
   /// Returns True if the `Sprite` ``s``, represented by a bounding circle, has 
   /// collided with a ``line``. The diameter for the bounding circle is 
   /// based on the sprites width or height value -- whatever is largest.
@@ -382,26 +370,15 @@ interface
   /// @lib
   procedure CollideCircles(s1, s2: Sprite);
   
-  
-  
 //----------------------------------------------------------------------------
 implementation
 //----------------------------------------------------------------------------
 
   uses
     SysUtils, {Math, Classes,} sgTrace,
-    sgCore, sgGraphics, sgCamera, sgGeometry;
-
-
-  function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
-  begin
-    result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
-              and ((x >= 0) and (x < bmp^.width))
-              and ((y >= 0) and (y < bmp^.height))
-              and bmp^.nonTransparentPixels[x, y];
-  end;
-
-
+    sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites;
+  
+  
   
   //---------------------------------------------------------------------------
 
@@ -484,6 +461,18 @@ implementation
   begin
     if s = nil then raise Exception.Create('The specified sprite is nil');
     
+    if width < 0 then
+    begin
+      x := x + width;
+      width := -width;
+    end;
+    
+    if height < 0 then
+    begin
+      y := y + height;
+      height := -height;
+    end;
+    
     if (width < 1) or (height < 1) then 
       raise Exception.Create('Rectangle width and height must be greater then 0');
     
@@ -519,16 +508,6 @@ implementation
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
   begin
     result := SpriteRectCollision(s, rect.x, rect.y, rect.width, rect.height);
-  end;
-  
-  function IsSpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
-  begin
-    result := SpriteRectCollision(s, ToWorldX(x), ToWorldY(y), 1, 1);
-  end;
-  
-  function IsSpriteOnScreenAt(s: Sprite; const pt: Point2D): Boolean; overload;
-  begin
-    result := SpriteRectCollision(s, ToWorldX(Round(pt.x)), ToWorldY(Round(pt.y)), 1, 1);
   end;
   
   /// Performs a collision detection within two bitmaps at the given x, y
@@ -1109,7 +1088,45 @@ implementation
                   (RectangleRight(destRect) < RectangleLeft(targetRect))  then result := VectorFrom(0,0);
     end   
   end;
-
+  
+  //
+  //
+  //
+  
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
+  begin
+    if bbox then
+      result := PointInRect(ptX, ptY, RectangleFrom(x, y, bmp))
+    else
+      result := PointInBitmap(bmp, x, y, ptX, ptY);
+  end;
+  
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
+  begin
+    result := IsPixelDrawnAtPoint(bmp, Round(ptX - x), Round(ptY - y));
+  end;
+  
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
+  begin
+    result := PointInBitmap(bmp, x, y, bbox, pt.x, pt.y);
+  end;
+  
+  function PointInBitmap(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
+  begin
+    result := PointInBitmap(bmp, x, y, False, pt.x, pt.y);
+  end;
+  
+  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
+  begin
+    result := PointInBitmap(bmp, x, y, False, ptX + part.x, ptY + part.y);
+  end;
+  
+  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  begin
+    result := PointInBitmap(bmp, x, y, False, pt.x + part.x, pt.y + part.y);
+  end;
+  
+  
   //----------------------------------------------------------------------------
   // Collision Effect Application (angle + mass/energy transfer)
   //----------------------------------------------------------------------------

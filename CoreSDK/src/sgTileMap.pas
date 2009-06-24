@@ -169,7 +169,9 @@ interface
 implementation
 //----------------------------------------------------------------------------
 
-  uses SysUtils, Classes, sgGraphics, sgCamera, sgCore, sgPhysics, sgGeometry, sgResources;
+  uses 
+    SysUtils, Classes,  //Syste,
+    sgGraphics, sgCamera, sgCore, sgPhysics, sgGeometry, sgResources, sgSprites; //Swingame
 
   function ReadInt(var stream : text): Word;
   var

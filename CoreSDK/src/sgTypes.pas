@@ -9,6 +9,13 @@ interface
     Point2D = record
         x, y: Single;
       end;
+      
+    /// Vectors represent a direction and distance, stored as x,y components.
+    ///
+    /// @struct Vector
+    Vector = record
+      x, y: Single;
+    end;
     
     ///@class Point2DPtr
     ///@pointer_wrapper
@@ -125,13 +132,6 @@ interface
     /// @data_wrapper
     /// @field data: UInt32
     Color = UInt32;
-
-    /// Vectors represent a direction and distance, stored as x,y components.
-    ///
-    /// @struct Vector
-    Vector = record
-      x, y: Single;
-    end;
 
     /// Bitmap data stores the data associated with a Bitmap. Each bitmap contains
     /// a pointer to the bitmap color information (surface), its width, height,
