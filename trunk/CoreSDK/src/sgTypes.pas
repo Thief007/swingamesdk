@@ -13,9 +13,9 @@ interface
     /// Vectors represent a direction and distance, stored as x,y components.
     ///
     /// @struct Vector
-    Vector = record
+    Vector = Point2D; {record
       x, y: Single;
-    end;
+    end;}
     
     ///@class Point2DPtr
     ///@pointer_wrapper
@@ -121,7 +121,7 @@ interface
       BottomRight,
       None
     );
-
+    
     /// The color type is used within the SwinGameAPI to store color values.
     /// The color values are represented as 32bit RGBA values where R stores the 
     /// color's red component, G stores the green component, B stores the blue 
