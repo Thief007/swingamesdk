@@ -31,6 +31,9 @@ interface
 
   uses sgTypes;
   
+  /// @lib
+  function LineCircleHit(const fromPt: Point2D; radius: Single; movement: Vector; rect: Rectangle; out found: LineSegment): Boolean;
+  
   /// todo: Test...
   /// @lib
   function GetTangentPoints(const fromPt, centre: Point2D; radius: Single; out p1, p2: Point2D): Boolean;
@@ -56,11 +59,13 @@ interface
   function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
   
   /// @lib
-  function DeepestPointOnCircleVsRectWithMovement(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
+  function CollisionPointCircleVsRect(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
   /// @lib
   function ClosestPointOnRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle): Point2D;
   /// @lib
-  function ClosestPointOnLinesFromCircle(const center: Point2D; radius: Single; const lines: LinesArray): Point2D;
+  function ClosestPointOnLinesFromCircle(const center: Point2D; radius: Single; const lines: LinesArray): Point2D;  
+  /// @lib
+  function ClosestPointOnCircle(const fromPt, center: Point2D; radius: Single): Point2D;
   
   /// @lib PointOnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
@@ -101,6 +106,8 @@ interface
   function RectangleFrom(s: Sprite): Rectangle; overload;
   /// @lib RectangleFromLine
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
+  /// @lib RectangleFromCircle
+  function RectangleFrom(const center: Point2D; radius: Single): Rectangle; overload;
 
   /// @lib
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
@@ -845,6 +852,12 @@ implementation
     result := sqrt(result);
   end;
   
+  function ClosestPointOnCircle(const fromPt, center: Point2D; radius: Single): Point2D;
+  begin
+    //result := AddVectors(VectorMultiply(UnitVector(VectorFromPoints(fromPt, center)), radius), center);
+    result := AddVectors(VectorMultiply(UnitVector(VectorFromPoints(center, fromPt)), radius), center);
+  end;
+  
   function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
   begin
     result := ClosestPointOnLine(PointAt(x, y), line);
@@ -881,121 +894,21 @@ implementation
     end; //  else NOT (u < EPS) or (u > 1)
   end;
   
-  function DeepestPointOnCircleVsRectWithMovement(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
+  function CollisionPointCircleVsRect(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
   var
-    lines, chk: LinesArray;
+    line: LineSegment;
     i, min: Integer;
     dst, minDist, ang, dist, dotPod, npx, npy: Single;
-    rectCollisionSide: CollisionSide;
+    side: CollisionSide;
     projection: LineSegment; 
     centerToRayIntersect, v, throughCircle: Vector;
     minPt, edgePt, hitPt: Point2D;
-    
-    procedure AddLinesToChk(line: LineSegment); overload;
-    begin
-      SetLength(chk, 1);
-      chk[0] := line;
-    end;
-    procedure AddLinesToChk(line1, line2: LineSegment); overload;
-    begin
-      SetLength(chk, 2);
-      chk[0] := line1;
-      chk[1] := line2;
-    end;
-    procedure CheckVectorAngle(min1, max1, min2, max2: Single); overload;
-    begin
-      if not (((ang >= min1) and (ang <= max1)) or ((ang >= min2) and (ang <= max2))) then
-      begin
-        //WriteLn('Inverted ang:', ang:4:2);
-        v := InvertVector(v); 
-      end;
-    end;
-    procedure CheckVectorAngle(min1, max1: Single); overload;
-    begin
-      if not ((ang >= min1) and (ang <= max1)) then
-      begin
-        //WriteLn('Inverted ang!!:', ang:4:2);
-          v := InvertVector(v); 
-      end;
-    end;
-    
-    // Checks for corner collisions and changes edgePt...
-    procedure CheckDiagonalEdgeCollision(angle: Single; colSide: CollisionSide);
-    var
-      unitMvmt: Vector;
-      closeIdx, farIdx: Integer;
-      closePt, farPt: Point2D;
-      
-      procedure SwapIdx();
-      begin
-        WriteLn('Swap Idx');
-        closeIdx := 1;
-        farIdx := 0;
-      end;
-    begin
-      unitMvmt := UnitVector(movement);
-      projection := LineFromVector(edgePt, movement); //project a line in movement dir, from edgePt
-      
-      closeIdx := 0; farIdx := 1;
-      
-      WriteLn(angle);
-      
-      //change if other way...
-      case colSide of
-        TopLeft: if angle = 0 then SwapIdx();
-        TopRight: if (angle = 180) or (angle = -180) then SwapIdx();
-      end;
-      
-      GetLineIntersectionPoint(projection, chk[closeIdx], closePt); //get points from both lines vs projection
-      GetLineIntersectionPoint(projection, chk[farIdx], farPt);
-
-      if PointPointDistance(edgePt, closePt) > PointPointDistance(edgePt, farPt) then
-      begin
-        //Corner case... hit a corner
-        case colSide of
-          TopLeft:  hitPt := chk[0].startPoint;
-          TopRight: hitPt := chk[0].endPoint;
-        end;
-        dist := GetRayCircleIntersectDistance(hitPt, UnitVector(movement), center, radius);
-        //project to find circle point
-
-        //check... get ray intersect point
-        v := VectorMultiply(UnitVector(movement), dist); //distance from hitpt to ray intersect
-        v.x += hitPt.x;
-        v.y += hitPt.y;
-        DrawCircle(ColorRed, v, 2);
-
-        centerToRayIntersect := VectorFromPoints(center, v);
-        DrawLine(ColorRed, center.x, center.y, center.x + centerToRayIntersect.x, center.y + centerToRayIntersect.y);
-
-        //double the projection onto the movement vector
-        dotPod := -2 * DotProduct(UnitVector(movement), centerToRayIntersect);
-
-        throughCircle := VectorMultiply(UnitVector(movement), dotPod);
-        v.x += throughCircle.x;
-        v.y += throughCircle.y;
-        DrawCircle(ColorGreen, v, 2);
-        edgePt := v;
-      end;
-    end;
   begin
-    lines := LinesFromRect(rect);
-    rectCollisionSide := GetSideForCollisionTest(movement);
+    if not LineCircleHit(center, radius, movement, rect, line) then exit;
     
-    // 1: Find closest point on rectangle sides based on movement
-    case rectCollisionSide of
-      TopLeft:  AddLinesToChk( lines[0], lines[1] );
-      Top: AddLinesToChk( lines[0] );
-      TopRight: AddLinesToChk( lines[0], lines[2] );
-      Left: AddLinesToChk( lines[1] );
-      Right: AddLinesToChk( lines[2] );
-      BottomLeft: AddLinesToChk( lines[3], lines[1] );
-      Bottom: AddLinesToChk( lines[3] );
-      BottomRight: AddLinesToChk( lines[3], lines[2] );
-      else exit;
-    end;
+    side := GetSideForCollisionTest(movement);
     
-    minPt := ClosestPointOnLinesFromCircle(center, radius, chk);
+    //minPt := ClosestPointOnLinesFromCircle(center, radius, lines);
     
     // 2: Get vector from center of circle to closest point
     v := VectorFromPoints(center, minPt);
@@ -1003,29 +916,14 @@ implementation
     // 3: invert and extend by radius to find most distant point
     v := VectorMultiply(UnitVector(InvertVector(v)), radius);
     
-    // 4: Check this is at the correct angle for collision side in case of non-enclosed circle:
-    ang := CalculateAngle(0, 0, v.x, v.y);
-    //WriteLn('Angle to minPt: ', ang:4:2);
-    
-    case rectCollisionSide of
-      TopLeft:  CheckVectorAngle(0, 90);
-      Top: CheckVectorAngle(90, 90);
-      TopRight: CheckVectorAngle(90, 180);
-      Left: CheckVectorAngle(0, 0);
-      Right: CheckVectorAngle(-180, -180, 180, 180);
-      BottomLeft: CheckVectorAngle(-90, 0);
-      Bottom: CheckVectorAngle(-90, -90);
-      BottomRight: CheckVectorAngle(-180, -90);
-    end;
-    
     // 5: Check edge conditions
     
     edgePt := PointAt(center, v);
     
-    case rectCollisionSide of
-      TopLeft, TopRight, BottomLeft, BottomRight:
-        CheckDiagonalEdgeCollision(CalculateAngle(0, 0, v.x, v.y), rectCollisionSide);
-    end;
+    // case rectCollisionSide of
+    //   TopLeft, TopRight, BottomLeft, BottomRight:
+    //     CheckDiagonalEdgeCollision(CalculateAngle(0, 0, v.x, v.y), rectCollisionSide);
+    // end;
     
     // 6: Result is found edge pt
     result := edgePt;
@@ -1058,6 +956,16 @@ implementation
     end;
     
     result := pts[min];
+  end;
+  
+  function RectangleFrom(const center: Point2D; radius: Single): Rectangle; overload;
+  begin
+    if radius < 0 then radius := -radius;
+    
+    result.x := center.x - radius;
+    result.y := center.y - radius;
+    result.width := Round(2 * radius);
+    result.height := Round(result.width);
   end;
   
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
@@ -1364,7 +1272,7 @@ implementation
     pmC: Vector;
     sqr_len, r_sqr, inv_sqr_len, root: Single;
   begin
-    pmC := VectorFromPoints(centre, fromPt);
+    pmC := VectorFromPoints(fromPt, centre);
     
     sqr_len := VectorMagnitudeSq(PmC);
     r_sqr := radius*radius;
@@ -1648,8 +1556,45 @@ implementation
   var
     distPt: Point2D;
   begin
-    distPt := DeepestPointOnCircleVsRectWithMovement(center, radius, rect, movement);
+    //distPt := DeepestPointOnCircleVsRectWithMovement(center, radius, rect, movement);
     result := VectorOutOfRectFromPoint(distPt, rect, movement);
+  end;
+  
+  function DistantPoint(const srcRect, inRect: Rectangle; side: CollisionSide): Point2D;
+  begin
+    //Get the top left out - default then adjust for other points out
+    result.x := srcRect.x; result.y := srcRect.y;
+    
+    case side of
+      //Hit top or left of wall... bottom right in
+      TopLeft:    begin result.x := result.x + srcRect.width; result.y := result.y + srcRect.height;  end;
+      //Hit top or right of wall... bottom left in
+      TopRight:   result.y := result.y + srcRect.height;
+      //Hit bottom or left of wall... top right in
+      BottomLeft:   result.x := result.x + srcRect.width;
+      //Hit bottom or right of wall... top left is in
+      BottomRight:  ;
+      //Hit left of wall... right in
+      Left:
+        begin
+          result.x := result.x + srcRect.width;
+          if srcRect.y < inRect.y then  result.y := result.y + srcRect.height;
+        end;
+      Right:
+        begin
+          if srcRect.y < inRect.y then  result.y := result.y + srcRect.height;
+        end;
+      //Hit top of wall... bottom in
+      Top:
+        begin
+          result.y := result.y + srcRect.height;
+          if srcRect.x < inRect.x then result.x := result.x + srcRect.width;
+        end;
+      Bottom: //hit bottom of wall get the top out
+        begin
+          if srcRect.x < inRect.x then result.x := result.x + srcRect.width;
+        end;
+    end; //end case
   end;
   
   function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
@@ -1660,54 +1605,20 @@ implementation
   begin
     //Which side of the rectangle did we collide with.
     rectCollisionSide := GetSideForCollisionTest(movement);
+    if rectCollisionSide = None then
+    begin 
+      result := VectorFrom(0, 0);
+      exit; 
+    end;
     
-    //Get the top left out - default then adjust for other points out
-    p.x := srcRect.x; p.y := srcRect.y;
-    
-    case rectCollisionSide of
-      //Hit top or left of wall... bottom right in
-      TopLeft:    begin p.x := p.x + srcRect.width; p.y := p.y + srcRect.height;  end;
-      //Hit top or right of wall... bottom left in
-      TopRight:   p.y := p.y + srcRect.height;
-      //Hit bottom or left of wall... top right in
-      BottomLeft:   p.x := p.x + srcRect.width;
-      //Hit bottom or right of wall... top left is in
-      BottomRight:  ;
-      //Hit left of wall... right in
-      Left:
-        begin
-          p.x := p.x + srcRect.width;
-          if srcRect.y < targetRect.y then  p.y := p.y + srcRect.height;
-        end;
-      Right:
-        begin
-          if srcRect.y < targetRect.y then  p.y := p.y + srcRect.height;
-        end;
-      //Hit top of wall... bottom in
-      Top:
-        begin
-          p.y := p.y + srcRect.height;
-          if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
-        end;
-      Bottom: //hit bottom of wall get the top out
-        begin
-          if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
-        end;
-      
-      None: begin 
-          result := VectorFrom(0, 0);
-          exit; 
-        end;
-    end; //end case
-    
+    p := DistantPoint(srcRect, targetRect, rectCollisionSide);
     //WriteLn('p = ', p.x, ',', p.y);
     
     result := VectorOut(p, targetRect, movement, rectCollisionSide);
     
     if (result.x = 0) and (result.y = 0) then exit; 
-
-    destRect := RectangleAfterMove(srcRect, result);
     
+    destRect := RectangleAfterMove(srcRect, result);
     //Check diagonal miss...
     case rectCollisionSide of
       //Hit top left, check bottom and right;
@@ -1737,6 +1648,94 @@ implementation
   function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
   begin
     result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
+  end;
+  
+  //
+  // Get the lines from the rectangle that are required to be checked given
+  // a collision on the given side (eg Top + Left lines for TopLeft collision side).
+  //
+  function LinesForCollisionTest(const rect: Rectangle; side: CollisionSide): LinesArray;
+  var
+    lines: LinesArray;
+    // Inner procedure....
+    // set only one line to check
+    procedure SetLinesToChk(line: LineSegment); overload;
+    begin
+      SetLength(result, 1);
+      result[0] := line;
+    end;
+    // Inner procedure....
+    // set two lines to check
+    procedure SetLinesToChk(line1, line2: LineSegment); overload;
+    begin
+      SetLength(result, 2);
+      result[0] := line1;
+      result[1] := line2;
+    end;
+  begin
+    lines := LinesFromRect(rect);
+    
+    case side of
+      TopLeft:      SetLinesToChk( lines[0], lines[1] );
+      Top:          SetLinesToChk( lines[0] );
+      TopRight:     SetLinesToChk( lines[0], lines[2] );
+      Left:         SetLinesToChk( lines[1] );
+      Right:        SetLinesToChk( lines[2] );
+      BottomLeft:   SetLinesToChk( lines[3], lines[1] );
+      Bottom:       SetLinesToChk( lines[3] );
+      BottomRight:  SetLinesToChk( lines[3], lines[2] );
+      else SetLength(result, 0);
+    end;
+  end;
+  
+  /// @lib
+  function LineCircleHit(const fromPt: Point2D; radius: Single; movement: Vector; rect: Rectangle; out found: LineSegment): Boolean;
+  var
+    unitMvmt: Vector;
+    projection: LineSegment;
+    edgePt, closePt: Point2D;
+    side: CollisionSide;
+    lines: LinesArray;
+    dist, minDist: Single;
+    i, min: Integer;
+  begin
+    side := GetSideForCollisionTest(movement);
+    result := false;
+    if side = None then exit; 
+    
+    //Find distant point from 
+    edgePt := DistantPoint(RectangleFrom(fromPt, radius), rect, side);
+    
+    DrawCircle(ColorYellow, edgePt, 2);
+    
+    //find the line with the shortest distance
+    //from the edgePt along theprojected line using movement.
+    unitMvmt := UnitVector(movement);
+    projection := LineFromVector(edgePt, movement); //project a line in movement dir, from edgePt
+    
+    lines := LinesForCollisionTest(rect, side);
+    minDist := -1;
+    min := -1;
+    
+    for i := Low(lines) to High(lines) do
+    begin
+      //get points from lines vs projection
+      if GetLineIntersectionPoint(projection, lines[i], closePt) then
+      begin
+        dist := PointPointDistance(closePt, edgePt);
+        if (dist < minDist) or (minDist < 0) then
+        begin
+          minDist := dist;
+          min := i;
+        end;
+      end; // end check intersection
+    end; //end for
+    
+    if min >= 0 then
+    begin
+      found := lines[min];
+      result := True;
+    end;
   end;
   
 end.
