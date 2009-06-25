@@ -147,6 +147,8 @@ interface
   procedure DrawLine(dest: Bitmap; theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
   /// @lib DrawLineSegmentOnto
   procedure DrawLine(dest: Bitmap; theColor: Color; const line: LineSegment); overload;
+  /// @lib DrawLinePtsOnto
+  procedure DrawLine(dest: Bitmap; theColor: Color; const startPt, endPt: Point2D); overload;
   
   /// @lib DrawHorizontalLineOnto
   procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt); overload;
@@ -250,6 +252,8 @@ interface
   procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
   /// @lib DrawLineSegment
   procedure DrawLine(theColor: Color; const line: LineSegment); overload;
+  /// @lib DrawLinePts
+  procedure DrawLine(theColor: Color; const startPt, endPt: Point2D); overload;
   
   /// @lib DrawOrFillTriangle
   procedure DrawTriangle(theColor: Color; filled: Boolean; const tri: Triangle); overload;
@@ -359,6 +363,8 @@ interface
   procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
   /// @lib DrawLineSegmentOnScreen
   procedure DrawLineOnScreen(theColor: Color; const line: LineSegment); overload;
+  /// @lib DrawLinePtsOnScreen
+  procedure DrawLineOnScreen(theColor: Color; const startPt, endPt: Point2D); overload;
   
   /// @lib
   procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt);
@@ -975,11 +981,21 @@ implementation
     DrawLine(theColor, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y);
   end;
   
+  procedure DrawLine(theColor: Color; const startPt, endPt: Point2D); overload;
+  begin
+    DrawLine(theColor, startPt.x, startPt.y, endPt.x, endPt.y);
+  end;
+  
   procedure DrawLine(dest: Bitmap; theColor: Color; const line: LineSegment); overload;
   begin
     DrawLine(dest, theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
   end;
-
+  
+  procedure DrawLine(dest: Bitmap; theColor: Color; const startPt, endPt: Point2D); overload;
+  begin
+    DrawLine(dest, theColor, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
+  end;
+  
   procedure DrawTriangle(theColor: Color; filled: Boolean; const tri: Triangle); overload;
   begin
     if filled then FillTriangle(theColor, tri)
@@ -1608,7 +1624,12 @@ implementation
   begin
     DrawLineOnScreen(theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
   end;
-
+  
+  procedure DrawLineOnScreen(theColor: Color; const startPt, endPt: Point2D); overload;
+  begin
+    DrawLineOnScreen(theColor, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
+  end;
+  
   procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
   begin
     DrawCircleOnScreen(theColor, filled, Round(position.x), Round(position.y), radius);

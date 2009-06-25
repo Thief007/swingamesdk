@@ -157,7 +157,7 @@ interface
   ///
   /// @lib
   /// @class Sprite
-  /// @method IsOnScreenAt
+  /// @method OnScreenAt
   function SpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
 
   /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
@@ -165,7 +165,7 @@ interface
   ///
   /// @lib SpriteOnScreenAtPoint
   /// @class Sprite
-  /// @overload IsOnScreenAt IsOnScreenAtPoint
+  /// @overload OnScreenAt OnScreenAtPoint
   function SpriteOnScreenAt(s: Sprite; const pt: Point2D): Boolean; overload;
 
   //---------------------------------------------------------------------------
@@ -718,13 +718,17 @@ function SpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
 var
   bmp: Bitmap;
   offX1, offY1: LongInt;
+  wx, wy: Single;
 begin
   if s = nil then raise Exception.Create('The specified sprite is nil');
   
-  if y > s^.y + CurrentHeight(s) then result := false
-  else if y < s^.y then result := false
-  else if x > s^.x + CurrentWidth(s) then result := false
-  else if x < s^.x then result := false
+  wx := ToWorldX(x);
+  wy := ToWorldY(y);
+  
+  if wy > s^.y + CurrentHeight(s) then result := false
+  else if wy < s^.y then result := false
+  else if wx > s^.x + CurrentWidth(s) then result := false
+  else if wx < s^.x then result := false
   else if not s^.usePixelCollision then result := true
   else
   begin
@@ -740,7 +744,7 @@ begin
       offX1 := 0;
       offY1 := 0;
     end;
-    result := IsPixelDrawnAtPoint(bmp, Round(x - s^.x + offX1), Round(y - s^.y + offY1));
+    result := IsPixelDrawnAtPoint(bmp, Round(wx - s^.x + offX1), Round(wy - s^.y + offY1));
   end;
 end;
 

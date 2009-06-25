@@ -41,6 +41,12 @@ Suggestions:
   - added release resources by name
   - added loading of resource bundles
   
+  Physics:
+  - added PointInBitmap functions
+  - added CollideCircleRectangle procedure
+  
+  Geometry: (new)
+  
 ** Changes to Version 2 **
   Units renamed:
     SGSDK_Audio -> sgAudio

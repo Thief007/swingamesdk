@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-06-25: Andrew : Moved VectorInRect, VectorFrom... functions to Geometry
+// - 2009-06-24: Andrew : Added BitmapPointCollision 
 // - 2009-06-23: Clinton: Renamed VectorFrom to VectorFrom
 //                      : Renamed HaveSpritesCollided to SpritesCollided
 //                      : Move Vector/Angle/Matrix code to sgMath.pas unit
@@ -68,19 +70,26 @@ unit sgPhysics;
 //----------------------------------------------------------------------------
 interface
 //----------------------------------------------------------------------------
-
+  
   uses sgTypes;
+  
+  //---------------------------------------------------------------------------
+  // Sprite <-> Sprite Collision Detection
+  //---------------------------------------------------------------------------
   
   /// Returns ``true`` if the specifed `Sprites` (``s1`` and ``s2``) have 
   /// collided. Will use simple bounding box tests first, and low-level pixel
   /// tests if needed.
   /// @lib
   function SpritesCollided(s1, s2: Sprite): Boolean;
- 
+  
+  
+  
+  
   //---------------------------------------------------------------------------
   // Sprite <-> Rectangle Collision Detection
   //---------------------------------------------------------------------------
-
+  
   /// Determined if a sprite has collided with a given rectangle. The rectangles
   /// coordinates are expressed in "world" coordinates.
   ///
@@ -101,10 +110,13 @@ interface
   /// @overload RectCollision RectangleCollision
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
   
+  
+  
+  
   //---------------------------------------------------------------------------
   // Sprite <-> Bitmap Collision Detection
   //---------------------------------------------------------------------------
-
+  
   /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``. 
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// If ``bbox`` is true only simple bounding box testing is used, otherwise
@@ -156,10 +168,13 @@ interface
   /// @overload BitmapCollision BitmapPartCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle; bbox: Boolean): Boolean; overload;
   
+  
+  
+  
   //---------------------------------------------------------------------------
   // Bitmap <-> Rectangle Collision Tests
   //---------------------------------------------------------------------------
-    
+  
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangles world position (``rectX`` and ``rectY``) and size 
@@ -205,7 +220,7 @@ interface
   /// @class Bitmap
   /// @overload RectCollision RectangleCollision
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
-    
+  
   /// Returns True if a ``part`` (rectangle) of the bitmap ``bmp`` has collided 
   /// with the rectangle (``rect``) specified.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
@@ -218,18 +233,79 @@ interface
   /// @method PartRectCollision
   function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
   
+  
+  
+  
   //---------------------------------------------------------------------------
   // Bitmap <-> Point
   //---------------------------------------------------------------------------
   
+  /// Returns True if a point (``ptX``,``ptY``) is located within the bitmap
+  /// ``bmp`` when it is drawn at ``x``,``y``.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// pixel level testing is used.
+  ///
+  /// @lib BitmapPointBBoxCollision
+  /// @class Bitmap
+  /// @overload PointCollision PointBBoxCollision
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
   
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
-
-  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
-  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  /// Returns True if a point (``ptX``,``ptY``) is located within the bitmap
+  /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
+  ///
+  /// @lib BitmapPointBBoxCollision(bmp, x, y, False, ptX, ptY)
+  /// @uname BitmapPointCollision
+  /// @class Bitmap
+  /// @method PointCollision
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
+  
+  /// Returns True if a point (``pt``) is located within the bitmap
+  /// ``bmp`` when it is drawn at ``x``,``y``.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The point ``pt`` needs to be provided in world coordinates.
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// pixel level testing is used.
+  ///  
+  /// @lib PointPtInBitmapBBox
+  /// @class Bitmap
+  /// @overload PointCollision PointPtBBoxCollision
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
+  
+  /// Returns True if a point (``pt``) is located within the bitmap
+  /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The point ``pt`` needs to be provided in world coordinates.
+  ///
+  /// @lib PointPtInBitmapBBox(bmp, x, y, False, pt)
+  /// @uname PointPtInBitmap
+  /// @class Bitmap
+  /// @overload PointCollision PointPtCollision
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
+  
+  /// Returns True if a point (``ptX``,``ptY``) is located within the ``part`` (rectangle) of the bitmap
+  /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions. For bounding box collisions
+  /// use the rectangle collision functions.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
+  ///
+  /// @lib
+  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
+  
+  /// Returns True if a point (``pt``) is located within the ``part`` (rectangle) of the bitmap
+  /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions. For bounding box collisions
+  /// use the rectangle collision functions.
+  /// The ``x`` and ``y`` values specify the world location of the bitmap.
+  /// The point ``pt`` needs to be provided in world coordinates.
+  ///  
+  /// @lib  PointXYInBitmapPart
+  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  
+  
+  
   
   //---------------------------------------------------------------------------
   // Bitmap <-> Bitmap Collision Tests
@@ -294,6 +370,13 @@ interface
   /// @overload BitmapCollision BitmapPartsBBoxCollision
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
   
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Geometry Collision Tests
+  //---------------------------------------------------------------------------
+  
   /// Returns True if the `Sprite` ``s``, represented by a bounding circle, has 
   /// collided with a ``line``. The diameter for the bounding circle is 
   /// based on the sprites width or height value -- whatever is largest.
@@ -312,63 +395,35 @@ interface
   ///
   /// @lib RectLineCollision
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
-
-
-
-
+  
+  
+  
+  
   //---------------------------------------------------------------------------
-  
-  //TODO: are these really "point" in rect test?
-  
-  /// Return true if the vector (used as a point) is within the rectangle
-  /// @lib
-  function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
-
-  /// @lib VectorInRectangle
-  function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
+  // Side to check based on movement direction
+  //---------------------------------------------------------------------------
   
   /// @lib
   function GetSideForCollisionTest(const movement: Vector): CollisionSide;
-
-
-  //---------------------------------------------------------------------------
   
-  /// @lib VectorFromPointToRect
-  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
   
-  /// @lib VectorFromPointToRectangle
-  function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
   
-  /// @lib VectorFromPointPtToRectangle
-  function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
   
-  //---------------------------------------------------------------------------
-
-  /// Determines the vector needed to move from x, y out of rectangle assuming movement specified
-  /// @lib
-  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
-  
-  /// @lib
-  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
-  
-  /// @lib
-  function VectorOutOfCircleFromPoint(const pt, center: Point2D; radius: Single; const movement: Vector): Vector;
-  
-  /// @lib
-  function VectorOutOfCircleFromCircle(const pt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
-  
-  //---------------------------------------------------------------------------
-
-
-
   //---------------------------------------------------------------------------
   // Collision Effect Application ( angle + energy/mass transfer)
   //---------------------------------------------------------------------------
   
   /// @lib
   procedure CollideCircleLine(s: Sprite; const line: LineSegment);
+  
+  /// @lib
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
+  
   /// @lib
   procedure CollideCircles(s1, s2: Sprite);
+  
+  
+  
   
 //----------------------------------------------------------------------------
 implementation
@@ -814,20 +869,6 @@ implementation
     result := RectLineCollision(RectangleFrom(s), line);
   end;
   
-  function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
-  begin
-    if v.x < x then result := false
-    else if v.x > x + w then result := false
-    else if v.y < y then result := false
-    else if v.y > y + h then result := false
-    else result := true;
-  end;
-  
-  function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
-  begin
-    result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
-  end;
-    
   //You need to test for collisions on the ...
   function GetSideForCollisionTest (const movement: Vector): CollisionSide;
   const SMALL = 0.1; //The delta for the check
@@ -852,278 +893,41 @@ implementation
     end;
   end;
   
-  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
-  var
-    px, py: Single;
-  begin
-    if x < rectX then px := rectX
-    else if x > (rectX + rectWidth) then px := rectX + rectWidth
-    else px := x;
-      
-    if y < rectY then py := rectY
-    else if y > (rectY + rectHeight) then py := rectY + rectHeight
-    else py := y;
-      
-    result := VectorFrom(px - x, py - y);
-  end;
-
-  function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
-  begin
-    result := VectorFromPointToRect(x, y, rect.x, rect.y, rect.width, rect.height);
-  end;
+  //----------------------------------------------------------------------------
+  // Bitmap <--> Point collision detection
+  //----------------------------------------------------------------------------
   
-  function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
-  begin
-    result := VectorFromPointToRect(pt.x, pt.y, rect.x, rect.y, rect.width, rect.height);
-  end;
-  
-  function VectorOut(const pt: Point2D; const rect: Rectangle; const movement: Vector; rectCollisionSide: CollisionSide): Vector; 
-    function GetVectorDiagonal(edgeX, edgeY: Single): Vector;
-    var
-      toEdge: Vector;
-      angle: Single;
-      mvOut: Vector;
-      xMag, yMag, outMag: Single;
-    begin
-      mvOut := UnitVector(InvertVector(movement));
-      
-      //Do X
-      toEdge := VectorFrom(edgeX - pt.x, 0);
-      angle := CalculateAngle(mvOut, toEdge);      
-      xMag := VectorMagnitude(toEdge) * 1 / sgGeometry.Cos(angle);
-
-      //Do Y
-      toEdge := VectorFrom(0, edgeY - pt.y);
-      angle := CalculateAngle(mvOut, toEdge);      
-      yMag := VectorMagnitude(toEdge) * 1 / sgGeometry.Cos(angle);
-          
-      if (yMag < 0) or (xMag < yMag) then outMag := xMag
-      else outMag := yMag;
-      
-      if outMag < 0 then outMag := 0;
-      
-      result := VectorMultiply(mvOut, outMag + 1);
-    end;    
-  begin   
-    case rectCollisionSide of
-      TopLeft: begin
-          if (pt.x < rect.x) or (pt.y < rect.y) then result := VectorFrom(0,0)
-          else result := GetVectorDiagonal(rect.x, rect.y);
-        end;
-      TopRight: begin
-          if (pt.x > rect.x + rect.width) or (pt.y < rect.y) then result := VectorFrom(0,0)
-          else result := GetVectorDiagonal(rect.x + rect.width, rect.y);
-        end;
-      BottomLeft: begin
-          if (pt.x < rect.x) or (pt.y > rect.y + rect.height) then result := VectorFrom(0,0)
-          else result := GetVectorDiagonal(rect.x, rect.y + rect.height);
-        end;
-      BottomRight: begin
-          if (pt.x > rect.x + rect.width) or (pt.y > rect.y + rect.height) then result := VectorFrom(0,0)
-          else result := GetVectorDiagonal(rect.x + rect.width, rect.y + rect.height);
-        end;
-      Left: begin
-          if (pt.x < rect.x) or (pt.y < rect.y) or (pt.y > rect.y + rect.height) then result := VectorFrom(0, 0)
-          else result := VectorFrom(rect.x - pt.x - 1, 0);
-          exit;
-        end;
-      Right: begin
-          if (pt.x > rect.x + rect.width) or (pt.y < rect.y) or (pt.y > rect.y + rect.height) then result := VectorFrom(0, 0)
-          else result := VectorFrom(rect.x + rect.width - pt.x + 1, 0);
-          exit;
-        end;
-      Top: begin
-          if (pt.y < rect.y) or (pt.x < rect.x) or (pt.x > rect.x + rect.width) then result := VectorFrom(0, 0)
-          else result := VectorFrom(0, rect.y - pt.y - 1);
-          exit;
-        end;
-      Bottom: begin
-          if (pt.y > rect.y + rect.height) or (pt.x < rect.x) or (pt.x > rect.x + rect.width) then result := VectorFrom(0, 0)
-          else result := VectorFrom(0, rect.y + rect.height + 1 - pt.y);
-          exit;
-        end;
-      else //Not moving... i.e. None
-        begin
-          result := VectorFrom(0, 0);
-        end;
-    end;
-    
-    //WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2);
-    //, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);
-  end;
-
-  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
-  begin
-    result := VectorOut(pt, rect, movement, GetSideForCollisionTest(movement));
-    
-    if (result.x = 0) and (result.y = 0) then exit; 
-
-    if not LineIntersectsRect(LineFromVector(pt, movement), rect) then
-      result := VectorFrom(0, 0);
-  end;
-
-  function VectorOutOfCircleFromPoint(const pt, center: Point2D; radius: Single; const movement: Vector): Vector;
-  var
-    dx, dy, cx, cy: Single;
-    mag, a, b, c, det, t, mvOut: single;
-    ipt2: Point2D;
-  begin
-    // If the point is not in the radius of the circle, return a zero vector 
-    if PointPointDistance(pt, center) > radius then
-    begin
-      result := VectorFrom(0, 0);
-      exit;
-    end;
-    
-    // If the magnitude of movement is very small, return a zero vector
-    mag := VectorMagnitude(movement);
-    if mag < 0.1 then
-    begin
-      result := VectorFrom(0, 0);
-      exit;
-    end;
-    
-    // Calculate the determinate (and components) from the center circle and 
-    // the point+movement details
-    cx := center.x;       
-    cy := center.y;
-    dx := movement.x; 
-    dy := movement.y; 
-    
-    a := dx * dx + dy * dy;
-    b := 2 * (dx * (pt.x - cx) + dy * (pt.y - cy));
-    c := (pt.x - cx) * (pt.x - cx) + (pt.y - cy) * (pt.y - cy) - radius * radius;
-
-    det := b * b - 4 * a * c;
-    
-    // If the determinate is very small, return a zero vector
-    if det <= 0 then
-      result := VectorFrom(0, 0)
-    else
-    begin
-      // Calculate the vector required to "push" the vector out of the circle
-      t := (-b - Sqrt(det)) / (2 * a);
-      ipt2.x := pt.x + t * dx;
-      ipt2.y := pt.y + t * dy;
-  
-      mvOut := PointPointDistance(pt, ipt2) + 1;
-      result := VectorMultiply(UnitVector(InvertVector(movement)), mvOut);
-    end;
-  end;
-
-  function VectorOutOfCircleFromCircle(const pt: Point2D; radius: Single; center: Point2D; radius2: Single; const movement: Vector): Vector;
-  begin
-    result := VectorOutOfCircleFromPoint(pt, center, radius + radius2, movement);
-  end;
-
-  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
-  var
-    rectCollisionSide: CollisionSide;
-    p: Point2D; // p is the most distant point from the collision on srcRect
-    destRect: Rectangle;
-  begin
-    //Which side of the rectangle did we collide with.
-    rectCollisionSide := GetSideForCollisionTest(movement);
-    
-    //Get the top left out - default then adjust for other points out
-    p.x := srcRect.x; p.y := srcRect.y;
-    
-    case rectCollisionSide of
-      //Hit top or left of wall... bottom right in
-      TopLeft:    begin p.x := p.x + srcRect.width; p.y := p.y + srcRect.height;  end;
-      //Hit top or right of wall... bottom left in
-      TopRight:   p.y := p.y + srcRect.height;
-      //Hit bottom or left of wall... top right in
-      BottomLeft:   p.x := p.x + srcRect.width;
-      //Hit bottom or right of wall... top left is in
-      BottomRight:  ;
-      //Hit left of wall... right in
-      Left:
-        begin
-          p.x := p.x + srcRect.width;
-          if srcRect.y < targetRect.y then  p.y := p.y + srcRect.height;
-        end;
-      Right:
-        begin
-          if srcRect.y < targetRect.y then  p.y := p.y + srcRect.height;
-        end;
-      //Hit top of wall... bottom in
-      Top:
-        begin
-          p.y := p.y + srcRect.height;
-          if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
-        end;
-      Bottom: //hit bottom of wall get the top out
-        begin
-          if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
-        end;
-      
-      None: begin 
-          result := VectorFrom(0, 0);
-          exit; 
-        end;
-    end; //end case
-    
-    //WriteLn('p = ', p.x, ',', p.y);
-    
-    result := VectorOut(p, targetRect, movement, rectCollisionSide);
-    
-    if (result.x = 0) and (result.y = 0) then exit; 
-
-    destRect := RectangleAfterMove(srcRect, result);
-    
-    //Check diagonal miss...
-    case rectCollisionSide of
-      //Hit top left, check bottom and right;
-      TopLeft: if (RectangleTop(destRect) > RectangleBottom(targetRect))  or 
-              (RectangleLeft(destRect) > RectangleRight(targetRect))  then result := VectorFrom(0,0);
-      //Hit top right, check bottom and left
-      TopRight: if  (RectangleTop(destRect) > RectangleBottom(targetRect))  or 
-                (RectangleRight(destRect) < RectangleLeft(targetRect))  then result := VectorFrom(0,0);
-      //Hit bottom left, check top and right
-      BottomLeft: if (RectangleBottom(destRect) < RectangleTop(targetRect))   or 
-                (RectangleLeft(destRect) > RectangleRight(targetRect))  then result := VectorFrom(0,0);
-      //Hit bottom right, check top and left
-      BottomRight: if   (RectangleBottom(destRect) < RectangleTop(targetRect))  or 
-                  (RectangleRight(destRect) < RectangleLeft(targetRect))  then result := VectorFrom(0,0);
-    end   
-  end;
-  
-  //
-  //
-  //
-  
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
   begin
     if bbox then
       result := PointInRect(ptX, ptY, RectangleFrom(x, y, bmp))
     else
-      result := PointInBitmap(bmp, x, y, ptX, ptY);
+      result := BitmapPointCollision(bmp, x, y, ptX, ptY);
   end;
   
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
   begin
     result := IsPixelDrawnAtPoint(bmp, Round(ptX - x), Round(ptY - y));
   end;
   
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
   begin
-    result := PointInBitmap(bmp, x, y, bbox, pt.x, pt.y);
+    result := BitmapPointCollision(bmp, x, y, bbox, pt.x, pt.y);
   end;
   
-  function PointInBitmap(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
+  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
   begin
-    result := PointInBitmap(bmp, x, y, False, pt.x, pt.y);
+    result := BitmapPointCollision(bmp, x, y, False, pt.x, pt.y);
   end;
   
-  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
+  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
   begin
-    result := PointInBitmap(bmp, x, y, False, ptX + part.x, ptY + part.y);
+    result := BitmapPointCollision(bmp, x, y, False, ptX + part.x, ptY + part.y);
   end;
   
-  function PointInBitmapPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
   begin
-    result := PointInBitmap(bmp, x, y, False, pt.x + part.x, pt.y + part.y);
+    result := BitmapPointCollision(bmp, x, y, False, pt.x + part.x, pt.y + part.y);
   end;
   
   
@@ -1202,6 +1006,30 @@ implementation
     // Local r2% = c2.v - optimisedP * mass1 * n
     s2^.movement.x := s2^.movement.x + (optP * s1^.mass * n.x);
     s2^.movement.y := s2^.movement.y + (optP * s1^.mass * n.y);
+  end;
+  
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
+  var
+    hitLine: LineSegment;
+    lines: LinesArray;
+    v: Vector;
+    shortest, radius: Single;
+    temp, circleCenter: Point2D;
+    circleRect: Rectangle;
+  begin
+    //Get the 4 lines that make up the rectangle
+    lines := LinesFromRect(rect);
+    
+    if CurrentWidth(s) > CurrentHeight(s) then radius := CurrentWidth(s) / 2
+    else radius := CurrentHeight(s) / 2;
+    
+    v := VectorOutOfRectFromCircle(CenterPoint(s), radius, rect, s^.Movement);
+    
+    // back out of rectangle
+    MoveSprite(s, v);
+    
+    // bounce...
+    
   end;
   
   //----------------------------------------------------------------------------

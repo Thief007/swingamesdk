@@ -31,6 +31,14 @@ interface
 
   uses sgTypes;
   
+  /// todo: Test...
+  /// @lib
+  function GetTangentPoints(const fromPt, centre: Point2D; radius: Single; out p1, p2: Point2D): Boolean;
+  
+  //todo: Test...
+  /// @lib
+  function GetRayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const circle_origin: Point2D; radius: Single): Single;
+  
   //  Returns distance from the line, or if the intersecting point on the line nearest
   //    the point tested is outside the endpoints of the line, the distance to the
   //    nearest endpoint.
@@ -46,12 +54,22 @@ interface
   function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
   /// @lib ClosestPointOnLine
   function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
-
+  
+  /// @lib
+  function DeepestPointOnCircleVsRectWithMovement(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
+  /// @lib
+  function ClosestPointOnRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle): Point2D;
+  /// @lib
+  function ClosestPointOnLinesFromCircle(const center: Point2D; radius: Single; const lines: LinesArray): Point2D;
+  
   /// @lib PointOnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
 
   /// @lib PointAt
   function PointAt(x, y: Single): Point2D;
+  
+  /// @lib PointAtStartWithOffset
+  function PointAt(const startPoint: Point2D; offset: Vector): Point2D;
 
   /// @lib LinesFromRect
   function LinesFromRect(const rect: Rectangle): LinesArray;
@@ -226,6 +244,13 @@ interface
   /// @lib
   function VectorMagnitude(const v: Vector): Single;
   
+  /// Returns the squared magnitude (or "length") of the parameter vector (v) as a 
+  /// scalar value.
+  ///
+  /// @lib
+  function VectorMagnitudeSq(const v: Vector): Single;
+  
+  
   /// Returns a new `Vector` created using the angle and magnitude (length). 
   /// The angle and magnitude are scalar values and the angle is in degrees.
   ///
@@ -250,6 +275,40 @@ interface
   /// @lib
   function LineAsVector(const line: lineSegment): Vector;
   
+  //TODO: are these really "point" in rect test?
+  /// Return true if the vector (used as a point) is within the rectangle
+  /// @lib
+  function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
+
+  /// @lib VectorInRectangle
+  function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
+  
+  /// @lib VectorFromPointToRect
+  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
+  
+  /// @lib VectorFromPointToRectangle
+  function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
+  
+  /// @lib VectorFromPointPtToRectangle
+  function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
+  
+  /// Determines the vector needed to move from x, y out of rectangle assuming movement specified
+  /// @lib
+  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
+  
+  /// @lib
+  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
+  
+  /// @lib
+  function VectorOutOfCircleFromPoint(const pt, center: Point2D; radius: Single; const movement: Vector): Vector;
+  
+  /// @lib
+  function VectorOutOfCircleFromCircle(const pt: Point2D; radius: Single; const center: Point2D; radius2: Single; const movement: Vector): Vector;
+  
+  /// @lib
+  function VectorOutOfRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Vector;
+  
+  
   //---------------------------------------------------------------------------
   // Angle Calculation
   //---------------------------------------------------------------------------
@@ -257,8 +316,8 @@ interface
   /// @lib
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
 
-  /// @lib CalculateAngleFromPoints
-  function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
+  // / @lib CalculateAngleFromPoints
+  //function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
 
   /// @lib CalculateAngleFromSprites
   /// @class Sprite
@@ -323,14 +382,14 @@ interface
   /// @overload Multiply MultiplyVector
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
 
-  /// Multiplies the Point2D parameter `pt` with the Matrix2D `m` and returns 
-  /// the result as a `Point2D`. Use this to transform the point with the 
-  /// matrix (to apply scaling, rotation or translation effects).
-  ///
-  /// @lib MatrixMultiplyPoint
-  /// @class Matrix2D
-  /// @overload Multiply MultiplyPoint
-  function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
+  // / Multiplies the Point2D parameter `pt` with the Matrix2D `m` and returns 
+  // / the result as a `Point2D`. Use this to transform the point with the 
+  // / matrix (to apply scaling, rotation or translation effects).
+  // /
+  // / @lib MatrixMultiplyPoint
+  // / @class Matrix2D
+  // / @overload Multiply MultiplyPoint
+  //function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
   
   /// @lib
   procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
@@ -364,7 +423,7 @@ implementation
 
   uses 
     Classes, SysUtils, Math,  // system
-    sgCamera, sgGraphics, sgSprites;     // SwinGame
+    sgCore, sgCamera, sgGraphics, sgSprites, sgPhysics;     // SwinGame
   
   const 
     DEG_TO_RAD = 0.0174532925;
@@ -472,6 +531,14 @@ implementation
   begin
     result := Sqrt((v.x * v.x) + (v.y * v.y));
   end;
+  
+  function VectorMagnitudeSq(const v: Vector): Single;
+  var
+    m: Single;
+  begin
+    m := VectorMagnitude(v);
+    result := m * m;
+  end;
 
   function DotProduct(const v1, v2: Vector): Single;
   begin
@@ -536,10 +603,10 @@ implementation
     end;
   end;
 
-  function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
-  begin
-    result := CalculateAngle(pt1.x, pt1.y, pt2.x, pt2.y);
-  end;
+  // function CalculateAngle(const pt1, pt2: Point2D): Single; overload;
+  // begin
+  //   result := CalculateAngle(pt1.x, pt1.y, pt2.x, pt2.y);
+  // end;
 
   function CalculateAngle(s1, s2: Sprite): Single; overload;
   var
@@ -697,11 +764,11 @@ implementation
     result.y := v.x * m[1,0]  +  v.y * m[1,1] + m[1,2]; 
   end;
 
-  function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
-  begin
-    result.x := pt.x * m[0,0] + pt.y * m[0,1] + m[0,2];
-    result.y := pt.x * m[1,0] + pt.y * m[1,1] + m[1,2];
-  end;
+  // function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
+  // begin
+  //   result.x := pt.x * m[0,0] + pt.y * m[0,1] + m[0,2];
+  //   result.y := pt.x * m[1,0] + pt.y * m[1,1] + m[1,2];
+  // end;
 
 
   procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
@@ -813,7 +880,186 @@ implementation
       result.y := line.startPoint.y + u * (line.endPoint.y - line.startPoint.y);
     end; //  else NOT (u < EPS) or (u > 1)
   end;
+  
+  function DeepestPointOnCircleVsRectWithMovement(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
+  var
+    lines, chk: LinesArray;
+    i, min: Integer;
+    dst, minDist, ang, dist, dotPod, npx, npy: Single;
+    rectCollisionSide: CollisionSide;
+    projection: LineSegment; 
+    centerToRayIntersect, v, throughCircle: Vector;
+    minPt, edgePt, hitPt: Point2D;
+    
+    procedure AddLinesToChk(line: LineSegment); overload;
+    begin
+      SetLength(chk, 1);
+      chk[0] := line;
+    end;
+    procedure AddLinesToChk(line1, line2: LineSegment); overload;
+    begin
+      SetLength(chk, 2);
+      chk[0] := line1;
+      chk[1] := line2;
+    end;
+    procedure CheckVectorAngle(min1, max1, min2, max2: Single); overload;
+    begin
+      if not (((ang >= min1) and (ang <= max1)) or ((ang >= min2) and (ang <= max2))) then
+      begin
+        //WriteLn('Inverted ang:', ang:4:2);
+        v := InvertVector(v); 
+      end;
+    end;
+    procedure CheckVectorAngle(min1, max1: Single); overload;
+    begin
+      if not ((ang >= min1) and (ang <= max1)) then
+      begin
+        //WriteLn('Inverted ang!!:', ang:4:2);
+          v := InvertVector(v); 
+      end;
+    end;
+    
+    // Checks for corner collisions and changes edgePt...
+    procedure CheckDiagonalEdgeCollision(angle: Single; colSide: CollisionSide);
+    var
+      unitMvmt: Vector;
+      closeIdx, farIdx: Integer;
+      closePt, farPt: Point2D;
+      
+      procedure SwapIdx();
+      begin
+        WriteLn('Swap Idx');
+        closeIdx := 1;
+        farIdx := 0;
+      end;
+    begin
+      unitMvmt := UnitVector(movement);
+      projection := LineFromVector(edgePt, movement); //project a line in movement dir, from edgePt
+      
+      closeIdx := 0; farIdx := 1;
+      
+      WriteLn(angle);
+      
+      //change if other way...
+      case colSide of
+        TopLeft: if angle = 0 then SwapIdx();
+        TopRight: if (angle = 180) or (angle = -180) then SwapIdx();
+      end;
+      
+      GetLineIntersectionPoint(projection, chk[closeIdx], closePt); //get points from both lines vs projection
+      GetLineIntersectionPoint(projection, chk[farIdx], farPt);
 
+      if PointPointDistance(edgePt, closePt) > PointPointDistance(edgePt, farPt) then
+      begin
+        //Corner case... hit a corner
+        case colSide of
+          TopLeft:  hitPt := chk[0].startPoint;
+          TopRight: hitPt := chk[0].endPoint;
+        end;
+        dist := GetRayCircleIntersectDistance(hitPt, UnitVector(movement), center, radius);
+        //project to find circle point
+
+        //check... get ray intersect point
+        v := VectorMultiply(UnitVector(movement), dist); //distance from hitpt to ray intersect
+        v.x += hitPt.x;
+        v.y += hitPt.y;
+        DrawCircle(ColorRed, v, 2);
+
+        centerToRayIntersect := VectorFromPoints(center, v);
+        DrawLine(ColorRed, center.x, center.y, center.x + centerToRayIntersect.x, center.y + centerToRayIntersect.y);
+
+        //double the projection onto the movement vector
+        dotPod := -2 * DotProduct(UnitVector(movement), centerToRayIntersect);
+
+        throughCircle := VectorMultiply(UnitVector(movement), dotPod);
+        v.x += throughCircle.x;
+        v.y += throughCircle.y;
+        DrawCircle(ColorGreen, v, 2);
+        edgePt := v;
+      end;
+    end;
+  begin
+    lines := LinesFromRect(rect);
+    rectCollisionSide := GetSideForCollisionTest(movement);
+    
+    // 1: Find closest point on rectangle sides based on movement
+    case rectCollisionSide of
+      TopLeft:  AddLinesToChk( lines[0], lines[1] );
+      Top: AddLinesToChk( lines[0] );
+      TopRight: AddLinesToChk( lines[0], lines[2] );
+      Left: AddLinesToChk( lines[1] );
+      Right: AddLinesToChk( lines[2] );
+      BottomLeft: AddLinesToChk( lines[3], lines[1] );
+      Bottom: AddLinesToChk( lines[3] );
+      BottomRight: AddLinesToChk( lines[3], lines[2] );
+      else exit;
+    end;
+    
+    minPt := ClosestPointOnLinesFromCircle(center, radius, chk);
+    
+    // 2: Get vector from center of circle to closest point
+    v := VectorFromPoints(center, minPt);
+    
+    // 3: invert and extend by radius to find most distant point
+    v := VectorMultiply(UnitVector(InvertVector(v)), radius);
+    
+    // 4: Check this is at the correct angle for collision side in case of non-enclosed circle:
+    ang := CalculateAngle(0, 0, v.x, v.y);
+    //WriteLn('Angle to minPt: ', ang:4:2);
+    
+    case rectCollisionSide of
+      TopLeft:  CheckVectorAngle(0, 90);
+      Top: CheckVectorAngle(90, 90);
+      TopRight: CheckVectorAngle(90, 180);
+      Left: CheckVectorAngle(0, 0);
+      Right: CheckVectorAngle(-180, -180, 180, 180);
+      BottomLeft: CheckVectorAngle(-90, 0);
+      Bottom: CheckVectorAngle(-90, -90);
+      BottomRight: CheckVectorAngle(-180, -90);
+    end;
+    
+    // 5: Check edge conditions
+    
+    edgePt := PointAt(center, v);
+    
+    case rectCollisionSide of
+      TopLeft, TopRight, BottomLeft, BottomRight:
+        CheckDiagonalEdgeCollision(CalculateAngle(0, 0, v.x, v.y), rectCollisionSide);
+    end;
+    
+    // 6: Result is found edge pt
+    result := edgePt;
+  end;
+  
+  function ClosestPointOnRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle): Point2D;
+  begin
+    result := ClosestPointOnLinesFromCircle(center, radius, LinesFromRect(rect));
+  end;
+  
+  function ClosestPointOnLinesFromCircle(const center: Point2D; radius: Single; const lines: LinesArray): Point2D;
+  var
+    i, min: Integer;
+    pts: Array of Point2D;
+    dst, minDist: Single;
+  begin
+    SetLength(pts, Length(lines));
+    minDist := -1;
+    min := 0;
+    
+    for i := Low(lines) to High(lines) do
+    begin
+      pts[i] := ClosestPointOnLine(center, lines[i]);
+      dst := PointPointDistance(pts[i], center);
+      if (minDist > dst) or (minDist < 0) then
+      begin
+        minDist := dst;
+        min := i;
+      end;
+    end;
+    
+    result := pts[min];
+  end;
+  
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
   begin
     result.x := Min(line.startPoint.x, line.endPoint.x);
@@ -906,6 +1152,12 @@ implementation
   begin
     result.x := x;
     result.y := y;
+  end;
+  
+  function PointAt(const startPoint: Point2D; offset: Vector): Point2D;
+  begin
+    result.x := startPoint.x + offset.x;
+    result.y := startPoint.y + offset.y;
   end;
 
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
@@ -1084,7 +1336,56 @@ implementation
     result := RectangleFrom(l, t, Round(r - l), Round(b - t));
   end;
   
-
+  function GetRayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const circle_origin: Point2D; radius: Single): Single;
+  var
+    to_circle: Vector;
+    length, v, d: Single;
+  begin
+      to_circle := VectorFromPoints(ray_origin, circle_origin);
+      length := VectorMagnitude(to_circle);
+      
+      v := DotProduct(to_circle, ray_heading);
+      d := radius*radius - (length*length - v*v);
+      // if there was no intersection, return -1
+      if d < 0.0 then
+          result := -1.0
+      // return the distance to the (first) intersection point
+      else
+          result := (v - sqrt(d));
+  end;
+     
+  {
+  ''' Given a point P and a circle of radius R centered at C, determine the 
+      two points T1, T2 on the circle that intersect with the tangents from P
+      to the circle. Returns False if P is within the circle '''
+  }
+  function GetTangentPoints(const fromPt, centre: Point2D; radius: Single; out p1, p2: Point2D): Boolean;
+  var
+    pmC: Vector;
+    sqr_len, r_sqr, inv_sqr_len, root: Single;
+  begin
+    pmC := VectorFromPoints(centre, fromPt);
+    
+    sqr_len := VectorMagnitudeSq(PmC);
+    r_sqr := radius*radius;
+    
+    // Quick check for P inside the circle, return False if so
+    if sqr_len <= r_sqr then
+    begin
+        result := False; // tangent objects are not returned.
+    end;
+    
+    // time to work out the real tangent points then
+    inv_sqr_len := 1.0 / sqr_len;
+    root := sqrt(abs(sqr_len - r_sqr));
+    
+    p1.x := centre.x + radius*(radius*pmC.x - pmC.y*root)*inv_sqr_len;
+    p1.y := centre.y + radius*(radius*pmC.y + pmC.x*root)*inv_sqr_len;
+    p2.x := centre.x + radius*(radius*pmC.x + pmC.y*root)*inv_sqr_len;
+    p2.y := centre.y + radius*(radius*pmC.y - pmC.x*root)*inv_sqr_len;
+    
+    result := True;
+  end;
 
   function GetLineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
   var
@@ -1170,4 +1471,272 @@ implementation
     result := PointInRect(x, y, rect.x, rect.y, rect.width, rect.height);
   end;
 
+  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
+  var
+    px, py: Single;
+  begin
+    if x < rectX then px := rectX
+    else if x > (rectX + rectWidth) then px := rectX + rectWidth
+    else px := x;
+      
+    if y < rectY then py := rectY
+    else if y > (rectY + rectHeight) then py := rectY + rectHeight
+    else py := y;
+      
+    result := VectorFrom(px - x, py - y);
+  end;
+
+  function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
+  begin
+    result := VectorFromPointToRect(x, y, rect.x, rect.y, rect.width, rect.height);
+  end;
+  
+  function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
+  begin
+    result := VectorFromPointToRect(pt.x, pt.y, rect.x, rect.y, rect.width, rect.height);
+  end;
+  
+  function VectorOut(const pt: Point2D; const rect: Rectangle; const movement: Vector; rectCollisionSide: CollisionSide): Vector; 
+    function GetVectorDiagonal(edgeX, edgeY: Single): Vector;
+    var
+      toEdge: Vector;
+      angle: Single;
+      mvOut: Vector;
+      xMag, yMag, outMag: Single;
+    begin
+      mvOut := UnitVector(InvertVector(movement));
+      
+      // WriteLn('Movement: ', movement.x:4:2, ':', movement.y:4:2);
+      // WriteLn('mvOut: ', mvOut.x:4:2, ':', mvOut.y:4:2);
+      // WriteLn('edge: ', edgeX:4:2, ':', edgeY:4:2);
+      // WriteLn('pt: ', pt.X:4:2, ':', pt.Y:4:2);
+      //Do X
+      toEdge := VectorFrom(edgeX - pt.x, 0);
+      angle := CalculateAngle(mvOut, toEdge);      
+      xMag := VectorMagnitude(toEdge) * 1 / sgGeometry.Cos(angle);
+      // WriteLn('xMag: ', xMag:4:2);
+      
+      //Do Y
+      toEdge := VectorFrom(0, edgeY - pt.y);
+      angle := CalculateAngle(mvOut, toEdge);      
+      yMag := VectorMagnitude(toEdge) * 1 / sgGeometry.Cos(angle);
+      // WriteLn('yMag: ', yMag:4:2);
+          
+      if (yMag < 0) or (xMag < yMag) then outMag := xMag
+      else outMag := yMag;
+      
+      if outMag < 0 then outMag := 0;
+      
+      // WriteLn('outMag: ', outMag);
+      
+      result := VectorMultiply(mvOut, outMag + 1);
+    end;    
+  begin   
+    case rectCollisionSide of
+      TopLeft: begin
+          if (pt.x < rect.x) or (pt.y < rect.y) then result := VectorFrom(0,0)
+          else result := GetVectorDiagonal(rect.x, rect.y);
+        end;
+      TopRight: begin
+          if (pt.x > rect.x + rect.width) or (pt.y < rect.y) then result := VectorFrom(0,0)
+          else result := GetVectorDiagonal(rect.x + rect.width, rect.y);
+        end;
+      BottomLeft: begin
+          if (pt.x < rect.x) or (pt.y > rect.y + rect.height) then result := VectorFrom(0,0)
+          else result := GetVectorDiagonal(rect.x, rect.y + rect.height);
+        end;
+      BottomRight: begin
+          if (pt.x > rect.x + rect.width) or (pt.y > rect.y + rect.height) then result := VectorFrom(0,0)
+          else result := GetVectorDiagonal(rect.x + rect.width, rect.y + rect.height);
+        end;
+      Left: begin
+          if (pt.x < rect.x) or (pt.y < rect.y) or (pt.y > rect.y + rect.height) then result := VectorFrom(0, 0)
+          else result := VectorFrom(rect.x - pt.x - 1, 0);
+          exit;
+        end;
+      Right: begin
+          if (pt.x > rect.x + rect.width) or (pt.y < rect.y) or (pt.y > rect.y + rect.height) then result := VectorFrom(0, 0)
+          else result := VectorFrom(rect.x + rect.width - pt.x + 1, 0);
+          exit;
+        end;
+      Top: begin
+          if (pt.y < rect.y) or (pt.x < rect.x) or (pt.x > rect.x + rect.width) then result := VectorFrom(0, 0)
+          else result := VectorFrom(0, rect.y - pt.y - 1);
+          exit;
+        end;
+      Bottom: begin
+          if (pt.y > rect.y + rect.height) or (pt.x < rect.x) or (pt.x > rect.x + rect.width) then result := VectorFrom(0, 0)
+          else result := VectorFrom(0, rect.y + rect.height + 1 - pt.y);
+          exit;
+        end;
+      else //Not moving... i.e. None
+        begin
+          result := VectorFrom(0, 0);
+        end;
+    end;
+    
+    // WriteLn('VectorOut: ', result.x:4:2, ',', result.y:4:2);
+    //, '  angle: ', angle:4:2, ' mag: ', outMag:4:2, ' xmag: ', xMag:4:2, ' ymag: ', yMag:4:2);
+  end;
+
+  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
+  begin
+    result := VectorOut(pt, rect, movement, GetSideForCollisionTest(movement));
+    // WriteLn(result.x:4:2, ':', result.y:4:2);
+    
+    if (result.x = 0) and (result.y = 0) then exit; 
+    
+    if not LineIntersectsRect(LineFromVector(pt, movement), rect) then
+      result := VectorFrom(0, 0);
+  end;
+
+  function VectorOutOfCircleFromPoint(const pt, center: Point2D; radius: Single; const movement: Vector): Vector;
+  var
+    dx, dy, cx, cy: Single;
+    mag, a, b, c, det, t, mvOut: single;
+    ipt2: Point2D;
+  begin
+    // If the point is not in the radius of the circle, return a zero vector 
+    if PointPointDistance(pt, center) > radius then
+    begin
+      result := VectorFrom(0, 0);
+      exit;
+    end;
+    
+    // If the magnitude of movement is very small, return a zero vector
+    mag := VectorMagnitude(movement);
+    if mag < 0.1 then
+    begin
+      result := VectorFrom(0, 0);
+      exit;
+    end;
+    
+    // Calculate the determinant (and components) from the center circle and 
+    // the point+movement details
+    cx := center.x;       
+    cy := center.y;
+    dx := movement.x; 
+    dy := movement.y; 
+    
+    a := dx * dx + dy * dy;
+    b := 2 * (dx * (pt.x - cx) + dy * (pt.y - cy));
+    c := (pt.x - cx) * (pt.x - cx) + (pt.y - cy) * (pt.y - cy) - radius * radius;
+    
+    det := b * b - 4 * a * c;
+    
+    // If the determinate is very small, return a zero vector
+    if det <= 0 then
+      result := VectorFrom(0, 0)
+    else
+    begin
+      // Calculate the vector required to "push" the vector out of the circle
+      t := (-b - Sqrt(det)) / (2 * a);
+      ipt2.x := pt.x + t * dx;
+      ipt2.y := pt.y + t * dy;
+  
+      mvOut := PointPointDistance(pt, ipt2) + 1;
+      result := VectorMultiply(UnitVector(InvertVector(movement)), mvOut);
+    end;
+  end;
+
+  function VectorOutOfCircleFromCircle(const pt: Point2D; radius: Single; const center: Point2D; radius2: Single; const movement: Vector): Vector;
+  begin
+    result := VectorOutOfCircleFromPoint(pt, center, radius + radius2, movement);
+  end;
+  
+  function VectorOutOfRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Vector;
+  var
+    distPt: Point2D;
+  begin
+    distPt := DeepestPointOnCircleVsRectWithMovement(center, radius, rect, movement);
+    result := VectorOutOfRectFromPoint(distPt, rect, movement);
+  end;
+  
+  function VectorOutOfRectFromRect(const srcRect, targetRect: Rectangle; const movement: Vector): Vector;  
+  var
+    rectCollisionSide: CollisionSide;
+    p: Point2D; // p is the most distant point from the collision on srcRect
+    destRect: Rectangle;
+  begin
+    //Which side of the rectangle did we collide with.
+    rectCollisionSide := GetSideForCollisionTest(movement);
+    
+    //Get the top left out - default then adjust for other points out
+    p.x := srcRect.x; p.y := srcRect.y;
+    
+    case rectCollisionSide of
+      //Hit top or left of wall... bottom right in
+      TopLeft:    begin p.x := p.x + srcRect.width; p.y := p.y + srcRect.height;  end;
+      //Hit top or right of wall... bottom left in
+      TopRight:   p.y := p.y + srcRect.height;
+      //Hit bottom or left of wall... top right in
+      BottomLeft:   p.x := p.x + srcRect.width;
+      //Hit bottom or right of wall... top left is in
+      BottomRight:  ;
+      //Hit left of wall... right in
+      Left:
+        begin
+          p.x := p.x + srcRect.width;
+          if srcRect.y < targetRect.y then  p.y := p.y + srcRect.height;
+        end;
+      Right:
+        begin
+          if srcRect.y < targetRect.y then  p.y := p.y + srcRect.height;
+        end;
+      //Hit top of wall... bottom in
+      Top:
+        begin
+          p.y := p.y + srcRect.height;
+          if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
+        end;
+      Bottom: //hit bottom of wall get the top out
+        begin
+          if srcRect.x < targetRect.x then p.x := p.x + srcRect.width;
+        end;
+      
+      None: begin 
+          result := VectorFrom(0, 0);
+          exit; 
+        end;
+    end; //end case
+    
+    //WriteLn('p = ', p.x, ',', p.y);
+    
+    result := VectorOut(p, targetRect, movement, rectCollisionSide);
+    
+    if (result.x = 0) and (result.y = 0) then exit; 
+
+    destRect := RectangleAfterMove(srcRect, result);
+    
+    //Check diagonal miss...
+    case rectCollisionSide of
+      //Hit top left, check bottom and right;
+      TopLeft: if (RectangleTop(destRect) > RectangleBottom(targetRect))  or 
+              (RectangleLeft(destRect) > RectangleRight(targetRect))  then result := VectorFrom(0,0);
+      //Hit top right, check bottom and left
+      TopRight: if  (RectangleTop(destRect) > RectangleBottom(targetRect))  or 
+                (RectangleRight(destRect) < RectangleLeft(targetRect))  then result := VectorFrom(0,0);
+      //Hit bottom left, check top and right
+      BottomLeft: if (RectangleBottom(destRect) < RectangleTop(targetRect))   or 
+                (RectangleLeft(destRect) > RectangleRight(targetRect))  then result := VectorFrom(0,0);
+      //Hit bottom right, check top and left
+      BottomRight: if   (RectangleBottom(destRect) < RectangleTop(targetRect))  or 
+                  (RectangleRight(destRect) < RectangleLeft(targetRect))  then result := VectorFrom(0,0);
+    end   
+  end;
+  
+  function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
+  begin
+    if v.x < x then result := false
+    else if v.x > x + w then result := false
+    else if v.y < y then result := false
+    else if v.y > y + h then result := false
+    else result := true;
+  end;
+  
+  function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
+  begin
+    result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
+  end;
+  
 end.
