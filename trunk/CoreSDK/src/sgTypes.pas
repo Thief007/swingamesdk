@@ -22,6 +22,11 @@ interface
     ///@field pointer: ^Point2D
     Point2DPtr = ^Point2D;
     
+    ///@class ThreePoint2D
+    ///@array_wrapper
+    ///@field data: array of Point2D
+    ArrayOfPoint2D = Array of Point2D;
+    
     /// @struct Rectangle
     Rectangle = record
         x, y: Single;
