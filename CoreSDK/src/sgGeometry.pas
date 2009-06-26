@@ -11,7 +11,15 @@
 //
 // Change History:
 //
-// Version 3.0: 
+// Version 3.0:
+// - 2009-06-26: Andrew : Completed ClosestPointOnRectFromCircle
+// 						  Completed
+//                        Fixed overloads of PointAt
+//                        Added RectangleCenter
+//                        GetRayCircleIntersectDistance heading can now be non-unit vector
+//                        Add DistantPointOnCircle
+//                        Added DistantPointOnCircleWithVector
+//                        Added VectorOutOfRectFromCircle
 // - 2009-06-24: Andrew : Renamed to sgGeometry and combined with Shapes
 //                        Moved CenterPoint to sgSprite.
 //                              VectorFromCenterSpriteToPoint
@@ -58,24 +66,40 @@ interface
   /// @lib ClosestPointOnLine
   function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
   
+  /// Returns the closest point on a rectangle from a given circle.
   /// @lib
-  function CollisionPointCircleVsRect(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
-  /// @lib
+  
   function ClosestPointOnRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle): Point2D;
   /// @lib
   function ClosestPointOnLinesFromCircle(const center: Point2D; radius: Single; const lines: LinesArray): Point2D;  
   /// @lib
   function ClosestPointOnCircle(const fromPt, center: Point2D; radius: Single): Point2D;
   
+  /// Returns the point at the opposite side of a circle from a given point `pt`.
+  ///
+  /// @lib
+  function DistantPointOnCircle(const pt, center: Point2D; radius: Single): Point2D;
+  
+  /// Finds the opposite side of a circle from a given point `pt` when travelling along the
+  /// vector `heading`. Returns False if the ray projected from point `pt` misses the circle.
+  ///
+  /// @lib
+  function DistantPointOnCircleWithVector(const pt, center: Point2D; radius: Single; heading: Vector; out oppositePt: Point2D): Boolean;
+  
+  /// Returns True if point `pt` is on the line segment `line`.
+  ///
   /// @lib PointOnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
 
   /// @lib PointAt
-  function PointAt(x, y: Single): Point2D;
+  function PointAt(x, y: Single): Point2D; overload;
   
   /// @lib PointAtStartWithOffset
-  function PointAt(const startPoint: Point2D; offset: Vector): Point2D;
-
+  function PointAt(const startPoint: Point2D; offset: Vector): Point2D; overload;
+  
+  /// @lib
+  function RectangleCenter(const rect: Rectangle): Point2D;
+  
   /// @lib LinesFromRect
   function LinesFromRect(const rect: Rectangle): LinesArray;
 
@@ -108,7 +132,7 @@ interface
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
   /// @lib RectangleFromCircle
   function RectangleFrom(const center: Point2D; radius: Single): Rectangle; overload;
-
+  
   /// @lib
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
 
@@ -894,41 +918,6 @@ implementation
     end; //  else NOT (u < EPS) or (u > 1)
   end;
   
-  function CollisionPointCircleVsRect(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Point2D;
-  var
-    line: LineSegment;
-    i, min: Integer;
-    dst, minDist, ang, dist, dotPod, npx, npy: Single;
-    side: CollisionSide;
-    projection: LineSegment; 
-    centerToRayIntersect, v, throughCircle: Vector;
-    minPt, edgePt, hitPt: Point2D;
-  begin
-    if not LineCircleHit(center, radius, movement, rect, line) then exit;
-    
-    side := GetSideForCollisionTest(movement);
-    
-    //minPt := ClosestPointOnLinesFromCircle(center, radius, lines);
-    
-    // 2: Get vector from center of circle to closest point
-    v := VectorFromPoints(center, minPt);
-    
-    // 3: invert and extend by radius to find most distant point
-    v := VectorMultiply(UnitVector(InvertVector(v)), radius);
-    
-    // 5: Check edge conditions
-    
-    edgePt := PointAt(center, v);
-    
-    // case rectCollisionSide of
-    //   TopLeft, TopRight, BottomLeft, BottomRight:
-    //     CheckDiagonalEdgeCollision(CalculateAngle(0, 0, v.x, v.y), rectCollisionSide);
-    // end;
-    
-    // 6: Result is found edge pt
-    result := edgePt;
-  end;
-  
   function ClosestPointOnRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle): Point2D;
   begin
     result := ClosestPointOnLinesFromCircle(center, radius, LinesFromRect(rect));
@@ -1056,13 +1045,20 @@ implementation
     end;
   end;
   
-  function PointAt(x, y: Single): Point2D;
+  function RectangleCenter(const rect: Rectangle): Point2D;
+  begin
+    result.x := rect.x + (rect.width / 2);
+    result.y := rect.y + (rect.height / 2);
+  end;
+  
+  
+  function PointAt(x, y: Single): Point2D; overload;
   begin
     result.x := x;
     result.y := y;
   end;
   
-  function PointAt(const startPoint: Point2D; offset: Vector): Point2D;
+  function PointAt(const startPoint: Point2D; offset: Vector): Point2D; overload;
   begin
     result.x := startPoint.x + offset.x;
     result.y := startPoint.y + offset.y;
@@ -1246,13 +1242,14 @@ implementation
   
   function GetRayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const circle_origin: Point2D; radius: Single): Single;
   var
-    to_circle: Vector;
+    to_circle, unit_heading: Vector;
     length, v, d: Single;
   begin
+      unit_heading := UnitVector(ray_heading);
       to_circle := VectorFromPoints(ray_origin, circle_origin);
       length := VectorMagnitude(to_circle);
       
-      v := DotProduct(to_circle, ray_heading);
+      v := DotProduct(to_circle, unit_heading);
       d := radius*radius - (length*length - v*v);
       // if there was no intersection, return -1
       if d < 0.0 then
@@ -1552,14 +1549,6 @@ implementation
     result := VectorOutOfCircleFromPoint(pt, center, radius + radius2, movement);
   end;
   
-  function VectorOutOfRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Vector;
-  var
-    distPt: Point2D;
-  begin
-    //distPt := DeepestPointOnCircleVsRectWithMovement(center, radius, rect, movement);
-    result := VectorOutOfRectFromPoint(distPt, rect, movement);
-  end;
-  
   function DistantPoint(const srcRect, inRect: Rectangle; side: CollisionSide): Point2D;
   begin
     //Get the top left out - default then adjust for other points out
@@ -1705,8 +1694,7 @@ implementation
     
     //Find distant point from 
     edgePt := DistantPoint(RectangleFrom(fromPt, radius), rect, side);
-    
-    DrawCircle(ColorYellow, edgePt, 2);
+    //DrawCircle(ColorYellow, edgePt, 2);
     
     //find the line with the shortest distance
     //from the edgePt along theprojected line using movement.
@@ -1716,7 +1704,6 @@ implementation
     lines := LinesForCollisionTest(rect, side);
     minDist := -1;
     min := -1;
-    
     for i := Low(lines) to High(lines) do
     begin
       //get points from lines vs projection
@@ -1737,5 +1724,96 @@ implementation
       result := True;
     end;
   end;
+  
+  function DistantPointOnCircle(const pt, center: Point2D; radius: Single): Point2D;
+  var
+    ptOnCircle: Point2D;
+    toCircle: Vector;
+  begin
+    //Get the closest point
+    ptOnCircle := ClosestPointOnCircle(pt, center, radius);
+    
+    // Get other side... follow toCircle vector 2 * radius
+    toCircle := VectorFromPoints(pt, ptOnCircle);
+    result := AddVectors(ptOnCircle, VectorMultiply(UnitVector(toCircle), radius * 2));
+  end;
+  
+  function DistantPointOnCircleWithVector(const pt, center: Point2D; radius: Single; heading: Vector; out oppositePt: Point2D): Boolean;
+  var
+    dist, dotProd: Single;
+    ptOnCircle, chkPt: Point2D;
+    toCenter, toPoint: Vector;
+  begin
+    result := False;
+    heading := UnitVector(heading);
+    
+    //Move pt back 2 * radius to ensure it is outside of the circle... 
+    //  but still on same alignment
+    chkPt := AddVectors(pt, VectorMultiply(InvertVector(heading), 2 * radius));
+    //DrawCircle(ColorBlue, chkPt, 1);
+    
+    dist := GetRayCircleIntersectDistance(chkPt, heading, center, radius);
+    if dist < 0 then exit;
+    
+    // Get point on circle by moving from chkPt dist distance in heading direction
+    ptOnCircle := AddVectors(chkPt, VectorMultiply(heading, dist));
+    //DrawLine(ColorMagenta, chkPt, ptOnCircle);
+    //DrawCircle(ColorMagenta, ptOnCircle, 2);
+    
+    //Project the ray to the other side of the circle
+    toCenter := VectorFromPoints(ptOnCircle, center);
+    dotProd := DotProduct(toCenter, heading);
+    //WriteLn(dotProd:4:2);
+    
+    result := True;
+    oppositePt := AddVectors(ptOnCircle, VectorMultiply(heading, 2 * dotProd));
+    //FillCircle(ColorRed, oppositePt, 2);
+  end;
+  
+  function VectorOutOfRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Vector;
+  var
+    distPt, linePt, edge: Point2D;
+    normalLine, found: LineSegment;
+    toEdge, normal: Vector;
+    side: CollisionSide;
+    dotProd: Single;
+  begin
+    result := VectorFrom(0, 0);
+    
+    // 1: Find the line we hit... exit if no line
+    if not LineCircleHit(center, radius, movement, rect, found) then exit;
+    
+    // 2: Get the most distant edge from the ``line`` (not segment) - most distant is based on direction of movement
+    // 2a: Get the normal of the line we hit, we will project along this direction
+    normal := VectorNormal(LineAsVector(found));
+    
+    // 2b: Get the most distant edge point (corner of bounding rectangle)
+    side := GetSideForCollisionTest(movement);
+    edge := DistantPoint(RectangleFrom(center, radius), rect, side);
+    //FillCircle(ColorYellow, edge, 2); // Draws corner pt
+    
+    // 2c: Project vect to edge point (corner) along the normal of the line we hit to get its components
+    toEdge := VectorFromPoints(center, edge);
+    dotProd := DotProduct(toEdge, normal);
+    
+    // 2d: Most distant edge pt is this distance (dotProd) from the center
+    edge := AddVectors(center, VectorMultiply(normal, dotProd));
+    //FillCircle(ColorGreen, edge, 2); // Draws distant pt
+    
+    //  Find the point we hit on the line...
+    if not GetLineIntersectionPoint(LineFromVector(edge, movement), found, linePt) then exit;
+    // Move back onto line segment... linePt -> closest point on line to intersect point
+    //DrawCircle(ColorWhite, linePt, 1); // point on line, but not segment
+    
+    linePt := ClosestPointOnLine(linePt, found);
+    //DrawCircle(ColorYellow, linePt, 1); // point on segment
+    
+    // Find the most distant point on the circle, given the movement vector
+    if not DistantPointOnCircleWithVector(linePt, center, radius, movement, distPt) then exit;
+    
+    result := VectorOut(distPt, rect, movement, side);
+  end;
+  
+  
   
 end.

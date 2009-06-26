@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-06-26: Andrew : Fixed FPS calculation.
 // - 2009-06-23: Clinton: Initial format/comment cleanup...
 //                      : Reordered / grouped all methods
 //                      : Removed private ClearArray (only one line)
@@ -358,9 +359,10 @@ implementation
   type
     // Details required for the Frames per second calculations.
     FPSData = record
-      values: Array [0..59] of UInt32;
-      pos, loops: LongInt;
+      values: Array [0..59] of Single;
+      pos: LongInt;
       max, min, avg: Single;
+      ready: Boolean;
     end;
     
   var
@@ -397,9 +399,10 @@ implementation
     _fpsData.pos := 0;
 //    _fpsData.loops := 0;
     // set the moving range and average to sensitble defaults
-    _fpsData.max := 1;
-    _fpsData.min := 1;
-    _fpsData.avg := 1000000;
+    _fpsData.max := 0;
+    _fpsData.min := 0;
+    _fpsData.avg := 0;
+    _fpsData.ready := false;
   end;
 
   //----------------------------------------------------------------------------
@@ -628,6 +631,15 @@ implementation
   var
     avg, hi, lo: Single;
   begin
+    if not _fpsData.ready then
+    begin
+      textColor := ColorBlue;
+      average :='??.?';
+      highest :='??.?';
+      lowest  :='??.?';
+      exit;
+    end;
+    
     if _fpsData.avg = 0 then
       avg := 9999
     else
@@ -650,51 +662,44 @@ implementation
 
 
   procedure _UpdateFPSData(delta: UInt32);
-    function RunningAverage(var values: Array of UInt32; newValue: UInt32; var pos: LongInt): Single;
+    function RunningAverage(var values: Array of Single; newValue: UInt32; var pos: LongInt): Single;
     var
       i: LongInt;
       sum: Double;
     begin
       // insert the newValue as the position specified
       values[pos] := newValue;
+      
       // calculate the sum for the average
       sum := 0;
       for i := Low(values) to High(values) do
         sum := sum + values[i];
       result := sum / Length(values);
+      
       //Inc position index, and wrap-around to start if needed
       pos := pos + 1;
-      if pos > High(values) then pos := Low(values);
+      if pos > High(values) then
+      begin
+        pos := Low(values);
+        if not _fpsData.ready then
+        begin
+          _fpsData.max := _fpsData.avg;
+          _fpsData.min := _fpsData.avg;
+          _fpsData.ready := True;
+        end;
+      end;
     end;
   begin
-{    //Populate the running average for the first 10 calcs
-    if _fpsData.loops < 10 then
-    begin
-      //Don't get the avg, because this may result in a
-      //div 0 error if avg is 0 (when calcing 1000/avg)
-      _RunningAverage(_fpsData.values, delta, _fpsData.pos);
-      _fpsData.loops := _fpsData.loops + 1;
-
-      //On the 10th calcs set the min maxes
-      if _fpsData.loops = 10 then
-      begin
-        //Get the running average
-        _fpsData.avg := _RunningAverage(_fpsData.values, delta, _fpsData.pos);;
-        _fpsData.max := _fpsData.avg;
-        _fpsData.min := _fpsData.avg;
-        _fpsData.loops := _fpsData.loops + 1;
-      end;
-    end
-    else //All other calcs get the average as normal
-      _fpsData.avg := _RunningAverage(_fpsData.values, delta, _fpsData.pos);
-}
     _fpsData.avg := RunningAverage(_fpsData.values, delta, _fpsData.pos);
-
+    
     if _fpsData.avg = 0.0 then _fpsData.avg := 0.01;
-
+    
     //Adjust the min/maxes
-    if _fpsData.avg > _fpsData.max then _fpsData.max := _fpsData.avg;
-    if _fpsData.avg < _fpsData.min then _fpsData.min := _fpsData.avg;
+    if _fpsData.ready then
+    begin
+      if _fpsData.avg > _fpsData.max then _fpsData.max := _fpsData.avg
+      else if _fpsData.avg < _fpsData.min then _fpsData.min := _fpsData.avg;
+    end;
   end;
 
 
@@ -744,8 +749,9 @@ implementation
     
     nowTime := GetTicks();
     delta := nowTime - _lastUpdateTime;
-
-    while (delta < ((1 / TargetFPS) * 1000)) do
+    
+    //dont sleep if 1ms remaining...
+    while (delta + 1) * TargetFPS < 1000 do
     begin
       Sleep(1);
       nowTime := GetTicks();
