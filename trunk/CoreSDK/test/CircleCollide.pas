@@ -36,6 +36,7 @@ var
   found: LineSegment;
   mouseMvmt, mouseOut, ptOnCircle, toCenter, oppositePt, toCircle: Vector;
   nrm, rm: Matrix2D;
+  t1: Triangle;
   
   i: Integer;
   dist, dotProd: Single;
@@ -66,6 +67,8 @@ begin
   s2^.Mass := 10;
   s2^.Movement := VectorFrom(1, -5);
   
+  t1 := TriangleFrom(600, 100, 550, 200, 670, 175);
+  
   mouseMvmt := VectorFrom(3,3);
   
   rect := RectangleFrom(400, 400, 200, 100);
@@ -78,6 +81,7 @@ begin
     
     DrawRectangle(ColorRed, rect);
     DrawCircle(ColorRed, c1, r1);
+    DrawTriangle(ColorRed, t1);
     
     temp := GetMousePosition();
     
@@ -100,6 +104,13 @@ begin
       mouseOut := VectorOutOfCircleFromCircle(temp, r2, c1, r1, mouseMvmt);
       mouseOut := AddVectors(temp, mouseOut);
       DrawCircle(ColorGreen, mouseOut, r2);
+    end
+    else if CircleTriangleCollision(temp, r2, t1) then
+    begin
+      //DrawTriangle(ColorWhite, t1);
+      DrawCircle(ColorBlue, temp, r2);
+      
+      LineOfLinesCircleHit(temp, r2, mouseMvmt, LinesFrom(t1), found);
     end else begin
       DrawCircle(ColorGreen, temp, r2);
     end;

@@ -248,6 +248,11 @@ interface
   /// @uname FillRectangleRect
   procedure FillRectangle(theColor: Color; const source: Rectangle); overload;
   
+  //TODO: Other overloads!
+  /// @lib DrawLineSegments
+  procedure DrawLines(theColor: Color; const lines: LinesArray); //overload;
+  
+  
   /// @lib
   procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
   /// @lib DrawLineSegment
@@ -1717,5 +1722,19 @@ implementation
       
     SetNonAlphaPixels(src, src^.surface);
     OptimiseBitmap(src);
+  end;
+  
+  //
+  //
+  //
+  
+  procedure DrawLines(theColor: Color; const lines: LinesArray); //overload;
+  var
+    i: Integer;
+  begin
+    for i := 0 to High(lines) do
+    begin
+      DrawLine(theColor, lines[i]);
+    end;
   end;
 end.

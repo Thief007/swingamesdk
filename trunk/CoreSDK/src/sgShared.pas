@@ -39,6 +39,9 @@ interface
   // blitting operations.
   function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
   
+  // Rounds `x` up... 1.1 -> 2
+  function Ceiling(x: Single): LongInt;
+  
   // Used by SwinGame units to register event "handlers" what will be called
   // when SDL events have occured. Events such as mouse movement, button 
   // clicking and key changes (up/down). See sgInput.   
@@ -131,6 +134,12 @@ implementation
     result.y := y;
     result.w := Word(w);
     result.h := Word(h);
+  end;
+  
+  function Ceiling(x: Single): LongInt;
+  begin
+    result := Round(x);
+    if result < x then result := result + 1;
   end;
   
 initialization

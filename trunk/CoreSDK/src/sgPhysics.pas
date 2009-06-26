@@ -381,6 +381,8 @@ interface
   // Geometry Collision Tests
   //---------------------------------------------------------------------------
   
+  /// Returns True if the Circle collised with rectangle `rect`.
+  ///
   /// @lib
   function CircleRectCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
   
@@ -393,6 +395,11 @@ interface
   ///
   /// @lib
   function CircleCircleCollision(const center: Point2D; radius: Single; const center2: Point2D; radius2: Single): Boolean;
+  
+  /// Returns True if the Circle has collided with the Triangle `tri`.
+  ///
+  /// @lib
+  function CircleTriangleCollision(const center: Point2D; radius: Single; const tri: Triangle): Boolean;
   
   //---------------------------------------------------------------------------
   // Sprite / Geometry Collision Tests
@@ -1110,31 +1117,9 @@ implementation
   //---------------------------------------------------------------------------
   
   function CircleRectCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
-  var
-    rectCenter, closePt, closeRectPt: Point2D;
-    // centerToClose, temp: Vector;
-    // dotProd: Single;
   begin
-    rectCenter := RectangleCenter(rect);
-    closeRectPt := ClosestPointOnRectFromCircle(center, radius, rect); 
-    closePt := ClosestPointOnCircle(closeRectPt, center, radius);
-    
-    result := PointInRect(closePt, rect.x, rect.y, rect.width, rect.height);
-    // DrawCircle(ColorYellow, rectCenter, 2);
-    // DrawCircle(ColorYellow, closePt, 2);
-    
-    // centerToClose := VectorFromPoints(rectCenter, closePt);
-    // result := False;
-    // 
-    // temp := VectorFrom(0, 1); // cast along y unit vector
-    // dotProd := DotProduct(centerToClose, temp);    
-    // if abs(dotProd) >= abs(rect.height) / 2 then exit;
-    // 
-    // temp := VectorFrom(1, 0); // cast along y unit vector
-    // dotProd := DotProduct(centerToClose, temp);
-    // if abs(dotProd) >= abs(rect.width) / 2 then exit;
-    // 
-    // result := True;
+    if CircleLinesCollision(center, radius, rect) then result := True
+    else result := PointInRect(center, rect.x, rect.y, rect.width, rect.height);
   end;
   
   function CircleLinesCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
@@ -1142,13 +1127,28 @@ implementation
     pt: Point2D;
   begin
     pt := ClosestPointOnRectFromCircle(center, radius, rect);
-    
     result := PointPointDistance(center, pt) <= radius;
   end;
   
   function CircleCircleCollision(const center: Point2D; radius: Single; const center2: Point2D; radius2: Single): Boolean;
   begin
     result := PointPointDistance(center, center2) < radius + radius2;
+  end;
+  
+  function CircleTriangleCollision(const center: Point2D; radius: Single; const tri: Triangle): Boolean;
+  var
+    i: Integer;
+  begin
+    result := False;
+    
+    for i := 0 to 2 do
+    begin
+      if PointInTriangle(ClosestPointOnCircle(tri[i], center, radius), tri) then 
+      begin
+        result := True;
+        exit;
+      end;
+    end;
   end;
   
 end.

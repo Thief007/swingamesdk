@@ -13,19 +13,21 @@
 //
 // Version 3.0:
 // - 2009-06-26: Andrew : Completed ClosestPointOnRectFromCircle
-// 						  Completed
-//                        Fixed overloads of PointAt
-//                        Added RectangleCenter
-//                        GetRayCircleIntersectDistance heading can now be non-unit vector
-//                        Add DistantPointOnCircle
-//                        Added DistantPointOnCircleWithVector
-//                        Added VectorOutOfRectFromCircle
+//                      : Completed
+//                      : Fixed overloads of PointAt
+//                      : Added RectangleCenter
+//                      : GetRayCircleIntersectDistance heading can now be non-unit vector
+//                      : Add DistantPointOnCircle
+//                      : Added DistantPointOnCircleWithVector
+//                      : Added VectorOutOfRectFromCircle
+//                      : Added PointInCircle
+//                      : Added RectangleFrom Triangle
 // - 2009-06-24: Andrew : Renamed to sgGeometry and combined with Shapes
-//                        Moved CenterPoint to sgSprite.
-//                              VectorFromCenterSpriteToPoint
-//                              VectorFromTo
+//                      : Moved CenterPoint to sgSprite.
+//                      : VectorFromCenterSpriteToPoint
+//                      : VectorFromTo
 // - 2009-06-23: Clinton: Created unit. Moved math routines from physics and
-//                        shapes units. 
+//                      : shapes units. 
 //----------------------------------------------------------------------------
 
 
@@ -40,13 +42,14 @@ interface
   uses sgTypes;
   
   /// @lib
+  function LineOfLinesCircleHit(const fromPt: Point2D; radius: Single; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
+  
+  /// @lib
   function LineCircleHit(const fromPt: Point2D; radius: Single; movement: Vector; rect: Rectangle; out found: LineSegment): Boolean;
   
-  /// todo: Test...
   /// @lib
   function GetTangentPoints(const fromPt, centre: Point2D; radius: Single; out p1, p2: Point2D): Boolean;
   
-  //todo: Test...
   /// @lib
   function GetRayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const circle_origin: Point2D; radius: Single): Single;
   
@@ -86,11 +89,6 @@ interface
   /// @lib
   function DistantPointOnCircleWithVector(const pt, center: Point2D; radius: Single; heading: Vector; out oppositePt: Point2D): Boolean;
   
-  /// Returns True if point `pt` is on the line segment `line`.
-  ///
-  /// @lib PointOnLine
-  function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
-
   /// @lib PointAt
   function PointAt(x, y: Single): Point2D; overload;
   
@@ -102,12 +100,19 @@ interface
   
   /// @lib LinesFromRect
   function LinesFromRect(const rect: Rectangle): LinesArray;
+  
+  /// @lib LinesFromTriangle
+  function LinesFrom(const tri: Triangle): LinesArray;
 
   /// @lib
   function LineFrom(x1, y1, x2, y2: Single): LineSegment;
+  
+  /// @lib LineFromPointToPoint
+  function LineFrom(pt1, pt2: Point2D): LineSegment;
 
   /// @lib LineFromVectorWithStartPoint
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
+  
   /// @lib LineFromVectorWithStartXY
   function LineFromVector(x, y: Single; const mv: Vector): LineSegment; overload;
   /// @lib
@@ -132,6 +137,10 @@ interface
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
   /// @lib RectangleFromCircle
   function RectangleFrom(const center: Point2D; radius: Single): Rectangle; overload;
+  /// @lib RectangleFromTriangle
+  function RectangleFrom(const tri: Triangle): Rectangle; overload;
+  /// @lib RectangleFromLines
+  function RectangleFrom(const lines: LinesArray): Rectangle; overload;
   
   /// @lib
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
@@ -141,10 +150,7 @@ interface
 
   /// @lib
   function TriangleBarycenter(const tri: Triangle): Point2D;
-
-  /// @lib
-  function PointInTriangle(const pt: Point2D; const tri: Triangle): Boolean;
-
+  
   /// @lib
   function RectangleAfterMove(const rect: Rectangle; const mv: Vector): Rectangle;
 
@@ -156,29 +162,57 @@ interface
   function RectangleLeft  (const rect: Rectangle): Single;
   /// @lib
   function RectangleRight (const rect: Rectangle): Single;
-
+  
   /// @lib
   function RectanglesIntersect(const rect1, rect2: Rectangle): Boolean;
+  
   /// @lib
   function Intersection(const rect1, rect2: Rectangle): Rectangle;
-
+  
   /// @lib
   function GetLineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
+  
   /// @lib
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
+  
   /// @lib
   function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
   
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Point test operations
+  //---------------------------------------------------------------------------
+  
+  /// Returns true if the point `pt` is in the Triangle `tri`.
+  ///
+  /// @lib
+  function PointInTriangle(const pt: Point2D; const tri: Triangle): Boolean;
+  
   /// @lib PointInRectXY
-  function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;  
+  function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;
+  
+  /// Returns True if point `pt` is in the Rectangle `rect`.
+  ///
   /// @lib 
   function PointInRect(const pt: Point2D; const rect: Rectangle): Boolean; overload;
   
   /// @lib PointXYInRectXY
   function PointInRect(ptX, ptY, x, y, w, h: Single): Boolean; overload;
+  
   /// @lib PointXYInRect
   function PointInRect(x, y: Single; const rect: Rectangle): Boolean; overload;
-
+  
+  /// Returns True if the point `pt` is in the circle.
+  ///
+  /// @lib
+  function PointInCircle(const pt, center: Point2D; radius: Single): Boolean;
+  
+  /// Returns True if point `pt` is on the line segment `line`.
+  ///
+  /// @lib PointOnLine
+  function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
   
   //---------------------------------------------------------------------------
   // Vector Creation and Operations
@@ -454,7 +488,7 @@ implementation
 
   uses 
     Classes, SysUtils, Math,  // system
-    sgCore, sgCamera, sgGraphics, sgSprites, sgPhysics;     // SwinGame
+    sgCore, sgCamera, sgGraphics, sgSprites, sgPhysics, sgShared;     // SwinGame
   
   const 
     DEG_TO_RAD = 0.0174532925;
@@ -957,6 +991,60 @@ implementation
     result.height := Round(result.width);
   end;
   
+  function RectangleFrom(const tri: Triangle): Rectangle; overload;
+  var
+    minX, minY, maxX, maxY: Single;
+    i: Integer;
+  begin
+    minX := tri[0].x; maxX := tri[0].x;
+    minY := tri[0].y; maxY := tri[0].y;
+    
+    for i := 1 to 2 do
+    begin
+      if tri[i].x < minX then minX := tri[i].x
+      else if tri[i].x > maxX then maxX := tri[i].x;
+      
+      if tri[i].y < minY then minY := tri[i].y
+      else if tri[i].y > maxY then maxY := tri[i].y;
+    end;
+    
+    result.x := minX;
+    result.y := minY;
+    result.width := Ceiling(maxX - minX);
+    result.height := Ceiling(maxY - minY);
+  end;
+  
+  function RectangleFrom(const lines: LinesArray): Rectangle; overload;
+  var
+    minX, minY, maxX, maxY: Single;
+    i: Integer;
+  begin
+    if Length(lines) = 0 then exit;
+    
+    minX := lines[0].startPoint.x; maxX := lines[0].startPoint.x;
+    minY := lines[0].startPoint.y; maxY := lines[0].startPoint.y;
+    
+    for i := 0 to High(lines) do
+    begin
+      if lines[i].startPoint.x < minX then minX := lines[i].startPoint.x
+      else if lines[i].startPoint.x > maxX then maxX := lines[i].startPoint.x;
+      
+      if lines[i].startPoint.y < minY then minY := lines[i].startPoint.y
+      else if lines[i].startPoint.y > maxY then maxY := lines[i].startPoint.y;
+      
+      if lines[i].endPoint.x < minX then minX := lines[i].endPoint.x
+      else if lines[i].endPoint.x > maxX then maxX := lines[i].endPoint.x;
+      
+      if lines[i].endPoint.y < minY then minY := lines[i].endPoint.y
+      else if lines[i].endPoint.y > maxY then maxY := lines[i].endPoint.y;
+    end;
+    
+    result.x := minX;
+    result.y := minY;
+    result.width := Ceiling(maxX - minX);
+    result.height := Ceiling(maxY - minY);
+  end;
+  
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
   begin
     result.x := Min(line.startPoint.x, line.endPoint.x);
@@ -1024,13 +1112,26 @@ implementation
               (ly <= pt.y + SMALL) and
               PointInRect(pt, RectangleFrom(line));
   end;
-    
+  
+  function LineFrom(pt1, pt2: Point2D): LineSegment;
+  begin
+    result := LineFrom(pt1.x, pt1.y, pt2.x, pt2.y);
+  end;
+  
   function LineFrom(x1, y1, x2, y2: Single): LineSegment;
   begin
     result.startPoint.x := x1;
     result.startPoint.y := y1;
     result.endPoint.x := x2;
     result.endPoint.y := y2;
+  end;
+  
+  function LinesFrom(const tri: Triangle): LinesArray;
+  begin
+    SetLength(result, 3);
+    result[0] := LineFrom(tri[0], tri[1]);
+    result[1] := LineFrom(tri[1], tri[2]);
+    result[2] := LineFrom(tri[2], tri[0]);
   end;
   
   function LinesFromRect(const rect: Rectangle): LinesArray;
@@ -1190,6 +1291,11 @@ implementation
     
     // Check if point is in triangle
     result := ((u > 0) and (v > 0) and (u + v < 1));
+  end;
+  
+  function PointInCircle(const pt, center: Point2D; radius: Single): Boolean;
+  begin
+    result := PointPointDistance(pt, center) <= radius;
   end;
   
 
@@ -1434,7 +1540,8 @@ implementation
       
       // WriteLn('outMag: ', outMag);
       
-      result := VectorMultiply(mvOut, outMag + 1);
+      //TODO: Calculate this better...
+      result := VectorMultiply(mvOut, outMag + 1.5);
     end;    
   begin   
     case rectCollisionSide of
@@ -1549,6 +1656,10 @@ implementation
     result := VectorOutOfCircleFromPoint(pt, center, radius + radius2, movement);
   end;
   
+  //
+  // Find the extreme edge point (top left, bottom right, etc..).
+  // Given collision side (inverse direction :) )
+  //
   function DistantPoint(const srcRect, inRect: Rectangle; side: CollisionSide): Point2D;
   begin
     //Get the top left out - default then adjust for other points out
@@ -1677,10 +1788,59 @@ implementation
     end;
   end;
   
-  /// @lib
+  //TODO: Replace LineCircleHit
+  function LineOfLinesCircleHit(const fromPt: Point2D; radius: Single; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
+  var
+    projection: LineSegment;
+    // side: CollisionSide;
+    iPts: Array of Point2D;
+    //edgePt: Point2D;
+    //boundRect: Rectangle;
+    i, j: Integer;
+    dist, minDist: Single;
+    min: Integer;
+  begin
+    // side := GetSideForCollisionTest(movement);
+    result := False;
+    
+    //boundRect := RectangleFrom(lines);
+    //DrawRectangle(ColorWhite, boundRect);
+    
+    //edgePt := DistantPoint(RectangleFrom(fromPt, radius), boundRect, side);
+    //DrawCircle(ColorWhite, edgePt, 2);
+    
+    projection := LineFromVector(fromPt, InvertVector(movement));
+    minDist := -1;
+    min := -1;
+    
+    //DrawLines(ColorWhite, lines);
+    DrawLine(ColorWhite, projection);
+    
+    SetLength(iPts, length(lines));
+    j := 0;
+    for i := 0 to High(lines) do
+    begin
+      if GetLineIntersectionPoint(lines[i], projection, iPts[j]) then
+      begin
+        dist := PointPointDistance(fromPt, iPts[j]);
+        
+        if (dist < minDist) or (minDist < 0) then
+        begin
+          minDist := dist;
+          min := i;
+        end;
+        
+        DrawCircle(ColorWhite, iPts[j], 2);
+        j := j + 1;
+      end;
+    end;
+    
+    DrawLine(ColorBlue, lines[min]);
+    
+  end;
+  
   function LineCircleHit(const fromPt: Point2D; radius: Single; movement: Vector; rect: Rectangle; out found: LineSegment): Boolean;
   var
-    unitMvmt: Vector;
     projection: LineSegment;
     edgePt, closePt: Point2D;
     side: CollisionSide;
@@ -1692,13 +1852,12 @@ implementation
     result := false;
     if side = None then exit; 
     
-    //Find distant point from 
+    //Find distant point from
     edgePt := DistantPoint(RectangleFrom(fromPt, radius), rect, side);
     //DrawCircle(ColorYellow, edgePt, 2);
     
     //find the line with the shortest distance
     //from the edgePt along theprojected line using movement.
-    unitMvmt := UnitVector(movement);
     projection := LineFromVector(edgePt, movement); //project a line in movement dir, from edgePt
     
     lines := LinesForCollisionTest(rect, side);
