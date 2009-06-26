@@ -66,6 +66,7 @@ _type_switcher = {
         'point2d': 'Point2D %s',
         '^point2d': 'Point2D *%s',
         'point2d[0..2]': 'Point2D %s[3]',
+        'point2d[0..n - 1]': 'LineSegment *%s',
         '^linesegment': 'LineSegment *%s',
         'linesegment': 'LineSegment %s',
         'sprite': 'Sprite %s',
@@ -128,7 +129,8 @@ _type_switcher = {
         'timer': 'Timer *%s',
         'point2d': 'Point2D *%s',
 #        'triangle': 'Triangle *%s'
-        'longint': 'int *%s'
+        'longint': 'int *%s',
+        'linesegment': 'LineSegment *%s',
     }
 }
 
@@ -204,7 +206,8 @@ _adapter_type_switcher = {
         'point2d': 'Point2D *%s',
 #        'triangle': 'Triangle *%s',
         'linesarray': 'LinesArray %s',
-        'longint': 'int *%s'
+        'longint': 'int *%s',
+        'linesegment': 'LineSegment *%s',
     }
 }
 

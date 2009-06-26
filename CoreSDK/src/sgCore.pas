@@ -214,7 +214,7 @@ interface
 
   /// @lib RefreshScreenRestrictFPS
   /// @uname RefreshScreenRestrictFPS
-  procedure RefreshScreen(TargetFPS: LongInt); overload;
+  procedure RefreshScreen(TargetFPS: UInt32); overload;
 
   //----------------------------------------------------------------------------
   // Colour
@@ -738,7 +738,7 @@ implementation
     _lastUpdateTime := nowTime;
   end;
 
-  procedure RefreshScreen(TargetFPS: LongInt); overload;
+  procedure RefreshScreen(TargetFPS: UInt32); overload;
   var
     nowTime: UInt32;
     delta: UInt32;
@@ -751,7 +751,7 @@ implementation
     delta := nowTime - _lastUpdateTime;
     
     //dont sleep if 1ms remaining...
-    while (delta + 1) * TargetFPS < 1000 do
+    while (delta + UInt32(1)) * TargetFPS < 1000 do
     begin
       Sleep(1);
       nowTime := GetTicks();
