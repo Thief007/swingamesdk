@@ -42,10 +42,16 @@ interface
   uses sgTypes;
   
   /// @lib
+  function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
+  
+  /// @lib
   function LineOfLinesCircleHit(const fromPt: Point2D; radius: Single; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   
   /// @lib
   function LineCircleHit(const fromPt: Point2D; radius: Single; movement: Vector; rect: Rectangle; out found: LineSegment): Boolean;
+  
+  /// @lib
+  procedure GetWidestPoints(const center: Point2D; radius: Single; along: Vector; out pt1, pt2: Point2D);
   
   /// @lib
   function GetTangentPoints(const fromPt, centre: Point2D; radius: Single; out p1, p2: Point2D): Boolean;
@@ -171,6 +177,9 @@ interface
   
   /// @lib
   function GetLineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
+  
+  /// @lib
+  function GetRayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : boolean;
   
   /// @lib
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
@@ -373,6 +382,9 @@ interface
   /// @lib
   function VectorOutOfRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Vector;
   
+  //TODO: OverLine...
+  /// @lib
+  function VectorOverLinesFromCircle(const center: Point2D; radius: Single; lines: LinesArray; movement: Vector; out maxIdx: Integer): Vector;
   
   //---------------------------------------------------------------------------
   // Angle Calculation
@@ -1364,7 +1376,14 @@ implementation
       else
           result := (v - sqrt(d));
   end;
-     
+  
+  
+  procedure GetWidestPoints(const center: Point2D; radius: Single; along: Vector; out pt1, pt2: Point2D);
+  begin
+    pt1 := AddVectors(center, VectorMultiply(UnitVector(along), radius));
+    pt2 := AddVectors(center, VectorMultiply(UnitVector(along), -radius));
+  end;
+  
   {
   ''' Given a point P and a circle of radius R centered at C, determine the 
       two points T1, T2 on the circle that intersect with the tangents from P
@@ -1384,6 +1403,7 @@ implementation
     if sqr_len <= r_sqr then
     begin
         result := False; // tangent objects are not returned.
+        exit;
     end;
     
     // time to work out the real tangent points then
@@ -1397,7 +1417,27 @@ implementation
     
     result := True;
   end;
-
+  
+  function GetRayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : boolean;
+  var
+    rayLine: LineSegment;
+    combMag: Single;
+  begin
+    result := False;
+    rayLine := LineFromVector(fromPt, heading);
+    
+    // Get where the line intersect
+    if not GetLineIntersectionPoint(rayLine, line, pt) then exit;
+    //DrawLine(ColorWhite, fromPt, pt);
+    
+    combMag := VectorMagnitude(AddVectors(UnitVector(VectorFromPoints(fromPt, pt)), UnitVector(heading)));
+    // WriteLn(combMag:4:2);
+    // Test that pt is forward of fromPt (given heading)
+    if combMag < 1 then exit; //behind point
+    
+    result := True;
+  end;
+  
   function GetLineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
   var
     // convert lines to the eqn
@@ -1429,7 +1469,14 @@ implementation
       result := true;
     end;    
   end;
-
+  
+  function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
+  var
+    pt: Point2D;
+  begin
+    result := GetLineIntersectionPoint(line1, line2, pt) and PointOnLine(pt, line2) and PointOnLine(pt, line1);
+  end;
+  
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
   var
     i: LongInt;
@@ -1974,5 +2021,101 @@ implementation
   end;
   
   
+  function VectorOverLinesFromCircle(const center: Point2D; radius: Single; lines: LinesArray; movement: Vector; out maxIdx: Integer): Vector;
+  type
+    DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
+  var
+    pt1, pt2, ptOnLine, ptOnCircle, hitPt, maxHitPtOnLine, maxHitPtOnCircle: Point2D;
+    tmp: Array [0..3] of Point2D;
+    chkPts: Array [0..3] of DoublePt;
+    lineVec, normalMvmt, normalLine, toEdge, edge, ray, vOut: Vector;
+    i, j, hits: Integer;
+    dotProd, dist, maxDist: Single;
+  begin
+    // Cast ray searching for points back from shape
+    ray := InvertVector(movement);
+    normalMvmt := VectorNormal(movement);
+    vOut := VectorFrom(0,0);
+    
+    maxIdx := -1;
+    maxDist := -1;
+
+    //Search all lines for hit points
+    for i := 0 to High(lines) do
+    begin
+      lineVec := LineAsVector(lines[i]);
+      //Get the normal of the line we hit
+      normalLine := VectorNormal(lineVec);
+      hits := 0;
+
+      //tmp 0 and tmp 1 are the widest points to detect collision with line
+      GetWidestPoints(center, radius, normalMvmt, tmp[0], tmp[1]);
+      //tmp 2 and tmp 3 are the closest and furthest points from the line
+      GetWidestPoints(center, radius, normalLine, tmp[2], tmp[3]);
+
+      // for both points...
+      for j := 0 to 3 do
+      begin
+        //DrawCircle(ColorWhite, tmp[j], 2);
+
+        // Cast a ray back from the test points to find line pts... out on ptOnLine
+        if GetRayIntersectionPoint(tmp[j], ray, lines[i], ptOnLine) then
+        begin
+          //DrawCircle(ColorRed, ptOnLine, 1);
+          //DrawLine(ColorRed, tmp[j], ptOnLine);
+
+          chkPts[hits].ptOnLine := ptOnLine;
+          chkPts[hits].ptOnCircle := tmp[j];
+          hits := hits + 1;
+        end;
+      end;
+
+      // for each of the hits on this line...
+      // search for the longest hit.
+      for j := 0 to hits - 1 do
+      begin
+        //DrawCircle(ColorWhite, chkPts[j].ptOnCircle, 1);
+        toEdge := VectorFromPoints(center, chkPts[j].ptOnCircle);
+        //DrawLine(ColorRed, center, chkPts[j].ptOnCircle);
+        dotProd := DotProduct(toEdge, normalLine);
+
+        // 2d: Most distant edge pt is on a line this distance (dotProd) from the center
+        edge := AddVectors(center, VectorMultiply(normalLine, dotProd));
+        //DrawPixel(ColorWhite, edge); // Draws pt on line to distant pt
+
+        //  Find the point we hit on the line... ptOnLine receives intersection point...
+        if not GetLineIntersectionPoint(LineFromVector(edge, movement), lines[i], ptOnLine) then continue;
+        // Move back onto line segment... linePt -> closest point on line to intersect point
+        //DrawCircle(ColorRed, ptOnLine, 1); // point on line, but not necessarily the line segment
+        //DrawLine(ColorWhite, edge, ptOnLine);
+
+        ptOnLine := ClosestPointOnLine(ptOnLine, lines[i]);
+        //FillCircle(ColorBlue, ptOnLine, 1); // point on segment
+
+        // Find the most distant point on the circle, given the movement vector
+        if not DistantPointOnCircleWithVector(ptOnLine, center, radius, movement, ptOnCircle) then continue;
+        //FillCircle(ColorBlue, ptOnCircle, 2); // point on segment
+        //DrawLine(ColorBlue, ptOnLine, ptOnCircle);
+
+        // GetTangentPoints(lines[i].endPoint, center, radius, pt1, pt2);
+        // DrawCircle(ColorRed, pt1, 2);
+        // DrawCircle(ColorRed, pt2, 2);
+
+        dist := PointPointDistance(ptOnLine, ptOnCircle);
+        //WriteLn(dist);
+        if (dist > maxDist) or (maxIdx = -1) then
+        begin
+          maxDist := dist;
+          maxIdx := i;
+          vOut := VectorFromPoints(ptOnCircle, ptOnLine);
+          //dotProd := DotProduct(UnitVector(vOut), VectorFrom(0.5,0.5));
+          vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1.42);
+          //WriteLn(dotProd:4:2);
+        end;      
+      end;
+    end;
+    
+    result := vOut;
+  end;
   
 end.
