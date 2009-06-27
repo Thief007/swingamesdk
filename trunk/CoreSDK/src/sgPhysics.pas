@@ -455,6 +455,8 @@ interface
   /// @lib
   procedure CollideCircles(s1, s2: Sprite);
   
+  ///@lib
+  procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   
   
   
@@ -974,8 +976,12 @@ implementation
     toLine: Vector;
     intersect: Point2D;
   begin
+    //TODO: fix collision pt.... cast back along movement...
     intersect := ClosestPointOnLine(CenterPoint(s), line);
-
+    
+    //DrawSprite(s);
+    //DrawCircle(ColorRed, intersect, 2);
+    
     toLine := UnitVector(VectorFromCenterSpriteToPoint(s, intersect));
     // Project movement across to-line
     dotPod := - DotProduct(toLine, s^.movement);
@@ -985,9 +991,31 @@ implementation
     
     s^.movement.x := s^.movement.x + 2 * npx;
     s^.movement.y := s^.movement.y + 2 * npy;
+    
+    //DrawLine(ColorYellow, CenterPoint(s).x, CenterPoint(s).y, CenterPoint(s).x + (s^.Movement.x * 10), CenterPoint(s).y + (s^.Movement.y * 10));
+    //RefreshScreen(1) ;
   end;
-
-
+  
+  procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
+  var 
+    outVec, mvmt: Vector;
+    maxIdx: Integer;
+    mvmtMag, prop: Single;
+  begin
+    mvmt := s^.movement;
+    outVec := VectorOverLinesFromCircle(CenterPoint(s), CurrentWidth(s) / 2, lines, mvmt, maxIdx);
+    if maxIdx < 0 then exit;
+     
+    MoveSprite(s, outVec);
+    CollideCircleLine(s, lines[maxIdx]);
+    
+    // do part movement
+    mvmtMag := VectorMagnitude(mvmt);
+    prop := VectorMagnitude(outVec) / mvmtMag; //proportion of move "undone" by back out
+    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
+  end;
+  
+  
   procedure CollideCircles(s1, s2: Sprite);
   var
     s1c, s2c: Point2D;
