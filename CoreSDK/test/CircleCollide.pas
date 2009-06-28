@@ -322,10 +322,17 @@ begin
     CheckCollisionWithTriangle(s1, t1);
     CheckCollisionWithTriangle(s2, t1);
     
+    temp := GetMousePosition();
+    if CircleCircleCollision(temp, r2, CenterPoint(s1), CurrentWidth(s1) / 2) then
+      CollideCircleCircle(s1, temp, r2);
+    
+    if CircleCircleCollision(temp, r2, CenterPoint(s2), CurrentWidth(s2) / 2) then
+      CollideCircleCircle(s2, temp, r2);
+    
     if SpritesCollided(s1, s2) then CollideCircles(s1, s2);
     
     DrawFramerate(0,0);
-    RefreshScreen(60);
+    RefreshScreen(20);
   until WindowCloseRequested();
   
   CloseAudio();

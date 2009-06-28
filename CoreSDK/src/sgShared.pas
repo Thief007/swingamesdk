@@ -108,6 +108,11 @@ implementation
   
   procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
   begin
+    if sdlManager = nil then
+    begin
+      sdlManager := TSDLManager.Create();
+    end;
+    
     sdlManager.RegisterEventProcessor(handle, handle2);
   end;
   
@@ -142,11 +147,6 @@ implementation
     if result < x then result := result + 1;
   end;
   
-initialization
-begin
-  sdlManager := TSDLManager.Create();
-end;
-
 finalization
   if sdlManager <> nil then
   begin

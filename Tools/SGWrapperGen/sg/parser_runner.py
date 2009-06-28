@@ -72,16 +72,17 @@ def run_for_all_units(file_visitor):
     files = [
             lib_file,
             find_or_add_file('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
-            find_or_add_file('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
             find_or_add_file('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
-            find_or_add_file('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
+            find_or_add_file('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
             find_or_add_file('sgGeometry', 'Geometry', '../../CoreSDK/src/sgGeometry.pas'),
-            find_or_add_file('sgInput', 'Input', '../../CoreSDK/src/sgInput.pas'),
             find_or_add_file('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
+            find_or_add_file('sgInput', 'Input', '../../CoreSDK/src/sgInput.pas'),
             find_or_add_file('sgPhysics', 'Physics', '../../CoreSDK/src/sgPhysics.pas'),
-            find_or_add_file('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
-            find_or_add_file('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas'),
             find_or_add_file('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
+            find_or_add_file('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
+            find_or_add_file('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
+            find_or_add_file('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
+            find_or_add_file('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas')
         ]
     
     for a_file in files[1:]:
