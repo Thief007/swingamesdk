@@ -5,7 +5,7 @@
 #include "Graphics.h"
 #include "Core.h"
 #include "Text.h"
-#include "ResourceManager.h"
+#include "Resources.h"
 
 #define True 1
 
@@ -15,12 +15,6 @@ int main(int argc, char* argv[])
     OpenAudio();
     OpenGraphicsWindow("Hello World", 800, 600);
     //SoundEffect sound = LoadSoundEffect("./SwinGameStart.ogg");
-    
-    MapBitmap("SplashBack", "SplashBack.png");
-    
-    char msg[2048];
-    GetExceptionMessage(msg);
-    printf("%s\n", msg);
     
     Color white = GetColor(255, 255, 255, 255);
     

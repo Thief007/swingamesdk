@@ -66,7 +66,7 @@ _type_switcher = {
         'point2d': 'Point2D %s',
         '^point2d': 'Point2D *%s',
         'point2d[0..2]': 'Point2D %s[3]',
-        'point2d[0..n - 1]': 'LineSegment *%s',
+        'point2d[0..n - 1]': 'Point2D *%s',
         '^linesegment': 'LineSegment *%s',
         'linesegment': 'LineSegment %s',
         'sprite': 'Sprite %s',

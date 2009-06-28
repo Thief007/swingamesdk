@@ -384,7 +384,7 @@ interface
   
   //TODO: OverLine...
   /// @lib
-  function VectorOverLinesFromCircle(const center: Point2D; radius: Single; lines: LinesArray; movement: Vector; out maxIdx: Integer): Vector;
+  function VectorOverLinesFromCircle(const center: Point2D; radius: Single; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
   
   //---------------------------------------------------------------------------
   // Angle Calculation
@@ -1948,7 +1948,7 @@ implementation
   var
     dist, dotProd: Single;
     ptOnCircle, chkPt: Point2D;
-    toCenter, toPoint: Vector;
+    toCenter: Vector;
   begin
     result := False;
     heading := UnitVector(heading);
@@ -1979,7 +1979,7 @@ implementation
   function VectorOutOfRectFromCircle(const center: Point2D; radius: Single; const rect: Rectangle; const movement: Vector): Vector;
   var
     distPt, linePt, edge: Point2D;
-    normalLine, found: LineSegment;
+    found: LineSegment;
     toEdge, normal: Vector;
     side: CollisionSide;
     dotProd: Single;
@@ -2021,11 +2021,11 @@ implementation
   end;
   
   
-  function VectorOverLinesFromCircle(const center: Point2D; radius: Single; lines: LinesArray; movement: Vector; out maxIdx: Integer): Vector;
+  function VectorOverLinesFromCircle(const center: Point2D; radius: Single; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
   type
     DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
   var
-    pt1, pt2, ptOnLine, ptOnCircle, hitPt, maxHitPtOnLine, maxHitPtOnCircle: Point2D;
+    ptOnLine, ptOnCircle: Point2D;
     tmp: Array [0..3] of Point2D;
     chkPts: Array [0..3] of DoublePt;
     lineVec, normalMvmt, normalLine, toEdge, edge, ray, vOut: Vector;

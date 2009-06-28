@@ -1,3 +1,6 @@
+/// Sprite management code.
+///
+/// @module Sprites
 unit sgSprites;
 
 //  renamed IsSpriteOnScreenAt -> SpriteOnScreenAt

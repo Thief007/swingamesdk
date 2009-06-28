@@ -13,6 +13,8 @@ cd "$APP_PATH"
 SWINGAME_DIR="${APP_PATH}/../../"
 SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 
+C_LIB_CODE_DIR="${SWINGAME_DIR}/Templates/C/common/lib"
+
 DIST_DIR="${SWINGAME_DIR}/Dist"
 
 echo "--------------------------------------------------"
@@ -21,6 +23,9 @@ echo "              for Mac OS X and Linux"
 echo "--------------------------------------------------"
 
 find ${DIST_DIR} -type d ! -path \*.svn\* -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
+
+rm -f ${C_LIB_CODE_DIR}/*.c
+rm -f ${C_LIB_CODE_DIR}/*.h
 
 echo "  Finished"
 echo "--------------------------------------------------"
