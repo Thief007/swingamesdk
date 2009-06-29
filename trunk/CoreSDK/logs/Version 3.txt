@@ -23,6 +23,10 @@ Suggestions:
 * status bar
 * SwinGame Map Editor
 
+
+
+
+
 ** New to Version 3 **
   General:
   - Commented functions in API
@@ -46,6 +50,9 @@ Suggestions:
   - added CollideCircleRectangle procedure
   
   Geometry: (new)
+  
+  Types:
+  - added Circle
   
 ** Changes to Version 2 **
   Units renamed:
@@ -71,6 +78,9 @@ Suggestions:
   - Removed PosX, PosY from Sprite.
   - Removed Colour, and all associated functions - standardised to use Color
   - Moved GetResource procesures to sgResources
+  - Added SwinGameVersion
+  - Renamed UnpauseTimer to ResumeTimer.
+  - Renamed GetTimerTicks to TimerTicks
   
   Text changes:
   - Changed order of parameters in TextWidth and TextHeight
@@ -120,3 +130,8 @@ Suggestions:
   - renamed SetScreenOffset (overloaded) methods to MoveCameraTo
   - renamed FollowSprite (overloaded) methods to CenterCameraOn
   - renamed ToWorldCoordinates and ToScreenCoordinates to ToWorld and ToScreen respectively 
+  
+  Shapes changes (in Geometry):
+  - renamed LinesFromRect to LinesFrom
+  
+  

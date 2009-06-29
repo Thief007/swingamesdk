@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-06-29: Andrew : Removed all need for Collision Side 
+//                      : Changed to use Circle Type
 // - 2009-06-26: Andrew : Added CircleRectCollision
 //                      : Added CircleLinesCollision
 //                      : Added CircleCircleCollision
@@ -274,7 +276,7 @@ interface
   /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
   /// pixel level testing is used.
   ///  
-  /// @lib PointPtInBitmapBBox
+  /// @lib BitmapPointPtCollisionBBox
   /// @class Bitmap
   /// @overload PointCollision PointPtBBoxCollision
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
@@ -284,8 +286,8 @@ interface
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The point ``pt`` needs to be provided in world coordinates.
   ///
-  /// @lib PointPtInBitmapBBox(bmp, x, y, False, pt)
-  /// @uname PointPtInBitmap
+  /// @lib BitmapPointPtCollisionBBox(bmp, x, y, False, pt)
+  /// @uname BitmapPointPtCollision
   /// @class Bitmap
   /// @overload PointCollision PointPtCollision
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
@@ -305,7 +307,7 @@ interface
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The point ``pt`` needs to be provided in world coordinates.
   ///  
-  /// @lib  PointXYInBitmapPart
+  /// @lib  BitmapPointXYCollisionPart
   function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
   
   
@@ -384,22 +386,22 @@ interface
   /// Returns True if the Circle collised with rectangle `rect`.
   ///
   /// @lib
-  function CircleRectCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
+  function CircleRectCollision(const c: Circle; const rect: Rectangle): Boolean;
   
   /// Returns True if the circle has collided with any of the lines from the `rect` rectangle.
   ///
   /// @lib
-  function CircleLinesCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
+  function CircleLinesCollision(const c: Circle; const lines: LinesArray): Boolean;
   
   /// Returns True if the circles have collided.
   ///
   /// @lib
-  function CircleCircleCollision(const center: Point2D; radius: Single; const center2: Point2D; radius2: Single): Boolean;
+  function CircleCircleCollision(const c1, c2: Circle): Boolean;
   
   /// Returns True if the Circle has collided with the Triangle `tri`.
   ///
   /// @lib
-  function CircleTriangleCollision(const center: Point2D; radius: Single; const tri: Triangle): Boolean;
+  function CircleTriangleCollision(const c: Circle; const tri: Triangle): Boolean;
   
   //---------------------------------------------------------------------------
   // Sprite / Geometry Collision Tests
@@ -444,10 +446,10 @@ interface
   /// @lib
   procedure CollideCircleLine(s: Sprite; const line: LineSegment);
   
-  /// Collide sprite `s` with the stationary circle `center`, `radius`.
+  /// Collide sprite ``s`` with the stationary circle ``c``.
   ///
   /// @lib
-  procedure CollideCircleCircle(s: Sprite; const center: Point2D; radius: Single);
+  procedure CollideCircleCircle(s: Sprite; const c: Circle);
   
   /// @lib
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
@@ -566,9 +568,9 @@ implementation
     if (width < 1) or (height < 1) then 
       raise Exception.Create('Rectangle width and height must be greater then 0');
     
-    if s^.y + CurrentHeight(s) <= y then result := false
+    if s^.y + SpriteHeight(s) <= y then result := false
     else if s^.y >= y + height then result := false
-    else if s^.x + CurrentWidth(s) <= x then result := false
+    else if s^.x + SpriteWidth(s) <= x then result := false
     else if s^.x >= x + width then result := false
     else
     begin
@@ -739,9 +741,9 @@ implementation
     end;
     
     result := CollisionWithinBitmapImages(
-                bmp1, Round(s1^.x), Round(s1^.y), CurrentWidth(s1), CurrentHeight(s1), 
+                bmp1, Round(s1^.x), Round(s1^.y), SpriteWidth(s1), SpriteHeight(s1), 
                 offX1, offY1, not s1^.usePixelCollision, 
-                bmp2, Round(s2^.x), Round(s2^.y), CurrentWidth(s2), CurrentHeight(s2), 
+                bmp2, Round(s2^.x), Round(s2^.y), SpriteWidth(s2), SpriteHeight(s2), 
                 offX2, offY2, not s2^.usePixelCollision);
   end;
 
@@ -885,10 +887,10 @@ implementation
     r: Single;
     dist: Single;
   begin
-    if CurrentWidth(s) > CurrentHeight(s) then
-      r := CurrentWidth(s) div 2
+    if SpriteWidth(s) > SpriteHeight(s) then
+      r := SpriteWidth(s) div 2
     else
-      r := CurrentHeight(s) div 2;
+      r := SpriteHeight(s) div 2;
       
     dist := PointLineDistance(s^.x + r, s^.y + r, line);
     result := dist < r;
@@ -896,7 +898,7 @@ implementation
   
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
   begin
-    result := LineIntersectsLines(line, LinesFromRect(rect));
+    result := LineIntersectsLines(line, LinesFrom(rect));
   end;
     
   function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
@@ -1003,7 +1005,8 @@ implementation
     mvmtMag, prop: Single;
   begin
     mvmt := s^.movement;
-    outVec := VectorOverLinesFromCircle(CenterPoint(s), CurrentWidth(s) / 2, lines, mvmt, maxIdx);
+    maxIdx := -1;
+    outVec := VectorOverLinesFromCircle(CircleFrom(s), lines, mvmt, maxIdx);
     if maxIdx < 0 then exit;
      
     MoveSprite(s, outVec);
@@ -1018,7 +1021,7 @@ implementation
   
   procedure CollideCircles(s1, s2: Sprite);
   var
-    s1c, s2c: Point2D;
+    c1, c2: Circle;
     colNormalAngle, a1, a2, optP: Single;
     n: Vector;
   begin
@@ -1027,22 +1030,24 @@ implementation
       raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
     end;
     
-    s1c := CenterPoint(s1);
-    s2c := CenterPoint(s2);
+    c1 := CircleFrom(s1);
+    c2 := CircleFrom(s2);
     
     //TODO: What if height > width!!
     //TODO: Change backout from using direction... VectorFromPoints(s1c, s2c)??
-    if s1^.mass < s2^.mass then
+    
+    //if s1^.mass < s2^.mass then
+    if VectorMagnitude(s1^.movement) > VectorMagnitude(s2^.movement) then
     begin
       //move s1 out
-      n := VectorOutOfCircleFromCircle(s1c, s1^.width / 2, s2c, s2^.width / 2, VectorFromPoints(s1c, s2c));
+      n := VectorOutOfCircleFromCircle(c1, c2, s1^.movement);
       s1^.x := s1^.x + n.x;
       s1^.y := s1^.y + n.y;
     end
     else
     begin
       //move s2 out
-      n := VectorOutOfCircleFromCircle(s2c, s2^.width / 2, s1c, s1^.width / 2, VectorFromPoints(s2c, s1c));
+      n := VectorOutOfCircleFromCircle(c2, c1, s2^.movement);
       s2^.x := s2^.x + n.x;
       s2^.y := s2^.y + n.y;
     end;
@@ -1071,7 +1076,7 @@ implementation
     s2^.movement.y := s2^.movement.y + (optP * s1^.mass * n.y);
   end;
   
-  procedure CollideCircleCircle(s: Sprite; const center: Point2D; radius: Single);
+  procedure CollideCircleCircle(s: Sprite; const c: Circle);
   var
     hitLine: LineSegment;
     outVec, mvmt, normal, colVec: Vector;
@@ -1082,15 +1087,15 @@ implementation
     spriteCenter := CenterPoint(s);
     mvmt := s^.movement;
     
-    outVec := VectorOutOfCircleFromCircle(spriteCenter, s^.width / 2, center, radius, mvmt);
+    outVec := VectorOutOfCircleFromCircle(CircleFrom(s), c, mvmt);
     // Back out of circle
     MoveSprite(s, outVec);
     
     // Normal of the collision...
-    colVec := UnitVector(VectorFromPoints(center, spriteCenter));
+    colVec := UnitVector(VectorFromPoints(c.center, spriteCenter));
     normal := VectorNormal(colVec);
     
-    hitPt := AddVectors(center, VectorMultiply(colVec, radius + 1));
+    hitPt := AddVectors(c.center, VectorMultiply(colVec, c.radius + 1.42));
     hitLine := LineFromVector(AddVectors(hitPt, VectorMultiply(normal, 100)), VectorMultiply(normal, -200));
     
     // DrawSprite(s);
@@ -1107,27 +1112,23 @@ implementation
   
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
   var
-    hitLine: LineSegment;
+    hitIdx: LongInt;
+    lines: LinesArray;
     outVec, mvmt: Vector;
-    mvmtMag, radius, prop: Single;
-    center: Point2D;
+    mvmtMag, prop: Single;
   begin
-    if CurrentWidth(s) > CurrentHeight(s) then radius := CurrentWidth(s) / 2
-    else radius := CurrentHeight(s) / 2;
-    
-    center := CenterPoint(s);
     mvmt := s^.Movement;
     
     // Get the line hit...
-    if not LineCircleHit(center, radius, mvmt, rect, hitLine) then exit;
+    lines := LinesFrom(rect);
+    outVec := VectorOverLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx);
+    if hitIdx = -1 then exit;
     
-    //TODO: Make this a line based test... VectorBackFromLineForCircle ??
-    outVec := VectorOutOfRectFromCircle(center, radius, rect, mvmt);
     // back out of rectangle
     MoveSprite(s, outVec);
     
     // bounce...
-    CollideCircleLine(s, hitLine);
+    CollideCircleLine(s, lines[hitIdx]);
     
     // do part movement
     mvmtMag := VectorMagnitude(mvmt);
@@ -1144,26 +1145,36 @@ implementation
   // Geometry Collision Tests
   //---------------------------------------------------------------------------
   
-  function CircleRectCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
+  function CircleRectCollision(const c: Circle; const rect: Rectangle): Boolean;
   begin
-    if CircleLinesCollision(center, radius, rect) then result := True
-    else result := PointInRect(center, rect.x, rect.y, rect.width, rect.height);
+    if CircleLinesCollision(c, LinesFrom(rect)) then result := True
+    else result := PointInRect(c.center, rect.x, rect.y, rect.width, rect.height);
   end;
   
-  function CircleLinesCollision(const center: Point2D; radius: Single; const rect: Rectangle): Boolean;
+  function CircleLinesCollision(const c: Circle; const lines: LinesArray): Boolean;
   var
     pt: Point2D;
+    i: Integer;
   begin
-    pt := ClosestPointOnRectFromCircle(center, radius, rect);
-    result := PointPointDistance(center, pt) <= radius;
+    result := false;
+    for i := 0 to High(lines) do
+    begin
+      pt := ClosestPointOnLineFromCircle(c, lines[i]);
+      
+      if PointPointDistance(c.center, pt) <= c.radius then
+      begin
+        result := True;
+        exit;
+      end;
+    end;
   end;
   
-  function CircleCircleCollision(const center: Point2D; radius: Single; const center2: Point2D; radius2: Single): Boolean;
+  function CircleCircleCollision(const c1, c2: Circle): Boolean;
   begin
-    result := PointPointDistance(center, center2) < radius + radius2;
+    result := PointPointDistance(c1.center, c2.center) < c1.radius + c2.radius;
   end;
   
-  function CircleTriangleCollision(const center: Point2D; radius: Single; const tri: Triangle): Boolean;
+  function CircleTriangleCollision(const c: Circle; const tri: Triangle): Boolean;
   var
     i: Integer;
   begin
@@ -1171,7 +1182,7 @@ implementation
     
     for i := 0 to 2 do
     begin
-      if PointInTriangle(ClosestPointOnCircle(tri[i], center, radius), tri) then 
+      if PointInTriangle(ClosestPointOnCircle(tri[i], c), tri) then 
       begin
         result := True;
         exit;

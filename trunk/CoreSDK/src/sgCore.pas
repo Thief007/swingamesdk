@@ -8,6 +8,9 @@
 // Change History:
 //
 // Version 3:
+// - 2009-06-29: Andrew : Renamed timer and version related functions,
+//                      : Added comments to color and timer functions and procedures.
+//                      : Changed UnPause timer to ResumeTimer
 // - 2009-06-26: Andrew : Fixed FPS calculation.
 // - 2009-06-23: Clinton: Initial format/comment cleanup...
 //                      : Reordered / grouped all methods
@@ -63,18 +66,18 @@ unit sgCore;
 //----------------------------------------------------------------------------
 interface
 //----------------------------------------------------------------------------
-
+  
   {$I sgTrace.inc}
-
+  
   uses sgTypes, SDL;
-
+  
   //----------------------------------------------------------------------------
   // Library Version
   //----------------------------------------------------------------------------
-
+  
   /// @lib
-  function DLLVersion(): LongInt;
-
+  function SwinGameVersion(): LongInt;
+  
   //----------------------------------------------------------------------------
   // Exception Notification/Message
   //----------------------------------------------------------------------------
@@ -174,11 +177,14 @@ interface
   ///
   /// @lib TakeScreenshot
   procedure TakeScreenshot(basename: String);
-
+  
+  
+  
+  
   //----------------------------------------------------------------------------
   // Game-loop Essentials: WindowOpen, ProcessEvents, WindowClose
   //----------------------------------------------------------------------------
-
+  
   /// Checks to see if the window has been asked to close. You need to handle
   /// this if you want the game to end when the window is closed. This value
   /// is updated by the ProcessEvents routine.
@@ -188,7 +194,7 @@ interface
   /// @lib WindowCloseRequested
   /// @uname WindowCloseRequested
   function WindowCloseRequested(): Boolean;
-
+  
   /// ProcessEvents allows the SwinGame API to react to user interactions. This
   /// routine checks the current keyboard and mouse states. This routine must
   /// be called frequently within your game loop to enable user interaction.
@@ -199,9 +205,14 @@ interface
   ///
   /// @lib ProcessEvents
   procedure ProcessEvents();
-
-
-
+  
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Refreshing the screen
+  //----------------------------------------------------------------------------
+  
   /// Draws the current drawing to the screen. This must be called to display
   /// anything to the screen. This will draw all drawing operations, as well
   /// as the text being entered by the user.
@@ -211,15 +222,15 @@ interface
   ///
   /// @lib RefreshScreen
   procedure RefreshScreen(); overload;
-
+  
   /// @lib RefreshScreenRestrictFPS
   /// @uname RefreshScreenRestrictFPS
   procedure RefreshScreen(TargetFPS: UInt32); overload;
-
+  
   //----------------------------------------------------------------------------
   // Colour
   //----------------------------------------------------------------------------
-
+  
   /// Maps a color from a given bitmap. This is used when determining color
   /// keys for transparent images.
   ///
@@ -230,7 +241,6 @@ interface
   /// @lib GetColorForBitmap
   /// @uname GetColorForBitmap
   function GetColor(bmp: Bitmap; apiColor: Color): Color; overload;
-
   
   /// Gets a color given its RGBA components.
   ///
@@ -239,7 +249,7 @@ interface
   ///
   /// @lib GetColor
   function GetColor(red, green, blue, alpha: Byte): Color; overload;
-
+  
   /// Gets a color given its RGB components.
   ///
   /// @param red, green, blue:   Components of the color
@@ -248,18 +258,19 @@ interface
   /// @lib GetColor(red, green, blue, 255)
   /// @uname GetColorRGB
   function GetColor(red, green, blue: Byte): Color; overload;
-
+  
+  /// Gets a color given its RGBA components.
+  ///
   /// @lib
   procedure GetComponents(color: Color; out r, g, b, a: byte);
-
-
+  
   /// Returns a color from a floating point RBG value set.
   ///
   /// @param r,g,b: Components for color 0 = none 1 = full
   ///
   /// @lib
   function GetRGBFloatColor(r,g,b: Single): Color;
-
+  
   /// Returs a color from the HSB input.
   ///
   /// @param hue, saturation, brightness: Values between 0 and 1
@@ -267,20 +278,27 @@ interface
   ///
   /// @lib
   function GetHSBColor(hue, saturation, brightness: Single): Color;
-
+  
+  /// Get the transpareny value of `color`.
+  ///
   /// @lib
   function GetTransparency(color: Color): byte;
-
+  
+  /// Get the red value of `color`.
+  ///
   /// @lib
   function GetRed(color: Color): byte;
-
+  
+  /// Get the green value of `color`.
+  ///
   /// @lib
   function GetGreen(color: Color): byte;
-
+  
+  /// Get the blue value of `color`.
+  ///
   /// @lib
   function GetBlue(color: Color): byte;
-
-
+  
   //----------------------------------------------------------------------------
   // Refresh / Sleep / Framerate
   //----------------------------------------------------------------------------
@@ -311,35 +329,53 @@ interface
   ///
   /// @lib
   procedure Sleep(time: UInt32);
-
+  
+  /// Returns the calculated framerate averages, highest, and lowest values along with
+  /// the suggested rendering color.
+  ///
   /// @lib
   procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);
-
-
+  
   //----------------------------------------------------------------------------
   // Timers
   //----------------------------------------------------------------------------
-
+  
+  /// Create and return a new Timer.
+  ///
   /// @lib
   function CreateTimer(): Timer;
-
+  
+  /// Free a created timer.
+  ///
   /// @lib
   procedure FreeTimer(var toFree: Timer);
-
+  
+  /// Start a timer recording the time that has passed.
+  ///
   /// @lib
   procedure StartTimer(toStart: Timer);
-
+  
+  /// Stop the timer.
+  ///
   /// @lib
   procedure StopTimer(toStop: Timer);
-
+  
+  /// Pause the timer, getting ticks from a paused timer
+  /// will continue to return the same time.
+  ///
   /// @lib
   procedure PauseTimer(toPause: Timer);
-
+  
+  /// Resumes a paused timer.
+  ///
   /// @lib
-  procedure UnpauseTimer(toUnpause: Timer);
-
+  procedure ResumeTimer(toUnpause: Timer);
+  
+  /// Gets the number of ticks (milliseconds) that have passed since the timer
+  /// was started.
+  ///
   /// @lib
-  function GetTimerTicks(toGet: Timer): UInt32;
+  function TimerTicks(toGet: Timer): UInt32;
 
   var
     //Preset colours, do not change these values.
@@ -409,7 +445,7 @@ implementation
   // Library Version
   //----------------------------------------------------------------------------
 
-  function DLLVersion(): LongInt;
+  function SwinGameVersion(): LongInt;
   begin
     result := DLL_VERSION;
   end;
@@ -961,7 +997,7 @@ implementation
     end;
   end;
 
-  procedure UnpauseTimer(toUnpause: Timer);
+  procedure ResumeTimer(toUnpause: Timer);
   begin
     if not Assigned(toUnpause) then raise Exception.Create('No timer supplied');
     with toUnpause^ do
@@ -975,7 +1011,7 @@ implementation
     end;
   end;
 
-  function GetTimerTicks(toGet: Timer): UInt32;
+  function TimerTicks(toGet: Timer): UInt32;
   begin
     if not Assigned(toGet) then raise Exception.Create('No timer supplied');
 

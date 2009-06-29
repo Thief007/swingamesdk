@@ -1,3 +1,17 @@
+//----------------------------------------------------------------------------
+//          sgTypes.pas
+//----------------------------------------------------------------------------
+//
+// The Types unit contains the data types used by SwinGames for shapes,
+// Sprites, Bitmaps, Sounds, etc.
+//
+// Change History:
+//
+// Version 3.0:
+// - 2009-06-29: Andrew : Added Circle
+// -                    : Started Polygon (removed for version 3)
+// - 2009-06-20: Andrew : Created types unit.
+
 /// @header sgTypes
 unit sgTypes;
 
@@ -15,7 +29,7 @@ interface
     /// @struct Vector
     Vector = Point2D; {record
       x, y: Single;
-    end;}
+    end;} 
     
     ///@class Point2DPtr
     ///@pointer_wrapper
@@ -27,11 +41,33 @@ interface
     ///@field data: array of Point2D
     ArrayOfPoint2D = Array of Point2D;
     
+    // /// The kind of polygon.
+    // ///
+    // /// @enum PolygonKind
+    // PolygonKind= (
+    //     pkLine,
+    //     pkStrip,
+    //     pkFan,
+    //     pkList
+    //   );
+    // 
+    // /// @struct Polygon
+    // Polygon = record
+    //   points: ArrayOfPoint2D;
+    //   kind: PolygonKind;
+    // end;
+    
     /// @struct Rectangle
     Rectangle = record
         x, y: Single;
         width, height: LongInt;
       end;
+    
+    /// @struct Circle
+    Circle = record
+      center: Point2D;
+      radius: LongInt;
+    end;
     
     /// @struct LineSegment
     LineSegment = record
