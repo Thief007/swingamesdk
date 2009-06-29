@@ -11,33 +11,33 @@
 // Change History:
 //
 // Version 3.0:
-// - 2009-06-24: Andrew: Moved Sprite routines to Sprites.
+// - 2009-06-29: Andrew : Using circle
+// - 2009-06-24: Andrew : Moved Sprite routines to Sprites.
 // - 2009-06-23: Clinton: Comment format/cleanup
-// - 2009-06-05: Andrew: Using sgShared
+// - 2009-06-05: Andrew : Using sgShared
 //
 // Version 2.0:
-// - 2008-12-17: Andrew: Moved all integers to LongInt
-// - 2008-12-10: Andrew: Moved primitive drawing to SDL_gfx
-//             Added rotation and zoom to Sprite + Sprite Drawing
-//             Added RotateZoomBitmap
-//             Added MakeOpaque and MakeTransparent to allow multiple blending
-//             Added extra triangle drawing code
-// - 2008-12-09: Andrew: Started transition to SDL_gfx
+// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-10: Andrew : Moved primitive drawing to SDL_gfx
+//                      : Added rotation and zoom to Sprite + Sprite Drawing
+//                      : Added RotateZoomBitmap
+//                      : Added MakeOpaque and MakeTransparent to allow multiple blending
+//                      : Added extra triangle drawing code
+// - 2008-12-09: Andrew : Started transition to SDL_gfx
 //
 // Version 1.1:
 // - 2008-04-08: Stephen: Added DrawTriangle()
-// - 2008-04-02: Andrew: Fixed issues related to freeing images
-//             Fixed transparent pixels for non 32bit images
-// - 2008-03-09: Andrew: Fixed DrawSprite with Offset
-// - 2008-02-16: Andrew: Added GetPixel and GetPixelFromScreen
-// - 2008-01-31: Andrew: Fixed Line Drawing Issue
-// - 2008-01-30: Andrew: Fixed DrawRectangle
-// - 2008-01-25: Andrew: Fixed compiler hints for pointer use
-// - 2008-01-24: Andrew: Added Clipping
-// - 2008-01-24: James: Version 1.1 overloads
-// - 2008-01-21: Aki: 40 overloads added for Point2D and 
-// - 2008-01-17: Aki + Andrew: Refactor
-//   Rectangle support
+// - 2008-04-02: Andrew : Fixed issues related to freeing images
+//                      : Fixed transparent pixels for non 32bit images
+// - 2008-03-09: Andrew : Fixed DrawSprite with Offset
+// - 2008-02-16: Andrew : Added GetPixel and GetPixelFromScreen
+// - 2008-01-31: Andrew : Fixed Line Drawing Issue
+// - 2008-01-30: Andrew : Fixed DrawRectangle
+// - 2008-01-25: Andrew : Fixed compiler hints for pointer use
+// - 2008-01-24: Andrew : Added Clipping
+// - 2008-01-24: James  : Version 1.1 overloads
+// - 2008-01-21: Aki    : 40 overloads added for Point2D and 
+// - 2008-01-17: Aki + Andrew: Refactor Rectangle support
 //  
 // Version 1.0:
 // - Various
@@ -122,85 +122,157 @@ interface
   procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
   
   /// @lib DrawPixelOnto
-  procedure DrawPixel(dest: Bitmap; theColor: Color; x, y: LongInt); overload;
+  procedure DrawPixel(dest: Bitmap; clr: Color; x, y: LongInt); overload;
   /// @lib DrawPixelAtPointOnto
-  procedure DrawPixel(dest: Bitmap; theColor: Color; const position: Point2D); overload;
+  procedure DrawPixel(dest: Bitmap; clr: Color; const position: Point2D); overload;
   
   /// @lib DrawOrFillRectangleOnto
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
   /// @lib DrawOrFillRectangleRectOnto
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; filled : Boolean; const source: Rectangle); overload;
-  /// @lib DrawOrFillRectangleOnto(dest, theColor, False, xPos, yPos, width, height)
+  procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillRectangleOnto(dest, clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangleOnto
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height: LongInt); overload;
-  /// @lib DrawOrFillRectangleRectOnto(dest, theColor, False, source)
+  procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height: LongInt); overload;
+  /// @lib DrawOrFillRectangleRectOnto(dest, clr, False, source)
   /// @uname DrawRectangleRectOnto
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
-  /// @lib DrawOrFillRectangleOnto(dest, theColor, True, xPos, yPos, width, height)
+  procedure DrawRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
+  /// @lib DrawOrFillRectangleOnto(dest, clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnto
-  procedure FillRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height : LongInt); overload;
-  /// @lib DrawOrFillRectangleRectOnto(dest, theColor, True, source)
+  procedure FillRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
+  /// @lib DrawOrFillRectangleRectOnto(dest, clr, True, source)
   /// @uname FillRectangleRectOnto
-  procedure FillRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
+  procedure FillRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
   
   /// @lib DrawLineOnto
-  procedure DrawLine(dest: Bitmap; theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
   /// @lib DrawLineSegmentOnto
-  procedure DrawLine(dest: Bitmap; theColor: Color; const line: LineSegment); overload;
+  procedure DrawLine(dest: Bitmap; clr: Color; const line: LineSegment); overload;
   /// @lib DrawLinePtsOnto
-  procedure DrawLine(dest: Bitmap; theColor: Color; const startPt, endPt: Point2D); overload;
+  procedure DrawLine(dest: Bitmap; clr: Color; const startPt, endPt: Point2D); overload;
   
   /// @lib DrawHorizontalLineOnto
-  procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt); overload;
+  procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: LongInt); overload;
   /// @lib DrawVerticalLineOnto
-  procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt); overload;
+  procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: LongInt); overload;
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Circle drawing code
+  //---------------------------------------------------------------------------
+  
+  /// @lib DrawOrFillPtCircleOnto
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircleOnto(dest, clr, False, xc, yc, radius)
+  /// @uname DrawPtCircleOnto
+  procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircleOnto(dest, clr, True, xc, yc, radius)
+  /// @uname FillPtCircleOnto
+  procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
+  
+  /// @lib DrawOrFillCircleAtPointOnto
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnto(dest, clr, False, point, radius)
+  /// @uname DrawCircleAtPointOnto
+  procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnto(dest, clr, True, point, radius)
+  /// @uname FillCircleAtPointOnto
+  procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
   
   /// @lib DrawOrFillCircleOnto
-  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
   /// @lib DrawOrFillCircleAtPointOnto
-  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleOnto(dest, theColor, False, xc, yc, radius)
-  /// @uname DrawCircleOnto
-  procedure DrawCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnto(dest, theColor, False, point, radius)
-  /// @uname DrawCircleAtPointOnto
-  procedure DrawCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleOnto(dest, theColor, True, xc, yc, radius)
+  procedure DrawCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
+  /// @lib DrawOrFillCircleOnto(dest, clr, c)
   /// @uname FillCircleOnto
-  procedure FillCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnto(dest, theColor, True, point, radius)
-  /// @uname FillCircleAtPointOnto
-  procedure FillCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
+  
+  /// @lib DrawOrFillPtCircle
+  procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircle(clr, False, xc, yc, radius)
+  /// @uname DrawPtCircle
+  procedure DrawCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircle(clr, True, xc, yc, radius)
+  /// @uname FillPtCircle
+  procedure FillCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  
+  /// @lib DrawOrFillPtCircleAtPoint
+  procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircleAtPoint(clr, False, position, radius)
+  /// @uname DrawPtCircleAtPoint
+  procedure DrawCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircleAtPoint(clr, True, position, radius)
+  /// @uname FillPtCircleAtPoint
+  procedure FillCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
+  
+  /// @lib DrawOrFillCircle
+  procedure DrawCircle(clr: Color; filled: Boolean; const c: Circle); overload;
+  /// @lib DrawOrFillCircle(clr, False, c)
+  /// @uname DrawCircle
+  procedure DrawCircle(clr: Color; const c: Circle); overload;
+  /// @lib DrawOrFillCircle(clr, True, c)
+  /// @uname FillCircle
+  procedure FillCircle(clr: Color; const c: Circle); overload;
+  
+  /// @lib DrawOrFillPtCircleOnScreen
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircleOnScreen(clr, False, xc, yc, radius)
+  /// @uname DrawCircleOnScreen
+  procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  /// @lib DrawOrFillPtCircleOnScreen(clr, True, xc, yc, radius)
+  /// @uname FillCircleOnScreen
+  procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  
+  /// @lib DrawOrFillCircleAtPointOnScreen
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnScreen(clr, False, position, radius)
+  /// @uname DrawCircleAtPointOnScreen
+  procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
+  /// @lib DrawOrFillCircleAtPointOnScreen(clr, True, position, radius)
+  /// @uname FillCircleAtPointOnScreen
+  procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
+  
+  /// @lib DrawOrFillCircleOnScreen
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const c: Circle); overload;
+  /// @lib DrawOrFillCircleOnScreen(clr, False, c)
+  /// @uname DrawCircleOnScreen
+  procedure DrawCircleOnScreen(clr: Color; const c: Circle); overload;
+  /// @lib DrawOrFillCircleOnScreen(clr, True, c)
+  /// @uname FillCircleOnScreen
+  procedure FillCircleOnScreen(clr: Color; const c: Circle); overload;
+  
+  
+  
   
   /// @lib DrawOrFillEllipseOnto
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
   /// @lib DrawOrFillEllipseInRectOnto
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; const source: Rectangle); overload;
-  /// @lib DrawOrFillEllipseOnto(dest, theColor, False, xPos, yPos, width, height)
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseOnto(dest, clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipseOnto
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseInRectOnto(dest, theColor, False, source)
+  procedure DrawEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseInRectOnto(dest, clr, False, source)
   /// @uname DrawEllipseInRectOnto
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
-  /// @lib DrawOrFillEllipseOnto(dest, theColor, True, xPos, yPos, width, height)
+  procedure DrawEllipse(dest: Bitmap; clr: Color; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseOnto(dest, clr, True, xPos, yPos, width, height)
   /// @uname FillEllipseOnto
-  procedure FillEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseInRectOnto(dest, theColor, True, source)
+  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseInRectOnto(dest, clr, True, source)
   /// @uname FillEllipseInRectOnto
-  procedure FillEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
+  procedure FillEllipse(dest: Bitmap; clr: Color; const source: Rectangle); overload;
   
   /// @lib DrawOrFillTriangleOnto
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const tri: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnto(dest, theColor, False, tri)
+  procedure DrawTriangle(dest: Bitmap; clr: Color; filled: Boolean; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnto(dest, clr, False, tri)
   /// @uname DrawTriangleOnto
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnto(dest, theColor, True, tri)
+  procedure DrawTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnto(dest, clr, True, tri)
   /// @uname FillTriangleOnto
-  procedure FillTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
+  procedure FillTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   /// @lib DrawTriangleFromPointsOnto
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPointsOnto
-  procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   //---------------------------------------------------------------------------
   // Screen drawing routines
@@ -227,90 +299,76 @@ interface
   procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
   
   /// @lib
-  procedure DrawPixel(theColor: Color; x, y: Single); overload;
+  procedure DrawPixel(clr: Color; x, y: Single); overload;
   /// @lib DrawPixelAtPoint
-  procedure DrawPixel(theColor: Color; const position: Point2D); overload;
+  procedure DrawPixel(clr: Color; const position: Point2D); overload;
   
   /// @lib DrawOrFillRectangle
-  procedure DrawRectangle(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawRectangle(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
   /// @lib DrawOrFillRectangleRect
-  procedure DrawRectangle(theColor: Color; filled: Boolean; const source: Rectangle); overload;
-  /// @lib DrawOrFillRectangle(theColor, False, xPos, yPos, width, height)
+  procedure DrawRectangle(clr: Color; filled: Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillRectangle(clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangle
-  procedure DrawRectangle(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
-  /// @lib DrawOrFillRectangleRect(theColor, False, source)
+  procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  /// @lib DrawOrFillRectangleRect(clr, False, source)
   /// @uname DrawRectangleRect
-  procedure DrawRectangle(theColor: Color; const source: Rectangle); overload;
-  /// @lib DrawOrFillRectangle(theColor, True, xPos, yPos, width, height)
+  procedure DrawRectangle(clr: Color; const source: Rectangle); overload;
+  /// @lib DrawOrFillRectangle(clr, True, xPos, yPos, width, height)
   /// @uname FillRectangle
-  procedure FillRectangle(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
-  /// @lib DrawOrFillRectangleRect(theColor, True, source)
+  procedure FillRectangle(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  /// @lib DrawOrFillRectangleRect(clr, True, source)
   /// @uname FillRectangleRect
-  procedure FillRectangle(theColor: Color; const source: Rectangle); overload;
+  procedure FillRectangle(clr: Color; const source: Rectangle); overload;
   
   //TODO: Other overloads!
   /// @lib DrawLineSegments
-  procedure DrawLines(theColor: Color; const lines: LinesArray); //overload;
+  procedure DrawLines(clr: Color; const lines: LinesArray); //overload;
   
   
   /// @lib
-  procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+  procedure DrawLine(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
   /// @lib DrawLineSegment
-  procedure DrawLine(theColor: Color; const line: LineSegment); overload;
+  procedure DrawLine(clr: Color; const line: LineSegment); overload;
   /// @lib DrawLinePts
-  procedure DrawLine(theColor: Color; const startPt, endPt: Point2D); overload;
+  procedure DrawLine(clr: Color; const startPt, endPt: Point2D); overload;
   
   /// @lib DrawOrFillTriangle
-  procedure DrawTriangle(theColor: Color; filled: Boolean; const tri: Triangle); overload;
-  /// @lib DrawOrFillTriangle(theColor, False, tri)
+  procedure DrawTriangle(clr: Color; filled: Boolean; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangle(clr, False, tri)
   /// @uname DrawTriangle
-  procedure DrawTriangle(theColor: Color; const tri: Triangle); overload;
-  /// @lib DrawOrFillTriangle(theColor, True, tri)
+  procedure DrawTriangle(clr: Color; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangle(clr, True, tri)
   /// @uname FillTriangle
-  procedure FillTriangle(theColor: Color; const tri: Triangle); overload;
+  procedure FillTriangle(clr: Color; const tri: Triangle); overload;
   /// @lib DrawTriangleFromPoints
-  procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPoints
-  procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   /// @lib
-  procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
+  procedure DrawHorizontalLine(clr: Color; y, x1, x2: Single); overload;
   /// @lib
-  procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
+  procedure DrawVerticalLine(clr: Color; x, y1, y2: Single); overload;
   
-  /// @lib DrawOrFillCircle
-  procedure DrawCircle(theColor: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPoint
-  procedure DrawCircle(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircle(theColor, False, xc, yc, radius)
-  /// @uname DrawCircle
-  procedure DrawCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPoint(theColor, False, position, radius)
-  /// @uname DrawCircleAtPoint
-  procedure DrawCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircle(theColor, True, xc, yc, radius)
-  /// @uname FillCircle
-  procedure FillCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPoint(theColor, True, position, radius)
-  /// @uname FillCircleAtPoint
-  procedure FillCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  
+  
   
   /// @lib DrawOrFillEllipse
-  procedure DrawEllipse(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
   /// @lib DrawOrFillEllipseInRect
-  procedure DrawEllipse(theColor: Color; filled: Boolean; const source: Rectangle); overload;
-  /// @lib DrawOrFillEllipse(theColor, False, xPos, yPos, width, height)
+  procedure DrawEllipse(clr: Color; filled: Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipse(clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipse
-  procedure DrawEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseInRect(theColor, False, source)
+  procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseInRect(clr, False, source)
   /// @uname DrawEllipseInRect
-  procedure DrawEllipse(theColor: Color; const source: Rectangle); overload;
-  /// @lib DrawOrFillEllipse(theColor, True, xPos, yPos, width, height)
+  procedure DrawEllipse(clr: Color; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipse(clr, True, xPos, yPos, width, height)
   /// @uname FillEllipse
-  procedure FillEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseInRect(theColor, True, source)
+  procedure FillEllipse(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseInRect(clr, True, source)
   /// @uname FillEllipseInRect
-  procedure FillEllipse(theColor: Color; const source: Rectangle); overload;
+  procedure FillEllipse(clr: Color; const source: Rectangle); overload;
 
   //---------------------------------------------------------------------------
   // Draws elements directly onto the screen, ignoring the visible window
@@ -343,85 +401,68 @@ interface
   procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
   
   /// @lib
-  procedure DrawPixelOnScreen(theColor: Color; x, y: LongInt); overload;
+  procedure DrawPixelOnScreen(clr: Color; x, y: LongInt); overload;
   /// @lib DrawPixelAtPointOnScreen
-  procedure DrawPixelOnScreen(theColor: Color; const position: Point2D); overload;
+  procedure DrawPixelOnScreen(clr: Color; const position: Point2D); overload;
   
   /// @lib DrawOrFillRectangleOnScreen
-  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
-  /// @lib DrawOrFillRectangleOnScreen(theColor, False, xPos, yPos, width, height)
+  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  /// @lib DrawOrFillRectangleOnScreen(clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangleOnScreen
-  procedure DrawRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
-  /// @lib DrawOrFillRectangleOnScreen(theColor, True, xPos, yPos, width, height)
+  procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
+  /// @lib DrawOrFillRectangleOnScreen(clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnScreen
-  procedure FillRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
   /// @lib DrawOrFillRectangleRectOnScreen
-  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; const source : Rectangle); overload;
-  /// @lib DrawOrFillRectangleRectOnScreen(theColor, False, source)
+  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; const source : Rectangle); overload;
+  /// @lib DrawOrFillRectangleRectOnScreen(clr, False, source)
   /// @uname DrawRectangleRectOnScreen
-  procedure DrawRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
-  /// @lib DrawOrFillRectangleRectOnScreen(theColor, True, source)
+  procedure DrawRectangleOnScreen(clr : Color; const source : Rectangle); overload;
+  /// @lib DrawOrFillRectangleRectOnScreen(clr, True, source)
   /// @uname FillRectangleRectOnScreen
-  procedure FillRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
+  procedure FillRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   
   /// @lib
-  procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLineOnScreen(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
   /// @lib DrawLineSegmentOnScreen
-  procedure DrawLineOnScreen(theColor: Color; const line: LineSegment); overload;
+  procedure DrawLineOnScreen(clr: Color; const line: LineSegment); overload;
   /// @lib DrawLinePtsOnScreen
-  procedure DrawLineOnScreen(theColor: Color; const startPt, endPt: Point2D); overload;
+  procedure DrawLineOnScreen(clr: Color; const startPt, endPt: Point2D); overload;
   
   /// @lib
-  procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt);
+  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: LongInt);
   /// @lib
-  procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt);
-  
-  /// @lib DrawOrFillCircleOnScreen
-  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
-  /// @lib DrawOrFillCircleOnScreen(theColor, False, xc, yc, radius)
-  /// @uname DrawCircleOnScreen
-  procedure DrawCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
-  /// @lib DrawOrFillCircleOnScreen(theColor, True, xc, yc, radius)
-  /// @uname FillCircleOnScreen
-  procedure FillCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnScreen
-  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnScreen(theColor, False, position, radius)
-  /// @uname DrawCircleAtPointOnScreen
-  procedure DrawCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnScreen(theColor, True, position, radius)
-  /// @uname FillCircleAtPointOnScreen
-  procedure FillCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: LongInt);
   
   /// @lib DrawOrFillEllipseOnScreen
-  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseOnScreen(theColor, False, xPos, yPos, width, height)
+  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseOnScreen(clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipseOnScreen
-  procedure DrawEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
-  /// @lib DrawOrFillEllipseOnScreen(theColor, True, xPos, yPos, width, height)
+  procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
+  /// @lib DrawOrFillEllipseOnScreen(clr, True, xPos, yPos, width, height)
   /// @uname FillEllipseOnScreen
-  procedure FillEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
   /// @lib DrawOrFillEllipseInRectOnScreen
-  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; const source: Rectangle); overload;
-  /// @lib DrawOrFillEllipseInRectOnScreen(theColor, False, source)
+  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseInRectOnScreen(clr, False, source)
   /// @uname DrawEllipseInRectOnScreen
-  procedure DrawEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
-  /// @lib DrawOrFillEllipseInRectOnScreen(theColor, True, source)
+  procedure DrawEllipseOnScreen(clr: Color; const source: Rectangle); overload;
+  /// @lib DrawOrFillEllipseInRectOnScreen(clr, True, source)
   /// @uname FillEllipseInRectOnScreen
-  procedure FillEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  procedure FillEllipseOnScreen(clr: Color; const source: Rectangle); overload;
   
   /// @lib DrawOrFillTriangleOnScreen
-  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const tri: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnScreen(theColor, False, tri)
+  procedure DrawTriangleOnScreen(clr: Color; filled: Boolean; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnScreen(clr, False, tri)
   /// @uname DrawTriangleOnScreen
-  procedure DrawTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
-  /// @lib DrawOrFillTriangleOnScreen(theColor, True, tri)
+  procedure DrawTriangleOnScreen(clr: Color; const tri: Triangle); overload;
+  /// @lib DrawOrFillTriangleOnScreen(clr, True, tri)
   /// @uname FillTriangleOnScreen  
-  procedure FillTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
+  procedure FillTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   /// @lib DrawTriangleFromPointsOnScreen
-  procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPointsOnScreen
-  procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   
   //---------------------------------------------------------------------------
   // Clipping
@@ -893,383 +934,417 @@ implementation
   
   /// Draws a pixel onto the screen.
   ///
-  /// @param theColor:     The color to draw the pixel
+  /// @param clr:     The color to draw the pixel
   /// @param x,y:         The x,y location to draw the pixel at
   ///
   /// Side Effects:
   /// - Sets one pixel on the screen
-  procedure DrawPixelOnScreen(theColor: Color; x, y: LongInt);
+  procedure DrawPixelOnScreen(clr: Color; x, y: LongInt);
   begin
-    DrawPixel(screen, theColor, x, y);
+    DrawPixel(screen, clr, x, y);
   end;
 
-  procedure DrawPixel(theColor: Color; x, y: Single); overload;
+  procedure DrawPixel(clr: Color; x, y: Single); overload;
   begin
-    DrawPixelOnScreen(theColor, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
+    DrawPixelOnScreen(clr, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
 
   /// Draws a rectangle on the screen.
   ///
-  /// @param theColor:     The color to draw the rectangle
+  /// @param clr:     The color to draw the rectangle
   /// @param filled:       True to draw a filled rectangle, false for outline
   /// @param xPos,yPos:   The x,y location to draw the rectangle at
   /// @param width,height: The width and height of the rectangle
   ///
   /// Side Effects:
   /// - Draws a rectangle in the dest bitmap
-  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
   begin
-    DrawRectangle(screen, theColor, filled, xPos, yPos, width, height);
+    DrawRectangle(screen, clr, filled, xPos, yPos, width, height);
   end;
 
-  procedure DrawRectangle(theColor : Color; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
+  procedure DrawRectangle(clr : Color; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    DrawRectangle(screen, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawRectangle(screen, clr, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws the outline of a rectangle on the screen.
   ///
-  /// @param theColor:     The color to draw the rectangle
+  /// @param clr:     The color to draw the rectangle
   /// @param xPos,yPos:   The x,y location to draw the rectangle at
   /// @param width,height: The width and height of the rectangle
   ///
   /// Side Effects:
   /// - Draws a rectangle on the screen
-  procedure DrawRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
   begin
-    DrawRectangle(screen, theColor, xPos, yPos, width, height);
+    DrawRectangle(screen, clr, xPos, yPos, width, height);
   end;
   
-  procedure DrawRectangle(theColor: Color; xPos, yPos: Single; width, height : LongInt); overload;
+  procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    DrawRectangle(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawRectangle(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a filled rectangle on the screen.
   ///
-  /// @param theColor:     The color to draw the rectangle
+  /// @param clr:     The color to draw the rectangle
   /// @param xPos,yPos:   The x,y location to draw the rectangle at
   /// @param width,height: The width and height of the rectangle
   ///
   /// Side Effects:
   /// - Draws a rectangle on the screen
-  procedure FillRectangleOnScreen(theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
   begin
-    FillRectangle(screen, theColor, xPos, yPos, width, height);
+    FillRectangle(screen, clr, xPos, yPos, width, height);
   end;
 
-  procedure FillRectangle(theColor : Color; xPos, yPos: Single; width, height : LongInt); overload;
+  procedure FillRectangle(clr : Color; xPos, yPos: Single; width, height : LongInt); overload;
   begin
-    FillRectangle(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    FillRectangle(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a line on the screen.
   ///
-  /// @param theColor:     The color to draw the line
+  /// @param clr:     The color to draw the line
   /// @param xPosStart,yPosStart: The x,y location to start the line at
   /// @param xPosEnd, yPosEnd:    The x,y location to end the line at
   ///
   /// Side Effects:
   /// - Draws a line in the screen
-  procedure DrawLineOnScreen(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLineOnScreen(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
   begin
-    DrawLine(screen, theColor, xPosStart, yPosStart, xPosEnd, yPosEnd);
+    DrawLine(screen, clr, xPosStart, yPosStart, xPosEnd, yPosEnd);
   end;
   
-  procedure DrawLine(theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
+  procedure DrawLine(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Single); overload;
   begin
-    DrawLine(screen, theColor, sgCamera.ToScreenX(xPosStart), sgCamera.ToScreenY(yPosStart), sgCamera.ToScreenX(xPosEnd), sgCamera.ToScreenY(yPosEnd));
+    DrawLine(screen, clr, sgCamera.ToScreenX(xPosStart), sgCamera.ToScreenY(yPosStart), sgCamera.ToScreenX(xPosEnd), sgCamera.ToScreenY(yPosEnd));
   end;
   
-  procedure DrawLine(theColor: Color; const line: LineSegment); overload;
+  procedure DrawLine(clr: Color; const line: LineSegment); overload;
   begin
-    DrawLine(theColor, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y);
+    DrawLine(clr, line.startPoint.x, line.startPoint.y, line.endPoint.x, line.endPoint.y);
   end;
   
-  procedure DrawLine(theColor: Color; const startPt, endPt: Point2D); overload;
+  procedure DrawLine(clr: Color; const startPt, endPt: Point2D); overload;
   begin
-    DrawLine(theColor, startPt.x, startPt.y, endPt.x, endPt.y);
+    DrawLine(clr, startPt.x, startPt.y, endPt.x, endPt.y);
   end;
   
-  procedure DrawLine(dest: Bitmap; theColor: Color; const line: LineSegment); overload;
+  procedure DrawLine(dest: Bitmap; clr: Color; const line: LineSegment); overload;
   begin
-    DrawLine(dest, theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
+    DrawLine(dest, clr, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
   end;
   
-  procedure DrawLine(dest: Bitmap; theColor: Color; const startPt, endPt: Point2D); overload;
+  procedure DrawLine(dest: Bitmap; clr: Color; const startPt, endPt: Point2D); overload;
   begin
-    DrawLine(dest, theColor, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
+    DrawLine(dest, clr, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
   end;
   
-  procedure DrawTriangle(theColor: Color; filled: Boolean; const tri: Triangle); overload;
+  procedure DrawTriangle(clr: Color; filled: Boolean; const tri: Triangle); overload;
   begin
-    if filled then FillTriangle(theColor, tri)
-    else DrawTriangle(theColor, tri);
+    if filled then FillTriangle(clr, tri)
+    else DrawTriangle(clr, tri);
   end;
 
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; filled: Boolean; const tri: Triangle); overload;
+  procedure DrawTriangle(dest: Bitmap; clr: Color; filled: Boolean; const tri: Triangle); overload;
   begin
-    if filled then FillTriangle(dest, theColor, tri)
-    else DrawTriangle(dest, theColor, tri);
+    if filled then FillTriangle(dest, clr, tri)
+    else DrawTriangle(dest, clr, tri);
   end;
   
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
+  procedure DrawTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(dest, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(dest, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
-  procedure DrawTriangleOnScreen(theColor: Color; filled: Boolean; const tri: Triangle); overload;
+  procedure DrawTriangleOnScreen(clr: Color; filled: Boolean; const tri: Triangle); overload;
   begin
-    if filled then FillTriangleOnScreen(theColor, tri) 
-    else DrawTriangleOnScreen(theColor, tri);
+    if filled then FillTriangleOnScreen(clr, tri) 
+    else DrawTriangleOnScreen(clr, tri);
   end;
 
-  procedure DrawTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
+  procedure DrawTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(screen, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(screen, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
-  procedure DrawTriangle(theColor: Color; const tri: Triangle); overload;
+  procedure DrawTriangle(clr: Color; const tri: Triangle); overload;
   begin
-    DrawTriangle(theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    DrawTriangle(clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
-  procedure DrawTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    DrawTriangle(screen, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
+    DrawTriangle(screen, clr, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
   end;
   
-  procedure DrawTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    DrawTriangle(screen, theColor, x1, y1, x2, y2, x3, y3);
+    DrawTriangle(screen, clr, x1, y1, x2, y2, x3, y3);
   end;
 
-  procedure DrawTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure DrawTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    aatrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(theColor));
+    aatrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(clr));
   end;
 
-  procedure FillTriangle(dest: Bitmap; theColor: Color; const tri: Triangle); overload;
+  procedure FillTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(dest, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(dest, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
-  procedure FillTriangle(theColor: Color; const tri: Triangle); overload;
+  procedure FillTriangle(clr: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
 
-  procedure FillTriangle(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangle(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    FillTriangle(screen, theColor, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
+    FillTriangle(screen, clr, sgCamera.ToScreenX(x1), sgCamera.ToScreenY(y1), sgCamera.ToScreenX(x2), sgCamera.ToScreenY(y2), sgCamera.ToScreenX(x3), sgCamera.ToScreenY(y3));
   end;
   
-  procedure FillTriangleOnScreen(theColor: Color; const tri: Triangle); overload;
+  procedure FillTriangleOnScreen(clr: Color; const tri: Triangle); overload;
   begin
-    FillTriangle(screen, theColor, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
+    FillTriangle(screen, clr, tri[0].x, tri[0].y, tri[1].x, tri[1].y, tri[2].x, tri[2].y);
   end;
   
-  procedure FillTriangleOnScreen(theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangleOnScreen(clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    FillTriangle(screen, theColor, x1, y1, x2, y2, x3, y3);
+    FillTriangle(screen, clr, x1, y1, x2, y2, x3, y3);
   end;
 
-  procedure FillTriangle(dest: Bitmap; theColor: Color; x1, y1, x2, y2, x3, y3: Single); overload;
+  procedure FillTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(theColor));
+    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(clr));
   end;
 
   
   /// Draws a horizontal line on the screen.
   ///
-  /// @param theColor:     The color to draw the line
+  /// @param clr:     The color to draw the line
   /// @param y:           The y location of the line
   /// @param x1, x2:       The starting and ending x value of the line
   ///
   /// Side Effects:
   /// - Draws a line on the screen
-  procedure DrawHorizontalLineOnScreen(theColor: Color; y, x1, x2: LongInt); overload;
+  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: LongInt); overload;
   begin
-    DrawHorizontalLine(screen, theColor, y, x1, x2);
+    DrawHorizontalLine(screen, clr, y, x1, x2);
   end;
 
-  procedure DrawHorizontalLine(theColor: Color; y, x1, x2: Single); overload;
+  procedure DrawHorizontalLine(clr: Color; y, x1, x2: Single); overload;
   begin
-    DrawHorizontalLine(screen, theColor, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
+    DrawHorizontalLine(screen, clr, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
   end;
 
   /// Draws a vertical line on the screen.
   ///
-  /// @param theColor:     The color to draw the line
+  /// @param clr:     The color to draw the line
   /// @param x:           The x location of the line
   /// @param y1, y2:       The starting and ending y value of the line
   ///
   /// Side Effects:
   /// - Draws a line on the screen
-  procedure DrawVerticalLineOnScreen(theColor: Color; x, y1, y2: LongInt); overload;
+  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: LongInt); overload;
   begin
-    DrawVerticalLine(screen, theColor, x, y1, y2);
+    DrawVerticalLine(screen, clr, x, y1, y2);
   end;
 
-  procedure DrawVerticalLine(theColor: Color; x, y1, y2: Single); overload;
+  procedure DrawVerticalLine(clr: Color; x, y1, y2: Single); overload;
   begin
-    DrawVerticalLine(screen, theColor, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y1), sgCamera.ToScreenY(y2));
+    DrawVerticalLine(screen, clr, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y1), sgCamera.ToScreenY(y2));
+  end;
+  
+  
+  
+  
+  
+  
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  begin
+    DrawCircle(screen, clr, filled, xc, yc, radius);
+  end;
+  
+  procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  begin
+    DrawCircle(screen, clr, filled, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+  end;
+  
+  procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  begin
+    DrawCircle(screen, clr, xc, yc, radius);
+  end;
+  
+  procedure DrawCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  begin
+    DrawCircle(screen, clr, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
-  /// Draws a circle centered on a given x, y location.
-  ///
-  /// @param theColor:     The color to draw the circle
-  /// @param filled:       True to draw a filled circle, false for outline
-  /// @param xc,yc:       The x,y location of the center of the circle
-  /// @param radius:       The radius of the circle
-  ///
-  /// Side Effects:
-  /// - Draws a Circle on the screen
-  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
+  procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(screen, theColor, filled, xc, yc, radius);
+    FillCircle(screen, clr, xc, yc, radius);
   end;
 
-  procedure DrawCircle(theColor: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(screen, theColor, filled, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+    FillCircle(screen, clr, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+  end;
+  
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  begin
+    if filled then FillCircle(dest, clr, xc, yc, radius)
+    else DrawCircle(dest, clr, xc, yc, radius);
   end;
 
-
-  /// Draws a circle outline centered on a given x, y location.
-  ///
-  /// @param theColor:     The color to draw the circle
-  /// @param xc,yc:       The x,y location of the center of the circle
-  /// @param radius:       The radius of the circle
-  ///
-  /// Side Effects:
-  /// - Draws a Circle on the screen
-  procedure DrawCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    DrawCircle(screen, theColor, xc, yc, radius);
+    aacircleColor(dest^.surface, Round(xc), Round(yc), radius, ToGfxColor(clr));
   end;
 
-  procedure DrawCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt);
   begin
-    DrawCircle(screen, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
+    filledCircleColor(dest^.surface, Round(xc), Round(yc), radius, ToGfxColor(clr));
+  end;
+  
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
+  begin
+    DrawCircle(dest, clr, filled, c.center.x, c.center.y, c.radius);
+  end;
+  
+  procedure DrawCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
+  begin
+    DrawCircle(dest, clr, False, c.center.x, c.center.y, c.radius)
+  end;
+  
+  procedure FillCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
+  begin
+    DrawCircle(dest, clr, True, c.center.x, c.center.y, c.radius)
+  end;
+  
+  procedure DrawCircle(clr: Color; filled: Boolean; const c: Circle); overload;
+  begin
+    DrawCircle(screen, clr, filled, sgCamera.ToScreenX(c.center.x), sgCamera.ToScreenY(c.center.y), c.radius);
+  end;
+  
+  procedure DrawCircle(clr: Color; const c: Circle); overload;
+  begin
+    DrawCircle(screen, clr, False, sgCamera.ToScreenX(c.center.x), sgCamera.ToScreenY(c.center.y), c.radius);
+  end;
+  
+  procedure FillCircle(clr: Color; const c: Circle); overload;
+  begin
+    DrawCircle(screen, clr, True, sgCamera.ToScreenX(c.center.x), sgCamera.ToScreenY(c.center.y), c.radius);
+  end;
+  
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const c: Circle); overload;
+  begin
+    DrawCircle(screen, clr, filled, c.center.x, c.center.y, c.radius);
+  end;
+  
+  procedure DrawCircleOnScreen(clr: Color; const c: Circle); overload;
+  begin
+    DrawCircle(screen, clr, False, c.center.x, c.center.y, c.radius);
+  end;
+  
+  procedure FillCircleOnScreen(clr: Color; const c: Circle); overload;
+  begin
+    DrawCircle(screen, clr, True, c.center.x, c.center.y, c.radius);
+  end;
+  
+  
+  
+  
+  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  begin
+    DrawEllipse(screen, clr, filled, xPos, yPos, width, height);
   end;
 
-  /// Draws a filled circle centered on a given x, y location.
-  ///
-  /// @param theColor:     The color to draw the circle
-  /// @param xc,yc:       The x,y location of the center of the circle
-  /// @param radius:       The radius of the circle
-  ///
-  /// Side Effects:
-  /// - Draws a Circle on the screen
-  procedure FillCircleOnScreen(theColor: Color; xc, yc, radius: LongInt); overload;
+  procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    FillCircle(screen, theColor, xc, yc, radius);
-  end;
-
-  procedure FillCircle(theColor: Color; xc, yc: Single; radius: LongInt); overload;
-  begin
-    FillCircle(screen, theColor, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
-  end;
-
-  /// Draws a ellipse within a given rectangle on the screen.
-  ///
-  /// @param theColor:     The color to draw the ellipse
-  /// @param filled:       True to draw a filled ellipse, false for outline
-  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
-  /// @param width,height: The width and height of the ellipse
-  ///
-  /// Side Effects:
-  /// - Draws a ellipse on the screen
-  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-  begin
-    DrawEllipse(screen, theColor, filled, xPos, yPos, width, height);
-  end;
-
-  procedure DrawEllipse(theColor: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
-  begin
-    DrawEllipse(screen, theColor, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawEllipse(screen, clr, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
   /// Draws a ellipse outline within a given rectangle on the screen.
   ///
-  /// @param theColor:     The color to draw the ellipse
+  /// @param clr:     The color to draw the ellipse
   /// @param xPos,yPos:   The x,y location of the top left of the ellipse
   /// @param width,height: The width and height of the ellipse
   ///
   /// Side Effects:
   /// - Draws a ellipse on the screen
-  procedure DrawEllipseOnScreen(theColor: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
   begin
-    DrawEllipse(screen, theColor, xPos, yPos, width, height);
+    DrawEllipse(screen, clr, xPos, yPos, width, height);
   end;
 
-  procedure DrawEllipse(theColor: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    DrawEllipse(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    DrawEllipse(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
 
   /// Draws a filled ellipse within a given rectangle on the screen.
   ///
-  /// @param theColor:     The color to draw the ellipse
+  /// @param clr:     The color to draw the ellipse
   /// @param xPos,yPos:   The x,y location of the top left of the ellipse
   /// @param width,height: The width and height of the ellipse
   ///
   /// Side Effects:
   /// - Draws a ellipse in the screen
-  procedure FillEllipseOnScreen(theColor: Color;  xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipseOnScreen(clr: Color;  xPos, yPos, width, height: LongInt); overload;
   begin
-    FillEllipse(screen, theColor, xPos, yPos, width, height);
+    FillEllipse(screen, clr, xPos, yPos, width, height);
   end;
 
-  procedure FillEllipse(theColor: Color;  xPos, yPos: Single; width, height: LongInt); overload;
+  procedure FillEllipse(clr: Color;  xPos, yPos: Single; width, height: LongInt); overload;
   begin
-    FillEllipse(screen, theColor, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
+    FillEllipse(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
 
   /// Draws a rectangle on the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the rectangle
+  /// @param clr:     The color to draw the rectangle
   /// @param filled:       True to draw a filled rectangle, false for outline
   /// @param xPos,yPos:   The x,y location to draw the rectangle at
   /// @param width,height: The width and height of the rectangle
   ///
   /// Side Effects:
   /// - Draws a rectangle in the dest bitmap
-  procedure DrawRectangle(dest: Bitmap; theColor: Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr: Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
   begin
-    if filled then FillRectangle(dest, theColor, xPos, yPos, width, height)
-    else DrawRectangle(dest, theColor, xPos, yPos, width, height);
+    if filled then FillRectangle(dest, clr, xPos, yPos, width, height)
+    else DrawRectangle(dest, clr, xPos, yPos, width, height);
   end;
 
   /// Draws the outline of a rectangle on the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the rectangle
+  /// @param clr:     The color to draw the rectangle
   /// @param xPos,yPos:   The x,y location to draw the rectangle at
   /// @param width,height: The width and height of the rectangle
   ///
   /// Side Effects:
   /// - Draws a rectangle in the dest bitmap
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
   begin
     if dest = nil then raise Exception.Create('No destination bitmap supplied');
-    rectangleColor(dest^.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(theColor));
+    rectangleColor(dest^.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(clr));
   end;
 
   /// Draws a filled rectangle on the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the rectangle
+  /// @param clr:     The color to draw the rectangle
   /// @param xPos,yPos:   The x,y location to draw the rectangle at
   /// @param width,height: The width and height of the rectangle
   ///
   /// Side Effects:
   /// - Draws a rectangle in the dest bitmap
-  procedure FillRectangle(dest: Bitmap; theColor : Color;  xPos, yPos, width, height : LongInt);
+  procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : LongInt);
   var
     rect: SDL_Rect;
   begin
@@ -1290,118 +1365,118 @@ implementation
     rect.w := width;
     rect.h := height;
     
-    //SDL_FillRect(dest^.surface, @rect, theColor);
-    boxColor(dest^.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(theColor));
+    //SDL_FillRect(dest^.surface, @rect, clr);
+    boxColor(dest^.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(clr));
   end;
 
   /// Draws a ellipse within a given rectangle on the dest bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the ellipse
+  /// @param clr:     The color to draw the ellipse
   /// @param filled:       True to draw a filled ellipse, false for outline
   /// @param xPos,yPos:   The x,y location of the top left of the ellipse
   /// @param width,height: The width and height of the ellipse
   ///
   /// Side Effects:
   /// - Draws a ellipse in the dest bitmap
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
   begin
-    if filled then FillEllipse(dest, theColor, xPos, yPos, width, height)
-    else DrawEllipse(dest, theColor, xPos, yPos, width, height);
+    if filled then FillEllipse(dest, clr, xPos, yPos, width, height)
+    else DrawEllipse(dest, clr, xPos, yPos, width, height);
   end;
 
   /// Draws a ellipse outline within a given rectangle on the dest bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the ellipse
+  /// @param clr:     The color to draw the ellipse
   /// @param xPos,yPos:   The x,y location of the top left of the ellipse
   /// @param width,height: The width and height of the ellipse
   ///
   /// Side Effects:
   /// - Draws a ellipse in the dest bitmap
-  procedure DrawEllipse(dest: Bitmap; theColor: Color;  xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color;  xPos, yPos, width, height: LongInt); overload;
   var
     halfWidth, halfHeight: Sint16;
   begin
     halfWidth := width div 2;
     halfHeight := height div 2;
     
-    aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
+    aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
   end;
 
   /// Draws a filled ellipse within a given rectangle on the dest bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the ellipse
+  /// @param clr:     The color to draw the ellipse
   /// @param xPos,yPos:   The x,y location of the top left of the ellipse
   /// @param width,height: The width and height of the ellipse
   ///
   /// Side Effects:
   /// - Draws a ellipse in the dest bitmap
-  procedure FillEllipse(dest: Bitmap; theColor: Color; xPos, yPos, width, height: LongInt);
+  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt);
   var
     halfWidth, halfHeight: Sint16;
   begin
     halfWidth := width div 2;
     halfHeight := height div 2;
 
-    filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(theColor));
+    filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
   end;
   
   /// Draws a vertical line on the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the line
+  /// @param clr:     The color to draw the line
   /// @param x:           The x location of the line
   /// @param y1, y2:       The starting and ending y value of the line
   ///
   /// Side Effects:
   /// - Draws a line in the dest bitmap
-  procedure DrawVerticalLine(dest: Bitmap; theColor: Color; x, y1, y2: LongInt);
+  procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: LongInt);
   begin
     if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
-    vlineColor(dest^.surface, x, y1, y2, ToGfxColor(theColor));
+    vlineColor(dest^.surface, x, y1, y2, ToGfxColor(clr));
   end;
 
   /// Draws a horizontal line on the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the line
+  /// @param clr:     The color to draw the line
   /// @param y:           The y location of the line
   /// @param x1, x2:       The starting and ending x value of the line
   ///
   /// Side Effects:
   /// - Draws a line in the dest bitmap
-  procedure DrawHorizontalLine(dest: Bitmap; theColor: Color; y, x1, x2: LongInt);
+  procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: LongInt);
   begin
     if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
       
-    hlineColor(dest^.surface, x1, x2, y, ToGfxColor(theColor));
+    hlineColor(dest^.surface, x1, x2, y, ToGfxColor(clr));
   end;
 
   /// Draws a line on the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the line
+  /// @param clr:     The color to draw the line
   /// @param xPosStart,yPosStart: The x,y location to start the line at
   /// @param xPosEnd, yPosEnd:    The x,y location to end the line at
   ///
   /// Side Effects:
   /// - Draws a line in the dest bitmap
-  procedure DrawLine(dest: Bitmap; theColor: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
+  procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
   begin
-    aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(theColor));
+    aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(clr));
   end;
 
   /// Draws a pixel onto the destination bitmap.
   ///
   /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the pixel
+  /// @param clr:     The color to draw the pixel
   /// @param x,y:         The x,y location to draw the pixel at
   ///
   /// Side Effects:
   /// - Sets one pixel on the destination bitmap
-  procedure DrawPixel(dest: Bitmap; theColor: Color; x, y: LongInt); overload;
+  procedure DrawPixel(dest: Bitmap; clr: Color; x, y: LongInt); overload;
   begin
     if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
     
@@ -1409,60 +1484,12 @@ implementation
     
     //if SDL_MUSTLOCK(dest^.surface) then SDL_LockSurface(dest^.surface);
     
-    PutPixel(dest^.surface, x, y, theColor);
+    PutPixel(dest^.surface, x, y, clr);
     
     //if SDL_MUSTLOCK(dest^.surface) then SDL_UnlockSurface(dest^.surface);
   end;
   
-  /// Draws a circle centered on a given x, y location.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the circle
-  /// @param filled:       True to draw a filled circle, false for outline
-  /// @param xc,yc:       The x,y location of the center of the circle
-  /// @param radius:       The radius of the circle
-  ///
-  /// Side Effects:
-  /// - Draws a Circle in the dest bitmap
-  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; xc, yc, radius: LongInt); overload;
-  begin
-    if filled then FillCircle(dest, theColor, xc, yc, radius)
-    else DrawCircle(dest, theColor, xc, yc, radius);
-  end;
-
-  /// Draws a circle outline centered on a given x, y location.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the circle
-  /// @param xc,yc:       The x,y location of the center of the circle
-  /// @param radius:       The radius of the circle
-  ///
-  /// Side Effects:
-  /// - Draws a Circle in the dest bitmap
-  procedure DrawCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt); overload;
-  begin
-    aacircleColor(dest^.surface, xc, yc, radius, ToGfxColor(theColor));
-  end;
-
-  /// Draws a filled circle centered on a given x, y location.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param theColor:     The color to draw the circle
-  /// @param xc,yc:       The x,y location of the center of the circle
-  /// @param radius:       The radius of the circle
-  ///
-  /// Side Effects:
-  /// - Draws a Circle in the dest bitmap
-  procedure FillCircle(dest: Bitmap; theColor: Color; xc, yc, radius: LongInt);
-  begin
-    filledCircleColor(dest^.surface, xc, yc, radius, ToGfxColor(theColor));
-  end;
   
-  
-  
-  //**********
-  // Overloaded draw methods...
-  //**********
   
   
   procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position: Point2D); overload;
@@ -1475,54 +1502,54 @@ implementation
     DrawBitmapPart(dest, src, source, Round(position.x), Round(position.y));
   end;
 
-  procedure DrawPixel(dest: Bitmap; theColor: Color; const position : Point2D); overload;
+  procedure DrawPixel(dest: Bitmap; clr: Color; const position : Point2D); overload;
   begin
-    DrawPixel(dest, theColor, Round(position.x), Round(position.y));
+    DrawPixel(dest, clr, Round(position.x), Round(position.y));
   end;
 
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; filled : Boolean; const source: Rectangle); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; const source: Rectangle); overload;
   begin
-    DrawRectangle(dest, theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+    DrawRectangle(dest, clr, filled, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
   begin
-    DrawRectangle(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+    DrawRectangle(dest, clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure FillRectangle(dest: Bitmap; theColor : Color; const source: Rectangle); overload;
+  procedure FillRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
   begin
-    FillRectangle(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+    FillRectangle(dest, clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawCircle(dest: Bitmap; theColor: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
   begin
-    DrawCircle(dest, theColor, filled, Round(point.x), Round(point.y), radius);
+    DrawCircle(dest, clr, filled, Round(point.x), Round(point.y), radius);
   end;
 
-  procedure DrawCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
   begin
-    DrawCircle(dest, theColor, Round(point.x), Round(point.y), radius);
+    DrawCircle(dest, clr, Round(point.x), Round(point.y), radius);
   end;
 
-  procedure FillCircle(dest: Bitmap; theColor: Color; const point: Point2D; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
   begin
-    FillCircle(dest, theColor, Round(point.x), Round(point.y), radius);
+    FillCircle(dest, clr, Round(point.x), Round(point.y), radius);
   end;
 
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; const source: Rectangle); overload;
   begin
-    DrawEllipse(dest, theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+    DrawEllipse(dest, clr, filled, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; const source: Rectangle); overload;
   begin
-    DrawEllipse(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+    DrawEllipse(dest, clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure FillEllipse(dest: Bitmap; theColor: Color; const source: Rectangle); overload;
+  procedure FillEllipse(dest: Bitmap; clr: Color; const source: Rectangle); overload;
   begin
-    FillEllipse(dest, theColor, Round(source.x), Round(source.y), source.width, source.height);
+    FillEllipse(dest, clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
   procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
@@ -1540,54 +1567,54 @@ implementation
     DrawBitmapPart(src, source, Round(position.x), Round(position.y));
   end;
 
-  procedure DrawPixel(theColor: Color; const position: Point2D); overload;
+  procedure DrawPixel(clr: Color; const position: Point2D); overload;
   begin
-    DrawPixel(theColor, Round(position.x), Round(position.y));
+    DrawPixel(clr, Round(position.x), Round(position.y));
   end;
 
-  procedure DrawRectangle(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  procedure DrawRectangle(clr : Color; filled : Boolean; const source : Rectangle); overload;
   begin
-    DrawRectangle(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+    DrawRectangle(clr, filled, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawRectangle(theColor : Color; const source : Rectangle); overload;
+  procedure DrawRectangle(clr : Color; const source : Rectangle); overload;
   begin
-    DrawRectangle(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    DrawRectangle(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure FillRectangle(theColor : Color; const source : Rectangle); overload;
+  procedure FillRectangle(clr : Color; const source : Rectangle); overload;
   begin
-    FillRectangle(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    FillRectangle(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawCircle(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
   begin
-    DrawCircle(theColor, filled, Round(position.x), Round(position.y), radius);
+    DrawCircle(clr, filled, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure DrawCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
   begin
-    DrawCircle(theColor, Round(position.x), Round(position.y), radius);
+    DrawCircle(clr, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure FillCircle(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
   begin
-    FillCircle(theColor, position.x, position.y, radius);
+    FillCircle(clr, position.x, position.y, radius);
   end;
 
-  procedure DrawEllipse(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawEllipse(clr: Color; filled: Boolean; const source: Rectangle); overload;
   begin
-    DrawEllipse(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+    DrawEllipse(clr, filled, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawEllipse(theColor: Color; const source: Rectangle); overload;
+  procedure DrawEllipse(clr: Color; const source: Rectangle); overload;
   begin
-    DrawEllipse(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    DrawEllipse(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure FillEllipse(theColor: Color; const source: Rectangle); overload;
+  procedure FillEllipse(clr: Color; const source: Rectangle); overload;
   begin
-    FillEllipse(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    FillEllipse(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
   procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
@@ -1605,64 +1632,64 @@ implementation
     DrawBitmapOnScreen(src, Round(position.x), Round(position.y))
   end;
 
-  procedure DrawPixelOnScreen(theColor: Color; const position: Point2D); overload;
+  procedure DrawPixelOnScreen(clr: Color; const position: Point2D); overload;
   begin
-    DrawPixelOnScreen(theColor, Round(position.x), Round(position.y));
+    DrawPixelOnScreen(clr, Round(position.x), Round(position.y));
   end;
 
-  procedure DrawRectangleOnScreen(theColor : Color; filled : Boolean; const source : Rectangle); overload;
+  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; const source : Rectangle); overload;
   begin
-    DrawRectangleOnScreen(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+    DrawRectangleOnScreen(clr, filled, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
+  procedure DrawRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   begin
-    DrawRectangleOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    DrawRectangleOnScreen(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure FillRectangleOnScreen(theColor : Color; const source : Rectangle); overload;
+  procedure FillRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   begin
-    FillRectangleOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    FillRectangleOnScreen(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawLineOnScreen(theColor: Color; const line: LineSegment); overload;
+  procedure DrawLineOnScreen(clr: Color; const line: LineSegment); overload;
   begin
-    DrawLineOnScreen(theColor, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
+    DrawLineOnScreen(clr, Round(line.startPoint.x), Round(line.startPoint.y), Round(line.endPoint.x), Round(line.endPoint.y));
   end;
   
-  procedure DrawLineOnScreen(theColor: Color; const startPt, endPt: Point2D); overload;
+  procedure DrawLineOnScreen(clr: Color; const startPt, endPt: Point2D); overload;
   begin
-    DrawLineOnScreen(theColor, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
+    DrawLineOnScreen(clr, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
   end;
   
-  procedure DrawCircleOnScreen(theColor: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
   begin
-    DrawCircleOnScreen(theColor, filled, Round(position.x), Round(position.y), radius);
+    DrawCircleOnScreen(clr, filled, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure DrawCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
   begin
-    DrawCircleOnScreen(theColor, Round(position.x), Round(position.y), radius);
+    DrawCircleOnScreen(clr, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure FillCircleOnScreen(theColor: Color; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
   begin
-    FillCircleOnScreen(theColor, Round(position.x), Round(position.y), radius);
+    FillCircleOnScreen(clr, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure DrawEllipseOnScreen(theColor: Color; filled: Boolean; const source: Rectangle); overload;
+  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; const source: Rectangle); overload;
   begin
-    DrawEllipseOnScreen(theColor, filled, Round(source.x), Round(source.y), source.width, source.height);
+    DrawEllipseOnScreen(clr, filled, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  procedure DrawEllipseOnScreen(clr: Color; const source: Rectangle); overload;
   begin
-    DrawEllipseOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    DrawEllipseOnScreen(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure FillEllipseOnScreen(theColor: Color; const source: Rectangle); overload;
+  procedure FillEllipseOnScreen(clr: Color; const source: Rectangle); overload;
   begin
-    FillEllipseOnScreen(theColor, Round(source.x), Round(source.y), source.width, source.height);
+    FillEllipseOnScreen(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
   
   procedure ResetClip(bmp: Bitmap); overload;
@@ -1728,13 +1755,29 @@ implementation
   //
   //
   
-  procedure DrawLines(theColor: Color; const lines: LinesArray); //overload;
+  procedure DrawLines(clr: Color; const lines: LinesArray); //TODO: overload;
   var
     i: Integer;
   begin
     for i := 0 to High(lines) do
     begin
-      DrawLine(theColor, lines[i]);
+      DrawLine(clr, lines[i]);
     end;
   end;
+  
+  // procedure DrawMesh(c: Color; const m: Mesh); //TODO: overload
+  //   procedure _DoDrawMesh();
+  //   var
+  //     i: Integer;
+  //   begin
+  //     
+  //   end;
+  // begin
+  //   case Length(mesh) of
+  //     1: DrawPixel(c, m[0]);
+  //     2: DrawLine(c, m[0], m[1]);
+  //     else
+  //       _DoDrawMesh();
+  //   end;
+  // end;
 end.

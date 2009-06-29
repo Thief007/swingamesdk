@@ -1,17 +1,25 @@
+//----------------------------------------------------------------------------
+//          sgSprites.pas
+//----------------------------------------------------------------------------
+//
+// The Sprites unit contains the code used to manage sprites in SwinGame.
+//
+// Change History:
+//
+// Version 3.0:
+// - 2009-06-29: Andrew : Changed CurrentWidth and CurrentHeight to SpriteWidth and SpriteHeight
+//                      : Renamed IsSpriteOnScreenAt -> SpriteOnScreenAt
+// - 2009-06-20: Andrew : Created Sprites unit.
+
+
 /// Sprite management code.
 ///
 /// @module Sprites
 unit sgSprites;
 
-//  renamed IsSpriteOnScreenAt -> SpriteOnScreenAt
-
 interface
-  
   uses sgTypes;
   
-  /// @lib CenterPoint
-  function CenterPoint(s: Sprite): Point2D;
-
   /// Returns a `Vector` that is the difference in the position of two sprites 
   /// (``s1`` and ``s2``). 
   ///
@@ -81,11 +89,11 @@ interface
   /// @lib
   /// @class Sprite
   /// @getter Height
-  function CurrentHeight(s: Sprite): LongInt;
+  function SpriteHeight(s: Sprite): LongInt;
   /// @lib
   /// @class Sprite
   /// @getter Width
-  function CurrentWidth(s: Sprite): LongInt;
+  function SpriteWidth(s: Sprite): LongInt;
 
   /// @lib
   /// @class Sprite
@@ -185,12 +193,6 @@ implementation
     Classes, SysUtils, // System
     sgGraphics, sgGeometry, sgCore, sgCamera; //SwinGame
 
-
-function CenterPoint(s: Sprite): Point2D;
-begin
-  result.x := s^.x + CurrentWidth(s) / 2;
-  result.y := s^.y + CurrentHeight(s) / 2;
-end;
 
 function VectorFromTo(s1, s2: Sprite): Vector;
 begin
@@ -470,7 +472,7 @@ end;
 ///
 /// @param sprite:     The sprite to get the width of
 /// @returns           The width of the sprite's current frame
-function CurrentWidth(s: Sprite): LongInt;
+function SpriteWidth(s: Sprite): LongInt;
 begin
   if s = nil then raise Exception.Create('No sprite supplied');
   
@@ -481,7 +483,7 @@ end;
 ///
 /// @param sprite:     The sprite to get the height of
 /// @returns           The height of the sprite's current frame
-function CurrentHeight(s: Sprite): LongInt;
+function SpriteHeight(s: Sprite): LongInt;
 begin
   if s = nil then raise Exception.Create('No sprite supplied');
   
@@ -659,9 +661,9 @@ begin
   if s = nil then raise Exception.Create('No sprite supplied');
   
   if sgCamera.ToScreenX(s^.x) >= ScreenWidth() then result := true
-  else if sgCamera.ToScreenX(s^.x) + CurrentWidth(s) < 0 then result := true
+  else if sgCamera.ToScreenX(s^.x) + SpriteWidth(s) < 0 then result := true
   else if sgCamera.ToScreenY(s^.y) >= ScreenHeight() then result := true
-  else if sgCamera.ToScreenY(s^.y) + CurrentHeight(s) < 0 then result := true
+  else if sgCamera.ToScreenY(s^.y) + SpriteHeight(s) < 0 then result := true
   else result := false;
 end;
 
@@ -728,9 +730,9 @@ begin
   wx := ToWorldX(x);
   wy := ToWorldY(y);
   
-  if wy > s^.y + CurrentHeight(s) then result := false
+  if wy > s^.y + SpriteHeight(s) then result := false
   else if wy < s^.y then result := false
-  else if wx > s^.x + CurrentWidth(s) then result := false
+  else if wx > s^.x + SpriteWidth(s) then result := false
   else if wx < s^.x then result := false
   else if not s^.usePixelCollision then result := true
   else
