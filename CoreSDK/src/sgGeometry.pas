@@ -112,7 +112,7 @@ interface
   function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
   
   /// @lib
-  function LineCircleHit(const c: Circle; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
+  function LineCircleHit(const c: Circle; const movement: Vector; const lines: LinesArray; maxLine: Boolean; out found: LineSegment): Boolean;
   
   //  Returns distance from the line, or if the intersecting point on the line nearest
   //    the point tested is outside the endpoints of the line, the distance to the
@@ -444,8 +444,16 @@ interface
   /// @lib
   function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
   
+  /// @lib
+  function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
   
   
+  
+  //---------------------------------------------------------------------------
+  // Functions to get a vector into of some bounded shape
+  //---------------------------------------------------------------------------
+  
+  function VectorIntoRectFromRect(const src, bounds: Rectangle; const movement: Vector): Vector;
   
   //---------------------------------------------------------------------------
   // Points functions and procedures
@@ -584,7 +592,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoints(const pts: ArrayOfPoint2D; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoints(const pts: ArrayOfPoint2D; lines: LinesArray; movement: Vector; maxLine: Boolean; out maxIdx: LongInt): Vector;
   var
     ptOnLine: Point2D;
     ray, vOut: Vector;
@@ -616,24 +624,28 @@ implementation
           
           dist := PointPointDistance(ptOnLine, pts[j]);
           
-          if (dist > maxDist) or (maxIdx = -1) then
+          if ((dist > maxDist) and maxLine) or ((dist < maxDist) and not maxLine) or (maxIdx = -1) then
           begin
             maxDist := dist;
             maxIdx := i;
             vOut := VectorFromPoints(pts[j], ptOnLine);
-            vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1.42);
+            if maxLine then
+              vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1)
+            else
+              vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) - 1);
           end;      
         end;
       end;
     end;
     
-    result := vOut;
+    result.x := Ceiling(vOut.x);
+    result.y := Ceiling(vOut.y);
   end;
   
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoint(const pt: Point2D; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoint(const pt: Point2D; lines: LinesArray; movement: Vector; maxLine: Boolean; out maxIdx: LongInt): Vector;
   // var
   //   ptOnLine, ptOnCircle: Point2D;
   //   tmp: Array [0..3] of Point2D;
@@ -646,13 +658,13 @@ implementation
   begin
     SetLength(pts, 1);
     pts[0] := pt;
-    result := _VectorOverLinesFromPoints(pts, lines, movement, maxIdx);
+    result := _VectorOverLinesFromPoints(pts, lines, movement, maxLine, maxIdx);
   end;
 
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; maxLine: Boolean; out maxIdx: LongInt): Vector;
   type
     DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
   var
@@ -731,17 +743,22 @@ implementation
 
         dist := PointPointDistance(ptOnLine, ptOnCircle);
 
-        if (dist > maxDist) or (maxIdx = -1) then
+        if ((dist > maxDist) and maxLine) or ((dist < maxDist) and not maxLine) or (maxIdx = -1) then
         begin
           maxDist := dist;
           maxIdx := i;
           vOut := VectorFromPoints(ptOnCircle, ptOnLine);
-          vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1.42);
+          
+          if maxLine then
+            vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1.42)
+          else
+            vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) - 1.42);
         end;      
       end;
     end;
     
-    result := vOut;
+    result.x := Ceiling(vOut.x);
+    result.y := Ceiling(vOut.y);
   end;
   
   
@@ -1789,7 +1806,7 @@ implementation
   var
     maxIdx: LongInt;
   begin
-    result := _VectorOverLinesFromPoint(pt, LinesFrom(rect), movement, maxIdx);
+    result := _VectorOverLinesFromPoint(pt, LinesFrom(rect), movement, True, maxIdx);
   end;
 
   function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const movement: Vector): Vector;
@@ -1845,7 +1862,14 @@ implementation
   var
     maxIDx: LongInt;
   begin
-    result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), movement, maxIdx);
+    result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), movement, True, maxIdx);
+  end;
+  
+  function VectorIntoRectFromRect(const src, bounds: Rectangle; const movement: Vector): Vector;
+  var
+    maxIDx: LongInt;
+  begin
+    result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), InvertVector(movement), False, maxIdx);
   end;
   
   function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
@@ -1862,11 +1886,11 @@ implementation
     result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
   end;
   
-  function LineCircleHit(const c: Circle; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
+  function LineCircleHit(const c: Circle; const movement: Vector; const lines: LinesArray; maxLine: Boolean; out found: LineSegment): Boolean;
   var
     hitIdx: Integer;
   begin
-    _VectorOverLinesFromCircle(c, lines, movement, hitIdx);
+    _VectorOverLinesFromCircle(c, lines, movement, maxLine, hitIdx);
     if hitIdx >= 0 then
     begin
       found := lines[hitIdx];
@@ -1929,9 +1953,13 @@ implementation
   
   function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
   begin
-    result := _VectorOverLinesFromCircle(c, lines, movement, maxIDx);
+    result := _VectorOverLinesFromCircle(c, lines, movement, True, maxIDx);
   end;
   
+  function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  begin
+    result := _VectorOverLinesFromCircle(c, lines, InvertVector(movement), False, maxIDx);
+  end;
   
   
   
