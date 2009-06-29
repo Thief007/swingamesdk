@@ -460,6 +460,11 @@ interface
   ///@lib
   procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   
+  /// @lib
+  procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
+  
+  
+  
   
   
 //----------------------------------------------------------------------------
@@ -1110,7 +1115,7 @@ implementation
     if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
   end;
   
-  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle; bounds: Boolean);
   var
     hitIdx: LongInt;
     lines: LinesArray;
@@ -1121,11 +1126,20 @@ implementation
     
     // Get the line hit...
     lines := LinesFrom(rect);
-    outVec := VectorOverLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx);
+    if bounds then
+      outVec := VectorInLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx)
+    else 
+      outVec := VectorOverLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx);
+    
     if hitIdx = -1 then exit;
     
     // back out of rectangle
     MoveSprite(s, outVec);
+    if bounds then
+    begin
+      DrawSprite(s);
+      RefreshScreen(1);
+    end;
     
     // bounce...
     CollideCircleLine(s, lines[hitIdx]);
@@ -1135,6 +1149,17 @@ implementation
     prop := VectorMagnitude(outVec) / mvmtMag; //proportion of move "undone" by back out
     if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
   end;
+  
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
+  begin
+    CollideCircleRectangle(s, rect, False);
+  end;
+  
+  procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
+  begin
+    CollideCircleRectangle(s, rect, True);
+  end;
+
   
   //----------------------------------------------------------------------------
 
@@ -1156,7 +1181,8 @@ implementation
     pt: Point2D;
     i: Integer;
   begin
-    result := false;
+    result := False;
+    
     for i := 0 to High(lines) do
     begin
       pt := ClosestPointOnLineFromCircle(c, lines[i]);
