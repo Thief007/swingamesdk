@@ -460,8 +460,8 @@ interface
   ///@lib
   procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   
-  /// @lib
-  procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
+  // /// @lib
+  // procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
   
   
   
@@ -1115,6 +1115,8 @@ implementation
     if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
   end;
   
+  
+  //TODO: bounds based checking, need VectorIntoShape...
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle; bounds: Boolean);
   var
     hitIdx: LongInt;
@@ -1126,23 +1128,34 @@ implementation
     
     // Get the line hit...
     lines := LinesFrom(rect);
-    if bounds then
-      outVec := VectorInLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx)
-    else 
+    // if bounds then
+    //   outVec := VectorInLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx)
+    // else 
       outVec := VectorOverLinesFromCircle(CircleFrom(s), lines, mvmt, hitIdx);
     
     if hitIdx = -1 then exit;
     
     // back out of rectangle
     MoveSprite(s, outVec);
-    if bounds then
-    begin
-      DrawSprite(s);
-      RefreshScreen(1);
-    end;
+    // if bounds then
+    // begin
+    //   ClearScreen();
+    //   DrawSprite(s);
+    //   DrawRectangle(ColorRed, rect);
+    //   DrawCircle(ColorYellow, AddVectors(CenterPoint(s), InvertVector(outVec)), 2);
+    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.movement, 10)));
+    //   RefreshScreen(1);
+    // end;
     
     // bounce...
     CollideCircleLine(s, lines[hitIdx]);
+    
+    // if bounds then
+    // begin
+    //   DrawSprite(s);
+    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.movement, 10)));
+    //   RefreshScreen(1);
+    // end;
     
     // do part movement
     mvmtMag := VectorMagnitude(mvmt);
@@ -1189,6 +1202,7 @@ implementation
       
       if PointPointDistance(c.center, pt) <= c.radius then
       begin
+        //DrawCircle(ColorGreen, pt, 2);
         result := True;
         exit;
       end;
