@@ -199,8 +199,8 @@ begin
   r2 := 20;
   
   s1 := CreateSprite(GetBitmap('ball'));
-  s1^.x := 400;
-  s1^.y := 300;
+  s1^.x := 100;
+  s1^.y := 600;
   s1^.Mass := 10;
   s1^.Movement := VectorFrom(4, 4);
   
@@ -214,7 +214,7 @@ begin
   
   mouseMvmt := VectorFrom(1,1);
   
-  rect := RectangleFrom(400, 400, 200, 100);
+  rect := RectangleFrom(400, 300, 200, 200);
   rect1 := RectangleFrom(420, 420, 10, 20);
   
   ShowMouse(False);
@@ -236,6 +236,13 @@ begin
     
     temp := GetMousePosition();
     DoLineTest(testLines, temp, r2, mouseMvmt);
+    
+    // if not CircleWithinRect(CircleFrom(temp, r2), rect) then
+    // begin
+    //   mouseOut := VectorIntoRectFromCircle(CircleFrom(temp, r2), rect, mouseMvmt);
+    //   DrawLine(ColorWhite, temp, AddVectors(temp, mouseOut));
+    //   DrawCircle(ColorWhite, AddVectors(temp, mouseOut), r2);
+    // end;
 
     if CircleRectCollision(CircleFrom(temp, r2), rect) then
     begin
@@ -270,7 +277,7 @@ begin
       
       //LineOfLinesCircleHit(temp, r2, mouseMvmt, LinesFrom(t1), found);
     end else begin
-      DrawCircle(ColorGreen, temp, r2);
+       DrawCircle(ColorGreen, temp, r2);
     end;
     
     // rectPt := ClosestPointOnRectFromCircle(temp, r2, rect);
@@ -308,8 +315,10 @@ begin
     DrawLine(ColorBlue, temp.x, temp.y, temp.x + (s1^.Movement.x * 10), temp.y + (s1^.Movement.y * 10));
     UpdateSprite(s1);
     KeepOnScreen(s1);
+    
     if CircleRectCollision(CircleFrom(s1), rect) then CollideCircleRectangle(s1, rect)
     else if CircleCircleCollision(CircleFrom(s1), CircleFrom(c1, r1)) then CollideCircleCircle(s1, CircleFrom(c1, r1));
+    
     
     DrawSprite(s2);
     temp := CenterPoint(s2);
@@ -340,6 +349,9 @@ begin
     
     temp := VectorOutOfRectFromRect(rect1, rect, mouseMvmt);
     DrawLine(ColorYellow, VectorFrom(rect1.x, rect1.y), AddVectors(temp, VectorFrom(rect1.x, rect1.y)));
+    
+    // temp := VectorIntoRectFromRect(rect1, rect, mouseMvmt);
+    // DrawLine(ColorWhite, VectorFrom(rect1.x, rect1.y), AddVectors(temp, VectorFrom(rect1.x, rect1.y)));
     
     
     DrawFramerate(0,0);
