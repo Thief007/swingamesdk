@@ -52,6 +52,7 @@ public final class ShapeDrawer
             Core.refreshScreen();
             Core.processEvents();
         } while (!Core.windowCloseRequested());*/
+        Core.useNative();
         runGame();
     }
 

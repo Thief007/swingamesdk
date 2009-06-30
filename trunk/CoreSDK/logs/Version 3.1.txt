@@ -1,0 +1,16 @@
+
+--                                 Change Log                                --
+
+SwinGame Software Development Kit
+Version 3.1
+
+Suggestions:
+* Group Apply (cw)
+* Change window title (forum)
+* Polygon type+drawing, matrix operations (translate + scale), collisions
+* Load resources from stream (eg. zip files of resources)
+* Sprite BB kind (circle, box, polygon)
+* sgUIControls - button, textarea, label, progress bar, dialog, inc/dec, file list
+* status bar
+* SwinGame Map Editor
+* Polygon (point array + kind) - TriangleList, TriangleFan, TriangleStrip, Lines, Point

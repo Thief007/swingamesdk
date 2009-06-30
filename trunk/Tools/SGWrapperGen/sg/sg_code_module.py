@@ -38,6 +38,16 @@ class SGCodeModule(SGMetaDataContainer):
         self.is_array_wrapper = False
         self.is_fixed_array_wrapper = False
     
+    def to_keyed_dict(self, doc_transform = None):
+        """Export a keyed dictionary of the class for template matching"""
+        
+        result = dict()
+        result['name'] = self.name
+        result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
+        result['static'] = 'static ' if self.is_static else ''
+        
+        return result
+    
     def add_member(self, member):
         """Add a member (method, property) to the class"""
         if isinstance(member, SGMethod):
@@ -136,6 +146,7 @@ class SGCodeModule(SGMetaDataContainer):
         None, None, 'Is a variable or fixed length array wrapper')
     
     def setup_from(self, the_type):
+        self.doc = the_type.doc
         fields = the_type.fields
         for field in fields:
             self.add_member(field)

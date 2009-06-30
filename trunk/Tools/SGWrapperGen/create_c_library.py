@@ -96,6 +96,8 @@ _type_switcher = {
         'map': 'Map %s',
         'event': 'Event %s',
         'tile': 'Tile %s',
+        'circle': 'Circle %s',
+        'arrayofpoint2d': 'Point2D *%s',
         None: 'void %s'
     },
     'const' : {
@@ -120,7 +122,8 @@ _type_switcher = {
         'bitmap': 'Bitmap *%s',
         'sprite': 'Sprite *%s',
         'matrix2d': 'Matrix2D %s',
-        'map': 'Map *%s'
+        'map': 'Map *%s',
+        'arrayofpoint2d': 'Point2D *%s',
     },
     'out' : {
         'string': 'char *%s',
@@ -131,7 +134,7 @@ _type_switcher = {
 #        'triangle': 'Triangle *%s'
         'longint': 'int *%s',
         'linesegment': 'LineSegment *%s',
-    }
+    },
 }
 
 _data_switcher = {
@@ -172,6 +175,8 @@ _adapter_type_switcher = {
         'map': 'MapRecord *%s',
         'event': 'Event %s',
         'tile': 'Tile %s',
+        'circle': 'Circle %s',
+        'arrayofpoint2d': 'Point2D *%s',
         None: 'void %s'
     },
     'const' : {
@@ -183,7 +188,8 @@ _adapter_type_switcher = {
         'vector': 'const Vector *%s',
         'linesarray': 'const LinesArray %s',
         'longintarray': 'const int *%s',
-        'bitmaparray': 'const Bitmap %s'
+        'bitmaparray': 'const Bitmap %s',
+        'circle': 'const Circle *%s'
     },
     'var': {
         'soundeffect': 'SoundEffect *%s',
@@ -208,7 +214,10 @@ _adapter_type_switcher = {
         'linesarray': 'LinesArray %s',
         'longint': 'int *%s',
         'linesegment': 'LineSegment *%s',
-    }
+    },
+    'result' : {
+        'string': 'char *%s',
+    }    
 }
 
 _names = []
@@ -462,7 +471,7 @@ def file_visitor(the_file, other):
         write_c_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     load_data()
     parser_runner.run_for_all_units(file_visitor)

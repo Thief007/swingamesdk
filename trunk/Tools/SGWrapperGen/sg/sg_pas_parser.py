@@ -41,7 +41,7 @@ class SGPasParser():
             'note': self.process_note_attribute,
             'uname': self.process_id_attribute,
             'field': self.process_field_attribute,
-            'constructor': self.process_true_attribute,
+            'constructor': self.process_true_attribute, # method_attribute,
             'dispose': self.process_true_attribute,
             'method': self.process_method_attribute,
             'overload': self.process_overload_attribute,
@@ -389,9 +389,16 @@ class SGPasParser():
         lib.version = tok[1]
     
     def process_method_attribute(self, token):
-        name_tok = self._match_token('id')
+        if token[1] == 'method':
+            name = self._match_token('id')[1]
+        # elif token[1] == 'constructor':
+        #     if self._match_lookahead('id') and not (self._match_lookahead('id', 'procedure') or self._match_lookahead('id', 'function')):
+        #         name = self._match_token('id')[1]
+        #     else:
+        #         name = 'Create'
+        #     self.process_true_attribute(token)
         
-        method = SGMethod(name_tok[1])
+        method = SGMethod(name)
         self._add_attribute('class_method', method)
     
     def process_overload_attribute(self, token):
