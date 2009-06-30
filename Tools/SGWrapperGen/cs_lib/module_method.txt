@@ -1,0 +1,5 @@
+/// <summary> %(doc)s </summary>
+%(public)s%(static)s%(return_type)s(%(params)s)
+{
+    %(returns)s %(calls.class)s.%(calls.name)s(%(calls.args)s)%(returns_end)s;
+}

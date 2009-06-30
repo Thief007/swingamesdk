@@ -83,10 +83,10 @@ interface
   //----------------------------------------------------------------------------
 
   /// @lib
-  function GetExceptionMessage(): String;
+  function ExceptionMessage(): String;
 
   /// @lib
-  function HasExceptionOccured(): Boolean;
+  function ExceptionOccured(): Boolean;
 
 
   //----------------------------------------------------------------------------
@@ -454,12 +454,12 @@ implementation
   // Exception Notification/Message
   //----------------------------------------------------------------------------
 
-  function GetExceptionMessage(): String;
+  function ExceptionMessage(): String;
   begin
     result := ErrorMessage;
   end;
 
-  function HasExceptionOccured(): Boolean;
+  function ExceptionOccured(): Boolean;
   begin
     result := HasException;
   end;

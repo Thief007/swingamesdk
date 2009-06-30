@@ -6,8 +6,6 @@ Version 3
 
 
 Suggestions:
-* Close/Open Window (forum)
-* Group Apply (cw)
 * Change Movement to dx,dy ? (cw)
 * - Add SpriteVelocity -> Vector
 * - SetSpriteVelocity(Vector) or (x,y)
@@ -15,17 +13,14 @@ Suggestions:
 * - SetSpritePosition(Point2S) or (dx,dy)
 * - SpriteSpeed -> float
 * - SpriteHeading -> float (angle)
-* Change window title (forum)
-* Polygon type+drawing, matrix operations (translate + scale), collisions
-* Load resources from stream (eg. zip files of resources)
-* Sprite BB kind (circle, box, polygon)
-* sgUIControls - button, textarea, label, progress bar, dialog, inc/dec, file list
-* status bar
-* SwinGame Map Editor
 
 
 
+The main aims of the SwinGame 3.0 release are to address the following:
 
+1: Naming issues and code organisation of the Core SwinGame SDK.
+2: SwinGame distributions, making it easier to support other languages.
+3: Add support for c, objective-c, and c++.
 
 ** New to Version 3 **
   General:

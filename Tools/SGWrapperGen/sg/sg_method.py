@@ -20,7 +20,7 @@ class SGMethod(SGMetaDataContainer):
     def __init__(self, name):
         """Initialise the SGMethod, setting its name."""
         SGMetaDataContainer.__init__(self, ['uname','static','operator',
-            'is_constructor','return_type','other_class','dispose',
+            'is_constructor','return_type','other_class','is_destructor',
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
             'method_called', 'args', 'self', 'see', 'like'])
@@ -33,6 +33,7 @@ class SGMethod(SGMetaDataContainer):
         self.in_class = None
         self.is_static = False
         self.is_constructor = False
+        self.is_destructor = False
         self.is_external = False
         self.is_getter = False
         self.is_setter = False
@@ -49,23 +50,28 @@ class SGMethod(SGMetaDataContainer):
         self.was_function = False
         self.has_length_params = False
     
-    def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None):
+    def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None):
         '''Returns a dictionary containing the details of this function/procedure
         
         The param_visitor is called to convert each parameter to a string. 
         param_visitor(the_param, last)
         '''
-        result = {}
+        result = dict()
+        result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['name'] = self.name
         result['uname'] = self.uname
-        result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type) 
+        result['in_class'] = self.in_class.name
+        result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type)
+        result['returns'] = '' if self.return_type == None else 'return '
         result['params'] = self.param_string(param_visitor)
+        result['args'] = self.args_string_for_self(arg_visitor)
         result['calls.file.pascal_name'] = self.method_called.in_class.in_file.pascal_name
         result['calls.file.name'] = self.method_called.in_class.in_file.name
         result['calls.file.filename'] = self.method_called.in_class.in_file.filename
         result['calls.class'] = self.method_called.in_class.name
         result['calls.name'] = self.method_called.name
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
+        result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
         
         return result
 
@@ -112,6 +118,10 @@ class SGMethod(SGMetaDataContainer):
     is_constructor = property(lambda self: self['is_constructor'].other, 
         lambda self,value: self.set_tag('is_constructor', value), 
         None, 'Is the method a constructor?')
+    
+    is_destructor = property(lambda self: self['is_destructor'].other, 
+            lambda self,value: self.set_tag('is_destructor', value), 
+            None, 'Is the method a destructor?')
     
     is_external = property(lambda self: self['is_external'].other, 
         lambda self,value: self.set_tag('is_external', value), 
@@ -217,6 +227,10 @@ class SGMethod(SGMetaDataContainer):
             const = SGMethod(self.other_class.name)
             const.is_constructor = True
             super(SGMethod,self).set_tag('class_method', const)
+        elif title == 'dispose':
+            const = SGMethod("~" + self.other_class.name)
+            const.is_destructor = True
+            super(SGMethod,self).set_tag('class_method', const)
         else:
             super(SGMethod,self).set_tag(title, other)
     
@@ -225,6 +239,8 @@ class SGMethod(SGMetaDataContainer):
         other.in_file = self.in_file
         other.return_type = self.return_type
         other.file_line_details = self.file_line_details
+        other.doc = self.doc
+        
         if self.is_static or other.is_constructor:
             other.params = self.params
             other.is_static = self.is_static
@@ -466,6 +482,16 @@ class SGMethod(SGMetaDataContainer):
                 if not self.has_parameter(arg.name):
                     logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(method_called), self)
                     assert False
+    
+    def args_string_for_self(self, arg_visitor = None):
+        '''The arguments for calling self (used in C# to wrap for exception catching)'''
+        params = self.params
+        
+        arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in params ]
+        if arg_visitor != None:
+            return ','.join([ arg_visitor(a, params[i]) for i,a in enumerate(arg_list) ])
+        else:
+            return ','.join(arg_list)
     
     def args_string_for_called_method(self, arg_visitor = None):
         args = self.args

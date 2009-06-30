@@ -1,0 +1,4 @@
+/// <summary> %(doc)s </summary>
+public %(static)sclass %(name)s
+{
+  

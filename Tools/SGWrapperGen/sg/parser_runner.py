@@ -35,7 +35,7 @@ def method_process_visitor(the_method, other):
         _add_parameter(the_method, result_param)
         
         result_param.maps_result = True
-        result_param.modifier = None #they are pointers... 'var'
+        result_param.modifier = 'result' #they are pointers... 'var'
         
         result_param.data_type = the_method.return_type
         

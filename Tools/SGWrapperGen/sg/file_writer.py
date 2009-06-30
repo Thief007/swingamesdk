@@ -13,19 +13,34 @@ import os
 class FileWriter(object):
     def __init__(self, filename):
         self._indent = 0
+        self._at_newline=True
         self.out_file = open(filename, 'w')
     
-    def indent(self):
-        self._indent += 1
+    def indent(self, count = 1):
+        self._indent += count
     
-    def outdent(self):
-        self._indent -= 1
+    def outdent(self, count = 1):
+        self._indent -= count
+    
+    def _write(self,data):
+        if self._at_newline:
+            self.out_file.write('%s%s' % ('  ' * self._indent, data)),
+        else:
+            self.out_file.write('%s' % data),
+        
+        self._at_newline = data[-1] == "\n"
     
     def write(self,data):
-        self.out_file.write('%s%s' % ('  ' * self._indent, data)),
+        lines = data.splitlines(True)
+        for line in lines:
+            self._write(line)
     
     def writeln(self,data=''):
-        self.out_file.write('%s%s\n' % ('  ' * self._indent, data))
+        lines = data.splitlines(True)
+        for line in lines:
+            self._write(line)
+        self._at_newline = True
+        self.out_file.write('\n')
     
     def close(self):
         self.out_file.close()

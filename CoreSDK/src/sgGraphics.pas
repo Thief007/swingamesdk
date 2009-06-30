@@ -170,20 +170,20 @@ interface
   /// @uname FillPtCircleOnto
   procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
   
-  /// @lib DrawOrFillCircleAtPointOnto
+  /// @lib DrawOrFillPtCircleAtPointOnto
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnto(dest, clr, False, point, radius)
+  /// @lib DrawOrFillPtCircleAtPointOnto(dest, clr, False, point, radius)
   /// @uname DrawCircleAtPointOnto
   procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
-  /// @lib DrawOrFillCircleAtPointOnto(dest, clr, True, point, radius)
+  /// @lib DrawOrFillPtCircleAtPointOnto(dest, clr, True, point, radius)
   /// @uname FillCircleAtPointOnto
   procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
   
   /// @lib DrawOrFillCircleOnto
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
-  /// @lib DrawOrFillCircleAtPointOnto
+  /// @lib DrawOrFillCircleOnto(dest, clr, False, c)
   procedure DrawCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
-  /// @lib DrawOrFillCircleOnto(dest, clr, c)
+  /// @lib DrawOrFillCircleOnto(dest, clr, True, c)
   /// @uname FillCircleOnto
   procedure FillCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
   

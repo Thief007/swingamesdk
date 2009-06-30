@@ -29,11 +29,9 @@ namespace SwinGame
         {
             Pointer = ptr;
             _Kind = kind;
-            //_Freed = (ptr == IntPtr.Zero);
         }
 
-        internal SwinGamePointer(IntPtr ptr)
-            : this(ptr, PtrKind.Copy)
+        internal SwinGamePointer(IntPtr ptr) : this(ptr, PtrKind.Copy)
         {
             GC.SuppressFinalize(this);
         }
@@ -54,5 +52,18 @@ namespace SwinGame
             Core.RegisterDelete(Pointer, _Kind);
             GC.SuppressFinalize(this);
         }
+        
+        #region IDisposable Members
+
+        /// <summary>
+        /// Clean up the native resources used by this resource.
+        /// </summary>
+        public void Dispose()
+        {
+            if (_Kind != PtrKind.Copy) Free();
+        }
+
+        #endregion
+
     }
 }

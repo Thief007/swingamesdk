@@ -1,0 +1,3 @@
+/// <summary> %(doc)s </summary>
+public class %(name)s : PointerWrapper
+{
