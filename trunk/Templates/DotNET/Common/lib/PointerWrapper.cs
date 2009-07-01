@@ -30,31 +30,80 @@ namespace SwinGame
         Copy
     }
     
+    internal delegate T Creater<T>(IntPtr pointer);
+    
     /// <summary>
     /// Wraps a pointer to a SwinGame resource
     /// </summary>
     public abstract class PointerWrapper : IDisposable
     {
-        private PtrKind _Kind;
-        internal IntPtr Pointer;
+        /// <summary>
+        /// The ptrRegistry is responsible for maintaining copies of all wrapped SwinGame pointers.
+        /// </summary>
+        private static readonly Dictionary<IntPtr, PointerWrapper> _ptrRegister = new Dictionary<IntPtr, PointerWrapper>();
         
-        protected abstract internal void DoFree();
-        
-        internal void Create(IntPtr ptr, PtrKind kind)
+        internal static T Create<T>(IntPtr ptr, Creater<T> create) where T : PointerWrapper
         {
-            Pointer = ptr;
-            _Kind = kind;
+            if (_ptrRegister.ContainsKey(ptr)) return _ptrRegister[ptr] as T;
+            else return create(ptr); //call via delegate
         }
         
-        internal void Create(IntPtr ptr)
+        internal static void Remove(IntPtr ptr)
         {
-            Create(ptr, PtrKind.Copy);
-            GC.SuppressFinalize(this);
+            _ptrRegister.Remove(ptr);
+        }
+        
+        private static List<PointerWrapper> _ToFree = new List<PointerWrapper>();
+
+        /// <summary>
+        /// Registers the pointer with SwinGame to have the memory freed.
+        /// This is done to ensure freeing is done on a single thread.
+        /// </summary>
+        /// <param name="ptr">the pointer to register</param>
+        /// <param name="kind">the type of the pointer</param>
+        private static void RegisterDelete(PointerWrapper pw)
+        {
+            lock (_ToFree)
+            {
+                _ToFree.Add(pw);
+            }
+        }
+        
+        /// <summary>
+        /// Free all pointers awaiting deletion.
+        /// </summary>
+        internal static void FreeAnythingToFree()
+        {
+            lock (_ToFree)
+            {
+                foreach (PointerWrapper pw in _ToFree)
+                {
+                    pw.DoFree();
+                }
+                _ToFree.Clear();
+            }
+        }
+        
+        
+        
+        private PtrKind _Kind;
+        protected internal IntPtr Pointer;
+        
+        protected internal abstract void DoFree();
+        
+        internal PointerWrapper(IntPtr ptr, PtrKind kind)
+        {
+            if (PointerWrapper._ptrRegister.ContainsKey(ptr)) throw new SwinGameException("Error managing resources.");
+            PointerWrapper._ptrRegister[ptr] = this;
+            Pointer = ptr;
+            _Kind = kind;
+            
+            if (_Kind == PtrKind.Copy) GC.SuppressFinalize(this);
         }
         
         ~PointerWrapper()
         {
-            Core.RegisterDelete(Pointer, _Kind);
+            PointerWrapper.RegisterDelete(this);
         }
         
         public static implicit operator IntPtr(PointerWrapper p)

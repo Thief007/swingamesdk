@@ -2,7 +2,7 @@ public static %(return_type)s(%(params)s)
 {
     try
     {
-        %(returns)s DLL_%(name)s(%(args)s);
+        %(pre_call)s%(the_call)s;%(post_call)s
     }
     catch (Exception exc)
     {

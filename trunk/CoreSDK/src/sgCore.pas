@@ -262,7 +262,7 @@ interface
   /// Gets a color given its RGBA components.
   ///
   /// @lib
-  procedure GetComponents(color: Color; out r, g, b, a: byte);
+  procedure GetComponents(c: Color; out r, g, b, a: byte);
   
   /// Returns a color from a floating point RBG value set.
   ///
@@ -802,7 +802,7 @@ implementation
   // Colour
   //----------------------------------------------------------------------------
 
-  procedure GetComponents(color: Color; out r, g, b, a: byte);
+  procedure GetComponents(c: Color; out r, g, b, a: byte);
   begin
     if baseSurface = nil then
       raise Exception.Create('Cannot read screen format. Ensure window is open.');
