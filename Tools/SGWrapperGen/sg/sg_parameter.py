@@ -22,6 +22,8 @@ class SGParameter(SGMetaDataContainer):
         self.maps_result = False
         self.maps_to_temp = False
         self.is_length_param = False
+        self.has_length_param = False # does this have a length param? (var arrays)
+        self.length_idx = -1 # which param is the length param for this?
     
     # def set_as_output(self):
     #     """marks this as an output parameter"""

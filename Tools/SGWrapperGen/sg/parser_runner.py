@@ -18,6 +18,7 @@ def _add_parameter(the_method, param):
     param_list = list(the_method.params)
     param_list.append(param)
     the_method.params = tuple(param_list)
+    return len(the_method.params) - 1
     
 
 def method_process_visitor(the_method, other):
@@ -51,12 +52,13 @@ def method_process_visitor(the_method, other):
             the_method.has_length_params = True
             logger.debug('PARSER RUN: Altering variable length array of %s\'s parameter %s', the_method.name, param.name)
             old_type = param.data_type
-            param.data_type = param.data_type #.fields[0].data_type
+            #param.data_type = param.data_type #.fields[0].data_type
             len_param = SGParameter('%s_len' % param.name)
             len_param.is_length_param = True
             len_param.data_type = find_or_add_type('LongInt')
             len_param.modifier = param.modifier if param.modifier is ['out', 'var'] else None
-            _add_parameter(the_method, len_param)
+            param.has_length_param = True
+            param.length_idx = _add_parameter(the_method, len_param)
 
 def post_parse_process(the_file):
     '''Create temporary variables for out/var string parameters, and string return types'''

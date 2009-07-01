@@ -277,7 +277,7 @@ class SGMethod(SGMetaDataContainer):
         new_args = list()
         args = self.args
         if args == None:
-            self.args = self.params
+            self.args = list(self.params)
             return
         for argv in args:
             if argv[0] in ['number', 'string', 'boolean']:
@@ -383,7 +383,7 @@ class SGMethod(SGMetaDataContainer):
             #add in self's arguments (-1st which is pointer)
         
         #set class method to call the same method this does
-        class_method.calls(self.method_called, tuple(args))
+        class_method.calls(self.method_called, args)
         
         logger.debug('Method    : Setting up call: %s calls %s with args %s', class_method,
             class_method.method_called, class_method.args)
@@ -411,7 +411,7 @@ class SGMethod(SGMetaDataContainer):
         logger.info(' Method    : Completing processing of %s', self)
         
         #This is 'the' method it has its params
-        self.params = tuple(self.params)
+        self.params = self.params
         
         #Convert args to appropriate values...
         self._process_args()

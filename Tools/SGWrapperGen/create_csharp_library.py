@@ -185,6 +185,14 @@ _type_switcher = {
 }
 
 _data_switcher = {
+    'temp_return' :
+    {
+        'string': '%s.ToString()',
+        'linesarray': '%s',
+        'matrix2d': '%s',
+        'arrayofpoint2d': '%s',
+        'triangle': '%s',
+    },
     'return_val' : 
     {
         #Pascal type: what values of this type switch to %s = data value
@@ -209,11 +217,10 @@ _data_switcher = {
     'arg_lit_val' : 
     {
         #Pascal type: what values of this type switch to %s = data value
-        'boolean': '(%s ? 1 : 0)',
         'single': '%sf',
         'pointer.pointer': 'this.Pointer',
-        'true': 'true',
-        'false': 'false',
+        'true': '1',
+        'false': '0',
     },
 }
 
@@ -233,10 +240,10 @@ _adapter_type_switcher = {
         'bitmap': 'IntPtr %s',
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
-        'triangle': 'Triangle %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3)] Point2D[] %s',
         'point2d': 'Point2D %s',
         'sprite': 'IntPtr %s',
-        'linesarray': 'LineSegment[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] LineSegment[] %s',
         'font': 'IntPtr %s',
         'fontalignment': 'int %s',
         'fontstyle': 'int %s',
@@ -251,19 +258,19 @@ _adapter_type_switcher = {
         'event': 'int %s',
         'tile': 'Tile %s',
         'circle': 'Circle %s',
-        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArr)] Point2D[] %s',
+        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
 #        None: 'void %s'
     },
     'const' : {
         'point2d':      '[MarshalAs(UnmanagedType.Struct), In] ref Point2D %s',
         'linesegment':  '[MarshalAs(UnmanagedType.Struct), In] ref LineSegment %s',
         'rectangle':    '[MarshalAs(UnmanagedType.Struct), In] ref Rectangle %s',
-        'matrix2d':     '[MarshalAs(UnmanagedType.LPArr), In] float[] %s',
-        'triangle':     '[MarshalAs(UnmanagedType.LPArr), In] Point2D[] %s',
+        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[] %s',
+        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
         'vector':       '[MarshalAs(UnmanagedType.Struct), In] ref Vector %s',
-        'linesarray':   '[MarshalAs(UnmanagedType.LPArr), In] LineSegment[] %s',
-        'longintarray': '[MarshalAs(UnmanagedType.LPArr), In] int[] %s',
-        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArr), In] Bitmap[] %s',
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] LineSegment[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] int[] %s',
+        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] Bitmap[] %s',
         'circle':       '[MarshalAs(UnmanagedType.Struct), In] ref Circle %s'
     },
     'var': {
@@ -272,8 +279,8 @@ _adapter_type_switcher = {
         'timer': 'ref IntPtr %s',
         'byte': 'ref byte %s',
         'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArr), In, Out] Point2D[] %s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArr), In, Out] LineSegment[] %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
+        #'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In, Out] LineSegment[] %s',
         'font': 'ref IntPtr %s',
         'bitmap': 'ref IntPtr %s',
         'sprite': 'ref IntPtr %s',
@@ -286,16 +293,16 @@ _adapter_type_switcher = {
 #        'timer': '[Out] IntPtr %s',
         'point2d': '[Out] out Point2D %s',
 #        'triangle': 'Triangle *%s',
-        'linesarray': '[Out] out LineSegment[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
         'longint': '[Out] out int %s',
         'linesegment': '[Out] out LineSegment %s',
     },
     'result': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArray), Out] LineSegment[] %s',
-        'matrix2d': '[MarshalAs(UnmanagedType.LPArray), Out] float[] %s',
-        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray), Out] Point2D[] %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray), Out] Point2D[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
+        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[] %s',
+        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
     },
     'return' : {
         None: 'void %s',
@@ -322,6 +329,18 @@ _adapter_type_switcher = {
         'event': 'int %s',
         'tile': 'Tile %s',
     }
+}
+
+# mapping for local variables
+_local_type_switcher = {
+    'string': 'StringBuilder %s = new StringBuilder(2048);',
+    'color': 'int %s;',
+    'matrix2d': 'float[] %s = new float[9];',
+    'triangle': 'Point2D[] %s = new Point2D[3];',
+    'linesarray': 'LineSegment[] %s;',
+    'longintarray': 'int[] %s;',
+    'bitmaparray' : 'Bitmap[] %s;',
+    'arrayofpoint2d': 'Point2D[] %s;',
 }
 
 # mapping for struct fields
@@ -486,21 +505,21 @@ def arg_visitor(arg_str, the_arg, for_param):
         arg_str = arg_str + '.Pointer'
     
     # Change True to true for example...
-    if arg_str.lower() in _data_switcher[data_key]:
+    if for_param.modifier != 'out' and arg_str.lower() in _data_switcher[data_key]:
         data = _data_switcher[data_key][arg_str.lower()] 
-        if '%s' in data: # and for_param.modifier not in ['out', 'var']:
+        if '%s' in data: #for_param.modifier not in ['out', 'var']:
             arg_str = _data_switcher[data_key][arg_str.lower()] % arg_str
         else:
             arg_str = data
     
-    if the_type.name.lower() in _data_switcher[data_key]:
+    if for_param.modifier != 'out' and the_type.name.lower() in _data_switcher[data_key]:
         #convert data using pattern from _data_switcher
         result = _data_switcher[data_key][the_type.name.lower()] % arg_str
     else:
         result = arg_str
     
     #check var/out/const
-    if for_param.modifier == 'var' or for_param.modifier == 'const':
+    if (for_param.modifier == 'var' or for_param.modifier == 'const') and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
         result = 'ref ' + result
     elif for_param.modifier == 'out' and the_type.name.lower() != "string":
         result = 'out ' + result
@@ -523,7 +542,12 @@ def adapter_param_visitor(the_param, last):
     if key not in _adapter_type_switcher[modifier]:
         logger.error('CREATE Cs : Error changing adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
     
-    return '%s%s' % ( _adapter_type_switcher[modifier][key] % the_param.name, ', ' if not last else '')
+    if not the_param.data_type.array_wrapper:
+        # map to name + type
+        return '%s%s' % ( _adapter_type_switcher[modifier][key] % the_param.name, ', ' if not last else '')
+    else:
+        print the_param.modifier, the_param.data_type.name
+        return '%s%s' % ( _adapter_type_switcher[modifier][key] % (the_param.length_idx, the_param.name), ', ' if not last else '')
 
 
 #
@@ -533,6 +557,8 @@ def adapter_param_visitor(the_param, last):
 def type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame library'''
     key = the_type.name.lower() if the_type != None else None
+    
+    if modifier == 'result': modifier = 'return'
     
     if key not in _type_switcher[modifier]:
         logger.error('CREATE Cs : Error changing model type %s - %s', modifier, the_type)
@@ -616,6 +642,53 @@ def method_visitor(the_method, other):
         writer.writeln((_method_wrapper % details).replace('%s', details['name']) )
         writer.writeln('')
     else:
+        if len(the_method.local_vars) > 0:
+            print the_method.name
+            temp = '\n'
+            temp_process_params = details['pre_call']
+            temp_process_result = details['post_call'] + '\n'
+            
+            #process all local variables
+            for local_var in the_method.local_vars:
+                temp += '    %s\n' % _local_type_switcher[local_var.data_type.name.lower()] % local_var.name
+                if isinstance(local_var, SGParameter) and local_var.maps_result: continue                
+                type_name = local_var.data_type.name.lower()
+                
+                if type_name == 'string':
+                    assert local_var.modifier == 'out' or local_var.maps_result
+                    temp_process_result += '\n    %s = %s.ToString();' % (local_var.name[:-5], local_var.name)
+                elif type_name == 'color':
+                    temp_process_result += '\n    %s = System.Drawing.Color.FromArgb(%s);' % (local_var.name[:-5], local_var.name)
+                # elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
+                #     if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
+                #         temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
+                #     if local_var.modifier in ['var', 'out'] or local_var.maps_result:
+                #         temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
+                # elif type_name in _array_copy_data:
+                #     if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
+                #         temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)
+                #     if local_var.modifier in ['var', 'out'] or local_var.maps_result:
+                #         temp_process_result += '\n      %sCopyToPtr(%s, %s_len, %s);' % (_array_copy_data[type_name],local_var.name, local_var.name[:-5], local_var.name[:-5])
+                # else:
+                #     logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
+                #     assert False
+                
+            details['vars'] = temp
+            details['post_call'] = temp_process_result
+            details['pre_call'] = temp_process_params
+        else:
+            details['vars'] = ''
+        
+        #process return types...
+        if the_method.method_called.was_function:
+            print the_method.name, ' ** '
+            #get the return parameter
+            result_param = the_method.method_called.params[-1]
+            if not result_param.maps_result: #in case of returning var length array
+                result_param = the_method.method_called.params[-2]
+            details['post_call'] += '\n    return %s;' % _data_switcher['temp_return'][result_param.data_type.name.lower()] % result_param.name;
+            details['the_call'] = details['the_call'][7:] #remove return...
+        
         writer.writeln((_module_method % details).replace('%s', details['name']) )
         writer.writeln()
         # if the_method.is_function:
@@ -806,7 +879,7 @@ def post_parse_process(the_file):
     for member in the_file.members:
         #process all method of the file
         for key, method in member.methods.items():
-           for param in method.params:
+            for param in method.params:
                if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
                    logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
                    local_var = SGParameter(param.name + '_temp')
@@ -815,6 +888,15 @@ def post_parse_process(the_file):
                    local_var.maps_result = param.maps_result
                    method.local_vars.append(local_var)
                    param.maps_to_temp = True
+            
+            if method.method_called.was_function:
+                #get the return parameter
+                result_param = method.method_called.params[-1]
+                if not result_param.maps_result: #in case of returning var length array
+                    result_param = method.method_called.params[-2]
+                method.local_vars.append(result_param)
+                method.args.append(result_param)
+
     
     return
     
