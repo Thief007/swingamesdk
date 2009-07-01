@@ -1,5 +1,5 @@
 /// <summary> %(doc)s </summary>
 %(public)s%(static)s%(return_type)s(%(params)s)%(base_const)s
-{
+{%(vars)s
     %(pre_call)s%(the_call)s;%(post_call)s
 }

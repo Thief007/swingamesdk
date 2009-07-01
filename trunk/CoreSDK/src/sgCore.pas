@@ -282,22 +282,22 @@ interface
   /// Get the transpareny value of `color`.
   ///
   /// @lib
-  function GetTransparency(color: Color): byte;
+  function GetTransparency(c: Color): byte;
   
   /// Get the red value of `color`.
   ///
   /// @lib
-  function GetRed(color: Color): byte;
+  function GetRed(c: Color): byte;
   
   /// Get the green value of `color`.
   ///
   /// @lib
-  function GetGreen(color: Color): byte;
+  function GetGreen(c: Color): byte;
   
   /// Get the blue value of `color`.
   ///
   /// @lib
-  function GetBlue(color: Color): byte;
+  function GetBlue(c: Color): byte;
   
   //----------------------------------------------------------------------------
   // Refresh / Sleep / Framerate
@@ -806,38 +806,38 @@ implementation
   begin
     if baseSurface = nil then
       raise Exception.Create('Cannot read screen format. Ensure window is open.');
-    SDL_GetRGBA(color, baseSurface^.Format, @r, @g, @b, @a);
+    SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
   end;
 
-  function GetRed(color: Color): byte;
+  function GetRed(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(color, r, g, b, a);
+    GetComponents(c, r, g, b, a);
     result := r;
   end;
 
-  function GetGreen(color: Color): byte;
+  function GetGreen(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(color, r, g, b, a);
+    GetComponents(c, r, g, b, a);
     result := g;
   end;
 
-  function GetBlue(color: Color): byte;
+  function GetBlue(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(color, r, g, b, a);
+    GetComponents(c, r, g, b, a);
     result := b;
   end;
 
-  function GetTransparency(color: Color): byte;
+  function GetTransparency(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(color, r, g, b, a);
+    GetComponents(c, r, g, b, a);
     result := a;
   end;
 
