@@ -20,7 +20,7 @@ class SGType(SGMetaDataContainer):
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
             'pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
-            'struct', 'enum', 'array_wrapper', 'fixed_array_wrapper'])
+            'struct', 'enum', 'array_wrapper', 'fixed_array_wrapper', 'type', 'via_pointer'])
         self.name = name
         self.set_tag('fields', [])
         self.dimensions = None
@@ -33,7 +33,9 @@ class SGType(SGMetaDataContainer):
         self.values = None
         self.is_pointer = False
         self.is_class = False
+        self.is_type = False
         self.is_struct = False
+        self.via_pointer = False # is the type accessed via a pointer (i.e. C# cant get to it :) )
     
     def __str__(self):
         '''String rep'''
@@ -47,6 +49,7 @@ class SGType(SGMetaDataContainer):
         self.set_tag('fields',other.fields)
         self.dimensions = other.dimensions
         self.is_pointer = other.is_pointer
+        self.via_pointer = other.via_pointer
         self.related_type = other
     
     fields = property(lambda self: self['fields'].other, None, None, "The fields for the type.")
@@ -59,9 +62,17 @@ class SGType(SGMetaDataContainer):
         lambda self, value: self.set_tag('is_pointer', value), 
         None, 'The type is a pointer to its related type')
     
+    via_pointer = property(lambda self: self['via_pointer'].other, 
+        lambda self, value: self.set_tag('via_pointer', value),
+        None, 'The type is accessed via a Pointer and may be hidden from other languages.')
+    
     is_class = property(lambda self: self['class'].other, 
         lambda self, value: self.set_tag('class', value), 
         None, 'The type is class')
+        
+    is_type = property(lambda self: self['type'].other, 
+        lambda self, value: self.set_tag('type', value), 
+        None, 'The type is a type mapping')
     
     is_struct = property(lambda self: self['struct'].other, 
         lambda self, value: self.set_tag('struct', value), 

@@ -1,3 +1,12 @@
 /// <summary> %(doc)s </summary>
 public class %(name)s : PointerWrapper
 {
+    /// <summary> Internal constructor used by SwinGame to create the %(name)s resource </summary>
+    internal %(name)s(IntPtr pointer) : base (pointer, PtrKind.%(name)s) {}
+    
+    /// <summary> Internal method to call constructor via a delegate. </summary>
+    internal %(name)s Create(IntPtr pointer)
+    {
+        return new %(name)s(pointer);
+    }
+    

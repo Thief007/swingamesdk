@@ -110,7 +110,7 @@ _type_switcher = {
         'tile': 'Tile %s',
         'circle': 'Circle %s',
         'arrayofpoint2d': 'Point2D[] %s',
-        None: 'void %s'
+#        None: 'void %s'
     },
     'const' : {
         'point2d': 'Point2D %s',
@@ -118,7 +118,7 @@ _type_switcher = {
         'rectangle': 'Rectangle %s',
         'matrix2d': 'Matrix2D %s',
         'vector': 'Vector %s',
-        'linesarray': 'LinesArray %s',
+        'linesarray': 'LineSegment[] %s',
         'triangle': 'Triangle %s',
         'bitmaparray': 'Bitmap %s',
         'longintarray': 'int %s',
@@ -130,7 +130,7 @@ _type_switcher = {
         'timer': 'Timer %s',
         'string': 'char *%s',
         'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s',
+        'linesarray': 'LineSegment[] %s',
         'font': 'Font %s',
         'bitmap': 'Bitmap %s',
         'sprite': 'Sprite %s',
@@ -147,13 +147,74 @@ _type_switcher = {
 #        'triangle': 'Triangle *%s'
         'longint': 'out int %s',
         'linesegment': 'out LineSegment %s',
+        'linesarray': 'out LineSegment[] %s',
+        'matrix2d': 'out Matrix2D %s',
+        'arrayofpoint2d': 'out Point2D[] %s',
+        'triangle': 'out Triangle %s',
+    },
+    'return' : {
+        None: 'void %s',
+        'boolean': 'bool %s',
+        'music': 'Music %s',
+        'soundeffect': 'SoundEffect %s',
+        'single': 'float %s',
+        'point2d': 'Point2D %s',
+        'longint': 'int %s',
+        'timer': 'Timer %s',
+        'byte': 'byte %s',
+        'color': 'System.Drawing.Color %s',
+        'uint32': 'uint %s',
+        'vector': 'Vector %s',
+        'circle': 'Circle %s',
+        'rectangle': 'Rectangle %s',
+        'linesegment': 'LineSegment %s',
+        'bitmap': 'Bitmap %s',
+        'collisionside': 'CollisionSide %s',
+        'font': 'Font %s',
+        'map': 'Map %s',
+        'sprite': 'Sprite %s',
+        'fontstyle': 'FontStyle %s',
+        'event': 'Event %s',
+        'tile': 'Tile %s',
+        'string': 'String %s',
+        'linesarray': 'LineSegment[] %s',
+        'matrix2d': 'Matrix2D %s',
+        'arrayofpoint2d': 'Point2D[] %s',
+        'triangle': 'Triangle %s',
     }
 }
 
 _data_switcher = {
-    #Pascal type: what values of this type switch to %s = data value
-    'Boolean': '%s != 0',
-    'pointer.Pointer': 'this.Pointer'
+    'return_val' : 
+    {
+        #Pascal type: what values of this type switch to %s = data value
+        'boolean': '%s != 0',
+        'music': 'PointerWrapper.Create<Music>(%s, Music.Create)',
+        'soundeffect': 'PointerWrapper.Create<SoundEffect>(%s, SoundEffect.Create)',
+        'bitmap': 'PointerWrapper.Create<Bitmap>(%s, Bitmap.Create)',
+        'font': 'PointerWrapper.Create<Font>(%s, Font.Create)',
+        'timer': 'PointerWrapper.Create<Timer>(%s, Timer.Create)',
+        'map': 'PointerWrapper.Create<Map>(%s, Map.Create)',
+        'color': 'System.Drawing.Color.FromArgb(%s)',
+        # 'pointer.pointer': 'this.Pointer'
+    },
+    #Argument with a parameter value
+    'arg_val' : 
+    {
+        #Pascal type: what values of this type switch to %s = data value
+        'boolean': '(%s ? 1 : 0)',
+        'color': '%s.ToArgb()'
+    },
+    #Argument with a literal value
+    'arg_lit_val' : 
+    {
+        #Pascal type: what values of this type switch to %s = data value
+        'boolean': '(%s ? 1 : 0)',
+        'single': '%sf',
+        'pointer.pointer': 'this.Pointer',
+        'true': 'true',
+        'false': 'false',
+    },
 }
 
 _adapter_type_switcher = {
@@ -165,7 +226,7 @@ _adapter_type_switcher = {
         'string': '[MarshalAs(UnmanagedType.LPStr)] string %s',
         'boolean': 'int %s',
         'byte': 'byte %s',
-        'color': 'uint %s',
+        'color': 'int %s',
         'timer': 'IntPtr %s',
         'resourcekind': 'int %s',
         'uint32': 'uint %s',
@@ -175,7 +236,7 @@ _adapter_type_switcher = {
         'triangle': 'Triangle %s',
         'point2d': 'Point2D %s',
         'sprite': 'IntPtr %s',
-        'linesarray': 'LinesArray %s',
+        'linesarray': 'LineSegment[] %s',
         'font': 'IntPtr %s',
         'fontalignment': 'int %s',
         'fontstyle': 'int %s',
@@ -190,29 +251,29 @@ _adapter_type_switcher = {
         'event': 'int %s',
         'tile': 'Tile %s',
         'circle': 'Circle %s',
-        'arrayofpoint2d': 'Point2D *%s',
-        None: 'void %s'
+        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArr)] Point2D[] %s',
+#        None: 'void %s'
     },
     'const' : {
-        'point2d': 'const Point2D *%s',
-        'linesegment': 'const LineSegment *%s',
-        'rectangle': 'const Rectangle *%s',
-        'matrix2d': 'const Matrix2D %s',
-        'triangle': 'const Triangle %s',
-        'vector': 'const Vector *%s',
-        'linesarray': 'const LinesArray %s',
-        'longintarray': 'const int *%s',
-        'bitmaparray': 'const Bitmap %s',
-        'circle': 'const Circle *%s'
+        'point2d':      '[MarshalAs(UnmanagedType.Struct), In] ref Point2D %s',
+        'linesegment':  '[MarshalAs(UnmanagedType.Struct), In] ref LineSegment %s',
+        'rectangle':    '[MarshalAs(UnmanagedType.Struct), In] ref Rectangle %s',
+        'matrix2d':     '[MarshalAs(UnmanagedType.LPArr), In] float[] %s',
+        'triangle':     '[MarshalAs(UnmanagedType.LPArr), In] Point2D[] %s',
+        'vector':       '[MarshalAs(UnmanagedType.Struct), In] ref Vector %s',
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArr), In] LineSegment[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArr), In] int[] %s',
+        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArr), In] Bitmap[] %s',
+        'circle':       '[MarshalAs(UnmanagedType.Struct), In] ref Circle %s'
     },
     'var': {
         'soundeffect': 'ref IntPtr %s',
         'music': 'ref IntPtr %s',
         'timer': 'ref IntPtr %s',
         'byte': 'ref byte %s',
-        'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
-        'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s',
+        'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArr), In, Out] Point2D[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArr), In, Out] LineSegment[] %s',
         'font': 'ref IntPtr %s',
         'bitmap': 'ref IntPtr %s',
         'sprite': 'ref IntPtr %s',
@@ -221,18 +282,112 @@ _adapter_type_switcher = {
     'out': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
         'byte': '[Out] out byte %s',
-        'color': '[Out] out uint %s',
+        'color': '[Out] out int %s',
 #        'timer': '[Out] IntPtr %s',
         'point2d': '[Out] out Point2D %s',
 #        'triangle': 'Triangle *%s',
-        'linesarray': 'LinesArray %s',
+        'linesarray': '[Out] out LineSegment[] %s',
         'longint': '[Out] out int %s',
         'linesegment': '[Out] out LineSegment %s',
     },
     'result': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray), Out] LineSegment[] %s',
+        'matrix2d': '[MarshalAs(UnmanagedType.LPArray), Out] float[] %s',
+        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray), Out] Point2D[] %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray), Out] Point2D[] %s',
+    },
+    'return' : {
+        None: 'void %s',
+        'boolean': 'int %s',
+        'music': 'IntPtr %s',
+        'soundeffect': 'IntPtr %s',
+        'single': 'float %s',
+        'point2d': 'Point2D %s',
+        'longint': 'int %s',
+        'timer': 'IntPtr %s',
+        'byte': 'byte %s',
+        'color': 'int %s',
+        'uint32': 'uint %s',
+        'vector': 'Vector %s',
+        'circle': 'Circle %s',
+        'rectangle': 'Rectangle %s',
+        'linesegment': 'LineSegment %s',
+        'bitmap': 'IntPtr %s',
+        'collisionside': 'int %s',
+        'font': 'IntPtr %s',
+        'map': 'IntPtr %s',
+        'sprite': 'IntPtr %s',
+        'fontstyle': 'int %s',
+        'event': 'int %s',
+        'tile': 'Tile %s',
     }
 }
+
+# mapping for struct fields
+_struct_type_switcher = {
+    #Pascal type: what it maps to
+    'single': 'public float %s',
+    'longint': 'public int %s',
+    'soundeffect': 'public SoundEffect %s',
+    'music': 'public Music %s',
+    'string': 'public string %s',
+    'boolean': 'public bool %s',
+    'byte': 'public byte %s',
+    'timer': 'public Timer %s',
+    'color': 'public Color %s',
+    'resourcekind': 'public ResourceKind %s',
+    'uint32': 'public uint %s',
+    'bitmap': 'public Bitmap %s',
+    #'pointer': 'public IntPtr %s',
+    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\npublic float[,] %s',
+    # '^bitmapdata': 'public BitmapData *%s',
+    # '^spritedata': 'public SpriteData *%s',
+    # '^timerdata': 'public TimerData *%s',
+    # 'psdl_surface': 'public IntPtr %s',
+    # 'boolean[0..n - 1][0..n - 1]': 'public bool[,] %s',
+    # 'bitmap[0..n - 1]': 'public Bitmap[] %s',
+    # 'spritekind': 'public SpriteKind %s',
+    # 'longint[0..n - 1]': 'public int[] %s',
+    'vector': 'public Vector %s',
+    # 'spriteendingaction': 'public SpriteEndingAction %s',
+    'point2d': 'public Point2D %s',
+    # '^point2d': 'public Point2D *%s',
+    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\npublic Point2D[] %s',
+    # 'point2d[0..n - 1]': 'public Point2D[] %s',
+    # '^linesegment': 'public LineSegment *%s',
+    'linesegment': 'public LineSegment %s',
+    'sprite': 'public Sprite %s',
+    'rectangle': 'public Rectangle %s',
+    #'triangle': 'public Triangle %s',
+    'linesarray': 'public LineSegment[] %s',
+    # 'linesegmentptr': 'public LineSegment *%s',
+    'font': 'public Font %s',
+    'fontalignment': 'public FontAlignment %s',
+    'fontstyle': 'public FontStyle %s',
+    'mousebutton': 'public MouseButton %s',
+    'uint16': 'public ushort %s',
+    # '^single': 'public float *%s',
+    'keycode': 'public KeyCode %s',
+    # 'bitmapptr': 'public Bitmap *%s',
+    # '^bitmap': 'public Bitmap *%s',
+    # 'longintptr': 'public int *%s',
+    # '^longint': 'public int *%s',
+    'collisionside': 'public CollisionSide %s',
+    'longint[0..n - 1][0..n - 1]': 'public int[][] %s',
+    'mapdata': 'public MapData %s',
+    'animationdata[0..n - 1]': 'public AnimationData[] %s',
+    'layerdata[0..n - 1]': 'public LayerData[] %s',
+    'collisiondata': 'public CollisionData %s',
+    # 'eventdetails[0..n - 1][0..23]': 'public EventDetails[][24] %s',
+    # '^maprecord': 'public MapRecord *%s',
+    'map': 'public Map %s',
+    'event': 'public Event %s',
+    'tile': 'public Tile %s',
+    'circle': 'public Circle %s',
+    'arrayofpoint2d': 'public Point2D[] %s',
+}
+
 
 _names = []
 
@@ -311,71 +466,143 @@ def doc_transform(the_docs):
     docLines = the_docs.splitlines(True)
     return ''.join([line if line == docLines[0] else '/// ' + line for line in docLines])
 
-def arg_visitor(the_arg, for_param_or_type):
-    '''Called for each argument in a call, performs required mappings'''
-    if isinstance(for_param_or_type, SGType):
-        the_type = for_param_or_type
-    else:
-        the_type = for_param_or_type.data_type
-        
-    if the_type.name in _data_switcher:
-        #convert data using pattern from _data_switcher
-        result = _data_switcher[the_type.name] % the_arg
-    else:
-        result = the_arg
+def arg_visitor(arg_str, the_arg, for_param):
+    '''Called for each argument in a call, performs required mappings. the_arg has the argument, for_param has
+    the parameter being mapped to'''
     
+    if not isinstance(for_param, SGParameter):
+        print arg_str, the_arg, for_param
+        assert False
+    
+    if isinstance(the_arg, SGParameter): #uses parameter as value
+        data_key = 'arg_val'
+    else:
+        data_key = 'arg_lit_val'
+    
+    the_type = for_param.data_type
+    
+    #check for pointer wrapper param
     if the_type.pointer_wrapper:
-        result = result + '.Pointer'
-            
-    if result in _data_switcher:
-        result = _data_switcher[result]
+        arg_str = arg_str + '.Pointer'
     
-    if isinstance(for_param_or_type, SGParameter):
-        if for_param_or_type.modifier == 'var':
-            result = 'ref ' + result
-        elif for_param_or_type.modifier == 'out' and the_type.name.lower() != "string":
-            result = 'out ' + result
+    # Change True to true for example...
+    if arg_str.lower() in _data_switcher[data_key]:
+        data = _data_switcher[data_key][arg_str.lower()] 
+        if '%s' in data: # and for_param.modifier not in ['out', 'var']:
+            arg_str = _data_switcher[data_key][arg_str.lower()] % arg_str
+        else:
+            arg_str = data
+    
+    if the_type.name.lower() in _data_switcher[data_key]:
+        #convert data using pattern from _data_switcher
+        result = _data_switcher[data_key][the_type.name.lower()] % arg_str
+    else:
+        result = arg_str
+    
+    #check var/out/const
+    if for_param.modifier == 'var' or for_param.modifier == 'const':
+        result = 'ref ' + result
+    elif for_param.modifier == 'out' and the_type.name.lower() != "string":
+        result = 'out ' + result
     
     return result
 
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (links to DLL)'''
-    logger.debug('CREATE Cs : Changing adapter type %s - %s', modifier, the_type)
-    return _adapter_type_switcher[modifier][the_type.name.lower() if the_type != None else None]
+    key = the_type.name.lower() if the_type != None else None
+    if key not in _adapter_type_switcher[modifier]:
+        logger.error('CREATE Cs : Error changing adapter type %s - %s', modifier, the_type)
+        assert False
+    
+    return _adapter_type_switcher[modifier][key]
 
 def adapter_param_visitor(the_param, last):
-    logger.debug('CREATE Cs : Visiting adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
-    return '%s%s' % (
-        _adapter_type_switcher[the_param.modifier][the_param.data_type.name.lower()] % the_param.name,
-        ', ' if not last else '')
+    key = the_param.data_type.name.lower()
+    modifier = the_param.modifier
+    
+    if key not in _adapter_type_switcher[modifier]:
+        logger.error('CREATE Cs : Error changing adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
+    
+    return '%s%s' % ( _adapter_type_switcher[modifier][key] % the_param.name, ', ' if not last else '')
+
+
+#
+# Type conversion for the Classes, Modules, and Structs
+#
 
 def type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame library'''
-    logger.debug('CREATE Cs : Changing model type %s - %s', modifier, the_type)
-    return _type_switcher[modifier][the_type.name.lower() if the_type != None else None]
+    key = the_type.name.lower() if the_type != None else None
+    
+    if key not in _type_switcher[modifier]:
+        logger.error('CREATE Cs : Error changing model type %s - %s', modifier, the_type)
+    return _type_switcher[modifier][key]
+
+def struct_type_visitor(the_type):
+    '''switch types for the fields of a struct'''
+    logger.debug('CREATE Cs : Changing model type %s', the_type)
+    return _struct_type_switcher[the_type.name.lower()]
+
 
 def param_visitor(the_param, last):
     return '%s%s' % (
         type_visitor(the_param.data_type, the_param.modifier) % the_param.name,
         ', ' if not last else '')
 
-def method_visitor(the_method, other):
-    details = the_method.to_keyed_dict(
-        other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform)
-    writer = other['file writer']
+def create_cs_call(details, the_method):
+    """Create a c# call for the passed in details dictionary/method"""
     
     if the_method.is_constructor:
+        details['pre_call'] =''
         details['return_type'] = '%s'
-        details['returns'] = 'base.Create('
-        details['returns_end'] = ', PtrKind.%s)' % details['in_class']
+        details['returns'] = ''
+        details['returns_end'] = '' # ', PtrKind.%s)' % details['in_class']
         details['public'] = 'public '
+        details['base_const'] = ': base(%(calls.class)s.%(calls.name)s(%(calls.args)s), PtrKind.%(in_class)s)%(returns_end)s' % details
+        result = ''
     elif the_method.is_destructor:
+        details['pre_call'] ='PointerWrapper.Remove(this);\n    '
         details['return_type'] = 'void DoFree'
         details['returns_end'] = ''
         details['public'] = 'protected internal override '
+        details['base_const'] = ''
+        result = '%(calls.class)s.%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
     else:
+        if the_method.name in ['WindowCloseRequested', 'CloseAudio']:
+            details['pre_call'] = 'PointerWrapper.FreeAnythingToFree();\n    '
+        elif the_method.mimic_destructor:
+            details['pre_call'] ='PointerWrapper.Remove(%s.Pointer);\n    ' % the_method.params[0].name
+        else: details['pre_call'] =''
         details['returns_end'] = ''
         details['public'] = 'public '
+        details['base_const'] = ''
+        result = '%(calls.class)s.%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
+        
+        if the_method.return_type != None:
+            if the_method.return_type.name.lower() in _data_switcher['return_val']:
+                result = _data_switcher['return_val'][the_method.return_type.name.lower()] % result
+    
+    if the_method.name in ['ProcessEvents']:
+        details['post_call'] = '\n    PointerWrapper.FreeAnythingToFree();'
+    else: details['post_call'] =''
+    
+    return ('%(returns)s' + result) % details
+
+def create_cs_dll_call(details, the_method):
+    """Create a c# call for the passed in details dictionary/method, this call is from the SGSDK.cs code
+    to the native library..."""
+    
+    details['pre_call'] =''
+    details['post_call'] =''
+    details['public'] = 'internal '
+    result = ''
+    
+    return '%(returns)sDLL_%(name)s(%(args)s)' % details
+
+def method_visitor(the_method, other):
+    details = the_method.to_keyed_dict(
+        other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
+    writer = other['file writer']
     
     if other['lib method']: 
         #write out the library versions...
@@ -386,7 +613,7 @@ def method_visitor(the_method, other):
         
         #write out the wrapped version...
         
-        writer.writeln((_module_method % details).replace('%s', details['name']) )
+        writer.writeln((_method_wrapper % details).replace('%s', details['name']) )
         writer.writeln('')
     else:
         writer.writeln((_module_method % details).replace('%s', details['name']) )
@@ -409,7 +636,8 @@ def write_cs_sgsdk_file(the_file, for_others = False):
         'file writer': file_writer,
         'type visitor': adapter_type_visitor,
         'param visitor': adapter_param_visitor,
-        'arg visitor': arg_visitor
+        'arg visitor': None, #arg_cs_dll_visitor,
+        'call_creater': create_cs_dll_call,
     }
     
     file_writer.indent(2);
@@ -478,6 +706,11 @@ def write_c_type_for(member, other):
     
     assert member.is_class or member.is_struct or member.is_enum
     
+    if member.via_pointer:
+        return
+    
+    writer = other['file writer']
+    
     if member.is_class:
         #convert to resource pointer
         if member.is_pointer_wrapper:
@@ -491,23 +724,36 @@ def write_c_type_for(member, other):
         #     assert len(member.fields) == 1
         #     the_type = member.fields['data'].data_type
         #     other['file writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
-        # else:
-        #     logger.error('CREATE Cs : Unknown class type for %s', member.uname)
-        #     assert false
+        else:
+            logger.error('CREATE Cs : Unknown class type for %s', member.uname)
+            assert false
+    #TODO: types
     elif member.is_struct:
-        #typedef struct %s_struct { } struct;
-        writer = other['file writer']
-        writer.write('typedef struct %s_struct { \n' % member.name)
+        writer.write('[ StructLayout( LayoutKind.Sequential, CharSet=CharSet.Ansi )]\n')
+        writer.write('public struct %s\n{\n' % member.name)
+        
+        writer.indent(2)
+        
         for field in member.field_list:
-            writer.writeln('    %s;' % type_visitor(field.data_type) % field.name)
-        writer.writeln('} %s;\n' % member.name)
+            writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
+            
+        writer.outdent(2)
+        
+        writer.writeln('}\n')
     elif member.is_enum:
         #enum id { list }
-        other['file writer'].write('typedef enum %s_enum { ' % member.name)
+        writer.write('public enum %s\n{\n' % member.name)
+        
+        writer.indent(2)
+        
         for val in member.values:
-            other['file writer'].write('%s' % val)
-            if val != member.values[-1]: other['file writer'].write(', ')
-        other['file writer'].writeln('} %s;\n' % member.name)
+            writer.write('%s' % val)
+            if val != member.values[-1]: writer.write(',')
+            writer.write('\n')
+        
+        writer.outdent(2)
+        
+        writer.writeln('}\n')
 
 def write_cs_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''
@@ -525,17 +771,19 @@ def write_cs_lib_module(the_file):
         'arg visitor': arg_visitor,
         'lib method': False,
         'the_file': the_file,
+        'call_creater': create_cs_call,
         }
     
     file_writer.indent(2)
     
     #process all types first so they appear at the top of the header files
     for member in the_file.members:
-        if member.is_module or member.is_header:
+        if member.is_module or member.is_header or member.is_type:
             pass
         elif member.is_class or member.is_struct or member.is_enum:
             write_c_type_for(member, other)
         else:
+            print member.module_kind, member
             assert False
     
     #process all methods
@@ -556,30 +804,46 @@ def post_parse_process(the_file):
     logger.info('Post Processing %s for C# wrapper creation', the_file.name)
     
     for member in the_file.members:
+        #process all method of the file
         for key, method in member.methods.items():
-            if method.method_called.was_function:
-                #convert string return types
-                result_param = SGParameter('result')
-                result_param.data_type = method.return_type
-                result_param.modifier = 'out'
-                param_list = list(method.params)
-                param_list.append(result_param)
-                method.params = tuple(param_list)
-                
-                arg_list = list(method.args)
-                arg_list.append(result_param)
-                method.args = arg_list
-                method.return_type = None
-            if method.method_called.has_length_params:
-                #add length parameters to this method
-                for param in method.method_called.params:
-                    if param.is_length_param:
-                        param_list = list(method.params)
-                        param_list.append(param)
-                        method.params = tuple(param_list)
-                        arg_list = list(method.args)
-                        arg_list.append(param)
-                        method.args = arg_list
+           for param in method.params:
+               if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
+                   logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
+                   local_var = SGParameter(param.name + '_temp')
+                   local_var.data_type = param.data_type
+                   local_var.modifier = param.modifier
+                   local_var.maps_result = param.maps_result
+                   method.local_vars.append(local_var)
+                   param.maps_to_temp = True
+    
+    return
+    
+    # for member in the_file.members:
+    #     #process all method of the file
+    #     for key, method in member.methods.items():
+    #         if method.method_called.was_function:
+    #             #convert string return types to result parameters...
+    #             result_param = SGParameter('result')
+    #             result_param.data_type = method.return_type
+    #             result_param.modifier = 'out'
+    #             param_list = list(method.params)
+    #             param_list.append(result_param)
+    #             method.params = tuple(param_list)
+    #             
+    #             arg_list = list(method.args)
+    #             arg_list.append(result_param)
+    #             method.args = arg_list
+    #             method.return_type = None
+    #         if method.method_called.has_length_params:
+    #             #add length parameters to this method
+    #             for param in method.method_called.params:
+    #                 if param.is_length_param:
+    #                     param_list = list(method.params)
+    #                     param_list.append(param)
+    #                     method.params = tuple(param_list)
+    #                     arg_list = list(method.args)
+    #                     arg_list.append(param)
+    #                     method.args = arg_list
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
@@ -593,7 +857,7 @@ def file_visitor(the_file, other):
         write_cs_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     load_data()
     parser_runner.run_for_all_units(file_visitor)

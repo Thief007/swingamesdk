@@ -31,6 +31,7 @@ class SGPasParser():
         self._attribute_processors = {
             'param': self.process_id_and_comment_attribute,
             'class': self.process_id_attribute,
+            'type': self.process_id_attribute,
             'enum': self.process_id_attribute,
             'module': self.process_id_attribute,
             'header': self.process_id_attribute,
@@ -58,6 +59,7 @@ class SGPasParser():
             'self': self.process_number_attribute,
             'see': self.process_idlist_attribute,
             'like': self.process_id_attribute,
+            'via_pointer': self.process_true_attribute,
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -70,7 +72,6 @@ class SGPasParser():
         self._attributes = {}
         self._ordered_attributes = []
         self._current_file = None
-        # self._classes = {}
         
     
     def parse(self, a_file):
@@ -495,7 +496,7 @@ class SGPasParser():
             
             self._parse_type_declaration(the_type)
             
-            if 'class' or 'struct' in the_type.keys():
+            if 'type' or 'class' or 'struct' in the_type.keys():
                 self._add_class(the_type)
             
             self.process_meta_comments()

@@ -31,12 +31,12 @@ interface
       x, y: Single;
     end;} 
     
-    ///@class Point2DPtr
+    ///@type Point2DPtr
     ///@pointer_wrapper
     ///@field pointer: ^Point2D
     Point2DPtr = ^Point2D;
     
-    ///@class ThreePoint2D
+    ///@type ThreePoint2D
     ///@array_wrapper
     ///@field data: array of Point2D
     ArrayOfPoint2D = Array of Point2D;
@@ -75,19 +75,17 @@ interface
         endPoint: Point2D;
       end;
     
-    ///@class Triangle
+    ///@struct Triangle
     ///@fixed_array_wrapper
     ///@field data: array[0..2] of Point2D
     Triangle = array [0..2] of Point2D;
     
-    ///@class LinesArray
+    ///@type LinesArray
     ///@array_wrapper
     ///@field data: LineSegmentPtr
     LinesArray = Array of LineSegment;
     
-    ///@class LineSegmentPtr
-    ///@pointer_wrapper
-    ///@field pointer: ^LineSegment
+    ///@type LineSegmentPtr
     LineSegmentPtr = ^LineSegment;
     
     /// The `SoundEffect` type is used to refer to sound effects that can be 
@@ -137,12 +135,12 @@ interface
     /// In SwinGame, Matrices can be used to combine together a number of
     /// operations that need to be performed on Vectors.
     ///
-    ///@class Matrix2D
+    ///@struct Matrix2D
     ///@fixed_array_wrapper
     ///@field data: array[0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
 
-    /// @class SinglePtr
+    /// @type SinglePtr
     /// @pointer_wrapper
     /// @field pointer: ^Single
     SinglePtr = ^Single;
@@ -169,7 +167,7 @@ interface
     /// component and A stores an alpha value representing the opacity (transparency)
     ///  of the of the color.
     ///
-    /// @class Color
+    /// @type Color
     /// @data_wrapper
     /// @field data: UInt32
     Color = UInt32;
@@ -181,6 +179,7 @@ interface
     ///
     /// @note Do not use BitmapData directly, use Bitmap.
     /// @struct BitmapData
+    /// @via_pointer
     BitmapData = record
       surface: PSDL_Surface;
       width, height: LongInt;
@@ -267,6 +266,7 @@ interface
     /// - reverse: True if this sprite's animation is reversing
     ///
     ///@struct SpriteData
+    ///@via_pointer
     SpriteData = record
       bitmaps : Array of Bitmap;
       bufferBmp: Bitmap;
@@ -303,13 +303,14 @@ interface
     /// @field pointer: ^SpriteData
     Sprite = ^SpriteData;
 
-    ///@struct TimerData
+    /// @struct TimerData
+    /// @via_pointer
     TimerData = record
       startTicks : UInt32;
       pausedTicks : UInt32;
       paused : Boolean;
       started : Boolean;
-    end; {1.1}
+    end;
 
     /// @class Timer
     /// @pointer_wrapper
@@ -321,8 +322,8 @@ interface
     /// DrawText and DrawTextLines routines.
     ///
     /// @class Font
-    ///@pointer_wrapper
-    ///@field pointer: pointer
+    /// @pointer_wrapper
+    /// @field pointer: pointer
     Font = PTTF_Font;
 
     /// Use font styles to set the style of a font. Setting the style is time
@@ -350,22 +351,22 @@ interface
         AlignRight  = 4
       );
 
-    /// @class BitmapArray
+    /// @type BitmapArray
     /// @array_wrapper
     /// @field data: BitmapPtr
     BitmapArray = array of Bitmap;
 
-    /// @class BitmapPtr
+    /// @type BitmapPtr
     /// @pointer_wrapper
     /// @field pointer: ^Bitmap
     BitmapPtr = ^Bitmap;
 
-    /// @class LongIntArray
+    /// @type LongIntArray
     /// @array_wrapper
     /// @field data: LongIntPtr
     LongIntArray = array of LongInt;
 
-    /// @class LongIntPtr
+    /// @type LongIntPtr
     /// @pointer_wrapper
     /// @field pointer: ^LongInt
     LongIntPtr = ^LongInt;
@@ -659,6 +660,7 @@ interface
     end;
 
     /// @struct MapData
+    /// @via_pointer
     MapData = record
       Version: LongInt;
       MapWidth: LongInt;
@@ -678,6 +680,7 @@ interface
     end;
 
     /// @struct AnimationData
+    /// @via_pointer
     AnimationData = record
         AnimationNumber: LongInt;
         Delay: LongInt;
@@ -687,23 +690,27 @@ interface
     end;
 
     /// @struct LayerData
+    /// @via_pointer
     LayerData = record
         Animation: Array of Array of LongInt;
         Value: Array of Array of LongInt;
     end;
 
     /// @struct CollisionData
+    /// @via_pointer
     CollisionData = record
         Collidable: Array of Array of Boolean;
     end;
 
     /// @struct EventDetails
+    /// @via_pointer
     EventDetails = record
       x: LongInt;
       y: LongInt;
     end;
 
     /// @struct MapRecord
+    /// @via_pointer
     MapRecord = record
       MapInfo : MapData;
       AnimationInfo : Array of AnimationData;
