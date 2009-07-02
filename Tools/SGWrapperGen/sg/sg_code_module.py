@@ -47,6 +47,7 @@ class SGCodeModule(SGMetaDataContainer):
         result['name'] = self.name
         result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['static'] = 'static ' if self.is_static else ''
+        result['sealed'] = 'sealed ' if self.is_module else ''
         
         return result
     
@@ -220,12 +221,17 @@ class SGCodeModule(SGMetaDataContainer):
             visitor(method, other)
     
     def visit_fields(self, visitor, other):
+        #DO NOT sort these... they map in order to the native code
         for field in self.field_list:
             visitor(field, field == self.field_list[-1], other)
     
     def visit_properties(self, visitor, other):
-        for key, prop in self.properties.items():
-            visitor(prop, key == self.properties.keys()[-1], other)
+        keys = self.properties.keys()
+        keys.sort()
+        
+        for key in keys:
+            prop = self.properties[key]
+            visitor(prop, other)
 
 def test_class_creation():
     """test basic class creation"""

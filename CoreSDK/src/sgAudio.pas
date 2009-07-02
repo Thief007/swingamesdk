@@ -265,7 +265,7 @@ interface
   /// music. The vol parameter indicates the percentage of the original volume,
   /// for example, 0.1 sets the playback volume to 10% of its full volume.
   ///
-  /// @param vol Indicates the percentage of the original volume to play the 
+  /// @param value Indicates the percentage of the original volume to play the 
   ///            `Music` at. This must be between 0 and 1, e.g. 0.1 is 10%.
   ///
   /// @lib SetMusicVolume
@@ -273,7 +273,7 @@ interface
   /// @class Music
   /// @static
   /// @setter Volume
-  procedure SetMusicVolume(vol: Single);
+  procedure SetMusicVolume(value: Single);
   
   /// This function returns the current volume of the music. This will be a 
   /// value between 0 and 1, with 1 indicating 100% of the `Music` resources
@@ -403,15 +403,15 @@ implementation
     mus := nil;
   end;
   
-  procedure SetMusicVolume(vol: Single);
+  procedure SetMusicVolume(value: Single);
   var
     newVol: LongInt;
   begin
-    if (vol < 0) then vol := 0
-    else if vol > 1 then vol := 1;
+    if (value < 0) then value := 0
+    else if value > 1 then value := 1;
     
     //SDL music volume is 0 - 128
-    newVol := Trunc(vol * 128);
+    newVol := Trunc(value * 128);
     Mix_VolumeMusic(newVol);
   end;
   

@@ -614,7 +614,7 @@ def create_cs_dll_call(details, the_method):
     
     return '%(returns)sDLL_%(name)s(%(args)s)' % details
 
-def method_visitor(the_method, other):
+def method_visitor(the_method, other, as_accessor_name = None):
     details = the_method.to_keyed_dict(
         other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
     writer = other['file writer']
@@ -656,19 +656,6 @@ def method_visitor(the_method, other):
                     temp_process_result += '\n    %s = %s.ToString();' % (local_var.name[:-5], local_var.name)
                 elif type_name == 'color':
                     temp_process_result += '\n    %s = System.Drawing.Color.FromArgb(%s);' % (local_var.name[:-5], local_var.name)
-                # elif type_name in _array_copy_fixed_data: #needed for mapped result parameters
-                #     if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
-                #         temp_process_params += '\n      %sCopyFromPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name, local_var.name[:-5])
-                #     if local_var.modifier in ['var', 'out'] or local_var.maps_result:
-                #         temp_process_result += '\n      %sCopyToPtr(%s, %s);' % (_array_copy_fixed_data[type_name], local_var.name[:-5], local_var.name)
-                # elif type_name in _array_copy_data:
-                #     if local_var.modifier in [None, 'var', 'const'] and not local_var.maps_result:
-                #         temp_process_params += '\n      %sCopyFromPtr(%s, %s_len, %s);' % (_array_copy_data[type_name], local_var.name[:-5], local_var.name[:-5],local_var.name)
-                #     if local_var.modifier in ['var', 'out'] or local_var.maps_result:
-                #         temp_process_result += '\n      %sCopyToPtr(%s, %s_len, %s);' % (_array_copy_data[type_name],local_var.name, local_var.name[:-5], local_var.name[:-5])
-                # else:
-                #     logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
-                #     assert False
                 
                 if local_var.modifier != 'out':
                     # copy in value
@@ -692,6 +679,16 @@ def method_visitor(the_method, other):
             details['post_call'] += '\n    return %s;' % _data_switcher['temp_return'][result_param.data_type.name.lower()] % result_param.name;
             details['the_call'] = details['the_call'][7:] #remove return...
         
+        
+        if as_accessor_name != None:
+            #change for property support
+            details['return_type'] = as_accessor_name
+            details['public'] = ''
+            details['static'] = ''
+            details['params'] = ''
+        else:
+            details['params'] = '(%s)' % details['params']
+        
         writer.writeln((_module_method % details).replace('%s', details['name']) )
         writer.writeln()
         # if the_method.is_function:
@@ -700,6 +697,24 @@ def method_visitor(the_method, other):
         #     other['file writer'].write(_module_c_function % details % the_method.uname)
         # else:
         #     other['file writer'].write(_module_c_method % details)
+
+def property_visitor(the_property, other):
+    writer = other['file writer']
+    
+    # public string Name { getter setter }
+    type_name = _type_switcher['return'][the_property.data_type.name.lower()]
+    writer.write('public %s%s\n{\n' % ('static ' if the_property.is_static else '', type_name) % the_property.name)
+    
+    writer.indent(2)
+    
+    if the_property.getter != None:
+        method_visitor(the_property.getter, other, 'get');
+    if the_property.setter != None:
+        method_visitor(the_property.setter, other, 'set');
+    
+    writer.outdent(2)
+    
+    writer.write('}\n');
 
 def write_cs_sgsdk_file(the_file, for_others = False):
     '''Write the c sharp library adapter - header file that matches DLL'''
@@ -730,12 +745,15 @@ def write_cs_sgsdk_file(the_file, for_others = False):
     file_writer.write(_footer)
     file_writer.close()
 
-def write_c_methods_for(member, other):
+def write_cs_methods_for_module(member, other):
     '''Write out a single c member'''
     
     writer = other['file writer']
     
     details = member.to_keyed_dict(doc_transform=doc_transform)
+    
+    #Support Module style access...
+    details['module_attr'] = '\n[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute()]' if member.is_module else ''
     
     writer.writeln(_class_header % details)
     
@@ -747,7 +765,7 @@ def write_c_methods_for(member, other):
     
     writer.writeln(_class_footer)
 
-def write_pointer_wrapper_type(member, other):
+def write_sg_class(member, other):
     #if member.name not in ['SoundEffect', 'Music']: return
     
     file_writer = FileWriter('%s/%s.cs'% (_out_path, member.name))
@@ -769,6 +787,7 @@ def write_pointer_wrapper_type(member, other):
     
     file_writer.indent(2);    
     member.visit_methods(method_visitor, my_other)
+    member.visit_properties(property_visitor, my_other)
     file_writer.outdent(2);
     
     file_writer.writeln(_class_footer)
@@ -791,19 +810,10 @@ def write_c_type_for(member, other):
         #convert to resource pointer
         if member.is_pointer_wrapper:
             assert len(member.fields) == 1
-            write_pointer_wrapper_type(member, other)
-        # elif member.is_data_wrapper:
-        #     assert len(member.fields) == 1
-        #     the_type = member.fields['data'].data_type
-        #     other['file writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
-        # elif member.wraps_array:
-        #     assert len(member.fields) == 1
-        #     the_type = member.fields['data'].data_type
-        #     other['file writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
+            write_sg_class(member, other)
         else:
             logger.error('CREATE Cs : Unknown class type for %s', member.uname)
             assert false
-    #TODO: types
     elif member.is_struct:
         writer.write('[ StructLayout( LayoutKind.Sequential, CharSet=CharSet.Ansi )]\n')
         writer.write('public struct %s\n{\n' % member.name)
@@ -865,7 +875,7 @@ def write_cs_lib_module(the_file):
     #process all methods
     for member in the_file.members:
         if member.is_module:
-            write_c_methods_for(member, other)
+            write_cs_methods_for_module(member, other)
     
     file_writer.outdent(2)
     
