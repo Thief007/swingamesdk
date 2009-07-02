@@ -47,7 +47,7 @@ interface
   uses sgTypes;
   
   /// @lib CenterPoint
-  function CenterPoint(s: Sprite): Point2D;
+  function CenterPoint(s: Sprite): Point2D; overload;
   
   
   //---------------------------------------------------------------------------
@@ -163,17 +163,17 @@ interface
   
   /// @lib LinesFromRect
   /// @fixed_result_size 4
-  function LinesFrom(const rect: Rectangle): LinesArray;
-  
+  function LinesFrom(const rect: Rectangle): LinesArray; overload;
+
   /// @lib LinesFromTriangle
   /// @fixed_result_size 3
-  function LinesFrom(const tri: Triangle): LinesArray;
+  function LinesFrom(const tri: Triangle): LinesArray; overload;
 
   /// @lib
-  function LineFrom(x1, y1, x2, y2: Single): LineSegment;
-  
+  function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
+
   /// @lib LineFromPointToPoint
-  function LineFrom(pt1, pt2: Point2D): LineSegment;
+  function LineFrom(pt1, pt2: Point2D): LineSegment; overload;
 
   /// @lib LineFromVectorWithStartPoint
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
@@ -689,10 +689,13 @@ implementation
     normalMvmt := VectorNormal(movement);
     vOut := VectorFrom(0,0);
     ptOnCircle := PointAt(0,0);
-    
+
     maxIdx := -1;
     maxDist := -1;
-    
+
+    // fix for tmp initialized warning
+    for i := 0 to high(tmp) do tmp[i] := PointAt(0,0);
+
     //Search all lines for hit points
     for i := 0 to High(lines) do
     begin
@@ -700,7 +703,7 @@ implementation
       //Get the normal of the line we hit
       normalLine := VectorNormal(lineVec);
       hits := 0;
-      
+
       //tmp 0 and tmp 1 are the widest points to detect collision with line
       WidestPoints(c, normalMvmt, tmp[0], tmp[1]);
       //tmp 2 and tmp 3 are the closest and furthest points from the line
