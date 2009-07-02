@@ -22,8 +22,10 @@ class SGParameter(SGMetaDataContainer):
         self.maps_result = False
         self.maps_to_temp = False
         self.is_length_param = False
-        self.has_length_param = False # does this have a length param? (var arrays)
-        self.length_idx = -1 # which param is the length param for this?
+        self.has_length_param = False   # does this have a length param? (var arrays)
+        self.length_idx = -1            # which param is the length param for this?
+        self.length_of = None           # the SGParameter this represents the length of...
+        self.has_field = False          # Used to check if a parameter/arg has a field (i.e. array wrapper)
     
     # def set_as_output(self):
     #     """marks this as an output parameter"""
@@ -60,6 +62,16 @@ class SGParameter(SGMetaDataContainer):
     maps_result = property(lambda self: self['maps_result'].other, 
         lambda self,value: self.set_tag('maps_result', value), 
         None, "The parameter wraps the result of a function.")
+        
+    def local_var_name(self):
+        """returns the local variable name that this would be copied to if needed, otherwise the parameter name"""
+        
+        if self.maps_result:
+            return 'result'
+        elif self.data_type.array_wrapper:
+            return self.name + '_temp'
+        else:
+            return self.name
 #
 # Test methods
 #

@@ -40,11 +40,11 @@ namespace SwinGame
         /// <summary>
         /// The ptrRegistry is responsible for maintaining copies of all wrapped SwinGame pointers.
         /// </summary>
-        private static readonly Dictionary<IntPtr, PointerWrapper> _ptrRegister = new Dictionary<IntPtr, PointerWrapper>();
+        private static readonly Dictionary<IntPtr, WeakReference> _ptrRegister = new Dictionary<IntPtr, WeakReference>();
         
         internal static T Create<T>(IntPtr ptr, Creater<T> create) where T : PointerWrapper
         {
-            if (_ptrRegister.ContainsKey(ptr)) return _ptrRegister[ptr] as T;
+            if (_ptrRegister.ContainsKey(ptr)) return _ptrRegister[ptr].Target as T;
             else return create(ptr); //call via delegate
         }
         
@@ -94,7 +94,7 @@ namespace SwinGame
         internal PointerWrapper(IntPtr ptr, PtrKind kind)
         {
             if (PointerWrapper._ptrRegister.ContainsKey(ptr)) throw new SwinGameException("Error managing resources.");
-            PointerWrapper._ptrRegister[ptr] = this;
+            PointerWrapper._ptrRegister[ptr] = new WeakReference(this);
             Pointer = ptr;
             _Kind = kind;
             

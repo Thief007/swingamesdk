@@ -57,6 +57,7 @@ def method_process_visitor(the_method, other):
             len_param.is_length_param = True
             len_param.data_type = find_or_add_type('LongInt')
             len_param.modifier = param.modifier if param.modifier is ['out', 'var'] else None
+            len_param.length_of = param
             param.has_length_param = True
             param.length_idx = _add_parameter(the_method, len_param)
 

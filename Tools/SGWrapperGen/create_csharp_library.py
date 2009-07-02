@@ -11,7 +11,7 @@ import logging
 import sys
 
 from sg import parser_runner
-from sg.sg_cache import logger, find_or_add_file
+from sg.sg_cache import logger, find_or_add_file, find_or_add_type
 from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
 from sg.sg_type import SGType
@@ -33,20 +33,6 @@ _class_header = ''
 _class_footer = ''
 
 _pointer_wrapper_class_header = ''
-
-
-
-#old
-_module_header_header = ''
-_module_header_footer = ''
-_module_c_header = ''
-
-_footer = ''
-_procedure_lines = None
-_function_lines = None
-_exports_header = ''
-_module_c_method = ''
-_module_c_function = ''
 
 _type_switcher = {
     None : {    
@@ -120,8 +106,8 @@ _type_switcher = {
         'vector': 'Vector %s',
         'linesarray': 'LineSegment[] %s',
         'triangle': 'Triangle %s',
-        'bitmaparray': 'Bitmap %s',
-        'longintarray': 'int %s',
+        'bitmaparray': 'Bitmap[] %s',
+        'longintarray': 'int[] %s',
         'circle': 'Circle %s',
     },
     'var' : {
@@ -189,9 +175,10 @@ _data_switcher = {
     {
         'string': '%s.ToString()',
         'linesarray': '%s',
-        'matrix2d': '%s',
+        'matrix2d': 'Utils.MatrixFromArray(%s)',
         'arrayofpoint2d': '%s',
-        'triangle': '%s',
+        'triangle': 'Utils.TriangleFromArray(%s)',
+        'longint': '%s;',
     },
     'return_val' : 
     {
@@ -203,7 +190,15 @@ _data_switcher = {
         'font': 'PointerWrapper.Create<Font>(%s, Font.Create)',
         'timer': 'PointerWrapper.Create<Timer>(%s, Timer.Create)',
         'map': 'PointerWrapper.Create<Map>(%s, Map.Create)',
+        'sprite': 'PointerWrapper.Create<Sprite>(%s, Sprite.Create)',
         'color': 'System.Drawing.Color.FromArgb(%s)',
+        'keycode': '(KeyCode)%s',
+        'mousebutton': '(MouseButton)%s',
+        'spriteendingaction': '(SpriteEndingAction)%s',
+        'event': '(Event)%s',
+        'collisionside': '(CollisionSide)%s',
+        'fontalignment': '(FontAlignment)%s',
+        'fontstyle': '(FontStyle)%s'
         # 'pointer.pointer': 'this.Pointer'
     },
     #Argument with a parameter value
@@ -211,7 +206,15 @@ _data_switcher = {
     {
         #Pascal type: what values of this type switch to %s = data value
         'boolean': '(%s ? 1 : 0)',
-        'color': '%s.ToArgb()'
+        'color': '%s.ToArgb()',
+        'keycode': '(int)%s',
+        'mousebutton': '(int)%s',
+        'spriteendingaction': '(int)%s',
+        'event': '(int)%s',
+        'collisionside': '(int)%s',
+        'resourcekind': '(int)%s',
+        'fontalignment': '(int)%s',
+        'fontstyle': '(int)%s'
     },
     #Argument with a literal value
     'arg_lit_val' : 
@@ -265,7 +268,7 @@ _adapter_type_switcher = {
         'point2d':      '[MarshalAs(UnmanagedType.Struct), In] ref Point2D %s',
         'linesegment':  '[MarshalAs(UnmanagedType.Struct), In] ref LineSegment %s',
         'rectangle':    '[MarshalAs(UnmanagedType.Struct), In] ref Rectangle %s',
-        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[] %s',
+        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[,] %s',
         'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
         'vector':       '[MarshalAs(UnmanagedType.Struct), In] ref Vector %s',
         'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] LineSegment[] %s',
@@ -300,7 +303,7 @@ _adapter_type_switcher = {
     'result': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
         'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
-        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[] %s',
+        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
         'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
         'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
     },
@@ -335,12 +338,13 @@ _adapter_type_switcher = {
 _local_type_switcher = {
     'string': 'StringBuilder %s = new StringBuilder(2048);',
     'color': 'int %s;',
-    'matrix2d': 'float[] %s = new float[9];',
+    'matrix2d': 'float[,] %s = new float[3,3];',
     'triangle': 'Point2D[] %s = new Point2D[3];',
     'linesarray': 'LineSegment[] %s;',
     'longintarray': 'int[] %s;',
     'bitmaparray' : 'Bitmap[] %s;',
     'arrayofpoint2d': 'Point2D[] %s;',
+    'longint': 'int %s;',
 }
 
 # mapping for struct fields
@@ -455,31 +459,6 @@ def load_data():
     f = open('./cs_lib/pointer_wrapper_class_header.txt')
     _pointer_wrapper_class_header = f.read()
     f.close()
-    
-    
-    
-    
-    
-    
-    f = open('./cs_lib/module_header_header.txt')
-    _module_header_header = f.read()
-    f.close()
-    
-    f = open('./cs_lib/module_header_footer.txt')
-    _module_header_footer = f.read()
-    f.close()
-    
-    f = open('./cs_lib/module_c_header.txt')
-    _module_c_header = f.read()
-    f.close()
-    
-    f = open('./cs_lib/module_c_method.txt')
-    _module_c_method = f.read()
-    f.close()
-    
-    f = open('./cs_lib/module_c_function.txt')
-    _module_c_function = f.read()
-    f.close()
 
 def doc_transform(the_docs):
     docLines = the_docs.splitlines(True)
@@ -526,6 +505,17 @@ def arg_visitor(arg_str, the_arg, for_param):
     
     return result
 
+def arg_cs_dll_visitor(arg_str, the_arg, for_param):
+    the_type = for_param.data_type
+    result = arg_str
+    #check var/out/const
+    if (for_param.modifier == 'var' or for_param.modifier == 'const') and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
+        result = 'ref ' + result
+    elif for_param.modifier == 'out' and the_type.name.lower() != "string":
+        result = 'out ' + result
+    
+    return result
+
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (links to DLL)'''
     key = the_type.name.lower() if the_type != None else None
@@ -546,7 +536,6 @@ def adapter_param_visitor(the_param, last):
         # map to name + type
         return '%s%s' % ( _adapter_type_switcher[modifier][key] % the_param.name, ', ' if not last else '')
     else:
-        print the_param.modifier, the_param.data_type.name
         return '%s%s' % ( _adapter_type_switcher[modifier][key] % (the_param.length_idx, the_param.name), ', ' if not last else '')
 
 
@@ -643,7 +632,6 @@ def method_visitor(the_method, other):
         writer.writeln('')
     else:
         if len(the_method.local_vars) > 0:
-            print the_method.name
             temp = '\n'
             temp_process_params = details['pre_call']
             temp_process_result = details['post_call'] + '\n'
@@ -651,7 +639,16 @@ def method_visitor(the_method, other):
             #process all local variables
             for local_var in the_method.local_vars:
                 temp += '    %s\n' % _local_type_switcher[local_var.data_type.name.lower()] % local_var.name
-                if isinstance(local_var, SGParameter) and local_var.maps_result: continue                
+                if isinstance(local_var, SGParameter) and local_var.maps_result:
+                    #setup the size of a return array
+                    if the_method.fixed_result_size > 0:
+                        assert local_var.data_type.name in ['LinesArray', 'ArrayOfPoint2D']
+                        temp_process_params = '%s = new %s[%s];\n    ' % (
+                                local_var.name,
+                                'LineSegment' if local_var.data_type.name == 'LinesArray' else 'Point2D',
+                                the_method.fixed_result_size
+                            )
+                    continue                
                 type_name = local_var.data_type.name.lower()
                 
                 if type_name == 'string':
@@ -673,6 +670,13 @@ def method_visitor(the_method, other):
                 #     logger.error('CREATE LIB: Unknow local variable type in %s', the_method.name)
                 #     assert False
                 
+                if local_var.modifier != 'out':
+                    # copy in value
+                    temp_process_params += '%s = %s;\n    ' % (
+                            local_var.name,
+                            local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '.' + local_var.field_name
+                        )
+                
             details['vars'] = temp
             details['post_call'] = temp_process_result
             details['pre_call'] = temp_process_params
@@ -681,7 +685,6 @@ def method_visitor(the_method, other):
         
         #process return types...
         if the_method.method_called.was_function:
-            print the_method.name, ' ** '
             #get the return parameter
             result_param = the_method.method_called.params[-1]
             if not result_param.maps_result: #in case of returning var length array
@@ -709,7 +712,7 @@ def write_cs_sgsdk_file(the_file, for_others = False):
         'file writer': file_writer,
         'type visitor': adapter_type_visitor,
         'param visitor': adapter_param_visitor,
-        'arg visitor': None, #arg_cs_dll_visitor,
+        'arg visitor': arg_cs_dll_visitor,
         'call_creater': create_cs_dll_call,
     }
     
@@ -880,14 +883,23 @@ def post_parse_process(the_file):
         #process all method of the file
         for key, method in member.methods.items():
             for param in method.params:
-               if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
-                   logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
-                   local_var = SGParameter(param.name + '_temp')
-                   local_var.data_type = param.data_type
-                   local_var.modifier = param.modifier
-                   local_var.maps_result = param.maps_result
-                   method.local_vars.append(local_var)
-                   param.maps_to_temp = True
+                if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
+                    logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
+
+                    local_var = SGParameter(param.name + '_temp')
+                    local_var.data_type = param.data_type
+                    local_var.modifier = param.modifier
+                    local_var.maps_result = param.maps_result
+
+                    if param.data_type.wraps_array:
+                        if param.data_type.is_struct:
+                            local_var.has_field = True
+                            local_var.field_name = param.data_type.fields[0].name
+                        else:
+                            continue
+                        
+                    method.local_vars.append(local_var)
+                    param.maps_to_temp = True
             
             if method.method_called.was_function:
                 #get the return parameter
@@ -896,6 +908,28 @@ def post_parse_process(the_file):
                     result_param = method.method_called.params[-2]
                 method.local_vars.append(result_param)
                 method.args.append(result_param)
+                
+            if method.method_called.has_length_params:
+                for param in method.method_called.params:
+                    if param.is_length_param:
+                        #possibly need an extra local for this... if out
+                        if param.length_of.maps_result:
+                            # need to indicate the size of the returned array...
+                            assert method.fixed_result_size > 0
+                            method.args.append(str(method.fixed_result_size))
+                        elif param.modifier == 'out':
+                            var_name = param.length_of.local_var_name() + '_length'
+
+                            local_var = SGParameter(var_name)
+                            local_var.data_type = find_or_add_type('LongInt')
+                            local_var.modifier = param.modifier
+
+                            method.local_vars.append(local_var)
+                            method.args.append(var_name)
+                        elif not param.data_type.is_struct:
+                            method.args.append(param.length_of.name + '.Length')
+                        else:
+                            method.args.append(param.length_of.local_var_name() + '.Length')
 
     
     return

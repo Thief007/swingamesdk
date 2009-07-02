@@ -57,6 +57,8 @@ _type_switcher = {
     'longintarray': 'LongIntPtr',
     'spriteendingaction': 'SpriteEndingAction',
     'bitmaparray': 'BitmapPtr',
+    'circle': 'Circle',
+    'arrayofpoint2d': 'Point2DPtr',
     'map': 'Map',
     'event': 'Event'
 }
@@ -66,7 +68,8 @@ _type_switcher = {
 _array_copy_data = {
     'linesarray': 'Line',
     'bitmaparray': 'Bmp',
-    'longintarray': 'LongInt'
+    'longintarray': 'LongInt',
+    'arrayofpoint2d': 'Point2D',
 }
 
 # dictionary for start of method names for copying fixed
@@ -125,6 +128,12 @@ def param_visitor(the_param, last):
             _type_switcher[the_param.data_type.name.lower()], 
             '; ' if not last else ''
             )        
+    elif the_param.modifier in ['result']:
+        return 'var %s: %s%s' % (
+            the_param.name, 
+            _type_switcher[the_param.data_type.name.lower()], 
+            '; ' if not last else ''
+            )        
     else:
         return '%s%s: %s%s' % (
             the_param.modifier + ' ' if the_param.modifier != None else '',
@@ -133,14 +142,14 @@ def param_visitor(the_param, last):
             '; ' if not last else ''
             )
 
-def arg_visitor(the_arg, for_param):
+def arg_visitor(arg_str, the_arg, for_param):
     '''Ensures data type consistency for all var/out parameters'''
     # if for_param.modifier in ['var','out']:
     #     #ensure exact same type for PChar and Color
     #     if for_param.data_type.name.lower() in ['string', 'color']:
     #         return the_arg + '_temp'
         
-    return the_arg
+    return arg_str
 
 def method_visitor(the_method, other):
     data = the_method.to_keyed_dict(param_visitor, arg_visitor = arg_visitor)
@@ -150,7 +159,7 @@ def method_visitor(the_method, other):
         if not result_param.maps_result: #in case of returning var length array
             result_param = the_method.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'arrayofpoint2d']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure

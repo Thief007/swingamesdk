@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-02: Andrew : Formatting, added @via_pointer for types accessed via a pointer
 // - 2009-06-29: Andrew : Added Circle
 // -                    : Started Polygon (removed for version 3)
 // - 2009-06-20: Andrew : Created types unit.
@@ -31,9 +32,9 @@ interface
       x, y: Single;
     end;} 
     
-    ///@type Point2DPtr
-    ///@pointer_wrapper
-    ///@field pointer: ^Point2D
+    /// @type Point2DPtr
+    /// @pointer_wrapper
+    /// @field pointer: ^Point2D
     Point2DPtr = ^Point2D;
     
     ///@type ThreePoint2D
@@ -86,6 +87,7 @@ interface
     LinesArray = Array of LineSegment;
     
     ///@type LineSegmentPtr
+    /// @pointer_wrapper
     LineSegmentPtr = ^LineSegment;
     
     /// The `SoundEffect` type is used to refer to sound effects that can be 

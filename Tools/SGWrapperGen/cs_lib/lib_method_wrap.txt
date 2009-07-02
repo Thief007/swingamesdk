@@ -1,14 +1,18 @@
+
+[System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
 public static %(return_type)s(%(params)s)
 {
+    #if DEBUG
     try
     {
+    #endif
         %(pre_call)s%(the_call)s;%(post_call)s
+    #if DEBUG
     }
     catch (Exception exc)
     {
         throw new SwinGameException(exc.Message);
     }
-    #if DEBUG
     finally
     {
       if (DLL_sg_Core_ExceptionOccured() != 0)

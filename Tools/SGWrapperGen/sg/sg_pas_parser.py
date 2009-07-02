@@ -60,6 +60,7 @@ class SGPasParser():
             'see': self.process_idlist_attribute,
             'like': self.process_id_attribute,
             'via_pointer': self.process_true_attribute,
+            'fixed_result_size': self.process_number_attribute,
         }
         self._block_header_processors = {
             'type': self.process_block_types,

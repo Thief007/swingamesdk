@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-02: Andrew : Added comments for returning fixed size var length arrays
 // - 2009-06-29: Andrew : Removed all need for Collision Side
 //                      : Changed to use Circle Type
 //                      : Added new circle working code
@@ -160,9 +161,11 @@ interface
   function RectangleCenter(const rect: Rectangle): Point2D;
   
   /// @lib LinesFromRect
+  /// @fixed_result_size 4
   function LinesFrom(const rect: Rectangle): LinesArray;
   
   /// @lib LinesFromTriangle
+  /// @fixed_result_size 3
   function LinesFrom(const tri: Triangle): LinesArray;
 
   /// @lib
@@ -474,6 +477,7 @@ interface
   //---------------------------------------------------------------------------
   
   /// @lib
+  /// @fixed_result_size 4
   function PointsFrom(const rect: Rectangle): ArrayOfPoint2D;
   
   

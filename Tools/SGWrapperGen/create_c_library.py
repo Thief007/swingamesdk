@@ -64,7 +64,7 @@ _type_switcher = {
         'vector': 'Vector %s',
         'spriteendingaction': 'SpriteEndingAction %s',
         'point2d': 'Point2D %s',
-        '^point2d': 'Point2D *%s',
+        'point2dptr': 'Point2D *%s',
         'point2d[0..2]': 'Point2D %s[3]',
         'point2d[0..n - 1]': 'Point2D *%s',
         '^linesegment': 'LineSegment *%s',
@@ -79,7 +79,7 @@ _type_switcher = {
         'fontstyle': 'FontStyle %s',
         'mousebutton': 'MouseButton %s',
         'uint16': 'unsigned short %s',
-        '^single': 'float *%s',
+        'singleptr': 'float *%s',
         'keycode': 'KeyCode %s',
         'bitmapptr': 'Bitmap *%s',
         '^bitmap': 'Bitmap *%s',
@@ -109,7 +109,8 @@ _type_switcher = {
         'linesarray': 'const LinesArray %s',
         'triangle': 'const Triangle %s',
         'bitmaparray': 'const Bitmap %s',
-        'longintarray': 'const int *%s'
+        'longintarray': 'const int *%s',
+        'circle': 'const Circle *%s',
     },
     'var' : {
         'soundeffect': 'SoundEffect *%s',
@@ -134,6 +135,36 @@ _type_switcher = {
 #        'triangle': 'Triangle *%s'
         'longint': 'int *%s',
         'linesegment': 'LineSegment *%s',
+    },
+    'return' : {
+        None: 'void %s',
+        'boolean': 'bool %s',
+        'music': 'Music %s',
+        'soundeffect': 'SoundEffect %s',
+        'single': 'float %s',
+        'point2d': 'Point2D %s',
+        'longint': 'int %s',
+        'timer': 'Timer %s',
+        'byte': 'byte %s',
+        'color': 'Color %s',
+        'uint32': 'uint %s',
+        'vector': 'Vector %s',
+        'circle': 'Circle %s',
+        'rectangle': 'Rectangle %s',
+        'linesegment': 'LineSegment %s',
+        'bitmap': 'Bitmap %s',
+        'collisionside': 'CollisionSide %s',
+        'font': 'Font %s',
+        'map': 'Map %s',
+        'sprite': 'Sprite %s',
+        'fontstyle': 'FontStyle %s',
+        'event': 'Event %s',
+        'tile': 'Tile %s',
+        'string': 'String %s',
+        'linesarray': 'LineSegment *%s',
+        'matrix2d': 'Matrix2D %s',
+        'arrayofpoint2d': 'Point2D *%s',
+        'triangle': 'Triangle %s',
     },
 }
 
@@ -217,7 +248,38 @@ _adapter_type_switcher = {
     },
     'result' : {
         'string': 'char *%s',
-    }    
+        'linesarray': 'LineSegment *%s',
+        'matrix2d': 'Matrix2D %s',
+        'arrayofpoint2d': 'Point2D *%s',
+        'triangle': 'Triangle %s',
+    },
+    # Mapping of the return type of a function
+    'return' : {
+        None: 'void %s',
+        'boolean': 'int %s',
+        'music': 'Music %s',
+        'soundeffect': 'SoundEffect %s',
+        'single': 'float %s',
+        'point2d': 'Point2D %s',
+        'longint': 'int %s',
+        'timer': 'Timer %s',
+        'byte': 'byte %s',
+        'color': 'uint %s',
+        'uint32': 'uint %s',
+        'vector': 'Vector %s',
+        'circle': 'Circle %s',
+        'rectangle': 'Rectangle %s',
+        'linesegment': 'LineSegment %s',
+        'bitmap': 'Bitmap %s',
+        'collisionside': 'CollisionSide %s',
+        'font': 'Font %s',
+        'map': 'Map %s',
+        'sprite': 'Sprite %s',
+        'fontstyle': 'FontStyle %s',
+        'event': 'Event %s',
+        'tile': 'Tile %s',
+    }
+
 }
 
 _names = []
@@ -259,7 +321,7 @@ def load_data():
     _module_c_function = f.read()
     f.close()
 
-def arg_visitor(the_arg, for_param_or_type):
+def arg_visitor(arg_str, the_arg, for_param_or_type):
     '''Called for each argument in a call, performs required mappings'''
     if isinstance(for_param_or_type, SGType):
         the_type = for_param_or_type
@@ -268,9 +330,9 @@ def arg_visitor(the_arg, for_param_or_type):
         
     if the_type.name in _data_switcher:
         #convert data using pattern from _data_switcher
-        return _data_switcher[the_type.name] % the_arg
+        return _data_switcher[the_type.name] % arg_str
     else:
-        return the_arg
+        return arg_str
 
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (links to DLL)'''
@@ -304,7 +366,7 @@ def method_visitor(the_method, other):
     if other['c writer'] != None: 
         if the_method.is_function:
             #%(calls.name)s(%(calls.args)s)
-            details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, the_method.return_type)
+            details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
             other['c writer'].write(_module_c_function % details % the_method.uname)
         else:
             other['c writer'].write(_module_c_method % details)
@@ -342,13 +404,13 @@ def write_c_methods_for(member, other):
 def write_c_type_for(member, other):
     '''Write out a single c member'''
     
-    assert member.is_class or member.is_struct or member.is_enum
+    assert member.is_class or member.is_struct or member.is_enum or member.is_type
     
-    if member.is_class:
+    if member.is_class or member.is_type or (member.is_struct and member.wraps_array):
         #convert to resource pointer
         if member.is_pointer_wrapper:
-            assert len(member.fields) == 1
-            the_type = member.fields['pointer'].data_type
+            # assert len(member.fields) == 1
+            the_type = member.data_type
             other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type, None) % member.name)
         elif member.is_data_wrapper:
             assert len(member.fields) == 1
@@ -360,7 +422,7 @@ def write_c_type_for(member, other):
             other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
         else:
             logger.error('CREATE C  : Unknown class type for %s', member.uname)
-            assert false
+            assert False
     elif member.is_struct:
         #typedef struct %s_struct { } struct;
         writer = other['header writer']
@@ -412,7 +474,7 @@ def write_c_lib_module(the_file):
     for member in the_file.members:
         if member.is_module or member.is_header:
             pass
-        elif member.is_class or member.is_struct or member.is_enum:
+        elif member.is_class or member.is_struct or member.is_enum or member.is_type:
             write_c_type_for(member, other)
         else:
             assert False
@@ -471,7 +533,7 @@ def file_visitor(the_file, other):
         write_c_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     load_data()
     parser_runner.run_for_all_units(file_visitor)

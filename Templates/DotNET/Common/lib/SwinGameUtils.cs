@@ -6,9 +6,19 @@ namespace SwinGame
 {
     internal static class Utils
     {
-        static LineSegment[] FromPtr()
+        internal static Matrix2D MatrixFromArray(float[,] data)
         {
-            return null;
+            Matrix2D result;
+            result.data = data;
+            return result;
         }
+        
+        internal static Triangle TriangleFromArray(Point2D[] data)
+        {
+            Triangle result;
+            result.data = data;
+            return result;
+        }
+
     }
 }

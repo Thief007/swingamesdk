@@ -1,5 +1,0 @@
-%(return_type)s(%(params)s)
-{
-    return %(the_call)s;
-}
-

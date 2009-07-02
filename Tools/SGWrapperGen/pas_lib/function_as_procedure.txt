@@ -1,4 +1,4 @@
-procedure %(name)s(%(params)s) cdecl; export;%(vars)s
+procedure %(name)s(%(params)s); cdecl; export;%(vars)s
 begin
   {$IFDEF TRACE}
     TraceEnter('SGSDK.dll', '%(name)s');
