@@ -12,10 +12,11 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-O3 -Wall"
+GMCS_FLAGS="-target:winexe -r:System.Drawing -r:Microsoft.VisualBasic"
+CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
-GCC_BIN=`which gcc`
+GMCS_BIN=`which gmcs`
 
 GAME_NAME=${APP_PATH##*/}
 
@@ -30,8 +31,8 @@ Usage()
     echo
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
-    echo " -h   Show this help message"
-    echo " -d   Create a debug build"
+    echo " -d   Debug build"
+    echo " -h   Show this help message "
     exit 0
 }
 
@@ -40,7 +41,8 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  C_FLAGS="-g -Wall"
+    d)  C_FLAGS="-g" ;;
+    ?)  Usage
     esac
 done
 
@@ -49,7 +51,6 @@ shift $((${OPTIND}-1))
 if [ "a$1a" != "aa" ]; then
     GAME_NAME=$1
 fi
-
 
 if [ -f "${LOG_FILE}" ]
 then
@@ -66,68 +67,41 @@ CleanTmp()
     mkdir "${TMP_DIR}"
 }
 
-#
-# Compile for Mac - manually assembles and links files
-# argument 1 is arch
-#
-doMacCompile()
-{
-    CleanTmp
-    
-    echo "  ... Compiling for $1"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c -arch ${1} ${SG_INC} ${C_FLAGS} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling"; cat ${LOG_FILE}; exit 1; fi
-    done
-    
-    #Assemble all of the .s files
-    echo "  ... Creating game for $1"
-    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o ${OUT_DIR}/${GAME_NAME}.${1} `find ${TMP_DIR} -name \*.o -maxdepth 1`
-    if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
-    
-    CleanTmp
-}
-
-# 
-# Create fat executable (i386 + ppc)
-# 
-doLipo()
-{
-    echo "  ... Creating Universal Binary"
-    lipo -arch ${1} "${OUT_DIR}/${GAME_NAME}.${1}" -arch ${2} "${OUT_DIR}/${GAME_NAME}.${2}" -output "${OUT_DIR}/${GAME_NAME}" -create
-    
-    rm -f "${OUT_DIR}/${GAME_NAME}.${1}"
-    rm -f "${OUT_DIR}/${GAME_NAME}.${2}"
-}
-
 doMacPackage()
 {
     GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
     if [ -d "${GAMEAPP_PATH}" ] 
     then
-    	echo "  ... Removing old application"
-    	rm -rf "${GAMEAPP_PATH}"
+        echo "  ... Removing old application"
+        rm -rf "${GAMEAPP_PATH}"
     fi
-
+    
     echo "  ... Creating Application Bundle"
     
-    mkdir "${GAMEAPP_PATH}"
-    mkdir "${GAMEAPP_PATH}/Contents"
-    mkdir "${GAMEAPP_PATH}/Contents/MacOS"
-    mkdir "${GAMEAPP_PATH}/Contents/Resources"
+    macpack -m winforms -n "${GAME_NAME}" -o "${OUT_DIR}" "${OUT_DIR}/${GAME_NAME}.exe"
+    # mkdir "${GAMEAPP_PATH}"
+    # mkdir "${GAMEAPP_PATH}/Contents"
+    # mkdir "${GAMEAPP_PATH}/Contents/MacOS"
+    # mkdir "${GAMEAPP_PATH}/Contents/Resources"
     mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
-
-    echo "  ... Added Private Frameworks"
+    
+    echo "  ... Adding Private Frameworks"
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
-
-    mv "${OUT_DIR}/${GAME_NAME}" "${APP_PATH}/bin/${GAME_NAME}.app/Contents/MacOS/" 
-
+    
+    pushd . >> /dev/null
+    cd "${GAMEAPP_PATH}/Contents/Resources"
+    ln -s ../Frameworks/SGSDK.framework/SGSDK libSGSDK.dylib
+    popd >> /dev/null
+    
+    rm -f "${OUT_DIR}/${GAME_NAME}.exe"
+    
+    if [ -f "${EXECUTABLE_NAME}.mdb" ]
+    then
+        echo "  ... Adding Debug Information"
+        mv "${EXECUTABLE_NAME}.mdb" "${PRODUCT_NAME}.app/Contents/Resources"
+    fi
+    
+    echo "  ... Adding Application Information"
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
     <plist version=\"1.0\">\
@@ -154,30 +128,22 @@ doMacPackage()
             <true/>\
     </dict>\
     </plist>" >> "${GAMEAPP_PATH}/Contents/Info.plist"
-
+    
     echo "APPLSWIN" >> "${GAMEAPP_PATH}/Contents/PkgInfo"
-
+    
     RESOURCE_DIR="${GAMEAPP_PATH}/Contents/Resources"
 }
 
-doLinuxCompile()
+doCompile()
 {
     CleanTmp
     
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
-        name=${file##*/} # ## = delete longest match for */... ie all but file name
-        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c ${SG_INC} ${C_FLAGS} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling SwinGame C wrapper"; cat ${LOG_FILE}; exit 1; fi
-    done
+    if [ ! -d ${OUT_DIR} ]; then
+        mkdir -p ${OUT_DIR}
+    fi
     
-    #Assemble all of the .s files
-    echo "  ... Creating game"
-    
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -name \*.o -maxdepth 1`
-    if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
+    ${GMCS_BIN} ${GMCS_FLAGS} ${CS_FLAGS} -out:"${OUT_DIR}/${GAME_NAME}.exe" `find ${APP_PATH} -mindepth 2 | grep [.]cs$` >> ${LOG_FILE}
+    if [ $? != 0 ]; then echo "Error compiling."; exit 1; fi
     
     CleanTmp
 }
@@ -230,10 +196,7 @@ then
         echo "--------------------------------------------------"
         echo "  ... Creating ${GAME_NAME}"
         
-        doMacCompile "ppc"
-        doMacCompile "i386"
-        
-        doLipo "i386" "ppc"
+        doCompile
         doMacPackage
     else
         echo "--------------------------------------------------"

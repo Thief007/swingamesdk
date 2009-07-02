@@ -286,7 +286,7 @@ class SGPasParser():
             self._attributes[attr + 's'].append(val)
         else:
             self._attributes[attr + 's'] = [val]
-            self._ordered_attributes.append([attr + 's', [val]]) #will this work?
+            self._ordered_attributes.append([attr + 's', self._attributes[attr + 's']])
     
     def _add_attribute(self, attr, val):
         logger.debug('Parser    : Adding attribute %s with value %s',attr,val)

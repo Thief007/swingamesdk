@@ -9,6 +9,7 @@
 //
 // Version 3.0:
 // - 2009-07-02: Andrew : Formatting, added @via_pointer for types accessed via a pointer
+//                      : Added fields to meta comments for Vector
 // - 2009-06-29: Andrew : Added Circle
 // -                    : Started Polygon (removed for version 3)
 // - 2009-06-20: Andrew : Created types unit.
@@ -28,9 +29,9 @@ interface
     /// Vectors represent a direction and distance, stored as x,y components.
     ///
     /// @struct Vector
-    Vector = Point2D; {record
-      x, y: Single;
-    end;} 
+    /// @field x: Single
+    /// @field y: Single
+    Vector = Point2D;
     
     /// @type Point2DPtr
     /// @pointer_wrapper

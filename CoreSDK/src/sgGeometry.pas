@@ -13,6 +13,7 @@
 //
 // Version 3.0:
 // - 2009-07-02: Andrew : Added comments for returning fixed size var length arrays
+//                      : Increased precision of deg to rad
 // - 2009-06-29: Andrew : Removed all need for Collision Side
 //                      : Changed to use Circle Type
 //                      : Added new circle working code
@@ -604,7 +605,7 @@ implementation
     sgCore, sgCamera, sgGraphics, sgSprites, sgPhysics, sgShared;     // SwinGame
   
   const 
-    DEG_TO_RAD = 0.0174532925;
+    DEG_TO_RAD = 0.0174532925199432957692369076848861271344287188854172545609;
   
   
   //
@@ -1000,7 +1001,7 @@ implementation
 
   function RotationMatrix(deg: Single): Matrix2D;
   var
-    rads: Double;
+    rads: Extended;
   begin
     rads := -deg * DEG_TO_RAD;
 
