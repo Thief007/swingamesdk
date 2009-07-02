@@ -233,11 +233,11 @@ then
             elif  [ $INSTALL = "global" ]
             then
                 TO_DIR=/Library/Frameworks
-        if [ "$(id -u)" != "0" ]
-        then
-            echo "Global install must be run by root user"
-            exit 1
-        fi
+                if [ "$(id -u)" != "0" ]
+                then
+                    echo "Global install must be run by root user"
+                    exit 1
+                fi
             else
                 echo "Unknown install type"
                 exit -1
@@ -291,11 +291,11 @@ then
         if [ ! $INSTALL = "N" ]
         then
             echo "  ... Installing SwinGame"
-	    if [ "$(id -u)" != "0" ]
+            if [ "$(id -u)" != "0" ]
             then
                 echo "Install must be run by root user"
                 exit 1
-	    fi
+            fi
             mv -f "${OUT_DIR}/libsgsdk.so.${VERSION}" /usr/lib
             ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" /usr/lib/libsgsdk.so
 

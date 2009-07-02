@@ -43,7 +43,7 @@
 // - Various
 //=============================================================================
 
-/// @module sgGraphics
+/// @module Graphics
 /// @static
 unit sgGraphics;
 

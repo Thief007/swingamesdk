@@ -17,7 +17,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_out_path="../../Templates/DotNET/common/lib"
+_out_path="../../Templates/CSharp/common/lib"
 
 #templates for adapter
 _header = ''
@@ -296,16 +296,16 @@ _adapter_type_switcher = {
 #        'timer': '[Out] IntPtr %s',
         'point2d': '[Out] out Point2D %s',
 #        'triangle': 'Triangle *%s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out LineSegment[] %s',
         'longint': '[Out] out int %s',
         'linesegment': '[Out] out LineSegment %s',
     },
     'result': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
-        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
-        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out LineSegment[] %s',
+        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] out float[,] %s',
+        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out Point2D[] %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] out Point2D[] %s',
     },
     'return' : {
         None: 'void %s',
@@ -486,7 +486,7 @@ def arg_visitor(arg_str, the_arg, for_param):
     # Change True to true for example...
     if for_param.modifier != 'out' and arg_str.lower() in _data_switcher[data_key]:
         data = _data_switcher[data_key][arg_str.lower()] 
-        if '%s' in data: #for_param.modifier not in ['out', 'var']:
+        if '%s' in data:
             arg_str = _data_switcher[data_key][arg_str.lower()] % arg_str
         else:
             arg_str = data
@@ -500,7 +500,7 @@ def arg_visitor(arg_str, the_arg, for_param):
     #check var/out/const
     if (for_param.modifier == 'var' or for_param.modifier == 'const') and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
         result = 'ref ' + result
-    elif for_param.modifier == 'out' and the_type.name.lower() != "string":
+    elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
         result = 'out ' + result
     
     return result
@@ -511,7 +511,7 @@ def arg_cs_dll_visitor(arg_str, the_arg, for_param):
     #check var/out/const
     if (for_param.modifier == 'var' or for_param.modifier == 'const') and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
         result = 'ref ' + result
-    elif for_param.modifier == 'out' and the_type.name.lower() != "string":
+    elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
         result = 'out ' + result
     
     return result

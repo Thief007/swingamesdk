@@ -23,14 +23,15 @@ CLEAN="N"
 
 Usage()
 {
-    echo "Usage: [-c] [-h] [name]"
+    echo "Usage: [-c] [-h] [-d] [name]"
     echo 
     echo "Compiles your game into an executable application."
     echo "Output is located in $OUT_DIR."
     echo
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
-    echo " -h   Show this help message "
+    echo " -h   Show this help message"
+    echo " -d   Create a debug build"
     exit 0
 }
 
@@ -44,6 +45,11 @@ do
 done
 
 shift $((${OPTIND}-1))
+
+if [ "a$1a" != "aa" ]; then
+    GAME_NAME=$1
+fi
+
 
 if [ -f "${LOG_FILE}" ]
 then
