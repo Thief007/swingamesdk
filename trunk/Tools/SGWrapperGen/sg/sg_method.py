@@ -23,7 +23,7 @@ class SGMethod(SGMetaDataContainer):
             'is_constructor','return_type','other_class','is_destructor',
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
-            'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor'])
+            'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 'fixed_result_size'])
         self.name = name
         self.uname = name
         self.params = list()
@@ -46,6 +46,7 @@ class SGMethod(SGMetaDataContainer):
         self.other_class = None
         self.called_by = list()
         self.self_pos = 1
+        self.fixed_result_size = -1
         
         self.local_vars = list()
         self.was_function = False
@@ -161,6 +162,10 @@ class SGMethod(SGMetaDataContainer):
     method_called = property(lambda self: self['method_called'].other, 
         lambda self,value: self.set_tag('method_called', value), 
         None, "The method called by this method.")
+        
+    fixed_result_size = property(lambda self: self['fixed_result_size'].other, 
+        lambda self,value: self.set_tag('fixed_result_size', value), 
+        None, 'The size for a variable length array returned...')
     
     @property
     def signature(self):
@@ -491,6 +496,7 @@ class SGMethod(SGMetaDataContainer):
         params = self.params
         
         arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in params ]
+        
         if arg_visitor != None:
             return ','.join([ arg_visitor(a, params[i], params[i]) for i,a in enumerate(arg_list) ])
         else:

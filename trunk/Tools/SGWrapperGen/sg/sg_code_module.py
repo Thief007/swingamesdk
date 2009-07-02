@@ -38,6 +38,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.is_array_wrapper = False
         self.is_fixed_array_wrapper = False
         self.via_pointer = False
+        self.data_type = None
     
     def to_keyed_dict(self, doc_transform = None):
         """Export a keyed dictionary of the class for template matching"""
@@ -172,6 +173,9 @@ class SGCodeModule(SGMetaDataContainer):
             self.name = the_type['struct'].other
             self.uname = self.name
             self.via_pointer = the_type.via_pointer
+            self.is_data_wrapper = the_type.data_wrapper
+            self.is_array_wrapper = the_type.array_wrapper
+            self.is_fixed_array_wrapper = the_type.fixed_array_wrapper
         elif the_type.is_enum:
             self.module_kind = 'enum'
             self.name = the_type['enum'].other
@@ -182,7 +186,12 @@ class SGCodeModule(SGMetaDataContainer):
             self.module_kind = 'type'
             self.name = the_type['type'].other
             self.uname = self.name
+            self.data_type = the_type
             self.via_pointer = the_type.via_pointer            
+            self.is_pointer_wrapper = the_type.pointer_wrapper
+            self.is_data_wrapper = the_type.data_wrapper
+            self.is_array_wrapper = the_type.array_wrapper
+            self.is_fixed_array_wrapper = the_type.fixed_array_wrapper
         else:
             logger.warning('Code Modul: Unknown type kind for %s', self.name)
     

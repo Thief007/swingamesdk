@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-02: Andrew : Added comments for Timer exporting.
 // - 2009-06-29: Andrew : Renamed timer and version related functions,
 //                      : Added comments to color and timer functions and procedures.
 //                      : Changed UnPause timer to ResumeTimer
@@ -343,11 +344,15 @@ interface
   /// Create and return a new Timer.
   ///
   /// @lib
+  /// @class Timer
+  /// @constructor
   function CreateTimer(): Timer;
   
   /// Free a created timer.
   ///
   /// @lib
+  /// @class Timer
+  /// @dispose
   procedure FreeTimer(var toFree: Timer);
   
   /// Start a timer recording the time that has passed.
@@ -358,23 +363,31 @@ interface
   /// Stop the timer.
   ///
   /// @lib
+  /// @class Timer
+  /// @method Stop
   procedure StopTimer(toStop: Timer);
   
   /// Pause the timer, getting ticks from a paused timer
   /// will continue to return the same time.
   ///
   /// @lib
+  /// @class Timer
+  /// @method Pause
   procedure PauseTimer(toPause: Timer);
   
   /// Resumes a paused timer.
   ///
   /// @lib
+  /// @class Timer
+  /// @method Resume
   procedure ResumeTimer(toUnpause: Timer);
   
   /// Gets the number of ticks (milliseconds) that have passed since the timer
   /// was started.
   ///
   /// @lib
+  /// @class Timer
+  /// @getter Ticks
   function TimerTicks(toGet: Timer): UInt32;
 
   var

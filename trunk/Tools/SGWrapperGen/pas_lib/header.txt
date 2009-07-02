@@ -160,3 +160,29 @@ library %(name)s;
     end;
   end;
   
+  procedure Point2DCopyFromPtr(data: Point2DPtr; len: LongInt; out arr: ArrayOfPoint2D);
+  var
+    i: LongInt;
+  begin
+    if len < 0 then raise Exception.Create('Length of array cannot be negative');
+    
+    SetLength(arr, len);
+    
+    for i := 0 to len - 1 do
+    begin
+      arr[i] := (data + i)^;
+    end;
+  end;
+  
+  procedure Point2DCopyToPtr(const arr: ArrayOfPoint2D; len: LongInt; data: Point2DPtr);
+  var
+    i: LongInt;
+  begin
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    
+    for i := Low(arr) to High(arr) do
+    begin
+      (data + i)^ := arr[i];
+    end;
+  end;
+  
