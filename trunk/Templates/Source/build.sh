@@ -270,6 +270,60 @@ then
                 doCopyFramework ${file} "${TO_DIR}"
             done
         fi
+    
+    elif [ -d /C/WINDOWS/System32 ] 
+    then
+        echo "--------------------------------------------------"
+        echo "          Creating SwinGame Dynamic Library"
+        echo "                 for Windows"
+        echo "--------------------------------------------------"
+        echo "  Running script from $APP_PATH"
+        echo "  Saving output to $OUT_DIR"
+        echo "  Compiling with $EXTRA_OPTS"
+        echo "--------------------------------------------------"
+        
+        
+        if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
+        echo "  ... Compiling Library"
+
+        CleanTmp
+        
+        # need windows-ized path for fpc to be happy
+        WIN_SDK_SRC_DIR=`echo $SDK_SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
+        WIN_OUT_DIR=`echo $OUT_DIR | awk '{sub("/c/", "c:/"); print}'`
+        
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${WIN_OUT_DIR}" ${WIN_SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
+        
+#        mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
+#        
+#        if [ ! $INSTALL = "N" ]
+#        then
+#            echo "  ... Installing SwinGame"
+#        if [ "$(id -u)" != "0" ]
+#            then
+#                echo "Install must be run by root user"
+#                exit 1
+#        fi
+#            mv -f "${OUT_DIR}/libsgsdk.so.${VERSION}" /usr/lib
+#            ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" /usr/lib/libsgsdk.so
+#
+#            HEADER_DIR="/usr/include/sgsdk"
+#            echo "  ... Headers going to ${HEADER_DIR}"
+#            if [ ! -d ${HEADER_DIR} ]
+#            then
+#                echo "  ... Creating header directory"
+#                mkdir -p ${HEADER_DIR}
+#            fi
+#
+#            echo "  ... Copying header files"
+#            cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/sgsdk.h"
+#            cp "${SDK_SRC_DIR}/Types.h" "${HEADER_DIR}/Types.h"
+#
+#            /sbin/ldconfig -n /usr/lib
+#        fi
+        CleanTmp
+ 
     else
         echo "--------------------------------------------------"
         echo "          Creating SwinGame Dynamic Library"
