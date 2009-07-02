@@ -49,7 +49,7 @@ interface
   /// @lib
   /// @class Font
   /// @setter FontStyle
-  procedure SetFontStyle(font: Font; style: FontStyle);
+  procedure SetFontStyle(font: Font; value: FontStyle);
   
   /// @lib
   /// @class Font
@@ -150,10 +150,10 @@ implementation
   ///
   /// Side Effects:
   /// - The font's style is changed
-  procedure SetFontStyle(font: Font; style: FontStyle);
+  procedure SetFontStyle(font: Font; value: FontStyle);
   begin
     if not Assigned(font) then raise Exception.Create('No font supplied');
-    TTF_SetFontStyle(font, LongInt(style));
+    TTF_SetFontStyle(font, LongInt(value));
   end;
   
   function GetFontStyle(font: Font): FontStyle;
