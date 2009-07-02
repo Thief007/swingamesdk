@@ -1,237 +1,246 @@
 unit comparable;
 
+//=============================================================================
 interface
+//=============================================================================
 
-uses sysutils;
+  uses sysutils;
 
-type
-ECompareException = class(Exception);
+  type
 
+    ECompareException = class(Exception);
 
+    //-------------------------------------------------------------------------
+    // Base object for collections to operate on all item objects should
+    // inherit from it (TInteger, TString, etc)
+    //-------------------------------------------------------------------------
 
-  (** the base object for collections to operate on
-      all item objects should inherit from it (tInteger, tString, etc)
-  *)
-tComparable = class(tObject)
-  protected
-       function compareObjects(object2 : tComparable) : integer; virtual; abstract;
-  public
-       function  hashCode : integer; virtual; abstract;
-       function compareTo(object2 : tComparable) : integer;
-  end;
+    TComparable = class(tObject)
+    protected
+      function compareObjects(obj2: TComparable): integer; virtual; abstract;
+    public
+      function  hashCode: integer; virtual; abstract;
+      function compareTo(obj2: TComparable): integer;
+    end;
 
+    //-------------------------------------------------------------------------
+    //  CLASSES FOR PRIMITIVE TYPES
+    //-------------------------------------------------------------------------
 
-  (* ************************ CLASSES FOR PRIMITIVE TYPES ******************)
+    // Derive all numeric classes from here
+    TNumeric = class(TComparable)
+    protected
+      function compareObjects(obj2: TComparable): integer; override;
+    public
+      function asDouble: double; virtual; abstract;
+    end;
 
+    TInteger = class(TNumeric)
+    protected
+      fValue: integer;
+    public
+      property value: integer read fValue write fValue;
+      function hashCode: integer; override;
+      constructor create(val: integer);
+      function asDouble: double; override;
+    end;
 
-  (** Derive all numeric classes from here *)
-tNumeric = class(tComparable)
-  protected
-       function compareObjects(object2 : tComparable) : integer; override;
-  public
-        function asDouble : double; virtual; abstract;
-  end;
+    TDouble = class(TNumeric)
+    protected
+      fValue: Double;
+      fHashCode: integer;
+      procedure setValue(value: double);
+    public
+      property value: double read fValue write setValue;
+      function hashCode: integer; override;
+      constructor create(val: double);
+      function asDouble: double; override;
+    end;
 
-tInteger = class(tNumeric)
-  protected
-        fValue : integer;
-  public
-        property value : integer read fValue write fValue;
-        function hashCode : integer; override;
-        constructor create(val : integer);
-        function asDouble : double; override;
-  end;
+    TString = class(TComparable)
+    protected
+      fValue: string;
+      fHashCode : integer;
 
-tDouble = class(tNumeric)
-  protected
-         fValue : Double;
-         fHashCode : integer;
+      procedure setValue(value: string);
+      function compareObjects(obj2: TComparable): integer; override;
+    public
+      property value: string read fValue write setvalue;
+      function hashCode: integer; override;
+      constructor create(val: string);
+    end;
 
-         procedure setValue(value : double);
-  public
-        property value : double read fValue write setValue;
-        function hashCode : integer; override;
-        constructor create(val : double);
-        function asDouble : double; override;
-  end;
+    TStringNoCase = class(TString)
+    protected
+      function compareObjects(obj2: TComparable): integer; override;
+    end;
 
-tString = class(tComparable)
-  protected
-        fValue : string;
-        fHashCode  : integer;
+  //---------------------------------------------------------------------------
 
-        procedure setValue(value : string);
-        function compareObjects(object2 : tComparable) : integer; override;
-  public
-        property value : string read fValue write setvalue;
-        function hashCode : integer; override;
-        constructor create(val : string);
-  end;
+  function equal(obj1, obj2: TComparable): boolean;
+  function compare(Item1, Item2: TComparable): integer;
 
-tStringNoCase = class(tString)
-  protected
-       function compareObjects(object2 : tComparable) : integer; override;
-  end;
+  procedure throwComparableException(obj: TComparable; targetClass: tClass);
 
-
-
-function equal(obj1, obj2 : tComparable) : boolean;
-function compare(Item1, Item2 : tComparable) : integer;
-
-procedure throwComparableException(obj : tComparable; targetClass : tClass);
-
+//=============================================================================
 implementation
+//=============================================================================
 
-procedure throwComparableException(obj : tComparable; targetClass : tClass);
-begin
-     if not (obj is targetClass) then
-        raise ECompareException.create(targetClass.ClassName + ' cannot be compared with ' + obj.className);
-end;
+  procedure throwComparableException(obj: TComparable; targetClass: tClass);
+  begin
+    if not (obj is targetClass) then
+      raise ECompareException.create(targetClass.ClassName + ' cannot be compared with ' + obj.className);
+  end;
 
-(* ************ tComparable ************** *)
-function tComparable.compareTo(object2 : tComparable) : integer;
-begin
-   if object2 = nil then
+  //---------------------------------------------------------------------------
+  //  TComparable
+  //---------------------------------------------------------------------------
+
+  function TComparable.compareTo(obj2: TComparable): integer;
+  begin
+    if obj2 = nil then
       result := -1
-   else
-      result := self.compareObjects(object2);
+    else
+      result := self.compareObjects(obj2);
+  end;
 
-end;
+  //---------------------------------------------------------------------------
+  // TNumeric
+  //---------------------------------------------------------------------------
 
-(* ************* tNumeric *************** *)
-function tNumeric.compareObjects(object2 : tComparable) : integer;
-var
-   otherDouble : double;
-begin
-     throwComparableException(object2, tNumeric);
-     otherDouble := tNumeric(object2).asDouble;
-     if asDouble > otherDouble then
-        result := 1
-     else if asDouble < otherDouble then
-        result := -1
-     else result := 0;
-end;
-(* ********** tInteger ************ *)
-function tInteger.hashCode : integer;
-(* make sure hash is never 0 so that it's different for nulls - I don't even know why :) *)
-begin
-     if fValue >= 0 then
-        result := fValue + 1
-     else
-        result := fValue;
-end;
+  function TNumeric.compareObjects(obj2: TComparable): integer;
+  var
+     otherDouble: double;
+  begin
+    throwComparableException(obj2, TNumeric);
+    otherDouble := TNumeric(obj2).asDouble;
+    if asDouble > otherDouble then
+      result := 1
+    else if asDouble < otherDouble then
+      result := -1
+    else result := 0;
+  end;
 
+  //---------------------------------------------------------------------------
+  //  TInteger
+  //---------------------------------------------------------------------------
 
-constructor tInteger.create(val : integer);
-begin
-     inherited create;
-     value := val;
-end;
+  function TInteger.hashCode: integer;
+  begin
+    // make sure hash is never 0 so that it's different for nulls
+    // - I don't even know why :)
+    if fValue >= 0 then
+      result := fValue + 1
+    else
+      result := fValue;
+  end;
 
-function tInteger.asDouble : double;
-begin
-     result := value;
-end;
+  constructor TInteger.create(val: integer);
+  begin
+    inherited create;
+    value := val;
+  end;
 
-
-(* *********** tDouble ******************* *)
-procedure tDouble.setValue(value : double);
-begin
-    fValue := value;
-
-    // calculate hash code
-    while (value * 10) < maxint do
-          value := value * 10;
-    while value > maxInt do
-          value := value / 10;
-
-    fHashCode := round(value);
-end;
-
-function tDouble.hashCode : integer;
-begin
-   result := fHashCode;
-end;
-
-
-constructor tDouble.create(val : double);
-begin
-     inherited create;
-     value := val;
-end;
-
-function tDouble.asDouble : double;
-begin
+  function TInteger.asDouble: double;
+  begin
     result := value;
-end;
+  end;
 
-(* tStringNoCase *)
+  //---------------------------------------------------------------------------
+  // TDouble
+  //---------------------------------------------------------------------------
 
-function tStringNoCase.compareObjects(object2 : tComparable) : integer;
-begin
-    throwComparableException(object2, tString);
-    result := CompareText(value, tString(object2).value);
-end;
+  procedure TDouble.setValue(value: double);
+  begin
+    fValue := value;
+    // calculate hash code and store it
+    while (value * 10) < maxint do value := value * 10;
+    while value > maxInt do value := value / 10;
+    fHashCode := round(value);
+  end;
 
+  function TDouble.hashCode: integer;
+  begin
+    result := fHashCode;
+  end;
 
-(* **************** tString ****************** *)
+  constructor TDouble.create(val: double);
+  begin
+    inherited create;
+    value := val;
+  end;
 
-function tString.compareObjects(object2 : tComparable) : integer;
-begin
-     throwComparableException(object2, tString);
+  function TDouble.asDouble: double;
+  begin
+    result := value;
+  end;
 
-     result := CompareStr(value, tString(object2).value);
-end;
+  //---------------------------------------------------------------------------
+  // TStringNoCase
+  //---------------------------------------------------------------------------
 
-procedure tString.setValue(value : string);
-var
-   h, i : integer;
-begin
-     fValue := value;
+  function TStringNoCase.compareObjects(obj2: TComparable): integer;
+  begin
+    throwComparableException(obj2, TString);
+    result := CompareText(value, TString(obj2).value);
+  end;
 
-     // calculate hash code
+  //---------------------------------------------------------------------------
+  //  TString 
+  //---------------------------------------------------------------------------
 
-     h := 0;
-     for i := 1 to length(value) do
-         h := h * 31 + integer(value[i]);
-     fHashCode := h;
-end;
+  function TString.compareObjects(obj2: TComparable): integer;
+  begin
+    throwComparableException(obj2, TString);
+    result := CompareStr(value, TString(obj2).value);
+  end;
 
-function tString.hashCode : integer;
-begin
-     result := fHashCode;
-end;
+  procedure TString.setValue(value: string);
+  var
+     h, i: integer;
+  begin
+    fValue := value;
+    // calculate hash code and store it
+    h := 0;
+    for i := 1 to length(value) do
+      h := h * 31 + integer(value[i]);
+    fHashCode := h;
+  end;
 
+  function TString.hashCode: integer;
+  begin
+    result := fHashCode;
+  end;
 
-constructor tString.create(val : string);
-begin
-     inherited create;
-     value := val;
-end;
+  constructor TString.create(val: string);
+  begin
+    inherited create;
+    value := val;
+  end;
 
+  //---------------------------------------------------------------------------
+  //  FUNCTIONS
+  //---------------------------------------------------------------------------
 
+  function equal(obj1, obj2: TComparable): boolean;
+  begin
+    if ((obj1 = nil) and (obj2 = nil)) or (obj1 = obj2) then
+      result := true
+    else if obj1 = nil then
+      result := false
+    else
+      result := (obj1.classType = obj2.classType) and (obj1.compareto(obj2) = 0);
+  end;
 
-(* ************ FUNCTIONS *************** *)
-function equal(obj1, obj2 : tComparable) : boolean;
-begin
-     if ((obj1 = nil) and (obj2 = nil)) or (obj1 = obj2) then
-        result := true
-     else if obj1 = nil then
-        result := false
-     else
-        result := (obj1.classType = obj2.classType) and (obj1.compareto(obj2) = 0);
-end;
-
-function compare(Item1, Item2 : tComparable) : integer;
-begin
-     if ((Item1 = nil) and (Item2 = nil)) or (Item1 = Item2) then
-        result := 0
-     else if item1 = nil then
-        result := -1
-     else
-        result := item1.compareTo(item2);
-end;
-
+  function compare(Item1, Item2: TComparable): integer;
+  begin
+    if ((Item1 = nil) and (Item2 = nil)) or (Item1 = Item2) then
+      result := 0
+    else if item1 = nil then
+      result := -1
+    else
+      result := item1.compareTo(item2);
+  end;
 
 
 end.

@@ -1,181 +1,184 @@
 unit integerhash;
 
+//=============================================================================
 interface
-uses hashtable, comparable, sysutils;
+//=============================================================================
 
-type
-tIntHashIterator = class(tHashTableIterator)
-public
-   function getKey : integer; reintroduce;
+  uses hashtable, comparable, sysutils;
 
-   property key : integer read getKey;
-//   property value : tObject read getValue;
+  type
 
-//protected
-//   constructor create(table : tHashTable);
-end;
+    TIntHashIterator = class(THashTableIterator)
+    public
+      function getKey: integer; reintroduce;
+      property key: integer read getKey;
+      //   property value: TObject read getValue;
+      //protected
+      //   constructor create(table: THashTable);
+    end;
 
 
-tIntegerHash = class(tObject)
-private
-    fHashTable : tHashTable;
-protected
-    procedure fSetValue(key : integer; value : tObject); virtual;
+    TIntegerHash = class(TObject)
+    private
+      fHashTable: THashTable;
+    protected
+      procedure fSetValue(key: integer; value: TObject); virtual;
+    public
+      function getIterator: TIntHashIterator; virtual;
+      function containsKey(key: integer): boolean; virtual;
+      function containsValue(value: TObject): boolean; virtual;
+      function getValue(key: integer): TObject; virtual;
+      function setValue(key: integer; value: TObject): boolean; virtual;
+      function remove(key: integer): TObject; virtual;
 
-public
-    function getIterator : tIntHashIterator; virtual;
-    function containsKey(key : integer) : boolean; virtual;
-    function containsValue(value : tObject) : boolean; virtual;
-    function getValue(key : integer) : tObject; virtual;
-    function setValue(key : integer; value : tObject) : boolean; virtual;
-    function remove(key : integer) : tObject; virtual;
+      function getCount: integer; virtual;
 
-    function getCount : integer; virtual;
+      property values[key: integer]: TObject read getValue write fsetValue;
+      property count: integer read getCount;
 
-    property values[key : integer] : tObject read getValue write fsetValue;
-    property count : integer read getCount;
+      {$IFNDEF FPC}
+      constructor create(initialcapacity: integer = 10);
+      {$ELSE FPC}
+      constructor create;
+      constructor create(initialcapacity: integer);
+      {$ENDIF FPC}
 
-    {$IFNDEF FPC}
-    constructor create(initialcapacity : integer = 10);
-    {$ELSE FPC}
-    constructor create;
-    constructor create(initialcapacity : integer);
-    {$ENDIF FPC}
+      destructor destroy; override;
 
-    destructor destroy; override;
+      procedure clear; virtual;
+      procedure deleteAll; virtual;
+    end;
 
-    procedure clear; virtual;
-    procedure deleteAll; virtual;
-end;
-
+//=============================================================================
 implementation
+//=============================================================================
 
-(* tSHIterator - iterator for integer hash table *)
-(* basically an adapter shell for tMapIterator *)
+  // tSHIterator - iterator for integer hash table
+  // basically an adapter shell for tMapIterator
 
-procedure throwTypeException(className : string);
-begin
-     raise exception.create('Wrong type. Expecting tInteger, got ' + className);
-end;
-
-
-function tIntHashIterator.getKey : integer;
-var
-   s : tObject;
-begin
-     s := inherited getKey;
-     if not (s is tInteger) then
-        throwTypeException(s.ClassName);
-     result := tInteger(s).value;
-end;
-
-
-(*
-constructor tIntHashIterator.create(table : tHashTable);
-begin
-     inherited create(table);
-end;
-*)
-
-(* tIntegerHash *)
-procedure tIntegerHash.fSetValue(key : integer; value : tObject);
-begin
-     setValue(key, value);
-end;
-
-function tIntegerHash.getIterator : tIntHashIterator;
-begin
-     result := tIntHashIterator.create(fHashTable);
-end;
-
-function tIntegerHash.containsKey(key : integer) : boolean;
-var
-   s : tInteger;
-begin
-   s := tInteger.create(key);
-   try
-   result := fHashTable.containsKey(s);
-   finally
-   s.free;
-   end;
-end;
-
-function tIntegerHash.containsValue(value : tObject) : boolean;
-begin
-     result := fHashTable.containsValue(tComparable(value))
-end;
-
-function tIntegerHash.getValue(key : integer) : tObject;
-var
-   s : tInteger;
-begin
-  s := tInteger.create(key);
-  try
-    result := fHashTable.getValue(s);
-  finally
-    s.free;
+  procedure throwTypeException(className: string);
+  begin
+    raise exception.create('Wrong type. Expecting tInteger, got ' + className);
   end;
-end;
 
-function tIntegerHash.setValue(key : integer; value : tObject) : boolean;
-begin
+  function TIntHashIterator.getKey: integer;
+  var
+    s: TObject;
+  begin
+    s := inherited getKey;
+    if not (s is tInteger) then
+      throwTypeException(s.ClassName);
+    result := tInteger(s).value;
+  end;
+
+
+  (*
+  constructor TIntHashIterator.create(table: THashTable);
+  begin
+       inherited create(table);
+  end;
+  *)
+
+  //---------------------------------------------------------------------------
+  // TIntegerHash
+  //---------------------------------------------------------------------------
+
+  procedure TIntegerHash.fSetValue(key: integer; value: TObject);
+  begin
+    setValue(key, value);
+  end;
+
+  function TIntegerHash.getIterator: TIntHashIterator;
+  begin
+    result := TIntHashIterator.create(fHashTable);
+  end;
+
+  function TIntegerHash.containsKey(key: integer): boolean;
+  var
+    s: tInteger;
+  begin
+    s := tInteger.create(key);
+    try
+      result := fHashTable.containsKey(s);
+    finally
+      s.free;
+    end;
+  end;
+
+  function TIntegerHash.containsValue(value: TObject): boolean;
+  begin
+    result := fHashTable.containsValue(tComparable(value))
+  end;
+
+  function TIntegerHash.getValue(key: integer): TObject;
+  var
+    s: tInteger;
+  begin
+    s := tInteger.create(key);
+    try
+      result := fHashTable.getValue(s);
+    finally
+      s.free;
+    end;
+  end;
+
+  function TIntegerHash.setValue(key: integer; value: TObject): boolean;
+  begin
     result := fHashTable.setValue(tInteger.create(key), value);
-end;
+  end;
 
-function tIntegerHash.remove(key : integer) : tObject;
-var
-   s : tInteger;
-begin
-   s := tInteger.create(key);
-   try
+  function TIntegerHash.remove(key: integer): TObject;
+  var
+    s: tInteger;
+  begin
+    s := tInteger.create(key);
+    try
       result := fHashTable.remove(s);
-   finally
+    finally
       //s.free;
-   end;
-end;
+    end;
+  end;
 
-function tIntegerHash.getCount : integer;
-begin
-     result := fHashTable.getCount;
-end;
+  function TIntegerHash.getCount: integer;
+  begin
+    result := fHashTable.getCount;
+  end;
 
-
-{$IFNDEF FPC}
-constructor tIntegerHash.create(initialcapacity : integer = 10);
-begin
+  {$IFNDEF FPC}
+  constructor TIntegerHash.create(initialcapacity: integer = 10);
+  begin
     inherited create;
-    fHashTable := tHashTable.create(initialcapacity);
+    fHashTable := THashTable.create(initialcapacity);
+  end;
 
-end;
+  {$ELSE FPC}
 
-{$ELSE FPC}
-
-constructor tIntegerHash.create;
-begin
+  constructor TIntegerHash.create;
+  begin
     inherited create;
-    fHashTable := tHashTable.create;
-end;
+    fHashTable := THashTable.create;
+  end;
 
-constructor tIntegerHash.create(initialcapacity : integer);
-begin
+  constructor TIntegerHash.create(initialcapacity: integer);
+  begin
     inherited create;
-    fHashTable := tHashTable.create(initialcapacity, 0.75, nil, true);
-end;
-{$ENDIF FPC}
+    fHashTable := THashTable.create(initialcapacity, 0.75, nil, true);
+  end;
+  {$ENDIF FPC}
 
-destructor tIntegerHash.destroy;
-begin
-     fHashTable.destroy;
-     inherited destroy;
-end;
-procedure tIntegerHash.clear;
-begin
-     fHashTable.clear;
-end;
-procedure tIntegerHash.deleteAll;
-begin
-     fHashTable.deleteAll;
-end;
+  destructor TIntegerHash.destroy;
+  begin
+    fHashTable.destroy;
+    inherited destroy;
+  end;
 
+  procedure TIntegerHash.clear;
+  begin
+    fHashTable.clear;
+  end;
+  procedure TIntegerHash.deleteAll;
+  begin
+    fHashTable.deleteAll;
+  end;
 
 end.

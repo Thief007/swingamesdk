@@ -452,7 +452,7 @@ interface
   procedure CollideCircleCircle(s: Sprite; const c: Circle);
   
   /// @lib
-  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle); overload;
   
   /// @lib
   procedure CollideCircles(s1, s2: Sprite);
@@ -1117,7 +1117,7 @@ implementation
   
   
   //TODO: bounds based checking, need VectorIntoShape...
-  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle; bounds: Boolean);
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle; bounds: Boolean); overload;
   var
     hitIdx: LongInt;
     lines: LinesArray;
@@ -1163,7 +1163,7 @@ implementation
     if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
   end;
   
-  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle);
+  procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle); overload;
   begin
     CollideCircleRectangle(s, rect, False);
   end;

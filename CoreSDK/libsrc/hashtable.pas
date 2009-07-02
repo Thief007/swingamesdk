@@ -1,679 +1,640 @@
 unit hashtable;
 
-(* when compiling with freePascal, use -S2 switch (-Sd won't work) *)
-(* todo : see if making it compatible with -Sd is possible and / or necessary *)
-
-(* -------------------------------------------------------- *)
-(*                                                          *)
-(*    (incomplete) rip-off of java hashtable                *)
-(*                                                          *)
-(*                                                          *)
-(* -------------------------------------------------------- *)
+// When compiling with freePascal, use -S2 switch (-Sd won't work)
+// TODO: see if making it compatible with -Sd is possible and / or necessary
+//
+//  (incomplete) rip-off of java hashtable
 
 
-
+//=============================================================================
 interface
-uses comparable, sysutils;
+//=============================================================================
 
-type
+  uses comparable, sysutils;
 
-tHashEntry = class(tComparable)
-  private
-     fkey : tComparable;
-     fvalue : tObject;
+  type
 
-  protected
-     function compareObjects(object2 : tComparable) : integer; override;
-  public
-     next : tHashEntry;
+    THashEntry = class(TComparable)
+    private
+      fkey: TComparable;
+      fvalue: TObject;
+    protected
+      function compareObjects(object2: TComparable): integer; override;
+    public
+      next: THashEntry;
+      function  hashCode: integer; override;
+      function getKey: TComparable;
+      function getValue: TObject;
+      procedure setValue(avalue: TObject);
+      property key: TComparable read getKey;
+      property value: TObject read getValue write setValue;
+      constructor create(akey: TComparable; avalue: TObject);
+    end;
 
+    THashEntryClass = class of THashEntry;
 
-     function  hashCode : integer; override;
+    THashEntryFactory = class(TObject)
+    private
+      fHashClass: THashEntryClass;
+    public
+      function getEntry(key: TComparable; value: TObject): THashEntry; virtual;
+      constructor create(hashEntryClass: THashEntryClass);
+    end;
 
-     function getKey : tComparable;
-     function getValue : tObject;
-     procedure setValue(avalue : tObject);
-
-     property key : tComparable read getKey;
-     property value : tObject read getValue write setValue;
-
-
-     constructor create(akey : tComparable; avalue : tObject);
-end;
-
-tHashEntryClass = class of tHashEntry;
-
-tHashEntryFactory = class(tObject)
-private
-   fHashClass : tHashEntryClass;
-public
-   function getEntry(key: tComparable; value : tObject) : tHashEntry; virtual;
-   constructor create(hashEntryClass : tHashEntryClass);
-end;
-
-tMapIterator = class (tObject)
-public
-   procedure next; virtual; abstract;
-   procedure remove; virtual; abstract;
-   function hasNext : boolean; virtual; abstract;
-   function getKey : tComparable; virtual; abstract;
-   function getValue : tObject; virtual; abstract;
-   function validEntry : boolean; virtual; abstract;
-   procedure setValue(value : tObject); virtual; abstract;
-   function isValid : boolean; virtual; abstract;
-
-   property key : tComparable read getKey;
-   property value : tObject read getValue write setValue;
-end;
-
-
-{$IFNDEF FPC}
-tHashEntryTable = array of tHashEntry;
-pHashEntryTable = ^tHashEntryTable;
-{$ELSE FPC}
-pHashEntryTable = ^tHashEntry;
-{$ENDIF}
-
-tHashTable = class (tObject)
-protected
-    fTable : pHashEntryTable;
-    fEntryFactory : tHashEntryFactory;
-    fModCount : integer;
-    fCapacity : integer;
-    fThreshHold : integer;
-    fLoadFactor : real;
-    fCount      : integer;
-
-    fOwnKeys    : boolean;
-
-    function hashToIndex(key : tComparable) : integer;
-
-    procedure rehash; virtual;
-
-
-    (* there's a potential for memory leak here
-       if key already in the table, it does not get re-inserted.
-       function setvalue returns false if this happens, so key may be freed if necessary
-       but procedure fsetvalue does not free keys. SO : don't use values property unless you're managing _all_ keys somewhere outsite of the hash table
-       CORRECTION : if ownKeys is set, fSetvalue will free the key, so there's no leak
-    *)
-    (* another possibility for a leak - what happens if the value that is already in the table is not managed outside? Should be deleted, but how? *)
-    procedure fSetValue(key : tComparable; value : tObject); virtual;
-
-    procedure clearTable(deleteValues : boolean);
-public
-    function getIterator : tMapIterator; virtual;
-    function containsKey(key : tComparable) : boolean; virtual;
-    function containsValue(value : tObject) : boolean; virtual;
-    function getValue(key : tComparable) : tObject; virtual;
-    function setValue(key : tComparable; value : tObject) : boolean; virtual;
-    function remove(key : tComparable) : tObject; virtual;
-
-    function getCount : integer; virtual;
-
-    property values[key : tComparable] : tObject read getValue write fsetValue;
-    property count : integer read getCount;
+    TMapIterator = class (TObject)
+    public
+      procedure next; virtual; abstract;
+      procedure remove; virtual; abstract;
+      function hasNext: boolean; virtual; abstract;
+      function getKey: TComparable; virtual; abstract;
+      function getValue: TObject; virtual; abstract;
+      function validEntry: boolean; virtual; abstract;
+      procedure setValue(value: TObject); virtual; abstract;
+      function isValid: boolean; virtual; abstract;
+      property key: TComparable read getKey;
+      property value: TObject read getValue write setValue;
+    end;
 
     {$IFNDEF FPC}
-    constructor create(initialcapacity : integer = 10; loadfactor : real = 0.75; entryfactory : tHashEntryFactory = nil; ownKeys : boolean = true);
+    THashEntryTable = array of THashEntry;
+    HashEntryTablePtr = ^THashEntryTable;
     {$ELSE FPC}
-    constructor create(initialcapacity : integer; loadfactor : real; entryfactory : tHashEntryFactory; ownKeys : boolean); overload;
-    constructor create; overload;
+    HashEntryTablePtr = ^THashEntry;
     {$ENDIF}
 
-    destructor destroy; override;
+    THashTable = class (TObject)
+    protected
+      fTable: HashEntryTablePtr;
+      fEntryFactory: THashEntryFactory;
+      fModCount: integer;
+      fCapacity: integer;
+      fThreshHold: integer;
+      fLoadFactor: real;
+      fCount     : integer;
+      fOwnKeys   : boolean;
+      function hashToIndex(key: TComparable): integer;
+      procedure rehash; virtual;
 
-    procedure clear; virtual;
-    procedure deleteAll; virtual;
-end;
+      // there's a potential for memory leak here
+      // - if key already in the table, it does not get re-inserted.
+      // function setvalue returns false if this happens, so key may be freed
+      // if necessary but procedure fsetvalue does not free keys.
+      // SO: don't use values property unless you're managing _all_ keys
+      // somewhere outsite of the hash table
+      // CORRECTION: if ownKeys is set, fSetvalue will free the key, so there's
+      // no leak
+      // Another possibility for a leak - what happens if the value that is
+      // already in the table is not managed outside? Should be deleted, but how?
+      procedure fSetValue(key: TComparable; value: TObject); virtual;
+      procedure clearTable(deleteValues: boolean);
+    public
+      function getIterator: TMapIterator; virtual;
+      function containsKey(key: TComparable): boolean; virtual;
+      function containsValue(value: TObject): boolean; virtual;
+      function getValue(key: TComparable): TObject; virtual;
+      function setValue(key: TComparable; value: TObject): boolean; virtual;
+      function remove(key: TComparable): TObject; virtual;
+      function getCount: integer; virtual;
+      property values[key: TComparable]: TObject read getValue write fsetValue;
+      property count: integer read getCount;
+      {$IFNDEF FPC}
+      constructor create(initialcapacity: integer = 10; loadfactor: real = 0.75;
+                         entryfactory: THashEntryFactory = nil; ownKeys: boolean = true);
+      {$ELSE FPC}
+      constructor create(initialcapacity: integer; loadfactor: real;
+                         entryfactory: THashEntryFactory; ownKeys: boolean); overload;
+      constructor create; overload;
+      {$ENDIF}
+      destructor destroy; override;
+      procedure clear; virtual;
+      procedure deleteAll; virtual;
+    end;
 
-tHashTableIterator = class(tMapIterator)
-protected
-       fIndex : integer;
-       fEntry : tHashEntry;
-       fModCount : integer;
-       fIsRemoved : boolean;
-       fCurrent : integer;
-
-       fHashTable : tHashTable;
-public
-   constructor create(table : tHashTable);
-
-   procedure next; override;
-   procedure remove; override;
-   function hasNext : boolean; override;
-   function getKey : tComparable; override;
-   function getValue : tObject; override;
-   procedure setValue(avalue : tObject); override;
-   function validEntry : boolean; override;
-   function isValid : boolean; override;
-
-end;
+    THashTableIterator = class(TMapIterator)
+    protected
+      fIndex: integer;
+      fEntry: THashEntry;
+      fModCount: integer;
+      fIsRemoved: boolean;
+      fCurrent: integer;
+      fHashTable: THashTable;
+    public
+      constructor create(table: THashTable);
+      procedure next; override;
+      procedure remove; override;
+      function hasNext: boolean; override;
+      function getKey: TComparable; override;
+      function getValue: TObject; override;
+      procedure setValue(avalue: TObject); override;
+      function validEntry: boolean; override;
+      function isValid: boolean; override;
+    end;
 
 
-(* -------------------------------------------------------- *)
-(*                                                          *)
-(*                                                          *)
-(*                                                          *)
-(*                                                          *)
-(* -------------------------------------------------------- *)
 
+//=============================================================================
 implementation
+//=============================================================================
 
-(********* pointer functions ***********)
+  //---------------------------------------------------------------------------
+  // array get/put methods - pointer functions
+  //---------------------------------------------------------------------------
 
+  {$IFNDEF FPC}
+  //delphi implementation, uses dynamic arrays
 
-{$IFNDEF FPC}
-//delphi implementation, uses dynamic arrays
+  function getNewEntryTable(size: integer): HashEntryTablePtr;
+  begin
+    new(result);
+    setLength(result^, size);
+  end;
 
-function getNewEntryTable(size : integer) : pHashEntryTable;
-begin
-     new(result);
-     setLength(result^, size);
-end;
+  procedure freeEntryTable(table: HashEntryTablePtr; oldSize: integer);
+  begin
+    setLength(table^, 0);
+    dispose(table);
+  end;
 
-procedure freeEntryTable(table : pHashEntryTable; oldSize : integer);
-begin
-     setLength(table^, 0);
-     dispose(table);
-end;
-
-function arrayGet(arr : pHashEntryTable; index : integer) : tHashEntry;
-begin
+  function arrayGet(arr: HashEntryTablePtr; index: integer): THashEntry;
+  begin
     result := arr^[index];
-end;
+  end;
 
-procedure arrayPut(arr : pHashEntryTable; index : integer; value : tHashEntry);
-begin
-   arr^[index] := value;
-end;
+  procedure arrayPut(arr: HashEntryTablePtr; index: integer; value: THashEntry);
+  begin
+    arr^[index] := value;
+  end;
 
-{$ELSE FPC}
-//freepascal implementaion, uses pointers as arrays 
+  {$ELSE FPC}
 
-function getNewEntryTable(size: integer) : pHashEntryTable;
-begin
-     getmem(result, size * sizeOf(tHashEntry));
-end;
+  // freepascal implementaion, uses pointers as arrays
 
-procedure freeEntryTable(table : pHashEntryTable; oldSize : integer);
-begin
-     freemem(table, oldSize * sizeOf(tHashEntry));
-end;
+  function getNewEntryTable(size: integer): HashEntryTablePtr;
+  begin
+    getmem(result, size * sizeOf(THashEntry));
+  end;
 
-function arrayGet(arr : pHashEntryTable; index : integer) : tHashEntry;
-begin
-     result := (arr + index)^; //arr[index];
-end;
+  procedure freeEntryTable(table: HashEntryTablePtr; oldSize: integer);
+  begin
+    freemem(table, oldSize * sizeOf(THashEntry));
+  end;
 
-procedure arrayPut(arr : pHashEntryTable; index : integer; value : tHashEntry);
-begin
-   (arr + index)^ := value; //arr[index] := value;
-end;
+  function arrayGet(arr: HashEntryTablePtr; index: integer): THashEntry;
+  begin
+    result := (arr + index)^; //arr[index];
+  end;
 
-{$ENDIF FPC}
+  procedure arrayPut(arr: HashEntryTablePtr; index: integer; value: THashEntry);
+  begin
+    (arr + index)^ := value; //arr[index] := value;
+  end;
+
+  {$ENDIF FPC}
 
 
-function equal(item1, item2 :tObject) : boolean;
-begin
-     if ((item1 = nil) or (item1 is tComparable)) and
-        ((item2 = nil) or (item2 is tComparable)) then
-        result := comparable.equal(tComparable(item1), tComparable(item2))
-     else
+  function equal(item1, item2 :TObject): boolean;
+  begin
+    if ((item1 = nil) or (item1 is TComparable)) and ((item2 = nil) or (item2 is TComparable)) then
+      result := comparable.equal(TComparable(item1), TComparable(item2))
+    else
+      result := false;
+  end;
+
+
+  constructor THashEntryFactory.create(hashEntryClass: THashEntryClass);
+  begin
+    inherited create;
+    fHashClass := hashEntryClass;
+  end;
+
+  function THashEntryFactory.getEntry(key: TComparable; value: TObject): THashEntry;
+  begin
+    result := fHashClass.create(key, value);
+  end;
+
+  //---------------------------------------------------------------------------
+  // THashEntry
+  //---------------------------------------------------------------------------
+
+  function THashEntry.compareObjects(object2: TComparable): integer;
+  begin
+    throwComparableException(object2, self.ClassType);
+    // this is not really important so we'll just make it compare keys
+    result := compare(fkey, THashEntry(object2).key);
+  end;
+
+  function  THashEntry.hashCode: integer;
+  begin
+    // for our purposes the hash code of the key is good enough
+    result := key.hashCode;
+  end;
+
+  function THashEntry.getKey: TComparable;
+  begin
+    result := fKey;
+  end;
+
+  function THashEntry.getValue: TObject;
+  begin
+    result := fValue;
+  end;
+
+  procedure THashEntry.setValue(avalue: TObject);
+  begin
+    fValue := avalue;
+  end;
+
+  constructor THashEntry.create(akey: TComparable; avalue: TObject);
+  begin
+    inherited create;
+    fKey := akey;
+    fValue := avalue;
+    next := nil;
+  end;
+
+
+  //---------------------------------------------------------------------------
+  // hashtable
+  //---------------------------------------------------------------------------
+
+  function THashTable.hashToIndex(key: TComparable): integer;
+  begin
+    result := abs(key.hashCode) mod fCapacity;
+  end;
+
+  procedure THashTable.rehash;
+  var
+    oldCapacity: integer;
+    oldTable: HashEntryTablePtr;
+    newCapacity: integer;
+    newTable: HashEntryTablePtr;
+    i: integer;
+    index: integer;
+    entry, oldentry: THashEntry;
+  begin
+
+    oldCapacity := fCapacity;
+    newCapacity := oldCapacity * 2 + 1;
+    newTable    := getNewEntryTable(newCapacity);
+
+    inc(fModCount);
+    oldTable := fTable;
+    fTable := newTable;
+    fCapacity := newCapacity;
+    fThreshHold := round(newCapacity * fLoadFactor);
+
+    try
+      for i := 0 to oldCapacity - 1 do begin
+        oldEntry := arrayGet(oldTable, i);
+        while oldEntry <> nil do begin
+          entry := oldEntry;
+          oldEntry := oldEntry.next;
+          index := hashToIndex(entry.key);
+          entry.next := arrayGet(fTable, index);
+          arrayPut(fTable, index, entry);
+        end;
+      end;
+    finally
+      freeEntryTable(oldTable, oldCapacity);
+    end;
+  end;
+
+  procedure THashTable.fSetValue(key: TComparable; value: TObject);
+  begin
+    setValue(key, value);
+  end;
+
+  function THashTable.getIterator: TMapIterator;
+  begin
+    result := THashTableIterator.create(self);
+  end;
+
+  function THashTable.containsKey(key: TComparable): boolean;
+  var
+    idx: integer;
+    entry: THashEntry;
+  begin
+    idx := hashToIndex(key);
+    result := false;
+    entry := arrayGet(fTable, idx);
+    while (entry <> nil) and not result do begin
+      result := equal(key, entry.key);
+      entry := entry.next;
+    end;
+  end;
+
+  function THashTable.containsValue(value: TObject): boolean;
+  var
+    idx: integer;
+    entry: THashEntry;
+  begin
+    result := false;
+    for idx := 0 to fCapacity - 1 do begin
+      entry := arrayGet(fTable, idx);
+      while (entry <> nil) and not result do begin
+        result := equal(value, entry.value);
+        entry := entry.next;
+      end;
+      if result then break;
+    end;
+  end;
+
+  function THashTable.getValue(key: TComparable): TObject;
+  var
+    idx: integer;
+    entry: THashEntry;
+  begin
+    idx := hashToIndex(key);
+    result := nil;
+    entry := arrayGet(fTable, idx);
+    while (entry <> nil) do begin
+      if equal(key, entry.key) then begin
+        result := entry.value;
+        break;
+      end;
+      entry := entry.next;
+    end;
+  end;
+
+  function THashTable.setValue(key: TComparable; value: TObject): boolean;
+  var
+    idx: integer;
+    entry: THashEntry;
+  begin
+    // first try to find key in the table and replace the value
+    idx := hashToIndex(key);
+    entry := arrayGet(fTable, idx);
+    while entry <> nil do begin
+      if equal(key, entry.key) then begin
         result := false;
-end;
+        entry.value := value;
+        if fOwnKeys then
+           key.free;
+        exit;
+      end;
+      entry := entry.next;
+    end;
 
-
-constructor tHashEntryFactory.create(hashEntryClass : tHashEntryClass);
-begin
-  inherited create;
-  fHashClass := hashEntryClass;
-end;
-
-function tHashEntryFactory.getEntry(key : tComparable; value : tObject) : tHashEntry;
-begin
-  result := fHashClass.create(key, value);
-end;
-//**
-
-(************ thashentry ***************)
-function tHashEntry.compareObjects(object2 : tComparable) : integer;
-begin
-     throwComparableException(object2, self.ClassType);
-     // this is not really important so we'll just make it compare keys
-     result := compare(fkey, tHashEntry(object2).key);
-end;
-
-
-function  tHashEntry.hashCode : integer;
-begin
-     // for our purposes the hash code of the key is good enough
-     result := key.hashCode;
-end;
-
-function tHashEntry.getKey : tComparable;
-begin
-     result := fKey;
-end;
-
-function tHashEntry.getValue : tObject;
-begin
-     result := fValue;
-end;
-
-procedure tHashEntry.setValue(avalue : tObject);
-begin
-     fValue := avalue;
-end;
-
-constructor tHashEntry.create(akey : tComparable; avalue : tObject);
-begin
-     inherited create;
-     fKey := akey;
-     fValue := avalue;
-     next := nil;
-end;
-
-
-(***************** hashtable *************************)
-function tHashTable.hashToIndex(key : tComparable) : integer;
-begin
-     result := abs(key.hashCode) mod fCapacity;
-end;
-
-
-
-procedure tHashTable.rehash;
-var
-   oldCapacity : integer;
-   oldTable : pHashEntryTable;
-   newCapacity : integer;
-   newTable : pHashEntryTable;
-   i : integer;
-   index : integer;
-   entry, oldentry : tHashEntry;
-begin
-
-   oldCapacity := fCapacity;
-   newCapacity := oldCapacity * 2 + 1;
-   newTable    := getNewEntryTable(newCapacity);
-
-   inc(fModCount);
-   oldTable := fTable;
-   fTable := newTable;
-   fCapacity := newCapacity;
-   fThreshHold := round(newCapacity * fLoadFactor);
-
-   try
-
-     for i := 0 to oldCapacity - 1 do begin
-         oldEntry := arrayGet(oldTable, i);
-         while oldEntry <> nil do begin
-            entry := oldEntry;
-            oldEntry := oldEntry.next;
-
-            index := hashToIndex(entry.key);
-            entry.next := arrayGet(fTable, index);
-            arrayPut(fTable, index, entry);
-
-         end;
-     end;
-   finally
-
-     freeEntryTable(oldTable, oldCapacity);
-   end;
-
-end;
-
-procedure tHashTable.fSetValue(key : tComparable; value : tObject);
-begin
-     setValue(key, value);
-end;
-
-function tHashTable.getIterator : tMapIterator;
-begin
-     result := tHashTableIterator.create(self); 
-end;
-
-function tHashTable.containsKey(key : tComparable) : boolean;
-var
-   idx : integer;
-   entry : tHashEntry;
-begin
-   idx := hashToIndex(key);
-
-   result := false;
-   entry := arrayGet(fTable, idx);
-   while (entry <> nil) and not result do begin
-         result := equal(key, entry.key);
-         entry := entry.next;
-   end;
-
-end;
-
-function tHashTable.containsValue(value : tObject) : boolean;
-var
-   idx : integer;
-   entry : tHashEntry;
-begin
-   result := false;
-   for idx := 0 to fCapacity - 1 do begin
-       entry := arrayGet(fTable, idx);
-       while (entry <> nil) and not result do begin
-             result := equal(value, entry.value);
-             entry := entry.next;
-       end;
-       if result then break;
-   end;
-end;
-
-
-function tHashTable.getValue(key : tComparable) : tObject;
-var
-   idx : integer;
-   entry : tHashEntry;
-begin
-   idx := hashToIndex(key);
-   result := nil;
-   entry := arrayGet(fTable, idx);
-   while (entry <> nil) do begin
-         if equal(key, entry.key) then begin
-            result := entry.value;
-            break;
-         end;
-         entry := entry.next;
-   end;
-end;
-
-function tHashTable.setValue(key : tComparable; value : tObject) : boolean;
-var
-   idx : integer;
-   entry : tHashEntry;
-begin
-
-   // first try to find key in the table and replace the value
-   idx := hashToIndex(key);
-   entry := arrayGet(fTable, idx);
-   while entry <> nil do begin
-         if equal(key, entry.key) then begin
-            result := false;
-            entry.value := value;
-            if fOwnKeys then
-               key.free;
-            exit;
-         end;
-         entry := entry.next;
-   end;
-
-   // inserting new key-value pair
-   inc(fModCount);
-   if fcount > fThreshHold then
+    // inserting new key-value pair
+    inc(fModCount);
+    if fcount > fThreshHold then
       rehash;
 
-   idx := hashToIndex(key);
-   entry := fEntryFactory.getEntry(key, value);
-   entry.next := arrayGet(ftable ,idx);
-   arrayPut(ftable, idx, entry);
-   inc(fcount);
-   result := true;
+    idx := hashToIndex(key);
+    entry := fEntryFactory.getEntry(key, value);
+    entry.next := arrayGet(ftable ,idx);
+    arrayPut(ftable, idx, entry);
+    inc(fcount);
+    result := true;
 
-end;
-
-
-function tHashTable.remove(key : tComparable) : tObject;
-var
-   idx : integer;
-   entry : tHashEntry;
-   preventry : tHashEntry;
-begin
-
-   idx := hashToIndex(key);
-   entry := arrayGet(fTable, idx);
-   result := nil;
-   prevEntry := nil;
-   while entry <> nil do begin
-         if equal(key, entry.key) then begin
-            inc(fModCount);
-            result := entry.value;
-            if fOwnKeys then if entry.key <> key then key.free; //test this! 
-            if fOwnKeys then entry.key.free;
-            if prevEntry = nil then
-               arrayPut(fTable, idx, entry.next)
-            else
-               prevEntry.next := entry.next;
-            entry.free;
-            dec(fCount);
-            break;
-         end;
-         preventry := entry;
-         entry := entry.next;
-   end;
-
-end;
-
-function tHashTable.getCount : integer;
-begin
-     result := fCount;
-end;
+  end;
 
 
-{$IFDEF FPC}
-constructor tHashTable.create(initialcapacity : integer; loadfactor : real; entryfactory : tHashEntryFactory; ownKeys : boolean);
-begin
-     inherited create;
+  function THashTable.remove(key: TComparable): TObject;
+  var
+    idx: integer;
+    entry: THashEntry;
+    preventry: THashEntry;
+  begin
+    idx := hashToIndex(key);
+    entry := arrayGet(fTable, idx);
+    result := nil;
+    prevEntry := nil;
+    while entry <> nil do begin
+      if equal(key, entry.key) then begin
+        inc(fModCount);
+        result := entry.value;
+        if fOwnKeys then if entry.key <> key then key.free; //test this!
+        if fOwnKeys then entry.key.free;
+        if prevEntry = nil then
+           arrayPut(fTable, idx, entry.next)
+        else
+           prevEntry.next := entry.next;
+        entry.free;
+        dec(fCount);
+        break;
+      end;
+      preventry := entry;
+      entry := entry.next;
+    end;
 
-     fLoadFactor := loadfactor;
-     fOwnKeys := ownKeys;
-     if entryFactory = nil then
-        fEntryFactory := tHashEntryFactory.create(tHashEntry)
-     else
-        fEntryFactory := entryfactory;
-     fTable := getNewEntryTable(initialCapacity);
-     fCapacity := initialcapacity;
-     fThreshHold := round(fCapacity * fLoadFactor);
-     fCount := 0;
-     fModCount := 0;
+  end;
 
-end;
+  function THashTable.getCount: integer;
+  begin
+    result := fCount;
+  end;
 
-constructor tHashTable.create;
-begin
-     create(10, 0.75, nil, true);
-end;
+  {$IFDEF FPC}
+  constructor THashTable.create(initialcapacity: integer; loadfactor: real;
+                                entryfactory: THashEntryFactory; ownKeys: boolean);
+  begin
+    inherited create;
+    fLoadFactor := loadfactor;
+    fOwnKeys := ownKeys;
+    if entryFactory = nil then
+      fEntryFactory := THashEntryFactory.create(THashEntry)
+    else
+      fEntryFactory := entryfactory;
+    fTable := getNewEntryTable(initialCapacity);
+    fCapacity := initialcapacity;
+    fThreshHold := round(fCapacity * fLoadFactor);
+    fCount := 0;
+    fModCount := 0;
+  end;
 
-{$ELSE FPC}
-constructor tHashTable.create(initialcapacity : integer = 10; loadfactor : real = 0.75; entryfactory : tHashEntryFactory = nil; ownKeys : boolean = true);
-begin
-     inherited create;
+  constructor THashTable.create;
+  begin
+    create(10, 0.75, nil, true);
+  end;
 
-     fLoadFactor := loadfactor;
-     fOwnKeys := ownKeys;
-     if entryFactory = nil then
-        fEntryFactory := tHashEntryFactory.create(tHashEntry)
-     else
-        fEntryFactory := entryfactory;
-     fTable := getNewEntryTable(initialCapacity);
-     fCapacity := initialcapacity;
-     fThreshHold := round(fCapacity * fLoadFactor);
-     fCount := 0;
-     fModCount := 0;
+  {$ELSE FPC}
+  constructor THashTable.create(initialcapacity: integer = 10; loadfactor: real = 0.75;
+                                entryfactory: THashEntryFactory = nil; ownKeys: boolean = true);
+  begin
+    inherited create;
+    fLoadFactor := loadfactor;
+    fOwnKeys := ownKeys;
+    if entryFactory = nil then
+      fEntryFactory := THashEntryFactory.create(THashEntry)
+    else
+      fEntryFactory := entryfactory;
+    fTable := getNewEntryTable(initialCapacity);
+    fCapacity := initialcapacity;
+    fThreshHold := round(fCapacity * fLoadFactor);
+    fCount := 0;
+    fModCount := 0;
+  end;
+  {$ENDIF}
 
-end;
-{$ENDIF}
+  destructor THashTable.destroy;
+  begin
+    clear;
+    freeEntryTable(fTable, fCapacity);
+    fEntryFactory.free;
+    inherited;
+  end;
+
+  procedure THashTable.clear;
+  begin
+    clearTable(false);
+  end;
+
+  procedure THashTable.deleteAll;
+  begin
+    clearTable(true);
+  end;
+
+  procedure THashTable.clearTable(deleteValues: boolean);
+  var
+    idx: integer;
+    entry: THashEntry;
+    temp : THashEntry;
+  begin
+    for idx := 0 to fCapacity - 1 do begin
+      entry := arrayGet(ftable, idx);
+      while entry <> nil do begin
+        temp := entry;
+        entry := entry.next;
+        if fOwnKeys then
+          temp.key.free;
+        if deleteValues then
+          temp.value.free;
+        temp.free;
+      end;
+      arrayPut(fTable, idx, nil);
+    end;
+  end;
+
+  //* iterator *
+  constructor THashTableIterator.create(table: THashTable);
+  var
+    i: integer;
+  begin
+    inherited create;
+
+    fHashTable := table;
+    fModCount := table.fModCount;
+
+    fIsRemoved := false;
+    fCurrent := 0;
+
+    fEntry := nil;
+    // get first element
+    if fHashTable.count > 0 then
+      for i := 0 to fHashTable.fCapacity - 1 do begin
+        fEntry := arrayGet(fHashTable.ftable, i);
+        if fEntry <> nil then begin
+          fIndex := i;
+          break;
+        end;
+      end;
+  end;
 
 
-destructor tHashTable.destroy;
-begin
-     clear;
-     freeEntryTable(fTable, fCapacity);
-     fEntryFactory.free;
-     inherited;
-end;
-
-procedure tHashTable.clear;
-begin
-  clearTable(false);
-end;
-
-procedure tHashTable.deleteAll;
-begin
-  clearTable(true);
-end;
-
-procedure tHashTable.clearTable(deleteValues : boolean);
-var
-   idx : integer;
-   entry : tHashEntry;
-   temp  : tHashEntry;
-begin
-   for idx := 0 to fCapacity - 1 do begin
-       entry := arrayGet(ftable, idx);
-       while entry <> nil do begin
-           temp := entry;
-           entry := entry.next;
-           if fOwnKeys then
-              temp.key.free;
-           if deleteValues then
-              temp.value.free;
-           temp.free;
-       end;
-       arrayPut(fTable, idx, nil);
-   end;
-
-end;
-
-(************ iterator **************)
-constructor tHashTableIterator.create(table : tHashTable);
-var i : integer;
-
-begin
-   inherited create;
-
-   fHashTable := table;
-   fModCount := table.fModCount;
-
-   fIsRemoved := false;
-   fCurrent := 0;
-
-   fEntry := nil;
-   // get first element
-   if fHashTable.count > 0 then
-     for i := 0 to fHashTable.fCapacity - 1 do begin
-         fEntry := arrayGet(fHashTable.ftable, i);
-         if fEntry <> nil then begin
-            fIndex := i;
-            break;
-         end;
-     end;
-end;
-
-
-procedure tHashTableIterator.next;
-var
-   i : integer;
-begin
-   if fModCount <> fHashtable.fModCount then
+  procedure THashTableIterator.next;
+  var
+    i: integer;
+  begin
+    if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');
 
     if fIsRemoved then
-       fisRemoved := false
+      fisRemoved := false
     else if fCurrent < fHashTable.count then begin
-       fEntry := fEntry.next;
-       if fEntry = nil then
-          for i := fIndex + 1 to fHashTable.fCapacity - 1 do
-              if arrayGet(fHashTable.fTable, i) <> nil then begin
-                 fEntry := arrayGet(fHashTable.fTable, i);
-                 fIndex := i;
-                 break;
-              end;
-
-       if fEntry <> nil then
-          inc(fCurrent);
-    end;
-
-end;
-
-function tHashTableIterator.isValid : boolean;
-begin
-     result := fModCount = fHashTable.fModCount;
-end;
-
-
-procedure tHashTableIterator.remove;
-var
-   oldEntry : tHashEntry;
-   i : integer;
-begin
-   if fModCount <> fHashtable.fModCount then
-      raise exception.create('Iterator no longer valid');
-
-  if fIsRemoved or (fEntry = nil) then exit;
-
-  oldEntry := fEntry;
-
-  if fCurrent < fHashTable.count then begin
-     fEntry := fEntry.next;
-     if fEntry = nil then begin
+      fEntry := fEntry.next;
+      if fEntry = nil then
         for i := fIndex + 1 to fHashTable.fCapacity - 1 do
-            if arrayGet(fHashTable.fTable, i) <> nil then begin
-               fEntry := arrayGet(fHashTable.fTable, i);
-               fIndex := i;
-               break;
-            end;
-     end;
+          if arrayGet(fHashTable.fTable, i) <> nil then begin
+            fEntry := arrayGet(fHashTable.fTable, i);
+            fIndex := i;
+            break;
+          end;
+
+      if fEntry <> nil then
+        inc(fCurrent);
+    end;
   end;
 
-  fHashTable.remove(oldEntry.key);
-  fIsRemoved := true;
-  fModCount := fHashTable.fmodCount;
+  function THashTableIterator.isValid: boolean;
+  begin
+    result := fModCount = fHashTable.fModCount;
+  end;
 
-end;
-
-
-function tHashTableIterator.hasNext : boolean;
-begin
-   if fModCount <> fHashtable.fModCount then
+  procedure THashTableIterator.remove;
+  var
+    oldEntry: THashEntry;
+    i: integer;
+  begin
+    if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');
-   result := (fCurrent < (fHashTable.count - 1)) or (fIsRemoved and (fCurrent < fHashTable.count));
-end;
 
-function tHashTableIterator.getKey : tComparable;
-begin
-   if fModCount <> fHashtable.fModCount then
+    if fIsRemoved or (fEntry = nil) then exit;
+
+    oldEntry := fEntry;
+
+    if fCurrent < fHashTable.count then begin
+      fEntry := fEntry.next;
+      if fEntry = nil then begin
+        for i := fIndex + 1 to fHashTable.fCapacity - 1 do
+          if arrayGet(fHashTable.fTable, i) <> nil then begin
+            fEntry := arrayGet(fHashTable.fTable, i);
+            fIndex := i;
+            break;
+          end;
+      end;
+    end;
+
+    fHashTable.remove(oldEntry.key);
+    fIsRemoved := true;
+    fModCount := fHashTable.fmodCount;
+  end;
+
+
+  function THashTableIterator.hasNext: boolean;
+  begin
+    if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');
-   if not (fIsRemoved or (fEntry = nil)) then
+    result := (fCurrent < (fHashTable.count - 1)) or (fIsRemoved and (fCurrent < fHashTable.count));
+  end;
+
+  function THashTableIterator.getKey: TComparable;
+  begin
+    if fModCount <> fHashtable.fModCount then
+      raise exception.create('Iterator no longer valid');
+    if not (fIsRemoved or (fEntry = nil)) then
       result := fEntry.key
-   else
+    else
       result := nil;
-end;
+  end;
 
-procedure tHashTableIterator.setValue(avalue : tObject);
-(* NOTE! at this point, dealing with the value that is being replaced is the responsibility of the user *)
-begin
-   if not isValid then
+  procedure THashTableIterator.setValue(avalue: TObject);
+  begin
+    // NOTE! at this point, dealing with the value that is being replaced is
+    // the responsibility of the user
+    if not isValid then
       raise exception.create('Iterator no longer valid');
-   if validEntry then
+    if validEntry then
       fEntry.value := avalue
-   else
+    else
       raise exception.create('The entry is not valid');
+  end;
 
-end;
-
-function tHashTableIterator.getValue : tObject;
-begin
-   if fModCount <> fHashtable.fModCount then
+  function THashTableIterator.getValue: TObject;
+  begin
+    if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');
-   if not (fIsRemoved or (fEntry = nil)) then
+    if not (fIsRemoved or (fEntry = nil)) then
       result := fEntry.value
-   else
+    else
       result := nil;
-end;
+  end;
 
-function tHashTableIterator.validEntry : boolean;
-begin
-   if fModCount <> fHashtable.fModCount then
+  function THashTableIterator.validEntry: boolean;
+  begin
+    if fModCount <> fHashtable.fModCount then
       raise exception.create('Iterator no longer valid');
-   result := (fEntry <> nil) and (fCurrent < fHashTable.count) and not fIsRemoved;
-end;
+    result := (fEntry <> nil) and (fCurrent < fHashTable.count) and not fIsRemoved;
+  end;
 
 end.

@@ -146,12 +146,18 @@ implementation
     result := Round(x);
     if result < x then result := result + 1;
   end;
-  
+
+initialization
+begin
+end;
+
 finalization
+begin
   if sdlManager <> nil then
   begin
     sdlManager.Free();
     sdlManager := nil;
   end;
+end;
 
 end.

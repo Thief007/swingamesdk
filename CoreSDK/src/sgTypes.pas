@@ -23,8 +23,8 @@ interface
   type
     /// @struct Point2D
     Point2D = record
-        x, y: Single;
-      end;
+      x, y: Single;
+    end;
       
     /// Vectors represent a direction and distance, stored as x,y components.
     ///
