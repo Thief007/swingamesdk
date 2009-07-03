@@ -23,7 +23,7 @@ class SGMethod(SGMetaDataContainer):
             'is_constructor','return_type','other_class','is_destructor',
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
-            'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 'fixed_result_size'])
+            'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 'fixed_result_size', 'calls'])
         self.name = name
         self.uname = name
         self.params = list()
@@ -74,6 +74,9 @@ class SGMethod(SGMetaDataContainer):
         result['calls.name'] = self.method_called.name
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
+        
+        if self.is_operator:
+            result['operator'] = self.name
         
         result['the_call'] = call_creater(result, self) if call_creater != None else None
         
@@ -271,7 +274,6 @@ class SGMethod(SGMetaDataContainer):
         if self.method_called != None:
             logger.error('Model Error: Changing method called by %s', self.name)
             assert False
-        #self.set_tag('calls', (method, args))
         self.method_called = method
         self.args = args
     
@@ -300,7 +302,6 @@ class SGMethod(SGMetaDataContainer):
                         assert False
             else:
                 logger.error('Method    : Error unknown type of argument in %s - %s', self.uname, argv[0])
-        #self.tags['calls'].other[1] = new_args
         self.args = new_args
     
     def setup_lib_method(self, lib_method):
@@ -449,7 +450,20 @@ class SGMethod(SGMetaDataContainer):
             self._setup_class_method(class_method)
             logger.info(' Method    : %s calls %s', class_method.name, lib_method.name)
             lib_method.called_by.append(class_method) #library is also called by class
-        
+        elif self.is_operator:
+            assert self.other_class != None
+            self.name = 'operator ' + self.name
+            self.other_method = self.in_class.find_method(self['calls'].other)
+            self.doc = self.other_method.doc
+            self.method_called = self.other_method.method_called
+            self.method_called.called_by.append(self) #library is also called by operator
+            self.is_static = True
+            
+            self.in_class.operators[self.signature] = None
+            self.in_class = self.other_class
+            self.in_class.add_member(self)
+            self.args = list(self.params) # operators must match directly
+            
         # Cant check here... need to wait until all are read
         # self.check_call_validity()
         # class_method.check_call_validity()

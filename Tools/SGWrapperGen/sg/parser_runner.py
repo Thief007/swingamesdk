@@ -60,6 +60,7 @@ def method_process_visitor(the_method, other):
             len_param.length_of = param
             param.has_length_param = True
             param.length_idx = _add_parameter(the_method, len_param)
+    return other
 
 def post_parse_process(the_file):
     '''Create temporary variables for out/var string parameters, and string return types'''

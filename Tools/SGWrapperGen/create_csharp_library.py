@@ -422,7 +422,7 @@ def load_data():
     global _module_method, _module_header, _module_footer
     global _class_header, _class_footer
     global _pointer_wrapper_class_header
-    global _array_property
+    global _array_property, _operator_overload
     
     f = open('./cs_lib/lib_header.txt')
     _header = f.read()
@@ -693,6 +693,9 @@ def method_visitor(the_method, other, as_accessor_name = None):
         else:
             details['params'] = '(%s)' % details['params']
         
+        # if the_method.is_operator:
+        #     writer.writeln((_operator_overload % details).replace('%s', details['name']) )
+        # else:
         writer.writeln((_module_method % details).replace('%s', details['name']) )
         writer.writeln()
         # if the_method.is_function:
@@ -701,6 +704,8 @@ def method_visitor(the_method, other, as_accessor_name = None):
         #     other['file writer'].write(_module_c_function % details % the_method.uname)
         # else:
         #     other['file writer'].write(_module_c_method % details)
+    
+    return other
 
 def property_visitor(the_property, other):
     writer = other['file writer']
@@ -719,6 +724,7 @@ def property_visitor(the_property, other):
     writer.outdent(2)
     
     writer.write('}\n');
+    return other
 
 def write_cs_sgsdk_file(the_file, for_others = False):
     '''Write the c sharp library adapter - header file that matches DLL'''
@@ -792,6 +798,7 @@ def write_sg_class(member, other):
     file_writer.indent(2);    
     member.visit_methods(method_visitor, my_other)
     member.visit_properties(property_visitor, my_other)
+    member.visit_operators(method_visitor, my_other)
     file_writer.outdent(2);
     
     file_writer.writeln(_class_footer)
@@ -834,6 +841,7 @@ def write_struct(member, other):
         writer.writeln(cast_code)
         
     member.visit_methods(method_visitor, other)
+    member.visit_operators(method_visitor, other)
     
     writer.outdent(2)
     
@@ -926,7 +934,8 @@ def post_parse_process(the_file):
     
     for member in the_file.members:
         #process all method of the file
-        for key, method in member.methods.items():
+        methods_and_operators = member.methods.items() + member.operators.items()
+        for key, method in methods_and_operators:
             for param in method.params:
                 if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
                     logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)

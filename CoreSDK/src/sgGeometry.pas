@@ -1,4 +1,4 @@
-//=============================================================================
+//----------------------------------------------------------------------------
 //          sgGeometry.pas
 //----------------------------------------------------------------------------
 //
@@ -15,6 +15,7 @@
 // - 2009-07-03: Andrew : Started adding class indicators
 //                      : Started adding operator overloads
 //                      : Added IdentityMatrix and MatrixToString
+//                      : Added overloaded operators to Vector and Matrix2D
 // - 2009-07-02: Andrew : Added comments for returning fixed size var length arrays
 //                      : Increased precision of deg to rad
 // - 2009-06-29: Andrew : Removed all need for Collision Side
@@ -313,17 +314,29 @@ interface
   /// @lib
   function AddVectors(const v1, v2: Vector): Vector;
   
+  /// @class Vector
+  /// @calls AddVectors
+  operator + (const v1, v2: Vector) r : Vector;
+  
   /// Subtracts the second vector parameter (``v2``) from the first vector 
   /// (``v1``) and returns the result as new `Vector`.
   ///
   /// @lib
   function SubtractVectors(const v1, v2: Vector): Vector;
   
+  /// @class Vector
+  /// @calls SubtractVectors
+  operator - (const v1, v2: Vector) r : Vector;
+  
   /// Multiplies each component (``x`` and ``y`` values) of the ``v1`` vector 
   /// by the ``s`` scalar value and returns the result as a new `Vector`.
   /// 
   /// @lib
   function VectorMultiply(const v: Vector; s: Single): Vector;
+  
+  /// @class Vector
+  /// @calls VectorMultiply
+  operator * (const v: Vector; s: Single) r : Vector;
   
   /// Calculates the dot product (scalar product) between the two vector 
   /// parameters  rovided (``v1`` and ``v2``). It returns the result as a 
@@ -576,7 +589,12 @@ interface
   /// @lib
   procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
   
+  /// @class Matrix2D
+  /// @calls MatrixMultiplyVector
   operator * (const m: Matrix2D; const v: Vector) r : Vector;
+  
+  /// @class Matrix2D
+  /// @calls MatrixMultiply
   operator * (const m1, m2: Matrix2D) r : Matrix2D;
   
   /// This function returns a string representation of the Matrix.
@@ -825,19 +843,34 @@ implementation
     result.x := v1.x + v2.x;
     result.y := v1.y + v2.y;
   end;
-
+  
+  operator + (const v1, v2: Vector) r : Vector;
+  begin
+    r := AddVectors(v1, v2);
+  end;
+  
   function SubtractVectors(const v1, v2: Vector): Vector;
   begin
     result.x := v1.x - v2.x;
     result.y := v1.y - v2.y;
   end;
-
+  
+  operator - (const v1, v2: Vector) r : Vector;
+  begin
+    r := SubtractVectors(v1, v2);
+  end;
+  
   function VectorMultiply(const v: Vector; s: Single): Vector;
   begin
     result.x := v.x * s;
     result.y := v.y * s;
   end;
-
+  
+  operator * (const v: Vector; s: Single) r : Vector;
+  begin
+    r := VectorMultiply(v, s);
+  end;
+  
   function InvertVector(const v: Vector): Vector;
   begin
     result.x := v.x * -1;

@@ -1,16 +1,10 @@
-//-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
-//+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+/+
-// 					SwinGameException
-//+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
-//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
+//----------------------------------------------------------------------------
+// PointerWrapper.cs
+//----------------------------------------------------------------------------
 //
-// Change History:
+//  Contains code used by the SwinGame resources. used by SGWrapperGen
 //
-// Version 3.0:
-// - 2009-06-30: Andrew: Added class
-//
-//\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\
-
+//----------------------------------------------------------------------------
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -142,7 +136,7 @@ namespace SwinGame
         public override bool Equals(object other)
         {
             if (other is PointerWrapper) return this.Pointer == ((PointerWrapper)other).Pointer;
-            else if (other is IntPtr) return this.Pointer == other;
+            else if (other is IntPtr) return this.Pointer == ((IntPtr)other);
             else return false;
         }
         

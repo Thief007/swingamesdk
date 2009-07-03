@@ -78,6 +78,15 @@ class SGCodeModule(SGMetaDataContainer):
         else:
             raise Exception, "Unknown member type"
     
+    def find_method(self, name):
+        m = lambda method, other : method if method.uname == name and other == None else other
+        result = self.visit_methods(m, None)
+        
+        if result != None: return result
+        
+        logger.error('  CODE MODUL: Error finding method %s in class %s', name, self.name)
+        assert False
+    
     def set_tag(self, title, other = None):
         if title == 'class':
             self.module_kind = 'class'
@@ -223,12 +232,26 @@ class SGCodeModule(SGMetaDataContainer):
         for key in keys :
             method = self.methods[key]
             logger.debug('Code Modul: Visiting method %s' % method.uname)
-            visitor(method, other)
+            other = visitor(method, other)
+        return other
+    
+    def visit_operators(self, visitor, other):
+        logger.debug('Code Modul: Visiting operator of %s' % self.name)
+        
+        keys = self.operators.keys()
+        keys.sort()
+        
+        for key in keys :
+            operator = self.operators[key]
+            logger.debug('Code Modul: Visiting operator %s' % operator.name)
+            other = visitor(operator, other)
+        return other
     
     def visit_fields(self, visitor, other):
         #DO NOT sort these... they map in order to the native code
         for field in self.field_list:
-            visitor(field, field == self.field_list[-1], other)
+            other = visitor(field, field == self.field_list[-1], other)
+        return other
     
     def visit_properties(self, visitor, other):
         keys = self.properties.keys()
@@ -236,7 +259,8 @@ class SGCodeModule(SGMetaDataContainer):
         
         for key in keys:
             prop = self.properties[key]
-            visitor(prop, other)
+            other = visitor(prop, other)
+        return other
 
 def test_class_creation():
     """test basic class creation"""
