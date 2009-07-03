@@ -10,7 +10,8 @@
 // - 2009-06-29: Andrew : Changed CurrentWidth and CurrentHeight to SpriteWidth and SpriteHeight
 //                      : Renamed IsSpriteOnScreenAt -> SpriteOnScreenAt
 // - 2009-06-20: Andrew : Created Sprites unit.
-
+//
+//----------------------------------------------------------------------------
 
 /// Sprite management code.
 ///

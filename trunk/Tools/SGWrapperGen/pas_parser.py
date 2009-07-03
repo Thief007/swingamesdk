@@ -39,6 +39,7 @@ def property_visitor(element, last, other):
     method_visitor(element.setter, other)
     print '\t}'
     if last: print
+    return other
 
 def field_visitor(element, last, other):
     print '\tprivate %s %s;'%(
@@ -46,6 +47,7 @@ def field_visitor(element, last, other):
         element.name
         )
     if last: print
+    return other
 
 def param_visitor(element, last, other):
     print '%s%s %s%s'%(
@@ -53,12 +55,13 @@ def param_visitor(element, last, other):
         element.data_type,
         element.name, 
         ',' if not last else ''), 
+    return other
     
 def arg_visitor(arg, last, other):
     print '%s%s'%(
         arg.name if isinstance(arg, SGParameter) else arg,
         ',' if not last else ''), 
-    
+    return other
 
 def method_visitor(element, other):
     if element == None: 
@@ -96,6 +99,7 @@ def method_visitor(element, other):
     print '\t\t-> args\t\t', 
     element.visit_args(arg_visitor, other)
     print '\n'
+    return other
 
 def visitor(the_file, other):
     for element in the_file.members:

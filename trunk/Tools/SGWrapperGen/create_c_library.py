@@ -370,6 +370,8 @@ def method_visitor(the_method, other):
             other['c writer'].write(_module_c_function % details % the_method.uname)
         else:
             other['c writer'].write(_module_c_method % details)
+    
+    return other
 
 def write_c_lib_header(the_file, for_others = False):
     '''Write the c library adapter - header file that matches DLL'''

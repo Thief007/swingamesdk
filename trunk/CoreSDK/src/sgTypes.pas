@@ -14,6 +14,7 @@
 // - 2009-06-29: Andrew : Added Circle
 // -                    : Started Polygon (removed for version 3)
 // - 2009-06-20: Andrew : Created types unit.
+//----------------------------------------------------------------------------
 
 /// @header sgTypes
 unit sgTypes;
