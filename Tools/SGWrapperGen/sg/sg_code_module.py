@@ -27,6 +27,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.name = name
         self.type_name = name
         self.methods = dict()
+        self.operators = dict()
         self.properties = dict()
         self.fields = dict()
         self.field_list = list()
@@ -56,7 +57,10 @@ class SGCodeModule(SGMetaDataContainer):
         if isinstance(member, SGMethod):
             logger.info(' Code Modul: Adding method %s.%s(%s)', self.name, member.name, member.param_string())
             if self.is_static: member.is_static = True
-            self.methods[member.signature] = member
+            if member.is_operator:
+                self.operators[member.signature] = member
+            else:
+                self.methods[member.signature] = member
         elif isinstance(member, SGProperty):
             logger.info(' Code Modul: Adding property %s.%s', self.name, member.name)
             self.properties[member.name] = member
@@ -160,6 +164,8 @@ class SGCodeModule(SGMetaDataContainer):
         fields = the_type.fields
         for field in fields:
             self.add_member(field)
+            
+        self.data_type = the_type
         
         if the_type.is_class:
             self.module_kind = 'class'
@@ -187,7 +193,6 @@ class SGCodeModule(SGMetaDataContainer):
             self.module_kind = 'type'
             self.name = the_type['type'].other
             self.uname = self.name
-            self.data_type = the_type
             self.via_pointer = the_type.via_pointer            
             self.is_pointer_wrapper = the_type.pointer_wrapper
             self.is_data_wrapper = the_type.data_wrapper

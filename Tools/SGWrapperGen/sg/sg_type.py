@@ -20,7 +20,7 @@ class SGType(SGMetaDataContainer):
         SGMetaDataContainer.__init__(self, ['fields',
             'class','uname', 'dimensions','nested_type', 'related_type',
             'pointer_wrapper', 'data_wrapper', 'values', 'is_pointer',
-            'struct', 'enum', 'array_wrapper', 'fixed_array_wrapper', 'type', 'via_pointer'])
+            'struct', 'enum', 'array_wrapper', 'fixed_array_wrapper', 'type', 'via_pointer', 'sameas'])
         self.name = name
         self.set_tag('fields', [])
         self.dimensions = None
@@ -35,6 +35,7 @@ class SGType(SGMetaDataContainer):
         self.is_class = False
         self.is_type = False
         self.is_struct = False
+        self.same_as = None
         self.via_pointer = False # is the type accessed via a pointer (i.e. C# cant get to it :) )
     
     def __str__(self):
@@ -85,6 +86,10 @@ class SGType(SGMetaDataContainer):
     related_type = property(lambda self: self['related_type'].other, 
         lambda self, value: self.set_tag('related_type', value), 
         None, 'The other type this one relates to')
+    
+    same_as = property(lambda self: self['sameas'].other, 
+        lambda self, value: self.set_tag('sameas', value), 
+        None, 'The type is the same as this other type...')
     
     pointer_wrapper = property(lambda self: self['pointer_wrapper'].other, 
         lambda self, value: self.set_tag('pointer_wrapper', value), 

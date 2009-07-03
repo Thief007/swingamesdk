@@ -61,11 +61,13 @@ class SGPasParser():
             'like': self.process_id_attribute,
             'via_pointer': self.process_true_attribute,
             'fixed_result_size': self.process_number_attribute,
+            'sameas': self.process_type_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
             'procedure': self.process_method_decl,
             'function': self.process_method_decl,
+            'operator': self.process_operator_decl,
             'var': self.process_variable_decl
         }
         self._lookahead_toks = []
@@ -263,11 +265,12 @@ class SGPasParser():
                 logger.info('-' * 70)
                 break
             
-            #interface contains types, functions, procedures, var, const
+            #interface contains types, functions, procedures, var, const, operator
             tok = self._match_one_token([['id','type'],
                 ['id','function'],
                 ['id','procedure'],
                 ['id','const'],
+                ['id','operator'],
                 ['id','var']])
             self._block_header_processors[tok[1]](unit, tok);
         
@@ -356,6 +359,12 @@ class SGPasParser():
         '''Process an attribute that is followed by a single identifier'''
         tok = self._match_token('id') #load id of thing...
         self._add_attribute(token[1], tok[1])
+    
+    def process_type_attribute(self, token):
+        '''Process an attribute that is followed by a single type identifier'''
+        the_type = self._read_type_usage()
+        #tok = self._match_token('id') #load id of the type...
+        self._add_attribute(token[1], the_type)
     
     def process_idlist_attribute(self, token):
         '''Process an attribute followed by a list of comma separated identifiers.
@@ -491,7 +500,7 @@ class SGPasParser():
         #following type... in pascal
         while True:
             type_name = self._match_token('id')[1] #read the types name
-            self._match_token('symbol','=') #read the =
+            self._match_token('operator','=') #read the =
             
             the_type = find_or_add_type(type_name)
             
@@ -504,7 +513,7 @@ class SGPasParser():
             
             tok1, tok2 = self._lookahead(2)
             #looking for... type_name = 
-            if tok2[0] != 'symbol' or tok2[1] != '=' or tok1[0] != 'id':
+            if tok2[0] != 'operator' or tok2[1] != '=' or tok1[0] != 'id':
                 logger.info('-' * 70)
                 logger.debug('Parser    : At end of block types')
                 break
@@ -547,7 +556,7 @@ class SGPasParser():
             values = []
             while not self._match_lookahead('symbol',')'):
                 temp = self._match_token('id')[1]
-                if self._match_lookahead('symbol', '=', True): #assigned value
+                if self._match_lookahead('operator', '=', True): #assigned value
                     values.append('%s = %s' % (temp, self._match_token('number')[1]))
                 else:
                     values.append(temp)
@@ -588,8 +597,6 @@ class SGPasParser():
     
     def _read_type_usage(self):
         '''Read a type identifier, or array of type, etc. and return a SGType'''
-        #todo: finish this!!!
-        
         if self._match_lookahead('id', 'array', True):
             #found an array
             dimensions = []
@@ -671,20 +678,8 @@ class SGPasParser():
             if tok[1].lower() in ['function', 'procedure', 'type', 'var', 'const', 'implementation']:
                 break
     
-    def process_method_decl(self, block, token):
-        '''process a method read from a unit.
-        
-        block is the block that contains the method, token is the first token.
-        At the end of this the method has been read in and added to block.
-        '''
-        name_tok = self._match_token('id') #name of function/procedure
-        open_tok = self._match_token('symbol', '(')
-        
-        #add to the class (e.g. Core module: which creates lib + other)
-        self._add_attribute('name', name_tok[1]) #name comes from function/procedure
-        method = self._create_model_element(SGMethod)
-        method.in_class = block
-        
+    def _read_params(self, method):
+        """Read in the parameters declared in a function, procedure or operator"""
         #look for parameters
         while not self._match_lookahead('symbol', ')'): #consume ) at end
             param_tok, other_tok = self._lookahead(2)
@@ -713,6 +708,48 @@ class SGPasParser():
                 logger.error('Parser    : Error in parameter list %s', self._tokeniser.line_details())
         
         self._match_token('symbol', ')')
+    
+    def process_operator_decl(self, block, token):
+        '''process a operator read from a unit.'''
+        
+        op_kind = self._match_token('operator')
+        open_tok = self._match_token('symbol', '(')
+        
+        #add to the class (e.g. Core module: which creates lib + other)
+        self._add_attribute('name', op_kind[1]) #name comes from operator
+        method = self._create_model_element(SGMethod)
+        method.in_class = block
+        method.is_operator = True
+        
+        self._read_params(method)
+        
+        result_tok = self._match_token('id')
+        colon_tok = self._match_token('symbol', ':')
+        the_type = self._read_type_usage()
+        method.return_type = the_type
+        logger.debug('Parser    : Set return type of operator %s to %s', method.name, method.return_type)
+        
+        end_tok = self._match_token('symbol', ';')
+        
+        self._apply_attributes_to(method)
+        method.complete_method_processing()
+        block.add_member(method)
+    
+    def process_method_decl(self, block, token):
+        '''process a method read from a unit.
+        
+        block is the block that contains the method, token is the first token.
+        At the end of this the method has been read in and added to block.
+        '''
+        name_tok = self._match_token('id') #name of function/procedure
+        open_tok = self._match_token('symbol', '(')
+        
+        #add to the class (e.g. Core module: which creates lib + other)
+        self._add_attribute('name', name_tok[1]) #name comes from function/procedure
+        method = self._create_model_element(SGMethod)
+        method.in_class = block
+        
+        self._read_params(method)
         
         if token[1] == 'function': #return return details
             colon_tok = self._match_token('symbol', ':')
@@ -732,9 +769,7 @@ class SGPasParser():
             self._setup_lib_method(method.uname)
         
         self._apply_attributes_to(method)
-        
         method.complete_method_processing()
-        
         block.add_member(method)
     
 if __name__ == '__main__':

@@ -21,7 +21,6 @@ _out_path="../../Templates/CSharp/common/lib"
 
 #templates for adapter
 _header = ''
-_footer = ''
 _method_wrapper = ''
 
 #templates for modules
@@ -31,6 +30,8 @@ _module_footer = ''
 
 _class_header = ''
 _class_footer = ''
+
+_array_property = ''
 
 _pointer_wrapper_class_header = ''
 
@@ -199,7 +200,6 @@ _data_switcher = {
         'collisionside': '(CollisionSide)%s',
         'fontalignment': '(FontAlignment)%s',
         'fontstyle': '(FontStyle)%s'
-        # 'pointer.pointer': 'this.Pointer'
     },
     #Argument with a parameter value
     'arg_val' : 
@@ -214,16 +214,19 @@ _data_switcher = {
         'collisionside': '(int)%s',
         'resourcekind': '(int)%s',
         'fontalignment': '(int)%s',
-        'fontstyle': '(int)%s'
+        'fontstyle': '(int)%s',
     },
     #Argument with a literal value
     'arg_lit_val' : 
     {
         #Pascal type: what values of this type switch to %s = data value
         'single': '%sf',
-        'pointer.pointer': 'this.Pointer',
+        'self.pointer': 'this.Pointer',
+        'self.data': 'this.data',
+        'self': 'this',
         'true': '1',
         'false': '0',
+        'self': 'this',
     },
 }
 
@@ -419,10 +422,7 @@ def load_data():
     global _module_method, _module_header, _module_footer
     global _class_header, _class_footer
     global _pointer_wrapper_class_header
-    
-    #old
-    global _module_header_header, _module_c_header, _module_c_method
-    global _module_c_function, _footer, _module_header_footer
+    global _array_property
     
     f = open('./cs_lib/lib_header.txt')
     _header = f.read()
@@ -430,10 +430,6 @@ def load_data():
     
     f = open('./cs_lib/lib_method_wrap.txt')
     _method_wrapper = f.read()
-    f.close()
-    
-    f = open('./cs_lib/lib_header_footer.txt')
-    _footer = f.read()
     f.close()
     
     f = open('./cs_lib/module_method.txt')
@@ -454,6 +450,10 @@ def load_data():
     
     f = open('./cs_lib/class_footer.txt')
     _class_footer = f.read()
+    f.close()
+    
+    f = open('./cs_lib/array_property.txt')
+    _array_property = f.read()
     f.close()
     
     f = open('./cs_lib/pointer_wrapper_class_header.txt')
@@ -480,7 +480,7 @@ def arg_visitor(arg_str, the_arg, for_param):
     the_type = for_param.data_type
     
     #check for pointer wrapper param
-    if the_type.pointer_wrapper:
+    if the_type.pointer_wrapper and not '.pointer' in arg_str.lower():
         arg_str = arg_str + '.Pointer'
     
     # Change True to true for example...
@@ -679,7 +679,11 @@ def method_visitor(the_method, other, as_accessor_name = None):
             details['post_call'] += '\n    return %s;' % _data_switcher['temp_return'][result_param.data_type.name.lower()] % result_param.name;
             details['the_call'] = details['the_call'][7:] #remove return...
         
-        
+        if the_method.name.lower() in ['tostring']:
+            details['override'] = 'override '
+        else:
+            details['override'] = ''
+            
         if as_accessor_name != None:
             #change for property support
             details['return_type'] = as_accessor_name
@@ -742,7 +746,7 @@ def write_cs_sgsdk_file(the_file, for_others = False):
     file_writer.writeln('}');
     file_writer.outdent(2);
     
-    file_writer.write(_footer)
+    file_writer.write('}')
     file_writer.close()
 
 def write_cs_methods_for_module(member, other):
@@ -796,7 +800,47 @@ def write_sg_class(member, other):
     file_writer.write(_module_footer)
     file_writer.close()
 
-def write_c_type_for(member, other):
+def write_struct(member, other):
+    '''Write out s struct data type'''
+    writer = other['file writer']
+    
+    writer.write('/// <summary>\n/// %s\n/// </summary>\n' % doc_transform(member.doc))
+    writer.write('[ StructLayout( LayoutKind.Sequential, CharSet=CharSet.Ansi )]\n')
+    writer.write('public struct %s\n{\n' % member.name)
+    
+    writer.indent(2)
+    
+    for field in member.field_list:
+        writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
+        
+    if member.wraps_array:
+        # add accessor methods
+        main_type = member.data_type.related_type
+        dim = main_type.dimensions
+        details = dict()
+        details['type'] = struct_type_visitor(main_type.nested_type) % 'this'
+        details['params'] =  ', '.join(['int idx%s' % i for i,d in enumerate(dim)])
+        details['idxs'] = ', '.join(['idx%s' % i for i,d in enumerate(dim)])
+        
+        writer.writeln(_array_property % details)
+    
+    if member.data_type.same_as != None:
+        filename = './cs_lib/%s_to_%s.txt' % (member.data_type.name.lower(), member.data_type.same_as.name.lower())
+        #print filename
+        f = open(filename)
+        cast_code = f.read()
+        f.close()
+        
+        writer.writeln(cast_code)
+        
+    member.visit_methods(method_visitor, other)
+    
+    writer.outdent(2)
+    
+    writer.writeln('}\n')
+    
+
+def write_cs_type_for(member, other):
     '''Write out a single c member'''
     
     assert member.is_class or member.is_struct or member.is_enum
@@ -815,19 +859,10 @@ def write_c_type_for(member, other):
             logger.error('CREATE Cs : Unknown class type for %s', member.uname)
             assert false
     elif member.is_struct:
-        writer.write('[ StructLayout( LayoutKind.Sequential, CharSet=CharSet.Ansi )]\n')
-        writer.write('public struct %s\n{\n' % member.name)
-        
-        writer.indent(2)
-        
-        for field in member.field_list:
-            writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
-            
-        writer.outdent(2)
-        
-        writer.writeln('}\n')
+        write_struct(member, other)
     elif member.is_enum:
         #enum id { list }
+        writer.write('/// <summary>\n/// %s\n/// </summary>\n' % doc_transform(member.doc))
         writer.write('public enum %s\n{\n' % member.name)
         
         writer.indent(2)
@@ -867,7 +902,7 @@ def write_cs_lib_module(the_file):
         if member.is_module or member.is_header or member.is_type:
             pass
         elif member.is_class or member.is_struct or member.is_enum:
-            write_c_type_for(member, other)
+            write_cs_type_for(member, other)
         else:
             print member.module_kind, member
             assert False
