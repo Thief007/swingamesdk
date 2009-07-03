@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-03: Andrew : Added sameas attribute to allow implicit casts in C#
 // - 2009-07-02: Andrew : Formatting, added @via_pointer for types accessed via a pointer
 //                      : Added fields to meta comments for Vector
 // - 2009-06-29: Andrew : Added Circle
@@ -21,7 +22,11 @@ interface
   uses SDL_Mixer, SDL, SDL_Image, SDL_TTF;
   
   type
+    
+    /// A Point2D represents an location in Cartesian coordinates (x,y). 
+    ///
     /// @struct Point2D
+    /// @sameas Vector
     Point2D = record
       x, y: Single;
     end;
@@ -31,6 +36,7 @@ interface
     /// @struct Vector
     /// @field x: Single
     /// @field y: Single
+    /// @sameas Point2D
     Vector = Point2D;
     
     /// @type Point2DPtr
@@ -61,9 +67,9 @@ interface
     
     /// @struct Rectangle
     Rectangle = record
-        x, y: Single;
-        width, height: LongInt;
-      end;
+      x, y: Single;
+      width, height: LongInt;
+    end;
     
     /// @struct Circle
     Circle = record
@@ -138,9 +144,10 @@ interface
     /// In SwinGame, Matrices can be used to combine together a number of
     /// operations that need to be performed on Vectors.
     ///
-    ///@struct Matrix2D
-    ///@fixed_array_wrapper
-    ///@field data: array[0..2,0..2] of Single
+    /// @struct Matrix2D
+    /// @fixed_array_wrapper
+    /// @field data: array[0..2,0..2] of Single
+    /// @sameas Array [0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
 
     /// @type SinglePtr

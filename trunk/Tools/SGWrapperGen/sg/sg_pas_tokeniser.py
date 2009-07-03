@@ -167,7 +167,8 @@ class SGPasTokeniser():
                           # alpha-numeric characters and the _ character
             attribute,    # name starting with @... inside meta comment block 
                           # follows the id name character rules
-            symbol,       # one of '+-:;,.()'
+            operator,     # one of + - / * ** := < > <= >=
+            symbol,       # one of ':;,.()'
         
         '''
         
@@ -197,7 +198,7 @@ class SGPasTokeniser():
                 logger.debug('Tokenisier: read %s - %s', result[0], result[1])
                 return result
             # Comment, single line // or meta comment line ///
-            elif t == '/': #start of comment
+            elif t == '/' and self._peek(1) == '/': #start of comment
                 if self._match_and_read('/'):
                     if self._match_and_read('/'):
                         kind = 'meta comment'
@@ -235,8 +236,19 @@ class SGPasTokeniser():
                     result = ('comment', comment[:-1])
                 logger.log(logging.DEBUG, 'Tokenisier: read %s', result[0])
                 return result
+            # Operator
+            elif (t == ':' and self._peek(1) == '=') or t in '=+-*/><':
+                if t == ':' and self._match_and_read('='):
+                    result = ('operator', ':=')
+                elif t == '*' and self._match_and_read('*'):
+                    result = ('operator', '**')
+                elif t in '<>' and self._match_and_read('='):
+                    result = ('operator', t + '=')
+                else:
+                    result = ('operator', t)
+                return result
             # Symbol
-            elif t in '(),:;=[].^+-':
+            elif t in '(),:;[].^':
                 result = ('symbol', t)
                 logger.debug('Tokenisier: read %s - %s', result[0], result[1])
                 return result

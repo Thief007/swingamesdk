@@ -12,6 +12,9 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-03: Andrew : Started adding class indicators
+//                      : Started adding operator overloads
+//                      : Added IdentityMatrix and MatrixToString
 // - 2009-07-02: Andrew : Added comments for returning fixed size var length arrays
 //                      : Increased precision of deg to rad
 // - 2009-06-29: Andrew : Removed all need for Collision Side
@@ -351,6 +354,8 @@ interface
   /// vector (v). In other words, the -/+ sign of the x and y values are changed.
   ///
   /// @lib
+  /// @class Vector
+  /// @method Invert
   function InvertVector(const v: Vector): Vector;
   
   /// Returns a new `Vector` that is a based on the parameter `v` however
@@ -523,6 +528,15 @@ interface
   // Matrix2D Creation and Operations
   //---------------------------------------------------------------------------
   
+  /// Returns the identity matrix. When a Matrix2D or Vector is multiplied by
+  /// the identity matrix the result is the original matrix or vector.
+  ///
+  /// @lib
+  /// @class Matrix2D
+  /// @static
+  /// @method IdentityMatrix
+  function IdentityMatrix(): Matrix2D;
+  
   /// @lib
   /// @class Matrix2D
   /// @static
@@ -559,20 +573,18 @@ interface
   /// @overload Multiply MultiplyVector
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
   
-  // / Multiplies the Point2D parameter `pt` with the Matrix2D `m` and returns 
-  // / the result as a `Point2D`. Use this to transform the point with the 
-  // / matrix (to apply scaling, rotation or translation effects).
-  // /
-  // / @lib MatrixMultiplyPoint
-  // / @class Matrix2D
-  // / @overload Multiply MultiplyPoint
-  //function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
-  
   /// @lib
   procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
   
+  operator * (const m: Matrix2D; const v: Vector) r : Vector;
+  operator * (const m1, m2: Matrix2D) r : Matrix2D;
   
-  
+  /// This function returns a string representation of the Matrix.
+  ///
+  /// @lib
+  /// @class Matrix2D
+  /// @method ToString
+  function MatrixToString(const m: Matrix2D) : String;
   
   //----------------------------------------------------------------------------
   // Cos/Sin/Tan accepting degrees
@@ -1035,32 +1047,32 @@ implementation
     result[2, 1] := 0;
     result[2, 2] := 1;
   end;
+  
+  function IdentityMatrix(): Matrix2D;
+  begin
+    result[0, 0] := 1;
+    result[0, 1] := 0;
+    result[0, 2] := 0;
 
+    result[1, 0] := 0;
+    result[1, 1] := 1;
+    result[1, 2] := 0;
+
+    result[2, 0] := 0;
+    result[2, 1] := 0;
+    result[2, 2] := 1;
+  end;
+  
+  
   function TranslationMatrix(dx, dy: Single): Matrix2D;
   begin
-    result := ScaleMatrix(1);
+    result := IdentityMatrix();
 
     result[0, 2] := dx;
     result[1, 2] := dy;
   end;
 
   function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
-    // procedure ShowMatrix(const m: Matrix2D);
-    // var
-    //   i, j: LongInt;
-    // begin
-    //   WriteLn('---');
-    //   for i := 0 to 2 do
-    //   begin
-    //     Write('|');
-    //     for j := 0 to 2 do
-    //     begin
-    //       Write(' ', m[i,j]);
-    //     end;
-    //     WriteLn('|');
-    //   end;
-    //   WriteLn('---');
-    // end;
   begin
       //unwound for performance optimisation
     result[0, 0] := m1[0, 0] * m2[0, 0] +
@@ -1093,25 +1105,46 @@ implementation
                     m1[2, 1] * m2[1, 2] +
                     m1[2, 2] * m2[2, 2];
   end;
-
+  
+  function MatrixToString(const m: Matrix2D) : String;
+  var
+    i, j: LongInt;
+  begin
+    result := '-------------------------------' + LineEnding;
+    
+    for i := 0 to 2 do
+    begin
+      result += '|';
+      for j := 0 to 2 do
+      begin
+        result += ' ' + FormatFloat('###0.00', m[i,j]) + ' ';
+      end;
+      result += '|' + LineEnding;
+    end;
+    result += '-------------------------------'
+  end;  
+  
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
   begin
     result.x := v.x * m[0,0]  +  v.y * m[0,1] + m[0,2]; 
     result.y := v.x * m[1,0]  +  v.y * m[1,1] + m[1,2]; 
   end;
-
-  // function MatrixMultiply(const m: Matrix2D; const pt: Point2D): Point2D; overload;
-  // begin
-  //   result.x := pt.x * m[0,0] + pt.y * m[0,1] + m[0,2];
-  //   result.y := pt.x * m[1,0] + pt.y * m[1,1] + m[1,2];
-  // end;
-
-
+  
   procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
   begin
     tri[0] := MatrixMultiply(m, tri[0]);
     tri[1] := MatrixMultiply(m, tri[1]);
     tri[2] := MatrixMultiply(m, tri[2]);
+  end;
+  
+  operator * (const m: Matrix2D; const v: Vector) r : Vector;
+  begin
+    r := MatrixMultiply(m, v);
+  end;
+  
+  operator * (const m1, m2: Matrix2D) r : Matrix2D;
+  begin
+    r := MatrixMultiply(m1, m2);
   end;
   
   //----------------------------------------------------------------------------

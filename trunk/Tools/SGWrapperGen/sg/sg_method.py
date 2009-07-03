@@ -29,7 +29,7 @@ class SGMethod(SGMetaDataContainer):
         self.params = list()
         #self.param_cache = {}
         self.return_type = None
-        self.operator = None
+        self.is_operator = False
         self.in_class = None
         self.is_static = False
         self.is_constructor = False
@@ -115,7 +115,7 @@ class SGMethod(SGMetaDataContainer):
         lambda self,value: self.set_tag('called_by', value), 
         None, 'The methods that call this method.')
     
-    operator = property(lambda self: self['operator'].other, 
+    is_operator = property(lambda self: self['operator'].other, 
         lambda self,value: self.set_tag('operator', value), 
         None, 'Is the method an operator overload?')
     
@@ -351,7 +351,7 @@ class SGMethod(SGMetaDataContainer):
         #change uname as well...
         class_method.uname = class_method.name
     
-    def setup_class_method(self, class_method):
+    def _setup_class_method(self, class_method):
         '''
         Setup the class's method.
         
@@ -384,7 +384,12 @@ class SGMethod(SGMetaDataContainer):
             
             args = list(self.args)
             #change the old argument for the self pointer
-            args[self.self_pos - 1] = 'pointer'
+            if class_method.in_class.is_pointer_wrapper:
+                args[self.self_pos - 1] = 'self.pointer'
+            elif class_method.in_class.wraps_array:
+                args[self.self_pos - 1] = 'self.data'
+            else:
+                args[self.self_pos - 1] = 'self'
             #add in self's arguments (-1st which is pointer)
         
         #set class method to call the same method this does
@@ -427,20 +432,21 @@ class SGMethod(SGMetaDataContainer):
         class_method = self.class_method
         
         #check rules
-        if lib_method == None:
+        if lib_method == None and not self.is_operator:
             logger.error('Method    : Found method %s without lib', self)
             assert False
+            
+        if lib_method != None:
+            #set up library method
+            self.setup_lib_method(lib_method)
         
-        #set up library method
-        self.setup_lib_method(lib_method)
-        
-        logger.info(' Method    : %s calls %s', self.name, lib_method.name)
-        lib_method.called_by.append(self)
+            logger.info(' Method    : %s calls %s', self.name, lib_method.name)
+            lib_method.called_by.append(self)
         
         #set up class method
         if class_method != None:
             logger.debug(' Method    : %s is also %s', self.name, class_method)
-            self.setup_class_method(class_method)
+            self._setup_class_method(class_method)
             logger.info(' Method    : %s calls %s', class_method.name, lib_method.name)
             lib_method.called_by.append(class_method) #library is also called by class
         

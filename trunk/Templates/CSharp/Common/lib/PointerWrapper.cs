@@ -84,13 +84,12 @@ namespace SwinGame
             }
         }
         
-        
-        
         private PtrKind _Kind;
         protected internal IntPtr Pointer;
         
         protected internal abstract void DoFree();
         
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         internal PointerWrapper(IntPtr ptr, PtrKind kind)
         {
             if (PointerWrapper._ptrRegister.ContainsKey(ptr)) throw new SwinGameException("Error managing resources.");
@@ -101,11 +100,13 @@ namespace SwinGame
             if (_Kind == PtrKind.Copy) GC.SuppressFinalize(this);
         }
         
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         ~PointerWrapper()
         {
             PointerWrapper.RegisterDelete(this);
         }
         
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public static implicit operator IntPtr(PointerWrapper p)
         {
             return p.Pointer;
@@ -116,6 +117,7 @@ namespace SwinGame
         /// <summary>
         /// Clean up the native resources used by this resource.
         /// </summary>
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public void Dispose()
         {
             if (_Kind != PtrKind.Copy)
@@ -127,9 +129,49 @@ namespace SwinGame
         
         #endregion
         
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public override String ToString()
         {
             return String.Format("%s (%x)", _Kind, Pointer);
         }
+        
+        /// <summary>
+        /// Determines if the PointerWrappers is equal to the passed in object.
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+        public override bool Equals(object other)
+        {
+            if (other is PointerWrapper) return this.Pointer == ((PointerWrapper)other).Pointer;
+            else if (other is IntPtr) return this.Pointer == other;
+            else return false;
+        }
+        
+        /// <summary>
+        /// Returns the hash code of the PointerWrapper based on what it points to.
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+        public override int GetHashCode()
+        {
+            return this.Pointer.GetHashCode();
+        }
+        
+        /// <summary>
+        /// Determines if two PointerWrappers are equal.
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+        public static bool operator ==(PointerWrapper pw1, PointerWrapper pw2)
+        {
+            return pw1.Pointer == pw2.Pointer;
+        }
+        
+        /// <summary>
+        /// Determines if two PointerWrappers are not equal.
+        /// </summary>
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+        public static bool operator !=(PointerWrapper pw1, PointerWrapper pw2)
+        {
+            return pw1.Pointer != pw2.Pointer;
+        }
+        
     }
 }

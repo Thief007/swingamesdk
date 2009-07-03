@@ -74,6 +74,7 @@ def run_for_all_units(file_visitor):
     
     files = [
             lib_file,
+            find_or_add_file('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas'), #read in types first...
             find_or_add_file('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
             find_or_add_file('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
             find_or_add_file('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
@@ -85,7 +86,6 @@ def run_for_all_units(file_visitor):
             find_or_add_file('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
             find_or_add_file('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
             find_or_add_file('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
-            find_or_add_file('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas')
         ]
     
     for a_file in files[1:]:
