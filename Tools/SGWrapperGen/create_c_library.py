@@ -56,7 +56,6 @@ _type_switcher = {
         '^bitmapdata': 'BitmapData *%s',
         '^spritedata': 'SpriteData *%s',
         '^timerdata': 'TimerData *%s',
-        'psdl_surface': 'void *%s',
         'boolean[0..n - 1][0..n - 1]': 'bool *%s',
         'bitmap[0..n - 1]': 'Bitmap *%s',
         'spritekind': 'SpriteKind %s',
@@ -145,9 +144,9 @@ _type_switcher = {
         'point2d': 'Point2D %s',
         'longint': 'int %s',
         'timer': 'Timer %s',
-        'byte': 'byte %s',
+        'byte': 'unsigned char %s',
         'color': 'Color %s',
-        'uint32': 'uint %s',
+        'uint32': 'unsigned int %s',
         'vector': 'Vector %s',
         'circle': 'Circle %s',
         'rectangle': 'Rectangle %s',
@@ -191,7 +190,7 @@ _adapter_type_switcher = {
         'linesegment': 'LineSegment %s',
         'triangle': 'Triangle %s',
         'point2d': 'Point2D %s',
-        'sprite': 'Sprite %s',
+        'sprite': 'void *%s',
         'linesarray': 'LinesArray %s',
         'font': 'void *%s',
         'fontalignment': 'int %s',
@@ -208,6 +207,26 @@ _adapter_type_switcher = {
         'tile': 'Tile %s',
         'circle': 'Circle %s',
         'arrayofpoint2d': 'Point2D *%s',
+        'psdl_surface': 'void *%s',
+        'boolean[0..n - 1][0..n - 1]': 'bool *%s',
+        'boolean[0..n - 1]': 'bool *%s',
+        'bitmap[0..n - 1]': 'void *%s',
+        'spritekind': 'int %s',
+        'longint[0..n - 1]': 'int *%s',
+        'longint[0..n - 1][0..n - 1]': 'int *%s',
+        'mapdata': 'MapData %s',
+        'animationdata[0..n - 1]': 'AnimationData *%s',
+        'layerdata[0..n - 1]': 'LayerData *%s',
+        'collisiondata': 'CollisionData %s',
+        'eventdetails[0..n - 1][0..23]': 'EventDetails *%s[24]',
+        'point2dptr': 'Point2D *%s',
+        'point2d[0..n - 1]': 'Point2D *%s',
+        'point2d[0..2]': 'Point2D %s[3]',
+        'linesegmentptr': 'LineSegment *%s',
+        'single[0..2][0..2]': 'float %s[3][3]',
+        'singleptr': 'float *%s',
+        'longintptr': 'int *%s',
+        'bitmapptr': 'void *%s',
         None: 'void %s'
     },
     'const' : {
@@ -263,9 +282,9 @@ _adapter_type_switcher = {
         'point2d': 'Point2D %s',
         'longint': 'int %s',
         'timer': 'Timer %s',
-        'byte': 'byte %s',
-        'color': 'uint %s',
-        'uint32': 'uint %s',
+        'byte': 'unsigned char %s',
+        'color': 'unsigned int %s',
+        'uint32': 'unsigned int %s',
         'vector': 'Vector %s',
         'circle': 'Circle %s',
         'rectangle': 'Rectangle %s',
@@ -413,15 +432,15 @@ def write_c_type_for(member, other):
         if member.is_pointer_wrapper:
             # assert len(member.fields) == 1
             the_type = member.data_type
-            other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type, None) % member.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type, None) % member.name)
         elif member.is_data_wrapper:
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
-            other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.name)
         elif member.wraps_array:
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
-            other['header writer'].writeln('typedef %s;\n' % type_visitor(the_type) % member.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.name)
         else:
             logger.error('CREATE C  : Unknown class type for %s', member.uname)
             assert False
@@ -430,7 +449,7 @@ def write_c_type_for(member, other):
         writer = other['header writer']
         writer.write('typedef struct %s_struct { \n' % member.name)
         for field in member.field_list:
-            writer.writeln('    %s;' % type_visitor(field.data_type) % field.name)
+            writer.writeln('    %s;' % adapter_type_visitor(field.data_type) % field.name)
         writer.writeln('} %s;\n' % member.name)
     elif member.is_enum:
         #enum id { list }

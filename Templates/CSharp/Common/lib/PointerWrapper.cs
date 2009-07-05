@@ -24,7 +24,7 @@ namespace SwinGame
         Copy
     }
     
-    internal delegate T Creater<T>(IntPtr pointer);
+    internal delegate PointerWrapper Creater(IntPtr pointer);
     
     /// <summary>
     /// Wraps a pointer to a SwinGame resource
@@ -34,13 +34,7 @@ namespace SwinGame
         /// <summary>
         /// The ptrRegistry is responsible for maintaining copies of all wrapped SwinGame pointers.
         /// </summary>
-        private static readonly Dictionary<IntPtr, WeakReference> _ptrRegister = new Dictionary<IntPtr, WeakReference>();
-        
-        internal static T Create<T>(IntPtr ptr, Creater<T> create) where T : PointerWrapper
-        {
-            if (_ptrRegister.ContainsKey(ptr)) return _ptrRegister[ptr].Target as T;
-            else return create(ptr); //call via delegate
-        }
+        protected static readonly Dictionary<IntPtr, WeakReference> _ptrRegister = new Dictionary<IntPtr, WeakReference>();
         
         internal static void Remove(IntPtr ptr)
         {

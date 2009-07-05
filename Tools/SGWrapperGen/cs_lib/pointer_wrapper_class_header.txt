@@ -5,8 +5,9 @@ public class %(name)s : PointerWrapper
     internal %(name)s(IntPtr pointer) : base (pointer, PtrKind.%(name)s) {}
     
     /// <summary> Internal method to call constructor via a delegate. </summary>
-    internal %(name)s Create(IntPtr pointer)
+    internal static %(name)s Create(IntPtr ptr)
     {
-        return new %(name)s(pointer);
+        if (_ptrRegister.ContainsKey(ptr)) return _ptrRegister[ptr].Target as %(name)s;
+        return new %(name)s(ptr);
     }
     

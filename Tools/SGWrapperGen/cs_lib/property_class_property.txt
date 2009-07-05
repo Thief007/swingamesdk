@@ -1,0 +1,14 @@
+public %(property_name)sClass %(property_name)s
+{
+    [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+    get
+    {
+        %(property_name)sClass result = new %(property_name)sClass(this.Pointer);
+        return result;
+    }
+    [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+    set
+    {
+        value.Set%(struct_type)sDataFor(this.Pointer);
+    }
+}

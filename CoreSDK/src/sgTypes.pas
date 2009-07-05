@@ -367,7 +367,7 @@ interface
 
     /// @type BitmapArray
     /// @array_wrapper
-    /// @field data: BitmapPtr
+    /// @field data: array of Bitmap
     BitmapArray = array of Bitmap;
 
     /// @type BitmapPtr
