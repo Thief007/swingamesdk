@@ -1,6 +1,6 @@
-//----------------------------------------------------------------------------
-//          sgTileMap.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgTileMap.pas
+//=============================================================================
 //
 // Responsible for loading and processing a "Mappy" data file exported using
 // the Lua script specifically written for SwinGame to create map files.
@@ -9,22 +9,22 @@
 //
 // Version 3.0:
 // - 2009-06-22: Clinton: Comment format, cleanup and new additions.
-// - 2009-06-17: Andrew: added meta tags, renamed from "mappy" to tilemap
+// - 2009-06-17: Andrew : added meta tags, renamed from "mappy" to tilemap
 //
 // Version 2:
-// - 2008-12-17: Andrew: Moved all integers to LongInt
+// - 2008-12-17: Andrew : Moved all integers to LongInt
 //
 // Version 1.1.5:
-// - 2008-04-18: Andrew:  Fix extensions to work with Delphi.
+// - 2008-04-18: Andrew :  Fix extensions to work with Delphi.
 //
 // Version 1.1:
-// - 2008-04-02: Stephen: Added MapWidth(), MapHeight(), BlockWidth(), 
+// - 2008-04-02: Stephen: Added MapWidth(), MapHeight(), BlockWidth(),
 //                        BlockHeight(), GapX(), GapY(), StaggerX(), StaggerY(),
-//                        LoadIsometricInformation(), LoadMapv2(), 
+//                        LoadIsometricInformation(), LoadMapv2(),
 //                      : various bug fixes
-// - 2008-04-02: Andrew: Removed gap loading as mappy support has not been 
-//                       updated on the web, and this version is unable to 
-//                       read the old files.
+// - 2008-04-02: Andrew : Removed gap loading as mappy support has not been
+//                        updated on the web, and this version is unable to
+//                        read the old files.
 // - 2008-03-29: Stephen: MapData record now contains GapX, GapY, StaggerX, 
 //                        StaggerY, Isometric
 //                      : LoadMapInformation, now loads the new isometric related data
@@ -40,15 +40,15 @@
 //
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 ///@module TileMap
 ///@static
 unit sgTileMap;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses  sgTypes;
 
@@ -165,11 +165,11 @@ interface
   procedure FreeMap(var m: Map);
 
 
-//----------------------------------------------------------------------------
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
-  uses 
+  uses
     SysUtils, Classes,  //Syste,
     sgGraphics, sgCamera, sgCore, sgPhysics, sgGeometry, sgResources, sgSprites; //Swingame
 
@@ -250,7 +250,7 @@ implementation
         m^.MapInfo.Isometric := false
       else
         m^.MapInfo.Isometric := true;
-      
+
       if (m^.MapInfo.Isometric = false) then
       begin
         m^.MapInfo.GapX := 0;
@@ -660,7 +660,7 @@ implementation
     y, x, yCache: LongInt;
   begin
     result := false;
-  
+
     XStart := round((s^.x / m^.MapInfo.BlockWidth) - ((s^.width / m^.MapInfo.BlockWidth) - SEARCH_RANGE));
     XEnd := round((s^.x / m^.MapInfo.BlockWidth) + ((s^.width / m^.MapInfo.BlockWidth) + SEARCH_RANGE));
     YStart := round((s^.y / m^.MapInfo.BlockHeight) - ((s^.height / m^.MapInfo.BlockHeight) - SEARCH_RANGE));

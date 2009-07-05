@@ -1,14 +1,13 @@
-//----------------------------------------------------------------------------
-//          sgPhysics.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgPhysics.pas
+//=============================================================================
 //
-// The Physics unit contains the code that is responsible for performing 
-// collisions and vector maths.
+// Responsible for performing collisions and vector maths.
 //
 // Change History:
 //
 // Version 3.0:
-// - 2009-06-29: Andrew : Removed all need for Collision Side 
+// - 2009-06-29: Andrew : Removed all need for Collision Side
 //                      : Changed to use Circle Type
 // - 2009-06-26: Andrew : Added CircleRectCollision
 //                      : Added CircleLinesCollision
@@ -65,7 +64,7 @@
 //
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 {$I sgTrace.inc}
 
@@ -73,29 +72,26 @@
 /// @static
 unit sgPhysics;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
-  
+//=============================================================================
+
   uses sgTypes;
-  
+
   //---------------------------------------------------------------------------
   // Sprite <-> Sprite Collision Detection
   //---------------------------------------------------------------------------
-  
-  /// Returns ``true`` if the specifed `Sprites` (``s1`` and ``s2``) have 
+
+  /// Returns ``true`` if the specifed `Sprites` (``s1`` and ``s2``) have
   /// collided. Will use simple bounding box tests first, and low-level pixel
   /// tests if needed.
   /// @lib
   function SpritesCollided(s1, s2: Sprite): Boolean;
-  
-  
-  
-  
+
   //---------------------------------------------------------------------------
   // Sprite <-> Rectangle Collision Detection
   //---------------------------------------------------------------------------
-  
+
   /// Determined if a sprite has collided with a given rectangle. The rectangles
   /// coordinates are expressed in "world" coordinates.
   ///
@@ -110,20 +106,18 @@ interface
   /// @class Sprite
   /// @method RectCollision
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
-  
+
   /// @lib SpriteRectangleCollision
   /// @class Sprite
   /// @overload RectCollision RectangleCollision
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
-  
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
   // Sprite <-> Bitmap Collision Detection
   //---------------------------------------------------------------------------
-  
-  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``. 
+
+  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
@@ -132,8 +126,8 @@ interface
   /// @class Sprite
   /// @overload BitmapCollision BitmapBBoxCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
-  
-  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``. 
+
+  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``.
   /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
   /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
@@ -142,9 +136,9 @@ interface
   /// @class Sprite
   /// @overload BitmapCollision BitmapAtPointBBoxCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
-  
+
   /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
-  /// pixel level testing if required. 
+  /// pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   ///
   /// @lib SpriteBitmapBBoxCollision(s, bmp, x, y, False)
@@ -152,9 +146,9 @@ interface
   /// @class Sprite
   /// @method BitmapCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
-  
+
   /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
-  /// pixel level testing if required. 
+  /// pixel level testing if required.
   /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
   ///
   /// @lib SpriteBitmapAtPointBBoxCollision(s, bmp, pt, False)
@@ -162,52 +156,50 @@ interface
   /// @class Sprite
   /// @overload BitmapCollision BitmapAtPointCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
-  
-  /// Determines if the `Sprite` ``s`` has collided with a part (``rect``) of 
-  /// the bitmap ``bmp`` using pixel level testing if required. 
+
+  /// Determines if the `Sprite` ``s`` has collided with a part (``rect``) of
+  /// the bitmap ``bmp`` using pixel level testing if required.
   /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
   ///
   /// @lib SpriteBitmapPartCollision
   /// @class Sprite
   /// @overload BitmapCollision BitmapPartCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle; bbox: Boolean): Boolean; overload;
-  
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
   // Bitmap <-> Rectangle Collision Tests
   //---------------------------------------------------------------------------
-  
+
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The rectangles world position (``rectX`` and ``rectY``) and size 
+  /// The rectangles world position (``rectX`` and ``rectY``) and size
   /// (``rectWidth`` and ``rectHeight``) need to be provided.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
   ///
   /// @lib BitmapRectBBoxCollision
   /// @class Bitmap
   /// @overload RectCollision RectBBoxCollision
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-  
+
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangle ``rect`` needs to be provided (in world coordinates).
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
   ///
   /// @lib BitmapRectangleBBoxCollision
   /// @class Bitmap
   /// @overload RectCollision RectangleBBoxCollision
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload;
-  
-  /// Returns True if the bitmap ``bmp`` has collided with the rectangle 
+
+  /// Returns True if the bitmap ``bmp`` has collided with the rectangle
   /// specified using pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The rectangles world position (``rectX`` and ``rectY``) and size 
+  /// The rectangles world position (``rectX`` and ``rectY``) and size
   /// (``rectWidth`` and ``rectHeight``) need to be provided.
   ///
   /// @lib BitmapRectBBoxCollision(bmp, x, y, False, rectX, rectY, rectWidth, rectHeight)
@@ -215,8 +207,8 @@ interface
   /// @class Bitmap
   /// @method RectCollision
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-  
-  /// Returns True if the bitmap ``bmp`` has collided with the rectangle 
+
+  /// Returns True if the bitmap ``bmp`` has collided with the rectangle
   /// specified using pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangle ``rect`` needs to be provided in world coordinates.
@@ -226,31 +218,29 @@ interface
   /// @class Bitmap
   /// @overload RectCollision RectangleCollision
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
-  
-  /// Returns True if a ``part`` (rectangle) of the bitmap ``bmp`` has collided 
+
+  /// Returns True if a ``part`` (rectangle) of the bitmap ``bmp`` has collided
   /// with the rectangle (``rect``) specified.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangle ``rect`` needs to be provided in world coordinates.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
   ///
   /// @lib
   /// @class Bitmap
   /// @method PartRectCollision
   function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
-  
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
   // Bitmap <-> Point
   //---------------------------------------------------------------------------
-  
+
   /// Returns True if a point (``ptX``,``ptY``) is located within the bitmap
   /// ``bmp`` when it is drawn at ``x``,``y``.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
+  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
   /// pixel level testing is used.
   ///
   /// @lib BitmapPointBBoxCollision
@@ -309,16 +299,14 @@ interface
   ///  
   /// @lib  BitmapPointXYCollisionPart
   function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
-  
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
   // Bitmap <-> Bitmap Collision Tests
   //---------------------------------------------------------------------------
-  
-  /// Returns True if two bitmaps have collided using per pixel testing if required. 
-  /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+
+  /// Returns True if two bitmaps have collided using per pixel testing if required.
+  /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
   ///
   /// @lib BitmapsBBoxCollided(bmp1, x1, y1, False, bmp2, x2, y2, False)
   /// @uname BitmapsCollided
@@ -327,7 +315,7 @@ interface
   function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   
   /// Returns True if two bitmaps have collided using per pixel testing if required. 
-  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
+  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
   ///
   /// @lib BitmapsBBoxAtPointsCollided(bmp1, pt1, False, bmp2, pt2, False)
   /// @uname BitmapsAtPointsCollided
@@ -338,7 +326,7 @@ interface
   /// Returns True if two bitmaps have collided. 
   /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
   /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
-  /// used, otherwise a longer per pixel check is used (if required) in the collision region. 
+  /// used, otherwise a longer per pixel check is used (if required) in the collision region.
   ///
   /// @lib BitmapsBBoxCollided
   /// @class Bitmap
@@ -368,31 +356,29 @@ interface
   /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) 
   /// of the two bitmaps (``bmp1`` and ``bmpt2``) have collided. 
   /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps. 
-  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
+  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is
   /// used, otherwise a slower per pixel test is used (if required) in the collision region. 
   ///
   /// @lib BitmapsPartsBBoxCollided
   /// @class Bitmap
   /// @overload BitmapCollision BitmapPartsBBoxCollision
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
-  
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
   // Geometry Collision Tests
   //---------------------------------------------------------------------------
-  
+
   /// Returns True if the Circle collised with rectangle `rect`.
   ///
   /// @lib
   function CircleRectCollision(const c: Circle; const rect: Rectangle): Boolean;
-  
+
   /// Returns True if the circle has collided with any of the lines from the `rect` rectangle.
   ///
   /// @lib
   function CircleLinesCollision(const c: Circle; const lines: LinesArray): Boolean;
-  
+
   /// Returns True if the circles have collided.
   ///
   /// @lib
@@ -419,25 +405,21 @@ interface
   ///
   /// @lib SpriteRectLineCollision
   function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
-  
-  /// Returns True if the rectangle ``rect`` provided has collided with the 
+
+  /// Returns True if the rectangle ``rect`` provided has collided with the
   /// ``line``.
   ///
   /// @lib RectLineCollision
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
-  
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
   // Side to check based on movement direction
   //---------------------------------------------------------------------------
-  
+
   /// @lib
   function GetSideForCollisionTest(const movement: Vector): CollisionSide;
-  
-  
-  
+
   
   //---------------------------------------------------------------------------
   // Collision Effect Application ( angle + energy/mass transfer)
@@ -450,7 +432,7 @@ interface
   ///
   /// @lib
   procedure CollideCircleCircle(s: Sprite; const c: Circle);
-  
+
   /// @lib
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle); overload;
   
@@ -462,21 +444,18 @@ interface
   
   // /// @lib
   // procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
-  
-  
-  
-  
-  
-//----------------------------------------------------------------------------
+
+
+
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses
     SysUtils, {Math, Classes,} sgTrace,
     sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites;
-  
-  
-  
+
+
   //---------------------------------------------------------------------------
 
   function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
@@ -488,10 +467,10 @@ implementation
   begin
     result := RectanglesIntersect(RectangleFrom(x, y, part.width, part.height), rect);
     if  bbox or (not result) then exit;
-    
+
     //reset result
     result := false;
-    
+
     left1 := x;
     right1 := x + part.width - 1;
     top1 := y;
@@ -557,7 +536,7 @@ implementation
     offX1, offY1: LongInt;
   begin
     if s = nil then raise Exception.Create('The specified sprite is nil');
-    
+
     if width < 0 then
     begin
       x := x + width;
@@ -748,7 +727,7 @@ implementation
     result := CollisionWithinBitmapImages(
                 bmp1, Round(s1^.x), Round(s1^.y), SpriteWidth(s1), SpriteHeight(s1), 
                 offX1, offY1, not s1^.usePixelCollision, 
-                bmp2, Round(s2^.x), Round(s2^.y), SpriteWidth(s2), SpriteHeight(s2), 
+                bmp2, Round(s2^.x), Round(s2^.y), SpriteWidth(s2), SpriteHeight(s2),
                 offX2, offY2, not s2^.usePixelCollision);
   end;
 
@@ -985,7 +964,7 @@ implementation
   begin
     //TODO: fix collision pt.... cast back along movement...
     intersect := ClosestPointOnLine(CenterPoint(s), line);
-    
+
     //DrawSprite(s);
     //DrawCircle(ColorRed, intersect, 2);
     
@@ -1108,7 +1087,7 @@ implementation
     // RefreshScreen(1);
     
     CollideCircleLine(s, hitLine);
-    
+
     // do part movement
     mvmtMag := VectorMagnitude(mvmt);
     prop := VectorMagnitude(outVec) / mvmtMag; //proportion of move "undone" by back out
@@ -1149,7 +1128,7 @@ implementation
     
     // bounce...
     CollideCircleLine(s, lines[hitIdx]);
-    
+
     // if bounds then
     // begin
     //   DrawSprite(s);
@@ -1167,7 +1146,7 @@ implementation
   begin
     CollideCircleRectangle(s, rect, False);
   end;
-  
+
   procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
   begin
     CollideCircleRectangle(s, rect, True);
@@ -1199,7 +1178,7 @@ implementation
     for i := 0 to High(lines) do
     begin
       pt := ClosestPointOnLineFromCircle(c, lines[i]);
-      
+
       if PointPointDistance(c.center, pt) <= c.radius then
       begin
         //DrawCircle(ColorGreen, pt, 2);
@@ -1208,27 +1187,27 @@ implementation
       end;
     end;
   end;
-  
+
   function CircleCircleCollision(const c1, c2: Circle): Boolean;
   begin
     result := PointPointDistance(c1.center, c2.center) < c1.radius + c2.radius;
   end;
-  
+
   function CircleTriangleCollision(const c: Circle; const tri: Triangle): Boolean;
   var
     i: Integer;
   begin
     result := False;
-    
+
     for i := 0 to 2 do
     begin
-      if PointInTriangle(ClosestPointOnCircle(tri[i], c), tri) then 
+      if PointInTriangle(ClosestPointOnCircle(tri[i], c), tri) then
       begin
         result := True;
         exit;
       end;
     end;
   end;
-  
+
 end.
 

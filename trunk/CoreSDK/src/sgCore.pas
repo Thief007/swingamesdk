@@ -1,6 +1,6 @@
-//----------------------------------------------------------------------------
+//=============================================================================
 // sgCore.pas
-//----------------------------------------------------------------------------
+//=============================================================================
 //
 // The Core unit contains the main SwinGame routines and data types. These will
 // be required by any game using the API.
@@ -46,10 +46,10 @@
 //                       were not needed. Need to test in windows
 // - 2008-01-21: Aki: Implemented timer
 // - 2008-01-17: Aki + Andrew: Refactor
-//  
+//
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 /// SwinGame's Core is responsible for core functionality such as creating
 /// the game window, coordinating event processing, and refreshing the
@@ -64,21 +64,21 @@ unit sgCore;
   {$linklib gcc}
 {$ENDIF}
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
-  
+//=============================================================================
+
   {$I sgTrace.inc}
-  
+
   uses sgTypes, SDL;
-  
+
   //----------------------------------------------------------------------------
   // Library Version
   //----------------------------------------------------------------------------
-  
+
   /// @lib
   function SwinGameVersion(): LongInt;
-  
+
   //----------------------------------------------------------------------------
   // Exception Notification/Message
   //----------------------------------------------------------------------------
@@ -231,7 +231,7 @@ interface
   //----------------------------------------------------------------------------
   // Colour
   //----------------------------------------------------------------------------
-  
+
   /// Maps a color from a given bitmap. This is used when determining color
   /// keys for transparent images.
   ///
@@ -354,7 +354,7 @@ interface
   /// @class Timer
   /// @dispose
   procedure FreeTimer(var toFree: Timer);
-  
+
   /// Start a timer recording the time that has passed.
   ///
   /// @lib
@@ -396,9 +396,9 @@ interface
     ColorPink, ColorTurquoise, ColorGrey, ColorMagenta, ColorTransparent,
     ColorLightGrey: Color;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses 
     SysUtils, Math, Classes, //System
@@ -1052,7 +1052,7 @@ var
 {$endif}
 
 
-//----------------------------------------------------------------------------
+//=============================================================================
 
 initialization
 begin
@@ -1082,10 +1082,10 @@ begin
     {$ENDIF}
     raise Exception.Create('Error loading sdl... ' + SDL_GetError());
   end;
-  
+
   //Unicode required by input manager.
   SDL_EnableUNICODE(SDL_ENABLE);
-  
+
   try
     if ParamCount() >= 0 then
       applicationPath := ExtractFileDir(ParamStr(0))
@@ -1103,21 +1103,21 @@ begin
   {$ENDIF}
 end;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 
 finalization
 begin
   {$IFDEF TRACE}
     TraceEnter('sgCore', 'finalization');
   {$ENDIF}
-  
+
   ReleaseResourceBundle('splash.txt');
-  
+
   if screen <> nil then
   begin
     if screen^.surface <> nil then
       SDL_FreeSurface(screen^.surface);
-    
+
     Dispose(screen);
     screen := nil;
     //scr and baseSurface are now the same!

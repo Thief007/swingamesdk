@@ -1,8 +1,8 @@
-//----------------------------------------------------------------------------
-//                                sgShared.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgShared.pas
+//=============================================================================
 //
-// The shared data and functions that are private to the SwinGame SDK. This 
+// The shared data and functions that are private to the SwinGame SDK. This
 // unit should not be accessed directly by games.
 //
 // Change History:
@@ -11,93 +11,97 @@
 // - 2009-06-23: Clinton: Comment/format cleanup/tweaks
 //                      : Slight optimization to NewSDLRect (redundant code)
 //                      : Renamed scr to screen
-// - 2009-06-05: Andrew: Created to contain all globals that are hidden from 
+// - 2009-06-05: Andrew: Created to contain all globals that are hidden from
 //                       the library
-//----------------------------------------------------------------------------
+//=============================================================================
 
 unit sgShared;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses SDL, SDL_Image, sgEventProcessing, sgCore, sgTypes;
-  
-  // Takes a 4-byte (32bit) unsigned integer representing colour in the 
-  // current SDL pixel format and returns a nice `TSDL_Color` record with 
+
+  // Takes a 4-byte (32bit) unsigned integer representing colour in the
+  // current SDL pixel format and returns a nice `TSDL_Color` record with
   // simple red, green and blue components
   function ToSDLColor(color: UInt32): TSDL_Color;
-  
-  // Converts the passed in SwinGame `Color` format (which changes as does 
-  // SDL to whatever the current SDL environment uses) to the Color structure 
+
+  // Converts the passed in SwinGame `Color` format (which changes as does
+  // SDL to whatever the current SDL environment uses) to the Color structure
   // used by SDL_GFX (which is always 4 bytes in RGBA order).
   function ToGfxColor(val: Color): Color;
-  
-  // Returns a new `SDL_Rect` at the specified position (``x`` and ``y``) and 
-  // size (``w`` and ``h``). SDL_Rect are used internally by SDL to specify 
-  // the part of a source or destination image to be used in clipping and 
+
+  // Returns a new `SDL_Rect` at the specified position (``x`` and ``y``) and
+  // size (``w`` and ``h``). SDL_Rect are used internally by SDL to specify
+  // the part of a source or destination image to be used in clipping and
   // blitting operations.
   function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
-  
+
   // Rounds `x` up... 1.1 -> 2
   function Ceiling(x: Single): LongInt;
-  
+
   // Used by SwinGame units to register event "handlers" what will be called
-  // when SDL events have occured. Events such as mouse movement, button 
-  // clicking and key changes (up/down). See sgInput.   
+  // when SDL events have occured. Events such as mouse movement, button
+  // clicking and key changes (up/down). See sgInput.
   procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-  
+
   // Global variables that can be shared.
   var
-    // This `Bitmap` wraps the an SDL image (and its double-buffered nature) 
-    // which is used to contain the current "screen" rendered to the window.   
+    // This `Bitmap` wraps the an SDL image (and its double-buffered nature)
+    // which is used to contain the current "screen" rendered to the window.
     screen: Bitmap;
-    
-    // The full path location of the current executable (or script). This is 
+
+    // The full path location of the current executable (or script). This is
     // particuarly useful when determining the path to resources (images, maps,
-    // sounds, music etc). 
+    // sounds, music etc).
     applicationPath: String;
-    
-    // The singleton instance manager used to check events and called 
+
+    // The singleton instance manager used to check events and called
     // registered "handlers". See `RegisterEventProcessor`.
     sdlManager: TSDLManager;
-    
+
     // The name of the icon file shown.
     // TODO: Does this work? Full path or just resource/filename?
     iconFile: String;
-          
-    // This "base" surface is used to get standard pixel format information 
+
+    // This "base" surface is used to get standard pixel format information
     // for any other surfaces that need to be created and to support colour.
     baseSurface: PSDL_Surface;
-    
-    // Contains the last error message that has occured if `HasException` is 
+
+    // Contains the last error message that has occured if `HasException` is
     // true. If multiple error messages have occured, only the last is stored.
     // Used only by the generated library code.
     ErrorMessage: String;
-    
+
     // This flag is set to true if an error message has occured. Used only by
     // the generated library code.
     HasException: Boolean;
-    
+
   const
     DLL_VERSION = 300000;
-  
-//----------------------------------------------------------------------------
+    {$ifndef FPC}
+    LineEnding = #13#10; // Delphi Windows \r\n pair
+    {$endif}
+
+
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses SysUtils, Math, Classes, sgTrace, SDL_gfx;
-  
+
   function ToSDLColor(color: UInt32): TSDL_Color;
   begin
     if (baseSurface = nil) or (baseSurface^.format = nil) then
     begin
       raise Exception.Create('Unable to get color as screen is not created.');
     end;
-    
+
     SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
   end;
-  
+
   function ToGfxColor(val: Color): Color;
   var
     r, g, b, a: Byte;
@@ -147,9 +151,13 @@ implementation
     if result < x then result := result + 1;
   end;
 
+//=============================================================================
+
 initialization
 begin
 end;
+
+//=============================================================================
 
 finalization
 begin

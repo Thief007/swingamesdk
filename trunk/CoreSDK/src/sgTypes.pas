@@ -1,6 +1,6 @@
-//----------------------------------------------------------------------------
-//          sgTypes.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgTypes.pas
+//=============================================================================
 //
 // The Types unit contains the data types used by SwinGames for shapes,
 // Sprites, Bitmaps, Sounds, etc.
@@ -8,18 +8,21 @@
 // Change History:
 //
 // Version 3.0:
-// - 2009-07-03: Andrew : Added sameas attribute to allow implicit casts in C#
-// - 2009-07-02: Andrew : Formatting, added @via_pointer for types accessed via a pointer
-//                      : Added fields to meta comments for Vector
-// - 2009-06-29: Andrew : Added Circle
-// -                    : Started Polygon (removed for version 3)
-// - 2009-06-20: Andrew : Created types unit.
-//----------------------------------------------------------------------------
+// - 2009-07-03: Andrew: Added sameas attribute to allow implicit casts in C#
+// - 2009-07-02: Andrew: Formatting, added @via_pointer for types accessed via a pointer
+//                     : Added fields to meta comments for Vector
+// - 2009-06-29: Andrew: Added Circle
+// -                   : Started Polygon (removed for version 3)
+// - 2009-06-20: Andrew: Created types unit.
+//=============================================================================
 
 /// @header sgTypes
 unit sgTypes;
 
+//=============================================================================
 interface
+//=============================================================================
+
   uses SDL_Mixer, SDL, SDL_Image, SDL_TTF;
   
   type
@@ -45,9 +48,9 @@ interface
     /// @field pointer: ^Point2D
     Point2DPtr = ^Point2D;
     
-    ///@type ThreePoint2D
-    ///@array_wrapper
-    ///@field data: array of Point2D
+    /// @type ThreePoint2D
+    /// @array_wrapper
+    /// @field data: array of Point2D
     ArrayOfPoint2D = Array of Point2D;
     
     // /// The kind of polygon.
@@ -84,17 +87,17 @@ interface
         endPoint: Point2D;
       end;
     
-    ///@struct Triangle
-    ///@fixed_array_wrapper
-    ///@field data: array[0..2] of Point2D
+    /// @struct Triangle
+    /// @fixed_array_wrapper
+    /// @field data: array[0..2] of Point2D
     Triangle = array [0..2] of Point2D;
     
-    ///@type LinesArray
-    ///@array_wrapper
-    ///@field data: LineSegmentPtr
+    /// @type LinesArray
+    /// @array_wrapper
+    /// @field data: LineSegmentPtr
     LinesArray = Array of LineSegment;
     
-    ///@type LineSegmentPtr
+    /// @type LineSegmentPtr
     /// @pointer_wrapper
     LineSegmentPtr = ^LineSegment;
     
@@ -240,13 +243,13 @@ interface
       AnimMultiSprite
     );
 
-    /// The sprite ending action is used to determine what action is peformed when a 
-    /// sprite gets to the end of its frames in its animation. Loop indicates that the 
+    /// The sprite ending action is used to determine what action is peformed when a
+    /// sprite gets to the end of its frames in its animation. Loop indicates that the
     /// sprite will restart the animation from the first frame resulting in the animation
     /// being looped repeatedly. ReverseLoop also loops the animation, but rather than
     /// returning to the first frame the ReverseLoop option indicates that the animation
-    /// should play backwards until it gets to the start of the cells. With ReverseLoop the 
-    /// animation will play forward, then backward, then forward, etc. repeatedly. To 
+    /// should play backwards until it gets to the start of the cells. With ReverseLoop the
+    /// animation will play forward, then backward, then forward, etc. repeatedly. To
     /// reverse the animation without looping the ReverseOnce can be used. This plays the
     /// animation forward once, then back once, then stops. Finally, the Stop option means
     /// that the animation stops once it gets to the end of the framces. Once an animation
@@ -276,27 +279,27 @@ interface
     /// - hasEnded: True if this sprite has stopped animating
     /// - reverse: True if this sprite's animation is reversing
     ///
-    ///@struct SpriteData
-    ///@via_pointer
+    /// @struct SpriteData
+    /// @via_pointer
     SpriteData = record
-      bitmaps : Array of Bitmap;
+      bitmaps: Array of Bitmap;
       bufferBmp: Bitmap;
-      spriteKind : SpriteKind;
-      framesPerCell : Array of LongInt;
+      spriteKind: SpriteKind;
+      framesPerCell: Array of LongInt;
       x, y: Single;
       dx, dy: Single; //Movement
-      movement : Vector;
-      width : LongInt;
-      height : LongInt;
-      cols : LongInt;
-      row : LongInt;
-      frameCount : Single;
-      currentFrame : LongInt;
+      movement: Vector;
+      width: LongInt;
+      height: LongInt;
+      cols: LongInt;
+      row: LongInt;
+      frameCount: Single;
+      currentFrame: LongInt;
       usePixelCollision: Boolean;
-      endingAction : SpriteEndingAction;
-      hasEnded : Boolean;
-      reverse : Boolean;
-      mass   : Single;
+      endingAction: SpriteEndingAction;
+      hasEnded: Boolean;
+      reverse: Boolean;
+      mass  : Single;
       rotation: Single;
       bufferedRotation: Single;
       zoom: Single;
@@ -317,10 +320,10 @@ interface
     /// @struct TimerData
     /// @via_pointer
     TimerData = record
-      startTicks : UInt32;
-      pausedTicks : UInt32;
-      paused : Boolean;
-      started : Boolean;
+      startTicks: UInt32;
+      pausedTicks: UInt32;
+      paused: Boolean;
+      started: Boolean;
     end;
 
     /// @class Timer
@@ -382,11 +385,11 @@ interface
     /// @field pointer: ^LongInt
     LongIntPtr = ^LongInt;
 
-    /// A mouse can have many different types of buttons. Most people know 
+    /// A mouse can have many different types of buttons. Most people know
     /// about the simple Left and Right buttons, but there is also a Middle
     /// button (sometimes part of a scoll wheel). Scroll wheel movement is also
-    /// treated as mouse button "clicks" of either the wheel "up" or "down" 
-    /// buttons. 
+    /// treated as mouse button "clicks" of either the wheel "up" or "down"
+    /// buttons.
     ///
     /// @enum MouseButton
     MouseButton = (
@@ -442,7 +445,7 @@ interface
       vk_QUESTION = 63,
       vk_AT = 64,
 
-      // Skip uppercase letters 
+      // Skip uppercase letters
 
       vk_LEFTBRACKET = 91,
       vk_BACKSLASH = 92,
@@ -650,12 +653,12 @@ interface
       vk_POWER = 320, // Power Macintosh power key
       vk_EURO = 321 // Some european keyboards
     );
-    
+
     /// @enum Event
     Event = (
       Event1 = 0, Event2 = 1, Event3 = 2, Event4 = 3, Event5 = 4, Event6 = 5, Event7 = 6, Event8 = 7, Event9 = 8,
-      Event10 = 9, Event11 = 10, Event12 = 11, Event13 = 12, Event14 = 13, Event15 = 14, Event16 = 15, 
-      Event17 = 16, Event18 = 17, Event19 = 18, Event20 = 19, Event21 = 20, Event22 = 21, Event23 = 22, 
+      Event10 = 9, Event11 = 10, Event12 = 11, Event13 = 12, Event14 = 13, Event15 = 14, Event16 = 15,
+      Event17 = 16, Event18 = 17, Event19 = 18, Event20 = 19, Event21 = 20, Event22 = 21, Event23 = 22,
       Event24 = 23
     );
 
@@ -683,34 +686,34 @@ interface
       NumberOfAnimations: LongInt;
       CollisionLayer: LongInt;
       EventLayer: LongInt;
-      GapX : LongInt;
-      GapY : LongInt;
-      StaggerX : LongInt;
-      StaggerY : LongInt;
-      Isometric : Boolean;
+      GapX: LongInt;
+      GapY: LongInt;
+      StaggerX: LongInt;
+      StaggerY: LongInt;
+      Isometric: Boolean;
     end;
 
     /// @struct AnimationData
     /// @via_pointer
     AnimationData = record
-        AnimationNumber: LongInt;
-        Delay: LongInt;
-        NumberOfFrames: LongInt;
-        Frame: Array of LongInt;
-        CurrentFrame : LongInt;
+      AnimationNumber: LongInt;
+      Delay: LongInt;
+      NumberOfFrames: LongInt;
+      Frame: Array of LongInt;
+      CurrentFrame: LongInt;
     end;
 
     /// @struct LayerData
     /// @via_pointer
     LayerData = record
-        Animation: Array of Array of LongInt;
-        Value: Array of Array of LongInt;
+      Animation: Array of Array of LongInt;
+      Value: Array of Array of LongInt;
     end;
 
     /// @struct CollisionData
     /// @via_pointer
     CollisionData = record
-        Collidable: Array of Array of Boolean;
+      Collidable: Array of Array of Boolean;
     end;
 
     /// @struct EventDetails
@@ -723,14 +726,14 @@ interface
     /// @struct MapRecord
     /// @via_pointer
     MapRecord = record
-      MapInfo : MapData;
-      AnimationInfo : Array of AnimationData;
-      Layerinfo : Array of LayerData;
-      CollisionInfo : CollisionData;
-      EventInfo : Array [0..23] of Array of EventDetails;
-      Tiles : Sprite;       
-      Animate : Boolean;
-      Frame : LongInt;
+      MapInfo: MapData;
+      AnimationInfo: Array of AnimationData;
+      Layerinfo: Array of LayerData;
+      CollisionInfo: CollisionData;
+      EventInfo: Array [0..23] of Array of EventDetails;
+      Tiles: Sprite;
+      Animate: Boolean;
+      Frame: LongInt;
     end;
 
     /// @class Map
@@ -738,8 +741,9 @@ interface
     /// @field pointer: ^MapRecord
     Map = ^MapRecord;
 
-//----------------------------------------------------------------------------
+
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
 end.

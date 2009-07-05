@@ -1,171 +1,177 @@
-//----------------------------------------------------------------------------
-//                            sgResources.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgResources.pas
+//=============================================================================
 // Change History:
 //
 // Version 3:
+// - 2009-07-05: Clinton: Fixed delphi-support for ExtractDelimited, formatting
 // - 2009-07-03: Andrew : Fixed header comments
 // - 2009-06-23: Andrew : Created
 //
-//----------------------------------------------------------------------------
+//=============================================================================
 
 /// @module ResourceManager
 unit sgResources;
 
+//=============================================================================
 interface
+//=============================================================================
+
   uses sgTypes;
-  
+
   //----------------------------------------------------------------------------
-    
+
   /// @lib
   procedure MapBitmap(name, filename: String);
-  
+
   /// @lib
   procedure MapTransparentBitmap(name, filename: String; transparentColor: Color);
-  
+
   /// @lib
   function HasBitmap(name: String): Boolean;
-  
+
   /// @lib
   function GetBitmap(name: String): Bitmap;
-  
+
   /// @lib
   procedure ReleaseBitmap(name: String);
-  
+
   /// @lib
   procedure ReleaseAllBitmaps();
-  
+
   //----------------------------------------------------------------------------
-  
+
   /// @lib
   procedure MapFont(name, filename: String; size: LongInt);
-  
+
   /// @lib
   function HasFont(name: String): Boolean;
-  
+
   /// @lib
   function GetFont(name: String): Font;
-  
+
   /// @lib
   procedure ReleaseFont(name: String);
-  
+
   /// @lib
   procedure ReleaseAllFonts();
-  
+
   //----------------------------------------------------------------------------
-  
+
   /// @lib
   procedure MapSoundEffect(name, filename: String);
-  
+
   /// @lib
   function HasSoundEffect(name: String): Boolean;
-  
+
   /// @lib
   function GetSoundEffect(name: String): SoundEffect;
-  
+
   /// @lib
   procedure ReleaseSoundEffect(name: String);
-  
+
   /// @lib
   procedure ReleaseAllSoundEffects();
-  
+
   //----------------------------------------------------------------------------
-  
+
   /// @lib
   procedure MapMusic(name, filename: String);
-  
+
   /// @lib
   function HasMusic(name: String): Boolean;
-  
+
   /// @lib
   function GetMusic(name: String): Music;
-  
+
   /// @lib
   procedure ReleaseMusic(name: String);
-  
+
   /// @lib
   procedure ReleaseAllMusic();
-  
+
   //----------------------------------------------------------------------------
-  
+
   /// @lib
   procedure MapTileMap(name, filename: String);
-  
+
   /// @lib
   function HasTileMap(name: String): Boolean;
-  
+
   /// @lib
   function GetTileMap(name: String): Map;
-  
+
   /// @lib
   procedure ReleaseTileMap(name: String);
-  
+
   /// @lib
   procedure ReleaseAllTileMaps();
-  
-  
-  
+
+
+
   //----------------------------------------------------------------------------
   // Bundle handling routines
   //----------------------------------------------------------------------------
-  
+
   /// @lib
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
-  
+
   /// @lib LoadResourceBundle(name, True)
   /// @uname LoadResourceBundleWithProgress
   procedure LoadResourceBundle(name: String); overload;
-  
+
   /// @lib
   procedure ReleaseResourceBundle(name: String);
-  
+
   /// @lib
   function HasResourceBundle(name: String): Boolean;
-  
+
   //----------------------------------------------------------------------------
   // Release all resources procedure
   //----------------------------------------------------------------------------
   /// @lib
   procedure ReleaseAllResources();
-  
-  
-  
+
+
+
   //----------------------------------------------------------------------------
   // Resource Path and Application Path
   //----------------------------------------------------------------------------
-  
+
   /// @lib GetPathToResource
   function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
-  
+
   /// @lib GetPathToOtherResource
   /// @uname GetPathToOtherResource
   function GetPathToResource(filename: String): String; overload;
-  
+
   /// @lib GetPathToResourceWithBaseAndKind
   /// @uname GetPathToResourceWithBase
   function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
-  
+
   /// @lib GetPathToOtherResourceWithBase
   /// @uname GetPathToOtherResourceWithBase
   function GetPathToResourceWithBase(path, filename: String): String; overload;
-  
+
   /// @lib
   procedure SetAppPath(path: String; withExe: Boolean);
   /// @lib
   function AppPath(): String;
-  
-  
-  
-//----------------------------------------------------------------------------
+
+
+
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
-  
-  uses SysUtils, sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, stringhash, strUtils, sgShared;
-  
+//=============================================================================
+
+  uses SysUtils, StrUtils, Classes, // system
+       stringhash,         // libsrc
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared; // Swingame
+
   //----------------------------------------------------------------------------
   // Global variables for resource management.
   //----------------------------------------------------------------------------
-  
+
   var
     _Images: TStringHash;
     _Fonts: TStringHash;
@@ -554,14 +560,26 @@ implementation
     else result := OtherResource;
   end;
 
-  {$ifndef FPC}
+  {$ifndef FPC} // Delphi land
   function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
+  var
+    strs: TStrings;
   begin
-    //TODO: proper replacement method needed
-    result := 'blah';
+    // Assumes that delim is [','] and uses simple commatext mode - better check
+    if delim <> [','] then
+      raise Exception.create('Internal SG bug using ExtractDelimited');
+    // okay - let a stringlist do the work
+    strs := TStringList.Create();
+    strs.CommaText := value;
+    if (index >= 0) and (index < strs.Count) then
+      result := strs.Strings[index]
+    else
+      result := '';
+    // cleanup
+    strs.Free();
   end;
   {$else}
-  // ExtractDelimited provided by StrUtils
+  // proper ExtractDelimited provided by StrUtils
   {$endif}
 
 
@@ -1134,7 +1152,7 @@ implementation
     result := applicationPath;
   end;
 
-  //---------------------------------------------------------------------------
+//=============================================================================
 
 initialization
 begin
