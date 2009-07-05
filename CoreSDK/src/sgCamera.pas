@@ -1,13 +1,13 @@
-//----------------------------------------------------------------------------
-//          sgCamera.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgCamera.pas
+//=============================================================================
 //
 // The Camera unit is used to change the view port (ie the camera location.)
 //
 // Change History:
 //
 // Version 3:
-// - 2009-06-17: Clinton: Added CameraPos, reordered methods, 
+// - 2009-06-17: Clinton: Added CameraPos, reordered methods,
 //                        Renamed ToScreen/ToWorld (removed "Coordinates")
 // - 2009-06-16: Clinton: Renaming for consistent World/Camera/Screen use
 //                        Comment cleanup/formatting + new comments
@@ -22,20 +22,20 @@
 //                 Added Point2D overload for SetScreenOffset
 // - 2008-01-21: Andrew: Added const to vector parameters.
 // - 2008-01-17: Aki + Andrew: Refactor
-//  
+//
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 ///@module Camera
 unit sgCamera;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
-  
+//=============================================================================
+
   uses sgTypes;
-  
+
   //---------------------------------------------------------------------------
   // Camera - position
   //---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ interface
   /// @param y The world y axis value to move the camera to
   /// @lib MoveCameraToXY
   procedure MoveCameraTo(x, y: Single); overload;
-  
+
   /// Move the camera view to a world location specified as a Point2D.
   ///
   /// @param pt The point to move the camera view to.
@@ -156,9 +156,9 @@ interface
   function ToWorld(const screenPoint: Point2D): Point2D;  
   
   
-//----------------------------------------------------------------------------
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses Classes, SysUtils, sgCore, sgGeometry;
 
@@ -234,7 +234,7 @@ implementation
   begin
     CenterCameraOn(s, Round(offset.x), Round(offset.y));
   end;
-  
+
   //---------------------------------------------------------------------------
   // World-To-Screen Translation
   //---------------------------------------------------------------------------
@@ -243,39 +243,37 @@ implementation
   begin
     result := Round(worldX - _cameraX);
   end;
-  
+
   function ToScreenY(worldY: Single): LongInt;
   begin
     result := Round(worldY - _cameraY);
-  end;  
-  
+  end;
+
   function ToScreen(const worldPoint: Point2D): Point2D;
   begin
     result.x := _cameraX - worldPoint.x;
     result.y := _cameraY - worldPoint.y;
   end;
-  
+
   //---------------------------------------------------------------------------
   // Screen-To-World Translation
   //---------------------------------------------------------------------------
-  
+
   function ToWorldX(screenX: LongInt) : Single;
   begin
     result := screenX + _cameraX;
   end;
-  
+
   function ToWorldY(screenY: LongInt) : Single;
   begin
     result := screenY + _cameraY;
   end;
-  
+
   function ToWorld(const screenPoint: Point2D): Point2D;
   begin
     result.x := screenPoint.x + _cameraX;
     result.y := screenPoint.y + _cameraY;
-  end;  
-  
-
+  end;
 
 
 end.

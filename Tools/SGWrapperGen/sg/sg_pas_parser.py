@@ -93,7 +93,11 @@ class SGPasParser():
         tok = self._next_token()
         
         if tok[0] == 'id' and tok[1] in ['unit','library']:
-            self._file_processors[tok[1]](tok)
+            try:
+              self._file_processors[tok[1]](tok)
+            except:
+              logger.error("Parse Error on file %s" % a_file.filename)
+              raise
         else:
             logger.error('Parse Error %s: found %s expected unit or library', 
                 self._tokeniser.line_details(), tok[1])

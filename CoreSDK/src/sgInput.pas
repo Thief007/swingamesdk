@@ -1,35 +1,35 @@
-//----------------------------------------------------------------------------
-//  sgInput.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgInput.pas
+//=============================================================================
 //
-// This unit is responsible for input event processing for mouse visibility, 
-// movement and button clicks (including the scroll wheel as button clicks) and 
-// keyboard events for text input and key state checking.
+// Responsible for input event processing for mouse visibility, movement and
+// button clicks (including the scroll wheel as button clicks) and keyboard
+// events for text input and key state checking.
 //
 // Change History:
 //
 // Version 3.0:
-// - 2009-06-15: Clinton: renamed+removed Is/Was and placed Key/Mouse first 
+// - 2009-06-15: Clinton: renamed+removed Is/Was and placed Key/Mouse first
 //                        moved and added meta comments, tweaked formatting.
-// - 2009-06-05: Andrew: Using sgShared
+// - 2009-06-05: Andrew : Using sgShared
 //
 // Version 2.2.2:
-// - 2008-12-17: Andrew: Moved all integers to LongInt
-// - 2008-12-16: Andrew: Added WasAKeyPressed
+// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-16: Andrew : Added WasAKeyPressed
 //
 // Version 1.1.5:
-// - 2008-04-18: Andrew: Added EndTextRead
+// - 2008-04-18: Andrew : Added EndTextRead
 //
 // Version 1.1:
-// - 2008-02-13: James: changed MoveMouse so it dosnt generate mouse movemnt event
+// - 2008-02-13: James  : changed MoveMouse so it dosnt generate mouse movement event
 // - 2008-01-25: Stephen: Fixed IsMouseShown
-// - 2008-01-25: Andrew: Fixed compiler hints
-// - 2008-01-22: James: changed MoveMouse to Point2D
+// - 2008-01-25: Andrew : Fixed compiler hints
+// - 2008-01-22: James  : changed MoveMouse to Point2D
 // - 2008-01-17: Aki + Andrew: Refactor
-//  
+//
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 {$I sgTrace.inc}
 
@@ -37,17 +37,17 @@
 /// @static
 unit sgInput;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses SDL, sgTypes;
-  
+
   /// @returns The current window position of the mouse as a `Vector`
   /// @lib
   function GetMousePositionAsVector(): Vector;
-  
-  /// @returns The current window position of the mouse as a `Point2D` 
+
+  /// @returns The current window position of the mouse as a `Point2D`
   /// @lib
   function GetMousePosition(): Point2D;
   
@@ -186,14 +186,14 @@ interface
   /// @lib
   function KeyName(key: KeyCode): String;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgCore, sgText, sgGeometry;
-  
+
   //---------------------------------------------------------------------------
-  
+
   function KeyTyped(key: KeyCode): Boolean;
   begin
     result := sdlManager.WasKeyTyped(LongInt(key));
@@ -203,14 +203,14 @@ implementation
   begin
     result := sdlManager.IsKeyPressed(LongInt(key));
   end;
-  
+
   function AnyKeyPressed(): Boolean;
   begin
    result := sdlManager.WasAKeyPressed();
   end;
-  
+
   //---------------------------------------------------------------------------
-  
+
   procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
   begin
     if theFont = nil then raise Exception.Create('The specified font to start reading text is nil');
@@ -230,7 +230,7 @@ implementation
   begin
     result := sdlManager.IsReading;
   end;
-  
+
   function EndReadingText(): String;
   begin
     result := sdlManager.EndReadingText();
@@ -253,7 +253,7 @@ implementation
     SDL_GetMouseState(x, y);
     result := VectorFrom(x, y);
   end;
-  
+
   procedure ShowMouse(); overload;
   begin
     ShowMouse(true);
@@ -312,7 +312,7 @@ implementation
     y := 0;
     SDL_GetRelativeMouseState(x, y);
     result := VectorFrom(x, y);
-    
+
     {$IFDEF TRACE}
       TraceExit('sgInput', 'GetMouseMovement');
     {$ENDIF}
@@ -608,7 +608,7 @@ implementation
   end;
 
 
-//----------------------------------------------------------------------------
+//=============================================================================
 
 initialization
 begin

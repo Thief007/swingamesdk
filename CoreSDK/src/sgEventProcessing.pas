@@ -1,12 +1,12 @@
-//----------------------------------------------------------------------------
-//  sgEventProcessing.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgEventProcessing.pas
+//=============================================================================
 //
-// This unit handles the processing of events, including the reading of text 
+// This unit handles the processing of events, including the reading of text
 // for SwinGames. This unit and its code is not directly used by typical games.
 //
-// An object of the TSDLManager is created and managed in sgCore. Only one 
-// instance should be used (essentially a "singleton" pattern), which is 
+// An object of the TSDLManager is created and managed in sgCore. Only one
+// instance should be used (essentially a "singleton" pattern), which is
 // available in the sdlManager as a global variable.
 //
 // Change History:
@@ -23,75 +23,74 @@
 //
 //  Version 1.0:
 //  - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 unit sgEventProcessing;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
-uses Classes, SDL, SDL_Mixer, SysUtils, SDL_TTF;
+//=============================================================================
 
-type 
-  
-  EventProcessPtr = procedure(event: PSDL_Event);
-  
-  EventStartProcessPtr = procedure();
+  uses Classes, SDL, SDL_Mixer, SysUtils, SDL_TTF;
 
-  TSDLManager = class(TObject)
-  private
-    _quit: Boolean;
-    _keyPressed: Boolean;
-    _readingString: Boolean;
-    _tempString: String;
-    _textSurface: PSDL_Surface;
-    _maxStringLen: LongInt;
-    _font: PTTF_Font;
-    _foreColor: TSDL_Color;
-    _x, _y: LongInt;
-    _KeyTyped: Array of LongInt;
-    _EventProcessors: Array of EventProcessPtr;
-    _EventStartProcessors: Array of EventStartProcessPtr;
-  public
-    procedure ProcessEvents();
+  type
 
-    constructor Create();
-    destructor Destroy(); override;
+    EventProcessPtr = procedure(event: PSDL_Event);
 
-    function HasQuit(): Boolean;
+    EventStartProcessPtr = procedure();
 
-    property MaxStringLength: LongInt read _maxStringLen write _maxStringLen;
-    property EnteredString: String read _tempString write _tempString;
-    property IsReading: Boolean read _readingString;
+    TSDLManager = class(TObject)
+    private
+      // private data
+      _quit: Boolean;
+      _keyPressed: Boolean;
+      _readingString: Boolean;
+      _tempString: String;
+      _textSurface: PSDL_Surface;
+      _maxStringLen: LongInt;
+      _font: PTTF_Font;
+      _foreColor: TSDL_Color;
+      _x, _y: LongInt;
+      _KeyTyped: Array of LongInt;
+      _EventProcessors: Array of EventProcessPtr;
+      _EventStartProcessors: Array of EventStartProcessPtr;
+      // private methods
+      procedure DoQuit();
+      procedure CheckQuit();
+      procedure HandleEvent(event: PSDL_Event);
+      procedure HandleKeydownEvent(event: PSDL_Event);
+    public
+      // text reading/draw collection
+      property MaxStringLength: LongInt read _maxStringLen write _maxStringLen;
+      property EnteredString: String read _tempString write _tempString;
+      property IsReading: Boolean read _readingString;
+      procedure DrawCollectedText(dest: PSDL_Surface);
+      procedure SetText(text: String);
+      procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; x, y: LongInt);
+      function  EndReadingText(): String;
+      // key pressed/typed tests
+      function WasKeyTyped(keyCode: LongInt): Boolean;
+      function IsKeyPressed(virtKeyCode: LongInt): Boolean;
+      function WasAKeyPressed(): Boolean;
+      // event register/process Quit
+      procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
+      procedure ProcessEvents();
+      function HasQuit(): Boolean;
+      // create/destroy
+      constructor Create();
+      destructor Destroy(); override;
+  end;
 
-    procedure DrawCollectedText(dest: PSDL_Surface);
-    procedure SetText(text: String);
-    procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; x, y: LongInt);
-    function  EndReadingText(): String;
-
-    function WasKeyTyped(keyCode: LongInt): Boolean;
-
-    procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
-
-    function IsKeyPressed(virtKeyCode : LongInt): Boolean;
-    function WasAKeyPressed(): Boolean;
-  private
-    procedure DoQuit();
-    procedure CheckQuit();
-    procedure HandleEvent(event: PSDL_Event);
-    procedure HandleKeydownEvent(event: PSDL_Event);
-end;
-
-//----------------------------------------------------------------------------
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
-  
+//=============================================================================
+
   function TSDLManager.WasAKeyPressed(): Boolean;
   begin
     result := _keyPressed;
   end;
-  
-  function TSDLManager.IsKeyPressed(virtKeyCode : LongInt): Boolean;
+
+  function TSDLManager.IsKeyPressed(virtKeyCode: LongInt): Boolean;
   var
     keys: PUint8;
     {$IFNDEF FPC}
@@ -100,7 +99,7 @@ implementation
     {$ENDIF}
   begin
     keys := SDL_GetKeyState(nil);
-  
+
     if keys <> nil then
     begin
       {$IFDEF FPC}
@@ -168,7 +167,7 @@ implementation
   end;
   
   procedure TSDLManager.HandleEvent(event: PSDL_Event);
-  var i : LongInt;
+  var i: LongInt;
   begin
     case event^.type_ of
       SDL_QUITEV: DoQuit();
@@ -314,7 +313,7 @@ implementation
   end;
   
   function TSDLManager.WasKeyTyped(keyCode: LongInt): Boolean;
-  var i : LongInt;
+  var i: LongInt;
   begin
     result := false;
   

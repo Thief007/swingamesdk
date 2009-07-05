@@ -1,8 +1,9 @@
-//----------------------------------------------------------------------------
-//          sgAudio.pas
-//----------------------------------------------------------------------------
-// The Audio unit is responsible for managing SDL audio for music and sound 
-// effects. This includes initialisation, loading, freeing, playing, and 
+//=============================================================================
+// sgAudio.pas
+//=============================================================================
+//
+// The Audio unit is responsible for managing SDL audio for music and sound
+// effects. This includes initialisation, loading, freeing, playing, and
 // checking if music or sound is playing.
 //
 // Change History:
@@ -24,13 +25,13 @@
 // Version 1.1:
 // - 2008-03-09: Andrew: Added extra exception handling
 // - 2008-01-17: Aki + Andrew: Refactor
-//  
+//
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
-/// SwinGame's Audio is responsible for loading and playing music and sound 
-/// effects. The main functionality exists in `LoadMusic`, `PlayMusic`, 
+/// SwinGame's Audio is responsible for loading and playing music and sound
+/// effects. The main functionality exists in `LoadMusic`, `PlayMusic`,
 /// `LoadSoundEffect`, and `PlaySoundEffect`. Associated with these are the
 /// `Music` and `SoundEffect` types.
 ///
@@ -38,24 +39,24 @@
 ///@static
 unit sgAudio;
 
-//----------------------------------------------------------------------------
+//=============================================================================
 interface
-//----------------------------------------------------------------------------
+//=============================================================================
 
   uses sgTypes;
-  
+
   /// `OpenAudio` is used to initialise the SwinGame audio code. This should be
-  /// called at the start of your programs code, and is usually coded into the 
-  /// starting project templates. After initialising the audio code you can 
-  /// load and play `Music` using `LoadMusic` and `PlayMusic', load and play 
-  /// `SoundEffect`s using `LoadSoundEffect` and `PlaySoundEffect`. At the end 
-  /// of the program you need to call `CloseAudio` to ensure that the audio 
+  /// called at the start of your programs code, and is usually coded into the
+  /// starting project templates. After initialising the audio code you can
+  /// load and play `Music` using `LoadMusic` and `PlayMusic', load and play
+  /// `SoundEffect`s using `LoadSoundEffect` and `PlaySoundEffect`. At the end
+  /// of the program you need to call `CloseAudio` to ensure that the audio
   /// code is correctly terminated.
   ///
   /// @lib
   procedure OpenAudio();
 
-  /// `CloseAudio` is used to clean up the resources used by SwinGame audio. If 
+  /// `CloseAudio` is used to clean up the resources used by SwinGame audio. If
   /// `OpenAudio` is called, this must be called to return the resources used
   /// before the program terminates.
   ///
@@ -64,7 +65,7 @@ interface
 
   /// Loads the `SoundEffect` from the supplied path. To ensure that your game
   /// is able to work across multiple platforms correctly ensure that you use
-  /// `GetPathToResource` to get the full path to the files in the projects 
+  /// `GetPathToResource` to get the full path to the files in the projects
   /// resources folder.
   ///
   /// LoadSoundEffect can load wav and ogg audio files.
@@ -139,7 +140,7 @@ interface
   /// the sound effect to be looped infinitely, setting it to a value larger than
   /// 0 plays the sound effect the number of times indicated, calling with a 
   /// value of 0 means the sound effect is not played.
-  /// 
+  ///
   /// @param effect The effect indicates which sound effect to start playing. This
   ///               effect is played once at its full volume.
   ///
@@ -187,7 +188,7 @@ interface
 
   /// PlayMusic starts playing a `Music` resource. SwinGame only allows one 
   /// music resource to be played at a time. Starting to play a new music 
-  /// resource will stop the currently playing music track. You can also stop 
+  /// resource will stop the currently playing music track. You can also stop
   /// the music by calling `StopMusic`.
   ///
   /// By default SwinGame starts playing music at its full volume. This can be 
@@ -228,7 +229,7 @@ interface
   /// @overload Play PlayWithLoops
   procedure PlayMusic(mus: Music; loops: LongInt); overload;
   
-  /// Fades the music in over a number of milliseconds, and then continues to 
+  /// Fades the music in over a number of milliseconds, and then continues to
   /// play the music repeatedly until the program ends or the music is stopped. 
   /// The music fades from 0 volume up to the currently set music volume.
   /// 
@@ -245,7 +246,7 @@ interface
 
   /// This version of FadeMusicIn fades the music in then plays the 'Music' 
   /// for a given number of loops.Setting loops to -1 repeats the music 
-  /// infinitely, other values larger than 0 indicate the number of times that 
+  /// infinitely, other values larger than 0 indicate the number of times that
   /// the music should be played.
   ///
   /// @param mus The `Music` resource to be played.
@@ -344,13 +345,13 @@ interface
   procedure FadeMusicOut(ms: LongInt);
   
 
-//----------------------------------------------------------------------------
+//=============================================================================
 implementation
-//----------------------------------------------------------------------------
+//=============================================================================
 
-  uses 
+  uses
     SysUtils, Classes, SDL_Mixer, SDL, sgCore;
-       
+
   var
     // Contains the sound channels used to determine if a sound is currently
     // playing and enables us to stop the sound, check if it is playing etc.
@@ -358,6 +359,7 @@ implementation
   
   procedure OpenAudio();
   begin
+    //TODO: Why is this conditional - its the same (now?)
     {$ifdef DARWIN}
     if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
     {$else}
@@ -409,7 +411,7 @@ implementation
   begin
     if (value < 0) then value := 0
     else if value > 1 then value := 1;
-    
+
     //SDL music volume is 0 - 128
     newVol := Trunc(value * 128);
     Mix_VolumeMusic(newVol);
@@ -470,7 +472,7 @@ implementation
   begin
     PlayMusic(mus, -1);
   end;
-  
+
   procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
   begin
     if not Assigned(mus) then raise Exception.Create('Music not supplied');

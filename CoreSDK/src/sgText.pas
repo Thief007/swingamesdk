@@ -1,6 +1,6 @@
-//----------------------------------------------------------------------------
-//          sgText.pas
-//----------------------------------------------------------------------------
+//=============================================================================
+// sgText.pas
+//=============================================================================
 //
 // The Font unit relates to writing text to the screen,
 // and to loading and styling the associated fonts.
@@ -22,34 +22,36 @@
 // - 2008-01-25: Andrew: Fixed compiler hints
 // - 2008-01-21: Andrew: Added Point/Rectangle overloads
 // - 2008-01-17: Aki + Andrew: Refactor
-//  
+//
 // Version 1.0:
 // - Various
-//----------------------------------------------------------------------------
+//=============================================================================
 
 ///@module Text
 ///@static
 unit sgText;
 
+//=============================================================================
 interface
-  
+//=============================================================================
+
   uses sgTypes;
-  
+
   /// @lib
   /// @class Font
   /// @constructor
   function LoadFont(fontName: String; size: LongInt): Font;
-  
+
   /// @lib
   /// @class Font
   /// @dispose
   procedure FreeFont(var fontToFree: Font);
-  
+
   /// @lib
   /// @class Font
   /// @setter FontStyle
   procedure SetFontStyle(font: Font; value: FontStyle);
-  
+
   /// @lib
   /// @class Font
   /// @getter FontStyle
@@ -117,11 +119,8 @@ implementation
   uses SysUtils, Classes, sgGraphics, sgCamera, SDL_gfx, sgShared, 
        SDL, SDL_TTF, sgCore, sgGeometry;
 
-  {$IFDEF FPC}
-  const EOL = LineEnding;
-  {$ElSE}
-  const EOL = '\n';
-  {$ENDIF}
+
+  const EOL = LineEnding; // from sgShared
 
   /// Loads a font from file with the specified side. Fonts must be freed using
   /// the FreeFont routine once finished with. Once the font is loaded you
@@ -422,7 +421,7 @@ implementation
     rect.x := 0; rect.y := 0; rect.w := rc^.w; rect.h := rc^.h;
     if (not bgTransparent) then SDL_SetAlpha(sText^.surface, 0, SDL_ALPHA_TRANSPARENT);  
     SDL_BlitSurface(sText^.surface, @rect, dest, rc );
-    
+
     FreeBitmap(sText);
   end;
 
@@ -586,7 +585,7 @@ implementation
   begin
     DrawUnicode(screen, theText, textColor, theFont, ToScreenX(x), ToScreenY(y));
   end;
-  
+
   procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload;
   begin
     DrawUnicode(screen, theText, textColor, theFont, ToScreenX(pt.x), ToScreenY(pt.y));
@@ -697,7 +696,9 @@ implementation
   begin
     stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
   end;
-  
+
+//=============================================================================
+
 initialization
 begin
   if TTF_Init() = -1 then
@@ -705,6 +706,8 @@ begin
     raise Exception.Create('Error openning font library. ' + string(TTF_GetError));
   end;
 end;
+
+//=============================================================================
 
 finalization
 begin
