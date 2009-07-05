@@ -191,6 +191,20 @@ interface
   /// @method IsOffscreen
   function IsSpriteOffscreen(s : Sprite): Boolean;
 
+  //---------------------------------------------------------------------------
+  // Sprite movement
+  //---------------------------------------------------------------------------
+  
+  /// @lib
+  /// @class Sprite
+  /// @getter Movement
+  function SpriteMovement(s: Sprite): Vector;
+
+  /// @lib
+  /// @class Sprite
+  /// @setter Movement
+  procedure SetSpriteMovement(s: Sprite; value: Vector);
+
 
 //=============================================================================
 implementation
@@ -765,5 +779,14 @@ implementation
     result := SpriteOnScreenAt(s, Round(pt.x), Round(pt.y));
   end;
 
+  function SpriteMovement(s: Sprite): Vector;
+  begin
+    result := s^.Movement;
+  end;
+
+  procedure SetSpriteMovement(s: Sprite; value: Vector);
+  begin
+    s^.Movement := value;
+  end;
 
 end.

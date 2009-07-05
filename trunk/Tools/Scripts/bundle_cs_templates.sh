@@ -111,6 +111,7 @@ for arg in "${COPY_LIST[@]}"; do
     copyWithoutSVN "$COMMON_TEMPLATE_DIR" "$to"
     copyWithoutSVN "$COMMON_CS_TEMPLATE_DIR" "$to"
     copyWithoutSVN "$from" "$to"
+    chmod a+x ${to}/*.sh
     
     if [ $OS = "Mac" ]; then
         echo " with library"

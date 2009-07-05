@@ -182,6 +182,7 @@ interface
   /// @lib DrawOrFillCircleOnto
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
   /// @lib DrawOrFillCircleOnto(dest, clr, False, c)
+  /// @uname DrawCircleOnto
   procedure DrawCircle(dest: Bitmap; clr: Color; const c: Circle); overload;
   /// @lib DrawOrFillCircleOnto(dest, clr, True, c)
   /// @uname FillCircleOnto
@@ -217,10 +218,10 @@ interface
   /// @lib DrawOrFillPtCircleOnScreen
   procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
   /// @lib DrawOrFillPtCircleOnScreen(clr, False, xc, yc, radius)
-  /// @uname DrawCircleOnScreen
+  /// @uname DrawCirclePtOnScreen
   procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
   /// @lib DrawOrFillPtCircleOnScreen(clr, True, xc, yc, radius)
-  /// @uname FillCircleOnScreen
+  /// @uname FillCirclePtOnScreen
   procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
 
   /// @lib DrawOrFillCircleAtPointOnScreen

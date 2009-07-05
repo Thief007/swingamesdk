@@ -91,6 +91,7 @@ doMacPackage()
     pushd . >> /dev/null
     cd "${GAMEAPP_PATH}/Contents/Resources"
     ln -s ../Frameworks/SGSDK.framework/SGSDK libSGSDK.dylib
+    ln -s ../Frameworks ./Frameworks #Silly macpac uses ./bin folder
     popd >> /dev/null
     
     rm -f "${OUT_DIR}/${GAME_NAME}.exe"

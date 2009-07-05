@@ -32,6 +32,9 @@ _class_header = ''
 _class_footer = ''
 
 _array_property = ''
+_property_class = ''
+_property_class_property = ''
+_property_class_field = ''
 
 _pointer_wrapper_class_header = ''
 
@@ -185,13 +188,13 @@ _data_switcher = {
     {
         #Pascal type: what values of this type switch to %s = data value
         'boolean': '%s != 0',
-        'music': 'PointerWrapper.Create<Music>(%s, Music.Create)',
-        'soundeffect': 'PointerWrapper.Create<SoundEffect>(%s, SoundEffect.Create)',
-        'bitmap': 'PointerWrapper.Create<Bitmap>(%s, Bitmap.Create)',
-        'font': 'PointerWrapper.Create<Font>(%s, Font.Create)',
-        'timer': 'PointerWrapper.Create<Timer>(%s, Timer.Create)',
-        'map': 'PointerWrapper.Create<Map>(%s, Map.Create)',
-        'sprite': 'PointerWrapper.Create<Sprite>(%s, Sprite.Create)',
+        'music': 'Music.Create(%s)',
+        'soundeffect': 'SoundEffect.Create(%s)',
+        'bitmap': 'Bitmap.Create(%s)',
+        'font': 'Font.Create(%s)',
+        'timer': 'Timer.Create(%s)',
+        'map': 'Map.Create(%s)',
+        'sprite': 'Sprite.Create(%s)',
         'color': 'System.Drawing.Color.FromArgb(%s)',
         'keycode': '(KeyCode)%s',
         'mousebutton': '(MouseButton)%s',
@@ -422,7 +425,8 @@ def load_data():
     global _module_method, _module_header, _module_footer
     global _class_header, _class_footer
     global _pointer_wrapper_class_header
-    global _array_property, _operator_overload
+    global _array_property
+    global _property_class, _property_class_property, _property_class_field
     
     f = open('./cs_lib/lib_header.txt')
     _header = f.read()
@@ -459,6 +463,19 @@ def load_data():
     f = open('./cs_lib/pointer_wrapper_class_header.txt')
     _pointer_wrapper_class_header = f.read()
     f.close()
+    
+    f = open('./cs_lib/property_class.txt')
+    _property_class = f.read()
+    f.close()
+    
+    f = open('./cs_lib/property_class_property.txt')
+    _property_class_property = f.read()
+    f.close()
+    
+    f = open('./cs_lib/property_class_field.txt')
+    _property_class_field = f.read()
+    f.close()
+    
 
 def doc_transform(the_docs):
     docLines = the_docs.splitlines(True)
@@ -707,23 +724,56 @@ def method_visitor(the_method, other, as_accessor_name = None):
     
     return other
 
-def property_visitor(the_property, other):
+def write_wrapped_property(the_property, other):
+    '''The property is a structure or array type, so write a wrapper to give access
+    to elements and as a whole.'''
+    
     writer = other['file writer']
     
-    # public string Name { getter setter }
-    type_name = _type_switcher['return'][the_property.data_type.name.lower()]
-    writer.write('public %s%s\n{\n' % ('static ' if the_property.is_static else '', type_name) % the_property.name)
+    details = dict()
+    details["property_name"] = the_property.name
+    details["in_type"] = the_property.in_class.name
+    details["struct_type"] = the_property.data_type.name
+    details["methods"] = ''
+    details["properties"] = ''
+    
+    writer.writeln(_property_class_property % details)
+    writer.writeln(_property_class % details)
     
     writer.indent(2)
     
+    for field in the_property.data_type.fields:
+        details["field_name"] = field.name
+        details["field_type"] = _struct_type_switcher[field.data_type.name.lower()] % field.name
+        writer.writeln(_property_class_field % details)
+
+def property_visitor(the_property, other):
+    writer = other['file writer']
+    
+    type_name = _type_switcher['return'][the_property.data_type.name.lower()]
+    
+    if the_property.in_class.is_pointer_wrapper and the_property.data_type.is_struct and not the_property.is_static and the_property.getter != None and the_property.setter != None:
+        write_wrapped_property(the_property, other)
+        writer.write('private %s\n{\n' % type_name % the_property.name)
+    else:    
+        # Write standard property
+        writer.write('public %s%s\n{\n' % ('static ' if the_property.is_static else '', type_name) % the_property.name)
+    
+    writer.indent(2)
+
     if the_property.getter != None:
         method_visitor(the_property.getter, other, 'get');
     if the_property.setter != None:
         method_visitor(the_property.setter, other, 'set');
-    
+
     writer.outdent(2)
-    
+
     writer.write('}\n');
+    
+    if the_property.in_class.is_pointer_wrapper and the_property.data_type.is_struct:
+        writer.outdent(2)
+        writer.write('}\n')
+    
     return other
 
 def write_cs_sgsdk_file(the_file, for_others = False):
