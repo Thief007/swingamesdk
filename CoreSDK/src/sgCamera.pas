@@ -226,8 +226,8 @@ implementation
     if s = nil then begin
       raise Exception.Create('CenterCameraOn requires a target sprite. No sprite was provided (nil supplied)');
     end;
-    MoveCameraTo(Round(ToScreenX(s^.x) + s^.width / 2 - ScreenWidth() / 2) + offsetX, 
-                 Round(ToScreenY(s^.y) + s^.height / 2 - ScreenHeight() / 2) + offsetY);
+    MoveCameraTo(Round(ToScreenX(s^.position.x) + s^.width / 2 - ScreenWidth() / 2) + offsetX, 
+                 Round(ToScreenY(s^.position.y) + s^.height / 2 - ScreenHeight() / 2) + offsetY);
   end;
   
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;

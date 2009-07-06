@@ -418,7 +418,7 @@ interface
   //---------------------------------------------------------------------------
 
   /// @lib
-  function GetSideForCollisionTest(const movement: Vector): CollisionSide;
+  function GetSideForCollisionTest(const velocity: Vector): CollisionSide;
 
   
   //---------------------------------------------------------------------------
@@ -552,10 +552,10 @@ implementation
     if (width < 1) or (height < 1) then 
       raise Exception.Create('Rectangle width and height must be greater then 0');
     
-    if s^.y + SpriteHeight(s) <= y then result := false
-    else if s^.y >= y + height then result := false
-    else if s^.x + SpriteWidth(s) <= x then result := false
-    else if s^.x >= x + width then result := false
+    if s^.position.y + SpriteHeight(s) <= y then result := false
+    else if s^.position.y >= y + height then result := false
+    else if s^.position.x + SpriteWidth(s) <= x then result := false
+    else if s^.position.x >= x + width then result := false
     else
     begin
       if not s^.usePixelCollision then result := true
@@ -563,18 +563,18 @@ implementation
       begin
         if s^.spriteKind = AnimMultiSprite then
         begin
-          offX1 := (s^.currentFrame mod s^.cols) * s^.width;
-          offY1 := (s^.currentFrame - (s^.currentFrame mod s^.cols)) div s^.cols * s^.height;
+          offX1 := (s^.currentCell mod s^.cols) * s^.width;
+          offY1 := (s^.currentCell - (s^.currentCell mod s^.cols)) div s^.cols * s^.height;
           bmp := s^.bitmaps[0];
         end
         else
         begin
-          bmp := s^.bitmaps[s^.currentFrame];
+          bmp := s^.bitmaps[s^.currentCell];
           offX1 := 0;
           offY1 := 0;
         end;
         result := BitmapPartRectCollision(
-                    bmp, Round(s^.x), Round(s^.y), 
+                    bmp, Round(s^.position.x), Round(s^.position.y), 
                     RectangleFrom(offX1, offY1, s^.width, s^.height),
                     s^.usePixelCollision = false, RectangleFrom(x, y, width, height));
       end;
@@ -700,34 +700,34 @@ implementation
     
     if s1^.spriteKind = AnimMultiSprite then
     begin
-      offX1 := (s1^.currentFrame mod s1^.cols) * s1^.width;
-      offY1 := (s1^.currentFrame - (s1^.currentFrame mod s1^.cols)) div s1^.cols * s1^.height;
+      offX1 := (s1^.currentCell mod s1^.cols) * s1^.width;
+      offY1 := (s1^.currentCell - (s1^.currentCell mod s1^.cols)) div s1^.cols * s1^.height;
       bmp1 := s1^.bitmaps[0];
     end
     else
     begin
-      bmp1 := s1^.bitmaps[s1^.currentFrame];
+      bmp1 := s1^.bitmaps[s1^.currentCell];
       offX1 := 0;
       offY1 := 0;
     end;
     
     if s2^.spriteKind = AnimMultiSprite then
     begin
-      offX2 := (s2^.currentFrame mod s2^.cols) * s2^.width;
-      offY2 := (s2^.currentFrame - (s2^.currentFrame mod s2^.cols)) div s2^.cols * s2^.height;
+      offX2 := (s2^.currentCell mod s2^.cols) * s2^.width;
+      offY2 := (s2^.currentCell - (s2^.currentCell mod s2^.cols)) div s2^.cols * s2^.height;
       bmp2 := s2^.bitmaps[0];
     end
     else
     begin
-      bmp2 := s2^.bitmaps[s2^.currentFrame];
+      bmp2 := s2^.bitmaps[s2^.currentCell];
       offX2 := 0;
       offY2 := 0;
     end;
     
     result := CollisionWithinBitmapImages(
-                bmp1, Round(s1^.x), Round(s1^.y), SpriteWidth(s1), SpriteHeight(s1), 
+                bmp1, Round(s1^.position.x), Round(s1^.position.y), SpriteWidth(s1), SpriteHeight(s1), 
                 offX1, offY1, not s1^.usePixelCollision, 
-                bmp2, Round(s2^.x), Round(s2^.y), SpriteWidth(s2), SpriteHeight(s2),
+                bmp2, Round(s2^.position.x), Round(s2^.position.y), SpriteWidth(s2), SpriteHeight(s2),
                 offX2, offY2, not s2^.usePixelCollision);
   end;
 
@@ -785,7 +785,7 @@ implementation
 
   function SpritesCollided(s1, s2: Sprite): Boolean;
   begin
-    if not SpriteRectCollision(s1, s2^.x, s2^.y, s2^.width, s2^.height) then
+    if not SpriteRectCollision(s1, s2^.position.x, s2^.position.y, s2^.width, s2^.height) then
     begin
       result := false;
       exit;
@@ -830,19 +830,19 @@ implementation
 
     if s^.spriteKind = AnimMultiSprite then
     begin
-      offX := (s^.currentFrame mod s^.cols) * s^.width;
-      offY := (s^.currentFrame - (s^.currentFrame mod s^.cols)) div s^.cols * s^.height;
+      offX := (s^.currentCell mod s^.cols) * s^.width;
+      offY := (s^.currentCell - (s^.currentCell mod s^.cols)) div s^.cols * s^.height;
       tmp := s^.bitmaps[0];
     end
     else
     begin
-      tmp := s^.bitmaps[s^.currentFrame];
+      tmp := s^.bitmaps[s^.currentCell];
       offX := 0;
       offY := 0;
     end;
     
     result := CollisionWithinBitmapImages(
-                tmp, Round(s^.x), Round(s^.y),  s^.width, s^.height, offX, offY, not s^.usePixelCollision, 
+                tmp, Round(s^.position.x), Round(s^.position.y),  s^.width, s^.height, offX, offY, not s^.usePixelCollision, 
                 bmp, Round(pt.x), Round(pt.y), part.width, part.height, Round(part.x), Round(part.y), bbox);
   end;
   
@@ -876,7 +876,7 @@ implementation
     else
       r := SpriteHeight(s) div 2;
       
-    dist := PointLineDistance(s^.x + r, s^.y + r, line);
+    dist := PointLineDistance(s^.position.x + r, s^.position.y + r, line);
     result := dist < r;
   end;
   
@@ -891,25 +891,25 @@ implementation
   end;
   
   //You need to test for collisions on the ...
-  function GetSideForCollisionTest (const movement: Vector): CollisionSide;
+  function GetSideForCollisionTest (const velocity: Vector): CollisionSide;
   const SMALL = 0.1; //The delta for the check
   begin
-    if movement.x < -SMALL then //Going Left...
+    if velocity.x < -SMALL then //Going Left...
     begin
-      if movement.y < -SMALL then result := BottomRight
-      else if movement.y > SMALL then result := TopRight
+      if velocity.y < -SMALL then result := BottomRight
+      else if velocity.y > SMALL then result := TopRight
       else result := Right;
     end
-    else if movement.x > SMALL then //Going Right
+    else if velocity.x > SMALL then //Going Right
     begin
-      if movement.y < -SMALL then result := BottomLeft
-      else if movement.y > SMALL then result := TopLeft
+      if velocity.y < -SMALL then result := BottomLeft
+      else if velocity.y > SMALL then result := TopLeft
       else result := Left;      
     end
     else // Going Up or Down
     begin
-      if movement.y < -SMALL then result := Bottom
-      else if movement.y > SMALL then result := Top
+      if velocity.y < -SMALL then result := Bottom
+      else if velocity.y > SMALL then result := Top
       else result := None;
     end;
   end;
@@ -962,23 +962,23 @@ implementation
     toLine: Vector;
     intersect: Point2D;
   begin
-    //TODO: fix collision pt.... cast back along movement...
+    //TODO: fix collision pt.... cast back along velocity...
     intersect := ClosestPointOnLine(CenterPoint(s), line);
 
     //DrawSprite(s);
     //DrawCircle(ColorRed, intersect, 2);
     
     toLine := UnitVector(VectorFromCenterSpriteToPoint(s, intersect));
-    // Project movement across to-line
-    dotPod := - DotProduct(toLine, s^.movement);
+    // Project velocity across to-line
+    dotPod := - DotProduct(toLine, s^.velocity);
     
     npx := dotPod * toLine.x;
     npy := dotPod * toLine.y;
     
-    s^.movement.x := s^.movement.x + 2 * npx;
-    s^.movement.y := s^.movement.y + 2 * npy;
+    s^.velocity.x := s^.velocity.x + 2 * npx;
+    s^.velocity.y := s^.velocity.y + 2 * npy;
     
-    //DrawLine(ColorYellow, CenterPoint(s).x, CenterPoint(s).y, CenterPoint(s).x + (s^.Movement.x * 10), CenterPoint(s).y + (s^.Movement.y * 10));
+    //DrawLine(ColorYellow, CenterPoint(s).x, CenterPoint(s).y, CenterPoint(s).x + (s^.velocity.x * 10), CenterPoint(s).y + (s^.velocity.y * 10));
     //RefreshScreen(1) ;
   end;
   
@@ -988,7 +988,7 @@ implementation
     maxIdx: Integer;
     mvmtMag, prop: Single;
   begin
-    mvmt := s^.movement;
+    mvmt := s^.velocity;
     maxIdx := -1;
     outVec := VectorOverLinesFromCircle(CircleFrom(s), lines, mvmt, maxIdx);
     if maxIdx < 0 then exit;
@@ -996,10 +996,10 @@ implementation
     MoveSprite(s, outVec);
     CollideCircleLine(s, lines[maxIdx]);
     
-    // do part movement
+    // do part velocity
     mvmtMag := VectorMagnitude(mvmt);
     prop := VectorMagnitude(outVec) / mvmtMag; //proportion of move "undone" by back out
-    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
+    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do velocity based on prop * pct
   end;
   
   
@@ -1021,19 +1021,19 @@ implementation
     //TODO: Change backout from using direction... VectorFromPoints(s1c, s2c)??
     
     //if s1^.mass < s2^.mass then
-    if VectorMagnitude(s1^.movement) > VectorMagnitude(s2^.movement) then
+    if VectorMagnitude(s1^.velocity) > VectorMagnitude(s2^.velocity) then
     begin
       //move s1 out
-      n := VectorOutOfCircleFromCircle(c1, c2, s1^.movement);
-      s1^.x := s1^.x + n.x;
-      s1^.y := s1^.y + n.y;
+      n := VectorOutOfCircleFromCircle(c1, c2, s1^.velocity);
+      s1^.position.x := s1^.position.x + n.x;
+      s1^.position.y := s1^.position.y + n.y;
     end
     else
     begin
       //move s2 out
-      n := VectorOutOfCircleFromCircle(c2, c1, s2^.movement);
-      s2^.x := s2^.x + n.x;
-      s2^.y := s2^.y + n.y;
+      n := VectorOutOfCircleFromCircle(c2, c1, s2^.velocity);
+      s2^.position.x := s2^.position.x + n.x;
+      s2^.position.y := s2^.position.y + n.y;
     end;
       
     colNormalAngle := CalculateAngle(s1, s2);
@@ -1041,11 +1041,11 @@ implementation
     // n = vector connecting the centers of the balls.
     // we are finding the components of the normalised vector n
     n := VectorFrom(Cos(colNormalAngle), Sin(colNormalAngle));
-    // now find the length of the components of each movement vectors
+    // now find the length of the components of each velocity vectors
     // along n, by using dot product.
-    a1 := DotProduct(s1^.Movement, n);
+    a1 := DotProduct(s1^.velocity, n);
     // Local a1# = c.dx*nX  +  c.dy*nY
-    a2 := DotProduct(s2^.Movement, n);
+    a2 := DotProduct(s2^.velocity, n);
     // Local a2# = c2.dx*nX +  c2.dy*nY
     // optimisedP = 2(a1 - a2)
     // ----------
@@ -1053,11 +1053,11 @@ implementation
     optP := (2.0 * (a1-a2)) / (s1^.mass + s2^.mass);
     // now find out the resultant vectors
     // Local r1% = c1.v - optimisedP * mass2 * n
-    s1^.movement.x := s1^.movement.x - (optP * s2^.mass * n.x);
-    s1^.movement.y := s1^.movement.y - (optP * s2^.mass * n.y);
+    s1^.velocity.x := s1^.velocity.x - (optP * s2^.mass * n.x);
+    s1^.velocity.y := s1^.velocity.y - (optP * s2^.mass * n.y);
     // Local r2% = c2.v - optimisedP * mass1 * n
-    s2^.movement.x := s2^.movement.x + (optP * s1^.mass * n.x);
-    s2^.movement.y := s2^.movement.y + (optP * s1^.mass * n.y);
+    s2^.velocity.x := s2^.velocity.x + (optP * s1^.mass * n.x);
+    s2^.velocity.y := s2^.velocity.y + (optP * s1^.mass * n.y);
   end;
   
   procedure CollideCircleCircle(s: Sprite; const c: Circle);
@@ -1069,7 +1069,7 @@ implementation
   begin
     //TODO: what if height > width!!
     spriteCenter := CenterPoint(s);
-    mvmt := s^.movement;
+    mvmt := s^.velocity;
     
     outVec := VectorOutOfCircleFromCircle(CircleFrom(s), c, mvmt);
     // Back out of circle
@@ -1088,10 +1088,10 @@ implementation
     
     CollideCircleLine(s, hitLine);
 
-    // do part movement
+    // do part velocity
     mvmtMag := VectorMagnitude(mvmt);
     prop := VectorMagnitude(outVec) / mvmtMag; //proportion of move "undone" by back out
-    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
+    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do velocity based on prop * pct
   end;
   
   
@@ -1103,7 +1103,7 @@ implementation
     outVec, mvmt: Vector;
     mvmtMag, prop: Single;
   begin
-    mvmt := s^.Movement;
+    mvmt := s^.velocity;
     
     // Get the line hit...
     lines := LinesFrom(rect);
@@ -1122,7 +1122,7 @@ implementation
     //   DrawSprite(s);
     //   DrawRectangle(ColorRed, rect);
     //   DrawCircle(ColorYellow, AddVectors(CenterPoint(s), InvertVector(outVec)), 2);
-    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.movement, 10)));
+    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.velocity, 10)));
     //   RefreshScreen(1);
     // end;
     
@@ -1132,14 +1132,14 @@ implementation
     // if bounds then
     // begin
     //   DrawSprite(s);
-    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.movement, 10)));
+    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.velocity, 10)));
     //   RefreshScreen(1);
     // end;
     
-    // do part movement
+    // do part velocity
     mvmtMag := VectorMagnitude(mvmt);
     prop := VectorMagnitude(outVec) / mvmtMag; //proportion of move "undone" by back out
-    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do movement based on prop * pct
+    if prop > 0 then MoveSprite(s, prop); //TODO: Allow proportion of move to be passed in (overload)... then do velocity based on prop * pct
   end;
   
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle); overload;

@@ -60,7 +60,8 @@ _type_switcher = {
     'circle': 'Circle',
     'arrayofpoint2d': 'Point2DPtr',
     'map': 'Map',
-    'event': 'Event'
+    'event': 'Event',
+    'spritekind': 'SpriteKind',
 }
 
 # dictionary for start of method names for copying variable

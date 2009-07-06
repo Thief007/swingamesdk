@@ -473,7 +473,7 @@ implementation
     SetLength(fpc, m^.MapInfo.NumberOfBlocks);
     m^.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
                             m^.MapInfo.BlockWidth, m^.MapInfo.BlockHeight);
-    m^.Tiles^.currentFrame := 0;
+    m^.Tiles^.currentCell := 0;
   end;
 
   procedure DrawMap(m : Map);
@@ -518,9 +518,9 @@ implementation
   
       //Isometric Offset for Y
       if (m^.MapInfo.Isometric = true) then
-        m^.Tiles^.y := y * m^.MapInfo.StaggerY
+        m^.Tiles^.position.y := y * m^.MapInfo.StaggerY
       else
-        m^.Tiles^.y := y * m^.MapInfo.BlockHeight; 
+        m^.Tiles^.position.y := y * m^.MapInfo.BlockHeight; 
   
       for x := XStart  to XEnd do
       begin
@@ -528,25 +528,25 @@ implementation
         //Isometric Offset for X
         if (m^.MapInfo.Isometric = true) then
         begin
-          m^.Tiles^.x := x * m^.MapInfo.GapX;
+          m^.Tiles^.position.x := x * m^.MapInfo.GapX;
           if ((y MOD 2) = 1) then
-            m^.Tiles^.x := m^.Tiles^.x + m^.MapInfo.StaggerX;
+            m^.Tiles^.position.x := m^.Tiles^.position.x + m^.MapInfo.StaggerX;
         end
         else
-          m^.Tiles^.x := x * m^.MapInfo.BlockWidth;
+          m^.Tiles^.position.x := x * m^.MapInfo.BlockWidth;
       
         for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.CollisionLayer - m^.MapInfo.EventLayer - 1 do
         begin
           if (m^.LayerInfo[l].Animation[y][x] = 0) and (m^.LayerInfo[l].Value[y][x] > 0) then
           begin
-            m^.Tiles^.currentFrame := m^.LayerInfo[l].Value[y][x] - 1;
+            m^.Tiles^.currentCell := m^.LayerInfo[l].Value[y][x] - 1;
             //DrawSprite(m^.Tiles, CameraX, CameraY, sgCore.ScreenWidth(), sgCore.ScreenHeight());
             DrawSprite(m^.Tiles);
           end
           else if (m^.LayerInfo[l].Animation[y][x] = 1) then
           begin
                         f := round(m^.Frame/10) mod (m^.AnimationInfo[m^.LayerInfo[l].Value[y][x]].NumberOfFrames);
-                        m^.Tiles^.currentFrame := m^.AnimationInfo[m^.LayerInfo[l].Value[y][x]].Frame[f] - 1;   
+                        m^.Tiles^.currentCell := m^.AnimationInfo[m^.LayerInfo[l].Value[y][x]].Frame[f] - 1;   
             DrawSprite(m^.Tiles);
           end;
         end;
@@ -661,10 +661,10 @@ implementation
   begin
     result := false;
 
-    XStart := round((s^.x / m^.MapInfo.BlockWidth) - ((s^.width / m^.MapInfo.BlockWidth) - SEARCH_RANGE));
-    XEnd := round((s^.x / m^.MapInfo.BlockWidth) + ((s^.width / m^.MapInfo.BlockWidth) + SEARCH_RANGE));
-    YStart := round((s^.y / m^.MapInfo.BlockHeight) - ((s^.height / m^.MapInfo.BlockHeight) - SEARCH_RANGE));
-    YEnd := round((s^.y / m^.MapInfo.BlockHeight) + ((s^.height / m^.MapInfo.BlockHeight) + SEARCH_RANGE));
+    XStart := round((s^.position.x / m^.MapInfo.BlockWidth) - ((s^.width / m^.MapInfo.BlockWidth) - SEARCH_RANGE));
+    XEnd := round((s^.position.x / m^.MapInfo.BlockWidth) + ((s^.width / m^.MapInfo.BlockWidth) + SEARCH_RANGE));
+    YStart := round((s^.position.y / m^.MapInfo.BlockHeight) - ((s^.height / m^.MapInfo.BlockHeight) - SEARCH_RANGE));
+    YEnd := round((s^.position.y / m^.MapInfo.BlockHeight) + ((s^.height / m^.MapInfo.BlockHeight) + SEARCH_RANGE));
 
     if YStart < 0 then YStart := 0;
     if YStart >= m^.MapInfo.MapHeight then exit;
@@ -700,8 +700,8 @@ implementation
 
   function BruteForceDetectionComponent(m : Map; var s: Sprite; xOffset, yOffset: LongInt): Boolean;
   begin
-    s^.x := s^.x + xOffset;
-    s^.y := s^.y + yOffset;
+    s^.position.x := s^.position.x + xOffset;
+    s^.position.y := s^.position.y + yOffset;
 
     if BruteForceDetection(m, s) then
     begin
@@ -710,11 +710,11 @@ implementation
     else
       result := false;
 
-    s^.x := s^.x - xOffset;
-    s^.y := s^.y - yOffset;
+    s^.position.x := s^.position.x - xOffset;
+    s^.position.y := s^.position.y - yOffset;
   end;
 
-  procedure MoveOut(s: Sprite; movement: Vector; x, y, width, height: LongInt);
+  procedure MoveOut(s: Sprite; velocity: Vector; x, y, width, height: LongInt);
   var
     kickVector: Vector;
     sprRect, tgtRect : Rectangle;
@@ -722,7 +722,7 @@ implementation
     sprRect := RectangleFrom(s);
     tgtRect := RectangleFrom(x, y, width, height);
   
-    kickVector := VectorOutOfRectFromRect(sprRect, tgtRect, movement);
+    kickVector := VectorOutOfRectFromRect(sprRect, tgtRect, velocity);
   
     MoveSprite(s, kickVector);
   end;
@@ -734,13 +734,13 @@ implementation
       startX, startY, endX, endY : LongInt;
     begin
       startPoint := RectangleFrom(
-                      round( ((s^.x - s^.movement.x) / m^.MapInfo.BlockWidth) - 1) * m^.MapInfo.BlockWidth,
-                      round( ((s^.y - s^.movement.y) / m^.MapInfo.BlockHeight) -1) * m^.MapInfo.BlockHeight,
+                      round( ((s^.position.x - s^.velocity.x) / m^.MapInfo.BlockWidth) - 1) * m^.MapInfo.BlockWidth,
+                      round( ((s^.position.y - s^.velocity.y) / m^.MapInfo.BlockHeight) -1) * m^.MapInfo.BlockHeight,
                       (round( s^.width / m^.MapInfo.BlockWidth) + 2) * m^.MapInfo.BlockWidth,
                       (round( s^.height / m^.MapInfo.BlockHeight) + 2) * m^.MapInfo.BlockHeight);
                     
-      endPoint := RectangleFrom(  round(((s^.x + s^.width) / m^.MapInfo.BlockWidth) - 1) * m^.MapInfo.BlockWidth,
-                      round(((s^.y + s^.height) / m^.MapInfo.BlockHeight) - 1) * m^.MapInfo.BlockHeight,
+      endPoint := RectangleFrom(  round(((s^.position.x + s^.width) / m^.MapInfo.BlockWidth) - 1) * m^.MapInfo.BlockWidth,
+                      round(((s^.position.y + s^.height) / m^.MapInfo.BlockHeight) - 1) * m^.MapInfo.BlockHeight,
                       (round(s^.width / m^.MapInfo.BlockWidth) + 2) * m^.MapInfo.BlockWidth,
                       (round(s^.height / m^.MapInfo.BlockHeight) + 2) * m^.MapInfo.BlockHeight);
     
@@ -793,10 +793,10 @@ implementation
   var
     col : Collisions;
   begin
-    col.Right   := (s^.movement.x > 0) and BruteForceDetectionComponent(m, s, s^.width, 0);
-    col.Left    := (s^.movement.x < 0) and BruteForceDetectionComponent(m, s, -s^.width, 0);
-    col.Top   := (s^.movement.y < 0) and BruteForceDetectionComponent(m, s, 0, -s^.height);
-    col.Bottom  := (s^.movement.y > 0) and BruteForceDetectionComponent(m, s, 0, s^.height);
+    col.Right   := (s^.velocity.x > 0) and BruteForceDetectionComponent(m, s, s^.width, 0);
+    col.Left    := (s^.velocity.x < 0) and BruteForceDetectionComponent(m, s, -s^.width, 0);
+    col.Top   := (s^.velocity.y < 0) and BruteForceDetectionComponent(m, s, 0, -s^.height);
+    col.Bottom  := (s^.velocity.y > 0) and BruteForceDetectionComponent(m, s, 0, s^.height);
 
     if col.Right and col.Bottom then result := BottomRight
     else if col.Left and col.Bottom then result := BottomLeft
@@ -816,7 +816,7 @@ implementation
     if (x < 0 ) or (x >= m^.mapInfo.mapWidth) then raise Exception.Create('x is outside the bounds of the map');
     if (y < 0 ) or (y >= m^.mapInfo.mapWidth) then raise Exception.Create('y is outside the bounds of the map');
         
-    MoveOut(s, s^.movement, x * m^.MapInfo.BlockWidth, y * m^.MapInfo.BlockHeight, m^.MapInfo.BlockWidth, m^.MapInfo.BlockHeight);
+    MoveOut(s, s^.velocity, x * m^.MapInfo.BlockWidth, y * m^.MapInfo.BlockHeight, m^.MapInfo.BlockWidth, m^.MapInfo.BlockHeight);
   end;
 
 
@@ -839,7 +839,7 @@ implementation
     if s = nil then raise Exception.Create('No Sprite suppled (nil)');
   
     rectSearch := GetPotentialCollisions(m, s);
-    side := GetSideForCollisionTest(s^.movement);
+    side := GetSideForCollisionTest(s^.velocity);
   
     yStart := round(rectSearch.y / m^.MapInfo.BlockHeight);
     yEnd := round((rectSearch.y + rectSearch.height) / m^.MapInfo.BlockHeight);
@@ -914,14 +914,14 @@ implementation
     temp: Vector;
   begin
     result := None;
-    temp := s^.movement;
-    s^.movement := vec;
+    temp := s^.velocity;
+    s^.velocity := vec;
     if sgTileMap.SpriteHasCollidedWithMapTile(m, s, x, y) then
     begin
       MoveSpriteOutOfTile(m, s, x, y);
       result := WillCollideOnSide(m, s);
     end;
-    s^.movement := temp;
+    s^.velocity := temp;
   end;
 
   function MapWidth(m : Map): LongInt;
