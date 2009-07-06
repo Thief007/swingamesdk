@@ -377,7 +377,7 @@ interface
 
     /// @type LongIntArray
     /// @array_wrapper
-    /// @field data: LongIntPtr
+    /// @field data: array of LongInt
     LongIntArray = array of LongInt;
 
     /// @type LongIntPtr

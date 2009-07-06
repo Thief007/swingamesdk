@@ -62,7 +62,8 @@ class SGPasParser():
             'via_pointer': self.process_true_attribute,
             'fixed_result_size': self.process_number_attribute,
             'sameas': self.process_type_attribute,
-            'calls': self.process_id_attribute
+            'calls': self.process_id_attribute,
+            'length': self.process_id_attribute,
         }
         self._block_header_processors = {
             'type': self.process_block_types,

@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-06: Andrew : Added property access routines for Sprite data
 // - 2009-06-29: Andrew : Renamed CurrentWidth to SpriteWidth
 //                      : Renamed CurrentHeight to SpriteHeight
 //                      : Renamed IsSpriteOnScreenAt to SpriteOnScreenAt
@@ -203,15 +204,40 @@ interface
   /// @lib
   /// @class Sprite
   /// @setter Movement
-  procedure SetSpriteMovement(s: Sprite; value: Vector);
+  procedure SetSpriteMovement(s: Sprite; const value: Vector);
 
+  //---------------------------------------------------------------------------
+  // Sprite CellCount
+  //---------------------------------------------------------------------------
+
+  /// @lib
+  /// @class Sprite
+  /// @getter CellCount
+  function SpriteCellCount(s: Sprite): LongInt;
+  
+  //---------------------------------------------------------------------------
+  // Sprite frames per cell
+  //---------------------------------------------------------------------------
+  
+  /// @lib
+  /// @class Sprite
+  /// @setter FramesPerCell
+  /// @length SpriteCellCount
+  procedure SetSpriteFramesPerCell(s: Sprite; const arr: LongIntArray);
+  
+  /// @lib
+  /// @class Sprite
+  /// @getter FramesPerCell
+  /// @length SpriteCellCount
+  function SpriteFramesPerCell(s: Sprite): LongIntArray;
+  
 
 //=============================================================================
 implementation
 //=============================================================================
 
   uses
-    Classes, SysUtils, // System
+    Classes, SysUtils, Math, // System
     sgGraphics, sgGeometry, sgCore, sgCamera; //SwinGame
 
 
@@ -784,9 +810,29 @@ implementation
     result := s^.Movement;
   end;
 
-  procedure SetSpriteMovement(s: Sprite; value: Vector);
+  procedure SetSpriteMovement(s: Sprite; const value: Vector);
   begin
     s^.Movement := value;
+  end;
+  
+  function SpriteFramesPerCell(s: Sprite): LongIntArray;
+  begin
+    result := s^.framesPerCell;
+  end;
+  
+  procedure SetSpriteFramesPerCell(s: Sprite; const arr: LongIntArray);
+  var
+    i: Integer;
+  begin
+    for i := 0 to Min(High(s^.framesPerCell), High(arr)) do
+    begin
+      s^.framesPerCell[i] := arr[i];
+    end;
+  end;
+  
+  function SpriteCellCount(s: Sprite): LongInt;
+  begin
+    result := Length(s^.framesPerCell);
   end;
 
 end.

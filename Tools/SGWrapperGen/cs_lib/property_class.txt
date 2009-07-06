@@ -22,7 +22,7 @@ public class %(property_name)sClass
     }
 
     [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
-    internal void Set%(struct_type)sDataFor(IntPtr ptr)
+    internal void SetDataFor(IntPtr ptr)
     {
         Pointer = ptr;
         this.%(property_name)s = _StructData;

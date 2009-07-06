@@ -23,7 +23,8 @@ class SGMethod(SGMetaDataContainer):
             'is_constructor','return_type','other_class','is_destructor',
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
-            'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 'fixed_result_size', 'calls'])
+            'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 
+            'fixed_result_size', 'length', 'calls'])
         self.name = name
         self.uname = name
         self.params = list()
@@ -51,6 +52,7 @@ class SGMethod(SGMetaDataContainer):
         self.local_vars = list()
         self.was_function = False
         self.has_length_params = False
+        self.length_call = None
     
     def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None, call_creater = None):
         '''Returns a dictionary containing the details of this function/procedure
@@ -74,6 +76,15 @@ class SGMethod(SGMetaDataContainer):
         result['calls.name'] = self.method_called.name
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
+        
+        if self.length_call != None:
+            if self.in_property != None: #replace first argument with 'self'
+                old_arg = self.length_call.args[0]
+                self.length_call.args[0] = 'self.pointer'
+                result['length_call'] = self.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater)['the_call']
+                self.length_call.args[0] = old_arg
+            else:
+                result['length_call'] = self.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater)['the_call']
         
         if self.is_operator:
             result['operator'] = self.name
@@ -168,7 +179,11 @@ class SGMethod(SGMetaDataContainer):
         
     fixed_result_size = property(lambda self: self['fixed_result_size'].other, 
         lambda self,value: self.set_tag('fixed_result_size', value), 
-        None, 'The size for a variable length array returned...')
+        None, 'The size for a variable length array returned is fixed (and known)')
+    
+    length_call = property(lambda self: self['length'].other, 
+        lambda self,value: self.set_tag('length', value), 
+        None, 'The property to get the length of the returned array...')
     
     @property
     def signature(self):
@@ -256,6 +271,8 @@ class SGMethod(SGMetaDataContainer):
         other.return_type = self.return_type
         other.file_line_details = self.file_line_details
         other.doc = self.doc
+        
+        other.length_call = self.length_call
         
         if self.is_static or other.is_constructor:
             other.params = self.params
@@ -347,10 +364,15 @@ class SGMethod(SGMetaDataContainer):
         elif self.is_setter:
             class_method.name = 'set' + property_name
             prop.setter = class_method
+            class_method.params[0].name = 'value'
         else:
             assert(False, '{Property is not a getter or a setter}')
+        
         #change uname as well...
         class_method.uname = class_method.name
+        class_method.in_property = prop
+        
+        self.in_property = None
     
     def _setup_class_method(self, class_method):
         '''
@@ -423,6 +445,10 @@ class SGMethod(SGMetaDataContainer):
         
         #This is 'the' method it has its params
         self.params = self.params
+        
+        #Find the length method if it exists
+        if self.length_call != None:
+            self.length_call = self.in_class.find_method(self.length_call)
         
         #Convert args to appropriate values...
         self._process_args()
