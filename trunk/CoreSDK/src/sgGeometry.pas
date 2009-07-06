@@ -126,7 +126,7 @@ interface
   function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
   
   /// @lib
-  function LineCircleHit(const c: Circle; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
+  function LineCircleHit(const c: Circle; const velocity: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   
   //  Returns distance from the line, or if the intersecting point on the line nearest
   //    the point tested is outside the endpoints of the line, the distance to the
@@ -447,33 +447,33 @@ interface
   // Functions to get a vector out of some bounded shape
   //---------------------------------------------------------------------------
   
-  /// Determines the vector needed to move from point ``pt`` out of rectangle ``rect`` given the movement specified
+  /// Determines the vector needed to move from point ``pt`` out of rectangle ``rect`` given the velocity specified
   /// 
   /// @lib
-  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector; 
+  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const velocity: Vector): Vector; 
   
-  /// Returns the vector needed to move rectangle ``src`` out of rectangle``bounds`` given the movement specified.
+  /// Returns the vector needed to move rectangle ``src`` out of rectangle``bounds`` given the velocity specified.
   ///
   /// @lib
-  function VectorOutOfRectFromRect(const src, bounds: Rectangle; const movement: Vector): Vector;  
+  function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;  
   
   /// Returns the vector out of
   ///
   /// @lib
-  function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const movement: Vector): Vector;
+  function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const velocity: Vector): Vector;
 
   /// @lib
-  function VectorOutOfCircleFromCircle(const src, bounds: Circle; const movement: Vector): Vector;
+  function VectorOutOfCircleFromCircle(const src, bounds: Circle; const velocity: Vector): Vector;
   
   /// @lib
-  function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const movement: Vector): Vector;
+  function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const velocity: Vector): Vector;
   
   //TODO: OverLine...
   /// @lib
-  function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
   
   // // / @lib
-  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
 
   
   //---------------------------------------------------------------------------
@@ -481,10 +481,10 @@ interface
   //---------------------------------------------------------------------------
   
   // // / @lib
-  // function VectorIntoRectFromRect(const src, bounds: Rectangle; const movement: Vector): Vector;
+  // function VectorIntoRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   // 
   // // / @lib
-  // function VectorIntoRectFromCircle(const c: Circle; bounds: Rectangle; const movement: Vector): Vector;
+  // function VectorIntoRectFromCircle(const c: Circle; bounds: Rectangle; const velocity: Vector): Vector;
   
   //---------------------------------------------------------------------------
   // Points functions and procedures
@@ -511,7 +511,11 @@ interface
   
   /// @lib
   function CalculateAngleBetween(const pt1, pt2: Point2D): Single;
-
+  
+  /// @lib
+  /// @class Vector
+  /// @getter Angle
+  function VectorAngle(const v: Vector): Single;
   
   //---------------------------------------------------------------------------
   // Distance / Magnitude Calculation
@@ -635,7 +639,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoints(const pts: ArrayOfPoint2D; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoints(const pts: ArrayOfPoint2D; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
   var
     ptOnLine: Point2D;
     ray, vOut: Vector;
@@ -643,7 +647,7 @@ implementation
     dist, maxDist: Single;
   begin
     // Cast ray searching for points back from shape
-    ray := InvertVector(movement);
+    ray := InvertVector(velocity);
     vOut := VectorFrom(0,0);
 
     maxIdx := -1;
@@ -685,19 +689,19 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoint(const pt: Point2D; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoint(const pt: Point2D; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
   var
     pts: ArrayOfPoint2D;
   begin
     SetLength(pts, 1);
     pts[0] := pt;
-    result := _VectorOverLinesFromPoints(pts, lines, movement, maxIdx);
+    result := _VectorOverLinesFromPoints(pts, lines, velocity, maxIdx);
   end;
 
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
   type
     DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
   var
@@ -709,8 +713,8 @@ implementation
     dotProd, dist, maxDist: Single;
   begin
     // Cast ray searching for points back from shape
-    ray := InvertVector(movement);
-    normalMvmt := VectorNormal(movement);
+    ray := InvertVector(velocity);
+    normalMvmt := VectorNormal(velocity);
     vOut := VectorFrom(0,0);
     ptOnCircle := PointAt(0,0);
 
@@ -764,7 +768,7 @@ implementation
         //DrawPixel(ColorWhite, edge); // Draws pt on line to distant pt
 
         //  Find the point we hit on the line... ptOnLine receives intersection point...
-        if not LineIntersectionPoint(LineFromVector(edge, movement), lines[i], ptOnLine) then continue;
+        if not LineIntersectionPoint(LineFromVector(edge, velocity), lines[i], ptOnLine) then continue;
         // Move back onto line segment... linePt -> closest point on line to intersect point
         //if not maxLine then DrawCircle(ColorRed, ptOnLine, 1); // point on line, but not necessarily the line segment
         //if not maxLine then DrawLine(ColorWhite, edge, ptOnLine);
@@ -772,8 +776,8 @@ implementation
         ptOnLine := ClosestPointOnLine(ptOnLine, lines[i]);
         //if not maxLine then FillCircle(ColorBlue, ptOnLine, 1); // point on segment
 
-        // Find the most distant point on the circle, given the movement vector
-        if not DistantPointOnCircleHeading(ptOnLine, c, movement, ptOnCircle) then continue;
+        // Find the most distant point on the circle, given the velocity vector
+        if not DistantPointOnCircleHeading(ptOnLine, c, velocity, ptOnCircle) then continue;
         // if not maxLine then FillCircle(ColorBlue, ptOnCircle, 2); // point on segment
         // if not maxLine then DrawLine(ColorBlue, ptOnLine, ptOnCircle);
 
@@ -960,6 +964,11 @@ implementation
   // Angle Calculation 
   //---------------------------------------------------------------------------
   
+  function VectorAngle(const v: Vector): Single;
+  begin
+    result := RadToDeg(arctan(v.y / v.x));
+  end;
+  
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
   var
     o, a, oa, rads: Single;
@@ -988,10 +997,10 @@ implementation
   var
     cx1, cy1, cx2, cy2: Single;
   begin
-    cx1 := s1^.x + SpriteWidth(s1) / 2;
-    cy1 := s1^.y + SpriteHeight(s1) / 2;
-    cx2 := s2^.x + SpriteWidth(s2) / 2;
-    cy2 := s2^.y + SpriteHeight(s2) / 2;
+    cx1 := s1^.position.x + SpriteWidth(s1) / 2;
+    cy1 := s1^.position.y + SpriteHeight(s1) / 2;
+    cx2 := s2^.position.x + SpriteWidth(s2) / 2;
+    cy2 := s2^.position.y + SpriteHeight(s2) / 2;
 
     result := CalculateAngle(cx1, cy1, cx2, cy2);
   end;
@@ -1564,7 +1573,7 @@ implementation
   
   function RectangleFrom(s: Sprite): Rectangle;
   begin
-    result := RectangleFrom(s^.x, s^.y, SpriteWidth(s), SpriteHeight(s));
+    result := RectangleFrom(s^.position.x, s^.position.y, SpriteWidth(s), SpriteHeight(s));
   end;
   
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
@@ -1880,14 +1889,14 @@ implementation
     result := VectorFromPointToRect(pt.x, pt.y, rect.x, rect.y, rect.width, rect.height);
   end;
 
-  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const movement: Vector): Vector;
+  function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const velocity: Vector): Vector;
   var
     maxIdx: LongInt;
   begin
-    result := _VectorOverLinesFromPoint(pt, LinesFrom(rect), movement, maxIdx);
+    result := _VectorOverLinesFromPoint(pt, LinesFrom(rect), velocity, maxIdx);
   end;
 
-  function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const movement: Vector): Vector;
+  function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const velocity: Vector): Vector;
   var
     dx, dy, cx, cy: Single;
     a, b, c1, det, t, mvOut: single;
@@ -1901,11 +1910,11 @@ implementation
     end;
 
     // Calculate the determinant (and components) from the center circle and
-    // the point+movement details
+    // the point+velocity details
     cx := c.center.x;
     cy := c.center.y;
-    dx := movement.x;
-    dy := movement.y;
+    dx := velocity.x;
+    dy := velocity.y;
 
     a := dx * dx + dy * dy;
     b := 2 * (dx * (pt.x - cx) + dy * (pt.y - cy));
@@ -1924,37 +1933,37 @@ implementation
       ipt2.y := pt.y + t * dy;
 
       mvOut := PointPointDistance(pt, ipt2) + 1.42; // sqrt 2
-      result := VectorMultiply(UnitVector(InvertVector(movement)), mvOut);
+      result := VectorMultiply(UnitVector(InvertVector(velocity)), mvOut);
     end;
   end;
 
-  function VectorOutOfCircleFromCircle(const src, bounds: Circle; const movement: Vector): Vector;
+  function VectorOutOfCircleFromCircle(const src, bounds: Circle; const velocity: Vector): Vector;
   var
     c: Circle;
   begin
     c := CircleFrom(CenterPoint(bounds), bounds.radius + src.radius);
-    result := VectorOutOfCircleFromPoint(CenterPoint(Src), c, movement);
+    result := VectorOutOfCircleFromPoint(CenterPoint(Src), c, velocity);
   end;
 
-  function VectorOutOfRectFromRect(const src, bounds: Rectangle; const movement: Vector): Vector;
+  function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   var
     maxIDx: LongInt;
   begin
-    result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), movement, maxIdx);
+    result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, maxIdx);
   end;
 
-  // function VectorIntoRectFromRect(const src, bounds: Rectangle; const movement: Vector): Vector;
+  // function VectorIntoRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   // var
   //   maxIDx: LongInt;
   // begin
-  //   result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), movement, False, maxIdx);
+  //   result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, False, maxIdx);
   // end;
 
-  // function VectorIntoRectFromCircle(const c: Circle; bounds: Rectangle; const movement: Vector): Vector;
+  // function VectorIntoRectFromCircle(const c: Circle; bounds: Rectangle; const velocity: Vector): Vector;
   // var
   //   maxIdx: LongInt;
   // begin
-  //   result := _VectorOverLinesFromCircle(c, LinesFrom(bounds), movement, False, maxIdx);
+  //   result := _VectorOverLinesFromCircle(c, LinesFrom(bounds), velocity, False, maxIdx);
   // end;
 
   function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
@@ -1971,11 +1980,11 @@ implementation
     result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
   end;
 
-  function LineCircleHit(const c: Circle; const movement: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
+  function LineCircleHit(const c: Circle; const velocity: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   var
     hitIdx: Integer;
   begin
-    _VectorOverLinesFromCircle(c, lines, movement, hitIdx);
+    _VectorOverLinesFromCircle(c, lines, velocity, hitIdx);
     if hitIdx >= 0 then
     begin
       found := lines[hitIdx];
@@ -2029,21 +2038,21 @@ implementation
     //FillCircle(ColorRed, oppositePt, 2);
   end;
 
-  function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const movement: Vector): Vector;
+  function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const velocity: Vector): Vector;
   var
     maxIdx: Integer;
   begin
-    result := VectorOverLinesFromCircle(c, LinesFrom(rect), movement, maxIdx);
+    result := VectorOverLinesFromCircle(c, LinesFrom(rect), velocity, maxIdx);
   end;
 
-  function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
   begin
-    result := _VectorOverLinesFromCircle(c, lines, movement, maxIDx);
+    result := _VectorOverLinesFromCircle(c, lines, velocity, maxIDx);
   end;
 
-  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; movement: Vector; out maxIdx: LongInt): Vector;
+  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
   // begin
-  //   result := _VectorOverLinesFromCircle(c, lines, movement, False, maxIDx);
+  //   result := _VectorOverLinesFromCircle(c, lines, velocity, False, maxIDx);
   // end;
 
   
@@ -2105,8 +2114,8 @@ implementation
   
   function CenterPoint(s: Sprite): Point2D;
   begin
-    result.x := s^.x + SpriteWidth(s) / 2;
-    result.y := s^.y + SpriteHeight(s) / 2;
+    result.x := s^.position.x + SpriteWidth(s) / 2;
+    result.y := s^.position.y + SpriteHeight(s) / 2;
   end;
   
   function CircleWithinRect(const c: Circle; const rect: Rectangle): Boolean;

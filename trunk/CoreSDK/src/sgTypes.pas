@@ -8,12 +8,13 @@
 // Change History:
 //
 // Version 3.0:
-// - 2009-07-03: Andrew: Added sameas attribute to allow implicit casts in C#
-// - 2009-07-02: Andrew: Formatting, added @via_pointer for types accessed via a pointer
-//                     : Added fields to meta comments for Vector
-// - 2009-06-29: Andrew: Added Circle
-// -                   : Started Polygon (removed for version 3)
-// - 2009-06-20: Andrew: Created types unit.
+// - 2009-07-06: Andrew : Changed movement to velocity and x,y to position for Sprite 
+// - 2009-07-03: Andrew : Added sameas attribute to allow implicit casts in C#
+// - 2009-07-02: Andrew : Formatting, added @via_pointer for types accessed via a pointer
+//                      : Added fields to meta comments for Vector
+// - 2009-06-29: Andrew : Added Circle
+// -                    : Started Polygon (removed for version 3)
+// - 2009-06-20: Andrew : Created types unit.
 //=============================================================================
 
 /// @header sgTypes
@@ -229,7 +230,7 @@ interface
 
     /// The sprite kind is used to indicate the type for each Sprite. This controls
     /// the update behaviour of the Sprite. A StaticSprite will not animate at all and
-    /// the update sprite only performs sprite movement. An AnimArraySprite will animate
+    /// the update sprite only performs sprite velocity. An AnimArraySprite will animate
     /// using an array of bitmaps in addition to updating the Sprite's position, where as
     ///  a AnimMultiSprite will animate using a single bitmap which contains multiple
     /// frames. The sprite kind is determined when the `Sprite` is created. The
@@ -272,7 +273,7 @@ interface
     /// - width, height: The width and height of this sprite (used for multi)
     /// - cols, row: The number of cols and rows of this sprite (used for multi)
     /// - frameCount: Current frame count of this sprite
-    /// - currentFrame: The current animation frame for the Sprite
+    /// - currentFrame: The current animation cell for the Sprite
     /// - usePixelCollision: A flag indicating if pixel collision sould be
     ///                      used, if false bounding collision is used.
     /// - endingAction: How this sprite acts when it finishes playing the animation
@@ -286,24 +287,24 @@ interface
       bufferBmp: Bitmap;
       spriteKind: SpriteKind;
       framesPerCell: Array of LongInt;
-      x, y: Single;
-      dx, dy: Single; //Movement
-      movement: Vector;
+      position: Point2D;
+      velocity: Vector;
       width: LongInt;
       height: LongInt;
       cols: LongInt;
-      row: LongInt;
+      rows: LongInt;
       frameCount: Single;
-      currentFrame: LongInt;
+      currentCell: LongInt;
       usePixelCollision: Boolean;
       endingAction: SpriteEndingAction;
       hasEnded: Boolean;
       reverse: Boolean;
-      mass  : Single;
+      mass: Single;
       rotation: Single;
+      scale: Single;
+      
       bufferedRotation: Single;
-      zoom: Single;
-      bufferedZoom: Single;
+      bufferedScale: Single;
     end;
 
     /// Sprites are used to represent Sprites drawn to the screen. Create a

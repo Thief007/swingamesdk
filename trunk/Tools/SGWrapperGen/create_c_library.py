@@ -165,6 +165,8 @@ _type_switcher = {
         'matrix2d': 'Matrix2D %s',
         'arrayofpoint2d': 'Point2D *%s',
         'triangle': 'Triangle %s',
+        'spriteendingaction': 'SpriteEndingAction %s',
+        'spritekind': 'SpriteKind %s',
     },
 }
 
@@ -299,6 +301,8 @@ _adapter_type_switcher = {
         'fontstyle': 'FontStyle %s',
         'event': 'Event %s',
         'tile': 'Tile %s',
+        'spriteendingaction': 'SpriteEndingAction %s',
+        'spritekind': 'SpriteKind %s',
     }
 
 }
@@ -357,7 +361,9 @@ def arg_visitor(arg_str, the_arg, for_param_or_type):
 
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (links to DLL)'''
-    logger.debug('CREATE C  : Changing adapter type %s - %s', modifier, the_type)
+    if (the_type.name.lower() if the_type != None else None) not in _adapter_type_switcher[modifier]:
+        logger.error('CREATE C  : Error changing adapter type %s - %s', modifier, the_type)
+    
     return _adapter_type_switcher[modifier][the_type.name.lower() if the_type != None else None]
 
 def adapter_param_visitor(the_param, last):

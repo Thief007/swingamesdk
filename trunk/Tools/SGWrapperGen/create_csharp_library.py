@@ -174,6 +174,8 @@ _type_switcher = {
         'arrayofpoint2d': 'Point2D[] %s',
         'triangle': 'Triangle %s',
         'longintarray': 'int[] %s',
+        'spriteendingaction': 'SpriteEndingAction %s',
+        'spritekind': 'SpriteKind %s',
     }
 }
 
@@ -203,6 +205,7 @@ _data_switcher = {
         'keycode': '(KeyCode)%s',
         'mousebutton': '(MouseButton)%s',
         'spriteendingaction': '(SpriteEndingAction)%s',
+        'spritekind': '(SpriteKind)%s',
         'event': '(Event)%s',
         'collisionside': '(CollisionSide)%s',
         'fontalignment': '(FontAlignment)%s',
@@ -273,6 +276,8 @@ _adapter_type_switcher = {
         'circle': 'Circle %s',
         'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
         'longintarray': 'int[] %s',
+        'spritekind': 'SpriteKind %s',
+        
 #        None: 'void %s'
     },
     'const' : {
@@ -343,6 +348,8 @@ _adapter_type_switcher = {
         'fontstyle': 'int %s',
         'event': 'int %s',
         'tile': 'Tile %s',
+        'spriteendingaction': 'int %s',
+        'spritekind': 'int %s',
     }
 }
 

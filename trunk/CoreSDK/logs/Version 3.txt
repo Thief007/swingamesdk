@@ -14,6 +14,7 @@ Suggestions:
 * - SpriteSpeed -> float
 * - SpriteHeading -> float (angle)
 
+Quantised angles for Sprites
 
 
 The main aims of the SwinGame 3.0 release are to address the following:
@@ -129,4 +130,8 @@ The main aims of the SwinGame 3.0 release are to address the following:
   Shapes changes (in Geometry):
   - renamed LinesFromRect to LinesFrom
   
+  Sprites (new):
+  - Added functions and procedures to access sprite data.
+  - Changed movement to velocity
+  - Changed x,y to position
   
