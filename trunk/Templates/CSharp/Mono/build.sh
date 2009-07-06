@@ -41,7 +41,7 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  C_FLAGS="-g" ;;
+    d)  CS_FLAGS="-debug -define:DEBUG" ;;
     ?)  Usage
     esac
 done
@@ -193,7 +193,7 @@ then
         echo "--------------------------------------------------"
         echo "  Running script from $APP_PATH"
         echo "  Saving output to $OUT_DIR"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
+        echo "  Compiler flags ${CS_FLAGS}"
         echo "--------------------------------------------------"
         echo "  ... Creating ${GAME_NAME}"
         
@@ -208,7 +208,7 @@ then
         echo "  Saving output to $OUT_DIR"
         echo "--------------------------------------------------"
         echo "  ... Creating C wrapper library"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
+        echo "  Compiler flags ${CS_FLAGS}"
         CreateCWrapper >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
         

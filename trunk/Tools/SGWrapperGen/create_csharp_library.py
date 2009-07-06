@@ -32,9 +32,11 @@ _class_header = ''
 _class_footer = ''
 
 _array_property = ''
+
 _property_class = ''
 _property_class_property = ''
 _property_class_field = ''
+_property_class_indexer = ''
 
 _pointer_wrapper_class_header = ''
 
@@ -171,6 +173,7 @@ _type_switcher = {
         'matrix2d': 'Matrix2D %s',
         'arrayofpoint2d': 'Point2D[] %s',
         'triangle': 'Triangle %s',
+        'longintarray': 'int[] %s',
     }
 }
 
@@ -182,7 +185,8 @@ _data_switcher = {
         'matrix2d': 'Utils.MatrixFromArray(%s)',
         'arrayofpoint2d': '%s',
         'triangle': 'Utils.TriangleFromArray(%s)',
-        'longint': '%s;',
+        'longint': '%s',
+        'longintarray': '%s',
     },
     'return_val' : 
     {
@@ -268,18 +272,19 @@ _adapter_type_switcher = {
         'tile': 'Tile %s',
         'circle': 'Circle %s',
         'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
+        'longintarray': 'int[] %s',
 #        None: 'void %s'
     },
     'const' : {
         'point2d':      '[MarshalAs(UnmanagedType.Struct), In] ref Point2D %s',
         'linesegment':  '[MarshalAs(UnmanagedType.Struct), In] ref LineSegment %s',
         'rectangle':    '[MarshalAs(UnmanagedType.Struct), In] ref Rectangle %s',
-        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[,] %s',
-        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
+        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] ref float[,] %s',
+        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] ref Point2D[] %s',
         'vector':       '[MarshalAs(UnmanagedType.Struct), In] ref Vector %s',
-        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] LineSegment[] %s',
-        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] int[] %s',
-        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] Bitmap[] %s',
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] ref LineSegment[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] ref int[] %s',
+        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] ref Bitmap[] %s',
         'circle':       '[MarshalAs(UnmanagedType.Struct), In] ref Circle %s'
     },
     'var': {
@@ -288,7 +293,7 @@ _adapter_type_switcher = {
         'timer': 'ref IntPtr %s',
         'byte': 'ref byte %s',
         'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] ref Point2D[] %s',
         #'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In, Out] LineSegment[] %s',
         'font': 'ref IntPtr %s',
         'bitmap': 'ref IntPtr %s',
@@ -312,6 +317,7 @@ _adapter_type_switcher = {
         'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] out float[,] %s',
         'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out Point2D[] %s',
         'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] out Point2D[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out int[] %s',
     },
     'return' : {
         None: 'void %s',
@@ -427,6 +433,7 @@ def load_data():
     global _pointer_wrapper_class_header
     global _array_property
     global _property_class, _property_class_property, _property_class_field
+    global _property_class_indexer
     
     f = open('./cs_lib/lib_header.txt')
     _header = f.read()
@@ -476,6 +483,10 @@ def load_data():
     _property_class_field = f.read()
     f.close()
     
+    f = open('./cs_lib/property_class_indexer.txt')
+    _property_class_indexer = f.read()
+    f.close()
+    
 
 def doc_transform(the_docs):
     docLines = the_docs.splitlines(True)
@@ -515,7 +526,7 @@ def arg_visitor(arg_str, the_arg, for_param):
         result = arg_str
     
     #check var/out/const
-    if (for_param.modifier == 'var' or for_param.modifier == 'const') and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
+    if (for_param.modifier == 'var' or for_param.modifier == 'const'): #and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
         result = 'ref ' + result
     elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
         result = 'out ' + result
@@ -526,7 +537,7 @@ def arg_cs_dll_visitor(arg_str, the_arg, for_param):
     the_type = for_param.data_type
     result = arg_str
     #check var/out/const
-    if (for_param.modifier == 'var' or for_param.modifier == 'const') and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
+    if (for_param.modifier == 'var' or for_param.modifier == 'const'): # and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
         result = 'ref ' + result
     elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
         result = 'out ' + result
@@ -656,6 +667,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
             #process all local variables
             for local_var in the_method.local_vars:
                 temp += '    %s\n' % _local_type_switcher[local_var.data_type.name.lower()] % local_var.name
+                
                 if isinstance(local_var, SGParameter) and local_var.maps_result:
                     #setup the size of a return array
                     if the_method.fixed_result_size > 0:
@@ -665,6 +677,15 @@ def method_visitor(the_method, other, as_accessor_name = None):
                                 'LineSegment' if local_var.data_type.name == 'LinesArray' else 'Point2D',
                                 the_method.fixed_result_size
                             )
+                    elif the_method.length_call != None:
+                        assert local_var.data_type.name in ['LongIntArray']
+                        temp_process_params = '%s = new %s[%s];\n    ' % (
+                                local_var.name,
+                                'int',
+                                details['length_call'].replace('return ', '')
+                            )
+                    
+                    # skip initialisation of result
                     continue                
                 type_name = local_var.data_type.name.lower()
                 
@@ -724,7 +745,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
     
     return other
 
-def write_wrapped_property(the_property, other):
+def _write_wrapped_property(the_property, other):
     '''The property is a structure or array type, so write a wrapper to give access
     to elements and as a whole.'''
     
@@ -733,7 +754,7 @@ def write_wrapped_property(the_property, other):
     details = dict()
     details["property_name"] = the_property.name
     details["in_type"] = the_property.in_class.name
-    details["struct_type"] = the_property.data_type.name
+    details["struct_type"] = _adapter_type_switcher[None][the_property.data_type.name.lower()] % ''
     details["methods"] = ''
     details["properties"] = ''
     
@@ -742,18 +763,26 @@ def write_wrapped_property(the_property, other):
     
     writer.indent(2)
     
-    for field in the_property.data_type.fields:
-        details["field_name"] = field.name
-        details["field_type"] = _struct_type_switcher[field.data_type.name.lower()] % field.name
-        writer.writeln(_property_class_field % details)
+    if the_property.data_type.is_struct:
+        for field in the_property.data_type.fields:
+            details["field_name"] = field.name
+            details["field_type"] = _struct_type_switcher[field.data_type.name.lower()] % field.name
+            writer.writeln(_property_class_field % details)
+    else:
+        field = the_property.data_type.fields[0]
+        details["field_type"] = _struct_type_switcher[field.data_type.nested_type.name.lower()] % 'this'
+        writer.writeln(_property_class_indexer % details)
+    
 
 def property_visitor(the_property, other):
     writer = other['file writer']
     
     type_name = _type_switcher['return'][the_property.data_type.name.lower()]
     
-    if the_property.in_class.is_pointer_wrapper and the_property.data_type.is_struct and not the_property.is_static and the_property.getter != None and the_property.setter != None:
-        write_wrapped_property(the_property, other)
+    is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
+    
+    if is_wrapped:
+        _write_wrapped_property(the_property, other)
         writer.write('private %s\n{\n' % type_name % the_property.name)
     else:    
         # Write standard property
@@ -770,7 +799,7 @@ def property_visitor(the_property, other):
 
     writer.write('}\n');
     
-    if the_property.in_class.is_pointer_wrapper and the_property.data_type.is_struct:
+    if is_wrapped:
         writer.outdent(2)
         writer.write('}\n')
     
@@ -883,7 +912,6 @@ def write_struct(member, other):
     
     if member.data_type.same_as != None:
         filename = './cs_lib/%s_to_%s.txt' % (member.data_type.name.lower(), member.data_type.same_as.name.lower())
-        #print filename
         f = open(filename)
         cast_code = f.read()
         f.close()
@@ -985,58 +1013,74 @@ def post_parse_process(the_file):
     for member in the_file.members:
         #process all method of the file
         methods_and_operators = member.methods.items() + member.operators.items()
+        
         for key, method in methods_and_operators:
-            for param in method.params:
-                if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
-                    logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
+            _post_process_method(method)
+        
+        for key, prop in member.properties.items():
+            if prop.getter != None:
+                _post_process_method(prop.getter)
+            if prop.setter != None:
+                _post_process_method(prop.setter)
 
-                    local_var = SGParameter(param.name + '_temp')
-                    local_var.data_type = param.data_type
-                    local_var.modifier = param.modifier
-                    local_var.maps_result = param.maps_result
-
-                    if param.data_type.wraps_array:
-                        if param.data_type.is_struct:
-                            local_var.has_field = True
-                            local_var.field_name = param.data_type.fields[0].name
-                        else:
-                            continue
-                        
-                    method.local_vars.append(local_var)
-                    param.maps_to_temp = True
+def _post_process_method(method):            
+    for param in method.params:
+        if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
             
-            if method.method_called.was_function:
-                #get the return parameter
-                result_param = method.method_called.params[-1]
-                if not result_param.maps_result: #in case of returning var length array
-                    result_param = method.method_called.params[-2]
-                method.local_vars.append(result_param)
-                method.args.append(result_param)
+            if method.is_constructor: continue
+            
+            logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
+
+            local_var = SGParameter(param.name + '_temp')
+            local_var.data_type = param.data_type
+            local_var.modifier = param.modifier
+            local_var.maps_result = param.maps_result
+            
+            if param.data_type.wraps_array:
+                if param.data_type.is_struct:
+                    local_var.has_field = True
+                    local_var.field_name = param.data_type.fields[0].name
+                # else:
+                #     print 'skipping', param
+                #     continue
                 
-            if method.method_called.has_length_params:
-                for param in method.method_called.params:
-                    if param.is_length_param:
-                        #possibly need an extra local for this... if out
-                        if param.length_of.maps_result:
-                            # need to indicate the size of the returned array...
-                            assert method.fixed_result_size > 0
-                            method.args.append(str(method.fixed_result_size))
-                        elif param.modifier == 'out':
-                            var_name = param.length_of.local_var_name() + '_length'
-
-                            local_var = SGParameter(var_name)
-                            local_var.data_type = find_or_add_type('LongInt')
-                            local_var.modifier = param.modifier
-
-                            method.local_vars.append(local_var)
-                            method.args.append(var_name)
-                        elif not param.data_type.is_struct:
-                            method.args.append(param.length_of.name + '.Length')
-                        else:
-                            method.args.append(param.length_of.local_var_name() + '.Length')
-
+            method.local_vars.append(local_var)
+            param.maps_to_temp = True
     
-    return
+    if method.method_called.was_function:
+        #get the return parameter
+        result_param = method.method_called.params[-1]
+        if not result_param.maps_result: #in case of returning var length array
+            result_param = method.method_called.params[-2]
+        
+        assert result_param.maps_result
+        
+        method.local_vars.append(result_param)
+        method.args.append(result_param)
+        
+    if method.method_called.has_length_params:
+        for param in method.method_called.params:
+            if param.is_length_param:
+                #possibly need an extra local for this... if out
+                if param.length_of.maps_result:
+                    # need to indicate the size of the returned array...
+                    if method.fixed_result_size > 0:
+                        method.args.append(str(method.fixed_result_size))
+                    else:
+                        method.args.append(param.length_of.name + '.Length')
+                elif param.modifier == 'out':
+                    var_name = param.length_of.local_var_name() + '_length'
+
+                    local_var = SGParameter(var_name)
+                    local_var.data_type = find_or_add_type('LongInt')
+                    local_var.modifier = param.modifier
+
+                    method.local_vars.append(local_var)
+                    method.args.append(var_name)
+                elif not param.data_type.is_struct:
+                    method.args.append(param.length_of.name + '.Length')
+                else:
+                    method.args.append(param.length_of.local_var_name() + '.Length')
     
     # for member in the_file.members:
     #     #process all method of the file

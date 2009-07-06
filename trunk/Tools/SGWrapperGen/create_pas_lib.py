@@ -159,7 +159,7 @@ def method_visitor(the_method, other):
         if not result_param.maps_result: #in case of returning var length array
             result_param = the_method.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'arrayofpoint2d']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'arrayofpoint2d', 'longintarray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure

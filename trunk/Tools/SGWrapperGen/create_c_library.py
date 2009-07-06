@@ -124,6 +124,7 @@ _type_switcher = {
         'matrix2d': 'Matrix2D %s',
         'map': 'Map *%s',
         'arrayofpoint2d': 'Point2D *%s',
+        'longintarray': 'int *%s',
     },
     'out' : {
         'string': 'char *%s',
@@ -271,6 +272,7 @@ _adapter_type_switcher = {
         'matrix2d': 'Matrix2D %s',
         'arrayofpoint2d': 'Point2D *%s',
         'triangle': 'Triangle %s',
+        'longintarray': 'int *%s',
     },
     # Mapping of the return type of a function
     'return' : {
@@ -359,14 +361,20 @@ def adapter_type_visitor(the_type, modifier = None):
     return _adapter_type_switcher[modifier][the_type.name.lower() if the_type != None else None]
 
 def adapter_param_visitor(the_param, last):
-    logger.debug('CREATE C  : Visiting adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
+    if not the_param.data_type.name.lower() in _adapter_type_switcher[the_param.modifier]:
+        logger.error('CREATE C  : Error visiting adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
+        assert False
+    
     return '%s%s' % (
         _adapter_type_switcher[the_param.modifier][the_param.data_type.name.lower()] % the_param.name,
         ', ' if not last else '')
 
 def type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame library'''
-    logger.debug('CREATE C  : Changing model type %s - %s', modifier, the_type)
+    if not (the_type.name.lower() if the_type != None else None) in _type_switcher[modifier]:
+        logger.error('CREATE C  : Error changing model type %s - %s', modifier, the_type)
+        assert False
+    
     return _type_switcher[modifier][the_type.name.lower() if the_type != None else None]
 
 def param_visitor(the_param, last):
