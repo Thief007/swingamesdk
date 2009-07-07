@@ -1,15 +1,20 @@
 #!/bin/sh
 
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
-    OS="Mac"
-else
-    OS="Linux"
-fi
-
+#
+# Step 1: Move to the directory containing the script
+#
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
+#
+# Step 2: Detect the operating system
+#
+source "${APP_PATH}/inc/os_check.sh"
+
+#
+# Step 3: Set the paths to local variables
+#
 SWINGAME_DIR="${APP_PATH}/../../"
 SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 
@@ -29,73 +34,46 @@ FPC_PAS_DIST_DIR="${PAS_DIST_DIR}/FPC"
 
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
+#
+# Step 4: Set up array of files to copy
+#
 COPY_LIST=( "Command line FPC,${FPC_PAS_TEMPLATE_DIR},${FPC_PAS_DIST_DIR}" )
 
-source ${APP_PATH}/bundle_source.sh
-echo
-echo
-echo "--------------------------------------------------"
-echo "         Creating SwinGame Pascal Templates"
-echo "              for Mac OS X and Linux"
-echo "--------------------------------------------------"
-echo "  Will Create Templates for: "
-
-for arg in "${COPY_LIST[@]}"; do
-    name=`echo $arg | awk -F"," '{print $1}'`
-    echo "    - $name"
-done
-
-echo "--------------------------------------------------"
-
-# Functions...
-
-copyWithoutSVN()
-{
-    FROM_DIR=$1
-    TO_DIR=$2
-    
-    cd "${FROM_DIR}"
-    
-    # Create directory structure
-    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -exec mkdir "${TO_DIR}/{}" \;
-    # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
-}
-
-#Step 1: Delete old dists if they exist
-
-if [ -d $PAS_DIST_DIR ]; then
-    echo "  ... Removing old Pascal dist"
-    rm -rf ${PAS_DIST_DIR}
+if [ "$OS" = "$MAC" ]; then
+    # build framework if needed
+    if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
+        source ${APP_PATH}/bundle_source.sh -b
+        if [ $? != 0 ]; then echo "Error building SGSDK framework"; exit 1; fi
+        echo
+        echo
+    fi
+elif [ "$OS" = "$WIN" ]; then
+    # build dll if needed
+    if [ ! -f "${SOURCE_DIST_DIR}/bin/SGSDK.dll" ]; then
+        source ${APP_PATH}/bundle_source.sh -b
+        if [ $? != 0 ]; then echo "Error building SGSDK library"; exit 1; fi
+        echo
+        echo
+    fi
 fi
 
-#Step 2: Create dists
-echo "  ... Creating dist directories"
-for arg in "${COPY_LIST[@]}"; do
-    to=`echo $arg | awk -F"," '{print $3}'`
-    
-    mkdir -p "${to}"
-done
+#
+# Step 5: Declare functions
+#
+source ${APP_PATH}/inc/copy_without_svn.sh
+source ${APP_PATH}/inc/dist_dir.sh
 
-#Step 3: Copy common files to all
-echo "  ... Copying files"
-for arg in "${COPY_LIST[@]}"; do
-    name=`echo $arg | awk -F"," '{print $1}'`
-    from=`echo $arg | awk -F"," '{print $2}'`
-    to=`echo $arg | awk -F"," '{print $3}'`
-    
-    echo -n "  ... Copying to $name"
-    
-    copyWithoutSVN "$COMMON_TEMPLATE_DIR" "$to"
-    copyWithoutSVN "$COMMON_PAS_TEMPLATE_DIR" "$to"
-    copyWithoutSVN "$from" "$to"
-    copyWithoutSVN "${SOURCE_DIST_DIR}/src" "${to}/lib"
-    
-    if [ $OS = "Mac" ]; then
-        echo " with library"
-        #Copy SDL frameworks
-        cp -R -p "${SOURCE_DIST_DIR}/lib"/*.framework "${to}/lib"
-    else
-        echo ""
-    fi
-done
+#
+# Step 6: Copy Pascal Library
+#
+echo "--------------------------------------------------"
+echo "      Creating $OS SwinGame Pascal Templates"
+echo "--------------------------------------------------"
+echo "  Will Create Templates for: "
+ListDists "${COPY_LIST}"
+echo "--------------------------------------------------"
+
+DoDist "${COPY_LIST}" "${PAS_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_PAS_TEMPLATE_DIR}"
+
+echo "  Finished"
+echo "--------------------------------------------------"

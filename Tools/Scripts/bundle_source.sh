@@ -1,26 +1,16 @@
-# Move to src dir
+#!/bin/sh
 
 #
-# Step 1: Detect the operating system
-#
-MAC="Mac OS X"
-WIN="Windows"
-LIN="Linux"
-
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
-    OS=$MAC
-elif [ -d /c/Windows ]; then
-    OS=$WIN
-else
-    OS=$LIN
-fi
-
-#
-# Step 2: Move to the directory containing the script
+# Step 1: Move to the directory containing the script
 #
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
+
+#
+# Step 2: Detect the operating system
+#
+source "${APP_PATH}/inc/os_check.sh"
 
 #
 # Step 3: Setup options
@@ -105,33 +95,7 @@ CreateLibrary()
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
 }
 
-# copy frameworks from $1 to $1 without copying SVN details
-copyFrameworksWithoutSVN()
-{
-    FROM_DIR=$1
-    TO_DIR=$2
-    
-    cd "${FROM_DIR}"
-    
-    # Create directory structure
-    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -path \*.framework\* -exec mkdir "${TO_DIR}/{}" \;
-    # Copy files
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
-}
-
-# copy frameworks from $1 to $1 without copying SVN details
-copyWithoutSVN()
-{
-    FROM_DIR=$1
-    TO_DIR=$2
-    
-    cd "${FROM_DIR}"
-    
-    # Create directory structure
-    find . -mindepth 1 -type d ! -path \*/. ! -path \*.svn\* -exec mkdir "${TO_DIR}/{}" \;
-    # Copy files
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
-}
+source "${APP_PATH}/inc/copy_without_svn.sh"
 
 #
 # Step 8: Create code and copy to destination

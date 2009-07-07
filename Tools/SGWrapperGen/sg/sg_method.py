@@ -366,7 +366,8 @@ class SGMethod(SGMetaDataContainer):
             prop.setter = class_method
             class_method.params[0].name = 'value'
         else:
-            assert(False, '{Property is not a getter or a setter}')
+            logger.error('Property is not a getter or a setter: %s - %s', self.name, property_name)
+            assert False
         
         #change uname as well...
         class_method.uname = class_method.name
