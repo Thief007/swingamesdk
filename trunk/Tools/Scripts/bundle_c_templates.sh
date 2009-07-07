@@ -1,26 +1,16 @@
 #!/bin/sh
 
 #
-# Step 1: Detect the operating system
-#
-MAC="Mac OS X"
-WIN="Windows"
-LIN="Linux"
-
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
-    OS=$MAC
-elif [ -d /c/Windows ]; then
-    OS=$WIN
-else
-    OS=$LIN
-fi
-
-#
-# Step 2: Move to the directory containing the script
+# Step 1: Move to the directory containing the script
 #
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
+
+#
+# Step 2: Detect the operating system (defines MAC, LIN, WIN, and OS variables)
+#
+source "${APP_PATH}/inc/os_check.sh"
 
 #
 # Step 3: Set the paths to local variables
@@ -47,11 +37,15 @@ XCODE_C_DIST_DIR="${C_DIST_DIR}/xcode 3"
 
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
+#
+# Step 4: Set up array of files to copy
+#
 COPY_LIST=( "Command line gcc,${GCC_C_TEMPLATE_DIR},${GCC_C_DIST_DIR}" )
 
 if [ "$OS" = "$MAC" ]; then
     COPY_LIST=( "${COPY_LIST[@]}" "XCode 3,${XCODE_C_TEMPLATE_DIR},${XCODE_C_DIST_DIR}")
     
+    # build framework if needed
     if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
         source ${APP_PATH}/bundle_source.sh -b
         if [ $? != 0 ]; then echo "Error building SGSDK framework"; exit 1; fi
@@ -59,6 +53,7 @@ if [ "$OS" = "$MAC" ]; then
         echo
     fi
 elif [ "$OS" = "$WIN" ]; then
+    # build dll if needed
     if [ ! -f "${SOURCE_DIST_DIR}/bin/SGSDK.dll" ]; then
         source ${APP_PATH}/bundle_source.sh -b
         if [ $? != 0 ]; then echo "Error building SGSDK library"; exit 1; fi
@@ -67,20 +62,32 @@ elif [ "$OS" = "$WIN" ]; then
     fi
 fi
 
+
+#
+# Step 5: Declare functions
+#
+
+# Create the c code using Python
+CreateCCode()
+{
+    cd "${PYTHON_SCRIPT_DIR}"
+    python create_c_library.py
+}
+
+source ${APP_PATH}/inc/copy_without_svn.sh
+source ${APP_PATH}/inc/dist_dir.sh
+
+#
+# Step 6: Create c library and copy
+#
 echo "--------------------------------------------------"
 echo "          Creating SwinGame C Templates"
 echo "              for $OS"
 echo "--------------------------------------------------"
 echo "  Will Create Templates for: "
-
-for arg in "${COPY_LIST[@]}"; do
-    name=`echo $arg | awk -F"," '{print $1}'`
-    echo "    - $name"
-done
-
+ListDists "${COPY_LIST}"
 echo "--------------------------------------------------"
-
-echo " Python scripts at $PYTHON_SCRIPT_DIR"
+echo "  Python scripts at $PYTHON_SCRIPT_DIR"
 
 if [ "$OS" = "$MAC" ]; then
     echo "  Copying Frameworks from Source dist"
@@ -89,72 +96,10 @@ elif [ "$OS" = "$WIN" ]; then
 fi
 
 echo "--------------------------------------------------"
-
-# Functions...
-CreateCCode()
-{
-    cd "${PYTHON_SCRIPT_DIR}"
-    python create_c_library.py
-}
-
-copyWithoutSVN()
-{
-    FROM_DIR=$1
-    TO_DIR=$2
-    
-    cd "${FROM_DIR}"
-    
-    # Create directory structure
-    find . -mindepth 1 -type d ! -path \*.svn\* ! -path \*/. -exec mkdir "${TO_DIR}/{}" \;
-    # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
-}
-
-#Step 1: Delete old dists if they exist
-if [ -d $C_DIST_DIR ]; then
-    echo "  ... Removing old C dist"
-    rm -rf ${C_DIST_DIR}
-fi
-
-#Step 2: Create dists
-echo "  ... Creating dist directories"
-for arg in "${COPY_LIST[@]}"; do
-    to=`echo $arg | awk -F"," '{print $3}'`
-    mkdir -p "${to}"
-done
-
-#Step 3: Create the C lib code
 echo "  ... Creating C library code"
 CreateCCode
 
-#Step 4: Copy files to all
-echo "  ... Copying files"
-for arg in "${COPY_LIST[@]}"; do
-    name=`echo $arg | awk -F"," '{print $1}'`
-    from=`echo $arg | awk -F"," '{print $2}'`
-    to=`echo $arg | awk -F"," '{print $3}'`
-    
-    echo -n "  ... Copying to $name"
-    
-    copyWithoutSVN "$COMMON_TEMPLATE_DIR" "$to"
-    copyWithoutSVN "$COMMON_C_TEMPLATE_DIR" "$to"
-    copyWithoutSVN "$from" "$to"
-    
-    if [ "$OS" = "$MAC" ]; then
-        echo " with library"
-        #Copy SGSDK framework
-        cp -R -p -f "${SOURCE_DIST_DIR}/bin"/*.framework "${to}/lib"
-        #Copy SDL frameworks
-        cp -R -p -f "${SOURCE_DIST_DIR}/lib"/*.framework "${to}/lib"
-    elif [ "$OS" = "$WIN" ]; then
-        echo " with library"
-        #Copy SGSDK framework
-        cp -p -f "${SOURCE_DIST_DIR}/bin"/*.dll "${to}/lib"
-        cp -p -f "${SOURCE_DIST_DIR}/bin"/*.a "${to}/lib"
-        #Copy SDL frameworks
-        cp -p -f "${SOURCE_DIST_DIR}/lib"/*.dll "${to}/lib"
-        cp -p -f "${SOURCE_DIST_DIR}/lib"/*.a "${to}/lib"
-    else
-        echo ""
-    fi
-done
+DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
+
+echo "  Finished"
+echo "--------------------------------------------------"
