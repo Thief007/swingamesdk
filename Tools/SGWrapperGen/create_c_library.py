@@ -428,7 +428,7 @@ def write_c_lib_header(the_file, for_others = False):
     
     the_file.members[0].visit_methods(method_visitor, other)
     
-    file_writer.write(_footer)
+    file_writer.writeln(_footer)
     file_writer.close()
 
 def write_c_methods_for(member, other):
@@ -520,9 +520,10 @@ def write_c_lib_module(the_file):
     
     if the_file.has_body:
         #close the c file
+        c_file_writer.writeln()
         c_file_writer.close()
     
-    header_file_writer.write(_module_header_footer)    
+    header_file_writer.writeln(_module_header_footer)    
     header_file_writer.close()
 
 def post_parse_process(the_file):

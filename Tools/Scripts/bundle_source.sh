@@ -3,7 +3,6 @@
 #
 # Step 1: Detect the operating system
 #
-
 MAC="Mac OS X"
 WIN="Windows"
 LIN="Linux"

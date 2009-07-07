@@ -1,5 +1,20 @@
 #!/bin/sh
 
+#
+# Step 1: Detect the operating system
+#
+MAC="Mac OS X"
+WIN="Windows"
+LIN="Linux"
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+    OS=$MAC
+elif [ -d /c/Windows ]; then
+    OS=$WIN
+else
+    OS=$LIN
+fi
+
 # Move to src dir
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
@@ -88,7 +103,7 @@ doMacCompile()
     echo "  ... Creating game for $1"
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o ${OUT_DIR}/${GAME_NAME}.${1} `find ${TMP_DIR} -name \*.o -maxdepth 1`
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o ${OUT_DIR}/${GAME_NAME}.${1} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
     
     CleanTmp
@@ -176,7 +191,7 @@ doLinuxCompile()
     #Assemble all of the .s files
     echo "  ... Creating game"
     
-    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -name \*.o -maxdepth 1`
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
     
     CleanTmp
@@ -184,7 +199,38 @@ doLinuxCompile()
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${APP_PATH}/bin/"
+    RESOURCE_DIR="${APP_PATH}/bin/Resources"
+}
+
+doWindowsCompile()
+{
+    CleanTmp
+    
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
+    do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        echo "      ... Compiling ${name}"    
+        ${GCC_BIN} -c ${SG_INC} ${C_FLAGS} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error compiling SwinGame C wrapper"; cat ${LOG_FILE}; exit 1; fi
+    done
+    
+    #Assemble all of the .s files
+    echo "  ... Creating game"
+    
+    ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
+    
+    echo "  ... Copying libraries"
+    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
+    cp -p -f "${LIB_DIR}"/*.a "${OUT_DIR}"
+    
+    CleanTmp
+}
+
+doWindowsPackage()
+{
+    RESOURCE_DIR=${APP_PATH}/bin/Resources
 }
 
 copyWithoutSVN()
@@ -195,7 +241,7 @@ copyWithoutSVN()
     cd "${FROM_DIR}"
     
     # Create directory structure
-    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -exec mkdir "${TO_DIR}/{}" \;
+    find . -mindepth 1 -type d ! -path \*.svn\* -exec sh -c "if [ ! -d '${TO_DIR}/{}' ]; then mkdir -p '${TO_DIR}/{}' ; fi" \;
     # Copy files and links
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }
@@ -218,40 +264,29 @@ then
         mkdir -p "${OUT_DIR}"
     fi
     
-    if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-    then
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Mac OS X"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
-        echo "--------------------------------------------------"
-        echo "  ... Creating ${GAME_NAME}"
-        
+    echo "--------------------------------------------------"
+    echo "          Creating $GAME_NAME"
+    echo "          for $OS"
+    echo "--------------------------------------------------"
+    echo "  Running script from $APP_PATH"
+    echo "  Saving output to $OUT_DIR"
+    echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
+    echo "--------------------------------------------------"
+    echo "  ... Creating ${GAME_NAME}"
+
+    
+    if [ "$OS" = "$MAC" ]; then
         doMacCompile "ppc"
         doMacCompile "i386"
         
         doLipo "i386" "ppc"
         doMacPackage
-    else
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Linux"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "--------------------------------------------------"
-        echo "  ... Creating C wrapper library"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
-        CreateCWrapper >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
-        
-        echo "  ... Compiling Library"
+    elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
-        
         doLinuxPackage
+    else #Windows
+        doWindowsCompile
+        doWindowsPackage
     fi
     
     doCopyResources

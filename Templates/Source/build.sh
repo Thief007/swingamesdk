@@ -3,7 +3,6 @@
 #
 # Step 1: Detect the operating system
 #
-
 MAC="Mac OS X"
 WIN="Windows"
 LIN="Linux"
@@ -34,7 +33,6 @@ INSTALL="N"
 #
 # Step 4: Usage message and process command line arguments
 #
-
 Usage()
 {
     echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [version]"
