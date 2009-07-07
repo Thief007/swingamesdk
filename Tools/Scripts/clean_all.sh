@@ -1,11 +1,5 @@
 #!/bin/sh
 
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
-    OS="Mac"
-else
-    OS="Linux"
-fi
-
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
@@ -19,7 +13,6 @@ DIST_DIR="${SWINGAME_DIR}/Dist"
 
 echo "--------------------------------------------------"
 echo "          Cleaning SwinGame Distributions"
-echo "              for Mac OS X and Linux"
 echo "--------------------------------------------------"
 
 find ${DIST_DIR} -type d ! -path \*.svn\* -mindepth 1 -maxdepth 1 -exec rm -rf {} \;
