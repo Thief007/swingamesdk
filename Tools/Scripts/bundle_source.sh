@@ -1,8 +1,55 @@
 # Move to src dir
+
+#
+# Step 1: Detect the operating system
+#
+
+MAC="Mac OS X"
+WIN="Windows"
+LIN="Linux"
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+    OS=$MAC
+elif [ -d /c/Windows ]; then
+    OS=$WIN
+else
+    OS=$LIN
+fi
+
+#
+# Step 2: Move to the directory containing the script
+#
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
+#
+# Step 3: Setup options
+#
+BUILD="N"
+EXTRA_OPTS=""
+
+while getopts bid o
+do
+    case "$o" in
+    b)  BUILD="Y";;
+    d)  BUILD="Y"
+        EXTRA_OPTS="${EXTRA_OPTS} -d";;
+    i)  EXTRA_OPTS="${EXTRA_OPTS} -i" ;;
+    [?]) print >&2 "Usage: $0 [-b] [-d] [-i] [version]"
+         exit -1;;
+    esac
+done
+
+shift $((${OPTIND}-1))
+
+if [ "a$1" != "a" ]; then
+    EXTRA_OPTS="${EXTRA_OPTS} $1"
+fi
+
+#
+# Step 5: Set the paths to local variables
+#
 SWINGAME_DIR="${APP_PATH}/../../"
 SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 
@@ -23,41 +70,43 @@ C_COMMON_LIB_DIR="${C_TEMPLATE_DIR}/common/lib"
 
 PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
 
-BUILD="N"
-EXTRA_OPTS=""
-
-while getopts bid o
-do
-    case "$o" in
-    b)  BUILD="Y";;
-    d)  BUILD="Y"
-        EXTRA_OPTS="${EXTRA_OPTS} -d";;
-    i)  EXTRA_OPTS="${EXTRA_OPTS} -i local" ;;
-    esac
-done
-
-shift $((${OPTIND}-1))
-
-if [ ! -d ${SOURCE_DIST_DIR} ]
-then
-    rm -rf ${SOURCE_DIST_DIR}
+if [ "$OS" = "$MAC" ]; then
+    FRAMEWORK_DIR="${SWINGAME_DIR}/CoreSDK/lib/mac"
+    TO_LIB_DIR="${SOURCE_DIST_DIR}/lib"
+elif [ "$OS" = "$WIN" ]; then
+    FROM_LIB_DIR="${SWINGAME_DIR}/CoreSDK/lib/win"
+    TO_LIB_DIR="${SOURCE_DIST_DIR}/lib"
 fi
 
-mkdir -p ${SRC_DIR}
+#
+# Step 6: Prepare directories
+#
+if [ ! -d "${SOURCE_DIST_DIR}" ]
+then
+    rm -rf "${SOURCE_DIST_DIR}"
+fi
 
-#Functions
+mkdir -p "${SRC_DIR}"
 
+#
+# Step 7: Define Functions
+#
+
+# Create the pascal code and c headers
 CreateLibrary()
 {
-    cd ${PYTHON_SCRIPT_DIR}
+    cd "${PYTHON_SCRIPT_DIR}"
     python create_pas_lib.py
     if [ $? != 0 ]; then echo "Error creating Pascal library."; exit 1; fi
-    cp -p ${C_COMMON_LIB_DIR}/SGSDK.h ${SRC_DIR}/SGSDK.h
+    
+    cp -p "${C_COMMON_LIB_DIR}/SGSDK.h" "${SRC_DIR}/SGSDK.h"
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
-    cp -p ${C_COMMON_LIB_DIR}/Types.h ${SRC_DIR}/Types.h
+    
+    cp -p "${C_COMMON_LIB_DIR}/Types.h" "${SRC_DIR}/Types.h"
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
 }
 
+# copy frameworks from $1 to $1 without copying SVN details
 copyFrameworksWithoutSVN()
 {
     FROM_DIR=$1
@@ -69,14 +118,28 @@ copyFrameworksWithoutSVN()
     find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -path \*.framework\* -exec mkdir "${TO_DIR}/{}" \;
     # Copy files
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
-
 }
 
-# Steps...
+# copy frameworks from $1 to $1 without copying SVN details
+copyWithoutSVN()
+{
+    FROM_DIR=$1
+    TO_DIR=$2
+    
+    cd "${FROM_DIR}"
+    
+    # Create directory structure
+    find . -mindepth 1 -type d ! -path \*/. ! -path \*.svn\* -exec mkdir "${TO_DIR}/{}" \;
+    # Copy files
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
+}
 
+#
+# Step 8: Create code and copy to destination
+#
 echo "--------------------------------------------------"
 echo "          Creating Source Template"
-echo "              for Mac OS X and Linux"
+echo "              for $OS"
 echo "--------------------------------------------------"
 echo "  Running script from $APP_PATH"
 echo "  Build options are ${EXTRA_OPTS}"
@@ -84,14 +147,17 @@ echo "  Copying"
 echo "    from ${SDK_SRC}"
 echo "    and ${SDK_LIB_SRC}"
 echo "    to ${SOURCE_DIST_DIR}"
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-then
-    FRAMEWORK_DIR="${SWINGAME_DIR}/CoreSDK/lib/mac"
-    LIB_DIR="${SOURCE_DIST_DIR}/lib"
+
+if [ "$OS" = "$MAC" ]; then
     echo "  Copying Frameworks"
     echo "    from ${FRAMEWORK_DIR}"
-    echo "      to ${LIB_DIR}"
-    mkdir -p ${LIB_DIR}
+    echo "      to ${TO_LIB_DIR}"
+    mkdir -p ${TO_LIB_DIR}
+elif [ "$OS" = "$WIN" ]; then
+    echo "  Copying libraries"
+    echo "    from ${FROM_LIB_DIR}"
+    echo "      to ${TO_LIB_DIR}"
+    mkdir -p ${TO_LIB_DIR}
 fi
 echo "--------------------------------------------------"
 
@@ -103,29 +169,39 @@ CreateLibrary
 echo "  Copying Pascal source"
 find ${SDK_SRC} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
 find ${SDK_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
 find ${SDK_LIB_SRC} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
 find ${SDK_LIB_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
 echo "  Copying build script"
 cp -p "${SOURCE_TEMPLATE_DIR}"/build.sh "${SOURCE_DIST_DIR}"
+chmod a+x "${SOURCE_DIST_DIR}"/build.sh
 
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-then
-    echo "  Copying frameworks"
-    rm -Rf "${LIB_DIR}"/*
-    copyFrameworksWithoutSVN ${FRAMEWORK_DIR} ${LIB_DIR}
+if [ "$OS" = "$MAC" ]; then
+    echo "  Copying Frameworks"
+    rm -Rf "${TO_LIB_DIR}"/*
+    copyFrameworksWithoutSVN ${FRAMEWORK_DIR} ${TO_LIB_DIR}
     if [ $? != 0 ]; then echo "Error copying frameworks."; exit 1; fi
+elif [ "$OS" = "$WIN" ]; then
+    echo "  Copying libraries"
+    rm -Rf "${TO_LIB_DIR}"/*
+    copyWithoutSVN ${FROM_LIB_DIR} ${TO_LIB_DIR}
+    if [ $? != 0 ]; then echo "Error copying libraries."; exit 1; fi
 fi
 
 echo "  Finished"
+if [ $BUILD = "Y" ]; then
+    echo "  Preparing to build..."
+fi
 echo "--------------------------------------------------"
 
-if [ $BUILD = "Y" ]
-then
+if [ $BUILD = "Y" ]; then
     echo
     ${SOURCE_DIST_DIR}/build.sh -c
     echo

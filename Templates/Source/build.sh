@@ -1,30 +1,45 @@
 #!/bin/sh
 
-# Move to src dir
+#
+# Step 1: Detect the operating system
+#
+
+MAC="Mac OS X"
+WIN="Windows"
+LIN="Linux"
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+    OS=$MAC
+elif [ -d /c/Windows ]; then
+    OS=$WIN
+else
+    OS=$LIN
+fi
+
+#
+# Step 2: Move to the directory containing the script
+#
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
-#Set the basic paths
-OUT_DIR="${APP_PATH}/bin"
-TMP_DIR="${APP_PATH}/tmp"
-SDK_SRC_DIR="${APP_PATH}/src"
-FRAMEWORK_DIR="${APP_PATH}/lib"
-LOG_FILE="${APP_PATH}/tmp/out.log"
-
+#
+# Step 3: Setup options
+#
 EXTRA_OPTS="-O3 -Sewn -vwn"
 VERSION=3.0
 CLEAN="N"
 INSTALL="N"
 
-FPC_BIN=`which fpc`
+#
+# Step 4: Usage message and process command line arguments
+#
 
 Usage()
 {
-    echo "Usage: [-c] [-d] [-i] [-h] version"
+    echo "Usage: ./build.sh [-c] [-d] [-i] [-h] [version]"
     echo 
     echo "Creates and Compiles the native SGSDK library."
-    echo "Libraries are copied to $OUT_DIR."
     echo
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
@@ -34,8 +49,8 @@ Usage()
     echo
     echo "Requires:"
     echo " - Free Pascal Compiler"
-    if [ ! -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-    then
+    
+    if [ "$OS" = "$LIN" ]; then
         echo " - SDL dev"
         echo " - SDL-image dev"
         echo " - SDL-mixer dev"
@@ -45,40 +60,114 @@ Usage()
     exit 0
 }
 
-while getopts chdi: o
+while getopts chdi o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  EXTRA_OPTS="-vwn -gw";;
-    i)  INSTALL="$OPTARG";;
-    [?]) print >&2 "Usage: $0 [-c] [-d] [-i] [-h] version"
+    d)  EXTRA_OPTS="-vwn -gw -uTRACE";;
+    i)  INSTALL="Y";;
+    [?]) print >&2 "Usage: $0 [-c] [-d] [-i] [-h] [version]"
          exit -1;;
     esac
 done
 
 shift $((${OPTIND}-1))
 
+if [ "a$1" != "a" ]; then
+    VERSION=$1
+fi
+
+#
+# Step 5: Set the paths to local variables
+#
+OUT_DIR="${APP_PATH}/bin"
+TMP_DIR="${APP_PATH}/tmp"
+SDK_SRC_DIR="${APP_PATH}/src"
+LOG_FILE="${APP_PATH}/tmp/out.log"
+FPC_BIN=`which fpc`
+
+if [ "$OS" = "$MAC" ]; then
+    FRAMEWORK_DIR="${APP_PATH}/lib"	
+    VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
+    HEADER_DIR="${VERSION_DIR}/Headers"
+    RESOURCES_DIR="${VERSION_DIR}/Resources"
+    CURRENT_DIR="${OUT_DIR}/SGSDK.framework/Versions/Current"
+elif [ "$OS" = "$WIN" ]; then
+    LIB_DIR="${APP_PATH}/lib"
+    # FPC paths require c:/
+    SDK_SRC_DIR=`echo $SDK_SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
+    OUT_DIR=`echo $OUT_DIR | awk '{sub("/c/", "c:/"); print}'`
+fi
+
+if [ $INSTALL != "N" ]; then
+    if [ "$OS" = "$MAC" ]; then
+        if [ "$(id -u)" != "0" ]; then
+            INSTALL_DIR="~/Library/Frameworks"
+        else
+            INSTALL_DIR="/Library/Frameworks"
+        fi
+    elif [ "$OS" = "$LIN" ]; then
+        if [ "$(id -u)" != "0" ]; then
+            echo "Install must be run as super user. Use sudo ./build.sh -i to install."
+            exit 1
+        fi
+        INSTALL_DIR="/usr/lib"
+        HEADER_DIR="/usr/include/sgsdk"
+    else #windows
+        INSTALL_DIR="$SYSTEMROOT/System32"
+    fi
+fi
+
+#
+# Step 6: Setup log file
+#
+
 if [ -f "${LOG_FILE}" ]
 then
     rm -f "${LOG_FILE}"
 fi
 
+#
+# Step 7: Declare functions for compiling
+#
 
-
-DoExitAsm ()
-{ 
-    echo "An error occurred while assembling $1" 
-    exit 1 
+DisplayHeader()
+{
+    echo "--------------------------------------------------"
+    echo "          Creating SwinGame Dynamic Library"
+    echo "                 for $OS"
+    echo "--------------------------------------------------"
+    echo "  Running script from $APP_PATH"
+    echo "  Saving output to $OUT_DIR"
+    if [ "$OS" = "$MAC" ]; then
+        echo "  Copying Frameworks from ${FRAMEWORK_DIR}"
+    elif [ "$OS" = "$WIN" ]; then
+        echo "  Copying libraries from ${LIB_DIR}"
+    fi
+    echo "  Compiling with $EXTRA_OPTS"
+    if [ ! $INSTALL = "N" ]; then
+        echo "  Installing to $INSTALL_DIR"
+        if [ "$OS" = "$LIN" ]; then
+            echo "  Copying headers to $HEADER_DIR"
+        fi
+    fi
+    echo "--------------------------------------------------"
 }
 
+# Clean up the temporary directory
 CleanTmp()
 {
     if [ -d "${TMP_DIR}" ]
     then
         rm -rf "${TMP_DIR}"
-    fi
-    mkdir "${TMP_DIR}" 
+    fi 
+}
+
+PrepareTmp()
+{
+    CleanTmp
+    mkdir "${TMP_DIR}"
 }
 
 #
@@ -87,26 +176,24 @@ CleanTmp()
 #
 doMacCompile()
 {
-    CleanTmp
+    PrepareTmp
     
-    ${FPC_BIN} -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
-    if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
-    rm -f ${LOG_FILE}
+    # Compile to assembly (.s)
+    "${FPC_BIN}" -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
+    if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
+    rm -f "${LOG_FILE}"
     
-    #Assemble all of the .s files
+    # Assemble all of the assembly (.s) files
     echo "  ... Assembling library for $1"
-    
     for file in `find ${TMP_DIR} | grep [.]s$`
     do
-        /usr/bin/as -o ${file%.s}.o $file -arch $1
-        if [ $? != 0 ]; then DoExitAsm $file; fi
+        /usr/bin/as -o "${file%.s}.o" $file -arch $1
+        if [ $? != 0 ]; then echo "An error occurred while assembling $file"; exit 1; fi
         rm $file
     done
     
-
     echo "  ... Linking Library"
     FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-
     /usr/bin/libtool -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
     
@@ -114,7 +201,7 @@ doMacCompile()
 }
 
 # 
-# Create fat dylib
+# Create fat dylib containing ppc and i386 code
 # 
 doLipo()
 {
@@ -131,12 +218,6 @@ doLipo()
 doCreateFramework()
 {
     echo "  ... Creating Framework version ${VERSION}"
-    
-    VERSION_DIR="${OUT_DIR}/SGSDK.framework/Versions/${VERSION}"
-    HEADER_DIR="${VERSION_DIR}/Headers"
-    RESOURCES_DIR="${VERSION_DIR}/Resources"
-    CURRENT_DIR="${OUT_DIR}/SGSDK.framework/Versions/Current"
-    
     if [ ! -d "${OUT_DIR}/SGSDK.framework" ]
     then
         mkdir "${OUT_DIR}/SGSDK.framework"
@@ -147,9 +228,9 @@ doCreateFramework()
         ADD_SYMLINKS="N"
     fi
     
-    mkdir ${VERSION_DIR}
-    mkdir ${HEADER_DIR}
-    mkdir ${RESOURCES_DIR}
+    mkdir "${VERSION_DIR}"
+    mkdir "${HEADER_DIR}"
+    mkdir "${RESOURCES_DIR}"
     
     cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/SGSDK.h"
     cp "${SDK_SRC_DIR}/Types.h" "${HEADER_DIR}/Types.h"
@@ -194,6 +275,9 @@ doCreateFramework()
     fi
 }
 
+#
+# Step 8: Do each OSs create/install process...
+#
 if [ $CLEAN = "N" ]
 then
     if [ ! -d "${OUT_DIR}" ]
@@ -201,51 +285,31 @@ then
         mkdir -p "${OUT_DIR}"
     fi
     
-    if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
+    if [ "$OS" = "$MAC" ]
     then
-        echo "--------------------------------------------------"
-        echo "          Creating SwinGame Dynamic Library"
-        echo "                 for Mac OS X"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Copying Frameworks from ${FRAMEWORK_DIR}"
-        echo "  Compiling with $EXTRA_OPTS"
-        echo "--------------------------------------------------"
+        DisplayHeader
         
         echo "  ... Compiling Library"
+        #Compile ppc version of library
         FPC_BIN=`which ppcppc`
         doMacCompile "ppc"
         
+        #Compile i386 version of library
         FPC_BIN=`which ppc386`
         doMacCompile "i386"
         
+        #Combine into a fat dylib
         doLipo "i386" "ppc"
         
+        #Convert into a Framework
         doCreateFramework
         
         if [ ! $INSTALL = "N" ]
         then
             echo "  ... Installing SwinGame"
-            if [ $INSTALL = "local" ]
+            if [ ! -d "${INSTALL_DIR}" ]
             then
-                TO_DIR=~/Library/Frameworks
-            elif  [ $INSTALL = "global" ]
-            then
-                TO_DIR=/Library/Frameworks
-                if [ "$(id -u)" != "0" ]
-                then
-                    echo "Global install must be run by root user"
-                    exit 1
-                fi
-            else
-                echo "Unknown install type"
-                exit -1
-            fi
-            
-            if [ ! -d ${TO_DIR} ]
-            then
-                mkdir -p ${TO_DIR}
+                mkdir -p "${INSTALL_DIR}"
             fi
             
             doCopyFramework()
@@ -254,107 +318,54 @@ then
                 # $2 = dest
                 fwk_name=${1##*/} # ## = delete longest match for */... ie all but file name
                 
-                if [ -d ${2}/${fwk_name} ]
+                if [ -d "${2}/${fwk_name}" ]
                 then
                     #framework exists at destn, just copy the version details
                     rm $2/${fwk_name}/Versions/Current
-                    cp -p -R -f ${1}/Versions/* ${2}/${fwk_name}/Versions
+                    cp -p -R -f "${1}/Versions/"* "${2}/${fwk_name}/Versions"
                 else
-                    cp -p -R $1 $2
+                    cp -p -R "$1" "$2"
                 fi
             }
             
-            doCopyFramework "${OUT_DIR}"/SGSDK.framework "${TO_DIR}"
+            doCopyFramework "${OUT_DIR}"/SGSDK.framework "${INSTALL_DIR}"
             for file in `find ${FRAMEWORK_DIR} -depth 1 | grep [.]framework$`
             do
-                doCopyFramework ${file} "${TO_DIR}"
+                doCopyFramework ${file} "${INSTALL_DIR}"
             done
         fi
-    
-    elif [ -d /C/WINDOWS/System32 ] 
+    elif [ "$OS" = "$WIN" ] 
     then
-        echo "--------------------------------------------------"
-        echo "          Creating SwinGame Dynamic Library"
-        echo "                 for Windows"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Compiling with $EXTRA_OPTS"
-        echo "--------------------------------------------------"
+        DisplayHeader
         
+        PrepareTmp
         
-        if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
-        echo "  ... Compiling Library"
-
-        CleanTmp
-        
-        # need windows-ized path for fpc to be happy
-        WIN_SDK_SRC_DIR=`echo $SDK_SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
-        WIN_OUT_DIR=`echo $OUT_DIR | awk '{sub("/c/", "c:/"); print}'`
-        
-        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${WIN_OUT_DIR}" ${WIN_SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
-        
-#        mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
-#        
-#        if [ ! $INSTALL = "N" ]
-#        then
-#            echo "  ... Installing SwinGame"
-#        if [ "$(id -u)" != "0" ]
-#            then
-#                echo "Install must be run by root user"
-#                exit 1
-#        fi
-#            mv -f "${OUT_DIR}/libsgsdk.so.${VERSION}" /usr/lib
-#            ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" /usr/lib/libsgsdk.so
-#
-#            HEADER_DIR="/usr/include/sgsdk"
-#            echo "  ... Headers going to ${HEADER_DIR}"
-#            if [ ! -d ${HEADER_DIR} ]
-#            then
-#                echo "  ... Creating header directory"
-#                mkdir -p ${HEADER_DIR}
-#            fi
-#
-#            echo "  ... Copying header files"
-#            cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/sgsdk.h"
-#            cp "${SDK_SRC_DIR}/Types.h" "${HEADER_DIR}/Types.h"
-#
-#            /sbin/ldconfig -n /usr/lib
-#        fi
-        CleanTmp
- 
-    else
-        echo "--------------------------------------------------"
-        echo "          Creating SwinGame Dynamic Library"
-        echo "                 for Linux"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Compiling with $EXTRA_OPTS"
-        echo "--------------------------------------------------"
-        
-        if [ $? != 0 ]; then echo "Error creating pascal library SGSDK"; cat ${LOG_FILE}; exit 1; fi
-        
-        echo "  ... Compiling Library"
-        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" ${SDK_SRC_DIR}/sgsdk.pas >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
-        
-        mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
+        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
         
         if [ ! $INSTALL = "N" ]
         then
             echo "  ... Installing SwinGame"
-            if [ "$(id -u)" != "0" ]
-            then
-                echo "Install must be run by root user"
-                exit 1
-            fi
-            mv -f "${OUT_DIR}/libsgsdk.so.${VERSION}" /usr/lib
-            ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" /usr/lib/libsgsdk.so
+            
+            cp -p -f "${OUT_DIR}/SGSDK.dll" ${INSTALL_DIR}
+        fi
+        CleanTmp 
+    else
+        DisplayHeader
+        
+        echo "  ... Compiling Library"
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/sgsdk.pas" >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
+        
+        mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
+        ln -s "${OUT_DIR}/libsgsdk.so.${VERSION}" "${OUT_DIR}/libsgsdk.so"
+        
+        if [ ! $INSTALL = "N" ]
+        then
+            echo "  ... Installing SwinGame"
+            cp -p -f "${OUT_DIR}/libsgsdk.so.${VERSION}" "${INSTALL_DIR}"
+            ln -s -f "/usr/lib/libsgsdk.so.${VERSION}" "${INSTALL_DIR}/libsgsdk.so"
 
-            HEADER_DIR="/usr/include/sgsdk"
-            echo "  ... Headers going to ${HEADER_DIR}"
             if [ ! -d ${HEADER_DIR} ]
             then
                 echo "  ... Creating header directory"
@@ -365,7 +376,7 @@ then
             cp "${SDK_SRC_DIR}/SGSDK.h" "${HEADER_DIR}/sgsdk.h"
             cp "${SDK_SRC_DIR}/Types.h" "${HEADER_DIR}/Types.h"
 
-            /sbin/ldconfig -n /usr/lib
+            /sbin/ldconfig -n "${INSTALL_DIR}"
         fi
         CleanTmp
     fi
@@ -381,7 +392,7 @@ else
 fi
 
 rm -f ${LOG_FILE}
-rm -rf ${TMP_DIR}
+rm -rf ${TMP_DIR} 2>>/dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"
