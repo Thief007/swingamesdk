@@ -16,7 +16,11 @@ GMCS_FLAGS="-target:winexe -r:System.Drawing -r:Microsoft.VisualBasic"
 CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
-GMCS_BIN=`which gmcs`
+if [ -d "/c/Windows" ]; then
+    GMCS_BIN=`which csc`
+else
+    GMCS_BIN=`which gmcs`
+fi
 
 GAME_NAME=${APP_PATH##*/}
 

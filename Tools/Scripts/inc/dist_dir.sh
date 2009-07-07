@@ -45,7 +45,8 @@ CopyDists()
             copyWithoutSVN "$COMMON_LANG_TEMPLATE_DIR" "$to"
         fi
         copyWithoutSVN "$from" "$to"
-        chmod a+x ${to}/*.sh
+        #mark scripts executable
+        find "$to" -name \*.sh -exec chmod a+x {} \; 
         
         if [ "$OS" = "$MAC" ]; then
             echo -n " with library"
