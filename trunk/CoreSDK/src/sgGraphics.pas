@@ -714,7 +714,7 @@ implementation
 
       if transparent then
       begin
-        correctedTransColor := GetColor(result, transparentColor);
+        correctedTransColor := ColorFrom(result, transparentColor);
         SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
         SetNonTransparentPixels(result, loadedImage, correctedTransColor);
       end

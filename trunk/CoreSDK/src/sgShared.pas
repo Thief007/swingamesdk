@@ -106,7 +106,7 @@ implementation
   var
     r, g, b, a: Byte;
   begin
-    GetComponents(val, r, g, b, a);
+    ColorComponents(val, r, g, b, a);
     result := (r shl 24) or (g shl 16) or (b shl 8) or a;
   end;
   

@@ -229,9 +229,9 @@ interface
   procedure RefreshScreen(TargetFPS: UInt32); overload;
   
   //----------------------------------------------------------------------------
-  // Colour
+  // Color
   //----------------------------------------------------------------------------
-
+  
   /// Maps a color from a given bitmap. This is used when determining color
   /// keys for transparent images.
   ///
@@ -239,38 +239,45 @@ interface
   /// @param apiColor:     The api color to match
   /// @returns:           The color matched to the bitmaps pixel format
   ///
-  /// @lib GetColorForBitmap
-  /// @uname GetColorForBitmap
-  function GetColor(bmp: Bitmap; apiColor: Color): Color; overload;
+  /// @lib ColorFromBitmap
+  /// @uname ColorFromBitmap
+  function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
   
   /// Gets a color given its RGBA components.
   ///
   /// @param red, green, blue, alpha:  Components of the color
   /// @returns: The matching colour
   ///
-  /// @lib GetColor
-  function GetColor(red, green, blue, alpha: Byte): Color; overload;
+  /// @lib
+  function RGBAColor(red, green, blue, alpha: Byte): Color;
   
   /// Gets a color given its RGB components.
   ///
   /// @param red, green, blue:   Components of the color
   /// @returns:                 The matching colour
   ///
-  /// @lib GetColor(red, green, blue, 255)
-  /// @uname GetColorRGB
-  function GetColor(red, green, blue: Byte): Color; overload;
+  /// @lib RGBAColor(red, green, blue, 255)
+  /// @uname RGBColor
+  function RGBColor(red, green, blue: Byte): Color;
   
   /// Gets a color given its RGBA components.
   ///
   /// @lib
-  procedure GetComponents(c: Color; out r, g, b, a: byte);
+  procedure ColorComponents(c: Color; out r, g, b, a: byte);
   
   /// Returns a color from a floating point RBG value set.
   ///
   /// @param r,g,b: Components for color 0 = none 1 = full
   ///
   /// @lib
-  function GetRGBFloatColor(r,g,b: Single): Color;
+  function RGBFloatColor(r,g,b: Single): Color;
+
+  /// Returns a color from a floating point RBGA value set.
+  ///
+  /// @param r,g,b,a: Components for color 0 = none 1 = full
+  ///
+  /// @lib
+  function RGBAFloatColor(r,g,b, a: Single): Color;
   
   /// Returs a color from the HSB input.
   ///
@@ -278,7 +285,7 @@ interface
   /// @returns The matching color
   ///
   /// @lib
-  function GetHSBColor(hue, saturation, brightness: Single): Color;
+  function HSBColor(hue, saturation, brightness: Single): Color;
   
   /// Get the transpareny value of `color`.
   ///
@@ -559,18 +566,18 @@ implementation
       _InitFPSData();
       
       //Init the colors
-      ColorWhite := GetColor(255, 255, 255, 255);
-      ColorGreen := GetColor(0, 255, 0, 255);
-      ColorBlue := GetColor(0, 0, 255, 255);
-      ColorBlack := GetColor(0, 0, 0, 255);
-      ColorRed := GetColor(255, 0, 0, 255);
-      ColorYellow := GetColor(255, 255, 0, 255);
-      ColorPink := GetColor(255, 20, 147, 255);
-      ColorTurquoise := GetColor(0, 206, 209, 255);
-      ColorGrey := GetColor(128, 128, 128, 255);
-      ColorMagenta := GetColor(255, 0, 255, 255);
-      ColorTransparent := GetColor(0, 0, 0, 0);
-      ColorLightGrey := GetColor(200, 200, 200, 255);
+      ColorWhite := RGBAColor(255, 255, 255, 255);
+      ColorGreen := RGBAColor(0, 255, 0, 255);
+      ColorBlue := RGBAColor(0, 0, 255, 255);
+      ColorBlack := RGBAColor(0, 0, 0, 255);
+      ColorRed := RGBAColor(255, 0, 0, 255);
+      ColorYellow := RGBAColor(255, 255, 0, 255);
+      ColorPink := RGBAColor(255, 20, 147, 255);
+      ColorTurquoise := RGBAColor(0, 206, 209, 255);
+      ColorGrey := RGBAColor(128, 128, 128, 255);
+      ColorMagenta := RGBAColor(255, 0, 255, 255);
+      ColorTransparent := RGBAColor(0, 0, 0, 0);
+      ColorLightGrey := RGBAColor(200, 200, 200, 255);
       
       SDL_FillRect(screen^.surface, nil, ColorGrey);
       stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
@@ -815,7 +822,7 @@ implementation
   // Colour
   //----------------------------------------------------------------------------
 
-  procedure GetComponents(c: Color; out r, g, b, a: byte);
+  procedure ColorComponents(c: Color; out r, g, b, a: byte);
   begin
     if baseSurface = nil then
       raise Exception.Create('Cannot read screen format. Ensure window is open.');
@@ -826,7 +833,7 @@ implementation
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(c, r, g, b, a);
+    ColorComponents(c, r, g, b, a);
     result := r;
   end;
 
@@ -834,7 +841,7 @@ implementation
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(c, r, g, b, a);
+    ColorComponents(c, r, g, b, a);
     result := g;
   end;
 
@@ -842,7 +849,7 @@ implementation
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(c, r, g, b, a);
+    ColorComponents(c, r, g, b, a);
     result := b;
   end;
 
@@ -850,11 +857,11 @@ implementation
   var
     r,g,b,a: Byte;
   begin
-    GetComponents(c, r, g, b, a);
+    ColorComponents(c, r, g, b, a);
     result := a;
   end;
 
-  function GetColor(bmp: Bitmap; apiColor: Color): Color; overload;
+  function ColorFrom(bmp: Bitmap; apiColor: Color): Color; overload;
   var
     temp: TSDL_Color;
   begin
@@ -869,10 +876,10 @@ implementation
     result := SDL_MapRGB(bmp^.surface^.format, temp.r, temp.g, temp.b);
   end;
 
-  function GetColor(red, green, blue, alpha: Byte): Color; overload;
+  function RGBAColor(red, green, blue, alpha: Byte): Color; overload;
   begin
     if (baseSurface = nil) or (baseSurface^.format = nil) then
-      raise Exception.Create('Unable to GetColor as the window is not open');
+      raise Exception.Create('Unable to get RGBAColor as the window is not open');
 
     try
       result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
@@ -881,17 +888,22 @@ implementation
     end;
   end;
 
-  function GetColor(red, green, blue: Byte): Color;
+  function RGBColor(red, green, blue: Byte): Color;
   begin
-    result := GetColor(red, green, blue, 255);
+    result := RGBAColor(red, green, blue, 255);
   end;
 
-  function GetRGBFloatColor(r,g,b: Single): Color;
+  function RGBFloatColor(r,g,b: Single): Color;
   begin
-    result := GetColor(Round(r * 255), Round(g * 255), Round(b * 255));
+    result := RGBColor(Round(r * 255), Round(g * 255), Round(b * 255));
+  end;
+  
+  function RGBAFloatColor(r,g,b, a: Single): Color;
+  begin
+    result := RGBAColor(Round(r * 255), Round(g * 255), Round(b * 255), Round(a * 255));
   end;
 
-  function GetHSBColor(hue, saturation, brightness: Single): Color;
+  function HSBColor(hue, saturation, brightness: Single): Color;
   var
     domainOffset: Single;
     red, green, blue: Single;
@@ -904,7 +916,7 @@ implementation
 
     if saturation = 0 then
     begin
-      result := GetRGBFloatColor(brightness, brightness, brightness);
+      result := RGBFloatColor(brightness, brightness, brightness);
       exit;
     end;
 
@@ -951,7 +963,7 @@ implementation
       blue  := red - (brightness - green) * domainOffset * 6;
     end;
 
-    result := GetRGBFloatColor(red, green, blue);
+    result := RGBFloatColor(red, green, blue);
   end;
   
   //----------------------------------------------------------------------------
