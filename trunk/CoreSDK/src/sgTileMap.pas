@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-09: Clinton: Optimized IsPointInTile slightly (isometric)
 // - 2009-07-08: Clinton: Code comments, TODO notes and some tweaks/optimization
 // - 2009-06-22: Clinton: Comment format, cleanup and new additions.
 // - 2009-06-17: Andrew : added meta tags, renamed from "mappy" to tilemap
@@ -16,7 +17,7 @@
 // - 2008-12-17: Andrew : Moved all integers to LongInt
 //
 // Version 1.1.5:
-// - 2008-04-18: Andrew :  Fix extensions to work with Delphi.
+// - 2008-04-18: Andrew : Fix extensions to work with Delphi.
 //
 // Version 1.1:
 // - 2008-04-02: Stephen: Added MapWidth(), MapHeight(), BlockWidth(),
@@ -30,10 +31,10 @@
 //                        StaggerY, Isometric
 //                      : LoadMapInformation, now loads the new isometric related data
 //                      : DrawMap now draws isometric tiles with their correct offsets
-// - 2008-01-30: Andrew: Added const to vector param, increased search for collision tests
-// - 2008-01-25: Andrew: Fixed compiler hints
-// - 2008-01-22: Andrew: Re-added CollidedWithMap to allow compatibility with 1.0
-// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines, 
+// - 2008-01-30: Andrew : Added const to vector param, increased search for collision tests
+// - 2008-01-25: Andrew : Fixed compiler hints
+// - 2008-01-22: Andrew : Re-added CollidedWithMap to allow compatibility with 1.0
+// - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines,
 //                        - HasSpriteCollidedWithMapTile,
 //                        - MoveSpriteOutOfTile,
 //                        - WillCollideOnSide
@@ -230,20 +231,20 @@ implementation
     end;
 
     //m^.MapInfo.MapWidth := ReadInt(stream);
-        m^.MapInfo.MapHeight := ReadInt(stream);
-        m^.MapInfo.BlockWidth := ReadInt(stream);
-        m^.MapInfo.BlockHeight := ReadInt(stream);
-        m^.MapInfo.NumberOfBlocks := ReadInt(stream);
-        m^.MapInfo.NumberOfAnimations := ReadInt(stream);
-        m^.MapInfo.NumberOfLayers := ReadInt(stream);
-        m^.MapInfo.CollisionLayer := ReadInt(stream);
-      m^.MapInfo.EventLayer := ReadInt(stream);
-      m^.MapInfo.GapX := 0;
-      m^.MapInfo.GapY := 0;
-      m^.MapInfo.StaggerX := 0;
-      m^.MapInfo.StaggerY := 0;
-      m^.MapInfo.Isometric := false;
-    
+    m^.MapInfo.MapHeight := ReadInt(stream);
+    m^.MapInfo.BlockWidth := ReadInt(stream);
+    m^.MapInfo.BlockHeight := ReadInt(stream);
+    m^.MapInfo.NumberOfBlocks := ReadInt(stream);
+    m^.MapInfo.NumberOfAnimations := ReadInt(stream);
+    m^.MapInfo.NumberOfLayers := ReadInt(stream);
+    m^.MapInfo.CollisionLayer := ReadInt(stream);
+    m^.MapInfo.EventLayer := ReadInt(stream);
+    m^.MapInfo.GapX := 0;
+    m^.MapInfo.GapY := 0;
+    m^.MapInfo.StaggerX := 0;
+    m^.MapInfo.StaggerY := 0;
+    m^.MapInfo.Isometric := false;
+
       {
       //Debug
       WriteLn('MapInformation');
@@ -265,22 +266,19 @@ implementation
   procedure LoadIsometricInformation(m: Map; var stream: text);
   begin
     m^.MapInfo.GapX := ReadInt(stream);
-      m^.MapInfo.GapY := ReadInt(stream);
-      m^.MapInfo.StaggerX := ReadInt(stream);
-      m^.MapInfo.StaggerY := ReadInt(stream);
+    m^.MapInfo.GapY := ReadInt(stream);
+    m^.MapInfo.StaggerX := ReadInt(stream);
+    m^.MapInfo.StaggerY := ReadInt(stream);
 
     if ((m^.MapInfo.StaggerX = 0) and (m^.MapInfo.StaggerY = 0)) then
-        m^.MapInfo.Isometric := false
-      else
-        m^.MapInfo.Isometric := true;
+    begin
+      m^.MapInfo.Isometric := false;
+      m^.MapInfo.GapX := 0;
+      m^.MapInfo.GapY := 0;
+    end
+    else
+      m^.MapInfo.Isometric := true;
 
-      if (m^.MapInfo.Isometric = false) then
-      begin
-        m^.MapInfo.GapX := 0;
-        m^.MapInfo.GapY := 0;
-        m^.MapInfo.StaggerX := 0;
-        m^.MapInfo.StaggerY := 0;
-      end;
   end;
 
 
@@ -662,7 +660,8 @@ implementation
   // Gets the Top Left Y Coordinate of the Event
   function EventPositionY(m: Map; eventType: Event; eventnumber: LongInt): LongInt;
   begin
-    if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
+    if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then
+      raise Exception.Create('Event number is out of range');
   
     if (m^.MapInfo.Isometric = true) then
     begin
@@ -704,16 +703,12 @@ implementation
         yCache := y * BlockHeight;
 
         for x := XStart to XEnd do
-        begin
-          if m^.CollisionInfo.Collidable[y][x] = true then
-          begin
+          if m^.CollisionInfo.Collidable[y][x] then
             if SpriteRectCollision(s, x * BlockWidth, yCache, BlockWidth, BlockHeight) then
             begin
               result := true;
               exit;
             end;
-          end;
-        end;
       end;
     end; // with
   end;
@@ -985,22 +980,30 @@ implementation
   //Determines whether the specified point is within the tile provided
   function IsPointInTile(point: Point2D; x, y: LongInt; m: Map): Boolean;
   var
-    tri1, tri2: Triangle;
+    tri: Triangle;
   begin
-    result := false;
-
     with m^.MapInfo do begin
       if Isometric then
       begin
-        //Create Triangles
-        tri1 := TriangleFrom(x, y + BlockHeight / 2,
-                             x + BlockWidth / 2, y,
-                             x + BlockWidth / 2, y + BlockHeight);
-        tri2 := TriangleFrom(x + BlockWidth, y + BlockHeight / 2,
-                             x + BlockWidth / 2, y,
-                             x + BlockWidth / 2, y + BlockHeight);
-        if PointInTriangle(point, tri1) or PointInTriangle(point, tri2) then
-          result := true;
+        // Create Triangle
+        tri := TriangleFrom(x, y + BlockHeight / 2,
+                            x + BlockWidth / 2, y,
+                            x + BlockWidth / 2, y + BlockHeight);
+        // Test first triangle and leave early?
+        if PointInTriangle(point, tri) then
+        begin
+          result := True;
+          exit;
+        end
+        // Need to test the second triangle too...
+        else
+        begin
+          tri := TriangleFrom(x + BlockWidth, y + BlockHeight / 2,
+                              x + BlockWidth / 2, y,
+                              x + BlockWidth / 2, y + BlockHeight);
+          // store result and done
+          result := PointInTriangle(point, tri);
+        end;
       end
       else
         result := PointInRect(point, x, y, BlockWidth, BlockHeight);
@@ -1022,6 +1025,53 @@ implementation
     result.PointD := PointAt(0,0);
 
     with m^.MapInfo do begin
+      if Isometric then
+        for y := 0 to MapHeight - 1 do
+        begin
+          // tile y pos?
+          ty := y * StaggerY;
+          for x := 0  to MapWidth - 1  do
+          begin
+            // tile x pos?
+            tx := x * GapX;
+            if ((y MOD 2) = 1) then tx := tx + StaggerX;
+            // test and leave?
+            if IsPointInTile(point, tx, ty, m) then
+            begin
+              result.xIndex := x;
+              result.yIndex := y;
+              result.topCorner := PointAt(tx,ty);
+              result.PointA := PointAt(tx, ty + BlockHeight / 2);
+              result.PointB := PointAt(tx + BlockWidth / 2, ty);
+              result.PointC := PointAt(tx + BlockWidth / 2, ty + BlockHeight);
+              result.PointD := PointAt(tx + BlockWidth, ty + BlockHeight / 2);
+              exit;
+            end;
+          end;
+        end
+      else // Simple square-map (not isometric diamonds)
+        for y := 0 to MapHeight - 1 do
+        begin
+          ty := y * BlockHeight;
+          for x := 0  to MapWidth - 1  do
+          begin
+            tx := x * BlockWidth;
+            if IsPointInTile(point, tx, ty, m) then
+            begin
+              result.xIndex := x;
+              result.yIndex := y;
+              result.topCorner := PointAt(tx,ty);
+              //TODO: Optimize - recalc of PointsA/B/C/D - store and keep.
+              result.PointA := PointAt(tx, ty);
+              result.PointB := PointAt(tx + BlockWidth, ty);
+              result.PointC := PointAt(tx, ty + BlockHeight);
+              result.PointD := PointAt(tx + BlockWidth, ty + BlockHeight);
+              exit;
+            end;
+          end;
+        end;
+
+{ // Old code - shorter, but takes longer
       for y := 0 to MapHeight - 1 do
       begin
         //TODO: Optimize - to isometric test ONCE not multiple times...
@@ -1063,10 +1113,12 @@ implementation
               result.PointB := PointAt(tx + BlockWidth, ty);
               result.PointC := PointAt(tx, ty + BlockHeight);
               result.PointD := PointAt(tx + BlockWidth, ty + BlockHeight);
+              exit; // ARGH!
             end;
           end;
         end;
       end;
+}
     end; // with
   end;
 
