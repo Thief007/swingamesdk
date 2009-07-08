@@ -9,6 +9,7 @@
 //
 // Version 3.0:
 // - 2009-07-09: Clinton: Optimized IsPointInTile slightly (isometric)
+//                        Optimized GetTileFromPoint (isometric)
 // - 2009-07-08: Clinton: Code comments, TODO notes and some tweaks/optimization
 // - 2009-06-22: Clinton: Comment format, cleanup and new additions.
 // - 2009-06-17: Andrew : added meta tags, renamed from "mappy" to tilemap
