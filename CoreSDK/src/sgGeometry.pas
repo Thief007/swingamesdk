@@ -196,6 +196,8 @@ interface
   function RectangleFrom(x, y: Single; bmp: Bitmap): Rectangle; overload;
   /// @lib RectangleForBitmapAtPoint
   function RectangleFrom(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
+  /// @lib RectangleForPoints
+  function RectangleFrom(const pt1, pt2: Point2D): Rectangle; overload;
   /// @lib RectangleAtPoint
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
   /// @lib RectangleFromSprite
@@ -1338,6 +1340,14 @@ implementation
     result.y := c.center.y - c.radius;
     result.width := Ceiling(2 * c.radius);
     result.height := result.width;
+  end;
+  
+  function RectangleFrom(const pt1, pt2: Point2D): Rectangle; overload;
+  begin
+    result.x := pt1.x;
+    result.y := pt1.y;
+    result.width := Ceiling(pt2.x - pt1.x);
+    result.height := Ceiling(pt2.y - pt1.y);
   end;
   
   function RectangleFrom(const tri: Triangle): Rectangle; overload;

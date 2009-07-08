@@ -315,14 +315,12 @@ implementation
     while i < Length(names) do
     begin
       names[i] := iter.key;
-      WriteLn('key = ', names[i]);
       i := i + 1;
       iter.next;
     end;
 
     for i := Low(names) to High(names) do
     begin
-      WriteLn('releasing ',names[i]);
       releaser(names[i]);
     end;
 
