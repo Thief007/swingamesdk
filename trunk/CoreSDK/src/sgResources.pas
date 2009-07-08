@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-08: Andrew : Fixed iterator use in release all
 // - 2009-07-05: Clinton: Fixed delphi-support for ExtractDelimited, formatting
 // - 2009-07-03: Andrew : Fixed header comments
 // - 2009-06-23: Andrew : Created
@@ -305,18 +306,23 @@ implementation
     names: array of String;
     i: Integer;
   begin
+    if tbl.count = 0 then exit;
+    
     SetLength(names, tbl.count);
     iter := tbl.getIterator();
     i := 0;
-
-    while iter.hasNext() do
+    
+    while i < Length(names) do
     begin
       names[i] := iter.key;
+      WriteLn('key = ', names[i]);
       i := i + 1;
+      iter.next;
     end;
 
     for i := Low(names) to High(names) do
     begin
+      WriteLn('releasing ',names[i]);
       releaser(names[i]);
     end;
 

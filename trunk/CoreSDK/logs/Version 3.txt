@@ -5,6 +5,9 @@ SwinGame Software Development Kit
 Version 3
 
 
+TODO:
+* SetAppPath auto detect directory
+
 Suggestions:
 * Change Movement to dx,dy ? (cw)
 * - Add SpriteVelocity -> Vector

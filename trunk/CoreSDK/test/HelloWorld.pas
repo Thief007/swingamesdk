@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics;
+  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources;
 
 procedure Main();
 begin
@@ -16,6 +16,8 @@ begin
     
     RefreshScreen();
   until WindowCloseRequested();
+  
+  ReleaseAllResources();
   
   CloseAudio();
 end;
