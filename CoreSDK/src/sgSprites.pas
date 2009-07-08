@@ -885,7 +885,7 @@ implementation
     if sum = 0 then raise Exception.Create('Frames per cell cannot all be zero');
   
     //Reset the frame count.
-    s^.frameCount -= s^.framesPerCell[s^.currentCell];
+    s^.frameCount := s^.frameCount - s^.framesPerCell[s^.currentCell];
     if s^.frameCount < 0 then s^.frameCount := 0;
   
     if s^.reverse then frameChange := -1

@@ -27,15 +27,27 @@ interface
   uses SDL_Mixer, SDL, SDL_Image, SDL_TTF;
   
   type
+
+
+    /// @type LongIntArray
+    /// @array_wrapper
+    /// @field data: array of LongInt
+    LongIntArray = array of LongInt;
+
+    /// @type LongIntPtr
+    /// @pointer_wrapper
+    /// @field pointer: ^LongInt
+    LongIntPtr = ^LongInt;
     
-    /// A Point2D represents an location in Cartesian coordinates (x,y). 
+
+    /// A Point2D represents an location in Cartesian coordinates (x,y).
     ///
     /// @struct Point2D
     /// @sameas Vector
     Point2D = record
       x, y: Single;
     end;
-      
+
     /// Vectors represent a direction and distance, stored as x,y components.
     ///
     /// @struct Vector
@@ -43,17 +55,17 @@ interface
     /// @field y: Single
     /// @sameas Point2D
     Vector = Point2D;
-    
+
     /// @type Point2DPtr
     /// @pointer_wrapper
     /// @field pointer: ^Point2D
     Point2DPtr = ^Point2D;
-    
+
     /// @type ThreePoint2D
     /// @array_wrapper
     /// @field data: array of Point2D
     ArrayOfPoint2D = Array of Point2D;
-    
+
     // /// The kind of polygon.
     // ///
     // /// @enum PolygonKind
@@ -63,57 +75,57 @@ interface
     //     pkFan,
     //     pkList
     //   );
-    // 
+    //
     // /// @struct Polygon
     // Polygon = record
     //   points: ArrayOfPoint2D;
     //   kind: PolygonKind;
     // end;
-    
+
     /// @struct Rectangle
     Rectangle = record
       x, y: Single;
       width, height: LongInt;
     end;
-    
+
     /// @struct Circle
     Circle = record
       center: Point2D;
       radius: LongInt;
     end;
-    
+
     /// @struct LineSegment
     LineSegment = record
         startPoint: Point2D;
         endPoint: Point2D;
       end;
-    
+
     /// @struct Triangle
     /// @fixed_array_wrapper
     /// @field data: array[0..2] of Point2D
     Triangle = array [0..2] of Point2D;
-    
+
     /// @type LinesArray
     /// @array_wrapper
     /// @field data: LineSegmentPtr
     LinesArray = Array of LineSegment;
-    
+
     /// @type LineSegmentPtr
     /// @pointer_wrapper
     LineSegmentPtr = ^LineSegment;
-    
-    /// The `SoundEffect` type is used to refer to sound effects that can be 
-    /// played by the SwinGame audio code. Sound effects are loaded with 
+
+    /// The `SoundEffect` type is used to refer to sound effects that can be
+    /// played by the SwinGame audio code. Sound effects are loaded with
     /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
     /// released using `FreeMusic`.
     ///
-    /// SwinGame will mix the audio from multiple sound effects, making it 
-    /// possible to play multiple SoundEffects, or even to play the one 
+    /// SwinGame will mix the audio from multiple sound effects, making it
+    /// possible to play multiple SoundEffects, or even to play the one
     /// SoundEffect multiple times.
     ///
-    /// You can check if a SoundEffect is currently playing using 
-    /// `IsSoundEffectPlaying`. 
-    /// 
+    /// You can check if a SoundEffect is currently playing using
+    /// `IsSoundEffectPlaying`.
+    ///
     /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
     /// instances of this one sound effect from playing.
     ///
@@ -124,18 +136,18 @@ interface
     /// @field pointer: pointer
     SoundEffect = PMix_Chunk;
 
-    /// The SoundEffect type is used to refer to sound effects that can be 
-    /// played by the SwinGame audio code. Sound effects are loaded with 
+    /// The SoundEffect type is used to refer to sound effects that can be
+    /// played by the SwinGame audio code. Sound effects are loaded with
     /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
     /// released using `FreeMusic`.
     ///
-    /// SwinGame will mix the audio from multiple sound effects, making it 
-    /// possible to play multiple SoundEffects, or even to play the one 
+    /// SwinGame will mix the audio from multiple sound effects, making it
+    /// possible to play multiple SoundEffects, or even to play the one
     /// SoundEffect multiple times.
     ///
-    /// You can check if a SoundEffect is currently playing using 
-    /// `IsSoundEffectPlaying`. 
-    /// 
+    /// You can check if a SoundEffect is currently playing using
+    /// `IsSoundEffectPlaying`.
+    ///
     /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
     /// instances of this one sound effect from playing.
     ///
@@ -175,10 +187,10 @@ interface
       BottomRight,
       None
     );
-    
+
     /// The color type is used within the SwinGameAPI to store color values.
-    /// The color values are represented as 32bit RGBA values where R stores the 
-    /// color's red component, G stores the green component, B stores the blue 
+    /// The color values are represented as 32bit RGBA values where R stores the
+    /// color's red component, G stores the green component, B stores the blue
     /// component and A stores an alpha value representing the opacity (transparency)
     ///  of the of the color.
     ///
@@ -264,6 +276,7 @@ interface
       Stop
     );
 
+
     /// NOTE: Do not use SpriteData directly. Use Sprite.
     ///
     /// - bitmaps: The array of bitmaps related to the Sprite
@@ -286,7 +299,7 @@ interface
       bitmaps: Array of Bitmap;
       bufferBmp: Bitmap;
       spriteKind: SpriteKind;
-      framesPerCell: Array of LongInt;
+      framesPerCell: LongIntArray; //Array of LongInt;
       position: Point2D;
       velocity: Vector;
       width: LongInt;
@@ -302,7 +315,7 @@ interface
       mass: Single;
       rotation: Single;
       scale: Single;
-      
+
       bufferedRotation: Single;
       bufferedScale: Single;
     end;
@@ -375,16 +388,6 @@ interface
     /// @pointer_wrapper
     /// @field pointer: ^Bitmap
     BitmapPtr = ^Bitmap;
-
-    /// @type LongIntArray
-    /// @array_wrapper
-    /// @field data: array of LongInt
-    LongIntArray = array of LongInt;
-
-    /// @type LongIntPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^LongInt
-    LongIntPtr = ^LongInt;
 
     /// A mouse can have many different types of buttons. Most people know
     /// about the simple Left and Right buttons, but there is also a Middle
