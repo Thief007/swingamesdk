@@ -12,7 +12,10 @@ begin
   repeat // The game loop...
     ProcessEvents();
     
-    FillRectangle(ColorWhite, 10, 10, 780, 580);
+    ReleaseAllResources();
+    LoadResourceBundle('splash.txt');
+    
+    DrawFramerate(0,0);
     
     RefreshScreen();
   until WindowCloseRequested();
