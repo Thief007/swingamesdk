@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-10: Andrew : Fixed missing const modifier on struct types
 // - 2009-07-05: Clinton:
 // - 2009-07-03: Andrew : Started adding class indicators
 //                      : Started adding operator overloads
@@ -97,10 +98,10 @@ interface
   /// vector `heading`. Returns False if the ray projected from point `pt` misses the circle.
   ///
   /// @lib
-  function DistantPointOnCircleHeading(const pt: Point2D; const c: Circle; heading: Vector; out oppositePt: Point2D): Boolean;
+  function DistantPointOnCircleHeading(const pt: Point2D; const c: Circle; const heading: Vector; out oppositePt: Point2D): Boolean;
 
   /// @lib
-  procedure WidestPoints(const c: Circle; along: Vector; out pt1, pt2: Point2D);
+  procedure WidestPoints(const c: Circle; const along: Vector; out pt1, pt2: Point2D);
 
   /// @lib
   function TangentPoints(const fromPt: Point2D; const c: Circle; out p1, p2: Point2D): Boolean;
@@ -158,7 +159,7 @@ interface
   function PointAt(x, y: Single): Point2D; overload;
   
   /// @lib PointAtStartWithOffset
-  function PointAt(const startPoint: Point2D; offset: Vector): Point2D; overload;
+  function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
   
   /// @lib
   function RectangleCenter(const rect: Rectangle): Point2D;
@@ -175,7 +176,7 @@ interface
   function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
 
   /// @lib LineFromPointToPoint
-  function LineFrom(pt1, pt2: Point2D): LineSegment; overload;
+  function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
 
   /// @lib LineFromVectorWithStartPoint
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
@@ -472,7 +473,7 @@ interface
   
   //TODO: OverLine...
   /// @lib
-  function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
+  function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   
   // // / @lib
   // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
@@ -1472,12 +1473,12 @@ implementation
               PointInRect(pt, RectangleFrom(line));
   end;
   
-  function LineFrom(pt1, pt2: Point2D): LineSegment;
+  function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
   begin
     result := LineFrom(pt1.x, pt1.y, pt2.x, pt2.y);
   end;
   
-  function LineFrom(x1, y1, x2, y2: Single): LineSegment;
+  function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
   begin
     result.startPoint.x := x1;
     result.startPoint.y := y1;
@@ -1485,7 +1486,7 @@ implementation
     result.endPoint.y := y2;
   end;
   
-  function LinesFrom(const tri: Triangle): LinesArray;
+  function LinesFrom(const tri: Triangle): LinesArray; overload;
   begin
     SetLength(result, 3);
     result[0] := LineFrom(tri[0], tri[1]);
@@ -1493,7 +1494,7 @@ implementation
     result[2] := LineFrom(tri[2], tri[0]);
   end;
   
-  function LinesFrom(const rect: Rectangle): LinesArray;
+  function LinesFrom(const rect: Rectangle): LinesArray; overload;
   begin
     SetLength(result, 4);
     with rect do
@@ -1510,7 +1511,6 @@ implementation
     result.x := rect.x + (rect.width / 2);
     result.y := rect.y + (rect.height / 2);
   end;
-
   
   function PointAt(x, y: Single): Point2D; overload;
   begin
@@ -1518,7 +1518,7 @@ implementation
     result.y := y;
   end;
   
-  function PointAt(const startPoint: Point2D; offset: Vector): Point2D; overload;
+  function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
   begin
     result.x := startPoint.x + offset.x;
     result.y := startPoint.y + offset.y;
@@ -1723,7 +1723,7 @@ implementation
   end;
 
 
-  procedure WidestPoints(const c: Circle; along: Vector; out pt1, pt2: Point2D);
+  procedure WidestPoints(const c: Circle; const along: Vector; out pt1, pt2: Point2D);
   begin
     pt1 := AddVectors(c.center, VectorMultiply(UnitVector(along), c.radius));
     pt2 := AddVectors(c.center, VectorMultiply(UnitVector(along), -c.radius));
@@ -2016,35 +2016,36 @@ implementation
     result := AddVectors(ptOnCircle, VectorMultiply(UnitVector(toCircle), c.radius * 2));
   end;
 
-  function DistantPointOnCircleHeading(const pt: Point2D; const c: Circle; heading: Vector; out oppositePt: Point2D): Boolean;
+  function DistantPointOnCircleHeading(const pt: Point2D; const c: Circle; const heading: Vector; out oppositePt: Point2D): Boolean;
   var
     dist, dotProd: Single;
     ptOnCircle, chkPt: Point2D;
     toCenter: Vector;
+    head: Vector;
   begin
     result := False;
-    heading := UnitVector(heading);
+    head := UnitVector(heading);
 
     //Move pt back 2 * radius to ensure it is outside of the circle...
     //  but still on same alignment
-    chkPt := AddVectors(pt, VectorMultiply(InvertVector(heading), 2 * c.radius));
+    chkPt := AddVectors(pt, VectorMultiply(InvertVector(head), 2 * c.radius));
     //DrawCircle(ColorBlue, chkPt, 1);
 
-    dist := RayCircleIntersectDistance(chkPt, heading, c);
+    dist := RayCircleIntersectDistance(chkPt, head, c);
     if dist < 0 then exit;
 
     // Get point on circle by moving from chkPt dist distance in heading direction
-    ptOnCircle := AddVectors(chkPt, VectorMultiply(heading, dist));
+    ptOnCircle := AddVectors(chkPt, VectorMultiply(head, dist));
     //DrawLine(ColorMagenta, chkPt, ptOnCircle);
     //DrawCircle(ColorMagenta, ptOnCircle, 2);
 
     //Project the ray to the other side of the circle
     toCenter := VectorFromPoints(ptOnCircle, c.center);
-    dotProd := DotProduct(toCenter, heading);
+    dotProd := DotProduct(toCenter, head);
     //WriteLn(dotProd:4:2);
 
     result := True;
-    oppositePt := AddVectors(ptOnCircle, VectorMultiply(heading, 2 * dotProd));
+    oppositePt := AddVectors(ptOnCircle, VectorMultiply(head, 2 * dotProd));
     //FillCircle(ColorRed, oppositePt, 2);
   end;
 
@@ -2055,7 +2056,7 @@ implementation
     result := VectorOverLinesFromCircle(c, LinesFrom(rect), velocity, maxIdx);
   end;
 
-  function VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
+  function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   begin
     result := _VectorOverLinesFromCircle(c, lines, velocity, maxIDx);
   end;

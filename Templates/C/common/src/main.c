@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
     OpenGraphicsWindow("Hello World", 800, 600);
     //SoundEffect sound = LoadSoundEffect("./SwinGameStart.ogg");
     
-    Color white = GetColor(255, 255, 255, 255);
+    Color white = RGBAColor(255, 255, 255, 255);
     
     //PlaySoundEffect(sound);
     

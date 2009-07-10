@@ -77,6 +77,7 @@ class SGMethod(SGMetaDataContainer):
         result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
         
+        
         if self.length_call != None:
             if self.in_property != None: #replace first argument with 'self'
                 old_arg = self.length_call.args[0]
@@ -204,6 +205,7 @@ class SGMethod(SGMetaDataContainer):
         the cache. The new parameter is returned, and added to the params 
         list."""
         result = SGParameter(name)
+        result.file_line_details = self.file_line_details
         self.params.append(result)
         return result
     
@@ -591,6 +593,11 @@ class SGMethod(SGMetaDataContainer):
         args = self.args
         for arg in args:
             visitor(arg, arg == args[-1], other)
+            
+    def has_const_params(self):
+        for param in self.params:
+            if param.modifier == 'const': return True
+        return False
     
 
 #

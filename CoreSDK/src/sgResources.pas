@@ -1158,14 +1158,16 @@ implementation
 
 //=============================================================================
 
-initialization
-begin
-  _Images := TStringHash.Create(False, 1024);
-  _SoundEffects := TStringHash.Create(False, 1024);
-  _Fonts := TStringHash.Create(False, 1024);
-  _Music := TStringHash.Create(False, 1024);
-  _TileMaps := TStringHash.Create(False, 1024);
-  _Bundles := TStringHash.Create(False, 1024);
-end;
+  initialization
+  begin
+    InitialiseSwinGame();
+    
+    _Images := TStringHash.Create(False, 1024);
+    _SoundEffects := TStringHash.Create(False, 1024);
+    _Fonts := TStringHash.Create(False, 1024);
+    _Music := TStringHash.Create(False, 1024);
+    _TileMaps := TStringHash.Create(False, 1024);
+    _Bundles := TStringHash.Create(False, 1024);
+  end;
 
 end.

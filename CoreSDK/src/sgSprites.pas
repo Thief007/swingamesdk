@@ -539,7 +539,7 @@ implementation
 
   uses
     Classes, SysUtils, Math, // System
-    sgGraphics, sgGeometry, sgCore, sgCamera; //SwinGame
+    sgGraphics, sgGeometry, sgCore, sgCamera, sgShared; //SwinGame
 
 
   function VectorFromTo(s1, s2: Sprite): Vector;
@@ -1356,4 +1356,10 @@ implementation
     s^.scale := value;
   end;
 
+//=============================================================================
+
+  initialization
+  begin
+    InitialiseSwinGame();
+  end;
 end.

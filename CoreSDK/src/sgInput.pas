@@ -9,6 +9,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-10: Andrew : Added call to initialise SwinGame.
+//                      : Fixed missing const modifier on struct parameters
 // - 2009-06-15: Clinton: renamed+removed Is/Was and placed Key/Mouse first
 //                        moved and added meta comments, tweaked formatting.
 // - 2009-06-05: Andrew : Using sgShared
@@ -80,7 +82,7 @@ interface
   /// Moves the mouse cursor to the specified screen location
   ///
   /// @lib MoveMouseToPoint
-  procedure MoveMouse(point: Point2D);overload;
+  procedure MoveMouse(const point: Point2D);overload;
   
   /// Tells the mouse cursor to be visible if it was previously hidden with 
   /// by a `HideMouse` or `SetMouseVisible(False)` call.
@@ -280,7 +282,7 @@ implementation
     GetMouseMovement();
   end;
   
-  procedure MoveMouse(point : Point2d);overload;
+  procedure MoveMouse(const point : Point2d);overload;
   begin
     SDL_WarpMouse(Round(point.x), Round(point.y));
     GetMouseMovement();
@@ -610,9 +612,10 @@ implementation
 
 //=============================================================================
 
-initialization
-begin
-  RegisterEventProcessor(@ProcessMouseEvent, @StartProcessMouseEvents);
-end;
+  initialization
+  begin
+    InitialiseSwinGame();
+    RegisterEventProcessor(@ProcessMouseEvent, @StartProcessMouseEvents);
+  end;
 
 end.

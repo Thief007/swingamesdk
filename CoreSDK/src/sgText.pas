@@ -699,19 +699,20 @@ implementation
 
 //=============================================================================
 
-initialization
-begin
-  if TTF_Init() = -1 then
+  initialization
   begin
-    raise Exception.Create('Error openning font library. ' + string(TTF_GetError));
+    InitialiseSwinGame();
+    if TTF_Init() = -1 then
+    begin
+      raise Exception.Create('Error openning font library. ' + string(TTF_GetError));
+    end;
   end;
-end;
 
 //=============================================================================
 
-finalization
-begin
-  TTF_Quit();
-end;
+  finalization
+  begin
+    TTF_Quit();
+  end;
 
 end.

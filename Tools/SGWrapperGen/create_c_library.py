@@ -97,6 +97,7 @@ _type_switcher = {
         'tile': 'Tile %s',
         'circle': 'Circle %s',
         'arrayofpoint2d': 'Point2D *%s',
+        'matrix2d': 'Matrix2D %s',
         None: 'void %s'
     },
     'const' : {
@@ -216,6 +217,7 @@ _adapter_type_switcher = {
         'bitmap[0..n - 1]': 'void *%s',
         'spritekind': 'int %s',
         'longint[0..n - 1]': 'int *%s',
+        'longintarray': 'int *%s',
         'longint[0..n - 1][0..n - 1]': 'int *%s',
         'mapdata': 'MapData %s',
         'animationdata[0..n - 1]': 'AnimationData *%s',
@@ -359,6 +361,22 @@ def arg_visitor(arg_str, the_arg, for_param_or_type):
     else:
         return arg_str
 
+def _const_strip_arg_visitor(arg_str, the_arg, for_param_or_type):
+    '''
+    Called for each argument in a call, performs required mappings.
+    This version adds in & operators for all const parameters to 
+    enable the creation of a pass by value version.
+    '''
+    if isinstance(for_param_or_type, SGType):
+        the_type = for_param_or_type
+    else:
+        the_type = for_param_or_type.data_type
+    
+    if the_arg != None and isinstance(the_arg, SGParameter) and the_arg.modifier == 'const' and not the_type.is_array:
+        return '&' + arg_str
+    else:
+        return arg_str
+
 def adapter_type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame adapter (links to DLL)'''
     if (the_type.name.lower() if the_type != None else None) not in _adapter_type_switcher[modifier]:
@@ -388,6 +406,19 @@ def param_visitor(the_param, last):
         type_visitor(the_param.data_type, the_param.modifier) % the_param.name,
         ', ' if not last else '')
 
+def _const_strip_param_visitor(the_param, last):
+    '''
+    Called for each parameter in the function/procedure being mapped. 
+    This version strips off the const details to enable call by value.
+    '''
+    if the_param.modifier != 'const' or the_param.data_type.is_array:
+        mod = the_param.modifier
+    else: mod = None
+    
+    return '%s%s' % (
+        type_visitor(the_param.data_type, mod) % the_param.name,
+        ', ' if not last else '')
+
 def method_visitor(the_method, other):
     details = the_method.to_keyed_dict(
         other['param visitor'], other['type visitor'], other['arg visitor'])
@@ -400,9 +431,28 @@ def method_visitor(the_method, other):
         if the_method.is_function:
             #%(calls.name)s(%(calls.args)s)
             details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
-            other['c writer'].write(_module_c_function % details % the_method.uname)
+            other['c writer'].write(_module_c_function % details % details['uname'])
         else:
             other['c writer'].write(_module_c_method % details)
+            
+        if the_method.has_const_params():
+            # Create a version with const parameters passed by value
+            details = the_method.to_keyed_dict(
+                _const_strip_param_visitor, other['type visitor'], _const_strip_arg_visitor)
+            details['uname'] = details['uname'] + '_byval'
+            details['name'] = details['uname']
+            
+            if the_method.is_function:    
+                details['the_call'] = _const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
+                other['c writer'].write(_module_c_function % details % details['uname'])
+            else:
+                other['c writer'].write(_module_c_method % details)
+            
+            # Also write to header
+            other['header writer'].write('%(return_type)s' % details % details['uname'])
+            other['header writer'].write('(%(params)s);' % details) 
+            other['header writer'].writeln('')
+            
     
     return other
 
