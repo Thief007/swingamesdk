@@ -176,6 +176,11 @@ _data_switcher = {
     'Boolean': '%s != 0'
 }
 
+_val_switcher = {
+    'True': 'true',
+    'False': 'false'
+}
+
 _adapter_type_switcher = {
     None: {
         'single': 'float %s',
@@ -354,6 +359,9 @@ def arg_visitor(arg_str, the_arg, for_param_or_type):
         the_type = for_param_or_type
     else:
         the_type = for_param_or_type.data_type
+    
+    if arg_str in _val_switcher:
+        arg_str = _val_switcher[arg_str]
         
     if the_type.name in _data_switcher:
         #convert data using pattern from _data_switcher
@@ -367,6 +375,8 @@ def _const_strip_arg_visitor(arg_str, the_arg, for_param_or_type):
     This version adds in & operators for all const parameters to 
     enable the creation of a pass by value version.
     '''
+    arg_str = arg_visitor(arg_str, the_arg, for_param_or_type)
+    
     if isinstance(for_param_or_type, SGType):
         the_type = for_param_or_type
     else:

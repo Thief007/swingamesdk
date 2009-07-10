@@ -1,14 +1,17 @@
-#include <stdio.h>
-#include <stdbool.h>
-#include "SwinGame.h"
+#import <stdbool.h>
+#import <Foundation/NSAutoreleasePool.h>
+#import "SwinGame.h"
 
 int main(int argc, const char* argv[])
 {
     SetAppPath(argv[0], true);
     OpenAudio();
     OpenGraphicsWindow("Hello World", 800, 600);
+    //SoundEffect sound = LoadSoundEffect("./SwinGameStart.ogg");
     
     Color white = RGBAColor(255, 255, 255, 255);
+    
+    //PlaySoundEffect(sound);
     
     while (!WindowCloseRequested())
     {
@@ -20,6 +23,8 @@ int main(int argc, const char* argv[])
         ProcessEvents();
         RefreshScreen();
     }
+    
+    //FreeSoundEffect(&sound);
     
     ReleaseAllResources();
     

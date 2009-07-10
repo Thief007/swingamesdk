@@ -8,7 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		943267791006C8BF00DA67D2 /* SplashBack.jpg in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C70FF76043002B4FFA /* SplashBack.jpg */; };
-		944473EF0FF7608B002B4FFA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473D10FF76043002B4FFA /* main.c */; };
+		944473EA0FF7607F002B4FFA /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B20FF76043002B4FFA /* SDL.framework */; };
+		944473EB0FF76080002B4FFA /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B40FF76043002B4FFA /* SDL_image.framework */; };
+		944473EC0FF76081002B4FFA /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B60FF76043002B4FFA /* SDL_ttf.framework */; };
+		944473ED0FF76082002B4FFA /* SGSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B70FF76043002B4FFA /* SGSDK.framework */; };
+		944473EE0FF76083002B4FFA /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B50FF76043002B4FFA /* SDL_mixer.framework */; };
+		944473EF0FF7608B002B4FFA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 944473D10FF76043002B4FFA /* main.m */; };
+		944473F00FF76098002B4FFA /* TileMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473BD0FF76043002B4FFA /* TileMap.c */; };
+		944473F10FF76098002B4FFA /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473B00FF76043002B4FFA /* Resources.c */; };
+		944473F20FF7609A002B4FFA /* Core.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473A20FF76043002B4FFA /* Core.c */; };
+		944473F30FF7609B002B4FFA /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 9444739E0FF76043002B4FFA /* Audio.c */; };
+		944473F40FF7609C002B4FFA /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473BB0FF76043002B4FFA /* Text.c */; };
+		944473F50FF7609C002B4FFA /* Geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473A40FF76043002B4FFA /* Geometry.c */; };
+		944473F60FF7609D002B4FFA /* Physics.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473AC0FF76043002B4FFA /* Physics.c */; };
+		944473F90FF7609F002B4FFA /* Graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473A60FF76043002B4FFA /* Graphics.c */; };
+		944473FB0FF760A3002B4FFA /* Input.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473A80FF76043002B4FFA /* Input.c */; };
+		944473FC0FF760A4002B4FFA /* Camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473A00FF76043002B4FFA /* Camera.c */; };
 		944474010FF76144002B4FFA /* arial.ttf in Copy Fonts */ = {isa = PBXBuildFile; fileRef = 944473C20FF76043002B4FFA /* arial.ttf */; };
 		944474020FF76145002B4FFA /* cour.ttf in Copy Fonts */ = {isa = PBXBuildFile; fileRef = 944473C30FF76043002B4FFA /* cour.ttf */; };
 		944474030FF76147002B4FFA /* loader_empty.png in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C50FF76043002B4FFA /* loader_empty.png */; };
@@ -19,29 +34,13 @@
 		944474080FF7614A002B4FFA /* SwinGame.ico in Resources */ = {isa = PBXBuildFile; fileRef = 944473CF0FF76043002B4FFA /* SwinGame.ico */; };
 		944474090FF7614A002B4FFA /* SwinGameAni.jpg in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C80FF76043002B4FFA /* SwinGameAni.jpg */; };
 		9444740A0FF7614B002B4FFA /* SwinGameStart.ogg in Copy Sounds */ = {isa = PBXBuildFile; fileRef = 944473CC0FF76043002B4FFA /* SwinGameStart.ogg */; };
-		94B87A3D1006F0D40020CC77 /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A1D1006F0D40020CC77 /* Audio.c */; };
-		94B87A3E1006F0D40020CC77 /* Camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A1F1006F0D40020CC77 /* Camera.c */; };
-		94B87A3F1006F0D40020CC77 /* Core.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A211006F0D40020CC77 /* Core.c */; };
-		94B87A411006F0D40020CC77 /* Geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A241006F0D40020CC77 /* Geometry.c */; };
-		94B87A421006F0D40020CC77 /* Graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A261006F0D40020CC77 /* Graphics.c */; };
-		94B87A431006F0D40020CC77 /* Input.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A281006F0D40020CC77 /* Input.c */; };
-		94B87A441006F0D40020CC77 /* Physics.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A2A1006F0D40020CC77 /* Physics.c */; };
-		94B87A451006F0D40020CC77 /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A2C1006F0D40020CC77 /* Resources.c */; };
-		94B87A461006F0D40020CC77 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A2E1006F0D40020CC77 /* SDL.framework */; };
-		94B87A471006F0D40020CC77 /* SDL_gfx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A2F1006F0D40020CC77 /* SDL_gfx.framework */; };
-		94B87A481006F0D40020CC77 /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A301006F0D40020CC77 /* SDL_image.framework */; };
-		94B87A491006F0D40020CC77 /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A311006F0D40020CC77 /* SDL_mixer.framework */; };
-		94B87A4A1006F0D40020CC77 /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A321006F0D40020CC77 /* SDL_ttf.framework */; };
-		94B87A4B1006F0D40020CC77 /* SGSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A331006F0D40020CC77 /* SGSDK.framework */; };
-		94B87A4C1006F0D40020CC77 /* Sprites.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A351006F0D40020CC77 /* Sprites.c */; };
-		94B87A4D1006F0D40020CC77 /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A381006F0D40020CC77 /* Text.c */; };
-		94B87A4E1006F0D40020CC77 /* TileMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A3A1006F0D40020CC77 /* TileMap.c */; };
-		94B87A7F1006F0E90020CC77 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A2E1006F0D40020CC77 /* SDL.framework */; };
-		94B87A801006F0E90020CC77 /* SDL_gfx.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A2F1006F0D40020CC77 /* SDL_gfx.framework */; };
-		94B87A811006F0E90020CC77 /* SDL_image.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A301006F0D40020CC77 /* SDL_image.framework */; };
-		94B87A821006F0E90020CC77 /* SDL_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A311006F0D40020CC77 /* SDL_mixer.framework */; };
-		94B87A831006F0E90020CC77 /* SDL_ttf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A321006F0D40020CC77 /* SDL_ttf.framework */; };
-		94B87A841006F0E90020CC77 /* SGSDK.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94B87A331006F0D40020CC77 /* SGSDK.framework */; };
+		94D3D4950FF77211000C506D /* SDL_gfx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B30FF76043002B4FFA /* SDL_gfx.framework */; };
+		94F685410FF7679000C88D27 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B20FF76043002B4FFA /* SDL.framework */; };
+		94F685420FF7679000C88D27 /* SDL_gfx.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B30FF76043002B4FFA /* SDL_gfx.framework */; };
+		94F685430FF7679000C88D27 /* SDL_image.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B40FF76043002B4FFA /* SDL_image.framework */; };
+		94F685440FF7679000C88D27 /* SDL_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B50FF76043002B4FFA /* SDL_mixer.framework */; };
+		94F685450FF7679000C88D27 /* SDL_ttf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B60FF76043002B4FFA /* SDL_ttf.framework */; };
+		94F685460FF7679000C88D27 /* SGSDK.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B70FF76043002B4FFA /* SGSDK.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -89,12 +88,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				94B87A7F1006F0E90020CC77 /* SDL.framework in Copy Frameworks */,
-				94B87A801006F0E90020CC77 /* SDL_gfx.framework in Copy Frameworks */,
-				94B87A811006F0E90020CC77 /* SDL_image.framework in Copy Frameworks */,
-				94B87A821006F0E90020CC77 /* SDL_mixer.framework in Copy Frameworks */,
-				94B87A831006F0E90020CC77 /* SDL_ttf.framework in Copy Frameworks */,
-				94B87A841006F0E90020CC77 /* SGSDK.framework in Copy Frameworks */,
+				94F685410FF7679000C88D27 /* SDL.framework in Copy Frameworks */,
+				94F685420FF7679000C88D27 /* SDL_gfx.framework in Copy Frameworks */,
+				94F685430FF7679000C88D27 /* SDL_image.framework in Copy Frameworks */,
+				94F685440FF7679000C88D27 /* SDL_mixer.framework in Copy Frameworks */,
+				94F685450FF7679000C88D27 /* SDL_ttf.framework in Copy Frameworks */,
+				94F685460FF7679000C88D27 /* SGSDK.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,6 +101,34 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9444739E0FF76043002B4FFA /* Audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Audio.c; sourceTree = "<group>"; };
+		9444739F0FF76043002B4FFA /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audio.h; sourceTree = "<group>"; };
+		944473A00FF76043002B4FFA /* Camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Camera.c; sourceTree = "<group>"; };
+		944473A10FF76043002B4FFA /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
+		944473A20FF76043002B4FFA /* Core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Core.c; sourceTree = "<group>"; };
+		944473A30FF76043002B4FFA /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
+		944473A40FF76043002B4FFA /* Geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Geometry.c; sourceTree = "<group>"; };
+		944473A50FF76043002B4FFA /* Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geometry.h; sourceTree = "<group>"; };
+		944473A60FF76043002B4FFA /* Graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Graphics.c; sourceTree = "<group>"; };
+		944473A70FF76043002B4FFA /* Graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Graphics.h; sourceTree = "<group>"; };
+		944473A80FF76043002B4FFA /* Input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Input.c; sourceTree = "<group>"; };
+		944473A90FF76043002B4FFA /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
+		944473AC0FF76043002B4FFA /* Physics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Physics.c; sourceTree = "<group>"; };
+		944473AD0FF76043002B4FFA /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Physics.h; sourceTree = "<group>"; };
+		944473B00FF76043002B4FFA /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Resources.c; sourceTree = "<group>"; };
+		944473B10FF76043002B4FFA /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Resources.h; sourceTree = "<group>"; };
+		944473B20FF76043002B4FFA /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
+		944473B30FF76043002B4FFA /* SDL_gfx.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_gfx.framework; sourceTree = "<group>"; };
+		944473B40FF76043002B4FFA /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
+		944473B50FF76043002B4FFA /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_mixer.framework; sourceTree = "<group>"; };
+		944473B60FF76043002B4FFA /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_ttf.framework; sourceTree = "<group>"; };
+		944473B70FF76043002B4FFA /* SGSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SGSDK.framework; sourceTree = "<group>"; };
+		944473B80FF76043002B4FFA /* SGSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGSDK.h; sourceTree = "<group>"; };
+		944473BB0FF76043002B4FFA /* Text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Text.c; sourceTree = "<group>"; };
+		944473BC0FF76043002B4FFA /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
+		944473BD0FF76043002B4FFA /* TileMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TileMap.c; sourceTree = "<group>"; };
+		944473BE0FF76043002B4FFA /* TileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileMap.h; sourceTree = "<group>"; };
+		944473BF0FF76043002B4FFA /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		944473C20FF76043002B4FFA /* arial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = arial.ttf; sourceTree = "<group>"; };
 		944473C30FF76043002B4FFA /* cour.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = cour.ttf; sourceTree = "<group>"; };
 		944473C50FF76043002B4FFA /* loader_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = loader_empty.png; sourceTree = "<group>"; };
@@ -112,40 +139,9 @@
 		944473CD0FF76043002B4FFA /* splash.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = splash.txt; sourceTree = "<group>"; };
 		944473CE0FF76043002B4FFA /* SwinGame.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SwinGame.icns; sourceTree = "<group>"; };
 		944473CF0FF76043002B4FFA /* SwinGame.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = SwinGame.ico; sourceTree = "<group>"; };
-		944473D10FF76043002B4FFA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		944473D10FF76043002B4FFA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.m; sourceTree = "<group>"; };
 		944473E10FF76057002B4FFA /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		944473E40FF76057002B4FFA /* MyGame-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyGame-Info.plist"; sourceTree = "<group>"; };
-		94B87A1D1006F0D40020CC77 /* Audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Audio.c; sourceTree = "<group>"; };
-		94B87A1E1006F0D40020CC77 /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audio.h; sourceTree = "<group>"; };
-		94B87A1F1006F0D40020CC77 /* Camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Camera.c; sourceTree = "<group>"; };
-		94B87A201006F0D40020CC77 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
-		94B87A211006F0D40020CC77 /* Core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Core.c; sourceTree = "<group>"; };
-		94B87A221006F0D40020CC77 /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Core.h; sourceTree = "<group>"; };
-		94B87A241006F0D40020CC77 /* Geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Geometry.c; sourceTree = "<group>"; };
-		94B87A251006F0D40020CC77 /* Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Geometry.h; sourceTree = "<group>"; };
-		94B87A261006F0D40020CC77 /* Graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Graphics.c; sourceTree = "<group>"; };
-		94B87A271006F0D40020CC77 /* Graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Graphics.h; sourceTree = "<group>"; };
-		94B87A281006F0D40020CC77 /* Input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Input.c; sourceTree = "<group>"; };
-		94B87A291006F0D40020CC77 /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Input.h; sourceTree = "<group>"; };
-		94B87A2A1006F0D40020CC77 /* Physics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Physics.c; sourceTree = "<group>"; };
-		94B87A2B1006F0D40020CC77 /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Physics.h; sourceTree = "<group>"; };
-		94B87A2C1006F0D40020CC77 /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Resources.c; sourceTree = "<group>"; };
-		94B87A2D1006F0D40020CC77 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Resources.h; sourceTree = "<group>"; };
-		94B87A2E1006F0D40020CC77 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
-		94B87A2F1006F0D40020CC77 /* SDL_gfx.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_gfx.framework; sourceTree = "<group>"; };
-		94B87A301006F0D40020CC77 /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_image.framework; sourceTree = "<group>"; };
-		94B87A311006F0D40020CC77 /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_mixer.framework; sourceTree = "<group>"; };
-		94B87A321006F0D40020CC77 /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL_ttf.framework; sourceTree = "<group>"; };
-		94B87A331006F0D40020CC77 /* SGSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SGSDK.framework; sourceTree = "<group>"; };
-		94B87A341006F0D40020CC77 /* SGSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGSDK.h; sourceTree = "<group>"; };
-		94B87A351006F0D40020CC77 /* Sprites.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Sprites.c; sourceTree = "<group>"; };
-		94B87A361006F0D40020CC77 /* Sprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sprites.h; sourceTree = "<group>"; };
-		94B87A371006F0D40020CC77 /* SwinGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwinGame.h; sourceTree = "<group>"; };
-		94B87A381006F0D40020CC77 /* Text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Text.c; sourceTree = "<group>"; };
-		94B87A391006F0D40020CC77 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
-		94B87A3A1006F0D40020CC77 /* TileMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = TileMap.c; sourceTree = "<group>"; };
-		94B87A3B1006F0D40020CC77 /* TileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileMap.h; sourceTree = "<group>"; };
-		94B87A3C1006F0D40020CC77 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,12 +149,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94B87A461006F0D40020CC77 /* SDL.framework in Frameworks */,
-				94B87A471006F0D40020CC77 /* SDL_gfx.framework in Frameworks */,
-				94B87A481006F0D40020CC77 /* SDL_image.framework in Frameworks */,
-				94B87A491006F0D40020CC77 /* SDL_mixer.framework in Frameworks */,
-				94B87A4A1006F0D40020CC77 /* SDL_ttf.framework in Frameworks */,
-				94B87A4B1006F0D40020CC77 /* SGSDK.framework in Frameworks */,
+				944473EA0FF7607F002B4FFA /* SDL.framework in Frameworks */,
+				944473EB0FF76080002B4FFA /* SDL_image.framework in Frameworks */,
+				944473EC0FF76081002B4FFA /* SDL_ttf.framework in Frameworks */,
+				944473ED0FF76082002B4FFA /* SGSDK.framework in Frameworks */,
+				944473EE0FF76083002B4FFA /* SDL_mixer.framework in Frameworks */,
+				94D3D4950FF77211000C506D /* SDL_gfx.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,13 +164,49 @@
 		944473910FF76022002B4FFA = {
 			isa = PBXGroup;
 			children = (
-				94B87A1C1006F0D40020CC77 /* lib */,
+				9444739D0FF76043002B4FFA /* lib */,
 				944473C00FF76043002B4FFA /* Resources */,
 				944473D00FF76043002B4FFA /* src */,
 				944473E20FF76057002B4FFA /* Products */,
 				944473E40FF76057002B4FFA /* MyGame-Info.plist */,
 			);
 			sourceTree = "<group>";
+		};
+		9444739D0FF76043002B4FFA /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				9444739E0FF76043002B4FFA /* Audio.c */,
+				9444739F0FF76043002B4FFA /* Audio.h */,
+				944473A00FF76043002B4FFA /* Camera.c */,
+				944473A10FF76043002B4FFA /* Camera.h */,
+				944473A20FF76043002B4FFA /* Core.c */,
+				944473A30FF76043002B4FFA /* Core.h */,
+				944473A40FF76043002B4FFA /* Geometry.c */,
+				944473A50FF76043002B4FFA /* Geometry.h */,
+				944473A60FF76043002B4FFA /* Graphics.c */,
+				944473A70FF76043002B4FFA /* Graphics.h */,
+				944473A80FF76043002B4FFA /* Input.c */,
+				944473A90FF76043002B4FFA /* Input.h */,
+				944473AC0FF76043002B4FFA /* Physics.c */,
+				944473AD0FF76043002B4FFA /* Physics.h */,
+				944473B00FF76043002B4FFA /* Resources.c */,
+				944473B10FF76043002B4FFA /* Resources.h */,
+				944473B20FF76043002B4FFA /* SDL.framework */,
+				944473B30FF76043002B4FFA /* SDL_gfx.framework */,
+				944473B40FF76043002B4FFA /* SDL_image.framework */,
+				944473B50FF76043002B4FFA /* SDL_mixer.framework */,
+				944473B60FF76043002B4FFA /* SDL_ttf.framework */,
+				944473B70FF76043002B4FFA /* SGSDK.framework */,
+				944473B80FF76043002B4FFA /* SGSDK.h */,
+				944473BB0FF76043002B4FFA /* Text.c */,
+				944473BC0FF76043002B4FFA /* Text.h */,
+				944473BD0FF76043002B4FFA /* TileMap.c */,
+				944473BE0FF76043002B4FFA /* TileMap.h */,
+				944473BF0FF76043002B4FFA /* Types.h */,
+			);
+			name = lib;
+			path = ./lib;
+			sourceTree = SOURCE_ROOT;
 		};
 		944473C00FF76043002B4FFA /* Resources */ = {
 			isa = PBXGroup;
@@ -237,7 +269,7 @@
 		944473D00FF76043002B4FFA /* src */ = {
 			isa = PBXGroup;
 			children = (
-				944473D10FF76043002B4FFA /* main.c */,
+				944473D10FF76043002B4FFA /* main.m */,
 			);
 			name = src;
 			path = ./src;
@@ -249,44 +281,6 @@
 				944473E10FF76057002B4FFA /* MyGame.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		94B87A1C1006F0D40020CC77 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				94B87A1D1006F0D40020CC77 /* Audio.c */,
-				94B87A1E1006F0D40020CC77 /* Audio.h */,
-				94B87A1F1006F0D40020CC77 /* Camera.c */,
-				94B87A201006F0D40020CC77 /* Camera.h */,
-				94B87A211006F0D40020CC77 /* Core.c */,
-				94B87A221006F0D40020CC77 /* Core.h */,
-				94B87A241006F0D40020CC77 /* Geometry.c */,
-				94B87A251006F0D40020CC77 /* Geometry.h */,
-				94B87A261006F0D40020CC77 /* Graphics.c */,
-				94B87A271006F0D40020CC77 /* Graphics.h */,
-				94B87A281006F0D40020CC77 /* Input.c */,
-				94B87A291006F0D40020CC77 /* Input.h */,
-				94B87A2A1006F0D40020CC77 /* Physics.c */,
-				94B87A2B1006F0D40020CC77 /* Physics.h */,
-				94B87A2C1006F0D40020CC77 /* Resources.c */,
-				94B87A2D1006F0D40020CC77 /* Resources.h */,
-				94B87A2E1006F0D40020CC77 /* SDL.framework */,
-				94B87A2F1006F0D40020CC77 /* SDL_gfx.framework */,
-				94B87A301006F0D40020CC77 /* SDL_image.framework */,
-				94B87A311006F0D40020CC77 /* SDL_mixer.framework */,
-				94B87A321006F0D40020CC77 /* SDL_ttf.framework */,
-				94B87A331006F0D40020CC77 /* SGSDK.framework */,
-				94B87A341006F0D40020CC77 /* SGSDK.h */,
-				94B87A351006F0D40020CC77 /* Sprites.c */,
-				94B87A361006F0D40020CC77 /* Sprites.h */,
-				94B87A371006F0D40020CC77 /* SwinGame.h */,
-				94B87A381006F0D40020CC77 /* Text.c */,
-				94B87A391006F0D40020CC77 /* Text.h */,
-				94B87A3A1006F0D40020CC77 /* TileMap.c */,
-				94B87A3B1006F0D40020CC77 /* TileMap.h */,
-				94B87A3C1006F0D40020CC77 /* Types.h */,
-			);
-			path = lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -349,18 +343,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				944473EF0FF7608B002B4FFA /* main.c in Sources */,
-				94B87A3D1006F0D40020CC77 /* Audio.c in Sources */,
-				94B87A3E1006F0D40020CC77 /* Camera.c in Sources */,
-				94B87A3F1006F0D40020CC77 /* Core.c in Sources */,
-				94B87A411006F0D40020CC77 /* Geometry.c in Sources */,
-				94B87A421006F0D40020CC77 /* Graphics.c in Sources */,
-				94B87A431006F0D40020CC77 /* Input.c in Sources */,
-				94B87A441006F0D40020CC77 /* Physics.c in Sources */,
-				94B87A451006F0D40020CC77 /* Resources.c in Sources */,
-				94B87A4C1006F0D40020CC77 /* Sprites.c in Sources */,
-				94B87A4D1006F0D40020CC77 /* Text.c in Sources */,
-				94B87A4E1006F0D40020CC77 /* TileMap.c in Sources */,
+				944473EF0FF7608B002B4FFA /* main.m in Sources */,
+				944473F00FF76098002B4FFA /* TileMap.c in Sources */,
+				944473F10FF76098002B4FFA /* Resources.c in Sources */,
+				944473F20FF7609A002B4FFA /* Core.c in Sources */,
+				944473F30FF7609B002B4FFA /* Audio.c in Sources */,
+				944473F40FF7609C002B4FFA /* Text.c in Sources */,
+				944473F50FF7609C002B4FFA /* Geometry.c in Sources */,
+				944473F60FF7609D002B4FFA /* Physics.c in Sources */,
+				944473F90FF7609F002B4FFA /* Graphics.c in Sources */,
+				944473FB0FF760A3002B4FFA /* Input.c in Sources */,
+				944473FC0FF760A4002B4FFA /* Camera.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

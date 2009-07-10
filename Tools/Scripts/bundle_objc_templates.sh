@@ -12,6 +12,11 @@ cd "$APP_PATH"
 #
 source "${APP_PATH}/inc/os_check.sh"
 
+if [ ! "$OS" = "$MAC" ]; then
+    echo "Objective C is only for MacOS (atm)"
+    exit 1
+fi
+
 #
 # Step 3: Set the paths to local variables
 #
@@ -24,16 +29,19 @@ TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
 DIST_DIR="${SWINGAME_DIR}/Dist"
 
 C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
-C_DIST_DIR="${DIST_DIR}/C"
-
-COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
 COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/common"
 
-GCC_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/gcc"
-GCC_C_DIST_DIR="${C_DIST_DIR}/gcc"
+OBJC_TEMPLATE_DIR="${TEMPLATE_DIR}/ObjC"
+OBJC_DIST_DIR="${DIST_DIR}/ObjC"
 
-XCODE_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/xcode 3"
-XCODE_C_DIST_DIR="${C_DIST_DIR}/xcode 3"
+COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
+COMMON_OBJC_TEMPLATE_DIR="${OBJC_TEMPLATE_DIR}/common"
+
+GCC_C_TEMPLATE_DIR="${OBJC_TEMPLATE_DIR}/gcc"
+GCC_C_DIST_DIR="${OBJC_DIST_DIR}/gcc"
+
+XCODE_OBJC_TEMPLATE_DIR="${OBJC_TEMPLATE_DIR}/xcode 3"
+XCODE_OBJC_DIST_DIR="${OBJC_DIST_DIR}/xcode 3"
 
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
@@ -43,7 +51,7 @@ SOURCE_DIST_DIR="${DIST_DIR}/Source"
 COPY_LIST=( "Command line gcc,${GCC_C_TEMPLATE_DIR},${GCC_C_DIST_DIR}" )
 
 if [ "$OS" = "$MAC" ]; then
-    COPY_LIST=( "${COPY_LIST[@]}" "XCode 3,${XCODE_C_TEMPLATE_DIR},${XCODE_C_DIST_DIR}")
+    COPY_LIST=( "${COPY_LIST[@]}" "XCode 3,${XCODE_OBJC_TEMPLATE_DIR},${XCODE_OBJC_DIST_DIR}")
     
     # build framework if needed
     if [ ! -d "${SOURCE_DIST_DIR}/bin/SGSDK.framework" ]; then
@@ -79,6 +87,9 @@ CreateCCode()
     echo "#define SWINGAME" >> SwinGame.h 
     ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> SwinGame.h
     echo "#endif" >> SwinGame.h    
+    
+    mkdir -p "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    cp -p * "${COMMON_OBJC_TEMPLATE_DIR}/lib"
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh
@@ -106,7 +117,7 @@ echo "--------------------------------------------------"
 echo "  ... Creating C library code"
 CreateCCode
 
-DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
+DoDist "${COPY_LIST}" "${OBJC_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_OBJC_TEMPLATE_DIR}"
 
 echo "  Finished"
 echo "--------------------------------------------------"
