@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-10: Andrew : Fixed missing const modifier on struct parameters
 // - 2009-06-29: Andrew : Using circle
 // - 2009-06-24: Andrew : Moved Sprite routines to Sprites.
 // - 2009-06-23: Clinton: Comment format/cleanup
@@ -472,7 +473,7 @@ interface
   /// @lib
   procedure SetClip(x, y, w, h: LongInt); overload;
   /// @lib SetClipRect
-  procedure SetClip(r: Rectangle); overload;
+  procedure SetClip(const r: Rectangle); overload;
 
   /// @lib SetClipForBitmap
   /// @class Bitmap
@@ -482,7 +483,7 @@ interface
   /// @lib SetClipRectForBitmap
   /// @class Bitmap
   /// @overload SetClip SetClipRect
-  procedure SetClip(bmp: Bitmap; r: Rectangle); overload;
+  procedure SetClip(bmp: Bitmap; const r: Rectangle); overload;
 
   /// @lib
   procedure ResetClip(); overload;
@@ -1713,7 +1714,7 @@ implementation
     SDL_SetClipRect(bmp^.surface, @rect);
   end;
   
-  procedure SetClip(bmp: Bitmap; r: Rectangle); overload;
+  procedure SetClip(bmp: Bitmap; const r: Rectangle); overload;
   begin
     SetClip(bmp, Round(r.x), Round(r.y), r.width, r.height);
   end;
@@ -1723,7 +1724,7 @@ implementation
     SetClip(screen, x, y, w, h);
   end;
   
-  procedure SetClip(r: Rectangle); overload;
+  procedure SetClip(const r: Rectangle); overload;
   begin
     SetClip(screen, Round(r.x), Round(r.y), r.width, r.height);
   end;
@@ -1781,4 +1782,11 @@ implementation
   //       _DoDrawMesh();
   //   end;
   // end;
+  
+//=============================================================================
+  
+  initialization
+  begin
+    InitialiseSwinGame();
+  end;
 end.

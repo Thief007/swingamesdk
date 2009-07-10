@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-10: Andrew : Added missing const modifier for struct parameters
 // - 2009-07-09: Clinton: Optimized IsPointInTile slightly (isometric)
 //                        Optimized GetTileFromPoint (isometric)
 // - 2009-07-08: Clinton: Code comments, TODO notes and some tweaks/optimization
@@ -174,7 +175,7 @@ interface
   /// @class Map
   /// @self 2
   /// @method GetTileFromPoint
-  function GetTileFromPoint(point: Point2D; m: Map): Tile;
+  function GetTileFromPoint(const point: Point2D; m: Map): Tile;
   //TODO: Why is the map the second parameter? Inconsistent...
 
   /// Returns the Event of the tile at the given (x,y) map index.
@@ -196,7 +197,7 @@ implementation
 
   uses
     SysUtils, Classes,  //System,
-    sgGraphics, sgCamera, sgCore, sgPhysics, sgGeometry, sgResources, sgSprites; //Swingame
+    sgGraphics, sgCamera, sgCore, sgPhysics, sgGeometry, sgResources, sgSprites, sgShared; //Swingame
 
   function ReadInt(var stream: text): Word;
   var
@@ -1012,7 +1013,7 @@ implementation
   end;
 
 
-  function GetTileFromPoint(point: Point2D; m: Map): Tile;
+  function GetTileFromPoint(const point: Point2D; m: Map): Tile;
   var
     x, y, tx, ty: LongInt;
   begin
@@ -1139,4 +1140,12 @@ implementation
     result := Event(-1);
   end;
   
+  
+//=============================================================================
+
+  initialization
+  begin
+    InitialiseSwinGame();
+  end;
+
 end.

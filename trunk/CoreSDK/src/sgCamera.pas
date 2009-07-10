@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-10: Andrew : Fixed missing const modifier on struct types
 // - 2009-06-17: Clinton: Added CameraPos, reordered methods,
 //                        Renamed ToScreen/ToWorld (removed "Coordinates")
 // - 2009-06-16: Clinton: Renaming for consistent World/Camera/Screen use
@@ -83,7 +84,7 @@ interface
   ///
   /// @param pt The point to move the camera view to.
   /// @lib
-  procedure MoveCameraTo(pt: Point2D); overload;
+  procedure MoveCameraTo(const pt: Point2D); overload;
   
   //---------------------------------------------------------------------------
   // Camera - sprite tracking
@@ -160,7 +161,7 @@ interface
 implementation
 //=============================================================================
 
-  uses Classes, SysUtils, sgCore, sgGeometry;
+  uses Classes, SysUtils, sgCore, sgGeometry, sgShared;
 
   ///
   /// The screen offset variables
@@ -211,7 +212,7 @@ implementation
     _cameraY := y;
   end;
 
-  procedure MoveCameraTo(pt: Point2D); overload;
+  procedure MoveCameraTo(const pt: Point2D); overload;
   begin
     _cameraX := pt.x;
     _cameraY := pt.y;
@@ -275,5 +276,11 @@ implementation
     result.y := screenPoint.y + _cameraY;
   end;
 
+//=============================================================================
+
+  initialization
+  begin
+    InitialiseSwinGame();
+  end;
 
 end.

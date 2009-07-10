@@ -350,7 +350,7 @@ implementation
 //=============================================================================
 
   uses
-    SysUtils, Classes, SDL_Mixer, SDL, sgCore;
+    SysUtils, Classes, SDL_Mixer, SDL, sgShared;
 
   var
     // Contains the sound channels used to determine if a sound is currently
@@ -532,6 +532,13 @@ implementation
         soundChannels[i] := nil;
       end;
     end;
+  end;
+
+//=============================================================================
+
+  initialization
+  begin
+    InitialiseSwinGame();
   end;
 
 end.

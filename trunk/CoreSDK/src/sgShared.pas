@@ -8,11 +8,12 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-10: Andrew : Added initialisation code
 // - 2009-06-23: Clinton: Comment/format cleanup/tweaks
 //                      : Slight optimization to NewSDLRect (redundant code)
 //                      : Renamed scr to screen
-// - 2009-06-05: Andrew: Created to contain all globals that are hidden from
-//                       the library
+// - 2009-06-05: Andrew : Created to contain all globals that are hidden from
+//                        the library
 //=============================================================================
 
 unit sgShared;
@@ -46,6 +47,9 @@ interface
   // when SDL events have occured. Events such as mouse movement, button
   // clicking and key changes (up/down). See sgInput.
   procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
+  
+  // All SwinGame initialisation code must call this before performing any processing...
+  procedure InitialiseSwinGame();
 
   // Global variables that can be shared.
   var
@@ -91,6 +95,73 @@ implementation
 //=============================================================================
 
   uses SysUtils, Math, Classes, sgTrace, SDL_gfx;
+  
+  var
+    is_initialised: Boolean = False;
+    //----------------------------------------------------------------------------
+    // Global variables for Mac OS Autorelease Pool
+    //----------------------------------------------------------------------------
+    {$ifdef DARWIN}
+      NSAutoreleasePool: LongInt;
+      pool: LongInt;
+    {$endif}
+    
+  //---------------------------------------------------------------------------
+  // OS X dylib external link
+  //---------------------------------------------------------------------------
+  
+  {$ifdef DARWIN}
+    {$linklib libobjc.dylib}
+    procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
+    function objc_getClass(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
+    function sel_registerName(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
+    function objc_msgSend(self, cmd: LongInt): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
+  {$endif}
+  
+  procedure InitialiseSwinGame();
+  begin
+    if is_initialised then exit;
+    is_initialised := True;
+    
+    {$ifdef DARWIN}
+      {$IFDEF Trace}
+        TraceIf(tlInfo, 'sgCore', 'Info', 'initialization', 'Loading Mac version');
+      {$ENDIF}
+
+      //FIX: Error with Mac and FPC 2.2.2
+      SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
+
+      NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
+      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+
+      objc_msgSend(pool, sel_registerName('init'));
+      NSApplicationLoad();
+    {$endif}
+
+    if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+    begin
+      {$IFDEF Trace}
+      TraceIf(tlError, 'sgCore', 'Error Loading SDL', 'initialization', SDL_GetError());
+      {$ENDIF}
+      raise Exception.Create('Error loading sdl... ' + SDL_GetError());
+    end;
+
+    //Unicode required by input manager.
+    SDL_EnableUNICODE(SDL_ENABLE);
+
+    try
+      if ParamCount() >= 0 then
+        applicationPath := ExtractFileDir(ParamStr(0))
+      else
+        applicationPath := '';
+    except
+      applicationPath := '';
+    end;
+
+    screen := nil;
+    baseSurface := nil;
+  end;
+  
 
   function ToSDLColor(color: UInt32): TSDL_Color;
   begin
@@ -153,19 +224,37 @@ implementation
 
 //=============================================================================
 
-initialization
-begin
-end;
+  initialization
+  begin
+    InitialiseSwinGame();
+  end;
 
 //=============================================================================
 
-finalization
-begin
-  if sdlManager <> nil then
+  finalization
   begin
-    sdlManager.Free();
-    sdlManager := nil;
+    if sdlManager <> nil then
+    begin
+      sdlManager.Free();
+      sdlManager := nil;
+    end;
+  
+    {$ifdef DARWIN}
+      objc_msgSend(pool, sel_registerName('drain'));
+    {$endif}
+  
+    if screen <> nil then
+    begin
+      if screen^.surface <> nil then
+        SDL_FreeSurface(screen^.surface);
+    
+      Dispose(screen);
+      screen := nil;
+      //scr and baseSurface are now the same!
+      baseSurface := nil;
+    end;
+  
+    SDL_Quit();
   end;
-end;
 
 end.

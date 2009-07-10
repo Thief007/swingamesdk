@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-10: Andrew : Moved initialisation code to sgShared
 // - 2009-07-02: Andrew : Added comments for Timer exporting.
 // - 2009-06-29: Andrew : Renamed timer and version related functions,
 //                      : Added comments to color and timer functions and procedures.
@@ -426,18 +427,6 @@ implementation
     _lastUpdateTime: UInt32;
     _screen: PSDL_Surface;
     _fpsData: FPSData;
-
-  //---------------------------------------------------------------------------
-  // OS X dylib external link
-  //---------------------------------------------------------------------------
-
-  {$ifdef DARWIN}
-    {$linklib libobjc.dylib}
-    procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
-    function objc_getClass(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
-    function sel_registerName(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
-    function objc_msgSend(self, cmd: LongInt): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
-  {$endif}
 
   //---------------------------------------------------------------------------
 
@@ -1052,95 +1041,34 @@ implementation
     result := 0;
   end;
 
+//=============================================================================
 
-//----------------------------------------------------------------------------
-// Global variables for Mac OS Autorelease Pool
-//----------------------------------------------------------------------------
-
-{$ifdef DARWIN}
-var
-  NSAutoreleasePool: LongInt;
-  pool: LongInt;
-{$endif}
-
+  initialization
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'initialization');
+    {$ENDIF}
+  
+    InitialiseSwinGame();
+  
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'initialization');
+    {$ENDIF}
+  end;
 
 //=============================================================================
 
-initialization
-begin
-  {$IFDEF TRACE}
-    TraceEnter('sgCore', 'initialization');
-  {$ENDIF}
-
-  {$ifdef DARWIN}
-    {$IFDEF Trace}
-      TraceIf(tlInfo, 'sgCore', 'Info', 'initialization', 'Loading Mac version');
-    {$ENDIF}
-
-    //FIX: Error with Mac and FPC 2.2.2
-    SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
-
-    NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
-    pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
-
-    objc_msgSend(pool, sel_registerName('init'));
-    NSApplicationLoad();
-   {$endif}
-
-  if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+  finalization
   begin
-    {$IFDEF Trace}
-    TraceIf(tlError, 'sgCore', 'Error Loading SDL', 'initialization', SDL_GetError());
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'finalization');
     {$ENDIF}
-    raise Exception.Create('Error loading sdl... ' + SDL_GetError());
+  
+    ReleaseResourceBundle('splash.txt');
+  
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'finalization');
+    {$ENDIF}
   end;
-
-  //Unicode required by input manager.
-  SDL_EnableUNICODE(SDL_ENABLE);
-
-  try
-    if ParamCount() >= 0 then
-      applicationPath := ExtractFileDir(ParamStr(0))
-    else
-      applicationPath := '';
-  except
-    applicationPath := '';
-  end;
-
-  screen := nil;
-  baseSurface := nil;
-
-  {$IFDEF TRACE}
-    TraceExit('sgCore', 'initialization');
-  {$ENDIF}
-end;
-
-//=============================================================================
-
-finalization
-begin
-  {$IFDEF TRACE}
-    TraceEnter('sgCore', 'finalization');
-  {$ENDIF}
-
-  ReleaseResourceBundle('splash.txt');
-
-  if screen <> nil then
-  begin
-    if screen^.surface <> nil then
-      SDL_FreeSurface(screen^.surface);
-
-    Dispose(screen);
-    screen := nil;
-    //scr and baseSurface are now the same!
-    baseSurface := nil;
-  end;
-
-  SDL_Quit();
-
-  {$IFDEF TRACE}
-    TraceExit('sgCore', 'finalization');
-  {$ENDIF}
-end;
 
 end.

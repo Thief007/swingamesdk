@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		943267791006C8BF00DA67D2 /* SplashBack.jpg in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C70FF76043002B4FFA /* SplashBack.jpg */; };
 		944473EA0FF7607F002B4FFA /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B20FF76043002B4FFA /* SDL.framework */; };
 		944473EB0FF76080002B4FFA /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B40FF76043002B4FFA /* SDL_image.framework */; };
 		944473EC0FF76081002B4FFA /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 944473B60FF76043002B4FFA /* SDL_ttf.framework */; };
@@ -61,6 +62,7 @@
 			dstPath = images;
 			dstSubfolderSpec = 7;
 			files = (
+				943267791006C8BF00DA67D2 /* SplashBack.jpg in Copy Images */,
 				944474030FF76147002B4FFA /* loader_empty.png in Copy Images */,
 				944474040FF76147002B4FFA /* loader_full.png in Copy Images */,
 				944474090FF7614A002B4FFA /* SwinGameAni.jpg in Copy Images */,
