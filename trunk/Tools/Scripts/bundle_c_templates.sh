@@ -27,7 +27,7 @@ C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
 C_DIST_DIR="${DIST_DIR}/C"
 
 COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
-COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/Common"
+COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/common"
 
 GCC_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/gcc"
 GCC_C_DIST_DIR="${C_DIST_DIR}/gcc"
@@ -72,6 +72,13 @@ CreateCCode()
 {
     cd "${PYTHON_SCRIPT_DIR}"
     python create_c_library.py
+    
+    #Create SwinGame.h
+    cd "${COMMON_C_TEMPLATE_DIR}"/lib
+    echo "#ifndef SWINGAME" > SwinGame.h
+    echo "#define SWINGAME" >> SwinGame.h 
+    ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> SwinGame.h
+    echo "#endif" >> SwinGame.h    
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh

@@ -7,17 +7,8 @@ Version 3
 
 TODO:
 * SetAppPath auto detect directory
-
-Suggestions:
-* Change Movement to dx,dy ? (cw)
-* - Add SpriteVelocity -> Vector
-* - SetSpriteVelocity(Vector) or (x,y)
-* - SpritePosition -> Point2D
-* - SetSpritePosition(Point2S) or (dx,dy)
-* - SpriteSpeed -> float
-* - SpriteHeading -> float (angle)
-
-Quantised angles for Sprites
+* Move loading functions into Resources
+* Quantised angles for Sprites
 
 
 The main aims of the SwinGame 3.0 release are to address the following:
@@ -52,6 +43,9 @@ The main aims of the SwinGame 3.0 release are to address the following:
   
   Types:
   - added Circle
+  
+  Sprites: (new)
+  - added heading, speed, velocity functions and procedures
   
 ** Changes to Version 2 **
   Units renamed:

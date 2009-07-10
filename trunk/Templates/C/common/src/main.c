@@ -1,24 +1,14 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include "Types.h"
-#include "Audio.h"
-#include "Graphics.h"
-#include "Core.h"
-#include "Text.h"
-#include "Resources.h"
+#include "SwinGame.h"
 
-#define True 1
-
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
-    SetAppPath(argv[0], True);
+    SetAppPath(argv[0], true);
     OpenAudio();
     OpenGraphicsWindow("Hello World", 800, 600);
-    //SoundEffect sound = LoadSoundEffect("./SwinGameStart.ogg");
     
     Color white = RGBAColor(255, 255, 255, 255);
-    
-    //PlaySoundEffect(sound);
     
     while (!WindowCloseRequested())
     {
@@ -30,8 +20,6 @@ int main(int argc, char* argv[])
         ProcessEvents();
         RefreshScreen();
     }
-    
-    //FreeSoundEffect(&sound);
     
     ReleaseAllResources();
     

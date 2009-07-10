@@ -7,7 +7,5 @@
 */
 
 #include "SGSDK.h"
+#include <stdbool.h>
 #include "%(name)s.h"
-
-#define True 1
-#define False 0
