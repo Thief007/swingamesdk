@@ -26,7 +26,7 @@ from sg.sg_parameter import SGParameter
 
 DEBUG = False
 
-def property_visitor(element, last, other):
+def property_visitor(element, other): #last, other):
     print '\tpublic %s%s %s'%(
         'static ' if element.is_static else '',
         element.data_type,
@@ -38,7 +38,7 @@ def property_visitor(element, last, other):
     print '\t',
     method_visitor(element.setter, other)
     print '\t}'
-    if last: print
+    #if last: print
     return other
 
 def field_visitor(element, last, other):
@@ -85,16 +85,17 @@ def method_visitor(element, other):
         print '???'
         return
     
+    m = element.method_called
     print '\t<@%s> %s%s%s %s(' % (
-        hex(id(element.method_called)),
-        'static ' if element.method_called.is_static else '',
-        'extern ' if element.method_called.is_external else '',
-        element.method_called.return_type if element.method_called.return_type != None else 'void' , 
-        element.method_called.name),
+        hex(id(m)),
+        'static ' if m.is_static else '',
+        'extern ' if m.is_external else '',
+        m.return_type if m.return_type != None else 'void' , 
+        m.name),
     
-    element.method_called.visit_params(param_visitor, other)
+    m.visit_params(param_visitor, other)
     
-    print ') from ', element.method_called.in_file
+    print ') from ', m.in_file
     
     print '\t\t-> args\t\t', 
     element.visit_args(arg_visitor, other)
@@ -113,7 +114,9 @@ def visitor(the_file, other):
         print '}'
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s - %(message)s',
+                        stream=sys.stdout)
     
     # tokeniser = SGPasTokeniser()
     # tokeniser.tokenise('../../CoreSDK/src/SGSDK_Audio.pas')
@@ -145,8 +148,13 @@ def main():
     # 
     # for key,each_class in all_classes().items():
     #     each_class.visit(visitor)
-    
     parser_runner.run_for_all_units(visitor)
 
 if __name__ == '__main__':
+    try:
+        import psyco
+        psyco.full()
+    except ImportError:
+        pass
+
     main()
