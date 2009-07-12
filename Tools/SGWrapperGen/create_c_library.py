@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-create_pas_lib.py
+create_c_lib.py
 
 Created by Andrew Cain on 2009-06-02.
-Copyright (c) 2009 __MyCompanyName__. All rights reserved.
+Copyright (c) 2009 Swinburne. All rights reserved.
 """
 
 import logging
@@ -527,11 +527,9 @@ def write_c_type_for(member, other):
         writer.writeln('} %s;\n' % member.name)
     elif member.is_enum:
         #enum id { list }
-        other['header writer'].write('typedef enum %s_enum { ' % member.name)
-        for val in member.values:
-            other['header writer'].write('%s' % val)
-            if val != member.values[-1]: other['header writer'].write(', ')
-        other['header writer'].writeln('} %s;\n' % member.name)
+        other['header writer'].write('typedef enum %s_enum { \n    ' % member.name)
+        other['header writer'].write( ',\n    '.join([v for v in member.values]))
+        other['header writer'].writeln('\n} %s;\n' % member.name)
 
 def write_c_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''

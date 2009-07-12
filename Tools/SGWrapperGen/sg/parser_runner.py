@@ -14,6 +14,25 @@ from sg_cache import find_or_add_file, find_or_add_class, find_or_add_type, all_
 from sg_pas_parser import SGPasParser
 from sg_parameter import SGParameter
 
+# All units - used as arguments to "find_or_add_file" in "run_for_all_units()"
+# Note: this does not include any "discovered" units like sgShared.pas
+all_units = [
+    ('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas'), #read in types first...
+    ('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
+    ('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
+    ('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
+    ('sgGeometry', 'Geometry', '../../CoreSDK/src/sgGeometry.pas'),
+    ('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
+    ('sgInput', 'Input', '../../CoreSDK/src/sgInput.pas'),
+    ('sgPhysics', 'Physics', '../../CoreSDK/src/sgPhysics.pas'),
+    ('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
+    ('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
+    ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
+    ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
+]
+
+
+
 def _add_parameter(the_method, param):
     param_list = list(the_method.params)
     param_list.append(param)
@@ -63,47 +82,41 @@ def method_process_visitor(the_method, other):
     return other
 
 def post_parse_process(the_file):
-    '''Create temporary variables for out/var string parameters, and string return types'''
+    '''Create temporary variables for out/var string parameters, and string 
+    return types'''
     logger.info('Post parsing library')
     
     the_file.members[0].visit_methods(method_process_visitor, None)
 
 def run_for_all_units(file_visitor):
+    '''Parse all standard known units listed in the module variable `all_units`.
+    The `file_visitor` is then given the chance to process each unit, including
+    the generated sgsdk.pas, in turn.
+    '''
     parser = SGPasParser()
     
     lib_file = find_or_add_file('SGSDK','SGSDK','./sgsdk.pas')
     
-    files = [
-            lib_file,
-            find_or_add_file('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas'), #read in types first...
-            find_or_add_file('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
-            find_or_add_file('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
-            find_or_add_file('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
-            find_or_add_file('sgGeometry', 'Geometry', '../../CoreSDK/src/sgGeometry.pas'),
-            find_or_add_file('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
-            find_or_add_file('sgInput', 'Input', '../../CoreSDK/src/sgInput.pas'),
-            find_or_add_file('sgPhysics', 'Physics', '../../CoreSDK/src/sgPhysics.pas'),
-            find_or_add_file('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
-            find_or_add_file('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
-            find_or_add_file('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
-            find_or_add_file('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
-        ]
+    # Build up a cache of the unit files (excludes sgsdk.pas)
+    files = [ find_or_add_file(*args) for args in all_units ]
     
-    for a_file in files[1:]:
+    # Parse each unit file (excluding sgsdk.pas)
+    for a_file in files: 
         parser.parse(a_file)
-    
+
+    # Create the "lib" class, and checks all its methods to ensure that the 
+    # method arguments, and the called-by parameters, match.
     find_or_add_class('lib').check_methods()
     
-    for key,each_file in all_files().items():
-        if each_file != lib_file: 
-            lib_file.uses.append(each_file)
+    # Tell the lib file about each of the known (or discovered) unit files
+    lib_file.uses.extend([ f for f in all_files().values() if f != lib_file ] )
     
     lib_file.members.append(find_or_add_class('lib'))
     
     post_parse_process(lib_file)
     
     logger.info('Processing files')
-    for each_file in files:
+    for each_file in [lib_file] + files:
         logger.debug('Visiting file %s', each_file.name)
         each_file.visit(file_visitor, None)
     
@@ -112,7 +125,9 @@ def show_file(the_file, other):
     print 'Done', the_file.name
 
 def main():
-    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s - %(levelname)s - %(message)s',
+                        stream=sys.stdout)
     run_for_all_units(show_file)
 
 
