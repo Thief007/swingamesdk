@@ -8,6 +8,11 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-13: Clinton: Renamed Event to MapEvent to MapTag
+//                      : Renamed EventDetails to MapTagDetails
+//                      : Renamed LayerData to MapLayerData
+//                      : Renamed Tile to MapTile
+//                      : Renamed CollisionData to MapCollisionData
 // - 2009-07-06: Andrew : Changed movement to velocity and x,y to position for Sprite 
 // - 2009-07-03: Andrew : Added sameas attribute to allow implicit casts in C#
 // - 2009-07-02: Andrew : Formatting, added @via_pointer for types accessed via a pointer
@@ -658,16 +663,16 @@ interface
       vk_EURO = 321 // Some european keyboards
     );
 
-    /// @enum Event
-    Event = (
-      Event1 = 0, Event2 = 1, Event3 = 2, Event4 = 3, Event5 = 4, Event6 = 5, Event7 = 6, Event8 = 7, Event9 = 8,
-      Event10 = 9, Event11 = 10, Event12 = 11, Event13 = 12, Event14 = 13, Event15 = 14, Event16 = 15,
-      Event17 = 16, Event18 = 17, Event19 = 18, Event20 = 19, Event21 = 20, Event22 = 21, Event23 = 22,
-      Event24 = 23
+    /// @enum MapTag
+    MapTag = (
+      MapTag1 = 0, MapTag2 = 1, MapTag3 = 2, MapTag4 = 3, MapTag5 = 4, MapTag6 = 5, MapTag7 = 6, MapTag8 = 7, MapTag9 = 8,
+      MapTag10 = 9, MapTag11 = 10, MapTag12 = 11, MapTag13 = 12, MapTag14 = 13, MapTag15 = 14, MapTag16 = 15,
+      MapTag17 = 16, MapTag18 = 17, MapTag19 = 18, MapTag20 = 19, MapTag21 = 20, MapTag22 = 21, MapTag23 = 22,
+      MapTag24 = 23
     );
 
-    /// @struct Tile
-    Tile = record
+    /// @struct MapTile
+    MapTile = record
       xIndex: LongInt;
       yIndex: LongInt;
       topCorner: Point2D;
@@ -689,7 +694,7 @@ interface
       NumberOfLayers: LongInt;
       NumberOfAnimations: LongInt;
       CollisionLayer: LongInt;
-      EventLayer: LongInt;
+      TagLayer: LongInt;
       GapX: LongInt;
       GapY: LongInt;
       StaggerX: LongInt;
@@ -697,9 +702,9 @@ interface
       Isometric: Boolean;
     end;
 
-    /// @struct AnimationData
+    /// @struct MapAnimationData
     /// @via_pointer
-    AnimationData = record
+    MapAnimationData = record
       AnimationNumber: LongInt;
       Delay: LongInt;
       NumberOfFrames: LongInt;
@@ -707,22 +712,22 @@ interface
       CurrentFrame: LongInt;
     end;
 
-    /// @struct LayerData
+    /// @struct MapLayerData
     /// @via_pointer
-    LayerData = record
+    MapLayerData = record
       Animation: Array of Array of LongInt;
       Value: Array of Array of LongInt;
     end;
 
-    /// @struct CollisionData
+    /// @struct MapCollisionData
     /// @via_pointer
-    CollisionData = record
+    MapCollisionData = record
       Collidable: Array of Array of Boolean;
     end;
 
-    /// @struct EventDetails
+    /// @struct MapTagDetails
     /// @via_pointer
-    EventDetails = record
+    MapTagDetails = record
       x: LongInt;
       y: LongInt;
     end;
@@ -731,10 +736,10 @@ interface
     /// @via_pointer
     MapRecord = record
       MapInfo: MapData;
-      AnimationInfo: Array of AnimationData;
-      Layerinfo: Array of LayerData;
-      CollisionInfo: CollisionData;
-      EventInfo: Array [0..23] of Array of EventDetails;
+      AnimationInfo: Array of MapAnimationData;
+      LayerInfo: Array of MapLayerData;
+      CollisionInfo: MapCollisionData;
+      TagInfo: Array [0..23] of Array of MapTagDetails;
       Tiles: Sprite;
       Animate: Boolean;
       Frame: LongInt;
@@ -756,9 +761,9 @@ uses sgShared;
 
 //=============================================================================
 
-  initialization
-  begin
-    InitialiseSwinGame();
-  end;
+initialization
+begin
+  InitialiseSwinGame();
+end;
 
 end.

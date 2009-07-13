@@ -20,10 +20,10 @@ header = '''"""MODULE DESCRIPTION HERE!
 # SwinGame wrapper for Python - %(name)s
 # Wrapping %(pascal_name)s.pas
 
-import sgsdk # dll bindings (methods/functions)
-import types # known types (structs, enums)
-
 '''
+
+# import sgsdk # dll bindings (methods/functions)
+# import types # known types (structs, enums)
 
 method = """
 def %(uname)s(%(params)s):

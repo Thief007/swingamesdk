@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-13: Clinton: Renamed Event to Tag - see types for more details
 // - 2009-07-10: Andrew : Added missing const modifier for struct parameters
 // - 2009-07-09: Clinton: Optimized IsPointInTile slightly (isometric)
 //                        Optimized GetTileFromPoint (isometric)
@@ -37,7 +38,7 @@
 // - 2008-01-25: Andrew : Fixed compiler hints
 // - 2008-01-22: Andrew : Re-added CollidedWithMap to allow compatibility with 1.0
 // - 2008-01-21: Stephen: CollidedWithMap replaced with 3 Routines,
-//                        - HasSpriteCollidedWithMapTile,
+//                        - HasSpriteCollidedWithTile,
 //                        - MoveSpriteOutOfTile,
 //                        - WillCollideOnSide
 // - 2008-01-17: Aki + Andrew: Refactor
@@ -78,12 +79,12 @@ interface
   /// @lib
   /// @class Map
   /// @method HasSpriteCollidedWithTile
-  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite): Boolean; overload;
+  function SpriteHasCollidedWithTile(m: Map; s: Sprite): Boolean; overload;
 
-  /// @lib SpriteHasCollidedWithMapTileOutXY
+  /// @lib SpriteHasCollidedWithTileOutXY
   /// @class Map
   /// @overload  HasSpriteCollidedWithTile HasSpriteCollidedWithTileOutXY
-  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
 
   /// @lib
   /// @class Map
@@ -97,18 +98,18 @@ interface
 
   /// @lib
   /// @class Map
-  /// @method EventCount
-  function EventCount(m: Map; eventType: Event): LongInt;
+  /// @method MapTagCount
+  function MapTagCount(m: Map; tagType: MapTag): LongInt;
 
   /// @lib
   /// @class Map
-  /// @method EventPositionX
-  function EventPositionX(m: Map; eventType: Event; eventnumber: LongInt): LongInt;
+  /// @method MapTagPositionX
+  function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
 
   /// @lib
   /// @class Map
-  /// @method EventPositionY
-  function EventPositionY(m: Map; eventType: Event; eventnumber: LongInt): LongInt;
+  /// @method MapTagPositionY
+  function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
 
   /// @lib
   /// @class Sprite
@@ -168,22 +169,22 @@ interface
 
 
   /// Return the tile that is under a given Point2D. Isometric maps are taken
-  /// into consideration.  A Tile knows its x,y index in the map structure,
+  /// into consideration.  A MapTile knows its x,y index in the map structure,
   /// the top-right corner of the tile and the 4 points that construct the tile.
   /// For Isometric tiles, the 4 points will form a diamond.
   /// @lib
   /// @class Map
   /// @self 2
   /// @method GetTileFromPoint
-  function GetTileFromPoint(const point: Point2D; m: Map): Tile;
+  function GetTileFromPoint(const point: Point2D; m: Map): MapTile;
   //TODO: Why is the map the second parameter? Inconsistent...
 
-  /// Returns the Event of the tile at the given (x,y) map index.
-  /// Note that if the tile does not have an event, will return Event(-1)
+  /// Returns the MapTag of the tile at the given (x,y) map index.
+  /// Note that if the tile does not have an tag, will return MapTag(-1)
   /// @lib
   /// @class Map
-  /// @method GetEventAtTile
-  function GetEventAtTile(m: Map; xIndex, yIndex: LongInt): Event;
+  /// @method GetTagAtTile
+  function GetTagAtTile(m: Map; xIndex, yIndex: LongInt): MapTag;
 
   /// @lib
   /// @class Map
@@ -240,7 +241,7 @@ implementation
     m^.MapInfo.NumberOfAnimations := ReadInt(stream);
     m^.MapInfo.NumberOfLayers := ReadInt(stream);
     m^.MapInfo.CollisionLayer := ReadInt(stream);
-    m^.MapInfo.EventLayer := ReadInt(stream);
+    m^.MapInfo.TagLayer := ReadInt(stream);
     m^.MapInfo.GapX := 0;
     m^.MapInfo.GapY := 0;
     m^.MapInfo.StaggerX := 0;
@@ -259,7 +260,7 @@ implementation
       WriteLn(m^.MapInfo.NumberOfAnimations);
       WriteLn(m^.MapInfo.NumberOfLayers);
       WriteLn(m^.MapInfo.CollisionLayer);
-      WriteLn(m^.MapInfo.EventLayer);
+      WriteLn(m^.MapInfo.TagLayer);
       WriteLn('');
       ReadLn();
       }
@@ -338,7 +339,7 @@ implementation
     l, y, x: LongInt;
   begin
 
-    SetLength(m^.LayerInfo, m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.EventLayer);
+    SetLength(m^.LayerInfo, m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.TagLayer);
 
     for y := 0 to Length(m^.LayerInfo) - 1 do
     begin
@@ -354,7 +355,7 @@ implementation
       end;
     end;
 
-    for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.Eventlayer - 1 do
+    for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.Taglayer - 1 do
     begin
       for y := 0 to m^.MapInfo.MapHeight - 1 do
       begin
@@ -438,33 +439,33 @@ implementation
     end;
   end;
 
-  procedure LoadEventData(m: Map; var stream: text);
+  procedure LoadTagData(m: Map; var stream: text);
   var
-    py, px, smallestEventIdx, temp: LongInt;
-    evt: Event;
+    py, px, smallestTagIdx, temp: LongInt;
+    evt: MapTag;
   begin
-    //SetLength(m^.EventInfo, High(Events));
-    //SetLength(m^.EventInfo.Event, m^.MapInfo.MapHeight);
+    //SetLength(m^.TagInfo, High(Tags));
+    //SetLength(m^.TagInfo.Tag, m^.MapInfo.MapHeight);
     {for y := 0 to m^.MapInfo.MapHeight - 1 do
     begin
-      SetLength(m^.EventInfo.Event[y], m^.MapInfo.MapWidth);
+      SetLength(m^.TagInfo.Tag[y], m^.MapInfo.MapWidth);
     end;}
 
-    //The smallest "non-graphics" tile, i.e. the events
-    smallestEventIdx := m^.MapInfo.NumberOfBlocks - 23;
+    //The smallest "non-graphics" tile, i.e. the tags
+    smallestTagIdx := m^.MapInfo.NumberOfBlocks - 23;
 
     for py := 0 to m^.MapInfo.MapHeight - 1 do
     begin
       for px := 0 to m^.MapInfo.MapWidth - 1 do
       begin
         temp := ReadInt(stream);
-        evt := Event(temp - smallestEventIdx);
+        evt := MapTag(temp - smallestTagIdx);
         //TODO: Optimize - avoid repeated LongIng(evt) conversions
-        if (evt >= Event1) and (evt <= Event24) then
+        if (evt >= MapTag1) and (evt <= MapTag24) then
         begin
-          SetLength(m^.EventInfo[LongInt(evt)], Length(m^.EventInfo[LongInt(evt)]) + 1);
+          SetLength(m^.TagInfo[LongInt(evt)], Length(m^.TagInfo[LongInt(evt)]) + 1);
 
-          with m^.EventInfo[LongInt(evt)][High(m^.EventInfo[LongInt(evt)])] do
+          with m^.TagInfo[LongInt(evt)][High(m^.TagInfo[LongInt(evt)])] do
           begin
             x := px;
             y := py;
@@ -481,7 +482,7 @@ implementation
       for x := 0 to m^.MapInfo.MapWidth - 1 do
       begin
         Write(' ');
-        Write(LongInt(m^.EventInfo.Event[y][x]));
+        Write(LongInt(m^.TagInfo.Tag[y][x]));
       end;
       WriteLn('');
     end;
@@ -555,7 +556,7 @@ implementation
         else
           m^.Tiles^.position.x := x * m^.MapInfo.BlockWidth;
 
-        for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.CollisionLayer - m^.MapInfo.EventLayer - 1 do
+        for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.CollisionLayer - m^.MapInfo.TagLayer - 1 do
         begin
           if (m^.LayerInfo[l].Animation[y][x] = 0) and (m^.LayerInfo[l].Value[y][x] > 0) then
           begin
@@ -607,7 +608,7 @@ implementation
     LoadAnimationInformation(m, f);
     LoadLayerData(m, f);
     LoadCollisionData(m, f);
-    LoadEventData(m, f);
+    LoadTagData(m, f);
     //Close File
     close(f);
 
@@ -618,16 +619,16 @@ implementation
     //WriteLn(m^.MapInfo.Version);
   end;
 
-  //Gets the number of Event of the specified type
-  function EventCount(m: Map; eventType: Event): LongInt;
+  //Gets the number of MapTag of the specified type
+  function MapTagCount(m: Map; tagType: MapTag): LongInt;
   begin
     if m = nil then
       raise Exception.Create('No Map supplied (nil)');
-    if (eventType < Event1) or (eventType > Event24) then //TODO: Should be high(Event) type.. less fixed
-      raise Exception.Create('EventType is out of range');
+    if (tagType < MapTag1) or (tagType > MapTag24) then //TODO: Should be high(Tag) type.. less fixed
+      raise Exception.Create('TagType is out of range');
 
-    result := Length(m^.EventInfo[LongInt(eventType)]);
-    //TODO: WHY do we keep converting eventType to LongInt - just store as LongINT!!!
+    result := Length(m^.TagInfo[LongInt(tagType)]);
+    //TODO: WHY do we keep converting tagType to LongInt - just store as LongINT!!!
 
     {count := 0;
   
@@ -635,43 +636,43 @@ implementation
     begin
       for x := 0 to m^.MapInfo.MapHeight - 1 do
       begin
-        if event = m^.EventInfo.Event[y][x] then
+        if tag = m^.TagInfo.Tag[y][x] then
           count := count + 1;
       end;
     end;
     result := count;}
   end;
 
-  // Gets the Top Left X Coordinate of the Event
-  function EventPositionX(m: Map; eventType: Event; eventnumber: LongInt): LongInt;
+  // Gets the Top Left X Coordinate of the MapTag
+  function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
   begin
-    if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then raise Exception.Create('Event number is out of range');
+    if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then raise Exception.Create('Tag number is out of range');
 
     if (m^.MapInfo.Isometric = true) then
     begin
-      result := m^.EventInfo[LongInt(eventType)][eventnumber].x * m^.MapInfo.GapX;
-      if ((m^.EventInfo[LongInt(eventType)][eventnumber].y MOD 2) = 1) then
+      result := m^.TagInfo[LongInt(tagType)][tagnumber].x * m^.MapInfo.GapX;
+      if ((m^.TagInfo[LongInt(tagType)][tagnumber].y MOD 2) = 1) then
         result := result + m^.MapInfo.StaggerX;
       end
     
     else
-      result := m^.EventInfo[LongInt(eventType)][eventnumber].x * m^.MapInfo.BlockWidth;
+      result := m^.TagInfo[LongInt(tagType)][tagnumber].x * m^.MapInfo.BlockWidth;
   
   end;
 
-  // Gets the Top Left Y Coordinate of the Event
-  function EventPositionY(m: Map; eventType: Event; eventnumber: LongInt): LongInt;
+  // Gets the Top Left Y Coordinate of the MapTag
+  function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
   begin
-    if (eventnumber < 0) or (eventnumber > EventCount(m, eventType) - 1) then
-      raise Exception.Create('Event number is out of range');
+    if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then
+      raise Exception.Create('Tag number is out of range');
   
     if (m^.MapInfo.Isometric = true) then
     begin
-      result := m^.EventInfo[LongInt(eventType)][eventnumber].y * m^.MapInfo.StaggerY;
+      result := m^.TagInfo[LongInt(tagType)][tagnumber].y * m^.MapInfo.StaggerY;
     end
     else      
     begin
-      result := m^.EventInfo[LongInt(eventType)][eventnumber].y * m^.MapInfo.BlockHeight;
+      result := m^.TagInfo[LongInt(tagType)][tagnumber].y * m^.MapInfo.BlockHeight;
     end;
   end;
 
@@ -837,14 +838,14 @@ implementation
   end;
 
 
-  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite): Boolean; overload;
+  function SpriteHasCollidedWithTile(m: Map; s: Sprite): Boolean; overload;
   var
     x, y: LongInt;
   begin
-    result := SpriteHasCollidedWithMapTile(m, s, x, y);
+    result := SpriteHasCollidedWithTile(m, s, x, y);
   end;
 
-  function SpriteHasCollidedWithMapTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
   var
     y, x, yCache, dy, dx, i, j, initY, initX: LongInt;
     xStart, yStart, xEnd, yEnd: LongInt;
@@ -931,7 +932,7 @@ implementation
     result := None;
     temp := s^.velocity;
     s^.velocity := vec;
-    if sgTileMap.SpriteHasCollidedWithMapTile(m, s, x, y) then
+    if sgTileMap.SpriteHasCollidedWithTile(m, s, x, y) then
     begin
       MoveSpriteOutOfTile(m, s, x, y);
       result := WillCollideOnSide(m, s);
@@ -1013,7 +1014,7 @@ implementation
   end;
 
 
-  function GetTileFromPoint(const point: Point2D; m: Map): Tile;
+  function GetTileFromPoint(const point: Point2D; m: Map): MapTile;
   var
     x, y, tx, ty: LongInt;
   begin
@@ -1124,20 +1125,20 @@ implementation
     end; // with
   end;
 
-  function GetEventAtTile(m: Map; xIndex, yIndex: LongInt): Event;
+  function GetTagAtTile(m: Map; xIndex, yIndex: LongInt): MapTag;
   var
     i, j: LongInt;
   begin
     for i := 0 to 23 do //TODO: hard-coded magic numbers bad... MAP_EVENT_HI?
-      if (Length(m^.EventInfo[i]) > 0) then
-        for j := 0 to High(m^.EventInfo[i]) do
-          if (m^.EventInfo[i][j].x = xIndex) and (m^.EventInfo[i][j].y = yIndex) then
+      if (Length(m^.TagInfo[i]) > 0) then
+        for j := 0 to High(m^.TagInfo[i]) do
+          if (m^.TagInfo[i][j].x = xIndex) and (m^.TagInfo[i][j].y = yIndex) then
           begin
-            result := Event(i);
+            result := MapTag(i);
             exit;
           end;
     // default result
-    result := Event(-1);
+    result := MapTag(-1);
   end;
   
   
