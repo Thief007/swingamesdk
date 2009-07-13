@@ -1,0 +1,8 @@
+#import "%(name)s.h"
+
+%(static_method_bodys)s
+
+%(init_bodys)s
+%(dealloc_bodys)s
+
+%(method_bodys)s
