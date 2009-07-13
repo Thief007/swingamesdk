@@ -1,0 +1,13 @@
+@interface %(name)s :  NSObject
+{
+    //Fields
+%(fields)s
+}
+
+// Methods for %(name)s
+
+%(static_method_headers)s
+
+%(method_headers)s
+
+@end

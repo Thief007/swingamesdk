@@ -10,7 +10,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 import logging
 import sys
 
-from sg import parser_runner
+from sg import parser_runner, wrapper_helper
 from sg.sg_cache import logger, find_or_add_file, find_or_add_type
 from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
@@ -1036,58 +1036,64 @@ def _post_process_method(method):
             
             if method.is_constructor: continue
             
-            logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
-
-            local_var = SGParameter(param.name + '_temp')
-            local_var.data_type = param.data_type
-            local_var.modifier = param.modifier
-            local_var.maps_result = param.maps_result
+            wrapper_helper.add_local_var_for_param(method, param)
             
-            if param.data_type.wraps_array:
-                if param.data_type.is_struct:
-                    local_var.has_field = True
-                    local_var.field_name = param.data_type.fields[0].name
-                # else:
-                #     print 'skipping', param
-                #     continue
-                
-            method.local_vars.append(local_var)
-            param.maps_to_temp = True
+            # logger.debug('Create cs : Adding local var of type %s to %s', param.data_type, method.uname)
+            # 
+            #             local_var = SGParameter(param.name + '_temp')
+            #             local_var.data_type = param.data_type
+            #             local_var.modifier = param.modifier
+            #             local_var.maps_result = param.maps_result
+            #             
+            #             if param.data_type.wraps_array:
+            #                 if param.data_type.is_struct:
+            #                     local_var.has_field = True
+            #                     local_var.field_name = param.data_type.fields[0].name
+            #                 # else:
+            #                 #     print 'skipping', param
+            #                 #     continue
+            #                 
+            #             method.local_vars.append(local_var)
+            #             param.maps_to_temp = True
     
     if method.method_called.was_function:
+        wrapper_helper.add_local_var_for_result(method)
+        
         #get the return parameter
-        result_param = method.method_called.params[-1]
-        if not result_param.maps_result: #in case of returning var length array
-            result_param = method.method_called.params[-2]
         
-        assert result_param.maps_result
-        
-        method.local_vars.append(result_param)
-        method.args.append(result_param)
+        # result_param = method.method_called.params[-1]
+        #         if not result_param.maps_result: #in case of returning var length array
+        #             result_param = method.method_called.params[-2]
+        #         
+        #         assert result_param.maps_result
+        #         
+        #         method.local_vars.append(result_param)
+        #         method.args.append(result_param)
         
     if method.method_called.has_length_params:
-        for param in method.method_called.params:
-            if param.is_length_param:
-                #possibly need an extra local for this... if out
-                if param.length_of.maps_result:
-                    # need to indicate the size of the returned array...
-                    if method.fixed_result_size > 0:
-                        method.args.append(str(method.fixed_result_size))
-                    else:
-                        method.args.append(param.length_of.name + '.Length')
-                elif param.modifier == 'out':
-                    var_name = param.length_of.local_var_name() + '_length'
-
-                    local_var = SGParameter(var_name)
-                    local_var.data_type = find_or_add_type('LongInt')
-                    local_var.modifier = param.modifier
-
-                    method.local_vars.append(local_var)
-                    method.args.append(var_name)
-                elif not param.data_type.is_struct:
-                    method.args.append(param.length_of.name + '.Length')
-                else:
-                    method.args.append(param.length_of.local_var_name() + '.Length')
+        wrapper_helper.add_length_params(method, '%s.Length')
+        # for param in method.method_called.params:
+        #     if param.is_length_param:
+        #         #possibly need an extra local for this... if out
+        #         if param.length_of.maps_result:
+        #             # need to indicate the size of the returned array...
+        #             if method.fixed_result_size > 0:
+        #                 method.args.append(str(method.fixed_result_size))
+        #             else:
+        #                 method.args.append(param.length_of.name + '.Length')
+        #         elif param.modifier == 'out':
+        #             var_name = param.length_of.local_var_name() + '_length'
+        # 
+        #             local_var = SGParameter(var_name)
+        #             local_var.data_type = find_or_add_type('LongInt')
+        #             local_var.modifier = param.modifier
+        # 
+        #             method.local_vars.append(local_var)
+        #             method.args.append(var_name)
+        #         elif not param.data_type.is_struct:
+        #             method.args.append(param.length_of.name + '.Length')
+        #         else:
+        #             method.args.append(param.length_of.local_var_name() + '.Length')
     
     # for member in the_file.members:
     #     #process all method of the file
