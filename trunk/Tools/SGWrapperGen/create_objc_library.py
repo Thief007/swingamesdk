@@ -14,7 +14,6 @@ import objc_lib #import templates
 
 from sg import parser_runner, wrapper_helper
 from sg.sg_cache import logger, find_or_add_file
-from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
@@ -22,17 +21,19 @@ from sg.sg_parameter import SGParameter
 _out_path="../../Templates/ObjC/common/lib"
 
 
-def _create_objc_method_headers(the_method, other):
-    def type_visitor(the_type, modifier = None):
-        '''switch types for the c SwinGame library'''
-        key = the_type.name.lower() if the_type != None else None
-        
-        if modifier == 'result': modifier = 'return'
-        
-        if key not in objc_lib._type_switcher[modifier]:
-            logger.error('CREATE Cs : Error changing model type %s - %s', modifier, the_type)
-            assert False
-        return objc_lib._type_switcher[modifier][key]
+def type_visitor(the_type, modifier = None):
+    '''switch types for the c SwinGame library'''
+    key = the_type.name.lower() if the_type != None else None
+    
+    if modifier == 'result': modifier = 'return'
+    
+    if key not in objc_lib._type_switcher[modifier]:
+        logger.error('CREATE Cs : Error changing model type %s - %s', modifier, the_type)
+        assert False
+    return objc_lib._type_switcher[modifier][key]
+
+def _create_objc_method_details(the_method, other):
+    ''' This method creates the objective c method details for a user facing module.'''
     def param_visitor(the_param, last):
         return '(%s) %s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ',' if not last else '')
     # Start of _create_objc_method_headers
@@ -41,13 +42,30 @@ def _create_objc_method_headers(the_method, other):
     my_details = the_method.to_keyed_dict(param_visitor, type_visitor)
     
     if the_method.is_static:
-        if len(the_method.params) > 0:
-            result_details['static_method_headers'] += '\n+ (%(return_type)s)%(uname)s:%(params)s;' % my_details
-        else: result_details['static_method_headers'] += '\n+ (%(return_type)s)%(uname)s;' % my_details
+        header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
+        if len(the_method.params) == 0: header = header[:-1]
+        result_details['static_method_headers'] += header + ';'
+        dest_key = 'static_method_bodys'
     else:
-        if len(the_method.params) > 0:
-            result_details['method_headers'] += '\n- (%(return_type)s)%(uname)s:%(params)s;' % my_details
-        else: result_details['method_headers'] += '\n- (%(return_type)s)%(uname)s;' % my_details
+        if the_method.is_constructor:
+            header = '\n- (id)init:%(params)s' % my_details
+            if len(the_method.params) == 0: header = header[:-1]
+            result_details['init_headers'] += header + ';'
+            dest_key = 'init_bodys'
+        elif the_method.is_destructor:
+            header = '\n- (void)dealloc;' % my_details
+            result_details['dealloc_headers'] += header + ';'
+            dest_key = 'dealloc_bodys'
+        else:
+            header = '\n- (%(return_type)s)%(uname)s:%(params)s;' % my_details
+            if len(the_method.params) == 0: header = header[:-1]
+            result_details['method_headers'] += header + ';'
+            dest_key = 'method_bodys'
+    
+    #Create the method body
+    result_details[dest_key] += header
+    result_details[dest_key] += '\n{'
+    result_details[dest_key] += '\n}'
     
     return other
 
@@ -58,17 +76,28 @@ def _write_objc_user_module(module):
     
     details = module.to_keyed_dict()
     details['method_headers'] = ''
+    details['init_headers'] = ''
+    details['dealloc_headers'] = ''
     details['static_method_headers'] = ''
+    details['method_bodys'] = ''
+    details['init_bodys'] = ''
+    details['dealloc_bodys'] = ''
+    details['static_method_bodys'] = ''    
     details['fields'] = ''
+    
+    if module.is_class:
+        for (name, data_type) in module.fields.items():
+            print name, 'type = ', data_type.name
+            details['fields'] += '\n    (%s) %s;' % (type_visitor(data_type), name)
     
     other = dict()
     other['details'] = details
     
-    print other
-    module.visit_methods(_create_objc_method_headers, other)
+    module.visit_methods(_create_objc_method_details, other)
     
     #Write the header file
     header_file_writer.writeln(objc_lib.class_header % details)
+    file_writer.writeln(objc_lib.class_body % details)
     
     file_writer.close()
     header_file_writer.close()
@@ -116,7 +145,7 @@ def _file_visitor(the_file, other):
     _post_parse_process(the_file)
     
     for member in the_file.members:
-        if member.is_module:
+        if member.is_module or member.is_class:
             _write_objc_user_module(member)
     
     # if the_file.name == 'SGSDK':
@@ -127,7 +156,7 @@ def _file_visitor(the_file, other):
     #     write_cs_lib_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.INFO,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     parser_runner.run_for_all_units(_file_visitor)
 
