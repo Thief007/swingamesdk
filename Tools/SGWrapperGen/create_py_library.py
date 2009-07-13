@@ -38,8 +38,8 @@ _procedure_lines = None
 _function_lines = None
 _exports_header = ''
 
-
-_type_switcher = {
+# Used by USER FACING code - things returned/used by to the user
+BLAH_type_switcher = {
     None : {    
         #Pascal type: what it maps to
         'single': 'float %s',
@@ -174,12 +174,14 @@ _type_switcher = {
     },
 }
 
+# POST-PROCESSING - used in wrapped method bodies
 _data_switcher = {
     #Pascal type: what values of this type switch to %s = data value
     'Boolean': '%s != 0'
 }
 
-_val_switcher = {
+# literal substitution
+BLAH_val_switcher = {
     'True': 'true',
     'False': 'false'
 }
@@ -323,42 +325,6 @@ _adapter_type_switcher = {
 
 _names = []
 
-#def load_data():
-#    global _lib_import_header, _header
-#    global _module_header_header, _module_c_header, _module_c_method
-#    global _module_c_function, _footer, _module_header_footer
-#    
-#    f = open('./c_lib/lib_import_header.txt')
-#    _lib_import_header = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/lib_header.txt')
-#    _header = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/lib_header_footer.txt')
-#    _footer = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/module_header_header.txt')
-#    _module_header_header = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/module_header_footer.txt')
-#    _module_header_footer = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/module_c_header.txt')
-#    _module_c_header = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/module_c_method.txt')
-#    _module_c_method = f.read()
-#    f.close()
-#    
-#    f = open('./c_lib/module_c_function.txt')
-#    _module_c_function = f.read()
-#    f.close()
 
 def arg_visitor(arg_str, the_arg, for_param_or_type):
     '''Called for each argument in a call, performs required mappings'''
@@ -385,7 +351,8 @@ def adapter_param_visitor(the_param, last):
     name = the_param.name.lower()
     if name not in _adapter_type_switcher[the_param.modifier]:
         logger.error('CREATE   : Error visiting adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
-        assert False
+        return 'XXX'
+        #assert False
     
     return '%s%s' % (
         _adapter_type_switcher[the_param.modifier][name] % the_param.name,
@@ -393,10 +360,7 @@ def adapter_param_visitor(the_param, last):
 
 def type_visitor(the_type, modifier = None):
     '''switch types for the c SwinGame library'''
-    if the_type is not None:
-        name = the_type.name.lower()
-    else:
-        name = None
+    name = None if the_type is None else the_type.name.lower()
     if name not in _type_switcher[modifier]:
         logger.error('CREATE  : Error changing model type %s - %s', modifier, the_type)
         assert False
@@ -421,7 +385,7 @@ def method_visitor(the_method, other):
     if other['writer'] != None: 
         if the_method.is_function:
             #%(calls.name)s(%(calls.args)s)
-            print details
+#            print details
             details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
             other['writer'].write(py_lib.function % details % the_method['uname'])
         else:
@@ -429,59 +393,6 @@ def method_visitor(the_method, other):
     
     return other
 
-
-#    if other['c writer'] != None: 
-#        if the_method.is_function:
-#            #%(calls.name)s(%(calls.args)s)
-#            details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
-#            other['c writer'].write(_module_c_function % details % details['uname'])
-#        else:
-#            other['c writer'].write(_module_c_method % details)
-            
-#        if the_method.has_const_params():
-#            # Create a version with const parameters passed by value
-#            details = the_method.to_keyed_dict(
-#                _const_strip_param_visitor, other['type visitor'], _const_strip_arg_visitor)
-#            details['uname'] = details['uname'] + '_byval'
-#            details['name'] = details['uname']
-#            
-#            if the_method.is_function:    
-#                details['the_call'] = _const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
-#                other['c writer'].write(_module_c_function % details % details['uname'])
-#            else:
-#                other['c writer'].write(_module_c_method % details)
-#            
-#            # Also write to header
-#            other['header writer'].write('%(return_type)s' % details % details['uname'])
-#            other['header writer'].write('(%(params)s);' % details) 
-#            other['header writer'].writeln('')
-
-
-
-##def write_c_lib_header(the_file, for_others = False):
-##    '''Write the c library adapter - header file that matches DLL'''
-##    file_writer = FileWriter('%s/%s.h'% (_out_path, the_file.name))
-##    file_writer.write(_header)
-##    
-##    #visit the methods of the library
-##    other = {
-##        'header writer': file_writer,
-##        'c writer': None,
-##        'type visitor': adapter_type_visitor,
-##        'param visitor': adapter_param_visitor,
-##        'arg visitor': None
-##    }
-##    
-##    for a_file in the_file.uses:
-##        if a_file.name != None and ((not for_others) or (not a_file.has_body)):
-##            file_writer.writeln("import %s\n" % a_file.name)
-##
-##    file_writer.writeln('')
-##    
-##    the_file.members[0].visit_methods(method_visitor, other)
-##    
-##    #file_writer.writeln(footer)
-##    file_writer.close()
 
 def write_methods_for(member, other):
     '''Write out member methods'''
@@ -545,47 +456,29 @@ def write_py_module(the_file):
         'pascal_name' : the_file.pascal_name}
     )
     
+    for a_file in the_file.uses:
+        if a_file.name != None:
+            mod.writeln("import %s\n" % a_file.name)
+    mod.writeln('')
+    
+    #process all methods
     other = {
         'writer': mod,
         'type visitor': type_visitor,
         'param visitor': param_visitor,
         'arg visitor': arg_visitor
     }
-    
-    for a_file in the_file.uses:
-        if a_file.name != None:
-            mod.writeln("import %s\n" % a_file.name)
-    mod.writeln('')
-    
-    #process all types first so they appear at the top of the header files
-#    for m in the_file.members:
-#        if m.is_module or m.is_header:
-#            pass
-#        elif m.is_class or m.is_struct or m.is_enum or m.is_type:
-#            write_type_for(m, other)
-#        else:
-#            assert False
-    #process all methods
+
     for m in the_file.members:
         if m.is_class or m.is_struct or m.is_enum or m.is_type:
             write_type_for(m, other)        
         elif m.is_module:
             write_methods_for(m, other)
-    
-##    if the_file.has_body:
-##        #close the c file
-##        c_file_writer.writeln()
-##        c_file_writer.close()
-    
-##    header_file_writer.writeln(_module_header_footer)    
-##    header_file_writer.close()
+
     mod.close()
 
 def post_parse_process(the_file):
     ''' the c modules also wrap array return values and adds length parameters for arrays.'''
-    if the_file.name == 'SGSDK':
-        return
-    
     logger.info('Post Processing %s for Python wrapper creation', the_file.name)
     
     for member in the_file.members:
@@ -615,17 +508,15 @@ def post_parse_process(the_file):
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
-    post_parse_process(the_file)
     if the_file.name == 'SGSDK':
-        #logger.info('Creating C Library Adapter %s.h', the_file.name)
-        #write_c_lib_header(the_file)
-        pass
-    else:
-        logger.info('Creating Python SwinGame Module %s', the_file.name)
-        write_py_module(the_file)
+        return
+    post_parse_process(the_file)
+    print the_file.name
+    logger.info('Creating Python SwinGame Module %s', the_file.name)
+    write_py_module(the_file)
 
 def main():
-    logging.basicConfig(level=logging.WARNING,
+    logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         stream=sys.stdout)
     

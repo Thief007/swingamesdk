@@ -60,7 +60,7 @@ _type_switcher = {
     'circle': 'Circle',
     'arrayofpoint2d': 'Point2DPtr',
     'map': 'Map',
-    'event': 'Event',
+    'maptag': 'MapTag',
     'spritekind': 'SpriteKind',
 }
 
