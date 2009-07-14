@@ -135,6 +135,75 @@ _type_switcher = {
     }
 }
 
+#
+# The data switcher provides a mapping for types and literal values
+# from pascal to objective c. 
+#
+_data_switcher = {
+    #
+    # The temp return is used to map local variable temporary variables
+    # to appropriate values to return.
+    #
+    'temp_return' :
+    {
+        'string': '%s.ToString()',
+        'linesarray': '%s',
+        'matrix2d': 'Utils.MatrixFromArray(%s)',
+        'arrayofpoint2d': '%s',
+        'triangle': 'Utils.TriangleFromArray(%s)',
+        'longint': '%s',
+        'longintarray': '%s',
+    },
+    'return_val' : 
+    {
+        #Pascal type: what values of this type switch to %s = data value
+        'boolean': '%s != 0',
+        'music': 'Music.Create(%s)',
+        'soundeffect': 'SoundEffect.Create(%s)',
+        'bitmap': 'Bitmap.Create(%s)',
+        'font': 'Font.Create(%s)',
+        'timer': 'Timer.Create(%s)',
+        'map': 'Map.Create(%s)',
+        'sprite': 'Sprite.Create(%s)',
+        'color': 'System.Drawing.Color.FromArgb(%s)',
+        'keycode': '(KeyCode)%s',
+        'mousebutton': '(MouseButton)%s',
+        'spriteendingaction': '(SpriteEndingAction)%s',
+        'spritekind': '(SpriteKind)%s',
+        'maptag': '(MapTag)%s',
+        'collisionside': '(CollisionSide)%s',
+        'fontalignment': '(FontAlignment)%s',
+        'fontstyle': '(FontStyle)%s'
+    },
+    #Argument with a parameter value
+    'arg_val' : 
+    {
+        #Pascal type: what values of this type switch to %s = data value
+        'boolean': '(%s ? 1 : 0)',
+        'color': '%s.ToArgb()',
+        'keycode': '(int)%s',
+        'mousebutton': '(int)%s',
+        'spriteendingaction': '(int)%s',
+        'maptag': '(int)%s',
+        'collisionside': '(int)%s',
+        'resourcekind': '(int)%s',
+        'fontalignment': '(int)%s',
+        'fontstyle': '(int)%s',
+    },
+    #Argument with a literal value
+    'arg_lit_val' : 
+    {
+        #Pascal type: what values of this type switch to %s = data value
+        'single': '%sf',
+        'self.pointer': 'Pointer',
+        'self.data': 'data',
+        'self': 'self',
+        'true': '1',
+        'false': '0',
+    },
+}
+
+
 def main():
     (path, script_file) = os.path.split(sys.modules[__name__].__file__) 
     dirList=os.listdir(path)

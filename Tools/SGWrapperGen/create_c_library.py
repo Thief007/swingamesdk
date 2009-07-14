@@ -98,6 +98,7 @@ _type_switcher = {
         'circle': 'Circle %s',
         'arrayofpoint2d': 'Point2D *%s',
         'matrix2d': 'Matrix2D %s',
+        'freenotifier': 'FreeNotifier %s',
         None: 'void %s'
     },
     'const' : {
@@ -237,6 +238,7 @@ _adapter_type_switcher = {
         'singleptr': 'float *%s',
         'longintptr': 'int *%s',
         'bitmapptr': 'void *%s',
+        'freenotifier': 'void (*%s)(void*)',
         None: 'void %s'
     },
     'const' : {
@@ -515,6 +517,11 @@ def write_c_type_for(member, other):
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
             other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.name)
+        elif member.data_type.is_procedure:
+            assert member.data_type.method != None
+            #typedef float(*pt2Func)(float, float);
+            m = member.data_type.method
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(member.data_type) % m.name)
         else:
             logger.error('CREATE C  : Unknown class type for %s', member.uname)
             assert False

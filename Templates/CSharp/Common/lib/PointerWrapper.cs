@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace SwinGame
 {
@@ -24,6 +25,7 @@ namespace SwinGame
         Copy
     }
     
+    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
     internal delegate PointerWrapper Creater(IntPtr pointer);
     
     /// <summary>
@@ -34,42 +36,30 @@ namespace SwinGame
         /// <summary>
         /// The ptrRegistry is responsible for maintaining copies of all wrapped SwinGame pointers.
         /// </summary>
-        protected static readonly Dictionary<IntPtr, WeakReference> _ptrRegister = new Dictionary<IntPtr, WeakReference>();
+        protected static readonly Dictionary<IntPtr, PointerWrapper> _ptrRegister;
         
         internal static void Remove(IntPtr ptr)
         {
-            _ptrRegister.Remove(ptr);
-        }
-        
-        private static List<PointerWrapper> _ToFree = new List<PointerWrapper>();
-
-        /// <summary>
-        /// Registers the pointer with SwinGame to have the memory freed.
-        /// This is done to ensure freeing is done on a single thread.
-        /// </summary>
-        /// <param name="ptr">the pointer to register</param>
-        /// <param name="kind">the type of the pointer</param>
-        private static void RegisterDelete(PointerWrapper pw)
-        {
-            lock (_ToFree)
+            if (_ptrRegister.ContainsKey(ptr))
             {
-                _ToFree.Add(pw);
+                _ptrRegister.Remove(ptr);
             }
         }
         
-        /// <summary>
-        /// Free all pointers awaiting deletion.
-        /// </summary>
-        internal static void FreeAnythingToFree()
+        static PointerWrapper()
         {
-            lock (_ToFree)
-            {
-                foreach (PointerWrapper pw in _ToFree)
-                {
-                    pw.DoFree();
-                }
-                _ToFree.Clear();
-            }
+            //Register Remove with SwinGame
+            //Console.WriteLine("Registering");
+            _ptrRegister = new Dictionary<IntPtr, PointerWrapper>();
+            sgLibrary.sg_Resources_RegisterFreeNotifier(PointerWrapper.Remove);
+            AppDomain.CurrentDomain.DomainUnload += DeRegister;
+        }
+        
+        private static void DeRegister(object o, EventArgs e)
+        {
+            //Register Remove with SwinGame
+            Console.WriteLine("Deregistering");
+            sgLibrary.sg_Resources_RegisterFreeNotifier(null);
         }
         
         private PtrKind _Kind;
@@ -81,17 +71,9 @@ namespace SwinGame
         internal PointerWrapper(IntPtr ptr, PtrKind kind)
         {
             if (PointerWrapper._ptrRegister.ContainsKey(ptr)) throw new SwinGameException("Error managing resources.");
-            PointerWrapper._ptrRegister[ptr] = new WeakReference(this);
+            PointerWrapper._ptrRegister[ptr] = this;
             Pointer = ptr;
             _Kind = kind;
-            
-            if (_Kind == PtrKind.Copy) GC.SuppressFinalize(this);
-        }
-        
-        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
-        ~PointerWrapper()
-        {
-            PointerWrapper.RegisterDelete(this);
         }
         
         [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
@@ -110,7 +92,6 @@ namespace SwinGame
         {
             if (_Kind != PtrKind.Copy)
             {
-              GC.SuppressFinalize(this);
               DoFree();
             }
         }

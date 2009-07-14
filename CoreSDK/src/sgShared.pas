@@ -50,17 +50,15 @@ interface
   
   // All SwinGame initialisation code must call this before performing any processing...
   procedure InitialiseSwinGame();
+  
+  procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
+  function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
 
   // Global variables that can be shared.
   var
     // This `Bitmap` wraps the an SDL image (and its double-buffered nature)
     // which is used to contain the current "screen" rendered to the window.
     screen: Bitmap;
-
-    // The full path location of the current executable (or script). This is
-    // particuarly useful when determining the path to resources (images, maps,
-    // sounds, music etc).
-    applicationPath: String;
 
     // The singleton instance manager used to check events and called
     // registered "handlers". See `RegisterEventProcessor`.
@@ -145,19 +143,10 @@ implementation
       {$ENDIF}
       raise Exception.Create('Error loading sdl... ' + SDL_GetError());
     end;
-
+    
     //Unicode required by input manager.
     SDL_EnableUNICODE(SDL_ENABLE);
-
-    try
-      if ParamCount() >= 0 then
-        applicationPath := ExtractFileDir(ParamStr(0))
-      else
-        applicationPath := '';
-    except
-      applicationPath := '';
-    end;
-
+    
     screen := nil;
     baseSurface := nil;
   end;
@@ -221,6 +210,70 @@ implementation
     result := Round(x);
     if result < x then result := result + 1;
   end;
+  
+  procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
+  var
+    r, c: LongInt;
+    hasAlpha: Boolean;
+  begin
+    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
+    hasAlpha := surface^.format^.BytesPerPixel = 4;
+
+    for c := 0 to bmp^.width - 1 do
+    begin
+      for r := 0 to bmp^.height - 1 do
+      begin
+        bmp^.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
+      end;
+    end;
+  end;
+  
+  function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
+  var
+    pixel, pixels: PUint32;
+    offset: Uint32;
+  {$IFDEF FPC}
+    pixelAddress: PUint32;
+  {$ELSE}
+    pixelAddress: UInt32;
+  {$ENDIF}
+  begin
+    //Convert the pixels to 32 bit
+    pixels := surface^.pixels;
+
+    //Get the requested pixel
+    offset := (( y * surface^.w ) + x) * surface^.format^.BytesPerPixel;
+
+    {$IFDEF FPC}
+      pixelAddress := pixels + (offset div 4);
+      pixel := PUint32(pixelAddress);
+    {$ELSE}
+      pixelAddress := UInt32(pixels) + offset;
+      pixel := Ptr(pixelAddress);
+    {$ENDIF}
+
+    {$IF SDL_BYTEORDER = SDL_BIG_ENDIAN }
+    case surface^.format^.BytesPerPixel of
+      1: result := pixel^ and $000000ff;
+      2: result := pixel^ and $0000ffff;
+      3: result := pixel^ and $00ffffff;
+      4: result := pixel^;
+    else
+      raise Exception.Create('Unsuported bit format...');
+    end;
+    {$ELSE}
+    case surface^.format^.BytesPerPixel of
+      1: result := pixel^ and $ff000000;
+      2: result := pixel^ and $ffff0000;
+      3: result := pixel^ and $ffffff00;
+      4: result := pixel^;
+    else
+      raise Exception.Create('Unsuported bit format...')
+    end;
+    {$IFEND}
+  end;
+  
+
 
 //=============================================================================
 

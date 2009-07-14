@@ -62,6 +62,7 @@ _type_switcher = {
     'map': 'Map',
     'maptag': 'MapTag',
     'spritekind': 'SpriteKind',
+    'freenotifier': 'FreeNotifier',
 }
 
 # dictionary for start of method names for copying variable

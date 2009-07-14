@@ -9,8 +9,9 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-14: Andrew : Removed loading and freeing code.
 // - 2009-06-16: Clinton: Commenting/format tweaks
-// - 2009-06-04: Andrew:  Finished processing comments.
+// - 2009-06-04: Andrew : Finished processing comments.
 //                        Added fading capabilities.
 //                        Fixed comments in implementation.
 //
@@ -44,7 +45,7 @@ interface
 //=============================================================================
 
   uses sgTypes;
-
+  
   /// `OpenAudio` is used to initialise the SwinGame audio code. This should be
   /// called at the start of your programs code, and is usually coded into the
   /// starting project templates. After initialising the audio code you can
@@ -55,68 +56,14 @@ interface
   ///
   /// @lib
   procedure OpenAudio();
-
+  
   /// `CloseAudio` is used to clean up the resources used by SwinGame audio. If
   /// `OpenAudio` is called, this must be called to return the resources used
   /// before the program terminates.
   ///
   /// @lib
   procedure CloseAudio();
-
-  /// Loads the `SoundEffect` from the supplied path. To ensure that your game
-  /// is able to work across multiple platforms correctly ensure that you use
-  /// `GetPathToResource` to get the full path to the files in the projects
-  /// resources folder.
-  ///
-  /// LoadSoundEffect can load wav and ogg audio files.
-  ///
-  /// `FreeSoundEffect` should be called to free the resources used by the 
-  /// `SoundEffect` data once the resource is no longer needed.
-  ///
-  /// @param path the path to the sound effect file to load. 
-  ///
-  /// @lib
-  ///
-  /// @class SoundEffect
-  /// @constructor
-  function LoadSoundEffect(path: String): SoundEffect;
-
-  /// Loads the `Music` from the supplied path. To ensure that your game
-  /// is able to work across multiple platforms correctly ensure that you use
-  /// `GetPathToResource` to get the full path to the files in the projects 
-  /// resources folder.
-  ///
-  /// LoadMusic can load mp3, wav and ogg audio files.
-  ///
-  /// `FreeMusic` should be called to free the resources used by the 
-  /// `Music` data once the resource is no longer needed.
-  ///
-  /// @param path the path to the music file to load.
-  ///
-  /// @lib
-  ///
-  /// @class Music
-  /// @constructor
-  function LoadMusic(path: String): Music;
-
-  /// Frees the resources used by a `Music` resource. All loaded
-  /// `Music` should be freed once it is no longer needed. 
-  ///
-  /// @lib
-  ///
-  /// @class Music
-  /// @dispose
-  procedure FreeMusic(var mus: Music);
-
-  /// Frees the resources used by a `SoundEffect` resource. All loaded
-  /// `SoundEffect`s should be freed once they are no longer needed.
-  ///
-  /// @lib
-  ///
-  /// @class SoundEffect
-  /// @dispose
-  procedure FreeSoundEffect(var effect: SoundEffect);
-
+  
   /// There are several versions of PlaySoundEffect that can be used to control
   /// the way the sound effect plays, allowing you to control its volume and 
   /// the number of times the code loops. In all cases the started sound effect
@@ -373,36 +320,6 @@ implementation
   procedure CloseAudio();
   begin
     Mix_CloseAudio();
-  end;
-  
-  function LoadSoundEffect(path: String): SoundEffect;
-  begin
-    result := Mix_LoadWAV(pchar(path));
-    if result = nil then
-    begin
-      raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
-    end;
-  end;
-  
-  function LoadMusic(path: String): Music;
-  begin
-    result := Mix_LoadMUS(pchar(path));
-    if result = nil then
-    begin
-      raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
-    end;
-  end;
-  
-  procedure FreeSoundEffect(var effect: SoundEffect);
-  begin
-    if assigned(effect) then Mix_FreeChunk(effect);
-    effect := nil;
-  end;
-  
-  procedure FreeMusic(var mus: Music);
-  begin
-    if assigned(mus) then Mix_FreeMusic(mus);
-    mus := nil;
   end;
   
   procedure SetMusicVolume(value: Single);

@@ -32,6 +32,87 @@ def type_visitor(the_type, modifier = None):
         assert False
     return objc_lib._type_switcher[modifier][key]
 
+def arg_visitor(arg_str, the_arg, for_param):
+    '''Called for each argument in a call, performs required mappings. the_arg has the argument, for_param has
+    the parameter being mapped to'''
+    
+    if not isinstance(for_param, SGParameter):
+        print arg_str, the_arg, for_param
+        assert False
+        
+    if isinstance(the_arg, SGParameter): #uses parameter as value
+        data_key = 'arg_val'
+    else:
+        data_key = 'arg_lit_val'
+        
+    the_type = for_param.data_type
+    
+    #check for pointer wrapper param
+    if the_type.pointer_wrapper and not '->pointer' in arg_str.lower():
+        arg_str = '%s->Pointer' % arg_str
+        
+    # Change True to true for example...
+    if for_param.modifier != 'out' and arg_str.lower() in objc_lib._data_switcher[data_key]:
+        data = objc_lib._data_switcher[data_key][arg_str.lower()] 
+        if '%s' in data:
+            arg_str = objc_lib._data_switcher[data_key][arg_str.lower()] % arg_str
+        else:
+            arg_str = data
+            
+    if for_param.modifier != 'out' and the_type.name.lower() in objc_lib._data_switcher[data_key]:
+        #convert data using pattern from _data_switcher
+        result = objc_lib._data_switcher[data_key][the_type.name.lower()] % arg_str
+    else:
+        result = arg_str
+        
+    #check var/out/const
+    if (for_param.modifier == 'var' or for_param.modifier == 'const'): #and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
+        result = '&' + result
+    elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
+        result = '&' + result
+
+    return result
+
+
+def _create_objc_call(details, the_method):
+    """Create an objective-c call for the passed in details dictionary/method"""
+    if the_method.is_constructor:
+        details['pre_call'] =''
+        details['return_type'] = '%s'
+        details['returns'] = ''
+        details['returns_end'] = '' # ', PtrKind.%s)' % details['in_class']
+        details['public'] = 'public '
+        details['base_const'] = ': base(%(calls.class)s.%(calls.name)s(%(calls.args)s), PtrKind.%(in_class)s)%(returns_end)s' % details
+        result = ''
+    elif the_method.is_destructor:
+        details['pre_call'] ='PointerWrapper.Remove(this);\n    '
+        details['return_type'] = 'void DoFree'
+        details['returns_end'] = ''
+        details['public'] = 'protected internal override '
+        details['base_const'] = ''
+        result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
+    else:
+        if the_method.name in ['WindowCloseRequested', 'CloseAudio']:
+            details['pre_call'] = 'PointerWrapper.FreeAnythingToFree();\n    '
+        elif the_method.mimic_destructor:
+            details['pre_call'] ='[PointerWrapper remove: %s->Pointer];\n    ' % the_method.params[0].name
+        else: details['pre_call'] =''
+        details['returns_end'] = ''
+        details['public'] = 'public '
+        details['base_const'] = ''
+        result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
+
+        if the_method.return_type != None:
+            if the_method.return_type.name.lower() in objc_lib._data_switcher['return_val']:
+                result = objc_lib._data_switcher['return_val'][the_method.return_type.name.lower()] % result
+
+    if the_method.name in ['ProcessEvents']:
+        details['post_call'] = '\n    PointerWrapper.FreeAnythingToFree();'
+    else: details['post_call'] =''
+
+    return ('%(returns)s' + result) % details
+
+
 def _create_objc_method_details(the_method, other):
     ''' This method creates the objective c method details for a user facing module.'''
     def param_visitor(the_param, last):
@@ -39,7 +120,7 @@ def _create_objc_method_details(the_method, other):
     # Start of _create_objc_method_headers
     result_details = other['details']
     
-    my_details = the_method.to_keyed_dict(param_visitor, type_visitor)
+    my_details = the_method.to_keyed_dict(param_visitor, type_visitor, call_creater=_create_objc_call, arg_visitor=arg_visitor)
     
     if the_method.is_static:
         header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
@@ -65,6 +146,7 @@ def _create_objc_method_details(the_method, other):
     #Create the method body
     result_details[dest_key] += header
     result_details[dest_key] += '\n{'
+    result_details[dest_key] += '\n    %(pre_call)s%(the_call)s;%(post_call)s' % my_details
     result_details[dest_key] += '\n}'
     
     return other
