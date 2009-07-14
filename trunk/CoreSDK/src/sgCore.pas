@@ -1063,9 +1063,10 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'finalization');
     {$ENDIF}
-  
+    
+    RegisterFreeNotifier(nil);
     ReleaseResourceBundle('splash.txt');
-  
+    
     {$IFDEF TRACE}
       TraceExit('sgCore', 'finalization');
     {$ENDIF}

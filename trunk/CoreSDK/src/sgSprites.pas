@@ -539,7 +539,7 @@ implementation
 
   uses
     Classes, SysUtils, Math, // System
-    sgGraphics, sgGeometry, sgCore, sgCamera, sgShared; //SwinGame
+    sgGraphics, sgGeometry, sgCore, sgCamera, sgShared, sgResources; //SwinGame
 
 
   function VectorFromTo(s1, s2: Sprite): Vector;

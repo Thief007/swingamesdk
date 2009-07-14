@@ -4,6 +4,8 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-14: Andrew : Added resource loading and freeing procedures.
+//                      : Added FreeNotifier
 // - 2009-07-08: Andrew : Fixed iterator use in release all
 // - 2009-07-05: Clinton: Fixed delphi-support for ExtractDelimited, formatting
 // - 2009-07-03: Andrew : Fixed header comments
@@ -11,7 +13,7 @@
 //
 //=============================================================================
 
-/// @module ResourceManager
+/// @module Resources
 unit sgResources;
 
 //=============================================================================
@@ -138,27 +140,198 @@ interface
   //----------------------------------------------------------------------------
   // Resource Path and Application Path
   //----------------------------------------------------------------------------
-
+  
   /// @lib GetPathToResource
   function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
-
+  
   /// @lib GetPathToOtherResource
   /// @uname GetPathToOtherResource
   function GetPathToResource(filename: String): String; overload;
-
+  
   /// @lib GetPathToResourceWithBaseAndKind
   /// @uname GetPathToResourceWithBase
   function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
-
+  
   /// @lib GetPathToOtherResourceWithBase
   /// @uname GetPathToOtherResourceWithBase
   function GetPathToResourceWithBase(path, filename: String): String; overload;
-
+  
   /// @lib
   procedure SetAppPath(path: String; withExe: Boolean);
+  
   /// @lib
   function AppPath(): String;
+  
+  //----------------------------------------------------------------------------
+  // Loading of actual resources
+  //----------------------------------------------------------------------------
+    
+  /// Loads the `SoundEffect` from the supplied path. To ensure that your game
+  /// is able to work across multiple platforms correctly ensure that you use
+  /// `GetPathToResource` to get the full path to the files in the projects
+  /// resources folder.
+  ///
+  /// LoadSoundEffect can load wav and ogg audio files.
+  ///
+  /// `FreeSoundEffect` should be called to free the resources used by the 
+  /// `SoundEffect` data once the resource is no longer needed.
+  ///
+  /// @param path the path to the sound effect file to load. 
+  ///
+  /// @lib
+  ///
+  /// @class SoundEffect
+  /// @constructor
+  function LoadSoundEffect(path: String): SoundEffect;
 
+  /// Loads the `Music` from the supplied path. To ensure that your game
+  /// is able to work across multiple platforms correctly ensure that you use
+  /// `GetPathToResource` to get the full path to the files in the projects 
+  /// resources folder.
+  ///
+  /// LoadMusic can load mp3, wav and ogg audio files.
+  ///
+  /// `FreeMusic` should be called to free the resources used by the 
+  /// `Music` data once the resource is no longer needed.
+  ///
+  /// @param path the path to the music file to load.
+  ///
+  /// @lib
+  ///
+  /// @class Music
+  /// @constructor
+  function LoadMusic(path: String): Music;
+  
+  //----------------------------------------------------------------------------
+  // Freeing of actual resources
+  //----------------------------------------------------------------------------
+  
+  /// Frees the resources used by a `Music` resource. All loaded
+  /// `Music` should be freed once it is no longer needed. 
+  ///
+  /// @lib
+  ///
+  /// @class Music
+  /// @dispose
+  procedure FreeMusic(var mus: Music);
+  
+  /// Frees the resources used by a `SoundEffect` resource. All loaded
+  /// `SoundEffect`s should be freed once they are no longer needed.
+  ///
+  /// @lib
+  ///
+  /// @class SoundEffect
+  /// @dispose
+  procedure FreeSoundEffect(var effect: SoundEffect);
+  
+  /// Creates a bitmap in memory that is the specified width and height (in pixels).
+  /// The new bitmap is initially transparent and can be used as the target 
+  /// for various drawing operations. Once you have drawn the desired image onto
+  /// the bitmap you can call OptimiseBitmap to optimise the surface.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @constructor
+  function CreateBitmap(width, height: LongInt): Bitmap;
+  
+  /// Loads a bitmap from file using where the specified transparent color
+  /// is used as a color key for the transparent color.
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @lib LoadBitmapWithTransparentColor
+  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+  
+  /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
+  /// the screen. Bitmaps can be of bmp, jpeg, gif, png, etc. Images may also
+  /// contain alpha values, which will be drawn correctly by the API. All
+  /// bitmaps must be freed using the FreeBitmap once you are finished with
+  /// them.
+  /// 
+  /// @lib
+  /// @class Bitmap
+  /// @constructor
+  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
+  
+  /// Loads a bitmap with a transparent color key. The transparent color is then
+  /// setup as the color key to ensure the image is drawn correctly. Alpha
+  /// values of Images loaded in this way will be ignored. All bitmaps must be
+  /// freed using the FreeBitmap once you are finished with them.
+  ///
+  /// @lib LoadBitmapWithTransparentColor(pathToBitmap, True, transparentColor)
+  /// @class Bitmap
+  /// @constructor
+  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
+  
+  /// Frees a loaded bitmap. Use this when you will no longer be drawing the
+  /// bitmap (including within Sprites), and when the program exits.
+  ///
+  /// @lib
+  /// @class Bitmap
+  /// @dispose
+  procedure FreeBitmap(var bitmapToFree : Bitmap);
+  
+  /// Created bitmaps can be optimised for faster drawing to the screen. This
+  /// optimisation should be called only once after all drawing to the bitmap
+  /// is complete. Optimisation should not be used if the bitmap is to be
+  /// drawn onto in the future. All loaded bitmaps are optimised during loading.
+  ///
+  /// @lib
+  /// @class Bitmap
+  /// @method OptimiseBitmap
+  procedure OptimiseBitmap(surface: Bitmap);
+  
+  /// Loads a font from file with the specified side. Fonts must be freed using
+  /// the FreeFont routine once finished with. Once the font is loaded you
+  /// can set its style using SetFontStyle. Fonts are then used to draw and
+  /// measure text in your programs.
+  /// 
+  /// @lib
+  /// @class Font
+  /// @constructor
+  function LoadFont(fontName: String; size: LongInt): Font;
+  
+  /// Frees the resources used by the loaded Font.
+  /// 
+  /// @lib
+  /// @class Font
+  /// @dispose
+  procedure FreeFont(var fontToFree: Font);
+    
+  /// Reads the map files specified by mapName and return a new `Map` with all
+  /// the details.
+  /// @lib
+  /// @class Map
+  /// @constructor
+  function LoadMap(mapName: String): Map;
+  
+  /// Frees the resources associated with the map.
+  ///
+  /// @lib
+  /// @class Map
+  /// @dispose
+  procedure FreeMap(var m: Map);
+  
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Notifier of resource freeing
+  //----------------------------------------------------------------------------
+  type 
+    /// The FreeNotifier is a function pointer used to notify user programs of
+    /// swingame resources being freed. This should not be used by user programs.
+    ///
+    /// @type FreeNotifier
+    FreeNotifier = procedure (p: Pointer); cdecl;
+  
+  /// Using this procedure you can register a callback that is executed
+  /// each time a resource is freed. This is called by different versions of
+  /// SwinGame to keep track of resources and should not be called by user code.
+  ///
+  /// @lib
+  procedure RegisterFreeNotifier(fn: FreeNotifier);
 
 
 //=============================================================================
@@ -167,7 +340,8 @@ implementation
 
   uses SysUtils, StrUtils, Classes, // system
        stringhash,         // libsrc
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared; // Swingame
+       SDL, SDL_Mixer, SDL_ttf, SDL_Image,
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites; // Swingame
 
   //----------------------------------------------------------------------------
   // Global variables for resource management.
@@ -180,7 +354,32 @@ implementation
     _Music: TStringHash;
     _TileMaps: TStringHash;
     _Bundles: TStringHash;
+    _FreeNotifier: FreeNotifier = nil;
+    // The full path location of the current executable (or script). This is
+    // particuarly useful when determining the path to resources (images, maps,
+    // sounds, music etc).
+    applicationPath: String;
+    
   
+  procedure CallFreeNotifier(p: Pointer);
+  begin
+    if Assigned(_FreeNotifier) then
+    begin
+      try
+        // Write('calling...');
+        _FreeNotifier(p);
+        // WriteLn('done!');
+      except
+        ErrorMessage := 'Error calling free notifier';
+        HasException := True;
+      end;
+    end;
+  end;
+  
+  procedure RegisterFreeNotifier(fn: FreeNotifier);
+  begin
+    _FreeNotifier := fn;
+  end;
   
   //----------------------------------------------------------------------------
   // Private types
@@ -194,7 +393,7 @@ implementation
       resource_val : Pointer;
     public
       constructor Create(data: Pointer);
-    
+      
       property Resource: Pointer read resource_val;
     end;
     
@@ -376,20 +575,6 @@ implementation
   begin
     ReleaseAll(_Images, @ReleaseBitmap);
   end;
-  // var
-  //   iter: tStrHashIterator;
-  //   bmp: Bitmap;
-  // begin
-  //   iter := _Images.getIterator();
-  //   
-  //   while iter.hasNext() do
-  //   begin
-  //     bmp := GetBitmap(iter.key);
-  //     FreeBitmap(bmp);
-  //   end;
-  //   
-  //   _Images.clear();
-  // end;
   
   //----------------------------------------------------------------------------
   
@@ -585,18 +770,22 @@ implementation
   {$else}
   // proper ExtractDelimited provided by StrUtils
   {$endif}
-
-
+  
+  //----------------------------------------------------------------------------
+  
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
   var
     input: Text; //the bundle file
     delim: TSysCharSet;
-    line: String;
+    line, path: String;
     i: Integer;
     current: tResourceIdentifier;
     bndl: tResourceBundle;
   begin
-    Assign(input, GetPathToResource(name));
+    path := GetPathToResource(name);
+    
+    if not FileExists(path) then raise Exception.Create('Unable to locate resource bundle ' + path);
+    Assign(input, path);
     Reset(input);
 
     delim := [ ',' ]; //comma delimited
@@ -660,445 +849,6 @@ implementation
     end;
   end;
   
-  // Creates a new Mappy Map from mapFile file.
-  //
-  // PARAMETERS:
-  // - mapName: The name of the map to load
-  //
-  // SIDE EFFECTS:
-  // - Loads the map from file into _Maps
-  // procedure NewMap(mapName: String);
-  // begin
-  //   SetLength(_Maps, Length(_Maps) + 1);
-  //   SetLength(_MapsStr, Length(_MapsStr) + 1);
-  //   _Maps[High(_Maps)] := LoadMap(mapName);
-  //   _MapsStr[High(_MapsStr)] := mapName;
-  // end;
-
-  // Creates a new font.
-  //
-  // PARAMETERS:
-  // - fontName: name to call font in _Fonts. Used when you access the font.
-  // - fileName: name of the font file to load. Must be in resources/fonts
-  // - size: Size of font to load
-  //
-  // SIDE EFFECTS:
-  // - Loads the font from file into _Fonts
-  // procedure NewFont(fontName, fileName: String; size: Integer);
-  // begin
-  //   SetLength(_Fonts, Length(_Fonts) + 1);
-  //   SetLength(_FontsStr, Length(_FontsStr) + 1);
-  //   _Fonts[High(_Fonts)] := LoadFont(GetPathToResource(fileName, FontResource), size);
-  //   _FontsStr[High(_FontsStr)] := fontName;
-  // end;
-  
-  // Creates a new sound.
-  //
-  // PARAMETERS:
-  // - soundName: name to call sound in _sounds. Used when you access the sound.
-  // - fileName: name of the sound file to load. Must be in resources/sounds
-  //
-  // SIDE EFFECTS:
-  // - Loads the sound from file into _sounds
-  // procedure NewSound(soundName, fileName: String);
-  // begin
-  //   SetLength(_Sounds, Length(_Sounds) + 1);
-  //   SetLength(_SoundsStr, Length(_SoundsStr) + 1);
-  //   _Sounds[High(_Sounds)] := LoadSoundEffect(GetPathToResource(fileName, SoundResource));
-  //   _SoundsStr[High(_SoundsStr)] := soundName;
-  // end;
-
-  // Creates a new music.
-  //
-  // PARAMETERS:
-  // - musicName: name to call music in _musics. Used when you access the music.
-  // - fileName: name of the music file to load. Must be in resources/musics
-  //
-  // SIDE EFFECTS:
-  // - Loads the music from file into _musics
-  // procedure NewMusic(musicName, fileName: String);
-  // begin
-  //   SetLength(_Music, Length(_Music) + 1);
-  //   SetLength(_MusicStr, Length(_MusicStr) + 1);
-  //   _Music[High(_Music)] := LoadMusic(GetPathToResource(fileName, SoundResource));
-  //   _MusicStr[High(_MusicStr)] := musicName;
-  // end;
-
-
-  // Load the fonts you need for your game.
-  //
-  // SIDE EFFECTS:
-  // - Loads the game's fonts
-  // procedure LoadFonts();
-  // begin
-  //   NewFont('ArialLarge', 'arial.ttf', 80);
-  //   NewFont('Courier', 'cour.ttf', 16);
-  //   //TODO: Add code here to load the fonts you want to use
-  // end;
-
-  // Load the images you need for your game.
-  //
-  // SIDE EFFECTS:
-  // - Loads the game's images
-  // procedure LoadImages();
-  // begin
-  //   //TODO: Add code here to load the images you want to use
-  //   //NewImage('NoImages', 'Ufo.png');
-  // end;
-
-  // Load the soundeffects you need for your game.
-  //
-  // SIDE EFFECTS:
-  // - Loads the game's soundeffects
-  // procedure LoadSounds();
-  // begin
-  //   //TODO: Add code here to load the sound effects you want to use
-  //   //NewSound('NoSound', 'sound.ogg');
-  // end;
-
-  // Load the music you need for your game.
-  //
-  // SIDE EFFECTS:
-  // - Loads the game's music
-  // procedure LoadMusics();
-  // begin
-  //   //NewMusic('NoMusic', 'sound.mp3');
-  // end;
-
-  // Load the maps you need for your game.
-  //
-  // SIDE EFFECTS:
-  // - Loads the game's maps
-  // procedure LoadMaps();
-  // begin
-  //   //TODO: Add code here to load the maps you want to use
-  //   //NewMap('test');
-  // end;
-
-  // Get the Font you created with name font.
-  //
-  // PARAMETERS:
-  // - font: name of the font to get
-  //
-  // RETURNS:
-  // - the font
-  //
-  // EXCEPT:
-  // - if the font isn't found an error is returned
-  // function GameFont(font: String): Font;
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_FontsStr) to High(_FontsStr) do
-  //   begin
-  //     if _FontsStr[i] = font then begin
-  //       result := _Fonts[i];
-  //       exit;
-  //     end;
-  //   end;
-  // 
-  //   raise exception.create('Font ' + font + ' does not exist...');
-  // end;
-
-  // Get the image you created with name image.
-  //
-  // PARAMETERS:
-  // - image: name of the image to get
-  //
-  // RETURNS:
-  // - the image
-  //
-  // EXCEPT:
-  // - if the image isn't found an error is returned
-  // function GameImage(image: String): Bitmap;
-  // var
-  // i: Integer;
-  // begin
-  //   for i := Low(_ImagesStr) to High(_ImagesStr) do
-  //   begin
-  //     if _ImagesStr[i] = image then begin
-  //       result := _Images[i];
-  //       exit;
-  //     end;
-  //   end;
-  //   raise exception.create('Image ' + image + ' does not exist...');
-  // end;
-
-  // Get the soundeffect you created with name sound.
-  //
-  // PARAMETERS:
-  // - sound: name of the soundeffect to get
-  //
-  // RETURNS:
-  // - the soundeffect
-  //
-  // EXCEPT:
-  // - if the soundeffect isn't found an error is returned
-  // function GameSound(sound: String): SoundEffect;
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_SoundsStr) to High(_SoundsStr) do
-  //   begin
-  //     if _SoundsStr[i] = sound then begin
-  //       result := _Sounds[i];
-  //       exit;
-  //     end;
-  //   end;
-  //   raise exception.create('Sound ' + sound + ' does not exist...');
-  // end;
-
-  // Get the map you created with name mapName.
-  //
-  // PARAMETERS:
-  // - mapName: name of the map to get
-  //
-  // RETURNS:
-  // - the map
-  //
-  // EXCEPT:
-  // - if the map isn't found an error is returned
-  // function GameMap(mapName: String): Map;
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_MapsStr) to High(_MapsStr) do
-  //   begin
-  //     if _MapsStr[i] = mapName then begin
-  //       result := _Maps[i];
-  //       exit;
-  //     end;
-  //   end;
-  //   raise exception.create('Map ' + mapName + ' does not exist...');
-  // end;
-
-  // Get the music you created with name music.
-  //
-  // PARAMETERS:
-  // - music: name of the music to get
-  //
-  // RETURNS:
-  // - the music
-  //
-  // EXCEPT:
-  // - if the music isn't found an error is returned
-  // function GameMusic(music: String): Music;
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_MusicStr) to High(_MusicStr) do
-  //   begin
-  //     if _MusicStr[i] = music then begin
-  //       result := _Music[i];
-  //       exit;
-  //     end;
-  //   end;
-  //   raise exception.create('Music ' + music + ' does not exist...');
-  // end;
-  
-
-  // Frees the fonts that you have loaded.
-  //
-  // SIDE EFFECTS:
-  // - Frees the game's fonts
-  // procedure FreeFonts();
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_Fonts) to High(_Fonts) do
-  //   begin
-  //     FreeFont(_Fonts[i]);
-  //   end;
-  // end;
-
-  // Frees the images that you have loaded.
-  //
-  // SIDE EFFECTS:
-  // - Frees the game's images
-  // procedure FreeSounds();
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_Sounds) to High(_Sounds) do
-  //   begin
-  //     FreeSoundEffect(_Sounds[i]);
-  //   end;
-  // end;
-
-  // Frees the music that you have loaded.
-  //
-  // SIDE EFFECTS:
-  // - Frees the game's music
-  // - Stops playing any music
-  // procedure FreeMusics();
-  // var
-  //   i: Integer;
-  // begin
-  //   StopMusic();
-  //   Sleep(100);
-  // 
-  //   for i := Low(_Music) to High(_Music) do
-  //   begin
-  //     FreeMusic(_Music[i]);
-  //   end;
-  // end;
-
-  // Frees the maps that you have loaded.
-  //
-  // SIDE EFFECTS:
-  // - Frees the game's maps
-  // procedure FreeMaps();
-  // var
-  //   i: Integer;
-  // begin
-  //   for i := Low(_Maps) to High(_Maps) do
-  //   begin
-  //     FreeMap(_Maps[i]);
-  //   end;
-  // end;
-
-  // Plays the SwinGame intro. Please leave this
-  // in all SwinGames.
-  //
-  // SIDE EFFECTS:
-  // - Plays the starting sound
-  // - Draws the background and animation
-  // - Refreshes screen
-  // procedure PlaySwinGameIntro();
-  // const
-  //   ANI_X = 143;
-  //   ANI_Y = 134;
-  //   ANI_W = 546;
-  //   ANI_H = 327;
-  //   ANI_V_CELL_COUNT = 6;
-  //   ANI_CELL_COUNT = 11;
-  // var
-  //   i : Integer;
-  // begin
-  //   PlaySoundEffect(_StartSound);
-  //   Sleep(200);
-  //   for i:= 0 to ANI_CELL_COUNT - 1 do
-  //   begin
-  //     DrawBitmap(_Background, 0, 0);
-  //     DrawBitmapPart(_Animation, 
-  //       (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
-  //       ANI_W, ANI_H, ANI_X, ANI_Y);
-  //     RefreshScreen();
-  //     ProcessEvents();
-  //     Sleep(20);
-  //   end;
-  //   Sleep(1500);
-  // end;
-
-  // Loads the resourced needed to show the loading screen,
-  // and plays the intro.
-  //
-  // SIDE EFFECTS:
-  // - Loads _Background, _Animation, _LoadingFont, and _StartSound
-  // - Plays Intro
-  // procedure ShowLoadingScreen();
-  // begin
-  //   _Background := LoadBitmap(GetPathToResource('SplashBack.png', BitmapResource));
-  //   DrawBitmap(_Background, 0, 0);
-  //   RefreshScreen(60);
-  //   ProcessEvents();
-  // 
-  //   _Animation := LoadBitmap(GetPathToResource('SwinGameAni.png', BitmapResource));
-  //   _LoaderEmpty := LoadBitmap(GetPathToResource('loader_empty.png', BitmapResource));
-  //   _LoaderFull := LoadBitmap(GetPathToResource('loader_full.png', BitmapResource));
-  //   _LoadingFont := LoadFont(GetPathToResource('arial.ttf', FontResource), 12);
-  //   _StartSound := LoadSoundEffect(GetPathToResource('SwinGameStart.ogg', SoundResource));
-  // 
-  //   PlaySwinGameIntro();
-  // end;
-
-  // This plays the "Loading ..." messages while your
-  // resources are being loaded.
-  //
-  // SIDE EFFECTS:
-  // - Draws text to the screen
-  // - Refreshes screen
-  // procedure ShowMessage(message: String; number: Integer);
-  // const
-  //   TX = 310; TY = 493; 
-  //   TW = 200; TH = 25;
-  //   STEPS = 5;
-  //   BG_X = 279; BG_Y = 453;
-  // var
-  //   fullW: Integer;
-  // begin
-  //   fullW := 260 * number div STEPS;
-  //   DrawBitmap(_LoaderEmpty, BG_X, BG_Y);
-  //   DrawBitmapPart(_LoaderFull, 0, 0, fullW, 66, BG_X, BG_Y);
-  //       
-  //   DrawTextLines(message, ColorWhite, ColorTransparent, _LoadingFont, AlignCenter, TX, TY, TW, TH);
-  //   RefreshScreen(60);
-  //   ProcessEvents();
-  // end;
-
-  // Ends the loading screen, and frees the set surfaces.
-  //
-  // SIDE EFFECTS:
-  // - Clears the screen
-  // - Frees _LoadingFont, _Background, _Animation, and _StartSound
-  // procedure EndLoadingScreen();
-  // begin
-  //   ProcessEvents();
-  //   Sleep(500);
-  //   ClearScreen();
-  //   RefreshScreen(60);
-  //   FreeFont(_LoadingFont);
-  //   FreeBitmap(_Background);
-  //   FreeBitmap(_Animation);
-  //   FreeBitmap(_LoaderEmpty);
-  //   FreeBitmap(_LoaderFull);
-  //   FreeSoundEffect(_StartSound);
-  // end;
-
-  // Call this to load your resources and to
-  // display the loading screen.
-  //
-  // SIDE EFFECTS:
-  // procedure LoadResources();
-  // var
-  //   oldW, oldH: Integer;
-  // begin
-  //   oldW := ScreenWidth();
-  //   oldH := ScreenHeight();
-  // 
-  //   ChangeScreenSize(800, 600);
-  //
-  //   //Remove sleeps once "real" game resources are being loaded
-  //   ShowLoadingScreen();
-  //       
-  //   ShowMessage('loading fonts', 0);
-  //   LoadFonts();
-  //   Sleep(100);
-  // 
-  //   ShowMessage('loading images', 1);
-  //   LoadImages();
-  //   Sleep(100);
-  // 
-  //   ShowMessage('loading sounds', 2);
-  //   LoadSounds();
-  //   Sleep(100);
-  // 
-  //   ShowMessage('loading music', 3);
-  //   LoadMusics();
-  //   Sleep(100);
-  // 
-  //   ShowMessage('loading maps', 4);
-  //   LoadMaps();
-  //   Sleep(100);
-  // 
-  //   ShowMessage('SwinGame loaded', 5);
-  //   Sleep(100);
-  //   EndLoadingScreen();
-  // 
-  //   ChangeScreenSize(oldW, oldH);
-  // end;
-  //----------------------------------------------------------------------------
-  // Resource Path and Application Path
   //----------------------------------------------------------------------------
   
   function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
@@ -1134,27 +884,590 @@ implementation
     {$endif}
     result := result + filename;
   end;
-
+  
   function GetPathToResource(filename: String): String; overload;
   begin
     result := GetPathToResourceWithBase(applicationPath, filename);
   end;
-
+  
   function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
   begin
     result := GetPathToResourceWithBase(applicationPath, filename, kind);
   end;
-
+  
   procedure SetAppPath(path: String; withExe: Boolean);
   begin
     if withExe then applicationPath := ExtractFileDir(path)
     else applicationPath := path;
   end;
-
+  
   function AppPath(): String;
   begin
     result := applicationPath;
   end;
+  
+  //----------------------------------------------------------------------------
+  
+  function LoadSoundEffect(path: String): SoundEffect;
+  begin
+    if not FileExists(path) then raise Exception.Create('Unable to locate music ' + path);
+    result := Mix_LoadWAV(pchar(path));
+    if result = nil then
+    begin
+      raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
+    end;
+  end;
+  
+  function LoadMusic(path: String): Music;
+  begin
+    if not FileExists(path) then raise Exception.Create('Unable to locate music ' + path);
+    result := Mix_LoadMUS(pchar(path));
+    if result = nil then
+    begin
+      raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
+    end;
+  end;
+  
+  procedure FreeSoundEffect(var effect: SoundEffect);
+  begin
+    if assigned(effect) then
+    begin
+      CallFreeNotifier(effect);
+      Mix_FreeChunk(effect);
+    end;
+    effect := nil;
+  end;
+  
+  procedure FreeMusic(var mus: Music);
+  begin
+    if assigned(mus) then
+    begin
+      CallFreeNotifier(mus);
+      Mix_FreeMusic(mus);
+    end;
+    mus := nil;
+  end;
+  
+  //----------------------------------------------------------------------------
+  
+  function CreateBitmap(width, height: LongInt): Bitmap;
+  begin
+    if (width < 1) or (height < 1) then
+      raise Exception.Create('Bitmap width and height must be greater then 0');
+      if (baseSurface = nil) or (baseSurface^.format = nil) then
+          raise Exception.Create('Unable to CreateBitmap as the window is not open');
+    
+    New(result);
+
+    with baseSurface^.format^ do
+    begin
+      result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
+                       RMask, GMask, BMask, AMask);
+    end;
+    
+    if result^.surface = nil then
+    begin
+      Dispose(result);
+      raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
+    end;
+    
+    result^.width := width;
+    result^.height := height;
+    SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
+    SDL_FillRect(result^.surface, nil, ColorTransparent);
+  end;
+  
+  // Sets the non-transparent pixels in a Bitmap. This is then used for
+  // collision detection, allowing the original surface to be optimised.
+  //
+  // @param bmp  A pointer to the Bitmap being set
+  // @param surface The surface with pixel data for this Bitmap
+  procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
+  var
+    r, c: LongInt;
+  begin
+    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
+
+    for c := 0 to bmp^.width - 1 do
+    begin
+      for r := 0 to bmp^.height - 1 do
+      begin
+        bmp^.nonTransparentPixels[c, r] :=
+          (GetPixel32(surface, c, r) <> transparentColor);
+      end;
+    end;
+  end;
+  
+  procedure OptimiseBitmap(surface: Bitmap);
+  var
+    oldSurface: PSDL_Surface;
+  begin
+    if surface = nil then raise Exception.Create('No bitmap supplied');
+    
+    oldSurface := surface^.surface;
+    SetNonAlphaPixels(surface, oldSurface);
+    surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
+    SDL_FreeSurface(oldSurface);
+  end;
+  
+  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+  var
+    loadedImage: PSDL_Surface;
+    correctedTransColor: Color;
+  begin
+    if not FileExists(pathToBitmap) then raise Exception.Create('Unable to locate bitmap ' + pathToBitmap);
+    
+    loadedImage := IMG_Load(pchar(pathToBitmap));
+    
+    if loadedImage <> nil then
+    begin
+      new(result);
+      if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
+      else result^.surface := SDL_DisplayFormat(loadedImage);
+      //result^.surface := loadedImage;
+      
+      //WriteLn('Loaded ', pathToBitmap);
+      //WriteLn('  at ', HexStr(result^.surface));
+
+      result^.width := result^.surface^.w;
+      result^.height := result^.surface^.h;
+
+      if transparent then
+      begin
+        correctedTransColor := ColorFrom(result, transparentColor);
+        SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+        SetNonTransparentPixels(result, loadedImage, correctedTransColor);
+      end
+      else
+      begin
+        SetNonAlphaPixels(result, loadedImage);
+      end;
+
+      if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
+    end
+    else
+    begin
+      raise Exception.Create('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
+    end;
+  end;
+
+  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
+  begin
+    result := LoadBitmap(pathToBitmap, false, ColorBlack);
+  end;
+
+  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
+  begin
+    result := LoadBitmap(pathToBitmap, true, transparentColor);
+  end;
+
+  procedure FreeBitmap(var bitmapToFree : Bitmap);
+  begin
+    if Assigned(bitmapToFree) then
+    begin
+      // WriteLn('Free Bitmap - ', HexStr(bitmapToFree));
+      CallFreeNotifier(bitmapToFree);
+      // WriteLn('Done Free Bitmap - ', HexStr(bitmapToFree));
+      
+      if Assigned(bitmapToFree^.surface) then
+      begin
+        //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
+        SDL_FreeSurface(bitmapToFree^.surface);
+      end;
+      bitmapToFree^.surface := nil;
+      
+      Dispose(bitmapToFree);
+      bitmapToFree := nil;
+    end;
+  end;
+  
+  //----------------------------------------------------------------------------
+  
+  function LoadFont(fontName: String; size: LongInt): Font;
+  begin
+    if not FileExists(fontName) then raise Exception.Create('Unable to locate font ' + fontName);
+    result := TTF_OpenFont(PChar(fontName), size);
+    
+    if result = nil then
+    begin
+      raise Exception.Create('LoadFont failed: ' + TTF_GetError());
+    end;
+  end;
+  
+  procedure FreeFont(var fontToFree: Font);
+  begin
+    if Assigned(fontToFree) then
+    begin
+      CallFreeNotifier(fontToFree);
+      try
+        TTF_CloseFont(fontToFree);
+        fontToFree := nil;
+      except
+        raise Exception.Create('Unable to free the specified font');
+      end;
+    end;
+  end;
+  
+  //----------------------------------------------------------------------------
+  
+  function ReadInt(var stream: text): Word;
+  var
+    c: char;
+    c2: char;
+    i: LongInt;
+    i2: LongInt;
+  begin
+    Read(stream ,c);
+    Read(stream ,c2);
+
+    i := LongInt(c);
+    i2 := LongInt(c2) * 256;
+
+    result := i + i2;
+  end;
+
+  procedure LoadMapInformation(m: Map; var stream: text);
+  var
+    header: LongInt;
+  begin
+    header := ReadInt(stream);
+
+    if header = 0 then
+    begin
+      m^.MapInfo.Version := ReadInt(stream);
+      m^.MapInfo.MapWidth := ReadInt(stream);
+    end
+    else
+    begin
+      m^.MapInfo.Version := 1;
+      m^.MapInfo.MapWidth := header;
+    end;
+
+    //m^.MapInfo.MapWidth := ReadInt(stream);
+    m^.MapInfo.MapHeight := ReadInt(stream);
+    m^.MapInfo.BlockWidth := ReadInt(stream);
+    m^.MapInfo.BlockHeight := ReadInt(stream);
+    m^.MapInfo.NumberOfBlocks := ReadInt(stream);
+    m^.MapInfo.NumberOfAnimations := ReadInt(stream);
+    m^.MapInfo.NumberOfLayers := ReadInt(stream);
+    m^.MapInfo.CollisionLayer := ReadInt(stream);
+    m^.MapInfo.TagLayer := ReadInt(stream);
+    m^.MapInfo.GapX := 0;
+    m^.MapInfo.GapY := 0;
+    m^.MapInfo.StaggerX := 0;
+    m^.MapInfo.StaggerY := 0;
+    m^.MapInfo.Isometric := false;
+
+      {
+      //Debug
+      WriteLn('MapInformation');
+      WriteLn('');
+      WriteLn(m^.MapInfo.MapWidth);
+      WriteLn(m^.MapInfo.MapHeight);
+      WriteLn(m^.MapInfo.BlockWidth);
+      WriteLn(m^.MapInfo.BlockHeight);
+      WriteLn(m^.MapInfo.NumberOfBlocks);
+      WriteLn(m^.MapInfo.NumberOfAnimations);
+      WriteLn(m^.MapInfo.NumberOfLayers);
+      WriteLn(m^.MapInfo.CollisionLayer);
+      WriteLn(m^.MapInfo.TagLayer);
+      WriteLn('');
+      ReadLn();
+      }
+  end;
+
+  procedure LoadIsometricInformation(m: Map; var stream: text);
+  begin
+    m^.MapInfo.GapX := ReadInt(stream);
+    m^.MapInfo.GapY := ReadInt(stream);
+    m^.MapInfo.StaggerX := ReadInt(stream);
+    m^.MapInfo.StaggerY := ReadInt(stream);
+
+    if ((m^.MapInfo.StaggerX = 0) and (m^.MapInfo.StaggerY = 0)) then
+    begin
+      m^.MapInfo.Isometric := false;
+      m^.MapInfo.GapX := 0;
+      m^.MapInfo.GapY := 0;
+    end
+    else
+      m^.MapInfo.Isometric := true;
+
+  end;
+
+
+  procedure LoadAnimationInformation(m: Map; var stream: text);
+  var
+    i, j: LongInt;
+  begin
+
+    if m^.MapInfo.NumberOfAnimations > 0 then
+    begin
+
+      SetLength(m^.AnimationInfo, m^.MapInfo.NumberOfAnimations);
+
+      for i := 0 to m^.MapInfo.NumberOfAnimations - 1 do
+      begin
+
+        m^.AnimationInfo[i].AnimationNumber := i + 1;
+        m^.AnimationInfo[i].Delay := ReadInt(stream);
+        m^.AnimationInfo[i].NumberOfFrames := ReadInt(stream);
+
+        SetLength(m^.AnimationInfo[i].Frame, m^.AnimationInfo[i].NumberOfFrames);
+
+        for j := 0 to m^.AnimationInfo[i].NumberOfFrames - 1 do
+        begin
+          m^.AnimationInfo[i].Frame[j] := ReadInt(stream);
+        end;
+
+        m^.AnimationInfo[i].CurrentFrame := 0;
+
+      end;
+
+      {
+      //Debug
+      WriteLn('Animation Information');
+      WriteLn('');
+      for i := 0 to m^.MapInfo.NumberOfAnimations - 1 do
+      begin
+        WriteLn(m^.AnimationInfo[i].AnimationNumber);
+        WriteLn(m^.AnimationInfo[i].Delay);
+        WriteLn(m^.AnimationInfo[i].NumberOfFrames);
+
+        for j := 0 to m^.AnimationInfo[i].NumberOfFrames - 1 do
+        begin
+          WriteLn(m^.AnimationInfo[i].Frame[j]);
+        end;
+      end;
+      WriteLn('');
+      ReadLn();
+      }
+    end;
+  end;
+
+  procedure LoadLayerData(m: Map; var stream: text);
+  var
+    l, y, x: LongInt;
+  begin
+
+    SetLength(m^.LayerInfo, m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.TagLayer);
+
+    for y := 0 to Length(m^.LayerInfo) - 1 do
+    begin
+
+      SetLength(m^.LayerInfo[y].Animation, m^.MapInfo.MapHeight);
+      SetLength(m^.LayerInfo[y].Value, m^.MapInfo.MapHeight);
+
+      for x := 0 to m^.MapInfo.MapHeight - 1 do
+      begin
+
+        SetLength(m^.LayerInfo[y].Animation[x], m^.MapInfo.MapWidth);
+        SetLength(m^.LayerInfo[y].Value[x], m^.MapInfo.MapWidth);
+      end;
+    end;
+
+    for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.Taglayer - 1 do
+    begin
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
+      begin
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
+        begin
+
+          m^.LayerInfo[l].Animation[y][x] := ReadInt(stream);
+          m^.LayerInfo[l].Value[y][x] := ReadInt(stream);
+        end;
+      end;
+    end;
+
+    {
+    //Debug
+    WriteLn('Layer Information');
+    WriteLn(Length(m^.Layerinfo));
+    WriteLn('');
+
+    for l := 0 to Length(m^.LayerInfo) - 1 do
+    begin
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
+      begin
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
+        begin
+          Write(m^.LayerInfo[l].Animation[y][x]);
+          Write(',');
+          Write(m^.LayerInfo[l].Value[y][x]);
+          Write(' ');
+        end;
+      end;
+      WriteLn('');
+      ReadLn();
+    end;
+    }
+
+
+  end;
+
+  procedure LoadCollisionData(m: Map; var stream: text);
+  var
+    y, x: LongInt;
+  begin
+    if m^.MapInfo.CollisionLayer = 1 then
+    begin
+      SetLength(m^.CollisionInfo.Collidable, m^.MapInfo.MapHeight);
+
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
+      begin
+        SetLength(m^.CollisionInfo.Collidable[y], m^.MapInfo.MapWidth);
+      end;
+
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
+      begin
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
+        begin
+          // True/False
+          m^.CollisionInfo.Collidable[y][x] := (ReadInt(stream) <> 0);
+//          if ReadInt(stream) <> 0 then
+//            m^.CollisionInfo.Collidable[y][x] := true
+//          else
+//            m^.CollisionInfo.Collidable[y][x] := false
+        end;
+      end;
+
+
+      //Debug
+      {
+      for y := 0 to m^.MapInfo.MapHeight - 1 do
+      begin
+        for x := 0 to m^.MapInfo.MapWidth - 1 do
+        begin
+          if m^.CollisionInfo.Collidable[y][x] = true then
+            Write('1')
+          else
+            Write('0')
+        end;
+        WriteLn('');
+      end;
+      ReadLn();
+      }
+    end;
+  end;
+
+  procedure LoadTagData(m: Map; var stream: text);
+  var
+    py, px, smallestTagIdx, temp: LongInt;
+    evt: MapTag;
+  begin
+    //SetLength(m^.TagInfo, High(Tags));
+    //SetLength(m^.TagInfo.Tag, m^.MapInfo.MapHeight);
+    {for y := 0 to m^.MapInfo.MapHeight - 1 do
+    begin
+      SetLength(m^.TagInfo.Tag[y], m^.MapInfo.MapWidth);
+    end;}
+
+    //The smallest "non-graphics" tile, i.e. the tags
+    smallestTagIdx := m^.MapInfo.NumberOfBlocks - 23;
+
+    for py := 0 to m^.MapInfo.MapHeight - 1 do
+    begin
+      for px := 0 to m^.MapInfo.MapWidth - 1 do
+      begin
+        temp := ReadInt(stream);
+        evt := MapTag(temp - smallestTagIdx);
+        //TODO: Optimize - avoid repeated LongIng(evt) conversions
+        if (evt >= MapTag1) and (evt <= MapTag24) then
+        begin
+          SetLength(m^.TagInfo[LongInt(evt)], Length(m^.TagInfo[LongInt(evt)]) + 1);
+
+          with m^.TagInfo[LongInt(evt)][High(m^.TagInfo[LongInt(evt)])] do
+          begin
+            x := px;
+            y := py;
+          end;
+        end
+      end;
+    end;
+
+
+    //Debug
+    {
+    for y := 0 to m^.MapInfo.MapHeight - 1 do
+    begin
+      for x := 0 to m^.MapInfo.MapWidth - 1 do
+      begin
+        Write(' ');
+        Write(LongInt(m^.TagInfo.Tag[y][x]));
+      end;
+      WriteLn('');
+    end;
+    ReadLn();
+    }
+  end;
+
+  procedure LoadBlockSprites(m: Map; fileName: String);
+  var
+    fpc: LongIntArray; //Array of LongInt;
+  begin
+    SetLength(fpc, m^.MapInfo.NumberOfBlocks);
+    m^.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
+                             m^.MapInfo.BlockWidth,
+                             m^.MapInfo.BlockHeight);
+    m^.Tiles^.currentCell := 0;
+  end;
+  
+  //mapFile and imgFile are full-path+filenames
+  function LoadMapFiles(mapFile, imgFile: String): Map;
+  var
+    f: text;
+    m: Map;
+  begin
+    if not FileExists(mapFile) then raise Exception.Create('Unable to locate map: ' + mapFile);
+    if not FileExists(imgFile) then raise Exception.Create('Unable to locate map images: ' + imgFile);
+
+    //Get File
+    assign(f, mapFile);
+    reset(f);
+
+    //Create Map
+    New(m);
+
+    //Load Map Content
+    LoadMapInformation(m, f);
+    if (m^.MapInfo.Version > 1) then LoadIsometricInformation(m, f);
+    LoadAnimationInformation(m, f);
+    LoadLayerData(m, f);
+    LoadCollisionData(m, f);
+    LoadTagData(m, f);
+    //Close File
+    close(f);
+
+    LoadBlockSprites(m, imgFile);
+    m^.Frame := 0;
+    result := m;
+
+    //WriteLn(m^.MapInfo.Version);
+  end;
+
+  function LoadMap(mapName: String): Map;
+  var
+    mapFile, imgFile: String;
+  begin
+    mapFile := GetPathToResource(mapName + '.sga', MapResource);
+    imgFile := GetPathToResource(mapName + '.png', MapResource);
+    result := LoadMapFiles(mapFile, imgFile);
+  end;
+
+  procedure FreeMap(var m: Map);
+  begin
+    if assigned(m) then
+    begin
+      CallFreeNotifier(m);
+      
+      // Free the one bitmap associated with the map
+      FreeBitmap(m^.Tiles^.bitmaps[0]);
+      FreeSprite(m^.Tiles);
+      Dispose(m);
+      m := nil;
+    end;
+  end;
+
+
 
 //=============================================================================
 
@@ -1168,6 +1481,9 @@ implementation
     _Music := TStringHash.Create(False, 1024);
     _TileMaps := TStringHash.Create(False, 1024);
     _Bundles := TStringHash.Create(False, 1024);
+    
+    if ParamCount() >= 0 then
+      SetAppPath(ParamStr(0), True)
   end;
 
 end.

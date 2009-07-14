@@ -582,6 +582,17 @@ class SGPasParser():
         elif self._match_lookahead('id', 'array') or self._match_lookahead('symbol', '^'):
             #is pointer or array
             the_type.clone(self._read_type_usage())
+        elif self._match_lookahead('id', 'procedure', True):
+            #procedure type: read ( params );
+            self._match_token('symbol', '(')
+            m = SGMethod(the_type.name)
+            m.in_file = self._current_file
+            self._read_params(m)
+            the_type.is_procedure = True
+            the_type.method = m
+            if self._lookahead(2)[1][1] == 'cdecl':
+                self._match_token('symbol', ';')
+                self._match_token('id', 'cdecl')
         elif self._match_lookahead('id'):
             other_id = self._match_token('id')[1]
             other_type = find_or_add_type(other_id)

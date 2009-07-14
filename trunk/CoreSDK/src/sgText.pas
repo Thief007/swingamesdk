@@ -11,6 +11,7 @@
 // - 2009-06-05: Andrew: Using sgShared
 //
 // Version 2.0:
+// - 2009-07-14: Andrew : Removed loading and freeing code.
 // - 2009-01-05: Andrew: Added Unicode rendering
 // - 2008-12-17: Andrew: Moved all integers to LongInt
 // - 2008-12-12: Andrew: Added simple string printing
@@ -36,17 +37,7 @@ interface
 //=============================================================================
 
   uses sgTypes;
-
-  /// @lib
-  /// @class Font
-  /// @constructor
-  function LoadFont(fontName: String; size: LongInt): Font;
-
-  /// @lib
-  /// @class Font
-  /// @dispose
-  procedure FreeFont(var fontToFree: Font);
-
+  
   /// @lib
   /// @class Font
   /// @setter FontStyle
@@ -116,29 +107,11 @@ interface
   procedure DrawFramerate(x, y: LongInt); overload;
   
 implementation
-  uses SysUtils, Classes, sgGraphics, sgCamera, SDL_gfx, sgShared, 
+  uses SysUtils, Classes, sgGraphics, sgCamera, SDL_gfx, sgShared, sgResources, 
        SDL, SDL_TTF, sgCore, sgGeometry;
 
 
   const EOL = LineEnding; // from sgShared
-
-  /// Loads a font from file with the specified side. Fonts must be freed using
-  /// the FreeFont routine once finished with. Once the font is loaded you
-  /// can set its style using SetFontStyle. Fonts are then used to draw and
-  /// measure text in your programs.
-  ///
-  /// @param fontName: The name of the font file to load from the file system
-  /// @param size:     The point size of the font
-  /// @returns:       The font loaded
-  function LoadFont(fontName: String; size: LongInt): Font;
-  begin
-    result := TTF_OpenFont(PChar(fontName), size);
-
-    if result = nil then
-    begin
-      raise Exception.Create('LoadFont failed: ' + TTF_GetError());
-    end;
-  end;
 
   /// Sets the style of the passed in font. This is time consuming, so load
   /// fonts multiple times and set the style for each if needed.
@@ -158,20 +131,6 @@ implementation
   begin
     if not Assigned(font) then raise Exception.Create('No font supplied');
     result := FontStyle(TTF_GetFontStyle(font));
-  end;
-
-  /// Free a loaded font.
-  ///
-  /// Side Effects:
-  /// - The font is freed and cannot be used any more
-  procedure FreeFont(var fontToFree: Font);
-  begin
-    try
-      TTF_CloseFont(fontToFree);
-      fontToFree := nil;
-    except
-      raise Exception.Create('Unable to free the specified font');
-    end;
   end;
 
   function IsSet(toCheck, checkFor: FontAlignment): Boolean; overload;

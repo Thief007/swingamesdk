@@ -35,6 +35,8 @@ class SGType(SGMetaDataContainer):
         self.is_class = False
         self.is_type = False
         self.is_struct = False
+        self.is_procedure = False
+        self.method = None
         self.same_as = None
         self.via_pointer = False # is the type accessed via a pointer (i.e. C# cant get to it :) )
     

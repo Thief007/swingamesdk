@@ -102,6 +102,7 @@ _type_switcher = {
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
         'arrayofpoint2d': 'Point2D[] %s',
+        'freenotifier': 'FreeNotifier %s',
 #        None: 'void %s'
     },
     'const' : {
@@ -277,7 +278,7 @@ _adapter_type_switcher = {
         'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
         'longintarray': 'int[] %s',
         'spritekind': 'SpriteKind %s',
-        
+        'freenotifier': 'FreeNotifier %s',
 #        None: 'void %s'
     },
     'const' : {
@@ -609,7 +610,7 @@ def create_cs_call(details, the_method):
         details['base_const'] = ': base(%(calls.class)s.%(calls.name)s(%(calls.args)s), PtrKind.%(in_class)s)%(returns_end)s' % details
         result = ''
     elif the_method.is_destructor:
-        details['pre_call'] ='PointerWrapper.Remove(this);\n    '
+        details['pre_call'] ='' # now done via callback 'PointerWrapper.Remove(this);\n    '
         details['return_type'] = 'void DoFree'
         details['returns_end'] = ''
         details['public'] = 'protected internal override '
@@ -617,9 +618,9 @@ def create_cs_call(details, the_method):
         result = '%(calls.class)s.%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
     else:
         if the_method.name in ['WindowCloseRequested', 'CloseAudio']:
-            details['pre_call'] = 'PointerWrapper.FreeAnythingToFree();\n    '
+            details['pre_call'] = '' # no longer needed 'PointerWrapper.FreeAnythingToFree();\n    '
         elif the_method.mimic_destructor:
-            details['pre_call'] ='PointerWrapper.Remove(%s.Pointer);\n    ' % the_method.params[0].name
+            details['pre_call'] = '' # now done via callback 'PointerWrapper.Remove(%s.Pointer);\n    ' % the_method.params[0].name
         else: details['pre_call'] =''
         details['returns_end'] = ''
         details['public'] = 'public '
@@ -630,9 +631,10 @@ def create_cs_call(details, the_method):
             if the_method.return_type.name.lower() in _data_switcher['return_val']:
                 result = _data_switcher['return_val'][the_method.return_type.name.lower()] % result
     
-    if the_method.name in ['ProcessEvents']:
-        details['post_call'] = '\n    PointerWrapper.FreeAnythingToFree();'
-    else: details['post_call'] =''
+    # if the_method.name in ['ProcessEvents']:
+    #     details['post_call'] = '\n    PointerWrapper.FreeAnythingToFree();'
+    # else: 
+    details['post_call'] =''
     
     return ('%(returns)s' + result) % details
 
@@ -891,6 +893,21 @@ def write_sg_class(member, other):
     file_writer.write(_module_footer)
     file_writer.close()
 
+def write_delegate(member, other):
+    '''write out a delegate data type'''
+    writer = other['file writer']
+    
+    method = member.data_type.method
+    
+    writer.write('/// <summary>\n/// %s\n/// </summary>\n' % doc_transform(member.doc))
+    
+    details = dict()
+    details['return_type'] = adapter_type_visitor(method.return_type, 'return') % member.name
+    details['params'] = method.param_string(param_visitor)
+    
+    writer.write('public delegate %(return_type)s(%(params)s);\n' % details)
+    
+
 def write_struct(member, other):
     '''Write out s struct data type'''
     writer = other['file writer']
@@ -934,8 +951,6 @@ def write_struct(member, other):
 def write_cs_type_for(member, other):
     '''Write out a single c member'''
     
-    assert member.is_class or member.is_struct or member.is_enum
-    
     if member.via_pointer:
         return
     
@@ -951,6 +966,8 @@ def write_cs_type_for(member, other):
             assert false
     elif member.is_struct:
         write_struct(member, other)
+    elif member.data_type.is_procedure:
+        write_delegate(member, other)
     elif member.is_enum:
         #enum id { list }
         writer.write('/// <summary>\n/// %s\n/// </summary>\n' % doc_transform(member.doc))
@@ -990,9 +1007,9 @@ def write_cs_lib_module(the_file):
     
     #process all types first so they appear at the top of the header files
     for member in the_file.members:
-        if member.is_module or member.is_header or member.is_type:
+        if member.is_module or member.is_header or (member.is_type and not member.data_type.is_procedure):
             pass
-        elif member.is_class or member.is_struct or member.is_enum:
+        elif member.is_class or member.is_struct or member.is_enum or member.data_type.is_procedure:
             write_cs_type_for(member, other)
         else:
             print member.module_kind, member

@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-14: Andrew : Removed loading and freeing code.
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct parameters
 // - 2009-06-29: Andrew : Using circle
 // - 2009-06-24: Andrew : Moved Sprite routines to Sprites.
@@ -53,32 +54,6 @@ interface
 //=============================================================================
 
   uses sgTypes;
-
-  /// @lib
-  function CreateBitmap(width, height: LongInt): Bitmap;
-
-  /// @lib LoadBitmapWithTransparentColor
-  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
-
-  /// @lib
-  /// @class Bitmap
-  /// @constructor
-  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
-
-  /// @lib LoadBitmapWithTransparentColor(pathToBitmap, True, transparentColor)
-  /// @class Bitmap
-  /// @constructor
-  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
-
-  /// @lib
-  /// @class Bitmap
-  /// @method OptimiseBitmap
-  procedure OptimiseBitmap(surface: Bitmap);
-
-  /// @lib
-  /// @class Bitmap
-  /// @dispose
-  procedure FreeBitmap(var bitmapToFree : Bitmap);
 
   //---------------------------------------------------------------------------
   // Bitmap drawing routines
@@ -289,19 +264,37 @@ interface
   procedure ClearScreen(toColor : Color); overload;
 
   /// @lib
+  ///
+  /// @class Bitmap
+  /// @method Draw
   procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
   /// @lib DrawBitmapAtPoint
+  ///
+  /// @class Bitmap
+  /// @overload Draw DrawAtPoint
   procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
 
   /// @lib
+  ///
+  /// @class Bitmap
+  /// @method DrawPart
   procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+  
   /// @lib DrawBitmapPartFromRect
+  ///
+  /// @class Bitmap
+  /// @overload DrawPart DrawPartFromRect
   procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
+  
   /// @lib DrawBitmapPartFromRectAtPoint
+  ///
+  /// @class Bitmap
+  /// @overload DrawPart DrawPartFromRectAtPoint
   procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
-
+  
   /// @lib
   procedure DrawPixel(clr: Color; x, y: Single); overload;
+  
   /// @lib DrawPixelAtPoint
   procedure DrawPixel(clr: Color; const position: Point2D); overload;
 
@@ -537,7 +530,7 @@ implementation
 
   uses Classes, SysUtils, // system
        SDL_gfx, SDL, SDL_Image, // sdl
-       sgCamera, sgPhysics, sgShared, sgCore, sgGeometry;
+       sgCamera, sgPhysics, sgShared, sgCore, sgGeometry, sgResources;
 
   /// Clears the surface of the bitmap to the passed in color.
   ///
@@ -583,51 +576,6 @@ implementation
     ClearScreen(ColorBlack);
   end;
 
-  function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
-  var
-    pixel, pixels: PUint32;
-    offset: Uint32;
-  {$IFDEF FPC}
-    pixelAddress: PUint32;
-  {$ELSE}
-    pixelAddress: UInt32;
-  {$ENDIF}
-  begin
-    //Convert the pixels to 32 bit
-    pixels := surface^.pixels;
-
-    //Get the requested pixel
-    offset := (( y * surface^.w ) + x) * surface^.format^.BytesPerPixel;
-
-    {$IFDEF FPC}
-      pixelAddress := pixels + (offset div 4);
-      pixel := PUint32(pixelAddress);
-    {$ELSE}
-      pixelAddress := UInt32(pixels) + offset;
-      pixel := Ptr(pixelAddress);
-    {$ENDIF}
-
-    {$IF SDL_BYTEORDER = SDL_BIG_ENDIAN }
-    case surface^.format^.BytesPerPixel of
-      1: result := pixel^ and $000000ff;
-      2: result := pixel^ and $0000ffff;
-      3: result := pixel^ and $00ffffff;
-      4: result := pixel^;
-    else
-      raise Exception.Create('Unsuported bit format...');
-    end;
-    {$ELSE}
-    case surface^.format^.BytesPerPixel of
-      1: result := pixel^ and $ff000000;
-      2: result := pixel^ and $ffff0000;
-      3: result := pixel^ and $ffffff00;
-      4: result := pixel^;
-    else
-      raise Exception.Create('Unsuported bit format...')
-    end;
-    {$IFEND}
-  end;
-
   function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
   begin
     if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
@@ -646,141 +594,6 @@ implementation
     result := GetPixel(screen, x, y);
   end;
 
-  // Sets the non-transparent pixels in a Bitmap. This is then used for
-  // collision detection, allowing the original surface to be optimised.
-  //
-  // @param bmp  A pointer to the Bitmap being set
-  // @param surface The surface with pixel data for this Bitmap
-  procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
-  var
-    r, c: LongInt;
-  begin
-    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
-
-    for c := 0 to bmp^.width - 1 do
-    begin
-      for r := 0 to bmp^.height - 1 do
-      begin
-        bmp^.nonTransparentPixels[c, r] :=
-          (GetPixel32(surface, c, r) <> transparentColor);
-      end;
-    end;
-  end;
-
-  procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
-  var
-    r, c: LongInt;
-    hasAlpha: Boolean;
-  begin
-    SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
-    hasAlpha := surface^.format^.BytesPerPixel = 4;
-
-    for c := 0 to bmp^.width - 1 do
-    begin
-      for r := 0 to bmp^.height - 1 do
-      begin
-        bmp^.nonTransparentPixels[c, r] := (not hasAlpha) or ((GetPixel32(surface, c, r) and SDL_Swap32($000000FF)) > 0);
-      end;
-    end;
-  end;
-
-  /// Loads a bitmap from a given path, with the indicated transparent color.
-  /// This loads both transparent and non-transparent bitmaps.
-  ///
-  /// @param pathToBitmap:     the path to the bitmap to be loaded
-  /// @param transparent:      Indicates if transparency should be set
-  /// @param transparentColor: the color that will be transparent
-  /// @returns: A bitmap from the loaded file.
-  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
-  var
-    loadedImage: PSDL_Surface;
-    correctedTransColor: Color;
-  begin
-    if not FileExists(pathToBitmap) then raise Exception.Create('Unable to locate bitmap ' + pathToBitmap);
-    
-    loadedImage := IMG_Load(pchar(pathToBitmap));
-    
-    if loadedImage <> nil then
-    begin
-      new(result);
-      if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
-      else result^.surface := SDL_DisplayFormat(loadedImage);
-      //result^.surface := loadedImage;
-      
-      //WriteLn('Loaded ', pathToBitmap);
-      //WriteLn('  at ', HexStr(result^.surface));
-
-      result^.width := result^.surface^.w;
-      result^.height := result^.surface^.h;
-
-      if transparent then
-      begin
-        correctedTransColor := ColorFrom(result, transparentColor);
-        SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
-        SetNonTransparentPixels(result, loadedImage, correctedTransColor);
-      end
-      else
-      begin
-        SetNonAlphaPixels(result, loadedImage);
-      end;
-
-      if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
-    end
-    else
-    begin
-      raise Exception.Create('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
-    end;
-  end;
-
-  /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
-  /// the screen. Bitmaps can be of bmp, jpeg, gif, png, etc. Images may also
-  /// contain alpha values, which will be drawn correctly by the API. All
-  /// bitmaps must be freed using the FreeBitmap once you are finished with
-  /// them.
-  ///
-  /// @param pathToBitmap:   The path to the bitmap file to open.
-  /// @returns: A bitmap from the loaded file
-  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
-  begin
-    result := LoadBitmap(pathToBitmap, false, ColorBlack);
-  end;
-
-  /// Loads a bitmap with a transparent color key. The transparent color is then
-  /// setup as the color key to ensure the image is drawn correctly. Alpha
-  /// values of Images loaded in this way will be ignored. All bitmaps must be
-  /// freed using the FreeBitmap once you are finished with them.
-  ///
-  /// @param pathToBitmap:     the path to the bitmap to be loaded
-  /// @param transparentColor: the color that will be transparent
-  /// @returns: A bitmap from the loaded file.
-  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
-  begin
-    result := LoadBitmap(pathToBitmap, true, transparentColor);
-  end;
-
-  /// Frees a loaded bitmap. Use this when you will no longer be drawing the
-  /// bitmap, and when the program exits.
-  ///
-  /// Side Effects:
-  /// - the bitmap is freeed and can no longer be drawn
-  procedure FreeBitmap(var bitmapToFree : Bitmap);
-  begin
-    if Assigned(bitmapToFree) then
-    begin
-      if Assigned(bitmapToFree^.surface) then
-      begin
-        //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
-        SDL_FreeSurface(bitmapToFree^.surface);
-      end;
-      bitmapToFree^.surface := nil;
-
-      //SetLength(bitmapToFree^.nonTransparentPixels, 0, 0);
-
-      Dispose(bitmapToFree);
-      bitmapToFree := nil;
-    end;
-  end;
-  
   /// Draws one bitmap (src) onto another bitmap (dest).
   ///
   /// @param dest:         The destination bitmap - not optimised!
@@ -864,40 +677,6 @@ implementation
     DrawBitmap(screen, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
   end;
   
-  /// Creates a bitmap in memory that can be drawn onto. The bitmap is initially
-  /// transparent and can be used as the target for various drawing operations.
-  /// Once you have drawn the desired image onto the bitmap you can call
-  /// OptimiseBitmap to optimise the surface.
-  ///
-  ///  @param width, height:  The width and height of the surface
-  ///  @returns:              A new bitmap
-  function CreateBitmap(width, height: LongInt): Bitmap;
-  begin
-    if (width < 1) or (height < 1) then
-      raise Exception.Create('Bitmap width and height must be greater then 0');
-      if (baseSurface = nil) or (baseSurface^.format = nil) then
-          raise Exception.Create('Unable to CreateBitmap as the window is not open');
-    
-    New(result);
-
-    with baseSurface^.format^ do
-    begin
-      result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
-                       RMask, GMask, BMask, AMask);
-    end;
-    
-    if result^.surface = nil then
-    begin
-      Dispose(result);
-      raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
-    end;
-    
-    result^.width := width;
-    result^.height := height;
-    SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
-    SDL_FillRect(result^.surface, nil, ColorTransparent);
-  end;
-  
   procedure MakeOpaque(bmp: Bitmap);
   begin
     SDL_SetAlpha(bmp^.surface, 0, 255);
@@ -906,27 +685,6 @@ implementation
   procedure MakeTransparent(bmp: Bitmap);
   begin
     SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, 0);
-  end;
-
-  /// Created bitmaps can be optimised for faster drawing to the screen. This
-  /// optimisation should be called only once after all drawing to the bitmap
-  /// is complete. Optimisation should not be used if the bitmap is to be
-  /// drawn to in the future. All loaded bitmaps are optimised during loading.
-  ///
-  /// @param surface: The bitmap to be optimised
-  ///
-  /// Side Effects:
-  /// - Bitmap is optimised, and should not be used to draw onto in the future
-  procedure OptimiseBitmap(surface: Bitmap);
-  var
-    oldSurface: PSDL_Surface;
-  begin
-    if surface = nil then raise Exception.Create('No bitmap supplied');
-    
-    oldSurface := surface^.surface;
-    SetNonAlphaPixels(surface, oldSurface);
-    surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
-    SDL_FreeSurface(oldSurface);
   end;
   
   procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
