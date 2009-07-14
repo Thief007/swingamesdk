@@ -52,15 +52,21 @@ namespace SwinGame
             //Console.WriteLine("Registering");
             _ptrRegister = new Dictionary<IntPtr, PointerWrapper>();
             sgLibrary.sg_Resources_RegisterFreeNotifier(PointerWrapper.Remove);
-            AppDomain.CurrentDomain.DomainUnload += DeRegister;
         }
         
-        private static void DeRegister(object o, EventArgs e)
+        /// <summary>
+        /// "Super Dodgy" (but correct) work around for the fact that C# has no unload methods for classes.
+        /// </summary>
+        internal class ReleaserClass
         {
-            //Register Remove with SwinGame
-            Console.WriteLine("Deregistering");
-            sgLibrary.sg_Resources_RegisterFreeNotifier(null);
+            ~ReleaserClass()
+            {
+                Console.WriteLine("Deregistering");
+                sgLibrary.sg_Resources_RegisterFreeNotifier(null);                
+            }
         }
+        
+        internal static ReleaserClass releaser = new ReleaserClass();
         
         private PtrKind _Kind;
         protected internal IntPtr Pointer;
