@@ -751,6 +751,14 @@ interface
     Map = ^MapRecord;
 
 
+
+    /// The FreeNotifier is a function pointer used to notify user programs of
+    /// swingame resources being freed. This should not be used by user programs.
+    ///
+    /// @type FreeNotifier
+    FreeNotifier = procedure (p: Pointer); cdecl;
+
+
 //=============================================================================
 implementation
 //=============================================================================

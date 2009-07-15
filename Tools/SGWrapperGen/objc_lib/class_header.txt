@@ -1,6 +1,11 @@
-@implementation %(name)s
+#import <Foundation/NSObject.h>
+#import "Types.h"
+%(imports)s
 
-
+@interface %(name)s : NSObject
+{
+  %(fields)s
+}
 %(static_method_headers)s
 
 %(init_headers)s

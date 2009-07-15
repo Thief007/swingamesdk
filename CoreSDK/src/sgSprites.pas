@@ -48,38 +48,52 @@ interface
   //
 
   /// @lib CreateAnimatedCellSpriteWithEndingAction
+  ///
   /// @class Sprite
   /// @constructor
-  function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction; width, height : LongInt): Sprite; overload;
+  /// @sn initWithBitmap:%s isMulti:%s withFramesPerCell:%s endingAction:%s width:%s andHeight:%s
+  function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell: LongIntArray; endingAction: SpriteEndingAction; width, height : LongInt): Sprite; overload;
   
   /// @lib CreateAnimatedCellSprite
+  ///
   /// @class Sprite
   /// @constructor
+  /// @sn initWithBitmap:%s isMulti:%s withFramesPerCell:%s width:%s andHeight:%s
   function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; width, height : LongInt): Sprite; overload;
   
   /// @lib CreateAnimatedCellSpriteWithSetFramesPerCell
+  ///
   /// @class Sprite
   /// @constructor
+  /// @sn initWithBitmap:%s withFramesPerCell:%s frames:%s width:%s andHeight:%s
   function CreateSprite(bmp : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
   
   /// @lib CreateBasicSprite
+  ///
   /// @class Sprite
   /// @constructor
+  /// @sn initWithBitmap:%s
   function CreateSprite(bmp : Bitmap): Sprite; overload;
   
   /// @lib CreateAnimatedArraySpriteWithEndingAction
+  ///
   /// @class Sprite
   /// @constructor
+  /// @sn initWithBitmaps:%s withFramesPerCell:%s andEndingAction:%s
   function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction): Sprite; overload;
   
   /// @lib CreateAnimatedArraySprite
+  ///
   /// @class Sprite
   /// @constructor
+  /// @sn initWithBitmaps:%s andFramesPerCell:%s
   function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray): Sprite; overload;
   
   /// @lib CreateAnimatedArraySpriteWithFramesPerCell
+  ///
   /// @class Sprite
   /// @constructor
+  /// @sn initWithBitmaps:%s withFramesPerCell:%s andFrames:%s
   function CreateSprite(const bitmaps : BitmapArray; framesPerCell, frames : LongInt): Sprite; overload;
 
   /// @lib

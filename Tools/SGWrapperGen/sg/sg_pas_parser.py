@@ -41,6 +41,7 @@ class SGPasParser():
             #'has_pointer': self.process_true_attribute,
             'note': self.process_note_attribute,
             'uname': self.process_id_attribute,
+            'sn': self.process_line_attribute,
             'field': self.process_field_attribute,
             'constructor': self.process_true_attribute, # method_attribute,
             'dispose': self.process_true_attribute,
@@ -322,6 +323,11 @@ class SGPasParser():
         self._check_meta_comments(0, desc)
         self._check_attributes([], desc)
     
+    def process_line_attribute(self, token):
+        '''read the remainder of the line for the token'''
+        line = self._tokeniser.read_to_eol()
+        self._add_attribute(token[1], line)
+    
     def process_id_and_comment_attribute(self, token):
         '''read the id and attach comments etc as attributes'''
         param_tok = self._match_token('id')
@@ -527,6 +533,7 @@ class SGPasParser():
     def _add_class(self, the_type):
         logger.info(' Parser    : Adding class %s', the_type.name)
         new_class = find_or_add_class(the_type.name)
+        new_class.in_file = self._current_file
         if new_class not in self._current_file.members:
             self._current_file.members.append(new_class)
         new_class.setup_from(the_type)
