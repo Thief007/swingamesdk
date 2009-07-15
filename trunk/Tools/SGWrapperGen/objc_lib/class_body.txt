@@ -1,4 +1,7 @@
-#import "%(name)s.h"
+#import "SG%(name)s.h"
+#import "SGSDK.h"
+
+@implementation %(name)s : NSObject
 
 %(static_method_bodys)s
 
@@ -6,3 +9,5 @@
 %(dealloc_bodys)s
 
 %(method_bodys)s
+
+@end

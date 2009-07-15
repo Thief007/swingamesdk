@@ -25,27 +25,39 @@ interface
   //----------------------------------------------------------------------------
 
   /// @lib
-  procedure MapBitmap(name, filename: String);
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @sn initWithName:%s forFilename:%s
+  function MapBitmap(name, filename: String): Bitmap;
 
   /// @lib
-  procedure MapTransparentBitmap(name, filename: String; transparentColor: Color);
-
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @sn initWithName:%s forFilename:%s andColorKey:%s
+  function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
+  
   /// @lib
   function HasBitmap(name: String): Boolean;
-
+  
   /// @lib
   function GetBitmap(name: String): Bitmap;
-
+  
   /// @lib
   procedure ReleaseBitmap(name: String);
-
+    
   /// @lib
   procedure ReleaseAllBitmaps();
-
+  
   //----------------------------------------------------------------------------
-
+  
   /// @lib
-  procedure MapFont(name, filename: String; size: LongInt);
+  ///
+  /// @class Map
+  /// @constructor
+  /// @sn initWithName:%s forFilename:%s andSize:%s
+  function MapFont(name, filename: String; size: LongInt): Font;
 
   /// @lib
   function HasFont(name: String): Boolean;
@@ -62,7 +74,11 @@ interface
   //----------------------------------------------------------------------------
 
   /// @lib
-  procedure MapSoundEffect(name, filename: String);
+  ///
+  /// @class SoundEffect
+  /// @constructor
+  /// @sn initWithName:%s forFilename:%s
+  function MapSoundEffect(name, filename: String): SoundEffect;
 
   /// @lib
   function HasSoundEffect(name: String): Boolean;
@@ -79,7 +95,11 @@ interface
   //----------------------------------------------------------------------------
 
   /// @lib
-  procedure MapMusic(name, filename: String);
+  ///
+  /// @class Music
+  /// @constructor
+  /// @sn initWithName:%s forFilename:%s
+  function MapMusic(name, filename: String): Music;
 
   /// @lib
   function HasMusic(name: String): Boolean;
@@ -96,7 +116,11 @@ interface
   //----------------------------------------------------------------------------
 
   /// @lib
-  procedure MapTileMap(name, filename: String);
+  ///
+  /// @class Map
+  /// @constructor
+  /// @sn initWithName:%s forFilename:%s
+  function MapTileMap(name, filename: String): Map;
 
   /// @lib
   function HasTileMap(name: String): Boolean;
@@ -182,6 +206,7 @@ interface
   ///
   /// @class SoundEffect
   /// @constructor
+  /// @sn initFromPath:%s
   function LoadSoundEffect(path: String): SoundEffect;
 
   /// Loads the `Music` from the supplied path. To ensure that your game
@@ -200,6 +225,7 @@ interface
   ///
   /// @class Music
   /// @constructor
+  /// @sn initFromPath:%s
   function LoadMusic(path: String): Music;
   
   //----------------------------------------------------------------------------
@@ -233,14 +259,17 @@ interface
   ///
   /// @class Bitmap
   /// @constructor
+  /// @sn initWithWidth:%s andHeight:%s
   function CreateBitmap(width, height: LongInt): Bitmap;
   
   /// Loads a bitmap from file using where the specified transparent color
   /// is used as a color key for the transparent color.
   ///
+  /// @lib LoadBitmapWithTransparentColor
+  ///
   /// @class Bitmap
   /// @constructor
-  /// @lib LoadBitmapWithTransparentColor
+  /// @sn initWithPath:%s withTransparency:%s usingColor:%s
   function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
   
   /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
@@ -250,8 +279,10 @@ interface
   /// them.
   /// 
   /// @lib
+  ///
   /// @class Bitmap
   /// @constructor
+  /// @sn initWithPath:%s
   function LoadBitmap(pathToBitmap : String): Bitmap; overload;
   
   /// Loads a bitmap with a transparent color key. The transparent color is then
@@ -260,14 +291,17 @@ interface
   /// freed using the FreeBitmap once you are finished with them.
   ///
   /// @lib LoadBitmapWithTransparentColor(pathToBitmap, True, transparentColor)
+  ///
   /// @class Bitmap
   /// @constructor
+  /// @sn initWithPath:%s transparentColor:%s
   function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
   
   /// Frees a loaded bitmap. Use this when you will no longer be drawing the
   /// bitmap (including within Sprites), and when the program exits.
   ///
   /// @lib
+  ///
   /// @class Bitmap
   /// @dispose
   procedure FreeBitmap(var bitmapToFree : Bitmap);
@@ -278,6 +312,7 @@ interface
   /// drawn onto in the future. All loaded bitmaps are optimised during loading.
   ///
   /// @lib
+  ///
   /// @class Bitmap
   /// @method OptimiseBitmap
   procedure OptimiseBitmap(surface: Bitmap);
@@ -288,22 +323,28 @@ interface
   /// measure text in your programs.
   /// 
   /// @lib
+  ///
   /// @class Font
   /// @constructor
+  /// @sn initWithFontName:%s andSize:%s
   function LoadFont(fontName: String; size: LongInt): Font;
   
   /// Frees the resources used by the loaded Font.
   /// 
   /// @lib
+  ///
   /// @class Font
   /// @dispose
   procedure FreeFont(var fontToFree: Font);
     
   /// Reads the map files specified by mapName and return a new `Map` with all
   /// the details.
+  ///
   /// @lib
+  ///
   /// @class Map
   /// @constructor
+  /// @sn initWithMapName: %s
   function LoadMap(mapName: String): Map;
   
   /// Frees the resources associated with the map.
@@ -319,12 +360,6 @@ interface
   //----------------------------------------------------------------------------
   // Notifier of resource freeing
   //----------------------------------------------------------------------------
-  type 
-    /// The FreeNotifier is a function pointer used to notify user programs of
-    /// swingame resources being freed. This should not be used by user programs.
-    ///
-    /// @type FreeNotifier
-    FreeNotifier = procedure (p: Pointer); cdecl;
   
   /// Using this procedure you can register a callback that is executed
   /// each time a resource is freed. This is called by different versions of
@@ -528,7 +563,7 @@ implementation
 
   //----------------------------------------------------------------------------
 
-  procedure MapBitmap(name, filename: String);
+  function MapBitmap(name, filename: String): Bitmap;
   var
     obj: tResourceContainer;
     bmp: Bitmap;
@@ -541,15 +576,20 @@ implementation
     obj := tResourceContainer.Create(bmp);
     if not _Images.setValue(name, obj) then
       raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+    
+    result := bmp;
   end;
 
-  procedure MapTransparentBitmap(name, filename: String; transparentColor: Color);
+  function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
   var
     obj: tResourceContainer;
+    bmp: Bitmap;
   begin
-    obj := tResourceContainer.Create(LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor));
+    bmp = LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor);
+    obj := tResourceContainer.Create(bmp);
     if not _Images.setValue(name, obj) then
       raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+    result := bmp;
   end;
 
   function HasBitmap(name: String): Boolean;
@@ -578,7 +618,7 @@ implementation
   
   //----------------------------------------------------------------------------
   
-  procedure MapFont(name, filename: String; size: LongInt);
+  function MapFont(name, filename: String; size: LongInt): Font;
   var
     obj: tResourceContainer;
     fnt: Font;
@@ -587,6 +627,7 @@ implementation
     obj := tResourceContainer.Create(fnt);
     if not _Fonts.setValue(name, obj) then
       raise Exception.create('Error loaded Font resource twice, ' + name);
+    result := fnt;
   end;
   
   function HasFont(name: String): Boolean;
@@ -615,7 +656,7 @@ implementation
   
   //----------------------------------------------------------------------------
   
-  procedure MapSoundEffect(name, filename: String);
+  function MapSoundEffect(name, filename: String): SoundEffect;
   var
     obj: tResourceContainer;
     snd: SoundEffect;
@@ -624,6 +665,7 @@ implementation
     obj := tResourceContainer.Create(snd);
     if not _SoundEffects.setValue(name, obj) then
       raise Exception.create('Error loaded Sound Effect resource twice, ' + name);
+    result := snd;
   end;
   
   function HasSoundEffect(name: String): Boolean;
@@ -661,6 +703,7 @@ implementation
     obj := tResourceContainer.Create(mus);
     if not _Music.setValue(name, obj) then
       raise Exception.create('Error loaded Music resource twice, ' + name);
+    result := mus;
   end;
   
   function HasMusic(name: String): Boolean;
@@ -698,6 +741,7 @@ implementation
     obj := tResourceContainer.Create(theMap);
     if not _TileMaps.setValue(name, obj) then
       raise Exception.create('Error loaded Map resource twice, ' + name);
+    result := theMap;
   end;
   
   function HasTileMap(name: String): Boolean;

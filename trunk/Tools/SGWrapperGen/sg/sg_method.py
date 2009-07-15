@@ -24,9 +24,10 @@ class SGMethod(SGMetaDataContainer):
             'method','overload','returns','is_setter','is_getter','is_external', 
             'called_by_lib', 'my_class', 'class_method','in_property', 'called_by',
             'method_called', 'args', 'self', 'see', 'like', 'mimic_destructor', 
-            'fixed_result_size', 'length', 'calls'])
+            'fixed_result_size', 'length', 'calls', 'sn'])
         self.name = name
         self.uname = name
+        self.sn = None
         self.params = list()
         #self.param_cache = {}
         self.return_type = None
@@ -54,7 +55,7 @@ class SGMethod(SGMetaDataContainer):
         self.has_length_params = False
         self.length_call = None
     
-    def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None, call_creater = None):
+    def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None, call_creater = None, special_visitor=None):
         '''Returns a dictionary containing the details of this function/procedure
         
         The param_visitor is called to convert each parameter to a string. 
@@ -64,6 +65,12 @@ class SGMethod(SGMetaDataContainer):
         result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['name'] = self.name
         result['uname'] = self.uname
+        if self.sn != None:
+            if special_visitor != None:
+                temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
+            else:
+                temp = self.sn % tuple([param.name for param in self.params])
+            result['sn'] = temp
         result['in_class'] = self.in_class.name
         result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type, 'return')
         result['returns'] = '' if self.return_type == None else 'return '
@@ -97,6 +104,10 @@ class SGMethod(SGMetaDataContainer):
     name = property(lambda self: self['name'].other, 
         lambda self,name: self.set_tag('name', name), 
         None, 'The name of the method.')
+    
+    sn = property(lambda self: self['sn'].other, 
+        lambda self,name: self.set_tag('sn', name), 
+        None, 'The special name of the method - for objective c')
     
     uname = property(lambda self: self['uname'].other, 
         lambda self,uname: self.set_tag('uname', uname), 
@@ -273,6 +284,7 @@ class SGMethod(SGMetaDataContainer):
         other.return_type = self.return_type
         other.file_line_details = self.file_line_details
         other.doc = self.doc
+        other.sn = self.sn
         
         other.length_call = self.length_call
         

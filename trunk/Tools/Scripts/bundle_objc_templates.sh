@@ -79,17 +79,14 @@ fi
 CreateCCode()
 {
     cd "${PYTHON_SCRIPT_DIR}"
-    python create_c_library.py
+    python create_objc_library.py
     
     #Create SwinGame.h
-    cd "${COMMON_C_TEMPLATE_DIR}"/lib
-    echo "#ifndef SWINGAME" > SwinGame.h
-    echo "#define SWINGAME" >> SwinGame.h 
-    ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> SwinGame.h
-    echo "#endif" >> SwinGame.h    
+    cd "${COMMON_OBJC_TEMPLATE_DIR}"/lib
+    ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' > SwinGame.h
     
-    mkdir -p "${COMMON_OBJC_TEMPLATE_DIR}/lib"
-    cp -p * "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/SGSDK.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/Types.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh

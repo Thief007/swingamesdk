@@ -354,6 +354,7 @@ interface
   /// @lib
   /// @class Timer
   /// @constructor
+  /// @sn init
   function CreateTimer(): Timer;
   
   /// Free a created timer.
