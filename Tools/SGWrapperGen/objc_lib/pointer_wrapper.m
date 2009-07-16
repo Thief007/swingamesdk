@@ -1,6 +1,11 @@
+#import <Foundation/NSObject.h>
+#import <Foundation/NSString.h>
+#import <Foundation/NSArray.h>
+
 #import "SG%(name)s.h"
 #import "PointerManager.h"
 #import "SGSDK.h"
+#import "SwinGame.h"
 
 @implementation SG%(name)s : NSObject
 

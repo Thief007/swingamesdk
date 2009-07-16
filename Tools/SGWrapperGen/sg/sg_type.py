@@ -54,6 +54,7 @@ class SGType(SGMetaDataContainer):
         self.is_pointer = other.is_pointer
         self.via_pointer = other.via_pointer
         self.related_type = other
+        self.is_struct = other.is_struct
     
     fields = property(lambda self: self['fields'].other, None, None, "The fields for the type.")
     

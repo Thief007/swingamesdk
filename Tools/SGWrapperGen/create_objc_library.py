@@ -21,17 +21,8 @@ from sg.sg_parameter import SGParameter
 
 _out_path="../../Templates/ObjC/common/lib"
 
-
 def type_visitor(the_type, modifier = None):
-    '''switch types for the c SwinGame library'''
-    key = the_type.name.lower() if the_type != None else None
-    
-    if modifier == 'result': modifier = 'return'
-    
-    if key not in objc_lib._type_switcher[modifier]:
-        logger.error('CREATE Cs : Error changing model type %s - %s', modifier, the_type)
-        assert False
-    return objc_lib._type_switcher[modifier][key]
+    return wrapper_helper.std_type_visitor(objc_lib._type_switcher, the_type, modifier)
 
 def arg_visitor(arg_str, the_arg, for_param):
     '''Called for each argument in a call, performs required mappings. the_arg has the argument, for_param has
@@ -59,13 +50,22 @@ def arg_visitor(arg_str, the_arg, for_param):
     #check for pointer wrapper param
     if the_type.pointer_wrapper and not '->pointer' in arg_str.lower():
         arg_str = '%s->pointer' % arg_str
+    # elif the_type.is_struct and not '->data' in arg_str.lower():
+    #     arg_str = '%s->data' % arg_str
     
-    if for_param.modifier != 'out' and the_type.name.lower() in objc_lib._data_switcher[data_key]:
+    if the_type.pointer_wrapper and for_param.modifier == 'var':
+        arg_str = '&' + arg_str
+    
+    if the_type.name.lower() in objc_lib._data_switcher[data_key] and for_param.modifier not in ['out', 'return', 'result']:
         #convert data using pattern from _data_switcher
-        result = objc_lib._data_switcher[data_key][the_type.name.lower()] % arg_str
+        arg_str = objc_lib._data_switcher[data_key][the_type.name.lower()] % arg_str
+    
+    if the_type.is_struct and for_param.modifier in ['const', 'var', 'out'] and not the_type.wraps_array:
+        #Get address for const, var and out parameters - excect if array as they are already pointers
+        result = '&' + arg_str
     else:
         result = arg_str
-        
+    
     return result
 
 
@@ -73,13 +73,12 @@ def _create_objc_call(details, the_method):
     """Create an objective-c call for the passed in details dictionary/method"""
     if the_method.is_constructor:
         details['pre_call'] =''
-        details['return_type'] = '%s'
         details['returns_end'] = '' # ', PtrKind.%s)' % details['in_class']
         details['base_const'] = '' # 'se(%(calls.class)s.%(calls.name)s(%(calls.args)s), PtrKind.%(in_class)s)%(returns_end)s' % details
-        result = '[self initWithId: %(calls.name)s(%(calls.args)s)];' % details
+        result = '[self initWithId: %(calls.name)s(%(calls.args)s)]' % details
     elif the_method.is_destructor:
         details['pre_call'] ='PointerWrapper.Remove(this);\n    '
-        details['return_type'] = 'void DoFree'
+        # details['return_type'] = 'void DoFree'
         details['returns_end'] = ''
         details['base_const'] = ''
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
@@ -88,20 +87,27 @@ def _create_objc_call(details, the_method):
         details['returns_end'] = ''
         details['base_const'] = ''
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
-
+        
         if the_method.return_type != None:
             if the_method.return_type.name.lower() in objc_lib._data_switcher['return_val']:
                 result = objc_lib._data_switcher['return_val'][the_method.return_type.name.lower()] % result
-
+    
+    if the_method.method_called.was_function:
+        details['returns'] = ''
+    elif the_method.has_out_params and the_method.return_type != None:
+        #todo: can this be done better?
+        details['returns'] = 'result = '
+    
     details['post_call'] =''
-
+    
     return ('%(returns)s' + result) % details
 
+def param_visitor(the_param, last):
+    return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ': ' if not last else '')
 
 def _create_objc_method_details(the_method, other):
     ''' This method creates the objective c method details for a user facing module.'''
-    def param_visitor(the_param, last):
-        return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ': ' if not last else '')
+    #todo: check this...
     def special_visitor(the_param, last):
         return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ' ' if not last else '')
     # Start of _create_objc_method_headers
@@ -130,10 +136,12 @@ def _create_objc_method_details(the_method, other):
             result_details['method_headers'] += header + ';'
             dest_key = 'method_bodys'
     
+    wrapper_helper.add_local_var_processing(the_method, my_details, objc_lib.local_variable_switcher)
+    
     #Create the method body
     result_details[dest_key] += header
     result_details[dest_key] += '\n{'
-    result_details[dest_key] += '\n    %(pre_call)s%(the_call)s;%(post_call)s' % my_details
+    result_details[dest_key] += '\n    %(vars)s%(pre_call)s%(the_call)s;%(post_call)s' % my_details
     result_details[dest_key] += '\n}\n'
     
     return other
@@ -143,7 +151,7 @@ def _write_objc_user_module(module):
     header_file_writer = FileWriter('%s/SG%s.h'% (_out_path, module.name))
     file_writer = FileWriter('%s/SG%s.m'% (_out_path, module.name))
     
-    details = module.to_keyed_dict()
+    details = module.to_keyed_dict(type_visitor=type_visitor, array_idx_sep='][', param_visitor=param_visitor)
     details['method_headers'] = ''
     details['init_headers'] = ''
     details['dealloc_headers'] = ''
@@ -163,7 +171,7 @@ def _write_objc_user_module(module):
         if f.name == None: continue
         details['imports'] += '#import "SG%s.h"\n' % f.name
         for cm in f.members:
-            if cm.is_class and cm != module:
+            if (cm.is_class and cm != module) or (cm.is_struct and not cm.via_pointer):
                 details['imports'] += '#import "SG%s.h"\n' % cm.name
     
     
@@ -176,6 +184,13 @@ def _write_objc_user_module(module):
     if module.is_pointer_wrapper:
         header_file_writer.writeln(objc_lib.pointer_wrapper_h % details)
         file_writer.writeln(objc_lib.pointer_wrapper_m % details)
+    elif module.is_struct:
+        if module.wraps_array:
+            header_file_writer.writeln(objc_lib.array_wrapper_h % details)
+            file_writer.writeln(objc_lib.array_wrapper_m % details)        
+        else:
+            header_file_writer.writeln(objc_lib.struct_wrapper_h % details)
+            file_writer.writeln(objc_lib.struct_wrapper_m % details)        
     else:
         header_file_writer.writeln(objc_lib.class_header_txt % details)
         file_writer.writeln(objc_lib.class_body_txt % details)
@@ -211,15 +226,21 @@ def _post_parse_process(the_file):
                 _post_process_method(prop.setter)
 
 def _post_process_method(method):
+    #Mangle name to lowercase first character
     method.uname = method.uname.lower()[0] + method.uname[1:]
     for param in method.params:
-        if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
-            if method.is_constructor: continue
+        if param.maps_result or param.data_type.name.lower() in ['string']:
             wrapper_helper.add_local_var_for_param(method, param)
-    if method.method_called.was_function:
+        elif param.data_type.wraps_array and not param.data_type.name.lower() in ['triangle', 'matrix2d']:
+            #also add arrays (variable length)
+            wrapper_helper.add_local_var_for_param(method, param)
+        elif param.modifier == 'out' and param.data_type.is_struct:
+            #also add out parameters
+            wrapper_helper.add_local_var_for_param(method, param)
+    if method.method_called.was_function or method.has_out_params:
         wrapper_helper.add_local_var_for_result(method)
     if method.method_called.has_length_params:
-        wrapper_helper.add_length_params(method, '%s.Length')
+        wrapper_helper.add_length_params(method, '[%s count]')
 
 def _file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
@@ -232,7 +253,7 @@ def _file_visitor(the_file, other):
         create_c_library.write_c_lib_module(the_file)
     
     for member in the_file.members:
-        if member.is_module or member.is_class:
+        if member.is_module or member.is_class or (member.is_struct and not member.via_pointer):
             #need the classes file for #importing the class names for use in SwinGame class code.
             if member.is_module:
                 classes_file_writer.writeln('@class %s;' % member.name)

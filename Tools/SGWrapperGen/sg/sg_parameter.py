@@ -12,11 +12,11 @@ from sg_metadata_container import SGMetaDataContainer
 class SGParameter(SGMetaDataContainer):
     """Represents a parameter to a method"""
     
-    def __init__(self, name):
+    def __init__(self, name, data_type = None):
         """initialise the parameter with a name, sets type to None"""
         SGMetaDataContainer.__init__(self, ['type','modifier','maps_result'])
         self.name = name
-        self.data_type = None
+        self.data_type = data_type
         self.modifier = None
         #post parse values
         self.maps_result = False
@@ -25,7 +25,10 @@ class SGParameter(SGMetaDataContainer):
         self.has_length_param = False   # does this have a length param? (var arrays)
         self.length_idx = -1            # which param is the length param for this?
         self.length_of = None           # the SGParameter this represents the length of...
+        self.local_for = None           # Used by local variables to link to their associated parameter
         self.has_field = False          # Used to check if a parameter/arg has a field (i.e. array wrapper)
+        self.is_returned = False        # Does this variable actually contain the return value (must be maps_result)
+        self.pass_through = False       # This parameter exists just to pass the result out after out parameters...
     
     # def set_as_output(self):
     #     """marks this as an output parameter"""

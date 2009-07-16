@@ -422,11 +422,11 @@ interface
   function VectorFromPoints(const p1, p2: Point2D): Vector;
   
   /// Returns a new `Vector` created from the start and end points of a 
-  /// `lineSegment`. Useful for calculating angle vectors or extracting a 
+  /// `LineSegment`. Useful for calculating angle vectors or extracting a 
   /// normal vector (see `LineNormal`) for the line.
   ///
   /// @lib
-  function LineAsVector(const line: lineSegment): Vector;
+  function LineAsVector(const line: LineSegment): Vector;
   
   //TODO: are these really "point" in rect test?
   /// Return true if the vector (used as a point) is within the rectangle
@@ -940,7 +940,7 @@ implementation
     result := VectorFrom(magnitude * sgGeometry.Cos(angle), magnitude * sgGeometry.Sin(angle));
   end;
   
-  function LineAsVector(const line: lineSegment): Vector;
+  function LineAsVector(const line: LineSegment): Vector;
   begin
     result.x := line.endPoint.x - line.startPoint.x;
     result.y := line.endPoint.y - line.startPoint.y;

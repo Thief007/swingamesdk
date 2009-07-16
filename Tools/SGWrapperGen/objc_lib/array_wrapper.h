@@ -4,16 +4,19 @@
 
 #import "Types.h"
 #import "SGTypes.h"
-%(imports)s
 
 @interface SG%(name)s : NSObject
 {
 @package
-    %(name)s pointer;
+    %(name)s data;
 }
 
-+ (id)createWithId:(id)ptr;
-- (id)initWithId:(id)ptr;
++ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat;
+
+- (id)init%(name)s:(%(name)s)dat;
+
+- (%(element.type)s) valueAtIndex:%(element.idx.params)s;
+- (void) setValueAtIndex:%(element.idx.params)s toValue:(%(element.type)s)dat;
 
 %(static_method_headers)s
 
