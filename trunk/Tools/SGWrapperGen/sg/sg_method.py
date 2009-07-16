@@ -64,7 +64,9 @@ class SGMethod(SGMetaDataContainer):
         result = dict()
         result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['name'] = self.name
+        result['camel_name'] = self.name.lower()[0] + self.name[1:]
         result['uname'] = self.uname
+        result['camel_uname'] = self.uname.lower()[0] + self.uname[1:]
         if self.sn != None:
             if special_visitor != None:
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
@@ -611,6 +613,10 @@ class SGMethod(SGMetaDataContainer):
             if param.modifier == 'const': return True
         return False
     
+    def has_out_params(self):
+        for param in self.params:
+            if param.modifier == 'out': return True
+        return False
 
 #
 # Test methods

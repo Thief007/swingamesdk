@@ -21,29 +21,31 @@ def all_types():
 def find_or_add_class(name):
     '''finds or creates and adds a class with the indicated name'''
     if name == None: return None
-    
-    if name in _classes:
-        return _classes[name]
+    name_key = name.lower()
+    if name_key in _classes:
+        return _classes[name_key]
     else:
         from sg_code_module import SGCodeModule
         from sg_library import SGLibrary
         logger.debug('Cache     : Created class %s', name)
-        if name == 'lib': result = SGLibrary()
+        if name_key == 'lib': result = SGLibrary()
         else: 
             result = SGCodeModule(name)
-        _classes[name] = result
+        _classes[name_key] = result
         return result
 
 def find_or_add_type(name):
     if name == None: return None
     from sg_type import SGType
     
-    if name in _loaded_types:
-        return _loaded_types[name]
+    name_key = name.lower()
+    
+    if name_key in _loaded_types:
+        return _loaded_types[name_key]
     else:
         logger.debug('Cache     : Created Type %s', name)
         result = SGType(name)
-        _loaded_types[name] = result
+        _loaded_types[name_key] = result
         return result
 
 def find_or_add_file(pascal_name, name=None, filename=None):

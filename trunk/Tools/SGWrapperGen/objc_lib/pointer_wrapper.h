@@ -1,4 +1,5 @@
 #import <Foundation/NSObject.h>
+#import <Foundation/NSString.h>
 #import <Foundation/NSArray.h>
 
 #import "Types.h"
@@ -8,7 +9,7 @@
 @interface SG%(name)s : NSObject
 {
 @package
-    id pointer;
+    %(name)s pointer;
 }
 
 + (id)createWithId:(id)ptr;

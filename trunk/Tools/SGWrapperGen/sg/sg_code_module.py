@@ -13,6 +13,8 @@ from sg_method import SGMethod
 from sg_property import SGProperty
 from sg_field import SGField
 from sg_metadata_container import SGMetaDataContainer
+from sg_cache import find_or_add_type
+from sg_parameter import SGParameter
 
 logger = logging.getLogger("SGWrapperGen")
 
@@ -41,14 +43,34 @@ class SGCodeModule(SGMetaDataContainer):
         self.via_pointer = False
         self.data_type = None
     
-    def to_keyed_dict(self, doc_transform = None):
+    def to_keyed_dict(self, doc_transform = None, type_visitor = None, array_idx_sep = ', ', param_visitor = None):
         """Export a keyed dictionary of the class for template matching"""
         
         result = dict()
         result['name'] = self.name
+        result['camel_name'] = self.name.lower()[0] + self.name[1:]
         result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['static'] = 'static ' if self.is_static else ''
         result['sealed'] = 'sealed ' if self.is_module else ''
+        
+        if self.wraps_array:
+            # add accessor methods
+            main_type = self.data_type.related_type
+            dim = main_type.dimensions
+            data_type = find_or_add_type('longint')
+            idx_type = type_visitor(data_type) if type_visitor != None else 'int'
+            
+            
+            
+            result['element.type'] = type_visitor(main_type.nested_type)
+            
+            if param_visitor == None:
+                result['element.idx.params'] =  ', '.join([idx_type + ' idx%s' % i for i,d in enumerate(dim)])
+            else:
+                result['element.idx.params'] =  ''.join([param_visitor(SGParameter('idx%s' % i, data_type), i + 1 == len(dim)) for i,d in enumerate(dim)])
+            
+            
+            result['element.idx.expr'] = array_idx_sep.join(['idx%s' % i for i,d in enumerate(dim)])
         
         return result
     
