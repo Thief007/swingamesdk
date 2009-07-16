@@ -6,7 +6,7 @@
 #import "SGSDK.h"
 #import "SwinGame.h"
 
-@implementation %(name)s : NSObject
+@implementation SG%(name)s : NSObject
 
 %(static_method_bodys)s
 

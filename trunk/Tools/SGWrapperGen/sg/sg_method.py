@@ -445,6 +445,15 @@ class SGMethod(SGMetaDataContainer):
             if par.name == name:
                 return par
         return None
+        
+    def get_variable(self, name):
+        '''Get variable from parameters or locals'''
+        for par in self.params:
+            if par.name == name: return par
+        for loc in self.local_vars:
+            if loc.name == name: return loc
+        return None
+        
     
     def complete_method_processing(self):
         '''

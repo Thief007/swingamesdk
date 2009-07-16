@@ -1,12 +1,25 @@
-#import <Foundation/NSObject.h>
-#import <Foundation/NSString.h>
-#import <Foundation/NSArray.h>
-
 #import "SG%(name)s.h"
+
 #import "PointerManager.h"
 #import "SGSDK.h"
 
 @implementation SG%(name)s : NSObject
+
++ (NSArray *) arrayOf%(name)ss:(%(name)s *)firstPtr size:(int)sz
+{
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];
+    int i;
+    SG%(name)s *obj;
+    
+    for (i = 0; i < sz; i++)
+    {
+        obj = [[SG%(name)s alloc] initWith%(name)s: *(firstPtr + i)];
+        [result addObject: obj];
+        [obj release];
+    }
+    
+    return [result autorelease];
+}
 
 + (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat;
 {

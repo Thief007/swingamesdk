@@ -52,9 +52,7 @@ def add_local_var_for_param(to_method, for_parameter):
 
 def add_local_var_for_result(to_method):
     '''
-    Result parameters require two local variables. One that is
-    the same type as the called value, and one that is the smae
-    as the language type.
+    
     '''
     
     if to_method.method_called.was_function:
@@ -75,30 +73,51 @@ def add_local_var_for_result(to_method):
     
     #Add the local variable ...
     var = add_local_var_for_param(to_method, result_param)
+    var.length_param = result_param.length_param
+    var.has_length_param = result_param.has_length_param
     
     if to_method.method_called.was_function:
         to_method.args.append(var) # and pass it as an additional argument
 
+def add_length_local(to_method, for_param):
+    var_name = for_param.local_var_name() + '_len'
+    local_var = SGParameter(var_name)
+    local_var.local_for = for_param
+    local_var.data_type = find_or_add_type('LongInt')
+    local_var.modifier = for_param.modifier
+    local_var.length_of = for_param
+    
+    for_param.length_param = local_var
+    for_param.has_length_param = True
+    
+    to_method.local_vars.append(local_var)
+    to_method.args.append(local_var.name)
+    
+    return local_var
+
 def add_length_params(to_method, len_str):
+    # for the parameters in the called method...
     for param in to_method.method_called.params:
         if param.is_length_param:
-            #possibly need an extra local for this... if out
+            #possibly need an extra local for this... if out or return...
             if param.length_of.maps_result:
                 # need to indicate the size of the returned array...
                 if to_method.fixed_result_size > 0:
                     to_method.args.append(str(to_method.fixed_result_size))
                 else:
-                    to_method.args.append(len_str % param.length_of.name)
+                    var = add_length_local(to_method, to_method.get_variable(param.length_of.name))
             elif param.modifier == 'out':
-                var_name = param.length_of.local_var_name() + '_length'
-                
-                local_var = SGParameter(var_name)
-                local_var.local_for = param
-                local_var.data_type = find_or_add_type('LongInt')
-                local_var.modifier = param.modifier
-                
-                to_method.local_vars.append(local_var)
-                to_method.args.append(var_name)
+                var = add_length_local(to_method, to_method.get_variable(param.length_of.name))
+                # 
+                # var_name = param.length_of.local_var_name() + '_len'
+                # 
+                # local_var = SGParameter(var_name)
+                # local_var.local_for = param
+                # local_var.data_type = find_or_add_type('LongInt')
+                # local_var.modifier = param.modifier
+                # 
+                # to_method.local_vars.append(local_var)
+                # to_method.args.append(var_name)
             elif not param.data_type.is_struct:
                 to_method.args.append(len_str % param.length_of.name)
             else:
@@ -130,21 +149,33 @@ def add_local_var_processing(the_method, details, local_variable_switcher):
                 temp += '%(return_type)s result;\n    ' % details
                 temp_process_result = temp_process_result + '\n    return %s;' % local_var.name;
                 continue
+            elif local_var.length_of != None:
+                #TODO: fix this...
+                if the_method.fixed_result_size > 0:
+                    var_details['size'] = the_method.fixed_result_size
+                elif the_method.length_call != None:
+                    #TODO: change these... call creator to excluse return/result = keyword (need call.expr)
+                    var_details['size'] = details['length_call'].replace('return ', '')
+                    var_details['size'] = var_details['size'].replace('result = ', '')
+                
+                temp = 'int %(var)s = %(size)s;\n    ' % var_details + temp
+                continue
             elif lower_type == 'string':
                 if local_var.modifier in ['var', 'const', None]:
                     var_details['size'] = local_variable_switcher['length-of'][lower_type] % var_details
                 else: #out or return
                     var_details['size'] = '2048'
             elif local_var.maps_result and isinstance(local_var, SGParameter):
-                #Size for fixed_result_size is already known
-                if the_method.fixed_result_size > 0:
-                    var_details['size'] = the_method.fixed_result_size
-                elif the_method.length_call != None:
-                    #TODO: change call creator to excluse return keyword
-                    var_details['size'] = details['length_call'].replace('return ', '')
+                # print 'No size for...', local_var
+                if local_var.has_length_param:
+                    # print local_var, the_method
+                    if local_var.length_param != None: #variable length
+                        var_details['size'] = local_var.length_param.name
+                    else: #fixed
+                        var_details['size'] = the_method.fixed_result_size
+                    # print var_details['size']
                 else:
-                    # print 'No size for...', local_var
-                    var_details['size'] = ''
+                    var_details['size'] = 'unknown'
             elif local_var.modifier in ['var', 'const', None] and local_var.data_type.array_wrapper:
                 #Read the length of an array from its length... - variable length only
                 if lower_type not in local_variable_switcher['length-of']:

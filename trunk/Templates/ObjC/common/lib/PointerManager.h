@@ -12,8 +12,8 @@
 @interface PointerManager : NSObject
 
 + (void)initialize;
-+ (void)registerObject:(id)obj withKey:(id)key;
++ (void)registerObject:(id)obj withKey:(void *)key;
 
-+ (id)objectForKey:(id)key;
++ (id)objectForKey:(void *)key;
     
 @end

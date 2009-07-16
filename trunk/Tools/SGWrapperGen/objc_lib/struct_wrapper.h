@@ -11,6 +11,7 @@
     %(name)s data;
 }
 
++ (NSArray *) arrayOf%(name)ss:(%(name)s *)firstPtr size:(int)sz;
 + (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat;
 + (void) get%(name)ss:(%(name)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz;
 

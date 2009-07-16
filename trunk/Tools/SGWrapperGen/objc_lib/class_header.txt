@@ -5,7 +5,7 @@
 #import "Types.h"
 %(imports)s
 
-@interface %(name)s : NSObject
+@interface SG%(name)s : NSObject
 {
   %(fields)s
 }

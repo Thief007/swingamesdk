@@ -60,12 +60,20 @@ def arg_visitor(arg_str, the_arg, for_param):
         #convert data using pattern from _data_switcher
         arg_str = objc_lib._data_switcher[data_key][the_type.name.lower()] % arg_str
     
+    if the_type.is_struct and not isinstance(the_arg, SGParameter):
+        arg_str = objc_lib._data_switcher['arg_val'][the_type.name.lower()] % arg_str
+    
     if the_type.is_struct and for_param.modifier in ['const', 'var', 'out'] and not the_type.wraps_array:
         #Get address for const, var and out parameters - excect if array as they are already pointers
         result = '&' + arg_str
     else:
         result = arg_str
     
+    return result
+
+def _map_data_value(key, return_type, result):
+    if return_type.name.lower() in objc_lib._data_switcher[key]:
+        return objc_lib._data_switcher[key][return_type.name.lower()] % result
     return result
 
 
@@ -89,9 +97,8 @@ def _create_objc_call(details, the_method):
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
         
         if the_method.return_type != None:
-            if the_method.return_type.name.lower() in objc_lib._data_switcher['return_val']:
-                result = objc_lib._data_switcher['return_val'][the_method.return_type.name.lower()] % result
-    
+            result = _map_data_value('return_val', the_method.return_type, result)
+            
     if the_method.method_called.was_function:
         details['returns'] = ''
     elif the_method.has_out_params and the_method.return_type != None:
@@ -113,7 +120,10 @@ def _create_objc_method_details(the_method, other):
     # Start of _create_objc_method_headers
     result_details = other['details']
     
-    my_details = the_method.to_keyed_dict(param_visitor, type_visitor, call_creater=_create_objc_call, arg_visitor=arg_visitor,special_visitor=special_visitor)
+    my_details = the_method.to_keyed_dict(param_visitor, type_visitor, 
+        call_creater = _create_objc_call, 
+        arg_visitor = arg_visitor,
+        special_visitor = special_visitor)
     
     if the_method.is_static:
         header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
@@ -151,7 +161,11 @@ def _write_objc_user_module(module):
     header_file_writer = FileWriter('%s/SG%s.h'% (_out_path, module.name))
     file_writer = FileWriter('%s/SG%s.m'% (_out_path, module.name))
     
-    details = module.to_keyed_dict(type_visitor=type_visitor, array_idx_sep='][', param_visitor=param_visitor)
+    details = module.to_keyed_dict(type_visitor = type_visitor, 
+        array_idx_sep ='][', 
+        param_visitor = param_visitor,
+        map_data_value = _map_data_value)
+    
     details['method_headers'] = ''
     details['init_headers'] = ''
     details['dealloc_headers'] = ''
@@ -186,6 +200,7 @@ def _write_objc_user_module(module):
         file_writer.writeln(objc_lib.pointer_wrapper_m % details)
     elif module.is_struct:
         if module.wraps_array:
+            #todo: fix this...
             header_file_writer.writeln(objc_lib.array_wrapper_h % details)
             file_writer.writeln(objc_lib.array_wrapper_m % details)        
         else:
