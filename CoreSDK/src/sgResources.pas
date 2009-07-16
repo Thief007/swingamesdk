@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-17: Andrew : Small fixes for return types.
 // - 2009-07-14: Andrew : Added resource loading and freeing procedures.
 //                      : Added FreeNotifier
 // - 2009-07-08: Andrew : Fixed iterator use in release all
@@ -585,7 +586,7 @@ implementation
     obj: tResourceContainer;
     bmp: Bitmap;
   begin
-    bmp = LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor);
+    bmp := LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor);
     obj := tResourceContainer.Create(bmp);
     if not _Images.setValue(name, obj) then
       raise Exception.create('Error loaded Bitmap resource twice, ' + name);
@@ -694,7 +695,7 @@ implementation
   
   //----------------------------------------------------------------------------
   
-  procedure MapMusic(name, filename: String);
+  function MapMusic(name, filename: String): Music;
   var
     obj: tResourceContainer;
     mus: Music;
@@ -732,7 +733,7 @@ implementation
 
   //----------------------------------------------------------------------------
   
-  procedure MapTileMap(name, filename: String);
+  function MapTileMap(name, filename: String): Map;
   var
     obj: tResourceContainer;
     theMap: Map;

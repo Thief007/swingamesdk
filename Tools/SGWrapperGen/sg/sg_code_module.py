@@ -43,7 +43,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.via_pointer = False
         self.data_type = None
     
-    def to_keyed_dict(self, doc_transform = None, type_visitor = None, array_idx_sep = ', ', param_visitor = None):
+    def to_keyed_dict(self, doc_transform = None, type_visitor = None, array_idx_sep = ', ', param_visitor = None, map_data_value = None):
         """Export a keyed dictionary of the class for template matching"""
         
         result = dict()
@@ -60,8 +60,6 @@ class SGCodeModule(SGMetaDataContainer):
             data_type = find_or_add_type('longint')
             idx_type = type_visitor(data_type) if type_visitor != None else 'int'
             
-            
-            
             result['element.type'] = type_visitor(main_type.nested_type)
             
             if param_visitor == None:
@@ -69,8 +67,10 @@ class SGCodeModule(SGMetaDataContainer):
             else:
                 result['element.idx.params'] =  ''.join([param_visitor(SGParameter('idx%s' % i, data_type), i + 1 == len(dim)) for i,d in enumerate(dim)])
             
-            
             result['element.idx.expr'] = array_idx_sep.join(['idx%s' % i for i,d in enumerate(dim)])
+            
+            result['element.access'] = map_data_value('return_val', main_type.nested_type, 'data[%(element.idx.expr)s]' % result)
+            result['element.value'] = map_data_value('arg_val', main_type.nested_type, 'value')
         
         return result
     

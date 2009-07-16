@@ -75,18 +75,18 @@ _type_switcher = {
         'arrayofpoint2d': 'Point2D[] %s',
     },
     'const' : {
-        'point2d':      'const SGPoint2D *',
-        'linesegment':  'const SGLineSegment *',
-        'rectangle':    'const SGRectangle *',
-        'vector':       'const SGVector *',
-        'linesarray':   'const NSArray *',
+        'point2d':      'SGPoint2D *',
+        'linesegment':  'SGLineSegment *',
+        'rectangle':    'SGRectangle *',
+        'vector':       'SGVector *',
+        'linesarray':   'NSArray *',
         
-        'matrix2d':     'const SGMatrix2D *',
-        'triangle':     'const SGTriangle *',
+        'matrix2d':     'SGMatrix2D *',
+        'triangle':     'SGTriangle *',
         
-        'bitmaparray':  'const NSArray *',
-        'longintarray': 'const NSArray *',
-        'circle':       'const SGCircle *',
+        'bitmaparray':  'NSArray *',
+        'longintarray': 'NSArray *',
+        'circle':       'SGCircle *',
     },
     'var' : {
         'soundeffect':  'SGSoundEffect *',
@@ -112,11 +112,11 @@ _type_switcher = {
         'point2d':      'out SGPoint2D *',
         
         'longint':      'out int *',
-        'linesegment':  'out LineSegment *',
-        'linesarray':   'out LineSegment[] %s',
-        'matrix2d':     'out Matrix2D %s',
-        'arrayofpoint2d': 'out Point2D[] %s',
-        'triangle':     'out Triangle %s',
+        'linesegment':  'out SGLineSegment *',
+        'linesarray':   'out NSArray *',
+        'matrix2d':     'out SGMatrix2D *',
+        'arrayofpoint2d': 'out NSArray *',
+        'triangle':     'out SGTriangle *',
     },
     'return' : {
         None: 'void',
@@ -242,7 +242,7 @@ _data_switcher = {
         #Pascal type: what values of this type switch to %s = data value
         'single': '%sf',
         'self.pointer': 'self',
-        'self.data': 'data',
+        'self.data': 'self', #adds ->data
         'self': 'self',
         'true': '1',
         'false': '0',
@@ -273,8 +273,8 @@ local_variable_switcher = {
         #arrays for structs
         'linesarray':       'LineSegment %(var)s[%(size)s];\n    ',
         'longintarray':     'int %(var)s[%(size)s];\n    ',
-        'bitmaparray' :     'Bitmap %s[%(size)s];\n    ',
-        'arrayofpoint2d':   'Point2D %s[%(size)s];\n    ',
+        'bitmaparray' :     'Bitmap %(var)s[%(size)s];\n    ',
+        'arrayofpoint2d':   'Point2D %(var)s[%(size)s];\n    ',
         
         #out structs
         'point2d':          'Point2D %(var)s;\n    ',
@@ -300,8 +300,8 @@ local_variable_switcher = {
         #String type
         'string':           '[%(param)s getCString:%(var)s maxLength:[%(param)s length] + 1 encoding:NSASCIIStringEncoding];\n    ',
         #NSArray types
-        'bitmaparray':      '[%(param)s getObjects:%(var)s];\n    ',
-        'longintarray':     '[%(param)s getObjects:%(var)s];\n    ',
+        'bitmaparray':      '[SGBitmap getBitmaps:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
+        'longintarray':     '[SGUtils getIntegers:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'linesarray':       '[SGLineSegment getLineSegments:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
     },
     'process-out-param': 
@@ -309,12 +309,12 @@ local_variable_switcher = {
         'string':           '\n    %(param)s = [[[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding] autorelease];',
         
         #Passed through arrays
-        'triangle':         '\n    %(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s] autorelease];',
-        'matrix2d':         '\n    %(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s] autorelease];',
+        'triangle':         '\n    %(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
+        'matrix2d':         '\n    %(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
         #NSArray types
-        'linesarray':       '\n    %(param)s = [[NSArray alloc] todo...];',
-        'arrayofpoint2d':   '\n    %(param)s = [[NSArray alloc] todo...];',
-        'longintarray':     '\n    %(param)s = [[NSArray alloc] todo...];',
+        # 'linesarray':       '\n    %(param)s = [[NSArray alloc] todo...];',
+        # 'arrayofpoint2d':   '\n    %(param)s = [[NSArray alloc] todo...];',
+        # 'longintarray':     '\n    %(param)s = [SGUtils arrayOfIntegers:%(var)s size:%(size)s];',
         
         #out structs
         'point2d':          '\n    %(param)s = [[[SGPoint2D alloc] initWithPoint2D:%(var)s] autorelease];',
@@ -338,12 +338,12 @@ local_variable_switcher = {
         'triangle':         '\n    return [SGTriangle triangleForData:%(var)s];',
         
         #NSArray types
-        'linesarray':       '\n    %(param)s = [[NSArray alloc] todo...];',
-        'arrayofpoint2d':   '\n    %(param)s = [[NSArray alloc] todo...];',
-        'longintarray':     '\n    %(param)s = [[NSArray alloc] todo...];',
+        'linesarray':       '\n    return [SGLineSegment arrayOfLineSegments:%(var)s size:%(size)s];',
+        'arrayofpoint2d':   '\n    return [SGPoint2D arrayOfPoint2Ds:%(var)s size:%(size)s];',
+        'longintarray':     '\n    return [SGUtils arrayOfIntegers:%(var)s size:%(size)s];',
 
         #return structs
-        'vector':           '\n    %(param)s = [[[SGVector alloc] initWithVector:%(var)s] autorelease];',
+        'vector':           '\n    return [[[SGVector alloc] initWithVector:%(var)s] autorelease];',
     },
     'clean-up':
     {

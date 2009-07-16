@@ -25,6 +25,7 @@ class SGParameter(SGMetaDataContainer):
         self.has_length_param = False   # does this have a length param? (var arrays)
         self.length_idx = -1            # which param is the length param for this?
         self.length_of = None           # the SGParameter this represents the length of...
+        self.length_param = None           # the SGParameter this represents the length of...
         self.local_for = None           # Used by local variables to link to their associated parameter
         self.has_field = False          # Used to check if a parameter/arg has a field (i.e. array wrapper)
         self.is_returned = False        # Does this variable actually contain the return value (must be maps_result)

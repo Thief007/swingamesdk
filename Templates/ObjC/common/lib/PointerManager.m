@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------
 
 // The ptrRegistry is responsible for maintaining copies of all wrapped SwinGame pointers.
+#import <Foundation/NSValue.h>
 #import "PointerManager.h"
 #import "SGSDK.h"
 
@@ -14,11 +15,13 @@ static NSMutableDictionary *_ptrRegister;
 
 void removeObject(void *ptr)
 {
-    id obj = [_ptrRegister objectForKey:ptr];
+    id key = [NSValue valueWithPointer:ptr];
+    
+    id obj = [_ptrRegister objectForKey:key];
     if (obj != nil)
     {
         [obj releasePointer];
-        [_ptrRegister removeObjectForKey: ptr];
+        [_ptrRegister removeObjectForKey: key];
     }
 }
 
@@ -26,18 +29,19 @@ void removeObject(void *ptr)
 
 + (void)initialize
 {
+    NSLog(@"Created register");
     _ptrRegister = [[NSMutableDictionary alloc] initWithCapacity: 1000];
     sg_Resources_RegisterFreeNotifier(removeObject);
 }
 
-+ (void)registerObject:(id)obj withKey:(id)key
++ (void)registerObject:(id)obj withKey:(void *)key
 {
-    [_ptrRegister setObject:obj forKey:key];
+    [_ptrRegister setObject:obj forKey:[NSValue valueWithPointer:key]];
 }
 
-+ (id)objectForKey:(id)key
++ (id)objectForKey:(void *)key
 {
-    return [_ptrRegister objectForKey:key];
+    return [_ptrRegister objectForKey:[NSValue valueWithPointer:key]];
 }
 
 @end
