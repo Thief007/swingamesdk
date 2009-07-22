@@ -8,11 +8,13 @@
 
 @implementation SG%(name)s : NSObject
 
-%(static_method_bodys)s
+%(static_method_bodies)s
 
 %(init_bodys)s
 %(dealloc_bodys)s
 
-%(method_bodys)s
+%(property_headers)s
+
+%(method_bodies)s
 
 @end

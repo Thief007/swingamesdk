@@ -29,6 +29,8 @@ class SGField(SGMetaDataContainer):
     def __repr__(self):
         '''Return a string representation of the fielf'''
         return '%s %s' % (self.data_type, self.name)
+        
+    pascalName = property(lambda self: self.name.upper()[0] + self.name[1:], None, None, 'The name in PascalCase')
     
 
 from sg_method import SGMethod

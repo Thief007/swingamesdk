@@ -1,6 +1,5 @@
 #import "SG%(name)s.h"
 
-#import "PointerManager.h"
 #import "SGSDK.h"
 #import "SwinGame.h"
 
@@ -64,10 +63,11 @@
     pointer = nil;
 }
 
-%(static_method_bodys)s
-
+%(static_method_bodies)s
 %(init_bodys)s
 
-%(method_bodys)s
+%(property_synthesizes)s
+
+%(method_bodies)s
 
 @end

@@ -1,7 +1,82 @@
 #import "SG%(name)s.h"
 
+#import <Foundation/NSInvocation.h>
+
 #import "PointerManager.h"
 #import "SGSDK.h"
+#import "SwinGame.h"
+
+@interface SG%(name)s ( Private )
+- (id) init;
+@end
+
+@implementation SGWrapped%(name)s : SG%(name)s
+
++ (SGWrapped%(name)s *) %(camel_name)sWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2
+{
+    SGWrapped%(name)s *ret = [[SGWrapped%(name)s alloc] initWithDelegate:del update:sel1 andRead:sel2];
+    [ret autorelease];
+    return ret;
+}
+
+- (id)initWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2
+{
+    self = [super init];
+    if (self != nil)
+    {
+        //If self isn't nil then assign pointer.
+        call_on_update = sel1;
+        call_on_read   = sel2;
+        delegate       = del;
+        
+        [delegate retain];
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+    [delegate release];
+    [super dealloc];
+}
+
+- (void) callUpdate
+{
+    if (delegate == nil || call_on_update == nil) return;
+    
+    NSMethodSignature *sig = [self methodSignatureForSelector:call_on_update];
+    NSInvocation *inv = [NSInvocation invocationWithMethodSignature: sig];
+    [inv setArgument:&self atIndex:2]; //first arg after self + _cmd (for call)
+    [inv invokeWithTarget: delegate]; //call on the delegate
+}
+
+- (void) callRead
+{
+    if (delegate == nil || call_on_read == nil) return;
+    
+    NSMethodSignature *sig = [self methodSignatureForSelector:call_on_read];
+    NSInvocation *inv = [NSInvocation invocationWithMethodSignature: sig];
+    [inv invokeWithTarget: delegate]; //call on the delegate
+    
+    SG%(name)s *ret;
+    [inv getReturnValue: &ret];
+    data = ret->data;
+}
+
+%(wrapped_property_bodies)s
+
+@end
+
+
+@implementation SG%(name)s ( Private )
+
+- (id) init
+{
+    return [super init];
+}
+
+@end
+
 
 @implementation SG%(name)s : NSObject
 
@@ -21,7 +96,7 @@
     return [result autorelease];
 }
 
-+ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat;
++ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat
 {
     SG%(name)s *ret = [[SG%(name)s alloc] initWith%(name)s: dat];
     [ret autorelease];
@@ -39,7 +114,7 @@
     }
 }
 
-- (SG%(name)s *)initWith%(name)s:(%(name)s)dat;
+- (SG%(name)s *)initWith%(name)s:(%(name)s)dat
 {
     //Assign super's initialised value to the self pointer
     self = [super init];
@@ -51,20 +126,22 @@
     return self;
 }
 
-- (%(name)s) data;
+- (%(name)s) data
 {
     return data;
 }
 
-- (void) setData:(%(name)s)dat;
+- (void) setData:(%(name)s)dat
 {
     data = dat;
 }
 
-%(static_method_bodys)s
+%(static_method_bodies)s
+
+%(property_synthesizes)s
 
 %(init_bodys)s
 
-%(method_bodys)s
+%(method_bodies)s
 
 @end
