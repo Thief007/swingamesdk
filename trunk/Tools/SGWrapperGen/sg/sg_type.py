@@ -117,6 +117,9 @@ class SGType(SGMetaDataContainer):
     values = property(lambda self: self['values'].other, 
         lambda self, value: self.set_tag('values', value), 
         None, 'The values for a enumeration')
+        
+    camel_name = property(lambda self: self.name.lower()[0] + self.name[1:],
+        None, None, 'The camelCase name.' )
     
     is_array = property(lambda self: self.dimensions != None, None, None, 'Indicates that this type is an array')
     is_enum = property(lambda self: self.values != None, None, None, 'Indicates that this type is an enumeration')

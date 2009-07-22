@@ -17,3 +17,7 @@
 + (id)objectForKey:(void *)key;
     
 @end
+
+@protocol PointerWrapper
+- (void)releasePointer;
+@end

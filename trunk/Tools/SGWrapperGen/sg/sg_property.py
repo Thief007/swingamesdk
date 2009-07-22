@@ -26,6 +26,7 @@ class SGProperty(SGMetaDataContainer):
         self.setter = None
         self.data_type = None
         self.in_class = None
+        self.is_static = False
     
     def set_getter(self, method):
         """sets the getter method of the property"""

@@ -79,27 +79,29 @@ def _map_data_value(key, return_type, result):
 
 def _create_objc_call(details, the_method):
     """Create an objective-c call for the passed in details dictionary/method"""
+    details['pre_call'] = ''
+    details['returns_end'] = ''
+    
     if the_method.is_constructor:
-        details['pre_call'] =''
-        details['returns_end'] = '' # ', PtrKind.%s)' % details['in_class']
-        details['base_const'] = '' # 'se(%(calls.class)s.%(calls.name)s(%(calls.args)s), PtrKind.%(in_class)s)%(returns_end)s' % details
         result = '[self initWithId: %(calls.name)s(%(calls.args)s)]' % details
     elif the_method.is_destructor:
         details['pre_call'] ='PointerWrapper.Remove(this);\n    '
-        # details['return_type'] = 'void DoFree'
-        details['returns_end'] = ''
-        details['base_const'] = ''
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
+    elif the_method.is_getter and the_method.method_called == None:
+        #Created property getter...
+        result = 'data.%(field.name)s' % details
+        result = _map_data_value('return_val', the_method.return_type, result)
+    elif the_method.is_setter and the_method.method_called == None:
+        #Created property setter...
+        details['value'] = arg_visitor('value', the_method.params[0], the_method.params[0])
+        result = 'data.%(field.name)s = %(value)s' % details
     else:
-        details['pre_call'] = ''
-        details['returns_end'] = ''
-        details['base_const'] = ''
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
         
         if the_method.return_type != None:
             result = _map_data_value('return_val', the_method.return_type, result)
             
-    if the_method.method_called.was_function:
+    if the_method.method_called != None and the_method.method_called.was_function:
         details['returns'] = ''
     elif the_method.has_out_params and the_method.return_type != None:
         #todo: can this be done better?
@@ -112,12 +114,12 @@ def _create_objc_call(details, the_method):
 def param_visitor(the_param, last):
     return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ': ' if not last else '')
 
+def special_visitor(the_param, last):
+    return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ' ' if not last else '')
+
+
 def _create_objc_method_details(the_method, other):
     ''' This method creates the objective c method details for a user facing module.'''
-    #todo: check this...
-    def special_visitor(the_param, last):
-        return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ' ' if not last else '')
-    # Start of _create_objc_method_headers
     result_details = other['details']
     
     my_details = the_method.to_keyed_dict(param_visitor, type_visitor, 
@@ -129,7 +131,7 @@ def _create_objc_method_details(the_method, other):
         header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
         if len(the_method.params) == 0: header = header[:-1]
         result_details['static_method_headers'] += header + ';'
-        dest_key = 'static_method_bodys'
+        dest_key = 'static_method_bodies'
     else:
         if the_method.is_constructor:
             header = '\n- (id)%(sn)s' % my_details
@@ -140,11 +142,16 @@ def _create_objc_method_details(the_method, other):
             header = '\n- (void)dealloc' % my_details
             result_details['dealloc_headers'] += header + ';'
             dest_key = 'dealloc_bodys'
+        elif the_method.is_getter or the_method.is_setter:
+            #dont write in header...
+            header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
+            if len(the_method.params) == 0: header = header[:-1]
+            dest_key = 'method_bodies'
         else:
             header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
             if len(the_method.params) == 0: header = header[:-1]
             result_details['method_headers'] += header + ';'
-            dest_key = 'method_bodys'
+            dest_key = 'method_bodies'
     
     wrapper_helper.add_local_var_processing(the_method, my_details, objc_lib.local_variable_switcher)
     
@@ -154,7 +161,105 @@ def _create_objc_method_details(the_method, other):
     result_details[dest_key] += '\n    %(vars)s%(pre_call)s%(the_call)s;%(post_call)s' % my_details
     result_details[dest_key] += '\n}\n'
     
+    if the_method.is_getter:
+        result_details['wrapped_property_bodies'] += header
+        result_details['wrapped_property_bodies'] += '\n{'
+        result_details['wrapped_property_bodies'] += '\n    [self callRead];'
+        result_details['wrapped_property_bodies'] += '\n    %(vars)s%(pre_call)s%(the_call)s;%(post_call)s' % my_details
+        result_details['wrapped_property_bodies'] += '\n}\n'
+    elif the_method.is_setter:
+        result_details['wrapped_property_bodies'] += header
+        result_details['wrapped_property_bodies'] += '\n{'
+        result_details['wrapped_property_bodies'] += '\n    %(vars)s%(pre_call)s%(the_call)s;%(post_call)s' % my_details
+        result_details['wrapped_property_bodies'] += '\n    [self callUpdate];'
+        result_details['wrapped_property_bodies'] += '\n}\n'
+    
     return other
+
+def _create_objc_property_details(the_property, other):
+    '''Visited for each property, adds details to the result details'''
+    result_details = other['details']
+    
+    type_name = objc_lib._type_switcher['return'][the_property.data_type.name.lower()]
+    
+    is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
+
+    if the_property.is_static:
+        print 'static', the_property.name
+        
+        _create_objc_method_details(the_property.getter, other);
+        if the_property.setter != None:
+            the_property.setter.is_setter = False #not supported...
+            _create_objc_method_details(the_property.setter, other);
+        
+        return other
+    elif the_property.getter == None:
+        print '!! write only', the_property.name
+        _create_objc_method_details(the_property.setter, other);
+        return other
+    # elif is_wrapped:
+    #     print 'wrapped', the_property.name
+    #     return other
+        # _write_wrapped_property(the_property, other)
+        # writer.write('private %s\n{\n' % type_name % the_property.name)
+    else:    
+        # Write standard property
+        header = '\n@property (%s, %s) %s %s' % (
+            'assign', 
+            'readonly ' if the_property.setter == None else 'readwrite', 
+            type_name, 
+            the_property.name)
+    
+    if is_wrapped and the_property.data_type.is_struct:
+        #rename getter
+        the_property.getter.uname = 'pri_' + the_property.getter.uname
+    
+    result_details['property_headers'] += header + ';'
+    result_details['property_synthesizes'] += '\n@dynamic %s;' % the_property.name
+    
+    _create_objc_method_details(the_property.getter, other);
+    if the_property.setter != None:
+        _create_objc_method_details(the_property.setter, other);
+    
+    if is_wrapped and the_property.data_type.is_struct:
+        #add the implementation of the getter...
+        the_property.getter.uname = the_property.getter.uname[4:] #remove pri_
+        
+        my_details = the_property.getter.to_keyed_dict(param_visitor, type_visitor, 
+            call_creater = _create_objc_call, 
+            arg_visitor = arg_visitor,
+            special_visitor = special_visitor)
+        
+        result_details['method_bodies'] += '\n- (%(return_type)s)%(uname)s' % my_details
+        result_details['method_bodies'] += '\n{'
+        result_details['method_bodies'] += '\n    SGWrapped%s *result;' % the_property.data_type.name
+        result_details['method_bodies'] += '\n    result = [SGWrapped%s %sWithDelegate:self update:%s andRead: @selector(%s)];' % (
+            the_property.data_type.name,
+            the_property.data_type.camel_name,
+            '@selector(%s:)' % the_property.setter.uname if the_property.setter != None else 'nil',
+            'pri_' + the_property.getter.uname
+            )
+        result_details['method_bodies'] += '\n    return result;'
+        result_details['method_bodies'] += '\n}\n'
+        
+    
+    # if is_wrapped:
+    #     writer.outdent(2)
+    #     writer.write('}\n')
+
+    return other
+
+def _add_properties_for_fields(module, details):
+    '''Add property code to access the fields of the passed in module (struct)'''
+    
+    for k, f in module.fields.items():
+        prop = wrapper_helper.create_property_for_field(module, f)
+        
+        _post_process_method(prop.getter)
+        if prop.setter != None:
+            _post_process_method(prop.setter)
+        
+        _create_objc_property_details(prop, details)
 
 def _write_objc_user_module(module):
     '''Write the header and obj-c file to wrap the attached files details'''
@@ -170,12 +275,15 @@ def _write_objc_user_module(module):
     details['init_headers'] = ''
     details['dealloc_headers'] = ''
     details['static_method_headers'] = ''
-    details['method_bodys'] = ''
+    details['method_bodies'] = ''
     details['init_bodys'] = ''
     details['dealloc_bodys'] = ''
-    details['static_method_bodys'] = ''    
+    details['static_method_bodies'] = ''    
     details['fields'] = ''
     details['imports'] = ''
+    details['property_synthesizes'] = ''
+    details['property_headers'] = ''
+    details['wrapped_property_bodies'] = ''
     
     if module.is_class:
         for (name, data_type) in module.fields.items():
@@ -192,6 +300,7 @@ def _write_objc_user_module(module):
     other = dict()
     other['details'] = details
     
+    module.visit_properties(_create_objc_property_details, other)
     module.visit_methods(_create_objc_method_details, other)
     
     #Write the header file
@@ -200,10 +309,10 @@ def _write_objc_user_module(module):
         file_writer.writeln(objc_lib.pointer_wrapper_m % details)
     elif module.is_struct:
         if module.wraps_array:
-            #todo: fix this...
             header_file_writer.writeln(objc_lib.array_wrapper_h % details)
             file_writer.writeln(objc_lib.array_wrapper_m % details)        
         else:
+            _add_properties_for_fields(module, other)
             header_file_writer.writeln(objc_lib.struct_wrapper_h % details)
             file_writer.writeln(objc_lib.struct_wrapper_m % details)        
     else:
@@ -235,6 +344,7 @@ def _post_parse_process(the_file):
             _post_process_method(method)
         
         for key, prop in member.properties.items():
+            prop.name = prop.name.lower()[0] + prop.name[1:]
             if prop.getter != None:
                 _post_process_method(prop.getter)
             if prop.setter != None:
@@ -242,7 +352,10 @@ def _post_parse_process(the_file):
 
 def _post_process_method(method):
     #Mangle name to lowercase first character
+    if method.is_getter:
+        method.uname = method.uname[3:]
     method.uname = method.uname.lower()[0] + method.uname[1:]
+    
     for param in method.params:
         if param.maps_result or param.data_type.name.lower() in ['string']:
             wrapper_helper.add_local_var_for_param(method, param)
@@ -252,10 +365,14 @@ def _post_process_method(method):
         elif param.modifier == 'out' and param.data_type.is_struct:
             #also add out parameters
             wrapper_helper.add_local_var_for_param(method, param)
-    if method.method_called.was_function or method.has_out_params:
+            
+    if method.method_called != None:
+        if method.method_called.was_function or method.has_out_params:
+            wrapper_helper.add_local_var_for_result(method)
+        if method.method_called.has_length_params:
+            wrapper_helper.add_length_params(method, '[%s count]')
+    elif method.return_type != None:
         wrapper_helper.add_local_var_for_result(method)
-    if method.method_called.has_length_params:
-        wrapper_helper.add_length_params(method, '[%s count]')
 
 def _file_visitor(the_file, other):
     '''Called for each file read in by the parser'''

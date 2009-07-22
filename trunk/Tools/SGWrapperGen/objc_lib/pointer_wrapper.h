@@ -4,9 +4,10 @@
 
 #import "Types.h"
 #import "SGTypes.h"
+#import "PointerManager.h"
 %(imports)s
 
-@interface SG%(name)s : NSObject
+@interface SG%(name)s : NSObject <PointerWrapper>
 {
 @package
     %(name)s pointer;
@@ -18,5 +19,8 @@
 %(static_method_headers)s
 - (id)initWithId:(%(name)s)ptr; 
 %(init_headers)s
+
+%(property_headers)s
+
 %(method_headers)s
 @end

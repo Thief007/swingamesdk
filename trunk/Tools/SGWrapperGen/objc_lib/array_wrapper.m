@@ -35,10 +35,10 @@
     data[%(element.idx.expr)s] = %(element.value)s;
 }
 
-%(static_method_bodys)s
+%(static_method_bodies)s
 
 %(init_bodys)s
 
-%(method_bodys)s
+%(method_bodies)s
 
 @end

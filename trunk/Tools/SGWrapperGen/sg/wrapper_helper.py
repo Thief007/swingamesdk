@@ -1,4 +1,6 @@
 from sg_parameter import SGParameter
+from sg_property import SGProperty
+from sg_method import SGMethod
 from sg.sg_cache import logger, find_or_add_type
 
 
@@ -55,7 +57,7 @@ def add_local_var_for_result(to_method):
     
     '''
     
-    if to_method.method_called.was_function:
+    if to_method.method_called != None and to_method.method_called.was_function:
         result_param = to_method.method_called.params[-1]
         if not result_param.maps_result: #in case of returning var length array
             result_param = to_method.method_called.params[-2]
@@ -76,7 +78,7 @@ def add_local_var_for_result(to_method):
     var.length_param = result_param.length_param
     var.has_length_param = result_param.has_length_param
     
-    if to_method.method_called.was_function:
+    if to_method.method_called != None and to_method.method_called.was_function:
         to_method.args.append(var) # and pass it as an additional argument
 
 def add_length_local(to_method, for_param):
@@ -217,3 +219,30 @@ def add_local_var_processing(the_method, details, local_variable_switcher):
         
     else:
         details['vars'] = ''
+
+
+def create_property_for_field(in_class, field):
+    '''Creates a property to access the '''
+    
+    prop = SGProperty(field.name)
+    prop.in_class = in_class
+    prop.data_type = field.data_type
+    
+    getter = SGMethod('get' + field.pascalName)
+    getter.return_type = field.data_type
+    getter.in_class = in_class
+    getter.field_name = field.name
+    getter.is_getter = True
+    
+    setter = SGMethod('set' + field.pascalName)
+    setter.params.append(SGParameter('value'))
+    setter.params[0].data_type = field.data_type
+    setter.in_class = in_class
+    setter.field_name = field.name
+    setter.is_setter = True
+    
+    prop.set_getter(getter)
+    prop.set_setter(setter)
+    
+    return prop
+    

@@ -54,6 +54,7 @@ class SGMethod(SGMetaDataContainer):
         self.was_function = False
         self.has_length_params = False
         self.length_call = None
+        self.field_name = None
     
     def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None, call_creater = None, special_visitor=None):
         '''Returns a dictionary containing the details of this function/procedure
@@ -72,20 +73,38 @@ class SGMethod(SGMetaDataContainer):
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
             else:
                 temp = self.sn % tuple([param.name for param in self.params])
+            
             result['sn'] = temp
+            result['sn.sel'] = (self.sn % tuple(['' for param in self.params])).replace(' ', '')
+        else:
+            if special_visitor != None:
+                temp = ':'.join([special_visitor(param, param == self.params[-1]) for param in self.params])
+            else:
+                temp = ':'.join([param.name for param in self.params])
+            
+            result['sn.sel'] = self.uname            
+            if len(self.params) > 0: 
+                temp = ':' + temp
+                for p in self.params:
+                    result['sn.sel'] += ':'
+                
+            temp = self.uname + temp
+            result['sn'] = temp
+            
         result['in_class'] = self.in_class.name
         result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type, 'return')
         result['returns'] = '' if self.return_type == None else 'return '
         result['params'] = self.param_string(param_visitor)
         result['args'] = self.args_string_for_self(arg_visitor)
-        result['calls.file.pascal_name'] = self.method_called.in_class.in_file.pascal_name
-        result['calls.file.name'] = self.method_called.in_class.in_file.name
-        result['calls.file.filename'] = self.method_called.in_class.in_file.filename
-        result['calls.class'] = self.method_called.in_class.name
-        result['calls.name'] = self.method_called.name
-        result['calls.args'] = self.args_string_for_called_method(arg_visitor)
+        if self.method_called != None:
+            result['calls.file.pascal_name'] = self.method_called.in_class.in_file.pascal_name
+            result['calls.file.name'] = self.method_called.in_class.in_file.name
+            result['calls.file.filename'] = self.method_called.in_class.in_file.filename
+            result['calls.class'] = self.method_called.in_class.name
+            result['calls.name'] = self.method_called.name
+            result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
-        
+        result['field.name'] = self.field_name
         
         if self.length_call != None:
             if self.in_property != None: #replace first argument with 'self'
@@ -376,10 +395,14 @@ class SGMethod(SGMetaDataContainer):
         #setup name of method and its position in the property
         if self.is_getter:
             class_method.name = 'get' + property_name
+            class_method.is_getter = True
+            self.is_getter = False #transfer to other methods
             prop.getter = class_method
         elif self.is_setter:
             class_method.name = 'set' + property_name
             prop.setter = class_method
+            class_method.is_setter = True
+            self.is_setter = False #transfer to other methods
             class_method.params[0].name = 'value'
         else:
             logger.error('Property is not a getter or a setter: %s - %s', self.name, property_name)

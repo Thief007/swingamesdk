@@ -17,7 +17,7 @@ void removeObject(void *ptr)
 {
     id key = [NSValue valueWithPointer:ptr];
     
-    id obj = [_ptrRegister objectForKey:key];
+    id <PointerWrapper> obj = [_ptrRegister objectForKey:key];
     if (obj != nil)
     {
         [obj releasePointer];
@@ -29,7 +29,7 @@ void removeObject(void *ptr)
 
 + (void)initialize
 {
-    NSLog(@"Created register");
+    //NSLog(@"Created register");
     _ptrRegister = [[NSMutableDictionary alloc] initWithCapacity: 1000];
     sg_Resources_RegisterFreeNotifier(removeObject);
 }
