@@ -4,7 +4,7 @@ import java.awt.Color;
 import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
-import swingame.Keys;
+import swingame.KeyCode;
 
 /**
  * The IntegerSortAnimator objects store a collection
@@ -103,7 +103,7 @@ public class IntegerSortAnimator
                 {
                     Core.processEvents();
                     if(Core.windowCloseRequested()) return;
-                    if(Input.wasKeyTyped(Keys.VK_ESCAPE)) return;
+                    if(Input.keyTyped(KeyCode.VK_ESCAPE)) return;
                 }
                 
                 if(_data[j] > _data[j+1])

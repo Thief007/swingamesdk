@@ -1,7 +1,7 @@
 package swingame.samples;
 
 import swingame.Core;
-import swingame.Keys;
+import swingame.KeyCode;
 import swingame.Input;
 
 public class BubbleSort implements SortAlgorithm
@@ -18,7 +18,7 @@ public class BubbleSort implements SortAlgorithm
                 {
                     Core.processEvents();
                     if(Core.windowCloseRequested()) return;
-                    if(Input.wasKeyTyped(Keys.VK_ESCAPE)) return;
+                    if(Input.keyTyped(KeyCode.VK_ESCAPE)) return;
                 }
                 
                 if(theData[j] > theData[j+1])

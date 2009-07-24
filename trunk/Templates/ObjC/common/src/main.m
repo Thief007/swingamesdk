@@ -9,27 +9,21 @@ int main(int argc, const char* argv[])
     
     [SGAudio openAudio];
     [SGCore openGraphicsWindow:@"Hello World": 800: 600];
-    //SoundEffect sound = LoadSoundEffect("./SwinGameStart.ogg");
-    
-    Color white = [SGCore rGBAColor:255: 255: 255: 255];
-    
-    //PlaySoundEffect(sound);
+    [SGColors loadDefaultColors];
     
     while (![SGCore windowCloseRequested])
     {
+        [SGCore processEvents];
+        
         [SGGraphics clearScreen];
         
         //FillRectangle(white, 10, 10, 620, 460);
         [SGGraphics drawBitmap: [SGResources getBitmap:@"SplashBack"]: 0: 0];
         
-        [SGCore processEvents];
         [SGCore refreshScreen];
     }
     
-    //FreeSoundEffect(&sound);
-    
     [SGResources releaseAllResources];
-    
     [SGAudio closeAudio];
     return 0;
 }

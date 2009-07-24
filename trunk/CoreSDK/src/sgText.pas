@@ -159,7 +159,7 @@ implementation
     end;
 
     colorFG := ToSDLColor(clrFg);
-    bgTransparent := GetTransparency(clrBg) < 255;
+    bgTransparent := TransparencyOf(clrBg) < 255;
     
     // If there's nothing to draw, return NULL
     if (Length(str) = 0) or (font = nil) then exit;
@@ -281,7 +281,7 @@ implementation
     end;
 
     colorFG := ToSDLColor(clrFg);
-    bgTransparent := GetTransparency(clrBg) < 255;
+    bgTransparent := TransparencyOf(clrBg) < 255;
     
     // If there's nothing to draw, return NULL
     if (Length(str) = 0) or (font = nil) then exit;

@@ -10,9 +10,10 @@ import java.awt.Point;
  */
 public interface InputAdapter 
 {
-    public Point getMousePosition();
-    public boolean mouseWasClicked(int button);
-    public boolean wasKeyTyped(int key);    
-    public boolean isKeyPressed(int key);
+    public Point mousePosition();
+    public boolean mouseClicked(int button);
+    public boolean mouseDown(int button);
+    public boolean keyTyped(int key);    
+    public boolean keyDown(int key);
     
 }

@@ -4,7 +4,7 @@ import java.awt.Color;
 import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
-import swingame.Keys;
+import swingame.KeyCode;
 
 /**
  * The IntegerSortAnimator objects store a collection

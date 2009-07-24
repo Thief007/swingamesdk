@@ -15,22 +15,27 @@ import swingame.InputAdapter;
  */
 public class EmulatedInput implements InputAdapter
 {
-    public Point getMousePosition() 
+    public Point mousePosition() 
     {
         return EmulatedCore.getWindow().getMousePoint();
     }
     
-    public boolean mouseWasClicked(int button) 
+    public boolean mouseClicked(int button) 
     { 
-        return EmulatedCore.getWindow().mouseWasClicked(button); 
+        return EmulatedCore.getWindow().mouseClicked(button); 
     }
     
-    public boolean wasKeyTyped(int key) 
+    public boolean mouseDown(int button) 
+    { 
+        return EmulatedCore.getWindow().mouseDown(button); 
+    }
+    
+    public boolean keyTyped(int key) 
     {
         return EmulatedCore.getWindow().keyTyped(key); 
     }
     
-    public boolean isKeyPressed(int key) 
+    public boolean keyDown(int key) 
     { 
         return EmulatedCore.getWindow().keyDown(key); 
     }

@@ -93,7 +93,7 @@ public class Mandelbrot
   
             if (hue > 1) hue = hue - 1; //correct for values beond 1.
   
-            return Core.getHSBColor(hue, 1.0f, 0.9f);
+            return Core.hSBColor(hue, 1.0f, 0.9f);
         }
     }
     
@@ -151,11 +151,11 @@ public class Mandelbrot
         {
             Core.processEvents();
 
-            if(Input.mouseWasClicked(MouseButton.LEFT_BUTTON))
+            if(Input.mouseClicked(MouseButton.LEFT_BUTTON))
             {
                 //Zoom in...
                 Point mouse;
-		        mouse = Input.getMousePosition();
+		        mouse = Input.mousePosition();
 
                 // location of click - offset to center
 		        setX = setX + (float)mouse.getX() / SCREEN_WIDTH * setWidth - setWidth / 4.0f;

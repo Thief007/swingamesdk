@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-24: Andrew : Added additional HSB code and renamed other color function
 // - 2009-07-10: Andrew : Moved initialisation code to sgShared
 // - 2009-07-02: Andrew : Added comments for Timer exporting.
 // - 2009-06-29: Andrew : Renamed timer and version related functions,
@@ -291,22 +292,43 @@ interface
   /// Get the transpareny value of `color`.
   ///
   /// @lib
-  function GetTransparency(c: Color): byte;
+  function TransparencyOf(c: Color): byte;
   
   /// Get the red value of `color`.
   ///
   /// @lib
-  function GetRed(c: Color): byte;
+  function RedOf(c: Color): byte;
   
   /// Get the green value of `color`.
   ///
   /// @lib
-  function GetGreen(c: Color): byte;
+  function GreenOf(c: Color): byte;
   
   /// Get the blue value of `color`.
   ///
   /// @lib
-  function GetBlue(c: Color): byte;
+  function BlueOf(c: Color): byte;
+  
+  /// Gets the hue, saturation, and brightness values from
+  /// the color.
+  ///
+  /// @lib
+  procedure HSBValuesOf(c: Color; out h, s, b: Single);
+  
+  /// Get the hue of the `color`.
+  ///
+  /// @lib
+  function HueOf(c: Color): Single;
+  
+  /// Get the saturation of the `color`.
+  ///
+  /// @lib
+  function SaturationOf(c: Color) : Single;
+  
+  /// Get the brightness of the `color`.
+  ///
+  /// @lib
+  function BrightnessOf(c: Color) : Single;
   
   //----------------------------------------------------------------------------
   // Refresh / Sleep / Framerate
@@ -819,7 +841,7 @@ implementation
     SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
   end;
 
-  function GetRed(c: Color): byte;
+  function RedOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
@@ -827,7 +849,7 @@ implementation
     result := r;
   end;
 
-  function GetGreen(c: Color): byte;
+  function GreenOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
@@ -835,7 +857,7 @@ implementation
     result := g;
   end;
 
-  function GetBlue(c: Color): byte;
+  function BlueOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
@@ -843,14 +865,72 @@ implementation
     result := b;
   end;
 
-  function GetTransparency(c: Color): byte;
+  function TransparencyOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
     ColorComponents(c, r, g, b, a);
     result := a;
   end;
-
+  
+  procedure HSBValuesOf(c: Color; out h, s, b: Single);
+  var
+    red, green, blue, alpha: byte;
+    rf, gf, bf: Single;
+    minRGB, maxRGB, delta: Single;
+  begin
+     H := 0.0 ;
+     
+     ColorComponents(c, red, green, blue, alpha);
+     
+     rf := red / 255;
+     gf := green / 255;
+     bf := blue / 255;
+     
+     minRGB := Min(Min(rf, gf), bf);
+     maxRGB := Max(Max(rf, gf), bf);
+     delta := (maxRGB - minRGB);
+     
+     b := maxRGB;
+     if (maxRGB <> 0.0) then s := delta / maxRGB
+     else s := 0.0;
+      
+     if (s <> 0.0) then
+     begin
+       if rf = maxRGB then h := (gf - bf) / Delta
+       else
+         if gf = maxRGB then h := 2.0 + (bf - rf) / Delta
+         else
+           if bf = maxRGB then h := 4.0 + (rf - gf) / Delta
+     end
+     else h := -1.0;
+     h := h * 60 ;
+     if h < 0.0 then h := h + 360.0;
+       
+     h := h / 360.0;
+  end;
+  
+  function HueOf(c: Color) : Single;
+  var
+    s, b: Single;
+  begin
+    HSBValuesOf(c, result, s, b);
+  end;
+  
+  function SaturationOf(c: Color) : Single;
+  var
+    h, b: Single;
+  begin
+    HSBValuesOf(c, h, result, b);
+  end;
+  
+  function BrightnessOf(c: Color) : Single;
+  var
+    h, s: Single;
+  begin
+    HSBValuesOf(c, h, s, result);
+  end;
+  
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color; overload;
   var
     temp: TSDL_Color;

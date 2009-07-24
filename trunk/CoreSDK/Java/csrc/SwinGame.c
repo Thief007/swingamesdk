@@ -148,10 +148,10 @@ JNIEXPORT void JNICALL Java_swingame_platform_NativeGraphics_n_1fillEllipse (JNI
 
 /*
  * Class:     swingame_platform_NativeInput
- * Method:    getMousePosition
+ * Method:    mousePosition
  * Signature: (Ljava/awt/Point;)V
  */
-JNIEXPORT void JNICALL Java_swingame_platform_NativeInput_n_1getMousePosition (JNIEnv *env, jclass cls, jobject pnt)
+JNIEXPORT void JNICALL Java_swingame_platform_NativeInput_n_1mousePosition (JNIEnv *env, jclass cls, jobject pnt)
 {
     float x, y;
     jdouble dx, dy;
@@ -168,10 +168,10 @@ JNIEXPORT void JNICALL Java_swingame_platform_NativeInput_n_1getMousePosition (J
 
 /*
  * Class:     swingame_platform_NativeInput
- * Method:    mouseWasClicked
+ * Method:    mouseClicked
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1mouseWasClicked (JNIEnv *env, jclass cls, jint btn)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1mouseClicked (JNIEnv *env, jclass cls, jint btn)
 {
     //return JNI_TRUE;
     return MouseWasClicked(btn) != 0  ? JNI_TRUE : JNI_FALSE;
@@ -179,15 +179,15 @@ JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1mouseWasClicked
 
 /*
  * Class:     swingame_platform_NativeInput
- * Method:    wasKeyTyped
+ * Method:    keyTyped
  * Signature: (I)Z
  */
-JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1wasKeyTyped (JNIEnv *env, jclass cls, jint key)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1keyTyped (JNIEnv *env, jclass cls, jint key)
 {
 	return WasKeyTyped(key) ? JNI_TRUE : JNI_FALSE;
 }
 
-JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1isKeyPressed (JNIEnv *env, jclass cls, jint key)
+JNIEXPORT jboolean JNICALL Java_swingame_platform_NativeInput_n_1keyDown (JNIEnv *env, jclass cls, jint key)
 {
     return IsKeyPressed(key) ? JNI_TRUE : JNI_FALSE;
 }

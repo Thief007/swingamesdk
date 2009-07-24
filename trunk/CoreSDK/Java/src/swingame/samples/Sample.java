@@ -7,7 +7,7 @@ import swingame.Graphics;
 import swingame.Input;
 
 import swingame.MouseButton;
-import swingame.Keys;
+import swingame.KeyCode;
 
 /**
  * <<Class summary>>
@@ -32,12 +32,12 @@ public final class Sample
         {
             Core.processEvents();
             
-            if (Input.mouseWasClicked(MouseButton.LEFT_BUTTON)) 
+            if (Input.mouseClicked(MouseButton.LEFT_BUTTON)) 
             {
                 c = c == Color.RED ? Color.WHITE : Color.RED;
             }
             
-            if (Input.wasKeyTyped(Keys.VK_SPACE))
+            if (Input.keyTyped(KeyCode.VK_SPACE))
             {
                 c1 = c1 == Color.BLUE ? Color.WHITE : Color.BLUE;
             }
@@ -46,12 +46,12 @@ public final class Sample
             Graphics.fillRectangle(c, x, 10.0f, 10, 20);
             Graphics.fillEllipse(c1, x, 40.0f, 20, 10);    
             
-            if( false == Input.isKeyPressed(Keys.VK_L) )
+            if( false == Input.keyDown(KeyCode.VK_L) )
                 Graphics.drawLine(Color.WHITE, x, 70.0f, x + 10, 75.0f);
             
             x += 1;
             
-            Point p = Input.getMousePosition();
+            Point p = Input.mousePosition();
             Graphics.drawPixel(Color.GREEN, (float)p.getX(), (float)p.getY());
             
             Core.refreshScreen();
