@@ -134,6 +134,7 @@ _type_switcher = {
         'color': 'unsigned int *%s',
         'timer': 'Timer *%s',
         'point2d': 'Point2D *%s',
+        'single': 'float *%s',
 #        'triangle': 'Triangle *%s'
         'longint': 'int *%s',
         'linesegment': 'LineSegment *%s',
@@ -267,15 +268,15 @@ _adapter_type_switcher = {
         'map': 'Map *%s'
     },
     'out': {
-        'string': 'char *%s',
-        'byte': 'unsigned char *%s',
-        'color': 'unsigned int *%s',
-        'timer': 'void *%s',
-        'point2d': 'Point2D *%s',
-#        'triangle': 'Triangle *%s',
-        'linesarray': 'LinesArray %s',
-        'longint': 'int *%s',
-        'linesegment': 'LineSegment *%s',
+        'string':       'char *%s',
+        'byte':         'unsigned char *%s',
+        'color':        'unsigned int *%s',
+        'timer':        'void *%s',
+        'point2d':      'Point2D *%s',
+        'single':       'float *%s',
+        'longint':      'int *%s',
+        'linesegment':  'LineSegment *%s',
+        'linesarray':   'LinesArray %s',
     },
     'result' : {
         'string': 'char *%s',

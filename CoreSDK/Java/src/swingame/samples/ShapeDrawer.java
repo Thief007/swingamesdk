@@ -5,7 +5,7 @@ import java.awt.Point;
 import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
-import swingame.Keys;
+import swingame.KeyCode;
 
 /**
  * The ShapeDrawer is the main entrance point for the drawing sample
@@ -52,7 +52,7 @@ public final class ShapeDrawer
             Core.refreshScreen();
             Core.processEvents();
         } while (!Core.windowCloseRequested());*/
-        Core.useNative();
+        // Core.useNative();
         runGame();
     }
 

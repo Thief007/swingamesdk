@@ -9,6 +9,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-24: Andrew : Renamed mouse code
 // - 2009-07-10: Andrew : Added call to initialise SwinGame.
 //                      : Fixed missing const modifier on struct parameters
 // - 2009-06-15: Clinton: renamed+removed Is/Was and placed Key/Mouse first
@@ -45,18 +46,20 @@ interface
 
   uses SDL, sgTypes;
 
-  /// @returns The current window position of the mouse as a `Vector`
+  /// Returns The current window position of the mouse as a `Vector`
+  ///
   /// @lib
-  function GetMousePositionAsVector(): Vector;
+  function MousePositionAsVector(): Vector;
 
-  /// @returns The current window position of the mouse as a `Point2D`
+  /// Returns the current window position of the mouse as a `Point2D`
+  ///
   /// @lib
-  function GetMousePosition(): Point2D;
+  function MousePosition(): Point2D;
   
   /// @returns The amount of accumulated mouse movement, since the last time 
   ///          `ProcessEvents` was called, as a `Vector`. 
   /// @lib
-  function GetMouseMovement(): Vector;
+  function MouseMovement(): Vector;
   
   /// @param button The specific `MouseButton` to check
   /// @returns `true` if the specified button is currently pressed down
@@ -247,7 +250,7 @@ implementation
   
   //---------------------------------------------------------------------------
   
-  function GetMousePositionAsVector(): Vector;
+  function MousePositionAsVector(): Vector;
   var
     x, y: LongInt;
   begin
@@ -279,13 +282,13 @@ implementation
   procedure MoveMouse(x, y : UInt16);overload;
   begin
     SDL_WarpMouse(x,y);
-    GetMouseMovement();
+    MouseMovement();
   end;
   
   procedure MoveMouse(const point : Point2d);overload;
   begin
     SDL_WarpMouse(Round(point.x), Round(point.y));
-    GetMouseMovement();
+    MouseMovement();
   end;
   
   function MouseShown(): Boolean;
@@ -293,7 +296,7 @@ implementation
     result := SDL_ShowCursor(-1) = 1;
   end;
   
-  function GetMousePosition(): Point2D;
+  function MousePosition(): Point2D;
   var
     x, y: LongInt;
   begin
@@ -302,12 +305,12 @@ implementation
     result := PointAt(x, y);    
   end;
   
-  function GetMouseMovement(): Vector;
+  function MouseMovement(): Vector;
   var
     x, y: LongInt;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgInput', 'GetMouseMovement');
+      TraceEnter('sgInput', 'MouseMovement');
     {$ENDIF}
     
     x := 0; 
@@ -316,7 +319,7 @@ implementation
     result := VectorFrom(x, y);
 
     {$IFDEF TRACE}
-      TraceExit('sgInput', 'GetMouseMovement');
+      TraceExit('sgInput', 'MouseMovement');
     {$ENDIF}
   end;
   

@@ -5,7 +5,7 @@ import java.awt.Point;
 import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
-import swingame.Keys;
+import swingame.KeyCode;
 import swingame.MouseButton;
 
 /**
@@ -59,14 +59,15 @@ import swingame.MouseButton;
          Shape s = _controlling.getSelectedShape();
          if (s != null)
          {
-             float h = Core.getHue(s.getColor());
-             
-             System.out.println("Hue: " + h);
-             
-             h += 0.01f;
-             if (h > 1) h = h - 1;
+             float hue, sat, bri;
+             hue = Core.hueOf(s.getColor());
+             sat = Core.saturationOf(s.getColor());
+             bri = Core.brightnessOf(s.getColor());
 
-             s.setColor(Color.getHSBColor(h, 0.9f, 1.0f));
+             hue += 0.01f;
+             if (hue > 1) hue = hue - 1;
+
+             s.setColor(Core.hSBColor(hue, sat, bri));
          }
      }
 
@@ -127,43 +128,43 @@ import swingame.MouseButton;
 
      public void handleInput()
      {
-         if (Input.mouseWasClicked(MouseButton.LEFT_BUTTON))
+         if (Input.mouseDown(MouseButton.LEFT_BUTTON))
          {
-             if (Input.isKeyPressed(Keys.VK_SHIFT))
+             if (Input.keyDown(KeyCode.VK_SHIFT))
              {
-                 moveTo((Point)Input.getMousePosition().clone());
+                 moveTo((Point)Input.mousePosition().clone());
              }
              else
              {
-                 addNewShape(Input.getMousePosition());
+                 addNewShape(Input.mousePosition());
              }
          }
          
-         if (Input.mouseWasClicked(MouseButton.RIGHT_BUTTON))
+         if (Input.mouseClicked(MouseButton.RIGHT_BUTTON))
          {
-             selectShape(Input.getMousePosition());
+             selectShape(Input.mousePosition());
          }
 
-         if (Input.wasKeyTyped(Keys.VK_R)) _adding = DrawingElements.RECTANGLE;
-         if (Input.wasKeyTyped(Keys.VK_L)) _adding = DrawingElements.LINE;
-         if (Input.wasKeyTyped(Keys.VK_E)) _adding = DrawingElements.ELLIPSE;
+         if (Input.keyTyped(KeyCode.VK_R)) _adding = DrawingElements.RECTANGLE;
+         if (Input.keyTyped(KeyCode.VK_L)) _adding = DrawingElements.LINE;
+         if (Input.keyTyped(KeyCode.VK_E)) _adding = DrawingElements.ELLIPSE;
 
-         if (Input.isKeyPressed(Keys.VK_SHIFT))
+         if (Input.keyDown(KeyCode.VK_SHIFT))
          {
-             if (Input.isKeyPressed(Keys.VK_LEFT)) changeSize(-1, 0);
-             if (Input.isKeyPressed(Keys.VK_RIGHT)) changeSize(1, 0);
-             if (Input.isKeyPressed(Keys.VK_UP)) changeSize(0, -1);
-             if (Input.isKeyPressed(Keys.VK_DOWN)) changeSize(0, 1);
+             if (Input.keyDown(KeyCode.VK_LEFT)) changeSize(-1, 0);
+             if (Input.keyDown(KeyCode.VK_RIGHT)) changeSize(1, 0);
+             if (Input.keyDown(KeyCode.VK_UP)) changeSize(0, -1);
+             if (Input.keyDown(KeyCode.VK_DOWN)) changeSize(0, 1);
          }
          else
          {
-             if (Input.isKeyPressed(Keys.VK_LEFT)) move(-1, 0);
-             if (Input.isKeyPressed(Keys.VK_RIGHT)) move(1, 0);
-             if (Input.isKeyPressed(Keys.VK_UP)) move(0, -1);
-             if (Input.isKeyPressed(Keys.VK_DOWN)) move(0, 1);
+             if (Input.keyDown(KeyCode.VK_LEFT)) move(-1, 0);
+             if (Input.keyDown(KeyCode.VK_RIGHT)) move(1, 0);
+             if (Input.keyDown(KeyCode.VK_UP)) move(0, -1);
+             if (Input.keyDown(KeyCode.VK_DOWN)) move(0, 1);
          }
 
-         if (Input.isKeyPressed(Keys.VK_C)) changeColor();
+         if (Input.keyDown(KeyCode.VK_C)) changeColor();
      }
  }
 

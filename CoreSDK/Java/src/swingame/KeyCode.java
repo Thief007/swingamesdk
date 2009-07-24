@@ -9,7 +9,7 @@ package swingame;
  *
  * @author acain
  */
-public class Keys 
+public class KeyCode
 {
         /// <summary>
         /// Backspace

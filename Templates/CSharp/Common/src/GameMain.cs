@@ -24,13 +24,7 @@ namespace MyGame
                 //Fetch the next back of UI interaction
                 Core.ProcessEvents();
                 
-                Resources.ReleaseAllResources();
-                Resources.LoadResourceBundle("splash.txt");
-                
-                Bitmap bmp = Resources.GetBitmap("SplashBack");
-                
-                //Draw the game
-                bmp.Draw(0, 0);
+                Graphics.ClearScreen();
                 Text.DrawFramerate(0,0); //Draw framerate top left
                 
                 //Draw onto the screen
@@ -39,6 +33,7 @@ namespace MyGame
             
             //End the audio
             Audio.CloseAudio();
+            Resources.ReleaseAllResources();
         }
     }
 }

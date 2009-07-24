@@ -7,7 +7,7 @@ package swingame.samples;
 
 import swingame.Core;
 import swingame.Input;
-import swingame.Keys;
+import swingame.KeyCode;
 
 /**
  * The SortVisualiser is a program that provides a visual animation
@@ -35,8 +35,8 @@ public class SortVisualiser
         {
             Core.processEvents();
 
-            if(Input.wasKeyTyped(Keys.VK_R)) sa.randomize();
-            if(Input.wasKeyTyped(Keys.VK_S)) sa.sort();
+            if(Input.keyTyped(KeyCode.VK_R)) sa.randomize();
+            if(Input.keyTyped(KeyCode.VK_S)) sa.sort();
             
             sa.showData();
             
