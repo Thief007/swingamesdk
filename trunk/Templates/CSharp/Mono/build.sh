@@ -23,6 +23,7 @@ else
 fi
 
 GAME_NAME=${APP_PATH##*/}
+ICON=SwinGame
 
 CLEAN="N"
 
@@ -37,15 +38,17 @@ Usage()
     echo " -c   Perform a clean rather than a build"
     echo " -d   Debug build"
     echo " -h   Show this help message "
+    echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chd o
+while getopts chdi: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
     d)  CS_FLAGS="-debug -define:DEBUG" ;;
+    i)  ICON="$OPTARG";;
     ?)  Usage
     esac
 done

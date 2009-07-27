@@ -33,6 +33,7 @@ SG_INC="-I${APP_PATH}/lib/"
 GCC_BIN=`which gcc`
 
 GAME_NAME=${APP_PATH##*/}
+ICON=SwinGame
 
 CLEAN="N"
 
@@ -47,15 +48,18 @@ Usage()
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message"
     echo " -d   Create a debug build"
+    echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chd o
+while getopts chdi: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  C_FLAGS="-g -Wall"
+    d)  C_FLAGS="-g -Wall" ;;
+    i)  ICON="$OPTARG";;
+    ?)  Usage
     esac
 done
 

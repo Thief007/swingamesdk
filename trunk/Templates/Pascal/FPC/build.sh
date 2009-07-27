@@ -18,6 +18,7 @@ SG_INC="-Fu${APP_PATH}/lib/"
 FPC_BIN=`which fpc`
 
 GAME_NAME=${APP_PATH##*/}
+ICON=SwinGame
 
 CLEAN="N"
 
@@ -31,15 +32,17 @@ Usage()
     echo "Options:"
     echo " -c   Perform a clean rather than a build"
     echo " -h   Show this help message "
+    echo " -i [icon] Change the icon file"
     exit 0
 }
 
-while getopts chd o
+while getopts chdi: o
 do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
     d)  PAS_FLAGS="-g -vw"
+    i)  ICON="$OPTARG";;
     esac
 done
 
