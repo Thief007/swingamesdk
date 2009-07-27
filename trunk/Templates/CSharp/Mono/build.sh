@@ -1,4 +1,15 @@
 #!/bin/sh
+MAC="Mac OS X"
+WIN="Windows"
+LIN="Linux"
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+    OS=$MAC
+elif [ -d /c/Windows ]; then
+    OS=$WIN
+else
+    OS=$LIN
+fi
 
 # Move to src dir
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
@@ -7,7 +18,7 @@ cd "$APP_PATH"
 
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
-TMP_DIR="${APP_PATH}/tmp"
+BIN_DIR="${APP_PATH}/bin"
 SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
@@ -47,7 +58,7 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  CS_FLAGS="-debug -define:DEBUG" ;;
+    d)  DEBUG="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -59,20 +70,21 @@ if [ "a$1a" != "aa" ]; then
     GAME_NAME=$1
 fi
 
+#
+# Change directories based on release or debug builds
+#
+if [ "a${DEBUG}a" != "aa" ]; then
+    CS_FLAGS="-debug -define:DEBUG"
+    OUT_DIR="${OUT_DIR}/Debug"
+else
+    OUT_DIR="${OUT_DIR}/Release"
+fi
+
 if [ -f "${LOG_FILE}" ]
 then
     rm -f "${LOG_FILE}"
 fi
 
-
-CleanTmp()
-{
-    if [ -d "${TMP_DIR}" ]
-    then
-        rm -rf "${TMP_DIR}"
-    fi
-    mkdir "${TMP_DIR}"
-}
 
 doMacPackage()
 {
@@ -86,10 +98,6 @@ doMacPackage()
     echo "  ... Creating Application Bundle"
     
     macpack -m winforms -n "${GAME_NAME}" -o "${OUT_DIR}" "${OUT_DIR}/${GAME_NAME}.exe"
-    # mkdir "${GAMEAPP_PATH}"
-    # mkdir "${GAMEAPP_PATH}/Contents"
-    # mkdir "${GAMEAPP_PATH}/Contents/MacOS"
-    # mkdir "${GAMEAPP_PATH}/Contents/Resources"
     mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
     
     echo "  ... Adding Private Frameworks"
@@ -144,21 +152,26 @@ doMacPackage()
 
 doCompile()
 {
-    CleanTmp
-    
     if [ ! -d ${OUT_DIR} ]; then
         mkdir -p ${OUT_DIR}
     fi
     
     ${GMCS_BIN} ${GMCS_FLAGS} ${CS_FLAGS} -out:"${OUT_DIR}/${GAME_NAME}.exe" `find ${APP_PATH} -mindepth 2 | grep [.]cs$` >> ${LOG_FILE}
     if [ $? != 0 ]; then echo "Error compiling."; exit 1; fi
-    
-    CleanTmp
 }
 
 doLinuxPackage()
 {
     RESOURCE_DIR="${APP_PATH}/bin/"
+}
+
+doWindowsPackage()
+{
+    RESOURCE_DIR=${APP_PATH}/bin/Resources
+    
+    echo "  ... Copying libraries"
+    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
+    cp -p -f "${LIB_DIR}"/*.a "${OUT_DIR}"
 }
 
 copyWithoutSVN()
@@ -192,50 +205,35 @@ then
         mkdir -p "${OUT_DIR}"
     fi
     
-    if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-    then
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Mac OS X"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Compiler flags ${CS_FLAGS}"
-        echo "--------------------------------------------------"
-        echo "  ... Creating ${GAME_NAME}"
-        
-        doCompile
+    echo "--------------------------------------------------"
+    echo "          Creating $GAME_NAME"
+    echo "          for $OS"
+    echo "--------------------------------------------------"
+    echo "  Running script from $APP_PATH"
+    echo "  Saving output to $OUT_DIR"
+    echo "  Compiler flags ${CS_FLAGS}"
+    echo "--------------------------------------------------"
+    echo "  ... Creating ${GAME_NAME}"
+    doCompile
+    
+    if [ "$OS" = "$MAC" ]; then
         doMacPackage
-    else
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Linux"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "--------------------------------------------------"
-        echo "  ... Creating C wrapper library"
-        echo "  Compiler flags ${CS_FLAGS}"
-        CreateCWrapper >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
-        
-        echo "  ... Compiling Library"
-        doLinuxCompile
-        
+    elif [ "$OS" = "$LIN" ]; then
         doLinuxPackage
+    else
+        doWindowsPackage
     fi
     
     doCopyResources
 else
     CleanTmp
-    rm -rf "${OUT_DIR}"
-    mkdir "${OUT_DIR}"
+    rm -rf "${BIN_DIR}"
+    mkdir -p "${BIN_DIR}"
     echo    ... Cleaned
 fi
 
 #remove temp files on success
 rm -f ${LOG_FILE} 2>> /dev/null
-rm -rf ${TMP_DIR} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"

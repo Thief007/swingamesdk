@@ -9,6 +9,7 @@
 //
 // Version 3:
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
+//                      : Fixed possible double release of AutoRelease pool
 // - 2009-07-10: Andrew : Added initialisation code
 // - 2009-06-23: Clinton: Comment/format cleanup/tweaks
 //                      : Slight optimization to NewSDLRect (redundant code)
@@ -106,7 +107,7 @@ implementation
     //----------------------------------------------------------------------------
     {$ifdef DARWIN}
       NSAutoreleasePool: LongInt;
-      pool: LongInt;
+      pool: LongInt = 0;
     {$endif}
     
   //---------------------------------------------------------------------------
@@ -135,7 +136,7 @@ implementation
       SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
 
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
-      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
       objc_msgSend(pool, sel_registerName('init'));
       NSApplicationLoad();
     {$endif}
@@ -161,7 +162,7 @@ implementation
     //Drain the pool - releases it
     objc_msgSend(pool, sel_registerName('drain'));
     //Create a new pool
-    pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+    pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
     objc_msgSend(pool, sel_registerName('init'));
   end;
   {$endif}
@@ -305,11 +306,12 @@ implementation
       sdlManager.Free();
       sdlManager := nil;
     end;
-  
     {$ifdef DARWIN}
-      objc_msgSend(pool, sel_registerName('drain'));
+      // last pool will self drain...
+      pool := 0;
+      NSAutoreleasePool := 0;
     {$endif}
-  
+    
     if screen <> nil then
     begin
       if screen^.surface <> nil then
@@ -320,7 +322,7 @@ implementation
       //scr and baseSurface are now the same!
       baseSurface := nil;
     end;
-  
+    
     SDL_Quit();
   end;
 

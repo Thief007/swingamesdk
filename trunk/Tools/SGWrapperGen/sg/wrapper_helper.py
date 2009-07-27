@@ -84,6 +84,7 @@ def add_local_var_for_result(to_method):
 def add_length_local(to_method, for_param):
     var_name = for_param.local_var_name() + '_len'
     local_var = SGParameter(var_name)
+    local_var.is_length_param = True
     local_var.local_for = for_param
     local_var.data_type = find_or_add_type('LongInt')
     local_var.modifier = for_param.modifier
@@ -110,16 +111,6 @@ def add_length_params(to_method, len_str):
                     var = add_length_local(to_method, to_method.get_variable(param.length_of.name))
             elif param.modifier == 'out':
                 var = add_length_local(to_method, to_method.get_variable(param.length_of.name))
-                # 
-                # var_name = param.length_of.local_var_name() + '_len'
-                # 
-                # local_var = SGParameter(var_name)
-                # local_var.local_for = param
-                # local_var.data_type = find_or_add_type('LongInt')
-                # local_var.modifier = param.modifier
-                # 
-                # to_method.local_vars.append(local_var)
-                # to_method.args.append(var_name)
             elif not param.data_type.is_struct:
                 to_method.args.append(len_str % param.length_of.name)
             else:

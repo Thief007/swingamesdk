@@ -2,13 +2,12 @@
 #include <stdbool.h>
 #include "SwinGame.h"
 
-int main(int argc, const char* argv[])
+int main(int argc, char* argv[])
 {
     SetAppPath(argv[0], true);
     OpenAudio();
     OpenGraphicsWindow("Hello World", 800, 600);
-    
-    Color white = RGBAColor(255, 255, 255, 255);
+    loadDefaultColors();
     
     while (!WindowCloseRequested())
     {

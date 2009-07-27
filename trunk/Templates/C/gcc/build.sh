@@ -57,7 +57,7 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  C_FLAGS="-g -Wall" ;;
+    d)  DEBUG="Y" ;;
     i)  ICON="$OPTARG";;
     ?)  Usage
     esac
@@ -69,6 +69,17 @@ if [ "a$1a" != "aa" ]; then
     GAME_NAME=$1
 fi
 
+#
+# Change directories based on release or debug builds
+#
+if [ "a${DEBUG}a" != "aa" ]; then
+    C_FLAGS="-g -Wall"
+    OUT_DIR="${OUT_DIR}/Debug"
+    TMP_DIR="${TMP_DIR}/Debug"
+else
+    OUT_DIR="${OUT_DIR}/Release"
+    TMP_DIR="${TMP_DIR}/Release"
+fi
 
 if [ -f "${LOG_FILE}" ]
 then
@@ -86,31 +97,48 @@ CleanTmp()
 }
 
 #
+# Compile the passed in file
+# $1 = filename
+# $2 = name
+# $3 = out filename
+# $4 = extra options
+#
+doCompile()
+{
+    file=$1
+    name=$2
+    out_file=$3
+    extra_opts=$4
+    
+    if [ $file -nt $out_file ]; then
+        echo "      ... Compiling ${name}"    
+        ${GCC_BIN} -c ${extra_opts} ${SG_INC} ${C_FLAGS} -o "${out_file}" ${file} >> ${LOG_FILE}
+        if [ $? != 0 ]; then echo "Error compiling"; cat ${LOG_FILE}; exit 1; fi
+    fi
+}
+
+#
 # Compile for Mac - manually assembles and links files
 # argument 1 is arch
 #
 doMacCompile()
 {
-    CleanTmp
+    mkdir -p "${TMP_DIR}/${1}"
     
     echo "  ... Compiling for $1"
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$` ; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c -arch ${1} ${SG_INC} ${C_FLAGS} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling"; cat ${LOG_FILE}; exit 1; fi
+        out_file="${TMP_DIR}/${1}/${name}.o"
+        doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
     done
     
     #Assemble all of the .s files
     echo "  ... Creating game for $1"
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o ${OUT_DIR}/${GAME_NAME}.${1} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch $1 -o ${TMP_DIR}/${1}/${GAME_NAME} `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
-    
-    CleanTmp
 }
 
 # 
@@ -119,19 +147,15 @@ doMacCompile()
 doLipo()
 {
     echo "  ... Creating Universal Binary"
-    lipo -arch ${1} "${OUT_DIR}/${GAME_NAME}.${1}" -arch ${2} "${OUT_DIR}/${GAME_NAME}.${2}" -output "${OUT_DIR}/${GAME_NAME}" -create
-    
-    rm -f "${OUT_DIR}/${GAME_NAME}.${1}"
-    rm -f "${OUT_DIR}/${GAME_NAME}.${2}"
+    lipo -arch ${1} "${TMP_DIR}/${1}/${GAME_NAME}" -arch ${2} "${TMP_DIR}/${2}/${GAME_NAME}" -output "${OUT_DIR}/${GAME_NAME}" -create
 }
 
 doMacPackage()
 {
     GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
-    if [ -d "${GAMEAPP_PATH}" ] 
-    then
-    	echo "  ... Removing old application"
-    	rm -rf "${GAMEAPP_PATH}"
+    if [ -d "${GAMEAPP_PATH}" ]; then
+        echo "  ... Removing old application"
+        rm -rf "${GAMEAPP_PATH}"
     fi
 
     echo "  ... Creating Application Bundle"
@@ -145,7 +169,7 @@ doMacPackage()
     echo "  ... Added Private Frameworks"
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
-    mv "${OUT_DIR}/${GAME_NAME}" "${APP_PATH}/bin/${GAME_NAME}.app/Contents/MacOS/" 
+    mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
 
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
@@ -181,15 +205,10 @@ doMacPackage()
 
 doLinuxCompile()
 {
-    CleanTmp
-    
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c ${SG_INC} ${C_FLAGS} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling SwinGame C wrapper"; cat ${LOG_FILE}; exit 1; fi
+        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
     #Assemble all of the .s files
@@ -197,8 +216,6 @@ doLinuxCompile()
     
     ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
-    
-    CleanTmp
 }
 
 doLinuxPackage()
@@ -208,15 +225,10 @@ doLinuxPackage()
 
 doWindowsCompile()
 {
-    CleanTmp
-    
-    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
-    do
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
-        echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c ${SG_INC} ${C_FLAGS} -o "${TMP_DIR}/${name}.o" ${file} >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error compiling SwinGame C wrapper"; cat ${LOG_FILE}; exit 1; fi
+        doCompile "${file}" "${name}" "${TMP_DIR}/${name}.o" ""
     done
     
     #Assemble all of the .s files
@@ -224,16 +236,14 @@ doWindowsCompile()
     
     ${GCC_BIN} -L${LIB_DIR} -lsgsdk -o ${OUT_DIR}/${GAME_NAME} `find ${TMP_DIR} -maxdepth 1 -name \*.o`
     if [ $? != 0 ]; then echo "Error creating game"; cat ${LOG_FILE}; exit 1; fi
-    
-    echo "  ... Copying libraries"
-    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
-    cp -p -f "${LIB_DIR}"/*.a "${OUT_DIR}"
-    
-    CleanTmp
 }
 
 doWindowsPackage()
 {
+    echo "  ... Copying libraries"
+    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
+    cp -p -f "${LIB_DIR}"/*.a "${OUT_DIR}"
+    
     RESOURCE_DIR=${APP_PATH}/bin/Resources
 }
 
@@ -303,7 +313,6 @@ fi
 
 #remove temp files on success
 rm -f ${LOG_FILE} 2>> /dev/null
-rm -rf ${TMP_DIR} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"
