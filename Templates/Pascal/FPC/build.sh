@@ -1,5 +1,20 @@
 #!/bin/sh
 
+#
+# Step 1: Detect the operating system
+#
+MAC="Mac OS X"
+WIN="Windows"
+LIN="Linux"
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+    OS=$MAC
+elif [ -d /c/Windows ]; then
+    OS=$WIN
+else
+    OS=$LIN
+fi
+
 # Move to src dir
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
@@ -41,12 +56,29 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  PAS_FLAGS="-g -vw"
+    d)  DEBUG="Y" ;;
     i)  ICON="$OPTARG";;
     esac
 done
 
 shift $((${OPTIND}-1))
+
+#
+# Change directories based on release or debug builds
+#
+if [ "a${DEBUG}a" != "aa" ]; then
+    if [ "$OS" = "$MAC" ]; then
+        PAS_FLAGS="-gw -vw"
+    else
+        PAS_FLAGS="-g -vw"
+    fi
+    OUT_DIR="${OUT_DIR}/Debug"
+    TMP_DIR="${TMP_DIR}/Debug"
+else
+    OUT_DIR="${OUT_DIR}/Release"
+    TMP_DIR="${TMP_DIR}/Release"
+fi
+
 
 if [ -f "${LOG_FILE}" ]
 then
@@ -76,20 +108,20 @@ CleanTmp()
 #
 doMacCompile()
 {
-    CleanTmp
+    mkdir -p ${TMP_DIR}/${1}
     echo "  ... Compiling $GAME_NAME - $1"
     
-    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -Fi${LIB_DIR} -FU${TMP_DIR} -s GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR}/${1} -FU${TMP_DIR}/${1} -Fi${LIB_DIR} -Fi${SRC_DIR} -s ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     rm -f ${LOG_FILE}
     
     #Remove the pascal assembler script
-    rm ${TMP_DIR}/ppas.sh
+    rm ${TMP_DIR}/${1}/ppas.sh
     
     echo "  ... Assembling for $1"
     
     #Assemble all of the .s files
-    for file in `find ${TMP_DIR} | grep [.]s$`
+    for file in `find ${TMP_DIR}/${1} | grep [.]s$`
     do
         /usr/bin/as -o ${file%.s}.o $file -arch $1
         if [ $? != 0 ]; then DoExitAsm $file; fi
@@ -100,10 +132,8 @@ doMacCompile()
     
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    /usr/bin/ld /usr/lib/crt1.o -F${LIB_DIR} -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/${GAME_NAME}.${1}" `cat ${TMP_DIR}/link.res` -framework Cocoa ${FRAMEWORKS}
+    /usr/bin/ld /usr/lib/crt1.o -F${LIB_DIR} -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -o "${TMP_DIR}/${1}/${GAME_NAME}" `cat ${TMP_DIR}/${1}/link.res` -framework Cocoa ${FRAMEWORKS}
     if [ $? != 0 ]; then DoExitLink ${GAME_NAME}; fi
-    
-    CleanTmp
 }
 
 # 
@@ -112,10 +142,7 @@ doMacCompile()
 doLipo()
 {
     echo "  ... Creating Universal Binary"
-    lipo -arch ${1} "${OUT_DIR}/${GAME_NAME}.${1}" -arch ${2} "${OUT_DIR}/${GAME_NAME}.${2}" -output "${OUT_DIR}/${GAME_NAME}" -create
-    
-    rm -f "${OUT_DIR}/${GAME_NAME}.${1}"
-    rm -f "${OUT_DIR}/${GAME_NAME}.${2}"
+    lipo -arch ${1} "${TMP_DIR}/${1}/${GAME_NAME}" -arch ${2} "${TMP_DIR}/${2}/${GAME_NAME}" -output "${OUT_DIR}/${GAME_NAME}" -create
 }
 
 doMacPackage()
@@ -138,7 +165,7 @@ doMacPackage()
     echo "  ... Added Private Frameworks"
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
 
-    mv "${OUT_DIR}/${GAME_NAME}" "${APP_PATH}/bin/${GAME_NAME}.app/Contents/MacOS/" 
+    mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
 
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
@@ -174,14 +201,36 @@ doMacPackage()
 
 doLinuxCompile()
 {
-    echo "todo"
-    exit 1
+    mkdir -p ${TMP_DIR}
+    echo "  ... Compiling $GAME_NAME"
+    
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    if [ $? != 0 ]; then DoExitCompile; fi
 }
 
 doLinuxPackage()
 {
     RESOURCE_DIR="${APP_PATH}/bin/"
 }
+
+doWindowsCompile()
+{
+    mkdir -p ${TMP_DIR}
+    echo "  ... Compiling $GAME_NAME"
+    
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    if [ $? != 0 ]; then DoExitCompile; fi
+}
+
+doWindowsPackage()
+{
+    RESOURCE_DIR=${APP_PATH}/bin/Resources
+    
+    echo "  ... Copying libraries"
+    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
+    cp -p -f "${LIB_DIR}"/*.a "${OUT_DIR}"
+}
+
 
 copyWithoutSVN()
 {
@@ -214,18 +263,17 @@ then
         mkdir -p "${OUT_DIR}"
     fi
     
-    if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-    then
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Mac OS X"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
-        echo "--------------------------------------------------"
-        echo "  ... Creating ${GAME_NAME}"
-        
+    echo "--------------------------------------------------"
+    echo "          Creating $GAME_NAME"
+    echo "          for $OS"
+    echo "--------------------------------------------------"
+    echo "  Running script from $APP_PATH"
+    echo "  Saving output to $OUT_DIR"
+    echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
+    echo "--------------------------------------------------"
+    echo "  ... Creating ${GAME_NAME}"
+    
+    if [ "$OS" = "$MAC" ]; then
         FPC_BIN=`which ppc386`
         doMacCompile "i386"
         FPC_BIN=`which ppcppc`
@@ -233,23 +281,12 @@ then
         
         doLipo "i386" "ppc"
         doMacPackage
-    else
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Linux"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "--------------------------------------------------"
-        echo "  ... Creating C wrapper library"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
-        CreateCWrapper >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
-        
-        echo "  ... Compiling Library"
+    elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
-        
         doLinuxPackage
+    else
+        doWindowsCompile
+        doWindowsPackage
     fi
     
     doCopyResources
@@ -262,7 +299,6 @@ fi
 
 #remove temp files on success
 rm -f ${LOG_FILE} 2>> /dev/null
-rm -rf ${TMP_DIR} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"

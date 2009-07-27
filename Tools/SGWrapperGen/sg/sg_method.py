@@ -69,13 +69,18 @@ class SGMethod(SGMetaDataContainer):
         result['uname'] = self.uname
         result['camel_uname'] = self.uname.lower()[0] + self.uname[1:]
         if self.sn != None:
+            real_params = list()
+            for p in self.params:
+                if not p.is_length_param:
+                    real_params.append(p)
+            
             if special_visitor != None:
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
             else:
-                temp = self.sn % tuple([param.name for param in self.params])
+                temp = self.sn % tuple([param.name for param in real_params])
             
             result['sn'] = temp
-            result['sn.sel'] = (self.sn % tuple(['' for param in self.params])).replace(' ', '')
+            result['sn.sel'] = (self.sn % tuple(['' for param in real_params])).replace(' ', '')
         else:
             if special_visitor != None:
                 temp = ':'.join([special_visitor(param, param == self.params[-1]) for param in self.params])

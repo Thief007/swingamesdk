@@ -132,18 +132,18 @@ _type_switcher = {
         'arrayofpoint2d': 'Point2D[] %s',
     },
     'out' : {
-        'string': 'out string %s',
-        'byte': 'out byte %s',
-        'color': 'out Color %s',
-        'timer': 'out Timer %s',
-        'point2d': 'out Point2D %s',
-#        'triangle': 'Triangle *%s'
-        'longint': 'out int %s',
-        'linesegment': 'out LineSegment %s',
-        'linesarray': 'out LineSegment[] %s',
-        'matrix2d': 'out Matrix2D %s',
+        'string':       'out string %s',
+        'byte':         'out byte %s',
+        'color':        'out Color %s',
+        'timer':        'out Timer %s',
+        'point2d':      'out Point2D %s',
+        'longint':      'out int %s',
+        'single':       'out float %s',
+        'linesegment':  'out LineSegment %s',
+        'linesarray':   'out LineSegment[] %s',
+        'matrix2d':     'out Matrix2D %s',
         'arrayofpoint2d': 'out Point2D[] %s',
-        'triangle': 'out Triangle %s',
+        'triangle':     'out Triangle %s',
     },
     'return' : {
         None: 'void %s',
@@ -307,15 +307,14 @@ _adapter_type_switcher = {
         'map': 'ref IntPtr %s'
     },
     'out': {
-        'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
-        'byte': '[Out] out byte %s',
-        'color': '[Out] out int %s',
-#        'timer': '[Out] IntPtr %s',
-        'point2d': '[Out] out Point2D %s',
-#        'triangle': 'Triangle *%s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out LineSegment[] %s',
-        'longint': '[Out] out int %s',
-        'linesegment': '[Out] out LineSegment %s',
+        'string':       '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
+        'byte':         '[Out] out byte %s',
+        'color':        '[Out] out int %s',
+        'single':       '[Out] out float %s',
+        'point2d':      '[Out] out Point2D %s',
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out LineSegment[] %s',
+        'longint':      '[Out] out int %s',
+        'linesegment':  '[Out] out LineSegment %s',
     },
     'result': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
@@ -673,6 +672,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
             
             #process all local variables
             for local_var in the_method.local_vars:
+                #declare variables
                 temp += '    %s\n' % _local_type_switcher[local_var.data_type.name.lower()] % local_var.name
                 
                 if isinstance(local_var, SGParameter) and local_var.maps_result:
@@ -702,7 +702,12 @@ def method_visitor(the_method, other, as_accessor_name = None):
                 elif type_name == 'color':
                     temp_process_result += '\n    %s = System.Drawing.Color.FromArgb(%s);' % (local_var.name[:-5], local_var.name)
                 
-                if local_var.modifier != 'out':
+                if local_var.is_length_param:
+                    temp_process_params += '%s = %s.Length;\n    ' % (
+                            local_var.name,
+                            local_var.length_of.name if not local_var.length_of.has_field else local_var.length_of.name + '.' + local_var.field_name
+                        )
+                elif local_var.modifier != 'out':
                     # copy in value
                     temp_process_params += '%s = %s;\n    ' % (
                             local_var.name,
