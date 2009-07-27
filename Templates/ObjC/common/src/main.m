@@ -5,6 +5,7 @@
 
 int main(int argc, const char* argv[])
 {
+    NSAutoreleasePool *appPool = [[NSAutoreleasePool alloc] init];
     [SGResources setAppPath:[NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding] : true];
     
     [SGAudio openAudio];
@@ -25,5 +26,6 @@ int main(int argc, const char* argv[])
     
     [SGResources releaseAllResources];
     [SGAudio closeAudio];
+    [appPool drain];
     return 0;
 }

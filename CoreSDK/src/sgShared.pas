@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
 // - 2009-07-10: Andrew : Added initialisation code
 // - 2009-06-23: Clinton: Comment/format cleanup/tweaks
 //                      : Slight optimization to NewSDLRect (redundant code)
@@ -50,6 +51,10 @@ interface
   
   // All SwinGame initialisation code must call this before performing any processing...
   procedure InitialiseSwinGame();
+  
+  {$ifdef DARWIN}
+  procedure CyclePool();
+  {$endif}
   
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
   function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
@@ -131,7 +136,6 @@ implementation
 
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
       pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
-
       objc_msgSend(pool, sel_registerName('init'));
       NSApplicationLoad();
     {$endif}
@@ -151,6 +155,16 @@ implementation
     baseSurface := nil;
   end;
   
+  {$ifdef DARWIN}
+  procedure CyclePool();
+  begin
+    //Drain the pool - releases it
+    objc_msgSend(pool, sel_registerName('drain'));
+    //Create a new pool
+    pool := objc_msgSend(NSAutoreleasePool, sel_registerName('new'));
+    objc_msgSend(pool, sel_registerName('init'));
+  end;
+  {$endif}
 
   function ToSDLColor(color: UInt32): TSDL_Color;
   begin

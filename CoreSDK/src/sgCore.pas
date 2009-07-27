@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
 // - 2009-07-24: Andrew : Added additional HSB code and renamed other color function
 // - 2009-07-10: Andrew : Moved initialisation code to sgShared
 // - 2009-07-02: Andrew : Added comments for Timer exporting.
@@ -788,6 +789,9 @@ implementation
   var
     x, y: LongInt;
   begin
+    {$ifdef DARWIN}
+    CyclePool();
+    {$endif}
     SDL_GetRelativeMouseState(x, y);
     sdlManager.ProcessEvents();
   end;
