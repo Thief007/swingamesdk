@@ -66,7 +66,7 @@ interface
     /// @field pointer: ^Point2D
     Point2DPtr = ^Point2D;
 
-    /// @type ThreePoint2D
+    /// @type Point2DArray
     /// @array_wrapper
     /// @field data: array of Point2D
     ArrayOfPoint2D = Array of Point2D;

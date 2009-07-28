@@ -8,18 +8,18 @@
 @interface SG%(name)s : NSObject
 {
 @package
-    %(name)s data;
+    %(name_lower)s data;
 }
 
-+ (NSArray *) arrayOf%(name)ss:(%(name)s *)firstPtr size:(int)sz;
-+ (void) get%(name)ss:(%(name)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz;
++ (NSArray *) arrayOf%(name)ss:(%(name_lower)s *)firstPtr size:(int)sz;
++ (void) get%(name)ss:(%(name_lower)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz;
 
-+ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat;
++ (SG%(name)s *) %(camel_name)sForData: (%(name_lower)s)dat;
 
-- (SG%(name)s *)initWith%(name)s:(%(name)s)dat;
+- (SG%(name)s *)initWith%(name)s:(%(name_lower)s)dat;
 
-- (%(name)s) data;
-- (void) setData:(%(name)s)dat;
+- (%(name_lower)s) data;
+- (void) setData:(%(name_lower)s)dat;
 
 %(static_method_headers)s
 
@@ -40,6 +40,6 @@
 }
 
 + (SGWrapped%(name)s *) %(camel_name)sWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2;
-- (id) initWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2;
+- (id) init%(name)sWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2;
 
 @end

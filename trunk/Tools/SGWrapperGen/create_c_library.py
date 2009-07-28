@@ -10,7 +10,7 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 import logging
 import sys
 
-from sg import parser_runner
+from sg import parser_runner, wrapper_helper
 from sg.sg_cache import logger, find_or_add_file
 from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
@@ -39,137 +39,155 @@ _module_c_function = ''
 _type_switcher = {
     None : {    
         #Pascal type: what it maps to
-        'single': 'float %s',
-        'longint': 'int %s',
-        'soundeffect': 'SoundEffect %s',
-        'music': 'Music %s',
-        'string': 'char *%s',
-        'boolean': 'bool %s',
-        'byte': 'unsigned char %s',
-        'timer': 'Timer %s',
-        'color': 'Color %s',
-        'resourcekind': 'ResourceKind %s',
-        'uint32': 'unsigned int %s',
-        'bitmap': 'Bitmap %s',
-        'pointer': 'void *%s',
-        'single[0..2][0..2]': 'float %s[3][3]',
-        '^bitmapdata': 'BitmapData *%s',
-        '^spritedata': 'SpriteData *%s',
-        '^timerdata': 'TimerData *%s',
-        'boolean[0..n - 1][0..n - 1]': 'bool *%s',
-        'bitmap[0..n - 1]': 'Bitmap *%s',
-        'spritekind': 'SpriteKind %s',
-        'longint[0..n - 1]': 'int *%s',
-        'vector': 'Vector %s',
-        'spriteendingaction': 'SpriteEndingAction %s',
-        'point2d': 'Point2D %s',
-        'point2dptr': 'Point2D *%s',
-        'point2d[0..2]': 'Point2D %s[3]',
-        'point2d[0..n - 1]': 'Point2D *%s',
-        '^linesegment': 'LineSegment *%s',
-        'linesegment': 'LineSegment %s',
-        'sprite': 'Sprite %s',
-        'rectangle': 'Rectangle %s',
-        'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s',
-        'linesegmentptr': 'LineSegment *%s',
-        'font': 'Font %s',
-        'fontalignment': 'FontAlignment %s',
-        'fontstyle': 'FontStyle %s',
-        'mousebutton': 'MouseButton %s',
-        'uint16': 'unsigned short %s',
-        'singleptr': 'float *%s',
-        'keycode': 'KeyCode %s',
-        'bitmapptr': 'Bitmap *%s',
-        '^bitmap': 'Bitmap *%s',
-        'longintptr': 'int *%s',
-        '^longint': 'int *%s',
-        'collisionside': 'CollisionSide %s',
-        'longint[0..n - 1][0..n - 1]': 'int *%s',
-        'mapdata': 'MapData %s',
-        'mapanimationdata[0..n - 1]': 'MapAnimationData *%s',
-        'maplayerdata[0..n - 1]': 'MapLayerData *%s',
-        'mapcollisiondata': 'MapCollisionData %s',
-        'tagmapdetails[0..n - 1][0..23]': 'MapTagDetails *%s[24]',
-        '^maprecord': 'MapRecord *%s',
-        'map': 'Map %s',
-        'maptag': 'MapTag %s',
-        'maptile': 'MapTile %s',
-        'circle': 'Circle %s',
-        'arrayofpoint2d': 'Point2D *%s',
-        'matrix2d': 'Matrix2D %s',
-        'freenotifier': 'FreeNotifier %s',
-        None: 'void %s'
+        'string':           'char *%s',
+        'boolean':          'bool %s',
+        'byte':             'unsigned char %s',
+        'uint32':           'unsigned int %s',
+        'single':           'float %s',
+        'longint':          'int %s',
+        'uint16':           'unsigned short %s',
+        
+        'soundeffect':      'sound_effect %s',
+        'music':            'music %s',
+        'timer':            'timer %s',
+        'bitmap':           'bitmap %s',
+        'color':            'color %s',
+        'sprite':           'sprite %s',
+        'font':             'font %s',
+        'map':              'map %s',
+        
+        'matrix2d':         'matrix2d %s',
+        'vector':           'vector %s',
+        'point2d':          'point2d %s',
+        'linesegment':      'line_segment %s',
+        'rectangle':        'rectangle %s',
+        'triangle':         'triangle %s',
+        'circle':           'circle %s',
+        
+        'keycode':              'key_code %s',
+        'resourcekind':         'resource_kind %s',
+        'spritekind':           'sprite_kind %s',
+        'spriteendingaction':   'sprite_ending_action %s',
+        'fontalignment':        'font_alignment %s',
+        'fontstyle':            'font_style %s',
+        'mousebutton':          'mouse_button %s',
+        'collisionside':        'collision_side %s',
+        
+        
+        'pointer':          'void *%s',
+        '^bitmapdata':      'bitmap_data *%s',
+        '^spritedata':      'sprite_data *%s',
+        '^timerdata':       'timer_data *%s',
+        
+        'single[0..2][0..2]':           'float %s[3][3]',
+        'boolean[0..n - 1][0..n - 1]':  'bool *%s',
+        'bitmap[0..n - 1]':             'bitmap *%s',
+        'longint[0..n - 1]':            'int *%s',
+        
+        'point2dptr':           'point2d *%s',
+        'point2d[0..2]':        'point2d %s[3]',
+        'point2d[0..n - 1]':    'point2d *%s',
+        
+        'singleptr':        'float *%s',
+        '^linesegment':     'line_segment *%s',
+        'linesarray':       'lines_array %s',
+        'linesegmentptr':   'line_segment *%s',
+        'bitmapptr':        'bitmap *%s',
+        '^bitmap':          'bitmap *%s',
+        'longintptr':       'int *%s',
+        '^longint':         'int *%s',
+        
+        'longint[0..n - 1][0..n - 1]':  'int *%s',
+        'mapanimationdata[0..n - 1]':   'map_animation_data *%s',
+        'maplayerdata[0..n - 1]':       'map_layer_data *%s',
+        'arrayofpoint2d':               'point2d *%s',
+        
+        'tagmapdetails[0..n - 1][0..23]':   'map_tag_details *%s[24]',
+        '^maprecord':                       'map_record *%s',
+        'mapdata':                          'map_data %s',
+        'maptag':                           'map_tag %s',
+        'mapcollisiondata':                 'map_collision_data %s',
+        'maptile':                          'map_tile %s',
+        
+        'freenotifier':     'free_notifier %s',
+        None:               'void %s'
     },
     'const' : {
-        'point2d': 'Point2D *%s',
-        'linesegment': 'LineSegment *%s',
-        'rectangle': 'Rectangle *%s',
-        'matrix2d': 'Matrix2D %s',
-        'vector': 'Vector *%s',
-        'linesarray': 'LinesArray %s',
-        'triangle': 'Triangle %s',
-        'bitmaparray': 'Bitmap %s',
+        'point2d':      'point2d *%s',
+        'linesegment':  'line_segment *%s',
+        'rectangle':    'rectangle *%s',
+        'matrix2d':     'matrix2d %s',
+        'vector':       'vector *%s',
+        'circle':       'circle *%s',
+        'triangle':     'triangle %s',
+        
+        'linesarray':   'lines_array %s',
+        'bitmaparray':  'bitmap %s',
         'longintarray': 'int *%s',
-        'circle': 'Circle *%s',
     },
     'var' : {
-        'soundeffect': 'SoundEffect *%s',
-        'music': 'Music *%s',
-        'timer': 'Timer *%s',
-        'string': 'char *%s',
-        'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s',
-        'font': 'Font *%s',
-        'bitmap': 'Bitmap *%s',
-        'sprite': 'Sprite *%s',
-        'matrix2d': 'Matrix2D %s',
-        'map': 'Map *%s',
-        'arrayofpoint2d': 'Point2D *%s',
-        'longintarray': 'int *%s',
+        'string':       'char *%s',
+        
+        'soundeffect':  'sound_effect *%s',
+        'music':        'music *%s',
+        'timer':        'timer *%s',
+        'font':         'font *%s',
+        'bitmap':       'bitmap *%s',
+        'sprite':       'sprite *%s',
+        'map':          'map *%s',
+        
+        'matrix2d':     'matrix2d %s',
+        'triangle':     'triangle %s',
+        
+        'linesarray':       'lines_array %s',
+        'arrayofpoint2d':   'point2d *%s',
+        'longintarray':     'int *%s',
     },
     'out' : {
-        'string': 'char *%s',
-        'byte': 'unsigned char *%s',
-        'color': 'unsigned int *%s',
-        'timer': 'Timer *%s',
-        'point2d': 'Point2D *%s',
-        'single': 'float *%s',
-#        'triangle': 'Triangle *%s'
-        'longint': 'int *%s',
-        'linesegment': 'LineSegment *%s',
+        'string':       'char *%s',
+        'byte':         'unsigned char *%s',
+        'color':        'color *%s',
+        # 'timer': 'timer *%s',
+        'point2d':      'point2d *%s',
+        'single':       'float *%s',
+        'longint':      'int *%s',
+        'linesegment':  'line_segment *%s',
     },
     'return' : {
-        None: 'void %s',
-        'boolean': 'bool %s',
-        'music': 'Music %s',
-        'soundeffect': 'SoundEffect %s',
-        'single': 'float %s',
-        'point2d': 'Point2D %s',
-        'longint': 'int %s',
-        'timer': 'Timer %s',
-        'byte': 'unsigned char %s',
-        'color': 'Color %s',
-        'uint32': 'unsigned int %s',
-        'vector': 'Vector %s',
-        'circle': 'Circle %s',
-        'rectangle': 'Rectangle %s',
-        'linesegment': 'LineSegment %s',
-        'bitmap': 'Bitmap %s',
-        'collisionside': 'CollisionSide %s',
-        'font': 'Font %s',
-        'map': 'Map %s',
-        'sprite': 'Sprite %s',
-        'fontstyle': 'FontStyle %s',
-        'maptag': 'MapTag %s',
-        'maptile': 'MapTile %s',
-        'string': 'String %s',
-        'linesarray': 'LineSegment *%s',
-        'matrix2d': 'Matrix2D %s',
-        'arrayofpoint2d': 'Point2D *%s',
-        'triangle': 'Triangle %s',
-        'spriteendingaction': 'SpriteEndingAction %s',
-        'spritekind': 'SpriteKind %s',
+        None:           'void %s',
+        'boolean':      'bool %s',
+        'single':       'float %s',
+        'longint':      'int %s',
+        'byte':         'unsigned char %s',
+        'uint32':       'unsigned int %s',
+        
+        'music':        'music %s',
+        'soundeffect':  'sound_effect %s',
+        'timer':        'timer %s',
+        'bitmap':       'bitmap %s',
+        'font':         'font %s',
+        'map':          'map %s',
+        'sprite':       'sprite %s',
+        
+        'color':        'color %s',
+        'point2d':      'point2d %s',
+        'vector':       'vector %s',
+        'circle':       'circle %s',
+        'triangle':     'triangle %s',
+        'rectangle':    'rectangle %s',
+        'linesegment':  'line_segment %s',
+        'matrix2d':     'matrix2d %s',
+        
+        'linesarray':       'line_segment *%s',
+        'arrayofpoint2d':   'point2d *%s',
+        
+        'collisionside':        'collision_side %s',
+        'fontstyle':            'font_style %s',        
+        'spriteendingaction':   'sprite_ending_action %s',
+        'spritekind':           'sprite_kind %s',
+        
+        'maptag': 'map_tag %s',
+        'maptile': 'map_tile %s',
     },
 }
 
@@ -185,134 +203,148 @@ _val_switcher = {
 
 _adapter_type_switcher = {
     None: {
-        'single': 'float %s',
-        'longint': 'int %s',
-        'soundeffect': 'void *%s',
-        'music': 'void *%s',
-        'string': 'char *%s',
-        'boolean': 'int %s',
-        'byte': 'unsigned char %s',
-        'color': 'unsigned int %s',
-        'timer': 'void *%s',
-        'resourcekind': 'int %s',
-        'uint32': 'unsigned int %s',
-        'bitmap': 'void *%s',
-        'rectangle': 'Rectangle %s',
-        'linesegment': 'LineSegment %s',
-        'triangle': 'Triangle %s',
-        'point2d': 'Point2D %s',
-        'sprite': 'void *%s',
-        'linesarray': 'LinesArray %s',
-        'font': 'void *%s',
-        'fontalignment': 'int %s',
-        'fontstyle': 'int %s',
-        'mousebutton': 'int %s',
-        'uint16': 'unsigned short %s',
-        'vector': 'Vector %s',
-        'spriteendingaction': 'SpriteEndingAction %s',
-        'keycode': 'KeyCode %s',
-        'matrix2d': 'Matrix2D %s',
-        'collisionside': 'CollisionSide %s',
-        'map': 'MapRecord *%s',
-        'maptag': 'MapTag %s',
-        'maptile': 'MapTile %s',
-        'circle': 'Circle %s',
-        'arrayofpoint2d': 'Point2D *%s',
-        'psdl_surface': 'void *%s',
-        'boolean[0..n - 1][0..n - 1]': 'bool *%s',
-        'boolean[0..n - 1]': 'bool *%s',
-        'bitmap[0..n - 1]': 'void *%s',
-        'spritekind': 'int %s',
-        'longint[0..n - 1]': 'int *%s',
-        'longintarray': 'int *%s',
-        'longint[0..n - 1][0..n - 1]': 'int *%s',
-        'mapdata': 'MapData %s',
-        'mapanimationdata[0..n - 1]': 'MapAnimationData *%s',
-        'maplayerdata[0..n - 1]': 'MapLayerData *%s',
-        'mapcollisiondata': 'MapCollisionData %s',
-        'maptagdetails[0..n - 1][0..23]': 'MapTagDetails *%s[24]',
-        'point2dptr': 'Point2D *%s',
-        'point2d[0..n - 1]': 'Point2D *%s',
-        'point2d[0..2]': 'Point2D %s[3]',
-        'linesegmentptr': 'LineSegment *%s',
-        'single[0..2][0..2]': 'float %s[3][3]',
-        'singleptr': 'float *%s',
-        'longintptr': 'int *%s',
-        'bitmapptr': 'void *%s',
-        'freenotifier': 'void (*%s)(void*)',
-        None: 'void %s'
+        'single':       'float %s',
+        'longint':      'int %s',
+        'string':       'char *%s',
+        'boolean':      'int %s',
+        'byte':         'unsigned char %s',
+        'uint32':       'unsigned int %s',
+        'uint16':       'unsigned short %s',
+        
+        'soundeffect':  'void *%s',
+        'music':        'void *%s',
+        'timer':        'void *%s',
+        'bitmap':       'void *%s',
+        'sprite':       'void *%s',
+        'font':         'void *%s',
+        
+        'color':        'unsigned int %s',
+        
+        'resourcekind':     'resource_kind %s',
+        'fontalignment':    'font_alignment %s',
+        'fontstyle':        'font_style %s',
+        'mousebutton':      'mouse_button %s',
+        
+        'point2d':      'point2d %s',
+        'vector':       'vector %s',
+        'matrix2d':     'matrix2d %s',
+                
+        'rectangle':    'rectangle %s',
+        'linesegment':  'line_segment %s',
+        'triangle':     'triangle %s',
+        
+        'linesarray':   'lines_array %s',
+        
+        'keycode':              'key_code %s',
+        'spriteendingaction':   'sprite_ending_action %s',
+        'collisionside':        'collision_side %s',
+        
+        'map':              'map_record *%s',
+        'maptag':           'map_tag %s',
+        'maptile':          'map_tile %s',
+        'circle':           'circle %s',
+        'arrayofpoint2d':   'point2d *%s',
+        'spritekind':       'sprite_kind %s',
+        
+        'psdl_surface':     'void *%s',
+        
+        'boolean[0..n - 1][0..n - 1]':  'bool *%s',
+        'boolean[0..n - 1]':            'bool *%s',
+        'bitmap[0..n - 1]':             'void *%s',
+        
+        'longint[0..n - 1]':            'int *%s',
+        'longintarray':                 'int *%s',
+        'longint[0..n - 1][0..n - 1]':  'int *%s',
+        
+        'mapdata':                          'map_data %s',
+        'mapanimationdata[0..n - 1]':       'map_animation_data *%s',
+        'maplayerdata[0..n - 1]':           'map_layer_data *%s',
+        'mapcollisiondata':                 'map_collision_data %s',
+        'maptagdetails[0..n - 1][0..23]':   'map_tag_details *%s[24]',
+        'single[0..2][0..2]':               'float %s[3][3]',
+        
+        'point2dptr':           'point2d *%s',
+        'point2d[0..n - 1]':    'point2d *%s',
+        'point2d[0..2]':        'point2d %s[3]',
+        'linesegmentptr':       'line_segment *%s',
+        'singleptr':            'float *%s',
+        'longintptr':           'int *%s',
+        'bitmapptr':            'void *%s',
+        'freenotifier':         'void (*%s)(void*)',
+        
+        None:                   'void %s'
     },
     'const' : {
-        'point2d': 'Point2D *%s',
-        'linesegment': 'LineSegment *%s',
-        'rectangle': 'Rectangle *%s',
-        'matrix2d': 'Matrix2D %s',
-        'triangle': 'Triangle %s',
-        'vector': 'Vector *%s',
-        'linesarray': 'LinesArray %s',
+        'point2d':      'point2d *%s',
+        'linesegment':  'line_segment *%s',
+        'rectangle':    'rectangle *%s',
+        'matrix2d':     'matrix2d %s',
+        'triangle':     'triangle %s',
+        'vector':       'vector *%s',
+        'linesarray':   'lines_array %s',
         'longintarray': 'int *%s',
-        'bitmaparray': 'Bitmap %s',
-        'circle': 'Circle *%s'
+        'bitmaparray':  'bitmap %s',
+        'circle':       'circle *%s'
     },
     'var': {
-        'soundeffect': 'SoundEffect *%s',
-        'music': 'Music *%s',
-        'timer': 'Timer *%s',
-        'byte': 'unsigned char *%s',
-        'string': 'char *%s',
-        'triangle': 'Triangle %s',
-        'linesarray': 'LinesArray %s',
-        'font': 'Font *%s',
-        'bitmap': 'Bitmap *%s',
-        'sprite': 'Sprite *%s',
-        'map': 'Map *%s'
+        'soundeffect':  'sound_effect *%s',
+        'music':        'music *%s',
+        'timer':        'timer *%s',
+        'byte':         'unsigned char *%s',
+        'string':       'char *%s',
+        'triangle':     'triangle %s',
+        'linesarray':   'lines_array %s',
+        'font':         'font *%s',
+        'bitmap':       'bitmap *%s',
+        'sprite':       'sprite *%s',
+        'map':          'map *%s'
     },
     'out': {
         'string':       'char *%s',
         'byte':         'unsigned char *%s',
         'color':        'unsigned int *%s',
         'timer':        'void *%s',
-        'point2d':      'Point2D *%s',
+        'point2d':      'point2d *%s',
         'single':       'float *%s',
         'longint':      'int *%s',
-        'linesegment':  'LineSegment *%s',
-        'linesarray':   'LinesArray %s',
+        'linesegment':  'line_segment *%s',
+        'linesarray':   'lines_array %s',
     },
     'result' : {
-        'string': 'char *%s',
-        'linesarray': 'LineSegment *%s',
-        'matrix2d': 'Matrix2D %s',
-        'arrayofpoint2d': 'Point2D *%s',
-        'triangle': 'Triangle %s',
-        'longintarray': 'int *%s',
+        'string':           'char *%s',
+        'linesarray':       'line_segment *%s',
+        'matrix2d':         'matrix2d %s',
+        'arrayofpoint2d':   'point2d *%s',
+        'triangle':         'triangle %s',
+        'longintarray':     'int *%s',
     },
-    # Mapping of the return type of a function
+    # mapping of the return type of a function
     'return' : {
         None: 'void %s',
         'boolean': 'int %s',
-        'music': 'Music %s',
-        'soundeffect': 'SoundEffect %s',
+        'music': 'music %s',
+        'soundeffect': 'sound_effect %s',
         'single': 'float %s',
-        'point2d': 'Point2D %s',
+        'point2d': 'point2d %s',
         'longint': 'int %s',
-        'timer': 'Timer %s',
+        'timer': 'timer %s',
         'byte': 'unsigned char %s',
         'color': 'unsigned int %s',
         'uint32': 'unsigned int %s',
-        'vector': 'Vector %s',
-        'circle': 'Circle %s',
-        'rectangle': 'Rectangle %s',
-        'linesegment': 'LineSegment %s',
-        'bitmap': 'Bitmap %s',
-        'collisionside': 'CollisionSide %s',
-        'font': 'Font %s',
-        'map': 'Map %s',
-        'sprite': 'Sprite %s',
-        'fontstyle': 'FontStyle %s',
-        'maptag': 'MapTag %s',
-        'maptile': 'MapTile %s',
-        'spriteendingaction': 'SpriteEndingAction %s',
-        'spritekind': 'SpriteKind %s',
+        'vector': 'vector %s',
+        'circle': 'circle %s',
+        'rectangle': 'rectangle %s',
+        'linesegment': 'line_segment %s',
+        'bitmap': 'bitmap %s',
+        'collisionside': 'collision_side %s',
+        'font': 'font %s',
+        'map': 'map %s',
+        'sprite': 'sprite %s',
+        'fontstyle': 'font_style %s',
+        'maptag': 'map_tag %s',
+        'maptile': 'map_tile %s',
+        'spriteendingaction': 'sprite_ending_action %s',
+        'spritekind': 'sprite_kind %s',
     }
 
 }
@@ -436,7 +468,10 @@ def method_visitor(the_method, other):
     details = the_method.to_keyed_dict(
         other['param visitor'], other['type visitor'], other['arg visitor'])
     
-    other['header writer'].write('%(return_type)s' % details % details['uname'])
+    if other['c writer'] == None: #writing lib... use given names...
+        other['header writer'].write('%(return_type)s' % details % details['uname'])
+    else:
+        other['header writer'].write('%(return_type)s' % details % details['uname_lower'])
     other['header writer'].write('(%(params)s);' % details) 
     other['header writer'].writeln('')
     
@@ -444,7 +479,7 @@ def method_visitor(the_method, other):
         if the_method.is_function:
             #%(calls.name)s(%(calls.args)s)
             details['the_call'] = other['arg visitor']('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
-            other['c writer'].write(_module_c_function % details % details['uname'])
+            other['c writer'].write(_module_c_function % details % details['uname_lower'])
         else:
             other['c writer'].write(_module_c_method % details)
             
@@ -453,19 +488,19 @@ def method_visitor(the_method, other):
             details = the_method.to_keyed_dict(
                 _const_strip_param_visitor, other['type visitor'], _const_strip_arg_visitor)
             details['uname'] = details['uname'] + '_byval'
+            details['uname_lower'] = details['uname_lower'] + '_byval'
             details['name'] = details['uname']
             
             if the_method.is_function:    
                 details['the_call'] = _const_strip_arg_visitor('%(calls.name)s(%(calls.args)s)' % details, None, the_method.return_type)
-                other['c writer'].write(_module_c_function % details % details['uname'])
+                other['c writer'].write(_module_c_function % details % details['uname_lower'])
             else:
                 other['c writer'].write(_module_c_method % details)
             
             # Also write to header
-            other['header writer'].write('%(return_type)s' % details % details['uname'])
+            other['header writer'].write('%(return_type)s' % details % details['uname_lower'])
             other['header writer'].write('(%(params)s);' % details) 
             other['header writer'].writeln('')
-            
     
     return other
 
@@ -509,35 +544,35 @@ def write_c_type_for(member, other):
         if member.is_pointer_wrapper:
             # assert len(member.fields) == 1
             the_type = member.data_type
-            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type, None) % member.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type, None) % member.lower_name)
         elif member.is_data_wrapper:
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
-            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.lower_name)
         elif member.wraps_array:
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
-            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.lower_name)
         elif member.data_type.is_procedure:
             assert member.data_type.method != None
             #typedef float(*pt2Func)(float, float);
             m = member.data_type.method
-            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(member.data_type) % m.name)
+            other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(member.data_type) % m.lower_name)
         else:
             logger.error('CREATE C  : Unknown class type for %s', member.uname)
             assert False
     elif member.is_struct:
         #typedef struct %s_struct { } struct;
         writer = other['header writer']
-        writer.write('typedef struct %s_struct { \n' % member.name)
+        writer.write('typedef struct { \n')
         for field in member.field_list:
-            writer.writeln('    %s;' % adapter_type_visitor(field.data_type) % field.name)
-        writer.writeln('} %s;\n' % member.name)
+            writer.writeln('    %s;' % adapter_type_visitor(field.data_type) % field.lower_name)
+        writer.writeln('} %s;\n' % member.lower_name)
     elif member.is_enum:
         #enum id { list }
-        other['header writer'].write('typedef enum %s_enum { \n    ' % member.name)
-        other['header writer'].write( ',\n    '.join([v for v in member.values]))
-        other['header writer'].writeln('\n} %s;\n' % member.name)
+        other['header writer'].write('typedef enum { \n    ')
+        other['header writer'].write( ',\n    '.join([wrapper_helper.upper_name(v) for v in member.values]))
+        other['header writer'].writeln('\n} %s;\n' % member.lower_name)
 
 def write_c_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''

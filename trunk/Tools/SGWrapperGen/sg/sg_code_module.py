@@ -46,8 +46,11 @@ class SGCodeModule(SGMetaDataContainer):
     def to_keyed_dict(self, doc_transform = None, type_visitor = None, array_idx_sep = ', ', param_visitor = None, map_data_value = None):
         """Export a keyed dictionary of the class for template matching"""
         
+        import wrapper_helper
+        
         result = dict()
         result['name'] = self.name
+        result['name_lower'] = wrapper_helper.lower_name(self.name)
         result['camel_name'] = self.name.lower()[0] + self.name[1:]
         result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['static'] = 'static ' if self.is_static else ''

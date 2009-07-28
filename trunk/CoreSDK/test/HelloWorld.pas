@@ -5,14 +5,14 @@ uses
 
 procedure Main();
 begin
-  OpenAudio();
+  //OpenAudio();
   
   OpenGraphicsWindow('Hello World', 800, 600);
   
   repeat // The game loop...
     ProcessEvents();
     
-    DrawBitmap(GetBitmap('SplashBack'), 0, 0);
+    DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
     FillRectangle(ColorWhite, 10, 10, 780, 580);
     
     RefreshScreen();
@@ -20,7 +20,7 @@ begin
   
   ReleaseAllResources();
   
-  CloseAudio();
+  //CloseAudio();
 end;
 
 begin

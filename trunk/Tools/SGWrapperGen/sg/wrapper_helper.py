@@ -237,3 +237,51 @@ def create_property_for_field(in_class, field):
     
     return prop
     
+def upper_name(string):
+    if string == None: return None
+    result = ''
+    last_was_us = False
+    last_was_lc = False
+    for i,c in enumerate(string):
+        if c.islower():
+            result += c.upper()
+            last_was_us = False
+            last_was_lc = True
+        elif c in ['_','-']:
+            last_was_us = True
+            result += '_'
+        elif c.isupper():
+            if (not last_was_us) and last_was_lc and (i > 0):
+                result += '_'
+            result += c
+            last_was_us = False
+            last_was_lc = False
+        else:
+            result += c
+            last_was_us = False
+    return result
+
+def lower_name(string):
+    if string == None: return None
+    string = string.replace('2D', '2d')
+    result = ''
+    last_was_us = False
+    last_was_lc = False
+    for i,c in enumerate(string):
+        if c.islower():
+            result += c
+            last_was_us = False
+            last_was_lc = True
+        elif c in ['_','-']:
+            last_was_us = True
+            result += '_'
+        elif c.isupper():
+            if (not last_was_us) and last_was_lc and (i > 0):
+                result += '_'
+            result += c.lower()
+            last_was_us = False
+            last_was_lc = False
+        else:
+            result += c
+            last_was_us = False
+    return result

@@ -38,41 +38,18 @@ _type_switcher = {
                 
         'pointer': 'id',
 
-        'color': 'Color',
+        'color': 'color',
 
-        'freenotifier': 'FreeNotifier',
+        'freenotifier': 'free_notifier',
 
-        'resourcekind':         'ResourceKind',
-        'mousebutton':          'MouseButton',
-        'keycode':              'KeyCode',
-        'spriteendingaction':   'SpriteEndingAction',
-        'maptag':               'MapTag',
-        'spritekind':           'SpriteKind',
-        'fontalignment':        'FontAlignment',
-        'fontstyle':            'FontStyle',
-        
-        'collisionside': 'CollisionSide %s',
-        
-        #'maptile':              'MapTile',
-        
-        
-        'single[0..2][0..2]': 'float %s[3][3]',
-        'psdl_surface': 'IntPtr %s',
-        'boolean[0..n - 1][0..n - 1]': 'bool[][] %s',
-        'bitmap[0..n - 1]': 'Bitmap[] %s',
-        'longint[0..n - 1]': 'int[] %s',
-        'vector': 'Vector %s',
-        'point2d[0..2]': 'Point2D %s[3]',
-        'point2d[0..n - 1]': 'Point2D[] %s',
-        'linesegment': 'LineSegment %s',
-        'linesarray': 'LineSegment[] %s',
-        'longint[0..n - 1][0..n - 1]': 'int[][] %s',
-        'mapdata': 'MapData %s',
-        'animationdata[0..n - 1]': 'AnimationData[] %s',
-        'layerdata[0..n - 1]': 'LayerData[] %s',
-        'collisiondata': 'CollisionData %s',
-        'maptagdetails[0..n - 1][0..23]': 'MapTag[][24] %s',
-        'arrayofpoint2d': 'Point2D[] %s',
+        'resourcekind':         'resource_kind',
+        'mousebutton':          'mouse_button',
+        'keycode':              'key_code',
+        'spriteendingaction':   'sprite_ending_action',
+        'maptag':               'map_tag',
+        'spritekind':           'sprite_kind',
+        'fontalignment':        'font_alignment',
+        'fontstyle':            'font_style',
     },
     'const' : {
         'point2d':      'SGPoint2D *',
@@ -99,14 +76,11 @@ _type_switcher = {
         
         'triangle':     'SGTriangle *',
         'matrix2d':     'SGMatrix2D *',
-        
-        'linesarray': 'LineSegment[] %s',
-        'arrayofpoint2d': 'Point2D[] %s',
     },
     'out' : {
         'string':       'NSString *',
         'byte':         'unsigned char *',
-        'color':        'Color *',
+        'color':        'color *',
         
         'point2d':      'SGPoint2D *',
         
@@ -134,7 +108,7 @@ _type_switcher = {
         'arrayofpoint2d':   'NSArray *',
         'linesarray':       'NSArray *',
                 
-        'color':        'Color',
+        'color':        'color',
         
         #basic types
         'single':       'float',
@@ -144,12 +118,12 @@ _type_switcher = {
         'string':       'NSString *',
         
         #enums
-        'collisionside':        'CollisionSide',
-        'fontstyle':            'FontStyle',
-        'maptag':               'MapTag',
-        'maptile':              'MapTile',
-        'spriteendingaction':   'SpriteEndingAction',
-        'spritekind':           'SpriteKind',
+        'collisionside':        'collision_side',
+        'fontstyle':            'font_style',
+        'maptag':               'map_tag',
+        'maptile':              'map_tile',
+        'spriteendingaction':   'sprite_ending_action',
+        'spritekind':           'sprite_kind',
         
         #arrays + structs
         'matrix2d':     'SGMatrix2D *',
@@ -204,14 +178,14 @@ _data_switcher = {
         # 'matrix2d':     '[SGMatrix2D matrix2DForData:%s]',
         # 'triangle':     '[SGTriangle triangleForData:%s]',
         
-        'keycode':              '(KeyCode)%s',
-        'mousebutton':          '(MouseButton)%s',
-        'spriteendingaction':   '(SpriteEndingAction)%s',
-        'spritekind':           '(SpriteKind)%s',
-        'maptag':               '(MapTag)%s',
-        'collisionside':        '(CollisionSide)%s',
-        'fontalignment':        '(FontAlignment)%s',
-        'fontstyle':            '(FontStyle)%s'
+        'keycode':              '(key_code)%s',
+        'mousebutton':          '(mouse_button)%s',
+        'spriteendingaction':   '(sprite_ending_action)%s',
+        'spritekind':           '(sprite_kind)%s',
+        'maptag':               '(map_tag)%s',
+        'collisionside':        '(collision_side)%s',
+        'fontalignment':        '(font_alignment)%s',
+        'fontstyle':            '(font_style)%s'
     },
     #Argument with a parameter value
     'arg_val' : 
@@ -259,7 +233,7 @@ local_variable_switcher = {
     'declare':
     {
         'boolean':          'BOOL %(var)s;\n    ',
-        'color':            'Color %(var)s;\n    ',
+        'color':            'color %(var)s;\n    ',
         'longint':          'int %(var)s;\n    ',
         
         'soundeffect':      'SGSoundEffect *%(var)s;\n    ',
@@ -267,19 +241,19 @@ local_variable_switcher = {
         'bitmap':           'SGBitmap *%(var)s;\n    ',
         
         'string':           'char %(var)s[%(size)s];\n    ',
-        'matrix2d':         'Matrix2D %(var)s;\n    ',
-        'triangle':         'Triangle %(var)s;\n    ',
+        'matrix2d':         'matrix2d %(var)s;\n    ',
+        'triangle':         'triangle %(var)s;\n    ',
         
         #arrays for structs
-        'linesarray':       'LineSegment %(var)s[%(size)s];\n    ',
+        'linesarray':       'line_segment %(var)s[%(size)s];\n    ',
         'longintarray':     'int %(var)s[%(size)s];\n    ',
-        'bitmaparray' :     'Bitmap %(var)s[%(size)s];\n    ',
-        'arrayofpoint2d':   'Point2D %(var)s[%(size)s];\n    ',
+        'bitmaparray' :     'bitmap %(var)s[%(size)s];\n    ',
+        'arrayofpoint2d':   'point2d %(var)s[%(size)s];\n    ',
         
         #out structs
-        'point2d':          'Point2D %(var)s;\n    ',
-        'linesegment':      'LineSegment %(var)s;\n    ',
-        'vector':           'Vector %(var)s;\n    ',
+        'point2d':          'point2d %(var)s;\n    ',
+        'linesegment':      'line_segment %(var)s;\n    ',
+        'vector':           'vector %(var)s;\n    ',
         
         'longint':          'int %s;\n    ',
     },

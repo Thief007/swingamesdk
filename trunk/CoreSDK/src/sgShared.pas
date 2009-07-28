@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-29: Andrew : Added flag for opened audio.
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
 //                      : Fixed possible double release of AutoRelease pool
 // - 2009-07-10: Andrew : Added initialisation code
@@ -85,8 +86,10 @@ interface
 
     // This flag is set to true if an error message has occured. Used only by
     // the generated library code.
-    HasException: Boolean;
-
+    HasException: Boolean = False;
+    
+    // This fkag indicates if the audio has been opened.
+    AudioOpen: Boolean = False;
   const
     DLL_VERSION = 300000;
     {$ifndef FPC}

@@ -8,12 +8,12 @@
 @interface SG%(name)s : NSObject
 {
 @package
-    %(name)s data;
+    %(name_lower)s data;
 }
 
-+ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat;
++ (SG%(name)s *) %(camel_name)sForData: (%(name_lower)s)dat;
 
-- (id)initWith%(name)s:(%(name)s)dat;
+- (id)initWith%(name)s:(%(name_lower)s)dat;
 
 - (%(element.type)s) valueAtIndex:%(element.idx.params)s;
 - (void) setValueAtIndex:%(element.idx.params)s toValue:(%(element.type)s)value;

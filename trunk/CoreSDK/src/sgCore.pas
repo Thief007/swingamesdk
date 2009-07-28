@@ -9,6 +9,7 @@
 //
 // Version 3:
 // - 2009-07-28: Andrew : Calling ShowLogos splash screen
+//                      : Added simple random funtions.
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
 // - 2009-07-24: Andrew : Added additional HSB code and renamed other color function
 // - 2009-07-10: Andrew : Moved initialisation code to sgShared
@@ -231,6 +232,21 @@ interface
   /// @lib RefreshScreenRestrictFPS
   /// @uname RefreshScreenRestrictFPS
   procedure RefreshScreen(TargetFPS: UInt32); overload;
+  
+  //----------------------------------------------------------------------------
+  // Random
+  //----------------------------------------------------------------------------
+  
+  /// Generates a random number between 0 and 1.
+  ///
+  /// @lib
+  function Random() : Single; overload;
+  
+  /// Generates a random integer up to (but not including) ubound. Effectively,
+  /// the ubound value specifies the number of random values to create.
+  ///
+  /// @lib RandomUpTo
+  function Random(ubound: LongInt): LongInt; overload;
   
   //----------------------------------------------------------------------------
   // Color
@@ -1125,6 +1141,21 @@ implementation
     end;
     result := 0;
   end;
+  
+  //----------------------------------------------------------------------------
+  // Random
+  //----------------------------------------------------------------------------
+  
+  function Random() : Single; overload;
+  begin
+    result := System.Random();
+  end;
+  
+  function Random(ubound: LongInt): LongInt; overload;
+  begin
+    result := System.Random(ubound);
+  end;
+
 
 //=============================================================================
 

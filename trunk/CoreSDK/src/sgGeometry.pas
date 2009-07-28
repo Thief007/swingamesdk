@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-07-29: Andrew : Renamed cos, sin, tan to avoid conflict in c
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct types
 // - 2009-07-05: Clinton:
 // - 2009-07-03: Andrew : Started adding class indicators
@@ -606,23 +607,23 @@ interface
   function MatrixToString(const m: Matrix2D) : String;
   
   //----------------------------------------------------------------------------
-  // Cos/Sin/Tan accepting degrees
+  // Cosine/Sin/Tan accepting degrees
   //----------------------------------------------------------------------------
   
   /// Returns the cosine of the passed in angle (in degrees).
   ///
   /// @lib
-  function Cos(angle: Single): Single;
+  function Cosine(angle: Single): Single;
   
   /// Returns the sine of the passed in angle (in degrees).
   ///
   /// @lib
-  function Sin(angle: Single): Single;
+  function Sine(angle: Single): Single;
   
   /// Returns the tangent of the passed in angle (in degrees).
   ///
   /// @lib
-  function Tan(angle: Single): Single;
+  function Tangent(angle: Single): Single;
   
   
   
@@ -937,7 +938,7 @@ implementation
   
   function VectorFromAngle(angle, magnitude: Single): Vector;
   begin
-    result := VectorFrom(magnitude * sgGeometry.Cos(angle), magnitude * sgGeometry.Sin(angle));
+    result := VectorFrom(magnitude * sgGeometry.Cosine(angle), magnitude * sgGeometry.Sine(angle));
   end;
   
   function LineAsVector(const line: LineSegment): Vector;
@@ -1197,20 +1198,20 @@ implementation
   {$endif}
 
   //----------------------------------------------------------------------------
-  // Cos/Sin/Tan accepting degrees
+  // Cosine/Sin/Tan accepting degrees
   //----------------------------------------------------------------------------
   
-  function Cos(angle: Single): Single;
+  function Cosine(angle: Single): Single;
   begin
     result := System.Cos(DegToRad(angle));
   end;
   
-  function Sin(angle: Single): Single;
+  function Sine(angle: Single): Single;
   begin
     result := System.Sin(DegToRad(angle));
   end;
   
-  function Tan(angle: Single): Single;
+  function Tangent(angle: Single): Single;
   begin
     result := Math.Tan(DegToRad(angle));
   end;

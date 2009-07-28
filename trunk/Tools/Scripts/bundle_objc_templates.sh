@@ -79,6 +79,9 @@ fi
 CreateCCode()
 {
     cd "${PYTHON_SCRIPT_DIR}"
+    echo "  ... Creating C library code"
+    python create_c_library.py
+    echo "  ... Creating Objective C library code"
     python create_objc_library.py
     
     # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/SGSDK.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
@@ -114,7 +117,6 @@ elif [ "$OS" = "$WIN" ]; then
 fi
 
 echo "--------------------------------------------------"
-echo "  ... Creating C and Objective C library code"
 CreateCCode
 
 DoDist "${COPY_LIST}" "${OBJC_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_OBJC_TEMPLATE_DIR}"

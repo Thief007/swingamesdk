@@ -10,14 +10,14 @@
 @interface SG%(name)s : NSObject <PointerWrapper>
 {
 @package
-    %(name)s pointer;
+    %(name_lower)s pointer;
 }
 
-+ (NSArray *) arrayOf%(name)ss:(%(name)s *)firstPtr size:(int)sz;
-+ (void) get%(name)ss:(%(name)s *)firstPtr fromArray:(NSArray *)in_data maxSize:(int)sz;
-+ (id)createWithId:(%(name)s)ptr;
++ (NSArray *) arrayOf%(name)ss:(%(name_lower)s *)firstPtr size:(int)sz;
++ (void) get%(name)ss:(%(name_lower)s *)firstPtr fromArray:(NSArray *)in_data maxSize:(int)sz;
++ (id)createWithId:(%(name_lower)s)ptr;
 %(static_method_headers)s
-- (id)initWithId:(%(name)s)ptr; 
+- (id)initWithId:(%(name_lower)s)ptr; 
 %(init_headers)s
 
 %(property_headers)s

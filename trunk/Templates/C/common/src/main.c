@@ -4,24 +4,25 @@
 
 int main(int argc, char* argv[])
 {
-    SetAppPath(argv[0], true);
-    OpenAudio();
-    OpenGraphicsWindow("Hello World", 800, 600);
-    loadDefaultColors();
+    set_app_path(argv[0]);
+    open_audio();
+    open_graphics_window("Hello World", 800, 600);
+    load_default_colors();
     
-    while (!WindowCloseRequested())
+    do
     {
-        ClearScreen();
+        process_events();
         
-        //FillRectangle(white, 10, 10, 620, 460);
-        DrawBitmap(GetBitmap("SplashBack"), 0, 0);
+        clear_screen();
         
-        ProcessEvents();
-        RefreshScreen();
-    }
+        //FillRectangle(ColorWhite, 10, 10, 620, 460);
+        draw_bitmap(get_bitmap("SplashBack"), 0, 0);
+        
+        refresh_screen();
+    } while ( ! window_close_requested());
     
-    ReleaseAllResources();
+    close_audio();
     
-    CloseAudio();
+    release_all_resources();
     return 0;
 }
