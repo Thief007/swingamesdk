@@ -7,18 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		943267791006C8BF00DA67D2 /* SplashBack.jpg in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C70FF76043002B4FFA /* SplashBack.jpg */; };
 		944473EF0FF7608B002B4FFA /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 944473D10FF76043002B4FFA /* main.c */; };
-		944474010FF76144002B4FFA /* arial.ttf in Copy Fonts */ = {isa = PBXBuildFile; fileRef = 944473C20FF76043002B4FFA /* arial.ttf */; };
-		944474020FF76145002B4FFA /* cour.ttf in Copy Fonts */ = {isa = PBXBuildFile; fileRef = 944473C30FF76043002B4FFA /* cour.ttf */; };
-		944474030FF76147002B4FFA /* loader_empty.png in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C50FF76043002B4FFA /* loader_empty.png */; };
-		944474040FF76147002B4FFA /* loader_full.png in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C60FF76043002B4FFA /* loader_full.png */; };
-		944474050FF76148002B4FFA /* splash.txt in Resources */ = {isa = PBXBuildFile; fileRef = 944473CD0FF76043002B4FFA /* splash.txt */; };
-		944474060FF76148002B4FFA /* SplashBack.jpg in Copy Sounds */ = {isa = PBXBuildFile; fileRef = 944473C70FF76043002B4FFA /* SplashBack.jpg */; };
-		944474070FF76149002B4FFA /* SwinGame.icns in Resources */ = {isa = PBXBuildFile; fileRef = 944473CE0FF76043002B4FFA /* SwinGame.icns */; };
-		944474080FF7614A002B4FFA /* SwinGame.ico in Resources */ = {isa = PBXBuildFile; fileRef = 944473CF0FF76043002B4FFA /* SwinGame.ico */; };
-		944474090FF7614A002B4FFA /* SwinGameAni.jpg in Copy Images */ = {isa = PBXBuildFile; fileRef = 944473C80FF76043002B4FFA /* SwinGameAni.jpg */; };
-		9444740A0FF7614B002B4FFA /* SwinGameStart.ogg in Copy Sounds */ = {isa = PBXBuildFile; fileRef = 944473CC0FF76043002B4FFA /* SwinGameStart.ogg */; };
+		94774235101EA6E600AB691F /* Colors.c in Sources */ = {isa = PBXBuildFile; fileRef = 94774233101EA6E600AB691F /* Colors.c */; };
 		94B87A3D1006F0D40020CC77 /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A1D1006F0D40020CC77 /* Audio.c */; };
 		94B87A3E1006F0D40020CC77 /* Camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A1F1006F0D40020CC77 /* Camera.c */; };
 		94B87A3F1006F0D40020CC77 /* Core.c in Sources */ = {isa = PBXBuildFile; fileRef = 94B87A211006F0D40020CC77 /* Core.c */; };
@@ -45,44 +35,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		94F6853C0FF766E100C88D27 /* Copy Fonts */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = fonts;
-			dstSubfolderSpec = 7;
-			files = (
-				944474010FF76144002B4FFA /* arial.ttf in Copy Fonts */,
-				944474020FF76145002B4FFA /* cour.ttf in Copy Fonts */,
-			);
-			name = "Copy Fonts";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		94F6853D0FF766E100C88D27 /* Copy Images */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = images;
-			dstSubfolderSpec = 7;
-			files = (
-				943267791006C8BF00DA67D2 /* SplashBack.jpg in Copy Images */,
-				944474030FF76147002B4FFA /* loader_empty.png in Copy Images */,
-				944474040FF76147002B4FFA /* loader_full.png in Copy Images */,
-				944474090FF7614A002B4FFA /* SwinGameAni.jpg in Copy Images */,
-			);
-			name = "Copy Images";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		94F6853E0FF766E100C88D27 /* Copy Sounds */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = sounds;
-			dstSubfolderSpec = 7;
-			files = (
-				944474060FF76148002B4FFA /* SplashBack.jpg in Copy Sounds */,
-				9444740A0FF7614B002B4FFA /* SwinGameStart.ogg in Copy Sounds */,
-			);
-			name = "Copy Sounds";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		94F685400FF7677B00C88D27 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +67,10 @@
 		944473D10FF76043002B4FFA /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		944473E10FF76057002B4FFA /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		944473E40FF76057002B4FFA /* MyGame-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyGame-Info.plist"; sourceTree = "<group>"; };
+		94774233101EA6E600AB691F /* Colors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Colors.c; sourceTree = "<group>"; };
+		94774234101EA6E600AB691F /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colors.h; sourceTree = "<group>"; };
+		9477423E101EA74300AB691F /* Swinburne.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = Swinburne.jpg; path = Resources/images/Swinburne.jpg; sourceTree = SOURCE_ROOT; };
+		9477423F101EA74300AB691F /* SwinGame.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = SwinGame.jpg; path = Resources/images/SwinGame.jpg; sourceTree = SOURCE_ROOT; };
 		94B87A1D1006F0D40020CC77 /* Audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Audio.c; sourceTree = "<group>"; };
 		94B87A1E1006F0D40020CC77 /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Audio.h; sourceTree = "<group>"; };
 		94B87A1F1006F0D40020CC77 /* Camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Camera.c; sourceTree = "<group>"; };
@@ -204,6 +160,8 @@
 		944473C40FF76043002B4FFA /* images */ = {
 			isa = PBXGroup;
 			children = (
+				9477423E101EA74300AB691F /* Swinburne.jpg */,
+				9477423F101EA74300AB691F /* SwinGame.jpg */,
 				944473C50FF76043002B4FFA /* loader_empty.png */,
 				944473C60FF76043002B4FFA /* loader_full.png */,
 				944473C70FF76043002B4FFA /* SplashBack.jpg */,
@@ -254,6 +212,8 @@
 		94B87A1C1006F0D40020CC77 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				94774233101EA6E600AB691F /* Colors.c */,
+				94774234101EA6E600AB691F /* Colors.h */,
 				94B87A1D1006F0D40020CC77 /* Audio.c */,
 				94B87A1E1006F0D40020CC77 /* Audio.h */,
 				94B87A1F1006F0D40020CC77 /* Camera.c */,
@@ -296,13 +256,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 944473E70FF76058002B4FFA /* Build configuration list for PBXNativeTarget "MyGame" */;
 			buildPhases = (
-				944473DD0FF76057002B4FFA /* Resources */,
-				94F685400FF7677B00C88D27 /* Copy Frameworks */,
-				94F6853C0FF766E100C88D27 /* Copy Fonts */,
-				94F6853D0FF766E100C88D27 /* Copy Images */,
-				94F6853E0FF766E100C88D27 /* Copy Sounds */,
 				944473DE0FF76057002B4FFA /* Sources */,
 				944473DF0FF76057002B4FFA /* Frameworks */,
+				94F685400FF7677B00C88D27 /* Copy Frameworks */,
+				9477425A101EA7A800AB691F /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -331,18 +288,22 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXResourcesBuildPhase section */
-		944473DD0FF76057002B4FFA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
+/* Begin PBXShellScriptBuildPhase section */
+		9477425A101EA7A800AB691F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				944474050FF76148002B4FFA /* splash.txt in Resources */,
-				944474070FF76149002B4FFA /* SwinGame.icns in Resources */,
-				944474080FF7614A002B4FFA /* SwinGame.ico in Resources */,
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/myfile",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "copyWithoutSVN()\n{\n    FROM_DIR=$1\n    TO_DIR=$2\n    \n    cd \"${FROM_DIR}\"\n    \n    # Create directory structure\n    find . -mindepth 1 -type d ! -path \\*.svn\\* -exec sh -c \"if [ ! -d '${TO_DIR}/{}' ]; then mkdir -p '${TO_DIR}/{}' ; fi\" \\;\n    # Copy files and links\n    find . ! -path \\*.svn\\* ! -name \\*.DS_Store ! -type d -exec cp -R -p {} \"${TO_DIR}/{}\"  \\;\n}\n\nRESOURCE_DIR=\"${TARGET_BUILD_DIR}/${PRODUCT_NAME}.app/Contents/Resources\"\ncopyWithoutSVN \"${SRCROOT}/Resources\" \"${RESOURCE_DIR}\"\n\n\n";
 		};
-/* End PBXResourcesBuildPhase section */
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		944473DE0FF76057002B4FFA /* Sources */ = {
@@ -361,6 +322,7 @@
 				94B87A4C1006F0D40020CC77 /* Sprites.c in Sources */,
 				94B87A4D1006F0D40020CC77 /* Text.c in Sources */,
 				94B87A4E1006F0D40020CC77 /* TileMap.c in Sources */,
+				94774235101EA6E600AB691F /* Colors.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

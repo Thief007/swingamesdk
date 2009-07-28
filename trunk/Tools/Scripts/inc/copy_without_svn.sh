@@ -32,3 +32,22 @@ copyFrameworksWithoutSVN()
     # Copy files
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }
+
+# Copy the dist directories from $1 array
+DoCopy()
+{
+    COPY_LIST=$1
+    
+    for arg in "${COPY_LIST[@]}"; do
+        name=`echo $arg | awk -F"," '{print $1}'`
+        from=`echo $arg | awk -F"," '{print $2}'`
+        to=`echo $arg | awk -F"," '{print $3}'`
+        
+        if [ ! -d "${to}" ] ; then
+            mkdir -p "${to}"
+        fi
+        
+        echo "  ... Copying to $name"
+        copyWithoutSVN "$from" "$to"
+    done
+}
