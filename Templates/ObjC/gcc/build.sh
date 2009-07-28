@@ -142,7 +142,7 @@ doMacCompile()
         
         out_file="${TMP_DIR}/${1}/${name}.o"
         
-        doCompile "${file}" "${name}" "${out_file}" "-arch ${1}"
+        doCompile "${file}" "${name}" "${out_file}" "-arch ${1} "
     done
     
     #Assemble all of the .o files

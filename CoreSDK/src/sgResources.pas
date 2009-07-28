@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-28: Andrew : Added ShowLogos splash screen
 // - 2009-07-17: Andrew : Small fixes for return types.
 // - 2009-07-14: Andrew : Added resource loading and freeing procedures.
 //                      : Added FreeNotifier
@@ -184,8 +185,17 @@ interface
   /// @lib
   procedure SetAppPath(path: String; withExe: Boolean);
   
+  //----------------------------------------------------------------------------
+  // Startup related code
+  //----------------------------------------------------------------------------
+  
   /// @lib
   function AppPath(): String;
+  
+  /// Show the Swinburne and SwinGame logos for 1 second
+  ///
+  /// @lib
+  procedure ShowLogos();
   
   //----------------------------------------------------------------------------
   // Loading of actual resources
@@ -1511,7 +1521,50 @@ implementation
       m := nil;
     end;
   end;
-
+  
+  //----------------------------------------------------------------------------
+  
+  procedure ShowLogos();
+  const
+    ANI_X = 143;
+    ANI_Y = 134;
+    ANI_W = 546;
+    ANI_H = 327;
+    ANI_V_CELL_COUNT = 6;
+    ANI_CELL_COUNT = 11;
+  var
+    i: Integer;
+    f: Font;
+    txt: String;
+  begin
+    ClearScreen();
+    DrawBitmap(GetBitmap('Swinburne'), 286, 171);
+    f := GetFont('ArialLarge');
+    txt := 'SwinGame API by Swinburne University of Technology';
+    DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
+    
+    for i := 1 to 60 do
+    begin
+      ProcessEvents();
+      RefreshScreen(60);
+      if WindowCloseRequested() or KeyDown(vk_Escape) then break;
+    end;
+    
+    PlaySoundEffect(GetSoundEffect('SwinGameStart'));
+    for i:= 0 to ANI_CELL_COUNT - 1 do
+    begin
+      DrawBitmap(GetBitmap('SplashBack'), 0, 0);
+      DrawBitmapPart(GetBitmap('SwinGameAni'), 
+        (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
+        ANI_W, ANI_H, ANI_X, ANI_Y);
+      RefreshScreen();
+      ProcessEvents();
+      if WindowCloseRequested() or KeyDown(vk_Escape) then continue;
+      Sleep(15);
+    end;
+    Sleep(1000);
+  end;
+  
 
 
 //=============================================================================

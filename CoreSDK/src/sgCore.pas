@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-28: Andrew : Calling ShowLogos splash screen
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
 // - 2009-07-24: Andrew : Added additional HSB code and renamed other color function
 // - 2009-07-10: Andrew : Moved initialisation code to sgShared
@@ -563,8 +564,7 @@ implementation
   begin
     iconFile := filename;
   end;
-
-
+  
   procedure OpenGraphicsWindow(caption: String; width: LongInt; height: LongInt); overload;
   begin
     {$IFDEF TRACE}
@@ -600,7 +600,7 @@ implementation
     end;
     
     LoadResourceBundle('splash.txt', False);
-    
+    ShowLogos();
     {$IFDEF TRACE}
       TraceExit('sgCore', 'OpenGraphicsWindow');
     {$ENDIF}

@@ -81,12 +81,15 @@ CreateCCode()
     cd "${PYTHON_SCRIPT_DIR}"
     python create_objc_library.py
     
+    # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/SGSDK.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/Types.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    
+    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.c "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    
     #Create SwinGame.h
     cd "${COMMON_OBJC_TEMPLATE_DIR}"/lib
     ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' > SwinGame.h
-    
-    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/SGSDK.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
-    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/Types.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh
@@ -111,7 +114,7 @@ elif [ "$OS" = "$WIN" ]; then
 fi
 
 echo "--------------------------------------------------"
-echo "  ... Creating C library code"
+echo "  ... Creating C and Objective C library code"
 CreateCCode
 
 DoDist "${COPY_LIST}" "${OBJC_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_OBJC_TEMPLATE_DIR}"
