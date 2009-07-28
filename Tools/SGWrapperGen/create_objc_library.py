@@ -89,12 +89,12 @@ def _create_objc_call(details, the_method):
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
     elif the_method.is_getter and the_method.method_called == None:
         #Created property getter...
-        result = 'data.%(field.name)s' % details
+        result = 'data.%(field.name_lower)s' % details
         result = _map_data_value('return_val', the_method.return_type, result)
     elif the_method.is_setter and the_method.method_called == None:
         #Created property setter...
         details['value'] = arg_visitor('value', the_method.params[0], the_method.params[0])
-        result = 'data.%(field.name)s = %(value)s' % details
+        result = 'data.%(field.name_lower)s = %(value)s' % details
     else:
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
         
@@ -185,7 +185,7 @@ def _create_objc_property_details(the_property, other):
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
 
     if the_property.is_static:
-        print 'static', the_property.name
+        #print 'static', the_property.name
         
         _create_objc_method_details(the_property.getter, other);
         if the_property.setter != None:

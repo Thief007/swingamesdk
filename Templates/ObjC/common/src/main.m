@@ -6,7 +6,7 @@
 int main(int argc, const char* argv[])
 {
     NSAutoreleasePool *appPool = [[NSAutoreleasePool alloc] init];
-    [SGResources setAppPath:[NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding] : true];
+    [SGResources setAppPath:[NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding]];
     
     [SGAudio openAudio];
     [SGCore openGraphicsWindow:@"Hello World": 800: 600];
@@ -18,14 +18,14 @@ int main(int argc, const char* argv[])
         
         [SGGraphics clearScreen];
         
-        //FillRectangle(white, 10, 10, 620, 460);
-        [SGGraphics drawBitmap: [SGResources getBitmap:@"SplashBack"]: 0: 0];
+        [SGGraphics drawBitmap: [SGResources bitmapNamed:@"SplashBack"]: 0: 0];
+        //FillRectangle(ColorWhite, 10, 10, 620, 460);
         
         [SGCore refreshScreen];
     }
     
-    [SGResources releaseAllResources];
     [SGAudio closeAudio];
+    [SGResources releaseAllResources];
     [appPool drain];
     return 0;
 }

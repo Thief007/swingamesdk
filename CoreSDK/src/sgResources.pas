@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-29: Andrew : Renamed Get... functions and check for opened audio
 // - 2009-07-28: Andrew : Added ShowLogos splash screen
 // - 2009-07-17: Andrew : Small fixes for return types.
 // - 2009-07-14: Andrew : Added resource loading and freeing procedures.
@@ -44,7 +45,7 @@ interface
   function HasBitmap(name: String): Boolean;
   
   /// @lib
-  function GetBitmap(name: String): Bitmap;
+  function BitmapNamed(name: String): Bitmap;
   
   /// @lib
   procedure ReleaseBitmap(name: String);
@@ -65,7 +66,7 @@ interface
   function HasFont(name: String): Boolean;
 
   /// @lib
-  function GetFont(name: String): Font;
+  function FontNamed(name: String): Font;
 
   /// @lib
   procedure ReleaseFont(name: String);
@@ -86,7 +87,7 @@ interface
   function HasSoundEffect(name: String): Boolean;
 
   /// @lib
-  function GetSoundEffect(name: String): SoundEffect;
+  function SoundEffectNamed(name: String): SoundEffect;
 
   /// @lib
   procedure ReleaseSoundEffect(name: String);
@@ -107,7 +108,7 @@ interface
   function HasMusic(name: String): Boolean;
 
   /// @lib
-  function GetMusic(name: String): Music;
+  function MusicNamed(name: String): Music;
 
   /// @lib
   procedure ReleaseMusic(name: String);
@@ -128,7 +129,7 @@ interface
   function HasTileMap(name: String): Boolean;
 
   /// @lib
-  function GetTileMap(name: String): Map;
+  function TileMapNamed(name: String): Map;
 
   /// @lib
   procedure ReleaseTileMap(name: String);
@@ -167,30 +168,28 @@ interface
   // Resource Path and Application Path
   //----------------------------------------------------------------------------
   
-  /// @lib GetPathToResource
-  function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
+  /// @lib PathToResource
+  function PathToResource(filename: String; kind: ResourceKind): String; overload;
   
-  /// @lib GetPathToOtherResource
-  /// @uname GetPathToOtherResource
-  function GetPathToResource(filename: String): String; overload;
+  /// @lib PathToOtherResource
+  /// @uname PathToOtherResource
+  function PathToResource(filename: String): String; overload;
   
-  /// @lib GetPathToResourceWithBaseAndKind
-  /// @uname GetPathToResourceWithBase
-  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+  ///
+  /// @uname SetAppPathWithExe
+  /// @sn setAppPath:%s withExe:%s
+  /// @lib 
+  procedure SetAppPath(path: String; withExe: Boolean); overload;
   
-  /// @lib GetPathToOtherResourceWithBase
-  /// @uname GetPathToOtherResourceWithBase
-  function GetPathToResourceWithBase(path, filename: String): String; overload;
+  /// @lib SetAppPath(path, True)
+  procedure SetAppPath(path: String); overload;
   
   /// @lib
-  procedure SetAppPath(path: String; withExe: Boolean);
+  function AppPath(): String;
   
   //----------------------------------------------------------------------------
   // Startup related code
   //----------------------------------------------------------------------------
-  
-  /// @lib
-  function AppPath(): String;
   
   /// Show the Swinburne and SwinGame logos for 1 second
   ///
@@ -203,7 +202,7 @@ interface
     
   /// Loads the `SoundEffect` from the supplied path. To ensure that your game
   /// is able to work across multiple platforms correctly ensure that you use
-  /// `GetPathToResource` to get the full path to the files in the projects
+  /// `PathToResource` to get the full path to the files in the projects
   /// resources folder.
   ///
   /// LoadSoundEffect can load wav and ogg audio files.
@@ -222,7 +221,7 @@ interface
 
   /// Loads the `Music` from the supplied path. To ensure that your game
   /// is able to work across multiple platforms correctly ensure that you use
-  /// `GetPathToResource` to get the full path to the files in the projects 
+  /// `PathToResource` to get the full path to the files in the projects 
   /// resources folder.
   ///
   /// LoadMusic can load mp3, wav and ogg audio files.
@@ -580,10 +579,10 @@ implementation
     bmp: Bitmap;
   begin
     //WriteLn('Mapping bitmap... ', filename);
-    //WriteLn(name, '->', GetPathToResource(filename, BitmapResource));
-    bmp := LoadBitmap(GetPathToResource(filename, BitmapResource));
+    //WriteLn(name, '->', PathToResource(filename, BitmapResource));
+    bmp := LoadBitmap(PathToResource(filename, BitmapResource));
     //WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
-    //WriteLn(GetPathToResource(filename, BitmapResource));
+    //WriteLn(PathToResource(filename, BitmapResource));
     obj := tResourceContainer.Create(bmp);
     if not _Images.setValue(name, obj) then
       raise Exception.create('Error loaded Bitmap resource twice, ' + name);
@@ -596,7 +595,7 @@ implementation
     obj: tResourceContainer;
     bmp: Bitmap;
   begin
-    bmp := LoadBitmap(GetPathToResource(filename, BitmapResource), true, transparentColor);
+    bmp := LoadBitmap(PathToResource(filename, BitmapResource), true, transparentColor);
     obj := tResourceContainer.Create(bmp);
     if not _Images.setValue(name, obj) then
       raise Exception.create('Error loaded Bitmap resource twice, ' + name);
@@ -608,7 +607,7 @@ implementation
     result := _Images.containsKey(name);
   end;
 
-  function GetBitmap(name: String): Bitmap;
+  function BitmapNamed(name: String): Bitmap;
   begin
     result := Bitmap(tResourceContainer(_Images.values[name]).Resource);
   end;
@@ -617,7 +616,7 @@ implementation
   var
     bmp: Bitmap;
   begin
-    bmp := GetBitmap(name);
+    bmp := BitmapNamed(name);
     _Images.remove(name).Free();
     FreeBitmap(bmp);
   end;
@@ -634,7 +633,7 @@ implementation
     obj: tResourceContainer;
     fnt: Font;
   begin
-    fnt := LoadFont(GetPathToResource(filename, FontResource), size);
+    fnt := LoadFont(PathToResource(filename, FontResource), size);
     obj := tResourceContainer.Create(fnt);
     if not _Fonts.setValue(name, obj) then
       raise Exception.create('Error loaded Font resource twice, ' + name);
@@ -646,7 +645,7 @@ implementation
     result := _Fonts.containsKey(name);
   end;
 
-  function GetFont(name: String): Font;
+  function FontNamed(name: String): Font;
   begin
     result := Font(tResourceContainer(_Fonts.values[name]).Resource);
   end;
@@ -655,7 +654,7 @@ implementation
   var
     fnt: Font;
   begin
-    fnt := GetFont(name);
+    fnt := FontNamed(name);
     _Fonts.remove(name).free();
     FreeFont(fnt);
   end;
@@ -672,7 +671,9 @@ implementation
     obj: tResourceContainer;
     snd: SoundEffect;
   begin
-    snd := LoadSoundEffect(GetPathToResource(filename, SoundResource));
+    if not AudioOpen then exit;
+    
+    snd := LoadSoundEffect(PathToResource(filename, SoundResource));
     obj := tResourceContainer.Create(snd);
     if not _SoundEffects.setValue(name, obj) then
       raise Exception.create('Error loaded Sound Effect resource twice, ' + name);
@@ -684,7 +685,7 @@ implementation
     result := _SoundEffects.containsKey(name);
   end;
 
-  function GetSoundEffect(name: String): SoundEffect;
+  function SoundEffectNamed(name: String): SoundEffect;
   begin
     result := SoundEffect(tResourceContainer(_SoundEffects.values[name]).Resource);
   end;
@@ -693,7 +694,7 @@ implementation
   var
     snd: SoundEffect;
   begin
-    snd := GetSoundEffect(name);
+    snd := SoundEffectNamed(name);
     _SoundEffects.remove(name).Free();
     FreeSoundEffect(snd);
   end;
@@ -710,7 +711,7 @@ implementation
     obj: tResourceContainer;
     mus: Music;
   begin
-    mus := LoadMusic(GetPathToResource(filename, SoundResource));
+    mus := LoadMusic(PathToResource(filename, SoundResource));
     obj := tResourceContainer.Create(mus);
     if not _Music.setValue(name, obj) then
       raise Exception.create('Error loaded Music resource twice, ' + name);
@@ -722,7 +723,7 @@ implementation
     result := _Music.containsKey(name);
   end;
   
-  function GetMusic(name: String): Music;
+  function MusicNamed(name: String): Music;
   begin
     result := Music(tResourceContainer(_Music.values[name]).Resource);
   end;
@@ -731,7 +732,7 @@ implementation
   var
     mus: Music;
   begin
-    mus := GetMusic(name);
+    mus := MusicNamed(name);
     _Music.remove(name).Free();
     FreeMusic(mus);
   end;
@@ -748,7 +749,7 @@ implementation
     obj: tResourceContainer;
     theMap: Map;
   begin
-    theMap := LoadMap(GetPathToResource(filename, MapResource));
+    theMap := LoadMap(PathToResource(filename, MapResource));
     obj := tResourceContainer.Create(theMap);
     if not _TileMaps.setValue(name, obj) then
       raise Exception.create('Error loaded Map resource twice, ' + name);
@@ -760,7 +761,7 @@ implementation
     result := _TileMaps.containsKey(name);
   end;
   
-  function GetTileMap(name: String): Map;
+  function TileMapNamed(name: String): Map;
   begin
     result := Map(tResourceContainer(_TileMaps.values[name]).Resource);
   end;
@@ -769,7 +770,7 @@ implementation
   var
     theMap: Map;
   begin
-    theMap := GetTileMap(name);
+    theMap := TileMapNamed(name);
     _TileMaps.remove(name).Free();
     FreeMap(theMap);
   end;
@@ -837,7 +838,7 @@ implementation
     current: tResourceIdentifier;
     bndl: tResourceBundle;
   begin
-    path := GetPathToResource(name);
+    path := PathToResource(name);
     
     if not FileExists(path) then raise Exception.Create('Unable to locate resource bundle ' + path);
     Assign(input, path);
@@ -906,26 +907,31 @@ implementation
   
   //----------------------------------------------------------------------------
   
-  function GetPathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
+  
+  function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload; forward;
+  function PathToResourceWithBase(path, filename: String): String; overload; forward;
+  
+  
+  function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;
   begin
     case kind of
     {$ifdef UNIX}
-      FontResource: result := GetPathToResourceWithBase(path, 'fonts/' + filename);
-      SoundResource: result := GetPathToResourceWithBase(path, 'sounds/' + filename);
-      BitmapResource: result := GetPathToResourceWithBase(path, 'images/' + filename);
-      MapResource: result := GetPathToResourceWithBase(path, 'maps/' + filename);
+      FontResource: result := PathToResourceWithBase(path, 'fonts/' + filename);
+      SoundResource: result := PathToResourceWithBase(path, 'sounds/' + filename);
+      BitmapResource: result := PathToResourceWithBase(path, 'images/' + filename);
+      MapResource: result := PathToResourceWithBase(path, 'maps/' + filename);
     {$else}
-      FontResource: result := GetPathToResourceWithBase(path, 'fonts\' + filename);
-      SoundResource: result := GetPathToResourceWithBase(path, 'sounds\' + filename);
-      BitmapResource: result := GetPathToResourceWithBase(path, 'images\' + filename);
-      MapResource: result := GetPathToResourceWithBase(path, 'maps\' + filename);
+      FontResource: result := PathToResourceWithBase(path, 'fonts\' + filename);
+      SoundResource: result := PathToResourceWithBase(path, 'sounds\' + filename);
+      BitmapResource: result := PathToResourceWithBase(path, 'images\' + filename);
+      MapResource: result := PathToResourceWithBase(path, 'maps\' + filename);
     {$endif}
       
-      else result := GetPathToResourceWithBase(path, filename);
+      else result := PathToResourceWithBase(path, filename);
     end;
   end;
 
-  function GetPathToResourceWithBase(path, filename: String): String; overload;
+  function PathToResourceWithBase(path, filename: String): String; overload;
   begin
     {$ifdef UNIX}
       {$ifdef DARWIN}
@@ -940,14 +946,19 @@ implementation
     result := result + filename;
   end;
   
-  function GetPathToResource(filename: String): String; overload;
+  function PathToResource(filename: String): String; overload;
   begin
-    result := GetPathToResourceWithBase(applicationPath, filename);
+    result := PathToResourceWithBase(applicationPath, filename);
   end;
   
-  function GetPathToResource(filename: String; kind: ResourceKind): String; overload;
+  function PathToResource(filename: String; kind: ResourceKind): String; overload;
   begin
-    result := GetPathToResourceWithBase(applicationPath, filename, kind);
+    result := PathToResourceWithBase(applicationPath, filename, kind);
+  end;
+  
+  procedure SetAppPath(path: String); overload;
+  begin
+    SetAppPath(path, True);
   end;
   
   procedure SetAppPath(path: String; withExe: Boolean);
@@ -1503,8 +1514,8 @@ implementation
   var
     mapFile, imgFile: String;
   begin
-    mapFile := GetPathToResource(mapName + '.sga', MapResource);
-    imgFile := GetPathToResource(mapName + '.png', MapResource);
+    mapFile := PathToResource(mapName + '.sga', MapResource);
+    imgFile := PathToResource(mapName + '.png', MapResource);
     result := LoadMapFiles(mapFile, imgFile);
   end;
 
@@ -1538,8 +1549,8 @@ implementation
     txt: String;
   begin
     ClearScreen();
-    DrawBitmap(GetBitmap('Swinburne'), 286, 171);
-    f := GetFont('ArialLarge');
+    DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
+    f := FontNamed('ArialLarge');
     txt := 'SwinGame API by Swinburne University of Technology';
     DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
     
@@ -1550,13 +1561,13 @@ implementation
       if WindowCloseRequested() or KeyDown(vk_Escape) then break;
     end;
     
-    PlaySoundEffect(GetSoundEffect('SwinGameStart'));
+    if AudioOpen then PlaySoundEffect(SoundEffectNamed('SwinGameStart'));
     for i:= 0 to ANI_CELL_COUNT - 1 do
     begin
-      DrawBitmap(GetBitmap('SplashBack'), 0, 0);
-      DrawBitmapPart(GetBitmap('SwinGameAni'), 
+      DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
+      DrawBitmapPart(BitmapNamed('SwinGameAni'), 
         (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
-        ANI_W, ANI_H, ANI_X, ANI_Y);
+        ANI_W, ANI_H - 1, ANI_X, ANI_Y);
       RefreshScreen();
       ProcessEvents();
       if WindowCloseRequested() or KeyDown(vk_Escape) then continue;

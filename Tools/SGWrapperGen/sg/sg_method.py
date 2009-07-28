@@ -62,11 +62,14 @@ class SGMethod(SGMetaDataContainer):
         The param_visitor is called to convert each parameter to a string. 
         param_visitor(the_param, last)
         '''
+        import wrapper_helper
+        
         result = dict()
         result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
         result['name'] = self.name
         result['camel_name'] = self.name.lower()[0] + self.name[1:]
         result['uname'] = self.uname
+        result['uname_lower'] = wrapper_helper.lower_name(self.uname)
         result['camel_uname'] = self.uname.lower()[0] + self.uname[1:]
         if self.sn != None:
             real_params = list()
@@ -110,6 +113,7 @@ class SGMethod(SGMetaDataContainer):
             result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
         result['field.name'] = self.field_name
+        result['field.name_lower'] = wrapper_helper.lower_name(self.field_name)
         
         if self.length_call != None:
             if self.in_property != None: #replace first argument with 'self'
@@ -126,7 +130,7 @@ class SGMethod(SGMetaDataContainer):
         result['the_call'] = call_creater(result, self) if call_creater != None else None
         
         return result
-
+    
     name = property(lambda self: self['name'].other, 
         lambda self,name: self.set_tag('name', name), 
         None, 'The name of the method.')

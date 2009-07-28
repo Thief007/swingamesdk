@@ -1040,7 +1040,7 @@ implementation
     // COLLISION RESPONSE
     // n = vector connecting the centers of the balls.
     // we are finding the components of the normalised vector n
-    n := VectorFrom(Cos(colNormalAngle), Sin(colNormalAngle));
+    n := VectorFrom(Cosine(colNormalAngle), Sine(colNormalAngle));
     // now find the length of the components of each velocity vectors
     // along n, by using dot product.
     a1 := DotProduct(s1^.velocity, n);

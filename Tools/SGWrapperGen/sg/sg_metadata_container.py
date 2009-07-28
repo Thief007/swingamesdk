@@ -73,6 +73,17 @@ class SGMetaDataContainer(object):
     def visit(self, visitor):
         visitor(self)
     
+    def lower_name(self):
+        import wrapper_helper
+        return wrapper_helper.lower_name(self.name)
+    
+    lower_name = property(lower_name, None, None, "The name as name_lower_case")
+    
+    def upper_name(self):
+        import wrapper_helper
+        return wrapper_helper.upper_name(self.name)
+    
+    upper_name = property(upper_name, None, None, "The name as NAME_UPPER_CASE")
 
 
 from sg_tag import SGTag

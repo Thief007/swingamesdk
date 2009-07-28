@@ -5,7 +5,7 @@
 
 @implementation SG%(name)s : NSObject
 
-+ (void) get%(name)ss:(%(name)s *)firstPtr fromArray:(NSArray *)in_data maxSize:(int)sz
++ (void) get%(name)ss:(%(name_lower)s *)firstPtr fromArray:(NSArray *)in_data maxSize:(int)sz
 {
     int i;
     int count = [in_data count];
@@ -17,7 +17,7 @@
     }
 }
 
-+ (NSArray *) arrayOf%(name)ss:(%(name)s *)firstPtr size:(int)sz
++ (NSArray *) arrayOf%(name)ss:(%(name_lower)s *)firstPtr size:(int)sz
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];
     int i;
@@ -32,7 +32,7 @@
     return [result autorelease];
 }
 
-+ (id)createWithId:(%(name)s)ptr
++ (id)createWithId:(%(name_lower)s)ptr
 {
     id obj = [PointerManager objectForKey: (id)ptr];
     
@@ -45,7 +45,7 @@
     return obj;
 }
 
-- (id)initWithId:(%(name)s)ptr
+- (id)initWithId:(%(name_lower)s)ptr
 {
     //Assign super's initialised value to the self pointer
     self = [super init];

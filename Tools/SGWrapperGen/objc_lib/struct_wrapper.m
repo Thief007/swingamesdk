@@ -14,12 +14,12 @@
 
 + (SGWrapped%(name)s *) %(camel_name)sWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2
 {
-    SGWrapped%(name)s *ret = [[SGWrapped%(name)s alloc] initWithDelegate:del update:sel1 andRead:sel2];
+    SGWrapped%(name)s *ret = [[SGWrapped%(name)s alloc] init%(name)sWithDelegate:del update:sel1 andRead:sel2];
     [ret autorelease];
     return ret;
 }
 
-- (id)initWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2
+- (id)init%(name)sWithDelegate:(id)del update:(SEL)sel1 andRead:(SEL)sel2
 {
     self = [super init];
     if (self != nil)
@@ -80,7 +80,7 @@
 
 @implementation SG%(name)s : NSObject
 
-+ (NSArray *) arrayOf%(name)ss:(%(name)s *)firstPtr size:(int)sz
++ (NSArray *) arrayOf%(name)ss:(%(name_lower)s *)firstPtr size:(int)sz
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];
     int i;
@@ -96,14 +96,14 @@
     return [result autorelease];
 }
 
-+ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat
++ (SG%(name)s *) %(camel_name)sForData: (%(name_lower)s)dat
 {
     SG%(name)s *ret = [[SG%(name)s alloc] initWith%(name)s: dat];
     [ret autorelease];
     return ret;
 }
 
-+ (void) get%(name)ss:(%(name)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz
++ (void) get%(name)ss:(%(name_lower)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz
 {
     int i, count = [arr count];
     count = count <= sz ? count: sz; //get min of count and sz
@@ -114,7 +114,7 @@
     }
 }
 
-- (SG%(name)s *)initWith%(name)s:(%(name)s)dat
+- (SG%(name)s *)initWith%(name)s:(%(name_lower)s)dat
 {
     //Assign super's initialised value to the self pointer
     self = [super init];
@@ -126,12 +126,12 @@
     return self;
 }
 
-- (%(name)s) data
+- (%(name_lower)s) data
 {
     return data;
 }
 
-- (void) setData:(%(name)s)dat
+- (void) setData:(%(name_lower)s)dat
 {
     data = dat;
 }

@@ -6,14 +6,14 @@
 
 @implementation SG%(name)s : NSObject
 
-+ (SG%(name)s *) %(camel_name)sForData: (%(name)s)dat
++ (SG%(name)s *) %(camel_name)sForData: (%(name_lower)s)dat
 {
     SG%(name)s *ret = [[SG%(name)s alloc] initWith%(name)s: dat];
     [ret autorelease];
     return ret;
 }
 
-- (id)initWith%(name)s:(%(name)s)dat
+- (id)initWith%(name)s:(%(name_lower)s)dat
 {
     //Assign super's initialised value to the self pointer
     self = [super init];

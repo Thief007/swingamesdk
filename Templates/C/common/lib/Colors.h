@@ -3,19 +3,19 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-extern Color ColorBlue;
-extern Color ColorGreen;
-extern Color ColorRed;
-extern Color ColorWhite;
-extern Color ColorBlack;
-extern Color ColorYellow;
-extern Color ColorPink;
-extern Color ColorTurquoise;
-extern Color ColorGrey;
-extern Color ColorMagenta;
-extern Color ColorTransparent;
-extern Color ColorLightGrey;
+extern color ColorBlue;
+extern color ColorGreen;
+extern color ColorRed;
+extern color ColorWhite;
+extern color ColorBlack;
+extern color ColorYellow;
+extern color ColorPink;
+extern color ColorTurquoise;
+extern color ColorGrey;
+extern color ColorMagenta;
+extern color ColorTransparent;
+extern color ColorLightGrey;
 
-void loadDefaultColors();
+void load_default_colors();
 
 #endif

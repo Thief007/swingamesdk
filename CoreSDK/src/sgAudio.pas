@@ -9,6 +9,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-07-29: Andrew : Open Audio now indicates if audio has been opened.
 // - 2009-07-14: Andrew : Removed loading and freeing code.
 // - 2009-06-16: Clinton: Commenting/format tweaks
 // - 2009-06-04: Andrew : Finished processing comments.
@@ -306,19 +307,17 @@ implementation
   
   procedure OpenAudio();
   begin
-    //TODO: Why is this conditional - its the same (now?)
-    {$ifdef DARWIN}
     if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
-    {$else}
-    if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then      
-    {$endif}
     begin
       raise Exception.Create('Error opening audio device: ' + string(Mix_GetError()));
     end;
+    
+    AudioOpen := True;
   end;
   
   procedure CloseAudio();
   begin
+    AudioOpen := False;
     Mix_CloseAudio();
   end;
   
