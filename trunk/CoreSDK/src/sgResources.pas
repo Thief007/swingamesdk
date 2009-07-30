@@ -1679,8 +1679,10 @@ implementation
         Sleep(1000);
       except on e:Exception do
         {$IFDEF TRACE}
+        begin
           Trace('sgResources', 'Error', 'ShowLogos', 'Error loading and drawing splash.');
           Trace('sgResources', 'Error', 'ShowLogos', e.Message);
+        end;
         {$ENDIF}
       end;
     finally
@@ -1688,8 +1690,10 @@ implementation
         ReleaseResourceBundle('splash.txt');
       except on e1: Exception do
         {$IFDEF TRACE}
+        begin
           Trace('sgResources', 'Error', 'ShowLogos', 'Error freeing splash.');
-          Trace('sgResources', 'Error', 'ShowLogos', e.Message);
+          Trace('sgResources', 'Error', 'ShowLogos', e1.Message);
+         end;
         {$ENDIF}
       end;
     end;
