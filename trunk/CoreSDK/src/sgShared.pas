@@ -130,6 +130,8 @@ implementation
     if is_initialised then exit;
     is_initialised := True;
     
+    Randomize();
+    
     {$ifdef DARWIN}
       {$IFDEF Trace}
         TraceIf(tlInfo, 'sgCore', 'Info', 'initialization', 'Loading Mac version');
