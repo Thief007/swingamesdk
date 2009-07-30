@@ -739,7 +739,7 @@ interface
       AnimationInfo: Array of MapAnimationData;
       LayerInfo: Array of MapLayerData;
       CollisionInfo: MapCollisionData;
-      TagInfo: Array [0..23] of Array of MapTagDetails;
+      TagInfo: Array [0..23] of Array of MapTagDetails; //TODO: Change to MapTag -> requires parser fixes to detect size
       Tiles: Sprite;
       Animate: Boolean;
       Frame: LongInt;

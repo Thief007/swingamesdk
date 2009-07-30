@@ -1237,7 +1237,8 @@ implementation
     sqLineMag := LineMagnitudeSq(line);
     if SqLineMag < EPSEPS then
     begin
-      raise Exception.Create('Cannot determine intersection point on line, line is too short');
+      RaiseException('Cannot determine intersection point on line, line is too short');
+      exit;
     end;
 
     //squared unit vector
@@ -1281,10 +1282,7 @@ implementation
     // see Paul Bourke's original article(s)
     // square of line's magnitude (see note in function LineMagnitude)
     sqLineMag := LineMagnitudeSq(line);
-    if SqLineMag < EPSEPS then
-    begin
-      raise Exception.Create('Cannot determine intersection point on line, line is too short');
-    end;
+    if SqLineMag < EPSEPS then begin RaiseException('Cannot determine intersection point on line, line is too short'); exit; end;
 
     u := ( (fromPt.x - line.startPoint.x)*(line.endPoint.x - line.startPoint.x) + (fromPt.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y) ) / sqLineMag;
 
@@ -1444,10 +1442,7 @@ implementation
   begin
     //Lines Magnitude must be at least 0.0001
     sqLineMag := LineMagnitudeSq(line);
-    if SqLineMag < EPSEPS then
-    begin
-      raise Exception.Create('Cannot determine if point is on line, line is too short');
-    end;
+    if SqLineMag < EPSEPS then begin RaiseException('Cannot determine if point is on line, line is too short'); exit; end;
           
     //Obtain the other variables for the Line Algorithm
     if line.endPoint.x = line.startPoint.x then

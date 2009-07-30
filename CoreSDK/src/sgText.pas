@@ -123,13 +123,13 @@ implementation
   /// - The font's style is changed
   procedure SetFontStyle(font: Font; value: FontStyle);
   begin
-    if not Assigned(font) then raise Exception.Create('No font supplied');
+    if not Assigned(font) then begin RaiseException('No font supplied'); exit; end;
     TTF_SetFontStyle(font, LongInt(value));
   end;
   
   function GetFontStyle(font: Font): FontStyle;
   begin
-    if not Assigned(font) then raise Exception.Create('No font supplied');
+    if not Assigned(font) then begin RaiseException('No font supplied'); exit; end;
     result := FontStyle(TTF_GetFontStyle(font));
   end;
 
@@ -153,10 +153,7 @@ implementation
     colorFG: TSDL_Color;
     bgTransparent: Boolean;
   begin
-    if dest = nil then
-    begin
-      raise Exception.Create('Error Printing Strings: There was no surface.');
-    end;
+    if dest = nil then begin RaiseException('Error Printing Strings: There was no surface.'); exit; end;
 
     colorFG := ToSDLColor(clrFg);
     bgTransparent := TransparencyOf(clrBg) < 255;
@@ -239,10 +236,7 @@ implementation
         TTF_SizeText(font, PChar(lines[i]), w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
-      else
-      begin
-        raise Exception.Create('Invalid font alignment');
-      end;
+      else begin RaiseException('Invalid font alignment'); exit; end;
 
       // Render the current line. Ignore alpha in this draw
       if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
@@ -275,10 +269,7 @@ implementation
     colorFG: TSDL_Color;
     bgTransparent: Boolean;
   begin
-    if dest = nil then
-    begin
-      raise Exception.Create('Error Printing Strings: There was no surface.');
-    end;
+    if dest = nil then begin RaiseException('Error Printing Strings: There was no surface.'); exit; end;
 
     colorFG := ToSDLColor(clrFg);
     bgTransparent := TransparencyOf(clrBg) < 255;
@@ -363,10 +354,7 @@ implementation
         TTF_SizeUNICODE(font, PUInt16(lines[i]), w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
-      else
-      begin
-        raise Exception.Create('Invalid font alignment');
-      end;
+      else begin RaiseException('Invalid font alignment'); exit; end;
 
       // Render the current line. Ignore alpha in this draw
       if bgTransparent then SDL_SetAlpha(temp, 0, SDL_ALPHA_TRANSPARENT);
@@ -401,8 +389,8 @@ implementation
   var
     rect: TSDL_Rect;
   begin
-    if theFont = nil then raise Exception.Create('The specified font is nil');
-    if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
+    if theFont = nil then begin RaiseException('The specified font is nil'); exit; end;
+    if dest = nil then begin RaiseException('Cannot draw text, as no destination was supplied'); exit; end;
       
     rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
     PrintStrings(dest^.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
@@ -412,8 +400,8 @@ implementation
   var
     rect: TSDL_Rect;
   begin
-    if theFont = nil then raise Exception.Create('The specified font is nil');
-    if dest = nil then raise Exception.Create('Cannot draw text, as no destination was supplied');
+    if theFont = nil then begin RaiseException('The specified font is nil'); exit; end;
+    if dest = nil then begin RaiseException('Cannot draw text, as no destination was supplied'); exit; end;
       
     rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
     PrintWideStrings(dest^.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
@@ -560,12 +548,12 @@ implementation
   var
     y: LongInt; //SizeText returns both... store and ignore y
   begin
-    if not Assigned(theFont) then raise Exception.Create('No font supplied');
+    if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       y := 0; result := 0;
       TTF_SizeText(theFont, PChar(theText), result, y);
     except
-      raise Exception.Create('Unable to get the text width');
+      begin RaiseException('Unable to get the text width'); exit; end;
     end;
   end;
 
@@ -573,12 +561,12 @@ implementation
   var
     y: LongInt; //SizeText returns both... store and ignore y
   begin
-    if not Assigned(theFont) then raise Exception.Create('No font supplied');
+    if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       y := 0; result := 0;
       TTF_SizeUNICODE(theFont, PUInt16(theText), result, y);
     except
-      raise Exception.Create('Unable to get the text width');
+      begin RaiseException('Unable to get the text width'); exit; end;
     end;
   end;
 
@@ -592,12 +580,12 @@ implementation
   var
     w: LongInt; //SizeText returns both... store and ignore w
   begin
-    if not Assigned(theFont) then raise Exception.Create('No font supplied');
+    if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       w := 0; result :=  0;
       TTF_SizeText(theFont, PChar(theText), w, result);
     except
-      raise Exception.Create('Unable to get the text height');
+      begin RaiseException('Unable to get the text height'); exit; end;
     end;
   end;
 
@@ -605,12 +593,12 @@ implementation
   var
     w: LongInt; //SizeText returns both... store and ignore w
   begin
-    if not Assigned(theFont) then raise Exception.Create('No font supplied');
+    if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       w := 0; result :=  0;
       TTF_SizeUNICODE(theFont, PUInt16(theText), w, result);
     except
-      raise Exception.Create('Unable to get the text height');
+      begin RaiseException('Unable to get the text height'); exit; end;
     end;
   end;
   
@@ -663,7 +651,7 @@ implementation
     InitialiseSwinGame();
     if TTF_Init() = -1 then
     begin
-      raise Exception.Create('Error openning font library. ' + string(TTF_GetError));
+      begin RaiseException('Error openning font library. ' + string(TTF_GetError)); exit; end;
     end;
   end;
 

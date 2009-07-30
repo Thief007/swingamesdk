@@ -187,7 +187,7 @@ implementation
     XStart, YStart, XEnd, YEnd: LongInt;
     f: LongInt;
   begin
-    if m = nil then raise Exception.Create('No Map supplied (nil)');
+    if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
 
     //WriteLn('GX, GY: ', ToWorldX(0), ',' , ToWorldY(0));
     //WriteLn('bw, bh: ', m^.MapInfo.BlockWidth, ', ', m^.MapInfo.BlockHeight);
@@ -260,14 +260,12 @@ implementation
   //Gets the number of MapTag of the specified type
   function MapTagCount(m: Map; tagType: MapTag): LongInt;
   begin
-    if m = nil then
-      raise Exception.Create('No Map supplied (nil)');
-    if (tagType < MapTag1) or (tagType > MapTag24) then //TODO: Should be high(Tag) type.. less fixed
-      raise Exception.Create('TagType is out of range');
-
+    if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
+    if (tagType < MapTag1) or (tagType > High(MapTag)) then begin RaiseException('TagType is out of range'); exit; end;
+    
     result := Length(m^.TagInfo[LongInt(tagType)]);
     //TODO: WHY do we keep converting tagType to LongInt - just store as LongINT!!!
-
+    
     {count := 0;
   
     for y := 0 to m^.MapInfo.MapWidth - 1 do
@@ -284,7 +282,7 @@ implementation
   // Gets the Top Left X Coordinate of the MapTag
   function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
   begin
-    if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then raise Exception.Create('Tag number is out of range');
+    if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then begin RaiseException('Tag number is out of range'); exit; end;
 
     if (m^.MapInfo.Isometric = true) then
     begin
@@ -301,8 +299,7 @@ implementation
   // Gets the Top Left Y Coordinate of the MapTag
   function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
   begin
-    if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then
-      raise Exception.Create('Tag number is out of range');
+    if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then begin RaiseException('Tag number is out of range'); exit; end;
   
     if (m^.MapInfo.Isometric = true) then
     begin
@@ -467,10 +464,10 @@ implementation
   procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: LongInt);
   begin
     //TODO: Avoid these exception tests (at least the first 2) - do them earlier during loading
-    if m = nil then raise Exception.Create('No Map supplied (nil)');
-    if s = nil then raise Exception.Create('No Sprite suppled (nil)');
-    if (x < 0 ) or (x >= m^.mapInfo.mapWidth) then raise Exception.Create('x is outside the bounds of the map');
-    if (y < 0 ) or (y >= m^.mapInfo.mapWidth) then raise Exception.Create('y is outside the bounds of the map');
+    if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
+    if s = nil then begin RaiseException('No Sprite suppled (nil)'); exit; end;
+    if (x < 0 ) or (x >= m^.mapInfo.mapWidth) then begin RaiseException('x is outside the bounds of the map'); exit; end;
+    if (y < 0 ) or (y >= m^.mapInfo.mapWidth) then begin RaiseException('y is outside the bounds of the map'); exit; end;
     with m^.MapInfo do
       MoveOut(s, s^.velocity, x * BlockWidth, y * BlockHeight, BlockWidth, BlockHeight);
   end;
@@ -491,8 +488,8 @@ implementation
     side: CollisionSide;
   begin
     result := false;
-    if m = nil then raise Exception.Create('No Map supplied (nil)');
-    if s = nil then raise Exception.Create('No Sprite suppled (nil)');
+    if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
+    if s = nil then begin RaiseException('No Sprite suppled (nil)'); exit; end;
 
     rectSearch := GetPotentialCollisions(m, s);
     side := GetSideForCollisionTest(s^.velocity);
@@ -759,7 +756,7 @@ implementation
   var
     i, j: LongInt;
   begin
-    for i := 0 to 23 do //TODO: hard-coded magic numbers bad... MAP_EVENT_HI?
+    for i := LongInt(Low(MapTag)) to LongInt(High(MapTag)) do
       if (Length(m^.TagInfo[i]) > 0) then
         for j := 0 to High(m^.TagInfo[i]) do
           if (m^.TagInfo[i][j].x = xIndex) and (m^.TagInfo[i][j].y = yIndex) then

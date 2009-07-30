@@ -54,6 +54,8 @@ interface
   // All SwinGame initialisation code must call this before performing any processing...
   procedure InitialiseSwinGame();
   
+  procedure RaiseException(message: String);
+  
   {$ifdef DARWIN}
   procedure CyclePool();
   {$endif}
@@ -90,6 +92,8 @@ interface
     
     // This fkag indicates if the audio has been opened.
     AudioOpen: Boolean = False;
+    
+    UseExceptions: Boolean = True;
   const
     DLL_VERSION = 300000;
     {$ifndef FPC}
@@ -151,7 +155,8 @@ implementation
       {$IFDEF Trace}
       TraceIf(tlError, 'sgCore', 'Error Loading SDL', 'initialization', SDL_GetError());
       {$ENDIF}
-      raise Exception.Create('Error loading sdl... ' + SDL_GetError());
+      RaiseException('Error loading sdl... ' + SDL_GetError());
+      exit;
     end;
     
     //Unicode required by input manager.
@@ -176,7 +181,8 @@ implementation
   begin
     if (baseSurface = nil) or (baseSurface^.format = nil) then
     begin
-      raise Exception.Create('Unable to get color as screen is not created.');
+      RaiseException('Unable to get color as screen is not created.');
+      exit;
     end;
 
     SDL_GetRGB(color, baseSurface^.format, @result.r, @result.g, @result.b);
@@ -202,23 +208,17 @@ implementation
   
   function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
   begin
-    if (w < 0) or (h < 0) then
-      raise Exception.Create('Width and height of a rectangle must be larger than 0');
-    // TODO: This can probably be removed now.
-    //   
-    // if w < 0 then
-    // begin
-    //   result.x := x + w;
-    //   w := -w;
-    // end
-    // else result.x := x;
-    // 
-    // if h < 0 then
-    // begin
-    //   result.y := y + h;
-    //   h := -h;
-    // end
-    // else result.y := y;
+    if w < 0 then
+    begin
+      x += w;
+      w := -w;
+    end;
+    if h < 0 then
+    begin
+      y += h;
+      h := -h;
+    end;
+    
     result.x := x;
     result.y := y;
     result.w := Word(w);
@@ -279,7 +279,8 @@ implementation
       3: result := pixel^ and $00ffffff;
       4: result := pixel^;
     else
-      raise Exception.Create('Unsuported bit format...');
+      RaiseException('Unsuported bit format...');
+      exit;
     end;
     {$ELSE}
     case surface^.format^.BytesPerPixel of
@@ -293,6 +294,13 @@ implementation
     {$IFEND}
   end;
   
+  procedure RaiseException(message: String);
+  begin
+    HasException := True;
+    ErrorMessage := message;
+
+    if UseExceptions then raise Exception.Create(message)
+  end;
 
 
 //=============================================================================

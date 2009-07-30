@@ -309,7 +309,8 @@ implementation
   begin
     if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
     begin
-      raise Exception.Create('Error opening audio device: ' + string(Mix_GetError()));
+      RaiseException('Error opening audio device: ' + string(Mix_GetError()));
+      exit;
     end;
     
     AudioOpen := True;
@@ -342,7 +343,11 @@ implementation
   var
     i: LongInt;
   begin
-    if not Assigned(effect) then raise Exception.Create('Sound not supplied');
+    if not Assigned(effect) then
+    begin
+      RaiseException('Sound not supplied');
+      exit;
+    end;
     //dont play if loops = 0
     if loops = 0 then exit;
     
@@ -380,7 +385,7 @@ implementation
   procedure PlayMusic(mus: Music; loops: LongInt); overload;
   begin
     //Mix_HaltMusic();
-    if not Assigned(mus) then raise Exception.Create('Music not supplied');
+    if not Assigned(mus) then begin RaiseException('Music not supplied'); exit; end;
     Mix_PlayMusic(mus, loops);
   end;
   
@@ -391,7 +396,7 @@ implementation
 
   procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
   begin
-    if not Assigned(mus) then raise Exception.Create('Music not supplied');
+    if not Assigned(mus) then begin RaiseException('Music not supplied'); exit; end;
     Mix_FadeInMusic(mus, loops, ms);
   end;
   

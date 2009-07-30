@@ -34,6 +34,7 @@
 
 + (id)createWithId:(%(name_lower)s)ptr
 {
+    if (ptr == nil) return nil;
     id obj = [PointerManager objectForKey: (id)ptr];
     
     if (obj == nil)
@@ -47,6 +48,11 @@
 
 - (id)initWithId:(%(name_lower)s)ptr
 {
+    if (ptr == nil)
+    {
+        [self release];
+        return nil;
+    }
     //Assign super's initialised value to the self pointer
     self = [super init];
     if (self != nil)

@@ -541,7 +541,11 @@ implementation
   /// - dest's surface is set to the toColor
   procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
   begin
-    if dest = nil then raise Exception.Create('Cannot clear, destination bitmap not supplied (nil)');
+    if dest = nil then
+    begin
+      RaiseException('Cannot clear, destination bitmap not supplied (nil)');
+      exit;
+    end;
     SDL_FillRect(dest^.surface, @dest^.surface^.clip_rect, toColor);
   end;
 
@@ -578,7 +582,7 @@ implementation
 
   function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
   begin
-    if not Assigned(bmp) then raise Exception.Create('No bitmap supplied');
+    if not Assigned(bmp) then begin RaiseException('No bitmap supplied'); exit; end;
 
     if (x < 0) or (x >= bmp^.width) or (y < 0) or (y >= bmp^.height) then
     begin
@@ -606,7 +610,7 @@ implementation
   var
     offset: SDL_Rect;
   begin
-    if (dest = nil) or (src = nil) then raise Exception.Create('No bitmap supplied');
+    if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
     
     offset := NewSDLRect(x, y, 0, 0);
     SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
@@ -626,8 +630,8 @@ implementation
   var
     offset, source: SDL_Rect;
   begin
-    if (dest = nil) or (src = nil) then raise Exception.Create('No bitmap supplied');
-    if (srcW < 0) or (srcH < 0) then raise Exception.Create('Width and Height must be >= 0');
+    if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
+    if (srcW < 0) or (srcH < 0) then begin RaiseException('Width and Height must be >= 0'); exit; end;
     
     offset := NewSDLRect(x, y, 0, 0);
     source := NewSDLRect(srcX, srcY, srcW, srcH);
@@ -1091,7 +1095,7 @@ implementation
   /// - Draws a rectangle in the dest bitmap
   procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
   begin
-    if dest = nil then raise Exception.Create('No destination bitmap supplied');
+    if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
     rectangleColor(dest^.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(clr));
   end;
 
@@ -1108,7 +1112,7 @@ implementation
   var
     rect: SDL_Rect;
   begin
-    if dest = nil then raise Exception.Create('No destination bitmap supplied');
+    if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
     
     if width < 0 then
     begin
@@ -1194,7 +1198,7 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: LongInt);
   begin
-    if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
+    if dest = nil then begin RaiseException('The destination bitmap to draw a vertical line is nil'); exit; end;
     vlineColor(dest^.surface, x, y1, y2, ToGfxColor(clr));
   end;
 
@@ -1209,7 +1213,7 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: LongInt);
   begin
-    if dest = nil then raise Exception.Create('The destination bitmap to draw a vertical line is nil');
+    if dest = nil then begin RaiseException('The destination bitmap to draw a vertical line is nil'); exit; end;
       
     hlineColor(dest^.surface, x1, x2, y, ToGfxColor(clr));
   end;
@@ -1238,7 +1242,7 @@ implementation
   /// - Sets one pixel on the destination bitmap
   procedure DrawPixel(dest: Bitmap; clr: Color; x, y: LongInt); overload;
   begin
-    if dest = nil then raise Exception.Create('The destination bitmap to draw a pixel is nil');
+    if dest = nil then begin RaiseException('The destination bitmap to draw a pixel is nil'); exit; end;
     
     if (x < 0) or (x >= dest^.surface^.w) or (y < 0) or (y >= dest^.surface^.h) then exit;
     
@@ -1454,7 +1458,7 @@ implementation
   
   procedure ResetClip(bmp: Bitmap); overload;
   begin
-    if bmp = nil then raise Exception.Create('Cannot reset clip, bmp must not be nil');
+    if bmp = nil then begin RaiseException('Cannot reset clip, bmp must not be nil'); exit; end;
     SDL_SetClipRect(bmp^.surface, nil);
   end;
 
@@ -1467,7 +1471,7 @@ implementation
   var
     rect: SDL_Rect;
   begin
-    if bmp = nil then raise Exception.Create('Cannot set clip, bmp must not be nil');
+    if bmp = nil then begin RaiseException('Cannot set clip, bmp must not be nil'); exit; end;
     rect := NewSDLRect(x, y, w, h);
     SDL_SetClipRect(bmp^.surface, @rect);
   end;
