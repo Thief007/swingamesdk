@@ -218,9 +218,9 @@ implementation
 
   procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
   begin
-    if theFont = nil then raise Exception.Create('The specified font to start reading text is nil');
-    if maxLength <= 0 then raise Exception.Create('Minimum length to start reading text is 1');
-    if ReadingText() then raise Exception.Create('Already reading text, cannot start reading text again.');
+    if theFont = nil then begin RaiseException('The specified font to start reading text is nil'); exit; end;
+    if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
+    if ReadingText() then begin RaiseException('Already reading text, cannot start reading text again.'); exit; end;
     
     sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
   end;
@@ -275,7 +275,7 @@ implementation
       if show then SDL_ShowCursor(1)
       else SDL_ShowCursor(0);
     except
-      raise Exception.Create('Unable to show or hide mouse');
+      begin RaiseException('Unable to show or hide mouse'); exit; end;
     end;
   end;
   

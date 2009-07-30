@@ -225,7 +225,8 @@ implementation
   procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt);
   begin
     if s = nil then begin
-      raise Exception.Create('CenterCameraOn requires a target sprite. No sprite was provided (nil supplied)');
+      RaiseException('CenterCameraOn requires a target sprite. No sprite was provided (nil supplied)');
+      exit;
     end;
     MoveCameraTo(Round(ToScreenX(s^.position.x) + s^.width / 2 - ScreenWidth() / 2) + offsetX, 
                  Round(ToScreenY(s^.position.y) + s^.height / 2 - ScreenHeight() / 2) + offsetY);

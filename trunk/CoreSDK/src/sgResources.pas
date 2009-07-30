@@ -23,6 +23,8 @@ unit sgResources;
 interface
 //=============================================================================
 
+  {$I sgTrace.inc}
+
   uses sgTypes;
 
   //----------------------------------------------------------------------------
@@ -386,7 +388,7 @@ implementation
   uses SysUtils, StrUtils, Classes, // system
        stringhash,         // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites; // Swingame
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites, sgTrace; // Swingame
 
   //----------------------------------------------------------------------------
   // Global variables for resource management.
@@ -608,8 +610,14 @@ implementation
   end;
 
   function BitmapNamed(name: String): Bitmap;
+  var
+    tmp : TObject;
   begin
-    result := Bitmap(tResourceContainer(_Images.values[name]).Resource);
+    tmp := _Images.values[name];
+    if assigned(tmp) then
+      result := Bitmap(tResourceContainer(tmp).Resource)
+    else 
+      result := nil;
   end;
 
   procedure ReleaseBitmap(name: String);
@@ -617,8 +625,11 @@ implementation
     bmp: Bitmap;
   begin
     bmp := BitmapNamed(name);
-    _Images.remove(name).Free();
-    FreeBitmap(bmp);
+    if (assigned(bmp)) then
+    begin
+      _Images.remove(name).Free();
+      FreeBitmap(bmp);
+    end;
   end;
 
   procedure ReleaseAllBitmaps();
@@ -646,8 +657,12 @@ implementation
   end;
 
   function FontNamed(name: String): Font;
+  var
+    tmp : TObject;
   begin
-    result := Font(tResourceContainer(_Fonts.values[name]).Resource);
+    tmp := _Fonts.values[name];
+    if assigned(tmp) then result := Font(tResourceContainer(tmp).Resource)
+    else result := nil;
   end;
   
   procedure ReleaseFont(name: String);
@@ -655,8 +670,11 @@ implementation
     fnt: Font;
   begin
     fnt := FontNamed(name);
-    _Fonts.remove(name).free();
-    FreeFont(fnt);
+    if (assigned(fnt)) then
+    begin
+      _Fonts.remove(name).free();
+      FreeFont(fnt);
+    end;
   end;
   
   procedure ReleaseAllFonts();
@@ -686,8 +704,12 @@ implementation
   end;
 
   function SoundEffectNamed(name: String): SoundEffect;
+  var
+    tmp : TObject;
   begin
-    result := SoundEffect(tResourceContainer(_SoundEffects.values[name]).Resource);
+    tmp := _SoundEffects.values[name];
+    if assigned(tmp) then result := SoundEffect(tResourceContainer(tmp).Resource)
+    else result := nil;
   end;
   
   procedure ReleaseSoundEffect(name: String);
@@ -695,8 +717,11 @@ implementation
     snd: SoundEffect;
   begin
     snd := SoundEffectNamed(name);
-    _SoundEffects.remove(name).Free();
-    FreeSoundEffect(snd);
+    if (assigned(snd)) then
+    begin
+      _SoundEffects.remove(name).Free();
+      FreeSoundEffect(snd);
+    end;
   end;
   
   procedure ReleaseAllSoundEffects();
@@ -724,8 +749,12 @@ implementation
   end;
   
   function MusicNamed(name: String): Music;
+  var
+    tmp : TObject;
   begin
-    result := Music(tResourceContainer(_Music.values[name]).Resource);
+    tmp := _Music.values[name];
+    if assigned(tmp) then result := Music(tResourceContainer(tmp).Resource)
+    else result := nil;
   end;
   
   procedure ReleaseMusic(name: String);
@@ -733,8 +762,11 @@ implementation
     mus: Music;
   begin
     mus := MusicNamed(name);
-    _Music.remove(name).Free();
-    FreeMusic(mus);
+    if (assigned(mus)) then
+    begin
+      _Music.remove(name).Free();
+      FreeMusic(mus);
+    end;
   end;
   
   procedure ReleaseAllMusic();
@@ -762,8 +794,12 @@ implementation
   end;
   
   function TileMapNamed(name: String): Map;
+  var
+    tmp : TObject;
   begin
-    result := Map(tResourceContainer(_TileMaps.values[name]).Resource);
+    tmp := _TileMaps.values[name];
+    if assigned(tmp) then result := Map(tResourceContainer(tmp).Resource)
+    else result := nil;
   end;
   
   procedure ReleaseTileMap(name: String);
@@ -771,8 +807,11 @@ implementation
     theMap: Map;
   begin
     theMap := TileMapNamed(name);
-    _TileMaps.remove(name).Free();
-    FreeMap(theMap);
+    if assigned(theMap) then
+    begin
+      _TileMaps.remove(name).Free();
+      FreeMap(theMap);
+    end;
   end;
   
   procedure ReleaseAllTileMaps();
@@ -840,10 +879,15 @@ implementation
   begin
     path := PathToResource(name);
     
-    if not FileExists(path) then raise Exception.Create('Unable to locate resource bundle ' + path);
+    if not FileExists(path) then
+    begin
+      RaiseException('Unable to locate resource bundle ' + path);
+      exit; 
+    end;
+    
     Assign(input, path);
     Reset(input);
-
+    
     delim := [ ',' ]; //comma delimited
     i := 0;
 
@@ -859,14 +903,25 @@ implementation
       current.kind := StringToResourceKind(ExtractDelimited(1, line, delim));
       current.name := ExtractDelimited(2, line, delim);
       if Length(current.name) = 0 then 
-        raise Exception.Create('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
+      begin
+        RaiseException('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
+        exit;
+      end;
+
       current.path := ExtractDelimited(3, line, delim);
       if Length(current.path) = 0 then 
-        raise Exception.Create('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
+      begin
+        RaiseException('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
+        exit;
+      end;
+
       if current.kind = FontResource then
       begin
         if not TryStrToInt(ExtractDelimited(4, line, delim), current.size) then
-          raise Exception.Create('Error loading resource bundle, no size supplied on line ' + IntToStr(i));
+        begin
+          RaiseException('Error loading resource bundle, no size supplied on line ' + IntToStr(i));
+          exit;
+        end;
       end
       else current.size := 0;
       
@@ -878,7 +933,10 @@ implementation
     bndl.LoadResources(showProgress);
     
     if not _Bundles.setValue(name, bndl) then //store bundle
-      raise Exception.create('Error loaded Bundle twice, ' + name);
+    begin
+      RaiseException('Error loaded Bundle twice, ' + name);
+      exit;
+    end;
     
     Close(input);
   end;
@@ -976,21 +1034,33 @@ implementation
   
   function LoadSoundEffect(path: String): SoundEffect;
   begin
-    if not FileExists(path) then raise Exception.Create('Unable to locate music ' + path);
+    if not FileExists(path) then
+    begin
+      RaiseException('Unable to locate music ' + path);
+      exit;
+    end;
+
     result := Mix_LoadWAV(pchar(path));
     if result = nil then
     begin
-      raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
+      RaiseException('Error loading sound effect: ' + SDL_GetError());
+      exit;
     end;
   end;
   
   function LoadMusic(path: String): Music;
   begin
-    if not FileExists(path) then raise Exception.Create('Unable to locate music ' + path);
+    if not FileExists(path) then
+    begin
+      RaiseException('Unable to locate music ' + path);
+      exit;
+    end;
+    
     result := Mix_LoadMUS(pchar(path));
     if result = nil then
     begin
-      raise Exception.Create('Error loading sound effect: ' + SDL_GetError());
+      RaiseException('Error loading sound effect: ' + SDL_GetError());
+      exit;
     end;
   end;
   
@@ -1019,12 +1089,18 @@ implementation
   function CreateBitmap(width, height: LongInt): Bitmap;
   begin
     if (width < 1) or (height < 1) then
-      raise Exception.Create('Bitmap width and height must be greater then 0');
-      if (baseSurface = nil) or (baseSurface^.format = nil) then
-          raise Exception.Create('Unable to CreateBitmap as the window is not open');
+    begin
+      RaiseException('Bitmap width and height must be greater then 0');
+      exit;
+    end;
+    if (baseSurface = nil) or (baseSurface^.format = nil) then
+    begin
+      RaiseException('Unable to CreateBitmap as the window is not open');
+      exit;
+    end;
     
     New(result);
-
+    
     with baseSurface^.format^ do
     begin
       result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
@@ -1034,7 +1110,8 @@ implementation
     if result^.surface = nil then
     begin
       Dispose(result);
-      raise Exception.Create('Failed to create a bitmap: ' + SDL_GetError());
+      RaiseException('Failed to create a bitmap: ' + SDL_GetError());
+      exit;
     end;
     
     result^.width := width;
@@ -1068,7 +1145,12 @@ implementation
   var
     oldSurface: PSDL_Surface;
   begin
-    if surface = nil then raise Exception.Create('No bitmap supplied');
+    if surface = nil then
+    begin
+      RaiseException('No bitmap supplied');
+      exit;
+    end;
+
     
     oldSurface := surface^.surface;
     SetNonAlphaPixels(surface, oldSurface);
@@ -1081,7 +1163,12 @@ implementation
     loadedImage: PSDL_Surface;
     correctedTransColor: Color;
   begin
-    if not FileExists(pathToBitmap) then raise Exception.Create('Unable to locate bitmap ' + pathToBitmap);
+    if not FileExists(pathToBitmap) then
+    begin
+      RaiseException('Unable to locate bitmap ' + pathToBitmap);
+      exit;
+    end;
+
     
     loadedImage := IMG_Load(pchar(pathToBitmap));
     
@@ -1113,7 +1200,8 @@ implementation
     end
     else
     begin
-      raise Exception.Create('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
+      RaiseException('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
+      exit;
     end;
   end;
 
@@ -1151,12 +1239,18 @@ implementation
   
   function LoadFont(fontName: String; size: LongInt): Font;
   begin
-    if not FileExists(fontName) then raise Exception.Create('Unable to locate font ' + fontName);
+    if not FileExists(fontName) then
+    begin
+      RaiseException('Unable to locate font ' + fontName);
+      exit;
+    end;
+
     result := TTF_OpenFont(PChar(fontName), size);
     
     if result = nil then
     begin
-      raise Exception.Create('LoadFont failed: ' + TTF_GetError());
+      RaiseException('LoadFont failed: ' + TTF_GetError());
+      exit;
     end;
   end;
   
@@ -1169,7 +1263,8 @@ implementation
         TTF_CloseFont(fontToFree);
         fontToFree := nil;
       except
-        raise Exception.Create('Unable to free the specified font');
+        RaiseException('Unable to free the specified font');
+        exit;
       end;
     end;
   end;
@@ -1483,16 +1578,16 @@ implementation
     f: text;
     m: Map;
   begin
-    if not FileExists(mapFile) then raise Exception.Create('Unable to locate map: ' + mapFile);
-    if not FileExists(imgFile) then raise Exception.Create('Unable to locate map images: ' + imgFile);
-
+    if not FileExists(mapFile) then begin RaiseException('Unable to locate map: ' + mapFile); exit; end;
+    if not FileExists(imgFile) then begin RaiseException('Unable to locate map images: ' + imgFile); exit; end;
+    
     //Get File
     assign(f, mapFile);
     reset(f);
-
+    
     //Create Map
     New(m);
-
+    
     //Load Map Content
     LoadMapInformation(m, f);
     if (m^.MapInfo.Version > 1) then LoadIsometricInformation(m, f);
@@ -1548,32 +1643,60 @@ implementation
     f: Font;
     txt: String;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'ShowLogos');
+    {$ENDIF}
+    
     ClearScreen();
-    DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
-    f := FontNamed('ArialLarge');
-    txt := 'SwinGame API by Swinburne University of Technology';
-    DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
+    try
+      try
+        LoadResourceBundle('splash.txt', False);
+      
+        DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
+        f := FontNamed('ArialLarge');
+        txt := 'SwinGame API by Swinburne University of Technology';
+        DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
     
-    for i := 1 to 60 do
-    begin
-      ProcessEvents();
-      RefreshScreen(60);
-      if WindowCloseRequested() or KeyDown(vk_Escape) then break;
+        for i := 1 to 60 do
+        begin
+          ProcessEvents();
+          RefreshScreen(60);
+          if WindowCloseRequested() or KeyDown(vk_Escape) then break;
+        end;
+    
+        if AudioOpen then PlaySoundEffect(SoundEffectNamed('SwinGameStart'));
+        for i:= 0 to ANI_CELL_COUNT - 1 do
+        begin
+          DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
+          DrawBitmapPart(BitmapNamed('SwinGameAni'), 
+            (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
+            ANI_W, ANI_H - 1, ANI_X, ANI_Y);
+          RefreshScreen();
+          ProcessEvents();
+          if WindowCloseRequested() or KeyDown(vk_Escape) then continue;
+          Sleep(15);
+        end;
+        Sleep(1000);
+      except on e:Exception do
+        {$IFDEF TRACE}
+          Trace('sgResources', 'Error', 'ShowLogos', 'Error loading and drawing splash.');
+          Trace('sgResources', 'Error', 'ShowLogos', e.Message);
+        {$ENDIF}
+      end;
+    finally
+      try
+        ReleaseResourceBundle('splash.txt');
+      except on e1: Exception do
+        {$IFDEF TRACE}
+          Trace('sgResources', 'Error', 'ShowLogos', 'Error freeing splash.');
+          Trace('sgResources', 'Error', 'ShowLogos', e.Message);
+        {$ENDIF}
+      end;
     end;
     
-    if AudioOpen then PlaySoundEffect(SoundEffectNamed('SwinGameStart'));
-    for i:= 0 to ANI_CELL_COUNT - 1 do
-    begin
-      DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
-      DrawBitmapPart(BitmapNamed('SwinGameAni'), 
-        (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
-        ANI_W, ANI_H - 1, ANI_X, ANI_Y);
-      RefreshScreen();
-      ProcessEvents();
-      if WindowCloseRequested() or KeyDown(vk_Escape) then continue;
-      Sleep(15);
-    end;
-    Sleep(1000);
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'ShowLogos');
+    {$ENDIF}
   end;
   
 

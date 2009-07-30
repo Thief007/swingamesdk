@@ -579,9 +579,9 @@ implementation
   var
     i : LongInt;
   begin
-    if bmp = nil then raise Exception.Create('No image specified to create a sprite');
-    if isMulti and (Length(framesPerCell) = 0) then raise Exception.Create('No frames per cell defined');
-    if (width < 1) or (height < 1) then raise Exception.Create('Sprite Width and Height must be greater then 0');
+    if bmp = nil then begin sgShared.RaiseException('No image specified to create a sprite'); exit; end;
+    if isMulti and (Length(framesPerCell) = 0) then begin sgShared.RaiseException('No frames per cell defined'); exit; end;
+    if (width < 1) or (height < 1) then begin RaiseException('Sprite Width and Height must be greater then 0'); exit; end;
 
     New(result);
     SetLength(result^.bitmaps, 1);
@@ -596,9 +596,8 @@ implementation
       SetLength(result^.framesPerCell, Length(framesPerCell));
       for i := 0 to High(framesPerCell) do
       begin
-        if framesPerCell[i] < 0 then 
-          raise Exception.Create('Frames per cell must be larger than 0');
-      
+        if framesPerCell[i] < 0 then begin RaiseException('Frames per cell must be larger than 0'); exit; end;
+        
         result^.framesPerCell[i] := framesPerCell[i];
       end;
     end
@@ -651,7 +650,7 @@ implementation
     tempIntegers: LongIntArray;
     i: LongInt;
   begin
-    if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
+    if framesPerCell <= 0 then begin RaiseException('Frames per cell must be larger than 0'); exit; end;
 
     SetLength(tempIntegers, frames);
     for i := 0 to High(tempIntegers) do
@@ -683,8 +682,8 @@ implementation
   var
     i : LongInt;
   begin
-    if Length(bitmaps) = 0 then raise Exception.Create('No images specified to create a sprite');
-    if Length(framesPerCell) = 0 then raise Exception.Create('No frames per cell defined');
+    if Length(bitmaps) = 0 then begin RaiseException('No images specified to create a sprite'); exit; end;
+    if Length(framesPerCell) = 0 then begin RaiseException('No frames per cell defined'); exit; end;
   
     New(result);
     result^.position.x          := 0;
@@ -713,8 +712,7 @@ implementation
     SetLength(result^.framesPerCell, Length(framesPerCell));
     for i := 0 to High(framesPerCell) do
     begin
-      if framesPerCell[i] <= 0 then 
-        raise Exception.Create('Frames per cell must be larger than 0');
+      if framesPerCell[i] <= 0 then begin RaiseException('Frames per cell must be larger than 0'); exit; end;
 
       result^.framesPerCell[i] := framesPerCell[i];
     end;
@@ -741,7 +739,7 @@ implementation
     tempIntegers: LongIntArray;
     i: LongInt;
   begin
-    if framesPerCell <= 0 then raise Exception.Create('Frames per cell must be larger than 0');
+    if framesPerCell <= 0 then begin RaiseException('Frames per cell must be larger than 0'); exit; end;
 
     SetLength(tempIntegers, frames);
     for i := 0 to High(tempIntegers) do
@@ -813,9 +811,9 @@ implementation
   /// - The bitmaps is added to the bitmaps within the sprite.
   function AddBitmapToSprite(s : Sprite; bitmapToAdd : Bitmap): LongInt;
   begin
-    if bitmapToAdd = nil then raise Exception.Create('Cannot add non-existing bitmap to Sprite');
-    if s = nil then raise Exception.Create('No sprite to add to');
-    if s^.spriteKind = AnimMultiSprite then raise Exception.Create('Cannot add bitmap to an animated multi-sprite');
+    if bitmapToAdd = nil then begin RaiseException('Cannot add non-existing bitmap to Sprite'); exit; end;
+    if s = nil then begin RaiseException('No sprite to add to'); exit; end;
+    if s^.spriteKind = AnimMultiSprite then begin RaiseException('Cannot add bitmap to an animated multi-sprite'); exit; end;
         
     //Resize the array
     SetLength(s^.bitmaps, Length(s^.bitmaps) + 1);
@@ -832,7 +830,7 @@ implementation
   /// @returns           The width of the sprite's current frame
   function SpriteWidth(s: Sprite): LongInt;
   begin
-    if s = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then begin RaiseException('No sprite supplied'); exit; end;
   
     result := s^.width;
   end;
@@ -843,14 +841,14 @@ implementation
   /// @returns           The height of the sprite's current frame
   function SpriteHeight(s: Sprite): LongInt;
   begin
-    if s = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then begin RaiseException('No sprite supplied'); exit; end;
   
     result := s^.height;
   end;
 
   procedure ReplayAnimation(s : Sprite);
   begin
-    if s = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then begin RaiseException('No sprite supplied'); exit; end;
 
     s^.currentCell := 0;
     s^.hasEnded := false;
@@ -892,11 +890,11 @@ implementation
     sum := 0;
     for i := Low(s^.framesPerCell) to High(s^.framesPerCell) do
     begin
-      if s^.framesPerCell[i] < 0 then raise Exception.Create('Frames per cell must be 0 or positive');
+      if s^.framesPerCell[i] < 0 then begin RaiseException('Frames per cell must be 0 or positive'); exit; end;
       sum := sum + s^.framesPerCell[i];
     end;
 
-    if sum = 0 then raise Exception.Create('Frames per cell cannot all be zero');
+    if sum = 0 then begin RaiseException('Frames per cell cannot all be zero'); exit; end;
   
     //Reset the frame count.
     s^.frameCount := s^.frameCount - s^.framesPerCell[s^.currentCell];
@@ -928,7 +926,7 @@ implementation
   /// - Process the frame position depending on the sprite's setting
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
   begin
-    if s = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then begin RaiseException('No sprite supplied'); exit; end;
     if s^.hasEnded then exit;
     if s^.spriteKind = StaticSprite then exit;
       
@@ -983,7 +981,7 @@ implementation
   var
     srcX, srcY: LongInt;
   begin
-    if not Assigned(s) then raise Exception.Create('No sprite supplied');
+    if not Assigned(s) then begin RaiseException('No sprite supplied'); exit; end;
 
     if (s^.rotation <> 0) or (s^.scale <> 1) then
     begin
@@ -1017,7 +1015,7 @@ implementation
   /// @returns          True if the sprite is off the screen
   function IsSpriteOffscreen(s : Sprite): Boolean;
   begin
-    if s = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then begin RaiseException('No sprite supplied'); exit; end;
   
     if sgCamera.ToScreenX(s^.position.x) >= ScreenWidth() then result := true
     else if sgCamera.ToScreenX(s^.position.x) + SpriteWidth(s) < 0 then result := true
@@ -1040,7 +1038,7 @@ implementation
     mvmt: Vector;
     trans: Matrix2D;
   begin
-    if not Assigned(s) then raise Exception.Create('No sprite supplied');
+    if not Assigned(s) then begin RaiseException('No sprite supplied'); exit; end;
   
     if s^.rotation <> 0 then
     begin
@@ -1062,7 +1060,7 @@ implementation
   /// - Moves the sprite, changing its x and y
   procedure MoveSpriteTo(s : Sprite; x,y : LongInt);
   begin
-    if s = nil then raise Exception.Create('No sprite supplied');
+    if s = nil then begin RaiseException('No sprite supplied'); exit; end;
   
     s^.position.x := x;
     s^.position.y := y;
@@ -1084,7 +1082,7 @@ implementation
     offX1, offY1: LongInt;
     wx, wy: Single;
   begin
-    if s = nil then raise Exception.Create('The specified sprite is nil');
+    if s = nil then begin RaiseException('The specified sprite is nil'); exit; end;
   
     wx := ToWorldX(x);
     wy := ToWorldY(y);

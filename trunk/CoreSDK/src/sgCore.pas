@@ -551,7 +551,10 @@ implementation
     {$ENDIF}
 
     if (screenWidth < 1) or (screenHeight < 1) then
-      raise Exception.Create('Screen Width and Height must be greater then 0 when opening a Graphical Window');
+    begin
+      RaiseException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
+      exit;
+    end;
 
     if Length(iconFile) > 0 then
     begin
@@ -560,13 +563,17 @@ implementation
         SDL_WM_SetIcon(icon, 0);
         SDL_FreeSurface(icon);
       except
-        raise Exception.Create('The icon file specified could not be loaded');
+        RaiseException('The icon file specified could not be loaded');
+        exit;
       end;
     end;
 
     _screen := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
     if _screen = nil then
-      raise Exception.Create('Unable to create window drawing surface... ' + SDL_GetError());
+    begin
+      RaiseException('Unable to create window drawing surface... ' + SDL_GetError());
+      exit;
+    end;
 
     _SetupScreen();
     SDL_WM_SetCaption(PChar(caption), nil);
@@ -588,7 +595,10 @@ implementation
     {$ENDIF}
 
     if screen <> nil then
-      raise Exception.Create('Screen has been created. Cannot create multiple windows.');
+    begin
+      RaiseException('Screen has been created. Cannot create multiple windows.');
+      exit;
+    end;
 
     try         
       _InitSDL(caption, width, height);
@@ -612,10 +622,12 @@ implementation
       stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
       RefreshScreen();
     except on e: Exception do
-      raise Exception.Create('Error in OpenGraphicsWindow: ' + e.Message);
+      begin
+        RaiseException('Error in OpenGraphicsWindow: ' + e.Message);
+        exit;
+      end;
     end;
     
-    LoadResourceBundle('splash.txt', False);
     ShowLogos();
     {$IFDEF TRACE}
       TraceExit('sgCore', 'OpenGraphicsWindow');
@@ -646,10 +658,16 @@ implementation
     oldScr: PSDL_Surface;
   begin
     if (screen = nil) then
-      raise Exception.Create('Screen has not been created. Unable to get screen width.');
+    begin
+      RaiseException('Screen has not been created. Unable to get screen width.');
+      exit;
+    end;
 
     if (width < 1) or (height < 1) then
-      raise Exception.Create('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+    begin
+      RaiseException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+      exit; 
+    end;
 
     if (width = ScreenWidth()) and (height = ScreenHeight()) then exit;
 
@@ -661,14 +679,21 @@ implementation
   function ScreenWidth(): LongInt;
   begin
     if (_screen = nil) then
-        raise Exception.Create('Screen has not been created. Unable to get screen width.');
+    begin
+      RaiseException('Screen has not been created. Unable to get screen width.');
+      exit;
+    end;
+    
     result := _screen^.w;
   end;
 
   function ScreenHeight(): LongInt;
   begin
     if (_screen = nil) then
-        raise Exception.Create('Screen has not been created. Unable to get screen height.');
+    begin
+      RaiseException('Screen has not been created. Unable to get screen height.');
+      exit;
+    end;
     result := _screen^.h;
   end;
 
@@ -687,7 +712,10 @@ implementation
     end;
 
     if SDL_SaveBMP(screen^.surface, PChar(filename)) = -1 then
-      raise Exception.Create('Failed to save ' + basename + '.bmp: ' + SDL_GetError());
+    begin
+      RaiseException('Failed to save ' + basename + '.bmp: ' + SDL_GetError());
+      exit;
+    end;
   end;
 
   //----------------------------------------------------------------------------
@@ -857,7 +885,10 @@ implementation
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
   begin
     if baseSurface = nil then
-      raise Exception.Create('Cannot read screen format. Ensure window is open.');
+    begin
+      RaiseException('Cannot read screen format. Ensure window is open.');
+      exit;
+    end;
     SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
   end;
 
@@ -959,7 +990,8 @@ implementation
       or (bmp^.surface = nil)
       or (bmp^.surface^.format = nil) then
     begin
-      raise Exception.Create('Unable to get color as bitmap not specified');
+      RaiseException('Unable to get color as bitmap not specified');
+      exit;
     end;
 
     temp := ToSDLColor(apiColor);
@@ -969,12 +1001,16 @@ implementation
   function RGBAColor(red, green, blue, alpha: Byte): Color; overload;
   begin
     if (baseSurface = nil) or (baseSurface^.format = nil) then
-      raise Exception.Create('Unable to get RGBAColor as the window is not open');
+    begin
+      RaiseException('Unable to get RGBAColor as the window is not open');
+      exit;
+    end;
 
     try
       result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
     except
-      raise Exception.Create('Error occured while trying to get a color from RGBA components');
+      RaiseException('Error occured while trying to get a color from RGBA components');
+      exit;
     end;
   end;
 
@@ -1080,7 +1116,8 @@ implementation
 
   procedure StartTimer(toStart: Timer);
   begin
-    if not Assigned(toStart) then raise Exception.Create('No timer supplied');
+    if not Assigned(toStart) then begin RaiseException('No timer supplied'); exit; end;
+    
     with toStart^ do
     begin
       started := true;
@@ -1091,7 +1128,7 @@ implementation
 
   procedure StopTimer(toStop: Timer);
   begin
-    if not Assigned(toStop) then raise Exception.Create('No timer supplied');
+    if not Assigned(toStop) then begin RaiseException('No timer supplied'); exit; end;
     with toStop^ do
     begin
       started := false;
@@ -1101,7 +1138,7 @@ implementation
 
   procedure PauseTimer(toPause: Timer);
   begin
-    if not Assigned(toPause) then raise Exception.Create('No timer supplied');
+    if not Assigned(toPause) then begin RaiseException('No timer supplied'); exit; end;
     with toPause^ do
     begin
       if started and (not paused) then
@@ -1114,7 +1151,7 @@ implementation
 
   procedure ResumeTimer(toUnpause: Timer);
   begin
-    if not Assigned(toUnpause) then raise Exception.Create('No timer supplied');
+    if not Assigned(toUnpause) then begin RaiseException('No timer supplied'); exit; end;
     with toUnpause^ do
     begin
       if paused then
@@ -1128,7 +1165,7 @@ implementation
 
   function TimerTicks(toGet: Timer): UInt32;
   begin
-    if not Assigned(toGet) then raise Exception.Create('No timer supplied');
+    if not Assigned(toGet) then begin RaiseException('No timer supplied'); exit; end;
 
     with toGet^ do
     begin
@@ -1181,7 +1218,6 @@ implementation
     {$ENDIF}
     
     RegisterFreeNotifier(nil);
-    ReleaseResourceBundle('splash.txt');
     
     {$IFDEF TRACE}
       TraceExit('sgCore', 'finalization');

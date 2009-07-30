@@ -7,6 +7,8 @@ public class %(name)s : PointerWrapper
     /// <summary> Internal method to call constructor via a delegate. </summary>
     internal static %(name)s Create(IntPtr ptr)
     {
+        if (ptr == IntPtr.Zero) return null;
+        
         if (_ptrRegister.ContainsKey(ptr)) return _ptrRegister[ptr] as %(name)s;
         return new %(name)s(ptr);
     }

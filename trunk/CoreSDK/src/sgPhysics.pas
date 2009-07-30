@@ -453,7 +453,7 @@ implementation
 
   uses
     SysUtils, {Math, Classes,} sgTrace,
-    sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites;
+    sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared;
 
 
   //---------------------------------------------------------------------------
@@ -535,7 +535,7 @@ implementation
     bmp: Bitmap;
     offX1, offY1: LongInt;
   begin
-    if s = nil then raise Exception.Create('The specified sprite is nil');
+    if s = nil then begin RaiseException('The specified sprite is nil'); exit; end;
 
     if width < 0 then
     begin
@@ -549,8 +549,7 @@ implementation
       height := -height;
     end;
     
-    if (width < 1) or (height < 1) then 
-      raise Exception.Create('Rectangle width and height must be greater then 0');
+    if (width < 1) or (height < 1) then exit;
     
     if s^.position.y + SpriteHeight(s) <= y then result := false
     else if s^.position.y >= y + height then result := false
@@ -619,11 +618,8 @@ implementation
     bottom1, bottom2, overBottom: LongInt;
     i, j, xPixel1, yPixel1, xPixel2, yPixel2: LongInt;
   begin
-    if (bmp1 = nil) or (bmp2 = nil) then
-      raise Exception.Create('One or both of the specified bitmaps are nil');
-    
-    if (w1 < 1) or (h1 < 1) or (w2 < 1) or (h2 < 1) then
-      raise Exception.Create('Bitmap width and height must be greater then 0');
+    if (bmp1 = nil) or (bmp2 = nil) then begin RaiseException('One or both of the specified bitmaps are nil'); exit; end;
+    if (w1 < 1) or (h1 < 1) or (w2 < 1) or (h2 < 1) then begin RaiseException('Bitmap width and height must be greater then 0'); exit; end;
     
     result := false;
  
@@ -695,8 +691,7 @@ implementation
     bmp1, bmp2: Bitmap;
     offX1, offY1, offX2, offY2: LongInt;
   begin
-    if (s1 = nil) or (s2 = nil) then
-      raise Exception.Create('One of the sprites specified is nil');
+    if (s1 = nil) or (s2 = nil) then begin RaiseException('One of the sprites specified is nil'); exit; end;
     
     if s1^.spriteKind = AnimMultiSprite then
     begin
@@ -1009,16 +1004,10 @@ implementation
     colNormalAngle, a1, a2, optP: Single;
     n: Vector;
   begin
-    if (s1^.mass <= 0) or (s2^.mass <= 0) then
-    begin
-      raise Exception.Create('Collision with 0 or negative mass... ensure that mass is greater than 0');
-    end;
+    if (s1^.mass <= 0) or (s2^.mass <= 0) then begin RaiseException('Collision with 0 or negative mass... ensure that mass is greater than 0'); exit; end;
     
     c1 := CircleFrom(s1);
     c2 := CircleFrom(s2);
-    
-    //TODO: What if height > width!!
-    //TODO: Change backout from using direction... VectorFromPoints(s1c, s2c)??
     
     //if s1^.mass < s2^.mass then
     if VectorMagnitude(s1^.velocity) > VectorMagnitude(s2^.velocity) then
