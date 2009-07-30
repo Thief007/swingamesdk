@@ -79,9 +79,11 @@ else
     TMP_DIR="${TMP_DIR}/Release"
 fi
 
+if [ ! -d ${TMP_DIR} ]; then
+    mkdir -p ${TMP_DIR}
+fi
 
-if [ -f "${LOG_FILE}" ]
-then
+if [ -f "${LOG_FILE}" ]; then
     rm -f "${LOG_FILE}"
 fi
 
@@ -217,6 +219,10 @@ doWindowsCompile()
 {
     mkdir -p ${TMP_DIR}
     echo "  ... Compiling $GAME_NAME"
+    
+    LIB_DIR=`echo $LIB_DIR | awk '{sub("/c/", "c:/"); print}'`
+    TMP_DIR=`echo $TMP_DIR | awk '{sub("/c/", "c:/"); print}'`
+    SRC_DIR=`echo $SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
     
     ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi

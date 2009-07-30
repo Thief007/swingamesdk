@@ -5,10 +5,10 @@ APP_PATH=`cd "$APP_PATH"; pwd`
 cd "$APP_PATH"
 
 #./clean_all.sh
-#./create_library.sh
-#./bundle_c_templates.sh
+./create_library.sh
+./bundle_c_templates.sh
 #./bundle_cs_templates.sh
-#./bundle_objc_templates.sh
+./bundle_objc_templates.sh
 #./bundle_pas_templates.sh
 
 #

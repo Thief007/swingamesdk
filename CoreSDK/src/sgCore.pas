@@ -240,13 +240,13 @@ interface
   /// Generates a random number between 0 and 1.
   ///
   /// @lib
-  function Random() : Single; overload;
+  function Rnd() : Single; overload;
   
   /// Generates a random integer up to (but not including) ubound. Effectively,
   /// the ubound value specifies the number of random values to create.
   ///
-  /// @lib RandomUpTo
-  function Random(ubound: LongInt): LongInt; overload;
+  /// @lib RndUpto
+  function Rnd(ubound: LongInt): LongInt; overload;
   
   //----------------------------------------------------------------------------
   // Color
@@ -1146,12 +1146,12 @@ implementation
   // Random
   //----------------------------------------------------------------------------
   
-  function Random() : Single; overload;
+  function Rnd() : Single; overload;
   begin
     result := System.Random();
   end;
   
-  function Random(ubound: LongInt): LongInt; overload;
+  function Rnd(ubound: LongInt): LongInt; overload;
   begin
     result := System.Random(ubound);
   end;
