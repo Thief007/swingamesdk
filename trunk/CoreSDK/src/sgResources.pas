@@ -517,11 +517,32 @@ implementation
 
   procedure TResourceBundle.LoadResources(showProgress: Boolean); //overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'TResourceBundle.LoadResources');
+    {$ENDIF}
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling BitmapResource');
+    {$ENDIF}
     LoadResources(showProgress, BitmapResource);
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling FontResource');
+    {$ENDIF}
     LoadResources(showProgress, FontResource);
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling MusicResource');
+    {$ENDIF}
     LoadResources(showProgress, MusicResource);
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling MapResource');
+    {$ENDIF}
     LoadResources(showProgress, MapResource);
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling SoundResource');
+    {$ENDIF}
     LoadResources(showProgress, SoundResource);
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'TResourceBundle.LoadResources');
+    {$ENDIF}
   end;
 
   procedure TResourceBundle.ReleaseResources();
@@ -529,6 +550,7 @@ implementation
     current: tResourceIdentifier;
     i: Integer;
   begin
+  
     for i := Low(identifiers) to High(identifiers) do
     begin
       current := identifiers[i];
@@ -580,16 +602,31 @@ implementation
     obj: tResourceContainer;
     bmp: Bitmap;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'MapBitmap', name + ' -> ' + filename);
+    {$ENDIF}
     //WriteLn('Mapping bitmap... ', filename);
     //WriteLn(name, '->', PathToResource(filename, BitmapResource));
     bmp := LoadBitmap(PathToResource(filename, BitmapResource));
     //WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
     //WriteLn(PathToResource(filename, BitmapResource));
+    
     obj := tResourceContainer.Create(bmp);
-    if not _Images.setValue(name, obj) then
-      raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'MapBitmap', 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
+    {$ENDIF}
+
+    if not _Images.setValue(name, obj) then raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+
+    {$IFDEF TRACE}
+      Trace('sgResources', 'Info', 'MapBitmap', 'returned from setValue');
+    {$ENDIF}
+
     
     result := bmp;
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'MapBitmap');
+    {$ENDIF}
   end;
 
   function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
@@ -877,6 +914,9 @@ implementation
     current: tResourceIdentifier;
     bndl: tResourceBundle;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'LoadResourceBundle');
+    {$ENDIF}
     path := PathToResource(name);
     
     if not FileExists(path) then
@@ -939,6 +979,9 @@ implementation
     end;
     
     Close(input);
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'LoadResourceBundle');
+    {$ENDIF}
   end;
   
   procedure LoadResourceBundle(name: String); overload;
@@ -1163,12 +1206,14 @@ implementation
     loadedImage: PSDL_Surface;
     correctedTransColor: Color;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'LoadBitmap', pathToBitmap);
+    {$ENDIF}
     if not FileExists(pathToBitmap) then
     begin
       RaiseException('Unable to locate bitmap ' + pathToBitmap);
       exit;
     end;
-
     
     loadedImage := IMG_Load(pchar(pathToBitmap));
     
@@ -1203,6 +1248,9 @@ implementation
       RaiseException('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
       exit;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'LoadBitmap, result = ' + HexStr(result));
+    {$ENDIF}
   end;
 
   function LoadBitmap(pathToBitmap : String): Bitmap; overload;
@@ -1646,12 +1694,11 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'ShowLogos');
     {$ENDIF}
-    
-    ClearScreen();
     try
       try
         LoadResourceBundle('splash.txt', False);
-      
+        
+        ClearScreen();
         DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
         f := FontNamed('ArialLarge');
         txt := 'SwinGame API by Swinburne University of Technology';
@@ -1709,17 +1756,26 @@ implementation
 
   initialization
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'initialization');
+    {$ENDIF}
+    
     InitialiseSwinGame();
     
     _Images := TStringHash.Create(False, 1024);
     _SoundEffects := TStringHash.Create(False, 1024);
-    _Fonts := TStringHash.Create(False, 1024);
     _Music := TStringHash.Create(False, 1024);
+    _Fonts := TStringHash.Create(False, 1024);
     _TileMaps := TStringHash.Create(False, 1024);
     _Bundles := TStringHash.Create(False, 1024);
     
-    if ParamCount() >= 0 then
-      SetAppPath(ParamStr(0), True)
+    try
+        if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)
+    except
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'initialization');
+    {$ENDIF}
   end;
 
 end.

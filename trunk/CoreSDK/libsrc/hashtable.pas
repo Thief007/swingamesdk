@@ -135,6 +135,8 @@ interface
 //=============================================================================
 implementation
 //=============================================================================
+  {$I sgTrace.inc}
+    uses sgTrace;
 
   //---------------------------------------------------------------------------
   // array get/put methods - pointer functions
@@ -170,8 +172,15 @@ implementation
   // freepascal implementaion, uses pointers as arrays
 
   function getNewEntryTable(size: integer): HashEntryTablePtr;
+  var
+    i: Integer;
   begin
     getmem(result, size * sizeOf(THashEntry));
+    //set all positions to nil
+    for i := 0 to size - 1 do
+    begin
+      (result + i)^ := nil;
+    end;
   end;
 
   procedure freeEntryTable(table: HashEntryTablePtr; oldSize: integer);
@@ -361,19 +370,39 @@ implementation
     idx: integer;
     entry: THashEntry;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('hashtable', 'THashTable.setValue');
+      Trace('hashtable', 'Info', 'THashTable.setValue', 'fTable = ' + HexStr(fTable));
+    {$ENDIF}
+
     // first try to find key in the table and replace the value
     idx := hashToIndex(key);
+    {$IFDEF TRACE}
+        Trace('hashtable', 'Info', 'THashTable.setValue', 'idx = ' + IntToStr(idx));
+    {$ENDIF}
     entry := arrayGet(fTable, idx);
-    while entry <> nil do begin
-      if equal(key, entry.key) then begin
+    {$IFDEF TRACE}
+        Trace('hashtable', 'Info', 'THashTable.setValue', 'entry = ' + HexStr(entry));
+    {$ENDIF}
+    while entry <> nil do
+    begin
+      if equal(key, entry.key) then
+      begin
+        {$IFDEF TRACE}
+          Trace('hashtable', 'Info', 'THashTable.setValue', 'Found Matching');
+        {$ENDIF}
+
         result := false;
         entry.value := value;
-        if fOwnKeys then
-           key.free;
+        if fOwnKeys then key.free;
         exit;
       end;
       entry := entry.next;
     end;
+    
+    {$IFDEF TRACE}
+        Trace('hashtable', 'Info', 'THashTable.setValue', 'Done checking... inserting');
+    {$ENDIF}
 
     // inserting new key-value pair
     inc(fModCount);
@@ -386,7 +415,10 @@ implementation
     arrayPut(ftable, idx, entry);
     inc(fcount);
     result := true;
-
+    
+    {$IFDEF TRACE}
+      TraceExit('hashtable', 'THashTable.setValue');
+    {$ENDIF}
   end;
 
 
