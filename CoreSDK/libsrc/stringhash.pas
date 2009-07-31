@@ -61,6 +61,9 @@ interface
 implementation
 //=============================================================================
 
+  {$I sgTrace.inc}
+    uses sgTrace;
+
   //---------------------------------------------------------------------------
   // tStrHashIterator - iterator for string hash table
   // basically an adapter shell for tMapIterator
@@ -152,7 +155,15 @@ implementation
 
   function TStringHash.setValue(key: string; value: TObject): boolean;
   begin
+    {$IFDEF TRACE}
+      //TraceEnter('stringhash', 'TStringHash.setValue');
+      //Trace('stringhash', 'Info', 'TStringHash.setValue', 'fObjectFactory = ' + HexStr(fObjectFactory));
+      //Trace('stringhash', 'Info', 'TStringHash.setValue', 'fHashTable = ' + HexStr(fHashTable));
+    {$ENDIF}
     result := fHashTable.setValue(fObjectFactory.createObject(key), value);
+    {$IFDEF TRACE}
+      //TraceExit('stringhash', 'TStringHash.setValue');
+    {$ENDIF}
   end;
 
   function TStringHash.remove(key: string): TObject;
