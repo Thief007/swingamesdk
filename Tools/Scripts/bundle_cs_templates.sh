@@ -108,7 +108,7 @@ if [ "$OS" = "$WIN" ]; then
     cd "${VS08_DIST_DIR}"
     rm *.sln
     #cat "src/GameMain.cs" | awk '{sub("MyGame", "[!output SAFE_NAMESPACE_NAME].src"); print}' >> "src/NewGameMain.cs"
-    cat "src/GameMain.cs" | awk '{sub("MyGame", "$safeprojectname$"); print}' >> "src/NewGameMain.cs"
+    cat "src/GameMain.cs" | awk '{sub("MyGame", "$safeprojectname$.src"); print}' >> "src/NewGameMain.cs"
     mv "src/NewGameMain.cs" "src/GameMain.cs"
     zip -r "SwinGame C# Project.zip" * > /dev/null
 
