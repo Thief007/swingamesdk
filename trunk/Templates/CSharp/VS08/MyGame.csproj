@@ -12,7 +12,7 @@
     <AssemblyName>$safeprojectname$</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>$safeprojectname$.GameMain</StartupObject>
+    <StartupObject>$safeprojectname$.src.GameMain</StartupObject>
     <ApplicationIcon>Resources\SwinGame.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
