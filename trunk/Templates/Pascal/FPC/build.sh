@@ -218,6 +218,11 @@ doLinuxPackage()
 doWindowsCompile()
 {
     mkdir -p ${TMP_DIR}
+    
+    echo "  ... Creating Resources $GAME_NAME"
+    windres SwinGame.rc GameLauncher.res
+    if [ $? != 0 ]; then DoExitCompile; fi
+
     echo "  ... Compiling $GAME_NAME"
     
     LIB_DIR=`echo $LIB_DIR | awk '{sub("/c/", "c:/"); print}'`
@@ -226,6 +231,7 @@ doWindowsCompile()
     
     ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
+    
 }
 
 doWindowsPackage()
