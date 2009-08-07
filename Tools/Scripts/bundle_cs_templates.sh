@@ -15,40 +15,8 @@ source "${APP_PATH}/inc/os_check.sh"
 #
 # Step 3: Set the paths to local variables
 #
-SWINGAME_DIR="${APP_PATH}/../../"
-SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
-
-PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
 PYTHON_SCRIPT='create_csharp_library.py'
-
-TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
-DIST_DIR="${SWINGAME_DIR}/Dist"
-
-CS_TEMPLATE_DIR="${TEMPLATE_DIR}/CSharp"
-CS_DIST_DIR="${DIST_DIR}/CSharp"
-
-COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
-COMMON_CS_TEMPLATE_DIR="${CS_TEMPLATE_DIR}/Common"
-
-MONO_TEMPLATE_DIR="${CS_TEMPLATE_DIR}/Mono"
-MONO_DIST_DIR="${CS_DIST_DIR}/Mono"
-
-CL_TEMPLATE_DIR="${CS_TEMPLATE_DIR}/Mono"
-CL_DIST_DIR="${CS_DIST_DIR}/CommandLine"
-
-VS05_TEMPLATE_DIR="${CS_TEMPLATE_DIR}/VS05"
-VS05_DIST_DIR="${CS_DIST_DIR}/VS05"
-
-VS08_TEMPLATE_DIR="${CS_TEMPLATE_DIR}/VS08"
-VS08_DIST_DIR="${CS_DIST_DIR}/VS08"
-
-STUDIO_TEMPLATE_DIR="${TEMPLATE_DIR}/Visual Studio"
-STUDIO_DIST_DIR="${DIST_DIR}/Visual Studio"
-
-STUDIO_EX_CS_08_TEMP_DIR="${STUDIO_TEMPLATE_DIR}/Express C# 08"
-STUDIO_EX_CS_08_DIST_DIR="${STUDIO_DIST_DIR}/Express C# 08"
-
-SOURCE_DIST_DIR="${DIST_DIR}/Source"
+source "${APP_PATH}/inc/base_template_dirs.sh"
 
 #
 # Step 4: Set up array of files to copy
@@ -56,7 +24,7 @@ SOURCE_DIST_DIR="${DIST_DIR}/Source"
 if [ "$OS" = "$WIN" ]; then
     COPY_LIST=( "VS08,${VS08_TEMPLATE_DIR},${VS08_DIST_DIR}" )
     COPY_LIST=( "${COPY_LIST[@]}" "Command Line,${CL_TEMPLATE_DIR},${CL_DIST_DIR}")
-
+    
     #Simple copy list with VS templates
     SMPL_COPY_LIST=( "C# Express 08,${STUDIO_EX_CS_08_TEMP_DIR},${STUDIO_EX_CS_08_DIST_DIR}" )
 else

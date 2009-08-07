@@ -4,45 +4,85 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
-#./clean_all.sh
-./create_library.sh
-./bundle_c_templates.sh
-#./bundle_cs_templates.sh
-./bundle_objc_templates.sh
-#./bundle_pas_templates.sh
+source ${APP_PATH}/inc/version.sh
+
+echo -n "Is ${SG_VERSION} the correct version number? [yn]: "
+read answer
+if [ "a${answer}a" != "aya" ] ; then
+    echo "Please update version.sh and retry."
+    exit 1
+fi
+
+echo -n "Clean all and recreate templates? [yn]: "
+read answer
+
+if [ "a${answer}a" == "aya" ] ; then
+    ./clean_all.sh
+    ./create_library.sh
+    ./bundle_c_templates.sh
+    ./bundle_cs_templates.sh
+    ./bundle_objc_templates.sh
+    ./bundle_pas_templates.sh
+fi
 
 #
 # Create XCode packages
 #
+source "${APP_PATH}/inc/base_template_dirs.sh"
 
-SWINGAME_DIR="${APP_PATH}/../../"
-SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
-
-DIST_DIR="${SWINGAME_DIR}/Dist"
-
-OBJC_DIST_DIR="${DIST_DIR}/ObjC"
-C_DIST_DIR="${DIST_DIR}/C"
-
-XCODE_OBJC_DIST_DIR="${OBJC_DIST_DIR}/xcode 3"
-XCODE_C_DIST_DIR="${C_DIST_DIR}/xcode 3"
-
-TMP_DIR=${SWINGAME_DIR}/tmp
-PKG_TMP_DIR="${TMP_DIR}/Pkgs/"
+PKG_TMP_DIR="${TMP_DIR}/Pkgs"
+DMG_TMP_DIR="${TMP_DIR}/Dmgs"
 
 PKG_XCODE_OBJC_DIR="${PKG_TMP_DIR}/SwinGame/SwinGame - Objective C"
 PKG_XCODE_C_DIR="${PKG_TMP_DIR}/SwinGame/SwinGame - C"
 
-COPY_LIST=( "Objective C,${XCODE_OBJC_DIST_DIR},${PKG_XCODE_OBJC_DIR}" )
-COPY_LIST=( "${COPY_LIST[@]}" "C,${XCODE_C_DIST_DIR},${PKG_XCODE_C_DIR}")
+PKG_COPY_LIST=( "Objective C,${XCODE_OBJC_DIST_DIR},${PKG_XCODE_OBJC_DIR}" )
+PKG_COPY_LIST=( "${PKG_COPY_LIST[@]}" "C,${XCODE_C_DIST_DIR},${PKG_XCODE_C_DIR}")
 
-# 1: Copy all files to related directories
+MAC_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "C XCode,${XCODE_C_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC XCode,${XCODE_OBJC_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "FPC,${MONO_DIST_DIR}")
+
 source ${APP_PATH}/inc/copy_without_svn.sh
 
+XCODE_PKG_NAME="${DIST_DIR}/SwinGame ${SG_VERSION} XCode Templates.pkg"
+
+# Step 1: Remove old packages and package dirs
 rm -rf ${PKG_TMP_DIR}
-rm "${DIST_DIR}/SwinGame XCode Templates.pkg"
+rm -rf ${DMG_TMP_DIR}
+if [ -f "$XCODE_PKG_NAME" ] ; then
+    rm -f "${XCODE_PKG_NAME}"
+fi
 
-DoCopy "${COPY_LIST}"
+# Step 2: Copy all files to related directories
+DoCopy "${PKG_COPY_LIST}"
 
-echo " ... Creating packages"
-/Developer/usr/bin/packagemaker --doc "${APP_PATH}/pkgdocs/SwinGame.pmdoc" --version 3.0 --out "${DIST_DIR}/SwinGame XCode Templates.pkg"
+# Step 3: Create packages
+echo "  ... Creating packages"
+/Developer/usr/bin/packagemaker --doc "${APP_PATH}/pkgdocs/SwinGame.pmdoc" --version "${SG_VERSION}" --out "${XCODE_PKG_NAME}" 2>> /dev/null
+
+echo "  ... Creating DMGs"
+for arg in "${MAC_DMG_LIST[@]}"; do
+    name=`echo $arg | awk -F"," '{print $1}'`
+    from=`echo $arg | awk -F"," '{print $2}'`
+    
+    DMG_BASE_DIR="${DMG_TMP_DIR}/SwinGame ${SG_VERSION} ${name}/Project Template"
+    create_from="${DMG_TMP_DIR}/SwinGame ${SG_VERSION} ${name}"
+    
+    to="${DIST_DIR}/SwinGame ${SG_VERSION} ${name}.dmg"
+    echo "  ... ${to}"
+    
+    mkdir -p "${DMG_BASE_DIR}"
+    cp -r "${from}/" "${DMG_BASE_DIR}"
+    hdiutil create -quiet -ov -srcfolder "${create_from}" "${to}"
+    rm -rf "${DMG_BASE_DIR}"
+done
+
+rm -rf ${PKG_TMP_DIR}
+rm -rf ${DMG_TMP_DIR}
+
 echo " ... Done"
+

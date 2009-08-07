@@ -20,35 +20,13 @@ fi
 #
 # Step 3: Set the paths to local variables
 #
-SWINGAME_DIR="${APP_PATH}/../../"
-SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
+source "${APP_PATH}/inc/base_template_dirs.sh"
 
-PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
-
-TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
-DIST_DIR="${SWINGAME_DIR}/Dist"
-
-C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
-COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/common"
-
-OBJC_TEMPLATE_DIR="${TEMPLATE_DIR}/ObjC"
-OBJC_DIST_DIR="${DIST_DIR}/ObjC"
-
-COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
-COMMON_OBJC_TEMPLATE_DIR="${OBJC_TEMPLATE_DIR}/common"
-
-GCC_C_TEMPLATE_DIR="${OBJC_TEMPLATE_DIR}/gcc"
-GCC_C_DIST_DIR="${OBJC_DIST_DIR}/gcc"
-
-XCODE_OBJC_TEMPLATE_DIR="${OBJC_TEMPLATE_DIR}/xcode 3"
-XCODE_OBJC_DIST_DIR="${OBJC_DIST_DIR}/xcode 3"
-
-SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 #
 # Step 4: Set up array of files to copy
 #
-COPY_LIST=( "Command line gcc,${GCC_C_TEMPLATE_DIR},${GCC_C_DIST_DIR}" )
+COPY_LIST=( "Command line gcc,${GCC_OBJC_TEMPLATE_DIR},${GCC_OBJC_DIST_DIR}" )
 
 if [ "$OS" = "$MAC" ]; then
     COPY_LIST=( "${COPY_LIST[@]}" "XCode 3,${XCODE_OBJC_TEMPLATE_DIR},${XCODE_OBJC_DIST_DIR}")

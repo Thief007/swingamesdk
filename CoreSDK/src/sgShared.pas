@@ -113,8 +113,9 @@ implementation
     // Global variables for Mac OS Autorelease Pool
     //----------------------------------------------------------------------------
     {$ifdef DARWIN}
-      NSAutoreleasePool: LongInt;
-      pool: LongInt = 0;
+      NSAutoreleasePool: Pointer;
+      pool: Pointer = nil;
+      local_pool: Pointer = nil; //used locally in startup/shutdown
     {$endif}
     
   //---------------------------------------------------------------------------
@@ -124,9 +125,9 @@ implementation
   {$ifdef DARWIN}
     {$linklib libobjc.dylib}
     procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
-    function objc_getClass(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
-    function sel_registerName(name: PChar): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
-    function objc_msgSend(self, cmd: LongInt): LongInt; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
+    function objc_getClass(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
+    function sel_registerName(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
+    function objc_msgSend(self, cmd: Pointer): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
   {$endif}
   
   procedure InitialiseSwinGame();
@@ -145,8 +146,8 @@ implementation
       SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
 
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
-      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      objc_msgSend(pool, sel_registerName('init'));
+      local_pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+      objc_msgSend(local_pool, sel_registerName('init'));
       NSApplicationLoad();
     {$endif}
 
@@ -164,6 +165,13 @@ implementation
     
     screen := nil;
     baseSurface := nil;
+    
+    {$ifdef DARWIN}
+      objc_msgSend(local_pool, sel_registerName('drain'));
+      local_pool := nil;
+      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+      objc_msgSend(pool, sel_registerName('init'));
+    {$endif}
   end;
   
   {$ifdef DARWIN}
@@ -302,7 +310,6 @@ implementation
     if UseExceptions then raise Exception.Create(message)
   end;
 
-
 //=============================================================================
 
   initialization
@@ -314,16 +321,16 @@ implementation
 
   finalization
   begin
+    {$ifdef DARWIN}
+      local_pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+      objc_msgSend(pool, sel_registerName('init'));
+    {$endif}
+    
     if sdlManager <> nil then
     begin
       sdlManager.Free();
       sdlManager := nil;
     end;
-    {$ifdef DARWIN}
-      // last pool will self drain...
-      pool := 0;
-      NSAutoreleasePool := 0;
-    {$endif}
     
     if screen <> nil then
     begin
@@ -337,6 +344,18 @@ implementation
     end;
     
     SDL_Quit();
+    
+    {$ifdef DARWIN}
+      // last pool will self drain...
+      objc_msgSend(local_pool, sel_registerName('drain'));
+      
+      if assigned(pool) then
+      begin
+        objc_msgSend(pool, sel_registerName('drain'));
+      end;
+      pool := nil;
+      NSAutoreleasePool := nil;
+    {$endif}
   end;
 
 end.
