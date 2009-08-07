@@ -61,8 +61,8 @@ interface
 implementation
 //=============================================================================
 
-  {$I sgTrace.inc}
-    uses sgTrace;
+  // { $I sgTrace.inc}
+  //   uses sgTrace;
 
   //---------------------------------------------------------------------------
   // tStrHashIterator - iterator for string hash table

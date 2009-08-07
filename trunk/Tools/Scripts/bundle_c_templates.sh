@@ -15,30 +15,7 @@ source "${APP_PATH}/inc/os_check.sh"
 #
 # Step 3: Set the paths to local variables
 #
-SWINGAME_DIR="${APP_PATH}/../../"
-SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
-
-PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
-
-TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
-DIST_DIR="${SWINGAME_DIR}/Dist"
-
-C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
-C_DIST_DIR="${DIST_DIR}/C"
-
-COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
-COMMON_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/common"
-
-GCC_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/gcc"
-GCC_C_DIST_DIR="${C_DIST_DIR}/gcc"
-
-XCODE_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/xcode 3"
-XCODE_C_DIST_DIR="${C_DIST_DIR}/xcode 3"
-
-CODEBLOCKS_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/code blocks"
-CODEBLOCKS_C_DIST_DIR="${C_DIST_DIR}/code blocks/SwinGame"
-
-SOURCE_DIST_DIR="${DIST_DIR}/Source"
+source "${APP_PATH}/inc/base_template_dirs.sh"
 
 #
 # Step 4: Set up array of files to copy

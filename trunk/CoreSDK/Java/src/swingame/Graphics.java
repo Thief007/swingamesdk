@@ -35,7 +35,7 @@ public class Graphics
     
     public static void fillCircle(Color color, float x, float y, int r) 
     {
-        _ga.fillEllipse(color, x - r, y - r, w + 2 * r, h + 2 * r);
+        _ga.fillEllipse(color, x - r, y - r, (int)x + r, (int)y + r);
     }
     
     public static void drawPixel(Color color, float x, float y)

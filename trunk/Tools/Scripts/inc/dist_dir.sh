@@ -21,6 +21,12 @@ CreateDistDirs()
     COPY_LIST=$1
     for arg in "${COPY_LIST[@]}"; do
         to=`echo $arg | awk -F"," '{print $3}'`
+        
+        if [ -d "${to}" ]; then
+            echo "  ... Removing old distribution directory"
+            rm -rf "${to}"
+        fi
+        
         mkdir -p "${to}"
     done
 }

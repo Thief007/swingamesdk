@@ -18,8 +18,7 @@ int main(int argc, const char* argv[])
         
         [SGGraphics clearScreen];
         
-        [SGGraphics drawBitmap: [SGResources bitmapNamed:@"SplashBack"]: 0: 0];
-        //FillRectangle(ColorWhite, 10, 10, 620, 460);
+        [SGText drawFrameRateWithSimpleFont: 0 :0];
         
         [SGCore refreshScreen];
     }

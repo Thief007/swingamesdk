@@ -15,24 +15,7 @@ source "${APP_PATH}/inc/os_check.sh"
 #
 # Step 3: Set the paths to local variables
 #
-SWINGAME_DIR="${APP_PATH}/../../"
-SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
-
-PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
-
-TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
-DIST_DIR="${SWINGAME_DIR}/Dist"
-
-PAS_TEMPLATE_DIR="${TEMPLATE_DIR}/Pascal"
-PAS_DIST_DIR="${DIST_DIR}/Pascal"
-
-COMMON_TEMPLATE_DIR="${TEMPLATE_DIR}/Common"
-COMMON_PAS_TEMPLATE_DIR="${PAS_TEMPLATE_DIR}/Common"
-
-FPC_PAS_TEMPLATE_DIR="${PAS_TEMPLATE_DIR}/FPC"
-FPC_PAS_DIST_DIR="${PAS_DIST_DIR}/FPC"
-
-SOURCE_DIST_DIR="${DIST_DIR}/Source"
+source "${APP_PATH}/inc/base_template_dirs.sh"
 
 #
 # Step 4: Set up array of files to copy
