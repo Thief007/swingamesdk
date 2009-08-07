@@ -15,8 +15,7 @@ int main(int argc, char* argv[])
         
         clear_screen();
         
-        //FillRectangle(ColorWhite, 10, 10, 620, 460);
-        draw_bitmap(bitmap_named("SplashBack"), 0, 0);
+        fill_rectangle(ColorWhite, 10, 10, 780, 580);
         
         refresh_screen();
     } while ( ! window_close_requested());
