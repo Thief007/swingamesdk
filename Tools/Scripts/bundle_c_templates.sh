@@ -35,6 +35,9 @@ GCC_C_DIST_DIR="${C_DIST_DIR}/gcc"
 XCODE_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/xcode 3"
 XCODE_C_DIST_DIR="${C_DIST_DIR}/xcode 3"
 
+CODEBLOCKS_C_TEMPLATE_DIR="${C_TEMPLATE_DIR}/code blocks"
+CODEBLOCKS_C_DIST_DIR="${C_DIST_DIR}/code blocks/SwinGame"
+
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 #
@@ -53,6 +56,7 @@ if [ "$OS" = "$MAC" ]; then
         echo
     fi
 elif [ "$OS" = "$WIN" ]; then
+    COPY_LIST=( "${COPY_LIST[@]}" "Code Blocks,${CODEBLOCKS_C_TEMPLATE_DIR},${CODEBLOCKS_C_DIST_DIR}")
     # build dll if needed
     if [ ! -f "${SOURCE_DIST_DIR}/bin/SGSDK.dll" ]; then
         source ${APP_PATH}/bundle_source.sh -b
@@ -107,6 +111,18 @@ echo "  ... Creating C library code"
 CreateCCode
 
 DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
+
+if [ "$OS" = "$WIN" ]; then
+    # Create ZIPs
+    echo "  ... Creating Code blocks zip"
+    cd "${C_DIST_DIR}/code blocks"
+    zip -r "../SwinGame C - Code Blocks.zip" "*" > /dev/null
+    
+    echo "  ... Creating GCC zip"
+    cd "${GCC_C_DIST_DIR}"
+    zip -r "../SwinGame C - GCC.zip" "*" > /dev/null
+fi
+
 
 echo "  Finished"
 echo "--------------------------------------------------"
