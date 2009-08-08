@@ -44,7 +44,7 @@ MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "C XCode,${XCODE_C_DIST_DIR}")
 MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR}")
 MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC XCode,${XCODE_OBJC_DIST_DIR}")
 MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR}")
-MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "FPC,${MONO_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR}")
 
 source ${APP_PATH}/inc/copy_without_svn.sh
 
