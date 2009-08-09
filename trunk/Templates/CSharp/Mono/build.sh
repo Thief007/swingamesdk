@@ -23,7 +23,7 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-GMCS_FLAGS="-target:winexe -r:System.Drawing -r:Microsoft.VisualBasic"
+GMCS_FLAGS="-target:winexe -r:System.Drawing" #" -r:Microsoft.VisualBasic"
 CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
