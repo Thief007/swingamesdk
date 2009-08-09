@@ -348,9 +348,11 @@ then
             cp -p -f "${OUT_DIR}/SGSDK.dll" ${INSTALL_DIR}
         fi
         CleanTmp 
-    else
+    else #os = Linux
         DisplayHeader
         
+        PrepareTmp
+
         echo "  ... Compiling Library"
         fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/sgsdk.pas" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi

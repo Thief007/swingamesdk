@@ -206,13 +206,13 @@ doLinuxCompile()
     mkdir -p ${TMP_DIR}
     echo "  ... Compiling $GAME_NAME"
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${APP_PATH}/bin/"
+    RESOURCE_DIR="${OUT_DIR}/Resources"
 }
 
 doWindowsCompile()
@@ -229,14 +229,14 @@ doWindowsCompile()
     TMP_DIR=`echo $TMP_DIR | awk '{sub("/c/", "c:/"); print}'`
     SRC_DIR=`echo $SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     
 }
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${APP_PATH}/bin/Resources
+    RESOURCE_DIR=${OUT_DIR}/Resources
     
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
@@ -252,7 +252,7 @@ copyWithoutSVN()
     cd "${FROM_DIR}"
     
     # Create directory structure
-    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -exec mkdir "${TO_DIR}/{}" \;
+    find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
     # Copy files and links
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }

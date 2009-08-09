@@ -17,7 +17,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_out_path="../../Templates/CSharp/common/lib"
+_out_path="../../Templates/CSharp/Common/lib"
 
 #templates for adapter
 _header = ''
@@ -655,7 +655,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
     
     if other['lib method']: 
         #write out the library versions...
-        writer.writeln('[DllImport("SGSDK.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="%s", CharSet=CharSet.Ansi)]' % details['name'])
+        writer.writeln('[DllImport("sgsdk.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="%s", CharSet=CharSet.Ansi)]' % details['name'])
         writer.write('private static extern %(return_type)s' % details % 'DLL_' + details['name'])
         writer.write('(%(params)s);' % details) 
         writer.writeln('')

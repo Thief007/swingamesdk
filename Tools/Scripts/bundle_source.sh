@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Step 1: Move to the directory containing the script
@@ -24,7 +24,8 @@ do
     b)  BUILD="Y";;
     d)  BUILD="Y"
         EXTRA_OPTS="${EXTRA_OPTS} -d";;
-    i)  EXTRA_OPTS="${EXTRA_OPTS} -i" ;;
+    i)  BUILD="Y"
+	EXTRA_OPTS="${EXTRA_OPTS} -i" ;;
     [?]) print >&2 "Usage: $0 [-b] [-d] [-i] [version]"
          exit -1;;
     esac

@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
+
+echo ${APP_PATH}/inc/version.sh
 
 source "${APP_PATH}/inc/version.sh"
 source "${APP_PATH}/inc/base_template_dirs.sh"
@@ -22,15 +24,16 @@ if [ "a${answer}a" == "aya" ] ; then
     ./create_library.sh
     ./bundle_c_templates.sh
     ./bundle_cs_templates.sh
-    ./bundle_objc_templates.sh
+    #./bundle_objc_templates.sh
     ./bundle_pas_templates.sh
 fi
 
 LINUX_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "C CodeBlocks,${CODEBLOCKS_C_DIST_DIR},")
-LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR},Project Template")
+#LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR},Project Template")
 LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR},Project Template")
+LINUX_DMG_LIST=( "${LINUX_DMG_LIST[@]}" "Source,${SOURCE_DIST_DIR},SwinGame")
 
 source ${APP_PATH}/inc/copy_without_svn.sh
 

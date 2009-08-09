@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Step 1: Move to the directory containing the script
@@ -12,10 +12,10 @@ cd "$APP_PATH"
 #
 source "${APP_PATH}/inc/os_check.sh"
 
-if [ ! "$OS" = "$MAC" ]; then
-    echo "Objective C is only for MacOS (atm)"
-    exit 1
-fi
+#if [ ! "$OS" = "$MAC" ]; then
+#    echo "Objective C is only for MacOS (atm)"
+#    exit 1
+#fi
 
 #
 # Step 3: Set the paths to local variables
