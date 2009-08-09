@@ -162,12 +162,12 @@ doCompile()
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${APP_PATH}/bin/"
+    RESOURCE_DIR="${OUT_DIR}/Resources"
 }
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${APP_PATH}/bin/Resources
+    RESOURCE_DIR=${OUT_PATH}/Resources
     
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
@@ -182,7 +182,7 @@ copyWithoutSVN()
     cd "${FROM_DIR}"
     
     # Create directory structure
-    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -exec mkdir "${TO_DIR}/{}" \;
+    find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
     # Copy files and links
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }

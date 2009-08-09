@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # This script contains the sh script functions related to copying
@@ -28,7 +28,7 @@ copyFrameworksWithoutSVN()
     cd "${FROM_DIR}"
     
     # Create directory structure
-    find . ! -path \*.svn\* ! -path \*/. -mindepth 1 -type d -path \*.framework\* -exec mkdir "${TO_DIR}/{}" \;
+    find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -path \*.framework\* -exec mkdir "${TO_DIR}/{}" \;
     # Copy files
     find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
 }

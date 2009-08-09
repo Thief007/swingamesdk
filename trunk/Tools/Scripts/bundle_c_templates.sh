@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Step 1: Move to the directory containing the script
@@ -41,6 +41,8 @@ elif [ "$OS" = "$WIN" ]; then
         echo
         echo
     fi
+else #unix
+    COPY_LIST=( "${COPY_LIST[@]}" "Code Blocks,${CODEBLOCKS_C_TEMPLATE_DIR},${CODEBLOCKS_C_DIST_DIR}")	
 fi
 
 

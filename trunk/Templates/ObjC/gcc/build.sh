@@ -110,7 +110,7 @@ doCompile()
     out_file=$3
     extra_opts=$4
     
-    if [ $file -nt $out_file ]; then
+    if [ ! -f ${out_file} ] || [ $file -nt $out_file ]; then
         echo "      ... Compiling ${name}"    
         ${GCC_BIN} -c ${extra_opts} ${SG_INC} ${C_FLAGS} -o "${out_file}" ${file} >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling"; cat ${LOG_FILE}; exit 1; fi
@@ -218,6 +218,7 @@ doMacPackage()
 
 doLinuxCompile()
 {
+    mkdir -p "${TMP_DIR}"
     for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
     do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
@@ -240,11 +241,12 @@ doLinuxCompile()
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${APP_PATH}/bin/Resources"
+    RESOURCE_DIR="${OUT_DIR}/Resources"
 }
 
 doWindowsCompile()
 {
+    mkdir -p "${TMP_DIR}"
     for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`
     do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
@@ -267,7 +269,7 @@ doWindowsCompile()
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${APP_PATH}/bin/Resources
+    RESOURCE_DIR=${OUT_DIR}/Resources
     
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
