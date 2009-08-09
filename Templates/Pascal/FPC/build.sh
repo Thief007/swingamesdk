@@ -113,7 +113,7 @@ doMacCompile()
     mkdir -p ${TMP_DIR}/${1}
     echo "  ... Compiling $GAME_NAME - $1"
     
-    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR}/${1} -FU${TMP_DIR}/${1} -Fi${LIB_DIR} -Fi${SRC_DIR} -s ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR}/${1} -FU${TMP_DIR}/${1} -Fu${LIB_DIR} -Fi${SRC_DIR} -s ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     rm -f ${LOG_FILE}
     
@@ -206,7 +206,7 @@ doLinuxCompile()
     mkdir -p ${TMP_DIR}
     echo "  ... Compiling $GAME_NAME"
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 
@@ -219,17 +219,18 @@ doWindowsCompile()
 {
     mkdir -p ${TMP_DIR}
     
-    echo "  ... Creating Resources $GAME_NAME"
-    windres SwinGame.rc GameLauncher.res
-    if [ $? != 0 ]; then DoExitCompile; fi
-
     echo "  ... Compiling $GAME_NAME"
     
     LIB_DIR=`echo $LIB_DIR | awk '{sub("/c/", "c:/"); print}'`
     TMP_DIR=`echo $TMP_DIR | awk '{sub("/c/", "c:/"); print}'`
     SRC_DIR=`echo $SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
+    OUT_DIR=`echo $OUT_DIR | awk '{sub("/c/", "c:/"); print}'`
+
+    echo "  ... Creating Resources"
+    windres ${SRC_DIR}/SwinGame.rc ${SRC_DIR}/GameLauncher.res
+    if [ $? != 0 ]; then DoExitCompile; fi
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fi${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     
 }

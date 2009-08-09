@@ -226,6 +226,7 @@ doLinuxPackage()
 
 doWindowsCompile()
 {
+    mkdir -p "${TMP_DIR}"
     for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$`; do
         name=${file##*/} # ## = delete longest match for */... ie all but file name
         name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
