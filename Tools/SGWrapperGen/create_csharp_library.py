@@ -854,7 +854,7 @@ def write_cs_methods_for_module(member, other):
     details = member.to_keyed_dict(doc_transform=doc_transform)
     
     #Support Module style access...
-    details['module_attr'] = '\n[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute()]' if member.is_module else ''
+    details['module_attr'] = '' #'\n[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute()]' if member.is_module else ''
     
     writer.writeln(_class_header % details)
     
