@@ -91,17 +91,5 @@ CreateCCode
 
 DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
 
-if [ "$OS" = "$WIN" ]; then
-    # Create ZIPs
-    echo "  ... Creating Code blocks zip"
-    cd "${C_DIST_DIR}/code blocks"
-    zip -r "../SwinGame C - Code Blocks.zip" "*" > /dev/null
-    
-    echo "  ... Creating GCC zip"
-    cd "${GCC_C_DIST_DIR}"
-    zip -r "../SwinGame C - GCC.zip" "*" > /dev/null
-fi
-
-
 echo "  Finished"
 echo "--------------------------------------------------"

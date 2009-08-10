@@ -24,9 +24,6 @@ source "${APP_PATH}/inc/base_template_dirs.sh"
 if [ "$OS" = "$WIN" ]; then
     COPY_LIST=( "VS08,${VS08_TEMPLATE_DIR},${VS08_DIST_DIR}" )
     #COPY_LIST=( "${COPY_LIST[@]}" "Command Line,${CL_TEMPLATE_DIR},${CL_DIST_DIR}")
-    
-    #Simple copy list with VS templates
-    SMPL_COPY_LIST=( "C# Express 08,${STUDIO_EX_CS_08_TEMP_DIR},${STUDIO_EX_CS_08_DIST_DIR}" )
 else
     COPY_LIST=( "Mono,${MONO_TEMPLATE_DIR},${MONO_DIST_DIR}" )
 fi
@@ -65,26 +62,6 @@ echo "  ... Creating C# library code"
 CreateCSCode
 
 DoDist "${COPY_LIST}" "${CS_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_CS_TEMPLATE_DIR}"
-
-if [ "$OS" = "$WIN" ]; then
-    echo "  ... Creating Visual Studio Template Structure"
-    rm -rf "${STUDIO_DIST_DIR}"
-    DoCopy "${SMPL_COPY_LIST}"
-
-    #Go to the VS08 C# template dir
-    echo "  ... Creating Project Template for C# Express"
-    cd "${VS08_DIST_DIR}"
-    rm *.sln
-    #cat "src/GameMain.cs" | awk '{sub("MyGame", "[!output SAFE_NAMESPACE_NAME].src"); print}' >> "src/NewGameMain.cs"
-    cat "src/GameMain.cs" | awk '{sub("MyGame", "$safeprojectname$.src"); print}' >> "src/NewGameMain.cs"
-    mv "src/NewGameMain.cs" "src/GameMain.cs"
-    zip -r "SwinGame C# Project.zip" * > /dev/null
-
-    echo "  ... Creating Template Installer for C# Express"
-    mv "SwinGame C# Project.zip" "${STUDIO_EX_CS_08_DIST_DIR}"
-    cd "${STUDIO_EX_CS_08_DIST_DIR}"
-    zip -r "SwinGame C# Template Installer.vsi" .vscontent * > /dev/null
-fi
 
 echo "  Finished"
 echo "--------------------------------------------------"
