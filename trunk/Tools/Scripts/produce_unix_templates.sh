@@ -59,8 +59,12 @@ for arg in "${LINUX_DMG_LIST[@]}"; do
     to="${DIST_DIR}/SwinGame ${SG_VERSION} ${name}.tar"
     echo "  ... ${to}"
     
+    if [ -f "${to}" ] ; then
+       rm "${to}" 
+    fi
+    
     mkdir -p "${TAR_BASE_DIR}"
-    cp -r "${from}/" "${TAR_BASE_DIR}"
+    cp -r "${from}"/* "${TAR_BASE_DIR}"
     
     cd "${TAR_ROOT}"
     tar -cf "${to}" *

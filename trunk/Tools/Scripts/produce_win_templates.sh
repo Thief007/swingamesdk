@@ -4,8 +4,6 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
-echo ${APP_PATH}/inc/version.sh
-
 source "${APP_PATH}/inc/version.sh"
 source "${APP_PATH}/inc/base_template_dirs.sh"
 
@@ -64,10 +62,15 @@ for arg in "${WIN_DMG_LIST[@]}"; do
     echo "  ... ${to}"
     
     mkdir -p "${ZIP_BASE_DIR}"
-    cp -r "${from}/" "${ZIP_BASE_DIR}"
+    cp -r "${from}"/* "${ZIP_BASE_DIR}"
     
     cd "${ZIP_ROOT}"
-    zip -r "${to}" *
+    
+    if [ -f "${to}" ] ; then
+       rm "${to}" 
+    fi
+    
+    zip -q -r "${to}" *
     
     rm -rf "${ZIP_BASE_DIR}"
 done
