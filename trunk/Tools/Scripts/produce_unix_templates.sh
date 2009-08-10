@@ -69,7 +69,6 @@ for arg in "${LINUX_DMG_LIST[@]}"; do
     rm -rf "${TAR_BASE_DIR}"
 done
 
-rm -rf ${PKG_TMP_DIR}
 rm -rf ${TAR_TMP_DIR}
 
 echo " ... Done"
