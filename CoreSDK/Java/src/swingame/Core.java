@@ -14,6 +14,7 @@ import swingame.emulator.EmulatedCore;
 public final class Core 
 {
     private static CoreAdapter _ca = new EmulatedCore();
+    private static Random _r = new Random();
     
     // public static void useNative()
     // {
@@ -30,9 +31,24 @@ public final class Core
     public static void processEvents() { _ca.processEvents(); }
     public static void refreshScreen() { _ca.refreshScreen(); }
     
+    public static float rnd()
+    {
+        return _r.nextFloat();
+    }
+    
+    public static int rnd(int upTo)
+    {
+        return _r.nextInt();
+    }
+    
     public static Color hSBColor(float hue, float saturation, float brightness)
     {
         return Color.getHSBColor(hue, saturation, brightness);
+    }
+    
+    public static Color rGBAFloatColor(float r, float g, float b, float a)
+    {
+        return new Color(r, g, b, a);
     }
     
     public static void main(String args[])
