@@ -146,6 +146,7 @@ def _create_objc_method_details(the_method, other):
             #dont write in header...
             header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
             if len(the_method.params) == 0: header = header[:-1]
+            result_details['method_headers'] += '\n#if OBJC_NEW_PROPERTIES != 1' + header + ';\n#endif'
             dest_key = 'method_bodies'
         else:
             header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
@@ -204,7 +205,7 @@ def _create_objc_property_details(the_property, other):
         # writer.write('private %s\n{\n' % type_name % the_property.name)
     else:    
         # Write standard property
-        header = '\n@property (%s, %s) %s %s' % (
+        header = '\n#if OBJC_NEW_PROPERTIES\n@property (%s, %s) %s %s;\n#endif' % (
             'assign', 
             'readonly ' if the_property.setter == None else 'readwrite', 
             type_name, 
