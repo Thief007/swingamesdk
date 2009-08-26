@@ -1,6 +1,7 @@
 package swingame;
 
 import java.awt.Color;
+import java.util.Random;
 
 import swingame.emulator.EmulatedCore;
 // import swingame.platform.NativeCore;

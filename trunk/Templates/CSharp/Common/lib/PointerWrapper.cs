@@ -25,8 +25,8 @@ namespace SwinGame
         Copy
     }
     
-    [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
-    internal delegate PointerWrapper Creater(IntPtr pointer);
+    /// [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
+    /// internal delegate PointerWrapper Creater(IntPtr pointer);
     
     /// <summary>
     /// Wraps a pointer to a SwinGame resource
@@ -46,12 +46,14 @@ namespace SwinGame
             }
         }
         
+        private static FreeDelegate _RemoveMethod = PointerWrapper.Remove;
+        
         static PointerWrapper()
         {
             //Register Remove with SwinGame
             //Console.WriteLine("Registering");
             _ptrRegister = new Dictionary<IntPtr, PointerWrapper>();
-            sgLibrary.sg_Resources_RegisterFreeNotifier(PointerWrapper.Remove);
+            sgLibrary.sg_Resources_RegisterFreeNotifier(_RemoveMethod);
         }
         
         /// <summary>

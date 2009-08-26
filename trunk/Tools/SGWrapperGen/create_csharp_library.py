@@ -910,6 +910,7 @@ def write_delegate(member, other):
     details['return_type'] = adapter_type_visitor(method.return_type, 'return') % member.name
     details['params'] = method.param_string(param_visitor)
     
+    writer.write('[UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]');
     writer.write('public delegate %(return_type)s(%(params)s);\n' % details)
     
 
