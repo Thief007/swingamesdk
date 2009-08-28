@@ -46,7 +46,7 @@ namespace SwinGame
             }
         }
         
-        private static FreeDelegate _RemoveMethod = PointerWrapper.Remove;
+        private static FreeNotifier _RemoveMethod = PointerWrapper.Remove;
         
         static PointerWrapper()
         {
