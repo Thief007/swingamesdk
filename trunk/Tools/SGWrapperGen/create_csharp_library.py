@@ -932,7 +932,10 @@ def write_struct(member, other):
     for field in member.field_list:
         writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
         
-        prop_decl = (struct_type_visitor(field.data_type) % field.pascalName).split('\n')[-1]
+        #hack
+        prop_decl = (struct_type_visitor(field.data_type) % field.pascalName)\
+            .split('\n')[-1]\
+            .replace('private', 'public')
         
         writer.writeln(_struct_property % { 'prop_decl': prop_decl,  'field_name': field.name})
         
