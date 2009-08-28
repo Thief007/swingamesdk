@@ -1,0 +1,11 @@
+%(prop_decl)s
+{
+    get
+    {
+        return this.%(field_name)s;
+    }
+    set
+    {
+        %(field_name)s = value;
+    }
+}
