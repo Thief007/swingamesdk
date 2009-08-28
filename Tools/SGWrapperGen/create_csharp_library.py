@@ -439,6 +439,7 @@ def load_data():
     global _array_property
     global _property_class, _property_class_property, _property_class_field
     global _property_class_indexer
+    global _struct_property
     
     f = open('./cs_lib/lib_header.txt')
     _header = f.read()
@@ -490,6 +491,10 @@ def load_data():
     
     f = open('./cs_lib/property_class_indexer.txt')
     _property_class_indexer = f.read()
+    f.close()
+    
+    f = open('./cs_lib/struct_property.txt')
+    _struct_property = f.read()
     f.close()
     
 
@@ -926,6 +931,8 @@ def write_struct(member, other):
     
     for field in member.field_list:
         writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
+        
+        writer.writeln(_struct_property % { 'prop_decl': struct_type_visitor(field.data_type) % field.pascalName,  'field_name': field.name})
         
     if member.wraps_array:
         # add accessor methods
