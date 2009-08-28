@@ -1,4 +1,4 @@
-%(prop_decl)s
+public %(prop_decl)s
 {
     get
     {
