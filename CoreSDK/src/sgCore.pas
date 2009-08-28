@@ -66,7 +66,9 @@
 unit sgCore;
 
 {$IFDEF UNIX}
+{$IFNDEF DARWIN}
   {$linklib gcc}
+{$ENDIF}  
 {$ENDIF}
 
 //=============================================================================

@@ -321,11 +321,6 @@ implementation
 
   finalization
   begin
-    {$ifdef DARWIN}
-      local_pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      objc_msgSend(pool, sel_registerName('init'));
-    {$endif}
-    
     if sdlManager <> nil then
     begin
       sdlManager.Free();
@@ -347,8 +342,6 @@ implementation
     
     {$ifdef DARWIN}
       // last pool will self drain...
-      objc_msgSend(local_pool, sel_registerName('drain'));
-      
       if assigned(pool) then
       begin
         objc_msgSend(pool, sel_registerName('drain'));

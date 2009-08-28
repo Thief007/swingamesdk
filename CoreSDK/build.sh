@@ -105,7 +105,7 @@ doMacCompile()
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
     /usr/bin/ld /usr/lib/crt1.o -F${LIB_DIR} -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/${GAME_NAME}.${1}" `cat ${TMP_DIR}/link.res` -framework Cocoa ${FRAMEWORKS}
-    if [ $? != 0 ]; then DoExitLink ${GAME_NAME}; fi
+    if [ $? != 0 ]; then DoExitCompile ${GAME_NAME}; fi
     
     CleanTmp
 }
