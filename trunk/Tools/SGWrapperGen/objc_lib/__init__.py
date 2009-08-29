@@ -10,6 +10,11 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 import sys
 import os
 
+#
+# The type_switcher switches types from the Pascal types in the
+# model to the ObjC types used by the users of the SwinGame API.
+#
+
 _type_switcher = {
     None : {    
         #Pascal type: what it maps to
@@ -78,15 +83,15 @@ _type_switcher = {
         'matrix2d':     'SGMatrix2D *',
     },
     'out' : {
-        'string':       'NSString *',
+        'string':       'NSString **',
         'byte':         'unsigned char *',
         'color':        'color *',
         
-        'point2d':      'SGPoint2D *',
+        'point2d':      'SGPoint2D **',
         
         'longint':          'int *',
         'single':           'float *',
-        'linesegment':      'SGLineSegment *',
+        'linesegment':      'SGLineSegment **',
         'linesarray':       'NSArray *',
         'matrix2d':         'SGMatrix2D *',
         'arrayofpoint2d':   'NSArray *',
@@ -280,19 +285,19 @@ local_variable_switcher = {
     },
     'process-out-param': 
     {
-        'string':           '\n    %(param)s = [[[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding] autorelease];',
+        'string':           '\n    *%(param)s = [[[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding] autorelease];',
         
         #Passed through arrays
-        'triangle':         '\n    %(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
-        'matrix2d':         '\n    %(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
+        'triangle':         '\n    *%(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
+        'matrix2d':         '\n    *%(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
         #NSArray types
         # 'linesarray':       '\n    %(param)s = [[NSArray alloc] todo...];',
         # 'arrayofpoint2d':   '\n    %(param)s = [[NSArray alloc] todo...];',
         # 'longintarray':     '\n    %(param)s = [SGUtils arrayOfIntegers:%(var)s size:%(size)s];',
         
         #out structs
-        'point2d':          '\n    %(param)s = [[[SGPoint2D alloc] initWithPoint2D:%(var)s] autorelease];',
-        'linesegment':      '\n    %(param)s = [[[SGLineSegment alloc] initWithLineSegment:%(var)s] autorelease];',
+        'point2d':          '\n    *%(param)s = [[[SGPoint2D alloc] initWithPoint2D:%(var)s] autorelease];',
+        'linesegment':      '\n    *%(param)s = [[[SGLineSegment alloc] initWithLineSegment:%(var)s] autorelease];',
     },
     'process-result': 
     {
@@ -300,7 +305,7 @@ local_variable_switcher = {
         'color':            '\n    return %(var)s;',
         'longint':          '\n    return %(var)s;',
         
-        'string':           '\n    return [[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding];',
+        'string':           '\n    return [[[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding] autorelease];',
         
         'soundeffect':      '\n    return %(var)s;',
         'music':            '\n    return %(var)s;',

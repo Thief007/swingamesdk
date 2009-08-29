@@ -58,7 +58,8 @@ if [ -f "$XCODE_PKG_NAME" ] ; then
 fi
 
 # Step 2: Copy all files to related directories
-DoCopy "${PKG_COPY_LIST}"
+COPY_LIST=( "${PKG_COPY_LIST[@]}" )
+DoCopy "${COPY_LIST}"
 
 # Step 3: Create packages
 echo "  ... Creating packages"

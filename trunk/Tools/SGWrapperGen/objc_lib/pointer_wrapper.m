@@ -40,7 +40,7 @@
     if (obj == nil)
     {
         // Create and assign to obj...
-        obj = [[self alloc] initWithId:ptr];
+        obj = [[[self alloc] initWithId:ptr] autorelease];
     }
     
     return obj;
