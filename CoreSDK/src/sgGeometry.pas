@@ -643,7 +643,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoints(const pts: ArrayOfPoint2D; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoints(const pts: ArrayOfPoint2D; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   var
     ptOnLine: Point2D;
     ray, vOut: Vector;
@@ -693,7 +693,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoint(const pt: Point2D; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoint(const pt: Point2D; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   var
     pts: ArrayOfPoint2D;
   begin
@@ -705,7 +705,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   type
     DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
   var
