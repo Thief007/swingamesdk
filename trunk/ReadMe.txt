@@ -1,53 +1,51 @@
 SwinGame SDK is divided into multiple sections:
 
-CoreSDK contains the main code for the SwinGame API, and the C# and VB6 interface code.
-Demos contains all the demo code
-SDKs contains the "starter packs" for each language we support
-Showcase is an old set of tests... its now in Tests/Full
-Tests this contains testing code and the Test program that illustrates most functions in use
+CoreSDK contains the main code for the SwinGame API (Pascal).
+Demos contains all the demo code (mostly for SwinGame 2)
+Dist - contains the files for distribution that are created by the scripts in Tools
+Templates - contains the static parts of the distributions. These files are copied by the scripts in Tools into the Dist directory when built
+Tests - contains testing code and the Test program that illustrates most functions in use (needs to be updated)
+Tools - contains the scripts that create the different distributions.
+
+(old directories that need to be removed...)
+SDKs contains old templates that haven't been converted to the new form
 
 ----
 Building the libraries:
 
-All the libraries can be built from the command line.
+All the libraries can be built from the command line (using bash - install MSYS on windows).
 
-Core Pascal Library:  in the CoreSDK folder...
- * On Mac or Unx: run ./build_lib.sh
- * On PC: run winbuild_lib.cmd
+The building scripts are in Tools/Scripts.
 
-.NET interface: in the CoreSDK folder
- * On Mac or Unx: run ./mono_lib.sh
- * On PC: run DotNet_lib.cmd
-
-VB6 interface: in the CoreSDK folder
- * On PC: run ./mono_lib.sh then run VB6_lib.cmd
-
-Delphi version of library:
- * On PC: Open the Delphi project, compile to create libraries this builds into SDK
+The scripts named "bundle_${lang}_templates.sh" can be called to create a given distribution in the Dist directory.
+The create_library.sh is used to compile the SwinGame API as a library (dll, so, or dylib), use -i to install the library.
+The scripts named "produce_${platform}_templates.sh" can be used to create all of the files for distribution on that platform and to bundle them for distribution.
 
 ----
-Creating an SDK:
+Testing new features:
 
-The SDKs share many resources, so these are stored in the Base subfolder. Step 2 of the instructions below executes a script to copy the common files from the Base into the required SDK.
-
-1: Build the libraries as needed.
-2: Run copy scripts: These are in the SDK folder, or one of its parents
-   * For Pascal: Run either copycommon.sh or copy_FPC_common.cmd
-   * For .NET: Run either unx_cp_common.sh or win_cp_common.cmd
-   * For VB6: Copy common resources manually (or write a script and update this...)
-   * For Delphi: Run copy_delphi_common.cmd
-3: Move into the SDK folder
-4: Check SDK can compile and run
-5: Copy to temporary location
-6: Strip out .svn details
-7: Package and ship
-
+This can be done with the ./build script in CoreSDK (on Mac only at the moment).
 
 ----
-Build a demo or Test
+Structure of a template:
 
-The demos share many files from the SDKs. The copy_lib_mono.sh and unxdemo.sh scripts copy the shared files from the SDK into the demo. These are run on Mac or Unix like: ./unxdemo.sh AlienFlight this will copy the library files into the AlienFlight demo.
+./
+./bin (or ./build) for output of compiling game
+./lib includes SwinGame source and binaries
+./obj (or ./tmp) for temporary output from compiling game
+./Resources includes SwinGame resources (images, sounds, etc)
+./src Source code for game
 
-Scripts need to be provided for the Windows versions.
+Of these Resources needs to retain the same structure to allow SwinGame to load data correctly.
 
-(Tests have win_lib.cmd in the C# version only.)
+----
+Adding new templates to a language:
+
+1: Create a project using the environment desired.
+2: Check that it works :)
+3: Remove shared folders including those in:
+3.1: Templates/Common/Resources
+3.2: Templates/${lang}/Common
+4: Place template directory in /Templates/${lang}/${template kind}
+5: Alter bundle_${lang}_templates.sh to include template for appropriate platforms
+
