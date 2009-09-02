@@ -63,7 +63,8 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  EXTRA_OPTS="-vwn -gw -uTRACE";;
+    d)  EXTRA_OPTS="-vwn -gw -uTRACE"
+        DEBUG="Y" ;;
     i)  INSTALL="Y";;
     [?]) print >&2 "Usage: $0 [-c] [-d] [-i] [-h] [version]"
          exit -1;;
@@ -192,8 +193,12 @@ doMacCompile()
     
     echo "  ... Linking Library"
     FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    /usr/bin/libtool -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    /usr/bin/libtool -no_dead_strip_inits_and_terms -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
+    
+	if [ "*$DEBUG*" = "*Y*" ] ; then
+        /usr/bin/strip -x "${OUT_DIR}/libSGSDK${1}.dylib"
+    fi
     
     CleanTmp
 }
