@@ -13,6 +13,8 @@ SDKs contains old templates that haven't been converted to the new form
 ----
 Building the libraries:
 
+(requires bash, and Python 2.6)
+
 All the libraries can be built from the command line (using bash - install MSYS on windows).
 
 The building scripts are in Tools/Scripts.
