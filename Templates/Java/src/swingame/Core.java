@@ -39,7 +39,7 @@ public final class Core
     
     public static int rnd(int upTo)
     {
-        return _r.nextInt();
+        return _r.nextInt(upTo);
     }
     
     public static Color hSBColor(float hue, float saturation, float brightness)
