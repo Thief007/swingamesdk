@@ -193,7 +193,7 @@ implementation
 
       w := 0;
       // Get the size of the rendered text.
-      if Length(subStr) > 0 then TTF_SizeText(font, PChar(subStr), w, height);
+      if Length(subStr) > 0 then TTF_SizeText(font, @subStr[1], w, height);
       
       if w > width then width := w;
     end;
@@ -209,7 +209,7 @@ implementation
     for i := 0 to High(lines) do
     begin
       // The rendered text:
-      temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
+      temp := TTF_RenderText_Blended(font, @lines[i][1], colorFG);
       //temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
       
       // Put it on the surface:
@@ -225,7 +225,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeText(font, PChar(lines[i]), w, h);
+        TTF_SizeText(font, @lines[i][1], w, h);
         rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
       end
       else if IsSet(flags, AlignRight) then
@@ -233,7 +233,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeText(font, PChar(lines[i]), w, h);
+        TTF_SizeText(font, @lines[i][1], w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
       else begin RaiseException('Invalid font alignment'); exit; end;
@@ -327,7 +327,7 @@ implementation
     for i := 0 to High(lines) do
     begin
       // The rendered text:
-      //temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
+      //temp := TTF_RenderText_Blended(font, @lines[i][1], colorFG);
       temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
       
       // Put it on the surface:
@@ -551,7 +551,7 @@ implementation
     if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       y := 0; result := 0;
-      TTF_SizeText(theFont, PChar(theText), result, y);
+      TTF_SizeText(theFont, @theText[1], result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -583,7 +583,7 @@ implementation
     if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       w := 0; result :=  0;
-      TTF_SizeText(theFont, PChar(theText), w, result);
+      TTF_SizeText(theFont, @theText[1], w, result);
     except
       begin RaiseException('Unable to get the text height'); exit; end;
     end;
@@ -641,7 +641,7 @@ implementation
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
   begin
-    stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
+    stringColor(dest^.surface, Round(x), Round(y), @theText[1], ToGFXColor(textColor));
   end;
 
 //=============================================================================

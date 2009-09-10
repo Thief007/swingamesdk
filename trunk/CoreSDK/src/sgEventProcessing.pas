@@ -182,7 +182,7 @@ implementation
   
   procedure TSDLManager.HandleKeydownEvent(event: PSDL_Event);
   var
-    oldStr: String;
+    oldStr, newStr: String;
   begin
     _keyPressed := true;
     SetLength(_KeyTyped, Length(_KeyTyped) + 1);
@@ -227,7 +227,10 @@ implementation
 
          //Render a new text surface
          if Length(_tempString) > 0 then
-           _textSurface := TTF_RenderText_Blended(_font, PChar(_tempString + '|'), _foreColor)
+         begin
+           newStr := _tempString + '|';
+           _textSurface := TTF_RenderText_Blended(_font, @newStr[1], _foreColor)
+         end
          else
           _textSurface := nil;
       end;

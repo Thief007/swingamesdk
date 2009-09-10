@@ -160,7 +160,13 @@ interface
   ///
   /// @lib
   procedure ToggleFullScreen();
-
+  
+  /// Toggle the Window border mode. This enables you to toggle from a bordered
+  /// window to a borderless window.
+  ///
+  /// @lib
+  procedure ToggleWindowBorder();
+  
   /// Returns the width of the screen currently displayed.
   ///
   /// @returns: The screen's width
@@ -649,8 +655,21 @@ implementation
     oldScr := _screen;
 
     try
-      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
       //Remember... _screen is a pointer to screen buffer, not a "surface"!
+      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
+    except on exc: Exception do
+    end;
+  end;
+  
+  procedure ToggleWindowBorder();
+  var
+    oldScr: PSDL_Surface;
+  begin
+    oldScr := _screen;
+    
+    try
+      //Remember... _screen is a pointer to screen buffer, not a "surface"!
+      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_NOFRAME);
     except on exc: Exception do
     end;
   end;
