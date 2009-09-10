@@ -1690,12 +1690,18 @@ implementation
     i: Integer;
     f: Font;
     txt: String;
+    oldW, oldH: Integer;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'ShowLogos');
     {$ENDIF}
     try
       try
+        oldW := ScreenWidth();
+        oldH := ScreenHeight();
+        if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(800, 600);
+        ToggleWindowBorder();
+        
         LoadResourceBundle('splash.txt', False);
         
         ClearScreen();
@@ -1723,7 +1729,13 @@ implementation
           if WindowCloseRequested() or KeyDown(vk_Escape) then continue;
           Sleep(15);
         end;
-        Sleep(1000);
+        
+        while SoundEffectPlaying(SoundEffectNamed('SwinGameStart')) do
+        begin
+          ProcessEvents();
+          if WindowCloseRequested() or KeyDown(vk_Escape) then break;
+        end;
+        
       except on e:Exception do
         {$IFDEF TRACE}
         begin
@@ -1743,6 +1755,9 @@ implementation
          end;
         {$ENDIF}
       end;
+      ToggleWindowBorder();
+      
+      if (oldW <> 800) or (oldH <> 600) then ChangeScreenSize(oldW, oldH);
     end;
     
     {$IFDEF TRACE}

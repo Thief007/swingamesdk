@@ -47,6 +47,13 @@ interface
 
   uses sgTypes;
   
+  /// `TryOpenAudio` attempts to open the audio device for SwinGame to use.
+  /// If this fails `TryOpenAudio` returns false to indicate that the audio
+  /// device has not opened correctly and audio cannot be played.
+  ///
+  /// @lib
+  function TryOpenAudio(): Boolean;
+  
   /// `OpenAudio` is used to initialise the SwinGame audio code. This should be
   /// called at the start of your programs code, and is usually coded into the
   /// starting project templates. After initialising the audio code you can
@@ -57,6 +64,12 @@ interface
   ///
   /// @lib
   procedure OpenAudio();
+  
+  /// `AudioOpen` indicates if SwinGame's audio has been opened. Sound effects
+  /// and Music can only be played with the audio is open.
+  ///
+  /// @lib
+  function AudioReady(): Boolean;
   
   /// `CloseAudio` is used to clean up the resources used by SwinGame audio. If
   /// `OpenAudio` is called, this must be called to return the resources used
@@ -144,7 +157,7 @@ interface
   /// with `MusicVolume`.
   ///
   /// To test if a `Music` resource is currently playing you can use the 
-  /// `IsMusicPlaying` function.
+  /// `MusicPlaying` function.
   ///
   /// This version of PlayMusic can be used to play background music that is 
   /// looped infinitely. The currently playing music is stopped and the new 
@@ -243,12 +256,12 @@ interface
   ///
   /// @returns true if the music is playing
   ///
-  /// @lib IsMusicPlaying
+  /// @lib MusicPlaying
   ///
   /// @class Music
   /// @static
   /// @method IsPlaying
-  function IsMusicPlaying(): Boolean;
+  function MusicPlaying(): Boolean;
   
   /// This function can be used to check if a sound effect is currently 
   /// playing. 
@@ -256,11 +269,11 @@ interface
   /// @param effect The sound effect to check.
   /// @returns true if the effect `SoundEffect` is playing.
   ///
-  /// @lib IsSoundEffectPlaying
+  /// @lib SoundEffectPlaying
   ///
   /// @class SoundEffect
   /// @method IsPlaying
-  function IsSoundEffectPlaying(effect: SoundEffect): Boolean;
+  function SoundEffectPlaying(effect: SoundEffect): Boolean;
 
   /// Stops all occurances of the effect `SoundEffect` that is currently playing.
   ///
@@ -305,15 +318,21 @@ implementation
     // playing and enables us to stop the sound, check if it is playing etc.
     soundChannels: Array[0..7] of Pointer;
   
+  function TryOpenAudio(): Boolean;
+  begin
+    sgShared.AudioOpen :=  Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) >= 0;
+    result := sgShared.AudioOpen;
+  end;
+  
   procedure OpenAudio();
   begin
-    if Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 1024 ) = -1 then
-    begin
+    if not TryOpenAudio() then
       RaiseException('Error opening audio device: ' + string(Mix_GetError()));
-      exit;
-    end;
-    
-    AudioOpen := True;
+  end;
+  
+  function AudioReady(): Boolean;
+  begin
+    result := sgShared.AudioOpen;
   end;
   
   procedure CloseAudio();
@@ -410,7 +429,7 @@ implementation
     Mix_FadeOutMusic(ms);
   end;
   
-  function IsSoundPlaying(effect: Pointer): Boolean;
+  function SoundPlaying(effect: Pointer): Boolean;
   var
     i: LongInt;
   begin
@@ -426,12 +445,12 @@ implementation
     end;
   end;
   
-  function IsSoundEffectPlaying(effect: SoundEffect): Boolean;
+  function SoundEffectPlaying(effect: SoundEffect): Boolean;
   begin
-    result := IsSoundPlaying(effect);
+    result := SoundPlaying(effect);
   end;
   
-  function IsMusicPlaying(): Boolean;
+  function MusicPlaying(): Boolean;
   begin
     result := Mix_PlayingMusic() <> 0;
   end;

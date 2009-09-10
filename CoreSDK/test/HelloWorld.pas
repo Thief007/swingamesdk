@@ -5,9 +5,9 @@ uses
 
 procedure Main();
 begin
-  //OpenAudio();
+  OpenAudio();
   
-  OpenGraphicsWindow('Hello World', 800, 600);
+  OpenGraphicsWindow('Hello World', 640, 480);
   
   //Test releasing of resources - not assigned
   WriteLn('BMP: ', HexStr(BitmapNamed('fred')));
@@ -34,7 +34,7 @@ begin
   
   ReleaseAllResources();
   
-  //CloseAudio();
+  CloseAudio();
 end;
 
 begin
