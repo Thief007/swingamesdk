@@ -177,8 +177,10 @@ doMacCompile()
 {
     PrepareTmp
     
+    LINK_OPTS="$2"
+    
     # Compile to assembly (.s)
-    "${FPC_BIN}" -Mobjfpc -Sh $EXTRA_OPTS -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
+    "${FPC_BIN}" -Mobjfpc -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
@@ -193,10 +195,18 @@ doMacCompile()
     
     echo "  ... Linking Library"
     FRAMEWORKS=`ls -d ${FRAMEWORK_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    /usr/bin/libtool -no_dead_strip_inits_and_terms -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    
+    
+    #/usr/bin/libtool -no_order_inits -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK"  -arch_only ${1} -dynamic -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -current_version ${VERSION} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    
+    #FIX: -no_order_inits for SnowLeopard
+    #FIX: -no_order_data for SnowLeopard can be removed with future versions of the compiler
+    /usr/bin/ld -dylib -dynamic $LINK_OPTS -L"${TMP_DIR}" -F${FRAMEWORK_DIR} -no_order_inits -no_order_data -arch $1 -search_paths_first -multiply_defined suppress -current_version "${VERSION}" -install_name "@executable_path/../Frameworks/SGSDK.framework/Versions/${VERSION}/SGSDK" -o "${OUT_DIR}/libSGSDK${1}.dylib" ${FRAMEWORKS} -read_only_relocs suppress `cat ${TMP_DIR}/link.res` -framework Cocoa
+    
     if [ $? != 0 ]; then echo "Error linking"; exit 1; fi
     
-	if [ "*$DEBUG*" = "*Y*" ] ; then
+    if [ "*$DEBUG*" = "**" ] ; then
+        echo "  ... Stripping symbols from dylib"
         /usr/bin/strip -x "${OUT_DIR}/libSGSDK${1}.dylib"
     fi
     
@@ -294,12 +304,13 @@ then
         
         echo "  ... Compiling Library"
         #Compile ppc version of library
-        FPC_BIN=`which ppcppc`
-        doMacCompile "ppc"
         
         #Compile i386 version of library
         FPC_BIN=`which ppc386`
-        doMacCompile "i386"
+        doMacCompile "i386" ""
+        
+        FPC_BIN=`which ppcppc`
+        doMacCompile "ppc" "-ldylib1.10.5.o"
         
         #Combine into a fat dylib
         doLipo "i386" "ppc"

@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 namespace SwinGame
 {
     //internal delegate void FreeDelegate(IntPtr toFree);
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     internal enum PtrKind
     {
         Bitmap,
@@ -31,6 +32,7 @@ namespace SwinGame
     /// <summary>
     /// Wraps a pointer to a SwinGame resource
     /// </summary>
+    [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public abstract class PointerWrapper : IDisposable
     {
         /// <summary>
@@ -38,6 +40,7 @@ namespace SwinGame
         /// </summary>
         protected static readonly Dictionary<IntPtr, PointerWrapper> _ptrRegister;
         
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         internal static void Remove(IntPtr ptr)
         {
             if (_ptrRegister.ContainsKey(ptr))
@@ -59,6 +62,7 @@ namespace SwinGame
         /// <summary>
         /// "Super Dodgy" (but correct) work around for the fact that C# has no unload methods for classes.
         /// </summary>
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         internal class ReleaserClass
         {
             ~ReleaserClass()
@@ -68,14 +72,17 @@ namespace SwinGame
             }
         }
         
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         internal static ReleaserClass releaser = new ReleaserClass();
         
         private PtrKind _Kind;
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         protected internal IntPtr Pointer;
         
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         protected internal abstract void DoFree();
         
-        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough(), System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         internal PointerWrapper(IntPtr ptr, PtrKind kind)
         {
             if (PointerWrapper._ptrRegister.ContainsKey(ptr)) throw new SwinGameException("Error managing resources.");
@@ -84,7 +91,7 @@ namespace SwinGame
             _Kind = kind;
         }
         
-        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
+        [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough(),System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public static implicit operator IntPtr(PointerWrapper p)
         {
             return p.Pointer;

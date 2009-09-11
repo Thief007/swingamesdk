@@ -934,8 +934,7 @@ def write_struct(member, other):
         
         #hack
         prop_decl = (struct_type_visitor(field.data_type) % field.pascalName)\
-            .split('\n')[-1]\
-            .replace('internal', 'public')
+            .split('\n')[-1])
         
         writer.writeln(_struct_property % { 'prop_decl': prop_decl,  'field_name': field.name})
         
