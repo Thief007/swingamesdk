@@ -57,7 +57,7 @@ interface
   procedure RaiseException(message: String);
   
   {$ifdef DARWIN}
-  procedure CyclePool();
+  //procedure CyclePool();
   {$endif}
   
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
@@ -114,8 +114,8 @@ implementation
     //----------------------------------------------------------------------------
     {$ifdef DARWIN}
       NSAutoreleasePool: Pointer;
+      //drain: Pointer;
       pool: Pointer = nil;
-      local_pool: Pointer = nil; //used locally in startup/shutdown
     {$endif}
     
   //---------------------------------------------------------------------------
@@ -127,6 +127,7 @@ implementation
     procedure NSApplicationLoad(); cdecl; external 'Cocoa'; {$EXTERNALSYM NSApplicationLoad}
     function objc_getClass(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_getClass}
     function sel_registerName(name: PChar): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM sel_registerName}
+    function class_respondsToSelector(cls, sel: Pointer): boolean; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM class_respondsToSelector}
     function objc_msgSend(self, cmd: Pointer): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
   {$endif}
   
@@ -146,8 +147,8 @@ implementation
       SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
 
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
-      local_pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      objc_msgSend(local_pool, sel_registerName('init'));
+      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+      objc_msgSend(pool, sel_registerName('init'));
       NSApplicationLoad();
     {$endif}
 
@@ -165,24 +166,21 @@ implementation
     
     screen := nil;
     baseSurface := nil;
-    
-    {$ifdef DARWIN}
-      objc_msgSend(local_pool, sel_registerName('drain'));
-      local_pool := nil;
-      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      objc_msgSend(pool, sel_registerName('init'));
-    {$endif}
   end;
   
   {$ifdef DARWIN}
-  procedure CyclePool();
-  begin
-    //Drain the pool - releases it
-    objc_msgSend(pool, sel_registerName('drain'));
-    //Create a new pool
-    pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-    objc_msgSend(pool, sel_registerName('init'));
-  end;
+  // procedure CyclePool();
+  // begin
+  //   // if class_respondsToSelector(NSAutoreleasePool, drain) then
+  //   // begin
+  //   //   //Drain the pool - releases it
+  //   //   objc_msgSend(pool, drain);
+  //   //   WriteLn('Drain');
+  //   //   //Create a new pool
+  //   //   pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+  //   //   objc_msgSend(pool, sel_registerName('init'));
+  //   // end;
+  // end;
   {$endif}
 
   function ToSDLColor(color: UInt32): TSDL_Color;

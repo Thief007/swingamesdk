@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-09-11: Andrew : Fixed io exceptions
 // - 2009-06-23: Clinton: Comment formatting/cleanup
 //
 // Version 2:
@@ -42,23 +43,25 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils;
+  uses SysUtils
+  {$IFDEF UNIX}
+    , BaseUnix
+  {$ENDIF}
+  ;
 
   {$IFDEF Trace}
   {$Info SwinGame Tracing Enabled}
 
-  var indentLevel: LongInt;
+  var 
+    indentLevel: LongInt;
+    output: Text;
 
   procedure Trace(unitname, action, routine, message: String);
-  var
-    output: Text;
   begin
-    Assign(output, 'Trace.log');
-    if FileExists('Trace.log') then Append(output)
-    else Rewrite(output);
-
-    WriteLn(output, StringOfChar(' ', indentLevel * 2), unitname:10, ': ', action:10, ': ', routine:10, ': ', message);
-    Close(output);
+    try 
+      WriteLn(output, StringOfChar(' ', indentLevel * 2), unitname:10, ': ', action:10, ': ', routine:10, ': ', message);
+    except
+    end;
   end;
 
   procedure TraceIf(tl: TraceLevel; unitname, action, routine, message: String);
@@ -83,6 +86,32 @@ implementation
     indentLevel := indentLevel - 1;
     Trace(unitName, 'Exit', routine, '');
   end;
+
+  //=============================================================================
+  
+  initialization
+  begin
+    try
+      {$IFDEF UNIX}
+      fpChmod ('Trace.log',S_IWUSR or S_IRUSR or S_IWGRP or S_IRGRP or S_IWOTH or S_IROTH);
+      {$ENDIF}
+      Assign(output, 'Trace.log');
+      Rewrite(output);
+    except
+      WriteLn('ERROR: Unable to write to trace file. Please make Trace.log writable by this program.')
+    end;
+  end;
+
+//=============================================================================
+
+  finalization
+  begin
+    try
+      Close(output);
+    except
+    end;
+  end;
+
 
   {$ENDIF}
 end.

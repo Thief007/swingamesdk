@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-09-11: Andrew : Fixed to load resources without needing path
 // - 2009-07-29: Andrew : Renamed Get... functions and check for opened audio
 // - 2009-07-28: Andrew : Added ShowLogos splash screen
 // - 2009-07-17: Andrew : Small fixes for return types.
@@ -202,8 +203,10 @@ interface
   // Loading of actual resources
   //----------------------------------------------------------------------------
     
-  /// Loads the `SoundEffect` from the supplied path. To ensure that your game
-  /// is able to work across multiple platforms correctly ensure that you use
+  /// Loads the `SoundEffect` from the supplied filename. The sound will be loaded
+  /// from the Resources/sounds folder unless a full path to the file is passed
+  /// in. If you are passing in the full path and you want to ensure that your game
+  /// is able to work across multiple platforms correctly then use
   /// `PathToResource` to get the full path to the files in the projects
   /// resources folder.
   ///
@@ -212,16 +215,18 @@ interface
   /// `FreeSoundEffect` should be called to free the resources used by the 
   /// `SoundEffect` data once the resource is no longer needed.
   ///
-  /// @param path the path to the sound effect file to load. 
+  /// @param filename the filename of the sound effect file to load. 
   ///
   /// @lib
   ///
   /// @class SoundEffect
   /// @constructor
   /// @sn initFromPath:%s
-  function LoadSoundEffect(path: String): SoundEffect;
+  function LoadSoundEffect(filename: String): SoundEffect;
 
-  /// Loads the `Music` from the supplied path. To ensure that your game
+  /// Loads the `Music` from the supplied filename. The music will be loaded
+  /// from the Resources/sounds folder unless a full path to the file is passed
+  /// in. If you are passing in the full path and you want toensure that your game
   /// is able to work across multiple platforms correctly ensure that you use
   /// `PathToResource` to get the full path to the files in the projects 
   /// resources folder.
@@ -231,14 +236,14 @@ interface
   /// `FreeMusic` should be called to free the resources used by the 
   /// `Music` data once the resource is no longer needed.
   ///
-  /// @param path the path to the music file to load.
+  /// @param filename the filename to the music file to load.
   ///
   /// @lib
   ///
   /// @class Music
   /// @constructor
   /// @sn initFromPath:%s
-  function LoadMusic(path: String): Music;
+  function LoadMusic(filename: String): Music;
   
   //----------------------------------------------------------------------------
   // Freeing of actual resources
@@ -282,7 +287,7 @@ interface
   /// @class Bitmap
   /// @constructor
   /// @sn initWithPath:%s withTransparency:%s usingColor:%s
-  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+  function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
   
   /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
   /// the screen. Bitmaps can be of bmp, jpeg, gif, png, etc. Images may also
@@ -295,19 +300,19 @@ interface
   /// @class Bitmap
   /// @constructor
   /// @sn initWithPath:%s
-  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
+  function LoadBitmap(filename : String): Bitmap; overload;
   
   /// Loads a bitmap with a transparent color key. The transparent color is then
   /// setup as the color key to ensure the image is drawn correctly. Alpha
   /// values of Images loaded in this way will be ignored. All bitmaps must be
   /// freed using the FreeBitmap once you are finished with them.
   ///
-  /// @lib LoadBitmapWithTransparentColor(pathToBitmap, True, transparentColor)
+  /// @lib LoadBitmapWithTransparentColor(filename, True, transparentColor)
   ///
   /// @class Bitmap
   /// @constructor
   /// @sn initWithPath:%s transparentColor:%s
-  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
+  function LoadTransparentBitmap(filename : String; transparentColor : Color): Bitmap; overload;
   
   /// Frees a loaded bitmap. Use this when you will no longer be drawing the
   /// bitmap (including within Sprites), and when the program exits.
@@ -413,9 +418,7 @@ implementation
     if Assigned(_FreeNotifier) then
     begin
       try
-        // Write('calling...');
         _FreeNotifier(p);
-        // WriteLn('done!');
       except
         ErrorMessage := 'Error calling free notifier';
         HasException := True;
@@ -521,23 +524,23 @@ implementation
       TraceEnter('sgResources', 'TResourceBundle.LoadResources');
     {$ENDIF}
     {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling BitmapResource');
+      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling BitmapResource');
     {$ENDIF}
     LoadResources(showProgress, BitmapResource);
     {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling FontResource');
+      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling FontResource');
     {$ENDIF}
     LoadResources(showProgress, FontResource);
     {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling MusicResource');
+      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling MusicResource');
     {$ENDIF}
     LoadResources(showProgress, MusicResource);
     {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling MapResource');
+      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling MapResource');
     {$ENDIF}
     LoadResources(showProgress, MapResource);
     {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'LoadResourceBundle', 'Calling SoundResource');
+      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling SoundResource');
     {$ENDIF}
     LoadResources(showProgress, SoundResource);
     {$IFDEF TRACE}
@@ -605,23 +608,18 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'MapBitmap', name + ' -> ' + filename);
     {$ENDIF}
-    //WriteLn('Mapping bitmap... ', filename);
-    //WriteLn(name, '->', PathToResource(filename, BitmapResource));
-    bmp := LoadBitmap(PathToResource(filename, BitmapResource));
-    //WriteLn(name, ' (', filename, ') => ', hexstr(bmp));
-    //WriteLn(PathToResource(filename, BitmapResource));
     
+    bmp := LoadBitmap(filename);
     obj := tResourceContainer.Create(bmp);
     {$IFDEF TRACE}
       Trace('sgResources', 'Info', 'MapBitmap', 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
     {$ENDIF}
-
+    
     if not _Images.setValue(name, obj) then raise Exception.create('Error loaded Bitmap resource twice, ' + name);
-
+    
     {$IFDEF TRACE}
       Trace('sgResources', 'Info', 'MapBitmap', 'returned from setValue');
     {$ENDIF}
-
     
     result := bmp;
     {$IFDEF TRACE}
@@ -634,7 +632,7 @@ implementation
     obj: tResourceContainer;
     bmp: Bitmap;
   begin
-    bmp := LoadBitmap(PathToResource(filename, BitmapResource), true, transparentColor);
+    bmp := LoadBitmap(filename, true, transparentColor);
     obj := tResourceContainer.Create(bmp);
     if not _Images.setValue(name, obj) then
       raise Exception.create('Error loaded Bitmap resource twice, ' + name);
@@ -681,7 +679,7 @@ implementation
     obj: tResourceContainer;
     fnt: Font;
   begin
-    fnt := LoadFont(PathToResource(filename, FontResource), size);
+    fnt := LoadFont(filename, size);
     obj := tResourceContainer.Create(fnt);
     if not _Fonts.setValue(name, obj) then
       raise Exception.create('Error loaded Font resource twice, ' + name);
@@ -728,7 +726,7 @@ implementation
   begin
     if not AudioOpen then exit;
     
-    snd := LoadSoundEffect(PathToResource(filename, SoundResource));
+    snd := LoadSoundEffect(filename);
     obj := tResourceContainer.Create(snd);
     if not _SoundEffects.setValue(name, obj) then
       raise Exception.create('Error loaded Sound Effect resource twice, ' + name);
@@ -773,7 +771,7 @@ implementation
     obj: tResourceContainer;
     mus: Music;
   begin
-    mus := LoadMusic(PathToResource(filename, SoundResource));
+    mus := LoadMusic(filename);
     obj := tResourceContainer.Create(mus);
     if not _Music.setValue(name, obj) then
       raise Exception.create('Error loaded Music resource twice, ' + name);
@@ -818,7 +816,7 @@ implementation
     obj: tResourceContainer;
     theMap: Map;
   begin
-    theMap := LoadMap(PathToResource(filename, MapResource));
+    theMap := LoadMap(filename);
     obj := tResourceContainer.Create(theMap);
     if not _TileMaps.setValue(name, obj) then
       raise Exception.create('Error loaded Map resource twice, ' + name);
@@ -917,12 +915,17 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'LoadResourceBundle');
     {$ENDIF}
-    path := PathToResource(name);
     
+    path := name;
     if not FileExists(path) then
     begin
-      RaiseException('Unable to locate resource bundle ' + path);
-      exit; 
+      path := PathToResource(name);
+      
+      if not FileExists(path) then
+      begin
+        RaiseException('Unable to locate resource bundle ' + path);
+        exit;
+      end;
     end;
     
     Assign(input, path);
@@ -1075,15 +1078,19 @@ implementation
   
   //----------------------------------------------------------------------------
   
-  function LoadSoundEffect(path: String): SoundEffect;
+  function LoadSoundEffect(filename: String): SoundEffect;
   begin
-    if not FileExists(path) then
+    if not FileExists(filename) then
     begin
-      RaiseException('Unable to locate music ' + path);
-      exit;
+      filename := PathToResource(filename, SoundResource);
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate music ' + filename);
+        exit;
+      end;
     end;
-
-    result := Mix_LoadWAV(pchar(path));
+    
+    result := Mix_LoadWAV(@filename[1]);
     if result = nil then
     begin
       RaiseException('Error loading sound effect: ' + SDL_GetError());
@@ -1091,15 +1098,19 @@ implementation
     end;
   end;
   
-  function LoadMusic(path: String): Music;
+  function LoadMusic(filename: String): Music;
   begin
-    if not FileExists(path) then
+    if not FileExists(filename) then
     begin
-      RaiseException('Unable to locate music ' + path);
-      exit;
+      filename := PathToResource(filename, SoundResource);
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate music ' + filename);
+        exit;
+      end;
     end;
     
-    result := Mix_LoadMUS(pchar(path));
+    result := Mix_LoadMUS(@filename[1]);
     if result = nil then
     begin
       RaiseException('Error loading sound effect: ' + SDL_GetError());
@@ -1201,35 +1212,36 @@ implementation
     SDL_FreeSurface(oldSurface);
   end;
   
-  function LoadBitmap(pathToBitmap: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+  function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
   var
     loadedImage: PSDL_Surface;
     correctedTransColor: Color;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgResources', 'LoadBitmap', pathToBitmap);
+      TraceEnter('sgResources', 'LoadBitmap', filename);
     {$ENDIF}
-    if not FileExists(pathToBitmap) then
+    if not FileExists(filename) then
     begin
-      RaiseException('Unable to locate bitmap ' + pathToBitmap);
-      exit;
+      filename := PathToResource(filename, BitmapResource);
+      
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate bitmap ' + filename);
+        exit;
+      end;
     end;
     
-    loadedImage := IMG_Load(pchar(pathToBitmap));
+    loadedImage := IMG_Load(@filename[1]);
     
     if loadedImage <> nil then
     begin
       new(result);
       if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
       else result^.surface := SDL_DisplayFormat(loadedImage);
-      //result^.surface := loadedImage;
       
-      //WriteLn('Loaded ', pathToBitmap);
-      //WriteLn('  at ', HexStr(result^.surface));
-
       result^.width := result^.surface^.w;
       result^.height := result^.surface^.h;
-
+      
       if transparent then
       begin
         correctedTransColor := ColorFrom(result, transparentColor);
@@ -1240,12 +1252,12 @@ implementation
       begin
         SetNonAlphaPixels(result, loadedImage);
       end;
-
+      
       if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
     end
     else
     begin
-      RaiseException('Error loading image: ' + pathToBitmap + ': ' + SDL_GetError());
+      RaiseException('Error loading image: ' + filename + ': ' + SDL_GetError());
       exit;
     end;
     {$IFDEF TRACE}
@@ -1253,14 +1265,14 @@ implementation
     {$ENDIF}
   end;
 
-  function LoadBitmap(pathToBitmap : String): Bitmap; overload;
+  function LoadBitmap(filename: String): Bitmap; overload;
   begin
-    result := LoadBitmap(pathToBitmap, false, ColorBlack);
+    result := LoadBitmap(filename, false, ColorBlack);
   end;
 
-  function LoadTransparentBitmap(pathToBitmap : String; transparentColor : Color): Bitmap; overload;
+  function LoadTransparentBitmap(filename: String; transparentColor: Color): Bitmap; overload;
   begin
-    result := LoadBitmap(pathToBitmap, true, transparentColor);
+    result := LoadBitmap(filename, true, transparentColor);
   end;
 
   procedure FreeBitmap(var bitmapToFree : Bitmap);
@@ -1286,14 +1298,22 @@ implementation
   //----------------------------------------------------------------------------
   
   function LoadFont(fontName: String; size: LongInt): Font;
+  var
+    filename: String;
   begin
-    if not FileExists(fontName) then
+    filename := fontName;
+    if not FileExists(filename) then
     begin
-      RaiseException('Unable to locate font ' + fontName);
-      exit;
+      filename := PathToResource(filename, FontResource);
+      
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate font ' + fontName);
+        exit;
+      end;
     end;
 
-    result := TTF_OpenFont(PChar(fontName), size);
+    result := TTF_OpenFont(@filename[1], size);
     
     if result = nil then
     begin

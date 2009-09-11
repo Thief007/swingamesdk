@@ -651,7 +651,7 @@ implementation
     InitialiseSwinGame();
     if TTF_Init() = -1 then
     begin
-      begin RaiseException('Error openning font library. ' + string(TTF_GetError)); exit; end;
+      begin RaiseException('Error opening font library. ' + string(TTF_GetError)); exit; end;
     end;
   end;
 
