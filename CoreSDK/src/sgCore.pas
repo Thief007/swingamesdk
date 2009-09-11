@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-09-11: Andrew : Added tracing code
 // - 2009-07-28: Andrew : Calling ShowLogos splash screen
 //                      : Added simple random funtions.
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
@@ -486,17 +487,24 @@ implementation
   var
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', '_InitFPSData');
+    {$ENDIF}
+    
     // clear the array of values
     for i := Low(_fpsData.values) to High(_fpsData.values) do
       _fpsData.values[i] := 0;
     // zero the current insert position, and the loop count
     _fpsData.pos := 0;
-//    _fpsData.loops := 0;
+    //_fpsData.loops := 0;
     // set the moving range and average to sensitble defaults
     _fpsData.max := 0;
     _fpsData.min := 0;
     _fpsData.avg := 0;
     _fpsData.ready := false;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', '_InitFPSData');
+    {$ENDIF}
   end;
 
   //----------------------------------------------------------------------------
@@ -505,7 +513,13 @@ implementation
 
   function SwinGameVersion(): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'SwinGameVersion');
+    {$ENDIF}
     result := DLL_VERSION;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'SwinGameVersion');
+    {$ENDIF}
   end;
 
   //----------------------------------------------------------------------------
@@ -514,12 +528,24 @@ implementation
 
   function ExceptionMessage(): String;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ExceptionMessage');
+    {$ENDIF}
     result := ErrorMessage;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ExceptionMessage');
+    {$ENDIF}
   end;
 
   function ExceptionOccured(): Boolean;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ExceptionOccured');
+    {$ENDIF}
     result := HasException;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ExceptionOccured');
+    {$ENDIF}
   end;
 
   //----------------------------------------------------------------------------
@@ -528,6 +554,9 @@ implementation
 
   procedure _SetupScreen();
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', '_SetupScreen');
+    {$ENDIF}
     if screen = nil then New(screen)
     else if (screen^.surface <> nil) then SDL_FreeSurface(screen^.surface);
 
@@ -546,6 +575,9 @@ implementation
       screen^.width := _screen^.w;
       screen^.height := _screen^.h;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', '_SetupScreen');
+    {$ENDIF}
   end;
 
   /// Sets up the graphical window for the specified width and height.
@@ -587,13 +619,19 @@ implementation
     SDL_WM_SetCaption(PChar(caption), nil);
 
     {$IFDEF TRACE}
-      TraceExit('sgCore', 'InitSDL');
+      TraceExit('sgCore', '_InitSDL');
     {$ENDIF}
   end;
 
   procedure SetIcon(filename: String);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'SetIcon');
+    {$ENDIF}
     iconFile := filename;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'SetIcon');
+    {$ENDIF}
   end;
   
   procedure OpenGraphicsWindow(caption: String; width: LongInt; height: LongInt); overload;
@@ -645,13 +683,22 @@ implementation
 
   procedure OpenGraphicsWindow(caption: String); overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'OpenGraphicsWindow');
+    {$ENDIF}
     OpenGraphicsWindow(caption, 800,600);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'OpenGraphicsWindow');
+    {$ENDIF}
   end;
 
   procedure ToggleFullScreen();
   var
     oldScr: PSDL_Surface;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ToggleFullScreen');
+    {$ENDIF}
     oldScr := _screen;
 
     try
@@ -659,12 +706,18 @@ implementation
       _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
     except on exc: Exception do
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ToggleFullScreen');
+    {$ENDIF}
   end;
   
   procedure ToggleWindowBorder();
   var
     oldScr: PSDL_Surface;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ToggleWindowBorder');
+    {$ENDIF}
     oldScr := _screen;
     
     try
@@ -672,12 +725,18 @@ implementation
       _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_NOFRAME);
     except on exc: Exception do
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ToggleWindowBorder');
+    {$ENDIF}
   end;
 
   procedure ChangeScreenSize(width, height: LongInt);
   var
     oldScr: PSDL_Surface;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ChangeScreenSize');
+    {$ENDIF}
     if (screen = nil) then
     begin
       RaiseException('Screen has not been created. Unable to get screen width.');
@@ -695,10 +754,16 @@ implementation
     oldScr := _screen;
     _screen := SDL_SetVideoMode(width, height, 32, oldScr^.flags);
     _SetupScreen();
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ChangeScreenSize');
+    {$ENDIF}
   end;
 
   function ScreenWidth(): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ScreenWidth');
+    {$ENDIF}
     if (_screen = nil) then
     begin
       RaiseException('Screen has not been created. Unable to get screen width.');
@@ -706,16 +771,25 @@ implementation
     end;
     
     result := _screen^.w;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ScreenWidth');
+    {$ENDIF}
   end;
 
   function ScreenHeight(): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ScreenHeight');
+    {$ENDIF}
     if (_screen = nil) then
     begin
       RaiseException('Screen has not been created. Unable to get screen height.');
       exit;
     end;
     result := _screen^.h;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ScreenHeight');
+    {$ENDIF}
   end;
 
   procedure TakeScreenShot(basename: String);
@@ -723,6 +797,9 @@ implementation
     filename: String;
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'TakeScreenShot');
+    {$ENDIF}
     filename := basename + '.bmp';
     i := 1;
 
@@ -737,6 +814,9 @@ implementation
       RaiseException('Failed to save ' + basename + '.bmp: ' + SDL_GetError());
       exit;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'TakeScreenShot');
+    {$ENDIF}
   end;
 
   //----------------------------------------------------------------------------
@@ -745,26 +825,47 @@ implementation
 
   procedure Sleep(time: UInt32);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'Sleep');
+    {$ENDIF}
     SDL_Delay(time);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'Sleep');
+    {$ENDIF}
   end;
 
   function GetTicks(): UInt32;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'GetTicks');
+    {$ENDIF}
     result := SDL_GetTicks();
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'GetTicks');
+    {$ENDIF}
   end;
 
   function GetFramerate(): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'GetFramerate');
+    {$ENDIF}
     if _fpsData.avg = 0 then
       result := 60
     else
       result := Round(1000 / _fpsData.avg);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'GetFramerate');
+    {$ENDIF}
   end;
 
   procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);
   var
     avg, hi, lo: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'CalculateFramerate');
+    {$ENDIF}
     if not _fpsData.ready then
     begin
       textColor := ColorBlue;
@@ -801,6 +902,9 @@ implementation
       i: LongInt;
       sum: Double;
     begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', '_UpdateFPSData');
+    {$ENDIF}
       // insert the newValue as the position specified
       values[pos] := newValue;
       
@@ -834,6 +938,9 @@ implementation
       if _fpsData.avg > _fpsData.max then _fpsData.max := _fpsData.avg
       else if _fpsData.avg < _fpsData.min then _fpsData.min := _fpsData.avg;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', '_UpdateFPSData');
+    {$ENDIF}
   end;
 
 
@@ -844,27 +951,42 @@ implementation
 
   function WindowCloseRequested(): Boolean;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'WindowCloseRequested');
+    {$ENDIF}
     if screen = nil then
       result := false
     else
       result := sdlManager.HasQuit();
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'WindowCloseRequested');
+    {$ENDIF}
   end;
 
   procedure ProcessEvents();
   var
     x, y: LongInt;
   begin
-    {$ifdef DARWIN}
-    CyclePool();
-    {$endif}
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ProcessEvents');
+    {$ENDIF}
+    // {$ifdef DARWIN}
+    // CyclePool();
+    // {$endif}
     SDL_GetRelativeMouseState(x, y);
     sdlManager.ProcessEvents();
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ProcessEvents');
+    {$ENDIF}
   end;
 
   procedure RefreshScreen(); overload;
   var
     nowTime: UInt32;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RefreshScreen');
+    {$ENDIF}
     //Draw then delay
     sdlManager.DrawCollectedText(screen^.surface);
     SDL_BlitSurface(screen^.surface, nil, _screen, nil);
@@ -873,6 +995,9 @@ implementation
     nowTime := GetTicks();
     _UpdateFPSData(nowTime - _lastUpdateTime); // delta
     _lastUpdateTime := nowTime;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RefreshScreen');
+    {$ENDIF}
   end;
 
   procedure RefreshScreen(TargetFPS: UInt32); overload;
@@ -880,6 +1005,9 @@ implementation
     nowTime: UInt32;
     delta: UInt32;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RefreshScreen');
+    {$ENDIF}
     sdlManager.DrawCollectedText(screen^.surface);
     SDL_BlitSurface(screen^.surface, nil, _screen, nil);
     SDL_Flip(_screen);
@@ -897,6 +1025,9 @@ implementation
 
     _UpdateFPSData(delta);
     _lastUpdateTime := nowTime;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RefreshScreen');
+    {$ENDIF}
   end;
 
   //----------------------------------------------------------------------------
@@ -905,44 +1036,74 @@ implementation
 
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ColorComponents');
+    {$ENDIF}
     if baseSurface = nil then
     begin
       RaiseException('Cannot read screen format. Ensure window is open.');
       exit;
     end;
     SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ColorComponents');
+    {$ENDIF}
   end;
 
   function RedOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RedOf');
+    {$ENDIF}
     ColorComponents(c, r, g, b, a);
     result := r;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RedOf');
+    {$ENDIF}
   end;
 
   function GreenOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'GreenOf');
+    {$ENDIF}
     ColorComponents(c, r, g, b, a);
     result := g;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'GreenOf');
+    {$ENDIF}
   end;
 
   function BlueOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'BlueOf');
+    {$ENDIF}
     ColorComponents(c, r, g, b, a);
     result := b;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'BlueOf');
+    {$ENDIF}
   end;
 
   function TransparencyOf(c: Color): byte;
   var
     r,g,b,a: Byte;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'TransparencyOf');
+    {$ENDIF}
     ColorComponents(c, r, g, b, a);
     result := a;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'TransparencyOf');
+    {$ENDIF}
   end;
   
   procedure HSBValuesOf(c: Color; out h, s, b: Single);
@@ -951,6 +1112,9 @@ implementation
     rf, gf, bf: Single;
     minRGB, maxRGB, delta: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'HSBValuesOf');
+    {$ENDIF}
      H := 0.0 ;
      
      ColorComponents(c, red, green, blue, alpha);
@@ -980,33 +1144,57 @@ implementation
      if h < 0.0 then h := h + 360.0;
        
      h := h / 360.0;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'HSBValuesOf');
+    {$ENDIF}
   end;
   
   function HueOf(c: Color) : Single;
   var
     s, b: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'HueOf');
+    {$ENDIF}
     HSBValuesOf(c, result, s, b);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'HueOf');
+    {$ENDIF}
   end;
   
   function SaturationOf(c: Color) : Single;
   var
     h, b: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'SaturationOf');
+    {$ENDIF}
     HSBValuesOf(c, h, result, b);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'SaturationOf');
+    {$ENDIF}
   end;
   
   function BrightnessOf(c: Color) : Single;
   var
     h, s: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'BrightnessOf');
+    {$ENDIF}
     HSBValuesOf(c, h, s, result);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'BrightnessOf');
+    {$ENDIF}
   end;
   
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color; overload;
   var
     temp: TSDL_Color;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ColorFrom');
+    {$ENDIF}
     if (bmp = nil)
       or (bmp^.surface = nil)
       or (bmp^.surface^.format = nil) then
@@ -1017,10 +1205,16 @@ implementation
 
     temp := ToSDLColor(apiColor);
     result := SDL_MapRGB(bmp^.surface^.format, temp.r, temp.g, temp.b);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ColorFrom');
+    {$ENDIF}
   end;
 
   function RGBAColor(red, green, blue, alpha: Byte): Color; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RGBAColor');
+    {$ENDIF}
     if (baseSurface = nil) or (baseSurface^.format = nil) then
     begin
       RaiseException('Unable to get RGBAColor as the window is not open');
@@ -1033,21 +1227,42 @@ implementation
       RaiseException('Error occured while trying to get a color from RGBA components');
       exit;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RGBAColor');
+    {$ENDIF}
   end;
 
   function RGBColor(red, green, blue: Byte): Color;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RGBColor');
+    {$ENDIF}
     result := RGBAColor(red, green, blue, 255);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RGBColor');
+    {$ENDIF}
   end;
 
   function RGBFloatColor(r,g,b: Single): Color;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RGBFloatColor');
+    {$ENDIF}
     result := RGBColor(Round(r * 255), Round(g * 255), Round(b * 255));
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RGBFloatColor');
+    {$ENDIF}
   end;
   
   function RGBAFloatColor(r,g,b, a: Single): Color;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RGBAFloatColor');
+    {$ENDIF}
     result := RGBAColor(Round(r * 255), Round(g * 255), Round(b * 255), Round(a * 255));
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RGBAFloatColor');
+    {$ENDIF}
   end;
 
   function HSBColor(hue, saturation, brightness: Single): Color;
@@ -1055,6 +1270,9 @@ implementation
     domainOffset: Single;
     red, green, blue: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'HSBColor');
+    {$ENDIF}
     if brightness = 0 then
     begin
       result := ColorBlack;
@@ -1111,6 +1329,9 @@ implementation
     end;
 
     result := RGBFloatColor(red, green, blue);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'HSBColor');
+    {$ENDIF}
   end;
   
   //----------------------------------------------------------------------------
@@ -1119,6 +1340,9 @@ implementation
   
   function CreateTimer(): Timer;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'CreateTimer');
+    {$ENDIF}
     New(result);
     with result^ do
     begin
@@ -1127,16 +1351,28 @@ implementation
       paused := false;
       started := false;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'CreateTimer');
+    {$ENDIF}
   end;
 
   procedure FreeTimer(var toFree: Timer);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'FreeTimer');
+    {$ENDIF}
     if Assigned(toFree) then Dispose(toFree);
     toFree := nil;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'FreeTimer');
+    {$ENDIF}
   end;
 
   procedure StartTimer(toStart: Timer);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'StartTimer');
+    {$ENDIF}
     if not Assigned(toStart) then begin RaiseException('No timer supplied'); exit; end;
     
     with toStart^ do
@@ -1145,20 +1381,32 @@ implementation
       paused := false;
       startTicks := SDL_GetTicks();
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'StartTimer');
+    {$ENDIF}
   end;
 
   procedure StopTimer(toStop: Timer);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'StopTimer');
+    {$ENDIF}
     if not Assigned(toStop) then begin RaiseException('No timer supplied'); exit; end;
     with toStop^ do
     begin
       started := false;
       paused := false;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'StopTimer');
+    {$ENDIF}
   end;
 
   procedure PauseTimer(toPause: Timer);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'PauseTimer');
+    {$ENDIF}
     if not Assigned(toPause) then begin RaiseException('No timer supplied'); exit; end;
     with toPause^ do
     begin
@@ -1168,10 +1416,16 @@ implementation
         pausedTicks := SDL_GetTicks() - startTicks;
       end;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'PauseTimer');
+    {$ENDIF}
   end;
 
   procedure ResumeTimer(toUnpause: Timer);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ResumeTimer');
+    {$ENDIF}
     if not Assigned(toUnpause) then begin RaiseException('No timer supplied'); exit; end;
     with toUnpause^ do
     begin
@@ -1182,10 +1436,16 @@ implementation
         pausedTicks := 0;
       end;
     end;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'ResumeTimer');
+    {$ENDIF}
   end;
 
   function TimerTicks(toGet: Timer): UInt32;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'TimerTicks');
+    {$ENDIF}
     if not Assigned(toGet) then begin RaiseException('No timer supplied'); exit; end;
 
     with toGet^ do
@@ -1198,6 +1458,9 @@ implementation
       end;
     end;
     result := 0;
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'TimerTicks');
+    {$ENDIF}
   end;
   
   //----------------------------------------------------------------------------
@@ -1206,12 +1469,24 @@ implementation
   
   function Rnd() : Single; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'Rnd');
+    {$ENDIF}
     result := System.Random();
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'Rnd');
+    {$ENDIF}
   end;
   
   function Rnd(ubound: LongInt): LongInt; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'Rnd');
+    {$ENDIF}
     result := System.Random(ubound);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'Rnd');
+    {$ENDIF}
   end;
 
 
