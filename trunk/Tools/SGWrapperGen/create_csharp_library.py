@@ -247,6 +247,45 @@ _adapter_type_switcher = {
         'longint': 'int %s',
         'soundeffect': 'IntPtr %s',
         'music': 'IntPtr %s',
+        'string': 'string %s',
+        'boolean': 'int %s',
+        'byte': 'byte %s',
+        'color': 'int %s',
+        'timer': 'IntPtr %s',
+        'resourcekind': 'int %s',
+        'uint32': 'uint %s',
+        'bitmap': 'IntPtr %s',
+        'rectangle': 'Rectangle %s',
+        'linesegment': 'LineSegment %s',
+        'triangle': 'Point2D[] %s',
+        'point2d': 'Point2D %s',
+        'sprite': 'IntPtr %s',
+        'linesarray': 'LineSegment[] %s',
+        'font': 'IntPtr %s',
+        'fontalignment': 'int %s',
+        'fontstyle': 'int %s',
+        'mousebutton': 'int %s',
+        'uint16': 'ushort %s',
+        'vector': 'Vector %s',
+        'spriteendingaction': 'int %s',
+        'keycode': 'int %s',
+        'matrix2d': 'Matrix2D %s',
+        'collisionside': 'int %s',
+        'map': 'IntPtr %s',
+        'maptag': 'int %s',
+        'maptile': 'MapTile %s',
+        'circle': 'Circle %s',
+        'arrayofpoint2d': 'Point2D[] %s',
+        'longintarray': 'int[] %s',
+        'spritekind': 'SpriteKind %s',
+        'freenotifier': 'FreeNotifier %s',
+    },
+    #No modifier and for the actual library call
+    'lib_': {
+        'single': 'float %s',
+        'longint': 'int %s',
+        'soundeffect': 'IntPtr %s',
+        'music': 'IntPtr %s',
         'string': '[MarshalAs(UnmanagedType.LPStr)] string %s',
         'boolean': 'int %s',
         'byte': 'byte %s',
@@ -276,53 +315,99 @@ _adapter_type_switcher = {
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
         'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
-        'longintarray': 'int[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
         'spritekind': 'SpriteKind %s',
         'freenotifier': 'FreeNotifier %s',
-#        None: 'void %s'
     },
     'const' : {
-        'point2d':      '[MarshalAs(UnmanagedType.Struct), In] ref Point2D %s',
-        'linesegment':  '[MarshalAs(UnmanagedType.Struct), In] ref LineSegment %s',
-        'rectangle':    '[MarshalAs(UnmanagedType.Struct), In] ref Rectangle %s',
-        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] ref float[,] %s',
-        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] ref Point2D[] %s',
-        'vector':       '[MarshalAs(UnmanagedType.Struct), In] ref Vector %s',
-        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] ref LineSegment[] %s',
-        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] ref int[] %s',
-        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] ref Bitmap[] %s',
-        'circle':       '[MarshalAs(UnmanagedType.Struct), In] ref Circle %s'
+        'point2d':      'ref Point2D %s',
+        'linesegment':  'ref LineSegment %s',
+        'rectangle':    'ref Rectangle %s',
+        'circle':       'ref Circle %s',
+        
+        # Arrays are passed by reference already
+        'matrix2d':     'float[,] %s',
+        'triangle':     'Point2D[] %s',
+        'vector':       'ref Vector %s',
+        'linesarray':   'LineSegment[] %s',
+        'longintarray': 'int[] %s',
+        'bitmaparray':  'Bitmap[] %s',
     },
+    'lib_const' : {
+        'point2d':      'ref Point2D %s',
+        'linesegment':  'ref LineSegment %s',
+        'rectangle':    'ref Rectangle %s',
+        'circle':       'ref Circle %s',
+        'vector':       'ref Vector %s',
+        
+        # Arrays are passed by reference already
+        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[,] %s',
+        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] LineSegment[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
+        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Bitmap[] %s',
+    },
+    #no lib_const
     'var': {
         'soundeffect': 'ref IntPtr %s',
         'music': 'ref IntPtr %s',
         'timer': 'ref IntPtr %s',
         'byte': 'ref byte %s',
-        'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] ref Point2D[] %s',
-        #'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In, Out] LineSegment[] %s',
         'font': 'ref IntPtr %s',
         'bitmap': 'ref IntPtr %s',
         'sprite': 'ref IntPtr %s',
-        'map': 'ref IntPtr %s'
+        'map': 'ref IntPtr %s',
+        
+        'string': 'StringBuilder %s',
+        'triangle': 'Point2D[] %s',
+    },
+    'lib_var': {
+        'soundeffect':  'ref IntPtr %s',
+        'music': 'ref IntPtr %s',
+        'timer': 'ref IntPtr %s',
+        'byte': 'ref byte %s',
+        'font': 'ref IntPtr %s',
+        'bitmap': 'ref IntPtr %s',
+        'sprite': 'ref IntPtr %s',
+        'map': 'ref IntPtr %s',
+        
+        'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
     },
     'out': {
+        'string':       'StringBuilder %s',
+        'byte':         'out byte %s',
+        'color':        'out int %s',
+        'single':       'out float %s',
+        'point2d':      'out Point2D %s',
+        'longint':      'out int %s',
+        'linesegment':  'out LineSegment %s',
+        # 'linesarray':   'out LineSegment[] %s',
+    },
+    'lib_out': {
         'string':       '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
         'byte':         '[Out] out byte %s',
         'color':        '[Out] out int %s',
         'single':       '[Out] out float %s',
         'point2d':      '[Out] out Point2D %s',
-        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out LineSegment[] %s',
         'longint':      '[Out] out int %s',
         'linesegment':  '[Out] out LineSegment %s',
     },
     'result': {
+        'string': 'StringBuilder %s',
+        'linesarray': 'LineSegment[] %s',
+        'matrix2d': 'float[,] %s',
+        'arrayofpoint2d': 'Point2D[] %s',
+        'triangle': 'Point2D[] %s',
+        'longintarray': 'int[] %s',
+    },
+    'lib_result': {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out LineSegment[] %s',
-        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] out float[,] %s',
-        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out Point2D[] %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] out Point2D[] %s',
-        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] out int[] %s',
+        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
+        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
+        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] int[] %s',
     },
     'return' : {
         None: 'void %s',
@@ -369,63 +454,63 @@ _local_type_switcher = {
 # mapping for struct fields
 _struct_type_switcher = {
     #Pascal type: what it maps to
-    'single': 'internal float %s',
-    'longint': 'internal int %s',
-    'soundeffect': 'internal SoundEffect %s',
-    'music': 'internal Music %s',
-    'string': 'internal string %s',
-    'boolean': 'internal bool %s',
-    'byte': 'internal byte %s',
-    'timer': 'internal Timer %s',
-    'color': 'internal Color %s',
-    'resourcekind': 'internal ResourceKind %s',
-    'uint32': 'internal uint %s',
-    'bitmap': 'internal Bitmap %s',
-    #'pointer': 'internal IntPtr %s',
-    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\ninternal float[,] %s',
-    # '^bitmapdata': 'internal BitmapData *%s',
-    # '^spritedata': 'internal SpriteData *%s',
-    # '^timerdata': 'internal TimerData *%s',
-    # 'psdl_surface': 'internal IntPtr %s',
-    # 'boolean[0..n - 1][0..n - 1]': 'internal bool[,] %s',
-    # 'bitmap[0..n - 1]': 'internal Bitmap[] %s',
-    # 'spritekind': 'internal SpriteKind %s',
-    # 'longint[0..n - 1]': 'internal int[] %s',
-    'vector': 'internal Vector %s',
-    # 'spriteendingaction': 'internal SpriteEndingAction %s',
-    'point2d': 'internal Point2D %s',
-    # '^point2d': 'internal Point2D *%s',
-    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\ninternal Point2D[] %s',
-    # 'point2d[0..n - 1]': 'internal Point2D[] %s',
-    # '^linesegment': 'internal LineSegment *%s',
-    'linesegment': 'internal LineSegment %s',
-    'sprite': 'internal Sprite %s',
-    'rectangle': 'internal Rectangle %s',
-    #'triangle': 'internal Triangle %s',
-    'linesarray': 'internal LineSegment[] %s',
-    # 'linesegmentptr': 'internal LineSegment *%s',
-    'font': 'internal Font %s',
-    'fontalignment': 'internal FontAlignment %s',
-    'fontstyle': 'internal FontStyle %s',
-    'mousebutton': 'internal MouseButton %s',
-    'uint16': 'internal ushort %s',
-    # '^single': 'internal float *%s',
-    'keycode': 'internal KeyCode %s',
-    # 'bitmapptr': 'internal Bitmap *%s',
-    # '^bitmap': 'internal Bitmap *%s',
-    # 'longintptr': 'internal int *%s',
-    # '^longint': 'internal int *%s',
-    'collisionside': 'internal CollisionSide %s',
-    'longint[0..n - 1][0..n - 1]': 'internal int[][] %s',
-    'mapdata': 'internal MapData %s',
-    'animationdata[0..n - 1]': 'internal AnimationData[] %s',
-    'layerdata[0..n - 1]': 'internal LayerData[] %s',
-    'collisiondata': 'internal CollisionData %s',
-    'map': 'internal Map %s',
-    'maptag': 'internal MapTag %s',
-    'maptile': 'internal MapTile %s',
-    'circle': 'internal Circle %s',
-    'arrayofpoint2d': 'internal Point2D[] %s',
+    'single': 'public float %s',
+    'longint': 'public int %s',
+    'soundeffect': 'public SoundEffect %s',
+    'music': 'public Music %s',
+    'string': 'public string %s',
+    'boolean': 'public bool %s',
+    'byte': 'public byte %s',
+    'timer': 'public Timer %s',
+    'color': 'public Color %s',
+    'resourcekind': 'public ResourceKind %s',
+    'uint32': 'public uint %s',
+    'bitmap': 'public Bitmap %s',
+    #'pointer': 'public IntPtr %s',
+    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\npublic float[,] %s',
+    # '^bitmapdata': 'public BitmapData *%s',
+    # '^spritedata': 'public SpriteData *%s',
+    # '^timerdata': 'public TimerData *%s',
+    # 'psdl_surface': 'public IntPtr %s',
+    # 'boolean[0..n - 1][0..n - 1]': 'public bool[,] %s',
+    # 'bitmap[0..n - 1]': 'public Bitmap[] %s',
+    # 'spritekind': 'public SpriteKind %s',
+    # 'longint[0..n - 1]': 'public int[] %s',
+    'vector': 'public Vector %s',
+    # 'spriteendingaction': 'public SpriteEndingAction %s',
+    'point2d': 'public Point2D %s',
+    # '^point2d': 'public Point2D *%s',
+    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\npublic Point2D[] %s',
+    # 'point2d[0..n - 1]': 'public Point2D[] %s',
+    # '^linesegment': 'public LineSegment *%s',
+    'linesegment': 'public LineSegment %s',
+    'sprite': 'public Sprite %s',
+    'rectangle': 'public Rectangle %s',
+    #'triangle': 'public Triangle %s',
+    'linesarray': 'public LineSegment[] %s',
+    # 'linesegmentptr': 'public LineSegment *%s',
+    'font': 'public Font %s',
+    'fontalignment': 'public FontAlignment %s',
+    'fontstyle': 'public FontStyle %s',
+    'mousebutton': 'public MouseButton %s',
+    'uint16': 'public ushort %s',
+    # '^single': 'public float *%s',
+    'keycode': 'public KeyCode %s',
+    # 'bitmapptr': 'public Bitmap *%s',
+    # '^bitmap': 'public Bitmap *%s',
+    # 'longintptr': 'public int *%s',
+    # '^longint': 'public int *%s',
+    'collisionside': 'public CollisionSide %s',
+    'longint[0..n - 1][0..n - 1]': 'public int[][] %s',
+    'mapdata': 'public MapData %s',
+    'animationdata[0..n - 1]': 'public AnimationData[] %s',
+    'layerdata[0..n - 1]': 'public LayerData[] %s',
+    'collisiondata': 'public CollisionData %s',
+    'map': 'public Map %s',
+    'maptag': 'public MapTag %s',
+    'maptile': 'public MapTile %s',
+    'circle': 'public Circle %s',
+    'arrayofpoint2d': 'public Point2D[] %s',
 }
 
 
@@ -536,9 +621,11 @@ def arg_visitor(arg_str, the_arg, for_param):
         result = arg_str
     
     #check var/out/const
-    if (for_param.modifier == 'var' or for_param.modifier == 'const'): #and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
+    if the_type.array_wrapper or the_type.fixed_array_wrapper:
+        return result
+    elif (for_param.modifier == 'var' or for_param.modifier == 'const'):
         result = 'ref ' + result
-    elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
+    elif (for_param.modifier == 'out') and the_type.name.lower() != "string": #TODO: check for array types...
         result = 'out ' + result
     
     return result
@@ -547,9 +634,11 @@ def arg_cs_dll_visitor(arg_str, the_arg, for_param):
     the_type = for_param.data_type
     result = arg_str
     #check var/out/const
+    if the_type.array_wrapper or the_type.fixed_array_wrapper:
+        return result
     if (for_param.modifier == 'var' or for_param.modifier == 'const'): # and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
         result = 'ref ' + result
-    elif (for_param.modifier == 'out' or for_param.modifier == 'result') and the_type.name.lower() != "string":
+    elif (for_param.modifier == 'out') and the_type.name.lower() != "string":
         result = 'out ' + result
     
     return result
@@ -564,17 +653,31 @@ def adapter_type_visitor(the_type, modifier = None):
     return _adapter_type_switcher[modifier][key]
 
 def adapter_param_visitor(the_param, last):
+    return delegated_param_visitor(the_param, last, False)
+
+def lib_adapter_param_visitor(the_param, last):
+    return delegated_param_visitor(the_param, last, True)
+    
+def delegated_param_visitor(the_param, last, was_lib):
     key = the_param.data_type.name.lower()
     modifier = the_param.modifier
+    
+    if was_lib:
+        modifier = "lib_" + (modifier if not modifier == None else "")
     
     if key not in _adapter_type_switcher[modifier]:
         logger.error('CREATE Cs : Error changing adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
     
-    if not the_param.data_type.array_wrapper:
+    if the_param.data_type.array_wrapper and (not modifier == "result"):
+        print _adapter_type_switcher[modifier][key], modifier, key
+        if was_lib and the_param.data_type.array_wrapper:
+            #if for a library result, arrays need to know the index of the length parameter
+            return '%s%s' % ( _adapter_type_switcher[modifier][key] % (the_param.length_idx, the_param.name), ', ' if not last else '')
+        else:
+            return '%s%s' % ( _adapter_type_switcher[modifier][key] % (the_param.name), ', ' if not last else '')
+    else:
         # map to name + type
         return '%s%s' % ( _adapter_type_switcher[modifier][key] % the_param.name, ', ' if not last else '')
-    else:
-        return '%s%s' % ( _adapter_type_switcher[modifier][key] % (the_param.length_idx, the_param.name), ', ' if not last else '')
 
 
 #
@@ -648,17 +751,16 @@ def create_cs_dll_call(details, the_method):
     
     details['pre_call'] =''
     details['post_call'] =''
-    details['public'] = 'internal '
+    # details['public'] = 'internal '
     result = ''
     
     return '%(returns)sDLL_%(name)s(%(args)s)' % details
 
 def method_visitor(the_method, other, as_accessor_name = None):
-    details = the_method.to_keyed_dict(
-        other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
     writer = other['file writer']
     
     if other['lib method']: 
+        details = the_method.to_keyed_dict(lib_adapter_param_visitor, other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
         #write out the library versions...
         writer.writeln('[DllImport("sgsdk.dll", CallingConvention=CallingConvention.Cdecl, EntryPoint="%s", CharSet=CharSet.Ansi)]' % details['name'])
         writer.write('private static extern %(return_type)s' % details % 'DLL_' + details['name'])
@@ -666,10 +768,12 @@ def method_visitor(the_method, other, as_accessor_name = None):
         writer.writeln('')
         
         #write out the wrapped version...
-        
+        details = the_method.to_keyed_dict(other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
         writer.writeln((_method_wrapper % details).replace('%s', details['name']) )
         writer.writeln('')
     else:
+        details = the_method.to_keyed_dict(other['param visitor'], other['type visitor'], other['arg visitor'], doc_transform, other['call_creater'])
+        
         if len(the_method.local_vars) > 0:
             temp = '\n'
             temp_process_params = details['pre_call']

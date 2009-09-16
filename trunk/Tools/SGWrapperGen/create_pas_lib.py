@@ -118,7 +118,7 @@ def _load_data():
     create_c_library.load_data()
 
 def param_visitor(the_param, last):
-    if the_param.modifier in ['out','var', 'const', 'result'] and the_param.data_type.name.lower() in ['string','triangle']:
+    if the_param.modifier in ['out','var', 'const', 'result'] and (the_param.data_type.name.lower() in ['string','triangle'] or the_param.data_type.wraps_array):
         return '%s: %s%s' % (
             the_param.name, 
             _type_switcher[the_param.data_type.name.lower()], 
@@ -131,7 +131,7 @@ def param_visitor(the_param, last):
             '; ' if not last else ''
             )        
     elif the_param.modifier in ['result']:
-        return 'var %s: %s%s' % (
+        return '%s: %s%s' % (
             the_param.name, 
             _type_switcher[the_param.data_type.name.lower()], 
             '; ' if not last else ''
