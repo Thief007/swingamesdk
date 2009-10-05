@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-10-02: Andrew : Added random color, reset timer
 // - 2009-09-11: Andrew : Added tracing code
 // - 2009-07-28: Andrew : Calling ShowLogos splash screen
 //                      : Added simple random funtions.
@@ -85,7 +86,7 @@ interface
   //----------------------------------------------------------------------------
 
   /// @lib
-  function SwinGameVersion(): LongInt;
+  function SwinGameVersion(): String;
 
   //----------------------------------------------------------------------------
   // Exception Notification/Message
@@ -272,6 +273,19 @@ interface
   /// @uname ColorFromBitmap
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
   
+  /// Creates and returns a random color where R, G, B and A are all randomised.
+  ///
+  /// @lib
+  function RandomColor(): Color;
+  
+  /// Creates and returns a random color where R, G, and B are all randomised, and A is set
+  /// to the passed in value.
+  ///
+  /// @param alpha: the opacity of the random color
+  ///
+  /// @lib
+  function RandomRGBColor(alpha: Byte): Color;
+
   /// Gets a color given its RGBA components.
   ///
   /// @param red, green, blue, alpha:  Components of the color
@@ -440,6 +454,13 @@ interface
   /// @method Resume
   procedure ResumeTimer(toUnpause: Timer);
   
+  /// Resets the time of a given timer
+  ///
+  /// @lib
+  /// @class Timer
+  /// @method Reset
+  procedure ResetTimer(tmr: Timer);
+  
   /// Gets the number of ticks (milliseconds) that have passed since the timer
   /// was started.
   ///
@@ -511,7 +532,7 @@ implementation
   // Library Version
   //----------------------------------------------------------------------------
 
-  function SwinGameVersion(): LongInt;
+  function SwinGameVersion(): String;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'SwinGameVersion');
@@ -1334,6 +1355,29 @@ implementation
     {$ENDIF}
   end;
   
+  function RandomColor(): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RandomColor');
+    {$ENDIF}
+    result := RGBAFloatColor(Rnd(), Rnd(), Rnd(), Rnd());
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RandomColor');
+    {$ENDIF}
+  end;
+  
+  function RandomRGBColor(alpha: Byte): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'RandomRGBColor');
+    {$ENDIF}
+    result := RGBAColor(Byte(Rnd(256)), Byte(Rnd(256)), Byte(Rnd(256)), alpha);
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'RandomRGBColor');
+    {$ENDIF}
+  end;
+
+  
   //----------------------------------------------------------------------------
   // Timers
   //----------------------------------------------------------------------------
@@ -1353,6 +1397,17 @@ implementation
     end;
     {$IFDEF TRACE}
       TraceExit('sgCore', 'CreateTimer');
+    {$ENDIF}
+  end;
+  
+  procedure ResetTimer(tmr: Timer);
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ResetTimer');
+    {$ENDIF}
+    tmr^.startTicks := SDL_GetTicks();
+    {$IFDEF TRACE}
+      TraceEnter('sgCore', 'ResetTimer');
     {$ENDIF}
   end;
 

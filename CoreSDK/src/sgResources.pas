@@ -1711,7 +1711,26 @@ implementation
     f: Font;
     txt: String;
     oldW, oldH: Integer;
+    //isStep: Boolean;
+    isPaused: Boolean;
+    isSkip: Boolean;
+    
+    procedure InnerProcessEvents();
+    begin
+      ProcessEvents();
+      if (KeyDown(vk_LSUPER) or KeyDown(vk_LCTRL)) and KeyTyped(vk_p) then
+      begin
+        isPaused := not isPaused;
+      end;
+      if WindowCloseRequested() or KeyDown(vk_Escape) then isSkip := true;
+      
+    end;
+    
   begin
+    
+    isPaused := false;
+    isSkip := false;
+    
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'ShowLogos');
     {$ENDIF}
@@ -1729,12 +1748,16 @@ implementation
         f := FontNamed('ArialLarge');
         txt := 'SwinGame API by Swinburne University of Technology';
         DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
-    
-        for i := 1 to 60 do
+        f := FontNamed('LoadingFont');
+        DrawText(DLL_VERSION, ColorWhite, f, 5, 580);
+        
+        i := 1;
+        while isPaused or (i < 60) do
         begin
-          ProcessEvents();
+          i += 1;
+          InnerProcessEvents();
           RefreshScreen(60);
-          if WindowCloseRequested() or KeyDown(vk_Escape) then break;
+          if isSkip then break;
         end;
     
         if AudioOpen then PlaySoundEffect(SoundEffectNamed('SwinGameStart'));
@@ -1745,15 +1768,15 @@ implementation
             (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
             ANI_W, ANI_H - 1, ANI_X, ANI_Y);
           RefreshScreen();
-          ProcessEvents();
-          if WindowCloseRequested() or KeyDown(vk_Escape) then continue;
+          InnerProcessEvents();
+          if isSkip then break;
           Sleep(15);
         end;
         
-        while SoundEffectPlaying(SoundEffectNamed('SwinGameStart')) do
+        while SoundEffectPlaying(SoundEffectNamed('SwinGameStart')) or isPaused do
         begin
-          ProcessEvents();
-          if WindowCloseRequested() or KeyDown(vk_Escape) then break;
+          InnerProcessEvents();
+          if isSkip then break;
         end;
         
       except on e:Exception do

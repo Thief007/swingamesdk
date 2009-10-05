@@ -10,6 +10,7 @@ cd "$APP_PATH"
 #
 # Step 2: Detect the operating system
 #
+source "${APP_PATH}/inc/version.sh"
 source "${APP_PATH}/inc/os_check.sh"
 
 #
@@ -103,7 +104,8 @@ source "${APP_PATH}/inc/copy_without_svn.sh"
 #
 echo "--------------------------------------------------"
 echo "          Creating Source Template"
-echo "              for $OS"
+echo "                for OS: $OS"
+echo "              SwinGame: ${SG_VERSION}"
 echo "--------------------------------------------------"
 echo "  Running script from $APP_PATH"
 echo "  Build options are ${EXTRA_OPTS}"
@@ -158,6 +160,10 @@ elif [ "$OS" = "$WIN" ]; then
     copyWithoutSVN ${FROM_LIB_DIR} ${TO_LIB_DIR}
     if [ $? != 0 ]; then echo "Error copying libraries."; exit 1; fi
 fi
+
+echo "  Updating Version Details"
+cat "${SRC_DIR}/sgShared.pas" | awk '{sub(/DLL_VERSION = .TEST BUILD./, "DLL_VERSION = '\'"${SG_VERSION}"\''"); print}' >> "${SRC_DIR}/NewsgShared.pas"
+mv "${SRC_DIR}/NewsgShared.pas" "${SRC_DIR}/sgShared.pas"
 
 echo "  Finished"
 if [ $BUILD = "Y" ]; then

@@ -70,23 +70,7 @@ interface
     /// @array_wrapper
     /// @field data: array of Point2D
     ArrayOfPoint2D = Array of Point2D;
-
-    // /// The kind of polygon.
-    // ///
-    // /// @enum PolygonKind
-    // PolygonKind= (
-    //     pkLine,
-    //     pkStrip,
-    //     pkFan,
-    //     pkList
-    //   );
-    //
-    // /// @struct Polygon
-    // Polygon = record
-    //   points: ArrayOfPoint2D;
-    //   kind: PolygonKind;
-    // end;
-
+    
     /// @struct Rectangle
     Rectangle = record
       x, y: Single;
@@ -229,7 +213,54 @@ interface
     /// @pointer_wrapper
     /// @field pointer: ^BitmapData
     Bitmap = ^BitmapData;
-
+    
+    /// The kind of polygon.
+    ///
+    /// @enum PolygonKind
+    ShapeKind= (
+        pkPoint,
+        pkCircle,
+        pkEllipse,
+        pkLine,
+        pkTriangle,
+        pkLineList,
+        pkLineStrip,
+        pkPolygon,
+        pkTriangleStrip,
+        pkTriangleFan,
+        pkTriangleList
+      );
+    
+    /// @class ShapePrototype
+    /// @pointer_wrapper
+    /// @field pointer: pointer
+    ShapePrototype = ^ShapePrototypeData;
+    
+    /// @class Shape
+    /// @pointer_wrapper
+    /// @field pointer: pointer
+    Shape = ^ShapeData;
+    
+    ShapeDrawingFn = procedure(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+    
+    /// @struct ShapePrototypeData
+    ShapePrototypeData = record
+      points: ArrayOfPoint2D;
+      kind: ShapeKind;
+      shapeCount: Integer;
+      drawWith: ShapeDrawingFn;
+    end;
+    
+    /// @struct ShapeData
+    ShapeData = record
+      pt: Point2D;
+      prototype: ShapePrototype;
+      scale: Point2D;
+      angle: single;
+      ptBuffer: ArrayOfPoint2D;
+      subShapes: Array of Shape;
+    end;
+    
     /// Use this with the resource path functions to get the path to a
     /// given resource. Using these functions ensures that your resource
     /// paths are correct across different platforms
@@ -320,7 +351,7 @@ interface
       mass: Single;
       rotation: Single;
       scale: Single;
-
+      
       bufferedRotation: Single;
       bufferedScale: Single;
     end;
