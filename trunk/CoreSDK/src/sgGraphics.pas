@@ -220,6 +220,9 @@ interface
 
 
 
+  //---------------------------------------------------------------------------
+  // Ellipse drawing code
+  //---------------------------------------------------------------------------
 
   /// @lib DrawOrFillEllipseOnto
   procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
@@ -237,7 +240,13 @@ interface
   /// @lib DrawOrFillEllipseInRectOnto(dest, clr, True, source)
   /// @uname FillEllipseInRectOnto
   procedure FillEllipse(dest: Bitmap; clr: Color; const source: Rectangle); overload;
-
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Triangle drawing code
+  //---------------------------------------------------------------------------
+  
   /// @lib DrawOrFillTriangleOnto
   procedure DrawTriangle(dest: Bitmap; clr: Color; filled: Boolean; const tri: Triangle); overload;
   /// @lib DrawOrFillTriangleOnto(dest, clr, False, tri)
@@ -250,7 +259,48 @@ interface
   procedure DrawTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   /// @lib FillTriangleFromPointsOnto
   procedure FillTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
-
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Shape drawing code
+  //---------------------------------------------------------------------------
+  
+  /// @lib DrawOrFillShapeOnto
+  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape; filled: Boolean); overload;
+  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  procedure FillShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  
+  procedure DrawShape(clr: Color; s: Shape; filled: Boolean); overload;
+  procedure DrawShape(clr: Color; s: Shape); overload;
+  procedure FillShape(clr: Color; s: Shape); overload;
+  
+  procedure DrawShapeOnScreen(clr: Color; s: Shape; filled: Boolean); overload;
+  procedure DrawShapeOnScreen(clr: Color; s: Shape); overload;
+  procedure FillShapeOnScreen(clr: Color; s: Shape); overload;
+  
+  procedure DrawShapeAsPoint(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  
+  procedure DrawShapeAsCircle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  
+  procedure DrawShapeAsEllipse(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  
+  procedure DrawShapeAsLine(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  
+  procedure DrawShapeAsTriangle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  
+  procedure DrawShapeAsLineList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  
+  procedure DrawShapeAsLineStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  
+  procedure DrawShapeAsPolygon(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  
+  procedure DrawShapeAsTriangleFan(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  
+  procedure DrawShapeAsTriangleStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  
+  procedure DrawShapeAsTriangleList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  
   //---------------------------------------------------------------------------
   // Screen drawing routines
   //---------------------------------------------------------------------------
@@ -851,7 +901,7 @@ implementation
 
   procedure DrawTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    aatrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(clr));
+    trigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(clr));
   end;
 
   procedure FillTriangle(dest: Bitmap; clr: Color; const tri: Triangle); overload;
@@ -881,18 +931,11 @@ implementation
 
   procedure FillTriangle(dest: Bitmap; clr: Color; x1, y1, x2, y2, x3, y3: Single); overload;
   begin
-    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Trunc(y3), ToGfxColor(clr));
+    filledTrigonColor(dest^.surface, Round(x1), Round(y1), Round(x2), Round(y2), Round(x3), Round(y3), ToGfxColor(clr));
   end;
 
+  //=============================================================================
   
-  /// Draws a horizontal line on the screen.
-  ///
-  /// @param clr:     The color to draw the line
-  /// @param y:           The y location of the line
-  /// @param x1, x2:       The starting and ending x value of the line
-  ///
-  /// Side Effects:
-  /// - Draws a line on the screen
   procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: LongInt); overload;
   begin
     DrawHorizontalLine(screen, clr, y, x1, x2);
@@ -903,14 +946,6 @@ implementation
     DrawHorizontalLine(screen, clr, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
   end;
 
-  /// Draws a vertical line on the screen.
-  ///
-  /// @param clr:     The color to draw the line
-  /// @param x:           The x location of the line
-  /// @param y1, y2:       The starting and ending y value of the line
-  ///
-  /// Side Effects:
-  /// - Draws a line on the screen
   procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: LongInt); overload;
   begin
     DrawVerticalLine(screen, clr, x, y1, y2);
@@ -921,10 +956,7 @@ implementation
     DrawVerticalLine(screen, clr, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y1), sgCamera.ToScreenY(y2));
   end;
   
-  
-  
-  
-  
+  //=============================================================================
   
   procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
   begin
@@ -964,12 +996,12 @@ implementation
 
   procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
   begin
-    aacircleColor(dest^.surface, Round(xc), Round(yc), radius, ToGfxColor(clr));
+    aacircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
   end;
 
   procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt);
   begin
-    filledCircleColor(dest^.surface, Round(xc), Round(yc), radius, ToGfxColor(clr));
+    filledCircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
   end;
   
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const c: Circle); overload;
@@ -1017,8 +1049,7 @@ implementation
     DrawCircle(screen, clr, True, c.center.x, c.center.y, c.radius);
   end;
   
-  
-  
+  //=============================================================================
   
   procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
   begin
@@ -1030,14 +1061,6 @@ implementation
     DrawEllipse(screen, clr, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
-  /// Draws a ellipse outline within a given rectangle on the screen.
-  ///
-  /// @param clr:     The color to draw the ellipse
-  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
-  /// @param width,height: The width and height of the ellipse
-  ///
-  /// Side Effects:
-  /// - Draws a ellipse on the screen
   procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
   begin
     DrawEllipse(screen, clr, xPos, yPos, width, height);
@@ -1047,67 +1070,79 @@ implementation
   begin
     DrawEllipse(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
-
-
-  /// Draws a filled ellipse within a given rectangle on the screen.
-  ///
-  /// @param clr:     The color to draw the ellipse
-  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
-  /// @param width,height: The width and height of the ellipse
-  ///
-  /// Side Effects:
-  /// - Draws a ellipse in the screen
+  
   procedure FillEllipseOnScreen(clr: Color;  xPos, yPos, width, height: LongInt); overload;
   begin
     FillEllipse(screen, clr, xPos, yPos, width, height);
   end;
-
+  
   procedure FillEllipse(clr: Color;  xPos, yPos: Single; width, height: LongInt); overload;
   begin
     FillEllipse(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
+  
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  begin
+    if filled then FillEllipse(dest, clr, xPos, yPos, width, height)
+    else DrawEllipse(dest, clr, xPos, yPos, width, height);
+  end;
+  
+  procedure DrawEllipse(dest: Bitmap; clr: Color;  xPos, yPos, width, height: LongInt); overload;
+  var
+    halfWidth, halfHeight: Sint16;
+  begin
+    if width < 0 then
+    begin
+      xPos += width;
+      width := -width;
+    end;
+    if height < 0 then
+    begin
+      yPos += height;
+      height := -height;
+    end;
 
+    halfWidth := width div 2;
+    halfHeight := height div 2;
+    
+    aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
+  end;
 
-  /// Draws a rectangle on the destination bitmap.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param clr:     The color to draw the rectangle
-  /// @param filled:       True to draw a filled rectangle, false for outline
-  /// @param xPos,yPos:   The x,y location to draw the rectangle at
-  /// @param width,height: The width and height of the rectangle
-  ///
-  /// Side Effects:
-  /// - Draws a rectangle in the dest bitmap
+  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt);
+  var
+    halfWidth, halfHeight: Sint16;
+  begin
+    if width < 0 then
+    begin
+      xPos += width;
+      width := -width;
+    end;
+    if height < 0 then
+    begin
+      yPos += height;
+      height := -height;
+    end;
+
+    halfWidth := width div 2;
+    halfHeight := height div 2;
+    
+    filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
+  end;
+
+  //=============================================================================
+  
   procedure DrawRectangle(dest: Bitmap; clr: Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
   begin
     if filled then FillRectangle(dest, clr, xPos, yPos, width, height)
     else DrawRectangle(dest, clr, xPos, yPos, width, height);
   end;
 
-  /// Draws the outline of a rectangle on the destination bitmap.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param clr:     The color to draw the rectangle
-  /// @param xPos,yPos:   The x,y location to draw the rectangle at
-  /// @param width,height: The width and height of the rectangle
-  ///
-  /// Side Effects:
-  /// - Draws a rectangle in the dest bitmap
   procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
   begin
     if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
     rectangleColor(dest^.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(clr));
   end;
 
-  /// Draws a filled rectangle on the destination bitmap.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param clr:     The color to draw the rectangle
-  /// @param xPos,yPos:   The x,y location to draw the rectangle at
-  /// @param width,height: The width and height of the rectangle
-  ///
-  /// Side Effects:
-  /// - Draws a rectangle in the dest bitmap
   procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : LongInt);
   var
     rect: SDL_Rect;
@@ -1131,60 +1166,6 @@ implementation
     
     //SDL_FillRect(dest^.surface, @rect, clr);
     boxColor(dest^.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(clr));
-  end;
-
-  /// Draws a ellipse within a given rectangle on the dest bitmap.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param clr:     The color to draw the ellipse
-  /// @param filled:       True to draw a filled ellipse, false for outline
-  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
-  /// @param width,height: The width and height of the ellipse
-  ///
-  /// Side Effects:
-  /// - Draws a ellipse in the dest bitmap
-  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
-  begin
-    if filled then FillEllipse(dest, clr, xPos, yPos, width, height)
-    else DrawEllipse(dest, clr, xPos, yPos, width, height);
-  end;
-
-  /// Draws a ellipse outline within a given rectangle on the dest bitmap.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param clr:     The color to draw the ellipse
-  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
-  /// @param width,height: The width and height of the ellipse
-  ///
-  /// Side Effects:
-  /// - Draws a ellipse in the dest bitmap
-  procedure DrawEllipse(dest: Bitmap; clr: Color;  xPos, yPos, width, height: LongInt); overload;
-  var
-    halfWidth, halfHeight: Sint16;
-  begin
-    halfWidth := width div 2;
-    halfHeight := height div 2;
-    
-    aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
-  end;
-
-  /// Draws a filled ellipse within a given rectangle on the dest bitmap.
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param clr:     The color to draw the ellipse
-  /// @param xPos,yPos:   The x,y location of the top left of the ellipse
-  /// @param width,height: The width and height of the ellipse
-  ///
-  /// Side Effects:
-  /// - Draws a ellipse in the dest bitmap
-  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt);
-  var
-    halfWidth, halfHeight: Sint16;
-  begin
-    halfWidth := width div 2;
-    halfHeight := height div 2;
-
-    filledEllipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
   end;
   
   /// Draws a vertical line on the destination bitmap.
@@ -1515,9 +1496,7 @@ implementation
     OptimiseBitmap(src);
   end;
   
-  //
-  //
-  //
+  //=============================================================================
   
   procedure DrawLines(clr: Color; const lines: LinesArray); //TODO: overload;
   var
@@ -1528,22 +1507,296 @@ implementation
       DrawLine(clr, lines[i]);
     end;
   end;
+
+  //=============================================================================
   
-  // procedure DrawMesh(c: Color; const m: Mesh); //TODO: overload
-  //   procedure _DoDrawMesh();
-  //   var
-  //     i: Integer;
-  //   begin
-  //     
-  //   end;
-  // begin
-  //   case Length(mesh) of
-  //     1: DrawPixel(c, m[0]);
-  //     2: DrawLine(c, m[0], m[1]);
-  //     else
-  //       _DoDrawMesh();
-  //   end;
-  // end;
+  procedure DrawShapeAsPoint(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  var
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    if length(pts) = 0 then exit;
+    
+    DrawPixel(dest, clr, pts[0]);
+  end;
+  
+  procedure DrawShapeAsCircle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  var
+    r: Single;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    if length(pts) < 2 then exit;
+    
+    r := PointPointDistance(pts[0], pts[1]);
+    
+    DrawCircle(dest, clr, filled, pts[0], Round(r));
+  end;
+  
+  procedure DrawShapeAsEllipse(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  var
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    if length(pts) < 2 then exit;
+    
+    DrawEllipse(dest, clr, filled, 
+      Round(pts[0].x),
+      Round(pts[0].y), 
+      Round(pts[1].x) - Round(pts[0].x), 
+      Round(pts[1].y) - Round(pts[0].y));
+  end;
+  
+  procedure DrawShapeAsLine(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  var
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    if length(pts) < 2 then exit;
+    
+    DrawLine(dest, clr, pts[0], pts[1]);
+  end;
+  
+  procedure DrawShapeAsTriangle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  var
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    if length(pts) < 3 then exit;
+    
+    if filled then
+      FillTriangle(dest, clr, pts[0].x, pts[0].y, pts[1].x, pts[1].y, pts[2].x, pts[2].y)
+    else
+      DrawTriangle(dest, clr, pts[0].x, pts[0].y, pts[1].x, pts[1].y, pts[2].x, pts[2].y);
+  end;
+  
+  procedure DrawShapeAsLineList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) div 2 - 1 do
+    begin
+      DrawLine(dest, clr, pts[i * 2], pts[i * 2 + 1]);
+    end;
+  end;
+  
+  procedure DrawShapeAsLineStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) - 2 do
+    begin
+      DrawLine(dest, clr, pts[i], pts[i+ 1]);
+    end;
+  end;
+  
+  procedure DrawShapeAsPolygon(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  var
+    i, l: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    if Length(pts) < 3 then exit;
+    
+    l := Length(pts);
+    
+    if filled then
+    begin
+      for i := 0 to Length(pts) - 3 + 1 do
+      begin
+        FillTriangle(dest, clr,
+          pts[i].x,pts[i].y,
+          pts[i + 1].x, pts[i + 1].y,
+          pts[(i + 2) mod l].x, pts[(i + 2) mod l].y);
+      end;
+    end
+    else
+    begin
+      for i := 0 to Length(pts) - 2 + 1 do
+      begin
+        DrawLine(dest, clr, pts[i], pts[(i+ 1) mod l]);
+      end;
+    end;
+    
+  end;
+  
+  procedure DrawTriangleFan(dest: Bitmap; clr: Color; s: Shape);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) - 3 do
+    begin
+      DrawTriangle(dest, clr,
+        pts[0].x,pts[0].y,
+        pts[i + 1].x, pts[i + 1].y,
+        pts[i + 2].x, pts[i + 2].y);
+    end;
+  end;
+  
+  procedure FillTriangleFan(dest: Bitmap; clr: Color; s: Shape);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) - 3 do
+    begin
+      FillTriangle(dest, clr,
+        pts[0].x,pts[0].y,
+        pts[i + 1].x, pts[i + 1].y,
+        pts[i + 2].x, pts[i + 2].y);
+    end;
+  end;
+  
+  procedure DrawShapeAsTriangleFan(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  begin
+    if filled then FillTriangleFan(dest, clr, s) else DrawTriangleFan(dest, clr, s);
+  end;
+  
+  procedure DrawTriangleStrip(dest: Bitmap; clr: Color; s: Shape);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) - 3 do
+    begin
+      DrawTriangle(dest, clr,
+        pts[i].x,pts[i].y,
+        pts[i + 1].x, pts[i + 1].y,
+        pts[i + 2].x, pts[i + 2].y);
+    end;
+  end;
+  
+  procedure FillTriangleStrip(dest: Bitmap; clr: Color; s: Shape);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) - 3 do
+    begin
+      FillTriangle(dest, clr,
+        pts[i].x,pts[i].y,
+        pts[i + 1].x, pts[i + 1].y,
+        pts[i + 2].x, pts[i + 2].y);
+    end;
+  end;
+  
+  procedure DrawShapeAsTriangleStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  begin
+    if filled then FillTriangleStrip(dest, clr, s) else DrawTriangleStrip(dest, clr, s);
+  end;
+  
+  procedure DrawTriangleList(dest: Bitmap; clr: Color; s: Shape);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) div 3 - 1 do
+    begin
+      DrawTriangle(dest, clr,
+        pts[i * 3].x, pts[i * 3].y,
+        pts[i * 3 + 1].x, pts[i * 3 + 1].y,
+        pts[i * 3 + 2].x, pts[i * 3 + 2].y);
+    end;
+  end;
+  
+  procedure FillTriangleList(dest: Bitmap; clr: Color; s: Shape);
+  var
+    i: Integer;
+    pts: ArrayOfPoint2D;
+  begin
+    pts := ShapePoints(s);
+    
+    for i := 0 to Length(pts) div 3 - 1 do
+    begin
+      FillTriangle(dest, clr,
+        pts[i * 3].x, pts[i * 3].y,
+        pts[i * 3 + 1].x, pts[i * 3 + 1].y,
+        pts[i * 3 + 2].x, pts[i * 3 + 2].y);
+    end;
+  end;
+  
+  procedure DrawShapeAsTriangleList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  begin
+    if filled then FillTriangleList(dest, clr, s) else DrawTriangleList(dest, clr, s);
+  end;
+  
+  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape; filled: Boolean); overload;
+  var
+    i: Integer;
+  begin
+    s^.prototype^.drawWith(dest, clr, s, filled);
+    
+    for i := 0 to High(s^.subShapes) do
+    begin
+      DrawShape(clr, s^.subShapes[i], filled);
+    end;
+  end;
+  
+  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  begin
+    DrawShape(dest, clr, s, false);
+  end;
+  
+  procedure FillShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  begin
+    DrawShape(dest, clr, s, true);
+  end;
+  
+  procedure DrawShape(clr: Color; s: Shape; filled: Boolean); overload;
+  begin
+    DrawShape(screen, clr, s, filled);
+  end;
+  
+  procedure DrawShape(clr: Color; s: Shape); overload;
+  begin
+    DrawShape(screen, clr, s, false);
+  end;
+  
+  procedure FillShape(clr: Color; s: Shape); overload;
+  begin
+    DrawShape(screen, clr, s, true);
+  end;
+  
+  procedure DrawShapeOnScreen(clr: Color; s: Shape; filled: Boolean); overload;
+  var
+    i: Integer;
+  begin
+    s^.pt.x += CameraX(); s^.pt.y += CameraY();
+    s^.prototype^.drawWith(screen, clr, s, filled);
+    s^.pt.x -= CameraX(); s^.pt.y -= CameraY();
+    
+    for i := 0 to High(s^.subShapes) do
+    begin
+      DrawShapeOnScreen(clr, s^.subShapes[i], filled);
+    end;
+  end;
+
+  procedure DrawShapeOnScreen(clr: Color; s: Shape); overload;
+  begin
+    DrawShapeOnScreen(clr, s, false);
+  end;
+  
+  procedure FillShapeOnScreen(clr: Color; s: Shape); overload;
+  begin
+    DrawShapeOnScreen(clr, s, true);
+  end;
   
 //=============================================================================
   

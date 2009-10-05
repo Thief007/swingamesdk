@@ -55,6 +55,7 @@ interface
   procedure InitialiseSwinGame();
   
   procedure RaiseException(message: String);
+  procedure RaiseWarning(message: String);
   
   {$ifdef DARWIN}
   //procedure CyclePool();
@@ -95,7 +96,7 @@ interface
     
     UseExceptions: Boolean = True;
   const
-    DLL_VERSION = 300000;
+    DLL_VERSION = 'TEST BUILD';
     {$ifndef FPC}
     LineEnding = #13#10; // Delphi Windows \r\n pair
     {$endif}
@@ -307,6 +308,13 @@ implementation
 
     if UseExceptions then raise Exception.Create(message)
   end;
+
+  procedure RaiseWarning(message: String);
+  begin
+    //TODO: make this better for cross language support
+    WriteLn(message);
+  end;
+
 
 //=============================================================================
 

@@ -471,7 +471,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				PRODUCT_NAME = MyGame;
+				PRODUCT_NAME = "$(PROJECT_NAME)";
 			};
 			name = Debug;
 		};

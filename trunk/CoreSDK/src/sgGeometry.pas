@@ -218,7 +218,241 @@ interface
 
   /// @lib TriangleFromPoints
   function TriangleFrom(const a, b, c: Point2D): Triangle; overload;
+  
+  
+  //----------------------------------------------------------------------------
+  // ShapePrototype creating functions
+  //----------------------------------------------------------------------------
+  
+  /// Create a shape prototype for a given point.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @constructor
+  /// @sn initPointPrototypeAt:%s
+  function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
+  
+  /// Create a shape prototype of a circle with a given radius `r`.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @constructor
+  /// @sn initCirclePrototypeAt:%s withRadius:%s
+  function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
+  
+  /// Create a shape prototype of an ellipse with a given width and height.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @constructor
+  /// @sn initEllipsePrototypeAt:%s width:%s height:%s
+  function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
+  
+  /// Create a shape prototype for a line from `startPt` to `endPt`.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @constructor
+  /// @sn initLinePrototypeFrom:%s to:%s
+  function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
+  
+  /// Create a shape prototype for a triangle made of points `pt1`, `pt2`, and `pt3`.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @constructor
+  /// @sn initTrianglePrototype:%s point2:%s point3:%s
+  function TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype;
+  
+  /// Create a LineList prototype from the passed in points. There must be an
+  /// even number of points, where each pair represents a line.
+  ///
+  /// @lib
+  function LineListPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  
+  /// Creates a LineStrip prototype where the points in the array represent the 
+  /// points on the line. The last point of the line does not join back to the starting
+  /// point.
+  ///
+  /// @lib
+  function LineStripPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  
+  /// Creates a Polygon from the passed in points, the polygon is made up of
+  /// the points in the array and the last point does join back to the start
+  /// point.
+  ///
+  /// @lib
+  function PolygonPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  
+  /// Creates a triangle strip from the passed in points. The passed in array
+  /// must contain at least three points.
+  ///
+  /// @lib
+  function TriangleStripPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  
+  /// Creates a triangle fan from the passed in points. The fan is constructed from
+  /// the first point combined with all other point pairs. The array must contain
+  /// at least three points.
+  ///
+  /// @lib
+  function TriangleFanPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  
+  /// Creates a triangle list from the passed in points. The list is a set of 
+  /// triangles. The number of points must be divisible by three.
+  ///
+  /// @lib
+  function TriangleListPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  
+  /// Creates a shape prototype from the data in the points array. The kind
+  /// indicates the type of shape prototype to create.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @constructor
+  /// @sn initShapePropertyFrom:%s withKind:%s
+  function PrototypeFrom(const points: ArrayOfPoint2D; kind:ShapeKind): ShapePrototype;
+  
+  /// Free the resources used by a ShapePrototype.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @dispose
+  procedure FreePrototype(var p: ShapePrototype);
+  
+  //----------------------------------------------------------------------------
+  // ShapePrototype functions and procedures
+  //----------------------------------------------------------------------------
+  
+  /// Returns the minimum number of points required for the given shape kind.
+  /// 
+  /// @lib
+  function MinimumPointsForKind(k: ShapeKind): Integer;
+  
+  /// Returns the number of points allocated to this shape prototype.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @getter PointCount
+  function PrototypePointCount(p: ShapePrototype): Integer;
+  
+  /// Change the prototype's points to the passed in points. The number of points must
+  /// be sufficient for the kind of shape being changed.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @setter Points
+  /// @length PrototypePointCount
+  procedure PrototypeSetPoints(p: ShapePrototype; const points: ArrayOfPoint2D);
+  
+  /// The prototype point locations.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @getter Points
+  /// @length PrototypePointCount
+  function PrototypePoints(p: ShapePrototype): ArrayOfPoint2D;
+  
+  /// Changes the prototype kind. This effects how shapes of this prototype
+  /// are drawn to the screen, and the number of points required.
+  /// 
+  /// @lib
+  /// @class ShapePrototype
+  /// @setter Kind
+  procedure PrototypeSetKind(p: ShapePrototype; kind: ShapeKind);
+  
+  /// The prototype kind.   This effects how shapes of this prototype
+  /// are drawn to the screen, and the number of points required.
+  ///
+  /// @lib
+  /// @class ShapePrototype
+  /// @getter Kind
+  function PrototypeKind(p: ShapePrototype): ShapeKind;
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Shape Code
+  //----------------------------------------------------------------------------
+  
+  /// Create a shape from a given prototype at a set location in the game.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @constructor
+  /// @sn initShapeWithPrototype:%s atPoint:%s
+  function ShapeAtPoint(p: ShapePrototype; const pt: Point2D): Shape;
+  
+  /// Free the resources used by a Shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @dispose
+  procedure FreeShape(var s: Shape);
+  
+  /// Recalculate the points of the shape. This will be required when a Shape's
+  /// prototype is changed.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method UpdatePoints
+  procedure UpdateShapePoints(s: Shape);
+  
+  /// Returns all of the points for a shape, based on its kind, angle 
+  /// and scale.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @getter Points
+  /// @length ShapePointCount
+  function ShapePoints(s: Shape): ArrayOfPoint2D;
+  
+  /// Returns the number of points on this shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @getter PointCount
+  function ShapePointCount(s: Shape): Integer;
+  
+  /// Change the angle of a Shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @setter Angle
+  procedure ShapeSetAngle(s: Shape; angle: Single);
+  
+  /// Return the angle of a Shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @getter Angle
+  function ShapeAngle(s: Shape): Single;
+  
+  /// Change the scale of a Shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @setter Scale
+  procedure ShapeSetScale(s: Shape; const scale: Point2D);
+  
+  /// Return the scale of a Shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @getter Scale
+  function ShapeScale(s: Shape): Point2D;
+  
+  /// Add a shape as a sub shape to a given parent shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method AddSubShape
+  procedure ShapeAddSubShape(parent, child: Shape);
+  
 
+  //----------------------------------------------------------------------------
+  // 
+  //----------------------------------------------------------------------------
+  
   /// @lib
   function TriangleBarycenter(const tri: Triangle): Point2D;
   
@@ -552,19 +786,42 @@ interface
   /// @class Matrix2D
   /// @static
   /// @method TranslationMatrix
-  function TranslationMatrix(dx, dy: Single): Matrix2D;
+  function TranslationMatrix(dx, dy: Single): Matrix2D; overload;
+  
+  /// @lib TranslationMatrixPt
+  /// @class Matrix2D
+  /// @static
+  /// @overload TranslationMatrix TranslationMatrixWithPoint
+  function TranslationMatrix(pt: Point2D): Matrix2D; overload;
   
   /// @lib
   /// @class Matrix2D
   /// @static
   /// @method ScaleMatrix
-  function ScaleMatrix(scale: Single): Matrix2D;
+  function ScaleMatrix(scale: Single): Matrix2D; overload;
+  
+  /// Create a scale matrix that scales x and y to
+  /// different degrees.
+  ///
+  /// @lib ScaleMatrixWithPoint
+  /// @class Matrix2D
+  /// @static
+  /// @overload ScaleMatrix ScaleMatrixWithPoint
+  function ScaleMatrix(scale: Point2D): Matrix2D; overload;
   
   /// @lib
   /// @class Matrix2D
   /// @static
   /// @method RotationMatrix
   function RotationMatrix(deg: Single): Matrix2D;
+  
+  /// Create a matrix that can scale, rotate then translate geometry points.
+  ///
+  /// @lib
+  /// @class Matrix2D
+  /// @static
+  /// @method ScaleRotateTranslateMatrix
+  function ScaleRotateTranslateMatrix(const scale: Point2D; deg: Single; const translate: Point2D): Matrix2D;
   
   /// Multiplies the two `Matrix2D` parameters, ``m1`` by ``m2``, and returns
   /// the result as a new `Matrix2D`. Use this to combine the effects to two 
@@ -585,8 +842,11 @@ interface
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
   
   /// @lib
-  procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
-
+  procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
+  
+  /// @lib ApplyMatrixToPoints
+  procedure ApplyMatrix(const m: Matrix2D; pts: ArrayOfPoint2D);
+  
   {$ifdef FPC}
   /// @class Matrix2D
   /// @calls MatrixMultiplyVector
@@ -1078,8 +1338,23 @@ implementation
     result[2, 1] := 0;
     result[2, 2] := 1;
   end;
-
-  function ScaleMatrix(scale: Single): Matrix2D;
+  
+  function ScaleMatrix(scale: Point2D): Matrix2D; overload;
+  begin
+    result[0, 0] := scale.x;
+    result[0, 1] := 0;
+    result[0, 2] := 0;
+    
+    result[1, 0] := 0;
+    result[1, 1] := scale.y;
+    result[1, 2] := 0;
+    
+    result[2, 0] := 0;
+    result[2, 1] := 0;
+    result[2, 2] := 1;
+  end;
+  
+  function ScaleMatrix(scale: Single): Matrix2D; overload;
   begin
     result[0, 0] := scale;
     result[0, 1] := 0;
@@ -1109,13 +1384,36 @@ implementation
     result[2, 2] := 1;
   end;
   
+  function TranslationMatrix(pt: Point2D): Matrix2D; overload;
+  begin
+    result := TranslationMatrix(pt.x, pt.y);
+  end;
   
-  function TranslationMatrix(dx, dy: Single): Matrix2D;
+  function TranslationMatrix(dx, dy: Single): Matrix2D; overload;
   begin
     result := IdentityMatrix();
 
     result[0, 2] := dx;
     result[1, 2] := dy;
+  end;
+  
+  function ScaleRotateTranslateMatrix(const scale: Point2D; deg: Single; const translate: Point2D): Matrix2D;
+  var
+    rads: Extended;
+  begin
+    rads := -deg * DEG_TO_RAD;
+    
+    result[0, 0] := System.Cos(rads) * scale.x;
+    result[0, 1] := System.Sin(rads);
+    result[0, 2] := translate.x;
+    
+    result[1, 0] := -System.Sin(rads);
+    result[1, 1] := System.Cos(rads) * scale.y;
+    result[1, 2] := translate.y;
+    
+    result[2, 0] := 0;
+    result[2, 1] := 0;
+    result[2, 2] := 1;
   end;
 
   function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
@@ -1176,11 +1474,21 @@ implementation
     result.y := v.x * m[1,0]  +  v.y * m[1,1] + m[1,2]; 
   end;
   
-  procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
+  procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
   begin
     tri[0] := MatrixMultiply(m, tri[0]);
     tri[1] := MatrixMultiply(m, tri[1]);
     tri[2] := MatrixMultiply(m, tri[2]);
+  end;
+  
+  procedure ApplyMatrix(const m: Matrix2D; pts: ArrayOfPoint2D);
+  var
+    i: Integer;
+  begin
+    for i := 0 to High(pts) do
+    begin
+      pts[i] := MatrixMultiply(m, pts[i]);
+    end;
   end;
 
   {$ifdef FPC}
@@ -1193,7 +1501,7 @@ implementation
   {$ifdef FPC}
   operator * (const m1, m2: Matrix2D) r : Matrix2D;
   begin
-    r := MatrixMultiply(m1, m2);
+    r := MatrixMultiply(m2, m1);
   end;
   {$endif}
 
@@ -2137,6 +2445,320 @@ implementation
   begin
     pt := ClosestPointOnLineFromCircle(c, l);
     result := PointInCircle(pt, c);
+  end;
+  
+  //=============================================================================
+  
+  function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
+  begin
+    New(result);
+    
+    SetLength(result^.points, 1);
+    result^.points[0] := pt;
+    result^.kind := pkPoint;
+  end;
+  
+  function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
+  begin
+    New(result);
+    
+    SetLength(result^.points, 2);
+    result^.points[0] := pt;
+    result^.points[1] := PointAt(r, r);
+    result^.kind := pkCircle;
+  end;
+  
+  function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
+  begin
+    New(result);
+    
+    SetLength(result^.points, 2);
+    result^.points[0] := pt;
+    result^.points[1] := PointAt(w, h);
+    result^.kind := pkEllipse;
+  end;
+  
+  function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
+  begin
+    New(result);
+    
+    SetLength(result^.points, 2);
+    result^.points[0] := startPt;
+    result^.points[1] := endPt;
+    result^.kind := pkLine;
+  end;
+  
+  function TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype;
+  begin
+    New(result);
+    
+    SetLength(result^.points, 3);
+    result^.points[0] := pt1;
+    result^.points[1] := pt2;
+    result^.points[2] := pt3;
+    result^.kind := pkTriangle;
+  end;
+  
+  function LineListPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  begin
+    result := PrototypeFrom(points, pkLineList);
+  end;
+  
+  function LineStripPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  begin
+    result := PrototypeFrom(points, pkLineStrip);
+  end;
+  
+  function PolygonPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  begin
+    result := PrototypeFrom(points, pkPolygon);
+  end;
+  
+  function TriangleStripPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  begin
+    result := PrototypeFrom(points, pkTriangleStrip);
+  end;
+  
+  function TriangleFanPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  begin
+    result := PrototypeFrom(points, pkTriangleFan);
+  end;
+  
+  function TriangleListPrototypeFrom(const points: ArrayOfPoint2D): ShapePrototype;
+  begin
+    result := PrototypeFrom(points, pkTriangleList);
+  end;
+  
+  function PrototypeFrom(const points: ArrayOfPoint2D; kind:ShapeKind): ShapePrototype;
+  begin
+    if Length(points) < MinimumPointsForKind(kind) then
+    begin
+      RaiseException('Insufficient points assigned to shape given its kind. Min is ' 
+        + IntToStr(MinimumPointsForKind(kind))
+        + ' was supplied ' 
+        + IntToStr(Length(points)));
+      exit;
+    end;
+    
+    New(result);
+    
+    PrototypeSetKind(result, kind);
+    PrototypeSetPoints(result, points);
+    result^.shapeCount := 0;
+  end;
+  
+  procedure FreePrototype(var p: ShapePrototype);
+  begin
+    if not Assigned(p) then exit;
+    if p^.shapeCount > 0 then begin RaiseWarning('Freeing prototype while it is still used by ' + IntToStr(p^.shapeCount) + ' shapes.'); end;
+    
+    SetLength(p^.points, 0);
+    Dispose(p);
+    p := nil;
+  end;
+  
+  //=============================================================================
+  
+  function MinimumPointsForKind(k: ShapeKind): Integer;
+  begin
+    case k of
+      pkPoint: result := 1;
+      pkCircle: result := 2;
+      pkEllipse: result := 2;
+      pkLine: result := 2;
+      pkTriangle: result := 3;
+      pkLineList: result := 2;
+      pkLineStrip: result := 2;
+      pkPolygon: result := 3;
+      pkTriangleStrip: result := 3;
+      pkTriangleFan: result := 3;
+      pkTriangleList: result := 3;
+    end;
+  end;
+  
+  function PrototypePointCount(p: ShapePrototype): Integer;
+  begin
+    if not assigned(p) then result := 0
+    else result := Length(p^.points);
+  end;
+  
+  procedure PrototypeSetPoints(p: ShapePrototype; const points: ArrayOfPoint2D);
+  var
+    i: Integer;
+  begin
+    if not assigned(p) then exit;
+    
+    if Length(points) < MinimumPointsForKind(p^.kind) then
+    begin
+      RaiseException('Insufficient points assigned to shape given its kind. Min is ' 
+        + IntToStr(MinimumPointsForKind(p^.kind)) 
+        + ' was supplied ' 
+        + IntToStr(Length(points)));
+      exit;
+    end;
+    
+    SetLength(p^.points, Length(points));
+    
+    for i := 0 to High(points) do
+    begin
+      p^.points[i] := points[i];
+    end;
+  end;
+  
+  function PrototypePoints(p: ShapePrototype): ArrayOfPoint2D;
+  begin
+    if not assigned(p) then SetLength(result,0)
+    else result := p^.points;
+  end;
+  
+  procedure PrototypeSetKind(p: ShapePrototype; kind: ShapeKind);
+  begin
+    if not assigned(p) then
+    begin
+      RaiseException('No shape prototype supplied to set kind.');
+      exit;
+    end;
+    
+    p^.kind := kind;
+    case kind of
+      pkPoint: p^.drawWith := @DrawShapeAsPoint;
+      pkCircle: p^.drawWith := @DrawShapeAsCircle;
+      pkEllipse: p^.drawWith := @DrawShapeAsEllipse;
+      pkLine: p^.drawWith := @DrawShapeAsLine;
+      pkTriangle: p^.drawWith := @DrawShapeAsTriangle;
+      pkLineList: p^.drawWith := @DrawShapeAsLineList;
+      pkLineStrip: p^.drawWith := @DrawShapeAsLineStrip;
+      pkPolygon: p^.drawWith := @DrawShapeAsPolygon;
+      pkTriangleStrip: p^.drawWith := @DrawShapeAsTriangleStrip;
+      pkTriangleFan: p^.drawWith := @DrawShapeAsTriangleFan;
+      pkTriangleList: p^.drawWith := @DrawShapeAsTriangleList;
+      else p^.drawWith := nil; 
+    end;
+  end;
+  
+  function PrototypeKind(p: ShapePrototype): ShapeKind;
+  begin
+    if not assigned(p) then result := ShapeKind(-1)
+    else result := p^.kind;
+  end;
+  
+  //=============================================================================
+  
+  function ShapeAtPoint(p: ShapePrototype; const pt: Point2D): Shape;
+  begin
+    New(result);
+    result^.prototype := p;
+    result^.pt := pt;
+    result^.angle := 0.0;
+    result^.scale := PointAt(1,1);
+    SetLength(result^.subShapes, 0);
+    
+    if Assigned(p) then p^.shapeCount += 1;
+  end;
+  
+  procedure FreeShape(var s: Shape);
+  var
+    i: Integer;
+  begin
+    if not Assigned(s) then exit;
+    if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
+      
+    for i := 0 to High(s^.subShapes) do
+    begin
+      FreeShape(s^.subShapes[i])
+    end;
+    SetLength(s^.subShapes, 0);
+    
+    Dispose(s);
+    s := nil;
+  end;
+  
+  procedure UpdateSubShapePoints(s: Shape; const parentM: Matrix2D);
+  var
+    m: Matrix2D;
+    i: Integer;
+  begin
+    if not Assigned(s) then begin exit; end;
+    s^.ptBuffer := Copy(s^.prototype^.points, 0, Length(s^.prototype^.points));
+    
+    //m := ScaleMatrix(s.scale) * RotationMatrix(s.angle) * TranslationMatrix(s.pt);
+    m := ScaleRotateTranslateMatrix(s^.scale, s^.angle, s^.pt) * parentM;
+    ApplyMatrix(m, s^.ptBuffer);
+    
+    for i := 0 to High(s^.subShapes) do
+    begin
+      UpdateSubShapePoints(s^.subShapes[i], m);
+    end;
+  end;
+  
+  procedure UpdateShapePoints(s: Shape);
+  begin
+    UpdateSubShapePoints(s, IdentityMatrix());
+  end;
+  
+  function ShapePoints(s: Shape): ArrayOfPoint2D;
+  begin
+    if not Assigned(s) then begin SetLength(result, 0); exit; end;
+    if not Assigned(s^.ptBuffer) then
+    begin
+      UpdateShapePoints(s);
+    end;
+    result := s^.ptBuffer;
+  end;
+  
+  function ShapePointCount(s: Shape): Integer;
+  begin
+    if not Assigned(s) then begin result := 0; exit; end;
+    result := PrototypePointCount(s^.prototype);
+  end;
+  
+  procedure ShapeSetAngle(s: Shape; angle: Single);
+  begin
+    if not Assigned(s) then begin exit; end;
+    s^.angle := angle;
+  end;
+  
+  function ShapeAngle(s: Shape): Single;
+  begin
+    if not Assigned(s) then begin result := 0; exit; end;
+    result := s^.angle;
+  end;
+  
+  procedure ShapeSetScale(s: Shape; const scale: Point2D);
+  begin
+    if not Assigned(s) then begin exit; end;
+    s^.scale := scale;
+  end;
+  
+  function ShapeScale(s: Shape): Point2D;
+  begin
+    if not Assigned(s) then begin result := PointAt(0,0); exit; end;
+    result := s^.scale;
+  end;
+  
+  function ShapeShapePrototype(s: Shape): ShapePrototype;
+  begin
+    if not Assigned(s) then begin result := nil; exit; end;
+    result := s^.prototype;
+  end;
+  
+  procedure ShapeSetPrototype(s: Shape; p: ShapePrototype);
+  begin
+    if not Assigned(s) then exit;
+    if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
+    
+    s^.prototype := p;
+    
+    if Assigned(s^.prototype) then s^.prototype^.shapeCount += 1;
+  end;
+  
+  procedure ShapeAddSubShape(parent, child: Shape);
+  begin
+    if not Assigned(parent) then exit;
+    if not Assigned(child) then exit;
+      
+    SetLength(parent^.subShapes, Length(parent^.subShapes) + 1);
+    parent^.subShapes[High(parent^.subShapes)] := child;
   end;
   
 end.
