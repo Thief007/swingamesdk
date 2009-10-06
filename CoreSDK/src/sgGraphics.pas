@@ -267,39 +267,39 @@ interface
   //---------------------------------------------------------------------------
   
   /// @lib DrawOrFillShapeOnto
-  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape; filled: Boolean); overload;
-  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape); overload;
-  procedure FillShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  procedure DrawShape(dest: Bitmap; s: Shape; filled: Boolean); overload;
+  procedure DrawShape(dest: Bitmap; s: Shape); overload;
+  procedure FillShape(dest: Bitmap; s: Shape); overload;
   
-  procedure DrawShape(clr: Color; s: Shape; filled: Boolean); overload;
-  procedure DrawShape(clr: Color; s: Shape); overload;
-  procedure FillShape(clr: Color; s: Shape); overload;
+  procedure DrawShape(s: Shape; filled: Boolean); overload;
+  procedure DrawShape(s: Shape); overload;
+  procedure FillShape(s: Shape); overload;
   
-  procedure DrawShapeOnScreen(clr: Color; s: Shape; filled: Boolean); overload;
-  procedure DrawShapeOnScreen(clr: Color; s: Shape); overload;
-  procedure FillShapeOnScreen(clr: Color; s: Shape); overload;
+  procedure DrawShapeOnScreen(s: Shape; filled: Boolean); overload;
+  procedure DrawShapeOnScreen(s: Shape); overload;
+  procedure FillShapeOnScreen(s: Shape); overload;
   
-  procedure DrawShapeAsPoint(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsPoint(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
-  procedure DrawShapeAsCircle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsCircle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
-  procedure DrawShapeAsEllipse(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsEllipse(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
-  procedure DrawShapeAsLine(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsLine(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
-  procedure DrawShapeAsTriangle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
-  procedure DrawShapeAsLineList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean);
   
-  procedure DrawShapeAsLineStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean);
   
-  procedure DrawShapeAsPolygon(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean);
   
-  procedure DrawShapeAsTriangleFan(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsTriangleFan(dest: Bitmap; s: Shape; filled: Boolean);
   
-  procedure DrawShapeAsTriangleStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsTriangleStrip(dest: Bitmap; s: Shape; filled: Boolean);
   
-  procedure DrawShapeAsTriangleList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsTriangleList(dest: Bitmap; s: Shape; filled: Boolean);
   
   //---------------------------------------------------------------------------
   // Screen drawing routines
@@ -1510,17 +1510,17 @@ implementation
 
   //=============================================================================
   
-  procedure DrawShapeAsPoint(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsPoint(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
     if length(pts) = 0 then exit;
     
-    DrawPixel(dest, clr, pts[0]);
+    DrawPixel(dest, s^.color, pts[0]);
   end;
   
-  procedure DrawShapeAsCircle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsCircle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
     r: Single;
     pts: ArrayOfPoint2D;
@@ -1530,34 +1530,34 @@ implementation
     
     r := PointPointDistance(pts[0], pts[1]);
     
-    DrawCircle(dest, clr, filled, pts[0], Round(r));
+    DrawCircle(dest, s^.color, filled, pts[0], Round(r));
   end;
   
-  procedure DrawShapeAsEllipse(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsEllipse(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
     if length(pts) < 2 then exit;
     
-    DrawEllipse(dest, clr, filled, 
+    DrawEllipse(dest, s^.color, filled, 
       Round(pts[0].x),
       Round(pts[0].y), 
       Round(pts[1].x) - Round(pts[0].x), 
       Round(pts[1].y) - Round(pts[0].y));
   end;
   
-  procedure DrawShapeAsLine(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsLine(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
     if length(pts) < 2 then exit;
     
-    DrawLine(dest, clr, pts[0], pts[1]);
+    DrawLine(dest, s^.color, pts[0], pts[1]);
   end;
   
-  procedure DrawShapeAsTriangle(dest: Bitmap; clr: Color; s:Shape; filled: Boolean); overload;
+  procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
     pts: ArrayOfPoint2D;
   begin
@@ -1565,12 +1565,12 @@ implementation
     if length(pts) < 3 then exit;
     
     if filled then
-      FillTriangle(dest, clr, pts[0].x, pts[0].y, pts[1].x, pts[1].y, pts[2].x, pts[2].y)
+      FillTriangle(dest, s^.color, pts[0].x, pts[0].y, pts[1].x, pts[1].y, pts[2].x, pts[2].y)
     else
-      DrawTriangle(dest, clr, pts[0].x, pts[0].y, pts[1].x, pts[1].y, pts[2].x, pts[2].y);
+      DrawTriangle(dest, s^.color, pts[0].x, pts[0].y, pts[1].x, pts[1].y, pts[2].x, pts[2].y);
   end;
   
-  procedure DrawShapeAsLineList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1579,11 +1579,11 @@ implementation
     
     for i := 0 to Length(pts) div 2 - 1 do
     begin
-      DrawLine(dest, clr, pts[i * 2], pts[i * 2 + 1]);
+      DrawLine(dest, s^.color, pts[i * 2], pts[i * 2 + 1]);
     end;
   end;
   
-  procedure DrawShapeAsLineStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1592,11 +1592,11 @@ implementation
     
     for i := 0 to Length(pts) - 2 do
     begin
-      DrawLine(dest, clr, pts[i], pts[i+ 1]);
+      DrawLine(dest, s^.color, pts[i], pts[i+ 1]);
     end;
   end;
   
-  procedure DrawShapeAsPolygon(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean);
   var
     i, l: Integer;
     pts: ArrayOfPoint2D;
@@ -1610,7 +1610,7 @@ implementation
     begin
       for i := 0 to Length(pts) - 3 + 1 do
       begin
-        FillTriangle(dest, clr,
+        FillTriangle(dest, s^.color,
           pts[i].x,pts[i].y,
           pts[i + 1].x, pts[i + 1].y,
           pts[(i + 2) mod l].x, pts[(i + 2) mod l].y);
@@ -1620,13 +1620,13 @@ implementation
     begin
       for i := 0 to Length(pts) - 2 + 1 do
       begin
-        DrawLine(dest, clr, pts[i], pts[(i+ 1) mod l]);
+        DrawLine(dest, s^.color, pts[i], pts[(i+ 1) mod l]);
       end;
     end;
     
   end;
   
-  procedure DrawTriangleFan(dest: Bitmap; clr: Color; s: Shape);
+  procedure DrawTriangleFan(dest: Bitmap; s: Shape);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1635,14 +1635,14 @@ implementation
     
     for i := 0 to Length(pts) - 3 do
     begin
-      DrawTriangle(dest, clr,
+      DrawTriangle(dest, s^.color,
         pts[0].x,pts[0].y,
         pts[i + 1].x, pts[i + 1].y,
         pts[i + 2].x, pts[i + 2].y);
     end;
   end;
   
-  procedure FillTriangleFan(dest: Bitmap; clr: Color; s: Shape);
+  procedure FillTriangleFan(dest: Bitmap; s: Shape);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1651,19 +1651,19 @@ implementation
     
     for i := 0 to Length(pts) - 3 do
     begin
-      FillTriangle(dest, clr,
+      FillTriangle(dest, s^.color,
         pts[0].x,pts[0].y,
         pts[i + 1].x, pts[i + 1].y,
         pts[i + 2].x, pts[i + 2].y);
     end;
   end;
   
-  procedure DrawShapeAsTriangleFan(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsTriangleFan(dest: Bitmap; s: Shape; filled: Boolean);
   begin
-    if filled then FillTriangleFan(dest, clr, s) else DrawTriangleFan(dest, clr, s);
+    if filled then FillTriangleFan(dest, s) else DrawTriangleFan(dest, s);
   end;
   
-  procedure DrawTriangleStrip(dest: Bitmap; clr: Color; s: Shape);
+  procedure DrawTriangleStrip(dest: Bitmap; s: Shape);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1672,14 +1672,14 @@ implementation
     
     for i := 0 to Length(pts) - 3 do
     begin
-      DrawTriangle(dest, clr,
+      DrawTriangle(dest, s^.color,
         pts[i].x,pts[i].y,
         pts[i + 1].x, pts[i + 1].y,
         pts[i + 2].x, pts[i + 2].y);
     end;
   end;
   
-  procedure FillTriangleStrip(dest: Bitmap; clr: Color; s: Shape);
+  procedure FillTriangleStrip(dest: Bitmap; s: Shape);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1688,19 +1688,19 @@ implementation
     
     for i := 0 to Length(pts) - 3 do
     begin
-      FillTriangle(dest, clr,
-        pts[i].x,pts[i].y,
+      FillTriangle(dest, s^.color,
+        pts[i].x, pts[i].y,
         pts[i + 1].x, pts[i + 1].y,
         pts[i + 2].x, pts[i + 2].y);
     end;
   end;
   
-  procedure DrawShapeAsTriangleStrip(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsTriangleStrip(dest: Bitmap; s: Shape; filled: Boolean);
   begin
-    if filled then FillTriangleStrip(dest, clr, s) else DrawTriangleStrip(dest, clr, s);
+    if filled then FillTriangleStrip(dest, s) else DrawTriangleStrip(dest, s);
   end;
   
-  procedure DrawTriangleList(dest: Bitmap; clr: Color; s: Shape);
+  procedure DrawTriangleList(dest: Bitmap; s: Shape);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1709,14 +1709,14 @@ implementation
     
     for i := 0 to Length(pts) div 3 - 1 do
     begin
-      DrawTriangle(dest, clr,
+      DrawTriangle(dest, s^.color,
         pts[i * 3].x, pts[i * 3].y,
         pts[i * 3 + 1].x, pts[i * 3 + 1].y,
         pts[i * 3 + 2].x, pts[i * 3 + 2].y);
     end;
   end;
   
-  procedure FillTriangleList(dest: Bitmap; clr: Color; s: Shape);
+  procedure FillTriangleList(dest: Bitmap; s: Shape);
   var
     i: Integer;
     pts: ArrayOfPoint2D;
@@ -1725,77 +1725,77 @@ implementation
     
     for i := 0 to Length(pts) div 3 - 1 do
     begin
-      FillTriangle(dest, clr,
+      FillTriangle(dest, s^.color,
         pts[i * 3].x, pts[i * 3].y,
         pts[i * 3 + 1].x, pts[i * 3 + 1].y,
         pts[i * 3 + 2].x, pts[i * 3 + 2].y);
     end;
   end;
   
-  procedure DrawShapeAsTriangleList(dest: Bitmap; clr: Color; s: Shape; filled: Boolean);
+  procedure DrawShapeAsTriangleList(dest: Bitmap; s: Shape; filled: Boolean);
   begin
-    if filled then FillTriangleList(dest, clr, s) else DrawTriangleList(dest, clr, s);
+    if filled then FillTriangleList(dest, s) else DrawTriangleList(dest, s);
   end;
   
-  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape; filled: Boolean); overload;
+  procedure DrawShape(dest: Bitmap; s: Shape; filled: Boolean); overload;
   var
     i: Integer;
   begin
-    s^.prototype^.drawWith(dest, clr, s, filled);
+    s^.prototype^.drawWith(dest, s, filled);
     
     for i := 0 to High(s^.subShapes) do
     begin
-      DrawShape(clr, s^.subShapes[i], filled);
+      DrawShape(s^.subShapes[i], filled);
     end;
   end;
   
-  procedure DrawShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  procedure DrawShape(dest: Bitmap; s: Shape); overload;
   begin
-    DrawShape(dest, clr, s, false);
+    DrawShape(dest, s, false);
   end;
   
-  procedure FillShape(dest: Bitmap; clr: Color; s: Shape); overload;
+  procedure FillShape(dest: Bitmap; s: Shape); overload;
   begin
-    DrawShape(dest, clr, s, true);
+    DrawShape(dest, s, true);
   end;
   
-  procedure DrawShape(clr: Color; s: Shape; filled: Boolean); overload;
+  procedure DrawShape(s: Shape; filled: Boolean); overload;
   begin
-    DrawShape(screen, clr, s, filled);
+    DrawShape(screen, s, filled);
   end;
   
-  procedure DrawShape(clr: Color; s: Shape); overload;
+  procedure DrawShape(s: Shape); overload;
   begin
-    DrawShape(screen, clr, s, false);
+    DrawShape(screen, s, false);
   end;
   
-  procedure FillShape(clr: Color; s: Shape); overload;
+  procedure FillShape(s: Shape); overload;
   begin
-    DrawShape(screen, clr, s, true);
+    DrawShape(screen, s, true);
   end;
   
-  procedure DrawShapeOnScreen(clr: Color; s: Shape; filled: Boolean); overload;
+  procedure DrawShapeOnScreen(s: Shape; filled: Boolean); overload;
   var
     i: Integer;
   begin
     s^.pt.x += CameraX(); s^.pt.y += CameraY();
-    s^.prototype^.drawWith(screen, clr, s, filled);
+    s^.prototype^.drawWith(screen, s, filled);
     s^.pt.x -= CameraX(); s^.pt.y -= CameraY();
     
     for i := 0 to High(s^.subShapes) do
     begin
-      DrawShapeOnScreen(clr, s^.subShapes[i], filled);
+      DrawShapeOnScreen(s^.subShapes[i], filled);
     end;
   end;
 
-  procedure DrawShapeOnScreen(clr: Color; s: Shape); overload;
+  procedure DrawShapeOnScreen(s: Shape); overload;
   begin
-    DrawShapeOnScreen(clr, s, false);
+    DrawShapeOnScreen(s, false);
   end;
   
-  procedure FillShapeOnScreen(clr: Color; s: Shape); overload;
+  procedure FillShapeOnScreen(s: Shape); overload;
   begin
-    DrawShapeOnScreen(clr, s, true);
+    DrawShapeOnScreen(s, true);
   end;
   
 //=============================================================================
