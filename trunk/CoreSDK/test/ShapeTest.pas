@@ -32,10 +32,12 @@ begin
   s := ShapeAtPoint(p, PointAt(200,200));
   ShapeSetAngle(s, 0);
   ShapeSetScale(s, PointAt(1.0, 1.0));
+  ShapeSetColor(s, ColorRed);
   
   s1 := ShapeAtPoint(p, PointAt(0,100));
   ShapeSetAngle(s1, 15);
-  ShapeSetScale(s1, PointAt(0.5, 0.5));
+  ShapeSetScale(s1, PointAt(0.75, 0.75));
+  ShapeSetColor(s1, RGBAColor(255, 0, 0, 100));
   
   ShapeAddSubShape(s, s1);
   
@@ -66,9 +68,9 @@ begin
     if KeyTyped(vk_space) then filled := not filled;
     
     if filled then
-      FillShape(ColorGreen, s)
+      FillShape(s)
     else
-      DrawShape(ColorGreen, s);
+      DrawShape(s);
     
     RefreshScreen();
   until WindowCloseRequested();

@@ -448,6 +448,20 @@ interface
   /// @method AddSubShape
   procedure ShapeAddSubShape(parent, child: Shape);
   
+  /// Gets the color of the shape s.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @getter Color
+  function ShapeColor(s: Shape): Color;
+  
+  /// Sets the color of the shape s.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @setter Color
+  procedure ShapeSetColor(s: Shape; c: Color);
+  
 
   //----------------------------------------------------------------------------
   // 
@@ -2759,6 +2773,19 @@ implementation
       
     SetLength(parent^.subShapes, Length(parent^.subShapes) + 1);
     parent^.subShapes[High(parent^.subShapes)] := child;
+  end;
+  
+  function ShapeColor(s: Shape): Color;
+  begin
+    if not Assigned(s) then begin result := ColorBlack; exit; end;
+    result := s^.color;
+  end;
+  
+  procedure ShapeSetColor(s: Shape; c: Color);
+  begin
+    if not Assigned(s) then begin exit; end;
+    
+    s^.color := c;
   end;
   
 end.
