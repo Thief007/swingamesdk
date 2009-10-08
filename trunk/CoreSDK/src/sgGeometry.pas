@@ -240,13 +240,13 @@ interface
   /// @sn initCirclePrototypeAt:%s withRadius:%s
   function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
   
-  /// Create a shape prototype of an ellipse with a given width and height.
-  ///
-  /// @lib
-  /// @class ShapePrototype
-  /// @constructor
-  /// @sn initEllipsePrototypeAt:%s width:%s height:%s
-  function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
+  // /// Create a shape prototype of an ellipse with a given width and height.
+  // ///
+  // /// @lib
+  // /// @class ShapePrototype
+  // /// @constructor
+  // /// @sn initEllipsePrototypeAt:%s width:%s height:%s
+  // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
   
   /// Create a shape prototype for a line from `startPt` to `endPt`.
   ///
@@ -326,14 +326,14 @@ interface
   /// Returns the minimum number of points required for the given shape kind.
   /// 
   /// @lib
-  function MinimumPointsForKind(k: ShapeKind): Integer;
+  function MinimumPointsForKind(k: ShapeKind): LongInt;
   
   /// Returns the number of points allocated to this shape prototype.
   ///
   /// @lib
   /// @class ShapePrototype
   /// @getter PointCount
-  function PrototypePointCount(p: ShapePrototype): Integer;
+  function PrototypePointCount(p: ShapePrototype): LongInt;
   
   /// Change the prototype's points to the passed in points. The number of points must
   /// be sufficient for the kind of shape being changed.
@@ -397,6 +397,13 @@ interface
   /// @method UpdatePoints
   procedure UpdateShapePoints(s: Shape);
   
+  /// Returns the number of points on this shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @getter PointCount
+  function ShapePointCount(s: Shape): LongInt;
+  
   /// Returns all of the points for a shape, based on its kind, angle 
   /// and scale.
   ///
@@ -405,13 +412,6 @@ interface
   /// @getter Points
   /// @length ShapePointCount
   function ShapePoints(s: Shape): ArrayOfPoint2D;
-  
-  /// Returns the number of points on this shape.
-  ///
-  /// @lib
-  /// @class Shape
-  /// @getter PointCount
-  function ShapePointCount(s: Shape): Integer;
   
   /// Change the angle of a Shape.
   ///
@@ -921,7 +921,7 @@ implementation
   var
     ptOnLine: Point2D;
     ray, vOut: Vector;
-    i, j: Integer;
+    i, j: LongInt;
     dist, maxDist: Single;
   begin
     // Cast ray searching for points back from shape
@@ -987,7 +987,7 @@ implementation
     tmp: Array [0..3] of Point2D;
     chkPts: Array [0..3] of DoublePt;
     lineVec, normalMvmt, normalLine, toEdge, edge, ray, vOut: Vector;
-    i, j, hits: Integer;
+    i, j, hits: LongInt;
     dotProd, dist, maxDist: Single;
   begin
     // Cast ray searching for points back from shape
@@ -1497,7 +1497,7 @@ implementation
   
   procedure ApplyMatrix(const m: Matrix2D; pts: ArrayOfPoint2D);
   var
-    i: Integer;
+    i: LongInt;
   begin
     for i := 0 to High(pts) do
     begin
@@ -1637,7 +1637,7 @@ implementation
   
   function ClosestPointOnLinesFromCircle(const c: Circle; const lines: LinesArray): Point2D;
   var
-    i: Integer;
+    i: LongInt;
     dst, minDist: Single;
     pt: Point2D;
   begin
@@ -1675,7 +1675,7 @@ implementation
   function RectangleFrom(const tri: Triangle): Rectangle; overload;
   var
     minX, minY, maxX, maxY: Single;
-    i: Integer;
+    i: LongInt;
   begin
     minX := tri[0].x; maxX := tri[0].x;
     minY := tri[0].y; maxY := tri[0].y;
@@ -1698,7 +1698,7 @@ implementation
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
   var
     minX, minY, maxX, maxY: Single;
-    i: Integer;
+    i: LongInt;
   begin
     if Length(lines) = 0 then exit;
     
@@ -2310,7 +2310,7 @@ implementation
 
   function LineCircleHit(const c: Circle; const velocity: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   var
-    hitIdx: Integer;
+    hitIdx: LongInt;
   begin
     _VectorOverLinesFromCircle(c, lines, velocity, hitIdx);
     if hitIdx >= 0 then
@@ -2369,7 +2369,7 @@ implementation
 
   function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const velocity: Vector): Vector;
   var
-    maxIdx: Integer;
+    maxIdx: LongInt;
   begin
     result := VectorOverLinesFromCircle(c, LinesFrom(rect), velocity, maxIdx);
   end;
@@ -2482,15 +2482,15 @@ implementation
     result^.kind := pkCircle;
   end;
   
-  function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
-  begin
-    New(result);
-    
-    SetLength(result^.points, 2);
-    result^.points[0] := pt;
-    result^.points[1] := PointAt(w, h);
-    result^.kind := pkEllipse;
-  end;
+  // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
+  // begin
+  //   New(result);
+  //   
+  //   SetLength(result^.points, 2);
+  //   result^.points[0] := pt;
+  //   result^.points[1] := PointAt(w, h);
+  //   result^.kind := pkEllipse;
+  // end;
   
   function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
   begin
@@ -2573,12 +2573,12 @@ implementation
   
   //=============================================================================
   
-  function MinimumPointsForKind(k: ShapeKind): Integer;
+  function MinimumPointsForKind(k: ShapeKind): LongInt;
   begin
     case k of
       pkPoint: result := 1;
       pkCircle: result := 2;
-      pkEllipse: result := 2;
+      // pkEllipse: result := 2;
       pkLine: result := 2;
       pkTriangle: result := 3;
       pkLineList: result := 2;
@@ -2590,7 +2590,7 @@ implementation
     end;
   end;
   
-  function PrototypePointCount(p: ShapePrototype): Integer;
+  function PrototypePointCount(p: ShapePrototype): LongInt;
   begin
     if not assigned(p) then result := 0
     else result := Length(p^.points);
@@ -2598,7 +2598,7 @@ implementation
   
   procedure PrototypeSetPoints(p: ShapePrototype; const points: ArrayOfPoint2D);
   var
-    i: Integer;
+    i: LongInt;
   begin
     if not assigned(p) then exit;
     
@@ -2637,7 +2637,7 @@ implementation
     case kind of
       pkPoint: p^.drawWith := @DrawShapeAsPoint;
       pkCircle: p^.drawWith := @DrawShapeAsCircle;
-      pkEllipse: p^.drawWith := @DrawShapeAsEllipse;
+      // pkEllipse: p^.drawWith := @DrawShapeAsEllipse;
       pkLine: p^.drawWith := @DrawShapeAsLine;
       pkTriangle: p^.drawWith := @DrawShapeAsTriangle;
       pkLineList: p^.drawWith := @DrawShapeAsLineList;
@@ -2672,7 +2672,7 @@ implementation
   
   procedure FreeShape(var s: Shape);
   var
-    i: Integer;
+    i: LongInt;
   begin
     if not Assigned(s) then exit;
     if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
@@ -2690,7 +2690,7 @@ implementation
   procedure UpdateSubShapePoints(s: Shape; const parentM: Matrix2D);
   var
     m: Matrix2D;
-    i: Integer;
+    i: LongInt;
   begin
     if not Assigned(s) then begin exit; end;
     s^.ptBuffer := Copy(s^.prototype^.points, 0, Length(s^.prototype^.points));
@@ -2720,7 +2720,7 @@ implementation
     result := s^.ptBuffer;
   end;
   
-  function ShapePointCount(s: Shape): Integer;
+  function ShapePointCount(s: Shape): LongInt;
   begin
     if not Assigned(s) then begin result := 0; exit; end;
     result := PrototypePointCount(s^.prototype);

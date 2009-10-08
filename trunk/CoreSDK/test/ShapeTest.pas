@@ -55,7 +55,7 @@ begin
     
     if KeyTyped(vk_p) then PrototypeSetKind(p, pkPoint);
     if KeyTyped(vk_c) then PrototypeSetKind(p, pkCircle);
-    if KeyTyped(vk_e) then PrototypeSetKind(p, pkEllipse);
+    // if KeyTyped(vk_e) then PrototypeSetKind(p, pkEllipse);
     if KeyTyped(vk_k) then PrototypeSetKind(p, pkLine);
     if KeyTyped(vk_t) then PrototypeSetKind(p, pkTriangle);
     if KeyTyped(vk_j) then PrototypeSetKind(p, pkLineList);

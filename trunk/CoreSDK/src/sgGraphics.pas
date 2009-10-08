@@ -266,39 +266,203 @@ interface
   // Shape drawing code
   //---------------------------------------------------------------------------
   
+  /// Draw the Shape s onto the destination bitmap. The filled boolean indicates
+  /// if the Shape should be filled.
+  ///
   /// @lib DrawOrFillShapeOnto
+  /// @uname DrawOrFillShapeOnto
+  /// @class Shape
+  /// @overload Draw DrawOrFillOnto
+  /// @self 2
   procedure DrawShape(dest: Bitmap; s: Shape; filled: Boolean); overload;
+  
+  /// Draw the Shape s onto the destination bitmap.
+  ///
+  /// @lib DrawShapeOnto
+  /// @uname DrawShapeOnto
+  /// @class Shape
+  /// @overload Draw DrawOnto
+  /// @self 2
   procedure DrawShape(dest: Bitmap; s: Shape); overload;
+  
+  /// Fill the Shape s onto the destination bitmap.
+  ///
+  /// @lib FillShapeOnto
+  /// @uname FillShapeOnto
+  /// @class Shape
+  /// @overload Fill FillOnto
+  /// @self 2
   procedure FillShape(dest: Bitmap; s: Shape); overload;
   
+  /// Draw or fill the Shape s onto the screen at the 
+  /// shapes game coordinates.
+  ///
+  /// @lib DrawOrFillShape
+  /// @uname DrawOrFillShape
+  /// @class Shape
+  /// @overload Draw DrawOrFill
   procedure DrawShape(s: Shape; filled: Boolean); overload;
+  
+  /// Draw the Shape s onto the screen at the 
+  /// shapes game coordinates.
+  ///
+  /// @lib DrawShape
+  /// @uname DrawShape
+  /// @class Shape
+  /// @method Draw
   procedure DrawShape(s: Shape); overload;
+  
+  /// Fill the Shape s.
+  ///
+  /// @lib FillShape
+  /// @uname FillShape
+  /// @class Shape
+  /// @method Fill
   procedure FillShape(s: Shape); overload;
   
+  /// Draw or fill the Shape s onto the screen using the
+  /// Shape's location as screen coordinates.
+  ///
+  /// @lib DrawOrFillShapeOnScreen
+  /// @uname DrawOrFillShapeOnScreen
+  /// @class Shape
+  /// @overload DrawOnScreen DrawOrFillOnScreen
   procedure DrawShapeOnScreen(s: Shape; filled: Boolean); overload;
+  
+  /// Draw the Shape s onto the screen using the
+  /// Shape's location as screen coordinates.
+  ///
+  /// @lib DrawShapeOnScreen
+  /// @uname DrawShapeOnScreen
+  /// @class Shape
+  /// @method DrawOnScreen
   procedure DrawShapeOnScreen(s: Shape); overload;
+  
+  /// Fill the Shape s onto the screen using the
+  /// Shape's location as screen coordinates.
+  ///
+  /// @lib FillShapeOnScreen
+  /// @uname FillShapeOnScreen
+  /// @class Shape
+  /// @method FillOnScreen
   procedure FillShapeOnScreen(s: Shape); overload;
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// Draws the first point of the shape as a pixel.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsPoint
+  /// @self 2
   procedure DrawShapeAsPoint(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws the shape as a circle, centered on the first point with a radius defined
+  /// by the distance to the second point.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsCircle
+  /// @self 2
   procedure DrawShapeAsCircle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
-  procedure DrawShapeAsEllipse(dest: Bitmap; s:Shape; filled: Boolean); overload;
+  //   /// Draw the passed in shape to the specified bitmap. If filled the shape
+  //   /// is drawn with a fill rather than drawn as a series of lines.
+  //   ///
+  //   /// @lib
+  //   /// @class Shape
+  //   /// @method DrawAsEllipse
+  //   /// @self 2
+  // procedure DrawShapeAsEllipse(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws a line from the first point of the shape to the second point.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsLine
+  /// @self 2
   procedure DrawShapeAsLine(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws the shape as a triangle based on the first three points of the shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsTriangle
+  /// @self 2
   procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws the points as a list of lines. A shape with 4 points has two lines in its
+  /// list. If an odd numer of points are supplied then the extra point will be skipped.
+  /// In this way a shape with 5 points also has 2 lines.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsLineList
+  /// @self 2
   procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean);
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws the shape as a line strip. A shape with three points has two lines, one 
+  /// from pt[0] to pt[1] and a second from pt[1] to pt[2].
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsLineStrip
+  /// @self 2
   procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean);
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This draws
+  /// as a polygon where each point is connected to its neighbour and the
+  /// first point is reconnected to the last point.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsPolygon
+  /// @self 2
   procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean);
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws the shape as a tan of triangles where each triangle is made up of
+  /// the first point and two neighbouring points from the shape.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsTriangleFan
+  /// @self 2
   procedure DrawShapeAsTriangleFan(dest: Bitmap; s: Shape; filled: Boolean);
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws as a strip of triangles where each triangle is made up of the 
+  /// three neighbouring points. In this way 4 points gives two triangles.
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsTriangleStrip
+  /// @self 2
   procedure DrawShapeAsTriangleStrip(dest: Bitmap; s: Shape; filled: Boolean);
   
+  /// Draw the passed in shape to the specified bitmap. If filled the shape
+  /// is drawn with a fill rather than drawn as a series of lines. This version
+  /// draws as a triangle list, where each set of three points is drawn as an
+  /// individual triangle and extra points are ignored. So 6, 7, and 8 points 
+  /// all create 2 triangles (pt[0] + pt[1] + pt[2] and pt[3] + pt[4] + pt[5]). 
+  ///
+  /// @lib
+  /// @class Shape
+  /// @method DrawAsTriangleList
+  /// @self 2
   procedure DrawShapeAsTriangleList(dest: Bitmap; s: Shape; filled: Boolean);
   
   //---------------------------------------------------------------------------
@@ -1500,7 +1664,7 @@ implementation
   
   procedure DrawLines(clr: Color; const lines: LinesArray); //TODO: overload;
   var
-    i: Integer;
+    i: LongInt;
   begin
     for i := 0 to High(lines) do
     begin
@@ -1572,7 +1736,7 @@ implementation
   
   procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1585,7 +1749,7 @@ implementation
   
   procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1598,7 +1762,7 @@ implementation
   
   procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean);
   var
-    i, l: Integer;
+    i, l: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1608,7 +1772,7 @@ implementation
     
     if filled then
     begin
-      for i := 0 to Length(pts) - 3 + 1 do
+      for i := 0 to Length(pts) - 3 do
       begin
         FillTriangle(dest, s^.color,
           pts[i].x,pts[i].y,
@@ -1628,7 +1792,7 @@ implementation
   
   procedure DrawTriangleFan(dest: Bitmap; s: Shape);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1644,7 +1808,7 @@ implementation
   
   procedure FillTriangleFan(dest: Bitmap; s: Shape);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1665,7 +1829,7 @@ implementation
   
   procedure DrawTriangleStrip(dest: Bitmap; s: Shape);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1681,7 +1845,7 @@ implementation
   
   procedure FillTriangleStrip(dest: Bitmap; s: Shape);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1702,7 +1866,7 @@ implementation
   
   procedure DrawTriangleList(dest: Bitmap; s: Shape);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1718,7 +1882,7 @@ implementation
   
   procedure FillTriangleList(dest: Bitmap; s: Shape);
   var
-    i: Integer;
+    i: LongInt;
     pts: ArrayOfPoint2D;
   begin
     pts := ShapePoints(s);
@@ -1739,7 +1903,7 @@ implementation
   
   procedure DrawShape(dest: Bitmap; s: Shape; filled: Boolean); overload;
   var
-    i: Integer;
+    i: LongInt;
   begin
     s^.prototype^.drawWith(dest, s, filled);
     
@@ -1776,7 +1940,7 @@ implementation
   
   procedure DrawShapeOnScreen(s: Shape; filled: Boolean); overload;
   var
-    i: Integer;
+    i: LongInt;
   begin
     s^.pt.x += CameraX(); s^.pt.y += CameraY();
     s^.prototype^.drawWith(screen, s, filled);
