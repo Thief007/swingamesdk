@@ -222,7 +222,7 @@ interface
     ShapeKind= (
         pkPoint,
         pkCircle,
-        pkEllipse,
+        // pkEllipse,
         pkLine,
         pkTriangle,
         pkLineList,
@@ -254,7 +254,7 @@ interface
     ShapePrototypeData = record
       points: ArrayOfPoint2D;
       kind: ShapeKind;
-      shapeCount: Integer;
+      shapeCount: LongInt;
       drawWith: ShapeDrawingFn;
     end;
     

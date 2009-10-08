@@ -209,6 +209,8 @@ implementation
     for i := 0 to High(lines) do
     begin
       // The rendered text:
+      if length(lines[i]) = 0 then continue;
+      
       temp := TTF_RenderText_Blended(font, @lines[i][1], colorFG);
       //temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
       
@@ -310,7 +312,7 @@ implementation
       w := 0;
       
       // Get the size of the rendered text.
-      if Length(subStr) > 0 then TTF_SizeUNICODE(font, PUint16(subStr), w, height);
+      if Length(subStr) > 0 then TTF_SizeUNICODE(font, @subStr[1], w, height);
         
       //Keep widest rendered text size
       if w > width then width := w;
@@ -326,9 +328,10 @@ implementation
     // Actually render the text:
     for i := 0 to High(lines) do
     begin
+      if length(lines[i]) = 0 then continue;
       // The rendered text:
       //temp := TTF_RenderText_Blended(font, @lines[i][1], colorFG);
-      temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
+      temp := TTF_RenderUNICODE_Blended(font, @lines[i][1], colorFG);
       
       // Put it on the surface:
       if IsSet(flags, AlignLeft) or
@@ -343,7 +346,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeUNICODE(font, PUInt16(lines[i]), w, h);
+        TTF_SizeUNICODE(font, @lines[i][1], w, h);
         rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
       end
       else if IsSet(flags, AlignRight) then
@@ -351,7 +354,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeUNICODE(font, PUInt16(lines[i]), w, h);
+        TTF_SizeUNICODE(font, @lines[i][1], w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
       else begin RaiseException('Invalid font alignment'); exit; end;
@@ -551,7 +554,8 @@ implementation
     if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       y := 0; result := 0;
-      TTF_SizeText(theFont, @theText[1], result, y);
+      if length(theText) = 0 then result := 0 
+      else TTF_SizeText(theFont, @theText[1], result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -564,7 +568,8 @@ implementation
     if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       y := 0; result := 0;
-      TTF_SizeUNICODE(theFont, PUInt16(theText), result, y);
+      if length(theText) = 0 then result := 0
+      else TTF_SizeUNICODE(theFont, PUInt16(theText), result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;

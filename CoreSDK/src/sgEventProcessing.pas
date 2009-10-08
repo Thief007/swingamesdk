@@ -239,14 +239,14 @@ implementation
   
   procedure TSDLManager.SetText(text: String);
   begin
-    _tempString := text;
+    _tempString := text + '|';
     
      //Free the old surface
     if _textSurface <> nil then SDL_FreeSurface( _textSurface );
 
      //Render a new text surface
-     if Length(_tempString) > 0 then
-       _textSurface := TTF_RenderText_Blended(_font, PChar(_tempString + '|'), _foreColor)
+     if Length(_tempString) > 1 then
+       _textSurface := TTF_RenderText_Blended(_font, @_tempString[1], _foreColor)
      else
       _textSurface := nil;
   end;

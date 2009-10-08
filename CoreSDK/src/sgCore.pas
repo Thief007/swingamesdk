@@ -620,7 +620,7 @@ implementation
     if Length(iconFile) > 0 then
     begin
       try
-        icon := IMG_Load(PChar(iconFile));
+        icon := IMG_Load(@iconFile[1]);
         SDL_WM_SetIcon(icon, 0);
         SDL_FreeSurface(icon);
       except
@@ -637,7 +637,8 @@ implementation
     end;
 
     _SetupScreen();
-    SDL_WM_SetCaption(PChar(caption), nil);
+    if length(caption) > 0 then
+      SDL_WM_SetCaption(@caption[1], nil);
 
     {$IFDEF TRACE}
       TraceExit('sgCore', '_InitSDL');
@@ -823,14 +824,14 @@ implementation
     {$ENDIF}
     filename := basename + '.bmp';
     i := 1;
-
+    
     while FileExists(filename) do
     begin
       filename := basename + IntToStr(i) + '.bmp';
       i := i + 1;
     end;
-
-    if SDL_SaveBMP(screen^.surface, PChar(filename)) = -1 then
+    
+    if SDL_SaveBMP(screen^.surface, @filename[1]) = -1 then
     begin
       RaiseException('Failed to save ' + basename + '.bmp: ' + SDL_GetError());
       exit;
