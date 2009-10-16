@@ -65,6 +65,7 @@ class SGPasParser():
             'sameas': self.process_type_attribute,
             'calls': self.process_id_attribute,
             'length': self.process_id_attribute,
+            'updatesArrayParam': self.process_numbers_attribute
         }
         self._block_header_processors = {
             'type': self.process_block_types,
@@ -497,6 +498,10 @@ class SGPasParser():
     def process_number_attribute(self, token):
         num_tok = self._match_token('number')
         self._add_attribute(token[1], eval(num_tok[1]))
+    
+    def process_numbers_attribute(self, token):
+        num_tok = self._match_token('number')
+        self._append_attribute(token[1], eval(num_tok[1]))
     
     def process_meta_comment(self, token):
         logger.log(logging.DEBUG - 1, 'Parser    : Processing meta comment: %s', token[1])

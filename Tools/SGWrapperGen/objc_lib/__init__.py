@@ -25,28 +25,37 @@ _type_switcher = {
         'byte':     'unsigned char',
         'uint32':   'uint',
         'uint16':   'unsigned short',
-
-        'soundeffect':  'SGSoundEffect *',
-        'music':        'SGMusic *',
-        'sprite':       'SGSprite *',
-        'font':         'SGFont *',
-        'bitmap':       'SGBitmap *',
-        'timer':        'SGTimer *',
-        'map':          'SGMap *',
         
+        #SwinGame resources
+        'soundeffect':      'SGSoundEffect *',
+        'music':            'SGMusic *',
+        'sprite':           'SGSprite *',
+        'font':             'SGFont *',
+        'bitmap':           'SGBitmap *',
+        'timer':            'SGTimer *',
+        'map':              'SGMap *',
+        'shapeprototype':   'SGShapePrototype *',
+        'shape':            'SGShape *',
+        'triangle':         'SGTriangle *',
         # 'rectangle':    'SGRectangle',
-        # 'triangle':     'SGTriangle',
         # 'circle':       'SGCircle',
         
         #elements of arrays
-        'point2d':      'SGPoint2D *',
-                
+        'point2d':          'SGPoint2D *',
+        
+        #arrays from within structs
+        'point2darray':     'NSArray *',
+        'shapearray':       'NSArray *',
+        
         'pointer': 'id',
-
+        
         'color': 'color',
-
-        'freenotifier': 'free_notifier',
-
+        
+        #function pointers
+        'freenotifier':     'free_notifier',
+        'shapedrawingfn':   'shape_drawing_fn',
+        
+        #Enums
         'resourcekind':         'resource_kind',
         'mousebutton':          'mouse_button',
         'keycode':              'key_code',
@@ -55,29 +64,35 @@ _type_switcher = {
         'spritekind':           'sprite_kind',
         'fontalignment':        'font_alignment',
         'fontstyle':            'font_style',
+        'shapekind':            'shape_kind',
     },
     'const' : {
+        #records
         'point2d':      'SGPoint2D *',
         'linesegment':  'SGLineSegment *',
         'rectangle':    'SGRectangle *',
         'vector':       'SGVector *',
-        'linesarray':   'NSArray *',
-        
         'matrix2d':     'SGMatrix2D *',
         'triangle':     'SGTriangle *',
-        
-        'bitmaparray':  'NSArray *',
-        'longintarray': 'NSArray *',
         'circle':       'SGCircle *',
+        
+        #Arrays
+        'linesarray':       'NSArray *',
+        'bitmaparray':      'NSArray *',
+        'longintarray':     'NSArray *',
+        'point2darray':     'NSArray *',
+        'shapearray':       'NSArray *',
     },
     'var' : {
-        'soundeffect':  'SGSoundEffect *',
-        'music':        'SGMusic *',
-        'timer':        'SGTimer *',
-        'bitmap':       'SGBitmap *',
-        'sprite':       'SGSprite *',
-        'map':          'SGMap *',
-        'font':         'SGFont *',
+        'soundeffect':      'SGSoundEffect *',
+        'music':            'SGMusic *',
+        'timer':            'SGTimer *',
+        'bitmap':           'SGBitmap *',
+        'sprite':           'SGSprite *',
+        'map':              'SGMap *',
+        'font':             'SGFont *',
+        'shapeprototype':   'SGShapePrototype *',
+        'shape':            'SGShape *',
         
         'triangle':     'SGTriangle *',
         'matrix2d':     'SGMatrix2D *',
@@ -94,28 +109,31 @@ _type_switcher = {
         'linesegment':      'SGLineSegment **',
         'linesarray':       'NSArray *',
         'matrix2d':         'SGMatrix2D *',
-        'arrayofpoint2d':   'NSArray *',
+        'point2darray':     'NSArray *',
         'triangle':         'SGTriangle *',
     },
     'return' : {
-        None: 'void',
-        'boolean':      'BOOL',
+        #SwinGame resources
+        'music':            'SGMusic *',
+        'soundeffect':      'SGSoundEffect *',
+        'bitmap':           'SGBitmap *',
+        'font':             'SGFont *',
+        'map':              'SGMap *',
+        'sprite':           'SGSprite *',
+        'timer':            'SGTimer *',
+        'shapeprototype':   'SGShapePrototype *',
+        'shape':            'SGShape *',
         
-        'music':        'SGMusic *',
-        'soundeffect':  'SGSoundEffect *',
-        'bitmap':       'SGBitmap *',
-        'font':         'SGFont *',
-        'map':          'SGMap *',
-        'sprite':       'SGSprite *',
-        'timer':        'SGTimer *',
-                
+        #Arrays
         'longintarray':     'NSArray *',
-        'arrayofpoint2d':   'NSArray *',
+        'point2darray':     'NSArray *',
         'linesarray':       'NSArray *',
+        'shapearray':       'NSArray *',
                 
-        'color':        'color',
-        
         #basic types
+        None:           'void',
+        'boolean':      'BOOL',
+        'color':        'color',
         'single':       'float',
         'longint':      'int',
         'byte':         'unsigned char',
@@ -129,6 +147,7 @@ _type_switcher = {
         'maptile':              'map_tile',
         'spriteendingaction':   'sprite_ending_action',
         'spritekind':           'sprite_kind',
+        'shapekind':            'shape_kind',
         
         #arrays + structs
         'matrix2d':     'SGMatrix2D *',
@@ -138,6 +157,9 @@ _type_switcher = {
         'circle':       'SGCircle *',
         'rectangle':    'SGRectangle *',
         'linesegment':  'SGLineSegment *',
+        
+        #function pointers
+        'shapedrawingfn':   'shape_drawing_fn',
     }
 }
 
@@ -155,7 +177,7 @@ _data_switcher = {
     #     'string':           '%s.ToString()',
     #     'linesarray':       '%s',
     #     'matrix2d':         'Utils.MatrixFromArray(%s)',
-    #     'arrayofpoint2d':   '%s',
+    #     'point2darray':   '%s',
     #     'triangle':         'Utils.TriangleFromArray(%s)',
     #     'longint':          '%s',
     #     'longintarray':     '%s',
@@ -166,13 +188,15 @@ _data_switcher = {
         #Pascal type: what values of this type switch to %s = data value
         'boolean':              '%s != 0',
         
-        'music':        '[SGMusic createWithId:%s]',
-        'soundeffect':  '[SGSoundEffect createWithId:%s]',
-        'bitmap':       '[SGBitmap createWithId:%s]',
-        'font':         '[SGFont createWithId:%s]',
-        'timer':        '[SGTimer createWithId:%s]',
-        'map':          '[SGMap createWithId:%s]',
-        'sprite':       '[SGSprite createWithId:%s]',
+        'music':            '[SGMusic createWithId:%s]',
+        'soundeffect':      '[SGSoundEffect createWithId:%s]',
+        'bitmap':           '[SGBitmap createWithId:%s]',
+        'font':             '[SGFont createWithId:%s]',
+        'timer':            '[SGTimer createWithId:%s]',
+        'map':              '[SGMap createWithId:%s]',
+        'sprite':           '[SGSprite createWithId:%s]',
+        'shape':            '[SGShape createWithId:%s]',
+        'shapeprototype':   '[SGShapePrototype createWithId:%s]',
         
         'point2d':      '[SGPoint2D point2DForData:%s]',
         'vector':       '[SGVector vectorForData:%s]',
@@ -190,12 +214,12 @@ _data_switcher = {
         'maptag':               '(map_tag)%s',
         'collisionside':        '(collision_side)%s',
         'fontalignment':        '(font_alignment)%s',
-        'fontstyle':            '(font_style)%s'
+        'fontstyle':            '(font_style)%s',
     },
-    #Argument with a parameter value
+    # Argument with a parameter value
     'arg_val' : 
     {
-        #Pascal type: what values of this type switch to %s = data value
+        # Pascal type: what values of this type switch to %s = data value
         'boolean':              '(%s ? 1 : 0)',
         'keycode':              '(int)%s',
         'mousebutton':          '(int)%s',
@@ -215,7 +239,7 @@ _data_switcher = {
         'matrix2d':             '%s->data',
         'triangle':             '%s->data',
     },
-    #Argument with a literal value
+    # Argument with a literal value
     'arg_lit_val' : 
     {
         #Pascal type: what values of this type switch to %s = data value
@@ -253,7 +277,8 @@ local_variable_switcher = {
         'linesarray':       'line_segment %(var)s[%(size)s];\n    ',
         'longintarray':     'int %(var)s[%(size)s];\n    ',
         'bitmaparray' :     'bitmap %(var)s[%(size)s];\n    ',
-        'arrayofpoint2d':   'point2d %(var)s[%(size)s];\n    ',
+        'point2darray':     'point2d %(var)s[%(size)s];\n    ',
+        'shapearray':       'shape %(var)s[%(size)s];\n    ',
         
         #out structs
         'point2d':          'point2d %(var)s;\n    ',
@@ -270,6 +295,8 @@ local_variable_switcher = {
         'bitmaparray':      '[%(param)s count]',
         'longintarray':     '[%(param)s count]',
         'linesarray':       '[%(param)s count]',
+        'point2darray':     '[%(param)s count]',
+        'shapearray':       '[%(param)s count]',
     },
     'initialise-param':
     {
@@ -282,7 +309,25 @@ local_variable_switcher = {
         'bitmaparray':      '[SGBitmap getBitmaps:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'longintarray':     '[SGUtils getIntegers:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'linesarray':       '[SGLineSegment getLineSegments:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
+        'point2darray':     '[SGPoint2D getPoint2Ds:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
+        'shapearray':       '[SGShape getShapes:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
     },
+    # -------------------------------
+    # Parameter post-call processing for standard parameters (arrays only)
+    # -------------------------------
+    # This is used for updating NSArray objects after passing data to Pascal.
+    # For example: apply_matrix(m, points) converts the NSArray for points into
+    # point data and passes this to Pascal which applys the matrix to all points.
+    # The resulting points then need to be moved back into the NSArray.
+    'process-param': 
+    {
+        'point2darray':     '\n    [SGPoint2D updatePoint2DsIn:%(param)s fromDataIn:%(var)s];',
+    },
+    # -------------------------------
+    # Parameter post-call processing for out parameters
+    # -------------------------------
+    # With out parameters the code needs to generate the appropriate code to copy the data passed to the Pascal code
+    # (and updated there due to out parameter) back to the parameter in this language.
     'process-out-param': 
     {
         'string':           '\n    *%(param)s = [[[NSString alloc] initWithCString:%(var)s encoding:NSASCIIStringEncoding] autorelease];',
@@ -290,15 +335,15 @@ local_variable_switcher = {
         #Passed through arrays
         'triangle':         '\n    *%(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
         'matrix2d':         '\n    *%(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
-        #NSArray types
-        # 'linesarray':       '\n    %(param)s = [[NSArray alloc] todo...];',
-        # 'arrayofpoint2d':   '\n    %(param)s = [[NSArray alloc] todo...];',
-        # 'longintarray':     '\n    %(param)s = [SGUtils arrayOfIntegers:%(var)s size:%(size)s];',
         
         #out structs
         'point2d':          '\n    *%(param)s = [[[SGPoint2D alloc] initWithPoint2D:%(var)s] autorelease];',
         'linesegment':      '\n    *%(param)s = [[[SGLineSegment alloc] initWithLineSegment:%(var)s] autorelease];',
     },
+    # -------------------------------
+    # Post-call processing for returning the result
+    # -------------------------------
+    # This provides the code that is used to return a value from a function.
     'process-result': 
     {
         'boolean':          '\n    return %(var)s;',
@@ -317,10 +362,11 @@ local_variable_switcher = {
         'triangle':         '\n    return [SGTriangle triangleForData:%(var)s];',
         
         #NSArray types
-        'linesarray':       '\n    return [SGLineSegment arrayOfLineSegments:%(var)s size:%(size)s];',
-        'arrayofpoint2d':   '\n    return [SGPoint2D arrayOfPoint2Ds:%(var)s size:%(size)s];',
         'longintarray':     '\n    return [SGUtils arrayOfIntegers:%(var)s size:%(size)s];',
-
+        'linesarray':       '\n    return [SGLineSegment arrayOfLineSegments:%(var)s size:%(size)s];',
+        'point2darray':     '\n    return [SGPoint2D arrayOfPoint2Ds:%(var)s size:%(size)s];',
+        'shapearray':       '\n    return [SGShape arrayOfShapes:%(var)s size:%(size)s];',
+        
         #return structs
         'vector':           '\n    return [[[SGVector alloc] initWithVector:%(var)s] autorelease];',
     },
@@ -329,13 +375,6 @@ local_variable_switcher = {
         'string':           '',
     },
 }
-
-# struct_type_switcher = {
-#     None:
-#     {
-#         'single':   'float',
-#     },
-# }
 
 def main():
     (path, script_file) = os.path.split(sys.modules[__name__].__file__) 

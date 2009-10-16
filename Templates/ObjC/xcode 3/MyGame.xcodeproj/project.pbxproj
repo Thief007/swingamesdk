@@ -62,6 +62,10 @@
 		9424DA6B101EC2FE00E5B4BA /* SDL_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F2101EC2AB00E5B4BA /* SDL_mixer.framework */; };
 		9424DA6C101EC2FE00E5B4BA /* SDL_ttf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F3101EC2AB00E5B4BA /* SDL_ttf.framework */; };
 		9424DA6F101EC34F00E5B4BA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
+		94E4812B1088229000AA74FD /* SGShape.m in Sources */ = {isa = PBXBuildFile; fileRef = 94E481241088229000AA74FD /* SGShape.m */; };
+		94E4812C1088229000AA74FD /* SGShapeData.m in Sources */ = {isa = PBXBuildFile; fileRef = 94E481261088229000AA74FD /* SGShapeData.m */; };
+		94E4812D1088229000AA74FD /* SGShapePrototype.m in Sources */ = {isa = PBXBuildFile; fileRef = 94E481281088229000AA74FD /* SGShapePrototype.m */; };
+		94E4812E1088229000AA74FD /* SGShapePrototypeData.m in Sources */ = {isa = PBXBuildFile; fileRef = 94E4812A1088229000AA74FD /* SGShapePrototypeData.m */; };
 		94F1F568101EC46F006F3D32 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 94F1F567101EC46F006F3D32 /* main.m */; };
 /* End PBXBuildFile section */
 
@@ -180,6 +184,14 @@
 		9424DA34101EC2AB00E5B4BA /* TileMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TileMap.c; path = lib/TileMap.c; sourceTree = "<group>"; };
 		9424DA35101EC2AB00E5B4BA /* TileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileMap.h; path = lib/TileMap.h; sourceTree = "<group>"; };
 		9424DA36101EC2AB00E5B4BA /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Types.h; path = lib/Types.h; sourceTree = "<group>"; };
+		94E481231088229000AA74FD /* SGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShape.h; path = lib/SGShape.h; sourceTree = "<group>"; };
+		94E481241088229000AA74FD /* SGShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShape.m; path = lib/SGShape.m; sourceTree = "<group>"; };
+		94E481251088229000AA74FD /* SGShapeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShapeData.h; path = lib/SGShapeData.h; sourceTree = "<group>"; };
+		94E481261088229000AA74FD /* SGShapeData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShapeData.m; path = lib/SGShapeData.m; sourceTree = "<group>"; };
+		94E481271088229000AA74FD /* SGShapePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShapePrototype.h; path = lib/SGShapePrototype.h; sourceTree = "<group>"; };
+		94E481281088229000AA74FD /* SGShapePrototype.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShapePrototype.m; path = lib/SGShapePrototype.m; sourceTree = "<group>"; };
+		94E481291088229000AA74FD /* SGShapePrototypeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShapePrototypeData.h; path = lib/SGShapePrototypeData.h; sourceTree = "<group>"; };
+		94E4812A1088229000AA74FD /* SGShapePrototypeData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShapePrototypeData.m; path = lib/SGShapePrototypeData.m; sourceTree = "<group>"; };
 		94F1F567101EC46F006F3D32 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -213,6 +225,14 @@
 		1058C7A0FEA54F0111CA2CBB /* SwinGame Code */ = {
 			isa = PBXGroup;
 			children = (
+				94E481231088229000AA74FD /* SGShape.h */,
+				94E481241088229000AA74FD /* SGShape.m */,
+				94E481251088229000AA74FD /* SGShapeData.h */,
+				94E481261088229000AA74FD /* SGShapeData.m */,
+				94E481271088229000AA74FD /* SGShapePrototype.h */,
+				94E481281088229000AA74FD /* SGShapePrototype.m */,
+				94E481291088229000AA74FD /* SGShapePrototypeData.h */,
+				94E4812A1088229000AA74FD /* SGShapePrototypeData.m */,
 				9424D9DB101EC2AB00E5B4BA /* Audio.c */,
 				9424D9DC101EC2AB00E5B4BA /* Audio.h */,
 				9424D9DD101EC2AB00E5B4BA /* Camera.c */,
@@ -449,6 +469,10 @@
 				9424DA64101EC2AB00E5B4BA /* Text.c in Sources */,
 				9424DA65101EC2AB00E5B4BA /* TileMap.c in Sources */,
 				94F1F568101EC46F006F3D32 /* main.m in Sources */,
+				94E4812B1088229000AA74FD /* SGShape.m in Sources */,
+				94E4812C1088229000AA74FD /* SGShapeData.m in Sources */,
+				94E4812D1088229000AA74FD /* SGShapePrototype.m in Sources */,
+				94E4812E1088229000AA74FD /* SGShapePrototypeData.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

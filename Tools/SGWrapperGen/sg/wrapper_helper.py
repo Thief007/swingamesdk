@@ -3,8 +3,14 @@ from sg_property import SGProperty
 from sg_method import SGMethod
 from sg.sg_cache import logger, find_or_add_type
 
+_hasError = False
+_dieOnError = True
 
-def std_type_visitor(the_dict, the_type, modifier = None):
+def hasError():
+    global _hasError
+    return _hasError
+
+def std_type_visitor(the_dict, the_type, modifier = None, dict_name = '_type_switcher'):
     '''
     switch types for the SwinGame library.
     
@@ -19,10 +25,46 @@ def std_type_visitor(the_dict, the_type, modifier = None):
     
     if key not in the_dict[modifier]:
         logger.error('WRAPPER   : Error changing model type %s - %s', modifier, the_type)
-        assert False
+        logger.error('          : Add \'%s[%s]\': \'%s\': \'????\',', dict_name, modifier, the_type.name.lower())
+        
+        global _hasError, _dieOnError
+        _hasError = True
+        
+        if _dieOnError: 
+            assert False
+        else:
+            the_dict[modifier][key] = "UNKNOWN"
+        
     return the_dict[modifier][key]
 
-
+def map_data_value(the_dict, key, the_type, result):
+    '''
+    Returns the code needed to map the swingame (Pascal) data in result to
+    the type used by language X
+    
+    Params:
+     - the_dict:    The dictionary with the type changes with modifier keys
+     - key:         The key to search for in the_dict
+     - the_type:    The type being checked
+     - modifier:    The modifier for the type
+    '''
+    if the_type.name.lower() in the_dict[key]:
+        return the_dict[key][the_type.name.lower()] % result
+        
+    #If this is a 
+    if the_type.pointer_wrapper and key == 'return_val':
+        logger.error('WRAPPER   : Error pointer wrapper without return data mapping - %s', the_type)
+        
+        global _hasError, _dieOnError
+        _hasError = True
+        
+        if _dieOnError: 
+            assert False
+        else:
+            the_dict[key][the_type.name.lower()] = "UNKNOWN"
+        
+        
+    return result
 
 def add_local_var_for_param(to_method, for_parameter):
     '''
@@ -122,15 +164,21 @@ def add_local_var_processing(the_method, details, local_variable_switcher):
         temp_process_params = details['pre_call']
         temp_process_result = details['post_call']
         
-        #process all local variables
+        # process all local variables
+        # ---------------------------
+        # This performs the processing of the local variables added to the method.
+        # The basic idea is to perform the processing necessary to take the data from language X
+        # and convert it so it can be passed to Pascal for processing. Once the processing
+        # is complete the code also needs to copy the data back from Pascal to language X again for
+        # any var,out or array parameters and the return result.
         for local_var in the_method.local_vars:
+            #Get the lowercase name of the type
+            lower_type = local_var.data_type.name.lower()
+            
             #Setup dictionary:
             #  - %(var)s = local variable name
             #  - %(param)s = parameter name
             #  - %(size)s = size expression (literal or call)
-            
-            lower_type = local_var.data_type.name.lower()
-            
             var_details = dict()
             var_details['var'] = local_var.name
             var_details['param'] = local_var.local_for.name if local_var.local_for != None else None
@@ -138,61 +186,66 @@ def add_local_var_processing(the_method, details, local_variable_switcher):
             
             if local_var.pass_through:
                 #just passes out return value:
-                #TODO: fix these...
-                temp += '%(return_type)s result;\n    ' % details
+                #TODO: fix these so that the code generated is not just C like code: i.e. Type result; and return result;...
+                temp += '%(return_type)s result;\n    ' % details #need to adjust for non-c style syntax - call specific code
                 temp_process_result = temp_process_result + '\n    return %s;' % local_var.name;
-                continue
+                continue #no further processing for this type
             elif local_var.length_of != None:
-                #TODO: fix this...
-                if the_method.fixed_result_size > 0:
+                #This is a variable that is the length of a given array.
+                if the_method.fixed_result_size > 0: #if its fixed size, we know its length
                     var_details['size'] = the_method.fixed_result_size
                 elif the_method.length_call != None:
-                    #TODO: change these... call creator to excluse return/result = keyword (need call.expr)
-                    var_details['size'] = details['length_call'].replace('return ', '')
-                    var_details['size'] = var_details['size'].replace('result = ', '')
+                    #Otherwise, we need to call the length function.
+                    
+                    #TODO: change these... call creator to exclude return/result = keyword (need call.expr)
+                    # the issue is that a return is added to the length_call. Here we want just the call
+                    # to fix create a call.expr = call expression that is used to create the return blah; and (blah) here
+                    var_details['size'] = details['length_call'].replace('return ', '').replace('result = ', '')
                 
+                #TODO: fix this so that variable declaration is not hard coded (and C style)
                 temp = 'int %(var)s = %(size)s;\n    ' % var_details + temp
-                continue
-            elif lower_type == 'string':
+                continue #no further processing of these variables
+            elif local_var.data_type.name.lower() == 'string':
+                #This is a string, need to know its size...
                 if local_var.modifier in ['var', 'const', None]:
-                    var_details['size'] = local_variable_switcher['length-of'][lower_type] % var_details
+                    var_details['size'] = std_type_visitor(local_variable_switcher, local_var.data_type, 'length-of', 'local_variable_switcher') % var_details
                 else: #out or return
                     var_details['size'] = '2048'
             elif local_var.maps_result and isinstance(local_var, SGParameter):
-                # print 'No size for...', local_var
-                if local_var.has_length_param:
-                    # print local_var, the_method
-                    if local_var.length_param != None: #variable length
+                #This is the result local variable used to return a value
+                if local_var.has_length_param: #is it an array?
+                    if local_var.length_param != None: #it is variable length
                         var_details['size'] = local_var.length_param.name
-                    else: #fixed
+                    else: #it is fixed, so just hard code size
                         var_details['size'] = the_method.fixed_result_size
-                    # print var_details['size']
                 else:
                     var_details['size'] = 'unknown'
             elif local_var.modifier in ['var', 'const', None] and local_var.data_type.array_wrapper:
+                #We have a local variable that is an array
                 #Read the length of an array from its length... - variable length only
-                if lower_type not in local_variable_switcher['length-of']:
-                    logger.error('Missing "length-of" for type %s in method %s - for %s', lower_type, the_method.name, var_details['param'])
-                    assert false
-                var_details['size'] = local_variable_switcher['length-of'][lower_type] % var_details
+                var_details['size'] = std_type_visitor(local_variable_switcher, local_var.data_type, 'length-of', 'local_variable_switcher') % var_details
             else:
-                # print 'No size for...', local_var
+                # Not a type that has a size...
                 var_details['size'] = ''
             
             #Add code to declare local variable
-            temp += local_variable_switcher['declare'][lower_type] % var_details
+            temp += std_type_visitor(local_variable_switcher, local_var.data_type, 'declare', 'local_variable_switcher') % var_details
             
             #Add code to initialise local variable
             if local_var.modifier in ['var', 'const', None]:
-                temp_process_params += local_variable_switcher['initialise-param'][lower_type] % var_details
+                temp_process_params += std_type_visitor(local_variable_switcher, local_var.data_type, 'initialise-param', 'local_variable_switcher') % var_details
             # else:
             #     print 'No pre-processing for ', local_var
             
-            #Add code to process out results
             if local_var.modifier in ['out', 'var']:
-                temp_process_result = local_variable_switcher['process-out-param'][lower_type] % var_details + temp_process_result
+                #Add code to process out and var parameters
+                temp_process_result = std_type_visitor(local_variable_switcher, local_var.data_type, 'process-out-param', 'local_variable_switcher') % var_details + temp_process_result
+            elif local_var.modifier == None and local_var.data_type.wraps_array:
+                #Add code to process arrays passed without const = being changed in SwinGame
+                temp_process_result = std_type_visitor(local_variable_switcher, local_var.data_type, 'process-param', 'local_variable_switcher') % var_details + temp_process_result
+                # print temp_process_result
             elif local_var.maps_result:
-                temp_process_result = local_variable_switcher['process-result'][lower_type] % var_details + temp_process_result
+                temp_process_result = std_type_visitor(local_variable_switcher, local_var.data_type, 'process-result', 'local_variable_switcher') % var_details + temp_process_result
             
         # if the_method.has_out_params and not the_method.was_function:
         #     #need to store result... add a new local variable...
@@ -214,6 +267,15 @@ def add_local_var_processing(the_method, details, local_variable_switcher):
 
 def create_property_for_field(in_class, field):
     '''Creates a property to access the '''
+    
+    if field.data_type.wraps_array:
+        logger.error('WRAPPER   : Error structure with array fields must be set to via_pointer')
+        
+        global _hasError, _dieOnError
+        _hasError = True
+        
+        if _dieOnError: 
+            assert False
     
     prop = SGProperty(field.name)
     prop.in_class = in_class

@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-10-16: Andrew : Added the free notifier, so it can be called from many places
 // - 2009-07-29: Andrew : Added flag for opened audio.
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
 //                      : Fixed possible double release of AutoRelease pool
@@ -63,13 +64,17 @@ interface
   
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
   function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
+  
+  /// Called when ANY resource is freed to inform other languages to remove from
+  /// their caches.
+  procedure CallFreeNotifier(p: Pointer);
 
   // Global variables that can be shared.
   var
     // This `Bitmap` wraps the an SDL image (and its double-buffered nature)
     // which is used to contain the current "screen" rendered to the window.
     screen: Bitmap;
-
+    
     // The singleton instance manager used to check events and called
     // registered "handlers". See `RegisterEventProcessor`.
     sdlManager: TSDLManager;
@@ -91,8 +96,11 @@ interface
     // the generated library code.
     HasException: Boolean = False;
     
-    // This fkag indicates if the audio has been opened.
+    // This flag indicates if the audio has been opened.
     AudioOpen: Boolean = False;
+    
+    // The function pointer to call into the other language to tell them something was freed
+    _FreeNotifier: FreeNotifier = nil;
     
     UseExceptions: Boolean = True;
   const
@@ -313,6 +321,21 @@ implementation
   begin
     //TODO: make this better for cross language support
     WriteLn(message);
+  end;
+
+  //---------------------------------------------------------------------------
+
+  procedure CallFreeNotifier(p: Pointer);
+  begin
+    if Assigned(_FreeNotifier) then
+    begin
+      try
+        _FreeNotifier(p);
+      except
+        ErrorMessage := 'Error calling free notifier';
+        HasException := True;
+      end;
+    end;
   end;
 
 

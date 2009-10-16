@@ -24,12 +24,16 @@ _out_path="../../Templates/ObjC/common/lib"
 def type_visitor(the_type, modifier = None):
     return wrapper_helper.std_type_visitor(objc_lib._type_switcher, the_type, modifier)
 
+def _map_data_value(key, return_type, result):
+    return wrapper_helper.map_data_value(objc_lib._data_switcher, key, return_type, result)
+
+
 def arg_visitor(arg_str, the_arg, for_param):
     '''Called for each argument in a call, performs required mappings. the_arg has the argument, for_param has
     the parameter being mapped to'''
     
     if not isinstance(for_param, SGParameter):
-        print arg_str, the_arg, for_param
+        # print arg_str, the_arg, for_param
         assert False
         
     if isinstance(the_arg, SGParameter): #uses parameter as value
@@ -71,21 +75,17 @@ def arg_visitor(arg_str, the_arg, for_param):
     
     return result
 
-def _map_data_value(key, return_type, result):
-    if return_type.name.lower() in objc_lib._data_switcher[key]:
-        return objc_lib._data_switcher[key][return_type.name.lower()] % result
-    return result
-
-
 def _create_objc_call(details, the_method):
     """Create an objective-c call for the passed in details dictionary/method"""
     details['pre_call'] = ''
     details['returns_end'] = ''
     
     if the_method.is_constructor:
-        result = '[self initWithId: %(calls.name)s(%(calls.args)s)]' % details
+        if the_method.in_class.is_struct:
+            result = '[self initWith%(name)s: %(calls.name)s(%(calls.args)s)]' % details
+        else:
+            result = '[self initWithId: %(calls.name)s(%(calls.args)s)]' % details
     elif the_method.is_destructor:
-        details['pre_call'] ='PointerWrapper.Remove(this);\n    '
         result = '%(calls.name)s(%(calls.args)s)%(returns_end)s' % details
     elif the_method.is_getter and the_method.method_called == None:
         #Created property getter...
@@ -139,9 +139,9 @@ def _create_objc_method_details(the_method, other):
             result_details['init_headers'] += header + ';'
             dest_key = 'init_bodys'
         elif the_method.is_destructor:
-            header = '\n- (void)dealloc' % my_details
-            result_details['dealloc_headers'] += header + ';'
-            dest_key = 'dealloc_bodys'
+            header = '\n- (void)free' % my_details
+            result_details['method_headers'] += header + ';'
+            dest_key = 'method_bodies'
         elif the_method.is_getter or the_method.is_setter:
             #dont write in header...
             header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
@@ -181,7 +181,7 @@ def _create_objc_property_details(the_property, other):
     '''Visited for each property, adds details to the result details'''
     result_details = other['details']
     
-    type_name = objc_lib._type_switcher['return'][the_property.data_type.name.lower()]
+    type_name = wrapper_helper.std_type_visitor(objc_lib._type_switcher, the_property.data_type, 'return')
     
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
 

@@ -5,7 +5,7 @@ uses
 
 procedure Main();
 var
-  pts: ArrayOfPoint2D;
+  pts: Point2DArray;
   p: ShapePrototype;
   s, s1: Shape;
   t: Timer;

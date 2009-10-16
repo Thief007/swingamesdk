@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-10-16: Andrew : Called the free notifier to ensure Sprites are freed
 // - 2009-07-06: Andrew : Added property access routines for Sprite data
 // - 2009-06-29: Andrew : Renamed CurrentWidth to SpriteWidth
 //                      : Renamed CurrentHeight to SpriteHeight
@@ -795,6 +796,7 @@ implementation
     
       //Dispose sprite
       Dispose(s);
+      CallFreeNotifier(s);
       s := nil;
     end;
   end;

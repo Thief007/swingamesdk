@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-10-16: Andrew : Added shapes and shape prototypes
 // - 2009-07-14: Andrew : Removed loading and freeing code.
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct parameters
 // - 2009-06-29: Andrew : Using circle
@@ -1676,7 +1677,7 @@ implementation
   
   procedure DrawShapeAsPoint(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     if length(pts) = 0 then exit;
@@ -1687,7 +1688,7 @@ implementation
   procedure DrawShapeAsCircle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
     r: Single;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     if length(pts) < 2 then exit;
@@ -1699,7 +1700,7 @@ implementation
   
   procedure DrawShapeAsEllipse(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     if length(pts) < 2 then exit;
@@ -1713,7 +1714,7 @@ implementation
   
   procedure DrawShapeAsLine(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     if length(pts) < 2 then exit;
@@ -1723,7 +1724,7 @@ implementation
   
   procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean); overload;
   var
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     if length(pts) < 3 then exit;
@@ -1737,7 +1738,7 @@ implementation
   procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1750,7 +1751,7 @@ implementation
   procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1763,7 +1764,7 @@ implementation
   procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean);
   var
     i, l: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     if Length(pts) < 3 then exit;
@@ -1793,7 +1794,7 @@ implementation
   procedure DrawTriangleFan(dest: Bitmap; s: Shape);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1809,7 +1810,7 @@ implementation
   procedure FillTriangleFan(dest: Bitmap; s: Shape);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1830,7 +1831,7 @@ implementation
   procedure DrawTriangleStrip(dest: Bitmap; s: Shape);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1846,7 +1847,7 @@ implementation
   procedure FillTriangleStrip(dest: Bitmap; s: Shape);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1867,7 +1868,7 @@ implementation
   procedure DrawTriangleList(dest: Bitmap; s: Shape);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     
@@ -1883,7 +1884,7 @@ implementation
   procedure FillTriangleList(dest: Bitmap; s: Shape);
   var
     i: LongInt;
-    pts: ArrayOfPoint2D;
+    pts: Point2DArray;
   begin
     pts := ShapePoints(s);
     

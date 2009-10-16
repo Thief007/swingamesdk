@@ -11,6 +11,7 @@
     %(name_lower)s data;
 }
 
++ (void) update%(name)ssIn:(NSArray *)arr fromDataIn:(%(name_lower)s *)firstPtr;
 + (NSArray *) arrayOf%(name)ss:(%(name_lower)s *)firstPtr size:(int)sz;
 + (void) get%(name)ss:(%(name_lower)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz;
 

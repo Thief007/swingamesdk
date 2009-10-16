@@ -101,7 +101,7 @@ _type_switcher = {
         'maptag': 'MapTag %s',
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
-        'arrayofpoint2d': 'Point2D[] %s',
+        'point2darray': 'Point2D[] %s',
         'freenotifier': 'FreeNotifier %s',
 #        None: 'void %s'
     },
@@ -129,7 +129,7 @@ _type_switcher = {
         'sprite': 'Sprite %s',
         'matrix2d': 'Matrix2D %s',
         'map': 'Map %s',
-        'arrayofpoint2d': 'Point2D[] %s',
+        'point2darray': 'Point2D[] %s',
     },
     'out' : {
         'string':       'out string %s',
@@ -142,7 +142,7 @@ _type_switcher = {
         'linesegment':  'out LineSegment %s',
         'linesarray':   'out LineSegment[] %s',
         'matrix2d':     'out Matrix2D %s',
-        'arrayofpoint2d': 'out Point2D[] %s',
+        'point2darray': 'out Point2D[] %s',
         'triangle':     'out Triangle %s',
     },
     'return' : {
@@ -172,7 +172,7 @@ _type_switcher = {
         'string': 'String %s',
         'linesarray': 'LineSegment[] %s',
         'matrix2d': 'Matrix2D %s',
-        'arrayofpoint2d': 'Point2D[] %s',
+        'point2darray': 'Point2D[] %s',
         'triangle': 'Triangle %s',
         'longintarray': 'int[] %s',
         'spriteendingaction': 'SpriteEndingAction %s',
@@ -186,7 +186,7 @@ _data_switcher = {
         'string': '%s.ToString()',
         'linesarray': '%s',
         'matrix2d': 'Utils.MatrixFromArray(%s)',
-        'arrayofpoint2d': '%s',
+        'point2darray': '%s',
         'triangle': 'Utils.TriangleFromArray(%s)',
         'longint': '%s',
         'longintarray': '%s',
@@ -275,7 +275,7 @@ _adapter_type_switcher = {
         'maptag': 'int %s',
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
-        'arrayofpoint2d': 'Point2D[] %s',
+        'point2darray': 'Point2D[] %s',
         'longintarray': 'int[] %s',
         'spritekind': 'SpriteKind %s',
         'freenotifier': 'FreeNotifier %s',
@@ -314,7 +314,7 @@ _adapter_type_switcher = {
         'maptag': 'int %s',
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
-        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
+        'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
         'spritekind': 'SpriteKind %s',
         'freenotifier': 'FreeNotifier %s',
@@ -397,7 +397,7 @@ _adapter_type_switcher = {
         'string': 'StringBuilder %s',
         'linesarray': 'LineSegment[] %s',
         'matrix2d': 'float[,] %s',
-        'arrayofpoint2d': 'Point2D[] %s',
+        'point2darray': 'Point2D[] %s',
         'triangle': 'Point2D[] %s',
         'longintarray': 'int[] %s',
     },
@@ -405,7 +405,7 @@ _adapter_type_switcher = {
         'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
         'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
         'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
-        'arrayofpoint2d': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
+        'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
         'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] int[] %s',
     },
@@ -447,7 +447,7 @@ _local_type_switcher = {
     'linesarray': 'LineSegment[] %s;',
     'longintarray': 'int[] %s;',
     'bitmaparray' : 'Bitmap[] %s;',
-    'arrayofpoint2d': 'Point2D[] %s;',
+    'point2darray': 'Point2D[] %s;',
     'longint': 'int %s;',
 }
 
@@ -510,7 +510,7 @@ _struct_type_switcher = {
     'maptag': 'public MapTag %s',
     'maptile': 'public MapTile %s',
     'circle': 'public Circle %s',
-    'arrayofpoint2d': 'public Point2D[] %s',
+    'point2darray': 'public Point2D[] %s',
 }
 
 
@@ -787,7 +787,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                 if isinstance(local_var, SGParameter) and local_var.maps_result:
                     #setup the size of a return array
                     if the_method.fixed_result_size > 0:
-                        assert local_var.data_type.name in ['LinesArray', 'ArrayOfPoint2D']
+                        assert local_var.data_type.name in ['LinesArray', 'Point2DArray']
                         temp_process_params = '%s = new %s[%s];\n    ' % (
                                 local_var.name,
                                 'LineSegment' if local_var.data_type.name == 'LinesArray' else 'Point2D',
