@@ -14,13 +14,17 @@ int main(int argc, const char* argv[])
     
     while (![SGCore windowCloseRequested])
     {
+        NSAutoreleasePool *loopPool = [[NSAutoreleasePool alloc] init];
+        
+        //Update game...
         [SGCore processEvents];
         
+        //Draw game...
         [SGGraphics clearScreen];
-        
         [SGText drawFrameRateWithSimpleFont: 0 :0];
-        
         [SGCore refreshScreen];
+        
+        [loopPool drain];
     }
     
     [SGAudio closeAudio];

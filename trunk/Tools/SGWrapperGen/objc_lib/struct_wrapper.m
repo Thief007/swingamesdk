@@ -80,6 +80,22 @@
 
 @implementation SG%(name)s : NSObject
 
+//
+// Update the %(name)s objects in the NSArray arr from the array pointed to by firstPtr.
+// This is used to restore data to objects after calling a SwinGame method.
+//
++ (void) update%(name)ssIn:(NSArray *)arr fromDataIn:(%(name_lower)s *)firstPtr
+{
+    int i;
+    SG%(name)s *current;
+    
+    for (i = 0; i < [arr count]; i++)
+    {
+        current = (SG%(name)s *)[arr objectAtIndex: i];
+        [current setData: *(firstPtr + i)];
+    }
+}
+
 + (NSArray *) arrayOf%(name)ss:(%(name_lower)s *)firstPtr size:(int)sz
 {
     NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];

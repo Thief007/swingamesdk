@@ -78,6 +78,7 @@ class SGMethod(SGMetaDataContainer):
                     real_params.append(p)
             
             if special_visitor != None:
+                # print self.name
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
             else:
                 temp = self.sn % tuple([param.name for param in real_params])
@@ -273,6 +274,10 @@ class SGMethod(SGMetaDataContainer):
                 if not done:
                     logger.error('Method    : Unable to find parameter %s for %s', param_name, self.uname)
                     assert False
+        elif title == 'updatesArrayParams':
+            # check which parameters are being updated and mark so that checking ignores them
+            for idx in other:
+                self.params[idx - 1].being_updated = True
         elif title == "class":
             #the class indicates that the @method is for this other class...
             from sg_code_module import SGCodeModule

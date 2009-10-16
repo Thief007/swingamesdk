@@ -30,6 +30,7 @@ class SGParameter(SGMetaDataContainer):
         self.has_field = False          # Used to check if a parameter/arg has a field (i.e. array wrapper)
         self.is_returned = False        # Does this variable actually contain the return value (must be maps_result)
         self.pass_through = False       # This parameter exists just to pass the result out after out parameters...
+        self.being_updated = False       # This parameter is updated (so ignore reporting errors on arrays when parameters are checked) 
     
     # def set_as_output(self):
     #     """marks this as an output parameter"""

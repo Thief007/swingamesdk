@@ -58,7 +58,7 @@ _type_switcher = {
     'spriteendingaction': 'SpriteEndingAction',
     'bitmaparray': 'BitmapPtr',
     'circle': 'Circle',
-    'arrayofpoint2d': 'Point2DPtr',
+    'point2darray': 'Point2DPtr',
     'map': 'Map',
     'maptag': 'MapTag',
     'spritekind': 'SpriteKind',
@@ -75,7 +75,7 @@ _array_copy_data = {
     'linesarray': 'Line',
     'bitmaparray': 'Bmp',
     'longintarray': 'LongInt',
-    'arrayofpoint2d': 'Point2D',
+    'point2darray': 'Point2D',
 }
 
 # dictionary for start of method names for copying fixed
@@ -165,7 +165,7 @@ def method_visitor(the_method, other):
         if not result_param.maps_result: #in case of returning var length array
             result_param = the_method.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'arrayofpoint2d', 'longintarray']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure

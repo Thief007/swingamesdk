@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-10-16: Andrew : Changed to consistent array names TypeArray eg. Point2DArray
+//                      : Added shapes and shape prototypes
 // - 2009-07-13: Clinton: Renamed Event to MapEvent to MapTag
 //                      : Renamed EventDetails to MapTagDetails
 //                      : Renamed LayerData to MapLayerData
@@ -69,7 +71,7 @@ interface
     /// @type Point2DArray
     /// @array_wrapper
     /// @field data: array of Point2D
-    ArrayOfPoint2D = Array of Point2D;
+    Point2DArray = Array of Point2D;
     
     /// @struct Rectangle
     Rectangle = record
@@ -251,22 +253,29 @@ interface
     ShapeDrawingFn = procedure(dest: Bitmap; s: Shape; filled: Boolean);
     
     /// @struct ShapePrototypeData
+    /// @via_pointer
     ShapePrototypeData = record
-      points: ArrayOfPoint2D;
+      points: Point2DArray;
       kind: ShapeKind;
-      shapeCount: LongInt;
+      shapeCount: LongInt;            //the number of shapes using the prototype
       drawWith: ShapeDrawingFn;
     end;
     
+    /// @type ShapeArray
+    /// @array_wrapper
+    /// @field data: array of Shape
+    ShapeArray = Array of Shape;
+    
     /// @struct ShapeData
+    /// @via_pointer
     ShapeData = record
       pt: Point2D;
       prototype: ShapePrototype;
       color: Color;
       scale: Point2D;
       angle: single;
-      ptBuffer: ArrayOfPoint2D;
-      subShapes: Array of Shape;
+      ptBuffer: Point2DArray;
+      subShapes: ShapeArray;
     end;
     
     /// Use this with the resource path functions to get the path to a

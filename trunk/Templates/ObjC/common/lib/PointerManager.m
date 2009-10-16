@@ -15,6 +15,7 @@ static NSMutableDictionary *_ptrRegister;
 
 void removeObject(void *ptr)
 {
+    NSLog(@"Freeing %h", ptr);
     id key = [NSValue valueWithPointer:ptr];
     
     id <PointerWrapper> obj = [_ptrRegister objectForKey:key];
@@ -30,7 +31,7 @@ void removeObject(void *ptr)
 + (void)initialize
 {
     //NSLog(@"Created register");
-    _ptrRegister = [[NSMutableDictionary alloc] initWithCapacity: 1000];
+    _ptrRegister = [[NSMutableDictionary alloc] initWithCapacity: 100000];
     sg_Resources_RegisterFreeNotifier(removeObject);
 }
 

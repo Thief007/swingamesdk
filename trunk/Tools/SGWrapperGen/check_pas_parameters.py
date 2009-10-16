@@ -15,27 +15,24 @@ from sg.sg_cache import logger, find_or_add_file
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_pass_ref_types = [
-    'vector',
-    'point2d',
-    'circle',
-    'rectangle',
-    'ellipse',
-    'linesegment',
-    'linesarray',
-]
-
 _errors = 0
 
 def param_visitor(param, last, other):
     '''Check that all types in the types list are passed by reference...'''
     
     if param.modifier in ['const', 'var', 'out', 'result']: return    
+    if param.being_updated:
+        print ' -------- NOTE --------'
+        print param.name, 'is updating data passed in.'
+        print param.file_line_details
+        print ' ----------------------'
+        return
     if param.data_type.is_struct or param.data_type.is_array:
         print ' ******* ERROR *********'
         print param.name
         print param.file_line_details
         print ' ***********************'
+        global _errors
         _errors += 1
 
 def method_visitor(method, other):

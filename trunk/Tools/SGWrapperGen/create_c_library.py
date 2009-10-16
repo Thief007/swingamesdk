@@ -100,7 +100,7 @@ _type_switcher = {
         'longint[0..n - 1][0..n - 1]':  'int *%s',
         'mapanimationdata[0..n - 1]':   'map_animation_data *%s',
         'maplayerdata[0..n - 1]':       'map_layer_data *%s',
-        'arrayofpoint2d':               'point2d *%s',
+        'point2darray':               'point2d *%s',
         
         'tagmapdetails[0..n - 1][0..23]':   'map_tag_details *%s[24]',
         '^maprecord':                       'map_record *%s',
@@ -130,7 +130,7 @@ _type_switcher = {
         'bitmaparray':  'bitmap_array %s',
         'longintarray': 'int *%s',
         
-        'arrayofpoint2d': 'point2d_array %s',
+        'point2darray': 'point2d_array %s',
     },
     'var' : {
         'string':       'char *%s',
@@ -147,7 +147,7 @@ _type_switcher = {
         'triangle':     'triangle %s',
         
         'linesarray':       'lines_array %s',
-        'arrayofpoint2d':   'point2d *%s',
+        'point2darray':   'point2d *%s',
         'longintarray':     'int *%s',
         
         'shapeprototype':   'shape_prototype *%s',
@@ -189,7 +189,7 @@ _type_switcher = {
         'matrix2d':     'matrix2d %s',
         
         'linesarray':       'line_segment *%s',
-        'arrayofpoint2d':   'point2d *%s',
+        'point2darray':   'point2d *%s',
         
         'collisionside':        'collision_side %s',
         'fontstyle':            'font_style %s',        
@@ -257,7 +257,7 @@ _adapter_type_switcher = {
         'maptag':           'map_tag %s',
         'maptile':          'map_tile %s',
         'circle':           'circle %s',
-        'arrayofpoint2d':   'point2d *%s',
+        'point2darray':   'point2d *%s',
         'spritekind':       'sprite_kind %s',
         
         'psdl_surface':     'void *%s',
@@ -292,6 +292,7 @@ _adapter_type_switcher = {
         'shape':                'void *%s',
         'shapedrawingfn':       'void (*%s)(void*,void*,int)',
         'shape[0..n - 1]':      'shape *%s',
+        'shapearray':           'shape *%s',
         
         None:                   'void %s'
     },
@@ -306,7 +307,7 @@ _adapter_type_switcher = {
         'longintarray': 'int *%s',
         'bitmaparray':  'bitmap_array %s',
         'circle':       'circle *%s',
-        'arrayofpoint2d': 'point2d_array %s',
+        'point2darray': 'point2d_array %s',
     },
     'var': {
         'soundeffect':  'sound_effect *%s',
@@ -339,7 +340,7 @@ _adapter_type_switcher = {
         'string':           'char *%s',
         'linesarray':       'line_segment *%s',
         'matrix2d':         'matrix2d %s',
-        'arrayofpoint2d':   'point2d *%s',
+        'point2darray':   'point2d *%s',
         'triangle':         'triangle %s',
         'longintarray':     'int *%s',
     },

@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-10-16: Andrew : Fixed order of free notifier calls
 // - 2009-10-02: Andrew : Added random color, reset timer
 // - 2009-09-11: Andrew : Added tracing code
 // - 2009-07-28: Andrew : Calling ShowLogos splash screen
@@ -1417,8 +1418,15 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'FreeTimer');
     {$ENDIF}
-    if Assigned(toFree) then Dispose(toFree);
+    
+    if Assigned(toFree) then
+    begin
+      Dispose(toFree);
+      CallFreeNotifier(toFree);
+    end;
+    
     toFree := nil;
+    
     {$IFDEF TRACE}
       TraceExit('sgCore', 'FreeTimer');
     {$ENDIF}

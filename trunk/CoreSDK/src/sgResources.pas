@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-10-16: Andrew : Moved free notifier, and ensured free notifier called after dispose
 // - 2009-09-11: Andrew : Fixed to load resources without needing path
 // - 2009-07-29: Andrew : Renamed Get... functions and check for opened audio
 // - 2009-07-28: Andrew : Added ShowLogos splash screen
@@ -406,25 +407,11 @@ implementation
     _Music: TStringHash;
     _TileMaps: TStringHash;
     _Bundles: TStringHash;
-    _FreeNotifier: FreeNotifier = nil;
     // The full path location of the current executable (or script). This is
     // particuarly useful when determining the path to resources (images, maps,
     // sounds, music etc).
     applicationPath: String;
     
-  
-  procedure CallFreeNotifier(p: Pointer);
-  begin
-    if Assigned(_FreeNotifier) then
-    begin
-      try
-        _FreeNotifier(p);
-      except
-        ErrorMessage := 'Error calling free notifier';
-        HasException := True;
-      end;
-    end;
-  end;
   
   procedure RegisterFreeNotifier(fn: FreeNotifier);
   begin
@@ -1122,8 +1109,8 @@ implementation
   begin
     if assigned(effect) then
     begin
-      CallFreeNotifier(effect);
       Mix_FreeChunk(effect);
+      CallFreeNotifier(effect);
     end;
     effect := nil;
   end;
@@ -1132,8 +1119,8 @@ implementation
   begin
     if assigned(mus) then
     begin
-      CallFreeNotifier(mus);
       Mix_FreeMusic(mus);
+      CallFreeNotifier(mus);
     end;
     mus := nil;
   end;
@@ -1279,10 +1266,6 @@ implementation
   begin
     if Assigned(bitmapToFree) then
     begin
-      // WriteLn('Free Bitmap - ', HexStr(bitmapToFree));
-      CallFreeNotifier(bitmapToFree);
-      // WriteLn('Done Free Bitmap - ', HexStr(bitmapToFree));
-      
       if Assigned(bitmapToFree^.surface) then
       begin
         //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
@@ -1291,6 +1274,7 @@ implementation
       bitmapToFree^.surface := nil;
       
       Dispose(bitmapToFree);
+      CallFreeNotifier(bitmapToFree);
       bitmapToFree := nil;
     end;
   end;
@@ -1326,9 +1310,9 @@ implementation
   begin
     if Assigned(fontToFree) then
     begin
-      CallFreeNotifier(fontToFree);
       try
         TTF_CloseFont(fontToFree);
+        CallFreeNotifier(fontToFree);
         fontToFree := nil;
       except
         RaiseException('Unable to free the specified font');
@@ -1686,12 +1670,11 @@ implementation
   begin
     if assigned(m) then
     begin
-      CallFreeNotifier(m);
-      
       // Free the one bitmap associated with the map
       FreeBitmap(m^.Tiles^.bitmaps[0]);
       FreeSprite(m^.Tiles);
       Dispose(m);
+      CallFreeNotifier(m);
       m := nil;
     end;
   end;

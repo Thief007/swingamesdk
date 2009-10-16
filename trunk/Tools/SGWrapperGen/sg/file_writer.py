@@ -9,6 +9,7 @@ Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 
 import sys
 import os
+import wrapper_helper
 
 class FileWriter(object):
     def __init__(self, filename):
@@ -23,6 +24,8 @@ class FileWriter(object):
         self._indent -= count
     
     def _write(self,data):
+        if wrapper_helper.hasError(): return
+        
         if self._at_newline:
             self.out_file.write('%s%s' % ('  ' * self._indent, data)),
         else:
@@ -31,11 +34,15 @@ class FileWriter(object):
         self._at_newline = data[-1] == "\n"
     
     def write(self,data):
+        if wrapper_helper.hasError(): return
+        
         lines = data.splitlines(True)
         for line in lines:
             self._write(line)
     
     def writeln(self,data=''):
+        if wrapper_helper.hasError(): return
+        
         lines = data.splitlines(True)
         for line in lines:
             self._write(line)

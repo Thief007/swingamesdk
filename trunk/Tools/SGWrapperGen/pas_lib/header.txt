@@ -160,7 +160,7 @@ library %(name)s;
     end;
   end;
   
-  procedure Point2DCopyFromPtr(data: Point2DPtr; len: LongInt; out arr: ArrayOfPoint2D);
+  procedure Point2DCopyFromPtr(data: Point2DPtr; len: LongInt; out arr: Point2DArray);
   var
     i: LongInt;
   begin
@@ -174,7 +174,7 @@ library %(name)s;
     end;
   end;
   
-  procedure Point2DCopyToPtr(const arr: ArrayOfPoint2D; len: LongInt; data: Point2DPtr);
+  procedure Point2DCopyToPtr(const arr: Point2DArray; len: LongInt; data: Point2DPtr);
   var
     i: LongInt;
   begin
