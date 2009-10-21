@@ -145,6 +145,8 @@ namespace SwinGame
         [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public static bool operator ==(PointerWrapper pw1, PointerWrapper pw2)
         {
+            if ((object)pw1 == null && (object)pw2 == null) return true;
+            if ((object)pw1 == null || (object)pw2 == null) return false;
             return pw1.Pointer == pw2.Pointer;
         }
         
@@ -154,6 +156,8 @@ namespace SwinGame
         [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public static bool operator !=(PointerWrapper pw1, PointerWrapper pw2)
         {
+            if ((object)pw1 == null && (object)pw2 == null) return false;
+            if ((object)pw1 == null || (object)pw2 == null) return true;
             return pw1.Pointer != pw2.Pointer;
         }
         
