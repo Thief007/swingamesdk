@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources, sgSprites, sgInput, sgPhysics;
+  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources, sgSprites, sgInput, sgPhysics, sgCamera;
 
 procedure Main();
 var
@@ -38,9 +38,16 @@ begin
     if KeyDown(vk_LEFT) then x -= 1;
     if KeyDown(vk_RIGHT) then x += 1;
     
+    if KeyDown(vk_a) then SpriteSetX(s, SpriteX(s) - 1);
+    if KeyDown(vk_s) then SpriteSetY(s, SpriteY(s) + 1);
+    if KeyDown(vk_d) then SpriteSetX(s, SpriteX(s) + 1);
+    if KeyDown(vk_w) then SpriteSetY(s, SpriteY(s) - 1);
+    
     if x < 0 then x := 0;
     if y < 0 then y := 0;
     
+    
+    CenterCameraOn(s, -50, +50);
     DrawSprite(s);
     
     RefreshScreen();

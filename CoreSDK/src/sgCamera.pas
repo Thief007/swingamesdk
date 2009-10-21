@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-10-21: Andrew : Fixed camera center on sprite
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct types
 // - 2009-06-17: Clinton: Added CameraPos, reordered methods,
 //                        Renamed ToScreen/ToWorld (removed "Coordinates")
@@ -223,13 +224,20 @@ implementation
   //---------------------------------------------------------------------------
   
   procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt);
+  var
+    center: Point2D;
+    scX, scY: Single;
   begin
     if s = nil then begin
       RaiseException('CenterCameraOn requires a target sprite. No sprite was provided (nil supplied)');
       exit;
     end;
-    MoveCameraTo(Round(ToScreenX(s^.position.x) + s^.width / 2 - ScreenWidth() / 2) + offsetX, 
-                 Round(ToScreenY(s^.position.y) + s^.height / 2 - ScreenHeight() / 2) + offsetY);
+    
+    center := CenterPoint(s);
+    scX := center.x + offsetX - (ScreenWidth() / 2);
+    scY := center.y + offsetY - (ScreenHeight() / 2);
+    
+    MoveCameraTo(scX, scY);
   end;
   
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
