@@ -293,7 +293,15 @@ implementation
   
   procedure RegisterFreeNotifier(fn: FreeNotifier);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'sgResources.RegisterFreeNotifier');
+      Trace('sgResources', 'Info', 'sgResources.RegisterFreeNotifier', 'fn: ' + HexStr(fn));
+    {$ENDIF}
     _FreeNotifier := fn;
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'sgResources.RegisterFreeNotifier');
+    {$ENDIF}
+
   end;
   
   //----------------------------------------------------------------------------

@@ -128,7 +128,8 @@ def _create_objc_method_details(the_method, other):
         special_visitor = special_visitor)
     
     if the_method.is_static:
-        header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
+        #header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
+        header = '\n- (%(return_type)s)%(sn)s' % my_details
         if len(the_method.params) == 0: header = header[:-1]
         result_details['static_method_headers'] += header + ';'
         dest_key = 'static_method_bodies'
@@ -149,7 +150,8 @@ def _create_objc_method_details(the_method, other):
             result_details['method_headers'] += '\n#if OBJC_NEW_PROPERTIES != 1' + header + ';\n#endif'
             dest_key = 'method_bodies'
         else:
-            header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
+            #header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
+            header = '\n- (%(return_type)s)%(sn)s' % my_details
             if len(the_method.params) == 0: header = header[:-1]
             result_details['method_headers'] += header + ';'
             dest_key = 'method_bodies'
