@@ -79,14 +79,14 @@ class SGMethod(SGMetaDataContainer):
                 if not p.is_length_param:
                     real_params.append(p)
             
-            print self.name, real_params, self.sn
+            #print self.name, real_params, self.sn
             
             if special_visitor != None:
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
             else:
                 temp = self.sn % tuple([param.name for param in real_params])
             
-            print temp
+            #print temp
             
             result['sn'] = temp
             result['sn.sel'] = (self.sn % tuple(['' for param in real_params])).replace(' ', '')
@@ -287,7 +287,6 @@ class SGMethod(SGMetaDataContainer):
                 self.params[idx - 1].being_updated = True
         elif title == "class":
             #the class indicates that the @method is for this other class...
-            print other, self
             from sg_code_module import SGCodeModule
             from sg_library import SGLibrary
             if other == None: 
@@ -307,20 +306,20 @@ class SGMethod(SGMetaDataContainer):
             # 2: set property name
             self.in_property = other
             # 3: mark for later processing
-            class_method = SGMethod(other + ' ' + title)
-            super(SGMethod,self).set_tag('class_method', class_method)
+            mthd = SGMethod(other + ' ' + title)
+            super(SGMethod,self).set_tag('class_method', mthd)
         elif title == 'constructor':
             const = SGMethod(self.other_class.name)
             const.is_constructor = True
             super(SGMethod,self).set_tag('class_method', const)
         elif title == 'dispose':
-            const = SGMethod("~" + self.other_class.name)
-            const.is_destructor = True
+            dest = SGMethod("~" + self.other_class.name)
+            dest.is_destructor = True
             self.mimic_destructor = True
-            super(SGMethod,self).set_tag('class_method', const)
+            super(SGMethod,self).set_tag('class_method', dest)
         elif title == 'csn':
-            print "Check this...", self.other_class, self.other_method, self
-            class_method.set_tag('sn', other)
+            #assign the 'csn' class special name to the class method
+            self.class_method.set_tag('sn', other)
         else:
             super(SGMethod,self).set_tag(title, other)
     
@@ -330,7 +329,10 @@ class SGMethod(SGMetaDataContainer):
         other.return_type = self.return_type
         other.file_line_details = self.file_line_details
         other.doc = self.doc
-        other.sn = self.sn
+        if other.sn == None:
+            other.sn = self.sn
+        # else:
+        #     print other.sn
         
         other.length_call = self.length_call
         

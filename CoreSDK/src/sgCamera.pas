@@ -164,11 +164,11 @@ interface
   /// @param offsetY The amount of y axis offset for the camaera to use 
   /// @lib CenterCameraOnWithXYOffset
   ///
-  /// @sn centerCameraOn: %s offsetX:%s y:%s
+  /// @sn centerCameraOn:%s offsetX:%s offsetY:%s
   ///
   /// @class Sprite
   /// @overload CenterCamera CenterCameraOffsetXY
-  /// @csn centerCameraOffsetX:%s y:%s
+  /// @csn centerCameraOffsetX:%s offsetY:%s
   procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt); overload;
   
   /// Set the camera view to be centered over the specific sprite. The offset
@@ -177,7 +177,7 @@ interface
   /// @param offset The amount of offset from sprite center for the camera to use.  
   /// @lib
   ///
-  /// @sn centerCameraOn:%s Offset:%s
+  /// @sn centerCameraOn:%s offset:%s
   ///  
   /// @class Sprite
   /// @method CenterCamera
