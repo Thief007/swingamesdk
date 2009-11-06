@@ -453,7 +453,7 @@ implementation
 
   uses
     SysUtils, {Math, Classes,} sgTrace,
-    sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared;
+    sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages;
 
 
   //---------------------------------------------------------------------------

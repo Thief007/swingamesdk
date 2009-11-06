@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-06: Andrew : Moved out loading of audio resources... others to follow
 // - 2009-10-16: Andrew : Moved free notifier, and ensured free notifier called after dispose
 // - 2009-09-11: Andrew : Fixed to load resources without needing path
 // - 2009-07-29: Andrew : Renamed Get... functions and check for opened audio
@@ -18,16 +19,15 @@
 //
 //=============================================================================
 
+{$I sgTrace.inc}
+
 /// @module Resources
 unit sgResources;
 
 //=============================================================================
 interface
-//=============================================================================
-
-  {$I sgTrace.inc}
-
   uses sgTypes;
+//=============================================================================
 
   //----------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ interface
   function HasBitmap(name: String): Boolean;
   
   /// @lib
-  function BitmapNamed(name: String): Bitmap;
+  function FetchBitmap(name: String): Bitmap;
   
   /// @lib
   procedure ReleaseBitmap(name: String);
@@ -70,55 +70,13 @@ interface
   function HasFont(name: String): Boolean;
 
   /// @lib
-  function FontNamed(name: String): Font;
+  function FetchFont(name: String): Font;
 
   /// @lib
   procedure ReleaseFont(name: String);
 
   /// @lib
   procedure ReleaseAllFonts();
-
-  //----------------------------------------------------------------------------
-
-  /// @lib
-  ///
-  /// @class SoundEffect
-  /// @constructor
-  /// @sn initWithName:%s forFilename:%s
-  function MapSoundEffect(name, filename: String): SoundEffect;
-
-  /// @lib
-  function HasSoundEffect(name: String): Boolean;
-
-  /// @lib
-  function SoundEffectNamed(name: String): SoundEffect;
-
-  /// @lib
-  procedure ReleaseSoundEffect(name: String);
-
-  /// @lib
-  procedure ReleaseAllSoundEffects();
-
-  //----------------------------------------------------------------------------
-
-  /// @lib
-  ///
-  /// @class Music
-  /// @constructor
-  /// @sn initWithName:%s forFilename:%s
-  function MapMusic(name, filename: String): Music;
-
-  /// @lib
-  function HasMusic(name: String): Boolean;
-
-  /// @lib
-  function MusicNamed(name: String): Music;
-
-  /// @lib
-  procedure ReleaseMusic(name: String);
-
-  /// @lib
-  procedure ReleaseAllMusic();
 
   //----------------------------------------------------------------------------
 
@@ -133,7 +91,7 @@ interface
   function HasTileMap(name: String): Boolean;
 
   /// @lib
-  function TileMapNamed(name: String): Map;
+  function FetchTileMap(name: String): Map;
 
   /// @lib
   procedure ReleaseTileMap(name: String);
@@ -200,73 +158,6 @@ interface
   /// @lib
   procedure ShowLogos();
   
-  //----------------------------------------------------------------------------
-  // Loading of actual resources
-  //----------------------------------------------------------------------------
-    
-  /// Loads the `SoundEffect` from the supplied filename. The sound will be loaded
-  /// from the Resources/sounds folder unless a full path to the file is passed
-  /// in. If you are passing in the full path and you want to ensure that your game
-  /// is able to work across multiple platforms correctly then use
-  /// `PathToResource` to get the full path to the files in the projects
-  /// resources folder.
-  ///
-  /// LoadSoundEffect can load wav and ogg audio files.
-  ///
-  /// `FreeSoundEffect` should be called to free the resources used by the 
-  /// `SoundEffect` data once the resource is no longer needed.
-  ///
-  /// @param filename the filename of the sound effect file to load. 
-  ///
-  /// @lib
-  ///
-  /// @class SoundEffect
-  /// @constructor
-  /// @sn initFromPath:%s
-  function LoadSoundEffect(filename: String): SoundEffect;
-
-  /// Loads the `Music` from the supplied filename. The music will be loaded
-  /// from the Resources/sounds folder unless a full path to the file is passed
-  /// in. If you are passing in the full path and you want toensure that your game
-  /// is able to work across multiple platforms correctly ensure that you use
-  /// `PathToResource` to get the full path to the files in the projects 
-  /// resources folder.
-  ///
-  /// LoadMusic can load mp3, wav and ogg audio files.
-  ///
-  /// `FreeMusic` should be called to free the resources used by the 
-  /// `Music` data once the resource is no longer needed.
-  ///
-  /// @param filename the filename to the music file to load.
-  ///
-  /// @lib
-  ///
-  /// @class Music
-  /// @constructor
-  /// @sn initFromPath:%s
-  function LoadMusic(filename: String): Music;
-  
-  //----------------------------------------------------------------------------
-  // Freeing of actual resources
-  //----------------------------------------------------------------------------
-  
-  /// Frees the resources used by a `Music` resource. All loaded
-  /// `Music` should be freed once it is no longer needed. 
-  ///
-  /// @lib
-  ///
-  /// @class Music
-  /// @dispose
-  procedure FreeMusic(var mus: Music);
-  
-  /// Frees the resources used by a `SoundEffect` resource. All loaded
-  /// `SoundEffect`s should be freed once they are no longer needed.
-  ///
-  /// @lib
-  ///
-  /// @class SoundEffect
-  /// @dispose
-  procedure FreeSoundEffect(var effect: SoundEffect);
   
   /// Creates a bitmap in memory that is the specified width and height (in pixels).
   /// The new bitmap is initially transparent and can be used as the target 
@@ -323,17 +214,6 @@ interface
   /// @class Bitmap
   /// @dispose
   procedure FreeBitmap(var bitmapToFree : Bitmap);
-  
-  /// Created bitmaps can be optimised for faster drawing to the screen. This
-  /// optimisation should be called only once after all drawing to the bitmap
-  /// is complete. Optimisation should not be used if the bitmap is to be
-  /// drawn onto in the future. All loaded bitmaps are optimised during loading.
-  ///
-  /// @lib
-  ///
-  /// @class Bitmap
-  /// @method OptimiseBitmap
-  procedure OptimiseBitmap(surface: Bitmap);
   
   /// Loads a font from file with the specified side. Fonts must be freed using
   /// the FreeFont routine once finished with. Once the font is loaded you
@@ -403,8 +283,6 @@ implementation
   var
     _Images: TStringHash;
     _Fonts: TStringHash;
-    _SoundEffects: TStringHash;
-    _Music: TStringHash;
     _TileMaps: TStringHash;
     _Bundles: TStringHash;
     // The full path location of the current executable (or script). This is
@@ -423,17 +301,6 @@ implementation
   //----------------------------------------------------------------------------
   
   type 
-    // The resource contain is an object to hold the resource for the 
-    // hash table
-    TResourceContainer = class(tObject)
-    private
-      resource_val : Pointer;
-    public
-      constructor Create(data: Pointer);
-      
-      property Resource: Pointer read resource_val;
-    end;
-    
     //
     // Used in loading bundles
     //
@@ -456,20 +323,9 @@ implementation
       procedure ReleaseResources();
     end;
 
-    //
-    // Used by release all
-    //
-    ReleaseFunction = procedure(name: String);
-
   //----------------------------------------------------------------------------
   // Private type functions/procedures
   //----------------------------------------------------------------------------
-
-  constructor TResourceContainer.create(data: Pointer);
-  begin
-    inherited create;
-    resource_val := data;
-  end;
 
   constructor TResourceBundle.create();
   begin
@@ -558,35 +414,6 @@ implementation
 
   //----------------------------------------------------------------------------
 
-  procedure ReleaseAll(tbl: TStringHash; releaser: ReleaseFunction);
-  var
-    iter: TStrHashIterator;
-    names: array of String;
-    i: Integer;
-  begin
-    if tbl.count = 0 then exit;
-    
-    SetLength(names, tbl.count);
-    iter := tbl.getIterator();
-    i := 0;
-    
-    while i < Length(names) do
-    begin
-      names[i] := iter.key;
-      i := i + 1;
-      iter.next;
-    end;
-
-    for i := Low(names) to High(names) do
-    begin
-      releaser(names[i]);
-    end;
-
-    tbl.deleteAll();
-  end;
-
-  //----------------------------------------------------------------------------
-
   function MapBitmap(name, filename: String): Bitmap;
   var
     obj: tResourceContainer;
@@ -631,7 +458,7 @@ implementation
     result := _Images.containsKey(name);
   end;
 
-  function BitmapNamed(name: String): Bitmap;
+  function FetchBitmap(name: String): Bitmap;
   var
     tmp : TObject;
   begin
@@ -646,7 +473,7 @@ implementation
   var
     bmp: Bitmap;
   begin
-    bmp := BitmapNamed(name);
+    bmp := FetchBitmap(name);
     if (assigned(bmp)) then
     begin
       _Images.remove(name).Free();
@@ -678,7 +505,7 @@ implementation
     result := _Fonts.containsKey(name);
   end;
 
-  function FontNamed(name: String): Font;
+  function FetchFont(name: String): Font;
   var
     tmp : TObject;
   begin
@@ -691,7 +518,7 @@ implementation
   var
     fnt: Font;
   begin
-    fnt := FontNamed(name);
+    fnt := FetchFont(name);
     if (assigned(fnt)) then
     begin
       _Fonts.remove(name).free();
@@ -704,98 +531,6 @@ implementation
     ReleaseAll(_Fonts, @ReleaseFont);
   end;
   
-  //----------------------------------------------------------------------------
-  
-  function MapSoundEffect(name, filename: String): SoundEffect;
-  var
-    obj: tResourceContainer;
-    snd: SoundEffect;
-  begin
-    if not AudioOpen then exit;
-    
-    snd := LoadSoundEffect(filename);
-    obj := tResourceContainer.Create(snd);
-    if not _SoundEffects.setValue(name, obj) then
-      raise Exception.create('Error loaded Sound Effect resource twice, ' + name);
-    result := snd;
-  end;
-  
-  function HasSoundEffect(name: String): Boolean;
-  begin
-    result := _SoundEffects.containsKey(name);
-  end;
-
-  function SoundEffectNamed(name: String): SoundEffect;
-  var
-    tmp : TObject;
-  begin
-    tmp := _SoundEffects.values[name];
-    if assigned(tmp) then result := SoundEffect(tResourceContainer(tmp).Resource)
-    else result := nil;
-  end;
-  
-  procedure ReleaseSoundEffect(name: String);
-  var
-    snd: SoundEffect;
-  begin
-    snd := SoundEffectNamed(name);
-    if (assigned(snd)) then
-    begin
-      _SoundEffects.remove(name).Free();
-      FreeSoundEffect(snd);
-    end;
-  end;
-  
-  procedure ReleaseAllSoundEffects();
-  begin
-    ReleaseAll(_SoundEffects, @ReleaseSoundEffect);
-  end;
-  
-  //----------------------------------------------------------------------------
-  
-  function MapMusic(name, filename: String): Music;
-  var
-    obj: tResourceContainer;
-    mus: Music;
-  begin
-    mus := LoadMusic(filename);
-    obj := tResourceContainer.Create(mus);
-    if not _Music.setValue(name, obj) then
-      raise Exception.create('Error loaded Music resource twice, ' + name);
-    result := mus;
-  end;
-  
-  function HasMusic(name: String): Boolean;
-  begin
-    result := _Music.containsKey(name);
-  end;
-  
-  function MusicNamed(name: String): Music;
-  var
-    tmp : TObject;
-  begin
-    tmp := _Music.values[name];
-    if assigned(tmp) then result := Music(tResourceContainer(tmp).Resource)
-    else result := nil;
-  end;
-  
-  procedure ReleaseMusic(name: String);
-  var
-    mus: Music;
-  begin
-    mus := MusicNamed(name);
-    if (assigned(mus)) then
-    begin
-      _Music.remove(name).Free();
-      FreeMusic(mus);
-    end;
-  end;
-  
-  procedure ReleaseAllMusic();
-  begin
-    ReleaseAll(_Music, @ReleaseMusic);
-  end;
-
   //----------------------------------------------------------------------------
   
   function MapTileMap(name, filename: String): Map;
@@ -815,7 +550,7 @@ implementation
     result := _TileMaps.containsKey(name);
   end;
   
-  function TileMapNamed(name: String): Map;
+  function FetchTileMap(name: String): Map;
   var
     tmp : TObject;
   begin
@@ -828,7 +563,7 @@ implementation
   var
     theMap: Map;
   begin
-    theMap := TileMapNamed(name);
+    theMap := FetchTileMap(name);
     if assigned(theMap) then
     begin
       _TileMaps.remove(name).Free();
@@ -1065,68 +800,6 @@ implementation
   
   //----------------------------------------------------------------------------
   
-  function LoadSoundEffect(filename: String): SoundEffect;
-  begin
-    if not FileExists(filename) then
-    begin
-      filename := PathToResource(filename, SoundResource);
-      if not FileExists(filename) then
-      begin
-        RaiseException('Unable to locate music ' + filename);
-        exit;
-      end;
-    end;
-    
-    result := Mix_LoadWAV(@filename[1]);
-    if result = nil then
-    begin
-      RaiseException('Error loading sound effect: ' + SDL_GetError());
-      exit;
-    end;
-  end;
-  
-  function LoadMusic(filename: String): Music;
-  begin
-    if not FileExists(filename) then
-    begin
-      filename := PathToResource(filename, SoundResource);
-      if not FileExists(filename) then
-      begin
-        RaiseException('Unable to locate music ' + filename);
-        exit;
-      end;
-    end;
-    
-    result := Mix_LoadMUS(@filename[1]);
-    if result = nil then
-    begin
-      RaiseException('Error loading sound effect: ' + SDL_GetError());
-      exit;
-    end;
-  end;
-  
-  procedure FreeSoundEffect(var effect: SoundEffect);
-  begin
-    if assigned(effect) then
-    begin
-      Mix_FreeChunk(effect);
-      CallFreeNotifier(effect);
-    end;
-    effect := nil;
-  end;
-  
-  procedure FreeMusic(var mus: Music);
-  begin
-    if assigned(mus) then
-    begin
-      Mix_FreeMusic(mus);
-      CallFreeNotifier(mus);
-    end;
-    mus := nil;
-  end;
-  
-  //----------------------------------------------------------------------------
-  
   function CreateBitmap(width, height: LongInt): Bitmap;
   begin
     if (width < 1) or (height < 1) then
@@ -1180,23 +853,6 @@ implementation
           (GetPixel32(surface, c, r) <> transparentColor);
       end;
     end;
-  end;
-  
-  procedure OptimiseBitmap(surface: Bitmap);
-  var
-    oldSurface: PSDL_Surface;
-  begin
-    if surface = nil then
-    begin
-      RaiseException('No bitmap supplied');
-      exit;
-    end;
-
-    
-    oldSurface := surface^.surface;
-    SetNonAlphaPixels(surface, oldSurface);
-    surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
-    SDL_FreeSurface(oldSurface);
   end;
   
   function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
@@ -1737,11 +1393,11 @@ implementation
         LoadResourceBundle('splash.txt', False);
         
         ClearScreen();
-        DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
-        f := FontNamed('ArialLarge');
+        DrawBitmap(FetchBitmap('Swinburne'), 286, 171);
+        f := FetchFont('ArialLarge');
         txt := 'SwinGame API by Swinburne University of Technology';
         DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
-        f := FontNamed('LoadingFont');
+        f := FetchFont('LoadingFont');
         DrawText(DLL_VERSION, ColorWhite, f, 5, 580);
         
         i := 1;
@@ -1753,11 +1409,11 @@ implementation
           if isSkip then break;
         end;
     
-        if AudioOpen then PlaySoundEffect(SoundEffectNamed('SwinGameStart'));
+        if AudioOpen then PlaySoundEffect(FetchSoundEffect('SwinGameStart'));
         for i:= 0 to ANI_CELL_COUNT - 1 do
         begin
-          DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
-          DrawBitmapPart(BitmapNamed('SwinGameAni'), 
+          DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
+          DrawBitmapPart(FetchBitmap('SwinGameAni'), 
             (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
             ANI_W, ANI_H - 1, ANI_X, ANI_Y);
           RefreshScreen();
@@ -1766,7 +1422,7 @@ implementation
           Sleep(15);
         end;
         
-        while SoundEffectPlaying(SoundEffectNamed('SwinGameStart')) or isPaused do
+        while SoundEffectPlaying(FetchSoundEffect('SwinGameStart')) or isPaused do
         begin
           InnerProcessEvents();
           if isSkip then break;
@@ -1814,8 +1470,6 @@ implementation
     InitialiseSwinGame();
     
     _Images := TStringHash.Create(False, 1024);
-    _SoundEffects := TStringHash.Create(False, 1024);
-    _Music := TStringHash.Create(False, 1024);
     _Fonts := TStringHash.Create(False, 1024);
     _TileMaps := TStringHash.Create(False, 1024);
     _Bundles := TStringHash.Create(False, 1024);

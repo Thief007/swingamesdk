@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-06: Andrew : Fixed formatting
 // - 2009-09-11: Andrew : Fixed io exceptions
 // - 2009-06-23: Clinton: Comment formatting/cleanup
 //
@@ -36,7 +37,8 @@ interface
     procedure TraceIf(tl: TraceLevel; unitname, action, routine, message: String);
     procedure TraceEnter(unitName, routine: String); overload;
     procedure TraceEnter(unitName, routine, message: String); overload;
-    procedure TraceExit(unitName, routine: String);
+    procedure TraceExit(unitName, routine: String); overload;
+    procedure TraceExit(unitName, routine, message: String); overload;
   {$ENDIF}
 
 //=============================================================================
@@ -59,7 +61,7 @@ implementation
   procedure Trace(unitname, action, routine, message: String);
   begin
     try 
-      WriteLn(output, StringOfChar(' ', indentLevel * 2), unitname:10, ': ', action:10, ': ', routine:10, ': ', message);
+      WriteLn(output, unitname, ': ':(15 - Length(unitname)), action, ': ':(8 - Length(action)), StringOfChar(' ', indentLevel * 2), routine, ': ', message);
     except
     end;
   end;
@@ -81,10 +83,16 @@ implementation
     indentLevel := indentLevel + 1;
   end;
 
-  procedure TraceExit(unitName, routine: String);
+  procedure TraceExit(unitName, routine: String); overload;
+  begin
+    TraceExit(unitName, routine, '');
+  end;
+  
+  procedure TraceExit(unitName, routine, message: String); overload;
   begin
     indentLevel := indentLevel - 1;
-    Trace(unitName, 'Exit', routine, '');
+    Trace(unitName, 'Exit', routine, message);
+    if indentLevel = 0 then WriteLn(output, StringOfChar('-', 50));
   end;
 
   //=============================================================================

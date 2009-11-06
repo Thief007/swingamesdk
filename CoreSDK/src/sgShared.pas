@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-06: Andrew : Added resource management type code
 // - 2009-10-16: Andrew : Added the free notifier, so it can be called from many places
 // - 2009-07-29: Andrew : Added flag for opened audio.
 // - 2009-07-27: Andrew : Added code to cycle auto release pool for Objective C
@@ -20,13 +21,35 @@
 //                        the library
 //=============================================================================
 
-unit sgShared;
+{$I sgTrace.inc}
 
+unit sgShared;
+  
 //=============================================================================
 interface
+  uses 
+    SDL, SDL_Image,     //SDL
+    stringhash,         // libsrc
+    sgEventProcessing, sgCore, sgTypes;
 //=============================================================================
-
-  uses SDL, SDL_Image, sgEventProcessing, sgCore, sgTypes;
+  
+  type
+    // The resource contain is an object to hold the resource for the 
+    // hash table
+    TResourceContainer = class(tObject)
+    private
+      resource_val : Pointer;
+    public
+      constructor Create(data: Pointer);
+      
+      property Resource: Pointer read resource_val;
+    end;
+    
+    // Used by release all
+    ReleaseFunction = procedure(name: String);
+    
+  // Calls Release on all of the resources in the tbl hash table.
+  procedure ReleaseAll(tbl: TStringHash; releaser: ReleaseFunction);
 
   // Takes a 4-byte (32bit) unsigned integer representing colour in the
   // current SDL pixel format and returns a nice `TSDL_Color` record with
@@ -140,16 +163,26 @@ implementation
     function objc_msgSend(self, cmd: Pointer): Pointer; cdecl; external 'libobjc.dylib'; {$EXTERNALSYM objc_msgSend}
   {$endif}
   
+  constructor TResourceContainer.create(data: Pointer);
+  begin
+    inherited create;
+    resource_val := data;
+  end;
+  
   procedure InitialiseSwinGame();
   begin
     if is_initialised then exit;
     is_initialised := True;
     
+    {$IFDEF TRACE}
+      TraceEnter('sgShared', 'InitialiseSwinGame', '');
+    {$ENDIF}
+    
     Randomize();
     
     {$ifdef DARWIN}
       {$IFDEF Trace}
-        TraceIf(tlInfo, 'sgCore', 'Info', 'initialization', 'Loading Mac version');
+        TraceIf(tlInfo, 'sgShared', 'Info', 'initialization', 'Loading Mac version');
       {$ENDIF}
 
       //FIX: Error with Mac and FPC 2.2.2
@@ -164,7 +197,7 @@ implementation
     if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
     begin
       {$IFDEF Trace}
-      TraceIf(tlError, 'sgCore', 'Error Loading SDL', 'initialization', SDL_GetError());
+      TraceIf(tlError, 'sgShared', 'Error Loading SDL', 'initialization', SDL_GetError());
       {$ENDIF}
       RaiseException('Error loading sdl... ' + SDL_GetError());
       exit;
@@ -175,6 +208,10 @@ implementation
     
     screen := nil;
     baseSurface := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgShared', 'InitialiseSwinGame');
+    {$ENDIF}
   end;
   
   {$ifdef DARWIN}
@@ -336,6 +373,35 @@ implementation
         HasException := True;
       end;
     end;
+  end;
+  
+  //----------------------------------------------------------------------------
+  
+  procedure ReleaseAll(tbl: TStringHash; releaser: ReleaseFunction);
+  var
+    iter: TStrHashIterator;
+    names: array of String;
+    i: Integer;
+  begin
+    if tbl.count = 0 then exit;
+    
+    SetLength(names, tbl.count);
+    iter := tbl.getIterator();
+    i := 0;
+    
+    while i < Length(names) do
+    begin
+      names[i] := iter.key;
+      i := i + 1;
+      iter.next;
+    end;
+
+    for i := Low(names) to High(names) do
+    begin
+      releaser(names[i]);
+    end;
+
+    tbl.deleteAll();
   end;
 
 

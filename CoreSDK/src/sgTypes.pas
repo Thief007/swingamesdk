@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-11-06: Andrew : Changed to Sound and Music Data records
 // - 2009-10-16: Andrew : Changed to consistent array names TypeArray eg. Point2DArray
 //                      : Added shapes and shape prototypes
 // - 2009-07-13: Clinton: Renamed Event to MapEvent to MapTag
@@ -104,7 +105,14 @@ interface
     /// @type LineSegmentPtr
     /// @pointer_wrapper
     LineSegmentPtr = ^LineSegment;
-
+    
+    /// @struct SoundEffectData
+    /// @via_pointer
+    SoundEffectData = record
+      effect: PMix_Chunk;
+      filename, name: String;
+    end;
+    
     /// The `SoundEffect` type is used to refer to sound effects that can be
     /// played by the SwinGame audio code. Sound effects are loaded with
     /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
@@ -125,8 +133,17 @@ interface
     /// @class SoundEffect
     /// @pointer_wrapper
     /// @field pointer: pointer
-    SoundEffect = PMix_Chunk;
-
+    SoundEffect = ^SoundEffectData;
+    
+    
+    /// @struct SoundEffectData
+    /// @via_pointer
+    MusicData = record
+      music: PMix_Music;
+      filename, name: String;
+    end;
+    
+    
     /// The SoundEffect type is used to refer to sound effects that can be
     /// played by the SwinGame audio code. Sound effects are loaded with
     /// `LoadSoundEffect`, played using `PlaySoundEffect`, and must be
@@ -147,7 +164,7 @@ interface
     /// @class Music
     /// @pointer_wrapper
     /// @field pointer: pointer
-    Music = PMix_Music;
+    Music = ^MusicData;
 
     /// In SwinGame, Matrices can be used to combine together a number of
     /// operations that need to be performed on Vectors.

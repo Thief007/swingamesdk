@@ -554,7 +554,7 @@ implementation
 
   uses
     Classes, SysUtils, Math, // System
-    sgGraphics, sgGeometry, sgCore, sgCamera, sgShared, sgResources; //SwinGame
+    sgGraphics, sgGeometry, sgCore, sgCamera, sgShared, sgResources, sgImages; //SwinGame
 
 
   function VectorFromTo(s1, s2: Sprite): Vector;
@@ -751,6 +751,9 @@ implementation
     result := CreateSprite(bitmaps, tempIntegers);
   end;
 
+  //
+  // Update the buffered image for rotation and scaling of a bitmap based sprite.
+  //
   procedure UpdateSpriteBuffers(s: Sprite);
   var
     dest: Bitmap; //temporary surface
