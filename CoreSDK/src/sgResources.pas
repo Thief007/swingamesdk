@@ -1310,10 +1310,20 @@ implementation
   begin
     if Assigned(fontToFree) then
     begin
+      {$IFDEF TRACE}
+        Trace('Resources', 'IN', 'FreeFont', 'After calling free notifier');
+      {$ENDIF}
       try
+        {$IFDEF TRACE}
+            Trace('Resources', 'IN', 'FreeFont', 'Before calling close font');
+        {$ENDIF}
+
         TTF_CloseFont(fontToFree);
         CallFreeNotifier(fontToFree);
         fontToFree := nil;
+        {$IFDEF TRACE}
+            Trace('Resources', 'IN', 'FreeFont', 'At end of free font');
+        {$ENDIF}
       except
         RaiseException('Unable to free the specified font');
         exit;

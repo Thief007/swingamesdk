@@ -22,14 +22,17 @@ find ${DIST_DIR} -mindepth 1 -maxdepth 1 -type d ! -path \*.svn\* -exec rm -rf {
 rm -f ${C_LIB_CODE_DIR}/*.c
 rm -f ${C_LIB_CODE_DIR}/*.h
 svn up ${C_LIB_CODE_DIR}
+if [ $? != 0 ]; then exit 1; fi
 
 rm -f ${CS_LIB_CODE_DIR}/*.cs
 svn up ${CS_LIB_CODE_DIR}
+if [ $? != 0 ]; then exit 1; fi
 
 rm -f ${OBJC_LIB_CODE_DIR}/*.c
 rm -f ${OBJC_LIB_CODE_DIR}/*.m
 rm -f ${OBJC_LIB_CODE_DIR}/*.h
 svn up ${OBJC_LIB_CODE_DIR}
+if [ $? != 0 ]; then exit 1; fi
 
 echo "  Finished"
 echo "--------------------------------------------------"
