@@ -42,6 +42,7 @@ class SGPasParser():
             'note': self.process_note_attribute,
             'uname': self.process_id_attribute,
             'sn': self.process_line_attribute,
+            'csn': self.process_line_attribute,
             'field': self.process_field_attribute,
             'constructor': self.process_true_attribute, # method_attribute,
             'dispose': self.process_true_attribute,

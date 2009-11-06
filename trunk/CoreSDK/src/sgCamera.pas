@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-06: Andrew : Added comments
 // - 2009-10-21: Andrew : Fixed camera center on sprite
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct types
 // - 2009-06-17: Clinton: Added CameraPos, reordered methods,
@@ -29,30 +30,88 @@
 // - Various
 //=============================================================================
 
+/// SwinGame's Camera functionality can be used to create scrolling games where
+/// the camera moves around a virtual game world. Using the camera allows you to
+/// position and draw game elements using game world coordinates, and then to
+/// move the camera around within this game world.
+///
 ///@module Camera
+///@static
 unit sgCamera;
 
 //=============================================================================
 interface
-//=============================================================================
-
   uses sgTypes;
-
+//=============================================================================
+  
+  
   //---------------------------------------------------------------------------
   // Camera - position
   //---------------------------------------------------------------------------
-
-  /// @returns the current camera x axis (offset) value
-  /// @lib
-  function CameraX(): LongInt;
-
-  /// @returns the current camera y axis (offset) value
-  /// @lib
-  function CameraY(): LongInt;
   
-  /// @returns the current camera position as a point 
+  /// Returns the x location of the camera in game coordinates. This represents
+  /// the left most x value shown on the screen, with the right of the screen
+  /// being at `CameraX` + `ScreenWidth`.
+  ///
   /// @lib
+  ///
+  /// @class Camera
+  /// @getter X
+  /// @static
+  function CameraX(): Single;
+
+  /// Returns the y location of the camera in game coordinates. This represents
+  /// the stop most y value shown on the screen, with bottom of screen being
+  /// at `CameraY` + `ScreenHeight`.
+  /// 
+  /// @lib
+  /// 
+  /// @class Camera
+  /// @getter Y
+  /// @static
+  function CameraY(): Single;
+  
+  /// Returns the current camera position in world coordinates. This is the top
+  /// left hand corner of the screen.
+  ///
+  /// @lib
+  /// 
+  /// @class Camera
+  /// @getter Position
+  /// @static
   function CameraPos(): Point2D;
+  
+  /// Change the X position of the camera to a specified world coordinate. This
+  /// will then be the new left most position of the screen within the world.
+  ///
+  /// @lib
+  ///
+  /// @class Camera
+  /// @setter X
+  /// @static
+  procedure SetCameraX(x: Single);
+  
+  /// Change the Y position of the camera to a specified world coordinate. This
+  /// will then be the new top most position of the screen within the world.
+  ///
+  /// @lib
+  ///
+  /// @class Camera
+  /// @setter Y
+  /// @static
+  procedure SetCameraY(y: Single);
+  
+  /// Change the position of the camera to a specified world coordinate. This
+  /// will then be the new top left most position of the screen within the world.
+  ///
+  /// @lib
+  ///
+  /// @class Camera
+  /// @setter Position
+  /// @static
+  procedure SetCameraPos(const pt: Point2D);
+  
+  
   
   //---------------------------------------------------------------------------
   // Camera - movement
@@ -75,6 +134,7 @@ interface
   procedure MoveCameraBy(dx, dy: Single); overload;
   
   /// Move the camera view to a world location specified by the x and y values.
+  /// This will be the new top left corner of the screen.
   ///
   /// @param x The world x axis value to move the camera to.
   /// @param y The world y axis value to move the camera to
@@ -82,10 +142,13 @@ interface
   procedure MoveCameraTo(x, y: Single); overload;
 
   /// Move the camera view to a world location specified as a Point2D.
+  /// This will be the new top left corner of the screen.
   ///
   /// @param pt The point to move the camera view to.
   /// @lib
   procedure MoveCameraTo(const pt: Point2D); overload;
+  
+  
   
   //---------------------------------------------------------------------------
   // Camera - sprite tracking
@@ -100,11 +163,28 @@ interface
   /// @param offsetX The amount of x axis offset for the camaera to use 
   /// @param offsetY The amount of y axis offset for the camaera to use 
   /// @lib CenterCameraOnWithXYOffset
+  ///
+  /// @sn centerCameraOn: %s offsetX:%s y:%s
+  ///
+  /// @class Sprite
+  /// @overload CenterCamera CenterCameraOffsetXY
+  /// @csn centerCameraOffsetX:%s y:%s
   procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt); overload;
-
+  
+  /// Set the camera view to be centered over the specific sprite. The offset
+  /// vector allows you to move the sprite from the direct center of the screen.
+  ///
   /// @param offset The amount of offset from sprite center for the camera to use.  
   /// @lib
+  ///
+  /// @sn centerCameraOn:%s Offset:%s
+  ///  
+  /// @class Sprite
+  /// @method CenterCamera
+  /// @csn centerCameraOffset:%s
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
+  
+  
   
   //---------------------------------------------------------------------------
   // World-To-Screen Translation
@@ -175,14 +255,14 @@ implementation
   // Camera - position
   //---------------------------------------------------------------------------
   
-  function CameraX(): LongInt;
+  function CameraX(): Single;
   begin
-    result := Round(_cameraX);
+    result := _cameraX;
   end;
   
-  function CameraY(): LongInt;
+  function CameraY(): Single;
   begin
-    result := Round(_cameraY);
+    result := _cameraY;
   end;
   
   function CameraPos(): Point2D;
@@ -190,6 +270,24 @@ implementation
     result.x := _cameraX;
     result.y := _cameraY;
   end;
+  
+  procedure SetCameraX(x: Single);
+  begin
+    _cameraX := x;
+  end;
+  
+  procedure SetCameraY(y: Single);
+  begin
+    _cameraY := y;
+  end;
+  
+  procedure SetCameraPos(const pt: Point2D);
+  begin
+    _cameraX := pt.x;
+    _cameraY := pt.y;
+  end;
+  
+  
   
   //---------------------------------------------------------------------------
   // Camera - movement

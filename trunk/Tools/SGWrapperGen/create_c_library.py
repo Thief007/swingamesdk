@@ -261,6 +261,8 @@ _adapter_type_switcher = {
         'spritekind':       'sprite_kind %s',
         
         'psdl_surface':     'void *%s',
+        'pmix_chunk':       'void *%s',
+        'pmix_music':       'void *%s',
         
         'boolean[0..n - 1][0..n - 1]':  'bool *%s',
         'boolean[0..n - 1]':            'bool *%s',

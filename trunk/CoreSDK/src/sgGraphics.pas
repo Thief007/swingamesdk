@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-11-06: Andrew : Moved out bitmap function
 // - 2009-10-16: Andrew : Added shapes and shape prototypes
 // - 2009-07-14: Andrew : Removed loading and freeing code.
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct parameters
@@ -697,47 +698,15 @@ interface
   procedure ResetClip(); overload;
   /// @lib ResetClipForBitmap
   procedure ResetClip(bmp: Bitmap); overload;
-
+  
   /// @lib
   /// @class Bitmap
   /// @method GetPixel
   function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
+  
   /// @lib
   function GetPixelFromScreen(x, y: LongInt): Color;
-
-  /// @lib
-  function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
-
-
-
-  //---------------------------------------------------------------------------
-  // Alpha blendings adjusting code
-  //---------------------------------------------------------------------------
-
-  /// @lib
-  /// @class Bitmap
-  /// @method MakeOpaque
-  procedure MakeOpaque(bmp: Bitmap);
-  /// @lib
-  /// @class Bitmap
-  /// @method MakeTransparent
-  procedure MakeTransparent(bmp: Bitmap);
-
-  //---------------------------------------------------------------------------
-  // Rotate and Zoom
-  //---------------------------------------------------------------------------
-
-  /// @lib
-  /// @class Bitmap
-  /// @method RotateScaleBitmap
-  function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
-
-  /// @lib
-  /// @class Bitmap
-  /// @method SetupForCollisions
-  procedure SetupBitmapForCollisions(src: Bitmap);
-
-
+  
 
 //=============================================================================
 implementation
@@ -894,16 +863,6 @@ implementation
   procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
   begin
     DrawBitmap(screen, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
-  end;
-  
-  procedure MakeOpaque(bmp: Bitmap);
-  begin
-    SDL_SetAlpha(bmp^.surface, 0, 255);
-  end;
-
-  procedure MakeTransparent(bmp: Bitmap);
-  begin
-    SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, 0);
   end;
   
   procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
@@ -1635,30 +1594,6 @@ implementation
   procedure SetClip(const r: Rectangle); overload;
   begin
     SetClip(screen, Round(r.x), Round(r.y), r.width, r.height);
-  end;
-  
-  function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
-  begin
-    result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
-              and ((x >= 0) and (x < bmp^.width))
-              and ((y >= 0) and (y < bmp^.height))
-              and bmp^.nonTransparentPixels[x, y];
-  end;
-  
-  function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
-  begin
-    New(result);
-    result^.surface := rotozoomSurface(src^.surface, degRot, scale, 1);
-    result^.width := result^.surface^.w;
-    result^.height := result^.surface^.h;
-  end;
-  
-  procedure SetupBitmapForCollisions(src: Bitmap);
-  begin
-    if Length(src^.nonTransparentPixels) <> 0 then exit;
-      
-    SetNonAlphaPixels(src, src^.surface);
-    OptimiseBitmap(src);
   end;
   
   //=============================================================================

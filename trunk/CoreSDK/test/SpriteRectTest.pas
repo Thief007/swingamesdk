@@ -26,7 +26,7 @@ begin
     ClearScreen();
     ProcessEvents();
     
-    //DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
+    //DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
     if SpriteRectCollision(s, x, y, 640 - Round(x) - 10, 10) then
       FillRectangle(ColorRed, x, y, 640 - Round(x) - 10, 10)
     else

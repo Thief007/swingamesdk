@@ -56,6 +56,9 @@ class SGParameter(SGMetaDataContainer):
             self.data_type, 
             self.name)
     
+    def __repr__(self):
+        return self.name
+    
     def arg_name(self):
         return '%s%s' % (
             self.name,

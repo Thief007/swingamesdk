@@ -71,17 +71,22 @@ class SGMethod(SGMetaDataContainer):
         result['uname'] = self.uname
         result['uname_lower'] = wrapper_helper.lower_name(self.uname)
         result['camel_uname'] = self.uname.lower()[0] + self.uname[1:]
+        
         if self.sn != None:
             real_params = list()
+            
             for p in self.params:
                 if not p.is_length_param:
                     real_params.append(p)
             
+            print self.name, real_params, self.sn
+            
             if special_visitor != None:
-                # print self.name
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
             else:
                 temp = self.sn % tuple([param.name for param in real_params])
+            
+            print temp
             
             result['sn'] = temp
             result['sn.sel'] = (self.sn % tuple(['' for param in real_params])).replace(' ', '')
@@ -91,7 +96,7 @@ class SGMethod(SGMetaDataContainer):
             else:
                 temp = ':'.join([param.name for param in self.params])
             
-            result['sn.sel'] = self.uname            
+            result['sn.sel'] = self.uname
             if len(self.params) > 0: 
                 temp = ':' + temp
                 for p in self.params:
@@ -105,6 +110,7 @@ class SGMethod(SGMetaDataContainer):
         result['returns'] = '' if self.return_type == None else 'return '
         result['params'] = self.param_string(param_visitor)
         result['args'] = self.args_string_for_self(arg_visitor)
+        
         if self.method_called != None:
             result['calls.file.pascal_name'] = self.method_called.in_class.in_file.pascal_name
             result['calls.file.name'] = self.method_called.in_class.in_file.name
@@ -112,6 +118,7 @@ class SGMethod(SGMetaDataContainer):
             result['calls.class'] = self.method_called.in_class.name
             result['calls.name'] = self.method_called.name
             result['calls.args'] = self.args_string_for_called_method(arg_visitor)
+        
         result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
         result['field.name'] = self.field_name
         result['field.name_lower'] = wrapper_helper.lower_name(self.field_name)
@@ -280,6 +287,7 @@ class SGMethod(SGMetaDataContainer):
                 self.params[idx - 1].being_updated = True
         elif title == "class":
             #the class indicates that the @method is for this other class...
+            print other, self
             from sg_code_module import SGCodeModule
             from sg_library import SGLibrary
             if other == None: 
@@ -310,6 +318,9 @@ class SGMethod(SGMetaDataContainer):
             const.is_destructor = True
             self.mimic_destructor = True
             super(SGMethod,self).set_tag('class_method', const)
+        elif title == 'csn':
+            print "Check this...", self.other_class, self.other_method, self
+            class_method.set_tag('sn', other)
         else:
             super(SGMethod,self).set_tag(title, other)
     
