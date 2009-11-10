@@ -23,12 +23,14 @@ all_units = [
     ('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
     ('sgGeometry', 'Geometry', '../../CoreSDK/src/sgGeometry.pas'),
     ('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
+    ('sgImages', 'Images', '../../CoreSDK/src/sgImages.pas'),
     ('sgInput', 'Input', '../../CoreSDK/src/sgInput.pas'),
     ('sgPhysics', 'Physics', '../../CoreSDK/src/sgPhysics.pas'),
     ('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
     ('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
     ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
     ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
+    ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
 ]
 
 

@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-11-10: Andrew : Added tracing and sn and csn tags to code
 // - 2009-10-16: Andrew : Added shapes and prototypes. Ensure they are freed
 // - 2009-07-29: Andrew : Renamed cos, sin, tan to avoid conflict in c
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct types
@@ -54,22 +55,23 @@ interface
 
   uses sgTypes;
 
-  /// @lib CenterPoint
-  function CenterPoint(s: Sprite): Point2D; overload;
-
 
   //---------------------------------------------------------------------------
   // Circle creation code
   //---------------------------------------------------------------------------
-
+  
+  /// Creates a Circle at the point pt with the given radius.
+  ///
   /// @lib
-  function CircleFrom(const pt: Point2D; radius: LongInt): Circle; overload;
-
+  /// @sn circleAt:%s radius:%s
+  function CircleAt(const pt: Point2D; radius: LongInt): Circle; overload;
+  
+  
   /// @lib CircleFromXY
-  function CircleFrom(x, y: Single; radius: LongInt): Circle; overload;
+  function CircleAt(x, y: Single; radius: LongInt): Circle; overload;
 
   /// @lib CircleFromSprite
-  function CircleFrom(s: Sprite): Circle; overload;
+  function CircleAt(s: Sprite): Circle; overload;
 
 
   //---------------------------------------------------------------------------
@@ -162,7 +164,7 @@ interface
   /// @lib PointAt
   /// @class Point2D
   /// @constructor
-  /// @sn initAtX:%s y:%s
+  /// @csn initAtX:%s y:%s
   function PointAt(x, y: Single): Point2D; overload;
   
   /// Create a Point2D that points at the point from the startPoint at the end of the offset vector.
@@ -170,7 +172,7 @@ interface
   /// @lib PointAtStartWithOffset
   /// @class Point2D
   /// @constructor
-  /// @sn initAtPointFrom:%s withOffset:%s
+  /// @csn initAtPointFrom:%s withOffset:%s
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
   
   /// @lib
@@ -240,7 +242,7 @@ interface
   /// @lib
   /// @class ShapePrototype
   /// @constructor
-  /// @sn initPointPrototypeAt:%s
+  /// @csn initPointPrototypeAt:%s
   function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
   
   /// Create a shape prototype of a circle with a given radius `r`.
@@ -248,7 +250,7 @@ interface
   /// @lib
   /// @class ShapePrototype
   /// @constructor
-  /// @sn initCirclePrototypeAt:%s withRadius:%s
+  /// @csn initCirclePrototypeAt:%s withRadius:%s
   function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
   
   // /// Create a shape prototype of an ellipse with a given width and height.
@@ -256,7 +258,7 @@ interface
   // /// @lib
   // /// @class ShapePrototype
   // /// @constructor
-  // /// @sn initEllipsePrototypeAt:%s width:%s height:%s
+  // /// @csn initEllipsePrototypeAt:%s width:%s height:%s
   // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
   
   /// Create a shape prototype for a line from `startPt` to `endPt`.
@@ -264,7 +266,7 @@ interface
   /// @lib
   /// @class ShapePrototype
   /// @constructor
-  /// @sn initLinePrototypeFrom:%s to:%s
+  /// @csn initLinePrototypeFrom:%s to:%s
   function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
   
   /// Create a shape prototype for a triangle made of points `pt1`, `pt2`, and `pt3`.
@@ -272,7 +274,7 @@ interface
   /// @lib
   /// @class ShapePrototype
   /// @constructor
-  /// @sn initTrianglePrototype:%s point2:%s point3:%s
+  /// @csn initTrianglePrototype:%s point2:%s point3:%s
   function TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype;
   
   /// Create a LineList prototype from the passed in points. There must be an
@@ -320,7 +322,7 @@ interface
   /// @lib
   /// @class ShapePrototype
   /// @constructor
-  /// @sn initShapePropertyFrom:%s withKind:%s
+  /// @csn initShapePropertyFrom:%s withKind:%s
   function PrototypeFrom(const points: Point2DArray; kind:ShapeKind): ShapePrototype;
   
   /// Free the resources used by a ShapePrototype.
@@ -390,7 +392,7 @@ interface
   /// @lib
   /// @class Shape
   /// @constructor
-  /// @sn initShapeWithPrototype:%s atPoint:%s
+  /// @csn initShapeWithPrototype:%s atPoint:%s
   function ShapeAtPoint(p: ShapePrototype; const pt: Point2D): Shape;
   
   /// Free the resources used by a Shape.
@@ -945,6 +947,10 @@ implementation
     i, j: LongInt;
     dist, maxDist: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', '_VectorOverLinesFromPoints(const pts: Point2DArray', '');
+    {$ENDIF}
+    
     // Cast ray searching for points back from shape
     ray := InvertVector(velocity);
     vOut := VectorFrom(0,0);
@@ -983,6 +989,10 @@ implementation
     
     result.x := Ceiling(vOut.x);
     result.y := Ceiling(vOut.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', '_VectorOverLinesFromPoints(const pts: Point2DArray', '');
+    {$ENDIF}
   end;
   
   //
@@ -992,9 +1002,17 @@ implementation
   var
     pts: Point2DArray;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', '_VectorOverLinesFromPoint(const pt: Point2D', '');
+    {$ENDIF}
+    
     SetLength(pts, 1);
     pts[0] := pt;
     result := _VectorOverLinesFromPoints(pts, lines, velocity, maxIdx);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', '_VectorOverLinesFromPoint(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   //
@@ -1011,6 +1029,10 @@ implementation
     i, j, hits: LongInt;
     dotProd, dist, maxDist: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', '_VectorOverLinesFromCircle(const c: Circle', '');
+    {$ENDIF}
+    
     // Cast ray searching for points back from shape
     ray := InvertVector(velocity);
     normalMvmt := VectorNormal(velocity);
@@ -1094,6 +1116,10 @@ implementation
     
     result.x := Ceiling(vOut.x);
     result.y := Ceiling(vOut.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', '_VectorOverLinesFromCircle(const c: Circle', '');
+    {$ENDIF}
   end;
   
   
@@ -1106,39 +1132,71 @@ implementation
   function VectorFrom(x, y: Single; invertY: boolean): Vector; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'VectorFrom');
+      TraceEnter('sgGeometry', 'VectorFrom(x, y: Single', '');
     {$ENDIF}
-
+    
     if invertY then y := y * -1;
 
     result.x := x;
     result.y := y;
     //result.w := 1;
-  
+    
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'VectorFrom');
+      TraceExit('sgGeometry', 'VectorFrom(x, y: Single', '');
     {$ENDIF}
   end;
 
   function VectorFrom(x, y: Single): Vector; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorFrom(x, y: Single): Vector', '');
+    {$ENDIF}
+    
     result := VectorFrom(x, y, false);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorFrom(x, y: Single): Vector', '');
+    {$ENDIF}
   end;
 
   function VectorToPoint(const p1: Point2D): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorToPoint(const p1: Point2D): Vector', '');
+    {$ENDIF}
+    
     result := VectorFrom(p1.x, p1.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorToPoint(const p1: Point2D): Vector', '');
+    {$ENDIF}
   end;
 
   function VectorFromPoints(const p1, p2: Point2D): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorFromPoints(const p1, p2: Point2D): Vector', '');
+    {$ENDIF}
+    
     result := VectorFrom(p2.x - p1.x, p2.y - p1.y, false);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorFromPoints(const p1, p2: Point2D): Vector', '');
+    {$ENDIF}
   end;
 
   function AddVectors(const v1, v2: Vector): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'AddVectors(const v1, v2: Vector): Vector', '');
+    {$ENDIF}
+    
     result.x := v1.x + v2.x;
     result.y := v1.y + v2.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'AddVectors(const v1, v2: Vector): Vector', '');
+    {$ENDIF}
   end;
 
   {$ifdef FPC}
@@ -1150,8 +1208,16 @@ implementation
 
   function SubtractVectors(const v1, v2: Vector): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'SubtractVectors(const v1, v2: Vector): Vector', '');
+    {$ENDIF}
+    
     result.x := v1.x - v2.x;
     result.y := v1.y - v2.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'SubtractVectors(const v1, v2: Vector): Vector', '');
+    {$ENDIF}
   end;
 
   {$ifdef FPC}
@@ -1163,8 +1229,16 @@ implementation
 
   function VectorMultiply(const v: Vector; s: Single): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorMultiply(const v: Vector', '');
+    {$ENDIF}
+    
     result.x := v.x * s;
     result.y := v.y * s;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorMultiply(const v: Vector', '');
+    {$ENDIF}
   end;
 
   {$ifdef FPC}
@@ -1176,8 +1250,16 @@ implementation
 
   function InvertVector(const v: Vector): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'InvertVector(const v: Vector): Vector', '');
+    {$ENDIF}
+    
     result.x := v.x * -1;
     result.y := v.y * -1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'InvertVector(const v: Vector): Vector', '');
+    {$ENDIF}
   end;
 
   function LimitVector(const v: Vector; limit: Single): Vector;
@@ -1185,6 +1267,10 @@ implementation
     mag: Single;
     tmp: Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LimitVector(const v: Vector', '');
+    {$ENDIF}
+    
     mag := VectorMagnitude(v);
     if mag > limit then
     begin
@@ -1194,12 +1280,20 @@ implementation
     end
     else
       result := v;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LimitVector(const v: Vector', '');
+    {$ENDIF}
   end;
 
   function UnitVector(const v: Vector): Vector;
   var
     mag, tmp: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'UnitVector(const v: Vector): Vector', '');
+    {$ENDIF}
+    
     mag := VectorMagnitude(v);
   
     if mag = 0 then
@@ -1209,51 +1303,119 @@ implementation
   
     result.x := tmp * v.x;
     result.y := tmp * v.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'UnitVector(const v: Vector): Vector', '');
+    {$ENDIF}
   end;
 
   function VectorIsZero(const v: Vector): Boolean;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorIsZero(const v: Vector): Boolean', '');
+    {$ENDIF}
+    
     result := (v.x = 0) and (v.y = 0);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorIsZero(const v: Vector): Boolean', '');
+    {$ENDIF}
   end;
 
   function VectorMagnitude(const v: Vector): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorMagnitude(const v: Vector): Single', '');
+    {$ENDIF}
+    
     result := Sqrt(VectorMagnitudeSq(v));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorMagnitude(const v: Vector): Single', '');
+    {$ENDIF}
   end;
 
   function VectorMagnitudeSq(const v: Vector): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorMagnitudeSq(const v: Vector): Single', '');
+    {$ENDIF}
+    
     result := (v.x * v.x) + (v.y * v.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorMagnitudeSq(const v: Vector): Single', '');
+    {$ENDIF}
   end;
   
   function DotProduct(const v1, v2: Vector): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'DotProduct(const v1, v2: Vector): Single', '');
+    {$ENDIF}
+    
     result := (v1.x * v2.x) + (v1.y * v2.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'DotProduct(const v1, v2: Vector): Single', '');
+    {$ENDIF}
   end;
   
   function VectorFromAngle(angle, magnitude: Single): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorFromAngle(angle, magnitude: Single): Vector', '');
+    {$ENDIF}
+    
     result := VectorFrom(magnitude * sgGeometry.Cosine(angle), magnitude * sgGeometry.Sine(angle));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorFromAngle(angle, magnitude: Single): Vector', '');
+    {$ENDIF}
   end;
   
   function LineAsVector(const line: LineSegment): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineAsVector(const line: LineSegment): Vector', '');
+    {$ENDIF}
+    
     result.x := line.endPoint.x - line.startPoint.x;
     result.y := line.endPoint.y - line.startPoint.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineAsVector(const line: LineSegment): Vector', '');
+    {$ENDIF}
   end;
   
   function VectorNormal(const v: Vector): Vector;
   var   
     tmp: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorNormal(const v: Vector): Vector', '');
+    {$ENDIF}
+    
     tmp := Sqrt( (v.x * v.x) + (v.y * v.y) );
     result.x := -v.y / tmp;
     result.y :=  v.x / tmp;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorNormal(const v: Vector): Vector', '');
+    {$ENDIF}
   end;
   
   function LineNormal(const line: LineSegment): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineNormal(const line: LineSegment): Vector', '');
+    {$ENDIF}
+    
     result := VectorNormal(LineAsVector(line));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineNormal(const line: LineSegment): Vector', '');
+    {$ENDIF}
   end;
   
   
@@ -1265,13 +1427,25 @@ implementation
   
   function VectorAngle(const v: Vector): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorAngle(const v: Vector): Single', '');
+    {$ENDIF}
+    
     result := RadToDeg(arctan(v.y / v.x));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorAngle(const v: Vector): Single', '');
+    {$ENDIF}
   end;
   
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
   var
     o, a, oa, rads: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CalculateAngle(x1, y1, x2, y2: Single): Single', '');
+    {$ENDIF}
+    
     if (x1 = x2) and (y2 < y1) then result := -90
     else if (x1 = x2) and (y2 >= y1) then result := 90
     else if (y1 = y2) and (x2 < x1) then result := 180
@@ -1290,24 +1464,40 @@ implementation
         else result := result + 180;
       end;
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CalculateAngle(x1, y1, x2, y2: Single): Single', '');
+    {$ENDIF}
   end;
 
   function CalculateAngle(s1, s2: Sprite): Single; overload;
   var
     cx1, cy1, cx2, cy2: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CalculateAngle(s1, s2: Sprite): Single', '');
+    {$ENDIF}
+    
     cx1 := s1^.position.x + SpriteWidth(s1) / 2;
     cy1 := s1^.position.y + SpriteHeight(s1) / 2;
     cx2 := s2^.position.x + SpriteWidth(s2) / 2;
     cy2 := s2^.position.y + SpriteHeight(s2) / 2;
 
     result := CalculateAngle(cx1, cy1, cx2, cy2);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CalculateAngle(s1, s2: Sprite): Single', '');
+    {$ENDIF}
   end;
 
   function CalculateAngle(const v1, v2: Vector): Single; overload;
   var
     t1, t2: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CalculateAngle(const v1, v2: Vector): Single', '');
+    {$ENDIF}
+    
     t1 := CalculateAngle(0, 0, v1.x, v1.y);
     t2 := CalculateAngle(0, 0, v2.x, v2.y);
   
@@ -1315,11 +1505,23 @@ implementation
   
     if result > 180 then result := result - 360
     else if result <= -180 then result := result + 360
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CalculateAngle(const v1, v2: Vector): Single', '');
+    {$ENDIF}
   end;
   
   function CalculateAngleBetween(const pt1, pt2: Point2D): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CalculateAngleBetween(const pt1, pt2: Point2D): Single', '');
+    {$ENDIF}
+    
      result := CalculateAngle(pt1.x, pt1.y, pt2.x, pt2.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CalculateAngleBetween(const pt1, pt2: Point2D): Single', '');
+    {$ENDIF}
   end;
 
 
@@ -1334,21 +1536,45 @@ implementation
   //
   function LineMagnitudeSq(const line: LineSegment): Single; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineMagnitudeSq(const line: LineSegment): Single', '');
+    {$ENDIF}
+    
     result := (line.endPoint.x - line.startPoint.x) * (line.endPoint.x - line.startPoint.x) +
               (line.endPoint.y - line.startPoint.y) * (line.endPoint.y - line.startPoint.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineMagnitudeSq(const line: LineSegment): Single', '');
+    {$ENDIF}
   end;
 
   function LineMagnitudeSq(x1, y1, x2, y2: single): single; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineMagnitudeSq(x1, y1, x2, y2: single): single', '');
+    {$ENDIF}
+    
    result := (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineMagnitudeSq(x1, y1, x2, y2: single): single', '');
+    {$ENDIF}
   end;
 
   function PointPointDistance(const pt1, pt2: Point2D): Single;
   var
     temp: Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointPointDistance(const pt1, pt2: Point2D): Single', '');
+    {$ENDIF}
+    
     temp := VectorFrom(pt2.x - pt1.x, pt2.y - pt1.y);
     result := VectorMagnitude(temp);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointPointDistance(const pt1, pt2: Point2D): Single', '');
+    {$ENDIF}
   end;
   
   //----------------------------------------------------------------------------
@@ -1359,6 +1585,10 @@ implementation
   var
     rads: Extended;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RotationMatrix(deg: Single): Matrix2D', '');
+    {$ENDIF}
+    
     rads := -deg * DEG_TO_RAD;
 
     result[0, 0] := System.Cos(rads);
@@ -1372,10 +1602,18 @@ implementation
     result[2, 0] := 0;
     result[2, 1] := 0;
     result[2, 2] := 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RotationMatrix(deg: Single): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function ScaleMatrix(const scale: Point2D): Matrix2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ScaleMatrix(const scale: Point2D): Matrix2D', '');
+    {$ENDIF}
+    
     result[0, 0] := scale.x;
     result[0, 1] := 0;
     result[0, 2] := 0;
@@ -1387,10 +1625,18 @@ implementation
     result[2, 0] := 0;
     result[2, 1] := 0;
     result[2, 2] := 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ScaleMatrix(const scale: Point2D): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function ScaleMatrix(scale: Single): Matrix2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ScaleMatrix(scale: Single): Matrix2D', '');
+    {$ENDIF}
+    
     result[0, 0] := scale;
     result[0, 1] := 0;
     result[0, 2] := 0;
@@ -1402,10 +1648,18 @@ implementation
     result[2, 0] := 0;
     result[2, 1] := 0;
     result[2, 2] := 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ScaleMatrix(scale: Single): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function IdentityMatrix(): Matrix2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'IdentityMatrix(): Matrix2D', '');
+    {$ENDIF}
+    
     result[0, 0] := 1;
     result[0, 1] := 0;
     result[0, 2] := 0;
@@ -1417,25 +1671,49 @@ implementation
     result[2, 0] := 0;
     result[2, 1] := 0;
     result[2, 2] := 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'IdentityMatrix(): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function TranslationMatrix(const pt: Point2D): Matrix2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TranslationMatrix(const pt: Point2D): Matrix2D', '');
+    {$ENDIF}
+    
     result := TranslationMatrix(pt.x, pt.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TranslationMatrix(const pt: Point2D): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function TranslationMatrix(dx, dy: Single): Matrix2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TranslationMatrix(dx, dy: Single): Matrix2D', '');
+    {$ENDIF}
+    
     result := IdentityMatrix();
 
     result[0, 2] := dx;
     result[1, 2] := dy;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TranslationMatrix(dx, dy: Single): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function ScaleRotateTranslateMatrix(const scale: Point2D; deg: Single; const translate: Point2D): Matrix2D;
   var
     rads: Extended;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ScaleRotateTranslateMatrix(const scale: Point2D', '');
+    {$ENDIF}
+    
     rads := -deg * DEG_TO_RAD;
     
     result[0, 0] := System.Cos(rads) * scale.x;
@@ -1449,10 +1727,18 @@ implementation
     result[2, 0] := 0;
     result[2, 1] := 0;
     result[2, 2] := 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ScaleRotateTranslateMatrix(const scale: Point2D', '');
+    {$ENDIF}
   end;
 
   function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'MatrixMultiply(const m1, m2: Matrix2D): Matrix2D', '');
+    {$ENDIF}
+    
       //unwound for performance optimisation
     result[0, 0] := m1[0, 0] * m2[0, 0] +
                     m1[0, 1] * m2[1, 0] +
@@ -1483,12 +1769,20 @@ implementation
     result[2, 2] := m1[2, 0] * m2[0, 2] +
                     m1[2, 1] * m2[1, 2] +
                     m1[2, 2] * m2[2, 2];
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'MatrixMultiply(const m1, m2: Matrix2D): Matrix2D', '');
+    {$ENDIF}
   end;
   
   function MatrixToString(const m: Matrix2D) : String;
   var
     i, j: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'MatrixToString(const m: Matrix2D) : String', '');
+    {$ENDIF}
+    
     result := '-------------------------------' + LineEnding;
     
     for i := 0 to 2 do
@@ -1501,29 +1795,57 @@ implementation
       result := result + '|' + LineEnding;
     end;
     result := result + '-------------------------------'
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'MatrixToString(const m: Matrix2D) : String', '');
+    {$ENDIF}
   end;  
   
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'MatrixMultiply(const m: Matrix2D', '');
+    {$ENDIF}
+    
     result.x := v.x * m[0,0]  +  v.y * m[0,1] + m[0,2]; 
     result.y := v.x * m[1,0]  +  v.y * m[1,1] + m[1,2]; 
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'MatrixMultiply(const m: Matrix2D', '');
+    {$ENDIF}
   end;
   
   procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
+    {$ENDIF}
+    
     tri[0] := MatrixMultiply(m, tri[0]);
     tri[1] := MatrixMultiply(m, tri[1]);
     tri[2] := MatrixMultiply(m, tri[2]);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
+    {$ENDIF}
   end;
   
   procedure ApplyMatrix(const m: Matrix2D; pts: Point2DArray);
   var
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
+    {$ENDIF}
+    
     for i := 0 to High(pts) do
     begin
       pts[i] := MatrixMultiply(m, pts[i]);
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
+    {$ENDIF}
   end;
 
   {$ifdef FPC}
@@ -1546,17 +1868,41 @@ implementation
   
   function Cosine(angle: Single): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'Cosine(angle: Single): Single', '');
+    {$ENDIF}
+    
     result := System.Cos(DegToRad(angle));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'Cosine(angle: Single): Single', '');
+    {$ENDIF}
   end;
   
   function Sine(angle: Single): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'Sine(angle: Single): Single', '');
+    {$ENDIF}
+    
     result := System.Sin(DegToRad(angle));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'Sine(angle: Single): Single', '');
+    {$ENDIF}
   end;
   
   function Tangent(angle: Single): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'Tangent(angle: Single): Single', '');
+    {$ENDIF}
+    
     result := Math.Tan(DegToRad(angle));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'Tangent(angle: Single): Single', '');
+    {$ENDIF}
   end;
   
   const
@@ -1567,7 +1913,15 @@ implementation
 
   function PointLineDistance(x, y: Single; const line: LineSegment): Single; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointLineDistance(x, y: Single', '');
+    {$ENDIF}
+    
     result := PointLineDistance(PointAt(x, y), line);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointLineDistance(x, y: Single', '');
+    {$ENDIF}
   end;
 
   function PointLineDistance(const pt: Point2D; const line: LineSegment): Single; overload;
@@ -1575,6 +1929,10 @@ implementation
     sqLineMag, u: Single;
     intersect: Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointLineDistance(const pt: Point2D', '');
+    {$ENDIF}
+    
     // see Paul Bourke's original article(s)
     // square of line's magnitude (see note in function LineMagnitude)
     sqLineMag := LineMagnitudeSq(line);
@@ -1606,22 +1964,46 @@ implementation
 
     // finally convert to actual distance not its square
     result := sqrt(result);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointLineDistance(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
   function ClosestPointOnCircle(const fromPt: Point2D; const c: Circle): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ClosestPointOnCircle(const fromPt: Point2D', '');
+    {$ENDIF}
+    
     result := AddVectors(VectorMultiply(UnitVector(VectorFromPoints(c.center, fromPt)), c.radius), c.center);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ClosestPointOnCircle(const fromPt: Point2D', '');
+    {$ENDIF}
   end;
   
   function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ClosestPointOnLine(x, y: Single', '');
+    {$ENDIF}
+    
     result := ClosestPointOnLine(PointAt(x, y), line);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ClosestPointOnLine(x, y: Single', '');
+    {$ENDIF}
   end;
   
   function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
   var
     sqLineMag, u: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ClosestPointOnLine(const fromPt: Point2D', '');
+    {$ENDIF}
+    
     // see Paul Bourke's original article(s)
     // square of line's magnitude (see note in function LineMagnitude)
     sqLineMag := LineMagnitudeSq(line);
@@ -1643,17 +2025,36 @@ implementation
       //  Intersecting point is on the line, use the formula
       result.x := line.startPoint.x + u * (line.endPoint.x - line.startPoint.x);
       result.y := line.startPoint.y + u * (line.endPoint.y - line.startPoint.y);
+      
     end; //  else NOT (u < EPS) or (u > 1)
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ClosestPointOnLine(const fromPt: Point2D', '');
+    {$ENDIF}
   end;
   
   function ClosestPointOnRectFromCircle(const c: Circle; const rect: Rectangle): Point2D;
   begin
-    result := ClosestPointOnLinesFromCircle(c, LinesFrom(rect));
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ClosestPointOnRectFromCircle(const c: Circle', '');
+    {$ENDIF}
+    
+    result := ClosestPointOnLinesFromCircle(c, LinesFrom(rect));  
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ClosestPointOnRectFromCircle(const c: Circle', '');
+    {$ENDIF}
+  
   end;
   
   function ClosestPointOnLineFromCircle(const c: Circle; const line: LineSegment): Point2D;
   begin
-    result := ClosestPointOnLine(c.center, line);
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ClosestPointOnLineFromCircle(const c: Circle', '');
+    {$ENDIF}
+    
+    result := ClosestPointOnLine(c.center, line);  
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ClosestPointOnLineFromCircle(const c: Circle', '');
+    {$ENDIF}
   end;
   
   function ClosestPointOnLinesFromCircle(const c: Circle; const lines: LinesArray): Point2D;
@@ -1662,6 +2063,10 @@ implementation
     dst, minDist: Single;
     pt: Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ClosestPointOnLinesFromCircle(const c: Circle', '');
+    {$ENDIF}
+    
     minDist := -1;
     
     for i := Low(lines) to High(lines) do
@@ -1674,23 +2079,40 @@ implementation
         minDist := dst;
         result := pt;
       end;
-    end;
+    end;  
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ClosestPointOnLinesFromCircle(const c: Circle', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const c: Circle): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const c: Circle): Rectangle', '');
+    {$ENDIF}
+    
     result.x := c.center.x - c.radius;
     result.y := c.center.y - c.radius;
     result.width := Ceiling(2 * c.radius);
-    result.height := result.width;
+    result.height := result.width;  
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const c: Circle): Rectangle', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const pt1, pt2: Point2D): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const pt1, pt2: Point2D): Rectangle', '');
+    {$ENDIF}
+    
     result.x := pt1.x;
     result.y := pt1.y;
     result.width := Ceiling(pt2.x - pt1.x);
-    result.height := Ceiling(pt2.y - pt1.y);
+    result.height := Ceiling(pt2.y - pt1.y);  
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const pt1, pt2: Point2D): Rectangle', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const tri: Triangle): Rectangle; overload;
@@ -1698,6 +2120,10 @@ implementation
     minX, minY, maxX, maxY: Single;
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const tri: Triangle): Rectangle', '');
+    {$ENDIF}
+    
     minX := tri[0].x; maxX := tri[0].x;
     minY := tri[0].y; maxY := tri[0].y;
     
@@ -1714,6 +2140,10 @@ implementation
     result.y := minY;
     result.width := Ceiling(maxX - minX);
     result.height := Ceiling(maxY - minY);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const tri: Triangle): Rectangle', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
@@ -1721,6 +2151,10 @@ implementation
     minX, minY, maxX, maxY: Single;
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const lines: LinesArray): Rectangle', '');
+    {$ENDIF}
+    
     if Length(lines) = 0 then exit;
     
     minX := lines[0].startPoint.x; maxX := lines[0].startPoint.x;
@@ -1745,14 +2179,26 @@ implementation
     result.y := minY;
     result.width := Ceiling(maxX - minX);
     result.height := Ceiling(maxY - minY);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const lines: LinesArray): Rectangle', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const line: LineSegment): Rectangle', '');
+    {$ENDIF}
+    
     result.x := Min(line.startPoint.x, line.endPoint.x);
     result.y := Min(line.startPoint.y, line.endPoint.y);
     result.width := Ceiling(Max(line.startPoint.x, line.endPoint.x) - result.x);
     result.height := Ceiling(Max(line.startPoint.y, line.endPoint.y) - result.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const line: LineSegment): Rectangle', '');
+    {$ENDIF}
   end;
     
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
@@ -1761,6 +2207,10 @@ implementation
     var
       minY, maxY: Single;
     begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointOnLine(const pt: Point2D', '');
+    {$ENDIF}
+    
       minY := Min(line.startPoint.y, line.endPoint.Y);
       maxY := Max(line.startPoint.y, line.endPoint.Y);
       
@@ -1810,31 +2260,63 @@ implementation
               (ly >= pt.y - SMALL) and
               (ly <= pt.y + SMALL) and
               PointInRect(pt, RectangleFrom(line));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointOnLine(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineFrom(const pt1, pt2: Point2D): LineSegment', '');
+    {$ENDIF}
+    
     result := LineFrom(pt1.x, pt1.y, pt2.x, pt2.y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineFrom(const pt1, pt2: Point2D): LineSegment', '');
+    {$ENDIF}
   end;
   
   function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineFrom(x1, y1, x2, y2: Single): LineSegment', '');
+    {$ENDIF}
+    
     result.startPoint.x := x1;
     result.startPoint.y := y1;
     result.endPoint.x := x2;
     result.endPoint.y := y2;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineFrom(x1, y1, x2, y2: Single): LineSegment', '');
+    {$ENDIF}
   end;
   
   function LinesFrom(const tri: Triangle): LinesArray; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
+    {$ENDIF}
+    
     SetLength(result, 3);
     result[0] := LineFrom(tri[0], tri[1]);
     result[1] := LineFrom(tri[1], tri[2]);
     result[2] := LineFrom(tri[2], tri[0]);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
+    {$ENDIF}
   end;
   
   function LinesFrom(const rect: Rectangle): LinesArray; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LinesFrom(const rect: Rectangle): LinesArray', '');
+    {$ENDIF}
+    
     SetLength(result, 4);
     with rect do
     begin
@@ -1843,118 +2325,274 @@ implementation
       result[2] := LineFrom(x + width, y, x + width, y + height);
       result[3] := LineFrom(x, y + height, x + width, y + height);
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LinesFrom(const rect: Rectangle): LinesArray', '');
+    {$ENDIF}
   end;
   
   function RectangleCenter(const rect: Rectangle): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleCenter(const rect: Rectangle): Point2D', '');
+    {$ENDIF}
+    
     result.x := rect.x + (rect.width / 2);
     result.y := rect.y + (rect.height / 2);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleCenter(const rect: Rectangle): Point2D', '');
+    {$ENDIF}
   end;
   
   function PointAt(x, y: Single): Point2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointAt(x, y: Single): Point2D', '');
+    {$ENDIF}
+    
     result.x := x;
     result.y := y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointAt(x, y: Single): Point2D', '');
+    {$ENDIF}
   end;
   
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointAt(const startPoint: Point2D', '');
+    {$ENDIF}
+    
     result.x := startPoint.x + offset.x;
     result.y := startPoint.y + offset.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointAt(const startPoint: Point2D', '');
+    {$ENDIF}
   end;
 
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineFromVector(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := LineFromVector(pt.x, pt.Y, mv);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineFromVector(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
   function LineFromVector(x, y: Single; const mv: Vector): LineSegment; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineFromVector(x, y: Single', '');
+    {$ENDIF}
+    
     result.startPoint.x := x;
     result.startPoint.y := y;
     result.endPoint.x := x + mv.x;
     result.endPoint.y := y + mv.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineFromVector(x, y: Single', '');
+    {$ENDIF}
   end;
   
   function LineFromVector(const mv: Vector): LineSegment; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineFromVector(const mv: Vector): LineSegment', '');
+    {$ENDIF}
+    
     result := LineFromVector(0, 0, mv);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineFromVector(const mv: Vector): LineSegment', '');
+    {$ENDIF}
   end;
 
   function RectangleAfterMove(const rect: Rectangle; const mv: Vector): Rectangle;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleAfterMove(const rect: Rectangle', '');
+    {$ENDIF}
+    
     result := rect;
     result.x := result.x + mv.x;
     result.y := result.y + mv.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleAfterMove(const rect: Rectangle', '');
+    {$ENDIF}
   end;
   
   function RectangleTop(const rect: Rectangle): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleTop(const rect: Rectangle): Single', '');
+    {$ENDIF}
+    
     if rect.height > 0 then result := rect.y
     else result := rect.y + rect.height - 1; //add negative height
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleTop(const rect: Rectangle): Single', '');
+    {$ENDIF}
   end;
   
   function RectangleBottom(const rect: Rectangle): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleBottom(const rect: Rectangle): Single', '');
+    {$ENDIF}
+    
     if rect.height > 0 then result := rect.y + rect.height - 1
     else result := rect.y; //y is bottom most
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleBottom(const rect: Rectangle): Single', '');
+    {$ENDIF}
   end;
 
   function RectangleLeft(const rect: Rectangle): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleLeft(const rect: Rectangle): Single', '');
+    {$ENDIF}
+    
     if rect.width > 0 then result := rect.x
     else result := rect.x + rect.width - 1; //add negative width
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleLeft(const rect: Rectangle): Single', '');
+    {$ENDIF}
   end;
 
   function RectangleRight(const rect: Rectangle): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleRight(const rect: Rectangle): Single', '');
+    {$ENDIF}
+    
     if rect.width > 0 then result := rect.x + rect.width - 1
     else result := rect.x; //x is right most
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleRight(const rect: Rectangle): Single', '');
+    {$ENDIF}
   end;
 
   function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(x, y: Single', '');
+    {$ENDIF}
+    
     result.x := x;
     result.y := y;
     result.width := w;
     result.height := h;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(x, y: Single', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(s: Sprite): Rectangle;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(s: Sprite): Rectangle', '');
+    {$ENDIF}
+    
     result := RectangleFrom(s^.position.x, s^.position.y, SpriteWidth(s), SpriteHeight(s));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(s: Sprite): Rectangle', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := RectangleFrom(pt.x, pt.y, width, height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := RectangleFrom(pt.x, pt.y, bmp^.width, bmp^.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(x, y: Single; bmp: Bitmap): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(x, y: Single', '');
+    {$ENDIF}
+    
     result := RectangleFrom(x, y, bmp^.width, bmp^.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(x, y: Single', '');
+    {$ENDIF}
   end;
   
   function RectangleFrom(bmp: Bitmap): Rectangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectangleFrom(bmp: Bitmap): Rectangle', '');
+    {$ENDIF}
+    
     result := RectangleFrom(0, 0, bmp);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectangleFrom(bmp: Bitmap): Rectangle', '');
+    {$ENDIF}
   end;
   
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle', '');
+    {$ENDIF}
+    
     result := TriangleFrom(PointAt(ax, ay), PointAt(bx, by), PointAt(cx, cy));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle', '');
+    {$ENDIF}
   end;
   
   function TriangleFrom(const a, b, c: Point2D): Triangle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TriangleFrom(const a, b, c: Point2D): Triangle', '');
+    {$ENDIF}
+    
     result[0] := a;
     result[1] := b;
     result[2] := c;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TriangleFrom(const a, b, c: Point2D): Triangle', '');
+    {$ENDIF}
   end;
   
   function PointInTriangle(const pt : Point2D; const tri : Triangle): Boolean;
@@ -1964,6 +2602,10 @@ implementation
     dot00, dot01, dot02, dot11, dot12 : Single;
     invDenom, u, v: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointInTriangle(const pt : Point2D', '');
+    {$ENDIF}
+    
     //Convert Points to vectors
     p := VectorToPoint(pt);
     a := VectorToPoint(tri[0]);
@@ -1989,38 +2631,78 @@ implementation
 
     // Check if point is in triangle
     result := ((u > 0) and (v > 0) and (u + v < 1));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointInTriangle(const pt : Point2D', '');
+    {$ENDIF}
   end;
 
   function PointInCircle(const pt: Point2D; const c: Circle): Boolean;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointInCircle(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := PointPointDistance(pt, c.center) <= c.radius;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointInCircle(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function TriangleBarycenter(const tri: Triangle): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TriangleBarycenter(const tri: Triangle): Point2D', '');
+    {$ENDIF}
+    
     result.x := (tri[0].x + tri[1].x + tri[2].x) / 3;
     result.y := (tri[0].y + tri[1].y + tri[2].y) / 3;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TriangleBarycenter(const tri: Triangle): Point2D', '');
+    {$ENDIF}
   end;
 
   function LineMidPoint(const line: LineSegment): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineMidPoint(const line: LineSegment): Point2D', '');
+    {$ENDIF}
+    
     result.x := line.startPoint.x + (line.endPoint.x - line.startPoint.x) / 2;
     result.y := line.startPoint.y + (line.endPoint.y - line.startPoint.y) / 2;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineMidPoint(const line: LineSegment): Point2D', '');
+    {$ENDIF}
   end;
 
   function RectanglesIntersect(const rect1, rect2: Rectangle): Boolean;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RectanglesIntersect(const rect1, rect2: Rectangle): Boolean', '');
+    {$ENDIF}
+    
     if RectangleBottom(rect1) < RectangleTop(rect2) then result := false
     else if RectangleTop(rect1) > RectangleBottom(rect2) then result := false
     else if RectangleRight(rect1) < RectangleLeft(rect2) then result := false
     else if RectangleLeft(rect1) > RectangleRight(rect2) then result := false
     else result := true;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RectanglesIntersect(const rect1, rect2: Rectangle): Boolean', '');
+    {$ENDIF}
   end;
 
   function Intersection(const rect1, rect2: Rectangle): Rectangle;
   var
     r, l, b, t: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'Intersection(const rect1, rect2: Rectangle): Rectangle', '');
+    {$ENDIF}
+    
     if RectangleBottom(rect1) > RectangleBottom(rect2) then b := RectangleBottom(rect2)
     else b := RectangleBottom(rect1);
 
@@ -2040,6 +2722,10 @@ implementation
     end;
 
     result := RectangleFrom(l, t, Ceiling(r - l), Ceiling(b - t));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'Intersection(const rect1, rect2: Rectangle): Rectangle', '');
+    {$ENDIF}
   end;
 
   function RayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const c: Circle): Single;
@@ -2047,6 +2733,10 @@ implementation
     to_circle, unit_heading: Vector;
     length, v, d: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RayCircleIntersectDistance(const ray_origin: Point2D', '');
+    {$ENDIF}
+    
       unit_heading := UnitVector(ray_heading);
       to_circle := VectorFromPoints(ray_origin, c.center);
       length := VectorMagnitude(to_circle);
@@ -2059,13 +2749,25 @@ implementation
       // return the distance to the (first) intersection point
       else
           result := (v - sqrt(d));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RayCircleIntersectDistance(const ray_origin: Point2D', '');
+    {$ENDIF}
   end;
 
 
   procedure WidestPoints(const c: Circle; const along: Vector; out pt1, pt2: Point2D);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'WidestPoints(const c: Circle', '');
+    {$ENDIF}
+    
     pt1 := AddVectors(c.center, VectorMultiply(UnitVector(along), c.radius));
     pt2 := AddVectors(c.center, VectorMultiply(UnitVector(along), -c.radius));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'WidestPoints(const c: Circle', '');
+    {$ENDIF}
   end;
 
   {
@@ -2078,6 +2780,10 @@ implementation
     pmC: Vector;
     sqr_len, r_sqr, inv_sqr_len, root: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TangentPoints(const fromPt: Point2D', '');
+    {$ENDIF}
+    
     pmC := VectorFromPoints(fromPt, c.center);
 
     sqr_len := VectorMagnitudeSq(PmC);
@@ -2100,6 +2806,10 @@ implementation
     p2.y := c.center.y + c.radius*(c.radius*pmC.y - pmC.x*root)*inv_sqr_len;
 
     result := True;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TangentPoints(const fromPt: Point2D', '');
+    {$ENDIF}
   end;
 
   function RayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : boolean;
@@ -2107,6 +2817,10 @@ implementation
     rayLine: LineSegment;
     combMag: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'RayIntersectionPoint(const fromPt: Point2D', '');
+    {$ENDIF}
+    
     result := False;
     rayLine := LineFromVector(fromPt, heading);
 
@@ -2120,6 +2834,10 @@ implementation
     if combMag < 1 then exit; //behind point
 
     result := True;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'RayIntersectionPoint(const fromPt: Point2D', '');
+    {$ENDIF}
   end;
 
   function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
@@ -2130,6 +2848,10 @@ implementation
     a2, b2, c2: Single;
     det: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineIntersectionPoint(const line1, line2: LineSegment', '');
+    {$ENDIF}
+    
     pt.x := 0;
     pt.y := 0;
 
@@ -2152,13 +2874,25 @@ implementation
       pt.y := (a1*c2 - a2*c1) / det;
       result := true;
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineIntersectionPoint(const line1, line2: LineSegment', '');
+    {$ENDIF}
   end;
 
   function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
   var
     pt: Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineSegmentsIntersect(const line1, line2: LineSegment): boolean', '');
+    {$ENDIF}
+    
     result := LineIntersectionPoint(line1, line2, pt) and PointOnLine(pt, line2) and PointOnLine(pt, line1);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineSegmentsIntersect(const line1, line2: LineSegment): boolean', '');
+    {$ENDIF}
   end;
 
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
@@ -2166,6 +2900,10 @@ implementation
     i: LongInt;
     pt: Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineIntersectsLines(const line: LineSegment', '');
+    {$ENDIF}
+    
     for i := 0 to High(lines) do
     begin
       if LineIntersectionPoint(line, lines[i], pt) and PointOnLine(pt, lines[i]) then
@@ -2175,48 +2913,96 @@ implementation
       end;
     end;
     result := false;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineIntersectsLines(const line: LineSegment', '');
+    {$ENDIF}
   end;
 
   function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
   var
     lines: LinesArray;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineIntersectsRect(const line: LineSegment', '');
+    {$ENDIF}
+    
     lines := LinesFrom(rect);
     result := LineIntersectsLines(line, lines);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineIntersectsRect(const line: LineSegment', '');
+    {$ENDIF}
   end;
 
   function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointInRect(const pt: Point2D', '');
+    {$ENDIF}
+    
     if pt.x < x then result := false
     else if pt.x > x + w then result := false
     else if pt.y < y then result := false
     else if pt.y > y + h then result := false
     else result := true;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointInRect(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function PointInRect(const pt: Point2D; const rect: Rectangle): Boolean; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointInRect(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := PointInRect(pt, rect.x, rect.y, rect.width, rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointInRect(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function PointInRect(ptX, ptY, x, y, w, h: Single): Boolean; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointInRect(ptX, ptY, x, y, w, h: Single): Boolean', '');
+    {$ENDIF}
+    
     if ptX < x then result := false
     else if ptX > x + w then result := false
     else if ptY < y then result := false
     else if ptY > y + h then result := false
     else result := true;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointInRect(ptX, ptY, x, y, w, h: Single): Boolean', '');
+    {$ENDIF}
   end;
 
   function PointInRect(x, y: Single; const rect: Rectangle): Boolean; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointInRect(x, y: Single', '');
+    {$ENDIF}
+    
     result := PointInRect(x, y, rect.x, rect.y, rect.width, rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointInRect(x, y: Single', '');
+    {$ENDIF}
   end;
 
   function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
   var
     px, py: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorFromPointToRect(x, y, rectX, rectY: Single', '');
+    {$ENDIF}
+    
     if x < rectX then px := rectX
     else if x > (rectX + rectWidth) then px := rectX + rectWidth
     else px := x;
@@ -2226,23 +3012,51 @@ implementation
     else py := y;
 
     result := VectorFrom(px - x, py - y);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorFromPointToRect(x, y, rectX, rectY: Single', '');
+    {$ENDIF}
   end;
 
   function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorFromPointToRect(x, y: Single', '');
+    {$ENDIF}
+    
     result := VectorFromPointToRect(x, y, rect.x, rect.y, rect.width, rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorFromPointToRect(x, y: Single', '');
+    {$ENDIF}
   end;
 
   function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorFromPointToRect(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := VectorFromPointToRect(pt.x, pt.y, rect.x, rect.y, rect.width, rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorFromPointToRect(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const velocity: Vector): Vector;
   var
     maxIdx: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorOutOfRectFromPoint(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := _VectorOverLinesFromPoint(pt, LinesFrom(rect), velocity, maxIdx);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorOutOfRectFromPoint(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const velocity: Vector): Vector;
@@ -2251,6 +3065,10 @@ implementation
     a, b, c1, det, t, mvOut: single;
     ipt2: Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorOutOfCircleFromPoint(const pt: Point2D', '');
+    {$ENDIF}
+    
     // If the point is not in the radius of the circle, return a zero vector
     if PointPointDistance(pt, CenterPoint(c)) > c.radius then
     begin
@@ -2284,21 +3102,41 @@ implementation
       mvOut := PointPointDistance(pt, ipt2) + 1.42; // sqrt 2
       result := VectorMultiply(UnitVector(InvertVector(velocity)), mvOut);
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorOutOfCircleFromPoint(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function VectorOutOfCircleFromCircle(const src, bounds: Circle; const velocity: Vector): Vector;
   var
     c: Circle;
   begin
-    c := CircleFrom(CenterPoint(bounds), bounds.radius + src.radius);
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorOutOfCircleFromCircle(const src, bounds: Circle', '');
+    {$ENDIF}
+    
+    c := CircleAt(CenterPoint(bounds), bounds.radius + src.radius);
     result := VectorOutOfCircleFromPoint(CenterPoint(Src), c, velocity);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorOutOfCircleFromCircle(const src, bounds: Circle', '');
+    {$ENDIF}
   end;
 
   function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   var
     maxIDx: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorOutOfRectFromRect(const src, bounds: Rectangle', '');
+    {$ENDIF}
+    
     result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, maxIdx);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorOutOfRectFromRect(const src, bounds: Rectangle', '');
+    {$ENDIF}
   end;
 
   // function VectorIntoRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
@@ -2317,22 +3155,42 @@ implementation
 
   function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorInRect(const v: Vector', '');
+    {$ENDIF}
+    
     if v.x < x then result := false
     else if v.x > x + w then result := false
     else if v.y < y then result := false
     else if v.y > y + h then result := false
     else result := true;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorInRect(const v: Vector', '');
+    {$ENDIF}
   end;
 
   function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorInRect(const v: Vector', '');
+    {$ENDIF}
+    
     result := VectorInRect(v, rect.x, rect.y, rect.width, rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorInRect(const v: Vector', '');
+    {$ENDIF}
   end;
 
   function LineCircleHit(const c: Circle; const velocity: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   var
     hitIdx: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineCircleHit(const c: Circle', '');
+    {$ENDIF}
+    
     _VectorOverLinesFromCircle(c, lines, velocity, hitIdx);
     if hitIdx >= 0 then
     begin
@@ -2340,6 +3198,10 @@ implementation
       result := True;
     end
     else result := False;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineCircleHit(const c: Circle', '');
+    {$ENDIF}
   end;
 
   function DistantPointOnCircle(const pt: Point2D; const c: Circle): Point2D;
@@ -2347,12 +3209,20 @@ implementation
     ptOnCircle: Point2D;
     toCircle: Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'DistantPointOnCircle(const pt: Point2D', '');
+    {$ENDIF}
+    
     //Get the closest point
     ptOnCircle := ClosestPointOnCircle(pt, c);
 
     // Get other side... follow toCircle vector 2 * radius
     toCircle := VectorFromPoints(pt, ptOnCircle);
     result := AddVectors(ptOnCircle, VectorMultiply(UnitVector(toCircle), c.radius * 2));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'DistantPointOnCircle(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function DistantPointOnCircleHeading(const pt: Point2D; const c: Circle; const heading: Vector; out oppositePt: Point2D): Boolean;
@@ -2362,6 +3232,10 @@ implementation
     toCenter: Vector;
     head: Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'DistantPointOnCircleHeading(const pt: Point2D', '');
+    {$ENDIF}
+    
     result := False;
     head := UnitVector(heading);
 
@@ -2386,18 +3260,38 @@ implementation
     result := True;
     oppositePt := AddVectors(ptOnCircle, VectorMultiply(head, 2 * dotProd));
     //FillCircle(ColorRed, oppositePt, 2);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'DistantPointOnCircleHeading(const pt: Point2D', '');
+    {$ENDIF}
   end;
 
   function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const velocity: Vector): Vector;
   var
     maxIdx: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorOutOfRectFromCircle(const c: Circle', '');
+    {$ENDIF}
+    
     result := VectorOverLinesFromCircle(c, LinesFrom(rect), velocity, maxIdx);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorOutOfRectFromCircle(const c: Circle', '');
+    {$ENDIF}
   end;
 
   function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'VectorOverLinesFromCircle(const c: Circle', '');
+    {$ENDIF}
+    
     result := _VectorOverLinesFromCircle(c, lines, velocity, maxIDx);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'VectorOverLinesFromCircle(const c: Circle', '');
+    {$ENDIF}
   end;
 
   // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
@@ -2413,94 +3307,184 @@ implementation
   
   function PointsFrom(const rect: Rectangle): Point2DArray;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointsFrom(const rect: Rectangle): Point2DArray', '');
+    {$ENDIF}
+    
     SetLength(result, 4);
     result[0] := PointAt(rect.x, rect.y);
     result[1] := PointAt(rect.x + rect.width, rect.y);
     result[2] := PointAt(rect.x, rect.y + rect.height);
     result[3] := PointAt(rect.x + rect.width, rect.y + rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointsFrom(const rect: Rectangle): Point2DArray', '');
+    {$ENDIF}
   end;
 
   function CenterPoint(const c: Circle): Point2D; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CenterPoint(const c: Circle): Point2D', '');
+    {$ENDIF}
+    
     result := c.center;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CenterPoint(const c: Circle): Point2D', '');
+    {$ENDIF}
   end;
   
-  function CircleFrom(const pt: Point2D; radius: LongInt): Circle; overload;
+  function CircleAt(const pt: Point2D; radius: LongInt): Circle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleAt(const pt: Point2D', '');
+    {$ENDIF}
+    
     result.center := pt;
     result.radius := radius;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleAt(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
-  function CircleFrom(x, y: Single; radius: LongInt): Circle; overload;
+  function CircleAt(x, y: Single; radius: LongInt): Circle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleAt(x, y: Single', '');
+    {$ENDIF}
+    
     result.center := PointAt(x, y);
     result.radius := radius;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleAt(x, y: Single', '');
+    {$ENDIF}
   end;
   
-  function CircleFrom(s: Sprite): Circle; overload;
+  function CircleAt(s: Sprite): Circle; overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleAt(s: Sprite): Circle', '');
+    {$ENDIF}
+    
     result.center := CenterPoint(s);
     
     if SpriteWidth(s) > SpriteHeight(s) then
       result.radius := Ceiling(SpriteWidth(s) / 2)
     else
       result.radius := Ceiling(SpriteHeight(s) / 2);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleAt(s: Sprite): Circle', '');
+    {$ENDIF}
   end;
   
   function CircleX(const c: Circle): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleX(const c: Circle): Single', '');
+    {$ENDIF}
+    
     result := c.center.x;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleX(const c: Circle): Single', '');
+    {$ENDIF}
   end;
   
   function CircleY(const c: Circle): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleY(const c: Circle): Single', '');
+    {$ENDIF}
+    
     result := c.center.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleY(const c: Circle): Single', '');
+    {$ENDIF}
   end;
   
   function CircleRadius(const c: Circle): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleRadius(const c: Circle): LongInt', '');
+    {$ENDIF}
+    
     result := c.radius;
-  end;
-  
-  function CenterPoint(s: Sprite): Point2D;
-  begin
-    result.x := s^.position.x + SpriteWidth(s) / 2;
-    result.y := s^.position.y + SpriteHeight(s) / 2;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleRadius(const c: Circle): LongInt', '');
+    {$ENDIF}
   end;
   
   function CircleWithinRect(const c: Circle; const rect: Rectangle): Boolean;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CircleWithinRect(const c: Circle', '');
+    {$ENDIF}
+    
     if CircleLinesCollision(c, LinesFrom(rect)) then result := False
     else result := PointInRect(c.center, rect.x, rect.y, rect.width, rect.height);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CircleWithinRect(const c: Circle', '');
+    {$ENDIF}
   end;
   
   function LineIntersectsCircle(const l: LineSegment; const c: Circle): Boolean;
   var
     pt: Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineIntersectsCircle(const l: LineSegment', '');
+    {$ENDIF}
+    
     pt := ClosestPointOnLineFromCircle(c, l);
     result := PointInCircle(pt, c);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineIntersectsCircle(const l: LineSegment', '');
+    {$ENDIF}
   end;
   
   //=============================================================================
   
   function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointPrototypeFrom(const pt: Point2D): ShapePrototype', '');
+    {$ENDIF}
+    
     New(result);
     
     SetLength(result^.points, 1);
     result^.points[0] := pt;
     result^.kind := pkPoint;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointPrototypeFrom(const pt: Point2D): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function CirclePrototypeFrom(const pt: Point2D; r: Single): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'CirclePrototypeFrom(const pt: Point2D', '');
+    {$ENDIF}
+    
     New(result);
     
     SetLength(result^.points, 2);
     result^.points[0] := pt;
     result^.points[1] := PointAt(r, r);
     result^.kind := pkCircle;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'CirclePrototypeFrom(const pt: Point2D', '');
+    {$ENDIF}
   end;
   
   // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
@@ -2515,16 +3499,28 @@ implementation
   
   function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype', '');
+    {$ENDIF}
+    
     New(result);
     
     SetLength(result^.points, 2);
     result^.points[0] := startPt;
     result^.points[1] := endPt;
     result^.kind := pkLine;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype', '');
+    {$ENDIF}
+    
     New(result);
     
     SetLength(result^.points, 3);
@@ -2532,40 +3528,96 @@ implementation
     result^.points[1] := pt2;
     result^.points[2] := pt3;
     result^.kind := pkTriangle;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TrianglePrototypeFrom(const pt1, pt2, pt3: Point2D): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function LineListPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
+    
     result := PrototypeFrom(points, pkLineList);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
+    
     result := PrototypeFrom(points, pkLineStrip);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
+    
     result := PrototypeFrom(points, pkPolygon);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
+    
     result := PrototypeFrom(points, pkTriangleStrip);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
+    
     result := PrototypeFrom(points, pkTriangleFan);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
+    
     result := PrototypeFrom(points, pkTriangleList);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function PrototypeFrom(const points: Point2DArray; kind:ShapeKind): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PrototypeFrom(const points: Point2DArray', '');
+    {$ENDIF}
+    
     if Length(points) < MinimumPointsForKind(kind) then
     begin
       RaiseException('Insufficient points assigned to shape given its kind. Min is ' 
@@ -2580,10 +3632,18 @@ implementation
     PrototypeSetKind(result, kind);
     PrototypeSetPoints(result, points);
     result^.shapeCount := 0;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PrototypeFrom(const points: Point2DArray', '');
+    {$ENDIF}
   end;
   
   procedure FreePrototype(var p: ShapePrototype);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'FreePrototype(var p: ShapePrototype)', '');
+    {$ENDIF}
+    
     if not Assigned(p) then exit;
     if p^.shapeCount > 0 then begin RaiseWarning('Freeing prototype while it is still used by ' + IntToStr(p^.shapeCount) + ' shapes.'); end;
     
@@ -2591,12 +3651,20 @@ implementation
     Dispose(p);
     CallFreeNotifier(p);
     p := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'FreePrototype(var p: ShapePrototype)', '');
+    {$ENDIF}
   end;
   
   //=============================================================================
   
   function MinimumPointsForKind(k: ShapeKind): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): LongInt', '');
+    {$ENDIF}
+    
     case k of
       pkPoint: result := 1;
       pkCircle: result := 2;
@@ -2610,18 +3678,34 @@ implementation
       pkTriangleFan: result := 3;
       pkTriangleList: result := 3;
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): LongInt', '');
+    {$ENDIF}
   end;
   
   function PrototypePointCount(p: ShapePrototype): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PrototypePointCount(p: ShapePrototype): LongInt', '');
+    {$ENDIF}
+    
     if not assigned(p) then result := 0
     else result := Length(p^.points);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PrototypePointCount(p: ShapePrototype): LongInt', '');
+    {$ENDIF}
   end;
   
   procedure PrototypeSetPoints(p: ShapePrototype; const points: Point2DArray);
   var
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PrototypeSetPoints(p: ShapePrototype', '');
+    {$ENDIF}
+    
     if not assigned(p) then exit;
     
     if Length(points) < MinimumPointsForKind(p^.kind) then
@@ -2639,16 +3723,32 @@ implementation
     begin
       p^.points[i] := points[i];
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PrototypeSetPoints(p: ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function PrototypePoints(p: ShapePrototype): Point2DArray;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PrototypePoints(p: ShapePrototype): Point2DArray', '');
+    {$ENDIF}
+    
     if not assigned(p) then SetLength(result,0)
     else result := p^.points;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PrototypePoints(p: ShapePrototype): Point2DArray', '');
+    {$ENDIF}
   end;
   
   procedure PrototypeSetKind(p: ShapePrototype; kind: ShapeKind);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PrototypeSetKind(p: ShapePrototype', '');
+    {$ENDIF}
+    
     if not assigned(p) then
     begin
       RaiseException('No shape prototype supplied to set kind.');
@@ -2670,18 +3770,34 @@ implementation
       pkTriangleList: p^.drawWith := @DrawShapeAsTriangleList;
       else p^.drawWith := nil; 
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PrototypeSetKind(p: ShapePrototype', '');
+    {$ENDIF}
   end;
   
   function PrototypeKind(p: ShapePrototype): ShapeKind;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PrototypeKind(p: ShapePrototype): ShapeKind', '');
+    {$ENDIF}
+    
     if not assigned(p) then result := ShapeKind(-1)
     else result := p^.kind;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PrototypeKind(p: ShapePrototype): ShapeKind', '');
+    {$ENDIF}
   end;
   
   //=============================================================================
   
   function ShapeAtPoint(p: ShapePrototype; const pt: Point2D): Shape;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeAtPoint(p: ShapePrototype', '');
+    {$ENDIF}
+    
     New(result);
     result^.prototype := p;
     result^.pt := pt;
@@ -2690,12 +3806,20 @@ implementation
     SetLength(result^.subShapes, 0);
     
     if Assigned(p) then p^.shapeCount += 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeAtPoint(p: ShapePrototype', '');
+    {$ENDIF}
   end;
   
   procedure FreeShape(var s: Shape);
   var
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'FreeShape(var s: Shape)', '');
+    {$ENDIF}
+    
     if not Assigned(s) then exit;
     if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
     
@@ -2708,6 +3832,10 @@ implementation
     Dispose(s);
     CallFreeNotifier(s);
     s := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'FreeShape(var s: Shape)', '');
+    {$ENDIF}
   end;
   
   procedure UpdateSubShapePoints(s: Shape; const parentM: Matrix2D);
@@ -2715,6 +3843,10 @@ implementation
     m: Matrix2D;
     i: LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'UpdateSubShapePoints(s: Shape', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin exit; end;
     s^.ptBuffer := Copy(s^.prototype^.points, 0, Length(s^.prototype^.points));
     
@@ -2726,89 +3858,189 @@ implementation
     begin
       UpdateSubShapePoints(s^.subShapes[i], m);
     end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'UpdateSubShapePoints(s: Shape', '');
+    {$ENDIF}
   end;
   
   procedure UpdateShapePoints(s: Shape);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'UpdateShapePoints(s: Shape)', '');
+    {$ENDIF}
+    
     UpdateSubShapePoints(s, IdentityMatrix());
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'UpdateShapePoints(s: Shape)', '');
+    {$ENDIF}
   end;
   
   function ShapePoints(s: Shape): Point2DArray;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapePoints(s: Shape): Point2DArray', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin SetLength(result, 0); exit; end;
     if not Assigned(s^.ptBuffer) then
     begin
       UpdateShapePoints(s);
     end;
     result := s^.ptBuffer;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapePoints(s: Shape): Point2DArray', '');
+    {$ENDIF}
   end;
   
   function ShapePointCount(s: Shape): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapePointCount(s: Shape): LongInt', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin result := 0; exit; end;
     result := PrototypePointCount(s^.prototype);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapePointCount(s: Shape): LongInt', '');
+    {$ENDIF}
   end;
   
   procedure ShapeSetAngle(s: Shape; angle: Single);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeSetAngle(s: Shape', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin exit; end;
     s^.angle := angle;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeSetAngle(s: Shape', '');
+    {$ENDIF}
   end;
   
   function ShapeAngle(s: Shape): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeAngle(s: Shape): Single', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin result := 0; exit; end;
     result := s^.angle;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeAngle(s: Shape): Single', '');
+    {$ENDIF}
   end;
   
   procedure ShapeSetScale(s: Shape; const scale: Point2D);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeSetScale(s: Shape', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin exit; end;
     s^.scale := scale;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeSetScale(s: Shape', '');
+    {$ENDIF}
   end;
   
   function ShapeScale(s: Shape): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeScale(s: Shape): Point2D', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin result := PointAt(0,0); exit; end;
     result := s^.scale;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeScale(s: Shape): Point2D', '');
+    {$ENDIF}
   end;
   
   function ShapeShapePrototype(s: Shape): ShapePrototype;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeShapePrototype(s: Shape): ShapePrototype', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin result := nil; exit; end;
     result := s^.prototype;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeShapePrototype(s: Shape): ShapePrototype', '');
+    {$ENDIF}
   end;
   
   procedure ShapeSetPrototype(s: Shape; p: ShapePrototype);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeSetPrototype(s: Shape', '');
+    {$ENDIF}
+    
     if not Assigned(s) then exit;
     if Assigned(s^.prototype) then s^.prototype^.shapeCount -= 1;
     
     s^.prototype := p;
     
     if Assigned(s^.prototype) then s^.prototype^.shapeCount += 1;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeSetPrototype(s: Shape', '');
+    {$ENDIF}
   end;
   
   procedure ShapeAddSubShape(parent, child: Shape);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeAddSubShape(parent, child: Shape)', '');
+    {$ENDIF}
+    
     if not Assigned(parent) then exit;
     if not Assigned(child) then exit;
       
     SetLength(parent^.subShapes, Length(parent^.subShapes) + 1);
     parent^.subShapes[High(parent^.subShapes)] := child;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeAddSubShape(parent, child: Shape)', '');
+    {$ENDIF}
   end;
   
   function ShapeColor(s: Shape): Color;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeColor(s: Shape): Color', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin result := ColorBlack; exit; end;
     result := s^.color;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeColor(s: Shape): Color', '');
+    {$ENDIF}
   end;
   
   procedure ShapeSetColor(s: Shape; c: Color);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'ShapeSetColor(s: Shape', '');
+    {$ENDIF}
+    
     if not Assigned(s) then begin exit; end;
     
     s^.color := c;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'ShapeSetColor(s: Shape', '');
+    {$ENDIF}
   end;
   
 end.

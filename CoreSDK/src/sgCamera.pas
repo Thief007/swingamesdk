@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-10: Andrew : Added sn and csn tags and tracing to code
 // - 2009-11-06: Andrew : Added comments
 // - 2009-10-21: Andrew : Fixed camera center on sprite
 // - 2009-07-10: Andrew : Fixed missing const modifier on struct types
@@ -29,6 +30,8 @@
 // Version 1.0:
 // - Various
 //=============================================================================
+
+{$I sgTrace.inc}
 
 /// SwinGame's Camera functionality can be used to create scrolling games where
 /// the camera moves around a virtual game world. Using the camera allows you to
@@ -130,7 +133,9 @@ interface
   ///
   /// @param dx the amount of x axis offset to apply 
   /// @param dy the amount of x axis offset to apply 
+  ///
   /// @lib MoveCameraByXY
+  /// @sn moveCameraByX:%s y:%s
   procedure MoveCameraBy(dx, dy: Single); overload;
   
   /// Move the camera view to a world location specified by the x and y values.
@@ -138,7 +143,9 @@ interface
   ///
   /// @param x The world x axis value to move the camera to.
   /// @param y The world y axis value to move the camera to
+  ///
   /// @lib MoveCameraToXY
+  /// @sn moveCaneraToX:%s y:%s
   procedure MoveCameraTo(x, y: Single); overload;
 
   /// Move the camera view to a world location specified as a Point2D.
@@ -146,6 +153,7 @@ interface
   ///
   /// @param pt The point to move the camera view to.
   /// @lib
+  /// @sn moveCameraTo:%s
   procedure MoveCameraTo(const pt: Point2D); overload;
   
   
@@ -164,7 +172,7 @@ interface
   /// @param offsetY The amount of y axis offset for the camaera to use 
   /// @lib CenterCameraOnWithXYOffset
   ///
-  /// @sn centerCameraOn:%s offsetX:%s offsetY:%s
+  /// @sn centerCameraOnSprite:%s offsetX:%s offsetY:%s
   ///
   /// @class Sprite
   /// @overload CenterCamera CenterCameraOffsetXY
@@ -177,7 +185,7 @@ interface
   /// @param offset The amount of offset from sprite center for the camera to use.  
   /// @lib
   ///
-  /// @sn centerCameraOn:%s offset:%s
+  /// @sn centerCameraOnSprite:%s offset:%s
   ///  
   /// @class Sprite
   /// @method CenterCamera
@@ -212,6 +220,8 @@ interface
   /// @lib
   function ToScreen(const worldPoint: Point2D): Point2D;
   
+  
+  
   //---------------------------------------------------------------------------
   // Screen-To-World Translation
   //---------------------------------------------------------------------------  
@@ -240,9 +250,10 @@ interface
   
 //=============================================================================
 implementation
+  uses 
+    sgTrace, SysUtils, 
+    sgCore, sgGeometry, sgSprites, sgShared;
 //=============================================================================
-
-  uses Classes, SysUtils, sgCore, sgGeometry, sgShared;
 
   ///
   /// The screen offset variables
@@ -257,34 +268,82 @@ implementation
   
   function CameraX(): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'CameraX(): Single', '');
+    {$ENDIF}
+    
     result := _cameraX;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'CameraX(): Single', '');
+    {$ENDIF}
   end;
   
   function CameraY(): Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'CameraY(): Single', '');
+    {$ENDIF}
+    
     result := _cameraY;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'CameraY(): Single', '');
+    {$ENDIF}
   end;
   
   function CameraPos(): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'CameraPos(): Point2D', '');
+    {$ENDIF}
+    
     result.x := _cameraX;
     result.y := _cameraY;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'CameraPos(): Point2D', '');
+    {$ENDIF}
   end;
   
   procedure SetCameraX(x: Single);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'SetCameraX(x: Single)', '');
+    {$ENDIF}
+    
     _cameraX := x;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'SetCameraX(x: Single)', '');
+    {$ENDIF}
   end;
   
   procedure SetCameraY(y: Single);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'SetCameraY(y: Single)', '');
+    {$ENDIF}
+    
     _cameraY := y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'SetCameraY(y: Single)', '');
+    {$ENDIF}
   end;
   
   procedure SetCameraPos(const pt: Point2D);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'SetCameraPos(const pt: Point2D)', '');
+    {$ENDIF}
+    
     _cameraX := pt.x;
     _cameraY := pt.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'SetCameraPos(const pt: Point2D)', '');
+    {$ENDIF}
   end;
   
   
@@ -295,26 +354,58 @@ implementation
   
   procedure MoveCameraBy(const offset: Vector); overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'MoveCameraBy(const offset: Vector)', '');
+    {$ENDIF}
+    
     _cameraX := _cameraX + offset.x;
     _cameraY := _cameraY + offset.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'MoveCameraBy(const offset: Vector)', '');
+    {$ENDIF}
   end;
 
   procedure MoveCameraBy(dx, dy: Single); overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'MoveCameraBy(dx, dy: Single)', '');
+    {$ENDIF}
+    
     _cameraX := _cameraX + dx;
     _cameraY := _cameraY + dy;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'MoveCameraBy(dx, dy: Single)', '');
+    {$ENDIF}
   end;
   
   procedure MoveCameraTo(x, y: Single); overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'MoveCameraTo(x, y: Single)', '');
+    {$ENDIF}
+    
     _cameraX := x;
     _cameraY := y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'MoveCameraTo(x, y: Single)', '');
+    {$ENDIF}
   end;
 
   procedure MoveCameraTo(const pt: Point2D); overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'MoveCameraTo(const pt: Point2D)', '');
+    {$ENDIF}
+    
     _cameraX := pt.x;
     _cameraY := pt.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'MoveCameraTo(const pt: Point2D)', '');
+    {$ENDIF}
   end;
 
   //---------------------------------------------------------------------------
@@ -326,6 +417,10 @@ implementation
     center: Point2D;
     scX, scY: Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'CenterCameraOn(s: Sprite', '');
+    {$ENDIF}
+    
     if s = nil then begin
       RaiseException('CenterCameraOn requires a target sprite. No sprite was provided (nil supplied)');
       exit;
@@ -336,11 +431,23 @@ implementation
     scY := center.y + offsetY - (ScreenHeight() / 2);
     
     MoveCameraTo(scX, scY);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'CenterCameraOn(s: Sprite', '');
+    {$ENDIF}
   end;
   
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'CenterCameraOn(s: Sprite', '');
+    {$ENDIF}
+    
     CenterCameraOn(s, Round(offset.x), Round(offset.y));
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'CenterCameraOn(s: Sprite', '');
+    {$ENDIF}
   end;
 
   //---------------------------------------------------------------------------
@@ -349,18 +456,42 @@ implementation
 
   function ToScreenX(worldX: Single): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'ToScreenX(worldX: Single): LongInt', '');
+    {$ENDIF}
+    
     result := Round(worldX - _cameraX);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'ToScreenX(worldX: Single): LongInt', '');
+    {$ENDIF}
   end;
 
   function ToScreenY(worldY: Single): LongInt;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'ToScreenY(worldY: Single): LongInt', '');
+    {$ENDIF}
+    
     result := Round(worldY - _cameraY);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'ToScreenY(worldY: Single): LongInt', '');
+    {$ENDIF}
   end;
 
   function ToScreen(const worldPoint: Point2D): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'ToScreen(const worldPoint: Point2D): Point2D', '');
+    {$ENDIF}
+    
     result.x := _cameraX - worldPoint.x;
     result.y := _cameraY - worldPoint.y;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'ToScreen(const worldPoint: Point2D): Point2D', '');
+    {$ENDIF}
   end;
 
   //---------------------------------------------------------------------------
@@ -369,18 +500,42 @@ implementation
 
   function ToWorldX(screenX: LongInt) : Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'ToWorldX(screenX: LongInt) : Single', '');
+    {$ENDIF}
+    
     result := screenX + _cameraX;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'ToWorldX(screenX: LongInt) : Single', '');
+    {$ENDIF}
   end;
 
   function ToWorldY(screenY: LongInt) : Single;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'ToWorldY(screenY: LongInt) : Single', '');
+    {$ENDIF}
+    
     result := screenY + _cameraY;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'ToWorldY(screenY: LongInt) : Single', '');
+    {$ENDIF}
   end;
 
   function ToWorld(const screenPoint: Point2D): Point2D;
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'ToWorld(const screenPoint: Point2D): Point2D', '');
+    {$ENDIF}
+    
     result.x := screenPoint.x + _cameraX;
     result.y := screenPoint.y + _cameraY;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'ToWorld(const screenPoint: Point2D): Point2D', '');
+    {$ENDIF}
   end;
 
 //=============================================================================

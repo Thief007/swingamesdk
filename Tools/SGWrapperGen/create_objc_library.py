@@ -122,6 +122,9 @@ def _create_objc_method_details(the_method, other):
     ''' This method creates the objective c method details for a user facing module.'''
     result_details = other['details']
     
+    if the_method.in_same_class_as_class_method():
+        return other
+    
     my_details = the_method.to_keyed_dict(param_visitor, type_visitor, 
         call_creater = _create_objc_call, 
         arg_visitor = arg_visitor,
@@ -129,14 +132,14 @@ def _create_objc_method_details(the_method, other):
     
     if the_method.is_static:
         #header = '\n+ (%(return_type)s)%(uname)s:%(params)s' % my_details
-        header = '\n- (%(return_type)s)%(sn)s' % my_details
-        if len(the_method.params) == 0: header = header[:-1]
+        header = '\n+ (%(return_type)s)%(sn)s' % my_details
+        #if len(the_method.params) == 0: header = header[:-1]
         result_details['static_method_headers'] += header + ';'
         dest_key = 'static_method_bodies'
     else:
         if the_method.is_constructor:
             header = '\n- (id)%(sn)s' % my_details
-            if len(the_method.params) == 0: header = header[:-1]
+            #if len(the_method.params) == 0: header = header[:-1]
             result_details['init_headers'] += header + ';'
             dest_key = 'init_bodys'
         elif the_method.is_destructor:
@@ -145,14 +148,15 @@ def _create_objc_method_details(the_method, other):
             dest_key = 'method_bodies'
         elif the_method.is_getter or the_method.is_setter:
             #dont write in header...
-            header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
-            if len(the_method.params) == 0: header = header[:-1]
+            header = '\n- (%(return_type)s)%(sn)s' % my_details
+            #header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
+            #if len(the_method.params) == 0: header = header[:-1]
             result_details['method_headers'] += '\n#if OBJC_NEW_PROPERTIES != 1' + header + ';\n#endif'
             dest_key = 'method_bodies'
         else:
             #header = '\n- (%(return_type)s)%(uname)s:%(params)s' % my_details
             header = '\n- (%(return_type)s)%(sn)s' % my_details
-            if len(the_method.params) == 0: header = header[:-1]
+            #if len(the_method.params) == 0: header = header[:-1]
             result_details['method_headers'] += header + ';'
             dest_key = 'method_bodies'
     

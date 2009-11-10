@@ -103,6 +103,8 @@ class SGMethod(SGMetaDataContainer):
                     result['sn.sel'] += ':'
                 
             temp = self.uname + temp
+            
+            #print temp
             result['sn'] = temp
             
         result['in_class'] = self.in_class.name
@@ -319,9 +321,17 @@ class SGMethod(SGMetaDataContainer):
             super(SGMethod,self).set_tag('class_method', dest)
         elif title == 'csn':
             #assign the 'csn' class special name to the class method
+            if self.class_method == None:
+                logger.error('Model Error: Method %s has a csn before the method/property/constructor definition - or should be sn.', self.name)
+                assert False
             self.class_method.set_tag('sn', other)
         else:
             super(SGMethod,self).set_tag(title, other)
+    
+    def in_same_class_as_class_method(self):
+        if self.class_method == None:
+            return False
+        return self.class_method.in_class == self.in_class
     
     def clone_to(self, other):
         #dont copy uname...
@@ -329,8 +339,9 @@ class SGMethod(SGMetaDataContainer):
         other.return_type = self.return_type
         other.file_line_details = self.file_line_details
         other.doc = self.doc
-        if other.sn == None:
-            other.sn = self.sn
+        #dont copy sn... unless other is static
+        if other.sn == None and other.is_static:
+                    other.sn = self.sn
         # else:
         #     print other.sn
         

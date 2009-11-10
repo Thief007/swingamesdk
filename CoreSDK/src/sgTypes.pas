@@ -136,7 +136,7 @@ interface
     SoundEffect = ^SoundEffectData;
     
     
-    /// @struct SoundEffectData
+    /// @struct MusicData
     /// @via_pointer
     MusicData = record
       music: PMix_Music;
