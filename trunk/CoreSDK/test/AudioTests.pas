@@ -6,6 +6,7 @@ procedure Main();
 var
   snd: SoundEffect;
   mus: Music;
+  i: Integer;
 begin
   OpenAudio();
   //OpenGraphicsWindow('Audio Tests', 640, 480);
@@ -21,16 +22,23 @@ begin
   WriteLn('Loaded ', SoundEffectName(snd), ' for file ', SoundEffectFilename(snd));
   
   FadeMusicIn(mus, 500);
-  Sleep(1000);
+  Delay(1000);
   
   PlaySoundEffect(snd);
-  Sleep(200);
+  Delay(200);
   
   PlaySoundEffect(snd);
-  Sleep(1000);
+  Delay(1000);
   
   FadeMusicOut(500);
-  Sleep(500);
+  Delay(500);
+  
+  for i := 0 to 10 do
+  begin
+    PlayMusic(mus);
+    Delay(1000);
+    StopMusic();
+  end;
   
   ReleaseAllResources();
   CloseAudio();

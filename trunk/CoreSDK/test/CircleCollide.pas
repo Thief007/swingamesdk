@@ -5,25 +5,26 @@ uses
 
 procedure KeepOnScreen(s: Sprite);
 begin
-  if s^.x > ScreenWidth() - SpriteWidth(s) then
+  if SpriteX(s) > ScreenWidth() - SpriteWidth(s) then
   begin
-    s^.movement.x := -s^.movement.x;
-    s^.x := ScreenWidth() - SpriteWidth(s);
+    SpriteSetDX(s, -SpriteDX(s));
+    SpriteSetX(s, ScreenWidth() - SpriteWidth(s));
   end;
-  if s^.y > ScreenHeight() - SpriteHeight(s) then
+  if SpriteY(s) > ScreenHeight() - SpriteHeight(s) then
   begin
-    s^.movement.y := -s^.movement.y;
-    s^.y := ScreenHeight() - SpriteHeight(s);
+    SpriteSetDY(s, -SpriteDY(s));
+    SpriteSetY(s, ScreenHeight() - SpriteHeight(s));
   end;
-  if s^.x < 0 then
+  
+  if SpriteX(s) < 0 then
   begin
-    s^.movement.x := -s^.movement.x;
-    s^.x := 0;
+    SpriteSetDX(s, -SpriteDX(s));
+    SpriteSetX(s, 0);
   end;
-  if s^.y < 0 then
+  if SpriteY(s) < 0 then
   begin
-    s^.movement.y := -s^.movement.y;
-    s^.y := 0;
+    SpriteSetDY(s, -SpriteDY(s));
+    SpriteSetY(s, 0);
   end;
 end;
 
@@ -56,9 +57,9 @@ begin
     hits := 0;
     
     //tmp 0 and tmp 1 are the widest points to detect collision with line
-    WidestPoints(CircleFrom(center, radius), normalMvmt, tmp[0], tmp[1]);
+    WidestPoints(CircleAt(center, radius), normalMvmt, tmp[0], tmp[1]);
     //tmp 2 and tmp 3 are the closest and furthest points from the line
-    WidestPoints(CircleFrom(center, radius), normalLine, tmp[2], tmp[3]);
+    WidestPoints(CircleAt(center, radius), normalLine, tmp[2], tmp[3]);
     
     // for both points...
     for j := 0 to 3 do
@@ -100,7 +101,7 @@ begin
       //FillCircle(ColorBlue, ptOnLine, 1); // point on segment
       
       // Find the most distant point on the circle, given the movement vector
-      if not DistantPointOnCircleHeading(ptOnLine, CircleFrom(center, radius), movement, ptOnCircle) then continue;
+      if not DistantPointOnCircleHeading(ptOnLine, CircleAt(center, radius), movement, ptOnCircle) then continue;
       //FillCircle(ColorBlue, ptOnCircle, 2); // point on segment
       //DrawLine(ColorBlue, ptOnLine, ptOnCircle);
       
@@ -157,7 +158,7 @@ end;
 procedure CheckCollisionWithTriangle(s: Sprite; const t: Triangle);
 var lines: LinesArray;
 begin
-  if CircleTriangleCollision(CircleFrom(s), t) then
+  if CircleTriangleCollision(CircleAt(s), t) then
   begin
     lines := LinesFrom(t);
     
@@ -198,17 +199,17 @@ begin
   r1 := 50;
   r2 := 20;
   
-  s1 := CreateSprite(GetBitmap('ball'));
-  s1^.x := 100;
-  s1^.y := 600;
-  s1^.Mass := 10;
-  s1^.Movement := VectorFrom(4, 4);
+  s1 := CreateSprite(FetchBitmap('ball'));
+  SpriteSetX(s1, 100);
+  SpriteSetY(s1, 600);
+  SpriteSetMass(s1, 10);
+  SpriteSetVelocity(s1, VectorFrom(4, 4));
   
-  s2 := CreateSprite(GetBitmap('ball'));
-  s2^.x := 200;
-  s2^.y := 200;
-  s2^.Mass := 10;
-  s2^.Movement := VectorFrom(1, -5);
+  s2 := CreateSprite(FetchBitmap('ball'));
+  SpriteSetX(s2, 200);
+  SpriteSetY(s2, 200);
+  SpriteSetMass(s2, 10);
+  SpriteSetVelocity(s2, VectorFrom(1, -5));
   
   t1 := TriangleFrom(600, 100, 550, 200, 670, 175);
   
@@ -234,41 +235,41 @@ begin
       DrawLine(ColorRed, testLines[i]);
     end;
     
-    temp := GetMousePosition();
+    temp := MousePosition();
     DoLineTest(testLines, temp, r2, mouseMvmt);
     
-    // if not CircleWithinRect(CircleFrom(temp, r2), rect) then
+    // if not CircleWithinRect(CircleAt(temp, r2), rect) then
     // begin
-    //   mouseOut := VectorIntoRectFromCircle(CircleFrom(temp, r2), rect, mouseMvmt);
+    //   mouseOut := VectorIntoRectFromCircle(CircleAt(temp, r2), rect, mouseMvmt);
     //   DrawLine(ColorWhite, temp, AddVectors(temp, mouseOut));
     //   DrawCircle(ColorWhite, AddVectors(temp, mouseOut), r2);
     // end;
 
-    if CircleRectCollision(CircleFrom(temp, r2), rect) then
+    if CircleRectCollision(CircleAt(temp, r2), rect) then
     begin
       DrawCircle(ColorBlue, temp, r2);
-      if LineCircleHit(CircleFrom(temp, r2), mouseMvmt, LinesFrom(rect), found) then
+      if LineCircleHit(CircleAt(temp, r2), mouseMvmt, LinesFrom(rect), found) then
       begin
         DrawLine(ColorWhite, found);
-        mouseOut := VectorOutOfRectFromCircle(CircleFrom(temp, r2), rect, mouseMvmt);
+        mouseOut := VectorOutOfRectFromCircle(CircleAt(temp, r2), rect, mouseMvmt);
         mouseOut := AddVectors(temp, mouseOut);
         DrawCircle(ColorGreen, mouseOut, r2);
       end;
     end
-    else if CircleCircleCollision(CircleFrom(temp, r2), CircleFrom(c1, r1)) then
+    else if CircleCircleCollision(CircleAt(temp, r2), CircleAt(c1, r1)) then
     begin
       DrawCircle(ColorWhite, c1, r1);
       DrawCircle(ColorBlue, temp, r2);
-      mouseOut := VectorOutOfCircleFromCircle(CircleFrom(temp, r2), CircleFrom(c1, r1), mouseMvmt);
+      mouseOut := VectorOutOfCircleFromCircle(CircleAt(temp, r2), CircleAt(c1, r1), mouseMvmt);
       mouseOut := AddVectors(temp, mouseOut);
       DrawCircle(ColorGreen, mouseOut, r2);
     end
-    else if CircleTriangleCollision(CircleFrom(temp, r2), t1) then
+    else if CircleTriangleCollision(CircleAt(temp, r2), t1) then
     begin
       //DrawTriangle(ColorWhite, t1);
       DrawCircle(ColorBlue, temp, r2);
       
-      mouseOut := VectorOverLinesFromCircle(CircleFrom(temp, r2), LinesFrom(t1), mouseMvmt, maxIdx);
+      mouseOut := VectorOverLinesFromCircle(CircleAt(temp, r2), LinesFrom(t1), mouseMvmt, maxIdx);
       
       mouseOut := AddVectors(temp, mouseOut);
       DrawCircle(ColorGreen, mouseOut, r2);
@@ -312,21 +313,21 @@ begin
     // 
     DrawSprite(s1);
     temp := CenterPoint(s1);
-    DrawLine(ColorBlue, temp.x, temp.y, temp.x + (s1^.Movement.x * 10), temp.y + (s1^.Movement.y * 10));
+    DrawLine(ColorBlue, temp.x, temp.y, temp.x + (SpriteDX(s1) * 10), temp.y + (SpriteDY(s1) * 10));
     UpdateSprite(s1);
     KeepOnScreen(s1);
     
-    if CircleRectCollision(CircleFrom(s1), rect) then CollideCircleRectangle(s1, rect)
-    else if CircleCircleCollision(CircleFrom(s1), CircleFrom(c1, r1)) then CollideCircleCircle(s1, CircleFrom(c1, r1));
+    if CircleRectCollision(CircleAt(s1), rect) then CollideCircleRectangle(s1, rect)
+    else if CircleCircleCollision(CircleAt(s1), CircleAt(c1, r1)) then CollideCircleCircle(s1, CircleAt(c1, r1));
     
     
     DrawSprite(s2);
     temp := CenterPoint(s2);
-    DrawLine(ColorYellow, temp.x, temp.y, temp.x + (s2^.Movement.x * 10), temp.y + (s2^.Movement.y * 10));
+    DrawLine(ColorYellow, temp.x, temp.y, temp.x + (SpriteDX(s2) * 10), temp.y + (SpriteDY(s2) * 10));
     UpdateSprite(s2);
     KeepOnScreen(s2);
-    if CircleRectCollision(CircleFrom(s2), rect) then CollideCircleRectangle(s2, rect)
-    else if CircleCircleCollision(CircleFrom(s2), CircleFrom(c1, r1)) then CollideCircleCircle(s2, CircleFrom(c1, r1));
+    if CircleRectCollision(CircleAt(s2), rect) then CollideCircleRectangle(s2, rect)
+    else if CircleCircleCollision(CircleAt(s2), CircleAt(c1, r1)) then CollideCircleCircle(s2, CircleAt(c1, r1));
     
     CheckCollisionWithLine(s1, testLines[0]);
     CheckCollisionWithLine(s2, testLines[0]);
@@ -334,18 +335,18 @@ begin
     CheckCollisionWithTriangle(s1, t1);
     CheckCollisionWithTriangle(s2, t1);
     
-    temp := GetMousePosition();
-    if CircleCircleCollision(CircleFrom(temp, r2), CircleFrom(s1)) then
-      CollideCircleCircle(s1, CircleFrom(temp, r2));
+    temp := MousePosition();
+    if CircleCircleCollision(CircleAt(temp, r2), CircleAt(s1)) then
+      CollideCircleCircle(s1, CircleAt(temp, r2));
     
-    if CircleCircleCollision(CircleFrom(temp, r2), CircleFrom(s2)) then
-      CollideCircleCircle(s2, CircleFrom(temp, r2));
+    if CircleCircleCollision(CircleAt(temp, r2), CircleAt(s2)) then
+      CollideCircleCircle(s2, CircleAt(temp, r2));
     
     if SpritesCollided(s1, s2) then CollideCircles(s1, s2);
     
     
     temp := VectorOutOfRectFromPoint(temp, rect, mouseMvmt);
-    DrawLine(ColorYellow, GetMousePosition(), AddVectors(temp, GetMousePosition()));
+    DrawLine(ColorYellow, MousePosition(), AddVectors(temp, MousePosition()));
     
     temp := VectorOutOfRectFromRect(rect1, rect, mouseMvmt);
     DrawLine(ColorYellow, VectorFrom(rect1.x, rect1.y), AddVectors(temp, VectorFrom(rect1.x, rect1.y)));

@@ -1,6 +1,5 @@
 #import <stdbool.h>
-#import <Foundation/NSAutoreleasePool.h>
-#import <Foundation/NSString.h>
+#import <Foundation/Foundation.h>
 #import "SwinGame.h"
 
 int main(int argc, const char* argv[])
@@ -9,7 +8,9 @@ int main(int argc, const char* argv[])
     [SGResources setAppPath:[NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding]];
     
     [SGAudio openAudio];
-    [SGCore openGraphicsWindow:@"Hello World": 800: 600];
+    [SGCore openGraphicsWindow:@"Hello World" 
+                         width:800
+                        height:600];
     [SGColors loadDefaultColors];
     
     while (![SGCore windowCloseRequested])

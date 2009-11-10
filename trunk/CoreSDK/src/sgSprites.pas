@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-11-10: Andrew : Changed sn and csn tags
 // - 2009-10-16: Andrew : Called the free notifier to ensure Sprites are freed
 // - 2009-07-06: Andrew : Added property access routines for Sprite data
 // - 2009-06-29: Andrew : Renamed CurrentWidth to SpriteWidth
@@ -52,49 +53,49 @@ interface
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmap:%s isMulti:%s withFramesPerCell:%s endingAction:%s width:%s andHeight:%s
+  /// @csn initWithBitmap:%s isMulti:%s withFramesPerCell:%s endingAction:%s width:%s andHeight:%s
   function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell: LongIntArray; endingAction: SpriteEndingAction; width, height : LongInt): Sprite; overload;
   
   /// @lib CreateAnimatedCellSprite
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmap:%s isMulti:%s withFramesPerCell:%s width:%s andHeight:%s
+  /// @csn initWithBitmap:%s isMulti:%s withFramesPerCell:%s width:%s andHeight:%s
   function CreateSprite(bmp : Bitmap; isMulti : Boolean; const framesPerCell : LongIntArray; width, height : LongInt): Sprite; overload;
   
   /// @lib CreateAnimatedCellSpriteWithSetFramesPerCell
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmap:%s withFramesPerCell:%s frames:%s width:%s andHeight:%s
+  /// @csn initWithBitmap:%s withFramesPerCell:%s frames:%s width:%s andHeight:%s
   function CreateSprite(bmp : Bitmap; framesPerCell, frames, width, height: LongInt): Sprite; overload;
   
   /// @lib CreateBasicSprite
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmap:%s
+  /// @csn initWithBitmap:%s
   function CreateSprite(bmp : Bitmap): Sprite; overload;
   
   /// @lib CreateAnimatedArraySpriteWithEndingAction
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmaps:%s withFramesPerCell:%s andEndingAction:%s
+  /// @csn initWithBitmaps:%s withFramesPerCell:%s andEndingAction:%s
   function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray; endingAction : SpriteEndingAction): Sprite; overload;
   
   /// @lib CreateAnimatedArraySprite
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmaps:%s andFramesPerCell:%s
+  /// @csn initWithBitmaps:%s andFramesPerCell:%s
   function CreateSprite(const bitmaps : BitmapArray; const framesPerCell : LongIntArray): Sprite; overload;
   
   /// @lib CreateAnimatedArraySpriteWithFramesPerCell
   ///
   /// @class Sprite
   /// @constructor
-  /// @sn initWithBitmaps:%s withFramesPerCell:%s andFrames:%s
+  /// @csn initWithBitmaps:%s withFramesPerCell:%s andFrames:%s
   function CreateSprite(const bitmaps : BitmapArray; framesPerCell, frames : LongInt): Sprite; overload;
 
   /// @lib
@@ -199,8 +200,10 @@ interface
   /// @method IsOffscreen
   function IsSpriteOffscreen(s : Sprite): Boolean;
   
+  
+  
   //---------------------------------------------------------------------------
-  // Sprite Width and Heigth
+  // Sprite Width and Heigth - CenterPoint
   //---------------------------------------------------------------------------
   
   /// The current Height of the sprite (aligned to the Y axis).
@@ -216,6 +219,15 @@ interface
   /// @class Sprite
   /// @getter Width
   function SpriteWidth(s: Sprite): LongInt;
+  
+  /// Returns the center point of the passed in Sprite. This uses the Sprite's 
+  /// Position, Width and Height.
+  ///
+  /// @lib CenterPoint
+  ///
+  /// @class Sprite
+  /// @getter CenterPoint
+  function CenterPoint(s: Sprite): Point2D; overload;
   
   //---------------------------------------------------------------------------
   // Sprite velocity
@@ -1371,6 +1383,24 @@ implementation
   procedure SpriteSetScale(s: Sprite; value: Single);
   begin
     s^.scale := value;
+  end;
+  
+  //---------------------------------------------------------------------------
+  // Sprite center point
+  //---------------------------------------------------------------------------
+  
+  function CenterPoint(s: Sprite): Point2D;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgSprites', 'CenterPoint(s: Sprite): Point2D', '');
+    {$ENDIF}
+    
+    result.x := s^.position.x + SpriteWidth(s) / 2;
+    result.y := s^.position.y + SpriteHeight(s) / 2;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgSprites', 'CenterPoint(s: Sprite): Point2D', '');
+    {$ENDIF}
   end;
 
 //=============================================================================

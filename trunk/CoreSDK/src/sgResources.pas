@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-10: Andrew : Changed sn to csn tags
 // - 2009-11-06: Andrew : Moved out loading of audio resources... others to follow
 // - 2009-10-16: Andrew : Moved free notifier, and ensured free notifier called after dispose
 // - 2009-09-11: Andrew : Fixed to load resources without needing path
@@ -35,14 +36,14 @@ interface
   ///
   /// @class Bitmap
   /// @constructor
-  /// @sn initWithName:%s forFilename:%s
+  /// @csn initWithName:%s forFilename:%s
   function MapBitmap(name, filename: String): Bitmap;
 
   /// @lib
   ///
   /// @class Bitmap
   /// @constructor
-  /// @sn initWithName:%s forFilename:%s andColorKey:%s
+  /// @csn initWithName:%s forFilename:%s andColorKey:%s
   function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
   
   /// @lib
@@ -63,7 +64,7 @@ interface
   ///
   /// @class Map
   /// @constructor
-  /// @sn initWithName:%s forFilename:%s andSize:%s
+  /// @csn initWithName:%s forFilename:%s andSize:%s
   function MapFont(name, filename: String; size: LongInt): Font;
 
   /// @lib
@@ -84,7 +85,7 @@ interface
   ///
   /// @class Map
   /// @constructor
-  /// @sn initWithName:%s forFilename:%s
+  /// @csn initWithName:%s forFilename:%s
   function MapTileMap(name, filename: String): Map;
 
   /// @lib
@@ -168,7 +169,7 @@ interface
   ///
   /// @class Bitmap
   /// @constructor
-  /// @sn initWithWidth:%s andHeight:%s
+  /// @csn initWithWidth:%s andHeight:%s
   function CreateBitmap(width, height: LongInt): Bitmap;
   
   /// Loads a bitmap from file using where the specified transparent color
@@ -178,7 +179,7 @@ interface
   ///
   /// @class Bitmap
   /// @constructor
-  /// @sn initWithPath:%s withTransparency:%s usingColor:%s
+  /// @csn initWithPath:%s withTransparency:%s usingColor:%s
   function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
   
   /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
@@ -191,7 +192,7 @@ interface
   ///
   /// @class Bitmap
   /// @constructor
-  /// @sn initWithPath:%s
+  /// @csn initWithPath:%s
   function LoadBitmap(filename : String): Bitmap; overload;
   
   /// Loads a bitmap with a transparent color key. The transparent color is then
@@ -203,7 +204,7 @@ interface
   ///
   /// @class Bitmap
   /// @constructor
-  /// @sn initWithPath:%s transparentColor:%s
+  /// @csn initWithPath:%s transparentColor:%s
   function LoadTransparentBitmap(filename : String; transparentColor : Color): Bitmap; overload;
   
   /// Frees a loaded bitmap. Use this when you will no longer be drawing the
@@ -224,7 +225,7 @@ interface
   ///
   /// @class Font
   /// @constructor
-  /// @sn initWithFontName:%s andSize:%s
+  /// @csn initWithFontName:%s andSize:%s
   function LoadFont(fontName: String; size: LongInt): Font;
   
   /// Frees the resources used by the loaded Font.
@@ -242,7 +243,7 @@ interface
   ///
   /// @class Map
   /// @constructor
-  /// @sn initWithMapName: %s
+  /// @csn initWithMapName: %s
   function LoadMap(mapName: String): Map;
   
   /// Frees the resources associated with the map.
@@ -1427,7 +1428,7 @@ implementation
           RefreshScreen();
           InnerProcessEvents();
           if isSkip then break;
-          Sleep(15);
+          Delay(15);
         end;
         
         while SoundEffectPlaying(FetchSoundEffect('SwinGameStart')) or isPaused do

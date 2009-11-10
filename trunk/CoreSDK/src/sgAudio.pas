@@ -9,6 +9,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-10: Andrew : Added sn and csn tags to code
 // - 2009-11-06: Andrew : Returned loading code
 //                      : Added extra comments and tracing
 // - 2009-07-29: Andrew : Open Audio now indicates if audio has been opened.
@@ -107,7 +108,7 @@ interface
   ///
   /// @class SoundEffect
   /// @constructor
-  /// @sn initFromPath:%s
+  /// @csn initFromPath:%s
   function LoadSoundEffect(filename: String): SoundEffect;
   
   /// Loads and returns a sound effect. The supplied `filename` is used to
@@ -116,10 +117,11 @@ interface
   /// retrieved by passing this `name` to the `FetchSoundEffect` function. 
   ///
   /// @lib
+  /// @sn mapSoundEffectNamed:%s toFilename:%s
   ///
   /// @class SoundEffect
   /// @constructor
-  /// @sn initWithName:%s forFilename:%s
+  /// @csn initWithName:%s forFilename:%s
   function MapSoundEffect(name, filename: String): SoundEffect;
   
   /// Determines if SwinGame has a sound effect loaded for the supplied name.
@@ -166,10 +168,11 @@ interface
   /// retrieved by passing this `name` to the `FetchMusic` function. 
   ///
   /// @lib
+  /// @sn mapMusicNamed:%s toFilename:%s
   ///
   /// @class Music
   /// @constructor
-  /// @sn initWithName:%s forFilename:%s
+  /// @csn initWithName:%s forFilename:%s
   function MapMusic(name, filename: String): Music;
   
   /// Determines if SwinGame has a music value loaded for the supplied name.
@@ -212,7 +215,7 @@ interface
   ///
   /// @class Music
   /// @constructor
-  /// @sn initFromPath:%s
+  /// @csn initFromPath:%s
   function LoadMusic(filename: String): Music;
   
   /// Frees the resources used by a `Music` resource. All loaded
@@ -262,9 +265,11 @@ interface
   ///
   /// @lib PlaySoundEffectWithLoopAndVolume(effect, loops, 1.0)
   /// @uname PlaySoundEffectWithLoop
+  /// @sn playSoundEffect:%s looped:%s
   ///
   /// @class SoundEffect
   /// @overload Play PlayWithLoops
+  /// @csn playLooped:%s
   procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
         
   /// This version of PlaySoundEffect allows you to control the volume of the 
@@ -278,6 +283,7 @@ interface
   ///
   /// @lib PlaySoundEffectWithLoopAndVolume(effect, 1, vol)
   /// @uname PlaySoundEffectWithVolume
+  /// @sn playSoundEffect:%s atVolume:%s
   /// @version 2.1
   ///
   /// @class SoundEffect
@@ -293,6 +299,7 @@ interface
   ///            `SoundEffect` at. This must be between 0 and 1.
   ///
   /// @lib PlaySoundEffectWithLoopAndVolume
+  /// @sn playSoundEffect:%s looped:%s atVolume:%s
   /// @version 2.0
   ///
   /// @class SoundEffect
@@ -343,6 +350,7 @@ interface
   ///              repeat infinitely
   ///
   /// @lib PlayMusicWithLoops
+  /// @sn playMusic:%s looped:%s
   ///
   /// @class Music
   /// @overload Play PlayWithLoops
@@ -358,9 +366,11 @@ interface
   ///
   /// @lib FadeMusicIn(mus, -1, ms)
   /// @uname FadeMusicIn
+  /// @sn playMusic:%s fadeIn:%s
   ///
   /// @class Music
   /// @method FadeIn
+  /// @csn playFadeIn:%s
   procedure FadeMusicIn(mus: Music; ms: LongInt); overload;
 
   /// This version of FadeMusicIn fades the music in then plays the 'Music' 
@@ -376,9 +386,11 @@ interface
   ///
   /// @lib FadeMusicIn
   /// @uname FadeMusicInWithLoops
+  /// @sn playMusic:%s looped:%s fadeIn:%s
   ///
   /// @class Music
   /// @overload FadeIn FadeInWithLoops
+  /// @csn playLooped:%s fadeIn:%s
   procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
   
   

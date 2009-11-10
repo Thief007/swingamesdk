@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-10: Andrew : Added sn and csn tags, and added comments to code
+//                      : Removed Timers
 // - 2009-10-16: Andrew : Fixed order of free notifier calls
 // - 2009-10-02: Andrew : Added random color, reset timer
 // - 2009-09-11: Andrew : Added tracing code
@@ -59,6 +61,13 @@
 // - Various
 //=============================================================================
 
+{$I sgTrace.inc}
+{$IFDEF UNIX}
+  {$IFNDEF DARWIN}
+    {$linklib gcc}
+  {$ENDIF}  
+{$ENDIF}
+
 /// SwinGame's Core is responsible for core functionality such as creating
 /// the game window, coordinating event processing, and refreshing the
 /// screen. Core also contains components that can be used to create and
@@ -68,42 +77,47 @@
 /// @static
 unit sgCore;
 
-{$IFDEF UNIX}
-{$IFNDEF DARWIN}
-  {$linklib gcc}
-{$ENDIF}  
-{$ENDIF}
-
 //=============================================================================
 interface
-//=============================================================================
-
-  {$I sgTrace.inc}
-
   uses sgTypes, SDL;
-
+//=============================================================================
+  
+  
   //----------------------------------------------------------------------------
   // Library Version
   //----------------------------------------------------------------------------
-
+  
+  /// Retrieves a string representing the version of SwinGame that is executing.
+  /// This can be used to check that the version supports the features required
+  /// for your game.
+  ///
   /// @lib
   function SwinGameVersion(): String;
-
+  
+  
+  
   //----------------------------------------------------------------------------
   // Exception Notification/Message
   //----------------------------------------------------------------------------
-
+  
+  /// This function can be used to retrieve a message containing the details of 
+  /// the last error that occurred in SwinGame.
+  ///
   /// @lib
   function ExceptionMessage(): String;
-
+  
+  /// This function tells you if an error occurred with the last operation in
+  /// SwinGame.
+  ///
   /// @lib
   function ExceptionOccured(): Boolean;
-
-
+  
+  
+  
   //----------------------------------------------------------------------------
   // Icon / Window Open / Screen Size / Resize
   //----------------------------------------------------------------------------
-
+  
   /// Sets the icon for the window. This must be called before openning the
   /// graphics window. The icon is loaded as a bitmap, though this can be from
   /// any kind of bitmap file.
@@ -116,7 +130,7 @@ interface
   ///
   /// @lib
   procedure SetIcon(filename: String);
-
+  
   /// Opens the graphical window so that it can be drawn onto. You can set the
   /// icon for this window using SetIcon. The window itself is only drawn when
   /// you call RefreshScreen. All windows are opened at 32 bits per pixel. You
@@ -132,6 +146,7 @@ interface
   ///
   /// @lib
   /// @uname OpenGraphicsWindow
+  /// @sn openGraphicsWindow:%s width:%s height:%s
   procedure OpenGraphicsWindow(caption: String; width, height: LongInt); overload;
 
   /// Opens the graphical window as an 800 x 600 window. See OpenGramhicsWinddow
@@ -143,6 +158,7 @@ interface
   ///
   /// @lib OpenGraphicsWindow(caption, 800, 600)
   /// @uname OpenGraphicsWindow800x600
+  /// @sn openGraphicsWindow:%s
   procedure OpenGraphicsWindow(caption: String); overload;
 
   /// Changes the size of the screen.
@@ -153,6 +169,7 @@ interface
   /// - The screen changes to the specified size
   ///
   /// @lib
+  /// @sn changeScreenSizeToWidth:%s height:%s
   procedure ChangeScreenSize(width, height: LongInt);
 
   /// Switches the application to full screen or back from full screen to
@@ -175,6 +192,10 @@ interface
   /// @returns: The screen's width
   ///
   /// @lib
+  ///
+  /// @class Core
+  /// @static
+  /// @getter ScreenWidth
   function ScreenWidth(): LongInt;
 
   /// Returns the height of the screen currently displayed.
@@ -182,6 +203,10 @@ interface
   /// @returns: The screen's height
   ///
   /// @lib
+  ///
+  /// @class Core
+  /// @static
+  /// @getter ScreenHeight
   function ScreenHeight(): LongInt;
 
   /// Saves the current screen a bitmap file. The file will be saved into the
@@ -194,7 +219,6 @@ interface
   ///
   /// @lib TakeScreenshot
   procedure TakeScreenshot(basename: String);
-  
   
   
   
@@ -244,6 +268,8 @@ interface
   /// @uname RefreshScreenRestrictFPS
   procedure RefreshScreen(TargetFPS: UInt32); overload;
   
+  
+  
   //----------------------------------------------------------------------------
   // Random
   //----------------------------------------------------------------------------
@@ -259,6 +285,8 @@ interface
   /// @lib RndUpto
   function Rnd(ubound: LongInt): LongInt; overload;
   
+  
+  
   //----------------------------------------------------------------------------
   // Color
   //----------------------------------------------------------------------------
@@ -272,6 +300,7 @@ interface
   ///
   /// @lib ColorFromBitmap
   /// @uname ColorFromBitmap
+  /// @sn colorFrom:%s apiColor:%s
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
   
   /// Creates and returns a random color where R, G, B and A are all randomised.
@@ -293,6 +322,7 @@ interface
   /// @returns: The matching colour
   ///
   /// @lib
+  /// @sn rgbaColorRed:%s green:%s blue:%s alpha:%s
   function RGBAColor(red, green, blue, alpha: Byte): Color;
   
   /// Gets a color given its RGB components.
@@ -302,11 +332,13 @@ interface
   ///
   /// @lib RGBAColor(red, green, blue, 255)
   /// @uname RGBColor
+  /// @sn rgbColorRed:%s green:%s blue:%s
   function RGBColor(red, green, blue: Byte): Color;
   
   /// Gets a color given its RGBA components.
   ///
   /// @lib
+  /// @sn colorComponentsOf:%s red:%s green:%s blue:%s alpha:%s
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
   
   /// Returns a color from a floating point RBG value set.
@@ -314,6 +346,7 @@ interface
   /// @param r,g,b: Components for color 0 = none 1 = full
   ///
   /// @lib
+  /// @sn rgbFloatColorRed:%s green:%s blue:%s
   function RGBFloatColor(r,g,b: Single): Color;
 
   /// Returns a color from a floating point RBGA value set.
@@ -321,6 +354,7 @@ interface
   /// @param r,g,b,a: Components for color 0 = none 1 = full
   ///
   /// @lib
+  /// @sn rgbaFloatColorRed:%s green:%s blue:%s alpha:%s
   function RGBAFloatColor(r,g,b, a: Single): Color;
   
   /// Returs a color from the HSB input.
@@ -329,6 +363,7 @@ interface
   /// @returns The matching color
   ///
   /// @lib
+  /// @sn hsbColorHue:%s sat:%s bri:%s
   function HSBColor(hue, saturation, brightness: Single): Color;
   
   /// Get the transpareny value of `color`.
@@ -355,6 +390,7 @@ interface
   /// the color.
   ///
   /// @lib
+  /// @hsbValueOf:%s hue:%s sat:%s bri:%s
   procedure HSBValuesOf(c: Color; out h, s, b: Single);
   
   /// Get the hue of the `color`.
@@ -372,8 +408,10 @@ interface
   /// @lib
   function BrightnessOf(c: Color) : Single;
   
+  
+  
   //----------------------------------------------------------------------------
-  // Refresh / Sleep / Framerate
+  // Refresh / Delay / Framerate
   //----------------------------------------------------------------------------
 
   /// Returns the average framerate for the last 10 frames as an integer.
@@ -390,7 +428,7 @@ interface
   ///
   /// @lib
   function GetTicks(): UInt32;
-
+  
   /// Puts the process to sleep for a specified number of
   /// milliseconds. This can be used to add delays into your
   /// game.
@@ -401,75 +439,17 @@ interface
   /// - Delay before returning
   ///
   /// @lib
-  procedure Sleep(time: UInt32);
+  procedure Delay(time: UInt32);
   
   /// Returns the calculated framerate averages, highest, and lowest values along with
   /// the suggested rendering color.
   ///
   /// @lib
+  /// @sn calculateFramerateAvg:%s high:%s low:%s color:%s
   procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);
   
-  //----------------------------------------------------------------------------
-  // Timers
-  //----------------------------------------------------------------------------
   
-  /// Create and return a new Timer.
-  ///
-  /// @lib
-  /// @class Timer
-  /// @constructor
-  /// @sn init
-  function CreateTimer(): Timer;
   
-  /// Free a created timer.
-  ///
-  /// @lib
-  /// @class Timer
-  /// @dispose
-  procedure FreeTimer(var toFree: Timer);
-
-  /// Start a timer recording the time that has passed.
-  ///
-  /// @lib
-  procedure StartTimer(toStart: Timer);
-  
-  /// Stop the timer.
-  ///
-  /// @lib
-  /// @class Timer
-  /// @method Stop
-  procedure StopTimer(toStop: Timer);
-  
-  /// Pause the timer, getting ticks from a paused timer
-  /// will continue to return the same time.
-  ///
-  /// @lib
-  /// @class Timer
-  /// @method Pause
-  procedure PauseTimer(toPause: Timer);
-  
-  /// Resumes a paused timer.
-  ///
-  /// @lib
-  /// @class Timer
-  /// @method Resume
-  procedure ResumeTimer(toUnpause: Timer);
-  
-  /// Resets the time of a given timer
-  ///
-  /// @lib
-  /// @class Timer
-  /// @method Reset
-  procedure ResetTimer(tmr: Timer);
-  
-  /// Gets the number of ticks (milliseconds) that have passed since the timer
-  /// was started.
-  ///
-  /// @lib
-  /// @class Timer
-  /// @getter Ticks
-  function TimerTicks(toGet: Timer): UInt32;
-
   var
     //Preset colours, do not change these values.
     ColorBlue, ColorGreen, ColorRed, ColorWhite, ColorBlack, ColorYellow,
@@ -478,12 +458,12 @@ interface
 
 //=============================================================================
 implementation
-//=============================================================================
-
   uses 
     SysUtils, Math, Classes, //System
     SDL_Image, SDL_gfx, //SDL
     sgTrace, sgShared, sgEventProcessing, sgResources; //SwinGame
+//=============================================================================
+
 
   type
     // Details required for the Frames per second calculations.
@@ -843,17 +823,17 @@ implementation
   end;
 
   //----------------------------------------------------------------------------
-  // Refresh / Sleep / Framerate
+  // Refresh / Delay / Framerate
   //----------------------------------------------------------------------------
 
-  procedure Sleep(time: UInt32);
+  procedure Delay(time: UInt32);
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgCore', 'Sleep');
+      TraceEnter('sgCore', 'Delay');
     {$ENDIF}
     SDL_Delay(time);
     {$IFDEF TRACE}
-      TraceExit('sgCore', 'Sleep');
+      TraceExit('sgCore', 'Delay');
     {$ENDIF}
   end;
 
@@ -1041,7 +1021,7 @@ implementation
     //dont sleep if 1ms remaining...
     while (delta + UInt32(1)) * TargetFPS < 1000 do
     begin
-      Sleep(1);
+      Delay(1);
       nowTime := GetTicks();
       delta := nowTime - _lastUpdateTime;
     end;  
@@ -1376,154 +1356,6 @@ implementation
     result := RGBAColor(Byte(Rnd(256)), Byte(Rnd(256)), Byte(Rnd(256)), alpha);
     {$IFDEF TRACE}
       TraceExit('sgCore', 'RandomRGBColor');
-    {$ENDIF}
-  end;
-
-  
-  //----------------------------------------------------------------------------
-  // Timers
-  //----------------------------------------------------------------------------
-  
-  function CreateTimer(): Timer;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'CreateTimer');
-    {$ENDIF}
-    New(result);
-    with result^ do
-    begin
-      startTicks := 0;
-      pausedTicks := 0;
-      paused := false;
-      started := false;
-    end;
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'CreateTimer');
-    {$ENDIF}
-  end;
-  
-  procedure ResetTimer(tmr: Timer);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'ResetTimer');
-    {$ENDIF}
-    tmr^.startTicks := SDL_GetTicks();
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'ResetTimer');
-    {$ENDIF}
-  end;
-
-  procedure FreeTimer(var toFree: Timer);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'FreeTimer');
-    {$ENDIF}
-    
-    if Assigned(toFree) then
-    begin
-      Dispose(toFree);
-      CallFreeNotifier(toFree);
-    end;
-    
-    toFree := nil;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'FreeTimer');
-    {$ENDIF}
-  end;
-
-  procedure StartTimer(toStart: Timer);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'StartTimer');
-    {$ENDIF}
-    if not Assigned(toStart) then begin RaiseException('No timer supplied'); exit; end;
-    
-    with toStart^ do
-    begin
-      started := true;
-      paused := false;
-      startTicks := SDL_GetTicks();
-    end;
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'StartTimer');
-    {$ENDIF}
-  end;
-
-  procedure StopTimer(toStop: Timer);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'StopTimer');
-    {$ENDIF}
-    if not Assigned(toStop) then begin RaiseException('No timer supplied'); exit; end;
-    with toStop^ do
-    begin
-      started := false;
-      paused := false;
-    end;
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'StopTimer');
-    {$ENDIF}
-  end;
-
-  procedure PauseTimer(toPause: Timer);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'PauseTimer');
-    {$ENDIF}
-    if not Assigned(toPause) then begin RaiseException('No timer supplied'); exit; end;
-    with toPause^ do
-    begin
-      if started and (not paused) then
-      begin
-        paused := true;
-        pausedTicks := SDL_GetTicks() - startTicks;
-      end;
-    end;
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'PauseTimer');
-    {$ENDIF}
-  end;
-
-  procedure ResumeTimer(toUnpause: Timer);
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'ResumeTimer');
-    {$ENDIF}
-    if not Assigned(toUnpause) then begin RaiseException('No timer supplied'); exit; end;
-    with toUnpause^ do
-    begin
-      if paused then
-      begin
-        paused := false;
-        startTicks := SDL_GetTicks() - pausedTicks;
-        pausedTicks := 0;
-      end;
-    end;
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'ResumeTimer');
-    {$ENDIF}
-  end;
-
-  function TimerTicks(toGet: Timer): UInt32;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgCore', 'TimerTicks');
-    {$ENDIF}
-    if not Assigned(toGet) then begin RaiseException('No timer supplied'); exit; end;
-
-    with toGet^ do
-    begin
-      if started then
-      begin
-        if paused then result := pausedTicks
-        else result := SDL_GetTicks() - startTicks;
-        exit;
-      end;
-    end;
-    result := 0;
-    {$IFDEF TRACE}
-      TraceExit('sgCore', 'TimerTicks');
     {$ENDIF}
   end;
   
