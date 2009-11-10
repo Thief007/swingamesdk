@@ -21,13 +21,6 @@ GAME_NAME="Test"
 
 CLEAN="N"
 
-SRC_FILE=${1}.pas
-
-if [ ! -f ./test/$SRC_FILE ]; then
-    echo "usage build.sh filename"
-    exit 1
-fi
-
 Usage()
 {
     echo "Usage: [-c] [-h] [name]"
@@ -46,11 +39,18 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  PAS_FLAGS="-g -vw"
+    d)  PAS_FLAGS="-gw -vw"
     esac
 done
 
 shift $((${OPTIND}-1))
+
+SRC_FILE=${1}.pas
+
+if [ ! -f ./test/$SRC_FILE ]; then
+    echo "usage build.sh filename"
+    exit 1
+fi
 
 if [ -f "${LOG_FILE}" ]
 then

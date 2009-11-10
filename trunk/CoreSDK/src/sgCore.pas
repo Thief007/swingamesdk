@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-11: Andrew : Updated amask for screen surface.
 // - 2009-11-10: Andrew : Added sn and csn tags, and added comments to code
 //                      : Removed Timers
 // - 2009-10-16: Andrew : Fixed order of free notifier calls
@@ -566,8 +567,13 @@ implementation
     begin
       screen^.surface := SDL_CreateRGBSurface(SDL_HWSURFACE,
                                              ScreenWidth(), ScreenHeight(), 32,
-                                             RMask, GMask, BMask, SDL_Swap32($000000FF));
-
+                                             RMask, GMask, BMask, 
+                                             $ffffffff and not RMask
+                                                and not GMask
+                                                and not BMask);
+      
+      //WriteLn(RMask, ':', GMask, ':', BMask, ':', screen^.surface^.format^.AMask);
+      
       //Turn off alpha blending for when scr is blit onto _screen
       SDL_SetAlpha(screen^.surface, 0, 255);
       SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, ColorLightGrey);
@@ -973,9 +979,9 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'ProcessEvents');
     {$ENDIF}
-    // {$ifdef DARWIN}
+    {$ifdef DARWIN}
     // CyclePool();
-    // {$endif}
+    {$endif}
     SDL_GetRelativeMouseState(x, y);
     sdlManager.ProcessEvents();
     {$IFDEF TRACE}

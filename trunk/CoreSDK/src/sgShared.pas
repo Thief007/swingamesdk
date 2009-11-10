@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-11-11: Andrew : Switched to release rather than drain on the autorelease pool
 // - 2009-11-06: Andrew : Added resource management type code
 // - 2009-10-16: Andrew : Added the free notifier, so it can be called from many places
 // - 2009-07-29: Andrew : Added flag for opened audio.
@@ -217,15 +218,15 @@ implementation
   {$ifdef DARWIN}
   // procedure CyclePool();
   // begin
-  //   // if class_respondsToSelector(NSAutoreleasePool, drain) then
-  //   // begin
-  //   //   //Drain the pool - releases it
-  //   //   objc_msgSend(pool, drain);
-  //   //   WriteLn('Drain');
-  //   //   //Create a new pool
-  //   //   pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-  //   //   objc_msgSend(pool, sel_registerName('init'));
-  //   // end;
+  //   if class_respondsToSelector(NSAutoreleasePool, sel_registerName('release')) then
+  //   begin
+  //     //Drain the pool - releases it
+  //     objc_msgSend(pool, sel_registerName('release'));
+  //     WriteLn('Drain');
+  //     //Create a new pool
+  //     pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+  //     objc_msgSend(pool, sel_registerName('init'));
+  //   end;
   // end;
   {$endif}
 
@@ -439,7 +440,7 @@ implementation
       // last pool will self drain...
       if assigned(pool) then
       begin
-        objc_msgSend(pool, sel_registerName('drain'));
+        objc_msgSend(pool, sel_registerName('release'));
       end;
       pool := nil;
       NSAutoreleasePool := nil;
