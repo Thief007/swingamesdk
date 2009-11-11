@@ -198,6 +198,7 @@ uses
       
       lineCount += 1;
       WriteLn(output, unitname, ': ':(15 - Length(unitname)), action, ': ':(8 - Length(action)), StringOfChar(' ', indentLevel * 2), routine, ': ', message);
+      Flush(output);
       AdvanceTrace();
     except
     end;
@@ -246,6 +247,7 @@ uses
       {$ENDIF}
       Assign(output, 'Trace.log');
       Rewrite(output);
+      Trace('sgTrace', 'INFO', 'initialization', 'Tracing started in SwinGame.');
     except
       WriteLn('ERROR: Unable to write to trace file. Please make Trace.log writable by this program.')
     end;
