@@ -1381,9 +1381,7 @@ implementation
         isPaused := not isPaused;
       end;
       if WindowCloseRequested() or KeyDown(vk_Escape) then isSkip := true;
-      
     end;
-    
   begin
     
     isPaused := false;

@@ -683,6 +683,10 @@ implementation
       end;
     end;
     
+    {$IFDEF TRACE}
+      TraceIf(tlInfo, 'sgCore', 'Info', 'OpenGraphicsWindow', 'Window is open (' + caption + ' ' + IntToStr(width) + 'x' + IntToStr(height) + ')');
+    {$ENDIF}
+    
     ShowLogos();
     {$IFDEF TRACE}
       TraceExit('sgCore', 'OpenGraphicsWindow');
@@ -837,7 +841,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'Delay');
     {$ENDIF}
-    SDL_Delay(time);
+    if time > 0 then SDL_Delay(time);
     {$IFDEF TRACE}
       TraceExit('sgCore', 'Delay');
     {$ENDIF}
@@ -881,6 +885,9 @@ implementation
       average :='??.?';
       highest :='??.?';
       lowest  :='??.?';
+      {$IFDEF TRACE}
+        TraceExit('sgCore', 'CalculateFramerate');
+      {$ENDIF}
       exit;
     end;
     
@@ -902,6 +909,10 @@ implementation
       textColor := ColorYellow
     else
       textColor := ColorGreen;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCore', 'CalculateFramerate');
+    {$ENDIF}
   end;
 
 
@@ -963,7 +974,7 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'WindowCloseRequested');
     {$ENDIF}
-    if screen = nil then
+    if sdlManager = nil then
       result := false
     else
       result := sdlManager.HasQuit();
@@ -1012,7 +1023,7 @@ implementation
   procedure RefreshScreen(TargetFPS: UInt32); overload;
   var
     nowTime: UInt32;
-    delta: UInt32;
+    delta, delayTime: UInt32;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'RefreshScreen');
@@ -1025,9 +1036,11 @@ implementation
     delta := nowTime - _lastUpdateTime;
     
     //dont sleep if 1ms remaining...
-    while (delta + UInt32(1)) * TargetFPS < 1000 do
+    while (delta + 1) * TargetFPS < 1000 do
     begin
-      Delay(1);
+      delayTime := (1000 div TargetFPS) - delta;
+      WriteLn(delayTime);
+      Delay(delayTime);
       nowTime := GetTicks();
       delta := nowTime - _lastUpdateTime;
     end;  
