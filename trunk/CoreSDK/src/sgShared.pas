@@ -199,7 +199,8 @@ implementation
       TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to initialise SDL');
     {$ENDIF}
     
-    if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+    //if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
+    if SDL_INIT(SDL_INIT_VIDEO or SDL_INIT_AUDIO) = -1 then
     begin
       {$IFDEF Trace}
       TraceIf(tlError, 'sgShared', 'ERROR', 'InitialiseSwinGame', SDL_GetError());
