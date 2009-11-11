@@ -183,7 +183,7 @@ implementation
     
     {$ifdef DARWIN}
       {$IFDEF Trace}
-        TraceIf(tlInfo, 'sgShared', 'Info', 'initialization', 'Loading Mac version');
+        TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'Loading Mac version');
       {$ENDIF}
 
       //FIX: Error with Mac and FPC 2.2.2
@@ -194,15 +194,23 @@ implementation
       objc_msgSend(pool, sel_registerName('init'));
       NSApplicationLoad();
     {$endif}
-
+    
+    {$IFDEF Trace}
+      TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to initialise SDL');
+    {$ENDIF}
+    
     if SDL_Init(SDL_INIT_EVERYTHING) = -1 then
     begin
       {$IFDEF Trace}
-      TraceIf(tlError, 'sgShared', 'Error Loading SDL', 'initialization', SDL_GetError());
+      TraceIf(tlError, 'sgShared', 'ERROR', 'InitialiseSwinGame', SDL_GetError());
       {$ENDIF}
       RaiseException('Error loading sdl... ' + SDL_GetError());
       exit;
     end;
+    
+    {$IFDEF Trace}
+      TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'About to enable unicode');
+    {$ENDIF}
     
     //Unicode required by input manager.
     SDL_EnableUNICODE(SDL_ENABLE);
