@@ -27,7 +27,10 @@ begin
     ProcessEvents();
     
     //DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
+    ClearScreen(ColorBlack);
     FillRectangle(ColorWhite, 10, 10, 780, 580);
+    
+    DrawFramerate(0,0);
     
     RefreshScreen();
   until WindowCloseRequested();

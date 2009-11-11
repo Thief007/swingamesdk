@@ -1102,7 +1102,7 @@ implementation
       if soundChannels[i] = effect then
       begin
         result := result or (Mix_Playing(i) <> 0);
-        if result then exit;
+        if result then break;
       end;
     end;
     
