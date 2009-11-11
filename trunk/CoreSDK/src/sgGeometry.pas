@@ -51,11 +51,10 @@ unit sgGeometry;
 
 //=============================================================================
 interface
-//=============================================================================
-
   uses sgTypes;
-
-
+//=============================================================================
+  
+  
   //---------------------------------------------------------------------------
   // Circle creation code
   //---------------------------------------------------------------------------
@@ -66,51 +65,116 @@ interface
   /// @sn circleAt:%s radius:%s
   function CircleAt(const pt: Point2D; radius: LongInt): Circle; overload;
   
-  
+  /// Creates a circle at the given x,y location with the indicated radius.
+  ///
   /// @lib CircleFromXY
+  /// @sn circleAtX:%s y:%s radius:%s
   function CircleAt(x, y: Single; radius: LongInt): Circle; overload;
-
-  /// @lib CircleFromSprite
-  function CircleAt(s: Sprite): Circle; overload;
-
-
+  
+  /// Create a circle that is centered on a Sprite, which takes its radius from
+  /// the larger of the sprites width and height.
+  ///
+  /// @lib CircleSprite
+  ///
+  /// @class Sprite
+  /// @method Circle
+  function CircleSprite(s: Sprite): Circle; overload;
+  
+  
+  
   //---------------------------------------------------------------------------
   // Circle code
   //---------------------------------------------------------------------------
-
+  
+  /// Return the center point of a circle.
+  ///
   /// @lib CenterPointCircle
   function CenterPoint(const c: Circle): Point2D; overload;
-
+  
+  /// Returns the X value of the center point of a circle.
+  ///
   /// @lib
+  /// @class Circle
+  /// @getter X
   function CircleX(const c: Circle): Single;
-
+  
+  /// Returns the Y value of the center point of a circle.
+  ///
   /// @lib
+  /// @class Circle
+  /// @getter Y
   function CircleY(const c: Circle): Single;
-
+  
+  /// Returns the radius of the passed in circle.
+  /// 
   /// @lib
   function CircleRadius(const c: Circle): LongInt;
-
+  
+  /// Returns the point that lies on the circle's radius that is closest to the fromPt.
+  ///
   /// @lib
+  /// @sn closestPointFrom:%s onCircle:%s
+  ///
+  /// @class Circle
+  /// @method ClosestPointTo
+  /// @self 2
   function ClosestPointOnCircle(const fromPt: Point2D; const c: Circle): Point2D;
-
+  
   /// Returns the point at the opposite side of a circle from a given point `pt`.
   ///
   /// @lib
+  /// @sn distantPointFrom:%s onCircle:%s
+  ///
+  /// @class Circle
+  /// @method DistantPointFrom
+  /// @self 2
+  /// @csn distantPointFrom:%s
   function DistantPointOnCircle(const pt: Point2D; const c: Circle): Point2D;
-
+  
   /// Finds the opposite side of a circle from a given point `pt` when travelling along the
   /// vector `heading`. Returns False if the ray projected from point `pt` misses the circle.
   ///
   /// @lib
+  /// @sn distantPointFrom:%s onCircle:%s heading:%s result:%s
+  ///
+  /// @class Circle
+  /// @method DistantPointFrom
+  /// @self 2
+  /// @csn distantPointFrom:%s heading:%s result:%s
   function DistantPointOnCircleHeading(const pt: Point2D; const c: Circle; const heading: Vector; out oppositePt: Point2D): Boolean;
-
+  
+  /// Returns the two widest points on the circle that lie along the indicated vector.
+  ///
   /// @lib
+  /// @sn widestPointsOn:%s along:%s firstPt:%s secondPt:%s
+  ///
+  /// @class Circle
+  /// @method WidestPoints
+  /// @csn widestPointsAlong:%s firstPt:%s secondPt:%s
   procedure WidestPoints(const c: Circle; const along: Vector; out pt1, pt2: Point2D);
-
+  
+  /// Returns the two tangent points on the circle given the indicated vector.
+  ///
   /// @lib
+  /// @sn tangentPointsFrom:%s on:%s firstPt:%s secondPt:%s
+  ///
+  /// @class Circle
+  /// @method TangentPoints
+  /// @self 2
+  /// @csn tangentPointsFrom:%s firstPt:%s secondPt:%s
   function TangentPoints(const fromPt: Point2D; const c: Circle; out p1, p2: Point2D): Boolean;
   
+  /// Returns the distance from the ray origin to the edge of the circle where the ray heads in the
+  /// direction indicated in the ray_heading parameter. This returns -1 where the ray does not hit
+  /// the circle.
+  ///
   /// @lib
+  /// @sn distanceRayAt:%s heading:%s hitCircle:%s
+  ///
+  /// @class Point2D
+  /// @method RayCircleIntersectDistance
+  /// @self 1
+  /// @csn distanceRayHeading:%s toCircle:%s
   function RayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const c: Circle): Single;
   
   /// @lib
@@ -3363,10 +3427,10 @@ implementation
     {$ENDIF}
   end;
   
-  function CircleAt(s: Sprite): Circle; overload;
+  function CircleSprite(s: Sprite): Circle; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'CircleAt(s: Sprite): Circle', '');
+      TraceEnter('sgGeometry', 'CircleSprite(s: Sprite): Circle', '');
     {$ENDIF}
     
     result.center := CenterPoint(s);
@@ -3377,7 +3441,7 @@ implementation
       result.radius := Ceiling(SpriteHeight(s) / 2);
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'CircleAt(s: Sprite): Circle', '');
+      TraceExit('sgGeometry', 'CircleSprite(s: Sprite): Circle', '');
     {$ENDIF}
   end;
   

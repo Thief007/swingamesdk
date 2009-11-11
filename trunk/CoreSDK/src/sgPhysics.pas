@@ -985,7 +985,7 @@ implementation
   begin
     mvmt := s^.velocity;
     maxIdx := -1;
-    outVec := VectorOverLinesFromCircle(CircleAt(s), lines, mvmt, maxIdx);
+    outVec := VectorOverLinesFromCircle(CircleSprite(s), lines, mvmt, maxIdx);
     if maxIdx < 0 then exit;
      
     MoveSprite(s, outVec);
@@ -1006,8 +1006,8 @@ implementation
   begin
     if (s1^.mass <= 0) or (s2^.mass <= 0) then begin RaiseException('Collision with 0 or negative mass... ensure that mass is greater than 0'); exit; end;
     
-    c1 := CircleAt(s1);
-    c2 := CircleAt(s2);
+    c1 := CircleSprite(s1);
+    c2 := CircleSprite(s2);
     
     //if s1^.mass < s2^.mass then
     if VectorMagnitude(s1^.velocity) > VectorMagnitude(s2^.velocity) then
@@ -1060,7 +1060,7 @@ implementation
     spriteCenter := CenterPoint(s);
     mvmt := s^.velocity;
     
-    outVec := VectorOutOfCircleFromCircle(CircleAt(s), c, mvmt);
+    outVec := VectorOutOfCircleFromCircle(CircleSprite(s), c, mvmt);
     // Back out of circle
     MoveSprite(s, outVec);
     
@@ -1097,9 +1097,9 @@ implementation
     // Get the line hit...
     lines := LinesFrom(rect);
     // if bounds then
-    //   outVec := VectorInLinesFromCircle(CircleAt(s), lines, mvmt, hitIdx)
+    //   outVec := VectorInLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx)
     // else 
-      outVec := VectorOverLinesFromCircle(CircleAt(s), lines, mvmt, hitIdx);
+      outVec := VectorOverLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx);
     
     if hitIdx = -1 then exit;
     

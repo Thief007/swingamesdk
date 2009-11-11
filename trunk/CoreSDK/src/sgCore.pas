@@ -391,7 +391,7 @@ interface
   /// the color.
   ///
   /// @lib
-  /// @hsbValueOf:%s hue:%s sat:%s bri:%s
+  /// @sn hsbValueOf:%s hue:%s sat:%s bri:%s
   procedure HSBValuesOf(c: Color; out h, s, b: Single);
   
   /// Get the hue of the `color`.
