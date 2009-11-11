@@ -1039,7 +1039,6 @@ implementation
     while (delta + 1) * TargetFPS < 1000 do
     begin
       delayTime := (1000 div TargetFPS) - delta;
-      WriteLn(delayTime);
       Delay(delayTime);
       nowTime := GetTicks();
       delta := nowTime - _lastUpdateTime;
