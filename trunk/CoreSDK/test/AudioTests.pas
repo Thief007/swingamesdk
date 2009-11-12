@@ -5,7 +5,7 @@ uses
 procedure Main();
 var
   snd: SoundEffect;
-  mus: Music;
+  mus, mus1: Music;
   i: Integer;
 begin
   OpenAudio();
@@ -16,6 +16,7 @@ begin
   ReleaseMusic('fred');
   
   mus := MapMusic('fast', 'Fast.mp3');
+  mus1 := LoadMusic('menu.ogg');
   snd := MapSoundEffect('shock', 'shock.wav');
   
   WriteLn('Loaded ', MusicName(mus), ' for file ', MusicFilename(mus));
@@ -33,12 +34,15 @@ begin
   FadeMusicOut(500);
   Delay(500);
   
-  for i := 0 to 10 do
+  for i := 0 to 5 do
   begin
     PlayMusic(mus);
     Delay(1000);
     StopMusic();
   end;
+  
+  PlayMusic(mus1);
+  Delay(2000);
   
   ReleaseAllResources();
   CloseAudio();

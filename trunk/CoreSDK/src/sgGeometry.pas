@@ -226,17 +226,11 @@ interface
   /// Create a Point2D that points at the X,Y location passed in.
   ///
   /// @lib PointAt
-  /// @class Point2D
-  /// @constructor
-  /// @csn initAtX:%s y:%s
   function PointAt(x, y: Single): Point2D; overload;
   
   /// Create a Point2D that points at the point from the startPoint at the end of the offset vector.
   ///
   /// @lib PointAtStartWithOffset
-  /// @class Point2D
-  /// @constructor
-  /// @csn initAtPointFrom:%s withOffset:%s
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
   
   /// @lib

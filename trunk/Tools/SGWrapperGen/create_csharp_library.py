@@ -43,15 +43,22 @@ _pointer_wrapper_class_header = ''
 _type_switcher = {
     None : {    
         #Pascal type: what it maps to
+        
+        #Primitives
         'single': 'float %s',
         'longint': 'int %s',
-        'soundeffect': 'SoundEffect %s',
-        'music': 'Music %s',
         'string': 'string %s',
         'boolean': 'bool %s',
         'byte': 'byte %s',
-        'timer': 'Timer %s',
         'color': 'Color %s',
+        
+        #Resources
+        'soundeffect': 'SoundEffect %s',
+        'music': 'Music %s',
+        'shapeprototype': 'ShapePrototype %s',
+        'timer': 'Timer %s',
+        'shape': 'Shape %s',
+        
         'resourcekind': 'ResourceKind %s',
         'uint32': 'uint %s',
         'bitmap': 'Bitmap %s',
@@ -68,27 +75,19 @@ _type_switcher = {
         'vector': 'Vector %s',
         'spriteendingaction': 'SpriteEndingAction %s',
         'point2d': 'Point2D %s',
-        # '^point2d': 'Point2D *%s',
         'point2d[0..2]': 'Point2D %s[3]',
         'point2d[0..n - 1]': 'Point2D[] %s',
-        # '^linesegment': 'LineSegment *%s',
         'linesegment': 'LineSegment %s',
         'sprite': 'Sprite %s',
         'rectangle': 'Rectangle %s',
         'triangle': 'Triangle %s',
         'linesarray': 'LineSegment[] %s',
-        # 'linesegmentptr': 'LineSegment *%s',
         'font': 'Font %s',
         'fontalignment': 'FontAlignment %s',
         'fontstyle': 'FontStyle %s',
         'mousebutton': 'MouseButton %s',
         'uint16': 'ushort %s',
-        # '^single': 'float *%s',
         'keycode': 'KeyCode %s',
-        # 'bitmapptr': 'Bitmap *%s',
-        # '^bitmap': 'Bitmap *%s',
-        # 'longintptr': 'int *%s',
-        # '^longint': 'int *%s',
         'collisionside': 'CollisionSide %s',
         'longint[0..n - 1][0..n - 1]': 'int[][] %s',
         'mapdata': 'MapData %s',
@@ -96,39 +95,52 @@ _type_switcher = {
         'layerdata[0..n - 1]': 'LayerData[] %s',
         'collisiondata': 'CollisionData %s',
         'maptagdetails[0..n - 1][0..23]': 'MapTagDetails[][24] %s',
-        # '^maprecord': 'MapRecord *%s',
         'map': 'Map %s',
         'maptag': 'MapTag %s',
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
         'point2darray': 'Point2D[] %s',
+        
+        #Enums
+        'shapekind': 'ShapeKind %s',
+        
+        #Functions
         'freenotifier': 'FreeNotifier %s',
-#        None: 'void %s'
     },
     'const' : {
+        #Data
         'point2d': 'Point2D %s',
         'linesegment': 'LineSegment %s',
         'rectangle': 'Rectangle %s',
         'matrix2d': 'Matrix2D %s',
         'vector': 'Vector %s',
+        'circle': 'Circle %s',
+        
+        #Arrays
         'linesarray': 'LineSegment[] %s',
         'triangle': 'Triangle %s',
         'bitmaparray': 'Bitmap[] %s',
         'longintarray': 'int[] %s',
-        'circle': 'Circle %s',
+        'point2darray': 'Point2D[] %s',
+
     },
     'var' : {
         'soundeffect': 'SoundEffect %s',
         'music': 'Music %s',
         'timer': 'Timer %s',
-        'string': 'char *%s',
-        'triangle': 'Triangle %s',
-        'linesarray': 'LineSegment[] %s',
+        'shapeprototype': 'ShapePrototype %s',
+        'shape': 'Shape %s',
         'font': 'Font %s',
         'bitmap': 'Bitmap %s',
         'sprite': 'Sprite %s',
-        'matrix2d': 'Matrix2D %s',
         'map': 'Map %s',
+        
+        'string': 'char *%s',
+        
+        'triangle': 'Triangle %s',
+        'matrix2d': 'Matrix2D %s',
+        
+        'linesarray': 'LineSegment[] %s',
         'point2darray': 'Point2D[] %s',
     },
     'out' : {
@@ -148,35 +160,46 @@ _type_switcher = {
     'return' : {
         None: 'void %s',
         'boolean': 'bool %s',
-        'music': 'Music %s',
-        'soundeffect': 'SoundEffect %s',
         'single': 'float %s',
-        'point2d': 'Point2D %s',
         'longint': 'int %s',
-        'timer': 'Timer %s',
         'byte': 'byte %s',
         'color': 'System.Drawing.Color %s',
         'uint32': 'uint %s',
+        'string': 'String %s',
+        
+        #Data
+        'point2d': 'Point2D %s',
         'vector': 'Vector %s',
         'circle': 'Circle %s',
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
+        'matrix2d': 'Matrix2D %s',
+        
+        #Resources
+        'music': 'Music %s',
+        'soundeffect': 'SoundEffect %s',
+        'timer': 'Timer %s',
         'bitmap': 'Bitmap %s',
-        'collisionside': 'CollisionSide %s',
+        'shapeprototype': 'ShapePrototype %s',
+        'shape': 'Shape %s',
         'font': 'Font %s',
         'map': 'Map %s',
         'sprite': 'Sprite %s',
+        
+        #Enum
+        'collisionside': 'CollisionSide %s',
         'fontstyle': 'FontStyle %s',
         'maptag': 'MapTag %s',
         'maptile': 'MapTile %s',
-        'string': 'String %s',
+        'spriteendingaction': 'SpriteEndingAction %s',
+        'spritekind': 'SpriteKind %s',
+        'shapekind': 'ShapeKind %s',
+        
+        #Arrays
         'linesarray': 'LineSegment[] %s',
-        'matrix2d': 'Matrix2D %s',
         'point2darray': 'Point2D[] %s',
         'triangle': 'Triangle %s',
         'longintarray': 'int[] %s',
-        'spriteendingaction': 'SpriteEndingAction %s',
-        'spritekind': 'SpriteKind %s',
     }
 }
 
@@ -197,6 +220,8 @@ _data_switcher = {
         'boolean': '%s != 0',
         'music': 'Music.Create(%s)',
         'soundeffect': 'SoundEffect.Create(%s)',
+        'shape': 'Shape.Create(%s)',
+        'shapeprototype': 'ShapePrototype.Create(%s)',
         'bitmap': 'Bitmap.Create(%s)',
         'font': 'Font.Create(%s)',
         'timer': 'Timer.Create(%s)',
@@ -243,16 +268,21 @@ _data_switcher = {
 
 _adapter_type_switcher = {
     None: {
+        #Primitives
         'single': 'float %s',
         'longint': 'int %s',
-        'soundeffect': 'IntPtr %s',
-        'music': 'IntPtr %s',
         'string': 'string %s',
         'boolean': 'int %s',
         'byte': 'byte %s',
         'color': 'int %s',
+        
+        #Resources
+        'soundeffect': 'IntPtr %s',
+        'music': 'IntPtr %s',
+        'shapeprototype': 'IntPtr %s',
         'timer': 'IntPtr %s',
-        'resourcekind': 'int %s',
+        'shape': 'IntPtr %s',
+        
         'uint32': 'uint %s',
         'bitmap': 'IntPtr %s',
         'rectangle': 'Rectangle %s',
@@ -275,22 +305,36 @@ _adapter_type_switcher = {
         'maptag': 'int %s',
         'maptile': 'MapTile %s',
         'circle': 'Circle %s',
+        
+        #Arrays
         'point2darray': 'Point2D[] %s',
         'longintarray': 'int[] %s',
+        
+        #Enums
+        'resourcekind': 'int %s',
         'spritekind': 'SpriteKind %s',
+        'shapekind': 'ShapeKind %s',
+        
+        #Functions
         'freenotifier': 'FreeNotifier %s',
     },
     #No modifier and for the actual library call
     'lib_': {
+        #primitive
         'single': 'float %s',
         'longint': 'int %s',
-        'soundeffect': 'IntPtr %s',
-        'music': 'IntPtr %s',
         'string': '[MarshalAs(UnmanagedType.LPStr)] string %s',
         'boolean': 'int %s',
         'byte': 'byte %s',
         'color': 'int %s',
+        
+        #Resources
+        'soundeffect': 'IntPtr %s',
+        'music': 'IntPtr %s',
+        'shapeprototype': 'IntPtr %s',
         'timer': 'IntPtr %s',
+        'shape': 'IntPtr %s',
+        
         'resourcekind': 'int %s',
         'uint32': 'uint %s',
         'bitmap': 'IntPtr %s',
@@ -316,7 +360,12 @@ _adapter_type_switcher = {
         'circle': 'Circle %s',
         'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
+        
+        #Enums
         'spritekind': 'SpriteKind %s',
+        'shapekind': 'ShapeKind %s',
+        
+        #Functions
         'freenotifier': 'FreeNotifier %s',
     },
     'const' : {
@@ -332,6 +381,7 @@ _adapter_type_switcher = {
         'linesarray':   'LineSegment[] %s',
         'longintarray': 'int[] %s',
         'bitmaparray':  'Bitmap[] %s',
+        'point2darray': 'Point2D[] %s',
     },
     'lib_const' : {
         'point2d':      'ref Point2D %s',
@@ -346,8 +396,8 @@ _adapter_type_switcher = {
         'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] LineSegment[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
         'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Bitmap[] %s',
+        'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
     },
-    #no lib_const
     'var': {
         'soundeffect': 'ref IntPtr %s',
         'music': 'ref IntPtr %s',
@@ -357,10 +407,13 @@ _adapter_type_switcher = {
         'bitmap': 'ref IntPtr %s',
         'sprite': 'ref IntPtr %s',
         'map': 'ref IntPtr %s',
+        'shapeprototype': 'ref IntPtr %s',
+        'shape': 'ref IntPtr %s',
         
         'string': 'StringBuilder %s',
         'triangle': 'Point2D[] %s',
     },
+    
     'lib_var': {
         'soundeffect':  'ref IntPtr %s',
         'music': 'ref IntPtr %s',
@@ -370,6 +423,8 @@ _adapter_type_switcher = {
         'bitmap': 'ref IntPtr %s',
         'sprite': 'ref IntPtr %s',
         'map': 'ref IntPtr %s',
+        'shapeprototype': 'ref IntPtr %s',
+        'shape': 'ref IntPtr %s',
         
         'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
         'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
@@ -412,11 +467,15 @@ _adapter_type_switcher = {
     'return' : {
         None: 'void %s',
         'boolean': 'int %s',
-        'music': 'IntPtr %s',
-        'soundeffect': 'IntPtr %s',
         'single': 'float %s',
         'point2d': 'Point2D %s',
         'longint': 'int %s',
+        
+        #Resources
+        'music': 'IntPtr %s',
+        'soundeffect': 'IntPtr %s',
+        'shapeprototype': 'IntPtr %s',
+        'shape': 'IntPtr %s',
         'timer': 'IntPtr %s',
         'byte': 'byte %s',
         'color': 'int %s',
@@ -433,8 +492,11 @@ _adapter_type_switcher = {
         'fontstyle': 'int %s',
         'maptag': 'int %s',
         'maptile': 'MapTile %s',
+        
+        #Enums
         'spriteendingaction': 'int %s',
         'spritekind': 'int %s',
+        'shapekind': 'ShapeKind %s',
     }
 }
 
@@ -666,10 +728,11 @@ def delegated_param_visitor(the_param, last, was_lib):
         modifier = "lib_" + (modifier if not modifier == None else "")
     
     if key not in _adapter_type_switcher[modifier]:
-        logger.error('CREATE Cs : Error changing adapter parameter %s - %s', the_param.modifier, the_param.data_type.name)
+        logger.error('CREATE Cs : Error changing adapter parameter %s - %s', modifier, the_param.data_type.name)
+        assert(False)
     
     if the_param.data_type.array_wrapper and (not modifier == "result"):
-        print _adapter_type_switcher[modifier][key], modifier, key
+        #print _adapter_type_switcher[modifier][key], modifier, key
         if was_lib and the_param.data_type.array_wrapper:
             #if for a library result, arrays need to know the index of the length parameter
             return '%s%s' % ( _adapter_type_switcher[modifier][key] % (the_param.length_idx, the_param.name), ', ' if not last else '')
@@ -794,10 +857,11 @@ def method_visitor(the_method, other, as_accessor_name = None):
                                 the_method.fixed_result_size
                             )
                     elif the_method.length_call != None:
-                        assert local_var.data_type.name in ['LongIntArray']
+                        # print local_var.data_type.name
+                        assert local_var.data_type.name in ['LongIntArray','Point2DArray']
                         temp_process_params = '%s = new %s[%s];\n    ' % (
                                 local_var.name,
-                                'int',
+                                'int' if local_var.data_type.name in ['LongIntArray'] else 'Point2D',
                                 details['length_call'].replace('return ', '')
                             )
                     
