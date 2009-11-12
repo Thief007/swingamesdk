@@ -552,7 +552,7 @@ implementation
       TraceEnter('sgAudio', 'TryOpenAudio', '');
     {$ENDIF}
     
-    sgShared.AudioOpen :=  Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) >= 0;
+    sgShared.AudioOpen :=  Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048 ) >= 0;
     result := sgShared.AudioOpen;
     
     {$IFDEF TRACE}
@@ -818,7 +818,7 @@ implementation
     begin
       dispose(result);
       result := nil;
-      RaiseException('Error loading sound effect: ' + SDL_GetError());
+      RaiseException('Error loading music: ' + SDL_GetError());
       exit;
     end;
     

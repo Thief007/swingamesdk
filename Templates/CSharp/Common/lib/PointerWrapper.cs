@@ -23,6 +23,8 @@ namespace SwinGame
         Map,
         Sprite,
         Timer,
+        Shape,
+        ShapePrototype,
         Copy
     }
     
