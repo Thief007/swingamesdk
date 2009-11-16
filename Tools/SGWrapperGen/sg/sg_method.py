@@ -121,7 +121,7 @@ class SGMethod(SGMetaDataContainer):
             result['calls.name'] = self.method_called.name
             result['calls.args'] = self.args_string_for_called_method(arg_visitor)
         
-        result['static'] = 'static ' if self.is_static or self.in_class.is_static else ''
+        result['static'] = 'static ' if self.is_static or self.in_class.is_static else '' #TODO: fix this for VB - parameter
         result['field.name'] = self.field_name
         result['field.name_lower'] = wrapper_helper.lower_name(self.field_name)
         

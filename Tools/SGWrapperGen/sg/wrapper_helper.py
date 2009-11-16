@@ -18,6 +18,7 @@ def std_type_visitor(the_dict, the_type, modifier = None, dict_name = '_type_swi
      - the_dict:    The dictionary with the type changes with modifier keys
      - the_type:    The type being checked
      - modifier:    The modifier for the type
+     - dict_name:   The name of the dictionary for error reporting
     '''
     key = the_type.name.lower() if the_type != None else None
     
@@ -140,7 +141,18 @@ def add_length_local(to_method, for_param):
     
     return local_var
 
-def add_length_params(to_method, len_str):
+def add_length_args(to_method, len_str):
+    '''
+    Adds length arguments, and possibly local variables, to the passed in method based
+    upon the method that it calls. This scans the method looking for length parameters
+    and adding in the argument code needed to pass the length of the called parameter.
+    
+    The len_str is used to contain the format of the expression to be passed to the
+    called method when the argument is passed. This will be passed a single string
+    containing the name of the parameter that it is the length of (this will also be a
+    parameter in this method, meaning that a %s can be used to place this value within
+    the expression).
+    '''
     # for the parameters in the called method...
     for param in to_method.method_called.params:
         if param.is_length_param:

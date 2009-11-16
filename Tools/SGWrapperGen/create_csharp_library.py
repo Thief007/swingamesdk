@@ -1271,7 +1271,7 @@ def _post_process_method(method):
         #         method.args.append(result_param)
         
     if method.method_called.has_length_params:
-        wrapper_helper.add_length_params(method, '%s.Length')
+        wrapper_helper.add_length_args(method, '%s.Length')
         # for param in method.method_called.params:
         #     if param.is_length_param:
         #         #possibly need an extra local for this... if out
