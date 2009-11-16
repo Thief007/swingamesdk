@@ -377,7 +377,7 @@ def _post_process_method(method):
         if method.method_called.was_function or method.has_out_params:
             wrapper_helper.add_local_var_for_result(method)
         if method.method_called.has_length_params:
-            wrapper_helper.add_length_params(method, '[%s count]')
+            wrapper_helper.add_length_args(method, '[%s count]')
     elif method.return_type != None:
         wrapper_helper.add_local_var_for_result(method)
 
