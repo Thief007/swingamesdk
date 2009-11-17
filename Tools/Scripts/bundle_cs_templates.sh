@@ -24,6 +24,8 @@ source "${APP_PATH}/inc/base_template_dirs.sh"
 if [ "$OS" = "$WIN" ]; then
     COPY_LIST=( "VS08,${VS08_TEMPLATE_DIR},${VS08_DIST_DIR}" )
     #COPY_LIST=( "${COPY_LIST[@]}" "Command Line,${CL_TEMPLATE_DIR},${CL_DIST_DIR}")
+    
+    VB_COPY_LIST=( "Mono VB,${VB_MONO_TEMPLATE_DIR},${VB_MONO_DIST_DIR}" )
 else
     COPY_LIST=( "Mono C#,${MONO_TEMPLATE_DIR},${MONO_DIST_DIR}" )
     
@@ -68,7 +70,13 @@ CreateCSCode
 #
 echo "  ... Compiling the C# library code"
 if [ "$OS" = "$WIN" ]; then
-    csc -t:library -r:System.Drawing.dll -out:"${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs"
+    CS_LIBRARY_DIR=`echo $CS_LIBRARY_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
+    CS_LIBRARY_DIR=`echo $CS_LIBRARY_DIR | awk '{gsub("/", "\\\\"); print}'`
+    
+    COMMON_CS_LIBRARY_DIR=`echo $COMMON_CS_LIBRARY_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
+    COMMON_CS_LIBRARY_DIR=`echo $COMMON_CS_LIBRARY_DIR | awk '{gsub("/", "\\\\"); print}'`
+    
+    csc -t:library -r:System.Drawing.dll -out:"${COMMON_CS_LIBRARY_DIR}\\SwinGame.dll" "${CS_LIBRARY_DIR}\\*.cs"
 else
     gmcs -t:library -r:System.Drawing.dll -out:"${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs"
 fi

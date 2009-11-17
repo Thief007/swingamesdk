@@ -68,7 +68,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)lib\*.dll" "$(TargetDir)" /s/y/d/e
-xcopy "$(ProjectDir)lib\*.a" "$(TargetDir)" /s/y/d/e</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(ProjectDir)lib\*.dll" "$(TargetDir)" /s/y/d/e</PostBuildEvent>
   </PropertyGroup>
 </Project>
