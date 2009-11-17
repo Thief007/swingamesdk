@@ -25,7 +25,9 @@ if [ "$OS" = "$WIN" ]; then
     COPY_LIST=( "VS08,${VS08_TEMPLATE_DIR},${VS08_DIST_DIR}" )
     #COPY_LIST=( "${COPY_LIST[@]}" "Command Line,${CL_TEMPLATE_DIR},${CL_DIST_DIR}")
 else
-    COPY_LIST=( "Mono,${MONO_TEMPLATE_DIR},${MONO_DIST_DIR}" )
+    COPY_LIST=( "Mono C#,${MONO_TEMPLATE_DIR},${MONO_DIST_DIR}" )
+    
+    VB_COPY_LIST=( "Mono VB,${VB_MONO_TEMPLATE_DIR},${VB_MONO_DIST_DIR}" )
 fi
 
 #
@@ -44,7 +46,7 @@ CreateCSCode()
 # Step 6: Create c# library and copy
 #
 echo "--------------------------------------------------"
-echo "      Creating $OS SwinGame C# Templates"
+echo "      Creating $OS SwinGame C# & VB Templates"
 echo "--------------------------------------------------"
 echo "  Will Create Templates for: "
 ListDists "${COPY_LIST}"
@@ -61,7 +63,23 @@ echo "--------------------------------------------------"
 echo "  ... Creating C# library code"
 CreateCSCode
 
+#
+# Step 7: Compile library
+#
+echo "  ... Compiling the C# library code"
+if [ "$OS" = "$WIN" ]; then
+    csc -t:library -r:System.Drawing.dll -out:"${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs"
+else
+    gmcs -t:library -r:System.Drawing.dll -out:"${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs"
+fi
+
+cp "${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${COMMON_VB_LIBRARY_DIR}/"
+
+echo "  ... Copy C# templates"
 DoDist "${COPY_LIST}" "${CS_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_CS_TEMPLATE_DIR}"
+
+echo "  ... Copy VB templates"
+DoDist "${VB_COPY_LIST}" "${VB_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_VB_TEMPLATE_DIR}"
 
 echo "  Finished"
 echo "--------------------------------------------------"

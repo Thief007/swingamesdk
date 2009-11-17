@@ -17,7 +17,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_out_path="../../Templates/CSharp/Common/lib"
+_out_path="../../Templates/CSharp/Library"
 
 #templates for adapter
 _header = ''
@@ -931,8 +931,10 @@ def method_visitor(the_method, other, as_accessor_name = None):
     return other
 
 def _write_wrapped_property(the_property, other):
-    '''The property is a structure or array type, so write a wrapper to give access
-    to elements and as a whole.'''
+    '''
+    The property is a structure or array type, so write a wrapper to give access
+    to elements and as a whole.
+    '''
     
     writer = other['file writer']
     

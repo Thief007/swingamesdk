@@ -23,20 +23,20 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-GMCS_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll" #" -r:Microsoft.VisualBasic"
-CS_FLAGS="-optimize+"
-SG_INC="-I${APP_PATH}/lib/"
-
-if [ -d "/c/Windows" ]; then
-    GMCS_BIN=`which csc`
-else
-    GMCS_BIN=`which gmcs`
-fi
-
 GAME_NAME=${APP_PATH##*/}
 ICON=SwinGame
 
 CLEAN="N"
+
+VBNC_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll -rootnamespace:${GAME_NAME} -imports:System,Color=System.Drawing.Color,SwinGame,System,System.Reflection" #" -r:Microsoft.VisualBasic"
+VB_FLAGS="-optimize+ -debug-"
+SG_INC="-I${APP_PATH}/lib/"
+
+if [ -d "/c/Windows" ]; then
+    VBNC_BIN=`which vbc`
+else
+    VBNC_BIN=`which vbnc`
+fi
 
 Usage()
 {
@@ -74,7 +74,7 @@ fi
 # Change directories based on release or debug builds
 #
 if [ "a${DEBUG}a" != "aa" ]; then
-    CS_FLAGS="-debug -define:DEBUG"
+    VB_FLAGS="-debug:full -define:DEBUG"
     OUT_DIR="${OUT_DIR}/Debug"
 else
     OUT_DIR="${OUT_DIR}/Release"
@@ -157,7 +157,7 @@ doCompile()
         mkdir -p ${OUT_DIR}
     fi
     
-    ${GMCS_BIN} ${GMCS_FLAGS} ${CS_FLAGS} -out:"${OUT_DIR}/${GAME_NAME}.exe" `find ${APP_PATH} -mindepth 2 | grep [.]cs$` >> ${LOG_FILE}
+    ${VBNC_BIN} ${VBNC_FLAGS} ${VB_FLAGS} -out:"${OUT_DIR}/${GAME_NAME}.exe" `find ${APP_PATH} -mindepth 2 | grep [.]vb$` >> ${LOG_FILE}
     if [ $? != 0 ]; then echo "Error compiling."; exit 1; fi
 }
 
@@ -214,7 +214,7 @@ then
     echo "--------------------------------------------------"
     echo "  Running script from $APP_PATH"
     echo "  Saving output to $OUT_DIR"
-    echo "  Compiler flags ${CS_FLAGS}"
+    echo "  Compiler flags ${VB_FLAGS}"
     echo "--------------------------------------------------"
     echo "  ... Creating ${GAME_NAME}"
     doCompile

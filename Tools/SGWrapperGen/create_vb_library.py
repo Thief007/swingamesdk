@@ -29,8 +29,48 @@ def adapter_type_visitor(the_type, modifier = None):
 def _map_data_value(key, return_type, result):
     return wrapper_helper.map_data_value(vb_lib._data_switcher, key, return_type, result)
 
-def param_visitor(the_param, last):
-    return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ': ' if not last else '')
+# def _modifier_by_type(modifier, the_type):
+#     '''
+#     Returns either ByVal or ByRef depending on the modifier type
+#     '''
+#     
+#     if the_type.is_array:
+#         return 'ByVal' #Arrays are already references
+#     elif the_type.name in ['String']:
+#         return 'ByVal' #All Strings are StringBuilders
+#     elif modifier in ['out','lib_out','var','lib_var','ref','lib_ref','const','lib_const', 'result', 'lib_resule']:
+#         return 'ByRef'
+#     else:
+#         return 'ByVal'
+
+def _do_param_visitor(visitor, the_param, last, was_lib = False):
+    modifier = the_param.modifier
+    
+    if was_lib:
+        modifier = "lib_" + (modifier if not modifier == None else "")
+        # print visitor(the_param.data_type, modifier)
+        if the_param.data_type.array_wrapper:
+            return visitor(the_param.data_type, modifier) % (the_param.length_idx, the_param.name) +  \
+                (', ' if not last else ' ')
+        else:
+            return visitor(the_param.data_type, modifier) % (the_param.name) +  \
+                (', ' if not last else ' ')
+    else:
+        if modifier == 'result':
+            modifier += '_param'
+        
+        print visitor(the_param.data_type, modifier)
+        return '%s%s' % (visitor(the_param.data_type, modifier) % the_param.name, 
+            ', ' if not last else ' ')
+
+def _param_visitor(the_param, last):
+    return _do_param_visitor(type_visitor, the_param, last)
+
+def _adapter_param_visitor(the_param, last):
+    return _do_param_visitor(adapter_type_visitor, the_param, last)
+
+def _lib_adapter_param_visitor(the_param, last):
+    return _do_param_visitor(adapter_type_visitor, the_param, last, True)
 
 def special_visitor(the_param, last):
     return '(%s)%s%s' % (type_visitor(the_param.data_type, the_param.modifier), the_param.name, ' ' if not last else '')
@@ -59,14 +99,15 @@ def arg_visitor(arg_str, the_arg, for_param):
         else:
             arg_str = data
     
+    #TODO: Remove
     #check for pointer wrapper param
-    if the_type.pointer_wrapper and not '->pointer' in arg_str.lower():
-        arg_str = '%s->pointer' % arg_str
+    # if the_type.pointer_wrapper and not '->pointer' in arg_str.lower():
+    #     arg_str = '%s->pointer' % arg_str
     # elif the_type.is_struct and not '->data' in arg_str.lower():
     #     arg_str = '%s->data' % arg_str
     
-    if the_type.pointer_wrapper and for_param.modifier == 'var':
-        arg_str = '&' + arg_str
+    # if the_type.pointer_wrapper and for_param.modifier == 'var':
+    #     arg_str = '&' + arg_str
     
     if the_type.name.lower() in vb_lib._data_switcher[data_key] and for_param.modifier not in ['out', 'return', 'result']:
         #convert data using pattern from _data_switcher
@@ -126,7 +167,7 @@ def _create_vb_method_details(the_method, other):
     if the_method.in_same_class_as_class_method():
         return other
     
-    my_details = the_method.to_keyed_dict(param_visitor, type_visitor, 
+    my_details = the_method.to_keyed_dict(_param_visitor, type_visitor, 
         call_creater = _create_vb_call, 
         arg_visitor = arg_visitor,
         special_visitor = special_visitor)
@@ -185,13 +226,51 @@ def _create_vb_method_details(the_method, other):
     return other
 
 def _create_vb_property_details(the_property, other):
-    '''Visited for each property, adds details to the result details'''
+    '''
+    Visited for each property, adds details to the result details
+    '''
     result_details = other['details']
+    
+    type_name = _type_switcher['return'][the_property.data_type.name.lower()]
+    
+    is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
+    
+    access_only = ''
+    
+    if the_property.getter == None:
+        access_only = 'WriteOnly'
+    elif the_property.setter == None:
+        access_only = 'ReadOnly '
+    
+    if is_wrapped:
+        _write_wrapped_property(the_property, other)
+        result_details['properties'] += 'Private %sProperty %s As %s\n' % \
+            (access_only, the_property.name, type_name))
+    else:    
+        # Write standard property
+        result_details['properties'] += 'Public %s%sProperty %s As %s\n' % \
+            ('Shared ' if the_property.is_static else '', access_only, the_property.name, type_name))
+    
+    if the_property.getter != None:
+        method_visitor(the_property.getter, other, 'get');
+    if the_property.setter != None:
+        method_visitor(the_property.setter, other, 'set');
+
+    writer.outdent(2)
+
+    result_details['properties'] += 'End Property\n';
+    
+    if is_wrapped:
+        writer.outdent(2)
+        writer.write('}\n')
+    
+    return other
+    
     
     type_name = wrapper_helper.std_type_visitor(vb_lib._type_switcher, the_property.data_type, 'return')
     
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
-
+    
     if the_property.is_static:
         #print 'static', the_property.name
         
@@ -233,7 +312,7 @@ def _create_vb_property_details(the_property, other):
         #add the implementation of the getter...
         the_property.getter.uname = the_property.getter.uname[4:] #remove pri_
         
-        my_details = the_property.getter.to_keyed_dict(param_visitor, type_visitor, 
+        my_details = the_property.getter.to_keyed_dict(_param_visitor, type_visitor, 
             call_creater = _create_vb_call, 
             arg_visitor = arg_visitor,
             special_visitor = special_visitor)
@@ -270,13 +349,13 @@ def _add_properties_for_fields(module, details):
         _create_vb_property_details(prop, details)
 
 def _write_vb_user_module(module):
-    '''Write the header and obj-c file to wrap the attached files details'''
-    header_file_writer = FileWriter('%s/SG%s.h'% (_out_path, module.name))
-    file_writer = FileWriter('%s/SG%s.m'% (_out_path, module.name))
+    '''
+    Write the VB file to wrap the attached files details
+    '''
+    file_writer = FileWriter('%s/%s.vb'% (_out_path, module.name))
     
     details = module.to_keyed_dict(type_visitor = type_visitor, 
-        array_idx_sep ='][', 
-        param_visitor = param_visitor,
+        param_visitor = _param_visitor,
         map_data_value = _map_data_value)
     
     details['method_headers'] = ''
@@ -313,11 +392,9 @@ def _write_vb_user_module(module):
     
     #Write the header file
     if module.is_pointer_wrapper:
-        header_file_writer.writeln(vb_lib.pointer_wrapper_h % details)
         file_writer.writeln(vb_lib.pointer_wrapper_m % details)
     elif module.is_struct:
         if module.wraps_array:
-            header_file_writer.writeln(vb_lib.array_wrapper_h % details)
             file_writer.writeln(vb_lib.array_wrapper_m % details)        
         else:
             _add_properties_for_fields(module, other)
@@ -342,20 +419,6 @@ def _create_vb_dll_call(details, the_method):
     
     return '%(returns)sDLL_%(name)s(%(args)s)' % details
 
-def _arg_vb_dll_visitor(arg_str, the_arg, for_param):
-    the_type = for_param.data_type
-    result = arg_str
-    
-    #check var/out/const
-    if the_type.array_wrapper or the_type.fixed_array_wrapper:
-        return result
-    if (for_param.modifier == 'var' or for_param.modifier == 'const'): # and not (the_type.array_wrapper or the_type.fixed_array_wrapper):
-        result = 'ref ' + result
-    elif (for_param.modifier == 'out') and the_type.name.lower() != "string":
-        result = 'out ' + result
-    
-    return result
-
 def _create_vb_lib_method(the_method, other):
     '''
     Create a library method for Visual Basic. This is a method in the DLL
@@ -365,10 +428,17 @@ def _create_vb_lib_method(the_method, other):
     
     # Read the details of the method into a keyed dictionary that can be used to
     # generate the output
-    my_details = the_method.to_keyed_dict(param_visitor, type_visitor, 
+    my_details = the_method.to_keyed_dict(_adapter_param_visitor, adapter_type_visitor, 
         call_creater = _create_vb_dll_call, 
         arg_visitor = arg_visitor,
         special_visitor = None)
+    
+    lib_details = the_method.to_keyed_dict(_lib_adapter_param_visitor, 
+        adapter_type_visitor, 
+        arg_visitor = arg_visitor,
+        call_creater = _create_vb_dll_call)
+    
+    my_details['lib_params'] = lib_details['params']
     
     my_details['public'] = 'friend '
     my_details['override'] = ''
@@ -404,7 +474,7 @@ def write_vb_lib(the_file):
         'details': details
     }
     
-    details['library_code'] += 'Friend Class %s' % the_file.members[0].name
+    details['library_code'] += 'Friend Class %s\n' % the_file.members[0].name
     the_file.members[0].visit_methods(_create_vb_lib_method, other)
     details['library_code'] += '\nEnd Class'
     
@@ -481,16 +551,8 @@ def _file_visitor(the_file, other):
     # elif the_file.name == 'Types':
     #     create_c_library.write_c_lib_module(the_file)
     
-    return
-    
     for member in the_file.members:
         if member.is_module or member.is_class or (member.is_struct and not member.via_pointer):
-            #need the classes file for #importing the class names for use in SwinGame class code.
-            if member.is_module:
-                classes_file_writer.writeln('@class %s;' % member.name)
-            else:
-                classes_file_writer.writeln('@class SG%s;' % member.name)
-            
             _write_vb_user_module(member)
     
     # if the_file.name == 'SGSDK':
@@ -507,6 +569,7 @@ def main():
     
     This is done using a visitor that visits each file that is parsed by the SG parser.
     '''
+    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     parser_runner.run_for_all_units(_file_visitor)
 
 if __name__ == '__main__':
