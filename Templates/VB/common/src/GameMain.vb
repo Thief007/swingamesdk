@@ -9,7 +9,7 @@ Public Module GameMain
         
         Core.OpenGraphicsWindow("GameMain", 800, 600)
         
-        //Run the game loop
+        'Run the game loop
         Do While Not Core.WindowCloseRequested()
             'Fetch the next batch of UI interaction
             Core.ProcessEvents()
