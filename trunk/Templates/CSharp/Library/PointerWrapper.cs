@@ -115,10 +115,14 @@ namespace SwinGame
         
         #endregion
         
+        /// <summary>
+        /// Returns a string representation of the resource. This is in the format
+        /// "Type @address".
+        /// </summary>
         [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public override String ToString()
         {
-            return String.Format("%s (%x)", _Kind, Pointer);
+            return String.Format("{0} @{1:x}", _Kind, Pointer);
         }
         
         /// <summary>
@@ -127,6 +131,7 @@ namespace SwinGame
         [System.Diagnostics.DebuggerNonUserCode(), System.Diagnostics.DebuggerStepThrough()]
         public override bool Equals(object other)
         {
+            if (other == null) return this.Pointer == IntPtr.Zero;
             if (other is PointerWrapper) return this.Pointer == ((PointerWrapper)other).Pointer;
             else if (other is IntPtr) return this.Pointer == ((IntPtr)other);
             else return false;

@@ -23,7 +23,7 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-GMCS_FLAGS="-target:winexe -r:System.Drawing" #" -r:Microsoft.VisualBasic"
+GMCS_FLAGS="-target:winexe -r:System.Drawing.dll,./lib/SwinGame.dll" #" -r:Microsoft.VisualBasic"
 CS_FLAGS="-optimize+"
 SG_INC="-I${APP_PATH}/lib/"
 
@@ -102,6 +102,7 @@ doMacPackage()
     
     echo "  ... Adding Private Frameworks"
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
+    cp -R -p "${LIB_DIR}/SwinGame.dll" "${GAMEAPP_PATH}/Contents/Resources/"
     
     pushd . >> /dev/null
     cd "${GAMEAPP_PATH}/Contents/Resources"
@@ -162,6 +163,8 @@ doCompile()
 
 doLinuxPackage()
 {
+    echo "  ... Copying SwinGame Library"
+    cp -R -p "${LIB_DIR}/SwinGame.dll" "${OUT_DIR}/"
     RESOURCE_DIR="${OUT_DIR}/Resources"
 }
 

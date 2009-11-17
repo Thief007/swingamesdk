@@ -928,7 +928,7 @@ interface
   
   /// @lib
   /// @class Matrix2D
-  /// @method applyTo
+  /// @method ApplyTo
   /// @updatesArrayParam 2
   procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
   
@@ -937,7 +937,7 @@ interface
   ///
   /// @lib ApplyMatrixToPoints
   /// @class Matrix2D
-  /// @overload applyTo applyToPoints
+  /// @overload ApplyTo ApplyToPoints
   ///
   /// @updatesArrayParam 2
   procedure ApplyMatrix(const m: Matrix2D; pts: Point2DArray);

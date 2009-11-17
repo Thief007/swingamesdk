@@ -18,63 +18,63 @@ import os
 _type_switcher = {
     None : {    
         #Pascal type: what it maps to
-        'single':   'float',
-        'longint':  'int',
-        'string':   'NSString *',
-        'boolean':  'BOOL',
-        'byte':     'unsigned char',
-        'uint32':   'uint',
-        'uint16':   'unsigned short',
+        'single':   '%s As Single',
+        'longint':  '%s As Integer',
+        'string':   '%s As String',
+        'boolean':  '%s As Boolean',
+        'byte':     '%s As Byte',
+        'uint32':   '%s As System.UInt32',
+        'uint16':   '%s As System.UInt16',
         
         #SwinGame resources
-        'soundeffect':      'SGSoundEffect *',
-        'music':            'SGMusic *',
-        'sprite':           'SGSprite *',
-        'font':             'SGFont *',
-        'bitmap':           'SGBitmap *',
-        'timer':            'SGTimer *',
-        'map':              'SGMap *',
-        'shapeprototype':   'SGShapePrototype *',
-        'shape':            'SGShape *',
-        'triangle':         'SGTriangle *',
+        'soundeffect':      '%s As SoundEffect',
+        'music':            '%s As Music',
+        'sprite':           '%s As Sprite',
+        'font':             '%s As Font',
+        'bitmap':           '%s As Bitmap',
+        'timer':            '%s As Timer',
+        'map':              '%s As Map',
+        'shapeprototype':   '%s As ShapePrototype',
+        'shape':            '%s As Shape',
+        'triangle':         '%s As Triangle',
         # 'rectangle':    'SGRectangle',
         # 'circle':       'SGCircle',
         
         #elements of arrays
-        'point2d':          'SGPoint2D *',
+        'point2d':          '%s As Point2D',
         
         #arrays from within structs
-        'point2darray':     'NSArray *',
-        'shapearray':       'NSArray *',
+        'point2darray':     '%s() As Point2D',
+        'shapearray':       '%s() As Shape',
         
-        'pointer': 'id',
+        'pointer': '%s As IntPtr',
         
-        'color': 'color',
+        'color': '%s As System.Drawing.Color',
         
         #function pointers
-        'freenotifier':     'free_notifier',
-        'shapedrawingfn':   'shape_drawing_fn',
+        'freenotifier':     '%s As FreeNotifier',
+        # 'shapedrawingfn':   '%s As shape_drawing_fn',
         
         #Enums
-        'resourcekind':         'resource_kind',
-        'mousebutton':          'mouse_button',
-        'keycode':              'key_code',
-        'spriteendingaction':   'sprite_ending_action',
-        'maptag':               'map_tag',
-        'spritekind':           'sprite_kind',
-        'fontalignment':        'font_alignment',
-        'fontstyle':            'font_style',
-        'shapekind':            'shape_kind',
+        'resourcekind':         '%s As ResourceKind',
+        'mousebutton':          '%s As MouseButton',
+        'keycode':              '%s As KeyCode',
+        'spriteendingaction':   '%s As SpriteEndingAction',
+        'maptag':               '%s As MapTag',
+        'spritekind':           '%s As SpriteKind',
+        'fontalignment':        '%s As FontAlignment',
+        'fontstyle':            '%s As FontStyle',
+        'shapekind':            '%s As ShapeKind',
     },
     'const' : {
         #records
-        'point2d':      'SGPoint2D *',
-        'linesegment':  'SGLineSegment *',
-        'rectangle':    'SGRectangle *',
-        'vector':       'SGVector *',
-        'matrix2d':     'SGMatrix2D *',
-        'triangle':     'SGTriangle *',
-        'circle':       'SGCircle *',
+        'point2d':      'ByRef %s As Point2D',
+        'linesegment':  'ByRef %s As LineSegment',
+        'rectangle':    'ByRef %s As Rectangle',
+        'vector':       'ByRef %s As Vector',
+        'matrix2d':     'ByVal %s As Matrix2D',
+        'triangle':     'ByVal %s As Triangle',
+        'circle':       'ByRef %s As Circle',
         
         #Arrays
         'linesarray':       'NSArray *',
@@ -162,6 +162,261 @@ _type_switcher = {
         'shapedrawingfn':   'shape_drawing_fn',
     }
 }
+
+_adapter_type_switcher = {
+    'lib_' : {
+        #Primitives
+        'single': 'ByVal %s As Single',
+        'longint': 'ByVal %s As Integer',
+        'string': '<MarshalAs(UnmanagedType.LPStr), In> ByVal %s As String',
+        'boolean': 'ByVal %s As Integer',
+        'byte': 'ByVal %s As Byte',
+        'color': 'ByVal %s As Integer',
+        'uint32': 'ByVal %s As System.UInt32',
+        'uint16': 'ByVal %s As System.UInt16',
+        
+        #structs
+        'rectangle':    'ByVal %s As Rectangle',
+        'point2d':      'ByVal %s As Point2D',
+        'triangle':     '<MarshalAs(UnmanagedType.LPArray, SizeConst:=3), In> ByVal %s() As Point2D',
+        'circle':       'ByVal %s As Circle',
+        'linesegment':  'ByVal %s As LineSegment',
+        'vector':       'ByVal %s As Vector',
+        'maptile':      'ByVal %s As MapTile',
+        
+        #Enums
+        'resourcekind':     'ByVal %s As Integer',
+        'fontalignment':    'ByVal %s As Integer',
+        'fontstyle':        'ByVal %s As Integer',
+        'mousebutton':      'ByVal %s As Integer',
+        'spriteendingaction': 'ByVal %s As Integer',
+        'keycode':          'ByVal %s As Integer',
+        'collisionside':    'ByVal %s As Integer',
+        'maptag':           'ByVal %s As Integer',
+        'spritekind':       'ByVal %s As Integer',
+        'shapekind':        'ByVal %s As Integer',
+        
+        #Arrays
+        'point2darray': '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex:=%s), In> ByVal %s() As Point2D',
+        'longintarray': '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex:=%s), In> ByVal %s() As Integer',
+        
+        #Resources
+        'music':        'ByVal %s As IntPtr',
+        'soundeffect':  'ByVal %s As IntPtr',
+        'music':        'ByVal %s As IntPtr',
+        'shapeprototype': 'ByVal %s As IntPtr',
+        'timer':        'ByVal %s As IntPtr',
+        'shape':        'ByVal %s As IntPtr',
+        'bitmap':       'ByVal %s As IntPtr',
+        'font':         'ByVal %s As IntPtr',
+        'sprite':       'ByVal %s As IntPtr',
+        'map':          'ByVal %s As IntPtr',
+        
+        #Functions
+        'freenotifier': 'ByVal %s As FreeNotifier',
+    },
+    'lib_var' : {
+        #Resources
+        'soundeffect':  'ByRef %s As IntPtr',
+        'music':        'ByRef %s As IntPtr',
+        'timer':        'ByRef %s As IntPtr',
+        'font':         'ByRef %s As IntPtr',
+        'bitmap':       'ByRef %s As IntPtr',
+        'sprite':       'ByRef %s As IntPtr',
+        'map':          'ByRef %s As IntPtr',
+        'shapeprototype': 'ByRef %s As IntPtr',
+        'shape':        'ByRef %s IntPtr',
+        
+        #Primitives
+        'byte': 'ByRef %s As Byte',
+        
+        'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] ByVal %s As StringBuilder',
+        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] ByVal %s() As Point2D',
+    },
+    'lib_result' : {
+        'string':       '<MarshalAs(UnmanagedType.LPStr), Out> ByVal %s As StringBuilder',
+        'linesarray':   '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out> ByVal %s() As LineSegment',
+        'matrix2d':     '<MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out> ByVal %s As Single(,)',
+        'point2darray': '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out> ByVal %s() As Point2D',
+        'triangle':     '<MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out> ByVal %s() As Point2D',
+        'longintarray': '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out> ByVal %s() As int',
+    },
+    'lib_const' : {
+        'point2d':      'ByRef %s As Point2D',
+        'linesegment':  'ByRef %s As LineSegment',
+        'rectangle':    'ByRef %s As Rectangle',
+        'circle':       'ByRef %s As Circle',
+        'vector':       'ByRef %s As Vector',
+    
+        # Arrays are passed by reference already
+        'matrix2d':     '<MarshalAs(UnmanagedType.LPArray, SizeConst=9), In> ByVal %s(,) As Single',
+        'triangle':     '<MarshalAs(UnmanagedType.LPArray, SizeConst=3), In> ByVal %s() As Point2D',
+        'linesarray':   '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)> ByVal %s() As LineSegment',
+        'longintarray': '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)> ByVal %s() As Integer',
+        'bitmaparray':  '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)> ByVal %s() As Bitmap',
+        'point2darray': '<MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)> ByVal %s() As Point2D',
+    },
+    'lib_out' : {
+        'string':       '<MarshalAs(UnmanagedType.LPStr), Out> ByVal %s As StringBuilder',
+        'byte':         '<Out> ByRef %s As Byte',
+        'color':        '<Out> ByRef %s As Integer',
+        'single':       '<Out> ByRef %s As Single',
+        'point2d':      '<Out> ByRef %s As Point2D',
+        'longint':      '<Out> ByRef %s As Integer',
+        'linesegment':  '<Out> ByRef %s As LineSegment',
+    },
+    None : {    
+        #Pascal type: what it maps to
+        'single':   'ByVal %s As Single',
+        'longint':  'ByVal %s As Integer',
+        'string':   'ByVal %s As String',
+        'boolean':  'ByVal %s As Integer',
+        'byte':     'ByVal %s As Byte',
+        'uint32':   'ByVal %s As System.UInt32',
+        'uint16':   'ByVal %s As System.UInt16',
+        
+        #SwinGame resources
+        'soundeffect':      'ByVal %s As IntPtr',
+        'music':            'ByVal %s As IntPtr',
+        'sprite':           'ByVal %s As IntPtr',
+        'font':             'ByVal %s As IntPtr',
+        'bitmap':           'ByVal %s As IntPtr',
+        'timer':            'ByVal %s As IntPtr',
+        'map':              'ByVal %s As IntPtr',
+        'shapeprototype':   'ByVal %s As IntPtr',
+        'shape':            'ByVal %s As IntPtr',
+        'triangle':         'ByVal %s As IntPtr',
+        
+        #elements of arrays
+        'point2d':          'ByVal %s As Point2D',
+        
+        #arrays from within structs
+        'point2darray':     'ByVal %s() As Point2D',
+        
+        #'pointer': 'id',
+        'color': 'ByVal %s As System.Drawing.Color',
+        
+        #function pointers
+        'freenotifier':     'ByVal %s As FreeNotifier',
+        #'shapedrawingfn':   'ShapeDrawingFn',
+        
+        #Enums
+        'resourcekind':         'ByVal %s As Integer',
+        'mousebutton':          'ByVal %s As Integer',
+        'keycode':              'ByVal %s As Integer',
+        'spriteendingaction':   'ByVal %s As Integer',
+        'maptag':               'ByVal %s As Integer',
+        'spritekind':           'ByVal %s As Integer',
+        'fontalignment':        'ByVal %s As Integer',
+        'fontstyle':            'ByVal %s As Integer',
+        'shapekind':            'ByVal %s As Integer',
+    },
+    'const' : {
+        #records
+        'point2d':      'ByVal %s As Point2D',
+        'linesegment':  'ByVal %s As LineSegment',
+        'rectangle':    'ByVal %s As Rectangle',
+        'vector':       'ByVal %s As Vector',
+        'matrix2d':     'ByVal %s(,) As Single',
+        'triangle':     'ByVal %s() As Point2D',
+        'circle':       'ByVal %s As Circle',
+        
+        #Arrays
+        'linesarray':       'ByVal %s() As LineSegment',
+        'bitmaparray':      'ByVal %s() As Bitmap',
+        'longintarray':     'ByVal %s() As Integer',
+        'point2darray':     'ByVal %s() As Point2D',
+        'shapearray':       'ByVal %s() As Shape',
+    },
+    'var' : {
+        'soundeffect':      'ByRef %s As IntPtr',
+        'music':            'ByRef %s As IntPtr',
+        'timer':            'ByRef %s As IntPtr',
+        'bitmap':           'ByRef %s As IntPtr',
+        'sprite':           'ByRef %s As IntPtr',
+        'map':              'ByRef %s As IntPtr',
+        'font':             'ByRef %s As IntPtr',
+        'shapeprototype':   'ByRef %s As IntPtr',
+        'shape':            'ByRef %s As IntPtr',
+        
+        'triangle':     'ByVal %s() As Point2D',
+        'matrix2d':     'ByVal %s(,) As Single',
+    },
+    'out' : {
+        'string':       'ByVal %s As StringBuilder',
+        'byte':         'ByRef %s As Byte',
+        'color':        'ByRef %s As Integer',
+        
+        'point2d':      'ByVal %s() Point2D',
+        
+        'longint':      'ByRef %s As Integer',
+        'single':       'ByRef %s As Single',
+        'linesegment':  'ByRef %s As LineSegment',
+        'linesarray':   'ByVal %s() As LineSegment',
+        'matrix2d':     'ByVal %s(,) As Single',
+        'point2darray': 'ByVal %s() As Point2D',
+        'triangle':     'ByVal %s() As Point2D',
+    },
+    'result_param' : {
+        'matrix2d':     'ByVal %s(,) As Single',
+        'triangle':     'ByVal %s() As Point2D',
+        'string':       'ByVal %s As StringBuilder',
+        'longintarray': 'ByVal %s() As Integer',
+        'point2darray': 'ByVal %s() As Point2D',
+        'linesarray':   'ByVal %s() As LineSegment',
+        'shapearray':   'ByVal %s() As Shape',
+    },
+    'return' : {
+        #SwinGame resources
+        'music':            'IntPtr',
+        'soundeffect':      'IntPtr',
+        'bitmap':           'IntPtr',
+        'font':             'IntPtr',
+        'map':              'IntPtr',
+        'sprite':           'IntPtr',
+        'timer':            'IntPtr',
+        'shapeprototype':   'IntPtr',
+        'shape':            'IntPtr',
+        
+        #Arrays
+        'longintarray':     'Integer()',
+        'point2darray':     'Point2D()',
+        'linesarray':       'LineSegment()',
+        'shapearray':       'Shape()',
+                
+        #basic types
+        None:           '',
+        'boolean':      'Integer',
+        'color':        'Integer',
+        'single':       'Single',
+        'longint':      'Integer',
+        'byte':         'Byte',
+        'uint32':       'System.UInt32',
+        'string':       'StringBuilder',
+        
+        #enums
+        'collisionside':        'Integer',
+        'fontstyle':            'Integer',
+        'maptag':               'Integer',
+        'maptile':              'Integer',
+        'spriteendingaction':   'Integer',
+        'spritekind':           'Integer',
+        'shapekind':            'Integer',
+        
+        #arrays + structs
+        'matrix2d':     'Single(,)',
+        'triangle':     'Point2D()',
+        'point2d':      'Point2D',
+        'vector':       'Vector',
+        'circle':       'Circle',
+        'rectangle':    'Rectangle',
+        'linesegment':  'LineSegment',
+        
+        #function pointers
+        # 'shapedrawingfn':   'shape_drawing_fn',
+    }
+}
+
 
 #
 # The data switcher provides a mapping for types and literal values

@@ -21,7 +21,7 @@ namespace MyGame
             //Run the game loop
             while(false == Core.WindowCloseRequested())
             {
-                //Fetch the next back of UI interaction
+                //Fetch the next batch of UI interaction
                 Core.ProcessEvents();
                 
                 Graphics.ClearScreen();
