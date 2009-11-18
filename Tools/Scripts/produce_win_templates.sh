@@ -35,7 +35,7 @@ WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR},Project Template")
 
 #Simple copy list with VS templates
 SMPL_COPY_LIST=( "C# Express 08,${STUDIO_EX_CS_08_TEMP_DIR},${STUDIO_EX_CS_08_DIST_DIR}" )
-
+SMPL_COPY_LIST=( "${SMPL_COPY_LIST[@]}" "VB Express 08,${STUDIO_EX_VB_08_TEMP_DIR},${STUDIO_EX_VB_08_DIST_DIR}" )
 
 source ${APP_PATH}/inc/copy_without_svn.sh
 
@@ -71,18 +71,19 @@ for arg in "${WIN_DMG_LIST[@]}"; do
     fi
     
     zip -q -r "${to}" *
-    
+    sleep 1
     rm -rf "${ZIP_BASE_DIR}"
 done
 
 echo "  ... Creating Visual Studio Template Structure"
 rm -rf "${STUDIO_DIST_DIR}"
-DoCopy "${SMPL_COPY_LIST}"
+COPY_LIST=( "${SMPL_COPY_LIST[@]}" )
+DoCopy "${COPY_LIST}"
 
 #Go to the VS08 C# template dir
 echo "  ... Creating Project Template for C# Express"
 cd "${VS08_DIST_DIR}"
-rm *.sln
+#rm *.sln
 #cat "src/GameMain.cs" | awk '{sub("MyGame", "[!output SAFE_NAMESPACE_NAME].src"); print}' >> "src/NewGameMain.cs"
 cat "src/GameMain.cs" | awk '{sub("MyGame", "$safeprojectname$.src"); print}' >> "src/NewGameMain.cs"
 mv "src/NewGameMain.cs" "src/GameMain.cs"
@@ -94,6 +95,23 @@ cd "${STUDIO_EX_CS_08_DIST_DIR}"
 zip -r "SwinGame C# Template Installer.vsi" .vscontent * > /dev/null
 mv "SwinGame C# Template Installer.vsi" "${DIST_DIR}"
 
+
+# Change the following lines... was Mono
+#    <StartupObject>$safeprojectname$.GameMain</StartupObject>
+#    <RootNamespace>$safeprojectname$</RootNamespace>
+#    <AssemblyName>$safeprojectname$</AssemblyName>
+# <DocumentationFile>$safeprojectname$.xml</DocumentationFile>
+echo "  ... Creating Project Template for VB Express"
+cd "${VB_VS08_DIST_DIR}"
+cat "Mono.vbproj" | awk '{sub("Mono", "$safeprojectname$"); print}' >> "NewMono.vbproj"
+mv "NewMono.vbproj" "Mono.vbproj"
+zip -r "SwinGame VB Project.zip" * > /dev/null
+
+echo "  ... Creating Template Installer for VB Express"
+mv "SwinGame VB Project.zip" "${STUDIO_EX_VB_08_DIST_DIR}"
+cd "${STUDIO_EX_VB_08_DIST_DIR}"
+zip -r "SwinGame VB Template Installer.vsi" .vscontent * > /dev/null
+mv "SwinGame VB Template Installer.vsi" "${DIST_DIR}"
 
 # # Create ZIPs
 # echo "  ... Creating Code blocks zip"
