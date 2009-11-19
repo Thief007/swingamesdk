@@ -908,7 +908,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
         if morph_fn == None:
             writer.writeln((_module_method % details).replace('%s', details['name']) )
         else:
-            writer.writeln(morph_fn((_module_method % details).replace('%s', details['name'])))
+            writer.writeln(morph_fn((_module_method % details).replace('%s', details['name']), details))
         
         writer.writeln()
         # if the_method.is_function:
@@ -946,8 +946,15 @@ def _write_wrapped_property(the_property, other):
             details["field_type"] = (_struct_type_switcher[field.data_type.name.lower()] % field.pascalName).replace("_","").replace("internal", "public")
             writer.writeln(_property_class_field % details)
         
+        # In the wrapped properties we need to access the internal data before the call or after the set
+        
+        import re
+        get_regex = re.compile('(get(.|\n)*?\{)')
         old_mfn = other['morph_method_fn']
-        other['morph_method_fn'] = lambda s: s.replace('this', 'this._StructData')
+        other['morph_method_fn'] = lambda s, details: \
+            get_regex.sub(r'\1\n    this._StructData = %s;' % the_property.name, \
+                s.replace('this', 'this._StructData') \
+                )
         find_or_add_class(the_property.data_type.name).visit_properties(property_visitor, other)
         other['morph_method_fn'] = old_mfn
     else:
