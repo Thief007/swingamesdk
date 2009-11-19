@@ -11,7 +11,7 @@ import logging
 import sys
 
 from sg import parser_runner, wrapper_helper
-from sg.sg_cache import logger, find_or_add_file, find_or_add_type
+from sg.sg_cache import logger, find_or_add_file, find_or_add_type, find_or_add_class
 from sg.print_writer import PrintWriter
 from sg.file_writer import FileWriter
 from sg.sg_type import SGType
@@ -899,7 +899,17 @@ def method_visitor(the_method, other, as_accessor_name = None):
         # if the_method.is_operator:
         #     writer.writeln((_operator_overload % details).replace('%s', details['name']) )
         # else:
-        writer.writeln((_module_method % details).replace('%s', details['name']) )
+        
+        # Morph fn is a function used to alter the output for this method.
+        # It is passed the string output and changes it as required.
+        # This is used by properties to alter some details.
+        morph_fn = other['morph_method_fn']
+        
+        if morph_fn == None:
+            writer.writeln((_module_method % details).replace('%s', details['name']) )
+        else:
+            writer.writeln(morph_fn((_module_method % details).replace('%s', details['name'])))
+        
         writer.writeln()
         # if the_method.is_function:
         #     #%(calls.name)s(%(calls.args)s)
@@ -935,6 +945,11 @@ def _write_wrapped_property(the_property, other):
             details["field_name"] = field.pascalName
             details["field_type"] = (_struct_type_switcher[field.data_type.name.lower()] % field.pascalName).replace("_","").replace("internal", "public")
             writer.writeln(_property_class_field % details)
+        
+        old_mfn = other['morph_method_fn']
+        other['morph_method_fn'] = lambda s: s.replace('this', 'this._StructData')
+        find_or_add_class(the_property.data_type.name).visit_properties(property_visitor, other)
+        other['morph_method_fn'] = old_mfn
     else:
         field = the_property.data_type.fields[0]
         details["field_type"] = (_struct_type_switcher[field.data_type.nested_type.name.lower()] % 'this').replace("_", "").replace("internal", "public")
@@ -986,6 +1001,7 @@ def write_cs_sgsdk_file(the_file, for_others = False):
         'param visitor': adapter_param_visitor,
         'arg visitor': arg_cs_dll_visitor,
         'call_creater': create_cs_dll_call,
+        'morph_method_fn': None,
     }
     
     file_writer.indent(2);
@@ -1170,6 +1186,7 @@ def write_cs_lib_module(the_file):
         'lib method': False,
         'the_file': the_file,
         'call_creater': create_cs_call,
+        'morph_method_fn': None,
         }
     
     file_writer.indent(2)
