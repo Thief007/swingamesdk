@@ -2,10 +2,10 @@
 {
     get
     {
-        return this.%(field_name)s;
+        return this._%(field_name)s;
     }
     set
     {
-        %(field_name)s = value;
+        _%(field_name)s = value;
     }
 }
