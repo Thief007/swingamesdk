@@ -258,7 +258,7 @@ _data_switcher = {
         #Pascal type: what values of this type switch to %s = data value
         'single': '%sf',
         'self.pointer': 'this.Pointer',
-        'self.data': 'this.data',
+        'self.data': 'this._data',
         'self': 'this',
         'true': '1',
         'false': '0',
@@ -516,63 +516,43 @@ _local_type_switcher = {
 # mapping for struct fields
 _struct_type_switcher = {
     #Pascal type: what it maps to
-    'single': 'internal float %s',
-    'longint': 'internal int %s',
-    'soundeffect': 'internal SoundEffect %s',
-    'music': 'internal Music %s',
-    'string': 'internal string %s',
-    'boolean': 'internal bool %s',
-    'byte': 'internal byte %s',
-    'timer': 'internal Timer %s',
-    'color': 'internal Color %s',
-    'resourcekind': 'internal ResourceKind %s',
-    'uint32': 'internal uint %s',
-    'bitmap': 'internal Bitmap %s',
-    #'pointer': 'internal IntPtr %s',
-    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\ninternal float[,] %s',
-    # '^bitmapdata': 'internal BitmapData *%s',
-    # '^spritedata': 'internal SpriteData *%s',
-    # '^timerdata': 'internal TimerData *%s',
-    # 'psdl_surface': 'internal IntPtr %s',
-    # 'boolean[0..n - 1][0..n - 1]': 'internal bool[,] %s',
-    # 'bitmap[0..n - 1]': 'internal Bitmap[] %s',
-    # 'spritekind': 'internal SpriteKind %s',
-    # 'longint[0..n - 1]': 'internal int[] %s',
-    'vector': 'internal Vector %s',
-    # 'spriteendingaction': 'internal SpriteEndingAction %s',
-    'point2d': 'internal Point2D %s',
-    # '^point2d': 'internal Point2D *%s',
-    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\ninternal Point2D[] %s',
-    # 'point2d[0..n - 1]': 'internal Point2D[] %s',
-    # '^linesegment': 'internal LineSegment *%s',
-    'linesegment': 'internal LineSegment %s',
-    'sprite': 'internal Sprite %s',
-    'rectangle': 'internal Rectangle %s',
-    #'triangle': 'internal Triangle %s',
-    'linesarray': 'internal LineSegment[] %s',
-    # 'linesegmentptr': 'internal LineSegment *%s',
-    'font': 'internal Font %s',
-    'fontalignment': 'internal FontAlignment %s',
-    'fontstyle': 'internal FontStyle %s',
-    'mousebutton': 'internal MouseButton %s',
-    'uint16': 'internal ushort %s',
-    # '^single': 'internal float *%s',
-    'keycode': 'internal KeyCode %s',
-    # 'bitmapptr': 'internal Bitmap *%s',
-    # '^bitmap': 'internal Bitmap *%s',
-    # 'longintptr': 'internal int *%s',
-    # '^longint': 'internal int *%s',
-    'collisionside': 'internal CollisionSide %s',
-    'longint[0..n - 1][0..n - 1]': 'internal int[][] %s',
-    'mapdata': 'internal MapData %s',
-    'animationdata[0..n - 1]': 'internal AnimationData[] %s',
-    'layerdata[0..n - 1]': 'internal LayerData[] %s',
-    'collisiondata': 'internal CollisionData %s',
-    'map': 'internal Map %s',
-    'maptag': 'internal MapTag %s',
-    'maptile': 'internal MapTile %s',
-    'circle': 'internal Circle %s',
-    'point2darray': 'internal Point2D[] %s',
+    'single': 'internal float _%s',
+    'longint': 'internal int _%s',
+    'soundeffect': 'internal SoundEffect _%s',
+    'music': 'internal Music _%s',
+    'string': 'internal string _%s',
+    'boolean': 'internal bool _%s',
+    'byte': 'internal byte _%s',
+    'timer': 'internal Timer _%s',
+    'color': 'internal Color _%s',
+    'resourcekind': 'internal ResourceKind _%s',
+    'uint32': 'internal uint _%s',
+    'bitmap': 'internal Bitmap _%s',
+    'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\ninternal float[,] _%s',
+    'vector': 'internal Vector _%s',
+    'point2d': 'internal Point2D _%s',
+    'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\ninternal Point2D[] _%s',
+    'linesegment': 'internal LineSegment _%s',
+    'sprite': 'internal Sprite _%s',
+    'rectangle': 'internal Rectangle _%s',
+    'linesarray': 'internal LineSegment[] _%s',
+    'font': 'internal Font _%s',
+    'fontalignment': 'internal FontAlignment _%s',
+    'fontstyle': 'internal FontStyle _%s',
+    'mousebutton': 'internal MouseButton _%s',
+    'uint16': 'internal ushort _%s',
+    'keycode': 'internal KeyCode _%s',
+    'collisionside': 'internal CollisionSide _%s',
+    'longint[0..n - 1][0..n - 1]': 'internal int[][] _%s',
+    'mapdata': 'internal MapData _%s',
+    'animationdata[0..n - 1]': 'internal AnimationData[] _%s',
+    'layerdata[0..n - 1]': 'internal LayerData[] _%s',
+    'collisiondata': 'internal CollisionData _%s',
+    'map': 'internal Map _%s',
+    'maptag': 'internal MapTag _%s',
+    'maptile': 'internal MapTile _%s',
+    'circle': 'internal Circle _%s',
+    'point2darray': 'internal Point2D[] _%s',
 }
 
 
@@ -878,13 +858,13 @@ def method_visitor(the_method, other, as_accessor_name = None):
                 if local_var.is_length_param:
                     temp_process_params += '%s = %s.Length;\n    ' % (
                             local_var.name,
-                            local_var.length_of.name if not local_var.length_of.has_field else local_var.length_of.name + '.' + local_var.field_name
+                            local_var.length_of.name if not local_var.length_of.has_field else local_var.length_of.name + '._' + local_var.field_name
                         )
                 elif local_var.modifier != 'out':
                     # copy in value
                     temp_process_params += '%s = %s;\n    ' % (
                             local_var.name,
-                            local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '.' + local_var.field_name
+                            local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
                         )
                 
             details['vars'] = temp
@@ -953,11 +933,12 @@ def _write_wrapped_property(the_property, other):
     if the_property.data_type.is_struct:
         for field in the_property.data_type.fields:
             details["field_name"] = field.pascalName
-            details["field_type"] = _struct_type_switcher[field.data_type.name.lower()] % field.pascalName
+            details["field_type"] = (_struct_type_switcher[field.data_type.name.lower()] % field.pascalName).replace("_","").replace("internal", "public")
             writer.writeln(_property_class_field % details)
     else:
         field = the_property.data_type.fields[0]
-        details["field_type"] = _struct_type_switcher[field.data_type.nested_type.name.lower()] % 'this'
+        details["field_type"] = (_struct_type_switcher[field.data_type.nested_type.name.lower()] % 'this').replace("_", "").replace("internal", "public")
+        #print details["field_type"], the_property.name, the_property.in_class.name
         writer.writeln(_property_class_indexer % details)
     
 
@@ -1103,7 +1084,7 @@ def write_struct(member, other):
         writer.writeln('%s;' % struct_type_visitor(field.data_type) % field.name)
         
         #hack
-        prop_decl = (struct_type_visitor(field.data_type) % field.pascalName)\
+        prop_decl = (struct_type_visitor(field.data_type).replace("_","").replace("internal", "public") % field.pascalName)\
             .split('\n')[-1]
         
         writer.writeln(_struct_property % { 'prop_decl': prop_decl,  'field_name': field.name})
@@ -1113,7 +1094,7 @@ def write_struct(member, other):
         main_type = member.data_type.related_type
         dim = main_type.dimensions
         details = dict()
-        details['type'] = struct_type_visitor(main_type.nested_type) % 'this'
+        details['type'] = (struct_type_visitor(main_type.nested_type) % 'this').replace("_","").replace("internal", "public")
         details['params'] =  ', '.join(['int idx%s' % i for i,d in enumerate(dim)])
         details['idxs'] = ', '.join(['idx%s' % i for i,d in enumerate(dim)])
         

@@ -64,10 +64,8 @@ CopyDists()
             echo -n " with library"
             #Copy SGSDK framework
             cp -p -f "${SOURCE_DIST_DIR}/bin"/*.dll "${to}/lib"
-            cp -p -f "${SOURCE_DIST_DIR}/bin"/*.a "${to}/lib"
             #Copy SDL frameworks
             cp -p -f "${SOURCE_DIST_DIR}/lib"/*.dll "${to}/lib"
-            cp -p -f "${SOURCE_DIST_DIR}/lib"/*.a "${to}/lib"
         fi
         echo ""
     done
