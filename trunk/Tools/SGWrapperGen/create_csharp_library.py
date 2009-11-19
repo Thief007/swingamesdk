@@ -1088,7 +1088,7 @@ def write_struct(member, other):
             .split('\n')[-1]
         
         writer.writeln(_struct_property % { 'prop_decl': prop_decl,  'field_name': field.name})
-        
+    
     if member.wraps_array:
         # add accessor methods
         main_type = member.data_type.related_type
@@ -1110,6 +1110,7 @@ def write_struct(member, other):
         
     member.visit_methods(method_visitor, other)
     member.visit_operators(method_visitor, other)
+    member.visit_properties(property_visitor, other)
     
     writer.outdent(2)
     
