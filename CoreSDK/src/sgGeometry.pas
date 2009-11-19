@@ -716,12 +716,18 @@ interface
   /// scalar value.
   ///
   /// @lib
+  ///
+  /// @class Vector
+  /// @getter Magnitude
   function VectorMagnitude(const v: Vector): Single;
   
   /// Returns the squared magnitude (or "length") of the parameter vector (v) as a 
   /// scalar value.
   ///
   /// @lib
+  ///
+  /// @class Vector
+  /// @getter MagnitudeSq
   function VectorMagnitudeSq(const v: Vector): Single;
   
   /// Returns a new `Vector` created using the angle and magnitude (length). 
