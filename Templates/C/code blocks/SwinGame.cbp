@@ -21,7 +21,6 @@
 				<ExtraCommands>
 					<Add after="xcopy /E /Y Resources bin\Debug\Resources\" />
 					<Add after="xcopy /Y lib\*.dll bin\Debug\" />
-					<Add after="xcopy /Y lib\*.a bin\Debug\" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Release (win)">
@@ -40,7 +39,6 @@
 				<ExtraCommands>
 					<Add after="xcopy /E /Y Resources bin\Release\Resources\" />
 					<Add after="xcopy /Y lib\*.dll bin\Release\" />
-					<Add after="xcopy /Y lib\*.a bin\Release\" />
 				</ExtraCommands>
 			</Target>
 			<Target title="Debug (unix)">
@@ -70,7 +68,6 @@
 				<ExtraCommands>
 					<Add after="cp -r Resources bin/Release/" />
 					<Add after="cp -p -f lib/*.dll bin/Release/" />
-					<Add after="cp -p -f lib/*.a bin/Release/" />
 				</ExtraCommands>
 			</Target>
 		</Build>

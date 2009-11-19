@@ -241,7 +241,6 @@ doWindowsPackage()
     
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
-    cp -p -f "${LIB_DIR}"/*.a "${OUT_DIR}"
 }
 
 
