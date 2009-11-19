@@ -9,14 +9,14 @@ namespace SwinGame
         internal static Matrix2D MatrixFromArray(float[,] data)
         {
             Matrix2D result;
-            result.data = data;
+            result._data = data;
             return result;
         }
         
         internal static Triangle TriangleFromArray(Point2D[] data)
         {
             Triangle result;
-            result.data = data;
+            result._data = data;
             return result;
         }
 
