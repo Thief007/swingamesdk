@@ -79,7 +79,7 @@ library %(name)s;
       end;
       //Writeln('|');
     end;
-    WriteLn('************************');
+    //WriteLn('************************');
   end;
   
   procedure LineCopyFromPtr(data: LineSegmentPtr; len: LongInt; out arr: LinesArray);

@@ -1099,7 +1099,7 @@ implementation
     // if bounds then
     //   outVec := VectorInLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx)
     // else 
-      outVec := VectorOverLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx);
+    outVec := VectorOverLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx);
     
     if hitIdx = -1 then exit;
     
