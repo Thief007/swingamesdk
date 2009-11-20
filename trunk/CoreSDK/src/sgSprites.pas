@@ -630,7 +630,7 @@ implementation
     result^.width          := width;
     result^.height         := height;
     result^.reverse        := false;
-    result^.velocity       := VectorFrom(0,0);
+    result^.velocity       := VectorTo(0,0);
     result^.rotation       := 0;
     result^.scale           := 1;
     result^.bufferedRotation := 0;
@@ -704,7 +704,7 @@ implementation
     result^.currentCell     := 0;
     result^.usePixelCollision  := true;
     result^.hasEnded       := false;
-    result^.velocity       := VectorFrom(0,0);
+    result^.velocity       := VectorTo(0,0);
     result^.rotation       := 0;
     result^.scale           := 1;
     result^.bufferedRotation := 0;

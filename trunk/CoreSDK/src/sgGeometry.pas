@@ -610,9 +610,9 @@ interface
   
   /// Returns a new `Vector` using the ``x`` and ``y`` values provided. 
   ///
-  /// @lib VectorFrom(x, y, False)
-  /// @uname VectorFrom
-  function VectorFrom(x, y: Single): Vector; overload;
+  /// @lib VectorTo(x, y, False)
+  /// @uname VectorTo
+  function VectorTo(x, y: Single): Vector; overload;
   
   /// Creates a new `Vector` with the ``x`` and ``y`` values provided, and will 
   /// invert the ``y`` value if the `invertY`` parameter is True. The inversion 
@@ -620,8 +620,8 @@ interface
   /// related vectors.
   ///
   /// @lib
-  /// @uname VectorFromWithInvertY
-  function VectorFrom(x, y: Single; invertY: boolean): Vector; overload;
+  /// @uname VectorToWithInvertY
+  function VectorTo(x, y: Single; invertY: boolean): Vector; overload;
 
   /// Adds the two parameter vectors (``v1`` and ``v2``) together and returns 
   /// the result as a new `Vector`.
@@ -1017,7 +1017,7 @@ implementation
     
     // Cast ray searching for points back from shape
     ray := InvertVector(velocity);
-    vOut := VectorFrom(0,0);
+    vOut := VectorTo(0,0);
 
     maxIdx := -1;
     maxDist := -1;
@@ -1100,7 +1100,7 @@ implementation
     // Cast ray searching for points back from shape
     ray := InvertVector(velocity);
     normalMvmt := VectorNormal(velocity);
-    vOut := VectorFrom(0,0);
+    vOut := VectorTo(0,0);
     ptOnCircle := PointAt(0,0);
 
     maxIdx := -1;
@@ -1193,10 +1193,10 @@ implementation
   // Vector operations on Vectors (usally returning vectors)
   //---------------------------------------------------------------------------
   
-  function VectorFrom(x, y: Single; invertY: boolean): Vector; overload;
+  function VectorTo(x, y: Single; invertY: boolean): Vector; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'VectorFrom(x, y: Single', '');
+      TraceEnter('sgGeometry', 'VectorTo(x, y: Single', '');
     {$ENDIF}
     
     if invertY then y := y * -1;
@@ -1206,20 +1206,20 @@ implementation
     //result.w := 1;
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'VectorFrom(x, y: Single', '');
+      TraceExit('sgGeometry', 'VectorTo(x, y: Single', '');
     {$ENDIF}
   end;
 
-  function VectorFrom(x, y: Single): Vector; overload;
+  function VectorTo(x, y: Single): Vector; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'VectorFrom(x, y: Single): Vector', '');
+      TraceEnter('sgGeometry', 'VectorTo(x, y: Single): Vector', '');
     {$ENDIF}
     
-    result := VectorFrom(x, y, false);
+    result := VectorTo(x, y, false);
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'VectorFrom(x, y: Single): Vector', '');
+      TraceExit('sgGeometry', 'VectorTo(x, y: Single): Vector', '');
     {$ENDIF}
   end;
 
@@ -1229,7 +1229,7 @@ implementation
       TraceEnter('sgGeometry', 'VectorToPoint(const p1: Point2D): Vector', '');
     {$ENDIF}
     
-    result := VectorFrom(p1.x, p1.y);
+    result := VectorTo(p1.x, p1.y);
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorToPoint(const p1: Point2D): Vector', '');
@@ -1242,7 +1242,7 @@ implementation
       TraceEnter('sgGeometry', 'VectorFromPoints(const p1, p2: Point2D): Vector', '');
     {$ENDIF}
     
-    result := VectorFrom(p2.x - p1.x, p2.y - p1.y, false);
+    result := VectorTo(p2.x - p1.x, p2.y - p1.y, false);
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorFromPoints(const p1, p2: Point2D): Vector', '');
@@ -1431,7 +1431,7 @@ implementation
       TraceEnter('sgGeometry', 'VectorFromAngle(angle, magnitude: Single): Vector', '');
     {$ENDIF}
     
-    result := VectorFrom(magnitude * sgGeometry.Cosine(angle), magnitude * sgGeometry.Sine(angle));
+    result := VectorTo(magnitude * sgGeometry.Cosine(angle), magnitude * sgGeometry.Sine(angle));
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorFromAngle(angle, magnitude: Single): Vector', '');
@@ -1633,7 +1633,7 @@ implementation
       TraceEnter('sgGeometry', 'PointPointDistance(const pt1, pt2: Point2D): Single', '');
     {$ENDIF}
     
-    temp := VectorFrom(pt2.x - pt1.x, pt2.y - pt1.y);
+    temp := VectorTo(pt2.x - pt1.x, pt2.y - pt1.y);
     result := VectorMagnitude(temp);
     
     {$IFDEF TRACE}
@@ -3075,7 +3075,7 @@ implementation
     else if y > (rectY + rectHeight) then py := rectY + rectHeight
     else py := y;
 
-    result := VectorFrom(px - x, py - y);
+    result := VectorTo(px - x, py - y);
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorFromPointToRect(x, y, rectX, rectY: Single', '');
@@ -3136,7 +3136,7 @@ implementation
     // If the point is not in the radius of the circle, return a zero vector
     if PointPointDistance(pt, CenterPoint(c)) > c.radius then
     begin
-      result := VectorFrom(0, 0);
+      result := VectorTo(0, 0);
       exit;
     end;
 
@@ -3155,7 +3155,7 @@ implementation
 
     // If the determinate is very small, return a zero vector
     if (det <= 0) or (a = 0) then
-      result := VectorFrom(0, 0)
+      result := VectorTo(0, 0)
     else
     begin
       // Calculate the vector required to "push" the vector out of the circle
