@@ -977,7 +977,7 @@ implementation
     //RefreshScreen(1) ;
   end;
   
-  procedure _CollideCircleLine(s: Sprite; const line: LineSegment);
+  procedure CollideCircleLine(s: Sprite; const line: LineSegment);
   var
     lines: LinesArray;
   begin
