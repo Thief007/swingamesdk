@@ -951,7 +951,7 @@ implementation
   // Collision Effect Application (angle + mass/energy transfer)
   //----------------------------------------------------------------------------
 
-  procedure CollideCircleLine(s: Sprite; const line: LineSegment);
+  procedure _CollideCircleLine(s: Sprite; const line: LineSegment);
   var
     npx, npy, dotPod: Single;
     toLine: Vector;
@@ -977,6 +977,16 @@ implementation
     //RefreshScreen(1) ;
   end;
   
+  procedure _CollideCircleLine(s: Sprite; const line: LineSegment);
+  var
+    lines: LinesArray;
+  begin
+    SetLength(lines, 1);
+    lines[0] := line;
+    
+    CollideCircleLines(s, lines);
+  end;
+  
   procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   var 
     outVec, mvmt: Vector;
@@ -989,7 +999,7 @@ implementation
     if maxIdx < 0 then exit;
      
     MoveSprite(s, outVec);
-    CollideCircleLine(s, lines[maxIdx]);
+    _CollideCircleLine(s, lines[maxIdx]);
     
     // do part velocity
     mvmtMag := VectorMagnitude(mvmt);
@@ -1075,7 +1085,7 @@ implementation
     // DrawLine(ColorWhite, hitLine);
     // RefreshScreen(1);
     
-    CollideCircleLine(s, hitLine);
+    _CollideCircleLine(s, hitLine);
 
     // do part velocity
     mvmtMag := VectorMagnitude(mvmt);
@@ -1116,7 +1126,7 @@ implementation
     // end;
     
     // bounce...
-    CollideCircleLine(s, lines[hitIdx]);
+    _CollideCircleLine(s, lines[hitIdx]);
 
     // if bounds then
     // begin
