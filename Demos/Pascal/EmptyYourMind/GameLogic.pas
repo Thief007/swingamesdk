@@ -1,4 +1,4 @@
-unit GameLogic;
+`unit GameLogic;
 
 interface
 	procedure Main();
@@ -244,19 +244,19 @@ implementation
 			game.player.currentDelay := game.player.shootDelay;
 			PlaySoundEffect(game.sounds[0]);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFrom(270, BULLETSPEED));
+										Player, VectorTo(270, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFrom(255, BULLETSPEED));
+										Player, VectorTo(255, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFrom(285, BULLETSPEED));
+										Player, VectorTo(285, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFrom(240, BULLETSPEED));
+										Player, VectorTo(240, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 			tempBullet := CreateBullet('PlayerBullet', game.player, DAMAGE, Normal, 
-										Player, VectorFrom(300, BULLETSPEED));
+										Player, VectorTo(300, BULLETSPEED));
 			DeployBullet(tempBullet, game.bullets);
 		end;
 	end;

@@ -116,7 +116,7 @@ begin
         maxDist := dist;
         maxIdx := i;
         vOut := VectorFromPoints(ptOnCircle, ptOnLine);
-        //dotProd := DotProduct(UnitVector(vOut), VectorFrom(0.5,0.5));
+        //dotProd := DotProduct(UnitVector(vOut), VectorTo(0.5,0.5));
         vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1.42);
         WriteLn(dotProd:4:2);
       end;      
@@ -203,17 +203,17 @@ begin
   SpriteSetX(s1, 100);
   SpriteSetY(s1, 600);
   SpriteSetMass(s1, 10);
-  SpriteSetVelocity(s1, VectorFrom(4, 4));
+  SpriteSetVelocity(s1, VectorTo(4, 4));
   
   s2 := CreateSprite(FetchBitmap('ball'));
   SpriteSetX(s2, 200);
   SpriteSetY(s2, 200);
   SpriteSetMass(s2, 10);
-  SpriteSetVelocity(s2, VectorFrom(1, -5));
+  SpriteSetVelocity(s2, VectorTo(1, -5));
   
   t1 := TriangleFrom(600, 100, 550, 200, 670, 175);
   
-  mouseMvmt := VectorFrom(1,1);
+  mouseMvmt := VectorTo(1,1);
   
   rect := RectangleFrom(400, 300, 200, 200);
   rect1 := RectangleFrom(420, 420, 10, 20);
@@ -349,10 +349,10 @@ begin
     DrawLine(ColorYellow, MousePosition(), AddVectors(temp, MousePosition()));
     
     temp := VectorOutOfRectFromRect(rect1, rect, mouseMvmt);
-    DrawLine(ColorYellow, VectorFrom(rect1.x, rect1.y), AddVectors(temp, VectorFrom(rect1.x, rect1.y)));
+    DrawLine(ColorYellow, VectorTo(rect1.x, rect1.y), AddVectors(temp, VectorTo(rect1.x, rect1.y)));
     
     // temp := VectorIntoRectFromRect(rect1, rect, mouseMvmt);
-    // DrawLine(ColorWhite, VectorFrom(rect1.x, rect1.y), AddVectors(temp, VectorFrom(rect1.x, rect1.y)));
+    // DrawLine(ColorWhite, VectorTo(rect1.x, rect1.y), AddVectors(temp, VectorTo(rect1.x, rect1.y)));
     
     
     DrawFramerate(0,0);

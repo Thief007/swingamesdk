@@ -256,7 +256,7 @@ implementation
   begin
     x := 0; y := 0;
     SDL_GetMouseState(x, y);
-    result := VectorFrom(x, y);
+    result := VectorTo(x, y);
   end;
 
   procedure ShowMouse(); overload;
@@ -316,7 +316,7 @@ implementation
     x := 0; 
     y := 0;
     SDL_GetRelativeMouseState(x, y);
-    result := VectorFrom(x, y);
+    result := VectorTo(x, y);
 
     {$IFDEF TRACE}
       TraceExit('sgInput', 'MouseMovement');
