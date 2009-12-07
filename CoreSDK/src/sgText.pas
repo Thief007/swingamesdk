@@ -8,20 +8,21 @@
 // Change History:
 //
 // Version 3.0:
-// - 2009-06-05: Andrew: Using sgShared
+// - 2009-12-07: Andrew : Added font loading and freeing code..
+// - 2009-06-05: Andrew : Using sgShared
 //
 // Version 2.0:
 // - 2009-07-14: Andrew : Removed loading and freeing code.
-// - 2009-01-05: Andrew: Added Unicode rendering
-// - 2008-12-17: Andrew: Moved all integers to LongInt
-// - 2008-12-12: Andrew: Added simple string printing
-// - 2008-12-10: Andrew: Fixed printing of string
+// - 2009-01-05: Andrew : Added Unicode rendering
+// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-12: Andrew : Added simple string printing
+// - 2008-12-10: Andrew : Fixed printing of string
 //
 // Version 1.1:
-// - 2008-03-09: Andrew: Added extra exception handling
-// - 2008-01-30: Andrew: Fixed Print strings for EOL as last char
-// - 2008-01-25: Andrew: Fixed compiler hints
-// - 2008-01-21: Andrew: Added Point/Rectangle overloads
+// - 2008-03-09: Andrew : Added extra exception handling
+// - 2008-01-30: Andrew : Fixed Print strings for EOL as last char
+// - 2008-01-25: Andrew : Fixed compiler hints
+// - 2008-01-21: Andrew : Added Point/Rectangle overloads
 // - 2008-01-17: Aki + Andrew: Refactor
 //
 // Version 1.0:
@@ -37,6 +38,72 @@ interface
   uses sgTypes;
 //=============================================================================
 
+//----------------------------------------------------------------------------
+// Font mapping routines
+//----------------------------------------------------------------------------
+  
+  /// Loads a font from file with the specified side. Fonts must be freed using
+  /// the FreeFont routine once finished with. Once the font is loaded you
+  /// can set its style using SetFontStyle. Fonts are then used to draw and
+  /// measure text in your programs.
+  /// 
+  /// @lib
+  ///
+  /// @class Font
+  /// @constructor
+  /// @csn initWithFontName:%s andSize:%s
+  function LoadFont(fontName: String; size: LongInt): Font;
+  
+  /// Frees the resources used by the loaded Font.
+  /// 
+  /// @lib
+  ///
+  /// @class Font
+  /// @dispose
+  procedure FreeFont(var fontToFree: Font);
+  
+  
+//----------------------------------------------------------------------------
+// Font mapping routines
+//----------------------------------------------------------------------------
+  
+  /// Loads and returns a font that can be used to draw text. The supplied
+  /// `filename` is used to locate the font to load. The supplied `name` indicates the 
+  /// name to use to refer to this Font in SwinGame. The `Font` can then be
+  /// retrieved by passing this `name` to the `FetchFont` function.
+  ///
+  /// @lib
+  ///
+  /// @class Map
+  /// @constructor
+  /// @csn initWithName:%s forFilename:%s andSize:%s
+  function MapFont(name, filename: String; size: LongInt): Font;
+  
+  /// Determines if SwinGame has a font loaded for the supplied name.
+  /// This checks against all fonts loaded, those loaded without a name
+  /// are assigned the filename as a default.
+  /// 
+  /// @lib
+  function HasFont(name: String): Boolean;
+  
+  /// Returns the `Font` that has been loaded with the specified name,
+  /// see `MapFont`.
+  ///
+  /// @lib
+  function FetchFont(name: String): Font;
+  
+  /// Releases the SwinGame resources associated with the font of the
+  /// specified `name`.
+  ///
+  /// @lib
+  procedure ReleaseFont(name: String);
+  
+  /// Releases all of the fonts that have been loaded.
+  ///
+  /// @lib
+  procedure ReleaseAllFonts();
+
+//----------------------------------------------------------------------------
   
   /// @lib
   /// @class Font
@@ -109,11 +176,116 @@ interface
 //=============================================================================
 implementation
   uses SysUtils, Classes, 
+       stringhash,         // libsrc
        sgCore, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages,
        SDL, SDL_TTF, SDL_gfx;
 //=============================================================================
 
   const EOL = LineEnding; // from sgShared
+
+  var
+    _Fonts: TStringHash;
+
+//----------------------------------------------------------------------------
+  
+  function LoadFont(fontName: String; size: LongInt): Font;
+  var
+    filename: String;
+  begin
+    filename := fontName;
+    if not FileExists(filename) then
+    begin
+      filename := PathToResource(filename, FontResource);
+    
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate font ' + fontName);
+        exit;
+      end;
+    end;
+
+    result := TTF_OpenFont(@filename[1], size);
+  
+    if result = nil then
+    begin
+      RaiseException('LoadFont failed: ' + TTF_GetError());
+      exit;
+    end;
+  end;
+
+  procedure FreeFont(var fontToFree: Font);
+  begin
+    if Assigned(fontToFree) then
+    begin
+      {$IFDEF TRACE}
+        Trace('Resources', 'IN', 'FreeFont', 'After calling free notifier');
+      {$ENDIF}
+      try
+        {$IFDEF TRACE}
+            Trace('Resources', 'IN', 'FreeFont', 'Before calling close font');
+        {$ENDIF}
+
+        TTF_CloseFont(fontToFree);
+        CallFreeNotifier(fontToFree);
+        fontToFree := nil;
+        {$IFDEF TRACE}
+            Trace('Resources', 'IN', 'FreeFont', 'At end of free font');
+        {$ENDIF}
+      except
+        RaiseException('Unable to free the specified font');
+        exit;
+      end;
+    end;
+  end;
+
+//----------------------------------------------------------------------------
+
+  function MapFont(name, filename: String; size: LongInt): Font;
+  var
+    obj: tResourceContainer;
+    fnt: Font;
+  begin
+    fnt := LoadFont(filename, size);
+    obj := tResourceContainer.Create(fnt);
+    if not _Fonts.setValue(name, obj) then
+      raise Exception.create('Error loaded Font resource twice, ' + name);
+    result := fnt;
+  end;
+
+  function HasFont(name: String): Boolean;
+  begin
+    result := _Fonts.containsKey(name);
+  end;
+
+  function FetchFont(name: String): Font;
+  var
+    tmp : TObject;
+  begin
+    tmp := _Fonts.values[name];
+    if assigned(tmp) then result := Font(tResourceContainer(tmp).Resource)
+    else result := nil;
+  end;
+
+  procedure ReleaseFont(name: String);
+  var
+    fnt: Font;
+  begin
+    fnt := FetchFont(name);
+    if (assigned(fnt)) then
+    begin
+      _Fonts.remove(name).free();
+      FreeFont(fnt);
+    end;
+  end;
+
+  procedure ReleaseAllFonts();
+  begin
+    ReleaseAll(_Fonts, @ReleaseFont);
+  end;
+
+  //----------------------------------------------------------------------------
+
+
 
   /// Sets the style of the passed in font. This is time consuming, so load
   /// fonts multiple times and set the style for each if needed.
@@ -653,9 +825,14 @@ implementation
 
 //=============================================================================
 
+//=============================================================================
+
   initialization
   begin
     InitialiseSwinGame();
+    
+    _Fonts := TStringHash.Create(False, 1024);
+    
     if TTF_Init() = -1 then
     begin
       begin RaiseException('Error opening font library. ' + string(TTF_GetError)); exit; end;

@@ -148,9 +148,16 @@ uses sgTypes;
 // Bitmap querying functions
 //---------------------------------------------------------------------------
   
+  /// Checks if a pixel is drawn at the specified x,y location.
+  /// 
   /// @lib
-  function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
-
+  ///
+  /// @class Bitmap
+  /// @csn pixelDrawnAtX:%s y:%s
+  /// @method PixelDrawnAtPoint
+  function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
+  
+  
 //---------------------------------------------------------------------------
 // Alpha blendings adjusting code
 //---------------------------------------------------------------------------
@@ -421,7 +428,7 @@ end;
 
 //----------------------------------------------------------------------------
 
-function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
+function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
 begin
   result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
             and ((x >= 0) and (x < bmp^.width))

@@ -1123,7 +1123,7 @@ implementation
         offX1 := 0;
         offY1 := 0;
       end;
-      result := IsPixelDrawnAtPoint(bmp, Round(wx - s^.position.x + offX1), Round(wy - s^.position.y + offY1));
+      result := PixelDrawnAtPoint(bmp, Round(wx - s^.position.x + offX1), Round(wy - s^.position.y + offY1));
     end;
   end;
 
