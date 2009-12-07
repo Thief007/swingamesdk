@@ -501,7 +501,7 @@ implementation
       begin
         xPixel1 := j - left1 + Round(part.x);
 
-        if IsPixelDrawnAtPoint(bmp, xPixel1, yPixel1) then
+        if PixelDrawnAtPoint(bmp, xPixel1, yPixel1) then
         begin
           result := true;
           exit;
@@ -655,8 +655,8 @@ implementation
         xPixel1 := j - left1 + offsetX1;
         xPixel2 := j - left2 + offsetX2;
 
-        if (bbox1 or IsPixelDrawnAtPoint(bmp1, xPixel1, yPixel1))
-           and (bbox2 or IsPixelDrawnAtPoint(bmp2, xPixel2, yPixel2)) then
+        if (bbox1 or PixelDrawnAtPoint(bmp1, xPixel1, yPixel1))
+           and (bbox2 or PixelDrawnAtPoint(bmp2, xPixel2, yPixel2)) then
         begin
           result := true;
           exit;
@@ -923,7 +923,7 @@ implementation
   
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
   begin
-    result := IsPixelDrawnAtPoint(bmp, Round(ptX - x), Round(ptY - y));
+    result := PixelDrawnAtPoint(bmp, Round(ptX - x), Round(ptY - y));
   end;
   
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;

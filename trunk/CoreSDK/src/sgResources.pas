@@ -31,29 +31,6 @@ interface
   uses sgTypes;
 //=============================================================================
 
-  //----------------------------------------------------------------------------
-  
-  /// @lib
-  ///
-  /// @class Map
-  /// @constructor
-  /// @csn initWithName:%s forFilename:%s andSize:%s
-  function MapFont(name, filename: String; size: LongInt): Font;
-
-  /// @lib
-  function HasFont(name: String): Boolean;
-
-  /// @lib
-  function FetchFont(name: String): Font;
-
-  /// @lib
-  procedure ReleaseFont(name: String);
-
-  /// @lib
-  procedure ReleaseAllFonts();
-
-  //----------------------------------------------------------------------------
-
   /// @lib
   ///
   /// @class Map
@@ -134,26 +111,6 @@ interface
   
   
   
-  /// Loads a font from file with the specified side. Fonts must be freed using
-  /// the FreeFont routine once finished with. Once the font is loaded you
-  /// can set its style using SetFontStyle. Fonts are then used to draw and
-  /// measure text in your programs.
-  /// 
-  /// @lib
-  ///
-  /// @class Font
-  /// @constructor
-  /// @csn initWithFontName:%s andSize:%s
-  function LoadFont(fontName: String; size: LongInt): Font;
-  
-  /// Frees the resources used by the loaded Font.
-  /// 
-  /// @lib
-  ///
-  /// @class Font
-  /// @dispose
-  procedure FreeFont(var fontToFree: Font);
-    
   /// Reads the map files specified by mapName and return a new `Map` with all
   /// the details.
   ///
@@ -200,7 +157,6 @@ implementation
   //----------------------------------------------------------------------------
 
   var
-    _Fonts: TStringHash;
     _TileMaps: TStringHash;
     _Bundles: TStringHash;
     // The full path location of the current executable (or script). This is
@@ -338,51 +294,6 @@ implementation
     SetLength(identifiers, 0);
   end;
 
-  //----------------------------------------------------------------------------
-  
-  function MapFont(name, filename: String; size: LongInt): Font;
-  var
-    obj: tResourceContainer;
-    fnt: Font;
-  begin
-    fnt := LoadFont(filename, size);
-    obj := tResourceContainer.Create(fnt);
-    if not _Fonts.setValue(name, obj) then
-      raise Exception.create('Error loaded Font resource twice, ' + name);
-    result := fnt;
-  end;
-  
-  function HasFont(name: String): Boolean;
-  begin
-    result := _Fonts.containsKey(name);
-  end;
-
-  function FetchFont(name: String): Font;
-  var
-    tmp : TObject;
-  begin
-    tmp := _Fonts.values[name];
-    if assigned(tmp) then result := Font(tResourceContainer(tmp).Resource)
-    else result := nil;
-  end;
-  
-  procedure ReleaseFont(name: String);
-  var
-    fnt: Font;
-  begin
-    fnt := FetchFont(name);
-    if (assigned(fnt)) then
-    begin
-      _Fonts.remove(name).free();
-      FreeFont(fnt);
-    end;
-  end;
-  
-  procedure ReleaseAllFonts();
-  begin
-    ReleaseAll(_Fonts, @ReleaseFont);
-  end;
-  
   //----------------------------------------------------------------------------
   
   function MapTileMap(name, filename: String): Map;
@@ -648,58 +559,6 @@ implementation
   function AppPath(): String;
   begin
     result := applicationPath;
-  end;
-  
-  //----------------------------------------------------------------------------
-  
-  function LoadFont(fontName: String; size: LongInt): Font;
-  var
-    filename: String;
-  begin
-    filename := fontName;
-    if not FileExists(filename) then
-    begin
-      filename := PathToResource(filename, FontResource);
-      
-      if not FileExists(filename) then
-      begin
-        RaiseException('Unable to locate font ' + fontName);
-        exit;
-      end;
-    end;
-
-    result := TTF_OpenFont(@filename[1], size);
-    
-    if result = nil then
-    begin
-      RaiseException('LoadFont failed: ' + TTF_GetError());
-      exit;
-    end;
-  end;
-  
-  procedure FreeFont(var fontToFree: Font);
-  begin
-    if Assigned(fontToFree) then
-    begin
-      {$IFDEF TRACE}
-        Trace('Resources', 'IN', 'FreeFont', 'After calling free notifier');
-      {$ENDIF}
-      try
-        {$IFDEF TRACE}
-            Trace('Resources', 'IN', 'FreeFont', 'Before calling close font');
-        {$ENDIF}
-
-        TTF_CloseFont(fontToFree);
-        CallFreeNotifier(fontToFree);
-        fontToFree := nil;
-        {$IFDEF TRACE}
-            Trace('Resources', 'IN', 'FreeFont', 'At end of free font');
-        {$ENDIF}
-      except
-        RaiseException('Unable to free the specified font');
-        exit;
-      end;
-    end;
   end;
   
   //----------------------------------------------------------------------------
@@ -1182,7 +1041,6 @@ implementation
     
     InitialiseSwinGame();
     
-    _Fonts := TStringHash.Create(False, 1024);
     _TileMaps := TStringHash.Create(False, 1024);
     _Bundles := TStringHash.Create(False, 1024);
     
