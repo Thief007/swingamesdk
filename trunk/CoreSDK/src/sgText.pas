@@ -34,9 +34,9 @@ unit sgText;
 
 //=============================================================================
 interface
+  uses sgTypes;
 //=============================================================================
 
-  uses sgTypes;
   
   /// @lib
   /// @class Font
@@ -106,10 +106,12 @@ interface
   /// @lib DrawFrameRateWithSimpleFont
   procedure DrawFramerate(x, y: LongInt); overload;
   
+//=============================================================================
 implementation
-  uses SysUtils, Classes, sgGraphics, sgCamera, SDL_gfx, sgShared, sgResources, 
-       SDL, SDL_TTF, sgCore, sgGeometry;
-
+  uses SysUtils, Classes, 
+       sgCore, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages,
+       SDL, SDL_TTF, SDL_gfx;
+//=============================================================================
 
   const EOL = LineEnding; // from sgShared
 

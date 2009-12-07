@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-07: Andrew : Added loading of image resources
 // - 2009-11-6: Andrew  : Started Images unit.
 //
 //=============================================================================
@@ -25,6 +26,128 @@ uses sgTypes;
 //=============================================================================
 
 
+//----------------------------------------------------------------------------
+// Bitmap loading routines
+//----------------------------------------------------------------------------
+  
+  /// Creates a bitmap in memory that is the specified width and height (in pixels).
+  /// The new bitmap is initially transparent and can be used as the target 
+  /// for various drawing operations. Once you have drawn the desired image onto
+  /// the bitmap you can call OptimiseBitmap to optimise the surface.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initWithWidth:%s andHeight:%s
+  function CreateBitmap(width, height: LongInt): Bitmap;
+
+  /// Loads a bitmap from file using where the specified transparent color
+  /// is used as a color key for the transparent color.
+  ///
+  /// @lib LoadBitmapWithTransparentColor
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initWithPath:%s withTransparency:%s usingColor:%s
+  function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+
+  /// Loads a bitmap from file into a Bitmap variable. This can then be drawn to
+  /// the screen. Bitmaps can be of bmp, jpeg, gif, png, etc. Images may also
+  /// contain alpha values, which will be drawn correctly by the API. All
+  /// bitmaps must be freed using the FreeBitmap once you are finished with
+  /// them.
+  /// 
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initWithPath:%s
+  function LoadBitmap(filename : String): Bitmap; overload;
+
+  /// Loads a bitmap with a transparent color key. The transparent color is then
+  /// setup as the color key to ensure the image is drawn correctly. Alpha
+  /// values of Images loaded in this way will be ignored. All bitmaps must be
+  /// freed using the FreeBitmap once you are finished with them.
+  ///
+  /// @lib LoadBitmapWithTransparentColor(filename, True, transparentColor)
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initWithPath:%s transparentColor:%s
+  function LoadTransparentBitmap(filename : String; transparentColor : Color): Bitmap; overload;
+
+  /// Frees a loaded bitmap. Use this when you will no longer be drawing the
+  /// bitmap (including within Sprites), and when the program exits.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @dispose
+  procedure FreeBitmap(var bitmapToFree : Bitmap);
+  
+  
+//----------------------------------------------------------------------------
+// Bitmap mapping routines
+//----------------------------------------------------------------------------
+  
+  /// Loads and returns a bitmap. The supplied `filename` is used to
+  /// locate the Bitmap to load. The supplied `name` indicates the 
+  /// name to use to refer to this Bitmap in SwinGame. The `Bitmap` can then be
+  /// retrieved by passing this `name` to the `FetchBitmap` function. 
+  ///
+  /// @lib
+  ///
+  /// @sn bitmapNamed:%s fromFilename:%s
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initWithName:%s forFilename:%s
+  function MapBitmap(name, filename: String): Bitmap;
+  
+  /// Loads and returns a bitmap with a given color code use for transparency.
+  /// The supplied `filename` is used to locate the Bitmap to load. The supplied
+  /// `name` indicates thename to use to refer to this Bitmap in SwinGame. The 
+  /// `Bitmap` can then be retrieved by passing this `name` to the `FetchBitmap` function. 
+  ///
+  /// @lib
+  ///
+  /// @sn bitmapNamed:%s fromFilename:%s withColorKey:%s
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initWithName:%s forFilename:%s andColorKey:%s
+  function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
+  
+  /// Determines if SwinGame has a bitmap loaded for the supplied name.
+  /// This checks against all bitmaps loaded, those loaded without a name
+  /// are assigned the filename as a default.
+  ///
+  /// @lib
+  function HasBitmap(name: String): Boolean;
+  
+  /// Returns the `Bitmap` that has been loaded with the specified name,
+  /// see `MapBitmap`.
+  ///
+  /// @lib
+  function FetchBitmap(name: String): Bitmap;
+  
+  /// Releases the SwinGame resources associated with the bitmap of the
+  /// specified `name`.
+  ///
+  /// @lib
+  procedure ReleaseBitmap(name: String);
+  
+  /// Releases all of the bitmaps that have been loaded.
+  ///
+  /// @lib
+  procedure ReleaseAllBitmaps();
+  
+  
+//---------------------------------------------------------------------------
+// Bitmap querying functions
+//---------------------------------------------------------------------------
+  
   /// @lib
   function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
 
@@ -74,10 +197,229 @@ uses sgTypes;
 
 //=============================================================================
 implementation
-uses sgCore, sgShared,
+uses sgCore, sgShared, sgResources,
+     stringhash,         // libsrc
+     SysUtils,
      SDL_gfx, SDL, SDL_Image // sdl
      ;
 //=============================================================================
+
+var
+  _Images: TStringHash;
+
+
+//----------------------------------------------------------------------------
+
+function CreateBitmap(width, height: LongInt): Bitmap;
+begin
+  if (width < 1) or (height < 1) then
+  begin
+    RaiseException('Bitmap width and height must be greater then 0');
+    exit;
+  end;
+  if (baseSurface = nil) or (baseSurface^.format = nil) then
+  begin
+    RaiseException('Unable to CreateBitmap as the window is not open');
+    exit;
+  end;
+  
+  New(result);
+  
+  with baseSurface^.format^ do
+  begin
+    result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
+                     RMask, GMask, BMask, AMask);
+  end;
+  
+  if result^.surface = nil then
+  begin
+    Dispose(result);
+    RaiseException('Failed to create a bitmap: ' + SDL_GetError());
+    exit;
+  end;
+  
+  result^.width := width;
+  result^.height := height;
+  SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
+  SDL_FillRect(result^.surface, nil, ColorTransparent);
+end;
+
+// Sets the non-transparent pixels in a Bitmap. This is then used for
+// collision detection, allowing the original surface to be optimised.
+//
+// @param bmp  A pointer to the Bitmap being set
+// @param surface The surface with pixel data for this Bitmap
+procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
+var
+  r, c: LongInt;
+begin
+  SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
+
+  for c := 0 to bmp^.width - 1 do
+  begin
+    for r := 0 to bmp^.height - 1 do
+    begin
+      bmp^.nonTransparentPixels[c, r] :=
+        (GetPixel32(surface, c, r) <> transparentColor);
+    end;
+  end;
+end;
+
+function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+var
+  loadedImage: PSDL_Surface;
+  correctedTransColor: Color;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgResources', 'LoadBitmap', filename);
+  {$ENDIF}
+  if not FileExists(filename) then
+  begin
+    filename := PathToResource(filename, BitmapResource);
+    
+    if not FileExists(filename) then
+    begin
+      RaiseException('Unable to locate bitmap ' + filename);
+      exit;
+    end;
+  end;
+  
+  loadedImage := IMG_Load(@filename[1]);
+  
+  if loadedImage <> nil then
+  begin
+    new(result);
+    if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
+    else result^.surface := SDL_DisplayFormat(loadedImage);
+    
+    result^.width := result^.surface^.w;
+    result^.height := result^.surface^.h;
+    
+    if transparent then
+    begin
+      correctedTransColor := ColorFrom(result, transparentColor);
+      SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+      SetNonTransparentPixels(result, loadedImage, correctedTransColor);
+    end
+    else
+    begin
+      SetNonAlphaPixels(result, loadedImage);
+    end;
+    
+    if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
+  end
+  else
+  begin
+    RaiseException('Error loading image: ' + filename + ': ' + SDL_GetError());
+    exit;
+  end;
+  {$IFDEF TRACE}
+    TraceExit('sgResources', 'LoadBitmap, result = ' + HexStr(result));
+  {$ENDIF}
+end;
+
+function LoadBitmap(filename: String): Bitmap; overload;
+begin
+  result := LoadBitmap(filename, false, ColorBlack);
+end;
+
+function LoadTransparentBitmap(filename: String; transparentColor: Color): Bitmap; overload;
+begin
+  result := LoadBitmap(filename, true, transparentColor);
+end;
+
+procedure FreeBitmap(var bitmapToFree : Bitmap);
+begin
+  if Assigned(bitmapToFree) then
+  begin
+    if Assigned(bitmapToFree^.surface) then
+    begin
+      //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
+      SDL_FreeSurface(bitmapToFree^.surface);
+    end;
+    bitmapToFree^.surface := nil;
+    
+    Dispose(bitmapToFree);
+    CallFreeNotifier(bitmapToFree);
+    bitmapToFree := nil;
+  end;
+end;
+
+//----------------------------------------------------------------------------
+
+function MapBitmap(name, filename: String): Bitmap;
+var
+  obj: tResourceContainer;
+  bmp: Bitmap;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgResources', 'MapBitmap', name + ' -> ' + filename);
+  {$ENDIF}
+  
+  bmp := LoadBitmap(filename);
+  obj := tResourceContainer.Create(bmp);
+  {$IFDEF TRACE}
+    Trace('sgResources', 'Info', 'MapBitmap', 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
+  {$ENDIF}
+  
+  if not _Images.setValue(name, obj) then raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+  
+  {$IFDEF TRACE}
+    Trace('sgResources', 'Info', 'MapBitmap', 'returned from setValue');
+  {$ENDIF}
+  
+  result := bmp;
+  {$IFDEF TRACE}
+    TraceExit('sgResources', 'MapBitmap');
+  {$ENDIF}
+end;
+
+function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
+var
+  obj: tResourceContainer;
+  bmp: Bitmap;
+begin
+  bmp := LoadBitmap(filename, true, transparentColor);
+  obj := tResourceContainer.Create(bmp);
+  if not _Images.setValue(name, obj) then
+    raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+  result := bmp;
+end;
+
+function HasBitmap(name: String): Boolean;
+begin
+  result := _Images.containsKey(name);
+end;
+
+function FetchBitmap(name: String): Bitmap;
+var
+  tmp : TObject;
+begin
+  tmp := _Images.values[name];
+  if assigned(tmp) then
+    result := Bitmap(tResourceContainer(tmp).Resource)
+  else 
+    result := nil;
+end;
+
+procedure ReleaseBitmap(name: String);
+var
+  bmp: Bitmap;
+begin
+  bmp := FetchBitmap(name);
+  if (assigned(bmp)) then
+  begin
+    _Images.remove(name).Free();
+    FreeBitmap(bmp);
+  end;
+end;
+
+procedure ReleaseAllBitmaps();
+begin
+  ReleaseAll(_Images, @ReleaseBitmap);
+end;
+
+//----------------------------------------------------------------------------
 
 function IsPixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
 begin
@@ -134,6 +476,23 @@ begin
   surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
   SDL_FreeSurface(oldSurface);
 end;
+
+//=============================================================================
+
+  initialization
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgImages', 'initialization');
+    {$ENDIF}
+    
+    InitialiseSwinGame();
+    
+    _Images := TStringHash.Create(False, 1024);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgImages', 'initialization');
+    {$ENDIF}
+  end;
 
 //=============================================================================
 end.

@@ -125,20 +125,20 @@ interface
   function MapSoundEffect(name, filename: String): SoundEffect;
   
   /// Determines if SwinGame has a sound effect loaded for the supplied name.
-  /// This checks against all sounds loaded using `MapSoundEffect`.
+  /// This checks against all sounds loaded, those loaded without a name
+  /// are assigned the filename as a default
   ///
   /// @lib
   function HasSoundEffect(name: String): Boolean;
   
-  /// Returns the `SoundEffect` that has been loaded with the specified name.
-  /// This works with sounds loaded using `MapSoundEffect`.
+  /// Returns the `SoundEffect` that has been loaded with the specified name,
+  /// see `MapSoundEffect`.
   ///
   /// @lib
   function FetchSoundEffect(name: String): SoundEffect;
   
-  /// Releases the SwinGame resources associated with the sound effect with the
-  /// specified `name`. This relates to the sound effects loaded with the
-  /// `MapSoundEffect` function.
+  /// Releases the SwinGame resources associated with the sound effect of the
+  /// specified `name`.
   ///
   /// @lib
   procedure ReleaseSoundEffect(name: String);

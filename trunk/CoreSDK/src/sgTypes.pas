@@ -30,10 +30,9 @@ unit sgTypes;
 
 //=============================================================================
 interface
+  uses SDL_Mixer, SDL, SDL_Image, SDL_TTF;
 //=============================================================================
 
-  uses SDL_Mixer, SDL, SDL_Image, SDL_TTF;
-  
   type
 
 
@@ -52,7 +51,7 @@ interface
     ///
     /// @struct Point2D
     /// @sameas Vector
-    Point2D = record
+    Point2D = packed record
       x, y: Single;
     end;
 
@@ -75,19 +74,19 @@ interface
     Point2DArray = Array of Point2D;
     
     /// @struct Rectangle
-    Rectangle = record
+    Rectangle = packed record
       x, y: Single;
       width, height: LongInt;
     end;
 
     /// @struct Circle
-    Circle = record
+    Circle = packed record
       center: Point2D;
       radius: LongInt;
     end;
 
     /// @struct LineSegment
-    LineSegment = record
+    LineSegment = packed record
         startPoint: Point2D;
         endPoint: Point2D;
       end;
@@ -108,7 +107,7 @@ interface
     
     /// @struct SoundEffectData
     /// @via_pointer
-    SoundEffectData = record
+    SoundEffectData = packed record
       effect: PMix_Chunk;
       filename, name: String;
     end;
@@ -138,7 +137,7 @@ interface
     
     /// @struct MusicData
     /// @via_pointer
-    MusicData = record
+    MusicData = packed record
       music: PMix_Music;
       filename, name: String;
     end;
@@ -215,7 +214,7 @@ interface
     /// @note Do not use BitmapData directly, use Bitmap.
     /// @struct BitmapData
     /// @via_pointer
-    BitmapData = record
+    BitmapData = packed record
       surface: PSDL_Surface;
       width, height: LongInt;
       nonTransparentPixels: Array of Array of Boolean;
@@ -271,7 +270,7 @@ interface
     
     /// @struct ShapePrototypeData
     /// @via_pointer
-    ShapePrototypeData = record
+    ShapePrototypeData = packed record
       points: Point2DArray;
       kind: ShapeKind;
       shapeCount: LongInt;            //the number of shapes using the prototype
@@ -285,7 +284,7 @@ interface
     
     /// @struct ShapeData
     /// @via_pointer
-    ShapeData = record
+    ShapeData = packed record
       pt: Point2D;
       prototype: ShapePrototype;
       color: Color;
@@ -365,7 +364,7 @@ interface
     ///
     /// @struct SpriteData
     /// @via_pointer
-    SpriteData = record
+    SpriteData = packed record
       bitmaps: Array of Bitmap;
       bufferBmp: Bitmap;
       spriteKind: SpriteKind;
@@ -403,7 +402,7 @@ interface
 
     /// @struct TimerData
     /// @via_pointer
-    TimerData = record
+    TimerData = packed record
       startTicks: UInt32;
       pausedTicks: UInt32;
       paused: Boolean;
@@ -737,7 +736,7 @@ interface
     );
 
     /// @struct MapTile
-    MapTile = record
+    MapTile = packed record
       xIndex: LongInt;
       yIndex: LongInt;
       topCorner: Point2D;
@@ -749,7 +748,7 @@ interface
 
     /// @struct MapData
     /// @via_pointer
-    MapData = record
+    MapData = packed record
       Version: LongInt;
       MapWidth: LongInt;
       MapHeight: LongInt;
@@ -769,7 +768,7 @@ interface
 
     /// @struct MapAnimationData
     /// @via_pointer
-    MapAnimationData = record
+    MapAnimationData = packed record
       AnimationNumber: LongInt;
       Delay: LongInt;
       NumberOfFrames: LongInt;
@@ -779,27 +778,27 @@ interface
 
     /// @struct MapLayerData
     /// @via_pointer
-    MapLayerData = record
+    MapLayerData = packed record
       Animation: Array of Array of LongInt;
       Value: Array of Array of LongInt;
     end;
 
     /// @struct MapCollisionData
     /// @via_pointer
-    MapCollisionData = record
+    MapCollisionData = packed record
       Collidable: Array of Array of Boolean;
     end;
 
     /// @struct MapTagDetails
     /// @via_pointer
-    MapTagDetails = record
+    MapTagDetails = packed record
       x: LongInt;
       y: LongInt;
     end;
 
     /// @struct MapRecord
     /// @via_pointer
-    MapRecord = record
+    MapRecord = packed record
       MapInfo: MapData;
       AnimationInfo: Array of MapAnimationData;
       LayerInfo: Array of MapLayerData;
