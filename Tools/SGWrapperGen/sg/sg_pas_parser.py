@@ -582,8 +582,8 @@ class SGPasParser():
                 self._match_lookahead('symbol', ',', True) #consume commas
             self._match_token('symbol',')') #read close bracket
             the_type.values = tuple(values)
-        elif self._match_lookahead('id', 'record', True):
-            #record field: Type end;
+        elif self._match_lookahead('id', 'packed', True) and self._match_lookahead('id', 'record', True):
+            #packed record field: Type end;
             while not self._match_lookahead('id', 'end', True):
                 #read field
                 variables = self._read_variable_list()
