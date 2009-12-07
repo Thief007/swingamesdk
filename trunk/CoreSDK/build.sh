@@ -5,25 +5,52 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
-#Set the basic paths
+#
+# Step 1: Detect the operating system
+#
+MAC="Mac OS X"
+WIN="Windows"
+LIN="Linux"
+
+if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+    OS=$MAC
+elif [ -d /c/Windows ]; then
+    OS=$WIN
+else
+    OS=$LIN
+fi
+
+#
+# Set the basic paths
+#
 OUT_DIR="${APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
-LIB_DIR="${APP_PATH}/lib/mac"
 LOG_FILE="${APP_PATH}/out.log"
 
+if [ $OS = $MAC ]; then
+    LIB_DIR="${APP_PATH}/lib/mac"
+elif [ $OS = $WIN ]; then
+    LIB_DIR="${APP_PATH}/lib/win"
+fi
+
+#
+# Set compiler path and options
+#
+FPC_BIN=`which fpc`
 PAS_FLAGS="-gw"
 SG_INC="-Fu${APP_PATH}/libsrc -Fu/${APP_PATH}/src"
+CLEAN="N"
 
-FPC_BIN=`which fpc`
-
+#
+# Set game name
+#
 GAME_NAME="Test"
 
-CLEAN="N"
 
 Usage()
 {
-    echo "Usage: [-c] [-h] [name]"
+    echo "Usage: [-c] [-h] src_name"
     echo 
     echo "Compiles your game into an executable application."
     echo "Output is located in $OUT_DIR."
@@ -45,6 +72,9 @@ done
 
 shift $((${OPTIND}-1))
 
+#
+# Get the name of the source file
+#
 SRC_FILE=${1}.pas
 
 if [ ! -f ./test/$SRC_FILE ]; then
@@ -52,6 +82,9 @@ if [ ! -f ./test/$SRC_FILE ]; then
     exit 1
 fi
 
+#
+# Remove old log file
+#
 if [ -f "${LOG_FILE}" ]
 then
     rm -f "${LOG_FILE}"
@@ -178,13 +211,44 @@ doMacPackage()
 
 doLinuxCompile()
 {
-    echo "todo"
-    exit 1
+    mkdir -p ${TMP_DIR}
+    echo "  ... Compiling $GAME_NAME"
+    
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ./test/${SRC_FILE} > ${LOG_FILE}
+    if [ $? != 0 ]; then DoExitCompile; fi
 }
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${APP_PATH}/bin/"
+    RESOURCE_DIR="${OUT_DIR}/Resources"
+}
+
+doWindowsCompile()
+{
+    mkdir -p ${TMP_DIR}
+    
+    echo "  ... Compiling $GAME_NAME"
+    
+    LIB_DIR=`echo $LIB_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    TMP_DIR=`echo $TMP_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    SRC_DIR=`echo $SRC_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+
+    echo "  ... Creating Resources"
+    windres ${SRC_DIR}/SwinGame.rc ${SRC_DIR}/GameLauncher.res
+    if [ $? != 0 ]; then DoExitCompile; fi
+    
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME}.exe ./test/${SRC_FILE} > ${LOG_FILE}
+    if [ $? != 0 ]; then DoExitCompile; fi
+    
+}
+
+doWindowsPackage()
+{
+    RESOURCE_DIR=${OUT_DIR}/Resources
+    
+    echo "  ... Copying libraries"
+    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
 }
 
 copyWithoutSVN()
@@ -217,19 +281,17 @@ then
     then
         mkdir -p "${OUT_DIR}"
     fi
+    echo "--------------------------------------------------"
+    echo "          Creating $GAME_NAME"
+    echo "          for $OS"
+    echo "--------------------------------------------------"
+    echo "  Running script from $APP_PATH"
+    echo "  Saving output to $OUT_DIR"
+    echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
+    echo "--------------------------------------------------"
+    echo "  ... Creating ${GAME_NAME}"    
     
-    if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]
-    then
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Mac OS X"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
-        echo "--------------------------------------------------"
-        echo "  ... Creating ${GAME_NAME}"
-        
+    if [ "$OS" = "$MAC" ]; then
         FPC_BIN=`which ppc386`
         doMacCompile "i386"
         FPC_BIN=`which ppcppc`
@@ -237,23 +299,12 @@ then
         
         doLipo "i386" "ppc"
         doMacPackage
-    else
-        echo "--------------------------------------------------"
-        echo "          Creating $GAME_NAME"
-        echo "                 for Linux"
-        echo "--------------------------------------------------"
-        echo "  Running script from $APP_PATH"
-        echo "  Saving output to $OUT_DIR"
-        echo "--------------------------------------------------"
-        echo "  ... Creating C wrapper library"
-        echo "  Compiler flags ${SG_INC} ${C_FLAGS}"
-        CreateCWrapper >> ${LOG_FILE}
-        if [ $? != 0 ]; then echo "Error creating c wrapper library"; cat ${LOG_FILE}; exit 1; fi
-        
-        echo "  ... Compiling Library"
+    elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
-        
         doLinuxPackage
+    else
+        doWindowsCompile
+        doWindowsPackage
     fi
     
     doCopyResources

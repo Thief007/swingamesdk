@@ -4,7 +4,7 @@
 // Change History:
 //
 // Version 3:
-// - 2009-12-07: Andrew : Moved out loading of image resources... more to follow
+// - 2009-12-07: Andrew : Moved out loading of image, font, and tilemap resources
 // - 2009-11-10: Andrew : Changed sn to csn tags
 // - 2009-11-06: Andrew : Moved out loading of audio resources... others to follow
 // - 2009-10-16: Andrew : Moved free notifier, and ensured free notifier called after dispose
@@ -30,27 +30,6 @@ unit sgResources;
 interface
   uses sgTypes;
 //=============================================================================
-
-  /// @lib
-  ///
-  /// @class Map
-  /// @constructor
-  /// @csn initWithName:%s forFilename:%s
-  function MapTileMap(name, filename: String): Map;
-
-  /// @lib
-  function HasTileMap(name: String): Boolean;
-
-  /// @lib
-  function FetchTileMap(name: String): Map;
-
-  /// @lib
-  procedure ReleaseTileMap(name: String);
-
-  /// @lib
-  procedure ReleaseAllTileMaps();
-
-
 
   //----------------------------------------------------------------------------
   // Bundle handling routines
@@ -110,27 +89,6 @@ interface
   procedure ShowLogos();
   
   
-  
-  /// Reads the map files specified by mapName and return a new `Map` with all
-  /// the details.
-  ///
-  /// @lib
-  ///
-  /// @class Map
-  /// @constructor
-  /// @csn initWithMapName: %s
-  function LoadMap(mapName: String): Map;
-  
-  /// Frees the resources associated with the map.
-  ///
-  /// @lib
-  /// @class Map
-  /// @dispose
-  procedure FreeMap(var m: Map);
-  
-  
-  
-  
   //----------------------------------------------------------------------------
   // Notifier of resource freeing
   //----------------------------------------------------------------------------
@@ -157,7 +115,6 @@ implementation
   //----------------------------------------------------------------------------
 
   var
-    _TileMaps: TStringHash;
     _Bundles: TStringHash;
     // The full path location of the current executable (or script). This is
     // particuarly useful when determining the path to resources (images, maps,
@@ -292,51 +249,6 @@ implementation
       end;
     end;
     SetLength(identifiers, 0);
-  end;
-
-  //----------------------------------------------------------------------------
-  
-  function MapTileMap(name, filename: String): Map;
-  var
-    obj: tResourceContainer;
-    theMap: Map;
-  begin
-    theMap := LoadMap(filename);
-    obj := tResourceContainer.Create(theMap);
-    if not _TileMaps.setValue(name, obj) then
-      raise Exception.create('Error loaded Map resource twice, ' + name);
-    result := theMap;
-  end;
-  
-  function HasTileMap(name: String): Boolean;
-  begin
-    result := _TileMaps.containsKey(name);
-  end;
-  
-  function FetchTileMap(name: String): Map;
-  var
-    tmp : TObject;
-  begin
-    tmp := _TileMaps.values[name];
-    if assigned(tmp) then result := Map(tResourceContainer(tmp).Resource)
-    else result := nil;
-  end;
-  
-  procedure ReleaseTileMap(name: String);
-  var
-    theMap: Map;
-  begin
-    theMap := FetchTileMap(name);
-    if assigned(theMap) then
-    begin
-      _TileMaps.remove(name).Free();
-      FreeMap(theMap);
-    end;
-  end;
-  
-  procedure ReleaseAllTileMaps();
-  begin
-    ReleaseAll(_TileMaps, @ReleaseTileMap);
   end;
 
   //----------------------------------------------------------------------------
@@ -561,365 +473,8 @@ implementation
     result := applicationPath;
   end;
   
-  //----------------------------------------------------------------------------
   
-  function ReadInt(var stream: text): Word;
-  var
-    c: char;
-    c2: char;
-    i: LongInt;
-    i2: LongInt;
-  begin
-    Read(stream ,c);
-    Read(stream ,c2);
-
-    i := LongInt(c);
-    i2 := LongInt(c2) * 256;
-
-    result := i + i2;
-  end;
-
-  procedure LoadMapInformation(m: Map; var stream: text);
-  var
-    header: LongInt;
-  begin
-    header := ReadInt(stream);
-
-    if header = 0 then
-    begin
-      m^.MapInfo.Version := ReadInt(stream);
-      m^.MapInfo.MapWidth := ReadInt(stream);
-    end
-    else
-    begin
-      m^.MapInfo.Version := 1;
-      m^.MapInfo.MapWidth := header;
-    end;
-
-    //m^.MapInfo.MapWidth := ReadInt(stream);
-    m^.MapInfo.MapHeight := ReadInt(stream);
-    m^.MapInfo.BlockWidth := ReadInt(stream);
-    m^.MapInfo.BlockHeight := ReadInt(stream);
-    m^.MapInfo.NumberOfBlocks := ReadInt(stream);
-    m^.MapInfo.NumberOfAnimations := ReadInt(stream);
-    m^.MapInfo.NumberOfLayers := ReadInt(stream);
-    m^.MapInfo.CollisionLayer := ReadInt(stream);
-    m^.MapInfo.TagLayer := ReadInt(stream);
-    m^.MapInfo.GapX := 0;
-    m^.MapInfo.GapY := 0;
-    m^.MapInfo.StaggerX := 0;
-    m^.MapInfo.StaggerY := 0;
-    m^.MapInfo.Isometric := false;
-
-      {
-      //Debug
-      WriteLn('MapInformation');
-      WriteLn('');
-      WriteLn(m^.MapInfo.MapWidth);
-      WriteLn(m^.MapInfo.MapHeight);
-      WriteLn(m^.MapInfo.BlockWidth);
-      WriteLn(m^.MapInfo.BlockHeight);
-      WriteLn(m^.MapInfo.NumberOfBlocks);
-      WriteLn(m^.MapInfo.NumberOfAnimations);
-      WriteLn(m^.MapInfo.NumberOfLayers);
-      WriteLn(m^.MapInfo.CollisionLayer);
-      WriteLn(m^.MapInfo.TagLayer);
-      WriteLn('');
-      ReadLn();
-      }
-  end;
-
-  procedure LoadIsometricInformation(m: Map; var stream: text);
-  begin
-    m^.MapInfo.GapX := ReadInt(stream);
-    m^.MapInfo.GapY := ReadInt(stream);
-    m^.MapInfo.StaggerX := ReadInt(stream);
-    m^.MapInfo.StaggerY := ReadInt(stream);
-
-    if ((m^.MapInfo.StaggerX = 0) and (m^.MapInfo.StaggerY = 0)) then
-    begin
-      m^.MapInfo.Isometric := false;
-      m^.MapInfo.GapX := 0;
-      m^.MapInfo.GapY := 0;
-    end
-    else
-      m^.MapInfo.Isometric := true;
-
-  end;
-
-
-  procedure LoadAnimationInformation(m: Map; var stream: text);
-  var
-    i, j: LongInt;
-  begin
-
-    if m^.MapInfo.NumberOfAnimations > 0 then
-    begin
-
-      SetLength(m^.AnimationInfo, m^.MapInfo.NumberOfAnimations);
-
-      for i := 0 to m^.MapInfo.NumberOfAnimations - 1 do
-      begin
-
-        m^.AnimationInfo[i].AnimationNumber := i + 1;
-        m^.AnimationInfo[i].Delay := ReadInt(stream);
-        m^.AnimationInfo[i].NumberOfFrames := ReadInt(stream);
-
-        SetLength(m^.AnimationInfo[i].Frame, m^.AnimationInfo[i].NumberOfFrames);
-
-        for j := 0 to m^.AnimationInfo[i].NumberOfFrames - 1 do
-        begin
-          m^.AnimationInfo[i].Frame[j] := ReadInt(stream);
-        end;
-
-        m^.AnimationInfo[i].CurrentFrame := 0;
-
-      end;
-
-      {
-      //Debug
-      WriteLn('Animation Information');
-      WriteLn('');
-      for i := 0 to m^.MapInfo.NumberOfAnimations - 1 do
-      begin
-        WriteLn(m^.AnimationInfo[i].AnimationNumber);
-        WriteLn(m^.AnimationInfo[i].Delay);
-        WriteLn(m^.AnimationInfo[i].NumberOfFrames);
-
-        for j := 0 to m^.AnimationInfo[i].NumberOfFrames - 1 do
-        begin
-          WriteLn(m^.AnimationInfo[i].Frame[j]);
-        end;
-      end;
-      WriteLn('');
-      ReadLn();
-      }
-    end;
-  end;
-
-  procedure LoadLayerData(m: Map; var stream: text);
-  var
-    l, y, x: LongInt;
-  begin
-
-    SetLength(m^.LayerInfo, m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.TagLayer);
-
-    for y := 0 to Length(m^.LayerInfo) - 1 do
-    begin
-
-      SetLength(m^.LayerInfo[y].Animation, m^.MapInfo.MapHeight);
-      SetLength(m^.LayerInfo[y].Value, m^.MapInfo.MapHeight);
-
-      for x := 0 to m^.MapInfo.MapHeight - 1 do
-      begin
-
-        SetLength(m^.LayerInfo[y].Animation[x], m^.MapInfo.MapWidth);
-        SetLength(m^.LayerInfo[y].Value[x], m^.MapInfo.MapWidth);
-      end;
-    end;
-
-    for l := 0 to m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.Taglayer - 1 do
-    begin
-      for y := 0 to m^.MapInfo.MapHeight - 1 do
-      begin
-        for x := 0 to m^.MapInfo.MapWidth - 1 do
-        begin
-
-          m^.LayerInfo[l].Animation[y][x] := ReadInt(stream);
-          m^.LayerInfo[l].Value[y][x] := ReadInt(stream);
-        end;
-      end;
-    end;
-
-    {
-    //Debug
-    WriteLn('Layer Information');
-    WriteLn(Length(m^.Layerinfo));
-    WriteLn('');
-
-    for l := 0 to Length(m^.LayerInfo) - 1 do
-    begin
-      for y := 0 to m^.MapInfo.MapHeight - 1 do
-      begin
-        for x := 0 to m^.MapInfo.MapWidth - 1 do
-        begin
-          Write(m^.LayerInfo[l].Animation[y][x]);
-          Write(',');
-          Write(m^.LayerInfo[l].Value[y][x]);
-          Write(' ');
-        end;
-      end;
-      WriteLn('');
-      ReadLn();
-    end;
-    }
-
-
-  end;
-
-  procedure LoadCollisionData(m: Map; var stream: text);
-  var
-    y, x: LongInt;
-  begin
-    if m^.MapInfo.CollisionLayer = 1 then
-    begin
-      SetLength(m^.CollisionInfo.Collidable, m^.MapInfo.MapHeight);
-
-      for y := 0 to m^.MapInfo.MapHeight - 1 do
-      begin
-        SetLength(m^.CollisionInfo.Collidable[y], m^.MapInfo.MapWidth);
-      end;
-
-      for y := 0 to m^.MapInfo.MapHeight - 1 do
-      begin
-        for x := 0 to m^.MapInfo.MapWidth - 1 do
-        begin
-          // True/False
-          m^.CollisionInfo.Collidable[y][x] := (ReadInt(stream) <> 0);
-//          if ReadInt(stream) <> 0 then
-//            m^.CollisionInfo.Collidable[y][x] := true
-//          else
-//            m^.CollisionInfo.Collidable[y][x] := false
-        end;
-      end;
-
-
-      //Debug
-      {
-      for y := 0 to m^.MapInfo.MapHeight - 1 do
-      begin
-        for x := 0 to m^.MapInfo.MapWidth - 1 do
-        begin
-          if m^.CollisionInfo.Collidable[y][x] = true then
-            Write('1')
-          else
-            Write('0')
-        end;
-        WriteLn('');
-      end;
-      ReadLn();
-      }
-    end;
-  end;
-
-  procedure LoadTagData(m: Map; var stream: text);
-  var
-    py, px, smallestTagIdx, temp: LongInt;
-    evt: MapTag;
-  begin
-    //SetLength(m^.TagInfo, High(Tags));
-    //SetLength(m^.TagInfo.Tag, m^.MapInfo.MapHeight);
-    {for y := 0 to m^.MapInfo.MapHeight - 1 do
-    begin
-      SetLength(m^.TagInfo.Tag[y], m^.MapInfo.MapWidth);
-    end;}
-
-    //The smallest "non-graphics" tile, i.e. the tags
-    smallestTagIdx := m^.MapInfo.NumberOfBlocks - 23;
-
-    for py := 0 to m^.MapInfo.MapHeight - 1 do
-    begin
-      for px := 0 to m^.MapInfo.MapWidth - 1 do
-      begin
-        temp := ReadInt(stream);
-        evt := MapTag(temp - smallestTagIdx);
-        //TODO: Optimize - avoid repeated LongIng(evt) conversions
-        if (evt >= MapTag1) and (evt <= MapTag24) then
-        begin
-          SetLength(m^.TagInfo[LongInt(evt)], Length(m^.TagInfo[LongInt(evt)]) + 1);
-
-          with m^.TagInfo[LongInt(evt)][High(m^.TagInfo[LongInt(evt)])] do
-          begin
-            x := px;
-            y := py;
-          end;
-        end
-      end;
-    end;
-
-
-    //Debug
-    {
-    for y := 0 to m^.MapInfo.MapHeight - 1 do
-    begin
-      for x := 0 to m^.MapInfo.MapWidth - 1 do
-      begin
-        Write(' ');
-        Write(LongInt(m^.TagInfo.Tag[y][x]));
-      end;
-      WriteLn('');
-    end;
-    ReadLn();
-    }
-  end;
-
-  procedure LoadBlockSprites(m: Map; fileName: String);
-  var
-    fpc: LongIntArray; //Array of LongInt;
-  begin
-    SetLength(fpc, m^.MapInfo.NumberOfBlocks);
-    m^.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
-                             m^.MapInfo.BlockWidth,
-                             m^.MapInfo.BlockHeight);
-    m^.Tiles^.currentCell := 0;
-  end;
-  
-  //mapFile and imgFile are full-path+filenames
-  function LoadMapFiles(mapFile, imgFile: String): Map;
-  var
-    f: text;
-    m: Map;
-  begin
-    if not FileExists(mapFile) then begin RaiseException('Unable to locate map: ' + mapFile); exit; end;
-    if not FileExists(imgFile) then begin RaiseException('Unable to locate map images: ' + imgFile); exit; end;
-    
-    //Get File
-    assign(f, mapFile);
-    reset(f);
-    
-    //Create Map
-    New(m);
-    
-    //Load Map Content
-    LoadMapInformation(m, f);
-    if (m^.MapInfo.Version > 1) then LoadIsometricInformation(m, f);
-    LoadAnimationInformation(m, f);
-    LoadLayerData(m, f);
-    LoadCollisionData(m, f);
-    LoadTagData(m, f);
-    //Close File
-    close(f);
-
-    LoadBlockSprites(m, imgFile);
-    m^.Frame := 0;
-    result := m;
-
-    //WriteLn(m^.MapInfo.Version);
-  end;
-
-  function LoadMap(mapName: String): Map;
-  var
-    mapFile, imgFile: String;
-  begin
-    mapFile := PathToResource(mapName + '.sga', MapResource);
-    imgFile := PathToResource(mapName + '.png', MapResource);
-    result := LoadMapFiles(mapFile, imgFile);
-  end;
-
-  procedure FreeMap(var m: Map);
-  begin
-    if assigned(m) then
-    begin
-      // Free the one bitmap associated with the map
-      FreeBitmap(m^.Tiles^.bitmaps[0]);
-      FreeSprite(m^.Tiles);
-      Dispose(m);
-      CallFreeNotifier(m);
-      m := nil;
-    end;
-  end;
-  
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
   
   procedure ShowLogos();
   const
@@ -1041,7 +596,6 @@ implementation
     
     InitialiseSwinGame();
     
-    _TileMaps := TStringHash.Create(False, 1024);
     _Bundles := TStringHash.Create(False, 1024);
     
     try
