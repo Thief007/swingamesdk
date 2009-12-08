@@ -275,28 +275,6 @@ implementation
     else if kind = 'PANEL' then result := PanelResource
     else result := OtherResource;
   end;
-
-  {$ifndef FPC} // Delphi land
-  function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
-  var
-    strs: TStrings;
-  begin
-    // Assumes that delim is [','] and uses simple commatext mode - better check
-    if delim <> [','] then
-      raise Exception.create('Internal SG bug using ExtractDelimited');
-    // okay - let a stringlist do the work
-    strs := TStringList.Create();
-    strs.CommaText := value;
-    if (index >= 0) and (index < strs.Count) then
-      result := strs.Strings[index]
-    else
-      result := '';
-    // cleanup
-    strs.Free();
-  end;
-  {$else}
-  // proper ExtractDelimited provided by StrUtils
-  {$endif}
   
   //----------------------------------------------------------------------------
   

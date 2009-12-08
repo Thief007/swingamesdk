@@ -92,6 +92,10 @@ interface
   /// Called when ANY resource is freed to inform other languages to remove from
   /// their caches.
   procedure CallFreeNotifier(p: Pointer);
+    
+  {$ifndef FPC} // Delphi land
+  function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
+  {$endif}
 
   // Global variables that can be shared.
   var
@@ -355,11 +359,38 @@ implementation
     {$IFEND}
   end;
   
+  {$ifndef FPC} // Delphi land
+  function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
+  var
+    strs: TStrings;
+  begin
+    // Assumes that delim is [','] and uses simple commatext mode - better check
+    if delim <> [','] then
+      raise Exception.create('Internal SG bug using ExtractDelimited');
+    // okay - let a stringlist do the work
+    strs := TStringList.Create();
+    strs.CommaText := value;
+    if (index >= 0) and (index < strs.Count) then
+      result := strs.Strings[index]
+    else
+      result := '';
+    // cleanup
+    strs.Free();
+  end;
+  {$else}
+  // proper ExtractDelimited provided by StrUtils
+  {$endif}
+  
+  
   procedure RaiseException(message: String);
   begin
     HasException := True;
     ErrorMessage := message;
-
+    
+    {$IFDEF TRACE}
+      TraceExit('sgShared', 'Ended with exception: ' + message);
+    {$ENDIF}
+    
     if UseExceptions then raise Exception.Create(message)
   end;
 
