@@ -115,8 +115,27 @@ var
 
 
 function LoadAnimationFrames(filename: String) : AnimationFrames;
+var
+  input: Text; //the bundle file
+  delim: TSysCharSet;
+  line, path: String;
+  i: Integer;
+  current: tResourceIdentifier;
+  bndl: tResourceBundle;
 begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimation', 'LoadAnimationFrames');
+  {$ENDIF}
   
+  path := FilenameToResource(name, OtherResource);
+  
+  Assign(input, path);
+  Reset(input);
+  
+  
+  {$IFDEF TRACE}
+    TraceExit('sgAnimation', 'LoadAnimationFrames');
+  {$ENDIF}  
 end;
 
 

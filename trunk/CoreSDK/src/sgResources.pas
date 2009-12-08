@@ -67,6 +67,15 @@ interface
   /// @uname PathToOtherResource
   function PathToResource(filename: String): String; overload;
   
+  /// Returns the path to the file with the passed in name for a given resource
+  /// kind. This checks if the path exists, throwing an exception if the file
+  /// does not exist in the expected locations.
+  ///
+  /// @lib
+  ///
+  /// @sn filenameFor:%s ofKind:%s
+  function FilenameToResource(name: String; kind: ResourceKind): String;
+  
   ///
   /// @uname SetAppPathWithExe
   /// @sn setAppPath:%s withExe:%s
@@ -106,7 +115,7 @@ implementation
 //=============================================================================
 
   uses SysUtils, StrUtils, Classes, // system
-       stringhash,         // libsrc
+       stringhash, MyStrUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
        sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites, sgTrace, sgImages; // Swingame
 
@@ -276,6 +285,23 @@ implementation
     else result := OtherResource;
   end;
   
+  function FilenameToResource(name: String; kind: ResourceKind): String;
+  begin
+    result := name;
+    
+    if not FileExists(result) then
+    begin
+      result := PathToResource(name, kind);
+      
+      if not FileExists(result) then
+      begin
+        RaiseException('Unable to locate resource at ' + result);
+        result := '';
+        exit;
+      end;
+    end;
+  end;
+  
   //----------------------------------------------------------------------------
   
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
@@ -291,17 +317,7 @@ implementation
       TraceEnter('sgResources', 'LoadResourceBundle');
     {$ENDIF}
     
-    path := name;
-    if not FileExists(path) then
-    begin
-      path := PathToResource(name);
-      
-      if not FileExists(path) then
-      begin
-        RaiseException('Unable to locate resource bundle ' + path);
-        exit;
-      end;
-    end;
+    path := FilenameToResource(name, OtherResource);
     
     Assign(input, path);
     Reset(input);
