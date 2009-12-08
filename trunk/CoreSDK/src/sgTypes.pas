@@ -205,7 +205,31 @@ interface
     /// @data_wrapper
     /// @field data: UInt32
     Color = UInt32;
-
+    
+    AnimationFrame = ^AnimationFrameData;
+    
+    AnimationFrameData = packed record
+      cellIndex: LongInt;     // Which cell of the current bitmap is drawn
+      sound: SoundEffect;     // Which sound should be played on entry
+      duration: Single;       // How long should this animation frame play for
+      next: AnimationFrame;   // What is the next frame in this animation
+    end;
+    
+    AnimationFrames = Pointer;  // Pointer to key frame data
+    
+    /// @note Do not use AnimationData directly, use Animation.
+    /// @struct Animation
+    /// @via_pointer
+    AnimationData = packed record
+      firstFrame:   AnimationFrame;   // Where did it start?
+      currentFrame: AnimationFrame;   // Where is the animation up to
+      frameTime:    Single;           // How long have we spent in this frame?
+      enteredFrame: Boolean;          // Did we just enter this frame? (can be used for sound playing)
+      hasEnded:     Boolean;          // Has the animation stopped?
+    end;
+    
+    Animation = ^AnimationData;
+    
     /// Bitmap data stores the data associated with a Bitmap. Each bitmap contains
     /// a pointer to the bitmap color information (surface), its width, height,
     /// and a mask storing the non-transparent pixels that is used for pixel level
@@ -215,9 +239,18 @@ interface
     /// @struct BitmapData
     /// @via_pointer
     BitmapData = packed record
-      surface: PSDL_Surface;
-      width, height: LongInt;
-      nonTransparentPixels: Array of Array of Boolean;
+      filename, name: String; // Used for locating bitmaps during load/freeing
+      surface: PSDL_Surface;  // The actual bitmap image
+      
+      width:  LongInt;        // The width of the bitmap
+      height: LongInt;        // The height of the bitmap
+      
+      //Used for bitmaps that are made up of cells
+      cellCols:   LongInt;    // The columns of cells in the bitmap
+      cellRows:   LongInt;    // The rows of cells in the bitmap
+      cellCount:  LongInt;    // The total number of cells in the bitmap
+      
+      nonTransparentPixels: Array of Array of Boolean;  // Pixel mask used for pixel level collisions
     end;
 
     /// The bitmap type is a pointer to a BitmapData. The BitmapData record
@@ -365,28 +398,41 @@ interface
     /// @struct SpriteData
     /// @via_pointer
     SpriteData = packed record
+      //  Images used by the sprite
       bitmaps: Array of Bitmap;
-      bufferBmp: Bitmap;
-      spriteKind: SpriteKind;
-      framesPerCell: LongIntArray; //Array of LongInt;
+      
+      mass:     Single;
+      rotation: Single;
+      scale:    Single;
+      
       position: Point2D;
       velocity: Vector;
-      width: LongInt;
+      
+      usePixelCollision: Boolean;
+      
+      // Can be simpler?
+      spriteKind: SpriteKind;
+      
+      // Optimise this...
+      bufferBmp: Bitmap;
+      bufferedRotation: Single;
+      bufferedScale:    Single;
+      
+      // Needed?
+      width:  LongInt;
       height: LongInt;
+      
+      // Move to bitmap
       cols: LongInt;
       rows: LongInt;
-      frameCount: Single;
-      currentCell: LongInt;
-      usePixelCollision: Boolean;
-      endingAction: SpriteEndingAction;
-      hasEnded: Boolean;
-      reverse: Boolean;
-      mass: Single;
-      rotation: Single;
-      scale: Single;
       
-      bufferedRotation: Single;
-      bufferedScale: Single;
+      // Move to animation
+      frameCount:     Single;
+      currentCell:    LongInt;
+      framesPerCell:  LongIntArray; //Array of LongInt;
+      endingAction:   SpriteEndingAction;
+      hasEnded:       Boolean;
+      reverse:        Boolean;
     end;
 
     /// Sprites are used to represent Sprites drawn to the screen. Create a

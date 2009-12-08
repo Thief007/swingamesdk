@@ -28,9 +28,9 @@ TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LOG_FILE="${APP_PATH}/out.log"
 
-if [ $OS = $MAC ]; then
+if [ "$OS" = "$MAC" ]; then
     LIB_DIR="${APP_PATH}/lib/mac"
-elif [ $OS = $WIN ]; then
+elif [ "$OS" = "$WIN" ]; then
     LIB_DIR="${APP_PATH}/lib/win"
 fi
 
@@ -39,7 +39,7 @@ fi
 #
 FPC_BIN=`which fpc`
 PAS_FLAGS="-gw"
-SG_INC="-Fu${APP_PATH}/libsrc -Fu/${APP_PATH}/src"
+SG_INC="-Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
 CLEAN="N"
 
 #

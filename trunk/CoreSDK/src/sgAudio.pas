@@ -531,14 +531,13 @@ interface
   
 //=============================================================================
 implementation
-//=============================================================================
-
   uses
     SysUtils, Classes, 
     stringhash,         // libsrc
     SDL_Mixer, SDL,     // SDL
     sgShared, sgResources, sgTrace;
-  
+//=============================================================================
+
   var
     // Contains the sound channels used to determine if a sound is currently
     // playing and enables us to stop the sound, check if it is playing etc.

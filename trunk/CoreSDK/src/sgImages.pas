@@ -218,6 +218,10 @@ var
 //----------------------------------------------------------------------------
 
 function CreateBitmap(width, height: LongInt): Bitmap;
+var
+  name: String;
+  idx: LongInt;
+  obj: tResourceContainer;
 begin
   if (width < 1) or (height < 1) then
   begin
@@ -245,8 +249,30 @@ begin
     exit;
   end;
   
+  //
+  // Place the bitmap in the _Images hashtable
+  //
+  obj := tResourceContainer.Create(result);
+  {$IFDEF TRACE}
+    Trace('sgImages', 'Info', 'DoLoadBitmap', 'name = ' + name + 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
+  {$ENDIF}
+  
+  name := 'Bitmap';
+  idx := 0;
+  while not _Images.setValue(name, obj) do
+  begin
+    name := 'Bitmap_' + IntToStr(idx);
+    idx := idx + 1;
+  end;
+  
   result^.width := width;
   result^.height := height;
+  result^.cellCols  := 1;
+  result^.cellRows  := 1;
+  result^.cellCount := 1;
+  result^.name      := name;
+  result^.filename  := name;
+  
   SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
   SDL_FillRect(result^.surface, nil, ColorTransparent);
 end;
@@ -272,14 +298,19 @@ begin
   end;
 end;
 
-function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+function DoLoadBitmap(name, filename: String; transparent: Boolean; transparentColor: Color): Bitmap;
 var
+  obj: tResourceContainer;
   loadedImage: PSDL_Surface;
   correctedTransColor: Color;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgResources', 'LoadBitmap', filename);
+    TraceEnter('sgImages', 'LoadBitmap', filename);
   {$ENDIF}
+  
+  result := nil; //start at nil to exit cleanly on error
+  
+  // Check for file
   if not FileExists(filename) then
   begin
     filename := PathToResource(filename, BitmapResource);
@@ -291,43 +322,73 @@ begin
     end;
   end;
   
-  loadedImage := IMG_Load(@filename[1]);
+  //Load the image
+  loadedImage := IMG_Load(PChar(filename));
   
-  if loadedImage <> nil then
-  begin
-    new(result);
-    if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
-    else result^.surface := SDL_DisplayFormat(loadedImage);
-    
-    result^.width := result^.surface^.w;
-    result^.height := result^.surface^.h;
-    
-    if transparent then
-    begin
-      correctedTransColor := ColorFrom(result, transparentColor);
-      SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
-      SetNonTransparentPixels(result, loadedImage, correctedTransColor);
-    end
-    else
-    begin
-      SetNonAlphaPixels(result, loadedImage);
-    end;
-    
-    if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
-  end
-  else
+  if loadedImage = nil then
   begin
     RaiseException('Error loading image: ' + filename + ': ' + SDL_GetError());
     exit;
   end;
+  
+  //
+  // Image loaded, so create SwinGame bitmap
+  //
+  new(result);
+  
+  if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
+  else result^.surface := SDL_DisplayFormat(loadedImage);
+  
+  result^.width     := result^.surface^.w;
+  result^.height    := result^.surface^.h;
+  result^.cellCols  := 1;
+  result^.cellRows  := 1;
+  result^.cellCount := 1;
+  result^.name      := name;
+  result^.filename  := filename;
+  
+  //Determine pixel level collision data
+  if transparent then
+  begin
+    correctedTransColor := ColorFrom(result, transparentColor);
+    SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
+    SetNonTransparentPixels(result, loadedImage, correctedTransColor);
+  end
+  else
+  begin
+    SetNonAlphaPixels(result, loadedImage);
+  end;
+  
+  // Free the loaded image if its not the result's surface
+  if loadedImage <> result^.surface then SDL_FreeSurface(loadedImage);
+  
+  //
+  // Place the bitmap in the _Images hashtable
+  //
+  obj := tResourceContainer.Create(result);
   {$IFDEF TRACE}
-    TraceExit('sgResources', 'LoadBitmap, result = ' + HexStr(result));
+    Trace('sgImages', 'Info', 'DoLoadBitmap', 'name = ' + name + 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
   {$ENDIF}
+  if not _Images.setValue(name, obj) then
+  begin
+    FreeBitmap(result);
+    RaiseException('Error loaded Bitmap resource twice: ' + name + ' for file ' + filename);
+    exit;
+  end;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'LoadBitmap, result = ' + HexStr(result));
+  {$ENDIF}
+end;
+
+function LoadBitmap(filename: String; transparent: Boolean; transparentColor: Color): Bitmap; overload;
+begin
+  result := DoLoadBitmap(filename + IntToStr(transparentColor),filename, transparent, transparentColor);
 end;
 
 function LoadBitmap(filename: String): Bitmap; overload;
 begin
-  result := LoadBitmap(filename, false, ColorBlack);
+  result := DoLoadBitmap(filename, filename, false, ColorBlack);
 end;
 
 function LoadTransparentBitmap(filename: String; transparentColor: Color): Bitmap; overload;
@@ -335,7 +396,9 @@ begin
   result := LoadBitmap(filename, true, transparentColor);
 end;
 
-procedure FreeBitmap(var bitmapToFree : Bitmap);
+// private:
+// Called to actually free the resource
+procedure DoFreeBitmap(var bitmapToFree : Bitmap);
 begin
   if Assigned(bitmapToFree) then
   begin
@@ -352,45 +415,50 @@ begin
   end;
 end;
 
+procedure FreeBitmap(var bitmapToFree : Bitmap);
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'FreeBitmap', 'effect = ' + HexStr(bitmapToFree));
+  {$ENDIF}
+  
+  if(assigned(bitmapToFree)) then
+  begin
+    ReleaseBitmap(bitmapToFree^.name);
+  end;
+  bitmapToFree := nil;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'FreeBitmap');
+  {$ENDIF}
+end;
+
+
 //----------------------------------------------------------------------------
 
 function MapBitmap(name, filename: String): Bitmap;
-var
-  obj: tResourceContainer;
-  bmp: Bitmap;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgResources', 'MapBitmap', name + ' -> ' + filename);
+    TraceEnter('sgImages', 'MapBitmap', name + ' -> ' + filename);
   {$ENDIF}
   
-  bmp := LoadBitmap(filename);
-  obj := tResourceContainer.Create(bmp);
-  {$IFDEF TRACE}
-    Trace('sgResources', 'Info', 'MapBitmap', 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
-  {$ENDIF}
-  
-  if not _Images.setValue(name, obj) then raise Exception.create('Error loaded Bitmap resource twice, ' + name);
+  result := DoLoadBitmap(name, filename, false, ColorBlack);
   
   {$IFDEF TRACE}
-    Trace('sgResources', 'Info', 'MapBitmap', 'returned from setValue');
-  {$ENDIF}
-  
-  result := bmp;
-  {$IFDEF TRACE}
-    TraceExit('sgResources', 'MapBitmap');
+    TraceExit('sgImages', 'MapBitmap');
   {$ENDIF}
 end;
 
 function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
-var
-  obj: tResourceContainer;
-  bmp: Bitmap;
 begin
-  bmp := LoadBitmap(filename, true, transparentColor);
-  obj := tResourceContainer.Create(bmp);
-  if not _Images.setValue(name, obj) then
-    raise Exception.create('Error loaded Bitmap resource twice, ' + name);
-  result := bmp;
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'MapBitmap', name + ' -> ' + filename);
+  {$ENDIF}
+  
+  result := DoLoadBitmap(name, filename, true, transparentColor);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'MapBitmap');
+  {$ENDIF}
 end;
 
 function HasBitmap(name: String): Boolean;
