@@ -1,3 +1,5 @@
+//Frames are declared with an f: and contain
+//the following comma separated values
 //ID,CELL,DUR,NEXT
 f:40,0,1,41
 f:41,1,1,42

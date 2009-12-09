@@ -206,8 +206,12 @@ interface
     /// @field data: UInt32
     Color = UInt32;
     
+    /// @struct AnimationFrame
+    /// @via_pointer
     AnimationFrame = ^AnimationFrameData;
     
+    /// @struct AnimationFrameData
+    /// @via_pointer
     AnimationFrameData = packed record
       cellIndex: LongInt;     // Which cell of the current bitmap is drawn
       sound: SoundEffect;     // Which sound should be played on entry
@@ -215,7 +219,18 @@ interface
       next: AnimationFrame;   // What is the next frame in this animation
     end;
     
-    AnimationFrames = Pointer;  // Pointer to key frame data
+    /// @struct AnimationTemplateData
+    /// @via_pointer
+    AnimationTemplateData = record
+      name: String;
+      filename: String;
+      data: Pointer;  // Pointer to key frame data
+    end;
+    
+    /// @class AnimationTemplate
+    /// @pointer_wrapper
+    /// @field pointer: pointer
+    AnimationTemplate = ^AnimationTemplateData;
     
     /// @note Do not use AnimationData directly, use Animation.
     /// @struct Animation
@@ -333,12 +348,13 @@ interface
     ///
     /// @enum ResourceKind
     ResourceKind = (
-      FontResource,
+      AnimationResource,
       BitmapResource,
-      SoundResource,
+      FontResource,
       MusicResource,
       MapResource,
-      PanelResource,
+      // PanelResource,
+      SoundResource,
       OtherResource
     );
 

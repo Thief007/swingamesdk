@@ -7,6 +7,7 @@ uses sgTypes;
   function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
   {$endif}
 
+  function CountDelimiter(value: String; delim: Char): LongInt;
   function ExtractDelimitedWithRanges(index: LongInt; value: String): String;
   function ProcessRange(value: String): LongIntArray;
 
@@ -28,7 +29,7 @@ implementation
     strs := TStringList.Create();
     strs.CommaText := value;
     if (index >= 0) and (index < strs.Count) then
-      result := strs.Strings[index]
+      result := strs.Strings[index - 1]
     else
       result := '';
     // cleanup

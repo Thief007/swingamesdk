@@ -117,7 +117,7 @@ implementation
   uses SysUtils, StrUtils, Classes, // system
        stringhash, MyStrUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites, sgTrace, sgImages; // Swingame
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites, sgTrace, sgImages, sgAnimations; // Swingame
 
   //----------------------------------------------------------------------------
   // Global variables for resource management.
@@ -199,11 +199,12 @@ implementation
       if current.kind = kind then
       begin
         case kind of
-          BitmapResource: MapBitmap(current.name, current.path);
-          FontResource:   MapFont(current.name, current.path, current.size);
-          SoundResource:  MapSoundEffect(current.name, current.path);
-          MusicResource:  MapMusic(current.name, current.path);
-          MapResource:    MapTileMap(current.name, current.path);
+          BitmapResource:     MapBitmap(current.name, current.path);
+          FontResource:       MapFont(current.name, current.path, current.size);
+          SoundResource:      MapSoundEffect(current.name, current.path);
+          MusicResource:      MapMusic(current.name, current.path);
+          MapResource:        MapTileMap(current.name, current.path);
+          AnimationResource:  MapAnimationTemplate(current.name, current.path);
         end;
       end;
     end;
@@ -250,11 +251,12 @@ implementation
       current := identifiers[i];
 
       case current.kind of
-        BitmapResource: ReleaseBitmap(current.name);
-        FontResource:   ReleaseFont(current.name);
-        SoundResource:  ReleaseSoundEffect(current.name);
-        MusicResource:  ReleaseMusic(current.name);
-        MapResource:    ReleaseTileMap(current.name);
+        BitmapResource:     ReleaseBitmap(current.name);
+        FontResource:       ReleaseFont(current.name);
+        SoundResource:      ReleaseSoundEffect(current.name);
+        MusicResource:      ReleaseMusic(current.name);
+        MapResource:        ReleaseTileMap(current.name);
+        AnimationResource:  ReleaseAnimationTemplate(current.name);
       end;
     end;
     SetLength(identifiers, 0);
@@ -264,6 +266,7 @@ implementation
   
   procedure ReleaseAllResources();
   begin
+    ReleaseAllAnimationTemplates();
     ReleaseAllFonts();
     ReleaseAllBitmaps();
     ReleaseAllMusic();
@@ -281,7 +284,8 @@ implementation
     else if kind = 'MUSIC' then result := MusicResource
     else if kind = 'FONT' then result := FontResource
     else if kind = 'MAP' then result := MapResource
-    else if kind = 'PANEL' then result := PanelResource
+    // else if kind = 'PANEL' then result := PanelResource
+    else if kind = 'ANIM' then result := AnimationResource
     else result := OtherResource;
   end;
   
@@ -411,15 +415,17 @@ implementation
   begin
     case kind of
     {$ifdef UNIX}
-      FontResource: result := PathToResourceWithBase(path, 'fonts/' + filename);
-      SoundResource: result := PathToResourceWithBase(path, 'sounds/' + filename);
-      BitmapResource: result := PathToResourceWithBase(path, 'images/' + filename);
-      MapResource: result := PathToResourceWithBase(path, 'maps/' + filename);
+      FontResource: result      := PathToResourceWithBase(path, 'fonts/' + filename);
+      SoundResource: result     := PathToResourceWithBase(path, 'sounds/' + filename);
+      BitmapResource: result    := PathToResourceWithBase(path, 'images/' + filename);
+      MapResource: result       := PathToResourceWithBase(path, 'maps/' + filename);
+      AnimationResource: result := PathToResourceWithBase(path, 'animations/' + filename);
     {$else}
       FontResource: result := PathToResourceWithBase(path, 'fonts\' + filename);
       SoundResource: result := PathToResourceWithBase(path, 'sounds\' + filename);
       BitmapResource: result := PathToResourceWithBase(path, 'images\' + filename);
       MapResource: result := PathToResourceWithBase(path, 'maps\' + filename);
+      AnimationResource: result := PathToResourceWithBase(path, 'animations\' + filename);
     {$endif}
       
       else result := PathToResourceWithBase(path, filename);
@@ -436,7 +442,7 @@ implementation
       {$endif}
     {$else}
     //Windows
-      result := path + '\resources\';
+      result := path + '\Resources\';
     {$endif}
     result := result + filename;
   end;
