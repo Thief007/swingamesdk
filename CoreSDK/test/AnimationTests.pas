@@ -3,7 +3,10 @@ program AnimationTests;
 uses sgTypes, sgShared, sgAnimations;
 
 var
-  explosions: AnimationFrames;
+  explosions: AnimationTemplate;
 begin
-  explosions := LoadAnimationFrames('explosion.txt');
+  explosions := LoadAnimationTemplate('explosion.txt');
+  
+  FreeAnimationTemplate(explosions);
+  ReadLn();
 end.

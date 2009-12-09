@@ -8,6 +8,8 @@ uses sgTypes;
   {$endif}
 
   function CountDelimiter(value: String; delim: Char): LongInt;
+  function CountDelimiterWithRanges(value: String; delim: Char): LongInt;
+  
   function ExtractDelimitedWithRanges(index: LongInt; value: String): String;
   function ProcessRange(value: String): LongIntArray;
 
@@ -90,7 +92,25 @@ implementation
         result := result + 1;
     end;
   end;
-
+  
+  function CountDelimiterWithRanges(value: String; delim: Char): LongInt;
+  var
+    i: Integer;
+    inRange: Boolean;
+  begin
+    inRange := false;
+    result := 0;
+    for i := Low(value) to Length(value) do
+    begin
+      if (not inRange) and (value[i] = delim) then 
+        result := result + 1
+      else if (value[i] = '[') then
+        inRange := true
+      else if (value[i] = ']') then
+        inRange := false;
+    end;
+  end;
+  
   function ProcessRange(value: String): LongIntArray;
   var
     i, j, count, temp, lowPart, highPart, dashCount: LongInt;

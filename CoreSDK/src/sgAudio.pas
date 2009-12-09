@@ -691,7 +691,13 @@ implementation
       TraceEnter('sgAudio', 'MapSoundEffect', name + ' = ' + filename);
     {$ENDIF}
     
-    if not AudioOpen then exit;
+    if not AudioOpen then
+    begin
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'MapSoundEffect', 'Audio Closed');
+      {$ENDIF}
+      exit;
+    end;
     
     if _SoundEffects.containsKey(name) then
     begin

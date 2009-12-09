@@ -45,9 +45,21 @@ interface
       
       property Resource: Pointer read resource_val;
     end;
-    
+        
+    // The resource contain is an object to hold the resource for the 
+    // hash table
+    TIntegerContainer = class(tObject)
+    private
+      val : LongInt;
+    public
+      constructor Create(data: LongInt);
+
+      property Value: LongInt read val;
+    end;
+
     // Used by release all
     ReleaseFunction = procedure(name: String);
+
     
   // Calls Release on all of the resources in the tbl hash table.
   procedure ReleaseAll(tbl: TStringHash; releaser: ReleaseFunction);
@@ -170,6 +182,12 @@ implementation
   begin
     inherited create;
     resource_val := data;
+  end;
+  
+  constructor TIntegerContainer.create(data: LongInt);
+  begin
+    inherited create;
+    val := data;
   end;
   
   procedure InitialiseSwinGame();

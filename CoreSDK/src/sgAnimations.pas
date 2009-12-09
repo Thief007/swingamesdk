@@ -107,26 +107,37 @@ implementation
     SysUtils, StrUtils, Classes, 
     stringhash, MyStrUtils,   // libsrc
     SDL_Mixer, SDL,           // SDL
-    sgShared, sgResources, sgTrace;
+    sgShared, sgResources, sgTrace, sgAudio;
 //=============================================================================
 
 var
   _Animations: TStringHash;
 
 function DoLoadAnimationTemplate(name, filename: String) : AnimationTemplate;
-type RowData = record
+type
+  RowData = record
     id,cell,dur,next: LongInt;
+    snd: SoundEffect;
+  end;
+  IdData = record
+    name: String;
+    startId: LongInt;
   end;
 var
   rows: Array of RowData;
+  ids: Array of IdData;
   input: Text; //the bundle file
   delim: TSysCharSet;
   line, id, data, path, temp: String;
   lineNo, maxId: Integer;
   
-  function MyStrToInt(str: String) : LongInt;
+  function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt;
   begin
-    if not TryStrToInt(str, result) then
+    if allowEmpty and (Length(str) = 0) then
+    begin
+      result := -1;
+    end
+    else if not TryStrToInt(str, result) then
     begin
       result := 0;
       RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Value is not an integer : ' + str);
@@ -167,6 +178,25 @@ var
       rows[myRow.id] := myRow;
     end;
   end;
+
+  procedure AddID(myId: IdData);
+  var
+    j: LongInt;
+  begin
+    // Check if name is already in ids
+    
+    for j := 0 to High(ids) do
+    begin
+      if ids[j].name = myId.name then
+      begin
+        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. The id ' + myId.name + ' already exists.');
+        exit;
+      end;
+    end;
+    
+    SetLength(ids, Length(ids) + 1);
+    ids[High(ids)] := myId;
+  end;
   
   procedure ProcessFrame();
   var
@@ -177,29 +207,174 @@ var
       RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A frame must have 4 values separated as id,cell,dur,next');
       exit;
     end;
-    myRow.id := MyStrToInt(ExtractDelimited(1,data,[',']));
-    myRow.cell := MyStrToInt(ExtractDelimited(2,data,[',']));
-    myRow.dur := MyStrToInt(ExtractDelimited(3,data,[',']));
-    myRow.next := MyStrToInt(ExtractDelimited(4,data,[',']));
+    myRow.id := MyStrToInt(ExtractDelimited(1,data,[',']), false);
+    myRow.cell := MyStrToInt(ExtractDelimited(2,data,[',']), false);
+    myRow.dur := MyStrToInt(ExtractDelimited(3,data,[',']), false);
+    myRow.next := MyStrToInt(ExtractDelimited(4,data,[',']), true);
     
     AddRow(myRow);
   end;
   
   procedure ProcessMultiFrame();
+  var
+    id_range, cell_range: Array of LongInt;
+    dur, next, j: LongInt;
+    myRow: RowData;
   begin
-    WriteLn('Process mf ', data);
+    if CountDelimiterWithRanges(data, ',') <> 3 then
+    begin
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A multi-frame must have 4 values separated as id-range,cell-range,dur,next');
+      exit;
+    end;
+    
+    id_range := ProcessRange(ExtractDelimitedWithRanges(1, data));
+    cell_range := ProcessRange(ExtractDelimitedWithRanges(2, data));
+    
+    if Length(id_range) <> Length(cell_range) then
+    begin
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. The range of cells and ids is not the same length.');
+      exit;
+    end;
+    
+    dur := MyStrToInt(ExtractDelimited(3,data,[',']), false);
+    next := MyStrToInt(ExtractDelimited(4,data,[',']), true);
+    
+    for j := Low(id_range) to High(id_range) do
+    begin
+      myRow.id := id_range[j];
+      myRow.cell := cell_range[j];
+      myRow.dur := dur;
+      if j <> High(id_range) then
+        myRow.next := id_range[j + 1]
+      else
+        myRow.next := next;
+      AddRow(myRow);
+    end;
   end;
   
   procedure ProcessId();
+  var
+    myIdData: IdData;
   begin
-    WriteLn('Process id ', data);
+    if CountDelimiterWithRanges(data, ',') <> 1 then
+    begin
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A id must have 2 values separated as name,start-id');
+      exit;
+    end;
+    
+    myIdData.name := ExtractDelimited(1,data,[',']);
+    myIdData.startId := MyStrToInt(ExtractDelimited(2,data,[',']), false);
+    
+    AddID(myIdData);
   end;
   
   procedure ProcessSound();
+  var
+    id: LongInt;
+    sndId: String;
   begin
-    WriteLn('Process sound ', data);
+    if CountDelimiter(data, ',') <> 1 then
+    begin
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A sound must have two parts id,sndfile.');
+      exit;
+    end;
+
+    id := MyStrToInt(ExtractDelimited(1,data,[',']), true);
+    
+    sndId := ExtractDelimited(2,data,[',']);
+    
+    if not HasSoundEffect(sndId) then
+    begin
+      if MapSoundEffect(sndId, sndId) = nil then
+      begin
+        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Cannot find sound file ' + sndId);
+        exit;
+      end;
+    end;
+    rows[id].snd := FetchSoundEffect(sndId);
   end;
   
+  procedure ProcessLine();
+  begin
+    // Split line into id and data
+    id := ExtractDelimited(1, line, [':']);
+    data := ExtractDelimited(2, line, [':']);
+    
+    // Verify that id is a single char
+    if Length(id) <> 1 then
+    begin
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be a single character.');
+      exit;
+    end;
+    
+    // Process based on id
+    case LowerCase(id)[1] of // in all cases the data variable is read
+      'f': ProcessFrame();
+      'm': ProcessMultiFrame();
+      'i': ProcessId();
+      's': ProcessSound();
+      else
+      begin
+        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of f,m,i or s.');
+        exit;
+      end;
+    end;
+  end;
+  
+  procedure BuildFrameLists();
+  var
+    frames: Array of AnimationFrame;
+    hash: TStringHash;
+    j, nextIdx: LongInt;
+  begin
+    SetLength(frames, Length(rows));
+    
+    for j := 0 to High(frames) do
+    begin
+      // Allocte space for frames
+      New(frames[j]);
+    end;
+    
+    // Link the frames together
+    for j := 0 to High(frames) do
+    begin
+      frames[j]^.cellIndex  := rows[j].cell;
+      frames[j]^.sound      := rows[j].snd;
+      frames[j]^.duration   := rows[j].dur;
+      
+      // Get the next id and then 
+      nextIdx := rows[j].next;
+      
+      if nextIdx = -1 then
+      begin
+        //The end of a list of frames = no next
+        frames[j]^.next := nil;
+      end
+      else if (nextIdx < 0) or (nextIdx > High(frames)) then
+      begin
+        FreeAnimationTemplate(result);
+        RaiseException('Error in animation ' + filename + '. Error with id: ' + IntToStr(j) + '. Next is outside of available frames.');
+        exit;
+      end
+      else
+        frames[j]^.next := frames[nextIdx];
+    end;
+    
+    hash := TStringHash.Create(False, Length(ids));
+    
+    for j := 0 to High(ids) do
+    begin
+      hash.setValue(ids[j].name, TIntegerContainer.Create(ids[j].startId));
+    end;
+    
+    //We have the data ready, now lets create the linked lists...
+    New(result);
+    
+    result^.name      := name;      // name taken from parameter of DoLoadAnimationTemplate
+    result^.filename  := filename;  // filename also taken from parameter
+    result^.data      := hash;      // Keep the hash of the names
+    result^.frames    := frames;    // The frames of this animation.
+  end;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgAnimation', 'LoadAnimationTemplate');
@@ -223,26 +398,10 @@ begin
     if Length(line) = 0 then continue;  //skip empty lines
     if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
     
-    id := ExtractDelimited(1, line, [':']);
-    data := ExtractDelimited(2, line, [':']);
-    if Length(id) <> 1 then
-    begin
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be a single character.');
-      exit;
-    end;
-    
-    case LowerCase(id)[1] of // in all cases the data variable is read
-      'f': ProcessFrame();
-      'm': ProcessMultiFrame();
-      'i': ProcessId();
-      's': ProcessSound();
-      else
-      begin
-        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of f,m,i or s.')
-      end;
-    end;
-    
+    ProcessLine();
   end;
+  
+  BuildFrameLists();
   
   {$IFDEF TRACE}
     TraceExit('sgAnimation', 'LoadAnimationTemplate');
@@ -256,7 +415,8 @@ end;
 
 procedure FreeAnimationTemplate(var framesToFree: AnimationTemplate);
 begin
-  ReleaseAnimationTemplate(framesToFree^.name);
+  if Assigned(framesToFree) then
+    ReleaseAnimationTemplate(framesToFree^.name);
   framesToFree := nil;
 end;
 
@@ -288,7 +448,7 @@ begin
   result := frm;
   
   {$IFDEF TRACE}
-    TraceExit('sgAudio', 'MapAnimationFrame');
+    TraceExit('sgAudio', 'MapAnimationFrame', HexStr(result));
   {$ENDIF}
 end;
 
@@ -325,10 +485,22 @@ end;
 procedure DoFreeAnimationTemplate(var frm: AnimationTemplate);
 var
   frmPtr: TStringHash;
+  i: LongInt;
 begin
+  //WriteLn(0);
   frmPtr := TStringHash(frm^.data);
+  //WriteLn(1);
   frmPtr.Free();
+  //WriteLn(2);
+  for i := 0 to High(frm^.frames) do
+  begin
+    //WriteLn(3,' ', i);
+    Dispose(frm^.frames[i]);
+    frm^.frames[i] := nil;
+  end;
+  //WriteLn(4);
   Dispose(frm);
+  //WriteLn(5);
   frm := nil;
 end;
 
