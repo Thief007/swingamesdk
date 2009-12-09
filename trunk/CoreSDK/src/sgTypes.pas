@@ -222,9 +222,10 @@ interface
     /// @struct AnimationTemplateData
     /// @via_pointer
     AnimationTemplateData = record
-      name: String;
+      name:     String;
       filename: String;
-      data: Pointer;  // Pointer to key frame data
+      data:     Pointer;  // Pointer to key frame data
+      frames:   Array of AnimationFrame;
     end;
     
     /// @class AnimationTemplate
