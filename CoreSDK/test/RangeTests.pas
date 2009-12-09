@@ -16,7 +16,7 @@ begin
   WriteLn(ExtractDelimitedWithRanges(2, testData));
   WriteLn(ExtractDelimitedWithRanges(3, testData));
   
-  data := ProcessRange('[1,2,3,-1,10-15,20-16,28, -5 -0, -10 - -6,-11 - -15]');
+  data := ProcessRange('[a,1,2,3,-1,10-15,20-16,28,0--3,-5-0,-10--6,-11--15]');
   for i := 0 to High(data) do
   begin
     WriteLn(data[i]);
