@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-10: Andrew : Got basic Animation features working
 // - 2009-12-08: Andrew : Changed name to AnimationTemplate
 // - 2009-12-08: Andrew : Created
 //=============================================================================
@@ -102,13 +103,21 @@ interface
   /// @csn initAs:%s from:%s
   function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation;
   
+  procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: LongInt);
+  
+  procedure UpdateAnimation(anim: Animation); overload;
+  procedure UpdateAnimation(anim: Animation; pct: Single); overload;
+  procedure UpdateAnimation(anim: Animation; pct: Single; withSound: Boolean); overload;
+  
+  function HasEnded(anim: Animation): Boolean;
+  
 //=============================================================================
 implementation
   uses
     SysUtils, StrUtils, Classes, 
     stringhash, MyStrUtils,   // libsrc
     SDL_Mixer, SDL,           // SDL
-    sgShared, sgResources, sgTrace, sgAudio;
+    sgShared, sgResources, sgTrace, sgAudio, sgImages;
 //=============================================================================
 
 var
@@ -128,8 +137,7 @@ var
   rows: Array of RowData;
   ids: Array of IdData;
   input: Text; //the bundle file
-  delim: TSysCharSet;
-  line, id, data, path, temp: String;
+  line, id, data, path: String;
   lineNo, maxId: Integer;
   
   function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt;
@@ -163,6 +171,9 @@ var
       for j := maxId + 1 to High(rows) do
       begin
         rows[j].id := -1;
+        rows[j].snd := nil;
+        rows[j].cell := -1;
+        rows[j].next := -1;
       end;
       
       maxId := myRow.id;
@@ -208,10 +219,11 @@ var
       RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A frame must have 4 values separated as id,cell,dur,next');
       exit;
     end;
-    myRow.id := MyStrToInt(ExtractDelimited(1,data,[',']), false);
-    myRow.cell := MyStrToInt(ExtractDelimited(2,data,[',']), false);
-    myRow.dur := MyStrToInt(ExtractDelimited(3,data,[',']), false);
-    myRow.next := MyStrToInt(ExtractDelimited(4,data,[',']), true);
+    myRow.id    := MyStrToInt(ExtractDelimited(1,data,[',']), false);
+    myRow.cell  := MyStrToInt(ExtractDelimited(2,data,[',']), false);
+    myRow.dur   := MyStrToInt(ExtractDelimited(3,data,[',']), false);
+    myRow.next  := MyStrToInt(ExtractDelimited(4,data,[',']), true);
+    myRow.snd   := nil;
     
     AddRow(myRow);
   end;
@@ -242,9 +254,10 @@ var
     
     for j := Low(id_range) to High(id_range) do
     begin
-      myRow.id := id_range[j];
-      myRow.cell := cell_range[j];
-      myRow.dur := dur;
+      myRow.id    := id_range[j];
+      myRow.cell  := cell_range[j];
+      myRow.dur   := dur;
+      myRow.snd   := nil;
       if j <> High(id_range) then
         myRow.next := id_range[j + 1]
       else
@@ -365,6 +378,7 @@ var
     
     for j := 0 to High(ids) do
     begin
+      // WriteLn('Adding ', ids[j].name);
       hash.setValue(ids[j].name, TIntegerContainer.Create(ids[j].startId));
     end;
     
@@ -378,7 +392,7 @@ var
   end;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAnimation', 'LoadAnimationTemplate');
+    TraceEnter('sgAnimations', 'LoadAnimationTemplate');
   {$ENDIF}
   
   path := FilenameToResource(name, AnimationResource);
@@ -408,7 +422,7 @@ begin
     Close(input);
   end;
   {$IFDEF TRACE}
-    TraceExit('sgAnimation', 'LoadAnimationTemplate');
+    TraceExit('sgAnimations', 'LoadAnimationTemplate');
   {$ENDIF}  
 end;
 
@@ -430,7 +444,7 @@ var
   frm: AnimationTemplate;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAudio', 'MapAnimationFrame', name + ' = ' + filename);
+    TraceEnter('sgAnimations', 'MapAnimationFrame', name + ' = ' + filename);
   {$ENDIF}
   
   if _Animations.containsKey(name) then
@@ -452,20 +466,20 @@ begin
   result := frm;
   
   {$IFDEF TRACE}
-    TraceExit('sgAudio', 'MapAnimationFrame', HexStr(result));
+    TraceExit('sgAnimations', 'MapAnimationFrame', HexStr(result));
   {$ENDIF}
 end;
 
 function HasAnimationTemplate(name: String): Boolean;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAudio', 'HasAnimationTemplate', name);
+    TraceEnter('sgAnimations', 'HasAnimationTemplate', name);
   {$ENDIF}
   
   result := _Animations.containsKey(name);
   
   {$IFDEF TRACE}
-    TraceExit('sgAudio', 'HasAnimationTemplate', BoolToStr(result, true));
+    TraceExit('sgAnimations', 'HasAnimationTemplate', BoolToStr(result, true));
   {$ENDIF}
 end;
 
@@ -474,7 +488,7 @@ var
   tmp : TObject;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAudio', 'FetchAnimationTemplate', name);
+    TraceEnter('sgAnimations', 'FetchAnimationTemplate', name);
   {$ENDIF}
   
   tmp := _Animations.values[name];
@@ -482,7 +496,7 @@ begin
   else result := nil;
   
   {$IFDEF TRACE}
-    TraceExit('sgAudio', 'FetchAnimationTemplate', HexStr(result));
+    TraceExit('sgAnimations', 'FetchAnimationTemplate', HexStr(result));
   {$ENDIF}
 end;
 
@@ -515,7 +529,7 @@ var
   frm: AnimationTemplate;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAudio', 'ReleaseAnimationTemplate', 'frm = ' + name);
+    TraceEnter('sgAnimations', 'ReleaseAnimationTemplate', 'frm = ' + name);
   {$ENDIF}
   
   frm := FetchAnimationTemplate(name);
@@ -527,33 +541,147 @@ begin
   end;
   
   {$IFDEF TRACE}
-    TraceExit('sgAudio', 'ReleaseAnimationTemplate');
+    TraceExit('sgAnimations', 'ReleaseAnimationTemplate');
   {$ENDIF}
 end;
 
 procedure ReleaseAllAnimationTemplates();
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAudio', 'ReleaseAllAnimationTemplates', '');
+    TraceEnter('sgAnimations', 'ReleaseAllAnimationTemplates', '');
   {$ENDIF}
   
   ReleaseAll(_Animations, @ReleaseAnimationTemplate);
   
   {$IFDEF TRACE}
-    TraceExit('sgAudio', 'ReleaseAllAnimationTemplates');
+    TraceExit('sgAnimations', 'ReleaseAllAnimationTemplates');
   {$ENDIF}
+end;
+
+
+function StartFrame(name: String; temp: AnimationTemplate) : AnimationFrame;
+var
+  frmPtr: TStringHash;
+  obj: TIntegerContainer;
+begin
+  result := nil;
+  if temp = nil then exit;
+  
+  // WriteLn(name);
+  
+  //Get hashtable
+  frmPtr := TStringHash(temp^.data);
+  obj := TIntegerContainer(frmPtr.values[name]);
+  
+  // WriteLn(HexStr(obj));
+  
+  if obj = nil then exit;
+  // WriteLn(obj.Value);
+  result := temp^.frames[obj.Value];
+end;
+
+
+function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation;
+begin
+  result := nil;
+  // WriteLn(HexStr(frames));
+  if frames = nil then exit;
+  
+  new(result);
+  result^.firstFrame    := StartFrame(identifier, frames);
+  result^.currentFrame  := result^.firstFrame;
+  result^.lastFrame     := result^.firstFrame;
+  result^.frameTime     := 0;
+  result^.enteredFrame  := true;
+  // result^.hasEnded      := false;
+  
+  if assigned(result^.currentFrame) and assigned(result^.currentFrame^.sound) and withSound then
+    PlaySoundEffect(result^.currentFrame^.sound);
 end;
 
 function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation;
 begin
-  result := nil;
+  result := CreateAnimation(identifier, frames, True);
+end;
+
+procedure UpdateAnimation(anim: Animation; pct: Single; withSound: Boolean); overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'UpdateAnimation', '');
+    try
+  {$ENDIF}
+  
+  if HasEnded(anim) then exit;
+    
+  anim^.frameTime     := anim^.frameTime + pct;
+  anim^.enteredFrame  := false;
+  
+  if anim^.frameTime > anim^.currentFrame^.duration then
+  begin
+    anim^.frameTime := anim^.frameTime - anim^.currentFrame^.duration; //reduce the time
+    anim^.lastFrame := anim^.currentFrame; //store last frame
+    anim^.currentFrame := anim^.currentFrame^.next; //get the next frame
+    
+    if assigned(anim^.currentFrame) and assigned(anim^.currentFrame^.sound) and withSound then
+    begin
+      PlaySoundEffect(anim^.currentFrame^.sound);
+    end;
+  end;
+  
+  {$IFDEF TRACE}
+    finally
+      TraceExit('sgAnimations', 'UpdateAnimation', '');
+    end;
+  {$ENDIF}
+end;
+
+procedure UpdateAnimation(anim: Animation; pct: Single); overload;
+begin
+  UpdateAnimation(anim, pct, True);
+end;
+
+procedure UpdateAnimation(anim: Animation); overload;
+begin
+  UpdateAnimation(anim, 1, True);
+end;
+
+function HasEnded(anim: Animation): Boolean;
+begin
+  if not Assigned(anim) then
+    result := true
+  else 
+    result := not Assigned(anim^.currentFrame);
+end;
+
+procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: LongInt);
+var
+  idx: Integer;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'DrawAnimation', '');
+    try
+  {$ENDIF}
+
+  if not HasEnded(ani) then
+    idx := ani^.currentFrame^.cellIndex
+  else if not assigned(ani^.lastFrame) then
+    exit
+  else  //Draw the last frame drawn.
+    idx := ani^.lastFrame^.cellIndex;
+  
+  DrawCell(bmp, idx, x, y);
+  {$IFDEF TRACE}
+    finally
+      TraceExit('sgAnimations', 'DrawAnimation', '');
+    end;
+  {$ENDIF}
 end;
 
 //=============================================================================
   initialization
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgAnimation', 'Initialise', '');
+      TraceEnter('sgAnimations', 'Initialise', '');
     {$ENDIF}
     
     InitialiseSwinGame();
@@ -561,7 +689,7 @@ end;
     _Animations := TStringHash.Create(False, 1024);
     
     {$IFDEF TRACE}
-      TraceExit('sgAnimation', 'Initialise');
+      TraceExit('sgAnimations', 'Initialise');
     {$ENDIF}
   end;
 

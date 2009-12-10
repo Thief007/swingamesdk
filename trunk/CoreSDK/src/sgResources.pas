@@ -6,6 +6,7 @@
 // Version 3:
 // - 2009-12-10: Andrew : Switched to DrawCell for start up animation
 //                      : Added reading of cell information on bitmap loading
+//                      : Switched to use Animation
 // - 2009-12-07: Andrew : Moved out loading of image, font, and tilemap resources
 // - 2009-11-10: Andrew : Changed sn to csn tags
 // - 2009-11-06: Andrew : Moved out loading of audio resources... others to follow
@@ -221,7 +222,6 @@ implementation
         SetBitmapCellDetails(bmp, current.data[0], current.data[1], current.data[2], current.data[3], current.data[4]);
       end;
     end;
-
     
   begin
     for i := Low(identifiers) to High(identifiers) do
@@ -237,36 +237,28 @@ implementation
           MusicResource:      MapMusic(current.name, current.path);
           MapResource:        MapTileMap(current.name, current.path);
           AnimationResource:  MapAnimationTemplate(current.name, current.path);
+          else
+            RaiseException('Unkown recource kind in LoadResources' + IntToStr(LongInt(kind)));
         end;
       end;
     end;
   end;
 
   procedure TResourceBundle.LoadResources(showProgress: Boolean); //overload;
+  var
+    kind: ResourceKind;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'TResourceBundle.LoadResources');
     {$ENDIF}
-    {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling BitmapResource');
-    {$ENDIF}
-    LoadResources(showProgress, BitmapResource);
-    {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling FontResource');
-    {$ENDIF}
-    LoadResources(showProgress, FontResource);
-    {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling MusicResource');
-    {$ENDIF}
-    LoadResources(showProgress, MusicResource);
-    {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling MapResource');
-    {$ENDIF}
-    LoadResources(showProgress, MapResource);
-    {$IFDEF TRACE}
-      Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling SoundResource');
-    {$ENDIF}
-    LoadResources(showProgress, SoundResource);
+    
+    for kind := Low(ResourceKind) to High(ResourceKind) do
+    begin
+      {$IFDEF TRACE}
+        Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling for ' + IntToStr(LongInt(kind)));
+      {$ENDIF}
+      LoadResources(showProgress, kind);      
+    end;
     {$IFDEF TRACE}
       TraceExit('sgResources', 'TResourceBundle.LoadResources');
     {$ENDIF}
@@ -453,17 +445,17 @@ implementation
   begin
     case kind of
     {$ifdef UNIX}
-      FontResource: result      := PathToResourceWithBase(path, 'fonts/' + filename);
-      SoundResource: result     := PathToResourceWithBase(path, 'sounds/' + filename);
-      BitmapResource: result    := PathToResourceWithBase(path, 'images/' + filename);
-      MapResource: result       := PathToResourceWithBase(path, 'maps/' + filename);
-      AnimationResource: result := PathToResourceWithBase(path, 'animations/' + filename);
+      FontResource:       result := PathToResourceWithBase(path, 'fonts/' + filename);
+      SoundResource:      result := PathToResourceWithBase(path, 'sounds/' + filename);
+      BitmapResource:     result := PathToResourceWithBase(path, 'images/' + filename);
+      MapResource:        result := PathToResourceWithBase(path, 'maps/' + filename);
+      AnimationResource:  result := PathToResourceWithBase(path, 'animations/' + filename);
     {$else}
-      FontResource: result := PathToResourceWithBase(path, 'fonts\' + filename);
-      SoundResource: result := PathToResourceWithBase(path, 'sounds\' + filename);
-      BitmapResource: result := PathToResourceWithBase(path, 'images\' + filename);
-      MapResource: result := PathToResourceWithBase(path, 'maps\' + filename);
-      AnimationResource: result := PathToResourceWithBase(path, 'animations\' + filename);
+      FontResource:       result := PathToResourceWithBase(path, 'fonts\' + filename);
+      SoundResource:      result := PathToResourceWithBase(path, 'sounds\' + filename);
+      BitmapResource:     result := PathToResourceWithBase(path, 'images\' + filename);
+      MapResource:        result := PathToResourceWithBase(path, 'maps\' + filename);
+      AnimationResource:  result := PathToResourceWithBase(path, 'animations\' + filename);
     {$endif}
       
       else result := PathToResourceWithBase(path, filename);
@@ -530,6 +522,7 @@ implementation
     //isStep: Boolean;
     isPaused: Boolean;
     isSkip: Boolean;
+    startAni: Animation;
     
     procedure InnerProcessEvents();
     begin
@@ -573,21 +566,36 @@ implementation
           RefreshScreen(60);
           if isSkip then break;
         end;
-    
-        if AudioOpen then PlaySoundEffect(FetchSoundEffect('SwinGameStart'));
-        for i:= 0 to ANI_CELL_COUNT - 1 do
+        
+        startAni := CreateAnimation('splash', FetchAnimationTemplate('Startup'));
+        
+        while not HasEnded(startAni) do
         begin
           DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
           
-          // DrawBitmapPart(FetchBitmap('SwinGameAni'), 
-          //   (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
-          //   ANI_W, ANI_H - 1, ANI_X, ANI_Y);
-          DrawCell(FetchBitmap('SwinGameAni'), i, ANI_X, ANI_Y);
+          DrawAnimation(startAni, FetchBitmap('SwinGameAni'), ANI_X, ANI_Y);
+          UpdateAnimation(startAni);
+          
           RefreshScreen();
           InnerProcessEvents();
           if isSkip then break;
-          Delay(15);
+          Delay(15);          
         end;
+        
+        //if AudioOpen then PlaySoundEffect(FetchSoundEffect('SwinGameStart'));
+        // for i:= 0 to ANI_CELL_COUNT - 1 do
+        // begin
+        //   DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
+        //   
+        //   // DrawBitmapPart(FetchBitmap('SwinGameAni'), 
+        //   //   (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
+        //   //   ANI_W, ANI_H - 1, ANI_X, ANI_Y);
+        //   DrawCell(FetchBitmap('SwinGameAni'), i, ANI_X, ANI_Y);
+        //   RefreshScreen();
+        //   InnerProcessEvents();
+        //   if isSkip then break;
+        //   Delay(15);
+        // end;
         
         while SoundEffectPlaying(FetchSoundEffect('SwinGameStart')) or isPaused do
         begin

@@ -7,3 +7,4 @@ BITMAP,LoaderFull,loader_full.png
 FONT,LoadingFont,arial.ttf,12
 FONT,ArialLarge,arial.ttf,18
 SOUND,SwinGameStart,SwinGameStart.ogg
+ANIM,Startup,Startup.txt
