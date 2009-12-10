@@ -1,0 +1,16 @@
+//Frames are declared with an f: and contain
+//the following comma separated values
+//ID,CELL,DUR,NEXT
+//f:40,0,1,41
+
+//Multi-frame: ranges are in[]
+//[a-b] = numbers from a to b inclusive
+//[a,b,c] = explicit values
+//[a-b,c] = combination
+m:[0-10],[0-10],1,
+
+//sounds
+s:0,SwinGameStart
+
+//identifiers
+i:splash,0

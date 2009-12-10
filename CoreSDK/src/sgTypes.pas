@@ -240,9 +240,10 @@ interface
     AnimationData = packed record
       firstFrame:   AnimationFrame;   // Where did it start?
       currentFrame: AnimationFrame;   // Where is the animation up to
+      lastFrame:    AnimationFrame;   // The last frame used, so last image can be drawn
       frameTime:    Single;           // How long have we spent in this frame?
       enteredFrame: Boolean;          // Did we just enter this frame? (can be used for sound playing)
-      hasEnded:     Boolean;          // Has the animation stopped?
+      //hasEnded:     Boolean;          // Has the animation stopped?
     end;
     
     Animation = ^AnimationData;
@@ -352,13 +353,13 @@ interface
     ///
     /// @enum ResourceKind
     ResourceKind = (
-      AnimationResource,
       BitmapResource,
       FontResource,
       MusicResource,
       MapResource,
       // PanelResource,
       SoundResource,
+      AnimationResource, //in load order, animation must be > sound
       OtherResource
     );
 
