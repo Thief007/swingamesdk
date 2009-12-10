@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-10: Andrew : Added iter free - fixed memory leak
 // - 2009-11-11: Andrew : Switched to release rather than drain on the autorelease pool
 // - 2009-11-06: Andrew : Added resource management type code
 // - 2009-10-16: Andrew : Added the free notifier, so it can be called from many places
@@ -30,7 +31,7 @@ unit sgShared;
 interface
   uses 
     SDL, SDL_Image,     //SDL
-    stringhash,         // libsrc
+    stringhash,   // libsrc
     sgEventProcessing, sgCore, sgTypes;
 //=============================================================================
   
@@ -433,7 +434,8 @@ implementation
     begin
       releaser(names[i]);
     end;
-
+    
+    iter.Free();
     tbl.deleteAll();
   end;
 

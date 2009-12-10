@@ -117,7 +117,7 @@ interface
   /// retrieved by passing this `name` to the `FetchSoundEffect` function. 
   ///
   /// @lib
-  /// @sn mapSoundEffectNamed:%s toFilename:%s
+  /// @sn mapSoundEffectNamed:%s toFile:%s
   ///
   /// @class SoundEffect
   /// @constructor
@@ -168,7 +168,7 @@ interface
   /// retrieved by passing this `name` to the `FetchMusic` function. 
   ///
   /// @lib
-  /// @sn mapMusicNamed:%s toFilename:%s
+  /// @sn mapMusicNamed:%s toFile:%s
   ///
   /// @class Music
   /// @constructor
@@ -653,14 +653,14 @@ implementation
     end;
     
     New(result);    
-    result^.effect := Mix_LoadWAV(@filename[1]);
+    result^.effect := Mix_LoadWAV(PChar(filename));
     result^.filename := filename;
     result^.name := name;
     
     if result^.effect = nil then
     begin
-      dispose(result);
-      RaiseException('Error loading sound effect: ' + SDL_GetError());
+      Dispose(result);
+      RaiseException('Error loading sound effect: ' + MIX_GetError());
       exit;
     end;
     
@@ -815,7 +815,7 @@ implementation
     end;
     
     New(result);
-    result^.music := Mix_LoadMUS(@filename[1]);
+    result^.music := Mix_LoadMUS(PChar(filename));
     result^.name := name;
     result^.filename := filename;
     

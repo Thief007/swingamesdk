@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-10: Andrew : Moved out remaining bitmap function
 // - 2009-11-06: Andrew : Moved out bitmap function
 // - 2009-10-16: Andrew : Added shapes and shape prototypes
 // - 2009-07-14: Andrew : Removed loading and freeing code.
@@ -57,47 +58,6 @@ interface
 
   uses sgTypes;
 
-  //---------------------------------------------------------------------------
-  // Bitmap drawing routines
-  //---------------------------------------------------------------------------
-
-  /// @lib
-  /// @class Bitmap
-  /// @overload ClearSurface ClearSurfaceToColor
-  procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
-
-  /// @lib ClearSurfaceToBlack
-  /// @class Bitmap
-  /// @method ClearSurface
-  procedure ClearSurface(dest: Bitmap); overload;
-
-  /// @lib DrawBitmapOnto
-  /// @class Bitmap
-  /// @method DrawOnto
-  /// @self 2
-  procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
-
-  /// @lib DrawBitmapAtPointOnto
-  /// @class Bitmap
-  /// @overload DrawOnto DrawAtPointOnto
-  /// @self 2
-  procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position : Point2D); overload;
-
-  /// @lib DrawBitmapPartOnto
-  /// @class Bitmap
-  /// @method DrawPartOnto
-  /// @self 2
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-
-  /// @lib DrawBitmapPartFromRectOnto
-  /// @class Bitmap
-  /// @overload DrawPartOnto DrawPartFromRectOnto
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
-
-  /// @lib DrawBitmapPartFromRectAtPointOnto
-  /// @class Bitmap
-  /// @overload DrawPartOnto DrawPartFromRectAtPointOnto
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
 
   /// @lib DrawPixelOnto
   procedure DrawPixel(dest: Bitmap; clr: Color; x, y: LongInt); overload;
@@ -480,35 +440,6 @@ interface
   procedure ClearScreen(toColor : Color); overload;
 
   /// @lib
-  ///
-  /// @class Bitmap
-  /// @method Draw
-  procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
-  /// @lib DrawBitmapAtPoint
-  ///
-  /// @class Bitmap
-  /// @overload Draw DrawAtPoint
-  procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
-
-  /// @lib
-  ///
-  /// @class Bitmap
-  /// @method DrawPart
-  procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
-  
-  /// @lib DrawBitmapPartFromRect
-  ///
-  /// @class Bitmap
-  /// @overload DrawPart DrawPartFromRect
-  procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
-  
-  /// @lib DrawBitmapPartFromRectAtPoint
-  ///
-  /// @class Bitmap
-  /// @overload DrawPart DrawPartFromRectAtPoint
-  procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
-  
-  /// @lib
   procedure DrawPixel(clr: Color; x, y: Single); overload;
   
   /// @lib DrawPixelAtPoint
@@ -589,27 +520,6 @@ interface
   // These routines are used to move the visual window.
   //
 
-  /// @lib
-  /// @class Bitmap
-  /// @method DrawPartOnScreen
-  procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-  /// @lib DrawBitmapPartFromRectOnScreen
-  /// @class Bitmap
-  /// @overload DrawPartOnScreen DrawPartFromRectOnScreen
-  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
-  /// @lib DrawBitmapPartFromRectAtPointOnScreen
-  /// @class Bitmap
-  /// @overload DrawPartOnScreen DrawPartOnFromRectAtPointScreen
-  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; const position: Point2D); overload;
-
-  /// @lib
-  /// @class Bitmap
-  /// @method DrawOnScreen
-  procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
-  /// @lib DrawBitmapAtPointOnScreen
-  /// @class Bitmap
-  /// @overload DrawOnScreen DrawAtPointOnSreen
-  procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
 
   /// @lib
   procedure DrawPixelOnScreen(clr: Color; x, y: LongInt); overload;
@@ -714,35 +624,7 @@ implementation
 
   uses Classes, SysUtils, // system
        SDL_gfx, SDL, SDL_Image, // sdl
-       sgCamera, sgPhysics, sgShared, sgCore, sgGeometry, sgResources;
-
-  /// Clears the surface of the bitmap to the passed in color.
-  ///
-  /// @param dest:     The bitmap to clear
-  /// @param toColor: The colour to clear the bitmap to
-  ///
-  /// Side Effects:
-  /// - dest's surface is set to the toColor
-  procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
-  begin
-    if dest = nil then
-    begin
-      RaiseException('Cannot clear, destination bitmap not supplied (nil)');
-      exit;
-    end;
-    SDL_FillRect(dest^.surface, @dest^.surface^.clip_rect, toColor);
-  end;
-
-  /// Clears the surface of the bitmap to Black.
-  ///
-  /// @param dest:     The bitmap to clear
-  ///
-  /// Side Effects:
-  /// - dest's surface is set to black
-  procedure ClearSurface(dest: Bitmap); overload;
-  begin
-    ClearSurface(dest, ColorBlack);
-  end;
+       sgCamera, sgPhysics, sgShared, sgCore, sgGeometry, sgResources, sgImages;
 
   /// Clears the surface of the screen to the passed in color.
   ///
@@ -782,89 +664,6 @@ implementation
     result := GetPixel(screen, x, y);
   end;
 
-  /// Draws one bitmap (src) onto another bitmap (dest).
-  ///
-  /// @param dest:         The destination bitmap - not optimised!
-  /// @param src: The bitmap to be drawn onto the destination
-  /// @param x,y:         The x,y location to draw the bitmap to
-  ///
-  /// Side Effects:
-  /// - Draws the src at the x,y location in the destination.
-  procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
-  var
-    offset: SDL_Rect;
-  begin
-    if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
-    
-    offset := NewSDLRect(x, y, 0, 0);
-    SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
-  end;
-
-  /// Draws part of a bitmap (src) onto another bitmap (dest).
-  ///
-  /// @param dest:     The destination bitmap - not optimised!
-  /// @param src: The bitmap to be drawn onto the destination
-  /// @param srcX, srcY:   The x,y offset to the area to copy in src
-  /// @param srcW, srcH:   The width and height of the area to copy
-  /// @param x,y:      The x,y location to draw the bitmap part to
-  ///
-  /// Side Effects:
-  /// - Draws part of the src at the x,y location in the destination.
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-  var
-    offset, source: SDL_Rect;
-  begin
-    if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
-    if (srcW < 0) or (srcH < 0) then begin RaiseException('Width and Height must be >= 0'); exit; end;
-    
-    offset := NewSDLRect(x, y, 0, 0);
-    source := NewSDLRect(srcX, srcY, srcW, srcH);
-
-    SDL_BlitSurface(src^.surface, @source, dest^.surface, @offset);
-  end;
-
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
-  begin
-    DrawBitmapPart(dest, src, Round(source.x), Round(source.y), source.width, source.height, x, y);
-  end;
-
-  /// Draws part of a bitmap (src) onto the screen.
-  ///
-  /// @param src: The bitmap to be drawn onto the screen
-  /// @param srcX, srcY:  The x,y offset to the area to copy in src
-  /// @param srcW, srcH:  The width and height of the area to copy
-  /// @param x,y:       The x,y location to draw the bitmap part to
-  ///
-  /// Side Effects:
-  /// - Draws part of the src at the x,y location on the screen.
-  /// - Effected by visible window
-  procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
-  begin
-    DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, x, y);
-  end;
-
-  procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
-  begin
-    DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
-  end;
-
-  /// Draws one bitmap (src) onto the screen.
-  ///
-  /// @param src:  The bitmap to be drawn onto the screen
-  /// @param x,y:       The x,y location to draw the bitmap to
-  ///
-  /// Side Effects:
-  /// - Draws the src at the x,y location on the screen.
-  procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
-  begin
-    DrawBitmap(screen, src, x, y);
-  end;
-
-  procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
-  begin
-    DrawBitmap(screen, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
-  end;
-  
   procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
   begin
     pixelColor(surface, x, y, ToGfxColor(color));
@@ -1361,16 +1160,6 @@ implementation
   
   
   
-  procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position: Point2D); overload;
-  begin
-    DrawBitmap(dest, src, Round(position.x), Round(position.y));
-  end;
-
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
-  begin
-    DrawBitmapPart(dest, src, source, Round(position.x), Round(position.y));
-  end;
-
   procedure DrawPixel(dest: Bitmap; clr: Color; const position : Point2D); overload;
   begin
     DrawPixel(dest, clr, Round(position.x), Round(position.y));
@@ -1421,21 +1210,6 @@ implementation
     FillEllipse(dest, clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
-  begin
-    DrawBitmap(src, Round(position.x), Round(position.y));
-  end;
-
-  procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
-  begin
-    DrawBitmapPart(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
-  end;
-
-  procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
-  begin
-    DrawBitmapPart(src, source, Round(position.x), Round(position.y));
-  end;
-
   procedure DrawPixel(clr: Color; const position: Point2D); overload;
   begin
     DrawPixel(clr, Round(position.x), Round(position.y));
@@ -1484,21 +1258,6 @@ implementation
   procedure FillEllipse(clr: Color; const source: Rectangle); overload;
   begin
     FillEllipse(clr, Round(source.x), Round(source.y), source.width, source.height);
-  end;
-
-  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
-  begin
-    DrawBitmapPartOnScreen(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
-  end;
-
-  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; const position: Point2D); overload;
-  begin
-    DrawBitmapPartOnScreen(src, source, Round(position.x), Round(position.y));
-  end;
-
-  procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
-  begin
-    DrawBitmapOnScreen(src, Round(position.x), Round(position.y))
   end;
 
   procedure DrawPixelOnScreen(clr: Color; const position: Point2D); overload;

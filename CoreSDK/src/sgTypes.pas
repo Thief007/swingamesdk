@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-10: Andrew : Added cell details to bitmap
 // - 2009-11-06: Andrew : Changed to Sound and Music Data records
 // - 2009-10-16: Andrew : Changed to consistent array names TypeArray eg. Point2DArray
 //                      : Added shapes and shape prototypes
@@ -262,6 +263,8 @@ interface
       height: LongInt;        // The height of the bitmap
       
       //Used for bitmaps that are made up of cells
+      cellW:      LongInt;    // The width of a cell
+      cellH:      LongInt;    // The height of a cell
       cellCols:   LongInt;    // The columns of cells in the bitmap
       cellRows:   LongInt;    // The rows of cells in the bitmap
       cellCount:  LongInt;    // The total number of cells in the bitmap

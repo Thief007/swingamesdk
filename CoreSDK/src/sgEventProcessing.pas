@@ -229,7 +229,7 @@ implementation
          if Length(_tempString) > 0 then
          begin
            newStr := _tempString + '|';
-           _textSurface := TTF_RenderText_Blended(_font, @newStr[1], _foreColor)
+           _textSurface := TTF_RenderText_Blended(_font, PChar(newStr), _foreColor)
          end
          else
           _textSurface := nil;
@@ -246,7 +246,7 @@ implementation
 
      //Render a new text surface
      if Length(_tempString) > 1 then
-       _textSurface := TTF_RenderText_Blended(_font, @_tempString[1], _foreColor)
+       _textSurface := TTF_RenderText_Blended(_font, PChar(_tempString), _foreColor)
      else
       _textSurface := nil;
   end;

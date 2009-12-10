@@ -204,7 +204,7 @@ implementation
       end;
     end;
 
-    result := TTF_OpenFont(@filename[1], size);
+    result := TTF_OpenFont(PChar(filename), size);
   
     if result = nil then
     begin
@@ -367,7 +367,7 @@ implementation
 
       w := 0;
       // Get the size of the rendered text.
-      if Length(subStr) > 0 then TTF_SizeText(font, @subStr[1], w, height);
+      if Length(subStr) > 0 then TTF_SizeText(font, PChar(subStr), w, height);
       
       if w > width then width := w;
     end;
@@ -385,7 +385,7 @@ implementation
       // The rendered text:
       if length(lines[i]) = 0 then continue;
       
-      temp := TTF_RenderText_Blended(font, @lines[i][1], colorFG);
+      temp := TTF_RenderText_Blended(font, PChar(lines[i]), colorFG);
       //temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
       
       // Put it on the surface:
@@ -401,7 +401,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeText(font, @lines[i][1], w, h);
+        TTF_SizeText(font, PChar(lines[i]), w, h);
         rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
       end
       else if IsSet(flags, AlignRight) then
@@ -409,7 +409,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeText(font, @lines[i][1], w, h);
+        TTF_SizeText(font, PChar(lines[i]), w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
       else begin RaiseException('Invalid font alignment'); exit; end;
@@ -486,7 +486,7 @@ implementation
       w := 0;
       
       // Get the size of the rendered text.
-      if Length(subStr) > 0 then TTF_SizeUNICODE(font, @subStr[1], w, height);
+      if Length(subStr) > 0 then TTF_SizeUNICODE(font, PUint16(subStr), w, height);
         
       //Keep widest rendered text size
       if w > width then width := w;
@@ -504,8 +504,8 @@ implementation
     begin
       if length(lines[i]) = 0 then continue;
       // The rendered text:
-      //temp := TTF_RenderText_Blended(font, @lines[i][1], colorFG);
-      temp := TTF_RenderUNICODE_Blended(font, @lines[i][1], colorFG);
+      //temp := TTF_RenderText_Blended(font, PUint16(lines[i]), colorFG);
+      temp := TTF_RenderUNICODE_Blended(font, PUint16(lines[i]), colorFG);
       
       // Put it on the surface:
       if IsSet(flags, AlignLeft) or
@@ -520,7 +520,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeUNICODE(font, @lines[i][1], w, h);
+        TTF_SizeUNICODE(font, PUint16(lines[i]), w, h);
         rect := NewSDLRect(width div 2 - w div 2, i * lineSkip, 0, 0)
       end
       else if IsSet(flags, AlignRight) then
@@ -528,7 +528,7 @@ implementation
         w := 0;
         h := 0;
 
-        TTF_SizeUNICODE(font, @lines[i][1], w, h);
+        TTF_SizeUNICODE(font, PUint16(lines[i]), w, h);
         rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
       end
       else begin RaiseException('Invalid font alignment'); exit; end;
@@ -729,7 +729,7 @@ implementation
     try
       y := 0; result := 0;
       if length(theText) = 0 then result := 0 
-      else TTF_SizeText(theFont, @theText[1], result, y);
+      else TTF_SizeText(theFont, PChar(theText), result, y);
     except
       begin RaiseException('Unable to get the text width'); exit; end;
     end;
@@ -762,7 +762,7 @@ implementation
     if not Assigned(theFont) then begin RaiseException('No font supplied'); exit; end;
     try
       w := 0; result :=  0;
-      TTF_SizeText(theFont, @theText[1], w, result);
+      TTF_SizeText(theFont, PChar(theText), w, result);
     except
       begin RaiseException('Unable to get the text height'); exit; end;
     end;
@@ -820,7 +820,7 @@ implementation
   
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
   begin
-    stringColor(dest^.surface, Round(x), Round(y), @theText[1], ToGFXColor(textColor));
+    stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
   end;
 
 //=============================================================================
