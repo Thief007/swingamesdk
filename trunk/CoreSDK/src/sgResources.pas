@@ -4,6 +4,8 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-10: Andrew : Switched to DrawCell for start up animation
+//                      : Added reading of cell information on bitmap loading
 // - 2009-12-07: Andrew : Moved out loading of image, font, and tilemap resources
 // - 2009-11-10: Andrew : Changed sn to csn tags
 // - 2009-11-06: Andrew : Moved out loading of audio resources... others to follow
@@ -154,7 +156,7 @@ implementation
     //
     TResourceIdentifier = record
       name, path: String;
-      size: Integer;
+      data: Array of Integer;
       kind: ResourceKind;
     end;
     
@@ -191,6 +193,36 @@ implementation
   var
     current: tResourceIdentifier;
     i: Integer;
+    
+    procedure rbLoadFont();
+    begin
+      if Length(current.data) <> 1 then
+      begin
+        RaiseException('Font must have a size assigned. ' + current.name);
+        exit;
+      end;
+      MapFont(current.name, current.path, current.data[0])
+    end;
+    
+    procedure rbLoadBitmap();
+    var
+      bmp: Bitmap;
+    begin
+      bmp := MapBitmap(current.name, current.path);
+      
+      if Length(current.data) > 0 then
+      begin
+        if Length(current.data) <> 5 then
+        begin
+          RaiseException('Invalid number of values for bitmap ' + current.name + ' expected 5 values for width, height, cellRows, cellCols, cellCount');
+            exit;
+        end;
+        
+        SetBitmapCellDetails(bmp, current.data[0], current.data[1], current.data[2], current.data[3], current.data[4]);
+      end;
+    end;
+
+    
   begin
     for i := Low(identifiers) to High(identifiers) do
     begin
@@ -199,8 +231,8 @@ implementation
       if current.kind = kind then
       begin
         case kind of
-          BitmapResource:     MapBitmap(current.name, current.path);
-          FontResource:       MapFont(current.name, current.path, current.size);
+          BitmapResource:     rbLoadBitmap();
+          FontResource:       rbLoadFont();
           SoundResource:      MapSoundEffect(current.name, current.path);
           MusicResource:      MapMusic(current.name, current.path);
           MapResource:        MapTileMap(current.name, current.path);
@@ -313,7 +345,7 @@ implementation
     input: Text; //the bundle file
     delim: TSysCharSet;
     line, path: String;
-    i: Integer;
+    i, j: Integer;
     current: tResourceIdentifier;
     bndl: tResourceBundle;
   begin
@@ -352,16 +384,22 @@ implementation
         RaiseException('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
         exit;
       end;
-
-      if current.kind = FontResource then
+      
+      if CountDelimiter(line, ',') > 2 then
+      // if current.kind = FontResource then
       begin
-        if not TryStrToInt(ExtractDelimited(4, line, delim), current.size) then
-        begin
-          RaiseException('Error loading resource bundle, no size supplied on line ' + IntToStr(i));
-          exit;
+        SetLength(current.data, CountDelimiter(line, ',') - 2);
+        
+        for j := 4 to CountDelimiter(line, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
+        begin  
+          if not TryStrToInt(ExtractDelimited(j, line, delim), current.data[j - 4]) then
+          begin
+            RaiseException('Error loading resource bundle, invalid data in ' + path + ' on line ' + IntToStr(i));
+            exit;
+          end;
         end;
       end
-      else current.size := 0;
+      else SetLength(current.data, 0);
       
       //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
       
@@ -540,9 +578,11 @@ implementation
         for i:= 0 to ANI_CELL_COUNT - 1 do
         begin
           DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
-          DrawBitmapPart(FetchBitmap('SwinGameAni'), 
-            (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
-            ANI_W, ANI_H - 1, ANI_X, ANI_Y);
+          
+          // DrawBitmapPart(FetchBitmap('SwinGameAni'), 
+          //   (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
+          //   ANI_W, ANI_H - 1, ANI_X, ANI_Y);
+          DrawCell(FetchBitmap('SwinGameAni'), i, ANI_X, ANI_Y);
           RefreshScreen();
           InnerProcessEvents();
           if isSkip then break;

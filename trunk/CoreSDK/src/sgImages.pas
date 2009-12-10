@@ -8,8 +8,9 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-10: Andrew : Added bitmap drawing functions
 // - 2009-12-07: Andrew : Added loading of image resources
-// - 2009-11-6: Andrew  : Started Images unit.
+// - 2009-11-06: Andrew : Started Images unit.
 //
 //=============================================================================
 
@@ -19,6 +20,8 @@
 /// @module Images
 /// @static
 unit sgImages;
+
+{$I sgTrace.inc}
 
 //=============================================================================
 interface
@@ -36,6 +39,7 @@ uses sgTypes;
   /// the bitmap you can call OptimiseBitmap to optimise the surface.
   ///
   /// @lib
+  /// @sn createBitmapWidth:%s height:%s
   ///
   /// @class Bitmap
   /// @constructor
@@ -46,6 +50,7 @@ uses sgTypes;
   /// is used as a color key for the transparent color.
   ///
   /// @lib LoadBitmapWithTransparentColor
+  /// @sn loadBitmapFile:%s colorKeyed:%s withColor:%s
   ///
   /// @class Bitmap
   /// @constructor
@@ -59,6 +64,7 @@ uses sgTypes;
   /// them.
   /// 
   /// @lib
+  /// @sn loadBitmapFile:%s
   ///
   /// @class Bitmap
   /// @constructor
@@ -71,6 +77,7 @@ uses sgTypes;
   /// freed using the FreeBitmap once you are finished with them.
   ///
   /// @lib LoadBitmapWithTransparentColor(filename, True, transparentColor)
+  /// @sn loadBitmapFile:%s withColorKey:%s
   ///
   /// @class Bitmap
   /// @constructor
@@ -97,6 +104,7 @@ uses sgTypes;
   /// retrieved by passing this `name` to the `FetchBitmap` function. 
   ///
   /// @lib
+  /// @sn mapBitmapNamed:%s toFile:%s
   ///
   /// @sn bitmapNamed:%s fromFilename:%s
   ///
@@ -111,8 +119,7 @@ uses sgTypes;
   /// `Bitmap` can then be retrieved by passing this `name` to the `FetchBitmap` function. 
   ///
   /// @lib
-  ///
-  /// @sn bitmapNamed:%s fromFilename:%s withColorKey:%s
+  /// @sn mapBitmapNamed:%s toFile:%s colorKey:%s
   ///
   /// @class Bitmap
   /// @constructor
@@ -151,21 +158,76 @@ uses sgTypes;
   /// Checks if a pixel is drawn at the specified x,y location.
   /// 
   /// @lib
+  /// @sn pixelOf:%s drawnAtX:%s y:%y
   ///
   /// @class Bitmap
   /// @csn pixelDrawnAtX:%s y:%s
   /// @method PixelDrawnAtPoint
   function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
   
+  /// This is used to define the number of cells in a bitmap, and 
+  /// their width and height. The cells are
+  /// traversed in rows so that the format would be [0 - 1 - 2] 
+  /// [3 - 4 - 5] etc. The count can be used to restrict which of the 
+  /// parts of the bitmap actually contain cells that can be drawn.
+  ///
+  /// @lib
+  /// @sn setCellsOfBitmap:%s columns:%s rows:%s count:%s
+  ///
+  /// @class Bitmap
+  /// @method SetCellDetails
+  /// @csn setCellColumns:%s rows:%s count:%s
+  procedure SetBitmapCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
+  
+  /// Returns the number of cells in the specified bitmap.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @getter CellCount
+  function BitmapCellCount(bmp: Bitmap): LongInt;
+  
+  /// Returns the number of rows of cells in the specified bitmap.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @getter CellRows
+  function BitmapCellRows(bmp: Bitmap): LongInt;
+  
+  /// Returns the number of columns of cells in the specified bitmap.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @getter CellColumns
+  function BitmapCellColumns(bmp: Bitmap): LongInt;
   
 //---------------------------------------------------------------------------
 // Alpha blendings adjusting code
 //---------------------------------------------------------------------------
-
+  
+  /// Removes any surface level transparency from the supplied bitmap.
+  ///
   /// @lib
+  ///
   /// @class Bitmap
   /// @method MakeOpaque
   procedure MakeOpaque(bmp: Bitmap);
+  
+  /// Turns on the surface level transparency for the supplied bitmap, 
+  /// and set the transparency value to the percentage supplied in pct.
+  ///
+  /// @lib
+  /// @sn setOpacityOf:%s pct:%s
+  /// 
+  /// @class Bitmap
+  /// @method SetOpacity
+  procedure SetOpacity(bmp: Bitmap; pct: Single);
+  
+  /// Turns on the surface level transparency for the supplied bitmap, the
+  /// transparency value is then set to 0 (fully transparent).
+  ///
   /// @lib
   /// @class Bitmap
   /// @method MakeTransparent
@@ -174,12 +236,19 @@ uses sgTypes;
 //---------------------------------------------------------------------------
 // Rotate and Zoom
 //---------------------------------------------------------------------------
-
+  
+  /// Rotate and Scale the passed in bitmap.
+  ///
   /// @lib
+  /// @sn transformBitmap:%s rotate:%s scale:%s
+  ///
   /// @class Bitmap
   /// @method RotateScaleBitmap
+  /// @csn rotate:%s scale:%s
   function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
-
+  
+  /// Setup the passed in bitmap for pixel level collisions.
+  ///
   /// @lib
   /// @class Bitmap
   /// @method SetupForCollisions
@@ -199,12 +268,263 @@ uses sgTypes;
   /// @class Bitmap
   /// @method OptimiseBitmap
   procedure OptimiseBitmap(surface: Bitmap);
-
-
-
+  
+  
+  //---------------------------------------------------------------------------
+  // Bitmap drawing routines - clearing
+  //---------------------------------------------------------------------------
+  
+  /// Clear the drawing on the Bitmap to the passed in color.
+  ///
+  /// @lib
+  /// @sn clearSurface:%s color:%s
+  ///
+  /// @class Bitmap
+  /// @overload ClearSurface ClearSurfaceToColor
+  procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
+  
+  /// Clears the drawing on the Bitmap to black.
+  ///
+  /// @lib ClearSurfaceToBlack
+  ///
+  /// @class Bitmap
+  /// @method ClearSurface
+  procedure ClearSurface(dest: Bitmap); overload;
+  
+  
+  //---------------------------------------------------------------------------
+  // Bitmap drawing routines - onto bitmap
+  //---------------------------------------------------------------------------
+  
+  /// Draws the source bitmap onto the destination.
+  ///
+  /// @lib DrawBitmapOnto
+  /// @sn drawOnto:%s bitmap:%s atX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @method DrawOnto
+  /// @self 2
+  /// @csn drawOnto:%s atX:%s y:%s
+  procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
+  
+  /// Draws the source bitmap onto the destination
+  ///
+  /// @lib DrawBitmapAtPointOnto
+  /// @sn drawOnto:%s bitmap:%s at:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawOnto DrawAtPointOnto
+  /// @self 2
+  /// @csn drawOnto:%s at:%s
+  procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position : Point2D); overload;
+  
+  /// Draw part of the source onto the desitination.
+  ///
+  /// @lib DrawBitmapPartOnto
+  /// @sn drawOnto:%s bitmap:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%y
+  ///
+  /// @class Bitmap
+  /// @method DrawPartOnto
+  /// @self 2
+  /// @csn drawOnto:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%y
+  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  
+  /// Draw part of the source bitmap onto the destination.
+  ///
+  /// @lib DrawBitmapPartFromRectOnto
+  /// @sn drawOnto:%s bitmap:%s srcRect:%s atX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawPartOnto DrawPartFromRectOnto
+  /// @sn drawOnto:%s srcRect:%s atX:%s y:%s
+  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  
+  /// Draw part of the source bitmap onto the destination
+  ///
+  /// @lib DrawBitmapPartFromRectAtPointOnto
+  /// @sn drawOnto:%s bitmap:%s srcRect:%s at:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawPartOnto DrawPartFromRectAtPointOnto
+  /// @sn drawOnto:%s srcRect:%s at:%s
+  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
+  
+  /// Draw a cell from a bitmap onto the destination.
+  ///
+  /// @lib
+  /// @sn drawOnto:%s bitmap:%s cell:%s atX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @method DrawCellOnto
+  /// @csn drawOnto:%s cell:%s atX:%s y:%s
+  /// @self 2
+  procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
+  
+  /// Draw a cell from a bitmap onto the destination.
+  ///
+  /// @lib
+  /// @sn drawOnto:%s bitmap:%s cell:%s at:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawCellOnto DrawCellAtPointOnto
+  /// @csn drawOnto:%s cell:%s at:%s
+  /// @self 2
+  procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
+  
+  
+  //---------------------------------------------------------------------------
+  // Bitmap drawing routines - standard
+  //---------------------------------------------------------------------------
+  
+  /// Draw the passed in bitmap onto the game.
+  ///
+  /// @lib
+  /// @sn draw:%s x:%s y:%y
+  ///
+  /// @class Bitmap
+  /// @method Draw
+  /// @sn drawAtX:%s y:%y
+  procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
+  
+  /// Draw the passed in bitmap onto the game.
+  ///
+  /// @lib DrawBitmapAtPoint
+  /// @sn draw:%s position:%s
+  ///
+  /// @class Bitmap
+  /// @overload Draw DrawAtPoint
+  /// @csn drawAt:%s
+  procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
+  
+  /// Draw part of a bitmap onto the game
+  ///
+  /// @lib
+  /// @sn draw:%s srcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%y
+  ///
+  /// @class Bitmap
+  /// @method DrawPart
+  /// @csn drawSrcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%y
+  procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+  
+  /// Draw part of a bitmap onto the game
+  ///
+  /// @lib DrawBitmapPartFromRect
+  /// @sn draw:%s srcRect:%s x:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawPart DrawPartFromRect
+  /// @sn drawSrcRect:%s x:%s y:%s
+  procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
+  
+  /// Draw part of a bitmap onto the game.
+  ///
+  /// @lib DrawBitmapPartFromRectAtPoint
+  /// @sn draw:%s srcRect:%s position:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawPart DrawPartFromRectAtPoint
+  /// @csn drawSrcRect:%s position:%s
+  procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
+  
+  /// Draw a cell from a bitmap onto the game.
+  ///
+  /// @lib
+  /// @sn draw:%s cell:%s atX:%s y:%y
+  ///
+  /// @class Bitmap
+  /// @method DrawCell
+  /// @csn drawCell:%s atX:%s y:%y
+  procedure DrawCell(src: Bitmap; cell, x, y: LongInt); overload;
+  
+  /// Draw a cell from a bitmap onto the game.
+  ///
+  /// @lib
+  /// @sn draw:%s bitmap:%s cell:%s at:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawCell DrawCellAtPoint
+  /// @csn drawCell:%s at:%s
+  procedure DrawCell(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+  
+  
+  //---------------------------------------------------------------------------
+  // Bitmap drawing routines - onto screen
+  //---------------------------------------------------------------------------
+  
+  /// Draw the bitmap onto the screen.
+  ///
+  /// @lib
+  /// @sn draw:%s onScreenAtX:%s y:%y
+  ///
+  /// @class Bitmap
+  /// @method DrawOnScreen
+  /// @csn drawOnScreenAtX:%s y:%y
+  procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
+  
+  /// Draw the bitmap onto the screen.
+  ///
+  /// @lib DrawBitmapAtPointOnScreen
+  /// @sn draw:%s onScreenAt:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawOnScreen DrawAtPointOnSreen
+  /// @csn drawOnScreenAt:%s
+  procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
+  
+  /// Draw part of the bitmap on the screen.
+  ///
+  /// @lib
+  /// @sn draw:%s srcX:%s srcY:%s srcW:%s srcH:%s onScreenAtX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @method DrawPartOnScreen
+  /// @csn drawSrcX:%s srcY:%s srcW:%s srcH:%s onScreenAtX:%s y:%s
+  procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  
+  /// Draw part of the bitmap on the screen.
+  ///
+  /// @lib DrawBitmapPartFromRectOnScreen
+  /// @sn draw:%s srcRect:%s onScreenAtX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawPartOnScreen DrawPartFromRectOnScreen
+  /// @csn drawSrcRect:%s onScreenAtX:%s y:%s
+  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  
+  /// Draw part of the bitmap on the screen.
+  ///
+  /// @lib DrawBitmapPartFromRectAtPointOnScreen
+  /// @sn draw:%s srcRect:%s onScreenAt:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawPartOnScreen DrawPartOnFromRectAtPointScreen
+  /// @csn drawSrcRect:%s onScreenAt:%s
+  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; const position: Point2D); overload;
+  
+  /// Draw a cell from a bitmap onto the screen.
+  ///
+  /// @lib
+  /// @sn draw:%s cell:%s onScreenAtX:%s y:%y
+  ///
+  /// @class Bitmap
+  /// @method DrawCell
+  /// @csn drawCell:%s onScreenAtX:%s y:%y
+  procedure DrawCellOnScreen(src: Bitmap; cell, x, y: LongInt); overload;
+  
+  /// Draw a cell from a bitmap onto the game.
+  ///
+  /// @lib
+  /// @sn draw:%s bitmap:%s cell:%s at:%s
+  ///
+  /// @class Bitmap
+  /// @overload DrawCell DrawCellAtPoint
+  /// @csn drawCell:%s onScreenAt:%s
+  procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+  
+  
 //=============================================================================
 implementation
-uses sgCore, sgShared, sgResources,
+uses sgCore, sgShared, sgResources, sgTrace, sgCamera,
      stringhash,         // libsrc
      SysUtils,
      SDL_gfx, SDL, SDL_Image // sdl
@@ -223,6 +543,10 @@ var
   idx: LongInt;
   obj: tResourceContainer;
 begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'CreateBitmap');
+  {$ENDIF}
+
   if (width < 1) or (height < 1) then
   begin
     RaiseException('Bitmap width and height must be greater then 0');
@@ -238,8 +562,7 @@ begin
   
   with baseSurface^.format^ do
   begin
-    result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32,
-                     RMask, GMask, BMask, AMask);
+    result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, RMask, GMask, BMask, AMask);
   end;
   
   if result^.surface = nil then
@@ -253,9 +576,6 @@ begin
   // Place the bitmap in the _Images hashtable
   //
   obj := tResourceContainer.Create(result);
-  {$IFDEF TRACE}
-    Trace('sgImages', 'Info', 'DoLoadBitmap', 'name = ' + name + 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
-  {$ENDIF}
   
   name := 'Bitmap';
   idx := 0;
@@ -265,16 +585,24 @@ begin
     idx := idx + 1;
   end;
   
-  result^.width := width;
-  result^.height := height;
+  result^.width     := width;
+  result^.height    := height;
+  
+  result^.cellW     := width;
+  result^.cellH     := height;
   result^.cellCols  := 1;
   result^.cellRows  := 1;
   result^.cellCount := 1;
+  
   result^.name      := name;
   result^.filename  := name;
   
   SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
   SDL_FillRect(result^.surface, nil, ColorTransparent);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'CreateBitmap', name + ' = ' + HexStr(result));
+  {$ENDIF}
 end;
 
 // Sets the non-transparent pixels in a Bitmap. This is then used for
@@ -341,6 +669,8 @@ begin
   
   result^.width     := result^.surface^.w;
   result^.height    := result^.surface^.h;
+  result^.cellW     := result^.width;
+  result^.cellH     := result^.height;
   result^.cellCols  := 1;
   result^.cellRows  := 1;
   result^.cellCount := 1;
@@ -367,7 +697,7 @@ begin
   //
   obj := tResourceContainer.Create(result);
   {$IFDEF TRACE}
-    Trace('sgImages', 'Info', 'DoLoadBitmap', 'name = ' + name + 'obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
+    Trace('sgImages', 'Info', 'DoLoadBitmap', 'name = ' + name + ' obj = ' + HexStr(obj) + ' _Images = ' + HexStr(_Images));
   {$ENDIF}
   if not _Images.setValue(name, obj) then
   begin
@@ -400,6 +730,10 @@ end;
 // Called to actually free the resource
 procedure DoFreeBitmap(var bitmapToFree : Bitmap);
 begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'DoFreeBitmap', 'bitmapToFree = ' + HexStr(bitmapToFree));
+  {$ENDIF}
+  
   if Assigned(bitmapToFree) then
   begin
     if Assigned(bitmapToFree^.surface) then
@@ -408,11 +742,15 @@ begin
       SDL_FreeSurface(bitmapToFree^.surface);
     end;
     bitmapToFree^.surface := nil;
-    
+    // SetLength(bitmapToFree^.nonTransparentPixels, 0, 0);
     Dispose(bitmapToFree);
     CallFreeNotifier(bitmapToFree);
     bitmapToFree := nil;
   end;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'DoFreeBitmap');
+  {$ENDIF}
 end;
 
 procedure FreeBitmap(var bitmapToFree : Bitmap);
@@ -481,12 +819,20 @@ procedure ReleaseBitmap(name: String);
 var
   bmp: Bitmap;
 begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'ReleaseBitmap', 'name = ' + name);
+  {$ENDIF}
+
   bmp := FetchBitmap(name);
   if (assigned(bmp)) then
   begin
     _Images.remove(name).Free();
-    FreeBitmap(bmp);
+    DoFreeBitmap(bmp);
   end;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'ReleaseBitmap');
+  {$ENDIF}
 end;
 
 procedure ReleaseAllBitmaps();
@@ -504,11 +850,41 @@ begin
             and bmp^.nonTransparentPixels[x, y];
 end;
 
+procedure SetBitmapCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
+begin
+  bmp^.cellW     := width;
+  bmp^.cellH     := height;
+  bmp^.cellCols  := columns;
+  bmp^.cellRows  := rows;
+  bmp^.cellCount := count;
+end;
+
+function BitmapCellCount(bmp: Bitmap): LongInt;
+begin
+  result := bmp^.cellCount;
+end;
+
+function BitmapCellRows(bmp: Bitmap): LongInt;
+begin
+  result := bmp^.cellRows;
+end;
+
+function BitmapCellColumns(bmp: Bitmap): LongInt;
+begin
+  result := bmp^.cellCols;
+end;
+
+
 //---------------------------------------------------------------------------
 
 procedure MakeOpaque(bmp: Bitmap);
 begin
   SDL_SetAlpha(bmp^.surface, 0, 255);
+end;
+
+procedure SetOpacity(bmp: Bitmap; pct: Single);
+begin
+  SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, Round(pct * 255));
 end;
 
 procedure MakeTransparent(bmp: Bitmap);
@@ -550,6 +926,187 @@ begin
   SetNonAlphaPixels(surface, oldSurface);
   surface^.surface := SDL_DisplayFormatAlpha(oldSurface);
   SDL_FreeSurface(oldSurface);
+end;
+
+//---------------------------------------------------------------------------
+
+/// Draws one bitmap (src) onto another bitmap (dest).
+///
+/// @param dest:         The destination bitmap - not optimised!
+/// @param src: The bitmap to be drawn onto the destination
+/// @param x,y:         The x,y location to draw the bitmap to
+///
+/// Side Effects:
+/// - Draws the src at the x,y location in the destination.
+procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
+var
+  offset: SDL_Rect;
+begin
+  if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
+  
+  offset := NewSDLRect(x, y, 0, 0);
+  SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
+end;
+
+/// Draws part of a bitmap (src) onto another bitmap (dest).
+///
+/// @param dest:     The destination bitmap - not optimised!
+/// @param src: The bitmap to be drawn onto the destination
+/// @param srcX, srcY:   The x,y offset to the area to copy in src
+/// @param srcW, srcH:   The width and height of the area to copy
+/// @param x,y:      The x,y location to draw the bitmap part to
+///
+/// Side Effects:
+/// - Draws part of the src at the x,y location in the destination.
+procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+var
+  offset, source: SDL_Rect;
+begin
+  if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
+  if (srcW < 0) or (srcH < 0) then begin RaiseException('Width and Height must be >= 0'); exit; end;
+  
+  offset := NewSDLRect(x, y, 0, 0);
+  source := NewSDLRect(srcX, srcY, srcW, srcH);
+
+  SDL_BlitSurface(src^.surface, @source, dest^.surface, @offset);
+end;
+
+procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
+begin
+  DrawBitmapPart(dest, src, Round(source.x), Round(source.y), source.width, source.height, x, y);
+end;
+
+/// Draws part of a bitmap (src) onto the screen.
+///
+/// @param src: The bitmap to be drawn onto the screen
+/// @param srcX, srcY:  The x,y offset to the area to copy in src
+/// @param srcW, srcH:  The width and height of the area to copy
+/// @param x,y:       The x,y location to draw the bitmap part to
+///
+/// Side Effects:
+/// - Draws part of the src at the x,y location on the screen.
+/// - Effected by visible window
+procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+begin
+  DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, x, y);
+end;
+
+procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+begin
+  DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
+end;
+
+/// Draws one bitmap (src) onto the screen.
+///
+/// @param src:  The bitmap to be drawn onto the screen
+/// @param x,y:       The x,y location to draw the bitmap to
+///
+/// Side Effects:
+/// - Draws the src at the x,y location on the screen.
+procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
+begin
+  DrawBitmap(screen, src, x, y);
+end;
+
+procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
+begin
+  DrawBitmap(screen, src, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
+end;
+
+procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position: Point2D); overload;
+begin
+  DrawBitmap(dest, src, Round(position.x), Round(position.y));
+end;
+
+procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
+begin
+  DrawBitmapPart(dest, src, source, Round(position.x), Round(position.y));
+end;
+
+procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
+begin
+  DrawBitmap(src, Round(position.x), Round(position.y));
+end;
+
+procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
+begin
+  DrawBitmapPart(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
+end;
+
+procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; const position : Point2D); overload;
+begin
+  DrawBitmapPart(src, source, Round(position.x), Round(position.y));
+end;
+
+procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+begin
+  DrawBitmapPartOnScreen(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
+end;
+
+procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; const position: Point2D); overload;
+begin
+  DrawBitmapPartOnScreen(src, source, Round(position.x), Round(position.y));
+end;
+
+procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
+begin
+  DrawBitmapOnScreen(src, Round(position.x), Round(position.y))
+end;
+
+//---------------------------------------------------------------------------
+
+procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
+begin
+  if dest = nil then
+  begin
+    RaiseException('Cannot clear, destination bitmap not supplied (nil)');
+    exit;
+  end;
+  SDL_FillRect(dest^.surface, @dest^.surface^.clip_rect, toColor);
+end;
+
+procedure ClearSurface(dest: Bitmap); overload;
+begin
+  ClearSurface(dest, ColorBlack);
+end;
+
+//---------------------------------------------------------------------------
+
+procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
+var
+  srcX, srcY: Integer;
+begin
+  if (cell < 0) or (cell >= src^.cellCount) then exit;
+  
+  srcX := (cell mod src^.cellCols) * src^.cellW;
+  srcY := (cell - (cell mod src^.cellCols)) div src^.cellCols * src^.cellH;
+  
+  DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
+end;
+
+procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
+begin
+  DrawCell(dest, src, cell, Round(position.x), Round(position.y));
+end;
+
+procedure DrawCell(src: Bitmap; cell, x, y: LongInt); overload;
+begin
+  DrawCell(screen, src,  cell, ToScreenX(x), ToScreenY(y));
+end;
+
+procedure DrawCell(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+begin
+  DrawCell(src, cell, Round(position.x), Round(position.y));
+end;
+
+procedure DrawCellOnScreen(src: Bitmap; cell, x, y: LongInt); overload;
+begin
+  DrawCell(screen, src, cell, x, y);
+end;
+
+procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+begin
+  DrawCell(screen, src, cell, position);
 end;
 
 //=============================================================================

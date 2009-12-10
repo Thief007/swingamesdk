@@ -1,12 +1,18 @@
 program AnimationTests;
 
-uses sgTypes, sgShared, sgAnimations;
+uses cmem, sgTypes, sgShared, sgAnimations, SysUtils, sgCore;
 
 var
   explosions: AnimationTemplate;
+  i: Integer;
 begin
-  explosions := LoadAnimationTemplate('explosion.txt');
+  for i := 0 to 100 do
+  begin
+    explosions := MapAnimationTemplate('e' + IntToStr(i), 'explosion.txt');
+  end;
   
-  FreeAnimationTemplate(explosions);
-  ReadLn();
+  ReleaseAllAnimationTemplates();
+  
+  Delay(2000);
+  
 end.

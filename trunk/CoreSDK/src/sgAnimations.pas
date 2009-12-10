@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-08: Andrew : Changed name to AnimationTemplate
 // - 2009-12-08: Andrew : Created
 //=============================================================================
 
@@ -75,13 +76,13 @@ interface
   /// @lib
   function FetchAnimationTemplate(name: String): AnimationTemplate;
   
-  /// Releases the SwinGame resources associated with the animation frames of the
+  /// Releases the SwinGame resources associated with the animation template of the
   /// specified `name`.
   ///
   /// @lib
   procedure ReleaseAnimationTemplate(name: String);
   
-  /// Releases all of the bitmaps that have been loaded.
+  /// Releases all of the animation templates that have been loaded.
   ///
   /// @lib
   procedure ReleaseAllAnimationTemplates();
@@ -389,20 +390,23 @@ begin
   Assign(input, path);
   Reset(input);
   
-  while not EOF(input) do
-  begin
-    lineNo := lineNo + 1;
+  try
+    while not EOF(input) do
+    begin
+      lineNo := lineNo + 1;
     
-    ReadLn(input, line);
-    line := Trim(line);
-    if Length(line) = 0 then continue;  //skip empty lines
-    if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
+      ReadLn(input, line);
+      line := Trim(line);
+      if Length(line) = 0 then continue;  //skip empty lines
+      if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
     
-    ProcessLine();
+      ProcessLine();
+    end;
+  
+    BuildFrameLists();
+  finally
+    Close(input);
   end;
-  
-  BuildFrameLists();
-  
   {$IFDEF TRACE}
     TraceExit('sgAnimation', 'LoadAnimationTemplate');
   {$ENDIF}  
@@ -490,7 +494,9 @@ begin
   //WriteLn(0);
   frmPtr := TStringHash(frm^.data);
   //WriteLn(1);
+  frmPtr.DeleteAll();
   frmPtr.Free();
+  
   //WriteLn(2);
   for i := 0 to High(frm^.frames) do
   begin

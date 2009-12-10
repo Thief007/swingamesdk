@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources;
+  cmem, sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources;
 
 procedure Main();
 begin
@@ -11,6 +11,8 @@ begin
   
   repeat // The game loop...
     ProcessEvents();
+    
+    ClearScreen();
     
     ReleaseAllResources();
     LoadResourceBundle('splash.txt');
