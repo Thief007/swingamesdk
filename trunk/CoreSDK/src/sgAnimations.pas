@@ -10,6 +10,7 @@
 // Version 3:
 // - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
 //                      : Fixed loading of animations with ranges like [,]
+//                      : Added code to query animations, and more create code.
 // - 2009-12-10: Andrew : Got basic Animation features working
 // - 2009-12-08: Andrew : Changed name to AnimationTemplate
 // - 2009-12-08: Andrew : Created
@@ -95,23 +96,203 @@ interface
   // Creating an Animation
   //----------------------------------------------------------------------------
   
-  /// Creates an animation from a KeyFrameTemplate.
+  /// Creates an animation from a AnimationTemplate. This may play a sound effect
+  /// if the animation is set to play a sound effect on its first frame.
   ///
   /// @lib
-  /// @sn animation:%s from:%s
+  /// @sn animationNamed:%s from:%s
   ///
   /// @class Animation
   /// @constructor
-  /// @csn initAs:%s from:%s
-  function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation;
+  /// @csn initAsName:%s from:%s
+  function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation; overload;
   
-  procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: LongInt);
+  /// Creates an animation from a AnimationTemplate. If withSound is true, this may
+  /// play a sound effect if the animation is set to play a sound effect on its first frame.
+  ///
+  /// @lib
+  /// @sn animationNamed:%s from:%s withSound:%s
+  ///
+  /// @class Animation
+  /// @constructor
+  /// @csn initAsName:%s from:%s withSound:%s
+  function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation;
   
+  /// Creates an animation from a AnimationTemplate. If withSound is true, this may
+  /// play a sound effect if the animation is set to play a sound effect on its first frame.
+  ///
+  /// @lib
+  /// @sn animationAtIndex:%s from:%s withSound:%s
+  ///
+  /// @class Animation
+  /// @constructor
+  /// @csn initAtIndex:%s from:%s withSound:%s
+  function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
+  
+  /// Creates an animation from a AnimationTemplate. This may play a sound effect
+  /// if the animation is set to play a sound effect on its first frame.
+  ///
+  /// @lib
+  /// @sn animationAtIndex:%s from:%s
+  ///
+  /// @class Animation
+  /// @constructor
+  /// @csn initAtIndex:%s from:%s
+  function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
+  
+  
+  //----------------------------------------------------------------------------
+  // Drawing Animations
+  //----------------------------------------------------------------------------
+  
+  /// Uses the animation information to draw a bitmap at the specified
+  /// x,y location.
+  ///
+  /// @lib
+  /// @sn drawAnimation:%s bitmap:%s x:%s y:%s
+  ///
+  /// @class Animation
+  /// @method DrawBitmap
+  /// @csn drawBitmap:%s x:%s y:%s
+  procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+  
+  /// Uses the animation information to draw a bitmap at the specified
+  /// point.
+  ///
+  /// @lib
+  /// @sn drawAnimation:%s bitmap:%s pt:%s
+  ///
+  /// @class Animation
+  /// @overload DrawBitmap DrawBitmapAtPt
+  /// @csn drawBitmap:%s pt:%s
+  procedure DrawAnimation(ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
+  
+  /// Uses the animation information to draw a bitmap at the specified
+  /// x,y location on a destination bitmap.
+  ///
+  /// @lib
+  /// @sn drawOnto:%s animation:%s bitmap:%s x:%s y:%s
+  ///
+  /// @class Animation
+  /// @overload DrawBitmap DrawBitmapOnto
+  /// @self 2
+  /// @csn drawOnto:%s bitmap:%s x:%s y:%s
+  procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+
+  /// Uses the animation information to draw a bitmap at the specified
+  /// point on a destination bitmap.
+  ///
+  /// @lib
+  /// @sn drawOnto:%s animation:%s bitmap:%s pt:%s
+  ///
+  /// @class Animation
+  /// @overload DrawBitmap DrawBitmapAtPtOnto
+  /// @csn drawOnto:%s using:%s pt:%s
+  procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
+  
+  /// Uses the animation information to draw a bitmap to the screen at the specified
+  /// x,y location.
+  ///
+  /// @lib
+  /// @sn drawAnimation:%s bitmap:%s onScreenAtX:%s y:%s
+  ///
+  /// @class Animation
+  /// @method DrawBitmapOnScreen
+  /// @csn drawBitmap:%s onScreenAtX:%s y:%s
+  procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+  
+  /// Uses the animation information to draw a bitmap to the screen at the specified
+  /// point.
+  ///
+  /// @lib
+  /// @sn drawAnimation:%s bitmap:%s onScreenAtPt:%s
+  ///
+  /// @class Animation
+  /// @overload DrawBitmapOnScreen DrawBitmapAtPtOnScreen
+  /// @csn drawBitmap:%s onScreenAtPt:%s
+  procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
+  
+  
+  //----------------------------------------------------------------------------
+  // Updating Animations
+  //----------------------------------------------------------------------------
+  
+  /// Updates the animation, updating the time spent and possibly moving to a new
+  /// frame in the animation. This may play a sound effect if the new frame
+  /// triggers a sound.
+  /// 
+  /// @lib
+  /// @sn updateAnimation:%s
+  ///
+  /// @class Animation
+  /// @method Update
+  /// @csn update
   procedure UpdateAnimation(anim: Animation); overload;
+  
+  /// Updates the animation a certain percentage and possibly moving to a new
+  /// frame in the animation. This may play a sound effect if the new frame
+  /// triggers a sound.
+  /// 
+  /// @lib UpdatePct
+  /// @sn updateAnimation:%s pct:%s
+  ///
+  /// @class Animation
+  /// @overload Update UpdatePct
+  /// @csn updatePct:%s
   procedure UpdateAnimation(anim: Animation; pct: Single); overload;
+  
+  /// Updates the animation a certain percentage and possibly moving to a new
+  /// frame in the animation. This may play a sound effect if the new frame
+  /// triggers a sound and withSound is true.
+  /// 
+  /// @lib UpdatePctAndSound
+  /// @sn updateAnimation:%s pct:%s withSound:%s
+  /// 
+  /// @class Animation
+  /// @overload Update UpdatePctAndSound
+  /// @csn updatePct:%s withSound:%s
   procedure UpdateAnimation(anim: Animation; pct: Single; withSound: Boolean); overload;
   
-  function HasEnded(anim: Animation): Boolean;
+  
+  //----------------------------------------------------------------------------
+  // Query Animation
+  //----------------------------------------------------------------------------
+  
+  /// Indicates if an animation has ended. Animations with loops will never end.
+  /// 
+  /// @lib
+  ///
+  /// @class Animation
+  /// @getter Ended
+  function AnimationEnded(anim: Animation): Boolean;
+  
+  /// Returns the current cell (the part of the image or sprite) of this animation.
+  /// This can be used to animate an image or sprite.
+  ///
+  /// @lib
+  ///
+  /// @class Animation
+  /// @getter CurrentCell
+  function AnimationCurrentCell(anim: Animation): LongInt;
+  
+  /// Returns true if the animation entered a new frame on its last update.
+  /// This can be used to trigger actions on frames within an animation.
+  ///
+  /// @lib
+  /// 
+  /// @class Animation
+  /// @getter EnteredFrame
+  function AnimationEnteredFrame(anim: Animation): Boolean;
+  
+  /// Returns the amount of time spent in the current frame. When this exceeds
+  /// the frame's duration the animation moves to the next frame.
+  /// 
+  /// @lib
+  /// 
+  /// @class Animation
+  /// @getter FrameTime
+  function AnimationFrameTime(anim: Animation): Single;
+  
   
 //=============================================================================
 implementation
@@ -339,7 +520,6 @@ var
   procedure BuildFrameLists();
   var
     frames: Array of AnimationFrame;
-    hash: TStringHash;
     j, nextIdx, addedIdx: LongInt;
   begin
     SetLength(frames, Length(rows));
@@ -503,7 +683,6 @@ end;
 
 procedure DoFreeAnimationTemplate(var frm: AnimationTemplate);
 var
-  frmPtr: TStringHash;
   i: LongInt;
 begin
   FreeNamedIndexCollection(frm^.animationIds);
@@ -551,29 +730,33 @@ begin
   {$ENDIF}
 end;
 
-
-function StartFrame(name: String; temp: AnimationTemplate) : AnimationFrame;
-var
-  idx: Integer;
+function StartFrame(id: LongInt; temp: AnimationTemplate) : AnimationFrame;
 begin
   result := nil;
-  if not assigned(temp) then exit;
+  if temp = nil then exit;
+  if (id < 0) or (id > High(temp^.animations)) then exit;
   
-  //Get index
-  idx := IndexOf(temp^.animationIds, name);
-  if idx < 0 then exit;
+  result := temp^.frames[id];
   
-  result := temp^.frames[idx];
 end;
 
+//----------------------------------------------------------------------------
 
-function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation;
+function StartFrame(name: String; temp: AnimationTemplate) : AnimationFrame;
+begin
+  if assigned(temp) then
+    result := StartFrame(IndexOf(temp^.animationIds, name), temp)
+  else
+    result := nil;
+end;
+
+function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
 begin
   result := nil;
   if frames = nil then exit;
   
   new(result);
-  result^.firstFrame    := StartFrame(identifier, frames);
+  result^.firstFrame    := frames^.frames[identifier];
   result^.currentFrame  := result^.firstFrame;
   result^.lastFrame     := result^.firstFrame;
   result^.frameTime     := 0;
@@ -584,7 +767,19 @@ begin
     PlaySoundEffect(result^.currentFrame^.sound);
 end;
 
-function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation;
+function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
+begin
+  result := CreateAnimation(identifier, frames, True);
+end;
+
+function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
+begin
+  if frames = nil then exit;
+    
+  result := CreateAnimation(IndexOf(frames^.animationIds, identifier), frames, withSound);
+end;
+
+function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation; overload;
 begin
   result := CreateAnimation(identifier, frames, True);
 end;
@@ -596,7 +791,7 @@ begin
     try
   {$ENDIF}
   
-  if HasEnded(anim) then exit;
+  if AnimationEnded(anim) then exit;
     
   anim^.frameTime     := anim^.frameTime + pct;
   anim^.enteredFrame  := false;
@@ -630,7 +825,7 @@ begin
   UpdateAnimation(anim, 1, True);
 end;
 
-function HasEnded(anim: Animation): Boolean;
+function AnimationEnded(anim: Animation): Boolean;
 begin
   if not Assigned(anim) then
     result := true
@@ -638,29 +833,111 @@ begin
     result := not Assigned(anim^.currentFrame);
 end;
 
-procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: LongInt);
-var
-  idx: Integer;
+function AnimationCurrentCell(anim: Animation): LongInt;
+begin
+  if not AnimationEnded(anim) then
+    result := anim^.currentFrame^.cellIndex
+  else if not assigned(anim^.lastFrame) then
+    result := -1
+  else  //Use the last frame drawn.
+    result := anim^.lastFrame^.cellIndex;
+end;
+
+function AnimationEnteredFrame(anim: Animation): Boolean;
+begin
+  if not Assigned(anim) then
+    result := false
+  else 
+    result := anim^.enteredFrame;
+end;
+
+function AnimationFrameTime(anim: Animation): Single;
+begin
+  if not Assigned(anim) then
+    result := -1
+  else 
+    result := anim^.frameTime;
+end;
+
+
+procedure DrawAnimation(ani: Animation; bmp: Bitmap; x, y: LongInt); overload;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAnimations', 'DrawAnimation', '');
-    try
+    TraceEnter('sgAnimations', 'DrawAnimation', ''); try
   {$ENDIF}
-
-  if not HasEnded(ani) then
-    idx := ani^.currentFrame^.cellIndex
-  else if not assigned(ani^.lastFrame) then
-    exit
-  else  //Draw the last frame drawn.
-    idx := ani^.lastFrame^.cellIndex;
   
-  DrawCell(bmp, idx, x, y);
+  DrawCell(bmp, AnimationCurrentCell(ani), x, y);
+  
   {$IFDEF TRACE}
-    finally
-      TraceExit('sgAnimations', 'DrawAnimation', '');
-    end;
+    finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
   {$ENDIF}
 end;
+
+procedure DrawAnimation(ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'DrawAnimation', ''); try
+  {$ENDIF}
+
+  DrawCell(bmp, AnimationCurrentCell(ani), pt);
+
+  {$IFDEF TRACE}
+    finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
+  {$ENDIF}
+end;
+
+procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'DrawAnimation', ''); try
+  {$ENDIF}
+
+  DrawCell(dest, bmp, AnimationCurrentCell(ani), x, y);
+
+  {$IFDEF TRACE}
+    finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
+  {$ENDIF}
+end;
+
+procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'DrawAnimation', ''); try
+  {$ENDIF}
+
+  DrawCell(dest, bmp, AnimationCurrentCell(ani), pt);
+
+  {$IFDEF TRACE}
+    finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
+  {$ENDIF}
+end;
+
+procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'DrawAnimationOnScreen', ''); try
+  {$ENDIF}
+  
+  DrawCellOnScreen(bmp, AnimationCurrentCell(ani), x, y);
+  
+  {$IFDEF TRACE}
+    finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
+  {$ENDIF}
+end;
+
+procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgAnimations', 'DrawAnimationOnScreen', ''); try
+  {$ENDIF}
+  
+  DrawCellOnScreen(bmp, AnimationCurrentCell(ani), pt);
+  
+  {$IFDEF TRACE}
+    finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
+  {$ENDIF}
+end;
+
 
 //=============================================================================
   initialization
