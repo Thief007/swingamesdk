@@ -1,0 +1,4 @@
+BITMAP,explosion_bmp,blue_explosion.jpg,180,180,6,7,40
+SOUND,boom,boom.wav
+SOUND,moob,moob.wav
+ANIM,explosion_temp,explosion.txt

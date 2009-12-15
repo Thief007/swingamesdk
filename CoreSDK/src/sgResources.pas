@@ -569,7 +569,7 @@ implementation
         
         startAni := CreateAnimation('splash', FetchAnimationTemplate('Startup'));
         
-        while not HasEnded(startAni) do
+        while not AnimationEnded(startAni) do
         begin
           DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
           
