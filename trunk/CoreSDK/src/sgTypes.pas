@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
 // - 2009-12-10: Andrew : Added cell details to bitmap
 // - 2009-11-06: Andrew : Changed to Sound and Music Data records
 // - 2009-10-16: Andrew : Changed to consistent array names TypeArray eg. Point2DArray
@@ -35,19 +36,29 @@ interface
 //=============================================================================
 
   type
-
-
+    
+    
     /// @type LongIntArray
     /// @array_wrapper
     /// @field data: array of LongInt
     LongIntArray = array of LongInt;
-
+    
     /// @type LongIntPtr
     /// @pointer_wrapper
     /// @field pointer: ^LongInt
     LongIntPtr = ^LongInt;
     
-
+    /// The named index collection type is used to maintain a named collection of 
+    /// index values that can then be used to lookup the location of the
+    /// named value within a collection.
+    ///
+    /// @type NamedIndexes
+    /// @via_pointer
+    NamedIndexCollection = record
+      names: Array of String;   // The names of these ids
+      ids: Pointer;             // A pointer to a TStringHash with this data
+    end;
+    
     /// A Point2D represents an location in Cartesian coordinates (x,y).
     ///
     /// @struct Point2D
@@ -79,7 +90,7 @@ interface
       x, y: Single;
       width, height: LongInt;
     end;
-
+    
     /// @struct Circle
     Circle = packed record
       center: Point2D;
@@ -90,7 +101,7 @@ interface
     LineSegment = packed record
         startPoint: Point2D;
         endPoint: Point2D;
-      end;
+    end;
 
     /// @struct Triangle
     /// @fixed_array_wrapper
@@ -220,15 +231,25 @@ interface
       next: AnimationFrame;   // What is the next frame in this animation
     end;
     
+    /// @note Use AnimationTemplate.
+    ///
     /// @struct AnimationTemplateData
     /// @via_pointer
     AnimationTemplateData = record
-      name:     String;
-      filename: String;
-      data:     Pointer;  // Pointer to key frame data
-      frames:   Array of AnimationFrame;
+      name:     String;                       // The name of the animation template so it can be retrieved from resources
+      filename: String;                       // The filename from which this template was loaded
+      
+      animationIds: NamedIndexCollection;     // The names and ids of the animations. This links to animations.
+      animations:   LongIntArray;             // The starting index of the animations in this template.
+      frames:       Array of AnimationFrame;  // The frames of the animations within this template.
     end;
     
+    /// An Animation Template stores a number of animations. Each animation is
+    /// a list of frames linked together in the order they are to be performed.
+    /// Each frame has the cell to draw, the duration it should be drawn for and
+    /// the next frame in the animation. The template can then be used to create
+    /// a number of animations.
+    ///
     /// @class AnimationTemplate
     /// @pointer_wrapper
     /// @field pointer: pointer
@@ -257,8 +278,8 @@ interface
     /// @struct BitmapData
     /// @via_pointer
     BitmapData = packed record
-      filename, name: String; // Used for locating bitmaps during load/freeing
-      surface: PSDL_Surface;  // The actual bitmap image
+      filename, name: String;         // Used for locating bitmaps during load/freeing
+      surface:        PSDL_Surface;   // The actual bitmap image
       
       width:  LongInt;        // The width of the bitmap
       height: LongInt;        // The height of the bitmap
@@ -398,8 +419,7 @@ interface
       ReverseOnce,
       Stop
     );
-
-
+    
     /// NOTE: Do not use SpriteData directly. Use Sprite.
     ///
     /// - bitmaps: The array of bitmaps related to the Sprite
