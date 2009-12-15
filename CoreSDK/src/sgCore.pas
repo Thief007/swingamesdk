@@ -576,7 +576,7 @@ implementation
       
       //Turn off alpha blending for when scr is blit onto _screen
       SDL_SetAlpha(screen^.surface, 0, 255);
-      SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, ColorLightGrey);
+      SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, 0);
 
       baseSurface := screen^.surface;
 

@@ -32,14 +32,22 @@ interface
   /// (``s1`` and ``s2``).
   ///
   /// @lib
+  /// @sn vectorFromSprite:%s toSprite:%s
+  ///
   /// @class Sprite
   /// @method VectorTo
+  /// @csn vectorToSprite:%s
   function VectorFromTo(s1, s2: Sprite): Vector;
 
   /// Returns a `Vector` that is the difference in location from the center of
   /// the sprite ``s`` to the point ``pt``.
   ///
   /// @lib
+  /// @sn vectorFromCenterOfSprite:%s toPoint:%s
+  ///
+  /// @class Sprite
+  /// @overload VectorTo VectorToPoint
+  /// @csn vectorToPoint:%s
   function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
 
 

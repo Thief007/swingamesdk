@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
+//                      : Fixed loading of animations with ranges like [,]
 // - 2009-12-10: Andrew : Got basic Animation features working
 // - 2009-12-08: Andrew : Changed name to AnimationTemplate
 // - 2009-12-08: Andrew : Created
@@ -115,7 +117,7 @@ interface
 implementation
   uses
     SysUtils, StrUtils, Classes, 
-    stringhash, MyStrUtils,   // libsrc
+    stringhash, MyStrUtils, sgNamedIndexCollection,   // libsrc
     SDL_Mixer, SDL,           // SDL
     sgShared, sgResources, sgTrace, sgAudio, sgImages;
 //=============================================================================
@@ -196,7 +198,6 @@ var
     j: LongInt;
   begin
     // Check if name is already in ids
-    
     for j := 0 to High(ids) do
     begin
       if ids[j].name = myId.name then
@@ -249,8 +250,8 @@ var
       exit;
     end;
     
-    dur := MyStrToInt(ExtractDelimited(3,data,[',']), false);
-    next := MyStrToInt(ExtractDelimited(4,data,[',']), true);
+    dur := MyStrToInt(ExtractDelimitedWithRanges(3,data), false);
+    next := MyStrToInt(ExtractDelimitedWithRanges(4,data), true);
     
     for j := Low(id_range) to High(id_range) do
     begin
@@ -339,7 +340,7 @@ var
   var
     frames: Array of AnimationFrame;
     hash: TStringHash;
-    j, nextIdx: LongInt;
+    j, nextIdx, addedIdx: LongInt;
   begin
     SetLength(frames, Length(rows));
     
@@ -374,21 +375,21 @@ var
         frames[j]^.next := frames[nextIdx];
     end;
     
-    hash := TStringHash.Create(False, Length(ids));
-    
-    for j := 0 to High(ids) do
-    begin
-      // WriteLn('Adding ', ids[j].name);
-      hash.setValue(ids[j].name, TIntegerContainer.Create(ids[j].startId));
-    end;
-    
     //We have the data ready, now lets create the linked lists...
     New(result);
     
     result^.name      := name;      // name taken from parameter of DoLoadAnimationTemplate
     result^.filename  := filename;  // filename also taken from parameter
-    result^.data      := hash;      // Keep the hash of the names
     result^.frames    := frames;    // The frames of this animation.
+    
+    SetLength(result^.animations, Length(ids));
+    InitNamedIndexCollection(result^.animationIds);   //Setup the name <-> id mappings
+    
+    for j := 0 to High(ids) do                        //Add in the animation starting indexes
+    begin
+      addedIdx := AddName(result^.animationIds, ids[j].name);   //Allocate the index
+      result^.animations[addedIdx] := ids[j].startId;           //Store the linked index
+    end;
   end;
 begin
   {$IFDEF TRACE}
@@ -505,22 +506,14 @@ var
   frmPtr: TStringHash;
   i: LongInt;
 begin
-  //WriteLn(0);
-  frmPtr := TStringHash(frm^.data);
-  //WriteLn(1);
-  frmPtr.DeleteAll();
-  frmPtr.Free();
+  FreeNamedIndexCollection(frm^.animationIds);
   
-  //WriteLn(2);
   for i := 0 to High(frm^.frames) do
   begin
-    //WriteLn(3,' ', i);
     Dispose(frm^.frames[i]);
     frm^.frames[i] := nil;
   end;
-  //WriteLn(4);
   Dispose(frm);
-  //WriteLn(5);
   frm := nil;
 end;
 
@@ -561,30 +554,22 @@ end;
 
 function StartFrame(name: String; temp: AnimationTemplate) : AnimationFrame;
 var
-  frmPtr: TStringHash;
-  obj: TIntegerContainer;
+  idx: Integer;
 begin
   result := nil;
-  if temp = nil then exit;
+  if not assigned(temp) then exit;
   
-  // WriteLn(name);
+  //Get index
+  idx := IndexOf(temp^.animationIds, name);
+  if idx < 0 then exit;
   
-  //Get hashtable
-  frmPtr := TStringHash(temp^.data);
-  obj := TIntegerContainer(frmPtr.values[name]);
-  
-  // WriteLn(HexStr(obj));
-  
-  if obj = nil then exit;
-  // WriteLn(obj.Value);
-  result := temp^.frames[obj.Value];
+  result := temp^.frames[idx];
 end;
 
 
 function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation;
 begin
   result := nil;
-  // WriteLn(HexStr(frames));
   if frames = nil then exit;
   
   new(result);
