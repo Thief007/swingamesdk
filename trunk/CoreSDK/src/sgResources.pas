@@ -112,6 +112,9 @@ interface
   /// @lib
   procedure RegisterFreeNotifier(fn: FreeNotifier);
 
+  function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload; // forward;
+  function PathToResourceWithBase(path, filename: String): String; overload; // forward;
+
 
 //=============================================================================
 implementation
@@ -131,7 +134,6 @@ implementation
     // The full path location of the current executable (or script). This is
     // particuarly useful when determining the path to resources (images, maps,
     // sounds, music etc).
-    applicationPath: String;
     
   
   procedure RegisterFreeNotifier(fn: FreeNotifier);
@@ -437,8 +439,6 @@ implementation
   //----------------------------------------------------------------------------
   
   
-  function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload; forward;
-  function PathToResourceWithBase(path, filename: String): String; overload; forward;
   
   
   function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload;

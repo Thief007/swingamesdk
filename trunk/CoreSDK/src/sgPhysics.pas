@@ -299,12 +299,18 @@ interface
   ///  
   /// @lib  BitmapPointXYCollisionPart
   function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
-
-
+  
+  
+  //---------------------------------------------------------------------------
+  // Cell Collision Tests
+  //---------------------------------------------------------------------------
+  
+  //function CellRectCollision(bmp: Bitmap; x, y, cellId: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload;
+  
   //---------------------------------------------------------------------------
   // Bitmap <-> Bitmap Collision Tests
   //---------------------------------------------------------------------------
-
+  
   /// Returns True if two bitmaps have collided using per pixel testing if required.
   /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
   ///
@@ -530,13 +536,15 @@ implementation
     result := BitmapRectCollision(bmp, x, y, false, rect);
   end;
   
+  
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
   var
     bmp: Bitmap;
     offX1, offY1: LongInt;
   begin
-    if s = nil then begin RaiseException('The specified sprite is nil'); exit; end;
-
+    result := false;
+    if s = nil then exit;
+    
     if width < 0 then
     begin
       x := x + width;
@@ -551,15 +559,19 @@ implementation
     
     if (width < 1) or (height < 1) then exit;
     
+    // Check the sprite's base rectangle
     if s^.position.y + SpriteHeight(s) <= y then result := false
     else if s^.position.y >= y + height then result := false
     else if s^.position.x + SpriteWidth(s) <= x then result := false
     else if s^.position.x >= x + width then result := false
     else
     begin
-      if not s^.usePixelCollision then result := true
+      //  Check pixel level details
+      if not s^.usePixelCollision then 
+        result := true
       else
       begin
+        
         if s^.spriteKind = AnimMultiSprite then
         begin
           offX1 := (s^.currentCell mod s^.cols) * s^.width;
