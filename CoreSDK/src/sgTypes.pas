@@ -439,17 +439,25 @@ interface
     /// @struct SpriteData
     /// @via_pointer
     SpriteData = packed record
-      //  Images used by the sprite
-      bitmaps: Array of Bitmap;
+      bitmaps:           Array of Bitmap;      // Layers of the sprites
+      layerOffsets:     Array of Point2D;     // Offsets from drawing this layer
+      visibleLayers:    Array of Boolean;     // Indicator if this layer is visible
+      collisionLayers:  Array of Boolean;     // Indicator if this layer should be checked for collisions
+      layerIds:         NamedIndexCollection; // The name <-> ids mapping for layers
+      
+      values:   Array of Single;              // Values associated with this sprite
+      valueIds: NamedIndexCollection;         // The name <-> ids mappings for values
+      
+      animationData:    Animation;            // The data used to animate this sprite
       
       mass:     Single;
       rotation: Single;
       scale:    Single;
       
-      position: Point2D;
-      velocity: Vector;
+      position: Point2D;    // The game location of the sprite
+      velocity: Vector;     // The velocity of the sprite
       
-      usePixelCollision: Boolean;
+      usePixelCollision: Boolean;   //
       
       // Can be simpler?
       spriteKind: SpriteKind;
@@ -470,7 +478,7 @@ interface
       // Move to animation
       frameCount:     Single;
       currentCell:    LongInt;
-      framesPerCell:  LongIntArray; //Array of LongInt;
+      framesPerCell:  LongIntArray;
       endingAction:   SpriteEndingAction;
       hasEnded:       Boolean;
       reverse:        Boolean;

@@ -108,6 +108,9 @@ interface
     
   // Global variables that can be shared.
   var
+    // The base path to the program's executable.
+    applicationPath: String;
+    
     // This `Bitmap` wraps the an SDL image (and its double-buffered nature)
     // which is used to contain the current "screen" rendered to the window.
     screen: Bitmap;
