@@ -253,6 +253,25 @@ interface
   /// @csn updatePct:%s withSound:%s
   procedure UpdateAnimation(anim: Animation; pct: Single; withSound: Boolean); overload;
   
+  /// Restarts the animation. This may play a sound effect if the first frame
+  /// triggers a sound.
+  /// 
+  /// @lib ResetAnimation
+  /// 
+  /// @class Animation
+  /// @method Reset
+  procedure RestartAnimation(anim: Animation); overload;
+  
+  /// Restarts the animation. This may play a sound effect if the first frame
+  /// triggers a sound and withSound is true.
+  /// 
+  /// @lib ResetAnimationWithSound
+  /// @sn resetAnimation:%s withSound:%s
+  /// 
+  /// @class Animation
+  /// @overload Reset ResetWithSound
+  /// @csn resetWithSound:%s
+  procedure RestartAnimation(anim: Animation; withSound: Boolean); overload;
   
   //----------------------------------------------------------------------------
   // Query Animation
@@ -553,6 +572,8 @@ var
       end
       else
         frames[j]^.next := frames[nextIdx];
+        
+      //WriteLn(j, ' = ', frames[j]^.cellIndex, ' -> ', nextIdx);
     end;
     
     //We have the data ready, now lets create the linked lists...
@@ -569,6 +590,7 @@ var
     begin
       addedIdx := AddName(result^.animationIds, ids[j].name);   //Allocate the index
       result^.animations[addedIdx] := ids[j].startId;           //Store the linked index
+      //WriteLn('load ids: ', addedIdx, ' - startid ', ids[j].startId)
     end;
   end;
 begin
@@ -756,15 +778,17 @@ begin
   if frames = nil then exit;
   
   new(result);
-  result^.firstFrame    := frames^.frames[identifier];
-  result^.currentFrame  := result^.firstFrame;
-  result^.lastFrame     := result^.firstFrame;
-  result^.frameTime     := 0;
-  result^.enteredFrame  := true;
+  //WriteLn('Creating animation ', identifier);
+  result^.firstFrame    := frames^.frames[frames^.animations[identifier]];
+  RestartAnimation(result, withSound);
+  // result^.currentFrame  := result^.firstFrame;
+  // result^.lastFrame     := result^.firstFrame;
+  // result^.frameTime     := 0;
+  // result^.enteredFrame  := true;
   // result^.hasEnded      := false;
   
-  if assigned(result^.currentFrame) and assigned(result^.currentFrame^.sound) and withSound then
-    PlaySoundEffect(result^.currentFrame^.sound);
+  // if assigned(result^.currentFrame) and assigned(result^.currentFrame^.sound) and withSound then
+  //   PlaySoundEffect(result^.currentFrame^.sound);
 end;
 
 function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
@@ -796,7 +820,7 @@ begin
   anim^.frameTime     := anim^.frameTime + pct;
   anim^.enteredFrame  := false;
   
-  if anim^.frameTime > anim^.currentFrame^.duration then
+  if anim^.frameTime >= anim^.currentFrame^.duration then
   begin
     anim^.frameTime := anim^.frameTime - anim^.currentFrame^.duration; //reduce the time
     anim^.lastFrame := anim^.currentFrame; //store last frame
@@ -832,6 +856,25 @@ begin
   else 
     result := not Assigned(anim^.currentFrame);
 end;
+
+procedure RestartAnimation(anim: Animation); overload;
+begin
+  RestartAnimation(anim, true);
+end;
+
+procedure RestartAnimation(anim: Animation; withSound: Boolean); overload;
+begin
+  if not assigned(anim) then exit;
+  
+  anim^.currentFrame  := anim^.firstFrame;
+  anim^.lastFrame     := anim^.firstFrame;
+  anim^.frameTime     := 0;
+  anim^.enteredFrame  := true;
+  
+  if assigned(anim^.currentFrame) and assigned(anim^.currentFrame^.sound) and withSound then
+    PlaySoundEffect(anim^.currentFrame^.sound);
+end;
+
 
 function AnimationCurrentCell(anim: Animation): LongInt;
 begin
@@ -937,6 +980,7 @@ begin
     finally TraceExit('sgAnimations', 'DrawAnimation', ''); end;
   {$ENDIF}
 end;
+
 
 
 //=============================================================================
