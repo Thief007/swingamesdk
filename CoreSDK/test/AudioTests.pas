@@ -5,7 +5,7 @@ uses
 procedure Main();
 var
   snd, snd2, snd3: SoundEffect;
-  mus, mus1: Music;
+  mus, mus1, miditest: Music;
   i: Integer;
 begin
   OpenAudio();
@@ -20,6 +20,7 @@ begin
   snd := MapSoundEffect('shock', 'shock.wav');
   snd2 := MapSoundEffect('menu', 'menu.ogg');
   snd3 := MapSoundEffect('menu3', 'menu.ogg');
+  miditest := MapMusic('ASNY', 'aintseennothingyet.mid');
   
   WriteLn(HexStr(mus), ' = Loaded ', MusicName(mus), ' for file ', MusicFilename(mus));
   WriteLn(HexStr(snd), ' = Loaded ', SoundEffectName(snd), ' for file ', SoundEffectFilename(snd));
@@ -37,6 +38,13 @@ begin
   
   FadeMusicOut(500);
   Delay(500);
+  
+  WriteLn('Should be playing midi any second...');
+  FadeMusicIn(miditest, 500);
+  Delay(90000);
+  WriteLn('Midi is finished...');
+  FadeMusicOut(500);
+  Delay(1000);
   
   for i := 0 to 3 do
   begin
