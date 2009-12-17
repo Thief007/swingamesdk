@@ -524,7 +524,7 @@ uses sgTypes;
   
 //=============================================================================
 implementation
-uses sgCore, sgShared, sgResources, sgTrace, sgCamera,
+uses sgCore, sgShared, sgResources, sgTrace, sgCamera, sgGeometry,
      stringhash,         // libsrc
      SysUtils,
      SDL_gfx, SDL, SDL_Image // sdl
@@ -1073,15 +1073,9 @@ end;
 //---------------------------------------------------------------------------
 
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
-var
-  srcX, srcY: Integer;
 begin
-  if (cell < 0) or (cell >= src^.cellCount) then exit;
-  
-  srcX := (cell mod src^.cellCols) * src^.cellW;
-  srcY := (cell - (cell mod src^.cellCols)) div src^.cellCols * src^.cellH;
-  
-  DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
+  //DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
+  DrawBitmapPart(dest, src, RectangleOfCell(src, cell), x, y);
 end;
 
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;

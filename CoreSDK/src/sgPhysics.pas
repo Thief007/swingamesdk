@@ -7,6 +7,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-17: Andrew : Removed bitmap bbox collision tests (use rect versions)
+//                      : Added Cell collision functions
 // - 2009-06-29: Andrew : Removed all need for Collision Side
 //                      : Changed to use Circle Type
 // - 2009-06-26: Andrew : Added CircleRectCollision
@@ -111,37 +113,18 @@ interface
   /// @class Sprite
   /// @overload RectCollision RectangleCollision
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
-
-
+  
+  
   //---------------------------------------------------------------------------
   // Sprite <-> Bitmap Collision Detection
   //---------------------------------------------------------------------------
-
-  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``.
-  /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
-  ///
-  /// @lib SpriteBitmapBBoxCollision
-  /// @class Sprite
-  /// @overload BitmapCollision BitmapBBoxCollision
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
-
-  /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp``.
-  /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
-  ///
-  /// @lib SpriteBitmapAtPointBBoxCollision
-  /// @class Sprite
-  /// @overload BitmapCollision BitmapAtPointBBoxCollision
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
-
+  
   /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
   /// pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   ///
-  /// @lib SpriteBitmapBBoxCollision(s, bmp, x, y, False)
+  /// @lib
+  ///
   /// @uname SpriteBitmapCollision
   /// @class Sprite
   /// @method BitmapCollision
@@ -151,132 +134,79 @@ interface
   /// pixel level testing if required.
   /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
   ///
-  /// @lib SpriteBitmapAtPointBBoxCollision(s, bmp, pt, False)
+  /// @lib SpriteBitmapAtPointCollision
   /// @uname SpriteBitmapAtPointCollision
   /// @class Sprite
   /// @overload BitmapCollision BitmapAtPointCollision
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
-
-  /// Determines if the `Sprite` ``s`` has collided with a part (``rect``) of
-  /// the bitmap ``bmp`` using pixel level testing if required.
-  /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
-  ///
-  /// @lib SpriteBitmapPartCollision
-  /// @class Sprite
-  /// @overload BitmapCollision BitmapPartCollision
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle; bbox: Boolean): Boolean; overload;
-
-
+  
+  
   //---------------------------------------------------------------------------
   // Bitmap <-> Rectangle Collision Tests
   //---------------------------------------------------------------------------
-
-  /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
-  /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The rectangles world position (``rectX`` and ``rectY``) and size
-  /// (``rectWidth`` and ``rectHeight``) need to be provided.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
-  ///
-  /// @lib BitmapRectBBoxCollision
-  /// @class Bitmap
-  /// @overload RectCollision RectBBoxCollision
-  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-
-  /// Returns True if the bitmap ``bmp`` has collided with the rectangle specified.
-  /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The rectangle ``rect`` needs to be provided (in world coordinates).
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
-  ///
-  /// @lib BitmapRectangleBBoxCollision
-  /// @class Bitmap
-  /// @overload RectCollision RectangleBBoxCollision
-  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload;
-
+  
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle
   /// specified using pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangles world position (``rectX`` and ``rectY``) and size
   /// (``rectWidth`` and ``rectHeight``) need to be provided.
   ///
-  /// @lib BitmapRectBBoxCollision(bmp, x, y, False, rectX, rectY, rectWidth, rectHeight)
+  /// @lib BitmapRectCollision
   /// @uname BitmapRectCollision
   /// @class Bitmap
   /// @method RectCollision
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-
+  
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle
   /// specified using pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangle ``rect`` needs to be provided in world coordinates.
   ///
-  /// @lib BitmapRectangleBBoxCollision(bmp, x, y, False, rect)
+  /// @lib BitmapRectangleCollision
   /// @uname BitmapRectangleCollision
   /// @class Bitmap
   /// @overload RectCollision RectangleCollision
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
-
-  /// Returns True if a ``part`` (rectangle) of the bitmap ``bmp`` has collided
-  /// with the rectangle (``rect``) specified.
-  /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The rectangle ``rect`` needs to be provided in world coordinates.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
+  
+  /// Returns True if the indicated part of the bitmap has collided with the specified
+  /// rectangle.
   ///
-  /// @lib
+  /// @lib BitmapPartRectCollision
+  ///
   /// @class Bitmap
-  /// @method PartRectCollision
-  function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
-
-
+  /// @overload RectCollision RectPartCollision
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const part, rect: Rectangle): Boolean; overload;
+  
+  /// Returns True if the indicated part of the bitmap has collided with the specified
+  /// rectangle.
+  ///
+  /// @lib BitmapPartAtPtRectCollision
+  ///
+  /// @class Bitmap
+  /// @overload RectCollision RectPartCollisionAtPoint
+  function BitmapRectCollision(bmp: Bitmap; const pt:Point2D; const part, rect: Rectangle): Boolean; overload;
+  
   //---------------------------------------------------------------------------
   // Bitmap <-> Point
   //---------------------------------------------------------------------------
-
-  /// Returns True if a point (``ptX``,``ptY``) is located within the bitmap
-  /// ``bmp`` when it is drawn at ``x``,``y``.
-  /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise
-  /// pixel level testing is used.
-  ///
-  /// @lib BitmapPointBBoxCollision
-  /// @class Bitmap
-  /// @overload PointCollision PointBBoxCollision
-  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
   
   /// Returns True if a point (``ptX``,``ptY``) is located within the bitmap
   /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
   ///
-  /// @lib BitmapPointBBoxCollision(bmp, x, y, False, ptX, ptY)
+  /// @lib BitmapPointCollision
   /// @uname BitmapPointCollision
   /// @class Bitmap
   /// @method PointCollision
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
   
   /// Returns True if a point (``pt``) is located within the bitmap
-  /// ``bmp`` when it is drawn at ``x``,``y``.
-  /// The ``x`` and ``y`` values specify the world location of the bitmap.
-  /// The point ``pt`` needs to be provided in world coordinates.
-  /// If ``bbox`` is true only simple bounding box testing is used, otherwise 
-  /// pixel level testing is used.
-  ///  
-  /// @lib BitmapPointPtCollisionBBox
-  /// @class Bitmap
-  /// @overload PointCollision PointPtBBoxCollision
-  function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const pt: Point2D): Boolean; overload;
-  
-  /// Returns True if a point (``pt``) is located within the bitmap
   /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The point ``pt`` needs to be provided in world coordinates.
   ///
-  /// @lib BitmapPointPtCollisionBBox(bmp, x, y, False, pt)
+  /// @lib BitmapPointPtCollision
   /// @uname BitmapPointPtCollision
   /// @class Bitmap
   /// @overload PointCollision PointPtCollision
@@ -302,19 +232,13 @@ interface
   
   
   //---------------------------------------------------------------------------
-  // Cell Collision Tests
-  //---------------------------------------------------------------------------
-  
-  //function CellRectCollision(bmp: Bitmap; x, y, cellId: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload;
-  
-  //---------------------------------------------------------------------------
   // Bitmap <-> Bitmap Collision Tests
   //---------------------------------------------------------------------------
   
   /// Returns True if two bitmaps have collided using per pixel testing if required.
   /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
   ///
-  /// @lib BitmapsBBoxCollided(bmp1, x1, y1, False, bmp2, x2, y2, False)
+  /// @lib BitmapsCollided
   /// @uname BitmapsCollided
   /// @class Bitmap
   /// @method BitmapCollision
@@ -323,54 +247,49 @@ interface
   /// Returns True if two bitmaps have collided using per pixel testing if required. 
   /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
   ///
-  /// @lib BitmapsBBoxAtPointsCollided(bmp1, pt1, False, bmp2, pt2, False)
+  /// @lib BitmapsAtPointsCollided
   /// @uname BitmapsAtPointsCollided
   /// @class Bitmap
   /// @overload BitmapCollision BitmapAtPointCollision
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   
-  /// Returns True if two bitmaps have collided. 
-  /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
-  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
-  /// used, otherwise a longer per pixel check is used (if required) in the collision region.
-  ///
-  /// @lib BitmapsBBoxCollided
-  /// @class Bitmap
-  /// @overload BitmapCollision BitmapBBoxCollision
-  function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
-  
-  /// Returns True if two bitmaps have collided using per pixel testing if required. 
-  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
-  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is 
-  /// used, otherwise a longer per pixel check is used (if required) in the collision region. 
-  ///
-  /// @lib BitmapsBBoxAtPointsCollided
-  /// @class Bitmap
-  /// @overload BitmapCollision BitmapAtPointsBBoxCollision
-  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; bbox2: Boolean): Boolean; overload;
-  
   /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) of the two 
   /// bitmaps (``bmp1`` and ``bmpt2``) have collided, using pixel level collision if required. 
   /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
   ///
-  /// @lib BitmapsPartsBBoxCollided(bmp1, pt1, part1, False, bmp2, pt2, part2, False)
+  /// @lib BitmapsPartsCollided
   /// @uname BitmapPartsCollided
   /// @class Bitmap
   /// @overload BitmapCollision BitmapPartCollision
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
   
-  /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) 
-  /// of the two bitmaps (``bmp1`` and ``bmpt2``) have collided. 
-  /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps. 
-  /// If a ``bbox`` parameter is true then only a simple (quick) bounding box test is
-  /// used, otherwise a slower per pixel test is used (if required) in the collision region. 
-  ///
-  /// @lib BitmapsPartsBBoxCollided
-  /// @class Bitmap
-  /// @overload BitmapCollision BitmapPartsBBoxCollision
-  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
-
-
+  
+  //---------------------------------------------------------------------------
+  // Cell based Collision Tests
+  //---------------------------------------------------------------------------
+  
+  function CellsCollided( bmp1: Bitmap; cell1, x1, y1: LongInt; 
+                          bmp2: Bitmap; cell2, x2, y2: LongInt): Boolean;
+  
+  function CellsCollided( bmp1: Bitmap; cell1: LongInt; const pt1: Point2D; 
+                          bmp2: Bitmap; cell2: LongInt; const pt2: Point2D): Boolean;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell, x1, y1: LongInt; 
+                              bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; const pt1: Point2D; 
+                              bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; x1, y1: LongInt;
+                              bmp2: Bitmap; x2, y2: LongInt; const part: Rectangle): Boolean; overload;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; const pt1: Point2D;
+                              bmp2: Bitmap; const pt2:Point2D; const part: Rectangle): Boolean; overload;
+  
+  function CellRectCollided(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean;
+  
+  function CellRectCollided(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean;
+  
   //---------------------------------------------------------------------------
   // Geometry Collision Tests
   //---------------------------------------------------------------------------
@@ -464,77 +383,98 @@ implementation
 
   //---------------------------------------------------------------------------
 
-  function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; bbox: Boolean; const rect: Rectangle): Boolean;
+  function BitmapPartRectCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const rect: Rectangle): Boolean;
   var
     i, j: LongInt;
     left1, right1, left2, right2, overRight, overLeft: LongInt;
     top1, bottom1, top2, bottom2, overTop, overBottom: LongInt;
     yPixel1, xPixel1: LongInt;
   begin
-    result := RectanglesIntersect(RectangleFrom(x, y, part.width, part.height), rect);
-    if  bbox or (not result) then exit;
-
-    //reset result
     result := false;
-
+    
+    if (not assigned(bmp)) or
+       (not RectanglesIntersect(RectangleFrom(x, y, part.width, part.height), rect)) then exit;
+    
     left1 := x;
     right1 := x + part.width - 1;
     top1 := y;
     bottom1 := y + part.height - 1;
-
+    
     left2 := Round(rect.x);
     right2 := Round(rect.x) + rect.width - 1;
     top2 := Round(rect.y);
     bottom2 := Round(rect.y) + rect.height - 1;
-
+    
     if bottom1 > bottom2 then overBottom := bottom2
     else overBottom := bottom1;
-
+    
     if top1 < top2 then overTop := top2
     else overTop := top1;
-
+    
     if right1 > right2 then overRight := right2
     else overRight := right1;
-
+    
     if left1 < left2 then overLeft := left2
     else overLeft := left1;
-
+    
     for i := overTop to overBottom do
     begin
       yPixel1 := i - top1 + Round(part.y);
-
+      
       for j := overLeft to overRight do
       begin
         xPixel1 := j - left1 + Round(part.x);
-
+        
         if PixelDrawnAtPoint(bmp, xPixel1, yPixel1) then
         begin
           result := true;
           exit;
         end;
       end;
-    end;    
-  end;
-
-  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
-  begin
-    result := BitmapPartRectCollision(bmp, x, y, RectangleFrom(0, 0, bmp), bbox, rect);
+    end;
   end;
   
-  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
-  begin
-    result := BitmapRectCollision(bmp, x, y, bbox, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
-  end;
-
-  function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
-  begin
-    result := BitmapRectCollision(bmp, x, y, false, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
-  end;
-
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
   begin
-    result := BitmapRectCollision(bmp, x, y, false, rect);
+    result := BitmapPartRectCollision(bmp, x, y, RectangleFrom(0, 0, bmp), rect);
   end;
+  
+  function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const part, rect: Rectangle): Boolean; overload;
+  begin
+    result := BitmapPartRectCollision(bmp, x, y, part, rect);
+  end;
+  
+  /// Returns True if the indicated part of the bitmap has collided with the specified
+  /// rectangle.
+  ///
+  /// @lib BitmapPartAtPtRectCollision
+  ///
+  /// @class Bitmap
+  /// @overload RectCollision RectPartCollisionAtPoint
+  function BitmapRectCollision(bmp: Bitmap; const pt:Point2D; const part, rect: Rectangle): Boolean; overload;
+  begin
+    result := BitmapPartRectCollision(bmp, Round(pt.x), Round(pt.y), part, rect);
+  end;
+  
+  // function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
+  // begin
+  //   result := BitmapPartRectCollision(bmp, x, y, RectangleFrom(0, 0, bmp), bbox, rect);
+  // end;
+  // 
+  // function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
+  // begin
+  //   result := BitmapRectCollision(bmp, x, y, bbox, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
+  // end;
+  
+  function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
+  begin
+    result := BitmapRectCollision(bmp, x, y, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
+  end;
+  
+  // function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
+  // begin
+  //   result := BitmapRectCollision(bmp, x, y, false, rect);
+  // end;
   
   
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
@@ -584,10 +524,11 @@ implementation
           offX1 := 0;
           offY1 := 0;
         end;
+        
         result := BitmapPartRectCollision(
                     bmp, Round(s^.position.x), Round(s^.position.y), 
                     RectangleFrom(offX1, offY1, s^.width, s^.height),
-                    s^.usePixelCollision = false, RectangleFrom(x, y, width, height));
+                    RectangleFrom(x, y, width, height));
       end;
     end;
   end;
@@ -619,9 +560,11 @@ implementation
   ///
   /// @returns          True if the bitmaps collide.
   /// 
+  
+  // offset... are the part 
   function CollisionWithinBitmapImages(
-             bmp1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: LongInt; bbox1: Boolean;
-             bmp2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: LongInt; bbox2: Boolean
+             bmp1: Bitmap; x1, y1, w1, h1, offsetX1, offsetY1: LongInt; //bbox1: Boolean;
+             bmp2: Bitmap; x2, y2, w2, h2, offsetX2, offsetY2: LongInt //bbox2: Boolean
            ): Boolean; overload;
   var
     left1, left2, overLeft: LongInt;
@@ -667,8 +610,7 @@ implementation
         xPixel1 := j - left1 + offsetX1;
         xPixel2 := j - left2 + offsetX2;
 
-        if (bbox1 or PixelDrawnAtPoint(bmp1, xPixel1, yPixel1))
-           and (bbox2 or PixelDrawnAtPoint(bmp2, xPixel2, yPixel2)) then
+        if PixelDrawnAtPoint(bmp1, xPixel1, yPixel1) and PixelDrawnAtPoint(bmp2, xPixel2, yPixel2) then
         begin
           result := true;
           exit;
@@ -677,33 +619,51 @@ implementation
     end;
   end;
 
-  function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
-  begin
-    result := CollisionWithinBitmapImages(
-                bmp1, x1, y1, bmp1^.width, bmp1^.height, 0, 0, bbox1, 
-                bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0, bbox2);
-  end;
-
+  // function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
+  // begin
+  //   result := CollisionWithinBitmapImages(
+  //               bmp1, x1, y1, bmp1^.width, bmp1^.height, 0, 0, bbox1, 
+  //               bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0, bbox2);
+  // end;
+  
   /// Performs a collision detection within two bitmaps at the given x, y
   /// locations using per pixel collision detection. This checks to see if
   /// two non-transparent pixels collide.
-  ///
-  /// @param bmp1, bmp2:  The bitmap images to check for collision
-  /// @param x1, y1:      The x,y location of bmp 1
-  /// @param x2, y2:      The x,y location of bmp 2
-  ///
-  /// @returns        True if the bitmaps collide.
   function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
-    result := CollisionWithinBitmapImages(bmp1, x1, y1, false, bmp2, x2, y2, false);
+    result := CollisionWithinBitmapImages(
+                bmp1, x1, y1, bmp1^.width, bmp1^.height, 0, 0, 
+                bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0);
   end;
-
+  
+  // ///
+  // /// @param bmp1, bmp2:  The bitmap images to check for collision
+  // /// @param x1, y1:      The x,y location of bmp 1
+  // /// @param x2, y2:      The x,y location of bmp 2
+  // ///
+  // /// @returns        True if the bitmaps collide.
+  // function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  // begin
+  //   result := CollisionWithinBitmapImages(bmp1, x1, y1, false, bmp2, x2, y2, false);
+  // end;
+  // 
   function CollisionWithinSpriteImages(s1, s2: Sprite): Boolean;
   var
     bmp1, bmp2: Bitmap;
     offX1, offY1, offX2, offY2: LongInt;
   begin
     if (s1 = nil) or (s2 = nil) then begin RaiseException('One of the sprites specified is nil'); exit; end;
+    
+    if not s1^.usePixelCollision then 
+    begin
+      result := SpriteRectCollision(s2, RectangleFrom(s1));
+      exit;
+    end
+    else if not s2^.usePixelCollision then 
+    begin
+      result := SpriteRectCollision(s1, RectangleFrom(s2));
+      exit;
+    end;
     
     if s1^.spriteKind = AnimMultiSprite then
     begin
@@ -732,10 +692,8 @@ implementation
     end;
     
     result := CollisionWithinBitmapImages(
-                bmp1, Round(s1^.position.x), Round(s1^.position.y), SpriteWidth(s1), SpriteHeight(s1), 
-                offX1, offY1, not s1^.usePixelCollision, 
-                bmp2, Round(s2^.position.x), Round(s2^.position.y), SpriteWidth(s2), SpriteHeight(s2),
-                offX2, offY2, not s2^.usePixelCollision);
+                bmp1, Round(s1^.position.x), Round(s1^.position.y), SpriteWidth(s1), SpriteHeight(s1), offX1, offY1, 
+                bmp2, Round(s2^.position.x), Round(s2^.position.y), SpriteWidth(s2), SpriteHeight(s2), offX2, offY2);
   end;
 
   /// Checks to see if two bitmaps have collided, performs a bbox check
@@ -750,45 +708,46 @@ implementation
   /// @returns          True if the bitmaps collide.
   function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
-    result := BitmapsCollided(bmp1, x1, y1, false, bmp2, x2, y2, false);
+    result := BitmapsCollided(bmp1, x1, y1, bmp2, x2, y2);
   end;
 
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   begin
-    result := BitmapsCollided(bmp1, Round(pt1.x), Round(pt1.y), false, 
-                                  bmp2, Round(pt2.x), Round(pt2.y), false);
+    result := BitmapsCollided(bmp1, Round(pt1.x), Round(pt1.y), 
+                              bmp2, Round(pt2.x), Round(pt2.y));
   end;
-
-
-  function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
-  begin
-    if not BitmapRectCollision(bmp1, x1, y1, true, x2, y2, bmp2^.width, bmp2^.height) then
-      result := false
-    else
-      result := CollisionWithinBitmapImages(bmp1, x1, y1, bbox1, bmp2, x2, y2, bbox2);
-  end;
+  
+  
+  // function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
+  // begin
+  //   if not BitmapRectCollision(bmp1, x1, y1, true, x2, y2, bmp2^.width, bmp2^.height) then
+  //     result := false
+  //   else
+  //     result := CollisionWithinBitmapImages(bmp1, x1, y1, bbox1, bmp2, x2, y2, bbox2);
+  // end;
   
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
   begin
-    result := BitmapsCollided(bmp1, pt1, part1, true, bmp2, pt2, part2, true);  
+  //   result := BitmapsCollided(bmp1, pt1, part1, true, bmp2, pt2, part2, true);  
+  // end;
+  // 
+  // function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; bbox2: Boolean): Boolean; overload;
+  // begin
+    result := BitmapsCollided(bmp1, Round(pt1.x), Round(pt1.y), 
+                              bmp2, Round(pt2.x), Round(pt2.y));
   end;
   
-  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; bbox2: Boolean): Boolean; overload;
-  begin
-    result := BitmapsCollided(bmp1, Round(pt1.x), Round(pt1.y), bbox1, bmp2, Round(pt2.x), Round(pt2.y), bbox2);
-  end;
-  
-  function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
-  begin
-    if not BitmapRectCollision(bmp1, Round(pt1.x), Round(pt1.y), true, Round(pt2.x), Round(pt2.y), part2.width, part2.height) then
-      result := false
-    else if bbox1 and bbox2 then
-      result := true
-    else
-      result := CollisionWithinBitmapImages(
-                  bmp1, Round(pt1.x), Round(pt1.y), part1.width, part1.height, Round(part1.x), Round(part1.y), bbox1, 
-                  bmp2, Round(pt2.x), Round(pt2.y), part2.width, part2.height, Round(part2.x), Round(part2.y), bbox2);
-  end;
+  // function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bbox1: Boolean; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle; bbox2: Boolean): Boolean; overload;
+  // begin
+  //   if not BitmapRectCollision(bmp1, Round(pt1.x), Round(pt1.y), true, Round(pt2.x), Round(pt2.y), part2.width, part2.height) then
+  //     result := false
+  //   else if bbox1 and bbox2 then
+  //     result := true
+  //   else
+  //     result := CollisionWithinBitmapImages(
+  //                 bmp1, Round(pt1.x), Round(pt1.y), part1.width, part1.height, Round(part1.x), Round(part1.y), bbox1, 
+  //                 bmp2, Round(pt2.x), Round(pt2.y), part2.width, part2.height, Round(part2.x), Round(part2.y), bbox2);
+  // end;
 
   function SpritesCollided(s1, s2: Sprite): Boolean;
   begin
@@ -809,32 +768,27 @@ implementation
   end;
 
 
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
-  begin
-    result := SpriteBitmapCollision(s, bmp, x, y, false);
-  end;
-
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
-  begin
-    result := SpriteBitmapCollision(s, bmp, pt.x, pt.y, false);
-  end;
+  // function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
+  // begin
+  //   result := SpriteBitmapCollision(s, bmp, x, y, false);
+  // end;
+  // 
+  // function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
+  // begin
+  //   result := SpriteBitmapCollision(s, bmp, pt.x, pt.y, false);
+  // end;
   
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle; bbox: Boolean): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle): Boolean; overload;
   var
     tmp: Bitmap;
     offX, offY: LongInt;
   begin
-    if not SpriteRectCollision(s, pt.x, pt.y, part.width, part.height) then
+    if not s^.usePixelCollision then
     begin
-      result := false;
-      exit;
-    end
-    else if bbox then 
-    begin
-      result := true;
+      result := BitmapRectCollision(bmp, pt, part, RectangleFrom(s));
       exit;
     end;
-
+    
     if s^.spriteKind = AnimMultiSprite then
     begin
       offX := (s^.currentCell mod s^.cols) * s^.width;
@@ -849,8 +803,8 @@ implementation
     end;
     
     result := CollisionWithinBitmapImages(
-                tmp, Round(s^.position.x), Round(s^.position.y),  s^.width, s^.height, offX, offY, not s^.usePixelCollision, 
-                bmp, Round(pt.x), Round(pt.y), part.width, part.height, Round(part.x), Round(part.y), bbox);
+                tmp, Round(s^.position.x), Round(s^.position.y),  s^.width, s^.height, offX, offY, 
+                bmp, Round(pt.x), Round(pt.y), part.width, part.height, Round(part.x), Round(part.y));
   end;
   
   /// Determines if a sprite has collided with a bitmap using pixel level
@@ -863,14 +817,14 @@ implementation
   ///
   /// @returns               True if the bitmap has collided with the sprite.
   ///
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single; bbox: Boolean): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, PointAt(x, y), RectangleFrom(bmp), bbox);
+    result := SpriteBitmapCollision(s, bmp, PointAt(x, y), RectangleFrom(bmp));
   end;
 
-  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; bbox: Boolean): Boolean; overload;
+  function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, pt, RectangleFrom(bmp), bbox);
+    result := SpriteBitmapCollision(s, bmp, pt, RectangleFrom(bmp));
   end;
   
   function CircleLineCollision(s: Sprite; const line: LineSegment): Boolean;
@@ -1219,6 +1173,91 @@ implementation
       end;
     end;
   end;
-
+  
+  //---------------------------------------------------------------------------
+  
+  function CellsCollided( bmp1: Bitmap; cell1, x1, y1: LongInt; 
+                          bmp2: Bitmap; cell2, x2, y2: LongInt): Boolean;
+  var
+    r1, r2: Rectangle;
+  begin
+    r1 := RectangleOfCell(bmp1, cell1);
+    r2 := RectangleOfCell(bmp2, cell2);
+    
+    result := 
+      CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
+                                  bmp2, x2, y2, r2.width, r2.height, Round(r2.x), Round(r2.y));
+  end;
+  
+  function CellsCollided( bmp1: Bitmap; cell1: LongInt; const pt1: Point2D; 
+                          bmp2: Bitmap; cell2: LongInt; const pt2: Point2D): Boolean;
+  begin
+    result := CellsCollided(bmp1, cell1, Round(pt1.x), Round(pt1.y),
+                            bmp2, cell2, Round(pt2.x), Round(pt2.y));
+  end;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell, x1, y1: LongInt; 
+                              bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
+  begin
+    result := CellBitmapCollided( bmp1, cell, x1, y1, 
+                                  bmp2, x2, y2, RectangleFrom(0, 0, bmp2));
+    // if not assigned(bmp2) then 
+    // begin
+    //   result := false;
+    //   exit;
+    // end;
+    // 
+    // r1 := RectangleOfCell(bmp1, cell);
+    // 
+    // result := 
+    //   CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
+    //                               bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0);
+  end;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; const pt1: Point2D; 
+                              bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
+  begin
+    result := CellBitmapCollided( bmp1, cell, Round(pt1.x), Round(pt1.y),
+                                  bmp2, Round(pt2.x), Round(pt2.y));
+  end;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; x1, y1: LongInt;
+                              bmp2: Bitmap; x2, y2: LongInt; const part: Rectangle): Boolean; overload;
+  var
+    r1: Rectangle;
+  begin
+    if not assigned(bmp2) then 
+    begin
+      result := false;
+      exit;
+    end;
+    
+    r1 := RectangleOfCell(bmp1, cell);
+    
+    result := 
+      CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
+                                  bmp2, x2, y2, part.width, part.height, Round(part.x), Round(part.y));
+  end;
+  
+  function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; const pt1: Point2D;
+                              bmp2: Bitmap; const pt2:Point2D; const part: Rectangle): Boolean; overload;
+  begin
+    result := CellBitmapCollided( bmp1, cell, Round(pt1.x), Round(pt1.y),
+                                  bmp2, Round(pt2.x), Round(pt2.y), part);
+  end;
+  
+  function CellRectCollided(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean;
+  var
+    r1: Rectangle;
+  begin
+    r1 := RectangleOfCell(bmp, cell);
+    
+    result := BitmapPartRectCollision(bmp, x, y, r1, rect);
+  end;
+  
+  function CellRectCollided(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean;
+  begin
+    result := CellRectCollided(bmp, cell, Round(pt.x), Round(pt.y), rect);
+  end;
 end.
 

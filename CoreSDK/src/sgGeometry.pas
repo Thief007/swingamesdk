@@ -263,6 +263,18 @@ interface
 
   /// @lib
   function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
+  
+  /// Returns a rectangle for the location of the indicated cell within the
+  /// bitmap.
+  /// 
+  /// @lib RectangleOfBitmapCell
+  /// @sn rectangleIn:%s ofCell:%s
+  /// 
+  /// @class Bitmap
+  /// @method RectangleOfCell
+  /// @csn rectangleOfCell:%s
+  function RectangleOfCell(src: Bitmap; cell: LongInt): Rectangle; overload;
+  
   /// @lib RectangleForBitmap
   function RectangleFrom(bmp: Bitmap): Rectangle; overload;
   /// @lib RectangleForBitmapAtXY
@@ -348,12 +360,12 @@ interface
   /// @lib
   function LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
-  /// Creates a Polygon from the passed in points, the polygon is made up of
-  /// the points in the array and the last point does join back to the start
-  /// point.
-  ///
-  /// @lib
-  function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
+  // /// Creates a Polygon from the passed in points, the polygon is made up of
+  // /// the points in the array and the last point does join back to the start
+  // /// point.
+  // ///
+  // /// @lib
+  // function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
   /// Creates a triangle strip from the passed in points. The passed in array
   /// must contain at least three points.
@@ -2631,6 +2643,21 @@ implementation
     {$ENDIF}
   end;
   
+  function RectangleOfCell(src: Bitmap; cell: LongInt): Rectangle; overload;
+  begin
+    if (cell < 0) or (cell >= src^.cellCount) then
+    begin
+      result := RectangleFrom(0,0,0,0);
+    end
+    else
+    begin
+      result.x := (cell mod src^.cellCols) * src^.cellW;
+      result.y := (cell - (cell mod src^.cellCols)) div src^.cellCols * src^.cellH;
+      result.width := src^.cellW;
+      result.height := src^.cellH;
+    end;
+  end;
+  
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
   begin
     {$IFDEF TRACE}
@@ -3624,18 +3651,18 @@ implementation
     {$ENDIF}
   end;
   
-  function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-    
-    result := PrototypeFrom(points, pkPolygon);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
-    {$ENDIF}
-  end;
+  // function PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype;
+  // begin
+  //   {$IFDEF TRACE}
+  //     TraceEnter('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+  //   {$ENDIF}
+  //   
+  //   result := PrototypeFrom(points, pkPolygon);
+  //   
+  //   {$IFDEF TRACE}
+  //     TraceExit('sgGeometry', 'PolygonPrototypeFrom(const points: Point2DArray): ShapePrototype', '');
+  //   {$ENDIF}
+  // end;
   
   function TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
   begin
@@ -3737,7 +3764,7 @@ implementation
       pkTriangle: result := 3;
       pkLineList: result := 2;
       pkLineStrip: result := 2;
-      pkPolygon: result := 3;
+      // pkPolygon: result := 3;
       pkTriangleStrip: result := 3;
       pkTriangleFan: result := 3;
       pkTriangleList: result := 3;
@@ -3828,7 +3855,7 @@ implementation
       pkTriangle: p^.drawWith := @DrawShapeAsTriangle;
       pkLineList: p^.drawWith := @DrawShapeAsLineList;
       pkLineStrip: p^.drawWith := @DrawShapeAsLineStrip;
-      pkPolygon: p^.drawWith := @DrawShapeAsPolygon;
+      // pkPolygon: p^.drawWith := @DrawShapeAsPolygon;
       pkTriangleStrip: p^.drawWith := @DrawShapeAsTriangleStrip;
       pkTriangleFan: p^.drawWith := @DrawShapeAsTriangleFan;
       pkTriangleList: p^.drawWith := @DrawShapeAsTriangleList;

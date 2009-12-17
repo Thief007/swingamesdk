@@ -114,7 +114,6 @@ implementation
   function ProcessRange(value: String): LongIntArray;
   var
     i, j, count, temp, lowPart, highPart, dashCount: LongInt;
-    inRange: Boolean;
     part: String;
   
     procedure _AddToResult(val: LongInt);
