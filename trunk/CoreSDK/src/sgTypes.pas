@@ -319,7 +319,7 @@ interface
         pkTriangle,
         pkLineList,
         pkLineStrip,
-        pkPolygon,
+        // pkPolygon,
         pkTriangleStrip,
         pkTriangleFan,
         pkTriangleList
@@ -457,6 +457,7 @@ interface
       position: Point2D;    // The game location of the sprite
       velocity: Vector;     // The velocity of the sprite
       
+      //collisionShape: Shape;        // This can be used in place of pixel level collisions for a Shape
       usePixelCollision: Boolean;   //
       
       // Can be simpler?
