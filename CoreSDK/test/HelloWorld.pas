@@ -3,7 +3,7 @@ program HelloWorld;
 uses
   sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources,
   sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, 
-  sgSprites, sgTileMap, sgTimers;
+  sgSprites, sgTimers;
 
 procedure Main();
 begin
@@ -20,8 +20,8 @@ begin
   ReleaseSoundEffect('fred');
   WriteLn('MUS: ', HexStr(FetchMusic('fred')));
   ReleaseMusic('fred');
-  WriteLn('MAP: ', HexStr(FetchTileMap('fred')));
-  ReleaseTileMap('fred');
+  // WriteLn('MAP: ', HexStr(FetchTileMap('fred')));
+  // ReleaseTileMap('fred');
   ReleaseResourceBundle('fred');
 
   

@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-18: Andrew : Added code to check if two images can be used interchangably
 // - 2009-12-10: Andrew : Added bitmap drawing functions
 // - 2009-12-07: Andrew : Added loading of image resources
 // - 2009-11-06: Andrew : Started Images unit.
@@ -202,6 +203,17 @@ uses sgTypes;
   /// @class Bitmap
   /// @getter CellColumns
   function BitmapCellColumns(bmp: Bitmap): LongInt;
+  
+  /// Are the two bitmaps of a similar format that they could be used in
+  /// place of each other. This returns true if they have the same cell
+  /// details (count, width, and height).
+  ///
+  /// @lib
+  /// @sn bitmap: %s interchangableWith:%s
+  ///
+  /// @class Bitmap
+  /// @method interchangableWith
+  function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
   
 //---------------------------------------------------------------------------
 // Alpha blendings adjusting code
@@ -872,6 +884,17 @@ end;
 function BitmapCellColumns(bmp: Bitmap): LongInt;
 begin
   result := bmp^.cellCols;
+end;
+
+function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
+begin
+  
+  if (not assigned(bmp1)) or (not assigned(bmp2)) then
+    result := false
+  else
+    result := (bmp1^.cellCount = bmp2^.cellCount) and
+              (bmp1^.cellW = bmp2^.cellW) and
+              (bmp1^.cellH = bmp2^.cellH);
 end;
 
 

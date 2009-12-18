@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-18: Andrew : Moved to new sprite format.
 // - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
 // - 2009-12-10: Andrew : Added cell details to bitmap
 // - 2009-11-06: Andrew : Changed to Sound and Music Data records
@@ -48,6 +49,11 @@ interface
     /// @field pointer: ^LongInt
     LongIntPtr = ^LongInt;
     
+    /// @type StringArray
+    /// @array_wrapper
+    /// @field data: array of String
+    StringArray = array of String;
+    
     /// The named index collection type is used to maintain a named collection of 
     /// index values that can then be used to lookup the location of the
     /// named value within a collection.
@@ -55,7 +61,7 @@ interface
     /// @type NamedIndexes
     /// @via_pointer
     NamedIndexCollection = record
-      names: Array of String;   // The names of these ids
+      names: StringArray;   // The names of these ids
       ids: Pointer;             // A pointer to a TStringHash with this data
     end;
     
@@ -225,10 +231,11 @@ interface
     /// @struct AnimationFrameData
     /// @via_pointer
     AnimationFrameData = packed record
-      cellIndex: LongInt;     // Which cell of the current bitmap is drawn
-      sound: SoundEffect;     // Which sound should be played on entry
-      duration: Single;       // How long should this animation frame play for
-      next: AnimationFrame;   // What is the next frame in this animation
+      index:      LongInt;          // The index of the frame in the animation template
+      cellIndex:  LongInt;          // Which cell of the current bitmap is drawn
+      sound:      SoundEffect;      // Which sound should be played on entry
+      duration:   Single;           // How long should this animation frame play for
+      next:       AnimationFrame;   // What is the next frame in this animation
     end;
     
     /// @note Use AnimationTemplate.
@@ -383,106 +390,36 @@ interface
       AnimationResource, //in load order, animation must be > sound
       OtherResource
     );
-
-    /// The sprite kind is used to indicate the type for each Sprite. This controls
-    /// the update behaviour of the Sprite. A StaticSprite will not animate at all and
-    /// the update sprite only performs sprite velocity. An AnimArraySprite will animate
-    /// using an array of bitmaps in addition to updating the Sprite's position, where as
-    ///  a AnimMultiSprite will animate using a single bitmap which contains multiple
-    /// frames. The sprite kind is determined when the `Sprite` is created. The
-    /// `SpriteEndingAction` values are used in conjuncture with the `SpriteKind` to
-    /// control the behaviour of the animation.
-    ///
-    /// @enum SpriteKind
-    SpriteKind = (
-      StaticSprite,
-      AnimArraySprite,
-      AnimMultiSprite
-    );
-
-    /// The sprite ending action is used to determine what action is peformed when a
-    /// sprite gets to the end of its frames in its animation. Loop indicates that the
-    /// sprite will restart the animation from the first frame resulting in the animation
-    /// being looped repeatedly. ReverseLoop also loops the animation, but rather than
-    /// returning to the first frame the ReverseLoop option indicates that the animation
-    /// should play backwards until it gets to the start of the cells. With ReverseLoop the
-    /// animation will play forward, then backward, then forward, etc. repeatedly. To
-    /// reverse the animation without looping the ReverseOnce can be used. This plays the
-    /// animation forward once, then back once, then stops. Finally, the Stop option means
-    /// that the animation stops once it gets to the end of the framces. Once an animation
-    /// stops sprite will be drawn as the last frame in the animation.
-    ///
-    /// @enum SpriteEndingAction
-    SpriteEndingAction = (
-      Loop,
-      ReverseLoop,
-      ReverseOnce,
-      Stop
-    );
     
-    /// NOTE: Do not use SpriteData directly. Use Sprite.
-    ///
-    /// - bitmaps: The array of bitmaps related to the Sprite
-    /// - spriteKind: Animation kind of this sprite
-    /// - framesPerCell: Array of Integer that defines the frames per cell
-    /// - xPod, yPos: The sprites location within the game world
-    /// - width, height: The width and height of this sprite (used for multi)
-    /// - cols, row: The number of cols and rows of this sprite (used for multi)
-    /// - frameCount: Current frame count of this sprite
-    /// - currentFrame: The current animation cell for the Sprite
-    /// - usePixelCollision: A flag indicating if pixel collision sould be
-    ///                      used, if false bounding collision is used.
-    /// - endingAction: How this sprite acts when it finishes playing the animation
-    /// - hasEnded: True if this sprite has stopped animating
-    /// - reverse: True if this sprite's animation is reversing
-    ///
+    /// @enum CollisionTestKind
+    CollisionTestKind = (
+        PixelCollisions,
+        // ShapeCollision,
+        AABBCollisions
+      );
+    
     /// @struct SpriteData
     /// @via_pointer
     SpriteData = packed record
-      bitmaps:           Array of Bitmap;      // Layers of the sprites
-      layerOffsets:     Array of Point2D;     // Offsets from drawing this layer
-      visibleLayers:    Array of Boolean;     // Indicator if this layer is visible
-      collisionLayers:  Array of Boolean;     // Indicator if this layer should be checked for collisions
       layerIds:         NamedIndexCollection; // The name <-> ids mapping for layers
+      layers:           Array of Bitmap;      // Layers of the sprites
+      visibleLayers:    Array of LongInt;     // The indexes of the visible layers
       
       values:   Array of Single;              // Values associated with this sprite
       valueIds: NamedIndexCollection;         // The name <-> ids mappings for values
       
-      animationData:    Animation;            // The data used to animate this sprite
+      animationData:      Animation;          // The data used to animate this sprite
+      animationTemplate:  AnimationTemplate;  // The template for this sprite's animations
       
-      mass:     Single;
-      rotation: Single;
-      scale:    Single;
+      position: Point2D;                      // The game location of the sprite
+      velocity: Vector;                       // The velocity of the sprite
       
-      position: Point2D;    // The game location of the sprite
-      velocity: Vector;     // The velocity of the sprite
-      
-      //collisionShape: Shape;        // This can be used in place of pixel level collisions for a Shape
-      usePixelCollision: Boolean;   //
-      
-      // Can be simpler?
-      spriteKind: SpriteKind;
-      
-      // Optimise this...
-      bufferBmp: Bitmap;
-      bufferedRotation: Single;
-      bufferedScale:    Single;
-      
-      // Needed?
-      width:  LongInt;
-      height: LongInt;
-      
-      // Move to bitmap
-      cols: LongInt;
-      rows: LongInt;
-      
-      // Move to animation
-      frameCount:     Single;
-      currentCell:    LongInt;
-      framesPerCell:  LongIntArray;
-      endingAction:   SpriteEndingAction;
-      hasEnded:       Boolean;
-      reverse:        Boolean;
+      collisionKind: CollisionTestKind;       //The kind of collisions used by this sprite
+      collisionBitmap: Bitmap;                // The bitmap used for collision testing (default to first image)
+        
+      //add later -> 
+      //layerOffsets:     Array of Point2D;     // Offsets from drawing this layer
+      //collisionShape: Shape;                // This can be used in place of pixel level collisions for a Shape
     end;
 
     /// Sprites are used to represent Sprites drawn to the screen. Create a

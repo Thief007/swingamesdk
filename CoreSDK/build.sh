@@ -113,20 +113,20 @@ CleanTmp()
 #
 doMacCompile()
 {
-    CleanTmp
+    mkdir -p ${TMP_DIR}/$1
     echo "  ... Compiling $GAME_NAME - $1 (${SRC_FILE})"
     
-    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR} -Fi${LIB_DIR} -FU${TMP_DIR} -s ./test/${SRC_FILE} > ${LOG_FILE}
+    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR}/$1 -Fi${LIB_DIR} -FU${TMP_DIR}/$1 -s ./test/${SRC_FILE} > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
     rm -f ${LOG_FILE}
     
     #Remove the pascal assembler script
-    rm ${TMP_DIR}/ppas.sh
+    rm ${TMP_DIR}/$1/ppas.sh
     
     echo "  ... Assembling for $1"
     
     #Assemble all of the .s files
-    for file in `find ${TMP_DIR} | grep [.]s$`
+    for file in `find ${TMP_DIR}/$1 | grep [.]s$`
     do
         /usr/bin/as -o ${file%.s}.o $file -arch $1
         if [ $? != 0 ]; then DoExitAsm $file; fi
@@ -137,10 +137,8 @@ doMacCompile()
     
     FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
     
-    /usr/bin/ld /usr/lib/crt1.o -F${LIB_DIR} -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/${GAME_NAME}.${1}" `cat ${TMP_DIR}/link.res` -framework Cocoa ${FRAMEWORKS}
+    /usr/bin/ld /usr/lib/crt1.o -F${LIB_DIR} -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -o "${OUT_DIR}/${GAME_NAME}.${1}" `cat ${TMP_DIR}/$1/link.res` -framework Cocoa ${FRAMEWORKS}
     if [ $? != 0 ]; then DoExitCompile ${GAME_NAME}; fi
-    
-    CleanTmp
 }
 
 # 
@@ -280,6 +278,7 @@ doCopyResources()
 
 if [ $CLEAN = "N" ]
 then
+    CleanTmp
     if [ ! -d "${OUT_DIR}" ]
     then
         mkdir -p "${OUT_DIR}"
@@ -320,7 +319,7 @@ fi
 
 #remove temp files on success
 rm -f ${LOG_FILE} 2>> /dev/null
-rm -rf ${TMP_DIR} 2>> /dev/null
+#rm -rf ${TMP_DIR} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"
