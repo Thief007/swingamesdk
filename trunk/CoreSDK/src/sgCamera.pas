@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-18: Andrew : Added in new on screen tests.
 // - 2009-11-10: Andrew : Added sn and csn tags and tracing to code
 // - 2009-11-06: Andrew : Added comments
 // - 2009-10-21: Andrew : Fixed camera center on sprite
@@ -217,9 +218,15 @@ interface
   ///
   /// @param worldPoint The screen coordinate to translate
   /// @returns A screen coordinate point
-  /// @lib
-  function ToScreen(const worldPoint: Point2D): Point2D;
+  /// @lib ToScreen
+  function ToScreen(const worldPoint: Point2D): Point2D; overload;
   
+  /// Translate the points in a rectangle to screen coordinates. This can 
+  /// be used to indicate the screen area used by a rectangle in game
+  /// coordinates.
+  ///
+  /// @lib ToScreenRect
+  function ToScreen(const rect: Rectangle): Rectangle; overload;
   
   
   //---------------------------------------------------------------------------
@@ -247,6 +254,13 @@ interface
   /// @lib
   function ToWorld(const screenPoint: Point2D): Point2D;  
   
+  
+  //---------------------------------------------------------------------------
+  // Screen tests
+  //---------------------------------------------------------------------------
+  
+  function OnScreen(const pt: Point2D): Boolean; overload;
+  function OnScreen(const rect: Rectangle): Boolean; overload;
   
 //=============================================================================
 implementation
@@ -480,7 +494,7 @@ implementation
     {$ENDIF}
   end;
 
-  function ToScreen(const worldPoint: Point2D): Point2D;
+  function ToScreen(const worldPoint: Point2D): Point2D; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgCamera', 'ToScreen(const worldPoint: Point2D): Point2D', '');
@@ -493,11 +507,20 @@ implementation
       TraceExit('sgCamera', 'ToScreen(const worldPoint: Point2D): Point2D', '');
     {$ENDIF}
   end;
-
+  
+  function ToScreen(const rect: Rectangle): Rectangle; overload;
+  begin
+    result.x := ToScreenX(rect.x);
+    result.y := ToScreenY(rect.y);
+    result.width := rect.width;
+    result.height := rect.height;
+  end;
+  
+  
   //---------------------------------------------------------------------------
   // Screen-To-World Translation
   //---------------------------------------------------------------------------
-
+  
   function ToWorldX(screenX: LongInt) : Single;
   begin
     {$IFDEF TRACE}
@@ -537,7 +560,26 @@ implementation
       TraceExit('sgCamera', 'ToWorld(const screenPoint: Point2D): Point2D', '');
     {$ENDIF}
   end;
-
+  
+  
+  //---------------------------------------------------------------------------
+  // Screen tests
+  //---------------------------------------------------------------------------
+  
+  function OnScreen(const pt: Point2D): Boolean; overload;
+  var
+    scrPt: Point2D;
+  begin
+    scrPt := ToScreen(pt);
+    result := not ((scrPt.x < 0) or (scrPt.y < 0) or (scrPt.x >= ScreenWidth()) or (scrPt.y >= ScreenHeight()));
+  end;
+  
+  function OnScreen(const rect: Rectangle): Boolean; overload;
+  begin
+    result := RectanglesIntersect(ToScreen(rect), screenRect);
+  end;
+  
+  
 //=============================================================================
 
   initialization

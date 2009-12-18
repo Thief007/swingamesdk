@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics;
+  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgSprites, sgInput, sgPhysics, sgImages;
 
 procedure KeepOnScreen(s: Sprite);
 begin
@@ -158,7 +158,7 @@ end;
 procedure CheckCollisionWithTriangle(s: Sprite; const t: Triangle);
 var lines: LinesArray;
 begin
-  if CircleTriangleCollision(CircleAt(s), t) then
+  if CircleTriangleCollision(CircleSprite(s), t) then
   begin
     lines := LinesFrom(t);
     
@@ -184,7 +184,6 @@ var
   testLines: LinesArray;
 begin
   OpenAudio();
-  
   OpenGraphicsWindow('Circle Collisions', 800, 600);
   
   MapBitmap('ball', 'ball_small.png');
@@ -200,6 +199,7 @@ begin
   r2 := 20;
   
   s1 := CreateSprite(FetchBitmap('ball'));
+  
   SpriteSetX(s1, 100);
   SpriteSetY(s1, 600);
   SpriteSetMass(s1, 10);
@@ -317,8 +317,8 @@ begin
     UpdateSprite(s1);
     KeepOnScreen(s1);
     
-    if CircleRectCollision(CircleAt(s1), rect) then CollideCircleRectangle(s1, rect)
-    else if CircleCircleCollision(CircleAt(s1), CircleAt(c1, r1)) then CollideCircleCircle(s1, CircleAt(c1, r1));
+    if CircleRectCollision(CircleSprite(s1), rect) then CollideCircleRectangle(s1, rect)
+    else if CircleCircleCollision(CircleSprite(s1), CircleAt(c1, r1)) then CollideCircleCircle(s1, CircleAt(c1, r1));
     
     
     DrawSprite(s2);
@@ -326,8 +326,8 @@ begin
     DrawLine(ColorYellow, temp.x, temp.y, temp.x + (SpriteDX(s2) * 10), temp.y + (SpriteDY(s2) * 10));
     UpdateSprite(s2);
     KeepOnScreen(s2);
-    if CircleRectCollision(CircleAt(s2), rect) then CollideCircleRectangle(s2, rect)
-    else if CircleCircleCollision(CircleAt(s2), CircleAt(c1, r1)) then CollideCircleCircle(s2, CircleAt(c1, r1));
+    if CircleRectCollision(CircleSprite(s2), rect) then CollideCircleRectangle(s2, rect)
+    else if CircleCircleCollision(CircleSprite(s2), CircleAt(c1, r1)) then CollideCircleCircle(s2, CircleAt(c1, r1));
     
     CheckCollisionWithLine(s1, testLines[0]);
     CheckCollisionWithLine(s2, testLines[0]);
@@ -336,10 +336,10 @@ begin
     CheckCollisionWithTriangle(s2, t1);
     
     temp := MousePosition();
-    if CircleCircleCollision(CircleAt(temp, r2), CircleAt(s1)) then
+    if CircleCircleCollision(CircleAt(temp, r2), CircleSprite(s1)) then
       CollideCircleCircle(s1, CircleAt(temp, r2));
     
-    if CircleCircleCollision(CircleAt(temp, r2), CircleAt(s2)) then
+    if CircleCircleCollision(CircleAt(temp, r2), CircleSprite(s2)) then
       CollideCircleCircle(s2, CircleAt(temp, r2));
     
     if SpritesCollided(s1, s2) then CollideCircles(s1, s2);

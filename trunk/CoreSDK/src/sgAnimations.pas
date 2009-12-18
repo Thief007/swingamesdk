@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-18: Andrew : Added in code to verify animations have no loops
+//                        with a 0 duration.
 // - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
 //                      : Fixed loading of animations with ranges like [,]
 //                      : Added code to query animations, and more create code.
@@ -49,9 +51,17 @@ interface
   procedure FreeAnimationTemplate(var framesToFree: AnimationTemplate);
   
   
-//----------------------------------------------------------------------------
-// AnimationTemplate mapping routines
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  // AnimationTemplate mapping routines
+  //----------------------------------------------------------------------------
+  
+  function AnimationIndex(temp: AnimationTemplate; name: String): LongInt;
+  
+  function AnimationName(temp: AnimationTemplate; idx: LongInt): String;
+  
+  //----------------------------------------------------------------------------
+  // AnimationTemplate mapping routines
+  //----------------------------------------------------------------------------
   
   /// Loads and returns a AnimationTemplate. The supplied `filename` is used to
   /// locate the AnimationTemplate to load. The supplied `name` indicates the 
@@ -145,6 +155,17 @@ interface
   // Drawing Animations
   //----------------------------------------------------------------------------
   
+  procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate); overload;
+  procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate; withSound: Boolean); overload;
+
+  procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate); overload;
+
+  procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate; withSound: Boolean); overload;
+  
+  //----------------------------------------------------------------------------
+  // Drawing Animations
+  //----------------------------------------------------------------------------
+  
   /// Uses the animation information to draw a bitmap at the specified
   /// x,y location.
   ///
@@ -178,7 +199,7 @@ interface
   /// @self 2
   /// @csn drawOnto:%s bitmap:%s x:%s y:%s
   procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
-
+  
   /// Uses the animation information to draw a bitmap at the specified
   /// point on a destination bitmap.
   ///
@@ -552,6 +573,7 @@ var
     // Link the frames together
     for j := 0 to High(frames) do
     begin
+      frames[j]^.index      := j;
       frames[j]^.cellIndex  := rows[j].cell;
       frames[j]^.sound      := rows[j].snd;
       frames[j]^.duration   := rows[j].dur;
@@ -592,6 +614,82 @@ var
       result^.animations[addedIdx] := ids[j].startId;           //Store the linked index
       //WriteLn('load ids: ', addedIdx, ' - startid ', ids[j].startId)
     end;
+  end;
+  
+  procedure MakeFalse(var visited: Array of Boolean);
+  var
+    i: LongInt;
+  begin
+    for i := 0 to High(visited) do
+    begin
+      visited[i] := false;
+    end;
+  end;
+  
+  function SumLoop(start: AnimationFrame): Single;
+  var
+    current: AnimationFrame;
+  begin
+    result := start^.duration;
+    current := start^.next;
+    
+    while (current <> start) and (assigned(current)) do
+    begin
+      result := result + current^.duration;
+      current := current^.next;
+    end;
+  end;
+  
+  // Animations with loops must have a duration > 0 for at least one frame
+  procedure CheckAnimationLoops();
+  var
+    i: Integer;
+    done: Boolean;
+    visited: Array of Boolean;
+    current: AnimationFrame;
+  begin
+    done := true;
+    
+    // check for all positive
+    for i := 0 to High(result^.frames) do
+    begin
+      if result^.frames[i]^.duration = 0 then
+      begin
+        done := false;
+        break;
+      end;
+    end;
+    
+    if done then exit;
+    
+    SetLength(visited, Length(result^.frames));
+    
+    // Check through each animation for a loop
+    for i := 0 to High(result^.animations) do
+    begin
+      MakeFalse(visited);
+      
+      current := result^.frames[result^.animations[i]];
+      
+      // Check for a loop
+      while current <> nil do
+      begin
+        if visited[current^.index] then
+        begin
+          if SumLoop(current) = 0 then
+          begin
+            FreeAnimationTemplate(result);
+            RaiseException('Error in animation ' + filename + '. Animation contains a loop with duration 0 starting at cell ' + IntToStr(current^.index));
+            exit;
+          end;
+          break;
+        end
+        else
+          current := current^.next;
+      end;
+    end;
+    
+    
   end;
 begin
   {$IFDEF TRACE}
@@ -778,17 +876,7 @@ begin
   if frames = nil then exit;
   
   new(result);
-  //WriteLn('Creating animation ', identifier);
-  result^.firstFrame    := frames^.frames[frames^.animations[identifier]];
-  RestartAnimation(result, withSound);
-  // result^.currentFrame  := result^.firstFrame;
-  // result^.lastFrame     := result^.firstFrame;
-  // result^.frameTime     := 0;
-  // result^.enteredFrame  := true;
-  // result^.hasEnded      := false;
-  
-  // if assigned(result^.currentFrame) and assigned(result^.currentFrame^.sound) and withSound then
-  //   PlaySoundEffect(result^.currentFrame^.sound);
+  AssignAnimation(result, identifier, frames)
 end;
 
 function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
@@ -806,6 +894,31 @@ end;
 function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation; overload;
 begin
   result := CreateAnimation(identifier, frames, True);
+end;
+
+procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate); overload;
+begin
+  AssignAnimation(anim, name, frames, true);
+end;
+
+procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate; withSound: Boolean); overload;
+begin
+  AssignAnimation(anim, AnimationIndex(frames, name), frames, withSound);
+end;
+
+procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate); overload;
+begin
+  AssignAnimation(anim, idx, frames, true);
+end;
+
+procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate; withSound: Boolean); overload;
+begin
+  if (not assigned(anim)) or (not assigned(frames)) then exit;
+  if (idx < 0) or (idx > High(frames^.animations)) then 
+    begin RaiseException('Assigning an animation frame that is not within range 0-' + IntToStr(High(frames^.animations)) + '.'); exit; end;
+  
+  anim^.firstFrame    := frames^.frames[frames^.animations[idx]];
+  RestartAnimation(anim, withSound);
 end;
 
 procedure UpdateAnimation(anim: Animation; pct: Single; withSound: Boolean); overload;
@@ -878,7 +991,9 @@ end;
 
 function AnimationCurrentCell(anim: Animation): LongInt;
 begin
-  if not AnimationEnded(anim) then
+  if not assigned(anim) then
+    result := 0 //no animation - return the first frame
+  else if not AnimationEnded(anim) then
     result := anim^.currentFrame^.cellIndex
   else if not assigned(anim^.lastFrame) then
     result := -1
@@ -982,6 +1097,17 @@ begin
 end;
 
 
+function AnimationIndex(temp: AnimationTemplate; name: String): LongInt;
+begin
+  if not assigned(temp) then result := -1
+  else result := IndexOf(temp^.animationIds, name);
+end;
+
+function AnimationName(temp: AnimationTemplate; idx: LongInt): String;
+begin
+  if not assigned(temp) then result := ''
+  else result := NameAt(temp^.animationIds, idx);
+end;
 
 //=============================================================================
   initialization

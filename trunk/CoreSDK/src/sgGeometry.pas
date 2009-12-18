@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-18: Andrew : Added code to fix rectangles (+ve width and height)
 // - 2009-11-10: Andrew : Added tracing and sn and csn tags to code
 // - 2009-10-16: Andrew : Added shapes and prototypes. Ensure they are freed
 // - 2009-07-29: Andrew : Renamed cos, sin, tan to avoid conflict in c
@@ -295,6 +296,18 @@ interface
   function RectangleFrom(const tri: Triangle): Rectangle; overload;
   /// @lib RectangleFromLines
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
+  
+  /// Ensures that the passed in rectangle has a positive width and height.
+  ///
+  /// @lib FixRectangle
+  procedure FixRectangle(var rect: Rectangle);
+  
+  /// Ensures that the passed in rectangle has a positive width and height.
+  ///
+  /// @lib FixRect
+  procedure FixRectangle(var x, y: Single; width,height: LongInt);
+  
+  
   
   /// @lib
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
@@ -2578,13 +2591,14 @@ implementation
     {$ENDIF}
   end;
   
-  function RectangleFrom(s: Sprite): Rectangle;
+  function RectangleFrom(s: Sprite): Rectangle; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'RectangleFrom(s: Sprite): Rectangle', '');
     {$ENDIF}
     
-    result := RectangleFrom(s^.position.x, s^.position.y, SpriteWidth(s), SpriteHeight(s));
+    if not assigned(s) then result := RectangleFrom(0,0,0,0)
+    else result := RectangleFrom(s^.position.x, s^.position.y, SpriteWidth(s), SpriteHeight(s));
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'RectangleFrom(s: Sprite): Rectangle', '');
@@ -2646,9 +2660,7 @@ implementation
   function RectangleOfCell(src: Bitmap; cell: LongInt): Rectangle; overload;
   begin
     if (cell < 0) or (cell >= src^.cellCount) then
-    begin
-      result := RectangleFrom(0,0,0,0);
-    end
+      result := RectangleFrom(0,0,0,0)
     else
     begin
       result.x := (cell mod src^.cellCols) * src^.cellW;
@@ -4132,6 +4144,26 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'ShapeSetColor(s: Shape', '');
     {$ENDIF}
+  end;
+  
+  procedure FixRectangle(var rect: Rectangle);
+  begin
+    FixRectangle(rect.x, rect.y, rect.width, rect.height);
+  end;
+  
+  procedure FixRectangle(var x, y: Single; width,height: LongInt);
+  begin
+    if width < 0 then
+    begin
+      x := x + width;
+      width := -width;
+    end;
+    
+    if height < 0 then
+    begin
+      y := y + height;
+      height := -height;
+    end;
   end;
   
 end.

@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-18: Andrew : Added screen rect cache
 // - 2009-12-10: Andrew : Added iter free - fixed memory leak
 // - 2009-11-11: Andrew : Switched to release rather than drain on the autorelease pool
 // - 2009-11-06: Andrew : Added resource management type code
@@ -114,6 +115,9 @@ interface
     // This `Bitmap` wraps the an SDL image (and its double-buffered nature)
     // which is used to contain the current "screen" rendered to the window.
     screen: Bitmap;
+    
+    // Used for on screen tests...
+    screenRect: Rectangle;
     
     // The singleton instance manager used to check events and called
     // registered "handlers". See `RegisterEventProcessor`.

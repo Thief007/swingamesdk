@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-18: Andrew : Updated to use new sprite format
 // - 2009-12-17: Andrew : Removed bitmap bbox collision tests (use rect versions)
 //                      : Added Cell collision functions
 // - 2009-06-29: Andrew : Removed all need for Collision Side
@@ -286,9 +287,9 @@ interface
   function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; const pt1: Point2D;
                               bmp2: Bitmap; const pt2:Point2D; const part: Rectangle): Boolean; overload;
   
-  function CellRectCollided(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean;
+  function CellRectCollided(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean; overload;
   
-  function CellRectCollided(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean;
+  function CellRectCollided(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean; overload;
   
   //---------------------------------------------------------------------------
   // Geometry Collision Tests
@@ -479,58 +480,23 @@ implementation
   
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
   var
-    bmp: Bitmap;
-    offX1, offY1: LongInt;
+    rect: Rectangle;
   begin
     result := false;
     if s = nil then exit;
     
-    if width < 0 then
-    begin
-      x := x + width;
-      width := -width;
-    end;
-    
-    if height < 0 then
-    begin
-      y := y + height;
-      height := -height;
-    end;
-    
+    rect := RectangleFrom(x, y, width, height);
+    FixRectangle(rect);
     if (width < 1) or (height < 1) then exit;
     
-    // Check the sprite's base rectangle
-    if s^.position.y + SpriteHeight(s) <= y then result := false
-    else if s^.position.y >= y + height then result := false
-    else if s^.position.x + SpriteWidth(s) <= x then result := false
-    else if s^.position.x >= x + width then result := false
+    if not RectanglesIntersect(RectangleFrom(s), rect) then 
+      exit;
+    
+    //  Check pixel level details
+    if SpriteCollisionKind(s) = AABBCollisions then 
+      result := true
     else
-    begin
-      //  Check pixel level details
-      if not s^.usePixelCollision then 
-        result := true
-      else
-      begin
-        
-        if s^.spriteKind = AnimMultiSprite then
-        begin
-          offX1 := (s^.currentCell mod s^.cols) * s^.width;
-          offY1 := (s^.currentCell - (s^.currentCell mod s^.cols)) div s^.cols * s^.height;
-          bmp := s^.bitmaps[0];
-        end
-        else
-        begin
-          bmp := s^.bitmaps[s^.currentCell];
-          offX1 := 0;
-          offY1 := 0;
-        end;
-        
-        result := BitmapPartRectCollision(
-                    bmp, Round(s^.position.x), Round(s^.position.y), 
-                    RectangleFrom(offX1, offY1, s^.width, s^.height),
-                    RectangleFrom(x, y, width, height));
-      end;
-    end;
+      result := CellRectCollided(s^.collisionBitmap, SpriteCurrentCell(s), Round(s^.position.x), Round(s^.position.y), rect);
   end;
 
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
@@ -560,6 +526,16 @@ implementation
   ///
   /// @returns          True if the bitmaps collide.
   /// 
+  
+  function CollisionWithinBitmapImages(
+             bmp1: Bitmap; x1, y1: Single; w1, h1: LongInt; offsetX1, offsetY1: Single; //bbox1: Boolean;
+             bmp2: Bitmap; x2, y2: Single; w2, h2: LongInt; offsetX2, offsetY2: Single //bbox2: Boolean
+           ): Boolean; overload;
+  begin
+    result := CollisionWithinBitmapImages(
+      bmp1, Round(x1), Round(y1), w1, h1, Round(offsetX1), Round(offsetY1),
+      bmp2, Round(x2), Round(y2), w2, h2, Round(offsetX2), Round(offsetY2));
+  end;
   
   // offset... are the part 
   function CollisionWithinBitmapImages(
@@ -649,51 +625,28 @@ implementation
   // 
   function CollisionWithinSpriteImages(s1, s2: Sprite): Boolean;
   var
-    bmp1, bmp2: Bitmap;
-    offX1, offY1, offX2, offY2: LongInt;
+    part1, part2: Rectangle;
   begin
     if (s1 = nil) or (s2 = nil) then begin RaiseException('One of the sprites specified is nil'); exit; end;
     
-    if not s1^.usePixelCollision then 
+    // Check if either is not using pixel level collisions
+    if SpriteCollisionKind(s1) = AABBCollisions then 
     begin
       result := SpriteRectCollision(s2, RectangleFrom(s1));
       exit;
     end
-    else if not s2^.usePixelCollision then 
+    else if SpriteCollisionKind(s2) = AABBCollisions then 
     begin
       result := SpriteRectCollision(s1, RectangleFrom(s2));
       exit;
     end;
     
-    if s1^.spriteKind = AnimMultiSprite then
-    begin
-      offX1 := (s1^.currentCell mod s1^.cols) * s1^.width;
-      offY1 := (s1^.currentCell - (s1^.currentCell mod s1^.cols)) div s1^.cols * s1^.height;
-      bmp1 := s1^.bitmaps[0];
-    end
-    else
-    begin
-      bmp1 := s1^.bitmaps[s1^.currentCell];
-      offX1 := 0;
-      offY1 := 0;
-    end;
-    
-    if s2^.spriteKind = AnimMultiSprite then
-    begin
-      offX2 := (s2^.currentCell mod s2^.cols) * s2^.width;
-      offY2 := (s2^.currentCell - (s2^.currentCell mod s2^.cols)) div s2^.cols * s2^.height;
-      bmp2 := s2^.bitmaps[0];
-    end
-    else
-    begin
-      bmp2 := s2^.bitmaps[s2^.currentCell];
-      offX2 := 0;
-      offY2 := 0;
-    end;
+    part1 := SpriteCurrentCellRectangle(s1);
+    part2 := SpriteCurrentCellRectangle(s2);
     
     result := CollisionWithinBitmapImages(
-                bmp1, Round(s1^.position.x), Round(s1^.position.y), SpriteWidth(s1), SpriteHeight(s1), offX1, offY1, 
-                bmp2, Round(s2^.position.x), Round(s2^.position.y), SpriteWidth(s2), SpriteHeight(s2), offX2, offY2);
+                s1^.collisionBitmap, Round(s1^.position.x), Round(s1^.position.y), part1.width, part1.height, Round(part1.x), Round(part1.y), 
+                s2^.collisionBitmap, Round(s2^.position.x), Round(s2^.position.y), part2.width, part2.height, Round(part2.x), Round(part2.y));
   end;
 
   /// Checks to see if two bitmaps have collided, performs a bbox check
@@ -751,20 +704,12 @@ implementation
 
   function SpritesCollided(s1, s2: Sprite): Boolean;
   begin
-    if not SpriteRectCollision(s1, s2^.position.x, s2^.position.y, s2^.width, s2^.height) then
-    begin
-      result := false;
-      exit;
-    end;
-
-    if s1^.usePixelCollision or s2^.usePixelCollision then
-    begin
-      result := CollisionWithinSpriteImages(s1, s2);
-    end
+    if not SpriteRectCollision(s1, RectangleFrom(s2)) then 
+      result := false
+    else if (SpriteCollisionKind(s1) = PixelCollisions) or (SpriteCollisionKind(s2) = PixelCollisions) then
+      result := CollisionWithinSpriteImages(s1, s2)
     else
-    begin
       result := true;
-    end;
   end;
 
 
@@ -779,32 +724,21 @@ implementation
   // end;
   
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle): Boolean; overload;
-  var
-    tmp: Bitmap;
-    offX, offY: LongInt;
   begin
-    if not s^.usePixelCollision then
+    result := false;
+    
+    if not assigned(s) then exit;
+    if (SpriteCollisionKind(s) = AABBCollisions) then
     begin
       result := BitmapRectCollision(bmp, pt, part, RectangleFrom(s));
       exit;
     end;
     
-    if s^.spriteKind = AnimMultiSprite then
-    begin
-      offX := (s^.currentCell mod s^.cols) * s^.width;
-      offY := (s^.currentCell - (s^.currentCell mod s^.cols)) div s^.cols * s^.height;
-      tmp := s^.bitmaps[0];
-    end
-    else
-    begin
-      tmp := s^.bitmaps[s^.currentCell];
-      offX := 0;
-      offY := 0;
-    end;
+    result := CellBitmapCollided(s^.collisionBitmap, SpriteCurrentCell(s), s^.position, bmp, pt, part);
     
-    result := CollisionWithinBitmapImages(
-                tmp, Round(s^.position.x), Round(s^.position.y),  s^.width, s^.height, offX, offY, 
-                bmp, Round(pt.x), Round(pt.y), part.width, part.height, Round(part.x), Round(part.y));
+    // result := CollisionWithinBitmapImages(
+    //             s^.collisionBitmap, s^.position.x, s^.position.y,  s^.width, s^.height, spritePart.x, spritePart.y, 
+    //             bmp, pt.x, pt.y, part.width, part.height, part.x, part.y);
   end;
   
   /// Determines if a sprite has collided with a bitmap using pixel level
@@ -977,10 +911,12 @@ implementation
   procedure CollideCircles(s1, s2: Sprite);
   var
     c1, c2: Circle;
-    colNormalAngle, a1, a2, optP: Single;
+    colNormalAngle, a1, a2, optP, s1Mass, s2Mass: Single;
     n: Vector;
   begin
-    if (s1^.mass <= 0) or (s2^.mass <= 0) then begin RaiseException('Collision with 0 or negative mass... ensure that mass is greater than 0'); exit; end;
+    s1Mass := SpriteMass(s1);
+    s2Mass := SpriteMass(s2);
+    if (s1Mass <= 0) or (s2Mass <= 0) then begin RaiseException('Collision with 0 or negative mass... ensure that mass is greater than 0'); exit; end;
     
     c1 := CircleSprite(s1);
     c2 := CircleSprite(s2);
@@ -1015,14 +951,14 @@ implementation
     // optimisedP = 2(a1 - a2)
     // ----------
     // m1 + m2
-    optP := (2.0 * (a1-a2)) / (s1^.mass + s2^.mass);
+    optP := (2.0 * (a1-a2)) / (s1Mass + s2Mass);
     // now find out the resultant vectors
     // Local r1% = c1.v - optimisedP * mass2 * n
-    s1^.velocity.x := s1^.velocity.x - (optP * s2^.mass * n.x);
-    s1^.velocity.y := s1^.velocity.y - (optP * s2^.mass * n.y);
+    s1^.velocity.x := s1^.velocity.x - (optP * s2Mass * n.x);
+    s1^.velocity.y := s1^.velocity.y - (optP * s2Mass * n.y);
     // Local r2% = c2.v - optimisedP * mass1 * n
-    s2^.velocity.x := s2^.velocity.x + (optP * s1^.mass * n.x);
-    s2^.velocity.y := s2^.velocity.y + (optP * s1^.mass * n.y);
+    s2^.velocity.x := s2^.velocity.x + (optP * s1Mass * n.x);
+    s2^.velocity.y := s2^.velocity.y + (optP * s1Mass * n.y);
   end;
   
   procedure CollideCircleCircle(s: Sprite; const c: Circle);
@@ -1246,7 +1182,7 @@ implementation
                                   bmp2, Round(pt2.x), Round(pt2.y), part);
   end;
   
-  function CellRectCollided(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean;
+  function CellRectCollided(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean; overload;
   var
     r1: Rectangle;
   begin
@@ -1255,7 +1191,7 @@ implementation
     result := BitmapPartRectCollision(bmp, x, y, r1, rect);
   end;
   
-  function CellRectCollided(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean;
+  function CellRectCollided(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean; overload;
   begin
     result := CellRectCollided(bmp, cell, Round(pt.x), Round(pt.y), rect);
   end;

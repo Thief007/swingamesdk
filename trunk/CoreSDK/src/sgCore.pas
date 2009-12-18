@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-18: Andrew : Added screen rect cache
 // - 2009-11-11: Andrew : Updated amask for screen surface.
 // - 2009-11-10: Andrew : Added sn and csn tags, and added comments to code
 //                      : Removed Timers
@@ -462,7 +463,7 @@ implementation
   uses 
     SysUtils, Math, Classes, //System
     SDL_Image, SDL_gfx, //SDL
-    sgTrace, sgShared, sgEventProcessing, sgResources; //SwinGame
+    sgTrace, sgShared, sgEventProcessing, sgResources, sgGeometry; //SwinGame
 //=============================================================================
 
 
@@ -582,6 +583,7 @@ implementation
 
       screen^.width := _screen^.w;
       screen^.height := _screen^.h;
+      screenRect := RectangleFrom(0,0,screen);
     end;
     {$IFDEF TRACE}
       TraceExit('sgCore', '_SetupScreen');

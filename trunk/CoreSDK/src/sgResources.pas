@@ -4,6 +4,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-18: Andrew : Removed links to old mappy tile code... need new map code
 // - 2009-12-10: Andrew : Switched to DrawCell for start up animation
 //                      : Added reading of cell information on bitmap loading
 //                      : Switched to use Animation
@@ -123,7 +124,7 @@ implementation
   uses SysUtils, StrUtils, Classes, // system
        stringhash, MyStrUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgTileMap, sgShared, sgSprites, sgTrace, sgImages, sgAnimations; // Swingame
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgShared, sgSprites, sgTrace, sgImages, sgAnimations; // Swingame
 
   //----------------------------------------------------------------------------
   // Global variables for resource management.
@@ -237,7 +238,7 @@ implementation
           FontResource:       rbLoadFont();
           SoundResource:      MapSoundEffect(current.name, current.path);
           MusicResource:      MapMusic(current.name, current.path);
-          MapResource:        MapTileMap(current.name, current.path);
+          // MapResource:        MapTileMap(current.name, current.path);
           AnimationResource:  MapAnimationTemplate(current.name, current.path);
           else
             RaiseException('Unkown recource kind in LoadResources' + IntToStr(LongInt(kind)));
@@ -281,7 +282,7 @@ implementation
         FontResource:       ReleaseFont(current.name);
         SoundResource:      ReleaseSoundEffect(current.name);
         MusicResource:      ReleaseMusic(current.name);
-        MapResource:        ReleaseTileMap(current.name);
+        // MapResource:        ReleaseTileMap(current.name);
         AnimationResource:  ReleaseAnimationTemplate(current.name);
       end;
     end;
@@ -297,7 +298,7 @@ implementation
     ReleaseAllBitmaps();
     ReleaseAllMusic();
     ReleaseAllSoundEffects();
-    ReleaseAllTileMaps();
+    // ReleaseAllTileMaps();
     _Bundles.deleteAll();
   end;
   
