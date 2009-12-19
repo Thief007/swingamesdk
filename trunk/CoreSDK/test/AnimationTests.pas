@@ -41,7 +41,7 @@ begin
     
     DrawFramerate(0,0);
     
-    RefreshScreen();
+    RefreshScreen(60);
   until WindowCloseRequested();
   
   ReleaseAllResources();
