@@ -1,0 +1,21 @@
+Map Loader #v0.1
+a:2
+b:3
+c:30
+d:30
+f:ball_small.png
+e:0
+0
+--
+e:0
+1
+0
+e:1
+0
+--
+e:1
+1
+0
+e:2
+0
+0
