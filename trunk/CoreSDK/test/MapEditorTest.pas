@@ -3,7 +3,7 @@ program MapEditorTest;
 uses
   sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgTrace, sgResources,
   sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, 
-  sgSprites, sgTileMap, sgTimers, SysUtils, StrUtils, Classes, 
+  sgSprites, sgTimers, SysUtils, StrUtils, Classes, 
     stringhash, MyStrUtils, sgNamedIndexCollection, sgShared;
 type
   Direction = (N, NE, E, SE, S, SW, W, NW);
