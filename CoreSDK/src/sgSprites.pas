@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-20: Andrew : Added code to manage sprite layers (show, hide, reorder, etc)
 // - 2009-12-18: Andrew : Moved to new sprite format.
 // - 2009-11-10: Andrew : Changed sn and csn tags
 // - 2009-10-16: Andrew : Called the free notifier to ensure Sprites are freed
@@ -102,6 +103,28 @@ interface
   
   function SpriteLayer(s: Sprite; name: String): Bitmap;
   function SpriteLayer(s: Sprite; idx: LongInt): Bitmap;
+  
+  function SpriteShowLayer(s: Sprite; name: String): LongInt;
+  function SpriteShowLayer(s: Sprite; id: LongInt): LongInt;
+  
+  procedure SpriteHideLayer(s: Sprite; name: String);
+  procedure SpriteHideLayer(s: Sprite; id: LongInt);
+  
+  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt;
+  function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt;
+  
+  function SpriteLayerCount(s: Sprite): LongInt;
+  function SpriteVisibleLayerCount(s: Sprite): LongInt;
+  
+  function SpriteVisibleLayerIds(s: Sprite) : LongIntArray;
+  function SpriteLayers(s: Sprite): BitmapArray;
+  
+  function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
+  
+  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
   
   //---------------------------------------------------------------------------
   // Animation code
@@ -966,6 +989,164 @@ implementation
     else result := s^.layers[idx];
   end;
   
+  function SpriteShowLayer(s: Sprite; name: String): LongInt;
+  begin
+    if not assigned(s) then result := -1
+    else result := SpriteShowLayer(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteShowLayer(s: Sprite; id: LongInt): LongInt;
+  begin
+    if not assigned(s) then result := -1
+    else
+    begin
+      //Scan for the current ID
+      result := SpriteVisibleIndexOfLayer(s, id);
+      if result >= 0 then exit;
+      
+      //Extend layers and add index
+      SetLength(s^.visibleLayers, Length(s^.visibleLayers) + 1);
+      result := High(s^.visibleLayers);
+      s^.visibleLayers[result] := id;
+    end;
+  end;
+  
+  procedure SpriteHideLayer(s: Sprite; name: String);
+  begin
+    if not assigned(s) then exit
+    else SpriteHideLayer(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  procedure SpriteHideLayer(s: Sprite; id: LongInt);
+  var
+    i, idx: LongInt;
+  begin
+    idx := SpriteVisibleIndexOfLayer(s, id);
+    if idx < 0 then exit; // The layer is not shown
+    
+    //Shift all later layers back over removed layer
+    for i := idx to High(s^.visibleLayers) - 1 do
+    begin
+      s^.visibleLayers[i] := s^.visibleLayers[i + 1];
+    end;
+    
+    //Resize the array to remove element
+    SetLength(s^.visibleLayers, Length(s^.visibleLayers) - 1);
+  end;
+  
+  function SpriteLayerCount(s: Sprite): LongInt;
+  begin
+    if not assigned(s) then result := 0
+    else result := Length(s^.layers);
+  end;
+  
+  function SpriteVisibleLayerCount(s: Sprite): LongInt;
+  begin
+    if not assigned(s) then result := 0
+    else result := Length(s^.visibleLayers);
+  end;
+  
+  function SpriteVisibleLayerIds(s: Sprite) : LongIntArray;
+  begin
+    if not assigned(s) then result := nil
+    else result := s^.visibleLayers;
+  end;
+  
+  function SpriteLayers(s: Sprite): BitmapArray;
+  begin
+    if not assigned(s) then result := nil
+    else result := s^.layers;
+  end;
+  
+  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt;
+  begin
+    if not assigned(s) then result := -1
+    else result := SpriteVisibleIndexOfLayer(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt;
+  var
+    i: LongInt;
+  begin
+    result := -1;
+    if not assigned(s) then exit
+    else
+    begin
+      for i := 0 to High(s^.visibleLayers) do
+      begin
+        if s^.visibleLayers[i] = id then 
+        begin
+          result := i;
+          exit;
+        end;
+      end;
+    end;
+  end;
+  
+  function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
+  begin
+    result := -1;
+    if not assigned(s) then exit
+    else result := s^.visibleLayers[idx];
+  end;
+  
+  procedure Swap(var val1, val2: LongInt);
+  var
+    temp: LongInt;
+  begin
+    temp := val1;
+    val1 := val2;
+    val2 := temp;
+  end;
+  
+  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
+  var
+    i: LongInt;
+  begin
+    if not assigned(s) then exit;
+    //Check not last or beyond in array
+    if (visibleLayer < 0) or (visibleLayer >= Length(s^.visibleLayers) - 1) then exit;
+    
+    // Bubble layer up
+    for i := visibleLayer to High(s^.visibleLayers) - 1 do
+    begin
+      Swap(s^.visibleLayers[i], s^.visibleLayers[i + 1]);
+    end;
+  end;
+  
+  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
+  begin
+    if not assigned(s) then exit;
+    //Check not last or beyond in array
+    if (visibleLayer < 0) or (visibleLayer >= Length(s^.visibleLayers) - 1) then exit;
+    
+    Swap(s^.visibleLayers[visibleLayer], s^.visibleLayers[visibleLayer + 1]);
+  end;
+  
+  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
+  begin
+    if not assigned(s) then exit;
+    //Check not first or lower
+    if (visibleLayer < 1) or (visibleLayer >= Length(s^.visibleLayers)) then exit;
+    
+    Swap(s^.visibleLayers[visibleLayer], s^.visibleLayers[visibleLayer - 1]);
+  end;
+  
+  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
+  var
+    i: LongInt;
+  begin
+    if not assigned(s) then exit;
+    //Check not last or beyond in array
+    if (visibleLayer < 0) or (visibleLayer >= Length(s^.visibleLayers) - 1) then exit;
+    
+    // Bubble layer down
+    for i := visibleLayer downto 1 do
+    begin
+      Swap(s^.visibleLayers[i], s^.visibleLayers[i - 1]);
+    end;
+  end;
+
   //---------------------------------------------------------------------------
   // Sprite position
   //---------------------------------------------------------------------------
