@@ -8,6 +8,8 @@
 //
 // Version 3.0:
 // - 2009-12-21: Andrew : Added the ability to toggle visible layers.
+//                      : Added width/height of layers and layer offsets
+//                      : Added rectangle calculation code for sprite layers
 // - 2009-12-20: Andrew : Added code to manage sprite layers (show, hide, reorder, etc)
 // - 2009-12-18: Andrew : Moved to new sprite format.
 // - 2009-11-10: Andrew : Changed sn and csn tags
@@ -123,12 +125,23 @@ interface
   function SpriteVisibleLayerIds(s: Sprite) : LongIntArray;
   function SpriteLayers(s: Sprite): BitmapArray;
   
+  function SpriteLayerOffsets(s: Sprite): Point2DArray;
+  procedure SpriteSetLayerOffsets(s: Sprite; values: Point2DArray);
+  function SpriteLayerOffset(s: Sprite; name: String): Point2D;
+  function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D;
+  procedure SpriteSetLayerOffset(s: Sprite; name: String; const value: Point2D);
+  procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D);
+  
   function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
   
   procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
   procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
   procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
   procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
+  
+  function SpriteLayerRectangle(s: Sprite; name: String): Rectangle;
+  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle;
+  function SpriteCollisionRectangle(s: Sprite): Rectangle;
   
   //---------------------------------------------------------------------------
   // Animation code
@@ -275,12 +288,18 @@ interface
   /// @getter Height
   function SpriteHeight(s: Sprite): LongInt;
   
+  function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
+  function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
+  
   /// The current Width of the sprite (aligned to the X axis).
   /// 
   /// @lib
   /// @class Sprite
   /// @getter Width
   function SpriteWidth(s: Sprite): LongInt;
+  
+  function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
+  function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
   
   /// Returns the center point of the passed in Sprite. This uses the Sprite's 
   /// Position, Width and Height.
@@ -524,7 +543,9 @@ implementation
     MASS_IDX      = 0;  // The index of the sprite's mass value
     ROTATION_IDX  = 1;  // The index of the sprite's rotation value
     SCALE_IDX     = 2;  // The index of the sprite's scale value
-  
+    // WIDTH_IDX     = 3;  // The index of the sprite's width value
+    // HEIGHT_IDX    = 4;  // The index of the sprite's height value
+    
   
   function VectorFromTo(s1, s2: Sprite): Vector;
   begin
@@ -604,10 +625,12 @@ implementation
     
     //Set lengths of the layer arrays
     SetLength(result^.layers, count);
+    SetLength(result^.layerOffsets, count);
     
     for i := 0 to High(result^.layers) do
     begin
       result^.layers[i] := layers[i];
+      result^.layerOffsets[i] := PointAt(0,0);
       
       // Make sure that this image can be used interchangably with the other layers of the
       // sprite.
@@ -698,6 +721,7 @@ implementation
       SetLength(s^.layers, 0);
       SetLength(s^.visibleLayers, 0);
       SetLength(s^.values, 0);
+      SetLength(s^.layerOffsets, 0);
       
       // Free the name <-> id maps
       FreeNamedIndexCollection(s^.layerIds);
@@ -711,7 +735,7 @@ implementation
       //Free buffered rotation image
       // if s^.bufferBmp <> nil then FreeBitmap(s^.bufferBmp);
       // s^.bufferBmp := nil;
-    
+      
       //Dispose sprite
       Dispose(s);
       CallFreeNotifier(s);
@@ -725,39 +749,17 @@ implementation
     if s = nil then begin RaiseException('No sprite to add to'); exit; end;
     
     result := AddName(s^.layerIds, layerName);
-    if (result < 0) or (result > Length(s^.layers)) then begin RaiseException('Error adding layer ' + layerName); exit; end;
+    if (result <> Length(s^.layers)) then begin RaiseException('Error adding layer ' + layerName); exit; end;
     
     //Resize the array
     SetLength(s^.layers, Length(s^.layers) + 1);
+    SetLength(s^.layerOffsets, Length(s^.layerOffsets) + 1);
     
     //Add the values to the array
     s^.layers[result] := newLayer;
+    s^.layerOffsets[result] := PointAt(0,0);
   end;
-
-  /// Returns the current width of the sprite.
-  ///
-  /// @param sprite:     The sprite to get the width of
-  /// @returns           The width of the sprite's current frame
-  function SpriteWidth(s: Sprite): LongInt;
-  begin
-    if s = nil then
-      result := 0
-    else
-      result := s^.layers[0]^.cellW;
-  end;
-
-  /// Returns the current height of the sprite.
-  ///
-  /// @param sprite:     The sprite to get the height of
-  /// @returns           The height of the sprite's current frame
-  function SpriteHeight(s: Sprite): LongInt;
-  begin
-    if s = nil then
-      result := 0
-    else
-      result := s^.layers[0]^.cellH;
-  end;
-
+  
   procedure SpriteReplayAnimation(s: Sprite);
   begin
     SpriteReplayAnimation(s, true);
@@ -811,7 +813,6 @@ implementation
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   begin
     if not assigned(s) then exit;
-    WriteLn(HexStr(s^.animationData), ' ', pct:4:2, '% ', withSound);
     UpdateAnimation(s^.animationData, pct, withSound);
   end;
 
@@ -854,7 +855,9 @@ implementation
     
     for i := 0 to High(s^.visibleLayers) do
     begin
-      DrawCell(SpriteLayer(s, s^.visibleLayers[i]), SpriteCurrentCell(s), Round(s^.position.x + xOffset), Round(s^.position.y + yOffset));
+      DrawCell(SpriteLayer(s, s^.visibleLayers[i]), SpriteCurrentCell(s), 
+        Round(s^.position.x + xOffset + s^.layerOffsets[i].x), 
+        Round(s^.position.y + yOffset + s^.layerOffsets[i].y));
     end;
   end;
 
@@ -863,7 +866,7 @@ implementation
     if s = nil then 
       result := false
     else
-      result := not OnScreen(RectangleFrom(s));
+      result := not OnScreen(SpriteLayerRectangle(s, 0));
   end;
 
   procedure MoveSprite(s : Sprite; const velocity : Vector); overload;
@@ -952,7 +955,7 @@ implementation
     if (not Assigned(s)) then
       result := RectangleFrom(0,0,0,0)
     else
-      result := RectangleOfCell(s^.layers[0], AnimationCurrentCell(s^.animationData));
+      result := BitmapCellRectangle(s^.layers[0], AnimationCurrentCell(s^.animationData));
   end;
   
   function SpriteScreenRectangle(s: Sprite): Rectangle;
@@ -960,7 +963,7 @@ implementation
     if (not Assigned(s)) or (not Assigned(s^.animationData)) then
       result := RectangleFrom(0,0,0,0)
     else
-      result := ToScreen(RectangleFrom(s));
+      result := ToScreen(SpriteLayerRectangle(s, 0));
   end;
   
   procedure SpriteSetX(s: Sprite; value: Single);
@@ -1079,6 +1082,50 @@ implementation
     else result := s^.layers;
   end;
   
+  function SpriteLayerOffsets(s: Sprite): Point2DArray;
+  begin
+    if not Assigned(s) then begin result := nil; exit; end;
+    result := s^.layerOffsets;
+  end;
+  
+  procedure SpriteSetLayerOffsets(s: Sprite; values: Point2DArray);
+  var
+    i: Integer;
+  begin
+    if not Assigned(s) then exit;
+    if not Length(values) = Length(s^.layerOffsets) then begin RaiseException('Unable to set sprite layer offsets as lengths are not equal.'); exit; end;
+    
+    for i := 0 to High(values) do
+    begin
+      s^.layerOffsets[i] := values[i];
+    end;
+  end;
+  
+  function SpriteLayerOffset(s: Sprite; name: String): Point2D;
+  begin
+    if not assigned(s) then result := PointAt(0,0)
+    else result := SpriteLayerOffset(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D;
+  begin
+    if not assigned(s) then result := PointAt(0,0)
+    else if (idx < 0) or (idx >= Length(s^.layerOffsets)) then begin RaiseException('Error fetching layer offset out of range.'); result := PointAt(0,0); exit; end
+    else result := s^.layerOffsets[idx];
+  end;
+  
+  procedure SpriteSetLayerOffset(s: Sprite; name: String; const value: Point2D);
+  begin
+    if assigned(s) then
+      SpriteSetLayerOffset(s, IndexOf(s^.layerIds, name), value);
+  end;
+  
+  procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D);
+  begin
+    if assigned(s) then
+      s^.layerOffsets[idx] := value;
+  end;
+  
   function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt;
   begin
     if not assigned(s) then result := -1
@@ -1167,7 +1214,43 @@ implementation
       Swap(s^.visibleLayers[i], s^.visibleLayers[i - 1]);
     end;
   end;
-
+  
+  function SpriteLayerRectangle(s: Sprite; name: String): Rectangle; overload;
+  begin
+    if not assigned(s) then result := RectangleFrom(0,0,0,0)
+    else result := SpriteLayerRectangle(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+    {$ENDIF}
+    
+    if not assigned(s) then result := RectangleFrom(0,0,0,0)
+    else result := BitmapRectangle(s^.position.x + s^.layerOffsets[idx].x, s^.position.y + s^.layerOffsets[idx].y, s^.layers[idx]);
+      
+    {$IFDEF TRACE}
+      TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+    {$ENDIF}
+  end;
+  
+  function SpriteCollisionRectangle(s: Sprite): Rectangle; overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+    {$ENDIF}
+    
+    if not assigned(s) then result := RectangleFrom(0,0,0,0)
+    else result := BitmapRectangle(s^.position.x, s^.position.y, s^.collisionBitmap);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+    {$ENDIF}
+  end;
+  
+  
+  
   //---------------------------------------------------------------------------
   // Sprite position
   //---------------------------------------------------------------------------
@@ -1245,6 +1328,47 @@ implementation
     if not assigned(s) then result := false
     else result := AnimationEnded(s^.animationData);
   end;
+  
+  //---------------------------------------------------------------------------
+  // Sprite width/height
+  //---------------------------------------------------------------------------
+  
+  function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
+  begin
+    if not Assigned(s) then result := 0
+    else result := SpriteLayerHeight(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
+  begin
+    if not Assigned(s) then result := 0
+    else if (idx < 0) or (idx >= Length(s^.layers)) then result := 0
+    else result := s^.layers[idx]^.cellH;
+  end;
+  
+  function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
+  begin
+    if not assigned(s) then result := 0
+    else result := SpriteLayerWidth(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
+  begin
+    if not Assigned(s) then result := 0
+    else if (idx < 0) or (idx >= Length(s^.layers)) then result := 0
+    else result := s^.layers[idx]^.cellW;
+  end;  
+  
+  function SpriteWidth(s: Sprite): LongInt;
+  begin
+    result := SpriteLayerWidth(s, 0);
+  end;
+  
+  function SpriteHeight(s: Sprite): LongInt;
+  begin
+    result := SpriteLayerHeight(s, 0);
+  end;
+  
   
   //---------------------------------------------------------------------------
   // Sprite mass

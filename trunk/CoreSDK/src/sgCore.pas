@@ -463,7 +463,7 @@ implementation
   uses 
     SysUtils, Math, Classes, //System
     SDL_Image, SDL_gfx, //SDL
-    sgTrace, sgShared, sgEventProcessing, sgResources, sgGeometry; //SwinGame
+    sgTrace, sgShared, sgEventProcessing, sgResources, sgGeometry, sgImages; //SwinGame
 //=============================================================================
 
 
@@ -583,7 +583,7 @@ implementation
 
       screen^.width := _screen^.w;
       screen^.height := _screen^.h;
-      screenRect := RectangleFrom(0,0,screen);
+      screenRect := BitmapRectangle(0,0,screen);
     end;
     {$IFDEF TRACE}
       TraceExit('sgCore', '_SetupScreen');

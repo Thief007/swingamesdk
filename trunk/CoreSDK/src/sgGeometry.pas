@@ -12,6 +12,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-21: Andrew : Moved Sprite and Bitmap rectangle function to sgSprites and sgImages
 // - 2009-12-18: Andrew : Added code to fix rectangles (+ve width and height)
 // - 2009-11-10: Andrew : Added tracing and sn and csn tags to code
 // - 2009-10-16: Andrew : Added shapes and prototypes. Ensure they are freed
@@ -265,29 +266,11 @@ interface
   /// @lib
   function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
   
-  /// Returns a rectangle for the location of the indicated cell within the
-  /// bitmap.
-  /// 
-  /// @lib RectangleOfBitmapCell
-  /// @sn rectangleIn:%s ofCell:%s
-  /// 
-  /// @class Bitmap
-  /// @method RectangleOfCell
-  /// @csn rectangleOfCell:%s
-  function RectangleOfCell(src: Bitmap; cell: LongInt): Rectangle; overload;
-  
-  /// @lib RectangleForBitmap
-  function RectangleFrom(bmp: Bitmap): Rectangle; overload;
-  /// @lib RectangleForBitmapAtXY
-  function RectangleFrom(x, y: Single; bmp: Bitmap): Rectangle; overload;
-  /// @lib RectangleForBitmapAtPoint
-  function RectangleFrom(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
   /// @lib RectangleForPoints
   function RectangleFrom(const pt1, pt2: Point2D): Rectangle; overload;
   /// @lib RectangleAtPoint
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
-  /// @lib RectangleFromSprite
-  function RectangleFrom(s: Sprite): Rectangle; overload;
+  
   /// @lib RectangleFromLine
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
   /// @lib RectangleFromCircle
@@ -2591,20 +2574,6 @@ implementation
     {$ENDIF}
   end;
   
-  function RectangleFrom(s: Sprite): Rectangle; overload;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'RectangleFrom(s: Sprite): Rectangle', '');
-    {$ENDIF}
-    
-    if not assigned(s) then result := RectangleFrom(0,0,0,0)
-    else result := RectangleFrom(s^.position.x, s^.position.y, SpriteWidth(s), SpriteHeight(s));
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'RectangleFrom(s: Sprite): Rectangle', '');
-    {$ENDIF}
-  end;
-  
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
   begin
     {$IFDEF TRACE}
@@ -2616,58 +2585,6 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
     {$ENDIF}
-  end;
-  
-  function RectangleFrom(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
-    {$ENDIF}
-    
-    result := RectangleFrom(pt.x, pt.y, bmp^.width, bmp^.height);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
-    {$ENDIF}
-  end;
-  
-  function RectangleFrom(x, y: Single; bmp: Bitmap): Rectangle; overload;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'RectangleFrom(x, y: Single', '');
-    {$ENDIF}
-    
-    result := RectangleFrom(x, y, bmp^.width, bmp^.height);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'RectangleFrom(x, y: Single', '');
-    {$ENDIF}
-  end;
-  
-  function RectangleFrom(bmp: Bitmap): Rectangle; overload;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'RectangleFrom(bmp: Bitmap): Rectangle', '');
-    {$ENDIF}
-    
-    result := RectangleFrom(0, 0, bmp);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'RectangleFrom(bmp: Bitmap): Rectangle', '');
-    {$ENDIF}
-  end;
-  
-  function RectangleOfCell(src: Bitmap; cell: LongInt): Rectangle; overload;
-  begin
-    if (cell < 0) or (cell >= src^.cellCount) then
-      result := RectangleFrom(0,0,0,0)
-    else
-    begin
-      result.x := (cell mod src^.cellCols) * src^.cellW;
-      result.y := (cell - (cell mod src^.cellCols)) div src^.cellCols * src^.cellH;
-      result.width := src^.cellW;
-      result.height := src^.cellH;
-    end;
   end;
   
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
