@@ -381,6 +381,7 @@ interface
     ///
     /// @enum ResourceKind
     ResourceKind = (
+      BundleResource,
       BitmapResource,
       FontResource,
       MusicResource,
