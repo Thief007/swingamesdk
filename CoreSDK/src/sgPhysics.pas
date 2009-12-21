@@ -437,7 +437,7 @@ implementation
   
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
   begin
-    result := BitmapPartRectCollision(bmp, x, y, RectangleFrom(0, 0, bmp), rect);
+    result := BitmapPartRectCollision(bmp, x, y, BitmapRectangle(0, 0, bmp), rect);
   end;
   
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const part, rect: Rectangle): Boolean; overload;
@@ -489,7 +489,7 @@ implementation
     FixRectangle(rect);
     if (width < 1) or (height < 1) then exit;
     
-    if not RectanglesIntersect(RectangleFrom(s), rect) then 
+    if not RectanglesIntersect(SpriteCollisionRectangle(s), rect) then 
       exit;
     
     //  Check pixel level details
@@ -632,12 +632,12 @@ implementation
     // Check if either is not using pixel level collisions
     if SpriteCollisionKind(s1) = AABBCollisions then 
     begin
-      result := SpriteRectCollision(s2, RectangleFrom(s1));
+      result := SpriteRectCollision(s2, SpriteCollisionRectangle(s1));
       exit;
     end
     else if SpriteCollisionKind(s2) = AABBCollisions then 
     begin
-      result := SpriteRectCollision(s1, RectangleFrom(s2));
+      result := SpriteRectCollision(s1, SpriteCollisionRectangle(s2));
       exit;
     end;
     
@@ -704,7 +704,7 @@ implementation
 
   function SpritesCollided(s1, s2: Sprite): Boolean;
   begin
-    if not SpriteRectCollision(s1, RectangleFrom(s2)) then 
+    if not SpriteRectCollision(s1, SpriteCollisionRectangle(s2)) then 
       result := false
     else if (SpriteCollisionKind(s1) = PixelCollisions) or (SpriteCollisionKind(s2) = PixelCollisions) then
       result := CollisionWithinSpriteImages(s1, s2)
@@ -730,7 +730,7 @@ implementation
     if not assigned(s) then exit;
     if (SpriteCollisionKind(s) = AABBCollisions) then
     begin
-      result := BitmapRectCollision(bmp, pt, part, RectangleFrom(s));
+      result := BitmapRectCollision(bmp, pt, part, SpriteCollisionRectangle(s));
       exit;
     end;
     
@@ -753,12 +753,12 @@ implementation
   ///
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, PointAt(x, y), RectangleFrom(bmp));
+    result := SpriteBitmapCollision(s, bmp, PointAt(x, y), BitmapRectangle(bmp));
   end;
 
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
   begin
-    result := SpriteBitmapCollision(s, bmp, pt, RectangleFrom(bmp));
+    result := SpriteBitmapCollision(s, bmp, pt, BitmapRectangle(bmp));
   end;
   
   function CircleLineCollision(s: Sprite; const line: LineSegment): Boolean;
@@ -782,7 +782,7 @@ implementation
     
   function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
   begin
-    result := RectLineCollision(RectangleFrom(s), line);
+    result := RectLineCollision(SpriteCollisionRectangle(s), line);
   end;
   
   //You need to test for collisions on the ...
@@ -816,7 +816,7 @@ implementation
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
   begin
     if bbox then
-      result := PointInRect(ptX, ptY, RectangleFrom(x, y, bmp))
+      result := PointInRect(ptX, ptY, BitmapRectangle(x, y, bmp))
     else
       result := BitmapPointCollision(bmp, x, y, ptX, ptY);
   end;
@@ -1117,8 +1117,8 @@ implementation
   var
     r1, r2: Rectangle;
   begin
-    r1 := RectangleOfCell(bmp1, cell1);
-    r2 := RectangleOfCell(bmp2, cell2);
+    r1 := BitmapCellRectangle(bmp1, cell1);
+    r2 := BitmapCellRectangle(bmp2, cell2);
     
     result := 
       CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
@@ -1136,7 +1136,7 @@ implementation
                               bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   begin
     result := CellBitmapCollided( bmp1, cell, x1, y1, 
-                                  bmp2, x2, y2, RectangleFrom(0, 0, bmp2));
+                                  bmp2, x2, y2, BitmapRectangle(0, 0, bmp2));
     // if not assigned(bmp2) then 
     // begin
     //   result := false;
@@ -1168,7 +1168,7 @@ implementation
       exit;
     end;
     
-    r1 := RectangleOfCell(bmp1, cell);
+    r1 := BitmapCellRectangle(bmp1, cell);
     
     result := 
       CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
@@ -1186,7 +1186,7 @@ implementation
   var
     r1: Rectangle;
   begin
-    r1 := RectangleOfCell(bmp, cell);
+    r1 := BitmapCellRectangle(bmp, cell);
     
     result := BitmapPartRectCollision(bmp, x, y, r1, rect);
   end;

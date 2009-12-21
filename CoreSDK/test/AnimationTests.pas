@@ -29,6 +29,7 @@ begin
   s := CreateSprite(FetchBitmap('red_explosion'),'explosion',FetchAnimationTemplate('explosion_temp'));
   SpriteAddLayer(s, FetchBitmap('count'), 'count');
   SpriteShowLayer(s, 'count');
+  SpriteSetLayerOffset(s, 'count', PointAt(30,30));
   SpriteStartAnimation(s, 'explosion_loop');
   SpriteSetPosition(s, PointAt(200,200));
   
@@ -57,6 +58,8 @@ begin
     
     DrawAnimation(boom[currentAnim], expl, 50, 50);
     DrawSprite(s);
+    
+    DrawRectangle(ColorGreen, SpriteLayerRectangle(s, 'count'));
     
     DrawCell(FetchBitmap('red_explosion'), 1, 200, 50);
     

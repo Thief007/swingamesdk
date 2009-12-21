@@ -405,6 +405,7 @@ interface
       layerIds:         NamedIndexCollection; // The name <-> ids mapping for layers
       layers:           Array of Bitmap;      // Layers of the sprites
       visibleLayers:    Array of LongInt;     // The indexes of the visible layers
+      layerOffsets:     Array of Point2D;     // Offsets from drawing the layers
       
       values:   Array of Single;              // Values associated with this sprite
       valueIds: NamedIndexCollection;         // The name <-> ids mappings for values
@@ -419,7 +420,6 @@ interface
       collisionBitmap: Bitmap;                // The bitmap used for collision testing (default to first image)
         
       //add later -> 
-      //layerOffsets:     Array of Point2D;     // Offsets from drawing this layer
       //collisionShape: Shape;                // This can be used in place of pixel level collisions for a Shape
     end;
 

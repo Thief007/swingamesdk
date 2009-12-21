@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-21: Andrew : Added Bitmap rectangle calculation code
 // - 2009-12-18: Andrew : Added code to check if two images can be used interchangably
 // - 2009-12-10: Andrew : Added bitmap drawing functions
 // - 2009-12-07: Andrew : Added loading of image resources
@@ -302,6 +303,26 @@ uses sgTypes;
   /// @class Bitmap
   /// @method ClearSurface
   procedure ClearSurface(dest: Bitmap); overload;
+  
+  //---------------------------------------------------------------------------
+  // Bitmap -> Rectangle functions
+  //---------------------------------------------------------------------------
+  
+  function BitmapRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+  function BitmapRectangle(bmp: Bitmap): Rectangle; overload;
+  function BitmapSheetRectangle(bmp: Bitmap): Rectangle; overload;
+  function BitmapSheetRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+  
+  /// Returns a rectangle for the location of the indicated cell within the
+  /// bitmap.
+  /// 
+  /// @lib
+  /// @sn bitmap:%s cellRectangle:%s
+  /// 
+  /// @class Bitmap
+  /// @method CellRectangle
+  /// @csn rectangleCell:%s
+  function BitmapCellRectangle(src: Bitmap; cell: LongInt): Rectangle;
   
   
   //---------------------------------------------------------------------------
@@ -965,7 +986,7 @@ procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
 var
   offset: SDL_Rect;
 begin
-  if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
+  if (dest = nil) or (src = nil) then exit;
   
   offset := NewSDLRect(x, y, 0, 0);
   SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
@@ -1098,7 +1119,7 @@ end;
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
 begin
   //DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
-  DrawBitmapPart(dest, src, RectangleOfCell(src, cell), x, y);
+  DrawBitmapPart(dest, src, BitmapCellRectangle(src, cell), x, y);
 end;
 
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
@@ -1125,6 +1146,74 @@ procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D);
 begin
   DrawCell(screen, src, cell, position);
 end;
+
+//---------------------------------------------------------------------------
+
+function BitmapSheetRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+begin
+  if not Assigned(bmp) then result := RectangleFrom(0,0,0,0)
+  else result := RectangleFrom(x, y, bmp^.width, bmp^.height);
+end;
+
+function BitmapSheetRectangle(bmp: Bitmap): Rectangle; overload;
+begin
+  result := BitmapSheetRectangle(0,0,bmp);
+end;
+
+function BitmapRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'BitmapRectangle(x, y: Single', '');
+  {$ENDIF}
+  
+  if not Assigned(bmp) then result := RectangleFrom(0,0,0,0)
+  else result := RectangleFrom(x, y, bmp^.cellW, bmp^.cellH);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'BitmapRectangle(x, y: Single', '');
+  {$ENDIF}
+end;
+
+function BitmapRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'BitmapRectangle(const pt: Point2D', '');
+  {$ENDIF}
+  
+  result := BitmapRectangle(pt.x, pt.y, bmp);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'BitmapRectangle(const pt: Point2D', '');
+  {$ENDIF}
+end;
+
+function BitmapRectangle(bmp: Bitmap): Rectangle; overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'BitmapRectangle(bmp: Bitmap): Rectangle', '');
+  {$ENDIF}
+  
+  result := BitmapRectangle(0, 0, bmp);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'BitmapRectangle(bmp: Bitmap): Rectangle', '');
+  {$ENDIF}
+end;
+
+function BitmapCellRectangle(src: Bitmap; cell: LongInt): Rectangle;
+begin
+  if (cell < 0) or (cell >= src^.cellCount) then
+    result := RectangleFrom(0,0,0,0)
+  else
+  begin
+    result.x := (cell mod src^.cellCols) * src^.cellW;
+    result.y := (cell - (cell mod src^.cellCols)) div src^.cellCols * src^.cellH;
+    result.width := src^.cellW;
+    result.height := src^.cellH;
+  end;
+end;
+
+
 
 //=============================================================================
 
