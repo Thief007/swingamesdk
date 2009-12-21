@@ -4,6 +4,8 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-21: Andrew : Moved bundle loading into the bundles directory.
+//                      : Added the ability to load bundles within bundles.
 // - 2009-12-18: Andrew : Removed links to old mappy tile code... need new map code
 // - 2009-12-10: Andrew : Switched to DrawCell for start up animation
 //                      : Added reading of cell information on bitmap loading
@@ -38,14 +40,17 @@ interface
   //----------------------------------------------------------------------------
   // Bundle handling routines
   //----------------------------------------------------------------------------
-
+  
   /// @lib
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
-
+  
   /// @lib LoadResourceBundle(name, True)
   /// @uname LoadResourceBundleWithProgress
   procedure LoadResourceBundle(name: String); overload;
-
+  
+  /// @lib
+  procedure MapResourceBundle(name, filename: String; showProgress: Boolean);
+  
   /// @lib
   procedure ReleaseResourceBundle(name: String);
 
@@ -230,10 +235,11 @@ implementation
     for i := Low(identifiers) to High(identifiers) do
     begin
       current := identifiers[i];
-
+      
       if current.kind = kind then
       begin
         case kind of
+          BundleResource:     MapResourceBundle(current.name, current.path, false);
           BitmapResource:     rbLoadBitmap();
           FontResource:       rbLoadFont();
           SoundResource:      MapSoundEffect(current.name, current.path);
@@ -278,6 +284,7 @@ implementation
       current := identifiers[i];
 
       case current.kind of
+        BundleResource:     ReleaseResourceBundle(current.name);
         BitmapResource:     ReleaseBitmap(current.name);
         FontResource:       ReleaseFont(current.name);
         SoundResource:      ReleaseSoundEffect(current.name);
@@ -306,7 +313,8 @@ implementation
   
   function StringToResourceKind(kind: String): ResourceKind;
   begin
-    if kind = 'BITMAP' then result := BitmapResource
+    if kind = 'BUNDLE' then result := BundleResource
+    else if kind = 'BITMAP' then result := BitmapResource
     else if kind = 'SOUND' then result := SoundResource
     else if kind = 'MUSIC' then result := MusicResource
     else if kind = 'FONT' then result := FontResource
@@ -336,6 +344,11 @@ implementation
   //----------------------------------------------------------------------------
   
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
+  begin
+    MapResourceBundle(name, name, showProgress);
+  end;
+  
+  procedure MapResourceBundle(name, filename: String; showProgress: Boolean);
   var
     input: Text; //the bundle file
     delim: TSysCharSet;
@@ -348,68 +361,75 @@ implementation
       TraceEnter('sgResources', 'LoadResourceBundle');
     {$ENDIF}
     
-    path := FilenameToResource(name, OtherResource);
+    path := FilenameToResource(filename, BundleResource);
+    
+    if _Bundles.containsKey(name) then
+    begin
+      RaiseException('Error loaded Resource Bundle resource twice, ' + name);
+      exit;
+    end;    
     
     Assign(input, path);
     Reset(input);
     
-    delim := [ ',' ]; //comma delimited
-    i := 0;
-
-    bndl := tResourceBundle.Create();
-
-    while not EOF(input) do
-    begin
-      i := i + 1;
-      ReadLn(input, line);
-      line := Trim(line);
-      if Length(line) = 0 then continue;
+    try
+      delim := [ ',' ]; //comma delimited
+      i := 0;
       
-      current.kind := StringToResourceKind(ExtractDelimited(1, line, delim));
-      current.name := ExtractDelimited(2, line, delim);
-      if Length(current.name) = 0 then 
-      begin
-        RaiseException('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
-        exit;
-      end;
-
-      current.path := ExtractDelimited(3, line, delim);
-      if Length(current.path) = 0 then 
-      begin
-        RaiseException('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
-        exit;
-      end;
+      bndl := tResourceBundle.Create();
       
-      if CountDelimiter(line, ',') > 2 then
-      // if current.kind = FontResource then
+      while not EOF(input) do
       begin
-        SetLength(current.data, CountDelimiter(line, ',') - 2);
+        i := i + 1;
+        ReadLn(input, line);
+        line := Trim(line);
+        if Length(line) = 0 then continue;
         
-        for j := 4 to CountDelimiter(line, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
-        begin  
-          if not TryStrToInt(ExtractDelimited(j, line, delim), current.data[j - 4]) then
-          begin
-            RaiseException('Error loading resource bundle, invalid data in ' + path + ' on line ' + IntToStr(i));
-            exit;
-          end;
+        current.kind := StringToResourceKind(ExtractDelimited(1, line, delim));
+        current.name := ExtractDelimited(2, line, delim);
+        if Length(current.name) = 0 then 
+        begin
+          RaiseException('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
+          exit;
         end;
-      end
-      else SetLength(current.data, 0);
+        
+        current.path := ExtractDelimited(3, line, delim);
+        if Length(current.path) = 0 then 
+        begin
+          RaiseException('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
+          exit;
+        end;
+        
+        if CountDelimiter(line, ',') > 2 then
+        begin
+          SetLength(current.data, CountDelimiter(line, ',') - 2);
+        
+          for j := 4 to CountDelimiter(line, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
+          begin  
+            if not TryStrToInt(ExtractDelimited(j, line, delim), current.data[j - 4]) then
+            begin
+              RaiseException('Error loading resource bundle, invalid data in ' + path + ' on line ' + IntToStr(i));
+              exit;
+            end;
+          end;
+        end
+        else SetLength(current.data, 0);
+        
+        //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
+        
+        bndl.add(current);
+      end;
       
-      //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
+      bndl.LoadResources(showProgress);
       
-      bndl.add(current);
+      if not _Bundles.setValue(name, bndl) then //store bundle
+      begin
+        RaiseException('Error loaded Bundle twice, ' + name);
+        exit;
+      end;
+    finally
+      Close(input);
     end;
-    
-    bndl.LoadResources(showProgress);
-    
-    if not _Bundles.setValue(name, bndl) then //store bundle
-    begin
-      RaiseException('Error loaded Bundle twice, ' + name);
-      exit;
-    end;
-    
-    Close(input);
     {$IFDEF TRACE}
       TraceExit('sgResources', 'LoadResourceBundle');
     {$ENDIF}
@@ -446,12 +466,14 @@ implementation
   begin
     case kind of
     {$ifdef UNIX}
+      BundleResource:     result := PathToResourceWithBase(path, 'bundles/' + filename);
       FontResource:       result := PathToResourceWithBase(path, 'fonts/' + filename);
       SoundResource:      result := PathToResourceWithBase(path, 'sounds/' + filename);
       BitmapResource:     result := PathToResourceWithBase(path, 'images/' + filename);
       MapResource:        result := PathToResourceWithBase(path, 'maps/' + filename);
       AnimationResource:  result := PathToResourceWithBase(path, 'animations/' + filename);
     {$else}
+      BundleResource:     result := PathToResourceWithBase(path, 'bundles\' + filename);
       FontResource:       result := PathToResourceWithBase(path, 'fonts\' + filename);
       SoundResource:      result := PathToResourceWithBase(path, 'sounds\' + filename);
       BitmapResource:     result := PathToResourceWithBase(path, 'images\' + filename);
@@ -582,21 +604,6 @@ implementation
           if isSkip then break;
           Delay(15);          
         end;
-        
-        //if AudioOpen then PlaySoundEffect(FetchSoundEffect('SwinGameStart'));
-        // for i:= 0 to ANI_CELL_COUNT - 1 do
-        // begin
-        //   DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
-        //   
-        //   // DrawBitmapPart(FetchBitmap('SwinGameAni'), 
-        //   //   (i div ANI_V_CELL_COUNT) * ANI_W, (i mod ANI_V_CELL_COUNT) * ANI_H,
-        //   //   ANI_W, ANI_H - 1, ANI_X, ANI_Y);
-        //   DrawCell(FetchBitmap('SwinGameAni'), i, ANI_X, ANI_Y);
-        //   RefreshScreen();
-        //   InnerProcessEvents();
-        //   if isSkip then break;
-        //   Delay(15);
-        // end;
         
         while SoundEffectPlaying(FetchSoundEffect('SwinGameStart')) or isPaused do
         begin

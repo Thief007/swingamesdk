@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-21: Andrew : Changed to include sound filename in animation loading.
 // - 2009-12-18: Andrew : Added in code to verify animations have no loops
 //                        with a 0 duration.
 // - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
@@ -507,23 +508,24 @@ var
   procedure ProcessSound();
   var
     id: LongInt;
-    sndId: String;
+    sndId, sndFile: String;
   begin
-    if CountDelimiter(data, ',') <> 1 then
+    if CountDelimiter(data, ',') <> 2 then
     begin
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A sound must have two parts id,sndfile.');
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A sound must have three parts id,sound id,sound file.');
       exit;
     end;
 
     id := MyStrToInt(ExtractDelimited(1,data,[',']), true);
     
     sndId := ExtractDelimited(2,data,[',']);
+    sndFile := ExtractDelimited(3,data,[',']);
     
     if not HasSoundEffect(sndId) then
     begin
-      if MapSoundEffect(sndId, sndId) = nil then
+      if MapSoundEffect(sndId, sndFile) = nil then
       begin
-        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Cannot find sound file ' + sndId);
+        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Cannot find sound file ' + sndFile);
         exit;
       end;
     end;
@@ -688,7 +690,22 @@ var
           current := current^.next;
       end;
     end;
+  end;
+  
+  procedure VerifyVersion();
+  begin
+    if EOF(input) then exit;
+    line := '';
     
+    while (Length(line) = 0) or (MidStr(line,1,2) = '//') do
+    begin
+      ReadLn(input, line);
+      line := Trim(line);
+    end;
+    
+    //Verify that the line has the right version
+    if line <> 'SwinGame Animation #v1' then 
+      RaiseException('Error in animation ' + filename + '. Animation files must start with "SwinGame Animation #v1"');
     
   end;
 begin
@@ -704,6 +721,8 @@ begin
   
   Assign(input, path);
   Reset(input);
+  
+  VerifyVersion();
   
   try
     while not EOF(input) do

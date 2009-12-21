@@ -7,6 +7,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2009-12-21: Andrew : Added the ability to toggle visible layers.
 // - 2009-12-20: Andrew : Added code to manage sprite layers (show, hide, reorder, etc)
 // - 2009-12-18: Andrew : Moved to new sprite format.
 // - 2009-11-10: Andrew : Changed sn and csn tags
@@ -101,17 +102,20 @@ interface
   /// @csn addLayer:%s named:%s
   function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): LongInt;
   
-  function SpriteLayer(s: Sprite; name: String): Bitmap;
-  function SpriteLayer(s: Sprite; idx: LongInt): Bitmap;
+  function SpriteLayer(s: Sprite; name: String): Bitmap; overload;
+  function SpriteLayer(s: Sprite; idx: LongInt): Bitmap; overload;
   
-  function SpriteShowLayer(s: Sprite; name: String): LongInt;
-  function SpriteShowLayer(s: Sprite; id: LongInt): LongInt;
+  function SpriteShowLayer(s: Sprite; name: String): LongInt; overload;
+  function SpriteShowLayer(s: Sprite; id: LongInt): LongInt; overload;
   
-  procedure SpriteHideLayer(s: Sprite; name: String);
-  procedure SpriteHideLayer(s: Sprite; id: LongInt);
+  procedure SpriteHideLayer(s: Sprite; name: String); overload;
+  procedure SpriteHideLayer(s: Sprite; id: LongInt); overload;
   
-  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt;
-  function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt;
+  procedure SpriteToggleLayerVisible(s: Sprite; name: String); overload;
+  procedure SpriteToggleLayerVisible(s: Sprite; id: LongInt); overload;
+  
+  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt; overload;
+  function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt; overload;
   
   function SpriteLayerCount(s: Sprite): LongInt;
   function SpriteVisibleLayerCount(s: Sprite): LongInt;
@@ -783,7 +787,10 @@ implementation
   
   procedure SpriteStartAnimation(s: Sprite; idx: LongInt; withSound: Boolean);
   begin
+    if not assigned(s) then exit;
+    if not assigned(s^.animationTemplate) then exit;
     
+    s^.animationData := CreateAnimation(idx, s^.animationTemplate, withSound);
   end;
   
   procedure UpdateSpriteAnimation(s: Sprite); overload;
@@ -803,8 +810,8 @@ implementation
   
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   begin
-    if s = nil then exit;
-    
+    if not assigned(s) then exit;
+    WriteLn(HexStr(s^.animationData), ' ', pct:4:2, '% ', withSound);
     UpdateAnimation(s^.animationData, pct, withSound);
   end;
 
@@ -826,7 +833,7 @@ implementation
   procedure UpdateSprite(s: Sprite; pct: Single; withSound: Boolean); overload;
   begin
     MoveSprite(s, pct);
-    UpdateSpriteAnimation(s, pct);
+    UpdateSpriteAnimation(s, pct, withSound);
   end;
   
   procedure DrawSprite(s: Sprite); overload;
@@ -1032,6 +1039,20 @@ implementation
     
     //Resize the array to remove element
     SetLength(s^.visibleLayers, Length(s^.visibleLayers) - 1);
+  end;
+  
+  procedure SpriteToggleLayerVisible(s: Sprite; name: String); overload;
+  begin
+    if not assigned(s) then exit
+    else SpriteToggleLayerVisible(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  procedure SpriteToggleLayerVisible(s: Sprite; id: LongInt); overload;
+  begin
+    if SpriteVisibleIndexOfLayer(s, id) < 0 then 
+      SpriteShowLayer(s, id)
+    else
+      SpriteHideLayer(s, id);
   end;
   
   function SpriteLayerCount(s: Sprite): LongInt;

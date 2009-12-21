@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2009-12-21: Andrew : Write exceptions to stderr if not raised.
 // - 2009-12-18: Andrew : Added screen rect cache
 // - 2009-12-10: Andrew : Added iter free - fixed memory leak
 // - 2009-11-11: Andrew : Switched to release rather than drain on the autorelease pool
@@ -393,6 +394,7 @@ implementation
     {$ENDIF}
     
     if UseExceptions then raise Exception.Create(message)
+    else WriteLn(stderr, message);
   end;
 
   procedure RaiseWarning(message: String);
