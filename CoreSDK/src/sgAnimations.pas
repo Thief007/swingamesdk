@@ -35,7 +35,7 @@ interface
   /// Load animation details from a animation frames file.
   ///
   /// @lib
-  /// @sn animationFramesFromFile:%s
+  /// @sn animationTemplateFromFile:%s
   ///
   /// @class AnimationTemplate
   /// @constructor
@@ -56,9 +56,26 @@ interface
   // AnimationTemplate mapping routines
   //----------------------------------------------------------------------------
   
+  /// The index of the animation within the animation template that has the supplied name.
+  ///
+  /// @lib
+  /// @sn animationTemplate:%s indexOfAnimation:%s
+  ///
+  /// @class AnimationTemplate
+  /// @method IndexOfAnimation
+  /// @csn indexOfAnimation:%s
   function AnimationIndex(temp: AnimationTemplate; name: String): LongInt;
   
+  /// The name of the animation within the animation template at the specified index.
+  ///
+  /// @lib
+  /// @sn animationTemplate:%s nameOfAnimation:%s
+  ///
+  /// @class AnimationTemplate
+  /// @method NameOfAnimation
+  /// @csn nameOfAnimation:%s
   function AnimationName(temp: AnimationTemplate; idx: LongInt): String;
+  
   
   //----------------------------------------------------------------------------
   // AnimationTemplate mapping routines
@@ -70,8 +87,7 @@ interface
   /// retrieved by passing this `name` to the `FetchAnimationTemplate` function. 
   ///
   /// @lib
-  ///
-  /// @sn animationFramesNamed:%s fromFile:%s
+  /// @sn animationTemplateNamed:%s fromFile:%s
   ///
   /// @class AnimationTemplate
   /// @constructor
@@ -110,7 +126,7 @@ interface
   /// Creates an animation from a AnimationTemplate. This may play a sound effect
   /// if the animation is set to play a sound effect on its first frame.
   ///
-  /// @lib
+  /// @lib CreateAnimationNamed
   /// @sn animationNamed:%s from:%s
   ///
   /// @class Animation
@@ -121,7 +137,7 @@ interface
   /// Creates an animation from a AnimationTemplate. If withSound is true, this may
   /// play a sound effect if the animation is set to play a sound effect on its first frame.
   ///
-  /// @lib
+  /// @lib CreateAnimationNamedWithSound
   /// @sn animationNamed:%s from:%s withSound:%s
   ///
   /// @class Animation
@@ -143,7 +159,7 @@ interface
   /// Creates an animation from a AnimationTemplate. This may play a sound effect
   /// if the animation is set to play a sound effect on its first frame.
   ///
-  /// @lib
+  /// @lib CreateAnimationWithSound
   /// @sn animationAtIndex:%s from:%s
   ///
   /// @class Animation
@@ -156,11 +172,48 @@ interface
   // Drawing Animations
   //----------------------------------------------------------------------------
   
+  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// This may play a sound if the first frame of the animation is linked to a sound effect.
+  ///
+  /// @lib AssignAnimationNamed
+  /// @sn assignAnimationNamed:%s to:%s from:%s
+  ///
+  /// @class Animation
+  /// @overload AssignAnimation AssignAnimationNamed
+  /// @csn assignAnimationNamed:%s from:%s
   procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate); overload;
+  
+  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// This may play a sound if the first frame of the animation is linked to a sound effect, and withSound is true.
+  ///
+  /// @lib AssignAnimationNamedWithSound
+  /// @sn assignAnimationNamed:%s to:%s from:%s withSound:%s
+  ///
+  /// @class Animation
+  /// @overload AssignAnimation AssignAnimationNamedWithSound
+  /// @csn assignAnimationNamed:%s from:%s withSound:%s
   procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate; withSound: Boolean); overload;
-
+  
+  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// This may play a sound if the first frame of the animation is linked to a sound effect.
+  ///
+  /// @lib AssignAnimation
+  /// @sn assignAnimation:%s to:%s from:%s
+  ///
+  /// @class Animation
+  /// @method AssignAnimation
+  /// @csn assignAnimation:%s from:%s
   procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate); overload;
-
+  
+  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// This may play a sound if the first frame of the animation is linked to a sound effect, and withSound is true.
+  ///
+  /// @lib AssignAnimationWithSound
+  /// @sn assignAnimation:%s to:%s from:%s withSound:%s
+  ///
+  /// @class Animation
+  /// @overload AssignAnimation AssignAnimationWithSound
+  /// @csn assignAnimation:%s from:%s withSound:%s
   procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate; withSound: Boolean); overload;
   
   //----------------------------------------------------------------------------
@@ -181,7 +234,7 @@ interface
   /// Uses the animation information to draw a bitmap at the specified
   /// point.
   ///
-  /// @lib
+  /// @lib DrawAnimationAtPoint
   /// @sn drawAnimation:%s bitmap:%s pt:%s
   ///
   /// @class Animation
@@ -192,7 +245,7 @@ interface
   /// Uses the animation information to draw a bitmap at the specified
   /// x,y location on a destination bitmap.
   ///
-  /// @lib
+  /// @lib DrawAnimationOntoDest
   /// @sn drawOnto:%s animation:%s bitmap:%s x:%s y:%s
   ///
   /// @class Animation
@@ -204,7 +257,7 @@ interface
   /// Uses the animation information to draw a bitmap at the specified
   /// point on a destination bitmap.
   ///
-  /// @lib
+  /// @lib DrawAnimationOntoDestAtPt
   /// @sn drawOnto:%s animation:%s bitmap:%s pt:%s
   ///
   /// @class Animation
@@ -215,7 +268,7 @@ interface
   /// Uses the animation information to draw a bitmap to the screen at the specified
   /// x,y location.
   ///
-  /// @lib
+  /// @lib DrawAnimationOnScreen
   /// @sn drawAnimation:%s bitmap:%s onScreenAtX:%s y:%s
   ///
   /// @class Animation
@@ -226,7 +279,7 @@ interface
   /// Uses the animation information to draw a bitmap to the screen at the specified
   /// point.
   ///
-  /// @lib
+  /// @lib DrawAnimationOnScreenAtPt
   /// @sn drawAnimation:%s bitmap:%s onScreenAtPt:%s
   ///
   /// @class Animation
@@ -255,7 +308,7 @@ interface
   /// frame in the animation. This may play a sound effect if the new frame
   /// triggers a sound.
   /// 
-  /// @lib UpdatePct
+  /// @lib UpdateAnimationPct
   /// @sn updateAnimation:%s pct:%s
   ///
   /// @class Animation
@@ -267,7 +320,7 @@ interface
   /// frame in the animation. This may play a sound effect if the new frame
   /// triggers a sound and withSound is true.
   /// 
-  /// @lib UpdatePctAndSound
+  /// @lib UpdateAnimationPctAndSound
   /// @sn updateAnimation:%s pct:%s withSound:%s
   /// 
   /// @class Animation

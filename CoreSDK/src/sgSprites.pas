@@ -107,6 +107,9 @@ interface
   function SpriteLayer(s: Sprite; name: String): Bitmap; overload;
   function SpriteLayer(s: Sprite; idx: LongInt): Bitmap; overload;
   
+  function SpriteLayerIndex(s: Sprite; name: String): LongInt;
+  function SpriteLayerName(s: Sprite; idx: LongInt): String;
+  
   function SpriteShowLayer(s: Sprite; name: String): LongInt; overload;
   function SpriteShowLayer(s: Sprite; id: LongInt): LongInt; overload;
   
@@ -997,6 +1000,18 @@ implementation
     if not assigned(s) then result := nil
     else if (idx < 0) or (idx > High(s^.layers)) then begin result := nil; RaiseException('Sprite layer index out of range - ' + IntToStr(idx)); exit; end
     else result := s^.layers[idx];
+  end;
+  
+  function SpriteLayerIndex(s: Sprite; name: String): LongInt;
+  begin
+    if not assigned(s) then result := -1
+    else result := IndexOf(s^.layerIds, name);
+  end;
+  
+  function SpriteLayerName(s: Sprite; idx: LongInt): String;
+  begin
+    if not assigned(s) then result := ''
+    else result := NameAt(s^.layerIds, idx);
   end;
   
   function SpriteShowLayer(s: Sprite; name: String): LongInt;

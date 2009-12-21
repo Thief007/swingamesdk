@@ -158,7 +158,6 @@ interface
   procedure MoveCameraTo(const pt: Point2D); overload;
   
   
-  
   //---------------------------------------------------------------------------
   // Camera - sprite tracking
   //---------------------------------------------------------------------------  
@@ -192,7 +191,6 @@ interface
   /// @method CenterCamera
   /// @csn centerCameraOffset:%s
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
-  
   
   
   //---------------------------------------------------------------------------
@@ -259,7 +257,14 @@ interface
   // Screen tests
   //---------------------------------------------------------------------------
   
+  /// Tests if the point pt is on the screen.
+  /// 
+  /// @lib
   function OnScreen(const pt: Point2D): Boolean; overload;
+  
+  /// Tests if the rectangle rect is on the screen.
+  /// 
+  /// @lib
   function OnScreen(const rect: Rectangle): Boolean; overload;
   
 //=============================================================================

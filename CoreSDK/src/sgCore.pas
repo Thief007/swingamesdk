@@ -250,8 +250,6 @@ interface
   procedure ProcessEvents();
   
   
-  
-  
   //----------------------------------------------------------------------------
   // Refreshing the screen
   //----------------------------------------------------------------------------
@@ -271,7 +269,6 @@ interface
   procedure RefreshScreen(TargetFPS: UInt32); overload;
   
   
-  
   //----------------------------------------------------------------------------
   // Random
   //----------------------------------------------------------------------------
@@ -286,7 +283,6 @@ interface
   ///
   /// @lib RndUpto
   function Rnd(ubound: LongInt): LongInt; overload;
-  
   
   
   //----------------------------------------------------------------------------
@@ -411,18 +407,17 @@ interface
   function BrightnessOf(c: Color) : Single;
   
   
-  
   //----------------------------------------------------------------------------
   // Refresh / Delay / Framerate
   //----------------------------------------------------------------------------
-
+  
   /// Returns the average framerate for the last 10 frames as an integer.
   ///
   /// @returns     The current average framerate
   ///
   /// @lib
   function GetFramerate(): LongInt;
-
+  
   /// Gets the number of milliseconds that have passed. This can be used to
   /// determine timing operations, such as updating the game elements.
   ///
@@ -449,7 +444,6 @@ interface
   /// @lib
   /// @sn calculateFramerateAvg:%s high:%s low:%s color:%s
   procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);
-  
   
   
   var
