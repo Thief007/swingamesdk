@@ -73,16 +73,6 @@ interface
   /// @sn circleAtX:%s y:%s radius:%s
   function CircleAt(x, y: Single; radius: LongInt): Circle; overload;
   
-  /// Create a circle that is centered on a Sprite, which takes its radius from
-  /// the larger of the sprites width and height.
-  ///
-  /// @lib CircleSprite
-  ///
-  /// @class Sprite
-  /// @method Circle
-  function CircleSprite(s: Sprite): Circle; overload;
-  
-  
   
   //---------------------------------------------------------------------------
   // Circle code
@@ -90,21 +80,17 @@ interface
   
   /// Return the center point of a circle.
   ///
-  /// @lib CenterPointCircle
+  /// @lib CircleCenterPoint
   function CenterPoint(const c: Circle): Point2D; overload;
   
   /// Returns the X value of the center point of a circle.
   ///
   /// @lib
-  /// @class Circle
-  /// @getter X
   function CircleX(const c: Circle): Single;
   
   /// Returns the Y value of the center point of a circle.
   ///
   /// @lib
-  /// @class Circle
-  /// @getter Y
   function CircleY(const c: Circle): Single;
   
   /// Returns the radius of the passed in circle.
@@ -179,104 +165,187 @@ interface
   /// @csn distanceRayHeading:%s toCircle:%s
   function RayCircleIntersectDistance(const ray_origin: Point2D; const ray_heading:Vector; const c: Circle): Single;
   
+  /// Returns true if the circle is completely within the rectangle.
+  /// 
   /// @lib
+  /// @sn circle:%s isWithin:%s
   function CircleWithinRect(const c: Circle; const rect: Rectangle): Boolean;
 
   //---------------------------------------------------------------------------
   // Line code
   //---------------------------------------------------------------------------
   
+  /// Returns true if the line segment intersects the circle.
+  /// 
   /// @lib
+  /// @sn lineSegment:%s intersectsCircle:%s
   function LineIntersectsCircle(const l: LineSegment; const c: Circle): Boolean;
   
   //---------------------------------------------------------------------------
   // Sprite <-> Rectangle Collision Detection
   //---------------------------------------------------------------------------
   
+  /// Returns true if the two line segments intersect.
+  ///
   /// @lib
+  /// @sn lineSegment:%s intersectsLinesSegment:%s
   function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
   
+  /// Which of the lines from the array of line segments did the circle collide with given the
+  /// indicated velocity.
+  /// 
   /// @lib
+  /// @sn circle:%s travelling:%s hitLines:%s result:%s
   function LineCircleHit(const c: Circle; const velocity: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   
-  //  Returns distance from the line, or if the intersecting point on the line nearest
-  //    the point tested is outside the endpoints of the line, the distance to the
-  //    nearest endpoint.
-  //
-  //  Returns -1 on zero-valued denominator conditions to return an illegal distance. (
-  //    modification of Brandon Crosby's VBA code)
-
+  ///  Returns distance from the line, or if the intersecting point on the line nearest
+  ///    the point tested is outside the endpoints of the line, the distance to the
+  ///    nearest endpoint.
+  ///
+  ///  Returns -1 on zero-valued denominator conditions to return an illegal distance. (
+  ///    modification of Brandon Crosby's VBA code)
+  ///
   /// @lib PointLineDistance
+  /// @sn point:%s distanceTo:%s
   function PointLineDistance(const pt: Point2D; const line: LineSegment): Single; overload;
+  
+  /// Returns the distance from the x,y point to the line segment.
+  /// 
   /// @lib PointXYLineDistance
+  /// @sn pointX:%s y:%s distanceTo:%s
   function PointLineDistance(x, y: Single; const line: LineSegment): Single; overload;
+  
+  /// Returns the closest point on the line from the x,y point.
+  ///
   /// @lib ClosestPointOnLineXY
+  /// @sn pointFromX:%s y:%s closestToLine:%s
   function ClosestPointOnLine(x, y: Single; const line: LineSegment): Point2D; overload;
+  
+  /// Returns the point on the line that is closest to the indicated point.
+  ///
   /// @lib ClosestPointOnLine
+  /// @sn pointFrom:%s closestToLine:%s
   function ClosestPointOnLine(const fromPt: Point2D; const line: LineSegment): Point2D; overload;
   
-  /// Returns the closest point on a rectangle from a given circle.
+  /// Returns the point on the rectangle that is closest to the circle.
+  ///
   /// @lib
+  /// @sn circle:%s closestPointOnRect:%s
   function ClosestPointOnRectFromCircle(const c: Circle; const rect: Rectangle): Point2D;
   
+  /// Returns the point on the lines that is closest in the indicated array from the circle.
+  ///
   /// @lib
+  /// @sn circle:%s closestPointOnLines:%s
   function ClosestPointOnLinesFromCircle(const c: Circle; const lines: LinesArray): Point2D;
-
+  
+  /// Returns the point on the line that is closest to the circle.
+  ///
   /// @lib
+  /// @sn circle:%s closestPointOnLine:%s
   function ClosestPointOnLineFromCircle(const c: Circle; const line: LineSegment): Point2D;
   
   /// Create a Point2D that points at the X,Y location passed in.
   ///
   /// @lib PointAt
+  /// @sn pointAtX:%s y:%s
   function PointAt(x, y: Single): Point2D; overload;
   
   /// Create a Point2D that points at the point from the startPoint at the end of the offset vector.
   ///
   /// @lib PointAtStartWithOffset
+  /// @sn point:%s offset:%s
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
   
+  /// Returns the center point of the rectangle.
+  ///
   /// @lib
   function RectangleCenter(const rect: Rectangle): Point2D;
   
+  /// Returns an array containing the four lines of the rectangle.
+  ///
   /// @lib LinesFromRect
   /// @fixed_result_size 4
   function LinesFrom(const rect: Rectangle): LinesArray; overload;
-
+  
+  /// Returns an array containing the three lines from the triangle.
+  ///
   /// @lib LinesFromTriangle
   /// @fixed_result_size 3
   function LinesFrom(const tri: Triangle): LinesArray; overload;
-
+  
+  /// REturns a line segment from x1,y1 to x2,y2.
+  /// 
   /// @lib
+  /// @sn lineFromX1:%s y1:%y x2:%s y2:%s
   function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
-
+  
+  /// Returns a line from pt1 to pt2.
+  ///
   /// @lib LineFromPointToPoint
+  /// @sn lineFrom:%s to:%s
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
-
+  
+  /// Returns a line from a starting point to the point at the end of the
+  /// mv vector.
+  ///
   /// @lib LineFromVectorWithStartPoint
+  /// @sn lineFrom:%s toOffset:%s
   function LineFromVector(const pt: Point2D; const mv: Vector): LineSegment; overload;
   
+  /// Returns a line from the x,y starting point to the point at the end of the
+  /// mv vector.
+  ///
   /// @lib LineFromVectorWithStartXY
+  /// @sn lineFromX:%s y:%s toOffset:%s
   function LineFromVector(x, y: Single; const mv: Vector): LineSegment; overload;
+  
+  /// Returns a line from the origin to the end of the mv vector.
+  ///
   /// @lib
   function LineFromVector(const mv: Vector): LineSegment; overload;
-
+  
+  /// Returns the mid point of the line segment.
+  ///
   /// @lib
   function LineMidPoint(const line: LineSegment): Point2D;
-
+  
+  /// Returns a rectangle from a given x,y location with a given width
+  /// and height.
+  ///
   /// @lib
+  /// @sn rectangleFromX:%s y:%s width:%s height:%s
   function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
   
+  /// Returns a rectangle with pt1 and pt2 defining the two distant edge points.
+  ///
   /// @lib RectangleForPoints
+  /// @sn rectangleFrom:%s to:%s
   function RectangleFrom(const pt1, pt2: Point2D): Rectangle; overload;
+  
+  /// Returns a rectangle at a given point with a specified width and height.
+  ///
   /// @lib RectangleAtPoint
+  /// @sn rectangleFrom:%s width:%s height:%s
   function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
   
+  /// Returns a rectangle that encloses the two points on the line segment.
+  ///
   /// @lib RectangleFromLine
   function RectangleFrom(const line: LineSegment): Rectangle; overload;
+  
+  /// Returns a rectangle that encloses a circle.
+  ///
   /// @lib RectangleFromCircle
   function RectangleFrom(const c: Circle): Rectangle; overload;
+  
+  /// Returns a rectangle that encloses th epoints in a triangle.
+  ///
   /// @lib RectangleFromTriangle
   function RectangleFrom(const tri: Triangle): Rectangle; overload;
+  
+  /// Returns a rectangle that encloses the lines in the lines array.
+  ///
   /// @lib RectangleFromLines
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
   
@@ -288,14 +357,19 @@ interface
   /// Ensures that the passed in rectangle has a positive width and height.
   ///
   /// @lib FixRect
+  /// @sn fixRectangleX:%s y:%s width:%s height:%s
   procedure FixRectangle(var x, y: Single; width,height: LongInt);
   
-  
-  
+  /// Returns a triangle from the points passed in.
+  /// 
   /// @lib
+  /// @sn triangleFromAx:%s ay:%s bx:%s by:%s cx:%s cy:%s
   function TriangleFrom(ax, ay, bx, by, cx, cy: Single): Triangle; overload;
-
+  
+  /// Returns a triangle made up of the three points passed in.
+  ///
   /// @lib TriangleFromPoints
+  /// @sn trangleFromPtA:%s ptB:%s ptC:%s
   function TriangleFrom(const a, b, c: Point2D): Triangle; overload;
   
   
@@ -306,6 +380,7 @@ interface
   /// Create a shape prototype for a given point.
   ///
   /// @lib
+  ///
   /// @class ShapePrototype
   /// @constructor
   /// @csn initPointPrototypeAt:%s
@@ -314,6 +389,8 @@ interface
   /// Create a shape prototype of a circle with a given radius `r`.
   ///
   /// @lib
+  /// @sn circlePrototypeFromPt:%s radius:%s
+  ///
   /// @class ShapePrototype
   /// @constructor
   /// @csn initCirclePrototypeAt:%s withRadius:%s
@@ -330,6 +407,8 @@ interface
   /// Create a shape prototype for a line from `startPt` to `endPt`.
   ///
   /// @lib
+  /// @sn linePrototypeFromPt:%s toPt:%s
+  ///
   /// @class ShapePrototype
   /// @constructor
   /// @csn initLinePrototypeFrom:%s to:%s
@@ -338,6 +417,8 @@ interface
   /// Create a shape prototype for a triangle made of points `pt1`, `pt2`, and `pt3`.
   ///
   /// @lib
+  /// @sn trianglePrototypeFromPt1:%s pt2:%s pt3:%s
+  ///
   /// @class ShapePrototype
   /// @constructor
   /// @csn initTrianglePrototype:%s point2:%s point3:%s
@@ -347,6 +428,11 @@ interface
   /// even number of points, where each pair represents a line.
   ///
   /// @lib
+  /// @sn lineListPrototypeFrom:%s
+  ///
+  /// @class ShapePrototype
+  /// @constructor
+  /// @csn initLineListPrototype:%s
   function LineListPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
   /// Creates a LineStrip prototype where the points in the array represent the 
@@ -354,6 +440,11 @@ interface
   /// point.
   ///
   /// @lib
+  /// @sn lineStripPrototypeFrom:%s
+  ///
+  /// @class ShapePrototype
+  /// @constructor
+  /// @csn initLineStripPrototype:%s
   function LineStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
   // /// Creates a Polygon from the passed in points, the polygon is made up of
@@ -367,6 +458,11 @@ interface
   /// must contain at least three points.
   ///
   /// @lib
+  /// @sn triangleStripPrototypeFrom:%s
+  ///
+  /// @class ShapePrototype
+  /// @constructor
+  /// @csn initTriangleStripPrototype:%s
   function TriangleStripPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
   /// Creates a triangle fan from the passed in points. The fan is constructed from
@@ -374,18 +470,30 @@ interface
   /// at least three points.
   ///
   /// @lib
+  /// @sn triangleFanPrototypeFrom:%s
+  ///
+  /// @class ShapePrototype
+  /// @constructor
+  /// @csn initTriangleFanPrototype:%s
   function TriangleFanPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
   /// Creates a triangle list from the passed in points. The list is a set of 
   /// triangles. The number of points must be divisible by three.
   ///
   /// @lib
+  /// @sn triangleListPrototypeFrom:%s
+  ///
+  /// @class ShapePrototype
+  /// @constructor
+  /// @csn initTriangleListPrototype:%s
   function TriangleListPrototypeFrom(const points: Point2DArray): ShapePrototype;
   
   /// Creates a shape prototype from the data in the points array. The kind
   /// indicates the type of shape prototype to create.
   ///
   /// @lib
+  /// @sn prototypeFrom:%s kind:%s
+  ///
   /// @class ShapePrototype
   /// @constructor
   /// @csn initShapePropertyFrom:%s withKind:%s
@@ -394,9 +502,11 @@ interface
   /// Free the resources used by a ShapePrototype.
   ///
   /// @lib
+  ///
   /// @class ShapePrototype
   /// @dispose
   procedure FreePrototype(var p: ShapePrototype);
+  
   
   //----------------------------------------------------------------------------
   // ShapePrototype functions and procedures
@@ -405,11 +515,16 @@ interface
   /// Returns the minimum number of points required for the given shape kind.
   /// 
   /// @lib
+  ///
+  /// @class ShapePrototype
+  /// @method MinimumPointsForKind
+  /// @static
   function MinimumPointsForKind(k: ShapeKind): LongInt;
   
   /// Returns the number of points allocated to this shape prototype.
   ///
   /// @lib
+  ///
   /// @class ShapePrototype
   /// @getter PointCount
   function PrototypePointCount(p: ShapePrototype): LongInt;
@@ -418,6 +533,8 @@ interface
   /// be sufficient for the kind of shape being changed.
   ///
   /// @lib
+  /// @sn prototype:%s setPointsTo:%s
+  ///
   /// @class ShapePrototype
   /// @setter Points
   /// @length PrototypePointCount
@@ -426,6 +543,7 @@ interface
   /// The prototype point locations.
   ///
   /// @lib
+  ///
   /// @class ShapePrototype
   /// @getter Points
   /// @length PrototypePointCount
@@ -435,6 +553,8 @@ interface
   /// are drawn to the screen, and the number of points required.
   /// 
   /// @lib
+  /// @sn prototype:%s setKindTo:%s 
+  ///
   /// @class ShapePrototype
   /// @setter Kind
   procedure PrototypeSetKind(p: ShapePrototype; kind: ShapeKind);
@@ -443,10 +563,10 @@ interface
   /// are drawn to the screen, and the number of points required.
   ///
   /// @lib
+  ///
   /// @class ShapePrototype
   /// @getter Kind
   function PrototypeKind(p: ShapePrototype): ShapeKind;
-  
   
   
   //----------------------------------------------------------------------------
@@ -456,6 +576,8 @@ interface
   /// Create a shape from a given prototype at a set location in the game.
   ///
   /// @lib
+  /// @sn prototype:%s createShapeAtPt:%s
+  ///
   /// @class Shape
   /// @constructor
   /// @csn initShapeWithPrototype:%s atPoint:%s
@@ -495,6 +617,8 @@ interface
   /// Change the angle of a Shape.
   ///
   /// @lib
+  /// @sn shape:%s setAngleTo:%s
+  ///
   /// @class Shape
   /// @setter Angle
   procedure ShapeSetAngle(s: Shape; angle: Single);
@@ -502,6 +626,7 @@ interface
   /// Return the angle of a Shape.
   ///
   /// @lib
+  ///
   /// @class Shape
   /// @getter Angle
   function ShapeAngle(s: Shape): Single;
@@ -509,6 +634,8 @@ interface
   /// Change the scale of a Shape.
   ///
   /// @lib
+  /// @sn shape:%s setScaleTo:%s
+  ///
   /// @class Shape
   /// @setter Scale
   procedure ShapeSetScale(s: Shape; const scale: Point2D);
@@ -516,6 +643,7 @@ interface
   /// Return the scale of a Shape.
   ///
   /// @lib
+  ///
   /// @class Shape
   /// @getter Scale
   function ShapeScale(s: Shape): Point2D;
@@ -523,13 +651,17 @@ interface
   /// Add a shape as a sub shape to a given parent shape.
   ///
   /// @lib
+  /// @sn shape:%s addSubShape:%s
+  ///
   /// @class Shape
   /// @method AddSubShape
+  /// @csn addSubShape:%s
   procedure ShapeAddSubShape(parent, child: Shape);
   
   /// Gets the color of the shape s.
   ///
   /// @lib
+  ///
   /// @class Shape
   /// @getter Color
   function ShapeColor(s: Shape): Color;
@@ -537,46 +669,122 @@ interface
   /// Sets the color of the shape s.
   ///
   /// @lib
+  /// @sn shape:%s setColorTo:%s
+  ///
   /// @class Shape
   /// @setter Color
   procedure ShapeSetColor(s: Shape; c: Color);
   
-
+  
   //----------------------------------------------------------------------------
   // 
   //----------------------------------------------------------------------------
   
+  /// Returns the barycenter point of the triangle.
+  ///
   /// @lib
+  ///
+  /// @class Triangle
+  /// @method Barycenter
   function TriangleBarycenter(const tri: Triangle): Point2D;
   
+  /// Returns the rectangle details after it moved the amount specified within
+  /// the vector.
+  ///
   /// @lib
+  /// @sn rectangle:%s rectangleAfterMove:%s
+  ///
+  /// @class Rectangle
+  /// @method RectangleAfterMove
   function RectangleAfterMove(const rect: Rectangle; const mv: Vector): Rectangle;
-
+  
+  /// Returns the top (y) value of a rectangle.
+  ///
   /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter Top
   function RectangleTop (const rect: Rectangle): Single;
+  
+  /// Returns the bottom (y) value of a rectangle.
+  ///
   /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter Bottom
   function RectangleBottom(const rect: Rectangle): Single;
+  
+  /// Returns the left (x) value of a rectangle.
+  ///
   /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter Left
   function RectangleLeft  (const rect: Rectangle): Single;
+  
+  /// Returns the right (x) value of a rectangle.
+  ///
   /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter Right
   function RectangleRight (const rect: Rectangle): Single;
   
+  /// Returns true if the two rectangles intersect.
+  ///
   /// @lib
+  /// @sn rectangle:%s intersectsRectangle:%s
+  ///
+  /// @class Rectangle
+  /// @method Intersects
   function RectanglesIntersect(const rect1, rect2: Rectangle): Boolean;
   
+  /// Returns the intersection of two rectangles.
+  ///
   /// @lib
+  /// @sn rectangle:%s intersectionWithRectangle:%s
+  /// 
+  /// @class Rectangle
+  /// @method Intersection
   function Intersection(const rect1, rect2: Rectangle): Rectangle;
   
+  /// Returns the intersection point of two lines.
+  ///
   /// @lib
+  /// @sn line:%s intersectionWith:%s result:%s
+  ///
+  /// @class LineSegment
+  /// @method IntersectionPoint
+  /// @sn intersectionWith:$s result:%s
   function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
   
+  /// Returns the intersection point of a ray with a line.
+  ///
   /// @lib
+  /// @sn rayFrom:%s heading:%s intersectsLine:%s result:%s
+  ///
+  /// @class LineSegment
+  /// @self 3
+  /// @method RayIntersectionPoint
+  /// @csn rayFrom:%s heading:%s intersectsAt:%s
   function RayIntersectionPoint(const fromPt: Point2D; const heading: Vector; const line: LineSegment; out pt: Point2D) : boolean;
   
+  /// Returns true if the line intersect any of the lines in the array.
+  ///
   /// @lib
+  /// @sn lineSegment:%s intersectsLines:%s
+  ///
+  /// @class LineSegment
+  /// @method IntersectsLines
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
   
+  /// Returns true if the line intersects the rectangle.
+  ///
   /// @lib
+  /// @sn lineSegment:%s intersectsRectangle:%s
+  ///
+  /// @class LineSegment
+  /// @method IntersectsRect
   function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
 
   //---------------------------------------------------------------------------
@@ -586,32 +794,62 @@ interface
   /// Returns true if the point `pt` is in the Triangle `tri`.
   ///
   /// @lib
+  /// @sn point:%s inTriangle:%s
+  ///
+  /// @class Point2D
+  /// @method InTriangle
   function PointInTriangle(const pt: Point2D; const tri: Triangle): Boolean;
   
+  /// Returns true if the point is within the rectangle.
+  ///
   /// @lib PointInRectXY
+  /// @sn point:%s inRectPt:%s x:%s y:%s width:%s height:%s
+  ///
+  /// @class Point2D
+  /// @overload InRectPtXYWH
+  /// @csn inRectX:%s y:%s width:%s height:%s
   function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;
   
   /// Returns True if point `pt` is in the Rectangle `rect`.
   ///
-  /// @lib 
+  /// @lib
+  /// @sn point:%s inRect:%s
+  ///
+  /// @class Point2D
+  /// @method InRect
   function PointInRect(const pt: Point2D; const rect: Rectangle): Boolean; overload;
   
+  /// Returns true if the point (ptX, ptY) is within the rectangle.
+  ///
   /// @lib PointXYInRectXY
+  /// @sn pointX:%s ptY:%s inRectX:%s y:%s width:%s height:%s
   function PointInRect(ptX, ptY, x, y, w, h: Single): Boolean; overload;
   
+  /// Returns true if the x,y point is within the rectangle.
+  ///
   /// @lib PointXYInRect
+  /// @sn pointX:%s ptY:%s inRect:%s
   function PointInRect(x, y: Single; const rect: Rectangle): Boolean; overload;
   
   /// Returns True if the point `pt` is in the circle.
   ///
   /// @lib
+  /// @sn point:%s inCircle:%s
+  ///
+  /// @class Point2D
+  /// @method InCircle
   function PointInCircle(const pt: Point2D; const c: Circle): Boolean;
   
   /// Returns True if point `pt` is on the line segment `line`.
   ///
   /// @lib PointOnLine
+  /// @sn point:%s onLine:%s
+  ///
+  /// @class Point2D
+  /// @method OnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
-
+  
+  
   //---------------------------------------------------------------------------
   // Vector Creation and Operations
   //---------------------------------------------------------------------------
@@ -620,6 +858,8 @@ interface
   ///
   /// @lib VectorTo(x, y, False)
   /// @uname VectorTo
+  ///
+  /// @sn vectorToX:%s y:%s
   function VectorTo(x, y: Single): Vector; overload;
   
   /// Creates a new `Vector` with the ``x`` and ``y`` values provided, and will 
@@ -629,26 +869,40 @@ interface
   ///
   /// @lib
   /// @uname VectorToWithInvertY
+  /// 
+  /// @sn vectorToX:%s y:%s invertY:%s
   function VectorTo(x, y: Single; invertY: boolean): Vector; overload;
 
   /// Adds the two parameter vectors (``v1`` and ``v2``) together and returns 
   /// the result as a new `Vector`.
-  ///
+  /// 
   /// @lib
+  /// 
+  /// @sn vector:%s addVector:%s
+  ///
+  /// @class Vector
+  /// @method AddVector
+  /// @csn vectorByAdding:%s
   function AddVectors(const v1, v2: Vector): Vector;
   
   {$ifdef FPC}
+  /// Adds the two vectors together resulting in a new vector.
+  ///
   /// @class Vector
   /// @calls AddVectors
   operator + (const v1, v2: Vector) r : Vector;
   {$endif}
-
+  
   /// Subtracts the second vector parameter (``v2``) from the first vector
   /// (``v1``) and returns the result as new `Vector`.
   ///
   /// @lib
+  /// @sn vector:%s subtractVector:%s
+  ///
+  /// @class Vector
+  /// @method SubtractVector
   function SubtractVectors(const v1, v2: Vector): Vector;
-
+  
   {$ifdef FPC}
   /// @class Vector
   /// @calls SubtractVectors
@@ -659,6 +913,10 @@ interface
   /// by the ``s`` scalar value and returns the result as a new `Vector`.
   ///
   /// @lib
+  /// @sn vector:%s multipliedBy:%s
+  ///
+  /// @class Vector
+  /// @method Multiply
   function VectorMultiply(const v: Vector; s: Single): Vector;
 
   {$ifdef FPC}
@@ -677,6 +935,10 @@ interface
   /// are parallel.
   ///
   /// @lib
+  /// @sn vector:%s dotProduct:%s
+  ///
+  /// @class Vector
+  /// @method DotProduct
   function DotProduct(const v1, v2: Vector): Single;
 
   /// Returns a new `Vector` that is perpendicular ("normal") to the parameter
@@ -684,20 +946,31 @@ interface
   /// extracted from (or associated with) a line. See `LineNormal`.
   ///
   /// @lib
+  /// @sn vectorNormal:%s
+  /// 
+  /// @class Vector
+  /// @getter Normal
   function VectorNormal(const v: Vector): Vector;
 
   /// Returns a unit vector (lenght is 1.0) that is "normal" (prependicular) to
   /// the ``line`` parameter. A normal vector is useful for calculating the
   /// result of a collision such as sprites bouncing off walls (lines).
+  /// 
   /// @lib
+  /// @sn lineNormal:%s
+  ///
+  /// @class LineSegment
+  /// @getter Normal
   function LineNormal(const line: LineSegment): Vector;
 
   /// Returns a new Vector that is an inverted version of the parameter
   /// vector (v). In other words, the -/+ sign of the x and y values are changed.
   ///
   /// @lib
+  /// @sn vectorInvert:%s
+  ///
   /// @class Vector
-  /// @method Invert
+  /// @getter Inverted
   function InvertVector(const v: Vector): Vector;
 
   /// Returns a new `Vector` that is a based on the parameter `v` however
@@ -705,19 +978,30 @@ interface
   /// specified limit value.
   ///
   /// @lib
+  /// @sn vector:%s limitMagnitude:%s
+  ///
+  /// @class Vector
+  /// @method LimitToMagnitude
   function LimitVector(const v: Vector; limit: Single): Vector;
 
   /// Returns the unit vector of the parameter vector (v). The unit vector has a
   /// magnitude of 1, resulting in a vector that indicates the direction of
   /// the original vector.
-  ///
+  /// 
   /// @lib
+  /// @sn vectorUnitVector:%s
+  /// 
+  /// @class Vector
+  /// @getter UnitVector
   function UnitVector(const v: Vector): Vector;
 
   /// Test to see if the ``x`` and ``y`` components of the provided vector
   /// parameter ``v`` are zero.
   ///
   /// @lib
+  ///
+  /// @class Vector
+  /// @getter IsZero
   function VectorIsZero(const v: Vector): Boolean;
 
   /// Returns the magnitude (or "length") of the parameter vector (v) as a 
@@ -742,17 +1026,25 @@ interface
   /// The angle and magnitude are scalar values and the angle is in degrees.
   ///
   /// @lib
+  /// @sn vectorFromAngle:%s magnitude:%s
   function VectorFromAngle(angle, magnitude: Single): Vector;
   
   /// Returns a new `Vector` using the x and y value of a Point2D parameter.
   ///
   /// @lib
+  ///
+  /// @class Vector
+  /// @method ToPoint
   function VectorToPoint(const p1: Point2D): Vector;
   
   /// Returns a `Vector` created from the difference from the ``p1`` to 
   /// the second ``p2`` points (`Point2D`).
   ///
   /// @lib
+  /// @sn vectorFrom:%s to:%s
+  ///
+  /// @class Point2D
+  /// @method ToPoint
   function VectorFromPoints(const p1, p2: Point2D): Vector;
   
   /// Returns a new `Vector` created from the start and end points of a 
@@ -760,25 +1052,49 @@ interface
   /// normal vector (see `LineNormal`) for the line.
   ///
   /// @lib
+  ///
+  /// @class LineSegment
+  /// @method AsVector
   function LineAsVector(const line: LineSegment): Vector;
   
-  //TODO: are these really "point" in rect test?
   /// Return true if the vector (used as a point) is within the rectangle
+  /// 
   /// @lib
+  /// @sn vector:%s inRectX:%s y:%s width:%s height:%s
+  /// 
+  /// @class Vector
+  /// @method InRect
+  /// @csn inRectX:%s y:%s width:%s height:%s
   function VectorInRect(const v: Vector; x, y, w, h: Single): Boolean; overload;
-
-  /// @lib VectorInRectangle
+  
+  /// Returns true if the vector ends within the rectangle when started at the origin.
+  /// 
+  /// @lib VectorInRect
+  /// @sn vector:%s inRectangle:%s
+  /// 
+  /// @class Vector
+  /// @overload InRect InRectangle
+  /// @csn inRect:%s
   function VectorInRect(const v: Vector; const rect: Rectangle): Boolean; overload;
   
+  /// Returns a vector from the specified point to the specified rectangle.
+  /// 
   /// @lib VectorFromPointToRect
+  /// @sn vectorFromX:%s y:%s toRectX:%s y:%s width:%s height:%s
   function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
   
+  /// Returns a vector from the specified point to the specified rectangle.
+  /// 
   /// @lib VectorFromPointToRectangle
+  /// @sn vectorFromX:%s y:%s toRect:%s
   function VectorFromPointToRect(x, y: Single; const rect: Rectangle): Vector; overload;
   
+  /// Returns a vector from a point to the specified rectangle.
+  /// 
   /// @lib VectorFromPointPtToRectangle
+  /// @sn vectorFromPt:%s to:%s
   function VectorFromPointToRect(const pt: Point2D; const rect: Rectangle): Vector; overload;
-
+  
   
   //---------------------------------------------------------------------------
   // Functions to get a vector out of some bounded shape
@@ -787,86 +1103,152 @@ interface
   /// Determines the vector needed to move from point ``pt`` out of rectangle ``rect`` given the velocity specified
   /// 
   /// @lib
+  /// @sn vectorFromPt:%s outOfRect:%s givenHeading:%s
+  /// 
+  /// @class Point2D
+  /// @method VectorOutOfRect
+  /// @csn vectorOutOfRect:%s givenHeading:%s
   function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const velocity: Vector): Vector; 
   
   /// Returns the vector needed to move rectangle ``src`` out of rectangle``bounds`` given the velocity specified.
-  ///
+  /// 
   /// @lib
+  /// @sn vectorFromRect:%s outOfRect:%s givenHeading:%s
+  /// 
+  /// @class Rectangle
+  /// @method VectorOutOfRect
+  /// @csn vectorOutOfRect:%s givenHeading:%s
   function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;  
   
-  /// Returns the vector out of
-  ///
+  /// Returns the vector out of a circle from a given point.
+  /// 
   /// @lib
+  /// @sn vectorFromPt:%s outOfCircle:%s givenHeading:%s
+  /// 
+  /// @class Point2D
+  /// @csn vectorOutOfCircle:%s givenHeading:%s
   function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const velocity: Vector): Vector;
-
+  
+  /// Returns a vector out of a circle for a given circle.
+  /// 
   /// @lib
+  /// @sn vectorFromCircle:%s outOfCircle:%s givenHeading:%s
+  /// 
+  /// @class Circle
+  /// @method VectorOutOfCircle
+  /// @csn vectorOutOfCircle:%s givenHeading:%s
   function VectorOutOfCircleFromCircle(const src, bounds: Circle; const velocity: Vector): Vector;
   
+  /// Returns a vector that can be used to move a circle out of a rectangle.
+  /// 
   /// @lib
+  /// @sn vectorFromCircle:%s outOfRect:%s givenHeading:%s
+  /// 
+  /// @class Circle
+  /// @method VectorOutOfRect
+  /// @csn vectorOutOfRect:%s givenHeading:%s
   function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const velocity: Vector): Vector;
   
-  //TODO: OverLine...
+  /// Returns a vector that can be used to move a circle over the lines in the array.
+  /// 
   /// @lib
+  /// @sn vectorFromCircle:%s overLines:%s givenHeading:%s resultingMaxIdx:%s
+  ///
+  /// @class Circle
+  /// @method VectorOverLines
+  /// @csn vectorOverLines:%s givenHeading:%s resultingMaxIdx:%s
   function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   
-  // // / @lib
-  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
-
-  
-  //---------------------------------------------------------------------------
-  // Functions to get a vector into of some bounded shape
-  //---------------------------------------------------------------------------
-  
-  // // / @lib
-  // function VectorIntoRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
-  // 
-  // // / @lib
-  // function VectorIntoRectFromCircle(const c: Circle; bounds: Rectangle; const velocity: Vector): Vector;
   
   //---------------------------------------------------------------------------
   // Points functions and procedures
   //---------------------------------------------------------------------------
   
+  /// Returns the four points from the corners of a rectangle.
+  /// 
   /// @lib
   /// @fixed_result_size 4
+  /// @sn pointsFromRect:%s
+  /// 
+  /// @class Rectangle
+  /// @getter Points
   function PointsFrom(const rect: Rectangle): Point2DArray;
+  
   
   //---------------------------------------------------------------------------
   // Angle Calculation
   //---------------------------------------------------------------------------
   
+  /// Calculates the angle from x1,y1 to x2,y2.
+  /// 
   /// @lib
+  /// @sn calculateAngleFromX1:%s y1:%s toX2:%s y:%s
   function CalculateAngle(x1, y1, x2, y2: Single): Single; overload;
-
-  /// @lib CalculateAngleFromSprites
+  
+  /// Calculates the angle between two sprites.
+  /// 
+  /// @lib CalculateAngleBetweenSprites
+  /// @sn sprite:%s angleToSprite:%s
+  /// 
   /// @class Sprite
   /// @method AngleTo
   function CalculateAngle(s1, s2: Sprite): Single; overload;
   
-  /// @lib CalculateAngleFromVectors
+  /// Calculates the angle from one vector to another.
+  /// 
+  /// @lib CalculateAngleBetweenVectors
+  /// @sn vector:%s angleTo:%s
+  /// 
+  /// @class Vector
+  /// @method AngleTo
   function CalculateAngle(const v1, v2: Vector): Single; overload;
   
+  /// Calculates the angle between two points.
+  /// 
   /// @lib
+  /// @sn point:%s angleTo:%s
+  ///
+  /// @class Point2D
+  /// @method AngleTo
   function CalculateAngleBetween(const pt1, pt2: Point2D): Single;
   
+  /// Calculates the angle of a vector.
+  /// 
   /// @lib
+  ///
   /// @class Vector
   /// @getter Angle
   function VectorAngle(const v: Vector): Single;
+  
   
   //---------------------------------------------------------------------------
   // Distance / Magnitude Calculation
   //---------------------------------------------------------------------------
   
+  /// Returns the squared magnitude of the line from the points given.
+  /// 
   /// @lib
+  /// @sn lineMagnitudeSqX1:%s y1:%s x2:%s y2:%s
   function LineMagnitudeSq(x1, y1, x2, y2: single): Single; overload;
   
+  /// Returns the squared line magnitude.
+  /// 
   /// @lib LineMagnitudeSqFromLine
+  /// @sn lineMagnitudeSq:%s
+  /// 
+  /// @class LineSegment
+  /// @getter MagnitudeSq
   function LineMagnitudeSq(const line: LineSegment): Single; overload;
   
+  /// Returns the distance from point to point.
+  /// 
   /// @lib
+  /// @sn point:%s distanceToPoint:%s
+  /// 
+  /// @class Point2D
+  /// @method DistanceTo
   function PointPointDistance(const pt1, pt2: Point2D): Single;
-
+  
   
   //---------------------------------------------------------------------------
   // Matrix2D Creation and Operations
@@ -876,24 +1258,41 @@ interface
   /// the identity matrix the result is the original matrix or vector.
   ///
   /// @lib
+  ///
   /// @class Matrix2D
   /// @static
   /// @method IdentityMatrix
   function IdentityMatrix(): Matrix2D;
   
+  /// Returns a matrix that can be used to translate 2d points. Moving them
+  /// by dx and dy.
+  /// 
   /// @lib
+  /// @sn translationMatrixDx:%s dy:%s
+  ///
   /// @class Matrix2D
   /// @static
   /// @method TranslationMatrix
+  /// @csn translationMatrixDx:%s dy:%s
   function TranslationMatrix(dx, dy: Single): Matrix2D; overload;
   
+  /// Returns a translation matric used to translate 2d points by the
+  /// distance in the Point2D.
+  /// 
   /// @lib TranslationMatrixPt
+  /// @sn translationMatrix:%s
+  /// 
   /// @class Matrix2D
   /// @static
   /// @overload TranslationMatrix TranslationMatrixWithPoint
+  /// @csn translationMatrix:%s
   function TranslationMatrix(const pt: Point2D): Matrix2D; overload;
   
+  /// Returns a matrix that can be used to scale 2d points (both x and y).
+  /// 
   /// @lib
+  /// @sn scaleMatrix:%s
+  ///
   /// @class Matrix2D
   /// @static
   /// @method ScaleMatrix
@@ -902,24 +1301,33 @@ interface
   /// Create a scale matrix that scales x and y to
   /// different degrees.
   ///
-  /// @lib ScaleMatrixWithPoint
+  /// @lib ScaleMatrixByPoint
+  /// @sn scaleMatricByPoint:%s
+  ///
   /// @class Matrix2D
   /// @static
   /// @overload ScaleMatrix ScaleMatrixWithPoint
+  /// @csn scaleMatrixByPoint:%s
   function ScaleMatrix(const scale: Point2D): Matrix2D; overload;
   
+  /// Returns a rotation matrix that rotates 2d points by the angle.
+  /// 
   /// @lib
+  /// 
   /// @class Matrix2D
   /// @static
   /// @method RotationMatrix
   function RotationMatrix(deg: Single): Matrix2D;
   
   /// Create a matrix that can scale, rotate then translate geometry points.
-  ///
+  /// 
   /// @lib
+  /// @sn matrixToScale:%s rotate:%s translate:%s
+  /// 
   /// @class Matrix2D
   /// @static
   /// @method ScaleRotateTranslateMatrix
+  /// @csn matrixToScale:%s rotate:%s translate:%s
   function ScaleRotateTranslateMatrix(const scale: Point2D; deg: Single; const translate: Point2D): Matrix2D;
   
   /// Multiplies the two `Matrix2D` parameters, ``m1`` by ``m2``, and returns
@@ -927,6 +1335,8 @@ interface
   /// matrix transformations.
   ///
   /// @lib
+  /// @sn matrix:%s multiply:%s
+  ///
   /// @class Matrix2D
   /// @method Multiply
   function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
@@ -934,46 +1344,63 @@ interface
   /// Multiplies the `Vector` parameter ``v`` with the `Matrix2D` ``m`` and 
   /// returns the result as a `Vector`. Use this to transform the vector with 
   /// the matrix (to apply scaling, rotation or translation effects).
-  ///
+  /// 
   /// @lib MatrixMultiplyVector
+  /// @sn matrix:%s multiplyVector:%s
+  /// 
   /// @class Matrix2D
   /// @overload Multiply MultiplyVector
+  /// @csn multiplyVector:%s
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
   
+  /// Use a matrix to transform all of the points in a triangle.
+  /// 
   /// @lib
+  /// @sn matrix:%s applyToTriangle:%s
+  ///
   /// @class Matrix2D
   /// @method ApplyTo
   /// @updatesArrayParam 2
+  /// @csn applyToTriangle:%s
   procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
   
   /// Apply the passed in Matrix2D to all of the points in the 
   /// Point2DArray.
-  ///
+  /// 
   /// @lib ApplyMatrixToPoints
+  /// @sn matrix:%s applyToPoints:%s
+  /// 
   /// @class Matrix2D
   /// @overload ApplyTo ApplyToPoints
-  ///
   /// @updatesArrayParam 2
+  /// @csn applyToPoints:%s
   procedure ApplyMatrix(const m: Matrix2D; pts: Point2DArray);
   
   {$ifdef FPC}
+  /// Multiply matrix by the vector.
+  /// 
   /// @class Matrix2D
   /// @calls MatrixMultiplyVector
   operator * (const m: Matrix2D; const v: Vector) r : Vector;
   {$endif}
-
+  
   {$ifdef FPC}
+  /// Multiply the two matricies together.
+  /// 
   /// @class Matrix2D
   /// @calls MatrixMultiply
   operator * (const m1, m2: Matrix2D) r : Matrix2D;
   {$endif}
-
-  /// This function returns a string representation of the Matrix.
+  
+  /// This function returns a string representation of a Matrix.
   ///
   /// @lib
+  ///
   /// @class Matrix2D
   /// @method ToString
+  /// @sn description
   function MatrixToString(const m: Matrix2D) : String;
+  
   
   //----------------------------------------------------------------------------
   // Cosine/Sin/Tan accepting degrees
@@ -995,8 +1422,6 @@ interface
   function Tangent(angle: Single): Single;
   
   
-  
-
 //=============================================================================
 implementation
 //=============================================================================
@@ -3380,24 +3805,6 @@ implementation
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'CircleAt(x, y: Single', '');
-    {$ENDIF}
-  end;
-  
-  function CircleSprite(s: Sprite): Circle; overload;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'CircleSprite(s: Sprite): Circle', '');
-    {$ENDIF}
-    
-    result.center := CenterPoint(s);
-    
-    if SpriteWidth(s) > SpriteHeight(s) then
-      result.radius := Ceiling(SpriteWidth(s) / 2)
-    else
-      result.radius := Ceiling(SpriteHeight(s) / 2);
-    
-    {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'CircleSprite(s: Sprite): Circle', '');
     {$ENDIF}
   end;
   

@@ -146,6 +146,19 @@ interface
   function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle;
   function SpriteCollisionRectangle(s: Sprite): Rectangle;
   
+  function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
+  
+  /// Create a circle that is centered on a Sprite, which takes its radius from
+  /// the larger of the sprites width and height.
+  ///
+  /// @lib CircleSprite
+  ///
+  /// @class Sprite
+  /// @method Circle
+  function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
+  function SpriteCollisionCircle(s: Sprite): Circle;
+  
+  
   //---------------------------------------------------------------------------
   // Animation code
   //---------------------------------------------------------------------------
@@ -1257,13 +1270,48 @@ implementation
     {$ENDIF}
     
     if not assigned(s) then result := RectangleFrom(0,0,0,0)
-    else result := BitmapRectangle(s^.position.x, s^.position.y, s^.collisionBitmap);
+    else result := BitmapCellRectangle(s^.position.x, s^.position.y, s^.collisionBitmap);
     
     {$IFDEF TRACE}
       TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
     {$ENDIF}
   end;
   
+  function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
+  begin
+    if not assigned(s) then result := CircleAt(0,0,0)
+    else result := SpriteLayerCircle(s, IndexOf(s^.layerIds, name));
+  end;
+  
+  function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
+    {$ENDIF}
+    
+    if not assigned(s) then result := CircleAt(0, 0, 0)
+    else if (idx < 0) or (idx > High(s^.layers)) then begin RaiseException('Layer out of range in SpriteLayerCircle.'); result := CircleAt(0,0,0); exit; end
+    else result := BitmapCellCircle(s^.layers[idx], s^.position);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
+    {$ENDIF}
+  end;
+  
+  function SpriteCollisionCircle(s: Sprite): Circle;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
+    {$ENDIF}
+    
+    if (not assigned(s)) or (not assigned(s^.collisionBitmap)) then result := CircleAt(0, 0, 0)
+    else result := BitmapCellCircle(s^.collisionBitmap, s^.position);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
+    {$ENDIF}
+    
+  end;
   
   
   //---------------------------------------------------------------------------

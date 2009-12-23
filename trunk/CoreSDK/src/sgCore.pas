@@ -264,6 +264,9 @@ interface
   /// @lib RefreshScreen
   procedure RefreshScreen(); overload;
   
+  /// Refresh with a target FPS. This will delay a period of time that will 
+  /// approximately meet the targetted frames per second.
+  ///
   /// @lib RefreshScreenRestrictFPS
   /// @uname RefreshScreenRestrictFPS
   procedure RefreshScreen(TargetFPS: UInt32); overload;

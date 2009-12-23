@@ -39,7 +39,7 @@ fi
 #
 FPC_BIN=`which fpc`
 PAS_FLAGS="-gw"
-SG_INC="-Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
+SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
 CLEAN="N"
 
 #
