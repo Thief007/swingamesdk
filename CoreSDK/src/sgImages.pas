@@ -157,6 +157,38 @@ uses sgTypes;
 // Bitmap querying functions
 //---------------------------------------------------------------------------
   
+  /// Returns the width of the entire bitmap.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @getter Width
+  function BitmapWidth(bmp: Bitmap): LongInt;
+  
+  /// Returns the height of the entire bitmap.
+  /// 
+  /// @lib
+  /// 
+  /// @class Bitmap
+  /// @getter Height
+  function BitmapHeight(bmp: Bitmap): LongInt;
+  
+  /// Returns the width of a cell within the bitmap.
+  /// 
+  /// @lib
+  /// 
+  /// @class Bitmap
+  /// @getter CellWidth
+  function BitmapCellWidth(bmp: Bitmap): LongInt;
+  
+  /// Returns the height of a cell within the bitmap.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @getter CellHeight
+  function BitmapCellHeight(bmp: Bitmap): LongInt;
+
   /// Checks if a pixel is drawn at the specified x,y location.
   /// 
   /// @lib
@@ -215,6 +247,56 @@ uses sgTypes;
   /// @class Bitmap
   /// @method interchangableWith
   function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
+  
+  
+//----------------------------------------------------------------------------
+// Bitmap -> Circle
+//----------------------------------------------------------------------------
+  
+  /// Creates a circle from within a bitmap, uses the larger of the width and
+  /// height.
+  ///
+  /// @lib
+  /// @sn bitmap:%s circleAtPt:%s
+  /// 
+  /// @class Bitmap
+  /// @method ToCircle
+  /// @csn circleAtPt:%s
+  function BitmapCircle(bmp: Bitmap; const pt: Point2D): Circle; overload;
+  
+  /// Creates a circle from within a bitmap, uses the larger of the width and
+  /// height.
+  ///
+  /// @lib BitmapCircleXY
+  /// @sn bitmap:%s circleAtX:%s y:%s
+  /// 
+  /// @class Bitmap
+  /// @overload ToCircle ToCircleXY
+  /// @csn circleAtX:%s y:%s
+  function BitmapCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
+  
+  /// Creates a circle from within a cell in a bitmap, uses the larger of the width and
+  /// height.
+  ///
+  /// @lib
+  /// @sn bitmap:%s circleCellAtPt:%s
+  ///
+  /// @class Bitmap
+  /// @method ToCellCircle
+  /// @csn circleCellAtPT:%s 
+  function BitmapCellCircle(bmp: Bitmap; const pt: Point2D): Circle; overload;
+  
+  /// Creates a circle from within a cell in a bitmap, uses the larger of the width and
+  /// height.
+  ///
+  /// @lib
+  /// @sn bitmap:%s circleCellAtX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @overload ToCellCircle ToCellCircleXY
+  /// @csn circleCellAtX:%s y:%s
+  function BitmapCellCircle(bmp: Bitmap; x,y: LongInt): Circle; overload;
+  
   
 //---------------------------------------------------------------------------
 // Alpha blendings adjusting code
@@ -310,8 +392,8 @@ uses sgTypes;
   
   function BitmapRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
   function BitmapRectangle(bmp: Bitmap): Rectangle; overload;
-  function BitmapSheetRectangle(bmp: Bitmap): Rectangle; overload;
-  function BitmapSheetRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+  function BitmapCellRectangle(bmp: Bitmap): Rectangle; overload;
+  function BitmapCellRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for the location of the indicated cell within the
   /// bitmap.
@@ -1149,54 +1231,54 @@ end;
 
 //---------------------------------------------------------------------------
 
-function BitmapSheetRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+function BitmapRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
 begin
   if not Assigned(bmp) then result := RectangleFrom(0,0,0,0)
   else result := RectangleFrom(x, y, bmp^.width, bmp^.height);
 end;
 
-function BitmapSheetRectangle(bmp: Bitmap): Rectangle; overload;
+function BitmapRectangle(bmp: Bitmap): Rectangle; overload;
 begin
-  result := BitmapSheetRectangle(0,0,bmp);
+  result := BitmapRectangle(0,0,bmp);
 end;
 
-function BitmapRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+function BitmapCellRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgImages', 'BitmapRectangle(x, y: Single', '');
+    TraceEnter('sgImages', 'BitmapCellRectangle(x, y: Single', '');
   {$ENDIF}
   
   if not Assigned(bmp) then result := RectangleFrom(0,0,0,0)
   else result := RectangleFrom(x, y, bmp^.cellW, bmp^.cellH);
   
   {$IFDEF TRACE}
-    TraceExit('sgImages', 'BitmapRectangle(x, y: Single', '');
+    TraceExit('sgImages', 'BitmapCellRectangle(x, y: Single', '');
   {$ENDIF}
 end;
 
-function BitmapRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
+function BitmapCellRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgImages', 'BitmapRectangle(const pt: Point2D', '');
+    TraceEnter('sgImages', 'BitmapCellRectangle(const pt: Point2D', '');
   {$ENDIF}
   
   result := BitmapRectangle(pt.x, pt.y, bmp);
   
   {$IFDEF TRACE}
-    TraceExit('sgImages', 'BitmapRectangle(const pt: Point2D', '');
+    TraceExit('sgImages', 'BitmapCellRectangle(const pt: Point2D', '');
   {$ENDIF}
 end;
 
-function BitmapRectangle(bmp: Bitmap): Rectangle; overload;
+function BitmapCellRectangle(bmp: Bitmap): Rectangle; overload;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgImages', 'BitmapRectangle(bmp: Bitmap): Rectangle', '');
+    TraceEnter('sgImages', 'BitmapCellRectangle(bmp: Bitmap): Rectangle', '');
   {$ENDIF}
   
-  result := BitmapRectangle(0, 0, bmp);
+  result := BitmapCellRectangle(0, 0, bmp);
   
   {$IFDEF TRACE}
-    TraceExit('sgImages', 'BitmapRectangle(bmp: Bitmap): Rectangle', '');
+    TraceExit('sgImages', 'BitmapCellRectangle(bmp: Bitmap): Rectangle', '');
   {$ENDIF}
 end;
 
@@ -1213,6 +1295,77 @@ begin
   end;
 end;
 
+function BitmapWidth(bmp: Bitmap): LongInt;
+begin
+  if not assigned(bmp) then result := 0
+  else result := bmp^.width;
+end;
+
+function BitmapHeight(bmp: Bitmap): LongInt;
+begin
+  if not assigned(bmp) then result := 0
+  else result := bmp^.height;
+end;
+
+function BitmapCellWidth(bmp: Bitmap): LongInt;
+begin
+  if not assigned(bmp) then result := 0
+  else result := bmp^.cellW;
+end;
+
+function BitmapCellHeight(bmp: Bitmap): LongInt;
+begin
+  if not assigned(bmp) then result := 0
+  else result := bmp^.cellH;
+end;
+
+
+function BitmapCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
+begin
+  result := BitmapCircle(bmp, PointAt(x, y));
+end;
+
+function BitmapCircle(bmp: Bitmap; const pt: Point2D): Circle; overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'BitmapCircle', '');
+  {$ENDIF}
+  
+  result.center := pt;
+  
+  if BitmapWidth(bmp) > BitmapHeight(bmp) then
+    result.radius := Ceiling(BitmapWidth(bmp) / 2)
+  else
+    result.radius := Ceiling(BitmapHeight(bmp) / 2);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'BitmapCircle', '');
+  {$ENDIF}
+end;
+
+
+function BitmapCellCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
+begin
+  result := BitmapCellCircle(bmp, PointAt(x, y));
+end;
+
+function BitmapCellCircle(bmp: Bitmap; const pt: Point2D): Circle; overload;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgImages', 'BitmapCellCircle', '');
+  {$ENDIF}
+  
+  result.center := pt;
+  
+  if BitmapCellWidth(bmp) > BitmapCellHeight(bmp) then
+    result.radius := Ceiling(BitmapCellWidth(bmp) / 2)
+  else
+    result.radius := Ceiling(BitmapCellHeight(bmp) / 2);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgImages', 'BitmapCellCircle', '');
+  {$ENDIF}
+end;
 
 
 //=============================================================================

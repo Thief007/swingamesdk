@@ -895,7 +895,7 @@ implementation
   begin
     mvmt := s^.velocity;
     maxIdx := -1;
-    outVec := VectorOverLinesFromCircle(CircleSprite(s), lines, mvmt, maxIdx);
+    outVec := VectorOverLinesFromCircle(SpriteCollisionCircle(s), lines, mvmt, maxIdx);
     if maxIdx < 0 then exit;
      
     MoveSprite(s, outVec);
@@ -918,8 +918,8 @@ implementation
     s2Mass := SpriteMass(s2);
     if (s1Mass <= 0) or (s2Mass <= 0) then begin RaiseException('Collision with 0 or negative mass... ensure that mass is greater than 0'); exit; end;
     
-    c1 := CircleSprite(s1);
-    c2 := CircleSprite(s2);
+    c1 := SpriteCollisionCircle(s1);
+    c2 := SpriteCollisionCircle(s2);
     
     //if s1^.mass < s2^.mass then
     if VectorMagnitude(s1^.velocity) > VectorMagnitude(s2^.velocity) then
@@ -972,7 +972,7 @@ implementation
     spriteCenter := CenterPoint(s);
     mvmt := s^.velocity;
     
-    outVec := VectorOutOfCircleFromCircle(CircleSprite(s), c, mvmt);
+    outVec := VectorOutOfCircleFromCircle(SpriteCollisionCircle(s), c, mvmt);
     // Back out of circle
     MoveSprite(s, outVec);
     
@@ -1005,37 +1005,19 @@ implementation
     mvmtMag, prop: Single;
   begin
     mvmt := s^.velocity;
+    hitIdx := -1;
     
     // Get the line hit...
     lines := LinesFrom(rect);
-    // if bounds then
-    //   outVec := VectorInLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx)
-    // else 
-    outVec := VectorOverLinesFromCircle(CircleSprite(s), lines, mvmt, hitIdx);
+    outVec := VectorOverLinesFromCircle(SpriteCollisionCircle(s), lines, mvmt, hitIdx);
     
     if hitIdx = -1 then exit;
     
     // back out of rectangle
     MoveSprite(s, outVec);
-    // if bounds then
-    // begin
-    //   ClearScreen();
-    //   DrawSprite(s);
-    //   DrawRectangle(ColorRed, rect);
-    //   DrawCircle(ColorYellow, AddVectors(CenterPoint(s), InvertVector(outVec)), 2);
-    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.velocity, 10)));
-    //   RefreshScreen(1);
-    // end;
     
     // bounce...
     _CollideCircleLine(s, lines[hitIdx]);
-
-    // if bounds then
-    // begin
-    //   DrawSprite(s);
-    //   DrawLine(ColorRed, CenterPoint(s), AddVectors(CenterPoint(s), VectorMultiply(s^.velocity, 10)));
-    //   RefreshScreen(1);
-    // end;
     
     // do part velocity
     mvmtMag := VectorMagnitude(mvmt);
