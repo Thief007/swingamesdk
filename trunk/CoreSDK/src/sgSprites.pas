@@ -865,15 +865,16 @@ implementation
 
   procedure DrawSprite(s: Sprite; xOffset, yOffset: LongInt); overload;
   var
-    i: LongInt;
+    i, idx: LongInt;
   begin
     if not Assigned(s) then begin RaiseException('No sprite supplied'); exit; end;
     
     for i := 0 to High(s^.visibleLayers) do
     begin
-      DrawCell(SpriteLayer(s, s^.visibleLayers[i]), SpriteCurrentCell(s), 
-        Round(s^.position.x + xOffset + s^.layerOffsets[i].x), 
-        Round(s^.position.y + yOffset + s^.layerOffsets[i].y));
+      idx := s^.visibleLayers[i];
+      DrawCell(SpriteLayer(s, idx), SpriteCurrentCell(s), 
+        Round(s^.position.x + xOffset + s^.layerOffsets[idx].x), 
+        Round(s^.position.y + yOffset + s^.layerOffsets[idx].y));
     end;
   end;
 
@@ -1256,7 +1257,7 @@ implementation
     {$ENDIF}
     
     if not assigned(s) then result := RectangleFrom(0,0,0,0)
-    else result := BitmapRectangle(s^.position.x + s^.layerOffsets[idx].x, s^.position.y + s^.layerOffsets[idx].y, s^.layers[idx]);
+    else result := BitmapCellRectangle(s^.position.x + s^.layerOffsets[idx].x, s^.position.y + s^.layerOffsets[idx].y, s^.layers[idx]);
       
     {$IFDEF TRACE}
       TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
