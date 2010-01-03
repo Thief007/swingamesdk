@@ -29,7 +29,7 @@ begin
   s := CreateSprite(FetchBitmap('red_explosion'),'explosion',FetchAnimationTemplate('explosion_temp'));
   SpriteAddLayer(s, FetchBitmap('count'), 'count');
   SpriteShowLayer(s, 'count');
-  SpriteSetLayerOffset(s, 'count', PointAt(30,30));
+  SpriteSetLayerOffset(s, 'count', PointAt(3,3));
   SpriteStartAnimation(s, 'explosion_loop');
   SpriteSetPosition(s, PointAt(200,200));
   
