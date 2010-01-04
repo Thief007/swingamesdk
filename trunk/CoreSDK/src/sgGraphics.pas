@@ -1149,7 +1149,7 @@ implementation
     p := bmp^.surface^.pixels + y * bmp^.surface^.pitch + x * bpp;
     
     if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
-    p^ := clr;
+    p^ := value;
   end;
   
   /// Draws a pixel onto the screen.
