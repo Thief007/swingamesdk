@@ -164,43 +164,208 @@ interface
   /// Adds a new layer to the sprite.
   /// 
   /// @lib
-  /// @sn addTo:%s newLayer:%s named:%s
+  /// @sn sprite:%s addLayer:%s named:%s
   ///
   /// @class Sprite
   /// @method AddLayer
   /// @csn addLayer:%s named:%s
   function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): LongInt;
   
+  /// Returns the bitmap of the indicated layer of the sprite.
+  ///
+  /// @lib SpriteLayerNamed
+  /// @sn sprite:%s layerNamed:%s
+  ///
+  /// @class Sprite
+  /// @method LayerNamed
+  /// @csn layerNamed:%s
   function SpriteLayer(s: Sprite; name: String): Bitmap; overload;
+  
+  /// Returns the bitmap of the indicated layer of the sprite.
+  ///
+  /// @lib SpriteLayerAtIdx
+  /// @sn sprite:%s layerAtIdx:%s
+  ///
+  /// @class Sprite
+  /// @method LayerAtIdx
+  /// @csn layerAtIdx:%s
   function SpriteLayer(s: Sprite; idx: LongInt): Bitmap; overload;
   
+  /// Returns the index of the specified layer.
+  ///
+  /// @lib SpriteLayerIndex
+  /// @sn sprite:%s indexOfLayer:%s
+  ///
+  /// @class Sprite
+  /// @method IndexOfLayer
+  /// @csn indexOfLayer:%s
   function SpriteLayerIndex(s: Sprite; name: String): LongInt;
+  
+  /// Returns the name of the specified layer.
+  ///
+  /// @lib SpriteLayerName
+  /// @sn sprite:%s layerName:%s
+  ///
+  /// @class Sprite
+  /// @method LayerName
+  /// @csn layerName:%s
   function SpriteLayerName(s: Sprite; idx: LongInt): String;
   
+  /// Show the specified layer of the sprite.
+  ///
+  /// @lib SpriteShowLayerNamed
+  /// @sn sprite:%s showLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @override ShowLayer ShowLayerNamed
+  /// @csn showLayerNamed:%s
   function SpriteShowLayer(s: Sprite; name: String): LongInt; overload;
+  
+  /// Show the specified layer of the sprite.
+  ///
+  /// @lib SpriteShowLayer
+  /// @sn sprite:%s showLayer:%s
+  ///
+  /// @class Sprite
+  /// @method ShowLayer
+  /// @csn showLayer:%s
   function SpriteShowLayer(s: Sprite; id: LongInt): LongInt; overload;
   
+  /// Hide the specified layer of the sprite.
+  ///
+  /// @lib SpriteHideLayerNamed
+  /// @sn sprite:%s hideLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @override HideLayer HideLayerNamed
+  /// @csn hideLayerNamed:%s
   procedure SpriteHideLayer(s: Sprite; name: String); overload;
+  
+  /// Hide the specified layer of the sprite.
+  ///
+  /// @lib SpriteHideLayer
+  /// @sn sprite:%s hideLayer:%s
+  ///
+  /// @class Sprite
+  /// @method HideLayer
+  /// @csn hideLayer:%s
   procedure SpriteHideLayer(s: Sprite; id: LongInt); overload;
   
+  /// Toggle the visibility of the specified layer of the sprite.
+  ///
+  /// @lib SpriteToggleLayerNamedVisible
+  /// @sn sprite:%s toggleVisibleLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @override ToggleLayerVisible ToggleLayerNamedVisible
+  /// @csn toggleLayerNamedVisible:%s
   procedure SpriteToggleLayerVisible(s: Sprite; name: String); overload;
+  
+  /// Toggle the visibility of the specified layer of the sprite.
+  ///
+  /// @lib SpriteToggleLayerVisible
+  /// @sn sprite:%s toggleVisibleLayer:%s
+  ///
+  /// @class Sprite
+  /// @method ToggleLayerVisible
+  /// @csn toggleLayerVisible:%s
   procedure SpriteToggleLayerVisible(s: Sprite; id: LongInt); overload;
   
+  /// Returns the index (z-order) of the sprite's layer.
+  ///
+  /// @lib SpriteVisibleIndexOfLayerNamed
+  /// @sn sprite:%s visibleIndexOfLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @override VisibleIndexOfLayer VisibleIndexOfLayerNamed
+  /// @csn visibleIndexOfLayerNamed:%s
   function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt; overload;
+  
+  /// Returns the index (z-order) of the sprite's layer.
+  ///
+  /// @lib SpriteVisibleIndexOfLayer
+  /// @sn sprite:%s visibleIndexOfLayer:%s
+  ///
+  /// @class Sprite
+  /// @method VisibleIndexOfLayer
+  /// @csn visibleIndexOfLayer:%s
   function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt; overload;
   
+  /// Returns the number of layers within the Sprite.
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter LayerCount
   function SpriteLayerCount(s: Sprite): LongInt;
+  
+  ///Returns the number of layers that are currently visible for the sprite.
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter VisibleLayerCount
   function SpriteVisibleLayerCount(s: Sprite): LongInt;
   
+  /// Returns the ids of the layers that are currently visible. In order back to front.
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter VisibleLayerIds
+  /// @length SpriteVisibleLayerCount
   function SpriteVisibleLayerIds(s: Sprite) : LongIntArray;
+  
+  /// Returns the bitmaps of the layers in the Sprite.
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter Layers
+  /// @length SpriteLayerCount
   function SpriteLayers(s: Sprite): BitmapArray;
   
+  /// Returns the offets of the layers in the Sprite.
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter LayerOffsets
+  /// @length SpriteLayerCount
   function SpriteLayerOffsets(s: Sprite): Point2DArray;
+  
+  /// Sets the layer offsets for the sprite.
+  ///
+  /// @lib
+  /// @sn sprite:%s setLayerOffsets:%s
+  ///
+  /// @class Sprite
+  /// @setter LayerOffsets
+  /// @length SpriteLayerCount
   procedure SpriteSetLayerOffsets(s: Sprite; values: Point2DArray);
-  function SpriteLayerOffset(s: Sprite; name: String): Point2D;
-  function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D;
-  procedure SpriteSetLayerOffset(s: Sprite; name: String; const value: Point2D);
-  procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D);
+  
+  /// Gets the offset of the specified layer.
+  ///
+  /// @lib
+  /// @sn sprite:%s offsetOfLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @overload LayerOffset LayerNamedOffset
+  /// @csn offsetOfLayerNamed:%s 
+  function SpriteLayerOffset(s: Sprite; name: String): Point2D; overload;
+  
+  /// Gets the offset of the specified layer.
+  ///
+  /// @lib
+  /// @sn sprite:%s offsetOfLayer:%s
+  ///
+  /// @class Sprite
+  /// @method LayerOffset
+  /// @csn offsetOfLayer:%s 
+  function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D; overload;
+  
+  procedure SpriteSetLayerOffset(s: Sprite; name: String; const value: Point2D); overload;
+  procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D); overload;
   
   function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
   
@@ -209,8 +374,8 @@ interface
   procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
   procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
   
-  function SpriteLayerRectangle(s: Sprite; name: String): Rectangle;
-  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle;
+  function SpriteLayerRectangle(s: Sprite; name: String): Rectangle; overload;
+  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
   function SpriteCollisionRectangle(s: Sprite): Rectangle;
   
   function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
