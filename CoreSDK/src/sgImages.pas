@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-04: David : Added Save Bitmap Procedure (Line 694 and 1428)
 // - 2009-12-21: Andrew : Added Bitmap rectangle calculation code
 // - 2009-12-18: Andrew : Added code to check if two images can be used interchangably
 // - 2009-12-10: Andrew : Added bitmap drawing functions
@@ -685,6 +686,12 @@ uses sgTypes;
   /// @csn drawCell:%s onScreenAt:%s
   procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
   
+  //---------------------------------------------------------------------------
+  // Bitmap Saving
+  //---------------------------------------------------------------------------
+  
+	// Save Bitmap to specific directory
+	procedure SaveBitmap(src : Bitmap; filepath : string);
   
 //=============================================================================
 implementation
@@ -1415,6 +1422,12 @@ begin
   {$ENDIF}
 end;
 
+//---------------------------------------------------------------------------
+
+procedure SaveBitmap(src: Bitmap; filepath: String);
+begin
+	SDL_SaveBMP(src^.surface, PChar(filepath));
+end;
 
 //=============================================================================
 
