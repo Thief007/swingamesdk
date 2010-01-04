@@ -627,7 +627,7 @@ interface
   ///
   /// @lib
   /// @sn bitmap:%s putPixelX:%s y:%s color:%s
-  procedure PutPixel(bmp: Bitmap; x, y: LongInt; value: Color);
+  procedure PutPixel(bmp: Bitmap; value: Color; x, y: LongInt);
   
   /// Draw a pixel onto a destination.
   /// 
@@ -1135,7 +1135,7 @@ implementation
     result := GetPixel(screen, x, y);
   end;
 
-  procedure PutPixel(bmp: Bitmap; x, y: LongInt; value: Color);
+  procedure PutPixel(bmp: Bitmap; value: Color; x, y: LongInt);
   var
     clr:  Color;
     p:    ^Color;
