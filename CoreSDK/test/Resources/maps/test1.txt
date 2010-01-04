@@ -1,35 +1,34 @@
 Map Loader #v0.1
 
-// a : width of map
-// b : height of map
-// c : tile Width
-// d : tile Height
-// e : x position of tile, followed by y position, followed by index within the bitmap array that it uses.
-// f : path to an image for a new bitmap.
+// mw : width of map
+// mh : height of map
+// tw : tile Width
+// th : tile Height
+// ti : tile info
+// tb : bitmap.
 
-//map data
-a:2
-b:3
-c:30
-d:30
-f:ball_small.png
-
-e:0
+// map data
+mw:2
+mh:3
+tw:50
+th:50
+tb:floor.png
+ti:0
 0
 --
 
-e:0
+ti:0
 1
 0
 
-e:1
+ti:1
 0
 --
 
-e:1
+Ti:1
 1
 0
 
-e:2
+TI:2
 0
 0

@@ -50,12 +50,12 @@ var
     else if not TryStrToInt(str, result) then
     begin
       result := 0;
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Value is not an integer : ' + str);
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Value is not an integer : ' + str);
     end
     else if result < 0 then
     begin
       result := 0;
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Values should be positive : ' + str);
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Values should be positive : ' + str);
     end;
   end;
  //ADD tile procedure*************
@@ -94,29 +94,38 @@ var
     data := ExtractDelimited(2, line, [':']);
     
     // Verify that id is a single char
-    if Length(id) <> 1 then
+    if Length(id) <> 2 then
     begin
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Error with id: ' + id + '. This should be a single character.');
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Error with id: ' + id + '. This id should contain 2 characters.');
       exit;
     end;
     
     
     // Process based on id
     case LowerCase(id)[1] of // in all cases the data variable is read
-      'a': result^.MapWidth := MyStrToInt(data, false); //a = map width
-      'b':
-        begin  
-          result^.MapHeight := MyStrToInt(data, false); // b = map height
-          SetLength(result^.Tiles, result^.MapWidth, result^.MapHeight);
+      'm':
+        begin
+          case LowerCase(id)[2] of
+          'w':result^.MapWidth := MyStrToInt(data, false); //map width
+          'h':
+            begin  
+              result^.MapHeight := MyStrToInt(data, false); // b = map height
+              SetLength(result^.Tiles, result^.MapWidth, result^.MapHeight);//set lengths of tiles array
+            end;
+          end;
         end;
-      
-      'c': result^.TileWidth := MyStrToInt(data, false);        // c = tile width
-      'd': result^.TileHeight := MyStrToInt(data, false);      // d = tile height
-      'e': AddTile(); // e = tile
-      'f': AddBitmap(); // f = add 
+      't':
+        begin
+          case LowerCase(id)[2] of
+          'w':result^.TileWidth := MyStrToInt(data, false);        // c = tile width
+          'h':result^.TileHeight := MyStrToInt(data, false);      // d = tile height
+          'i':AddTile(); 
+          'b':AddBitmap();
+          end;
+        end;
       else
       begin
-        RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. id not recognized.');
+        RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Error with id: ' + id + '. id not recognized.');
         exit;
       end;
     end;
