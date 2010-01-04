@@ -71,48 +71,58 @@
 
 {$I sgTrace.inc}
 
+/// The physics contains code to check for collisions between bitmaps and shapes
+/// in SwinGame, as well as to perform collisions between sprites.
+/// 
 /// @module Physics
 /// @static
 unit sgPhysics;
 
 //=============================================================================
 interface
-//=============================================================================
-
   uses sgTypes;
-
+//=============================================================================
+  
+  
   //---------------------------------------------------------------------------
   // Sprite <-> Sprite Collision Detection
   //---------------------------------------------------------------------------
-
+  
   /// Returns ``true`` if the specifed `Sprites` (``s1`` and ``s2``) have
   /// collided. Will use simple bounding box tests first, and low-level pixel
   /// tests if needed.
+  ///
   /// @lib
+  /// @sn sprite:%s collidedWithSprite:%s
+  ///
+  /// @class Sprite
+  /// @method CollidedWithSprite
   function SpritesCollided(s1, s2: Sprite): Boolean;
-
+  
+  
   //---------------------------------------------------------------------------
   // Sprite <-> Rectangle Collision Detection
   //---------------------------------------------------------------------------
-
+  
   /// Determined if a sprite has collided with a given rectangle. The rectangles
   /// coordinates are expressed in "world" coordinates.
   ///
-  /// @param s The sprite to check
-  /// @param x The x location of the rectangle
-  /// @param y The y location of the rectangle
-  /// @param width The width of the rectangle
-  /// @param height The height of the rectangle
-  /// @returns True if the sprite collides with the rectangle
-  ///
   /// @lib
+  /// @sn sprite:%s collisionWithRectX:%s y:%s width:%s height:%s
+  ///
   /// @class Sprite
   /// @method RectCollision
+  /// @csn collisionWithRectX:%s y:%s width:%s height:%s
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
-
+  
+  /// Returns true if the sprite has collided with a rectangle.
+  /// 
   /// @lib SpriteRectangleCollision
+  /// @sn sprite:%s collisionWithRect:%s
+  /// 
   /// @class Sprite
   /// @overload RectCollision RectangleCollision
+  /// @csn collisionWithRect:%s
   function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
   
   
@@ -125,20 +135,24 @@ interface
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   ///
   /// @lib
+  /// @sn sprite:%s collisionWithBitmap:%s x:%s y:%s
   ///
   /// @uname SpriteBitmapCollision
   /// @class Sprite
   /// @method BitmapCollision
+  /// @csn collisionWithBitmap:%s x:%s y:%s
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
-
+  
   /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
   /// pixel level testing if required.
   /// The ``pt`` (`Point2D`) value specifies the world location of the bitmap.
-  ///
+  /// 
   /// @lib SpriteBitmapAtPointCollision
-  /// @uname SpriteBitmapAtPointCollision
+  /// @sn sprite:%s collisionWithBitmap:%s at:%s
+  /// 
   /// @class Sprite
   /// @overload BitmapCollision BitmapAtPointCollision
+  /// @csn collisionWithBitmap:%s at:%s
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
   
   
@@ -151,41 +165,50 @@ interface
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangles world position (``rectX`` and ``rectY``) and size
   /// (``rectWidth`` and ``rectHeight``) need to be provided.
-  ///
+  /// 
   /// @lib BitmapRectCollision
-  /// @uname BitmapRectCollision
+  /// @sn bitmap:%s collisionAtX:%s y:%s withRectX:%s y:%s width:%s height:%s
+  /// 
   /// @class Bitmap
   /// @method RectCollision
+  /// @csn collisionAtX:%s y:%s withRectX:%s y:%s width:%s height:%s
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
   
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle
   /// specified using pixel level testing if required.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The rectangle ``rect`` needs to be provided in world coordinates.
-  ///
+  /// 
   /// @lib BitmapRectangleCollision
-  /// @uname BitmapRectangleCollision
+  /// @sn bitmap:%s collisionAtX:%s y:%s withRect:%s
+  /// 
   /// @class Bitmap
   /// @overload RectCollision RectangleCollision
+  /// @csn collisionAtX:%s y:%s withRect:%s
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
   
   /// Returns True if the indicated part of the bitmap has collided with the specified
   /// rectangle.
   ///
   /// @lib BitmapPartRectCollision
+  /// @sn bitmap:%s collisionAtX:%s y:%s part:%s withRect:%s
   ///
   /// @class Bitmap
   /// @overload RectCollision RectPartCollision
+  /// @csn collisionAtX:%s y:%s part:%s withRect:%s
   function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const part, rect: Rectangle): Boolean; overload;
   
   /// Returns True if the indicated part of the bitmap has collided with the specified
   /// rectangle.
   ///
   /// @lib BitmapPartAtPtRectCollision
+  /// @sn bitmap:%s atPt:%s part:%s collisionWithRect:%s
   ///
   /// @class Bitmap
   /// @overload RectCollision RectPartCollisionAtPoint
+  /// @csn atPt:%s part:%s collisionWithRect:%s
   function BitmapRectCollision(bmp: Bitmap; const pt:Point2D; const part, rect: Rectangle): Boolean; overload;
+  
   
   //---------------------------------------------------------------------------
   // Bitmap <-> Point
@@ -195,11 +218,13 @@ interface
   /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions.
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
-  ///
+  /// 
   /// @lib BitmapPointCollision
-  /// @uname BitmapPointCollision
+  /// @sn bitmap:%s atX:%s y:%s collisionWithPtX:%s y:%s
+  /// 
   /// @class Bitmap
   /// @method PointCollision
+  /// @csn atX:%s y:%s collisionWithPtX:%s y:%s
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; ptX, ptY: Single): Boolean; overload;
   
   /// Returns True if a point (``pt``) is located within the bitmap
@@ -208,9 +233,11 @@ interface
   /// The point ``pt`` needs to be provided in world coordinates.
   ///
   /// @lib BitmapPointPtCollision
-  /// @uname BitmapPointPtCollision
+  /// @sn bitmap:%s atX:%s y:%s collisionWithPt:%s
+  /// 
   /// @class Bitmap
   /// @overload PointCollision PointPtCollision
+  /// @csn atX:%s y:%s collisionWithPt:%s
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; const pt: Point2D): Boolean; overload;
   
   /// Returns True if a point (``ptX``,``ptY``) is located within the ``part`` (rectangle) of the bitmap
@@ -220,6 +247,11 @@ interface
   /// The ``ptX`` and ``ptY`` needs to be provided in world coordinates.
   ///
   /// @lib
+  /// @sn bitmap:%s atX:%s y:%s part:%s collisionWithPtX:%s y:%s
+  ///
+  /// @class Bitmap
+  /// @overload PointCollision PointPartCollision
+  /// @csn atX:%s y:%s part:%s collisionWithPtX:%s y:%s
   function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
   
   /// Returns True if a point (``pt``) is located within the ``part`` (rectangle) of the bitmap
@@ -229,6 +261,11 @@ interface
   /// The point ``pt`` needs to be provided in world coordinates.
   ///  
   /// @lib  BitmapPointXYCollisionPart
+  /// @sn bitmap:%s atX:%s y:%s part:%s collisionWithPt:%s
+  /// 
+  /// @class Bitmap
+  /// @overload PointCollision PointPartCollisionWithPt
+  /// @csn atX:%s y:%s part:%s collisionWithPt:%s
   function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
   
   
@@ -238,30 +275,36 @@ interface
   
   /// Returns True if two bitmaps have collided using per pixel testing if required.
   /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
-  ///
+  /// 
   /// @lib BitmapsCollided
-  /// @uname BitmapsCollided
+  /// @sn bitmap:%s atX:%s y:%s collisionWithBitmap:%s atX:%s y:%s
+  /// 
   /// @class Bitmap
   /// @method BitmapCollision
+  /// @csn atX:%s y:%s collisionWithBitmap:%s atX:%s y:%s
   function BitmapsCollided(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   
   /// Returns True if two bitmaps have collided using per pixel testing if required. 
   /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
-  ///
+  /// 
   /// @lib BitmapsAtPointsCollided
-  /// @uname BitmapsAtPointsCollided
+  /// @sn bitmap:%s at:%s collisionWithBitmap:%s atPt:%s
+  /// 
   /// @class Bitmap
   /// @overload BitmapCollision BitmapAtPointCollision
+  /// @csn at:%s collisionWithBitmap:%s atPt:%s
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   
   /// Returns True if the specified parts (``part1`` and ``part2`` rectangles) of the two 
   /// bitmaps (``bmp1`` and ``bmpt2``) have collided, using pixel level collision if required. 
   /// The ``pt`` (`Point2D`) parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``). 
-  ///
+  /// 
   /// @lib BitmapsPartsCollided
-  /// @uname BitmapPartsCollided
+  /// @sn bitmap:%s at:%s part:%s collisionWith:%s at:%s part:%s
+  /// 
   /// @class Bitmap
   /// @overload BitmapCollision BitmapPartCollision
+  /// @csn at:%s part:%s collisionWith:%s at:%s part:%s
   function BitmapsCollided(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
   
   
@@ -331,21 +374,21 @@ interface
   ///
   /// @lib SpriteRectLineCollision
   function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
-
+  
   /// Returns True if the rectangle ``rect`` provided has collided with the
   /// ``line``.
   ///
   /// @lib RectLineCollision
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
-
-
+  
+  
   //---------------------------------------------------------------------------
   // Side to check based on movement direction
   //---------------------------------------------------------------------------
-
+  
   /// @lib
   function GetSideForCollisionTest(const velocity: Vector): CollisionSide;
-
+  
   
   //---------------------------------------------------------------------------
   // Collision Effect Application ( angle + energy/mass transfer)
@@ -358,7 +401,7 @@ interface
   ///
   /// @lib
   procedure CollideCircleCircle(s: Sprite; const c: Circle);
-
+    
   /// @lib
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle); overload;
   
@@ -368,11 +411,7 @@ interface
   ///@lib
   procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   
-  // /// @lib
-  // procedure CollideCircleRectangleBounds(s: Sprite; const rect: Rectangle);
-
-
-
+  
 //=============================================================================
 implementation
 //=============================================================================
@@ -1099,8 +1138,8 @@ implementation
   var
     r1, r2: Rectangle;
   begin
-    r1 := BitmapCellRectangle(bmp1, cell1);
-    r2 := BitmapCellRectangle(bmp2, cell2);
+    r1 := BitmapRectangleOfCell(bmp1, cell1);
+    r2 := BitmapRectangleOfCell(bmp2, cell2);
     
     result := 
       CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
@@ -1119,17 +1158,6 @@ implementation
   begin
     result := CellBitmapCollided( bmp1, cell, x1, y1, 
                                   bmp2, x2, y2, BitmapRectangle(0, 0, bmp2));
-    // if not assigned(bmp2) then 
-    // begin
-    //   result := false;
-    //   exit;
-    // end;
-    // 
-    // r1 := RectangleOfCell(bmp1, cell);
-    // 
-    // result := 
-    //   CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
-    //                               bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0);
   end;
   
   function CellBitmapCollided(bmp1: Bitmap; cell: LongInt; const pt1: Point2D; 
@@ -1150,7 +1178,7 @@ implementation
       exit;
     end;
     
-    r1 := BitmapCellRectangle(bmp1, cell);
+    r1 := BitmapRectangleOfCell(bmp1, cell);
     
     result := 
       CollisionWithinBitmapImages(bmp1, x1, y1, r1.width, r1.height, Round(r1.x), Round(r1.y),
@@ -1168,7 +1196,7 @@ implementation
   var
     r1: Rectangle;
   begin
-    r1 := BitmapCellRectangle(bmp, cell);
+    r1 := BitmapRectangleOfCell(bmp, cell);
     
     result := BitmapPartRectCollision(bmp, x, y, r1, rect);
   end;

@@ -108,8 +108,6 @@ uses sgTypes;
   /// @lib
   /// @sn mapBitmapNamed:%s toFile:%s
   ///
-  /// @sn bitmapNamed:%s fromFilename:%s
-  ///
   /// @class Bitmap
   /// @constructor
   /// @csn initWithName:%s forFilename:%s
@@ -257,7 +255,7 @@ uses sgTypes;
   /// height.
   ///
   /// @lib
-  /// @sn bitmap:%s circleAtPt:%s
+  /// @sn circleFrombitmap:%s atPt:%s
   /// 
   /// @class Bitmap
   /// @method ToCircle
@@ -268,7 +266,7 @@ uses sgTypes;
   /// height.
   ///
   /// @lib BitmapCircleXY
-  /// @sn bitmap:%s circleAtX:%s y:%s
+  /// @sn circleFromBitmap:%s atX:%s y:%s
   /// 
   /// @class Bitmap
   /// @overload ToCircle ToCircleXY
@@ -279,7 +277,7 @@ uses sgTypes;
   /// height.
   ///
   /// @lib
-  /// @sn bitmap:%s circleCellAtPt:%s
+  /// @sn circleFromBitmap:%s cellAtPt:%s
   ///
   /// @class Bitmap
   /// @method ToCellCircle
@@ -290,7 +288,7 @@ uses sgTypes;
   /// height.
   ///
   /// @lib
-  /// @sn bitmap:%s circleCellAtX:%s y:%s
+  /// @sn circleBitmap:%s cellAtX:%s y:%s
   ///
   /// @class Bitmap
   /// @overload ToCellCircle ToCellCircleXY
@@ -327,7 +325,8 @@ uses sgTypes;
   /// @class Bitmap
   /// @method MakeTransparent
   procedure MakeTransparent(bmp: Bitmap);
-
+  
+  
 //---------------------------------------------------------------------------
 // Rotate and Zoom
 //---------------------------------------------------------------------------
@@ -376,6 +375,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @overload ClearSurface ClearSurfaceToColor
+  /// @csn clearSurfaceTo:%s
   procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
   
   /// Clears the drawing on the Bitmap to black.
@@ -386,25 +386,74 @@ uses sgTypes;
   /// @method ClearSurface
   procedure ClearSurface(dest: Bitmap); overload;
   
+  
   //---------------------------------------------------------------------------
   // Bitmap -> Rectangle functions
   //---------------------------------------------------------------------------
   
+  /// Returns a bounding rectangle for the bitmap.
+  /// 
+  /// @lib BitmapRectXY
+  /// @sn rectangleAtX:%s y:%s forBitmap:%s
+  ///
+  /// @class Bitmap
+  /// @overload ToRectangle ToRectangleAtXY
+  /// @self 3
+  /// @csn toRectangleAtX:%s y:%s
   function BitmapRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
+  
+  /// Returns a bounding rectangle for the bitmap, at the origin.
+  /// 
+  /// @lib BitmapRectAtOrigin
+  ///
+  /// @class Bitmap
+  /// @overload ToRectangle ToRectangleAtOrigin
+  /// @csn toRectangleAtOrigin
   function BitmapRectangle(bmp: Bitmap): Rectangle; overload;
+  
+  /// Returns a bounding rectangle for a cell of the bitmap at the origin.
+  /// 
+  /// @lib BitmapCellRectangleAtOrigin
+  /// @sn rectangleForBitmapCellAtOrigin:%s
+  ///
+  /// @class Bitmap
+  /// @overload ToCellRectangle ToCellRectangleAtOrigin
+  /// @self 3
+  /// @csn toRectangleAtOrigin
   function BitmapCellRectangle(bmp: Bitmap): Rectangle; overload;
+  
+  /// Returns a rectangle for a cell of the bitmap at the indicated point.
+  /// 
+  /// @lib BitmapCellRectangle
+  /// @sn rectangleAt:%s forBitmapCell:%s
+  ///
+  /// @class Bitmap
+  /// @overload ToCellRectangle ToCellRectangleAtPt
+  /// @self 2
+  /// @sn toRectangleAt:%s
+  function BitmapCellRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
+  
+  /// Returns a rectangle for a cell of the bitmap at the indicated point.
+  /// 
+  /// @lib BitmapCellRectangleXY
+  /// @sn rectangleAtX:%s y:%s forBitmapCell:%s
+  ///
+  /// @class Bitmap
+  /// @method ToCellRectangle
+  /// @self 2
+  /// @sn toRectangleAtX:%s y:%s
   function BitmapCellRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for the location of the indicated cell within the
   /// bitmap.
   /// 
   /// @lib
-  /// @sn bitmap:%s cellRectangle:%s
+  /// @sn bitmap:%s rectangleOfCell:%s
   /// 
   /// @class Bitmap
   /// @method CellRectangle
   /// @csn rectangleCell:%s
-  function BitmapCellRectangle(src: Bitmap; cell: LongInt): Rectangle;
+  function BitmapRectangleOfCell(src: Bitmap; cell: LongInt): Rectangle;
   
   
   //---------------------------------------------------------------------------
@@ -1201,7 +1250,7 @@ end;
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
 begin
   //DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
-  DrawBitmapPart(dest, src, BitmapCellRectangle(src, cell), x, y);
+  DrawBitmapPart(dest, src, BitmapRectangleOfCell(src, cell), x, y);
 end;
 
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
@@ -1282,7 +1331,7 @@ begin
   {$ENDIF}
 end;
 
-function BitmapCellRectangle(src: Bitmap; cell: LongInt): Rectangle;
+function BitmapRectangleOfCell(src: Bitmap; cell: LongInt): Rectangle;
 begin
   if (cell < 0) or (cell >= src^.cellCount) then
     result := RectangleFrom(0,0,0,0)

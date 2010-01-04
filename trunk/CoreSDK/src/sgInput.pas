@@ -56,34 +56,36 @@ interface
   /// @lib
   function MousePosition(): Point2D;
   
-  /// @returns The amount of accumulated mouse movement, since the last time 
-  ///          `ProcessEvents` was called, as a `Vector`. 
+  /// Returns the amount of accumulated mouse movement, since the last time 
+  /// `ProcessEvents` was called, as a `Vector`. 
+  /// 
   /// @lib
   function MouseMovement(): Vector;
   
-  /// @param button The specific `MouseButton` to check
-  /// @returns `true` if the specified button is currently pressed down
+  /// Returns `true` if the specified button is currently pressed down.
+  /// 
   /// @lib
   function MouseDown(button: MouseButton): Boolean;
   
-  /// @param button The specific `MouseButton` to check
-  /// @returns `true` if the specified button is currently up
+  /// Returns `true` if the specified button is currently up.
+  /// 
   /// @lib
   function MouseUp(button: MouseButton): Boolean;
-
-  /// @param button The specific `MouseButton` to check
-  /// @returns true if the specified button was clicked since the last time
-  ///          `ProcessEvents` was called
+  
+  /// Returns true if the specified button was clicked since the last time
+  /// `ProcessEvents` was called
+  /// 
   /// @lib
   function MouseClicked(button: MouseButton): Boolean;
   
-  /// Moves the mouse cursor to the specified screen location
-  ///
+  /// Moves the mouse cursor to the specified screen location.
+  /// 
   /// @lib
-  procedure MoveMouse(x, y : UInt16);overload;
+  /// @sn moveMouseToX:%s y:%s
+  procedure MoveMouse(x, y : UInt16); overload;
     
-  /// Moves the mouse cursor to the specified screen location
-  ///
+  /// Moves the mouse cursor to the specified screen location.
+  /// 
   /// @lib MoveMouseToPoint
   procedure MoveMouse(const point: Point2D);overload;
   
@@ -96,8 +98,8 @@ interface
   /// Used to explicitly set the mouse cursors visible state (if it is showing
   /// in the window or not) based on the `show` parameter.
   ///
-  /// @param show If the mouse should be set to visible (showing) or not
   /// @lib SetMouseVisible
+  /// @sn showMouse:%s
   procedure ShowMouse(show : Boolean); overload;
     
   /// Tells the mouse cursor to hide (no longer visible) if it is currently 
@@ -105,8 +107,9 @@ interface
   ///
   /// @lib
   procedure HideMouse();
-    
-  /// @returns `true` if the mouse is currently visible, `false` if not.
+  
+  /// Returns `true` if the mouse is currently visible, `false` if not.
+  /// 
   /// @lib
   function MouseShown(): Boolean;
   
@@ -116,26 +119,20 @@ interface
   /// updated during `ProcessEvents`, and text is drawn to the screen as part 
   /// of the `RefreshScreen` call.
   ///
-  /// @param textColor The color of the text entered by the user
-  /// @param maxLength The maximum length of the string the user can enter
-  /// @param theFont   The font used to draw the text entered
-  /// @param x         Screen x location at which to draw the text
-  /// @param y         Screen y location at which to draw the text
-  ///
-  /// @see StartReadingTextWithText, EndReadingText, ReadingText
   /// @lib
+  /// @sn startReadingTextColor:%s maxLen:%s font:%s x:%s y:%s
   procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
   
   /// The same as `StartReadingText' but with an additional `text` parameter
   /// that is displayed as default text to the user.  
   ///
-  /// @like StartReadingText
-  /// @param text A default text string to display which the user can change 
   /// @lib
+  /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s x:%s y:%s
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
   
-  /// @returns the string that has been read since `StartReadingText` or 
-  ///          `StartReadingTextWithText` was called
+  /// Returns the string that has been read since `StartReadingText` or 
+  /// `StartReadingTextWithText` was called.
+  ///
   /// @lib
   function EndReadingText(): String;
   
@@ -144,7 +141,6 @@ interface
   /// false when the user presses enter or escape. At this point you can
   /// read the string entered as either ASCII or Unicode.
   ///
-  /// @returns True while the API is reading text from the user
   /// @lib
   function ReadingText(): Boolean;
   
@@ -152,7 +148,6 @@ interface
   /// user as ASCII. See TextReasAsUNICODE, StartReadingText and ReadingText
   /// for more details.
   ///
-  /// @returns The string entered by the user
   /// @lib
   function TextReadAsASCII(): String;
   
@@ -160,25 +155,20 @@ interface
   /// as part of the `ProcessEvents` call. Use the key codes from `KeyCodes`
   /// to specify the key to be checked.
   ///
-  /// @param key A `KeyCode` to indicate the what key to check 
-  /// @returns `true` if the key specified is currently being held down
   /// @lib
   function KeyDown(key: KeyCode): Boolean;
-
+  
   /// Returns true if the specified key was pressed down since the last time 
   /// `ProcessEvents` was called. This occurs only once for the key that is 
   /// pressed and will not return true again until the key is released and
   /// pressed down again.
   ///
-  /// @param key A `KeyCode` to indicate the what key to check 
-  /// @returns `true` if the key was pressed down since the last `ProcessEvents` call
   /// @lib
   function KeyTyped(key: KeyCode): Boolean;
-
+  
   /// Checks to see if any key has been pressed since the last time 
   /// `ProcessEvents` was called.
   ///
-  /// @returns `true` if any key has been pressed.
   /// @lib
   function AnyKeyPressed(): Boolean;
   
@@ -186,11 +176,9 @@ interface
   /// example, vk_Comma returns the string 'Comma'. This function could be used
   /// to display more meaningful key names for configuring game controls, etc.
   ///
-  /// @param key The enumerated key code value used to identify a specific key
-  /// @returns a string version of the key name
   /// @lib
   function KeyName(key: KeyCode): String;
-
+  
 //=============================================================================
 implementation
 //=============================================================================

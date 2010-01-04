@@ -46,7 +46,9 @@
 //                      : shapes units.
 //=============================================================================
 
-
+/// SwinGame's geometry code includes the features to create, draw, and manipulate
+/// shapes.
+///
 /// @module Geometry
 /// @static
 unit sgGeometry;

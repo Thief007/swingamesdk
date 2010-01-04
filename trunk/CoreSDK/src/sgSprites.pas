@@ -972,7 +972,7 @@ implementation
     if (not Assigned(s)) then
       result := RectangleFrom(0,0,0,0)
     else
-      result := BitmapCellRectangle(s^.layers[0], AnimationCurrentCell(s^.animationData));
+      result := BitmapRectangleOfCell(s^.layers[0], AnimationCurrentCell(s^.animationData));
   end;
   
   function SpriteScreenRectangle(s: Sprite): Rectangle;

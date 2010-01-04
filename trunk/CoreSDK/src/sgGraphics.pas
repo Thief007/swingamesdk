@@ -48,6 +48,9 @@
 // - Various
 //=============================================================================
 
+/// The graphics code of SwinGame is used to draw primitive shapes to the screen
+/// or onto bitmaps.
+/// 
 /// @module Graphics
 /// @static
 unit sgGraphics;
@@ -62,6 +65,7 @@ interface
   //---------------------------------------------------------------------------
   
   /// Draw a circle onto a destination (filled or outline).
+  /// 
   /// @lib DrawOrFillPtCircleOnto
   /// @sn drawOnto:%s color:%s filled:%s circleX:%s y:%s radius:%s
   procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
