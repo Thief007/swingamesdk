@@ -21,6 +21,12 @@
 
 {$I sgTrace.inc}
 
+/// Animations in SwinGame can be used to move between cells in bitmaps and
+/// sprites. Each Animation generates a number sequence that can then be used
+/// when drawing bitmaps.
+///
+/// @module Animations
+/// @static
 unit sgAnimations;
 
 //=============================================================================
