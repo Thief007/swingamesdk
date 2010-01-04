@@ -312,7 +312,7 @@ interface
   // Cell based Collision Tests
   //---------------------------------------------------------------------------
   
-  /// Returns true if the cells within the two bitmaps have collided.
+  /// Returns true if the cells within the two bitmaps have collided at their specified x,y locations.
   ///
   /// @lib
   /// @sn bitmap:%s cell:%s atX:%s y:%s collisionWithBitmap:%s cell:%s atX:%s y:%s
@@ -321,50 +321,112 @@ interface
   /// @method CellCollision
   /// @csn cell:%s atX:%s y:%s collisionWithBitmap:%s cell:%s atX:%s y:%s
   function CellCollision( bmp1: Bitmap; cell1, x1, y1: LongInt; 
-                          bmp2: Bitmap; cell2, x2, y2: LongInt): Boolean;
+                          bmp2: Bitmap; cell2, x2, y2: LongInt): Boolean; overload;
   
+  /// Returns true if the cells within the two bitmaps have collided at the given points.
+  ///
+  /// @lib CellCollisionAtPt
+  /// @sn bitmap:%s cell:%s at:%s collisionWithBitmap:%s cell:%s at:%s
+  ///
+  /// @class Bitmap
+  /// @overload CellCollision
+  /// @csn cell:%s at:%s collisionWithBitmap:%s cell:%s at:%s
   function CellCollision( bmp1: Bitmap; cell1: LongInt; const pt1: Point2D; 
-                          bmp2: Bitmap; cell2: LongInt; const pt2: Point2D): Boolean;
+                          bmp2: Bitmap; cell2: LongInt; const pt2: Point2D): Boolean; overload;
   
+  /// Returns true if the cell in the specified bitmap has collided with a bitmap.
+  /// 
+  /// @lib
+  /// @sn bitmap:%s cell:%s atX:%s y:%s collisionWithBitmap:%s atX:%s y:%s
+  /// 
+  /// @class Bitmap
+  /// @method CellBitmapCollision
+  /// @csn cell:%s atX:%s y:%s collisionWithBitmap:%s atX:%s y:%s
   function CellBitmapCollision(bmp1: Bitmap; cell, x1, y1: LongInt; 
                               bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
   
+  /// Returns true if the cell in the specified bitmap has collided with a bitmap.
+  /// 
+  /// @lib CellBitmapCollisionAtPt
+  /// @sn bitmap:%s cell:%s at:%s collisionWithBitmap:%s at:%s
+  /// 
+  /// @class Bitmap
+  /// @overload CellBitmapCollision CellBitmapCollisionAtPt
+  /// @csn cell:%s at:%s collisionWithBitmap:%s at:%s
   function CellBitmapCollision(bmp1: Bitmap; cell: LongInt; const pt1: Point2D; 
                               bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
   
+  /// Returns true if the cell in the specified bitmap has collided with a part of a bitmap.
+  /// 
+  /// @lib CellBitmapPartCollision
+  /// @sn bitmap:%s cell:%s atX:%s y:%s collisionWithBitmap:%s atX:%s y:%s part:%s
+  /// 
+  /// @class Bitmap
+  /// @overload CellBitmapCollision CellBitmapPartCollision
+  /// @csn cell:%s atX:%s y:%s collisionWithBitmap:%s atX:%s y:%s part:%s
   function CellBitmapCollision(bmp1: Bitmap; cell: LongInt; x1, y1: LongInt;
                               bmp2: Bitmap; x2, y2: LongInt; const part: Rectangle): Boolean; overload;
   
+  /// Returns true if the cell in the specified bitmap has collided with a part of a bitmap.
+  /// 
+  /// @lib CellBitmapPartCollisionAtPt
+  /// @sn bitmap:%s cell:%s at:%s collisionWithBitmap:%s at:%s part:%s
+  /// 
+  /// @class Bitmap
+  /// @overload CellBitmapCollision CellBitmapPartCollisionAtPt
+  /// @csn cell:%s at:%s collisionWithBitmap:%s at:%s part:%s
   function CellBitmapCollision(bmp1: Bitmap; cell: LongInt; const pt1: Point2D;
                               bmp2: Bitmap; const pt2:Point2D; const part: Rectangle): Boolean; overload;
   
+  /// Returns true if the cell of the bitmap has collided with a given rectangle.
+  /// 
+  /// @lib
+  /// @sn bitmap:%s cell:%s atX:%s y:%s collisionWithRect:%s
+  /// 
+  /// @class Bitmap
+  /// @method CellRectCollision
+  /// @csn cell:%s atX:%s y:%s collisionWithRect:%s
   function CellRectCollision(bmp: Bitmap; cell, x, y: LongInt; const rect: Rectangle): Boolean; overload;
   
+  /// Returns true if the cell of the bitmap has collided with a given rectangle.
+  /// 
+  /// @lib CellRectCollisionAtPt
+  /// @sn bitmap:%s cell:%s at:%s collisionWithRect:%s
+  /// 
+  /// @class Bitmap
+  /// @method CellRectCollision
+  /// @csn cell:%s at:%s collisionWithRect:%s
   function CellRectCollision(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean; overload;
+  
   
   //---------------------------------------------------------------------------
   // Geometry Collision Tests
   //---------------------------------------------------------------------------
-
+  
   /// Returns True if the Circle collised with rectangle `rect`.
   ///
   /// @lib
+  /// @sn circle:%s collisionWithRect:%s
   function CircleRectCollision(const c: Circle; const rect: Rectangle): Boolean;
-
+  
   /// Returns True if the circle has collided with any of the lines from the `rect` rectangle.
   ///
   /// @lib
+  /// @sn circle:%s collisionWithLine:%s
   function CircleLinesCollision(const c: Circle; const lines: LinesArray): Boolean;
-
+  
   /// Returns True if the circles have collided.
   ///
   /// @lib
+  /// @sn circle:%s collisionWithCircle:%s
   function CircleCircleCollision(const c1, c2: Circle): Boolean;
   
   /// Returns True if the Circle has collided with the Triangle `tri`.
   ///
   /// @lib
+  /// @sn circle:%s collisionWithTriangle:%s
   function CircleTriangleCollision(const c: Circle; const tri: Triangle): Boolean;
+  
   
   //---------------------------------------------------------------------------
   // Sprite / Geometry Collision Tests
@@ -375,18 +437,21 @@ interface
   /// based on the sprites width or height value -- whatever is largest.
   ///
   /// @lib SpriteCircleLineCollision
+  /// @sn sprite:%s circleCollisionWithLine:%s
   function CircleLineCollision(s: Sprite; const line: LineSegment): Boolean;
   
   /// Returns True if the bounding rectangle of the `Sprite` ``s`` has collided 
   /// with the ``line`` specified.
   ///
   /// @lib SpriteRectLineCollision
+  /// @sn sprite:%s rectCollisionWithLine:%s
   function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;
   
   /// Returns True if the rectangle ``rect`` provided has collided with the
   /// ``line``.
   ///
   /// @lib RectLineCollision
+  /// @sn rectangle:%s collisionWithLine:%s
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
   
   
@@ -394,29 +459,68 @@ interface
   // Side to check based on movement direction
   //---------------------------------------------------------------------------
   
+  /// Returns the side of that needs to be checked for collisions given the
+  /// movement velocity.
+  /// 
   /// @lib
-  function GetSideForCollisionTest(const velocity: Vector): CollisionSide;
+  function SideForCollisionTest(const velocity: Vector): CollisionSide;
   
   
   //---------------------------------------------------------------------------
   // Collision Effect Application ( angle + energy/mass transfer)
   //---------------------------------------------------------------------------
   
+  /// Perform a physical collision with a circle bouncing off a line.
+  /// 
   /// @lib
+  /// @sn sprite:%s circleCollideWithLine:%s
+  ///
+  /// @class Sprite
+  /// @method CircleCollideLine
+  /// @csn circleCollideWithLine:%s
   procedure CollideCircleLine(s: Sprite; const line: LineSegment);
   
-  /// Collide sprite ``s`` with the stationary circle ``c``.
+  /// Perform a physical collidion with a sprite circle bouncing off a
+  /// stationary circle.
   ///
   /// @lib
+  /// @sn sprite:%s circleCollideWithCircle:%s
+  ///
+  /// @class Sprite
+  /// @method CircleCollideCircle
+  /// @csn circleCollideWithCircle:%s
   procedure CollideCircleCircle(s: Sprite; const c: Circle);
-    
+  
+  /// Perform a physical collision with a sprite as a circle bouncing off
+  /// a stationary rectangle.
+  ///
   /// @lib
+  /// @sn sprite:%s circleCollideWithRect:%s
+  ///
+  /// @class Sprite
+  /// @method CircleCollideRectangle
+  /// @csn circleCollideWithRectangle:%s
   procedure CollideCircleRectangle(s: Sprite; const rect: Rectangle); overload;
   
+  /// Perform a physical collision between two circular sprites.
+  /// 
   /// @lib
+  /// @sn sprite:%s circleCollide:%s
+  /// 
+  /// @class Sprite
+  /// @method CirclesCollide
+  /// @csn circlesCollide:%s
   procedure CollideCircles(s1, s2: Sprite);
   
-  ///@lib
+  /// Perform a physical collision with a sprite as a circle bouncing off
+  /// the closest line in the array of lines.
+  /// 
+  /// @lib
+  /// @sn sprite:%s circleCollideWithLines:%s
+  /// 
+  /// @class Sprite
+  /// @method CircleCollideWithLines
+  /// @csn circleCollideWithLines:%s
   procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   
   
@@ -425,7 +529,7 @@ implementation
 //=============================================================================
 
   uses
-    SysUtils, {Math, Classes,} sgTrace,
+    SysUtils, sgTrace,
     sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages;
 
 
@@ -492,38 +596,15 @@ implementation
     result := BitmapPartRectCollision(bmp, x, y, part, rect);
   end;
   
-  /// Returns True if the indicated part of the bitmap has collided with the specified
-  /// rectangle.
-  ///
-  /// @lib BitmapPartAtPtRectCollision
-  ///
-  /// @class Bitmap
-  /// @overload RectCollision RectPartCollisionAtPoint
   function BitmapRectCollision(bmp: Bitmap; const pt:Point2D; const part, rect: Rectangle): Boolean; overload;
   begin
     result := BitmapPartRectCollision(bmp, Round(pt.x), Round(pt.y), part, rect);
   end;
   
-  // function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; const rect: Rectangle): Boolean; overload; {New for 1.2}
-  // begin
-  //   result := BitmapPartRectCollision(bmp, x, y, RectangleFrom(0, 0, bmp), bbox, rect);
-  // end;
-  // 
-  // function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload; {New for 1.2}
-  // begin
-  //   result := BitmapRectCollision(bmp, x, y, bbox, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
-  // end;
-  
   function BitmapRectCollision(bmp: Bitmap; x, y, rectX, rectY, rectWidth, rectHeight: LongInt): Boolean; overload;
   begin
     result := BitmapRectCollision(bmp, x, y, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
   end;
-  
-  // function BitmapRectCollision(bmp: Bitmap; x, y: LongInt; const rect: Rectangle): Boolean; overload;
-  // begin
-  //   result := BitmapRectCollision(bmp, x, y, false, rect);
-  // end;
-  
   
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
   var
@@ -573,7 +654,6 @@ implementation
   ///
   /// @returns          True if the bitmaps collide.
   /// 
-  
   function CollisionWithinBitmapImages(
              bmp1: Bitmap; x1, y1: Single; w1, h1: LongInt; offsetX1, offsetY1: Single; //bbox1: Boolean;
              bmp2: Bitmap; x2, y2: Single; w2, h2: LongInt; offsetX2, offsetY2: Single //bbox2: Boolean
@@ -642,13 +722,6 @@ implementation
     end;
   end;
 
-  // function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bbox1: Boolean; bmp2: Bitmap; x2, y2: LongInt; bbox2: Boolean): Boolean; overload;
-  // begin
-  //   result := CollisionWithinBitmapImages(
-  //               bmp1, x1, y1, bmp1^.width, bmp1^.height, 0, 0, bbox1, 
-  //               bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0, bbox2);
-  // end;
-  
   /// Performs a collision detection within two bitmaps at the given x, y
   /// locations using per pixel collision detection. This checks to see if
   /// two non-transparent pixels collide.
@@ -659,17 +732,6 @@ implementation
                 bmp2, x2, y2, bmp2^.width, bmp2^.height, 0, 0);
   end;
   
-  // ///
-  // /// @param bmp1, bmp2:  The bitmap images to check for collision
-  // /// @param x1, y1:      The x,y location of bmp 1
-  // /// @param x2, y2:      The x,y location of bmp 2
-  // ///
-  // /// @returns        True if the bitmaps collide.
-  // function CollisionWithinBitmapImages(bmp1: Bitmap; x1, y1: LongInt; bmp2: Bitmap; x2, y2: LongInt): Boolean; overload;
-  // begin
-  //   result := CollisionWithinBitmapImages(bmp1, x1, y1, false, bmp2, x2, y2, false);
-  // end;
-  // 
   function CollisionWithinSpriteImages(s1, s2: Sprite): Boolean;
   var
     part1, part2: Rectangle;
@@ -722,17 +784,6 @@ implementation
     else
       result := true;
   end;
-
-
-  // function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; x, y: Single): Boolean; overload;
-  // begin
-  //   result := SpriteBitmapCollision(s, bmp, x, y, false);
-  // end;
-  // 
-  // function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
-  // begin
-  //   result := SpriteBitmapCollision(s, bmp, pt.x, pt.y, false);
-  // end;
   
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D; const part: Rectangle): Boolean; overload;
   begin
@@ -746,10 +797,6 @@ implementation
     end;
     
     result := CellBitmapCollision(s^.collisionBitmap, SpriteCurrentCell(s), s^.position, bmp, pt, part);
-    
-    // result := CollisionWithinBitmapImages(
-    //             s^.collisionBitmap, s^.position.x, s^.position.y,  s^.width, s^.height, spritePart.x, spritePart.y, 
-    //             bmp, pt.x, pt.y, part.width, part.height, part.x, part.y);
   end;
   
   /// Determines if a sprite has collided with a bitmap using pixel level
@@ -797,8 +844,8 @@ implementation
   end;
   
   //You need to test for collisions on the ...
-  function GetSideForCollisionTest (const velocity: Vector): CollisionSide;
-  const SMALL = 0.1; //The delta for the check
+  function SideForCollisionTest (const velocity: Vector): CollisionSide;
+  const SMALL = 0.01; //The delta for the check
   begin
     if velocity.x < -SMALL then //Going Left...
     begin

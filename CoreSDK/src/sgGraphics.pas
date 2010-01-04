@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-04: Andrew : Added PutPixel
 // - 2009-12-10: Andrew : Moved out remaining bitmap function
 // - 2009-11-06: Andrew : Moved out bitmap function
 // - 2009-10-16: Andrew : Added shapes and shape prototypes
@@ -1149,7 +1150,7 @@ implementation
     p := bmp^.surface^.pixels + y * bmp^.surface^.pitch + x * bpp;
     
     if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
-    p^ := value;
+    p^ := clr;
   end;
   
   /// Draws a pixel onto the screen.

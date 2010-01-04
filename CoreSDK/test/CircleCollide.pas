@@ -158,7 +158,7 @@ end;
 procedure CheckCollisionWithTriangle(s: Sprite; const t: Triangle);
 var lines: LinesArray;
 begin
-  if CircleTriangleCollision(CircleSprite(s), t) then
+  if CircleTriangleCollision(SpriteCircle(s), t) then
   begin
     lines := LinesFrom(t);
     
@@ -313,21 +313,23 @@ begin
     // 
     DrawSprite(s1);
     temp := CenterPoint(s1);
+    DrawCircle(ColorBlue, SpriteCircle(s1));
     DrawLine(ColorBlue, temp.x, temp.y, temp.x + (SpriteDX(s1) * 10), temp.y + (SpriteDY(s1) * 10));
     UpdateSprite(s1);
     KeepOnScreen(s1);
     
-    if CircleRectCollision(CircleSprite(s1), rect) then CollideCircleRectangle(s1, rect)
-    else if CircleCircleCollision(CircleSprite(s1), CircleAt(c1, r1)) then CollideCircleCircle(s1, CircleAt(c1, r1));
+    if CircleRectCollision(SpriteCircle(s1), rect) then CollideCircleRectangle(s1, rect)
+    else if CircleCircleCollision(SpriteCircle(s1), CircleAt(c1, r1)) then CollideCircleCircle(s1, CircleAt(c1, r1));
     
     
     DrawSprite(s2);
     temp := CenterPoint(s2);
+    DrawCircle(ColorYellow, SpriteCircle(s2));
     DrawLine(ColorYellow, temp.x, temp.y, temp.x + (SpriteDX(s2) * 10), temp.y + (SpriteDY(s2) * 10));
     UpdateSprite(s2);
     KeepOnScreen(s2);
-    if CircleRectCollision(CircleSprite(s2), rect) then CollideCircleRectangle(s2, rect)
-    else if CircleCircleCollision(CircleSprite(s2), CircleAt(c1, r1)) then CollideCircleCircle(s2, CircleAt(c1, r1));
+    if CircleRectCollision(SpriteCircle(s2), rect) then CollideCircleRectangle(s2, rect)
+    else if CircleCircleCollision(SpriteCircle(s2), CircleAt(c1, r1)) then CollideCircleCircle(s2, CircleAt(c1, r1));
     
     CheckCollisionWithLine(s1, testLines[0]);
     CheckCollisionWithLine(s2, testLines[0]);
@@ -336,13 +338,13 @@ begin
     CheckCollisionWithTriangle(s2, t1);
     
     temp := MousePosition();
-    if CircleCircleCollision(CircleAt(temp, r2), CircleSprite(s1)) then
+    if CircleCircleCollision(CircleAt(temp, r2), SpriteCircle(s1)) then
       CollideCircleCircle(s1, CircleAt(temp, r2));
     
-    if CircleCircleCollision(CircleAt(temp, r2), CircleSprite(s2)) then
+    if CircleCircleCollision(CircleAt(temp, r2), SpriteCircle(s2)) then
       CollideCircleCircle(s2, CircleAt(temp, r2));
     
-    if SpritesCollided(s1, s2) then CollideCircles(s1, s2);
+    if SpriteCollision(s1, s2) then CollideCircles(s1, s2);
     
     
     temp := VectorOutOfRectFromPoint(temp, rect, mouseMvmt);

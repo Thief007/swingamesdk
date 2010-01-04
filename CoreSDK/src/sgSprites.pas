@@ -22,7 +22,9 @@
 //
 //=============================================================================
 
-/// Sprite management code.
+/// SwinGame Sprites are game elements that can be moved, and animated. Sprites are
+/// located at a position in the game, have a velocity, and an animation. The 
+/// Sprite can also have arbitary data associated with it for game specific purposes.
 ///
 /// @module Sprites
 unit sgSprites;
@@ -31,7 +33,7 @@ unit sgSprites;
 interface
   uses sgTypes;
 //=============================================================================
-
+  
   /// Returns a `Vector` that is the difference in the position of two sprites
   /// (``s1`` and ``s2``).
   ///
@@ -42,7 +44,7 @@ interface
   /// @method VectorTo
   /// @csn vectorToSprite:%s
   function VectorFromTo(s1, s2: Sprite): Vector;
-
+  
   /// Returns a `Vector` that is the difference in location from the center of
   /// the sprite ``s`` to the point ``pt``.
   ///
@@ -53,8 +55,8 @@ interface
   /// @overload VectorTo VectorToPoint
   /// @csn vectorToPoint:%s
   function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
-
-
+  
+  
   //---------------------------------------------------------------------------
   // Sprite routines
   //---------------------------------------------------------------------------
@@ -70,20 +72,85 @@ interface
   /// @csn initWithBitmap:%s
   function CreateSprite(layer: Bitmap): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, and the specified layer have name.
+  /// 
+  /// @lib CreateSpriteWithLayer
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s layerNamed:%s
   function CreateSprite(layer: Bitmap; layerName: String): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, the layer have name 'layer1'.
+  /// 
+  /// @lib CreateSpriteWithAnimation
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s animationTemplate:%s
   function CreateSprite(layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, and layer name.
+  /// 
+  /// @lib CreateSpriteWithLayerAndAnimation
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s layerNamed:%s animationTemplate:%s
   function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
+  /// 
+  /// @lib CreateLayeredSprite
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmaps:%s
   function CreateSprite(const layers: BitmapArray): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, and the specified layer names.
+  /// 
+  /// @lib CreateLayeredSpriteWithLayerNames
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmaps:%s layerNames:%s
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, the layer names 'layer1', 'layer2',... .
+  /// 
+  /// @lib CreateLayeredSpriteWithAnimationTemplate
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmaps:%s animationTemplate:%s
   function CreateSprite(const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
+  /// 
+  /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationTemplate
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmaps:%s layerNames:%s animationTemplate:%s
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
   
+  /// Free the resources associated with a sprite.
+  /// 
   /// @lib
   /// @class Sprite
   /// @dispose
@@ -156,6 +223,7 @@ interface
   /// @class Sprite
   /// @method Circle
   function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
+  function SpriteCircle(s: Sprite): Circle; overload;
   function SpriteCollisionCircle(s: Sprite): Circle;
   
   
@@ -676,7 +744,7 @@ implementation
     AddName(result^.valueIds, 'rotation');        //idx 1 = rotation, default to 0
     result^.values[ROTATION_IDX]  := 0;
     
-    AddName(result^.valueIds, 'scale');           //idx 2 = mass, default to 1
+    AddName(result^.valueIds, 'scale');           //idx 2 = scale, default to 1
     result^.values[SCALE_IDX]     := 1;
     
     // Position the sprite
@@ -1267,15 +1335,20 @@ implementation
   function SpriteCollisionRectangle(s: Sprite): Rectangle; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+      TraceEnter('sgSprites', 'SpriteCollisionRectangle(s: Sprite): Rectangle', '');
     {$ENDIF}
     
     if not assigned(s) then result := RectangleFrom(0,0,0,0)
     else result := BitmapCellRectangle(s^.position.x, s^.position.y, s^.collisionBitmap);
     
     {$IFDEF TRACE}
-      TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+      TraceExit('sgSprites', 'SpriteCollisionRectangle(s: Sprite): Rectangle', '');
     {$ENDIF}
+  end;
+  
+  function SpriteCircle(s: Sprite): Circle; overload;
+  begin
+    result := SpriteLayerCircle(s, 0);
   end;
   
   function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
@@ -1292,7 +1365,10 @@ implementation
     
     if not assigned(s) then result := CircleAt(0, 0, 0)
     else if (idx < 0) or (idx > High(s^.layers)) then begin RaiseException('Layer out of range in SpriteLayerCircle.'); result := CircleAt(0,0,0); exit; end
-    else result := BitmapCellCircle(s^.layers[idx], s^.position);
+    else
+    begin
+      result := BitmapCellCircle(s^.layers[idx], CenterPoint(s));
+    end;
     
     {$IFDEF TRACE}
       TraceExit('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
@@ -1306,7 +1382,7 @@ implementation
     {$ENDIF}
     
     if (not assigned(s)) or (not assigned(s^.collisionBitmap)) then result := CircleAt(0, 0, 0)
-    else result := BitmapCellCircle(s^.collisionBitmap, s^.position);
+    else result := BitmapCellCircle(s^.collisionBitmap, CenterPoint(s));
     
     {$IFDEF TRACE}
       TraceExit('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
