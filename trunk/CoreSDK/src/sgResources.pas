@@ -41,39 +41,81 @@ interface
   // Bundle handling routines
   //----------------------------------------------------------------------------
   
+  /// Load a resource bundle showing load progress.
+  ///
   /// @lib
+  /// @sn loadResourceBundleNamed:%s showingProgress:%s
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
   
+  /// Load a resource bundle showing load progress.
+  /// 
   /// @lib LoadResourceBundle(name, True)
   /// @uname LoadResourceBundleWithProgress
   procedure LoadResourceBundle(name: String); overload;
   
+  /// Load a resource bundle mapping it to a given name, showing progress.
+  /// 
   /// @lib
+  /// @sn mapResourceBundle:%s filename:%s showProgress:%s
   procedure MapResourceBundle(name, filename: String; showProgress: Boolean);
   
+  /// Release the resource bundle with the given name.
+  /// 
   /// @lib
   procedure ReleaseResourceBundle(name: String);
-
+  
+  /// Returns true if the resource bundle is loaded.
+  /// 
   /// @lib
   function HasResourceBundle(name: String): Boolean;
-
+  
+  
   //----------------------------------------------------------------------------
   // Release all resources procedure
   //----------------------------------------------------------------------------
+  
+  /// Release all of the resources loaded by SwinGame.
+  /// 
   /// @lib
   procedure ReleaseAllResources();
-
-
-
+  
+  
   //----------------------------------------------------------------------------
   // Resource Path and Application Path
   //----------------------------------------------------------------------------
   
+  /// Returns the path to a resource based on a base path and a the resource kind.
+  ///
+  /// @lib
+  /// @sn pathToResourceBase:%s filename:%s resourceKind:%s
+  function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload; // forward;
+  
+  /// Returns the path to a resource based on a base path and a the resource kind.
+  ///
+  /// @lib PathToOtherResourceWithBase
+  /// @sn pathToResourceBase:%s filename:%s
+  function PathToResourceWithBase(path, filename: String): String; overload; // forward;
+  
+  /// Returns the path to a resource given its filename, kind, and any subPaths. For example: to load
+  /// the image 'bullet01.png' from the 'bullets' subdirectory you pass in 'bullet01.png' as the filename,
+  /// ImageResource as the kind, and 'bullets' as the subPaths. This will then return the full path
+  /// to the resource according to the platform in question. 
+  /// For example: .../Resources/images/bullets/bullet01.png
+  /// 
+  /// @lib PathToResourceWithSubPaths
+  /// @sn pathToResourceFilename:%s kind:%s subPaths:%s
+  function PathToResource(filename: String; kind: ResourceKind; subPaths: StringArray): String; overload;
+  
+  /// Returns the path to the filename for a given file resource.
+  /// 
   /// @lib PathToResource
+  /// @sn pathToResourceFilename:%s kind:%s
   function PathToResource(filename: String; kind: ResourceKind): String; overload;
   
+  /// Returns the path to the filename within the game's resources folder.
+  /// 
   /// @lib PathToOtherResource
-  /// @uname PathToOtherResource
+  /// @sn pathToResourceFilename:%s
   function PathToResource(filename: String): String; overload;
   
   /// Returns the path to the file with the passed in name for a given resource
@@ -81,21 +123,28 @@ interface
   /// does not exist in the expected locations.
   ///
   /// @lib
-  ///
   /// @sn filenameFor:%s ofKind:%s
   function FilenameToResource(name: String; kind: ResourceKind): String;
   
-  ///
-  /// @uname SetAppPathWithExe
+  /// Sets the path to the executable. This path is used for locating game
+  /// resources.
+  /// 
+  /// @lib SetAppPathWithExe
   /// @sn setAppPath:%s withExe:%s
-  /// @lib 
   procedure SetAppPath(path: String; withExe: Boolean); overload;
   
-  /// @lib SetAppPath(path, True)
+  /// Sets the path to the executable. This path is used for locating game
+  /// resources.
+  /// 
+  /// @lib SetAppPath
   procedure SetAppPath(path: String); overload;
   
+  /// Returns the application path set within SwinGame. This is the path
+  /// used to determine the location of the game's resources.
+  ///
   /// @lib
   function AppPath(): String;
+  
   
   //----------------------------------------------------------------------------
   // Startup related code
@@ -117,11 +166,8 @@ interface
   ///
   /// @lib
   procedure RegisterFreeNotifier(fn: FreeNotifier);
-
-  function PathToResourceWithBase(path, filename: String; kind: ResourceKind): String; overload; // forward;
-  function PathToResourceWithBase(path, filename: String): String; overload; // forward;
-
-
+  
+  
 //=============================================================================
 implementation
 //=============================================================================
@@ -484,7 +530,7 @@ implementation
       else result := PathToResourceWithBase(path, filename);
     end;
   end;
-
+  
   function PathToResourceWithBase(path, filename: String): String; overload;
   begin
     {$ifdef UNIX}
@@ -508,6 +554,30 @@ implementation
   function PathToResource(filename: String; kind: ResourceKind): String; overload;
   begin
     result := PathToResourceWithBase(applicationPath, filename, kind);
+  end;
+  
+  function PathToResource(filename: String; kind: ResourceKind; subPaths: StringArray): String; overload;
+  var
+    temp: String;
+    i: LongInt;
+  begin
+    if Length(subPaths) > 0 then
+    begin
+      temp := '';
+      
+      for i := 0 to High(subPaths) do
+      begin
+        {$ifdef UNIX}
+          temp := temp + subPaths[i] + '/';
+        {$else} // Windows
+          temp := temp + subPaths[i] + '\';
+        {$endif}
+      end;
+      
+      filename := temp + filename;
+    end;
+    
+    result := PathToResource(filename, kind)
   end;
   
   procedure SetAppPath(path: String); overload;

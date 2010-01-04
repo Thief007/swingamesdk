@@ -784,8 +784,7 @@ begin
   begin
     for r := 0 to bmp^.height - 1 do
     begin
-      bmp^.nonTransparentPixels[c, r] :=
-        (GetPixel32(surface, c, r) <> transparentColor);
+      bmp^.nonTransparentPixels[c, r] := (GetPixel32(surface, c, r) <> transparentColor);
     end;
   end;
 end;
@@ -1311,7 +1310,7 @@ begin
     TraceEnter('sgImages', 'BitmapCellRectangle(const pt: Point2D', '');
   {$ENDIF}
   
-  result := BitmapRectangle(pt.x, pt.y, bmp);
+  result := BitmapCellRectangle(pt.x, pt.y, bmp);
   
   {$IFDEF TRACE}
     TraceExit('sgImages', 'BitmapCellRectangle(const pt: Point2D', '');

@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2010-01-04: Andrew : Fixed ColorFrom to include RGB and A
 // - 2009-12-18: Andrew : Added screen rect cache
 // - 2009-11-11: Andrew : Updated amask for screen surface.
 // - 2009-11-10: Andrew : Added sn and csn tags, and added comments to code
@@ -1210,21 +1211,20 @@ implementation
   
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color; overload;
   var
-    temp: TSDL_Color;
+    r,g,b,a: Byte;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'ColorFrom');
     {$ENDIF}
-    if (bmp = nil)
-      or (bmp^.surface = nil)
-      or (bmp^.surface^.format = nil) then
+    if (bmp = nil) or (bmp^.surface = nil) then
     begin
       RaiseException('Unable to get color as bitmap not specified');
       exit;
     end;
-
-    temp := ToSDLColor(apiColor);
-    result := SDL_MapRGB(bmp^.surface^.format, temp.r, temp.g, temp.b);
+    
+    ColorComponents(apiColor, r, g, b, a);
+    
+    result := SDL_MapRGBA(bmp^.surface^.format, r, g, b, a);
     {$IFDEF TRACE}
       TraceExit('sgCore', 'ColorFrom');
     {$ENDIF}
