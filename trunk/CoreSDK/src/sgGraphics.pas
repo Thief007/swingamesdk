@@ -623,6 +623,12 @@ interface
   // Pixel drawing
   //---------------------------------------------------------------------------
   
+  /// Sets the color of the pixel to the specified value.
+  ///
+  /// @lib
+  /// @sn bitmap:%s putPixelX:%s y:%s color:%s
+  procedure PutPixel(bmp: Bitmap; x, y: LongInt; value: Color);
+  
   /// Draw a pixel onto a destination.
   /// 
   /// @lib DrawPixelOnto
@@ -1129,9 +1135,21 @@ implementation
     result := GetPixel(screen, x, y);
   end;
 
-  procedure PutPixel(surface: PSDL_Surface; x, y: LongInt; color: Color);
+  procedure PutPixel(bmp: Bitmap; x, y: LongInt; value: Color);
+  var
+    clr:  Color;
+    p:    ^Color;
+    bpp:  LongInt;
   begin
-    pixelColor(surface, x, y, ToGfxColor(color));
+    if not assigned(bmp) then exit;
+    
+    clr := ColorFrom(bmp, value);
+    bpp := bmp^.surface^.format^.BytesPerPixel;
+    // Here p is the address to the pixel we want to set
+    p := bmp^.surface^.pixels + y * bmp^.surface^.pitch + x * bpp;
+    
+    if bpp <> 4 then RaiseException('PutPixel only supported on 32bit images.');
+    p^ := clr;
   end;
   
   /// Draws a pixel onto the screen.
@@ -1617,12 +1635,10 @@ implementation
     
     //if SDL_MUSTLOCK(dest^.surface) then SDL_LockSurface(dest^.surface);
     
-    PutPixel(dest^.surface, x, y, clr);
+    pixelColor(dest^.surface, x, y, ToGfxColor(clr));
     
     //if SDL_MUSTLOCK(dest^.surface) then SDL_UnlockSurface(dest^.surface);
   end;
-  
-  
   
   
   procedure DrawPixel(dest: Bitmap; clr: Color; const position : Point2D); overload;
