@@ -8,7 +8,8 @@
 // Change History:
 //
 // Version 3.0:
-// - 2010-01-04: David : Added Save Bitmap Procedure (Line 694 and 1428)
+// - 2010-01-05: David  : Added SetTransparentColor Procedure (Line 701 and 1442)
+// - 2010-01-04: David  : Added Save Bitmap Procedure (Line 694 and 1428)
 // - 2009-12-21: Andrew : Added Bitmap rectangle calculation code
 // - 2009-12-18: Andrew : Added code to check if two images can be used interchangably
 // - 2009-12-10: Andrew : Added bitmap drawing functions
@@ -692,10 +693,17 @@ uses sgTypes;
   
 	// Save Bitmap to specific directory
 	procedure SaveBitmap(src : Bitmap; filepath : string);
+	
+	//---------------------------------------------------------------------------
+  // Bitmap Transparancy
+  //---------------------------------------------------------------------------
+	
+	//Setting the color passed in to be transparent on the bitmap
+	procedure SetTransparentColor(src: Bitmap; clr:Color);
   
 //=============================================================================
 implementation
-uses sgCore, sgShared, sgResources, sgTrace, sgCamera, sgGeometry,
+uses sgCore, sgShared, sgResources, sgTrace, sgCamera, sgGeometry, sgGraphics,
      stringhash,         // libsrc
      SysUtils,
      SDL_gfx, SDL, SDL_Image // sdl
@@ -1427,6 +1435,23 @@ end;
 procedure SaveBitmap(src: Bitmap; filepath: String);
 begin
 	SDL_SaveBMP(src^.surface, PChar(filepath));
+end;
+
+//---------------------------------------------------------------------------
+
+procedure SetTransparentColor(src: Bitmap; clr:Color);
+var
+  x,y : integer;
+begin
+	if not assigned(src) then exit;
+	
+  for x:= 0 to src^.Width do
+  begin
+    for y := 0 to src^.Height do
+		begin
+			if (GetPixel(src, x, y) = clr) then PutPixel(src,RGBAColor(0,0,0,0),x,y);
+		end;
+  end;
 end;
 
 //=============================================================================
