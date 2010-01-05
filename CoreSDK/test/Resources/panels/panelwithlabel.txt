@@ -1,0 +1,16 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 50
+y: 50
+w: 600
+h: 225
+
+// Region data
+// Format: r: x, y, w, h, kind
+r: 125, 100, 80, 20, 1, Label1, Hello World!, courierLarge

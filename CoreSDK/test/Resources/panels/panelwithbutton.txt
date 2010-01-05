@@ -1,0 +1,17 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 50
+y: 280
+w: 500
+h: 225
+
+// Region data
+// Format: r: x, y, w, h, kind
+r: 80, 80, 320, 70, 0, Button1
+r: 100, 100, 20, 20, 1, Label1, PUSH BUTTON, courierLarge

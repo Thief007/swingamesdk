@@ -1,2 +1,1 @@
-BITMAP,main_menu_bmp,MainMenu.png
-PANEL,main_menu,main_menu.txt
+FONT,courierLarge,cour.ttf,40
