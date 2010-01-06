@@ -15,7 +15,7 @@ begin
   HidePanel(pnlb);
   
   ActivatePanel(pnla);
-  ActivatePanel(pnlb);
+  DeactivatePanel(pnlb);
   
   AddPanelToGUI(pnla);
   AddPanelToGUI(pnlb);
@@ -23,12 +23,12 @@ begin
   DrawGUIAsVectors(true);
 end;
   
-procedure UpdateInterface(pnla, pnlb: panel);
+procedure UpdateGUI(pnla, pnlb: panel);
 begin
-  if RegionStringID(RegionClicked(PanelClicked())) = 'Button1' then
+  if (RegionClicked() = 'Button1') And (CheckboxState('Checkbox2')) then
   begin
-    WriteLn('Button1 Clicked');
     ToggleShowPanel(pnlb);
+    Toggleactivatepanel(pnlb);
   end;
 end;
   
@@ -49,8 +49,9 @@ begin
     ClearScreen(ColorBlack);
     
     DrawPanels();
-    UpdateInterface(pnla, pnlb);
-	
+    UpdateGUI(pnla, pnlb);
+    UpdateInterface();
+    
     DrawFramerate(0,0);
     RefreshScreen();
   until WindowCloseRequested();
