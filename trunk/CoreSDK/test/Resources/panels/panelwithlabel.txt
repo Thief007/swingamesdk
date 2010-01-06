@@ -13,4 +13,5 @@ h: 225
 
 // Region data
 // Format: r: x, y, w, h, kind
-r: 125, 100, 80, 20, 1, Label1, Hello World!, courierLarge
+r: 125, 100, 80, 20, 1, Label1, Hello World, courierLarge
+r: 10, 10, 25, 25, 2, Checkbox1, true

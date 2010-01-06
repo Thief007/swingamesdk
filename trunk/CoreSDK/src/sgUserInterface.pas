@@ -22,25 +22,31 @@ interface
 //=============================================================================
 
 type
+  Panel = ^PanelData;
+  Region = ^RegionData;
+  GUILabel = ^GUILabelData;
+  GUICheckbox = ^GUICheckboxData;
+  
 	GUILabelData = record
     contentString: string;
     fontID:       String;
   end;
   
-	GUILabel = ^GUILabelData;
-	
+  GUICheckboxData = record
+    state: boolean;
+  end;
+  
 	RegionData = record
     stringID:     String;
     kind:         LongInt;
     regionID:     LongInt;
     elementIndex: LongInt;
     area:         Rectangle;
+    
     active:       boolean;
-    parent:       ^Panel;
+    parent:       Panel;
   end;
 
-	Region = ^RegionData;
-	
   PanelData = record
     stringID:     String;
     panelID:      LongInt;
@@ -52,10 +58,9 @@ type
     panelBitmap:  Bitmap;
     regions:      Array of Region;
     regionIds:    NamedIndexCollection;
-    labels: Array of GUILabel;
+    labels:       Array of GUILabel;
+    checkboxes:   Array of GUICheckbox;
   end;
-	
-	Panel = ^PanelData;
 	
 	GUIController = record
     panels:         Array of Panel;
@@ -64,6 +69,7 @@ type
     globalGUIFont:  Font;
     globalGUIVectorColor: Color;
     VectorDrawing:  Boolean;
+    lastClicked:    Region;
   end;
 
 function LoadPanel(filename: string): Panel;
@@ -74,13 +80,16 @@ procedure SetGUIColorForVectors(c:Color);
 procedure DrawGUIAsVectors(b : boolean);
 procedure HidePanel(p: Panel);
 function PanelClicked(): Panel;
-function RegionClicked(): Region;
+function RegionClicked(): String;
 function RegionClicked(pnl: Panel): Region; Overload;
 function RegionStringID(r: Region): string;
 procedure ToggleShowPanel(p: Panel);
 procedure ActivatePanel(p: Panel);
 procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
+procedure UpdateInterface();
+function GetRegionByID(ID: String): Region;
+function CheckboxState(ID: String): Boolean;
 
 //=============================================================================
 implementation
@@ -94,6 +103,14 @@ var
   _Panels: TStringHash;
   GUIC: GUIController;
   
+procedure DrawVectorCheckbox(forRegion: Region);
+begin 
+  if forRegion^.parent^.Checkboxes[forRegion^.elementIndex]^.state then 
+    FillRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area) 
+  else
+    DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
+end;
+  
 procedure DrawAsVectors();
 var
   i, j: integer;
@@ -105,11 +122,10 @@ begin
       DrawRectangleOnScreen(GUIC.globalGUIVectorColor, Trunc(GUIC.panels[i]^.position.x), Trunc(GUIC.panels[i]^.position.y), GUIC.panels[i]^.width, GUIC.panels[i]^.height);
       for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
       begin
-        if GUIC.panels[i]^.Regions[j]^.kind = 0 then
-          DrawRectangleOnScreen(GUIC.globalGUIVectorColor, GUIC.panels[i]^.Regions[j]^.area)
-        else if GUIC.panels[i]^.Regions[j]^.kind = 1 then
-        begin
-          DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.contentString, GUIC.GlobalGUIVectorColor, FetchFont(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.fontID), Trunc(GUIC.panels[i]^.Regions[j]^.area.x), Trunc(GUIC.panels[i]^.Regions[j]^.area.y));
+        case GUIC.panels[i]^.Regions[j]^.kind of
+        0: DrawRectangleOnScreen(GUIC.globalGUIVectorColor, GUIC.panels[i]^.Regions[j]^.area);
+        1: DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.contentString, GUIC.GlobalGUIVectorColor, FetchFont(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.fontID), Trunc(GUIC.panels[i]^.Regions[j]^.area.x), Trunc(GUIC.panels[i]^.Regions[j]^.area.y));
+        2: DrawVectorCheckbox(GUIC.panels[i]^.Regions[j]);
         end;
       end;
     end;
@@ -137,12 +153,37 @@ begin
     DrawAsBitmaps();
 end;
 
+function GetRegionByID(ID: String): Region;
+var
+  i, j: integer;
+begin
+  for i := Low(GUIC.panels) to High(GUIC.panels) do
+  begin
+    for j := Low(GUIC.panels[i]^.regions) to High(GUIC.panels[i]^.regions) do
+    begin
+      if GUIC.panels[i]^.regions[j]^.StringID = ID then
+      begin
+        result := GUIC.panels[i]^.regions[j];
+        exit;
+      end;
+    end;
+  end;
+end;
+
 function RegionStringID(r: Region): string;
 begin
   if assigned(r) then
     result := r^.stringID
   else
     result := '';
+end;
+
+function CheckboxState(ID: String): Boolean;
+var
+  reg: Region;
+begin
+  reg := GetRegionByID(ID);
+  result := reg^.parent^.checkboxes[reg^.elementIndex]^.state;
 end;
 
 procedure ActivatePanel(p: Panel);
@@ -181,48 +222,50 @@ var
 begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
-  for i:= Low(GUIC.panels) to High(GUIC.panels) do
+  
+  for i := Low(GUIC.panels) to High(GUIC.panels) do
   begin
     if (GUIC.panels[i]^.active) then
     begin
       if PointInRect(MousePosition(), GUIC.panels[i]^.position.x,GUIC.panels[i]^.position.y,GUIC.panels[i]^.width,GUIC.panels[i]^.height) then
-      result := GUIC.panels[i];
-      exit;
-    end;
-  end;
-end;
-
-function RegionClicked(pnl: Panel): Region; Overload;
-var
-  i, j: integer;
-begin
-result := nil;
-  if not MouseClicked(Leftbutton) then exit;
-  if pnl = nil then exit;
-  if (pnl^.active) then
-  begin
-    for j := Low(pnl^.Regions) to High(pnl^.Regions) do
-    begin
-      if PointInRect(MousePosition(), pnl^.Regions[j]^.area) then
       begin
-        result := pnl^.Regions[j];
+        result := GUIC.panels[i];
         exit;
       end;
     end;
   end;
 end;
 
-function RegionClicked(): Region;
+procedure ToggleCheckboxState(c: GUICheckbox);
+begin
+  c^.state := not c^.state;
+end;
+
+function RegionClicked(pnl: Panel): Region; Overload;
 var
-  i: integer;
+  i, j: integer;
 begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
-  for i := Low(GUIC.panels) to High(GUIC.panels) do
+  if pnl = nil then exit;
+  if not pnl^.active then exit;
+  
+  for j := Low(pnl^.Regions) to High(pnl^.Regions) do
   begin
-    Result := RegionClicked(GUIC.panels[i]);
-    if not(result = nil) then exit;
+    if PointInRect(MousePosition(), pnl^.Regions[j]^.area) then
+    begin
+      if (pnl^.Regions[j]^.kind = 2) then
+        ToggleCheckboxState(pnl^.checkboxes[pnl^.Regions[j]^.elementindex]);
+      
+      result := pnl^.Regions[j];
+      exit;
+    end;
   end;
+end;
+
+function RegionClicked(): String;
+begin
+  result := RegionStringID(GUIC.lastClicked);
 end;
 
 procedure setLabelText(var l: GUILabel; s: string);
@@ -239,16 +282,6 @@ procedure AddPanelToGUI(p: Panel);
 begin
 	SetLength(GUIC.panels, Length(GUIC.panels) + 1);
 	GUIC.panels[High(GUIC.panels)] := p;
-end;
-
-function CreateButton(area: Rectangle; active: boolean): Region;
-begin
-	New(result);
-	result^.kind := 0; // Sets as button
-	result^.area := area; // 
-	result^.active := active; //Sets whether the element can be clicked or not.
-  result^.parent := nil; //Set when region is added to panel.
-	// Panel is set when region is added to panel.
 end;
 
 function LoadPanel(filename: string): Panel;
@@ -287,6 +320,18 @@ var
     forRegion^.elementIndex := High(result^.labels);  // The label index for the region -> so it knows which label
   end;
   
+  procedure CreateCheckbox(forRegion: Region; data: string);
+  var
+    newChkbox: GUICheckbox;
+  begin
+    new(newChkbox);
+    newChkbox^.state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
+    
+    SetLength(result^.Checkboxes, Length(result^.Checkboxes) + 1);
+    result^.Checkboxes[High(result^.Checkboxes)] := newChkbox;
+    forRegion^.elementIndex := High(result^.labels);
+  end;
+  
   procedure AddRegionToPanelWithString(d: string; p: panel);
   var
     regID: string;
@@ -316,11 +361,12 @@ var
     if High(p^.Regions) <> addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
     
     p^.Regions[addedIdx] := r;
-    r^.parent := @p;
+    r^.parent := p;
     
     case r^.kind of
       0: ;
       1: CreateLabel(r,d);
+      2: CreateCheckbox(r,d);
     end;
     
   end;
@@ -406,6 +452,11 @@ end;
 procedure DrawGUIAsVectors(b : boolean);
 begin
   GUIC.VectorDrawing := b;
+end;
+
+procedure UpdateInterface();
+begin
+  GUIC.lastClicked := RegionClicked(PanelClicked());
 end;
 
 //=============================================================================

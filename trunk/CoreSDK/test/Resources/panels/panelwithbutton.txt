@@ -14,4 +14,5 @@ h: 225
 // Region data
 // Format: r: x, y, w, h, kind
 r: 80, 80, 320, 70, 0, Button1
-r: 100, 100, 20, 20, 1, Label1, PUSH BUTTON, courierLarge
+r: 90, 100, 20, 20, 1, Button1Label, PUSH BUTTON, courierLarge
+r: 50, 100, 20, 20, 2, Checkbox2, false
