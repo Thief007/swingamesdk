@@ -73,6 +73,8 @@ uses sgShared, stringhash;
     
     if assigned(hash) then
     begin
+      if hash.containsKey(name) then begin RaiseException('Error: Adding ' + name + ' to the name collection twice.'); exit; end;
+      
       SetLength(col.names, Length(col.names) + 1);            // Add to the names array
       result := High(col.names);                              // Record the index of the added name
       hash.setValue(name, TIntegerContainer.Create(result));  // Store this idx in the hashtable
