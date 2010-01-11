@@ -77,6 +77,7 @@ uses sgShared, stringhash;
       
       SetLength(col.names, Length(col.names) + 1);            // Add to the names array
       result := High(col.names);                              // Record the index of the added name
+      col.names[result] := name;                              // Store the name in the names array
       hash.setValue(name, TIntegerContainer.Create(result));  // Store this idx in the hashtable
     end
     else
