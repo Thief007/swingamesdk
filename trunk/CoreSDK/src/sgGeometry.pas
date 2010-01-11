@@ -677,6 +677,24 @@ interface
   /// @setter Color
   procedure ShapeSetColor(s: Shape; c: Color);
   
+  /// Sets the shape's prototype.
+  /// 
+  /// @lib
+  /// @sn shape:%s setPrototypeTo:%s
+  ///
+  /// @class Shape
+  /// @setter ShapePrototype
+  procedure ShapeSetPrototype(s: Shape; p: ShapePrototype);
+  
+  /// Returns the shape's ShapePrototype.
+  /// 
+  /// @lib
+  /// @sn shapeShapePrototype:%s
+  /// 
+  /// @class Shape
+  /// @getter ShapePrototype
+  function ShapeShapePrototype(s: Shape): ShapePrototype;
+  
   
   //----------------------------------------------------------------------------
   // 
