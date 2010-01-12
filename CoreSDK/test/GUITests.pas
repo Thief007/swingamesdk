@@ -11,6 +11,7 @@ begin
   
   pnla := LoadPanel('panelwithbutton.txt');
   pnlb := LoadPanel('panelwithlabel.txt');
+  
   ShowPanel(pnla);
   HidePanel(pnlb);
   
@@ -24,11 +25,21 @@ begin
 end;
   
 procedure UpdateGUI(pnla, pnlb: panel);
+var
+  reg: Region;
+  parpnl: Panel;
+  radGroup: GUIRadioGroup;
 begin
   if (RegionClicked() = 'Button1') And (CheckboxState('Checkbox2')) then
   begin
     ToggleShowPanel(pnlb);
     Toggleactivatepanel(pnlb);
+  end;
+    
+  case GetRegionByID('radButton1')^.parent^.radioGroups[GetRegionByID('radButton1')^.elementIndex]^.activeButton of
+    0: SetGUIColorForVectors(ColorWhite);
+    1: SetGUIColorForVectors(ColorRed);
+    2: SetGUIColorForVectors(ColorBlue);
   end;
 end;
   
@@ -42,6 +53,7 @@ begin
   
   LoadResourceBundle('MainMenu.txt');
 
+  
   InitInterface(pnla,pnlb);
   
   repeat

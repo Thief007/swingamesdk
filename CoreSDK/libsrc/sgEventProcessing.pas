@@ -11,6 +11,7 @@
 //
 // Change History:
 // Version 3:
+// - 2010-01-13: Cooldave: Fixed error with Bar in SetText.
 // - 2009-06-23: Clinton: Renamed file/unit, comment/format cleanup/tweaks
 //
 // Version 2.0.0:
@@ -238,15 +239,20 @@ implementation
   end;
   
   procedure TSDLManager.SetText(text: String);
+  var
+    outStr: String;
   begin
-    _tempString := text + '|';
+    _tempString := text;
     
      //Free the old surface
     if _textSurface <> nil then SDL_FreeSurface( _textSurface );
 
      //Render a new text surface
      if Length(_tempString) > 1 then
-       _textSurface := TTF_RenderText_Blended(_font, PChar(_tempString), _foreColor)
+     begin
+      outStr := _tempString + '|';
+      _textSurface := TTF_RenderText_Blended(_font, PChar(outStr), _foreColor)
+      end
      else
       _textSurface := nil;
   end;
