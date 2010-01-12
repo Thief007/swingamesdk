@@ -26,14 +26,28 @@ type
   Region = ^RegionData;
   GUILabel = ^GUILabelData;
   GUICheckbox = ^GUICheckboxData;
+  GUIRadioGroup = ^GUIRadioGroupData;
+  GUITextBox = ^GUITextBoxData;
+  
+  GUITextBoxData = record
+    contentString:  string;
+    fontID:         string;
+    lengthLimit:    LongInt;
+  end;
   
 	GUILabelData = record
-    contentString: string;
-    fontID:       String;
+    contentString:  string;
+    fontID:         String;
+  end;
+  
+  GUIRadioGroupData = record
+    groupID:      String;
+    buttons:      Array of Region;
+    activeButton: LongInt;
   end;
   
   GUICheckboxData = record
-    state: boolean;
+    state:        boolean;
   end;
   
 	RegionData = record
@@ -42,7 +56,6 @@ type
     regionID:     LongInt;
     elementIndex: LongInt;
     area:         Rectangle;
-    
     active:       boolean;
     parent:       Panel;
   end;
@@ -59,9 +72,12 @@ type
     regions:      Array of Region;
     regionIds:    NamedIndexCollection;
     labels:       Array of GUILabel;
-    checkboxes:   Array of GUICheckbox;
+    checkBoxes:   Array of GUICheckbox;
+    radioGroups:  Array of GUIRadioGroup;
+    textBoxes:    Array of GUITextBox;
   end;
 	
+  
 	GUIController = record
     panels:         Array of Panel;
     panelIds:       NamedIndexCollection;
@@ -70,6 +86,7 @@ type
     globalGUIVectorColor: Color;
     VectorDrawing:  Boolean;
     lastClicked:    Region;
+    activeTextBox:  Region;
   end;
 
 function LoadPanel(filename: string): Panel;
@@ -110,6 +127,22 @@ begin
   else
     DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
 end;
+
+procedure DrawVectorRadioButton(forRegion: Region);
+begin
+  DrawEllipseOnScreen(GUIC.globalGUIVectorColor, Trunc(forRegion^.area.x), trunc(forRegion^.area.y), Trunc(forRegion^.area.width), Trunc(forRegion^.area.height));
+  if (forRegion^.parent^.radioGroups[forRegion^.elementIndex]^.buttons[forRegion^.parent^.radioGroups[forRegion^.elementIndex]^.activeButton]^.StringID) = (forRegion^.StringID) then
+    FillEllipseOnScreen(GUIC.globalGUIVectorColor, Trunc(forRegion^.area.x), trunc(forRegion^.area.y), Trunc(forRegion^.area.width), Trunc(forRegion^.area.height));
+end;
+
+procedure DrawVectorTextbox(forRegion: Region);
+begin
+  DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
+  if assigned(GUIC.activeTextBox) AND NOT(GUIC.activeTextBox^.StringID = forRegion^.StringID) then
+    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.contentString, GUIC.globalGUIVectorColor, FetchFont(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.fontID), Trunc(forRegion^.area.x), Trunc(forRegion^.area.y))
+  else if NOT(assigned(GUIC.activeTextBox)) then
+    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.contentString, GUIC.globalGUIVectorColor, FetchFont(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.fontID), Trunc(forRegion^.area.x), Trunc(forRegion^.area.y)); 
+end;
   
 procedure DrawAsVectors();
 var
@@ -126,6 +159,8 @@ begin
         0: DrawRectangleOnScreen(GUIC.globalGUIVectorColor, GUIC.panels[i]^.Regions[j]^.area);
         1: DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.contentString, GUIC.GlobalGUIVectorColor, FetchFont(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.fontID), Trunc(GUIC.panels[i]^.Regions[j]^.area.x), Trunc(GUIC.panels[i]^.Regions[j]^.area.y));
         2: DrawVectorCheckbox(GUIC.panels[i]^.Regions[j]);
+        3: DrawVectorRadioButton(GUIC.panels[i]^.Regions[j]);
+        4: DrawVectorTextbox(GUIC.panels[i]^.Regions[j]);
         end;
       end;
     end;
@@ -241,12 +276,56 @@ begin
   c^.state := not c^.state;
 end;
 
+procedure SelectRadioButton(r: Region);
+var
+  rGroup: GUIRadioGroup;
+  i: integer;
+begin
+  rGroup := r^.parent^.radioGroups[r^.elementIndex];
+  
+  for i := Low(rGroup^.buttons) to High(rGroup^.buttons) do
+  begin
+    if rGroup^.buttons[i]^.stringID = r^.StringID then
+      rGroup^.activeButton := i;
+  end;
+end;
+
+procedure FinishReadingText();
+begin
+  if not assigned(GUIC.activeTextBox) then exit;
+  
+  //Write(' Storing last read into the contentString... ');
+  GUIC.activeTextBox^.parent^.textBoxes[GUIC.activeTextBox^.elementIndex]^.contentString := EndReadingText();
+  //WriteLn('Success');
+  GUIC.activeTextBox := nil;
+end;
+
+procedure SetAsActiveTextbox(r: Region);
+var
+  textBox: GUITextbox;
+begin
+  //Write(' Attempting to store GUITextbox of passed region... ');
+  textBox := r^.parent^.textBoxes[r^.elementIndex];
+  //WriteLn('Stored successfully in textBox');
+  
+  //Write(' Setting new activeTextBox... ');
+  GUIC.activeTextBox := r;
+  //WriteLn('Success');
+  //Write(' Beginning to Read text... ');
+  
+  StartReadingTextWithText(textBox^.contentString, GUIC.globalGUIVectorColor, textBox^.lengthLimit, FetchFont(textBox^.FontID), Trunc(r^.area.x), Trunc(r^.area.y));
+  WriteLn('Started with: ', textBox^.contentString);
+  //WriteLn('Success');
+end;
+
 function RegionClicked(pnl: Panel): Region; Overload;
 var
   i, j: integer;
 begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
+  FinishReadingText();
+  
   if pnl = nil then exit;
   if not pnl^.active then exit;
   
@@ -254,9 +333,11 @@ begin
   begin
     if PointInRect(MousePosition(), pnl^.Regions[j]^.area) then
     begin
-      if (pnl^.Regions[j]^.kind = 2) then
-        ToggleCheckboxState(pnl^.checkboxes[pnl^.Regions[j]^.elementindex]);
-      
+      case pnl^.Regions[j]^.kind of
+        2: ToggleCheckboxState(pnl^.checkboxes[pnl^.Regions[j]^.elementindex]);
+        3: SelectRadioButton(pnl^.Regions[j]);
+        4: begin Write('Set as active... '); SetAsActiveTextbox(pnl^.Regions[j]); WriteLn('Success'); end;
+      end;
       result := pnl^.Regions[j];
       exit;
     end;
@@ -320,6 +401,41 @@ var
     forRegion^.elementIndex := High(result^.labels);  // The label index for the region -> so it knows which label
   end;
   
+  procedure AddRegionToGroup(regToAdd: Region; groupToRecieve: GUIRadioGroup);
+  begin
+    SetLength(groupToRecieve^.buttons, Length(groupToRecieve^.buttons) + 1);
+    groupToRecieve^.buttons[High(groupToRecieve^.buttons)] := regToAdd;
+  end;
+  
+  procedure CreateRadioButton(forRegion: Region; data: String);
+  var
+    newRadioGroup: GUIRadioGroup;
+    i: Integer;
+    radioGroupID: string;
+  begin
+    radioGroupID := Trim(ExtractDelimited(7,data,[',']));
+    
+    for i := Low(result^.radioGroups) to High(result^.radioGroups) do
+    begin
+      if (radioGroupID = result^.radioGroups[i]^.GroupID) then
+      begin
+        AddRegionToGroup(forRegion, result^.radioGroups[i]);
+        forRegion^.elementIndex := i;
+        exit;
+      end;
+    end;
+    New(newRadioGroup);
+    SetLength(newRadioGroup^.buttons, 0);
+    newRadioGroup^.GroupID := radioGroupID;
+    AddRegionToGroup(forRegion, newRadioGroup);
+    if assigned(newRadioGroup^.buttons[0]) then
+      newRadioGroup^.activeButton := 0; 
+    // add to panel, record element index.
+    SetLength(result^.radioGroups, Length(result^.radioGroups) + 1);
+    result^.radioGroups[High(result^.radioGroups)] := newRadioGroup;
+    forRegion^.elementIndex := High(result^.radioGroups);
+  end;
+  
   procedure CreateCheckbox(forRegion: Region; data: string);
   var
     newChkbox: GUICheckbox;
@@ -330,6 +446,20 @@ var
     SetLength(result^.Checkboxes, Length(result^.Checkboxes) + 1);
     result^.Checkboxes[High(result^.Checkboxes)] := newChkbox;
     forRegion^.elementIndex := High(result^.labels);
+  end;
+  
+  procedure CreateTextbox(r: region; data: string);
+  var
+    newTextbox: GUITextbox;
+  begin
+    new(newTextbox);
+    newTextbox^.fontID := Trim(ExtractDelimited(7, data, [',']));
+    newTextbox^.lengthLimit := StrToInt(Trim(ExtractDelimited(8, data, [','])));
+    newTextBox^.contentString := Trim(ExtractDelimited(9, data, [',']));
+    
+    SetLength(result^.textBoxes, Length(result^.textBoxes) + 1);
+    result^.textBoxes[High(result^.textBoxes)] := newTextbox;
+    r^.ElementIndex := High(result^.textBoxes);
   end;
   
   procedure AddRegionToPanelWithString(d: string; p: panel);
@@ -367,8 +497,9 @@ var
       0: ;
       1: CreateLabel(r,d);
       2: CreateCheckbox(r,d);
-    end;
-    
+      3: CreateRadioButton(r,d);
+      4: CreateTextbox(r,d);
+    end;    
   end;
   
 	procedure ProcessLine();
@@ -413,6 +544,7 @@ var
     result^.height := -1;
     result^.visible := false;
     result^.active := false;
+    SetLength(result^.radioGroups, 0);
     InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
   end;
 	
@@ -457,6 +589,8 @@ end;
 procedure UpdateInterface();
 begin
   GUIC.lastClicked := RegionClicked(PanelClicked());
+  if assigned(GUIC.activeTextbox) and not ReadingText() then
+    FinishReadingText();
 end;
 
 //=============================================================================

@@ -1,1 +1,2 @@
 FONT,courierLarge,cour.ttf,40
+FONT,courier,cour.ttf,28
