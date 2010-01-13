@@ -254,16 +254,16 @@ var
   pts:Point2DArray;
   begin
     SetLength(Pts, 5);
-    pts[0].X:=(0+result^.TileStaggerX);
-    pts[0].Y:=(0+result^.TileStaggerY);
-    pts[1].X:=(0+result^.TileStaggerX+result^.TileWidth);
-    pts[1].Y:=(0+result^.TileStaggerY);
-    pts[2].X:=(0+result^.TileStaggerX+result^.TileWidth);
-    pts[2].Y:=(0+result^.TileStaggerY+result^.TileHeight);
-    pts[3].Y:=(0+result^.TileStaggerY+result^.TileHeight);
-    pts[3].X:=(0+result^.TileStaggerX);
-    pts[4].X:=(0+result^.TileStaggerX);
-    pts[4].Y:=(0+result^.TileStaggerY);
+    pts[0].X:=0;
+    pts[0].Y:=((result^.TileStaggerY*-1));
+    pts[1].X:=((result^.TileStaggerX)+result^.TileWidth);
+    pts[1].Y:=0;
+    pts[2].X:=result^.TileWidth;
+    pts[2].Y:=(result^.TileHeight + result^.TileStaggerY);
+    pts[3].X:=(result^.TileStaggerX*-1);
+    pts[3].Y:=(result^.TileHeight);
+    pts[4].X:=0;
+    pts[4].Y:=(result^.TileStaggerY*-1);
     result^.MapPrototype:=PrototypeFrom(pts, pkTriangleStrip);
   end;
 begin
@@ -389,7 +389,7 @@ end;
 //procedure to highlight one tile.
 procedure HighlightTile(highlightedTile: Tile; map:Map);
 begin
-  DrawShape(highlightedTile^.TileShape);
+  DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, CameraPos*-1);
 end;
 //updates whether a tile is highlighted.
 procedure UpdateHighlight(map:Map);
@@ -410,18 +410,17 @@ i,j:LongInt;
 begin
   for i:=low(map^.Tiles) to high(map^.Tiles) do
     for j:=low(map^.Tiles[i]) to high(map^.Tiles[i]) do
-      if ((map^.TileStaggerX + map^.TileStaggerY) = 0) then
-        begin
-          if PointInShape(ToWorld(MousePosition()), map^.Tiles[i,j].TileShape) then
+      begin
+        if PointInShape(ToWorld(MousePosition()), map^.Tiles[i,j].TileShape) then
+          begin
+            if NOT TileSelected(map, @map^.Tiles[i,j]) then
             begin
-              if NOT TileSelected(map, @map^.Tiles[i,j]) then
-              begin
-                SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
-                map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[i,j].TileID;
-              end
-              else if TileSelected(map, @map^.Tiles[i,j]) then Deselect(map, @map^.Tiles[i,j]);
+              SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
+              map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[i,j].TileID;
             end
-        end
+            else if TileSelected(map, @map^.Tiles[i,j]) then Deselect(map, @map^.Tiles[i,j]);
+          end
+      end
 end;
 
 //updates all event driven actions.
