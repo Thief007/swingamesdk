@@ -15,7 +15,7 @@ Map Loader #v0.1
 mw:16
 mh:5
 ml:2
-mhc: 255,0,0,255
+mhc: 0,0,255,255
 mi:1
 tw:50
 th:50

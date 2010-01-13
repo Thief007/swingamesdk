@@ -1281,6 +1281,13 @@ interface
   //---------------------------------------------------------------------------
   // Point2D  Operations 
   //---------------------------------------------------------------------------
+  /// Returns the sum of pt1 and pt2
+  ///
+  /// @lib
+  /// @sn point:%s plusPoint:%s
+  ///
+  /// @class Point2D
+  /// @method Add
   function PointAdd(const pt1, pt2: Point2D): Point2D;
   //---------------------------------------------------------------------------
   // Matrix2D Creation and Operations

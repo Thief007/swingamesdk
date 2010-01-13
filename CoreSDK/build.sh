@@ -323,3 +323,4 @@ rm -f ${LOG_FILE} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"
+${APP_PATH}/bin/Test
