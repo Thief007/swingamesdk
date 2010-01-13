@@ -868,6 +868,15 @@ interface
   /// @class Point2D
   /// @method OnLine
   function PointOnLine(const pt: Point2D; const line: LineSegment): Boolean;
+
+  /// Returns True if point 'pt' is in the shape.
+  ///
+  /// @lib
+  /// @sn point:%s inShape:%s
+  ///
+  /// @class Point2D
+  /// @method InShape
+  function PointInShape(const pt: Point2d; const s:Shape):Boolean;
   
   
   //---------------------------------------------------------------------------
@@ -1269,7 +1278,10 @@ interface
   /// @method DistanceTo
   function PointPointDistance(const pt1, pt2: Point2D): Single;
   
-  
+  //---------------------------------------------------------------------------
+  // Point2D  Operations 
+  //---------------------------------------------------------------------------
+  function PointAdd(const pt1, pt2: Point2D): Point2D;
   //---------------------------------------------------------------------------
   // Matrix2D Creation and Operations
   //---------------------------------------------------------------------------
@@ -2782,6 +2794,141 @@ implementation
       TraceExit('sgGeometry', 'PointOnLine(const pt: Point2D', '');
     {$ENDIF}
   end;
+
+  function PointOnPoint(const pt1,pt2:Point2d):Boolean;
+  begin
+    if ((pt1.X = pt2.X) AND (pt1.Y = pt2.Y)) then
+    begin
+      result:=True;
+    end
+    else
+    begin
+      result:=False;
+    end
+  end;
+
+  function PointOnLineList(const pt:point2d; const s:Shape):Boolean;
+  var
+  pts : Point2dArray;
+  i :LongInt;
+  begin
+    pts := ShapePoints(s);
+    result:=False;
+    for i := 0 to Length(pts) div 2 - 1 do
+    begin
+      if PointOnLine(pt, Linefrom(pts[i * 2], pts[i * 2 + 1])) then
+      begin
+        result:=True;
+        exit;
+      end
+    end;
+  end;
+
+  function PointOnLineStrip(const pt:point2d; const s:Shape):Boolean;
+  var
+  pts : Point2dArray;
+  i :LongInt;
+  begin
+    pts := ShapePoints(s);
+    result:=False;
+    
+    for i := 0 to Length(pts) - 2 do
+    begin
+      if PointOnLine(pt,Linefrom(pts[i], pts[i+ 1])) then
+      begin
+        result:=True;
+        exit;
+      end;
+    end;
+  end;
+
+  function PointInTriangleList(const pt:point2d; const s:shape):Boolean;
+  var
+  pts : Point2dArray;
+  i :LongInt;
+  begin
+    pts := ShapePoints(s);
+    result:=False;
+    for i := 0 to Length(pts) div 3 - 1 do
+    begin
+      if PointInTriangle(pt, TriangleFrom(
+          pts[i * 3].x, pts[i * 3].y,
+          pts[i * 3 + 1].x, pts[i * 3 + 1].y,
+          pts[i * 3 + 2].x, pts[i * 3 + 2].y)) then
+      begin
+        result:=True;
+        exit;
+      end
+    end;
+  end;
+
+  function PointInTriangleFan(const pt:point2d; const s:shape):Boolean;
+  var
+  pts : Point2dArray;
+  i :LongInt;
+  begin
+    pts := ShapePoints(s);
+    result:=False;
+     for i := 0 to Length(pts) - 3 do
+    begin
+      if PointInTriangle(pt, TriangleFrom(
+          pts[0].x,pts[0].y,
+          pts[i + 1].x, pts[i + 1].y,
+          pts[i + 2].x, pts[i + 2].y)) then
+      begin
+        result:=True;
+        exit;
+      end
+    end;
+  end;
+
+  function PointInTriangleStrip(const pt:point2d; const s:shape):Boolean;
+  var
+  pts : Point2dArray;
+  i :LongInt;
+  begin
+    pts := ShapePoints(s);
+    result:=False;
+    for i := 0 to Length(pts) - 3 do
+    begin
+      if PointInTriangle(pt, TriangleFrom(
+        pts[i].x,pts[i].y,
+        pts[i + 1].x, pts[i + 1].y,
+        pts[i + 2].x, pts[i + 2].y)) then
+      begin
+        result:=True;
+        exit;
+      end
+    end;
+  end;
+
+  function PointInShape(const pt: Point2d; const s:Shape):Boolean;
+  var
+  k : ShapeKind;
+  pts : Point2dArray;
+  begin
+    k:=PrototypeKind(s^.prototype);
+    pts :=ShapePoints(s);
+    
+    case k of
+      pkPoint: result := PointOnPoint(pt, s^.pt);
+      pkCircle: result := PointInCircle(pt, CircleAt(s^.pt,round(PointPointDistance(pts[0], pts[1]))));
+      // pkEllipse: result := 2;
+      pkLine: result := PointOnLine(pt, Linefrom(pts[0],pts[1]));
+      pkTriangle: result := PointInTriangle(pt,TriangleFrom(pts[0],pts[1],pts[2]));
+      pkLineList: result := PointOnLineList(pt,s);
+      pkLineStrip: result := PointOnLineStrip(pt,s);
+      //pkPolygon: result := 3;
+      pkTriangleStrip: result := PointInTriangleStrip(pt,s);
+      pkTriangleFan: result := PointInTriangleFan(pt,s);
+      pkTriangleList: result := PointInTriangleList(pt,s);
+      else
+        begin
+          RaiseException('Shape not Recognized when checking if point is in shape.');
+          exit;
+        end;
+      end;
+  end;
   
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
   begin
@@ -3090,6 +3237,12 @@ implementation
     dot12 := DotProduct(v1, v2);
 
     // Compute barycentric coordinates
+    if dot00 * dot11 - dot01 * dot01 = 0 then
+    begin
+      result := false;
+      exit;
+    end;
+    
     invDenom := 1 / (dot00 * dot11 - dot01 * dot01);
     u := (dot11 * dot02 - dot01 * dot12) * invDenom;
     v := (dot00 * dot12 - dot01 * dot02) * invDenom;
@@ -4250,6 +4403,7 @@ implementation
     result^.pt := pt;
     result^.angle := 0.0;
     result^.scale := PointAt(1,1);
+    result^.color := ColorWhite;
     SetLength(result^.subShapes, 0);
     
     if Assigned(p) then p^.shapeCount += 1;
@@ -4509,5 +4663,11 @@ implementation
       height := -height;
     end;
   end;
-  
+
+  function PointAdd(const pt1, pt2: Point2D): Point2D;
+  begin
+    result.X := pt1.X + pt2.X;
+    result.Y := pt1.Y + pt2.Y;
+  end;
+    
 end.

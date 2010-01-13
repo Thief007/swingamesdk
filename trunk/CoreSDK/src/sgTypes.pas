@@ -347,7 +347,7 @@ interface
     /// is drawn be DrawShape and FillShape.
     ///
     /// @type ShapeDrawingFn
-    ShapeDrawingFn = procedure(dest: Bitmap; s: Shape; filled: Boolean);
+    ShapeDrawingFn = procedure(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
     
     /// @struct ShapePrototypeData
     /// @via_pointer

@@ -3,6 +3,7 @@ Map Loader #v0.1
 // mw : width of map
 // mh : height of map
 // ml : number of layers
+// mi : is map isometric (0 = false, 1 =true)
 // tw : tile Width
 // th : tile Height
 // ti : tile info
@@ -14,6 +15,8 @@ Map Loader #v0.1
 mw:16
 mh:5
 ml:2
+mhc: 255,0,0,255
+mi:1
 tw:50
 th:50
 tb:floor.png

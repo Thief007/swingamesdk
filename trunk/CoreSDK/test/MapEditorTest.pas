@@ -13,26 +13,30 @@ type
     end;
   Tile = ^TileData;
   TileData = Record
-    TileID:     LongInt;                            // The tile's unique id
-    //Kind:       LongInt;                          // The "kind" of the tile - links to KindNames etc.
-    Position:     Point2D;                          // Position of the top right corner of the Tile
-    //Center:     Point2D;                          // position of the center of the Tile
-    TileBitmapCells: array of BitmapCell;           // Bitmap of the Tile.
+    TileID:           LongInt;                      // The tile's unique id
+    //Kind:           LongInt;                      // The "kind" of the tile - links to KindNames etc.
+    Position:         Point2D;                      // Position of the top right corner of the Tile
+    //Center:         Point2D;                      // position of the center of the Tile
+    TileBitmapCells:  array of BitmapCell;          // Bitmap of the Tile.
+    TileShape:        Shape;                        //shape of tile
     //Values:     Array of Single;                  // Array of single values.
     //SurroundingTiles: Array[Direction] of Tile;   // The adjcent tiles, can be nil if none.
   end;
   Map = ^MapData;
   MapData = Record
     Tiles:        Array of Array of TileData;     // The actual tiles -> in col,row order
-    SelectedTiles:Array of LongInt;
+    SelectedTiles:Array of LongInt;               // id of selected tiles
+    Isometric:    Boolean;
+    MapPrototype: ShapePrototype;
+    mapHighlightcolor: Color;
     //KindOfTiles:  Array of Array of Tile;       // The tiles indexed by kind -> kind, # order
     MapWidth:     LongInt;                        // The Map width (# of grid in x axis)
     MapHeight:    LongInt;                        // The Map height (# of grid in Y axis)
     MapLayer:     LongInt;                        // The Number of layers within the map
     TileWidth:    LongInt;                        // The Tile width
     TileHeight:   LongInt;                        // The Tile height
-    TileOffsetX:  LongInt;                        // Offset of the tile's X Position
-    TileOffsetY:  LongInt;                        // Offset of the tile's Y Position
+    TileStaggerX:  LongInt;                        // Offset of the tile's X Position
+    TileStaggerY:  LongInt;                        // Offset of the tile's Y Position
   end;
 // load map func *********
 function LoadMap(filename:string): Map;
@@ -124,13 +128,17 @@ var
         begin
           if ((i mod 2) =1) then
           begin
-            result^.Tiles[i,j].Position.X:=j*result^.TileWidth+result^.TileOffsetX;
-            result^.Tiles[i,j].Position.Y:=i*result^.TileHeight+(i*result^.TileOffsetY);
+            result^.Tiles[i,j].Position.X:=j*result^.TileWidth+result^.TileStaggerX;
+            result^.Tiles[i,j].Position.Y:=i*result^.TileHeight+(i*result^.TileStaggerY);
+            result^.Tiles[i,j].TileShape:=ShapeAtPoint(result^.MapPrototype, result^.Tiles[i,j].Position);
+            ShapeSetColor(result^.Tiles[i,j].TileShape, result^.mapHighlightcolor);
           end
           else
           begin
             result^.Tiles[i,j].Position.X:=j*result^.TileWidth;
-            result^.Tiles[i,j].Position.Y:=i*result^.TileHeight+(i*result^.TileOffsetY);
+            result^.Tiles[i,j].Position.Y:=i*result^.TileHeight+(i*result^.TileStaggerY);
+            result^.Tiles[i,j].TileShape:=ShapeAtPoint(result^.MapPrototype, result^.Tiles[i,j].Position);
+            ShapeSetColor(result^.Tiles[i,j].TileShape, result^.mapHighlightcolor);
           end
         end;
   end;
@@ -142,8 +150,24 @@ var
   begin
     case LowerCase(id)[2] of
       'w': result^.MapWidth  := MyStrToInt(data, false); //map width
-      'h': result^.MapHeight := MyStrToInt(data, false); //  map height
+      'h': if length(id)=2 then
+        begin
+          result^.MapHeight := MyStrToInt(data, false); //  map height
+        end
+        else
+        begin
+          case LowerCase(id)[3] of
+            'c': result^.mapHighlightcolor:= RGBAColor(
+              StrToInt(ExtractDelimited(1, data, [','])),
+              StrToInt(ExtractDelimited(2, data, [','])),
+              StrToInt(ExtractDelimited(3, data, [','])),
+              StrToInt(ExtractDelimited(4, data, [','])));
+          end;
+        end;
       'l': result^.MapLayer  := MyStrToInt(data, false); // number of layers
+      'i': if( MyStrToInt(data, false) = 0) then
+            begin result^.Isometric := false; end
+          else if (MyStrToInt(data, false) = 1) then result^.Isometric := true;
       else
       begin
         RaiseException('Error at line' + IntToStr(lineNo) + 'in map' + filename + '. error with id: ' + id + '. Id not recognized.');
@@ -166,8 +190,8 @@ var
       'b': AddBitmap();
       'o':
         begin
-          result^.TileOffsetX := StrToInt(ExtractDelimited(1, data, [',']));
-          result^.TileOffsetY := StrToInt(ExtractDelimited(2, data, [',']));
+          result^.TileStaggerX := StrToInt(ExtractDelimited(1, data, [',']));
+          result^.TileStaggerY := StrToInt(ExtractDelimited(2, data, [',']));
         end;
     end;
   end;
@@ -208,9 +232,9 @@ var
     id   := ExtractDelimited(1, line, [':']);
     data := ExtractDelimited(2, line, [':']);
     // Verify that id is two chars
-    if Length(id) <> 2 then
+    if ((Length(id) <> 2) AND (Length(id) <> 3)) then
     begin
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Error with id: ' + id + '. This id should contain 2 characters.');
+      RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Error with id: ' + id + '. This id should contain 2 or 3 characters.');
       exit;
     end;
     // Process based on id
@@ -224,6 +248,23 @@ var
         exit;
       end;
     end;
+  end;
+  procedure AddMapPrototype();
+  var
+  pts:Point2DArray;
+  begin
+    SetLength(Pts, 5);
+    pts[0].X:=(0+result^.TileStaggerX);
+    pts[0].Y:=(0+result^.TileStaggerY);
+    pts[1].X:=(0+result^.TileStaggerX+result^.TileWidth);
+    pts[1].Y:=(0+result^.TileStaggerY);
+    pts[2].X:=(0+result^.TileStaggerX+result^.TileWidth);
+    pts[2].Y:=(0+result^.TileStaggerY+result^.TileHeight);
+    pts[3].Y:=(0+result^.TileStaggerY+result^.TileHeight);
+    pts[3].X:=(0+result^.TileStaggerX);
+    pts[4].X:=(0+result^.TileStaggerX);
+    pts[4].Y:=(0+result^.TileStaggerY);
+    result^.MapPrototype:=PrototypeFrom(pts, pkTriangleStrip);
   end;
 begin
   //load map starts here
@@ -250,32 +291,57 @@ begin
     if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
     ProcessLine();
   end;
+  
+  AddMapPrototype();
+writeln('addedprototype');
   ProcessTile();
+writeln('processedTile')  ;
 end;
 
+
+Procedure RangeOfRect(r:Rectangle; mp:Map; out startX, startY, endX, endY:LongInt  );
+begin
+  // Calculate the tiles that are on the screen - only draw these
+  startY:= Trunc(r.Y/mp^.TileHeight);
+  startX:= Trunc(r.X/mp^.TileWidth);
+  endY:= Trunc(startY + (r.Height/mp^.TileHeight))+1;
+  endX:= Trunc(startX + (r.Width/mp^.TileWidth))+1;
+
+  // Adjust the end and start to be in range of the array
+  if endY >= (mp^.MapHeight) then endY := mp^.Mapheight-1;
+  if endX >= (mp^.MapWidth) then endX := mp^.MapWidth-1;
+  if startY < 0 then startY :=0;
+  if startX < 0 then startX :=0;
+end;
 
 
 //draw map procedure.
-Procedure DrawMap(mp:Map);
+procedure DrawMap(mp: Map);
 var
   h,j, i, startRow, startCol, endRow, endCol : LongInt;
+  screenRect : Rectangle;
 begin
-  startRow:= Trunc(CameraY()/mp^.TileHeight);
-  startCol:= Trunc(CameraX()/Mp^.TileWidth);
-  endRow:= Trunc(startRow + (ScreenHeight/mp^.TileHeight))+1;
-  endCol:= Trunc(startCol + (ScreenWidth/mp^.TileWidth))+1;
-  if endRow >= (mp^.MapHeight) then endRow := mp^.Mapheight-1;
-  if endCol >= (mp^.MapWidth) then endCol := mp^.MapWidth-1;
-  if startRow < 0 then startRow :=0;
-  if startCol < 0 then startCol :=0;
-  for h:=low(mp^.Tiles[0,0].TileBitmapCells) to high (mp^.Tiles[0,0].TileBitmapCells) do
+  screenRect.X:=CameraX();
+  screenRect.Y:=CameraY();
+  screenRect.Width:=ScreenWidth();
+  screenRect.Height:=ScreenHeight();
+  //DrawRectangle(colorWhite,screenRect);
+  RangeOfRect(screenRect,mp, startCol, startRow, endCol, endRow);
+  for h:= 0 to mp^.MapLayer - 1 do
+  begin
     for i:=startRow to endRow do
+    begin
       for j:=startCol to endCol do
+      begin
         if mp^.Tiles[i,j].TileBitmapCells[h].Bmp <> nil then
         begin
             DrawCell(mp^.Tiles[i,j].TileBitmapCells[h].Bmp, mp^.Tiles[i,j].TileBitmapCells[h].Cell, mp^.Tiles[i,j].Position);
-        end
+        end;
+      end; // end of col in row
+    end; // end of row
+  end; // end of layers
 end;
+
 //checks if tile is within selectedtile array.
 function TileSelected(map:Map; tile:Tile):Boolean;
 var
@@ -291,6 +357,7 @@ begin
     end;
   result :=False;
 end;
+
 //updates camera position based on user input
 procedure UpdateCamera();
 begin
@@ -303,6 +370,7 @@ begin
   else if KeyDown(VK_DOWN) then
     MoveCameraBy(0,2)
 end;
+
 //procedure to deselect a tile. (includes removing from array and reducing array length)
 procedure Deselect(map:Map; tile:Tile);
 var
@@ -321,8 +389,7 @@ end;
 //procedure to highlight one tile.
 procedure HighlightTile(highlightedTile: Tile; map:Map);
 begin
-  if ((map^.TileOffsetX + map^.TileOffsetY) = 0) then
-    DrawRectangle(ColorWhite, highlightedTile^.Position.X, highlightedTile^.Position.Y, map^.TileWidth, map^.TileHeight);
+  DrawShape(highlightedTile^.TileShape);
 end;
 //updates whether a tile is highlighted.
 procedure UpdateHighlight(map:Map);
@@ -343,16 +410,17 @@ i,j:LongInt;
 begin
   for i:=low(map^.Tiles) to high(map^.Tiles) do
     for j:=low(map^.Tiles[i]) to high(map^.Tiles[i]) do
-      if PointInRect(ToWorld(MousePosition()), map^.Tiles[i,j].Position.X, map^.Tiles[i,j].Position.Y, trunc(map^.TileWidth), trunc(map^.TileHeight)) then
+      if ((map^.TileStaggerX + map^.TileStaggerY) = 0) then
         begin
-          if NOT TileSelected(map, @map^.Tiles[i,j]) then
-          begin
-            SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
-            map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[i,j].TileID;
-            //writeln(TileSelected(map, @map^.Tiles[i,j]));
-          end
-          else if TileSelected(map, @map^.Tiles[i,j]) then
-            Deselect(map, @map^.Tiles[i,j]);
+          if PointInShape(ToWorld(MousePosition()), map^.Tiles[i,j].TileShape) then
+            begin
+              if NOT TileSelected(map, @map^.Tiles[i,j]) then
+              begin
+                SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
+                map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[i,j].TileID;
+              end
+              else if TileSelected(map, @map^.Tiles[i,j]) then Deselect(map, @map^.Tiles[i,j]);
+            end
         end
 end;
 
@@ -360,8 +428,9 @@ end;
 procedure UpdateActions(map:Map);
 begin
   UpdateCamera();
-if MouseClicked(LeftButton) then
-  UpdateSelect(map);
+  
+  if MouseClicked(LeftButton) then
+    UpdateSelect(map);
 end;
 
 //Main procedure 
