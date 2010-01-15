@@ -105,7 +105,7 @@ uses sgTypes;
   /// Loads and returns a bitmap. The supplied `filename` is used to
   /// locate the Bitmap to load. The supplied `name` indicates the 
   /// name to use to refer to this Bitmap in SwinGame. The `Bitmap` can then be
-  /// retrieved by passing this `name` to the `FetchBitmap` function. 
+  /// retrieved by passing this `name` to the `BitmapNamed` function. 
   ///
   /// @lib
   /// @sn mapBitmapNamed:%s toFile:%s
@@ -118,7 +118,7 @@ uses sgTypes;
   /// Loads and returns a bitmap with a given color code use for transparency.
   /// The supplied `filename` is used to locate the Bitmap to load. The supplied
   /// `name` indicates thename to use to refer to this Bitmap in SwinGame. The 
-  /// `Bitmap` can then be retrieved by passing this `name` to the `FetchBitmap` function. 
+  /// `Bitmap` can then be retrieved by passing this `name` to the `BitmapNamed` function. 
   ///
   /// @lib
   /// @sn mapBitmapNamed:%s toFile:%s colorKey:%s
@@ -139,7 +139,7 @@ uses sgTypes;
   /// see `MapBitmap`.
   ///
   /// @lib
-  function FetchBitmap(name: String): Bitmap;
+  function BitmapNamed(name: String): Bitmap;
   
   /// Releases the SwinGame resources associated with the bitmap of the
   /// specified `name`.
@@ -982,7 +982,7 @@ begin
   result := _Images.containsKey(name);
 end;
 
-function FetchBitmap(name: String): Bitmap;
+function BitmapNamed(name: String): Bitmap;
 var
   tmp : TObject;
 begin
@@ -1001,7 +1001,7 @@ begin
     TraceEnter('sgImages', 'ReleaseBitmap', 'name = ' + name);
   {$ENDIF}
 
-  bmp := FetchBitmap(name);
+  bmp := BitmapNamed(name);
   if (assigned(bmp)) then
   begin
     _Images.remove(name).Free();

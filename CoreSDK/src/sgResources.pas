@@ -644,11 +644,11 @@ implementation
         LoadResourceBundle('splash.txt', False);
         
         ClearScreen();
-        DrawBitmap(FetchBitmap('Swinburne'), 286, 171);
-        f := FetchFont('ArialLarge');
+        DrawBitmap(BitmapNamed('Swinburne'), 286, 171);
+        f := FontNamed('ArialLarge');
         txt := 'SwinGame API by Swinburne University of Technology';
         DrawText(txt, ColorWhite, f, (ScreenWidth() - TextWidth(f, txt)) div 2, 500);
-        f := FetchFont('LoadingFont');
+        f := FontNamed('LoadingFont');
         DrawText(DLL_VERSION, ColorWhite, f, 5, 580);
         
         i := 1;
@@ -660,13 +660,13 @@ implementation
           if isSkip then break;
         end;
         
-        startAni := CreateAnimation('splash', FetchAnimationTemplate('Startup'));
+        startAni := CreateAnimation('splash', AnimationTemplateNamed('Startup'));
         
         while not AnimationEnded(startAni) do
         begin
-          DrawBitmap(FetchBitmap('SplashBack'), 0, 0);
+          DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
           
-          DrawAnimation(startAni, FetchBitmap('SwinGameAni'), ANI_X, ANI_Y);
+          DrawAnimation(startAni, BitmapNamed('SwinGameAni'), ANI_X, ANI_Y);
           UpdateAnimation(startAni);
           
           RefreshScreen();
@@ -675,7 +675,7 @@ implementation
           Delay(15);          
         end;
         
-        while SoundEffectPlaying(FetchSoundEffect('SwinGameStart')) or isPaused do
+        while SoundEffectPlaying(SoundEffectNamed('SwinGameStart')) or isPaused do
         begin
           InnerProcessEvents();
           if isSkip then break;
