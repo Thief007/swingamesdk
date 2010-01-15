@@ -16,18 +16,18 @@ begin
   
   LoadResourceBundle('Explosion.txt');
   
-  boom[0] := CreateAnimation('explosion', FetchAnimationTemplate('explosion_temp'), False);
-  boom[1] := CreateAnimation('implosion', FetchAnimationTemplate('explosion_temp'), False);
+  boom[0] := CreateAnimation('explosion', AnimationTemplateNamed('explosion_temp'), False);
+  boom[1] := CreateAnimation('implosion', AnimationTemplateNamed('explosion_temp'), False);
   
-  expl := FetchBitmap('explosion_bmp');
+  expl := BitmapNamed('explosion_bmp');
   
   WriteLn('ID of boom[0] = ', HexStr(boom[0]));
   WriteLn('ID of expl = ', HexStr(expl));
   
   currentAnim := -1;
   
-  s := CreateSprite(FetchBitmap('red_explosion'),'explosion',FetchAnimationTemplate('explosion_temp'));
-  SpriteAddLayer(s, FetchBitmap('count'), 'count');
+  s := CreateSprite(BitmapNamed('red_explosion'),'explosion',AnimationTemplateNamed('explosion_temp'));
+  SpriteAddLayer(s, BitmapNamed('count'), 'count');
   SpriteShowLayer(s, 'count');
   SpriteSetLayerOffset(s, 'count', PointAt(3,3));
   SpriteStartAnimation(s, 'explosion_loop');
@@ -61,7 +61,7 @@ begin
     
     DrawRectangle(ColorGreen, SpriteLayerRectangle(s, 'count'));
     
-    DrawCell(FetchBitmap('red_explosion'), 1, 200, 50);
+    DrawCell(BitmapNamed('red_explosion'), 1, 200, 50);
     
     DrawFramerate(0,0);
     

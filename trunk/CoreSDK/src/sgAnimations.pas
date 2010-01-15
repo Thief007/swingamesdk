@@ -111,7 +111,7 @@ interface
   /// see `MapAnimationTemplate`.
   ///
   /// @lib
-  function FetchAnimationTemplate(name: String): AnimationTemplate;
+  function AnimationTemplateNamed(name: String): AnimationTemplate;
   
   /// Releases the SwinGame resources associated with the animation template of the
   /// specified `name`.
@@ -588,7 +588,7 @@ var
         exit;
       end;
     end;
-    rows[id].snd := FetchSoundEffect(sndId);
+    rows[id].snd := SoundEffectNamed(sndId);
   end;
   
   procedure ProcessLine();
@@ -862,12 +862,12 @@ begin
   {$ENDIF}
 end;
 
-function FetchAnimationTemplate(name: String): AnimationTemplate;
+function AnimationTemplateNamed(name: String): AnimationTemplate;
 var
   tmp : TObject;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgAnimations', 'FetchAnimationTemplate', name);
+    TraceEnter('sgAnimations', 'AnimationTemplateNamed', name);
   {$ENDIF}
   
   tmp := _Animations.values[name];
@@ -875,7 +875,7 @@ begin
   else result := nil;
   
   {$IFDEF TRACE}
-    TraceExit('sgAnimations', 'FetchAnimationTemplate', HexStr(result));
+    TraceExit('sgAnimations', 'AnimationTemplateNamed', HexStr(result));
   {$ENDIF}
 end;
 
@@ -902,7 +902,7 @@ begin
     TraceEnter('sgAnimations', 'ReleaseAnimationTemplate', 'frm = ' + name);
   {$ENDIF}
   
-  frm := FetchAnimationTemplate(name);
+  frm := AnimationTemplateNamed(name);
   
   if (assigned(frm)) then
   begin

@@ -198,14 +198,14 @@ begin
   r1 := 50;
   r2 := 20;
   
-  s1 := CreateSprite(FetchBitmap('ball'));
+  s1 := CreateSprite(BitmapNamed('ball'));
   
   SpriteSetX(s1, 100);
   SpriteSetY(s1, 600);
   SpriteSetMass(s1, 10);
   SpriteSetVelocity(s1, VectorTo(4, 4));
   
-  s2 := CreateSprite(FetchBitmap('ball'));
+  s2 := CreateSprite(BitmapNamed('ball'));
   SpriteSetX(s2, 200);
   SpriteSetY(s2, 200);
   SpriteSetMass(s2, 10);

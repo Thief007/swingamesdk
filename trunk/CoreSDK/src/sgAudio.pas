@@ -114,7 +114,7 @@ interface
   /// Loads and returns a sound effect. The supplied `filename` is used to
   /// locate the sound effect to load. The supplied `name` indicates the 
   /// name to use to refer to this SoundEffect. The `SoundEffect` can then be
-  /// retrieved by passing this `name` to the `FetchSoundEffect` function. 
+  /// retrieved by passing this `name` to the `SoundEffectNamed` function. 
   ///
   /// @lib
   /// @sn mapSoundEffectNamed:%s toFile:%s
@@ -135,7 +135,7 @@ interface
   /// see `MapSoundEffect`.
   ///
   /// @lib
-  function FetchSoundEffect(name: String): SoundEffect;
+  function SoundEffectNamed(name: String): SoundEffect;
   
   /// Releases the SwinGame resources associated with the sound effect of the
   /// specified `name`.
@@ -165,7 +165,7 @@ interface
   /// Loads and returns a music value. The supplied `filename` is used to
   /// locate the music file to load. The supplied `name` indicates the 
   /// name to use to refer to this Music value. The `Music` can then be
-  /// retrieved by passing this `name` to the `FetchMusic` function. 
+  /// retrieved by passing this `name` to the `MusicNamed` function. 
   ///
   /// @lib
   /// @sn mapMusicNamed:%s toFile:%s
@@ -185,7 +185,7 @@ interface
   /// This works with music data loaded using `MapMusic`.
   ///
   /// @lib
-  function FetchMusic(name: String): Music;
+  function MusicNamed(name: String): Music;
   
   /// Releases the music that have been loaded with the supplied name.
   ///
@@ -771,7 +771,7 @@ implementation
       TraceEnter('sgAudio', 'ReleaseSoundEffect', 'effect = ' + name);
     {$ENDIF}
     
-    snd := FetchSoundEffect(name);
+    snd := SoundEffectNamed(name);
     if (assigned(snd)) then
     begin
       _SoundEffects.remove(name).Free();
@@ -921,7 +921,7 @@ implementation
       TraceEnter('sgAudio', 'ReleaseMusic', name);
     {$ENDIF}
     
-    mus := FetchMusic(name);
+    mus := MusicNamed(name);
     if (assigned(mus)) then
     begin
       _Music.remove(name).Free();
@@ -1157,12 +1157,12 @@ implementation
     {$ENDIF}
   end;
 
-  function FetchSoundEffect(name: String): SoundEffect;
+  function SoundEffectNamed(name: String): SoundEffect;
   var
     tmp : TObject;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgAudio', 'FetchSoundEffect', name);
+      TraceEnter('sgAudio', 'SoundEffectNamed', name);
     {$ENDIF}
     
     tmp := _SoundEffects.values[name];
@@ -1170,7 +1170,7 @@ implementation
     else result := nil;
     
     {$IFDEF TRACE}
-      TraceExit('sgAudio', 'FetchSoundEffect', HexStr(result));
+      TraceExit('sgAudio', 'SoundEffectNamed', HexStr(result));
     {$ENDIF}
   end;
   
@@ -1218,12 +1218,12 @@ implementation
     {$ENDIF}
   end;
   
-  function FetchMusic(name: String): Music;
+  function MusicNamed(name: String): Music;
   var
     tmp : TObject;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgAudio', 'FetchMusic', name);
+      TraceEnter('sgAudio', 'MusicNamed', name);
     {$ENDIF}
     
     tmp := _Music.values[name];
@@ -1231,7 +1231,7 @@ implementation
     else result := nil;
     
     {$IFDEF TRACE}
-      TraceExit('sgAudio', 'FetchMusic', HexStr(result));
+      TraceExit('sgAudio', 'MusicNamed', HexStr(result));
     {$ENDIF}
   end;
   

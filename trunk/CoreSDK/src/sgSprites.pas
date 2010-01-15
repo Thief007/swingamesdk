@@ -364,7 +364,24 @@ interface
   /// @csn offsetOfLayer:%s 
   function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D; overload;
   
+  /// Sets the offset of the specified layer.
+  ///
+  /// @lib
+  /// @sn sprite:%s setOffsetOfLayer:%s to:%s
+  ///
+  /// @class Sprite
+  /// @overload SetLayerOffset SetLayerNamedOffset
+  /// @csn layerNamed:%s setOffset:%s 
   procedure SpriteSetLayerOffset(s: Sprite; name: String; const value: Point2D); overload;
+  
+  /// Sets the offset of the specified layer.
+  ///
+  /// @lib
+  /// @sn sprite:%s setOffsetOfLayer:%s to:%s
+  ///
+  /// @class Sprite
+  /// @overload SetLayerOffset SetLayerNamedOffset
+  /// @csn layerNamed:%s setOffset:%s 
   procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D); overload;
   
   function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
@@ -778,7 +795,7 @@ interface
   /// @setter Scale
   procedure SpriteSetScale(s: Sprite; value: Single);
   
-
+  
 //=============================================================================
 implementation
   uses

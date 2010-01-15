@@ -12,15 +12,15 @@ begin
   OpenGraphicsWindow('Hello World', 640, 480);
   
   //Test releasing of resources - not assigned
-  WriteLn('BMP: ', HexStr(FetchBitmap('fred')));
+  WriteLn('BMP: ', HexStr(BitmapNamed('fred')));
   ReleaseBitmap('fred');
-  WriteLn('FNT: ', HexStr(FetchFont('fred')));
+  WriteLn('FNT: ', HexStr(FontNamed('fred')));
   ReleaseFont('fred');
-  WriteLn('SND: ', HexStr(FetchSoundEffect('fred')));
+  WriteLn('SND: ', HexStr(SoundEffectNamed('fred')));
   ReleaseSoundEffect('fred');
-  WriteLn('MUS: ', HexStr(FetchMusic('fred')));
+  WriteLn('MUS: ', HexStr(MusicNamed('fred')));
   ReleaseMusic('fred');
-  // WriteLn('MAP: ', HexStr(FetchTileMap('fred')));
+  // WriteLn('MAP: ', HexStr(TileMapNamed('fred')));
   // ReleaseTileMap('fred');
   ReleaseResourceBundle('fred');
 
