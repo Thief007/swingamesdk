@@ -66,7 +66,11 @@ _type_switcher = {
     
     'shapeprototype': 'ShapePrototype',
     'shape': 'Shape',
-    'shapekind': 'ShapeKind'
+    'shapekind': 'ShapeKind',
+    'animation': 'Animation',
+    'animationtemplate': 'AnimationTemplate',
+    'stringarray': 'StringPtr',
+    'collisiontestkind':    'CollisionTestKind',
 }
 
 # dictionary for start of method names for copying variable
@@ -76,6 +80,7 @@ _array_copy_data = {
     'bitmaparray': 'Bmp',
     'longintarray': 'LongInt',
     'point2darray': 'Point2D',
+    'stringarray':  'String'
 }
 
 # dictionary for start of method names for copying fixed
@@ -165,7 +170,7 @@ def method_visitor(the_method, other):
         if not result_param.maps_result: #in case of returning var length array
             result_param = the_method.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray','stringarray','bitmaparray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure
@@ -274,7 +279,7 @@ def file_visitor(the_file, other):
     my_writer.close()
 
 def main():
-    logging.basicConfig(level=logging.WARNING,
+    logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         stream=sys.stdout)
     

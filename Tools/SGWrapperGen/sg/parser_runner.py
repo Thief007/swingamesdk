@@ -18,6 +18,7 @@ from sg_parameter import SGParameter
 # Note: this does not include any "discovered" units like sgShared.pas
 all_units = [
     ('sgTypes', 'Types', '../../CoreSDK/src/sgTypes.pas'), #read in types first...
+    ('sgAnimations', 'Animation', '../../CoreSDK/src/sgAnimations.pas'),
     ('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
     ('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
     ('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
@@ -29,7 +30,7 @@ all_units = [
     ('sgResources', 'Resources', '../../CoreSDK/src/sgResources.pas'),
     ('sgSprites', 'Sprites', '../../CoreSDK/src/sgSprites.pas'),
     ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
-    ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
+    # ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
 ]
 

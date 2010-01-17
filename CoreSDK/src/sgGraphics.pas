@@ -223,7 +223,7 @@ interface
   /// 
   /// @lib DrawOrFillCircleAtPointOnScreen(clr, True, position, radius)
   /// @uname FillCircleAtPointOnScreen
-  /// @fill:%s circleOnScreen:%s radius:%s
+  /// @sn fill:%s circleOnScreen:%s radius:%s
   procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
   
   /// Draw a circle on the screen (filled or outline)
@@ -362,7 +362,7 @@ interface
   /// @class Shape
   /// @overload Draw DrawOrFillOnto
   /// @self 2
-  /// @ drawOnto:%s filled:%s
+  /// @csn drawOnto:%s filled:%s
   procedure DrawShape(dest: Bitmap; s: Shape; filled: Boolean); overload;
   
   /// Draw the Shape s onto the destination bitmap.
@@ -374,7 +374,7 @@ interface
   /// @class Shape
   /// @overload Draw DrawOnto
   /// @self 2
-  /// @sn drawOnto:%s
+  /// @csn drawOnto:%s
   procedure DrawShape(dest: Bitmap; s: Shape); overload;
   
   /// Fill the Shape s onto the destination bitmap.
@@ -457,12 +457,12 @@ interface
   /// Draws the first point of the shape as a pixel.
   ///
   /// @lib
-  /// @sn drawOnto:%s pointShape:%s filled:%s
+  /// @sn drawOnto:%s pointShape:%s filled:%s offset:%s
   ///
   /// @class Shape
   /// @method DrawAsPoint
   /// @self 2
-  /// @csn drawPointOnto:%s filled:%s
+  /// @csn drawPointOnto:%s filled:%s offset:%s
   procedure DrawShapeAsPoint(dest: Bitmap; s:Shape; filled: Boolean; const offset:Point2D); overload;
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -471,12 +471,12 @@ interface
   /// by the distance to the second point.
   /// 
   /// @lib
-  /// @sn drawOnto:%s circleShape:%s filled:%s
+  /// @sn drawOnto:%s circleShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsCircle
   /// @self 2
-  /// @csn drawCircleOnto:%s filled:%s
+  /// @csn drawCircleOnto:%s filled:%s offset:%s
   procedure DrawShapeAsCircle(dest: Bitmap; s:Shape; filled: Boolean; const offset:Point2D); overload;
   
   //   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -493,12 +493,12 @@ interface
   /// draws a line from the first point of the shape to the second point.
   /// 
   /// @lib
-  /// @sn drawOnto:%s lineShape:%s filled:%s
+  /// @sn drawOnto:%s lineShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsLine
   /// @self 2
-  /// @csn drawLineOnto:%s filled:%s
+  /// @csn drawLineOnto:%s filled:%s offset:%s
   procedure DrawShapeAsLine(dest: Bitmap; s:Shape; filled: Boolean; const offset:Point2D); overload;
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -506,12 +506,12 @@ interface
   /// draws the shape as a triangle based on the first three points of the shape.
   /// 
   /// @lib
-  /// @sn drawOnto:%s triangleShape:%s filled:%s
+  /// @sn drawOnto:%s triangleShape:%s filled:%s offset:%s
   ///
   /// @class Shape
   /// @method DrawAsTriangle
   /// @self 2
-  /// @csn drawTriangleOnto:%s filled:%s
+  /// @csn drawTriangleOnto:%s filled:%s offset:%s
   procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean; const offset:Point2D); overload;
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -521,12 +521,12 @@ interface
   /// In this way a shape with 5 points also has 2 lines.
   /// 
   /// @lib
-  /// @sn drawOnto:%s lineListShape:%s filled:%s
+  /// @sn drawOnto:%s lineListShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsLineList
   /// @self 2
-  /// @csn drawLineListOnto:%s filled:%s
+  /// @csn drawLineListOnto:%s filled:%s offset:%s
   procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -535,26 +535,26 @@ interface
   /// from pt[0] to pt[1] and a second from pt[1] to pt[2].
   /// 
   /// @lib
-  /// @sn drawOnto:%s lineStripShape:%s filled:%s
+  /// @sn drawOnto:%s lineStripShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsLineStrip
   /// @self 2
-  /// @csn drawLineStripOnto:%s filled:%s
+  /// @csn drawLineStripOnto:%s filled:%s offset:%s
   procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
   
-  /// Draw the passed in shape to the specified bitmap. If filled the shape
-  /// is drawn with a fill rather than drawn as a series of lines. This draws
-  /// as a polygon where each point is connected to its neighbour and the
-  /// first point is reconnected to the last point.
-  /// 
-  /// @lib
-  /// @sn drawOnto:%s polygonShape:%s filled:%s
-  /// 
-  /// @class Shape
-  /// @method DrawAsPolygon
-  /// @self 2
-  /// @csn drawPolygonOnto:%s filled:%s
+  // / Draw the passed in shape to the specified bitmap. If filled the shape
+  // / is drawn with a fill rather than drawn as a series of lines. This draws
+  // / as a polygon where each point is connected to its neighbour and the
+  // / first point is reconnected to the last point.
+  // / 
+  // / @lib
+  // / @sn drawOnto:%s polygonShape:%s filled:%s offset:%s
+  // / 
+  // / @class Shape
+  // / @method DrawAsPolygon
+  // / @self 2
+  // / @csn drawPolygonOnto:%s filled:%s offset:%s
   //procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -563,12 +563,12 @@ interface
   /// the first point and two neighbouring points from the shape.
   /// 
   /// @lib
-  /// @sn drawOnto:%s triangleFanShape:%s filled:%s
+  /// @sn drawOnto:%s triangleFanShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsTriangleFan
   /// @self 2
-  /// @csn drawTriangleFonOnto:%s filled:%s
+  /// @csn drawTriangleFonOnto:%s filled:%s offset:%s
   procedure DrawShapeAsTriangleFan(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -577,12 +577,12 @@ interface
   /// three neighbouring points. In this way 4 points gives two triangles.
   /// 
   /// @lib
-  /// @sn drawOnto:%s triangleStripShape:%s filled:%s
+  /// @sn drawOnto:%s triangleStripShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsTriangleStrip
   /// @self 2
-  /// @csn drawTriangleStripOnto:%s filled:%s
+  /// @csn drawTriangleStripOnto:%s filled:%s offset:%s
   procedure DrawShapeAsTriangleStrip(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
   
   /// Draw the passed in shape to the specified bitmap. If filled the shape
@@ -592,12 +592,12 @@ interface
   /// all create 2 triangles (pt[0] + pt[1] + pt[2] and pt[3] + pt[4] + pt[5]). 
   /// 
   /// @lib
-  /// @sn drawOnto:%s triangleListShape:%s filled:%s
+  /// @sn drawOnto:%s triangleListShape:%s filled:%s offset:%s
   /// 
   /// @class Shape
   /// @method DrawAsTriangleList
   /// @self 2
-  /// @csn drawTriangleListOnto:%s filled:%s
+  /// @csn drawTriangleListOnto:%s filled:%s offset:%s
   procedure DrawShapeAsTriangleList(dest: Bitmap; s: Shape; filled: Boolean; const offset:Point2D);
   
   
@@ -701,7 +701,7 @@ interface
   /// 
   /// @lib DrawOrFillRectangleOnto(dest, clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnto
-  /// @sn fillOnto:@s color:%s rectangleX:%s y:%s width:%s height:%s
+  /// @sn fillOnto:%s color:%s rectangleX:%s y:%s width:%s height:%s
   procedure FillRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
   
   /// Fill a rectangle onto a destination.

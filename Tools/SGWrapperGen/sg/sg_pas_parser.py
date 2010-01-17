@@ -302,6 +302,8 @@ class SGPasParser():
     
     def _add_attribute(self, attr, val):
         logger.debug('Parser    : Adding attribute %s with value %s',attr,val)
+        if attr in self._attributes and self._attributes[attr] != None:
+            logger.warning('Parser    : Added attribute twice %s = %s', attr, val)
         self._attributes[attr] = val
         self._ordered_attributes.append([attr, val])
     
@@ -582,7 +584,7 @@ class SGPasParser():
                 self._match_lookahead('symbol', ',', True) #consume commas
             self._match_token('symbol',')') #read close bracket
             the_type.values = tuple(values)
-        elif self._match_lookahead('id', 'packed', True) and self._match_lookahead('id', 'record', True):
+        elif (self._match_lookahead('id', 'packed', True) and self._match_lookahead('id', 'record', True)) or self._match_lookahead('id', 'record', True):
             #packed record field: Type end;
             while not self._match_lookahead('id', 'end', True):
                 #read field

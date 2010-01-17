@@ -259,13 +259,13 @@ interface
   
   /// Tests if the point pt is on the screen.
   /// 
-  /// @lib
-  function OnScreen(const pt: Point2D): Boolean; overload;
+  /// @lib PointOnScreen
+  function PointOnScreen(const pt: Point2D): Boolean; overload;
   
   /// Tests if the rectangle rect is on the screen.
   /// 
-  /// @lib
-  function OnScreen(const rect: Rectangle): Boolean; overload;
+  /// @lib RectOnScreen
+  function RectOnScreen(const rect: Rectangle): Boolean; overload;
   
 //=============================================================================
 implementation
@@ -571,7 +571,7 @@ implementation
   // Screen tests
   //---------------------------------------------------------------------------
   
-  function OnScreen(const pt: Point2D): Boolean; overload;
+  function PointOnScreen(const pt: Point2D): Boolean; overload;
   var
     scrPt: Point2D;
   begin
@@ -579,7 +579,7 @@ implementation
     result := not ((scrPt.x < 0) or (scrPt.y < 0) or (scrPt.x >= ScreenWidth()) or (scrPt.y >= ScreenHeight()));
   end;
   
-  function OnScreen(const rect: Rectangle): Boolean; overload;
+  function RectOnScreen(const rect: Rectangle): Boolean; overload;
   begin
     result := RectanglesIntersect(ToScreen(rect), screenRect);
   end;
