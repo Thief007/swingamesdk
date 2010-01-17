@@ -81,15 +81,23 @@ class SGMethod(SGMetaDataContainer):
             
             #print self.name, real_params, self.sn
             
+            temp_sn  = self.sn
+            if self.method_called.was_function:
+                temp_sn = temp_sn + ' result:%s'
+            # if self.method_called.has_length_params:
+            #     temp_sn = temp_sn + ' length:%s'
+            print temp_sn
+            print tuple([param.name for param in real_params])
+            
             if special_visitor != None:
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
             else:
-                temp = self.sn % tuple([param.name for param in real_params])
+                temp = temp_sn % tuple([param.name for param in real_params])
             
             #print temp
             
             result['sn'] = temp
-            result['sn.sel'] = (self.sn % tuple(['' for param in real_params])).replace(' ', '')
+            result['sn.sel'] = (temp_sn % tuple(['' for param in real_params])).replace(' ', '')
         else:
             if special_visitor != None:
                 temp = ':'.join([special_visitor(param, param == self.params[-1]) for param in self.params])
@@ -480,7 +488,7 @@ class SGMethod(SGMetaDataContainer):
             args = list(self.args)
         else:  #other is an instance (with ptr)
             if self.args == None or len(self.args) < self.self_pos:
-                logger.error('Class method calling a method without parameter for self pointer...')
+                logger.error('Class method calling a method without parameter for self pointer... ' + self.name)
                 assert False
             
             args = list(self.args)

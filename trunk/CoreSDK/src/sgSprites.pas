@@ -217,7 +217,7 @@ interface
   /// @sn sprite:%s showLayerNamed:%s
   ///
   /// @class Sprite
-  /// @override ShowLayer ShowLayerNamed
+  /// @overload ShowLayer ShowLayerNamed
   /// @csn showLayerNamed:%s
   function SpriteShowLayer(s: Sprite; name: String): LongInt; overload;
   
@@ -237,7 +237,7 @@ interface
   /// @sn sprite:%s hideLayerNamed:%s
   ///
   /// @class Sprite
-  /// @override HideLayer HideLayerNamed
+  /// @overload HideLayer HideLayerNamed
   /// @csn hideLayerNamed:%s
   procedure SpriteHideLayer(s: Sprite; name: String); overload;
   
@@ -257,7 +257,7 @@ interface
   /// @sn sprite:%s toggleVisibleLayerNamed:%s
   ///
   /// @class Sprite
-  /// @override ToggleLayerVisible ToggleLayerNamedVisible
+  /// @overload ToggleLayerVisible ToggleLayerNamedVisible
   /// @csn toggleLayerNamedVisible:%s
   procedure SpriteToggleLayerVisible(s: Sprite; name: String); overload;
   
@@ -277,7 +277,7 @@ interface
   /// @sn sprite:%s visibleIndexOfLayerNamed:%s
   ///
   /// @class Sprite
-  /// @override VisibleIndexOfLayer VisibleIndexOfLayerNamed
+  /// @overload VisibleIndexOfLayer VisibleIndexOfLayerNamed
   /// @csn visibleIndexOfLayerNamed:%s
   function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt; overload;
   
@@ -346,7 +346,7 @@ interface
   
   /// Gets the offset of the specified layer.
   ///
-  /// @lib
+  /// @lib SpriteLayerOffsetNamed
   /// @sn sprite:%s offsetOfLayerNamed:%s
   ///
   /// @class Sprite
@@ -366,7 +366,7 @@ interface
   
   /// Sets the offset of the specified layer.
   ///
-  /// @lib
+  /// @lib SpriteSetLayerOffsetNamed
   /// @sn sprite:%s setOffsetOfLayer:%s to:%s
   ///
   /// @class Sprite
@@ -384,17 +384,26 @@ interface
   /// @csn layerNamed:%s setOffset:%s 
   procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D); overload;
   
+  /// @lib
   function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
   
+  /// @lib
   procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
+  /// @lib
   procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
+  /// @lib
   procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
+  /// @lib
   procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
   
+  /// @lib SpriteLayerNamedRectangle
   function SpriteLayerRectangle(s: Sprite; name: String): Rectangle; overload;
+  /// @lib
   function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
+  /// @lib
   function SpriteCollisionRectangle(s: Sprite): Rectangle;
   
+  /// @lib SpriteLayerNamedCircle
   function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
   
   /// Create a circle that is centered on a Sprite, which takes its radius from
@@ -405,7 +414,11 @@ interface
   /// @class Sprite
   /// @method Circle
   function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
+  
+  /// @lib
   function SpriteCircle(s: Sprite): Circle; overload;
+  
+  /// @lib
   function SpriteCollisionCircle(s: Sprite): Circle;
   
   
@@ -437,40 +450,52 @@ interface
   /// This will play a sound effect if the first cell of the animation
   /// has a sound.
   /// 
-  /// @lib 
+  /// @lib SpriteStartAnimationNamed
   /// 
   /// @class Sprite
   /// @method StartAnimation
-  procedure SpriteStartAnimation(s: Sprite; named: String);
-  procedure SpriteStartAnimation(s: Sprite; named: String; withSound: Boolean);
-  procedure SpriteStartAnimation(s: Sprite; idx: LongInt);
-  procedure SpriteStartAnimation(s: Sprite; idx: LongInt; withSound: Boolean);
+  procedure SpriteStartAnimation(s: Sprite; named: String); overload;
   
-  /// @lib UpdateSpritePct(s, 1.0)
+  /// @lib SpriteStartAnimationNamedWithSound
+  procedure SpriteStartAnimation(s: Sprite; named: String; withSound: Boolean); overload;
+  /// @lib SpriteStartAnimation
+  procedure SpriteStartAnimation(s: Sprite; idx: LongInt); overload;
+  /// @lib SpriteStartAnimationWithSound
+  procedure SpriteStartAnimation(s: Sprite; idx: LongInt; withSound: Boolean); overload;
+  
+  /// @lib UpdateSpritePctWithSound(s, 1.0, true)
   /// @uname UpdateSprite
   ///
   /// @class Sprite
   /// @method Update
   procedure UpdateSprite(s: Sprite); overload;
+  
+  /// @lib UpdateSpritePctWithSound(s, 1.0, withSound)
   procedure UpdateSprite(s: Sprite; withSound:Boolean); overload;
     
-  /// @lib UpdateSpritePct
+  /// @lib UpdateSpritePctWithSound(s, pct, true)
   /// @class Sprite
   /// @overload Update UpdatePct
   procedure UpdateSprite(s: Sprite; pct: Single); overload;
+  
+  /// @lib UpdateSpritePctWithSound
   procedure UpdateSprite(s: Sprite; pct: Single; withSound: Boolean); overload;
     
-  /// @lib UpdateSpriteAnimationPct(s, 1.0)
+  /// @lib UpdateSpriteAnimationPctWithSound(s, 1.0, true)
   /// @uname UpdateSpriteAnimation
   /// @class Sprite
   /// @method UpdateAnimation
   procedure UpdateSpriteAnimation(s: Sprite); overload;
+  
+  /// @lib UpdateSpriteAnimationPctWithSound(s, 1.0, withSound)
   procedure UpdateSpriteAnimation(s: Sprite; withSound: Boolean); overload;
   
-  /// @lib UpdateSpriteAnimationPct
+  /// @lib UpdateSpriteAnimationPctWithSound(s, pct, true)
   /// @class Sprite
   /// @overload UpdateAnimation UpdateAnimationPct
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
+  
+  /// @lib UpdateSpriteAnimationPctWithSound
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   
   
@@ -554,7 +579,9 @@ interface
   /// @getter Height
   function SpriteHeight(s: Sprite): LongInt;
   
+  /// @lib SpriteLayerNamedHeight
   function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
+  /// @lib SpriteLayerHeight
   function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
   
   /// The current Width of the sprite (aligned to the X axis).
@@ -564,7 +591,9 @@ interface
   /// @getter Width
   function SpriteWidth(s: Sprite): LongInt;
   
+  /// @lib SpriteLayerNamedWidth
   function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
+  /// @lib SpriteLayerWidth
   function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
   
   /// Returns the center point of the passed in Sprite. This uses the Sprite's 
@@ -607,7 +636,7 @@ interface
   ///
   /// @lib
   ///
-  /// @class
+  /// @class Sprite
   /// @getter ScreenRectangle
   function SpriteScreenRectangle(s: Sprite): Rectangle;
   
@@ -721,11 +750,15 @@ interface
   // Sprite collision details
   //---------------------------------------------------------------------------
   
+  /// @lib
   function SpriteCollisionBitmap(s: Sprite): Bitmap;
+  /// @lib
   procedure SpriteSetCollisionBitmap(s: Sprite; bmp: Bitmap);
   
+  /// @lib
   function SpriteCollisionKind(s: Sprite): CollisionTestKind;
   
+  /// @lib
   procedure SpriteSetCollisionKind(s: Sprite; value: CollisionTestKind);
   
   /// Indicates if the sprites animation has ended.
@@ -1133,7 +1166,7 @@ implementation
     if s = nil then 
       result := false
     else
-      result := not OnScreen(SpriteLayerRectangle(s, 0));
+      result := not RectOnScreen(SpriteLayerRectangle(s, 0));
   end;
 
   procedure MoveSprite(s : Sprite; const velocity : Vector); overload;

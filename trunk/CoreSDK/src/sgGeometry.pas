@@ -279,7 +279,7 @@ interface
   /// REturns a line segment from x1,y1 to x2,y2.
   /// 
   /// @lib
-  /// @sn lineFromX1:%s y1:%y x2:%s y2:%s
+  /// @sn lineFromX1:%s y1:%s x2:%s y2:%s
   function LineFrom(x1, y1, x2, y2: Single): LineSegment; overload;
   
   /// Returns a line from pt1 to pt2.
@@ -775,7 +775,7 @@ interface
   ///
   /// @class LineSegment
   /// @method IntersectionPoint
-  /// @sn intersectionWith:$s result:%s
+  /// @csn intersectionWith:$s result:%s
   function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
   
   /// Returns the intersection point of a ray with a line.
@@ -823,10 +823,10 @@ interface
   /// Returns true if the point is within the rectangle.
   ///
   /// @lib PointInRectXY
-  /// @sn point:%s inRectPt:%s x:%s y:%s width:%s height:%s
+  /// @sn point:%s inRectX:%s y:%s width:%s height:%s
   ///
   /// @class Point2D
-  /// @overload InRectPtXYWH
+  /// @overload InRect InRectPtXYWH 
   /// @csn inRectX:%s y:%s width:%s height:%s
   function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;
   
@@ -876,7 +876,7 @@ interface
   ///
   /// @class Point2D
   /// @method InShape
-  function PointInShape(const pt: Point2d; const s:Shape):Boolean;
+  function PointInShape(const pt: Point2d; s:Shape):Boolean;
   
   
   //---------------------------------------------------------------------------
@@ -1088,7 +1088,7 @@ interface
   
   /// Return true if the vector (used as a point) is within the rectangle
   /// 
-  /// @lib
+  /// @lib VectorInRectXY
   /// @sn vector:%s inRectX:%s y:%s width:%s height:%s
   /// 
   /// @class Vector
@@ -1155,6 +1155,7 @@ interface
   /// @sn vectorFromPt:%s outOfCircle:%s givenHeading:%s
   /// 
   /// @class Point2D
+  /// @method VectorOutOfCircleFromPoint
   /// @csn vectorOutOfCircle:%s givenHeading:%s
   function VectorOutOfCircleFromPoint(const pt: Point2D; const c: Circle; const velocity: Vector): Vector;
   
@@ -1374,10 +1375,11 @@ interface
   /// matrix transformations.
   ///
   /// @lib
-  /// @sn matrix:%s multiply:%s
+  /// @sn matrix:%s multiplyByMatrix:%s
   ///
   /// @class Matrix2D
   /// @method Multiply
+  /// @csn multiplyByMatrix:%s
   function MatrixMultiply(const m1, m2: Matrix2D): Matrix2D; overload;
   
   /// Multiplies the `Vector` parameter ``v`` with the `Matrix2D` ``m`` and 
@@ -1385,11 +1387,11 @@ interface
   /// the matrix (to apply scaling, rotation or translation effects).
   /// 
   /// @lib MatrixMultiplyVector
-  /// @sn matrix:%s multiplyVector:%s
+  /// @sn matrix:%s multiplyByVector:%s
   /// 
   /// @class Matrix2D
   /// @overload Multiply MultiplyVector
-  /// @csn multiplyVector:%s
+  /// @csn multiplyByVector:%s
   function MatrixMultiply(const m: Matrix2D; const v: Vector): Vector; overload;
   
   /// Use a matrix to transform all of the points in a triangle.
@@ -1437,7 +1439,7 @@ interface
   ///
   /// @class Matrix2D
   /// @method ToString
-  /// @sn description
+  /// @csn description
   function MatrixToString(const m: Matrix2D) : String;
   
   
@@ -2909,7 +2911,7 @@ implementation
     end;
   end;
 
-  function PointInShape(const pt: Point2d; const s:Shape):Boolean;
+  function PointInShape(const pt: Point2d; s:Shape):Boolean;
   var
   k : ShapeKind;
   pts : Point2dArray;

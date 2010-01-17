@@ -54,13 +54,20 @@ interface
     /// @field data: array of String
     StringArray = array of String;
     
+    /// This type is used for mapping arrays out of the Pascal library
+    ///
+    /// @type StringPtr
+    /// @pointer_wrapper
+    /// @field pointer: ^String
+    StringPtr = ^String;
+    
     /// The named index collection type is used to maintain a named collection of 
     /// index values that can then be used to lookup the location of the
     /// named value within a collection.
     ///
-    /// @type NamedIndexes
+    /// @struct NamedIndexCollection
     /// @via_pointer
-    NamedIndexCollection = record
+    NamedIndexCollection = packed record
       names: StringArray;   // The names of these ids
       ids: Pointer;             // A pointer to a TStringHash with this data
     end;
@@ -242,7 +249,7 @@ interface
     ///
     /// @struct AnimationTemplateData
     /// @via_pointer
-    AnimationTemplateData = record
+    AnimationTemplateData = packed record
       name:     String;                       // The name of the animation template so it can be retrieved from resources
       filename: String;                       // The filename from which this template was loaded
       
@@ -263,7 +270,7 @@ interface
     AnimationTemplate = ^AnimationTemplateData;
     
     /// @note Do not use AnimationData directly, use Animation.
-    /// @struct Animation
+    /// @struct AnimationData
     /// @via_pointer
     AnimationData = packed record
       firstFrame:   AnimationFrame;   // Where did it start?
@@ -274,6 +281,9 @@ interface
       //hasEnded:     Boolean;          // Has the animation stopped?
     end;
     
+    /// @class Animation
+    /// @pointer_wrapper
+    /// @field pointer: pointer
     Animation = ^AnimationData;
     
     /// Bitmap data stores the data associated with a Bitmap. Each bitmap contains
@@ -486,7 +496,9 @@ interface
     /// @array_wrapper
     /// @field data: array of Bitmap
     BitmapArray = array of Bitmap;
-
+    
+    /// This type is used for mapping arrays out of the Pascal library
+    ///
     /// @type BitmapPtr
     /// @pointer_wrapper
     /// @field pointer: ^Bitmap

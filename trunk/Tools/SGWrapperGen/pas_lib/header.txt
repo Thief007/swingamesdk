@@ -9,6 +9,8 @@ library %(name)s;
   uses SysUtils, Strings, sgTrace, sgShared,
     %(uses)s
   
+  // The exception trap is used to ensure that exceptions do not propagate beyond the
+  // library boundary.
   procedure TrapException(exc: Exception; fromMethod: String);
   begin
     HasException := true;
@@ -23,6 +25,7 @@ library %(name)s;
     {$ENDIF}
   end;
   
+  // The following routines are used to copy array data
   procedure TriCopyToPtr(tri: Point2DPtr; const fromTri: Triangle);
   var
     i: LongInt;
@@ -183,6 +186,32 @@ library %(name)s;
     for i := Low(arr) to High(arr) do
     begin
       (data + i)^ := arr[i];
+    end;
+  end;
+  
+  procedure StringCopyFromPtr(str: StringPtr; len: LongInt; out arr: StringArray);
+  var
+    i: LongInt;
+  begin
+    if len < 0 then raise Exception.Create('Length of array cannot be negative');
+    
+    SetLength(arr, len);
+    
+    for i := 0 to len - 1 do
+    begin
+      StrCopy(PChar(arr[i]), PChar((str + i)^));
+    end;
+  end;
+  
+  procedure StringCopyToPtr(const arr: StringArray; len: LongInt; str: StringPtr);
+  var
+    i: LongInt;
+  begin
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    
+    for i := Low(arr) to High(arr) do
+    begin
+      StrCopy(PChar((str + i)^), PChar(arr[i]));
     end;
   end;
   

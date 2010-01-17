@@ -55,6 +55,8 @@ _type_switcher = {
         'sprite':           'sprite %s',
         'font':             'font %s',
         'map':              'map %s',
+        'animationtemplate':    'animation_template %s',
+        'animation':            'animation %s',
         
         'matrix2d':         'matrix2d %s',
         'vector':           'vector %s',
@@ -72,6 +74,7 @@ _type_switcher = {
         'fontstyle':            'font_style %s',
         'mousebutton':          'mouse_button %s',
         'collisionside':        'collision_side %s',
+        'collisiontestkind':    'collision_test_kind %s',
         
         
         'pointer':          'void *%s',
@@ -90,12 +93,14 @@ _type_switcher = {
         
         'singleptr':        'float *%s',
         '^linesegment':     'line_segment *%s',
-        'linesarray':       'lines_array %s',
         'linesegmentptr':   'line_segment *%s',
         'bitmapptr':        'bitmap *%s',
         '^bitmap':          'bitmap *%s',
         'longintptr':       'int *%s',
         '^longint':         'int *%s',
+        
+        'lines_array':          'lines_array %s',
+        'stringarray':          'string_array %s',
         
         'longint[0..n - 1][0..n - 1]':  'int *%s',
         'mapanimationdata[0..n - 1]':   'map_animation_data *%s',
@@ -127,6 +132,7 @@ _type_switcher = {
         'triangle':     'triangle %s',
         
         'linesarray':   'lines_array %s',
+        'stringarray':   'string_array %s',
         'bitmaparray':  'bitmap_array %s',
         'longintarray': 'int *%s',
         
@@ -142,13 +148,18 @@ _type_switcher = {
         'bitmap':       'bitmap *%s',
         'sprite':       'sprite *%s',
         'map':          'map *%s',
+        'animationtemplate':    'animation_template *%s',
+        'animation':            'animation *%s',
         
         'matrix2d':     'matrix2d %s',
         'triangle':     'triangle %s',
+        'rectangle':    'rectangle %s',
         
         'linesarray':       'lines_array %s',
-        'point2darray':   'point2d *%s',
+        'bitmaparray':       'bitmap_array %s',
+        'point2darray':     'point2d *%s',
         'longintarray':     'int *%s',
+        'single':           'float *%s',
         
         'shapeprototype':   'shape_prototype *%s',
         'shape':            'shape *%s',
@@ -178,6 +189,8 @@ _type_switcher = {
         'font':         'font %s',
         'map':          'map %s',
         'sprite':       'sprite %s',
+        'animationtemplate':    'animation_template %s',
+        'animation':            'animation %s',
         
         'color':        'color %s',
         'point2d':      'point2d %s',
@@ -195,6 +208,7 @@ _type_switcher = {
         'fontstyle':            'font_style %s',        
         'spriteendingaction':   'sprite_ending_action %s',
         'spritekind':           'sprite_kind %s',
+        'collisiontestkind':    'collision_test_kind %s',
         
         'maptag': 'map_tag %s',
         'maptile': 'map_tile %s',
@@ -231,6 +245,11 @@ _adapter_type_switcher = {
         'bitmap':       'void *%s',
         'sprite':       'void *%s',
         'font':         'void *%s',
+        'animationtemplate':    'void *%s',
+        'animation':    'void *%s',
+        
+        'namedindexcollection': 'named_index_collection %s',
+        
         
         'color':        'unsigned int %s',
         
@@ -238,6 +257,7 @@ _adapter_type_switcher = {
         'fontalignment':    'font_alignment %s',
         'fontstyle':        'font_style %s',
         'mousebutton':      'mouse_button %s',
+        'collisiontestkind':    'collision_test_kind %s',
         
         'point2d':      'point2d %s',
         'vector':       'vector %s',
@@ -248,6 +268,7 @@ _adapter_type_switcher = {
         'triangle':     'triangle %s',
         
         'linesarray':   'lines_array %s',
+        'stringarray':  'string_array %s',
         
         'keycode':              'key_code %s',
         'spriteendingaction':   'sprite_ending_action %s',
@@ -272,6 +293,9 @@ _adapter_type_switcher = {
         'longintarray':                 'int *%s',
         'longint[0..n - 1][0..n - 1]':  'int *%s',
         
+        'single[0..n - 1]':             'float *%s',
+        'string[0..n - 1]':             'char **%s',
+        
         'mapdata':                          'map_data %s',
         'mapanimationdata[0..n - 1]':       'map_animation_data *%s',
         'maplayerdata[0..n - 1]':           'map_layer_data *%s',
@@ -279,6 +303,9 @@ _adapter_type_switcher = {
         'maptagdetails[0..n - 1][0..23]':   'map_tag_details *%s[24]',
         'single[0..2][0..2]':               'float %s[3][3]',
         
+        'animationframe[0..n - 1]':           'animation_frame *%s',
+        
+        'stringptr':            'char **%s',
         'point2dptr':           'point2d *%s',
         'point2d[0..n - 1]':    'point2d *%s',
         'point2d[0..2]':        'point2d %s[3]',
@@ -286,6 +313,9 @@ _adapter_type_switcher = {
         'singleptr':            'float *%s',
         'longintptr':           'int *%s',
         'bitmapptr':            'void *%s',
+        
+        'pointer':              'void *%s',
+        'animationframe':       'animation_frame %s',
         
         'freenotifier':         'void (*%s)(void*)',
         
@@ -305,27 +335,34 @@ _adapter_type_switcher = {
         'matrix2d':     'matrix2d %s',
         'triangle':     'triangle %s',
         'vector':       'vector *%s',
-        'linesarray':   'lines_array %s',
-        'longintarray': 'int *%s',
-        'bitmaparray':  'bitmap_array %s',
         'circle':       'circle *%s',
+        
+        'longintarray': 'int *%s',
+        'linesarray':   'lines_array %s',
+        'bitmaparray':  'bitmap_array %s',
         'point2darray': 'point2d_array %s',
+        'stringarray':  'string_array %s',
     },
     'var': {
         'soundeffect':  'sound_effect *%s',
         'music':        'music *%s',
         'timer':        'timer *%s',
-        'byte':         'unsigned char *%s',
-        'string':       'char *%s',
-        'triangle':     'triangle %s',
-        'linesarray':   'lines_array %s',
         'font':         'font *%s',
         'bitmap':       'bitmap *%s',
         'sprite':       'sprite *%s',
         'map':          'map *%s',
+        'shapeprototype':       'shape_prototype *%s',
+        'shape':                'shape *%s',
+        'animationtemplate':    'animation_template %s',
+        'animation':            'animation %s',
         
-        'shapeprototype': 'shape_prototype *%s',
-        'shape': 'shape *%s',
+        'rectangle':    'rectangle *%s',
+        'triangle':     'triangle %s',
+        'linesarray':   'lines_array %s',
+        
+        'string':       'char *%s',
+        'byte':         'unsigned char *%s',
+        'single':       'float *%s',
     },
     'out': {
         'string':       'char *%s',
@@ -345,6 +382,7 @@ _adapter_type_switcher = {
         'point2darray':   'point2d *%s',
         'triangle':         'triangle %s',
         'longintarray':     'int *%s',
+        'bitmaparray':      'bitmap_array %s'
     },
     # mapping of the return type of a function
     'return' : {
@@ -365,6 +403,8 @@ _adapter_type_switcher = {
         'linesegment': 'line_segment %s',
         'bitmap': 'bitmap %s',
         'collisionside': 'collision_side %s',
+        'collisiontestkind': 'collision_test_kind %s',
+        
         'font': 'font %s',
         'map': 'map %s',
         'sprite': 'sprite %s',
@@ -373,6 +413,8 @@ _adapter_type_switcher = {
         'maptile': 'map_tile %s',
         'spriteendingaction': 'sprite_ending_action %s',
         'spritekind': 'sprite_kind %s',
+        'animationtemplate': 'animation_template %s',
+        'animation': 'animation %s',
         
         'shapedrawingfn':      'shape_drawing_fn %s',
         
@@ -499,6 +541,7 @@ def _const_strip_param_visitor(the_param, last):
         ', ' if not last else '')
 
 def method_visitor(the_method, other):
+    logger.info('VISITING  : Method %s', the_method.name)
     details = the_method.to_keyed_dict(
         other['param visitor'], other['type visitor'], other['arg visitor'])
     

@@ -192,11 +192,11 @@ uses sgTypes;
   /// Checks if a pixel is drawn at the specified x,y location.
   /// 
   /// @lib
-  /// @sn pixelOf:%s drawnAtX:%s y:%y
+  /// @sn pixelOf:%s drawnAtX:%s y:%s
   ///
   /// @class Bitmap
+  /// @method PixelDrawnAtPoint  
   /// @csn pixelDrawnAtX:%s y:%s
-  /// @method PixelDrawnAtPoint
   function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
   
   /// This is used to define the number of cells in a bitmap, and 
@@ -206,11 +206,11 @@ uses sgTypes;
   /// parts of the bitmap actually contain cells that can be drawn.
   ///
   /// @lib
-  /// @sn setCellsOfBitmap:%s columns:%s rows:%s count:%s
+  /// @sn bitmap:%s setCellWidth:%s height:%s columns:%s rows:%s count:%s
   ///
   /// @class Bitmap
   /// @method SetCellDetails
-  /// @csn setCellColumns:%s rows:%s count:%s
+  /// @csn setCellWidth:%s height:%s columns:%s rows:%s count:%s
   procedure SetBitmapCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
   
   /// Returns the number of cells in the specified bitmap.
@@ -289,7 +289,7 @@ uses sgTypes;
   /// Creates a circle from within a cell in a bitmap, uses the larger of the width and
   /// height.
   ///
-  /// @lib
+  /// @lib BitmapCellCircleXY
   /// @sn circleBitmap:%s cellAtX:%s y:%s
   ///
   /// @class Bitmap
@@ -420,7 +420,6 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @overload ToCellRectangle ToCellRectangleAtOrigin
-  /// @self 3
   /// @csn toRectangleAtOrigin
   function BitmapCellRectangle(bmp: Bitmap): Rectangle; overload;
   
@@ -432,7 +431,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload ToCellRectangle ToCellRectangleAtPt
   /// @self 2
-  /// @sn toRectangleAt:%s
+  /// @csn toRectangleAt:%s
   function BitmapCellRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for a cell of the bitmap at the indicated point.
@@ -443,7 +442,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method ToCellRectangle
   /// @self 2
-  /// @sn toRectangleAtX:%s y:%s
+  /// @csn toRectangleAtX:%s y:%s
   function BitmapCellRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for the location of the indicated cell within the
@@ -487,12 +486,12 @@ uses sgTypes;
   /// Draw part of the source onto the desitination.
   ///
   /// @lib DrawBitmapPartOnto
-  /// @sn drawOnto:%s bitmap:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%y
+  /// @sn drawOnto:%s bitmap:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%s
   ///
   /// @class Bitmap
   /// @method DrawPartOnto
   /// @self 2
-  /// @csn drawOnto:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%y
+  /// @csn drawOnto:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%s
   procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
   
   /// Draw part of the source bitmap onto the destination.
@@ -502,7 +501,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @overload DrawPartOnto DrawPartFromRectOnto
-  /// @sn drawOnto:%s srcRect:%s atX:%s y:%s
+  /// @csn drawOnto:%s srcRect:%s atX:%s y:%s
   procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
   
   /// Draw part of the source bitmap onto the destination
@@ -512,12 +511,12 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @overload DrawPartOnto DrawPartFromRectAtPointOnto
-  /// @sn drawOnto:%s srcRect:%s at:%s
+  /// @csn drawOnto:%s srcRect:%s at:%s
   procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; const position: Point2D); overload;
   
   /// Draw a cell from a bitmap onto the destination.
   ///
-  /// @lib
+  /// @lib DrawCellOntoXY
   /// @sn drawOnto:%s bitmap:%s cell:%s atX:%s y:%s
   ///
   /// @class Bitmap
@@ -528,7 +527,7 @@ uses sgTypes;
   
   /// Draw a cell from a bitmap onto the destination.
   ///
-  /// @lib
+  /// @lib DrawCellOnto
   /// @sn drawOnto:%s bitmap:%s cell:%s at:%s
   ///
   /// @class Bitmap
@@ -545,11 +544,11 @@ uses sgTypes;
   /// Draw the passed in bitmap onto the game.
   ///
   /// @lib
-  /// @sn draw:%s x:%s y:%y
+  /// @sn draw:%s x:%s y:%s
   ///
   /// @class Bitmap
   /// @method Draw
-  /// @sn drawAtX:%s y:%y
+  /// @csn drawAtX:%s y:%s
   procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
   
   /// Draw the passed in bitmap onto the game.
@@ -565,11 +564,11 @@ uses sgTypes;
   /// Draw part of a bitmap onto the game
   ///
   /// @lib
-  /// @sn draw:%s srcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%y
+  /// @sn draw:%s srcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%s
   ///
   /// @class Bitmap
   /// @method DrawPart
-  /// @csn drawSrcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%y
+  /// @csn drawSrcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%s
   procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
   
   /// Draw part of a bitmap onto the game
@@ -579,13 +578,13 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @overload DrawPart DrawPartFromRect
-  /// @sn drawSrcRect:%s x:%s y:%s
+  /// @csn drawSrcRect:%s x:%s y:%s
   procedure DrawBitmapPart(src : Bitmap; const source : Rectangle; x, y : Single); overload;
   
   /// Draw part of a bitmap onto the game.
   ///
   /// @lib DrawBitmapPartFromRectAtPoint
-  /// @sn draw:%s srcRect:%s position:%s
+  /// @sn bitmap:%s drawPart:%s position:%s
   ///
   /// @class Bitmap
   /// @overload DrawPart DrawPartFromRectAtPoint
@@ -594,18 +593,18 @@ uses sgTypes;
   
   /// Draw a cell from a bitmap onto the game.
   ///
-  /// @lib
-  /// @sn draw:%s cell:%s atX:%s y:%y
+  /// @lib DrawCellXY
+  /// @sn bitmap:%s drawCell:%s atX:%s y:%s
   ///
   /// @class Bitmap
   /// @method DrawCell
-  /// @csn drawCell:%s atX:%s y:%y
+  /// @csn drawCell:%s atX:%s y:%s
   procedure DrawCell(src: Bitmap; cell, x, y: LongInt); overload;
   
   /// Draw a cell from a bitmap onto the game.
   ///
-  /// @lib
-  /// @sn draw:%s bitmap:%s cell:%s at:%s
+  /// @lib DrawCell
+  /// @sn bitmap:%s drawCell:%s at:%s
   ///
   /// @class Bitmap
   /// @overload DrawCell DrawCellAtPoint
@@ -620,11 +619,11 @@ uses sgTypes;
   /// Draw the bitmap onto the screen.
   ///
   /// @lib
-  /// @sn draw:%s onScreenAtX:%s y:%y
+  /// @sn draw:%s onScreenAtX:%s y:%s
   ///
   /// @class Bitmap
   /// @method DrawOnScreen
-  /// @csn drawOnScreenAtX:%s y:%y
+  /// @csn drawOnScreenAtX:%s y:%s
   procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
   
   /// Draw the bitmap onto the screen.
@@ -669,37 +668,53 @@ uses sgTypes;
   
   /// Draw a cell from a bitmap onto the screen.
   ///
-  /// @lib
-  /// @sn draw:%s cell:%s onScreenAtX:%s y:%y
+  /// @lib DrawCellOnScreenXY
+  /// @sn bitmap:%s drawCell:%s onScreenAtX:%s y:%s
   ///
   /// @class Bitmap
   /// @method DrawCell
-  /// @csn drawCell:%s onScreenAtX:%s y:%y
+  /// @csn drawCell:%s onScreenAtX:%s y:%s
   procedure DrawCellOnScreen(src: Bitmap; cell, x, y: LongInt); overload;
   
   /// Draw a cell from a bitmap onto the game.
   ///
-  /// @lib
-  /// @sn draw:%s bitmap:%s cell:%s at:%s
+  /// @lib DrawCellOnScreen
+  /// @sn bitmap:%s drawCell:%s at:%s
   ///
   /// @class Bitmap
   /// @overload DrawCell DrawCellAtPoint
   /// @csn drawCell:%s onScreenAt:%s
   procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
   
+  
   //---------------------------------------------------------------------------
   // Bitmap Saving
   //---------------------------------------------------------------------------
   
-	// Save Bitmap to specific directory
-	procedure SaveBitmap(src : Bitmap; filepath : string);
-	
-	//---------------------------------------------------------------------------
+  /// Save Bitmap to specific directory.
+  /// 
+  /// @lib
+  /// @sn bitmap:%s saveToFile:%s
+  ///
+  /// @class Bitmap
+  /// @method Save
+  /// @csn saveToFile:%s
+  procedure SaveBitmap(src : Bitmap; filepath : string);
+  
+  
+  //---------------------------------------------------------------------------
   // Bitmap Transparancy
   //---------------------------------------------------------------------------
-	
-	//Setting the color passed in to be transparent on the bitmap
-	procedure SetTransparentColor(src: Bitmap; clr:Color);
+  
+  /// Setting the color passed in to be transparent on the bitmap. This edits the
+  /// passed in bitmap, altering the color to transparent.
+  /// 
+  /// @lib
+  /// @sn bitmap:%s setTransparentColor:%s
+  ///
+  /// @class Bitmap
+  /// @method SetTransparentColor 
+  procedure SetTransparentColor(src: Bitmap; clr:Color);
   
 //=============================================================================
 implementation

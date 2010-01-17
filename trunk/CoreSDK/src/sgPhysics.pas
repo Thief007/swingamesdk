@@ -318,7 +318,7 @@ interface
   /// @sn bitmap:%s cell:%s atX:%s y:%s collisionWithBitmap:%s cell:%s atX:%s y:%s
   ///
   /// @class Bitmap
-  /// @method CellCollision
+  /// @overload CellCollision CellCollisionXY
   /// @csn cell:%s atX:%s y:%s collisionWithBitmap:%s cell:%s atX:%s y:%s
   function CellCollision( bmp1: Bitmap; cell1, x1, y1: LongInt; 
                           bmp2: Bitmap; cell2, x2, y2: LongInt): Boolean; overload;
@@ -329,7 +329,7 @@ interface
   /// @sn bitmap:%s cell:%s at:%s collisionWithBitmap:%s cell:%s at:%s
   ///
   /// @class Bitmap
-  /// @overload CellCollision
+  /// @method CellCollision
   /// @csn cell:%s at:%s collisionWithBitmap:%s cell:%s at:%s
   function CellCollision( bmp1: Bitmap; cell1: LongInt; const pt1: Point2D; 
                           bmp2: Bitmap; cell2: LongInt; const pt2: Point2D): Boolean; overload;
