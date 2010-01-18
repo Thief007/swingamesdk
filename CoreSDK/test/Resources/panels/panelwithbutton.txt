@@ -20,5 +20,8 @@ r: 50, 100, 20, 20, 2, Checkbox2, false
 r: 10, 10, 10, 10, 3, radButton1, RadioGroup1
 r: 25, 10, 10, 10, 3, radButton2, RadioGroup1
 r: 40, 10, 10, 10, 3, radButton3, RadioGroup1
+
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
 r: 10, 180, 450, 30, 4, TextBox1, courier, 16, test text box
+r: 10, 25, 450, 30, 4, TextBox2, courier, 16, testbox 2

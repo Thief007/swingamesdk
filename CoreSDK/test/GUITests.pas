@@ -2,7 +2,7 @@ program GUITests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 
 uses
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes;
+  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils;
 	
   
 procedure InitInterface(var pnla, pnlb: panel);
@@ -24,45 +24,57 @@ begin
   DrawGUIAsVectors(true);
 end;
   
-procedure UpdateGUI(pnla, pnlb: panel);
+procedure UpdateGUI(pnla, pnlb: panel; i: Integer);
 var
   reg: Region;
   parpnl: Panel;
   radGroup: GUIRadioGroup;
+  Item: GUIListItem;
 begin
+
   if (RegionClicked() = 'Button1') And (CheckboxState('Checkbox2')) then
   begin
     ToggleShowPanel(pnlb);
     Toggleactivatepanel(pnlb);
   end;
-    
-  case GetRegionByID('radButton1')^.parent^.radioGroups[GetRegionByID('radButton1')^.elementIndex]^.activeButton of
+  
+  SetLabelString('Label1', TextboxString('TextBox1'));
+  
+  case ActiveRadioButton('RadioGroup1') of
     0: SetGUIColorForVectors(ColorWhite);
     1: SetGUIColorForVectors(ColorRed);
     2: SetGUIColorForVectors(ColorBlue);
   end;
+  
+  if (i = 600) OR (i = 1200) OR (i = 1800) then
+  	AddItemToList(GetRegionByID('List1'), NewListItem('List1', 'List1Item' + IntToStr(i), 'n', 'I''m ListItem' + IntToStr(i)));
+  
 end;
   
 procedure Main();
 var
 	pnla, pnlb: Panel;
+	i: Integer;
 begin
   OpenAudio();
-  
   OpenGraphicsWindow('Hello World', 800, 600);
   
   LoadResourceBundle('MainMenu.txt');
-
-  
   InitInterface(pnla,pnlb);
   
+  i := 5;
+
   repeat
     ProcessEvents();
     ClearScreen(ColorBlack);
     
+    // Need to re-initialize Lists!
+    
     DrawPanels();
-    UpdateGUI(pnla, pnlb);
+    UpdateGUI(pnla, pnlb, i);
     UpdateInterface();
+    
+    i += 1;
     
     DrawFramerate(0,0);
     RefreshScreen();
