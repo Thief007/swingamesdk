@@ -1969,7 +1969,10 @@ implementation
       TraceEnter('sgGeometry', 'VectorAngle(const v: Vector): Single', '');
     {$ENDIF}
     
-    result := RadToDeg(arctan(v.y / v.x));
+    if v.x <> 0 then 
+      result := RadToDeg(arctan(v.y / v.x))
+    else
+      result := 0;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorAngle(const v: Vector): Single', '');
