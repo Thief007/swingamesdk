@@ -38,9 +38,14 @@ fi
 # Set compiler path and options
 #
 FPC_BIN=`which fpc`
-PAS_FLAGS="-gw"
+if [ "$OS" = "$WIN" ]; then
+	PAS_FLAGS="-g"
+else
+	PAS_FLAGS="-gw"
+fi
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
 CLEAN="N"
+
 
 #
 # Set game name

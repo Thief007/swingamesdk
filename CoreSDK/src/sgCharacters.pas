@@ -51,17 +51,32 @@ type
 		ShownLayerCache				: LayerCache;
 	end;
 		
-	
+	//Loads Character from TextFile
 	function LoadCharacter(filename: String) : Character;
-	procedure DrawCharacterWithStationary(var c: Character; state: Integer);
-	function UpdateDirectionAnimation(var c: Character) : Boolean;
-	function UpdateDirectionAnimationWithStationary(var c: Character; state, newState: integer) : Boolean;
+	
+	//Draw Character that changes state when its velocity is 0
+	procedure DrawCharacterWithStationary(c: Character; stationaryState, state: Integer);
+	
+	//Draw Character without a stationary state
+	procedure DrawCharacter(c: Character);
+	
+	//Update the animation of the character depending on its direction
+	function UpdateDirectionAnimation(c: Character) : Boolean;
+	
+	//Update the animation of the character depending on its direction, including updating
+	//When the character's state goes stationary
+	function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
+	
+	//Inverts the boolean of Showlayer for the layer at the index
 	procedure HideShowLayer(c: Character; index: integer);
+	
+	//Frees the pointer to the character
+	procedure FreeCharacter(var c: Character);
 
 //=============================================================================
 implementation
 	uses
-		crt, sgCore, sgAudio, sgAnimations, sgGeometry, sgResources,
+		crt, sgCore, sgAnimations, sgGeometry, sgResources,
 		sgImages, sgInput, sgPhysics, sgNamedIndexCollection, sgShared,
 		sgSprites, SysUtils, MyStrUtils, stringhash, StrUtils;
 //=============================================================================	
@@ -71,7 +86,7 @@ implementation
 		c^.CharSprite^.visibleLayers := c^.ShownLayerCache[c^.CurrentState, c^.CurrentDirection];
 	end;
 
-	function UpdateDirectionAnimationWithStationary(var c: Character; state, newState: integer) : Boolean;
+	function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
 	begin
 		result := false;
 		if (c^.CharSprite^.velocity.x = 0) AND (c^.CharSprite^.velocity.y = 0) then 
@@ -91,6 +106,28 @@ implementation
 			result := UpdateDirectionAnimation(c);
 		end;
 	end;
+	
+	function UpdateDirectionAnimation(c: Character) : Boolean;
+	var
+		i : Integer;
+		angle : single;
+	begin
+		angle := VectorAngle(c^.CharSprite^.velocity);
+		result := false;
+		for i := 0 to NameCount(c^.Directions) -1 do
+		begin
+			if (i = c^.CurrentDirection) then continue;
+			
+			if ((c^.DirAngles[i].min < c^.DirAngles[i].max) AND (angle >= c^.DirAngles[i].min) AND (angle <= c^.DirAngles[i].max)) OR 
+			(((c^.DirAngles[i].min > 0) AND (c^.DirAngles[i].max < 0)) AND (((angle >= c^.DirAngles[i].min) AND (angle <= 180)) OR ((angle <= c^.DirAngles[i].max) AND (angle >= -180)))) then
+			begin
+				c^.CurrentDirection := i;
+				SetActiveLayer(c);
+				SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim);
+				result := true;
+			end
+		end;
+	end; 
 	
 	function UpdateShownLayerCache(c: Character): LayerCache;
 	var
@@ -115,28 +152,6 @@ implementation
 			end;
 		end;		
 	end;
-
-	function UpdateDirectionAnimation(var c: Character) : Boolean;
-	var
-		i : Integer;
-		angle : single;
-	begin
-		angle := VectorAngle(c^.CharSprite^.velocity);
-		result := false;
-		for i := 0 to NameCount(c^.Directions) -1 do
-		begin
-			if (i = c^.CurrentDirection) then continue;
-			
-			if ((c^.DirAngles[i].min < c^.DirAngles[i].max) AND (angle >= c^.DirAngles[i].min) AND (angle <= c^.DirAngles[i].max)) OR 
-			(((c^.DirAngles[i].min > 0) AND (c^.DirAngles[i].max < 0)) AND (((angle >= c^.DirAngles[i].min) AND (angle <= 180)) OR ((angle <= c^.DirAngles[i].max) AND (angle >= -180)))) then
-			begin
-				c^.CurrentDirection := i;
-				SetActiveLayer(c);
-				SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim);
-				result := true;
-			end
-		end;
-	end; 
 	
 	procedure HideShowLayer(c: Character; index: integer);
 	begin
@@ -145,48 +160,55 @@ implementation
 		SetActiveLayer(c);
 	end;
 	
-	procedure SetCharacterName(var c: Character; name : String);
+	procedure SetCharacterName(c: Character; name : String);
 	begin
 		c^.CharName := name;
 	end;
 	
-	procedure SetCharacterType(var c: Character; name : String);
+	procedure SetCharacterType(c: Character; name : String);
 	begin
 		c^.CharType := name;
 	end;
 	
-	procedure SetCharacterCurrentState(var c: Character; state: Integer);
+	procedure SetCharacterCurrentState(c: Character; state: Integer);
 	begin
 		c^.CurrentState := state;
 	end;
 	
-	procedure SetCharacterCurrentDirection(var c: Character; direction: Integer);
+	procedure SetCharacterCurrentDirection(c: Character; direction: Integer);
 	begin
 		c^.CurrentDirection := direction;
 	end;
 
-	procedure FreeCharacter(c : character);
+	procedure FreeCharacter(var c : character);
 	begin
+		if not assigned(c) then exit;
+		
+		FreeSprite(c^.charSprite);
 		Dispose(c);
+		c := nil;
 	end;
 	
-	procedure DrawCharacterWithStationary(var c: character; state: integer);
+	procedure DrawCharacterWithStationary(c: character; stationaryState, state: integer);
 	begin
-		UpdateDirectionAnimationWithStationary(c,0, state);
+		UpdateDirectionAnimationWithStationary(c, stationaryState, state);
 		DrawSprite(c^.CharSprite);
 	end;
 	
 	procedure DrawCharacter(c: character);
 	begin
+		UpdateDirectionAnimation(c);
 		DrawSprite(c^.CharSprite);
 	end;
 
 	function LoadCharacter(filename: String) : Character;
 	var
 		bmpArray: Array of Bitmap;
-		data, line, id, path, name: string;
-		lineno, maxid, w, h, cols, rows, count, i: integer;
-		ShownLayers : Array of Boolean;
+		data, line, id, path: string;
+		lineno, w, h, cols, rows, count, colliIndex: integer;
+		aniTemp: AnimationTemplate;
+		bmpIDs: NamedIndexCollection;
+		
 		
 		function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt;
 		begin
@@ -229,15 +251,14 @@ implementation
 		var
 			i: integer;
 		begin
-			SetLength(bmpArray, CountDelimiter(data, ',') + 1);
+			SetLength(bmpArray, Length(bmpArray) + 1);
 			
-			for i := Low(bmpArray) to High(bmpArray) do
-			begin
-				bmpArray[i] := LoadBitmap(ExtractDelimited(i+1, data, [',']));
-				SetTransparentColor(bmpArray[i], RGBColor(255,255,255));
-				SetBitmapCellDetails(bmpArray[i], w, h, cols, rows, count);
-			end;
-			result^.CharSprite := CreateSprite(bmpArray);
+			AddName(bmpIDs,ExtractDelimited(1, data, [',']));
+			bmpArray[High(bmpArray)] := LoadBitmap(ExtractDelimited(2, data, [',']));
+			SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(255,255,255));
+			SetBitmapCellDetails(bmpArray[High(bmpArray)], w, h, cols, rows, count);
+			
+			if ((CountDelimiter(data,',') = 3) AND (ExtractDelimited(1, data, [',']) = 't')) then colliIndex := High(bmpArray);
 		end;
 		
 		procedure AddValuesToCharacter();
@@ -285,7 +306,7 @@ implementation
 		
 		procedure SetDirectionStateDetails();
 		var
-			dirIndex, stateIndex, aniIndex: integer;
+			dirIndex, stateIndex: integer;
 		begin
 			stateIndex := IndexOf(result^.States, ExtractDelimited(1, data, [',']));
 			dirIndex	 := IndexOf(result^.Directions, ExtractDelimited(2, data, [',']));
@@ -293,13 +314,13 @@ implementation
 			if High(result^.ShownLayersByDirState) < stateIndex then SetLength(result^.ShownLayersByDirState, stateIndex + 1);
 			if High(result^.ShownLayersByDirState[stateIndex]) < dirIndex then SetLength(result^.ShownLayersByDirState[stateIndex], dirIndex + 1);
 						
-			result^.ShownLayersByDirState[stateIndex,dirIndex].Anim := IndexOf(result^.CharSprite^.animationTemplate^.animationIDs, ExtractDelimited(3, data, [',']));
+			result^.ShownLayersByDirState[stateIndex,dirIndex].Anim := IndexOf(aniTemp^.animationIDs, ExtractDelimited(3, data, [',']));
 			result^.ShownLayersByDirState[stateIndex,dirIndex].LayerOrder := ProcessRange(ExtractDelimitedWithRanges(4, data));
 		end;
 		
 		procedure SetShownLayersBooleans();
 		var
-			i, id: integer;
+			i: integer;
 			draw: string;
 		begin			
 			SetLength(result^.ShownLayers, Length(bmpArray));
@@ -317,7 +338,7 @@ implementation
 		
 		procedure AddAniTemplateToChar();
 		begin
-			result^.CharSprite^.animationTemplate := LoadAnimationTemplate(ExtractDelimited(1, data, [',']));
+			aniTemp := LoadAnimationTemplate(ExtractDelimited(1, data, [',']));
 		end;
 		
 		procedure InitializeAnimation();
@@ -351,11 +372,11 @@ implementation
 					'c': SetCellDetails();		
 					'p': SetAngles();		
 					'i': InitializeAnimation();									
-	{				else
+					else
 					begin
-						RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of f,m,i or s.');
+						RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of n, t, b, a, d, s, v, l, c, p, i, sd.');
 						exit;
-					end; }
+					end; 
 				end;
 		end;
 			
@@ -380,6 +401,8 @@ implementation
 			TraceEnter('sgCharacters', 'LoadCharacter');
 		{$ENDIF}
 		
+		SetLength(bmpArray, 0);
+		
 		path := PathToResource('characters\' + filename);
 		lineNo := 0;
 		
@@ -391,6 +414,8 @@ implementation
 		New(result);
 		
 		InitNamedIndexCollection(result^.CharValueNames);
+		InitNamedIndexCollection(bmpIDs);
+		colliIndex := -1;
 				
 		try
 			while not EOF(input) do
@@ -409,6 +434,12 @@ implementation
 			Close(input);
 		end;
 		
+		WriteLn('Creating Sprite');
+		result^.CharSprite := CreateSprite(bmpArray, NamesOf(bmpIDs));
+		WriteLn('Crash Point');
+		result^.CharSprite^.animationTemplate := aniTemp;
+		//result^.CharSprite^.layerIDs := bmpIDs;
+		if colliIndex <> -1 then SpriteSetCollisionBitmap(result^.CharSprite,bmpArray[colliIndex]);
 		result^.ShownLayerCache := UpdateShownLayerCache(result);
 		SetActiveLayer(result);
 		
