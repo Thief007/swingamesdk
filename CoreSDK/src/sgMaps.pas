@@ -37,7 +37,9 @@ interface
       SelectedTiles:    Array of LongInt;               // id of selected tiles
       Isometric:        Boolean;
       valueIds:         NamedIndexCollection;           // has names of values
-      kindids:       NamedIndexCollection;           // has names of kinds
+      kindids:          NamedIndexCollection;           // has names of kinds
+      MarkerIds:        NamedIndexCollection;           // has names of Markers
+      MapMarkers:       Array of Marker;
       MapPrototype:     ShapePrototype;
       MapHighlightcolor:Color;
       MapWidth:         LongInt;                        // The Map width (# of grid in x axis)
@@ -70,7 +72,15 @@ interface
 
   // load map func *********
   function LoadMap(filename:string): Map;
+  type
+    SpecificValuesLoader = record
+      row:      LongInt;
+      col:      LongInt;
+      name:     string;
+      value:     Single;
+    end;
   var
+    tempValues:   Array of SpecificValuesLoader;
     path:         String;                         // path of the map file
     textFile:     Text;                           // text file that is loaded
     id:           String;                         // id for the line processor to identify how to handle the data
@@ -185,6 +195,17 @@ interface
         tile.values[i] := map^.MapDefaultValues[kindIdx, i];
       end;
     end;
+
+    procedure AllocateSpecificValues();
+    var
+    i: LongInt;
+    begin
+    for i := low(tempValues) to high(tempValues) do
+    begin
+      AllocateValue(result, @result^.tiles[tempValues[i].row, tempValues[i].col], tempValues[i].name, tempValues[i].value);
+    end;
+      
+    end;
     
     //sets up positions of each tile
     procedure ProcessTiles();
@@ -206,6 +227,7 @@ interface
 
             //kind
             AllocateDefaultValues(result, result^.Tiles[row,col].kind, result^.Tiles[row,col]);
+            AllocateSpecificValues();
           end;
       CreateSurroundingTiles();
     end;
@@ -264,7 +286,25 @@ interface
         else
         RaiseException('The number of kinds passed in does not match the number of bitmaps');
     end;
-    
+
+    procedure LoadSpecificValue(data:String);
+    var
+    row,col:LongInt;
+    val:single;
+    name:String;
+    begin
+      setlength(tempValues, length(tempValues)+1);
+      row:=MyStrToInt(ExtractDelimited(1, data, [',']), false);
+      col:=MyStrToInt(ExtractDelimited(2, data, [',']), false);
+      name:=ExtractDelimited(3, data, [',']);
+      writeln(name,row,col);
+      val:=StrToFloat(ExtractDelimited(4, data, [',']));
+      tempValues[high(tempValues)].row := row;
+      tempValues[high(tempValues)].col := col;
+      tempValues[high(tempValues)].name := name;
+      tempValues[high(tempValues)].value := val;
+
+    end;
     //process lines that deals with value
     procedure ProcessValueLineData();
     begin
@@ -345,6 +385,7 @@ interface
             result^.TileStaggerX := StrToInt(ExtractDelimited(1, data, [',']));
             result^.TileStaggerY := StrToInt(ExtractDelimited(2, data, [',']));
           end;
+        'v':LoadSpecificValue(data);
       end;
     end;
     //processes lines regarding grid bitmap.
@@ -581,6 +622,8 @@ interface
               //Draw debug information
               DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
               DrawText(IntToStr(map^.Tiles[row,col].SurroundingTiles[mdWest]^.kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
+              DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
+              
               DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdWest]^.center);
               DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdNorthWest]^.center);
               DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdNorth]^.center);

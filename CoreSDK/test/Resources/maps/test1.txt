@@ -80,5 +80,6 @@ mvd:0,[0.7,0.0]
 // Tile Values
 //
 // Format:
-// tv: [row index], [col index], [value name], 
-//tv: 3,3,
+// tv: [row index], [col index], [value name], [value's value]
+tv:3,3,test,0.2
+tv:3,3,blah,0.3
