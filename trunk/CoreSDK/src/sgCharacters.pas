@@ -1,14 +1,17 @@
 //=============================================================================
-// sgAnimation.pas
+// sgCharacters.pas
 //=============================================================================
 //
-// Version 0.1 -  
+// Version 0.4 -  
 // 
 //
 // Change History:
 //
 // Version 0.1:
-// - 2010-01-18: Created sgCharacters
+// - 2010-01-20:	David :	Added functions and procedures to access record data
+// - 2010-01-20:	David :	Created Angle functions, show/hide layer functions
+// - 2010-01-19:	David	: Created LoadCharacter function
+// - 2010-01-18:	David	:	Created sgCharacters
 //
 //=============================================================================
 
@@ -26,11 +29,11 @@ type
 	end;
 	
 	DirStateData = record
-		Anim : LongInt;
+		Anim 			: LongInt;
 		LayerOrder: Array of LongInt;
 	end;
 	
-	Character = ^CharacterData;
+	Character  = ^CharacterData;
 	LayerCache = Array of Array of Array of LongInt;
 
 	CharacterData = record
@@ -43,13 +46,14 @@ type
 		LastAngle 						: LongInt;
 		CurrentState	 				: LongInt;
 		CurrentDirection	 		: LongInt;
-		DirAngles							: Array of DirectionAngles;
+		DirectionParameters		: Array of DirectionAngles;
 		CharValues						: Array of LongInt;
-		DirectionParameters 	: Array of LongInt;
 		ShownLayers						: Array of Boolean;
 		ShownLayersByDirState	: Array of Array of DirStateData;
 		ShownLayerCache				: LayerCache;
 	end;
+	
+	
 		
 	//Loads Character from TextFile
 	function LoadCharacter(filename: String) : Character;
@@ -76,10 +80,148 @@ type
 //=============================================================================
 implementation
 	uses
-		crt, sgCore, sgAnimations, sgGeometry, sgResources,
-		sgImages, sgInput, sgPhysics, sgNamedIndexCollection, sgShared,
+		sgCore, sgAnimations, sgGeometry, sgResources,
+		sgImages, sgNamedIndexCollection, sgShared,
 		sgSprites, SysUtils, MyStrUtils, stringhash, StrUtils;
 //=============================================================================	
+
+  //---------------------------------------------------------------------------
+  // Character Name and Type
+  //---------------------------------------------------------------------------	
+
+	procedure CharacterSetName(c: Character; name : String);
+	begin
+		c^.CharName := name;
+	end;
+	
+	function CharacterName(c: Character) : String;
+	begin
+		result := c^.CharName;
+	end;
+	
+	procedure CharacterSetType(c: Character; name : String);
+	begin
+		c^.CharType := name;
+	end;
+	
+	function CharacterType(c: Character): String;
+	begin
+		result := c^.CharType;
+	end;
+
+  //---------------------------------------------------------------------------
+  // Character Directions and States
+  //---------------------------------------------------------------------------	
+	
+	procedure CharacterSetCurrentState(c: Character; state: Integer);
+	begin
+		c^.CurrentState := state;
+	end;
+	
+	procedure CharacterSetDirectionState(c: Character; direction: Integer);
+	begin
+		c^.CurrentState := direction;
+	end;
+	
+	function CharacterCurrentState(c: Character): LongInt;
+	begin
+		result := c^.CurrentState;
+	end;
+	
+	function CharacterCurrentDirection(c: Character): LongInt;
+	begin
+		result := c^.CurrentDirection;
+	end;
+	
+	function CharacterDirections(c: Character) : NamedIndexCollection;
+	begin
+		result := c^.Directions;
+	end;
+	
+	function CharacterStates(c: Character) : NamedIndexCollection;
+	begin
+		result := c^.States;
+	end;
+	
+	//---------------------------------------------------------------------------
+  // Character Angles
+  //---------------------------------------------------------------------------	
+		
+	function CharacterLastAngle(c: Character): LongInt;
+	begin
+		result := c^.LastAngle;
+	end;
+	
+	function CharacterAngleAt(c: Character; index : integer): DirectionAngles;
+	begin
+		result := c^.DirectionParameters[index];
+	end;
+	
+	function CharacterAnglesLength(c: Character): LongInt;
+	begin
+		result := Length(c^.DirectionParameters);
+	end;
+	
+	function CharacterAngleMinAt(c: Character; index : integer): LongInt;
+	begin
+		result := c^.DirectionParameters[index].min;
+	end;
+	
+	function CharacterAngleMaxAt(c: Character; index : integer): LongInt;
+	begin
+		result := c^.DirectionParameters[index].max;
+	end;
+	
+	function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
+	begin
+		result := c^.ShownLayers[index];
+	end;
+	
+	procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
+	begin
+		c^.CurrentDirection := direction;
+	end;
+
+  //---------------------------------------------------------------------------
+  // Character Values
+  //---------------------------------------------------------------------------		
+
+	function CharacterValueNames(c: Character) : NamedIndexCollection;
+	begin
+		result := c^.CharValueNames;
+	end;
+	
+	function CharacterValueAt(c: Character; index: Integer): LongInt;
+	begin
+		result := c^.CharValues[index];
+	end;
+	
+	function CharacterValueCount(c: Character): LongInt;
+	begin
+		result := Length(c^.CharValues);
+	end;
+	
+  //---------------------------------------------------------------------------
+  // Character Sprite
+  //---------------------------------------------------------------------------		
+	
+	function CharacterSprite(c: Character) : Sprite;
+	begin
+		result := c^.CharSprite;
+	end;
+	
+		procedure FreeCharacter(var c : character);
+	begin
+		if not assigned(c) then exit;
+		
+		FreeSprite(c^.charSprite);
+		Dispose(c);
+		c := nil;
+	end;
+	
+  //---------------------------------------------------------------------------
+  // Handle Character Layers
+  //---------------------------------------------------------------------------	
 	
 	procedure SetActiveLayer(var c: Character);
 	begin
@@ -118,8 +260,8 @@ implementation
 		begin
 			if (i = c^.CurrentDirection) then continue;
 			
-			if ((c^.DirAngles[i].min < c^.DirAngles[i].max) AND (angle >= c^.DirAngles[i].min) AND (angle <= c^.DirAngles[i].max)) OR 
-			(((c^.DirAngles[i].min > 0) AND (c^.DirAngles[i].max < 0)) AND (((angle >= c^.DirAngles[i].min) AND (angle <= 180)) OR ((angle <= c^.DirAngles[i].max) AND (angle >= -180)))) then
+			if ((c^.DirectionParameters[i].min < c^.DirectionParameters[i].max) AND (angle >= c^.DirectionParameters[i].min) AND (angle <= c^.DirectionParameters[i].max)) OR 
+			(((c^.DirectionParameters[i].min > 0) AND (c^.DirectionParameters[i].max < 0)) AND (((angle >= c^.DirectionParameters[i].min) AND (angle <= 180)) OR ((angle <= c^.DirectionParameters[i].max) AND (angle >= -180)))) then
 			begin
 				c^.CurrentDirection := i;
 				SetActiveLayer(c);
@@ -160,34 +302,10 @@ implementation
 		SetActiveLayer(c);
 	end;
 	
-	procedure SetCharacterName(c: Character; name : String);
-	begin
-		c^.CharName := name;
-	end;
-	
-	procedure SetCharacterType(c: Character; name : String);
-	begin
-		c^.CharType := name;
-	end;
-	
-	procedure SetCharacterCurrentState(c: Character; state: Integer);
-	begin
-		c^.CurrentState := state;
-	end;
-	
-	procedure SetCharacterCurrentDirection(c: Character; direction: Integer);
-	begin
-		c^.CurrentDirection := direction;
-	end;
 
-	procedure FreeCharacter(var c : character);
-	begin
-		if not assigned(c) then exit;
-		
-		FreeSprite(c^.charSprite);
-		Dispose(c);
-		c := nil;
-	end;
+  //---------------------------------------------------------------------------
+  // Handle Character Drawing
+  //---------------------------------------------------------------------------		
 	
 	procedure DrawCharacterWithStationary(c: character; stationaryState, state: integer);
 	begin
@@ -200,6 +318,10 @@ implementation
 		UpdateDirectionAnimation(c);
 		DrawSprite(c^.CharSprite);
 	end;
+	
+	//---------------------------------------------------------------------------
+  // Load Character
+  //---------------------------------------------------------------------------	
 
 	function LoadCharacter(filename: String) : Character;
 	var
@@ -208,25 +330,6 @@ implementation
 		lineno, w, h, cols, rows, count, colliIndex: integer;
 		aniTemp: AnimationTemplate;
 		bmpIDs: NamedIndexCollection;
-		
-		
-		function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt;
-		begin
-			if allowEmpty and (Length(str) = 0) then
-			begin
-				result := -1;
-			end
-			else if not TryStrToInt(str, result) then
-			begin
-				result := 0;
-				RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Value is not an integer : ' + str);
-			end
-			else if result < 0 then
-			begin
-				result := 0;
-				RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Values should be positive : ' + str);
-			end;
-		end;
 		
 		procedure SetCellDetails();
 		begin
@@ -239,12 +342,12 @@ implementation
 		
 		procedure SetName();
 		begin
-			if Length(ExtractDelimited(2, line, [':'])) > 0 then SetCharacterName(result, ExtractDelimited(1, data, [',']));
+			if Length(ExtractDelimited(2, line, [':'])) > 0 then CharacterSetName(result, ExtractDelimited(1, data, [',']));
 		end;
 		
 		procedure SetType();
 		begin
-			if Length(ExtractDelimited(2, line, [':'])) > 0 then SetCharacterType(result, ExtractDelimited(1, data, [',']));
+			if Length(ExtractDelimited(2, line, [':'])) > 0 then CharacterSetType(result, ExtractDelimited(1, data, [',']));
 		end;
 		
 		procedure AddBitmapToCharacterSprite();
@@ -298,10 +401,10 @@ implementation
 		var
 			i: integer;
 		begin
-			SetLength(result^.DirAngles, Length(result^.DirAngles) + 1);
+			SetLength(result^.DirectionParameters, Length(result^.DirectionParameters) + 1);
 			i := IndexOf(result^.Directions, ExtractDelimited(1, data, [',']));
-			result^.DirAngles[i].min := StrToInt(ExtractDelimited(2, data, [',']));
-			result^.DirAngles[i].max := StrToInt(ExtractDelimited(3, data, [',']));
+			result^.DirectionParameters[i].min := StrToInt(ExtractDelimited(2, data, [',']));
+			result^.DirectionParameters[i].max := StrToInt(ExtractDelimited(3, data, [',']));
 		end;
 		
 		procedure SetDirectionStateDetails();
@@ -436,9 +539,7 @@ implementation
 		
 		WriteLn('Creating Sprite');
 		result^.CharSprite := CreateSprite(bmpArray, NamesOf(bmpIDs));
-		WriteLn('Crash Point');
 		result^.CharSprite^.animationTemplate := aniTemp;
-		//result^.CharSprite^.layerIDs := bmpIDs;
 		if colliIndex <> -1 then SpriteSetCollisionBitmap(result^.CharSprite,bmpArray[colliIndex]);
 		result^.ShownLayerCache := UpdateShownLayerCache(result);
 		SetActiveLayer(result);
