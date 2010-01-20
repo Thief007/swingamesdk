@@ -140,6 +140,10 @@ interface
   
   /// @lib DrawSimpleText
   procedure DrawText(theText: String; textColor: Color; x, y: Single); overload;
+
+  /// @lib DrawSimpleTextPt
+  procedure DrawText(theText: String; textColor: Color; const pt: Point2D); overload;
+  
   /// @lib DrawSimpleTextOnScreen
   procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
   /// @lib DrawSimpleTextOnBitmap
@@ -812,7 +816,12 @@ implementation
   begin
     DrawText(screen, theText, textColor, ToScreenX(x), ToScreenY(y));
   end;
-  
+
+  procedure DrawText(theText: String; textColor: Color; const pt: Point2D);
+  begin
+    DrawText(theText, textColor, pt.x, pt.y);
+  end;
+
   procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
   begin
     DrawText(screen, theText, textColor, x, y);

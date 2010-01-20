@@ -84,6 +84,16 @@ interface
   /// @getter Position
   /// @static
   function CameraPos(): Point2D;
+
+  /// Returns the rectangle that encompases the area of the game world
+  /// that is currently on the screen.
+  ///
+  /// @lib
+  ///
+  /// @class Camera
+  /// @getter ScreenRect
+  /// @static
+  function CameraScreenRect(): Rectangle;
   
   /// Change the X position of the camera to a specified world coordinate. This
   /// will then be the new left most position of the screen within the world.
@@ -271,7 +281,7 @@ interface
 implementation
   uses 
     sgTrace, SysUtils, 
-    sgCore, sgGeometry, sgSprites, sgShared;
+    sgCore, sgGeometry, sgSprites, sgShared, sgImages;
 //=============================================================================
 
   ///
@@ -322,6 +332,19 @@ implementation
     
     {$IFDEF TRACE}
       TraceExit('sgCamera', 'CameraPos(): Point2D', '');
+    {$ENDIF}
+  end;
+
+  function CameraScreenRect(): Rectangle;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCamera', 'CameraScreenRect(): Rectangle', '');
+    {$ENDIF}
+    
+    result := BitmapRectangle(_cameraX, _cameraY, screen);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCamera', 'CameraScreenRect(): Rectangle', '');
     {$ENDIF}
   end;
   

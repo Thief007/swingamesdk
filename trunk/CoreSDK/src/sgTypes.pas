@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-13: Aaron  : Changed function pointer of ShapeDrawingFn to accept offset
 // - 2009-12-18: Andrew : Moved to new sprite format.
 // - 2009-12-15: Andrew : Updated animation handling to use new NamedIndexCollection.
 // - 2009-12-10: Andrew : Added cell details to bitmap
@@ -53,6 +54,11 @@ interface
     /// @array_wrapper
     /// @field data: array of String
     StringArray = array of String;
+
+    /// @type FloatArray
+    /// @array_wrapper
+    /// @field data: array of Single
+    SingleArray = array of Single;
     
     /// This type is used for mapping arrays out of the Pascal library
     ///
@@ -309,6 +315,7 @@ interface
       cellCount:  LongInt;    // The total number of cells in the bitmap
       
       nonTransparentPixels: Array of Array of Boolean;  // Pixel mask used for pixel level collisions
+      clipStack: Array of Rectangle;                    // The clipping rectangle history for the bitmap
     end;
 
     /// The bitmap type is a pointer to a BitmapData. The BitmapData record
