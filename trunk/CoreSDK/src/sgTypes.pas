@@ -55,7 +55,7 @@ interface
     /// @field data: array of String
     StringArray = array of String;
 
-    /// @type FloatArray
+    /// @type SinglesArray
     /// @array_wrapper
     /// @field data: array of Single
     SingleArray = array of Single;
