@@ -869,6 +869,7 @@ begin
   result^.cellCount := 1;
   result^.name      := name;
   result^.filename  := filename;
+  SetLength(result^.clipStack, 0);
   
   //Determine pixel level collision data
   if transparent then

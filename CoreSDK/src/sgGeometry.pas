@@ -12,6 +12,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-13: Aaron  : Added PointAdd which adds 2 pointers together.
+//                        Added PointInShape which checks if a Point is in a shape.
 // - 2009-12-21: Andrew : Moved Sprite and Bitmap rectangle function to sgSprites and sgImages
 // - 2009-12-18: Andrew : Added code to fix rectangles (+ve width and height)
 // - 2009-11-10: Andrew : Added tracing and sn and csn tags to code
@@ -258,6 +260,15 @@ interface
   /// @lib PointAtStartWithOffset
   /// @sn point:%s offset:%s
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
+
+  /// Get a text description of the point2D.
+  ///
+  /// @lib
+  ///
+  /// @class Point2D
+  /// @method ToString
+  /// @csn description
+  function PointToString(const pt: Point2D): String;
   
   /// Returns the center point of the rectangle.
   ///
@@ -1441,7 +1452,7 @@ interface
   /// @method ToString
   /// @csn description
   function MatrixToString(const m: Matrix2D) : String;
-  
+
   
   //----------------------------------------------------------------------------
   // Cosine/Sin/Tan accepting degrees
@@ -3041,6 +3052,11 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'PointAt(x, y: Single): Point2D', '');
     {$ENDIF}
+  end;
+
+  function PointToString(const pt: Point2D): String;
+  begin
+    result := FloatToStr(pt.x) + ':' + FloatToStr(pt.y);
   end;
   
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;

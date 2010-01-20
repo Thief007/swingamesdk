@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-13: Aaron  : Made all Draw Shapes  draw with an offset and made those that does not have a destination Bitmap have  an offset of cameraX and cameraY
 // - 2010-01-04: Andrew : Added PutPixel
 // - 2009-12-10: Andrew : Moved out remaining bitmap function
 // - 2009-11-06: Andrew : Moved out bitmap function
@@ -1022,37 +1023,27 @@ interface
   // Clipping
   //---------------------------------------------------------------------------
   
-  /// Set the clip rectangle of the screen.
+  /// Push a clip rectangle to the screen. This can be undone using PopClip.
   ///
-  /// @lib
-  /// @sn setClipX:%s y:%s width:%s height:%s
-  procedure SetClip(x, y, w, h: LongInt); overload;
+  /// @lib PushClipXY
+  /// @sn pushClipX:%s y:%s width:%s height:%s
+  procedure PushClip(x, y, w, h: LongInt); overload;
   
-  /// Set the clip rectangle of the screen.
+  /// Push a clip rectangle to the screen. This can be undone using PopClip.
   ///
-  /// @lib SetClipRect
-  /// @sn setClip:%s
-  procedure SetClip(const r: Rectangle); overload;
-  
-  /// Set the clipping rectangle of a bitmap.
-  ///
-  /// @lib SetClipForBitmap
-  /// @sn bitmap:%s setClipRectX:%s y:%s width:%s height:%s
-  ///
-  /// @class Bitmap
-  /// @method SetClip
-  /// @csn setClipRectX:%s y:%s width:%s height:%s
-  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
-  
-  /// Set the clipping rectangle of a bitmap.
+  /// @lib PushClipRect
+  /// @sn pushClip:%s
+  procedure PushClip(const r: Rectangle); overload;
+
+  /// Add the clipping rectangle of a bitmap and uses the intersect between the new rectangle and previous clip.
   /// 
-  /// @lib SetClipRectForBitmap
-  /// @sn bitmap:%s setClipRect:%s
+  /// @lib PushClipRectForBitmap
+  /// @sn bitmap:%s PushClipRect:%s
   ///
   /// @class Bitmap
-  /// @overload SetClip SetClipRect
-  /// @csn setClip:%s
-  procedure SetClip(bmp: Bitmap; const r: Rectangle); overload;
+  /// @overload PushClip PushClipRect
+  /// @csn pushClip:%s
+  procedure PushClip(bmp: Bitmap; const r: Rectangle); overload;  
   
   /// Reset the clipping rectangle of the screen.
   /// 
@@ -1066,6 +1057,68 @@ interface
   /// @class Bitmap
   /// @method ResetClip
   procedure ResetClip(bmp: Bitmap); overload;
+
+  /// Set the clip rectangle of the bitmap.
+  ///
+  /// @lib SetBmpClip
+  /// @sn bitmap:%s setClip:%s
+  ///
+  /// @class Bitmap
+  /// @method SetClip
+  procedure SetClip(bmp: Bitmap; const r: Rectangle); overload;
+
+  /// Set the clip rectangle of the screen.
+  ///
+  /// @lib SetClip
+  /// @sn setClip:%s
+  procedure SetClip(const r: Rectangle); overload;
+  
+  /// Set the clip rectangle of the screen.
+  ///
+  /// @lib SetClipXY
+  /// @sn setClipX:%s y:%s width:%s height:%s
+  procedure SetClip(x, y, w, h: LongInt); overload;
+
+  /// Set the clip rectangle of the bitmap.
+  ///
+  /// @lib SetBmpClipXY
+  /// @sn bitmap:%s setClipX:%s y:%s width:%s height:%s
+  ///
+  /// @class Bitmap
+  /// @overload SetClip SetClipXY
+  /// @csn setClipX:%s y:%s width:%s height:%s
+  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
+  
+  /// Pop the clip rectangle of the screen.
+  ///
+  /// @lib PopClipScreen
+  /// @sn PopClip:%s
+  procedure PopClip(); overload;
+
+  /// Pop the clipping rectangle of a bitmap.
+  /// 
+  /// @lib PopClipBmp
+  /// @sn PopClipBitmap:%s
+  ///
+  /// @class Bitmap
+  /// @method PopClip
+  procedure PopClip(bmp: Bitmap); overload;
+
+  /// Returns the rectangle of the currentl clip of bitmap
+  ///
+  /// @lib CurrentBmpClip
+  /// @sn currentClip:%s
+  ///
+  /// @class Bitmap
+  /// @getter CurrentClip
+  function CurrentClip(bmp: Bitmap): Rectangle; overload;
+
+  /// Returns the rectangle of the currentl clip of bitmap
+  ///
+  /// @lib CurrentScreenClip
+  ///
+  function CurrentClip(): Rectangle; overload;
+
   
   
   //---------------------------------------------------------------------------
@@ -1804,7 +1857,9 @@ implementation
   
   procedure ResetClip(bmp: Bitmap); overload;
   begin
-    if bmp = nil then begin RaiseException('Cannot reset clip, bmp must not be nil'); exit; end;
+    if bmp = nil then exit;
+    
+    SetLength(bmp^.clipStack, 0);
     SDL_SetClipRect(bmp^.surface, nil);
   end;
 
@@ -1813,29 +1868,85 @@ implementation
     ResetClip(screen);
   end;
   
-  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
+  procedure DoSetClip(bmp: Bitmap; const r: Rectangle); overload;
   var
     rect: SDL_Rect;
   begin
     if bmp = nil then begin RaiseException('Cannot set clip, bmp must not be nil'); exit; end;
-    rect := NewSDLRect(x, y, w, h);
+    rect := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
     SDL_SetClipRect(bmp^.surface, @rect);
   end;
   
-  procedure SetClip(bmp: Bitmap; const r: Rectangle); overload;
+  procedure PushClip(bmp: Bitmap; const r: Rectangle); overload;
   begin
-    SetClip(bmp, Round(r.x), Round(r.y), r.width, r.height);
+    SetLength(bmp^.clipStack, Length(bmp^.clipStack)+1);
+    
+    if Length(bmp^.clipStack) > 1 then
+      bmp^.clipStack[high(bmp^.clipStack)] := Intersection(r, bmp^.clipStack[High(bmp^.clipStack)])
+    else
+      bmp^.clipStack[high(bmp^.clipStack)] := r;
+    
+    DoSetClip(bmp, bmp^.clipStack[high(bmp^.clipStack)]);
   end;
 
   procedure SetClip(x, y, w, h: LongInt); overload;
   begin
-    SetClip(screen, x, y, w, h);
+    SetClip(screen, RectangleFrom(x, y, w, h));
   end;
   
+  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
+  begin
+    SetClip(bmp, RectangleFrom(x, y, w, h));
+  end;
+
+  procedure PushClip(x, y, w, h: LongInt); overload;
+  begin
+    PushClip(screen, RectangleFrom(x, y, w, h));
+  end;
+  
+  procedure PushClip(const r: Rectangle); overload;
+  begin
+    PushClip(screen, r);
+  end;
+
+  procedure SetClip(bmp: Bitmap; const r: Rectangle); overload;
+  begin
+    SetLength(bmp^.clipStack, 0);
+    PushClip(bmp, r);
+  end;
+
   procedure SetClip(const r: Rectangle); overload;
   begin
-    SetClip(screen, Round(r.x), Round(r.y), r.width, r.height);
+    SetClip(screen, r);
   end;
+
+  procedure PopClip(); overload;
+  begin
+    PopClip(screen);
+  end;
+  
+  procedure PopClip(bmp: Bitmap); overload;
+  begin
+    Setlength(bmp^.clipStack, Length(bmp^.clipStack)-1);
+    if Length(bmp^.clipStack) > 0 then
+      DoSetClip(bmp, bmp^.clipStack[High(bmp^.clipStack)])
+    else
+      ResetClip(bmp);
+  end;
+
+  function CurrentClip(bmp: Bitmap): Rectangle; overload;
+  begin
+    if Length(bmp^.clipStack) <> 0 then result:= bmp^.clipStack[high(bmp^.clipStack)]
+    else
+      result:=BitmapRectangle(0, 0, bmp);
+  end;
+
+  function CurrentClip(): Rectangle; overload;
+  begin
+    result := CurrentClip(screen);
+  end;
+
+  
   
   //=============================================================================
   
