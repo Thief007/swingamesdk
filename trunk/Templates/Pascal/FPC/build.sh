@@ -221,10 +221,13 @@ doWindowsCompile()
     
     echo "  ... Compiling $GAME_NAME"
     
-    LIB_DIR=`echo $LIB_DIR | awk '{sub("/c/", "c:/"); print}'`
-    TMP_DIR=`echo $TMP_DIR | awk '{sub("/c/", "c:/"); print}'`
-    SRC_DIR=`echo $SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
-    OUT_DIR=`echo $OUT_DIR | awk '{sub("/c/", "c:/"); print}'`
+    LIB_DIR=`echo $LIB_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    TMP_DIR=`echo $TMP_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    SRC_DIR=`echo $SRC_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
+    SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
+    SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
+    SG_INC=`echo $SG_INC | sed 's/\/\(.\)\//\1:\//'`            #awk '{sub("/c/", "c:/"); print}'`
 
     echo "  ... Creating Resources"
     windres ${SRC_DIR}/SwinGame.rc ${SRC_DIR}/GameLauncher.res

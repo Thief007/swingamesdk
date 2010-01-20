@@ -95,8 +95,8 @@ if [ "$OS" = "$MAC" ]; then
 elif [ "$OS" = "$WIN" ]; then
     LIB_DIR="${APP_PATH}/lib"
     # FPC paths require c:/
-    SDK_SRC_DIR=`echo $SDK_SRC_DIR | awk '{sub("/c/", "c:/"); print}'`
-    OUT_DIR=`echo $OUT_DIR | awk '{sub("/c/", "c:/"); print}'`
+		SDK_SRC_DIR=`echo $SDK_SRC_DIR | sed 's/\/\(.\)\//\1:\//'`
+		OUT_DIR=`echo $OUT_DIR | sed 's/\/\(.\)\//\1:\//'`
 fi
 
 if [ $INSTALL != "N" ]; then
@@ -353,6 +353,8 @@ then
         DisplayHeader
         
         PrepareTmp
+				
+				
         
         fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi

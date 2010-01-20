@@ -279,7 +279,7 @@ def file_visitor(the_file, other):
     my_writer.close()
 
 def main():
-    logging.basicConfig(level=logging.INFO,
+    logging.basicConfig(level=logging.WARNING,
                         format='%(asctime)s - %(levelname)s - %(message)s',
                         stream=sys.stdout)
     

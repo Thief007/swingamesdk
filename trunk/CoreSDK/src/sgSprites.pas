@@ -901,7 +901,7 @@ implementation
     i: Integer;
   begin
     SetLength(layerNames, Length(layers));
-    for i := 0 to Length(layers) do
+    for i := 0 to High(layers) do
     begin
       layerNames[i] := 'layer' + IntToStr(i);
     end;

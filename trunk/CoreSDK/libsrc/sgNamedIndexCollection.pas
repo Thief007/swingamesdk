@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-20: David  : Added NamesOf to return names in collection
 // - 2009-12-15: Andrew : Created
 //=============================================================================
 
@@ -26,7 +27,8 @@ interface
   /// The number of names in the collection
   ///
   function NameCount(const col: NamedIndexCollection): Integer;
-  
+
+  function NamesOf(const col: NamedIndexCollection): StringArray;
   
   /// Add a new name to the index. Returns the index of the added element or
   /// -1 if the add fails.
@@ -64,6 +66,14 @@ uses sgShared, stringhash;
   begin
     result := Length(col.names);
   end;
+	
+	function NamesOf(const col: NamedIndexCollection): StringArray;
+	var
+		i: Integer;
+  begin
+		result := col.names;
+  end;
+
 
   function AddName(var col: NamedIndexCollection; name: String): Integer;
   var
