@@ -12,11 +12,61 @@ uses sgTypes;
   
   function ExtractDelimitedWithRanges(index: LongInt; value: String): String;
   function ProcessRange(value: String): LongIntArray;
+  function ProcessFloatRange(value: String): SingleArray;
+
+  function MyStrToInt(str: String): LongInt; overload;
+  function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt; overload;
+  
+  function MyStrToFloat(str: String): Extended; overload;
+  function MyStrToFloat(str: String; allowEmpty: Boolean) : Extended; overload;
 
 implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
     sgShared;
+
+  function MyStrToInt(str: String): LongInt; overload;
+  begin
+    if Length(str) = 0 then result := 0
+    else result := StrToInt(Trim(str));
+  end;
+
+  function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt; overload;
+  begin
+    if allowEmpty and (Length(str) = 0) then
+    begin
+      result := -1;
+    end
+    else if not TryStrToInt(str, result) then
+    begin
+      result := 0;
+      RaiseException('Value is not an integer : ' + str);
+    end
+    else if result < 0 then
+    begin
+      result := 0;
+      RaiseException('Value is not an integer : ' + str);
+    end;
+  end;
+  
+  function MyStrToFloat(str: String): Extended; overload;
+  begin
+    if Length(str) = 0 then result := 0
+    else result := StrToFloat(Trim(str));
+  end;
+
+  function MyStrToFloat(str: String; allowEmpty: Boolean) : Extended; overload;
+  begin
+    if allowEmpty and (Length(str) = 0) then
+    begin
+      result := 0.0;
+    end
+    else if not TryStrToFloat(str, result) then
+    begin
+      result := 0;
+      RaiseException('Value is not a number : ' + str);
+    end;
+  end;
 
   {$ifndef FPC} 
   // Delphi land
@@ -46,7 +96,7 @@ implementation
     i, count, start: LongInt;
     inRange: Boolean;
   begin
-    SetLength(result, 0);
+    //SetLength(result, 0);
     inRange := false;
     result := '';
     count := 1; //1 is the first index... not 0
@@ -120,13 +170,7 @@ implementation
     begin
       SetLength(result, Length(result) + 1);
       result[High(result)] := val;
-    end;
-  
-    function MyStrToInt(str: String): LongInt;
-    begin
-      if Length(str) = 0 then result := 0
-      else result := StrToInt(Trim(str));
-    end;
+    end;  
   begin
     value := Trim(value);
     SetLength(result, 0);
@@ -182,5 +226,42 @@ implementation
       i := i + 1;
     end;
   end;
+  
+  function ProcessFloatRange(value: String): SingleArray;
+  var
+    i, count : LongInt;
+    temp: Extended;
+    part: String;
+  
+    procedure _AddToResult(val: Single);
+    begin
+      SetLength(result, Length(result) + 1);
+      result[High(result)] := val;
+    end;
+  begin
+    value := Trim(value);
+    SetLength(result, 0);
+  
+    if (value[1] <> '[') or (value[Length(value)] <> ']') then
+      exit; //not a range
 
+    // Remove the [ and ]
+    value := MidStr(value, 2, Length(value) - 2);
+  
+    i := 0;
+    count := CountDelimiter(value, ',');
+  
+    while i <= count do
+    begin
+      part := Trim(ExtractDelimited(i + 1, value, [',']));
+    
+      if TryStrToFloat(part, temp) then
+      begin
+        //just "123.45" so...
+        _AddToResult(temp);
+      end;
+      
+      i := i + 1;
+    end;
+  end;
 end.
