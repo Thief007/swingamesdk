@@ -423,24 +423,6 @@ var
   line, id, data, path: String;
   lineNo, maxId: Integer;
   
-  function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt;
-  begin
-    if allowEmpty and (Length(str) = 0) then
-    begin
-      result := -1;
-    end
-    else if not TryStrToInt(str, result) then
-    begin
-      result := 0;
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Value is not an integer : ' + str);
-    end
-    else if result < 0 then
-    begin
-      result := 0;
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Values should be positive : ' + str);
-    end;
-  end;
-  
   procedure AddRow(myRow: RowData);
   var
     j: LongInt;
