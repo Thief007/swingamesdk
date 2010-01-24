@@ -72,7 +72,7 @@ type
 	function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
 	
 	//Inverts the boolean of Showlayer for the layer at the index
-	procedure HideShowLayer(c: Character; index: integer);
+	procedure ToggleLayerVisibility(c: Character; index: integer);
 	
 	//Frees the pointer to the character
 	procedure FreeCharacter(var c: Character);
@@ -82,7 +82,7 @@ implementation
 	uses
 		sgCore, sgAnimations, sgGeometry, sgResources,
 		sgImages, sgNamedIndexCollection, sgShared,
-		sgSprites, SysUtils, MyStrUtils, stringhash, StrUtils;
+		sgSprites, SysUtils, MyStrUtils, StrUtils;
 //=============================================================================	
 
   //---------------------------------------------------------------------------
@@ -295,7 +295,7 @@ implementation
 		end;		
 	end;
 	
-	procedure HideShowLayer(c: Character; index: integer);
+	procedure ToggleLayerVisibility(c: Character; index: integer);
 	begin
 		c^.ShownLayers[index] := not c^.ShownLayers[index];
 		c^.ShownLayerCache := UpdateShownLayerCache(c);
