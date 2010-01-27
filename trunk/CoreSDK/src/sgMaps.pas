@@ -564,6 +564,8 @@ interface
   //procedure to highlight one tile.
   procedure HighlightTile(highlightedTile: Tile; map:Map);
   begin
+    if not assigned(highlightedTile) then exit;
+    
     DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, CameraPos*-1);
   end;
   //updates whether a tile is highlighted.
@@ -767,7 +769,8 @@ interface
         for j := xStart to xEnd do
         begin
           x := initX + (j - xStart) * dx; //TODO: Optimize - j start at 0 instead...
-          if map^.Tiles[x,y].Kind = k then
+          writeln(x,',',y);
+          if map^.Tiles[y,x].Kind = k then
           begin
             if SpriteRectCollision(s, x * TileWidth, yCache, TileWidth, TileHeight) then
             begin
