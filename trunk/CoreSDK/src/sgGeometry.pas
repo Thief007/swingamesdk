@@ -789,7 +789,7 @@ interface
   /// @csn intersectionWith:$s result:%s
   function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
   
-  /// Returns the intersection point of a ray with a line.
+  /// Returns the intersection point of a ray with a line, returning true if the ray intesects with the line.
   ///
   /// @lib
   /// @sn rayFrom:%s heading:%s intersectsLine:%s result:%s
@@ -964,7 +964,22 @@ interface
   /// @calls VectorMultiply
   operator * (const v: Vector; s: Single) r : Vector;
   {$endif}
-
+  
+  /// Determines if two vectors are equal.
+  /// 
+  /// @lib
+  /// @sn vector:%s equals:%s
+  /// 
+  /// @class Vector
+  /// @method EqualsVector
+  function VectorsEqual(const v1, v2: Vector): Boolean;
+  
+  {$ifdef FPC}
+  /// @class Vector
+  /// @calls VectorsEqual
+  operator = (const v1, v2: Vector) r : Boolean;
+  {$endif}
+  
   /// Calculates the dot product (scalar product) between the two vector
   /// parameters  rovided (``v1`` and ``v2``). It returns the result as a
   /// scalar value.
@@ -1213,8 +1228,17 @@ interface
   /// 
   /// @class Rectangle
   /// @getter Points
-  function PointsFrom(const rect: Rectangle): Point2DArray;
+  function PointsFrom(const rect: Rectangle): Point2DArray; overload;
   
+  /// Returns the two points from the ends of a line segment.
+  /// 
+  /// @lib
+  /// @fixed_result_size 2
+  /// @sn pointsFromLine:%s
+  /// 
+  /// @class LineSegment
+  /// @getter Points
+  function PointsFrom(const line: LineSegment): Point2DArray; overload;
   
   //---------------------------------------------------------------------------
   // Angle Calculation
@@ -1484,10 +1508,123 @@ implementation
 
   const
     DEG_TO_RAD = 0.0174532925199432957692369076848861271344287188854172545609;
+  
+  //
+  // This internal function is used to calculate the vector and determine if a hit has occurred...
+  //
+  // pts  contains the array of points to search from. These represent the widest points of the shape being tested
+  //      against the lines.
+  //
+  // lines      These are the lines being tested for collision.
+  //
+  // velocity   The direction/distance of the movement of the points (used to find impact point)
+  //
+  // maxIds     The index of the line that is the furthest colliding line back from the points.
+  //
+  function _VectorOverLinesFromLines(const srcLines, boundLines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  var
+    ray, vOut: Vector;
+    i, j, k: LongInt;
+    maxDist: Single;
+    lnPoints: Point2DArray;
+    bothDidHit: Boolean;
+    
+    // Search from the startPt for the ray 
+    function _RayFromPtHitLine(startPt: Point2D; const toLine: LineSegment; myRay: Vector): Boolean;
+    var
+      ptOnLine: Point2D;
+      dist: Single;
+    begin
+      //DrawCircle(ColorWhite, pts[j], 2);
+      result := False;
+      
+      // Cast myRay back from startPt to find line pts... out on ptOnLine
+      // ptOnLine is then the point that the ray intersects with the line
+      if RayIntersectionPoint(startPt, myRay, toLine, ptOnLine) then
+      begin
+        //DrawCircle(ColorRed, ptOnLine, 1);
+        //DrawLine(ColorRed, pts[j], ptOnLine);
+        
+        if not PointOnLine(ptOnLine, toLine) then exit; //this points ray misses the line
+        result := True;
+        
+        // Calculate the distance from the point on the line to the point being tested
+        dist := PointPointDistance(ptOnLine, startPt);
+        
+        // Check if the distance is the new max distance
+        if (dist > maxDist) or (maxIdx = -1) then
+        begin
+          maxDist := dist;
+          maxIdx := i;  //  We hit with the current line
+          if VectorsEqual(myRay, ray) then // if we are searching back...
+            vOut := VectorFromPoints(startPt, ptOnLine)
+          else // if we are searching forward (using velocity)
+            vOut := VectorFromPoints(ptOnLine, startPt);
+          vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1)
+        end;      
+      end;
+    end;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', '_VectorOverLinesFromLines(const pts: Point2DArray', '');
+    {$ENDIF}
+    
+    // Cast ray searching back from pts... looking for the impact point
+    ray := InvertVector(velocity);  // the ray
+    vOut := VectorTo(0,0);          // the vector out (from the point to over the line, i.e. moving the point along this vector moves it back over the line)
+    
+    // Indicate no find so far....
+    maxIdx := -1;
+    maxDist := -1;
+    
+    //
+    //  Search all lines for hit points - cast ray back from line ends and find where these intersect with the bound lines
+    //
+    for i := 0 to High(boundLines) do
+    begin
+      
+      // for all source lines...
+      for j := 0 to High(srcLines) do
+      begin
+        // Get the points from the srcLine
+        lnPoints := PointsFrom(srcLines[j]);
+        bothDidHit := True;
+        
+        for k := 0 to High(lnPoints) do
+        begin
+          bothDidHit := _RayFromPtHitLine(lnPoints[k], boundLines[i], ray) and bothDidHit;
+        end;
+        
+        if bothDidHit then continue;
+        
+        // Search from the bound line to the source 
+        lnPoints := PointsFrom(boundLines[j]);
+        for k := 0 to High(lnPoints) do
+        begin
+          _RayFromPtHitLine(lnPoints[k], srcLines[i], velocity);
+        end;        
+      end;
+    end;
 
+    result.x := Ceiling(vOut.x);
+    result.y := Ceiling(vOut.y);
+
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', '_VectorOverLinesFromLines(const pts: Point2DArray', '');
+    {$ENDIF}
+  end;
 
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
+  //
+  // pts  contains the array of points to search from. These represent the widest points of the shape being tested
+  //      against the lines.
+  //
+  // lines      These are the lines being tested for collision.
+  //
+  // velocity   The direction/distance of the movement of the points (used to find impact point)
+  //
+  // maxIds     The index of the line that is the furthest colliding line back from the points.
   //
   function _VectorOverLinesFromPoints(const pts: Point2DArray; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
   var
@@ -1500,13 +1637,14 @@ implementation
       TraceEnter('sgGeometry', '_VectorOverLinesFromPoints(const pts: Point2DArray', '');
     {$ENDIF}
     
-    // Cast ray searching for points back from shape
-    ray := InvertVector(velocity);
-    vOut := VectorTo(0,0);
-
+    // Cast ray searching back from pts... looking for the impact point
+    ray := InvertVector(velocity);  // the ray
+    vOut := VectorTo(0,0);          // the vector out (from the point to over the line, i.e. moving the point along this vector moves it back over the line)
+    
+    // Indicate no find so far....
     maxIdx := -1;
     maxDist := -1;
-
+    
     //Search all lines for hit points
     for i := 0 to High(lines) do
     begin
@@ -1515,7 +1653,8 @@ implementation
       begin
         //DrawCircle(ColorWhite, pts[j], 2);
 
-        // Cast a ray back from the test point to find line pts... out on ptOnLine
+        // Cast a ray back from this point to find line pts... out on ptOnLine
+        // ptOnLine is then the point that the ray intersects with the line
         if RayIntersectionPoint(pts[j], ray, lines[i], ptOnLine) then
         begin
           //DrawCircle(ColorRed, ptOnLine, 1);
@@ -1523,8 +1662,10 @@ implementation
           
           if not PointOnLine(ptOnLine, lines[i]) then continue; //this points ray misses the line
           
+          // Calculate the distance from the point on the line to the point being tested
           dist := PointPointDistance(ptOnLine, pts[j]);
           
+          // Check if the distance is the new max distance
           if (dist > maxDist) or (maxIdx = -1) then
           begin
             maxDist := dist;
@@ -1796,6 +1937,20 @@ implementation
     r := VectorMultiply(v, s);
   end;
   {$endif}
+  
+  function VectorsEqual(const v1, v2: Vector): Boolean;
+  begin
+    result := (v1.x = v2.x) and (v1.y = v2.y);
+  end;
+  
+  {$ifdef FPC}
+  /// @class Vector
+  /// @calls VectorsEqual
+  operator = (const v1, v2: Vector) r : Boolean;
+  begin
+    r := VectorsEqual(v1, v2);
+  end;
+  {$endif}  
 
   function InvertVector(const v: Vector): Vector;
   begin
@@ -3786,7 +3941,8 @@ implementation
       TraceEnter('sgGeometry', 'VectorOutOfRectFromRect(const src, bounds: Rectangle', '');
     {$ENDIF}
     
-    result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, maxIdx);
+    result := _VectorOverLinesFromLines(LinesFrom(src), LinesFrom(bounds), velocity, maxIdx);
+    //result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, maxIdx);
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorOutOfRectFromRect(const src, bounds: Rectangle', '');
@@ -3959,7 +4115,7 @@ implementation
   // Points functions and procedures
   //---------------------------------------------------------------------------
   
-  function PointsFrom(const rect: Rectangle): Point2DArray;
+  function PointsFrom(const rect: Rectangle): Point2DArray; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'PointsFrom(const rect: Rectangle): Point2DArray', '');
@@ -3975,7 +4131,22 @@ implementation
       TraceExit('sgGeometry', 'PointsFrom(const rect: Rectangle): Point2DArray', '');
     {$ENDIF}
   end;
-
+  
+  function PointsFrom(const line: LineSegment): Point2DArray; overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'PointsFrom(line): Point2DArray', '');
+    {$ENDIF}
+    
+    SetLength(result, 2);
+    result[0] := line.startPoint;
+    result[1] := line.endPoint;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'PointsFrom(line): Point2DArray', '');
+    {$ENDIF}
+  end;
+  
   function CenterPoint(const c: Circle): Point2D; overload;
   begin
     {$IFDEF TRACE}
