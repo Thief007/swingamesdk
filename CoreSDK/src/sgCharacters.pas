@@ -507,9 +507,9 @@ implementation
     SetLength(bmpArray, 0);
     
     {$IFDEF UNIX}
-      path := PathToResource('characters\' + filename);
-    {$ELSE}
       path := PathToResource('characters/' + filename);
+    {$ELSE}
+      path := PathToResource('characters\' + filename);
     {$ENDIF}
     lineNo := 0;
     
