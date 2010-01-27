@@ -298,7 +298,12 @@ interface
   /// @lib LineFromPointToPoint
   /// @sn lineFrom:%s to:%s
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
-  
+  ///returns array of lines from a triangle strip shape
+  function LinesFromShapeAsTriangleStrip(const s: shape): LinesArray; overload;
+  ///returns the number of lines in a given shape
+  function LineCount(const s: Shape): LongInt;
+  ///returns array of lines for a given shape.
+  function LinesFrom(const s: shape): LinesArray; overload;
   /// Returns a line from a starting point to the point at the end of the
   /// mv vector.
   ///
@@ -3113,7 +3118,7 @@ implementation
           RaiseException('Shape not Recognized when checking if point is in shape.');
           exit;
         end;
-      end;
+    end;
   end;
   
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
@@ -3155,6 +3160,77 @@ implementation
     result[0] := LineFrom(tri[0], tri[1]);
     result[1] := LineFrom(tri[1], tri[2]);
     result[2] := LineFrom(tri[2], tri[0]);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
+    {$ENDIF}
+  end;
+
+  function LinesFromShapeAsTriangleStrip(const s: shape): LinesArray; overload;
+  var
+    pts:Point2DArray;
+    i:LongInt;
+  begin
+    pts:= PrototypePoints(s^.prototype);
+    
+    SetLength(result, LineCount(s));
+    if Length(result) <= 0 then exit;
+    
+    for i := 0 to Length(pts) - 3 do
+    begin
+      result[i * 2]     := LineFrom(pts[i], pts[i + 1]);
+      result[i * 2 + 1] := LineFrom(pts[i], pts[i + 2]);
+    end;
+
+    result[high(result)] := LineFrom(pts[High(pts) - 1], pts[High(pts)]);
+  end;
+
+  function LineCount(const s: Shape): LongInt;
+  var
+  k: ShapeKind;
+  begin
+    k:=PrototypeKind(s^.prototype);
+    case k of
+      pkCircle: result := 0;
+      pkLine: result := 1;
+      pkTriangle: result := 3;
+      //pkLineList: result := PointOnLineList(pt,s);
+      //pkLineStrip: result := PointOnLineStrip(pt,s);
+      //pkPolygon: result := 3;
+      pkTriangleStrip, pkTriangleFan: result := (2*(PrototypePointCount(s^.prototype))-3);
+      pkTriangleList: result := ((PrototypePointCount(s^.prototype) div 3)*3);
+      else
+        begin
+          RaiseException('Shape not Recognized when getting line out of shape.');
+          exit;
+        end;
+    end;
+  end;
+  function LinesFrom(const s: shape): LinesArray; overload;
+  var
+  k: ShapeKind;
+  pts: Point2DArray;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
+    {$ENDIF}
+    k:=PrototypeKind(s^.prototype);
+    pts:= PrototypePoints(s^.prototype);
+    case k of
+      pkCircle: SetLength(result, 0);
+      //pkLine: result := PointOnLine(pt, Linefrom(pts[0],pts[1]));
+      pkTriangle: result := LinesFrom(TriangleFrom(pts[0],pts[1],pts[2]));
+      //pkLineList: result := PointOnLineList(pt,s);
+      //pkLineStrip: result := PointOnLineStrip(pt,s);
+      pkTriangleStrip: result := LinesFromShapeAsTriangleStrip(s);
+      //pkTriangleFan: result := PointInTriangleFan(pt,s);
+      //pkTriangleList: result := PointInTriangleList(pt,s);
+      else
+        begin
+          RaiseException('LinesFrom not implemented with this kind of shape.');
+          exit;
+        end;
+    end;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
