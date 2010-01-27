@@ -11,7 +11,6 @@ var
 	c: Character;
 	i: integer;
 	p2d : Array of Point2D;
-	charDetails: Panel
 	
 begin
   OpenAudio();
@@ -43,9 +42,6 @@ begin
 //		DrawCharacter(c);
 		UpdateSpriteAnimation(c^.CharSprite);
 		MoveSprite(c^.CharSprite);
-		
-		if RegionClickedBool then WriteLn('Worky');
-		
 		
 		if KeyDown(vk_Up) then c^.CharSprite^.velocity:= p2d[0]
 		else if KeyDown(vk_Down) then c^.CharSprite^.velocity:= p2d[1]
