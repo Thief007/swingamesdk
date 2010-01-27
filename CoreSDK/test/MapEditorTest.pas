@@ -38,6 +38,7 @@ var
   myMap: Map;
 	c: Character;
   p2d : Point2DArray;
+  i,j : LongInt;
 begin
   OpenAudio();
   OpenGraphicsWindow('Maps Tests', 640, 480);
@@ -67,6 +68,9 @@ begin
     ClearScreen(ColorBlack);
     DrawMap(myMap);
 
+
+
+
 		DrawCharacterWithStationary(c, 0, 1);
 //		DrawCharacter(c);
 		UpdateSpriteAnimation(c^.CharSprite);
@@ -80,6 +84,14 @@ begin
       else c^.CharSprite^.velocity:= p2d[4];
     end;
 		if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
+
+
+
+    if SpriteHasCollidedWithTile(myMap, 2, c^.CharSprite, i, j) then
+    begin
+      WriteLn('Highlighting: ', i, ':', j);
+      HighLightTile(@myMap^.Tiles[j, i], myMap);
+    end;
 
     
     DrawFramerate(0,0);
