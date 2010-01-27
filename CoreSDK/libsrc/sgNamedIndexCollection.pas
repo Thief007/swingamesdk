@@ -68,8 +68,6 @@ uses sgShared, stringhash;
   end;
 	
 	function NamesOf(const col: NamedIndexCollection): StringArray;
-	var
-		i: Integer;
   begin
 		result := col.names;
   end;
