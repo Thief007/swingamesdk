@@ -60,6 +60,10 @@ interface
   procedure Deselect(map:Map; tile:Tile);
   procedure HighlightTile(highlightedTile: Tile; map:Map);
   procedure AllocateValue(map:map; tile:Tile; name:String; val:Single);
+  function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
+  function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+
+
 
   function TileAt(map: Map; row, col: LongInt): Tile;
 
@@ -495,7 +499,7 @@ interface
   end;
 
 
-  Procedure RangeOfRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
+  Procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
   begin
     // Calculate the tiles that are on the screen - only draw these
     startY := Trunc(r.Y / map^.TileHeight) - 1;
@@ -579,7 +583,7 @@ interface
   var
   row,col,startCol, startRow, endCol, endRow:LongInt;
   begin
-    RangeOfRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
       for row:=startRow to endRow do
       begin
         for col:=startCol to endCol do
@@ -605,7 +609,7 @@ interface
   begin
     PushMapClip(map);
     
-    RangeOfRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
 
     // Loop through all the layers + and additional one for debug info
     for layer:= 0 to map^.MapLayer do
@@ -666,6 +670,122 @@ interface
     //WriteLn('AllocateValue: ', name, ' := ', val, ' @idx ', idx, ' ', High(tile^.values));
     tile^.Values[idx] := val;
   end;
+
+
+    //gets potential collision and makes a rect out of it.
+  function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
+  var
+    startPoint, endPoint: Rectangle;
+    startX, startY, endX, endY: LongInt;
+  begin
+    with map^ do begin
+      startPoint := RectangleFrom(
+        round( ((s^.position.x - s^.velocity.x) / TileWidth) - 1) * TileWidth,
+        round( ((s^.position.y - s^.velocity.y) / tileheight) - 1) * tileheight,
+        (round( SpriteWidth(s) / TileWidth) + 2) * TileWidth,
+        (round( SpriteHeight(s) / tileheight) + 2) * tileheight
+      );
+      endPoint := RectangleFrom(
+        round(((s^.position.x + SpriteWidth(s)) / TileWidth) - 1) * TileWidth,
+        round(((s^.position.y + SpriteHeight(s)) / tileheight) - 1) * tileheight,
+        (round(SpriteWidth(s) / TileWidth) + 2) * TileWidth,
+        (round(SpriteHeight(s) / tileheight) + 2) * tileheight
+      );
+    end; // with
+
+    //Encompassing Rectangle
+    if startPoint.x < endPoint.x then
+    begin
+      startX := round(startPoint.x);
+      endX := round(endPoint.x + endPoint.width);
+    end
+    else
+    begin
+      startX := round(endPoint.x);
+      endX := round(startPoint.x + startPoint.width);
+    end;
+
+    if startPoint.y < endPoint.y then
+    begin
+      startY := round(startPoint.y);
+      endY := round(endPoint.y + endPoint.height);
+    end
+    else
+    begin
+      startY := round(endPoint.y);
+      endY := round(startPoint.y + startPoint.height);
+    end;
+
+    result := RectangleFrom(startX, startY, endX - startX, endY - startY);
+
+    //Debug Info
+    //DrawRectangle(ColorYellow, startPoint.x, startPoint.y, startPoint.width, startPoint.height);
+    //DrawRectangle(ColorWhite, endPoint.x, endPoint.y, endPoint.width, endPoint.height);
+    //DrawRectangle(ColorGreen, result.x, result.y, result.width, result.height);
+  end;
+
+// outs the tile X and Y that the sprite has collided with  map and result is a boolean if it did collide.
+  function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  var
+    y, x, yCache, dy, dx, i, j, initY, initX: LongInt;
+    xStart, yStart, xEnd, yEnd: LongInt;
+    rectSearch: Rectangle;
+    side: CollisionSide;
+  begin
+    result := false;
+    if map = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
+    if s = nil then begin RaiseException('No Sprite suppled (nil)'); exit; end;
+//makes a rect of bounding area to search so that it doesn't need to search the whole map.
+    rectSearch := GetPotentialCollisions(map, s);
+
+//makes range out of rect.
+
+    MapRangeFromRect(rectSearch, map, xStart, yStart, xEnd, yEnd);
+
+//checks which side to use to check for collision
+      
+    side := SideForCollisionTest(s^.velocity);
+
+    case side of
+      TopLeft: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+      TopRight: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
+      BottomLeft: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
+      BottomRight: begin dy := -1; dx := -1; initY := yEnd; initX := xEnd; end;
+      Top: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+      Bottom: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
+      Left: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+      Right: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
+      else
+      begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+    end;
+
+    with map^ do begin
+      for i := yStart to yEnd do
+      begin
+        y := initY + (i - yStart) * dy;
+        yCache := y * TileHeight;
+        for j := xStart to xEnd do
+        begin
+          x := initX + (j - xStart) * dx; //TODO: Optimize - j start at 0 instead...
+          if map^.Tiles[x,y].Kind = k then
+          begin
+            if SpriteRectCollision(s, x * TileWidth, yCache, TileWidth, TileHeight) then
+            begin
+              result := true;
+              collidedX := x;
+              collidedY := y;
+              exit;
+            end;
+          end;
+        end;
+      end;
+    end; // with
+
+    collidedX := -1; 
+    collidedY := -1;
+
+  end;
+
   
   initialization
   begin

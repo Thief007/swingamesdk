@@ -45,7 +45,7 @@ unit sgCamera;
 
 //=============================================================================
 interface
-  uses sgTypes;
+  uses sgTypes, sgCharacters;
 //=============================================================================
   
   
@@ -201,6 +201,17 @@ interface
   /// @method CenterCamera
   /// @csn centerCameraOffset:%s
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
+  /// Set the camera view to be centered over the specific Character. The offset
+  /// vector allows you to move the sprite from the direct center of the screen.
+  ///
+  /// @lib CenterCameraOnCharacter
+  ///
+  /// @sn centerCameraOnCharacter:%s offset:%s
+  ///  
+  /// @class Character
+  /// @method CenterCamera
+  /// @csn centerCameraOffset:%s
+  procedure CenterCameraOn(c: Character; const offset: Vector); overload;
   
   
   //---------------------------------------------------------------------------
@@ -477,6 +488,11 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgCamera', 'CenterCameraOn(s: Sprite', '');
     {$ENDIF}
+  end;
+  
+  procedure CenterCameraOn(c: Character; const offset: Vector); overload;
+  begin
+    CenterCameraOn(c^.CharSprite, Round(offset.x), Round(offset.y));
   end;
   
   procedure CenterCameraOn(s: Sprite; const offset: Vector); overload;
