@@ -72,24 +72,23 @@ begin
 
 
 		DrawCharacterWithStationary(c, 0, 1);
-//		DrawCharacter(c);
+    //DrawCharacter(c);
 		UpdateSpriteAnimation(c^.CharSprite);
 		MoveSprite(c^.CharSprite);
-		if KeyDown(vk_LShift) then
-    begin
+
+
       if KeyDown(vk_Up) then c^.CharSprite^.velocity:= p2d[0]
       else if KeyDown(vk_Down) then c^.CharSprite^.velocity:= p2d[1]
       else if KeyDown(vk_Left) then c^.CharSprite^.velocity:= p2d[2]
       else if KeyDown(vk_Right) then c^.CharSprite^.velocity:= p2d[3]
       else c^.CharSprite^.velocity:= p2d[4];
-    end;
+
 		if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
 
 
 
-    if SpriteHasCollidedWithTile(myMap, 2, c^.CharSprite, i, j) then
+    if SpriteHasCollidedWithTile(myMap, 0, c^.CharSprite, i, j) then
     begin
-      WriteLn('Highlighting: ', i, ':', j);
       HighLightTile(@myMap^.Tiles[j, i], myMap);
     end;
 

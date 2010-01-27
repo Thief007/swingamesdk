@@ -313,7 +313,6 @@ interface
       row:=MyStrToInt(ExtractDelimited(1, data, [',']), false);
       col:=MyStrToInt(ExtractDelimited(2, data, [',']), false);
       name:=ExtractDelimited(3, data, [',']);
-      writeln(name,row,col);
       val:=StrToFloat(ExtractDelimited(4, data, [',']));
       tempValues[high(tempValues)].row := row;
       tempValues[high(tempValues)].col := col;
@@ -620,6 +619,7 @@ interface
   procedure DrawMap(map: Map);
   var
     layer,col, row, startRow, startCol, endRow, endCol : LongInt;
+    dir:Direction;
   begin
     PushMapClip(map);
     
@@ -641,15 +641,12 @@ interface
               DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
               DrawText(IntToStr(map^.Tiles[row,col].SurroundingTiles[mdWest]^.kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
               DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
-              
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdWest]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdNorthWest]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdNorth]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdNorthEast]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdEast]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdSouth]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdSouthWest]^.center);
-              DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[mdSouthEast]^.center);
+
+              for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
+              begin
+                if assigned(map^.Tiles[row,col].SurroundingTiles[dir]) then
+                DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
+              end;
             end;
           end
           else if map^.Tiles[row,col].TileBitmapCells[layer].Bmap <> nil then
@@ -741,7 +738,7 @@ interface
 // outs the tile X and Y that the sprite has collided with  map and result is a boolean if it did collide.
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
   var
-    y, x, yCache, dy, dx, i, j, initY, initX: LongInt;
+    y, x, dy, dx, i, j, initY, initX: LongInt;
     xStart, yStart, xEnd, yEnd: LongInt;
     rectSearch: Rectangle;
     side: CollisionSide;
@@ -777,14 +774,12 @@ interface
       for i := yStart to yEnd do
       begin
         y := initY + (i - yStart) * dy;
-        yCache := y * TileHeight;
         for j := xStart to xEnd do
         begin
           x := initX + (j - xStart) * dx; //TODO: Optimize - j start at 0 instead...
-          writeln(x,',',y);
           if map^.Tiles[y,x].Kind = k then
           begin
-            if SpriteRectCollision(s, x * TileWidth, yCache, TileWidth, TileHeight) then
+            if SpriteRectCollision(s, map^.Tiles[y,x].Position.X, map^.Tiles[y,x].Position.Y, TileWidth, TileHeight) then
             begin
               result := true;
               collidedX := x;
