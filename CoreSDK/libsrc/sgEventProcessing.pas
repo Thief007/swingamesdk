@@ -248,7 +248,7 @@ implementation
     if _textSurface <> nil then SDL_FreeSurface( _textSurface );
 
      //Render a new text surface
-     if Length(_tempString) > 1 then
+     if Length(_tempString) > 0 then
      begin
       outStr := _tempString + '|';
       _textSurface := TTF_RenderText_Blended(_font, PChar(outStr), _foreColor)
