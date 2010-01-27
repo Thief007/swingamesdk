@@ -1,7 +1,7 @@
 program CharacterTest;
 
 uses
-  sgCore, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, sgCharacters, sgNamedIndexCollection, sgSprites, sgInput, sgUserinterface;
+  sgCore, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, sgCharacters, sgNamedIndexCollection, sgSprites, sgInput;
 	  
 const
 	speed = 5;
