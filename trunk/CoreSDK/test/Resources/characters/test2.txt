@@ -18,7 +18,7 @@ b:Face,facelupo3.png
 b:WTF,3_skeleton_hair.png
 
 //AnimationTemplate
-a:test.txt
+a:charas_animation.txt
 
 //Directions INITIAL || COUNT || NAMES
 d:0,4,Up,Down,Left,Right
