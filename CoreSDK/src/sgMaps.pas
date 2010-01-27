@@ -169,6 +169,7 @@ interface
     begin
       for row:=low(result^.Tiles) to high(result^.Tiles) do
         for col:=low(result^.Tiles[row]) to high(result^.Tiles[row]) do
+        if NOT (result^.Isometric) then
         begin
           result^.Tiles[row,col].SurroundingTiles[mdNorthWest]  := TileAt(result, row-1,  col-1);
           result^.Tiles[row,col].SurroundingTiles[mdNorth]      := TileAt(result, row-1,  col);
@@ -178,6 +179,17 @@ interface
           result^.Tiles[row,col].SurroundingTiles[mdSouthWest]  := TileAt(result, row+1,  col-1);
           result^.Tiles[row,col].SurroundingTiles[mdSouth]      := TileAt(result, row+1,  col);
           result^.Tiles[row,col].SurroundingTiles[mdSouthEast]  := TileAt(result, row+1,  col+1);
+        end
+        else
+        begin
+          result^.Tiles[row,col].SurroundingTiles[mdNorthWest]  := TileAt(result, row-1,  col);
+          result^.Tiles[row,col].SurroundingTiles[mdNorth]      := TileAt(result, row-2,  col);
+          result^.Tiles[row,col].SurroundingTiles[mdNorthEast]  := TileAt(result, row-1,  col+1 -((row mod 2)*2));
+          result^.Tiles[row,col].SurroundingTiles[mdWest]       := TileAt(result, row,    col-1);
+          result^.Tiles[row,col].SurroundingTiles[mdEast]       := TileAt(result, row,    col+1);
+          result^.Tiles[row,col].SurroundingTiles[mdSouthWest]  := TileAt(result, row+1,  col);
+          result^.Tiles[row,col].SurroundingTiles[mdSouth]      := TileAt(result, row+2,  col);
+          result^.Tiles[row,col].SurroundingTiles[mdSouthEast]  := TileAt(result, row+1,  col+1 -((row mod 2)*2));
         end;
     end;    
 
