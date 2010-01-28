@@ -38,11 +38,11 @@ begin
   
   setLabelText(LabelFromRegion(GetRegionByID('Label1')), lst^.items[lst^.activeItem].text);
   
-  case ActiveRadioButton('RadioGroup1') of
-    0: SetGUIColorForVectors(ColorWhite);
-    1: SetGUIColorForVectors(ColorRed);
-    2: SetGUIColorForVectors(ColorBlue);
-  end;  
+//   case ActiveRadioButton('RadioGroup1') of
+//     0: SetGUIColorForVectors(ColorWhite);
+//     1: SetGUIColorForVectors(ColorRed);
+//     2: SetGUIColorForVectors(ColorBlue);
+//   end;  
 end;
   
 procedure Main();
@@ -70,13 +70,26 @@ begin
   ListAddItem(lst, 'Chainmail');
   ListAddItem(lst, 'Ninja');
   ListAddItem(lst, 'Newspaper');
-  ListAddItem(lst, 'Car');
+  ListAddItem(lst, 'Car');  
+  ListAddItem(lst, 'Hat2');
+  ListAddItem(lst, 'Sword2');
+  ListAddItem(lst, 'Cape2');
+  ListAddItem(lst, 'Cheese2');
+  ListAddItem(lst, 'Cake2');
+  ListAddItem(lst, 'Mouse2');
+  ListAddItem(lst, 'Dog2');
+  ListAddItem(lst, 'Axe2');
+  ListAddItem(lst, 'Mace2');
+  ListAddItem(lst, 'Chainmail2');
+  ListAddItem(lst, 'Ninja2');
+  ListAddItem(lst, 'Newspaper2');
+  ListAddItem(lst, 'Car2');
+  
   
   repeat
     ProcessEvents();
     ClearScreen(ColorBlack);
     
-    // Need to re-initialize Lists!
     DrawPanels();
     UpdateGUI(pnla, pnlb, lst);
     UpdateInterface();
