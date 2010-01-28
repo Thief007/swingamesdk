@@ -10,6 +10,7 @@ x: 10
 y: 365
 w: 500
 h: 225
+b: testerface.png
 
 // Region data
 // Format: r: x, y, w, h, kind

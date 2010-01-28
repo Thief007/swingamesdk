@@ -56,7 +56,7 @@ uses sgShared, stringhash;
     hash: TStringHash;
   begin
     hash := TStringHash(col.ids);
-    if assigned(hash) then
+    if assigned(hash) and hash.containsKey(name) then
       result := TIntegerContainer(hash.values[name]).Value
     else
       result := -1;
