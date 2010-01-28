@@ -128,7 +128,6 @@ type
   end;
 
 function LoadPanel(filename: string): Panel;
-function ActiveRadioButton(rGID: string): integer;
 procedure ShowPanel(p: Panel);
 procedure AddPanelToGUI(p: Panel);
 procedure DrawPanels();
@@ -173,13 +172,19 @@ function GetRegionByID(pnl: Panel; ID: String): Region; overload;
 function GetRegionByID(ID: String): Region; overload;
 
 function CheckboxState(ID: String): Boolean;
+
 function TextBoxFromRegion(r: Region): GUITextBox;
+function TextBoxText(tb: GUITextBox): string;
 
 function LabelFromRegion(r: Region): GUILabel;
 function LabelString(lb: GUILabel): string; Overload;
 procedure setLabelText(lb: GUILabel; newString: String);
 
 function TextboxString(tb: GUITextBox): string; Overload;
+
+procedure DeactivateTextBox();
+function ActiveTextIndex(): Integer;
+function StoppedReadingText(): boolean;
 
 //=============================================================================
 implementation
@@ -193,6 +198,23 @@ var
   _Panels: TStringHash;
   GUIC: GUIController;
 
+function StoppedReadingText(): boolean;
+begin
+	result := false;
+  if assigned(GUIC.activeTextbox) and not ReadingText() then
+		result := true;
+end;
+
+function ActiveTextIndex(): Integer;
+begin
+	result := GUIC.activeTextBox^.elementIndex;
+end;
+
+procedure DeactivateTextBox();
+begin	
+	GUIC.activeTextBox := nil;
+end;
+  
 //---------------------------------------------------------------------------------------
 // Drawing Loops
 //---------------------------------------------------------------------------------------  
@@ -219,7 +241,7 @@ procedure DrawVectorTextbox(forRegion: Region);
 begin
   DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
   if assigned(GUIC.activeTextBox) AND NOT(GUIC.activeTextBox^.StringID = forRegion^.StringID) then
-    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex].contentString, GUIC.globalGUIVectorColor, forRegion^.parent^.textBoxes[forRegion^.ElementIndex].font, Round(forRegion^.area.x), Round(forRegion^.area.y))
+    DrawTextOnScreen(TextBoxText(TextBoxFromRegion(forRegion)), GUIC.globalGUIVectorColor, TextBoxFromRegion(forRegion)^.font, Round(forRegion^.area.x), Round(forRegion^.area.y))
   else if NOT(assigned(GUIC.activeTextBox)) then
     DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex].contentString, GUIC.globalGUIVectorColor, forRegion^.parent^.textBoxes[forRegion^.ElementIndex].font, Round(forRegion^.area.x), Round(forRegion^.area.y)); 
 end;
@@ -275,7 +297,7 @@ begin
         case GUIC.panels[i]^.Regions[j].kind of
         gkButton: 		DrawRectangleOnScreen(GUIC.globalGUIVectorColor, GUIC.panels[i]^.Regions[j].area);
         gkLabel: 			DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j].elementIndex].contentString, GUIC.GlobalGUIVectorColor, GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j].elementIndex].font, Round(GUIC.panels[i]^.Regions[j].area.x), Round(GUIC.panels[i]^.Regions[j].area.y));
-        gkCheckbox: 		DrawVectorCheckbox(@GUIC.panels[i]^.Regions[j]);
+        gkCheckbox: 	DrawVectorCheckbox(@GUIC.panels[i]^.Regions[j]);
         gkRadioGroup: DrawVectorRadioButton(@GUIC.panels[i]^.Regions[j]);
         gkTextbox: 		DrawVectorTextbox(@GUIC.panels[i]^.Regions[j]);
         gkList: 			DrawVectorList(@GUIC.panels[i]^.Regions[j]);
@@ -383,17 +405,13 @@ end;
 // RadioGroup Code
 //---------------------------------------------------------------------------------------
 
-function ActiveRadioButton(rGID: string): integer;
-var
-  i,j:integer;
+function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
 begin
-  for i:= Low(GUIC.Panels) to High(GUIC.Panels) do
-    for j:= Low(GUIC.Panels[i]^.radioGroups) to High(GUIC.Panels[i]^.radioGroups) do
-      if GUIC.Panels[i]^.radioGroups[j].groupID = rGID then
-      begin
-        result := GUIC.Panels[i]^.radioGroups[j].activeButton;
-        exit;
-      end;
+	result := RadioGroup^.activeButton;
+end;
+
+function RadioGroupFromRegion(forRegion: Region): GUIRadioGroup;
+begin
 end;
 
 procedure SelectRadioButton(r: Region);
@@ -456,6 +474,11 @@ end;
 //---------------------------------------------------------------------------------------
 // Textbox Code
 //---------------------------------------------------------------------------------------
+
+function TextBoxText(tb: GUITextBox): String;
+begin
+	result := tb^.contentString;
+end;
 
 procedure FinishReadingText();
 begin
