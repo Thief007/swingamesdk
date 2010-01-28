@@ -123,8 +123,10 @@ interface
   /// @class Sprite
   /// @overload RectCollision RectangleCollision
   /// @csn collisionWithRect:%s
-  function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
-  
+function SpriteRectCollision(s: Sprite; const r: Rectangle): Boolean; overload;
+
+
+   function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload; 
   
   //---------------------------------------------------------------------------
   // Sprite <-> Bitmap Collision Detection
@@ -605,17 +607,38 @@ implementation
   begin
     result := BitmapRectCollision(bmp, x, y, RectangleFrom(rectX, rectY, rectWidth, rectHeight));
   end;
+
+  function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload;
+  begin
+    result := false;
+    if s = nil then exit;
+
+    if not RectangleShapeIntersect(SpriteCollisionRectangle(s), shp) then 
+      exit;
+
+    //  Check pixel level details
+    if SpriteCollisionKind(s) = AABBCollisions then 
+      result := true
+    else
+      //TODO: add pixel level shape collisions
+      result := true; //CellRectCollision(s^.collisionBitmap, SpriteCurrentCell(s), Round(s^.position.x), Round(s^.position.y), rect);    
+  end;
   
   function SpriteRectCollision(s: Sprite; x, y: Single; width, height: LongInt): Boolean; overload;
+  begin
+    result := SpriteRectCollision(s, RectangleFrom(x, y, width, height));
+  end;
+
+  function SpriteRectCollision(s: Sprite; const r: Rectangle): Boolean; overload;
   var
     rect: Rectangle;
   begin
     result := false;
     if s = nil then exit;
-    
-    rect := RectangleFrom(x, y, width, height);
+
+    rect := r;
     FixRectangle(rect);
-    if (width < 1) or (height < 1) then exit;
+   // if (width < 1) or (height < 1) then exit;
     
     if not RectanglesIntersect(SpriteCollisionRectangle(s), rect) then 
       exit;
@@ -625,11 +648,6 @@ implementation
       result := true
     else
       result := CellRectCollision(s^.collisionBitmap, SpriteCurrentCell(s), Round(s^.position.x), Round(s^.position.y), rect);
-  end;
-
-  function SpriteRectCollision(s: Sprite; const rect: Rectangle): Boolean; overload;
-  begin
-    result := SpriteRectCollision(s, rect.x, rect.y, rect.width, rect.height);
   end;
   
   /// Performs a collision detection within two bitmaps at the given x, y
