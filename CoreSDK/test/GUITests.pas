@@ -24,37 +24,31 @@ begin
   DrawGUIAsVectors(true);
 end;
   
-procedure UpdateGUI(pnla, pnlb: panel; i: Integer);
+procedure UpdateGUI(var pnla, pnlb: panel; lst: GUilist);
 var
   reg: Region;
   parpnl: Panel;
   radGroup: GUIRadioGroup;
-  Item: GUIListItem;
 begin
-
   if (RegionClicked() = 'Button1') And (CheckboxState('Checkbox2')) then
   begin
     ToggleShowPanel(pnlb);
     Toggleactivatepanel(pnlb);
   end;
   
-  SetLabelString('Label1', TextboxString('TextBox1'));
+  setLabelText(LabelFromRegion(GetRegionByID('Label1')), lst^.items[lst^.activeItem].text);
   
   case ActiveRadioButton('RadioGroup1') of
     0: SetGUIColorForVectors(ColorWhite);
     1: SetGUIColorForVectors(ColorRed);
     2: SetGUIColorForVectors(ColorBlue);
-  end;
-  
-  if (i = 600) OR (i = 1200) OR (i = 1800) then
-  	AddItemToList(GetRegionByID('List1'), NewListItem('List1', 'List1Item' + IntToStr(i), 'n', 'I''m ListItem' + IntToStr(i)));
-  
+  end;  
 end;
   
 procedure Main();
 var
 	pnla, pnlb: Panel;
-	i: Integer;
+	lst: GUIList;
 begin
   OpenAudio();
   OpenGraphicsWindow('Hello World', 800, 600);
@@ -62,19 +56,30 @@ begin
   LoadResourceBundle('MainMenu.txt');
   InitInterface(pnla,pnlb);
   
-  i := 5;
+  lst := ListFromRegion(GetRegionByID('List1'));
 
+  ListAddItem(lst, 'Hat');
+  ListAddItem(lst, 'Sword');
+  ListAddItem(lst, 'Cape');
+  ListAddItem(lst, 'Cheese');
+  ListAddItem(lst, 'Cake');
+  ListAddItem(lst, 'Mouse');
+  ListAddItem(lst, 'Dog');
+  ListAddItem(lst, 'Axe');
+  ListAddItem(lst, 'Mace');
+  ListAddItem(lst, 'Chainmail');
+  ListAddItem(lst, 'Ninja');
+  ListAddItem(lst, 'Newspaper');
+  ListAddItem(lst, 'Car');
+  
   repeat
     ProcessEvents();
     ClearScreen(ColorBlack);
     
     // Need to re-initialize Lists!
-    
     DrawPanels();
-    UpdateGUI(pnla, pnlb, i);
+    UpdateGUI(pnla, pnlb, lst);
     UpdateInterface();
-    
-    i += 1;
     
     DrawFramerate(0,0);
     RefreshScreen();
