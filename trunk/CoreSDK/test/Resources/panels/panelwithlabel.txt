@@ -15,9 +15,5 @@ h: 250
 // Format: r: x, y, w, h, kind
 r: 10, 10, 80, 20, 1, Label1, Hello World, courierSmall
 
-//LIST r: x, y, w, h, 5, ListID, Columns, ActiveItem, itemWidth, itemHeight
-r: 20, 20, 200, 200, 5, List1, 2, 0, 230, 35, courier
-r: 0, 0, 0, 0, 6, List1Item1, List1, I'm ListItem1, n
-r: 0, 0, 0, 0, 6, List1Item2, List1, I'm ListItem2, n
-r: 0, 0, 0, 0, 6, List1Item3, List1, I'm ListItem3, n
-r: 0, 0, 0, 0, 6, List1Item4, List1, I'm ListItem4, n
+//LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
+r: 45, 30, 0, 0, 5, List1, 2, 6, 2, 150, 35, courier, 70

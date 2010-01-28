@@ -1,5 +1,5 @@
 //=============================================================================
-// sgAnimation.pas
+// sgUserInterface.pas
 //=============================================================================
 //
 // Version 0.1 - Resposible for constructing User Interfaces in 
@@ -33,35 +33,49 @@ type
   GUIRadioGroup = ^GUIRadioGroupData;
   GUITextBox = ^GUITextBoxData;
   GUIList = ^GUIListData;
-  GUIListItem = ^GUIListItemData;
+  
+  GuiElementKind = ( gkLabel, gkButton, gkCheckBox, gkRadioGroup, gkTextBox, gkList );
   
   GUITextBoxData = record
     contentString:  string;
-    fontID:         string;
+    font:         	Font;
     lengthLimit:    LongInt;
   end;
   
   GUILabelData = record
     contentString:  string;
-    fontID:         String;
+    font:         Font;
   end;
+  
+  /// Each list item has text and an image
+  GUIListItem = record
+    text: 		String;
+    image:		Bitmap;
+    parent:		GUIList;
+  end;
+
   
   GUIListData = record
+  	verticalScroll: Boolean;
+  	scrollNeg:		Rectangle;
+  	scrollPos:		Rectangle;
+  	
     columns:      LongInt;
-    items:        Array of GUIListItem;
-    activeItem:   LongInt;
-    rowHeight:    LongInt;
+    rows:					LongInt;
+    
+    rowHeight:   	LongInt;
     colWidth:     LongInt;
-    fontID:				String;
+    scrollSize:		LongInt;
+    placeholder: 	Array of Rectangle;
+    
+    activeItem:   LongInt;
+    startingAt:		LongInt;
+
+    font:				Font;
+        
+    items:        Array of GUIListItem;
   end;
-  
-  GUIListItemData = record
-    nameString: string;
-    imageID:     string;
-    parentList:  string;
-    area:        Rectangle;
-  end;
-  
+    
   GUIRadioGroupData = record
     groupID:      string;
     buttons:      Array of Region;
@@ -73,13 +87,14 @@ type
   end;
   
   RegionData = record
-    stringID:       string;
-    kind:         	 LongInt;
-    regionID:  	   LongInt;
-    elementIndex: LongInt;
-    area:        	 Rectangle;
-    active:    	   boolean;
-    parent:      	 Panel;
+    stringID:       String;
+    kind:         	GUIElementKind;
+    regionID:  	   	LongInt;
+    elementIndex: 	LongInt;
+    area:        	 	Rectangle;
+    active:    	   	Boolean;
+    
+    parent:      	 	Panel;
   end;
 
   PanelData = record
@@ -91,13 +106,13 @@ type
     visible:      boolean;
     active:       boolean;
     panelBitmap:  Bitmap;
-    regions:      Array of Region;
+    regions:      Array of RegionData;
     regionIds:    NamedIndexCollection;
-    labels:       Array of GUILabel;
-    checkBoxes:   Array of GUICheckbox;
-    radioGroups:  Array of GUIRadioGroup;
-    textBoxes:    Array of GUITextBox;
-    lists:        Array of GUIList;
+    labels:       Array of GUILabelData;
+    checkBoxes:   Array of GUICheckboxData;
+    radioGroups:  Array of GUIRadioGroupData;
+    textBoxes:    Array of GUITextBoxData;
+    lists:        Array of GUIListData;
   end;
   
   
@@ -124,28 +139,46 @@ function PanelClicked(): Panel;
 function RegionClicked(): String;
 function RegionClicked(pnl: Panel): Region; Overload;
 function RegionStringID(r: Region): string;
+procedure FinishReadingText();
+procedure ToggleCheckboxState(c: GUICheckbox);
+procedure SelectRadioButton(r: Region);
+procedure SetAsActiveTextbox(r: Region);
+procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
+
 procedure ToggleShowPanel(p: Panel);
 procedure ActivatePanel(p: Panel);
 procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
 procedure UpdateInterface();
 
-function NewListItem(listID, itemID, bitmapID, nString: string): GUIListItem;
-procedure AddItemToList(list: Region; item: GUIListItem);
+procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+
+procedure ListAddItem(lst: GUIList; text: String);
+procedure ListAddItem(lst: GUIList; img:Bitmap);
+procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
+
+function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+function ListTextIndex(lst: GUIList; value: String): LongInt;
+
+//function ListTextAt(lst: GUIList; idx: LongInt): String;
+//function ListBitmapAt(lst: GUIList; idx: LongInt): Bitmap;
+
+//function ListActiveIndex(lst: GUIList): LongInt;
+//function ListActiveText(lst: GUIList): String;
+//function ListActiveBitmap(lst: GUIList): Bitmap;
+
+function ListFromRegion(reg: Region): GUIList; overload;
 
 function GetRegionByID(pnl: Panel; ID: String): Region; overload;
 function GetRegionByID(ID: String): Region; overload;
 
 function CheckboxState(ID: String): Boolean;
 function TextBoxFromRegion(r: Region): GUITextBox;
-function TextBoxFromRegion(regID: string): GUITextBox; Overload;
+
 function LabelFromRegion(r: Region): GUILabel;
-function LabelFromRegion(regID: string): GUILabel; Overload;
-function LabelString(r: Region): string;
-function LabelString(regID: string): string; Overload;
 function LabelString(lb: GUILabel): string; Overload;
-procedure SetLabelString(lb, newString: String);
-function TextboxString(tbID: String): string; 
+procedure setLabelText(lb: GUILabel; newString: String);
+
 function TextboxString(tb: GUITextBox): string; Overload;
 
 //=============================================================================
@@ -159,10 +192,14 @@ implementation
 var
   _Panels: TStringHash;
   GUIC: GUIController;
+
+//---------------------------------------------------------------------------------------
+// Drawing Loops
+//---------------------------------------------------------------------------------------  
   
 procedure DrawVectorCheckbox(forRegion: Region);
 begin 
-  if forRegion^.parent^.Checkboxes[forRegion^.elementIndex]^.state then 
+  if forRegion^.parent^.Checkboxes[forRegion^.elementIndex].state then 
     FillRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area) 
   else
     DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
@@ -170,42 +207,57 @@ end;
 
 procedure DrawVectorRadioButton(forRegion: Region);
 begin
-  DrawEllipseOnScreen(GUIC.globalGUIVectorColor, Trunc(forRegion^.area.x), trunc(forRegion^.area.y), Trunc(forRegion^.area.width), Trunc(forRegion^.area.height));
-  if (forRegion^.parent^.radioGroups[forRegion^.elementIndex]^.buttons[forRegion^.parent^.radioGroups[forRegion^.elementIndex]^.activeButton]^.StringID) = (forRegion^.StringID) then
-    FillEllipseOnScreen(GUIC.globalGUIVectorColor, Trunc(forRegion^.area.x), trunc(forRegion^.area.y), Trunc(forRegion^.area.width), Trunc(forRegion^.area.height));
+  DrawEllipseOnScreen(GUIC.globalGUIVectorColor, Round(forRegion^.area.x), Round(forRegion^.area.y), Round(forRegion^.area.width), Round(forRegion^.area.height));
+  
+  if (forRegion^.parent^.radioGroups[forRegion^.elementIndex].buttons[forRegion^.parent^.radioGroups[forRegion^.elementIndex].activeButton]^.StringID) = (forRegion^.StringID) then
+  begin
+    FillEllipseOnScreen(GUIC.globalGUIVectorColor, Round(forRegion^.area.x), Round(forRegion^.area.y), Round(forRegion^.area.width), Round(forRegion^.area.height));
+  end;
 end;
 
 procedure DrawVectorTextbox(forRegion: Region);
 begin
   DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
   if assigned(GUIC.activeTextBox) AND NOT(GUIC.activeTextBox^.StringID = forRegion^.StringID) then
-    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.contentString, GUIC.globalGUIVectorColor, FontNamed(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.fontID), Trunc(forRegion^.area.x), Trunc(forRegion^.area.y))
+    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex].contentString, GUIC.globalGUIVectorColor, forRegion^.parent^.textBoxes[forRegion^.ElementIndex].font, Round(forRegion^.area.x), Round(forRegion^.area.y))
   else if NOT(assigned(GUIC.activeTextBox)) then
-    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.contentString, GUIC.globalGUIVectorColor, FontNamed(forRegion^.parent^.textBoxes[forRegion^.ElementIndex]^.fontID), Trunc(forRegion^.area.x), Trunc(forRegion^.area.y)); 
+    DrawTextOnScreen(forRegion^.parent^.textBoxes[forRegion^.ElementIndex].contentString, GUIC.globalGUIVectorColor, forRegion^.parent^.textBoxes[forRegion^.ElementIndex].font, Round(forRegion^.area.x), Round(forRegion^.area.y)); 
 end;
   
 procedure DrawVectorList(forRegion: Region);
 var
 	tempList: GUIList;
-	i: integer;
+	i, itemIdx: integer;
 begin
-	tempList := forRegion^.parent^.lists[forRegion^.elementIndex];
+	tempList := ListFromRegion(forRegion);	
+	if not assigned(tempList) then exit;
+
+		PushClip(Round(forRegion^.area.x), Round(forRegion^.area.y), forRegion^.area.width + 1, forRegion^.area.Height + 1);
 	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
-	FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.items[tempList^.activeItem]^.area);
+	//FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[tempList^.activeItem - tempList^.startingAt]);
 	
-	for i := Low(tempList^.items) to High(tempList^.items) do
+	//Scrollbuttons
+	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.scrollNeg);
+	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.scrollPos);
+	
+	for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
 	begin
-		DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.items[i]^.area);
+		DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[i]);
+			
+		itemIdx := i + tempList^.startingAt;
 		
-		if i <> tempList^.activeItem then
-		begin
-			DrawTextOnscreen(tempList^.items[i]^.nameString, GUIC.globalGUIVectorColor, FontNamed(tempList^.fontID), Trunc(tempList^.items[i]^.area.x), Trunc(tempList^.items[i]^.area.y));
-		end
+		if (itemIdx < 0) OR (itemIdx > High(tempList^.items)) then continue;
+		
+		if itemIdx <> tempList^.activeItem then
+			DrawTextOnscreen(tempList^.items[itemIdx].text, GUIC.globalGUIVectorColor, tempList^.font, round(tempList^.placeHolder[i].x), round(tempList^.placeHolder[i].y))
 		else
 		begin
-			DrawTextOnscreen(tempList^.items[i]^.nameString, ColorBlack, FontNamed(tempList^.fontID), Trunc(tempList^.items[i]^.area.x), Trunc(tempList^.items[i]^.area.y));
+			FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[i]);
+			DrawTextOnscreen(tempList^.items[itemIdx].text, ColorBlack, tempList^.font, Round(tempList^.placeHolder[i].x), Round(tempList^.placeHolder[i].y));
 		end;
+		
 	end;
+	PopClip();
 end;
 
 procedure DrawAsVectors();
@@ -216,16 +268,17 @@ begin
   begin
     if (GUIC.panels[i]^.visible) then
     begin
-      DrawRectangleOnScreen(GUIC.globalGUIVectorColor, Trunc(GUIC.panels[i]^.position.x), Trunc(GUIC.panels[i]^.position.y), GUIC.panels[i]^.width, GUIC.panels[i]^.height);
-      for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
+    	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, Round(GUIC.panels[i]^.position.x), Round(GUIC.panels[i]^.position.y), GUIC.panels[i]^.width, GUIC.panels[i]^.height);
+      
+    	for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
       begin
-        case GUIC.panels[i]^.Regions[j]^.kind of
-        0: DrawRectangleOnScreen(GUIC.globalGUIVectorColor, GUIC.panels[i]^.Regions[j]^.area);
-        1: DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.contentString, GUIC.GlobalGUIVectorColor, FontNamed(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j]^.elementIndex]^.fontID), Trunc(GUIC.panels[i]^.Regions[j]^.area.x), Trunc(GUIC.panels[i]^.Regions[j]^.area.y));
-        2: DrawVectorCheckbox(GUIC.panels[i]^.Regions[j]);
-        3: DrawVectorRadioButton(GUIC.panels[i]^.Regions[j]);
-        4: DrawVectorTextbox(GUIC.panels[i]^.Regions[j]);
-        5: DrawVectorList(GUIC.panels[i]^.Regions[j]);
+        case GUIC.panels[i]^.Regions[j].kind of
+        gkButton: 		DrawRectangleOnScreen(GUIC.globalGUIVectorColor, GUIC.panels[i]^.Regions[j].area);
+        gkLabel: 			DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j].elementIndex].contentString, GUIC.GlobalGUIVectorColor, GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j].elementIndex].font, Round(GUIC.panels[i]^.Regions[j].area.x), Round(GUIC.panels[i]^.Regions[j].area.y));
+        gkCheckbox: 		DrawVectorCheckbox(@GUIC.panels[i]^.Regions[j]);
+        gkRadioGroup: DrawVectorRadioButton(@GUIC.panels[i]^.Regions[j]);
+        gkTextbox: 		DrawVectorTextbox(@GUIC.panels[i]^.Regions[j]);
+        gkList: 			DrawVectorList(@GUIC.panels[i]^.Regions[j]);
         end;
       end;
     end;
@@ -253,15 +306,21 @@ begin
     DrawAsBitmaps();
 end;
 
+//---------------------------------------------------------------------------------------
+// Region Code
+//---------------------------------------------------------------------------------------
+
 function GetRegionByID(pnl: Panel; ID: String): Region; overload;
 var
 	idx: Integer;
 begin
 	result := nil;
+	if not assigned(pnl) then exit;
+	
 	idx := IndexOf(pnl^.regionIds, ID);
 	if idx >= 0 then
 	begin
-    result := pnl^.regions[idx];
+    result := @pnl^.regions[idx];
 	end;	
 end;
 
@@ -274,116 +333,7 @@ begin
   begin
   	result := GetRegionById(GUIC.panels[i], ID);
   	if assigned(result) then exit;
-    //for j := Low(GUIC.panels[i]^.regions) to High(GUIC.panels[i]^.regions) do
-    //begin
-    //  if GUIC.panels[i]^.regions[j]^.StringID = ID then
-    //  begin
-    //    result := GUIC.panels[i]^.regions[j];
-    //    exit;
-    //  end;
-    //end;
   end;
-end;
-
-function ActiveRadioButton(rGID: string): integer;
-var
-  i,j:integer;
-begin
-  for i:= Low(GUIC.Panels) to High(GUIC.Panels) do
-    for j:= Low(GUIC.Panels[i]^.radioGroups) to High(GUIC.Panels[i]^.radioGroups) do
-      if GUIC.Panels[i]^.radioGroups[j]^.groupID = rGID then
-      begin
-        result := GUIC.Panels[i]^.radioGroups[j]^.activeButton;
-        exit;
-      end;
-end;
-
-function TextBoxFromRegion(regID: string): GUITextBox; Overload;
-begin
-  if assigned(GetRegionByID(regID)^.parent^.TextBoxes[GetRegionByID(regID)^.elementIndex]) then
-    result := GetRegionByID(regID)^.parent^.TextBoxes[GetRegionByID(regID)^.elementIndex]
-  else
-    result := nil;
-end;
-
-function TextBoxFromRegion(r: Region): GUITextBox;
-begin
-  if assigned(r^.parent^.TextBoxes[r^.elementIndex]) then
-    result := r^.parent^.TextBoxes[r^.elementIndex]
-  else
-    result := nil;
-end;
-
-function LabelFromRegion(regID: string): GUILabel; Overload;
-begin
-  if assigned(GetRegionByID(regID)^.parent^.labels[GetRegionByID(regID)^.elementIndex]) then
-    result := GetRegionByID(regID)^.parent^.labels[GetRegionByID(regID)^.elementIndex]
-  else
-    result := nil;
-end;
-
-function LabelFromRegion(r: Region): GUILabel;
-begin
-  if assigned(r^.parent^.labels[r^.elementIndex]) then
-    result := r^.parent^.labels[r^.elementIndex]
-  else
-    result := nil;
-end;
-
-function ListFromRegion(reg: Region): GUIList;
-begin
-	if assigned(reg^.parent^.lists[reg^.elementIndex]) then
-		result := reg^.parent^.lists[reg^.elementIndex]
-	else
-		result := nil;
-end;
-
-function ListFromID(idString: String): GUIList;
-begin
-	if assigned(GetRegionByID(idString)^.parent^.lists[GetRegionByID(idString)^.elementIndex]) then
-		result := GetRegionByID(idString)^.parent^.lists[GetRegionByID(idString)^.elementIndex]
-	else
-		result := nil;
-end;
-
-function LabelString(r: Region): string;
-begin
-  if assigned(r^.parent^.labels[r^.elementIndex]) then
-    result := r^.parent^.labels[r^.elementIndex]^.contentString
-  else
-    result := '';
-end;
-
-function LabelString(regID: string): string; Overload;
-begin
-  if assigned(GetRegionByID(regID)^.parent^.labels[GetRegionByID(regID)^.elementIndex]) then
-    result := GetRegionByID(regID)^.parent^.labels[GetRegionByID(regID)^.elementIndex]^.contentString
-  else
-    result := '';
-end;
-
-function LabelString(lb: GUILabel): string; Overload;
-begin
-  if assigned(lb) then
-    result := lb^.contentString;
-end;
-
-function TextboxString(tb: GUITextBox): string; Overload;
-begin
-  if assigned(tb) then
-    result := tb^.contentString;
-end;
-
-function TextboxString(tbID: String): string;
-begin
-  if assigned(TextBoxFromRegion(tbID)) then
-    result := TextboxString(TextBoxFromRegion(tbID));
-end;
-
-procedure SetLabelString(lb, newString: String);
-begin
-  if assigned(LabelFromRegion(lb)) then
-    LabelFromRegion(lb)^.contentString := newString;
 end;
 
 function RegionStringID(r: Region): string;
@@ -394,82 +344,306 @@ begin
     result := '';
 end;
 
-procedure RecalibrateList(listReg: Region);
+function RegionClicked(pnl: Panel): Region; Overload;
 var
-    workingCol, workingRow: LongInt;
-		k: LongInt;
-		theList: GUIList;
+	j: LongInt;
+	pointClicked: Point2D;
 begin
-  workingCol := 0;
-  workingRow := 0;
+  result := nil;
+  if not MouseClicked(Leftbutton) then exit;
+  FinishReadingText();
   
-  theList := listReg^.parent^.lists[listReg^.elementIndex];
+  pointClicked := MousePosition();
   
-  for k := Low(theList^.items) to High(thelist^.items) do
+  if pnl = nil then exit;
+  if not pnl^.active then exit;
+  
+  for j := Low(pnl^.Regions) to High(pnl^.Regions) do
   begin
-  	WriteLn('Checking list elements ', k);
-    theList^.items[k]^.area.x := (workingCol * theList^.colWidth) + listReg^.parent^.position.x + listReg^.area.x;
-    theList^.items[k]^.area.y := (workingRow * theList^.rowHeight) + listReg^.parent^.position.y + listReg^.area.y;
-    theList^.items[k]^.area.width := (theList^.colWidth);
-    theList^.items[k]^.area.height := (theList^.rowHeight);
-    
-    WriteLn('Item ', k, ' details: x = ',  theList^.items[k]^.area.x, ' y = ',  theList^.items[k]^.area.y, ' width = ',  theList^.items[k]^.area.width, ' height = ',  theList^.items[k]^.area.height, '.');
-    
-    workingCol += 1;
-    
-    if workingCol >= theList^.columns then
+    if PointInRect(pointClicked, pnl^.Regions[j].area) then
     begin
-      workingCol := 0;
-      workingRow += 1;
-  	end;
-  	
-	end;            
+      case pnl^.Regions[j].kind of
+        gkCheckBox: 		ToggleCheckboxState(@pnl^.checkboxes[pnl^.Regions[j].elementindex]);
+        gkRadioGroup: 	SelectRadioButton(@pnl^.Regions[j]);
+        gkTextBox: 			SetAsActiveTextbox(@pnl^.Regions[j]);
+        gkList: 				SetActiveListItem(@pnl^.Regions[j], pointClicked);
+      end;
+      result := @pnl^.Regions[j];
+      exit;
+    end;
+  end;
+end;
+
+function RegionClicked(): String;
+begin
+  result := RegionStringID(GUIC.lastClicked);
+end;
+
+//---------------------------------------------------------------------------------------
+// RadioGroup Code
+//---------------------------------------------------------------------------------------
+
+function ActiveRadioButton(rGID: string): integer;
+var
+  i,j:integer;
+begin
+  for i:= Low(GUIC.Panels) to High(GUIC.Panels) do
+    for j:= Low(GUIC.Panels[i]^.radioGroups) to High(GUIC.Panels[i]^.radioGroups) do
+      if GUIC.Panels[i]^.radioGroups[j].groupID = rGID then
+      begin
+        result := GUIC.Panels[i]^.radioGroups[j].activeButton;
+        exit;
+      end;
+end;
+
+procedure SelectRadioButton(r: Region);
+var
+  rGroup: GUIRadioGroup;
+  i: integer;
+begin
+  rGroup := @r^.parent^.radioGroups[r^.elementIndex];
+  
+  for i := Low(rGroup^.buttons) to High(rGroup^.buttons) do
+  begin
+    if rGroup^.buttons[i]^.stringID = r^.StringID then
+      rGroup^.activeButton := i;
+  end;
 end;
 
 
-function NewListItem(listID, itemID, bitmapID, nString: string): GUIListItem;
+//---------------------------------------------------------------------------------------
+// Label Code
+//---------------------------------------------------------------------------------------
+
+procedure setLabelText(lb: GUILabel; newString: String);
+begin
+  lb^.contentString := newString;
+end;
+
+procedure setLabelFont(var l: GUILabel; s: String);
+begin
+  l^.font := FontNamed(s);
+end;
+
+function LabelFromRegion(r: Region): GUILabel; overload;
+begin
+	result := nil;
+	
+	if not assigned(r) then exit;
+	if not assigned(r^.parent) then exit;
+	if not (r^.kind = gkLabel) then exit;
+	if (r^.elementIndex < 0) or (r^.elementIndex > High(r^.parent^.labels)) then exit;
+  if not (High(r^.parent^.labels) >= r^.elementIndex) then exit;
+  
+  //Return a pointer to the label in the panel
+  result := @r^.parent^.labels[r^.elementIndex]
+end;
+
+function LabelString(regID: string): string; Overload;
+begin
+  if High(GetRegionByID(regID)^.parent^.labels) >= GetRegionByID(regID)^.elementIndex then
+    result := GetRegionByID(regID)^.parent^.labels[GetRegionByID(regID)^.elementIndex].contentString
+  else
+    result := '';
+end;
+
+function LabelString(lb: GUILabel): string; Overload;
+begin
+  if assigned(lb) then
+    result := lb^.contentString;
+end;
+
+//---------------------------------------------------------------------------------------
+// Textbox Code
+//---------------------------------------------------------------------------------------
+
+procedure FinishReadingText();
+begin
+  if not assigned(GUIC.activeTextBox) then exit;
+  
+  GUIC.activeTextBox^.parent^.textBoxes[GUIC.activeTextBox^.elementIndex].contentString := EndReadingText();
+  GUIC.activeTextBox := nil;
+end;
+
+function TextboxString(tb: GUITextBox): string; Overload;
+begin
+  if assigned(tb) then
+    result := tb^.contentString;
+end;
+
+function TextBoxFromRegion(r: Region): GUITextBox;
+begin
+	result := nil;
+	if not assigned(r) then exit;
+	if not assigned(r^.parent) then exit;
+	if not (r^.kind = gkTextbox) then exit;
+	if (r^.elementIndex < Low(r^.parent^.TextBoxes)) OR (r^.elementIndex > High(r^.parent^.TextBoxes)) then exit;
+	
+  if High(r^.parent^.TextBoxes) >= r^.elementIndex then
+    result := @r^.parent^.TextBoxes[r^.elementIndex]
+  else
+    result := nil;
+end;
+
+procedure SetAsActiveTextbox(r: Region);
+var
+  textBox: GUITextbox;
+begin
+  textBox := @r^.parent^.textBoxes[r^.elementIndex];
+  
+  GUIC.activeTextBox := r;
+  
+  StartReadingTextWithText(textBox^.contentString, GUIC.globalGUIVectorColor, textBox^.lengthLimit, textBox^.Font, Round(r^.area.x), Round(r^.area.y));
+end;
+
+//---------------------------------------------------------------------------------------
+// List Code
+//---------------------------------------------------------------------------------------
+
+function ListFromRegion(reg: Region): GUIList; overload;
+begin
+	if High(reg^.parent^.lists) >= reg^.elementIndex then
+		result := @reg^.parent^.lists[reg^.elementIndex]
+	else
+		result := nil;
+end;
+
+function ListFromID(idString: String): GUIList;
 var
 	tempReg: Region;
 begin
-	new(Result);
-	result^.nameString := nString;
-	WriteLn(nString);
-	WriteLn(result^.nameString);
-	result^.parentList := listID;
-	result^.imageID := bitmapID;
-	
-	new(tempReg);
-	tempReg^.stringID := itemID;
-	tempReg^.kind := 6;
-	tempReg^.area.x := 0; tempReg^.area.y := 0; tempReg^.area.width := 0; tempReg^.area.height := 0;
-	tempReg^.active := True;
-	
-	SetLength(GetRegionByID(listID)^.parent^.regions, Length(GetRegionByID(listID)^.parent^.regions) + 1);
-	GetRegionByID(listID)^.parent^.regions[High(GetRegionByID(listID)^.parent^.regions)] := tempReg;
-	tempReg^.elementIndex := High(GetRegionByID(listID)^.parent^.regions);
-	tempReg^.parent := GetRegionByID(listID)^.parent;
-end; 
+	tempReg := GetRegionByID(idString);
+	if assigned(tempReg) AND (tempReg^.elementIndex < Length(tempReg^.parent^.lists)) AND (tempReg^.elementIndex >= 0) then
+		result := @tempReg^.parent^.lists[GetRegionByID(idString)^.elementIndex]
+	else
+		result := nil;
+end;
 
-procedure AddItemToList(list: Region; item: GUIListItem);
+procedure ListAddItem(lst: GUIList; text: String);
+begin
+	ListAddItem(lst, nil, text);
+end;
+
+procedure ListAddItem(lst: GUIList; img:Bitmap);
+begin
+	ListAddItem(lst, img, '');
+end;
+
+procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
+begin
+	  if not assigned(lst) then exit;
+	  
+	  SetLength(lst^.items, Length(lst^.items) + 1);
+	  lst^.items[High(lst^.items)].text 		:= text;	//Assign the text to the item
+	  lst^.items[High(lst^.items)].image := img; //Assign the image to the item
+end;
+
+procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+var
+	i: LongInt;
+begin
+	  if not assigned(lst) then exit;
+	  if (idx < 0) or (idx > High(lst^.items)) then exit;
+	  
+	  for i := idx to High(lst^.items) - 1 do
+	  begin
+	  	lst^.items[i] := lst^.items[i + 1];
+		end;
+		
+	  SetLength(lst^.items, Length(lst^.items) - 1);
+end;
+
+function ListTextIndex(lst: GUIList; value: String): LongInt;
+var
+	i: LongInt;
+begin
+	result := -1;
+	if not assigned(lst) then exit;
+	
+	for i := Low(lst^.items) to High(lst^.items) do
+	begin
+		//find the text... then exit
+		if lst^.items[i].text = value then
+		begin
+			result := i;
+			exit;
+		end;
+	end;
+end;
+
+function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+var
+	i: LongInt;
+begin
+	result := -1;
+	if not assigned(lst) then exit;
+	
+	for i := Low(lst^.items) to High(lst^.items) do
+	begin
+		//find the text... then exit
+		if lst^.items[i].image = img then
+		begin
+			result := i;
+			exit;
+		end;
+	end;
+end;
+
+procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
 var
 	theList: GUIList;
+	i: LongInt;
 begin
-	  if not(assigned(list)) OR not(assigned(item)) then exit;
-	  
-	  theList := ListFromRegion(list);
-	  
-	  SetLength(theList^.items, Length(theList^.items) + 1);
-	  theList^.items[High(theList^.items)] := item;
+	theList := ListFromRegion(forRegion);
 	
-		RecalibrateList(list);
+	if PointInRect(pointClicked, theList^.scrollNeg) then
+	begin
+		if theList^.startingAt >= 1 then
+			theList^.startingAt := theList^.startingAt - theList^.columns;
+		exit;
+	end;
+	
+	if PointInRect(pointClicked, theList^.scrollPos) then
+	begin
+		if theList^.startingAt + Length(theList^.placeHolder) <= Length(theList^.items) then
+			theList^.startingAt := theList^.startingAt + theList^.columns;
+		exit;
+	end;
+	
+	for i := Low(theList^.placeHolder) to High(theList^.placeHolder) do
+	begin
+		if PointInRect(pointClicked, theList^.placeHolder[i]) then
+		begin
+			theList^.activeItem := theList^.startingAt + i;
+		end;
+	end;
 end;
+
+//---------------------------------------------------------------------------------------
+// Checkbox Code Code
+//---------------------------------------------------------------------------------------
 
 function CheckboxState(ID: String): Boolean;
 var
   reg: Region;
 begin
   reg := GetRegionByID(ID);
-  result := reg^.parent^.checkboxes[reg^.elementIndex]^.state;
+  result := reg^.parent^.checkboxes[reg^.elementIndex].state;
+end;
+
+procedure ToggleCheckboxState(c: GUICheckbox);
+begin
+  c^.state := not c^.state;
+end;
+
+//---------------------------------------------------------------------------------------
+// Panel Code
+//---------------------------------------------------------------------------------------
+
+procedure AddPanelToGUI(p: Panel);
+begin
+  SetLength(GUIC.panels, Length(GUIC.panels) + 1);
+  GUIC.panels[High(GUIC.panels)] := p;
 end;
 
 procedure ActivatePanel(p: Panel);
@@ -522,149 +696,40 @@ begin
   end;
 end;
 
-procedure ToggleCheckboxState(c: GUICheckbox);
-begin
-  c^.state := not c^.state;
-end;
-
-procedure SelectRadioButton(r: Region);
-var
-  rGroup: GUIRadioGroup;
-  i: integer;
-begin
-  rGroup := r^.parent^.radioGroups[r^.elementIndex];
-  
-  for i := Low(rGroup^.buttons) to High(rGroup^.buttons) do
-  begin
-    if rGroup^.buttons[i]^.stringID = r^.StringID then
-      rGroup^.activeButton := i;
-  end;
-end;
-
-procedure FinishReadingText();
-begin
-  if not assigned(GUIC.activeTextBox) then exit;
-  
-  //Write(' Storing last read into the contentString... ');
-  GUIC.activeTextBox^.parent^.textBoxes[GUIC.activeTextBox^.elementIndex]^.contentString := EndReadingText();
-  //WriteLn('Success');
-  GUIC.activeTextBox := nil;
-end;
-
-procedure SetAsActiveTextbox(r: Region);
-var
-  textBox: GUITextbox;
-begin
-  //Write(' Attempting to store GUITextbox of passed region... ');
-  textBox := r^.parent^.textBoxes[r^.elementIndex];
-  //WriteLn('Stored successfully in textBox');
-  
-  //Write(' Setting new activeTextBox... ');
-  GUIC.activeTextBox := r;
-  //WriteLn('Success');
-  //Write(' Beginning to Read text... ');
-  
-  StartReadingTextWithText(textBox^.contentString, GUIC.globalGUIVectorColor, textBox^.lengthLimit, FontNamed(textBox^.FontID), Trunc(r^.area.x), Trunc(r^.area.y));
-  WriteLn('Started with: ', textBox^.contentString);
-  //WriteLn('Success');
-end;
-
-procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
-var
-	theList: GUIList;
-	i: LongInt;
-begin
-	theList := ListFromRegion(forRegion);
-	for i := Low(theList^.items) to High(theList^.items) do
-	begin
-		if PointInRect(pointClicked, theList^.items[i]^.area) then
-		begin
-			theList^.activeItem := i;
-		end;
-	end;
-end;
-
-function RegionClicked(pnl: Panel): Region; Overload;
-var
-	j: LongInt;
-	pointClicked: Point2D;
-begin
-  result := nil;
-  if not MouseClicked(Leftbutton) then exit;
-  FinishReadingText();
-  
-  pointClicked := MousePosition();
-  
-  if pnl = nil then exit;
-  if not pnl^.active then exit;
-  
-  for j := Low(pnl^.Regions) to High(pnl^.Regions) do
-  begin
-    if PointInRect(pointClicked, pnl^.Regions[j]^.area) then
-    begin
-      case pnl^.Regions[j]^.kind of
-        2: ToggleCheckboxState(pnl^.checkboxes[pnl^.Regions[j]^.elementindex]);
-        3: SelectRadioButton(pnl^.Regions[j]);
-        4: SetAsActiveTextbox(pnl^.Regions[j]);
-        5: SetActiveListItem(pnl^.Regions[j], pointClicked);
-      end;
-      result := pnl^.Regions[j];
-      exit;
-    end;
-  end;
-end;
-
-function RegionClicked(): String;
-begin
-  result := RegionStringID(GUIC.lastClicked);
-end;
-
-procedure setLabelText(var l: GUILabel; s: string);
-begin
-  l^.contentString := s;
-end;
-
-procedure setLabelFont(var l: GUILabel; s: String);
-begin
-  l^.fontID := s;
-end;
-
-procedure AddPanelToGUI(p: Panel);
-begin
-  SetLength(GUIC.panels, Length(GUIC.panels) + 1);
-  GUIC.panels[High(GUIC.panels)] := p;
-end;
+//=============================================================================
+// Create Panels/GUI Elements/Regions etc.
+//=============================================================================
 
 function LoadPanel(filename: string): Panel;
 var
   pathToFile, line, id, data: string;
   panelFile: text;
   lineNo: integer;
+  regionDataArr: Array of String;
   
-  function MyStrToInt(str: String; allowEmpty: Boolean): LongInt;
-  begin
-    if not allowEmpty and (Length(str) = 0) then
-    begin
-      result := -1;
-    end
-    else if not TryStrToInt(str, result) then
-    begin
-      result := 0;
-      RaiseException('Error at line ' + IntToStr(lineNo) + ' in Panel: ' + filename + '. Value ' + str + ' is not an integer.');
-    end
-    else
-    begin
-      result := StrToInt(str);
-    end;
-  end;
-  
+//   function MyStrToInt(str: String; allowEmpty: Boolean): LongInt;
+//   begin
+//     if not allowEmpty and (Length(str) = 0) then
+//     begin
+//       result := -1;
+//     end
+//     else if not TryStrToInt(str, result) then
+//     begin
+//       result := 0;
+//       RaiseException('Error at line ' + IntToStr(lineNo) + ' in Panel: ' + filename + '. Value ' + str + ' is not an integer.');
+//     end
+//     else
+//     begin
+//       result := StrToInt(str);
+//     end;
+//   end;
+   
   procedure CreateLabel(forRegion: Region; d: string);
   var
-    newLbl: GUILabel;
+    newLbl: GUILabelData;
   begin
-    New(newLbl);
-    newLbl^.contentString := ExtractDelimited(7, d, [',']);
-    newLbl^.fontID := Trim(ExtractDelimited(8, d, [',']));
+    newLbl.contentString := ExtractDelimited(7, d, [',']);
+    newLbl.font := FontNamed(Trim(ExtractDelimited(8, d, [','])));
     
     SetLength(result^.Labels, Length(result^.Labels) + 1);
     result^.labels[High(result^.labels)] := newLbl;
@@ -674,12 +739,12 @@ var
   procedure AddRegionToGroup(regToAdd: Region; groupToRecieve: GUIRadioGroup);
   begin
     SetLength(groupToRecieve^.buttons, Length(groupToRecieve^.buttons) + 1);
-    groupToRecieve^.buttons[High(groupToRecieve^.buttons)] := regToAdd;
+    groupToRecieve^.buttons[High(groupToRecieve^.buttons)] := regToAdd;    
   end;
   
   procedure CreateRadioButton(forRegion: Region; data: String);
   var
-    newRadioGroup: GUIRadioGroup;
+    newRadioGroup: GUIRadioGroupData;
     i: Integer;
     radioGroupID: string;
   begin
@@ -687,19 +752,19 @@ var
     
     for i := Low(result^.radioGroups) to High(result^.radioGroups) do
     begin
-      if (radioGroupID = result^.radioGroups[i]^.GroupID) then
+      if (radioGroupID = result^.radioGroups[i].GroupID) then
       begin
-        AddRegionToGroup(forRegion, result^.radioGroups[i]);
+        AddRegionToGroup(forRegion, @result^.radioGroups[i]);
         forRegion^.elementIndex := i;
         exit;
       end;
     end;
-    New(newRadioGroup);
-    SetLength(newRadioGroup^.buttons, 0);
-    newRadioGroup^.GroupID := radioGroupID;
-    AddRegionToGroup(forRegion, newRadioGroup);
-    if assigned(newRadioGroup^.buttons[0]) then
-      newRadioGroup^.activeButton := 0; 
+    
+    SetLength(newRadioGroup.buttons, 0);
+    newRadioGroup.GroupID := radioGroupID;
+    AddRegionToGroup(forRegion, @newRadioGroup);
+    
+    newRadioGroup.activeButton := 0;
     // add to panel, record element index.
     SetLength(result^.radioGroups, Length(result^.radioGroups) + 1);
     result^.radioGroups[High(result^.radioGroups)] := newRadioGroup;
@@ -708,10 +773,9 @@ var
   
   procedure CreateCheckbox(forRegion: Region; data: string);
   var
-    newChkbox: GUICheckbox;
+    newChkbox: GUICheckboxData;
   begin
-    new(newChkbox);
-    newChkbox^.state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
+    newChkbox.state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
     
     SetLength(result^.Checkboxes, Length(result^.Checkboxes) + 1);
     result^.Checkboxes[High(result^.Checkboxes)] := newChkbox;
@@ -720,12 +784,11 @@ var
   
   procedure CreateTextbox(r: region; data: string);
   var
-    newTextbox: GUITextbox;
+    newTextbox: GUITextboxData;
   begin
-    new(newTextbox);
-    newTextbox^.fontID := Trim(ExtractDelimited(7, data, [',']));
-    newTextbox^.lengthLimit := StrToInt(Trim(ExtractDelimited(8, data, [','])));
-    newTextBox^.contentString := Trim(ExtractDelimited(9, data, [',']));
+    newTextbox.font := FontNamed(Trim(ExtractDelimited(7, data, [','])));
+    newTextbox.lengthLimit := StrToInt(Trim(ExtractDelimited(8, data, [','])));
+    newTextBox.contentString := Trim(ExtractDelimited(9, data, [',']));
     
     SetLength(result^.textBoxes, Length(result^.textBoxes) + 1);
     result^.textBoxes[High(result^.textBoxes)] := newTextbox;
@@ -734,20 +797,43 @@ var
   
   procedure CreateList(r: Region; data: string);
   var
-    newList: GUIList;
+    newList: GUIListData;
   begin
-    new(newList);
-    newList^.columns := StrToInt(Trim(ExtractDelimited(7, data, [','])));
-    newList^.activeItem := StrToInt(Trim(ExtractDelimited(8, data, [','])));
-    newList^.colWidth := StrToInt(Trim(ExtractDelimited(9, data, [','])));
-    newList^.rowHeight := StrToInt(Trim(ExtractDelimited(10, data, [','])));
-    newList^.fontID := Trim(ExtractDelimited(11, data, [',']));
-    SetLength(newList^.items, 0);
+    newList.columns 				:= StrToInt(Trim(ExtractDelimited(7, data, [','])));
+    newList.rows 						:= StrToInt(Trim(ExtractDelimited(8, data, [','])));
+    newList.activeItem 			:= StrToInt(Trim(ExtractDelimited(9, data, [','])));
+    newList.scrollSize  		:= StrToInt(Trim(ExtractDelimited(13, data, [','])));;
+    newList.verticalScroll 	:= True;
+    newList.font 						:= FontNamed(Trim(ExtractDelimited(12, data, [','])));
+    
+    newList.startingAt  := 0;
+    
+    // Calculate col and row sizes
+    newList.colWidth 		:= StrToInt(Trim(ExtractDelimited(10, data, [','])));
+    newList.rowHeight 	:= StrToInt(Trim(ExtractDelimited(11, data, [','])));
+    
+    r^.area.width := (newList.columns * newList.colWidth) + newList.scrollSize;
+    r^.area.height := (newList.rows * newList.rowHeight);
+    
+    
+    // Set up scroll buttons
+    newList.scrollNeg.x := r^.area.x + r^.area.width - newList.scrollSize;
+    newList.scrollNeg.y := r^.area.y;
+    newList.scrollNeg.width := newList.scrollSize;
+    newList.scrollNeg.height := newList.scrollSize;
+    
+    newList.scrollPos.x := r^.area.x + r^.area.width - newList.scrollSize;
+    newList.scrollPos.y := r^.area.y + r^.area.height - newList.scrollSize;
+    newList.scrollPos.width := newList.scrollSize;
+    newList.scrollPos.height := newList.scrollSize;
+    
+    SetLength(newList.placeHolder, (newList.columns * newList.rows));
+    
+    SetLength(newList.items, 0);
     
     SetLength(result^.lists, Length(result^.lists) + 1);
     result^.lists[High(result^.lists)] := newList;
     r^.elementIndex := High(result^.lists);
-    WriteLn('List ''', r^.stringID, ''' added.');
   end;
   
   procedure CreateListItem(r: region; data: string);
@@ -755,19 +841,23 @@ var
     newListItem: GUIListItem;
     reg: Region;
     pList: GUIList;
+    bitmap: String;
   begin
-    new(newListItem);
-    newListItem^.parentList := Trim(ExtractDelimited(7, data, [',']));
-    newListItem^.nameString := Trim(ExtractDelimited(8, data, [',']));
-    newListItem^.imageID := Trim(ExtractDelimited(9, data, [',']));
+  	newListItem.parent := ListFromRegion(GetRegionByID(Trim(ExtractDelimited(8, data, [',']))));
+  
+    newListItem.text := Trim(ExtractDelimited(8, data, [',']));
     
-    WriteLn('trying ListFromID with: ', newListItem^.parentList);
-    reg := GetRegionByID(result, newListItem^.parentList);
+    //Load the bitmap or nil if bitmap text is 'n'
+    bitmap := Trim(ExtractDelimited(9, data, [',']));
+    if bitmap <> 'n' then
+    	newListItem.image := BitmapNamed(bitmap)
+    else
+    	newListItem.image := nil;
+    
+    reg := GetRegionByID(result, Trim(ExtractDelimited(8, data, [','])));
     pList := ListFromRegion(reg);
     
-    Write('Setting length + 1... to ', HexStr(pList));
     SetLength(pList^.items, Length(pList^.items) + 1);
-    WriteLn('Success');
     pList^.items[High(pList^.items)] := newListItem;
   end;
   
@@ -775,7 +865,7 @@ var
   var
     regID: string;
     regX, regY, regW, regH, regKind, addedIdx: integer;
-    r: region;
+    r: RegionData;
   begin
     regX := StrToInt(Trim(ExtractDelimited(1, d, [','])));
     regY := StrToInt(Trim(ExtractDelimited(2, d, [','])));
@@ -785,32 +875,45 @@ var
     
     regID := Trim(ExtractDelimited(6, d, [',']));
     
-    regX += Trunc(p^.position.x);
-    regY += Trunc(p^.position.y);
-    
-    new(r);
-    r^.area := RectangleFrom(regX, regY, regW, regH);
-    r^.kind := regKind;
-    r^.active := true;
-    r^.StringID := regID;
+    regX += Round(p^.position.x);
+    regY += Round(p^.position.y);
     
     addedIdx := AddName(result^.regionIds, regID);   //Allocate the index
-    SetLength(p^.Regions, Length(p^.Regions) + 1);
-    r^.RegionID := High(p^.Regions);
-    if High(p^.Regions) <> addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
+    if High(p^.Regions) < addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
+
+    case regKind of
+    	0: r.kind := gkButton;
+    	1: r.kind := gkLabel;
+    	2: r.kind := gkCheckbox;
+    	3: r.kind := gkRadioGroup;
+    	4: r.kind := gkTextbox;
+    	5: r.kind := gkList;
+    end;
+    
+    r.RegionID 			:= High(p^.Regions);
+    r.area 					:= RectangleFrom(regX, regY, regW, regH);
+    r.active 				:= true;
+    r.stringID 			:= regID;
+    r.elementIndex	:= -1;
+    r.parent 				:= p;
     
     p^.Regions[addedIdx] := r;
-    r^.parent := p;
     
-    case r^.kind of
-      0: ;
-      1: CreateLabel(r,d);
-      2: CreateCheckbox(r,d);
-      3: CreateRadioButton(r,d);
-      4: CreateTextbox(r,d);
-      5: CreateList(r, d);
-      6: CreateListItem(r, d);
+    
+    case r.kind of
+      gkButton: ;
+      gkLabel: 			CreateLabel(@p^.Regions[addedIdx],d);
+      gkCheckbox: 	CreateCheckbox(@p^.Regions[addedIdx],d);
+      gkRadioGroup: CreateRadioButton(@p^.Regions[addedIdx],d);
+      gkTextbox: 		CreateTextbox(@p^.Regions[addedIdx],d);
+      gkList: 			CreateList(@p^.Regions[addedIdx], d);
     end;    
+  end;
+  
+  procedure StoreRegionData(data: String);
+  begin
+  	SetLength(regionDataArr, Length(regionDataArr) + 1);
+  	regionDataArr[High(regionDataArr)] := data;
   end;
   
   procedure ProcessLine();
@@ -831,7 +934,7 @@ var
       'y': result^.position.y := MyStrToInt(data, false);
       'w': result^.width := MyStrToInt(data, false);
       'h': result^.height := MyStrToInt(data, false);
-      'r': AddRegionToPanelWithString(data, result);
+      'r': StoreRegionData(data);
     else
       begin
         RaiseException('Error at line ' + IntToStr(lineNo) + ' in panel: ' + filename + '. Error with id: ' + id + '. This should be one of the characters defined in the template.');
@@ -840,12 +943,25 @@ var
     end;
   end;
   
+  procedure CreateRegions();
+  var
+  	i: LongInt;
+  begin
+  	SetLength(result^.regions, Length(regionDataArr));
+  	
+  	for i := Low(regionDataArr) to High(regionDataArr) do
+  	begin
+  		AddRegionToPanelWithString(regionDataArr[i], result);
+  	end;
+  end;
+  
   procedure InitPanel();
   var
     P2D: Point2D;
   begin
     P2D.x := 0;
     P2D.y := 0;
+    
     New(result);
     result^.stringID := '';
     result^.panelBitmap := nil;
@@ -870,36 +986,34 @@ var
     workingRow := 0;
 		for j := Low(result^.Regions) to High(result^.Regions) do
 		begin
-			WriteLn('Got regions');
-		  if result^.Regions[j]^.kind = 5 then
+		  if result^.Regions[j].kind = gkList then
 		  begin
-		  	WriteLn('Found a list..');
-		    tempListPtr := result^.Regions[j]^.parent^.Lists[result^.Regions[j]^.elementIndex];
-		    for k := Low(tempListPtr^.items) to High(tempListPtr^.items) do
+		  	
+		    tempListPtr := @result^.Lists[result^.Regions[j].elementIndex];
+		    for k := Low(tempListPtr^.placeHolder) to High(tempListPtr^.placeHolder) do
 		    begin
-		    	WriteLn('Checking list elements ', k);
-		      tempListPtr^.items[k]^.area.x := (workingCol * tempListPtr^.colWidth) + result^.position.x + result^.Regions[j]^.area.x;
-		      tempListPtr^.items[k]^.area.y := (workingRow * tempListPtr^.rowHeight) + result^.position.y + result^.Regions[j]^.area.y;
-		      tempListPtr^.items[k]^.area.width := (tempListPtr^.colWidth);
-		      tempListPtr^.items[k]^.area.height := (tempListPtr^.rowHeight);
-		      
+		      tempListPtr^.placeHolder[k].x := (workingCol * tempListPtr^.colWidth) + result^.Regions[j].area.x;
+		      tempListPtr^.placeHolder[k].y := (workingRow * tempListPtr^.rowHeight) + result^.Regions[j].area.y;
+		      tempListPtr^.placeHolder[k].width := (tempListPtr^.colWidth);
+		      tempListPtr^.placeHolder[k].height := (tempListPtr^.rowHeight);
+		      		      
 		      workingCol += 1;
 		      
 		      if workingCol >= tempListPtr^.columns then
 		      begin
 		        workingCol := 0;
 		        workingRow += 1;
-		    end;
-		  end;            
+		    	end;
+		  	end;            
+			end;
 		end;
-	end;
 end;
   
 begin
   {$ifdef Windows}
-  pathToFile := PathToResourceWithBase(applicationPath, 'panels\' + filename);
+  	pathToFile := PathToResourceWithBase(applicationPath, 'panels\' + filename);
   {$else}
-  pathToFile := PathToResourceWithBase(applicationPath, 'panels/' + filename);
+  	pathToFile := PathToResourceWithBase(applicationPath, 'panels/' + filename);
   {$endif}
   
   // Initialise the resulting panel
@@ -907,6 +1021,8 @@ begin
   
   Assign(panelFile, pathToFile);
   Reset(panelFile);
+  
+  SetLength(regionDataArr, 0);
   
   lineNo := -1;
   
@@ -922,6 +1038,7 @@ begin
     ProcessLine();
   end;
   
+  CreateRegions();
   InitializeLists();
 end;
 

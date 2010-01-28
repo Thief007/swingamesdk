@@ -6,15 +6,15 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 50
-y: 280
+x: 10
+y: 365
 w: 500
 h: 225
 
 // Region data
 // Format: r: x, y, w, h, kind
 r: 80, 80, 320, 70, 0, Button1
-r: 90, 100, 20, 20, 1, Button1Label, PUSH BUTTON, courierLarge
+r: 90, 100, 20, 20, 1, Button1Label, Push Button, courierLarge
 r: 50, 100, 20, 20, 2, Checkbox2, false
 //Radiobutton r: x, y, w, h, 3, GroupID
 r: 10, 10, 10, 10, 3, radButton1, RadioGroup1
