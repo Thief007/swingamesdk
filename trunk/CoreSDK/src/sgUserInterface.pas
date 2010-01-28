@@ -1093,8 +1093,8 @@ end;
 
 procedure UpdateInterface();
 begin
+	GUIC.doneReading := false;
   GUIC.lastClicked := RegionClicked(PanelClicked());
-  GUIC.doneReading := false;
   if assigned(GUIC.activeTextbox) and not ReadingText() then
     FinishReadingText();
 end;
