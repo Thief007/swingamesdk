@@ -64,18 +64,6 @@ begin
   repeat // The game loop...
     ProcessEvents();
     UpdateActions(myMap);
-    CenterCameraOn(c, VectorTo(0,0));
-    ClearScreen(ColorBlack);
-    DrawMap(myMap);
-
-
-
-
-		DrawCharacterWithStationary(c, 0, 1);
-    //DrawCharacter(c);
-		UpdateSpriteAnimation(c^.CharSprite);
-		MoveSprite(c^.CharSprite);
-
 
       if KeyDown(vk_Up) then c^.CharSprite^.velocity:= p2d[0]
       else if KeyDown(vk_Down) then c^.CharSprite^.velocity:= p2d[1]
@@ -85,16 +73,26 @@ begin
 
 		if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
 
+    UpdateSpriteAnimation(c^.CharSprite);
+    //if KeyDown(vk_m) then
+      MoveSprite(c^.CharSprite);
 
+    CenterCameraOn(c, VectorTo(0,0));
+    ClearScreen(ColorBlack);
+    DrawMap(myMap);
 
-    if SpriteHasCollidedWithTile(myMap, 0, c^.CharSprite, i, j) then
+		DrawCharacterWithStationary(c, 0, 1);
+    
+    if SpriteHasCollidedWithTile(myMap, 2, c^.CharSprite, i, j) then
     begin
-      HighLightTile(@myMap^.Tiles[j, i], myMap);
+      //HighLightTile(@myMap^.Tiles[j, i], myMap);
+      //WriteLn('Character Velocity: ', PointToString(c^.CharSprite^.velocity));
+      MoveOut(myMap,c^.CharSprite, c^.CharSprite^.velocity, i, j);
     end;
-
+    
     
     DrawFramerate(0,0);
-    RefreshScreen();
+    RefreshScreen(15);
   until WindowCloseRequested();
   ReleaseAllResources();
   CloseAudio();

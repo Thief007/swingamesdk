@@ -269,6 +269,15 @@ interface
   /// @method ToString
   /// @csn description
   function PointToString(const pt: Point2D): String;
+
+  /// Get a text description of the line segment.
+  ///
+  /// @lib
+  ///
+  /// @class LineSegment
+  /// @method ToString
+  /// @csn description
+  function LineToString(const ln: LineSegment): String;
   
   /// Returns the center point of the rectangle.
   ///
@@ -304,6 +313,15 @@ interface
   function LineCount(const s: Shape): LongInt;
   ///returns array of lines for a given shape.
   function LinesFrom(const s: shape): LinesArray; overload;
+  /// Returns the vector needed to move shape ``s`` out of rectangle``bounds`` given the velocity specified.
+  /// 
+  /// @lib
+  /// @sn vectorFromRect:%s outOfRect:%s givenHeading:%s
+  /// 
+  /// @class Rectangle
+  /// @method VectorOutOfRect
+  /// @csn vectorOutOfRect:%s givenHeading:%s
+  function VectorOutOfShapeFromRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
   /// Returns a line from a starting point to the point at the end of the
   /// mv vector.
   ///
@@ -822,6 +840,9 @@ interface
   /// @class LineSegment
   /// @method IntersectsRect
   function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
+
+  function RectangleShapeIntersect(const rect: Rectangle; shp: Shape): Boolean;
+  function ShapeAABB(shp: Shape): Rectangle;
 
   //---------------------------------------------------------------------------
   // Point test operations
@@ -1531,7 +1552,7 @@ implementation
     ray, vOut: Vector;
     i, j, k: LongInt;
     maxDist: Single;
-    lnPoints: Point2DArray;
+    lnPoints, boundLnPoints: Point2DArray;
     bothDidHit: Boolean;
     
     // Search from the startPt for the ray 
@@ -1547,11 +1568,12 @@ implementation
       // ptOnLine is then the point that the ray intersects with the line
       if RayIntersectionPoint(startPt, myRay, toLine, ptOnLine) then
       begin
-        //DrawCircle(ColorRed, ptOnLine, 1);
-        //DrawLine(ColorRed, pts[j], ptOnLine);
-        
         if not PointOnLine(ptOnLine, toLine) then exit; //this points ray misses the line
         result := True;
+
+        FillCircle(ColorRed, startPt, 2);
+        DrawCircle(ColorRed, ptOnLine, 2);
+        DrawLine(ColorRed, startPt, ptOnLine);
         
         // Calculate the distance from the point on the line to the point being tested
         dist := PointPointDistance(ptOnLine, startPt);
@@ -1565,7 +1587,7 @@ implementation
             vOut := VectorFromPoints(startPt, ptOnLine)
           else // if we are searching forward (using velocity)
             vOut := VectorFromPoints(ptOnLine, startPt);
-          vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1)
+          vOut := VectorMultiply(UnitVector(vOut), VectorMagnitude(vOut) + 1.42)
         end;      
       end;
     end;
@@ -1577,7 +1599,7 @@ implementation
     // Cast ray searching back from pts... looking for the impact point
     ray := InvertVector(velocity);  // the ray
     vOut := VectorTo(0,0);          // the vector out (from the point to over the line, i.e. moving the point along this vector moves it back over the line)
-    
+
     // Indicate no find so far....
     maxIdx := -1;
     maxDist := -1;
@@ -1587,26 +1609,31 @@ implementation
     //
     for i := 0 to High(boundLines) do
     begin
+      //WriteLn('Testing bound line: ', LineToString(boundLines[i]));
+      boundLnPoints := PointsFrom(boundLines[i]);
       
       // for all source lines...
       for j := 0 to High(srcLines) do
       begin
+        //WriteLn('Testing src line: ', LineToString(srcLines[j]));
+        
         // Get the points from the srcLine
         lnPoints := PointsFrom(srcLines[j]);
         bothDidHit := True;
         
         for k := 0 to High(lnPoints) do
         begin
+          //WriteLn('Point ', k, ' in line is at ', PointToString(lnPoints[k]));
           bothDidHit := _RayFromPtHitLine(lnPoints[k], boundLines[i], ray) and bothDidHit;
         end;
-        
+
         if bothDidHit then continue;
         
         // Search from the bound line to the source 
-        lnPoints := PointsFrom(boundLines[j]);
-        for k := 0 to High(lnPoints) do
+        
+        for k := 0 to High(boundLnPoints) do
         begin
-          _RayFromPtHitLine(lnPoints[k], srcLines[i], velocity);
+          _RayFromPtHitLine(boundLnPoints[k], srcLines[j], velocity);
         end;        
       end;
     end;
@@ -2049,7 +2076,6 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'VectorMagnitudeSq(const v: Vector): Single', '');
     {$ENDIF}
-    
     result := (v.x * v.x) + (v.y * v.y);
     
     {$IFDEF TRACE}
@@ -2955,7 +2981,10 @@ implementation
   begin
     //Lines Magnitude must be at least 0.0001
     sqLineMag := LineMagnitudeSq(line);
-    if SqLineMag < EPSEPS then begin RaiseException('Cannot determine if point is on line, line is too short'); exit; end;
+    if SqLineMag < EPSEPS then
+    begin
+      RaiseException('Cannot determine if point is on line, line is too short'); exit;
+    end;
           
     //Obtain the other variables for the Line Algorithm
     if line.endPoint.x = line.startPoint.x then
@@ -3171,8 +3200,9 @@ implementation
     pts:Point2DArray;
     i:LongInt;
   begin
-    pts:= PrototypePoints(s^.prototype);
-    
+    pts:= ShapePoints(s);
+
+    //WriteLn('LineCount: ', LineCount(s));
     SetLength(result, LineCount(s));
     if Length(result) <= 0 then exit;
     
@@ -3180,16 +3210,19 @@ implementation
     begin
       result[i * 2]     := LineFrom(pts[i], pts[i + 1]);
       result[i * 2 + 1] := LineFrom(pts[i], pts[i + 2]);
+      //WriteLn('  Line ', LineToString(result[i*2]));
+      //WriteLn('  Line ', LineToString(result[i*2 + 1]));
     end;
 
     result[high(result)] := LineFrom(pts[High(pts) - 1], pts[High(pts)]);
+    //WriteLn('  Line ', LineToString(result[High(result)]));
   end;
 
   function LineCount(const s: Shape): LongInt;
   var
   k: ShapeKind;
   begin
-    k:=PrototypeKind(s^.prototype);
+    k := PrototypeKind(s^.prototype);
     case k of
       pkCircle: result := 0;
       pkLine: result := 1;
@@ -3206,6 +3239,7 @@ implementation
         end;
     end;
   end;
+  
   function LinesFrom(const s: shape): LinesArray; overload;
   var
   k: ShapeKind;
@@ -3214,8 +3248,9 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'LinesFrom(const tri: Triangle): LinesArray', '');
     {$ENDIF}
-    k:=PrototypeKind(s^.prototype);
-    pts:= PrototypePoints(s^.prototype);
+    k := PrototypeKind(s^.prototype);
+    pts := ShapePoints(s);
+    
     case k of
       pkCircle: SetLength(result, 0);
       //pkLine: result := PointOnLine(pt, Linefrom(pts[0],pts[1]));
@@ -3244,6 +3279,7 @@ implementation
     {$ENDIF}
     
     SetLength(result, 4);
+    
     with rect do
     begin
       result[0] := LineFrom(x, y, x + width, y);
@@ -3288,6 +3324,11 @@ implementation
   function PointToString(const pt: Point2D): String;
   begin
     result := FloatToStr(pt.x) + ':' + FloatToStr(pt.y);
+  end;
+
+  function LineToString(const ln: LineSegment): String;
+  begin
+    result := 'From ' + PointToString(ln.startPoint) + ' to ' + PointToString(ln.endPoint);
   end;
   
   function PointAt(const startPoint: Point2D; const offset: Vector): Point2D; overload;
@@ -3578,6 +3619,41 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'RectanglesIntersect(const rect1, rect2: Rectangle): Boolean', '');
     {$ENDIF}
+  end;
+
+  function ShapeAABB(shp: Shape): Rectangle;
+  var
+  pts : Point2DArray;
+  x,y :Single;
+  i,w,h : LongInt;
+  begin
+    pts := ShapePoints(shp);
+    x := pts[0].X;
+    y := pts[0].Y;
+    w := 0;
+    h := 0;
+    for i := low(pts)+1 to high(pts) do
+    begin
+      if pts[i].X < x then x := pts[i].X
+      else if pts[i].X > (x+w) then  w := trunc(pts[i].X - x);
+      if pts[i].Y < y then y := pts[i].Y
+      else if pts[i].Y > (y+h) then h := trunc(pts[i].Y - y);
+    end;
+    result := RectangleFrom(x,y,w,h);
+    drawRectangle(colorYellow,RectangleFrom(x,y,w,h));
+  end;
+
+
+  function RectangleShapeIntersect(const rect: Rectangle; shp: Shape): Boolean;
+  var
+  rect2 : rectangle;
+  begin
+    rect2 := ShapeAABB(shp);
+    if RectangleBottom(rect) < RectangleTop(rect2) then result := false
+    else if RectangleTop(rect) > RectangleBottom(rect2) then result := false
+    else if RectangleRight(rect) < RectangleLeft(rect2) then result := false
+    else if RectangleLeft(rect) > RectangleRight(rect2) then result := false
+    else result := true;
   end;
 
   function Intersection(const rect1, rect2: Rectangle): Rectangle;
@@ -4008,6 +4084,15 @@ implementation
       TraceExit('sgGeometry', 'VectorOutOfCircleFromCircle(const src, bounds: Circle', '');
     {$ENDIF}
   end;
+
+  function VectorOutOfShapeFromRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
+  var
+  maxIdx :LongInt;
+  begin
+   result := _VectorOverLinesFromLines(LinesFrom(bounds),LinesFrom(s), velocity, maxIdx);
+  end;
+    
+  
 
   function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   var

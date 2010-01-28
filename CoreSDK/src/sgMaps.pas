@@ -62,6 +62,7 @@ interface
   procedure AllocateValue(map:map; tile:Tile; name:String; val:Single);
   function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  procedure MoveOut(m:map; s: Sprite; velocity: Vector; x, y: LongInt);
 
 
 
@@ -516,7 +517,7 @@ interface
     startY := Trunc(r.Y / map^.TileHeight) - 1;
     startX := Trunc(r.X / map^.TileWidth) - 1;
     
-    endY   := Trunc(startY + (r.Height/(map^.TileHeight - map^.TileStaggerY))) + 2;
+    endY   := Trunc(startY + (r.Height/(map^.TileHeight - map^.TileStaggerY))) + 2 ;
     endX   := Trunc(startX + ((r.Width + map^.TileStaggerX)/map^.TileWidth)) + 3;
 
     // Adjust the end and start to be in range of the array
@@ -728,6 +729,7 @@ interface
     end;
 
     result := RectangleFrom(startX, startY, endX - startX, endY - startY);
+    drawRectangle(colorpink, RectangleFrom(startX, startY, endX - startX, endY - startY));
 
     //Debug Info
     //DrawRectangle(ColorYellow, startPoint.x, startPoint.y, startPoint.width, startPoint.height);
@@ -773,13 +775,14 @@ interface
     with map^ do begin
       for i := yStart to yEnd do
       begin
+        writeln ('start ', yStart,  'end', yEnd);
         y := initY + (i - yStart) * dy;
         for j := xStart to xEnd do
         begin
           x := initX + (j - xStart) * dx; //TODO: Optimize - j start at 0 instead...
-          if map^.Tiles[y,x].Kind = k then
+          if Tiles[y,x].Kind = k then
           begin
-            if SpriteRectCollision(s, map^.Tiles[y,x].Position.X, map^.Tiles[y,x].Position.Y, TileWidth, TileHeight) then
+            if SpriteShapeCollision(s, Tiles[y,x].TileShape) then
             begin
               result := true;
               collidedX := x;
@@ -794,6 +797,29 @@ interface
     collidedX := -1; 
     collidedY := -1;
 
+  end;
+
+  procedure MoveOut(m: map; s: Sprite; velocity: Vector; x, y: LongInt);
+  var
+    kickVector: Vector;
+    sprRect: Rectangle;
+    tileshape: shape;
+  begin
+    tileshape:= m^.Tiles[y,x].TileShape;
+    sprRect := SpriteCollisionRectangle(s);
+
+    //Draw the sprite rectangle
+    DrawRectangle(ColorYellow, sprRect);
+    DrawShape(tileShape);
+    //WriteLn(x, ',', y);
+    kickVector := VectorOutOfShapeFromRect(tileshape, sprRect, velocity);
+
+    sprRect.x += kickVector.x;
+    sprRect.y += kickVector.y;
+    
+    DrawRectangle(ColorWhite, sprRect);
+    //writeln('v.x: ',kickVector.x, 'v.y: ',kickVector.y);
+    MoveSprite(s, kickVector);;
   end;
 
   
