@@ -2,10 +2,13 @@
 // sgCharacters.pas
 //=============================================================================
 //
-// Version 0.4 -  
+// Version 0.2 -  
 // 
 //
 // Change History:
+// Version 0.2:
+// - 2010-01-28:	David : Added functions and procedures to the interface section
+//												of the code.
 //
 // Version 0.1:
 // - 2010-01-20:  David : Added functions and procedures to access record data
@@ -52,18 +55,56 @@ type
     ShownLayersByDirState : Array of Array of DirStateData;
     ShownLayerCache       : LayerCache;
   end;
+	
+  //---------------------------------------------------------------------------
+  // Character Name and Type
+  //---------------------------------------------------------------------------   
+  procedure CharacterSetName(c: Character; name : String);
+	function CharacterName(c: Character) : String;
+	function CharacterCurrentState(c: Character): LongInt;
+	function CharacterType(c: Character): String;
+	
+	//---------------------------------------------------------------------------
+  // Character Directions and States
+  //--------------------------------------------------------------------------- 
+  procedure CharacterSetCurrentState(c: Character; state: Integer); 
+	procedure CharacterSetDirectionState(c: Character; direction: Integer);
+	function CharacterCurrentState(c: Character): LongInt;
+	function CharacterCurrentDirection(c: Character): LongInt;
+	function CharacterDirections(c: Character) : NamedIndexCollection;
+	function CharacterStates(c: Character) : NamedIndexCollection;
+	
+	//---------------------------------------------------------------------------
+  // Character Angles
+  //--------------------------------------------------------------------------- 
+	function CharacterLastAngle(c: Character): LongInt;  
+  function CharacterAngleAt(c: Character; index : integer): DirectionAngles;  
+  function CharacterAnglesLength(c: Character): LongInt;
+  function CharacterAngleMinAt(c: Character; index : integer): LongInt;
+  function CharacterAngleMaxAt(c: Character; index : integer): LongInt;
+  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
+  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
+	
+	  //---------------------------------------------------------------------------
+  // Character Values
+  //---------------------------------------------------------------------------   
+  function CharacterValueNames(c: Character) : NamedIndexCollection; 
+  function CharacterValueAt(c: Character; index: Integer): LongInt;  
+  function CharacterValueCount(c: Character): LongInt;
   
+  //---------------------------------------------------------------------------
+  // Character Sprite
+  //---------------------------------------------------------------------------    
+  function CharacterSprite(c: Character) : Sprite;  
+  procedure FreeCharacter(var c : character);
+	
+ //---------------------------------------------------------------------------
+  // Handle Character Layers
+  //--------------------------------------------------------------------------- 
   
-    
-  //Loads Character from TextFile
-  function LoadCharacter(filename: String) : Character;
-  
-  //Draw Character that changes state when its velocity is 0
-  procedure DrawCharacterWithStationary(c: Character; stationaryState, state: Integer);
-  
-  //Draw Character without a stationary state
-  procedure DrawCharacter(c: Character);
-  
+  procedure SetActiveLayer(var c: Character);
+  function UpdateShownLayerCache(c: Character): LayerCache;  	
+	
   //Update the animation of the character depending on its direction
   function UpdateDirectionAnimation(c: Character) : Boolean;
   
@@ -73,8 +114,25 @@ type
   
   //Inverts the boolean of Showlayer for the layer at the index
   procedure ToggleLayerVisibility(c: Character; index: integer);
+
+  //---------------------------------------------------------------------------
+  // Handle Character Drawing
+  //---------------------------------------------------------------------------   
   
-  //Frees the pointer to the character
+  //Draw Character that changes state when its velocity is 0
+  procedure DrawCharacterWithStationary(c: Character; stationaryState, state: Integer);
+  
+  //Draw Character without a stationary state with default facing down when not moving
+  procedure DrawCharacter(c: Character);
+	
+  //---------------------------------------------------------------------------
+  // Load and Free Character
+  //--------------------------------------------------------------------------- 
+	
+  //Loads Character from TextFile
+  function LoadCharacter(filename: String) : Character;
+    
+  //Frees the pointer to the character and it's sprite
   procedure FreeCharacter(var c: Character);
 
 //=============================================================================
