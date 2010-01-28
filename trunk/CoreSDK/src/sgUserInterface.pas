@@ -125,6 +125,7 @@ type
     VectorDrawing:  Boolean;
     lastClicked:    Region;
     activeTextBox:  Region;
+    doneReading: 		Boolean;
   end;
 
 function LoadPanel(filename: string): Panel;
@@ -166,6 +167,9 @@ function ListTextIndex(lst: GUIList; value: String): LongInt;
 //function ListActiveText(lst: GUIList): String;
 //function ListActiveBitmap(lst: GUIList): Bitmap;
 
+function RadioGroupFromRegion(forRegion: Region): GUIRadioGroup;
+function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
+
 function ListFromRegion(reg: Region): GUIList; overload;
 
 function GetRegionByID(pnl: Panel; ID: String): Region; overload;
@@ -176,6 +180,8 @@ function CheckboxState(ID: String): Boolean;
 function TextBoxFromRegion(r: Region): GUITextBox;
 function TextBoxText(tb: GUITextBox): string;
 
+function ActiveTextBoxParent() : Panel;
+procedure TextboxSetString(tb: GUITextBox; s: string);
 function LabelFromRegion(r: Region): GUILabel;
 function LabelString(lb: GUILabel): string; Overload;
 procedure setLabelText(lb: GUILabel; newString: String);
@@ -200,9 +206,7 @@ var
 
 function StoppedReadingText(): boolean;
 begin
-	result := false;
-  if assigned(GUIC.activeTextbox) and not ReadingText() then
-		result := true;
+	result := GUIC.doneReading;
 end;
 
 function ActiveTextIndex(): Integer;
@@ -213,6 +217,17 @@ end;
 procedure DeactivateTextBox();
 begin	
 	GUIC.activeTextBox := nil;
+end;
+
+procedure TextboxSetString(tb: GUITextBox; s: string);
+begin
+  if assigned(tb) then
+    tb^.contentString := s;
+end;
+
+function ActiveTextBoxParent() : Panel;
+begin
+	result := GUIC.activeTextBox^.parent;
 end;
   
 //---------------------------------------------------------------------------------------
@@ -248,19 +263,29 @@ end;
   
 procedure DrawVectorList(forRegion: Region);
 var
-	tempList: GUIList;
-	i, itemIdx: integer;
+	tempList: 		 GUIList;
+	i, itemIdx: 	 LongInt;
+	barHeight: 		 LongInt;
+	scrollButtonY: LongInt;
 begin
 	tempList := ListFromRegion(forRegion);	
 	if not assigned(tempList) then exit;
 
-		PushClip(Round(forRegion^.area.x), Round(forRegion^.area.y), forRegion^.area.width + 1, forRegion^.area.Height + 1);
+	PushClip(Round(forRegion^.area.x), Round(forRegion^.area.y), forRegion^.area.width + 1, forRegion^.area.Height + 1);
 	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, forRegion^.area);
 	//FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[tempList^.activeItem - tempList^.startingAt]);
 	
 	//Scrollbuttons
+	barHeight := forRegion^.area.height - (tempList^.scrollneg.height *  2);
+	scrollButtonY := Round((tempList^.scrollNeg.y + tempList^.scrollNeg.height) + (((tempList^.startingAt) / (Length(tempList^.items) - (tempList^.columns * tempList^.rows)) * barHeight)));
 	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.scrollNeg);
 	DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.scrollPos);
+	
+	if scrollButtonY <= tempList^.scrollPos.y - tempList^.scrollPos.Height then
+		FillRectangleOnScreen(GUIC.globalGUIVectorColor, Round(tempList^.scrollNeg.x), scrollButtonY, Round(tempList^.scrollNeg.width), Round(tempList^.scrollNeg.height))
+	else
+		FillRectangleOnScreen(GUIC.globalGUIVectorColor, Round(tempList^.scrollNeg.x), Round(tempList^.scrollPos.y - tempList^.scrollPos.Height), Round(tempList^.scrollNeg.width), Round(tempList^.scrollNeg.height));
+	
 	
 	for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
 	begin
@@ -277,8 +302,8 @@ begin
 			FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[i]);
 			DrawTextOnscreen(tempList^.items[itemIdx].text, ColorBlack, tempList^.font, Round(tempList^.placeHolder[i].x), Round(tempList^.placeHolder[i].y));
 		end;
-		
 	end;
+	
 	PopClip();
 end;
 
@@ -313,10 +338,8 @@ var
 begin
   for i := Low(GUIC.panels) to High(GUIC.panels) do
   begin
-    if (GUIC.panels[i]^.visible and not(GUIC.panels[i]^.panelBitmap = nil)) then
-      DrawBitmapOnScreen(GUIC.panels[i]^.panelBitmap, GUIC.panels[i]^.position) //Look up syntax...
-    else
-      RaiseException('Bitmap for panel ' + IntToStr(i) + ' not set. Please check your input file or enable vector drawing.');
+    if GUIC.panels[i]^.visible then
+      DrawBitmapOnScreen(GUIC.panels[i]^.panelBitmap, GUIC.panels[i]^.position);
   end;
 end;
   
@@ -366,6 +389,11 @@ begin
     result := '';
 end;
 
+function DoneReadingText(): Boolean;
+begin
+	
+end;
+
 function RegionClicked(pnl: Panel): Region; Overload;
 var
 	j: LongInt;
@@ -374,6 +402,7 @@ begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
   FinishReadingText();
+  GUIC.doneReading := true;
   
   pointClicked := MousePosition();
   
@@ -412,6 +441,7 @@ end;
 
 function RadioGroupFromRegion(forRegion: Region): GUIRadioGroup;
 begin
+	result := @forRegion^.parent^.radioGroups[forRegion^.elementIndex];
 end;
 
 procedure SelectRadioButton(r: Region);
@@ -427,7 +457,6 @@ begin
       rGroup^.activeButton := i;
   end;
 end;
-
 
 //---------------------------------------------------------------------------------------
 // Label Code
@@ -710,7 +739,7 @@ begin
   begin
     if (GUIC.panels[i]^.active) then
     begin
-      if PointInRect(MousePosition(), GUIC.panels[i]^.position.x,GUIC.panels[i]^.position.y,GUIC.panels[i]^.width,GUIC.panels[i]^.height) then
+      if PointInRect(MousePosition(), GUIC.panels[i]^.position.x, GUIC.panels[i]^.position.y, GUIC.panels[i]^.width, GUIC.panels[i]^.height) then
       begin
         result := GUIC.panels[i];
         exit;
@@ -729,23 +758,6 @@ var
   panelFile: text;
   lineNo: integer;
   regionDataArr: Array of String;
-  
-//   function MyStrToInt(str: String; allowEmpty: Boolean): LongInt;
-//   begin
-//     if not allowEmpty and (Length(str) = 0) then
-//     begin
-//       result := -1;
-//     end
-//     else if not TryStrToInt(str, result) then
-//     begin
-//       result := 0;
-//       RaiseException('Error at line ' + IntToStr(lineNo) + ' in Panel: ' + filename + '. Value ' + str + ' is not an integer.');
-//     end
-//     else
-//     begin
-//       result := StrToInt(str);
-//     end;
-//   end;
    
   procedure CreateLabel(forRegion: Region; d: string);
   var
@@ -957,6 +969,10 @@ var
       'y': result^.position.y := MyStrToInt(data, false);
       'w': result^.width := MyStrToInt(data, false);
       'h': result^.height := MyStrToInt(data, false);
+      'b': begin 
+      		   LoadBitmap(Trim(data)); 
+      		   result^.panelBitmap := BitmapNamed(Trim(data));
+      		 end;
       'r': StoreRegionData(data);
     else
       begin
@@ -1078,6 +1094,7 @@ end;
 procedure UpdateInterface();
 begin
   GUIC.lastClicked := RegionClicked(PanelClicked());
+  GUIC.doneReading := false;
   if assigned(GUIC.activeTextbox) and not ReadingText() then
     FinishReadingText();
 end;
