@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-01-28: David  : Changed DoLoadBitmap to use an already loaded bitmap if found
 // - 2010-01-05: David  : Added SetTransparentColor Procedure (Line 701 and 1442)
 // - 2010-01-04: David  : Added Save Bitmap Procedure (Line 694 and 1428)
 // - 2009-12-21: Andrew : Added Bitmap rectangle calculation code
@@ -828,6 +829,12 @@ begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'LoadBitmap', filename);
   {$ENDIF}
+	
+	if _Images.containsKey(name) then
+	begin
+		result := BitmapNamed(name);
+		exit;
+	end;
   
   result := nil; //start at nil to exit cleanly on error
   

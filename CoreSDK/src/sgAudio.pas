@@ -9,6 +9,8 @@
 // Change History:
 //
 // Version 3:
+// - 2010-01-28: David  : Changed MapSoundEffect to use an already
+//												loaded bitmap if found
 // - 2009-11-10: Andrew : Added sn and csn tags to code
 // - 2009-11-06: Andrew : Returned loading code
 //                      : Added extra comments and tracing
@@ -701,8 +703,7 @@ implementation
     
     if _SoundEffects.containsKey(name) then
     begin
-      RaiseException('Error loaded Sound Effect resource twice, ' + name);
-      result := nil;
+      result := SoundEffectNamed(name);
       exit;
     end;
     
