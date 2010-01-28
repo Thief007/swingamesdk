@@ -407,8 +407,6 @@ implementation
     end;
     
     procedure AddBitmapToCharacterSprite();
-    var
-      i: integer;
     begin
       SetLength(bmpArray, Length(bmpArray) + 1);
       
