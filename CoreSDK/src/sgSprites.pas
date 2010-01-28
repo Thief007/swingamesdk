@@ -384,41 +384,110 @@ interface
   /// @csn layerNamed:%s setOffset:%s 
   procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D); overload;
   
+  /// Returns the index of the n'th (idx parameter) visible layer.
+  /// 
   /// @lib
-  function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
-  
-  /// @lib
-  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
-  /// @lib
-  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
-  /// @lib
-  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
-  /// @lib
-  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
-  
-  /// @lib SpriteLayerNamedRectangle
-  function SpriteLayerRectangle(s: Sprite; name: String): Rectangle; overload;
-  /// @lib
-  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
-  /// @lib
-  function SpriteCollisionRectangle(s: Sprite): Rectangle;
-  
-  /// @lib SpriteLayerNamedCircle
-  function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
-  
-  /// Create a circle that is centered on a Sprite, which takes its radius from
-  /// the larger of the sprites width and height.
-  ///
-  /// @lib CircleSprite
+  /// @sn sprite:%s visibleLayer:%s
   ///
   /// @class Sprite
-  /// @method Circle
+  /// @method VisibleLayer
+  function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
+  
+  /// Sends the layer specified to the back in the visible layer order.
+  /// 
+  /// @lib
+  /// @sn sprite:%s sendLayerToBack:%s
+  ///
+  /// @class Sprite
+  /// @method SendLayerToBack
+  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
+  
+  /// Sends the layer specified backward in the visible layer order.
+  /// 
+  /// @lib
+  /// @sn sprite:%s sendLayerToBackward:%s
+  ///
+  /// @class Sprite
+  /// @method SendLayerToBackward
+  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
+  
+  /// Sends the layer specified forward in the visible layer order.
+  /// 
+  /// @lib
+  /// @sn sprite:%s sendLayerForward:%s
+  ///
+  /// @class Sprite
+  /// @method SendLayerForward
+  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
+  
+  /// Sends the layer specified to the front in the visible layer order.
+  /// 
+  /// @lib
+  /// @sn sprite:%s sendLayerToFront:%s
+  ///
+  /// @class Sprite
+  /// @method SendLayerToFront
+  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
+  
+  /// Gets a rectangle that surrounds the indicated layer.
+  ///
+  /// @lib SpriteLayerNamedRectangle
+  /// @sn sprite:%s rectangleForLayerNamed:%s
+  /// 
+  /// @class Sprite
+  /// @method RectangleForLayerNamed
+  function SpriteLayerRectangle(s: Sprite; name: String): Rectangle; overload;
+  
+  /// Gets a rectangle that surrounds the indicated layer.
+  ///
+  /// @lib
+  /// @sn sprite:%s rectangleForLayer:%s
+  /// 
+  /// @class Sprite
+  /// @method RectangleForLayer
+  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
+  
+  /// Returns the collision rectangle for the specified sprite.
+  ///
+  /// @lib
+  /// 
+  /// @class Sprite
+  /// @getter CollisionRectangle
+  function SpriteCollisionRectangle(s: Sprite): Rectangle;
+  
+  /// Gets a circle in the bounds of the indicated layer.
+  ///
+  /// @lib SpriteLayerNamedCircle
+  /// @sn sprite:%s circleForLayerNamed:%s
+  /// 
+  /// @class Sprite
+  /// @method CircleForLayerNamed
+  function SpriteLayerCircle(s: Sprite; name: String): Circle; overload;
+  
+  /// Gets a circle in the bounds of the indicated layer.
+  ///
+  /// @lib
+  /// @sn sprite:%s circleForLayer:%s
+  /// 
+  /// @class Sprite
+  /// @method CircleForLayer
   function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
   
+  /// Gets a circle in the bounds of the base layer of the indicated sprite.
+  ///
   /// @lib
+  /// @sn sprite:%s circle:%s
+  /// 
+  /// @class Sprite
+  /// @method Circle
   function SpriteCircle(s: Sprite): Circle; overload;
   
+  /// Gets a circle in the bounds of the indicated sprite's collision rectangle.
+  ///
   /// @lib
+  /// 
+  /// @class Sprite
+  /// @method CollisionCircle
   function SpriteCollisionCircle(s: Sprite): Circle;
   
   
@@ -439,7 +508,7 @@ interface
   /// withSound is true and the first cell of the animation is associated with a sound effect.
   /// 
   /// @lib ReplayAnimationWithSound
-  /// @sn replayAnimation:%s withSound:%s
+  /// @sn sprite:%s replayAnimationWithSound:%s
   /// 
   /// @class Sprite
   /// @overload ReplayAnimation ReplayAnimationWithSound
@@ -451,36 +520,100 @@ interface
   /// has a sound.
   /// 
   /// @lib SpriteStartAnimationNamed
+  /// @sn sprite:%s startAnimationNamed:%s
+  /// 
+  /// @class Sprite
+  /// @overload StartAnimation StartAnimationNamed
+  /// @csn startAnimationNamed:%s
+  procedure SpriteStartAnimation(s: Sprite; named: String); overload;
+  
+  /// Start playing an animation from the sprite's animation template.
+  /// The withSound parameter determines whether to play a sound effect 
+  /// if the first cell of the animation has a sound.
+  /// 
+  /// @lib SpriteStartAnimationNamedWithSound
+  /// @sn sprite:%s startAnimationNamed:%s withSound:%s
+  /// 
+  /// @class Sprite
+  /// @overload StartAnimation StartAnimationNamedWithSound
+  /// @csn startAnimationNamed:%s withSound:%s
+  procedure SpriteStartAnimation(s: Sprite; named: String; withSound: Boolean); overload;
+  
+  /// Start playing an animation from the sprite's animation template.
+  /// This will play a sound effect if the first cell of the animation
+  /// has a sound.
+  /// 
+  /// @lib SpriteStartAnimation
+  /// @sn sprite:%s startAnimation:%s
   /// 
   /// @class Sprite
   /// @method StartAnimation
-  procedure SpriteStartAnimation(s: Sprite; named: String); overload;
-  
-  /// @lib SpriteStartAnimationNamedWithSound
-  procedure SpriteStartAnimation(s: Sprite; named: String; withSound: Boolean); overload;
-  /// @lib SpriteStartAnimation
+  /// @csn startAnimation:%s
   procedure SpriteStartAnimation(s: Sprite; idx: LongInt); overload;
+  
+  /// Start playing an animation from the sprite's animation template.
+  /// The withSound parameter determines whether to play a sound effect 
+  /// if the first cell of the animation has a sound.
+  /// 
   /// @lib SpriteStartAnimationWithSound
+  /// @sn sprite:%s startAnimation:%s withSound:%s
+  /// 
+  /// @class Sprite
+  /// @overload StartAnimation StartAnimationWithSound
+  /// @csn startAnimation:%s withSound:%s
   procedure SpriteStartAnimation(s: Sprite; idx: LongInt; withSound: Boolean); overload;
   
+  /// Update the position and animation details of the Sprite.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound.
+  ///
   /// @lib UpdateSpritePctWithSound(s, 1.0, true)
   /// @uname UpdateSprite
+  /// @sn updateSprite:%s
   ///
   /// @class Sprite
   /// @method Update
   procedure UpdateSprite(s: Sprite); overload;
   
+  /// Update the position and animation details of the Sprite.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound and withSound is true.
+  ///
   /// @lib UpdateSpritePctWithSound(s, 1.0, withSound)
-  procedure UpdateSprite(s: Sprite; withSound:Boolean); overload;
-    
-  /// @lib UpdateSpritePctWithSound(s, pct, true)
+  /// @uname UpdateSpriteWithSound
+  /// @sn updateSprite:%s withSound:%s
+  /// 
   /// @class Sprite
-  /// @overload Update UpdatePct
+  /// @overload Update UpdateWithSound
+  /// @csn updateWithSound:%s
+  procedure UpdateSprite(s: Sprite; withSound:Boolean); overload;
+  
+  /// Update the position and animation details of the Sprite by a 
+  /// given percentage of a single unit of movement/animation.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound.
+  ///  
+  /// @lib UpdateSpritePctWithSound(s, pct, true)
+  /// @sn updateSprite:%s percent:%s
+  ///
+  /// @class Sprite
+  /// @overload Update UpdatePercent
+  /// @csn updatePercent:%s
   procedure UpdateSprite(s: Sprite; pct: Single); overload;
   
+  /// Update the position and animation details of the Sprite by a 
+  /// given percentage of a single unit of movement/animation.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound and withSound is true.
+  ///  
   /// @lib UpdateSpritePctWithSound
+  /// @sn updateSprite:%s percent:%s withSound:%s
+  /// 
+  /// @class Sprite
+  /// @overload Update UpdatePercentWithSound
+  /// @csn updatePercent:%s withSound:%s
   procedure UpdateSprite(s: Sprite; pct: Single; withSound: Boolean); overload;
-    
+  
   /// @lib UpdateSpriteAnimationPctWithSound(s, 1.0, true)
   /// @uname UpdateSpriteAnimation
   /// @class Sprite
