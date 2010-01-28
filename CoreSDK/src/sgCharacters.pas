@@ -61,7 +61,6 @@ type
   //---------------------------------------------------------------------------   
   procedure CharacterSetName(c: Character; name : String);
 	function CharacterName(c: Character) : String;
-	function CharacterCurrentState(c: Character): LongInt;
 	function CharacterType(c: Character): String;
 	
 	//---------------------------------------------------------------------------
@@ -96,7 +95,6 @@ type
   // Character Sprite
   //---------------------------------------------------------------------------    
   function CharacterSprite(c: Character) : Sprite;  
-  procedure FreeCharacter(var c : character);
 	
  //---------------------------------------------------------------------------
   // Handle Character Layers
