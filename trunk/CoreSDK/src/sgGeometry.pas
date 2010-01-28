@@ -195,6 +195,12 @@ interface
   /// @sn lineSegment:%s intersectsLinesSegment:%s
   function LineSegmentsIntersect(const line1, line2: LineSegment): boolean;
   
+  /// Returns true if the triangle intersects with the rectangle.
+  /// 
+  /// @lib
+  /// @sn triangle:%s intersectsRectangle:%s
+  function TriangleRectangleIntersect(const tri: Triangle; const rect: Rectangle): Boolean;
+  
   /// Which of the lines from the array of line segments did the circle collide with given the
   /// indicated velocity.
   /// 
@@ -278,6 +284,15 @@ interface
   /// @method ToString
   /// @csn description
   function LineToString(const ln: LineSegment): String;
+  
+  /// Get a text description of the rectangle.
+  ///
+  /// @lib
+  ///
+  /// @class Rectangle
+  /// @method ToString
+  /// @csn description
+  function RectangleToString(const rect:Rectangle): String;
   
   /// Returns the center point of the rectangle.
   ///
@@ -729,6 +744,23 @@ interface
   /// @getter ShapePrototype
   function ShapeShapePrototype(s: Shape): ShapePrototype;
   
+  /// Returns true if the shape and rectangle intersect
+  /// 
+  /// @lib
+  /// @sn shape:%s intersectsRectangle:%s
+  ///
+  /// @class Shape
+  /// @method IntersectsRectangle
+  function ShapeRectangleIntersect(shp: Shape; const rect: Rectangle): Boolean;
+  
+  /// Returns an axis aligned bounded box for the shape.
+  /// 
+  /// @lib
+  ///
+  /// @class Shape
+  /// @getter AABB
+  function ShapeAABB(shp: Shape): Rectangle;
+  
   
   //----------------------------------------------------------------------------
   // 
@@ -840,10 +872,8 @@ interface
   /// @class LineSegment
   /// @method IntersectsRect
   function LineIntersectsRect(const line: LineSegment; const rect: Rectangle): boolean;
-
-  function RectangleShapeIntersect(const rect: Rectangle; shp: Shape): Boolean;
-  function ShapeAABB(shp: Shape): Rectangle;
-
+  
+  
   //---------------------------------------------------------------------------
   // Point test operations
   //---------------------------------------------------------------------------
@@ -3323,7 +3353,12 @@ implementation
 
   function PointToString(const pt: Point2D): String;
   begin
-    result := FloatToStr(pt.x) + ':' + FloatToStr(pt.y);
+    result := 'Pt @' + FloatToStr(pt.x) + ':' + FloatToStr(pt.y);
+  end;
+
+  function RectangleToString(const rect:Rectangle): String;
+  begin
+    result := 'Rect @' + FloatToStr(rect.x) + ':' + FloatToStr(rect.y) + ' ' + IntToStr(rect.width) + 'x' + IntToStr(rect.height);
   end;
 
   function LineToString(const ln: LineSegment): String;
@@ -3603,7 +3638,129 @@ implementation
       TraceExit('sgGeometry', 'LineMidPoint(const line: LineSegment): Point2D', '');
     {$ENDIF}
   end;
-
+  
+  function ShapeAABB(shp: Shape): Rectangle;
+  var
+    pts : Point2DArray;
+    minPt, maxPt: Point2D;
+    i: Integer;
+  begin
+    pts := ShapePoints(shp);
+    if Length(pts) <= 0 then begin result := RectangleFrom(0,0,0,0); exit; end;
+    
+    minPt := pts[0];
+    maxPt := pts[0];
+    
+    for i := low(pts) + 1 to high(pts) do
+    begin
+      if pts[i].x < minPt.x then minPt.x := pts[i].x
+      else if pts[i].x > maxPt.x then  maxPt.x := pts[i].x;
+      
+      if pts[i].y < minPt.y then minPt.y := pts[i].y
+      else if pts[i].Y > maxPt.y then maxPt.y := pts[i].y;
+    end;
+    
+    result := RectangleFrom(minPt, maxPt);
+    drawRectangle(colorYellow, result);
+  end;
+  
+  function TriangleAABB(const tri: Triangle): Rectangle;
+  var
+    minPt, maxPt: Point2D;
+    i: Integer;
+  begin
+    minPt := tri[0];
+    maxPt := tri[0];
+    
+    for i := 1 to 2 do
+    begin
+      if minPt.x > tri[i].x then minPt.x := tri[i].x
+      else if maxPt.x < tri[i].x then maxPt.x := tri[i].x;
+      
+      if minPt.y > tri[i].y then minPt.y := tri[i].y
+      else if maxPt.y < tri[i].y then maxPt.y := tri[i].y;
+    end;
+    
+    result := RectangleFrom(minPt, maxPt);
+  end;
+  
+  function TriangleRectangleIntersect(const tri: Triangle; const rect: Rectangle): Boolean;
+  var
+    r, l, t, b: Single;
+    
+    function _TriLineRectangleTest(const pt1, pt2: Point2D): Boolean;
+    var
+      m,c: Single;
+      top_intersection, bottom_intersection: Single;
+      toptrianglepoint, bottomtrianglepoint: Single;
+      topoverlap, botoverlap: Single;
+    begin
+      m := (pt2.y - pt1.y) / (pt2.x - pt1.x);
+      c := pt1.y - (m * pt1.x);
+      
+      // if the line is going up from right to left then the top intersect point is on the left
+      if m > 0 then
+      begin
+        top_intersection    := m * l + c;
+        bottom_intersection := m * r + c;
+      end
+      // otherwise it's on the right
+      else
+      begin
+        top_intersection    := m * l + c;
+        bottom_intersection := m * l + c;
+      end;
+      
+      // work out the top and bottom extents for the triangle
+      if pt1.y < pt2.y then
+      begin
+        toptrianglepoint    := pt1.y;
+        bottomtrianglepoint := pt2.y;
+      end
+      else
+      begin
+        toptrianglepoint    := pt2.y;
+        bottomtrianglepoint := pt1.y;
+      end;
+      
+      // and calculate the overlap between those two bounds
+      topoverlap := iif(top_intersection>toptrianglepoint, top_intersection, toptrianglepoint);
+      botoverlap := iif(bottom_intersection<bottomtrianglepoint, bottom_intersection, bottomtrianglepoint);
+      
+      // (topoverlap<botoverlap) :
+      // if the intersection isn't the right way up then we have no overlap
+      
+      // (!((botoverlap<t) || (topoverlap>b)) :
+      // If the bottom overlap is higher than the top of the rectangle or the top overlap is
+      // lower than the bottom of the rectangle we don't have intersection. So return the negative
+      // of that. Much faster than checking each of the points is within the bounds of the rectangle.
+      result := (topoverlap<botoverlap) and (not((botoverlap<t) or (topoverlap>b)));
+    end;
+  begin
+    result := false;
+    // Perform bounding box check
+    if not RectanglesIntersect(rect, TriangleAABB(tri)) then exit;
+    
+    r := RectangleRight(rect);
+    l := RectangleLeft(rect);
+    t := RectangleTop(rect);
+    b := RectangleBottom(rect);
+    
+    // Check line intersects see http://sebleedelisle.com/2009/05/super-fast-trianglerectangle-intersection-test/
+    result := _TriLineRectangleTest(tri[0],tri[1])
+              or _TriLineRectangleTest(tri[1],tri[2])
+              or _TriLineRectangleTest(tri[2],tri[0]);
+    
+    if not result then
+    begin
+      //check rect points in triangle
+      result := PointInTriangle(PointAt(l, t), tri) or 
+                PointInTriangle(PointAt(l, b), tri) or 
+                PointInTriangle(PointAt(r, t), tri) or
+                PointInTriangle(PointAt(r, b), tri);
+    end;
+  end;
+  
   function RectanglesIntersect(const rect1, rect2: Rectangle): Boolean;
   begin
     {$IFDEF TRACE}
@@ -3620,40 +3777,15 @@ implementation
       TraceExit('sgGeometry', 'RectanglesIntersect(const rect1, rect2: Rectangle): Boolean', '');
     {$ENDIF}
   end;
-
-  function ShapeAABB(shp: Shape): Rectangle;
-  var
-  pts : Point2DArray;
-  x,y :Single;
-  i,w,h : LongInt;
+  
+  function ShapeRectangleIntersect(shp: Shape; const rect: Rectangle): Boolean;
   begin
-    pts := ShapePoints(shp);
-    x := pts[0].X;
-    y := pts[0].Y;
-    w := 0;
-    h := 0;
-    for i := low(pts)+1 to high(pts) do
-    begin
-      if pts[i].X < x then x := pts[i].X
-      else if pts[i].X > (x+w) then  w := trunc(pts[i].X - x);
-      if pts[i].Y < y then y := pts[i].Y
-      else if pts[i].Y > (y+h) then h := trunc(pts[i].Y - y);
-    end;
-    result := RectangleFrom(x,y,w,h);
-    drawRectangle(colorYellow,RectangleFrom(x,y,w,h));
-  end;
-
-
-  function RectangleShapeIntersect(const rect: Rectangle; shp: Shape): Boolean;
-  var
-  rect2 : rectangle;
-  begin
-    rect2 := ShapeAABB(shp);
-    if RectangleBottom(rect) < RectangleTop(rect2) then result := false
-    else if RectangleTop(rect) > RectangleBottom(rect2) then result := false
-    else if RectangleRight(rect) < RectangleLeft(rect2) then result := false
-    else if RectangleLeft(rect) > RectangleRight(rect2) then result := false
-    else result := true;
+    result := false;
+    
+    if not RectanglesIntersect(rect, ShapeAABB(shp)) then exit;
+    //TODO:
+    
+    result := true;
   end;
 
   function Intersection(const rect1, rect2: Rectangle): Rectangle;
