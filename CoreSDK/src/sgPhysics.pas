@@ -612,10 +612,10 @@ implementation
   begin
     result := false;
     if s = nil then exit;
-
-    if not RectangleShapeIntersect(SpriteCollisionRectangle(s), shp) then 
+    
+    if not ShapeRectangleIntersect(shp, SpriteCollisionRectangle(s)) then 
       exit;
-
+    
     //  Check pixel level details
     if SpriteCollisionKind(s) = AABBCollisions then 
       result := true

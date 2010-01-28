@@ -511,14 +511,15 @@ interface
   end;
 
 
-  Procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
+  procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
   begin
+    WriteLn('Getting range for ', RectangleToString(r));
     // Calculate the tiles that are on the screen - only draw these
     startY := Trunc(r.Y / map^.TileHeight) - 1;
     startX := Trunc(r.X / map^.TileWidth) - 1;
     
-    endY   := Trunc(startY + (r.Height/(map^.TileHeight - map^.TileStaggerY))) + 2 ;
-    endX   := Trunc(startX + ((r.Width + map^.TileStaggerX)/map^.TileWidth)) + 3;
+    endY   := Ceiling(startY + (r.Height/(map^.TileHeight - map^.TileStaggerY))) + 2 ;
+    endX   := Ceiling(startX + ((r.Width + map^.TileStaggerX)/map^.TileWidth)) + 3;
 
     // Adjust the end and start to be in range of the array
     if endY >= (map^.MapHeight) then endY := map^.MapHeight-1;
@@ -598,22 +599,21 @@ interface
   row,col,startCol, startRow, endCol, endRow:LongInt;
   begin
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
-      for row:=startRow to endRow do
+    for row:=startRow to endRow do
+    begin
+      for col:=startCol to endCol do
       begin
-        for col:=startCol to endCol do
-        begin
-          if PointInShape(ToWorld(MousePosition()), map^.Tiles[row,col].TileShape) then
+        if PointInShape(ToWorld(MousePosition()), map^.Tiles[row,col].TileShape) then
+          begin
+            if NOT TileSelected(map, @map^.Tiles[row,col]) then
             begin
-              if NOT TileSelected(map, @map^.Tiles[row,col]) then
-              begin
-                SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
-                map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[row,col].TileID;
-              end
-              else if TileSelected(map, @map^.Tiles[row,col]) then Deselect(map, @map^.Tiles[row,col]);
+              SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
+              map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[row,col].TileID;
             end
-        end;
+            else if TileSelected(map, @map^.Tiles[row,col]) then Deselect(map, @map^.Tiles[row,col]);
+          end
       end;
-        
+    end;
   end;
 
   //draw map procedure.
@@ -685,7 +685,7 @@ interface
 
 
     //gets potential collision and makes a rect out of it.
-  function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
+  function GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
   var
     startPoint, endPoint: Rectangle;
     startX, startY, endX, endY: LongInt;
@@ -729,18 +729,19 @@ interface
     end;
 
     result := RectangleFrom(startX, startY, endX - startX, endY - startY);
-    drawRectangle(colorpink, RectangleFrom(startX, startY, endX - startX, endY - startY));
+    //drawRectangle(colorpink, RectangleFrom(startX, startY, endX - startX, endY - startY));
 
     //Debug Info
-    //DrawRectangle(ColorYellow, startPoint.x, startPoint.y, startPoint.width, startPoint.height);
-    //DrawRectangle(ColorWhite, endPoint.x, endPoint.y, endPoint.width, endPoint.height);
-    //DrawRectangle(ColorGreen, result.x, result.y, result.width, result.height);
+    DrawRectangle(ColorYellow, startPoint);
+    DrawRectangle(ColorWhite, endPoint);
+    DrawRectangle(ColorGreen, result);
   end;
 
 // outs the tile X and Y that the sprite has collided with  map and result is a boolean if it did collide.
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
   var
     y, x, dy, dx, i, j, initY, initX: LongInt;
+    yRange, xRange: LongInt;
     xStart, yStart, xEnd, yEnd: LongInt;
     rectSearch: Rectangle;
     side: CollisionSide;
@@ -748,39 +749,55 @@ interface
     result := false;
     if map = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
     if s = nil then begin RaiseException('No Sprite suppled (nil)'); exit; end;
-//makes a rect of bounding area to search so that it doesn't need to search the whole map.
+    
+    //makes a rect of bounding area to search so that it doesn't need to search the whole map.
+    
     rectSearch := GetPotentialCollisions(map, s);
-
-//makes range out of rect.
-
+    
+    //makes range out of rect.
+    WriteLn('Creating search rectangle for sprite at ', RectangleToString(SpriteCollisionRectangle(s)));
     MapRangeFromRect(rectSearch, map, xStart, yStart, xEnd, yEnd);
-
-//checks which side to use to check for collision
-      
+    
+    //checks which side to use to check for collision
     side := SideForCollisionTest(s^.velocity);
-
+    
+    // Use the side to determine search order, allowing the tiles to be 
+    // checked in a sensible order based on movement of sprite
     case side of
-      TopLeft: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
-      TopRight: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
-      BottomLeft: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
-      BottomRight: begin dy := -1; dx := -1; initY := yEnd; initX := xEnd; end;
-      Top: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
-      Bottom: begin dy := -1; dx := 1; initY := yEnd; initX := xStart; end;
-      Left: begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
-      Right: begin dy := 1; dx := -1; initY := yStart; initX := xEnd; end;
-      else
-      begin dy := 1; dx := 1; initY := yStart; initX := xStart; end;
+      TopLeft:      begin dy := 1;  dx := 1;  initY := yStart;  initX := xStart;  end;
+      TopRight:     begin dy := 1;  dx := -1; initY := yStart;  initX := xEnd;    end;
+      BottomLeft:   begin dy := -1; dx := 1;  initY := yEnd;    initX := xStart;  end;
+      BottomRight:  begin dy := -1; dx := -1; initY := yEnd;    initX := xEnd;    end;
+      Top:          begin dy := 1;  dx := 1;  initY := yStart;  initX := xStart;  end;
+      Bottom:       begin dy := -1; dx := 1;  initY := yEnd;    initX := xStart;  end;
+      Left:         begin dy := 1;  dx := 1;  initY := yStart;  initX := xStart;  end;
+      Right:        begin dy := 1;  dx := -1; initY := yStart;  initX := xEnd;    end;
+      else          begin dy := 1;  dx := 1;  initY := yStart;  initX := xStart;  end;
     end;
-
-    with map^ do begin
-      for i := yStart to yEnd do
+    
+    // Determine the number of tiles to check in the x and y directions
+    yRange := yEnd - yStart;
+    xRange := xEnd - xStart;
+    
+    writeln ('StartY: ', yStart,  ', endY:', yEnd);
+    writeln ('StartX: ', xStart,  ', endX:', xEnd);
+    
+    with map^ do 
+    begin
+      // For i = the tiles within the y range (inclusive of start/end)
+      for i := 0 to yRange do
       begin
-        writeln ('start ', yStart,  'end', yEnd);
-        y := initY + (i - yStart) * dy;
-        for j := xStart to xEnd do
+        y := initY + i * dy;
+        
+        // for j = the tiles within the x range (inclusive of start/end)
+        for j := 0 to xRange do
         begin
-          x := initX + (j - xStart) * dx; //TODO: Optimize - j start at 0 instead...
-          if Tiles[y,x].Kind = k then
+          x := initX + j * dx;
+          
+          writeln ('  Checking tile: ', x,  ', ', y);
+          DrawShape(Tiles[y, x].TileShape);
+          
+          if Tiles[y, x].Kind = k then
           begin
             if SpriteShapeCollision(s, Tiles[y,x].TileShape) then
             begin
@@ -793,10 +810,9 @@ interface
         end;
       end;
     end; // with
-
-    collidedX := -1; 
+    
+    collidedX := -1;
     collidedY := -1;
-
   end;
 
   procedure MoveOut(m: map; s: Sprite; velocity: Vector; x, y: LongInt);

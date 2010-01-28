@@ -63,7 +63,9 @@ interface
     // Used by release all
     ReleaseFunction = procedure(name: String);
 
-    
+  // Immediate if
+  function iif(pred: Boolean; trueVal, falseVal: Single): Single; overload;
+  
   // Calls Release on all of the resources in the tbl hash table.
   procedure ReleaseAll(tbl: TStringHash; releaser: ReleaseFunction);
 
@@ -448,6 +450,11 @@ implementation
     tbl.deleteAll();
   end;
 
+function iif(pred: Boolean; trueVal, falseVal: Single): Single; overload;
+begin
+  if pred then result := trueVal
+  else result := falseVal;
+end;
 
 //=============================================================================
 

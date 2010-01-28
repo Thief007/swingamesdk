@@ -39,9 +39,9 @@ fi
 #
 FPC_BIN=`which fpc`
 if [ "$OS" = "$WIN" ]; then
-	PAS_FLAGS="-g"
+    PAS_FLAGS="-g"
 else
-	PAS_FLAGS="-gw"
+    PAS_FLAGS="-gw"
 fi
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
 CLEAN="N"
@@ -71,7 +71,6 @@ do
     case "$o" in
     c)  CLEAN="Y" ;;
     h)  Usage ;;
-    d)  PAS_FLAGS="-gw -vw"
     esac
 done
 
@@ -328,4 +327,8 @@ rm -f ${LOG_FILE} 2>> /dev/null
 
 echo "  Finished"
 echo "--------------------------------------------------"
-${APP_PATH}/bin/Test
+if [ "$OS" = "$MAC" ]; then
+    ${APP_PATH}/bin/Test.app/Contents/MacOS/Test
+else
+    ${APP_PATH}/bin/Test
+fi
