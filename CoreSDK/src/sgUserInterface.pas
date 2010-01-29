@@ -196,6 +196,7 @@ function GUITextEntryComplete(): boolean;
 function RegionParent(r: Region): Panel;
 function GUITextBoxOfTextEntered(): GUITextbox;
 function RegionOfLastUpdatedTextBox(): Region;
+function PanelShown(p: Panel): boolean;
 
 //=============================================================================
 implementation
