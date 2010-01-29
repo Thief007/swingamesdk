@@ -1,7 +1,7 @@
 program HelloWorld;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgInput;
+  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgGeometry, sgResources, sgInput, sgTimers;
 
 procedure Main();
 var
@@ -11,6 +11,8 @@ var
   t: Timer;
   time: Integer;
   filled: Boolean;
+  aabb: Rectangle;
+  r: Rectangle;
 begin
   OpenAudio();
   
@@ -48,8 +50,10 @@ begin
   
   repeat // The game loop...
     ClearScreen();
-
+    
     ProcessEvents();
+    
+    r := RectangleFrom(MousePosition(), 10, 10);
     
     time := TimerTicks(t);
     
@@ -60,17 +64,27 @@ begin
     if KeyTyped(vk_t) then PrototypeSetKind(p, pkTriangle);
     if KeyTyped(vk_j) then PrototypeSetKind(p, pkLineList);
     if KeyTyped(vk_h) then PrototypeSetKind(p, pkLineStrip);
-    if KeyTyped(vk_o) then PrototypeSetKind(p, pkPolygon);
+    // if KeyTyped(vk_o) then PrototypeSetKind(p, pkPolygon);
     if KeyTyped(vk_l) then PrototypeSetKind(p, pkTriangleList);
     if KeyTyped(vk_s) then PrototypeSetKind(p, pkTriangleStrip);
     if KeyTyped(vk_f) then PrototypeSetKind(p, pkTriangleFan);
     
     if KeyTyped(vk_space) then filled := not filled;
+      
+    //if KeyDown(vk_left) then 
+    
+    aabb := ShapeAABB(s);
+    FillRectangle(ColorLightGrey, aabb);
     
     if filled then
       FillShape(s)
     else
       DrawShape(s);
+    
+    if ShapeRectangleIntersect(s, r) then
+      FillRectangle(ColorBlue, r)
+    else
+      DrawRectangle(ColorGreen, r);
     
     RefreshScreen();
   until WindowCloseRequested();
