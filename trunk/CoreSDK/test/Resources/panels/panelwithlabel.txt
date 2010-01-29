@@ -15,5 +15,16 @@ h: 250
 // Format: r: x, y, w, h, kind
 r: 10, 10, 80, 20, 1, Label1, Hello World, courierSmall
 
-//LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
-r: 45, 30, 0, 0, 5, List1, 1, 5, -1, 150, 35, courier, 10
+// Lists are loaded as a region with the following format:
+// r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind
+// x, y, w, h = area of region
+// 5          = the identifier for lists
+// listId     = the lists name
+// columns    = the columns in the list
+// rows       = the rows in the list
+//              Note: The area for the list items is calculated from the region's area the rows/cols and scrollSize
+// ActiveItem = the item active at start (-1 for none)
+// fontId     = the name of the font to use for this list's items
+// scrollSize = the size (width and height) of the scroll bar
+// scrollKind = v for vertical or h for horizontal
+r: 45, 30, 0, 0, 5, List1, 1, 5, -1, courier, 10, v

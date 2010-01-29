@@ -475,11 +475,11 @@ begin
   if ReadingText() then
     FinishReadingText();
   
-  //Adjust the mouse point into this panels area
-  pointClicked := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
-  
   if pnl = nil then exit;
   if not pnl^.active then exit;
+  
+  //Adjust the mouse point into this panels area
+  pointClicked := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
   
   for j := Low(pnl^.Regions) to High(pnl^.Regions) do
   begin
@@ -1089,22 +1089,30 @@ var
   var
     newList: GUIListData;
   begin
+    //Format is
+    // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,         12
+    // x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind
+    
     newList.columns         := StrToInt(Trim(ExtractDelimited(7, data, [','])));
     newList.rows            := StrToInt(Trim(ExtractDelimited(8, data, [','])));
     newList.activeItem      := StrToInt(Trim(ExtractDelimited(9, data, [','])));
-    newList.scrollSize      := StrToInt(Trim(ExtractDelimited(13, data, [','])));;
-    newList.verticalScroll  := True;
-    newList.font            := FontNamed(Trim(ExtractDelimited(12, data, [','])));
+    newList.scrollSize      := StrToInt(Trim(ExtractDelimited(11, data, [','])));;
+    newList.verticalScroll  := LowerCase(Trim(ExtractDelimited(12, data, [',']))) = 'v';
+    newList.font            := FontNamed(Trim(ExtractDelimited(10, data, [','])));
     
     newList.startingAt  := 0;
     
     // Calculate col and row sizes
-    newList.colWidth    := StrToInt(Trim(ExtractDelimited(10, data, [','])));
-    newList.rowHeight   := StrToInt(Trim(ExtractDelimited(11, data, [','])));
-    
-    r^.area.width := (newList.columns * newList.colWidth) + newList.scrollSize;
-    r^.area.height := (newList.rows * newList.rowHeight);
-    
+    if newList.verticalScroll then
+    begin
+      newList.colWidth    := (r^.area.width - newList.scrollSize) div newList.columns;
+      newList.rowHeight   := r^.area.height div newList.rows;
+    end
+    else
+    begin
+      newList.colWidth    := r^.area.width div newList.columns;
+      newList.rowHeight   := r^.area.height - newList.scrollSize div newList.rows;
+    end;
     
     // Set up scroll buttons
     newList.scrollUp.x := r^.area.x + r^.area.width - newList.scrollSize;
