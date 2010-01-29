@@ -1884,10 +1884,10 @@ implementation
     
     if Length(bmp^.clipStack) > 1 then
     begin
-      WriteLn('Adding clip ', RectangleToString(r));
-      WriteLn('Was         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack) - 1]));
+      // WriteLn('Adding clip ', RectangleToString(r));
+      // WriteLn('Was         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack) - 1]));
       bmp^.clipStack[high(bmp^.clipStack)] := Intersection(r, bmp^.clipStack[High(bmp^.clipStack) - 1]);
-      WriteLn('Now         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack)]));
+      // WriteLn('Now         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack)]));
     end
     else
       bmp^.clipStack[high(bmp^.clipStack)] := r;
