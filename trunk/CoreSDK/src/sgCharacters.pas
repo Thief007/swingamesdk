@@ -147,21 +147,25 @@ implementation
 
   procedure CharacterSetName(c: Character; name : String);
   begin
+		if not Assigned(c) then exit;
     c^.CharName := name;
   end;
   
   function CharacterName(c: Character) : String;
   begin
+		if not Assigned(c) then exit;
     result := c^.CharName;
   end;
   
   procedure CharacterSetType(c: Character; name : String);
   begin
+		if not Assigned(c) then exit;
     c^.CharType := name;
   end;
   
   function CharacterType(c: Character): String;
   begin
+		if not Assigned(c) then exit;
     result := c^.CharType;
   end;
 
@@ -171,31 +175,37 @@ implementation
   
   procedure CharacterSetCurrentState(c: Character; state: Integer);
   begin
+		if not Assigned(c) then exit;
     c^.CurrentState := state;
   end;
   
   procedure CharacterSetDirectionState(c: Character; direction: Integer);
   begin
+		if not Assigned(c) then exit;
     c^.CurrentState := direction;
   end;
   
   function CharacterCurrentState(c: Character): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := c^.CurrentState;
   end;
   
   function CharacterCurrentDirection(c: Character): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := c^.CurrentDirection;
   end;
   
   function CharacterDirections(c: Character) : NamedIndexCollection;
   begin
+		if not Assigned(c) then exit;
     result := c^.Directions;
   end;
   
   function CharacterStates(c: Character) : NamedIndexCollection;
   begin
+		if not Assigned(c) then exit;
     result := c^.States;
   end;
   
@@ -205,36 +215,43 @@ implementation
     
   function CharacterLastAngle(c: Character): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := c^.LastAngle;
   end;
   
   function CharacterAngleAt(c: Character; index : integer): DirectionAngles;
   begin
+		if not Assigned(c) then exit;
     result := c^.DirectionParameters[index];
   end;
   
   function CharacterAnglesLength(c: Character): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := Length(c^.DirectionParameters);
   end;
   
   function CharacterAngleMinAt(c: Character; index : integer): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].min;
   end;
   
   function CharacterAngleMaxAt(c: Character; index : integer): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].max;
   end;
   
   function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
   begin
+		if not Assigned(c) then exit;
     result := c^.ShownLayers[index];
   end;
   
   procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
   begin
+		if not Assigned(c) then exit;
     c^.CurrentDirection := direction;
   end;
 
@@ -244,16 +261,19 @@ implementation
 
   function CharacterValueNames(c: Character) : NamedIndexCollection;
   begin
+		if not Assigned(c) then exit;
     result := c^.CharValueNames;
   end;
   
   function CharacterValueAt(c: Character; index: Integer): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := c^.CharValues[index];
   end;
   
   function CharacterValueCount(c: Character): LongInt;
   begin
+		if not Assigned(c) then exit;
     result := Length(c^.CharValues);
   end;
   
@@ -263,6 +283,7 @@ implementation
   
   function CharacterSprite(c: Character) : Sprite;
   begin
+		if not Assigned(c) then exit;
     result := c^.CharSprite;
   end;
   
@@ -281,11 +302,13 @@ implementation
   
   procedure SetActiveLayer(var c: Character);
   begin
+		if not Assigned(c) then exit;
     c^.CharSprite^.visibleLayers := c^.ShownLayerCache[c^.CurrentState, c^.CurrentDirection];
   end;
 
   function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
   begin
+		if not Assigned(c) then exit;
     result := false;
     if (c^.CharSprite^.velocity.x = 0) AND (c^.CharSprite^.velocity.y = 0) then 
     begin
@@ -310,6 +333,7 @@ implementation
     i : Integer;
     angle : single;
   begin
+		if not Assigned(c) then exit;
     angle := VectorAngle(c^.CharSprite^.velocity);
     result := false;
     for i := 0 to NameCount(c^.Directions) -1 do
@@ -331,6 +355,7 @@ implementation
   var
     states, directions, layers, count : Integer;
   begin
+		if not Assigned(c) then exit;
     SetLength(result, NameCount(c^.States), NameCount(c^.Directions));
     
     for states := Low(result) to High(result) do
@@ -353,6 +378,7 @@ implementation
   
   procedure ToggleLayerVisibility(c: Character; index: integer);
   begin
+		if not Assigned(c) then exit;
     c^.ShownLayers[index] := not c^.ShownLayers[index];
     c^.ShownLayerCache := UpdateShownLayerCache(c);
     SetActiveLayer(c);
@@ -365,12 +391,14 @@ implementation
   
   procedure DrawCharacterWithStationary(c: character; stationaryState, state: integer);
   begin
+		if not Assigned(c) then exit;
     UpdateDirectionAnimationWithStationary(c, stationaryState, state);
     DrawSprite(c^.CharSprite);
   end;
   
   procedure DrawCharacter(c: character);
   begin
+		if not Assigned(c) then exit;
     UpdateDirectionAnimation(c);
     DrawSprite(c^.CharSprite);
   end;
@@ -510,7 +538,6 @@ implementation
       id := ExtractDelimited(1, line, [':']);
       data := ExtractDelimited(2, line, [':']);
       
-      WriteLn(data);
       // Process based on id
       
       if Length(id) = 2 then SetDirectionStateDetails()
@@ -595,7 +622,6 @@ implementation
       Close(input);
     end;
     
-    WriteLn('Creating Sprite');
     result^.CharSprite := CreateSprite(bmpArray, NamesOf(bmpIDs));
     result^.CharSprite^.animationTemplate := aniTemp;
     if colliIndex <> -1 then SpriteSetCollisionBitmap(result^.CharSprite,bmpArray[colliIndex]);
