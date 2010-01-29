@@ -10,7 +10,7 @@ interface
     BitmapCell = Record
       Cell:         LongInt;
       Bmap:         Bitmap;
-      KindIdx:      LongInt;
+     // KindIdx:      LongInt;
     end;
 
     Marker = record
@@ -70,7 +70,7 @@ interface
   
   function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
-  procedure MoveOut(m:map; s: Sprite; velocity: Vector; x, y: LongInt);
+  procedure MoveOut(m:map; s: Sprite; x, y: LongInt);
 
   
 //===============================//
@@ -86,6 +86,8 @@ interface
   function MapPrototype(m: Map) : ShapePrototype;
   function MapHeight(m: Map) : Longint;
   function MapWidth(m: Map) : Longint;
+  function ValueName(m : map; idx:LongInt): String;
+  function KindName(m : map; idx:LongInt): String;
 
   
 //================================//
@@ -106,8 +108,12 @@ interface
   function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
   function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
 
-
-
+  //======================//
+  // Set Tile procedures  //
+  //======================//
+  procedure SetTileKind(t : Tile; VId : LongInt; value : Single);  
+  procedure SetTileKind(t: Tile; kindId:LongInt);
+  procedure SetTileBitmap(t: Tile; layer:LongInt; bmp:Bitmap; cell:LongInt);
 
 
 
@@ -128,6 +134,11 @@ interface
       name:     string;
       value:     Single;
     end;
+    BitmapCellKind = record
+      Cell:         LongInt;
+      Bmap:         Bitmap;
+      KindIdx:      LongInt;    
+    end;
   var
     tempValues:   Array of SpecificValuesLoader;
     path:         String;                         // path of the map file
@@ -135,7 +146,7 @@ interface
     id:           String;                         // id for the line processor to identify how to handle the data
     data,line:    String;                         // line is read then seperated into id and data.
     lineno:       LongInt;                        // line number for exceptions
-    bitmapCellArray:  Array of BitmapCell;        // had to make a list of bitmap since i can't load 2 bitmaps with the same image.
+    bitmapCellArray:  Array of BitmapCellKind;        // had to make a list of bitmap since i can't load 2 bitmaps with the same image.
   // use data processed to set tile properties.
     Procedure SetTiles();
     var
@@ -688,13 +699,13 @@ interface
             begin
               //Draw debug information
               DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
-              DrawText(IntToStr(map^.Tiles[row,col].SurroundingTiles[mdWest]^.kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
+              DrawText(IntToStr(map^.Tiles[row,col].kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
               DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
 
               for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
               begin
                 if assigned(map^.Tiles[row,col].SurroundingTiles[dir]) then
-                DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
+                  DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
               end;
             end;
           end
@@ -857,14 +868,16 @@ interface
     collidedY := -1;
   end;
 
-  procedure MoveOut(m: map; s: Sprite; velocity: Vector; x, y: LongInt);
+  procedure MoveOut(m: map; s: Sprite; x, y: LongInt);
   var
     kickVector: Vector;
     sprRect: Rectangle;
     tileshape: shape;
+    velocity: Vector;
   begin
     tileshape:= m^.Tiles[y,x].TileShape;
     sprRect := SpriteCollisionRectangle(s);
+    velocity:= s^.Velocity;
 
     //Draw the sprite rectangle
     DrawRectangle(ColorYellow, sprRect);
@@ -964,9 +977,9 @@ interface
   end;
 
 
-  //=====================================================
-  //TILE RETURN FUNCTIONS
-  //=====================================================
+  //=========================//
+  //TILE RETURN FUNCTIONS    //
+  //=========================//
 
   function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
   begin
@@ -1077,13 +1090,53 @@ interface
     result := t^.TileId;
   end;
 
+  function TileBitmap(t: Tile; layer:LongInt): Bitmap;
+  begin
+    result := nil;
+    if not Assigned(t) then exit
+    else
+    result := t^.TileBitmapCells[layer].BMap;
+  end;
+
+  function KindName(m : map; idx:LongInt): String;
+  begin
+    result := '';
+    if not Assigned(m) then exit
+    else
+    result:= NameAt(m^.KindIds, idx);
+  end;
   
+  function ValueName(m : map; idx:LongInt): String;
+  begin
+    result := '';
+    if not Assigned(m) then exit
+    else
+    result:= NameAt(m^.ValueIds, idx);
+  end;
+  //======================//
+  // Set Tile procedures  //
+  //======================//
   
+  procedure SetTileBitmap(t: Tile; layer:LongInt; bmp:Bitmap; cell:LongInt);
+  begin
+    t^.TileBitmapCells[layer].BMap := bmp;
+    t^.TileBitmapCells[layer].Cell := cell;
+  end;
+  
+  procedure SetTileKind(t: Tile; kindId:LongInt);
+  begin
+    t^.Kind := KindId;
+  end;
+  
+  procedure SetTileKind(t : Tile; VId : LongInt; value : Single);
+  begin
+    t^.Values[VId] := value;
+  end;
+
+  
+
   initialization
   begin
     InitialiseSwinGame();
   end;
-
-    
-
 end.
