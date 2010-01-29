@@ -461,7 +461,7 @@ implementation
   uses 
     SysUtils, Math, Classes, //System
     SDL_Image, SDL_gfx, //SDL
-    sgTrace, sgShared, sgEventProcessing, sgResources, sgGeometry, sgImages; //SwinGame
+    sgTrace, sgShared, sgEventProcessing, sgResources, sgGeometry, sgImages, sgUserInterface; //SwinGame
 //=============================================================================
 
 
@@ -672,6 +672,9 @@ implementation
       ColorMagenta := RGBAColor(255, 0, 255, 255);
       ColorTransparent := RGBAColor(0, 0, 0, 0);
       ColorLightGrey := RGBAColor(200, 200, 200, 255);
+      
+      GUISetForegroundColor(ColorGreen);
+      GUISetBackgroundColor(ColorBlack);
       
       SDL_FillRect(screen^.surface, nil, ColorGrey);
       stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
