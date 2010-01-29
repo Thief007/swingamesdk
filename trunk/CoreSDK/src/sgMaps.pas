@@ -13,10 +13,10 @@ interface
      // KindIdx:      LongInt;
     end;
 
-    Marker = record
+    {Marker = record
       position:     Point2D;
       Id:           LongInt;
-    end;
+    end;}
 
     
     Tile = ^TileData;
@@ -35,21 +35,21 @@ interface
     Map = ^MapData;
     MapData = Record
       Tiles:            Array of Array of TileData;     // The actual tiles -> in col,row order
-      SelectedTiles:    LongIntArray;               // id of selected tiles
-      Isometric:        Boolean;
+      SelectedTiles:    LongIntArray;                   // id of selected tiles
+      Isometric:        Boolean;                        // Map Isometric
       valueIds:         NamedIndexCollection;           // has names of values
       kindids:          NamedIndexCollection;           // has names of kinds
       MarkerIds:        NamedIndexCollection;           // has names of Markers
-      MapMarkers:       Array of Marker;
-      MapPrototype:     ShapePrototype;
-      MapHighlightcolor:Color;
+      //MapMarkers:       Array of Marker;
+      MapPrototype:     ShapePrototype;                 // prototype of the tiles
+      MapHighlightcolor:Color;                          // highlight color
       MapWidth:         LongInt;                        // The Map width (# of grid in x axis)
       MapHeight:        LongInt;                        // The Map height (# of grid in Y axis)
       MapLayer:         LongInt;                        // The Number of layers within the map
       TileWidth:        LongInt;                        // The Tile width
       TileHeight:       LongInt;                        // The Tile height
-      TileStagger:      Vector;                        // Offset of the tile's X Position
-      MapDefaultValues: Array of Array of Single;   //default values of tiles depending on bitmaps.
+      TileStagger:      Vector;                         // Offset of the tile's X Position
+      MapDefaultValues: Array of Array of Single;       //default values of tiles depending on bitmaps.
     end;
 
 
@@ -127,26 +127,33 @@ interface
 
   // load map func *********
   function LoadMap(filename:string): Map;
+
   type
     SpecificValuesLoader = record
       row:      LongInt;
       col:      LongInt;
       name:     string;
-      value:     Single;
+      value:    Single;
     end;
+
+
     BitmapCellKind = record
       Cell:         LongInt;
       Bmap:         Bitmap;
       KindIdx:      LongInt;    
     end;
+
+
   var
-    tempValues:   Array of SpecificValuesLoader;
-    path:         String;                         // path of the map file
-    textFile:     Text;                           // text file that is loaded
-    id:           String;                         // id for the line processor to identify how to handle the data
-    data,line:    String;                         // line is read then seperated into id and data.
-    lineno:       LongInt;                        // line number for exceptions
+    tempValues:       Array of SpecificValuesLoader;  // contains the row,col, name and value
+    path:             String;                         // path of the map file
+    textFile:         Text;                           // text file that is loaded
+    id:               String;                         // id for the line processor to identify how to handle the data
+    data,line:        String;                         // line is read then seperated into id and data.
+    lineno:           LongInt;                        // line number for exceptions
     bitmapCellArray:  Array of BitmapCellKind;        // had to make a list of bitmap since i can't load 2 bitmaps with the same image.
+
+
   // use data processed to set tile properties.
     Procedure SetTiles();
     var
@@ -162,6 +169,7 @@ interface
           id+=1;
         end;
     end;
+    
     // ADD tile procedure*************
     //
     // Reads the ti: data
@@ -205,6 +213,8 @@ interface
       end;
     end;
     //procedure to add bitmap to bitmapcell array gives cell value of 0
+
+
     procedure AddBitmap(data:String);
     var
     index:LongInt;
@@ -219,6 +229,7 @@ interface
     end;
 
     //Procedure that adds the surrounding tiles to each tile.
+
     procedure CreateSurroundingTiles();
     var
       row,col: LongInt;
@@ -249,6 +260,7 @@ interface
         end;
     end;    
 
+
     procedure AllocateDefaultValues(map:Map; kindIdx:LongInt; var tile: TileData);
     var
       i: Integer;
@@ -272,11 +284,10 @@ interface
     var
     i: LongInt;
     begin
-    for i := low(tempValues) to high(tempValues) do
-    begin
-      AllocateValue(result, @result^.tiles[tempValues[i].row, tempValues[i].col], tempValues[i].name, tempValues[i].value);
-    end;
-      
+      for i := low(tempValues) to high(tempValues) do
+      begin
+        AllocateValue(result, @result^.tiles[tempValues[i].row, tempValues[i].col], tempValues[i].name, tempValues[i].value);
+      end;      
     end;
     
     //sets up positions of each tile
@@ -811,7 +822,6 @@ interface
 
     
     //checks which side to use to check for collision
-//>>>>>>> .r1115
     side := SideForCollisionTest(s^.velocity);
     
     // Use the side to determine search order, allowing the tiles to be 
@@ -838,17 +848,17 @@ interface
     with map^ do 
     begin
       // For i = the tiles within the y range (inclusive of start/end)
-      for i := 0 to yRange-1 do
+      for i := 0 to yRange do
       begin
         y := initY + i * dy;
         
         // for j = the tiles within the x range (inclusive of start/end)
-        for j := 0 to xRange-2 do
+        for j := 0 to xRange do
         begin
           x := initX + j * dx;
           
         //  writeln ('  Checking tile: ', x,  ', ', y);
-          DrawShape(Tiles[y, x].TileShape);
+         // DrawShape(Tiles[y, x].TileShape);
           
           if Tiles[y, x].Kind = k then
           begin
@@ -881,7 +891,7 @@ interface
 
     //Draw the sprite rectangle
     DrawRectangle(ColorYellow, sprRect);
-    DrawShape(tileShape);
+    //DrawShape(tileShape);
     //WriteLn(x, ',', y);
     kickVector := VectorOutOfShapeFromRect(tileshape, sprRect, velocity);
 
