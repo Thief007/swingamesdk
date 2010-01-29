@@ -16,4 +16,4 @@ h: 250
 r: 10, 10, 80, 20, 1, Label1, Hello World, courierSmall
 
 //LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
-r: 45, 30, 0, 0, 5, List1, 1, 5, 2, 150, 35, courier, 10
+r: 45, 30, 0, 0, 5, List1, 1, 5, -1, 150, 35, courier, 10

@@ -117,15 +117,17 @@ type
   
   
   GUIController = record
-    panels:         Array of Panel;
-    panelIds:       NamedIndexCollection;
-    visiblePanels:  Array of Panel;
-    globalGUIFont:  Font;
+    panels:         		Array of Panel;
+    panelIds:       		NamedIndexCollection;
+    visiblePanels:  		Array of Panel;
+    globalGUIFont:  		Font;
     globalGUIVectorColor: Color;
-    VectorDrawing:  Boolean;
-    lastClicked:    Region;
-    activeTextBox:  Region;
-    doneReading: 		Boolean;
+    VectorDrawing:  		Boolean;
+    lastClicked:    		Region;
+    activeTextBox: 			Region;
+    lastActiveTextBox:	Region;
+    doneReading: 				Boolean;
+    lastTextRead:				String; //The text that was in the most recently changed textbox before it was changed.
   end;
 
 function LoadPanel(filename: string): Panel;
@@ -190,7 +192,7 @@ function TextboxString(tb: GUITextBox): string; Overload;
 
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
-function StoppedReadingText(): boolean;
+function GUITextEntryComplete(): boolean;
 
 //=============================================================================
 implementation
@@ -204,9 +206,19 @@ var
   _Panels: TStringHash;
   GUIC: GUIController;
 
-function StoppedReadingText(): boolean;
+function GUITextEntryComplete(): boolean;
 begin
 	result := GUIC.doneReading;
+end;
+
+function GUITextBoxOfTextEntered(): GUITextbox;
+begin
+	result := @GUIC.lastActiveTextBox^.parent^.textBoxes[GUIC.lastActiveTextBox^.elementIndex];
+end;
+
+function RegionOfLastUpdatedTextBox(): Region;
+begin
+	result := GUIC.lastActiveTextBox;
 end;
 
 function ActiveTextIndex(): Integer;
@@ -389,11 +401,6 @@ begin
     result := '';
 end;
 
-function DoneReadingText(): Boolean;
-begin
-	
-end;
-
 function RegionClicked(pnl: Panel): Region; Overload;
 var
 	j: LongInt;
@@ -436,11 +443,13 @@ end;
 
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
 begin
+	if not(assigned(RadioGroup)) then exit;
 	result := RadioGroup^.activeButton;
 end;
 
 function RadioGroupFromRegion(forRegion: Region): GUIRadioGroup;
 begin
+	if not assigned(forRegion) then exit;
 	result := @forRegion^.parent^.radioGroups[forRegion^.elementIndex];
 end;
 
@@ -449,6 +458,8 @@ var
   rGroup: GUIRadioGroup;
   i: integer;
 begin
+	if not assigned(r) then exit;
+
   rGroup := @r^.parent^.radioGroups[r^.elementIndex];
   
   for i := Low(rGroup^.buttons) to High(rGroup^.buttons) do
@@ -464,11 +475,14 @@ end;
 
 procedure setLabelText(lb: GUILabel; newString: String);
 begin
+	if not assigned(lb) then exit;	
+
   lb^.contentString := newString;
 end;
 
 procedure setLabelFont(var l: GUILabel; s: String);
 begin
+	if not assigned(l) then exit;
   l^.font := FontNamed(s);
 end;
 
@@ -506,14 +520,23 @@ end;
 
 function TextBoxText(tb: GUITextBox): String;
 begin
+	if not assigned(tb) then exit;
 	result := tb^.contentString;
+end;
+
+function LastTextRead(): string;
+begin
+	result := GUIC.lastTextRead;
 end;
 
 procedure FinishReadingText();
 begin
   if not assigned(GUIC.activeTextBox) then exit;
   
+  GUIC.lastTextRead := GUIC.activeTextBox^.parent^.textBoxes[GUIC.activeTextBox^.elementIndex].contentString;
   GUIC.activeTextBox^.parent^.textBoxes[GUIC.activeTextBox^.elementIndex].contentString := EndReadingText();
+  
+  GUIC.lastActiveTextBox := GUIC.activeTextBox;
   GUIC.activeTextBox := nil;
 end;
 
@@ -669,6 +692,13 @@ begin
 			theList^.activeItem := theList^.startingAt + i;
 		end;
 	end;
+end;
+
+function ListActiveItemIndex(lst: GUIList): LongInt;
+begin
+	result := -1;
+	if not assigned(lst) then exit;
+	result := lst^.activeItem;
 end;
 
 //---------------------------------------------------------------------------------------
@@ -1094,7 +1124,9 @@ end;
 procedure UpdateInterface();
 begin
 	GUIC.doneReading := false;
+	
   GUIC.lastClicked := RegionClicked(PanelClicked());
+  
   if assigned(GUIC.activeTextbox) and not ReadingText() then
     FinishReadingText();
 end;

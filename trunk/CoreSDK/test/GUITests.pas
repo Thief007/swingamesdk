@@ -21,7 +21,7 @@ begin
   AddPanelToGUI(pnla);
   AddPanelToGUI(pnlb);
   
-  DrawGUIAsVectors(false);
+  DrawGUIAsVectors(true);
 end;
   
 procedure UpdateGUI(var pnla, pnlb: panel; lst: GUilist);
@@ -36,10 +36,10 @@ begin
     Toggleactivatepanel(pnlb);
   end;
   
-  setLabelText(LabelFromRegion(GetRegionByID('Label1')), lst^.items[lst^.activeItem].text);
+  setLabelText(LabelFromRegion(GetRegionByID('Label1')), TextboxText(TextBoxFromRegion(GetRegionByID('TextBox1'))));
   
    case ActiveRadioButtonIndex(RadioGroupFromRegion(GetRegionByID('radButton1'))) of
-     0: SetGUIColorForVectors(ColorWhite);
+     0: SetGUIColorForVectors(ColorGreen);
      1: SetGUIColorForVectors(ColorRed);
      2: SetGUIColorForVectors(ColorBlue);
    end;  

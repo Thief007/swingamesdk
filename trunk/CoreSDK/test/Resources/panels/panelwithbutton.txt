@@ -16,7 +16,7 @@ b: testerface.png
 // Format: r: x, y, w, h, kind
 r: 80, 80, 320, 70, 0, Button1
 r: 90, 100, 20, 20, 1, Button1Label, Push Button, courierLarge
-r: 50, 100, 20, 20, 2, Checkbox2, false
+r: 10, 80, 60, 70, 2, Checkbox2, false
 //Radiobutton r: x, y, w, h, 3, GroupID
 r: 10, 10, 10, 10, 3, radButton1, RadioGroup1
 r: 25, 10, 10, 10, 3, radButton2, RadioGroup1
