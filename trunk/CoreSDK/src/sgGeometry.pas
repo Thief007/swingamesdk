@@ -3864,7 +3864,10 @@ implementation
       toptrianglepoint, bottomtrianglepoint: Single;
       topoverlap, botoverlap: Single;
     begin
+      if (pt2.x - pt1.x = 0) then m := 0
+      else
       m := (pt2.y - pt1.y) / (pt2.x - pt1.x);
+      
       c := pt1.y - (m * pt1.x);
       
       // if the line is going up from right to left then the top intersect point is on the left

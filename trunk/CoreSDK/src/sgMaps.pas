@@ -717,8 +717,9 @@ interface
 
               for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
               begin
-                if assigned(map^.Tiles[row,col].SurroundingTiles[dir]) then
-                  DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
+                if not assigned(map^.Tiles[row,col].SurroundingTiles[dir]) then exit
+                else
+                DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
               end;
             end;
           end
