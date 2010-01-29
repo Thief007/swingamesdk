@@ -13,11 +13,11 @@ interface
       KindIdx:      LongInt;
     end;
 
-    
     Marker = record
       position:     Point2D;
       Id:           LongInt;
     end;
+
     
     Tile = ^TileData;
     TileData = Record
@@ -30,6 +30,7 @@ interface
       Values:           Array of Single;              // Array of single values.
       SurroundingTiles: Array[Direction] of Tile;     // The adjcent tiles, can be nil if none.
     end;
+
     
     Map = ^MapData;
     MapData = Record
@@ -47,10 +48,13 @@ interface
       MapLayer:         LongInt;                        // The Number of layers within the map
       TileWidth:        LongInt;                        // The Tile width
       TileHeight:       LongInt;                        // The Tile height
-      TileStaggerX:     LongInt;                        // Offset of the tile's X Position
-      TileStaggerY:     LongInt;                        // Offset of the tile's Y Position
+      TileStagger:      Vector;                        // Offset of the tile's X Position
       MapDefaultValues: Array of Array of Single;   //default values of tiles depending on bitmaps.
     end;
+
+
+
+
 
   function LoadMap(filename:string): Map;
   procedure DrawMap(map: Map); overload;
@@ -59,14 +63,21 @@ interface
   procedure Deselect(map:Map; tile:Tile);
   procedure HighlightTile(highlightedTile: Tile; map:Map);
   procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);
+
+//==================================//
+//collision functions and procedures//
+//==================================//
   
   function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
   procedure MoveOut(m:map; s: Sprite; velocity: Vector; x, y: LongInt);
 
-//return map properties functions
-  function TileStaggerY(m: Map) : LongInt;
-  function TileStaggerX(m: Map) : LongInt;
+  
+//===============================//
+//return map properties functions//
+//===============================//
+
+  function TileStagger(m: Map) : Vector;
   function LayerCount(m: Map) : LongInt;  
   function TileHeight(m: Map) : LongInt;  
   function TileWidth(m: Map) : LongInt;
@@ -75,8 +86,12 @@ interface
   function MapPrototype(m: Map) : ShapePrototype;
   function MapHeight(m: Map) : Longint;
   function MapWidth(m: Map) : Longint;
+
   
- // return tile properties functions
+//================================//
+//return tile properties functions//
+//================================//
+
   function TileId(t: Tile): LongInt;
   function TileNeighbour(t: tile; d:Direction): Tile;
   function TileShape(t: tile): Shape;
@@ -90,6 +105,12 @@ interface
   function TileAt(m: Map; id:LongInt) : Tile; Overload;
   function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
   function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
+
+
+
+
+
+
 
   implementation
   uses
@@ -256,8 +277,8 @@ interface
         for col:=low(result^.Tiles[row]) to high(result^.Tiles[row]) do
           begin
             //Allocate position and center given stagger
-            result^.Tiles[row,col].Position.X := (col * result^.TileWidth) - ((row mod 2) * result^.TileStaggerX);      // stagger alternate lines
-            result^.Tiles[row,col].Position.Y := (row * result^.TileHeight) - ((row + 1) * result^.TileStaggerY);       // position y value
+            result^.Tiles[row,col].Position.X := (col * result^.TileWidth) - ((row mod 2) * result^.TileStagger.X);      // stagger alternate lines
+            result^.Tiles[row,col].Position.Y := (row * result^.TileHeight) - ((row + 1) * result^.TileStagger.Y);       // position y value
             result^.Tiles[row,col].Center.X := result^.Tiles[row,col].Position.X + (result^.TileWidth/2);
             result^.Tiles[row,col].Center.Y := result^.Tiles[row,col].Position.Y + (result^.TileHeight/2);
 
@@ -391,10 +412,19 @@ interface
         'l':  result^.MapLayer  := MyStrToInt(data, false);
 
         //Isometric 
-        'i':  if( MyStrToInt(data, false) = 0) then
-                result^.Isometric := false
-              else if (MyStrToInt(data, false) = 1) then
-                result^.Isometric := true;  
+        'i':  if( data = 'true') then
+              begin
+                result^.Isometric := true;
+                result^.TileStagger.X := (result^.TileWidth/2);
+                result^.TileStagger.Y := (result^.TileHeight/2);
+              end
+              else
+              begin
+                result^.Isometric := false;
+                result^.TileStagger.X := 0;
+                result^.TileStagger.Y := 0;
+              end;
+              
         //kind  
         'k':  ProcessKindLineData();      
         //Value
@@ -419,11 +449,6 @@ interface
         'h': result^.TileHeight := MyStrToInt(data, false);      // tile height
         'l': AddTile();
         'b': AddBitmap(data);
-        'o':
-          begin
-            result^.TileStaggerX := StrToInt(ExtractDelimited(1, data, [',']));
-            result^.TileStaggerY := StrToInt(ExtractDelimited(2, data, [',']));
-          end;
         'v':LoadSpecificValue(data);
       end;
     end;
@@ -489,15 +514,15 @@ interface
     begin
       SetLength(Pts, 5);
       pts[0].X:=0;
-      pts[0].Y:=(result^.TileStaggerY);
-      pts[1].X:=((-result^.TileStaggerX)+result^.TileWidth);
+      pts[0].Y:=(result^.TileStagger.Y);
+      pts[1].X:=((-result^.TileStagger.X)+result^.TileWidth);
       pts[1].Y:=0;
       pts[2].X:=result^.TileWidth;
-      pts[2].Y:=(result^.TileHeight - result^.TileStaggerY);
-      pts[3].X:=(result^.TileStaggerX);
+      pts[2].Y:=(result^.TileHeight - result^.TileStagger.Y);
+      pts[3].X:=(result^.TileStagger.X);
       pts[3].Y:=(result^.TileHeight);
       pts[4].X:=0;
-      pts[4].Y:=(result^.TileStaggerY);
+      pts[4].Y:=(result^.TileStagger.Y);
       result^.MapPrototype:=PrototypeFrom(pts, pkTriangleStrip);
     end;
   begin
@@ -541,8 +566,8 @@ interface
     startY := Trunc(r.Y / map^.TileHeight) - 1;
     startX := Trunc(r.X / map^.TileWidth) - 1;
     
-    endY   := Ceiling(startY + (r.Height/(map^.TileHeight - map^.TileStaggerY))) + 2 ;
-    endX   := Ceiling(startX + ((r.Width + map^.TileStaggerX)/map^.TileWidth)) + 3;
+    endY   := Ceiling(startY + (r.Height/(map^.TileHeight - map^.TileStagger.Y))) + 2 ;
+    endX   := Ceiling(startX + ((r.Width + map^.TileStagger.X)/map^.TileWidth)) + 3;
 
     // Adjust the end and start to be in range of the array
     if endY >= (map^.MapHeight) then endY := map^.MapHeight-1;
@@ -555,8 +580,8 @@ interface
   var
   width, height : LongInt;
   begin
-    width := ((map^.MapWidth) * map^.TileWidth) - (2 * (map^.TileStaggerX));
-    height := ((map^.MapHeight) * map^.TileHeight) - (map^.TileStaggerY * (map^.MapHeight - 1)) -(2*map^.TileStaggerY);
+    width := Round(((map^.MapWidth) * map^.TileWidth) - (2 * (map^.TileStagger.X)));
+    height := Round(((map^.MapHeight) * map^.TileHeight) - (map^.TileStagger.Y * (map^.MapHeight - 1)) -(2*map^.TileStagger.Y));
 
     {$IFDEF DEBUG}
       DrawRectangle(ColorBlue, false, RectangleFrom(0, 0, width ,height));
@@ -930,20 +955,14 @@ interface
     result := m^.MapLayer;
   end;
 
-  function TileStaggerX(m: Map) : LongInt;
+  function TileStagger(m: Map) : Vector;
   begin
-    result := -1;
+    result := VectorTo(0,0);
     if NOT Assigned(m) then exit
     else
-    result := m^.TileStaggerX;
+    result := m^.TileStagger;
   end;
 
-  function TileStaggerY(m: Map) : LongInt;
-  begin
-    result := -1;
-    if not Assigned(m) then exit
-    else result := m^.TileStaggerY;
-  end;
 
   //=====================================================
   //TILE RETURN FUNCTIONS

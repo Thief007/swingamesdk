@@ -18,9 +18,9 @@ mw:65
 mh:20
 ml:4
 mhc: 0,255,0,255
-mi:1
 tw:50
 th:50
+mi:true
 
 //
 // Tile Bitmaps
@@ -31,8 +31,6 @@ th:50
 tb:0,isometric.png
 tb:1,ball_small.png
 gb:[2,3],[0,1],test.jpg,50,50,2,1,2
-
-to: 25,25
 
 //
 // Tile -> Kind Mapping
