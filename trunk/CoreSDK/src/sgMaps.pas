@@ -34,7 +34,7 @@ interface
     Map = ^MapData;
     MapData = Record
       Tiles:            Array of Array of TileData;     // The actual tiles -> in col,row order
-      SelectedTiles:    Array of LongInt;               // id of selected tiles
+      SelectedTiles:    LongIntArray;               // id of selected tiles
       Isometric:        Boolean;
       valueIds:         NamedIndexCollection;           // has names of values
       kindids:          NamedIndexCollection;           // has names of kinds
@@ -54,19 +54,42 @@ interface
 
   function LoadMap(filename:string): Map;
   procedure DrawMap(map: Map); overload;
-  //procedure DrawMap(map: Map; withHighlight: Boolean); overload;
   function TileSelected(map:Map; tile:Tile):Boolean;
   procedure UpdateSelect(map:Map);
   procedure Deselect(map:Map; tile:Tile);
   procedure HighlightTile(highlightedTile: Tile; map:Map);
-  procedure AllocateValue(map:map; tile:Tile; name:String; val:Single);
+  procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);
+  
   function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
   procedure MoveOut(m:map; s: Sprite; velocity: Vector; x, y: LongInt);
 
-
-
-  function TileAt(map: Map; row, col: LongInt): Tile;
+//return map properties functions
+  function TileStaggerY(m: Map) : LongInt;
+  function TileStaggerX(m: Map) : LongInt;
+  function LayerCount(m: Map) : LongInt;  
+  function TileHeight(m: Map) : LongInt;  
+  function TileWidth(m: Map) : LongInt;
+  function MapHighlightcolor(m: Map) : color;
+  function CountSelectedTiles(m: Map) : LongInt;
+  function MapPrototype(m: Map) : ShapePrototype;
+  function MapHeight(m: Map) : Longint;
+  function MapWidth(m: Map) : Longint;
+  
+ // return tile properties functions
+  function TileId(t: Tile): LongInt;
+  function TileNeighbour(t: tile; d:Direction): Tile;
+  function TileShape(t: tile): Shape;
+  function TileCenter(t: tile): Point2D;
+  function TilePosition(t: tile): Point2D;
+  function TileValueName(m: Map; id: LongInt): string;
+  function TileValueId(m: Map; n: String): LongInt;
+  function TileValue(t: Tile; vId: LongInt) : Single;
+  function TileKindName(m: Map; t: Tile) : String;
+  function TileKind(t: Tile) : LongInt;
+  function TileAt(m: Map; id:LongInt) : Tile; Overload;
+  function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
+  function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
 
   implementation
   uses
@@ -513,7 +536,7 @@ interface
 
   procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
   begin
-    WriteLn('Getting range for ', RectangleToString(r));
+    //WriteLn('Getting range for ', RectangleToString(r));
     // Calculate the tiles that are on the screen - only draw these
     startY := Trunc(r.Y / map^.TileHeight) - 1;
     startX := Trunc(r.X / map^.TileWidth) - 1;
@@ -525,7 +548,7 @@ interface
     if endY >= (map^.MapHeight) then endY := map^.MapHeight-1;
     if endX >= (map^.MapWidth) then endX := map^.MapWidth-1;
     if startY < 0 then startY := 0;
-    if startX < 0 then startX := 0;
+    if startX < 0 then startX := 0;   
   end;
 
   procedure PushMapClip(map:Map);
@@ -661,22 +684,14 @@ interface
     PopClip();
   end;
 
-  function TileAt(map: Map; row, col: LongInt): Tile;
-  begin    
-    if (row < Low(map^.Tiles)) or (row > High(map^.Tiles)) or (col < Low(map^.Tiles[row])) or (col > High(map^.Tiles[row])) then
-      result := nil
-    else
-      result := @map^.Tiles[row,col];
-  end;
-  
-  procedure AllocateValue(map:map; tile:Tile; name:String; val:Single);
+  procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);
   var
     idx: LongInt;
   begin  
-    if not assigned(map) then exit;
+    if not assigned(m) then exit;
     if not assigned(tile) then exit;
     
-    idx := IndexOf(map^.valueIds, name);
+    idx := IndexOf(m^.valueIds, name);
     if (idx < 0) OR (idx > High(tile^.values)) then exit;
     
     //WriteLn('AllocateValue: ', name, ' := ', val, ' @idx ', idx, ' ', High(tile^.values));
@@ -732,9 +747,9 @@ interface
     //drawRectangle(colorpink, RectangleFrom(startX, startY, endX - startX, endY - startY));
 
     //Debug Info
-    DrawRectangle(ColorYellow, startPoint);
-    DrawRectangle(ColorWhite, endPoint);
-    DrawRectangle(ColorGreen, result);
+    //DrawRectangle(ColorYellow, startPoint);
+    //DrawRectangle(ColorWhite, endPoint);
+    //DrawRectangle(ColorGreen, result);
   end;
 
 // outs the tile X and Y that the sprite has collided with  map and result is a boolean if it did collide.
@@ -755,10 +770,12 @@ interface
     rectSearch := GetPotentialCollisions(map, s);
     
     //makes range out of rect.
-    WriteLn('Creating search rectangle for sprite at ', RectangleToString(SpriteCollisionRectangle(s)));
+    //WriteLn('Creating search rectangle for sprite at ', RectangleToString(SpriteCollisionRectangle(s)));
     MapRangeFromRect(rectSearch, map, xStart, yStart, xEnd, yEnd);
+
     
     //checks which side to use to check for collision
+//>>>>>>> .r1115
     side := SideForCollisionTest(s^.velocity);
     
     // Use the side to determine search order, allowing the tiles to be 
@@ -779,22 +796,22 @@ interface
     yRange := yEnd - yStart;
     xRange := xEnd - xStart;
     
-    writeln ('StartY: ', yStart,  ', endY:', yEnd);
-    writeln ('StartX: ', xStart,  ', endX:', xEnd);
+    //writeln ('StartY: ', yStart,  ', endY:', yEnd);
+    //writeln ('StartX: ', xStart,  ', endX:', xEnd);
     
     with map^ do 
     begin
       // For i = the tiles within the y range (inclusive of start/end)
-      for i := 0 to yRange do
+      for i := 0 to yRange-1 do
       begin
         y := initY + i * dy;
         
         // for j = the tiles within the x range (inclusive of start/end)
-        for j := 0 to xRange do
+        for j := 0 to xRange-2 do
         begin
           x := initX + j * dx;
           
-          writeln ('  Checking tile: ', x,  ', ', y);
+        //  writeln ('  Checking tile: ', x,  ', ', y);
           DrawShape(Tiles[y, x].TileShape);
           
           if Tiles[y, x].Kind = k then
@@ -833,15 +850,221 @@ interface
     sprRect.x += kickVector.x;
     sprRect.y += kickVector.y;
     
-    DrawRectangle(ColorWhite, sprRect);
+    //DrawRectangle(ColorWhite, sprRect);
     //writeln('v.x: ',kickVector.x, 'v.y: ',kickVector.y);
     MoveSprite(s, kickVector);;
   end;
 
+
+
+
+  //==================================================================
+  //FUNCTIONS THAT RETURNS MAP PROPERTIES
+  //==================================================================
+
+  function MapWidth(m: Map) : Longint;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.MapWidth;
+  end;
+
+  
+  function MapHeight(m: Map) : Longint;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.MapHeight;
+  end;
+
+  function MapPrototype(m: Map) : ShapePrototype;
+  begin
+    result := m^.MapPrototype;
+  end;
+
+  function CountSelectedTiles(m: Map) : LongInt;
+  begin
+    result := -1;
+    if NOT assigned(m) then exit
+    else
+    result:= length(m^.SelectedTiles);
+  end;
+
+  function SelectedTiles(m: Map) : LongIntArray;
+  begin
+    result := nil;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.Selectedtiles;
+  end;
+
+  function MapHighlightcolor(m: Map) : color;
+  begin
+    result := m^.MapHighlightcolor;
+  end;
+
+  
+  function TileWidth(m: Map) : LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.TileWidth;
+  end;
+  
+  function TileHeight(m: Map) : LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.TileHeight;
+  end;
+
+  function LayerCount(m: Map) : LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.MapLayer;
+  end;
+
+  function TileStaggerX(m: Map) : LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := m^.TileStaggerX;
+  end;
+
+  function TileStaggerY(m: Map) : LongInt;
+  begin
+    result := -1;
+    if not Assigned(m) then exit
+    else result := m^.TileStaggerY;
+  end;
+
+  //=====================================================
+  //TILE RETURN FUNCTIONS
+  //=====================================================
+
+  function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
+  begin
+    //result:=********************
+    result := nil;
+  end;
+
+  function TileAt(m: Map; id:LongInt) : Tile; Overload;
+  var
+    row,col : LongInt;
+  begin
+    result := nil;
+    row := id div m^.MapWidth;
+    col := id mod m^.MapWidth;
+    if (row >= m^.MapHeight) AND (col >= m^.MapWidth) then exit
+    else
+    result := TileAt(m, row,col);
+  end;
+
+  function TileAt(m: Map; row, col: LongInt): Tile; overload;
+  begin    
+    if (not assigned(m)) or (row < Low(m^.Tiles)) or (row > High(m^.Tiles)) or (col < Low(m^.Tiles[row])) or (col > High(m^.Tiles[row])) then
+      result := nil
+    else
+      result := @m^.Tiles[row,col];
+  end;
+
+  function TileKind(t: Tile) : LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(t) then exit
+    else
+    result := t^.Kind;
+  end;
+
+  function TileKindName(m: Map; t: Tile) : String;
+  begin
+    result := '';
+    if NOT Assigned(t) then exit
+    else
+      result := NameAt(m^.KindIds, Tilekind(t));
+  end;
+
+  function TileValue(t: Tile; vId: LongInt) : Single;
+  begin
+    result := -1;
+    if NOT Assigned(t) then exit
+    else
+    result := t^.Values[vId];
+  end;
+
+  function TileValueId(m: Map; n: String): LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(m) then exit
+    else
+    result := IndexOf(m^.ValueIds, n);
+  end;
+
+  function TileValueName(m: Map; id: LongInt): string;
+  begin
+    result := '';
+    if NOT Assigned(m) then exit
+    else
+    result := NameAt(m^.ValueIds, id);
+  end;
+
+  function TilePosition(t: tile): Point2D;
+  begin
+    result.X := -1;
+    result.Y := -1;
+    if not Assigned(t) then exit
+    else
+    result := t^.Position;
+  end;
+
+  function TileCenter(t: tile): Point2D;
+  begin
+    result.X := -1;
+    result.Y := -1;
+    if not Assigned(t) then exit
+    else
+    result := t^.Center;
+  end;
+
+
+  function TileShape(t: tile): Shape;
+  begin
+    result := nil;
+    if NOT assigned(t) then exit
+    else
+    result := t^.TileShape;
+  end;
+
+  function TileNeighbour(t: tile; d:Direction): Tile;
+  begin
+    result := nil;
+    if NOT Assigned(t) then exit
+    else
+    result := t^.SurroundingTiles[d];
+  end;
+
+  function TileId(t: Tile): LongInt;
+  begin
+    result := -1;
+    if NOT Assigned(t) then exit
+    else
+    result := t^.TileId;
+  end;
+
+  
   
   initialization
   begin
     InitialiseSwinGame();
   end;
+
+    
 
 end.

@@ -92,7 +92,7 @@ begin
     
     
     DrawFramerate(0,0);
-    RefreshScreen(15);
+    RefreshScreen();
   until WindowCloseRequested();
   ReleaseAllResources();
   CloseAudio();
