@@ -146,50 +146,38 @@ procedure ToggleCheckboxState(c: GUICheckbox);
 procedure SelectRadioButton(r: Region);
 procedure SetAsActiveTextbox(r: Region);
 procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
-
 procedure ToggleShowPanel(p: Panel);
 procedure ActivatePanel(p: Panel);
 procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
 procedure UpdateInterface();
-
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
-
 procedure ListAddItem(lst: GUIList; text: String);
 procedure ListAddItem(lst: GUIList; img:Bitmap);
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
-
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
 
 //function ListTextAt(lst: GUIList; idx: LongInt): String;
 //function ListBitmapAt(lst: GUIList; idx: LongInt): Bitmap;
-
 //function ListActiveIndex(lst: GUIList): LongInt;
 //function ListActiveText(lst: GUIList): String;
 //function ListActiveBitmap(lst: GUIList): Bitmap;
 
 function RadioGroupFromRegion(forRegion: Region): GUIRadioGroup;
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
-
 function ListFromRegion(reg: Region): GUIList; overload;
-
 function GetRegionByID(pnl: Panel; ID: String): Region; overload;
 function GetRegionByID(ID: String): Region; overload;
-
 function CheckboxState(ID: String): Boolean;
-
 function TextBoxFromRegion(r: Region): GUITextBox;
 function TextBoxText(tb: GUITextBox): string;
-
 function ActiveTextBoxParent() : Panel;
 procedure TextboxSetString(tb: GUITextBox; s: string);
 function LabelFromRegion(r: Region): GUILabel;
 function LabelString(lb: GUILabel): string; Overload;
 procedure setLabelText(lb: GUILabel; newString: String);
-
 function TextboxString(tb: GUITextBox): string; Overload;
-
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
 function GUITextEntryComplete(): boolean;
@@ -218,24 +206,28 @@ end;
 
 function GUITextBoxOfTextEntered(): GUITextbox;
 begin
+	result := nil;
 	if not assigned(GUIC.lastActiveTextBox) then exit;
 	result := @GUIC.lastActiveTextBox^.parent^.textBoxes[GUIC.lastActiveTextBox^.elementIndex];
 end;
 
 function RegionOfLastUpdatedTextBox(): Region;
 begin
+  result := nil;
 	if not assigned(GUIC.lastActiveTextBox) then exit;
 	result := GUIC.lastActiveTextBox;
 end;
 
-function IndexOfLastUpdatedTextBox(): Integer;
+function IndexOfLastUpdatedTextBox(): LongInt;
 begin
+	result := -1;
 	if not assigned(GUIC.lastActiveTextBox) then exit;
 	result := RegionOfLastUpdatedTextBox()^.elementIndex;
 end;
 
-function ActiveTextIndex(): Integer;
+function ActiveTextIndex(): LongInt;
 begin
+	result := -1;
 	if not assigned(GUIC.activeTextBox) then exit;
 	result := GUIC.activeTextBox^.elementIndex;
 end;
@@ -294,7 +286,7 @@ var
 	barHeight: 		 LongInt;
 	scrollButtonY: LongInt;
 begin
-	tempList := ListFromRegion(forRegion);	
+	tempList := ListFromRegion(forRegion);
 	if not assigned(tempList) then exit;
 
 	PushClip(Round(forRegion^.area.x), Round(forRegion^.area.y), forRegion^.area.width + 1, forRegion^.area.Height + 1);
@@ -360,12 +352,19 @@ end;
 
 procedure DrawAsBitmaps();
 var
-  i: integer;
+  i, j: integer;
 begin
   for i := Low(GUIC.panels) to High(GUIC.panels) do
   begin
     if GUIC.panels[i]^.visible then
       DrawBitmapOnScreen(GUIC.panels[i]^.panelBitmap, GUIC.panels[i]^.position);
+      
+    for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
+    begin
+    	case GUIC.panels[i]^.Regions[j].kind of
+    		gkLabel: DrawTextOnScreen(GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j].elementIndex].contentString, GUIC.GlobalGUIVectorColor, GUIC.panels[i]^.Labels[GUIC.panels[i]^.Regions[j].elementIndex].font, Round(GUIC.panels[i]^.Regions[j].area.x), Round(GUIC.panels[i]^.Regions[j].area.y));
+    	end;
+    end;
   end;
 end;
   
@@ -422,8 +421,9 @@ var
 begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
-  FinishReadingText();
-  GUIC.doneReading := true;
+  
+  if ReadingText() then
+  	FinishReadingText();
   
   pointClicked := MousePosition();
   
@@ -541,6 +541,7 @@ end;
 
 function TextBoxText(tb: GUITextBox): String;
 begin
+	result := '';
 	if not assigned(tb) then exit;
 	result := tb^.contentString;
 end;
@@ -559,6 +560,7 @@ begin
   
   GUIC.lastActiveTextBox := GUIC.activeTextBox;
   GUIC.activeTextBox := nil;
+  GUIC.doneReading := true;
 end;
 
 function TextboxString(tb: GUITextBox): string; Overload;
@@ -1151,7 +1153,6 @@ end;
 procedure UpdateInterface();
 begin
 	GUIC.doneReading := false;
-	
   GUIC.lastClicked := RegionClicked(PanelClicked());
   
   if assigned(GUIC.activeTextbox) and not ReadingText() then
