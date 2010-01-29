@@ -197,6 +197,7 @@ function RegionParent(r: Region): Panel;
 function GUITextBoxOfTextEntered(): GUITextbox;
 function RegionOfLastUpdatedTextBox(): Region;
 function PanelShown(p: Panel): boolean;
+function IndexOfLastUpdatedTextBox(): Integer;
 
 //=============================================================================
 implementation
@@ -223,6 +224,11 @@ end;
 function RegionOfLastUpdatedTextBox(): Region;
 begin
 	result := GUIC.lastActiveTextBox;
+end;
+
+function IndexOfLastUpdatedTextBox(): Integer;
+begin
+	result := RegionOfLastUpdatedTextBox()^.elementIndex;
 end;
 
 function ActiveTextIndex(): Integer;
