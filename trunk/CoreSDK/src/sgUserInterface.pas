@@ -193,6 +193,9 @@ function TextboxString(tb: GUITextBox): string; Overload;
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
 function GUITextEntryComplete(): boolean;
+function RegionParent(r: Region): Panel;
+function GUITextBoxOfTextEntered(): GUITextbox;
+function RegionOfLastUpdatedTextBox(): Region;
 
 //=============================================================================
 implementation
@@ -435,6 +438,13 @@ end;
 function RegionClicked(): String;
 begin
   result := RegionStringID(GUIC.lastClicked);
+end;
+
+function RegionParent(r: Region): Panel;
+begin
+	if not assigned(r) then exit;
+	
+	result := r^.parent;
 end;
 
 //---------------------------------------------------------------------------------------
