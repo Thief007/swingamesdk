@@ -60,7 +60,7 @@ begin
   writeln('Map Loading');
   myMap := LoadMap('test1.txt');
   writeln('Map Loaded');
-  AllocateValue(myMap, @myMap^.Tiles[2,2], 'test', 0.8);
+  AllocateValue(myMap, TileAt(myMap, 2,2), 'test', 0.8);
   repeat // The game loop...
     ProcessEvents();
     UpdateActions(myMap);
@@ -87,7 +87,7 @@ begin
     begin
       //HighLightTile(@myMap^.Tiles[j, i], myMap);
       //WriteLn('Character Velocity: ', PointToString(c^.CharSprite^.velocity));
-      MoveOut(myMap,c^.CharSprite, c^.CharSprite^.velocity, i, j);
+      MoveOut(myMap,CharacterSprite(c), i, j);
     end;
     
     
