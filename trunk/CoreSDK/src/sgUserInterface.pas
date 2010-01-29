@@ -722,6 +722,11 @@ end;
 // Panel Code
 //---------------------------------------------------------------------------------------
 
+function PanelShown(p: Panel): boolean;
+begin
+	result := p^.visible;
+end;
+
 procedure AddPanelToGUI(p: Panel);
 begin
   SetLength(GUIC.panels, Length(GUIC.panels) + 1);
