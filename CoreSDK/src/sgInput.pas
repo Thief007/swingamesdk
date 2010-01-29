@@ -128,7 +128,14 @@ interface
   ///
   /// @lib
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s x:%s y:%s
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
+  
+  /// The same as `StartReadingText' but with an additional `text` parameter
+  /// that is displayed as default text to the user.  
+  ///
+  /// @lib StartReadingTextWithTextAtPt
+  /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s at:%s
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const pt: Point2D); overload;
   
   /// Returns the string that has been read since `StartReadingText` or 
   /// `StartReadingTextWithText` was called.
@@ -213,7 +220,12 @@ implementation
     sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
   end;
   
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const pt: Point2D); overload;
+  begin
+    StartReadingTextWithText(text, textColor, maxLength, theFont, Round(pt.x), Round(pt.y));
+  end;
+  
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, x, y);
     sdlManager.SetText(text);
