@@ -218,21 +218,25 @@ end;
 
 function GUITextBoxOfTextEntered(): GUITextbox;
 begin
+	if not assigned(GUIC.lastActiveTextBox) then exit;
 	result := @GUIC.lastActiveTextBox^.parent^.textBoxes[GUIC.lastActiveTextBox^.elementIndex];
 end;
 
 function RegionOfLastUpdatedTextBox(): Region;
 begin
+	if not assigned(GUIC.lastActiveTextBox) then exit;
 	result := GUIC.lastActiveTextBox;
 end;
 
 function IndexOfLastUpdatedTextBox(): Integer;
 begin
+	if not assigned(GUIC.lastActiveTextBox) then exit;
 	result := RegionOfLastUpdatedTextBox()^.elementIndex;
 end;
 
 function ActiveTextIndex(): Integer;
 begin
+	if not assigned(GUIC.activeTextBox) then exit;
 	result := GUIC.activeTextBox^.elementIndex;
 end;
 
@@ -559,6 +563,7 @@ end;
 
 function TextboxString(tb: GUITextBox): string; Overload;
 begin
+	result := '';
   if assigned(tb) then
     result := tb^.contentString;
 end;
@@ -1162,6 +1167,7 @@ end;
     
     InitialiseSwinGame();
     GUIC.VectorDrawing := False;
+    GUIC.lastActiveTextBox := nil;
     
     _Panels := TStringHash.Create(False, 1024);
     
