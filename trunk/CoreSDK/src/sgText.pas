@@ -117,6 +117,7 @@ interface
   
   /// @lib
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; x, y: LongInt); overload;
+    
   /// @lib DrawTextOnScreenAtPoint
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; const pt: Point2D); overload;
   /// @lib

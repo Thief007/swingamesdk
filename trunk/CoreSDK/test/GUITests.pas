@@ -30,13 +30,13 @@ var
   parpnl: Panel;
   radGroup: GUIRadioGroup;
 begin
-  if (RegionClicked() = 'Button1') And (CheckboxState('Checkbox2')) then
+  if (RegionClicked() = 'Button1') And (CheckboxState(GetRegionById(pnla, 'Checkbox2'))) then
   begin
     ToggleShowPanel(pnlb);
     Toggleactivatepanel(pnlb);
   end;
   
-  setLabelText(LabelFromRegion(GetRegionByID('Label1')), TextboxText(TextBoxFromRegion(GetRegionByID('TextBox1'))));
+  LabelSetText(LabelFromRegion(GetRegionByID('Label1')), TextboxText(TextBoxFromRegion(GetRegionByID('TextBox1'))));
   
    case ActiveRadioButtonIndex(RadioGroupFromRegion(GetRegionByID('radButton1'))) of
      0: SetGUIColorForVectors(ColorGreen);

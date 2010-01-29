@@ -410,6 +410,11 @@ interface
   /// @lib RectangleFromLines
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
   
+  /// Returns a rectangle that is inset from rect the amount specified.
+  ///
+  /// @lib
+  function InsetRectangle(const rect: Rectangle; insetAmount: LongInt): Rectangle;
+  
   /// Ensures that the passed in rectangle has a positive width and height.
   ///
   /// @lib FixRectangle
@@ -921,6 +926,43 @@ interface
   /// @class Rectangle
   /// @getter Right
   function RectangleRight (const rect: Rectangle): Single;
+  
+  /// Returns the top left corner of the rectangle.
+  ///
+  /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter TopLeft
+  function RectangleTopLeft(const rect: Rectangle): Point2D;
+  
+  /// Returns the top right corner of the rectangle.
+  ///
+  /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter TopRight
+  function RectangleTopRight(const rect: Rectangle): Point2D;
+  
+  /// Returns the bottom left corner of the rectangle.
+  ///
+  /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter BottomLeft
+  function RectangleBottomLeft(const rect: Rectangle): Point2D;
+  
+  /// Returns the bottom right corner of the rectangle.
+  ///
+  /// @lib
+  ///
+  /// @class Rectangle
+  /// @getter BottomRight
+  function RectangleBottomRight(const rect: Rectangle): Point2D;
+  
+  /// Returns a rectangle that is offset by the vector.
+  ///
+  /// @lib
+  function RectangleOffset(const rect: Rectangle; const vec: Vector): Rectangle;
   
   /// Returns true if the two rectangles intersect.
   ///
@@ -2967,6 +3009,16 @@ implementation
     {$ENDIF}
   end;
   
+  function InsetRectangle(const rect: Rectangle; insetAmount: LongInt): Rectangle;
+  var
+    dblAmt: LongInt;
+  begin
+    dblAmt := 2 * insetAmount;
+    if (rect.width <= dblAmt) or (rect.height <= dblAmt) then begin result := rect; exit; end;
+    
+    result := RectangleFrom(rect.x + insetAmount, rect.y + insetAmount, rect.width - dblAmt, rect.height - dblAmt)
+  end;
+  
   function RectangleFrom(const c: Circle): Rectangle; overload;
   begin
     {$IFDEF TRACE}
@@ -3598,7 +3650,32 @@ implementation
       TraceExit('sgGeometry', 'RectangleRight(const rect: Rectangle): Single', '');
     {$ENDIF}
   end;
-
+  
+  function RectangleTopLeft(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt(RectangleLeft(rect), RectangleTop(rect));
+  end;
+  
+  function RectangleTopRight(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt(RectangleRight(rect), RectangleTop(rect));
+  end;
+  
+  function RectangleBottomLeft(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt(RectangleLeft(rect), RectangleBottom(rect));
+  end;
+  
+  function RectangleBottomRight(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt(RectangleRight(rect), RectangleBottom(rect));
+  end;
+  
+  function RectangleOffset(const rect: Rectangle; const vec: Vector): Rectangle;
+  begin
+    result := RectangleFrom(PointAdd(vec, RectangleTopLeft(rect)), rect.width, rect.height);
+  end;
+  
   function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
   begin
     {$IFDEF TRACE}
@@ -4124,17 +4201,17 @@ implementation
     
     if RectangleBottom(rect1) > RectangleBottom(rect2) then b := RectangleBottom(rect2)
     else b := RectangleBottom(rect1);
-
+      
     if RectangleTop(rect1) < RectangleTop(rect2) then t := RectangleTop(rect2)
     else t := RectangleTop(rect1);
-
+      
     if RectangleRight(rect1) > RectangleRight(rect2) then r := RectangleRight(rect2)
     else r := RectangleRight(rect1);
-
+      
     if RectangleLeft(rect1) < RectangleLeft(rect2) then l := RectangleLeft(rect2)
     else l := RectangleLeft(rect1);
-
-    if (r < l) or (b > t) then
+    
+    if (r < l) or (b < t) then
     begin
       result := RectangleFrom(0, 0, 0, 0);
       exit;

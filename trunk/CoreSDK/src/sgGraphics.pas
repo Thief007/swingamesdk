@@ -1873,16 +1873,22 @@ implementation
     rect: SDL_Rect;
   begin
     if bmp = nil then begin RaiseException('Cannot set clip, bmp must not be nil'); exit; end;
+    
     rect := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
     SDL_SetClipRect(bmp^.surface, @rect);
   end;
   
   procedure PushClip(bmp: Bitmap; const r: Rectangle); overload;
   begin
-    SetLength(bmp^.clipStack, Length(bmp^.clipStack)+1);
+    SetLength(bmp^.clipStack, Length(bmp^.clipStack) + 1);
     
     if Length(bmp^.clipStack) > 1 then
-      bmp^.clipStack[high(bmp^.clipStack)] := Intersection(r, bmp^.clipStack[High(bmp^.clipStack)])
+    begin
+      WriteLn('Adding clip ', RectangleToString(r));
+      WriteLn('Was         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack) - 1]));
+      bmp^.clipStack[high(bmp^.clipStack)] := Intersection(r, bmp^.clipStack[High(bmp^.clipStack) - 1]);
+      WriteLn('Now         ', RectangleToString(bmp^.clipStack[High(bmp^.clipStack)]));
+    end
     else
       bmp^.clipStack[high(bmp^.clipStack)] := r;
     
