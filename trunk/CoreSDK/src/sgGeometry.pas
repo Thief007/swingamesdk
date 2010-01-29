@@ -300,6 +300,15 @@ interface
   /// @csn description
   function RectangleToString(const rect:Rectangle): String;
   
+  /// Get a text description of the triangle.
+  ///
+  /// @lib
+  ///
+  /// @class Triangle
+  /// @method ToString
+  /// @csn description
+  function TriangleToString(const tri: Triangle): String;
+  
   /// Returns the center point of the rectangle.
   ///
   /// @lib
@@ -958,6 +967,39 @@ interface
   /// @class Rectangle
   /// @getter BottomRight
   function RectangleBottomRight(const rect: Rectangle): Point2D;
+  
+  /// Returns the center of the top line of the rectangle.
+  /// 
+  /// @lib
+  /// 
+  /// @class Rectangle
+  /// @getter CenterTop
+  function RectangleCenterTop(const rect: Rectangle): Point2D;
+  
+  /// Returns the center of the bottom line of the rectangle.
+  /// 
+  /// @lib
+  /// 
+  /// @class Rectangle
+  /// @getter CenterBottom
+  function RectangleCenterBottom(const rect: Rectangle): Point2D;
+  
+  /// Returns the center of the left line of the rectangle.
+  /// 
+  /// @lib
+  /// 
+  /// @class Rectangle
+  /// @getter CenterLeft
+  function RectangleCenterLeft(const rect: Rectangle): Point2D;
+  
+  /// Returns the center of the right line of the rectangle.
+  /// 
+  /// @lib
+  /// 
+  /// @class Rectangle
+  /// @getter CenterRight
+  function RectangleCenterRight(const rect: Rectangle): Point2D;
+  
   
   /// Returns a rectangle that is offset by the vector.
   ///
@@ -3513,7 +3555,12 @@ implementation
   begin
     result := 'Pt @' + FloatToStr(pt.x) + ':' + FloatToStr(pt.y);
   end;
-
+  
+  function TriangleToString(const tri: Triangle): String;
+  begin
+    result := 'Triangle @' + PointToString(tri[0]) + ' - ' + PointToString(tri[1]) + ' - ' + PointToString(tri[2]);
+  end;
+  
   function RectangleToString(const rect:Rectangle): String;
   begin
     result := 'Rect @' + FloatToStr(rect.x) + ':' + FloatToStr(rect.y) + ' ' + IntToStr(rect.width) + 'x' + IntToStr(rect.height);
@@ -3602,7 +3649,7 @@ implementation
     {$ENDIF}
     
     if rect.height > 0 then result := rect.y
-    else result := rect.y + rect.height - 1; //add negative height
+    else result := rect.y + rect.height; //add negative height
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'RectangleTop(const rect: Rectangle): Single', '');
@@ -3615,7 +3662,7 @@ implementation
       TraceEnter('sgGeometry', 'RectangleBottom(const rect: Rectangle): Single', '');
     {$ENDIF}
     
-    if rect.height > 0 then result := rect.y + rect.height - 1
+    if rect.height > 0 then result := rect.y + rect.height
     else result := rect.y; //y is bottom most
     
     {$IFDEF TRACE}
@@ -3630,7 +3677,7 @@ implementation
     {$ENDIF}
     
     if rect.width > 0 then result := rect.x
-    else result := rect.x + rect.width - 1; //add negative width
+    else result := rect.x + rect.width; //add negative width
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'RectangleLeft(const rect: Rectangle): Single', '');
@@ -3643,7 +3690,7 @@ implementation
       TraceEnter('sgGeometry', 'RectangleRight(const rect: Rectangle): Single', '');
     {$ENDIF}
     
-    if rect.width > 0 then result := rect.x + rect.width - 1
+    if rect.width > 0 then result := rect.x + rect.width
     else result := rect.x; //x is right most
     
     {$IFDEF TRACE}
@@ -3669,6 +3716,26 @@ implementation
   function RectangleBottomRight(const rect: Rectangle): Point2D;
   begin
     result := PointAt(RectangleRight(rect), RectangleBottom(rect));
+  end;
+  
+  function RectangleCenterTop(const rect: Rectangle): Point2D;
+  begin
+     result := PointAt((RectangleLeft(rect) + RectangleRight(rect)) / 2, RectangleTop(rect));
+  end;
+  
+  function RectangleCenterBottom(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt((RectangleLeft(rect) + RectangleRight(rect)) / 2, RectangleBottom(rect));
+  end;
+
+  function RectangleCenterLeft(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt(RectangleLeft(rect), (RectangleTop(rect) + RectangleBottom(rect)) / 2);
+  end;
+  
+  function RectangleCenterRight(const rect: Rectangle): Point2D;
+  begin
+    result := PointAt(RectangleRight(rect), (RectangleTop(rect) + RectangleBottom(rect)) / 2);
   end;
   
   function RectangleOffset(const rect: Rectangle; const vec: Vector): Rectangle;
@@ -4218,6 +4285,13 @@ implementation
     end;
 
     result := RectangleFrom(l, t, Ceiling(r - l), Ceiling(b - t));
+    
+    // WriteLn();
+    // WriteLn('b ', b);
+    // WriteLn('t ', t);
+    // WriteLn(RectangleToString(rect1));
+    // WriteLn(RectangleToString(rect2));
+    // WriteLn(RectangleToString(result));
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'Intersection(const rect1, rect2: Rectangle): Rectangle', '');

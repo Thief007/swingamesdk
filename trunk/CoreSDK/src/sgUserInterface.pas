@@ -37,9 +37,10 @@ type
   GuiElementKind = ( gkLabel, gkButton, gkCheckBox, gkRadioGroup, gkTextBox, gkList );
   
   GUITextBoxData = record
-    contentString:  string;
+    contentString:  String;
     font:           Font;
     lengthLimit:    LongInt;
+    region:         Region;
   end;
   
   GUILabelData = record
@@ -57,8 +58,11 @@ type
   
   GUIListData = record
     verticalScroll: Boolean;
-    scrollUp:    Rectangle;
-    scrollDown:    Rectangle;
+    
+    //The areas for the up/left down/right scrolling buttons
+    scrollUp:     Rectangle;
+    scrollDown:   Rectangle;
+    scrollArea:   Rectangle;
     
     columns:      LongInt;
     rows:         LongInt;
@@ -116,13 +120,27 @@ type
     textBoxes:    Array of GUITextBoxData;
     lists:        Array of GUIListData;
   end;
+
   
   
+  //---------------------------------------------------------------------------
+  // Alter GUI global values
+  //---------------------------------------------------------------------------
+  
+  procedure GUISetForegroundColor(c:Color);
+  procedure GUISetBackgroundColor(c:Color);
+  
+  
+  //---------------------------------------------------------------------------
+  // Sprite routines
+  //---------------------------------------------------------------------------
+
 function LoadPanel(filename: string): Panel;
 procedure ShowPanel(p: Panel);
 procedure AddPanelToGUI(p: Panel);
 procedure DrawPanels();
-procedure SetGUIColorForVectors(c:Color);
+
+    
 procedure DrawGUIAsVectors(b : boolean);
 procedure HidePanel(p: Panel);
 function PanelClicked(): Panel;
@@ -130,25 +148,16 @@ function RegionClicked(): String;
 function RegionClicked(pnl: Panel): Region; Overload;
 function RegionStringID(r: Region): string;
 procedure FinishReadingText();
-procedure SetAsActiveTextbox(r: Region);
+procedure SetAsActiveTextbox(r: Region); overload;
+procedure SetAsActiveTextbox(t: GUITextBox); overload;
+  
 procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
+procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
 procedure ToggleShowPanel(p: Panel);
 procedure ActivatePanel(p: Panel);
 procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
 procedure UpdateInterface();
-procedure ListRemoveItem(lst: GUIList; idx: LongInt);
-procedure ListAddItem(lst: GUIList; text: String);
-procedure ListAddItem(lst: GUIList; img:Bitmap);
-procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
-function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
-function ListTextIndex(lst: GUIList; value: String): LongInt;
-
-//function ListTextAt(lst: GUIList; idx: LongInt): String;
-//function ListBitmapAt(lst: GUIList; idx: LongInt): Bitmap;
-//function ListActiveIndex(lst: GUIList): LongInt;
-//function ListActiveText(lst: GUIList): String;
-//function ListActiveBitmap(lst: GUIList): Bitmap;
 
 function RadioGroupFromRegion(r: Region): GUIRadioGroup;
 function ListFromRegion(r: Region): GUIList; overload;
@@ -157,9 +166,10 @@ function LabelFromRegion(r: Region): GUILabel;
 function CheckboxFromRegion(r: Region): GUICheckbox;
 
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
-procedure SelectRadioButton(r: Region);
 function ActionRadioButton(grp: GUIRadioGroup): Region; overload;
 function ActionRadioButton(r: Region): Region; overload;
+procedure SelectRadioButton(r: Region); overload;
+procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 
 function GetRegionByID(pnl: Panel; ID: String): Region; overload;
 function GetRegionByID(ID: String): Region; overload;
@@ -193,6 +203,25 @@ function LabelText(lb: GUILabel): string; overload;
 function LabelText(r: Region): string; overload;
 procedure LabelSetText(lb: GUILabel; newString: String);
 
+  function ListFont(r: Region): Font; overload;
+  function ListFont(lst: GUIList): Font; overload;
+  function ListItemText(r: Region; idx: LongInt): String; overload;
+  function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+  
+  procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+  procedure ListAddItem(lst: GUIList; text: String);
+  procedure ListAddItem(lst: GUIList; img:Bitmap);
+  procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
+  function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+  function ListTextIndex(lst: GUIList; value: String): LongInt;
+
+  //function ListTextAt(lst: GUIList; idx: LongInt): String;
+  //function ListBitmapAt(lst: GUIList; idx: LongInt): Bitmap;
+  //function ListActiveIndex(lst: GUIList): LongInt;
+  //function ListActiveText(lst: GUIList): String;
+  //function ListActiveBitmap(lst: GUIList): Bitmap;
+
+
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
 function GUITextEntryComplete(): boolean;
@@ -216,7 +245,8 @@ type
     panelIds:           NamedIndexCollection;
     visiblePanels:      Array of Panel;         // The panels that are currently visible (in reverse z order - back to front)
     globalGUIFont:      Font;
-    globalGUIVectorColor: Color;
+    foregroundClr:      Color;                  // The color of the foreground
+    backgroundClr:      Color;                  // The color of the background
     VectorDrawing:      Boolean;
     lastClicked:        Region;
     activeTextBox:      Region;
@@ -285,82 +315,193 @@ end;
   
 procedure DrawVectorCheckbox(forRegion: Region; const area: Rectangle);
 begin
-  DrawRectangleOnScreen(GUIC.globalGUIVectorColor, area);
+  DrawRectangleOnScreen(GUIC.foregroundClr, area);
   
   if CheckboxState(forRegion) then 
   begin
-    FillRectangleOnScreen(GUIC.globalGUIVectorColor, InsetRectangle(area, 2));
+    FillRectangleOnScreen(GUIC.foregroundClr, InsetRectangle(area, 2));
   end;
 end;
 
 procedure DrawVectorRadioButton(forRegion: Region; const area: Rectangle);
 begin
-  DrawEllipseOnScreen(GUIC.globalGUIVectorColor, area);
+  DrawEllipseOnScreen(GUIC.foregroundClr, area);
   
   if forRegion = ActionRadioButton(forRegion) then
   begin
-    FillEllipseOnScreen(GUIC.globalGUIVectorColor, InsetRectangle(area, 2));
+    FillEllipseOnScreen(GUIC.foregroundClr, InsetRectangle(area, 2));
   end;
 end;
 
 procedure DrawVectorTextbox(forRegion: Region; const area: Rectangle);
 begin
-  DrawRectangleOnScreen(GUIC.globalGUIVectorColor, area);
+  DrawRectangleOnScreen(GUIC.foregroundClr, area);
   
   if GUIC.activeTextBox <> forRegion then
     DrawTextOnScreen( TextBoxText(forRegion), 
-                      GUIC.globalGUIVectorColor, 
+                      GUIC.foregroundClr, 
                       TextBoxFont(forRegion), 
                       RectangleTopLeft(area));
 end;
   
 procedure DrawVectorList(forRegion: Region; const area: Rectangle);
 var
-  tempList:      GUIList;
-  i, itemIdx:    LongInt;
-  barHeight:     LongInt;
-  scrollButtonY: LongInt;
-  areaPt:       Point2D;
+  tempList:       GUIList;
+  i, itemIdx:     LongInt;
+  // barHeight:      LongInt;
+  // scrollButtonY:  LongInt;
+  areaPt:         Point2D;
+  itemArea, scrollArea:       Rectangle;
+  pct:            Single;
+  
+  procedure _DrawUpDownArrow(const rect: Rectangle; up: Boolean);
+  var
+    tri: Triangle;
+    innerRect, arrowArea: Rectangle;
+  begin
+    arrowArea := RectangleOffset(rect, areaPt);
+    FillRectangleOnScreen(GUIC.foregroundClr, arrowArea);
+    innerRect := InsetRectangle(arrowArea, 2);
+    
+    if up then
+    begin
+      tri[0] := RectangleBottomLeft(innerRect);
+      tri[1] := RectangleBottomRight(innerRect);
+      tri[2] := RectangleCenterTop(innerRect);
+    end
+    else
+    begin
+      tri[0] := RectangleTopLeft(innerRect);
+      tri[1] := RectangleTopRight(innerRect);
+      tri[2] := RectangleCenterBottom(innerRect);
+    end;
+    
+    FillTriangleOnScreen(GUIC.backgroundClr, tri);
+  end;
+  procedure _DrawLeftRightArrow(const rect: Rectangle; left: Boolean);
+  var
+    tri: Triangle;
+    innerRect, arrowArea: Rectangle;
+  begin
+    arrowArea := RectangleOffset(rect, areaPt);
+    FillRectangleOnScreen(GUIC.foregroundClr, arrowArea);
+    innerRect := InsetRectangle(arrowArea, 2);
+    
+    if left then
+    begin
+      tri[0] := RectangleCenterLeft(innerRect);
+      tri[1] := RectangleBottomRight(innerRect);
+      tri[2] := RectangleTopRight(innerRect);
+    end
+    else
+    begin
+      tri[0] := RectangleCenterRight(innerRect);
+      tri[1] := RectangleTopLeft(innerRect);
+      tri[2] := RectangleBottomLeft(innerRect);
+    end;
+    
+    FillTriangleOnScreen(GUIC.backgroundClr, tri);
+  end;
+// Start DrawVectorList
 begin
   tempList := ListFromRegion(forRegion);
   if not assigned(tempList) then exit;
   
-  DrawRectangleOnScreen(GUIC.globalGUIVectorColor, area);
+  DrawRectangleOnScreen(GUIC.foregroundClr, area);
+  
   PushClip(area);
-  
-  areaPt := InvertVector(RectangleTopLeft(area));
-  
-  //FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[tempList^.activeItem - tempList^.startingAt]);
+  areaPt := RectangleTopLeft(area);
   
   // //Scrollbuttons
   // barHeight := area.height - (tempList^.scrollUp.height *  2);
   // scrollButtonY := Round((tempList^.scrollUp.y + tempList^.scrollUp.height) + (((tempList^.startingAt) / (Length(tempList^.items) - (tempList^.columns * tempList^.rows)) * barHeight)));
   
   // Draw the up and down buttons
-  DrawRectangleOnScreen(GUIC.globalGUIVectorColor, RectangleOffset(tempList^.scrollUp, areaPt));
-  DrawRectangleOnScreen(GUIC.globalGUIVectorColor, RectangleOffset(tempList^.scrollDown, areaPt));
+  if tempList^.verticalScroll then
+  begin
+    _DrawUpDownArrow(tempList^.scrollUp, true);
+    _DrawUpDownArrow(tempList^.scrollDown, false);
+  end
+  else
+  begin
+    _DrawLeftRightArrow(tempList^.scrollUp, true);
+    _DrawLeftRightArrow(tempList^.scrollDown, false);    
+  end;
   
-  // if scrollButtonY <= tempList^.scrollDown.y - tempList^.scrollDown.Height then
-  //   FillRectangleOnScreen(GUIC.globalGUIVectorColor, Round(tempList^.scrollUp.x), scrollButtonY, Round(tempList^.scrollUp.width), Round(tempList^.scrollUp.height))
-  // else
-  //   FillRectangleOnScreen(GUIC.globalGUIVectorColor, Round(tempList^.scrollUp.x), Round(tempList^.scrollDown.y - tempList^.scrollDown.Height), Round(tempList^.scrollUp.width), Round(tempList^.scrollUp.height));
-  // 
-  // for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
-  // begin
-  //   DrawRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[i]);
-  //     
-  //   itemIdx := i + tempList^.startingAt;
-  //   
-  //   if (itemIdx < 0) OR (itemIdx > High(tempList^.items)) then continue;
-  //   
-  //   if itemIdx <> tempList^.activeItem then
-  //     DrawTextOnscreen(tempList^.items[itemIdx].text, GUIC.globalGUIVectorColor, tempList^.font, round(tempList^.placeHolder[i].x), round(tempList^.placeHolder[i].y))
-  //   else
-  //   begin
-  //     FillRectangleOnScreen(GUIC.globalGUIVectorColor, tempList^.placeHolder[i]);
-  //     DrawTextOnscreen(tempList^.items[itemIdx].text, ColorBlack, tempList^.font, Round(tempList^.placeHolder[i].x), Round(tempList^.placeHolder[i].y));
-  //   end;
-  // end;
+  // Draw the scroll area
+  scrollArea := RectangleOffset(tempList^.scrollArea, areaPt);
+  
+  DrawRectangleOnScreen(GUIC.backgroundClr, scrollArea);
+  DrawRectangleOnScreen(GUIC.foregroundClr, scrollArea);
+  
+  PushClip(scrollArea);
+  
+  // Draw the scroll position indicator
+  
+  // if the number of items is >= the number shown then pct := 0
+  if tempList^.rows * tempList^.columns >= Length(tempList^.items) then 
+    pct := 0
+  else 
+  begin
+    if tempList^.verticalScroll then
+      pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.columns)
+    else 
+      pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.rows);
+  end;
+  
+  if tempList^.verticalScroll then
+    FillRectangleOnScreen(GUIC.foregroundClr, 
+                          Round(scrollArea.x),
+                          Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
+                          tempList^.scrollSize,
+                          tempList^.scrollSize
+                          )
+  else
+    FillRectangleOnScreen(GUIC.foregroundClr, 
+                          Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+                          Round(scrollArea.y),
+                          tempList^.scrollSize,
+                          tempList^.scrollSize
+                          );
+  PopClip();
+  
+  // WriteLn('-------');
+  //Draw all of the placeholders
+  for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
+  begin
+    itemArea := RectangleOffset(tempList^.placeHolder[i], areaPt);
+    
+    // Outline the item's area
+    DrawRectangleOnScreen(GUIC.foregroundClr, itemArea);
+    
+    // Find the index of the first item to be shown in the list
+    // NOTE: place holders in col then row order 0, 1 -> 2, 3 -> 4, 5 (for 2 cols x 3 rows)
+    
+    if tempList^.verticalScroll then
+      itemIdx := i + tempList^.startingAt
+    else
+      // 0, 1 => 0, 3
+      // 2, 3 => 1, 4
+      // 4, 5 => 2, 5
+      itemIdx := tempList^.startingAt + ((i mod tempList^.columns) * tempList^.rows) + (i div tempList^.columns);
+      
+    // WriteLn(' Drawing ', itemIdx);
+    
+    // Dont draw item details if out of range, but continue to draw outlines
+    if (itemIdx < 0) OR (itemIdx > High(tempList^.items)) then continue;
+    
+    PushClip(itemArea);
+    
+    if itemIdx <> tempList^.activeItem then
+      DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.foregroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+    else
+    begin
+      FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
+      DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+    end;
+    
+    PopClip();
+  end;
   
   PopClip();
 end;
@@ -375,16 +516,17 @@ begin
   begin
     current := GUIC.visiblePanels[i];
     
-    DrawRectangleOnScreen(GUIC.globalGUIVectorColor, current^.area);
+    FillRectangleOnScreen(GUIC.backgroundClr, current^.area);
+    DrawRectangleOnScreen(GUIC.foregroundClr, current^.area);
     PushClip(current^.area);
     
     for j := High(current^.Regions) downto Low(current^.Regions) do
     begin
       currentReg := @GUIC.panels[i]^.Regions[j];
       case currentReg^.kind of
-        gkButton:     DrawRectangleOnScreen(GUIC.globalGUIVectorColor, RegionRectangle(currentReg));
+        gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangle(currentReg));
         gkLabel:      DrawTextOnScreen( LabelText(currentReg), 
-                                        GUIC.GlobalGUIVectorColor, 
+                                        GUIC.foregroundClr, 
                                         LabelFont(currentReg), 
                                         RectangleTopLeft(RegionRectangle(currentReg)));
         gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangle(currentReg));
@@ -410,7 +552,7 @@ begin
     for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
     begin
       case GUIC.panels[i]^.Regions[j].kind of
-        gkLabel: ;//      DrawTextOnScreen(LabelText(currentReg), GUIC.GlobalGUIVectorColor, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
+        gkLabel: ;//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
       end;
     end;
   end;
@@ -467,7 +609,8 @@ end;
 function RegionClicked(pnl: Panel): Region; overload;
 var
   j: LongInt;
-  pointClicked: Point2D;
+  pointClickedInPnl, pointClickedInRegion: Point2D;
+  current: Region;
 begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
@@ -478,20 +621,30 @@ begin
   if pnl = nil then exit;
   if not pnl^.active then exit;
   
-  //Adjust the mouse point into this panels area
-  pointClicked := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
+  // Adjust the mouse point into this panels area (offset from top left of pnl)
+  pointClickedInPnl := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
   
   for j := Low(pnl^.Regions) to High(pnl^.Regions) do
   begin
-    if PointInRect(pointClicked, pnl^.Regions[j].area) then
+    // Get the region at the j index
+    current := @pnl^.Regions[j];
+    
+    //Check if it has been clicked
+    if PointInRect(pointClickedInPnl, current^.area) then
     begin
+      // Adjust the mouse point into the region's coordinates (offset from top left of region)
+      pointClickedInRegion := PointAdd(pointClickedInPnl, InvertVector(RectangleTopLeft(current^.area)));
+      
+      // Perform kind based updating
       case pnl^.Regions[j].kind of
-        gkCheckBox:     ToggleCheckboxState(@pnl^.checkboxes[pnl^.Regions[j].elementindex]);
-        gkRadioGroup:   SelectRadioButton(@pnl^.Regions[j]);
-        gkTextBox:      SetAsActiveTextbox(@pnl^.Regions[j]);
-        gkList:         SetActiveListItem(@pnl^.Regions[j], pointClicked);
+        gkCheckBox:     ToggleCheckboxState ( CheckboxFromRegion(current)   );
+        gkRadioGroup:   SelectRadioButton   ( RadioGroupFromRegion(current), current );
+        gkTextBox:      SetAsActiveTextbox  ( TextBoxFromRegion(current)    );
+        gkList:         SetActiveListItem   ( ListFromRegion(current), pointClickedInRegion);
       end;
-      result := @pnl^.Regions[j];
+      
+      // Return the clicked region
+      result := current;
       exit;
     end;
   end;
@@ -602,16 +755,22 @@ begin
   result := grp^.buttons[grp^.activeButton];
 end;
 
-procedure SelectRadioButton(r: Region);
+procedure SelectRadioButton(r: Region); overload;
+begin
+  SelectRadioButton(RadioGroupFromRegion(r), r);
+end;
+
+procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 var
-  rGroup: GUIRadioGroup;
   i: integer;
 begin
-  rGroup := RadioGroupFromRegion(r);
   if not assigned(rGroup) then exit;
-  
+  if RadioGroupFromRegion(r) <> rGroup then exit;
+    
+  // Remove the selection ...
   rGroup^.activeButton := -1;
   
+  // Find this button in the group and select it
   for i := Low(rGroup^.buttons) to High(rGroup^.buttons) do
   begin
     if rGroup^.buttons[i] = r then
@@ -732,19 +891,23 @@ begin
 end;
 
 procedure SetAsActiveTextbox(r: Region);
-var
-  textBox: GUITextbox;
 begin
-  textBox := TextBoxFromRegion(r);
-  if not assigned(textBox) then exit;
+  SetAsActiveTextbox(TextBoxFromRegion(r));
+end;
+
+procedure SetAsActiveTextbox(t: GUITextbox);
+begin
+  if not assigned(t) then exit;
   
-  GUIC.activeTextBox := r;
+  GUIC.activeTextBox := t^.region;
   
-  StartReadingTextWithText( textBox^.contentString, 
-                            GUIC.globalGUIVectorColor, 
-                            textBox^.lengthLimit, 
-                            textBox^.Font, 
-                            RectangleTopLeft(RegionRectangle(r)));
+  if ReadingText() then FinishReadingText();
+  
+  StartReadingTextWithText( t^.contentString, 
+                            GUIC.foregroundClr, 
+                            t^.lengthLimit, 
+                            t^.Font, 
+                            RectangleTopLeft(RegionRectangle(t^.region)));
 end;
 
 //---------------------------------------------------------------------------------------
@@ -761,6 +924,33 @@ end;
 //   else
 //     result := nil;
 // end;
+
+function ListFont(r: Region): Font; overload;
+begin
+  result := ListFont(ListFromRegion(r));
+end;
+
+function ListFont(lst: GUIList): Font; overload;
+begin
+  result := nil;
+  if not assigned(lst) then exit;
+  
+  result := lst^.font;
+end;
+
+function ListItemText(r: Region; idx: LongInt): String; overload;
+begin
+  result := ListItemText(ListFromRegion(r), idx);
+end;
+
+function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+begin
+  result := '';
+  if not assigned(lst) then exit;
+  if (idx < 0) or (idx > High(lst^.items)) then exit;
+  
+  result := lst^.items[idx].text;
+end;
 
 procedure ListAddItem(lst: GUIList; text: String);
 begin
@@ -833,31 +1023,49 @@ begin
 end;
 
 procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
-var
-  theList: GUIList;
-  i: LongInt;
 begin
-  theList := ListFromRegion(forRegion);
+  SetActiveListItem(ListFromRegion(forRegion), pointClicked);
+end;
+
+procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
+var
+  i, inc: LongInt;
+begin
+  if not assigned(lst) then exit;
   
-  if PointInRect(pointClicked, theList^.scrollUp) then
+  // WriteLn(PointToString(pointClicked));
+  
+  if lst^.verticalScroll then
+    inc := lst^.columns
+  else
+    inc := lst^.rows;
+  
+  // Write(lst^.startingAt);
+  
+  if PointInRect(pointClicked, lst^.scrollUp) then
   begin
-    if theList^.startingAt >= 1 then
-      theList^.startingAt := theList^.startingAt - theList^.columns;
+    if lst^.startingAt >= inc then 
+      lst^.startingAt := lst^.startingAt - inc;
+    // WriteLn(' -> ', lst^.startingAt);
     exit;
   end;
   
-  if PointInRect(pointClicked, theList^.scrollDown) then
+  if PointInRect(pointClicked, lst^.scrollDown) then
   begin
-    if theList^.startingAt + Length(theList^.placeHolder) <= Length(theList^.items) then
-      theList^.startingAt := theList^.startingAt + theList^.columns;
+    if lst^.startingAt + inc <= Length(lst^.items) then
+      lst^.startingAt := lst^.startingAt + inc;
+    // WriteLn(' -> ', lst^.startingAt);
     exit;
   end;
   
-  for i := Low(theList^.placeHolder) to High(theList^.placeHolder) do
+  // WriteLn(' -> ', lst^.startingAt);
+  
+  for i := Low(lst^.placeHolder) to High(lst^.placeHolder) do
   begin
-    if PointInRect(pointClicked, theList^.placeHolder[i]) then
+    if PointInRect(pointClicked, lst^.placeHolder[i]) then
     begin
-      theList^.activeItem := theList^.startingAt + i;
+      lst^.activeItem := lst^.startingAt + i;
+      exit;
     end;
   end;
 end;
@@ -1076,9 +1284,13 @@ var
   var
     newTextbox: GUITextboxData;
   begin
-    newTextbox.font := FontNamed(Trim(ExtractDelimited(7, data, [','])));
-    newTextbox.lengthLimit := StrToInt(Trim(ExtractDelimited(8, data, [','])));
-    newTextBox.contentString := Trim(ExtractDelimited(9, data, [',']));
+    //Format is
+    // 1, 2, 3, 4, 5, 6,      7,    8,      9, 
+    // x, y, w, h, 5, ListID, font, maxLen, text
+    newTextbox.font           := FontNamed(Trim(ExtractDelimited(7, data, [','])));
+    newTextbox.lengthLimit    := StrToInt(Trim(ExtractDelimited(8, data, [','])));
+    newTextBox.contentString  := Trim(ExtractDelimited(9, data, [',']));
+    newTextBox.region         := r;
     
     SetLength(result^.textBoxes, Length(result^.textBoxes) + 1);
     result^.textBoxes[High(result^.textBoxes)] := newTextbox;
@@ -1088,6 +1300,7 @@ var
   procedure CreateList(r: Region; data: string);
   var
     newList: GUIListData;
+    scrollSz, rhs, btm, height, width: LongInt;
   begin
     //Format is
     // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,         12
@@ -1100,30 +1313,43 @@ var
     newList.verticalScroll  := LowerCase(Trim(ExtractDelimited(12, data, [',']))) = 'v';
     newList.font            := FontNamed(Trim(ExtractDelimited(10, data, [','])));
     
-    newList.startingAt  := 0;
+    scrollSz := newList.scrollSize;
+    
+    // Start at the fist item in the list, or the activeItem
+    if newList.activeItem = -1 then
+      newList.startingAt    := 0
+    else
+      newList.startingAt    := newList.activeItem;
+    
+    rhs     := r^.area.width - scrollSz;
+    btm     := r^.area.height - scrollSz;
+    height  := r^.area.height;
+    width   := r^.area.width;
     
     // Calculate col and row sizes
     if newList.verticalScroll then
     begin
-      newList.colWidth    := (r^.area.width - newList.scrollSize) div newList.columns;
-      newList.rowHeight   := r^.area.height div newList.rows;
+      newList.colWidth    := rhs    div newList.columns;
+      newList.rowHeight   := height div newList.rows;
+      
+      // Set scroll buttons
+      newList.scrollUp    := RectangleFrom( rhs, 0, scrollSz, scrollSz);
+      newList.scrollDown  := RectangleFrom( rhs, btm, scrollSz, scrollSz);
+      
+      newList.scrollArea  := RectangleFrom( rhs, scrollSz, scrollSz, height - (2 * scrollSz));
     end
     else
     begin
       newList.colWidth    := r^.area.width div newList.columns;
-      newList.rowHeight   := r^.area.height - newList.scrollSize div newList.rows;
+      newList.rowHeight   := btm div newList.rows;
+      
+      // Set scroll buttons
+      newList.scrollUp    := RectangleFrom( 0, btm, scrollSz, scrollSz);
+      newList.scrollDown  := RectangleFrom( rhs, btm, scrollSz, scrollSz);
+      
+      newList.scrollArea  := RectangleFrom( scrollSz, btm, width - (2 * scrollSz), scrollSz);
     end;
     
-    // Set up scroll buttons
-    newList.scrollUp.x := r^.area.x + r^.area.width - newList.scrollSize;
-    newList.scrollUp.y := r^.area.y;
-    newList.scrollUp.width := newList.scrollSize;
-    newList.scrollUp.height := newList.scrollSize;
-    
-    newList.scrollDown.x := r^.area.x + r^.area.width - newList.scrollSize;
-    newList.scrollDown.y := r^.area.y + r^.area.height - newList.scrollSize;
-    newList.scrollDown.width := newList.scrollSize;
-    newList.scrollDown.height := newList.scrollSize;
     
     SetLength(newList.placeHolder, (newList.columns * newList.rows));
     
@@ -1166,10 +1392,13 @@ var
     regW, regH, regKind, addedIdx: integer;
     r: RegionData;
   begin
-    regX := StrToInt(Trim(ExtractDelimited(1, d, [','])));
-    regY := StrToInt(Trim(ExtractDelimited(2, d, [','])));
+    // Format is 
+    // x, y, w, h, kind, id
+    regX := StrToFloat(Trim(ExtractDelimited(1, d, [','])));
+    regY := StrToFloat(Trim(ExtractDelimited(2, d, [','])));
     regW := StrToInt(Trim(ExtractDelimited(3, d, [','])));
     regH := StrToInt(Trim(ExtractDelimited(4, d, [','])));
+    
     regKind := StrToInt(Trim(ExtractDelimited(5, d, [','])));
     
     regID := Trim(ExtractDelimited(6, d, [',']));
@@ -1199,7 +1428,6 @@ var
     r.parent        := p;
     
     p^.Regions[addedIdx] := r;
-    
     
     case r.kind of
       gkButton: ;
@@ -1274,24 +1502,28 @@ var
     InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
   end;
   
-  procedure InitializeLists();
+  procedure SetupListPlaceholders();
   var
     tempListPtr: GUIList;
     workingCol, workingRow: LongInt;
     j, k: LongInt;
+    
   begin
     workingCol := 0;
     workingRow := 0;
+    
     for j := Low(result^.Regions) to High(result^.Regions) do
     begin
-      if result^.Regions[j].kind = gkList then
+      //Get the region as a list (will be nil if not list...)
+      tempListPtr := ListFromRegion(@result^.regions[j]);
+      
+      if assigned(tempListPtr) then
       begin
-        
-        tempListPtr := @result^.Lists[result^.Regions[j].elementIndex];
         for k := Low(tempListPtr^.placeHolder) to High(tempListPtr^.placeHolder) do
         begin
-          tempListPtr^.placeHolder[k].x := (workingCol * tempListPtr^.colWidth) + result^.Regions[j].area.x;
-          tempListPtr^.placeHolder[k].y := (workingRow * tempListPtr^.rowHeight) + result^.Regions[j].area.y;
+          tempListPtr^.placeHolder[k].x := (workingCol * tempListPtr^.colWidth);
+          tempListPtr^.placeHolder[k].y := (workingRow * tempListPtr^.rowHeight);
+          
           tempListPtr^.placeHolder[k].width := (tempListPtr^.colWidth);
           tempListPtr^.placeHolder[k].height := (tempListPtr^.rowHeight);
                     
@@ -1337,12 +1569,17 @@ begin
   end;
   
   CreateRegions();
-  InitializeLists();
+  SetupListPlaceholders();
 end;
 
-procedure SetGUIColorForVectors(c:Color);
+procedure GUISetForegroundColor(c:Color);
 begin
-  GUIC.globalGUIVectorColor := c;
+  GUIC.foregroundClr := c;
+end;
+
+procedure GUISetBackgroundColor(c:Color);
+begin
+  GUIC.backgroundClr := c;
 end;
 
 procedure DrawGUIAsVectors(b : boolean);
@@ -1367,6 +1604,7 @@ end;
     {$ENDIF}
     
     InitialiseSwinGame();
+    
     GUIC.VectorDrawing := False;
     GUIC.lastActiveTextBox := nil;
     
