@@ -429,6 +429,12 @@ function SpriteRectCollision(s: Sprite; const r: Rectangle): Boolean; overload;
   /// @sn circle:%s collisionWithTriangle:%s
   function CircleTriangleCollision(const c: Circle; const tri: Triangle): Boolean;
   
+  /// Returns true if the triangle and the line have collided.
+  ///
+  /// @lib
+  /// @sn triangle:%s collisionWithLine:%s
+  function TriangleLineCollision(const tri: Triangle; const ln: LineSegment): Boolean;
+  
   
   //---------------------------------------------------------------------------
   // Sprite / Geometry Collision Tests
@@ -837,6 +843,11 @@ implementation
     result := SpriteBitmapCollision(s, bmp, pt, BitmapRectangle(bmp));
   end;
   
+  function TriangleLineCollision(const tri: Triangle; const ln: LineSegment): Boolean;
+  begin
+    result := LineIntersectsLines(ln, LinesFrom(tri));
+  end;
+  
   function CircleLineCollision(s: Sprite; const line: LineSegment): Boolean;
   var
     r: Single;
@@ -1160,7 +1171,8 @@ implementation
 
     for i := 0 to 2 do
     begin
-      if PointInTriangle(ClosestPointOnCircle(tri[i], c), tri) then
+      // if the closest point on the circle is in the triangle, or the triangle pt is in the circle
+      if PointInTriangle(ClosestPointOnCircle(tri[i], c), tri) or PointInCircle(tri[i], c) then
       begin
         result := True;
         exit;

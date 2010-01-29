@@ -131,7 +131,16 @@ interface
     /// @array_wrapper
     /// @field data: LineSegmentPtr
     LinesArray = Array of LineSegment;
-
+    
+    /// @type TriangleArray
+    /// @array_wrapper
+    /// @field data: TrianglePtr
+    TriangleArray = Array of Triangle;
+    
+    /// @type TrianglePtr
+    /// @pointer_wrapper
+    TrianglePtr = ^Triangle;
+    
     /// @type LineSegmentPtr
     /// @pointer_wrapper
     LineSegmentPtr = ^LineSegment;

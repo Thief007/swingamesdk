@@ -10,7 +10,6 @@ interface
     BitmapCell = Record
       Cell:         LongInt;
       Bmap:         Bitmap;
-     // KindIdx:      LongInt;
     end;
 
     {Marker = record
@@ -579,23 +578,27 @@ interface
     ProcessTiles();
     writeln('TileProcessed')  ;
   end;
-
-
+  
   procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
   begin
     //WriteLn('Getting range for ', RectangleToString(r));
     // Calculate the tiles that are on the screen - only draw these
-    startY := Trunc(r.Y / map^.TileHeight) - 1;
-    startX := Trunc(r.X / map^.TileWidth) - 1;
     
-    endY   := Ceiling(startY + (r.Height/(map^.TileHeight - map^.TileStagger.Y))) + 2 ;
-    endX   := Ceiling(startX + ((r.Width + map^.TileStagger.X)/map^.TileWidth)) + 3;
+    // Trunc so that 210 / 50 becomes 4 - i.e. the index of the 5th tile... (saves - 1)
+    startY := Trunc(RectangleTop(r) / (map^.TileHeight - map^.TileStagger.Y));
+    startX := Trunc(RectangleLeft(r) / map^.TileWidth);
+    
+    // equation is (bottom - stagger) / (height - stagger) = redone with + 1
+    endY   := Trunc(RectangleBottom(r) / (map^.TileHeight - map^.TileStagger.Y)) + 1;
+    endX   := Trunc((RectangleRight(r) + map^.TileStagger.X) / map^.TileWidth);
 
     // Adjust the end and start to be in range of the array
     if endY >= (map^.MapHeight) then endY := map^.MapHeight-1;
     if endX >= (map^.MapWidth) then endX := map^.MapWidth-1;
     if startY < 0 then startY := 0;
     if startX < 0 then startX := 0;   
+    
+    //WriteLn('result ', startX, ':', startY, ' ', endX, ':', endY);
   end;
 
   procedure PushMapClip(map:Map);
@@ -609,7 +612,6 @@ interface
       DrawRectangle(ColorBlue, false, RectangleFrom(0, 0, width ,height));
     {$ENDIF}
     PushClip(RectangleFrom(-CameraX(), -CameraY(), width ,height));
-    
   end;
 
   //checks if tile is within selectedtile array.
@@ -789,8 +791,9 @@ interface
       startY := round(endPoint.y);
       endY := round(startPoint.y + startPoint.height);
     end;
-
-    result := RectangleFrom(startX, startY, endX - startX, endY - startY);
+    
+    // -1 of width and height so as not to project into next tiles (200/50 = 4... the 5th tile, we want 199/50 = 3... the 4th tile)
+    result := RectangleFrom(startX, startY, endX - startX - 1, endY - startY - 1);
     //drawRectangle(colorpink, RectangleFrom(startX, startY, endX - startX, endY - startY));
 
     //Debug Info
@@ -818,6 +821,8 @@ interface
     
     //makes range out of rect.
     //WriteLn('Creating search rectangle for sprite at ', RectangleToString(SpriteCollisionRectangle(s)));
+    //WriteLn('                            search rect ', RectangleToString(rectSearch));
+    //WriteLn('                            heading     ', PointToString(SpriteVelocity(s)));
     MapRangeFromRect(rectSearch, map, xStart, yStart, xEnd, yEnd);
 
     
@@ -857,8 +862,8 @@ interface
         begin
           x := initX + j * dx;
           
-        //  writeln ('  Checking tile: ', x,  ', ', y);
-         // DrawShape(Tiles[y, x].TileShape);
+          // Writeln ('  Checking tile: ', x,  ', ', y);
+          // DrawShape(Tiles[y, x].TileShape);
           
           if Tiles[y, x].Kind = k then
           begin
@@ -890,7 +895,7 @@ interface
     velocity:= s^.Velocity;
 
     //Draw the sprite rectangle
-    DrawRectangle(ColorYellow, sprRect);
+    //DrawRectangle(ColorYellow, sprRect);
     //DrawShape(tileShape);
     //WriteLn(x, ',', y);
     kickVector := VectorOutOfShapeFromRect(tileshape, sprRect, velocity);

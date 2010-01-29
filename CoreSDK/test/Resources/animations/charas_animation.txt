@@ -3,29 +3,29 @@ SwinGame Animation #v1
 //Frames are declared with an f: and contain
 //the following comma separated values
 //ID,CELL,DUR,NEXT
-f:12,0,10,
-f:13,3,10,
-f:14,6,10,
-f:15,9,10,
+f:16,1,10,
+f:17,4,10,
+f:18,7,10,
+f:19,10,10,
 
 
 //Multi-frame: ranges are in[]
 //[a-b] = numbers from a to b inclusive
 //[a,b,c] = explicit values
 //[a-b,c] = combination
-m:[0-2],[1,2,0],10,0
-m:[3-5],[4,5,3],10,3
-m:[6-8],[7,8,6],10,6
-m:[9-11],[10,11,9],10,9
+m:[0-3],[1,2,1,0],10,0
+m:[4-7],[4,5,4,3],10,4
+m:[8-11],[7,8,7,6],10,8
+m:[12-15],[10,11,10,9],10,12
 
 //sounds
 
 //identifiers
 i:MoveUp,0
-i:MoveRight,3
-i:MoveDown,6
-i:MoveLeft,9
-i:StatUp,12
-i:StatRight,13
-i:StatDown,14
-i:StatLeft,15
+i:MoveRight,4
+i:MoveDown,8
+i:MoveLeft,12
+i:StatUp,16
+i:StatRight,17
+i:StatDown,18
+i:StatLeft,19
