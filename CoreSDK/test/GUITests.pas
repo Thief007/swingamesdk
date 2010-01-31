@@ -31,15 +31,15 @@ var
   parpnl: Panel;
   radGroup: GUIRadioGroup;
 begin
-  if (RegionClicked() = 'Button1') And (CheckboxState(GetRegionById(pnla, 'Checkbox2'))) then
+  if (RegionClickedID() = 'Button1') And (CheckboxState(RegionWithID(pnla, 'Checkbox2'))) then
   begin
     ToggleShowPanel(pnlb);
     Toggleactivatepanel(pnlb);
   end;
   
-  LabelSetText(LabelFromRegion(GetRegionByID('Label1')), TextboxText(TextBoxFromRegion(GetRegionByID('TextBox1'))));
+  LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextboxText(TextBoxFromRegion(RegionWithID('TextBox1'))));
   
-   case ActiveRadioButtonIndex(RadioGroupFromRegion(GetRegionByID('radButton1'))) of
+   case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('radButton1'))) of
      0: GUISetForegroundColor(ColorGreen);
      1: GUISetForegroundColor(ColorRed);
      2: GUISetForegroundColor(ColorBlue);
@@ -57,7 +57,7 @@ begin
   LoadResourceBundle('MainMenu.txt');
   InitInterface(pnla,pnlb);
   
-  lst := ListFromRegion(GetRegionByID('List1'));
+  lst := ListFromRegion(regionWithID('List1'));
 
   ListAddItem(lst, 'Hat');
   ListAddItem(lst, 'Sword');
