@@ -259,6 +259,8 @@ var
   // _Panels: TStringHash;
   GUIC: GUIController;
 
+//function UpdateRegionClicked(pnl: Panel): Region; overload; forward;
+
 function GUITextEntryComplete(): boolean;
 begin
   result := GUIC.doneReading;
@@ -411,10 +413,6 @@ begin
   
   PushClip(area);
   areaPt := RectangleTopLeft(area);
-  
-  // //Scrollbuttons
-  // barHeight := area.height - (tempList^.scrollUp.height *  2);
-  // scrollButtonY := Round((tempList^.scrollUp.y + tempList^.scrollUp.height) + (((tempList^.startingAt) / (Length(tempList^.items) - (tempList^.columns * tempList^.rows)) * barHeight)));
   
   // Draw the up and down buttons
   if tempList^.verticalScroll then
@@ -671,7 +669,6 @@ function RadioGroupFromRegion(r: Region): GUIRadioGroup;
 begin
   result := nil;
   
-  if not assigned(r) then exit;
   if not assigned(r) then exit;
   if not assigned(r^.parent) then exit;
   if not (r^.kind = gkRadioGroup) then exit;
@@ -1198,15 +1195,12 @@ begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
   
-  for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
+  for i := High(GUIC.visiblePanels) downto Low(GUIC.visiblePanels) do
   begin
-    if (GUIC.visiblePanels[i]^.active) then
+    if PointInRect(MousePosition(), GUIC.panels[i]^.area) then
     begin
-      if PointInRect(MousePosition(), GUIC.panels[i]^.area) then
-      begin
-        result := GUIC.panels[i];
-        exit;
-      end;
+      result := GUIC.panels[i];
+      exit;
     end;
   end;
 end;
@@ -1587,11 +1581,24 @@ begin
   GUIC.VectorDrawing := b;
 end;
 
+function PanelActive(pnl: Panel): Boolean;
+begin
+  if assigned(pnl) then result := pnl^.active
+  else result := false;
+end;
+
 procedure UpdateInterface();
+var
+  pnl: Panel;
 begin
   GUIC.doneReading := false;
-  GUIC.lastClicked := RegionClicked(PanelClicked());
   
+  pnl := PanelClicked();
+  if PanelActive(pnl) then
+    GUIC.lastClicked := RegionClicked(pnl)
+  else
+    GUIC.lastClicked := nil;
+    
   if assigned(GUIC.activeTextbox) and not ReadingText() then
     FinishReadingText();
 end;
