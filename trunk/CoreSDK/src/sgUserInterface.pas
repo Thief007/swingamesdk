@@ -144,9 +144,9 @@ procedure DrawPanels();
 procedure DrawGUIAsVectors(b : boolean);
 procedure HidePanel(p: Panel);
 function PanelClicked(): Panel;
-function RegionClicked(): String;
-function RegionClicked(pnl: Panel): Region; Overload;
-function RegionStringID(r: Region): string;
+function RegionClickedID(): String;
+function RegionClicked(): Region;
+function RegionID(r: Region): string;
 procedure FinishReadingText();
 procedure SetAsActiveTextbox(r: Region); overload;
 procedure SetAsActiveTextbox(t: GUITextBox); overload;
@@ -171,8 +171,8 @@ function ActionRadioButton(r: Region): Region; overload;
 procedure SelectRadioButton(r: Region); overload;
 procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 
-function GetRegionByID(pnl: Panel; ID: String): Region; overload;
-function GetRegionByID(ID: String): Region; overload;
+function RegionWithID(pnl: Panel; ID: String): Region; overload;
+function RegionWithID(ID: String): Region; overload;
 
 function CheckboxState(chk: GUICheckbox): Boolean; overload;
 function CheckboxState(r: Region): Boolean; overload;
@@ -221,11 +221,11 @@ procedure LabelSetText(lb: GUILabel; newString: String);
   //function ListActiveText(lst: GUIList): String;
   //function ListActiveBitmap(lst: GUIList): Bitmap;
 
-
+function ListActiveItemIndex(lst: GUIList): LongInt;
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
 function GUITextEntryComplete(): boolean;
-function RegionParent(r: Region): Panel;
+function RegionPanel(r: Region): Panel;
 function GUITextBoxOfTextEntered(): GUITextbox;
 function RegionOfLastUpdatedTextBox(): Region;
 function PanelShown(p: Panel): boolean;
@@ -259,7 +259,7 @@ var
   // _Panels: TStringHash;
   GUIC: GUIController;
 
-//function UpdateRegionClicked(pnl: Panel): Region; overload; forward;
+function UpdateRegionClicked(pnl: Panel): Region; overload; forward;
 
 function GUITextEntryComplete(): boolean;
 begin
@@ -568,7 +568,7 @@ end;
 // Region Code
 //---------------------------------------------------------------------------------------
 
-function GetRegionByID(pnl: Panel; ID: String): Region; overload;
+function RegionWithID(pnl: Panel; ID: String): Region; overload;
 var
   idx: Integer;
 begin
@@ -582,7 +582,7 @@ begin
   end;  
 end;
 
-function GetRegionByID(ID: String): Region; overload;
+function RegionWithID(ID: String): Region; overload;
 var
   i: integer;
 begin
@@ -590,12 +590,12 @@ begin
   
   for i := Low(GUIC.panels) to High(GUIC.panels) do
   begin
-    result := GetRegionById(GUIC.panels[i], ID);
+    result := RegionWithID(GUIC.panels[i], ID);
     if assigned(result) then exit;
   end;
 end;
 
-function RegionStringID(r: Region): string;
+function RegionID(r: Region): string;
 begin
   if assigned(r) then
     result := r^.stringID
@@ -604,7 +604,7 @@ begin
 end;
 
 // Check which of the regions was clicked in this panel
-function RegionClicked(pnl: Panel): Region; overload;
+function UpdateRegionClicked(pnl: Panel): Region; overload;
 var
   j: LongInt;
   pointClickedInPnl, pointClickedInRegion: Point2D;
@@ -648,12 +648,17 @@ begin
   end;
 end;
 
-function RegionClicked(): String;
+function RegionClicked(): region;
 begin
-  result := RegionStringID(GUIC.lastClicked);
+     result := GUIC.lastClicked;
 end;
 
-function RegionParent(r: Region): Panel;
+function RegionClickedID(): String;
+begin
+  result := RegionID(GUIC.lastClicked);
+end;
+
+function RegionPanel(r: Region): Panel;
 begin
   if not assigned(r) then exit;
   
@@ -1361,7 +1366,7 @@ var
     pList: GUIList;
     bitmap: String;
   begin
-    newListItem.parent := ListFromRegion(GetRegionByID(Trim(ExtractDelimited(8, data, [',']))));
+    newListItem.parent := ListFromRegion(RegionWithID(Trim(ExtractDelimited(8, data, [',']))));
   
     newListItem.text := Trim(ExtractDelimited(8, data, [',']));
     
@@ -1372,7 +1377,7 @@ var
     else
       newListItem.image := nil;
     
-    reg := GetRegionByID(result, Trim(ExtractDelimited(8, data, [','])));
+    reg := RegionWithID(result, Trim(ExtractDelimited(8, data, [','])));
     pList := ListFromRegion(reg);
     
     SetLength(pList^.items, Length(pList^.items) + 1);
@@ -1595,7 +1600,7 @@ begin
   
   pnl := PanelClicked();
   if PanelActive(pnl) then
-    GUIC.lastClicked := RegionClicked(pnl)
+    GUIC.lastClicked := UpdateRegionClicked(pnl)
   else
     GUIC.lastClicked := nil;
     
