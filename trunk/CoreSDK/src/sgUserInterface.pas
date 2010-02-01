@@ -121,43 +121,43 @@ type
     lists:        Array of GUIListData;
   end;
 
-  
-  
-  //---------------------------------------------------------------------------
-  // Alter GUI global values
-  //---------------------------------------------------------------------------
-  
-  procedure GUISetForegroundColor(c:Color);
-  procedure GUISetBackgroundColor(c:Color);
-  
-  
-  //---------------------------------------------------------------------------
-  // Sprite routines
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Alter GUI global values
+//---------------------------------------------------------------------------
+procedure GUISetForegroundColor(c:Color);
+procedure GUISetBackgroundColor(c:Color);
 
+// Panels
 function LoadPanel(filename: string): Panel;
 procedure ShowPanel(p: Panel);
 procedure AddPanelToGUI(p: Panel);
-procedure DrawPanels();
-
-    
-procedure DrawGUIAsVectors(b : boolean);
 procedure HidePanel(p: Panel);
+procedure DrawPanels();
+procedure ToggleShowPanel(p: Panel);
+procedure ActivatePanel(p: Panel);
+procedure DeactivatePanel(p: Panel);
+procedure ToggleActivatePanel(p: Panel);
+function PanelShown(p: Panel): boolean;
 function PanelClicked(): Panel;
+
+// Regions
 function RegionClickedID(): String;
 function RegionClicked(): Region;
 function RegionID(r: Region): string;
+function RegionWithID(pnl: Panel; ID: String): Region; overload;
+function RegionWithID(ID: String): Region; overload;
+function RegionPanel(r: Region): Panel;
+
+
+function CheckboxState(s: String): Boolean; overload;
+procedure UpdateInterface();
+procedure DrawGUIAsVectors(b : boolean);
 procedure FinishReadingText();
 procedure SetAsActiveTextbox(r: Region); overload;
 procedure SetAsActiveTextbox(t: GUITextBox); overload;
   
 procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
 procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
-procedure ToggleShowPanel(p: Panel);
-procedure ActivatePanel(p: Panel);
-procedure DeactivatePanel(p: Panel);
-procedure ToggleActivatePanel(p: Panel);
-procedure UpdateInterface();
 
 function RadioGroupFromRegion(r: Region): GUIRadioGroup;
 function ListFromRegion(r: Region): GUIList; overload;
@@ -171,8 +171,6 @@ function ActionRadioButton(r: Region): Region; overload;
 procedure SelectRadioButton(r: Region); overload;
 procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 
-function RegionWithID(pnl: Panel; ID: String): Region; overload;
-function RegionWithID(ID: String): Region; overload;
 
 function CheckboxState(chk: GUICheckbox): Boolean; overload;
 function CheckboxState(r: Region): Boolean; overload;
@@ -203,17 +201,17 @@ function LabelText(lb: GUILabel): string; overload;
 function LabelText(r: Region): string; overload;
 procedure LabelSetText(lb: GUILabel; newString: String);
 
-  function ListFont(r: Region): Font; overload;
-  function ListFont(lst: GUIList): Font; overload;
-  function ListItemText(r: Region; idx: LongInt): String; overload;
-  function ListItemText(lst: GUIList; idx: LongInt): String; overload;
-  
-  procedure ListRemoveItem(lst: GUIList; idx: LongInt);
-  procedure ListAddItem(lst: GUIList; text: String);
-  procedure ListAddItem(lst: GUIList; img:Bitmap);
-  procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
-  function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
-  function ListTextIndex(lst: GUIList; value: String): LongInt;
+function ListFont(r: Region): Font; overload;
+function ListFont(lst: GUIList): Font; overload;
+function ListItemText(r: Region; idx: LongInt): String; overload;
+function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+
+procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+procedure ListAddItem(lst: GUIList; text: String);
+procedure ListAddItem(lst: GUIList; img:Bitmap);
+procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
+function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+function ListTextIndex(lst: GUIList; value: String): LongInt;
 
   //function ListTextAt(lst: GUIList; idx: LongInt): String;
   //function ListBitmapAt(lst: GUIList; idx: LongInt): Bitmap;
@@ -225,10 +223,9 @@ function ListActiveItemIndex(lst: GUIList): LongInt;
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
 function GUITextEntryComplete(): boolean;
-function RegionPanel(r: Region): Panel;
+
 function GUITextBoxOfTextEntered(): GUITextbox;
 function RegionOfLastUpdatedTextBox(): Region;
-function PanelShown(p: Panel): boolean;
 function IndexOfLastUpdatedTextBox(): Integer;
 
 //=============================================================================
@@ -1093,6 +1090,11 @@ end;
 function CheckboxState(r: Region): Boolean; overload;
 begin
   result := CheckboxState(CheckboxFromRegion(r));
+end;
+
+function CheckboxState(s: String): Boolean; overload;
+begin
+  result := CheckboxState(CheckboxFromRegion(RegionWithID(s)));
 end;
 
 procedure CheckboxSetState(chk: GUICheckbox; val: Boolean);

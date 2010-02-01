@@ -7,8 +7,8 @@ uses
   
 procedure InitInterface(var pnla, pnlb: panel);
 begin
-  GUISetForegroundColor(ColorWhite);
-  GUISetBackgroundColor(ColorGrey);
+  GUISetForegroundColor(ColorRed);
+  GUISetBackgroundColor(ColorYellow);
   
   pnla := LoadPanel('panelwithbutton.txt');
   pnlb := LoadPanel('panelwithlabel.txt');
@@ -40,7 +40,7 @@ begin
   LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextboxText(TextBoxFromRegion(RegionWithID('TextBox1'))));
   
    case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('radButton1'))) of
-     0: GUISetForegroundColor(ColorGreen);
+     0: GUISetForegroundColor(ColorWhite);
      1: GUISetForegroundColor(ColorRed);
      2: GUISetForegroundColor(ColorBlue);
    end;  
