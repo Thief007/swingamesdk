@@ -488,7 +488,7 @@ begin
     
     for j := High(current^.Regions) downto Low(current^.Regions) do
     begin
-      currentReg := @GUIC.panels[i]^.Regions[j];
+      currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case currentReg^.kind of
         gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangle(currentReg));
         gkLabel:      DrawTextOnScreen( LabelText(currentReg), 
@@ -1177,9 +1177,9 @@ begin
   
   for i := High(GUIC.visiblePanels) downto Low(GUIC.visiblePanels) do
   begin
-    if PointInRect(MousePosition(), GUIC.panels[i]^.area) then
+    if PointInRect(MousePosition(), GUIC.visiblePanels[i]^.area) then
     begin
-      result := GUIC.panels[i];
+      result := GUIC.visiblePanels[i];
       exit;
     end;
   end;
@@ -1324,9 +1324,7 @@ var
       newList.scrollArea  := RectangleFrom( scrollSz, btm, width - (2 * scrollSz), scrollSz);
     end;
     
-    
     SetLength(newList.placeHolder, (newList.columns * newList.rows));
-    
     SetLength(newList.items, 0);
     
     SetLength(result^.lists, Length(result^.lists) + 1);
@@ -1483,9 +1481,6 @@ var
     j, k: LongInt;
     
   begin
-    workingCol := 0;
-    workingRow := 0;
-    
     for j := Low(result^.Regions) to High(result^.Regions) do
     begin
       //Get the region as a list (will be nil if not list...)
@@ -1493,6 +1488,9 @@ var
       
       if assigned(tempListPtr) then
       begin
+        workingCol := 0;
+        workingRow := 0;
+        
         for k := Low(tempListPtr^.placeHolder) to High(tempListPtr^.placeHolder) do
         begin
           tempListPtr^.placeHolder[k].x := (workingCol * tempListPtr^.colWidth);
