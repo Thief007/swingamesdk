@@ -1,104 +1,12 @@
 program BitmapAnimationEditor;
 
 uses
-  crt, sgTypes, sgCore, sgAudio, sgAnimations, sgText, sgGraphics, sgResources,
-  sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, sgNamedIndexCollection,
-  sgSprites, sgTimers, SysUtils;
-
-const
-	CellGap 								= 5;
-	ScreenWidth 						= 1280;
-	ScreenHeight						= 720;
-	LengthCellData 					= 6;
-	LengthgrpData 					= 10;
-	LengthMode							= 2;
-	LengthAniEditing				= 6;
+  crt, sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources,
+  sgGeometry, sgImages, sgInput, sgPhysics, sgNamedIndexCollection,
+  sgSprites, SysUtils, sgUserInterface, sgShared, sgAnimations, 
+	EditorTypes, BitmapEditor;
 	
-//Cell Group Indexes
-	cgXpos									= 0;
-	cgYpos									= 1;
-	cgDrag									= 2;
-	cgCellCount							= 3;
-	cgWidth									= 4;
-	cgHeight								= 5;
-	cgColumns								= 6;
-	cgRows									= 7;
-	cgScale									= 8;
-	cgSelected							= 9;
-//Animation Editing Area
-	aeXpos									= 0;
-	aeYpos									= 1;
-	aeDrag									= 2;
-	aeCellCount							= 3;
-	aeWidth									= 4;
-	aeHeight								= 5;
-
-//Cell Area Indexes
-	caXpos									= 0;
-	caYpos									= 1;
-	caCell									= 2;
-	caXGap									= 3;
-	caYGap									= 4;
-	caBitmap								= 5;
-	caID										= 4;
-		
-// Modes
-	blankCells							= 0;
-	splitImage							= 1;
-//Colors
-	Red											= 255;
-	Green										= 255;
-	Blue										= 255;
-//Multipliers
-	Neg											= -1;
-	Pos											= 1;
-//Other
-	edgeDistance						= 50;
-	ArrowWidth							= 39;
-	ArrowHeight							= 26;
-	
-type
-	EditorValues = record
-		name : string;
-		val : integer;
-	end;
-	
-	LoadedBitmap = record
-		original, src : Bitmap;
-	end;
-	
-	CellArea = record
-		data : Array [0..LengthCellData] of LongInt;
-		isSelected : Boolean;
-	end;
-	
-	CellGroup = record
-		grpData : Array of LongInt; 
-		cellArea : Array of CellArea;
-		selectedOrder : Array of LongInt; 
-		isAniGroup : boolean;
-	end;
-		
-	Frame = record
-		ids, cells, duration, next : Array of Integer;
-	end;
-	
-	InitialData = record
-		name : string;
-		startCell : integer;
-	end;	
-	
-	DraggedCell = record
-		index, bmp, cell:Integer;
-		isAniGroup: Boolean
-	end;
-		
-	MultiFrame = Array of Frame;
-	CellGroups 		= array of CellGroup;
-	arrayofString = array [cgCellCount..cgScale] of String;
-	arrayOfLoadedBMP = array of LoadedBitmap;
-
-procedure InitializeAniCell(var aniCellGrp: cellGroup; i, ID, bitmap, cell:integer; var xGap: integer);
+procedure InitializeAniCell(var aniCellGrp: cellGroup; i, ID, bitmap, cell:LongInt; var xGap: LongInt);
 begin
 	aniCellGrp.cellArea[i].data[caXpos] 	:= aniCellGrp.grpData[cgWidth]  * i + aniCellGrp.grpData[aeXpos] + xGap;
 	aniCellGrp.cellArea[i].data[caYpos]		:= aniCellGrp.grpData[aeYpos];	
@@ -114,7 +22,7 @@ end;
 	
 procedure InitializeAniCellArea(var aniCellGrp, cellGrp : cellGroup);
 var
-	xGap, i, oldLength: integer;
+	xGap, i, oldLength: LongInt;
 begin
 	xGap 			:= 0;
 
@@ -126,14 +34,14 @@ begin
 	
 	for  i := Low(aniCellGrp.cellArea) to High(aniCellGrp.cellArea) do
 	begin
-	{	aniCellGrp.cellArea[i].data[caXpos] 	:= cellGrp.grpData[cgWidth]  * i + aniCellGrp.grpData[aeXpos] + xGap;
+		aniCellGrp.cellArea[i].data[caXpos] 	:= cellGrp.grpData[cgWidth]  * i + aniCellGrp.grpData[aeXpos] + xGap;
 		aniCellGrp.cellArea[i].data[caYpos]		:= aniCellGrp.grpData[aeYpos];	
 		aniCellGrp.cellArea[i].data[caXGap]		:= xGap;
 		aniCellGrp.cellArea[i].data[caID]			:= -1;
 		aniCellGrp.cellArea[i].data[caBitmap]	:= -1;
 		aniCellGrp.cellArea[i].data[caCell]		:= -1;
 		
-		xGap 			+= CellGap; }
+		xGap 			+= CellGap; 
 
 		InitializeAniCell(aniCellGrp, i, -1, -1, -1, xGap);
 	end;	
@@ -149,75 +57,15 @@ begin
 	InitializeAniCellArea(aniCellGrp, cellgrp);
 end;
 
-procedure InitializeCellArea(var cellGrp : CellGroup);
-var
-	rows, columns, cellIndex, xGap, yGap, oldLength: LongInt;
-// Gaps are shown inbetween cells when drawn on screen
-begin
-	xGap 			:= 0;
-	yGap 			:= 0;	
-	cellIndex := 0;
-	
-	if Length(cellGrp.cellArea) < cellGrp.grpData[cgCellCount] then oldLength := Length(cellGrp.cellArea)-1 else oldLength := cellGrp.grpData[cgCellCount];
-	
-	SetLength(cellGrp.cellArea, cellGrp.grpData[cgCellCount]);
-	
-	cellGrp.grpData[cgXpos]	:= (ScreenWidth DIV 2) 	- (cellGrp.grpData[cgColumns] * (cellGrp.grpData[cgWidth]  + CellGap)) DIV 2;
-	cellGrp.grpData[cgYpos]	:= (ScreenHeight DIV 2) - (cellGrp.grpData[cgRows] 		* (cellGrp.grpData[cgHeight] + CellGap)) DIV 2;
-	
-	for  rows := 0 to cellGrp.grpData[cgRows] - 1 do
-	begin
-		for  columns := 0 to cellGrp.grpData[cgColumns] - 1 do
-		begin
-			cellGrp.cellArea[cellIndex].data[caXpos] 	:= cellGrp.grpData[cgWidth]  * columns + cellGrp.grpData[cgXpos] + xGap;
-			cellGrp.cellArea[cellIndex].data[caYpos]	:= cellGrp.grpData[cgHeight] * rows		 + cellGrp.grpData[cgYpos] + yGap;	
-			cellGrp.cellArea[cellIndex].data[caXGap]	:= xGap;
-			cellGrp.cellArea[cellIndex].data[caYGap]	:= yGap;
-			
-			if cellIndex > oldLength then
-			begin
-				cellGrp.cellArea[cellIndex].isSelected			:= false;	
-				cellGrp.cellArea[cellIndex].data[caBitmap]	:= -1;
-				cellGrp.cellArea[cellIndex].data[caCell]		:= cellIndex;				
-			end;
-			
-			if cellIndex = cellGrp.grpData[cgCellCount] - 1 then exit;
-			
-			xGap 			+= CellGap;
-			cellIndex	+= 1;
-		end;
-		xGap := 0;
-		yGap += CellGap;
-	end;
-end;
-
-procedure InitializeCellGroup(out cellGrp : CellGroup);
-var
-	i : LongInt;
-begin
-	SetLength(cellGrp.grpData, LengthgrpData); 
-	cellGrp.grpData[cgCellCount]:= 12;
-	cellGrp.grpData[cgColumns]	:= 3;
-	cellGrp.grpData[cgRows] 		:= 4;
-	cellGrp.grpData[cgWidth]		:= 24;
-	cellGrp.grpData[cgHeight]		:= 32;
-	cellGrp.grpData[cgScale]		:= 1;
-	cellGrp.grpData[cgDrag]			:= -1;
-	cellGrp.grpData[cgSelected]	:= -1;
-	cellGrp.isAniGroup 					:= false;
-
-	InitializeCellArea(cellGrp);
-end;
-
 procedure UpdateAllCellAreas(var aniCellGrp, cellGrp: cellGroup);
 begin
-	InitializeCellArea(cellGrp);
-	InitializeAniCellArea(aniCellGrp,cellGrp);	
+	//InitializeCellArea(cellGrp);
+//	InitializeAniCellArea(aniCellGrp,cellGrp);	
 end;
 
 procedure AddCellToAnimation(var aniCellGrp, cellGrp : cellGroup);
 var
-	i, oldLength, xGap, selectIncr: integer;
+	i, oldLength, xGap, selectIncr: LongInt;
 begin
 	oldLength := Length(aniCellGrp.cellArea);
 	selectIncr := 0;
@@ -235,9 +83,9 @@ begin
 										aniCellGrp.cellArea[High(aniCellGrp.cellArea)].data[caCell], xGap);	
 end;
 
-procedure AddCellToAnimation(var aniCellGrp: cellGroup; dCell: DraggedCell; i: integer); overload;
+procedure AddCellToAnimation(var aniCellGrp: cellGroup; dCell: DraggedCell; i: LongInt); overload;
 var
-	oldLength, xGap, selectIncr: integer;
+	oldLength, xGap, selectIncr: LongInt;
 begin	
 	InitializeAniCell(aniCellGrp, i, dCell.Index, dCell.Bmp, dCell.Cell, aniCellGrp.cellArea[i].data[caXGap]);
 	
@@ -252,7 +100,7 @@ begin
 end;
 
 
-procedure AddBitmapToArray(var bmpArray : arrayOfLoadedBMP; id, fileName : string; cellGrp : CellGroup);
+procedure AddBitmapToArray(var bmpArray : arrayOfLoadedBMP; id, fileName : string; cellGrp : CellGroup;lst: GUIList);
 begin
 	SetLength(bmpArray, Length(bmpArray)+1);
 	
@@ -260,22 +108,13 @@ begin
 	SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(Red,Green,Blue));
 	
 	bmpArray[High(bmpArray)].src := bmpArray[High(bmpArray)].original;
-	SetBitmapCellDetails(bmpArray[High(bmpArray)].src, cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight], cellGrp.grpData[cgColumns], cellGrp.grpData[cgRows], cellGrp.grpData[cgCellCount]);
+	SetBitmapCellDetails(bmpArray[High(bmpArray)].src, cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight], cellGrp.grpData[cgColumns], cellGrp.grpData[cgRows], cellGrp.grpData[cgCellCount]);  
+  ListAddItem(lst, bmpArray[High(bmpArray)].src^.name);
 end;
 
-procedure InitializeLabels(out labels : arrayofString);
-begin
-	labels[cgCellCount] := 'Cell Count';
-	labels[cgWidth] 		:= 'Width';
-	labels[cgHeight] 		:= 'Height';
-	labels[cgRows] 			:= 'Rows';
-	labels[cgColumns] 	:= 'Columns';
-	labels[cgScale] 		:= 'Scale';
-end;
-
-procedure ModifyCellBitmap(var cellGrp : cellGroup; value, comparedValue : integer; valid : boolean);
+procedure ModifyCellBitmap(var cellGrp : cellGroup; value, comparedValue : LongInt; valid : boolean);
 var
-	i : integer;
+	i : LongInt;
 begin
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
 	begin
@@ -283,9 +122,9 @@ begin
 	end;
 end;
 
-procedure ModifyCellIndex(var cellGrp : cellGroup; value, comparedValue : integer; valid : boolean);
+procedure ModifyCellIndex(var cellGrp : cellGroup; value, comparedValue : LongInt; valid : boolean);
 var
-	i : integer;
+	i : LongInt;
 begin
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
 	begin
@@ -293,7 +132,7 @@ begin
 	end;
 end;
 
-procedure AddSelection(var cellGrp : cellGroup; i : integer);
+procedure AddSelection(var cellGrp : cellGroup; i : LongInt);
 begin
 	SetLength(cellGrp.selectedOrder, Length(cellGrp.selectedOrder) + 1);
 	
@@ -301,9 +140,9 @@ begin
 	cellGrp.cellArea[i].isSelected := true;
 end;
 
-procedure RemoveSelection(var cellGrp : cellGroup; i : integer);
+procedure RemoveSelection(var cellGrp : cellGroup; i : LongInt);
 var
-	j: integer;
+	j: LongInt;
 begin
 
 	for j := Low(cellGrp.selectedOrder) to High(cellGrp.selectedOrder) do
@@ -321,16 +160,16 @@ end;
 
 procedure DeselectAll(var cellGrp : cellGroup);
 var 
-	i: integer;
+	i: LongInt;
 begin
 	SetLength(cellGrp.selectedOrder, 0);
 	
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do cellGrp.cellArea[i].isSelected := false;
 end;
 
-procedure SelectMultiple(var cellGrp : cellGroup; i : integer);
+procedure SelectMultiple(var cellGrp : cellGroup; i : LongInt);
 var
-	previousSelect, newLength, j, count, startVal : integer;
+	previousSelect, newLength, j, count, startVal : LongInt;
 begin
 	if Length(cellGrp.selectedOrder) = 0 then exit;
 	previousSelect := cellGrp.selectedOrder[High(cellGrp.selectedOrder)];
@@ -356,10 +195,10 @@ begin
 	end;
 end;
 
-procedure DrawCellGroup(cellGrp : CellGroup; i, width, height: integer);
+procedure DrawCellGroup(cellGrp : CellGroup; i, width, height: LongInt);
 begin
 	if cellGrp.cellArea[i].isSelected then
-		DrawRectangleOnScreen(ColorBlack, cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos], width, height)
+		FillRectangleOnScreen(RGBAColor(255,0,0,150), cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos], width, height)
 	else
 		DrawRectangleOnScreen(ColorWhite, cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos], width, height);
 end; 
@@ -375,7 +214,7 @@ end;
 
 procedure DrawAnimationGroup(aniCellGrp, cellGrp : CellGroup; dCell: DraggedCell; bmpArray: arrayOfLoadedBMP; mouseOffSet: Point2D);
 var
-	i: integer;
+	i: LongInt;
 	dragPos : Point2D;
 begin
 	for i := Low(aniCellGrp.cellArea) to High(aniCellGrp.cellArea) do
@@ -385,7 +224,6 @@ begin
 		DrawCellGroup(aniCellGrp, i, aniCellGrp.grpData[cgWidth], aniCellGrp.grpData[cgHeight]);
 		if (aniCellGrp.cellArea[i].data[caBitmap] <> -1) AND (i <> dCell.Index) then
 			DrawCell(bmpArray[aniCellGrp.cellArea[i].data[caBitmap]].src, aniCellGrp.cellArea[i].data[caCell], aniCellGrp.cellArea[i].data[caXpos], aniCellGrp.cellArea[i].data[caYpos]);
-		WriteLn(i);
 	end;
 	if ((dCell.Index <> -1)) then if (dCell.isAniGroup) then 
 	begin
@@ -395,9 +233,9 @@ begin
 	WriteLn('fail');
 end; 
 
-procedure DrawBitmapGrid(destbmp: bitmap; save: boolean; cellGrp : cellGroup; i : integer);
+procedure DrawBitmapGrid(destbmp: bitmap; save: boolean; cellGrp : cellGroup; i : LongInt);
 var
-  xPos, yPos : integer;
+  xPos, yPos : LongInt;
 begin
 	FillRectangleOnscreen(ColorWhite, cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos], cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight]);
 	DrawText(IntToStr(i), ColorBlack, cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos]);
@@ -413,23 +251,27 @@ end;
 
 procedure DrawSplitBitmapCells(destbmp: Bitmap; bmpArray: arrayOfLoadedBMP; cellGrp : CellGroup; save: boolean; mouseOffSet: Point2D; dCell: DraggedCell);
 var
-	i: integer;
+	i: LongInt;
 	dragPos : Point2D;
 begin
+	if (cellGrp.grpData[cgColumns] = 0) OR (cellGrp.grpData[cgCellCount] = 0) then exit;
 	if save then 	for i := Low(bmpArray) to High(bmpArray) do MakeOpaque(bmpArray[i].src);
 	
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
 	begin
-		DrawCellGroup(cellGrp, i, cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight]);
 		if cellGrp.cellArea[i].data[caBitmap] = -1 then 
 		begin
 			DrawBitmapGrid(destbmp,save,cellGrp,i)
 		end else begin
-			if i <> dCell.index then DrawCell(bmpArray[cellGrp.cellArea[i].data[caBitmap]].src, cellGrp.cellArea[i].data[caCell], cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos]);
+			if i <> dCell.index then begin
+				DrawCell(bmpArray[cellGrp.cellArea[i].data[caBitmap]].src, cellGrp.cellArea[i].data[caCell], cellGrp.cellArea[i].data[caXpos], cellGrp.cellArea[i].data[caYpos]);
+			end;
 			
 			if save then DrawCell(destbmp, bmpArray[cellGrp.cellArea[i].data[caBitmap]].src, cellGrp.cellArea[i].data[caCell], 
 				cellGrp.cellArea[i].data[caXpos] - cellGrp.cellArea[i].data[caXGap] - cellGrp.grpData[cgXpos], cellGrp.cellArea[i].data[caYpos] - cellGrp.cellArea[i].data[caYGap] - cellGrp.grpData[cgYpos]);
 		end;	
+		
+		DrawCellGroup(cellGrp, i, cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight]);
 	end;
 	
 	if (dCell.Index <> -1) AND (not dCell.isAniGroup) then DrawOnMouse(cellGrp, bmpArray, dCell, mouseOffSet);
@@ -437,9 +279,9 @@ begin
 	if save then for i := Low(bmpArray) to High(bmpArray) do MakeTransparent(bmpArray[i].src);
 end;
 
-procedure DrawTestValues(labels : arrayofString; cellGrp : CellGroup; editVal: integer);
+procedure DrawTestValues(labels : arrayofString; cellGrp : CellGroup);
 var 
-	i, xPos, yPos: integer;
+	i, xPos, yPos: LongInt;
 begin
 	xPos := 10;
 	yPos := 10;
@@ -449,7 +291,7 @@ begin
 		yPos += xPos;
 	end;
 	DrawText('Currently Editing:', ColorWhite, xPos, yPos + 30);
-	DrawText(labels[editVal] + ' : ' + IntToStr(cellGrp.grpData[editVal]), ColorWhite, xPos, yPos + 40);	
+//	DrawText(labels[editVal] + ' : ' + IntToStr(cellGrp.grpData[editVal]), ColorWhite, xPos, yPos + 40);	
 	DrawText('X : ' + IntToStr(cellGrp.grpData[cgXpos]), ColorWhite, xPos, yPos + 70);
 	DrawText('Y : ' + IntToStr(cellGrp.grpData[cgYpos]), ColorWhite, xPos, yPos + 80);
 	DrawText('[TAB]: Change Currently Editing Index', ColorWhite, xPos, yPos + 100);
@@ -460,7 +302,7 @@ end;
 
 procedure DrawCellTestValues(cellGrp : CellGroup);
 var
-	i, startPosY : integer;
+	i, startPosY : LongInt;
 begin
 	startPosY := 250;
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
@@ -473,7 +315,7 @@ begin
 	end;
 end;
 
-procedure AlterValues(var cellGrp, aniCell: CellGroup; var bmpArray: arrayOfLoadedBMP; editVal, multiplier : integer);
+procedure AlterValues(var cellGrp, aniCell: CellGroup; var bmpArray: arrayOfLoadedBMP; editVal, multiplier : LongInt);
 var
 	i: LongInt;
 begin
@@ -498,9 +340,11 @@ begin
 	end;
 end;
 
+
+
 procedure HandleSelection(var cellGrp : CellGroup; out mouseOffSet : Point2D);
 var
-	i, tempCell, tempBMP : integer;
+	i, tempCell, tempBMP : LongInt;
 begin
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
 	begin
@@ -521,7 +365,7 @@ end;
 
 procedure HandleCellDragging(var cellGrp : CellGroup;var dCell: DraggedCell; out mouseOffSet : Point2D);
 var
-	i, temp : integer;
+	i, temp : LongInt;
 	tempCell : DraggedCell;
 begin
 	for i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
@@ -563,17 +407,11 @@ begin
 	end;
 end;
 
-procedure ProcessInput(var aniCell, cellGrp : cellGroup; labels : arrayofString; var destBMP: Bitmap; var bmpArray: arrayofLoadedBMP; var editVal, mode: integer;out  mouseOffSet: Point2D;out save: boolean);
+procedure ProcessInput(var aniCell, cellGrp : cellGroup; var destBMP: Bitmap; var bmpArray: arrayofLoadedBMP; var mode: LongInt;out  mouseOffSet: Point2D;out save: boolean);
 var
-	w, h, i: integer;
-begin
-	if KeyTyped(vk_TAB) 				AND (editVal < High(labels)) then editVal += 1
-	else if KeyTyped(vk_TAB) 		AND (editVal = High(labels)) then editVal := Low(labels)
-	
-	else if (KeyTyped(vk_MINUS) AND (cellGrp.grpData[editVal] > 1)) then AlterValues(cellGrp, aniCell, bmpArray, editVal, - 1)			
-	else if (KeyTyped(vk_EQUALS)) then AlterValues(cellGrp, aniCell, bmpArray, editVal, 1)
-	
-	else if (KeyTyped(vk_1)) then
+	w, h, i: LongInt;
+begin	
+	if (KeyTyped(vk_e)) then
 	begin
 		FreeBitmap(destBMP);
 		w 			:= cellGrp.grpData[cgColumns] * cellGrp.grpData[cgWidth];
@@ -581,15 +419,13 @@ begin
 		destbmp := CreateBitmap(w,h );
 		save 		:= true;
 	end		
-	
+	{
 	else if (KeyTyped(vk_2) AND (Length(cellGrp.selectedOrder) > 0)) then 
 	begin
 		AddCellToAnimation(aniCell, cellGrp);
 		exit;
 	end
-	
-	else if KeyTyped(vk_CAPSLOCK) AND (mode < LengthMode -1) then mode += 1
-	else if KeyTyped(vk_CAPSLOCK) AND (mode = LengthMode -1) then mode := 0
+	}
 	
 	else if KeyTyped(vk_PAGEUP) 	then ModifyCellBitmap(cellGrp, 1,	high(bmpArray), true)
 	else if KeyTyped(vk_PAGEDOWN) then ModifyCellBitmap(cellGrp, -1, -2, false)
@@ -597,11 +433,11 @@ begin
 	else if KeyTyped(vk_9) 				then ModifyCellIndex(cellGrp, -1, 0, false)
 	else if KeyTyped(vk_ESCAPE) 	then DeselectAll(cellGrp)
 	else exit;
-	
+	{
 	for i:= Low(bmpArray) to High(bmpArray) do
 	begin	
 		SetBitmapCellDetails(bmpArray[i].src, cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight], cellGrp.grpData[cgColumns], cellGrp.grpData[cgRows], cellGrp.grpData[cgCellCount]);
-	end;
+	end; }
 end;
 
 function OutputSingleFrameAnimation(aniCellGrp: cellGroup): string;
@@ -612,7 +448,7 @@ end;
 
 function OutputMultiFrameAnimation(aniCellGrp: cellGroup): string;
 var
-	i, lastVal : integer;
+	i, lastVal : LongInt;
 begin
 	result := 'm:' + '[' + IntToStr(Low(aniCellGrp.cellArea)) + '-' + IntToStr(High(aniCellGrp.cellArea)- 2) + '],[' + IntToStr(aniCellGrp.cellArea[Low(aniCellGrp.cellArea)].data[caID]);
 	lastVal := Low(aniCellGrp.cellArea);
@@ -633,7 +469,7 @@ end;
 
 procedure ExportAnimationFile(aniCellGrp : cellGroup; name : string);
 var
-	i : integer;
+	i : LongInt;
 	txt: Text;
 	arrayOfSingleFrame, arrayofMultiFrame : array of string;
 begin
@@ -661,64 +497,132 @@ begin
 	WriteLn(txt, '//[a-b,c] = combination');
 
 	for i := Low(arrayOfMultiFrame) to High(arrayOfMultiFrame) do WriteLn(txt, arrayOfMultiFrame[i]);
-	
-	
-	
-	
+
 	Close(txt);
+end; 
+
+procedure MoveCellGroup(var cellGrp: CellGroup; var mouseOffSet: Point2D; var dragGroup: boolean);
+var
+	height : LongInt;
+	rect: Rectangle;
+	dragPos: Point2D;
+begin
+	if (cellGrp.grpData[cgColumns] = 0) OR (cellGrp.grpData[cgCellCount] = 0) then exit;
+	height := Ceiling(cellGrp.grpData[cgCellCount] / cellGrp.grpData[cgColumns]);
+	rect := RectangleFrom(cellGrp.cellArea[Low(cellGrp.cellArea)].data[caXPos], cellGrp.cellArea[Low(cellGrp.cellArea)].data[caYPos], 
+												cellGrp.grpData[cgWidth] * cellGrp.grpData[cgColumns] + (CellGap * cellGrp.grpData[cgColumns] - CellGap),
+												cellGrp.grpData[cgHeight] * height + (CellGap * height - CellGap));
+	FillRectangle(RGBAColor(255,255,0,180), rect);
+	if PointInRect(MousePosition, rect) and MouseDown(LeftButton) AND not dragGroup then
+	begin
+		dragGroup := true;
+		mouseOffset.x := Trunc(MousePosition().x) - cellGrp.grpData[cgXPos];
+		mouseOffset.y := Trunc(MousePosition().y) - cellGrp.grpData[cgYPos];
+	end;
+	if dragGroup and MouseDown(LeftButton) then
+	begin		
+		cellGrp.grpData[cgXPos] := Trunc(MousePosition().x -  mouseOffset.x);
+		cellGrp.grpData[cgYPos] := Trunc(MousePosition().y - mouseOffset.y);
+		MoveCellPosition(cellGrp);
+	end;
+	
+	if not MouseDown(LeftButton) and dragGroup then dragGroup := false; 
+end;
+
+procedure InitializeFilePanel(out p: Panel);
+begin
+	p := LoadPanel('ToolBarPanel.txt');
+	
+	ShowPanel(p);
+	ActivatePanel(p); 
+	AddPanelToGUI(p);
+	
+	DrawGUIAsVectors(true);	
+	GUISetBackGroundColor(RGBAColor(0,0,0,0));
+	GUISetForeGRoundColor(ColorWhite);
+end;
+
+procedure BitmapEditorMode();
+begin
 end;
 
 procedure Main();
 var
 	cellGrp, aniCellGrp : CellGroup;
 	dCell: DraggedCell;
-	mode, i, H, W, editVal: integer; 
+	mode, i, H, W: LongInt; 
 	save: boolean;
-	destBMP, src, original, arrow : Bitmap;
+	destBMP, src, original, arrow, tempBg : Bitmap;
 	bmpArray : arrayofLoadedBMP;
 	mouseOffset : Point2D; 
-	labels : arrayofString;
 	ani : Animation;
 	aniTemp : AnimationTemplate;
-	aniData : AnimationData;
-	s : string;
+	aniData : AnimationData; 
+	cellGroupDetails : Panel;
+	dragGroup : Boolean;
+	BMPpanelArray : editorPanels;
+	p : Panel;
 begin
   OpenAudio();
   OpenGraphicsWindow('Hello World', ScreenWidth, ScreenHeight);
 	
+	tempBG := LoadBitmap('BMPEDITOR.png');
+	
+  LoadResourceBundle('MainMenu.txt');			
+	
+	InitializeFilePanel(p);
+	InitializePanels(BMPpanelArray);
 	InitializeCellGroup(cellGrp);
+	InitializeCellArea(cellGrp, bmpArray);
 	InitializeAniCellGroup(aniCellGrp, cellGrp);
-	InitializeLabels(labels);
 	
 	save 		:= false;
 	mode 		:= 0;
-	editVal := Low(labels);	
-	destBMP := CreateBitmap(1, 1);
+//	destBMP := CreateBitmap(1, 1);
 	arrow 	:= LoadBitmap('arrow.png');
 	dCell.Index 	:= -1;
 	
-	AddBitmapToArray(bmpArray, 'Corpo', 'corpolupo1.png', cellGrp);
-	AddBitmapToArray(bmpArray, 'Black', 'blackbody.png', cellGrp);
+	AddBitmapToArray(bmpArray, 'Corpo', 'corpolupo1.png', cellGrp, ListFromRegion(RegionWithID(BMPpanelArray[2],'BMPList')));
+	AddBitmapToArray(bmpArray, 'Black', 'blackbody.png', cellGrp, ListFromRegion(RegionWithID(BMPpanelArray[2],'BMPList')));
 
-	for i := 0 to 4 do AddBitmapToArray(bmpArray, IntToStr(i), IntToStr(i) + '.gif', cellGrp);
+	for i := 0 to 4 do AddBitmapToArray(bmpArray, IntToStr(i), IntToStr(i) + '.gif', cellGrp, ListFromRegion(RegionWithID(BMPpanelArray[2],'BMPList')));
 	
 	aniTemp:=LoadAnimationTemplate('Test.txt');
   ani := CreateAnimation('Up',aniTemp,FALSE);
 	
+	dragGroup := false;
+	
+	WriteLn('Before Loop');
+	
   repeat // The game loop...
     ProcessEvents();
-    ClearScreen(ColorRed);
+//    DrawBitmap(tempBG,0,0);
+//		WriteLn('Draw Panels');
+		DrawPanels();
+//		WriteLn('Draw Panels Done');
+		DrawSelectedDetails(cellGrp, BMPpanelArray, bmpArray);
 		
-		if AnyKeyPressed 						then ProcessInput(aniCellGrp, cellGrp, labels, destBMP, bmpArray, editVal, mode, mouseOffSet, save);
-		if MouseClicked(LeftButton) then
+		if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp,bmpArray, BMPpanelArray);
+		
+		PushClip(ClipX, ClipY, ClipW, ClipH);
+		DrawSplitBitmapCells(destbmp, bmpArray, cellGrp, false, mouseOffSet, dCell);
+		if CheckboxState(RegionWithID(BMPpanelArray[0], 'Anchor')) then MoveCellGroup(cellGrp, mouseOffset, dragGroup);
+		PopClip();
+			
+		if (not CheckboxState(RegionWithID(BMPpanelArray[0], 'Anchor'))) then
 		begin
-			HandleSelection(cellGrp, mouseOffSet);
-			HandleSelection(aniCellGrp, mouseOffSet);
-			HandleCellDragging(cellGrp, dCell, mouseOffSet);
-			HandleCellDragging(aniCellGrp, dCell, mouseOffSet);
-		end;
+			if AnyKeyPressed  then ProcessInput(aniCellGrp, cellGrp, destBMP, bmpArray, mode, mouseOffSet, save);
+			if MouseClicked(LeftButton) then
+			begin
+				HandleSelection(cellGrp, mouseOffSet);
+				HandleSelection(aniCellGrp, mouseOffSet);
+				HandleCellDragging(cellGrp, dCell, mouseOffSet);
+				HandleCellDragging(aniCellGrp, dCell, mouseOffSet);
+			end;
+	  end;
 		
-		DrawTestValues(labels,cellGrp, editVal);
+		if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(BMPpanelArray[2]);
+{
 		DrawCellTestValues(cellGrp);
 		DrawSplitBitmapCells(destbmp, bmpArray, cellGrp, save, mouseOffSet, dCell);	
 		UpdateAnimation(ani);
@@ -733,8 +637,10 @@ begin
 			save := false;
 		end;
 		
-		if KeyTyped(vk_3) then ExportAnimationFile(aniCellGrp,'testAni');
-		
+		if KeyTyped(vk_3) then ExportAnimationFile(aniCellGrp,'testAni');}
+//		WriteLn('Updating Interface');
+		UpdateInterface();
+//		WriteLn('End Update');
 		RefreshScreen(60);   
   until WindowCloseRequested();
   
