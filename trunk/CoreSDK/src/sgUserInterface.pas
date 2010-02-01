@@ -58,25 +58,19 @@ type
   
   GUIListData = record
     verticalScroll: Boolean;
-    
     //The areas for the up/left down/right scrolling buttons
     scrollUp:     Rectangle;
     scrollDown:   Rectangle;
     scrollArea:   Rectangle;
-    
     columns:      LongInt;
     rows:         LongInt;
-    
     rowHeight:    LongInt;
     colWidth:     LongInt;
     scrollSize:   LongInt;
     placeholder:  Array of Rectangle;
-    
     activeItem:   LongInt;
     startingAt:   LongInt;
-
     font:       Font;
-        
     items:        Array of GUIListItem;
   end;
     
@@ -97,7 +91,6 @@ type
     elementIndex:   LongInt;
     area:           Rectangle;
     active:         Boolean;
-    
     parent:         Panel;
   end;
   
@@ -105,15 +98,11 @@ type
     stringID:     string;
     panelID:      LongInt;
     area:         Rectangle;
-    //position:     Point2D;
-    //width:        LongInt;
-    //height:       LongInt;
     visible:      boolean;
     active:       boolean;
     panelBitmap:  Bitmap;
     regions:      Array of RegionData;
     regionIds:    NamedIndexCollection;
-    
     labels:       Array of GUILabelData;
     checkBoxes:   Array of GUICheckboxData;
     radioGroups:  Array of GUIRadioGroupData;
@@ -148,64 +137,52 @@ function RegionWithID(pnl: Panel; ID: String): Region; overload;
 function RegionWithID(ID: String): Region; overload;
 function RegionPanel(r: Region): Panel;
 
-
+//Checkbox
 function CheckboxState(s: String): Boolean; overload;
-procedure UpdateInterface();
-procedure DrawGUIAsVectors(b : boolean);
-procedure FinishReadingText();
-procedure SetAsActiveTextbox(r: Region); overload;
-procedure SetAsActiveTextbox(t: GUITextBox); overload;
-  
-procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
-procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
-
-function RadioGroupFromRegion(r: Region): GUIRadioGroup;
-function ListFromRegion(r: Region): GUIList; overload;
-function TextBoxFromRegion(r: Region): GUITextBox;
-function LabelFromRegion(r: Region): GUILabel;
+function CheckboxState(chk: GUICheckbox): Boolean; overload;
+function CheckboxState(r: Region): Boolean; overload;
+procedure CheckboxSetState(chk: GUICheckbox; val: Boolean);
+procedure ToggleCheckboxState(c: GUICheckbox);
 function CheckboxFromRegion(r: Region): GUICheckbox;
 
+//RadioGroup
+function RadioGroupFromRegion(r: Region): GUIRadioGroup;
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
 function ActionRadioButton(grp: GUIRadioGroup): Region; overload;
 function ActionRadioButton(r: Region): Region; overload;
 procedure SelectRadioButton(r: Region); overload;
 procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 
-
-function CheckboxState(chk: GUICheckbox): Boolean; overload;
-function CheckboxState(r: Region): Boolean; overload;
-procedure CheckboxSetState(chk: GUICheckbox; val: Boolean);
-
-procedure ToggleCheckboxState(c: GUICheckbox);
-
-
+//TextBox
 function TextBoxFont(tb: GUITextBox): Font; overload;
 function TextBoxFont(r: Region): Font; overload;
-
 function TextBoxText(r: Region): String; overload;
 function TextBoxText(tb: GUITextBox): String; overload;
-
 procedure TextboxSetText(r: Region; s: string); overload;
 procedure TextboxSetText(tb: GUITextBox; s: string); overload;
-
-
+function TextBoxFromRegion(r: Region): GUITextBox;
+procedure SetAsActiveTextbox(r: Region); overload;
+procedure SetAsActiveTextbox(t: GUITextBox); overload;
+procedure DeactivateTextBox();
+function ActiveTextIndex(): Integer;
+function GUITextEntryComplete(): boolean;
+function GUITextBoxOfTextEntered(): GUITextbox;
+function RegionOfLastUpdatedTextBox(): Region;
+function IndexOfLastUpdatedTextBox(): Integer;
+procedure UpdateInterface();
+procedure DrawGUIAsVectors(b : boolean);
+procedure FinishReadingText();
 function ActiveTextBoxParent() : Panel;
 
-
-
-function LabelFont(l: GUILabel): Font; overload;
-function LabelFont(r: Region): Font; overload;
-procedure LabelSetFont(l: GUILabel; s: String);
-
-function LabelText(lb: GUILabel): string; overload;
-function LabelText(r: Region): string; overload;
-procedure LabelSetText(lb: GUILabel; newString: String);
-
+//Lists
+procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
+procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
+function ListFromRegion(r: Region): GUIList; overload;
 function ListFont(r: Region): Font; overload;
 function ListFont(lst: GUIList): Font; overload;
 function ListItemText(r: Region; idx: LongInt): String; overload;
 function ListItemText(lst: GUIList; idx: LongInt): String; overload;
-
+function ListActiveItemIndex(lst: GUIList): LongInt;
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
 procedure ListAddItem(lst: GUIList; text: String);
 procedure ListAddItem(lst: GUIList; img:Bitmap);
@@ -213,20 +190,14 @@ procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
 
-  //function ListTextAt(lst: GUIList; idx: LongInt): String;
-  //function ListBitmapAt(lst: GUIList; idx: LongInt): Bitmap;
-  //function ListActiveIndex(lst: GUIList): LongInt;
-  //function ListActiveText(lst: GUIList): String;
-  //function ListActiveBitmap(lst: GUIList): Bitmap;
-
-function ListActiveItemIndex(lst: GUIList): LongInt;
-procedure DeactivateTextBox();
-function ActiveTextIndex(): Integer;
-function GUITextEntryComplete(): boolean;
-
-function GUITextBoxOfTextEntered(): GUITextbox;
-function RegionOfLastUpdatedTextBox(): Region;
-function IndexOfLastUpdatedTextBox(): Integer;
+//Label
+function LabelFont(l: GUILabel): Font; overload;
+function LabelFont(r: Region): Font; overload;
+procedure LabelSetFont(l: GUILabel; s: String);
+function LabelText(lb: GUILabel): string; overload;
+function LabelText(r: Region): string; overload;
+procedure LabelSetText(lb: GUILabel; newString: String);
+function LabelFromRegion(r: Region): GUILabel;
 
 //=============================================================================
 implementation
@@ -632,9 +603,9 @@ begin
       
       // Perform kind based updating
       case pnl^.Regions[j].kind of
-        gkCheckBox:     ToggleCheckboxState ( CheckboxFromRegion(current)   );
+        gkCheckBox:     ToggleCheckboxState ( CheckboxFromRegion(current) );
         gkRadioGroup:   SelectRadioButton   ( RadioGroupFromRegion(current), current );
-        gkTextBox:      SetAsActiveTextbox  ( TextBoxFromRegion(current)    );
+        gkTextBox:      SetAsActiveTextbox  ( TextBoxFromRegion(current) );
         gkList:         SetActiveListItem   ( ListFromRegion(current), pointClickedInRegion);
       end;
       
@@ -1115,6 +1086,8 @@ end;
 
 procedure ToggleCheckboxState(c: GUICheckbox);
 begin
+  if not assigned(c) then exit;
+
   c^.state := not c^.state;
 end;
 
@@ -1278,7 +1251,7 @@ var
     
     SetLength(result^.Checkboxes, Length(result^.Checkboxes) + 1);
     result^.Checkboxes[High(result^.Checkboxes)] := newChkbox;
-    forRegion^.elementIndex := High(result^.labels);
+    forRegion^.elementIndex := High(result^.Checkboxes);
   end;
   
   procedure CreateTextbox(r: region; data: string);

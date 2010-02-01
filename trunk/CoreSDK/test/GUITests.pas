@@ -31,7 +31,7 @@ var
   parpnl: Panel;
   radGroup: GUIRadioGroup;
 begin
-  if (RegionClickedID() = 'Button1') And (CheckboxState(RegionWithID(pnla, 'Checkbox2'))) then
+  if (RegionClickedID() = 'Button1') And (CheckboxState(RegionWithID('Checkbox2'))) then
   begin
     ToggleShowPanel(pnlb);
     Toggleactivatepanel(pnlb);
