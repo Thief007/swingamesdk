@@ -617,19 +617,25 @@ interface
     pt: Point2D;
   begin
     //WriteLn('cols: ', startCol, ' to ', endCol);
-    //WriteLn('rows: ', startRow, ' to ', endRow);
+   // WriteLn('rows: ', startRow, ' to ', endRow);
     rowCount := (endRow - startRow)+1;
     colCount := (endCol - startCol)+1;
-    //writeln(rowCount, ' ',ColCount);
+    //writeln('rowcount: ',rowCount, ' ','colcount: ',ColCount);
+    // # of columns * tilewidth - stagger X for even rows.
+    width := Round ( (colCount * map^.TileWidth) - ( ( (startRow+1) mod 2)* (map^.TileStagger.X)));
+    // # of row ^ tileheight - number of rows * staggerY  -- in conjunction with if rowcount = 20...
+    height := Round(((rowCount) * map^.TileHeight) - ((rowCount)*(map^.TileStagger.Y)));
     
-    width := Round(((colCount * map^.TileWidth) - (2 * (map^.TileStagger.X))));
-    height := Round(((rowCount) * map^.TileHeight) - (map^.TileStagger.Y * (map^.MapHeight - 1)) -(2*map^.TileStagger.Y));
-    
+   // writeln('width: ',width, ' ','height: ',height);
+
     pt := TileAt(map, startRow, startCol)^.position;
     pt := PointAdd(pt, InvertVector(CameraPos()));
-    
-    //PushClip(RectangleFrom(-CameraX(), -CameraY(), width ,height));
-
+    //the last row doesnt clip at 20 because the camera has not reached the next row.
+    if rowcount = 20 then height-=round(map^.TileStagger.Y);
+    //apply stagger x only on the first column and even values.
+    if (startCol = 0) and  not(startRow Mod 2=0) then pt.X += map^.TileStagger.X;
+    //apply stagger to top of the map only.
+    if (startrow = 0) then pt.Y += map^.TileStagger.Y;
     //WriteLn('Clip At: ', PointToString(pt));
     PushClip(RectangleFrom(pt.x, pt.y, width ,height));
   end;
