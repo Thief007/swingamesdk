@@ -1,0 +1,40 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 10
+y: 90
+w: 160
+h: 180
+
+// Region data
+// Format: r: x, y, w, h, kind
+//Radiobutton r: x, y, w, h, 3, GroupID
+//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
+//CellCount
+r: 80, 0, 80, 12, 4, CellCountIn, courierSmall, 16, 0
+r: 2, 0, 80, 12, 1, CellCountLbl, Cell Count, courierSmall
+
+//Columns
+r: 80, 30, 80, 12, 4, ColumnIn, courierSmall, 16, 0
+r: 2, 30, 80, 12, 1, ColumnLbl, Columns, courierSmall
+
+//Width
+r: 80, 60, 80, 12, 4, WidthIn, courierSmall, 16, 0
+r: 2, 60, 80, 12, 1, WidthLbl, Width, courierSmall
+
+//Height
+r: 80, 90, 80, 12, 4, HeightIn, courierSmall, 16, 0
+r: 2, 90, 80, 12, 1, HeightLbl, Height, courierSmall
+
+//Scale
+r: 80, 120, 80, 12, 4, ScaleIn, courierSmall, 16, 1
+r: 2, 120, 80, 12, 1, ScaleLbl, Scale, courierSmall
+
+//Move Group Button
+r: 10, 150, 20, 20, 2, Anchor, false

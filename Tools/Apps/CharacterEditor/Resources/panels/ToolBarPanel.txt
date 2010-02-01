@@ -1,0 +1,29 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 20
+y: 0
+w: 620
+h: 28
+
+// Region data
+// Format: r: x, y, w, h, kind
+//Radiobutton r: x, y, w, h, 3, GroupID
+//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
+//File Button
+r:0,0,140,28,0,File
+
+//BitmapEditor
+r:160,0,140,28,3,Bitmap,Mode
+
+//File Button
+r:320,0,140,28,3,Animation,Mode
+
+//File Button
+r:480,0,140,28,3,Character,Mode
