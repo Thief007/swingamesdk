@@ -494,7 +494,7 @@ begin
     
     for j := High(current^.Regions) downto Low(current^.Regions) do
     begin
-      currentReg := @GUIC.panels[i]^.Regions[j];
+      currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case currentReg^.kind of
         gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangle(currentReg));
         gkLabel:      DrawTextOnScreen( LabelText(currentReg), 
@@ -525,15 +525,15 @@ var
   i, j: integer;
   currentReg: Region;
 begin
-  for i := Low(GUIC.panels) to High(GUIC.panels) do
+  for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
   begin
-    if GUIC.panels[i]^.visible then
-      DrawBitmapOnScreen(GUIC.panels[i]^.panelBitmapInactive, RectangleTopLeft(GUIC.panels[i]^.area));
+    if GUIC.visiblePanels[i]^.visible then
+      DrawBitmapOnScreen(GUIC.visiblePanels[i]^.panelBitmapInactive, RectangleTopLeft(GUIC.visiblePanels[i]^.area));
       
-    for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
+    for j := Low(GUIC.visiblePanels[i]^.Regions) to High(GUIC.visiblePanels[i]^.Regions) do
     begin
-      currentReg := @GUIC.panels[i]^.Regions[j];
-      case GUIC.panels[i]^.Regions[j].kind of
+      currentReg := @GUIC.visiblePanels[i]^.Regions[j];
+      case GUIC.visiblePanels[i]^.Regions[j].kind of
         gkLabel: DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(RegionRectangle(currentReg)));//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
         gkTextbox: DrawTextbox(currentReg, currentReg^.area);
         gkCheckbox: DrawBitmapCheckbox(currentReg, currentReg^.area);
@@ -1144,8 +1144,11 @@ end;
 
 procedure AddPanelToGUI(p: Panel);
 begin
-  SetLength(GUIC.panels, Length(GUIC.panels) + 1);
-  GUIC.panels[High(GUIC.panels)] := p;
+  if assigned(p) then
+  begin
+    SetLength(GUIC.panels, Length(GUIC.panels) + 1);
+    GUIC.panels[High(GUIC.panels)] := p;
+  end;
 end;
 
 procedure ActivatePanel(p: Panel);
@@ -1219,9 +1222,9 @@ begin
   
   for i := High(GUIC.visiblePanels) downto Low(GUIC.visiblePanels) do
   begin
-    if PointInRect(MousePosition(), GUIC.panels[i]^.area) then
+    if PointInRect(MousePosition(), GUIC.visiblePanels[i]^.area) then
     begin
-      result := GUIC.panels[i];
+      result := GUIC.visiblePanels[i];
       exit;
     end;
   end;
