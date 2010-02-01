@@ -1421,14 +1421,14 @@ end;
 function BitmapName(bmp:Bitmap): string;
 begin
   result:= '';
-  if not assigned(bmp) exit;
+  if not assigned(bmp) then exit;
   result:=bmp^.name;
 end;
 
 function BitmapFilename(bmp:Bitmap): string;
 begin
   result:= '';
-  if not assigned(bmp) exit;
+  if not assigned(bmp) then exit;
   result:=bmp^.filename;
 end;
 
