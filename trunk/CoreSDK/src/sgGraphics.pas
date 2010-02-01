@@ -2019,22 +2019,37 @@ implementation
     DrawLine(dest, s^.color, ln); //PointAdd(pts[0], offset), PointAdd(pts[1], offset));
   end;
   
-  procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean; const offset: Point2D); overload;
+  procedure _DrawTriangles(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D; kind: ShapeKind);
   var
-    //pts: Point2DArray;
-    tri: Triangle;
+    i: Integer;
+    tri: TriangleArray;
   begin
-    tri := ShapeTriangle(s);
+    tri := ShapeTriangles(s, kind);
     
-    // pts := ShapePoints(s);
-    // if length(pts) < 3 then exit;
-    
-    if filled then
-      FillTriangle(dest, s^.color, tri)
-      //FillTriangle(dest, s^.color, pts[0].x+offset.X, pts[0].y+offset.Y, pts[1].x+offset.X, pts[1].y+offset.Y, pts[2].x+offset.X, pts[2].y+offset.Y)
-    else
-      DrawTriangle(dest, s^.color, tri);
-      //DrawTriangle(dest, s^.color, pts[0].x+offset.X, pts[0].y+offset.Y, pts[1].x+offset.X, pts[1].y+offset.Y, pts[2].x+offset.X, pts[2].y+offset.Y);
+    for i := 0 to High(tri) do
+    begin
+      if filled then FillTriangle(s^.color, tri[i])
+      else DrawTriangle(s^.color, tri[i]);
+    end;
+  end;
+  
+  procedure DrawShapeAsTriangle(dest: Bitmap; s:Shape; filled: Boolean; const offset: Point2D); overload;
+  // var
+  //   //pts: Point2DArray;
+  //   tri: Triangle;
+  begin
+    _DrawTriangles(dest, s, filled, offset, pkTriangle);
+    // tri := ShapeTriangle(s);
+    // 
+    // // pts := ShapePoints(s);
+    // // if length(pts) < 3 then exit;
+    // 
+    // if filled then
+    //   FillTriangle(dest, s^.color, tri)
+    //   //FillTriangle(dest, s^.color, pts[0].x+offset.X, pts[0].y+offset.Y, pts[1].x+offset.X, pts[1].y+offset.Y, pts[2].x+offset.X, pts[2].y+offset.Y)
+    // else
+    //   DrawTriangle(dest, s^.color, tri);
+    //   //DrawTriangle(dest, s^.color, pts[0].x+offset.X, pts[0].y+offset.Y, pts[1].x+offset.X, pts[1].y+offset.Y, pts[2].x+offset.X, pts[2].y+offset.Y);
   end;
   
   procedure _DrawLines(dest: Bitmap; s: Shape; const offset: Point2D; kind: ShapeKind);
@@ -2111,20 +2126,6 @@ implementation
     
   end;}
   
-  procedure _DrawTriangles(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
-  var
-    i: Integer;
-    tri: TriangleArray;
-  begin
-    tri := ShapeTriangles(s, ShapeShapeKind(s));
-    
-    for i := 0 to High(tri) do
-    begin
-      if filled then FillTriangle(s^.color, tri[i])
-      else DrawTriangle(s^.color, tri[i]);
-    end;
-  end;
-  
   // procedure DrawTriangleFan(dest: Bitmap; s: Shape; const offset: Point2D);
   // // var
   // //   i: LongInt;
@@ -2162,7 +2163,7 @@ implementation
   procedure DrawShapeAsTriangleFan(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
   begin
     //if filled then FillTriangleFan(dest, s, offset) else DrawTriangleFan(dest, s, offset);
-    _DrawTriangles(dest, s, filled, offset);
+    _DrawTriangles(dest, s, filled, offset, pkTriangleFan);
   end;
   
   // procedure DrawTriangleStrip(dest: Bitmap; s: Shape; const offset: Point2D);
@@ -2206,7 +2207,7 @@ implementation
   
   procedure DrawShapeAsTriangleStrip(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
   begin
-    _DrawTriangles(dest, s, filled, offset);
+    _DrawTriangles(dest, s, filled, offset, pkTriangleStrip);
     //if filled then FillTriangleStrip(dest, s, offset) else DrawTriangleStrip(dest, s, offset);
   end;
   
@@ -2250,7 +2251,7 @@ implementation
   
   procedure DrawShapeAsTriangleList(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
   begin
-    _DrawTriangles(dest, s, filled, offset);
+    _DrawTriangles(dest, s, filled, offset, pkTriangleList);
     //if filled then FillTriangleList(dest, s, offset) else DrawTriangleList(dest, s, offset);
   end;
   

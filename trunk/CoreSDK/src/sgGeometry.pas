@@ -4177,24 +4177,27 @@ implementation
   
   function ShapeTriangles(shp: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
   var
-    pts: Point2DArray;
+    pts, pts1: Point2DArray;
     i: Integer;
   begin
     pts := ShapePoints(shp);
+    SetLength(pts1, Length(pts));
     if length(pts) < 2 then begin SetLength(result, 0); exit; end;
-    if not ((kind = pkTriangleStrip) or (kind = pkTriangleFan) or (kind = pkTriangleList)) then exit;
+    if not ((kind = pkTriangleStrip) or (kind = pkTriangleFan) or (kind = pkTriangleList) or (kind = pkTriangle)) then exit;
     
     if kind = pkLineList then SetLength(result, Length(pts) div 3)
+    else if kind = pkTriangle then SetLength(result, 1)
     else SetLength(result, Length(pts) - 2);
     
-    for i := 0 to high(pts) do pts[i] := PointAdd(pts[i], offset);
+    for i := 0 to high(pts) do pts1[i] := PointAdd(pts[i], offset);
     
     for i := 0 to High(result) do
     begin
       case kind of
-        pkTriangleList: result[i] := TriangleFrom(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2]);
-        pkTriangleStrip:result[i] := TriangleFrom(pts[i], pts[i + 1], pts[i + 2]);
-        pkTriangleFan:  result[i] := TriangleFrom(pts[0], pts[i + 1], pts[i + 2]);
+        pkTriangle:     result[i] := TriangleFrom(pts1[i],     pts1[i + 1],     pts1[i + 2]);
+        pkTriangleList: result[i] := TriangleFrom(pts1[i * 3], pts1[i * 3 + 1], pts1[i * 3 + 2]);
+        pkTriangleStrip:result[i] := TriangleFrom(pts1[i],     pts1[i + 1],     pts1[i + 2]);
+        pkTriangleFan:  result[i] := TriangleFrom(pts1[0],     pts1[i + 1],     pts1[i + 2]);
       end;
     end;
   end;

@@ -332,6 +332,7 @@ implementation
     colorFG: TSDL_Color;
     bgTransparent: Boolean;
   begin
+    if Length(str) = 0 then exit;
     if dest = nil then begin RaiseException('Error Printing Strings: There was no surface.'); exit; end;
 
     colorFG := ToSDLColor(clrFg);
@@ -376,7 +377,9 @@ implementation
       
       if w > width then width := w;
     end;
-
+    
+    if (width = 0) or (height = 0) then exit;
+    
     // Length(lines) = Number of Lines.
     // we assume that height is the same for all lines.
     height := (Length(lines) - 1) * lineSkip + height;

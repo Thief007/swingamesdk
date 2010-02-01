@@ -182,14 +182,20 @@ function ActiveTextBoxParent() : Panel;
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
 procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
 procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
+
 function ListFromRegion(r: Region): GUIList; overload;
+
 function ListFont(r: Region): Font; overload;
 function ListFont(lst: GUIList): Font; overload;
 procedure ListSetFont(lst: GUITextbox; f: font);
 function ListItemText(r: Region; idx: LongInt): String; overload;
 function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+function ListItemCount(r: Region): LongInt; overload;
+function ListItemCount(lst:GUIList): LongInt; overload;
+function ListActiveItemIndex(r: Region): LongInt; overload;
 function ListActiveItemIndex(lst: GUIList): LongInt;
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+procedure ListClearItems(lst: GUIList);
 procedure ListAddItem(lst: GUIList; text: String);
 procedure ListAddItem(lst: GUIList; img:Bitmap);
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
@@ -197,13 +203,16 @@ function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
 
 //Label
-function LabelFont(l: GUILabel): Font; overload;
-function LabelFont(r: Region): Font; overload;
+function  LabelFont(l: GUILabel): Font; overload;
+function  LabelFont(r: Region): Font; overload;
 procedure LabelSetFont(l: GUILabel; s: String);
-function LabelText(lb: GUILabel): string; overload;
-function LabelText(r: Region): string; overload;
-procedure LabelSetText(lb: GUILabel; newString: String);
-function LabelFromRegion(r: Region): GUILabel;
+  
+function  LabelText(lb: GUILabel): string; overload;
+function  LabelText(r: Region): string; overload;
+procedure LabelSetText(lb: GUILabel; newString: String); overload;
+procedure LabelSetText(pnl: Panel; id, newString: String); overload;
+
+function  LabelFromRegion(r: Region): GUILabel;
 
 //=============================================================================
 implementation
@@ -562,11 +571,10 @@ begin
 end;
 
 procedure ToggleRegionActive(forRegion: Region);
-var
-  b: Boolean;
 begin
   if not assigned(forRegion) then exit;
-
+  
+  forRegion^.active := not forRegion^.active;
 end;
 
 function RegionWithID(pnl: Panel; ID: String): Region; overload;
@@ -788,6 +796,11 @@ end;
 // Label Code
 //---------------------------------------------------------------------------------------
 
+procedure LabelSetText(pnl: Panel; id, newString: String); overload;
+begin
+  LabelSetText(LabelFromRegion(RegionWithID(pnl, id)), newString);
+end;
+
 procedure LabelSetText(lb: GUILabel; newString: String);
 begin
   if not assigned(lb) then exit;  
@@ -964,6 +977,19 @@ begin
   result := lst^.items[idx].text;
 end;
 
+function ListItemCount(r: Region): LongInt; overload;
+begin
+  result := ListItemCount(ListFromRegion(r));
+end;
+
+function ListItemCount(lst:GUIList): LongInt; overload;
+begin
+  result := 0;
+  if not assigned(lst) then exit;
+  
+  result := Length(lst^.items);
+end;
+
 procedure ListAddItem(lst: GUIList; text: String);
 begin
   ListAddItem(lst, nil, text);
@@ -983,6 +1009,15 @@ begin
     lst^.items[High(lst^.items)].image := img; //Assign the image to the item
 end;
 
+procedure ListClearItems(lst: GUIList);
+begin
+  if not assigned(lst) then exit;
+  
+  SetLength(lst^.items, 0);
+  lst^.activeItem := -1;
+  lst^.startingAt := 0;
+end;
+
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
 var
   i: LongInt;
@@ -996,6 +1031,9 @@ begin
     end;
     
     SetLength(lst^.items, Length(lst^.items) - 1);
+    
+    if lst^.startingAt >= idx then lst^.startingAt := lst^.startingAt - 1;
+    if lst^.activeItem >= idx then lst^.activeItem := lst^.activeItem - 1;
 end;
 
 function ListTextIndex(lst: GUIList; value: String): LongInt;
@@ -1082,7 +1120,12 @@ begin
   end;
 end;
 
-function ListActiveItemIndex(lst: GUIList): LongInt;
+function ListActiveItemIndex(r: Region): LongInt; overload;
+begin
+  result := ListActiveItemIndex(ListFromRegion(r));
+end;
+
+function ListActiveItemIndex(lst: GUIList): LongInt; overload;
 begin
   result := -1;
   if not assigned(lst) then exit;
@@ -1514,11 +1557,11 @@ var
   procedure InitPanel();
   begin
     New(result);
-    result^.stringID := '';
-    result^.panelID := -1;
-    result^.area := RectangleFrom(0,0,0,0);
-    result^.visible := false;
-    result^.active := false;
+    result^.stringID  := '';
+    result^.panelID   := -1;
+    result^.area      := RectangleFrom(0,0,0,0);
+    result^.visible   := false;
+    result^.active    := true;
     SetLength(result^.radioGroups, 0);
     SetLength(result^.lists, 0);
     InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
@@ -1531,9 +1574,6 @@ var
     j, k: LongInt;
     
   begin
-    workingCol := 0;
-    workingRow := 0;
-    
     for j := Low(result^.Regions) to High(result^.Regions) do
     begin
       //Get the region as a list (will be nil if not list...)
@@ -1541,6 +1581,9 @@ var
       
       if assigned(tempListPtr) then
       begin
+        workingCol := 0;
+        workingRow := 0;
+        
         for k := Low(tempListPtr^.placeHolder) to High(tempListPtr^.placeHolder) do
         begin
           tempListPtr^.placeHolder[k].x := (workingCol * tempListPtr^.colWidth);
