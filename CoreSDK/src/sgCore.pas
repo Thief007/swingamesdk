@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3:
+// - 2010-02-01: Aaron  : Added ColorToStr
 // - 2010-01-04: Andrew : Fixed ColorFrom to include RGB and A
 // - 2009-12-18: Andrew : Added screen rect cache
 // - 2009-11-11: Andrew : Updated amask for screen surface.
@@ -342,6 +343,12 @@ interface
   /// @lib
   /// @sn colorComponentsOf:%s red:%s green:%s blue:%s alpha:%s
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
+
+
+  /// returns color to string.
+  ///
+  /// @lib
+  function  ColorToString(c: Color): string;
   
   /// Returns a color from a floating point RBG value set.
   ///
@@ -1057,6 +1064,13 @@ implementation
   //----------------------------------------------------------------------------
   // Colour
   //----------------------------------------------------------------------------
+  function  ColorToString(c: Color): string;
+  var
+  r,g,b,a : byte;
+  begin
+  colorComponents(c,r,g,b,a);
+  result:=IntToStr(r)+','+IntToStr(g)+','+IntToStr(b)+','+IntToStr(a);
+  end;
 
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
   begin
