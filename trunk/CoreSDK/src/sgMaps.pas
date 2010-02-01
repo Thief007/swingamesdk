@@ -57,6 +57,7 @@ interface
 
   function LoadMap(filename:string): Map;
   procedure DrawMap(map: Map); overload;
+   procedure DrawMapDebug(map: map);
   function TileSelected(map:Map; tile:Tile):Boolean;
   procedure UpdateSelect(map:Map);
   procedure Deselect(map:Map; tile:Tile);
@@ -124,7 +125,9 @@ interface
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
       stringhash, MyStrUtils, sgNamedIndexCollection, sgShared;
 
-  // load map func *********
+  //==================================================================
+  //Load Map Functions
+  //==================================================================
   function LoadMap(filename:string): Map;
 
   type
@@ -595,26 +598,43 @@ interface
     // Adjust the end and start to be in range of the array
     if endY >= (map^.MapHeight) then endY := map^.MapHeight-1;
     if endX >= (map^.MapWidth) then endX := map^.MapWidth-1;
+    if startX >= (map^.MapWidth) then startX := map^.MapWidth-1;
+    if startY >= (map^.MapHeight) then startY := map^.MapHeight-1;
+    
+    if endY <0 then endY := 0;
+    if endX <0 then endX := 0;
+    
     if startY < 0 then startY := 0;
     if startX < 0 then startX := 0;   
     
     //WriteLn('result ', startX, ':', startY, ' ', endX, ':', endY);
   end;
 
-  procedure PushMapClip(map:Map);
+  procedure PushMapClip(map:Map; startCol, startRow, endCol, endRow : LongInt);
   var
-  width, height : LongInt;
+    rowCount, colCount: LongInt;
+    width, height : LongInt;
+    pt: Point2D;
   begin
-    width := Round(((map^.MapWidth) * map^.TileWidth) - (2 * (map^.TileStagger.X)));
-    height := Round(((map^.MapHeight) * map^.TileHeight) - (map^.TileStagger.Y * (map^.MapHeight - 1)) -(2*map^.TileStagger.Y));
+    //WriteLn('cols: ', startCol, ' to ', endCol);
+    //WriteLn('rows: ', startRow, ' to ', endRow);
+    rowCount := (endRow - startRow)+1;
+    colCount := (endCol - startCol)+1;
+    //writeln(rowCount, ' ',ColCount);
+    
+    width := Round(((colCount * map^.TileWidth) - (2 * (map^.TileStagger.X))));
+    height := Round(((rowCount) * map^.TileHeight) - (map^.TileStagger.Y * (map^.MapHeight - 1)) -(2*map^.TileStagger.Y));
+    
+    pt := TileAt(map, startRow, startCol)^.position;
+    pt := PointAdd(pt, InvertVector(CameraPos()));
+    
+    //PushClip(RectangleFrom(-CameraX(), -CameraY(), width ,height));
 
-    {$IFDEF DEBUG}
-      DrawRectangle(ColorBlue, false, RectangleFrom(0, 0, width ,height));
-    {$ENDIF}
-    PushClip(RectangleFrom(-CameraX(), -CameraY(), width ,height));
+    //WriteLn('Clip At: ', PointToString(pt));
+    PushClip(RectangleFrom(pt.x, pt.y, width ,height));
   end;
 
-  //checks if tile is within selectedtile array.
+  //checks if tile is Selected.
   function TileSelected(map:Map; tile:Tile):Boolean;
   var
   k:LongInt;
@@ -650,7 +670,6 @@ interface
   procedure HighlightTile(highlightedTile: Tile; map:Map);
   begin
     if not assigned(highlightedTile) then exit;
-    
     DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, CameraPos*-1);
   end;
   //updates whether a tile is highlighted.
@@ -661,6 +680,7 @@ interface
     for row:=low(map^.Tiles) to high(map^.Tiles) do
       for col:=low(map^.Tiles[row]) to high(map^.Tiles[row]) do
         begin
+
           if TileSelected(map, @map^.Tiles[row,col]) then
             HighlightTile(@map^.Tiles[row,col],map);
         end;
@@ -668,7 +688,7 @@ interface
   //updates whether a tile should be selected or deselected.
   procedure UpdateSelect(map:Map);
   var
-  row,col,startCol, startRow, endCol, endRow:LongInt;
+    row,col,startCol, startRow, endCol, endRow:LongInt;
   begin
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
     for row:=startRow to endRow do
@@ -692,38 +712,20 @@ interface
   procedure DrawMap(map: Map);
   var
     layer,col, row, startRow, startCol, endRow, endCol : LongInt;
-    dir:Direction;
+   // dir:Direction;
   begin
-    PushMapClip(map);
-    
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
 
+    PushMapClip(map, startCol, startRow, endCol, endRow);
+    
     // Loop through all the layers + and additional one for debug info
-    for layer:= 0 to map^.MapLayer do
+    for layer:= 0 to map^.MapLayer-1 do
     begin
       for row:=startRow to endRow do
       begin
         for col:=startCol to endCol do
         begin
-          //Show debug information over last layer
-          if (layer = map^.MapLayer) then // and showdebug
-          begin
-            if TileSelected(map, @map^.Tiles[row,col]) then
-            begin
-              //Draw debug information
-              DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
-              DrawText(IntToStr(map^.Tiles[row,col].kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
-              DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
-
-              for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
-              begin
-                if not assigned(map^.Tiles[row,col].SurroundingTiles[dir]) then exit
-                else
-                DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
-              end;
-            end;
-          end
-          else if map^.Tiles[row,col].TileBitmapCells[layer].Bmap <> nil then
+          if map^.Tiles[row,col].TileBitmapCells[layer].Bmap <> nil then
           begin
               DrawCell(map^.Tiles[row,col].TileBitmapCells[layer].Bmap, map^.Tiles[row,col].TileBitmapCells[layer].Cell, map^.Tiles[row,col].Position);
           end;
@@ -732,6 +734,35 @@ interface
     end; // end of layers
     UpdateHighlight(map);
     PopClip();
+  end;
+
+  procedure DrawMapDebug(map: map);
+  var
+  dir: Direction;
+  row,col,startRow, startCol, endRow, endCol : LongInt;
+  begin
+  MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    for row:=startRow to endRow do
+    begin
+      for col:=startCol to endCol do
+      begin
+  //Show debug information over last layer
+        if TileSelected(map, @map^.Tiles[row,col]) then
+        begin
+          //Draw debug information
+          DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
+          DrawText(IntToStr(map^.Tiles[row,col].kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
+          DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
+
+          for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
+          begin
+            if not assigned(map^.Tiles[row,col].SurroundingTiles[dir]) then continue
+            else
+            DrawLine(map^.mapHighlightcolor, map^.Tiles[row,col].center,map^.Tiles[row,col].SurroundingTiles[dir]^.center);
+          end;
+        end;
+      end;
+    end;
   end;
 
   procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);
@@ -997,11 +1028,6 @@ interface
   //TILE RETURN FUNCTIONS    //
   //=========================//
 
-  function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
-  begin
-    //result:=********************
-    result := nil;
-  end;
 
   function TileAt(m: Map; id:LongInt) : Tile; Overload;
   var
@@ -1021,6 +1047,15 @@ interface
       result := nil
     else
       result := @m^.Tiles[row,col];
+  end;
+
+  function TileAt(m: Map; const pos:Point2D): Tile; overload;
+  var
+  row,col : LongInt;
+  begin
+    row := Trunc(pos.Y / (m^.TileHeight - m^.TileStagger.Y));
+    col := Trunc(pos.X / m^.TileWidth);
+    result := TileAt(m, row, col);
   end;
 
   function TileKind(t: Tile) : LongInt;

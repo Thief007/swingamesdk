@@ -60,10 +60,10 @@ begin
   writeln('Map Loading');
   myMap := LoadMap('test1.txt');
   writeln('Map Loaded');
-  AllocateValue(myMap, TileAt(myMap, 2,2), 'test', 0.8);
+  AllocateValue(myMap, @myMap^.Tiles[2,2], 'test', 0.8);
   repeat // The game loop...
     ProcessEvents();
-    UpdateActions(myMap);
+
 
       if KeyDown(vk_Up) then c^.CharSprite^.velocity:= p2d[0]
       else if KeyDown(vk_Down) then c^.CharSprite^.velocity:= p2d[1]
@@ -78,8 +78,10 @@ begin
       MoveSprite(c^.CharSprite);
 
     CenterCameraOn(c, VectorTo(0,0));
+        UpdateActions(myMap);
     ClearScreen(ColorBlack);
     DrawMap(myMap);
+    DrawMapDebug(myMap);
 
 		DrawCharacterWithStationary(c, 0, 1);
     
@@ -87,12 +89,12 @@ begin
     begin
       //HighLightTile(@myMap^.Tiles[j, i], myMap);
       //WriteLn('Character Velocity: ', PointToString(c^.CharSprite^.velocity));
-      MoveOut(myMap,CharacterSprite(c), i, j);
+      MoveOut(myMap,c^.CharSprite,i, j);
     end;
     
     
     DrawFramerate(0,0);
-    RefreshScreen(15);
+    RefreshScreen();
   until WindowCloseRequested();
   ReleaseAllResources();
   CloseAudio();
