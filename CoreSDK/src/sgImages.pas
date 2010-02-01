@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-01: Aaron  : Added BitmapName and BitmapFileName
 // - 2010-01-28: David  : Changed DoLoadBitmap to use an already loaded bitmap if found
 // - 2010-01-05: David  : Added SetTransparentColor Procedure (Line 701 and 1442)
 // - 2010-01-04: David  : Added Save Bitmap Procedure (Line 694 and 1428)
@@ -248,8 +249,20 @@ uses sgTypes;
   /// @class Bitmap
   /// @method interchangableWith
   function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
-  
-  
+
+
+  /// Returns the name of the bitmap
+  /// @lib
+  /// @class Bitmap
+  /// @getter Name
+  function BitmapName(bmp:Bitmap): string;
+  /// Returns the FileName of the bitmap
+  /// @lib
+  /// @class Bitmap
+  /// @getter Filename
+  function BitmapfileName(bmp:Bitmap): string;
+
+
 //----------------------------------------------------------------------------
 // Bitmap -> Circle
 //----------------------------------------------------------------------------
@@ -1405,6 +1418,19 @@ begin
   else result := bmp^.cellH;
 end;
 
+function BitmapName(bmp:Bitmap): string;
+begin
+  result:= '';
+  if not assigned(bmp) exit;
+  result:=bmp^.name;
+end;
+
+function BitmapFilename(bmp:Bitmap): string;
+begin
+  result:= '';
+  if not assigned(bmp) exit;
+  result:=bmp^.filename;
+end;
 
 function BitmapCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
 begin
