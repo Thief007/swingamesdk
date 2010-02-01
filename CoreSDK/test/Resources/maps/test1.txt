@@ -20,7 +20,7 @@ ml:4
 mhc: 0,255,0,255
 tw:50
 th:50
-mi:true
+mi:asfd
 
 //
 // Tile Bitmaps
@@ -28,7 +28,7 @@ mi:true
 // Format:
 // tb: [tile index], [bitmap filename]
 // gb: [tile index range], [cell range], [bitmap filename], [cell width], [cell height] [cells across] [cells down] [cell count]
-tb:0,isometric.png
+tb:0,floor.png
 tb:1,ball_small.png
 gb:[2,3],[0,1],test.jpg,50,50,2,1,2
 
