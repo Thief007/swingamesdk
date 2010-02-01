@@ -179,6 +179,7 @@ procedure FinishReadingText();
 function ActiveTextBoxParent() : Panel;
 
 //Lists
+procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
 procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
 procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
 function ListFromRegion(r: Region): GUIList; overload;
@@ -194,7 +195,6 @@ procedure ListAddItem(lst: GUIList; img:Bitmap);
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
-function ListActiveText(id :string) : string;
 
 //Label
 function LabelFont(l: GUILabel): Font; overload;
@@ -494,7 +494,7 @@ begin
     
     for j := High(current^.Regions) downto Low(current^.Regions) do
     begin
-      currentReg := @GUIC.visiblePanels[i]^.Regions[j];
+      currentReg := @GUIC.panels[i]^.Regions[j];
       case currentReg^.kind of
         gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangle(currentReg));
         gkLabel:      DrawTextOnScreen( LabelText(currentReg), 
@@ -923,7 +923,7 @@ end;
 // List Code
 //---------------------------------------------------------------------------------------
 
-procedure ListActiveItemIndex(lst: GUIList; idx: LongInt);
+procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
 begin
   if not assigned(lst) then exit;
   lst^.activeItem := idx;
@@ -936,11 +936,6 @@ begin
   lst^.font := f;
 end;
 
-
-function ListActiveText(id :string) : string;
-begin
-	result := ListItemText(ListFromRegion(RegionWithID('id')), ListActiveItemIndex(ListFromRegion(RegionWithID('id'))));
-end;
 
 function ListFont(r: Region): Font; overload;
 begin
@@ -1224,9 +1219,9 @@ begin
   
   for i := High(GUIC.visiblePanels) downto Low(GUIC.visiblePanels) do
   begin
-    if PointInRect(MousePosition(), GUIC.visiblePanels[i]^.area) then
+    if PointInRect(MousePosition(), GUIC.panels[i]^.area) then
     begin
-      result := GUIC.visiblePanels[i];
+      result := GUIC.panels[i];
       exit;
     end;
   end;
@@ -1371,7 +1366,9 @@ var
       newList.scrollArea  := RectangleFrom( scrollSz, btm, width - (2 * scrollSz), scrollSz);
     end;
     
+    
     SetLength(newList.placeHolder, (newList.columns * newList.rows));
+    
     SetLength(newList.items, 0);
     
     SetLength(result^.lists, Length(result^.lists) + 1);
@@ -1531,6 +1528,9 @@ var
     j, k: LongInt;
     
   begin
+    workingCol := 0;
+    workingRow := 0;
+    
     for j := Low(result^.Regions) to High(result^.Regions) do
     begin
       //Get the region as a list (will be nil if not list...)
@@ -1538,9 +1538,6 @@ var
       
       if assigned(tempListPtr) then
       begin
-        workingCol := 0;
-        workingRow := 0;
-        
         for k := Low(tempListPtr^.placeHolder) to High(tempListPtr^.placeHolder) do
         begin
           tempListPtr^.placeHolder[k].x := (workingCol * tempListPtr^.colWidth);
