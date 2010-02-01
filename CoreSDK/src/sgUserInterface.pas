@@ -189,6 +189,7 @@ procedure ListAddItem(lst: GUIList; img:Bitmap);
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
+function ListActiveText(id :string) : string;
 
 //Label
 function LabelFont(l: GUILabel): Font; overload;
@@ -894,6 +895,11 @@ end;
 //   else
 //     result := nil;
 // end;
+
+function ListActiveText(id :string) : string;
+begin
+	result := ListItemText(ListFromRegion(RegionWithID('id')), ListActiveItemIndex(ListFromRegion(RegionWithID('id'))));
+end;
 
 function ListFont(r: Region): Font; overload;
 begin
