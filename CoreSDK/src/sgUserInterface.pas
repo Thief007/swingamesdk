@@ -95,19 +95,20 @@ type
   end;
   
   PanelData = record
-    stringID:     string;
-    panelID:      LongInt;
-    area:         Rectangle;
-    visible:      boolean;
-    active:       boolean;
-    panelBitmap:  Bitmap;
-    regions:      Array of RegionData;
-    regionIds:    NamedIndexCollection;
-    labels:       Array of GUILabelData;
-    checkBoxes:   Array of GUICheckboxData;
-    radioGroups:  Array of GUIRadioGroupData;
-    textBoxes:    Array of GUITextBoxData;
-    lists:        Array of GUIListData;
+    stringID:             string;
+    panelID:              LongInt;
+    area:                 Rectangle;
+    visible:              boolean;
+    active:               boolean;
+    panelBitmapInactive:  Bitmap;
+    panelBitmapActive:    Bitmap;
+    regions:              Array of RegionData;
+    regionIds:            NamedIndexCollection;
+    labels:               Array of GUILabelData;
+    checkBoxes:           Array of GUICheckboxData;
+    radioGroups:          Array of GUIRadioGroupData;
+    textBoxes:            Array of GUITextBoxData;
+    lists:                Array of GUIListData;
   end;
 
 //---------------------------------------------------------------------------
@@ -118,11 +119,11 @@ procedure GUISetBackgroundColor(c:Color);
 
 // Panels
 function LoadPanel(filename: string): Panel;
-procedure ShowPanel(p: Panel);
 procedure AddPanelToGUI(p: Panel);
+procedure ShowPanel(p: Panel);
 procedure HidePanel(p: Panel);
-procedure DrawPanels();
 procedure ToggleShowPanel(p: Panel);
+procedure DrawPanels();
 procedure ActivatePanel(p: Panel);
 procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
@@ -136,6 +137,8 @@ function RegionID(r: Region): string;
 function RegionWithID(pnl: Panel; ID: String): Region; overload;
 function RegionWithID(ID: String): Region; overload;
 function RegionPanel(r: Region): Panel;
+procedure ToggleRegionActive(forRegion: Region);
+procedure SetRegionActive(forRegion: Region; b: boolean);
 
 //Checkbox
 function CheckboxState(s: String): Boolean; overload;
@@ -156,6 +159,7 @@ procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 //TextBox
 function TextBoxFont(tb: GUITextBox): Font; overload;
 function TextBoxFont(r: Region): Font; overload;
+procedure TextboxSetFont(Tb: GUITextbox; f: font);
 function TextBoxText(r: Region): String; overload;
 function TextBoxText(tb: GUITextBox): String; overload;
 procedure TextboxSetText(r: Region; s: string); overload;
@@ -180,6 +184,7 @@ procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
 function ListFromRegion(r: Region): GUIList; overload;
 function ListFont(r: Region): Font; overload;
 function ListFont(lst: GUIList): Font; overload;
+procedure ListSetFont(lst: GUITextbox; f: font);
 function ListItemText(r: Region; idx: LongInt): String; overload;
 function ListItemText(lst: GUIList; idx: LongInt): String; overload;
 function ListActiveItemIndex(lst: GUIList): LongInt;
@@ -304,7 +309,7 @@ begin
   end;
 end;
 
-procedure DrawVectorTextbox(forRegion: Region; const area: Rectangle);
+procedure DrawTextbox(forRegion: Region; const area: Rectangle);
 begin
   DrawRectangleOnScreen(GUIC.foregroundClr, area);
   
@@ -498,7 +503,7 @@ begin
                                         RectangleTopLeft(RegionRectangle(currentReg)));
         gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangle(currentReg));
         gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangle(currentReg));
-        gkTextbox:    DrawVectorTextbox(currentReg, RegionRectangle(currentReg));
+        gkTextbox:    DrawTextbox(currentReg, RegionRectangle(currentReg));
         gkList:       DrawVectorList(currentReg, RegionRectangle(currentReg));
       end;
     end;
@@ -507,19 +512,31 @@ begin
   end;
 end;
 
+procedure DrawBitmapCheckbox(forRegion: Region; const area: Rectangle);
+begin
+  if CheckboxState(forRegion) then
+  begin
+    DrawBitmapPart(forRegion^.parent^.panelBitmapActive, area, PointAdd(RectangleTopLeft(area), RectangleTopLeft(forRegion^.parent^.area)));
+  end;
+end;
+
 procedure DrawAsBitmaps();
 var
   i, j: integer;
+  currentReg: Region;
 begin
   for i := Low(GUIC.panels) to High(GUIC.panels) do
   begin
     if GUIC.panels[i]^.visible then
-      DrawBitmapOnScreen(GUIC.panels[i]^.panelBitmap, RectangleTopLeft(GUIC.panels[i]^.area));
+      DrawBitmapOnScreen(GUIC.panels[i]^.panelBitmapInactive, RectangleTopLeft(GUIC.panels[i]^.area));
       
     for j := Low(GUIC.panels[i]^.Regions) to High(GUIC.panels[i]^.Regions) do
     begin
+      currentReg := @GUIC.panels[i]^.Regions[j];
       case GUIC.panels[i]^.Regions[j].kind of
-        gkLabel: ;//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
+        gkLabel: DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(RegionRectangle(currentReg)));//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
+        gkTextbox: DrawTextbox(currentReg, currentReg^.area);
+        gkCheckbox: DrawBitmapCheckbox(currentReg, currentReg^.area);
       end;
     end;
   end;
@@ -536,6 +553,21 @@ end;
 //---------------------------------------------------------------------------------------
 // Region Code
 //---------------------------------------------------------------------------------------
+
+procedure SetRegionActive(forRegion: Region; b: boolean);
+begin
+  if not assigned(forRegion) then exit;
+
+  forRegion^.active := b;
+end;
+
+procedure ToggleRegionActive(forRegion: Region);
+var
+  b: Boolean;
+begin
+  if not assigned(forRegion) then exit;
+
+end;
 
 function RegionWithID(pnl: Panel; ID: String): Region; overload;
 var
@@ -806,6 +838,12 @@ end;
 // Textbox Code
 //---------------------------------------------------------------------------------------
 
+procedure TextboxSetFont(Tb: GUITextbox; f: font);
+begin
+  if not(assigned(tb)) OR not(assigned(f)) then exit;
+
+  Tb^.font := f;
+end;
 
 function TextBoxFont(r: Region): Font; overload;
 begin
@@ -885,16 +923,19 @@ end;
 // List Code
 //---------------------------------------------------------------------------------------
 
-// function ListFromID(idString: String): GUIList;
-// var
-//   tempReg: Region;
-// begin
-//   tempReg := GetRegionByID(idString);
-//   if assigned(tempReg) AND (tempReg^.elementIndex < Length(tempReg^.parent^.lists)) AND (tempReg^.elementIndex >= 0) then
-//     result := @tempReg^.parent^.lists[GetRegionByID(idString)^.elementIndex]
-//   else
-//     result := nil;
-// end;
+procedure ListActiveItemIndex(lst: GUIList; idx: LongInt);
+begin
+  if not assigned(lst) then exit;
+  lst^.activeItem := idx;
+end;
+
+procedure ListSetFont(lst: GUITextbox; f: font);
+begin
+  if not(assigned(lst)) OR not(assigned(f)) then exit;
+
+  lst^.font := f;
+end;
+
 
 function ListActiveText(id :string) : string;
 begin
@@ -1408,7 +1449,7 @@ var
     p^.Regions[addedIdx] := r;
     
     case r.kind of
-      gkButton: ;
+      gkButton:     ;
       gkLabel:      CreateLabel(@p^.Regions[addedIdx],d);
       gkCheckbox:   CreateCheckbox(@p^.Regions[addedIdx],d);
       gkRadioGroup: CreateRadioButton(@p^.Regions[addedIdx],d);
@@ -1441,9 +1482,13 @@ var
       'y': result^.area.y       := MyStrToInt(data, false);
       'w': result^.area.width   := MyStrToInt(data, false);
       'h': result^.area.height  := MyStrToInt(data, false);
-      'b': begin 
+      'i': begin
              LoadBitmap(Trim(data)); 
-             result^.panelBitmap := BitmapNamed(Trim(data));
+             result^.panelBitmapInactive := BitmapNamed(Trim(data));
+           end;
+      'a': begin
+             LoadBitmap(Trim(data));
+             result^.panelBitmapActive := BitmapNamed(Trim(data));
            end;
       'r': StoreRegionData(data);
     else
@@ -1470,7 +1515,6 @@ var
   begin
     New(result);
     result^.stringID := '';
-    result^.panelBitmap := nil;
     result^.panelID := -1;
     result^.area := RectangleFrom(0,0,0,0);
     result^.visible := false;
