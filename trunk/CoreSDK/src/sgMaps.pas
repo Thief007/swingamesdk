@@ -61,7 +61,7 @@ interface
   function TileSelected(map:Map; tile:Tile):Boolean;
   procedure UpdateSelect(map:Map);
   procedure Deselect(map:Map; tile:Tile);
-  procedure HighlightTile(highlightedTile: Tile; map:Map);
+  procedure HighlightTile(highlightedTile: Tile);
   procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);
 
 //==================================//
@@ -672,31 +672,45 @@ interface
           SetLength(map^.SelectedTiles, length(map^.SelectedTiles)-1);
         end;
   end;
+  
   //procedure to highlight one tile.
-  procedure HighlightTile(highlightedTile: Tile; map:Map);
+  procedure HighlightTile(highlightedTile: Tile);
   begin
     if not assigned(highlightedTile) then exit;
     DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, CameraPos*-1);
   end;
+
+  
   //updates whether a tile is highlighted.
   procedure UpdateHighlight(map:Map);
   var
-  row,col:LongInt;
+  i:LongInt;
   begin
-    for row:=low(map^.Tiles) to high(map^.Tiles) do
-      for col:=low(map^.Tiles[row]) to high(map^.Tiles[row]) do
-        begin
-
-          if TileSelected(map, @map^.Tiles[row,col]) then
-            HighlightTile(@map^.Tiles[row,col],map);
-        end;
+    for i:=low(map^.SelectedTiles) to high(map^.SelectedTiles) do
+            HighlightTile(TileAt(map, map^.SelectedTiles[i]));
   end;
+  
   //updates whether a tile should be selected or deselected.
   procedure UpdateSelect(map:Map);
   var
-    row,col,startCol, startRow, endCol, endRow:LongInt;
+    //startCol, startRow, endCol, endRow:LongInt;
+    t: Tile;
   begin
-    MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    t := TileAt(map, ToWorld(MousePosition()));
+    if not TileSelected(map, t) then
+    begin
+      SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
+      map^.SelectedTiles[high(map^.SelectedTiles)]:=t^.TileId;
+      writeln('selected: ',t^.TileId);
+    end
+    else
+    begin
+    writeln('deselecting: ',t^.TileId);
+      Deselect(map, TileAt(map, t^.TileId));
+    end;
+  
+    {MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    
     for row:=startRow to endRow do
     begin
       for col:=startCol to endCol do
@@ -711,7 +725,7 @@ interface
             else if TileSelected(map, @map^.Tiles[row,col]) then Deselect(map, @map^.Tiles[row,col]);
           end
       end;
-    end;
+    end;}
   end;
 
   //draw map procedure.
@@ -738,7 +752,6 @@ interface
         end; // end of col in row
       end; // end of row
     end; // end of layers
-    UpdateHighlight(map);
     PopClip();
   end;
 
@@ -769,6 +782,7 @@ interface
         end;
       end;
     end;
+        UpdateHighlight(map);
   end;
 
   procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);

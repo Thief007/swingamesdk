@@ -2037,13 +2037,12 @@ implementation
       //DrawTriangle(dest, s^.color, pts[0].x+offset.X, pts[0].y+offset.Y, pts[1].x+offset.X, pts[1].y+offset.Y, pts[2].x+offset.X, pts[2].y+offset.Y);
   end;
   
-  procedure _DrawLines(dest: Bitmap; s: Shape; const offset: Point2D);
+  procedure _DrawLines(dest: Bitmap; s: Shape; const offset: Point2D; kind: ShapeKind);
   var
     lines: LinesArray;
     i: Integer;
   begin
-    lines := ShapeLines(s, ShapeShapeKind(s), offset);
-    
+    lines := ShapeLines(s, kind, offset);
     for i := 0 to High(lines) do
     begin
       DrawLine(dest, s^.color, lines[i]);
@@ -2052,7 +2051,7 @@ implementation
   
   procedure DrawShapeAsLineList(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
   begin
-    _DrawLines(dest, s, offset);
+    _DrawLines(dest, s, offset, pkLineList);
   end;
   // var
   //   i: LongInt;
@@ -2068,7 +2067,7 @@ implementation
   
   procedure DrawShapeAsLineStrip(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
   begin
-    _DrawLines(dest, s, offset);
+    _DrawLines(dest, s, offset, pkLineStrip);
   end;
   // var
   //   i: LongInt;
