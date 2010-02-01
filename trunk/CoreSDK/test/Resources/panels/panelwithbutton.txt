@@ -6,23 +6,29 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 10
-y: 365
-w: 500
-h: 225
-//b: testerface.png
+x: 15
+y: 15
+w: 680
+h: 400
+a: testerfaceActive.png
+i: testerface.png
 
 // Region data
 // Format: r: x, y, w, h, kind
-r: 80, 80, 320, 70, 0, Button1
-r: 90, 100, 20, 20, 1, Button1Label, Push Button, courierLarge
-r: 10, 80, 60, 70, 2, Checkbox2, false
+r: 255, 310, 150, 30, 0, Button1
+r: 360, 30, 280, 25, 1, Button1Label, Test Label, courier
+r: 30, 150, 30, 30, 2, Checkbox1, false
+r: 30, 200, 30, 30, 2, Checkbox2, false
 //Radiobutton r: x, y, w, h, 3, GroupID
-r: 10, 10, 10, 10, 3, radButton1, RadioGroup1
-r: 25, 10, 10, 10, 3, radButton2, RadioGroup1
-r: 40, 10, 10, 10, 3, radButton3, RadioGroup1
+
+r: 30, 250, 25, 25, 3, radButton1, RadioGroup1
+
+r: 80, 250, 25, 25, 3, radButton2, RadioGroup1
+
+r: 120, 250, 25, 25, 3, radButton3, RadioGroup1
+
+r: 170, 250, 25, 25, 3, radButton4, RadioGroup1
 
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
-r: 10, 180, 450, 30, 4, TextBox1, courier, 16, test text box
-r: 10, 25, 450, 30, 4, TextBox2, courier, 16, testbox 2
+r: 385, 165, 290, 40, 4, TextBox1, courier, 16, test text box
