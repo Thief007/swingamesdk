@@ -4148,24 +4148,25 @@ implementation
   
   function ShapeLines(shp: Shape; kind: ShapeKind; const offset: Point2D): LinesArray;
   var
-    pts: Point2DArray;
+    pts,pts1: Point2DArray;
     i: Integer;
   begin
     pts := ShapePoints(shp);
+    SetLength(pts1, length(pts));
     if length(pts) < 2 then begin SetLength(result, 0); exit; end;
     if not ((kind = pkLineList) or (kind = pkLineStrip)) then exit;
     
     if kind = pkLineList then SetLength(result, Length(pts) div 2)
     else SetLength(result, Length(pts) - 1);
     
-    for i := 0 to high(pts) do pts[i] := PointAdd(pts[i], offset);
+    for i := 0 to high(pts1) do pts1[i] := PointAdd(pts[i], offset);
     
     for i := 0 to High(result) do
     begin
       if kind = pkLineList then
-        result[i] := LineFrom(pts[i * 2], pts[i * 2 + 1])
+        result[i] := LineFrom(pts1[i * 2], pts1[i * 2 + 1])
       else // strip
-        result[i] := LineFrom(pts[i], pts[i + 1]);
+        result[i] := LineFrom(pts1[i], pts1[i + 1]);
     end;
   end;
   
