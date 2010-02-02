@@ -530,8 +530,14 @@ begin
       	DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
       end
       else
-      	DrawBitmapPart(forRegion^.parent^.panelBitmapActive, placeHolderScreenRect, RectangleTopLeft(itemArea));
-      	DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.foregroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+      	DrawBitmapPart(forRegion^.parent^.panelBitmapActive, 
+      									placeHolderScreenRect, 
+      									RectangleTopLeft(itemArea));
+      									
+      	DrawTextOnScreen(ListItemText(tempList, itemIdx), 
+      										GUIC.foregroundClr, 
+      										ListFont(tempList), 
+      										RectangleTopLeft(itemArea))
     end;
     
     PopClip();
@@ -625,6 +631,39 @@ end;
 //---------------------------------------------------------------------------------------
 // Region Code
 //---------------------------------------------------------------------------------------
+
+function RegionWidth(r: Region): LongInt;
+begin
+	result := -1;
+	if not(assigned(r)) then exit;
+	
+	result := r^.area.width;
+end;
+
+function RegionHeight(r: Region): LongInt;
+begin
+	result := -1;
+	if not(assigned(r)) then exit;
+	
+	result := r^.area.height;
+end;
+
+function RegionX(r: Region): LongInt;
+begin
+	result := -1;
+	
+	if not(assigned(r)) then exit;
+	
+	result := r^.area.x;
+end;
+
+function RegionY(r: Region): LongInt;
+begin
+	result := -1;
+	if not(assigned(r)) then exit;
+	
+	result := r^.area.y;
+end;
 
 procedure SetRegionActive(forRegion: Region; b: boolean);
 begin
@@ -721,12 +760,18 @@ begin
 end;
 
 function RegionClicked(): region;
-begin
+begin		
+  result := nil;	
+  if not assigned(GUIC.lastClicked) then exit;
+	
   result := GUIC.lastClicked;
 end;
 
 function RegionClickedID(): String;
 begin
+	result := '';
+	if not assigned(GUIC.lastClicked) then exit;
+	
   result := RegionID(GUIC.lastClicked);
 end;
 
@@ -934,7 +979,9 @@ end;
 function LabelText(lb: GUILabel): String; overload;
 begin
   if assigned(lb) then
-    result := lb^.contentString;
+    result := lb^.contentString
+  else
+  	result := '';
 end;
 
 function LabelText(r: Region): String; overload;
@@ -992,6 +1039,8 @@ end;
 
 function LastTextRead(): string;
 begin
+	result := '';
+	if not assigned(GUIC.lastTextRead) then exit;
   result := GUIC.lastTextRead;
 end;
 
@@ -1337,6 +1386,52 @@ end;
 //---------------------------------------------------------------------------------------
 // Panel Code
 //---------------------------------------------------------------------------------------
+
+procedure PanelSetX(p: Panel; nX: LongInt);
+begin
+	if not(assigned(p)) then exit;
+	
+	p^.area.X := nX;
+end;
+
+procedure PanelSetY(p: Panel; nY: LongInt);
+begin
+	if not(assigned(p)) then exit;
+	
+	p^.area.Y := nY;
+end;
+
+function PanelWidth(p: Panel): LongInt;
+begin
+	result := -1;
+	if not(assigned(p)) then exit;
+	
+	result := p^.area.width;
+end;
+
+function PanelHeight(p: Panel): LongInt;
+begin
+	result := -1;
+	if not(assigned(p)) then exit;
+	
+	result := p^.area.height;
+end;
+
+function PanelX(p: Panel): LongInt;
+begin
+	result := -1;
+	if not(assigned(p)) then exit;
+	
+	result := p^.area.x;
+end;
+
+function PanelY(p: Panel): LongInt;
+begin
+	result := -1;
+	if not(assigned(p)) then exit;
+	
+	result := p^.area.y;
+end;
 
 function PanelVisible(p: Panel): boolean;
 begin
