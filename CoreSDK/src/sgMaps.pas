@@ -7,9 +7,16 @@ interface
     Direction = (mdNorthWest, mdNorth, mdNorthEast, mdWest, mdEast, mdSouthWest, mdSouth, mdSouthEast);
 
     
-    BitmapCell = Record
+    {BitmapCell = Record
       Cell:         LongInt;
       Bmap:         Bitmap;
+    end;}
+
+      type
+      BitmapCellKind = record
+      Cell:         LongInt;
+      Bmap:         Bitmap;
+      KindIdx:      LongInt;    
     end;
 
     {Marker = record
@@ -17,38 +24,39 @@ interface
       Id:           LongInt;
     end;}
 
-    
+    BitmapCellKindPtr = ^BitmapCellKind;
     Tile = ^TileData;
     TileData = Record
-      TileID:           LongInt;                      // The tile's unique id
-      Kind:             LongInt;                      // The "kind" of the tile - links to KindNames etc.
-      Position:         Point2D;                      // Position of the top right corner of the Tile
-      Center:           Point2D;                      // position of the center of the Tile
-      TileBitmapCells:  array of BitmapCell;          // Bitmap of the Tile.
-      TileShape:        Shape;                        // shape of tile
-      Values:           Array of Single;              // Array of single values.
-      SurroundingTiles: Array[Direction] of Tile;     // The adjcent tiles, can be nil if none.
+      TileID:             LongInt;                      // The tile's unique id
+      Kind:               LongInt;                      // The "kind" of the tile - links to KindNames etc.
+      Position:           Point2D;                      // Position of the top right corner of the Tile
+      Center:             Point2D;                      // position of the center of the Tile
+      TileBitmapCellKind: Array of BitmapCellKindPtr;      // ptr to bitmapCellKindData
+      TileShape:          Shape;                        // shape of tile
+      Values:             Array of Single;              // Array of single values.
+      SurroundingTiles:   Array[Direction] of Tile;     // The adjcent tiles, can be nil if none.
     end;
 
     
     Map = ^MapData;
     MapData = Record
-      Tiles:            Array of Array of TileData;     // The actual tiles -> in col,row order
-      SelectedTiles:    LongIntArray;                   // id of selected tiles
-      Isometric:        Boolean;                        // Map Isometric
-      valueIds:         NamedIndexCollection;           // has names of values
-      kindids:          NamedIndexCollection;           // has names of kinds
-      MarkerIds:        NamedIndexCollection;           // has names of Markers
-      //MapMarkers:       Array of Marker;
-      MapPrototype:     ShapePrototype;                 // prototype of the tiles
-      MapHighlightcolor:Color;                          // highlight color
-      MapWidth:         LongInt;                        // The Map width (# of grid in x axis)
-      MapHeight:        LongInt;                        // The Map height (# of grid in Y axis)
-      MapLayer:         LongInt;                        // The Number of layers within the map
-      TileWidth:        LongInt;                        // The Tile width
-      TileHeight:       LongInt;                        // The Tile height
-      TileStagger:      Vector;                         // Offset of the tile's X Position
-      MapDefaultValues: Array of Array of Single;       //default values of tiles depending on bitmaps.
+      Tiles:              Array of Array of TileData;     // The actual tiles -> in col,row order
+      SelectedTiles:      LongIntArray;                   // id of selected tiles
+      Isometric:          Boolean;                        // Map Isometric
+      valueIds:           NamedIndexCollection;           // has names of values
+      kindids:            NamedIndexCollection;           // has names of kinds
+      MarkerIds:          NamedIndexCollection;           // has names of Markers
+      //MapMarkers:        Array of Marker;
+      MapPrototype:       ShapePrototype;                 // prototype of the tiles
+      MapHighlightcolor:  Color;                          // highlight color
+      MapWidth:           LongInt;                        // The Map width (# of grid in x axis)
+      MapHeight:          LongInt;                        // The Map height (# of grid in Y axis)
+      MapLayer:           LongInt;                        // The Number of layers within the map
+      TileWidth:          LongInt;                        // The Tile width
+      TileHeight:         LongInt;                        // The Tile height
+      TileStagger:        Vector;                         // Offset of the tile's X Position
+      MapDefaultValues:   Array of Array of Single;       //default values of tiles depending on bitmaps.
+      BitmapCellKind:     Array of BitmapCellKind;    // Bitmap/cell/kinds.
     end;
 
 
@@ -57,13 +65,13 @@ interface
 
   function LoadMap(filename:string): Map;
   procedure DrawMap(map: Map); overload;
-   procedure DrawMapDebug(map: map);
+  procedure DrawMapDebug(map: map);
   function TileSelected(map:Map; tile:Tile):Boolean;
   procedure UpdateSelect(map:Map);
   procedure Deselect(map:Map; tile:Tile);
   procedure HighlightTile(highlightedTile: Tile);
   procedure AllocateValue(m:Map; tile:Tile; name:String; val:Single);
-
+  procedure SaveMap(m:Map; filename:String);
 //==================================//
 //collision functions and procedures//
 //==================================//
@@ -125,6 +133,7 @@ interface
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
       stringhash, MyStrUtils, sgNamedIndexCollection, sgShared;
 
+
   //==================================================================
   //Load Map Functions
   //==================================================================
@@ -139,12 +148,6 @@ interface
     end;
 
 
-    BitmapCellKind = record
-      Cell:         LongInt;
-      Bmap:         Bitmap;
-      KindIdx:      LongInt;    
-    end;
-
 
   var
     tempValues:       Array of SpecificValuesLoader;  // contains the row,col, name and value
@@ -153,7 +156,7 @@ interface
     id:               String;                         // id for the line processor to identify how to handle the data
     data,line:        String;                         // line is read then seperated into id and data.
     lineno:           LongInt;                        // line number for exceptions
-    bitmapCellArray:  Array of BitmapCellKind;        // had to make a list of bitmap since i can't load 2 bitmaps with the same image.
+
 
 
   // use data processed to set tile properties.
@@ -166,7 +169,7 @@ interface
       for row:=low(result^.Tiles) to high (result^.Tiles) do
         for col:=low(result^.Tiles[row]) to high(result^.Tiles[row]) do
         begin
-          SetLength(result^.Tiles[row,col].TileBitmapCells, result^.MapLayer); // set length of bitmapcells per tile.
+          SetLength(result^.Tiles[row,col].TileBitmapCellKind, result^.MapLayer); // set length of bitmapcells per tile.
           result^.Tiles[row,col].TileID:=id;
           id+=1;
         end;
@@ -181,6 +184,7 @@ interface
     var
       bitmapIdxs: Array of LongInt;
       layer, i,rowNum:LongInt;
+      current : LongInt;
     begin
       rowNum:= 0;
       if Length(result^.Tiles) = 0 then SetTiles();
@@ -197,19 +201,25 @@ interface
 
         for i:=low(bitmapIdxs) to high(bitmapIdxs) do
         begin
-          if bitmapIdxs[i] <> -1 then // used -1 as no bitmap.
+        result^.Tiles[rowNum, i].TileBitmapCellKind[layer] := nil;
+          current := bitmapIdxs[i];
+          if current <> -1 then // used -1 as no bitmap.
           begin
-            result^.Tiles[rowNum, i].TileBitmapCells[layer].Bmap := bitmapCellArray[bitmapIdxs[i]].Bmap;
-            result^.Tiles[rowNum, i].TileBitmapCells[layer].Cell := bitmapCellArray[bitmapIdxs[i]].Cell;
+            //result^.Tiles[rowNum, i].TileBitmapCellKind[layer].Bmap    := bitmapCellArray[current].Bmap;
+            //result^.Tiles[rowNum, i].TileBitmapCells[layer].Cell    := bitmapCellArray[current].Cell;
+            //result^.Tiles[rowNum, i].TileBitmapCells[layer].KindIdx := bitmapCellArray[current].KindIdx;
+            result^.Tiles[rowNum, i].TileBitmapCellKind[layer] := @result^.BitmapCellKind[current];
             
             if layer = 0 then
             begin
-              result^.Tiles[rowNum, i].kind := bitmapCellArray[bitmapIdxs[i]].KindIdx;
+              writeln('adding kind');
+              result^.Tiles[rowNum, i].kind := result^.BitmapCellKind[current].KindIdx;
             end;
             //result^.Tiles[row,col].Values:= result^.MapDefaultValues
           end
           else if layer = 0 then
-           result^.Tiles[rowNum, i].kind := -1;
+          result^.Tiles[rowNum, i].kind := -1;
+
         end;
         RowNum += 1;
       end;
@@ -222,11 +232,11 @@ interface
     index:LongInt;
     begin
       index:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
-      if (index+1)> length(bitmapCellArray) then
+      if (index+1)> length(result^.BitmapCellKind) then
       begin
-      SetLength(bitmapCellArray, index+1);
-      bitmapCellArray[index].Bmap := LoadBitmap(ExtractDelimited(2,data,[',']));
-      bitmapCellArray[index].Cell:= 0;
+      SetLength(result^.BitmapCellKind, index+1);
+      result^.BitmapCellKind[index].Bmap := LoadBitmap(ExtractDelimited(2,data,[',']));
+      result^.BitmapCellKind[index].Cell:= 0;
       end;
     end;
 
@@ -361,11 +371,11 @@ interface
     kindIds:LongIntArray;
     begin
       kindIds:=ProcessRange(ExtractDelimitedWithRanges(1,data));
-      if length(kindIds) = length(bitmapCellArray) then
+      if length(kindIds) = length(result^.BitmapCellKind) then
         begin
-          for i:=low(bitmapCellArray) to high(bitmapCellArray) do
+          for i:=low(result^.BitmapCellKind) to high(result^.BitmapCellKind) do
           begin
-          bitmapCellArray[i].KindIdx := kindIds[i];
+          result^.BitmapCellKind[i].KindIdx := kindIds[i];
           end;
         end
         else
@@ -460,6 +470,16 @@ interface
         end;
       end;
     end;
+
+    procedure AddSpecificKind(data: string);
+    var
+    row,col,kidx:longInt;
+    begin
+      row := MyStrToInt(ExtractDelimited(1, data, [',']));
+      col := MyStrToInt(ExtractDelimited(2, data, [',']));
+      kidx := MyStrToInt(ExtractDelimited(3, data, [',']));
+      SetTileKind(TileAt(result,row,col), kidx);
+    end;
     // processes lines regarding tiles
     // tw = tile width
     // th = tile height
@@ -474,6 +494,7 @@ interface
         'l': AddTile();
         'b': AddBitmap(data);
         'v':LoadSpecificValue(data);
+        'k':AddSpecificKind(data);
       end;
     end;
     //processes lines regarding grid bitmap.
@@ -499,12 +520,12 @@ interface
       cellCols        := MyStrToInt(ExtractDelimitedWithRanges(7,data),false);
       cellCount       := MyStrToInt(ExtractDelimitedWithRanges(8,data),false);
       
-      SetBitmapCellDetails(gridBitmap, cellWidth, cellHeight, cellRows, cellCols, cellCount);
+      SetBitmapCellDetails(gridBitmap, cellWidth, cellHeight, cellCols, cellRows, cellCount);
       for i:=low(bitmapCellIds) to high(bitmapCellIds) do
       begin
-        SetLength(bitmapCellArray, length(bitmapCellArray)+1);
-        bitmapCellArray[high(bitmapCellArray)].Cell := cellRegions[i];
-        bitmapCellArray[high(bitmapCellArray)].Bmap  := gridBitmap;
+        SetLength(result^.BitmapCellKind, length(result^.BitmapCellKind)+1);
+        result^.BitmapCellKind[high(result^.BitmapCellKind)].Cell := cellRegions[i];
+        result^.BitmapCellKind[high(result^.BitmapCellKind)].Bmap  := gridBitmap;
       end;
     end;
     //Process line procedure*************
@@ -697,6 +718,7 @@ interface
     t: Tile;
   begin
     t := TileAt(map, ToWorld(MousePosition()));
+    if t = nil then exit;
     if not TileSelected(map, t) then
     begin
       SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
@@ -708,24 +730,6 @@ interface
     writeln('deselecting: ',t^.TileId);
       Deselect(map, TileAt(map, t^.TileId));
     end;
-  
-    {MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
-    
-    for row:=startRow to endRow do
-    begin
-      for col:=startCol to endCol do
-      begin
-        if PointInShape(ToWorld(MousePosition()), map^.Tiles[row,col].TileShape) then
-          begin
-            if NOT TileSelected(map, @map^.Tiles[row,col]) then
-            begin
-              SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
-              map^.SelectedTiles[high(map^.SelectedTiles)]:=map^.Tiles[row,col].TileID;
-            end
-            else if TileSelected(map, @map^.Tiles[row,col]) then Deselect(map, @map^.Tiles[row,col]);
-          end
-      end;
-    end;}
   end;
 
   //draw map procedure.
@@ -745,9 +749,11 @@ interface
       begin
         for col:=startCol to endCol do
         begin
-          if map^.Tiles[row,col].TileBitmapCells[layer].Bmap <> nil then
+          if map^.Tiles[row,col].TileBitmapCellKind[layer] <> nil then
+          if map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap <> nil then
           begin
-              DrawCell(map^.Tiles[row,col].TileBitmapCells[layer].Bmap, map^.Tiles[row,col].TileBitmapCells[layer].Cell, map^.Tiles[row,col].Position);
+           // writeln(HexStr(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap));
+              DrawCell(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap, map^.Tiles[row,col].TileBitmapCellKind[layer]^.Cell, map^.Tiles[row,col].Position);
           end;
         end; // end of col in row
       end; // end of row
@@ -798,7 +804,251 @@ interface
     //WriteLn('AllocateValue: ', name, ' := ', val, ' @idx ', idx, ' ', High(tile^.values));
     tile^.Values[idx] := val;
   end;
+//---------------------------------------------------------------------------
+// SAVE MAP
+//---------------------------------------------------------------------------
+  Procedure SaveMap(m:Map; filename:String);
+  type
+  cellkind = record
+    cell      : LongInt;
+    kindIdx      : LongInt;
+    end;
 
+  cellKindArray = array of cellkind;
+  
+  BitmapCells = record
+    bmp       : Bitmap;
+    Cellkinds : cellKindArray;
+    startIdx  : LongInt;
+    kindIdx   : LongInt;
+  end;
+  var
+  path : string;
+  output: text;
+  bitmapCellsArray:  Array of BitmapCells;
+    procedure _CheckAddBitmap(bmp: Bitmap; cell,kindIdx: Integer);
+    var
+      i,j:LongInt;
+    begin
+     // WriteLn('Checking ', HexStr(bmp), ' ', cell, ' kind ', kindIdx);
+      
+      if not assigned(bmp) then exit;
+      // For all of the cells we have so far
+      for i:=low(bitmapCellsArray) to high(bitmapCellsArray) do
+      begin
+        //if this is the bitmap we are after...
+        if (bitmapCellsArray[i].bmp = bmp) then
+        begin
+          //check if we have the cell...
+          for j:=low(bitmapCellsArray[i].CellKinds) to high(bitmapCellsArray[i].CellKinds) do
+          begin
+            //if found... exit out of proc
+            if bitmapCellsArray[i].CellKinds[j].cell = cell then exit;
+          end;
+          // Need to add cellkind to bitmap
+          SetLength(bitmapCellsArray[i].CellKinds, length(bitmapCellsArray[i].CellKinds) + 1);
+          bitmapCellsArray[i].CellKinds[high(bitmapCellsArray[i].CellKinds)].cell := Cell;
+          bitmapCellsArray[i].CellKinds[high(bitmapCellsArray[i].CellKinds)].kindIdx := kindIdx;
+          
+          exit;
+        end;
+      end;
+      
+      // Got here because there was no matching bitmap... so add it
+      SetLength(bitmapCellsArray, length(bitmapCellsArray) + 1);
+     // writeln(Length(bitmapCellsArray));
+      SetLength(bitmapCellsArray[high(bitmapCellsArray)].CellKinds, 1);
+      bitmapCellsArray[high(bitmapCellsArray)].CellKinds[0].Cell := cell;
+      bitmapCellsArray[high(bitmapCellsArray)].Bmp := bmp;
+      bitmapCellsArray[high(bitmapCellsArray)].CellKinds[0].KindIdx := kindIdx;
+      
+     // writeln('cur '+bitmapName(bitmapCellsArray[i].bmp),' passed '+bitmapName(bmp));
+    end;
+
+    procedure _SetStartIdx();
+    var
+    i:LongInt;
+    begin
+      bitmapCellsArray[0].startIdx:=0;
+      for i:= (low(bitmapCellsArray)+1) to high(bitmapCellsArray) do
+      begin
+        bitmapCellsArray[i].startIdx := (bitmapCellsArray[i-1].startIdx + length(bitmapCellsArray[i-1].CellKinds));
+      end;
+    end;
+
+
+    function _IndexOfMapCellKind(ptr:BitmapCellKindPtr): LongInt;
+    var
+    i:LongInt;
+    begin
+    result := -1;
+    if ptr = nil then exit;
+    for i := low(m^.BitmapCellKind) to high(m^.BitmapCellKind) do
+    begin
+      if ptr = @m^.BitmapCellKind[i] then
+      result:= i;
+    end;
+    
+    end;
+    
+    procedure _WriteBitmapInfo();
+    var
+    i,j:Longint;
+    endIdx : longint;
+    cells : LongIntArray;
+    currentBitmap : BitmapCells;
+    cellrange:string;
+    begin
+      for i:=low(bitmapCellsArray) to high(bitmapCellsArray) do
+      begin
+        currentBitmap := bitmapCellsArray[i];
+        if length(currentBitmap.CellKinds) = 1 then
+        begin
+          writeln(output, 'tb:',currentBitmap.startIdx,','+BitmapName(currentBitmap.bmp));
+        end
+        else
+        begin
+
+          //make cell into LongIntArray of cells
+          SetLength(cells,length(currentBitmap.CellKinds));
+          for j := low(currentBitmap.CellKinds) to high(currentBitmap.CellKinds) do
+          begin
+            cells[j] := currentBitmap.CellKinds[j].cell;
+          end;
+         cellrange := LongIntArrayToRange(cells);
+          endIdx:=bitmapCellsArray[i].startIdx+length(bitmapCellsArray[i].CellKinds)-1;
+        writeln(output,'gb:[',bitmapCellsArray[i].startIdx,'-',endIdx,'],',cellrange,
+              ',',BitmapName(bitmapCellsArray[i].bmp),
+              ',',IntToStr(BitmapCellWidth(bitmapCellsArray[i].bmp)),
+              ',',IntToStr(BitmapCellHeight(bitmapCellsArray[i].bmp)),
+              ',',IntToStr(BitmapCellRows(bitmapCellsArray[i].bmp)),
+              ',',IntToStr(BitmapCellColumns(bitmapCellsArray[i].bmp)),
+              ',',IntToStr(BitmapCellCount(bitmapCellsArray[i].bmp)));
+        end;
+      end;
+    end;
+
+    
+    
+    procedure _SaveMapBitmaps();
+    var
+      row,col,bmpIdx:LongInt;
+      current :Array of BitmapCellKind;
+    begin
+      for row:=low(m^.Tiles) to high(m^.Tiles) do
+      begin
+        for col:=low(m^.Tiles[row]) to high(m^.Tiles[row]) do
+        begin
+          current := m^.BitmapCellKind;
+
+          
+          for bmpIdx := low(current) to high(current) do
+          begin
+            _CheckAddBitmap(current[bmpIdx].Bmap, current[bmpIdx].cell, current[bmpIdx].KindIdx);
+          end;
+        end;
+      end;
+      _SetStartIdx();
+      _WriteBitmapInfo();
+    end;
+
+  procedure _WriteKindBitmap();
+  var
+    i,j : LongInt;
+    mki : string;
+  begin
+    mki := 'mki:';
+    mki += '['+IntToStr(bitmapCellsArray[0].CellKinds[0].kindIdx);
+    
+    for i := Low(bitmapCellsArray)+1 to High(bitmapCellsArray) do
+      for j := Low(bitmapCellsArray[i].CellKinds) to High(bitmapCellsArray[i].CellKinds) do
+      begin
+        mki+=','+IntToStr(bitmapCellsArray[i].CellKinds[j].kindIdx);
+      end;
+    mki+=']';
+    writeln(output,mki);
+  end;
+
+  procedure _WriteKindName();
+  var
+  mkn : string;
+  i : LongInt;
+  begin
+    mkn:='mkn:'+NameAt(m^.kindIds,0);
+    for i:=1 to NameCount(m^.kindIds)-1 do
+    begin
+      mkn+=','+NameAt(m^.kindIds, i);
+    end;
+    writeln(output, mkn);
+  end;
+
+  procedure _WriteTileLayers();
+  var
+    ids : LongIntArray;
+    row,col, layer : LongInt;
+    currentTile: TileData;
+  begin
+    SetLength(ids, m^.MapWidth);
+    for layer := 0 to m^.MapLayer-1 do
+    begin
+      writeln(output, 'tl: ', IntToStr(layer));
+      for row := Low(m^.Tiles) to High(m^.Tiles) do
+      begin
+        for col := Low(m^.Tiles[row]) to High(m^.Tiles[row]) do
+        begin
+          currentTile := m^.Tiles[row,col];
+          //add indexes to ids.
+          ids[col]:=_IndexOfMapCellKind(currentTile.TileBitmapCellKind[layer]);
+        end; // end col
+        writeln(output, LongIntArrayToRange(ids));
+      end; // end row
+    end; // end layer
+  end;
+
+  begin
+    path:= PathToResource('maps/' +filename);
+    SetLength(bitmapCellsArray, 0);
+    
+    Assign(output, Path);
+    rewrite(output);
+    writeln(output, 'Map Loader #v0.1');
+    writeln(output, '// mw : width of map');
+    writeln(output, 'mw:'+IntToStr(m^.MapWidth));
+    writeln(output, '// mh : height of map');
+    writeln(output, 'mh:'+IntToStr(m^.MapHeight));
+    writeln(output, '// ml : Number of map Layers');
+    writeln(output, 'ml:'+IntToStr(m^.MapLayer));
+    writeln(output, '//mhc : r,g,b,a (byte)');
+    writeln(output, 'mhc:'+ColorToString(m^.MapHighlightcolor));
+    writeln(output, '// tw : Width of tile');
+    writeln(output, 'tw:'+IntToStr(m^.TileWidth));
+    writeln(output, '// th : Height of tile');
+    writeln(output, 'th:'+IntToStr(m^.TileHeight));
+    writeln(output, '// mi : isometric:true or false');
+    writeln(output, 'mi:',m^.Isometric);
+    writeln(output, '// Tile Bitmaps');
+    writeln(output, '//');
+    writeln(output, '// Format:');
+    writeln(output, '// tb: [tile index], [bitmap filename]');
+    writeln(output, '// gb: [tile index range], [cell range], [bitmap filename], [cell width], [cell height] [cells Row] [cells columns] [cell count]');
+    _SaveMapBitmaps();
+    writeln(output, '//');
+    writeln(output, '// Tile -> Kind Mapping');
+    writeln(output, '// Format:');
+    writeln(output, '// mkn: [name1], [name2]...');
+    writeln(output, '// mki: [kind index ids - position of values match bitmap index]');
+    _WriteKindBitmap();
+    _WriteKindName();
+    _WriteTileLayers();
+    close(output);
+  end;
+  
+
+
+
+//====================================== //
+//           collision codes            //
+//=====================================//
 
     //gets potential collision and makes a rect out of it.
   function GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
@@ -806,7 +1056,8 @@ interface
     startPoint, endPoint: Rectangle;
     startX, startY, endX, endY: LongInt;
   begin
-    with map^ do begin
+    with map^ do
+    begin
       startPoint := RectangleFrom(
         round( ((s^.position.x - s^.velocity.x) / TileWidth) - 1) * TileWidth,
         round( ((s^.position.y - s^.velocity.y) / tileheight) - 1) * tileheight,
@@ -1073,9 +1324,16 @@ interface
   var
   row,col : LongInt;
   begin
+    if (pos.y <0) or (pos.x <0) then
+    begin
+    result:=nil;
+    exit;
+    end;
     row := Trunc(pos.Y / (m^.TileHeight - m^.TileStagger.Y));
     col := Trunc(pos.X / m^.TileWidth);
     result := TileAt(m, row, col);
+   //writeln(pos.x,' ',pos.y);
+    //writeln(row,' ',col);
   end;
 
   function TileKind(t: Tile) : LongInt;
@@ -1166,7 +1424,7 @@ interface
     result := nil;
     if not Assigned(t) then exit
     else
-    result := t^.TileBitmapCells[layer].BMap;
+    result := t^.TileBitmapCellKind[layer]^.BMap;
   end;
 
   function KindName(m : map; idx:LongInt): String;
@@ -1190,8 +1448,8 @@ interface
   
   procedure SetTileBitmap(t: Tile; layer:LongInt; bmp:Bitmap; cell:LongInt);
   begin
-    t^.TileBitmapCells[layer].BMap := bmp;
-    t^.TileBitmapCells[layer].Cell := cell;
+    t^.TileBitmapCellKind[layer]^.BMap := bmp;
+    t^.TileBitmapCellKind[layer]^.Cell := cell;
   end;
   
   procedure SetTileKind(t: Tile; kindId:LongInt);

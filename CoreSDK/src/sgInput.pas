@@ -238,9 +238,9 @@ implementation
     sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, NewSDLRect(area));
   end;
   
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
   begin
-    StartReadingText(textColor, maxLength, theFont, RectangleFrom(x, y, TextWidth(StringOfChar('M', maxLength), theFont), TextHeight('M', theFont)));
+    StartReadingText(textColor, maxLength, theFont, RectangleFrom(x, y, TextWidth(theFont, StringOfChar('M', maxLength)), TextHeight(theFont, 'M')));
   end;
   
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;

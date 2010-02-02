@@ -1,3 +1,16 @@
+//=============================================================================
+// MyStrUtils.pas
+//=============================================================================
+//
+// Extra String Utilities used for processing parts of SwinGame.
+// 
+//
+// Change History:
+//
+// Version 3.0:
+// - 2010-02-02: Aaron  : Added LongIntArrayToRange
+// - Earlier   : Andrew : Various changes
+//=============================================================================
 unit MyStrUtils;
 
 interface
@@ -31,17 +44,31 @@ implementation
     i,temp:longint;
   begin
     result:= '';
-    temp :=0;
+    temp :=-1;
     if not assigned(ints) then exit;
     result := '['+IntToStr(ints[0]);
     for i := low(ints)+1 to high(ints) do
     begin
       //writeln(ints[0], ints[1]);
-      if (ints[i]-1) = (ints[i-1]) then temp := ints[i]
-      else if temp <> 0 then result += IntToStr(temp)
-      else if temp = 0 then result +=','+IntToStr(ints[i]);
+      if (ints[i]-1) = (ints[i-1]) then
+      begin
+        if temp = -1 then temp := ints[i]
+        else if temp <> -1 then temp+= ints[i];
+      end
+      else if temp <> -1 then
+      begin
+        result += '-'+IntToStr(temp);
+        result +=','+IntToStr(ints[i]);
+        temp:=-1;
+      end
+      else if temp = -1 then result +=','+IntToStr(ints[i]);
     end;
-    if temp <> 0 then result += '-'+IntToStr(temp);
+    if temp <> -1 then
+    begin
+     result += '-'+IntToStr(temp);
+     temp:=-1;
+    end;
+    
     result += ']';
   end;
   function MyStrToInt(str: String): LongInt; overload;

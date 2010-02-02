@@ -58,9 +58,10 @@ begin
 	
   c := LoadCharacter('test2.txt');
   writeln('Map Loading');
-  myMap := LoadMap('test1.txt');
+  myMap := LoadMap('savetest.txt');
   writeln('Map Loaded');
   AllocateValue(myMap, @myMap^.Tiles[2,2], 'test', 0.8);
+  SaveMap(myMap, 'test2.txt');
   repeat // The game loop...
     ProcessEvents();
 
