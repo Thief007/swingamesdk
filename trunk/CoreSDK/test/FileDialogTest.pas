@@ -2,15 +2,17 @@ program FileDialogTests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 
 uses
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils;
+  Math, SysUtils,
+  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes;
 
 
 type
   
   FileDialogData = record
-    dialogPanel:  Panel;      // The panel used to show the dialog
-    currentPath:  String;
-    cancelled:    Boolean;
+    dialogPanel:          Panel;      // The panel used to show the dialog
+    currentPath:          String;     // The path to the current directory being shown
+    currentSelectedPath:  String;     // The path to the file selected by the user
+    cancelled:            Boolean;
     lastSelectedFile, lastSelectedPath: LongInt; // These represent the index if the selected file/path to enable double-like clicking
   end;
   
@@ -38,7 +40,7 @@ begin
   
   with dialog do
   begin
-    LabelSetText(dialogPanel, 'OpenLabel', 'Open');
+    LabelSetText(dialogPanel, 'OkLabel', 'Open');
     
     ShowPanel(dialogPanel);
   end;
@@ -50,10 +52,44 @@ begin
   
   with dialog do
   begin
-    LabelSetText(dialogPanel, 'OpenLabel', 'Save');
+    LabelSetText(dialogPanel, 'OkLabel', 'Save');
     
     ShowPanel(dialogPanel);
   end;
+end;
+
+function DialogComplete(): Boolean;
+begin
+  result := not (PanelVisible(dialog.dialogPanel) or dialog.cancelled);
+end;
+
+function DialogCancelled(): Boolean;
+begin
+  result := dialog.cancelled;
+end;
+
+function DialogPath(): String;
+begin
+  if dialog.cancelled then result := ''
+  else result := dialog.currentSelectedPath;
+end;
+
+procedure UpdateDialogPathText();
+var
+  selectedPath: String;
+  pathTxt: Region;
+begin
+  selectedPath  := dialog.currentSelectedPath;
+  
+  pathTxt := RegionWithId(dialog.dialogPanel,'PathTextbox');
+  
+  WriteLn('tw: ', TextWidth(TextboxFont(pathTxt), selectedPath));
+  WriteLn('rw: ', RegionWidth(pathTxt));
+  if TextWidth(TextboxFont(pathTxt), selectedPath) > RegionWidth(pathTxt) then TextboxSetAlignment(pathTxt, AlignRight)
+  else TextboxSetAlignment(pathTxt, AlignLeft);
+  
+  TextboxSetText(pathTxt, selectedPath);
+  LabelSetText(RegionWithId(dialog.dialogPanel, 'PathLabel'), selectedPath);
 end;
 
 procedure SetFileDialogPath(path: String);
@@ -68,13 +104,18 @@ begin
   
   // expand the relative path to absolute
   path := ExpandFileName(path);
+  // LabelSetText(RegionWithId(dialog.dialogPanel, 'PathLabel'), path);
+  // TextboxSetText(RegionWithId(dialog.dialogPanel,'PathTextbox'), path);
   
   with dialog do
   begin
-    currentPath := IncludeTrailingPathDelimiter(path);
-    lastSelectedPath := -1;
-    lastSelectedFile := -1;
+    currentPath         := IncludeTrailingPathDelimiter(path);
+    currentSelectedPath := currentPath;
+    lastSelectedPath    := -1;
+    lastSelectedFile    := -1;
   end;
+  
+  UpdateDialogPathText();
   
   pathList  := ListFromRegion(RegionWithId(dialog.dialogPanel, 'PathList'));
   filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
@@ -86,19 +127,23 @@ begin
   // Clear the list of all of its items
   ListClearItems(pathList);
   
+  // Add the drive letter at the start
+  ListAddItem(pathList, ExtractFileDrive(path));
+  
   // Loop through the directories adding them to the list
   for i := 0 to len - 1 do
   begin
-    WriteLn(paths[i]);
     ListAddItem(pathList, paths[i]);
   end;
+  
+  // Ensure that the last path is visible in the list
+  ListSetStartAt(pathList, len - 1);
   
   // Clear the files in the filesList
   ListClearItems(filesList);
   
   //Loop through the directories
-  WriteLn(dialog.currentPath + '*');
-  if FindFirst (dialog.currentPath + '*', faAnyFile and faDirectory, info)=0 then
+  if FindFirst (dialog.currentPath + '*', faAnyFile and faDirectory, info) = 0 then
   begin
     repeat
       with Info do
@@ -116,28 +161,91 @@ end;
 procedure UpdateFileDialog();
 var
   clicked: Region;
-  selectedText, selectedPath: String;
-  selectedIdx: Integer;
+  
+  procedure _PerformFileListClick();
+  var
+    selectedText, selectedPath: String;
+    selectedIdx: Integer;
+  begin
+    // Get the idx of the item selected in the files list
+    selectedIdx := ListActiveItemIndex(clicked);
+    
+    if (selectedIdx >= 0) and (selectedIdx < ListItemCount(clicked)) then
+    begin
+      selectedText := ListItemText(clicked, selectedIdx);
+      selectedPath := dialog.currentPath + selectedText;
+    end
+    else exit;
+    
+    // if it is double click...
+    if (dialog.lastSelectedFile = selectedIdx) then
+    begin
+      if DirectoryExists(selectedPath) then
+        SetFileDialogPath(selectedPath)
+      else
+        HidePanel(dialog.dialogPanel);
+    end
+    else
+    begin
+      // Update the selected file for double click
+      dialog.lastSelectedFile     := selectedIdx;
+      // Update the selected path and its label
+      dialog.currentSelectedPath  := IncludeTrailingPathDelimiter(selectedPath);
+      UpdateDialogPathText();
+    end;
+  end;
+  
+  procedure _PerformPathListClick();
+  var
+    tmpPath, newPath: String;
+    selectedIdx, i, len: Integer;
+    paths: Array [0..256] of PChar;
+  begin
+    // Get the idx of the item selected in the paths
+    selectedIdx := ListActiveItemIndex(clicked);
+    
+    // if it is double click...
+    if (dialog.lastSelectedPath = selectedIdx) and (selectedIdx >= 0) and (selectedIdx < ListItemCount(clicked)) then
+    begin
+      // Get the parts of the current path, and reconstruct up to (and including) selectedIdx
+      tmpPath := dialog.currentPath;
+      len := GetDirs(tmpPath, paths); //NOTE: need to use tmpPath as this strips separators from pass in string...
+      
+      newPath := ExtractFileDrive(dialog.currentPath) + PathDelim;
+      for i := 0 to Min(selectedIdx - 1, len) do
+      begin
+        newPath := newPath + paths[i] + PathDelim;
+      end;
+      
+      SetFileDialogPath(newPath);
+    end
+    else
+      dialog.lastSelectedPath := selectedIdx;
+  end;
+  
+  procedure _PerformCancelClick();
+  begin
+    HidePanel(dialog.dialogPanel);
+    dialog.cancelled := true;
+  end;
+  
+  procedure _PerformOkClick();
+  begin
+    HidePanel(dialog.dialogPanel);
+  end;
 begin
   if PanelClicked() = dialog.dialogPanel then
   begin
     clicked := RegionClicked();
     
     if clicked = RegionWithID(dialog.dialogPanel, 'FilesList') then
-    begin
-      selectedIdx := ListActiveItemIndex(clicked);
-      
-      if (dialog.lastSelectedFile = selectedIdx) and (selectedIdx > 0) and (selectedIdx < ListItemCount(clicked)) then
-      begin
-        selectedText := ListItemText(clicked, selectedIdx);
-        selectedPath := IncludeTrailingPathDelimiter(dialog.currentPath) + selectedText;
-        
-        if DirectoryExists(selectedPath) then
-          SetFileDialogPath(selectedPath);
-      end;
-      
-      dialog.lastSelectedFile := selectedIdx;
-    end;
+      _PerformFileListClick()
+    else if clicked = RegionWithID(dialog.dialogPanel, 'PathList') then
+      _PerformPathListClick()
+    else if clicked = RegionWithID(dialog.dialogPanel, 'CancelButton') then
+      _PerformCancelClick()
+    else if clicked = RegionWithID(dialog.dialogPanel, 'OkButton') then
+      _PerformOkClick();
   end;
 end;
 
@@ -238,7 +346,9 @@ begin
     
     DrawFramerate(0,0);
     RefreshScreen();
-  until WindowCloseRequested();
+  until WindowCloseRequested() or DialogComplete() or DialogCancelled();
+  
+  WriteLn(DialogPath());
   
   ReleaseAllResources();
   
