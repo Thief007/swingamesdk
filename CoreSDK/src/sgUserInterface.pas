@@ -41,6 +41,7 @@ type
     font:           Font;
     lengthLimit:    LongInt;
     region:         Region;
+    alignment:      FontAlignment;
   end;
   
   GUILabelData = record
@@ -70,7 +71,7 @@ type
     placeholder:  Array of Rectangle;
     activeItem:   LongInt;
     startingAt:   LongInt;
-    font:       	Font;
+    font:         Font;
     items:        Array of GUIListItem;
     scrollButton: Bitmap;
   end;
@@ -128,7 +129,7 @@ procedure DrawPanels();
 procedure ActivatePanel(p: Panel);
 procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
-function PanelShown(p: Panel): boolean;
+function PanelVisible(p: Panel): boolean;
 function PanelClicked(): Panel;
 
 // Regions
@@ -141,6 +142,8 @@ function RegionPanel(r: Region): Panel;
 procedure ToggleRegionActive(forRegion: Region);
 procedure SetRegionActive(forRegion: Region; b: boolean);
 
+function RegionWidth(r: Region): LongInt;
+
 //Checkbox
 function CheckboxState(s: String): Boolean; overload;
 function CheckboxState(chk: GUICheckbox): Boolean; overload;
@@ -150,12 +153,14 @@ procedure ToggleCheckboxState(c: GUICheckbox);
 function CheckboxFromRegion(r: Region): GUICheckbox;
 
 //RadioGroup
+function RadioGroupFromId(pnl: Panel; id: String): GUIRadioGroup;
 function RadioGroupFromRegion(r: Region): GUIRadioGroup;
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
 function ActionRadioButton(grp: GUIRadioGroup): Region; overload;
 function ActionRadioButton(r: Region): Region; overload;
 procedure SelectRadioButton(r: Region); overload;
 procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
+
 
 //TextBox
 function TextBoxFont(tb: GUITextBox): Font; overload;
@@ -178,6 +183,12 @@ procedure UpdateInterface();
 procedure DrawGUIAsVectors(b : boolean);
 procedure FinishReadingText();
 function ActiveTextBoxParent() : Panel;
+
+function TextboxAlignment(r: Region): FontAlignment;
+function TextboxAlignment(tb: GUITextbox): FontAlignment;
+procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
+procedure TextboxSetAlignment(r: Region; align: FontAlignment);
+
 
 //Lists
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
@@ -203,6 +214,12 @@ procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
 
+function ListStartAt(lst: GUIList): LongInt;
+function ListStartAt(r: Region): LongInt;
+
+procedure ListSetStartAt(lst: GUIList; idx: LongInt);
+procedure ListSetStartAt(r: Region; idx: LongInt);
+
 //Label
 function  LabelFont(l: GUILabel): Font; overload;
 function  LabelFont(r: Region): Font; overload;
@@ -211,6 +228,7 @@ procedure LabelSetFont(l: GUILabel; s: String);
 function  LabelText(lb: GUILabel): string; overload;
 function  LabelText(r: Region): string; overload;
 procedure LabelSetText(lb: GUILabel; newString: String); overload;
+procedure LabelSetText(r: Region; newString: String); overload;
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
 
 function  LabelFromRegion(r: Region): GUILabel;
@@ -321,14 +339,15 @@ end;
 
 procedure DrawTextbox(forRegion: Region; const area: Rectangle);
 begin
-	if GUIC.VectorDrawing then
-  	DrawRectangleOnScreen(GUIC.foregroundClr, area);
+  if GUIC.VectorDrawing then DrawRectangleOnScreen(GUIC.foregroundClr, area);
   
   if GUIC.activeTextBox <> forRegion then
-    DrawTextOnScreen( TextBoxText(forRegion), 
-                      GUIC.foregroundClr, 
-                      TextBoxFont(forRegion), 
-                      RectangleTopLeft(RegionRectangleOnScreen(forRegion)));
+    DrawTextLinesOnScreen(TextboxText(forRegion), 
+                          GUIC.foregroundClr,
+                          GUIC.backgroundClr, 
+                          TextboxFont(forRegion), 
+                          TextboxAlignment(forRegion),
+                          InsetRectangle(area, 1));
 end;
   
 procedure DrawList(forRegion: Region; const area: Rectangle);
@@ -703,7 +722,7 @@ end;
 
 function RegionClicked(): region;
 begin
-     result := GUIC.lastClicked;
+  result := GUIC.lastClicked;
 end;
 
 function RegionClickedID(): String;
@@ -713,9 +732,17 @@ end;
 
 function RegionPanel(r: Region): Panel;
 begin
+  result := nil;
   if not assigned(r) then exit;
   
   result := r^.parent;
+end;
+
+function RegionWidth(r: Region): LongInt;
+begin
+  if not assigned(r) then exit;
+  
+  result := r^.area.width;
 end;
 
 
@@ -733,6 +760,25 @@ begin
   if (r^.elementIndex < 0) or (r^.elementIndex > High(r^.parent^.radioGroups)) then exit;
 
   result := @r^.parent^.radioGroups[r^.elementIndex];
+end;
+
+function RadioGroupFromId(pnl: Panel; id: String): GUIRadioGroup;
+var
+  i: Integer;
+begin
+  result := nil;
+  if not assigned(pnl) then exit;
+  
+  id := LowerCase(id);
+  
+  for i := 0 to High(pnl^.radioGroups) do
+  begin
+    if LowerCase(pnl^.radioGroups[i].groupID) = id then
+    begin
+      result := @pnl^.radioGroups[i];
+      exit;
+    end;
+  end;
 end;
 
 function LabelFromRegion(r: Region): GUILabel; overload;
@@ -843,6 +889,11 @@ end;
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
 begin
   LabelSetText(LabelFromRegion(RegionWithID(pnl, id)), newString);
+end;
+
+procedure LabelSetText(r: Region; newString: String); overload;
+begin
+  LabelSetText(LabelFromRegion(r), newString);
 end;
 
 procedure LabelSetText(lb: GUILabel; newString: String);
@@ -974,6 +1025,32 @@ begin
                             t^.lengthLimit, 
                             t^.Font, 
                             RectangleTopLeft(RegionRectangleOnScreen(t^.region)));
+end;
+
+function TextboxAlignment(r: Region): FontAlignment;
+begin
+  result := TextboxAlignment(TextBoxFromRegion(r));
+end;
+
+function TextboxAlignment(tb: GUITextbox): FontAlignment;
+begin
+  result := AlignLeft;
+  if not assigned(tb) then exit;
+  
+  result := tb^.alignment;
+end;
+
+procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
+begin
+  if not assigned(tb) then exit;
+  
+  WriteLn(Integer(align));
+  tb^.alignment := align;
+end;
+
+procedure TextboxSetAlignment(r: Region; align: FontAlignment);
+begin
+  TextboxSetAlignment(TextBoxFromRegion(r), align);
 end;
 
 //---------------------------------------------------------------------------------------
@@ -1116,7 +1193,20 @@ begin
   end;
 end;
 
-procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
+function ListScrollIncrement(lst: GUIList): LongInt;
+begin
+  result := 1;
+  if not assigned(lst) then exit;
+  
+  if lst^.verticalScroll then
+    result := lst^.columns
+  else
+    result := lst^.rows;
+    
+  if result <= 0 then result := 1;
+end;
+
+procedure SetActiveListItem(forRegion: Region; pointClicked: Point2D);
 begin
   SetActiveListItem(ListFromRegion(forRegion), pointClicked);
 end;
@@ -1128,11 +1218,7 @@ begin
   if not assigned(lst) then exit;
   
   // WriteLn(PointToString(pointClicked));
-  
-  if lst^.verticalScroll then
-    inc := lst^.columns
-  else
-    inc := lst^.rows;
+  inc := ListScrollIncrement(lst);
   
   // Write(lst^.startingAt);
   
@@ -1175,6 +1261,34 @@ begin
   if not assigned(lst) then exit;
   result := lst^.activeItem;
 end;
+
+function ListStartAt(lst: GUIList): LongInt;
+begin
+  result := 0;
+  if not assigned(lst) then exit;
+  
+  result := lst^.startingAt;
+end;
+
+function ListStartAt(r: Region): LongInt;
+begin
+  result := ListStartAt(ListFromRegion(r));
+end;
+
+procedure ListSetStartAt(lst: GUIList; idx: LongInt);
+begin
+  if not assigned(lst) then exit;
+  if (idx < 0) then idx := 0
+  else if (idx > High(lst^.items)) then idx := (High(lst^.items) div ListScrollIncrement(lst)) * ListScrollIncrement(lst);
+  
+  lst^.startingAt := idx;
+end;
+
+procedure ListSetStartAt(r: Region; idx: LongInt);
+begin
+  ListSetStartAt(ListFromRegion(r), idx);
+end;
+
 
 //---------------------------------------------------------------------------------------
 // Checkbox Code Code
@@ -1224,7 +1338,7 @@ end;
 // Panel Code
 //---------------------------------------------------------------------------------------
 
-function PanelShown(p: Panel): boolean;
+function PanelVisible(p: Panel): boolean;
 begin
   result := p^.visible;
 end;
@@ -1391,11 +1505,19 @@ var
     newTextbox: GUITextboxData;
   begin
     //Format is
-    // 1, 2, 3, 4, 5, 6,      7,    8,      9, 
-    // x, y, w, h, 5, ListID, font, maxLen, text
+    // 1, 2, 3, 4, 5, 6,   7,    8,      9,     10, 
+    // x, y, w, h, 5, id , font, maxLen, align, text
+    
+    if CountDelimiter(data, ',') <> 9 then
+    begin
+      RaiseException('Error with textbox (' + data + ') should have 10 values (x, y, w, h, 5, id, font, maxLen, align, text)');
+      exit;
+    end;
+    
     newTextbox.font           := FontNamed(Trim(ExtractDelimited(7, data, [','])));
     newTextbox.lengthLimit    := StrToInt(Trim(ExtractDelimited(8, data, [','])));
-    newTextBox.contentString  := Trim(ExtractDelimited(9, data, [',']));
+    newTextBox.alignment      := TextAlignmentFrom(Trim(ExtractDelimited(9, data, [',']))[1]);
+    newTextBox.contentString  := Trim(ExtractDelimited(10, data, [',']));
     newTextBox.region         := r;
     
     SetLength(result^.textBoxes, Length(result^.textBoxes) + 1);

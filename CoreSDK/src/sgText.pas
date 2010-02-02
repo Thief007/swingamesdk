@@ -178,6 +178,11 @@ interface
   /// @lib DrawFrameRateWithSimpleFont
   procedure DrawFramerate(x, y: LongInt); overload;
   
+  /// Returns the font alignment for the passed in character (l = left. r = right, c = center).
+  /// 
+  /// @lib
+  function TextAlignmentFrom(ch: Char): FontAlignment;
+  
 //=============================================================================
 implementation
   uses SysUtils, Classes, 
@@ -414,11 +419,10 @@ implementation
       end
       else if IsSet(flags, AlignRight) then
       begin
-        w := 0;
-        h := 0;
-
+        // Get w and h from the size of the text...
+        w := 0; h := 0;
         TTF_SizeText(font, PChar(lines[i]), w, h);
-        rect := NewSDLRect(width - w, i * lineSkip, 0, 0);
+        rect := NewSDLRect(rc^.w - w, i * lineSkip, 0, 0);
       end
       else begin RaiseException('Invalid font alignment'); exit; end;
 
@@ -834,6 +838,15 @@ implementation
   procedure DrawText(dest: Bitmap; theText: String; textColor: Color; x, y: Single); overload;
   begin
     stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
+  end;
+  
+  function TextAlignmentFrom(ch: Char): FontAlignment;
+  begin
+    case ch of
+      'c', 'C': result := AlignCenter;
+      'r', 'R': result := AlignRight;
+      else result := AlignLeft;
+    end;
   end;
 
 //=============================================================================
