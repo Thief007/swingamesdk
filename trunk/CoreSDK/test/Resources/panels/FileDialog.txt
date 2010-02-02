@@ -27,7 +27,7 @@ r: 238, 273, 70, 20, 1, CancelLabel, Cancel, DialogText
 r:  11, 273, 227, 20, 1, PathLabel, File Path, DialogText
 
 // Lists are loaded as a region with the following format:
-// r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind, scrollBmp
+// r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, alignment, scrollSize, scrollKind, scrollBmp
 // x, y, w, h = area of region
 // 5          = the identifier for lists
 // listId     = the lists name
@@ -36,9 +36,10 @@ r:  11, 273, 227, 20, 1, PathLabel, File Path, DialogText
 //              Note: The area for the list items is calculated from the region's area the rows/cols and scrollSize
 // ActiveItem = the item active at start (-1 for none)
 // fontId     = the name of the font to use for this list's items
+// alignment  = The list font alignment
 // scrollSize = the size (width and height) of the scroll bar
 // scrollKind = v for vertical or h for horizontal
 // scrollBmp  = n for no bitmap, or the bitmap name
 
-r: 11, 73, 378, 190, 5, FilesList, 1, 10, -1, DialogText, 10, v, n
-r: 92, 42, 297,  26, 5, PathList,  3,  1, -1, DialogText,  6, h, n
+r: 11, 73, 378, 190, 5, FilesList, 1, 10, -1, DialogText, l, 10, v, n
+r: 92, 42, 297,  26, 5, PathList,  3,  1, -1, DialogText, c,  6, h, n

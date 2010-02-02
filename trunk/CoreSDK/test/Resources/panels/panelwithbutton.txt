@@ -31,8 +31,9 @@ r: 170, 250, 25, 25, 3, radButton4, RadioGroup1
 
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
-r: 385, 165, 290, 40, 4, TextBox1, courier, 16, test text box
+r: 385, 165, 290, 40, 4, TextBox1, courier, 16, l, test text box
 
 //List
 
-r: 101,50, 205, 157, 5, List1, 1, 4, -1, courier, 12, v, scrollbutton.png
+r: 101,50, 205, 157, 5, List1, 1, 4, -1, courier, 12, v, n
+//scrollbutton.png

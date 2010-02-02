@@ -83,7 +83,8 @@ interface
   // size (``w`` and ``h``). SDL_Rect are used internally by SDL to specify
   // the part of a source or destination image to be used in clipping and
   // blitting operations.
-  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
+  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect; overload;
+  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
 
   // Rounds `x` up... 1.1 -> 2
   function Ceiling(x: Single): LongInt;
@@ -298,7 +299,12 @@ implementation
     sdlManager.RegisterEventProcessor(handle, handle2);
   end;
   
-  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect;
+  function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
+  begin
+    result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
+  end;
+  
+  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect; overload;
   begin
     if w < 0 then
     begin
