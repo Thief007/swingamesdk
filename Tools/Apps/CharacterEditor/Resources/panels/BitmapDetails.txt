@@ -37,4 +37,4 @@ r: 80, 120, 80, 12, 4, ScaleIn, courierSmall, 16, 1
 r: 2, 120, 80, 12, 1, ScaleLbl, Scale, courierSmall
 
 //Move Group Button
-r: 10, 150, 20, 20, 2, Anchor, false
+//r: 10, 150, 20, 20, 2, Anchor, false

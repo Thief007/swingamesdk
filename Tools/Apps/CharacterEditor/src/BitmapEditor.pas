@@ -2,203 +2,343 @@ unit BitmapEditor;
 
 //=============================================================================
 interface
-	uses EditorTypes, sgUserInterface;
+	uses sgTypes, sgCore, sgGraphics,
+  sgGeometry, sgImages, sgInput, SysUtils, 
+	sgUserInterface, sgShared, EditorShared;
 	
-	procedure InitializeCellArea(var cellGrp : CellGroup; bmpArray: arrayofLoadedBMP);
-	procedure DrawSelectedDetails(cellGrp : CellGroup; var pnl: editorPanels; bmpArray: arrayofLoadedBMP);
-	procedure MoveCellPosition(var cellGrp: CellGroup);
-	procedure UpdateCellDetailsFromTextInput(var cellGrp : CellGroup; var  bmpArray: arrayofLoadedBMP; pnl : editorPanels);
-	procedure InitializeCellGroup(out cellGrp : CellGroup);
-	procedure InitializePanels(var 	panelArray : editorPanels);
+	procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroup; var  bmpArray: LoadedBitmaps; pnl : PanelArray;var bmpScale: Integer);
+	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues; var bmpArray: LoadedBitmaps);
+	procedure InitializeCellArea(var cellGrp : CellGroup; bmpArray: LoadedBitmaps);
+	procedure MoveCellPosition(var cellGrp : CellGroup);
+	procedure UpdateBitmapEditor(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
+	
+const
+//Bitmap Panel Array Indexes
+	BitmapDetails = 0;
+	CellDetails = 1;
+	CellBitmapNames = 2;
+	BitmapButtons = 3;	
 	
 implementation
-uses sgInput, SysUtils, sgShared, sgImages;
-
-	procedure InitializeCellGroup(out cellGrp : CellGroup);
-	var
-		i : LongInt;
+	
+	procedure MyTextBoxSetText(id, value : string);
 	begin
-		SetLength(cellGrp.grpData, LengthgrpData); 
-		cellGrp.grpData[cgCellCount]:= 12;
-		cellGrp.grpData[cgColumns]	:= 3;
-		cellGrp.grpData[cgRows] 		:= 4;
-		cellGrp.grpData[cgWidth]		:= 24;
-		cellGrp.grpData[cgHeight]		:= 32;
-		cellGrp.grpData[cgScale]		:= 1;
-		cellGrp.grpData[cgDrag]			:= -1;
-		cellGrp.grpData[cgSelected]	:= -1;
-		cellGrp.isAniGroup 					:= false;
-
-		cellGrp.grpData[cgXpos]	:=  ClipX;
-		cellGrp.grpData[cgYpos]	:= 	ClipY;
+		TextBoxSetText(TextBoxFromRegion(RegionWithID(id)), value);
 	end;
 	
-	procedure InitializePanels(var 	panelArray : editorPanels);
+	procedure MyLabelSetText(id, value : string);
+	begin
+		LabelSetText(LabelFromRegion(RegionWithID(id)), value); 
+	end;
+	
+	procedure MyListSetActiveItemIndex(id: string; value: Integer);
+	begin
+		ListSetActiveItemIndex(ListFromRegion(RegionWithID(id)), value);
+	end;
+	
+	function MyLabelText(id: string): string;
+	begin
+		result := LabelText(LabelFromRegion(RegionWithID(id)));
+	end;
+	
+	function MyListActiveItemIndex(id: string): Integer;
+	begin
+		result := ListActiveItemIndex(ListFromRegion(RegionWithID(id)));
+	end;
+			
+	procedure DrawSelectedDetails(cellGrp : CellGroup; var pnl: PanelArray; bmpArray: LoadedBitmaps);
+	var
+		i: integer;
+	begin
+		if MyListActiveItemIndex('BMPList') > Length(bmpArray) then exit;
+		with cellGrp do
+			begin
+			if (Length(selectedOrder) = 1) AND (not PanelShown(pnl[CellDetails])) then
+			begin
+				MyTextBoxSetText('CellIn', IntToStr(cells[selectedOrder[0]].cellIdx));
+				if (cells[selectedOrder[0]].bmpIdx <> -1) then 
+					MyLabelSetText('CurrentBitmapNameLbl', bmpArray[cells[selectedOrder[0]].bmpIdx].src^.name)
+				else
+					MyLabelSetText('CurrentBitmapNameLbl', 'None'); 
+				MyListSetActiveItemIndex('BMPList', cells[cellGrp.selectedOrder[0]].bmpIdx + 1);
+				ShowPanel(pnl[CellDetails]);
+			end else 		
+			if (Length(cellGrp.selectedOrder) > 1) AND (TextBoxText(RegionWithID('CellIn')) <> 'Multiple') then
+			begin
+				MyTextBoxSetText('CellIn','Multiple');
+				MyLabelSetText('CurrentBitmapNameLbl', 'None'); 
+				MyListSetActiveItemIndex('BMPList',  0);
+				ShowPanel(pnl[CellDetails])
+			end;
+				
+			if PanelShown(pnl[CellBitmapNames]) AND (ListActiveItemText('BMPList') <> MyLabelText('CurrentBitmapNameLbl')) then
+			begin
+				if (Length(selectedOrder) = 1) then
+				begin
+					cells[selectedOrder[0]].bmpIdx := MyListActiveItemIndex('BMPList') - 1;
+				end else
+				if (Length(selectedOrder) > 1) then
+				begin
+					for i := Low(selectedOrder) to High(selectedOrder) do
+					begin
+						cells[selectedOrder[i]].bmpIdx := MyListActiveItemIndex('BMPList') - 1;
+					end;
+				end;
+				MyLabelSetText('CurrentBitmapNameLbl', ListActiveItemText('BMPList'));
+				HidePanel(pnl[CellBitmapNames]);
+			end;
+			
+			if PanelShown(pnl[CellDetails]) AND (Length(selectedOrder) = 0) then
+			begin
+				HidePanel(pnl[CellBitmapNames]);
+				HidePanel(pnl[CellDetails]);
+			end;
+		end;
+	end;
+	
+	procedure ScaleBitmaps(var cellGrp: CellGroup;var pnl: Panel; var bmpArray: LoadedBitmaps; newScale : integer; var bmpScale : integer);
+	var
+		i, initHeight, initWidth: integer;
+	begin
+		with cellGrp do
+		begin
+			initWidth := grpData.Width DIV bmpScale;
+			initHeight := grpData.Height DIV bmpScale;
+			
+			grpData.Width 	:= initWidth	* newScale;
+			grpData.Height	:= initHeight * newScale;
+			bmpScale				:= newScale;
+		
+			for i:= Low(bmpArray) to High(bmpArray) do bmpArray[i].src := RotateScaleBitmap(bmpArray[i].original, 0, bmpScale);		
+		end;
+	end;
+	
+	procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroup; var  bmpArray: LoadedBitmaps; pnl : PanelArray;var bmpScale: integer);
+	var
+		newVal: LongInt;
+	begin
+		with cellGrp do
+		begin
+			if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), newVal) AND (newVal > -1) then
+			begin			
+				if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[BitmapDetails]) then
+				begin			
+					case IndexOfLastUpdatedTextBox of 
+						0: cellCount 			:= newVal;
+						1: cols						:= newVal;
+						2: grpData.Width 	:= newVal;
+						3: grpData.Height := newVal;
+						4: ScaleBitmaps(cellGrp,pnl[BitmapDetails],  bmpArray, newVal, bmpScale);
+					end;
+				end else if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[CellDetails]) AND (IndexOfLastUpdatedTextBox = 0) then
+				begin
+					cells[selectedOrder[0]].cellIdx := newVal;
+				end;
+				InitializeCellArea(cellGrp, bmpArray)	;
+			end else 
+			begin
+				case IndexOfLastUpdatedTextBox of 
+					0: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellCount));
+					1: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cols));
+					2: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(grpData.Width));
+					3: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(grpData.Height));
+					4: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(bmpScale));
+				end;	
+			end;
+		end;
+	end;
+	
+	procedure MoveCellGroup(var cellGrp: CellGroup; var mouseOffSet: Point2D; var dragGroup: boolean);
+	var
+		height : LongInt;
+		rect: Rectangle;
+	begin
+		with cellGrp do
+		begin
+			if (cols = 0) OR (cellCount = 0) then exit;
+			height := Ceiling(cellCount / cols);
+			rect := RectangleFrom(cells[Low(cells)].Area.X, cells[Low(cells)].Area.Y, 
+														grpData.Width * cols + (CellGap * cols - CellGap),
+														grpData.Height * height + (CellGap * height - CellGap));
+			FillRectangle(RGBAColor(255,255,0,180), rect);
+			if PointInRect(MousePosition, rect) and MouseDown(LeftButton) AND not dragGroup then
+			begin
+				dragGroup := true;
+				mouseOffset.x := Trunc(MousePosition().x) - grpData.X;
+				mouseOffset.y := Trunc(MousePosition().y) - grpData.Y;
+			end;
+			if dragGroup and MouseDown(LeftButton) then
+			begin		
+				grpData.X := Trunc(MousePosition().x -  mouseOffset.x);
+				grpData.Y := Trunc(MousePosition().y -	mouseOffset.y);
+				MoveCellPosition(cellGrp);
+			end;
+			
+			if not MouseDown(LeftButton) and dragGroup then dragGroup := false; 
+		end;
+	end;
+	
+//	procedure UpdateBitmapEditor(var cellGrp: CellGroup; var bmpArray: LoadedBitmaps; var destbmp: Bitmap; var mouseOffSet: Point2D; var dragGroup: boolean; dCell: DraggedCell; panelArray: PanelArray);
+
+	procedure UpdateBitmapEditor(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
+	var
+		i: integer;
+	begin
+		with BitmapMode do
+		begin
+			DrawBitmap(bg, 0, 0);
+			DrawSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
+			
+			if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.BMPArray, panels, scale);
+			
+			PushClip(ClipX, ClipY, ClipW, ClipH);
+			DrawSplitBitmapCells(destbmp, sharedVals.bmpArray, cellGrp, false, sharedVals.mouseOffSet, dCell);
+			if CheckboxState(RegionWithID('Anchor')) then MoveCellGroup(cellGrp, sharedVals.mouseOffset, dragGroup);
+			PopClip();
+				
+			if (not CheckboxState(RegionWithID('Anchor'))) then
+			begin
+				if MouseClicked(LeftButton) then
+				begin
+					HandleSelection(cellGrp, sharedVals.mouseOffSet, dCell);
+					HandleCellDragging(cellGrp, dCell, sharedVals.mouseOffSet);
+				end;
+			end;
+			
+			if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[2]);
+			if (RegionClickedID() = 'ResetPosition') then
+			begin
+				cellGrp.grpData.X	:= ClipX;
+				cellGrp.grpData.Y	:= ClipY;
+				MoveCellPosition(cellGrp);
+			end;
+			
+			if KeyTyped(vk_ESCAPE) then
+			begin
+				for i := Low(cellGrp.SelectedOrder) to High(cellGrp.SelectedOrder) do cellGrp.cells[cellGrp.selectedOrder[i]].isSelected := false;
+				SetLength(cellGrp.SelectedOrder, 0);
+				dCell.index := -1;
+			end;
+		end;
+	end;
+	//---------------------------------------------------------------------------
+  // Initialize Bitmap Editor
+  //--------------------------------------------------------------------------- 
+	function InitializeCellGroup() : CellGroup;
+	begin
+		result.CellCount 			:= 12;
+		result.Cols 					:= 3;
+		result.Rows 					:= 4;
+		result.grpData.Width 	:= 24;
+		result.grpData.Height := 32;
+		result.grpData.X 			:= ClipX;
+		result.grpData.Y 			:= ClipY;
+		
+		SetLength(result.selectedOrder, 0);
+	end;
+	
+	function InitializePanels(): PanelArray;
 	var
 		i: LongInt;
 	begin
-		panelArray[0]:= LoadPanel('BitmapDetails.txt');
-		panelArray[1]:= LoadPanel('CellDetails.txt');
-		panelArray[2]:= LoadPanel('CellBMPNames.txt');
-		panelArray[3]:= LoadPanel('BitmapButtons.txt');
+		SetLength(result, 4);
+		result[BitmapDetails]		:= LoadPanel('BitmapDetails.txt');
+		result[CellDetails]			:= LoadPanel('CellDetails.txt');
+		result[CellBitmapNames]	:= LoadPanel('CellBMPNames.txt');
+		result[BitmapButtons]		:= LoadPanel('BitmapButtons.txt');
 		
-		for i := Low(panelArray) to High(panelArray) do
+		for i := Low(result) to High(result) do
 		begin
-		//	ShowPanel(panelArray[i]);
-			ActivatePanel(panelArray[i]); 
-			AddPanelToGUI(panelArray[i]); 
-			WriteLn(i);
+		  ShowPanel(result[i]);
+			ActivatePanel(result[i]); 
+			AddPanelToGUI(result[i]); 
 		end;
-		HidePanel(panelArray[2]);
-		ShowPanel(panelArray[3]);
+		HidePanel(result[CellBitmapNames]);
 	end;
 	
-	procedure MoveCellPosition(var cellGrp: CellGroup);
+	procedure MoveCellPosition(var cellGrp : CellGroup);
 	var
-		rows, columns, i: LongInt;
+		r, c, i: LongInt; //Rows and Column count in loop
 	begin
-		columns := 0;
-		rows := 0;
+		c := 0;
+		r := 0;
 		
-		for  i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
-		begin				
-			cellGrp.cellArea[i].data[caXpos] 	:= cellGrp.grpData[cgWidth]  * columns + cellGrp.grpData[cgXpos] + cellGrp.cellArea[i].data[caXGap];
-			cellGrp.cellArea[i].data[caYpos]	:= cellGrp.grpData[cgHeight] * rows		 + cellGrp.grpData[cgYpos] + cellGrp.cellArea[i].data[caYGap];	
-			
-			columns += 1;
-			
-			if columns = cellGrp.grpData[cgColumns] then
-			begin		
-				columns := 0;
-				rows +=1;
+		With cellGrp do 
+		begin
+			for  i := Low(cells) to High(cells) do
+			begin				
+				cells[i].Area.X := grpData.Width  * c + grpData.X + cells[i].xGap;
+				cells[i].Area.Y := grpData.Height * r + grpData.Y + cells[i].yGap;
+				
+				c += 1;				
+				if c = Cols then
+				begin		
+					c := 0;
+					r += 1;
+				end;
 			end;
 		end;
 	end;
 
-	procedure InitializeCellArea(var cellGrp : CellGroup; bmpArray: arrayofLoadedBMP);
+	procedure InitializeCellArea(var cellGrp : CellGroup; bmpArray: LoadedBitmaps);
 	var
 		xGap, yGap, oldLength, i, columns: LongInt;
-	// Gaps are shown inbetween cells when drawn on screen
+	// Gaps are inbetween cells when drawn on screen
 	begin
+		if (cellGrp.cellCount = 0) OR (cellGrp.cols = 0) then exit;
 		xGap 			:= 0;
 		yGap 			:= 0;	
-		columns	:= 0;
-				
-		if (cellGrp.grpData[cgCellCount] <> 0) AND (cellGrp.grpData[cgColumns] <> 0) then 
-		begin
-			cellGrp.grpData[cgRows] := Ceiling(cellGrp.grpData[cgCellCount] / cellGrp.grpData[cgColumns]);	
+		columns		:= 0;
+		With cellGrp do
+		begin		
+			rows := Ceiling(cellCount / cols);	
 			for i:= Low(bmpArray) to High(bmpArray) do
 			begin	
-				SetBitmapCellDetails(bmpArray[i].src, cellGrp.grpData[cgWidth], cellGrp.grpData[cgHeight], cellGrp.grpData[cgColumns], cellGrp.grpData[cgRows], cellGrp.grpData[cgCellCount]);
+				SetBitmapCellDetails(bmpArray[i].src, grpData.Width, grpData.Height, cols, rows, cellCount);
 			end;
-		end;
-		
-		if Length(cellGrp.cellArea) < cellGrp.grpData[cgCellCount] then oldLength := Length(cellGrp.cellArea)-1 else oldLength := cellGrp.grpData[cgCellCount];
-		
-		SetLength(cellGrp.cellArea, cellGrp.grpData[cgCellCount]);
-		
-		for  i := Low(cellGrp.cellArea) to High(cellGrp.cellArea) do
-		begin							
-			cellGrp.cellArea[i].data[caXGap]	:= xGap;
-			cellGrp.cellArea[i].data[caYGap]	:= yGap;		
 			
-			if i > oldLength then
-			begin
-				cellGrp.cellArea[i].isSelected			:= false;	
-				cellGrp.cellArea[i].data[caBitmap]	:= -1;
-				cellGrp.cellArea[i].data[caCell]		:= i;				
-			end;		
+			if Length(cells) < CellCount then oldLength := Length(cells)-1 else oldLength := cellCount;			
+			SetLength(cells, cellCount);
 			
-			xGap 			+= CellGap;		
-			columns += 1;
-			
-			if columns = cellGrp.grpData[cgColumns] then
-			begin		
-				columns := 0;
-				xGap := 0;
-				yGap += CellGap;
+			for  i := Low(cells) to High(cells) do
+			begin							
+				cells[i].XGap	:= xGap;
+				cells[i].YGap	:= yGap;		
+				
+				if i > oldLength then
+				begin
+					cells[i].isSelected	:= false;	
+					cells[i].bmpIdx			:= -1;
+					cells[i].cellIdx		:= i;				
+				end;		
+				
+				xGap 		+= CellGap;		
+				columns += 1;
+				
+				if columns = cols then
+				begin		
+					columns := 0;
+					xGap 		:= 0;
+					yGap 		+= CellGap;
+				end;
 			end;
 		end;
 		MoveCellPosition(cellGrp);
 	end;
-		
-	procedure DrawSelectedDetails(cellGrp : CellGroup; var pnl: editorPanels; bmpArray: arrayofLoadedBMP);
-	begin
-		if (Length(cellGrp.selectedOrder) = 1) AND (not PanelShown(pnl[1])) then
+	
+	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues; var bmpArray: LoadedBitmaps);
+	begin	
+		with BitmapMode do
 		begin
-			TextBoxSetText(TextBoxFromRegion(RegionWithID(pnl[1], 'CellIn')), IntToStr(cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caCell]));
-			if (cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caBitmap] <> -1) then 
-				LabelSetText(LabelFromRegion(RegionWithID(pnl[1], 'CurrentBitmapNameLbl')), bmpArray[cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caBitmap]].src^.name)
-			else
-				LabelSetText(LabelFromRegion(RegionWithID(pnl[1], 'CurrentBitmapNameLbl')), 'None');
-			ShowPanel(pnl[1])
-		end
-		else if PanelShown(pnl[1]) AND (Length(cellGrp.selectedOrder) <> 1) then
-		begin
-			HidePanel(pnl[1]);
-			HidePanel(pnl[2]);
-		end;
-		
-		if PanelShown(pnl[2]) AND (ListActiveItemIndex(ListFromRegion(RegionWithID(pnl[2],'BMPList'))) <> cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caBitmap]) then
-		begin
-			if (ListActiveItemIndex(ListFromRegion(RegionWithID(pnl[2],'BMPList'))) <= High(bmpArray)) then 
-			begin
-				cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caBitmap] := ListActiveItemIndex(ListFromRegion(RegionWithID(pnl[2],'BMPList')));
-				LabelSetText(LabelFromRegion(RegionWithID(pnl[1], 'CurrentBitmapNameLbl')), bmpArray[cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caBitmap]].src^.name);
-			end;
-			HidePanel(pnl[2]);
+			panels	:= InitializePanels();
+			cellGrp := InitializeCellGroup();
+			InitializeCellArea(cellGrp, bmpArray);
+			ListAddItem(ListFromRegion(RegionWithID('BMPList')), 'None');
+			ListSetActiveItemIndex(ListFromRegion(RegionWithID('BMPList')), 0);	
+			dCell.Index := -1;
+			dragGroup 	:= false;
+			scale		 		:= 1;
+			bg := LoadBitmap('BMPEDITOR.png');
 		end;
 	end;
-	
-	procedure ScaleBitmaps(var cellGrp: CellGroup;var pnl: Panel; var bmpArray: arrayOfLoadedBMP; newScale : integer);
-	var
-		i, initHeight, initWidth: integer;
-	begin
-		initWidth := cellGrp.grpData[cgWidth] DIV cellGrp.grpData[cgScale];
-		initHeight := cellGrp.grpData[cgHeight] DIV cellGrp.grpData[cgScale];
-		
-		cellGrp.grpData[cgWidth] 	:= initWidth	* newScale;// + (cellGrp.grpData[cgWidth]	DIV (cellGrp.grpData[cgScale] - multiplier) * multiplier);
-		cellGrp.grpData[cgHeight]	:= initHeight * newScale;
-		cellGrp.grpData[cgScale]	:= newScale;
-		
-	//	TextBoxSetString(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgWidth]));
-	//	TextBoxSetString(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgHeight]));
-	
-		for i:= Low(bmpArray) to High(bmpArray) do bmpArray[i].src := RotateScaleBitmap(bmpArray[i].original, 0, cellGrp.grpData[cgScale]);		
-	end;
-	
-	procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroup; var  bmpArray: arrayofLoadedBMP; pnl : editorPanels);
-	var
-		newVal, i : LongInt;
-	begin
-		if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), newVal) AND (newVal > -1) then
-		begin
-			if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[0]) then
-			begin			
-				case IndexOfLastUpdatedTextBox of 
-					0: cellGrp.grpData[cgCellCount] := newVal;
-					1: cellGrp.grpData[cgColumns] 	:= newVal;
-					2: cellGrp.grpData[cgWidth] 		:= newVal;
-					3: cellGrp.grpData[cgHeight] 		:= newVal;
-					4: ScaleBitmaps(cellGrp,pnl[0],  bmpArray, newVal);
-				end;
-			end else if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[1]) AND (IndexOfLastUpdatedTextBox = 0) then
-			begin
-				cellGrp.cellArea[cellGrp.selectedOrder[0]].data[caCell] := newVal;
-			end;
-			InitializeCellArea(cellGrp, bmpArray);	
-		end else 
-		begin
-			case IndexOfLastUpdatedTextBox of 
-				0: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgCellCount]));
-				1: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgColumns]));
-				2: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgWidth]));
-				3: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgHeight]));
-				4: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.grpData[cgScale]));
-			end;	
-		end;
-		WriteLn(cellGrp.grpData[cgCellCount]);
-	end;
-
-
 end.

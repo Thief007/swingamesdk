@@ -9,7 +9,7 @@
 x: 10
 y: 420
 w: 160
-h: 400
+h: 46
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -17,7 +17,7 @@ h: 400
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //MoveCellGroup Button
-r:0,0,140,20,0,MoveCellGrp
+r:0,0,160,20,2, Anchor, false
 
 //ResetPosition Button
-r:0,20,140,20,0,ResetPosition
+r:0,26,160,20,0,ResetPosition
