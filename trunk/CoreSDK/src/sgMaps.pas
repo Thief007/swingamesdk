@@ -212,7 +212,7 @@ interface
             
             if layer = 0 then
             begin
-              writeln('adding kind');
+             //writeln('adding kind');
               result^.Tiles[rowNum, i].kind := result^.BitmapCellKind[current].KindIdx;
             end;
             //result^.Tiles[row,col].Values:= result^.MapDefaultValues
@@ -592,13 +592,14 @@ interface
     begin
       ReadLn(textFile, line);
       lineNo := lineNo + 1;
+      //writeln(lineNo);
       line   := Trim(line);
       if Length(line) = 0 then continue;  //skip emapty lines
       if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
       ProcessLine();
     end;
     AddMapPrototype();
-    writeln('PrototypeAdded');
+    //writeln('PrototypeAdded');
     ProcessTiles();
     writeln('TileProcessed')  ;
   end;
@@ -723,7 +724,7 @@ interface
     begin
       SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
       map^.SelectedTiles[high(map^.SelectedTiles)]:=t^.TileId;
-      writeln('selected: ',t^.TileId);
+     // writeln('selected: ',t^.TileId);
     end
     else
     begin
@@ -969,19 +970,33 @@ interface
     writeln(output,mki);
   end;
 
+
+  function NamedIndexCollectionNameList(const list:NamedIndexCollection):String;
+  var
+  i : Longint;
+  begin
+      result:=NameAt(list,0);
+    for i:=1 to NameCount(list)-1 do
+    begin
+      result+=','+NameAt(list, i);
+    end;
+  end;
+
   procedure _WriteKindName();
   var
   mkn : string;
-  i : LongInt;
   begin
-    mkn:='mkn:'+NameAt(m^.kindIds,0);
-    for i:=1 to NameCount(m^.kindIds)-1 do
-    begin
-      mkn+=','+NameAt(m^.kindIds, i);
-    end;
+    mkn:='mkn:'+NamedIndexCollectionNameList(m^.kindIds);
     writeln(output, mkn);
   end;
 
+  procedure _WriteValueName();
+  var
+  mvn : String;
+  begin
+    mvn:='mvn:'+NamedIndexCollectionNameList(m^.valueIds);
+    writeln(output, mvn);
+  end;
   procedure _WriteTileLayers();
   var
     ids : LongIntArray;
@@ -1003,6 +1018,29 @@ interface
         writeln(output, LongIntArrayToRange(ids));
       end; // end row
     end; // end layer
+  end;
+
+  procedure _WriteTileKind();
+  var
+    row,col : LongInt;
+    currentTile : TileData;
+  const
+    LAYER = 0;
+  begin
+    for row := low(m^.Tiles) to high(m^.Tiles) do
+      for col := low(m^.Tiles[row]) to high(m^.Tiles[row])do
+      begin
+        currentTile := m^.Tiles[row,col];
+        writeln(currentTile.Kind);
+       //writeln(currentTile.TileBitmapCellKind[LAYER]^.kindIdx);
+        if not Assigned(currentTile.TileBitmapCellKind[LAYER]) then
+        begin
+          if currentTile.Kind <> -1 then writeln(output,'tk:',row,',',col,',',currentTile.Kind);
+
+        end
+        else if currentTile.Kind <> currentTile.TileBitmapCellKind[LAYER]^.kindIdx then writeln(output,'tk:',row,',',col,',',currentTile.Kind);
+
+      end;
   end;
 
   begin
@@ -1040,6 +1078,15 @@ interface
     _WriteKindBitmap();
     _WriteKindName();
     _WriteTileLayers();
+    writeln(output, '//');
+    writeln(output, '// Map Kinds');
+    writeln(output, '//');
+    writeln(output, '// Format:');
+    writeln(output, '// // TK: [row],[col], [kind index]');
+    _WriteTileKind();
+    _WriteValueName();
+    
+
     close(output);
   end;
   
