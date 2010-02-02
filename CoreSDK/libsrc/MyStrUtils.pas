@@ -20,11 +20,30 @@ uses sgTypes;
   function MyStrToFloat(str: String): Extended; overload;
   function MyStrToFloat(str: String; allowEmpty: Boolean) : Extended; overload;
 
+  function LongIntArrayToRange(ints: LongIntArray):String;
+
 implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
     sgShared;
-
+  function LongIntArrayToRange(ints: LongIntArray):String;
+  var
+    i,temp:longint;
+  begin
+    result:= '';
+    temp :=0;
+    if not assigned(ints) then exit;
+    result := '['+IntToStr(ints[0]);
+    for i := low(ints)+1 to high(ints) do
+    begin
+      //writeln(ints[0], ints[1]);
+      if (ints[i]-1) = (ints[i-1]) then temp := ints[i]
+      else if temp <> 0 then result += IntToStr(temp)
+      else if temp = 0 then result +=','+IntToStr(ints[i]);
+    end;
+    if temp <> 0 then result += '-'+IntToStr(temp);
+    result += ']';
+  end;
   function MyStrToInt(str: String): LongInt; overload;
   begin
     if Length(str) = 0 then result := 0
