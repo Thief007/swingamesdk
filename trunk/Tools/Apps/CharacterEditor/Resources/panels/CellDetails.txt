@@ -21,6 +21,5 @@ r: 80, 0, 80, 12, 4, CellIn, courierSmall,16,0
 r: 2, 0, 80, 12, 1, CellLbl, Cell, courierSmall,0
 
 //Bitmap Label
-r: 20, 25, 80, 12, 1, BitmapLbl, Bitmap in Cell, courierSmall
-r: 5, 42, 150, 20, 0, CurrentBitmap
-r: 5, 42, 150, 20, 1, CurrentBitmapNameLbl, bmp, courierSmall
+r: 20, 45, 80, 12, 1, BitmapLbl, Bitmap in Cell, courierSmall
+r: 15, 64, 150, 20, 1, CurrentBitmapNameLbl, bmp, courierSmall
