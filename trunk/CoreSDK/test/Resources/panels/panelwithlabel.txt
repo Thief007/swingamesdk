@@ -27,4 +27,4 @@ r: 10, 10, 80, 20, 1, Label1, Hello World, courierSmall
 // fontId     = the name of the font to use for this list's items
 // scrollSize = the size (width and height) of the scroll bar
 // scrollKind = v for vertical or h for horizontal
-r: 45, 30, 150, 250, 5, List1, 2, 5, -1, courier, 10, v
+//r: 45, 30, 150, 250, 5, List1, 2, 5, -1, courier, 10, v

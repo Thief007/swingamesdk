@@ -70,8 +70,9 @@ type
     placeholder:  Array of Rectangle;
     activeItem:   LongInt;
     startingAt:   LongInt;
-    font:       Font;
+    font:       	Font;
     items:        Array of GUIListItem;
+    scrollButton: Bitmap;
   end;
     
   GUIRadioGroupData = record
@@ -437,22 +438,36 @@ begin
       pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.rows);
   end;
   
-  if GUIC.VectorDrawing then
+  
   begin
 	  if tempList^.verticalScroll then
-	    FillRectangleOnScreen(GUIC.foregroundClr, 
-	                          Round(scrollArea.x),
-	                          Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
-	                          tempList^.scrollSize,
-	                          tempList^.scrollSize
-	                          )
+	  begin
+	  	if GUIC.VectorDrawing then
+	    	FillRectangleOnScreen(GUIC.foregroundClr, 
+	      	                    Round(scrollArea.x),
+	        	                  Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
+	          	                tempList^.scrollSize,
+	            	              tempList^.scrollSize
+	              	            )
+	    else
+	    	DrawBitmapOnScreen(tempList^.ScrollButton,
+	    											Round(scrollArea.x),
+	    										  Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)));
+	  end
 	  else
-	    FillRectangleOnScreen(GUIC.foregroundClr, 
-	                          Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
-	                          Round(scrollArea.y),
-	                          tempList^.scrollSize,
-	                          tempList^.scrollSize
-	                          );
+	  begin
+	  	if GUIC.VectorDrawing then
+		    FillRectangleOnScreen(GUIC.foregroundClr, 
+		                          Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+		                          Round(scrollArea.y),
+		                          tempList^.scrollSize,
+		                          tempList^.scrollSize
+		                          )
+			else
+				DrawBitmapOnScreen(tempList^.ScrollButton,
+	    											Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+	    										  Round(scrollArea.y));
+		end;
 	end;
 	
   PopClip();
@@ -1131,7 +1146,7 @@ begin
   
   if PointInRect(pointClicked, lst^.scrollDown) then
   begin
-    if lst^.startingAt + inc <= Length(lst^.items) then
+    if lst^.startingAt + inc + (lst^.columns * lst^.rows) <= Length(lst^.items) then
       lst^.startingAt := lst^.startingAt + inc;
     // WriteLn(' -> ', lst^.startingAt);
     exit;
@@ -1394,8 +1409,8 @@ var
     scrollSz, rhs, btm, height, width: LongInt;
   begin
     //Format is
-    // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,         12
-    // x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind
+    // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,         12					 13
+    // x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind, scrollbutton bitmap
     
     newList.columns         := StrToInt(Trim(ExtractDelimited(7, data, [','])));
     newList.rows            := StrToInt(Trim(ExtractDelimited(8, data, [','])));
@@ -1403,6 +1418,13 @@ var
     newList.scrollSize      := StrToInt(Trim(ExtractDelimited(11, data, [','])));;
     newList.verticalScroll  := LowerCase(Trim(ExtractDelimited(12, data, [',']))) = 'v';
     newList.font            := FontNamed(Trim(ExtractDelimited(10, data, [','])));
+    
+    WriteLn('''', Trim(ExtractDelimited(13, data, [','])),  '''');
+    if Trim(ExtractDelimited(13, data, [','])) <> 'n' then
+    begin
+    	//LoadBitmap(Trim(ExtractDelimited(13, data, [','])));
+    	newList.scrollButton		:= LoadBitmap(Trim(ExtractDelimited(13, data, [','])));//BitmapNamed(Trim(ExtractDelimited(13, data, [','])));
+    end;
     
     scrollSz := newList.scrollSize;
     
