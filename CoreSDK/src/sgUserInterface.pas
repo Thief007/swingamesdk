@@ -45,8 +45,8 @@ type
   end;
   
   GUILabelData = record
-    contentString:  string;
-    font:         Font;
+    contentString:  String;
+    font:           Font;
   end;
   
   /// Each list item has text and an image
@@ -74,6 +74,7 @@ type
     font:         Font;
     items:        Array of GUIListItem;
     scrollButton: Bitmap;
+    alignment:    FontAlignment;
   end;
     
   GUIRadioGroupData = record
@@ -132,6 +133,11 @@ procedure ToggleActivatePanel(p: Panel);
 function PanelVisible(p: Panel): boolean;
 function PanelClicked(): Panel;
 
+function PanelY(p: Panel): Single;
+function PanelX(p: Panel): Single;
+function PanelHeight(p: Panel): LongInt;
+function PanelWidth(p: Panel): LongInt;
+
 // Regions
 function RegionClickedID(): String;
 function RegionClicked(): Region;
@@ -142,7 +148,11 @@ function RegionPanel(r: Region): Panel;
 procedure ToggleRegionActive(forRegion: Region);
 procedure SetRegionActive(forRegion: Region; b: boolean);
 
+function RegionY(r: Region): Single;
+function RegionX(r: Region): Single;
+function RegionHeight(r: Region): LongInt;
 function RegionWidth(r: Region): LongInt;
+
 
 //Checkbox
 function CheckboxState(s: String): Boolean; overload;
@@ -219,6 +229,11 @@ function ListStartAt(r: Region): LongInt;
 
 procedure ListSetStartAt(lst: GUIList; idx: LongInt);
 procedure ListSetStartAt(r: Region; idx: LongInt);
+
+function ListFontAlignment(r: Region): FontAlignment;
+function ListFontAlignment(lst: GUIList): FontAlignment;
+procedure ListSetFontAlignment(r: Region; align: FontAlignment);
+procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
 
 //Label
 function  LabelFont(l: GUILabel): Font; overload;
@@ -357,7 +372,6 @@ var
   areaPt:         Point2D;
   itemArea, scrollArea:       Rectangle;
   pct:            Single;
-  placeHolderScreenPoint: Point2D;
   placeHolderScreenRect: Rectangle;
 
   procedure _DrawUpDownArrow(const rect: Rectangle; up: Boolean);
@@ -408,7 +422,38 @@ var
     
     FillTriangleOnScreen(GUIC.backgroundClr, tri);
   end;
-
+  
+  procedure _DrawScrollPosition();
+  begin
+    if tempList^.verticalScroll then
+    begin
+      if GUIC.VectorDrawing then
+        FillRectangleOnScreen(GUIC.foregroundClr, 
+                              Round(scrollArea.x),
+                              Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
+                              tempList^.scrollSize,
+                              tempList^.scrollSize
+                              )
+      else
+        DrawBitmapOnScreen(tempList^.ScrollButton,
+                            Round(scrollArea.x),
+                            Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)));
+    end
+    else
+    begin
+      if GUIC.VectorDrawing then
+        FillRectangleOnScreen(GUIC.foregroundClr, 
+                              Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+                              Round(scrollArea.y),
+                              tempList^.scrollSize,
+                              tempList^.scrollSize
+                              )
+      else
+        DrawBitmapOnScreen(tempList^.ScrollButton,
+                            Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+                            Round(scrollArea.y));
+    end;
+  end;
 begin
   tempList := ListFromRegion(forRegion);
   if not assigned(tempList) then exit;
@@ -421,25 +466,25 @@ begin
   // Draw the up and down buttons
   if GUIC.VectorDrawing then
   begin
-	  if tempList^.verticalScroll then
-	  begin
-	    _DrawUpDownArrow(tempList^.scrollUp, true);
-	    _DrawUpDownArrow(tempList^.scrollDown, false);
-	  end
-	  else
-	  begin
-	    _DrawLeftRightArrow(tempList^.scrollUp, true);
-	    _DrawLeftRightArrow(tempList^.scrollDown, false);    
-	  end;
-	end;
+    if tempList^.verticalScroll then
+    begin
+      _DrawUpDownArrow(tempList^.scrollUp, true);
+      _DrawUpDownArrow(tempList^.scrollDown, false);
+    end
+    else
+    begin
+      _DrawLeftRightArrow(tempList^.scrollUp, true);
+      _DrawLeftRightArrow(tempList^.scrollDown, false);    
+    end;
+  end;
   
   // Draw the scroll area
   scrollArea := RectangleOffset(tempList^.scrollArea, areaPt);
   
   if GUIC.VectorDrawing then
   begin
-  	DrawRectangleOnScreen(GUIC.backgroundClr, scrollArea);
-  	DrawRectangleOnScreen(GUIC.foregroundClr, scrollArea);
+    DrawRectangleOnScreen(GUIC.backgroundClr, scrollArea);
+    DrawRectangleOnScreen(GUIC.foregroundClr, scrollArea);
   end;
   
   PushClip(scrollArea);
@@ -457,39 +502,9 @@ begin
       pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.rows);
   end;
   
+  _DrawScrollPosition();
   
-  begin
-	  if tempList^.verticalScroll then
-	  begin
-	  	if GUIC.VectorDrawing then
-	    	FillRectangleOnScreen(GUIC.foregroundClr, 
-	      	                    Round(scrollArea.x),
-	        	                  Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
-	          	                tempList^.scrollSize,
-	            	              tempList^.scrollSize
-	              	            )
-	    else
-	    	DrawBitmapOnScreen(tempList^.ScrollButton,
-	    											Round(scrollArea.x),
-	    										  Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)));
-	  end
-	  else
-	  begin
-	  	if GUIC.VectorDrawing then
-		    FillRectangleOnScreen(GUIC.foregroundClr, 
-		                          Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
-		                          Round(scrollArea.y),
-		                          tempList^.scrollSize,
-		                          tempList^.scrollSize
-		                          )
-			else
-				DrawBitmapOnScreen(tempList^.ScrollButton,
-	    											Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
-	    										  Round(scrollArea.y));
-		end;
-	end;
-	
-  PopClip();
+  PopClip(); // pop the scroll area
   
   // WriteLn('-------');
   //Draw all of the placeholders
@@ -500,7 +515,7 @@ begin
     
     // Outline the item's area
     if GUIC.VectorDrawing then
-    	DrawRectangleOnScreen(GUIC.foregroundClr, itemArea);
+      DrawRectangleOnScreen(GUIC.foregroundClr, itemArea);
     
     // Find the index of the first item to be shown in the list
     // NOTE: place holders in col then row order 0, 1 -> 2, 3 -> 4, 5 (for 2 cols x 3 rows)
@@ -521,29 +536,33 @@ begin
     PushClip(itemArea);
     
     if (itemIdx <> tempList^.activeItem) then
-      DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.foregroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+      DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
+                            GUIC.foregroundClr, GUIC.backgroundClr, 
+                            ListFont(tempList), ListFontAlignment(tempList), 
+                            itemArea)
     else
     begin
-    	if GUIC.VectorDrawing then
-    	begin
-      	FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
-      	DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+      if GUIC.VectorDrawing then
+      begin
+        FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
+        DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
       end
       else
-      	DrawBitmapPart(forRegion^.parent^.panelBitmapActive, 
-      									placeHolderScreenRect, 
-      									RectangleTopLeft(itemArea));
-      									
-      	DrawTextOnScreen(ListItemText(tempList, itemIdx), 
-      										GUIC.foregroundClr, 
-      										ListFont(tempList), 
-      										RectangleTopLeft(itemArea))
+      begin
+        DrawBitmapPart(forRegion^.parent^.panelBitmapActive,
+                       placeHolderScreenRect,
+                       RectangleTopLeft(itemArea));
+        DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
+                     GUIC.foregroundClr, GUIC.backgroundClr, 
+                     ListFont(tempList), ListFontAlignment(tempList),
+                     itemArea);
+      end;
     end;
     
-    PopClip();
+    PopClip(); // item area
   end;
   
-  PopClip();
+  PopClip(); // region
 end;
 
 procedure DrawAsVectors();
@@ -634,35 +653,35 @@ end;
 
 function RegionWidth(r: Region): LongInt;
 begin
-	result := -1;
-	if not(assigned(r)) then exit;
-	
-	result := r^.area.width;
+  result := -1;
+  if not(assigned(r)) then exit;
+  
+  result := r^.area.width;
 end;
 
 function RegionHeight(r: Region): LongInt;
 begin
-	result := -1;
-	if not(assigned(r)) then exit;
-	
-	result := r^.area.height;
+  result := -1;
+  if not(assigned(r)) then exit;
+  
+  result := r^.area.height;
 end;
 
-function RegionX(r: Region): LongInt;
+function RegionX(r: Region): Single;
 begin
-	result := -1;
-	
-	if not(assigned(r)) then exit;
-	
-	result := r^.area.x;
+  result := -1;
+  
+  if not(assigned(r)) then exit;
+  
+  result := r^.area.x;
 end;
 
-function RegionY(r: Region): LongInt;
+function RegionY(r: Region): Single;
 begin
-	result := -1;
-	if not(assigned(r)) then exit;
-	
-	result := r^.area.y;
+  result := -1;
+  if not(assigned(r)) then exit;
+  
+  result := r^.area.y;
 end;
 
 procedure SetRegionActive(forRegion: Region; b: boolean);
@@ -760,18 +779,18 @@ begin
 end;
 
 function RegionClicked(): region;
-begin		
-  result := nil;	
+begin   
+  result := nil;  
   if not assigned(GUIC.lastClicked) then exit;
-	
+  
   result := GUIC.lastClicked;
 end;
 
 function RegionClickedID(): String;
 begin
-	result := '';
-	if not assigned(GUIC.lastClicked) then exit;
-	
+  result := '';
+  if not assigned(GUIC.lastClicked) then exit;
+  
   result := RegionID(GUIC.lastClicked);
 end;
 
@@ -781,13 +800,6 @@ begin
   if not assigned(r) then exit;
   
   result := r^.parent;
-end;
-
-function RegionWidth(r: Region): LongInt;
-begin
-  if not assigned(r) then exit;
-  
-  result := r^.area.width;
 end;
 
 
@@ -981,7 +993,7 @@ begin
   if assigned(lb) then
     result := lb^.contentString
   else
-  	result := '';
+    result := '';
 end;
 
 function LabelText(r: Region): String; overload;
@@ -1039,8 +1051,6 @@ end;
 
 function LastTextRead(): string;
 begin
-	result := '';
-	if not assigned(GUIC.lastTextRead) then exit;
   result := GUIC.lastTextRead;
 end;
 
@@ -1073,7 +1083,7 @@ begin
                             GUIC.foregroundClr, 
                             t^.lengthLimit, 
                             t^.Font, 
-                            RectangleTopLeft(RegionRectangleOnScreen(t^.region)));
+                            RegionRectangleOnScreen(t^.region));
 end;
 
 function TextboxAlignment(r: Region): FontAlignment;
@@ -1093,7 +1103,6 @@ procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
 begin
   if not assigned(tb) then exit;
   
-  WriteLn(Integer(align));
   tb^.alignment := align;
 end;
 
@@ -1338,6 +1347,31 @@ begin
   ListSetStartAt(ListFromRegion(r), idx);
 end;
 
+function ListFontAlignment(r: Region): FontAlignment;
+begin
+  result := ListFontAlignment(ListFromRegion(r));
+end;
+
+function ListFontAlignment(lst: GUIList): FontAlignment;
+begin
+  result := AlignLeft;
+  if not assigned(lst) then exit;
+  
+  result := lst^.alignment;
+end;
+
+procedure ListSetFontAlignment(r: Region; align: FontAlignment);
+begin
+  ListSetFontAlignment(ListFromRegion(r), align);
+end;
+
+procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
+begin
+  if not assigned(lst) then exit;
+  
+  lst^.alignment := align;
+end;
+
 
 //---------------------------------------------------------------------------------------
 // Checkbox Code Code
@@ -1389,48 +1423,48 @@ end;
 
 procedure PanelSetX(p: Panel; nX: LongInt);
 begin
-	if not(assigned(p)) then exit;
-	
-	p^.area.X := nX;
+  if not(assigned(p)) then exit;
+  
+  p^.area.X := nX;
 end;
 
 procedure PanelSetY(p: Panel; nY: LongInt);
 begin
-	if not(assigned(p)) then exit;
-	
-	p^.area.Y := nY;
+  if not(assigned(p)) then exit;
+  
+  p^.area.Y := nY;
 end;
 
 function PanelWidth(p: Panel): LongInt;
 begin
-	result := -1;
-	if not(assigned(p)) then exit;
-	
-	result := p^.area.width;
+  result := -1;
+  if not(assigned(p)) then exit;
+  
+  result := p^.area.width;
 end;
 
 function PanelHeight(p: Panel): LongInt;
 begin
-	result := -1;
-	if not(assigned(p)) then exit;
-	
-	result := p^.area.height;
+  result := -1;
+  if not(assigned(p)) then exit;
+  
+  result := p^.area.height;
 end;
 
-function PanelX(p: Panel): LongInt;
+function PanelX(p: Panel): Single;
 begin
-	result := -1;
-	if not(assigned(p)) then exit;
-	
-	result := p^.area.x;
+  result := -1;
+  if not(assigned(p)) then exit;
+  
+  result := p^.area.x;
 end;
 
-function PanelY(p: Panel): LongInt;
+function PanelY(p: Panel): Single;
 begin
-	result := -1;
-	if not(assigned(p)) then exit;
-	
-	result := p^.area.y;
+  result := -1;
+  if not(assigned(p)) then exit;
+  
+  result := p^.area.y;
 end;
 
 function PanelVisible(p: Panel): boolean;
@@ -1611,7 +1645,7 @@ var
     
     newTextbox.font           := FontNamed(Trim(ExtractDelimited(7, data, [','])));
     newTextbox.lengthLimit    := StrToInt(Trim(ExtractDelimited(8, data, [','])));
-    newTextBox.alignment      := TextAlignmentFrom(Trim(ExtractDelimited(9, data, [',']))[1]);
+    newTextBox.alignment      := TextAlignmentFrom(Trim(ExtractDelimited(9, data, [','])));
     newTextBox.contentString  := Trim(ExtractDelimited(10, data, [',']));
     newTextBox.region         := r;
     
@@ -1626,21 +1660,21 @@ var
     scrollSz, rhs, btm, height, width: LongInt;
   begin
     //Format is
-    // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,         12					 13
-    // x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind, scrollbutton bitmap
+    // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,        12,         13          14                  
+    // x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, alignment, scrollSize, scrollKind, scrollbutton bitmap
     
     newList.columns         := StrToInt(Trim(ExtractDelimited(7, data, [','])));
     newList.rows            := StrToInt(Trim(ExtractDelimited(8, data, [','])));
     newList.activeItem      := StrToInt(Trim(ExtractDelimited(9, data, [','])));
-    newList.scrollSize      := StrToInt(Trim(ExtractDelimited(11, data, [','])));;
-    newList.verticalScroll  := LowerCase(Trim(ExtractDelimited(12, data, [',']))) = 'v';
     newList.font            := FontNamed(Trim(ExtractDelimited(10, data, [','])));
+    newList.alignment       := TextAlignmentFrom(Trim(ExtractDelimited(11, data, [','])));
+    newList.scrollSize      := StrToInt(Trim(ExtractDelimited(12, data, [','])));;
+    newList.verticalScroll  := LowerCase(Trim(ExtractDelimited(13, data, [',']))) = 'v';
     
-    WriteLn('''', Trim(ExtractDelimited(13, data, [','])),  '''');
-    if Trim(ExtractDelimited(13, data, [','])) <> 'n' then
+    if Trim(ExtractDelimited(14, data, [','])) <> 'n' then
     begin
-    	//LoadBitmap(Trim(ExtractDelimited(13, data, [','])));
-    	newList.scrollButton		:= LoadBitmap(Trim(ExtractDelimited(13, data, [','])));//BitmapNamed(Trim(ExtractDelimited(13, data, [','])));
+      //LoadBitmap(Trim(ExtractDelimited(13, data, [','])));
+      newList.scrollButton    := LoadBitmap(Trim(ExtractDelimited(14, data, [',']))); //BitmapNamed(Trim(ExtractDelimited(13, data, [','])));
     end;
     
     scrollSz := newList.scrollSize;

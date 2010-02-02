@@ -9,6 +9,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-02: Andrew : Added starting text reading within a region
 // - 2009-07-24: Andrew : Renamed mouse code
 // - 2009-07-10: Andrew : Added call to initialise SwinGame.
 //                      : Fixed missing const modifier on struct parameters
@@ -113,6 +114,23 @@ interface
   /// @lib
   function MouseShown(): Boolean;
   
+  /// Start reading text within an area. Entry is 
+  /// completed when the user presses ENTER, and aborted with ESCAPE.
+  /// If the user aborts entry the result is an empty string. Text entry is
+  /// updated during `ProcessEvents`, and text is drawn to the screen as part 
+  /// of the `RefreshScreen` call.
+  ///
+  /// @lib StartReadingTextWithinArea
+  /// @sn startReadingTextColor:%s maxLen:%s font:%s area:%s
+  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  
+  /// The same as `StartReadingText' but with an additional `text` parameter
+  /// that is displayed as default text to the user.  
+  ///
+  /// @lib
+  /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s area:%s
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  
   /// Starts the reading of a string of characters from the user. Entry is 
   /// completed when the user presses ENTER, and aborted with ESCAPE.
   /// If the user aborts entry the result is an empty string. Text entry is
@@ -121,7 +139,7 @@ interface
   ///
   /// @lib
   /// @sn startReadingTextColor:%s maxLen:%s font:%s x:%s y:%s
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
   
   /// The same as `StartReadingText' but with an additional `text` parameter
   /// that is displayed as default text to the user.  
@@ -210,14 +228,25 @@ implementation
   end;
 
   //---------------------------------------------------------------------------
-
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  
+  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
   begin
     if theFont = nil then begin RaiseException('The specified font to start reading text is nil'); exit; end;
     if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
     if ReadingText() then begin RaiseException('Already reading text, cannot start reading text again.'); exit; end;
     
-    sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, x, y);
+    sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, NewSDLRect(area));
+  end;
+  
+  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt);
+  begin
+    StartReadingText(textColor, maxLength, theFont, RectangleFrom(x, y, TextWidth(StringOfChar('M', maxLength), theFont), TextHeight('M', theFont)));
+  end;
+  
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  begin
+    StartReadingText(textColor, maxLength, theFont, area);
+    sdlManager.SetText(text);    
   end;
   
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const pt: Point2D); overload;

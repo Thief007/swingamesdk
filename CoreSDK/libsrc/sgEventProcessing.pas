@@ -11,6 +11,7 @@
 //
 // Change History:
 // Version 3:
+// - 2010-02-02: Andrew : Added the ability to define a region for text entry
 // - 2010-01-13: Cooldave: Fixed error with Bar in SetText.
 // - 2009-06-23: Clinton: Renamed file/unit, comment/format cleanup/tweaks
 //
@@ -32,7 +33,8 @@ unit sgEventProcessing;
 interface
 //=============================================================================
 
-  uses Classes, SDL, SDL_Mixer, SysUtils, SDL_TTF;
+  uses 
+    Classes, SDL, SDL_Mixer, SysUtils, SDL_TTF;
 
   type
 
@@ -43,18 +45,19 @@ interface
     TSDLManager = class(TObject)
     private
       // private data
-      _quit: Boolean;
-      _keyPressed: Boolean;
-      _readingString: Boolean;
-      _tempString: String;
-      _textSurface: PSDL_Surface;
-      _maxStringLen: LongInt;
-      _font: PTTF_Font;
-      _foreColor: TSDL_Color;
-      _x, _y: LongInt;
-      _KeyTyped: Array of LongInt;
-      _EventProcessors: Array of EventProcessPtr;
-      _EventStartProcessors: Array of EventStartProcessPtr;
+      _quit:                  Boolean;
+      _keyPressed:            Boolean;
+      _readingString:         Boolean;
+      _tempString:            String;
+      _textSurface:           PSDL_Surface;
+      _maxStringLen:          LongInt;
+      _font:                  PTTF_Font;
+      _foreColor:             TSDL_Color;
+      _area:                  SDL_Rect;
+      _KeyTyped:              Array of LongInt;
+      _EventProcessors:       Array of EventProcessPtr;
+      _EventStartProcessors:  Array of EventStartProcessPtr;
+      
       // private methods
       procedure DoQuit();
       procedure CheckQuit();
@@ -67,7 +70,7 @@ interface
       property IsReading: Boolean read _readingString;
       procedure DrawCollectedText(dest: PSDL_Surface);
       procedure SetText(text: String);
-      procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; x, y: LongInt);
+      procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; area: SDL_Rect);
       function  EndReadingText(): String;
       // key pressed/typed tests
       function WasKeyTyped(keyCode: LongInt): Boolean;
@@ -198,7 +201,7 @@ implementation
       begin
          _tempString := Copy(_tempString, 1, Length(_tempString) - 1);
       end
-      else if event^.key.keysym.sym = SDLK_RETURN then
+      else if (event^.key.keysym.sym = SDLK_RETURN) or (event^.key.keysym.sym = SDLK_KP_ENTER) then
       begin
         _readingString := false;
       end
@@ -211,10 +214,8 @@ implementation
       begin
         case event^.key.keysym.unicode of
           //Skip non printable characters
-          0: ;
-          128..159: ;
-          7..10, 13: ;
-          27: ;
+          0..31: ;
+          127..High(UInt16): ;
           else //Append the character
             _tempString := _tempString + Char(event^.key.keysym.unicode);
         end;
@@ -265,18 +266,29 @@ implementation
   
   procedure TSDLManager.DrawCollectedText(dest: PSDL_Surface);
   var
-    drect: SDL_Rect;
+    srect, drect: SDL_Rect;
+    textWidth: LongInt;
   begin
     if _readingString and (_textSurface <> nil) then
     begin
-      drect.x := _x;
-      drect.y := _y;
-    
-      SDL_BlitSurface(_textSurface, nil, dest, @drect);
+      textWidth := _textSurface^.w;
+      
+      if textWidth > _area.w then
+        srect.x := textWidth - _area.w
+      else
+        srect.x := 0;
+      srect.y := 0;
+      
+      srect.w := _area.w;
+      srect.h := _area.h;
+      
+      drect := _area;
+      
+      SDL_BlitSurface(_textSurface, @srect, dest, @drect);
     end;
   end;
   
-  procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; x: LongInt; y: LongInt);
+  procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; area: SDL_Rect);
   begin
     if _textSurface <> nil then
     begin
@@ -290,8 +302,7 @@ implementation
     _maxStringLen := maxLength;
     _foreColor := textColor;
     _font := theFont;
-    _x := x;
-    _y := y;
+    _area := area;
   end;
   
   constructor TSDLManager.Create();

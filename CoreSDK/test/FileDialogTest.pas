@@ -19,7 +19,7 @@ type
 var
   dialog: FileDialogData;
 
-procedure SetFileDialogPath(path: String); forward;
+procedure SetFileDialogPath(fullname: String); forward;
 
 procedure InitialiseFileDialog();
 begin
@@ -83,8 +83,8 @@ begin
   
   pathTxt := RegionWithId(dialog.dialogPanel,'PathTextbox');
   
-  WriteLn('tw: ', TextWidth(TextboxFont(pathTxt), selectedPath));
-  WriteLn('rw: ', RegionWidth(pathTxt));
+  // WriteLn('tw: ', TextWidth(TextboxFont(pathTxt), selectedPath));
+  // WriteLn('rw: ', RegionWidth(pathTxt));
   if TextWidth(TextboxFont(pathTxt), selectedPath) > RegionWidth(pathTxt) then TextboxSetAlignment(pathTxt, AlignRight)
   else TextboxSetAlignment(pathTxt, AlignLeft);
   
@@ -92,25 +92,37 @@ begin
   LabelSetText(RegionWithId(dialog.dialogPanel, 'PathLabel'), selectedPath);
 end;
 
-procedure SetFileDialogPath(path: String);
+procedure SetFileDialogPath(fullname: String);
 var
-  tmpPath: String;
+  tmpPath, path, filename: String;
   pathList, filesList: GUIList;
   paths: Array [0..255] of PChar;
   i, len: Integer;
   info : TSearchRec;
+  selectFile: Boolean;
 begin
-  if not (FileExists(path) or DirectoryExists(path)) then exit;
-  
   // expand the relative path to absolute
-  path := ExpandFileName(path);
-  // LabelSetText(RegionWithId(dialog.dialogPanel, 'PathLabel'), path);
-  // TextboxSetText(RegionWithId(dialog.dialogPanel,'PathTextbox'), path);
+  fullname := ExpandFileName(fullname);
+  if not (FileExists(fullname) or DirectoryExists(fullname)) then exit;
+  
+  selectFile := false;
+  
+  if FileExists(fullname) and not DirectoryExists(fullname) then
+  begin
+    filename := ExtractFileName(fullname);
+    selectFile := true;
+  end
+  else fullname := IncludeTrailingPathDelimiter(fullname);
+  
+  path := ExtractFilePath(fullname);
+  
+  // Get the path without the ending delimiter (if one exists...)
+  tmpPath := ExcludeTrailingPathDelimiter(path);
   
   with dialog do
   begin
-    currentPath         := IncludeTrailingPathDelimiter(path);
-    currentSelectedPath := currentPath;
+    currentPath         := IncludeTrailingPathDelimiter(tmpPath);
+    currentSelectedPath := fullname;
     lastSelectedPath    := -1;
     lastSelectedFile    := -1;
   end;
@@ -121,14 +133,16 @@ begin
   filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
   
   // Set the details in the path list
-  tmpPath := ExcludeTrailingPathDelimiter(path);
   len := GetDirs(tmpPath, paths); //NOTE: need to use tmpPath as this strips separators from pass in string...
   
   // Clear the list of all of its items
   ListClearItems(pathList);
   
   // Add the drive letter at the start
-  ListAddItem(pathList, ExtractFileDrive(path));
+  if Length(ExtractFileDrive(path)) = 0 then
+    ListAddItem(pathList, PathDelim)
+  else
+    ListAddItem(pathList, ExtractFileDrive(path));
   
   // Loop through the directories adding them to the list
   for i := 0 to len - 1 do
@@ -156,6 +170,11 @@ begin
     until FindNext(info) <> 0;
   end;
   FindClose(info);
+  
+  if selectFile then
+  begin
+    ListSetActiveItemIndex(filesList, ListTextIndex(filesList, filename));
+  end;
 end;
 
 procedure UpdateFileDialog();
@@ -214,7 +233,8 @@ var
       newPath := ExtractFileDrive(dialog.currentPath) + PathDelim;
       for i := 0 to Min(selectedIdx - 1, len) do
       begin
-        newPath := newPath + paths[i] + PathDelim;
+        //Need to exclude trailing path delimiter as some paths will include this at the end...
+        newPath := newPath + ExcludeTrailingPathDelimiter(paths[i]) + PathDelim;
       end;
       
       SetFileDialogPath(newPath);
@@ -233,6 +253,15 @@ var
   begin
     HidePanel(dialog.dialogPanel);
   end;
+  
+  procedure _PerformChangePath();
+  var
+    newPath: String;
+  begin
+    newPath := TextboxText(RegionWithID(dialog.dialogPanel, 'PathTextbox'));
+    
+    SetFileDialogPath(newPath);
+  end;
 begin
   if PanelClicked() = dialog.dialogPanel then
   begin
@@ -246,6 +275,11 @@ begin
       _PerformCancelClick()
     else if clicked = RegionWithID(dialog.dialogPanel, 'OkButton') then
       _PerformOkClick();
+  end;
+  
+  if GUITextEntryComplete() and (RegionOfLastUpdatedTextBox() = RegionWithID(dialog.dialogPanel, 'PathTextbox')) then
+  begin
+    _PerformChangePath();
   end;
 end;
 

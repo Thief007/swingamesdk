@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-02: Andrew:  Added string to FontAlignment
 // - 2009-12-07: Andrew : Added font loading and freeing code..
 // - 2009-06-05: Andrew : Using sgShared
 //
@@ -181,7 +182,7 @@ interface
   /// Returns the font alignment for the passed in character (l = left. r = right, c = center).
   /// 
   /// @lib
-  function TextAlignmentFrom(ch: Char): FontAlignment;
+  function TextAlignmentFrom(str: String): FontAlignment;
   
 //=============================================================================
 implementation
@@ -581,7 +582,7 @@ implementation
     if theFont = nil then begin RaiseException('The specified font is nil'); exit; end;
     if dest = nil then begin RaiseException('Cannot draw text, as no destination was supplied'); exit; end;
       
-    rect := NewSDLRect(x, y, TextWidth(theFont, theText), TextHeight(theFont, theText));    
+    rect := NewSDLRect(x + 1, y + 1, TextWidth(theFont, theText) + 2, TextHeight(theFont, theText) + 2);
     PrintStrings(dest^.surface, theFont, theText, @rect, textColor, ColorTransparent, AlignLeft);
   end;
 
@@ -627,7 +628,7 @@ implementation
   var
     rect: TSDL_Rect;
   begin
-    rect := NewSDLRect(x, y, w, h);
+    rect := NewSDLRect(x + 1, y + 1, w - 2, h - 2);
     PrintStrings(dest^.surface, theFont, theText, @rect, textColor, backColor, align);
   end;
 
@@ -840,8 +841,12 @@ implementation
     stringColor(dest^.surface, Round(x), Round(y), PChar(theText), ToGFXColor(textColor));
   end;
   
-  function TextAlignmentFrom(ch: Char): FontAlignment;
+  function TextAlignmentFrom(str: String): FontAlignment;
+  var ch: Char;
   begin
+    str := trim(str);
+    if length(str) > 0 then ch := str[1] else ch := 'l';
+    
     case ch of
       'c', 'C': result := AlignCenter;
       'r', 'R': result := AlignRight;
