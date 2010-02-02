@@ -42,9 +42,11 @@ implementation
   function LongIntArrayToRange(ints: LongIntArray):String;
   var
     i,temp:longint;
+    tempChanged : Boolean;
   begin
     result:= '';
-    temp :=-1;
+    temp :=0;
+    tempChanged := false;
     if not assigned(ints) then exit;
     result := '['+IntToStr(ints[0]);
     for i := low(ints)+1 to high(ints) do
@@ -52,21 +54,24 @@ implementation
       //writeln(ints[0], ints[1]);
       if (ints[i]-1) = (ints[i-1]) then
       begin
-        if temp = -1 then temp := ints[i]
-        else if temp <> -1 then temp+= ints[i];
+        if not tempChanged then temp := ints[i]
+        else if tempChanged then temp += ints[i];
+        tempChanged := true;
       end
-      else if temp <> -1 then
+      else if tempChanged then
       begin
         result += '-'+IntToStr(temp);
-        result +=','+IntToStr(ints[i]);
-        temp:=-1;
+        result += ','+IntToStr(ints[i]);
+        tempChanged := false;
+        temp := 0;
       end
-      else if temp = -1 then result +=','+IntToStr(ints[i]);
+      else if not tempChanged then result +=','+IntToStr(ints[i]);
     end;
-    if temp <> -1 then
+    if tempChanged then
     begin
      result += '-'+IntToStr(temp);
-     temp:=-1;
+     tempChanged := false;
+     temp := 0;
     end;
     
     result += ']';

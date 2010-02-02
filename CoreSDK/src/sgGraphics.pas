@@ -11,6 +11,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-02: Aaron  : Added PushClip,PopClip,SetClip,ResetClip
 // - 2010-01-13: Aaron  : Made all Draw Shapes  draw with an offset and made those that does not have a destination Bitmap have  an offset of cameraX and cameraY
 // - 2010-01-04: Andrew : Added PutPixel
 // - 2009-12-10: Andrew : Moved out remaining bitmap function
