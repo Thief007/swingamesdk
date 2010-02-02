@@ -7,8 +7,8 @@ uses
   
 procedure InitInterface(var pnla, pnlb: panel);
 begin
-  GUISetForegroundColor(ColorRed);
-  GUISetBackgroundColor(ColorYellow);
+  GUISetForegroundColor(RGBAColor(128,128,128,127));
+  GUISetBackgroundColor(ColorTransparent);
   
   pnla := LoadPanel('panelwithbutton.txt');
   pnlb := LoadPanel('panelwithlabel.txt');
@@ -31,10 +31,9 @@ var
   parpnl: Panel;
   radGroup: GUIRadioGroup;
 begin
-  if (RegionClickedID() = 'Button1') And (CheckboxState(RegionWithID('Checkbox2'))) then
+  if (RegionClickedID() = 'Button1') then
   begin
-    ToggleShowPanel(pnlb);
-    Toggleactivatepanel(pnlb);
+  	LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextBoxText(RegionWithID('TextBox1')));
   end;
 
   radGroup := RadioGroupFromRegion(RegionWithID('radButton1'));
