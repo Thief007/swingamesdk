@@ -287,7 +287,7 @@ begin
   result := GUIC.activeTextBox^.parent;
 end;
 
-function RegionRectangle(r: Region): Rectangle;
+function RegionRectangleOnscreen(r: Region): Rectangle;
 begin
   if not assigned(r) then begin result := RectangleFrom(0,0,0,0); exit; end;
   
@@ -320,25 +320,26 @@ end;
 
 procedure DrawTextbox(forRegion: Region; const area: Rectangle);
 begin
-  DrawRectangleOnScreen(GUIC.foregroundClr, area);
+	if GUIC.VectorDrawing then
+  	DrawRectangleOnScreen(GUIC.foregroundClr, area);
   
   if GUIC.activeTextBox <> forRegion then
     DrawTextOnScreen( TextBoxText(forRegion), 
                       GUIC.foregroundClr, 
                       TextBoxFont(forRegion), 
-                      RectangleTopLeft(area));
+                      RectangleTopLeft(RegionRectangleOnScreen(forRegion)));
 end;
   
-procedure DrawVectorList(forRegion: Region; const area: Rectangle);
+procedure DrawList(forRegion: Region; const area: Rectangle);
 var
   tempList:       GUIList;
   i, itemIdx:     LongInt;
-  // barHeight:      LongInt;
-  // scrollButtonY:  LongInt;
   areaPt:         Point2D;
   itemArea, scrollArea:       Rectangle;
   pct:            Single;
-  
+  placeHolderScreenPoint: Point2D;
+  placeHolderScreenRect: Rectangle;
+
   procedure _DrawUpDownArrow(const rect: Rectangle; up: Boolean);
   var
     tri: Triangle;
@@ -387,7 +388,7 @@ var
     
     FillTriangleOnScreen(GUIC.backgroundClr, tri);
   end;
-// Start DrawVectorList
+
 begin
   tempList := ListFromRegion(forRegion);
   if not assigned(tempList) then exit;
@@ -398,22 +399,28 @@ begin
   areaPt := RectangleTopLeft(area);
   
   // Draw the up and down buttons
-  if tempList^.verticalScroll then
+  if GUIC.VectorDrawing then
   begin
-    _DrawUpDownArrow(tempList^.scrollUp, true);
-    _DrawUpDownArrow(tempList^.scrollDown, false);
-  end
-  else
-  begin
-    _DrawLeftRightArrow(tempList^.scrollUp, true);
-    _DrawLeftRightArrow(tempList^.scrollDown, false);    
-  end;
+	  if tempList^.verticalScroll then
+	  begin
+	    _DrawUpDownArrow(tempList^.scrollUp, true);
+	    _DrawUpDownArrow(tempList^.scrollDown, false);
+	  end
+	  else
+	  begin
+	    _DrawLeftRightArrow(tempList^.scrollUp, true);
+	    _DrawLeftRightArrow(tempList^.scrollDown, false);    
+	  end;
+	end;
   
   // Draw the scroll area
   scrollArea := RectangleOffset(tempList^.scrollArea, areaPt);
   
-  DrawRectangleOnScreen(GUIC.backgroundClr, scrollArea);
-  DrawRectangleOnScreen(GUIC.foregroundClr, scrollArea);
+  if GUIC.VectorDrawing then
+  begin
+  	DrawRectangleOnScreen(GUIC.backgroundClr, scrollArea);
+  	DrawRectangleOnScreen(GUIC.foregroundClr, scrollArea);
+  end;
   
   PushClip(scrollArea);
   
@@ -430,20 +437,24 @@ begin
       pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.rows);
   end;
   
-  if tempList^.verticalScroll then
-    FillRectangleOnScreen(GUIC.foregroundClr, 
-                          Round(scrollArea.x),
-                          Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
-                          tempList^.scrollSize,
-                          tempList^.scrollSize
-                          )
-  else
-    FillRectangleOnScreen(GUIC.foregroundClr, 
-                          Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
-                          Round(scrollArea.y),
-                          tempList^.scrollSize,
-                          tempList^.scrollSize
-                          );
+  if GUIC.VectorDrawing then
+  begin
+	  if tempList^.verticalScroll then
+	    FillRectangleOnScreen(GUIC.foregroundClr, 
+	                          Round(scrollArea.x),
+	                          Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
+	                          tempList^.scrollSize,
+	                          tempList^.scrollSize
+	                          )
+	  else
+	    FillRectangleOnScreen(GUIC.foregroundClr, 
+	                          Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
+	                          Round(scrollArea.y),
+	                          tempList^.scrollSize,
+	                          tempList^.scrollSize
+	                          );
+	end;
+	
   PopClip();
   
   // WriteLn('-------');
@@ -451,9 +462,11 @@ begin
   for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
   begin
     itemArea := RectangleOffset(tempList^.placeHolder[i], areaPt);
+    placeHolderScreenRect := RectangleOffset(tempList^.placeHolder[i], RectangleTopLeft(forRegion^.area));
     
     // Outline the item's area
-    DrawRectangleOnScreen(GUIC.foregroundClr, itemArea);
+    if GUIC.VectorDrawing then
+    	DrawRectangleOnScreen(GUIC.foregroundClr, itemArea);
     
     // Find the index of the first item to be shown in the list
     // NOTE: place holders in col then row order 0, 1 -> 2, 3 -> 4, 5 (for 2 cols x 3 rows)
@@ -473,12 +486,18 @@ begin
     
     PushClip(itemArea);
     
-    if itemIdx <> tempList^.activeItem then
+    if (itemIdx <> tempList^.activeItem) then
       DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.foregroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
     else
     begin
-      FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
-      DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+    	if GUIC.VectorDrawing then
+    	begin
+      	FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
+      	DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+      end
+      else
+      	DrawBitmapPart(forRegion^.parent^.panelBitmapActive, placeHolderScreenRect, RectangleTopLeft(itemArea));
+      	DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.foregroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
     end;
     
     PopClip();
@@ -505,15 +524,15 @@ begin
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case currentReg^.kind of
-        gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangle(currentReg));
+        gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangleOnscreen(currentReg));
         gkLabel:      DrawTextOnScreen( LabelText(currentReg), 
                                         GUIC.foregroundClr, 
                                         LabelFont(currentReg), 
-                                        RectangleTopLeft(RegionRectangle(currentReg)));
-        gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangle(currentReg));
-        gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangle(currentReg));
-        gkTextbox:    DrawTextbox(currentReg, RegionRectangle(currentReg));
-        gkList:       DrawVectorList(currentReg, RegionRectangle(currentReg));
+                                        RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
+        gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
+        gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangleOnScreen(currentReg));
+        gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
+        gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
       end;
     end;
     
@@ -525,7 +544,15 @@ procedure DrawBitmapCheckbox(forRegion: Region; const area: Rectangle);
 begin
   if CheckboxState(forRegion) then
   begin
-    DrawBitmapPart(forRegion^.parent^.panelBitmapActive, area, PointAdd(RectangleTopLeft(area), RectangleTopLeft(forRegion^.parent^.area)));
+    DrawBitmapPart(forRegion^.parent^.panelBitmapActive, forRegion^.area, RectangleTopLeft(area));
+  end;
+end;
+
+procedure DrawBitmapRadioGroup(forRegion: Region; const area: Rectangle);
+begin
+  if forRegion = ActionRadioButton(forRegion) then
+  begin
+    DrawBitmapPart(forRegion^.parent^.panelBitmapActive, forRegion^.area, RectangleTopLeft(area));
   end;
 end;
 
@@ -543,9 +570,11 @@ begin
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case GUIC.visiblePanels[i]^.Regions[j].kind of
-        gkLabel: DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(RegionRectangle(currentReg)));//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
-        gkTextbox: DrawTextbox(currentReg, currentReg^.area);
-        gkCheckbox: DrawBitmapCheckbox(currentReg, currentReg^.area);
+        gkLabel: DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(RegionRectangleOnScreen(currentReg)));//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
+        gkTextbox: DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
+        gkCheckbox: DrawBitmapCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
+        gkRadioGroup: DrawBitmapRadioGroup(currentReg, RegionRectangleOnScreen(currentReg));
+        gkList: DrawList(currentReg, RegionRectangleOnScreen(currentReg));
       end;
     end;
   end;
@@ -929,7 +958,7 @@ begin
                             GUIC.foregroundClr, 
                             t^.lengthLimit, 
                             t^.Font, 
-                            RectangleTopLeft(RegionRectangle(t^.region)));
+                            RectangleTopLeft(RegionRectangleOnScreen(t^.region)));
 end;
 
 //---------------------------------------------------------------------------------------
