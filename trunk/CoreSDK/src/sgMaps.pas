@@ -355,9 +355,10 @@ interface
       
       defaultValues:=ProcessFloatRange(ExtractDelimitedWithRanges(2,data));
       //add exception if length of default value <> length of valueIds.names.
-      if ((length(result^.MapDefaultValues) = 0) AND (kind+1 > length(result^.MapDefaultValues))) then
-       //sets length of default value to kind +1 and number of names of value
-          SetLength(result^.MapDefaultValues, kind+1, NameCount(result^.valueIds));
+      if ((length(result^.MapDefaultValues) = 0) AND (NameCount(result^.kindIds) > length(result^.MapDefaultValues))) then
+       //sets length of default value to length of kinds and number of names of value
+          SetLength(result^.MapDefaultValues, NameCount(result^.KindIds), NameCount(result^.valueIds));
+          ZeroArray(result^.MapDefaultValues);
       for i:=low(result^.MapDefaultValues[kind]) to high(result^.MapDefaultValues[kind]) do
       begin
         result^.MapDefaultValues[kind, i] := defaultValues[i];
@@ -1031,7 +1032,6 @@ interface
       for col := low(m^.Tiles[row]) to high(m^.Tiles[row])do
       begin
         currentTile := m^.Tiles[row,col];
-        writeln(currentTile.Kind);
        //writeln(currentTile.TileBitmapCellKind[LAYER]^.kindIdx);
         if not Assigned(currentTile.TileBitmapCellKind[LAYER]) then
         begin
@@ -1040,6 +1040,41 @@ interface
         end
         else if currentTile.Kind <> currentTile.TileBitmapCellKind[LAYER]^.kindIdx then writeln(output,'tk:',row,',',col,',',currentTile.Kind);
 
+      end;
+  end;
+
+  procedure _WriteDefaultValues();
+  var
+  i : LongInt;
+  currentArr : SingleArray;
+  begin
+    for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
+    begin
+      currentArr := m^.MapDefaultValues[i];
+      writeln(output,'mvd:',i,',',SingleArrayToRange(currentArr));
+    end;
+  end;
+
+  procedure _WriteTileValues();
+  var
+  row, col, vId: LongInt;
+  currentTile : TileData;
+  currentValue : Single;
+  begin
+    for row := low(m^.Tiles) to high(m^.Tiles) do
+      for col := low(m^.Tiles[row]) to high(m^.Tiles[row])do
+      begin
+        currentTile := m^.Tiles[row,col];
+        for vId := low(currentTile.Values) to high(currentTile.Values) do
+        begin
+          currentValue := currentTile.Values[vId];
+          if currentTile.kind <> -1 then
+          begin
+            writeln(currentTile.Kind,vId);
+            if currentValue <> m^.MapDefaultValues[currentTile.Kind,vId] then
+              writeln(output,'tv:',row,',',col,',',NameAt(m^.ValueIds,vId),',',currentValue);
+          end;
+        end;
       end;
   end;
 
@@ -1084,8 +1119,24 @@ interface
     writeln(output, '// Format:');
     writeln(output, '// // TK: [row],[col], [kind index]');
     _WriteTileKind();
+    writeln(output, '//');
+    writeln(output, '// Map Values');
+    writeln(output, '//');
+    writeln(output, '// Format:');
+    writeln(output, '// - Define the names');
+    writeln(output, '// mvn: [name list]');
+    writeln(output, '// - Define the default values');
+    writeln(output, '// mvd: [kind idx], [range of default values - same number/order as names]');
+    writeln(output, '//');
     _WriteValueName();
-    
+    _WriteDefaultValues();
+    writeln(output, '//');
+    writeln(output, '// Tile Values');
+    writeln(output, '//');
+    writeln(output, '// Format:');
+    writeln(output, '// tv: [row index], [col index], [value name], [value''s value]');
+    writeln(output, '//');
+    _WriteTileValues();
 
     close(output);
   end;

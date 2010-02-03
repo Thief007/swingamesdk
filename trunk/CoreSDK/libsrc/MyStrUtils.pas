@@ -8,6 +8,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-03: Aaron  : Added SingleArrayToRange
+//                        Added ZeroArray
 // - 2010-02-02: Aaron  : Added LongIntArrayToRange
 // - Earlier   : Andrew : Various changes
 //=============================================================================
@@ -34,11 +36,71 @@ uses sgTypes;
   function MyStrToFloat(str: String; allowEmpty: Boolean) : Extended; overload;
 
   function LongIntArrayToRange(ints: LongIntArray):String;
+  function SingleArrayToRange(singles: SingleArray):String;
+
+  procedure ZeroArray (var ints : LongIntArray); overload;
+  procedure ZeroArray (var singles : SingleArray); overload;
+   procedure ZeroArray (var Ints : array of LongIntArray); overload;
+  procedure ZeroArray (var singles : array of SingleArray); overload;
 
 implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
     sgShared;
+
+  procedure ZeroArray (var ints : LongIntArray); overload;
+  var
+  i: LongInt;
+  begin
+    for i := low(ints) to high(ints) do
+    begin
+        ints[i] := 0;
+      end;
+
+  end;
+  
+  procedure ZeroArray (var singles : SingleArray); overload;
+  var
+  i : LongInt;
+  begin
+    for i := low(singles) to high(singles) do
+    begin
+        singles[i] := 0;
+      end;
+
+  end;
+
+  procedure ZeroArray (var singles : array of SingleArray); overload;
+  var
+  i : LongInt;
+  begin
+    for i := low(singles) to high(singles) do
+    begin
+      ZeroArray(singles[i]);
+    end;
+  end;
+
+  procedure ZeroArray (var Ints : array of LongIntArray); overload;
+  var
+  i : LongInt;
+  begin
+    for i := low(Ints) to high(Ints) do
+    begin
+      ZeroArray(Ints[i]);
+    end;
+  end;
+  
+  function SingleArrayToRange(singles: SingleArray):String;
+  var
+  i : LongInt;
+  begin
+    result := '['+FloatToStr(singles[0]);
+    for i := low(singles)+1 to high(singles) do
+    begin
+      result+=','+FloatToStr(Singles[i]);
+    end;
+    result +=']';
+  end; 
   function LongIntArrayToRange(ints: LongIntArray):String;
   var
     i,temp:longint;
