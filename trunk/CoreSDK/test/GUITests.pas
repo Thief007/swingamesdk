@@ -65,8 +65,8 @@ begin
   lst := ListFromRegion(regionWithID('List1'));
 
   ListAddItem(lst, BitmapNamed('hat'),'Hat');
-  ListAddItem(lst, 'Sword');
-  ListAddItem(lst, 'Cape');
+  ListAddItem(lst, BitmapNamed('sword'),'Sword');
+  ListAddItem(lst, BitmapNamed('cape'),'Cape');
   ListAddItem(lst, 'Cheese');
   ListAddItem(lst, 'Cake');
   ListAddItem(lst, 'Mouse');
