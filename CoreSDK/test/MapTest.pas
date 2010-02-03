@@ -58,10 +58,13 @@ begin
 	
   c := LoadCharacter('test2.txt');
   writeln('Map Loading');
-  myMap := LoadMap('test2.txt');
+  //myMap := NewMap();
+  myMap := LoadMap('test1.txt');
   writeln('Map Loaded');
-  AllocateValue(myMap, @myMap^.Tiles[2,2], 'test', 0.8);
-  //SaveMap(myMap, 'test2.txt');
+  //SetTileValue(myMap,TileAt(myMap,2,2), 'test', 0.8);
+  //SaveMap(myMap, 'test3.txt');
+  writeln('have not changed dimension');
+  writeln('have  changed dimension');
   repeat // The game loop...
     ProcessEvents();
 
@@ -71,8 +74,12 @@ begin
       else if KeyDown(vk_Left) then c^.CharSprite^.velocity:= p2d[2]
       else if KeyDown(vk_Right) then c^.CharSprite^.velocity:= p2d[3]
       else c^.CharSprite^.velocity:= p2d[4];
-
-		if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
+      if KeyTyped(vk_Q) then MapSetDimension(myMap, 5,5,1,50,50,False);
+      if keyTyped(vk_e) Then SetTileKind(TileAt(myMap,0,0),0);
+      if keyTyped(vk_w) Then SetTileKind(TileAt(myMap,0,0),2);
+      if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
+      if keyTyped(vk_s) Then SaveMap(myMap, 'test3.txt');
+      if keyTyped(vk_l) Then myMap := loadMap('test3.txt');
 
     UpdateSpriteAnimation(c^.CharSprite);
     //if KeyDown(vk_m) then
@@ -80,8 +87,12 @@ begin
 
     CenterCameraOn(c, VectorTo(0,0));
         UpdateActions(myMap);
-    ClearScreen(ColorBlack);
+    ClearScreen(Colorwhite);
     DrawMap(myMap);
+   // writeln('have not drawn');
+    DrawMapGrid(myMap);
+    //writeln('have  drawn');
+
     DrawMapDebug(myMap);
 
 		DrawCharacterWithStationary(c, 0, 1);
