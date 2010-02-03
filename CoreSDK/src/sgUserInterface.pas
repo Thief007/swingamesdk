@@ -379,12 +379,13 @@ end;
   
 procedure DrawList(forRegion: Region; const area: Rectangle);
 var
-  tempList:       GUIList;
-  i, itemIdx:     LongInt;
-  areaPt:         Point2D;
-  itemArea, scrollArea:       Rectangle;
-  pct:            Single;
-  placeHolderScreenRect: Rectangle;
+  tempList:                 GUIList;
+  i, itemIdx:               LongInt;
+  areaPt, Imagept:          Point2D;
+  itemTextArea, itemArea, 
+  scrollArea:    Rectangle;
+  pct:                      Single;
+  placeHolderScreenRect:    Rectangle;
 
   procedure _DrawUpDownArrow(const rect: Rectangle; up: Boolean);
   var
@@ -538,6 +539,7 @@ begin
   //Draw all of the placeholders
   for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
   begin
+    itemTextArea := RectangleOffset(tempList^.placeHolder[i], areaPt);
     itemArea := RectangleOffset(tempList^.placeHolder[i], areaPt);
     placeHolderScreenRect := RectangleOffset(tempList^.placeHolder[i], RectangleTopLeft(forRegion^.area));
     
@@ -563,8 +565,11 @@ begin
     
     PushClip(itemArea);
     
+    imagePt   := RectangleTopLeft(itemArea);    
+    imagept.y := Imagept.y + (itemArea.height - BitmapHeight(tempList^.items[itemidx].image)) / 2;
+    
     if not (tempList^.items[itemIdx].image = nil) then
-      ResizeItemArea(itemArea, ListFontAlignment(tempList), tempList^.items[itemIdx].image);
+      ResizeItemArea(itemTextArea, ListFontAlignment(tempList), tempList^.items[itemIdx].image);
 
     
     if (itemIdx <> tempList^.activeItem) then
@@ -572,19 +577,16 @@ begin
       DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                             GUIC.foregroundClr, GUIC.backgroundClr, 
                             ListFont(tempList), ListFontAlignment(tempList), 
-                            itemArea);
-      
+                            itemTextArea);
       if not (tempList^.items[itemIdx].image = nil) then
-        DrawBitmapOnScreen(tempList^.items[itemIdx].image, Trunc((itemArea.x - BitmapWidth(tempList^.items[itemIdx].image))), Trunc(itemArea.y));
+        DrawBitmapOnScreen(tempList^.items[itemIdx].image, imagePt);
     end
     else
     begin
       if GUIC.VectorDrawing then
       begin
         FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
-        DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea));
-        if not (tempList^.items[itemIdx].image = nil) then
-          DrawBitmapOnScreen(tempList^.items[itemIdx].image, Trunc((itemArea.x - BitmapWidth(tempList^.items[itemIdx].image))), Trunc(itemArea.y));
+        DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemTextArea));
       end
       else
       begin
@@ -594,10 +596,11 @@ begin
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                      GUIC.foregroundClr, GUIC.backgroundClr, 
                      ListFont(tempList), ListFontAlignment(tempList),
-                     itemArea);
-        if not (tempList^.items[itemIdx].image = nil) then
-          DrawBitmapOnScreen(tempList^.items[itemIdx].image, Trunc((itemArea.x - BitmapWidth(tempList^.items[itemIdx].image))), Trunc(itemArea.y));
+                     itemTextArea);
       end;
+      
+      if  assigned(tempList^.items[itemIdx].image) then
+        DrawBitmapOnScreen(tempList^.items[itemIdx].image, imagePt);
     end;
     
     PopClip(); // item area
@@ -1936,7 +1939,8 @@ var
     result^.panelID   := -1;
     result^.area      := RectangleFrom(0,0,0,0);
     result^.visible   := false;
-    result^.active    := true;
+    result^.active    := false;
+    result^.draggable := false;
     SetLength(result^.radioGroups, 0);
     SetLength(result^.lists, 0);
     InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
