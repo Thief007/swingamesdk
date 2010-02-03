@@ -3,3 +3,4 @@ FONT,courier,cour.ttf,28
 FONT,courierSmall,cour.ttf,10
 BITMAP,testImageInactive,testerface.png
 BITMAP,testImageActive,testerfaceActive.png
+BITMAP,hat,santa_hat.gif

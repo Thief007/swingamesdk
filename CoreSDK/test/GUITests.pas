@@ -2,7 +2,7 @@ program GUITests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 
 uses
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils;
+  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils, sgImages;
 	
   
 procedure InitInterface(var pnla, pnlb: panel);
@@ -57,12 +57,14 @@ begin
   OpenAudio();
   OpenGraphicsWindow('Hello World', 800, 600);
   
+  //ToggleFullScreen();
+  
   LoadResourceBundle('MainMenu.txt');
   InitInterface(pnla,pnlb);
   
   lst := ListFromRegion(regionWithID('List1'));
 
-  ListAddItem(lst, 'Hat');
+  ListAddItem(lst, BitmapNamed('hat'),'Hat');
   ListAddItem(lst, 'Sword');
   ListAddItem(lst, 'Cape');
   ListAddItem(lst, 'Cheese');
