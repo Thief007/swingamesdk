@@ -73,7 +73,7 @@ end;
 function DialogPath(): String;
 begin
   if dialog.cancelled then result := ''
-  else result := dialog.currentSelectedPath;
+  else result := ExpandFileName(dialog.currentSelectedPath);
 end;
 
 procedure UpdateDialogPathText();
@@ -115,9 +115,11 @@ var
   end;
 begin
   // expand the relative path to absolute
-  if not ExtractFileAndPath(fullname, path, filename, dialog.allowNew) then exit;
-  
-  // WriteLn('path is ', path);
+  if not ExtractFileAndPath(fullname, path, filename, dialog.allowNew) then 
+  begin
+    PlaySoundEffect(SoundEffectNamed('DialogError'));
+    exit;
+  end;
   
   // Get the path without the ending delimiter (if one exists...)
   tmpPath := ExcludeTrailingPathDelimiter(path);
@@ -125,7 +127,7 @@ begin
   with dialog do
   begin
     currentPath         := IncludeTrailingPathDelimiter(tmpPath);
-    currentSelectedPath := fullname;
+    currentSelectedPath := path + filename;
     lastSelectedPath    := -1;
     lastSelectedFile    := -1;
   end;
@@ -208,6 +210,7 @@ var
     begin
       // Update the selected file for double click
       dialog.lastSelectedFile     := selectedIdx;
+      
       // Update the selected path and its label
       dialog.currentSelectedPath  := selectedPath;
       UpdateDialogPathText();
@@ -367,7 +370,7 @@ begin
   // ListAddItem(lst, 'Car2');
   
   
-  ShowSaveDialog();
+  ShowOpenDialog();
   
   repeat
     ProcessEvents();
