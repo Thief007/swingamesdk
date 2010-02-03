@@ -34,7 +34,14 @@ type
   GUITextBox = ^GUITextBoxData;
   GUIList = ^GUIListData;
   
-  GuiElementKind = ( gkLabel, gkButton, gkCheckBox, gkRadioGroup, gkTextBox, gkList );
+  GuiElementKind = ( 
+    gkLabel = 1, 
+    gkButton = 2, 
+    gkCheckBox = 4, 
+    gkRadioGroup = 8, 
+    gkTextBox = 16, 
+    gkList = 32,
+    gkAnyKind = (1 or 2 or 4 or 8 or 16 or 32) );
   
   GUITextBoxData = record
     contentString:  String;
@@ -137,6 +144,7 @@ procedure PanelSetDraggable(p: panel; b:boolean);
 function PanelDraggable(p: panel): boolean;
 procedure MovePanel(p: Panel; mvmt: Vector);
 function PanelAtPoint(pt: Point2D): Panel;
+function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
 function PointInRegion(pt: Point2D; p: Panel): Boolean;
 
 function IsDragging(): Boolean;
@@ -161,6 +169,7 @@ function RegionX(r: Region): Single;
 function RegionHeight(r: Region): LongInt;
 function RegionWidth(r: Region): LongInt;
 
+function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 
 //Checkbox
 function CheckboxState(s: String): Boolean; overload;
@@ -189,8 +198,8 @@ function TextBoxText(tb: GUITextBox): String; overload;
 procedure TextboxSetText(r: Region; s: string); overload;
 procedure TextboxSetText(tb: GUITextBox; s: string); overload;
 function TextBoxFromRegion(r: Region): GUITextBox;
-procedure SetAsActiveTextbox(r: Region); overload;
-procedure SetAsActiveTextbox(t: GUITextBox); overload;
+procedure GUISetActiveTextbox(r: Region); overload;
+procedure GUISetActiveTextbox(t: GUITextBox); overload;
 procedure DeactivateTextBox();
 function ActiveTextIndex(): Integer;
 function GUITextEntryComplete(): boolean;
@@ -210,8 +219,6 @@ procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 
 //Lists
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
-procedure SetActiveListItem(forRegion: region; pointClicked: Point2D);
-procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
 
 function ListFromRegion(r: Region): GUIList; overload;
 
@@ -242,6 +249,9 @@ function ListFontAlignment(r: Region): FontAlignment;
 function ListFontAlignment(lst: GUIList): FontAlignment;
 procedure ListSetFontAlignment(r: Region; align: FontAlignment);
 procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
+
+function ListLargestStartIndex(lst: GUIList): LongInt;
+function ListScrollIncrement(lst: GUIList): LongInt;
 
 //Label
 function  LabelFont(l: GUILabel): Font; overload;
@@ -288,7 +298,7 @@ var
   // _Panels: TStringHash;
   GUIC: GUIController;
 
-function UpdateRegionClicked(pnl: Panel): Region; overload; forward;
+procedure HandlePanelInput(pnl: Panel); forward;
 
 function GUITextEntryComplete(): boolean;
 begin
@@ -343,7 +353,19 @@ end;
 //---------------------------------------------------------------------------------------
 // Drawing Loops
 //---------------------------------------------------------------------------------------  
-  
+
+//Helper functions used to determine the text rectangle for text boxes
+function TextboxTextArea(r: Rectangle): Rectangle; overload;
+begin
+  result := InsetRectangle(r, 1);
+end;
+
+function TextboxTextArea(r: Region): Rectangle; overload;
+begin
+  result := TextboxTextArea(RegionRectangleOnScreen(r));
+end;
+
+
 procedure DrawVectorCheckbox(forRegion: Region; const area: Rectangle);
 begin
   DrawRectangleOnScreen(GUIC.foregroundClr, area);
@@ -374,18 +396,17 @@ begin
                           GUIC.backgroundClr, 
                           TextboxFont(forRegion), 
                           TextboxAlignment(forRegion),
-                          InsetRectangle(area, 1));
+                          TextboxTextArea(area));
 end;
   
 procedure DrawList(forRegion: Region; const area: Rectangle);
 var
-  tempList:                 GUIList;
-  i, itemIdx:               LongInt;
-  areaPt, Imagept:          Point2D;
-  itemTextArea, itemArea, 
-  scrollArea:    Rectangle;
-  pct:                      Single;
-  placeHolderScreenRect:    Rectangle;
+  tempList:               GUIList;
+  i, itemIdx:             LongInt;
+  areaPt, imagePt:        Point2D;
+  itemArea, scrollArea:   Rectangle;
+  itemTextArea:           Rectangle;
+  placeHolderScreenRect:  Rectangle;
 
   procedure _DrawUpDownArrow(const rect: Rectangle; up: Boolean);
   var
@@ -453,7 +474,24 @@ var
   end;
   
   procedure _DrawScrollPosition();
+  var
+    pct:              Single;
+    largestStartIdx:  Integer;
   begin
+    largestStartIdx := ListLargestStartIndex(tempList);
+    
+    // if the number of items is >= the number shown then pct := 0
+    if largestStartIdx <= 0 then 
+      pct := 0
+    else 
+    begin
+      pct := tempList^.startingAt / largestStartIdx;
+      // if tempList^.verticalScroll then
+      //   pct := tempList^.startingAt / (itemCount - placeCount + tempList^.columns)
+      // else 
+      //   pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.rows);
+    end;
+    
     if tempList^.verticalScroll then
     begin
       if GUIC.VectorDrawing then
@@ -519,23 +557,10 @@ begin
   PushClip(scrollArea);
   
   // Draw the scroll position indicator
-  
-  // if the number of items is >= the number shown then pct := 0
-  if tempList^.rows * tempList^.columns >= Length(tempList^.items) then 
-    pct := 0
-  else 
-  begin
-    if tempList^.verticalScroll then
-      pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.columns)
-    else 
-      pct := tempList^.startingAt / (Length(tempList^.items) - (tempList^.rows * tempList^.columns) + tempList^.rows);
-  end;
-  
   _DrawScrollPosition();
   
   PopClip(); // pop the scroll area
   
-  // WriteLn('-------');
   //Draw all of the placeholders
   for i := Low(tempList^.placeHolder) to High(tempList^.placeHolder) do
   begin
@@ -778,48 +803,139 @@ begin
 end;
 
 // Check which of the regions was clicked in this panel
-function UpdateRegionClicked(pnl: Panel): Region; overload;
+procedure HandlePanelInput(pnl: Panel);
+  procedure _ScrollWithScrollArea(lst: GUIList; mouse: Point2D);
+  var
+    largestStartIdx: LongInt;
+    pct: Single;
+  begin
+    GUIC.lastClicked := nil;
+    largestStartIdx := ListLargestStartIndex(lst);
+    
+    if lst^.verticalScroll then
+      pct := (mouse.y - lst^.scrollArea.y) / lst^.scrollArea.height
+    else
+      pct := (mouse.x - lst^.scrollArea.x) / lst^.scrollArea.width;
+    
+    lst^.startingAt := Round(pct * largestStartIdx / ListScrollIncrement(lst)) * ListScrollIncrement(lst);
+    exit;
+  end;
+  
+  procedure _PerformListClicked(lst: GUIList; pointClicked: Point2D);
+  var
+    i, inc: LongInt;
+    largestStartIdx: LongInt;
+  begin
+    if not assigned(lst) then exit;
+    
+    // WriteLn(PointToString(pointClicked));
+    inc := ListScrollIncrement(lst);
+    
+    // Write(lst^.startingAt);
+    
+    // itemCount  := Length(lst^.items);
+    // placeCount := lst^.rows * lst^.columns;
+    largestStartIdx := ListLargestStartIndex(lst); //itemCount - placeCount + inc - 1;
+    
+    // Check up and down scrolling...
+    if PointInRect(pointClicked, lst^.scrollUp) then
+    begin
+      if lst^.startingAt >= inc then 
+        lst^.startingAt := lst^.startingAt - inc;
+      // WriteLn(' -> ', lst^.startingAt);
+      GUIC.lastClicked := nil; // click in scroller...
+      exit;
+    end
+    else if PointInRect(pointClicked, lst^.scrollDown) then
+    begin
+      if lst^.startingAt + inc <= largestStartIdx then
+        lst^.startingAt := lst^.startingAt + inc;
+      // WriteLn(' -> ', lst^.startingAt);
+      GUIC.lastClicked := nil; // click in scroller...
+      exit;
+    end
+    else if PointInRect(pointClicked, lst^.scrollArea) then
+    begin
+      _ScrollWithScrollArea(lst, pointClicked);
+      exit;
+    end;
+    
+    // WriteLn(' -> ', lst^.startingAt);
+    
+    for i := Low(lst^.placeHolder) to High(lst^.placeHolder) do
+    begin
+      if PointInRect(pointClicked, lst^.placeHolder[i]) then
+      begin
+        lst^.activeItem := lst^.startingAt + i;
+        exit;
+      end;
+    end;
+  end;
+  
+  procedure _PerformMouseDownOnList(lst: GUIList; mouse: Point2D);
+  begin
+    if PointInRect(mouse, lst^.scrollArea) then
+    begin
+      _ScrollWithScrollArea(lst, mouse);
+    end;
+  end;
+  
+  procedure _UpdateMouseDown(mouse: Point2D);
+  var
+    pointDownInRegion: Point2D;
+    r: Region;
+  begin
+    if ReadingText() then
+      FinishReadingText();
+    
+    r := RegionAtPoint(pnl, mouse);
+    if not assigned(r) then exit;
+    
+    // Adjust the mouse point into the region's coordinates (offset from top left of region)
+    pointDownInRegion := PointAdd(mouse, InvertVector(RectangleTopLeft(r^.area)));
+    
+    // Perform kind based updating
+    case r^.kind of
+      gkList: _PerformMouseDownOnList(ListFromRegion(r), pointDownInRegion);
+    end;
+  end;
+  
+  procedure _UpdateMouseClicked(pointClicked: Point2D);
+  var
+    pointClickedInRegion: Point2D;
+    r: Region;
+  begin
+    if ReadingText() then
+      FinishReadingText();
+    
+    r := RegionAtPoint(pnl, pointClicked);
+    if not assigned(r) then exit;
+    
+    GUIC.lastClicked := r;
+    
+    // Adjust the mouse point into the region's coordinates (offset from top left of region)
+    pointClickedInRegion := PointAdd(pointClicked, InvertVector(RectangleTopLeft(r^.area)));
+    
+    // Perform kind based updating
+    case r^.kind of
+      gkCheckBox:     ToggleCheckboxState (CheckboxFromRegion(r) );
+      gkRadioGroup:   SelectRadioButton   (RadioGroupFromRegion(r), r );
+      gkTextBox:      GUISetActiveTextbox (TextBoxFromRegion(r) );
+      gkList:         _PerformListClicked(ListFromRegion(r), pointClickedInRegion);
+    end;
+  end;
+
 var
-  j: LongInt;
-  pointClickedInPnl, pointClickedInRegion: Point2D;
-  current: Region;
+  pointClickedInPnl: Point2D;
 begin
-  result := nil;
-  if not MouseClicked(Leftbutton) then exit;
-  
-  if ReadingText() then
-    FinishReadingText();
-  
   if pnl = nil then exit;
   if not pnl^.active then exit;
   
   // Adjust the mouse point into this panels area (offset from top left of pnl)
   pointClickedInPnl := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
   
-  for j := Low(pnl^.Regions) to High(pnl^.Regions) do
-  begin
-    // Get the region at the j index
-    current := @pnl^.Regions[j];
-    
-    //Check if it has been clicked
-    if PointInRect(pointClickedInPnl, current^.area) then
-    begin
-      // Adjust the mouse point into the region's coordinates (offset from top left of region)
-      pointClickedInRegion := PointAdd(pointClickedInPnl, InvertVector(RectangleTopLeft(current^.area)));
-      
-      // Perform kind based updating
-      case pnl^.Regions[j].kind of
-        gkCheckBox:     ToggleCheckboxState ( CheckboxFromRegion(current) );
-        gkRadioGroup:   SelectRadioButton   ( RadioGroupFromRegion(current), current );
-        gkTextBox:      SetAsActiveTextbox  ( TextBoxFromRegion(current) );
-        gkList:         SetActiveListItem   ( ListFromRegion(current), pointClickedInRegion);
-      end;
-      
-      // Return the clicked region
-      result := current;
-      exit;
-    end;
-  end;
+  if MouseClicked(LeftButton)   then _UpdateMouseClicked(pointClickedInPnl)
+  else if MouseDown(LeftButton) then _UpdateMouseDown(pointClickedInPnl);
 end;
 
 function RegionClicked(): region;
@@ -846,6 +962,27 @@ begin
   result := r^.parent;
 end;
 
+function RegionAtPoint(p: Panel; const pt: Point2D): Region;
+var
+  i: Integer;
+  current: Region;
+begin
+  result := nil;
+  if not assigned(p) then exit;
+  
+  for i := Low(p^.Regions) to High(p^.Regions) do
+  begin
+    // Get the region at the i index
+    current := @p^.Regions[i];
+    
+    //Check if it has been clicked
+    if PointInRect(pt, current^.area) then
+    begin
+      result := current;
+      exit;
+    end;
+  end;
+end;
 //---------------------------------------------------------------------------------------
 // Get element from region
 //---------------------------------------------------------------------------------------
@@ -1109,12 +1246,12 @@ begin
   GUIC.doneReading := true;
 end;
 
-procedure SetAsActiveTextbox(r: Region);
+procedure GUISetActiveTextbox(r: Region);
 begin
-  SetAsActiveTextbox(TextBoxFromRegion(r));
+  GUISetActiveTextbox(TextBoxFromRegion(r));
 end;
 
-procedure SetAsActiveTextbox(t: GUITextbox);
+procedure GUISetActiveTextbox(t: GUITextbox);
 begin
   if not assigned(t) then exit;
   
@@ -1126,7 +1263,7 @@ begin
                             GUIC.foregroundClr, 
                             t^.lengthLimit, 
                             t^.Font, 
-                            RegionRectangleOnScreen(t^.region));
+                            InsetRectangle(TextboxTextArea(t^.region), 1)); // Need to inset 1 further to match printing text lines
 end;
 
 function TextboxAlignment(r: Region): FontAlignment;
@@ -1318,50 +1455,6 @@ begin
   if result <= 0 then result := 1;
 end;
 
-procedure SetActiveListItem(forRegion: Region; pointClicked: Point2D);
-begin
-  SetActiveListItem(ListFromRegion(forRegion), pointClicked);
-end;
-
-procedure SetActiveListItem(lst: GUIList; pointClicked: Point2D);
-var
-  i, inc: LongInt;
-begin
-  if not assigned(lst) then exit;
-  
-  // WriteLn(PointToString(pointClicked));
-  inc := ListScrollIncrement(lst);
-  
-  // Write(lst^.startingAt);
-  
-  if PointInRect(pointClicked, lst^.scrollUp) then
-  begin
-    if lst^.startingAt >= inc then 
-      lst^.startingAt := lst^.startingAt - inc;
-    // WriteLn(' -> ', lst^.startingAt);
-    exit;
-  end;
-  
-  if PointInRect(pointClicked, lst^.scrollDown) then
-  begin
-    if lst^.startingAt + inc + (lst^.columns * lst^.rows) <= Length(lst^.items) then
-      lst^.startingAt := lst^.startingAt + inc;
-    // WriteLn(' -> ', lst^.startingAt);
-    exit;
-  end;
-  
-  // WriteLn(' -> ', lst^.startingAt);
-  
-  for i := Low(lst^.placeHolder) to High(lst^.placeHolder) do
-  begin
-    if PointInRect(pointClicked, lst^.placeHolder[i]) then
-    begin
-      lst^.activeItem := lst^.startingAt + i;
-      exit;
-    end;
-  end;
-end;
-
 function ListActiveItemIndex(r: Region): LongInt; overload;
 begin
   result := ListActiveItemIndex(ListFromRegion(r));
@@ -1426,6 +1519,21 @@ begin
   lst^.alignment := align;
 end;
 
+function ListLargestStartIndex(lst: GUIList): LongInt;
+var
+  placeCount:       Integer;
+  itemCount:        Integer;
+begin
+ result := 0;
+ if not assigned(lst) then exit;
+   
+ itemCount  := Length(lst^.items);
+ placeCount := lst^.rows * lst^.columns;
+ result     := itemCount - placeCount;
+ 
+ // Round
+ result := Ceiling(result / ListScrollIncrement(lst)) * ListScrollIncrement(lst);
+end;
 
 //---------------------------------------------------------------------------------------
 // Checkbox Code Code
@@ -1619,20 +1727,11 @@ begin
 end;
 
 function PanelClicked(): Panel;
-var
-  i: integer;
 begin
   result := nil;
   if not MouseClicked(Leftbutton) then exit;
   
-  for i := High(GUIC.visiblePanels) downto Low(GUIC.visiblePanels) do
-  begin
-    if PointInRect(MousePosition(), GUIC.visiblePanels[i]^.area) then
-    begin
-      result := GUIC.visiblePanels[i];
-      exit;
-    end;
-  end;
+  result := PanelAtPoint(MousePosition());
 end;
 
 //=============================================================================
@@ -1911,7 +2010,7 @@ var
              result^.panelBitmapActive := BitmapNamed(Trim(data));
            end;
       'r': StoreRegionData(data);
-      'd': result^.draggable    := (data = 'true');
+      'd': result^.draggable    := (LowerCase(Trim(data)) = 'true');
     else
       begin
         RaiseException('Error at line ' + IntToStr(lineNo) + ' in panel: ' + filename + '. Error with id: ' + id + '. This should be one of the characters defined in the template.');
@@ -1939,7 +2038,7 @@ var
     result^.panelID   := -1;
     result^.area      := RectangleFrom(0,0,0,0);
     result^.visible   := false;
-    result^.active    := false;
+    result^.active    := true;      // Panels are active by default - you need to deactivate them specially...
     result^.draggable := false;
     SetLength(result^.radioGroups, 0);
     SetLength(result^.lists, 0);
@@ -2037,58 +2136,74 @@ begin
   else result := false;
 end;
 
-function PointInRegion(pt: Point2D; p: Panel): Boolean;
-var
-	i: LongInt;
+function IsSet(toCheck, checkFor: GuiElementKind): Boolean; overload;
 begin
-	result := false;
+  result := (LongInt(toCheck) and LongInt(checkFor)) = LongInt(checkFor);
+end;
+
+function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
+var
+  i: LongInt;
+  curr: Region;
+begin
+  result := false;
   if not assigned(p) then exit;
-	
-	for i := Low(p^.Regions) to High(p^.Regions) do
-	begin
-		if PointInRect(MousePointinPanel(p), p^.Regions[i].area) then 
-		begin	    
-			result := true;
-			exit;
-		end;
-	end;
+  
+  for i := Low(p^.Regions) to High(p^.Regions) do
+  begin
+    curr := @p^.Regions[i];
+    if PointInRect(MousePointInPanel(p), curr^.area) and IsSet(kind, curr^.kind) then 
+    begin     
+      result := true;
+      exit;
+    end;
+  end;
+end;
+
+function PointInRegion(pt: Point2D; p: Panel): Boolean; overload;
+begin
+  result := PointInRegion(pt, p, gkAnyKind);
 end;
 
 function PanelAtPoint(pt: Point2D): Panel;
 var
-	i: LongInt;
-	curPanel: Panel;
+  i: LongInt;
+  curPanel: Panel;
 begin
-	result := nil;
-	
-	for i := Low(GUIC.Panels) to High(GUIC.Panels) do
-	begin
-		curPanel := GUIC.Panels[i];
-		
-		if PointInRect(pt, GUIC.Panels[i]^.area) then
-		begin
-			result := curPanel;
-			exit;
-		end;
-	end;
+  result := nil;
+  
+  for i := High(GUIC.visiblePanels) downto Low(GUIC.visiblePanels) do
+  begin
+    curPanel := GUIC.visiblePanels[i];
+    
+    if PointInRect(pt, GUIC.visiblePanels[i]^.area) then
+    begin
+      result := curPanel;
+      exit;
+    end;
+  end;
 end;
 
 procedure DragPanel();
 var
-	mp: Point2D;
-	curPanel: Panel;
+  mp: Point2D;
+  curPanel: Panel;
 begin
   if not IsDragging() then exit;
   
   mp := MousePosition();
   curPanel := PanelAtPoint(mp);
-  if curPanel^.draggable then
-	  MovePanel(curPanel, MouseMovement());
+  // WriteLn(HexStr(curPanel));
+  
+  if IsDragging() then
+  begin
+    MovePanel(GUIC.panelDragging, MouseMovement());
+  end;
 end;
 
 function IsDragging(): Boolean;
 begin
-  result := assigned(GUIC.panelDragging);
+  result := assigned(GUIC.panelDragging) and GUIC.panelDragging^.draggable;
 end;
 
 procedure StartDragging();
@@ -2099,7 +2214,7 @@ begin
   mp := MousePosition();
   curPanel := PanelAtPoint(mp);
   
-  if not PointInRegion(mp, curPanel) then
+  if not PointInRegion(mp, curPanel, GuiElementKind(LongInt(gkAnyKind) and not LongInt(gkLabel))) then
   begin
     GUIC.panelDragging := curPanel;
   end
@@ -2150,15 +2265,17 @@ var
   pnl: Panel;
 begin
   GUIC.doneReading := false;
+  GUIC.lastClicked := nil;
   
   UpdateDrag();
   
-  pnl := PanelClicked();
+  pnl := PanelAtPoint(MousePosition());
+  
   if PanelActive(pnl) then
-    GUIC.lastClicked := UpdateRegionClicked(pnl)
-  else
-    GUIC.lastClicked := nil;
-    
+  begin
+    HandlePanelInput(pnl)
+  end;
+  
   if assigned(GUIC.activeTextbox) and not ReadingText() then
     FinishReadingText();
 end;

@@ -10,6 +10,7 @@ x: 0
 y: 0
 w: 400
 h: 300
+d: true
 
 // Region data
 // Format: r: x, y, w, h, kind

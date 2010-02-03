@@ -3,6 +3,7 @@ program FileDialogTests;
 
 uses
   Math, SysUtils,
+  MyStrUtils,
   sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes;
 
 
@@ -13,6 +14,7 @@ type
     currentPath:          String;     // The path to the current directory being shown
     currentSelectedPath:  String;     // The path to the file selected by the user
     cancelled:            Boolean;
+    allowNew:             Boolean;
     lastSelectedFile, lastSelectedPath: LongInt; // These represent the index if the selected file/path to enable double-like clicking
   end;
   
@@ -41,7 +43,7 @@ begin
   with dialog do
   begin
     LabelSetText(dialogPanel, 'OkLabel', 'Open');
-    
+    allowNew := false;
     ShowPanel(dialogPanel);
   end;
 end;
@@ -53,7 +55,7 @@ begin
   with dialog do
   begin
     LabelSetText(dialogPanel, 'OkLabel', 'Save');
-    
+    allowNew := true;
     ShowPanel(dialogPanel);
   end;
 end;
@@ -99,22 +101,23 @@ var
   paths: Array [0..255] of PChar;
   i, len: Integer;
   info : TSearchRec;
-  selectFile: Boolean;
+  
+  procedure _SelectFileInList();
+  var
+    fileIdx: Integer;
+  begin
+    if Length(filename) > 0 then
+    begin
+      fileIdx := ListTextIndex(filesList, filename);
+      ListSetActiveItemIndex(filesList, fileIdx);
+      ListSetStartAt(filesList, fileIdx);
+    end;
+  end;
 begin
   // expand the relative path to absolute
-  fullname := ExpandFileName(fullname);
-  if not (FileExists(fullname) or DirectoryExists(fullname)) then exit;
+  if not ExtractFileAndPath(fullname, path, filename, dialog.allowNew) then exit;
   
-  selectFile := false;
-  
-  if FileExists(fullname) and not DirectoryExists(fullname) then
-  begin
-    filename := ExtractFileName(fullname);
-    selectFile := true;
-  end
-  else fullname := IncludeTrailingPathDelimiter(fullname);
-  
-  path := ExtractFilePath(fullname);
+  // WriteLn('path is ', path);
   
   // Get the path without the ending delimiter (if one exists...)
   tmpPath := ExcludeTrailingPathDelimiter(path);
@@ -171,10 +174,7 @@ begin
   end;
   FindClose(info);
   
-  if selectFile then
-  begin
-    ListSetActiveItemIndex(filesList, ListTextIndex(filesList, filename));
-  end;
+  _SelectFileInList();
 end;
 
 procedure UpdateFileDialog();
@@ -209,7 +209,7 @@ var
       // Update the selected file for double click
       dialog.lastSelectedFile     := selectedIdx;
       // Update the selected path and its label
-      dialog.currentSelectedPath  := IncludeTrailingPathDelimiter(selectedPath);
+      dialog.currentSelectedPath  := selectedPath;
       UpdateDialogPathText();
     end;
   end;
