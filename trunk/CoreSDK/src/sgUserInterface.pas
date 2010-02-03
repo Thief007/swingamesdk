@@ -112,6 +112,7 @@ type
     radioGroups:          Array of GUIRadioGroupData;
     textBoxes:            Array of GUITextBoxData;
     lists:                Array of GUIListData;
+    draggable:            Boolean;
   end;
 
 //---------------------------------------------------------------------------
@@ -132,6 +133,13 @@ procedure DeactivatePanel(p: Panel);
 procedure ToggleActivatePanel(p: Panel);
 function PanelVisible(p: Panel): boolean;
 function PanelClicked(): Panel;
+procedure PanelSetDraggable(p: panel; b:boolean);
+function PanelDraggable(p: panel): boolean;
+procedure MovePanel(p: Panel; mvmt: Vector);
+function PanelAtPoint(pt: Point2D): Panel;
+function PointInRegion(pt: Point2D; p: Panel): Boolean;
+
+function IsDragging(): Boolean;
 
 function PanelY(p: Panel): Single;
 function PanelX(p: Panel): Single;
@@ -270,6 +278,10 @@ type
     lastActiveTextBox:  Region;
     doneReading:        Boolean;
     lastTextRead:       String;                 // The text that was in the most recently changed textbox before it was changed.
+    
+    // Variables for dragging panels
+    downRegistered:     Boolean;
+    panelDragging:      Panel;
   end;
   
 var
@@ -801,7 +813,6 @@ begin
   
   result := r^.parent;
 end;
-
 
 //---------------------------------------------------------------------------------------
 // Get element from region
@@ -1421,6 +1432,20 @@ end;
 // Panel Code
 //---------------------------------------------------------------------------------------
 
+function PanelDraggable(p: panel): boolean;
+begin
+  if not assigned(p) then exit;
+  
+  Result := p^.draggable;
+end;
+
+procedure PanelSetDraggable(p: panel; b:boolean);
+begin
+  if not assigned(p) then exit;
+  
+   p^.draggable := b;
+end;
+
 procedure PanelSetX(p: Panel; nX: LongInt);
 begin
   if not(assigned(p)) then exit;
@@ -1542,6 +1567,13 @@ begin
   end;
 end;
 
+function MousePointInPanel(pnl: Panel): Point2D;
+begin
+  result.x := -1; result.y := -1;
+  if not assigned(pnl) then exit;
+  
+  result := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
+end;
 
 function PanelClicked(): Panel;
 var
@@ -1836,6 +1868,7 @@ var
              result^.panelBitmapActive := BitmapNamed(Trim(data));
            end;
       'r': StoreRegionData(data);
+      'd': result^.draggable    := (data = 'true');
     else
       begin
         RaiseException('Error at line ' + IntToStr(lineNo) + ' in panel: ' + filename + '. Error with id: ' + id + '. This should be one of the characters defined in the template.');
@@ -1960,11 +1993,121 @@ begin
   else result := false;
 end;
 
+function PointInRegion(pt: Point2D; p: Panel): Boolean;
+var
+	i: LongInt;
+begin
+	result := false;
+  if not assigned(p) then exit;
+	
+	for i := Low(p^.Regions) to High(p^.Regions) do
+	begin
+		if PointInRect(MousePointinPanel(p), p^.Regions[i].area) then 
+		begin	    
+			result := true;
+			exit;
+		end;
+	end;
+end;
+
+function PanelAtPoint(pt: Point2D): Panel;
+var
+	i: LongInt;
+	curPanel: Panel;
+begin
+	result := nil;
+	
+	for i := Low(GUIC.Panels) to High(GUIC.Panels) do
+	begin
+		curPanel := GUIC.Panels[i];
+		
+		if PointInRect(pt, GUIC.Panels[i]^.area) then
+		begin
+			result := curPanel;
+			exit;
+		end;
+	end;
+end;
+
+procedure DragPanel();
+var
+	mp: Point2D;
+	curPanel: Panel;
+begin
+  if not IsDragging() then exit;
+  
+  mp := MousePosition();
+  curPanel := PanelAtPoint(mp);
+  if curPanel^.draggable then
+	  MovePanel(curPanel, MouseMovement());
+end;
+
+function IsDragging(): Boolean;
+begin
+  result := assigned(GUIC.panelDragging);
+end;
+
+procedure StartDragging();
+var
+  mp: Point2D;
+  curPanel: Panel;
+begin
+  mp := MousePosition();
+  curPanel := PanelAtPoint(mp);
+  
+  if not PointInRegion(mp, curPanel) then
+  begin
+    GUIC.panelDragging := curPanel;
+  end
+  else
+  begin
+    GUIC.panelDragging := nil;
+  end;
+end;
+
+procedure StopDragging();
+begin
+  GUIC.panelDragging  := nil;
+  GUIC.downRegistered := false;
+end;
+
+procedure MovePanel(p: Panel; mvmt: Vector);
+begin
+  if not assigned(p) then exit;
+  
+  p^.area := RectangleOffset(p^.area, mvmt);
+end;
+
+procedure UpdateDrag();
+begin
+  // if mouse is down and this is the first time we see it go down
+  if MouseDown(LeftButton) and not GUIC.downRegistered then
+  begin
+    GUIC.downRegistered := true;
+    
+    if ReadingText() then
+      FinishReadingText();
+    
+    StartDragging();
+  end
+  // if mouse is now up... and it was down before...
+  else if MouseUp(LeftButton) and GUIC.downRegistered then
+  begin
+    StopDragging();
+  end;
+  
+  // If it is dragging then...
+  if IsDragging() then
+    DragPanel();
+end;
+
 procedure UpdateInterface();
 var
   pnl: Panel;
 begin
   GUIC.doneReading := false;
+  
+  UpdateDrag();
   
   pnl := PanelClicked();
   if PanelActive(pnl) then

@@ -36,6 +36,16 @@ begin
   	LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextBoxText(RegionWithID('TextBox1')));
   end;
 
+  if CheckboxState(RegionWithID('Checkbox1')) then
+    DrawGUIAsVectors(false)
+  else
+    DrawGUIAsVectors(true);
+    
+  if CheckboxState(RegionWithID('Checkbox2')) then
+    PanelSetDraggable(pnla, true)
+  else
+    PanelSetDraggable(pnla, false);
+    
   radGroup := RadioGroupFromRegion(RegionWithID('radButton1'));
 end;
   
