@@ -2185,15 +2185,8 @@ begin
 end;
 
 procedure DragPanel();
-var
-  mp: Point2D;
-  curPanel: Panel;
 begin
   if not IsDragging() then exit;
-  
-  mp := MousePosition();
-  curPanel := PanelAtPoint(mp);
-  // WriteLn(HexStr(curPanel));
   
   if IsDragging() then
   begin

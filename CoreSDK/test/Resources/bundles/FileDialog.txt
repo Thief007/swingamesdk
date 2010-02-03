@@ -1,1 +1,2 @@
 FONT,DialogText,cour.ttf,12
+SOUND,DialogError,error.wav
