@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-03: Andrew : Added ExtractFileAndPath
 // - 2010-02-03: Aaron  : Added SingleArrayToRange
 //                        Added ZeroArray
 // - 2010-02-02: Aaron  : Added LongIntArrayToRange
@@ -38,9 +39,11 @@ uses sgTypes;
   function LongIntArrayToRange(ints: LongIntArray):String;
   function SingleArrayToRange(singles: SingleArray):String;
 
+  function ExtractFileAndPath(fullname: String; out path, filename: String; allowNewFile: Boolean): Boolean;
+
   procedure ZeroArray (var ints : LongIntArray); overload;
   procedure ZeroArray (var singles : SingleArray); overload;
-   procedure ZeroArray (var Ints : array of LongIntArray); overload;
+  procedure ZeroArray (var Ints : array of LongIntArray); overload;
   procedure ZeroArray (var singles : array of SingleArray); overload;
 
 implementation
@@ -376,5 +379,41 @@ implementation
       
       i := i + 1;
     end;
+  end;
+  
+  
+  function ExtractFileAndPath(fullname: String; out path, filename: String; allowNewFile: Boolean): Boolean;
+  begin
+    result    := false;
+    fullname  := ExpandFileName(fullname);
+    
+    if DirectoryExists(fullname) then
+    begin
+      // Directory only
+      path        := IncludeTrailingPathDelimiter(fullname); // ensure it includes a directory delim at end
+      filename    := '';
+      result      := true;
+    end
+    else if FileExists(fullname) then
+    begin
+      // We have a file...
+      filename    := ExtractFileName(fullname);
+      path        := IncludeTrailingPathDelimiter(ExtractFilePath(fullname));
+      result      := true;
+    end
+    else
+    begin
+      // Neither an existing file or directory... try new file in directory
+      if not allowNewFile then exit; // not allowed so exit
+      
+      path      := ExtractFilePath(fullname);
+      // WriteLn(path);
+      if not DirectoryExists(path) then exit; // directory does not exist
+      
+      filename  := ExtractFileName(fullname);
+      result := true;
+    end;
+    
+    // WriteLn(path, filename);
   end;
 end.
