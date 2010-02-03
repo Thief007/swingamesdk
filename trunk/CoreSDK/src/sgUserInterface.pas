@@ -435,6 +435,22 @@ var
     FillTriangleOnScreen(GUIC.backgroundClr, tri);
   end;
   
+  procedure ResizeItemArea(var area: Rectangle; aligned: FontAlignment; bmp: bitmap);
+  begin
+    
+    case aligned of
+      AlignLeft:    begin
+                      area.Width := area.Width - BitmapWidth(bmp);
+                      area.x     := area.x + Bitmapwidth(bmp);
+                    end;
+      AlignRight:   begin
+                    end;
+      AlignCenter:  begin
+                    end;
+    end;
+    
+  end;
+  
   procedure _DrawScrollPosition();
   begin
     if tempList^.verticalScroll then
@@ -547,17 +563,28 @@ begin
     
     PushClip(itemArea);
     
+    if not (tempList^.items[itemIdx].image = nil) then
+      ResizeItemArea(itemArea, ListFontAlignment(tempList), tempList^.items[itemIdx].image);
+
+    
     if (itemIdx <> tempList^.activeItem) then
+    begin
       DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                             GUIC.foregroundClr, GUIC.backgroundClr, 
                             ListFont(tempList), ListFontAlignment(tempList), 
-                            itemArea)
+                            itemArea);
+      
+      if not (tempList^.items[itemIdx].image = nil) then
+        DrawBitmapOnScreen(tempList^.items[itemIdx].image, Trunc((itemArea.x - BitmapWidth(tempList^.items[itemIdx].image))), Trunc(itemArea.y));
+    end
     else
     begin
       if GUIC.VectorDrawing then
       begin
         FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
-        DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea))
+        DrawTextOnScreen(ListItemText(tempList, itemIdx), GUIC.backgroundClr, ListFont(tempList), RectangleTopLeft(itemArea));
+        if not (tempList^.items[itemIdx].image = nil) then
+          DrawBitmapOnScreen(tempList^.items[itemIdx].image, Trunc((itemArea.x - BitmapWidth(tempList^.items[itemIdx].image))), Trunc(itemArea.y));
       end
       else
       begin
@@ -568,6 +595,8 @@ begin
                      GUIC.foregroundClr, GUIC.backgroundClr, 
                      ListFont(tempList), ListFontAlignment(tempList),
                      itemArea);
+        if not (tempList^.items[itemIdx].image = nil) then
+          DrawBitmapOnScreen(tempList^.items[itemIdx].image, Trunc((itemArea.x - BitmapWidth(tempList^.items[itemIdx].image))), Trunc(itemArea.y));
       end;
     end;
     
@@ -1125,6 +1154,17 @@ end;
 //---------------------------------------------------------------------------------------
 // List Code
 //---------------------------------------------------------------------------------------
+
+function ListActiVeItemText(pnl: Panel; ID: String): String;
+var
+  r: Region;
+begin
+  result := '';
+  if not assigned(pnl) then exit;
+  r := RegionWithID(ID);
+
+  Result := ListItemText(r, ListActiveItemIndex(r));
+end;
 
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
 begin
