@@ -120,7 +120,7 @@ implementation
       if (ints[i]-1) = (ints[i-1]) then
       begin
         if not tempChanged then temp := ints[i]
-        else if tempChanged then temp += ints[i];
+        else if tempChanged then temp := ints[i];
         tempChanged := true;
       end
       else if tempChanged then
