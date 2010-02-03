@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-03: Aaron  : Added NamedIndexCollectionNameList
 // - 2010-01-20: David  : Added NamesOf to return names in collection
 // - 2009-12-15: Andrew : Created
 //=============================================================================
@@ -34,6 +35,9 @@ interface
   /// -1 if the add fails.
   ///
   function AddName(var col: NamedIndexCollection; name: String): Integer;
+
+  /// returns names in an index collection in the following manner: name1,name2...
+  function NamedIndexCollectionNameList(const list:NamedIndexCollection):String;
   
   procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: Array of String); overload;
   procedure InitNamedIndexCollection(var col: NamedIndexCollection); overload;
@@ -50,6 +54,18 @@ uses sgShared, stringhash;
     else
       result := '';
   end;
+
+    function NamedIndexCollectionNameList(const list:NamedIndexCollection):String;
+  var
+  i : Longint;
+  begin
+      result:=NameAt(list,0);
+    for i:=1 to NameCount(list)-1 do
+    begin
+      result+=','+NameAt(list, i);
+    end;
+  end;
+
 
   function IndexOf(const col: NamedIndexCollection; name: String): Integer;
   var
