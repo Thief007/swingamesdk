@@ -106,7 +106,8 @@ type
   end;
   
   PanelData = record
-    stringID:             string;
+    name:             string;
+    filename:             string;
     panelID:              LongInt;
     area:                 Rectangle;
     visible:              boolean;
@@ -130,7 +131,6 @@ procedure GUISetForegroundColor(c:Color);
 procedure GUISetBackgroundColor(c:Color);
 
 // Panels
-function LoadPanel(filename: string): Panel;
 procedure AddPanelToGUI(p: Panel);
 procedure ShowPanel(p: Panel);
 procedure HidePanel(p: Panel);
@@ -147,9 +147,17 @@ procedure MovePanel(p: Panel; mvmt: Vector);
 function PanelAtPoint(pt: Point2D): Panel;
 function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
 function PointInRegion(pt: Point2D; p: Panel): Boolean;
-
+procedure ReleaseAllPanels();
+procedure ReleasePanel(name: String);
+procedure FreePanel(var pnl: Panel);
+procedure DoFreePanel(var pnl: Panel);
+function MapPanel(name, filename: String): Panel;
+function LoadPanel(filename: String): Panel;
+function HasPanel(name: String): Boolean;
+function PanelNamed(name: String): Panel;  
+function PanelName(pnl: Panel): String;  
+function PanelFilename(pnl: Panel): String;
 function IsDragging(): Boolean;
-
 function PanelY(p: Panel): Single;
 function PanelX(p: Panel): Single;
 function PanelHeight(p: Panel): LongInt;
@@ -284,7 +292,6 @@ implementation
 type
   GUIController = record
     panels:             Array of Panel;         // The panels that are loaded into the GUI
-    panelIds:           NamedIndexCollection;
     visiblePanels:      Array of Panel;         // The panels that are currently visible (in reverse z order - back to front)
     globalGUIFont:      Font;
     foregroundClr:      Color;                  // The color of the foreground
@@ -295,7 +302,7 @@ type
     lastActiveTextBox:  Region;
     doneReading:        Boolean;
     lastTextRead:       String;                 // The text that was in the most recently changed textbox before it was changed.
-    
+    panelIds:           TStringHash;
     // Variables for dragging panels
     downRegistered:     Boolean;
     panelDragging:      Panel;
@@ -1826,7 +1833,7 @@ end;
 // Create Panels/GUI Elements/Regions etc.
 //=============================================================================
 
-function LoadPanel(filename: string): Panel;
+function DoLoadPanel(filename, name: string): Panel;
 var
   pathToFile, line, id, data: string;
   panelFile: text;
@@ -2126,7 +2133,7 @@ var
   procedure InitPanel();
   begin
     New(result);
-    result^.stringID  := '';
+    result^.name  := '';
     result^.panelID   := -1;
     result^.area      := RectangleFrom(0,0,0,0);
     result^.visible   := false;
@@ -2172,14 +2179,24 @@ var
         end;            
       end;
     end;
-end;
+  end;
   
 begin
-  {$ifdef Windows}
-    pathToFile := PathToResourceWithBase(applicationPath, 'panels\' + filename);
-  {$else}
-    pathToFile := PathToResourceWithBase(applicationPath, 'panels/' + filename);
-  {$endif}
+//   {$ifdef Windows}
+//     pathToFile := PathToResourceWithBase(applicationPath, 'panels\' + filename);
+//   {$else}
+//     pathToFile := PathToResourceWithBase(applicationPath, 'panels/' + filename);
+//   {$endif}
+
+  if not FileExists(pathToFile) then
+  begin
+    pathToFile := PathToResource(filename, PanelResource);
+    if not FileExists(pathToFile) then
+    begin
+      RaiseException('Unable to locate panel ' + filename);
+      exit;
+    end;
+  end;
   
   // Initialise the resulting panel
   InitPanel();
@@ -2322,6 +2339,241 @@ begin
   p^.area := RectangleOffset(p^.area, mvmt);
 end;
 
+// function DoLoadPanel(filename, name: String): Panel;
+// begin
+//   {$IFDEF TRACE}
+//     TraceEnter('sgUserInterface', 'DoLoadPanel', name + ' = ' + filename);
+//   {$ENDIF}
+//   
+//   if not FileExists(filename) then
+//   begin
+//     filename := PathToResource(filename, PanelResource);
+//     if not FileExists(filename) then
+//     begin
+//       RaiseException('Unable to locate panel ' + filename);
+//       exit;
+//     end;
+//   end;
+//   
+//   New(result);    
+//   result^.effect := Mix_LoadWAV(PChar(filename));
+//   result^.filename := filename;
+//   result^.name := name;
+//   
+//   if result^.effect = nil then
+//   begin
+//     Dispose(result);
+//     RaiseException('Error loading panel: ' + MIX_GetError());
+//     exit;
+//   end;
+//   
+//   {$IFDEF TRACE}
+//     TraceExit('sgUserInterface', 'DoLoadPanel', HexStr(result));
+//   {$ENDIF}
+// end;
+
+function LoadPanel(filename: String): Panel;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgUserInterface', 'LoadPanel', filename);
+  {$ENDIF}
+  
+  result := MapPanel(filename, filename);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgUserInterface', 'LoadPanel');
+  {$ENDIF}
+end;
+
+
+function MapPanel(name, filename: String): Panel;
+var
+  obj: tResourceContainer;
+  snd: Panel;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgUserInterface', 'MapPanel', name + ' = ' + filename);
+  {$ENDIF}
+  
+  if not AudioOpen then
+  begin
+    {$IFDEF TRACE}
+      TraceExit('sgUserInterface', 'MapPanel', 'Audio Closed');
+    {$ENDIF}
+    exit;
+  end;
+  
+  if GUIC.panelIds.containsKey(name) then
+  begin
+    result := PanelNamed(name);
+    exit;
+  end;
+  
+  snd := DoLoadPanel(filename, name);
+  obj := tResourceContainer.Create(snd);
+  
+  if not GUIC.panelIds.setValue(name, obj) then
+  begin
+    RaiseException('** Leaking: Caused by panel resource twice, ' + name);
+    result := nil;
+    exit;
+  end;
+  result := snd;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgUserInterface', 'MapPanel');
+  {$ENDIF}
+end;
+
+// private:
+// Called to actually free the resource
+
+procedure DoFreePanel(var pnl: Panel);
+var i, j: LongInt;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgUserInterface', 'DoFreePanel', 'pnl = ' + HexStr(pnl));
+  {$ENDIF}
+  
+  if assigned(pnl) then
+  begin
+    
+    if GUIC.panelDragging = pnl then GUIC.panelDragging := nil;
+    
+    HidePanel(pnl);
+    
+    for i := Low(GUIC.panels) to High(GUIC.panels) do
+    begin
+      if GUIC.panels[i] = pnl then
+      begin
+        guic.panels[i] := nil;
+        for j := i to (High(GUIC.panels) - 1) do
+        begin
+          GUIC.panels[j] := GUIC.panels[j + 1]
+        end;
+        SetLength(GUIC.panels, Length(GUIC.panels) - 1);
+      end;
+    end;
+    
+    CallFreeNotifier(pnl);
+    
+    Dispose(pnl);
+  end;
+  
+  pnl := nil;
+  {$IFDEF TRACE}
+    TraceExit('sgUserInterface', 'DoFreePanel');
+  {$ENDIF}
+end;
+
+procedure FreePanel(var pnl: Panel);
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgUserInterface', 'FreePanel', 'pnl = ' + HexStr(pnl));
+  {$ENDIF}
+  
+  if(assigned(pnl)) then
+  begin
+    ReleasePanel(pnl^.name);
+  end;
+  pnl := nil;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgUserInterface', 'FreePanel');
+  {$ENDIF}
+end;
+
+procedure ReleasePanel(name: String);
+var
+  pnl: Panel;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgUserInterface', 'ReleasePanel', 'pnl = ' + name);
+  {$ENDIF}
+  
+  pnl := PanelNamed(name);
+  if (assigned(pnl)) then
+  begin
+    GUIC.panelIds.remove(name).Free();
+    DoFreePanel(pnl);
+  end;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgUserInterface', 'ReleasePanel');
+  {$ENDIF}
+end;
+
+procedure ReleaseAllPanels();
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgUserInterface', 'ReleaseAllPanels', '');
+  {$ENDIF}
+  
+  ReleaseAll(GUIC.panelIds, @ReleasePanel);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgUserInterface', 'ReleaseAllPanels');
+  {$ENDIF}
+end;
+
+function HasPanel(name: String): Boolean;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgUserInterface', 'HasPanel', name);
+    {$ENDIF}
+    
+    result := GUIC.panelIds.containsKey(name);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgUserInterface', 'HasPanel', BoolToStr(result, true));
+    {$ENDIF}
+  end;
+
+  function PanelNamed(name: String): Panel;
+  var
+    tmp : TObject;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgUserInterface', 'PanelNamed', name);
+    {$ENDIF}
+    
+    tmp := GUIC.panelIds.values[name];
+    if assigned(tmp) then result := Panel(tResourceContainer(tmp).Resource)
+    else result := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgUserInterface', 'PanelNamed', HexStr(result));
+    {$ENDIF}
+  end;
+  
+  function PanelName(pnl: Panel): String;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgUserInterface', 'PanelName', HexStr(pnl));
+    {$ENDIF}
+    
+    if assigned(pnl) then result := pnl^.name
+    else result := '';
+    
+    {$IFDEF TRACE}
+      TraceExit('sgUserInterface', 'PanelName', result);
+    {$ENDIF}
+  end;
+  
+  function PanelFilename(pnl: Panel): String;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgUserInterface', 'PanelFilename', HexStr(pnl));
+    {$ENDIF}
+    
+    if assigned(pnl) then result := pnl^.filename
+    else result := '';
+    
+    {$IFDEF TRACE}
+      TraceExit('sgUserInterface', 'PanelFilename', result);
+    {$ENDIF}
+  end;
+
 procedure UpdateDrag();
 begin
   // if mouse is down and this is the first time we see it go down
@@ -2377,7 +2629,7 @@ end;
     GUIC.VectorDrawing := False;
     GUIC.lastActiveTextBox := nil;
     
-    // _Panels := TStringHash.Create(False, 1024);
+    GUIC.panelIds := TStringHash.Create(False, 1024);
     
     {$IFDEF TRACE}
       TraceExit('sgUserInterface', 'Initialise');
