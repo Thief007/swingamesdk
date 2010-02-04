@@ -9,12 +9,16 @@ uses
 
 type
   
+  FileDialogSelectType = ( fdFiles = 1, fdDirectories = 2, fdFilesAndDirectories = 3 );
+  
   FileDialogData = record
     dialogPanel:          Panel;      // The panel used to show the dialog
     currentPath:          String;     // The path to the current directory being shown
     currentSelectedPath:  String;     // The path to the file selected by the user
     cancelled:            Boolean;
     allowNew:             Boolean;
+    selectType:           FileDialogSelectType;
+    onlyFiles:            Boolean;
     lastSelectedFile, lastSelectedPath: LongInt; // These represent the index if the selected file/path to enable double-like clicking
   end;
   
@@ -30,34 +34,51 @@ begin
     lastSelectedFile := -1;
     lastSelectedPath := -1;
     
-    cancelled := false;
+    cancelled     := false;
+    
     if length(currentPath) = 0 then 
       SetFileDialogPath(GetUserDir());
   end;
 end;
 
-procedure ShowOpenDialog();
+procedure ShowOpenDialog(select: FileDialogSelectType); overload;
 begin
-  InitialiseFileDialog();
-  
   with dialog do
   begin
     LabelSetText(dialogPanel, 'OkLabel', 'Open');
-    allowNew := false;
+    LabelSetText(dialogPanel, 'FileEntryLabel', 'Open');
+    
+    allowNew      := false;
+    selectType    := select;
     ShowPanel(dialogPanel);
   end;
+  
+  InitialiseFileDialog();
 end;
 
-procedure ShowSaveDialog();
+procedure ShowOpenDialog(); overload;
 begin
-  InitialiseFileDialog();
-  
+  ShowOpenDialog(fdFilesAndDirectories);
+end;
+
+procedure ShowSaveDialog(select: FileDialogSelectType); overload;
+begin
   with dialog do
   begin
     LabelSetText(dialogPanel, 'OkLabel', 'Save');
-    allowNew := true;
+    LabelSetText(dialogPanel, 'FileEntryLabel', 'Save');
+    
+    allowNew      := true;
+    selectType    := select;
     ShowPanel(dialogPanel);
   end;
+  
+  InitialiseFileDialog();
+end;
+
+procedure ShowSaveDialog(); overload;
+begin
+  ShowSaveDialog(fdFilesAndDirectories);
 end;
 
 function DialogComplete(): Boolean;
@@ -87,25 +108,99 @@ begin
   
   // WriteLn('tw: ', TextWidth(TextboxFont(pathTxt), selectedPath));
   // WriteLn('rw: ', RegionWidth(pathTxt));
-  if TextWidth(TextboxFont(pathTxt), selectedPath) > RegionWidth(pathTxt) then TextboxSetAlignment(pathTxt, AlignRight)
+  if TextWidth(TextboxFont(pathTxt), selectedPath) > RegionWidth(pathTxt) then
+    TextboxSetAlignment(pathTxt, AlignRight)
   else TextboxSetAlignment(pathTxt, AlignLeft);
   
   TextboxSetText(pathTxt, selectedPath);
-  LabelSetText(RegionWithId(dialog.dialogPanel, 'PathLabel'), selectedPath);
+end;
+
+function IsSet(toCheck, checkFor: FileDialogSelectType): Boolean; overload;
+begin
+  result := (LongInt(toCheck) and LongInt(checkFor)) = LongInt(checkFor);
+end;
+
+procedure ShowErrorMessage(msg: String);
+begin
+  LabelSetText(dialog.dialogPanel, 'ErrorLabel', msg);
+  PlaySoundEffect(SoundEffectNamed('DialogError'));
 end;
 
 procedure SetFileDialogPath(fullname: String);
 var
   tmpPath, path, filename: String;
-  pathList, filesList: GUIList;
   paths: Array [0..255] of PChar;
-  i, len: Integer;
-  info : TSearchRec;
+  
+  procedure _PopulatePathList();
+  var
+    pathList: GUIList;
+    i, len: Integer;
+  begin
+    pathList  := ListFromRegion(RegionWithId(dialog.dialogPanel, 'PathList'));
+    
+    // Clear the list of all of its items
+    ListClearItems(pathList);
+    
+    // Add the drive letter at the start
+    if Length(ExtractFileDrive(path)) = 0 then
+      ListAddItem(pathList, PathDelim)
+    else
+      ListAddItem(pathList, ExtractFileDrive(path));
+    
+    // Set the details in the path list
+    len := GetDirs(tmpPath, paths); //NOTE: need to use tmpPath as this strips separators from pass in string...
+    
+    // Loop through the directories adding them to the list
+    for i := 0 to len - 1 do
+    begin
+      ListAddItem(pathList, paths[i]);
+    end;
+    
+    // Ensure that the last path is visible in the list
+    ListSetStartAt(pathList, ListLargestStartIndex(pathList));
+  end;
+  
+  procedure _PopulateFileList();
+  var
+    filesList: GUIList;
+    info : TSearchRec;
+  begin
+    filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
+    
+    // Clear the files in the filesList
+    ListClearItems(filesList);
+    
+    //Loop through the directories
+    if FindFirst (dialog.currentPath + '*', faAnyFile and faDirectory, info) = 0 then
+    begin
+      repeat
+        with Info do
+        begin
+          if (attr and faDirectory) = faDirectory then 
+          begin
+            // its a directory... always add it
+            ListAddItem(filesList, name);
+          end
+          else
+          begin
+            // Its a file ... add if not dir only
+            if IsSet(dialog.selectType, fdFiles) then
+            begin
+              ListAddItem(filesList, name);
+            end;
+          end;
+        end;
+      until FindNext(info) <> 0;
+    end;
+    FindClose(info);
+  end;
   
   procedure _SelectFileInList();
   var
+    filesList: GUIList;
     fileIdx: Integer;
   begin
+    filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
     if Length(filename) > 0 then
     begin
       fileIdx := ListTextIndex(filesList, filename);
@@ -117,7 +212,7 @@ begin
   // expand the relative path to absolute
   if not ExtractFileAndPath(fullname, path, filename, dialog.allowNew) then 
   begin
-    PlaySoundEffect(SoundEffectNamed('DialogError'));
+    ShowErrorMessage('Unable to find file or path.');
     exit;
   end;
   
@@ -134,49 +229,37 @@ begin
   
   UpdateDialogPathText();
   
-  pathList  := ListFromRegion(RegionWithId(dialog.dialogPanel, 'PathList'));
-  filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
-  
-  // Set the details in the path list
-  len := GetDirs(tmpPath, paths); //NOTE: need to use tmpPath as this strips separators from pass in string...
-  
-  // Clear the list of all of its items
-  ListClearItems(pathList);
-  
-  // Add the drive letter at the start
-  if Length(ExtractFileDrive(path)) = 0 then
-    ListAddItem(pathList, PathDelim)
-  else
-    ListAddItem(pathList, ExtractFileDrive(path));
-  
-  // Loop through the directories adding them to the list
-  for i := 0 to len - 1 do
-  begin
-    ListAddItem(pathList, paths[i]);
-  end;
-  
-  // Ensure that the last path is visible in the list
-  ListSetStartAt(pathList, len - 1);
-  
-  // Clear the files in the filesList
-  ListClearItems(filesList);
-  
-  //Loop through the directories
-  if FindFirst (dialog.currentPath + '*', faAnyFile and faDirectory, info) = 0 then
-  begin
-    repeat
-      with Info do
-      begin
-        // if (attr and faDirectory) = faDirectory then
-        //   Write('Dir : ');
-        // Writeln (Name:40,Size:15);
-        ListAddItem(filesList, name);
-      end;
-    until FindNext(info) <> 0;
-  end;
-  FindClose(info);
-  
+  _PopulatePathList();
+  _PopulateFileList();
   _SelectFileInList();
+end;
+
+procedure DialogCheckComplete();
+var
+  path: String;
+begin
+  path := DialogPath();
+  
+  if (not dialog.allowNew) and (not FileExists(path)) then
+  begin
+    ShowErrorMessage('Select an existing file or path.');
+    exit;
+  end;
+  
+  // The file exists, but is not a directory and files cannot be selected
+  if (not IsSet(dialog.selectType, fdFiles)) and FileExists(path) and (not DirectoryExists(path)) then
+  begin
+    ShowErrorMessage('Please select a directory.');
+    exit;
+  end;
+  
+  if (not IsSet(dialog.selectType, fdDirectories)) and DirectoryExists(path) then
+  begin
+    ShowErrorMessage('Please select a file.');
+    exit;
+  end;
+  
+  HidePanel(dialog.dialogPanel);
 end;
 
 procedure UpdateFileDialog();
@@ -204,7 +287,7 @@ var
       if DirectoryExists(selectedPath) then
         SetFileDialogPath(selectedPath)
       else
-        HidePanel(dialog.dialogPanel);
+        DialogCheckComplete();
     end
     else
     begin
@@ -254,7 +337,7 @@ var
   
   procedure _PerformOkClick();
   begin
-    HidePanel(dialog.dialogPanel);
+    DialogCheckComplete();
   end;
   
   procedure _PerformChangePath();
@@ -306,31 +389,6 @@ begin
   DrawGUIAsVectors(true);
 end;
 
-
-
-// procedure UpdateGUI(var pnla, pnlb: panel; lst: GUilist);
-// var
-//   reg: Region;
-//   parpnl: Panel;
-//   radGroup: GUIRadioGroup;
-// begin
-//   if (RegionClickedID() = 'Button1') And (CheckboxState(RegionWithID(pnla, 'Checkbox2'))) then
-//   begin
-//     ToggleShowPanel(pnlb);
-//     Toggleactivatepanel(pnlb);
-//   end;
-//   
-//   LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextboxText(TextBoxFromRegion(RegionWithID('TextBox1'))));
-//   
-//    case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('radButton1'))) of
-//      0: GUISetForegroundColor(ColorGreen);
-//      1: GUISetForegroundColor(ColorRed);
-//      2: GUISetForegroundColor(ColorBlue);
-//    end;  
-// end;
-
-
-
 procedure Main();
 var
   lst: GUIList;
@@ -339,45 +397,13 @@ begin
   OpenGraphicsWindow('File Dialog Test', 800, 600);
   
   InitInterface();
-  
-  // lst := ListFromRegion(regionWithID('List1'));
-  // 
-  // ListAddItem(lst, 'Hat');
-  // ListAddItem(lst, 'Sword');
-  // ListAddItem(lst, 'Cape');
-  // ListAddItem(lst, 'Cheese');
-  // ListAddItem(lst, 'Cake');
-  // ListAddItem(lst, 'Mouse');
-  // ListAddItem(lst, 'Dog');
-  // ListAddItem(lst, 'Axe');
-  // ListAddItem(lst, 'Mace');
-  // ListAddItem(lst, 'Chainmail');
-  // ListAddItem(lst, 'Ninja');
-  // ListAddItem(lst, 'Newspaper');
-  // ListAddItem(lst, 'Car');  
-  // ListAddItem(lst, 'Hat2');
-  // ListAddItem(lst, 'Sword2');
-  // ListAddItem(lst, 'Cape2');
-  // ListAddItem(lst, 'Cheese2');
-  // ListAddItem(lst, 'Cake2');
-  // ListAddItem(lst, 'Mouse2');
-  // ListAddItem(lst, 'Dog2');
-  // ListAddItem(lst, 'Axe2');
-  // ListAddItem(lst, 'Mace2');
-  // ListAddItem(lst, 'Chainmail2');
-  // ListAddItem(lst, 'Ninja2');
-  // ListAddItem(lst, 'Newspaper2');
-  // ListAddItem(lst, 'Car2');
-  
-  
-  ShowOpenDialog();
+  ShowOpenDialog(fdFiles);
   
   repeat
     ProcessEvents();
     ClearScreen(ColorBlack);
     
     DrawPanels();
-    // UpdateGUI(pnla, pnlb, lst);
     UpdateInterface();
     UpdateFileDialog();
     

@@ -54,6 +54,7 @@ type
   GUILabelData = record
     contentString:  String;
     font:           Font;
+    alignment:      FontAlignment;
   end;
   
   /// Each list item has text and an image
@@ -265,6 +266,12 @@ procedure LabelSetText(r: Region; newString: String); overload;
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
 
 function  LabelFromRegion(r: Region): GUILabel;
+
+function LabelAlignment(r: Region): FontAlignment;
+function LabelAlignment(tb: GUILabel): FontAlignment;
+procedure LabelSetAlignment(tb: GUILabel; align: FontAlignment);
+procedure LabelSetAlignment(r: Region; align: FontAlignment);
+
 
 //=============================================================================
 implementation
@@ -634,6 +641,16 @@ begin
   PopClip(); // region
 end;
 
+procedure DrawLabelText(forRegion: Region; const area: Rectangle);
+begin
+  DrawTextLinesOnScreen(LabelText(forRegion), 
+                        GUIC.foregroundClr,
+                        GUIC.backgroundClr, 
+                        LabelFont(forRegion),
+                        LabelAlignment(forRegion), 
+                        TextboxTextArea(area));
+end;
+
 procedure DrawAsVectors();
 var
   i, j: integer;
@@ -653,10 +670,7 @@ begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case currentReg^.kind of
         gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangleOnscreen(currentReg));
-        gkLabel:      DrawTextOnScreen( LabelText(currentReg), 
-                                        GUIC.foregroundClr, 
-                                        LabelFont(currentReg), 
-                                        RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
+        gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
         gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
         gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangleOnScreen(currentReg));
         gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
@@ -698,7 +712,7 @@ begin
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case GUIC.visiblePanels[i]^.Regions[j].kind of
-        gkLabel: DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(RegionRectangleOnScreen(currentReg)));//      DrawTextOnScreen(LabelText(currentReg), GUIC.foregroundClr, LabelFont(currentReg), RectangleTopLeft(currentReg.area));
+        gkLabel: DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
         gkTextbox: DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
         gkCheckbox: DrawBitmapCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
         gkRadioGroup: DrawBitmapRadioGroup(currentReg, RegionRectangleOnScreen(currentReg));
@@ -821,35 +835,50 @@ procedure HandlePanelInput(pnl: Panel);
     exit;
   end;
   
+  procedure _ScrollUp(lst: GUIList);
+  var
+    inc: LongInt;
+  begin
+    inc := ListScrollIncrement(lst);
+    
+    if lst^.startingAt >= inc then 
+      lst^.startingAt := lst^.startingAt - inc;
+  end;
+  
+  procedure _ScrollDown(lst: GUIList);
+  var
+    inc, largestStartIdx: LongInt;
+  begin
+    inc := ListScrollIncrement(lst);
+    largestStartIdx := ListLargestStartIndex(lst);
+    
+    if lst^.startingAt + inc <= largestStartIdx then
+      lst^.startingAt := lst^.startingAt + inc;
+  end;
+  
   procedure _PerformListClicked(lst: GUIList; pointClicked: Point2D);
   var
-    i, inc: LongInt;
-    largestStartIdx: LongInt;
+    i: LongInt;
   begin
     if not assigned(lst) then exit;
     
     // WriteLn(PointToString(pointClicked));
-    inc := ListScrollIncrement(lst);
-    
     // Write(lst^.startingAt);
     
     // itemCount  := Length(lst^.items);
     // placeCount := lst^.rows * lst^.columns;
-    largestStartIdx := ListLargestStartIndex(lst); //itemCount - placeCount + inc - 1;
     
     // Check up and down scrolling...
     if PointInRect(pointClicked, lst^.scrollUp) then
     begin
-      if lst^.startingAt >= inc then 
-        lst^.startingAt := lst^.startingAt - inc;
+      _ScrollUp(lst);
       // WriteLn(' -> ', lst^.startingAt);
       GUIC.lastClicked := nil; // click in scroller...
       exit;
     end
     else if PointInRect(pointClicked, lst^.scrollDown) then
     begin
-      if lst^.startingAt + inc <= largestStartIdx then
-        lst^.startingAt := lst^.startingAt + inc;
+      _ScrollDown(lst);
       // WriteLn(' -> ', lst^.startingAt);
       GUIC.lastClicked := nil; // click in scroller...
       exit;
@@ -900,6 +929,46 @@ procedure HandlePanelInput(pnl: Panel);
     end;
   end;
   
+  procedure _UpdateScrollUp(mouse: Point2D);
+  var
+    pointDownInRegion: Point2D;
+    r: Region;
+  begin
+    if ReadingText() then
+      FinishReadingText();
+    
+    r := RegionAtPoint(pnl, mouse);
+    if not assigned(r) then exit;
+    
+    // Adjust the mouse point into the region's coordinates (offset from top left of region)
+    pointDownInRegion := PointAdd(mouse, InvertVector(RectangleTopLeft(r^.area)));
+    
+    // Perform kind based updating
+    case r^.kind of
+      gkList: _ScrollUp(ListFromRegion(r));
+    end;
+  end;
+  
+  procedure _UpdateScrollDown(mouse: Point2D);
+  var
+    pointDownInRegion: Point2D;
+    r: Region;
+  begin
+    if ReadingText() then
+      FinishReadingText();
+    
+    r := RegionAtPoint(pnl, mouse);
+    if not assigned(r) then exit;
+    
+    // Adjust the mouse point into the region's coordinates (offset from top left of region)
+    pointDownInRegion := PointAdd(mouse, InvertVector(RectangleTopLeft(r^.area)));
+    
+    // Perform kind based updating
+    case r^.kind of
+      gkList: _ScrollDown(ListFromRegion(r));
+    end;
+  end;
+  
   procedure _UpdateMouseClicked(pointClicked: Point2D);
   var
     pointClickedInRegion: Point2D;
@@ -935,7 +1004,9 @@ begin
   pointClickedInPnl := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
   
   if MouseClicked(LeftButton)   then _UpdateMouseClicked(pointClickedInPnl)
-  else if MouseDown(LeftButton) then _UpdateMouseDown(pointClickedInPnl);
+  else if MouseDown(LeftButton) then _UpdateMouseDown(pointClickedInPnl)
+  else if MouseClicked(WheelUpButton)   then _UpdateScrollUp(pointClickedInPnl)
+  else if MouseClicked(WheelDownButton) then _UpdateScrollDown(pointClickedInPnl)
 end;
 
 function RegionClicked(): region;
@@ -1159,14 +1230,31 @@ begin
   result := l^.font;
 end;
 
-// function LabelText(regID: string): string; overload;
-// begin
-//   if High(GetRegionByID(regID)^.parent^.labels) >= GetRegionByID(regID)^.elementIndex then
-//     result := GetRegionByID(regID)^.parent^.labels[GetRegionByID(regID)^.elementIndex].contentString
-//   else
-//     result := '';
-// end;
-// 
+function LabelAlignment(r: Region): FontAlignment;
+begin
+  result := LabelAlignment(LabelFromRegion(r));
+end;
+
+function LabelAlignment(tb: GUILabel): FontAlignment;
+begin
+  result := AlignLeft;
+  if not assigned(tb) then exit;
+  
+  result := tb^.alignment;
+end;
+
+procedure LabelSetAlignment(tb: GUILabel; align: FontAlignment);
+begin
+  if not assigned(tb) then exit;
+  
+  tb^.alignment := align;
+end;
+
+procedure LabelSetAlignment(r: Region; align: FontAlignment);
+begin
+  LabelSetAlignment(LabelFromRegion(r), align);
+end;
+
 
 function LabelText(lb: GUILabel): String; overload;
 begin
@@ -1749,8 +1837,12 @@ var
   var
     newLbl: GUILabelData;
   begin
-    newLbl.contentString := ExtractDelimited(7, d, [',']);
-    newLbl.font := FontNamed(Trim(ExtractDelimited(8, d, [','])));
+    //Format is
+    // 1, 2, 3, 4, 5, 6,   7,    8,     9, 
+    // x, y, w, h, 5, id , font, align, text
+    newLbl.font           := FontNamed(Trim(ExtractDelimited(7, d, [','])));
+    newLbl.alignment      := TextAlignmentFrom(Trim(ExtractDelimited(8, d, [','])));
+    newLbl.contentString  := Trim(ExtractDelimited(9, d, [',']));
     
     SetLength(result^.Labels, Length(result^.Labels) + 1);
     result^.labels[High(result^.labels)] := newLbl;

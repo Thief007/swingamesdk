@@ -13,7 +13,7 @@ h: 300
 
 // Region data
 // Format: r: x, y, w, h, kind
-r: 10, 10, 80, 20, 1, Label1, Hello World, courierSmall
+r: 10, 10, 80, 20, 1, Label1, courierSmall, l, Hello World
 
 // Lists are loaded as a region with the following format:
 // r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, scrollSize, scrollKind
