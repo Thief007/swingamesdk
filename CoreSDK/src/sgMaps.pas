@@ -149,7 +149,7 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     sgCore, sgAudio, sgText, sgGraphics, sgTrace, sgResources,
     sgCamera, sgGeometry, sgImages, sgInput, sgPhysics,
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
-      stringhash, MyStrUtils, sgNamedIndexCollection, sgShared;
+      stringhash, sgUtils, sgNamedIndexCollection, sgShared;
 
 
   //==================================================================

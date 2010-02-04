@@ -173,9 +173,10 @@ implementation
 //=============================================================================
 
   uses SysUtils, StrUtils, Classes, // system
-       stringhash, MyStrUtils,      // libsrc
+       stringhash, sgUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgShared, sgSprites, sgTrace, sgImages, sgAnimations; // Swingame
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgShared, 
+       sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface; // Swingame
 
   //----------------------------------------------------------------------------
   // Global variables for resource management.
@@ -269,7 +270,7 @@ implementation
       begin
         if Length(current.data) <> 5 then
         begin
-          RaiseException('Invalid number of values for bitmap ' + current.name + ' expected 5 values for width, height, cellRows, cellCols, cellCount');
+            RaiseException('Invalid number of values for bitmap ' + current.name + ' expected 5 values for width, height, cellRows, cellCols, cellCount');
             exit;
         end;
         
@@ -292,6 +293,8 @@ implementation
           MusicResource:      MapMusic(current.name, current.path);
           // MapResource:        MapTileMap(current.name, current.path);
           AnimationResource:  MapAnimationTemplate(current.name, current.path);
+          PanelResource:      MapPanel(current.name, current.path);
+          
           else
             RaiseException('Unkown recource kind in LoadResources' + IntToStr(LongInt(kind)));
         end;
@@ -335,6 +338,7 @@ implementation
         FontResource:       ReleaseFont(current.name);
         SoundResource:      ReleaseSoundEffect(current.name);
         MusicResource:      ReleaseMusic(current.name);
+        PanelResource:      ReleasePanel(current.name);
         // MapResource:        ReleaseTileMap(current.name);
         AnimationResource:  ReleaseAnimationTemplate(current.name);
       end;
@@ -351,6 +355,7 @@ implementation
     ReleaseAllBitmaps();
     ReleaseAllMusic();
     ReleaseAllSoundEffects();
+    ReleaseAllPanels();
     // ReleaseAllTileMaps();
     _Bundles.deleteAll();
   end;
@@ -359,14 +364,15 @@ implementation
   
   function StringToResourceKind(kind: String): ResourceKind;
   begin
+    kind := Uppercase(Trim(kind));
     if kind = 'BUNDLE' then result := BundleResource
     else if kind = 'BITMAP' then result := BitmapResource
-    else if kind = 'SOUND' then result := SoundResource
-    else if kind = 'MUSIC' then result := MusicResource
-    else if kind = 'FONT' then result := FontResource
-    else if kind = 'MAP' then result := MapResource
-    // else if kind = 'PANEL' then result := PanelResource
-    else if kind = 'ANIM' then result := AnimationResource
+    else if kind = 'SOUND'  then result := SoundResource
+    else if kind = 'MUSIC'  then result := MusicResource
+    else if kind = 'FONT'   then result := FontResource
+    else if kind = 'MAP'    then result := MapResource
+    else if kind = 'ANIM'   then result := AnimationResource
+    else if kind = 'PANEL'  then result := PanelResource
     else result := OtherResource;
   end;
   
@@ -394,88 +400,77 @@ implementation
     MapResourceBundle(name, name, showProgress);
   end;
   
+  // Called to read in each line of the resource bundle.
+  // ptr is a pointer to a tResourceBundle to load details into
+  procedure ProcessBundleLine(const line: LineData; ptr: Pointer);
+  var
+    delim: TSysCharSet;
+    i: Integer;
+    current: tResourceIdentifier;
+  begin
+    delim := [ ',' ]; //comma delimited
+    
+    current.kind := StringToResourceKind(ExtractDelimited(1, line.data, delim));
+    current.name := ExtractDelimited(2, line.data, delim);
+    
+    if Length(current.name) = 0 then 
+    begin
+      RaiseException('No name for resource.');
+      exit;
+    end;
+    
+    current.path := ExtractDelimited(3, line.data, delim);
+    if Length(current.path) = 0 then 
+    begin
+      RaiseException('No path supplied for resource.');
+      exit;
+    end;
+    
+    if CountDelimiter(line.data, ',') > 2 then
+    begin
+      SetLength(current.data, CountDelimiter(line.data, ',') - 2);
+    
+      for i := 4 to CountDelimiter(line.data, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
+      begin  
+        if not TryStrToInt(ExtractDelimited(i, line.data, delim), current.data[i - 4]) then
+        begin
+          RaiseException('Invalid data expected a whole number at position ' + IntToStr(i + 1));
+          exit;
+        end;
+      end;
+    end
+    else SetLength(current.data, 0);
+    
+    //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
+    tResourceBundle(ptr).add(current);
+  end;
+    
   procedure MapResourceBundle(name, filename: String; showProgress: Boolean);
   var
-    input: Text; //the bundle file
-    delim: TSysCharSet;
-    line, path: String;
-    i, j: Integer;
-    current: tResourceIdentifier;
     bndl: tResourceBundle;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgResources', 'LoadResourceBundle');
     {$ENDIF}
     
-    path := FilenameToResource(filename, BundleResource);
-    
     if _Bundles.containsKey(name) then
     begin
       RaiseException('Error loaded Resource Bundle resource twice, ' + name);
       exit;
-    end;    
-    
-    Assign(input, path);
-    Reset(input);
-    
-    try
-      delim := [ ',' ]; //comma delimited
-      i := 0;
-      
-      bndl := tResourceBundle.Create();
-      
-      while not EOF(input) do
-      begin
-        i := i + 1;
-        ReadLn(input, line);
-        line := Trim(line);
-        if Length(line) = 0 then continue;
-        
-        current.kind := StringToResourceKind(ExtractDelimited(1, line, delim));
-        current.name := ExtractDelimited(2, line, delim);
-        if Length(current.name) = 0 then 
-        begin
-          RaiseException('Error loading resource bundle, no name supplied on line ' + IntToStr(i));
-          exit;
-        end;
-        
-        current.path := ExtractDelimited(3, line, delim);
-        if Length(current.path) = 0 then 
-        begin
-          RaiseException('Error loading resource bundle, no path supplied on line ' + IntToStr(i));
-          exit;
-        end;
-        
-        if CountDelimiter(line, ',') > 2 then
-        begin
-          SetLength(current.data, CountDelimiter(line, ',') - 2);
-        
-          for j := 4 to CountDelimiter(line, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
-          begin  
-            if not TryStrToInt(ExtractDelimited(j, line, delim), current.data[j - 4]) then
-            begin
-              RaiseException('Error loading resource bundle, invalid data in ' + path + ' on line ' + IntToStr(i));
-              exit;
-            end;
-          end;
-        end
-        else SetLength(current.data, 0);
-        
-        //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
-        
-        bndl.add(current);
-      end;
-      
-      bndl.LoadResources(showProgress);
-      
-      if not _Bundles.setValue(name, bndl) then //store bundle
-      begin
-        RaiseException('Error loaded Bundle twice, ' + name);
-        exit;
-      end;
-    finally
-      Close(input);
     end;
+    
+    bndl := tResourceBundle.Create();
+    ProcessLinesInFile(filename, BundleResource, @ProcessBundleLine, bndl);
+    bndl.LoadResources(showProgress);
+  
+    if not _Bundles.setValue(name, bndl) then //store bundle
+    begin
+      bndl.ReleaseResources();
+      bndl.Free();
+      RaiseException('Error loaded Bundle twice, ' + name);
+      exit;
+    end;
+    
     {$IFDEF TRACE}
       TraceExit('sgResources', 'LoadResourceBundle');
     {$ENDIF}

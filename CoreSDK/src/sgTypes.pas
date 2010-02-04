@@ -412,9 +412,9 @@ interface
       FontResource,
       MusicResource,
       MapResource,
-      PanelResource,
       SoundResource,
-      AnimationResource, //in load order, animation must be > sound
+      AnimationResource,    //in load order,  Animation must be > sound
+      PanelResource,        //                Panel must be > sound + bitmap
       OtherResource
     );
     

@@ -698,6 +698,7 @@ implementation
     {$ENDIF}
     
     ShowLogos();
+    LoadResourceBundle('FileDialog.txt');
     {$IFDEF TRACE}
       TraceExit('sgCore', 'OpenGraphicsWindow');
     {$ENDIF}
