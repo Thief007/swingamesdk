@@ -518,6 +518,7 @@ implementation
       BitmapResource:     result := PathToResourceWithBase(path, 'images/' + filename);
       MapResource:        result := PathToResourceWithBase(path, 'maps/' + filename);
       AnimationResource:  result := PathToResourceWithBase(path, 'animations/' + filename);
+      PanelResource:      result := PathToResourceWithBase(path, 'panels/' + filename);
     {$else}
       BundleResource:     result := PathToResourceWithBase(path, 'bundles\' + filename);
       FontResource:       result := PathToResourceWithBase(path, 'fonts\' + filename);
@@ -525,6 +526,7 @@ implementation
       BitmapResource:     result := PathToResourceWithBase(path, 'images\' + filename);
       MapResource:        result := PathToResourceWithBase(path, 'maps\' + filename);
       AnimationResource:  result := PathToResourceWithBase(path, 'animations\' + filename);
+      PanelResource:      result := PathToResourceWithBase(path, 'panels\' + filename);
     {$endif}
       
       else result := PathToResourceWithBase(path, filename);
