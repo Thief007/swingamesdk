@@ -23,25 +23,25 @@ d: true
 // Format: r: x, y, w, h, kind
 r: 255, 310, 150, 30, 0, Button1
 
-r: 360, 30, 280, 25, 1, Label1, courier, l, Test Label
+r: 360, 30, 280, 25, Label, Label1, courier, l, Test Label
 
-r: 30, 150, 30, 30, 2, Checkbox1, false
-r: 30, 200, 30, 30, 2, Checkbox2, false
+r: 30, 150, 30, 30, CheckBox, Checkbox1, false
+r: 30, 200, 30, 30, CheckBox, Checkbox2, false
 
 //Radiobutton r: x, y, w, h, 3, GroupID
 
-r: 30, 250, 25, 25, 3, radButton1, RadioGroup1
+r: 30, 250, 25, 25, RadioGroup, radButton1, RadioGroup1
 
-r: 80, 250, 25, 25, 3, radButton2, RadioGroup1
+r: 80, 250, 25, 25, RadioGroup, radButton2, RadioGroup1
 
-r: 120, 250, 25, 25, 3, radButton3, RadioGroup1
+r: 120, 250, 25, 25, RadioGroup, radButton3, RadioGroup1
 
-r: 170, 250, 25, 25, 3, radButton4, RadioGroup1
+r: 170, 250, 25, 25, RadioGroup, radButton4, RadioGroup1
 
-//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+//Textbox r: x, y, w, h, Textbox, TextboxID, fontID, LengthLimit, InitialisedText
 
-r: 385, 165, 290, 40, 4, TextBox1, courier, 16, l, test text box
+r: 385, 165, 290, 40, Textbox, TextBox1, courier, 16, l, test text box
 
 //List
 
-r: 101,50, 205, 157, 5, List1, 1, 4, -1, courier, l, 12, v, scrollbutton.png
+r: 101,50, 205, 157, List, List1, 1, 4, -1, courier, l, 12, v, scrollbutton.png

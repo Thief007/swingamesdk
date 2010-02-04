@@ -1756,6 +1756,9 @@ end;
 
 function PanelVisible(p: Panel): boolean;
 begin
+  result := false;
+  if not(assigned(p)) then exit;
+  
   result := p^.visible;
 end;
 
@@ -1855,7 +1858,26 @@ var
   panelFile: text;
   lineNo: integer;
   regionDataArr: Array of String;
-   
+  
+  function StringToKind(s: String): GUIElementKind;
+  begin
+    if Lowercase(s) = 'button' then
+      result := gkButton
+    else if Lowercase(s) = 'label' then
+      result := gkLabel
+    else if Lowercase(s) = 'textbox' then
+      result := gkTextBox
+    else if Lowercase(s) = 'checkbox' then
+      result := gkCheckBox
+    else if Lowercase(s) = 'radiogroup' then
+      result := gkRadioGroup
+    else if Lowercase(s) = 'list' then
+      result := gkList
+    else 
+      RaiseException(s + ' is an invalid kind for region.');
+
+  end;
+  
   procedure CreateLabel(forRegion: Region; d: string);
   var
     newLbl: GUILabelData;
@@ -2052,7 +2074,7 @@ var
     regW := StrToInt(Trim(ExtractDelimited(3, d, [','])));
     regH := StrToInt(Trim(ExtractDelimited(4, d, [','])));
     
-    regKind := StrToInt(Trim(ExtractDelimited(5, d, [','])));
+    r.kind := StringToKind(Trim(ExtractDelimited(5, d, [','])));
     
     regID := Trim(ExtractDelimited(6, d, [',']));
     
@@ -2063,15 +2085,6 @@ var
     
     addedIdx := AddName(result^.regionIds, regID);   //Allocate the index
     if High(p^.Regions) < addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
-
-    case regKind of
-      0: r.kind := gkButton;
-      1: r.kind := gkLabel;
-      2: r.kind := gkCheckbox;
-      3: r.kind := gkRadioGroup;
-      4: r.kind := gkTextbox;
-      5: r.kind := gkList;
-    end;
     
     r.RegionID      := High(p^.Regions);
     r.area          := RectangleFrom(regX, regY, regW, regH);
@@ -3023,8 +3036,7 @@ end;
       lastSelectedFile      := -1;
       lastSelectedPath      := -1;
     end;
-    
-    
+        
     {$IFDEF TRACE}
       TraceExit('sgUserInterface', 'Initialise');
     {$ENDIF}
