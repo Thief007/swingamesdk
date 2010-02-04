@@ -400,7 +400,7 @@ interface
 implementation
   uses
     SysUtils, StrUtils, Classes, 
-    stringhash, MyStrUtils, sgNamedIndexCollection,   // libsrc
+    stringhash, sgUtils, sgNamedIndexCollection,   // libsrc
     SDL_Mixer, SDL,           // SDL
     sgShared, sgResources, sgTrace, sgAudio, sgImages;
 //=============================================================================
@@ -781,6 +781,7 @@ begin
     end;
   
     BuildFrameLists();
+    CheckAnimationLoops();
   finally
     Close(input);
   end;

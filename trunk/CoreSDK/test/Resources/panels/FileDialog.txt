@@ -14,18 +14,18 @@ d: true
 
 // Region data
 // Format: r: x, y, w, h, kind
-r:  11, 11, 70, 20, 1, FileEntryLabel, DialogText, l, Open
-r:  11, 42, 70, 20, 1, FixedLabel1, DialogText, l, Path
+r:  11, 11, 70, 20, 1, FileEntryLabel, fdDialogText, l, Open
+r:  11, 42, 70, 20, 1, FixedLabel1, fdDialogText, l, Path
 
-r:  92, 11, 297, 20, 4, PathTextbox, DialogText, 1024, l, File Path
+r:  92, 11, 297, 20, 4, PathTextbox, fdDialogText, 1024, l, File Path
 
 r: 319, 273, 70, 20, 0, OkButton
-r: 319, 273, 70, 20, 1, OkLabel, DialogText, c, Open
+r: 319, 273, 70, 20, 1, OkLabel, fdDialogText, c, Open
 
 r: 238, 273, 70, 20, 0, CancelButton
-r: 238, 273, 70, 20, 1, CancelLabel, DialogText, c, Cancel
+r: 238, 273, 70, 20, 1, CancelLabel, fdDialogText, c, Cancel
 
-r:  11, 273, 227, 20, 1, ErrorLabel, DialogText, l, 
+r:  11, 273, 227, 20, 1, ErrorLabel, fdDialogText, l, 
 
 // Lists are loaded as a region with the following format:
 // r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, fontID, alignment, scrollSize, scrollKind, scrollBmp
@@ -42,5 +42,5 @@ r:  11, 273, 227, 20, 1, ErrorLabel, DialogText, l,
 // scrollKind = v for vertical or h for horizontal
 // scrollBmp  = n for no bitmap, or the bitmap name
 
-r: 11, 73, 378, 190, 5, FilesList, 1, 10, -1, DialogText, l, 10, v, n
-r: 92, 42, 297,  26, 5, PathList,  3,  1, -1, DialogText, c,  6, h, n
+r: 11, 73, 378, 190, 5, FilesList, 1, 10, -1, fdDialogText, l, 10, v, n
+r: 92, 42, 297,  26, 5, PathList,  3,  1, -1, fdDialogText, c,  6, h, n

@@ -1,5 +1,5 @@
 //=============================================================================
-// MyStrUtils.pas
+// sgUtils.pas
 //=============================================================================
 //
 // Extra String Utilities used for processing parts of SwinGame.
@@ -8,13 +8,14 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-04: Andrew : Renamed unit, added code to process lines of a text file
 // - 2010-02-03: Andrew : Added ExtractFileAndPath
 // - 2010-02-03: Aaron  : Added SingleArrayToRange
 //                        Added ZeroArray
 // - 2010-02-02: Aaron  : Added LongIntArrayToRange
 // - Earlier   : Andrew : Various changes
 //=============================================================================
-unit MyStrUtils;
+unit sgUtils;
 
 interface
 uses sgTypes;
@@ -45,11 +46,28 @@ uses sgTypes;
   procedure ZeroArray (var singles : SingleArray); overload;
   procedure ZeroArray (var Ints : array of LongIntArray); overload;
   procedure ZeroArray (var singles : array of SingleArray); overload;
-
+  
+  procedure MakeFalse (var visited: Array of Boolean);
+  
+  
+  type
+    LineData = record
+      filename: String;
+      data:     String;
+      lineNo:   LongInt;
+    end;
+    LineProcessor = procedure(const data: LineData; ptr: Pointer);
+  
+  // This reads the lines of the passed in file, calling proc for each non comment line.
+  // the ptr is then passed to each line to allow custom data to be passed into the line processing
+  // procedure.
+  procedure ProcessLinesInFile(filename: String; kind: ResourceKind; proc: LineProcessor; ptr: Pointer);
+  
+  
 implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
-    sgShared;
+    sgShared, sgResources;
 
   procedure ZeroArray (var ints : LongIntArray); overload;
   var
@@ -415,5 +433,60 @@ implementation
     end;
     
     // WriteLn(path, filename);
+  end;
+  
+  procedure MakeFalse(var visited: Array of Boolean);
+  var
+    i: LongInt;
+  begin
+    for i := 0 to High(visited) do
+    begin
+      visited[i] := false;
+    end;
+  end;
+  
+  procedure ProcessLinesInFile(filename: String; kind: ResourceKind; proc: LineProcessor; ptr: Pointer);
+  var
+    path: String;
+    input: Text;
+    line: LineData;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgUtils', 'ProcessLinesInFile');
+    {$ENDIF}
+    
+    if not assigned(proc) then exit;
+    
+    path := FilenameToResource(filename, kind);
+    line.lineNo := 0;
+    
+    Assign(input, path);
+    Reset(input);
+    
+    line.filename := filename;
+    
+    try
+      try
+        while not EOF(input) do
+        begin
+          line.lineNo := line.lineNo + 1;
+          
+          ReadLn(input, line.data);
+          line.data := Trim(line.data);
+          if Length(line.data) = 0 then continue;  //skip empty lines
+          if MidStr(line.data,1,2) = '//' then continue; //skip lines starting with //
+          
+          proc(line, ptr);
+        end;
+      except on e: Exception do
+        RaiseException('Error processing ' + filename + ' on line ' + IntToStr(line.lineNo) + ': ' + e.Message);
+      end;
+    finally
+      Close(input);
+    end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgUtils', 'ProcessLinesInFile');
+    {$ENDIF}
   end;
 end.

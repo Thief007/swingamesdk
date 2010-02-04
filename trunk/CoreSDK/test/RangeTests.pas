@@ -1,5 +1,5 @@
 program RangeTests;
-uses sgShared, sgTypes, strutils, MyStrUtils;
+uses sgShared, sgTypes, strutils, sgUtils;
 
 var
   data: LongIntArray;

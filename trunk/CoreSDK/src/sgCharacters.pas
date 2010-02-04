@@ -138,7 +138,7 @@ implementation
   uses
     sgCore, sgAnimations, sgGeometry, sgResources,
     sgImages, sgNamedIndexCollection, sgShared,
-    sgSprites, SysUtils, MyStrUtils, StrUtils;
+    sgSprites, SysUtils, sgUtils, StrUtils;
 //============================================================================= 
 
   //---------------------------------------------------------------------------
