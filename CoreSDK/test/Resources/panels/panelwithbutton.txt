@@ -23,7 +23,7 @@ d: true
 // Format: r: x, y, w, h, kind
 r: 255, 310, 150, 30, 0, Button1
 
-r: 360, 30, 280, 25, 1, Label1, Test Label, courier
+r: 360, 30, 280, 25, 1, Label1, courier, l, Test Label
 
 r: 30, 150, 30, 30, 2, Checkbox1, false
 r: 30, 200, 30, 30, 2, Checkbox2, false
