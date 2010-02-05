@@ -246,7 +246,7 @@ procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 
 //Lists
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
-
+function ListActiveItemText(pnl: Panel; ID: String): String;
 function ListFromRegion(r: Region): GUIList; overload;
 
 function ListFont(r: Region): Font; overload;
@@ -258,7 +258,7 @@ function ListItemCount(r: Region): LongInt; overload;
 function ListItemCount(lst:GUIList): LongInt; overload;
 function ListActiveItemIndex(r: Region): LongInt; overload;
 function ListActiveItemIndex(lst: GUIList): LongInt;
-function ListActiveItemText(id: string): string;
+
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
 procedure ListClearItems(lst: GUIList); overload;
 procedure ListClearItems(r : Region); overload;
