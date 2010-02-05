@@ -468,7 +468,8 @@ implementation
   uses 
     SysUtils, Math, Classes, //System
     SDL_Image, SDL_gfx, //SDL
-    sgTrace, sgShared, sgEventProcessing, sgResources, sgGeometry, sgImages, sgUserInterface; //SwinGame
+    sgSavePNG, sgShared, sgTrace, sgEventProcessing, //SwinGame shared library code
+    sgResources, sgGeometry, sgImages, sgUserInterface; //SwinGame
 //=============================================================================
 
 
@@ -818,24 +819,32 @@ implementation
 
   procedure TakeScreenShot(basename: String);
   var
+    path: String;
     filename: String;
     i: LongInt;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgCore', 'TakeScreenShot');
     {$ENDIF}
-    filename := basename + '.bmp';
+    
+    path := IncludeTrailingPathDelimiter(GetUserDir()) + 'Desktop' + PathDelim;
+    if not DirectoryExists(path) then 
+      path := IncludeTrailingPathDelimiter(GetUserDir());
+    
+    filename := basename + '.png';
+    
     i := 1;
     
-    while FileExists(filename) do
+    while FileExists(path + filename) do
     begin
-      filename := basename + IntToStr(i) + '.bmp';
+      filename := basename + IntToStr(i) + '.png';
       i := i + 1;
     end;
     
-    if SDL_SaveBMP(screen^.surface, PChar(filename)) = -1 then
+    //if SDL_SaveBMP(screen^.surface, PChar(path + filename)) = -1 then
+    if not png_save_surface(path + filename, screen^.surface) then
     begin
-      RaiseException('Failed to save ' + basename + '.bmp: ' + SDL_GetError());
+      RaiseException('Failed to save ' + basename + ': ' + SDL_GetError());
       exit;
     end;
     {$IFDEF TRACE}
