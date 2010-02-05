@@ -258,6 +258,7 @@ function ListItemCount(r: Region): LongInt; overload;
 function ListItemCount(lst:GUIList): LongInt; overload;
 function ListActiveItemIndex(r: Region): LongInt; overload;
 function ListActiveItemIndex(lst: GUIList): LongInt;
+function ListActiveItemText(id: string): string;
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
 procedure ListClearItems(lst: GUIList); overload;
 procedure ListClearItems(r : Region); overload;
