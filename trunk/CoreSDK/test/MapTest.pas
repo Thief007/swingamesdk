@@ -63,8 +63,8 @@ begin
   writeln('Map Loaded');
   //SetTileValue(myMap,TileAt(myMap,2,2), 'test', 0.8);
   //SaveMap(myMap, 'test3.txt');
-  writeln('have not changed dimension');
-  writeln('have  changed dimension');
+  //writeln('have not changed dimension');
+  //writeln('have  changed dimension');
   repeat // The game loop...
     ProcessEvents();
 
@@ -80,6 +80,7 @@ begin
       if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
       if keyTyped(vk_s) Then SaveMap(myMap, 'test3.txt');
       if keyTyped(vk_l) Then myMap := loadMap('test3.txt');
+      if keyTyped(vk_k) Then myMap := loadMap('test1.txt');
 
     UpdateSpriteAnimation(c^.CharSprite);
     //if KeyDown(vk_m) then

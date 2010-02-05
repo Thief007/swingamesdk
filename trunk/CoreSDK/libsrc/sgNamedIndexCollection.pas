@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-05: Aaron  : Added AddNamesToCollection
 // - 2010-02-03: Aaron  : Added NamedIndexCollectionNameList
 // - 2010-01-20: David  : Added NamesOf to return names in collection
 // - 2009-12-15: Andrew : Created
@@ -35,6 +36,8 @@ interface
   /// -1 if the add fails.
   ///
   function AddName(var col: NamedIndexCollection; name: String): Integer;
+  //adds more than one name delimited by ',' i.e. name1,name2..
+  Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
 
   /// returns names in an index collection in the following manner: name1,name2...
   function NamedIndexCollectionNameList(const list:NamedIndexCollection):String;
@@ -45,7 +48,7 @@ interface
   procedure FreeNamedIndexCollection(var col: NamedIndexCollection);
   
 implementation
-uses sgShared, stringhash;
+uses sgShared, stringhash, sgUtils, StrUtils;
 
   function NameAt(const col: NamedIndexCollection;idx: Integer): String;
   begin
@@ -107,6 +110,21 @@ uses sgShared, stringhash;
     else
       result := -1;                                           // Failed to add return -1 idx
   end;
+
+      Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
+    var
+      i, namesLength:LongInt;    
+    begin
+      if names = '' then exit;
+      //number of names = ,'s + 1 (commas + 1)
+      namesLength := CountDelimiter(names, ',') + 1;
+      //WriteLn('Reading ', namesLength, ' names from ', names);
+      
+      for i := 1 to namesLength do
+      begin
+        AddName(col, ExtractDelimited(i,names,[',']));
+      end;
+    end;
   
   procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: Array of String); overload;
   var
