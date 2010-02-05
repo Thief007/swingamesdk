@@ -4,7 +4,7 @@ program FileDialogTests;
 uses
   Math, SysUtils,
   sgUtils,
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, sgImages;
+  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, sgImages, sgInput;
 
 procedure InitInterface();
 begin
@@ -30,6 +30,8 @@ begin
     
     DrawFramerate(0,0);
     RefreshScreen();
+    
+    if KeyTyped(vk_s) then TakeScreenShot('FileDialogTest');
   until WindowCloseRequested() or DialogComplete() or DialogCancelled();
   
   WriteLn(DialogPath());
