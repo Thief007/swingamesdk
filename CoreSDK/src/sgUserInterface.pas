@@ -197,7 +197,8 @@ function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 function CheckboxState(s: String): Boolean; overload;
 function CheckboxState(chk: GUICheckbox): Boolean; overload;
 function CheckboxState(r: Region): Boolean; overload;
-procedure CheckboxSetState(chk: GUICheckbox; val: Boolean);
+procedure CheckboxSetState(r: region; val: Boolean); overload;
+procedure CheckboxSetState(chk: GUICheckbox; val: Boolean); overload;
 procedure ToggleCheckboxState(c: GUICheckbox);
 function CheckboxFromRegion(r: Region): GUICheckbox;
 
@@ -219,6 +220,10 @@ function TextBoxText(r: Region): String; overload;
 function TextBoxText(tb: GUITextBox): String; overload;
 procedure TextboxSetText(r: Region; s: string); overload;
 procedure TextboxSetText(tb: GUITextBox; s: string); overload;
+procedure TextboxSetText(tb: GUITextBox; i: LongInt); overload;
+procedure TextboxSetText(tb: GUITextBox; single: Single); overload;
+procedure TextboxSetText(r: Region; single: Single); overload;
+procedure TextboxSetText(r: Region; i: LongInt); overload;
 function TextBoxFromRegion(r: Region): GUITextBox;
 procedure GUISetActiveTextbox(r: Region); overload;
 procedure GUISetActiveTextbox(t: GUITextBox); overload;
@@ -255,9 +260,15 @@ function ListActiveItemIndex(r: Region): LongInt; overload;
 function ListActiveItemIndex(lst: GUIList): LongInt;
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
 procedure ListClearItems(lst: GUIList);
-procedure ListAddItem(lst: GUIList; text: String);
-procedure ListAddItem(lst: GUIList; img:Bitmap);
-procedure ListAddItem(lst: GUIList; img:Bitmap; text: String);
+procedure ListAddItem(lst: GUIList; text: String); overload;
+procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
+procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
+procedure ListAddItem(r : Region; text: String); overload;
+procedure ListAddItem(r : Region; img:Bitmap); overload;
+procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
+
+
+
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 function ListTextIndex(lst: GUIList; value: String): LongInt;
 
@@ -1321,10 +1332,30 @@ begin
   TextboxSetText(TextBoxFromRegion(r), s);
 end;
 
+procedure TextboxSetText(r: Region; i: LongInt); overload;
+begin
+  TextboxSetText(TextBoxFromRegion(r), IntToStr(i));
+end;
+
+procedure TextboxSetText(r: Region; single: Single); overload;
+begin
+  TextboxSetText(TextBoxFromRegion(r), FloatToStr(single));
+end;
+
 procedure TextboxSetText(tb: GUITextBox; s: string); overload;
 begin
   if assigned(tb) then
     tb^.contentString := s;
+end;
+
+procedure TextboxSetText(tb: GUITextBox; i: LongInt); overload;
+begin
+  TextboxSetText(tb, IntToStr(i));
+end;
+
+procedure TextboxSetText(tb: GUITextBox; single: Single); overload;
+begin
+  TextboxSetText(tb, FloatToStr(single));
 end;
 
 function TextBoxText(r: Region): String; overload;
@@ -1488,6 +1519,21 @@ begin
     SetLength(lst^.items, Length(lst^.items) + 1);
     lst^.items[High(lst^.items)].text     := text;  //Assign the text to the item
     lst^.items[High(lst^.items)].image := img; //Assign the image to the item
+end;
+
+procedure ListAddItem(r : Region; text: String); overload;
+begin
+  ListAddItem(ListFromRegion(r), text);
+end;
+
+procedure ListAddItem(r : Region; img:Bitmap); overload;
+begin
+  ListAddItem(ListFromRegion(r), img);
+end;
+
+procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
+begin
+  ListAddItem(ListFromRegion(r),img, text);
 end;
 
 procedure ListClearItems(lst: GUIList);
@@ -1667,11 +1713,16 @@ begin
   result := CheckboxState(CheckboxFromRegion(RegionWithID(s)));
 end;
 
-procedure CheckboxSetState(chk: GUICheckbox; val: Boolean);
+procedure CheckboxSetState(chk: GUICheckbox; val: Boolean); overload;
 begin
   if not assigned(chk) then exit;
   
   chk^.state := val;
+end;
+
+procedure CheckboxSetState(r: region; val: Boolean); overload;
+begin
+  CheckboxSetState(CheckboxFromRegion(r), val);
 end;
 
 

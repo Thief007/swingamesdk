@@ -68,8 +68,11 @@ interface
  //       Draw Procedures            //
 //==================================//
   procedure DrawMap(map: Map); overload;
+  procedure DrawMap(map: Map; offset:Vector); overload;
   procedure DrawMapDebug(map: map);
-  procedure DrawMapGrid(m:map);
+  procedure DrawMapGrid(m:map); overload;
+  procedure DrawMapGrid(m:map; offset:Vector); overload;
+  
   
   //==================================//
  //       Select Procedures          //
@@ -77,7 +80,8 @@ interface
   function TileSelected(map:Map; tile:Tile):Boolean;
   procedure UpdateSelect(map:Map);
   procedure Deselect(map:Map; tile:Tile);
-  procedure HighlightTile(highlightedTile: Tile);
+  procedure HighlightTile(highlightedTile: Tile); OverLoad;
+  procedure HighlightTile(highlightedTile: Tile; offset: Vector); OverLoad;
 
   
   procedure SaveMap(m:Map; filename:String);
@@ -93,7 +97,7 @@ interface
 //===============================//
 //return map properties functions//
 //===============================//
-
+  function MapKinds(m: map) : StringArray;
   function TileStagger(m: Map) : Vector;
   function LayerCount(m: Map) : LongInt;  
   function TileHeight(m: Map) : LongInt;  
@@ -105,6 +109,7 @@ interface
   function MapWidth(m: Map) : Longint;
   function ValueName(m : map; idx:LongInt): String;
   function KindName(m : map; idx:LongInt): String;
+  function Isometric(m : map): Boolean;
 
   
 //================================//
@@ -139,10 +144,12 @@ interface
   // Set map procedures   //
   //======================//
 
-procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean); 
+  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean); 
   function NewMap():map;
   procedure ReconfigureMap(var m:map);
-
+  procedure AddBitmap(m:map; filename:String);
+  procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
+  procedure AddKind(m:map; kname:string);
 
   implementation
   uses
@@ -155,6 +162,24 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
   //==================================================================
   //Load Map Functions
   //==================================================================
+
+      //Add one or many name(s) to an index collection.
+
+    Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
+    var
+      i, namesLength:LongInt;    
+    begin
+      if names = '' then exit;
+      //number of names = ,'s + 1 (commas + 1)
+      namesLength := CountDelimiter(names, ',') + 1;
+      //WriteLn('Reading ', namesLength, ' names from ', names);
+      
+      for i := 1 to namesLength do
+      begin
+        AddName(col, ExtractDelimited(i,names,[',']));
+      end;
+    end;
+    
   function LoadMap(filename:string): Map;
 
   type
@@ -199,6 +224,7 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     // Reading the regions from the file
 
     procedure AddTile();
+
     var
       bitmapIdxs: Array of LongInt;
       layer, i,rowNum:LongInt;
@@ -245,20 +271,8 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     //procedure to add bitmap to bitmapcell array gives cell value of 0
 
 
-    procedure AddBitmap(data:String);
-    var
-    index:LongInt;
-    begin
-      index:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
-      if (index+1)> length(result^.BitmapCellKind) then
-      begin
-      SetLength(result^.BitmapCellKind, index+1);
-      result^.BitmapCellKind[index].Bmap := LoadBitmap(ExtractDelimited(2,data,[',']));
-      result^.BitmapCellKind[index].Cell:= 0;
-      end;
-    end;
 
-    //Procedure that adds the surrounding tiles to each tile.
+
 
 
 
@@ -309,22 +323,7 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     end;
 
 
-    //Add one or many name(s) to an index collection.
 
-    Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
-    var
-      i, namesLength:LongInt;    
-    begin
-      if names = '' then exit;
-      //number of names = ,'s + 1 (commas + 1)
-      namesLength := CountDelimiter(names, ',') + 1;
-      //WriteLn('Reading ', namesLength, ' names from ', names);
-      
-      for i := 1 to namesLength do
-      begin
-        AddName(col, ExtractDelimited(i,names,[',']));
-      end;
-    end;
 
   
     // Adds default values depending on kind
@@ -471,44 +470,22 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
         'w': result^.TileWidth  := MyStrToInt(data, false);        //  tile width
         'h': result^.TileHeight := MyStrToInt(data, false);      // tile height
         'l': AddTile();
-        'b': AddBitmap(data);
+        'b': AddBitmap(result, data);
         'v':LoadSpecificValue(data);
         'k':AddSpecificKind(data);
       end;
     end;
-    //processes lines regarding grid bitmap.
-    // gb = grid bitmap
-    procedure ProcessGridLineData();
+    //Process line procedure*************
+    procedure ProcessLine();
     var
     bitmapCellIds : array of LongInt;
     cellRegions   : array of LongInt;
     gridBitmap    : Bitmap;
-    i,
     cellWidth,
     cellHeight,
     cellRows,
     cellCols,
-    cellCount     :LongInt;
-    begin
-      bitmapCellIds   := ProcessRange(ExtractDelimitedWithRanges(1,data));
-      cellRegions     := ProcessRange(ExtractDelimitedWithRanges(2,data));
-      gridBitmap      := LoadBitmap(ExtractDelimitedWithRanges(3,data));
-      cellWidth       := MyStrToInt(ExtractDelimitedWithRanges(4,data),false);
-      cellHeight      := MyStrToInt(ExtractDelimitedWithRanges(5,data),false);
-      cellRows        := MyStrToInt(ExtractDelimitedWithRanges(6,data),false);
-      cellCols        := MyStrToInt(ExtractDelimitedWithRanges(7,data),false);
-      cellCount       := MyStrToInt(ExtractDelimitedWithRanges(8,data),false);
-      
-      SetBitmapCellDetails(gridBitmap, cellWidth, cellHeight, cellCols, cellRows, cellCount);
-      for i:=low(bitmapCellIds) to high(bitmapCellIds) do
-      begin
-        SetLength(result^.BitmapCellKind, length(result^.BitmapCellKind)+1);
-        result^.BitmapCellKind[high(result^.BitmapCellKind)].Cell := cellRegions[i];
-        result^.BitmapCellKind[high(result^.BitmapCellKind)].Bmap  := gridBitmap;
-      end;
-    end;
-    //Process line procedure*************
-    procedure ProcessLine();
+    cellCount     : LongInt;
     begin
       // Split line into id and data
       id   := ExtractDelimited(1, line, [':']);
@@ -523,7 +500,19 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
       case LowerCase(id)[1] of // in all cases the data variable is read
         'm': ProcessMapLineData();
         't': ProcessTileLineData();
-        'g': ProcessGridLineData();
+        'g':
+        begin
+          bitmapCellIds   := ProcessRange(ExtractDelimitedWithRanges(1,data));
+          cellRegions     := ProcessRange(ExtractDelimitedWithRanges(2,data));
+          gridBitmap      := LoadBitmap(ExtractDelimitedWithRanges(3,data));
+          cellWidth       := MyStrToInt(ExtractDelimitedWithRanges(4,data),false);
+          cellHeight      := MyStrToInt(ExtractDelimitedWithRanges(5,data),false);
+          cellRows        := MyStrToInt(ExtractDelimitedWithRanges(6,data),false);
+          cellCols        := MyStrToInt(ExtractDelimitedWithRanges(7,data),false);
+          cellCount       := MyStrToInt(ExtractDelimitedWithRanges(8,data),false);
+          SetBitmapCellDetails(gridBitmap, cellWidth, cellHeight, cellCols, cellRows, cellCount);
+          MapAddBitmapCells(result, bitmapCellIds, cellRegions, gridBitmap);
+        end;
         else
         begin
           RaiseException('Error at line ' + IntToStr(lineNo) + ' in map ' + filename + '. Error with id: ' + id + '. id not recognized.');
@@ -560,7 +549,7 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     end;
     //writeln('PrototypeAdded');
     ProcessTiles();
-    writeln('TileProcessed')  ;
+    //writeln('TileProcessed')  ;
   end;
   
   procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
@@ -656,10 +645,16 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
   end;
   
   //procedure to highlight one tile.
-  procedure HighlightTile(highlightedTile: Tile);
+  
+  procedure HighlightTile(highlightedTile: Tile; offset: Vector); OverLoad;
   begin
     if not assigned(highlightedTile) then exit;
-    DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, CameraPos*-1);
+    DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, (CameraPos*-1)+offset);
+  end;
+
+  procedure HighlightTile(highlightedTile: Tile); OverLoad;
+  begin
+    HighlightTile(highlightedTile, VectorTo(0,0));
   end;
 
   
@@ -694,7 +689,7 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
   end;
 
   //draw map procedure.
-  procedure DrawMap(map: Map);
+  procedure DrawMap(map: Map; offset:Vector); overload;
   var
     layer,col, row, startRow, startCol, endRow, endCol : LongInt;
    // dir:Direction;
@@ -714,7 +709,7 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
           if map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap <> nil then
           begin
            // writeln(HexStr(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap));
-              DrawCell(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap, map^.Tiles[row,col].TileBitmapCellKind[layer]^.Cell, map^.Tiles[row,col].Position);
+              DrawCell(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap, map^.Tiles[row,col].TileBitmapCellKind[layer]^.Cell, PointAdd(map^.Tiles[row,col].Position,offset));
           end;
         end; // end of col in row
       end; // end of row
@@ -722,7 +717,12 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     PopClip();
   end;
 
-  procedure DrawMapDebug(map: map);
+  procedure DrawMap(map: Map); overload;
+  begin
+    DrawMap(map, VectorTo(0,0));
+  end;
+
+  procedure DrawMapDebug(map: map); 
   var
   dir: Direction;
   row,col,startRow, startCol, endRow, endCol : LongInt;
@@ -752,9 +752,9 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
         UpdateHighlight(map);
   end;
 
-  procedure DrawMapGrid(m:map);
+  procedure DrawMapGrid(m:map; offset:Vector); overload;
   var
-  row,col,startRow, startCol, endRow, endCol : LongInt;
+    row,col,startRow, startCol, endRow, endCol : LongInt;
   begin
     MapRangeFromRect(CameraScreenRect(), m, startCol, startRow, endCol, endRow);
 
@@ -763,9 +763,14 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     begin
       for col := startCol to endCol do
       begin
-        HighlightTile(@m^.Tiles[row,col]);
+        HighlightTile(@m^.Tiles[row,col], offset);
       end;
     end;
+  end;
+
+  procedure DrawMapGrid(m:map); overload;
+  begin
+    DrawMapGrid(m,VectorTo(0,0));
   end;
 
 
@@ -1037,7 +1042,6 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
           currentValue := currentTile.Values[vId];
           if currentTile.kind <> -1 then
           begin
-            writeln(currentTile.Kind,vId);
             if currentValue <> m^.MapDefaultValues[currentTile.Kind,vId] then
               writeln(output,'tv:',row,',',col,',',NameAt(m^.ValueIds,vId),',',currentValue);
           end;
@@ -1284,6 +1288,23 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
   //FUNCTIONS THAT RETURNS MAP PROPERTIES
   //==================================================================
 
+
+  function MapKinds(m: map) : StringArray;
+  var
+    i : LongInt;
+  begin
+    SetLength(result,0);
+    result:= result;
+    if not Assigned(m) then exit
+    else
+    SetLength(result,NameCount(m^.KindIds));
+    for i := 0 to NameCount(m^.KindIds)-1 do
+    begin
+      result[i] := NameAt(m^.KindIds, i); 
+    end;
+  end;
+
+
   function MapWidth(m: Map) : Longint;
   begin
     result := -1;
@@ -1292,6 +1313,15 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     result := m^.MapWidth;
   end;
 
+
+
+  function Isometric(m: map) : Boolean;
+  begin
+    result:= false;
+    if not Assigned(m) then exit
+    else
+    result := m^.Isometric;
+  end;
   
   function MapHeight(m: Map) : Longint;
   begin
@@ -1544,6 +1574,11 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
   //======================//
   // Set map procedures   //
   //======================//
+  procedure AddKind(m:map; kname:string);
+  begin
+    AddNamesToCollection(m^.KindIds, kname);
+  end;
+  
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
   begin
     if not assigned(m) then exit;
@@ -1556,7 +1591,31 @@ procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Lon
     ReconfigureMap(m);
   end;
 
-  
+
+    procedure AddBitmap(m:map; filename:String);
+    var
+      index:LongInt;
+    begin
+      index:=MyStrToInt(ExtractDelimited(1,filename,[',']),false);
+      if (index+1)> length(m^.BitmapCellKind) then
+      begin
+      SetLength(m^.BitmapCellKind, index+1);
+      m^.BitmapCellKind[index].Bmap := LoadBitmap(ExtractDelimited(2,filename,[',']));
+      m^.BitmapCellKind[index].Cell:= 0;
+      end;
+    end;
+
+    procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
+    var
+    i             : LongInt;
+    begin
+      for i:=low(bitmapCellIds) to high(bitmapCellIds) do
+      begin
+        SetLength(m^.BitmapCellKind, length(m^.BitmapCellKind)+1);
+        m^.BitmapCellKind[high(m^.BitmapCellKind)].Cell := cellRegions[i];
+        m^.BitmapCellKind[high(m^.BitmapCellKind)].Bmap  := gridBitmap;
+      end;
+    end;
 
   function NewMap():map;
   begin
