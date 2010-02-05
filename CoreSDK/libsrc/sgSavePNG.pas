@@ -13,11 +13,11 @@ type PFile = ^FILE;
 function fopen( 
   a: pchar;
   b: pchar
-):PFile; cdecl; external 'libc';
+):PFile; cdecl; external 'libc.a';
 
 procedure fclose(
   a: PFile
-); cdecl; external 'libc';
+); cdecl; external 'libc.a';
 
 const 
   PNG_COLOR_MASK_PALETTE    = 1;
