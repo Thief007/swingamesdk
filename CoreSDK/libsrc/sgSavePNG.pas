@@ -10,19 +10,35 @@ uses png, sgShared;
 
 type PFile = ^FILE;
 
+{$linklib c}
+{$IFDEF WINDOWS}
 function fopen( 
   a: pchar;
   b: pchar
-):PFile; cdecl; external 'libc.a';
+):PFile; stdcall; external 'msvcrt.dll';
 
 procedure fclose(
   a: PFile
-); cdecl; external 'libc.a';
+); stdcall; external 'msvcrt.dll';
+{$ENDIF}
+
+{$IFDEF UNIX}
+function fopen( 
+  a: pchar;
+  b: pchar
+):PFile; cdecl; external 'libc';
+
+procedure fclose(
+  a: PFile
+); cdecl; external 'libc';
+{$ENDIF}
 
 const 
   PNG_COLOR_MASK_PALETTE    = 1;
   PNG_COLOR_MASK_COLOR      = 2;
   PNG_COLOR_MASK_ALPHA      = 4;
+  
+  PNG_COLOR_TYPE_RGB        = PNG_COLOR_MASK_COLOR;
   
   PNG_INTERLACE_NONE        = 0; // Non-interlaced image
   
@@ -47,7 +63,7 @@ const
 
 function png_colortype_from_surface(surface: PSDL_Surface): LongInt;
 begin
-  result := PNG_COLOR_MASK_COLOR; // grayscale not supported
+  result := PNG_COLOR_TYPE_RGB; // grayscale not supported
   
   if not assigned(surface) then exit;
   
@@ -145,6 +161,7 @@ begin
       // Writing the image
       png_write_info(png_ptr, info_ptr);
       png_set_packing(png_ptr);
+      png_set_bgr(png_ptr);
       
       GetMem(row_pointers, sizeof(png_bytep) * surf^.h);
       

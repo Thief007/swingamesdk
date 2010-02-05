@@ -25,6 +25,10 @@ begin
     ProcessEvents();
     ClearScreen(ColorBlack);
     
+    FillRectangle(ColorRed, 0,0, 50, 50);
+    FillRectangle(ColorGreen, 50,0, 50, 50);
+    FillRectangle(ColorBlue, 100, 0, 50, 50);
+    
     DrawPanels();
     UpdateInterface();
     
