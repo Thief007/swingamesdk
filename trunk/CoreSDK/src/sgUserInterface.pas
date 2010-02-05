@@ -1444,7 +1444,7 @@ var
 begin
   result := '';
   if not assigned(pnl) then exit;
-  r := RegionWithID(ID);
+  r := RegionWithID(pnl, ID);
 
   Result := ListItemText(r, ListActiveItemIndex(r));
 end;
@@ -2296,24 +2296,28 @@ begin
   Assign(panelFile, pathToFile);
   Reset(panelFile);
   
-  SetLength(regionDataArr, 0);
+  try  
+    SetLength(regionDataArr, 0);
   
-  lineNo := -1;
+    lineNo := -1;
   
-  while not EOF(panelFile) do
-  begin
-    lineNo := lineNo + 1;
+    while not EOF(panelFile) do
+    begin
+      lineNo := lineNo + 1;
     
-    ReadLn(panelFile, line);
-    line := Trim(line);
-    if Length(line) = 0 then continue;  //skip empty lines
-    if MidStr(line,1,2) = '//' then continue; //skip lines starting with // - the first character at index 0 is the length of the string.
+      ReadLn(panelFile, line);
+      line := Trim(line);
+      if Length(line) = 0 then continue;  //skip empty lines
+      if MidStr(line,1,2) = '//' then continue; //skip lines starting with // - the first character at index 0 is the length of the string.
   
-    ProcessLine();
+      ProcessLine();
+    end;
+  
+    CreateRegions();
+    SetupListPlaceholders();
+  finally
+    Close(panelFile);
   end;
-  
-  CreateRegions();
-  SetupListPlaceholders();
 end;
 
 procedure GUISetForegroundColor(c:Color);

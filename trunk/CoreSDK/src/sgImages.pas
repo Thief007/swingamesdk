@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-05: Andrew : Added png saving.
 // - 2010-02-01: Aaron  : Added BitmapName and BitmapFileName
 // - 2010-01-28: David  : Changed DoLoadBitmap to use an already loaded bitmap if found
 // - 2010-01-05: David  : Added SetTransparentColor Procedure (Line 701 and 1442)
@@ -342,6 +343,18 @@ uses sgTypes;
   /// @method MakeTransparent
   procedure MakeTransparent(bmp: Bitmap);
   
+  
+//---------------------------------------------------------------------------
+// Save
+//---------------------------------------------------------------------------
+  
+  /// Saves the bitmap to a png file at the specified location.
+  ///
+  /// @lib
+  ///
+  /// @class Bitmap
+  /// @method save
+  procedure SaveToPNG(bmp: Bitmap; filename: String);
   
 //---------------------------------------------------------------------------
 // Rotate and Zoom
@@ -732,9 +745,10 @@ uses sgTypes;
   
 //=============================================================================
 implementation
-uses sgCore, sgShared, sgResources, sgTrace, sgCamera, sgGeometry, sgGraphics,
+uses sgCore, sgResources, sgCamera, sgGeometry, sgGraphics,
      stringhash,         // libsrc
-     SysUtils,
+     SysUtils, 
+     sgSavePNG, sgShared, sgTrace, 
      SDL_gfx, SDL, SDL_Image // sdl
      ;
 //=============================================================================
@@ -842,12 +856,12 @@ begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'LoadBitmap', filename);
   {$ENDIF}
-	
-	if _Images.containsKey(name) then
-	begin
-		result := BitmapNamed(name);
-		exit;
-	end;
+  
+  if _Images.containsKey(name) then
+  begin
+    result := BitmapNamed(name);
+    exit;
+  end;
   
   result := nil; //start at nil to exit cleanly on error
   
@@ -1483,7 +1497,7 @@ end;
 
 procedure SaveBitmap(src: Bitmap; filepath: String);
 begin
-	SDL_SaveBMP(src^.surface, PChar(filepath));
+  SDL_SaveBMP(src^.surface, PChar(filepath));
 end;
 
 //---------------------------------------------------------------------------
@@ -1492,15 +1506,22 @@ procedure SetTransparentColor(src: Bitmap; clr:Color);
 var
   x,y : integer;
 begin
-	if not assigned(src) then exit;
-	
-  for x:= 0 to src^.Width do
+  if not assigned(src) then exit;
+  
+  for x:= 0 to src^.Width - 1 do
   begin
-    for y := 0 to src^.Height do
-		begin
-			if (GetPixel(src, x, y) = clr) then PutPixel(src,RGBAColor(0,0,0,0),x,y);
-		end;
+    for y := 0 to src^.Height - 1 do
+    begin
+      if (GetPixel(src, x, y) = clr) then PutPixel(src,RGBAColor(0,0,0,0),x,y);
+    end;
   end;
+end;
+
+procedure SaveToPNG(bmp: Bitmap; filename: String);
+begin
+  if not assigned(bmp) then exit;
+  
+  png_save_surface(filename, bmp^.surface);
 end;
 
 //=============================================================================
