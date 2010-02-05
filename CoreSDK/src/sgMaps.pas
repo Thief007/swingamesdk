@@ -1576,7 +1576,7 @@ interface
   //======================//
   procedure AddKind(m:map; kname:string);
   begin
-    AddNamesToCollection(m^.KindIds, kname);
+    AddName(m^.kindIds, kname);
   end;
   
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
