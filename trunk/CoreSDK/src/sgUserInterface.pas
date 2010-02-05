@@ -259,7 +259,8 @@ function ListItemCount(lst:GUIList): LongInt; overload;
 function ListActiveItemIndex(r: Region): LongInt; overload;
 function ListActiveItemIndex(lst: GUIList): LongInt;
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
-procedure ListClearItems(lst: GUIList);
+procedure ListClearItems(lst: GUIList); overload;
+procedure ListClearItems(r : Region); overload;
 procedure ListAddItem(lst: GUIList; text: String); overload;
 procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
@@ -1536,13 +1537,18 @@ begin
   ListAddItem(ListFromRegion(r),img, text);
 end;
 
-procedure ListClearItems(lst: GUIList);
+procedure ListClearItems(lst: GUIList); overload;
 begin
   if not assigned(lst) then exit;
   
   SetLength(lst^.items, 0);
   lst^.activeItem := -1;
   lst^.startingAt := 0;
+end;
+
+procedure ListClearItems(r : Region); overload;
+begin
+  ListClearItems(ListFromRegion(r));
 end;
 
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
