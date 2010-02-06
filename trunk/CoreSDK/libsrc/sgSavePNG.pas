@@ -10,16 +10,15 @@ uses png, sgShared;
 
 type PFile = ^FILE;
 
-{$linklib c}
 {$IFDEF WINDOWS}
 function fopen( 
   a: pchar;
   b: pchar
-):PFile; stdcall; external 'msvcrt.dll';
+):PFile; cdecl; external 'msvcrt.dll';
 
 procedure fclose(
   a: PFile
-); stdcall; external 'msvcrt.dll';
+); cdecl; external 'msvcrt.dll';
 {$ENDIF}
 
 {$IFDEF UNIX}
