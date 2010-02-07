@@ -1157,7 +1157,7 @@ var
 begin
   if surface = nil then
   begin
-    RaiseException('No bitmap supplied');
+    //RaiseException('No bitmap supplied');
     exit;
   end;
   
@@ -1201,8 +1201,8 @@ procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y
 var
   offset, source: SDL_Rect;
 begin
-  if (dest = nil) or (src = nil) then begin RaiseException('No bitmap supplied'); exit; end;
-  if (srcW < 0) or (srcH < 0) then begin RaiseException('Width and Height must be >= 0'); exit; end;
+  if (dest = nil) or (src = nil) then begin {RaiseException('No bitmap supplied');} exit; end;
+  if (srcW <= 0) or (srcH <= 0) then begin {RaiseException('Width and Height must be >= 0');} exit; end;
   
   offset := NewSDLRect(x, y, 0, 0);
   source := NewSDLRect(srcX, srcY, srcW, srcH);
