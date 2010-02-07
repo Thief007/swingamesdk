@@ -127,16 +127,7 @@ type
   
   FileDialogSelectType = ( fdFiles = 1, fdDirectories = 2, fdFilesAndDirectories = 3 );
   
-  FileDialogData = packed record
-    dialogPanel:          Panel;      // The panel used to show the dialog
-    currentPath:          String;     // The path to the current directory being shown
-    currentSelectedPath:  String;     // The path to the file selected by the user
-    cancelled:            Boolean;
-    allowNew:             Boolean;
-    selectType:           FileDialogSelectType;
-    onlyFiles:            Boolean;
-    lastSelectedFile, lastSelectedPath: LongInt; // These represent the index if the selected file/path to enable double-like clicking
-  end;
+
 
 //---------------------------------------------------------------------------
 // Alter GUI global values
@@ -254,6 +245,7 @@ function ListFont(lst: GUIList): Font; overload;
 procedure ListSetFont(lst: GUITextbox; f: font);
 function ListItemText(r: Region; idx: LongInt): String; overload;
 function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+function ListActiveItemText(r: Region): String; overload;
 function ListItemCount(r: Region): LongInt; overload;
 function ListItemCount(lst:GUIList): LongInt; overload;
 function ListActiveItemIndex(r: Region): LongInt; overload;
@@ -347,6 +339,18 @@ type
     // Variables for dragging panels
     downRegistered:     Boolean;
     panelDragging:      Panel;
+  end;
+
+    FileDialogData = packed record
+    dialogPanel:          Panel;      // The panel used to show the dialog
+    currentPath:          String;     // The path to the current directory being shown
+    currentSelectedPath:  String;     // The path to the file selected by the user
+    cancelled:            Boolean;
+    complete:             Boolean;
+    allowNew:             Boolean;
+    selectType:           FileDialogSelectType;
+    onlyFiles:            Boolean;
+    lastSelectedFile, lastSelectedPath: LongInt; // These represent the index if the selected file/path to enable double-like clicking
   end;
   
 var
@@ -1439,7 +1443,8 @@ end;
 // List Code
 //---------------------------------------------------------------------------------------
 
-function ListActiVeItemText(pnl: Panel; ID: String): String;
+
+function ListActiveItemText(pnl: Panel; ID: String): String; overload;
 var
   r: Region;
 begin
@@ -1449,6 +1454,12 @@ begin
 
   Result := ListItemText(r, ListActiveItemIndex(r));
 end;
+
+function ListActiveItemText(r:region):String; Overload;
+begin
+  Result := ListItemText(r, ListActiveItemIndex(r));
+end;
+
 
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
 begin
@@ -2122,7 +2133,7 @@ var
   var
     regID: string;
     regX, regY: Single;
-    regW, regH, regKind, addedIdx: integer;
+    regW, regH, addedIdx: integer;
     r: RegionData;
   begin
     // Format is 
@@ -2751,7 +2762,7 @@ end;
 
 function DialogComplete(): Boolean;
 begin
-  result := not (PanelVisible(dialog.dialogPanel) or dialog.cancelled);
+  result := (dialog.complete) and (Not(dialog.cancelled));
 end;
 
 function DialogCancelled(): Boolean;
@@ -2926,7 +2937,7 @@ begin
     ShowErrorMessage('Please select a file.');
     exit;
   end;
-  
+  Dialog.Complete := true;
   HidePanel(dialog.dialogPanel);
 end;
 
@@ -3041,6 +3052,7 @@ procedure UpdateInterface();
 var
   pnl: Panel;
 begin
+  dialog.Complete := false;
   GUIC.doneReading := false;
   GUIC.lastClicked := nil;
   
@@ -3097,6 +3109,7 @@ end;
       onlyFiles             := false;
       lastSelectedFile      := -1;
       lastSelectedPath      := -1;
+      complete              := false;
     end;
         
     {$IFDEF TRACE}
