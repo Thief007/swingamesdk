@@ -700,7 +700,6 @@ implementation
     
     ShowLogos();
     LoadResourceBundle('FileDialog.txt');
-    png_save_surface('/Users/acain/Desktop/test.png', BitmapNamed('fdFolder')^.surface);
     {$IFDEF TRACE}
       TraceExit('sgCore', 'OpenGraphicsWindow');
     {$ENDIF}
