@@ -414,6 +414,33 @@ end;
 // Drawing Loops
 //---------------------------------------------------------------------------------------  
 
+function BitmapToDraw(r: Region): Bitmap;
+begin
+  result := nil;
+  if not(assigned(r)) then exit;
+  
+  case r^.kind of
+    gkButton:     begin
+                    if MouseDown(LeftButton) AND PointInRect(MousePosition(), RegionRectangleOnScreen(r)) then
+                      result := r^.parent^.panelBitmapActive
+                    else
+                      result := r^.parent^.panelBitmap;
+                  end;
+    gkCheckBox:   begin
+                    if CheckboxState(r) then 
+                     result := r^.parent^.panelBitmapActive
+                   else
+                     result := r^.parent^.panelBitmap;
+                  end;
+    gkRadioGroup: begin
+                    if r = ActionRadioButton(r) then
+                      result := r^.parent^.panelBitmapActive
+                    else
+                      result := r^.parent^.panelBitmap;
+                  end;
+  end;
+end;
+
 //Helper functions used to determine the text rectangle for text boxes
 function TextboxTextArea(r: Rectangle): Rectangle; overload;
 begin
@@ -673,7 +700,7 @@ begin
       end
       else
       begin
-        DrawBitmapPart(forRegion^.parent^.panelBitmapActive,
+        DrawBitmapPartOnscreen(forRegion^.parent^.panelBitmapActive,
                        placeHolderScreenRect,
                        RectangleTopLeft(itemArea));
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
@@ -738,18 +765,12 @@ end;
 
 procedure DrawBitmapCheckbox(forRegion: Region; const area: Rectangle);
 begin
-  if CheckboxState(forRegion) then
-  begin
-    DrawBitmapPart(forRegion^.parent^.panelBitmapActive, forRegion^.area, RectangleTopLeft(area));
-  end;
+  DrawBitmapPartOnScreen(BitmapToDraw(forRegion), forRegion^.area, RectangleTopLeft(area));
 end;
 
 procedure DrawBitmapRadioGroup(forRegion: Region; const area: Rectangle);
 begin
-  if forRegion = ActionRadioButton(forRegion) then
-  begin
-    DrawBitmapPart(forRegion^.parent^.panelBitmapActive, forRegion^.area, RectangleTopLeft(area));
-  end;
+  DrawBitmapPartOnScreen(BitmapToDraw(forRegion), forRegion^.area, RectangleTopLeft(area));
 end;
 
 procedure DrawAsBitmaps();
@@ -766,6 +787,7 @@ begin
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case GUIC.visiblePanels[i]^.Regions[j].kind of
+        gkButton: DrawBitmapPartOnscreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
         gkLabel: DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
         gkTextbox: DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
         gkCheckbox: DrawBitmapCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
