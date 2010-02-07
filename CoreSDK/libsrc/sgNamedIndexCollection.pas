@@ -44,7 +44,8 @@ interface
   
   procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: Array of String); overload;
   procedure InitNamedIndexCollection(var col: NamedIndexCollection); overload;
-  
+  procedure RemoveName(var col: NamedIndexCollection; idx: LongInt); overload;
+  function RemoveName(var col: NamedIndexCollection; name: String): LongInt; overload;
   procedure FreeNamedIndexCollection(var col: NamedIndexCollection);
   
 implementation
@@ -111,20 +112,47 @@ uses sgShared, stringhash, sgUtils, StrUtils;
       result := -1;                                           // Failed to add return -1 idx
   end;
 
-      Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
-    var
-      i, namesLength:LongInt;    
+  procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
+  var
+    i, namesLength:LongInt;    
+  begin
+    if Length(names) = 0 then exit;
+    
+    //number of names = ,'s + 1 (commas + 1)
+    namesLength := CountDelimiter(names, ',') + 1;
+    //WriteLn('Reading ', namesLength, ' names from ', names);
+    
+    for i := 1 to namesLength do
     begin
-      if names = '' then exit;
-      //number of names = ,'s + 1 (commas + 1)
-      namesLength := CountDelimiter(names, ',') + 1;
-      //WriteLn('Reading ', namesLength, ' names from ', names);
-      
-      for i := 1 to namesLength do
-      begin
-        AddName(col, ExtractDelimited(i,names,[',']));
-      end;
+      AddName(col, ExtractDelimited(i,names,[',']));
     end;
+  end;
+
+  function RemoveName(var col: NamedIndexCollection; name: String): LongInt; overload;
+  begin
+    result := IndexOf(col, name);
+    RemoveName(col, result);
+  end;
+
+  procedure RemoveName(var col: NamedIndexCollection; idx: LongInt); overload;
+  var
+    hash: TStringHash;
+    name: String;
+    i: Integer;
+  begin
+    hash := TStringHash(col.ids);
+    if not Assigned(hash) then exit;
+
+    name := NameAt(col, idx);
+    hash.remove(name).Free();
+
+    for i := idx to High(col.names) - 1 do
+    begin
+      col.names[idx] := col.names[idx + 1];
+    end;
+    SetLength(col.names, Length(col.names) - 1);
+  end;
+  
   
   procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: Array of String); overload;
   var

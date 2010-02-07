@@ -18,9 +18,7 @@ begin
   
   ActivatePanel(pnla);
   DeactivatePanel(pnlb);
-  
-  AddPanelToGUI(pnla);
-  AddPanelToGUI(pnlb);
+
   
   DrawGUIAsVectors(false);
 end;

@@ -98,6 +98,7 @@ interface
 //return map properties functions//
 //===============================//
   function MapKinds(m: map) : StringArray;
+  function MapValues(m: map) : StringArray;
   function TileStagger(m: Map) : Vector;
   function LayerCount(m: Map) : LongInt;  
   function TileHeight(m: Map) : LongInt;  
@@ -148,8 +149,12 @@ interface
   function NewMap():map;
   procedure ReconfigureMap(var m:map);
   procedure AddBitmap(m:map; filename:String);
+  procedure AddValue(m:map; vName:string);
   procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
   procedure AddKind(m:map; kname:string);
+  procedure RemoveKind(m:map; kname:String);  
+  procedure RemoveValue(m:map; vName:string);
+
 
   implementation
   uses
@@ -370,7 +375,7 @@ interface
     val:single;
     name:String;
     begin
-      setlength(tempValues, length(tempValues)+1);
+      SetLength(tempValues, length(tempValues)+1);
       row:=MyStrToInt(ExtractDelimited(1, data, [',']), false);
       col:=MyStrToInt(ExtractDelimited(2, data, [',']), false);
       name:=ExtractDelimited(3, data, [',']);
@@ -550,6 +555,7 @@ interface
     //writeln('PrototypeAdded');
     ProcessTiles();
     //writeln('TileProcessed')  ;
+    close(textFile);
   end;
   
   procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
@@ -649,7 +655,7 @@ interface
   procedure HighlightTile(highlightedTile: Tile; offset: Vector); OverLoad;
   begin
     if not assigned(highlightedTile) then exit;
-    DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, (CameraPos*-1)+offset);
+    DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, (CameraPos*-1));
   end;
 
   procedure HighlightTile(highlightedTile: Tile); OverLoad;
@@ -674,7 +680,7 @@ interface
     t: Tile;
   begin
     t := TileAt(map, ToWorld(MousePosition()));
-    if t = nil then exit;
+    if not assigned(t) then exit;
     if not TileSelected(map, t) then
     begin
       SetLength(map^.SelectedTiles, Length(map^.SelectedTiles)+1);
@@ -727,7 +733,7 @@ interface
   dir: Direction;
   row,col,startRow, startCol, endRow, endCol : LongInt;
   begin
-  MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
     for row:=startRow to endRow do
     begin
       for col:=startCol to endCol do
@@ -736,9 +742,9 @@ interface
         if TileSelected(map, @map^.Tiles[row,col]) then
         begin
           //Draw debug information
-       //   DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
-        //  DrawText(IntToStr(map^.Tiles[row,col].kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
-         // DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
+          DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
+          DrawText(IntToStr(map^.Tiles[row,col].kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
+          DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
 
           for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
           begin
@@ -795,7 +801,6 @@ interface
     kindIdx   : LongInt;
   end;
   var
-  path : string;
   output: text;
   bitmapCellsArray:  Array of BitmapCells;
     procedure _CheckAddBitmap(bmp: Bitmap; cell,kindIdx: Integer);
@@ -1050,10 +1055,9 @@ interface
   end;
 
   begin
-    path:= PathToResource('maps/' +filename);
     SetLength(bitmapCellsArray, 0);
     
-    Assign(output, Path);
+    Assign(output, filename);
     rewrite(output);
     writeln(output, 'Map Loader #v0.1');
     writeln(output, '// mw : width of map');
@@ -1303,6 +1307,21 @@ interface
       result[i] := NameAt(m^.KindIds, i); 
     end;
   end;
+  
+  function MapValues(m: map) : StringArray;
+  var
+    i : LongInt;
+  begin
+    SetLength(result,0);
+    result:= result;
+    if not Assigned(m) then exit
+    else
+    SetLength(result,NameCount(m^.ValueIds));
+    for i := 0 to NameCount(m^.ValueIds)-1 do
+    begin
+      result[i] := NameAt(m^.ValueIds, i); 
+    end;
+  end;
 
 
   function MapWidth(m: Map) : Longint;
@@ -1418,18 +1437,22 @@ interface
 
   function TileAt(m: Map; const pos:Point2D): Tile; overload;
   var
-  row,col : LongInt;
+    startrow,startcol : LongInt;
+    endrow,endcol : LongInt;
+    row,col : LongInt;
   begin
-    if (pos.y <0) or (pos.x <0) then
-    begin
     result:=nil;
-    exit;
+    if (pos.y <0) or (pos.x <0) then exit;
+    MapRangeFromRect(RectangleFrom(pos.x,pos.y,1,1),m, startCol, startRow, endCol, endRow);
+    writeln('startrow: ', startRow, 'startCol: ', startcol, 'endrow: ',endrow, 'endCol: ', endcol);
+    for row := startrow to endrow do
+    begin
+      for col := startcol to endcol do
+      begin
+        if PointInShape(pos, m^.tiles[row,col].TileShape) then
+        result := TileAt(m, row, col);
+      end;
     end;
-    row := Trunc(pos.Y / (m^.TileHeight - m^.TileStagger.Y));
-    col := Trunc(pos.X / m^.TileWidth);
-    result := TileAt(m, row, col);
-   //writeln(pos.x,' ',pos.y);
-    //writeln(row,' ',col);
   end;
 
   function TileKind(t: Tile) : LongInt;
@@ -1576,8 +1599,59 @@ interface
   //======================//
   procedure AddKind(m:map; kname:string);
   begin
+    if length(kname) = 0 then exit;
     AddName(m^.kindIds, kname);
   end;
+  procedure AddValue(m:map; vName:string);
+  begin
+    if length(vName) = 0 then exit;
+    AddName(m^.valueIds, vName);
+  end;
+  
+  procedure RemoveKind(m:map; kname:string);
+  var
+    row,col : LongInt;
+    idx : LongInt;
+  begin
+    if length(kname) = 0 then exit;
+    idx := IndexOf(m^.KindIds,kname);
+    RemoveName(m^.kindIds, kname);
+    for row := Low(m^.Tiles) to High(m^.Tiles) do
+    begin
+      for col := Low(m^.Tiles[row]) to High(m^.Tiles[row]) do
+      begin
+        if m^.Tiles[row,col].Kind = idx then m^.Tiles[row,col].Kind := -1
+        else if m^.Tiles[row,col].Kind > idx then m^.Tiles[row,col].Kind -= 1;
+      end;
+    end;
+  end;
+
+  
+  procedure RemoveValue(m:map; vName:string);
+  var
+    row,col,val,idx : LongInt;
+    
+  begin
+    if length(vName) = 0 then exit;
+    val := IndexOf(m^.valueIds,vName);
+    RemoveName(m^.valueIds, vName);
+    for row := Low(m^.Tiles) to High(m^.Tiles) do
+    begin
+      for col := Low(m^.Tiles[row]) to High(m^.Tiles[row]) do
+      begin
+        for idx := low(m^.Tiles[row,col].values) to high(m^.Tiles[row,col].values) do
+        begin
+          if m^.Tiles[row,col].Values[idx] = val then
+          begin
+            m^.Tiles[row,col].values[idx] := m^.Tiles[row,col].values[idx+1];
+          end;
+        end;//end of values
+        setlength(m^.Tiles[row,col].Values, Length(m^.Tiles[row,col].values)-1);
+      end;//end of col
+    end;// end of row
+  end;
+
+  
   
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
   begin
@@ -1643,6 +1717,7 @@ interface
   procedure ReconfigureMap(var m: map);
   var
     row,col,id : LongInt;
+    
     procedure _CreateSurroundingTiles(tile : Tile; row, col : LongInt);
     begin
       if NOT (m^.Isometric) then
@@ -1686,39 +1761,43 @@ interface
       pts[4].X:=0;
       pts[4].Y:=(m^.TileStagger.Y);
       m^.MapPrototype:=PrototypeFrom(pts, pkTriangleStrip);
-    end;
-    
+    end;    
+  begin
+    id:=0; // initiate the ids.
+    SetLength(m^.Tiles, m^.MapHeight, m^.MapWidth); //set lengths of tiles
+
+    // Set tile stagger information
+    if m^.Isometric then
     begin
-      id:=0;
-      SetLength(m^.Tiles, m^.MapHeight, m^.MapWidth); //set lengths of tiles
-      _AddMapPrototype();
-      for row:=low(m^.Tiles) to high (m^.Tiles) do
-        for col:=low(m^.Tiles[row]) to high(m^.Tiles[row]) do
-        begin
-          SetLength(m^.Tiles[row,col].TileBitmapCellKind, m^.MapLayer); // set length of bitmapcells per tile.
-          m^.Tiles[row,col].TileID:=id;
-          id+=1;
-          //Allocate position and center given stagger
-          m^.Tiles[row,col].Position.X := (col * m^.TileWidth) - ((row mod 2) * m^.TileStagger.X);      // stagger alternate lines
-          m^.Tiles[row,col].Position.Y := (row * m^.TileHeight) - ((row + 1) * m^.TileStagger.Y);       // position y value
-          m^.Tiles[row,col].Center.X := m^.Tiles[row,col].Position.X + (m^.TileWidth/2);                
-          m^.Tiles[row,col].Center.Y := m^.Tiles[row,col].Position.Y + (m^.TileHeight/2);
-          m^.Tiles[row,col].TileShape  := ShapeAtPoint(m^.MapPrototype, m^.Tiles[row,col].Position);   // Shape of the tile
-          ShapeSetColor(m^.Tiles[row,col].TileShape, m^.mapHighlightcolor);
-          _CreateSurroundingTiles(@m^.Tiles[row,col],row,col);
-        end;
-        if m^.Isometric then
-        begin
-           m^.TileStagger.X := (m^.TileWidth/2);
-           m^.TileStagger.Y := (m^.TileHeight/2);
-        end
-        else
-        begin
-          m^.TileStagger.X := 0;
-          m^.TileStagger.Y := 0;
-        
-        end;
+       m^.TileStagger.X := (m^.TileWidth/2);
+       m^.TileStagger.Y := (m^.TileHeight/2);
+    end
+    else
+    begin
+      m^.TileStagger.X := 0;
+      m^.TileStagger.Y := 0;
     end;
+
+    _AddMapPrototype();
+    for row:=low(m^.Tiles) to high (m^.Tiles) do
+    begin
+      for col:=low(m^.Tiles[row]) to high(m^.Tiles[row]) do
+      begin
+        SetLength(m^.Tiles[row,col].TileBitmapCellKind, m^.MapLayer); // set length of bitmapcells per tile.
+        m^.Tiles[row,col].TileID:=id;
+        id+=1;
+        //Allocate position and center given stagger
+        m^.Tiles[row,col].Position.X  := (col * m^.TileWidth) - ((row mod 2) * m^.TileStagger.X);      // stagger alternate lines
+        m^.Tiles[row,col].Position.Y  := (row * m^.TileHeight) - ((row + 1) * m^.TileStagger.Y);       // position y value
+        m^.Tiles[row,col].Center.X    := m^.Tiles[row,col].Position.X + (m^.TileWidth/2);                
+        m^.Tiles[row,col].Center.Y    := m^.Tiles[row,col].Position.Y + (m^.TileHeight/2);
+        m^.Tiles[row,col].TileShape   := ShapeAtPoint(m^.MapPrototype, m^.Tiles[row,col].Position);   // Shape of the tile
+        
+        ShapeSetColor(m^.Tiles[row,col].TileShape, m^.mapHighlightcolor);
+        _CreateSurroundingTiles(@m^.Tiles[row,col],row,col);
+      end;
+    end;
+  end;
 
     
   initialization
