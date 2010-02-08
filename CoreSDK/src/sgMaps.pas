@@ -98,6 +98,7 @@ interface
 //return map properties functions//
 //===============================//
   function IndexOfKind(const m :  map; const kname : string) : LongInt;
+  function IndexOfValues(const m :  map; const vName : string) : LongInt;
   function MapKinds(m: map) : StringArray;
   function MapValues(m: map) : StringArray;
   function TileStagger(m: Map) : Vector;
@@ -145,7 +146,7 @@ interface
   //======================//
   // Set map procedures   //
   //======================//
-
+  procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean); 
   function NewMap():map;
   procedure AllocateDefaultValues(map:Map; var tile: TileData);
@@ -1296,7 +1297,11 @@ interface
   begin
     result := indexOf(m^.kindIds, kname);
   end;
-  
+
+  function IndexOfValues(const m :  map; const vName : string) : LongInt;
+  begin
+    result := indexOf(m^.valueIds, vName);
+  end;
   function MapKinds(m: map) : StringArray;
   var
     i : LongInt;
@@ -1601,6 +1606,12 @@ interface
   //======================//
   // Set map procedures   //
   //======================//
+  procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
+  begin
+    m^.MapDefaultValues[idx1,idx2] := val;
+    ReconfigureMap(m);
+  end;
+  
   procedure AddKind(m:map; kname:string);
   begin
     if length(kname) = 0 then exit;
