@@ -7,9 +7,11 @@
 
 // Panel data:
 x: 10
-y: 90
+y: 60
 w: 160
-h: 180
+h: 210
+a: BitmapDetails.png
+i: BitmapDetails.png
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -17,24 +19,16 @@ h: 180
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //CellCount
-r: 80, 0, 80, 12, 4, CellCountIn, courierSmall, 16, 0
-r: 2, 0, 80, 12, 1, CellCountLbl, Cell Count, courierSmall
+r: 80, 45, 80, 20, TextBox, CellCountIn, subs, 16,  center, 0
 
 //Columns
-r: 80, 30, 80, 12, 4, ColumnIn, courierSmall, 16, 0
-r: 2, 30, 80, 12, 1, ColumnLbl, Columns, courierSmall
+r: 80, 77, 80, 20, TextBox, ColumnIn, subs, 16, center, 0
 
 //Width
-r: 80, 60, 80, 12, 4, WidthIn, courierSmall, 16, 0
-r: 2, 60, 80, 12, 1, WidthLbl, Width, courierSmall
+r: 80, 107, 80, 20, TextBox, WidthIn, subs, 16,  center, 0
 
 //Height
-r: 80, 90, 80, 12, 4, HeightIn, courierSmall, 16, 0
-r: 2, 90, 80, 12, 1, HeightLbl, Height, courierSmall
+r: 80, 140, 80, 20, TextBox, HeightIn, subs, 16,  center, 0
 
 //Scale
-r: 80, 120, 80, 12, 4, ScaleIn, courierSmall, 16, 1
-r: 2, 120, 80, 12, 1, ScaleLbl, Scale, courierSmall
-
-//Move Group Button
-//r: 10, 150, 20, 20, 2, Anchor, false
+r: 80, 172, 80, 20, TextBox, ScaleIn, subs, 16,  center, 1

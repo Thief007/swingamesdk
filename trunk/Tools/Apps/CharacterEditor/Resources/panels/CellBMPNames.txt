@@ -7,13 +7,15 @@
 
 // Panel data:
 x: 18
-y: 392
+y: 340
 w: 140
 h: 60
+a: blank.png
+i: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 //LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
-r: 0, 0, 140, 60, 5, BMPList, 1, 3, -1, courierSmall, 25, v
+r: 0, 0, 140, 60, List, BMPList, 1, 3, -1, subsSmall, left, 25,  v, n

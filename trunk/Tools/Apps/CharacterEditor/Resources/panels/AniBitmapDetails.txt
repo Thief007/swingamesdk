@@ -1,0 +1,39 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 10
+y: 60
+w: 370
+h: 217
+a: AniBitmapDetails.png
+i: AniBitmapDetails.png
+
+// Region data
+// Format: r: x, y, w, h, kind
+//Radiobutton r: x, y, w, h, 3, GroupID
+//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
+//ActiveBMP Label
+r: 70, 5, 80, 12, Label, AniBmpActiveLbl, subsSmall, l,_
+
+//CellWidth
+r: 300, 0, 80, 12, TextBOx, AniCellWIn, subsSmall, 16, center, 0
+r: 200, 0, 80, 12, Label, AniCellWLbl, subsSmall, l, Columns
+
+//CellHeight
+r: 300, 10, 80, 12, TextBox, AniCellHIn, subsSmall, 16, center, 0
+r: 200, 10, 80, 12, Label, AniCellWHbl, subsSmall, l, Rows
+
+//Drag Checkbox
+r:2,25,45,30,CheckBox,Drag,false
+
+//Fit to Window
+r:2,60,45,30,RadioGroup,Fit,ScaleGrp
+
+//Original Size
+r:2,95,45,30,RadioGroup,Full,ScaleGrp
