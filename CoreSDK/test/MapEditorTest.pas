@@ -136,12 +136,13 @@ var
   selectedValues : string;
   
 begin
-  if (length(TextBoxText(RegionWithId('tB.Map.Values'))) =0) then exit;
+  if (length(TextBoxText(RegionWithId('Tb.Map.Values'))) =0) then exit;
   selectedKind := ListActiveItemText(RegionWithID('lst.Kind'));
   selectedValues := ListActiveItemText(RegionWithID('lst.Values'));
   kIdx := IndexOfKind(m, selectedKind);
-  vIdx := IndexOfKind(m, selectedValues);
-  val  := StrToFloat(TextBoxText(RegionWithId('Tb.Map.Values')));
+  vIdx := IndexOfValues(m, selectedValues);
+  writeln(vidx);
+  TryStrToFloat(TextBoxText(RegionWithId('Tb.Map.Values')), val);
   AddMapValues(m, kIdx, vIdx, val);
 end;  
   
