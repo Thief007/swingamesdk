@@ -191,25 +191,7 @@ interface
     end;
 
 
-        // Adds default values depending on kind
-    procedure AddDefaultValue(m:map;data:String);
-    var
-    defaultValues:SingleArray;
-    kind,i: LongInt;
-    begin
-      kind:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
-      
-      defaultValues:=ProcessFloatRange(ExtractDelimitedWithRanges(2,data));
-      //add exception if length of default value <> length of valueIds.names.
-      if ((length(m^.MapDefaultValues) = 0) AND (NameCount(m^.kindIds) > length(m^.MapDefaultValues))) then
-       //sets length of default value to length of kinds and number of names of value
-          SetLength(m^.MapDefaultValues, NameCount(m^.KindIds), NameCount(m^.valueIds));
-          ZeroArray(m^.MapDefaultValues);
-      for i:=low(m^.MapDefaultValues[kind]) to high(m^.MapDefaultValues[kind]) do
-      begin
-        m^.MapDefaultValues[kind, i] := defaultValues[i];
-      end; 
-    end;
+   
 
     procedure AllocateDefaultValues(map:Map; var tile: TileData);
     var
@@ -217,7 +199,7 @@ interface
     begin
       kindIdx := tile.kind;
       SetLength(tile.values, NameCount(map^.valueIds));
-      for i := 0 to High(tile.values) do tile.values[i] := 0;
+      ZeroArray(tile.values);
       
       if (kindIdx < 0) or (kindIdx > High(map^.MapDefaultValues)) then exit;
 
@@ -226,7 +208,7 @@ interface
       
       for i := 0 to High(tile.values) do
       begin
-        if i > High(map^.MapDefaultValues[kindIdx]) then exit;
+        //if i > High(map^.MapDefaultValues[kindIdx]) then tile.Values[i] := 0;
         tile.values[i] := map^.MapDefaultValues[kindIdx, i];
       end;
     end;
@@ -258,7 +240,11 @@ interface
     begin
       for i := low(tempValues) to high(tempValues) do
       begin
+      
         SetTileValue(result, TileAt(result,tempValues[i].row, tempValues[i].col), tempValues[i].name, tempValues[i].value);
+        writeln('length of values within tiles', length(result^.Tiles[3,3].values));
+        writeln(tempValues[i].row,',',tempValues[i].col,',',tempValues[i].name,',',tempValues[i].value);
+
       end;      
     end;
 
@@ -335,19 +321,41 @@ interface
       row,col: LongInt;
     begin
       for row:=low(result^.Tiles) to high(result^.Tiles) do
+      begin
         for col:=low(result^.Tiles[row]) to high(result^.Tiles[row]) do
           begin
 
             //kind
             AllocateDefaultValues(result, result^.Tiles[row,col]);
-            AllocateSpecificValues();
           end;
+      end;
           ReconfigureMap(result);
+          AllocateSpecificValues();
     end;
 
 
 
-
+     // Adds default values depending on kind
+    procedure AddDefaultValue(data:String);
+    var
+    defaultValues:SingleArray;
+    kind,i: LongInt;
+    begin
+      kind:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
+      
+      defaultValues:=ProcessFloatRange(ExtractDelimitedWithRanges(2,data));
+      //add exception if length of default value <> length of valueIds.naresultes.
+      if ((length(result^.MapDefaultValues) = 0) AND (NameCount(result^.kindIds) > length(result^.MapDefaultValues))) then
+      begin
+       //sets length of default value to length of kinds and nuresultber of naresultes of value
+          SetLength(result^.MapDefaultValues, NameCount(result^.KindIds), NameCount(result^.valueIds));
+          ZeroArray(result^.MapDefaultValues);
+      end;
+      for i:=low(result^.MapDefaultValues[kind]) to high(result^.MapDefaultValues[kind]) do
+      begin
+        result^.MapDefaultValues[kind, i] := defaultValues[i];
+      end; 
+    end;
   
 
 
@@ -395,7 +403,8 @@ interface
         'n':  AddNamesToCollection(result^.valueIds, data);
               
         // Value Default
-        'd':  AddDefaultValue(result,data);
+        'd':  AddDefaultValue(data);
+
       end;
     end;
 
@@ -1029,6 +1038,7 @@ interface
     for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
     begin
       currentArr := m^.MapDefaultValues[i];
+      writeln(m^.MapDefaultValues[i,0]);
       writeln(output,'mvd:',i,',',SingleArrayToRange(currentArr));
     end;
   end;
@@ -1590,6 +1600,7 @@ interface
   begin
     if not Assigned(t) or (vId < 0) OR (vId > High(t^.values)) then exit;
     t^.Values[vId] := value;
+    writeln('the value is ',value);
   end;
 
 
@@ -1599,6 +1610,7 @@ interface
   begin  
     if not assigned(t) then exit;
     idx := IndexOf(m^.valueIds, name);
+    writeln('idx',idx);
     SetTileValue(t, idx, val);
   end;
   

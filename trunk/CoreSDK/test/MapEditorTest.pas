@@ -250,13 +250,13 @@ procedure UpdateCamera();
 begin
 
   if KeyDown(VK_LEFT) then
-    MoveCameraBy(-2,0)
+    MoveCameraBy(-5,0)
   else if KeyDown(VK_RIGHT) then
-    MoveCameraBy(2,0)
+    MoveCameraBy(5,0)
   else if KeyDown(VK_UP) then
-    MoveCameraBy(0,-2)
+    MoveCameraBy(0,-5)
   else if KeyDown(VK_DOWN) then
-    MoveCameraBy(0,2)
+    MoveCameraBy(0,5)
 end;
 
   
@@ -283,18 +283,20 @@ begin
   repeat
     ProcessEvents();
     ClearScreen(ColorBlack);
+        UpdateCamera();
     PushClip(RectangleFrom(150, 30, 650 ,527));
-    DrawMapGrid(myMap);//, VectorTo(150,30));
+    DrawMapGrid(myMap, VectorTo(150,30));
     DrawMapDebug(myMap);
     //DrawMap(myMap, VectorTo(150,30));
     PopClip();
-    DrawPanels();
     UpdateGUI(pnls, myMap, openingFile, savingFile);
+
+    DrawPanels();
     UpdateInterface();
 
     
     DrawFramerate(0,0);
-    RefreshScreen(60);
+    RefreshScreen();
   until WindowCloseRequested();
   
   ReleaseAllResources();
