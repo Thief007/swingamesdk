@@ -7,22 +7,19 @@
 
 // Panel data:
 x: 10
-y: 420
-w: 160
-h: 72
-i: BMPEditorButtons.png
-a: BMPEditorButtonsInact.png
+y: 277
+w: 370
+h: 23
+i:AniRadio1.png
+a:AniRadioDown1.png
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
-//MoveCellGroup Button
-r:0,0,160,20,CheckBox, Anchor, false
+//Bitmap
+r:0,0,193,23,RadioGroup,BitmapDetailTab,AniDetailsTabs
 
-//ResetPosition Button
-r:0,26,160,20,Button,ResetPosition
-
-//Save Button
-r:0,52,160,20,Button,ExportBitmap
+//Preview
+r:194,0,177,23,RadioGroup,PreviewTab,AniDetailsTabs

@@ -6,23 +6,16 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 10
-y: 420
-w: 160
-h: 72
-i: BMPEditorButtons.png
-a: BMPEditorButtonsInact.png
+x: 70
+y: 83
+w: 140
+h: 60
+a: Blank.png
+i: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
-
-//MoveCellGroup Button
-r:0,0,160,20,CheckBox, Anchor, false
-
-//ResetPosition Button
-r:0,26,160,20,Button,ResetPosition
-
-//Save Button
-r:0,52,160,20,Button,ExportBitmap
+//LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
+r: 0, 0, 140, 60, List, AniBMPList, 1, 3, -1, subsSmall, left, 25, v, blank.png

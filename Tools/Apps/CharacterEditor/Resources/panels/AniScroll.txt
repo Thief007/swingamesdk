@@ -6,10 +6,10 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 18
-y: 340
-w: 140
-h: 60
+x: 30
+y: 320
+w: 752
+h: 267
 a: blank.png
 i: blank.png
 
@@ -17,5 +17,19 @@ i: blank.png
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
-//LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
-r: 0, 0, 140, 60, List, BMPList, 1, 3, -1, subsSmall, left, 25,  v, n
+
+//Scroll Up Button
+r:732,0,20,20,Button, ScrollUp
+
+//ScrollDown Button
+r:732,247,20,20,Button,ScrollDown
+
+//Left Button
+r:0,0,15,71,Button, Left1
+r:0,98,15,71,Button, Left2
+r:0,196,15,71,Button, Left3
+
+//Right Button
+r:-50,0,15,71,Button, Right1
+r:-50,97,15,71,Button, Right2
+r:-50,196,15,71,Button, Right3

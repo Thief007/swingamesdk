@@ -10,6 +10,8 @@ x: 20
 y: 0
 w: 620
 h: 28
+a: blank.png
+i: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -17,13 +19,13 @@ h: 28
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //File Button
-r:0,0,140,28,0,File
+r:0,0,140,28,Button,FileButton
 
 //BitmapEditor
-r:160,0,140,28,3,Bitmap,Mode
+r:160,0,140,28,RadioGroup,Bitmap,Mode
 
 //File Button
-r:320,0,140,28,3,Animation,Mode
+r:320,0,140,28,RadioGroup,Animation,Mode
 
 //File Button
-r:480,0,140,28,3,Character,Mode
+r:480,0,140,28,RadioGroup,Character,Mode
