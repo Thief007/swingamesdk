@@ -97,6 +97,7 @@ interface
 //===============================//
 //return map properties functions//
 //===============================//
+  function IndexOfKind(const m :  map; const kname : string) : LongInt;
   function MapKinds(m: map) : StringArray;
   function MapValues(m: map) : StringArray;
   function TileStagger(m: Map) : Vector;
@@ -147,13 +148,16 @@ interface
 
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean); 
   function NewMap():map;
+  procedure AllocateDefaultValues(map:Map; var tile: TileData);
   procedure ReconfigureMap(var m:map);
   procedure AddBitmap(m:map; filename:String);
   procedure AddValue(m:map; vName:string);
   procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
   procedure AddKind(m:map; kname:string);
-  procedure RemoveKind(m:map; kname:String);  
-  procedure RemoveValue(m:map; vName:string);
+  procedure RemoveValue(m:map; vName:string);overload;
+  procedure RemoveValue(m:map; idx:LongInt); overload;
+  procedure RemoveKind(m:map; idx:LongInt); overload;
+  procedure RemoveKind(m:map; kname:string); overload;
 
 
   implementation
@@ -184,7 +188,49 @@ interface
         AddName(col, ExtractDelimited(i,names,[',']));
       end;
     end;
-    
+
+
+        // Adds default values depending on kind
+    procedure AddDefaultValue(m:map;data:String);
+    var
+    defaultValues:SingleArray;
+    kind,i: LongInt;
+    begin
+      kind:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
+      
+      defaultValues:=ProcessFloatRange(ExtractDelimitedWithRanges(2,data));
+      //add exception if length of default value <> length of valueIds.names.
+      if ((length(m^.MapDefaultValues) = 0) AND (NameCount(m^.kindIds) > length(m^.MapDefaultValues))) then
+       //sets length of default value to length of kinds and number of names of value
+          SetLength(m^.MapDefaultValues, NameCount(m^.KindIds), NameCount(m^.valueIds));
+          ZeroArray(m^.MapDefaultValues);
+      for i:=low(m^.MapDefaultValues[kind]) to high(m^.MapDefaultValues[kind]) do
+      begin
+        m^.MapDefaultValues[kind, i] := defaultValues[i];
+      end; 
+    end;
+
+    procedure AllocateDefaultValues(map:Map; var tile: TileData);
+    var
+      kindIdx, i : LongInt;
+    begin
+      kindIdx := tile.kind;
+      SetLength(tile.values, NameCount(map^.valueIds));
+      for i := 0 to High(tile.values) do tile.values[i] := 0;
+      
+      if (kindIdx < 0) or (kindIdx > High(map^.MapDefaultValues)) then exit;
+
+      //Allocate space for the values
+      //SetLength(tile.values, Length(map^.MapDefaultValues[kindIdx]));
+      
+      for i := 0 to High(tile.values) do
+      begin
+        if i > High(map^.MapDefaultValues[kindIdx]) then exit;
+        tile.values[i] := map^.MapDefaultValues[kindIdx, i];
+      end;
+    end;
+
+
   function LoadMap(filename:string): Map;
 
   type
@@ -205,7 +251,15 @@ interface
     data,line:        String;                         // line is read then seperated into id and data.
     lineno:           LongInt;                        // line number for exceptions
 
-
+    procedure AllocateSpecificValues();
+    var
+    i: LongInt;
+    begin
+      for i := low(tempValues) to high(tempValues) do
+      begin
+        SetTileValue(result, TileAt(result,tempValues[i].row, tempValues[i].col), tempValues[i].name, tempValues[i].value);
+      end;      
+    end;
 
   // use data processed to set tile properties.
     Procedure SetTiles();
@@ -273,44 +327,7 @@ interface
         RowNum += 1;
       end;
     end;
-    //procedure to add bitmap to bitmapcell array gives cell value of 0
 
-
-
-
-
-
-
-
-    procedure AllocateDefaultValues(map:Map; kindIdx:LongInt; var tile: TileData);
-    var
-      i: Integer;
-    begin
-      SetLength(tile.values, NameCount(map^.valueIds));
-      for i := 0 to High(tile.values) do tile.values[i] := 0;
-      
-      if (kindIdx < 0) or (kindIdx > High(map^.MapDefaultValues)) then exit;
-
-      //Allocate space for the values
-      //SetLength(tile.values, Length(map^.MapDefaultValues[kindIdx]));
-      
-      for i := 0 to High(tile.values) do
-      begin
-        if i > High(map^.MapDefaultValues[kindIdx]) then exit;
-        tile.values[i] := map^.MapDefaultValues[kindIdx, i];
-      end;
-    end;
-
-    procedure AllocateSpecificValues();
-    var
-    i: LongInt;
-    begin
-      for i := low(tempValues) to high(tempValues) do
-      begin
-        SetTileValue(result, TileAt(result,tempValues[i].row, tempValues[i].col), tempValues[i].name, tempValues[i].value);
-      end;      
-    end;
-    
     //sets up positions of each tile
     procedure ProcessTiles();
     var
@@ -321,7 +338,7 @@ interface
           begin
 
             //kind
-            AllocateDefaultValues(result, result^.Tiles[row,col].kind, result^.Tiles[row,col]);
+            AllocateDefaultValues(result, result^.Tiles[row,col]);
             AllocateSpecificValues();
           end;
           ReconfigureMap(result);
@@ -331,25 +348,7 @@ interface
 
 
   
-    // Adds default values depending on kind
-    procedure AddDefaultValue(data:String);
-    var
-    defaultValues:SingleArray;
-    kind,i: LongInt;
-    begin
-      kind:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
-      
-      defaultValues:=ProcessFloatRange(ExtractDelimitedWithRanges(2,data));
-      //add exception if length of default value <> length of valueIds.names.
-      if ((length(result^.MapDefaultValues) = 0) AND (NameCount(result^.kindIds) > length(result^.MapDefaultValues))) then
-       //sets length of default value to length of kinds and number of names of value
-          SetLength(result^.MapDefaultValues, NameCount(result^.KindIds), NameCount(result^.valueIds));
-          ZeroArray(result^.MapDefaultValues);
-      for i:=low(result^.MapDefaultValues[kind]) to high(result^.MapDefaultValues[kind]) do
-      begin
-        result^.MapDefaultValues[kind, i] := defaultValues[i];
-      end; 
-    end;
+
 
     //Maps kinds to the bitmap
     procedure MapBitmapToKind(data:string);
@@ -395,7 +394,7 @@ interface
         'n':  AddNamesToCollection(result^.valueIds, data);
               
         // Value Default
-        'd':  AddDefaultValue(data);
+        'd':  AddDefaultValue(result,data);
       end;
     end;
 
@@ -433,7 +432,7 @@ interface
         'l':  result^.MapLayer  := MyStrToInt(data, false);
 
         //Isometric 
-        'i':  if( data = 'true') then
+        'i':  if( lowerCase(data) = 'true') then
               begin
                 result^.Isometric := true;
               end
@@ -764,7 +763,7 @@ interface
   begin
     MapRangeFromRect(CameraScreenRect(), m, startCol, startRow, endCol, endRow);
 
-    //PushMapClip(m, startCol, startRow, endCol, endRow);
+    PushMapClip(m, startCol, startRow, endCol, endRow);
     for row := startRow to endRow do
     begin
       for col := startCol to endCol do
@@ -772,6 +771,7 @@ interface
         HighlightTile(@m^.Tiles[row,col], offset);
       end;
     end;
+    PopClip();
   end;
 
   procedure DrawMapGrid(m:map); overload;
@@ -1292,7 +1292,11 @@ interface
   //FUNCTIONS THAT RETURNS MAP PROPERTIES
   //==================================================================
 
-
+  function IndexOfKind(const m :  map; const kname : string) : LongInt;
+  begin
+    result := indexOf(m^.kindIds, kname);
+  end;
+  
   function MapKinds(m: map) : StringArray;
   var
     i : LongInt;
@@ -1601,54 +1605,83 @@ interface
   begin
     if length(kname) = 0 then exit;
     AddName(m^.kindIds, kname);
+    SetLength(m^.MapDefaultValues, length(m^.MapDefaultValues)+1);
+    ZeroArray(m^.MapDefaultValues[high(m^.MapDefaultValues)]);
   end;
   procedure AddValue(m:map; vName:string);
   begin
     if length(vName) = 0 then exit;
     AddName(m^.valueIds, vName);
+    ReconfigureMap(m);
   end;
-  
-  procedure RemoveKind(m:map; kname:string);
+
+// set values of kind removed to 0 then set kind to -1
+
+  procedure RemoveKind(m:map; idx:LongInt); overload;
   var
-    row,col : LongInt;
-    idx : LongInt;
+    row,col,i : LongInt;
   begin
-    if length(kname) = 0 then exit;
-    idx := IndexOf(m^.KindIds,kname);
-    RemoveName(m^.kindIds, kname);
+    if not assigned(m) then exit;
+    RemoveName(m^.kindIds, NameAt(m^.kindids, idx));
     for row := Low(m^.Tiles) to High(m^.Tiles) do
     begin
       for col := Low(m^.Tiles[row]) to High(m^.Tiles[row]) do
       begin
-        if m^.Tiles[row,col].Kind = idx then m^.Tiles[row,col].Kind := -1
+        if m^.Tiles[row,col].Kind = idx then
+        begin
+          m^.Tiles[row,col].Kind := -1;
+          for i := low(m^.Tiles[row,col].values) to high(m^.Tiles[row,col].values) do
+          begin
+            m^.Tiles[row,col].Values[i] := 0;
+          end;//end of values
+        end//end of if kind = idx
         else if m^.Tiles[row,col].Kind > idx then m^.Tiles[row,col].Kind -= 1;
+      end;//endcol
+    end;//end shuffling tile to have proper kinds (endrow)
+    for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
+    begin
+      if i = idx then
+      begin
+        m^.MapDefaultValues[i] := m^.MapDefaultValues[i+1];
       end;
     end;
+    setLength(m^.MapDefaultValues, length(m^.MapDefaultValues)-1);
+  end;
+
+  procedure RemoveKind(m:map; kname:string); overload;
+  begin
+    RemoveKind(m, indexOf(m^.kindIds,kname));
   end;
 
   
-  procedure RemoveValue(m:map; vName:string);
+
+  
+  procedure RemoveValue(m:map; idx:LongInt); overload;
   var
-    row,col,val,idx : LongInt;
+    row,col,vIdx : LongInt;
     
   begin
-    if length(vName) = 0 then exit;
-    val := IndexOf(m^.valueIds,vName);
-    RemoveName(m^.valueIds, vName);
+    if not assigned(m)  then exit;
+    RemoveName(m^.valueIds, NameAt(m^.valueIds, idx));
     for row := Low(m^.Tiles) to High(m^.Tiles) do
     begin
       for col := Low(m^.Tiles[row]) to High(m^.Tiles[row]) do
       begin
-        for idx := low(m^.Tiles[row,col].values) to high(m^.Tiles[row,col].values) do
+        for vIdx := low(m^.Tiles[row,col].values) to high(m^.Tiles[row,col].values) do
         begin
-          if m^.Tiles[row,col].Values[idx] = val then
+          if vIdx = idx then
           begin
-            m^.Tiles[row,col].values[idx] := m^.Tiles[row,col].values[idx+1];
+            m^.Tiles[row,col].values[vIdx] := m^.Tiles[row,col].values[vIdx+1];
           end;
         end;//end of values
         setlength(m^.Tiles[row,col].Values, Length(m^.Tiles[row,col].values)-1);
       end;//end of col
     end;// end of row
+  end;
+
+  procedure RemoveValue(m:map; vName:string);overload;
+  begin
+    RemoveValue(m, IndexOf(m^.valueIds,vName));
   end;
 
   
@@ -1795,6 +1828,7 @@ interface
         
         ShapeSetColor(m^.Tiles[row,col].TileShape, m^.mapHighlightcolor);
         _CreateSurroundingTiles(@m^.Tiles[row,col],row,col);
+        AllocateDefaultValues(m, m^.Tiles[row,col]);
       end;
     end;
   end;

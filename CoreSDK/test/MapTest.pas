@@ -81,6 +81,7 @@ begin
       if keyTyped(vk_s) Then SaveMap(myMap, 'test3.txt');
       if keyTyped(vk_l) Then myMap := loadMap('test3.txt');
       if keyTyped(vk_k) Then myMap := loadMap('test1.txt');
+      if keyTyped(vk_r) Then RemoveValue(myMap, 'test');
 
     UpdateSpriteAnimation(c^.CharSprite);
     //if KeyDown(vk_m) then
