@@ -2077,7 +2077,9 @@ var
     begin
       //LoadBitmap(Trim(ExtractDelimited(13, data, [','])));
       newList.scrollButton    := LoadBitmap(Trim(ExtractDelimited(14, data, [',']))); //BitmapNamed(Trim(ExtractDelimited(13, data, [','])));
-    end;
+    end
+    else
+      newList.scrollButton    := nil;
     
     scrollSz := newList.scrollSize;
     
