@@ -59,53 +59,252 @@ interface
       BitmapCellKind:     Array of BitmapCellKind;    // Bitmap/cell/kinds.
     end;
 
+//----------------------------------------------------------------------------
+//       Load function            
+//----------------------------------------------------------------------------
 
-
-
+  /// Loads the Map from a text file which contains the map informations.
+  /// this returns a map.
+  ///
+  /// @lib LoadMap
+  ///
+  /// @class Map
+  /// @method LoadMap
 
   function LoadMap(filename:string): Map;
-  //==================================//
- //       Draw Procedures            //
-//==================================//
+//----------------------------------------------------------------------------
+//       Draw Procedures            
+//----------------------------------------------------------------------------
+
+
+  /// Draws the map at the current camera position with the given map information.
+  /// The width and height of the area drawn is the same as the screen size. 
+  ///
+  /// @lib DrawMap
+  /// @sn DrawMap:%s 
+  ///
+  /// @class Map
+  /// @method Draw
   procedure DrawMap(map: Map); overload;
+
+  /// Draws the map with the given camera position with the given map information.
+  /// The width and height of the area drawn the screen size subtracted by the offset. 
+  ///
+  /// @lib DrawMapWithOffset
+  /// @sn DrawMap:%s WithOffset:%s
+  ///
+  /// @class Map
+  /// @overload Draw DrawWithOffset
   procedure DrawMap(map: Map; offset:Vector); overload;
+
+  /// Draws the map with debug information like surrounding tiles, kind and value.
+  /// The visible area is the same size as the screen size.
+  ///
+  /// @lib DrawMapDebug
+  ///
+  /// @class Map
+  /// @method DrawDebug
   procedure DrawMapDebug(map: map);
+
+  /// Draws the outline of each tile at the current camera position
+  /// given the map information.
+  ///
+  /// @lib DrawMapGrid
+  ///
+  /// @class Map
+  /// @method DrawGrid
   procedure DrawMapGrid(m:map); overload;
+
+  /// Draws the outline of each tile at the current camera position
+  /// given the map information.
+  ///
+  /// @lib DrawMapGrid
+  /// @sn DrawMapGrid:%s WithOffset:%s
+  ///
+  /// @class Map
+  /// @method DrawGridWithOffset
   procedure DrawMapGrid(m:map; offset:Vector); overload;
+
+  //----------------------------------------------------------------------------
+  //       Save map
+  //----------------------------------------------------------------------------
+
+  /// Saves map into a text file the filename provided needs to be the fullpath.
+  ///
+  /// @lib SaveMap
+  ///
+  /// @class Map
+  /// @method SaveMap  
+  procedure SaveMap(m:Map; filename:String);
   
   
-  //==================================//
- //       Select Procedures          //
-//==================================//
+  //----------------------------------------------------------------------------
+  //       Selecting Tile          
+  //----------------------------------------------------------------------------
+  
+  /// Returns true if tile is in the selectedTile array in the map.
+  ///
+  /// @lib TileSelected
+  /// @sn Tile ****************************
+  ///
+  /// @class Tile
+  /// @method Selected
   function TileSelected(map:Map; tile:Tile):Boolean;
+
+  /// updates whether a tile should be selected or deselected.
+  /// Tile to be selected or deselected depends on what is under the cursor.
+  ///
+  /// @lib UpdateSelect
+  ///
+  /// @class Map
+  /// @method Update 
   procedure UpdateSelect(map:Map);
+
+  /// If the tile passed in is selected this will deselect the tile
+  /// and remove it from the selectedTiles array.
+  ///
+  /// @lib DeselectTile
+  /// 
+  /// @class Tile
+  /// @method Deselect 
   procedure Deselect(map:Map; tile:Tile);
+
+  /// Highlights a tile by drawing its shape using
+  /// the highlight colour in the map. This highglights tiles with no offset.
+  ///
+  /// @lib HighlightTile
+  ///
+  /// @class Tile
+  /// @method Highlight
   procedure HighlightTile(highlightedTile: Tile); OverLoad;
+
+  /// Highlights a tile by drawing its shape using
+  /// the highlight colour in the map. This highglights
+  /// tiles with the given offset.
+  ///
+  /// @lib HighlightTileWithOffset
+  /// @sn Highlight:%s WithOffset:%s
+  ///
+  /// @class Tile
+  /// @method HighlightWith Offset
+  
   procedure HighlightTile(highlightedTile: Tile; offset: Vector); OverLoad;
 
-  
-  procedure SaveMap(m:Map; filename:String);
-//==================================//
-//collision functions and procedures//
-//==================================//
-  
+
+  //----------------------------------------------------------------------------
+  //collision functions and procedures
+  //----------------------------------------------------------------------------
+
+  /// Returns a bounding rectangle the encompasses all the potential tiles
+  ///that the sprite may collide with
+  ///
+  /// @lib GetPotentialCollisions
+  /// @sn map:%s getPotentialCollisionsForKind:%s sprite:%s
+  /// @class Map
+  /// @method GetPotentialCollisions
   function  GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
+
+  /// Returns a boolean of whether a sprite has collided with a tile of specified kind
+  /// it also returns the cell column and row of the tile that the sprite collided with.
+  ///
+  /// @lib SpriteHasCollidedWithTile
+  /// @sn map:%s hasCollidedWithKind:%s forSprite:%s resultAtX:%s y:%s 
+  ///
+  /// @class Map
+  /// @method SpriteHasCollidedWithTile
+  /// @csn kind:%s hasCollidedWithSprite:%s resultAtX:%s y:%s
   function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+
+  /// Moves the sprite out of a tile. The x and y is the column and row of
+  /// the tile that the sprite needs to be kicked out of.
+  ///
+  /// @lib MoveOut
+  /// @sn
+  ///
+  /// @class Map
+  /// @method MoveOut
   procedure MoveOut(m:map; s: Sprite; x, y: LongInt);
 
   
-//===============================//
-//return map properties functions//
-//===============================//
+  //----------------------------------------------------------------------------
+  //return map properties functions//
+  //----------------------------------------------------------------------------
+
+  /// returns the index of the kind from the NamedIndexCollection given
+  /// the name of the kind
+  ///
+  /// @lib IndexOfkind
+  /// @sn map:%s indexOfKind:%s
+  ///
+  /// @class Map
+  /// @getter IndexOfKind
   function IndexOfKind(const m :  map; const kname : string) : LongInt;
+
+  /// returns the index of the value from the NamedIndexCollection given
+  /// the name of the value
+  ///
+  /// @lib IndexOfValue
+  /// @sn map:%s indexOfValue:%s
+  ///
+  /// @class Map
+  /// @getter IndexOfValue
   function IndexOfValues(const m :  map; const vName : string) : LongInt;
+
+  /// returns all the names of kinds in a string array
+  ///
+  /// @lib MapKinds
+  ///
+  /// @class Map
+  /// @getter MapKinds
   function MapKinds(m: map) : StringArray;
+
+  /// returns all the names of values in a string array
+  ///
+  /// @lib MapValues
+  ///
+  /// @class Map
+  /// @getter MapValues
   function MapValues(m: map) : StringArray;
+
+  /// Returns the stagger values of the given map.
+  ///
+  /// @lib TileStagger
+  ///
+  /// @class Map
+  /// @getter TileStagger
   function TileStagger(m: Map) : Vector;
-  function LayerCount(m: Map) : LongInt;  
-  function TileHeight(m: Map) : LongInt;  
+
+  /// Returns the number of layers that the given map has.
+  ///
+  /// @lib LayerCount
+  ///
+  /// @class Map
+  /// @getter LayerCount
+  function LayerCount(m: Map) : LongInt;
+  /// Returns the Tile height of the given map.
+  ///
+  /// @lib TileHeight
+  ///
+  /// @class Map
+  /// @getter TileHeight  
+  function TileHeight(m: Map) : LongInt;
+  /// Returns the Tile width of the given map.
+  ///
+  /// @lib TileWidth
+  ///
+  /// @class Map
+  /// @getter TileWidht
   function TileWidth(m: Map) : LongInt;
+  /// Returns the Color that is used for highlighting within the map.
+  ///
+  /// @lib MapHighlightColor
+  ///
+  /// @class Map
+  /// @getter HighlightColor
   function MapHighlightcolor(m: Map) : color;
+  /// Returns the number of selected tiles.
+  ///
+  /// @lib CountSelectedTiles
   function CountSelectedTiles(m: Map) : LongInt;
   function MapPrototype(m: Map) : ShapePrototype;
   function MapHeight(m: Map) : Longint;
