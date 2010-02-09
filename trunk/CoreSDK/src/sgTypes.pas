@@ -415,6 +415,7 @@ interface
       SoundResource,
       AnimationResource,    //in load order,  Animation must be > sound
       PanelResource,        //                Panel must be > sound + bitmap
+      CharacterResource,
       OtherResource
     );
     
