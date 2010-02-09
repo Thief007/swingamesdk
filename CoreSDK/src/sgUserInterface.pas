@@ -142,167 +142,896 @@ procedure GUISetBackgroundColor(c:Color);
 function GUIClicked(): Boolean;
 
 // Panels
+//---------------------------------------------------------------------------
 
 procedure ShowPanelDialog(p: Panel);
 
+/// Display the panel on screen at panel's co-ordinates.
+///
+/// @lib
+///
+/// @class Panel
+/// @method Show
 procedure ShowPanel(p: Panel);
-procedure HidePanel(p: Panel);
-procedure ToggleShowPanel(p: Panel);
-procedure DrawPanels();
-procedure ActivatePanel(p: Panel);
-procedure DeactivatePanel(p: Panel);
-procedure ToggleActivatePanel(p: Panel);
-function PanelVisible(p: Panel): boolean;
-function PanelClicked(): Panel;
-procedure PanelSetDraggable(p: panel; b:boolean);
-function PanelDraggable(p: panel): boolean;
-procedure MovePanel(p: Panel; mvmt: Vector);
-function PanelAtPoint(pt: Point2D): Panel;
-function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
-function PointInRegion(pt: Point2D; p: Panel): Boolean;
-procedure ReleaseAllPanels();
-procedure ReleasePanel(name: String);
-procedure FreePanel(var pnl: Panel);
-procedure DoFreePanel(var pnl: Panel);
-function MapPanel(name, filename: String): Panel;
-function LoadPanel(filename: String): Panel;
-function HasPanel(name: String): Boolean;
-function PanelNamed(name: String): Panel;  
-function PanelName(pnl: Panel): String;  
-function PanelFilename(pnl: Panel): String;
-function IsDragging(): Boolean;
-function PanelY(p: Panel): Single;
-function PanelX(p: Panel): Single;
-function PanelHeight(p: Panel): LongInt;
-function PanelWidth(p: Panel): LongInt;
-function PanelActive(pnl: Panel): Boolean;
 
+/// Hide the panel, stop drawing it. Panels which are not being draw can not be interacted with by the user.
+///
+/// @lib
+///
+/// @class Panel
+/// @method Hide
+procedure HidePanel(p: Panel);
+
+/// Toggles whether the panel is being shown or not.
+///
+/// @lib
+///
+/// @class Panel
+/// @method ToggleVisible
+procedure ToggleShowPanel(p: Panel);
+
+/// Draw the currently visible panels (For use in the main loop)
+///
+/// @lib
+procedure DrawPanels();
+
+/// Activate the passed in panel. If shown, the panel will be clickable. This is the default state of a panel.
+///
+/// @lib
+///
+/// @class Panel
+/// @method Activate
+procedure ActivatePanel(p: Panel);
+
+/// Deactivate the panel. The panel will become unclickable, it will remain visible if it was already.
+///
+/// @lib
+///
+/// @class Panel
+/// @method Deactivate
+procedure DeactivatePanel(p: Panel);
+
+/// Activates the panel if deactivated, and deactivates if activated.
+///
+/// @lib
+///
+/// @class Panel
+/// @method ToggleActivate
+procedure ToggleActivatePanel(p: Panel);
+
+/// Returns whether panel is active
+///
+/// @lib
+///
+/// @class Panel
+/// @getter Active
+function PanelActive(pnl: panel): boolean;
+
+/// Returns true if panel is currently visible.
+///
+/// @lib
+///
+/// @class Panel
+/// @getter Visible
+function PanelVisible(p: Panel): boolean;
+
+/// Returns the last panel clicked.
+///
+/// @lib
+function PanelClicked(): Panel; overload;
+
+/// Returns true when the panel was clicked.
+///
+/// @lib PanelWasClicked
+///
+/// @class Panel
+/// @getter Clicked
+function PanelClicked(pnl: Panel): Boolean; overload;
+
+/// Sets panel's draggability to the passed boolean
+///
+/// @lib
+/// @sn panel:%s setDraggable:%s
+///
+/// @class Panel
+/// @setter Draggable
+procedure PanelSetDraggable(p: panel; b:boolean);
+
+/// Returns whether or not the passed panel is currently draggable
+///
+/// @lib
+/// @sn panelDraggable:%s
+///
+/// @class Panel
+/// @getter Draggable
+function PanelDraggable(p: panel): boolean;
+
+/// Move panel along vector
+///
+/// @lib
+///
+/// @class Panel
+/// @method Move
+procedure MovePanel(p: Panel; mvmt: Vector);
+
+/// Returns the panel at the point passed in. Returns nil if there is no panel.
+///
+/// @lib
+function PanelAtPoint(pt: Point2D): Panel;
+
+/// Returns true if point is in any region within the panel
+///
+/// @lib PointInRegionWithKind
+///
+/// @class Panel
+/// @self 2
+/// @Overload PointInRegion PointInRegionWithKind
+function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
+
+/// Returns true if point is in any region within the panel
+///
+/// @lib
+///
+/// @class Panel
+/// @self 2
+/// @method PointInRegion
+function PointInRegion(pt: Point2D; p: Panel): Boolean;
+
+/// Disposes of all panels
+///
+/// @lib
+procedure ReleaseAllPanels();
+
+/// Disposes of the panel by name, removing it from the index collection, setting its dragging to nil, and hiding it first to avoid crashes.
+///
+/// @lib
+procedure ReleasePanel(name: String);
+
+/// Disposes of the panel by panel
+///
+/// @lib
+///
+/// @class Panel
+/// @method Free
+procedure FreePanel(var pnl: Panel);
+
+/// maps panel to name in Hash Table.
+///
+/// @lib
+///
+/// @class Panel
+/// @constructor
+/// @csn initWithName:%s forFilename:%s
+function MapPanel(name, filename: String): Panel;
+
+
+/// Loads panel from panel directory with filename
+///
+/// @lib
+///
+/// @class Panel
+/// @constructor
+/// @csn initFromPath:%s
+function LoadPanel(filename: String): Panel;
+
+
+/// Returns if panel is in Index Collection
+///
+/// @lib
+function HasPanel(name: String): Boolean;
+
+
+/// Returns panel with the name name
+///
+/// @lib
+function PanelNamed(name: String): Panel;  
+
+
+/// Returns the name of the panel
+///
+/// @lib
+/// 
+/// @class Panel
+/// @getter Name
+function PanelName(pnl: Panel): String;  
+
+/// Returns panel filename
+///
+/// @lib
+///
+/// @class Panel
+/// @getter FileName
+function PanelFilename(pnl: Panel): String;
+
+/// Returns if anything is currently being dragged
+///
+/// @lib
+function IsDragging(): Boolean; overload;
+
+/// Returns if panel is currently being dragged
+///
+/// @lib PanelIsDragging
+///
+/// @class Panel
+/// @getter IsDragging
+function IsDragging(pnl: Panel): Boolean; overload;
+
+/// Returns panel y value
+///
+/// @lib
+///
+/// @class Panel
+/// @getter Y
+function PanelY(p: Panel): Single;
+
+/// Returns panel x value
+///
+/// @lib
+///
+/// @class Panel
+/// @getter X
+function PanelX(p: Panel): Single;
+
+
+/// Returns panel h value
+///
+/// @lib
+///
+/// @class Panel
+/// @getter Height
+function PanelHeight(p: Panel): LongInt;
+
+
+/// Returns panel width value
+///
+/// @lib
+///
+/// @class Panel
+/// @getter Width
+function PanelWidth(p: Panel): LongInt;
+//function PanelActive(pnl: Panel): Boolean;
+
+//---------------------------------------------------------------------------
 // Regions
+//---------------------------------------------------------------------------
+
+/// Returns the ID of the last region clicked on by user.
+///
+/// @lib
 function RegionClickedID(): String;
+
+/// Returns the last region clicked on by user.
+///
+/// @lib
 function RegionClicked(): Region;
+
+/// Returns the ID of the last region clicked on by user.
+///
+/// @lib
+///
+/// @class Region
+/// @getter ID
 function RegionID(r: Region): string;
+
+/// Returns the Region with the ID passed from the panel passed
+///
+/// @lib
+///
+/// @class Panel
+/// @method RegionWithID
 function RegionWithID(pnl: Panel; ID: String): Region; overload;
+
+/// Returns the Region with the ID passed
+///
+/// @lib GlobalRegionWithID
 function RegionWithID(ID: String): Region; overload;
+
+/// Returns the Region with the ID passed from the panel passed
+///
+/// @lib
+///
+/// @class Region
+/// @getter ParentPanel
 function RegionPanel(r: Region): Panel;
+
+/// Toggles the region active state
+///
+/// @lib
+///
+/// @class Region
 procedure ToggleRegionActive(forRegion: Region);
+
+/// Sets the region active to boolean
+///
+/// @lib
+///
+/// @class Region
+/// @setter RegionActive
 procedure SetRegionActive(forRegion: Region; b: boolean);
 
+/// Returns the Region Y value
+///
+/// @lib
+///
+/// @class Region
+/// @getter Y
 function RegionY(r: Region): Single;
+
+/// Returns the Region X value
+///
+/// @lib
+///
+/// @class Region
+/// @getter X
 function RegionX(r: Region): Single;
+
+/// Returns the Region height value
+///
+/// @lib
+///
+/// @class Region
+/// @getter Height
 function RegionHeight(r: Region): LongInt;
+
+/// Returns the Region Wdith value
+///
+/// @lib
+///
+/// @class Region
+/// @getter Width
 function RegionWidth(r: Region): LongInt;
 
+/// Returns the region from the panel at the point
+///
+/// @lib
 function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 
+//---------------------------------------------------------------------------
 //Checkbox
+//---------------------------------------------------------------------------
+
+/// Returns checkbox state of the checkbox with ID from string
+///
+/// @lib
+///
+/// @method CheckboxState
 function CheckboxState(s: String): Boolean; overload;
+
+/// Returns checkbox state of the checkbox with ID from string
+///
+/// @lib
+/// 
+/// @class Checkbox
+/// @getter State
 function CheckboxState(chk: GUICheckbox): Boolean; overload;
+
+/// Returns checkbox state of the checkbox with ID from string
+///
+/// @lib CheckboxStateFromRegion
+///
+/// @class Region
+/// @getter CheckboxState
 function CheckboxState(r: Region): Boolean; overload;
+
+/// Sets the checkbox state to val.
+/// 
+/// @lib CheckboxSetStateFromRegion
+///
+/// @class Region
+/// @setter CheckboxState
 procedure CheckboxSetState(r: region; val: Boolean); overload;
+
+/// Sets the checkbox state to val.
+/// 
+/// @lib CheckboxSetState
+///
+/// @class Checkbox
+/// @setter State
 procedure CheckboxSetState(chk: GUICheckbox; val: Boolean); overload;
+
+/// Toggles the state of a checkbox (ticked/unticked)
+///
+/// @lib
+///
+/// @class Checkbox
+/// @method ToggleCheckboxState
 procedure ToggleCheckboxState(c: GUICheckbox);
+
+/// Takes a region and returns the checkbox of that region
+///
+/// @lib
 function CheckboxFromRegion(r: Region): GUICheckbox;
 
 //RadioGroup
+/// Takes panel and ID and returns the RadioGroup.
+///
+/// @lib
 function RadioGroupFromId(pnl: Panel; id: String): GUIRadioGroup;
+
+/// Takes region and returns the RadioGroup.
+///
+/// @lib
 function RadioGroupFromRegion(r: Region): GUIRadioGroup;
+
+/// Takes a radiogroup and returns the active button's index.
+///
+/// @lib
 function ActiveRadioButtonIndex(RadioGroup: GUIRadioGroup): integer;
+
 function ActionRadioButton(grp: GUIRadioGroup): Region; overload;
 function ActionRadioButton(r: Region): Region; overload;
 procedure SelectRadioButton(r: Region); overload;
 procedure SelectRadioButton(rGroup: GUIRadioGroup; r: Region); overload;
 
-
 //TextBox
+/// returns font of textbox
+///
+/// @lib
+///
+/// @class Textbox
+/// @getter Font
 function TextBoxFont(tb: GUITextBox): Font; overload;
+
+/// returns font of region's textbox (If it has one)
+///
+/// @lib TextBoxFontFromRegion
+///
+/// @class Region
+/// @getter TextBoxFont
 function TextBoxFont(r: Region): Font; overload;
+
+/// Sets the textbox font
+/// 
+/// @lib 
+///
+/// @class Textbox
+/// @setter Font
 procedure TextboxSetFont(Tb: GUITextbox; f: font);
+
+/// Gets the textbox text from region
+/// 
+/// @lib TextboxTextFromRegion
+///
+/// @class Region
+/// @getter TextboxText
 function TextBoxText(r: Region): String; overload;
+
+/// Gets the textbox text
+/// 
+/// @lib
+///
+/// @class Textbox
+/// @getter Text
 function TextBoxText(tb: GUITextBox): String; overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxSetTextFromRegion
+///
+/// @class Region
+/// @setter TextboxText
 procedure TextboxSetText(r: Region; s: string); overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxSetText
+///
+/// @class Textbox
+/// @setter Text
 procedure TextboxSetText(tb: GUITextBox; s: string); overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxSetTextToInt
+///
+/// @class Textbox
+/// @setter Text
 procedure TextboxSetText(tb: GUITextBox; i: LongInt); overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxSetTextToSingle
+///
+/// @class Textbox
+/// @setter Text
 procedure TextboxSetText(tb: GUITextBox; single: Single); overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxSetTextToSingleFromRegion
+///
+/// @class Region
+/// @setter TextboxText
 procedure TextboxSetText(r: Region; single: Single); overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxSetTextToIntFromRegion
+///
+/// @class Region
+/// @setter TextboxText
 procedure TextboxSetText(r: Region; i: LongInt); overload;
+
+/// Sets the textbox text from region
+/// 
+/// @lib TextboxTextFromRegion
+///
+/// @class Region
+/// @getter TextboxText
 function TextBoxFromRegion(r: Region): GUITextBox;
+
+/// Sets the active textbox from region
+/// 
+/// @lib GUISetActiveTextboxFromRegion
 procedure GUISetActiveTextbox(r: Region); overload;
+
+/// Sets the active textbox
+/// 
+/// @lib
 procedure GUISetActiveTextbox(t: GUITextBox); overload;
+
+/// Deactivates the active textbox
+///
+/// @lib
 procedure DeactivateTextBox();
+
+/// Returns the index of the active textbox's region.
+///
+/// @lib
 function ActiveTextIndex(): Integer;
+
+/// Checks if TextEntry finished, returns true/false
+///
+/// @lib
 function GUITextEntryComplete(): boolean;
+
+/// Returns the textbox in which text was changed/added into most recently.
+///
+/// @lib
 function GUITextBoxOfTextEntered(): GUITextbox;
+
+/// Returns the region of the textbox in which text was changed/added into most recently.
+///
+/// @lib
 function RegionOfLastUpdatedTextBox(): Region;
+
+/// Returns the index of the region of the textbox in which text was changed/added into most recently.
+///
+/// @lib
 function IndexOfLastUpdatedTextBox(): Integer;
+
+/// UpdateInterface main loop, checks the draggable, checks the region clicked, updates the interface
+///
+/// @lib
 procedure UpdateInterface();
+
+/// Sets the GUI whether or not to use Vector Drawing
+///
+/// @lib
 procedure DrawGUIAsVectors(b : boolean);
+
+/// Finishes reading text and stores in the active textbox
+///
+/// @lib
 procedure FinishReadingText();
+
+/// Returns the parent panel of the active textbox
+///
+/// @lib
 function ActiveTextBoxParent() : Panel;
 
+/// Returns the alignment of the text in textbox passed in as region
+///
+/// @lib
 function TextboxAlignment(r: Region): FontAlignment;
+
+/// Gets the textbox alignmnet of the textbox
+///
+/// @lib
+///
+/// @class Textbox
+/// @getter Alignmnet
 function TextboxAlignment(tb: GUITextbox): FontAlignment;
+
+/// Set the textbox alignment of the textbox
+///
+/// @lib
+///
+/// @class Textbox
+/// @setter Alignmnet
 procedure TextboxSetAlignment(tb: GUITextbox; align: FontAlignment);
+
+/// Set the textbox alignment of the textbox passed in
+///
+/// @lib
 procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 
-
+//---------------------------------------------------------------------------
 //Lists
+//---------------------------------------------------------------------------
+
+/// Set the active item in the list to the item at index idx
+///
+/// @lib
+///
+/// @class List
+/// @setter activeItem
 procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
+
+/// Returns the active item text of the List in panel, pnl- with ID, ID
+///
+/// @lib
+///
+/// @class List
+/// @getter activeItemText
 function ListActiveItemText(pnl: Panel; ID: String): String;
+
+/// Returns Returns the list of the region r
+///
+/// @lib
+///
+/// @class Region
+/// @getter List
 function ListFromRegion(r: Region): GUIList; overload;
 
+/// Returns the font of the list of the region
+///
+/// @lib ListFontFromRegion
+///
+/// @class Region
+/// @getter ListFont
 function ListFont(r: Region): Font; overload;
+
+/// Returns the font of the list
+///
+/// @lib
+///
+/// @class List
+/// @getter Font
 function ListFont(lst: GUIList): Font; overload;
+
+/// Sets the font of the list to font f
+///
+/// @lib
+///
+/// @class List
+/// @setter Font
 procedure ListSetFont(lst: GUITextbox; f: font);
+
+/// Returns the text of the item at index idx from the List of the Region
+///
+/// @lib ListItemTextFromRegion
+///
+/// @class Region
+/// @getter ListItemText
 function ListItemText(r: Region; idx: LongInt): String; overload;
+
+/// Returns the text of the item at index idx
+///
+/// @lib
+///
+/// @class List
+/// @getter ItemText
 function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+
+/// Returns the text of the active item in the list of the region
+///
+/// @lib ListActiveItemTextFromRegion
+///
+/// @class Region
+/// @getter ListItemText
 function ListActiveItemText(r: Region): String; overload;
+
+/// Returns the number of items in the list of the region
+///
+/// @lib ListItemCountFromRegion
+///
+/// @class Region
+/// @getter ListItemCount
 function ListItemCount(r: Region): LongInt; overload;
+
+/// Returns the number of items in the list
+///
+/// @lib ListItemCount
+///
+/// @class List
+/// @getter ItemCount
 function ListItemCount(lst:GUIList): LongInt; overload;
+
+/// Returns active item's index from the list of the region
+///
+/// @lib
+///
+/// @class Region
+/// @getter ListActiveItemIndex
 function ListActiveItemIndex(r: Region): LongInt; overload;
+
+/// Returns active item's index from the list
+///
+/// @lib
+///
+/// @class List
+/// @getter ActiveItemIndex
 function ListActiveItemIndex(lst: GUIList): LongInt;
 
+/// Removes item at index idx from the list
+///
+/// @lib
+///
+/// @class List
+/// @method RemoveItem
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+
+/// Removes all items from the list.
+///
+/// @lib
+///
+/// @class List
+/// @method ClearItems
 procedure ListClearItems(lst: GUIList); overload;
+
+/// Removes all items from the list of the region
+///
+/// @lib
+///
+/// @class Region
+/// @method ListClearItems
 procedure ListClearItems(r : Region); overload;
+
+/// Adds an item to the list by text
+///
+/// @lib AddItemByText
+///
+/// @class List
+/// @method AddItem
 procedure ListAddItem(lst: GUIList; text: String); overload;
+
+/// Adds an item to the list by bitmap
+///
+/// @lib AddItemByBitmap
+///
+/// @class List
+/// @method AddItem
 procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
+
+/// Adds an item to the list by text
+///
+/// @lib AddItem
+///
+/// @class List
+/// @method AddItem
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
+
+/// Adds an item to the list by text
+///
+/// @lib AddItemByTextFromRegion
+///
+/// @class Region
+/// @method ListAddItem
 procedure ListAddItem(r : Region; text: String); overload;
+
+/// Adds an item to the list by bitmap
+///
+/// @lib AddItemByBitmapFromRegion
+///
+/// @class Region
+/// @method ListAddItem
 procedure ListAddItem(r : Region; img:Bitmap); overload;
+
+/// Adds an item to the list
+///
+/// @lib AddItemFromRegion
+///
+/// @class Region
+/// @method ListAddItem
 procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
 
-
-
+/// Returns the index of the item with the bitmap, img
+///
+/// @lib
+///
+/// @class List
+/// @getter activeItem
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+
+/// Adds an item to the list by text
+///
+/// @lib
+///
+/// @class Region
+/// @getter activeItem
 function ListTextIndex(lst: GUIList; value: String): LongInt;
 
+/// Returns the starting point for the list
+///
+/// @lib
+///
+/// @class List
+/// @getter StartingAt
 function ListStartAt(lst: GUIList): LongInt;
+
+/// Returns the starting point for the list from region
+///
+/// @lib ListStartingAtFromRegion
+///
+/// @class Region
+/// @getter ListStartingAt
 function ListStartAt(r: Region): LongInt;
 
+/// Sets the starting point for the list
+///
+/// @lib ListSetStartingAt
+///
+/// @class List
+/// @setter StartingAt
 procedure ListSetStartAt(lst: GUIList; idx: LongInt);
+
+/// Sets the starting point for the list from region
+///
+/// @lib ListSetStartingAtFromRegion
+///
+/// @class Region
+/// @setter ListStartingAt
 procedure ListSetStartAt(r: Region; idx: LongInt);
 
+/// Returns the font alignment of a list from region
+///
+/// @lib ListFontAlignmentFromRegion
+///
+/// @class Region
+/// @getter ListFontAlignment
 function ListFontAlignment(r: Region): FontAlignment;
+
+/// Returns the font alignment of a list
+///
+/// @lib ListFontAlignment
+///
+/// @class List
+/// @getter FontAlignment
 function ListFontAlignment(lst: GUIList): FontAlignment;
+
+/// Returns the font alignment of a list from region
+///
+/// @lib ListSetFontAlignmentFromRegion
+///
+/// @class Region
+/// @setter ListFontAlignment
 procedure ListSetFontAlignment(r: Region; align: FontAlignment);
+
+/// Returns the font alignment of a list
+///
+/// @lib ListSetFontAlignment
+///
+/// @class List
+/// @setter FontAlignment
 procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
 
+/// Returns the largest index that startingAt should be set to.
+///
+/// @lib ListLargestStartIndex
+///
+/// @class List
+/// @setter LargestStartIndex
 function ListLargestStartIndex(lst: GUIList): LongInt;
+
+/// Returns the largest index that startingAt should be set to.
+///
+/// @lib ListLargestStartIndex
+///
+/// @class List
+/// @method ScrollIncrement
 function ListScrollIncrement(lst: GUIList): LongInt;
 
 //Label
 function  LabelFont(l: GUILabel): Font; overload;
 function  LabelFont(r: Region): Font; overload;
 procedure LabelSetFont(l: GUILabel; s: String);
-  
 function  LabelText(lb: GUILabel): string; overload;
 function  LabelText(r: Region): string; overload;
 procedure LabelSetText(lb: GUILabel; newString: String); overload;
 procedure LabelSetText(r: Region; newString: String); overload;
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
-
 function  LabelFromRegion(r: Region): GUILabel;
-
 function LabelAlignment(r: Region): FontAlignment;
 function LabelAlignment(tb: GUILabel): FontAlignment;
 procedure LabelSetAlignment(tb: GUILabel; align: FontAlignment);
@@ -310,18 +1039,16 @@ procedure LabelSetAlignment(r: Region; align: FontAlignment);
 
 // Dialog Code
 procedure DialogSetPath(fullname: String);
-
 function IsSet(toCheck, checkFor: FileDialogSelectType): Boolean; overload;
 function DialogPath(): String;
 function DialogCancelled(): Boolean;
 function DialogComplete(): Boolean;
 procedure ShowSaveDialog(); overload;
 procedure ShowSaveDialog(select: FileDialogSelectType); overload;
-
 procedure ShowOpenDialog(); overload;
-
 procedure ShowOpenDialog(select: FileDialogSelectType); overload;
 
+procedure DoFreePanel(var pnl: Panel);
 
 //=============================================================================
 implementation
@@ -460,19 +1187,19 @@ begin
                     if MouseDown(LeftButton) AND PointInRect(MousePosition(), RegionRectangleOnScreen(r)) then
                       result := r^.parent^.panelBitmapActive
                     else
-                      result := r^.parent^.panelBitmap;
+                      result := nil; // dont redraw the r^.parent^.panelBitmap;
                   end;
     gkCheckBox:   begin
                     if CheckboxState(r) then 
                      result := r^.parent^.panelBitmapActive
                    else
-                     result := r^.parent^.panelBitmap;
+                     result := nil; // dont redraw the 
                   end;
     gkRadioGroup: begin
                     if r = ActionRadioButton(r) then
                       result := r^.parent^.panelBitmapActive
                     else
-                      result := r^.parent^.panelBitmap;
+                      result := nil; // dont redraw the 
                   end;
   end;
 end;
@@ -803,16 +1530,6 @@ begin
   end;
 end;
 
-procedure DrawBitmapCheckbox(forRegion: Region; const area: Rectangle);
-begin
-  DrawBitmapPartOnScreen(BitmapToDraw(forRegion), forRegion^.area, RectangleTopLeft(area));
-end;
-
-procedure DrawBitmapRadioGroup(forRegion: Region; const area: Rectangle);
-begin
-  DrawBitmapPartOnScreen(BitmapToDraw(forRegion), forRegion^.area, RectangleTopLeft(area));
-end;
-
 procedure DrawAsBitmaps();
 var
   i, j: integer;
@@ -826,15 +1543,10 @@ begin
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case GUIC.visiblePanels[i]^.Regions[j].kind of
-        gkButton: 
-          // Only draw the button if its not the same as the bitmap of the panel
-          if BitmapToDraw(currentReg) <>  GUIC.visiblePanels[i]^.panelBitmap then 
-            DrawBitmapPartOnscreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
-        gkLabel: DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
-        gkTextbox: DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
-        gkCheckbox: DrawBitmapCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
-        gkRadioGroup: DrawBitmapRadioGroup(currentReg, RegionRectangleOnScreen(currentReg));
-        gkList: DrawList(currentReg, RegionRectangleOnScreen(currentReg));
+        gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
+        gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
+        gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
+        else          DrawBitmapPartOnScreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
       end;
     end;
   end;
@@ -2002,6 +2714,14 @@ begin
   // result := PanelAtPoint(MousePosition());
 end;
 
+function PanelClicked(pnl: Panel): Boolean;
+begin
+  if not(assigned(pnl)) then exit;
+  if not(assigned(GUIC.panelClicked)) then exit;
+
+  result := GUIC.panelClicked = pnl;
+end;
+
 //=============================================================================
 // Create Panels/GUI Elements/Regions etc.
 //=============================================================================
@@ -2502,6 +3222,15 @@ end;
 function IsDragging(): Boolean;
 begin
   result := assigned(GUIC.panelDragging) and GUIC.panelDragging^.draggable;
+end;
+
+function IsDragging(pnl: Panel): Boolean;
+begin
+  result := false;
+  if not(assigned(pnl)) then exit;
+  if not(assigned(GUIC.panelDragging)) then exit;
+  
+  result := GUIC.panelDragging = pnl;
 end;
 
 procedure StartDragging();
