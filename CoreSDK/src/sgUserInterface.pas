@@ -123,6 +123,7 @@ type
     textBoxes:            Array of GUITextBoxData;
     lists:                Array of GUIListData;
     draggable:            Boolean;
+    modal:                Boolean;
   end;
   
   FileDialogSelectType = ( fdFiles = 1, fdDirectories = 2, fdFilesAndDirectories = 3 );
@@ -135,7 +136,15 @@ type
 procedure GUISetForegroundColor(c:Color);
 procedure GUISetBackgroundColor(c:Color);
 
+/// Returns true if any of the panels in the user interface have been clicked.
+/// 
+/// @lib
+function GUIClicked(): Boolean;
+
 // Panels
+
+procedure ShowPanelDialog(p: Panel);
+
 procedure ShowPanel(p: Panel);
 procedure HidePanel(p: Panel);
 procedure ToggleShowPanel(p: Panel);
@@ -166,6 +175,7 @@ function PanelY(p: Panel): Single;
 function PanelX(p: Panel): Single;
 function PanelHeight(p: Panel): LongInt;
 function PanelWidth(p: Panel): LongInt;
+function PanelActive(pnl: Panel): Boolean;
 
 // Regions
 function RegionClickedID(): String;
@@ -336,9 +346,13 @@ type
     doneReading:        Boolean;
     lastTextRead:       String;                 // The text that was in the most recently changed textbox before it was changed.
     panelIds:           TStringHash;
+    
     // Variables for dragging panels
     downRegistered:     Boolean;
     panelDragging:      Panel;
+    
+    // The panel clicked
+    panelClicked:       Panel;
   end;
 
     FileDialogData = packed record
@@ -408,6 +422,28 @@ begin
   if not assigned(r) then begin result := RectangleFrom(0,0,0,0); exit; end;
   
   result := RectangleOffset(r^.area, RectangleTopLeft(r^.parent^.area));
+end;
+
+function GUIClicked(): Boolean;
+begin
+  result := PanelClicked() <> nil;
+end;
+
+function ModalBefore(pnl: Panel): Boolean;
+var
+  i: Integer;
+begin
+  result := false;
+  
+  for i := High(GUIC.visiblePanels) downto 0 do
+  begin
+    if GUIC.visiblePanels[i] = pnl then exit
+    else if GUIC.visiblePanels[i]^.modal then
+    begin
+      result := true;
+      exit;
+    end;
+  end;
 end;
 
 //---------------------------------------------------------------------------------------
@@ -681,17 +717,20 @@ begin
       _ResizeItemArea(itemTextArea, imagePt, ListFontAlignment(tempList), tempList^.items[itemIdx].image);
     end;
     
+    // If the current item is not the active item
     if (itemIdx <> tempList^.activeItem) then
     begin
+      // Draw the text onto the screen as normal...
       DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                             GUIC.foregroundClr, GUIC.backgroundClr, 
                             ListFont(tempList), ListFontAlignment(tempList), 
                             itemTextArea);
     end
-    else
+    else // the item is the selected item...
     begin
       if GUIC.VectorDrawing then
       begin
+        // Fill and draw text in alternate color if vector based
         FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                               GUIC.backgroundClr, GUIC.foregroundClr,
@@ -700,6 +739,7 @@ begin
       end
       else
       begin
+        // Draw bitmap and text if bitmap based
         DrawBitmapPartOnscreen(forRegion^.parent^.panelBitmapActive,
                        placeHolderScreenRect,
                        RectangleTopLeft(itemArea));
@@ -780,14 +820,16 @@ var
 begin
   for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
   begin
-    if GUIC.visiblePanels[i]^.visible then
-      DrawBitmapOnScreen(GUIC.visiblePanels[i]^.panelBitmap, RectangleTopLeft(GUIC.visiblePanels[i]^.area));
+    DrawBitmapOnScreen(GUIC.visiblePanels[i]^.panelBitmap, RectangleTopLeft(GUIC.visiblePanels[i]^.area));
       
     for j := Low(GUIC.visiblePanels[i]^.Regions) to High(GUIC.visiblePanels[i]^.Regions) do
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case GUIC.visiblePanels[i]^.Regions[j].kind of
-        gkButton: DrawBitmapPartOnscreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
+        gkButton: 
+          // Only draw the button if its not the same as the bitmap of the panel
+          if BitmapToDraw(currentReg) <>  GUIC.visiblePanels[i]^.panelBitmap then 
+            DrawBitmapPartOnscreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
         gkLabel: DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
         gkTextbox: DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
         gkCheckbox: DrawBitmapCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
@@ -1060,7 +1102,7 @@ var
   pointClickedInPnl: Point2D;
 begin
   if pnl = nil then exit;
-  if not pnl^.active then exit;
+  if not PanelActive(pnl) then exit;
   
   // Adjust the mouse point into this panels area (offset from top left of pnl)
   pointClickedInPnl := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
@@ -1877,6 +1919,20 @@ begin
   if assigned(p) then p^.active := not p^.active;
 end;
 
+procedure ShowPanelDialog(p: Panel);
+begin
+  if assigned(p) then 
+  begin
+    if p^.visible then //hide it...
+      ToggleShowPanel(p);
+    
+    // show the panel last...
+    ToggleShowPanel(p);
+    // and make it modal
+    p^.modal := true;
+  end;
+end;
+
 procedure ShowPanel(p: Panel);
 begin
   if assigned(p) and (not p^.visible) then ToggleShowPanel(p);
@@ -1894,7 +1950,10 @@ var
 begin
   if assigned(p) then
   begin
-    p^.visible := not p^.visible;
+    p^.visible  := not p^.visible;
+    
+    // set to non-modal by default
+    p^.modal    := false;
     
     if p^.visible then
     begin
@@ -1934,9 +1993,13 @@ end;
 function PanelClicked(): Panel;
 begin
   result := nil;
-  if not MouseClicked(Leftbutton) then exit;
   
-  result := PanelAtPoint(MousePosition());
+  if not ModalBefore(GUIC.panelClicked) then result := GUIC.panelClicked;
+  
+  // result := nil;
+  // if not MouseClicked(Leftbutton) then exit;
+  // 
+  // result := PanelAtPoint(MousePosition());
 end;
 
 //=============================================================================
@@ -1966,7 +2029,6 @@ var
       result := gkList
     else 
       RaiseException(s + ' is an invalid kind for region.');
-
   end;
   
   procedure CreateLabel(forRegion: Region; d: string);
@@ -2263,6 +2325,7 @@ var
     result^.visible   := false;
     result^.active    := true;      // Panels are active by default - you need to deactivate them specially...
     result^.draggable := false;
+    result^.modal     := false;
     result^.panelBitmap := nil;
     result^.panelBitmapActive   := nil;
     
@@ -2373,7 +2436,8 @@ end;
 
 function PanelActive(pnl: Panel): Boolean;
 begin
-  if assigned(pnl) then result := pnl^.active
+  if assigned(pnl) then 
+    result := pnl^.active and not ModalBefore(pnl)
   else result := false;
 end;
 
@@ -2749,7 +2813,7 @@ begin
     
     allowNew      := false;
     selectType    := select;
-    ShowPanel(dialogPanel);
+    ShowPanelDialog(dialogPanel);
     
     if length(currentPath) = 0 then 
       DialogSetPath(GetUserDir());
@@ -2772,7 +2836,7 @@ begin
     
     allowNew      := true;
     selectType    := select;
-    ShowPanel(dialogPanel);
+    ShowPanelDialog(dialogPanel);
     
     if length(currentPath) = 0 then 
       DialogSetPath(GetUserDir());
@@ -3083,10 +3147,12 @@ begin
   UpdateDrag();
   
   pnl := PanelAtPoint(MousePosition());
+  if MouseClicked(Leftbutton) then GUIC.panelClicked := pnl
+  else GUIC.panelClicked := nil;
   
   if PanelActive(pnl) then
   begin
-    HandlePanelInput(pnl)
+    if not ModalBefore(pnl) then HandlePanelInput(pnl);
   end;
   
   if assigned(GUIC.activeTextbox) and not ReadingText() then
@@ -3094,9 +3160,6 @@ begin
     
   if PanelVisible(dialog.dialogPanel) then UpdateFileDialog();
 end;
-
-
-
 
 //=============================================================================
   initialization
