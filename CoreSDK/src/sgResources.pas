@@ -175,7 +175,7 @@ implementation
   uses SysUtils, StrUtils, Classes, // system
        stringhash, sgUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgShared, 
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, 
        sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface; // Swingame
 
   //----------------------------------------------------------------------------
@@ -294,7 +294,7 @@ implementation
           // MapResource:        MapTileMap(current.name, current.path);
           AnimationResource:  MapAnimationTemplate(current.name, current.path);
           PanelResource:      MapPanel(current.name, current.path);
-          
+          CharacterResource:  MapCharacter(current.name, current.path);
           else
             RaiseException('Unkown recource kind in LoadResources' + IntToStr(LongInt(kind)));
         end;
@@ -341,6 +341,7 @@ implementation
         PanelResource:      ReleasePanel(current.name);
         // MapResource:        ReleaseTileMap(current.name);
         AnimationResource:  ReleaseAnimationTemplate(current.name);
+        CharacterResource:  ReleaseCharacter(current.name);
       end;
     end;
     SetLength(identifiers, 0);
@@ -356,6 +357,7 @@ implementation
     ReleaseAllMusic();
     ReleaseAllSoundEffects();
     ReleaseAllPanels();
+    ReleaseAllCharacters();
     // ReleaseAllTileMaps();
     _Bundles.deleteAll();
   end;
@@ -366,13 +368,14 @@ implementation
   begin
     kind := Uppercase(Trim(kind));
     if kind = 'BUNDLE' then result := BundleResource
-    else if kind = 'BITMAP' then result := BitmapResource
-    else if kind = 'SOUND'  then result := SoundResource
-    else if kind = 'MUSIC'  then result := MusicResource
-    else if kind = 'FONT'   then result := FontResource
-    else if kind = 'MAP'    then result := MapResource
-    else if kind = 'ANIM'   then result := AnimationResource
-    else if kind = 'PANEL'  then result := PanelResource
+    else if kind = 'BITMAP'     then result := BitmapResource
+    else if kind = 'SOUND'      then result := SoundResource
+    else if kind = 'MUSIC'      then result := MusicResource
+    else if kind = 'FONT'       then result := FontResource
+    else if kind = 'MAP'        then result := MapResource
+    else if kind = 'ANIM'       then result := AnimationResource
+    else if kind = 'PANEL'      then result := PanelResource
+    else if kind = 'CHARACTER'  then result := CharacterResource
     else result := OtherResource;
   end;
   
@@ -514,6 +517,7 @@ implementation
       MapResource:        result := PathToResourceWithBase(path, 'maps/' + filename);
       AnimationResource:  result := PathToResourceWithBase(path, 'animations/' + filename);
       PanelResource:      result := PathToResourceWithBase(path, 'panels/' + filename);
+      CharacterResource:  result := PathToResourceWithBase(path, 'characters/' + filename);
     {$else}
       BundleResource:     result := PathToResourceWithBase(path, 'bundles\' + filename);
       FontResource:       result := PathToResourceWithBase(path, 'fonts\' + filename);
@@ -522,6 +526,7 @@ implementation
       MapResource:        result := PathToResourceWithBase(path, 'maps\' + filename);
       AnimationResource:  result := PathToResourceWithBase(path, 'animations\' + filename);
       PanelResource:      result := PathToResourceWithBase(path, 'panels\' + filename);
+      CharacterResource:  result := PathToResourceWithBase(path, 'characters\' + filename);
     {$endif}
       
       else result := PathToResourceWithBase(path, filename);
