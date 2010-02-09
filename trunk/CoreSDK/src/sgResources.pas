@@ -176,7 +176,7 @@ implementation
        stringhash, sgUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
        sgCore, sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, 
-       sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface; // Swingame
+       sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps; // Swingame
 
   //----------------------------------------------------------------------------
   // Global variables for resource management.
@@ -291,7 +291,7 @@ implementation
           FontResource:       rbLoadFont();
           SoundResource:      MapSoundEffect(current.name, current.path);
           MusicResource:      MapMusic(current.name, current.path);
-          // MapResource:        MapTileMap(current.name, current.path);
+          MapResource:        MapMap(current.name, current.path);
           AnimationResource:  MapAnimationTemplate(current.name, current.path);
           PanelResource:      MapPanel(current.name, current.path);
           CharacterResource:  MapCharacter(current.name, current.path);
@@ -357,8 +357,8 @@ implementation
     ReleaseAllMusic();
     ReleaseAllSoundEffects();
     ReleaseAllPanels();
+    ReleaseAllMaps();
     ReleaseAllCharacters();
-    // ReleaseAllTileMaps();
     _Bundles.deleteAll();
   end;
   

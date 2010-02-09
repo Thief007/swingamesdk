@@ -40,12 +40,14 @@ interface
     
     Map = ^MapData;
     MapData = Record
+      name:              String;
+      filename:           String;
       Tiles:              Array of Array of TileData;     // The actual tiles -> in col,row order
       SelectedTiles:      LongIntArray;                   // id of selected tiles
       Isometric:          Boolean;                        // Map Isometric
       valueIds:           NamedIndexCollection;           // has names of values
       kindids:            NamedIndexCollection;           // has names of kinds
-      MarkerIds:          NamedIndexCollection;           // has names of Markers
+      //MarkerIds:          NamedIndexCollection;           // has names of Markers
       //MapMarkers:        Array of Marker;
       MapPrototype:       ShapePrototype;                 // prototype of the tiles
       MapHighlightcolor:  Color;                          // highlight color
@@ -66,12 +68,12 @@ interface
   /// Loads the Map from a text file which contains the map informations.
   /// this returns a map.
   ///
-  /// @lib LoadMap
+  /// @lib DoLoadMap
   ///
   /// @class Map
-  /// @method LoadMap
+  /// @method DoLoadMap
 
-  function LoadMap(filename:string): Map;
+  function DoLoadMap(filename:string; name:String): Map;
 //----------------------------------------------------------------------------
 //       Draw Procedures            
 //----------------------------------------------------------------------------
@@ -229,7 +231,7 @@ interface
   //----------------------------------------------------------------------------
   //return map properties functions//
   //----------------------------------------------------------------------------
-
+  function TileCount(m : map): Longint;
   /// returns the index of the kind from the NamedIndexCollection given
   /// the name of the kind
   ///
@@ -380,6 +382,8 @@ interface
   /// @class Tile
   /// @getter shape
   function TileShape(t: tile): Shape;
+
+  
 
   /// Returns the center position of the given tile
   ///
@@ -582,9 +586,23 @@ interface
   procedure RemoveKind(m:map; kname:string); overload;
 
 
+  //---------------------------------------------------------------------
+  //resource management
+  //------------------------------------------------------------------
+  procedure ReleaseAllMaps();
+  function LoadMap(filename: String): Map;
+  procedure ReleaseMap(name: String);
+  procedure FreeMap(var m: map);
+  function MapMap(name, filename: String): Map;
+  function MapFilename(m: Map): String; 
+  function MapName(m: Map): String;
+  function MapNamed(name: String): Map;
+  function HasMap(name: String): Boolean;  
+  
+
   implementation
   uses
-    sgCore, sgAudio, sgText, sgGraphics, sgTrace, sgResources,
+    sgCore, sgText, sgGraphics, sgTrace, sgResources,
     sgCamera, sgGeometry, sgImages, sgInput, sgPhysics,
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
       stringhash, sgUtils, sgNamedIndexCollection, sgShared;
@@ -593,7 +611,8 @@ interface
   //==================================================================
   //Load Map Functions
   //==================================================================
-
+  var
+      _Maps: TStringHash;
       //Add one or many name(s) to an index collection.
 
     Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
@@ -635,7 +654,7 @@ interface
     end;
 
 
-  function LoadMap(filename:string): Map;
+  function DoLoadMap(filename:string; name:String): Map;
 
   type
     SpecificValuesLoader = record
@@ -649,7 +668,6 @@ interface
 
   var
     tempValues:       Array of SpecificValuesLoader;  // contains the row,col, name and value
-    path:             String;                         // path of the map file
     textFile:         Text;                           // text file that is loaded
     id:               String;                         // id for the line processor to identify how to handle the data
     data,line:        String;                         // line is read then seperated into id and data.
@@ -663,8 +681,8 @@ interface
       begin
       
         SetTileValue(result, TileAt(result,tempValues[i].row, tempValues[i].col), tempValues[i].name, tempValues[i].value);
-        writeln('length of values within tiles', length(result^.Tiles[3,3].values));
-        writeln(tempValues[i].row,',',tempValues[i].col,',',tempValues[i].name,',',tempValues[i].value);
+        //writeln('length of values within tiles', length(result^.Tiles[3,3].values));
+        //writeln(tempValues[i].row,',',tempValues[i].col,',',tempValues[i].name,',',tempValues[i].value);
 
       end;      
     end;
@@ -959,10 +977,21 @@ interface
 
   begin
     //load map starts here
-    path:= FilenameToResource(filename, MapResource);
-    Assign(textFile, Path);
-    lineNo:=0;
+    if not FileExists(filename) then
+    begin
+      filename := PathToResource(filename, MapResource);
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate sound m ' + filename);
+        exit;
+      end;
+    end;
     result := NewMap();
+    result^.filename := filename;
+    result^.name := name;
+    Assign(textFile, filename);
+    lineNo:=0;
+    
     //moves cursor to 1,1
     Reset(textFile);
     ReadLn(textFile,line);
@@ -1130,6 +1159,7 @@ interface
     layer,col, row, startRow, startCol, endRow, endCol : LongInt;
    // dir:Direction;
   begin
+   if not assigned(map) then exit;
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
 
     PushMapClip(map, startCol, startRow, endCol, endRow);
@@ -1163,6 +1193,7 @@ interface
   dir: Direction;
   row,col,startRow, startCol, endRow, endCol : LongInt;
   begin
+    if not assigned(map) then exit;
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
     for row:=startRow to endRow do
     begin
@@ -1193,6 +1224,7 @@ interface
   var
     row,col,startRow, startCol, endRow, endCol : LongInt;
   begin
+    if not assigned(m) then exit;
     MapRangeFromRect(CameraScreenRect(), m, startCol, startRow, endCol, endRow);
 
     PushMapClip(m, startCol, startRow, endCol, endRow);
@@ -1622,8 +1654,8 @@ interface
     side: CollisionSide;
   begin
     result := false;
-    if map = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
-    if s = nil then begin RaiseException('No Sprite suppled (nil)'); exit; end;
+    if map = nil then exit;
+    if s = nil then exit;
     
     //makes a rect of bounding area to search so that it doesn't need to search the whole map.
     
@@ -1724,6 +1756,10 @@ interface
   //==================================================================
   //FUNCTIONS THAT RETURNS MAP PROPERTIES
   //==================================================================
+  function TileCount(m : map): Longint;
+  begin
+    result := (m^.MapWidth) * (m^.MapHeight);
+  end;
 
   function IndexOfKind(const m :  map; const kname : string) : LongInt;
   begin
@@ -2001,7 +2037,7 @@ interface
   begin
     if not Assigned(t) or (vId < 0) OR (vId > High(t^.values)) then exit;
     t^.Values[vId] := value;
-    writeln('the value is ',value);
+   // writeln('the value is ',value);
   end;
 
 
@@ -2011,7 +2047,7 @@ interface
   begin  
     if not assigned(t) then exit;
     idx := IndexOf(m^.valueIds, name);
-    writeln('idx',idx);
+    //writeln('idx',idx);
     SetTileValue(t, idx, val);
   end;
   
@@ -2259,10 +2295,201 @@ interface
     end;
   end;
 
+
+  //----------------------------------------------------------
+  //  Resource management
+  //----------------------------------------------------------
+
+  function LoadMap(filename: String): Map;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgMaps', 'LoadMap', filename);
+    {$ENDIF}
     
+    result := MapMap(filename, filename);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgMaps', 'LoadMap');
+    {$ENDIF}
+  end;
+
+
+  function MapMap(name, filename: String): Map;
+  var
+    obj: tResourceContainer;
+    mp : Map;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgMap', 'MapMap', name + ' = ' + filename);
+    {$ENDIF}
+    
+    
+    if _Maps.containsKey(name) then
+    begin
+      result := MapNamed(name);
+      exit;
+    end;
+    
+    mp := DoLoadMap(filename, name);
+    obj := tResourceContainer.Create(mp);
+    
+    if not _Maps.setValue(name, obj) then
+    begin
+      RaiseException('** Leaking: Caused by Sound m resource twice, ' + name);
+      result := nil;
+      exit;
+    end;
+    result := mp;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgMap', 'MapMap');
+    {$ENDIF}
+  end;
+
+  procedure DoFreeMap(var m: Map);
+  var
+  i: LongInt;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgMap', 'DoFreeMap', 'map = ' + HexStr(map));
+    {$ENDIF}
+    
+    if assigned(m) then
+    begin
+      CallFreeNotifier(m);
+      for i:=0 to TileCount(m)-1 do
+      begin
+        FreeShape(TileAt(m,i)^.TileShape);
+        //setlength(TileAt(m,i)^.Values, 0);
+      end;
+      SetLength(m^.Tiles, 0,0);
+      SetLength(m^.MapDefaultValues, 0,0);
+      FreeNamedIndexCollection(m^.ValueIds);
+      FreeNamedIndexCollection(m^.KindIds);
+      FreePrototype(m^.MapPrototype);
+      Dispose(m);
+    end;
+    m := nil;
+    {$IFDEF TRACE}
+      TraceExit('sgMap', 'DoFreeMap');
+    {$ENDIF}
+  end;
+
+  procedure FreeMap(var m: map);
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgMap', 'FreeMap', 'map = ' + HexStr(map));
+    {$ENDIF}
+    
+    if(assigned(m)) then
+    begin
+      ReleaseMap(m^.name);
+    end;
+    m := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgMap', 'FreeMap');
+    {$ENDIF}
+  end;
+  
+  procedure ReleaseMap(name: String);
+  var
+    m: map;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgMap', 'ReleaseMap', 'map = ' + name);
+    {$ENDIF}
+    
+    m := MapNamed(name);
+    if (assigned(m)) then
+    begin
+      _Maps.remove(name).Free();
+      DoFreeMap(m);
+    end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgMap', 'ReleaseMap');
+    {$ENDIF}
+  end;
+  
+  procedure ReleaseAllMaps();
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgMap', 'ReleaseAllMaps', '');
+    {$ENDIF}
+    
+    ReleaseAll(_Maps, @ReleaseMap);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgMap', 'ReleaseAllMaps');
+    {$ENDIF}
+  end;
+
+    function HasMap(name: String): Boolean;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgAudio', 'HasMap', name);
+    {$ENDIF}
+    
+    result := _Maps.containsKey(name);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgAudio', 'HasMap', BoolToStr(result, true));
+    {$ENDIF}
+  end;
+
+  function MapNamed(name: String): Map;
+  var
+    tmp : TObject;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgAudio', 'MapNamed', name);
+    {$ENDIF}
+    
+    tmp := _Maps.values[name];
+    if assigned(tmp) then result := Map(tResourceContainer(tmp).Resource)
+    else result := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgAudio', 'MapNamed', HexStr(result));
+    {$ENDIF}
+  end;
+  
+  function MapName(m: Map): String;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgAudio', 'MapName', HexStr(m));
+    {$ENDIF}
+    
+    if assigned(m) then result := m^.name
+    else result := '';
+    
+    {$IFDEF TRACE}
+      TraceExit('sgAudio', 'MapName', result);
+    {$ENDIF}
+  end;
+  
+  function MapFilename(m: Map): String;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgAudio', 'MapFilename', HexStr(m));
+    {$ENDIF}
+    
+    if assigned(m) then result := m^.filename
+    else result := '';
+    
+    {$IFDEF TRACE}
+      TraceExit('sgAudio', 'MapFilename', result);
+    {$ENDIF}
+  end;
+  
+
+
+  
   initialization
   begin
     InitialiseSwinGame();
+    _Maps := TStringHash.Create(False, 1024);
   end;
 end.
 

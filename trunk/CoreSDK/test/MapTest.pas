@@ -38,7 +38,8 @@ var
   myMap: Map;
 	c: Character;
   p2d : Point2DArray;
-  i,j : LongInt;
+  i,j,k : LongInt;
+  
 begin
   OpenAudio();
   OpenGraphicsWindow('Maps Tests', 640, 480);
@@ -79,9 +80,20 @@ begin
       if keyTyped(vk_w) Then SetTileKind(TileAt(myMap,0,0),2);
       if KeyTyped(vk_1) then ToggleLayerVisibility(c, 1);
       if keyTyped(vk_s) Then SaveMap(myMap, 'test3.txt');
-      if keyTyped(vk_l) Then myMap := loadMap('test3.txt');
-      if keyTyped(vk_k) Then myMap := loadMap('test1.txt');
+      if keyTyped(vk_l) Then myMap := LoadMap('test3.txt');
+      if keyTyped(vk_k) Then myMap := LoadMap('test1.txt');
       if keyTyped(vk_r) Then RemoveValue(myMap, 'test');
+      if keyTyped(vk_z) Then FreeMap(myMap);
+      if keyTyped(vk_p) then
+      begin
+       for k := 0 to 1000 do
+       begin
+          myMap := LoadMap('test1.txt');
+        FreeMap(myMap);
+        //ReleaseAllResources();
+        myMap:=nil;
+       end;
+      end;
 
     UpdateSpriteAnimation(c^.CharSprite);
     //if KeyDown(vk_m) then
@@ -97,7 +109,7 @@ begin
 
     DrawMapDebug(myMap);
 
-		DrawCharacterWithStationary(c, 0, 1);
+	//	DrawCharacterWithStationary(c, 0, 1);
     
     if SpriteHasCollidedWithTile(myMap, 2, c^.CharSprite, i, j) then
     begin
