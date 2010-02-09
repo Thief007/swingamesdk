@@ -1,0 +1,27 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 150
+y: 0
+//width
+w: 650
+//height
+h: 30
+//active bmp
+a: mapeditor_grid.png
+//inactive bmp
+i: mapeditor_grid.png
+//Draggable
+d: false
+
+// Region data
+// Format: r: x, y, w, h, kind
+
+
+// label data
+r: 500, -3, 80, 30, label, grid,courier,l, Grid 
