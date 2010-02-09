@@ -543,7 +543,7 @@ implementation
   var
     // Contains the sound channels used to determine if a sound is currently
     // playing and enables us to stop the sound, check if it is playing etc.
-    soundChannels: Array[0..7] of Pointer;
+    soundChannels: Array[0..31] of Pointer;
     _SoundEffects: TStringHash;
     _Music: TStringHash;
   
@@ -555,6 +555,11 @@ implementation
     
     sgShared.AudioOpen :=  Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, 2, 2048 ) >= 0;
     result := sgShared.AudioOpen;
+    
+    if result then
+    begin
+      Mix_AllocateChannels(32);
+    end;
     
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'TryOpenAudio', BoolToStr(result, true));

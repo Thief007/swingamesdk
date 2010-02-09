@@ -35,16 +35,28 @@ begin
   
   PlaySoundEffect(snd2);
   Delay(1000);
+  StopSoundEffect(snd2);
   
+  WriteLn('Fading music out...');
   FadeMusicOut(500);
   Delay(500);
   
+  WriteLn('Press enter');
+  ReadLn();
+  
+  WriteLn('Stopping...');
+  StopMusic();
+  WriteLn('Press enter');
+  ReadLn();
+  
+  
   WriteLn('Should be playing midi any second...');
   FadeMusicIn(miditest, 500);
-  Delay(90000);
+  Delay(5000);
   WriteLn('Midi is finished...');
   FadeMusicOut(500);
-  Delay(1000);
+  WriteLn('Press enter');
+  ReadLn();
   
   for i := 0 to 3 do
   begin
@@ -53,8 +65,27 @@ begin
     StopMusic();
   end;
   
+  WriteLn('Press enter');
+  ReadLn();
+  
   PlayMusic(mus1);
   Delay(2000);
+  StopMusic();
+  WriteLn('Music stopped...');
+  
+  WriteLn('Press enter');
+  ReadLn();
+  
+  
+  WriteLn('Playing many channels...');
+  for i := 0 to 30 do
+  begin
+    PlaySoundEffect(snd);
+    Delay(100);
+  end;
+  
+  WriteLn('Press enter');
+  ReadLn();
   
   ReleaseAllResources();
   CloseAudio();
