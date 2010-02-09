@@ -40,6 +40,8 @@ type
   LayerCache = Array of Array of Array of LongInt;
 
   CharacterData = record
+    Name                  : String;
+    FileName              : String;
     CharSprite            : Sprite;                               // The Character's Sprite
     CharName              : String;                               // The Character's Name
     CharType              : String;                               // The Character's Type
@@ -72,7 +74,7 @@ type
   ///
   /// @class Character
   /// @getter Name
-	function CharacterName(c: Character) : String;
+	function CharacterCharacterName(c: Character) : String;
   
   /// Sets the the name of the Type of Character(eg boss, grunt etc)
   ///
@@ -347,7 +349,17 @@ type
   ///
   /// @class Character
   /// @method LoadCharacter
-  function LoadCharacter(filename: String) : Character;
+  function MapCharacter(name, filename: String): Character;
+  function LoadCharacter(filename: String): Character;
+  function DoLoadCharacter(filename, name: String): Character;
+  procedure DoFreeCharacter(var c: Character);
+  procedure FreeCharacter(var c: Character);
+  procedure ReleaseCharacter(name: String);
+  procedure ReleaseAllCharacters();
+  function CharacterFilename(c: Character): String;  
+  function CharacterName(c: Character): String;
+  function CharacterNamed(name: String): Character;
+  function HasCharacter(name: String): Boolean;
     
   /// Frees the Characrer, as well as calling FreeSprite on the Character's Sprite
   ///
@@ -355,16 +367,18 @@ type
   ///
   /// @class Character
   /// @method FreeCharacter
-  procedure FreeCharacter(var c: Character);
+ // procedure FreeCharacter(var c: Character);
 
 //=============================================================================
 implementation
   uses
-    sgCore, sgAnimations, sgGeometry, sgResources,
+    sgCore, sgAnimations, sgGeometry, sgResources, stringHash,
     sgImages, sgNamedIndexCollection, sgShared,
     sgSprites, SysUtils, sgUtils, StrUtils;
 //============================================================================= 
 
+  var
+    _Characters : TStringHash;
   //---------------------------------------------------------------------------
   // Character Name and Type
   //--------------------------------------------------------------------------- 
@@ -375,7 +389,7 @@ implementation
     c^.CharName := name;
   end;
   
-  function CharacterName(c: Character) : String;
+  function CharacterCharacterName(c: Character) : String;
   begin
 		if not Assigned(c) then exit;
     result := c^.CharName;
@@ -504,7 +518,7 @@ implementation
 		if not Assigned(c) then exit;
     result := c^.CharSprite;
   end;
-  
+ { 
     procedure FreeCharacter(var c : character);
   begin
     if not assigned(c) then exit;
@@ -513,7 +527,7 @@ implementation
     Dispose(c);
     c := nil;
   end;
-  
+  }
   //---------------------------------------------------------------------------
   // Handle Character Layers
   //--------------------------------------------------------------------------- 
@@ -636,18 +650,19 @@ implementation
 		if not Assigned(c) then exit;
     DrawSprite(c^.CharSprite);
   end;
-  
-  //---------------------------------------------------------------------------
-  // Load Character
-  //--------------------------------------------------------------------------- 
 
-  function LoadCharacter(filename: String) : Character;
+  //---------------------------------------------------------------------------
+  // Loading And Freeing Character
+  //---------------------------------------------------------------------------  
+  
+  function DoLoadCharacter(filename, name: String): Character;
   var
     bmpArray: Array of Bitmap;
     data, line, id, path: string;
     lineno, w, h, cols, rows, count, colliIndex: integer;
     aniTemp: AnimationTemplate;
-    bmpIDs: NamedIndexCollection;
+    bmpIDs, tempValueIDs: NamedIndexCollection;
+    singleValues: Array of Single;
     
     procedure SetCellDetails();
     begin
@@ -682,9 +697,12 @@ implementation
     
     procedure AddValuesToCharacter();
     begin
-      SetLength(result^.CharSprite^.values, Length(result^.CharSprite^.values) + 1);
+    {  SetLength(result^.CharSprite^.values, Length(result^.CharSprite^.values) + 1);
       AddName(result^.CharSprite^.valueIds, ExtractDelimited(1, data, [',']));
-      result^.CharSprite^.values[High(result^.CharSprite^.values)] := StrToInt(ExtractDelimited(2, data, [',']));
+      result^.CharSprite^.values[High(result^.CharSprite^.values)] := StrToInt(ExtractDelimited(2, data, [',']));}
+      SetLength(singleValues, Length(singleValues) + 1);
+      AddName(tempValueIDs, ExtractDelimited(1, data, [',']));
+      singleValues[High(singleValues)] := StrToInt(ExtractDelimited(2, data, [',']));
     end;
     
     procedure SetDirections();
@@ -800,52 +818,65 @@ implementation
       
     procedure VerifyVersion();
     begin
+      WriteLn('Starting to Verify');
       if EOF(input) then exit;
       line := '';
-      
+      WriteLn('Verify');
       while (Length(line) = 0) or (MidStr(line,1,2) = '//') do
       begin
         ReadLn(input, line);
         line := Trim(line);
+        WriteLn(line);
       end;
-      
+       WriteLn('EndVerify');
       //Verify that the line has the right version
       if line <> 'SwinGame Character #v1' then 
-        RaiseException('Error in character ' + filename + '. Character files must start with "SwinGame Character #v1"');
-      
+        RaiseException('Error in character ' + filename + '. Character files must start with "SwinGame Character #v1"');     
     end;
+    
   begin
+    WriteLn('Start Load');
     {$IFDEF TRACE}
-      TraceEnter('sgCharacters', 'LoadCharacter');
+      TraceEnter('sgCharacters', 'DoLoadCharacter', name + ' = ' + filename);
     {$ENDIF}
+    result := nil;
+    
+    if not FileExists(filename) then
+    begin
+      filename := PathToResource(filename, CharacterResource);
+      if not FileExists(filename) then
+      begin
+        RaiseException('Unable to locate Character ' + filename);
+        exit;
+      end;
+    end;
+    WriteLn('Checked if Exists');
+    New(result);    
+    result^.filename := filename;
+    result^.name := name;
     
     SetLength(bmpArray, 0);
     
-    {$IFDEF UNIX}
-      path := PathToResource('characters/' + filename);
-    {$ELSE}
-      path := PathToResource('characters\' + filename);
-    {$ENDIF}
     lineNo := 0;
-    
-    Assign(input, path);
+    WriteLn('Assign');
+    Assign(input, filename);
     Reset(input);
-    
+    WriteLn(filename);
     VerifyVersion();
-    
-    New(result);
-    
-    InitNamedIndexCollection(result^.CharSprite^.valueIds);
+    WriteLn('EndVerify2');
+   // InitNamedIndexCollection(result^.CharSprite^.valueIds);
+    InitNamedIndexCollection(tempValueIDs);
     InitNamedIndexCollection(bmpIDs);
     colliIndex := -1;
         
     try
       while not EOF(input) do
       begin 
-
+        WriteLn('Start Loop');
         lineNo := lineNo + 1;
         ReadLn(input, line);
         line := Trim(line);
+        WriteLn(line);
         if Length(line) = 0 then continue;  //skip empty lines
         if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
 
@@ -857,14 +888,204 @@ implementation
     end;
     
     result^.CharSprite := CreateSprite(bmpArray, NamesOf(bmpIDs));
+    result^.CharSprite^.valueIDs := tempValueIDs;
+    result^.CharSprite^.values := singleValues;
     result^.CharSprite^.animationTemplate := aniTemp;
     if colliIndex <> -1 then SpriteSetCollisionBitmap(result^.CharSprite,bmpArray[colliIndex]);
     result^.ShownLayerCache := UpdateShownLayerCache(result);
     SetActiveLayer(result);
+    WriteLn('End Load CHar');
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'DoLoadCharacter', HexStr(result));
+    {$ENDIF}  
+  end;
+
+  function LoadCharacter(filename: String): Character;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'LoadCharacter', filename);
+    {$ENDIF}
+    
+    result := MapCharacter(filename, filename);
     
     {$IFDEF TRACE}
       TraceExit('sgCharacters', 'LoadCharacter');
-    {$ENDIF}  
+    {$ENDIF}
+  end;
+  
+  function MapCharacter(name, filename: String): Character;
+  var
+    obj: tResourceContainer;
+    chr: Character;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'MapCharacter', name + ' = ' + filename);
+    {$ENDIF}
+        
+    if _Characters.containsKey(name) then
+    begin
+      result := CharacterNamed(name);
+      exit;
+    end;
+    
+    chr := DoLoadCharacter(filename, name);
+    obj := tResourceContainer.Create(chr);
+    
+    result := chr;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'MapCharacter');
+    {$ENDIF}
+  end;
+  
+  // private:
+  // Called to actually free the resource
+  procedure DoFreeCharacter(var c: Character);
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'DoFreeCharacter', 'c = ' + HexStr(c));
+    {$ENDIF}
+    
+    if assigned(c) then
+    begin
+      CallFreeNotifier(c);     
+      Dispose(c);
+    end;
+    c := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'DoFreeCharacter');
+    {$ENDIF}
+  end;
+  
+  procedure FreeCharacter(var c: Character);
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'FreeCharacter', 'c = ' + HexStr(c));
+    {$ENDIF}
+    
+    if(assigned(c)) then
+    begin
+      ReleaseCharacter(c^.name);
+    end;
+    c := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'FreeCharacter');
+    {$ENDIF}
+  end;
+  
+  procedure ReleaseCharacter(name: String);
+  var
+    chr: Character;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'ReleaseCharacter', 'c = ' + name);
+    {$ENDIF}
+    
+    chr := CharacterNamed(name);
+    if (assigned(chr)) then
+    begin
+      _Characters.remove(name).Free();
+      DoFreeCharacter(chr);
+    end;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'ReleaseCharacter');
+    {$ENDIF}
+  end;
+  
+  procedure ReleaseAllCharacters();
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'ReleaseAllCharacters', '');
+    {$ENDIF}
+    
+    ReleaseAll(_Characters, @ReleaseCharacter);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'ReleaseAllCharacters');
+    {$ENDIF}
+  end;
+ 
+//-----------------------------------------------------------------------
+
+  function HasCharacter(name: String): Boolean;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacter', 'HasCharacter', name);
+    {$ENDIF}
+    
+    result := _Characters.containsKey(name);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacter', 'HasCharacter', BoolToStr(result, true));
+    {$ENDIF}
+  end;
+  
+  function CharacterNamed(name: String): Character;
+  var
+    tmp : TObject;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacter', 'CharacterNamed', name);
+    {$ENDIF}
+    
+    tmp := _Characters.values[name];
+    if assigned(tmp) then result := Character(tResourceContainer(tmp).Resource)
+    else result := nil;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacter', 'CharacterNamed', HexStr(result));
+    {$ENDIF}
+  end;
+
+  function CharacterName(c: Character): String;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacter', 'CharacterName', HexStr(c));
+    {$ENDIF}
+    
+    if assigned(c) then result := c^.name
+    else result := '';
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacter', 'CharacterName', result);
+    {$ENDIF}
+  end;
+  
+  function CharacterFilename(c: Character): String;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacter', 'CharacterFilename', HexStr(c));
+    {$ENDIF}
+    
+    if assigned(c) then result := c^.filename
+    else result := '';
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacter', 'CharacterFilename', result);
+    {$ENDIF}
+  end;
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Load Character
+  //--------------------------------------------------------------------------- 
+ 
+  initialization 
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgCharacters', 'Initialise', '');
+    {$ENDIF}
+    
+    InitialiseSwinGame();
+    _Characters := TStringHash.Create(False, 1024);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgCharacters', 'Initialise');
+    {$ENDIF}
   end;
 
 end.
