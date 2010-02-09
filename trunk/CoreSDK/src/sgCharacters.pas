@@ -40,97 +40,321 @@ type
   LayerCache = Array of Array of Array of LongInt;
 
   CharacterData = record
-    CharSprite            : Sprite;
-    CharName              : String;
-    CharType              : String;
-    States                : NamedIndexCollection;
-    Directions            : NamedIndexCollection;
-    CharValueNames        : NamedIndexCollection;
-    LastAngle             : LongInt;
-    CurrentState          : LongInt;
-    CurrentDirection      : LongInt;
-    DirectionParameters   : Array of DirectionAngles;
-    CharValues            : Array of LongInt;
-    ShownLayers           : Array of Boolean;
-    ShownLayersByDirState : Array of Array of DirStateData;
-    ShownLayerCache       : LayerCache;
+    CharSprite            : Sprite;                               // The Character's Sprite
+    CharName              : String;                               // The Character's Name
+    CharType              : String;                               // The Character's Type
+    States                : NamedIndexCollection;                 // The names and indexs of the Character's States
+    Directions            : NamedIndexCollection;                 // The names and indexs of the Character's Direction
+    CurrentState          : LongInt;                              // The Character's Current State
+    CurrentDirection      : LongInt;                              // The Character's Current Direction
+    DirectionParameters   : Array of DirectionAngles;             // The different angle parameters the character checks to change the animation based on the direction
+    ShownLayers           : Array of Boolean;                     // Boolean stating whether a layer is to be drawn
+    ShownLayersByDirState : Array of Array of DirStateData;       // 
+    ShownLayerCache       : LayerCache;                           // The Character's Sprite
   end;
 	
-  //---------------------------------------------------------------------------
-  // Character Name and Type
-  //---------------------------------------------------------------------------   
-  procedure CharacterSetName(c: Character; name : String);
+  ///---------------------------------------------------------------------------
+  /// Character Name and Type
+  ///--------------------------------------------------------------------------- 
+  
+  /// Sets the Character's name
+  ///
+  /// @lib
+  /// @sn character:%s setName:%s
+  ///
+  /// @class Character
+  /// @setter Name
+  procedure CharacterSetName(c: Character; name : String);  
+  
+  /// Returns the Character's name
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter Name
 	function CharacterName(c: Character) : String;
+  
+  /// Sets the the name of the Type of Character(eg boss, grunt etc)
+  ///
+  /// @lib
+  /// @sn character:%s setType:%s
+  ///
+  /// @class Character
+  /// @setter CharacterType
+  procedure CharacterSetType(c: Character; name : String);
+  
+  /// Returns the string value of the character's type
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter CharacterType
 	function CharacterType(c: Character): String;
 	
 	//---------------------------------------------------------------------------
   // Character Directions and States
   //--------------------------------------------------------------------------- 
+    
+  /// Sets the current state of the character
+  ///
+  /// @lib
+  /// @sn character:%s setState:%s
+  ///
+  /// @class Character
+  /// @setter CurrentState
   procedure CharacterSetCurrentState(c: Character; state: Integer); 
-	procedure CharacterSetDirectionState(c: Character; direction: Integer);
+    
+  /// Sets the current direction of the character
+  ///
+  /// @lib
+  /// @sn character:%s setDirection:%s
+  ///
+  /// @class Character
+  /// @method CurrentDirection  
+  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
+    
+  /// Returns the index of the current state of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter CurrentState
 	function CharacterCurrentState(c: Character): LongInt;
+    
+  /// Returns the index of the current direction of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter CurrentDirection
 	function CharacterCurrentDirection(c: Character): LongInt;
-	function CharacterDirections(c: Character) : NamedIndexCollection;
-	function CharacterStates(c: Character) : NamedIndexCollection;
+  
+  /// Returns the count of the amount of directions that the character has
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter DirectionCount
+  function CharacterDirectionCount(c: Character): LongInt;
+    
+  /// Returns all of the possible directions of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter Directions
+  /// @length CharacterDirectionsCount
+	function CharacterDirections(c: Character) : StringArray;
+       
+  /// Returns all of the possible states of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter StateCount
+  function CharacterStateCount(c: Character): LongInt;
+    
+  /// Returns all of the possible directions of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter States
+  /// @length CharacterStateCount
+	function CharacterStates(c: Character) : StringArray;
 	
 	//---------------------------------------------------------------------------
   // Character Angles
-  //--------------------------------------------------------------------------- 
-	function CharacterLastAngle(c: Character): LongInt;  
+  //---------------------------------------------------------------------------    
+      
+  /// Returns the DirectionAngles data at the selected index. The min and max
+  /// of this record can be accessed by .min and .max
+  ///
+  /// @lib
+  /// @sn character:%s idx:%s
+  ///
+  /// @class Character
+  /// @method AngleAt
   function CharacterAngleAt(c: Character; index : integer): DirectionAngles;  
-  function CharacterAnglesLength(c: Character): LongInt;
+        
+  /// Returns the count of the Angles of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter AngleLength
+  function CharacterAnglesLength(c: Character): LongInt;    
+  
+  /// Returns the minimum angle in the DirectionAngles record at the index
+  /// specified
+  ///
+  /// @lib
+  /// @sn character:%s idx:%s
+  ///
+  /// @class Character
+  /// @method AngleMinAt
   function CharacterAngleMinAt(c: Character; index : integer): LongInt;
+    
+  /// Returns the maximum angle in the DirectionAngles record at the index
+  /// specified
+  ///
+  /// @lib
+  /// @sn character:%s idx:%s
+  ///
+  /// @class Character
+  /// @method AngleMaxAt
   function CharacterAngleMaxAt(c: Character; index : integer): LongInt;
-  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
-  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
 	
-	  //---------------------------------------------------------------------------
+	//---------------------------------------------------------------------------
   // Character Values
-  //---------------------------------------------------------------------------   
-  function CharacterValueNames(c: Character) : NamedIndexCollection; 
-  function CharacterValueAt(c: Character; index: Integer): LongInt;  
-  function CharacterValueCount(c: Character): LongInt;
+  //---------------------------------------------------------------------------     
+    
+  /// Returns the count of character values
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter ValueCount 
+  function CharacterValueCount(c: Character) : LongInt;
+  
+  /// Returns the names of all of the values of the character
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter ValueNames
+  /// @length CharacterValueCount
+  function CharacterValueNames(c: Character) : StringArray; 
+    
+  /// Returns the character's value at the index specified
+  ///
+  /// @lib
+  /// @sn character:%s valueIndex:$s
+  ///
+  /// @class Character
+  /// @method Value
+  function CharacterValueAt(c: Character; index: Integer): Single;
   
   //---------------------------------------------------------------------------
   // Character Sprite
-  //---------------------------------------------------------------------------    
+  //---------------------------------------------------------------------------   
+    
+  /// Returns the character's sprite
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @getter CharSprite  
   function CharacterSprite(c: Character) : Sprite;  
 	
  //---------------------------------------------------------------------------
   // Handle Character Layers
   //--------------------------------------------------------------------------- 
-  
+      
+  /// Sets the active layers from the shown layers cache, using the current
+  /// states and directions for the indexes of the array
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method ActiveLayer  
   procedure SetActiveLayer(var c: Character);
+	
+  /// Returns a new LayerCache. This is usually used when the values of the layers change
+  /// such as the order or visibility
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method UpdateDirectionAnimation 
   function UpdateShownLayerCache(c: Character): LayerCache;  	
 	
-  //Update the animation of the character depending on its direction
+  /// Update the animation of the character depending on its direction. Returns true
+  /// if the direction was changed and false if it was no changed
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method UpdateDirectionAnimation 
   function UpdateDirectionAnimation(c: Character) : Boolean;
   
-  //Update the animation of the character depending on its direction, including updating
-  //When the character's state goes stationary
+  ///Update the animation of the character depending on its direction, including updating
+  ///When the character's state goes stationary
+  ///
+  /// @lib
+  /// @sn character:%s stationaryState:%s newState:%s
+  ///
+  /// @class Character
+  /// @method UpdateDirectionAnimationWithStationary
+  /// @csn stationaryState:%s newState:%s
   function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
   
-  //Inverts the boolean of Showlayer for the layer at the index
+  /// Toggles whether or not the layer at the specified index is drawn or not
+  ///
+  /// @lib
+  /// @sn character:%s idx:%s
+  ///
+  /// @class Character
+  /// @method ToggleVisibility 
   procedure ToggleLayerVisibility(c: Character; index: integer);
+      
+  /// Returns whether or not the layer at the selected index is drawn
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method LayerShownAt 
+  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
 
   //---------------------------------------------------------------------------
   // Handle Character Drawing
   //---------------------------------------------------------------------------   
   
-  //Draw Character that changes state when its velocity is 0
+  /// Draw Character that changes state when its velocity is 0 to be the stationary
+  /// state which is specified.
+  ///
+  /// @lib
+  /// @sn character:%s stationaryState:%s state:%s
+  ///
+  /// @class Character
+  /// @method DrawCharacterWithStationary
+  /// @csn stationaryState:%s state:%s
   procedure DrawCharacterWithStationary(c: Character; stationaryState, state: Integer);
   
-  //Draw Character without a stationary state with default facing down when not moving
+  /// Draw Character without a stationary state with default facing down when not moving   
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method DrawCharacter
   procedure DrawCharacter(c: Character);
+   
+  /// Draws the character's sprite with no additional functionality
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method DrawCharacterSprite
+  procedure DrawCharacterSprite(c: character);
 	
   //---------------------------------------------------------------------------
   // Load and Free Character
   //--------------------------------------------------------------------------- 
-	
-  //Loads Character from TextFile
+	    
+  /// Loads the character from a text file
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method LoadCharacter
   function LoadCharacter(filename: String) : Character;
     
-  //Frees the pointer to the character and it's sprite
+  /// Frees the Characrer, as well as calling FreeSprite on the Character's Sprite
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method FreeCharacter
   procedure FreeCharacter(var c: Character);
 
 //=============================================================================
@@ -179,12 +403,6 @@ implementation
     c^.CurrentState := state;
   end;
   
-  procedure CharacterSetDirectionState(c: Character; direction: Integer);
-  begin
-		if not Assigned(c) then exit;
-    c^.CurrentState := direction;
-  end;
-  
   function CharacterCurrentState(c: Character): LongInt;
   begin
 		if not Assigned(c) then exit;
@@ -197,28 +415,40 @@ implementation
     result := c^.CurrentDirection;
   end;
   
-  function CharacterDirections(c: Character) : NamedIndexCollection;
+  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
   begin
 		if not Assigned(c) then exit;
-    result := c^.Directions;
+    c^.CurrentDirection := direction;
   end;
   
-  function CharacterStates(c: Character) : NamedIndexCollection;
+  function CharacterDirectionCount(c: Character) : LongInt;
   begin
 		if not Assigned(c) then exit;
-    result := c^.States;
+    result := NameCount(c^.Directions);
+  end;
+  
+  function CharacterDirections(c: Character) : StringArray;
+  begin
+		if not Assigned(c) then exit;
+    result := c^.Directions.names;
+  end;
+  
+  function CharacterStateCount(c: Character) : LongInt;
+  begin
+		if not Assigned(c) then exit;
+    result := NameCount(c^.States);
+  end;
+  
+  function CharacterStates(c: Character) : StringArray;
+  begin
+		if not Assigned(c) then exit;
+    result := c^.States.names;
   end;
   
   //---------------------------------------------------------------------------
   // Character Angles
   //--------------------------------------------------------------------------- 
-    
-  function CharacterLastAngle(c: Character): LongInt;
-  begin
-		if not Assigned(c) then exit;
-    result := c^.LastAngle;
-  end;
-  
+      
   function CharacterAngleAt(c: Character; index : integer): DirectionAngles;
   begin
 		if not Assigned(c) then exit;
@@ -242,39 +472,27 @@ implementation
 		if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].max;
   end;
-  
-  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
-  begin
-		if not Assigned(c) then exit;
-    result := c^.ShownLayers[index];
-  end;
-  
-  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
-  begin
-		if not Assigned(c) then exit;
-    c^.CurrentDirection := direction;
-  end;
 
   //---------------------------------------------------------------------------
   // Character Values
   //---------------------------------------------------------------------------   
-
-  function CharacterValueNames(c: Character) : NamedIndexCollection;
+  
+  function CharacterValueNames(c: Character) : StringArray;
   begin
 		if not Assigned(c) then exit;
-    result := c^.CharValueNames;
+    result := c^.CharSprite^.valueIds.names;
   end;
   
-  function CharacterValueAt(c: Character; index: Integer): LongInt;
+  function CharacterValueAt(c: Character; index: Integer): Single;
   begin
 		if not Assigned(c) then exit;
-    result := c^.CharValues[index];
+    result := c^.CharSprite^.values[index];
   end;
   
   function CharacterValueCount(c: Character): LongInt;
   begin
 		if not Assigned(c) then exit;
-    result := Length(c^.CharValues);
+    result := NameCount(c^.CharSprite^.valueIds);
   end;
   
   //---------------------------------------------------------------------------
@@ -300,31 +518,38 @@ implementation
   // Handle Character Layers
   //--------------------------------------------------------------------------- 
   
+  // Setting the visibile layers array in the sprite to match the array of the shown layer cache
   procedure SetActiveLayer(var c: Character);
   begin
 		if not Assigned(c) then exit;
     c^.CharSprite^.visibleLayers := c^.ShownLayerCache[c^.CurrentState, c^.CurrentDirection];
   end;
-
+  
+  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
+  begin
+		if not Assigned(c) then exit;
+    result := c^.ShownLayers[index];
+  end;
+   
   function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
   begin
 		if not Assigned(c) then exit;
     result := false;
-    if (c^.CharSprite^.velocity.x = 0) AND (c^.CharSprite^.velocity.y = 0) then 
+    if (c^.CharSprite^.velocity.x = 0) AND (c^.CharSprite^.velocity.y = 0) then  // Check if Character is moving
     begin
-      if c^.CurrentState = state then exit;
-      c^.CurrentState := state;
-      SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim);
-      result:= true;
+      if c^.CurrentState = state then exit;                                      // if current state is the stationary state then exit
+      c^.CurrentState := state;                                                  // Set the current state to the stationary state
+      SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim); // Restart the animation for the animation at the index
+      result:= true;                                                              // Return true that the state was changed
     end
     else begin
-      if c^.CurrentState <> newState then
+      if c^.CurrentState <> newState then                                         // if the current state isnt the new state then the current state needs to be changed
       begin
-        c^.CurrentState := newState;
-        SetActiveLayer(c);
-        SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim);
-      end;
-      result := UpdateDirectionAnimation(c);
+        c^.CurrentState := newState;  
+        SetActiveLayer(c);                                                        // Change the active layer in the sprite to draw for this state
+        SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim); // Restart the animation for the animation at the index
+      end;  
+      result := UpdateDirectionAnimation(c);                                      // Call Update direction Animation
     end;
   end;
   
@@ -334,31 +559,34 @@ implementation
     angle : single;
   begin
 		if not Assigned(c) then exit;
-    angle := VectorAngle(c^.CharSprite^.velocity);
+    angle := VectorAngle(c^.CharSprite^.velocity);                                    // Get the angle of the character from it's velocity
     result := false;
-    for i := 0 to NameCount(c^.Directions) -1 do
+    for i := 0 to NameCount(c^.Directions) -1 do                                      // Low to high directions
     begin
-      if (i = c^.CurrentDirection) then continue;
+      if (i = c^.CurrentDirection) then continue;                                     // if the index is the current direction then nothing needs to be checked so continue
       
-      if ((c^.DirectionParameters[i].min < c^.DirectionParameters[i].max) AND (angle >= c^.DirectionParameters[i].min) AND (angle <= c^.DirectionParameters[i].max)) OR 
-      (((c^.DirectionParameters[i].min > 0) AND (c^.DirectionParameters[i].max < 0)) AND (((angle >= c^.DirectionParameters[i].min) AND (angle <= 180)) OR ((angle <= c^.DirectionParameters[i].max) AND (angle >= -180)))) then
+      if ((c^.DirectionParameters[i].min < c^.DirectionParameters[i].max) AND 
+          (angle >= c^.DirectionParameters[i].min) AND (angle <= c^.DirectionParameters[i].max)) OR 
+          (((c^.DirectionParameters[i].min > 0) AND (c^.DirectionParameters[i].max < 0)) AND 
+          (((angle >= c^.DirectionParameters[i].min) AND (angle <= 180)) OR 
+          ((angle <= c^.DirectionParameters[i].max) AND (angle >= -180)))) then
       begin
         c^.CurrentDirection := i;
         SetActiveLayer(c);
-        SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim);
+        SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim); // Restart the animation for the animation at the index
         result := true;
       end
     end;
   end; 
   
-  function UpdateShownLayerCache(c: Character): LayerCache;
+  function UpdateShownLayerCache(c: Character): LayerCache; // Layer cache is a 3d array for states, directions and layers
   var
     states, directions, layers, count : Integer;
   begin
 		if not Assigned(c) then exit;
     SetLength(result, NameCount(c^.States), NameCount(c^.Directions));
     
-    for states := Low(result) to High(result) do
+    for states := Low(result) to High(result) do                                      // Loop through state indexes
     begin
       for directions := Low(result[states]) to High(result[states]) do
       begin
@@ -368,7 +596,7 @@ implementation
           if c^.ShownLayers[c^.ShownLayersByDirState[states, directions].LayerOrder[layers]] then
           begin
             SetLength(result[states,directions], Length(result[states,directions]) + 1);
-            result[states,directions,count] := c^.ShownLayersByDirState[states, directions].LayerOrder[layers];
+            result[states,directions,count] := c^.ShownLayersByDirState[states, directions].LayerOrder[layers]; //Update the shown layer cache using the updated values
             count += 1;
           end;
         end;
@@ -379,9 +607,9 @@ implementation
   procedure ToggleLayerVisibility(c: Character; index: integer);
   begin
 		if not Assigned(c) then exit;
-    c^.ShownLayers[index] := not c^.ShownLayers[index];
-    c^.ShownLayerCache := UpdateShownLayerCache(c);
-    SetActiveLayer(c);
+    c^.ShownLayers[index] := not c^.ShownLayers[index];     // Invert the boolean of the shown layer  for the specified index
+    c^.ShownLayerCache := UpdateShownLayerCache(c);         // Since a shown layer has been changed,  the cache needs to be updated
+    SetActiveLayer(c);                                      // Set the active layer in the sprites visibile layer array
   end;
   
 
@@ -400,6 +628,12 @@ implementation
   begin
 		if not Assigned(c) then exit;
     UpdateDirectionAnimation(c);
+    DrawSprite(c^.CharSprite);
+  end;
+  
+  procedure DrawCharacterSprite(c: character);
+  begin
+		if not Assigned(c) then exit;
     DrawSprite(c^.CharSprite);
   end;
   
@@ -448,9 +682,9 @@ implementation
     
     procedure AddValuesToCharacter();
     begin
-      SetLength(result^.CharValues, Length(result^.CharValues) + 1);
-      AddName(result^.CharValueNames, ExtractDelimited(1, data, [',']));
-      result^.CharValues[High(result^.CharValues)] := StrToInt(ExtractDelimited(2, data, [',']));
+      SetLength(result^.CharSprite^.values, Length(result^.CharSprite^.values) + 1);
+      AddName(result^.CharSprite^.valueIds, ExtractDelimited(1, data, [',']));
+      result^.CharSprite^.values[High(result^.CharSprite^.values)] := StrToInt(ExtractDelimited(2, data, [',']));
     end;
     
     procedure SetDirections();
@@ -601,7 +835,7 @@ implementation
     
     New(result);
     
-    InitNamedIndexCollection(result^.CharValueNames);
+    InitNamedIndexCollection(result^.CharSprite^.valueIds);
     InitNamedIndexCollection(bmpIDs);
     colliIndex := -1;
         
