@@ -306,57 +306,279 @@ interface
   ///
   /// @lib CountSelectedTiles
   function CountSelectedTiles(m: Map) : LongInt;
+
+  /// Returns the prototype of the tiles used within the map.
+  ///
+  /// @lib MapPrototype
+  ///
+  /// @class Map
+  /// @getter Prototype
   function MapPrototype(m: Map) : ShapePrototype;
+
+  /// Returns the number of rows within the given map
+  ///
+  /// @lib MapHeight
+  ///
+  /// @class Map
+  /// @getter height  
   function MapHeight(m: Map) : Longint;
+
+  /// Returns the number of columns within the given map
+  ///
+  /// @lib MapWidht
+  ///
+  /// @class Map
+  /// @getter width
   function MapWidth(m: Map) : Longint;
+
+  /// Returns the name of the value given the index.
+  ///
+  /// @lib ValueName
+  ///
+  /// @class Map
+  /// @getter ValueName
   function ValueName(m : map; idx:LongInt): String;
+  /// Returns the name of the kind given the index.
+  ///
+  /// @lib KindName
+  ///
+  /// @class Map
+  /// @getter KindName
   function KindName(m : map; idx:LongInt): String;
+
+  /// Returns if the map type is isometric.
+  ///
+  /// @lib Isometric
+  ///
+  /// @class Map
+  /// @getter Isometric
   function Isometric(m : map): Boolean;
 
   
-//================================//
-//return tile properties functions//
-//================================//
-
+  //----------------------------------------------------------------------------
+  //return tile properties functions//
+  //----------------------------------------------------------------------------
+  /// Returns the Id of the given Tile
+  ///
+  /// @lib TileId
+  ///
+  /// @class Tile
+  /// @getter id
   function TileId(t: Tile): LongInt;
+  /// Returns the neighbouring tile by the given tile and direction
+  ///
+  /// @lib TileNeightbour
+  /// @sn neighbourOf:%s at:s%
+  ///
+  /// @class Tile
+  /// @method neighbour
   function TileNeighbour(t: tile; d:Direction): Tile;
+  /// Returns  the shape of a given tile
+  ///
+  /// @lib TileShape
+  ///
+  /// @class Tile
+  /// @getter shape
   function TileShape(t: tile): Shape;
+
+  /// Returns the center position of the given tile
+  ///
+  /// @lib TileCenter
+  ///
+  /// @class Tile
+  /// @getter center
   function TileCenter(t: tile): Point2D;
+  /// Return the top right position of the given tile
+  ///
+  /// @lib TilePosition
+  ///
+  /// @class Tile
+  /// @getter position
   function TilePosition(t: tile): Point2D;
-  function TileValueName(m: Map; id: LongInt): string;
-  function TileValueId(m: Map; n: String): LongInt;
+  /// Returns the value of a given tile at a given index
+  ///
+  /// @lib TileValue
+  /// @sn Tile:%s ValueId:%s
+  ///
+  /// @class Tile
+  /// @method Value
   function TileValue(t: Tile; vId: LongInt) : Single;
-  function TileKindName(m: Map; t: Tile) : String;
+  /// Returns the kind of the given tile
+  ///
+  /// @lib TileKind
+  /// @sn Tile:%s KindId:%s
+  ///
+  /// @class Tile
+  /// @getter kind
   function TileKind(t: Tile) : LongInt;
+  /// Returns Tile given the id of the tile
+  ///
+  /// @lib TileAtId
+  ///
+  /// @class Map
+  /// @method TileAt
   function TileAt(m: Map; id:LongInt) : Tile; Overload;
+
+  /// Return Tile given the top right position
+  ///
+  /// @lib TileAtPosition
+  ///
+  /// @class Map
+  /// @overload TileAt TileAtPosition
   function TileAt(m: Map; const pos:Point2D) : Tile; Overload;
+
+  /// Returns tile given the row and column of the tile
+  ///
+  /// @lib TileAtRowCol
+  ///
+  /// @class Map
+  /// @overLoad TileAt TileAtRowCol
   function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
 
-  //======================//
-  // Set Tile procedures  //
-  //======================//
+  //----------------------------------------------------------------------------
+  // Set Tile procedures 
+  //----------------------------------------------------------------------------
+  
+  /// Sets the kind of a given tile
+  ///
+  /// @lib SetTileKind
+  /// @sn setTile:%s kind:%s
+  ///
+  /// @class Tile
+  /// @setter TileKind
   procedure SetTileKind(t : Tile; kindId : LongInt);
-  procedure SetTileValue(t : Tile; VId : LongInt; value : Single);  
-  procedure SetTileValue(m : map; t :Tile; name : String; val : Single);
+
+  /// Sets the Values of a given tile at a given index
+  ///
+  /// @lib SetTileValue
+  /// @sn setTile:%s valueId:%s value:%s
+  ///
+  /// @class Tile
+  /// @method TileValue
+  procedure SetTileValue(t : Tile; VId : LongInt; value : Single); overload;
+
+  /// Sets the values of a given tile at a given name
+  ///
+  /// @lib SetTileValueByName
+  ///
+  /// @class Tile
+  /// @overload TileValue TileValueByName
+  procedure SetTileValue(m : map; t :Tile; name : String; val : Single); overload;
+
+
+  /// Sets the bitmap of a given Tile at a given layer
+  ///
+  /// @lib SetTileBitmap
+  /// @sn setTile:%s layer:%s bitmap:%s cell:%s
+  ///
+  /// @class Tile
+  /// @method SetTileBitmap
   procedure SetTileBitmap(t : Tile; layer : LongInt; bmp : Bitmap; cell : LongInt);
 
-
+  /// returns an empty new map
+  ///
+  /// @lib NewMap
+  ///
+  /// @class map
+  /// @method NewMap
+  function NewMap():map;
 
   //======================//
   // Set map procedures   //
   //======================//
+  /// Adds a values to map where idx1 represents kind and idx2 represents value index
+  ///
+  /// @lib AddMapValues
+  /// @sn 
+  ///
+  /// @class Map
+  /// @method AddMapValues
   procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
-  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean); 
-  function NewMap():map;
+  /// Sets the map width, height layer count, tile width, tile height and if the map is isometric.
+  ///
+  /// @lib MapSetDimension
+  ///
+  /// @class map
+  /// @method MapSetDimension
+  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
+
+  /// Allocates Default values to given tile depending on the tile's kind
+  ///
+  /// @lib AllocateDefaultValues
+  /// @sn 
+  ///
+  /// @class Map
+  /// @method AllocaDefaultValues
   procedure AllocateDefaultValues(map:Map; var tile: TileData);
+
+  /// Reconfigures the map given new dimensions/values.
+  ///
+  ///@lib ReconfigureMap
+  ///
+  /// @class Map
+  /// @method ReconfigureMap
   procedure ReconfigureMap(var m:map);
+
+  /// Adds a single bitmap to bitmapCellKind within the map.
+  ///
+  /// @lib AddBitmap
+  /// 
+  /// @class Map
+  /// @setter AddBItmap
   procedure AddBitmap(m:map; filename:String);
+
+  /// Adds a value name to the named index collection within the map
+  ///
+  /// @lib AddValue
+  ///
+  /// @class Map
+  /// @setter AddValue
   procedure AddValue(m:map; vName:string);
+
+  /// Adds bitmap cells to bitmap cell kind within map
+  ///
+  /// @lib MappAddBitmapCells
+  ///
+  /// @class Map
+  /// @method MapAddBitmapCells
   procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
+
+  /// Adds Kind Name to the numed index collection within the map.
+  ///
+  /// @lib AddKind
+  ///
+  /// @class Map
+  /// @setter AddKind
   procedure AddKind(m:map; kname:string);
+  /// Removes a value name from the named index collection and reshuffles the values
+  ///
+  /// @lib RemoveValueName
+  ///
+  /// @class Map
+  /// @method RemoveValue 
   procedure RemoveValue(m:map; vName:string);overload;
+
+  /// Removes the value from the named index collection by idx and reshuffles the value
+  ///
+  /// @lib RemoveValueIdx
+  ///
+  /// @class Map
+  /// @overload RemoveValue RemoveValueId
   procedure RemoveValue(m:map; idx:LongInt); overload;
+  /// Removes the kind from the named index collection by idx and sets all tiles of removed kind to -1
+  ///
+  /// @lib RemoveKindIdx
+  ///
+  /// @class Map
+  /// @method RemoveKind
   procedure RemoveKind(m:map; idx:LongInt); overload;
+  /// Removes the kind From the named index collection by kind
+  /// name and sets all tiles of removed kind to -1
+  ///
+  /// @lib RemoveKindName
+  ///
+  /// @class Map
+  /// @overload RemoveKind RemoveKindByName
   procedure RemoveKind(m:map; kname:string); overload;
 
 
@@ -812,7 +1034,7 @@ interface
     height := Round(((rowCount) * map^.TileHeight) - ((rowCount)*(map^.TileStagger.Y)));
     
    // writeln('width: ',width, ' ','height: ',height);
-
+    if not assigned(TileAt(map, startRow, startCol)) then exit;
     pt := TileAt(map, startRow, startCol)^.position;
     pt := PointAdd(pt, InvertVector(CameraPos()));
     //the last row doesnt clip at 20 because the camera has not reached the next row.
@@ -822,7 +1044,7 @@ interface
     //apply stagger to top of the map only.
     if (startrow = 0) then pt.Y += map^.TileStagger.Y;
     //WriteLn('Clip At: ', PointToString(pt));
-    PushClip(RectangleFrom(pt.x, pt.y, width ,height));
+    PushClip(RectangleFrom(pt.x, pt.y, width+1 ,height+1)); // +1 because in grid mode the line is drawn 1 px outside the shape.
   end;
 
   //checks if tile is Selected.
@@ -952,6 +1174,7 @@ interface
           //Draw debug information
           DrawText(IntToStr(col) + ':' + IntToStr(row), map^.mapHighlightcolor, map^.Tiles[row,col].Position);
           DrawText(IntToStr(map^.Tiles[row,col].kind), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 10);
+          if length(map^.Tiles[row,col].values) <> 0 then
           DrawText(FloatToStr(map^.Tiles[row,col].values[0]), map^.mapHighlightcolor, map^.Tiles[row,col].Position.x, map^.Tiles[row,col].Position.y + 20);
 
           for dir:=low(map^.Tiles[row,col].SurroundingTiles) to high(map^.Tiles[row,col].SurroundingTiles) do
@@ -980,7 +1203,7 @@ interface
         HighlightTile(@m^.Tiles[row,col], offset);
       end;
     end;
-    PopClip();
+    if not((m^.MapWidth = 0 ) or ( m^.MapHeight = 0 )) then PopClip();
   end;
 
   procedure DrawMapGrid(m:map); overload;
@@ -1660,9 +1883,9 @@ interface
     row,col : LongInt;
   begin
     result:=nil;
-    if (pos.y <0) or (pos.x <0) then exit;
+    if (pos.y <0) or (pos.x <0) or (m^.TileWidth = 0) or (m^.TileHeight = 0) then exit;
     MapRangeFromRect(RectangleFrom(pos.x,pos.y,1,1),m, startCol, startRow, endCol, endRow);
-    writeln('startrow: ', startRow, 'startCol: ', startcol, 'endrow: ',endrow, 'endCol: ', endcol);
+    //writeln('startrow: ', startRow, 'startCol: ', startcol, 'endrow: ',endrow, 'endCol: ', endcol);
     for row := startrow to endrow do
     begin
       for col := startcol to endcol do
@@ -1681,13 +1904,6 @@ interface
     result := t^.Kind;
   end;
 
-  function TileKindName(m: Map; t: Tile) : String;
-  begin
-    result := '';
-    if NOT Assigned(t) then exit
-    else
-      result := NameAt(m^.KindIds, Tilekind(t));
-  end;
 
   function TileValue(t: Tile; vId: LongInt) : Single;
   begin
@@ -1697,21 +1913,7 @@ interface
     result := t^.Values[vId];
   end;
 
-  function TileValueId(m: Map; n: String): LongInt;
-  begin
-    result := -1;
-    if NOT Assigned(m) then exit
-    else
-    result := IndexOf(m^.ValueIds, n);
-  end;
 
-  function TileValueName(m: Map; id: LongInt): string;
-  begin
-    result := '';
-    if NOT Assigned(m) then exit
-    else
-    result := NameAt(m^.ValueIds, id);
-  end;
 
   function TilePosition(t: tile): Point2D;
   begin
@@ -1819,7 +2021,9 @@ interface
   //======================//
   procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
   begin
+  
     m^.MapDefaultValues[idx1,idx2] := val;
+    writeln(val);
     ReconfigureMap(m);
   end;
   

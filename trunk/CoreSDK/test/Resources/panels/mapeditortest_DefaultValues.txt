@@ -33,4 +33,4 @@ r: 78, 125, 70, 25, label, b.Values.Remove,courierMedium, l, Remove
 
 r: 15, 150, 120, 15, textbox, Tb.Map.Value, courierSmall, 20, l, 
 
-r: 45, 165, 70, 30, label, b.Value.assign,courierMedium,l,Assign 
+r: 45, 165, 70, 30, label,b.Values.Assign,courierMedium,l,Assign 
