@@ -21,7 +21,7 @@ d: true
 
 // Region data
 // Format: r: x, y, w, h, kind
-r: 255, 310, 150, 30, 0, Button1
+r: 255, 310, 150, 30, Button, Button1
 
 r: 360, 30, 280, 25, Label, Label1, courier, l, Test Label
 

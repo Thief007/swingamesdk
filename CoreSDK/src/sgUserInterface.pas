@@ -41,7 +41,16 @@ type
     gkRadioGroup = 8, 
     gkTextBox = 16, 
     gkList = 32,
-    gkAnyKind = (1 or 2 or 4 or 8 or 16 or 32) );
+    gkAnyKind = 63 // = (1 or 2 or 4 or 8 or 16 or 32) 
+    );
+  
+  EventKind = (
+      ekClicked,
+      ekTextEntryEnded,
+      ekSelectionMade
+    );
+  
+  GUIEventCallback = procedure (r: Region; kind: EventKind);
   
   GUITextBoxData = record
     contentString:  String;
@@ -98,7 +107,7 @@ type
   RegionData = record
     stringID:       String;
     kind:           GUIElementKind;
-    regionID:       LongInt;
+    regionIdx:       LongInt;
     elementIndex:   LongInt;
     area:           Rectangle;
     active:         Boolean;
@@ -112,23 +121,35 @@ type
     area:                 Rectangle;
     visible:              Boolean;
     active:               Boolean;
+    draggable:            Boolean;
+    
+    // The panel's bitmaps
     panelBitmap:          Bitmap;
     panelBitmapInactive:  Bitmap;
     panelBitmapActive:    Bitmap;
+    
+    // The regions within the Panel
     regions:              Array of RegionData;
     regionIds:            NamedIndexCollection;
+    
+    // The extra details for the different kinds of controls
     labels:               Array of GUILabelData;
     checkBoxes:           Array of GUICheckboxData;
     radioGroups:          Array of GUIRadioGroupData;
     textBoxes:            Array of GUITextBoxData;
     lists:                Array of GUIListData;
-    draggable:            Boolean;
-    modal:                Boolean;
+    
+    modal:                Boolean;                      // A panel that is modal blocks events from panels shown earlier.
+    
+    // Event callback mechanisms
+    callbacks:            Array of Array of GUIEventCallback; // [region][callback]
   end;
   
-  FileDialogSelectType = ( fdFiles = 1, fdDirectories = 2, fdFilesAndDirectories = 3 );
-  
-
+  FileDialogSelectType = ( 
+    fdFiles = 1, 
+    fdDirectories = 2, 
+    fdFilesAndDirectories = 3 // = (1 or 2)
+    );
 
 //---------------------------------------------------------------------------
 // Alter GUI global values
@@ -258,6 +279,8 @@ procedure MovePanel(p: Panel; mvmt: Vector);
 ///
 /// @lib
 function PanelAtPoint(pt: Point2D): Panel;
+
+
 
 /// Returns true if point is in any region within the panel
 ///
@@ -389,7 +412,7 @@ function PanelHeight(p: Panel): LongInt;
 /// @class Panel
 /// @getter Width
 function PanelWidth(p: Panel): LongInt;
-//function PanelActive(pnl: Panel): Boolean;
+
 
 //---------------------------------------------------------------------------
 // Regions
@@ -411,7 +434,7 @@ function RegionClicked(): Region;
 ///
 /// @class Region
 /// @getter ID
-function RegionID(r: Region): string;
+function RegionID(r: Region): String;
 
 /// Returns the Region with the ID passed from the panel passed
 ///
@@ -485,6 +508,17 @@ function RegionWidth(r: Region): LongInt;
 ///
 /// @lib
 function RegionAtPoint(p: Panel; const pt: Point2D): Region;
+
+/// Registers the callback with the panel, when an event related to this
+/// region occurs the procedure registered will be called.
+///
+/// @lib
+/// @sn region:%s registerEventCallback:%s
+/// 
+/// @class Region
+/// @method  RegisterEventCallback
+procedure RegisterEventCallback(r: Region; callback: GUIEventCallback);
+
 
 //---------------------------------------------------------------------------
 //Checkbox
@@ -587,6 +621,11 @@ function TextBoxFont(r: Region): Font; overload;
 /// @class Textbox
 /// @setter Font
 procedure TextboxSetFont(Tb: GUITextbox; f: font);
+
+/// Gets the textbox text from region
+/// 
+/// @lib TextboxTextFromId
+function TextBoxText(id: String): String; overload;
 
 /// Gets the textbox text from region
 /// 
@@ -765,6 +804,11 @@ procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
 /// @class List
 /// @getter activeItemText
 function ListActiveItemText(pnl: Panel; ID: String): String;
+
+/// Returns the active item text of the List in with ID
+///
+/// @lib
+function ListActiveItemText(ID: String): String;
 
 /// Returns Returns the list of the region r
 ///
@@ -1028,6 +1072,7 @@ function  LabelFont(r: Region): Font; overload;
 procedure LabelSetFont(l: GUILabel; s: String);
 function  LabelText(lb: GUILabel): string; overload;
 function  LabelText(r: Region): string; overload;
+procedure LabelSetText(id: String; newString: String); overload;
 procedure LabelSetText(lb: GUILabel; newString: String); overload;
 procedure LabelSetText(r: Region; newString: String); overload;
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
@@ -1101,6 +1146,38 @@ var
   GUIC: GUIController;
   // The file dialog
   dialog: FileDialogData;
+
+//
+// Event management code
+//
+
+// This procedure calls the callbacks for the event
+// This is private to the unit
+procedure SendEvent(r: Region; kind: EventKind);
+var
+  i, idx: Integer;
+  pnl: Panel;
+begin
+  if not assigned(r) then exit;
+  pnl := r^.parent;
+  if not assigned(pnl) then exit;
+  idx := r^.regionIdx;
+  
+  for i := 0 to High(pnl^.callbacks[idx]) do
+  begin
+    try
+      pnl^.callbacks[idx][i](r, kind);
+    except
+      WriteLn(stderr, 'Error with event callback!');
+    end;
+  end;
+end;
+
+
+
+
+
+
 
 procedure HandlePanelInput(pnl: Panel); forward;
 
@@ -1184,27 +1261,37 @@ function BitmapToDraw(r: Region): Bitmap;
 begin
   result := nil;
   if not(assigned(r)) then exit;
-  if not(r^.parent^.active) then begin result := r^.parent^.panelBitmapInactive; exit; end;
   
+  // Check if the panel or the region is inactive
+  if (not r^.parent^.active) or (not r^.active) then 
+  begin
+    result := r^.parent^.panelBitmapInactive; 
+    exit; 
+  end;
+  
+  // Check based upon the kind of the region
   case r^.kind of
-    gkButton:     begin
-                    if MouseDown(LeftButton) AND PointInRect(MousePosition(), RegionRectangleOnScreen(r)) then
-                      result := r^.parent^.panelBitmapActive
-                    else
-                      result := nil; // dont redraw the r^.parent^.panelBitmap;
-                  end;
-    gkCheckBox:   begin
-                    if CheckboxState(r) then 
-                     result := r^.parent^.panelBitmapActive
-                   else
-                     result := nil; // dont redraw the 
-                  end;
-    gkRadioGroup: begin
-                    if r = ActionRadioButton(r) then
-                      result := r^.parent^.panelBitmapActive
-                    else
-                      result := nil; // dont redraw the 
-                  end;
+    gkButton:
+    begin
+      if MouseDown(LeftButton) AND PointInRect(MousePosition(), RegionRectangleOnScreen(r)) then
+        result := r^.parent^.panelBitmapActive
+      else
+        result := nil; // dont redraw the r^.parent^.panelBitmap;
+    end;
+    gkCheckBox:
+    begin
+      if CheckboxState(r) then 
+       result := r^.parent^.panelBitmapActive
+     else
+       result := nil; // dont redraw the 
+    end;
+    gkRadioGroup: 
+    begin
+      if r = ActionRadioButton(r) then
+        result := r^.parent^.panelBitmapActive
+      else
+        result := nil; // dont redraw the 
+    end;
   end;
 end;
 
@@ -1725,7 +1812,7 @@ procedure HandlePanelInput(pnl: Panel);
       lst^.startingAt := lst^.startingAt + inc;
   end;
   
-  procedure _PerformListClicked(lst: GUIList; pointClicked: Point2D);
+  procedure _PerformListClicked(lstRegion: Region; lst: GUIList; pointClicked: Point2D);
   var
     i: LongInt;
   begin
@@ -1765,6 +1852,7 @@ procedure HandlePanelInput(pnl: Panel);
       if PointInRect(pointClicked, lst^.placeHolder[i]) then
       begin
         lst^.activeItem := lst^.startingAt + i;
+        SendEvent(lstRegion, ekSelectionMade);
         exit;
       end;
     end;
@@ -1834,6 +1922,7 @@ procedure HandlePanelInput(pnl: Panel);
     
     r := RegionAtPoint(pnl, pointClicked);
     if not assigned(r) then exit;
+    if not r^.active then exit;
     
     GUIC.lastClicked := r;
     
@@ -1845,8 +1934,10 @@ procedure HandlePanelInput(pnl: Panel);
       gkCheckBox:     ToggleCheckboxState (CheckboxFromRegion(r) );
       gkRadioGroup:   SelectRadioButton   (RadioGroupFromRegion(r), r );
       gkTextBox:      GUISetActiveTextbox (TextBoxFromRegion(r) );
-      gkList:         _PerformListClicked(ListFromRegion(r), pointClickedInRegion);
+      gkList:         _PerformListClicked (r, ListFromRegion(r), pointClickedInRegion);
     end;
+    
+    if assigned(GUIC.lastClicked) then SendEvent(GUIC.lastClicked, ekClicked);
   end;
 
 var
@@ -2049,6 +2140,11 @@ end;
 // Label Code
 //---------------------------------------------------------------------------------------
 
+procedure LabelSetText(id: String; newString: String); overload;
+begin
+  LabelSetText(LabelFromRegion(RegionWithID(id)), newString);
+end;
+
 procedure LabelSetText(pnl: Panel; id, newString: String); overload;
 begin
   LabelSetText(LabelFromRegion(RegionWithID(pnl, id)), newString);
@@ -2179,6 +2275,11 @@ begin
   TextboxSetText(tb, FloatToStr(single));
 end;
 
+function TextBoxText(id: String): String; overload;
+begin
+  result := TextBoxText(RegionWithID(id));
+end;
+
 function TextBoxText(r: Region): String; overload;
 begin
   result := TextBoxText(TextBoxFromRegion(r));
@@ -2201,12 +2302,24 @@ procedure FinishReadingText();
 begin
   if not assigned(GUIC.activeTextBox) then exit;
   
-  GUIC.lastTextRead := TextBoxText(GUIC.activeTextBox);
-  TextboxSetText(GUIC.activeTextBox, EndReadingText());
+  // Only perform an entry complete if this wasn't cancelled
+  if not TextEntryCancelled() then
+  begin
+    // Read the old value of the text box
+    GUIC.lastTextRead := TextBoxText(GUIC.activeTextBox);
+    
+    // assign the new value
+    TextboxSetText(GUIC.activeTextBox, EndReadingText());
+    
+    // Which was the last active textbox - so we know where data was entered
+    GUIC.lastActiveTextBox := GUIC.activeTextBox;
+    
+    GUIC.doneReading := true;
+    
+    SendEvent(GUIC.activeTextBox, ekTextEntryEnded);
+  end;
   
-  GUIC.lastActiveTextBox := GUIC.activeTextBox;
   GUIC.activeTextBox := nil;
-  GUIC.doneReading := true;
 end;
 
 procedure GUISetActiveTextbox(r: Region);
@@ -2258,6 +2371,10 @@ end;
 // List Code
 //---------------------------------------------------------------------------------------
 
+function ListActiveItemText(ID: String): String; overload;
+begin
+  result := ListActiveItemText(RegionWithID(id));
+end;
 
 function ListActiveItemText(pnl: Panel; ID: String): String; overload;
 var
@@ -3000,7 +3117,7 @@ var
     addedIdx := AddName(result^.regionIds, regID);   //Allocate the index
     if High(p^.Regions) < addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
     
-    r.RegionID      := High(p^.Regions);
+    r.regionIdx     := addedIdx;
     r.area          := RectangleFrom(regX, regY, regW, regH);
     r.active        := true;
     r.stringID      := regID;
@@ -3070,9 +3187,11 @@ var
     i: LongInt;
   begin
     SetLength(result^.regions, Length(regionDataArr));
+    SetLength(result^.callbacks, Length(regionDataArr));
     
     for i := Low(regionDataArr) to High(regionDataArr) do
     begin
+      SetLength(result^.callbacks[i], 0);
       AddRegionToPanelWithString(regionDataArr[i], result);
     end;
   end;
@@ -3081,25 +3200,29 @@ var
   begin
     New(result);
     
-    result^.name      := '';
-    result^.filename  := '';
-    result^.panelID   := -1;
-    result^.area      := RectangleFrom(0,0,0,0);
-    result^.visible   := false;
-    result^.active    := true;      // Panels are active by default - you need to deactivate them specially...
-    result^.draggable := false;
-    result^.modal     := false;
-    result^.panelBitmap := nil;
-    result^.panelBitmapActive   := nil;
-    
-    SetLength(result^.regions, 0);
-    SetLength(result^.labels, 0);
-    SetLength(result^.checkBoxes, 0);
-    SetLength(result^.radioGroups, 0);
-    SetLength(result^.textBoxes, 0);
-    SetLength(result^.lists, 0);
-    
-    InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
+    with result^ do
+    begin
+      name      := '';
+      filename  := '';
+      panelID   := -1;
+      area      := RectangleFrom(0,0,0,0);
+      visible   := false;
+      active    := true;      // Panels are active by default - you need to deactivate them specially...
+      draggable := false;
+      modal     := false;
+      panelBitmap := nil;
+      panelBitmapActive   := nil;
+      
+      SetLength(regions,      0);
+      SetLength(labels,       0);
+      SetLength(checkBoxes,   0);
+      SetLength(radioGroups,  0);
+      SetLength(textBoxes,    0);
+      SetLength(lists,        0);
+      SetLength(callbacks,    0, 0);
+      
+      InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
+    end;
   end;
   
   procedure SetupListPlaceholders();
@@ -3934,13 +4057,30 @@ begin
   
   if PanelActive(pnl) then
   begin
-    if not ModalBefore(pnl) then HandlePanelInput(pnl);
+    HandlePanelInput(pnl);
   end;
   
   if assigned(GUIC.activeTextbox) and not ReadingText() then
     FinishReadingText();
     
-  if PanelVisible(dialog.dialogPanel) then UpdateFileDialog();
+  if PanelVisible(dialog.dialogPanel) then 
+    UpdateFileDialog();
+end;
+
+procedure RegisterEventCallback(r: Region; callback: GUIEventCallback);
+var
+  parent: Panel;
+  idx: LongInt;
+begin
+  if not assigned(r) then exit;
+  parent := RegionPanel(r);
+  idx := r^.regionIdx;
+  
+  with parent^ do
+  begin
+    SetLength(callbacks[idx], Length(callbacks[idx]) + 1);
+    callbacks[idx][High(callbacks[idx])] := callback;
+  end;
 end;
 
 //=============================================================================
@@ -3954,6 +4094,7 @@ end;
     
     SetLength(GUIC.panels, 0);
     SetLength(GUIC.visiblePanels, 0);
+    
     GUIC.globalGUIFont := nil;
     // Color set on loading window
     GUIC.VectorDrawing      := false;
