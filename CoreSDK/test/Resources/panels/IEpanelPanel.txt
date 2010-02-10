@@ -4,8 +4,9 @@ x: 0
 y: 40
 w: 150
 h: 299
-i: panelPanel
+b: panelPanel
 a: panelPanelActive
+i: panelPanelInactive
 d: False
 
 //  Regions

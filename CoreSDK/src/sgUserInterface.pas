@@ -1049,7 +1049,8 @@ procedure ShowOpenDialog(); overload;
 procedure ShowOpenDialog(select: FileDialogSelectType); overload;
 
 procedure DoFreePanel(var pnl: Panel);
-
+procedure GUISetBackgroundColorInactive(c:color);
+procedure GUISetForegroundColorInactive(c:color);
 //=============================================================================
 implementation
   uses
@@ -1061,18 +1062,20 @@ implementation
 
 type
   GUIController = record
-    panels:             Array of Panel;         // The panels that are loaded into the GUI
-    visiblePanels:      Array of Panel;         // The panels that are currently visible (in reverse z order - back to front)
-    globalGUIFont:      Font;
-    foregroundClr:      Color;                  // The color of the foreground
-    backgroundClr:      Color;                  // The color of the background
-    VectorDrawing:      Boolean;
-    lastClicked:        Region;
-    activeTextBox:      Region;
-    lastActiveTextBox:  Region;
-    doneReading:        Boolean;
-    lastTextRead:       String;                 // The text that was in the most recently changed textbox before it was changed.
-    panelIds:           TStringHash;
+    panels:                Array of Panel;         // The panels that are loaded into the GUI
+    visiblePanels:         Array of Panel;         // The panels that are currently visible (in reverse z order - back to front)
+    globalGUIFont:         Font;
+    foregroundClr:         Color;                  // The color of the foreground
+    backgroundClr:         Color;                  // The color of the background
+    foregroundClrInactive: Color;
+    backgroundClrInactive: Color;
+    VectorDrawing:         Boolean;
+    lastClicked:           Region;
+    activeTextBox:         Region;
+    lastActiveTextBox:     Region;
+    doneReading:           Boolean;
+    lastTextRead:          String;                 // The text that was in the most recently changed textbox before it was changed.
+    panelIds:              TStringHash;
     
     // Variables for dragging panels
     downRegistered:     Boolean;
@@ -1082,7 +1085,7 @@ type
     panelClicked:       Panel;
   end;
 
-    FileDialogData = packed record
+  FileDialogData = packed record
     dialogPanel:          Panel;      // The panel used to show the dialog
     currentPath:          String;     // The path to the current directory being shown
     currentSelectedPath:  String;     // The path to the file selected by the user
@@ -1181,6 +1184,7 @@ function BitmapToDraw(r: Region): Bitmap;
 begin
   result := nil;
   if not(assigned(r)) then exit;
+  if not(r^.parent^.active) then begin result := r^.parent^.panelBitmapInactive; exit; end;
   
   case r^.kind of
     gkButton:     begin
@@ -1215,35 +1219,56 @@ begin
   result := TextboxTextArea(RegionRectangleOnScreen(r));
 end;
 
+function VectorForecolorToDraw(r: region): Color;
+begin
+  result := ColorBlack;
+  if not(assigned(r)) then exit;
+  
+  if r^.parent^.active then
+    result := GUIC.foregroundClr
+  else
+    result := GUIC.foregroundClrInactive;
+end;
+
+function VectorBackcolorToDraw(r: region): Color;
+begin
+  result := ColorBlack;
+  if not(assigned(r)) then exit;
+  
+  if r^.parent^.active then
+    result := GUIC.backgroundClr
+  else
+    result := GUIC.backgroundClrInactive;
+end;
 
 procedure DrawVectorCheckbox(forRegion: Region; const area: Rectangle);
 begin
-  DrawRectangleOnScreen(GUIC.foregroundClr, area);
+  DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   if CheckboxState(forRegion) then 
   begin
-    FillRectangleOnScreen(GUIC.foregroundClr, InsetRectangle(area, 2));
+    FillRectangleOnScreen(VectorForecolorToDraw(forRegion), InsetRectangle(area, 2));
   end;
 end;
 
 procedure DrawVectorRadioButton(forRegion: Region; const area: Rectangle);
 begin
-  DrawEllipseOnScreen(GUIC.foregroundClr, area);
+  DrawEllipseOnScreen(VectorForecolorToDraw(forRegion), area);
   
   if forRegion = ActionRadioButton(forRegion) then
   begin
-    FillEllipseOnScreen(GUIC.foregroundClr, InsetRectangle(area, 2));
+    FillEllipseOnScreen(VectorForecolorToDraw(forRegion), InsetRectangle(area, 2));
   end;
 end;
 
 procedure DrawTextbox(forRegion: Region; const area: Rectangle);
 begin
-  if GUIC.VectorDrawing then DrawRectangleOnScreen(GUIC.foregroundClr, area);
+  if GUIC.VectorDrawing then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   if GUIC.activeTextBox <> forRegion then
     DrawTextLinesOnScreen(TextboxText(forRegion), 
-                          GUIC.foregroundClr,
-                          GUIC.backgroundClr, 
+                          VectorForecolorToDraw(forRegion),
+                          VectorBackcolorToDraw(forRegion), 
                           TextboxFont(forRegion), 
                           TextboxAlignment(forRegion),
                           TextboxTextArea(area));
@@ -1264,7 +1289,7 @@ var
     innerRect, arrowArea: Rectangle;
   begin
     arrowArea := RectangleOffset(rect, areaPt);
-    FillRectangleOnScreen(GUIC.foregroundClr, arrowArea);
+    FillRectangleOnScreen(VectorForecolorToDraw(forRegion), arrowArea);
     innerRect := InsetRectangle(arrowArea, 2);
     
     if up then
@@ -1280,7 +1305,7 @@ var
       tri[2] := RectangleCenterBottom(innerRect);
     end;
     
-    FillTriangleOnScreen(GUIC.backgroundClr, tri);
+    FillTriangleOnScreen(VectorBackcolorToDraw(forRegion), tri);
   end;
   procedure _DrawLeftRightArrow(const rect: Rectangle; left: Boolean);
   var
@@ -1288,7 +1313,7 @@ var
     innerRect, arrowArea: Rectangle;
   begin
     arrowArea := RectangleOffset(rect, areaPt);
-    FillRectangleOnScreen(GUIC.foregroundClr, arrowArea);
+    FillRectangleOnScreen(VectorForecolorToDraw(forRegion), arrowArea);
     innerRect := InsetRectangle(arrowArea, 2);
     
     if left then
@@ -1304,7 +1329,7 @@ var
       tri[2] := RectangleBottomLeft(innerRect);
     end;
     
-    FillTriangleOnScreen(GUIC.backgroundClr, tri);
+    FillTriangleOnScreen(VectorBackcolorToDraw(forRegion), tri);
   end;
   
   procedure _ResizeItemArea(var area: Rectangle; var imgPt: Point2D; aligned: FontAlignment; bmp: bitmap);
@@ -1343,7 +1368,7 @@ var
     if tempList^.verticalScroll then
     begin
       if GUIC.VectorDrawing then
-        FillRectangleOnScreen(GUIC.foregroundClr, 
+        FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
                               Round(scrollArea.x),
                               Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
                               tempList^.scrollSize,
@@ -1357,7 +1382,7 @@ var
     else
     begin
       if GUIC.VectorDrawing then
-        FillRectangleOnScreen(GUIC.foregroundClr, 
+        FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
                               Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
                               Round(scrollArea.y),
                               tempList^.scrollSize,
@@ -1373,7 +1398,7 @@ begin
   tempList := ListFromRegion(forRegion);
   if not assigned(tempList) then exit;
   
-  if GUIC.VectorDrawing then DrawRectangleOnScreen(GUIC.foregroundClr, area);
+  if GUIC.VectorDrawing then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   PushClip(area);
   areaPt := RectangleTopLeft(area);
@@ -1398,8 +1423,8 @@ begin
   
   if GUIC.VectorDrawing then
   begin
-    DrawRectangleOnScreen(GUIC.backgroundClr, scrollArea);
-    DrawRectangleOnScreen(GUIC.foregroundClr, scrollArea);
+    DrawRectangleOnScreen(VectorBackcolorToDraw(forRegion), scrollArea);
+    DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), scrollArea);
   end;
   
   // Draw the scroll position indicator
@@ -1416,7 +1441,7 @@ begin
     
     // Outline the item's area
     if GUIC.VectorDrawing then
-      DrawRectangleOnScreen(GUIC.foregroundClr, itemArea);
+      DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
     
     // Find the index of the first item to be shown in the list
     // NOTE: place holders in col then row order 0, 1 -> 2, 3 -> 4, 5 (for 2 cols x 3 rows)
@@ -1449,7 +1474,7 @@ begin
     begin
       // Draw the text onto the screen as normal...
       DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
-                            GUIC.foregroundClr, GUIC.backgroundClr, 
+                            VectorForecolorToDraw(forRegion), VectorBackcolorToDraw(forRegion), 
                             ListFont(tempList), ListFontAlignment(tempList), 
                             itemTextArea);
     end
@@ -1458,9 +1483,9 @@ begin
       if GUIC.VectorDrawing then
       begin
         // Fill and draw text in alternate color if vector based
-        FillRectangleOnScreen(GUIC.foregroundClr, itemArea);
+        FillRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
-                              GUIC.backgroundClr, GUIC.foregroundClr,
+                              VectorBackcolorToDraw(forRegion), VectorForecolorToDraw(forRegion),
                               ListFont(tempList), ListFontAlignment(tempList),
                               itemTextArea);
       end
@@ -1471,7 +1496,7 @@ begin
                        placeHolderScreenRect,
                        RectangleTopLeft(itemArea));
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
-                     GUIC.foregroundClr, GUIC.backgroundClr, 
+                     VectorForecolorToDraw(forRegion), VectorBackcolorToDraw(forRegion), 
                      ListFont(tempList), ListFontAlignment(tempList),
                      itemTextArea);
       end;
@@ -1492,8 +1517,8 @@ end;
 procedure DrawLabelText(forRegion: Region; const area: Rectangle);
 begin
   DrawTextLinesOnScreen(LabelText(forRegion), 
-                        GUIC.foregroundClr,
-                        GUIC.backgroundClr, 
+                        VectorForecolorToDraw(forRegion),
+                        VectorBackcolorToDraw(forRegion), 
                         LabelFont(forRegion),
                         LabelAlignment(forRegion), 
                         TextboxTextArea(area));
@@ -1509,15 +1534,24 @@ begin
   begin
     current := GUIC.visiblePanels[i];
     
-    FillRectangleOnScreen(GUIC.backgroundClr, current^.area);
-    DrawRectangleOnScreen(GUIC.foregroundClr, current^.area);
+    if current^.active then
+    begin
+      FillRectangleOnScreen(GUIC.backgroundClr, current^.area);
+      DrawRectangleOnScreen(GUIC.foregroundClr, current^.area);
+    end
+    else
+    begin
+      FillRectangleOnScreen(GUIC.backgroundClrInactive, current^.area);
+      DrawRectangleOnScreen(GUIC.foregroundClrInactive, current^.area);
+    end;
+    
     PushClip(current^.area);
     
     for j := High(current^.Regions) downto Low(current^.Regions) do
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
       case currentReg^.kind of
-        gkButton:     DrawRectangleOnScreen(GUIC.foregroundClr, RegionRectangleOnscreen(currentReg));
+        gkButton:     DrawRectangleOnScreen(VectorForecolorToDraw(currentReg), RegionRectangleOnscreen(currentReg));
         gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
         gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
         gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangleOnScreen(currentReg));
@@ -1525,9 +1559,14 @@ begin
         gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
       end;
     end;
-    
     PopClip();
   end;
+end;
+
+function PanelBitmapToDraw(p: Panel): bitmap;
+begin
+  if not PanelActive(p) then begin result := p^.PanelBitmapInactive; exit; end
+  else result := p^.PanelBitmap;
 end;
 
 procedure DrawAsBitmaps();
@@ -1537,8 +1576,8 @@ var
 begin
   for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
   begin
-    DrawBitmapOnScreen(GUIC.visiblePanels[i]^.panelBitmap, RectangleTopLeft(GUIC.visiblePanels[i]^.area));
-      
+    DrawBitmapOnScreen(PanelBitmapToDraw(GUIC.visiblePanels[i]), RectangleTopLeft(GUIC.visiblePanels[i]^.area));   
+    
     for j := Low(GUIC.visiblePanels[i]^.Regions) to High(GUIC.visiblePanels[i]^.Regions) do
     begin
       currentReg := @GUIC.visiblePanels[i]^.Regions[j];
@@ -3004,13 +3043,17 @@ var
       'y': result^.area.y       := MyStrToInt(data, false);
       'w': result^.area.width   := MyStrToInt(data, false);
       'h': result^.area.height  := MyStrToInt(data, false);
-      'i': begin
+      'b': begin
              LoadBitmap(Trim(data)); 
              result^.panelBitmap := BitmapNamed(Trim(data));
            end;
       'a': begin
              LoadBitmap(Trim(data));
              result^.panelBitmapActive := BitmapNamed(Trim(data));
+           end;
+      'i': begin
+             LoadBitmap(Trim(data));
+             result^.panelBitmapInactive := BitmapNamed(Trim(data));
            end;
       'r': StoreRegionData(data);
       'd': result^.draggable    := (LowerCase(Trim(data)) = 'true');
@@ -3144,6 +3187,15 @@ begin
   GUIC.foregroundClr := c;
 end;
 
+procedure GUISetForegroundColorInactive(c:color);
+begin
+  GUIC.foregroundClrInactive := c;
+end;
+
+procedure GUISetBackgroundColorInactive(c:color);
+begin
+  GUIC.backgroundClrInactive := c;
+end;
 procedure GUISetBackgroundColor(c:Color);
 begin
   GUIC.backgroundClr := c;
