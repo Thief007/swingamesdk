@@ -243,7 +243,7 @@ begin
     
 
 
-    if MouseClicked(LeftButton) then
+    if MouseClicked(LeftButton) and not GUIClicked() then
     UpdateSelect(m);
   
 
@@ -294,12 +294,9 @@ begin
     DrawMapDebug(myMap);
     //DrawMap(myMap, VectorTo(150,30));
     PopClip();
+        UpdateInterface();
     UpdateGUI(pnls, myMap, openingFile, savingFile);
-
     DrawPanels();
-    UpdateInterface();
-
-    
     DrawFramerate(0,0);
     RefreshScreen();
   until WindowCloseRequested();
