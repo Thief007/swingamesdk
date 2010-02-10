@@ -3411,6 +3411,7 @@ begin
   begin
     
     if GUIC.panelDragging = pnl then GUIC.panelDragging := nil;
+    if dialog.dialogPanel = pnl then dialog.dialogPanel := nil;
     
     HidePanel(pnl);
     
