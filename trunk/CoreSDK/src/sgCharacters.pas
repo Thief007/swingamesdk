@@ -658,7 +658,7 @@ implementation
   function DoLoadCharacter(filename, name: String): Character;
   var
     bmpArray: Array of Bitmap;
-    data, line, id, path: string;
+    data, line, id: string;
     lineno, w, h, cols, rows, count, colliIndex: integer;
     aniTemp: AnimationTemplate;
     bmpIDs, tempValueIDs: NamedIndexCollection;
@@ -818,24 +818,24 @@ implementation
       
     procedure VerifyVersion();
     begin
-      WriteLn('Starting to Verify');
+    
       if EOF(input) then exit;
       line := '';
-      WriteLn('Verify');
+      
       while (Length(line) = 0) or (MidStr(line,1,2) = '//') do
       begin
         ReadLn(input, line);
         line := Trim(line);
         WriteLn(line);
       end;
-       WriteLn('EndVerify');
+      
       //Verify that the line has the right version
       if line <> 'SwinGame Character #v1' then 
         RaiseException('Error in character ' + filename + '. Character files must start with "SwinGame Character #v1"');     
     end;
     
   begin
-    WriteLn('Start Load');
+  
     {$IFDEF TRACE}
       TraceEnter('sgCharacters', 'DoLoadCharacter', name + ' = ' + filename);
     {$ENDIF}
@@ -850,7 +850,7 @@ implementation
         exit;
       end;
     end;
-    WriteLn('Checked if Exists');
+    
     New(result);    
     result^.filename := filename;
     result^.name := name;
@@ -858,13 +858,12 @@ implementation
     SetLength(bmpArray, 0);
     
     lineNo := 0;
-    WriteLn('Assign');
+    
     Assign(input, filename);
     Reset(input);
-    WriteLn(filename);
+    
     VerifyVersion();
-    WriteLn('EndVerify2');
-   // InitNamedIndexCollection(result^.CharSprite^.valueIds);
+    
     InitNamedIndexCollection(tempValueIDs);
     InitNamedIndexCollection(bmpIDs);
     colliIndex := -1;
@@ -872,11 +871,9 @@ implementation
     try
       while not EOF(input) do
       begin 
-        WriteLn('Start Loop');
         lineNo := lineNo + 1;
         ReadLn(input, line);
         line := Trim(line);
-        WriteLn(line);
         if Length(line) = 0 then continue;  //skip empty lines
         if MidStr(line,1,2) = '//' then continue; //skip lines starting with //
 
@@ -894,7 +891,7 @@ implementation
     if colliIndex <> -1 then SpriteSetCollisionBitmap(result^.CharSprite,bmpArray[colliIndex]);
     result^.ShownLayerCache := UpdateShownLayerCache(result);
     SetActiveLayer(result);
-    WriteLn('End Load CHar');
+    
     {$IFDEF TRACE}
       TraceExit('sgCharacters', 'DoLoadCharacter', HexStr(result));
     {$ENDIF}  
