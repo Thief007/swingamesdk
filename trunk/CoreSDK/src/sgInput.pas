@@ -116,9 +116,9 @@ interface
   
   /// Start reading text within an area. Entry is 
   /// completed when the user presses ENTER, and aborted with ESCAPE.
-  /// If the user aborts entry the result is an empty string. Text entry is
-  /// updated during `ProcessEvents`, and text is drawn to the screen as part 
-  /// of the `RefreshScreen` call.
+  /// If the user aborts entry the result is an empty string, and TextEntryCancelled 
+  /// will return true. Text entry is updated during `ProcessEvents`, and text is drawn 
+  /// to the screen as part of the `RefreshScreen` call.
   ///
   /// @lib StartReadingTextWithinArea
   /// @sn startReadingTextColor:%s maxLen:%s font:%s area:%s
@@ -133,8 +133,8 @@ interface
   
   /// Starts the reading of a string of characters from the user. Entry is 
   /// completed when the user presses ENTER, and aborted with ESCAPE.
-  /// If the user aborts entry the result is an empty string. Text entry is
-  /// updated during `ProcessEvents`, and text is drawn to the screen as part 
+  /// If the user aborts entry the result is an empty string, and TextEntryCancelled will return true. 
+  /// Text entry is updated during `ProcessEvents`, and text is drawn to the screen as part 
   /// of the `RefreshScreen` call.
   ///
   /// @lib
@@ -168,6 +168,11 @@ interface
   ///
   /// @lib
   function ReadingText(): Boolean;
+  
+  /// Returns true if the text entry started with `StartReadingText` was cancelled.
+  ///
+  /// @lib
+  function TextEntryCancelled(): Boolean;
   
   /// TextReadAsASCII allows you to read the value of the string entered by the
   /// user as ASCII. See TextReasAsUNICODE, StartReadingText and ReadingText
@@ -264,7 +269,12 @@ implementation
   begin
     result := sdlManager.IsReading;
   end;
-
+  
+  function TextEntryCancelled(): Boolean;
+  begin
+    result := sdlManager.TextEntryWasCancelled;
+  end;
+  
   function EndReadingText(): String;
   begin
     result := sdlManager.EndReadingText();

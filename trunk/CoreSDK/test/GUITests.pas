@@ -3,7 +3,23 @@ program GUITests;
 
 uses
   sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils, sgImages;
-	
+
+
+procedure __callback__Button1Clicked(r: Region; kind: EventKind);
+begin
+  WriteLn('here button1 - ', RegionID(r), ' - ', LongInt(kind));
+  LabelSetText('Label1', TextBoxText('TextBox1'));
+end;
+
+procedure __callback__List1(r: Region; kind: EventKind);
+begin
+  WriteLn('here - list1 - ', RegionID(r), ' - ', LongInt(kind));
+  if kind = ekSelectionMade then
+  begin
+    LabelSetText('Label1', ListActiveItemText('List1'));
+  end;
+end;
+
   
 procedure InitInterface(var pnla, pnlb: panel);
 begin
@@ -18,21 +34,24 @@ begin
   
   ActivatePanel(pnla);
   DeactivatePanel(pnlb);
-
   
   DrawGUIAsVectors(false);
-end;
   
+  RegisterEventCallback(RegionWithId(pnla, 'Button1'), @__callback__Button1Clicked);
+  RegisterEventCallback(RegionWithId(pnla, 'List1'), @__callback__List1);
+end;
+
+
 procedure UpdateGUI(var pnla, pnlb: panel; lst: GUilist);
 var
   reg: Region;
   parpnl: Panel;
   radGroup: GUIRadioGroup;
 begin
-  if (RegionClickedID() = 'Button1') then
-  begin
-  	LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextBoxText(RegionWithID('TextBox1')));
-  end;
+  // if (RegionClickedID() = 'Button1') then
+  // begin
+  //  LabelSetText(LabelFromRegion(RegionWithID('Label1')), TextBoxText(RegionWithID('TextBox1')));
+  // end;
 
   if CheckboxState(RegionWithID('Checkbox1')) then
     DrawGUIAsVectors(false)

@@ -48,8 +48,10 @@ interface
       _quit:                  Boolean;
       _keyPressed:            Boolean;
       _readingString:         Boolean;
+      _textCancelled:         Boolean;
       _tempString:            String;
       _textSurface:           PSDL_Surface;
+      _cursorSurface:         PSDL_Surface;
       _maxStringLen:          LongInt;
       _font:                  PTTF_Font;
       _foreColor:             TSDL_Color;
@@ -68,6 +70,7 @@ interface
       property MaxStringLength: LongInt read _maxStringLen write _maxStringLen;
       property EnteredString: String read _tempString write _tempString;
       property IsReading: Boolean read _readingString;
+      property TextEntryWasCancelled: Boolean read _textCancelled;
       procedure DrawCollectedText(dest: PSDL_Surface);
       procedure SetText(text: String);
       procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; area: SDL_Rect);
@@ -209,6 +212,7 @@ implementation
       begin
         _tempString := '';
         _readingString := false;
+        _textCancelled := true;
       end
       else if Length(_tempString) < _maxStringLen then
       begin
@@ -225,16 +229,17 @@ implementation
       if oldStr <> _tempString then
       begin
          //Free the old surface
-        if _textSurface <> nil then SDL_FreeSurface( _textSurface );
-
-         //Render a new text surface
-         if Length(_tempString) > 0 then
-         begin
-           newStr := _tempString + '|';
-           _textSurface := TTF_RenderText_Blended(_font, PChar(newStr), _foreColor)
-         end
-         else
-          _textSurface := nil;
+        if (_textSurface <> nil) and (_textSurface <> _cursorSurface) then 
+          SDL_FreeSurface( _textSurface );
+        
+        //Render a new text surface
+        if Length(_tempString) > 0 then
+        begin
+         newStr := _tempString + '|';
+         _textSurface := TTF_RenderText_Blended(_font, PChar(newStr), _foreColor)
+        end
+        else 
+          _textSurface := _cursorSurface;
       end;
     end;
   end;
@@ -246,16 +251,17 @@ implementation
     _tempString := text;
     
      //Free the old surface
-    if _textSurface <> nil then SDL_FreeSurface( _textSurface );
-
-     //Render a new text surface
-     if Length(_tempString) > 0 then
-     begin
+    if (_textSurface <> nil) and (_textSurface <> _cursorSurface) then 
+      SDL_FreeSurface( _textSurface );
+    
+    //Render a new text surface
+    if Length(_tempString) > 0 then
+    begin
       outStr := _tempString + '|';
       _textSurface := TTF_RenderText_Blended(_font, PChar(outStr), _foreColor)
-      end
-     else
-      _textSurface := nil;
+    end
+    else
+      _textSurface := _cursorSurface;
   end;
   
   function TSDLManager.EndReadingText(): String;
@@ -269,6 +275,8 @@ implementation
     srect, drect: SDL_Rect;
     textWidth: LongInt;
   begin
+    if not assigned(dest) then exit;
+    
     if _readingString and (_textSurface <> nil) then
     begin
       textWidth := _textSurface^.w;
@@ -289,6 +297,8 @@ implementation
   end;
   
   procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; area: SDL_Rect);
+  var
+    newStr: String;
   begin
     if _textSurface <> nil then
     begin
@@ -298,11 +308,18 @@ implementation
     end;
   
     _readingString := true;
+    _textCancelled := false;
     _tempString := '';
     _maxStringLen := maxLength;
     _foreColor := textColor;
     _font := theFont;
     _area := area;
+    
+    newStr := '|';
+    
+    if _cursorSurface <> nil then SDL_FreeSurface(_cursorSurface);
+    _cursorSurface := TTF_RenderText_Blended(_font, PChar(newStr), _foreColor);
+    _textSurface := _cursorSurface;
   end;
   
   constructor TSDLManager.Create();
@@ -310,7 +327,9 @@ implementation
     _quit := false;
     _keyPressed := false;
     _textSurface := nil;
+    _cursorSurface := nil;
     _readingString := false;
+    _textCancelled := false;
     
     SetLength(_EventProcessors, 0);
     SetLength(_EventStartProcessors, 0);
