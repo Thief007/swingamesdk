@@ -1153,7 +1153,7 @@ end;
 
 function GUIClicked(): Boolean;
 begin
-  result := PanelClicked() <> nil;
+  result := GUIC.panelClicked <> nil;
 end;
 
 function ModalBefore(pnl: Panel): Boolean;
