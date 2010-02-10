@@ -9,6 +9,7 @@ BITMAP,checkBoxPanel,editorCheckBoxPanel.png
 BITMAP,labelPanel,editorLabelPanel.png
 BITMAP,textBoxPanel,editorTextBoxPanel.png
 BITMAP,panelPanelActive,editorPanelPanelActive.png
+BITMAP,panelPanelInactive,editorPanelPanelInactive.png
 BITMAP,regionPanelActive,editorRegionPanelActive.png
 BITMAP,checkBoxPanelActive,editorCheckBoxPanelActive.png
 BITMAP,listPanel,editorListPanel.png

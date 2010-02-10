@@ -43,6 +43,9 @@ begin
   begin
     HidePanel(p[i]);
   end;
+  GUISetBackgroundColorInactive(ColorGrey);
+  GUISetForegroundColorInactive(ColorLightGrey);
+  DeactivatePanel(p[EditPanel]);
   
   DrawGUIasVectors(false);
   GUISetForegroundColor(ColorBlack);

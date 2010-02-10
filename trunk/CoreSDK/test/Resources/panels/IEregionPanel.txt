@@ -4,7 +4,7 @@ x: 0
 y: 40
 w: 150
 h: 299
-i: regionPanel
+b: regionPanel
 a: regionPanelActive
 d: False
 

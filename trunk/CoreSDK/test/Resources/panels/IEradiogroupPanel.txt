@@ -4,7 +4,7 @@ x: 0
 y: 339
 w: 150
 h: 260
-i: radioGroupPanel
+b: radioGroupPanel
 d: False
 
 // Regions
