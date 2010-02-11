@@ -3,8 +3,8 @@ program BitmapAnimationEditor;
 uses
   crt, sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources,
   sgGeometry, sgImages, sgInput, 
-  SysUtils, sgUserInterface, sgAnimations, 
-	EditorShared, BitmapEditor, AnimationEditor;
+  SysUtils, sgUserInterface, sgAnimations, sgNamedIndexCollection,
+	EditorShared, BitmapEditor, AnimationEditor, CharacterEditor;
   
 const
   ToolBarMenu = 0; // Top menu of the editor
@@ -59,6 +59,16 @@ begin
 	HidePanel(panels[Preview1]);
 end;
 
+procedure ShowCharPanels(panels: PanelArray);
+var
+	i: integer;
+begin	
+	for i := Low(panels) to High(panels) do
+	begin
+		ShowPanel(panels[i]);
+	end;
+end;
+
 // Hides the previously active panels of the previous mode
 procedure HidePanels(panels: PanelArray);
 var
@@ -71,30 +81,31 @@ begin
 end;
 
   // Handles Hiding/Showing of panels based on the mode
-procedure ChangePanelMode(BitmapPanels, AnimationPanels: PanelArray; var prevMode :integer; currentMode: Integer);
+procedure ChangePanelMode(BitmapPanels, AnimationPanels, CharacterPanels: PanelArray; var prevMode :integer; currentMode: Integer);
 var
 	i: integer;
 begin
 	case currentMode of
 		BitmapEditorID 		: ShowBitmapPanels(BitmapPanels);
 		AnimationEditorID : ShowAnimationPanels(AnimationPanels);
-		//	CharacterEditorID : ShowBitmapPanels(panels[i]);
+		CharacterEditorID : ShowCharPanels(CharacterPanels);
 	end;
 	
 	case prevMode of
 		BitmapEditorID 		:  HidePanels(BitmapPanels);
 		AnimationEditorID :  HidePanels(AnimationPanels);
-		//	CharacterEditorID : ShowBitmapPanels(panels[i]);
+		CharacterEditorID :  HidePanels(CharacterPanels);
 	end;
 	prevMode := currentMode;
 end;
 
   //Draws the background depending on the mode
-procedure DrawBackGround(BitmapMode: BitmapEditorValues; AniMode: AnimationEditorValues);
+procedure DrawBackGround(BitmapMode: BitmapEditorValues; AniMode: AnimationEditorValues; CharMode : CharEditorValues);
 begin
 	case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))) of 
 		0: DrawBitmap(BitmapMode.bg, 0, 0);
 		1: DrawBitmap(AniMode.bg, 0, 0);
+		2: DrawBitmap(CharMode.bg, 0, 0);
 	end;
 end;
 
@@ -102,55 +113,61 @@ procedure Main();
 var
 	prevMode: LongInt; // Stores previous mode value so the program knows when to Update panels
 	p : PanelArray; //Panel Array for the editor (toolbar, file)
-	SharedData : EditorValues;  //Editor record
+	sharedVals : EditorValues;  //Editor record
 	BitmapMode : BitmapEditorValues;  //Bitmap Editor Record
 	AniMode		 : AnimationEditorValues; // Animation Editor Record
-//	CharMode	 : CharacterEditorValues; //Character Editor Record
+	CharMode	 : CharEditorValues; //Character Editor Record
   drawvect : boolean;
+  i, j : integer;
 begin
   OpenAudio();
   OpenGraphicsWindow('Bitmap | Animation | Character Editor', ScreenWidth, ScreenHeight);
   LoadResourceBundle('CharacterEditor.txt');			
-	  
-	AddBitmapToArray(SharedData.BMPArray, 'Corpo', 'corpolupo1.png');
-	AddBitmapToArray(SharedData.BMPArray, 'Black', 'blackbody.png');
   
 	InitializeFilePanel(p);
-	InitializeBitmapEditor(BitmapMode, SharedData.BMPArray);
+	InitializeBitmapEditor(BitmapMode, sharedVals.BMPArray);
 	InitializeAnimationEditor(AniMode);
-	WriteLn('BItmaps');
-  AddBitmapToList(SharedData.BMPArray[0].original, ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
-  AddBitmapToList(SharedData.BMPArray[1].original, ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
-	WriteLn('BItmaps');
-  SharedData.dragCell := nil;
-  SharedData.dragGroup := false;
+  InitializeCharEditor(CharMode);
+
+  LoadBitmapsFromTextFile(CharMode, sharedVals.bmpArray, PathToResource('\images\test.txt'), ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
+  
+  sharedVals.dragCell := nil;
+  sharedVals.dragGroup := false;
+  sharedVals.OpenSave := None;
 	prevMode := 0;
   drawVect := false;
 
   repeat // The game loop...
     ProcessEvents();
-		DrawBackGround(BitmapMode, AniMode);
+		DrawBackGround(BitmapMode, AniMode, CharMode);
     
     ShowFileMenu(p[FileMenu]);
    
 		case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))) of 
-			0: UpdateBitmapEditor(BitmapMode, SharedData);
-			1: UpdateAnimationEditor(AniMode, SharedData);
+			0: UpdateBitmapEditor(BitmapMode, sharedVals);
+			1: UpdateAnimationEditor(AniMode, sharedVals);
+			2: UpdateCharEditor(CharMode, sharedVals);
 		end;
 	
 		if (prevMode <> ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap')))) then
 		begin
-			ChangePanelMode(BitmapMode.panels, AniMode.panels, prevMode, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))));
+			ChangePanelMode(BitmapMode.panels, AniMode.panels, CharMode.panels, prevMode, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))));
 		end;
     
     DrawPanels();
-    if SharedData.dragCell <> nil then DrawOnMouse(SharedData);
-    if KeyTyped(vk_ESCAPE) then sharedData.dragCell := nil;
+    if sharedVals.dragCell <> nil then DrawOnMouse(sharedVals);
+    if KeyTyped(vk_ESCAPE) then sharedVals.dragCell := nil;
     if KeyTyped(vk_TAB) then
     begin
       drawVect := not drawvect;
      DrawGUIAsVectors(drawvect);
     end;
+    
+    if DialogComplete then sharedVals.OpenSave := None;
+    
+    if KeyTyped(vk_1) then
+    for i := 0 to NameCount(CharMode.BrowserData.bodytype[4].parts[2].ids)-1 do
+    WriteLn(NameAt(CharMode.BrowserData.bodytype[4].parts[2].ids, i));
         
 		UpdateInterface();
 		RefreshScreen(60);   

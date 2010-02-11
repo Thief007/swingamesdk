@@ -6,7 +6,6 @@ interface
   sgGeometry, sgImages, sgInput, SysUtils, 
 	sgUserInterface, sgShared, EditorShared;
 	
-	procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroupData; var  bmpArray: LoadedBitmaps; pnl : PanelArray;var bmpScale: Integer);
 	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues; var bmpArray: LoadedBitmaps);
 	procedure UpdateBitmapEditor(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
 	
@@ -22,6 +21,11 @@ implementation
 	procedure MyTextBoxSetText(id, value : string);
 	begin
 		TextBoxSetText(TextBoxFromRegion(RegionWithID(id)), value);
+	end;
+  
+  function MyTextBoxText(id: string) : string;
+	begin
+		result := TextBoxText(TextBoxFromRegion(RegionWithID(id)));
 	end;
 	
 	procedure MyLabelSetText(id, value : string);
@@ -44,56 +48,60 @@ implementation
 		result := ListActiveItemIndex(ListFromRegion(RegionWithID(id)));
 	end;
 			
-	procedure DrawSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray; bmpArray: LoadedBitmaps);
+	procedure ShowSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray);
 	var
 		i: integer;
 	begin
-		if MyListActiveItemIndex('BMPList') > Length(bmpArray) then exit;
 		with cellGrp do
-			begin
-			if (Length(selectedOrder) = 1) AND (not PanelVisible(pnl[CellDetails])) then
-			begin
-				MyTextBoxSetText('CellIn', IntToStr(cells[selectedOrder[0]].cellIdx));
-				if (cells[selectedOrder[0]].bmpPtr <> nil) then 
-					MyLabelSetText('CurrentBitmapNameLbl', cells[selectedOrder[0]].bmpPtr^.src[cellGrp.GridType]^.name)
-				else
-					MyLabelSetText('CurrentBitmapNameLbl', 'None'); 
-				ShowPanel(pnl[CellDetails]);
-			end else 		
-			if (Length(cellGrp.selectedOrder) > 1) AND (TextBoxText(RegionWithID('CellIn')) <> 'Multiple') then
-			begin
-				MyTextBoxSetText('CellIn','Multiple');
-				MyLabelSetText('CurrentBitmapNameLbl', 'Multiple'); 
-				MyListSetActiveItemIndex('BMPList',  0);
-				ShowPanel(pnl[CellDetails])
-			end;
-				
-			if PanelVisible(pnl[CellBitmapNames]) AND (ListActiveItemText(pnl[CellBitmapNames], 'BMPList') <> MyLabelText('CurrentBitmapNameLbl')) then
-			begin
-				if (Length(selectedOrder) = 1) then
-				begin
-          cells[selectedOrder[0]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
-				end else
-				if (Length(selectedOrder) > 1) then
-				begin
-					for i := Low(selectedOrder) to High(selectedOrder) do
-					begin
-						cells[selectedOrder[i]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
-					end;
-				end;
-				MyLabelSetText('CurrentBitmapNameLbl', ListActiveItemText(pnl[CellBitmapNames], 'BMPList'));
-				HidePanel(pnl[CellBitmapNames]);
-			end;
-			
-			if PanelVisible(pnl[CellDetails]) AND (Length(selectedOrder) = 0) then
-			begin
-				HidePanel(pnl[CellBitmapNames]);
-				HidePanel(pnl[CellDetails]);
-			end;
-		end;
+    begin
+      if (Length(selectedOrder) = 1) AND (MyTextBoxText('CellIn') <> IntToStr(cells[selectedOrder[0]].cellIdx)) then
+      begin
+        MyTextBoxSetText('CellIn', IntToStr(cells[selectedOrder[0]].cellIdx));
+        if (cells[selectedOrder[0]].bmpPtr <> nil) then 
+          MyLabelSetText('CurrentBitmapNameLbl', cells[selectedOrder[0]].bmpPtr^.src[cellGrp.GridType]^.name)
+        else
+          MyLabelSetText('CurrentBitmapNameLbl', 'None'); 
+      end else 		
+      if (Length(cellGrp.selectedOrder) > 1) AND (MyTextBoxText('CellIn') <> 'Multiple') then
+      begin
+        MyTextBoxSetText('CellIn','Multiple');
+        MyLabelSetText('CurrentBitmapNameLbl', 'Multiple'); 
+        MyListSetActiveItemIndex('BMPList',  0);
+      end;
+      if (Length(cellGrp.selectedOrder) > 0)  AND (not PanelVisible(pnl[CellDetails])) then ShowPanel(pnl[CellDetails]);
+    end;
+  end;
+	
+	procedure HideSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray; bmpArray: LoadedBitmaps);
+	var
+		i: integer; 
+	begin
+    if PanelVisible(pnl[CellDetails]) AND (Length(cellGrp.selectedOrder) = 0) then
+    begin
+      HidePanel(pnl[CellBitmapNames]);
+      HidePanel(pnl[CellDetails]);
+      exit;
+    end;
+    if (RegionClickedID <> 'BMPList') then exit;
+    with cellGrp do
+    begin    
+      if (Length(selectedOrder) = 1) then
+      begin
+        cells[selectedOrder[0]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
+      end else
+      if (Length(selectedOrder) > 1) then
+      begin
+        for i := Low(selectedOrder) to High(selectedOrder) do
+        begin
+          cells[selectedOrder[i]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
+        end;
+      end;
+      MyLabelSetText('CurrentBitmapNameLbl', ListActiveItemText(pnl[CellBitmapNames], 'BMPList'));
+      HidePanel(pnl[CellBitmapNames]);
+    end;
 	end;
 	
-	procedure ScaleBitmaps(var cellGrp: CellGroupData;var pnl: Panel; var bmpArray: LoadedBitmaps; newScale : integer; var bmpScale : integer);
+	procedure ScaleBitmaps(var cellGrp: CellGroupData; var bmpArray: LoadedBitmaps; newScale : integer; var bmpScale : integer);
 	var
 		initHeight, initWidth: integer;
 	begin
@@ -105,44 +113,70 @@ implementation
 			cellH	      := initHeight * newScale;
 			bmpScale		:= newScale;
       
+      WriteLn(bmpScale);
+      WriteLn(cellGrp.cellW);
+      
       InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
 		end;
 	end;
-	
-	procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroupData; var  bmpArray: LoadedBitmaps; pnl : PanelArray;var bmpScale: integer);
-	var
-		newVal: LongInt;
+  
+  function ValidateInput(var target: Integer): Integer;
+  begin
+    result := -1;
+    if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), result) AND (result > -1) then
+		begin	
+      target := result;
+    end else
+      TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(target));
+  end;
+  
+  procedure ValidateInputForScale(var cellGrp: CellGroupData; var target: Integer; bmpArray: LoadedBitmaps);
+  var
+    newVal : Integer;
+  begin
+    if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), newVal) AND (newVal > -1) then
+      ScaleBitmaps(cellGrp, bmpArray, newVal, target);
+  end;
+  
+  procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroupData; var  bmpArray: LoadedBitmaps; pnl : PanelArray;var bmpScale: integer);
 	begin
 		with cellGrp do
-		begin
-			if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), newVal) AND (newVal > -1) then
-			begin			
-				if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[BitmapDetails]) then
-				begin			
-					case IndexOfLastUpdatedTextBox of 
-						0: cellCount 			:= newVal;
-						1: cols						:= newVal;
-						2: cellW 	:= newVal;
-						3: cellH := newVal;
-						4: ScaleBitmaps(cellGrp,pnl[BitmapDetails],  bmpArray, newVal, bmpScale);
-					end;
-				end else if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[CellDetails]) AND (IndexOfLastUpdatedTextBox = 0) then
-				begin
-					cells[selectedOrder[0]].cellIdx := newVal;
-				end;
-				InitializeCellArea(cellGrp, nil, CellGap)	;
-			end else 
-			begin
-				case IndexOfLastUpdatedTextBox of 
-					0: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellCount));
-					1: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cols));
-					2: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellW));
-					3: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellH));
-					4: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(bmpScale));
-				end;	
-			end;
+		begin	
+      if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[BitmapDetails]) then
+      begin			
+        case IndexOfLastUpdatedTextBox of 
+          0: ValidateInput(cellCount);
+          1: ValidateInput(cols);
+          2: ValidateInput(cellW);
+          3: ValidateInput(cellH);
+          4: ValidateInputForScale(cellGrp, bmpScale, bmpArray);
+        end;
+        InitializeCellArea(cellGrp, nil, CellGap, true)	;   
+      end else 
+      if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[CellDetails]) AND (IndexOfLastUpdatedTextBox = 0) then
+      begin
+        ValidateInput(cells[selectedOrder[0]].cellIdx);
+      end;   
 		end;
 	end;
+  
+  procedure UpdateGUI(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
+  begin
+    with BitmapMode do
+    begin
+    if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
+    if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.BMPArray, panels, scale);
+    if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp, sharedVals.bmpArray);
+    if (RegionClickedID() = 'ExportBitmap') then DoSaveDialog(sharedVals, saveBMP);			
+    if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[CellBitmapNames]);
+    if (RegionClickedID() = 'ResetPosition') then
+    begin
+      cellGrp.grpArea.X	:= ClipX;
+      cellGrp.grpArea.Y	:= ClipY;
+      UpdatePosition(cellGrp);
+    end;
+    end;
+  end;
   
 	procedure UpdateBitmapEditor(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
 	var
@@ -150,52 +184,31 @@ implementation
 	begin
 		with BitmapMode do
 		begin
-			DrawSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
-			
-			
-			
+      UpdateGUI(BitmapMode, sharedVals);
+			ShowSelectedDetails(cellGrp, panels);
+			HideSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
+				
 			PushClip(ClipX, ClipY, ClipW, ClipH);
       MyDrawEmptyCells(cellGrp, sharedVals);      
       MyDrawSplitBitmapCells(cellGrp, sharedVals);
-      
-      if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.BMPArray, panels, scale);
-			if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
-			PopClip();
-      
-      if (RegionClickedID() = 'ExportBitmap') then ShowSaveDialog();
-      
-      if DialogComplete then ExportBitmap(destbmp, cellGrp, sharedVals.bmpArray);
-				
+      if CheckboxState(RegionWithID('Drag')) then FillRectangle(RGBAColor(255,255,0,180), cellGrp.grpArea);
+ 			PopClip();
+      				
 			if (not CheckboxState(RegionWithID('Anchor'))) then
 			begin
-				if MouseClicked(LeftButton) then
-				begin
-					HandleSelection(cellGrp, sharedVals.dragCell);
-				end;
+				if MouseClicked(LeftButton) then HandleSelection(cellGrp, sharedVals.dragCell);
 			end;
 			
-			if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[2]);
-			if (RegionClickedID() = 'ResetPosition') then
-			begin
-				cellGrp.grpArea.X	:= ClipX;
-				cellGrp.grpArea.Y	:= ClipY;
-				UpdatePosition(cellGrp);
-			end;
-
-      if KeyTyped(vk_9) then DeleteSelected(cellGrp, CellGap);
-
-      if MouseClicked(RightButton) then
-      begin
-        DragAndDrop(cellGrp, sharedVals, CellGap);
-      end;
-        
-			
+      if KeyTyped(vk_DELETE) then DeleteSelected(cellGrp, CellGap);
+      if MouseClicked(RightButton) then DragAndDrop(cellGrp, sharedVals, CellGap);
+        			
 			if KeyTyped(vk_ESCAPE) then 
 			begin
-				for i := Low(cellGrp.SelectedOrder) to High(cellGrp.SelectedOrder) do cellGrp.cells[cellGrp.selectedOrder[i]].isSelected := false;
-				SetLength(cellGrp.SelectedOrder, 0);
-				
+				for i := Low(cellGrp.SelectedOrder) to High(cellGrp.SelectedOrder) do 
+          cellGrp.cells[cellGrp.selectedOrder[i]].isSelected := false;
+				SetLength(cellGrp.SelectedOrder, 0);				
 			end;
+      
 		end;
 	end;
 	//---------------------------------------------------------------------------
@@ -224,7 +237,7 @@ implementation
 		begin
 			panels	:= InitializePanels();
 			cellGrp := InitializeCellGroup(12, 3, 4, 24, 32, ClipX, ClipY, CellGap, BitmapGroup);
-			InitializeCellArea(cellGrp, nil, CellGap);
+			InitializeCellArea(cellGrp, nil, CellGap, true);
 			ListAddItem(ListFromRegion(RegionWithID('BMPList')), 'None');
 			ListSetActiveItemIndex(ListFromRegion(RegionWithID('BMPList')), 0);
       InitializeBitmapDetails(cellGrp.GridType, bmpArray, 1, cellGrp.cols, cellGrp.rows);

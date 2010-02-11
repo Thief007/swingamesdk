@@ -6,12 +6,13 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 18
-y: 340
+x: 25
+y: 395
 w: 140
 h: 60
 a: blank.png
 i: blank.png
+b: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind

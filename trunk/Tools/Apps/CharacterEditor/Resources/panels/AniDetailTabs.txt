@@ -12,6 +12,7 @@ w: 370
 h: 23
 i:AniRadio1.png
 a:AniRadioDown1.png
+b:AniRadioDown1.png
 
 // Region data
 // Format: r: x, y, w, h, kind

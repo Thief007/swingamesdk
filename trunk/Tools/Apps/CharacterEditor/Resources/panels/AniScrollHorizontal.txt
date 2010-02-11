@@ -12,6 +12,7 @@ w: 762
 h: 267
 a: blank.png
 i: blank.png
+b: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind

@@ -12,6 +12,7 @@ w: 160
 h: 210
 a: BitmapDetails.png
 i: BitmapDetails.png
+b: BitmapDetails.png
 
 // Region data
 // Format: r: x, y, w, h, kind
