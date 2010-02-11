@@ -248,7 +248,6 @@ var
 begin
   if  (TextboxText(RegionWithID('tB.Bitmap.Path')) = '') then exit;
   idx := (IntToStr(length(BitmapCellKinds(m)))+',');
-  writeln(idx);
   MapAddBitmap(m,  idx+TextboxText(RegionWithID('tB.Bitmap.Path')));
   LoadBitmapFromMap(m);
   

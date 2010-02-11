@@ -957,7 +957,7 @@ procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 /// @class List
 /// @overload AddItem AddItemWithCellAndText
 /// @csn addBitmapCell:%s withText:%s
-procedure ListAddItem(lst: GUIList; img:BitmapCell; text: String); overload;
+procedure ListAddItem(lst: GUIList; const img:BitmapCell; text: String); overload;
 
 /// Adds an item to the list by text
 ///
