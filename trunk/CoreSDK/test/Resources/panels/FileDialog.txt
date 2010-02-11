@@ -6,11 +6,12 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 0
-y: 0
+x: 200
+y: 150
 w: 400
 h: 300
 d: true
+b: FileDialog_Background.png
 a: FileDialog_Active.png
 i: FileDialog_Inactive.png
 
@@ -44,5 +45,5 @@ r:  11, 273, 227, 20, Label, ErrorLabel, fdDialogText, l,
 // scrollKind = v for vertical or h for horizontal
 // scrollBmp  = n for no bitmap, or the bitmap name
 
-r: 11, 73, 378, 190, List, FilesList, 1, 10, -1, fdDialogText, l, 10, v, mapeditor_scroll.png
-r: 92, 42, 297,  26, List, PathList,  3,  1, -1, fdDialogText, c,  6, h, mapeditor_scroll.png
+r: 11, 73, 379, 190, List, FilesList, 1, 10, -1, fdDialogText, l, 10, v, FileDialog_Scroll.png
+r: 92, 42, 297,  29, List, PathList,  3,  1, -1, fdDialogText, c,  8, h, FileDialog_ScrollSmall.png
