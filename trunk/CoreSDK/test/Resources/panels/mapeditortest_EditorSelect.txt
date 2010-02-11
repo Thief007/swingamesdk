@@ -26,4 +26,4 @@ d: false
 // label data
 r: 5, -3, 80, 30, label, edit,courier,l, Edit 
 
-r: 85, -3, 145, 30, label, DropDown1, courier,l, Map
+r: 80, -3, 145, 30, label, DropDown1, courier,l, Map

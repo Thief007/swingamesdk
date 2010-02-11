@@ -10,7 +10,7 @@ w: 150
 //height
 h: 190
 //active bmp
-a: mapeditor_values.png
+a: mapeditor_values_a.png
 //inactive bmp
 i: mapeditor_values.png
 //Draggable
