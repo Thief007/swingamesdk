@@ -166,7 +166,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @getter Width
-  function BitmapWidth(bmp: Bitmap): LongInt;
+  function BitmapWidth(bmp: Bitmap): LongInt; overload;
   
   /// Returns the height of the entire bitmap.
   /// 
@@ -174,7 +174,7 @@ uses sgTypes;
   /// 
   /// @class Bitmap
   /// @getter Height
-  function BitmapHeight(bmp: Bitmap): LongInt;
+  function BitmapHeight(bmp: Bitmap): LongInt; overload;
   
   /// Returns the width of a cell within the bitmap.
   /// 
@@ -250,13 +250,13 @@ uses sgTypes;
   /// @class Bitmap
   /// @method interchangableWith
   function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
-
-
+  
   /// Returns the name of the bitmap
   /// @lib
   /// @class Bitmap
   /// @getter Name
   function BitmapName(bmp:Bitmap): string;
+  
   /// Returns the FileName of the bitmap
   /// @lib
   /// @class Bitmap
@@ -264,6 +264,46 @@ uses sgTypes;
   function BitmapfileName(bmp:Bitmap): string;
 
 
+  //----------------------------------------------------------------------------
+  // BitmapCell code
+  //----------------------------------------------------------------------------
+  
+  /// Returns a bitmap cell for the cell of the indicated bitmap.
+  ///
+  /// @lib
+  /// @sn bitmap:%s bitmapCellForCell:%s
+  ///
+  /// @class Bitmap
+  /// @method BitmapCell
+  function BitmapCellOf(bmp: Bitmap; cell: LongInt): BitmapCell;
+  
+  /// Returns true of the two bitmap cells refer to the same cell
+  /// in the one bitmap.
+  /// 
+  /// @lib
+  /// @sn bitmapCell:%s isSameAs:%s
+  ///
+  /// @class BitmapCell
+  /// @method SameAs
+  function SameBitmapCell(const bmp1, bmp2: BitmapCell): Boolean;
+  
+  /// Returns the width of the bitmap cell.
+  ///
+  /// @lib BitmapWidthForCell
+  ///
+  /// @class BitmapCell
+  /// @getter Width
+  function BitmapWidth(const bmp: BitmapCell): LongInt; overload;
+  
+  /// Returns the height of the bitmap cell.
+  /// 
+  /// @lib BitmapHeightForCell
+  /// 
+  /// @class BitmapCell
+  /// @getter Height
+  function BitmapHeight(const bmp: BitmapCell): LongInt; overload;
+  
+  
 //----------------------------------------------------------------------------
 // Bitmap -> Circle
 //----------------------------------------------------------------------------
@@ -1559,16 +1599,40 @@ begin
   end;
 end;
 
-function BitmapWidth(bmp: Bitmap): LongInt;
+function BitmapWidth(bmp: Bitmap): LongInt; overload;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.width;
 end;
 
-function BitmapHeight(bmp: Bitmap): LongInt;
+function BitmapHeight(bmp: Bitmap): LongInt; overload;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.height;
+end;
+
+function SameBitmapCell(const bmp1, bmp2: BitmapCell): Boolean;
+begin
+  result := (bmp1.bmp = bmp2.bmp) and (bmp1.cell = bmp2.cell);
+end;
+
+function BitmapCellOf(bmp: Bitmap; cell: LongInt): BitmapCell;
+begin
+  result.bmp := bmp;
+  if cell >= -1 then result.cell := cell
+  else result.cell := -1;
+end;
+
+function BitmapWidth(const bmp: BitmapCell): LongInt; overload;
+begin
+  if bmp.cell = -1 then result := BitmapWidth(bmp.bmp)
+  else result := BitmapCellWidth(bmp.bmp);
+end;
+
+function BitmapHeight(const bmp: BitmapCell): LongInt; overload;
+begin
+  if bmp.cell = -1 then result := BitmapHeight(bmp.bmp)
+  else result := BitmapCellHeight(bmp.bmp);
 end;
 
 function BitmapCellWidth(bmp: Bitmap): LongInt;
