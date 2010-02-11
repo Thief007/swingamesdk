@@ -238,8 +238,28 @@ begin
   for i := low(bCkArray) to high(bCkArray) do
   begin
     
-    ListAddItem(RegionWithID('lst.Palette'), RotateScaleBitmap(bCKArray[i].bmap,0, scale));
+    ListAddItem(RegionWithID('lst.Palette'), BitmapCellOf(RotateScaleBitmap(bCKArray[i].bmap,0, scale),bCKArray[i].cell));
   end;
+end;
+
+
+procedure ApplyBitmapToTile(m:map; offset:vector);
+var
+  BmpCellKindArray : BitmapCellKindArray;
+begin
+if ListActiveItemIndex(RegionWithId('lst.Palette')) = -1 then exit;
+BmpCellKindArray := BitmapCellKinds(m);
+SetTileBitmap(m,TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30))),StrToInt(LabelText(RegionWithId('Lbl.Map.layer'))), ListActiveItemIndex(RegionWithId('lst.Palette')));
+end;
+
+
+
+procedure UpdateDefaultKind(m:map);
+var
+  DefaultKinds : BitmapCellKindArray;
+begin
+  DefaultKinds := BitmapCellKinds(m);
+  TextboxSetText(RegionWithId('Tb.DefaultKind.Kind'),DefaultKinds[ListActiveItemIndex(RegionWithId('lst.Palette'))].KindIdx);
 end;
 
 procedure AddBitmapToPalette(m:Map);
@@ -253,7 +273,7 @@ begin
   
 end;
   
-procedure UpdateGUI(pnls : PanelArray; var m:map; var openingFile, savingFile, openingBmp : Boolean);
+procedure UpdateGUI(pnls : PanelArray; var m:map; var openingFile, savingFile, openingBmp : Boolean; offset:vector);
 begin
   
   LabelSetText(RegionWithID('b.Value.KindSelected'), ListActiveItemText(RegionWithID('lst.Kind')));
@@ -334,6 +354,7 @@ begin
       //writeln('loading file');
       m:=LoadMap(DialogPath());
       ShowMapProperties(m);
+      LoadBitmapFromMap(m);
       openingFile := false;
     end;
 
@@ -402,13 +423,27 @@ begin
     AddBitmapToPalette(m);
    end;
 
-   if KeyTyped(vk_DELETE) and (ListActiveItemIndex(RegionWithID('lst.Palette'))<>-1) then
+   if KeyTyped(vk_DELETE) and (ListActiveItemIndex(RegionWithId('lst.Palette'))<>-1) then
    begin
+   //writeln(ListActiveItemIndex(RegionWithId('lst.Palette')));
+       MapRemoveBitmap(m, ListActiveItemIndex(RegionWithId('lst.Palette')));
     ListRemoveActiveItem('lst.Palette');
-    m^.BitmapCellKind[ListActiveItemIndex(RegionWithID('lst.Palette'))].Bmap := nil;
-   
+
    end;
 
+    if (RegionClickedID() = 'lst.Palette')then
+   begin
+   writeln('blah');
+    updateDefaultKind(m);
+   end;
+   if (RegionClickedId()='b.DefaultKind.Assign') and (ListActiveItemIndex(RegionWithId('lst.Palette'))<>-1) then
+   begin
+    MapSetBitmapDefaultKind(m,ListActiveItemIndex(RegionWithId('lst.Palette')),StrToInt(TextboxText(RegionWithId('Tb.DefaultKind.Kind') )));
+   end;
+  if MouseClicked(LeftButton) then
+    begin
+      ApplyBitmapToTile(m,offset);
+    end;
   
 
 end;
@@ -430,7 +465,12 @@ begin
    
   if ListActiveItemText(RegionWithID('dD.displayList')) = 'Bitmap+Grid' then
   begin
-    DrawMap(m, offset);
+    if CheckboxState('cB.Map.ShowAll') then
+    DrawMap(m,offset)
+    else
+    begin
+      DrawMapLayer(m, offset,StrToInt(LabelText(RegionWithID('Lbl.Map.layer'))));
+    end;
     DrawMapGrid(m, offset);
    end;
    if ListActiveItemText(RegionWithID('dD.displayList')) = '' then DrawMapGrid(m, offset);
@@ -482,7 +522,7 @@ begin
     UpdateCamera();
 
     UpdateInterface();
-    UpdateGUI(pnls, myMap, openingFile, savingFile, openingBmp);
+    UpdateGUI(pnls, myMap, openingFile, savingFile, openingBmp, offset);
     DrawUpdate(myMap,offset);
     DrawPanels();
     DrawFramerate(0,0);
