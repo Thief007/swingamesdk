@@ -24,6 +24,8 @@ interface
       Id:           LongInt;
     end;}
 
+    BitmapCellKindArray = Array of BitmapCellKind;
+
     BitmapCellKindPtr = ^BitmapCellKind;
     Tile = ^TileData;
     TileData = Record
@@ -58,7 +60,7 @@ interface
       TileHeight:         LongInt;                        // The Tile height
       TileStagger:        Vector;                         // Offset of the tile's X Position
       MapDefaultValues:   Array of Array of Single;       //default values of tiles depending on bitmaps.
-      BitmapCellKind:     Array of BitmapCellKind;    // Bitmap/cell/kinds.
+      BitmapCellKind:     Array of BitmapCellKind;        // Bitmap/cell/kinds.
     end;
 
 //----------------------------------------------------------------------------
@@ -241,6 +243,18 @@ interface
   //----------------------------------------------------------------------------
   //return map properties functions//
   //----------------------------------------------------------------------------
+  /// Returns the BitmapCellKind of the map
+  ///
+  /// @lib BitmapCellKind
+  ///
+  /// @class
+  function BitmapCellKinds(m:map): BitmapCellKindArray;
+
+  ///returns the number of tiles that are in a map.
+  ///
+  /// @lib TileCount
+  ///
+  /// @class Map
   function TileCount(m : map): Longint;
   /// returns the index of the kind from the NamedIndexCollection given
   /// the name of the kind
@@ -555,25 +569,25 @@ interface
 
   /// Adds a single bitmap to bitmapCellKind within the map.
   ///
-  /// @lib AddBitmap
+  /// @lib MapAddBitmap
   /// @sn map:%s addBitmap:%s
   /// 
   /// @class Map
   /// @setter AddBItmap
-  procedure AddBitmap(m:map; filename:String);
+  procedure MapAddBitmap(m:map; filename:String);
 
   /// Adds a value name to the named index collection within the map
   ///
-  /// @lib AddValue
+  /// @lib MapAddValue
   /// @sn map:%s addValueName:%s
   ///
   /// @class Map
   /// @setter AddValue
-  procedure AddValue(m:map; vName:string);
+  procedure MapAddValue(m:map; vName:string);
 
   /// Adds bitmap cells to bitmap cell kind within map
   ///
-  /// @lib MappAddBitmapCells
+  /// @lib MapAddBitmapCells
   /// @sn map:%s bitmapCellIds:%s cellRegions:%s bitmap:%s
   ///
   /// @class Map
@@ -1013,7 +1027,7 @@ interface
         'w': result^.TileWidth  := MyStrToInt(data, false);        //  tile width
         'h': result^.TileHeight := MyStrToInt(data, false);      // tile height
         'l': AddTile();
-        'b': AddBitmap(result, data);
+        'b': MapAddBitmap(result, data);
         'v':LoadSpecificValue(data);
         'k':AddSpecificKind(data);
       end;
@@ -1866,33 +1880,57 @@ interface
   //==================================================================
   //FUNCTIONS THAT RETURNS MAP PROPERTIES
   //==================================================================
+  function BitmapCellKinds(m:map): BitmapCellKindArray;
+  var
+    i : LongInt;
+  begin
+    SetLength(result,0);
+    if NOT Assigned(m) then exit;
+    SetLength(result, length(m^.BitmapCellKind));
+    for i := low (m^.BitmapCellKind) to high (m^.BitmapCellKind) do
+    begin
+      result[i].Bmap := m^.BitmapCellKind[i].Bmap;
+      result[i].Cell := m^.BitmapCellKind[i].Cell;
+      result[i].KindIdx := m^.BitmapCellKind[i].KindIdx;
+    end;
+  end;
+
+  
   function MapDefaultValues(m : map; const kId, vId : LongInt): single;
   begin
+    result := -1;
+    if NOT Assigned(m) then exit;
   result := m^.MapDefaultValues[kId,vId];  
   end;
   
   function TileCount(m : map): Longint;
   begin
+    result := -1;
+    if NOT Assigned(m) then exit;
     result := (m^.MapWidth) * (m^.MapHeight);
   end;
 
   function IndexOfKind(const m :  map; const kname : string) : LongInt;
   begin
+    result := -1;
+    if NOT Assigned(m) then exit;
     result := indexOf(m^.kindIds, kname);
   end;
 
   function IndexOfValues(const m :  map; const vName : string) : LongInt;
   begin
+    result := -1;
+    if NOT Assigned(m) then exit;
     result := indexOf(m^.valueIds, vName);
   end;
+  
   function MapKinds(m: map) : StringArray;
   var
     i : LongInt;
   begin
     SetLength(result,0);
     result:= result;
-    if not Assigned(m) then exit
-    else
+    if not Assigned(m) then exit;
     SetLength(result,NameCount(m^.KindIds));
     for i := 0 to NameCount(m^.KindIds)-1 do
     begin
@@ -1905,7 +1943,6 @@ interface
     i : LongInt;
   begin
     SetLength(result,0);
-    result:= result;
     if not Assigned(m) then exit
     else
     SetLength(result,NameCount(m^.ValueIds));
@@ -2194,7 +2231,7 @@ interface
       m^.MapDefaultValues[high(m^.MapDefaultValues),j] :=0;
     end;
   end;
-  procedure AddValue(m:map; vName:string);
+  procedure MapAddValue(m:map; vName:string);
   var
     i:LongInt;
   begin
@@ -2296,7 +2333,7 @@ interface
   end;
 
 
-    procedure AddBitmap(m:map; filename:String);
+    procedure MapAddBitmap(m:map; filename:String);
     var
       index:LongInt;
     begin

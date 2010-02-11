@@ -223,6 +223,36 @@ begin
   end;
 end;
   
+
+  
+procedure LoadBitmapFromMap(m:map);
+var
+  i : LongInt;
+  scale : Single;
+  bCKArray : BitmapCellKindArray;
+begin
+
+  scale := 35 / m^.TileWidth ;
+  bCkArray := BitmapCellKinds(m);
+  ListClearItems(RegionWithID('lst.Palette'));
+  for i := low(bCkArray) to high(bCkArray) do
+  begin
+    
+    ListAddItem(RegionWithID('lst.Palette'), RotateScaleBitmap(bCKArray[i].bmap,0, scale));
+  end;
+end;
+
+procedure AddBitmapToPalette(m:Map);
+var
+  idx : string;
+begin
+  if  (TextboxText(RegionWithID('tB.Bitmap.Path')) = '') then exit;
+  idx := (IntToStr(length(BitmapCellKinds(m)))+',');
+  writeln(idx);
+  MapAddBitmap(m,  idx+TextboxText(RegionWithID('tB.Bitmap.Path')));
+  LoadBitmapFromMap(m);
+  
+end;
   
 procedure UpdateGUI(pnls : PanelArray; var m:map; var openingFile, savingFile, openingBmp : Boolean);
 begin
@@ -233,6 +263,7 @@ begin
   if (RegionClickedID() = 'DropDown1') or (RegionClickedID() = 'SelectorList') then
   begin
   	ToggleShowPanel(pnls[SelectorDropDown]);
+    if (ListActiveItemText(RegionWithID('SelectorList')) <> '') then
     LabelSetText(RegionWithID('DropDown1'), ListActiveItemText(RegionWithID('SelectorList')));
   end;
 
@@ -269,7 +300,7 @@ begin
   
   if (RegionClickedID() = 'b.Values.Add') then
   begin
-    AddValue(m, TextBoxText(RegionWithId('tB.Values.Name')));
+    MapAddValue(m, TextBoxText(RegionWithId('tB.Values.Name')));
     
     UpdateValuesList(m);
   end;
@@ -342,6 +373,7 @@ begin
   if (RegionClickedID() = 'dD.BitmapTypeIndicator') or (RegionClickedID() = 'dD.BitmapType') then
   begin
   	ToggleShowPanel(pnls[Bitmap_Type]);
+      if (ListActiveItemText(RegionWithID('dD.BitmapType')) <> '') then
     LabelSetText(RegionWithID('dD.BitmapTypeIndicator'), ListActiveItemText(RegionWithID('dD.BitmapType')));
   end;
 
@@ -355,7 +387,7 @@ begin
   if (RegionClickedID() = 'Lbl.Map.layer') or (RegionClickedID() = 'dD.layerList') then
   begin
   	ToggleShowPanel(pnls[LayerList]);
-    writeln(ListActiveItemText(RegionWithID('dD.layerList')));
+    //writeln(ListActiveItemText(RegionWithID('dD.layerList')));
       if (ListActiveItemText(RegionWithID('dD.layerList')) <> '') then
     LabelSetText(RegionWithID('Lbl.Map.layer'), ListActiveItemText(RegionWithID('dD.layerList')));
   end;
@@ -366,10 +398,23 @@ begin
     openingBmp:= true;
   end;
 
+   if (RegionClickedID() = 'b.Bitmap.Add') and (LabelText(RegionWithID('dD.BitmapTypeIndicator')) ='Bitmap') then
+   begin
+    AddBitmapToPalette(m);
+   end;
+
+   if KeyTyped(vk_DELETE) and (ListActiveItemIndex(RegionWithID('lst.Palette'))<>-1) then
+   begin
+    ListRemoveActiveItem('lst.Palette');
+    m^.BitmapCellKind[ListActiveItemIndex(RegionWithID('lst.Palette'))].Bmap := nil;
+   
+   end;
+
   
 
 end;
-  
+
+
 
 procedure DrawUpdate(m : Map; offset:vector);
 begin
@@ -428,6 +473,7 @@ begin
   UpdateValuesList(myMap);
   UpdateLayerList(myMap);
   ShowMapProperties(myMap);
+  LoadBitmapFromMap(myMap);
 
   //SetCameraPos(VectorTo(-150,-30));
 

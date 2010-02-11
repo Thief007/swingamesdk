@@ -24,6 +24,7 @@ d: false
 
 
 // label data
+r: 80, 240, 65, 20, label, b.Bitmap.Add,courierMedium,l,Add
 r: 5, 0, 80, 15, label, l.BitmapType,courierSmall,l, Bitmap Type 
 
 r: 5, 15, 60, 30, label, dD.BitmapTypeIndicator, courierSmall,l, Cell
@@ -60,4 +61,3 @@ r: 5, 225, 140, 15, textbox, tB.Bitmap.Path, courierSmall, 20, l,
 
 r: 5, 240, 65, 20, label, b.Bitmap.Browse,courierMedium,l,Browse
 
-r: 80, 240, 65, 20, label, b.Bitmap.Add,courierMedium,l,Add
