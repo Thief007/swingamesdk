@@ -142,6 +142,7 @@ type
     
     // Event callback mechanisms
     callbacks:            Array of Array of GUIEventCallback; // [region][callback]
+    DrawAsVectors:        Boolean;
   end;
   
   FileDialogSelectType = ( 
@@ -1151,6 +1152,11 @@ procedure ShowOpenDialog(select: FileDialogSelectType); overload;
 procedure DoFreePanel(var pnl: Panel);
 procedure GUISetBackgroundColorInactive(c:color);
 procedure GUISetForegroundColorInactive(c:color);
+
+//Do not use
+procedure AddPanelToGUI(p: Panel);
+procedure AddRegionToPanelWithString(d: string; p: panel);
+
 //=============================================================================
 implementation
   uses
@@ -1706,43 +1712,40 @@ begin
                         TextboxTextArea(area));
 end;
 
-procedure DrawAsVectors();
+procedure DrawAsVectors(p: Panel);
 var
-  i, j: integer;
+  j: integer;
   current: Panel;
   currentReg: Region;
 begin
-  for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
+  current := p;
+  
+  if current^.active then
   begin
-    current := GUIC.visiblePanels[i];
-    
-    if current^.active then
-    begin
-      FillRectangleOnScreen(GUIC.backgroundClr, current^.area);
-      DrawRectangleOnScreen(GUIC.foregroundClr, current^.area);
-    end
-    else
-    begin
-      FillRectangleOnScreen(GUIC.backgroundClrInactive, current^.area);
-      DrawRectangleOnScreen(GUIC.foregroundClrInactive, current^.area);
-    end;
-    
-    PushClip(current^.area);
-    
-    for j := High(current^.Regions) downto Low(current^.Regions) do
-    begin
-      currentReg := @GUIC.visiblePanels[i]^.Regions[j];
-      case currentReg^.kind of
-        gkButton:     DrawRectangleOnScreen(VectorForecolorToDraw(currentReg), RegionRectangleOnscreen(currentReg));
-        gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
-        gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
-        gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangleOnScreen(currentReg));
-        gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
-        gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
-      end;
-    end;
-    PopClip();
+    FillRectangleOnScreen(GUIC.backgroundClr, current^.area);
+    DrawRectangleOnScreen(GUIC.foregroundClr, current^.area);
+  end
+  else
+  begin
+    FillRectangleOnScreen(GUIC.backgroundClrInactive, current^.area);
+    DrawRectangleOnScreen(GUIC.foregroundClrInactive, current^.area);
   end;
+  
+  PushClip(current^.area);
+  
+  for j := High(current^.Regions) downto Low(current^.Regions) do
+  begin
+    currentReg := @p^.Regions[j];
+    case currentReg^.kind of
+      gkButton:     DrawRectangleOnScreen(VectorForecolorToDraw(currentReg), RegionRectangleOnscreen(currentReg));
+      gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
+      gkCheckbox:   DrawVectorCheckbox(currentReg, RegionRectangleOnScreen(currentReg));
+      gkRadioGroup: DrawVectorRadioButton(currentReg, RegionRectangleOnScreen(currentReg));
+      gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
+      gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
+    end;
+  end;
+  PopClip();
 end;
 
 function PanelBitmapToDraw(p: Panel): bitmap;
@@ -1756,34 +1759,36 @@ begin
   result := p^.PanelBitmap;
 end;
 
-procedure DrawAsBitmaps();
+procedure DrawAsBitmaps(p: Panel);
 var
-  i, j: integer;
+  j: integer;
   currentReg: Region;
 begin
-  for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
+  DrawBitmapOnScreen(PanelBitmapToDraw(p), RectangleTopLeft(p^.area));   
+  
+  for j := Low(p^.Regions) to High(p^.Regions) do
   begin
-    DrawBitmapOnScreen(PanelBitmapToDraw(GUIC.visiblePanels[i]), RectangleTopLeft(GUIC.visiblePanels[i]^.area));   
-    
-    for j := Low(GUIC.visiblePanels[i]^.Regions) to High(GUIC.visiblePanels[i]^.Regions) do
-    begin
-      currentReg := @GUIC.visiblePanels[i]^.Regions[j];
-      case GUIC.visiblePanels[i]^.Regions[j].kind of
-        gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
-        gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
-        gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
-        else          DrawBitmapPartOnScreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
-      end;
+    currentReg := @p^.Regions[j];
+    case p^.Regions[j].kind of
+      gkLabel:      DrawLabelText(currentReg, RegionRectangleOnscreen(currentReg));
+      gkTextbox:    DrawTextbox(currentReg, RegionRectangleOnScreen(currentReg));
+      gkList:       DrawList(currentReg, RegionRectangleOnScreen(currentReg));
+      else          DrawBitmapPartOnScreen(BitmapToDraw(currentReg), currentReg^.area, RectangleTopLeft(RegionRectangleOnScreen(currentReg)));
     end;
   end;
 end;
   
 procedure DrawPanels();
+var
+  i: longint;
 begin
-  if GUIC.VectorDrawing then
-    DrawAsVectors()
-  else
-    DrawAsBitmaps();
+  for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
+  begin  
+    if GUIC.visiblePanels[i]^.DrawAsVectors then
+      DrawAsVectors(GUIC.visiblePanels[i])
+    else
+      DrawAsBitmaps(GUIC.visiblePanels[i]);
+  end;
 end;
 
 //---------------------------------------------------------------------------------------
@@ -1949,7 +1954,7 @@ procedure HandlePanelInput(pnl: Panel);
     
     for i := Low(lst^.placeHolder) to High(lst^.placeHolder) do
     begin
-      if PointInRect(pointClicked, lst^.placeHolder[i]) then
+      if PointInRect(pointClicked, lst^.placeHolder[i]) AND ((not(lst^.items[i + lst^.startingAt].text = '')) OR (assigned(lst^.items[i + lst^.startingAt].image.bmp))) then
       begin
         lst^.activeItem := lst^.startingAt + i;
         SendEvent(lstRegion, ekSelectionMade);
@@ -3018,14 +3023,7 @@ end;
 // Create Panels/GUI Elements/Regions etc.
 //=============================================================================
 
-function DoLoadPanel(filename, name: string): Panel;
-var
-  pathToFile, line, id, data: string;
-  panelFile: text;
-  lineNo: integer;
-  regionDataArr: Array of String;
-  
-  function StringToKind(s: String): GUIElementKind;
+function StringToKind(s: String): GUIElementKind;
   begin
     if Lowercase(s) = 'button' then
       result := gkButton
@@ -3043,7 +3041,7 @@ var
       RaiseException(s + ' is an invalid kind for region.');
   end;
   
-  procedure CreateLabel(forRegion: Region; d: string);
+  procedure CreateLabel(forRegion: Region; d: string; result: panel);
   var
     newLbl: GUILabelData;
   begin
@@ -3065,7 +3063,7 @@ var
     groupToRecieve^.buttons[High(groupToRecieve^.buttons)] := regToAdd;    
   end;
   
-  procedure CreateRadioButton(forRegion: Region; data: String);
+  procedure CreateRadioButton(forRegion: Region; data: String; result: panel);
   var
     newRadioGroup: GUIRadioGroupData;
     i: Integer;
@@ -3094,7 +3092,7 @@ var
     forRegion^.elementIndex := High(result^.radioGroups);
   end;
   
-  procedure CreateCheckbox(forRegion: Region; data: string);
+  procedure CreateCheckbox(forRegion: Region; data: string; result: panel);
   var
     newChkbox: GUICheckboxData;
   begin
@@ -3105,7 +3103,7 @@ var
     forRegion^.elementIndex := High(result^.Checkboxes);
   end;
   
-  procedure CreateTextbox(r: region; data: string);
+  procedure CreateTextbox(r: region; data: string; result: panel);
   var
     newTextbox: GUITextboxData;
   begin
@@ -3130,7 +3128,7 @@ var
     r^.ElementIndex := High(result^.textBoxes);
   end;
   
-  procedure CreateList(r: Region; data: string);
+  procedure CreateList(r: Region; data: string; result: Panel);
   var
     newList: GUIListData;
     scrollSz, rhs, btm, height, width: LongInt;
@@ -3225,7 +3223,7 @@ var
     // regX += p^.area.x;
     // regY += p^.area.y;
     
-    addedIdx := AddName(result^.regionIds, regID);   //Allocate the index
+    addedIdx := AddName(p^.regionIds, regID);   //Allocate the index
     if High(p^.Regions) < addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
     
     r.regionIdx     := addedIdx;
@@ -3239,19 +3237,28 @@ var
     
     case r.kind of
       gkButton:     ;
-      gkLabel:      CreateLabel(@p^.Regions[addedIdx],d);
-      gkCheckbox:   CreateCheckbox(@p^.Regions[addedIdx],d);
-      gkRadioGroup: CreateRadioButton(@p^.Regions[addedIdx],d);
-      gkTextbox:    CreateTextbox(@p^.Regions[addedIdx],d);
-      gkList:       CreateList(@p^.Regions[addedIdx], d);
+      gkLabel:      CreateLabel(@p^.Regions[addedIdx],d,p);
+      gkCheckbox:   CreateCheckbox(@p^.Regions[addedIdx],d,p);
+      gkRadioGroup: CreateRadioButton(@p^.Regions[addedIdx],d,p);
+      gkTextbox:    CreateTextbox(@p^.Regions[addedIdx],d,p);
+      gkList:       CreateList(@p^.Regions[addedIdx], d,p);
     end;    
   end;
+
+function DoLoadPanel(filename, name: string): Panel;
+var
+  pathToFile, line, id, data: string;
+  panelFile: text;
+  lineNo: integer;
+  regionDataArr: Array of String;
+  
   
   procedure StoreRegionData(data: String);
   begin
     SetLength(regionDataArr, Length(regionDataArr) + 1);
     regionDataArr[High(regionDataArr)] := data;
   end;
+  
   
   procedure ProcessLine();
   begin
@@ -3284,7 +3291,8 @@ var
              result^.panelBitmapInactive := BitmapNamed(Trim(data));
            end;
       'r': StoreRegionData(data);
-      'd': result^.draggable    := (LowerCase(Trim(data)) = 'true');
+      'd': result^.draggable     := (LowerCase(Trim(data)) = 'true');
+      'v': result^.DrawAsVectors := (LowerCase(Trim(data)) = 'true');
     else
       begin
         RaiseException('Error at line ' + IntToStr(lineNo) + ' in panel: ' + filename + '. Error with id: ' + id + '. This should be one of the characters defined in the template.');
@@ -3310,6 +3318,7 @@ var
   procedure InitPanel();
   begin
     New(result);
+
     
     with result^ do
     begin
@@ -3320,6 +3329,7 @@ var
       visible   := false;
       active    := true;      // Panels are active by default - you need to deactivate them specially...
       draggable := false;
+      DrawAsVectors := true;
       modal     := false;
       panelBitmap := nil;
       panelBitmapActive   := nil;
@@ -3664,6 +3674,7 @@ begin
     
     CallFreeNotifier(pnl);
     
+    FreeNamedIndexCollection(pnl^.regionIds);
     Dispose(pnl);
   end;
   

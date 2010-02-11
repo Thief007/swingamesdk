@@ -7,6 +7,7 @@ h: 40
 b: tabsPanelPanel
 a: tabsPanelRegion
 d: False
+v: False
 
 // RadioGroup
 r: 0, 16, 75, 24, RadioGroup, PanelTab, UpperTabs

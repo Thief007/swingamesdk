@@ -6,5 +6,6 @@ w: 150
 h: 260
 b: textBoxPanel
 d: False
+v: False
 
 // Regions
