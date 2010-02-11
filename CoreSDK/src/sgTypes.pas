@@ -339,6 +339,14 @@ interface
     /// @field pointer: ^BitmapData
     Bitmap = ^BitmapData;
     
+    /// A bitmap cell is used to store the cell to draw from a particular bitmap.
+    /// 
+    /// @struct BitmapCell
+    BitmapCell = record
+      bmp: Bitmap;
+      cell: LongInt;
+    end;
+    
     /// The ShapeKind is used to configure the drawing method for a
     /// shape. Each of these options provides an alternate way of 
     /// rendering based upon the shapes points.
