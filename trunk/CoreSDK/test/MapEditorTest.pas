@@ -10,6 +10,8 @@ type
   PanelName = (Selector, SelectorDropDown, MapProperties, Kind, DefaultValues, Bottom, Grid, Bitmap, Bitmap_Type, Palette, BmpKind, DisplayList, LayerList);
   PanelArray = Array[PanelName] of Panel;
 
+var
+bCKArray : BitmapCellKindArray;
 
 function InitInterface():PanelArray;
 
@@ -229,9 +231,12 @@ procedure LoadBitmapFromMap(m:map);
 var
   i : LongInt;
   scale : Single;
-  bCKArray : BitmapCellKindArray;
 begin
-
+  if m^.TileWidth = 0 then
+  begin
+  ListClearItems(RegionWithId('lst.Palette'));
+   exit;
+  end;
   scale := 35 / m^.TileWidth ;
   bCkArray := BitmapCellKinds(m);
   ListClearItems(RegionWithID('lst.Palette'));
@@ -244,22 +249,22 @@ end;
 
 
 procedure ApplyBitmapToTile(m:map; offset:vector);
-var
-  BmpCellKindArray : BitmapCellKindArray;
 begin
 if ListActiveItemIndex(RegionWithId('lst.Palette')) = -1 then exit;
-BmpCellKindArray := BitmapCellKinds(m);
 SetTileBitmap(m,TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30))),StrToInt(LabelText(RegionWithId('Lbl.Map.layer'))), ListActiveItemIndex(RegionWithId('lst.Palette')));
+end;
+
+procedure AddCellToPalette(m:map);
+begin
+
 end;
 
 
 
 procedure UpdateDefaultKind(m:map);
-var
-  DefaultKinds : BitmapCellKindArray;
+
 begin
-  DefaultKinds := BitmapCellKinds(m);
-  TextboxSetText(RegionWithId('Tb.DefaultKind.Kind'),DefaultKinds[ListActiveItemIndex(RegionWithId('lst.Palette'))].KindIdx);
+  TextboxSetText(RegionWithId('Tb.DefaultKind.Kind'),bCKArray[ListActiveItemIndex(RegionWithId('lst.Palette'))].KindIdx);
 end;
 
 procedure AddBitmapToPalette(m:Map);
@@ -267,7 +272,7 @@ var
   idx : string;
 begin
   if  (TextboxText(RegionWithID('tB.Bitmap.Path')) = '') then exit;
-  idx := (IntToStr(length(BitmapCellKinds(m)))+',');
+  idx := (IntToStr(length(bCKArray))+',');
   MapAddBitmap(m,  idx+TextboxText(RegionWithID('tB.Bitmap.Path')));
   LoadBitmapFromMap(m);
   
@@ -292,12 +297,14 @@ begin
     m := NewMap();
    //writeln('new');
     ShowMapProperties(m);
+    LoadBitmapFromMap(m)
   end;
   
   if (RegionClickedID() = 'b.Map.Apply') then
   begin
     ApplyMapProperties(m);
     UpdateLayerList(m);
+    LoadBitmapFromMap(m);
   end;
 
   if (RegionClickedID() = 'b.Map.Reset') then
@@ -377,9 +384,6 @@ begin
     AssignValues(m);
   end;
 
-  if MouseClicked(LeftButton) and not GUIClicked() then
-  UpdateSelect(m);
-
   if (RegionClickedID() = 'lst.Values') or (RegionClickedID() = 'lst.Kind') then
   begin
     AssignValues(m);
@@ -433,18 +437,20 @@ begin
 
     if (RegionClickedID() = 'lst.Palette')then
    begin
-   writeln('blah');
     updateDefaultKind(m);
    end;
    if (RegionClickedId()='b.DefaultKind.Assign') and (ListActiveItemIndex(RegionWithId('lst.Palette'))<>-1) then
    begin
     MapSetBitmapDefaultKind(m,ListActiveItemIndex(RegionWithId('lst.Palette')),StrToInt(TextboxText(RegionWithId('Tb.DefaultKind.Kind') )));
    end;
-  if MouseClicked(LeftButton) then
+  if MouseClicked(LeftButton)and not GUIClicked() then
     begin
       ApplyBitmapToTile(m,offset);
     end;
-  
+    if (RegionClickedID() = 'b.Bitmap.Add') and (LabelText(RegionWithID('dD.BitmapTypeIndicator')) ='Cell') then
+   begin
+    //AddCellToPalette(m);
+   end;
 
 end;
 
