@@ -8,12 +8,11 @@
 // Change History:
 //
 // Version 3:
-// - 2009-12-18: Cooldave : Ability to create panels...  no regions, just panels. 
-//              They can  be drawn as rectangles and read from file.
-// 
 // - 2010-01-19: Cooldave : Textboxes, Buttons, Checkboxes, Radiobuttons, Labels all fully functional.
-//              Lists are almost completed. Can be created and used, and items can be added at runtime.
-//              Need to add the ability to remove items from lists.
+//              			Lists are almost completed. Can be created and used, and items can be added at runtime.
+//              			Need to add the ability to remove items from lists.
+// - 2009-12-18: Cooldave : Ability to create panels...  no regions, just panels. 
+//              			They can  be drawn as rectangles and read from file.
 //=============================================================================
 
 {$I sgTrace.inc}
@@ -1949,10 +1948,11 @@ begin
   // Adjust the mouse point into this panels area (offset from top left of pnl)
   pointClickedInPnl := PointAdd(MousePosition(), InvertVector(RectangleTopLeft(pnl^.area)));
   
+  // Handle mouse interaction
   if MouseClicked(LeftButton)   then _UpdateMouseClicked(pointClickedInPnl)
   else if MouseDown(LeftButton) then _UpdateMouseDown(pointClickedInPnl)
   else if MouseClicked(WheelUpButton)   then _UpdateScrollUp(pointClickedInPnl)
-  else if MouseClicked(WheelDownButton) then _UpdateScrollDown(pointClickedInPnl)
+  else if MouseClicked(WheelDownButton) then _UpdateScrollDown(pointClickedInPnl);
 end;
 
 function RegionClicked(): region;
@@ -4042,6 +4042,35 @@ begin
 end;
 
 procedure UpdateInterface();
+  procedure _UpdateTextEntry();
+  var
+    pnl: Panel;
+    r: Region;
+    txtCount, inc, idx: LongInt;
+    txt: GUITextBox;
+  begin
+    //Enable tabbing between text boxes
+    if assigned(GUIC.activeTextBox) and KeyTyped(vk_tab) then 
+    begin
+      r := GUIC.activeTextBox;
+      pnl := r^.parent;
+      txtCount := Length(pnl^.textBoxes);
+      
+      if KeyDown(vk_lshift) or KeyDown(vk_rshift) then inc := -1
+      else inc := +1;
+      
+      // Only tab if more than one textbox
+      if txtCount > 1 then
+      begin
+        FinishReadingText();
+        idx := (r^.elementIndex + inc) mod txtCount;
+        if idx < 0 then idx := idx + txtCount;
+        
+        txt := @pnl^.textBoxes[idx];
+        GUISetActiveTextbox(txt);
+      end;
+    end;
+  end;
 var
   pnl: Panel;
 begin
@@ -4050,6 +4079,9 @@ begin
   GUIC.lastClicked := nil;
   
   UpdateDrag();
+  
+  if AnyKeyPressed() then
+    _UpdateTextEntry();
   
   pnl := PanelAtPoint(MousePosition());
   if MouseClicked(Leftbutton) then GUIC.panelClicked := pnl
