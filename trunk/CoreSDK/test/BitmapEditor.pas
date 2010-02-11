@@ -262,7 +262,7 @@ begin
 		end;
 	end;
 	if (currentStat <> xPos) OR (currentStat <> yPos) then
-		SetBitmapCellDetails(src, editVals[bmpType,CellWidth].val, editVals[bmpType,CellHeight].val, editVals[bmpType,Columns].val, editVals[bmpType,Rows].val, editVals[bmpType,CellCount].val);
+		BitmapSetCellDetails(src, editVals[bmpType,CellWidth].val, editVals[bmpType,CellHeight].val, editVals[bmpType,Columns].val, editVals[bmpType,Rows].val, editVals[bmpType,CellCount].val);
 	ResetRectangles(rectArray, editVals, bmpType);
 end;
 

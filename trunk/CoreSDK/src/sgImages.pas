@@ -214,7 +214,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method SetCellDetails
   /// @csn setCellWidth:%s height:%s columns:%s rows:%s count:%s
-  procedure SetBitmapCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
+  procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
   
   /// Returns the number of cells in the specified bitmap.
   ///
@@ -1078,7 +1078,7 @@ begin
             and bmp^.nonTransparentPixels[x, y];
 end;
 
-procedure SetBitmapCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
+procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
 begin
   bmp^.cellW     := width;
   bmp^.cellH     := height;
@@ -1134,11 +1134,50 @@ end;
 //---------------------------------------------------------------------------
 
 function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
+var
+  name: String;
+  obj: TResourceContainer;
+  deg: LongInt;
 begin
+  result := nil;
+  if not assigned(src) then exit;
+  
+  deg := Round(degRot) mod 360;
+  
+  name := Format('%s|%d|%.2f', [BitmapName(src), deg, scale]);
+  
+  //WriteLn(name);
+  
+  if HasBitmap(name) then
+  begin
+    result := BitmapNamed(name);
+    exit;
+  end;
+  
   New(result);
-  result^.surface := rotozoomSurface(src^.surface, degRot, scale, 1);
-  result^.width := result^.surface^.w;
-  result^.height := result^.surface^.h;
+  obj := tResourceContainer.Create(result);
+  if not _Images.setValue(name, obj) then
+  begin
+    Dispose(result);
+    result := nil;
+    exit;
+  end;
+  
+  with result^ do
+  begin
+    surface := rotozoomSurface(src^.surface, deg, scale, 0);
+    width   := surface^.w;
+    height  := surface^.h;
+    
+    if degRot = 0 then
+      BitmapSetCellDetails(result, Round(src^.cellW * scale), Round(src^.cellH * scale), src^.cellCount, src^.cellRows, src^.cellCount)
+    else
+      // Cell details are gone
+      BitmapSetCellDetails(result, width, height, 1, 1, 1);
+    
+    SetLength(nonTransparentPixels, 0);
+    SetLength(clipStack, 0);
+  end;
 end;
 
 procedure SetupBitmapForCollisions(src: Bitmap);

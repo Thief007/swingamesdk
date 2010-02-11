@@ -1601,7 +1601,7 @@ implementation
   procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
   begin
     if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
-    rectangleColor(dest^.surface, xPos, yPos, xPos + width, yPos + height, ToGfxColor(clr));
+    rectangleColor(dest^.surface, xPos, yPos, xPos + width - 1, yPos + height - 1, ToGfxColor(clr));
   end;
 
   procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : LongInt);
@@ -1626,7 +1626,7 @@ implementation
     rect.h := height;
     
     //SDL_FillRect(dest^.surface, @rect, clr);
-    boxColor(dest^.surface, rect.x, rect.y, rect.x + width, rect.y + height, ToGfxColor(clr));
+    boxColor(dest^.surface, rect.x, rect.y, rect.x + width - 1, rect.y + height - 1, ToGfxColor(clr));
   end;
   
   /// Draws a vertical line on the destination bitmap.
