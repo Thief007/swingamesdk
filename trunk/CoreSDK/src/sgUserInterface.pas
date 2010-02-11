@@ -788,6 +788,9 @@ procedure TextboxSetAlignment(r: Region; align: FontAlignment);
 //Lists
 //---------------------------------------------------------------------------
 
+procedure ListRemoveActiveItem(r : region); overload;
+procedure ListRemoveActiveItem(s : string); overload;
+
 /// Set the active item in the list to the item at index idx
 ///
 /// @lib
@@ -2518,6 +2521,17 @@ procedure ListClearItems(r : Region); overload;
 begin
   ListClearItems(ListFromRegion(r));
 end;
+
+procedure ListRemoveActiveItem(r : region); overload;
+begin
+  ListRemoveItem(ListFromRegion(r), ListActiveItemIndex(r));
+end;
+
+procedure ListRemoveActiveItem(s : string); overload;
+begin
+  ListRemoveActiveItem(RegionWithID(s));
+end;
+
 
 procedure ListRemoveItem(lst: GUIList; idx: LongInt);
 var

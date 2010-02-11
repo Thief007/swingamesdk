@@ -24,4 +24,4 @@ d: false
 
 // Region data
 // Format: r: x, y, w, h, kind
-r: 0,0, 150, 230, list, lst.Palette, 1, 2, -1, courier, l, 12, v, mapeditor_scroll.png
+r: 0,0, 150, 230, list, lst.Palette, 3, 5, -1, courier, l, 12, v, mapeditor_scroll.png
