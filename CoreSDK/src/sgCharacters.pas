@@ -663,16 +663,7 @@ implementation
     aniTemp: AnimationTemplate;
     bmpIDs, tempValueIDs: NamedIndexCollection;
     singleValues: Array of Single;
-    
-    procedure SetCellDetails();
-    begin
-      w     := StrToInt(ExtractDelimited(1, data, [',']));
-      h     := StrToInt(ExtractDelimited(2, data, [',']));
-      cols  := StrToInt(ExtractDelimited(3, data, [',']));
-      rows  := StrToInt(ExtractDelimited(4, data, [',']));
-      count := StrToInt(ExtractDelimited(5, data, [',']));
-    end;
-    
+        
     procedure SetName();
     begin
       if Length(ExtractDelimited(2, line, [':'])) > 0 then CharacterSetName(result, ExtractDelimited(1, data, [',']));
@@ -689,17 +680,22 @@ implementation
       
       AddName(bmpIDs,ExtractDelimited(1, data, [',']));
       bmpArray[High(bmpArray)] := LoadBitmap(ExtractDelimited(2, data, [',']));
-      SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(255,255,255));
+      w     := StrToInt(ExtractDelimited(3, data, [',']));
+      h     := StrToInt(ExtractDelimited(4, data, [',']));
+      cols  := StrToInt(ExtractDelimited(5, data, [',']));
+      rows  := StrToInt(ExtractDelimited(6, data, [',']));
+      count := StrToInt(ExtractDelimited(7, data, [',']));
       SetBitmapCellDetails(bmpArray[High(bmpArray)], w, h, cols, rows, count);
       
-      if ((CountDelimiter(data,',') = 3) AND (ExtractDelimited(1, data, [',']) = 't')) then colliIndex := High(bmpArray);
+      SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(StrToInt(ExtractDelimited(8, data, [','])),
+                                                             StrToInt(ExtractDelimited(9, data, [','])),
+                                                             StrToInt(ExtractDelimited(10, data, [',']))));
+        
+      if ((CountDelimiter(data,',') = 11) AND (ExtractDelimited(11, data, [',']) = 't')) then colliIndex := High(bmpArray);
     end;
     
     procedure AddValuesToCharacter();
     begin
-    {  SetLength(result^.CharSprite^.values, Length(result^.CharSprite^.values) + 1);
-      AddName(result^.CharSprite^.valueIds, ExtractDelimited(1, data, [',']));
-      result^.CharSprite^.values[High(result^.CharSprite^.values)] := StrToInt(ExtractDelimited(2, data, [',']));}
       SetLength(singleValues, Length(singleValues) + 1);
       AddName(tempValueIDs, ExtractDelimited(1, data, [',']));
       singleValues[High(singleValues)] := StrToInt(ExtractDelimited(2, data, [',']));
@@ -777,13 +773,7 @@ implementation
     begin
       aniTemp := LoadAnimationTemplate(ExtractDelimited(1, data, [',']));
     end;
-    
-    procedure InitializeAnimation();
-    begin
-      result^.CurrentDirection := IndexOf(result^.Directions, data);
-      SpriteStartAnimation(result^.CharSprite, result^.ShownLayersByDirState[result^.CurrentState, result^.CurrentDirection].Anim);
-    end;
-      
+         
     procedure ProcessLine();
     begin
       // Split line into id and data
@@ -792,10 +782,8 @@ implementation
       
       // Process based on id
       
-      if Length(id) = 2 then SetDirectionStateDetails()
-      
-      else
-      
+      if Length(id) = 2 then SetDirectionStateDetails()     
+      else      
         case LowerCase(id)[1] of // in all cases the data variable is read
           'n': SetName();
           't': SetType();
@@ -804,10 +792,8 @@ implementation
           'd': SetDirections();
           's': SetStates();
           'v': AddValuesToCharacter();  
-          'l': SetShownLayersBooleans();    
-          'c': SetCellDetails();    
-          'p': SetAngles();   
-          'i': InitializeAnimation();                 
+          'l': SetShownLayersBooleans(); 
+          'p': SetAngles();                 
           else
           begin
             RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Error with id: ' + id + '. This should be one of n, t, b, a, d, s, v, l, c, p, i, sd.');
@@ -826,7 +812,6 @@ implementation
       begin
         ReadLn(input, line);
         line := Trim(line);
-        WriteLn(line);
       end;
       
       //Verify that the line has the right version
@@ -912,7 +897,6 @@ implementation
   
   function MapCharacter(name, filename: String): Character;
   var
-    obj: tResourceContainer;
     chr: Character;
   begin
     {$IFDEF TRACE}
@@ -926,7 +910,6 @@ implementation
     end;
     
     chr := DoLoadCharacter(filename, name);
-    obj := tResourceContainer.Create(chr);
     
     result := chr;
     
