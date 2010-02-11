@@ -12,6 +12,7 @@ w: 370
 h: 217
 a: AniBitmapDetails.png
 i: AniBitmapDetails.png
+b: AniBitmapDetails.png
 
 // Region data
 // Format: r: x, y, w, h, kind

@@ -13,6 +13,7 @@ h: 120
 
 a:filemenu.png
 i:filemenu.png
+b:filemenu.png
 
 // Region data
 // Format: r: x, y, w, h, kind

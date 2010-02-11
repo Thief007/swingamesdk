@@ -12,6 +12,7 @@ w: 160
 h: 120
 a: CellDetails.png
 i: CellDetails.png
+b: CellDetails.png
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -19,8 +20,8 @@ i: CellDetails.png
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //Cell Label
-r: 80, 30, 80, 20, Label, CellIdx, subs,c,0
-r: 110, 30, 80, 20, TextBox, CellIn, subs,16, center,0
+r: 80, 58, 80, 20, Label, CellIdx, subs,c,0
+r: 80, 35, 80, 20, TextBox, CellIn, subs,16, c,0
 
 //Bitmap Label
-r: 15, 94, 150, 25, Label, CurrentBitmapNameLbl, subs, c, bmp
+r: 15, 96, 150, 25, Label, CurrentBitmapNameLbl, subsSmall, l, bmp

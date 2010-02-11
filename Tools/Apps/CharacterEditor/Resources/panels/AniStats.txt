@@ -12,6 +12,7 @@ w: 370
 h: 217
 a: AniStats.png
 i: AniStats.png
+b: AniStats.png
 
 // Region data
 // Format: r: x, y, w, h, kind
