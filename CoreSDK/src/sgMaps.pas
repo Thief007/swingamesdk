@@ -2261,15 +2261,15 @@ interface
           begin
             if (m^.Tiles[row,col].TileBitmapCellKind[i] = oldAdd[k]) then // if tilebitmapcell kind points to the old address then
             begin
-              writeln(i,k);
-              writeln('current Address: ', hexstr(m^.Tiles[row,col].TileBitmapCellKind[i]), 'to ', hexstr(newAdd[k]));
+            //  writeln(i,k);
+              //writeln('current Address: ', hexstr(m^.Tiles[row,col].TileBitmapCellKind[i]), 'to ', hexstr(newAdd[k]));
               m^.Tiles[row,col].TileBitmapCellKind[i] := newAdd[k]; // assign the new address
             end; // if the tilebitmapcell doesnt match the old address it will just go to the next loop (should anyways :s)
           end;
         end; // end of TileBitmapCell Loop
       end; // end of col
     end;// end of row
-     m^.BitmapCellKind := @NewBitmapCellKinds;
+     m^.BitmapCellKind := NewBitmapCellKinds;
   end; 
   
   procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
@@ -2413,7 +2413,7 @@ interface
 
     procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
     var
-    i             : LongInt;
+    i   : LongInt;
     begin
       for i:=low(bitmapCellIds) to high(bitmapCellIds) do
       begin
