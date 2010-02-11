@@ -510,6 +510,28 @@ uses sgTypes;
   /// @csn drawOnto:%s at:%s
   procedure DrawBitmap(dest: Bitmap; src: Bitmap; const position : Point2D); overload;
   
+  /// Draws the cell of the source bitmap onto the destination.
+  ///
+  /// @lib DrawBitmapCellOnto
+  /// @sn drawOnto:%s bitmapCell:%s atX:%s y:%s
+  ///
+  /// @class BitmapCell
+  /// @method DrawOnto
+  /// @self 2
+  /// @csn drawOnto:%s atX:%s y:%s
+  procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; x, y : LongInt); overload;
+
+  /// Draws the cell of the source bitmap onto the destination
+  ///
+  /// @lib DrawBitmapCellAtPointOnto
+  /// @sn drawOnto:%s bitmapCell:%s at:%s
+  ///
+  /// @class BitmapCell
+  /// @overload DrawOnto DrawAtPointOnto
+  /// @self 2
+  /// @csn drawOnto:%s at:%s
+  procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; const position : Point2D); overload;
+
   /// Draw part of the source onto the desitination.
   ///
   /// @lib DrawBitmapPartOnto
@@ -550,7 +572,7 @@ uses sgTypes;
   /// @method DrawCellOnto
   /// @csn drawOnto:%s cell:%s atX:%s y:%s
   /// @self 2
-  procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
+  procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; x, y: Single); overload;
   
   /// Draw a cell from a bitmap onto the destination.
   ///
@@ -587,6 +609,26 @@ uses sgTypes;
   /// @overload Draw DrawAtPoint
   /// @csn drawAt:%s
   procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
+  
+  /// Draw the cell of the passed in bitmap onto the game.
+  ///
+  /// @lib DrawBitmapCell
+  /// @sn bitmapCell:%s drawAtX:%s y:%s
+  ///
+  /// @class BitmapCell
+  /// @method DrawAt
+  /// @csn drawAtX:%s y:%s
+  procedure DrawBitmapCell(const src : BitmapCell; x, y : Single); overload;
+  
+  /// Draw the cell of the passed in bitmap onto the game.
+  ///
+  /// @lib DrawBitmapCellAtPoint
+  /// @sn bitmapCell:%s drawAtPosition:%s
+  ///
+  /// @class BitmapCell
+  /// @overload DrawAt DrawAtPoint
+  /// @csn drawAt:%s
+  procedure DrawBitmapCell(const src : BitmapCell; const position : Point2D); overload;
   
   /// Draw part of a bitmap onto the game
   ///
@@ -626,7 +668,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawCell
   /// @csn drawCell:%s atX:%s y:%s
-  procedure DrawCell(src: Bitmap; cell, x, y: LongInt); overload;
+  procedure DrawCell(src: Bitmap; cell: LongInt; x, y: Single); overload;
   
   /// Draw a cell from a bitmap onto the game.
   ///
@@ -662,6 +704,26 @@ uses sgTypes;
   /// @overload DrawOnScreen DrawAtPointOnSreen
   /// @csn drawOnScreenAt:%s
   procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
+
+  /// Draw the cell of the bitmap onto the screen.
+  ///
+  /// @lib DrawBitmapCellOnScreen
+  /// @sn bitmapCell:%s drawOnScreenAtX:%s y:%s
+  ///
+  /// @class BitmapCell
+  /// @method DrawOnScreen
+  /// @csn drawOnScreenAtX:%s y:%s
+  procedure DrawBitmapCellOnScreen(const src : BitmapCell; x, y : LongInt); overload;
+
+  /// Draw the cell of the bitmap onto the screen.
+  ///
+  /// @lib DrawBitmapCellAtPointOnScreen
+  /// @sn bitmapCell:%s drawOnScreenAt:%s
+  ///
+  /// @class BitmapCell
+  /// @overload DrawOnScreen DrawAtPointOnSreen
+  /// @csn drawOnScreenAt:%s
+  procedure DrawBitmapCellOnScreen(const src : BitmapCell; const position : Point2D); overload;
   
   /// Draw part of the bitmap on the screen.
   ///
@@ -701,7 +763,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawCell
   /// @csn drawCell:%s onScreenAtX:%s y:%s
-  procedure DrawCellOnScreen(src: Bitmap; cell, x, y: LongInt); overload;
+  procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; x, y: Single); overload;
   
   /// Draw a cell from a bitmap onto the game.
   ///
@@ -1350,10 +1412,10 @@ end;
 
 //---------------------------------------------------------------------------
 
-procedure DrawCell(dest: Bitmap; src: Bitmap; cell, x, y: LongInt); overload;
+procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; x, y: Single); overload;
 begin
   //DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
-  DrawBitmapPart(dest, src, BitmapRectangleOfCell(src, cell), x, y);
+  DrawBitmapPart(dest, src, BitmapRectangleOfCell(src, cell), Round(x), Round(y));
 end;
 
 procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
@@ -1361,7 +1423,7 @@ begin
   DrawCell(dest, src, cell, Round(position.x), Round(position.y));
 end;
 
-procedure DrawCell(src: Bitmap; cell, x, y: LongInt); overload;
+procedure DrawCell(src: Bitmap; cell: LongInt; x, y: Single); overload;
 begin
   DrawCell(screen, src,  cell, ToScreenX(x), ToScreenY(y));
 end;
@@ -1371,7 +1433,7 @@ begin
   DrawCell(src, cell, Round(position.x), Round(position.y));
 end;
 
-procedure DrawCellOnScreen(src: Bitmap; cell, x, y: LongInt); overload;
+procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; x, y: Single); overload;
 begin
   DrawCell(screen, src, cell, x, y);
 end;
@@ -1379,6 +1441,56 @@ end;
 procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
 begin
   DrawCell(screen, src, cell, position);
+end;
+
+//---------------------------------------------------------------------------
+
+procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; x, y : LongInt); overload;
+begin
+  if src.cell = -1 then
+    DrawBitmap(dest, src.bmp, x, y)
+  else
+    DrawCell(dest, src.bmp, src.cell, x, y);
+end;
+
+procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; const position : Point2D); overload;
+begin
+  if src.cell = -1 then
+    DrawBitmap(dest, src.bmp, position)
+  else
+    DrawCell(dest, src.bmp, src.cell, position);
+end;
+
+procedure DrawBitmapCell(const src : BitmapCell; x, y : Single); overload;
+begin
+  if src.cell = -1 then
+    DrawBitmap(src.bmp, x, y)
+  else
+    DrawCell(src.bmp, src.cell, x, y);
+end;
+
+procedure DrawBitmapCell(const src : BitmapCell; const position : Point2D); overload;
+begin
+  if src.cell = -1 then
+    DrawBitmap(src.bmp, position)
+  else
+    DrawCell(src.bmp, src.cell, position);
+end;
+
+procedure DrawBitmapCellOnScreen(const src : BitmapCell; x, y : LongInt); overload;
+begin
+  if src.cell = -1 then
+    DrawBitmapOnScreen(src.bmp, x, y)
+  else
+    DrawCellOnScreen(src.bmp, src.cell, x, y);
+end;
+
+procedure DrawBitmapCellOnScreen(const src : BitmapCell; const position : Point2D); overload;
+begin
+  if src.cell = -1 then
+    DrawBitmapOnScreen(src.bmp, position)
+  else
+    DrawCellOnScreen(src.bmp, src.cell, position);
 end;
 
 //---------------------------------------------------------------------------
