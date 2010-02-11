@@ -959,6 +959,40 @@ procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 /// @csn addBitmapCell:%s withText:%s
 procedure ListAddItem(lst: GUIList; const img: BitmapCell; text: String); overload;
 
+/// Adds an item to the list where the items shows a cell of a
+/// bitmap and some text.
+///
+/// @lib ListAddItemWithCellAndTextFromRegion
+/// @sn region:%s addBitmapCell:%s withText:%s
+///
+/// @class Region
+/// @overload AddItem AddItemWithCellAndTextFromRegion
+/// @csn addBitmapCell:%s withText:%s
+procedure ListAddItem(r: Region; const img:BitmapCell; text: String); overload;
+
+/// Adds an item to the list where the items shows a cell of a
+/// bitmap.
+///
+/// @lib ListAddItemWithCellFromRegion
+/// @sn region:%s addBitmapCell:%s
+///
+/// @class Region
+/// @overload AddItem AddItemWithCellFromRegion
+/// @csn addBitmapCell:%s
+
+procedure ListAddItem(r : Region; const img:BitmapCell); overload;
+
+/// Adds an item to the list where the items shows a cell of a
+/// bitmap.
+///
+/// @lib ListAddItemWithCell
+/// @sn list:%s addBitmapCell:%s
+///
+/// @class List
+/// @overload AddItem AddItemWithCell
+/// @csn addBitmapCell:%s
+procedure ListAddItem(lst: GUIList; const img:BitmapCell); overload;
+
 /// Adds an item to the list by text
 ///
 /// @lib AddItemByTextFromRegion
@@ -2536,6 +2570,20 @@ begin
     SetLength(lst^.items, Length(lst^.items) + 1);
     lst^.items[High(lst^.items)].text     := text;  //Assign the text to the item
     lst^.items[High(lst^.items)].image    := img;   //Assign the image to the item
+end;
+
+procedure ListAddItem(lst: GUIList; const img:BitmapCell); overload;
+begin
+  ListAddItem(lst,img,'');
+end;
+procedure ListAddItem(r : Region; const img:BitmapCell); overload;
+begin
+  ListAddItem(r,img,'');
+end;
+
+procedure ListAddItem(r : Region; const img:BitmapCell; text: String); overload;
+begin
+  ListAddItem(ListFromRegion(r), img, text);
 end;
 
 procedure ListAddItem(r : Region; text: String); overload;

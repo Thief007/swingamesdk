@@ -20,7 +20,7 @@ d: false
 // Format: r: x, y, w, h, kind
 
 
-r: 5, 0, 125, 30, label, b.Value.header,courierMedium,l, Default Kind
-r: 15, 30, 120, 15, textbox, Tb.Map.Value, courierSmall, 20, l, 
+r: 5, 0, 125, 30, label, b.DefaulKind.header,courierMedium,l, Default Kind
+r: 15, 30, 120, 15, textbox, Tb.DefaultKind.Kind, courierSmall, 20, l, 
 
-r: 45, 45, 70, 30, label,b.Values.Assign,courierMedium,l,Assign 
+r: 45, 45, 70, 30, label,b.DefaultKind.Assign,courierMedium,l,Assign 

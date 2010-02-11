@@ -510,15 +510,8 @@ interface
   procedure SetTileValue(m : map; t :Tile; name : String; val : Single); overload;
 
 
-  /// Sets the bitmap of a given Tile at a given layer
-  ///
-  /// @lib SetTileBitmap
-  /// @sn setTile:%s layer:%s bitmap:%s cell:%s
-  ///
-  /// @class Tile
-  /// @method SetTileBitmap
-  /// @csn layer:%s bitmap:%s cell:%s
-  procedure SetTileBitmap(t : Tile; layer : LongInt; bmp : Bitmap; cell : LongInt);
+
+  procedure SetTileBitmap(m:map; t : tile; layer:LongInt; idx :LongInt);
 
   /// returns an empty new map
   ///
@@ -532,6 +525,16 @@ interface
   //======================//
   // Set map procedures   //
   //======================//
+  procedure MapSetBitmapDefaultKind(m: map; const idx :longInt; kind :longInt);
+  /// Removes a BitmapCellKind from the array within the given map
+  ///
+  /// @lib MapRemoveBitmap
+  /// @sn map:%s removeIdx:%s
+  ///
+  /// @class Map
+  /// @method RemoveBitmap
+  procedure MapRemoveBitmap(m : map; const idx:LongInt);
+  
   /// Adds a values to map where idx1 represents kind and idx2 represents value index
   ///
   /// @lib AddMapValues
@@ -836,6 +839,7 @@ interface
         begin
         result^.Tiles[rowNum, i].TileBitmapCellKind[layer] := nil;
           current := bitmapIdxs[i];
+          SetLength(result^.Tiles[rowNum, i].TileBitmapCellKind, result^.MapLayer);
           if current <> -1 then // used -1 as no bitmap.
           begin
             //result^.Tiles[rowNum, i].TileBitmapCellKind[layer].Bmap    := bitmapCellArray[current].Bmap;
@@ -851,7 +855,9 @@ interface
             //result^.Tiles[row,col].Values:= result^.MapDefaultValues
           end
           else if layer = 0 then
-          result^.Tiles[rowNum, i].kind := -1;
+          result^.Tiles[rowNum, i].kind := -1
+          else
+          result^.Tiles[rowNum, i].TileBitmapCellKind[layer]:=nil;
 
         end;
         RowNum += 1;
@@ -2172,11 +2178,13 @@ interface
   //======================//
   // Set Tile procedures  //
   //======================//
+
+
   
-  procedure SetTileBitmap(t: Tile; layer:LongInt; bmp:Bitmap; cell:LongInt);
+  procedure SetTileBitmap(m:map; t : tile; layer:LongInt; idx :LongInt);
   begin
-    t^.TileBitmapCellKind[layer]^.BMap := bmp;
-    t^.TileBitmapCellKind[layer]^.Cell := cell;
+    if not assigned(t) then exit;
+    t^.TileBitmapCellKind[layer] := @m^.BitmapCellKind[idx]
   end;
   
   procedure SetTileKind(t: Tile; kindId:LongInt);
@@ -2207,6 +2215,63 @@ interface
   //======================//
   // Set map procedures   //
   //======================//
+
+  procedure MapSetBitmapDefaultKind(m: map; const idx :longInt; kind :longInt);
+  begin
+  m^.BitmapCellKind[idx].KindIdx := kind;
+  end;
+
+  procedure MapRemoveBitmap(m : map; const idx:LongInt);
+  var
+    i,k,row,col : LongInt;
+    NewBitmapCellKinds : array of BitmapCellKind;
+    oldAdd, newAdd : Array of Pointer;
+    
+    procedure _MakeNewBitmapCellKind();
+    var
+      j : LongInt;
+    begin
+      setLength(NewBitmapCellKinds, length(m^.BitmapCellKind)-1);
+      setLength(oldAdd, length(m^.BitmapCellKind));
+      setLength(newAdd, length(m^.BitmapCellKind));
+      for j := low(m^.BitmapCellKind) to idx-1 do //before the to be removed index is reached
+      begin
+        oldAdd[j] := @m^.BitmapCellKind[j]; // stores the old address 
+        NewBitmapCellKinds[j] := m^.BitmapCellKind[j];  // copy to new bitmapcellkind array
+        newAdd[j] := @NewBitmapCellKinds[j]; // store the new map... note that the index of old and new are the same but addresses are different.
+      end; // end of first loop
+      oldAdd[idx] := @m^.BitmapCellKind[idx]; // copy the address of the tobe removed index to the old address
+      newAdd[idx] := nil; // since the index is about to be removed the new address is nil.
+      for j := idx+1 to high(m^.BitmapCellKind) do //loop after the removed index. note that j is the index of the old and j-1 is the index of the new
+      begin
+        oldAdd[j] := @m^.BitmapCellKind[j]; // store the old address of bitmapcell kind
+        NewBitmapCellKinds[j-1] := m^.BitmapCellKind[j]; // new bitmapcellkind is now lagging by 1 due to the removed index.
+        newAdd[j] := @NewBitmapCellKinds[j-1];   // address f new bitmapcellkind
+      end;
+    end;
+  begin
+    _MakeNewBitmapCellKind();
+    for row := low(m^.Tiles) to high(m^.Tiles) do
+    begin
+      for col := low(m^.Tiles[row]) to high(m^.Tiles[row]) do
+      begin
+        for i :=low(m^.Tiles[row,col].TileBitmapCellKind) to high(m^.Tiles[row,col].TileBitmapCellKind) do // loop thru the arrays of bitmapcellkindptr
+        begin
+          for k := low(oldAdd) to high(oldAdd) do  // loops thru the arrays of pointers
+          begin
+            if (m^.Tiles[row,col].TileBitmapCellKind[i] = oldAdd[k]) then // if tilebitmapcell kind points to the old address then
+            begin
+              writeln(i,k);
+              writeln('current Address: ', hexstr(m^.Tiles[row,col].TileBitmapCellKind[i]), 'to ', hexstr(newAdd[k]));
+              m^.Tiles[row,col].TileBitmapCellKind[i] := newAdd[k]; // assign the new address
+            end; // if the tilebitmapcell doesnt match the old address it will just go to the next loop (should anyways :s)
+          end;
+        end; // end of TileBitmapCell Loop
+      end; // end of col
+    end;// end of row
+     m^.BitmapCellKind := @NewBitmapCellKinds;
+  end; 
+  
   procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
   begin
     if (idx1 = -1) or (idx2 = -1) then exit;
