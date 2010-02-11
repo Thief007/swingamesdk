@@ -1,0 +1,45 @@
+SwinGame Character #v1
+//Character Template
+
+//Name 						STRING
+n:TestDude
+
+//Type STRING
+t:Badass
+
+//Bitmaps 				COUNT || LIST OF BITMAPS
+b:Body,blackbodyisometric.png,48,64,3,4,12,255,255,255,t
+b:Clothes,bluertparmourisometric3.png,48,64,3,4,12,255,255,255
+b:Hair,zackhairisometric2.png,48,64,3,4,12,255,255,255
+b:Hat,piratebandanaisometric6.png,48,64,3,4,12,255,255,255
+
+//AnimationTemplate
+a:charas_animationiso.txt
+
+//Directions INITIAL || COUNT || NAMES
+d:0,4,Up,Down,Left,Right
+
+//States 							INITIAL || COUNT || NAMES
+s:0,2,Stationary,Move,0
+
+//ShownLayers
+l:t,t,t,t,t
+
+//StateDirection Details
+sd:Stationary,Up,StatUp,[0,1,2,3]
+sd:Stationary,Down,StatDown,[0,1,2,3]
+sd:Stationary,Left,StatLeft,[0,1,2,3]
+sd:Stationary,Right,StatRight,[0,1,2,3]
+sd:Move,Up,MoveUp,[0,1,2,3]
+sd:Move,Down,MoveDown,[0,1,2,3]
+sd:Move,Left,MoveLeft,[0,1,2,3]
+sd:Move,Right,MoveRight,[0,1,2,3]
+
+//Values					NAME || VALUE
+v:Health,500
+
+//AngleParameters -180 to 180
+p:Up,-180,-91
+p:Down,-90,1
+p:Left,0,89
+p:Right,90,179
