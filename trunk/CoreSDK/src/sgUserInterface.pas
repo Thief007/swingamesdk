@@ -68,7 +68,7 @@ type
   /// Each list item has text and an image
   GUIListItem = record
     text:     String;
-    image:    Bitmap;
+    image:    BitmapCell;
     parent:   GUIList;
   end;
 
@@ -945,6 +945,17 @@ procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
 /// @method AddItem
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 
+/// Adds an item to the list where the items shows a cell of a
+/// bitmap and some text.
+///
+/// @lib ListAddItemWithCellAndText
+/// @sn list:%s addBitmapCell:%s withText:%s
+///
+/// @class List
+/// @overload AddItem AddItemWithCellAndText
+/// @csn addBitmapCell:%s withText:%s
+procedure ListAddItem(lst: GUIList; img:BitmapCell; text: String); overload;
+
 /// Adds an item to the list by text
 ///
 /// @lib AddItemByTextFromRegion
@@ -976,6 +987,14 @@ procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
 /// @class List
 /// @getter activeItem
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+
+/// Returns the index of the item with the bitmap and cell.
+///
+/// @lib
+///
+/// @class List
+/// @getter activeItem
+function ListBitmapIndex(lst: GUIList; const img: BitmapCell): LongInt;
 
 /// Adds an item to the list by text
 ///
@@ -1418,7 +1437,7 @@ var
     FillTriangleOnScreen(VectorBackcolorToDraw(forRegion), tri);
   end;
   
-  procedure _ResizeItemArea(var area: Rectangle; var imgPt: Point2D; aligned: FontAlignment; bmp: bitmap);
+  procedure _ResizeItemArea(var area: Rectangle; var imgPt: Point2D; aligned: FontAlignment; bmp: BitmapCell);
   begin
     
     case aligned of
@@ -1546,7 +1565,7 @@ begin
     PushClip(itemArea);
     
     //Draw the text (adjusting position for width of list item bitmap)
-    if assigned(tempList^.items[itemIdx].image) then
+    if assigned(tempList^.items[itemIdx].image.bmp) then
     begin
       // Determine the location of the list item's bitmap
       imagePt   := RectangleTopLeft(itemArea);    
@@ -1589,9 +1608,9 @@ begin
     end;
     
     // Draw the item's bitmap
-    if  assigned(tempList^.items[itemIdx].image) then
+    if  assigned(tempList^.items[itemIdx].image.bmp) then
     begin
-      DrawBitmapOnScreen(tempList^.items[itemIdx].image, imagePt);
+      DrawBitmapCellOnScreen(tempList^.items[itemIdx].image, imagePt);
     end;
     
     PopClip(); // item area
@@ -2459,11 +2478,16 @@ end;
 
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 begin
+  ListAddItem(lst, BitmapCellOf(img, -1), text);
+end;
+
+procedure ListAddItem(lst: GUIList; const img:BitmapCell; text: String); overload;
+begin
     if not assigned(lst) then exit;
     
     SetLength(lst^.items, Length(lst^.items) + 1);
     lst^.items[High(lst^.items)].text     := text;  //Assign the text to the item
-    lst^.items[High(lst^.items)].image := img; //Assign the image to the item
+    lst^.items[High(lst^.items)].image    := img;   //Assign the image to the item
 end;
 
 procedure ListAddItem(r : Region; text: String); overload;
@@ -2532,6 +2556,11 @@ begin
 end;
 
 function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+begin
+  result := ListBitmapIndex(lst, BitmapCellOf(img, -1));
+end;
+
+function ListBitmapIndex(lst: GUIList; const img: BitmapCell): LongInt;
 var
   i: LongInt;
 begin
@@ -2541,7 +2570,7 @@ begin
   for i := Low(lst^.items) to High(lst^.items) do
   begin
     //find the text... then exit
-    if lst^.items[i].image = img then
+    if SameBitmapCell(lst^.items[i].image, img) then
     begin
       result := i;
       exit;
@@ -3064,31 +3093,6 @@ var
     SetLength(result^.lists, Length(result^.lists) + 1);
     result^.lists[High(result^.lists)] := newList;
     r^.elementIndex := High(result^.lists);
-  end;
-  
-  procedure CreateListItem(r: region; data: string);
-  var
-    newListItem: GUIListItem;
-    reg: Region;
-    pList: GUIList;
-    bitmap: String;
-  begin
-    newListItem.parent := ListFromRegion(RegionWithID(Trim(ExtractDelimited(8, data, [',']))));
-  
-    newListItem.text := Trim(ExtractDelimited(8, data, [',']));
-    
-    //Load the bitmap or nil if bitmap text is 'n'
-    bitmap := Trim(ExtractDelimited(9, data, [',']));
-    if bitmap <> 'n' then
-      newListItem.image := BitmapNamed(bitmap)
-    else
-      newListItem.image := nil;
-    
-    reg := RegionWithID(result, Trim(ExtractDelimited(8, data, [','])));
-    pList := ListFromRegion(reg);
-    
-    SetLength(pList^.items, Length(pList^.items) + 1);
-    pList^.items[High(pList^.items)] := newListItem;
   end;
   
   procedure AddRegionToPanelWithString(d: string; p: panel);
