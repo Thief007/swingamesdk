@@ -7,13 +7,12 @@ uses
   sgCamera;
 
 type
-  PanelName = (Selector, SelectorDropDown, MapProperties, Kind, DefaultValues, Bottom,Grid);
+  PanelName = (Selector, SelectorDropDown, MapProperties, Kind, DefaultValues, Bottom, Grid, Bitmap, Bitmap_Type, Palette, BmpKind, DisplayList, LayerList);
   PanelArray = Array[PanelName] of Panel;
 
 
 function InitInterface():PanelArray;
-var
-  pN: PanelName;
+
 begin
 
   GUISetForegroundColor(RGBAColor(255,255,255,255));
@@ -25,19 +24,77 @@ begin
   result[DefaultValues] := LoadPanel('mapeditortest_DefaultValues.txt');
   result[Bottom] := LoadPanel('mapeditortest_BottomPanel.txt');
   result[Grid] := LoadPanel('mapeditortest_Grid.txt');
+  result[Bitmap]  := LoadPanel('mapeditortest_Bitmap.txt');
+  result[Bitmap_Type]  := LoadPanel('mapeditortest_Bitmap_Type.txt');  
+  result[Palette] := LoadPanel('mapeditortest_Palette.txt');
+  result[BmpKind] := LoadPanel('mapeditortest_BmpKind.txt');
+  result[DisplayList] := LoadPanel('mapeditortest_DisplayList.txt');
+  result[LayerList] := LoadPanel('mapeditortest_LayerList.txt');
 
-    ListAddItem(RegionWithID('SelectorList'), 'Map');
-    ListAddItem(RegionWithID('SelectorList'), 'Tile');
+  
 
-  for pN := Low(result) to high(result) do
+  ListAddItem(RegionWithID('SelectorList'), 'Map');
+  ListAddItem(RegionWithID('SelectorList'), 'Tile');
+  
+  ListAddItem(RegionWithID('dD.BitmapType'), 'Cell');
+  ListAddItem(RegionWithID('dD.BitmapType'), 'Bitmap');
+
+  
+  ListAddItem(RegionWithID('dD.displayList'), 'Grid');
+  ListAddItem(RegionWithID('dD.displayList'), 'Bitmap');
+  ListAddItem(RegionWithID('dD.displayList'), 'Bitmap+Grid');
+
+
+end;
+
+procedure HideAllPanel(pnls: PanelArray);
+var
+pN : PanelName;
+begin
+  for pN := low(pnls) to high(pnls) do
   begin
-    ShowPanel(result[pN]);
+    HidePanel(pnls[pN]);
+  end;
+end;
+
+procedure ShowMapEditor(pnls: PanelArray);
+var
+  pN: PanelName;
+begin
+  HideAllPanel(pnls);
+  for pN := Low(pnls) to Grid do // 6 is the last panel for the map editor everything after that is the tile editor
+  begin
+    ShowPanel(pnls[pN]);
   end;
 
-  HidePanel(result[SelectorDropDown]);
+  HidePanel(pnls[SelectorDropDown]);
   
-  DrawGUIAsVectors(false);
+  DrawGUIAsVectors(true);
+    ListSetActiveItemIndex(ListFromRegion(RegionWithID('SelectorList')),-1);
+
 end;
+
+procedure ShowTileEditor(pnls: PanelArray);
+var
+  pN: PanelName;
+begin
+  HideAllPanel(pnls);
+  for pN := Grid to high(pnls) do // 7 is the first panel for the tile editor everything before that is the map editor
+  begin
+    ShowPanel(pnls[pN]);
+  end;
+  ShowPanel(pnls[Selector]);
+  ShowPanel(pnls[Bottom]);
+  
+  HidePanel(pnls[Bitmap_Type]);
+  HidePanel(pnls[DisplayList]);
+  HidePanel(pnls[LayerList]);
+  
+  DrawGUIAsVectors(true);
+
+  ListSetActiveItemIndex(ListFromRegion(RegionWithID('SelectorList')),-1);
+end;
+
 
 procedure CurrentMapProperties(m:Map; out mWidth, mHeight, mLayers, tWidth, tHeight : LongInt; out iso : Boolean);
 begin
@@ -128,36 +185,55 @@ begin
   end;
 end;
 
-procedure AssignValues(m : Map);
+procedure UpdateValueTextBox(m: map; out kIdx,vIdx:LongInt);
 var
-  kIdx,vIdx : LongInt;
-  val : single;
-  selectedKind : string;
+    selectedKind : string;
   selectedValues : string;
-  
 begin
   
-  if (length(TextBoxText(RegionWithId('Tb.Map.Value'))) = 0) then exit;
-  writeln('hello');
   selectedKind := ListActiveItemText(RegionWithID('lst.Kind'));
   selectedValues := ListActiveItemText(RegionWithID('lst.Values'));
   kIdx := IndexOfKind(m, selectedKind);
   vIdx := IndexOfValues(m, selectedValues);
-  writeln(vidx);
-  TryStrToFloat(TextBoxText(RegionWithId('Tb.Map.Value')), val);
+  if (vIdx = -1) or (kIdx = -1) or (RegionClickedID() = 'b.Values.Assign')  then exit;
+  TextboxSetText(RegionWithID('Tb.Map.Value'), FloatToStr(MapDefaultValues(m, kIdx, VIdx)));
+  
+end;
+
+procedure AssignValues(m : Map);
+var
+  kIdx,vIdx : LongInt;
+  val : single;
+  
+begin
+  UpdateValueTextBox(m, kIdx, vIdx);
+  if (length(TextBoxText(RegionWithId('Tb.Map.Value'))) = 0) then exit;
+  if not TryStrToFloat(TextBoxText(RegionWithId('Tb.Map.Value')), val) then exit;
   AddMapValues(m, kIdx, vIdx, val);
-end;  
+end;
+
+procedure UpdateLayerList(m : map);
+var
+i : LongInt;
+begin
+  ListClearItems(RegionWithID('dD.layerList'));
+  for i:= 0 to LayerCount(m)-1 do
+  begin
+    ListAddItem(RegionWithID('dD.layerList'),IntToStr(i));
+  end;
+end;
   
   
-procedure UpdateGUI(pnls : PanelArray; var m:map; var openingFile, savingFile : Boolean);
+procedure UpdateGUI(pnls : PanelArray; var m:map; var openingFile, savingFile, openingBmp : Boolean);
 begin
   
   LabelSetText(RegionWithID('b.Value.KindSelected'), ListActiveItemText(RegionWithID('lst.Kind')));
 
 
-  if (RegionClickedID() = 'DropDown1') then
+  if (RegionClickedID() = 'DropDown1') or (RegionClickedID() = 'SelectorList') then
   begin
   	ToggleShowPanel(pnls[SelectorDropDown]);
+    LabelSetText(RegionWithID('DropDown1'), ListActiveItemText(RegionWithID('SelectorList')));
   end;
 
   if (RegionClickedID() = 'b.Map.New') then
@@ -171,6 +247,7 @@ begin
   if (RegionClickedID() = 'b.Map.Apply') then
   begin
     ApplyMapProperties(m);
+    UpdateLayerList(m);
   end;
 
   if (RegionClickedID() = 'b.Map.Reset') then
@@ -193,12 +270,14 @@ begin
   if (RegionClickedID() = 'b.Values.Add') then
   begin
     AddValue(m, TextBoxText(RegionWithId('tB.Values.Name')));
+    
     UpdateValuesList(m);
   end;
   
   if (RegionClickedID() = 'b.Values.Remove') then
   begin
     RemoveValue(m,ListActiveItemText(RegionWithID('lst.Values')));
+    writeln(length(m^.MapDefaultValues[0]));
     UpdateValuesList(m);
   end;
 
@@ -222,7 +301,7 @@ begin
   begin
     if openingFile then
     begin
-      writeln('loading file');
+      //writeln('loading file');
       m:=LoadMap(DialogPath());
       ShowMapProperties(m);
       openingFile := false;
@@ -230,9 +309,15 @@ begin
 
     if savingFile then
     begin
-      writeln('saving file');
+     // writeln('saving file');
       SaveMap(m,DialogPath());
       savingFile  := false;
+    end;
+
+    if openingBmp then
+    begin
+    TextboxSetText(RegionWithID('tB.Bitmap.Path'), DialogPath());
+    openingBmp := false;
     end;
   end;
 
@@ -240,16 +325,72 @@ begin
   begin
     AssignValues(m);
   end;
-    
+
+  if MouseClicked(LeftButton) and not GUIClicked() then
+  UpdateSelect(m);
+
+  if (RegionClickedID() = 'lst.Values') or (RegionClickedID() = 'lst.Kind') then
+  begin
+    AssignValues(m);
+  end;
+
+  if ListActiveItemText(RegionWithID('SelectorList')) = 'Tile' then ShowTileEditor(pnls)
+  else if ListActiveItemText(RegionWithID('SelectorList')) = 'Map' then ShowMapEditor(pnls);
+
+  /////// from here on tile editor specific events.
+
+  if (RegionClickedID() = 'dD.BitmapTypeIndicator') or (RegionClickedID() = 'dD.BitmapType') then
+  begin
+  	ToggleShowPanel(pnls[Bitmap_Type]);
+    LabelSetText(RegionWithID('dD.BitmapTypeIndicator'), ListActiveItemText(RegionWithID('dD.BitmapType')));
+  end;
 
 
-    if MouseClicked(LeftButton) and not GUIClicked() then
-    UpdateSelect(m);
+  if (RegionClickedID() = 'Lbl.Map.DisplayIndicator') or (RegionClickedID() = 'dD.displayList') then
+  begin
+  	ToggleShowPanel(pnls[DisplayList]);
+    LabelSetText(RegionWithID('Lbl.Map.DisplayIndicator'), ListActiveItemText(RegionWithID('dD.displayList')));
+  end;
+  
+  if (RegionClickedID() = 'Lbl.Map.layer') or (RegionClickedID() = 'dD.layerList') then
+  begin
+  	ToggleShowPanel(pnls[LayerList]);
+    writeln(ListActiveItemText(RegionWithID('dD.layerList')));
+      if (ListActiveItemText(RegionWithID('dD.layerList')) <> '') then
+    LabelSetText(RegionWithID('Lbl.Map.layer'), ListActiveItemText(RegionWithID('dD.layerList')));
+  end;
+
+   if (RegionClickedID() = 'b.Bitmap.Browse') then
+  begin
+    ShowOpenDialog();
+    openingBmp:= true;
+  end;
+
   
 
 end;
   
 
+procedure DrawUpdate(m : Map; offset:vector);
+begin
+  if ListActiveItemText(RegionWithID('dD.displayList')) = 'Grid' then DrawMapGrid(m, offset);
+  if ListActiveItemText(RegionWithID('dD.displayList')) =  'Bitmap' then
+  begin
+    if CheckboxState('cB.Map.ShowAll') then
+    DrawMap(m,offset)
+    else
+    begin
+      DrawMapLayer(m, offset,StrToInt(LabelText(RegionWithID('Lbl.Map.layer'))));
+    end;
+  end;
+   
+  if ListActiveItemText(RegionWithID('dD.displayList')) = 'Bitmap+Grid' then
+  begin
+    DrawMap(m, offset);
+    DrawMapGrid(m, offset);
+   end;
+   if ListActiveItemText(RegionWithID('dD.displayList')) = '' then DrawMapGrid(m, offset);
+end;
   
 procedure UpdateCamera();
 begin
@@ -269,33 +410,35 @@ procedure Main();
 var
   pnls: PanelArray;
   myMap: Map;
-  openingFile,savingFile : boolean;
+  openingFile,savingFile,openingBmp : boolean;
+  offset : Vector;
 begin
+  offset := VectorTo(150,30);
   openingFile := false;
   savingFile  := false;
+  openingBmp  := false;
   OpenAudio();
   OpenGraphicsWindow('Map Editor v1.0', 800, 600);
   myMap := LoadMap('test1.txt');
   //ToggleFullScreen();
   LoadResourceBundle('MapEditorBundleResource.txt');
   pnls:=InitInterface();
+  ShowMapEditor(pnls);
   UpdateKindList(myMap);
   UpdateValuesList(myMap);
+  UpdateLayerList(myMap);
   ShowMapProperties(myMap);
 
-  SetCameraPos(VectorTo(-150,-30));
+  //SetCameraPos(VectorTo(-150,-30));
 
   repeat
     ProcessEvents();
     ClearScreen(ColorBlack);
-        UpdateCamera();
-    PushClip(RectangleFrom(150, 30, 650 ,527));
-    DrawMapGrid(myMap, VectorTo(150,30));
-    DrawMapDebug(myMap);
-    //DrawMap(myMap, VectorTo(150,30));
-    PopClip();
-        UpdateInterface();
-    UpdateGUI(pnls, myMap, openingFile, savingFile);
+    UpdateCamera();
+
+    UpdateInterface();
+    UpdateGUI(pnls, myMap, openingFile, savingFile, openingBmp);
+    DrawUpdate(myMap,offset);
     DrawPanels();
     DrawFramerate(0,0);
     RefreshScreen();

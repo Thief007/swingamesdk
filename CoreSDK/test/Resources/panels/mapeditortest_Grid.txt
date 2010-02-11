@@ -22,6 +22,16 @@ d: false
 // Region data
 // Format: r: x, y, w, h, kind
 
+r: 200, 10, 60, 15, label, Lbl.Map.layerLabel,courierSmall, l, Layer
+r: 260, 10, 20, 15, label, Lbl.Map.layer,courierSmall, l, 0
 
+ 
+r: 300, 10, 60, 15, label, Lbl.Map.ShowAll,courierSmall, l, Show All 
+//isometric cbox
+r: 280, 10, 15, 15, checkbox, cB.Map.ShowAll, true
 // label data
-r: 500, -3, 80, 30, label, grid,courier,l, Grid 
+r: 100, 10, 80, 30, label, Lbl.Map.DisplayIndicator,courierSmall,l, Grid
+
+r: 50, 10, 60, 30, label, lbl.Map.DisplayLabel,courierSmall,l, Display:
+//
+ 

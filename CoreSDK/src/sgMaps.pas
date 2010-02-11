@@ -68,12 +68,13 @@ interface
   /// Loads the Map from a text file which contains the map informations.
   /// this returns a map.
   ///
-  /// @lib DoLoadMap
+  /// @lib LoadMap
   ///
   /// @class Map
-  /// @method DoLoadMap
+  /// @constructor
+  /// @csn initForPath:%s
 
-  function DoLoadMap(filename:string; name:String): Map;
+  function LoadMap(filename:string): Map;
 //----------------------------------------------------------------------------
 //       Draw Procedures            
 //----------------------------------------------------------------------------
@@ -127,6 +128,15 @@ interface
   /// @method DrawGridWithOffset
   procedure DrawMapGrid(m:map; offset:Vector); overload;
 
+  
+  /// Draws a single layer of the map's bitmap
+  ///
+  /// @lib DrawMapLayer
+  /// @sn map:%s offset:%s layer :%s
+  ///
+  /// @class Map
+  /// @method DrawLayers
+  procedure DrawMapLayer(map: Map; offset:Vector; layer:LongInt); overload;
   //----------------------------------------------------------------------------
   //       Save map
   //----------------------------------------------------------------------------
@@ -276,6 +286,15 @@ interface
   /// @getter TileStagger
   function TileStagger(m: Map) : Vector;
 
+  /// Returns the value from the map default value given the kind id and value id
+  ///
+  /// @lib MapDefaultValues
+  /// @sn map:%s defaultValueAtKindId:%s and valueId:%s
+  ///
+  /// class Map
+  /// @csn defaultValueAtKindId:%s and valueId:%s
+  function MapDefaultValues(m : map; const kId, vId : LongInt): single;
+
   /// Returns the number of layers that the given map has.
   ///
   /// @lib LayerCount
@@ -336,6 +355,7 @@ interface
   /// Returns the name of the value given the index.
   ///
   /// @lib ValueName
+  /// @sn map:%s valueNameAtId:%s
   ///
   /// @class Map
   /// @getter ValueName
@@ -343,6 +363,7 @@ interface
   /// Returns the name of the kind given the index.
   ///
   /// @lib KindName
+  /// @sn map:%s kindNameAtId:%s
   ///
   /// @class Map
   /// @getter KindName
@@ -410,7 +431,6 @@ interface
   /// Returns the kind of the given tile
   ///
   /// @lib TileKind
-  /// @sn Tile:%s KindId:%s
   ///
   /// @class Tile
   /// @getter kind
@@ -418,6 +438,7 @@ interface
   /// Returns Tile given the id of the tile
   ///
   /// @lib TileAtId
+  /// @sn map:%s tileAtId:%s
   ///
   /// @class Map
   /// @method TileAt
@@ -426,6 +447,7 @@ interface
   /// Return Tile given the top right position
   ///
   /// @lib TileAtPosition
+  /// @sn map:%s tileAt:%s
   ///
   /// @class Map
   /// @overload TileAt TileAtPosition
@@ -434,9 +456,11 @@ interface
   /// Returns tile given the row and column of the tile
   ///
   /// @lib TileAtRowCol
+  /// @sn map:%s tileAtRow:%s col:%s
   ///
   /// @class Map
   /// @overLoad TileAt TileAtRowCol
+  /// @csn tileAtRow:%s col:%s
   function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
 
   //----------------------------------------------------------------------------
@@ -464,9 +488,11 @@ interface
   /// Sets the values of a given tile at a given name
   ///
   /// @lib SetTileValueByName
+  /// @sn map:%s tile:%s name:%s value:%s
   ///
   /// @class Tile
   /// @overload TileValue TileValueByName
+  /// @csn tile:%s name:%s value:%s
   procedure SetTileValue(m : map; t :Tile; name : String; val : Single); overload;
 
 
@@ -477,6 +503,7 @@ interface
   ///
   /// @class Tile
   /// @method SetTileBitmap
+  /// @csn layer:%s bitmap:%s cell:%s
   procedure SetTileBitmap(t : Tile; layer : LongInt; bmp : Bitmap; cell : LongInt);
 
   /// returns an empty new map
@@ -484,7 +511,8 @@ interface
   /// @lib NewMap
   ///
   /// @class map
-  /// @method NewMap
+  /// @constructor
+  /// @csn init
   function NewMap():map;
 
   //======================//
@@ -493,7 +521,7 @@ interface
   /// Adds a values to map where idx1 represents kind and idx2 represents value index
   ///
   /// @lib AddMapValues
-  /// @sn 
+  /// @sn map:%s kindId:%s valueId:%s value:%s
   ///
   /// @class Map
   /// @method AddMapValues
@@ -501,15 +529,17 @@ interface
   /// Sets the map width, height layer count, tile width, tile height and if the map is isometric.
   ///
   /// @lib MapSetDimension
+  /// @sn map:%s width:%s height:%s layers:%s tileWidth:%s tileHeight:%s isometric:%s
   ///
   /// @class map
   /// @method MapSetDimension
+  /// @csn width:%s height:%s layers:%s tileWidth:%s tileHeight:%s isometric:%s
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
 
   /// Allocates Default values to given tile depending on the tile's kind
   ///
   /// @lib AllocateDefaultValues
-  /// @sn 
+  /// @sn allocateDefaultValuesToMap:%s atTile:%s 
   ///
   /// @class Map
   /// @method AllocaDefaultValues
@@ -526,6 +556,7 @@ interface
   /// Adds a single bitmap to bitmapCellKind within the map.
   ///
   /// @lib AddBitmap
+  /// @sn map:%s addBitmap:%s
   /// 
   /// @class Map
   /// @setter AddBItmap
@@ -534,6 +565,7 @@ interface
   /// Adds a value name to the named index collection within the map
   ///
   /// @lib AddValue
+  /// @sn map:%s addValueName:%s
   ///
   /// @class Map
   /// @setter AddValue
@@ -542,14 +574,17 @@ interface
   /// Adds bitmap cells to bitmap cell kind within map
   ///
   /// @lib MappAddBitmapCells
+  /// @sn map:%s bitmapCellIds:%s cellRegions:%s bitmap:%s
   ///
   /// @class Map
   /// @method MapAddBitmapCells
+  /// @csn bitmapCellIds:%s cellRegions:%s bitmap:%s
   procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
 
   /// Adds Kind Name to the numed index collection within the map.
   ///
   /// @lib AddKind
+  /// @sn map:%s addKindName:%s
   ///
   /// @class Map
   /// @setter AddKind
@@ -557,6 +592,7 @@ interface
   /// Removes a value name from the named index collection and reshuffles the values
   ///
   /// @lib RemoveValueName
+  /// @sn map:%s removeValueName:%s
   ///
   /// @class Map
   /// @method RemoveValue 
@@ -565,6 +601,7 @@ interface
   /// Removes the value from the named index collection by idx and reshuffles the value
   ///
   /// @lib RemoveValueIdx
+  /// @sn map:%s removeValueId:%s
   ///
   /// @class Map
   /// @overload RemoveValue RemoveValueId
@@ -572,6 +609,7 @@ interface
   /// Removes the kind from the named index collection by idx and sets all tiles of removed kind to -1
   ///
   /// @lib RemoveKindIdx
+  /// @sn map:%s removeKindId:%s
   ///
   /// @class Map
   /// @method RemoveKind
@@ -580,6 +618,7 @@ interface
   /// name and sets all tiles of removed kind to -1
   ///
   /// @lib RemoveKindName
+  /// @sn map:%s removeKindName:%s
   ///
   /// @class Map
   /// @overload RemoveKind RemoveKindByName
@@ -589,14 +628,65 @@ interface
   //---------------------------------------------------------------------
   //resource management
   //------------------------------------------------------------------
+  /// Releases all of the map data that have been loaded.
+  ///
+  /// @lib
   procedure ReleaseAllMaps();
-  function LoadMap(filename: String): Map;
+
+  /// Releases the Map that have been loaded with the supplied name.
+  ///
+  /// @lib
   procedure ReleaseMap(name: String);
+  
+  /// Frees the resources used by a `Map` resource. All loaded
+  /// `Map` should be freed once it is no longer needed. 
+  ///
+  /// @lib
+  ///
+  /// @class Map
+  /// @dispose
   procedure FreeMap(var m: map);
+
+  /// Loads and returns a map value. The supplied `filename` is used to
+  /// locate the map file to load. The supplied `name` indicates the 
+  /// name to use to refer to this map value. The `Map` can then be
+  /// retrieved by passing this `name` to the `MapNamed` function. 
+  ///
+  /// @lib
+  /// @sn mapMapNamed:%s toFile:%s
+  ///
+  /// @class Map
+  /// @constructor
+  /// @csn initWithName:%s forFilename:%s
   function MapMap(name, filename: String): Map;
-  function MapFilename(m: Map): String; 
+
+  /// Returns the filename that SwinGame uses to load to this Map data.
+  ///
+  /// @lib
+  ///
+  /// @class Map
+  /// @getter Filename
+  function MapFilename(m: Map): String;
+
+  /// Returns the name that SwinGame uses to refer to this Map data. This
+  /// name can be used to fetch and release this Map resource.
+  ///
+  /// @lib
+  ///
+  /// @class Map
+  /// @getter Name
   function MapName(m: Map): String;
+
+  /// Returns the `Map` that has been loaded with the specified name.
+  /// This works with Map data loaded using `MapMap`.
+  ///
+  /// @lib
   function MapNamed(name: String): Map;
+
+  /// Determines if SwinGame has a Map value loaded for the supplied name.
+  /// This checks against all Map values loaded using `MapMap`.
+  ///
+  /// @lib
   function HasMap(name: String): Boolean;  
   
 
@@ -1046,7 +1136,7 @@ interface
     //WriteLn('result ', startX, ':', startY, ' ', endX, ':', endY);
   end;
 
-  procedure PushMapClip(map:Map; startCol, startRow, endCol, endRow : LongInt);
+  procedure PushMapClip(map:Map; startCol, startRow, endCol, endRow : LongInt; offset :Vector);
   var
     rowCount, colCount: LongInt;
     width, height : LongInt;
@@ -1064,16 +1154,17 @@ interface
     
    // writeln('width: ',width, ' ','height: ',height);
     if not assigned(TileAt(map, startRow, startCol)) then exit;
-    pt := TileAt(map, startRow, startCol)^.position;
+    pt := PointAdd(TileAt(map, startRow, startCol)^.position, offset);
     pt := PointAdd(pt, InvertVector(CameraPos()));
     //the last row doesnt clip at 20 because the camera has not reached the next row.
-    if rowcount = 20 then height-=round(map^.TileStagger.Y);
+    if rowcount = map^.MapHeight then height-=round(map^.TileStagger.Y);
     //apply stagger x only on the first column and even values.
     if (startCol = 0) and  not(startRow Mod 2=0) then pt.X += map^.TileStagger.X;
     //apply stagger to top of the map only.
     if (startrow = 0) then pt.Y += map^.TileStagger.Y;
     //WriteLn('Clip At: ', PointToString(pt));
     PushClip(RectangleFrom(pt.x, pt.y, width+1 ,height+1)); // +1 because in grid mode the line is drawn 1 px outside the shape.
+    PushClip(RectangleFrom(offset.x, offset.y, ScreenWidth,ScreenHeight)); // +1 because in grid mode the line is drawn 1 px outside the shape.
   end;
 
   //checks if tile is Selected.
@@ -1114,7 +1205,7 @@ interface
   procedure HighlightTile(highlightedTile: Tile; offset: Vector); OverLoad;
   begin
     if not assigned(highlightedTile) then exit;
-    DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, (CameraPos*-1));
+    DrawShapeAsLineStrip(screen, highlightedTile^.TileShape, false, PointAdd((CameraPos*-1),offset));
   end;
 
   procedure HighlightTile(highlightedTile: Tile); OverLoad;
@@ -1153,36 +1244,54 @@ interface
     end;
   end;
 
-  //draw map procedure.
-  procedure DrawMap(map: Map; offset:Vector); overload;
+  
+  procedure DoDrawMapLayer(map: Map; offset:Vector; layer, startCol, startRow, endCol, endRow:LongInt); overload;
   var
-    layer,col, row, startRow, startCol, endRow, endCol : LongInt;
+    col, row : LongInt;
    // dir:Direction;
   begin
-   if not assigned(map) then exit;
-    MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
-
-    PushMapClip(map, startCol, startRow, endCol, endRow);
+    if not assigned(map) or (map^.MapWidth = 0) or (map^.MapHeight = 0) then exit;
     
     // Loop through all the layers + and additional one for debug info
-    for layer:= 0 to map^.MapLayer-1 do
-    begin
+
       for row:=startRow to endRow do
       begin
         for col:=startCol to endCol do
         begin
           if map^.Tiles[row,col].TileBitmapCellKind[layer] <> nil then
-          if map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap <> nil then
-          begin
-           // writeln(HexStr(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap));
-              DrawCell(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap, map^.Tiles[row,col].TileBitmapCellKind[layer]^.Cell, PointAdd(map^.Tiles[row,col].Position,offset));
-          end;
+            if map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap <> nil then
+            begin
+             // writeln(HexStr(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap));
+                DrawCell(map^.Tiles[row,col].TileBitmapCellKind[layer]^.Bmap, map^.Tiles[row,col].TileBitmapCellKind[layer]^.Cell, PointAdd(map^.Tiles[row,col].Position,offset));
+            end;
         end; // end of col in row
       end; // end of row
-    end; // end of layers
-    PopClip();
   end;
 
+  
+  procedure DrawMapLayer(map: Map; offset:Vector; layer:LongInt); overload;
+  var
+    startRow, startCol, endRow, endCol : LongInt;
+  begin
+    if not assigned(map) or (map^.MapWidth = 0) or (map^.MapHeight = 0) then exit;
+    MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
+    PushMapClip(map, startCol, startRow, endCol, endRow, offset);
+    DoDrawMapLayer(map, offset,layer, startCol, startRow, endCol, endRow );
+    PopClip(); // push clip pushes 2 clips
+    PopClip();
+
+  end;
+
+  procedure DrawMap(map: Map; offset:vector); overload;
+  var
+    layer : longint;
+  begin
+    for layer := 0 to LayerCount(map)-1 do
+    begin
+      DrawMapLayer(map, offset, layer);
+    end;
+  end;
+  
   procedure DrawMap(map: Map); overload;
   begin
     DrawMap(map, VectorTo(0,0));
@@ -1193,7 +1302,7 @@ interface
   dir: Direction;
   row,col,startRow, startCol, endRow, endCol : LongInt;
   begin
-    if not assigned(map) then exit;
+    if not assigned(map) or (map^.MapWidth = 0) or (map^.MapHeight = 0) then exit;
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
     for row:=startRow to endRow do
     begin
@@ -1224,10 +1333,10 @@ interface
   var
     row,col,startRow, startCol, endRow, endCol : LongInt;
   begin
-    if not assigned(m) then exit;
+    if not assigned(m) or (m^.MapWidth = 0) or (m^.MapHeight = 0) then exit;
     MapRangeFromRect(CameraScreenRect(), m, startCol, startRow, endCol, endRow);
 
-    PushMapClip(m, startCol, startRow, endCol, endRow);
+    PushMapClip(m, startCol, startRow, endCol, endRow,offset);
     for row := startRow to endRow do
     begin
       for col := startCol to endCol do
@@ -1235,7 +1344,8 @@ interface
         HighlightTile(@m^.Tiles[row,col], offset);
       end;
     end;
-    if not((m^.MapWidth = 0 ) or ( m^.MapHeight = 0 )) then PopClip();
+        PopClip();//push map clip adds 2 clips
+    PopClip();
   end;
 
   procedure DrawMapGrid(m:map); overload;
@@ -1756,6 +1866,11 @@ interface
   //==================================================================
   //FUNCTIONS THAT RETURNS MAP PROPERTIES
   //==================================================================
+  function MapDefaultValues(m : map; const kId, vId : LongInt): single;
+  begin
+  result := m^.MapDefaultValues[kId,vId];  
+  end;
+  
   function TileCount(m : map): Longint;
   begin
     result := (m^.MapWidth) * (m^.MapHeight);
@@ -2057,23 +2172,39 @@ interface
   //======================//
   procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
   begin
-  
+    if (idx1 = -1) or (idx2 = -1) then exit;
     m^.MapDefaultValues[idx1,idx2] := val;
-    writeln(val);
+    //writeln(val);
     ReconfigureMap(m);
   end;
   
   procedure AddKind(m:map; kname:string);
+  var
+    i,j: LongInt;
   begin
     if length(kname) = 0 then exit;
     AddName(m^.kindIds, kname);
     SetLength(m^.MapDefaultValues, length(m^.MapDefaultValues)+1);
-    ZeroArray(m^.MapDefaultValues[high(m^.MapDefaultValues)]);
+    for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
+    begin
+      setlength(m^.MapDefaultValues[i], NameCount(m^.valueIds));
+    end;
+    for j := low(m^.MapDefaultValues[i]) to high(m^.MapDefaultValues[i]) do
+    begin
+      m^.MapDefaultValues[high(m^.MapDefaultValues),j] :=0;
+    end;
   end;
   procedure AddValue(m:map; vName:string);
+  var
+    i:LongInt;
   begin
     if length(vName) = 0 then exit;
     AddName(m^.valueIds, vName);
+    for i := low (m^.MapDefaultValues) to high(m^.MapDefaultValues) do
+    begin
+      setlength(m^.MapDefaultValues[i], Length(m^.MapDefaultValues[i])+1);
+      m^.MapDefaultValues[i,high(m^.MapDefaultValues[i])] := 0;
+    end;
     ReconfigureMap(m);
   end;
 
@@ -2120,7 +2251,7 @@ interface
   
   procedure RemoveValue(m:map; idx:LongInt); overload;
   var
-    row,col,vIdx : LongInt;
+    row,col,vIdx,i : LongInt;
     
   begin
     if not assigned(m)  then exit;
@@ -2139,6 +2270,10 @@ interface
         setlength(m^.Tiles[row,col].Values, Length(m^.Tiles[row,col].values)-1);
       end;//end of col
     end;// end of row
+    for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
+    begin
+      SetLength(m^.MapDefaultValues[i], Length(m^.MapDefaultValues[i])-1);
+    end;
   end;
 
   procedure RemoveValue(m:map; vName:string);overload;
@@ -2150,7 +2285,7 @@ interface
   
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
   begin
-    if not assigned(m) then exit;
+    if not assigned(m) or (Width < 0) or  (height < 0) or  (Layers < 0) or  (tWidth < 0) or  (tHeight < 0) then exit;
     m^.MapHeight := height;
     m^.MapWidth  := width;
     m^.MapLayer  := layers;
