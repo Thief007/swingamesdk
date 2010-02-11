@@ -957,7 +957,7 @@ procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 /// @class List
 /// @overload AddItem AddItemWithCellAndText
 /// @csn addBitmapCell:%s withText:%s
-procedure ListAddItem(lst: GUIList; const img:BitmapCell; text: String); overload;
+procedure ListAddItem(lst: GUIList; const img: BitmapCell; text: String); overload;
 
 /// Adds an item to the list by text
 ///
@@ -1329,24 +1329,46 @@ end;
 
 function VectorForecolorToDraw(r: region): Color;
 begin
-  result := ColorBlack;
+  result := GUIC.foregroundClr;
   if not(assigned(r)) then exit;
   
-  if r^.parent^.active then
-    result := GUIC.foregroundClr
-  else
-    result := GUIC.foregroundClrInactive;
+  // Check if the panel or the region is inactive
+  if (not r^.parent^.active) or (not r^.active) then 
+  begin
+    result := GUIC.foregroundClrInactive; 
+    exit; 
+  end;
+  
+  // Change the button on mouse down
+  case r^.kind of
+    gkButton:
+    begin
+      if MouseDown(LeftButton) AND PointInRect(MousePosition(), RegionRectangleOnScreen(r)) then
+        result := guic.backgroundClr
+    end;
+  end;
 end;
 
 function VectorBackcolorToDraw(r: region): Color;
 begin
-  result := ColorBlack;
+  result := GUIC.backgroundClr;
   if not(assigned(r)) then exit;
   
-  if r^.parent^.active then
-    result := GUIC.backgroundClr
-  else
-    result := GUIC.backgroundClrInactive;
+  // Check if the panel or the region is inactive
+  if (not r^.parent^.active) or (not r^.active) then 
+  begin
+    result := GUIC.backgroundClrInactive; 
+    exit; 
+  end;
+  
+  // Change the button on mouse down
+  case r^.kind of
+    gkButton:
+    begin
+      if MouseDown(LeftButton) AND PointInRect(MousePosition(), RegionRectangleOnScreen(r)) then
+        result := guic.foregroundClr
+    end;
+  end;
 end;
 
 procedure DrawVectorCheckbox(forRegion: Region; const area: Rectangle);
@@ -1444,7 +1466,11 @@ var
   begin
     
     case aligned of
-      AlignLeft, AlignCenter:
+      AlignCenter:
+      begin
+        imgPt.x := imgPt.x + (area.Width - BitmapWidth(bmp)) / 2;
+      end;
+      AlignLeft:
       begin
         area.Width := area.Width - BitmapWidth(bmp) - 1; // 1 pixel boundry for bitmap
         area.x     := area.x + BitmapWidth(bmp);
@@ -1567,6 +1593,9 @@ begin
     
     PushClip(itemArea);
     
+    //Draw the placeholder background
+    
+    
     //Draw the text (adjusting position for width of list item bitmap)
     if assigned(tempList^.items[itemIdx].image.bmp) then
     begin
@@ -1577,7 +1606,30 @@ begin
       _ResizeItemArea(itemTextArea, imagePt, ListFontAlignment(tempList), tempList^.items[itemIdx].image);
     end;
     
-    // If the current item is not the active item
+    // if selected draw the alternate background
+    if (itemIdx = tempList^.activeItem) then
+    begin
+      if GUIC.VectorDrawing then
+      begin
+        // Fill and draw text in alternate color if vector based
+        FillRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
+      end
+      else
+      begin
+        // Draw bitmap and text if bitmap based
+        DrawBitmapPartOnscreen(forRegion^.parent^.panelBitmapActive,
+                       placeHolderScreenRect,
+                       RectangleTopLeft(itemArea));
+      end;
+    end;
+    
+    // Draw the item's bitmap
+    if  assigned(tempList^.items[itemIdx].image.bmp) then
+    begin
+      DrawBitmapCellOnScreen(tempList^.items[itemIdx].image, imagePt);
+    end;
+    
+    // Draw the text on top
     if (itemIdx <> tempList^.activeItem) then
     begin
       // Draw the text onto the screen as normal...
@@ -1590,8 +1642,6 @@ begin
     begin
       if GUIC.VectorDrawing then
       begin
-        // Fill and draw text in alternate color if vector based
-        FillRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                               VectorBackcolorToDraw(forRegion), VectorForecolorToDraw(forRegion),
                               ListFont(tempList), ListFontAlignment(tempList),
@@ -1599,21 +1649,11 @@ begin
       end
       else
       begin
-        // Draw bitmap and text if bitmap based
-        DrawBitmapPartOnscreen(forRegion^.parent^.panelBitmapActive,
-                       placeHolderScreenRect,
-                       RectangleTopLeft(itemArea));
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                      VectorForecolorToDraw(forRegion), VectorBackcolorToDraw(forRegion), 
                      ListFont(tempList), ListFontAlignment(tempList),
                      itemTextArea);
       end;
-    end;
-    
-    // Draw the item's bitmap
-    if  assigned(tempList^.items[itemIdx].image.bmp) then
-    begin
-      DrawBitmapCellOnScreen(tempList^.items[itemIdx].image, imagePt);
     end;
     
     PopClip(); // item area
@@ -1673,8 +1713,13 @@ end;
 
 function PanelBitmapToDraw(p: Panel): bitmap;
 begin
-  if not PanelActive(p) then begin result := p^.PanelBitmapInactive; exit; end
-  else result := p^.PanelBitmap;
+  if not PanelActive(p) then
+  begin
+    result := p^.PanelBitmapInactive;
+    exit;
+  end;
+  
+  result := p^.PanelBitmap;
 end;
 
 procedure DrawAsBitmaps();
