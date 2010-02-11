@@ -1053,7 +1053,7 @@ interface
           cellRows        := MyStrToInt(ExtractDelimitedWithRanges(6,data),false);
           cellCols        := MyStrToInt(ExtractDelimitedWithRanges(7,data),false);
           cellCount       := MyStrToInt(ExtractDelimitedWithRanges(8,data),false);
-          SetBitmapCellDetails(gridBitmap, cellWidth, cellHeight, cellCols, cellRows, cellCount);
+          BitmapSetCellDetails(gridBitmap, cellWidth, cellHeight, cellCols, cellRows, cellCount);
           MapAddBitmapCells(result, bitmapCellIds, cellRegions, gridBitmap);
         end;
         else

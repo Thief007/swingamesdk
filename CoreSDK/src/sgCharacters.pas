@@ -685,7 +685,7 @@ implementation
       cols  := StrToInt(ExtractDelimited(5, data, [',']));
       rows  := StrToInt(ExtractDelimited(6, data, [',']));
       count := StrToInt(ExtractDelimited(7, data, [',']));
-      SetBitmapCellDetails(bmpArray[High(bmpArray)], w, h, cols, rows, count);
+      BitmapSetCellDetails(bmpArray[High(bmpArray)], w, h, cols, rows, count);
       
       SetTransparentColor(bmpArray[High(bmpArray)], RGBColor(StrToInt(ExtractDelimited(8, data, [','])),
                                                              StrToInt(ExtractDelimited(9, data, [','])),

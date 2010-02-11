@@ -274,7 +274,7 @@ implementation
             exit;
         end;
         
-        SetBitmapCellDetails(bmp, current.data[0], current.data[1], current.data[2], current.data[3], current.data[4]);
+        BitmapSetCellDetails(bmp, current.data[0], current.data[1], current.data[2], current.data[3], current.data[4]);
       end;
     end;
     
