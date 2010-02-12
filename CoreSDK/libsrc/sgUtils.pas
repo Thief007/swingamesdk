@@ -236,7 +236,7 @@ implementation
     count := 1; //1 is the first index... not 0
   
     // Find the start of this delimited range
-    for i := Low(value) to Length(value) do
+    for i := 1 to Length(value) do
     begin
       if count = index then break;
     
@@ -270,7 +270,7 @@ implementation
     i: Integer;
   begin
     result := 0;
-    for i := Low(value) to Length(value) do
+    for i := 1 to Length(value) do
     begin
       if value[i] = delim then 
         result := result + 1;
@@ -284,7 +284,7 @@ implementation
   begin
     inRange := false;
     result := 0;
-    for i := Low(value) to Length(value) do
+    for i := 1 to Length(value) do
     begin
       if (not inRange) and (value[i] = delim) then 
         result := result + 1

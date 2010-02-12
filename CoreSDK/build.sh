@@ -39,9 +39,9 @@ fi
 #
 FPC_BIN=`which fpc`
 if [ "$OS" = "$WIN" ]; then
-    PAS_FLAGS="-g"
+    PAS_FLAGS="-g -Cr -Ci -gc -Ct"
 else
-    PAS_FLAGS="-gw"
+    PAS_FLAGS="-gw -Cr -Ci -Ct"
 fi
 SG_INC="-Fi${APP_PATH}/libsrc -Fu${APP_PATH}/libsrc -Fu${APP_PATH}/src"
 CLEAN="N"

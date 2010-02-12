@@ -162,6 +162,7 @@ procedure GUISetBackgroundColor(c:Color);
 /// @lib
 function GUIClicked(): Boolean;
 
+//---------------------------------------------------------------------------
 // Panels
 //---------------------------------------------------------------------------
 
@@ -950,6 +951,17 @@ procedure ListAddItem(lst: GUIList; img:Bitmap); overload;
 procedure ListAddItem(lst: GUIList; img:Bitmap; text: String); overload;
 
 /// Adds an item to the list where the items shows a cell of a
+/// bitmap.
+///
+/// @lib ListAddItemWithCell
+/// @sn list:%s addBitmapCell:%s
+///
+/// @class List
+/// @overload AddItem AddItemWithCell
+/// @csn addBitmapCell:%s
+procedure ListAddItem(lst: GUIList; const img: BitmapCell); overload;
+
+/// Adds an item to the list where the items shows a cell of a
 /// bitmap and some text.
 ///
 /// @lib ListAddItemWithCellAndText
@@ -981,18 +993,7 @@ procedure ListAddItem(r: Region; const img:BitmapCell; text: String); overload;
 /// @overload AddItem AddItemWithCellFromRegion
 /// @csn addBitmapCell:%s
 
-procedure ListAddItem(r : Region; const img:BitmapCell); overload;
-
-/// Adds an item to the list where the items shows a cell of a
-/// bitmap.
-///
-/// @lib ListAddItemWithCell
-/// @sn list:%s addBitmapCell:%s
-///
-/// @class List
-/// @overload AddItem AddItemWithCell
-/// @csn addBitmapCell:%s
-procedure ListAddItem(lst: GUIList; const img:BitmapCell); overload;
+procedure ListAddItem(r : Region; const img: BitmapCell); overload;
 
 /// Adds an item to the list by text
 ///
@@ -2576,6 +2577,11 @@ begin
   ListAddItem(lst, BitmapCellOf(img, -1), text);
 end;
 
+procedure ListAddItem(lst: GUIList; const img: BitmapCell); overload;
+begin
+  ListAddItem(lst, img, '');
+end;
+
 procedure ListAddItem(lst: GUIList; const img:BitmapCell; text: String); overload;
 begin
     if not assigned(lst) then exit;
@@ -2585,10 +2591,6 @@ begin
     lst^.items[High(lst^.items)].image    := img;   //Assign the image to the item
 end;
 
-procedure ListAddItem(lst: GUIList; const img:BitmapCell); overload;
-begin
-  ListAddItem(lst,img,'');
-end;
 procedure ListAddItem(r : Region; const img:BitmapCell); overload;
 begin
   ListAddItem(r,img,'');
@@ -2653,7 +2655,7 @@ begin
     
     SetLength(lst^.items, Length(lst^.items) - 1);
     
-    if lst^.startingAt >= idx then lst^.startingAt := lst^.startingAt - 1;
+    if (lst^.startingAt >= idx) and (idx <> 0) then lst^.startingAt := lst^.startingAt - 1;
     if lst^.activeItem >= idx then lst^.activeItem := lst^.activeItem - 1;
 end;
 

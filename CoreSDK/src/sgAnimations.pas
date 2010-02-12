@@ -175,6 +175,14 @@ interface
   /// @csn initAtIndex:%s from:%s
   function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
   
+  /// Disposes of the resources used in the animation.
+  ///
+  /// @lib
+  ///
+  /// @class Animation
+  /// @dispose
+  procedure FreeAnimation(var ani: Animation);
+  
   
   //----------------------------------------------------------------------------
   // Drawing Animations
@@ -932,13 +940,22 @@ begin
     result := nil;
 end;
 
+procedure FreeAnimation(var ani: Animation);
+begin
+  if assigned(ani) then
+  begin
+    dispose(ani);
+    ani := nil;
+  end;
+end;
+
 function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
 begin
   result := nil;
   if frames = nil then exit;
   
   new(result);
-  AssignAnimation(result, identifier, frames)
+  AssignAnimation(result, identifier, frames, withSound)
 end;
 
 function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
@@ -977,7 +994,10 @@ procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTempla
 begin
   if (not assigned(anim)) or (not assigned(frames)) then exit;
   if (idx < 0) or (idx > High(frames^.animations)) then 
-    begin RaiseException('Assigning an animation frame that is not within range 0-' + IntToStr(High(frames^.animations)) + '.'); exit; end;
+  begin 
+    //RaiseException('Assigning an animation frame that is not within range 0-' + IntToStr(High(frames^.animations)) + '.'); 
+    exit; 
+  end;
   
   anim^.firstFrame    := frames^.frames[frames^.animations[idx]];
   RestartAnimation(anim, withSound);

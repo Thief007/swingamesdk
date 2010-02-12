@@ -2387,17 +2387,25 @@ implementation
     {$ENDIF}
     
     if v.x = 0 then
-		begin
-			if v.y < 0 then result := -90
-			else result := 90; //Default to down screen if x and y are both 0
-		end
-		else if v.y = 0 then
-		begin
-			if v.x < 0 then result := 180
-			else result := 0;		
-		end
-		else
+    begin
+      if v.y < 0 then result := -90
+      else result := 90; //Default to down screen if x and y are both 0
+    end
+    else if v.y = 0 then
+    begin
+      if v.x < 0 then result := 180
+      else result := 0;   
+    end
+    else
+    begin
       result := RadToDeg(arctan(v.y / v.x));
+      
+      if v.x < 0 then
+      begin
+        if v.y < 0 then result := result - 180
+        else result := result + 180;
+      end;
+    end;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'VectorAngle(const v: Vector): Single', '');

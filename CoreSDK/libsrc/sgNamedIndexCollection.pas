@@ -32,6 +32,8 @@ interface
 
   function NamesOf(const col: NamedIndexCollection): StringArray;
   
+  function HasName(const col: NamedIndexCollection; name: String): Boolean;
+  
   /// Add a new name to the index. Returns the index of the added element or
   /// -1 if the add fails.
   ///
@@ -42,7 +44,7 @@ interface
   /// returns names in an index collection in the following manner: name1,name2...
   function NamedIndexCollectionNameList(const list:NamedIndexCollection):String;
   
-  procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: Array of String); overload;
+  procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: StringArray); overload;
   procedure InitNamedIndexCollection(var col: NamedIndexCollection); overload;
   procedure RemoveName(var col: NamedIndexCollection; idx: LongInt); overload;
   function RemoveName(var col: NamedIndexCollection; name: String): LongInt; overload;
@@ -86,13 +88,25 @@ uses sgShared, stringhash, sgUtils, StrUtils;
   begin
     result := Length(col.names);
   end;
-	
-	function NamesOf(const col: NamedIndexCollection): StringArray;
+  
+  function NamesOf(const col: NamedIndexCollection): StringArray;
   begin
-		result := col.names;
+    result := col.names;
   end;
-
-
+  
+  function HasName(const col: NamedIndexCollection; name: String): Boolean;
+  var
+    hash: TStringHash;
+  begin
+    result := false;
+    hash := TStringHash(col.ids);
+    
+    if not assigned(hash) then exit;
+    
+    result := hash.containsKey(name);
+  end;
+  
+  
   function AddName(var col: NamedIndexCollection; name: String): Integer;
   var
     hash: TStringHash;
@@ -154,11 +168,12 @@ uses sgShared, stringhash, sgUtils, StrUtils;
   end;
   
   
-  procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: Array of String); overload;
+  procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: StringArray); overload;
   var
     hash: TStringHash;
     i: Integer;
   begin
+    // WriteLn('here');
     hash := TStringHash.Create(False, 1024);   //Create the hash locally and store in col.ids
     col.ids := hash;
     
