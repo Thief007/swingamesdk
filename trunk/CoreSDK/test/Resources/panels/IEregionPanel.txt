@@ -7,7 +7,7 @@ h: 299
 b: regionPanel
 a: regionPanelActive
 d: False
-v: False
+v: True
 
 // RadioGroups
 r: 9,  10,  16, 17, RadioGroup, RBButton,       KindRadio
