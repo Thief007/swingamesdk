@@ -4,7 +4,7 @@ program GUITests;
 uses
   sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText,
   sgGeometry, sgTypes, sgInput, SysUtils, sgImages, sgMaps,
-  sgCamera;
+  sgCamera, sgUtils;
 
 type
   PanelName = (Selector, SelectorDropDown, MapProperties, Kind, DefaultValues, Bottom, Grid, Bitmap, Bitmap_Type, Palette, BmpKind, DisplayList, LayerList);
@@ -229,24 +229,51 @@ end;
   
 procedure LoadBitmapFromMap(m:map);
 var
-  i : LongInt;
+  i: LongInt;
   scale : Single;
 begin
   if m^.TileWidth = 0 then
   begin
-  ListClearItems(RegionWithId('lst.Palette'));
-   exit;
+    ListClearItems(RegionWithId('lst.Palette'));
+    SetLength(m^.BitmapCellKind, 0);
+    bCKArray := BitmapCellKinds(m);
+    exit;
   end;
   scale := 35 / m^.TileWidth ;
   bCkArray := BitmapCellKinds(m);
   ListClearItems(RegionWithID('lst.Palette'));
   for i := low(bCkArray) to high(bCkArray) do
   begin
-    
     ListAddItem(RegionWithID('lst.Palette'), BitmapCellOf(RotateScaleBitmap(bCKArray[i].bmap,0, scale),bCKArray[i].cell));
   end;
 end;
 
+ procedure AddCellToPalette(m:map);
+  var
+  i,cellCount : longInt;
+  cellRegions : LongIntArray;
+  cellIds : LongIntArray;
+  
+  begin
+    CellCount := StrToInt(TextboxText(RegionWithID('tB.CellCount')));
+    SetLength(cellIds, CellCount );
+    for i := 0 to CellCount-1 do
+    begin
+      cellIds[i] := length(bCKArray)+i;
+    end;
+   cellRegions :=  ProcessRange(TextBoxText(RegionWithId('tB.CellRange')));
+    BitmapSetCellDetails(
+                LoadBitmap(TextboxText(RegionWithID('tB.Bitmap.Path'))),
+                StrToInt(TextboxText(RegionWithID('tB.CellWidth'))),
+                StrToInt(TextboxText(RegionWithID('tB.CellHeight'))),
+                StrToInt(TextboxText(RegionWithID('tB.CellCol'))),
+                StrToInt(TextboxText(RegionWithID('tB.CellRow'))),
+                CellCount
+                );
+      MapAddBitmapCells(m, cellIds, cellRegions, LoadBitmap(TextboxText(RegionWithID('tB.Bitmap.Path')))); //length because length = high +1
+    LoadBitmapFromMap(m);
+    writeln(length(m^.BitmapCellKind));
+  end;
 
 procedure ApplyBitmapToTile(m:map; offset:vector);
 begin
@@ -254,10 +281,7 @@ if ListActiveItemIndex(RegionWithId('lst.Palette')) = -1 then exit;
 SetTileBitmap(m,TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30))),StrToInt(LabelText(RegionWithId('Lbl.Map.layer'))), ListActiveItemIndex(RegionWithId('lst.Palette')));
 end;
 
-procedure AddCellToPalette(m:map);
-begin
 
-end;
 
 
 
@@ -297,7 +321,9 @@ begin
     m := NewMap();
    //writeln('new');
     ShowMapProperties(m);
-    LoadBitmapFromMap(m)
+    LoadBitmapFromMap(m);
+    UpdateKindList(m);
+    UpdateValuesList(m);
   end;
   
   if (RegionClickedID() = 'b.Map.Apply') then
@@ -305,6 +331,7 @@ begin
     ApplyMapProperties(m);
     UpdateLayerList(m);
     LoadBitmapFromMap(m);
+    ReAssignKinds(m);
   end;
 
   if (RegionClickedID() = 'b.Map.Reset') then
@@ -334,7 +361,6 @@ begin
   if (RegionClickedID() = 'b.Values.Remove') then
   begin
     RemoveValue(m,ListActiveItemText(RegionWithID('lst.Values')));
-    writeln(length(m^.MapDefaultValues[0]));
     UpdateValuesList(m);
   end;
 
@@ -362,6 +388,8 @@ begin
       m:=LoadMap(DialogPath());
       ShowMapProperties(m);
       LoadBitmapFromMap(m);
+      UpdateKindList(m);
+    UpdateValuesList(m);
       openingFile := false;
     end;
 
@@ -432,6 +460,7 @@ begin
    //writeln(ListActiveItemIndex(RegionWithId('lst.Palette')));
        MapRemoveBitmap(m, ListActiveItemIndex(RegionWithId('lst.Palette')));
     ListRemoveActiveItem('lst.Palette');
+    LoadBitmapFromMap(m);
 
    end;
 
@@ -441,15 +470,19 @@ begin
    end;
    if (RegionClickedId()='b.DefaultKind.Assign') and (ListActiveItemIndex(RegionWithId('lst.Palette'))<>-1) then
    begin
+    writeln(ListActiveItemIndex(RegionWithId('lst.Palette')),StrToInt(TextboxText(RegionWithId('Tb.DefaultKind.Kind') )));
     MapSetBitmapDefaultKind(m,ListActiveItemIndex(RegionWithId('lst.Palette')),StrToInt(TextboxText(RegionWithId('Tb.DefaultKind.Kind') )));
+    LoadBitmapFromMap(m);
    end;
   if MouseClicked(LeftButton)and not GUIClicked() then
     begin
       ApplyBitmapToTile(m,offset);
+      ReAssignKinds(m);
+     // writeln(TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30)))^.Kind);
     end;
     if (RegionClickedID() = 'b.Bitmap.Add') and (LabelText(RegionWithID('dD.BitmapTypeIndicator')) ='Cell') then
    begin
-    //AddCellToPalette(m);
+    AddCellToPalette(m);
    end;
 
 end;

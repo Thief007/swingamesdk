@@ -525,6 +525,8 @@ interface
   //======================//
   // Set map procedures   //
   //======================//
+  procedure ReAssignKinds(m:map);
+  
   procedure MapSetBitmapDefaultKind(m: map; const idx :longInt; kind :longInt);
   /// Removes a BitmapCellKind from the array within the given map
   ///
@@ -1530,14 +1532,17 @@ interface
     mki : string;
   begin
     if length(bitmapCellsArray) = 0 then exit;
-    mki := 'mki:';
-    mki += '['+IntToStr(bitmapCellsArray[0].CellKinds[0].kindIdx);
+    mki := 'mki:[';
     
-    for i := Low(bitmapCellsArray)+1 to High(bitmapCellsArray) do
+    for i := Low(bitmapCellsArray) to High(bitmapCellsArray) do
+    begin
       for j := Low(bitmapCellsArray[i].CellKinds) to High(bitmapCellsArray[i].CellKinds) do
       begin
-        mki+=','+IntToStr(bitmapCellsArray[i].CellKinds[j].kindIdx);
+        if length(mki) > 5 then
+          mki += ',';
+        mki += IntToStr(bitmapCellsArray[i].CellKinds[j].kindIdx);
       end;
+    end;
     mki+=']';
     writeln(output,mki);
   end;
@@ -1622,7 +1627,7 @@ interface
     for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
     begin
       currentArr := m^.MapDefaultValues[i];
-      writeln(m^.MapDefaultValues[i,0]);
+      if not assigned(currentArr) then break;
       writeln(output,'mvd:',i,',',SingleArrayToRange(currentArr));
     end;
   end;
@@ -2216,6 +2221,25 @@ interface
   // Set map procedures   //
   //======================//
 
+  procedure ReAssignKinds(m:map);
+  var
+    row,col : LongInt;
+  begin
+    for row := low(m^.Tiles) to high(m^.Tiles) do
+    begin
+      for col := low(m^.Tiles[row]) to high(m^.Tiles[row]) do
+      begin
+        if (m^.Tiles[row,col].TileBitmapCellKind[0] = nil) then
+        begin
+          m^.Tiles[row,col].Kind := -1;
+          break;
+        end; 
+        m^.Tiles[row,col].Kind := m^.Tiles[row,col].TileBitmapCellKind[0]^.KindIdx;
+      end;
+    end;
+  end;
+  
+
   procedure MapSetBitmapDefaultKind(m: map; const idx :longInt; kind :longInt);
   begin
   m^.BitmapCellKind[idx].KindIdx := kind;
@@ -2383,7 +2407,32 @@ interface
     RemoveValue(m, IndexOf(m^.valueIds,vName));
   end;
 
-  
+   // PRIVATE FUNCTION
+    procedure RewireTilesToBitmapCellKind(m:map; oldBCKArray,newBCKArray: array of pointer );
+    var
+      row,col,layer,i : LongInt;
+    begin
+      for row := low(m^.Tiles) to high(m^.Tiles) do // loop row
+      begin 
+        for col := low(m^.Tiles[row]) to high(m^.Tiles[row]) do // loop col
+        begin
+          for layer := low(m^.Tiles[row,col].TileBitmapCellKind)  to high(m^.Tiles[row,col].TileBitmapCellKind) do // loop layer
+          begin
+            for i := low(oldBCKArray) to high(oldBCKArray) do // loop the old addresses
+            begin
+              
+              if m^.Tiles[row,col].TileBitmapCellKind[layer] = oldBCKArray[i] then // if tile's bckarray points to old address then
+              begin
+                //writeln('old: ',hexstr(oldBCKArray[0]), ' new: ',hexstr(@newBCKArray[0]));
+                m^.Tiles[row,col].TileBitmapCellKind[layer] := newBCKArray[i]; // assigne new address.
+                break;// breaks to layer
+                
+              end;
+            end; // end old address loop
+          end; // end layer loop
+        end;// end col loop
+      end;// end row loop
+    end; // end of procedure.
   
   procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
   begin
@@ -2400,27 +2449,56 @@ interface
 
     procedure MapAddBitmap(m:map; filename:String);
     var
-      index:LongInt;
+      index,i:LongInt;
+      oldBCKArray, newBCKArray : Array Of Pointer;
     begin
+      SetLength(oldBCKArray, length(m^.BitmapCellKind));
+      for i := Low(m^.BitmapCellKind) to high(m^.BitmapCellKind) do
+      begin
+        oldBCKArray[i] := @m^.BitmapCellKind[i];
+      end;
       index:=MyStrToInt(ExtractDelimited(1,filename,[',']),false);
       if (index+1)> length(m^.BitmapCellKind) then
       begin
-      SetLength(m^.BitmapCellKind, index+1);
-      m^.BitmapCellKind[index].Bmap := LoadBitmap(ExtractDelimited(2,filename,[',']));
-      m^.BitmapCellKind[index].Cell:= 0;
+        SetLength(m^.BitmapCellKind, index+1);
+        m^.BitmapCellKind[index].Bmap := LoadBitmap(ExtractDelimited(2,filename,[',']));
+        m^.BitmapCellKind[index].Cell:= 0;
       end;
+      
+      SetLength(newBCKArray, length(m^.BitmapCellKind));
+      for i := Low(m^.BitmapCellKind) to high(m^.BitmapCellKind) do
+      begin
+        newBCKArray[i] := @m^.BitmapCellKind[i];
+      end;
+      
+      RewireTilesToBitmapCellKind(m, oldBCKArray, newBCKArray);
     end;
+
 
     procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
     var
-    i   : LongInt;
+    i ,j  : LongInt;
+    oldBCKArray, newBCKArray : Array of pointer;
     begin
+      SetLength(oldBCKArray, length(m^.BitmapCellKind));
+        for j := Low(m^.BitmapCellKind) to high(m^.BitmapCellKind) do
+        begin
+          oldBCKArray[j] := @m^.BitmapCellKind[j];
+        end;
+        
       for i:=low(bitmapCellIds) to high(bitmapCellIds) do
       begin
+
         SetLength(m^.BitmapCellKind, length(m^.BitmapCellKind)+1);
         m^.BitmapCellKind[high(m^.BitmapCellKind)].Cell := cellRegions[i];
         m^.BitmapCellKind[high(m^.BitmapCellKind)].Bmap  := gridBitmap;
       end;
+      SetLength(newBCKArray, length(m^.BitmapCellKind));
+      for j := Low(m^.BitmapCellKind) to high(m^.BitmapCellKind) do
+      begin
+        newBCKArray[j] := @m^.BitmapCellKind[j];
+      end;
+      RewireTilesToBitmapCellKind(m, oldBCKArray, newBCKArray);
     end;
 
   function NewMap():map;
@@ -2516,6 +2594,14 @@ interface
       for col:=low(m^.Tiles[row]) to high(m^.Tiles[row]) do
       begin
         SetLength(m^.Tiles[row,col].TileBitmapCellKind, m^.MapLayer); // set length of bitmapcells per tile.
+        if (m^.Tiles[row,col].TileBitmapCellKind[0] = nil) then
+        begin
+          m^.Tiles[row,col].Kind := -1;
+        end
+        else
+        begin
+          m^.Tiles[row,col].Kind := m^.Tiles[row,col].TileBitmapCellKind[0]^.KindIdx;
+        end;
         m^.Tiles[row,col].TileID:=id;
         id+=1;
         //Allocate position and center given stagger
@@ -2523,6 +2609,7 @@ interface
         m^.Tiles[row,col].Position.Y  := (row * m^.TileHeight) - ((row + 1) * m^.TileStagger.Y);       // position y value
         m^.Tiles[row,col].Center.X    := m^.Tiles[row,col].Position.X + (m^.TileWidth/2);                
         m^.Tiles[row,col].Center.Y    := m^.Tiles[row,col].Position.Y + (m^.TileHeight/2);
+        m^.Tiles[row,col].TileShape   := ShapeAtPoint(m^.MapPrototype, m^.Tiles[row,col].Position);   // Shape of the tile
         m^.Tiles[row,col].TileShape   := ShapeAtPoint(m^.MapPrototype, m^.Tiles[row,col].Position);   // Shape of the tile
         
         ShapeSetColor(m^.Tiles[row,col].TileShape, m^.mapHighlightcolor);
