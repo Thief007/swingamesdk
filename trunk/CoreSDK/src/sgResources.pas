@@ -423,6 +423,7 @@ implementation
     end;
     
     current.path := ExtractDelimited(3, line.data, delim);
+    
     if Length(current.path) = 0 then 
     begin
       RaiseException('No path supplied for resource.');
@@ -432,9 +433,9 @@ implementation
     if CountDelimiter(line.data, ',') > 2 then
     begin
       SetLength(current.data, CountDelimiter(line.data, ',') - 2);
-    
+      
       for i := 4 to CountDelimiter(line.data, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
-      begin  
+      begin
         if not TryStrToInt(ExtractDelimited(i, line.data, delim), current.data[i - 4]) then
         begin
           RaiseException('Invalid data expected a whole number at position ' + IntToStr(i + 1));
@@ -442,8 +443,9 @@ implementation
         end;
       end;
     end
-    else SetLength(current.data, 0);
-    
+    else
+      SetLength(current.data, 0);
+      
     //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
     tResourceBundle(ptr).add(current);
   end;

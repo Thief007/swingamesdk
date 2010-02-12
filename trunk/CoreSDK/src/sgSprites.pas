@@ -961,6 +961,85 @@ interface
   /// @setter Scale
   procedure SpriteSetScale(s: Sprite; value: Single);
   
+  //---------------------------------------------------------------------------
+  // Sprite value code
+  //---------------------------------------------------------------------------
+  
+  /// Returns the count of sprite's values
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter ValueCount 
+  function SpriteValueCount(s: Sprite) : LongInt;
+  
+  /// Returns the names of all of the values of the sprite
+  ///
+  /// @lib
+  ///
+  /// @class Sprite
+  /// @getter ValueNames
+  /// @length SpriteValueCount
+  function SpriteValueNames(s: Sprite) : StringArray; 
+  
+  /// Returns the sprite's value at the index specified
+  ///
+  /// @lib
+  /// @sn sprite:%s valueAt:%s
+  ///
+  /// @class Sprite
+  /// @overload Value ValueAt
+  function SpriteValue(s: Sprite; index: Integer): Single; overload;
+  
+  /// Returns the indicated value of the sprite
+  ///
+  /// @lib
+  /// @sn sprite:%s valueOf:%s
+  ///
+  /// @class Sprite
+  /// @method Value
+  function SpriteValue(s: Sprite; name: String): Single; overload;
+  
+  /// Adds a new kind of value to the Sprite
+  /// 
+  /// @lib
+  /// @sn sprite:%s addValue:%s
+  /// 
+  /// @class Sprite
+  /// @method AddValue
+  procedure SpriteAddValue(s: Sprite; name: String);
+  
+  /// Adds a new kind of value to the Sprite, setting the initial value
+  /// to the value passed in.
+  /// 
+  /// @lib
+  /// @sn sprite:%s addValue:%s initally:%s
+  /// 
+  /// @class Sprite
+  /// @overload AddValue AddValueWithDefault
+  /// @csn addValue:%s initally:%s
+  procedure SpriteAddValue(s: Sprite; name: String; initVal: Single);
+  
+  /// Assigns a value to the Sprite.
+  ///
+  /// @lib SpriteSetValueNamed
+  /// @sn sprite:%s setValueNamed:%s to:%s
+  ///
+  /// @class Sprite
+  /// @overload SetValue SetValueNamed
+  /// @csn setValueNamed:%s to:%s
+  procedure SpriteSetValue(s: Sprite; name: String; val: Single); overload;
+  
+  /// Assigns a value to the Sprite.
+  ///
+  /// @lib SpriteSetValue
+  /// @sn sprite:%s setValue:%s to:%s
+  ///
+  /// @class Sprite
+  /// @overload SetValue
+  /// @csn setValue:%s to:%s
+  procedure SpriteSetValue(s: Sprite; idx: LongInt; val: Single); overload;
+  
   
 //=============================================================================
 implementation
@@ -1159,8 +1238,10 @@ implementation
       FreeNamedIndexCollection(s^.layerIds);
       FreeNamedIndexCollection(s^.valueIds);
       
-      // Nil pointers
-      s^.animationData := nil;
+      // Free pointers
+      FreeAnimation(s^.animationData);
+      
+      // Nil pointers to resources managed by sgResources
       s^.animationTemplate := nil;
       s^.collisionBitmap := nil;
       
@@ -1169,8 +1250,9 @@ implementation
       // s^.bufferBmp := nil;
       
       //Dispose sprite
-      Dispose(s);
       CallFreeNotifier(s);
+      
+      Dispose(s);
       s := nil;
     end;
   end;
@@ -1224,7 +1306,10 @@ implementation
     if not assigned(s) then exit;
     if not assigned(s^.animationTemplate) then exit;
     
-    s^.animationData := CreateAnimation(idx, s^.animationTemplate, withSound);
+    if assigned(s^.animationData) then
+      AssignAnimation(s^.animationData, idx, s^.animationTemplate, withSound)
+    else
+      s^.animationData := CreateAnimation(idx, s^.animationTemplate, withSound);
   end;
   
   procedure UpdateSpriteAnimation(s: Sprite); overload;
@@ -1943,6 +2028,75 @@ implementation
   begin
     if assigned(s) then s^.collisionBitmap := bmp;
   end;
+  
+  //---------------------------------------------------------------------------
+  // Sprite value code
+  //---------------------------------------------------------------------------
+  
+  function SpriteValueCount(s: Sprite) : LongInt;
+  begin
+    result := -1;
+    if not Assigned(s) then exit;
+    
+    result := NameCount(s^.valueIds);
+  end;
+  
+  function SpriteValueNames(s: Sprite) : StringArray; 
+  begin
+    SetLength(result, 0);
+    if not Assigned(s) then exit;
+    
+    result := NamesOf(s^.valueIds);
+  end;
+  
+  function SpriteValue(s: Sprite; index: Integer): Single; overload;
+  begin
+    result := 0;
+    if not Assigned(s) then exit;
+    
+    result := s^.values[index];
+  end;
+  
+  function SpriteValue(s: Sprite; name: String): Single; overload;
+  begin
+    result := 0;
+    if not Assigned(s) then exit;
+    
+    result := SpriteValue(s, IndexOf(s^.valueIds, name));
+  end;
+  
+  procedure SpriteAddValue(s: Sprite; name: String);
+  begin
+    SpriteAddValue(s, name, 0);
+  end;
+  
+  procedure SpriteAddValue(s: Sprite; name: String; initVal: Single);
+  var
+    idx: LongInt;
+  begin
+    if not assigned(s) then exit;
+    if HasName(s^.valueIds, name) then exit;
+    
+    idx := AddName(s^.valueIds, name);
+    SetLength(s^.values, Length(s^.values) + 1);
+    s^.values[idx] := initVal;
+  end;
+  
+  procedure SpriteSetValue(s: Sprite; name: String; val: Single); overload;
+  begin
+    if not Assigned(s) then exit;
+    
+    SpriteSetValue(s, IndexOf(s^.valueIds, name), val);
+  end;
+  
+  procedure SpriteSetValue(s: Sprite; idx: LongInt; val: Single); overload;
+  begin
+    if not assigned(s) then exit;
+    if (idx < 0) or (idx > High(s^.values)) then exit;
+    
+    s^.values[idx] := val;
+  end;
+  
 
 //=============================================================================
 
