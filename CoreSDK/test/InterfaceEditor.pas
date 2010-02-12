@@ -10,7 +10,6 @@ type
 var
   panels: ArrayOfPanel;
   workingPanel: Panel;
-  exportPanel: Panel;
   
 const
   Tabs = 0;
@@ -37,38 +36,33 @@ procedure UpdateWorkingPanel();
 var
   testInt: LongInt;
 begin
+  
   testInt := 10;
   if TryStrToInt(TextBoxText(RegionWithID('PanelWidth')), testInt) then
     workingPanel^.area.width  := testInt;
+
     
+
   testInt := 10;
   if TryStrToInt(TextBoxText(RegionWithID('PanelHeight')), testInt) then
     workingPanel^.area.height := testInt;
+
   
+
   workingPanel^.panelBitmap         := BitmapNamed(TextBoxText(RegionWithID('ImageS')));
   workingPanel^.panelBitmapInactive := BitmapNamed(TextBoxText(RegionWithID('ImageI')));
   workingPanel^.panelBitmapActive   := BitmapNamed(TextBoxText(RegionWithID('ImageA')));
-  
-  // Updating the panel for exporting.
-  
-  exportPanel^ := workingPanel^;
-  
-  testInt := 0;
-  if TryStrToInt(TextBoxText(RegionWithID('PanelX')), testInt) then
-    exportPanel^.area.x:= testInt;
-  
-  testInt := 0;
-  if TryStrToInt(TextBoxText(RegionWithID('PanelY')), testInt) then
-    exportPanel^.area.y := testInt;
     
-  exportPanel^.draggable := CheckBoxState(RegionWithID('Draggable'));
+  // Updating the panel for exporting.
+    
+  
 end;
 
 procedure InitInterface();
 var
   i: LongInt;
 begin
-  SetLength(panels, 9);
+  SetLength(panels, 10);
   panels[Tabs] := LoadPanel('IETabs.txt');
   panels[EditPanel] := LoadPanel('IEpanelPanel.txt');
   panels[EditRegion] := LoadPanel('IEregionPanel.txt');
@@ -98,7 +92,7 @@ var
   workingRegion: String;
   kinds: GUIRadioGroup;
 begin
-  workingRegion := '';
+  workingRegion   := '';
   workingRegion   += (TextBoxText(RegionWithID('TBRegionX')) + ',');
   workingRegion   += (TextBoxText(RegionWithID('TBRegionY')) + ',');
   workingRegion   += (TextBoxText(RegionWithID('TBRegionWidth')) + ',');
@@ -117,7 +111,7 @@ begin
   
   workingRegion += (',' + TextBoxText(RegionWithID('TBRegionName')));
   
-  AddRegionToPanelWithString(workingRegion, workingPanel);    
+  AddRegionToPanelWithString(workingRegion, workingPanel);  
 end;
 
 procedure MyUpdateGUI();
@@ -125,7 +119,6 @@ var
   tab, kinds: GUIRadioGroup;
   i: LongInt;
 begin
-
   tab := RadioGroupFromId(panels[Tabs], 'UpperTabs');
   
   case ActiveRadioButtonIndex(tab) of
@@ -135,9 +128,9 @@ begin
   
   kinds := RadioGroupFromId(panels[EditRegion], 'KindRadio');
   
+  
   for i := Low(kinds^.buttons) to High(kinds^.buttons) do
   begin
-    //WriteLn(i, ': Testing');
     if i = ActiveRadioButtonIndex(kinds) then
     begin
       case ActiveRadioButtonIndex(kinds) of
@@ -155,52 +148,19 @@ begin
       HidePanel(panels[i + 4]); //Offset the hidden panel index to skip the first 3 panels in the array.
     end;
   end;
-  
+
   if RegionClickedID() = 'AddRegionButton' then
     AddRegionToPanel();
-  
+    
   UpdateWorkingPanel();
 end;
 
 procedure InitWorkingPanel();
 begin
-  workingPanel := New(Panel);
-  exportPanel := New(Panel);
-  
-  with workingPanel^ do
-  begin
-    name                := 'working';
-    panelID             := -1;
-    visible             := true;
-    active              := true;      // Panels are active by default - you need to deactivate them specially...
-    draggable           := true;
-    DrawAsVectors       := true;
-    modal               := false;
-    panelBitmap         := nil;
-    panelBitmapActive   := nil;  
-
-    SetLength(regions,      0);
-    SetLength(labels,       0);
-    SetLength(checkBoxes,   0);
-    SetLength(radioGroups,  0);
-    SetLength(textBoxes,    0);
-    SetLength(lists,        0);
-    SetLength(callbacks,    0, 0);
-  end;
-
-  workingPanel^.area.x      := 175;
-  workingPanel^.area.y      := 25;
-  workingPanel^.area.width  := 10;
-  workingPanel^.area.height := 10;
-  
-  
-  exportPanel^ := workingPanel^;
-  exportPanel^.name := 'export';
-  
-  //InitNamedIndexCollection(workingPanel^.regionIds);
-  //InitNamedIndexCollection(exportPanel^.regionIds);
-  
-  AddPanelToGUI(workingPanel);
+  WorkingPanel := NewPanel('working');
+  workingPanel^.area.x := 175;
+  workingPanel^.area.y := 25;
+  workingPanel^.draggable := true;
   ShowPanel(workingPanel);
 end;
 
@@ -223,13 +183,12 @@ begin
     ProcessEvents();
     ClearScreen(ColorBlack);
     
+    
     MyUpdateGUI();
+    
+    
     UpdateInterface();
     DrawPanels();
-    
-    WriteLn(RectangleToString(workingPanel^.area));
-    WriteLn('workingPanel^.visible = ',workingPanel^.visible);
-    WriteLn('workingPanel^.drawasvectors = ',workingPanel^.drawasvectors);
     
     DrawFramerate(0,0);
     RefreshScreen();

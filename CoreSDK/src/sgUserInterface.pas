@@ -111,6 +111,7 @@ type
     area:           Rectangle;
     active:         Boolean;
     parent:         Panel;
+    callbacks:      Array of GUIEventCallback;
   end;
   
   PanelData = record
@@ -141,7 +142,6 @@ type
     modal:                Boolean;                      // A panel that is modal blocks events from panels shown earlier.
     
     // Event callback mechanisms
-    callbacks:            Array of Array of GUIEventCallback; // [region][callback]
     DrawAsVectors:        Boolean;
   end;
   
@@ -1002,6 +1002,8 @@ procedure ListAddItem(lst: GUIList; const img:BitmapCell); overload;
 /// @method ListAddItem
 procedure ListAddItem(r : Region; text: String); overload;
 
+function NewPanel(pnlName: String): Panel;
+
 /// Adds an item to the list by bitmap
 ///
 /// @lib AddItemByBitmapFromRegion
@@ -1216,18 +1218,17 @@ var
 // This is private to the unit
 procedure SendEvent(r: Region; kind: EventKind);
 var
-  i, idx: Integer;
+  i: Integer;
   pnl: Panel;
 begin
   if not assigned(r) then exit;
   pnl := r^.parent;
   if not assigned(pnl) then exit;
-  idx := r^.regionIdx;
   
-  for i := 0 to High(pnl^.callbacks[idx]) do
+  for i := 0 to High(r^.callbacks) do
   begin
     try
-      pnl^.callbacks[idx][i](r, kind);
+      r^.callbacks[i](r, kind);
     except
       WriteLn(stderr, 'Error with event callback!');
     end;
@@ -1433,7 +1434,7 @@ end;
 
 procedure DrawTextbox(forRegion: Region; const area: Rectangle);
 begin
-  if GUIC.VectorDrawing then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
+  if forRegion^.parent^.DrawAsVectors then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   if GUIC.activeTextBox <> forRegion then
     DrawTextLinesOnScreen(TextboxText(forRegion), 
@@ -1541,7 +1542,7 @@ var
     
     if tempList^.verticalScroll then
     begin
-      if GUIC.VectorDrawing then
+      if forRegion^.parent^.DrawAsVectors then
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
                               Round(scrollArea.x),
                               Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
@@ -1555,7 +1556,7 @@ var
     end
     else
     begin
-      if GUIC.VectorDrawing then
+      if forRegion^.parent^.DrawAsVectors then
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
                               Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
                               Round(scrollArea.y),
@@ -1572,13 +1573,13 @@ begin
   tempList := ListFromRegion(forRegion);
   if not assigned(tempList) then exit;
   
-  if GUIC.VectorDrawing then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
+  if forRegion^.parent^.DrawAsVectors then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   PushClip(area);
   areaPt := RectangleTopLeft(area);
   
   // Draw the up and down buttons
-  if GUIC.VectorDrawing then
+  if forRegion^.parent^.DrawAsVectors then
   begin
     if tempList^.verticalScroll then
     begin
@@ -1595,7 +1596,7 @@ begin
   // Draw the scroll area
   scrollArea := RectangleOffset(tempList^.scrollArea, areaPt);
   
-  if GUIC.VectorDrawing then
+  if forRegion^.parent^.DrawAsVectors then
   begin
     DrawRectangleOnScreen(VectorBackcolorToDraw(forRegion), scrollArea);
     DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), scrollArea);
@@ -1614,7 +1615,7 @@ begin
     placeHolderScreenRect := RectangleOffset(tempList^.placeHolder[i], RectangleTopLeft(forRegion^.area));
     
     // Outline the item's area
-    if GUIC.VectorDrawing then
+    if forRegion^.parent^.DrawAsVectors then
       DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
     
     // Find the index of the first item to be shown in the list
@@ -1649,7 +1650,7 @@ begin
     // if selected draw the alternate background
     if (itemIdx = tempList^.activeItem) then
     begin
-      if GUIC.VectorDrawing then
+      if forRegion^.parent^.DrawAsVectors then
       begin
         // Fill and draw text in alternate color if vector based
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
@@ -1680,7 +1681,7 @@ begin
     end
     else // the item is the selected item...
     begin
-      if GUIC.VectorDrawing then
+      if forRegion^.parent^.DrawAsVectors then
       begin
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                               VectorBackcolorToDraw(forRegion), VectorForecolorToDraw(forRegion),
@@ -1784,10 +1785,17 @@ var
 begin
   for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
   begin  
+    
     if GUIC.visiblePanels[i]^.DrawAsVectors then
+    begin
+      
       DrawAsVectors(GUIC.visiblePanels[i])
+    end
     else
+    begin
+      
       DrawAsBitmaps(GUIC.visiblePanels[i]);
+    end;
   end;
 end;
 
@@ -1954,7 +1962,7 @@ procedure HandlePanelInput(pnl: Panel);
     
     for i := Low(lst^.placeHolder) to High(lst^.placeHolder) do
     begin
-      if PointInRect(pointClicked, lst^.placeHolder[i]) AND ((not(lst^.items[i + lst^.startingAt].text = '')) OR (assigned(lst^.items[i + lst^.startingAt].image.bmp))) then
+      if PointInRect(pointClicked, lst^.placeHolder[i]) AND (lst^.startingAt + i < Length(lst^.items)) then
       begin
         lst^.activeItem := lst^.startingAt + i;
         SendEvent(lstRegion, ekSelectionMade);
@@ -2928,6 +2936,65 @@ begin
   if assigned(p) then p^.active := not p^.active;
 end;
 
+function InitPanel(name, filename:string): Panel;
+begin
+  New(result);
+
+  result^.name      := name;
+  result^.filename  := filename;
+  
+  with result^ do
+  begin
+    panelID       := -1;
+    area          := RectangleFrom(0,0,0,0);
+    visible       := false;
+    active        := true;      // Panels are active by default - you need to deactivate them specially...
+    draggable     := false;
+    DrawAsVectors := true;
+    modal         := false;
+    
+    panelBitmap         := nil;
+    panelBitmapActive   := nil;
+    panelBitmapInactive := nil;
+    
+    SetLength(regions,      0);
+    SetLength(labels,       0);
+    SetLength(checkBoxes,   0);
+    SetLength(radioGroups,  0);
+    SetLength(textBoxes,    0);
+    SetLength(lists,        0);
+    
+    InitNamedIndexCollection(regionIds);   //Setup the name <-> id mappings
+  end;
+end;
+
+function NewPanel(pnlName: String): Panel;
+var
+  pnl: Panel;
+  obj: tResourceContainer;
+begin
+  if GUIC.panelIds.containsKey(pnlName) then
+  begin
+    result := PanelNamed(pnlName);
+    exit;
+  end;
+  
+  pnl := InitPanel(pnlName, 'RuntimePanel');
+  obj := tResourceContainer.Create(pnl);
+  
+  if not GUIC.panelIds.setValue(pnlname, obj) then
+  begin
+    DoFreePanel(pnl);
+    result := nil;
+  end
+  else
+  begin
+    AddPanelToGUI(pnl);
+    result := pnl;
+  end;
+  
+end;
+
 procedure ShowPanelDialog(p: Panel);
 begin
   if assigned(p) then 
@@ -3200,13 +3267,54 @@ function StringToKind(s: String): GUIElementKind;
     r^.elementIndex := High(result^.lists);
   end;
   
+  type RegionDataArray = Array of RegionData;
+  
+  // Rewires points to regions in the panel, assumes that the
+  // newRegions is larger than or equal to the number of old regions in the panel
+  procedure RewireRegions(p: Panel; newRegions: RegionDataArray);
+  var
+    i, j, elemIdx: Integer;
+  begin
+    
+    // for all of the regions
+    for i := 0 to High(p^.regions) do
+    begin
+      //Copy the old region data to the new region data
+      newRegions[i] := p^.regions[i];
+      //Get the element index
+      elemIdx := p^.regions[i].elementIndex;
+      
+      // if a textbox or a radio group, remap pointers
+      case p^.regions[i].kind of
+        gkTextbox: p^.textBoxes[elemIdx].region := @newRegions[i];
+        gkRadioGroup:
+        begin
+          for j := 0 to High(p^.radioGroups[elemIdx].buttons) do
+          begin
+            //searching for the button that points to the old regions
+            if p^.radioGroups[elemIdx].buttons[j] = @p^.regions[i] then
+            begin 
+               p^.radioGroups[elemIdx].buttons[j] := @newRegions[i];
+               break; // exit inner loop
+            end;
+          end;
+        end;
+      end; // end case
+    end;// end for
+    
+    // move the new regions in (copies pointer)
+    p^.regions := newRegions;    
+  end;
+  
   procedure AddRegionToPanelWithString(d: string; p: panel);
   var
     regID: string;
     regX, regY: Single;
     regW, regH, addedIdx: integer;
     r: RegionData;
+    newRegions: RegionDataArray;
   begin
+    
     // Format is 
     // x, y, w, h, kind, id
     regX := StrToFloat(Trim(ExtractDelimited(1, d, [','])));
@@ -3223,8 +3331,19 @@ function StringToKind(s: String): GUIElementKind;
     // regX += p^.area.x;
     // regY += p^.area.y;
     
+    
+        
     addedIdx := AddName(p^.regionIds, regID);   //Allocate the index
-    if High(p^.Regions) < addedIdx then begin RaiseException('Error creating panel - added index is invalid.'); exit; end;
+      
+    if High(p^.Regions) < addedIdx then 
+    begin 
+      
+      // Make more space and rewire region pointers
+      SetLength(newRegions, addedIdx + 1);
+      
+      RewireRegions(p, newRegions);
+      
+    end;
     
     r.regionIdx     := addedIdx;
     r.area          := RectangleFrom(regX, regY, regW, regH);
@@ -3232,6 +3351,7 @@ function StringToKind(s: String): GUIElementKind;
     r.stringID      := regID;
     r.elementIndex  := -1;
     r.parent        := p;
+    SetLength(r.callbacks, 0);
     
     p^.Regions[addedIdx] := r;
     
@@ -3244,7 +3364,7 @@ function StringToKind(s: String): GUIElementKind;
       gkList:       CreateList(@p^.Regions[addedIdx], d,p);
     end;    
   end;
-
+  
 function DoLoadPanel(filename, name: string): Panel;
 var
   pathToFile, line, id, data: string;
@@ -3252,13 +3372,11 @@ var
   lineNo: integer;
   regionDataArr: Array of String;
   
-  
   procedure StoreRegionData(data: String);
   begin
     SetLength(regionDataArr, Length(regionDataArr) + 1);
     regionDataArr[High(regionDataArr)] := data;
   end;
-  
   
   procedure ProcessLine();
   begin
@@ -3306,45 +3424,14 @@ var
     i: LongInt;
   begin
     SetLength(result^.regions, Length(regionDataArr));
-    SetLength(result^.callbacks, Length(regionDataArr));
     
     for i := Low(regionDataArr) to High(regionDataArr) do
     begin
-      SetLength(result^.callbacks[i], 0);
       AddRegionToPanelWithString(regionDataArr[i], result);
     end;
   end;
   
-  procedure InitPanel();
-  begin
-    New(result);
-
-    
-    with result^ do
-    begin
-      name      := '';
-      filename  := '';
-      panelID   := -1;
-      area      := RectangleFrom(0,0,0,0);
-      visible   := false;
-      active    := true;      // Panels are active by default - you need to deactivate them specially...
-      draggable := false;
-      DrawAsVectors := true;
-      modal     := false;
-      panelBitmap := nil;
-      panelBitmapActive   := nil;
-      
-      SetLength(regions,      0);
-      SetLength(labels,       0);
-      SetLength(checkBoxes,   0);
-      SetLength(radioGroups,  0);
-      SetLength(textBoxes,    0);
-      SetLength(lists,        0);
-      SetLength(callbacks,    0, 0);
-      
-      InitNamedIndexCollection(result^.regionIds);   //Setup the name <-> id mappings
-    end;
-  end;
+  
   
   procedure SetupListPlaceholders();
   var
@@ -3397,7 +3484,7 @@ begin
   end;
   
   // Initialise the resulting panel
-  InitPanel();
+  result := InitPanel(name, filename);
   
   Assign(panelFile, pathToFile);
   Reset(panelFile);
@@ -3663,16 +3750,19 @@ begin
     begin
       if GUIC.panels[i] = pnl then
       begin
-        guic.panels[i] := nil;
         for j := i to (High(GUIC.panels) - 1) do
         begin
           GUIC.panels[j] := GUIC.panels[j + 1]
         end;
+        
         SetLength(GUIC.panels, Length(GUIC.panels) - 1);
+        break;
       end;
     end;
     
     CallFreeNotifier(pnl);
+    
+    
     
     FreeNamedIndexCollection(pnl^.regionIds);
     Dispose(pnl);
@@ -4222,18 +4312,13 @@ begin
 end;
 
 procedure RegisterEventCallback(r: Region; callback: GUIEventCallback);
-var
-  parent: Panel;
-  idx: LongInt;
 begin
   if not assigned(r) then exit;
-  parent := RegionPanel(r);
-  idx := r^.regionIdx;
   
-  with parent^ do
+  with r^ do
   begin
-    SetLength(callbacks[idx], Length(callbacks[idx]) + 1);
-    callbacks[idx][High(callbacks[idx])] := callback;
+    SetLength(callbacks, Length(callbacks) + 1);
+    callbacks[High(callbacks)] := callback;
   end;
 end;
 
