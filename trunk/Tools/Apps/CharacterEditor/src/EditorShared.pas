@@ -81,11 +81,10 @@ type
     ids: NamedIndexCollection;
     bodyType: Array of Parts;
   end;
-  
-  
-  
+   
   ItemCache = record
     listID, body, part, bmp : Integer;
+    bmpPtr : LoadedBitmapPtr;
   end;
   ItemCacheArray = Array of Array of Array of ItemCache;
   

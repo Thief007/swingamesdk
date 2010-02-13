@@ -6,12 +6,9 @@ uses sgTypes, sgUserInterface, EditorShared, sgCharacters, sgNamedIndexCollectio
 
 const
   CharDetails   = 0;
-  LayerList    = 1;
+  LayerList     = 1;
   DirAngle      = 2;
-  DirLayer      = 3;
-  StateLayer    = 4;
-  Browser       = 5;
-  LayerOrder    = 6;
+  LayerOrder    = 3;
   
   
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
@@ -28,15 +25,12 @@ implementation
   var
     i: Integer;
   begin
-    SetLength(p, 7);
+    SetLength(p, 4);
     
     p[CharDetails]  := LoadPanel('CharDetails.txt');
-    p[LayerList]   := LoadPanel('LayerOrder.txt');
+    p[LayerList]    := LoadPanel('LayerOrder.txt');
     p[DirAngle]     := LoadPanel('DirAngles.txt');
-    p[DirLayer]     := LoadPanel('DirLayer.txt');
-    p[StateLayer]   := LoadPanel('StateLayer.txt');
-    p[Browser]      := LoadPanel('CharOption.txt');
-    p[LayerOrder]      := LoadPanel('CharLayerOrder.txt');
+    p[LayerOrder]   := LoadPanel('CharLayerOrder.txt');
   end;
   
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
@@ -267,14 +261,15 @@ implementation
     if index <> -1  then result := false;
   end;
   
-  function NewItem(id, body, part, bmp : integer) : ItemCache;
+  function NewItem(id : integer; bmpPtr : LoadedBitmapPtr) : ItemCache;
   begin
     result.listId := id;
-    result.body := body;
-    result.part := part;
-    result.bmp := bmp;
+  //  result.body := body;
+  //  result.part := part;
+  //  result.bmp := bmp;
+    result.bmpPtr := bmpPtr;
   end;
-    
+  {  
   procedure AddLayer(var CharMode : CharEditorValues; browser: CharBodyTypes);
   var
     cell: BitmapCell;
@@ -299,8 +294,32 @@ implementation
     end;   
     ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, cell.bmp^.name);
   end;
+  }
   
-  procedure ShowLayerOrder(var CharMode : CharEditorValues; browser: CharBodyTypes);
+  procedure AddLayer(var CharMode : CharEditorValues; bmp : LoadedBitmapPtr);
+  var
+    cell: BitmapCell;
+    bodyID, partID, imageID, i, j: Integer;
+  begin
+    cell := BitmapCellOf(bmp^.original, 0 );
+    SetLength(CharMode.BaseLayer, Length(CharMode.BaseLayer) + 1);
+    CharMode.BaseLayer[High(CharMode.BaseLayer)] := NewItem(High(CharMode.BaseLayer), bmp);
+    
+    with CharMode do
+    begin
+      for i := Low(Cache) to High(Cache) do
+      begin
+        for j := Low(Cache[i]) to High(Cache[i]) do
+        begin
+          SetLength(Cache[i,j], Length(Cache[i,j]) + 1);
+          Cache[i,j, High(Cache[i,j])] := NewItem(High(CharMode.BaseLayer), bmp);
+        end;
+      end;
+    end;   
+    ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, cell.bmp^.name);
+  end;
+  
+  procedure ShowLayerOrder(var CharMode : CharEditorValues);
   var
     i,j,k, state, dir : Integer;
   begin
@@ -314,8 +333,8 @@ implementation
     with CharMode do
     begin      
       for k := Low(Cache[state,dir]) to High(Cache[state,dir]) do
-        ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BitmapCellOf(browser.BodyType[Cache[state,dir,k].body].parts[Cache[state,dir,k].part].bmps[Cache[state,dir,k].bmp].original, 0),
-                                                                browser.BodyType[Cache[state,dir,k].body].parts[Cache[state,dir,k].part].bmps[Cache[state,dir,k].bmp].original^.name);
+        ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BitmapCellOf(Cache[state,dir,k].bmpPtr^.original, 0),
+                                                                Cache[state,dir,k].bmpPtr^.original^.name);
 
     end; 
   end;
@@ -329,7 +348,7 @@ implementation
     part2 := tmp;
   end;
   
-  procedure MoveLayerUp(var CharMode : CharEditorValues;var browser: CharBodyTypes);    
+  procedure MoveLayerUp(var CharMode : CharEditorValues);    
   var
    state, dir, active, i, j , k : Integer;
   begin
@@ -343,7 +362,7 @@ implementation
       
       SwapParts(Cache[state,dir,active], Cache[state,dir,active - 1]);
     
-      ShowLayerOrder(CharMode, browser);
+      ShowLayerOrder(CharMode);
       ListSetActiveItemIndex(ListFromRegion(RegionWithID('LayerOrder')), active -1);
     end;
   end;
@@ -390,14 +409,12 @@ implementation
       if (RegionClickedID() = 'AngleEdit') then EditAngle(CharMode);
       
 
-   //   if (RegionClickedID() = 'AddItemButton') then AddLayer(CharMode, sharedVals.Browser);
-      if (RegionClickedID() = 'MoveUP') then MoveLayerUp(CharMode, sharedVals.Browser);
-      if (RegionClickedID() = 'DirLayerList') OR (RegionClickedID() = 'StateLayerList') then ShowLayerOrder(CharMode, sharedVals.Browser);
+      if sharedVals.BitmapPtr <> nil then AddLayer(CharMode, sharedVals.BitmapPtr);
+      if (RegionClickedID() = 'MoveUP') then MoveLayerUp(CharMode);
+      if (RegionClickedID() = 'DirLayerList') OR (RegionClickedID() = 'StateLayerList') then ShowLayerOrder(CharMode);
 
       //Drop Down
       UpdateDropDown('DirAngleList'   , 'DirAngleLbl'   , panels[DirAngle]);
-      UpdateDropDown('DirLayerList'   , 'DirLayerLbl'   , panels[DirLayer]);
-      UpdateDropDown('StateLayerList' , 'StateLayerLbl' , panels[StateLayer]);
     end;
   end;
   

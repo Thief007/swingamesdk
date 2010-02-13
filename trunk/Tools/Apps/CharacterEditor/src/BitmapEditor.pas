@@ -101,7 +101,7 @@ implementation
     end;
 	end;
 	
-	procedure ScaleBitmaps(var cellGrp: CellGroupData; var bmpArray: LoadedBitmaps; newScale : integer; var bmpScale : integer);
+	procedure ScaleBitmaps(var cellGrp: CellGroupData; var bmpArray : CharBodyTypes; newScale : integer; var bmpScale : integer);
 	var
 		initHeight, initWidth: integer;
 	begin
@@ -113,10 +113,7 @@ implementation
 			cellH	      := initHeight * newScale;
 			bmpScale		:= newScale;
       
-      WriteLn(bmpScale);
-      WriteLn(cellGrp.cellW);
-      
-      InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
+     // InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
 		end;
 	end;
   
@@ -130,7 +127,7 @@ implementation
       TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(target));
   end;
   
-  procedure ValidateInputForScale(var cellGrp: CellGroupData; var target: Integer; bmpArray: LoadedBitmaps);
+  procedure ValidateInputForScale(var cellGrp: CellGroupData; var target: Integer; bmpArray: CharBodyTypes);
   var
     newVal : Integer;
   begin
@@ -138,7 +135,7 @@ implementation
       ScaleBitmaps(cellGrp, bmpArray, newVal, target);
   end;
   
-  procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroupData; var  bmpArray: LoadedBitmaps; pnl : PanelArray;var bmpScale: integer);
+  procedure UpdateCellDetailsFromTextInput(var cellGrp: CellGroupData; var  bmpArray: CharBodyTypes; pnl : PanelArray;var bmpScale: integer);
 	begin
 		with cellGrp do
 		begin	
@@ -180,7 +177,7 @@ implementation
     with BitmapMode do
     begin
     if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
-//    if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.bmps, panels, scale);
+    if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.browser, panels, scale);
   //  if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp, sharedVals.bmpArray);
     if (RegionClickedID() = 'ExportBitmap') then DoSaveDialog(sharedVals, saveBMP);			
     if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[CellBitmapNames]);
