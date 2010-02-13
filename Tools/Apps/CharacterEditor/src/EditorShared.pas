@@ -11,12 +11,7 @@ type
   LoadedBitmapPtr = ^LoadedBitmap;               // Pointer to a loaded bitmap for the type of bitmaps used in the editor 
   CellGroup = ^CellGroupData;                    // Pointer to a CellGroup used by the cells to their parents
   CellAreaPtr = ^CellArea;                       // Pointer to a cell Area. Mainly used for drag and drop
-{
-	LoadedBitmap = record
-		original  : Bitmap;                          // The original bitmap - ensures all scales occur from this
-    src       : Array [BMPType] of Bitmap;       // The scaled version of the bitmaps for the different groups
-	end;
-    }
+    
 	CellArea = record                              // Individual cells in a cell Group
 		area: Rectangle;                             // X Y width height. The width and height are mainly accessed from the cellGroup instead of the cell
 		xGap, yGap, idx, cellIdx: Integer;           // Gaps are shown inbetween cells. Idx = index of cell. CellIdx = index of cell drawn in bitmap
@@ -45,7 +40,6 @@ type
   AnimationStrip = record                        // The Animation Strip has two cellgroups. One for the cells of the animation, and one for the 'goto' cell
     cellGrp             : CellGroupData;         // The Animation cells 
     LastCell            : CellGroupData;         // The GOTO cell
- //   stringIDs,soundIDs  : AniIDArray;            // The array of string IDs and soundIDs
     idx, scrollOffSet,                           // idx = the index of the animation strip. scrolloffset is used as a mutliplier to position the strip with scrolling
     lastCellParentID    : Integer;               // LastCellParentID is the id of the parent for the last cell for saving purposes
   end;
@@ -61,8 +55,8 @@ type
 	end;
     
   LoadedBitmap = record 
-    original : Bitmap;
-    Scaled : Array [BMPType] of Bitmap;
+    original : Bitmap;                           // The original bitmap - ensures all scales occur from this
+    Scaled : Array [BMPType] of Bitmap;          // The scaled version of the bitmaps for the different groups
   end;
   
   LoadedBitmaps = Array of LoadedBitmap;
@@ -126,7 +120,7 @@ type
     dragCell        : CellAreaPtr;              // The cell area pointer of the cell currently on the mouse
     dragGroup       : Boolean;                  // When true allows the user to drag the entire cellgroup
     OpenSave        : DialogType;
-    BitmapPtr       : ^LoadedBitmap;
+    BitmapPtr       : LoadedBitmapPtr;
 	end;
   
 	//---------------------------------------------------------------------------
@@ -290,29 +284,15 @@ implementation
     begin         
       if not PointInRect(pt, grpArea) then exit;
       
-         Write('pt.x ');WriteLn(pt.x);
-         Write('pt.y ');WriteLn(pt.y);
-         Write('grpArea.x ');WriteLn(grpArea.x);
-         Write('grpArea.y ');WriteLn(grpArea.y);
-         Write('grpArea.x + grpArea.width ');WriteLn(grpArea.x + grpArea.Width);
-         Write('grpArea.y + grpArea.Height');WriteLn(grpArea.y + grpArea.Height);
-         Write('grpArea.Height');WriteLn(grpArea.Height);
-         Write('grpArea.width');WriteLn(grpArea.width);
-      
       pos.x := pt.x - grpArea.x;
       pos.y := pt.y - grpArea.y;
             
       pointCol := Trunc(pos.x / (cellW + gap));
       pointRow := Trunc(pos.y / (cellH + gap));
       
-      Write('pointCol');WriteLn( pointCol);
-      Write('pointRow');WriteLn( pointRow);
-      
       index := cols*pointRow + pointCol;
       
       result := @cells[index];
-      
-      Write('cell idx '); WriteLn(index);
     end;
   end;
   
@@ -432,28 +412,22 @@ implementation
   var
     i: Integer;
 	begin
-	//	with AniMode do
-	//	begin
-			SetLength(aniStrips, Length(aniStrips) + 1);
-      
-      aniStrips[High(aniStrips)].idx 	:= 	High(aniStrips); 
-      
-      aniStrips[High(aniStrips)].cellGrp  := InitializeCellGroup(cellCount, cellCount, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * High(aniStrips)), CellGapLarge, AnimationGroup);
-      aniStrips[High(aniStrips)].LastCell := InitializeCellGroup(1, 1, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * High(aniStrips)), CellGapLarge, AnimationGroup);
-      
-      InitializeCellArea(aniStrips[High(aniStrips)].cellGrp, nil, CellGapLarge, false);
-      InitializeCellArea(aniStrips[High(aniStrips)].LastCell, nil, CellGapLarge, false);
-      
-    //  
-      aniStrips[High(aniStrips)].scrollOffSet := 0;
-      aniStrips[High(aniStrips)].lastCellParentID := -1;
-      
-      for i := Low(aniStrips) to High(aniStrips) do DeselectAll(aniStrips[i].cellGrp);
-      
-      
-   //  end;
-
-    with{AniMode.}AniStrips[High(aniStrips)] do
+    SetLength(aniStrips, Length(aniStrips) + 1);
+    
+    aniStrips[High(aniStrips)].idx 	:= 	High(aniStrips); 
+    
+    aniStrips[High(aniStrips)].cellGrp  := InitializeCellGroup(cellCount, cellCount, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * High(aniStrips)), CellGapLarge, AnimationGroup);
+    aniStrips[High(aniStrips)].LastCell := InitializeCellGroup(1, 1, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * High(aniStrips)), CellGapLarge, AnimationGroup);
+    
+    InitializeCellArea(aniStrips[High(aniStrips)].cellGrp, nil, CellGapLarge, false);
+    InitializeCellArea(aniStrips[High(aniStrips)].LastCell, nil, CellGapLarge, false);
+    
+    aniStrips[High(aniStrips)].scrollOffSet := 0;
+    aniStrips[High(aniStrips)].lastCellParentID := -1;
+    
+    for i := Low(aniStrips) to High(aniStrips) do DeselectAll(aniStrips[i].cellGrp);
+    
+    with AniStrips[High(aniStrips)] do
     begin
       MoveGroup(LastCell, Trunc(cellGrp.cells[High(cellGrp.cells)].area.x + (LastCell.grpArea.width + CellGapLarge)*2), Trunc(LastCell.grpArea.y));
       UpdatePosition(LastCell);
@@ -524,7 +498,6 @@ implementation
     procedure AddToCollection(out bodyID, partID: Integer);
     var
       body, part, name : string;
-     // bodyID, partID: Integer;
     begin
       body := ExtractDelimited(3, line, ['/']);
       part := ExtractDelimited(4, line, ['/']);
@@ -583,7 +556,7 @@ implementation
         scale[BitmapGroup]    := 1;
         scale[SourceGroup]    := CalculateScale(BMPWindowWidth, BMPWindowHeight, totalW + (cols-1)*CellGapSmall, totalH + (rows-1)*CellGapSmall);                                
         scale[AnimationGroup] := CalculateScale(AniCellWidth, AniCellHeight, width, height); 
-        scale[PreviewGroup]   := CalculateScale(AniCellWidth, AniCellHeight, width, height);
+        scale[PreviewGroup]   := CalculateScale(AniCellWidth*2, AniCellHeight*2, width, height);
         
         for i := Low(BMPType) to High(BMPType) do
         begin
@@ -666,11 +639,7 @@ implementation
   begin
     for i := Low(bmpArray) to High(bmpArray) do
     begin
- //     WriteLn(i, '  ' , GridType, ' width is now ' , bmpArray[i].scaled[GridType]^.width);
-  //    WriteLn(i, '  ' , GridType, ' height is now ' , bmpArray[i].scaled[GridType]^.Height);
       bmpArray[i].scaled[GridType] := RotateScaleBitmap(bmpArray[i].original, 0, scale);	
-  //    WriteLn(i, '  ' , GridType, ' width is now ' , bmpArray[i].scaled[GridType]^.width);
-  //    WriteLn(i, '  ' , GridType, ' height is now ' , bmpArray[i].scaled[GridType]^.Height);
     end;
   end;
   
