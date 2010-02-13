@@ -11,12 +11,12 @@ type
   LoadedBitmapPtr = ^LoadedBitmap;               // Pointer to a loaded bitmap for the type of bitmaps used in the editor 
   CellGroup = ^CellGroupData;                    // Pointer to a CellGroup used by the cells to their parents
   CellAreaPtr = ^CellArea;                       // Pointer to a cell Area. Mainly used for drag and drop
-
+{
 	LoadedBitmap = record
 		original  : Bitmap;                          // The original bitmap - ensures all scales occur from this
     src       : Array [BMPType] of Bitmap;       // The scaled version of the bitmaps for the different groups
 	end;
-    
+    }
 	CellArea = record                              // Individual cells in a cell Group
 		area: Rectangle;                             // X Y width height. The width and height are mainly accessed from the cellGroup instead of the cell
 		xGap, yGap, idx, cellIdx: Integer;           // Gaps are shown inbetween cells. Idx = index of cell. CellIdx = index of cell drawn in bitmap
@@ -59,10 +59,17 @@ type
 		destBMP         : Bitmap;                    // The saved Bitmap
 		bg              : Bitmap;                    // THe background of the mode
 	end;
+    
+  LoadedBitmap = record 
+    original : Bitmap;
+    Scaled : Array [BMPType] of Bitmap;
+  end;
+  
+  LoadedBitmaps = Array of LoadedBitmap;
   
   BitmapCollection = record
     ids: NamedIndexCollection;
-    bmps: Array of BitmapCell;
+    bmps : LoadedBitmaps;
   end;
 
   Parts = record
@@ -70,7 +77,7 @@ type
     parts: Array of BitmapCollection;
   end;
 
-  BodyTypes = record
+  CharBodyTypes = record
     ids: NamedIndexCollection;
     bodyType: Array of Parts;
   end;
@@ -78,14 +85,14 @@ type
   
   
   ItemCache = record
-    listID, body,part, bmp : Integer;
+    listID, body, part, bmp : Integer;
   end;
   ItemCacheArray = Array of Array of Array of ItemCache;
   
   CharEditorValues = record
     panels : PanelArray;
     bg: Bitmap;
-    BrowserData : BodyTypes;
+  //  BrowserData : BodyTypes;
     MainChar : Character;
     BaseLayer : Array of ItemCache;
     Cache : ItemCacheArray;
@@ -112,15 +119,15 @@ type
     aniTemp         : AnimationTemplate;
 	end;
     
-	LoadedBitmaps = array of LoadedBitmap;        // The array that the bitmaps are stored in with the original and different scales
+	//LoadedBitmaps = LoadedBitmaps;        // The array that the bitmaps are stored in with the original and different scales
 	
 	EditorValues = record                         // The Editor values used by all modes
-		BMPArray        : LoadedBitmaps;            // The array of loaded bitmaps
-	//	SoundArray      : Array of SoundEffect;     // THe array of sound effects
+		Browser        : CharBodyTypes;            // The array of loaded bitmaps
 		mouseOffSet     : Point2D;	                // The mouse offset used when dragging
     dragCell        : CellAreaPtr;              // The cell area pointer of the cell currently on the mouse
     dragGroup       : Boolean;                  // When true allows the user to drag the entire cellgroup
     OpenSave        : DialogType;
+    BitmapPtr       : ^LoadedBitmap;
 	end;
   
 	//---------------------------------------------------------------------------
@@ -162,7 +169,7 @@ type
   procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: LoadedBitmaps; scale: single; cols, rows: Integer);
   procedure SetBitmapDetails(GridType: BMPType; var bmpArray: LoadedBitmaps; cols, rows: Integer);	
   procedure AddBitmapToArray(var bmpArray : LoadedBitmaps; id, fileName : string);
-  procedure LoadBitmapsFromTextFile(var CharMode: CharEditorValues; var bmpArray : LoadedBitmaps; fileName : string; lst1, lst2: GUIList);
+  procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string; lst1, lst2: GUIList);
 
 	//---------------------------------------------------------------------------
   // Dragging
@@ -509,84 +516,85 @@ implementation
       result := maxHeight / totalHeight;  
   end;
   
-  procedure LoadBitmapsFromTextFile(var CharMode: CharEditorValues; var bmpArray : LoadedBitmaps; fileName : string; lst1, lst2: GUIList);
+  procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string; lst1, lst2: GUIList);
   var
     line : string;
     txt : text;
     lineNo, j : Integer;
-    names : Array of Array of String;
-    BodyList : GUIList;
     
-    procedure AddToCollection();
+    procedure AddToCollection(out bodyID, partID: Integer);
     var
       body, part, name : string;
-      bodyID, partID: Integer;
+     // bodyID, partID: Integer;
     begin
       body := ExtractDelimited(3, line, ['/']);
       part := ExtractDelimited(4, line, ['/']);
       name := ExtractFileName(ExtractDelimited(1, line, [',']));
       
-      if IndexOf(CharMode.BrowserData.ids, body) = -1 then
+      if IndexOf(charBmps.ids, body) = -1 then
       begin
         body := 'Custom';
         Part := 'Custom';   
       end;
       
-      bodyID := IndexOf(CharMode.BrowserData.ids, body);
+      bodyID := IndexOf(charBmps.ids, body);
       
-      if IndexOf(CharMode.BrowserData.BodyType[bodyID].ids, part) = -1 then
+      if IndexOf(charBmps.BodyType[bodyID].ids, part) = -1 then
       begin
-        AddName(CharMode.BrowserData.BodyType[bodyID].ids, part);
-        SetLength(CharMode.BrowserData.BodyType[bodyID].parts, Length(CharMode.BrowserData.BodyType[bodyID].parts) + 1);
-        InitNamedIndexCollection(CharMode.BrowserData.BodyType[bodyID].parts[IndexOf(CharMode.BrowserData.BodyType[bodyID].ids, part)].ids);
+        AddName(charBmps.BodyType[bodyID].ids, part);
+        SetLength(charBmps.BodyType[bodyID].parts, Length(charBmps.BodyType[bodyID].parts) + 1);
+        InitNamedIndexCollection(charBmps.BodyType[bodyID].parts[IndexOf(charBmps.BodyType[bodyID].ids, part)].ids);
       end;     
       
-      partID := IndexOf(CharMode.BrowserData.BodyType[bodyID].ids, part);    
+      partID := IndexOf(charBmps.BodyType[bodyID].ids, part);    
       
-      if IndexOf(CharMode.BrowserData.BodyType[bodyID].parts[partID].ids, part) = -1 then
+      if IndexOf(charBmps.BodyType[bodyID].parts[partID].ids, part) = -1 then
       begin
-        AddName(CharMode.BrowserData.BodyType[bodyID].parts[partID].ids, name);
-        SetLength(CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps, Length(CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps) + 1);
-        CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps[High(CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps)].bmp := BitmapNamed(name);
-        CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps[High(CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps)].cell := 0;
+        with charBmps.BodyType[bodyID].parts[partID] do
+        begin
+          AddName(ids, name);
+          SetLength(bmps, Length(bmps) + 1);
+          bmps[High(bmps)].original  := MapBitmap(ExtractFileName(ExtractDelimited(1, line, [','])), ExtractDelimited(1, line, [',']));	
+        end;
       end;
     end;
     
     procedure ProcessLine();
     var
       scale: Array [BMPType] of Single;
-      width, height, cols, rows, count, totalW, totalH: Integer;
+      width, height, cols, rows, count, totalW, totalH, bodyID, partsID: Integer;
       i : BMPType;
-    begin
-      SetLength(bmpArray, Length(bmpArray)+1);
-      bmpArray[High(bmpArray)].original := MapBitmap(ExtractFileName(ExtractDelimited(1, line, [','])), ExtractDelimited(1, line, [',']));	
-      SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(StrToInt(ExtractDelimited(2, line, [','])),
-                                                                      StrToInt(ExtractDelimited(3, line, [','])),
-                                                                      StrToInt(ExtractDelimited(4, line, [','])))); 
+    begin      
+      AddToCollection(bodyID, partsID);
       
-     
-      width   := StrToInt(ExtractDelimited(7, line, [',']));
-      height  := StrToInt(ExtractDelimited(8, line, [',']));
-      cols    := StrToInt(ExtractDelimited(5, line, [',']));
-      rows    := StrToInt(ExtractDelimited(6, line, [',']));
-      count   := StrToInt(ExtractDelimited(9, line, [',']));
-      totalW  := bmpArray[High(bmpArray)].original^.Width;
-      totalH  := bmpArray[High(bmpArray)].original^.Height;
-            
-      scale[BitmapGroup]    := 1;
-      scale[SourceGroup]    := CalculateScale(BMPWindowWidth, BMPWindowHeight, totalW + (cols-1)*CellGapSmall, totalH + (rows-1)*CellGapSmall);                                
-      scale[AnimationGroup] := CalculateScale(AniCellWidth, AniCellHeight, width, height); 
-      scale[PreviewGroup]   := CalculateScale(AniCellWidth, AniCellHeight, width, height);
-      
-      for i := Low(BMPType) to High(BMPType) do
+      with charBmps.BodyType[bodyID].parts[partsID] do
       begin
-        if scale[i] = 1 then
-          bmpArray[High(bmpArray)].src[i] := bmpArray[High(bmpArray)].original
-        else
-          bmpArray[High(bmpArray)].src[i] := RotateScaleBitmap(bmpArray[High(bmpArray)].original, 0, scale[i]);	
-        BitmapSetCellDetails(bmpArray[High(bmpArray)].src[i],  Trunc(width*scale[i]), Trunc(height*scale[i]), cols, rows, count);
+        SetTransparentColor(bmps[High(bmps)].original, RGBColor(StrToInt(ExtractDelimited(2, line, [','])),
+                                                                StrToInt(ExtractDelimited(3, line, [','])),
+                                                                StrToInt(ExtractDelimited(4, line, [','])))); 
+               
+        width   := StrToInt(ExtractDelimited(7, line, [',']));
+        height  := StrToInt(ExtractDelimited(8, line, [',']));
+        cols    := StrToInt(ExtractDelimited(5, line, [',']));
+        rows    := StrToInt(ExtractDelimited(6, line, [',']));
+        count   := StrToInt(ExtractDelimited(9, line, [',']));
+        totalW  := bmps[High(bmps)].original^.Width;
+        totalH  := bmps[High(bmps)].original^.Height;
+              
+        scale[BitmapGroup]    := 1;
+        scale[SourceGroup]    := CalculateScale(BMPWindowWidth, BMPWindowHeight, totalW + (cols-1)*CellGapSmall, totalH + (rows-1)*CellGapSmall);                                
+        scale[AnimationGroup] := CalculateScale(AniCellWidth, AniCellHeight, width, height); 
+        scale[PreviewGroup]   := CalculateScale(AniCellWidth, AniCellHeight, width, height);
+        
+        for i := Low(BMPType) to High(BMPType) do
+        begin
+          if scale[i] = 1 then
+            bmps[High(bmps)].Scaled[i] := bmps[High(bmps)].original
+          else
+            bmps[High(bmps)].Scaled[i] := RotateScaleBitmap(bmps[High(bmps)].original, 0, scale[i]);	
+          BitmapSetCellDetails(bmps[High(bmps)].Scaled[i],  Trunc(width*scale[i]), Trunc(height*scale[i]), cols, rows, count);
+        end;
       end;
-      AddToCollection();
       ListAddItem(lst1, ExtractFileName(ExtractDelimited(1, line, [','])));
       ListAddItem(lst2, ExtractFileName(ExtractDelimited(1, line, [','])));
     end;
@@ -596,14 +604,14 @@ implementation
     lineNo :=0;
     line := '';
     
-    InitNamedIndexCollection(CharMode.BrowserData.ids);
-    AddNamesToCollection(CharMode.BrowserData.ids,MainCharasFolders);
-    SetLength(CharMode.BrowserData.BodyType, NameCount(CharMode.BrowserData.ids));
+    InitNamedIndexCollection(charBmps.ids);
+    AddNamesToCollection(charBmps.ids,MainCharasFolders);
+    SetLength(charBmps.BodyType, NameCount(charBmps.ids));
     
-    for j := Low(CharMode.BrowserData.BodyType) to High(CharMode.BrowserData.BodyType) do
+    for j := Low(charBmps.BodyType) to High(charBmps.BodyType) do
     begin
-      ListAddItem(RegionWithID('BodyList'), NameAt(CharMode.BrowserData.ids, j));
-      InitNamedIndexCollection(CharMode.BrowserData.BodyType[j].ids);
+      ListAddItem(RegionWithID('BodyList'), NameAt(charBmps.ids, j));
+      InitNamedIndexCollection(charBmps.BodyType[j].ids);
     end;
     
    try
@@ -627,12 +635,12 @@ implementation
 		SetLength(bmpArray, Length(bmpArray)+1);
 		
 		bmpArray[High(bmpArray)].original := MapBitmap(id, fileName);	
-	//	SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(Red,Green,Blue));
+		SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(Red,Green,Blue));
 		
-		bmpArray[High(bmpArray)].src[BitmapGroup]    := bmpArray[High(bmpArray)].original;
-		bmpArray[High(bmpArray)].src[SourceGroup]    := bmpArray[High(bmpArray)].original;
-		bmpArray[High(bmpArray)].src[AnimationGroup] := bmpArray[High(bmpArray)].original;
-		bmpArray[High(bmpArray)].src[PreviewGroup] := bmpArray[High(bmpArray)].original;
+		bmpArray[High(bmpArray)].scaled[BitmapGroup]    := bmpArray[High(bmpArray)].original;
+		bmpArray[High(bmpArray)].scaled[SourceGroup]    := bmpArray[High(bmpArray)].original;
+		bmpArray[High(bmpArray)].scaled[AnimationGroup] := bmpArray[High(bmpArray)].original;
+		bmpArray[High(bmpArray)].scaled[PreviewGroup]   := bmpArray[High(bmpArray)].original;
 	end;
   
   procedure AddBitmapToList(bmp : Bitmap; lst1, lst2: GUIList);
@@ -647,9 +655,9 @@ implementation
   begin    
     for i := Low(bmpArray) to High(bmpArray) do
     begin
-      cellW := Trunc(bmpArray[i].src[GridType]^.width  / cols);
-      cellH := Trunc(bmpArray[i].src[GridType]^.height / rows);
-      BitmapSetCellDetails(bmpArray[i].src[GridType], cellW, cellH, cols, rows, cols*rows);
+      cellW := Trunc(bmpArray[i].scaled[GridType]^.width  / cols);
+      cellH := Trunc(bmpArray[i].scaled[GridType]^.height / rows);
+      BitmapSetCellDetails(bmpArray[i].scaled[GridType], cellW, cellH, cols, rows, cols*rows);
     end;
   end;
   
@@ -659,11 +667,11 @@ implementation
   begin
     for i := Low(bmpArray) to High(bmpArray) do
     begin
- //     WriteLn(i, '  ' , GridType, ' width is now ' , bmpArray[i].src[GridType]^.width);
-  //    WriteLn(i, '  ' , GridType, ' height is now ' , bmpArray[i].src[GridType]^.Height);
-      bmpArray[i].src[GridType] := RotateScaleBitmap(bmpArray[i].original, 0, scale);	
-  //    WriteLn(i, '  ' , GridType, ' width is now ' , bmpArray[i].src[GridType]^.width);
-  //    WriteLn(i, '  ' , GridType, ' height is now ' , bmpArray[i].src[GridType]^.Height);
+ //     WriteLn(i, '  ' , GridType, ' width is now ' , bmpArray[i].scaled[GridType]^.width);
+  //    WriteLn(i, '  ' , GridType, ' height is now ' , bmpArray[i].scaled[GridType]^.Height);
+      bmpArray[i].scaled[GridType] := RotateScaleBitmap(bmpArray[i].original, 0, scale);	
+  //    WriteLn(i, '  ' , GridType, ' width is now ' , bmpArray[i].scaled[GridType]^.width);
+  //    WriteLn(i, '  ' , GridType, ' height is now ' , bmpArray[i].scaled[GridType]^.Height);
     end;
   end;
   
@@ -928,7 +936,7 @@ implementation
 		with cellGrp do
 		begin	
       destbmp := CreateBitmap(cellGrp.grpArea.width - (cellGap*(cols-1)), cellGrp.grpArea.height - (cellGap*(rows-1)));
-      for i := Low(bmpArray) to High(bmpArray) do MakeOpaque(bmpArray[i].src[GridType]);		
+      for i := Low(bmpArray) to High(bmpArray) do MakeOpaque(bmpArray[i].scaled[GridType]);		
 			for i := Low(cells) to High(cells) do
 			begin
         xPos := Trunc(cells[i].Area.X - cells[i].xGap - grpArea.X);
@@ -936,9 +944,9 @@ implementation
 				if cells[i].bmpPtr = nil then
           SaveBitmapGrid(destBMP, cellGrp, i, xPos, yPos)
         else
-          DrawCell(destbmp, cells[i].bmpPtr^.src[cells[i].parent^.GridType], cells[i].cellIdx, xPos, yPos);
+          DrawCell(destbmp, cells[i].bmpPtr^.scaled[cells[i].parent^.GridType], cells[i].cellIdx, xPos, yPos);
 			end;
-      for i := Low(bmpArray) to High(bmpArray) do MakeTransparent(bmpArray[i].src[GridType]);
+      for i := Low(bmpArray) to High(bmpArray) do MakeTransparent(bmpArray[i].scaled[GridType]);
       SaveToPNG(destbmp, dialogpath);
       FreeBitmap(destBmp);
 		end;
@@ -1331,13 +1339,13 @@ implementation
       if dragCell^.bmpPtr = nil then exit;
       dragPos.x := MousePosition().x - mouseOffSet.x;
       dragPos.y := MousePosition().y - mouseOffSet.y;
-      DrawCell(dragCell^.BMPPtr^.src[dragCell^.parent^.GridType], dragCell^.cellIdx, dragPos);
+      DrawCell(dragCell^.BMPPtr^.scaled[dragCell^.parent^.GridType], dragCell^.cellIdx, dragPos);
     end;
 	end;
   
   procedure DrawCellArea(cell: CellArea);
   begin
-    DrawCell(cell.bmpPTR^.src[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
+    DrawCell(cell.bmpPTR^.scaled[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
   end;
   
   procedure MyDrawSplitBitmapCells(cellGrp: CellGroupData; sharedVals: EditorValues);

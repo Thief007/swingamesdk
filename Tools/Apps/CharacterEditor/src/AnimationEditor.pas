@@ -23,11 +23,11 @@ implementation
 		result[AniBitmapDetails]:= LoadPanel('AniBitmapDetails.txt');
 		result[AniDetailTabs]		:= LoadPanel('AniDetailTabs.txt');
 		result[AniCellBMPNames]	:= LoadPanel('AniCellBMPNames.txt');
-		result[AniMenuPanel]	:= LoadPanel('AniMenuPanel.txt');
-		result[AniStats]	:= LoadPanel('AniStats.txt');
-		result[AniScroll]	:= LoadPanel('AniScroll.txt');
-		result[Preview1]	:= LoadPanel('PreviewPanel1.txt');
-		result[AniNames]	:= LoadPanel('AnimationNames.txt');
+		result[AniMenuPanel]	  := LoadPanel('AniMenuPanel.txt');
+		result[AniStats]	      := LoadPanel('AniStats.txt');
+		result[AniScroll]	      := LoadPanel('AniScroll.txt');
+		result[Preview1]	      := LoadPanel('PreviewPanel1.txt');
+		result[AniNames]	      := LoadPanel('AnimationNames.txt');
 		for i := Low(result) to High(result) do
 		begin
 			ActivatePanel(result[i]); 
@@ -75,13 +75,20 @@ implementation
   procedure DrawFilmStrip(AniMode: AnimationEditorValues; sharedVals: EditorValues; aniIndex : integer);
   var
     i: integer;
+  const
+    w = 702;    // DIfferent push clips for so that the bitmap parts arent drawn on the side scrolling buttons or visible behind them
+    h = 267;
+    initialX = 47;
+    YoffSet = 19;
+    outerX = 30;
+    maxHCells = 16;
   begin
     with AniMode.aniStrips[aniIndex].cellGrp do
     begin
-      PushClip(30, InitialAnimationPosY-19, 20, 267);
+      PushClip(outerX, InitialAnimationPosY-YoffSet, 20, h);
       DrawBitmapPart(AniMode.filmStrip, AniMode.startArrow, FilmStripStartX, cells[Low(cells)].area.y- FilmStripYOffSet);	
       PopClip();
-      PushClip(47, InitialAnimationPosY-19, 702, 267);
+      PushClip(initialX, InitialAnimationPosY-YoffSet, w, h);
       for  i := Low(cells) to High(cells) do
       begin			
         DrawBitmapPart(AniMode.filmStrip, AniMode.middle, cells[i].area.x + FilmOffSet, cells[i].area.y - FilmStripYOffSet);
@@ -90,8 +97,8 @@ implementation
       DrawBitmap(AniMode.pointArrow, cells[i].area.x + AniMode.middle.width + FilmOffSet,  cells[i].area.y - FilmStripYOffSet);
       DrawBitmapPart(AniMode.filmStrip, AniMode.middle, cells[i].area.x + (AniMode.middle.width)*2  + FilmOffSet, cells[i].area.y - FilmStripYOffSet);
       PopClip();
-      PushClip(30, InitialAnimationPosY-19, 752, 267);
-      if Length(cells) >= 16 then
+      PushClip(outerX, InitialAnimationPosY-YoffSet, 752, h);
+      if Length(cells) >= maxHCells then
         DrawBitmapPart(AniMode.filmStrip, AniMode.finishArrow, 743, cells[i].area.y - FilmStripYOffSet)
       else
         DrawBitmapPart(AniMode.filmStrip, AniMode.finishArrow, cells[i].area.x + (AniMode.middle.width)*3  + FilmOffSet, cells[i].area.y - FilmStripYOffSet);
@@ -102,6 +109,11 @@ implementation
   procedure DrawAnimationEditor(AniMode: AnimationEditorValues; sharedVals: EditorValues);
   var
     i: Integer;
+  const
+    w = 702;
+    h = 267;
+    initialX = 47;
+    YoffSet = 19;
   begin
     with AniMode do
     begin
@@ -109,7 +121,7 @@ implementation
       for i := Low(aniStrips) to High(aniStrips) do
 			begin       
         DrawFilmStrip(AniMode, sharedVals, i);
-        PushClip(47, InitialAnimationPosY-19, 702, 267);
+        PushClip(initialX, InitialAnimationPosY-YoffSet, w, h);
         MyDrawSplitBitmapCells(aniStrips[i].cellGrp, sharedVals);
         MyDrawSplitBitmapCells(aniStrips[i].LastCell, sharedVals);
         if aniStrips[i].lastCellParentID <> -1 then
@@ -120,18 +132,6 @@ implementation
         PopClip();
       end;
     end;
-  end;
-  
-  procedure ScaleAniBitmap(group: BMPType; bmpArray: LoadedBitmaps; cols, rows, w, h, maxw, maxh, ratio: Integer);
-  var
-    scale: single;
-  begin
-    if ratio <> 0 then
-      scale := maxw / w 
-    else
-      scale := maxh / h;
-    
-    InitializeBitmapDetails(group, bmpArray, scale, cols, rows); 
   end;
   
  	//---------------------------------------------------------------------------
@@ -327,33 +327,31 @@ implementation
     end;    
   end;
   
-  procedure UpdateAllAniBitmaps(var cellGrp: CellGroupData; bmpArray: LoadedBitmaps; listIdx: Integer; original: integer;var aniStrips: AniStripArray);
+  procedure UpdateAllAniBitmaps(var cellGrp: CellGroupData; targetBMP: LoadedBitmapPtr; var aniStrips: AniStripArray);
 	var
 		ratio, tempW, tempH, i: integer;
 		scale : single;
-    targetBMP : LoadedBitmapPtr;
 	begin
 		with cellGrp do
 		begin
-      targetBMP := SetLoadedBitmapPtr(listIdx -1, bmpArray);
 			if (targetBMP = nil) then
       begin
         ResetSourceCells(cellGrp);
         exit;
       end;
 
-      cellW     := targetBMP^.src[SourceGroup]^.cellW;
-      cellH     := targetBMP^.src[SourceGroup]^.cellH;
-      cols      := targetBMP^.src[SourceGroup]^.cellCols;
-      rows      := targetBMP^.src[SourceGroup]^.cellRows;
-      cellCount := targetBMP^.src[SourceGroup]^.cellCount;
+      cellW     := targetBMP^.scaled[SourceGroup]^.cellW;
+      cellH     := targetBMP^.scaled[SourceGroup]^.cellH;
+      cols      := targetBMP^.scaled[SourceGroup]^.cellCols;
+      rows      := targetBMP^.scaled[SourceGroup]^.cellRows;
+      cellCount := targetBMP^.scaled[SourceGroup]^.cellCount;
       
-      if targetBMP^.src[SourceGroup]^.Width > targetBMP^.src[SourceGroup]^.Height then
+      if targetBMP^.scaled[SourceGroup]^.Width > targetBMP^.scaled[SourceGroup]^.Height then
       begin
         grpArea.x := BMPWindowX;
-        grpArea.y := BMPWindowY + (BMPWindowHeight DIV 2) - ((targetBMP^.src[SourceGroup]^.Height  + (rows-1)*CellGapSmall) DIV 2);
+        grpArea.y := BMPWindowY + (BMPWindowHeight DIV 2) - ((targetBMP^.scaled[SourceGroup]^.Height  + (rows-1)*CellGapSmall) DIV 2);
       end else begin
-        grpArea.x := BMPWindowX + (BMPWindowWidth DIV 2) - ((targetBMP^.src[SourceGroup]^.Width  + (cols-1)*CellGapSmall) DIV 2);
+        grpArea.x := BMPWindowX + (BMPWindowWidth DIV 2) - ((targetBMP^.scaled[SourceGroup]^.Width  + (cols-1)*CellGapSmall) DIV 2);
         grpArea.y := BMPWindowY;
       end;
       
@@ -364,45 +362,10 @@ implementation
       
       InitializeCellArea(cellGrp, targetBMP, CellGapSmall, true);   
       UpdateGroupSize(cellGrp, CellGapSmall);  
-      UpdateBitmapPointers(cellGrp, aniStrips);         
-      targetBMP := nil;
+      UpdateBitmapPointers(cellGrp, aniStrips); 
 		end;
 	end;
-  
-  procedure GetUpdateAllAniBitmapsIndexs(out radioIndex, listIndex : Integer);
-  begin
-    radioIndex := ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Fit')));
-    listIndex  := ListActiveItemIndex(ListFromRegion(RegionWithID('AniBMPList')));
-  end;
-		
-	procedure UpdateAniCellDetailsFromTextInput(var AniMode: AnimationEditorValues; BMPArray: LoadedBitmaps);
-	var
-		newVal, radioIndex, listIndex : LongInt;
-	begin
-		with AniMode do
-		begin
-      GetUpdateAllAniBitmapsIndexs(radioIndex, listIndex);
-      
-      if (RegionPanel(RegionOfLastUpdatedTextBox) = panels[AniBitmapDetails]) then
-      begin	
-        if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), newVal) AND (newVal > -1) then
-        begin		
-					case IndexOfLastUpdatedTextBox of 
-						0: cellGrp.cols	:= newVal;
-						1: cellGrp.rows  := newVal;
-					end;
-        UpdateAllAniBitmaps(cellGrp, bmpArray, listIndex, radioIndex, AniMode.aniStrips);
-        end else begin
-          case IndexOfLastUpdatedTextBox of 
-            0: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.cols));
-            1: TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(cellGrp.rows));
-          end;	
-        end;
-			end;
-		end;
-	end;
- 
-  
+		  
   procedure UpdateAniCellStripFromTextBox(var AniMode: AnimationEditorValues);
   begin
     with AniMode do
@@ -417,23 +380,6 @@ implementation
       end;
     end;
   end;
-  
-	
-	procedure ChangeActiveBitmap(var AniMode: AnimationEditorValues; BMPArray: LoadedBitmaps);
-  var
-    listIndex, radioIndex: Integer;
-	begin
-		with AniMode do
-		begin
-			if PanelVisible(panels[AniCellBMPNames]) AND (ListActiveItemText(panels[AniCellBMPNames], 'AniBMPList') <> LabelText(LabelFromRegion(RegionWithID('AniBmpActiveLbl')))) then
-			begin
-				ToggleShowPanel(panels[AniCellBMPNames]);
-        GetUpdateAllAniBitmapsIndexs(radioIndex, listIndex);
-        UpdateAllAniBitmaps(cellGrp, bmpArray, listIndex, radioIndex,   AniMode.aniStrips);      
-				LabelSetText(LabelFromRegion(RegionWithID('AniBmpActiveLbl')), ListActiveItemText(panels[AniCellBMPNames], 'AniBMPList'));
-			end;
-		end;
-	end;
 	
   //---------------------------------------------------------------------------
   // Cell Dragging and Deleting
@@ -575,7 +521,6 @@ implementation
       if Length(cellGrp.cells) <> 0 then MoveGroup(LastCell, Trunc(cellGrp.cells[High(cellGrp.cells)].area.x + (LastCell.grpArea.width + CellGapLarge)*2), Trunc(cellGrp.grpArea.y));
       UpdatePosition(LastCell); 
       DeleteAnimationStrip(AniMode, index);
-   //   PurgeAllInvalidIds(AniMode.aniStrips[index]);
       RefreshIDList(AniMode.aniStrips);
       PositionAniHorizontalScrollButtons(AniMode);
     end;
@@ -607,14 +552,6 @@ implementation
       if CheckboxState(RegionWithID('Drag')) then DragCellGroup(cellGrp, sharedVals);
       if (RegionClickedID() = 'AniBmpActiveLbl') then ShowPanel(panels[AniCellBMPNames]);
       
-      if originalSize <> ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Fit'))) then
-      begin
-        GetUpdateAllAniBitmapsIndexs(radioIndex, listIndex);
-        UpdateAllAniBitmaps(cellGrp, sharedVals.bmpArray, listIndex, radioIndex, AniMode.aniStrips);
-        originalSize := radioIndex;
-      end;
-      ChangeActiveBitmap(AniMode,SharedVals.BMPArray);
-
       HandleSelection(cellGrp, sharedVals.dragCell);
       if MouseClicked(RightButton) then SourceCellDragging(cellGrp, sharedVals);
     end;
@@ -631,6 +568,7 @@ implementation
         selectedIdx := -2;
       end;
       
+      if sharedVals.BitmapPtr <> nil then UpdateAllAniBitmaps(cellGrp, sharedVals.BitmapPtr, aniStrips);
       if (RegionClickedID() = 'AniActiveLbl') then ToggleShowPanel(panels[AniNames]);
       if (RegionClickedID() = 'ExportAnimationStrip') then DoSaveDialog(sharedVals, SaveAni);
       if (RegionClickedID() = 'LoadAniIntoEditor') then DoOpenDialog(sharedVals, LoadAniEdit);
@@ -641,11 +579,7 @@ implementation
         RefreshIDList(aniStrips);
       end;
       
-      if GUITextEntryComplete  then 
-      begin
-        UpdateAniCellDetailsFromTextInput(AniMode, SharedVals.BMPArray);
-        UpdateAniCellStripFromTextBox(AniMode);
-      end;
+      if GUITextEntryComplete  then UpdateAniCellStripFromTextBox(AniMode);
       
       if (radio1 <>  ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('PreviewTab')))) then
         ChangePanels(panels[AniBitmapDetails], panels[Preview1], radio1, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('PreviewTab'))));
@@ -696,7 +630,7 @@ implementation
       ExportAnimation(aniStrips);
       if aniTemp <> nil then FreeAnimationTemplate(aniTemp);
       aniTemp := LoadAnimationTemplate('testsave.txt');
-      previewSprite := CreateSprite(cellGrp.cells[0].bmpPtr^.src[PreviewGroup], aniTemp);
+      previewSprite := CreateSprite(cellGrp.cells[0].bmpPtr^.scaled[PreviewGroup], aniTemp);
       ListClearItems(RegionWithID('AniList'));
       for i := 0 to NameCount(aniTemp^.animationIDs)-1 do
       begin

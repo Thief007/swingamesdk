@@ -18,7 +18,7 @@ const
   procedure UpdateCharEditor(var CharMode : CharEditorValues;var sharedVals: EditorValues);
 
 implementation
-	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils;
+	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgSprites;
 
   //---------------------------------------------------------------------------
   // Initialize
@@ -41,12 +41,14 @@ implementation
   
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
   var
-    s: Sprite;
+    b : Bitmap;
   begin
     with CharMode do
     begin
+      b := nil;
       New(MainChar);
-      New(MainChar^.CharSprite);
+      //MainChar^.CharSprite := CreateSprite(b);
+      MainChar^.CharSprite := CreateSprite();
       bg := LoadBitmap('CHAREDITOR.png');
       InitializeCharPanels(panels);
       InitNamedIndexCollection(MainChar^.Directions);
@@ -74,8 +76,8 @@ implementation
         
     for i := 0 to NameCount(CharMode.MainChar^.States) -1 do
     begin
-      SetLength(CharMode.Cache[i], Length(CharMode.Cache[High(CharMode.Cache)]) + 1);
-      CharMode.Cache[i,High(CharMode.Cache[i])] := CharMode.BaseLayer;
+      SetLength(CharMode.Cache[i], Length(CharMode.Cache[i]) + 1);
+      CharMode.Cache[i][High(CharMode.Cache[i])] := Copy(CharMode.BaseLayer, 0 , Length(CharMode.BaseLayer));
     end;
   end;
   
@@ -95,7 +97,7 @@ implementation
     
     for i := 0 to NameCount(CharMode.MainChar^.Directions) -1 do
     begin      
-      CharMode.Cache[High(CharMode.Cache),i] := CharMode.BaseLayer;
+      CharMode.Cache[High(CharMode.Cache),i] := Copy(CharMode.BaseLayer, 0 , Length(CharMode.BaseLayer));
     end;
   end;
   
@@ -257,40 +259,6 @@ implementation
   // Manage Item Lists
   //--------------------------------------------------------------------------- 
   
-  procedure PopulateImageList(browser: BodyTypes);
-  var
-    parts : GUIList;
-    index, index2, i : Integer;
-  begin
-    parts := ListFromRegion(RegionWithID('PartsList'));
-   
-    ListClearItems(RegionWithID('ImageList'));
-    
-    index  := ListActiveItemIndex(ListFromRegion(RegionWithID('BodyList')));
-    index2 := ListActiveItemIndex(parts);
-    
-    for i := 0 to NameCount(browser.bodyType[index].parts[index2].ids) -1 do
-    begin
-      ListAddItem(ListFromRegion(RegionWithID('ImageList')), browser.bodyType[index].parts[index2].bmps[i], '');
-    end;   
-  end;
-  
-  procedure PopulatePartsList(browser: BodyTypes);
-  var
-    parts : GUIList;
-    index, i : Integer;
-  begin
-    parts := ListFromRegion(RegionWithID('PartsList'));
-   
-    ListClearItems(parts);
-    
-    index := ListActiveItemIndex(RegionWithID('BodyList'));
-    
-    for i := 0 to NameCount(browser.bodyType[index].ids) -1 do
-    begin
-      ListAddItem(parts, NameAt(browser.bodyType[index].ids, i));
-    end;   
-  end;
   
   function GetItemIndex(id: string; out index: Integer): Boolean;
   begin
@@ -307,14 +275,14 @@ implementation
     result.bmp := bmp;
   end;
     
-  procedure AddLayer(var CharMode : CharEditorValues);
+  procedure AddLayer(var CharMode : CharEditorValues; browser: CharBodyTypes);
   var
     cell: BitmapCell;
     bodyID, partID, imageID, i, j: Integer;
   begin
     if GetItemIndex('BodyList', bodyID) OR GetItemIndex('PartsList', partID) OR GetItemIndex('ImageList', imageID) then exit;
     
-    cell := CharMode.BrowserData.BodyType[bodyID].parts[partID].bmps[imageID];
+    cell := BitmapCellOf(browser.BodyType[bodyID].parts[partID].bmps[imageID].original, 0 );
     SetLength(CharMode.BaseLayer, Length(CharMode.BaseLayer) + 1);
     CharMode.BaseLayer[High(CharMode.BaseLayer)] := NewItem(High(CharMode.BaseLayer), bodyID, partID, imageID);
     
@@ -332,7 +300,7 @@ implementation
     ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, cell.bmp^.name);
   end;
   
-  procedure ShowLayerOrder(CharMode : CharEditorValues);
+  procedure ShowLayerOrder(var CharMode : CharEditorValues; browser: CharBodyTypes);
   var
     i,j,k, state, dir : Integer;
   begin
@@ -344,24 +312,40 @@ implementation
     ListClearItems(ListFromRegion(RegionWithID('LayerOrder')));
     
     with CharMode do
-    begin
-      for i := Low(Cache) to High(Cache) do
-      begin
-        for j := Low(Cache[i]) to High(Cache[i]) do
-        begin
-          for k := Low(Cache[i,j]) to High(Cache[i,j]) do
-          ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BrowserData.BodyType[Cache[i,j,k].body].parts[Cache[i,j,k].part].bmps[Cache[i,j,k].bmp],
-                                                                  BrowserData.BodyType[Cache[i,j,k].body].parts[Cache[i,j,k].part].bmps[Cache[i,j,k].bmp].bmp^.name);
-        end;
-      end;
+    begin      
+      for k := Low(Cache[state,dir]) to High(Cache[state,dir]) do
+        ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BitmapCellOf(browser.BodyType[Cache[state,dir,k].body].parts[Cache[state,dir,k].part].bmps[Cache[state,dir,k].bmp].original, 0),
+                                                                browser.BodyType[Cache[state,dir,k].body].parts[Cache[state,dir,k].part].bmps[Cache[state,dir,k].bmp].original^.name);
+
     end; 
   end;
   
-  procedure MoveLayerUp();
+  procedure SwapParts(var part1, part2: ItemCache);
   var
-    temp : ItemCache;
+    tmp: ItemCache;
   begin
-   // temp := 
+    tmp := part1;
+    part1 := part2;
+    part2 := tmp;
+  end;
+  
+  procedure MoveLayerUp(var CharMode : CharEditorValues;var browser: CharBodyTypes);    
+  var
+   state, dir, active, i, j , k : Integer;
+  begin
+    with CharMode do
+    begin
+      state   := ListActiveItemIndex(RegionWithID('StateLayerList'));
+      dir     := ListActiveItemIndex(RegionWithID('DirLayerList'));     
+      active  := ListActiveItemIndex(RegionWithID('LayerOrder'));
+      
+      if (dir < 0) OR (state < 0) OR (active <= 0) then exit;
+      
+      SwapParts(Cache[state,dir,active], Cache[state,dir,active - 1]);
+    
+      ShowLayerOrder(CharMode, browser);
+      ListSetActiveItemIndex(ListFromRegion(RegionWithID('LayerOrder')), active -1);
+    end;
   end;
   
   //---------------------------------------------------------------------------
@@ -377,7 +361,7 @@ implementation
     HidePanel(p);
   end;
   
-  procedure UpdateFromTextBox(var CharMode : CharEditorValues);
+  procedure UpdateFromTextBox(var CharMode : CharEditorValues; sharedVals: EditorValues);
   begin
     with CharMode do
     begin
@@ -405,10 +389,10 @@ implementation
       if (RegionClickedID() = 'ValueEdit') then EditValue(CharMode);
       if (RegionClickedID() = 'AngleEdit') then EditAngle(CharMode);
       
-      if (RegionClickedID() = 'BodyList')      then PopulatePartsList(CharMode.BrowserData);
-      if (RegionClickedID() = 'PartsList')     then PopulateImageList(CharMode.BrowserData);
-      if (RegionClickedID() = 'AddItemButton') then AddLayer(CharMode);
-      if (RegionClickedID() = 'DirLayerList') OR (RegionClickedID() = 'StateLayerList') then ShowLayerOrder(CharMode);
+
+   //   if (RegionClickedID() = 'AddItemButton') then AddLayer(CharMode, sharedVals.Browser);
+      if (RegionClickedID() = 'MoveUP') then MoveLayerUp(CharMode, sharedVals.Browser);
+      if (RegionClickedID() = 'DirLayerList') OR (RegionClickedID() = 'StateLayerList') then ShowLayerOrder(CharMode, sharedVals.Browser);
 
       //Drop Down
       UpdateDropDown('DirAngleList'   , 'DirAngleLbl'   , panels[DirAngle]);
@@ -418,7 +402,25 @@ implementation
   end;
   
   procedure UpdateCharEditor(var CharMode : CharEditorValues;var sharedVals: EditorValues);
+  var
+    i : Integer;
   begin
-    UpdateFromTextBox(CharMode);
+    UpdateFromTextBox(CharMode, sharedVals);
+    if KeyTyped(vk_4) then 
+    begin
+      for i := Low(CharMode.BaseLayer) to High(CharMode.BaseLayer) do
+      begin
+        if IndexOf(CharMode.MainChar^.CharSprite^.valueids, sharedVals.Browser.BodyType[CharMode.BaseLayer[i].body].parts[CharMode.BaseLayer[i].part].bmps[CharMode.BaseLayer[i].bmp].original^.name) <> -1 then continue;
+        SpriteAddLayer(CharacterSprite(CharMode.MainChar), sharedVals.Browser.BodyType[CharMode.BaseLayer[i].body].parts[CharMode.BaseLayer[i].part].bmps[CharMode.BaseLayer[i].bmp].original,
+                                                            sharedVals.Browser.BodyType[CharMode.BaseLayer[i].body].parts[CharMode.BaseLayer[i].part].bmps[CharMode.BaseLayer[i].bmp].original^.name);
+        SpriteShowLayer(CharacterSprite(CharMode.MainChar), i);
+      end;
+      CharMode.MainChar^.CharSprite^.position.x := 350;
+      CharMode.MainChar^.CharSprite^.position.y :=440;
+    end;
+    if Length(CharMode.MainChar^.CharSprite^.layers) <> 0 then
+    begin      
+      DrawCharacter(CharMode.MainChar);
+    end;
   end;
 end.
