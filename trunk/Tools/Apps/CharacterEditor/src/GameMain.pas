@@ -9,18 +9,74 @@ uses
 const
   ToolBarMenu = 0; // Top menu of the editor
   FileMenu     = 1; // Drop down menu from the file button
+  Browser   = 2;
 
   // Initialize the Toolbar panel for the editor
   // the one with file, bmp, ani, char editor modes
 procedure InitializeFilePanel(out p: PanelArray);
 begin
-  SetLength(p, 2);
+  SetLength(p, 3);
 	p[ToolBarMenu] := LoadPanel('ToolBarPanel.txt');
 	p[FileMenu] := LoadPanel('File.txt');
+  p[Browser]      := LoadPanel('CharOption.txt');
 	ShowPanel(p[ToolBarMenu]);
 	
 	GUISetBackGroundColor(RGBAColor(0,0,0,0));
 	GUISetForeGRoundColor(ColorWhite);
+end;
+
+procedure PopulateImageList(browser: CharBodyTypes);
+var
+  parts : GUIList;
+  bodyIndex, partIndex, i : Integer;
+begin
+  parts := ListFromRegion(RegionWithID('PartsList'));
+  
+  bodyIndex  := ListActiveItemIndex(ListFromRegion(RegionWithID('BodyList')));
+  partIndex := ListActiveItemIndex(parts);
+  
+
+  
+  ListClearItems(RegionWithID('ImageList'));
+      
+  for i := 0 to NameCount(browser.bodyType[bodyIndex].parts[partIndex].ids) -1 do
+  begin
+    ListAddItem(ListFromRegion(RegionWithID('ImageList')), BitmapCellOf(browser.bodyType[bodyIndex].parts[partIndex].bmps[i].original, 0));
+  end;   
+end;
+
+procedure PopulatePartsList(browser: CharBodyTypes);
+var
+  parts : GUIList;
+  bodyIndex, i : Integer;
+begin
+  parts := ListFromRegion(RegionWithID('PartsList'));
+  bodyIndex := ListActiveItemIndex(RegionWithID('BodyList'));
+  
+  if (bodyIndex = -1) then exit;
+  ListClearItems(parts);
+     
+  for i := 0 to NameCount(browser.bodyType[bodyIndex].ids) -1 do
+  begin
+    ListAddItem(parts, NameAt(browser.bodyType[bodyIndex].ids, i));
+  end;   
+end;
+
+function GetSelectedBitmap(browser: CharBodyTypes) : LoadedBitmapPtr;
+var
+  bodyIndex, partIndex, activeIndex : Integer;
+begin  
+  bodyIndex   := ListActiveItemIndex(ListFromRegion(RegionWithID('BodyList')));
+  partIndex   := ListActiveItemIndex(ListFromRegion(RegionWithID('PartsList')));
+  activeIndex := ListActiveItemIndex(ListFromRegion(RegionWithID('ImageList')));
+  
+  if (bodyIndex = -1) or (partIndex = -1) or (activeIndex = -1) then
+  begin
+    result := nil;
+    exit;
+  end;
+  
+  result := @browser.bodyType[bodyIndex].parts[partIndex].bmps[activeIndex];
 end;
 
 
@@ -125,11 +181,11 @@ begin
   LoadResourceBundle('CharacterEditor.txt');			
   
 	InitializeFilePanel(p);
-	InitializeBitmapEditor(BitmapMode, sharedVals.BMPArray);
+	InitializeBitmapEditor(BitmapMode);
 	InitializeAnimationEditor(AniMode);
   InitializeCharEditor(CharMode);
 
-  LoadBitmapsFromTextFile(CharMode, sharedVals.bmpArray, PathToResource('\images\test.txt'), ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
+  LoadBitmapsFromTextFile(sharedVals.Browser, PathToResource('\images\test.txt'), ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
   
   sharedVals.dragCell := nil;
   sharedVals.dragGroup := false;
@@ -139,10 +195,15 @@ begin
 
   repeat // The game loop...
     ProcessEvents();
+    sharedVals.BitmapPtr := nil;
 		DrawBackGround(BitmapMode, AniMode, CharMode);
     
     ShowFileMenu(p[FileMenu]);
-   
+    if (RegionClickedID() = 'BodyList')      then PopulatePartsList(sharedVals.Browser);
+    if (RegionClickedID() = 'PartsList')     then PopulateImageList(sharedVals.Browser);
+    if (RegionClickedID() = 'AddItemButton') then sharedVals.BitmapPtr := GetSelectedBitmap(sharedVals.Browser);
+    
+    
 		case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))) of 
 			0: UpdateBitmapEditor(BitmapMode, sharedVals);
 			1: UpdateAnimationEditor(AniMode, sharedVals);
@@ -165,10 +226,8 @@ begin
     
     if DialogComplete then sharedVals.OpenSave := None;
     
-    if KeyTyped(vk_1) then
-    for i := 0 to NameCount(CharMode.BrowserData.bodytype[4].parts[2].ids)-1 do
-    WriteLn(NameAt(CharMode.BrowserData.bodytype[4].parts[2].ids, i));
-        
+    if KeyTyped(Vk_8) then ToggleSHowPanel(p[Browser]);
+            
 		UpdateInterface();
 		RefreshScreen(60);   
   until WindowCloseRequested();

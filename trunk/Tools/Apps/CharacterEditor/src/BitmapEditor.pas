@@ -6,7 +6,7 @@ interface
   sgGeometry, sgImages, sgInput, SysUtils, 
 	sgUserInterface, sgShared, EditorShared;
 	
-	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues; var bmpArray: LoadedBitmaps);
+	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues);
 	procedure UpdateBitmapEditor(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
 	
 const
@@ -58,7 +58,7 @@ implementation
       begin
         MyTextBoxSetText('CellIn', IntToStr(cells[selectedOrder[0]].cellIdx));
         if (cells[selectedOrder[0]].bmpPtr <> nil) then 
-          MyLabelSetText('CurrentBitmapNameLbl', cells[selectedOrder[0]].bmpPtr^.src[cellGrp.GridType]^.name)
+          MyLabelSetText('CurrentBitmapNameLbl', cells[selectedOrder[0]].bmpPtr^.scaled[cellGrp.GridType]^.name)
         else
           MyLabelSetText('CurrentBitmapNameLbl', 'None'); 
       end else 		
@@ -160,13 +160,28 @@ implementation
 		end;
 	end;
   
+  procedure ChangeDrawnBitmap(cellGrp: CellGroupData; bmpPtr: LoadedBitmapPtr);
+  var
+    i : Integer;
+  begin
+    with cellGrp do
+    begin
+      if Length(selectedOrder) = 0 then exit;
+    
+      for i := Low(selectedOrder) to High(selectedOrder) do
+      begin
+        cells[selectedOrder[i]].bmpPtr := bmpPtr;
+      end;
+    end;
+  end;
+  
   procedure UpdateGUI(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
   begin
     with BitmapMode do
     begin
     if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
-    if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.BMPArray, panels, scale);
-    if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp, sharedVals.bmpArray);
+//    if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.bmps, panels, scale);
+  //  if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp, sharedVals.bmpArray);
     if (RegionClickedID() = 'ExportBitmap') then DoSaveDialog(sharedVals, saveBMP);			
     if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[CellBitmapNames]);
     if (RegionClickedID() = 'ResetPosition') then
@@ -186,7 +201,9 @@ implementation
 		begin
       UpdateGUI(BitmapMode, sharedVals);
 			ShowSelectedDetails(cellGrp, panels);
-			HideSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
+	//		HideSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
+  
+      if sharedVals.BitmapPtr <> nil then ChangeDrawnBitmap(cellGrp, sharedVals.BitmapPtr);
 				
 			PushClip(ClipX, ClipY, ClipW, ClipH);
       MyDrawEmptyCells(cellGrp, sharedVals);      
@@ -231,7 +248,7 @@ implementation
 		HidePanel(result[CellBitmapNames]);
 	end;
 	
-	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues; var bmpArray: LoadedBitmaps);
+	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues);
 	begin	
 		with BitmapMode do
 		begin
@@ -240,7 +257,7 @@ implementation
 			InitializeCellArea(cellGrp, nil, CellGap, true);
 			ListAddItem(ListFromRegion(RegionWithID('BMPList')), 'None');
 			ListSetActiveItemIndex(ListFromRegion(RegionWithID('BMPList')), 0);
-      InitializeBitmapDetails(cellGrp.GridType, bmpArray, 1, cellGrp.cols, cellGrp.rows);
+ //     InitializeBitmapDetails(cellGrp.GridType, bmpArray, 1, cellGrp.cols, cellGrp.rows);
 			scale		 		:= 1;
       destBMP := nil;
 			bg := LoadBitmap('BMPEDITOR.png');
