@@ -392,10 +392,10 @@ implementation
       // Adds
       if (RegionClickedID() = 'DirAdd')     then AddDirection(CharMode,  TextBoxText(TextBoxFromRegion(RegionWithID('DirIn'))));
       if (RegionClickedID() = 'StateAdd')   then AddState(CharMode,      TextBoxText(TextBoxFromRegion(RegionWithID('StateIn'))));
-      if (RegionClickedID() = 'ValueAdd')   then AddValue(CharMode,               TextBoxText(TextBoxFromRegion(RegionWithID('NameValueIn'))),
-                                                                                  TextBoxText(TextBoxFromRegion(RegionWithID('ValueValueIn'))));      
-      if (RegionClickedID() = 'AngleAdd')   then AddAngle(CharMode,               TextBoxText(TextBoxFromRegion(RegionWithID('MinIn'))),
-                                                                                  TextBoxText(TextBoxFromRegion(RegionWithID('MaxIn'))));
+      if (RegionClickedID() = 'ValueAdd')   then AddValue(CharMode,      TextBoxText(TextBoxFromRegion(RegionWithID('NameValueIn'))),
+                                                                         TextBoxText(TextBoxFromRegion(RegionWithID('ValueValueIn'))));      
+      if (RegionClickedID() = 'AngleAdd')   then AddAngle(CharMode,      TextBoxText(TextBoxFromRegion(RegionWithID('MinIn'))),
+                                                                         TextBoxText(TextBoxFromRegion(RegionWithID('MaxIn'))));
       // Remove
       if (RegionClickedID() = 'DirRemove')   then RemoveDirection(CharMode);
       if (RegionClickedID() = 'StateRemove') then RemoveState(CharMode);
@@ -427,13 +427,12 @@ implementation
     begin
       for i := Low(CharMode.BaseLayer) to High(CharMode.BaseLayer) do
       begin
-        if IndexOf(CharMode.MainChar^.CharSprite^.valueids, sharedVals.Browser.BodyType[CharMode.BaseLayer[i].body].parts[CharMode.BaseLayer[i].part].bmps[CharMode.BaseLayer[i].bmp].original^.name) <> -1 then continue;
-        SpriteAddLayer(CharacterSprite(CharMode.MainChar), sharedVals.Browser.BodyType[CharMode.BaseLayer[i].body].parts[CharMode.BaseLayer[i].part].bmps[CharMode.BaseLayer[i].bmp].original,
-                                                            sharedVals.Browser.BodyType[CharMode.BaseLayer[i].body].parts[CharMode.BaseLayer[i].part].bmps[CharMode.BaseLayer[i].bmp].original^.name);
+        if IndexOf(CharMode.MainChar^.CharSprite^.valueids,   CharMode.BaseLayer[i].bmpPtr^.original^.name) <> -1 then continue;
+        SpriteAddLayer(CharacterSprite(CharMode.MainChar), CharMode.BaseLayer[i].bmpPtr^.scaled[PreviewGroup], CharMode.BaseLayer[i].bmpPtr^.original^.name);
         SpriteShowLayer(CharacterSprite(CharMode.MainChar), i);
       end;
       CharMode.MainChar^.CharSprite^.position.x := 350;
-      CharMode.MainChar^.CharSprite^.position.y :=440;
+      CharMode.MainChar^.CharSprite^.position.y := 440;
     end;
     if Length(CharMode.MainChar^.CharSprite^.layers) <> 0 then
     begin      
