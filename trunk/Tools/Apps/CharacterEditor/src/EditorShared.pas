@@ -159,8 +159,8 @@ type
   
   function SetLoadedBitmapPtr(idx : Integer; bmpArray: LoadedBitmaps): LoadedBitmapPtr;
   procedure AddBitmapToList(bmp : Bitmap; lst1, lst2: GUIList);
-  procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: LoadedBitmaps; scale: single; cols, rows: Integer);
-  procedure SetBitmapDetails(GridType: BMPType; var bmpArray: LoadedBitmaps; cols, rows: Integer);	
+  procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: CharBodyTypes; scale: single; cols, rows: Integer);
+  procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);	
   procedure AddBitmapToArray(var bmpArray : LoadedBitmaps; id, fileName : string);
   procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string; lst1, lst2: GUIList);
 
@@ -197,7 +197,7 @@ type
   //---------------------------------------------------------------------------
   // Saving
   //--------------------------------------------------------------------------- 
- 	procedure ExportBitmap(destbmp: Bitmap; cellGrp: CellGroupData; bmpArray : LoadedBitmaps); 
+ 	procedure ExportBitmap(destbmp: Bitmap; cellGrp: CellGroupData); 
   procedure ExportAnimation(aniStrips: AniStripArray);
   procedure LoadAnimation(var AniMode: AnimationEditorValues);
   procedure DoOpenDialog(var sharedVals : EditorValues; dt : DialogType);
@@ -621,32 +621,46 @@ implementation
 		ListAddItem(lst2, bmp^.name);
   end;
   
-  procedure SetBitmapDetails(GridType: BMPType; var bmpArray: LoadedBitmaps; cols, rows: Integer);
+  procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);
   var
     cellW, cellH, i: Integer;
   begin    
-    for i := Low(bmpArray) to High(bmpArray) do
-    begin
-      cellW := Trunc(bmpArray[i].scaled[GridType]^.width  / cols);
-      cellH := Trunc(bmpArray[i].scaled[GridType]^.height / rows);
-      BitmapSetCellDetails(bmpArray[i].scaled[GridType], cellW, cellH, cols, rows, cols*rows);
-    end;
+  //  for i := Low(bmpArray) to High(bmpArray) do
+    //begin
+      cellW := Trunc(bmp.scaled[GridType]^.width  / cols);
+      cellH := Trunc(bmp.scaled[GridType]^.height / rows);
+      BitmapSetCellDetails(bmp.scaled[GridType], cellW, cellH, cols, rows, cols*rows);
+  //  end;
   end;
   
-  procedure ScaleAllBitmaps(GridType: BMPType; var bmpArray: LoadedBitmaps; scale: single);
+  procedure ScaleAllBitmaps(GridType: BMPType; var bmpArray: LoadedBitmap; scale: single);
   var
     i: integer;
   begin
-    for i := Low(bmpArray) to High(bmpArray) do
+  {  for i := Low(bmpArray) to High(bmpArray) do
     begin
       bmpArray[i].scaled[GridType] := RotateScaleBitmap(bmpArray[i].original, 0, scale);	
-    end;
+    end;}
   end;
   
-  procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: LoadedBitmaps; scale: single; cols, rows: Integer);
+  procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: CharBodyTypes; scale: single; cols, rows: Integer);
+  var
+    body, part, img : Integer;
   begin	 
-    ScaleAllBitmaps(GridType, bmpArray, scale);    
-    SetBitmapDetails(GridType, bmpArray, cols, rows);
+    for body := Low(bmpArray.bodyType) to High(bmpArray.bodyType) do
+    begin
+      for part := Low(bmpArray.bodyType[body].parts) to High(bmpArray.bodyType[body].parts) do
+      begin
+        for img := Low(bmpArray.bodyType[body].parts[part].bmps) to High(bmpArray.bodyType[body].parts[part].bmps) do
+        begin
+          bmpArray.bodyType[body].parts[part].bmps[img].scaled[GridType] := RotateScaleBitmap(bmpArray.bodyType[body].parts[part].bmps[img].original, 0, scale);	
+    //      ScaleAllBitmaps(bmpArray[body].parts[part].bmp[img].scale[GridType], scale);    
+          SetBitmapDetails(GridType, bmpArray.bodyType[body].parts[part].bmps[img], cols, rows);
+        end;
+      end;
+    end;
+  //  ScaleAllBitmaps(GridType, bmpArray, scale);    
+  //  SetBitmapDetails(GridType, bmpArray, cols, rows);
   end;
     
   function SetLoadedBitmapPtr(idx : Integer; bmpArray: LoadedBitmaps): LoadedBitmapPtr;
@@ -897,24 +911,27 @@ implementation
 		end;
 	end;
 
-	procedure ExportBitmap(destbmp: Bitmap; cellGrp: CellGroupData; bmpArray : LoadedBitmaps);
+	procedure ExportBitmap(destbmp: Bitmap; cellGrp: CellGroupData);
 	var
 		xPos, yPos, i: Integer;
 	begin
 		with cellGrp do
 		begin	
       destbmp := CreateBitmap(cellGrp.grpArea.width - (cellGap*(cols-1)), cellGrp.grpArea.height - (cellGap*(rows-1)));
-      for i := Low(bmpArray) to High(bmpArray) do MakeOpaque(bmpArray[i].scaled[GridType]);		
+    //  for i := Low(bmpArray) to High(bmpArray) do MakeOpaque(bmpArray[i].scaled[GridType]);		
 			for i := Low(cells) to High(cells) do
 			begin
         xPos := Trunc(cells[i].Area.X - cells[i].xGap - grpArea.X);
         yPos := Trunc(cells[i].Area.Y - cells[i].yGap - grpArea.Y);
 				if cells[i].bmpPtr = nil then
           SaveBitmapGrid(destBMP, cellGrp, i, xPos, yPos)
-        else
+        else begin
+          MakeOpaque(cells[i].bmpPtr^.scaled[cells[i].parent^.GridType]);		
           DrawCell(destbmp, cells[i].bmpPtr^.scaled[cells[i].parent^.GridType], cells[i].cellIdx, xPos, yPos);
+          MakeTransparent(cells[i].bmpPtr^.scaled[cells[i].parent^.GridType]);	
+        end;
 			end;
-      for i := Low(bmpArray) to High(bmpArray) do MakeTransparent(bmpArray[i].scaled[GridType]);
+   //   for i := Low(bmpArray) to High(bmpArray) do MakeTransparent(bmpArray[i].scaled[GridType]);
       SaveToPNG(destbmp, dialogpath);
       FreeBitmap(destBmp);
 		end;
