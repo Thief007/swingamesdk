@@ -113,7 +113,7 @@ implementation
 			cellH	      := initHeight * newScale;
 			bmpScale		:= newScale;
       
-     // InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
+      InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
 		end;
 	end;
   
@@ -178,7 +178,7 @@ implementation
     begin
     if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
     if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.browser, panels, scale);
-  //  if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp, sharedVals.bmpArray);
+    if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp);
     if (RegionClickedID() = 'ExportBitmap') then DoSaveDialog(sharedVals, saveBMP);			
     if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[CellBitmapNames]);
     if (RegionClickedID() = 'ResetPosition') then

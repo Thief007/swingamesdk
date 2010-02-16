@@ -18,7 +18,7 @@ begin
   SetLength(p, 3);
 	p[ToolBarMenu] := LoadPanel('ToolBarPanel.txt');
 	p[FileMenu] := LoadPanel('File.txt');
-  p[Browser]      := LoadPanel('CharOption.txt');
+  p[Browser]      := LoadPanel('Browser.txt');
 	ShowPanel(p[ToolBarMenu]);
 	
 	GUISetBackGroundColor(RGBAColor(0,0,0,0));
