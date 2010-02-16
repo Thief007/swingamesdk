@@ -112,6 +112,7 @@ implementation
 			cellW 	    := initWidth	* newScale;
 			cellH	      := initHeight * newScale;
 			bmpScale		:= newScale;
+      UpdateGroupSize(cellGrp, CellGap);
       
       InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
 		end;
