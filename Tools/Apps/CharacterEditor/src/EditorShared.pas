@@ -121,6 +121,7 @@ type
     dragGroup       : Boolean;                  // When true allows the user to drag the entire cellgroup
     OpenSave        : DialogType;
     BitmapPtr       : LoadedBitmapPtr;
+    panels          : PanelArray;
 	end;
   
 	//---------------------------------------------------------------------------
@@ -216,12 +217,6 @@ const
 	BitmapEditorID					= 0;
 	AnimationEditorID				= 1;
 	CharacterEditorID				= 2;
-
-//Clip Area
-	ClipX										= 195;
-	ClipY										= 65;
-	ClipW										= 570;
-	ClipH										= 480;
 		
 //Colors
 	Red											= 255;
@@ -263,6 +258,11 @@ const
   
   AniCellWidth = 24;
   AniCellHeight = 32;
+  
+ // Editor Shared Panels
+  ToolBarMenu = 0; // Top menu of the editor
+  FileMenu     = 1; // Drop down menu from the file button
+  BrowserPanel   = 2;
   
   MainCharasFolders = 'chara_chubby,Chara-dwarf,Chara-Isometric,Chara-little,Chara-medium,Chara-monsters,Chara-monsters_f,Chara-Overweight Torso,Chara-soldiers,Chara-tall,Custom';
 	
@@ -802,6 +802,7 @@ implementation
 				begin
 					if cells[i].isSelected then RemoveSelection(cellGrp, i)
           else if KeyDown(VK_LShift) then SelectMultiple(cellGrp, i)
+          else if KeyDown(VK_LCTRL) then AddSelection(cellGrp, i)
 					else begin
             DeselectAll(cellGrp);
             AddSelection(cellGrp, i);			
@@ -905,7 +906,7 @@ implementation
 	begin
 		with cellGrp do
 		begin
-			DrawRectangle(destbmp, ColorBlack, xPos, yPos, cellW -1, cellH -1);
+			DrawRectangle(destbmp, ColorBlack, xPos, yPos, cellW, cellH);
 	//		FillRectangle(destbmp, ColorBlack, xPos, yPos, cellW -1, cellH -1);
 			DrawText(destbmp, IntToStr(idx), ColorRed, xPos, yPos);		
 		end;

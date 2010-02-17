@@ -7,12 +7,13 @@
 
 // Panel data:
 x: 10
-y: 280
+y: 310
 w: 160
-h: 120
-a: CellDetails.png
-i: CellDetails.png
-b: CellDetails.png
+h: 155
+a: BMPCellDetailsAct.png
+b: BMPCellDetails.png
+i: BMPCellDetails.png
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -20,8 +21,11 @@ b: CellDetails.png
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //Cell Label
-r: 80, 58, 80, 20, Label, CellIdx, subs,c,0
-r: 80, 35, 80, 20, TextBox, CellIn, subs,16, c,0
+r: 83, 42,90, 20, Label, CellIdx, subs,c,0
+//Cell Input
+r: 83, 73, 90, 20, TextBox, CellIn, subs,16, c,0
 
 //Bitmap Label
-r: 15, 96, 150, 25, Label, CurrentBitmapNameLbl, subsSmall, l, bmp
+r: 85, 101, 90, 25, Label, CurrentBitmapNameLbl, subsSmall, l, bmp
+//Change Button
+r: 79, 124, 100, 30, Button, ChangeButton

@@ -13,25 +13,14 @@ const
 //Bitmap Panel Array Indexes
 	BitmapDetails = 0;
 	CellDetails = 1;
-	CellBitmapNames = 2;
-	BitmapButtons = 3;	
+	BitmapButtons = 2;
+//Clip Area
+	ClipX										= 220;
+	ClipY										= 85;
+	ClipW										= 565;
+	ClipH										= 490;	
 	
 implementation
-	
-	procedure MyTextBoxSetText(id, value : string);
-	begin
-		TextBoxSetText(TextBoxFromRegion(RegionWithID(id)), value);
-	end;
-  
-  function MyTextBoxText(id: string) : string;
-	begin
-		result := TextBoxText(TextBoxFromRegion(RegionWithID(id)));
-	end;
-	
-	procedure MyLabelSetText(id, value : string);
-	begin
-		LabelSetText(LabelFromRegion(RegionWithID(id)), value); 
-	end;
 	
 	procedure MyListSetActiveItemIndex(id: string; value: Integer);
 	begin
@@ -54,21 +43,23 @@ implementation
 	begin
 		with cellGrp do
     begin
-      if (Length(selectedOrder) = 1) AND (MyTextBoxText('CellIn') <> IntToStr(cells[selectedOrder[0]].cellIdx)) then
+      if (Length(selectedOrder) = 1) AND (TextBoxText(RegionWithID('CellIn')) <> IntToStr(cells[selectedOrder[0]].Idx)) then
       begin
-        MyTextBoxSetText('CellIn', IntToStr(cells[selectedOrder[0]].cellIdx));
+        TextBoxSetText(RegionWithID('CellIn'), IntToStr(cells[selectedOrder[0]].cellIdx));
+        LabelSetText(RegionWithID('CellIdx'), IntToStr(cells[selectedOrder[0]].Idx));
         if (cells[selectedOrder[0]].bmpPtr <> nil) then 
-          MyLabelSetText('CurrentBitmapNameLbl', cells[selectedOrder[0]].bmpPtr^.scaled[cellGrp.GridType]^.name)
+          LabelSetText(RegionWithID('CurrentBitmapNameLbl'), cells[selectedOrder[0]].bmpPtr^.scaled[cellGrp.GridType]^.name)
         else
-          MyLabelSetText('CurrentBitmapNameLbl', 'None'); 
+          LabelSetText(RegionWithID('CurrentBitmapNameLbl'), 'None'); 
       end else 		
-      if (Length(cellGrp.selectedOrder) > 1) AND (MyTextBoxText('CellIn') <> 'Multiple') then
+      if (Length(cellGrp.selectedOrder) > 1) AND (TextBoxText(RegionWithID('CellIn')) <> 'Multiple') then
       begin
-        MyTextBoxSetText('CellIn','Multiple');
-        MyLabelSetText('CurrentBitmapNameLbl', 'Multiple'); 
-        MyListSetActiveItemIndex('BMPList',  0);
+        TextBoxSetText(RegionWithID('CellIn'),'Multiple');
+        LabelSetText(RegionWithID('CellIdx'),'Multiple');
+        LabelSetText(RegionWithID('CurrentBitmapNameLbl'), 'Multiple'); 
       end;
       if (Length(cellGrp.selectedOrder) > 0)  AND (not PanelVisible(pnl[CellDetails])) then ShowPanel(pnl[CellDetails]);
+      if (Length(cellGrp.selectedOrder) = 0)  AND PanelVisible(pnl[CellDetails]) then HidePanel(pnl[CellDetails]);
     end;
   end;
 	
@@ -78,7 +69,6 @@ implementation
 	begin
     if PanelVisible(pnl[CellDetails]) AND (Length(cellGrp.selectedOrder) = 0) then
     begin
-      HidePanel(pnl[CellBitmapNames]);
       HidePanel(pnl[CellDetails]);
       exit;
     end;
@@ -96,8 +86,7 @@ implementation
           cells[selectedOrder[i]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
         end;
       end;
-      MyLabelSetText('CurrentBitmapNameLbl', ListActiveItemText(pnl[CellBitmapNames], 'BMPList'));
-      HidePanel(pnl[CellBitmapNames]);
+   //x   LabelSetText(RegionWithID('CurrentBitmapNameLbl'), ListActiveItemText(pnl[CellBitmapNames], 'BMPList'));
     end;
 	end;
 	
@@ -149,7 +138,9 @@ implementation
           3: ValidateInput(cellH);
           4: ValidateInputForScale(cellGrp, bmpScale, bmpArray);
         end;
-        InitializeCellArea(cellGrp, nil, CellGap, true)	;   
+        if cellCount = 0 then SetLength(cells, 0);
+        InitializeCellArea(cellGrp, nil, CellGap, true)	;  
+        DeselectAll(cellGrp);
       end else 
       if (RegionPanel(RegionOfLastUpdatedTextBox) = pnl[CellDetails]) AND (IndexOfLastUpdatedTextBox = 0) then
       begin
@@ -158,7 +149,7 @@ implementation
 		end;
 	end;
   
-  procedure ChangeDrawnBitmap(cellGrp: CellGroupData; bmpPtr: LoadedBitmapPtr);
+  procedure ChangeDrawnBitmap(cellGrp: CellGroupData; bmpPtr: LoadedBitmapPtr; pnl : Panel);
   var
     i : Integer;
   begin
@@ -168,8 +159,13 @@ implementation
     
       for i := Low(selectedOrder) to High(selectedOrder) do
       begin
+        WriteLn('i: ', i);
+        WriteLn('selectedOrder[i]: ', selectedOrder[i]);
         cells[selectedOrder[i]].bmpPtr := bmpPtr;
-      end;
+      end;     
+      LabelSetText(RegionWithID('CurrentBitmapNameLbl'), bmpPtr^.original^.name);
+      HidePanel(pnl);
+      DeselectAll(cellGrp);
     end;
   end;
   
@@ -177,17 +173,16 @@ implementation
   begin
     with BitmapMode do
     begin
-    if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
-    if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.browser, panels, scale);
-    if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp);
-    if (RegionClickedID() = 'ExportBitmap') then DoSaveDialog(sharedVals, saveBMP);			
-    if (RegionClickedID() = 'CurrentBitmapNameLbl') then ToggleShowPanel(panels[CellBitmapNames]);
-    if (RegionClickedID() = 'ResetPosition') then
-    begin
-      cellGrp.grpArea.X	:= ClipX;
-      cellGrp.grpArea.Y	:= ClipY;
-      UpdatePosition(cellGrp);
-    end;
+      if CheckboxState(RegionWithID('Anchor')) then DragCellGroup(cellGrp, sharedVals);
+      if GUITextEntryComplete then UpdateCellDetailsFromTextInput(cellGrp, sharedVals.browser, panels, scale);
+      if DialogComplete AND (sharedVals.OpenSave = SaveBMP) then ExportBitmap(destbmp, cellGrp);
+      if (RegionClickedID() = 'ExportBitmap') then DoSaveDialog(sharedVals, saveBMP);		
+      if (RegionClickedID() = 'ChangeButton') then ShowPanel(sharedVals.panels[BrowserPanel]);
+      if (RegionClickedID() = 'ResetPosition') then
+      begin
+        MoveGroup(cellGrp, ClipX, ClipY);
+        UpdatePosition(cellGrp);
+      end;
     end;
   end;
   
@@ -201,12 +196,12 @@ implementation
 			ShowSelectedDetails(cellGrp, panels);
 	//		HideSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
   
-      if sharedVals.BitmapPtr <> nil then ChangeDrawnBitmap(cellGrp, sharedVals.BitmapPtr);
+      if sharedVals.BitmapPtr <> nil then ChangeDrawnBitmap(cellGrp, sharedVals.BitmapPtr, panels[CellDetails]);
 				
 			PushClip(ClipX, ClipY, ClipW, ClipH);
       MyDrawEmptyCells(cellGrp, sharedVals);      
       MyDrawSplitBitmapCells(cellGrp, sharedVals);
-      if CheckboxState(RegionWithID('Drag')) then FillRectangle(RGBAColor(255,255,0,180), cellGrp.grpArea);
+      if CheckboxState(RegionWithID('Anchor')) then FillRectangle(RGBAColor(255,255,0,180), cellGrp.grpArea);
  			PopClip();
       				
 			if (not CheckboxState(RegionWithID('Anchor'))) then
@@ -234,16 +229,16 @@ implementation
 	var
 		i: LongInt;
 	begin
-		SetLength(result, 4);
+		SetLength(result, 3);
 		result[BitmapDetails]		:= LoadPanel('BitmapDetails.txt');
-		result[CellDetails]			:= LoadPanel('CellDetails.txt');
-		result[CellBitmapNames]	:= LoadPanel('CellBMPNames.txt');
+		result[CellDetails]			:= LoadPanel('BMPCellDetails.txt');
+	//	result[CellBitmapNames]	:= LoadPanel('CellBMPNames.txt');
 		result[BitmapButtons]		:= LoadPanel('BitmapButtons.txt');
 		for i := Low(result) to High(result) do
 		begin
 		  ShowPanel(result[i]);
 		end;
-		HidePanel(result[CellBitmapNames]);
+		HidePanel(result[CellDetails]);
 	end;
 	
 	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues);
@@ -253,9 +248,6 @@ implementation
 			panels	:= InitializePanels();
 			cellGrp := InitializeCellGroup(12, 3, 4, 24, 32, ClipX, ClipY, CellGap, BitmapGroup);
 			InitializeCellArea(cellGrp, nil, CellGap, true);
-			ListAddItem(ListFromRegion(RegionWithID('BMPList')), 'None');
-			ListSetActiveItemIndex(ListFromRegion(RegionWithID('BMPList')), 0);
- //     InitializeBitmapDetails(cellGrp.GridType, bmpArray, 1, cellGrp.cols, cellGrp.rows);
 			scale		 		:= 1;
       destBMP := nil;
 			bg := LoadBitmap('BMPEDITOR.png');

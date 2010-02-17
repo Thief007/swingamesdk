@@ -6,14 +6,14 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 0
-y: 0
+x: 200
+y: 150
 w: 400
 h: 300
 d: true
+b: blank.png
 a: blank.png
 i: blank.png
-b: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -22,11 +22,11 @@ r:  11, 42, 70, 20, Label, FixedLabel1, fdDialogText, l, Path
 
 r:  92, 11, 297, 20, TextBox, PathTextbox, fdDialogText, 1024, l, File Path
 
-r: 319, 273, 70, 20, Button, OkButton
-r: 319, 273, 70, 20, Label, OkLabel, fdDialogText, c, Open
+r: 319, 275, 70, 20, Button, OkButton
+r: 319, 275, 70, 20, Label, OkLabel, fdDialogText, c, Open
 
-r: 238, 273, 70, 20, Button, CancelButton
-r: 238, 273, 70, 20, Label, CancelLabel, fdDialogText, c, Cancel
+r: 238, 275, 70, 20, Button, CancelButton
+r: 238, 275, 70, 20, Label, CancelLabel, fdDialogText, c, Cancel
 
 r:  11, 273, 227, 20, Label, ErrorLabel, fdDialogText, l, 
 
@@ -45,5 +45,5 @@ r:  11, 273, 227, 20, Label, ErrorLabel, fdDialogText, l,
 // scrollKind = v for vertical or h for horizontal
 // scrollBmp  = n for no bitmap, or the bitmap name
 
-r: 11, 73, 378, 190, List, FilesList, 1, 10, -1, fdDialogText, l, 10, v, blank.png
-r: 92, 42, 297,  26, List, PathList,  3,  1, -1, fdDialogText, c,  6, h, blank.png
+r: 11, 73, 379, 190, List, FilesList, 1, 10, -1, fdDialogText, l, 10, v, blank.png
+r: 92, 42, 297,  29, List, PathList,  3,  1, -1, fdDialogText, c,  8, h, blank.png

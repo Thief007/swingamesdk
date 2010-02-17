@@ -6,11 +6,6 @@ uses
   SysUtils, sgUserInterface, sgAnimations, sgNamedIndexCollection,
 	EditorShared, BitmapEditor, AnimationEditor, CharacterEditor;
   
-const
-  ToolBarMenu = 0; // Top menu of the editor
-  FileMenu     = 1; // Drop down menu from the file button
-  Browser   = 2;
-
   // Initialize the Toolbar panel for the editor
   // the one with file, bmp, ani, char editor modes
 procedure InitializeFilePanel(out p: PanelArray);
@@ -18,7 +13,7 @@ begin
   SetLength(p, 3);
 	p[ToolBarMenu] := LoadPanel('ToolBarPanel.txt');
 	p[FileMenu] := LoadPanel('File.txt');
-  p[Browser]      := LoadPanel('Browser.txt');
+  p[BrowserPanel]      := LoadPanel('Browser.txt');
 	ShowPanel(p[ToolBarMenu]);
 	
 	GUISetBackGroundColor(RGBAColor(0,0,0,0));
@@ -99,7 +94,7 @@ begin
 	begin
 		ShowPanel(panels[i]);
 	end;
-	HidePanel(panels[CellBitmapNames]);
+	HidePanel(panels[CellDetails]);
 end;
 
 // Shows the Animation panels when the mode is selected
@@ -165,6 +160,17 @@ begin
 	end;
 end;
 
+procedure HandleBrowser(var sharedVals: EditorValues);
+begin
+  if (RegionClickedID() = 'BodyList')      then PopulatePartsList(sharedVals.Browser);
+  if (RegionClickedID() = 'PartsList')     then PopulateImageList(sharedVals.Browser);
+  if (RegionClickedID() = 'AddItemButton') then
+  begin
+    sharedVals.BitmapPtr := GetSelectedBitmap(sharedVals.Browser);
+    HidePanel(sharedVals.panels[BrowserPanel]);
+  end;
+end;
+
 procedure Main();
 var
 	prevMode: LongInt; // Stores previous mode value so the program knows when to Update panels
@@ -180,11 +186,12 @@ begin
   OpenGraphicsWindow('Bitmap | Animation | Character Editor', ScreenWidth, ScreenHeight);
   LoadResourceBundle('CharacterEditor.txt');			
   
-	InitializeFilePanel(p);
+	InitializeFilePanel(sharedVals.panels);
 	InitializeBitmapEditor(BitmapMode);
 	InitializeAnimationEditor(AniMode);
   InitializeCharEditor(CharMode);
 
+      
   LoadBitmapsFromTextFile(sharedVals.Browser, PathToResource('\images\test.txt'), ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
   
   sharedVals.dragCell := nil;
@@ -197,12 +204,7 @@ begin
     ProcessEvents();
     sharedVals.BitmapPtr := nil;
 		DrawBackGround(BitmapMode, AniMode, CharMode);
-    
-    ShowFileMenu(p[FileMenu]);
-    if (RegionClickedID() = 'BodyList')      then PopulatePartsList(sharedVals.Browser);
-    if (RegionClickedID() = 'PartsList')     then PopulateImageList(sharedVals.Browser);
-    if (RegionClickedID() = 'AddItemButton') then sharedVals.BitmapPtr := GetSelectedBitmap(sharedVals.Browser);
-    
+    HandleBrowser(sharedVals);
     
 		case ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))) of 
 			0: UpdateBitmapEditor(BitmapMode, sharedVals);
@@ -226,7 +228,7 @@ begin
     
     if DialogComplete then sharedVals.OpenSave := None;
     
-    if KeyTyped(Vk_8) then ToggleSHowPanel(p[Browser]);
+   // if KeyTyped(Vk_8) then ToggleSHowPanel(p[Browser]);
             
 		UpdateInterface();
 		RefreshScreen(60);   

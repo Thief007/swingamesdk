@@ -7,23 +7,24 @@
 
 // Panel data:
 x: 10
-y: 420
-w: 160
-h: 72
-i: BMPEditorButtons.png
-a: BMPEditorButtonsInact.png
-b: BMPEditorButtonsInact.png
+y: 40
+w: 580
+h: 40
+a: BMPButtonsAct.png
+b: BMPButtons.png
+i: BMPButtons.png
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
+//Save Button
+r:0,0,160,40,Button,ExportBitmap
+
 //MoveCellGroup Button
-r:0,0,160,20,CheckBox, Anchor, false
+r:160,0,160,40,CheckBox, Anchor, false
 
 //ResetPosition Button
-r:0,26,160,20,Button,ResetPosition
-
-//Save Button
-r:0,52,160,20,Button,ExportBitmap
+r:320,0,160,40,Button,ResetPosition
