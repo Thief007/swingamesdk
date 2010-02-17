@@ -7,12 +7,12 @@
 
 // Panel data:
 x: 10
-y: 60
+y: 80
 w: 160
 h: 210
-a: BitmapDetails.png
-i: BitmapDetails.png
-b: BitmapDetails.png
+b: BMPBitmapDetails.png
+i: BMPBitmapDetails.png
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -20,16 +20,16 @@ b: BitmapDetails.png
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //CellCount
-r: 80, 45, 80, 20, TextBox, CellCountIn, subs, 16,  center, 0
+r: 85, 53, 90, 20, TextBox, CellCountIn, subs, 16,  center, 12
 
 //Columns
-r: 80, 77, 80, 20, TextBox, ColumnIn, subs, 16, center, 0
+r: 85, 85, 90, 20, TextBox, ColumnIn, subs, 16, center, 3
 
 //Width
-r: 80, 107, 80, 20, TextBox, WidthIn, subs, 16,  center, 0
+r: 85, 115, 90, 20, TextBox, WidthIn, subs, 16,  center, 24
 
 //Height
-r: 80, 140, 80, 20, TextBox, HeightIn, subs, 16,  center, 0
+r: 85, 147, 90, 20, TextBox, HeightIn, subs, 16,  center, 32
 
 //Scale
-r: 80, 172, 80, 20, TextBox, ScaleIn, subs, 16,  center, 1
+r: 85, 177, 90, 20, TextBox, ScaleIn, subs, 16,  center, 1

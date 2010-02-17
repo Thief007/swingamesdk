@@ -6,13 +6,14 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 20
+x: 10
 y: 0
 w: 620
 h: 28
-a: blank.png
-i: blank.png
-b: blank.png
+v: false
+a: ToolBarAct.png
+b: ToolBar.png
+i: ToolBar.png
 
 // Region data
 // Format: r: x, y, w, h, kind
@@ -20,13 +21,13 @@ b: blank.png
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //File Button
-r:0,0,140,28,Button,FileButton
+r:0,0,160,40,Button,FileButton
 
 //BitmapEditor
-r:160,0,140,28,RadioGroup,Bitmap,Mode
+r:160,0,160,40,RadioGroup,Bitmap,Mode
 
 //File Button
-r:320,0,140,28,RadioGroup,Animation,Mode
+r:320,0,160,40,RadioGroup,Animation,Mode
 
 //File Button
-r:480,0,140,28,RadioGroup,Character,Mode
+r:480,0,160,40,RadioGroup,Character,Mode
