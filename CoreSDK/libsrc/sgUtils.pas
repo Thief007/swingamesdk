@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-02-17: David  : Added ExtractAfterFirstDelim
 // - 2010-02-04: Andrew : Renamed unit, added code to process lines of a text file
 // - 2010-02-03: Andrew : Added ExtractFileAndPath
 // - 2010-02-03: Aaron  : Added SingleArrayToRange
@@ -23,6 +24,7 @@ uses sgTypes;
   {$ifndef FPC} // Delphi land
   function ExtractDelimited(index: integer; value: string; delim: TSysCharSet): string;
   {$endif}
+  function ExtractAfterFirstDelim(index: integer; value: string; delim: Char): string;
 
   function CountDelimiter(value: String; delim: Char): LongInt;
   function CountDelimiterWithRanges(value: String; delim: Char): LongInt;
@@ -224,6 +226,19 @@ implementation
   {$else}
   // proper ExtractDelimited provided by StrUtils
   {$endif}
+  
+  function ExtractAfterFirstDelim(index: integer; value: string; delim: Char): string;
+  var
+    i: Integer;
+  begin
+    result := '';
+    for i := index+1 to CountDelimiter(value , delim)+1 do
+    begin
+      WriteLn(ExtractDelimited(i, value, [delim]));
+      result += ExtractDelimited(i, value, [delim]);
+      if i <> CountDelimiter(value , delim)+1 then result += delim;
+    end;
+  end;
 
   function ExtractDelimitedWithRanges(index: LongInt; value: String): String;
   var
@@ -236,7 +251,7 @@ implementation
     count := 1; //1 is the first index... not 0
   
     // Find the start of this delimited range
-    for i := 1 to Length(value) do
+    for i := Low(value) to Length(value) do
     begin
       if count = index then break;
     
@@ -270,7 +285,7 @@ implementation
     i: Integer;
   begin
     result := 0;
-    for i := 1 to Length(value) do
+    for i := Low(value) to Length(value) do
     begin
       if value[i] = delim then 
         result := result + 1;
@@ -284,7 +299,7 @@ implementation
   begin
     inRange := false;
     result := 0;
-    for i := 1 to Length(value) do
+    for i := Low(value) to Length(value) do
     begin
       if (not inRange) and (value[i] = delim) then 
         result := result + 1
