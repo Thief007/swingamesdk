@@ -6,7 +6,7 @@ uses sgTypes, sgUserInterface, sgCharacters;
 
 type
   BMPType  = (BitmapGroup, SourceGroup, AnimationGroup, PreviewGroup); // The type of grids used for the various scales of the bitmaps draw
-  DialogType = (None, SaveBMP, SaveAni, SaveChar, LoadBMP, LoadAni, LoadChar, LoadAniEdit);
+  DialogType = (None, SaveBMP, SaveAni, SaveChar, LoadBMP, LoadAni, LoadChar, LoadAniEdit, SetSoundPath);
 	
   LoadedBitmapPtr = ^LoadedBitmap;               // Pointer to a loaded bitmap for the type of bitmaps used in the editor 
   CellGroup = ^CellGroupData;                    // Pointer to a CellGroup used by the cells to their parents
@@ -199,7 +199,7 @@ type
   // Saving
   //--------------------------------------------------------------------------- 
  	procedure ExportBitmap(destbmp: Bitmap; cellGrp: CellGroupData); 
-  procedure ExportAnimation(aniStrips: AniStripArray);
+  procedure ExportAnimation(aniStrips: AniStripArray; path: string);
   procedure LoadAnimation(var AniMode: AnimationEditorValues);
   procedure DoOpenDialog(var sharedVals : EditorValues; dt : DialogType);
   procedure DoSaveDialog(var sharedVals : EditorValues; dt : DialogType);
@@ -218,10 +218,6 @@ const
 	AnimationEditorID				= 1;
 	CharacterEditorID				= 2;
 		
-//Colors
-	Red											= 255;
-	Green										= 255;
-	Blue										= 255;
 //Other
 	edgeDistance						= 50;
 	ArrowWidth							= 39;
@@ -232,14 +228,6 @@ const
 	BMPWindowHeight 	= 190;
 	BMPWindowX 				= 57;
 	BMPWindowY 				= 85;
-	AniBitmapDetails  = 0;
-	AniDetailTabs 		= 1;
-	AniCellBMPNames 	= 2;
-	AniMenuPanel 			= 3;
-	AniStats 			    = 4;
-	AniScroll			    = 5;
-	Preview1 			    = 6;
-	AniNames 			    = 7;
 	CellGapSmall 			= 2;
 	CellGapLarge 			= 15;
 	
@@ -607,7 +595,7 @@ implementation
 		SetLength(bmpArray, Length(bmpArray)+1);
 		
 		bmpArray[High(bmpArray)].original := MapBitmap(id, fileName);	
-		SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(Red,Green,Blue));
+	//	SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(Red,Green,Blue));
 		
 		bmpArray[High(bmpArray)].scaled[BitmapGroup]    := bmpArray[High(bmpArray)].original;
 		bmpArray[High(bmpArray)].scaled[SourceGroup]    := bmpArray[High(bmpArray)].original;
@@ -919,7 +907,6 @@ implementation
 		with cellGrp do
 		begin	
       destbmp := CreateBitmap(cellGrp.grpArea.width - (cellGap*(cols-1)), cellGrp.grpArea.height - (cellGap*(rows-1)));
-    //  for i := Low(bmpArray) to High(bmpArray) do MakeOpaque(bmpArray[i].scaled[GridType]);		
 			for i := Low(cells) to High(cells) do
 			begin
         xPos := Trunc(cells[i].Area.X - cells[i].xGap - grpArea.X);
@@ -932,7 +919,6 @@ implementation
           MakeTransparent(cells[i].bmpPtr^.scaled[cells[i].parent^.GridType]);	
         end;
 			end;
-   //   for i := Low(bmpArray) to High(bmpArray) do MakeTransparent(bmpArray[i].scaled[GridType]);
       SaveToPNG(destbmp, dialogpath);
       FreeBitmap(destBmp);
 		end;
@@ -966,7 +952,6 @@ implementation
         SetLength(aniData, Length(aniData) + 1);
         SetLength(aniData[High(aniData)].range, 1);
         SetLength(aniData[High(aniData)].idArray, 1);
-        WriteLn('Adding SingleFrame');
         aniData[High(aniData)].idArray[0]    := StrToInt(ExtractDelimited(1, data, [',']));
         aniData[High(aniData)].range[0] := StrToInt(ExtractDelimited(2, data, [',']));
         aniData[High(aniData)].speed    := StrToInt(ExtractDelimited(3, data, [',']));
@@ -979,41 +964,30 @@ implementation
       procedure _ProcessMultiFrame();
       begin
         SetLength(aniData, Length(aniData) + 1);
-        WriteLn('Adding MultiFrame');
-        WriteLn('Doing IDs');
         aniData[High(aniData)].idArray  := ProcessRange(ExtractDelimitedWithRanges(1, data));
-        WriteLn('Doing Cells');
         aniData[High(aniData)].range    := ProcessRange(ExtractDelimitedWithRanges(2, data));
-        WriteLn('Finished Cells');
         aniData[High(aniData)].speed    := StrToInt(ExtractDelimitedWithRanges(3, data));
         if ExtractDelimitedWithRanges(4, data) <> '' then 
           aniData[High(aniData)].next     := StrToInt(ExtractDelimitedWithRanges(4, data))
         else
           aniData[High(aniData)].next     := -1;
-        WriteLn('Finished MultiFrame');
       end;
       
       procedure _ProcessIDs();
       begin
-        WriteLn('Start IDs');
         SetLength(aniString, Length(aniString) + 1);
         aniString[High(aniString)].value      := ExtractDelimited(1, data, [',']);
 
         aniString[High(aniString)].targetCell := StrToInt(ExtractDelimited(2, data, [',']));
-        WriteLn('End IDs');
       end;
       
       procedure _ProcessSounds();
       begin
-        WriteLn('Adding Sound');
         SetLength(aniSounds, Length(aniSounds) + 1);
-        WriteLn(data);
         WriteLn(ExtractDelimited(1, data, [',']));
-        aniSounds[High(aniSounds)].value      := ExtractDelimited(1, data, [',']);
-        WriteLn(ExtractDelimited(2, data, [',']));
-        WriteLn('Write Done');
-        aniSounds[High(aniSounds)].targetCell := StrToInt(ExtractDelimited(2, data, [',']));
-        WriteLn('ENdSOund');
+        aniSounds[High(aniSounds)].value      := ExtractDelimited(3, data, [',']);
+        WriteLn(ExtractDelimited(3, data, [',']));
+        aniSounds[High(aniSounds)].targetCell := StrToInt(ExtractDelimited(1, data, [',']));
       end;
       
       procedure _CalculateTargetStrip();
@@ -1022,10 +996,6 @@ implementation
       begin         
         for k := Low(aniData) to High(aniData) do
         begin
-            WriteLn('parent idx k ', k);
-            WriteLn('parent low k ', aniData[k].IDArray[Low(aniData[k].IDArray)]);
-            WriteLn('parent low k ', aniData[k].IDArray[High(aniData[k].IDArray)]);
-            WriteLn('next ' , aniData[i].next);
           if (aniData[i].next >= aniData[k].IDArray[Low(aniData[k].IDArray)]) AND
              (aniData[i].next <= aniData[k].IDArray[High(aniData[k].IDArray)]) then
           begin
@@ -1033,7 +1003,6 @@ implementation
             tempAni[High(tempAni)].lastCellParentID := k;
             tempAni[High(tempAni)].lastCell.cells[0].Idx     := aniData[i].next - aniData[k].idArray[0];
             tempAni[High(tempAni)].lastCell.cells[0].cellIdx := aniData[k].range[tempAni[High(tempAni)].lastCell.cells[0].Idx];
-            WriteLn('idx ' ,tempAni[High(tempAni)].lastCell.cells[0].Idx);
           end;
        
         end;
@@ -1080,9 +1049,9 @@ implementation
       procedure ProcessLine();
       begin
         // Split line into id and data
-        WriteLn(line);
+       // WriteLn(line);
         id := ExtractDelimited(1, line, [':']);
-        data := ExtractDelimited(2, line, [':']);
+        data := ExtractAfterFirstDelim(1, line,':');//ExtractDelimited(2, line, [':']);
         case LowerCase(id)[1] of // in all cases the data variable is read
           'f': _ProcessSingleFrame();
           'm': _ProcessMultiFrame();
@@ -1130,12 +1099,12 @@ implementation
     end;  
     _CalculateTargetID();
     AniMode.aniStrips := tempAni;
-    WriteLn(AniMode.aniStrips[0].lastCell.cells[0].cellIdx);
+ //   WriteLn(AniMode.aniStrips[0].lastCell.cells[0].cellIdx);
     UpdateBitmapPointers(AniMode.cellGrp, AniMode.aniStrips);
     PositionAniHorizontalScrollButtons(AniMode);
   end;
   
-  procedure ExportAnimation(aniStrips: AniStripArray);
+  procedure ExportAnimation(aniStrips: AniStripArray; path: string);
   type
     last = record
       cellIdx, aniIdx, parentIdx : Integer;
@@ -1247,7 +1216,7 @@ implementation
     end; 
   begin
     id := 0;
-    Assign(txt, dialogpath);
+    Assign(txt, path);
     ReWrite(txt);
     WriteLn(txt,'SwinGame Animation #v1');
     WriteLn(txt,'');
@@ -1288,7 +1257,7 @@ implementation
     
     for i := Low(arrayofSounds) to High(arrayofSounds) do 
     begin
-      WriteLn(txt, 's:' + arrayofSounds[i]);
+      WriteLn(txt, 's:' + ExtractDelimited(2, arrayofSounds[i], [',']) + ',' + ExtractFileName(ExtractDelimited(1, arrayofSounds[i], [','])) + ',' + ExtractDelimited(1, arrayofSounds[i], [',']));
     end;
     
     WriteLn(txt, '//Identifiers');
@@ -1331,7 +1300,8 @@ implementation
   
   procedure DrawCellArea(cell: CellArea);
   begin
-    DrawCell(cell.bmpPTR^.scaled[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
+ // wRITElN(cell.parent^.GridType);
+  //  DrawCell(cell.bmpPTR^.scaled[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
   end;
   
   procedure MyDrawSplitBitmapCells(cellGrp: CellGroupData; sharedVals: EditorValues);

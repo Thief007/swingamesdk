@@ -94,7 +94,6 @@ begin
 	begin
 		ShowPanel(panels[i]);
 	end;
-	HidePanel(panels[CellDetails]);
 end;
 
 // Shows the Animation panels when the mode is selected
@@ -106,8 +105,6 @@ begin
 	begin
 		ShowPanel(panels[i]);
 	end;
-	HidePanel(panels[AniCellBMPNames]);
-	HidePanel(panels[Preview1]);
 end;
 
 procedure ShowCharPanels(panels: PanelArray);

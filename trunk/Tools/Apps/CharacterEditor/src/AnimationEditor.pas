@@ -11,6 +11,14 @@ interface
 	
 implementation
 
+const
+	AniBitmapDetails  = 0;
+	AniLists       		= 1;
+	AniMenuPanel 			= 2;
+	AniStats 			    = 3;
+	AniScroll			    = 4;
+	AniPreview		    = 5;
+
 	//---------------------------------------------------------------------------
   // Initialize Animation Editor
   //--------------------------------------------------------------------------- 
@@ -19,22 +27,13 @@ implementation
 	var
 		i: LongInt;
 	begin
-		SetLength(result, 8);
+		SetLength(result, 6);
 		result[AniBitmapDetails]:= LoadPanel('AniBitmapDetails.txt');
-		result[AniDetailTabs]		:= LoadPanel('AniDetailTabs.txt');
-		result[AniCellBMPNames]	:= LoadPanel('AniCellBMPNames.txt');
+		result[AniLists]	      := LoadPanel('AniLists.txt');
 		result[AniMenuPanel]	  := LoadPanel('AniMenuPanel.txt');
 		result[AniStats]	      := LoadPanel('AniStats.txt');
 		result[AniScroll]	      := LoadPanel('AniScroll.txt');
-		result[Preview1]	      := LoadPanel('PreviewPanel1.txt');
-		result[AniNames]	      := LoadPanel('AnimationNames.txt');
-		for i := Low(result) to High(result) do
-		begin
-			ActivatePanel(result[i]); 
-		end;
-		ListAddItem(ListFromRegion(RegionWithID('AniBMPList')), 'None');
-		ListSetActiveItemIndex(ListFromRegion(RegionWithID('AniBMPList')), 0);	
-		LabelSetText(LabelFromRegion(RegionWithID('AniBmpActiveLbl')), ListActiveItemText(result[AniCellBMPNames], 'AniBMPList'));
+		result[AniPreview]	    := LoadPanel('AniPreview.txt');
 	end;
 	
 	procedure InitializeAnimationEditor(out AniMode: AnimationEditorValues);
@@ -212,6 +211,12 @@ implementation
 	//---------------------------------------------------------------------------
   // Animation IDs
   //--------------------------------------------------------------------------- 
+   
+  // Calculates the index of the animation strip based on the cell's position
+  function CalculateParentStripID(cell: CellArea; AniMode: AnimationEditorValues): Integer;
+  begin
+    result := Trunc((cell.area.y - InitialAnimationPosY + (AniMode.scrollOffset*AnimationIncrPosY)) / AnimationIncrPosY);
+  end;
   
   function SelectedIdx(aniStrip: AniStripArray) : Integer;
   var
@@ -237,20 +242,22 @@ implementation
     end;
   end;
   
-  procedure RefreshIDList(var aniStrips: AniStripArray);
+  procedure RefreshIDList(var AniMode: AnimationEditorValues);
   var
     i, j: Integer;
   begin
     ListClearItems(RegionWithID('IDList'));
     ListClearItems(RegionWithID('SoundList'));
-    for i := Low(aniStrips) to High(aniStrips) do
+    for i := Low(AniMode.aniStrips) to High(AniMode.aniStrips) do
     begin
-      with aniStrips[i] do
+      with AniMode.aniStrips[i].cellGrp do
       begin
-        for j:= Low(cellGrp.cells) to High(cellGrp.cells) do
+        for j:= Low(cells) to High(cells) do
         begin
-          if Trim(cellGrp.cells[j].identifier) <> '' then ListAddItem(RegionWithID('IDList'), cellGrp.cells[j].identifier);
-          if Trim(cellGrp.cells[j].sound) <> '' then ListAddItem(RegionWithID('SoundList'), cellGrp.cells[j].sound);
+          if Trim(cells[j].identifier) <> '' then 
+            ListAddItem(RegionWithID('IDList'), IntToStr(CalculateParentStripID(cells[j], AniMode)) + ',' + IntToStr(cells[j].idx) + ',' + cells[j].identifier);
+          if Trim(cells[j].sound) <> '' then 
+            ListAddItem(RegionWithID('SoundList'), IntToStr(CalculateParentStripID(cells[j], AniMode)) + ',' + IntToStr(cells[j].idx) + ',' + ExtractFileName(cells[j].sound));
         end;
       end;
     end;
@@ -296,7 +303,7 @@ implementation
     AniMode.selectedIdx := selected;
     
     case selected of 
-      -1 : ShowCellDetails(Multiple, Multiple, Multiple, Multiple, Multiple);
+      -1 : ShowCellDetails('*', Multiple, Multiple, Multiple, Multiple);
       -2 : ShowCellDetails(None, None, None, None, None);
     else
       with AniMode.aniStrips[selected] do
@@ -373,10 +380,10 @@ implementation
       if (RegionPanel(RegionOfLastUpdatedTextBox) = panels[AniStats]) AND (selectedIdx >= 0) then
       begin	
       	case IndexOfLastUpdatedTextBox of 
-          1: aniStrips[selectedIdx].cellGrp.cells[aniStrips[selectedIdx].cellGrp.selectedOrder[0]].identifier := TextBoxText(GUITextBoxOfTextEntered);//AddAniID(aniStrips[selectedIdx].stringIDs, TextBoxText(GUITextBoxOfTextEntered), aniStrips[selectedIdx].cellGrp.selectedOrder[0]);
-          2: aniStrips[selectedIdx].cellGrp.cells[aniStrips[selectedIdx].cellGrp.selectedOrder[0]].sound := TextBoxText(GUITextBoxOfTextEntered);//AddAniID(aniStrips[selectedIdx].soundIDs, TextBoxText(GUITextBoxOfTextEntered), aniStrips[selectedIdx].cellGrp.selectedOrder[0]);
-        end;
-        RefreshIDList(aniStrips);
+          2: aniStrips[selectedIdx].cellGrp.cells[aniStrips[selectedIdx].cellGrp.selectedOrder[0]].identifier := TextBoxText(GUITextBoxOfTextEntered);
+          3: aniStrips[selectedIdx].cellGrp.cells[aniStrips[selectedIdx].cellGrp.selectedOrder[0]].sound := TextBoxText(GUITextBoxOfTextEntered);
+        end;       
+        RefreshIDList(AniMode);
       end;
     end;
   end;
@@ -391,12 +398,6 @@ implementation
     
     sharedVals.dragCell := CellAreaAt(cellGrp, MousePosition, CellGapSmall);
     PickUpCell(sharedVals);
-  end;
-  
-  // Calculates the index of the animation strip based on the cell's position
-  function CalculateParentStripID(cell: CellArea; AniMode: AnimationEditorValues): Integer;
-  begin
-    result := Trunc((cell.area.y - InitialAnimationPosY + (AniMode.scrollOffset*AnimationIncrPosY)) / AnimationIncrPosY);
   end;
   
   procedure LastCellDragging(cellGrp: CellGroupData; var sharedVals: EditorValues;var AniMode: AnimationEditorValues);
@@ -433,10 +434,10 @@ implementation
     end;
   end;
   
-  procedure IncreaseAniStripLength(var cellGrp, lastCell: CellGroupData; AniMode: AnimationEditorValues);
+  procedure IncreaseAniStripLength(var cellGrp, lastCell: CellGroupData; AniMode: AnimationEditorValues; const count : Integer);
   begin
-    cellGrp.CellCount += 1;
-    cellGrp.cols += 1;
+    cellGrp.CellCount += count;
+    cellGrp.cols += count;
     InitializeCellArea(cellGrp, nil, CellGapLarge, false);
     UpdateGroupSize(cellGrp, CellGapLarge);
     MoveGroup(LastCell, Trunc(cellGrp.cells[High(cellGrp.cells)].area.x + (LastCell.grpArea.width + CellGapLarge)*2), Trunc(LastCell.grpArea.y));
@@ -458,7 +459,7 @@ implementation
         if not PointInRect(MousePosition, target^.area.x, target^.area.y, cellGrp.cellW, cellGrp.cellH) then
         begin
           idx := target^.idx + 1;          
-          IncreaseAniStripLength(cellGrp, lastCell, AniMode);
+          IncreaseAniStripLength(cellGrp, lastCell, AniMode, 1);
           ShiftDataInAnimationUp(cellGrp, idx);
           target := @cellGrp.cells[idx];
           DropData(dragCell, target);      
@@ -466,13 +467,18 @@ implementation
           DropData(dragCell, target);      
           if (cellGrp.cells[High(cellGrp.cells)].bmpPtr <> nil) then
           begin         
-            IncreaseAniStripLength(cellGrp, lastCell, AniMode);
+            IncreaseAniStripLength(cellGrp, lastCell, AniMode, 1);
           end;
         end;
       end else begin 
         DragAndDrop(cellGrp, sharedVals, CellGapLarge);
       end;
     end;
+  end;
+  
+  procedure AddMultiple();
+  begin
+    IncreaseAniStripLength(cellGrp, lastCell, AniMode, 1);
   end;
  
   procedure DeleteAnimationStrip(var AniMode: AnimationEditorValues; index: Integer);
@@ -521,7 +527,7 @@ implementation
       if Length(cellGrp.cells) <> 0 then MoveGroup(LastCell, Trunc(cellGrp.cells[High(cellGrp.cells)].area.x + (LastCell.grpArea.width + CellGapLarge)*2), Trunc(cellGrp.grpArea.y));
       UpdatePosition(LastCell); 
       DeleteAnimationStrip(AniMode, index);
-      RefreshIDList(AniMode.aniStrips);
+      RefreshIDList(AniMode);
       PositionAniHorizontalScrollButtons(AniMode);
     end;
   end;  
@@ -538,19 +544,11 @@ implementation
   end;
   
   procedure HandleSourceCells(var AniMode: AnimationEditorValues;var sharedVals: EditorValues);
-  var
-    listIndex, radioIndex: Integer;
   begin   
     with AniMode do
     begin
-      if (not PanelVisible(panels[AniBitmapDetails])) then
-      begin
-        if PanelVisible(panels[AniCellBMPNames]) then HidePanel(panels[AniCellBMPNames]);
-        exit;
-      end;
       
       if CheckboxState(RegionWithID('Drag')) then DragCellGroup(cellGrp, sharedVals);
-      if (RegionClickedID() = 'AniBmpActiveLbl') then ShowPanel(panels[AniCellBMPNames]);
       
       HandleSelection(cellGrp, sharedVals.dragCell);
       if MouseClicked(RightButton) then SourceCellDragging(cellGrp, sharedVals);
@@ -569,21 +567,24 @@ implementation
       end;
       
       if sharedVals.BitmapPtr <> nil then UpdateAllAniBitmaps(cellGrp, sharedVals.BitmapPtr, aniStrips);
-      if (RegionClickedID() = 'AniActiveLbl') then ToggleShowPanel(panels[AniNames]);
       if (RegionClickedID() = 'ExportAnimationStrip') then DoSaveDialog(sharedVals, SaveAni);
       if (RegionClickedID() = 'LoadAniIntoEditor') then DoOpenDialog(sharedVals, LoadAniEdit);
-      if DialogComplete AND (sharedVals.OpenSave = SaveAni) then ExportAnimation(aniStrips);
+      if (RegionClickedID() = 'AniChangeBitmap') then ShowPanel(sharedVals.panels[BrowserPanel]);
+      if (RegionClickedID() = 'BrowseSound') then DoOpenDialog(sharedVals, SetSoundPath);
+      if DialogComplete AND (sharedVals.OpenSave = SaveAni) then ExportAnimation(aniStrips, dialogPath);
+      if DialogComplete AND (sharedVals.OpenSave = SetSoundPath) then
+      begin
+        aniStrips[selectedIdx].cellGrp.cells[aniStrips[selectedIdx].cellGrp.selectedOrder[0]].sound := dialogPath;
+        RefreshIDList(AniMode);
+      end;
       if DialogComplete AND (sharedVals.OpenSave = LoadAniEdit) then
       begin
         LoadAnimation(AniMode);
-        RefreshIDList(aniStrips);
+        RefreshIDList(AniMode);
       end;
       
       if GUITextEntryComplete  then UpdateAniCellStripFromTextBox(AniMode);
-      
-      if (radio1 <>  ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('PreviewTab')))) then
-        ChangePanels(panels[AniBitmapDetails], panels[Preview1], radio1, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('PreviewTab'))));
-             
+                   
       DisplaySelectedCellStats(AniMode); 
       ScrollAnimationsVertical(AniMode);
       ScrollAnimationsHorizontal(AniMode);      
@@ -619,25 +620,22 @@ implementation
   var
     i: integer;
   const
-    xPos = 200; // Middle of panel based on scale
-    yPos = 130; // Middle of panel based on scale
+    xPos = 400; // Middle of panel based on scale
+    yPos = 60; // Middle of panel based on scale
   begin
     with AniMode do
     begin
-      if (ListActiveItemIndex(ListFromRegion(RegionWithID('AniBMPList'))) = -1) OR
-          (cellGrp.cellCount = 0) then exit;
+      if (cellGrp.cellCount = 0) then exit;
       if previewSprite <> nil then FreeSprite(previewSprite);
-      ExportAnimation(aniStrips);
+      ExportAnimation(aniStrips, PathToResource('/animations/testsave.txt'));
       if aniTemp <> nil then FreeAnimationTemplate(aniTemp);
       aniTemp := LoadAnimationTemplate('testsave.txt');
       previewSprite := CreateSprite(cellGrp.cells[0].bmpPtr^.scaled[PreviewGroup], aniTemp);
       ListClearItems(RegionWithID('AniList'));
       for i := 0 to NameCount(aniTemp^.animationIDs)-1 do
       begin
-        WriteLn(i); 
         ListAddItem(RegionWithID('AniList'), NameAt(aniTemp^.animationIDs, i));
       end;
-      WriteLn(NameCount(aniTemp^.animationIDs));
       previewSprite^.position.x := xPos;
       previewSPrite^.position.y := yPos;
     end;
@@ -647,20 +645,12 @@ implementation
   begin
     with AniMode do
     begin
-      if (not PanelVisible(panels[Preview1])) then
-      begin
-        if PanelVisible(panels[AniNames]) then HidePanel(panels[AniNames]);
-        exit;
-      end;
       if previewSprite <> nil then DrawSprite(previewSprite);
-      if RegionClickedID = 'RefreshPreview' then 
-      begin 
-        RefreshPreview(AniMode, sharedVals);
-      end;
+      if RegionClickedID = 'RefreshPreview' then RefreshPreview(AniMode, sharedVals);
+
       if (ListActiveItemIndex(RegionWithID('AniList')) <> -1) AND (ListActiveItemText(RegionWithID('AniList')) <> '') AND (RegionClickedID = 'AniList') then
       begin
           SpriteStartAnimation(previewSprite, ListActiveItemText(RegionWithID('AniList')));
-          HidePanel(panels[AniNames]);
       end;
       if (ListActiveItemIndex(RegionWithID('AniList')) <> -1) then UpdateSpriteAnimation(previewSprite);
     end;
