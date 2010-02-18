@@ -21,22 +21,7 @@ const
 	ClipH										= 490;	
 	
 implementation
-	
-	procedure MyListSetActiveItemIndex(id: string; value: Integer);
-	begin
-		ListSetActiveItemIndex(ListFromRegion(RegionWithID(id)), value);
-	end;
-	
-	function MyLabelText(id: string): string;
-	begin
-		result := LabelText(LabelFromRegion(RegionWithID(id)));
-	end;
-	
-	function MyListActiveItemIndex(id: string): Integer;
-	begin
-		result := ListActiveItemIndex(ListFromRegion(RegionWithID(id)));
-	end;
-			
+					
 	procedure ShowSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray);
 	var
 		i: integer;
@@ -62,34 +47,7 @@ implementation
       if (Length(cellGrp.selectedOrder) = 0)  AND PanelVisible(pnl[CellDetails]) then HidePanel(pnl[CellDetails]);
     end;
   end;
-	
-	procedure HideSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray; bmpArray: LoadedBitmaps);
-	var
-		i: integer; 
-	begin
-    if PanelVisible(pnl[CellDetails]) AND (Length(cellGrp.selectedOrder) = 0) then
-    begin
-      HidePanel(pnl[CellDetails]);
-      exit;
-    end;
-    if (RegionClickedID <> 'BMPList') then exit;
-    with cellGrp do
-    begin    
-      if (Length(selectedOrder) = 1) then
-      begin
-        cells[selectedOrder[0]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
-      end else
-      if (Length(selectedOrder) > 1) then
-      begin
-        for i := Low(selectedOrder) to High(selectedOrder) do
-        begin
-          cells[selectedOrder[i]].bmpPtr := SetLoadedBitmapPtr(MyListActiveItemIndex('BMPList') - 1, bmpArray);
-        end;
-      end;
-   //x   LabelSetText(RegionWithID('CurrentBitmapNameLbl'), ListActiveItemText(pnl[CellBitmapNames], 'BMPList'));
-    end;
-	end;
-	
+		
 	procedure ScaleBitmaps(var cellGrp: CellGroupData; var bmpArray : CharBodyTypes; newScale : integer; var bmpScale : integer);
 	var
 		initHeight, initWidth: integer;
@@ -159,8 +117,6 @@ implementation
     
       for i := Low(selectedOrder) to High(selectedOrder) do
       begin
-        WriteLn('i: ', i);
-        WriteLn('selectedOrder[i]: ', selectedOrder[i]);
         cells[selectedOrder[i]].bmpPtr := bmpPtr;
       end;     
       LabelSetText(RegionWithID('CurrentBitmapNameLbl'), bmpPtr^.original^.name);
@@ -194,7 +150,6 @@ implementation
 		begin
       UpdateGUI(BitmapMode, sharedVals);
 			ShowSelectedDetails(cellGrp, panels);
-	//		HideSelectedDetails(cellGrp, panels, sharedVals.BMPArray);
   
       if sharedVals.BitmapPtr <> nil then ChangeDrawnBitmap(cellGrp, sharedVals.BitmapPtr, panels[CellDetails]);
 				
@@ -232,7 +187,6 @@ implementation
 		SetLength(result, 3);
 		result[BitmapDetails]		:= LoadPanel('BitmapDetails.txt');
 		result[CellDetails]			:= LoadPanel('BMPCellDetails.txt');
-	//	result[CellBitmapNames]	:= LoadPanel('CellBMPNames.txt');
 		result[BitmapButtons]		:= LoadPanel('BitmapButtons.txt');
 		for i := Low(result) to High(result) do
 		begin
@@ -248,7 +202,7 @@ implementation
 			panels	:= InitializePanels();
 			cellGrp := InitializeCellGroup(12, 3, 4, 24, 32, ClipX, ClipY, CellGap, BitmapGroup);
 			InitializeCellArea(cellGrp, nil, CellGap, true);
-			scale		 		:= 1;
+			scale		:= 1;
       destBMP := nil;
 			bg := LoadBitmap('BMPEDITOR.png');
 		end;
