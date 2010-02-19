@@ -6,17 +6,19 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 25
-y: 395
-w: 140
-h: 60
+x: 595
+y: 45
+w: 195
+h: 535
 a: blank.png
 i: blank.png
-b: blank.png
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
-//LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
-r: 0, 0, 140, 60, List, BMPList, 1, 3, -1, subsSmall, left, 25,  v, n
+r: 15, 170, 160, 338, List, LayerList, 1, 16, -1, subs, left, 10,  v, blank.png
+r: 45, 63, 110, 15, Button, LoadNewAni
+r: 45, 512, 110, 15, Button, RemoveLayer
+
+

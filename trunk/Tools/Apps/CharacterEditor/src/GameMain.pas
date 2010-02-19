@@ -36,7 +36,7 @@ begin
       
   for i := 0 to NameCount(browser.bodyType[bodyIndex].parts[partIndex].ids) -1 do
   begin
-    ListAddItem(ListFromRegion(RegionWithID('ImageList')), BitmapCellOf(browser.bodyType[bodyIndex].parts[partIndex].bmps[i].original, 0));
+    ListAddItem(ListFromRegion(RegionWithID('ImageList')), BitmapCellOf(browser.bodyType[bodyIndex].parts[partIndex].bmps[i].scaled[Original], 0));
   end;   
 end;
 
@@ -189,7 +189,7 @@ begin
   InitializeCharEditor(CharMode);
 
       
-  LoadBitmapsFromTextFile(sharedVals.Browser, PathToResource('\images\test.txt'), ListFromRegion(RegionWithID('BMPList')), ListFromRegion(RegionWithID('AniBMPList')));
+  LoadBitmapsFromTextFile(sharedVals.Browser, PathToResource('/images/ImageRepository.txt'));
   
   sharedVals.dragCell := nil;
   sharedVals.dragGroup := false;
@@ -224,9 +224,9 @@ begin
     end;
     
     if DialogComplete then sharedVals.OpenSave := None;
+
     
    // if KeyTyped(Vk_8) then ToggleSHowPanel(p[Browser]);
-            
 		UpdateInterface();
 		RefreshScreen(60);   
   until WindowCloseRequested();

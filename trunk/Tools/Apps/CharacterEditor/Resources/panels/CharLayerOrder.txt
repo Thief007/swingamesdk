@@ -1,0 +1,31 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 230
+y: 345
+w: 350
+h: 300
+a: blank.png
+i: blank.png
+
+// Region data
+// Format: r: x, y, w, h, kind
+//Radiobutton r: x, y, w, h, 3, GroupID
+//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
+//r: 75, 110, 110, 15, Label, DirLayerLbl, subsSmall, l, None
+//r: 75, 128, 110, 15, Label, StateLayerLbl, subsSmall, l, None
+//r: 75, 147, 110, 15, Label, AniLayerLbl, subsSmall, l, None
+r: 10, 150, 110, 15, Button,MoveUP
+
+r: 0, 0, 120, 60, List, StateLayerList, 1, 3, -1, subsSmall, left, 10,  v, n
+r: 0, 80, 120, 60, List, DirLayerList, 1, 3, -1, subsSmall, left, 10,  v, n
+r: 0, 170, 120, 60, List, AniLayerList, 1, 3, -1, subsSmall, left, 10,  v, n
+r: 150, 0, 120, 210, List, LayerOrder, 1, 15, -1, subsSmall, left, 10,  v, n
+
+

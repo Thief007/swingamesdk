@@ -1,0 +1,220 @@
+./CharEditor/Chara-dwarf/Body/CharsetDWARF-Body-Dwarf-Duergar.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Body/CharsetDWARF-Body-Dwarf-Duergar1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Body/CharsetDWARF-Body-Dwarf[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Body/skel.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Dress/CharsetDWARF-Dress-BasicArmor-Green.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Dress/CharsetDWARF-Dress-BasicArmor[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Dress/CharsetDWARF-Dress-BigArmor[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Dress/CharsetDWARF-Dress-BlackKnightArmor[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Dress/CharsetDWARF-Dress-NormalDress[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Face/CharsetDWARF-Face-LeftScare[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Face/CharsetDWARF-Face-Normal-Brown.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Face/CharsetDWARF-Face-Normal[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Face/CharsetDWARF-Face-RightScare[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Face/CharsetDWARF-Face-Scar[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Hairs/Hair_DwarfBarbareBrown.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Hairs/Hair_DwarfChauveBlond.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Hairs/Hair_DwarfChevalRoux.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Hairs/Hair_DwarfLongBlack.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Hairs/Hair_DwarfLongChauveGray.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Items/CharsetDWARF-Item-Axe01[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Items/CharsetDWARF-Item-AxeReversed[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Items/CharsetDWARF-Item-BroadswordReversed[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Items/CharsetDWARF-Item-Broadsword[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-dwarf/Items/CharsetDWARF-Item-FF7CloudSword[Default].png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Body/blackbodyisometric.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Body/corpoiso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Body/EditedIso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Dress/bluertparmourisometric3.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Dress/evilisometricarmour.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Dress/IsoBod.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Dress/vestitoiso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Face/angry_black.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Face/angry_blue.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Face/angry_green.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Face/angry_isometric.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Face/facciaiso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Hairs/capelliiso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Hairs/MewtNormalHair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Hairs/yellowbraidediso3.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Hairs/zackhairisometric2.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Items/bluertphelmetisometric4.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Items/dragoonhelmedit.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Items/piratebandanaisometric6.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Isometric/Items/piratepatchisometric2.PNG, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Body/BrownBody1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Body/BrownBody2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Body/Japanesepeanut-1048716852.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Body/NamecBody.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Body/RedBody.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Dress/AAB-DressC3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Dress/AAE-Dress1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Dress/AAF-Dress2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Dress/Dress4.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Dress/Dress5.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Face/AAA-1048716883.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Face/BrownFace1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Face/BrownFace2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Face/BrownFace3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Face/Japanesepeanut-1048716895.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Hairs/Black_boy_hair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Hairs/Blond_boy_hair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Hairs/Blue_boy_hair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Hairs/Green_boy_hair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Hairs/Grey_boy_hair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Items/BAA-Charao01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Items/Balloon2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Items/Balloon3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Items/Balloon4.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-little/Items/CAB-Baloon1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Body/AAA-BaseBody.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Body/blackbody.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Body/blackbody2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Body/FAA-DrowBody.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Body/gray.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Dress/casual02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Dress/casual03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Dress/casual04.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Dress/DAB-casual1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Dress/FAB-dress.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Face/AAA-NormalFemaleFace.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Face/AAB-Mustache.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Face/AAC-AngryFace.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Face/DAA-Elf.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Face/elfo02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Hairs/CAL-femminili03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Hairs/CDI-SFcammy.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Hairs/CDI-SFchunli.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Hairs/CEQ-femminili01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Hairs/femminili02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Items/alloro_metal.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Items/CAB-FalloroCip.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Items/CAC-angelo_aureola.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Items/EAB-angeloaliaureola.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-medium/Items/EAB-Bangelo_ali.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Body/corpolupo1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Body/corpolupo2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Body/corpolupo3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Body/corpolupo4.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Body/corpolupo5.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Dress/pantaloniblu.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Dress/pantalonighiaccio.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Dress/pantalonimarroni.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Dress/pantaloniverdi.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Dress/pantaloniviola.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Face/facelupo1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Face/facelupo2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Face/facelupo3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Face/facelupo4.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Face/testa1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Hairs/3_skeleton_hair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Hairs/capellispazzolacorretti.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Hairs/capellispazzolacorretti2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Hairs/capellispazzolacorretti3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Hairs/capelli_lupo.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Items/bracciali.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Items/brown_queue.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Items/coda.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Items/green_queue.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters/Items/werewolf_crown.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Body/2colors.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Body/2colorswv.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Body/demona.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Body/demona2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Body/demona3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Dress/lupaabito.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Dress/lupaabitoblue.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Dress/lupaabitogreen.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Dress/lupaabitogreen2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Dress/lupaabitored.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Face/lupaface.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Face/occhirossi.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Face/occhiverdi.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Face/occhiviola.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Face/volpeface.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Hairs/lupacapelli.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Hairs/lupacapelliarancioni.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Hairs/lupacapelliverdi.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Hairs/lupacapelliverdi2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Hairs/lupacapelliviola.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Items/alloroSMB.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Items/cornadonna.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Items/cornadonna2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Items/cornadonna3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-monsters_f/Items/lupaorecchie.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Body/GAWTorso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Body/OverweightTorso.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Body/OverweightTorsoGrey.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Body/OverweightTorsoPink.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Body/OverweightTorsoRed.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Dress/AltDBZSuit.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Dress/BasicShirt1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Dress/BasicShirt2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Dress/DBZSuit.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Dress/FatRTPDress.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Face/FatBlueHead.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Face/FatBlueHeadAngry.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Face/FatBuuHead.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Face/FatRTPHead.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Face/FatRTPHeadAngry.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Hairs/AndreHazesHairOldStyle.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Hairs/bphair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Hairs/CidHair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Hairs/cphair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Hairs/FighterHair.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Items/Axe.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Items/Axe2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Items/BuuHeadThing.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Items/FatRTPHat.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-Overweight Torso/Items/Wings.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Body/AAA-corpo_base.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Body/CorpoG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Body/CorpoG03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Body/CorpoG08.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Body/WhiteBodyC1.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Dress/AAB-armatura01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Dress/Armatura02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Dress/Armatura03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Dress/BBA-MilUnif01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Dress/BCA-FF7barrett.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Face/AAA-face01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Face/ABC-FaceG2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Face/ABD-FaceG3.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Face/DAB-FaceG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Face/FaceG4.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Hairs/AAF-CapelliG02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Hairs/AAH-CapelliG07.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Hairs/BAC-CapelliG06.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Hairs/DAA-CapelliG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Hairs/DBA-CapelliG04.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Items/AAA-CascoG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Items/ACA-CoronaG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Items/ACC-AlloroG01Cip.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Items/ACD-FasciaG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-soldiers/Items/ACE-AureolaG01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Body/AA-Tall01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Body/Tall02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Body/Tall03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Body/Tall04.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Body/Tall05.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Dress/BBF-Vestito01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Dress/Vestito02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Dress/Vestito03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Dress/Vestito04.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Dress/Vestito05.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Face/AAA-FaceTall004.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Face/AAC-FaceTall001.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Face/AAD-pFaceTall010.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Face/FaceTall011.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Face/FaceTall012.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Hairs/Capelli03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Hairs/Capelli04.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Hairs/Capelli05.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Hairs/DBA-Capelli01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Hairs/DBH-Capelli2.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Items/BAA-Occhiali01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Items/CBA-Mantello01.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Items/Mantello02.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Items/Mantello03.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/Chara-tall/Items/Mantello04.png, 255, 255, 255, 3, 4, 24, 32, 12
+./CharEditor/chara_chubby/Body/1-Albino.png, 255, 255, 255, 3, 4, 24, 32, 12

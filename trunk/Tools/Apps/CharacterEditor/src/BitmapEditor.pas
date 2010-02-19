@@ -64,17 +64,7 @@ implementation
       InitializeBitmapDetails(GridType, bmpArray, newScale, cols, rows);
 		end;
 	end;
-  
-  function ValidateInput(var target: Integer): Integer;
-  begin
-    result := -1;
-    if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), result) AND (result > -1) then
-		begin	
-      target := result;
-    end else
-      TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(target));
-  end;
-  
+    
   procedure ValidateInputForScale(var cellGrp: CellGroupData; var target: Integer; bmpArray: CharBodyTypes);
   var
     newVal : Integer;
@@ -119,7 +109,7 @@ implementation
       begin
         cells[selectedOrder[i]].bmpPtr := bmpPtr;
       end;     
-      LabelSetText(RegionWithID('CurrentBitmapNameLbl'), bmpPtr^.original^.name);
+      LabelSetText(RegionWithID('CurrentBitmapNameLbl'), bmpPtr^.scaled[Original]^.name);
       HidePanel(pnl);
       DeselectAll(cellGrp);
     end;

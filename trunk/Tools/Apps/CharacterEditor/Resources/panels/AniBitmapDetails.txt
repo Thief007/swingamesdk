@@ -1,40 +1,39 @@
 // Panel Version: 1
 
-// Load bitmaps for the panel 
-// b: name,filename
-// b:main_menu_bmp,main_menu.png
-// Load Fonts for labels before creating panels.
-
 // Panel data:
-x: 10
-y: 60
-w: 370
-h: 217
-a: AniBitmapDetails.png
-i: AniBitmapDetails.png
-b: AniBitmapDetails.png
-
-// Region data
-// Format: r: x, y, w, h, kind
-//Radiobutton r: x, y, w, h, 3, GroupID
-//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+x: 23
+y: 80
+w: 395
+h: 240
+a: AniSourceCellsAct.png
+i: AniSourceCells.png
+b: AniSourceCells.png
+v: false
 
 //ActiveBMP Label
-r: 70, 5, 80, 12, Label, AniBmpActiveLbl, subsSmall, l,_
-
-//CellWidth
-r: 300, 0, 80, 12, TextBOx, AniCellWIn, subsSmall, 16, center, 0
-r: 200, 0, 80, 12, Label, AniCellWLbl, subsSmall, l, Columns
-
-//CellHeight
-r: 300, 10, 80, 12, TextBox, AniCellHIn, subsSmall, 16, center, 0
-r: 200, 10, 80, 12, Label, AniCellWHbl, subsSmall, l, Rows
+r: 165, 8, 80, 20, Label, AniBmpActiveLbl, subsSmall, l,None
 
 //Drag Checkbox
-r:2,25,45,30,CheckBox,Drag,false
+r:280,155,105,25,CheckBox,Drag,false
 
 //Fit to Window
-r:2,60,45,30,RadioGroup,Fit,ScaleGrp
+r:280,178,105, 25,RadioGroup,Fit,ScaleGrp
 
 //Original Size
-r:2,95,45,30,RadioGroup,Full,ScaleGrp
+r:280,202,105, 25,RadioGroup,Full,ScaleGrp
+
+//New Strip
+r: 2, 29, 105, 25, Button, NewStrip
+
+//Add Selection
+r: 2, 69, 105, 25, Button, AniAddSelection
+r: 65, 98, 30, 20, TextBox, AniAddSelDest, subsSmall, 16, c,-
+
+//Add Multiple
+r: 2, 146, 105, 25, Button, AniAddMultiple
+r: 65, 173, 30, 20, TextBox, AniAddMultiDest, subsSmall, 16, c,-
+r: 65, 196, 30, 20, TextBox, AniAddMultiCount, subsSmall, 16, c,-
+
+//CHange Bitmap
+r: 145, 24, 100, 28, Button, AniChangeBitmap
+r: 245, 24, 28, 28, Button, AniClearBitmap
