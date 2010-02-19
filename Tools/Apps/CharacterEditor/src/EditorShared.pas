@@ -4,8 +4,59 @@ unit EditorShared;
 interface
 uses sgTypes, sgUserInterface, sgCharacters;
 
+const
+	CellGap 								= 5;
+	ScreenWidth 						= 800;
+	ScreenHeight						= 600;
+	LengthCellData 					= 6;
+	LengthgrpArea 					= 10;
+	LengthMode							= 2;
+	LengthAniEditing				= 6;
+
+//Editors
+	BitmapEditorID					= 0;
+	AnimationEditorID				= 1;
+	CharacterEditorID				= 2;
+		
+//Other
+	edgeDistance						= 50;
+	ArrowWidth							= 39;
+	ArrowHeight							= 26;
+  
+//Animation Editor
+	BMPWindowWidth 		= 147;
+	BMPWindowHeight 	= 170;
+	BMPWindowX 				= 140;
+	BMPWindowY 				= 135;
+	CellGapSmall 			= 2;
+	CellGapLarge 			= 15;
+	
+//FilmStrip
+	FilmStripStartX			= 30;
+	FilmStripY					= 340;
+	FilmStripSEWidth 		= 10;
+	FilmStripSEHeight		= 71;
+	
+	InitialAnimationPosX	= 50;
+	FilmStripStartPos	=12;
+	FilmStripYOffSet	=18;
+	InitialAnimationPosY	= 340;
+	AnimationIncrPosY	= 97;
+  FilmOffSet = -7;
+  
+  AniCellWidth = 24;
+  AniCellHeight = 32;
+  MaxAniStrips  = 40;
+  
+ // Editor Shared Panels
+  ToolBarMenu = 0; // Top menu of the editor
+  FileMenu     = 1; // Drop down menu from the file button
+  BrowserPanel   = 2;
+  
+  MainCharasFolders = 'chara_chubby,Chara-dwarf,Chara-Isometric,Chara-little,Chara-medium,Chara-monsters,Chara-monsters_f,Chara-Overweight Torso,Chara-soldiers,Chara-tall,Custom';
+	
 type
-  BMPType  = (BitmapGroup, SourceGroup, AnimationGroup, PreviewGroup); // The type of grids used for the various scales of the bitmaps draw
+  BMPType  = (Original, BitmapGroup, SourceGroup, AnimationGroup, PreviewGroup); // The type of grids used for the various scales of the bitmaps draw
   DialogType = (None, SaveBMP, SaveAni, SaveChar, LoadBMP, LoadAni, LoadChar, LoadAniEdit, SetSoundPath);
 	
   LoadedBitmapPtr = ^LoadedBitmap;               // Pointer to a loaded bitmap for the type of bitmaps used in the editor 
@@ -41,7 +92,8 @@ type
     cellGrp             : CellGroupData;         // The Animation cells 
     LastCell            : CellGroupData;         // The GOTO cell
     idx, scrollOffSet,                           // idx = the index of the animation strip. scrolloffset is used as a mutliplier to position the strip with scrolling
-    lastCellParentID    : Integer;               // LastCellParentID is the id of the parent for the last cell for saving purposes
+    lastCellParentID,
+    timing              : Integer;               // LastCellParentID is the id of the parent for the last cell for saving purposes
   end;
   
   PanelArray = Array of Panel;                   // PanelArray data type used for array of panels
@@ -91,7 +143,7 @@ type
     Cache : ItemCacheArray;
   end;
 
-  AniStripArray = Array of AnimationStrip;
+  AniStripArray = Array [0..MaxAniStrips] of AnimationStrip;
   
 	AnimationEditorValues = record
 		cellGrp         : CellGroupData;            // The group of cells in the top source cells
@@ -107,7 +159,8 @@ type
     scrollOffSet,                               // Vertical animationstrip scrolling offset
     originalSize,                               // Use original size or fit to window. Stores value of radio group to check if changed
     radio1,
-    radio2          : Integer;
+    radio2,
+    stripCount      : Integer;
     previewSprite   : Sprite;
     aniTemp         : AnimationTemplate;
 	end;
@@ -130,6 +183,7 @@ type
   
   // Returns the cell at the mouse position    
   function CellAreaAt(cellGrp: CellGroupData; const pt: Point2D; const gap: Integer): CellAreaPtr;
+  function ValidateInput(var target: Integer): Integer;
  
   //---------------------------------------------------------------------------
   // Initializing
@@ -150,8 +204,8 @@ type
   //Updates the position of all cells in the cellgroup to by offset by the x y of the cell group
   procedure UpdatePosition(var cellGrp: CellGroupData);
   // Creates an Animation Strip
-  procedure CreateAnimationStrip(var aniStrips: AniStripArray; cellCount : Integer);
-  procedure UpdateBitmapPointers(var sourceGrp: CellGroupData; var aniStrips: AniStripArray);
+  procedure CreateAnimationStrip(cellCount : Integer; var AniMode: AnimationEditorValues);
+  procedure UpdateBitmapPointers(var AniMode: AnimationEditorValues; bmpPtr: LoadedBitmapPtr);
   procedure PositionAniHorizontalScrollButtons(AniMode: AnimationEditorValues);
 
 	//---------------------------------------------------------------------------
@@ -163,7 +217,7 @@ type
   procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: CharBodyTypes; scale: single; cols, rows: Integer);
   procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);	
   procedure AddBitmapToArray(var bmpArray : LoadedBitmaps; id, fileName : string);
-  procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string; lst1, lst2: GUIList);
+  procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string);
 
 	//---------------------------------------------------------------------------
   // Dragging
@@ -204,56 +258,6 @@ type
   procedure DoOpenDialog(var sharedVals : EditorValues; dt : DialogType);
   procedure DoSaveDialog(var sharedVals : EditorValues; dt : DialogType);
 	
-const
-	CellGap 								= 5;
-	ScreenWidth 						= 800;
-	ScreenHeight						= 600;
-	LengthCellData 					= 6;
-	LengthgrpArea 					= 10;
-	LengthMode							= 2;
-	LengthAniEditing				= 6;
-
-//Editors
-	BitmapEditorID					= 0;
-	AnimationEditorID				= 1;
-	CharacterEditorID				= 2;
-		
-//Other
-	edgeDistance						= 50;
-	ArrowWidth							= 39;
-	ArrowHeight							= 26;
-  
-//Animation Editor
-	BMPWindowWidth 		= 320;
-	BMPWindowHeight 	= 190;
-	BMPWindowX 				= 57;
-	BMPWindowY 				= 85;
-	CellGapSmall 			= 2;
-	CellGapLarge 			= 15;
-	
-//FilmStrip
-	FilmStripStartX			= 30;
-	FilmStripY					= 340;
-	FilmStripSEWidth 		= 10;
-	FilmStripSEHeight		= 71;
-	
-	InitialAnimationPosX	= 50;
-	FilmStripStartPos	=12;
-	FilmStripYOffSet	=18;
-	InitialAnimationPosY	= 340;
-	AnimationIncrPosY	= 97;
-  FilmOffSet = -7;
-  
-  AniCellWidth = 24;
-  AniCellHeight = 32;
-  
- // Editor Shared Panels
-  ToolBarMenu = 0; // Top menu of the editor
-  FileMenu     = 1; // Drop down menu from the file button
-  BrowserPanel   = 2;
-  
-  MainCharasFolders = 'chara_chubby,Chara-dwarf,Chara-Isometric,Chara-little,Chara-medium,Chara-monsters,Chara-monsters_f,Chara-Overweight Torso,Chara-soldiers,Chara-tall,Custom';
-	
 implementation
 	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgNamedIndexCollection;
 
@@ -282,6 +286,16 @@ implementation
       
       result := @cells[index];
     end;
+  end;
+  
+  function ValidateInput(var target: Integer): Integer;
+  begin
+    result := -1;
+    if TryStrToInt(TextBoxText(GUITextBoxOfTextEntered), result) AND (result > -1) then
+		begin	
+      target := result;
+    end else
+      TextBoxSetText(GUITextBoxOfTextEntered, IntToStr(target));
   end;
   
   //---------------------------------------------------------------------------
@@ -396,50 +410,57 @@ implementation
     SetLength(result.selectedOrder, 0);
   end;
     
-  procedure CreateAnimationStrip(var aniStrips: AniStripArray; cellCount : Integer);
+  procedure CreateAnimationStrip(cellCount : Integer;var AniMode: AnimationEditorValues);
   var
     i: Integer;
 	begin
-    SetLength(aniStrips, Length(aniStrips) + 1);
+    with AniMode do
+    begin
+    if stripCount <> MaxAniStrips then stripCount += 1;
     
-    aniStrips[High(aniStrips)].idx 	:= 	High(aniStrips); 
+    aniStrips[stripCount].idx 	:= 	stripCount; 
     
-    aniStrips[High(aniStrips)].cellGrp  := InitializeCellGroup(cellCount, cellCount, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * High(aniStrips)), CellGapLarge, AnimationGroup);
-    aniStrips[High(aniStrips)].LastCell := InitializeCellGroup(1, 1, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * High(aniStrips)), CellGapLarge, AnimationGroup);
+    aniStrips[stripCount].cellGrp  := InitializeCellGroup(cellCount, cellCount, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * stripCount), CellGapLarge, AnimationGroup);
+    aniStrips[stripCount].LastCell := InitializeCellGroup(1, 1, 1, 24, 32, InitialAnimationPosX, InitialAnimationPosY + (AnimationIncrPosY * stripCount), CellGapLarge, AnimationGroup);
     
-    InitializeCellArea(aniStrips[High(aniStrips)].cellGrp, nil, CellGapLarge, false);
-    InitializeCellArea(aniStrips[High(aniStrips)].LastCell, nil, CellGapLarge, false);
+    InitializeCellArea(aniStrips[stripCount].cellGrp, nil, CellGapLarge, false);
+    InitializeCellArea(aniStrips[stripCount].LastCell, nil, CellGapLarge, false);
+ 
+    aniStrips[stripCount].scrollOffSet := 0;
+    aniStrips[stripCount].lastCellParentID := -1;
+    aniStrips[stripCount].timing := 1;
     
-    aniStrips[High(aniStrips)].scrollOffSet := 0;
-    aniStrips[High(aniStrips)].lastCellParentID := -1;
+    for i := 0 to stripCount do DeselectAll(aniStrips[i].cellGrp);
     
-    for i := Low(aniStrips) to High(aniStrips) do DeselectAll(aniStrips[i].cellGrp);
-    
-    with AniStrips[High(aniStrips)] do
+    with aniStrips[stripCount] do
     begin
       MoveGroup(LastCell, Trunc(cellGrp.cells[High(cellGrp.cells)].area.x + (LastCell.grpArea.width + CellGapLarge)*2), Trunc(LastCell.grpArea.y));
       UpdatePosition(LastCell);
     end;   
+    end;
 	end;
   
-  procedure UpdateBitmapPointers(var sourceGrp: CellGroupData; var aniStrips: AniStripArray);
+  procedure UpdateBitmapPointers(var AniMode: AnimationEditorValues; bmpPtr: LoadedBitmapPtr);
   var
     i, j: Integer;
   begin
-    if (Length(sourceGrp.cells) = 0) then exit;
+    if (Length(AniMode.cellGrp.cells) = 0) then exit;
     
-    for i := Low(aniStrips) to High(aniStrips) do
+    for i:= 0 to AniMode.stripCount do
     begin
-      for j := Low(aniStrips[i].cellGrp.cells) to High(aniStrips[i].cellGrp.cells) do
-      begin
-        if aniStrips[i].cellGrp.cells[j].cellIdx <> -1 then
-          aniStrips[i].cellGrp.cells[j].bmpPtr := sourceGrp.cells[0].bmpPtr;
+      with AniMode.aniStrips[i] do
+      begin       
+        for j := Low(cellGrp.cells) to High(cellGrp.cells) do
+        begin
+          if cellGrp.cells[j].cellIdx <> -1 then
+            cellGrp.cells[j].bmpPtr := bmpPtr;
+        end;
+        if lastCell.cells[0].cellIdx <> -1 then
+          lastCell.cells[0].bmpPtr := bmpPtr;
       end;
-      if aniStrips[i].lastCell.cells[0].cellIdx <> -1 then
-        aniStrips[i].lastCell.cells[0].bmpPtr := sourceGrp.cells[0].bmpPtr;
     end;
   end;
-  
+    
   procedure PositionAniHorizontalScrollButtons(AniMode: AnimationEditorValues);
   var
     buttonArray: Array [0..2] of Region;
@@ -451,19 +472,19 @@ implementation
     
     with AniMode do
     begin
-      for i:= Low(buttonArray) to High(buttonArray) do
+      for i:= 0 to 2 do
       begin
-        if Length(aniStrips) >= 1+i then
+        if aniMode.stripCount >= i then
         begin
-          if Length(aniStrips[scrollOffset+i].cellGrp.cells) >= 16 then
+          if Length(aniStrips[scrollOffset+i].cellGrp.cells) >= 16 then 
             buttonArray[0+i]^.area.x := 713
-          else
+          else 
             buttonArray[0+i]^.area.x := aniStrips[scrollOffset+i].cellGrp.cells[High(aniStrips[scrollOffset+i].cellGrp.cells)].area.x + (AniMode.middle.width)*2
         end else
           buttonArray[0+i]^.area.x := -50;
         buttonArray[0+i] := nil;
       end;
-    end;         
+    end;    
   end;
     
 	//---------------------------------------------------------------------------
@@ -477,7 +498,7 @@ implementation
       result := maxHeight / totalHeight;  
   end;
   
-  procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string; lst1, lst2: GUIList);
+  procedure LoadBitmapsFromTextFile(var charBmps: CharBodyTypes; fileName : string);
   var
     line : string;
     txt : text;
@@ -514,7 +535,7 @@ implementation
         begin
           AddName(ids, name);
           SetLength(bmps, Length(bmps) + 1);
-          bmps[High(bmps)].original  := MapBitmap(ExtractFileName(ExtractDelimited(1, line, [','])), ExtractDelimited(1, line, [',']));	
+          bmps[High(bmps)].scaled[Original]  := MapBitmap(ExtractFileName(ExtractDelimited(1, line, [','])), ExtractDelimited(1, line, [',']));	
         end;
       end;
     end;
@@ -529,7 +550,7 @@ implementation
       
       with charBmps.BodyType[bodyID].parts[partsID] do
       begin
-        SetTransparentColor(bmps[High(bmps)].original, RGBColor(StrToInt(ExtractDelimited(2, line, [','])),
+        SetTransparentColor(bmps[High(bmps)].scaled[Original], RGBColor(StrToInt(ExtractDelimited(2, line, [','])),
                                                                 StrToInt(ExtractDelimited(3, line, [','])),
                                                                 StrToInt(ExtractDelimited(4, line, [','])))); 
                
@@ -538,25 +559,23 @@ implementation
         cols    := StrToInt(ExtractDelimited(5, line, [',']));
         rows    := StrToInt(ExtractDelimited(6, line, [',']));
         count   := StrToInt(ExtractDelimited(9, line, [',']));
-        totalW  := bmps[High(bmps)].original^.Width;
-        totalH  := bmps[High(bmps)].original^.Height;
+        totalW  := bmps[High(bmps)].scaled[Original]^.Width;
+        totalH  := bmps[High(bmps)].scaled[Original]^.Height;
               
         scale[BitmapGroup]    := 1;
         scale[SourceGroup]    := CalculateScale(BMPWindowWidth, BMPWindowHeight, totalW + (cols-1)*CellGapSmall, totalH + (rows-1)*CellGapSmall);                                
         scale[AnimationGroup] := CalculateScale(AniCellWidth, AniCellHeight, width, height); 
         scale[PreviewGroup]   := CalculateScale(AniCellWidth*2, AniCellHeight*2, width, height);
         
-        for i := Low(BMPType) to High(BMPType) do
+        for i := BitmapGroup to High(BMPType) do
         begin
           if scale[i] = 1 then
-            bmps[High(bmps)].Scaled[i] := bmps[High(bmps)].original
+            bmps[High(bmps)].Scaled[i] := bmps[High(bmps)].scaled[Original]
           else
-            bmps[High(bmps)].Scaled[i] := RotateScaleBitmap(bmps[High(bmps)].original, 0, scale[i]);	
+            bmps[High(bmps)].Scaled[i] := RotateScaleBitmap(bmps[High(bmps)].scaled[Original], 0, scale[i]);	
           BitmapSetCellDetails(bmps[High(bmps)].Scaled[i],  Trunc(width*scale[i]), Trunc(height*scale[i]), cols, rows, count);
         end;
       end;
-      ListAddItem(lst1, ExtractFileName(ExtractDelimited(1, line, [','])));
-      ListAddItem(lst2, ExtractFileName(ExtractDelimited(1, line, [','])));
     end;
   begin
     Assign(txt, fileName);
@@ -594,13 +613,13 @@ implementation
 	begin
 		SetLength(bmpArray, Length(bmpArray)+1);
 		
-		bmpArray[High(bmpArray)].original := MapBitmap(id, fileName);	
-	//	SetTransparentColor(bmpArray[High(bmpArray)].original, RGBColor(Red,Green,Blue));
+		bmpArray[High(bmpArray)].scaled[Original] := MapBitmap(id, fileName);	
+	//	SetTransparentColor(bmpArray[High(bmpArray)].scaled[Original], RGBColor(Red,Green,Blue));
 		
-		bmpArray[High(bmpArray)].scaled[BitmapGroup]    := bmpArray[High(bmpArray)].original;
-		bmpArray[High(bmpArray)].scaled[SourceGroup]    := bmpArray[High(bmpArray)].original;
-		bmpArray[High(bmpArray)].scaled[AnimationGroup] := bmpArray[High(bmpArray)].original;
-		bmpArray[High(bmpArray)].scaled[PreviewGroup]   := bmpArray[High(bmpArray)].original;
+		bmpArray[High(bmpArray)].scaled[BitmapGroup]    := bmpArray[High(bmpArray)].scaled[Original];
+		bmpArray[High(bmpArray)].scaled[SourceGroup]    := bmpArray[High(bmpArray)].scaled[Original];
+		bmpArray[High(bmpArray)].scaled[AnimationGroup] := bmpArray[High(bmpArray)].scaled[Original];
+		bmpArray[High(bmpArray)].scaled[PreviewGroup]   := bmpArray[High(bmpArray)].scaled[Original];
 	end;
   
   procedure AddBitmapToList(bmp : Bitmap; lst1, lst2: GUIList);
@@ -627,7 +646,7 @@ implementation
   begin
   {  for i := Low(bmpArray) to High(bmpArray) do
     begin
-      bmpArray[i].scaled[GridType] := RotateScaleBitmap(bmpArray[i].original, 0, scale);	
+      bmpArray[i].scaled[GridType] := RotateScaleBitmap(bmpArray[i].scaled[Original], 0, scale);	
     end;}
   end;
   
@@ -641,7 +660,7 @@ implementation
       begin
         for img := Low(bmpArray.bodyType[body].parts[part].bmps) to High(bmpArray.bodyType[body].parts[part].bmps) do
         begin
-          bmpArray.bodyType[body].parts[part].bmps[img].scaled[GridType] := RotateScaleBitmap(bmpArray.bodyType[body].parts[part].bmps[img].original, 0, scale);	
+          bmpArray.bodyType[body].parts[part].bmps[img].scaled[GridType] := RotateScaleBitmap(bmpArray.bodyType[body].parts[part].bmps[img].scaled[Original], 0, scale);	
     //      ScaleAllBitmaps(bmpArray[body].parts[part].bmp[img].scale[GridType], scale);    
           SetBitmapDetails(GridType, bmpArray.bodyType[body].parts[part].bmps[img], cols, rows);
         end;
@@ -927,7 +946,7 @@ implementation
   procedure LoadAnimation(var AniMode: AnimationEditorValues);
   type
     LoadedData = record
-      speed, next : Integer;
+      timing, next : Integer;
       range, idArray : Array of Integer;
     end;
     identifiers = record
@@ -952,25 +971,25 @@ implementation
         SetLength(aniData, Length(aniData) + 1);
         SetLength(aniData[High(aniData)].range, 1);
         SetLength(aniData[High(aniData)].idArray, 1);
-        aniData[High(aniData)].idArray[0]    := StrToInt(ExtractDelimited(1, data, [',']));
-        aniData[High(aniData)].range[0] := StrToInt(ExtractDelimited(2, data, [',']));
-        aniData[High(aniData)].speed    := StrToInt(ExtractDelimited(3, data, [',']));
+        aniData[High(aniData)].idArray[0]     := StrToInt(ExtractDelimited(1, data, [',']));
+        aniData[High(aniData)].range[0]       := StrToInt(ExtractDelimited(2, data, [',']));
+        aniData[High(aniData)].timing         := StrToInt(ExtractDelimited(3, data, [',']));
         if ExtractDelimitedWithRanges(4, data) <> '' then 
-          aniData[High(aniData)].next     := StrToInt(ExtractDelimited(4, data, [',']))
+          aniData[High(aniData)].next         := StrToInt(ExtractDelimited(4, data, [',']))
         else
-          aniData[High(aniData)].next     := -1;          
+          aniData[High(aniData)].next         := -1;          
       end;
       
       procedure _ProcessMultiFrame();
       begin
         SetLength(aniData, Length(aniData) + 1);
-        aniData[High(aniData)].idArray  := ProcessRange(ExtractDelimitedWithRanges(1, data));
-        aniData[High(aniData)].range    := ProcessRange(ExtractDelimitedWithRanges(2, data));
-        aniData[High(aniData)].speed    := StrToInt(ExtractDelimitedWithRanges(3, data));
+        aniData[High(aniData)].idArray        := ProcessRange(ExtractDelimitedWithRanges(1, data));
+        aniData[High(aniData)].range          := ProcessRange(ExtractDelimitedWithRanges(2, data));
+        aniData[High(aniData)].timing         := StrToInt(ExtractDelimitedWithRanges(3, data));
         if ExtractDelimitedWithRanges(4, data) <> '' then 
-          aniData[High(aniData)].next     := StrToInt(ExtractDelimitedWithRanges(4, data))
+          aniData[High(aniData)].next         := StrToInt(ExtractDelimitedWithRanges(4, data))
         else
-          aniData[High(aniData)].next     := -1;
+          aniData[High(aniData)].next         := -1;
       end;
       
       procedure _ProcessIDs();
@@ -984,9 +1003,7 @@ implementation
       procedure _ProcessSounds();
       begin
         SetLength(aniSounds, Length(aniSounds) + 1);
-        WriteLn(ExtractDelimited(1, data, [',']));
         aniSounds[High(aniSounds)].value      := ExtractDelimited(3, data, [',']);
-        WriteLn(ExtractDelimited(3, data, [',']));
         aniSounds[High(aniSounds)].targetCell := StrToInt(ExtractDelimited(1, data, [',']));
       end;
       
@@ -999,10 +1016,9 @@ implementation
           if (aniData[i].next >= aniData[k].IDArray[Low(aniData[k].IDArray)]) AND
              (aniData[i].next <= aniData[k].IDArray[High(aniData[k].IDArray)]) then
           begin
-            
-            tempAni[High(tempAni)].lastCellParentID := k;
-            tempAni[High(tempAni)].lastCell.cells[0].Idx     := aniData[i].next - aniData[k].idArray[0];
-            tempAni[High(tempAni)].lastCell.cells[0].cellIdx := aniData[k].range[tempAni[High(tempAni)].lastCell.cells[0].Idx];
+            AniMode.aniStrips[i].lastCellParentID := k;
+            AniMode.aniStrips[i].lastCell.cells[0].Idx     := aniData[i].next - aniData[k].idArray[0];
+            AniMode.aniStrips[i].lastCell.cells[0].cellIdx := aniData[k].range[AniMode.aniStrips[i].lastCell.cells[0].Idx];
           end;
        
         end;
@@ -1018,13 +1034,13 @@ implementation
           begin
             if (aniString[n].targetCell >= aniData[k].IDArray[Low(aniData[k].IDArray)]) AND
             (aniString[n].targetCell <= aniData[k].IDArray[High(aniData[k].IDArray)]) then
-              tempAni[k].cellGrp.cells[aniString[n].targetCell - aniData[k].idArray[0]].identifier := aniString[n].value;
+              AniMode.aniStrips[k].cellGrp.cells[aniString[n].targetCell - aniData[k].idArray[0]].identifier := aniString[n].value;
           end;   
           for n := Low(aniSounds) to High(aniSounds) do
           begin
             if (aniSounds[n].targetCell >= aniData[k].IDArray[Low(aniData[k].IDArray)]) AND
             (aniSounds[n].targetCell <= aniData[k].IDArray[High(aniData[k].IDArray)]) then
-              tempAni[k].cellGrp.cells[aniSounds[n].targetCell - aniData[k].idArray[0]].sound := aniSounds[n].value;
+              AniMode.aniStrips[k].cellGrp.cells[aniSounds[n].targetCell - aniData[k].idArray[0]].sound := aniSounds[n].value;
           end;            
         end;
       end;
@@ -1082,13 +1098,16 @@ implementation
     finally
       Close(input);
     end;
-      
+    
+    AniMode.stripCount := -1;
+    AniMode.aniStrips := tempAni;
+    
     for i := Low(aniData) to High(aniData) do
     begin
-      CreateAnimationStrip(tempAni, Length(aniData[i].range) + 1);
-      with tempAni[High(tempAni)] do
+      CreateAnimationStrip(Length(aniData[i].range) + 1, AniMode);
+      with AniMode.aniStrips[i] do
       begin
-        
+        timing := aniData[i].timing;
         for j := Low(cellGrp.cells) to High(cellGrp.cells) - 1 do
         begin
           cellGrp.cells[j].cellIdx := aniData[i].range[j];
@@ -1098,9 +1117,11 @@ implementation
       end;
     end;  
     _CalculateTargetID();
-    AniMode.aniStrips := tempAni;
- //   WriteLn(AniMode.aniStrips[0].lastCell.cells[0].cellIdx);
-    UpdateBitmapPointers(AniMode.cellGrp, AniMode.aniStrips);
+    
+    if AniMode.cellGrp.cellCount = 0 then
+      UpdateBitmapPointers(AniMode, nil)
+    else
+      UpdateBitmapPointers(AniMode, AniMode.cellGrp.cells[0].bmpPtr);
     PositionAniHorizontalScrollButtons(AniMode);
   end;
   
@@ -1150,7 +1171,7 @@ implementation
       begin
         result.id :=  id;
         result.aniType := 'f';
-        result.values := IntToStr(id) + ',' + IntToStr(cellGrp.cells[0].cellidx) + ',5,';
+        result.values := IntToStr(id) + ',' + IntToStr(cellGrp.cells[0].cellidx) + ',' + IntToStr(aniStrip.timing) + ',';
         result.lastCellDetails := _lastCellCheck(aniStrip);
         AddID(arrayofIDs, cellGrp.cells[0].identifier, id);
         AddID(arrayofSounds, cellGrp.cells[0].sound, id);
@@ -1183,7 +1204,7 @@ implementation
         begin
           result.values += '-' + IntToStr(cellGrp.cells[High(cellGrp.cells)-1].cellidx);
         end;
-        result.values += ']' + ',' + '5' + ',';
+        result.values += ']' + ',' + IntToStr(aniStrip.timing) + ',';
         result.lastCellDetails := _lastCellCheck(aniStrip);
         
         for i := Low(cellGrp.cells) to High(cellGrp.cells) do
@@ -1300,8 +1321,9 @@ implementation
   
   procedure DrawCellArea(cell: CellArea);
   begin
- // wRITElN(cell.parent^.GridType);
-  //  DrawCell(cell.bmpPTR^.scaled[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
+ //   WriteLn(cell.parent^.GridType);
+ //   WriteLn(cell.bmpPTR^.scaled[cell.parent^.GridType]^.name);
+    DrawCell(cell.bmpPTR^.scaled[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
   end;
   
   procedure MyDrawSplitBitmapCells(cellGrp: CellGroupData; sharedVals: EditorValues);

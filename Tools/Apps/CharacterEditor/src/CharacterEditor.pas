@@ -28,7 +28,7 @@ implementation
     SetLength(p, 4);
     
     p[CharDetails]  := LoadPanel('CharDetails.txt');
-    p[LayerList]    := LoadPanel('LayerOrder.txt');
+    p[LayerList]    := LoadPanel('CharLayerList.txt');
     p[DirAngle]     := LoadPanel('DirAngles.txt');
     p[LayerOrder]   := LoadPanel('CharLayerOrder.txt');
   end;
@@ -277,7 +277,7 @@ implementation
   begin
     if GetItemIndex('BodyList', bodyID) OR GetItemIndex('PartsList', partID) OR GetItemIndex('ImageList', imageID) then exit;
     
-    cell := BitmapCellOf(browser.BodyType[bodyID].parts[partID].bmps[imageID].original, 0 );
+    cell := BitmapCellOf(browser.BodyType[bodyID].parts[partID].bmps[imageID].scaled[Original], 0 );
     SetLength(CharMode.BaseLayer, Length(CharMode.BaseLayer) + 1);
     CharMode.BaseLayer[High(CharMode.BaseLayer)] := NewItem(High(CharMode.BaseLayer), bodyID, partID, imageID);
     
@@ -301,7 +301,7 @@ implementation
     cell: BitmapCell;
     bodyID, partID, imageID, i, j: Integer;
   begin
-    cell := BitmapCellOf(bmp^.original, 0 );
+    cell := BitmapCellOf(bmp^.scaled[Original], 0 );
     SetLength(CharMode.BaseLayer, Length(CharMode.BaseLayer) + 1);
     CharMode.BaseLayer[High(CharMode.BaseLayer)] := NewItem(High(CharMode.BaseLayer), bmp);
     
@@ -333,8 +333,8 @@ implementation
     with CharMode do
     begin      
       for k := Low(Cache[state,dir]) to High(Cache[state,dir]) do
-        ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BitmapCellOf(Cache[state,dir,k].bmpPtr^.original, 0),
-                                                                Cache[state,dir,k].bmpPtr^.original^.name);
+        ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BitmapCellOf(Cache[state,dir,k].bmpPtr^.scaled[Original], 0),
+                                                                Cache[state,dir,k].bmpPtr^.scaled[Original]^.name);
 
     end; 
   end;
@@ -427,8 +427,8 @@ implementation
     begin
       for i := Low(CharMode.BaseLayer) to High(CharMode.BaseLayer) do
       begin
-        if IndexOf(CharMode.MainChar^.CharSprite^.valueids,   CharMode.BaseLayer[i].bmpPtr^.original^.name) <> -1 then continue;
-        SpriteAddLayer(CharacterSprite(CharMode.MainChar), CharMode.BaseLayer[i].bmpPtr^.scaled[PreviewGroup], CharMode.BaseLayer[i].bmpPtr^.original^.name);
+        if IndexOf(CharMode.MainChar^.CharSprite^.valueids,   CharMode.BaseLayer[i].bmpPtr^.scaled[Original]^.name) <> -1 then continue;
+        SpriteAddLayer(CharacterSprite(CharMode.MainChar), CharMode.BaseLayer[i].bmpPtr^.scaled[PreviewGroup], CharMode.BaseLayer[i].bmpPtr^.scaled[Original]^.name);
         SpriteShowLayer(CharacterSprite(CharMode.MainChar), i);
       end;
       CharMode.MainChar^.CharSprite^.position.x := 350;

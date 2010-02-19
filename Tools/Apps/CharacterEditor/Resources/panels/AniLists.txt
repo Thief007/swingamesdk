@@ -6,17 +6,25 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 70
-y: 83
-w: 140
-h: 60
-a: Blank.png
-i: blank.png
-b: blank.png
+x: 420
+y: 230
+w: 350
+h: 100
+a: AniListsAct.png
+i: AniLists.png
+b: AniLists.png
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
-//LIST r: x, y, w, h, 5, ListID, Columns, Rows, ActiveItem, itemWidth, itemHeight, fontID, scrollsize
-r: 0, 0, 140, 60, List, AniBMPList, 1, 3, -1, subsSmall, left, 25, v, blank.png
+
+//RemoveButtons
+r:95,0,30,30,Button,RemoveID
+r:275,0,30,30,Button,RemoveSound
+
+//Lists
+r: 7, 30, 158, 51, List, IDList, 1, 3, -1, subs, left, 15,  v, blank.png
+
+r: 173, 30, 158, 51, List, SoundList, 1, 3, -1, subs, left, 15,  v, blank.png

@@ -1,16 +1,3 @@
 FONT,subsLarge,subtitles.ttf,40
 FONT,subs,subtitles.ttf,16
 FONT,subsSmall,subtitles.ttf,12
-BITMAP,FILEMENU,filemenu.png
-BITMAP,BMPDetails,BitmapDetails.png
-BITMAP,CellDetails,CellDetails.png
-BITMAP,BMPEditorButtons,BMPEditorButtons.png
-BITMAP,BMPEditorButtonsInact,BMPEditorButtonsInact.png
-BITMAP,BLANK,blank.png
-BITMAP,AniBitmapDetails,AniBitmapDetails.png
-BITMAP,AniRadio1,AniRadio1.png
-BITMAP,AniRadio2,AniRadio2.png
-BITMAP,AniRadioDown1,AniRadioDown1.png
-BITMAP,AniRadioDown2,AniRadioDown2.png
-BITMAP,AniStats,AniStats.png
-BITMAP,AniPreview,AniPreview.png
