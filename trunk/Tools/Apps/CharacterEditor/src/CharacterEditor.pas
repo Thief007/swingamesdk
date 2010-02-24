@@ -2,20 +2,25 @@ unit CharacterEditor;
 
 //=============================================================================
 interface
-uses sgTypes, sgUserInterface, EditorShared, sgCharacters, sgNamedIndexCollection;
+uses sgTypes, EditorShared;
 
 const
-  CharDetails   = 0;
-  LayerList     = 1;
-  DirAngle      = 2;
-  LayerOrder    = 3;
-  
-  
+  CharDetails     = 0;
+  CharDirections  = 1;
+  CharStates      = 2;
+  CharValues      = 3;
+  CharAngles      = 4;
+  LayerList       = 5;
+  DirAngle        = 6;
+  LayerOrder      = 7;
+  Preview         = 8;
+   
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
   procedure UpdateCharEditor(var CharMode : CharEditorValues;var sharedVals: EditorValues);
 
 implementation
-	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgSprites;
+	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgSprites,
+  sgUserInterface, sgCharacters, sgNamedIndexCollection, sgAnimations;
 
   //---------------------------------------------------------------------------
   // Initialize
@@ -25,12 +30,17 @@ implementation
   var
     i: Integer;
   begin
-    SetLength(p, 4);
+    SetLength(p, 9);
     
-    p[CharDetails]  := LoadPanel('CharDetails.txt');
-    p[LayerList]    := LoadPanel('CharLayerList.txt');
-    p[DirAngle]     := LoadPanel('DirAngles.txt');
-    p[LayerOrder]   := LoadPanel('CharLayerOrder.txt');
+    p[CharDetails]      := LoadPanel('CharDetails.txt');
+    p[CharDirections]   := LoadPanel('CharDirections.txt');
+    p[CharStates]       := LoadPanel('CharStates.txt');
+    p[CharValues]       := LoadPanel('CharValues.txt');
+    p[CharAngles]       := LoadPanel('CharAngles.txt');
+    p[LayerList]        := LoadPanel('CharLayerList.txt');
+    p[DirAngle]         := LoadPanel('DirAngles.txt');
+    p[LayerOrder]       := LoadPanel('CharLayerOrder.txt');
+    p[Preview]          := LoadPanel('CharPreview.txt');
   end;
   
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
@@ -41,14 +51,347 @@ implementation
     begin
       b := nil;
       New(MainChar);
-      //MainChar^.CharSprite := CreateSprite(b);
       MainChar^.CharSprite := CreateSprite();
       bg := LoadBitmap('CHAREDITOR.png');
       InitializeCharPanels(panels);
       InitNamedIndexCollection(MainChar^.Directions);
       InitNamedIndexCollection(MainChar^.States);
       InitNamedIndexCollection(MainChar^.CharSprite^.valueIds);
+      MainChar^.CharSprite^.position.x := 498;
+      MainChar^.CharSprite^.position.y := 517;
+      MainChar^.CurrentState := -1;
+      MainChar^.CurrentDirection := -1;
+      SetLength(MainChar^.ShownLayers, 0);
     end;
+  end;
+  
+  //---------------------------------------------------------------------------
+  // Misc
+  //--------------------------------------------------------------------------- 
+  
+  function BitmapAt(sharedVals: EditorValues; name : String): Bitmap;
+  var
+    body, part, bmp: integer;
+  begin
+    result := nil;  
+    with sharedVals do
+    begin
+      for body := Low(Browser.bodyType) to High(Browser.bodyType) do
+      begin
+        for part := Low(Browser.bodyType[body].parts) to High(Browser.bodyType[body].parts) do
+        begin
+          for bmp := Low(Browser.bodyType[body].parts[part].bmps) to High(Browser.bodyType[body].parts[part].bmps) do
+          begin
+            if Browser.bodyType[body].parts[part].bmps[bmp].scaled[Original]^.name = name then
+            begin
+              result := Browser.bodyType[body].parts[part].bmps[bmp].scaled[PreviewGroup];
+              exit;
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+  
+  function CurrentCheck(c: Character): Boolean;
+  begin
+    result := true;
+    
+    if (CharacterCurrentState(c) = -1) OR (CharacterCurrentDirection(c) = -1) then result := false;
+  end;
+  
+  //---------------------------------------------------------------------------
+  // Manage Layers
+  //--------------------------------------------------------------------------- 
+ 
+  procedure ShowAniDetails(CharMode : CharEditorValues; state, dir: Integer);
+  begin
+    with CharMode.MainChar^ do
+    begin
+      if (dir < 0) OR (state < 0) then exit;
+      if ShownLayersByDirState[state][dir].Anim = -1 then
+      begin
+        LabelSetText(RegionWithID('AniLbl'), 'None');
+        ListSetActiveItemIndex(ListFromRegion(RegionWithID('AniLayerList')), -1);
+      end else begin
+        LabelSetText(RegionWithID('AniLbl'), NameAt(CharSprite^.animationTemplate^.animationIds, ShownLayersByDirState[state][dir].Anim));
+        ListSetActiveItemIndex(ListFromRegion(RegionWithID('AniLayerList')), ShownLayersByDirState[state][dir].Anim);
+      end;
+    end;
+  end;
+  
+  procedure ShowLayerOrder(var CharMode : CharEditorValues);
+  var
+    i,j,k, state, dir, index: Integer;
+    mainList, orderList : GUIList;
+  begin
+    state := ListActiveItemIndex(RegionWithID('StateLayerList'));
+    dir   := ListActiveItemIndex(RegionWithID('DirLayerList'));
+    mainList   :=  ListFromRegion(RegionWithID('LayerList'));
+    orderList  :=  ListFromRegion(RegionWithID('LayerOrder'));
+    
+    if (dir = -1) OR (state = -1) then exit;
+    
+    ListClearItems(orderList);
+    
+    with CharMode.MainChar^ do
+    begin      
+      for i := Low(ShownLayersByDirState[state][dir].LayerOrder) to High(ShownLayersByDirState[state][dir].LayerOrder) do
+      begin
+        index := ShownLayersByDirState[state][dir].LayerOrder[i];
+        ListAddItem(orderList, mainList^.items[index].image, mainList^.items[index].image.bmp^.name)
+      end;
+    end;
+    
+    ShowAniDetails(CharMode, state,dir);
+  end;
+  
+  procedure RefreshSpriteLayers(var CharMode: CharEditorValues; sharedVals: EditorValues);
+  var
+    i: Integer;
+    lst : GUIList;
+    imageName : string;
+  begin
+    lst :=  ListFromRegion(RegionWithID('LayerList'));
+    with CharMode.MainChar^.CharSprite^ do
+    begin
+      SetLength(layerOffsets, 0);
+      SetLength(layers, 0);
+      FreeNamedIndexCollection(layerIds);
+      InitNamedIndexCollection(layerIds);
+      
+      for i := 0 to ListItemCount(lst) -1 do
+      begin
+        imageName := lst^.items[i].image.bmp^.name;
+        SpriteAddLayer(CharMode.MainChar^.CharSprite, BitmapAt(sharedVals, imageName), imageName)
+      end;
+    end;
+  end;
+  
+  procedure RemoveLayerFromOrder(var order : DirStateData; idx: Integer);
+  var
+    i: Integer;
+  begin
+    if idx = -1 then exit;
+    
+    for i := idx to High(order.LayerOrder)-1 do
+    begin
+      order.LayerOrder[i] := order.LayerOrder[i+1];
+    end;     
+    SetLength(order.LayerOrder, Length(order.LayerOrder) -1);
+  end;
+  
+  procedure RemoveLayerFromOrder(var CharMode: CharEditorValues);
+  var
+    state, dir, idx: Integer;
+  begin
+    state := ListActiveItemIndex(RegionWithID('StateLayerList'));
+    dir   := ListActiveItemIndex(RegionWithID('DirLayerList'));
+    idx   := ListActiveItemIndex(RegionWithID('LayerOrder'));
+    
+    if (dir < 0) OR (state < 0) then exit;
+    
+    RemoveLayerFromOrder(CharMode.MainChar^.ShownLayersByDirState[state][dir], idx);
+    ShowLayerOrder(CharMode);
+    CharMode.MainChar^.ShownLayerCache := UpdateShownLayerCache(CharMode.MainChar);
+    SetActiveLayer(CharMode.MainChar);    
+  end;
+  
+  procedure AdjustLayerOrderIds(var order : DirStateData; idx: Integer);
+  var
+    i, layerIdx : Integer;
+  begin
+    layerIdx := -1;
+    for i := Low(order.LayerOrder) to High(order.LayerOrder) do
+    begin
+      if order.LayerOrder[i] > idx then order.LayerOrder[i] := order.LayerOrder[i] -1;
+      if order.LayerOrder[i] = idx then layerIdx := i;
+    end;   
+    
+    RemoveLayerFromOrder(order, layerIdx);
+  end;
+  
+  procedure RemoveLayer(var CharMode : CharEditorValues; sharedVals: EditorValues);
+  var
+    idx, state, dir, vis : Integer;
+  begin
+    idx := ListActiveItemIndex(RegionWithID('LayerList'));
+    ListRemoveItem(ListFromRegion(RegionWithID('LayerList')), idx);
+    
+    with CharMode.MainChar^ do
+    begin
+      for state := Low(ShownLayersByDirState) to High(ShownLayersByDirState) do
+      begin
+        for dir := Low(ShownLayersByDirState[state]) to High(ShownLayersByDirState[state]) do
+        begin
+          AdjustLayerOrderIds(ShownLayersByDirState[state][dir], idx);
+          WriteLn('length: ',Length(ShownLayersByDirState[state][dir].LayerOrder));
+        end;
+      end;
+            
+      for vis := idx to High(ShownLayers)-1 do
+      begin
+        ShownLayers[vis] := ShownLayers[vis + 1];
+      end;
+      
+      if Length(ShownLayers) <> 0 then SetLength(ShownLayers , Length(ShownLayers) - 1);
+      
+      RefreshSpriteLayers(CharMode, sharedVals);
+          
+      if not CurrentCheck(CharMode.MainChar) then exit;
+      
+      CharMode.MainChar^.ShownLayerCache := UpdateShownLayerCache(CharMode.MainChar);
+      SetActiveLayer(CharMode.MainChar);
+    end;
+  end;
+  
+  procedure AddLayer(var CharMode : CharEditorValues; bmp : LoadedBitmapPtr; sharedVals: EditorValues);
+  var
+    cell: BitmapCell;
+    i, j: Integer;
+  begin
+    cell := BitmapCellOf(bmp^.scaled[Original], 0 );
+    
+    with CharMode.MainChar^ do
+    begin
+      for i := Low(ShownLayersByDirState) to High(ShownLayersByDirState) do
+      begin
+        for j := Low(ShownLayersByDirState[i]) to High(ShownLayersByDirState[i]) do
+        begin
+          SetLength(ShownLayersByDirState[i][j].LayerOrder, Length(ShownLayersByDirState[i][j].LayerOrder) + 1);
+          ShownLayersByDirState[i][j].LayerOrder[High(ShownLayersByDirState[i][j].LayerOrder)] := ListItemCount(ListFromRegion(RegionWithID('LayerList')));
+        end;
+      end;
+      
+      SetLength(ShownLayers , Length(ShownLayers) + 1);
+      ShownLayers[High(ShownLayers)] := true;
+    end;
+    ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, cell.bmp^.name);    
+    RefreshSpriteLayers(CharMode, sharedVals);
+  end;
+    
+  procedure SwapParts(var part1, part2: Integer);
+  var
+    tmp: Integer;
+  begin
+    tmp := part1;
+    part1 := part2;
+    part2 := tmp;
+  end;
+  
+  procedure MoveLayer(var CharMode : CharEditorValues; dest: Integer);    
+  var
+   state, dir, active: Integer;
+  begin
+    with CharMode do
+    begin
+      state   := ListActiveItemIndex(RegionWithID('StateLayerList'));
+      dir     := ListActiveItemIndex(RegionWithID('DirLayerList'));     
+      active  := ListActiveItemIndex(RegionWithID('LayerOrder'));
+      
+      if ((dest < 0) AND (active <= 0)) OR
+         ((dest > 0) AND (active >= High(MainChar^.ShownLayersByDirState[state][dir].LayerOrder))) OR
+         (dir < 0) OR (state < 0) then exit;
+      
+      SwapParts(MainChar^.ShownLayersByDirState[state][dir].LayerOrder[active], MainChar^.ShownLayersByDirState[state][dir].LayerOrder[active + dest]);
+    
+      ShowLayerOrder(CharMode);
+      ListSetActiveItemIndex(ListFromRegion(RegionWithID('LayerOrder')), active + dest);
+    end;
+  end;
+  
+  //---------------------------------------------------------------------------
+  // Animation
+  //---------------------------------------------------------------------------  
+   
+  procedure RefreshAniComboList(var CharMode: CharEditorValues);
+  var
+    i, j: Integer;
+  begin
+    ListClearItems(RegionWithID('CharAniComboList'));
+    
+    with CharMode.MainChar^ do 
+    begin
+      for i := Low(ShownLayersByDirState) to High(ShownLayersByDirState) do
+      begin
+        for j := Low(ShownLayersByDirState[i]) to High(ShownLayersByDirState[i]) do
+        begin
+          if ShownLayersByDirState[i][j].Anim <> -1 then
+          begin
+            ListAddItem(RegionWithID('CharAniComboList'), NameAt(States, i) + ',' + NameAt(Directions, j));
+          end;
+        end;
+      end;
+    end;
+  end;
+  
+  procedure ResetAnimationDetails(var CharMode: CharEditorValues);
+  var
+    i, j: Integer;
+  begin
+    with CharMode.MainChar^ do 
+    begin
+      for i := Low(ShownLayersByDirState) to High(ShownLayersByDirState) do
+      begin
+        for j := Low(ShownLayersByDirState[i]) to High(ShownLayersByDirState[i]) do
+        begin
+          if ShownLayersByDirState[i][j].Anim <> -1 then ShownLayersByDirState[i][j].Anim := -1;
+        end;
+      end;
+    end;
+    RefreshAniComboList(CharMode);
+    ShowAniDetails(CharMode, ListActiveItemIndex(RegionWithID('StateLayerList')), ListActiveItemIndex(RegionWithID('DirLayerList')));
+  end;
+  
+  procedure LoadAniToPreview(var CharMode: CharEditorValues);
+  var
+    i: Integer;
+  begin
+    with CharMode.MainChar^ do
+    begin
+      CharSprite^.animationTemplate := LoadAnimationTemplate(dialogPath);
+      ListClearItems(RegionWithID('AniLayerList'));
+      ResetAnimationDetails(CharMode);
+      for i := 0 to NameCount(CharSprite^.animationTemplate^.animationIDs)-1 do
+      begin 
+        ListAddItem(RegionWithID('AniLayerList'), NameAt(CharSprite^.animationTemplate^.animationIDs, i));
+      end;
+    end;
+  end;
+  
+  procedure AcceptAnimation(var CharMode: CharEditorValues);
+  var
+    state, dir: Integer;
+  begin
+    if ListActiveItemIndex(RegionWithID('AniLayerList')) = -1 then exit;
+    state   := ListActiveItemIndex(RegionWithID('StateLayerList'));
+    dir     := ListActiveItemIndex(RegionWithID('DirLayerList'));     
+    
+    if (dir < 0) OR (state < 0) then exit;
+    
+    CharMode.MainChar^.ShownLayersByDirState[state][dir].anim := ListActiveItemIndex(RegionWithID('AniLayerList'));
+    LabelSetText(RegionWithID('AniLbl'), NameAt(CharMode.MainChar^.CharSprite^.animationTemplate^.animationIds, CharMode.MainChar^.ShownLayersByDirState[state][dir].anim));
+    RefreshAniComboList(CharMode);
+  end;
+  
+  procedure PreviewCharacter(var CharMode: CharEditorValues);
+  var
+    stateIdx, dirIdx : Integer;
+    input : String;
+  begin
+    if ListActiveItemIndex(RegionWithID('CharAniComboList')) = -1 then exit;
+    
+    input := ListActiveItemText(RegionWithID('CharAniComboList'));
+    
+    stateIdx := IndexOf(CharMode.MainChar^.States, ExtractDelimited(1, input, [',']));
+    dirIdx   := IndexOf(CharMode.MainChar^.Directions, ExtractDelimited(2, input, [',']));
+    
+    CharacterSetCurrentDirection(CharMode.MainChar, dirIdx);
+    CharMode.MainChar^.CurrentState := stateIdx;
+    CharMode.MainChar^.ShownLayerCache := UpdateShownLayerCache(CharMode.MainChar);
+    SetActiveLayer(CharMode.MainChar);
+    SpriteReplayAnimation(CharMode.MainChar^.CharSprite);
+    SpriteStartAnimation(CharMode.MainChar^.CharSprite, CharMode.MainChar^.ShownLayersByDirState[CharMode.MainChar^.CurrentState, CharMode.MainChar^.CurrentDirection].Anim);
   end;
   
   //---------------------------------------------------------------------------
@@ -57,41 +400,57 @@ implementation
   
   procedure AddDirection(var CharMode: CharEditorValues; value: string);
   var
-    i: Integer;
+    i, j: Integer;
   begin   
-    if value = '' then exit;
-    value := Trim(value);
-    AddName(CharMode.MainChar^.Directions, value);
-    SetLength(CharMode.MainChar^.DirectionParameters, NameCount(CharMode.MainChar^.Directions));
-    ListAddItem(ListFromRegion(RegionWithID('DirList')), value);
-    ListAddItem(ListFromRegion(RegionWithID('DirAngleList')), value);
-    ListAddItem(ListFromRegion(RegionWithID('DirLayerList')), value);
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('DirIn')), '');
-        
-    for i := 0 to NameCount(CharMode.MainChar^.States) -1 do
+    with CharMode.MainChar^ do
     begin
-      SetLength(CharMode.Cache[i], Length(CharMode.Cache[i]) + 1);
-      CharMode.Cache[i][High(CharMode.Cache[i])] := Copy(CharMode.BaseLayer, 0 , Length(CharMode.BaseLayer));
+      if value = '' then exit;
+      value := Trim(value);
+      AddName(Directions, value);
+      SetLength(DirectionParameters, NameCount(Directions));
+      ListAddItem(ListFromRegion(RegionWithID('DirList')), value);
+      ListAddItem(ListFromRegion(RegionWithID('DirAngleList')), value);
+      ListAddItem(ListFromRegion(RegionWithID('DirLayerList')), value);
+      TextBoxSetText(TextBoxFromRegion(RegionWithID('DirIn')), '');
+            
+      for i := 0 to NameCount(States) -1 do
+      begin
+        SetLength(ShownLayersByDirState[i], Length(ShownLayersByDirState[i]) + 1);
+        SetLength(ShownLayersByDirState[i][High(ShownLayersByDirState[i])].LayerOrder, ListItemCount(ListFromRegion(RegionWithID('LayerList'))));
+        ShownLayersByDirState[i][High(ShownLayersByDirState[i])].anim := -1;
+        for j := 0 to ListItemCount(ListFromRegion(RegionWithID('LayerList'))) -1 do
+        begin
+          ShownLayersByDirState[i][High(ShownLayersByDirState[i])].LayerOrder[j] := j;
+        end;
+      end;
     end;
   end;
   
   procedure AddState(var CharMode: CharEditorValues; value: string);
   var
-    i: Integer;
+    i, j: Integer;
   begin
-    if value = '' then exit;
-    value := Trim(value);
-    AddName(CharMode.MainChar^.States, value);
-    ListAddItem(ListFromRegion(RegionWithID('StateList')),value );
-    ListAddItem(ListFromRegion(RegionWithID('StateLayerList')),value );
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('StateIn')), '');
-    
-    SetLength(CharMode.Cache, Length(CharMode.Cache) + 1);
-    SetLength(CharMode.Cache[High(CharMode.Cache)], NameCount(CharMode.MainChar^.Directions));
-    
-    for i := 0 to NameCount(CharMode.MainChar^.Directions) -1 do
-    begin      
-      CharMode.Cache[High(CharMode.Cache),i] := Copy(CharMode.BaseLayer, 0 , Length(CharMode.BaseLayer));
+    with CharMode.MainChar^ do
+    begin
+      if value = '' then exit;
+      value := Trim(value);
+      AddName(states, value);
+      ListAddItem(ListFromRegion(RegionWithID('StateList')),value );
+      ListAddItem(ListFromRegion(RegionWithID('StateLayerList')),value );
+      TextBoxSetText(TextBoxFromRegion(RegionWithID('StateIn')), '');
+      
+      SetLength(ShownLayersByDirState, Length(ShownLayersByDirState) +1);
+      SetLength(ShownLayersByDirState[High(ShownLayersByDirState)], NameCount(Directions));
+      
+      for i := 0 to NameCount(Directions) -1 do
+      begin
+        SetLength(ShownLayersByDirState[High(ShownLayersByDirState)][i].LayerOrder, ListItemCount(ListFromRegion(RegionWithID('LayerList'))));
+        ShownLayersByDirState[High(ShownLayersByDirState)][i].anim := -1;
+        for j := 0 to ListItemCount(ListFromRegion(RegionWithID('LayerList'))) -1 do
+        begin
+          ShownLayersByDirState[High(ShownLayersByDirState)][i].LayerOrder[j] := j;
+        end;
+      end;
     end;
   end;
   
@@ -132,7 +491,38 @@ implementation
   //---------------------------------------------------------------------------
   // Remove Data From List
   //--------------------------------------------------------------------------- 
-
+  
+  procedure RemoveDirectionLayer(var CharMode : CharEditorValues; index: Integer);
+  var
+    i, j: Integer;
+  begin
+    with CharMode.MainChar^ do
+    begin
+      for i := Low(ShownLayersByDirState) to High(ShownLayersByDirState) do
+      begin
+        for j := index to High(ShownLayersByDirState[i])-1 do
+        begin
+          ShownLayersByDirState[i][j] := ShownLayersByDirState[i][j+1]
+        end;
+        SetLength(ShownLayersByDirState[i], Length(ShownLayersByDirState[i]) -1);
+      end;
+    end;
+  end;
+  
+  procedure RemoveStateLayer(var CharMode : CharEditorValues; index: Integer);
+  var
+    i: Integer;
+  begin
+    with CharMode.MainChar^ do
+    begin
+      for i := index to High(ShownLayersByDirState)-1 do
+      begin
+        ShownLayersByDirState[i] := ShownLayersByDirState[i+1];
+      end;
+      SetLength(ShownLayersByDirState, Length(ShownLayersByDirState) -1);
+    end;
+  end;
+  
   procedure RemoveDataFromList(listID, activeID:string);
   begin
     ListRemoveItem(ListFromRegion(RegionWithID(listID)), ListActiveItemIndex(RegionWithID(activeId)));
@@ -176,19 +566,25 @@ implementation
     mainList = 'DirList';
   begin
     RemoveAngle(CharMode, mainList);
+    RemoveDirectionLayer(CharMode, ListActiveItemIndex(RegionWithID(mainList)));
     RemoveName(CharMode.MainChar^.Directions, ListActiveItemIndex(RegionWithID(mainList)));
     RemoveDataFromList('DirAngleList', mainList);
     RemoveDataFromList('DirLayerList', mainList);
     RemoveDataFromList(mainList, mainList);
+    CharMode.MainChar^.CurrentDirection := -1;
+    RefreshAniComboList(CharMode);
   end;
   
   procedure RemoveState(var CharMode : CharEditorValues);
   const
     mainList = 'StateList';
   begin
-    RemoveName(CharMode.MainChar^.Directions, ListActiveItemIndex(RegionWithID(mainList)));
+    RemoveStateLayer(CharMode, ListActiveItemIndex(RegionWithID(mainList)));
+    RemoveName(CharMode.MainChar^.States, ListActiveItemIndex(RegionWithID(mainList)));
     RemoveDataFromList('StateLayerList', mainList);
     RemoveDataFromList(mainList, mainList);
+    CharMode.MainChar^.CurrentState := -1;
+    RefreshAniComboList(CharMode);
   end;
   
   procedure RemoveValue(var CharMode : CharEditorValues);
@@ -211,162 +607,8 @@ implementation
       SetLength(CharSprite^.values, Length(CharSprite^.values) -1);
       RemoveDataFromList('ValueList', 'ValueList');
     end;
-  end;
-  
-  //---------------------------------------------------------------------------
-  // Edit Data From List
-  //--------------------------------------------------------------------------- 
-  
-  procedure EditDirection(var CharMode : CharEditorValues);
-  begin
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('DirIn')), ListActiveItemText(RegionWithID('DirList')));
-    RemoveDirection(CharMode);
-  end;
-  
-  procedure EditState(var CharMode : CharEditorValues);
-  begin
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('StateIn')), ListActiveItemText(RegionWithID('StateList')));
-    RemoveState(CharMode);
-  end;
-  
-  procedure EditValue(var CharMode : CharEditorValues);
-  var
-    values : string;
-  begin
-    values := ListActiveItemText(RegionWithID('ValueList'));
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('NameValueIn')), ExtractDelimited(1, values, [',']));
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('ValueValueIn')), ExtractDelimited(2, values, [',']));
-    RemoveValue(CharMode);
-  end;
-  
-  procedure EditAngle(var CharMode : CharEditorValues);
-  var
-    values : string;
-  begin
-    values := ListActiveItemText(RegionWithID('AngleList'));
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('MinIn')), ExtractDelimited(2, values, [',']));
-    TextBoxSetText(TextBoxFromRegion(RegionWithID('MaxIn')), ExtractDelimited(3, values, [',']));
-    RemoveDataFromList('AngleList', 'AngleList');
-  end;
-  
-  //---------------------------------------------------------------------------
-  // Manage Item Lists
-  //--------------------------------------------------------------------------- 
-  
-  
-  function GetItemIndex(id: string; out index: Integer): Boolean;
-  begin
-    result := true;
-    index := ListActiveItemIndex(RegionWithID(id));
-    if index <> -1  then result := false;
-  end;
-  
-  function NewItem(id : integer; bmpPtr : LoadedBitmapPtr) : ItemCache;
-  begin
-    result.listId := id;
-  //  result.body := body;
-  //  result.part := part;
-  //  result.bmp := bmp;
-    result.bmpPtr := bmpPtr;
-  end;
-  {  
-  procedure AddLayer(var CharMode : CharEditorValues; browser: CharBodyTypes);
-  var
-    cell: BitmapCell;
-    bodyID, partID, imageID, i, j: Integer;
-  begin
-    if GetItemIndex('BodyList', bodyID) OR GetItemIndex('PartsList', partID) OR GetItemIndex('ImageList', imageID) then exit;
-    
-    cell := BitmapCellOf(browser.BodyType[bodyID].parts[partID].bmps[imageID].scaled[Original], 0 );
-    SetLength(CharMode.BaseLayer, Length(CharMode.BaseLayer) + 1);
-    CharMode.BaseLayer[High(CharMode.BaseLayer)] := NewItem(High(CharMode.BaseLayer), bodyID, partID, imageID);
-    
-    with CharMode do
-    begin
-      for i := Low(Cache) to High(Cache) do
-      begin
-        for j := Low(Cache[i]) to High(Cache[i]) do
-        begin
-          SetLength(Cache[i,j], Length(Cache[i,j]) + 1);
-          Cache[i,j, High(Cache[i,j])] := NewItem(High(CharMode.BaseLayer), bodyID, partID, imageID);
-        end;
-      end;
-    end;   
-    ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, cell.bmp^.name);
-  end;
-  }
-  
-  procedure AddLayer(var CharMode : CharEditorValues; bmp : LoadedBitmapPtr);
-  var
-    cell: BitmapCell;
-    bodyID, partID, imageID, i, j: Integer;
-  begin
-    cell := BitmapCellOf(bmp^.scaled[Original], 0 );
-    SetLength(CharMode.BaseLayer, Length(CharMode.BaseLayer) + 1);
-    CharMode.BaseLayer[High(CharMode.BaseLayer)] := NewItem(High(CharMode.BaseLayer), bmp);
-    
-    with CharMode do
-    begin
-      for i := Low(Cache) to High(Cache) do
-      begin
-        for j := Low(Cache[i]) to High(Cache[i]) do
-        begin
-          SetLength(Cache[i,j], Length(Cache[i,j]) + 1);
-          Cache[i,j, High(Cache[i,j])] := NewItem(High(CharMode.BaseLayer), bmp);
-        end;
-      end;
-    end;   
-    ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, cell.bmp^.name);
-  end;
-  
-  procedure ShowLayerOrder(var CharMode : CharEditorValues);
-  var
-    i,j,k, state, dir : Integer;
-  begin
-    state := ListActiveItemIndex(RegionWithID('StateLayerList'));
-    dir   := ListActiveItemIndex(RegionWithID('DirLayerList'));
-    
-    if (dir = -1) OR (state = -1) then exit;
-    
-    ListClearItems(ListFromRegion(RegionWithID('LayerOrder')));
-    
-    with CharMode do
-    begin      
-      for k := Low(Cache[state,dir]) to High(Cache[state,dir]) do
-        ListAddItem(ListFromRegion(RegionWithID('LayerOrder')), BitmapCellOf(Cache[state,dir,k].bmpPtr^.scaled[Original], 0),
-                                                                Cache[state,dir,k].bmpPtr^.scaled[Original]^.name);
-
-    end; 
-  end;
-  
-  procedure SwapParts(var part1, part2: ItemCache);
-  var
-    tmp: ItemCache;
-  begin
-    tmp := part1;
-    part1 := part2;
-    part2 := tmp;
-  end;
-  
-  procedure MoveLayerUp(var CharMode : CharEditorValues);    
-  var
-   state, dir, active, i, j , k : Integer;
-  begin
-    with CharMode do
-    begin
-      state   := ListActiveItemIndex(RegionWithID('StateLayerList'));
-      dir     := ListActiveItemIndex(RegionWithID('DirLayerList'));     
-      active  := ListActiveItemIndex(RegionWithID('LayerOrder'));
+  end; 
       
-      if (dir < 0) OR (state < 0) OR (active <= 0) then exit;
-      
-      SwapParts(Cache[state,dir,active], Cache[state,dir,active - 1]);
-    
-      ShowLayerOrder(CharMode);
-      ListSetActiveItemIndex(ListFromRegion(RegionWithID('LayerOrder')), active -1);
-    end;
-  end;
-  
   //---------------------------------------------------------------------------
   // Update
   //---------------------------------------------------------------------------  
@@ -380,7 +622,7 @@ implementation
     HidePanel(p);
   end;
   
-  procedure UpdateFromTextBox(var CharMode : CharEditorValues; sharedVals: EditorValues);
+  procedure UpdateFromTextBox(var CharMode : CharEditorValues;var sharedVals: EditorValues);
   begin
     with CharMode do
     begin
@@ -401,16 +643,17 @@ implementation
       if (RegionClickedID() = 'StateRemove') then RemoveState(CharMode);
       if (RegionClickedID() = 'ValueRemove') then RemoveValue(CharMode);
       if (RegionClickedID() = 'AngleRemove') then RemoveDataFromList('AngleList', 'AngleList');
+      if (RegionClickedID() = 'AddLayer')    then ShowPanel(sharedVals.panels[BrowserPanel]);
+      if (RegionClickedID() = 'BrowseAni')   then DoOpenDialog(sharedVals, LoadAni);
+      if DialogComplete AND (sharedVals.OpenSave = LoadAni) then LoadAniToPreview(CharMode);
+      if (RegionClickedID() = 'AcceptAni') then AcceptAnimation(CharMode);
+      if (RegionClickedID() = 'CharAniComboList') then PreviewCharacter(CharMode);
+      if (RegionClickedID() = 'LORemove') then RemoveLayerFromOrder(CharMode);
       
-      //Edit
-      if (RegionClickedID() = 'DirEdit')   then EditDirection(CharMode);
-      if (RegionClickedID() = 'StateEdit') then EditState(CharMode);
-      if (RegionClickedID() = 'ValueEdit') then EditValue(CharMode);
-      if (RegionClickedID() = 'AngleEdit') then EditAngle(CharMode);
-      
-
-      if sharedVals.BitmapPtr <> nil then AddLayer(CharMode, sharedVals.BitmapPtr);
-      if (RegionClickedID() = 'MoveUP') then MoveLayerUp(CharMode);
+      if sharedVals.BitmapPtr <> nil then AddLayer(CharMode, sharedVals.BitmapPtr, sharedVals);
+      if (RegionClickedID() = 'RemoveLayer') then RemoveLayer(CharMode, sharedVals);
+      if (RegionClickedID() = 'MoveUP') then MoveLayer(CharMode, -1);
+      if (RegionClickedID() = 'MoveDown') then MoveLayer(CharMode, 1);
       if (RegionClickedID() = 'DirLayerList') OR (RegionClickedID() = 'StateLayerList') then ShowLayerOrder(CharMode);
 
       //Drop Down
@@ -423,20 +666,12 @@ implementation
     i : Integer;
   begin
     UpdateFromTextBox(CharMode, sharedVals);
-    if KeyTyped(vk_4) then 
-    begin
-      for i := Low(CharMode.BaseLayer) to High(CharMode.BaseLayer) do
-      begin
-        if IndexOf(CharMode.MainChar^.CharSprite^.valueids,   CharMode.BaseLayer[i].bmpPtr^.scaled[Original]^.name) <> -1 then continue;
-        SpriteAddLayer(CharacterSprite(CharMode.MainChar), CharMode.BaseLayer[i].bmpPtr^.scaled[PreviewGroup], CharMode.BaseLayer[i].bmpPtr^.scaled[Original]^.name);
-        SpriteShowLayer(CharacterSprite(CharMode.MainChar), i);
-      end;
-      CharMode.MainChar^.CharSprite^.position.x := 350;
-      CharMode.MainChar^.CharSprite^.position.y := 440;
-    end;
-    if Length(CharMode.MainChar^.CharSprite^.layers) <> 0 then
+    if (ListActiveItemIndex(RegionWithID('CharAniComboList')) <> -1) AND CurrentCheck(CharMode.MainChar)then
     begin      
-      DrawCharacter(CharMode.MainChar);
+      DrawCharacterSprite(CharMode.MainChar);
+      UpdateSpriteAnimation(CharMode.MainChar^.CharSprite);
     end;
+    WriteLn(Length(CharMode.MainChar^.ShownLayersByDirState));
+    
   end;
 end.

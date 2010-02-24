@@ -6,26 +6,31 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 230
-y: 345
-w: 350
-h: 300
-a: blank.png
-i: blank.png
+x: 190
+y: 82
+w: 390
+h: 310
+a: CharLayerOrderAct.png
+i: CharLayerOrder.png
+b: CharLayerOrder.png
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
-//r: 75, 110, 110, 15, Label, DirLayerLbl, subsSmall, l, None
-//r: 75, 128, 110, 15, Label, StateLayerLbl, subsSmall, l, None
-//r: 75, 147, 110, 15, Label, AniLayerLbl, subsSmall, l, None
-r: 10, 150, 110, 15, Button,MoveUP
+r: 222, 290, 60, 15, Button,MoveUP
+r: 292, 290, 60, 15, Button,MoveDown
+r: 362, 13, 20, 20, Button,LORemove
+r: 125, 202, 20, 20, Button,BrowseAni
 
-r: 0, 0, 120, 60, List, StateLayerList, 1, 3, -1, subsSmall, left, 10,  v, n
-r: 0, 80, 120, 60, List, DirLayerList, 1, 3, -1, subsSmall, left, 10,  v, n
-r: 0, 170, 120, 60, List, AniLayerList, 1, 3, -1, subsSmall, left, 10,  v, n
-r: 150, 0, 120, 210, List, LayerOrder, 1, 15, -1, subsSmall, left, 10,  v, n
+r: 32, 207, 110,15, Label, AniLbl, subsSmall, l, None
+r: 52, 290, 60, 15, Button,AcceptAni
+
+r: 9, 33, 158, 51, List, StateLayerList, 1, 3, -1, subsSmall, left, 15,  v, blank.png
+r: 9, 110, 158, 51, List, DirLayerList, 1, 3, -1, subsSmall, left, 15,  v, blank.png
+r: 224, 46, 158, 221, List, LayerOrder, 1, 13, -1, subsSmall, left, 15,  v, blank.png
+r: 9, 230, 158, 51, List, AniLayerList, 1, 3, -1, subsSmall, left, 15,  v, blank.png
 
 

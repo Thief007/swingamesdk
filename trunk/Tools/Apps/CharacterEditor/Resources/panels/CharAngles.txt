@@ -1,0 +1,30 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 190
+y: 402
+w: 195
+h: 550
+a: CharAnglesAct.png
+i: CharAngles.png
+b: CharAngles.png
+v: false
+
+// Region data
+// Format: r: x, y, w, h, kind
+//Radiobutton r: x, y, w, h, 3, GroupID
+//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
+//MinAngle
+r: 44, 28, 25, 15, TextBox, MinIn, subsSmall, 16, l,min
+r: 130, 28, 25, 15, TextBox, MaxIn, subsSmall, 16, l,max
+r: 7, 112, 159, 68, List, AngleList, 1, 4, -1, subsSmall, left, 15,  v, blank.png
+r: 80, 55, 110,15, Label, DirAngleLbl, subsSmall, l, None
+r: 63, 82, 20, 20, Button,AngleAdd
+//r: 40, 156, 50, 15, Button, AngleEdit
+r: 93, 82, 20, 20, Button, AngleRemove

@@ -6,7 +6,7 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 21
+x: 221
 y: 515
 w: 120
 h: 60

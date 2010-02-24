@@ -225,8 +225,6 @@ begin
     
     if DialogComplete then sharedVals.OpenSave := None;
 
-    
-   // if KeyTyped(Vk_8) then ToggleSHowPanel(p[Browser]);
 		UpdateInterface();
 		RefreshScreen(60);   
   until WindowCloseRequested();

@@ -6,12 +6,10 @@ uses sgTypes, sgUserInterface, sgCharacters;
 
 const
 	CellGap 								= 5;
+	CellGapSmall 			      = 2;
+	CellGapLarge 			      = 15;
 	ScreenWidth 						= 800;
 	ScreenHeight						= 600;
-	LengthCellData 					= 6;
-	LengthgrpArea 					= 10;
-	LengthMode							= 2;
-	LengthAniEditing				= 6;
 
 //Editors
 	BitmapEditorID					= 0;
@@ -28,8 +26,6 @@ const
 	BMPWindowHeight 	= 170;
 	BMPWindowX 				= 140;
 	BMPWindowY 				= 135;
-	CellGapSmall 			= 2;
-	CellGapLarge 			= 15;
 	
 //FilmStrip
 	FilmStripStartX			= 30;
@@ -107,7 +103,6 @@ type
 	end;
     
   LoadedBitmap = record 
-    original : Bitmap;                           // The original bitmap - ensures all scales occur from this
     Scaled : Array [BMPType] of Bitmap;          // The scaled version of the bitmaps for the different groups
   end;
   
@@ -127,20 +122,11 @@ type
     ids: NamedIndexCollection;
     bodyType: Array of Parts;
   end;
-   
-  ItemCache = record
-    listID, body, part, bmp : Integer;
-    bmpPtr : LoadedBitmapPtr;
-  end;
-  ItemCacheArray = Array of Array of Array of ItemCache;
-  
+    
   CharEditorValues = record
     panels : PanelArray;
     bg: Bitmap;
-  //  BrowserData : BodyTypes;
     MainChar : Character;
-    BaseLayer : Array of ItemCache;
-    Cache : ItemCacheArray;
   end;
 
   AniStripArray = Array [0..MaxAniStrips] of AnimationStrip;
@@ -213,7 +199,6 @@ type
   //--------------------------------------------------------------------------- 
   
   function SetLoadedBitmapPtr(idx : Integer; bmpArray: LoadedBitmaps): LoadedBitmapPtr;
-  procedure AddBitmapToList(bmp : Bitmap; lst1, lst2: GUIList);
   procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: CharBodyTypes; scale: single; cols, rows: Integer);
   procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);	
   procedure AddBitmapToArray(var bmpArray : LoadedBitmaps; id, fileName : string);
@@ -621,33 +606,14 @@ implementation
 		bmpArray[High(bmpArray)].scaled[AnimationGroup] := bmpArray[High(bmpArray)].scaled[Original];
 		bmpArray[High(bmpArray)].scaled[PreviewGroup]   := bmpArray[High(bmpArray)].scaled[Original];
 	end;
-  
-  procedure AddBitmapToList(bmp : Bitmap; lst1, lst2: GUIList);
-  begin
-  	ListAddItem(lst1, bmp^.name);
-		ListAddItem(lst2, bmp^.name);
-  end;
-  
+    
   procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);
   var
     cellW, cellH, i: Integer;
   begin    
-  //  for i := Low(bmpArray) to High(bmpArray) do
-    //begin
-      cellW := Trunc(bmp.scaled[GridType]^.width  / cols);
-      cellH := Trunc(bmp.scaled[GridType]^.height / rows);
-      BitmapSetCellDetails(bmp.scaled[GridType], cellW, cellH, cols, rows, cols*rows);
-  //  end;
-  end;
-  
-  procedure ScaleAllBitmaps(GridType: BMPType; var bmpArray: LoadedBitmap; scale: single);
-  var
-    i: integer;
-  begin
-  {  for i := Low(bmpArray) to High(bmpArray) do
-    begin
-      bmpArray[i].scaled[GridType] := RotateScaleBitmap(bmpArray[i].scaled[Original], 0, scale);	
-    end;}
+    cellW := Trunc(bmp.scaled[GridType]^.width  / cols);
+    cellH := Trunc(bmp.scaled[GridType]^.height / rows);
+    BitmapSetCellDetails(bmp.scaled[GridType], cellW, cellH, cols, rows, cols*rows);
   end;
   
   procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: CharBodyTypes; scale: single; cols, rows: Integer);
@@ -661,13 +627,10 @@ implementation
         for img := Low(bmpArray.bodyType[body].parts[part].bmps) to High(bmpArray.bodyType[body].parts[part].bmps) do
         begin
           bmpArray.bodyType[body].parts[part].bmps[img].scaled[GridType] := RotateScaleBitmap(bmpArray.bodyType[body].parts[part].bmps[img].scaled[Original], 0, scale);	
-    //      ScaleAllBitmaps(bmpArray[body].parts[part].bmp[img].scale[GridType], scale);    
           SetBitmapDetails(GridType, bmpArray.bodyType[body].parts[part].bmps[img], cols, rows);
         end;
       end;
     end;
-  //  ScaleAllBitmaps(GridType, bmpArray, scale);    
-  //  SetBitmapDetails(GridType, bmpArray, cols, rows);
   end;
     
   function SetLoadedBitmapPtr(idx : Integer; bmpArray: LoadedBitmaps): LoadedBitmapPtr;
@@ -1321,8 +1284,6 @@ implementation
   
   procedure DrawCellArea(cell: CellArea);
   begin
- //   WriteLn(cell.parent^.GridType);
- //   WriteLn(cell.bmpPTR^.scaled[cell.parent^.GridType]^.name);
     DrawCell(cell.bmpPTR^.scaled[cell.parent^.GridType], cell.cellIdx, Trunc(cell.area.X), Trunc(cell.area.Y));
   end;
   

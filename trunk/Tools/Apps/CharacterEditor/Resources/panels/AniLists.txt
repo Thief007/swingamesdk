@@ -25,6 +25,6 @@ r:95,0,30,30,Button,RemoveID
 r:275,0,30,30,Button,RemoveSound
 
 //Lists
-r: 7, 30, 158, 51, List, IDList, 1, 3, -1, subs, left, 15,  v, blank.png
+r: 7, 30, 158, 51, List, IDList, 1, 3, -1, subsSmall, left, 15,  v, blank.png
 
-r: 173, 30, 158, 51, List, SoundList, 1, 3, -1, subs, left, 15,  v, blank.png
+r: 173, 30, 158, 51, List, SoundList, 1, 3, -1, subsSmall, left, 15,  v, blank.png

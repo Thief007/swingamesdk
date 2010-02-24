@@ -2,9 +2,7 @@ unit BitmapEditor;
 
 //=============================================================================
 interface
-	uses sgTypes, sgCore, sgGraphics,
-  sgGeometry, sgImages, sgInput, SysUtils, 
-	sgUserInterface, sgShared, EditorShared;
+	uses EditorShared;	
 	
 	procedure InitializeBitmapEditor(out BitmapMode: BitmapEditorValues);
 	procedure UpdateBitmapEditor(var BitmapMode: BitmapEditorValues; var sharedVals: EditorValues);
@@ -21,7 +19,8 @@ const
 	ClipH										= 490;	
 	
 implementation
-					
+	uses sgTypes, sgCore, sgGraphics, sgGeometry, sgImages, sgInput, SysUtils, sgUserInterface, sgShared;		
+	
 	procedure ShowSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray);
 	var
 		i: integer;
