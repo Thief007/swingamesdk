@@ -6,21 +6,20 @@
 // Load Fonts for labels before creating panels.
 
 // Panel data:
-x: 585
-y: 82
-w: 205
-h: 500
-a: CharLayersAct.png
-i: CharLayers.png
-b: CharLayers.png
+x: 365
+y: 400
+w: 195
+h: 550
+a: CharPreviewAct.png
+i: CharPreview.png
+b: CharPreview.png
 v: false
 
 // Region data
 // Format: r: x, y, w, h, kind
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
-r: 38, 52, 158, 442, List, LayerList, 1, 26, -1, subsSmall, left, 15,  v, blank.png
-r: 135, 20, 20, 20, Button, AddLayer
-r: 160, 20, 20, 20, Button, RemoveLayer
 
-
+//Value
+r: 27, 73, 159, 68, List, CharAniComboList, 1, 4, -1, subsSmall, left, 15,  v, blank.png
+r: 144, 50, 20, 20, Button, RefreshCharPreviewList

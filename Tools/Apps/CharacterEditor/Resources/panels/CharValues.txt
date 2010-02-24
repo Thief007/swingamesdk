@@ -1,0 +1,29 @@
+// Panel Version: 1
+
+// Load bitmaps for the panel 
+// b: name,filename
+// b:main_menu_bmp,main_menu.png
+// Load Fonts for labels before creating panels.
+
+// Panel data:
+x: 10
+y: 445
+w: 195
+h: 550
+a: CharValuesAct.png
+i: CharValues.png
+b: CharValues.png
+v: false
+
+// Region data
+// Format: r: x, y, w, h, kind
+//Radiobutton r: x, y, w, h, 3, GroupID
+//Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
+
+//Value
+r: 60, 27, 100, 20, TextBox, NameValueIn, subsSmall, 16, l,val
+r: 60, 51, 50, 20, TextBox, ValueValueIn, subsSmall, 16, l,val
+r: 7, 71, 159, 68, List, ValueList, 1, 4, -1, subsSmall, left, 15,  v, blank.png
+r: 118, 50, 20, 20, Button, ValueAdd
+//r: 40, 391, 50, 15, Button, ValueEdit
+r: 144, 50, 20, 20, Button, ValueRemove

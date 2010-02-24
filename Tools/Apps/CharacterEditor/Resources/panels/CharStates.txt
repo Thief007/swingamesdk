@@ -7,12 +7,12 @@
 
 // Panel data:
 x: 10
-y: 85
+y: 315
 w: 195
 h: 550
-a: CharChar.png
-i: CharChar.png
-b: CharChar.png
+a: CharStatesAct.png
+i: CharStates.png
+b: CharStates.png
 v: false
 
 // Region data
@@ -20,8 +20,9 @@ v: false
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
-//Name
-r: 75, 36, 90, 20, TextBox, CharName, subsSmall, 16, l, Name
-
-//Type
-r: 75, 66, 90, 20, TextBox, CharType, subsSmall, 16, l,type
+//State
+r: 10, 31, 90, 20, TextBox, StateIn, subsSmall, 16, l,state
+r: 7, 50, 159, 68, List, StateList, 1, 4, -1, subsSmall, left, 15,  v, blank.png
+r: 115, 28, 20, 20, Button, StateAdd
+//r: 40, 271, 50, 15, Button, StateEdit
+r: 141, 28, 20, 20, Button, StateRemove
