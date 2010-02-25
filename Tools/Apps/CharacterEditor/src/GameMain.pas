@@ -222,7 +222,7 @@ begin
       drawVect := not drawvect;
      DrawGUIAsVectors(drawvect);
     end;
-    
+        
     if DialogComplete then sharedVals.OpenSave := None;
 
 		UpdateInterface();

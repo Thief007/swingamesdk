@@ -703,7 +703,6 @@ implementation
         lastNotSelected := 0;
         for i:= Low(cells) to High(cells) do
         begin
-         // if i <= lastNotSelected then continue; 
           if cells[i].isSelected  then
           begin
             ShiftCellsDown(cellGrp, i, lastNotSelected);
@@ -714,7 +713,7 @@ implementation
       for i:= High(cells) downto High(cells) - High(selectedOrder) do
       begin
         UpdateCellPointers(cells[i], nil, nil);
-      end;
+      end; 
       cellCount := Length(cells) - Length(selectedOrder);
       SetLength(cells, cellCount);
       SetLength(selectedOrder, 0);

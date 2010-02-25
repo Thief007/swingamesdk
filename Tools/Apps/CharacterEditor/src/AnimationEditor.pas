@@ -436,7 +436,7 @@ const
     PickUpCell(sharedVals);
   end;
   
-  procedure LastCellDragging(sharedVals: EditorValues;var AniMode: AnimationEditorValues; index: Integer);
+  procedure LastCellDragging(var sharedVals: EditorValues;var AniMode: AnimationEditorValues; index: Integer);
   var
     target: CellAreaPtr;
     dragIdx: Integer;
@@ -445,7 +445,8 @@ const
     begin
       if (sharedVals.dragCell <> nil) AND (sharedVals.dragCell^.parent^.GridType = AnimationGroup) then
       begin
-        target := CellAreaAt(cellGrp, MousePosition, CellGapLarge);
+        target := CellAreaAt(lastCell, MousePosition, CellGapLarge);
+        WriteLn('lastCell = ' , target = nil);
         if target = nil then exit;
         dragIdx := sharedVals.dragCell^.idx;
         AniMode.aniStrips[CalculateParentStripID(target^, AniMode)].lastCellParentID := CalculateParentStripID(sharedVals.dragCell^, AniMode);
@@ -491,6 +492,47 @@ const
   begin
     with AniMode.aniStrips[index] do
     begin
+      if (sharedVals.dragCell <> nil) then 
+      begin     
+        target := CellAreaAt(cellGrp, MousePosition, CellGapLarge); 
+        if target = nil then exit;
+        if(sharedVals.dragCell^.parent^.GridType = AnimationGroup) AND (CalculateParentStripID(sharedVals.dragCell^, AniMode) = CalculateParentStripID(target^, AniMode)) 
+          AND (target^.idx <> High(cellGrp.cells)) then
+        begin
+          WriteLn('Swapping');
+          SwapData(sharedVals.dragCell, target);
+        end else if(sharedVals.dragCell^.parent^.GridType = SourceGroup) then
+        begin
+          if not PointInRect(MousePosition, target^.area.x, target^.area.y, cellGrp.cellW, cellGrp.cellH) then
+          begin
+            idx := target^.idx + 1;          
+            IncreaseAniStripLength(AniMode, 1, index);
+            ShiftDataInAnimationUp(cellGrp, idx);
+            target := @cellGrp.cells[idx];
+            DropData(sharedVals.dragCell, target);      
+          end else begin
+            DropData(sharedVals.dragCell, target);      
+            if (cellGrp.cells[High(cellGrp.cells)].bmpPtr <> nil) then
+            begin         
+              IncreaseAniStripLength(AniMode, 1, index);
+            end;
+          end;
+        end;
+      end else begin 
+        WriteLn('Pickup');
+        sharedVals.dragCell := CellAreaAt(cellGrp, MousePosition, CellGapLarge);
+        PickUpCell(sharedVals);
+      end;
+    end;
+  end;
+  {
+  procedure AniCellDragging(var sharedVals: EditorValues; var AniMode: AnimationEditorValues; index: Integer);
+  var
+    target: CellAreaPtr;
+    i, idx : integer;
+  begin
+    with AniMode.aniStrips[index] do
+    begin
       if (sharedVals.dragCell <> nil) AND (sharedVals.dragCell^.parent^.GridType = SourceGroup) then
       begin
         target := CellAreaAt(cellGrp, MousePosition, CellGapLarge);
@@ -514,7 +556,7 @@ const
       end;
     end;
   end;
-  
+  }
   procedure AddMultiple(var AniMode: AnimationEditorValues);
   var
     dest, count: GUITextBox;
@@ -599,6 +641,8 @@ const
         lastCellParentID := -1;
       end;
       DeleteSelected(AniMode.aniStrips[index].cellGrp, CellGapLarge);
+      cellGrp.cols := cellGrp.cellCount;
+      UpdateGroupSize(cellGrp, CellGapLarge);
       if Length(cellGrp.cells) <> 0 then MoveGroup(LastCell, Trunc(cellGrp.cells[High(cellGrp.cells)].area.x + (LastCell.grpArea.width + CellGapLarge)*2), Trunc(cellGrp.grpArea.y));
       UpdatePosition(LastCell); 
       DeleteAnimationStrip(AniMode, index);
@@ -732,7 +776,8 @@ const
           LastCellDragging(sharedVals, AniMode, i);           
         end;       
         if KeyTyped(vk_ESCAPE) then DeselectAll(aniStrips[i].cellGrp);
-      end;
+        FillRectangle(RGBAColor(255,0,0,100), aniStrips[i].cellGrp.grpArea.x, aniStrips[i].cellGrp.grpArea.y, aniStrips[i].cellGrp.grpArea.width, aniStrips[i].cellGrp.grpArea.height);
+        end;
     end;
   end;
  
