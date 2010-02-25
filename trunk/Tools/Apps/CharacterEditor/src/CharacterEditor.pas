@@ -349,6 +349,7 @@ implementation
   begin
     with CharMode.MainChar^ do
     begin
+      if CharSprite^.animationTemplate <> nil then FreeAnimationTemplate(CharSprite^.animationTemplate);
       CharSprite^.animationTemplate := LoadAnimationTemplate(dialogPath);
       ListClearItems(RegionWithID('AniLayerList'));
       ResetAnimationDetails(CharMode);
