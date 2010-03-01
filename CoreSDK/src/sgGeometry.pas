@@ -338,14 +338,23 @@ interface
   /// @sn lineFrom:%s to:%s
   function LineFrom(const pt1, pt2: Point2D): LineSegment; overload;
   
-  ///returns array of lines from a triangle strip shape
-  function LinesFromShapeAsTriangleStrip(const s: shape): LinesArray; overload;
+  /// Returns the number of lines in a given shape
+  ///
+  /// @lib
+  ///
+  /// @class Shape
+  /// @getter LineCount
+  function LineCount(s: Shape): LongInt;
   
-  ///returns the number of lines in a given shape
-  function LineCount(const s: Shape): LongInt;
-  
-  ///returns array of lines for a given shape.
-  function LinesFrom(const s: shape): LinesArray; overload;
+  /// Returns an array of lines from a given shape. These are the lines that represent
+  /// the shape.
+  /// 
+  /// @lib LinesFromShape
+  ///
+  /// @class Shape
+  /// @getter Lines
+  /// @length LineCount
+  function LinesFrom(s: shape): LinesArray; overload;
   
   /// Returns the vector needed to move shape ``s`` out of rectangle``bounds`` given the velocity specified.
   /// 
@@ -356,6 +365,7 @@ interface
   /// @method VectorOutOfRect
   /// @csn vectorOutOfRect:%s givenHeading:%s
   function VectorOutOfShapeFromRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
+  
   /// Returns a line from a starting point to the point at the end of the
   /// mv vector.
   ///
@@ -1468,7 +1478,7 @@ interface
   
   /// Returns the four points from the corners of a rectangle.
   /// 
-  /// @lib
+  /// @lib PointsFromRect
   /// @fixed_result_size 4
   /// @sn pointsFromRect:%s
   /// 
@@ -1478,7 +1488,7 @@ interface
   
   /// Returns the two points from the ends of a line segment.
   /// 
-  /// @lib
+  /// @lib PointsFromLine
   /// @fixed_result_size 2
   /// @sn pointsFromLine:%s
   /// 
@@ -3433,7 +3443,7 @@ implementation
     {$ENDIF}
   end;
 
-  function LinesFromShapeAsTriangleStrip(const s: shape): LinesArray; overload;
+  function LinesFromShapeAsTriangleStrip(s: shape): LinesArray; overload;
   var
     pts:Point2DArray;
     i:LongInt;
@@ -3456,7 +3466,7 @@ implementation
     //WriteLn('  Line ', LineToString(result[High(result)]));
   end;
 
-  function LineCount(const s: Shape): LongInt;
+  function LineCount(s: Shape): LongInt;
   var
   k: ShapeKind;
   begin
@@ -3478,7 +3488,7 @@ implementation
     end;
   end;
   
-  function LinesFrom(const s: shape): LinesArray; overload;
+  function LinesFrom(s: shape): LinesArray; overload;
   var
   k: ShapeKind;
   pts: Point2DArray;
@@ -3901,7 +3911,7 @@ implementation
   var
     pts : Point2DArray;
     minPt, maxPt: Point2D;
-    i, max: Integer;
+    i, max: LongInt;
     r, l, t, b, temp: Single;
     subRect: Rectangle;
     kind: ShapeKind;
@@ -3971,7 +3981,7 @@ implementation
   function TriangleAABB(const tri: Triangle): Rectangle;
   var
     minPt, maxPt: Point2D;
-    i: Integer;
+    i: LongInt;
   begin
     minPt := tri[0];
     maxPt := tri[0];
@@ -3990,7 +4000,7 @@ implementation
   
   function TrianglesRectangleIntersect(const tri: TriangleArray; const rect: Rectangle): Boolean;
   var
-    i: Integer;
+    i: LongInt;
   begin
     for i := Low(tri) to High(tri) do
     begin
@@ -4157,7 +4167,7 @@ implementation
   function ShapeLines(shp: Shape; kind: ShapeKind; const offset: Point2D): LinesArray;
   var
     pts,pts1: Point2DArray;
-    i: Integer;
+    i: LongInt;
   begin
     pts := ShapePoints(shp);
     SetLength(pts1, length(pts));
@@ -4186,7 +4196,7 @@ implementation
   function ShapeTriangles(shp: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
   var
     pts, pts1: Point2DArray;
-    i: Integer;
+    i: LongInt;
   begin
     pts := ShapePoints(shp);
     SetLength(pts1, Length(pts));
@@ -4212,7 +4222,7 @@ implementation
   
   function LinesIntersect(const lines, lines1: LinesArray): Boolean;
   var
-    i: Integer;
+    i: LongInt;
   begin
     result := false;
     if (Length(lines) = 0) or (Length(lines1) = 0) then exit;
@@ -4235,7 +4245,7 @@ implementation
   function ShapeRectangleIntersect(shp: Shape; const rect: Rectangle): Boolean; overload;
   var
     kind: ShapeKind;
-    i: Integer;
+    i: LongInt;
   begin
     result := false;
     

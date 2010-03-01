@@ -476,7 +476,7 @@ interface
   /// Gets a circle in the bounds of the base layer of the indicated sprite.
   ///
   /// @lib
-  /// @sn sprite:%s circle:%s
+  /// @sn spriteCircle:%s
   /// 
   /// @class Sprite
   /// @method Circle
@@ -651,9 +651,8 @@ interface
   /// @class Sprite
   /// @method Move
   procedure MoveSprite(s: Sprite); overload;
-    
+  
   /// @lib MoveSprite
-  /// @uname MoveSpritePct
   /// @class Sprite
   /// @overload Move MovePct
   procedure MoveSprite(s: Sprite; pct: Single); overload;
@@ -989,11 +988,11 @@ interface
   ///
   /// @class Sprite
   /// @overload Value ValueAt
-  function SpriteValue(s: Sprite; index: Integer): Single; overload;
+  function SpriteValue(s: Sprite; index: LongInt): Single; overload;
   
   /// Returns the indicated value of the sprite
   ///
-  /// @lib
+  /// @lib SpriteValueNamed
   /// @sn sprite:%s valueOf:%s
   ///
   /// @class Sprite
@@ -1002,7 +1001,7 @@ interface
   
   /// Adds a new kind of value to the Sprite
   /// 
-  /// @lib
+  /// @lib SpriteAddValue
   /// @sn sprite:%s addValue:%s
   /// 
   /// @class Sprite
@@ -1012,7 +1011,7 @@ interface
   /// Adds a new kind of value to the Sprite, setting the initial value
   /// to the value passed in.
   /// 
-  /// @lib
+  /// @lib SpriteAddValueWithInitialValue
   /// @sn sprite:%s addValue:%s initally:%s
   /// 
   /// @class Sprite
@@ -1036,7 +1035,7 @@ interface
   /// @sn sprite:%s setValue:%s to:%s
   ///
   /// @class Sprite
-  /// @overload SetValue
+  /// @method SetValue
   /// @csn setValue:%s to:%s
   procedure SpriteSetValue(s: Sprite; idx: LongInt; val: Single); overload;
   
@@ -1110,7 +1109,7 @@ implementation
   function CreateSprite(const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
   var
     layerNames: StringArray;
-    i: Integer;
+    i: LongInt;
   begin
     SetLength(layerNames, Length(layers));
     for i := 0 to High(layers) do
@@ -1123,7 +1122,7 @@ implementation
   
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
   var
-    i, count: Integer;
+    i, count: LongInt;
   begin
     result := nil; 
     count := Length(layers);
@@ -1620,7 +1619,7 @@ implementation
   
   procedure SpriteSetLayerOffsets(s: Sprite; values: Point2DArray);
   var
-    i: Integer;
+    i: LongInt;
   begin
     if not Assigned(s) then exit;
     if not Length(values) = Length(s^.layerOffsets) then begin RaiseException('Unable to set sprite layer offsets as lengths are not equal.'); exit; end;
@@ -2049,7 +2048,7 @@ implementation
     result := NamesOf(s^.valueIds);
   end;
   
-  function SpriteValue(s: Sprite; index: Integer): Single; overload;
+  function SpriteValue(s: Sprite; index: LongInt): Single; overload;
   begin
     result := 0;
     if not Assigned(s) then exit;

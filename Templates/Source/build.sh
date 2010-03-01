@@ -312,6 +312,9 @@ then
         FPC_BIN=`which ppcppc`
         doMacCompile "ppc" "-ldylib1.10.5.o"
         
+        #FPC_BIN=`which ppcx64`
+        #doMacCompile "x86_64"
+        
         #Combine into a fat dylib
         doLipo "i386" "ppc"
         

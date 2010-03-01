@@ -123,10 +123,16 @@ interface
   /// @class Sprite
   /// @overload RectCollision RectangleCollision
   /// @csn collisionWithRect:%s
-function SpriteRectCollision(s: Sprite; const r: Rectangle): Boolean; overload;
-
-
-   function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload; 
+  function SpriteRectCollision(s: Sprite; const r: Rectangle): Boolean; overload;
+  
+  /// Returns true if the sprite and the shape have collided.
+  /// 
+  /// @lib SpriteShapeCollision
+  /// @sn sprite:%s collisionWithShape:%s
+  ///
+  /// @class Sprite
+  /// @method ShapeCollision
+  function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload; 
   
   //---------------------------------------------------------------------------
   // Sprite <-> Bitmap Collision Detection
@@ -977,7 +983,7 @@ implementation
   procedure CollideCircleLines(s: Sprite; const lines: LinesArray);
   var 
     outVec, mvmt: Vector;
-    maxIdx: Integer;
+    maxIdx: LongInt;
     mvmtMag, prop: Single;
   begin
     mvmt := s^.velocity;
@@ -1141,7 +1147,7 @@ implementation
   function CircleLinesCollision(const c: Circle; const lines: LinesArray): Boolean;
   var
     pt: Point2D;
-    i: Integer;
+    i: LongInt;
   begin
     result := False;
     
@@ -1165,7 +1171,7 @@ implementation
 
   function CircleTriangleCollision(const c: Circle; const tri: Triangle): Boolean;
   var
-    i: Integer;
+    i: LongInt;
   begin
     result := False;
 

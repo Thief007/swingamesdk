@@ -413,8 +413,6 @@ implementation
   end;
   
   constructor TSDLManager.Create();
-  var
-    i: Integer;
   begin
     _quit := false;
     _keyPressed := false;

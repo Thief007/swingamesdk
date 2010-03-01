@@ -237,7 +237,6 @@ interface
   /// @returns: True if the window has been requested to close.
   ///
   /// @lib WindowCloseRequested
-  /// @uname WindowCloseRequested
   function WindowCloseRequested(): Boolean;
   
   /// ProcessEvents allows the SwinGame API to react to user interactions. This
@@ -270,7 +269,6 @@ interface
   /// approximately meet the targetted frames per second.
   ///
   /// @lib RefreshScreenRestrictFPS
-  /// @uname RefreshScreenRestrictFPS
   procedure RefreshScreen(TargetFPS: UInt32); overload;
   
   
@@ -302,7 +300,6 @@ interface
   /// @returns:           The color matched to the bitmaps pixel format
   ///
   /// @lib ColorFromBitmap
-  /// @uname ColorFromBitmap
   /// @sn colorFrom:%s apiColor:%s
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
   

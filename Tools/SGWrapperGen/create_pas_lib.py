@@ -54,23 +54,31 @@ _type_switcher = {
     'mousebutton': 'MouseButton',
     'boolean': 'Boolean',
     'keycode': 'KeyCode',
-    'longintarray': 'LongIntPtr',
+    
+    'longintarray':     'LongIntPtr',
+    'bitmaparray':      'BitmapPtr',
+    'point2darray':     'Point2DPtr',
+    'trianglearray':    'TrianglePtr',
+        
     'spriteendingaction': 'SpriteEndingAction',
-    'bitmaparray': 'BitmapPtr',
     'circle': 'Circle',
-    'point2darray': 'Point2DPtr',
     'map': 'Map',
     'maptag': 'MapTag',
     'spritekind': 'SpriteKind',
     'freenotifier': 'FreeNotifier',
     
     'shapeprototype': 'ShapePrototype',
+    'character': 'Character',
     'shape': 'Shape',
+    
     'shapekind': 'ShapeKind',
     'animation': 'Animation',
     'animationtemplate': 'AnimationTemplate',
     'stringarray': 'StringPtr',
     'collisiontestkind':    'CollisionTestKind',
+    
+    'bitmapcell':       'BitmapCell',
+    
 }
 
 # dictionary for start of method names for copying variable
@@ -80,14 +88,15 @@ _array_copy_data = {
     'bitmaparray': 'Bmp',
     'longintarray': 'LongInt',
     'point2darray': 'Point2D',
-    'stringarray':  'String'
+    'stringarray':  'String',
+    'trianglearray':  'Triangle',
 }
 
 # dictionary for start of method names for copying fixed
 # length array data
 _array_copy_fixed_data = {
     'triangle': 'Tri',
-    'matrix2d': 'Matrix'
+    'matrix2d': 'Matrix',
 }
 
 _names = []
@@ -170,7 +179,7 @@ def method_visitor(the_method, other):
         if not result_param.maps_result: #in case of returning var length array
             result_param = the_method.params[-2]
         
-        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray','stringarray','bitmaparray']:
+        if not result_param.maps_result or result_param.data_type.name.lower() not in ['string', 'triangle', 'linesarray', 'matrix2d', 'point2darray', 'longintarray','stringarray','bitmaparray','trianglearray']:
             logger.error('CREATE LIB: Unknown parameter return type in %s.', the_method.name)
             assert False
         lines = _function_as_procedure

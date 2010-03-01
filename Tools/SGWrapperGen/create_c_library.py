@@ -57,6 +57,7 @@ _type_switcher = {
         'map':              'map %s',
         'animationtemplate':    'animation_template %s',
         'animation':            'animation %s',
+        'character':            'character %s',
         
         'matrix2d':         'matrix2d %s',
         'vector':           'vector %s',
@@ -65,6 +66,7 @@ _type_switcher = {
         'rectangle':        'rectangle %s',
         'triangle':         'triangle %s',
         'circle':           'circle %s',
+        'bitmapcell':       'bitmap_cell *%s',
         
         'keycode':              'key_code %s',
         'resourcekind':         'resource_kind %s',
@@ -129,8 +131,11 @@ _type_switcher = {
         'matrix2d':     'matrix2d %s',
         'vector':       'vector *%s',
         'circle':       'circle *%s',
+        'bitmapcell':   'bitmap_cell *%s',
+        
         'triangle':     'triangle %s',
         
+        'trianglearray':    'triangle_array %s',
         'linesarray':   'lines_array %s',
         'stringarray':   'string_array %s',
         'bitmaparray':  'bitmap_array %s',
@@ -155,8 +160,10 @@ _type_switcher = {
         'triangle':     'triangle %s',
         'rectangle':    'rectangle %s',
         
+        'trianglearray':    'triangle_array %s',
+        'stringarray':      'string_array %s',
         'linesarray':       'lines_array %s',
-        'bitmaparray':       'bitmap_array %s',
+        'bitmaparray':      'bitmap_array %s',
         'point2darray':     'point2d *%s',
         'longintarray':     'int *%s',
         'single':           'float *%s',
@@ -200,6 +207,7 @@ _type_switcher = {
         'rectangle':    'rectangle %s',
         'linesegment':  'line_segment %s',
         'matrix2d':     'matrix2d %s',
+        'bitmapcell':   'bitmap_cell %s',
         
         'linesarray':       'line_segment *%s',
         'point2darray':   'point2d *%s',
@@ -216,6 +224,8 @@ _type_switcher = {
         'shapeprototype':   'shape_prototype %s',
         'shapekind':        'shape_kind %s',
         'shape':            'shape %s',
+        
+        'fontalignment':    'font_alignment %s',
     },
 }
 
@@ -247,6 +257,7 @@ _adapter_type_switcher = {
         'font':         'void *%s',
         'animationtemplate':    'void *%s',
         'animation':    'void *%s',
+        'character':    'void *%s',
         
         'namedindexcollection': 'named_index_collection %s',
         
@@ -296,6 +307,8 @@ _adapter_type_switcher = {
         'single[0..n - 1]':             'float *%s',
         'string[0..n - 1]':             'char **%s',
         
+        'rectangle[0..n - 1]':          'rectangle *%s',
+        
         'mapdata':                          'map_data %s',
         'mapanimationdata[0..n - 1]':       'map_animation_data *%s',
         'maplayerdata[0..n - 1]':           'map_layer_data *%s',
@@ -313,6 +326,7 @@ _adapter_type_switcher = {
         'singleptr':            'float *%s',
         'longintptr':           'int *%s',
         'bitmapptr':            'void *%s',
+        'triangleptr':          'triangle *%s',
         
         'pointer':              'void *%s',
         'animationframe':       'animation_frame %s',
@@ -329,19 +343,23 @@ _adapter_type_switcher = {
         None:                   'void %s'
     },
     'const' : {
-        'point2d':      'point2d *%s',
-        'linesegment':  'line_segment *%s',
-        'rectangle':    'rectangle *%s',
-        'matrix2d':     'matrix2d %s',
-        'triangle':     'triangle %s',
-        'vector':       'vector *%s',
-        'circle':       'circle *%s',
+        # Structs - pass in pointer
+        'point2d':          'point2d *%s',
+        'linesegment':      'line_segment *%s',
+        'rectangle':        'rectangle *%s',
+        'bitmapcell':       'bitmap_cell *%s',
+        'vector':           'vector *%s',
+        'circle':           'circle *%s',
         
-        'longintarray': 'int *%s',
-        'linesarray':   'lines_array %s',
-        'bitmaparray':  'bitmap_array %s',
-        'point2darray': 'point2d_array %s',
-        'stringarray':  'string_array %s',
+        # Arrays - pass in as is (already pointer)
+        'longintarray':     'int *%s',
+        'matrix2d':         'matrix2d %s',
+        'triangle':         'triangle %s',
+        'linesarray':       'lines_array %s',
+        'bitmaparray':      'bitmap_array %s',
+        'point2darray':     'point2d_array %s',
+        'stringarray':      'string_array %s',
+        'trianglearray':    'triangle_array %s',
     },
     'var': {
         'soundeffect':  'sound_effect *%s',
@@ -379,10 +397,12 @@ _adapter_type_switcher = {
         'string':           'char *%s',
         'linesarray':       'line_segment *%s',
         'matrix2d':         'matrix2d %s',
-        'point2darray':   'point2d *%s',
+        'point2darray':     'point2d *%s',
         'triangle':         'triangle %s',
         'longintarray':     'int *%s',
-        'bitmaparray':      'bitmap_array %s'
+        'bitmaparray':      'bitmap_array %s',
+        'trianglearray':    'triangle_array %s',
+        'stringarray':      'string_array %s',
     },
     # mapping of the return type of a function
     'return' : {
@@ -421,6 +441,10 @@ _adapter_type_switcher = {
         'shapeprototype':   'shape_prototype %s',
         'shapekind':        'shape_kind %s',
         'shape':            'shape %s',
+        
+        'bitmapcell':       'bitmap_cell %s',
+        
+        'fontalignment':    'font_alignment %s',
     }
 
 }

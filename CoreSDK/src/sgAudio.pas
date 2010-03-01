@@ -366,8 +366,7 @@ interface
   /// @param ms The number of milliseconds over which to fade the music in to 
   //            the current music volume.
   ///
-  /// @lib FadeMusicIn(mus, -1, ms)
-  /// @uname FadeMusicIn
+  /// @lib FadeMusicIn
   /// @sn playMusic:%s fadeIn:%s
   ///
   /// @class Music
@@ -386,8 +385,7 @@ interface
   /// @param ms The number of milliseconds over which to fade the music in to 
   ///           the current music volume.
   ///
-  /// @lib FadeMusicIn
-  /// @uname FadeMusicInWithLoops
+  /// @lib FadeMusicInWithLoops
   /// @sn playMusic:%s looped:%s fadeIn:%s
   ///
   /// @class Music
