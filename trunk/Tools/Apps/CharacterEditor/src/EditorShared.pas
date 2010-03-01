@@ -104,6 +104,8 @@ type
     
   LoadedBitmap = record 
     Scaled : Array [BMPType] of Bitmap;          // The scaled version of the bitmaps for the different groups
+    red, green, blue, cols, rows, 
+    width, height, count : Integer;
   end;
   
   LoadedBitmaps = Array of LoadedBitmap;
@@ -198,6 +200,7 @@ type
   // Bitmaps
   //--------------------------------------------------------------------------- 
   
+  function BitmapAt(sharedVals: EditorValues; name : String): LoadedBitmap;
   function SetLoadedBitmapPtr(idx : Integer; bmpArray: LoadedBitmaps): LoadedBitmapPtr;
   procedure InitializeBitmapDetails(GridType: BMPType; var bmpArray: CharBodyTypes; scale: single; cols, rows: Integer);
   procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);	
@@ -240,6 +243,8 @@ type
  	procedure ExportBitmap(destbmp: Bitmap; cellGrp: CellGroupData); 
   procedure ExportAnimation(aniStrips: AniStripArray; path: string);
   procedure LoadAnimation(var AniMode: AnimationEditorValues);
+  procedure ExportCharacter(CharMode: CharEditorValues; sharedVals: EditorValues; path: String);
+  procedure LoadCharacterToEditor(var CharMode: CharEditorValues; path:string);
   procedure DoOpenDialog(var sharedVals : EditorValues; dt : DialogType);
   procedure DoSaveDialog(var sharedVals : EditorValues; dt : DialogType);
 	
@@ -475,6 +480,30 @@ implementation
 	//---------------------------------------------------------------------------
   // Bitmaps
   //--------------------------------------------------------------------------- 
+   
+  function BitmapAt(sharedVals: EditorValues; name : String): LoadedBitmap;
+  var
+    body, part, bmp: integer;
+  begin  
+    with sharedVals do
+    begin
+      for body := Low(Browser.bodyType) to High(Browser.bodyType) do
+      begin
+        for part := Low(Browser.bodyType[body].parts) to High(Browser.bodyType[body].parts) do
+        begin
+          for bmp := Low(Browser.bodyType[body].parts[part].bmps) to High(Browser.bodyType[body].parts[part].bmps) do
+          begin
+            if Browser.bodyType[body].parts[part].bmps[bmp].scaled[Original]^.name = name then
+            begin
+              result := Browser.bodyType[body].parts[part].bmps[bmp];
+              exit;
+            end;
+          end;
+        end;
+      end;
+    end;
+  end;
+  
 	function CalculateScale(maxWidth, maxHeight, totalWidth, totalHeight: Integer): Single;
   begin
     if totalWidth > totalHeight then
@@ -528,29 +557,30 @@ implementation
     procedure ProcessLine();
     var
       scale: Array [BMPType] of Single;
-      width, height, cols, rows, count, totalW, totalH, bodyID, partsID: Integer;
+      totalW, totalH, bodyID, partsID: Integer;
       i : BMPType;
     begin      
       AddToCollection(bodyID, partsID);
       
       with charBmps.BodyType[bodyID].parts[partsID] do
       begin
-        SetTransparentColor(bmps[High(bmps)].scaled[Original], RGBColor(StrToInt(ExtractDelimited(2, line, [','])),
-                                                                StrToInt(ExtractDelimited(3, line, [','])),
-                                                                StrToInt(ExtractDelimited(4, line, [','])))); 
-               
-        width   := StrToInt(ExtractDelimited(7, line, [',']));
-        height  := StrToInt(ExtractDelimited(8, line, [',']));
-        cols    := StrToInt(ExtractDelimited(5, line, [',']));
-        rows    := StrToInt(ExtractDelimited(6, line, [',']));
-        count   := StrToInt(ExtractDelimited(9, line, [',']));
-        totalW  := bmps[High(bmps)].scaled[Original]^.Width;
-        totalH  := bmps[High(bmps)].scaled[Original]^.Height;
+        bmps[High(bmps)].red     := StrToInt(ExtractDelimited(2, line, [',']));
+        bmps[High(bmps)].green   := StrToInt(ExtractDelimited(3, line, [',']));
+        bmps[High(bmps)].blue    := StrToInt(ExtractDelimited(4, line, [',']));
+        bmps[High(bmps)].cols    := StrToInt(ExtractDelimited(5, line, [',']));
+        bmps[High(bmps)].rows    := StrToInt(ExtractDelimited(6, line, [',']));
+        bmps[High(bmps)].width   := StrToInt(ExtractDelimited(7, line, [',']));
+        bmps[High(bmps)].height  := StrToInt(ExtractDelimited(8, line, [',']));
+        bmps[High(bmps)].count   := StrToInt(ExtractDelimited(9, line, [',']));
+        totalW       := bmps[High(bmps)].scaled[Original]^.Width;
+        totalH       := bmps[High(bmps)].scaled[Original]^.Height;
+                
+        SetTransparentColor(bmps[High(bmps)].scaled[Original], RGBColor(bmps[High(bmps)].red, bmps[High(bmps)].green, bmps[High(bmps)].blue)); 
               
         scale[BitmapGroup]    := 1;
-        scale[SourceGroup]    := CalculateScale(BMPWindowWidth, BMPWindowHeight, totalW + (cols-1)*CellGapSmall, totalH + (rows-1)*CellGapSmall);                                
-        scale[AnimationGroup] := CalculateScale(AniCellWidth, AniCellHeight, width, height); 
-        scale[PreviewGroup]   := CalculateScale(AniCellWidth*2, AniCellHeight*2, width, height);
+        scale[SourceGroup]    := CalculateScale(BMPWindowWidth, BMPWindowHeight, totalW + (bmps[High(bmps)].cols-1)*CellGapSmall, totalH + (bmps[High(bmps)].rows-1)*CellGapSmall);                                
+        scale[AnimationGroup] := CalculateScale(AniCellWidth, AniCellHeight, bmps[High(bmps)].width, bmps[High(bmps)].height); 
+        scale[PreviewGroup]   := CalculateScale(AniCellWidth*2, AniCellHeight*2, bmps[High(bmps)].width, bmps[High(bmps)].height);
         
         for i := BitmapGroup to High(BMPType) do
         begin
@@ -558,7 +588,7 @@ implementation
             bmps[High(bmps)].Scaled[i] := bmps[High(bmps)].scaled[Original]
           else
             bmps[High(bmps)].Scaled[i] := RotateScaleBitmap(bmps[High(bmps)].scaled[Original], 0, scale[i]);	
-          BitmapSetCellDetails(bmps[High(bmps)].Scaled[i],  Trunc(width*scale[i]), Trunc(height*scale[i]), cols, rows, count);
+          BitmapSetCellDetails(bmps[High(bmps)].Scaled[i],  Trunc(bmps[High(bmps)].width*scale[i]), Trunc(bmps[High(bmps)].height*scale[i]), bmps[High(bmps)].cols, bmps[High(bmps)].rows, bmps[High(bmps)].count);
         end;
       end;
     end;
@@ -609,7 +639,7 @@ implementation
     
   procedure SetBitmapDetails(GridType: BMPType; var bmp: LoadedBitmap; cols, rows: Integer);
   var
-    cellW, cellH, i: Integer;
+    cellW, cellH: Integer;
   begin    
     cellW := Trunc(bmp.scaled[GridType]^.width  / cols);
     cellH := Trunc(bmp.scaled[GridType]^.height / rows);
@@ -1251,6 +1281,199 @@ implementation
     end;
     
     Close(txt);
+  end;
+  
+  procedure ExportCharacter(CharMode: CharEditorValues; sharedVals: EditorValues; path: String);
+  var
+    i, j, k: Integer;
+    txt: Text;
+    bmp : LoadedBitmap;
+    lst: GUIList;
+    filename : string;
+  begin
+    Assign(txt, path);
+    ReWrite(txt);
+    WriteLn(txt, 'SwinGame Character #v1');
+    WriteLn(txt, '//Character Template');
+    WriteLn(txt, '');
+    
+    if  CharMode.MainChar^.CharName <> '' then
+    begin
+      WriteLn(txt, '//Name: [STRING]');
+      WriteLn(txt, 'n: ', CharMode.MainChar^.CharName);
+      WriteLn(txt, '');
+    end;
+    
+    if  CharMode.MainChar^.CharName <> '' then
+    begin
+      WriteLn(txt, '//Type: [STRING]');
+      WriteLn(txt, 't: ',CharMode.MainChar^.CharType);
+      WriteLn(txt, '');
+    end;    
+    
+    WriteLn(txt, '//Bitmaps: [NAME||FILE||WIDTH||HEIGHT||COLS||ROWS||CELLCOUNT||R||G||B||CollisionLayer]');
+       
+    lst := ListFromRegion(RegionWithID('LayerList'));
+    
+    for i := 0 to ListItemCount(RegionWithID('LayerList')) -1 do
+    begin
+      fileName := lst^.items[i].image.bmp^.name;
+      bmp := BitmapAt(sharedVals, filename);
+      Write(txt, 'b: ',fileName,',');
+      Write(txt, bmp.scaled[Original]^.filename,',',bmp.scaled[Original]^.Width,',',bmp.scaled[Original]^.Height,',');
+      Write(txt, bmp.cols , ',',bmp.rows , ',',bmp.count, ',',bmp.red, ',',bmp.green ,',',bmp.blue);
+      if i = 0 then WriteLn(txt,', t') else WriteLn(txt,'');
+    end;
+    
+    WriteLn(txt, '');
+    
+    with CharMode.MainChar^ do
+    begin    
+      if CharSprite^.animationTemplate <> nil then
+      begin
+        WriteLn(txt, '//Animation Template');
+        WriteLn(txt, 'a: ' + CharSprite^.animationTemplate^.filename);
+        WriteLn(txt, '');
+      end;
+      
+      if NameCount(Directions) <> 0 then
+      begin
+        WriteLn(txt, '//Directions [Initial|Count|Names]');
+        Write(txt, 'd: 0,',NameCount(Directions),',');
+        for i := 0 to NameCount(Directions) -1 do
+        begin
+          Write(txt, NameAt(Directions, i));
+          if i <> NameCount(Directions) -1 then Write(txt,',')
+          else WriteLn(txt, ''); 
+        end;    
+        WriteLn(txt, '');
+      end;
+      
+      if NameCount(States) <> 0 then
+      begin
+        WriteLn(txt, '//States [Initial|Count|Names]');
+        Write(txt, 's: 0,',NameCount(States),',');
+        for i := 0 to NameCount(States) -1 do
+        begin
+          Write(txt, NameAt(States, i));
+          if i <> NameCount(States) -1 then Write(txt,',')
+          else WriteLn(txt, ''); 
+        end;
+        WriteLn(txt, '');
+      end;
+      
+      
+      if Length(ShownLayers) <> 0 then
+      begin
+        WriteLn(txt, '//ShownLayers [t = true(show)| f = false(hide)]');
+        Write(txt, 'l: ');
+        for i := Low(ShownLayers) to High(ShownLayers) do 
+        begin
+          if ShownLayers[i] then Write(txt, 't') else Write(txt, 'f');
+          if i <> High(ShownLayers) then Write(txt, ',')
+          else WriteLn(txt, ''); 
+        end;
+        WriteLn(txt, '');
+      end;
+      
+      if (NameCount(States) <> 0) AND (NameCount(Directions) <> 0) then
+      begin
+        WriteLn(txt, '');
+        for i := 0 to NameCount(States) -1 do
+        begin
+          for j := 0 to NameCount(Directions) -1 do
+          begin
+            Write(txt, 'sd: ', NameAt(States, i), ',', NameAt(Directions, j),',', NameAt(CharSprite^.AnimationTemplate^.animationids, ShownLayersByDirState[i,j].Anim));
+            if Length(ShownLayersByDirState[i,j].LayerOrder) <> 0 then
+            begin
+              Write(txt, ',[');
+              for k := Low(ShownLayersByDirState[i,j].LayerOrder) to High(ShownLayersByDirState[i,j].LayerOrder) do
+              begin
+                Write(txt, ShownLayersByDirState[i,j].LayerOrder[k]);
+                if k <> High(ShownLayersByDirState[i,j].LayerOrder) then Write(txt,',')
+                else WriteLn(txt, ']'); 
+              end;
+            end;
+          end;
+        end;
+        WriteLn(txt, '');
+      end;
+      
+      
+      if ListItemCount(RegionWithID('ValueList'))  <> 0 then
+      begin
+        WriteLn(txt, '//Values: [Name|Single]');
+        for i := 0 to ListItemCount(RegionWithID('ValueList')) -1 do
+        begin
+          WriteLn(txt, 'v: ', Trim(ListItemText(RegionWithID('ValueList'), i)));
+        end;
+      end;
+      WriteLn(txt, '');
+    end;
+    
+    if ListItemCount(RegionWithID('AngleList'))  <> 0 then
+    begin
+      WriteLn(txt, '//Angles: [Direction|Min|Max]');
+      for i := 0 to ListItemCount(RegionWithID('AngleList')) -1 do
+      begin
+        WriteLn(txt, 'p: ', Trim(ListItemText(RegionWithID('AngleList'), i)));
+      end;
+      WriteLn(txt, '');
+    end;
+    Close(txt);
+  end;
+  
+  procedure LoadCharacterToEditor(var CharMode: CharEditorValues; path:string);
+  var
+    i, j, k: Integer;
+    cell : BitmapCell;
+    lst: GUIList;
+  begin    
+    FreeCharacter(CharMode.MainChar);
+    CharMode.MainChar := LoadCharacter(path);
+    
+    with CharMode.MainChar^ do
+    begin   
+      TextBoxSetText(RegionWithID('CharName'), CharName);    
+      TextBoxSetText(RegionWithID('CharType'), CharType);
+       
+      for i := 0 to NameCount(Directions) -1 do
+      begin
+        ListAddItem(ListFromRegion(RegionWithID('DirList')), NameAt(Directions, i));
+        ListAddItem(ListFromRegion(RegionWithID('DirAngleList')), NameAt(Directions, i));
+        ListAddItem(ListFromRegion(RegionWithID('DirLayerList')), NameAt(Directions, i));
+      end;
+      
+      for i := 0 to NameCount(States) -1 do
+      begin
+        ListAddItem(ListFromRegion(RegionWithID('StateList')), NameAt(States, i));
+        ListAddItem(ListFromRegion(RegionWithID('StateAngleList')), NameAt(States, i));
+        ListAddItem(ListFromRegion(RegionWithID('StateLayerList')), NameAt(States, i));
+      end;
+      
+      for i := 2 to NameCount(CharSprite^.ValueIds) -1 do
+      begin
+        ListAddItem(ListFromRegion(RegionWithID('ValueList')), NameAt(CharSprite^.ValueIds, i) + ',' + FloatToStr(CharSprite^.values[i]));
+      end;
+      
+      for i := Low(DirectionParameters) to High(DirectionParameters) do
+      begin
+        ListAddItem(ListFromRegion(RegionWithID('AngleList')), IntToStr(DirectionParameters[i].min) + ',' + IntToStr(DirectionParameters[i].max) + ',' + NameAt(Directions, i));
+      end;
+      
+      for i := Low(CharSprite^.layers) to High(CharSprite^.layers) do
+      begin
+        name := ExtractFileName(CharSprite^.layers[i]^.filename);
+        cell := BitmapCellOf(BitmapNamed(name), 0);
+        ListAddItem(ListFromRegion(RegionWithID('LayerList')), cell, name); 
+      end;
+      
+      ListClearItems(RegionWithID('AniLayerList'));
+      for i := 0 to NameCount(CharSprite^.animationTemplate^.animationIDs)-1 do
+      begin 
+        ListAddItem(RegionWithID('AniLayerList'), NameAt(CharSprite^.animationTemplate^.animationIDs, i));
+      end;
+    end;
   end;
       
 	//---------------------------------------------------------------------------

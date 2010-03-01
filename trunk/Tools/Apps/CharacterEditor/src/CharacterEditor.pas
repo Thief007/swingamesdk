@@ -14,6 +14,7 @@ const
   DirAngle        = 6;
   LayerOrder      = 7;
   Preview         = 8;
+  CharMenu        = 9;
    
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
   procedure UpdateCharEditor(var CharMode : CharEditorValues;var sharedVals: EditorValues);
@@ -30,7 +31,7 @@ implementation
   var
     i: Integer;
   begin
-    SetLength(p, 9);
+    SetLength(p, 10);
     
     p[CharDetails]      := LoadPanel('CharDetails.txt');
     p[CharDirections]   := LoadPanel('CharDirections.txt');
@@ -41,6 +42,7 @@ implementation
     p[DirAngle]         := LoadPanel('DirAngles.txt');
     p[LayerOrder]       := LoadPanel('CharLayerOrder.txt');
     p[Preview]          := LoadPanel('CharPreview.txt');
+    p[CharMenu]         := LoadPanel('CharMenuPanel.txt');
   end;
   
   procedure InitializeCharEditor(var CharMode : CharEditorValues);
@@ -68,31 +70,7 @@ implementation
   //---------------------------------------------------------------------------
   // Misc
   //--------------------------------------------------------------------------- 
-  
-  function BitmapAt(sharedVals: EditorValues; name : String): Bitmap;
-  var
-    body, part, bmp: integer;
-  begin
-    result := nil;  
-    with sharedVals do
-    begin
-      for body := Low(Browser.bodyType) to High(Browser.bodyType) do
-      begin
-        for part := Low(Browser.bodyType[body].parts) to High(Browser.bodyType[body].parts) do
-        begin
-          for bmp := Low(Browser.bodyType[body].parts[part].bmps) to High(Browser.bodyType[body].parts[part].bmps) do
-          begin
-            if Browser.bodyType[body].parts[part].bmps[bmp].scaled[Original]^.name = name then
-            begin
-              result := Browser.bodyType[body].parts[part].bmps[bmp].scaled[PreviewGroup];
-              exit;
-            end;
-          end;
-        end;
-      end;
-    end;
-  end;
-  
+    
   function CurrentCheck(c: Character): Boolean;
   begin
     result := true;
@@ -163,7 +141,7 @@ implementation
       for i := 0 to ListItemCount(lst) -1 do
       begin
         imageName := lst^.items[i].image.bmp^.name;
-        SpriteAddLayer(CharMode.MainChar^.CharSprite, BitmapAt(sharedVals, imageName), imageName)
+        SpriteAddLayer(CharMode.MainChar^.CharSprite, BitmapAt(sharedVals, imageName).scaled[PreviewGroup], imageName)
       end;
     end;
   end;
@@ -465,7 +443,7 @@ implementation
       AddName(MainChar^.CharSprite^.ValueIds, value);
       SetLength(MainChar^.CharSprite^.values, Length(MainChar^.CharSprite^.values) + 1);
       MainChar^.CharSprite^.values[High(MainChar^.CharSprite^.values)] := newVal;
-      ListAddItem(ListFromRegion(RegionWithID('ValueList')), name + ' , ' +  value);
+      ListAddItem(ListFromRegion(RegionWithID('ValueList')), name + ',' +  value);
       TextBoxSetText(TextBoxFromRegion(RegionWithID('NameValueIn')), '');
       TextBoxSetText(TextBoxFromRegion(RegionWithID('ValueValueIn')), '');
     end;
@@ -482,7 +460,7 @@ implementation
       directionParameters[index].min := newval2;
       directionParameters[index].max := newval;
       
-      ListAddItem(ListFromRegion(RegionWithID('AngleList')), ListActiveItemText(RegionWIthID('DirAngleList')) + ' , ' + min + ' , ' +  max);
+      ListAddItem(ListFromRegion(RegionWithID('AngleList')), ListActiveItemText(RegionWIthID('DirAngleList')) + ',' + min + ',' +  max);
       TextBoxSetText(TextBoxFromRegion(RegionWithID('MinIn')), '');
       TextBoxSetText(TextBoxFromRegion(RegionWithID('MaxIn')), '');
       ListSetActiveItemIndex(ListFromRegion(RegionWIthID('DirAngleList')), -1);
@@ -627,10 +605,15 @@ implementation
   begin
     with CharMode do
     begin
-      case IndexOfLastUpdatedTextBox of 
-        0: MainChar^.CharName 			:= TextBoxText(GUITextBoxOfTextEntered);
-        1: MainChar^.CharType 			:= TextBoxText(GUITextBoxOfTextEntered);
+      if GUITextEntryComplete AND (RegionPanel(RegionOfLastUpdatedTextBox) = panels[CharDetails]) then
+      begin
+        case IndexOfLastUpdatedTextBox of 
+          0: MainChar^.CharName 			:= TextBoxText(GUITextBoxOfTextEntered);
+          1: MainChar^.CharType 			:= TextBoxText(GUITextBoxOfTextEntered);
+        end;
       end;
+      
+      if sharedVals.BitmapPtr <> nil then AddLayer(CharMode, sharedVals.BitmapPtr, sharedVals);
       
       // Adds
       if (RegionClickedID() = 'DirAdd')     then AddDirection(CharMode,  TextBoxText(TextBoxFromRegion(RegionWithID('DirIn'))));
@@ -644,19 +627,28 @@ implementation
       if (RegionClickedID() = 'StateRemove') then RemoveState(CharMode);
       if (RegionClickedID() = 'ValueRemove') then RemoveValue(CharMode);
       if (RegionClickedID() = 'AngleRemove') then RemoveDataFromList('AngleList', 'AngleList');
-      if (RegionClickedID() = 'AddLayer')    then ShowPanel(sharedVals.panels[BrowserPanel]);
+      
+      if (RegionClickedID() = 'ExportCharacter') then DoSaveDialog(sharedVals, SaveChar);
+      if (RegionClickedID() = 'LoadCharIntoEditor') then DoSaveDialog(sharedVals, LoadChar);
       if (RegionClickedID() = 'BrowseAni')   then DoOpenDialog(sharedVals, LoadAni);
-      if DialogComplete AND (sharedVals.OpenSave = LoadAni) then LoadAniToPreview(CharMode);
+      
+      if (RegionClickedID() = 'AddLayer')    then ShowPanel(sharedVals.panels[BrowserPanel]);
       if (RegionClickedID() = 'AcceptAni') then AcceptAnimation(CharMode);
       if (RegionClickedID() = 'CharAniComboList') then PreviewCharacter(CharMode);
       if (RegionClickedID() = 'LORemove') then RemoveLayerFromOrder(CharMode);
       
-      if sharedVals.BitmapPtr <> nil then AddLayer(CharMode, sharedVals.BitmapPtr, sharedVals);
       if (RegionClickedID() = 'RemoveLayer') then RemoveLayer(CharMode, sharedVals);
       if (RegionClickedID() = 'MoveUP') then MoveLayer(CharMode, -1);
       if (RegionClickedID() = 'MoveDown') then MoveLayer(CharMode, 1);
       if (RegionClickedID() = 'DirLayerList') OR (RegionClickedID() = 'StateLayerList') then ShowLayerOrder(CharMode);
 
+      if DialogComplete AND (sharedVals.OpenSave = LoadAni) then LoadAniToPreview(CharMode);
+      if DialogComplete AND (sharedVals.OpenSave = SaveChar) then ExportCharacter(CharMode, sharedVals, dialogPath);
+      if DialogComplete AND (sharedVals.OpenSave = LoadChar) then 
+      begin
+        LoadCharacterToEditor(CharMode, dialogPath);
+        RefreshAniComboList(CharMode);
+      end;
       //Drop Down
       UpdateDropDown('DirAngleList'   , 'DirAngleLbl'   , panels[DirAngle]);
     end;
@@ -672,7 +664,5 @@ implementation
       DrawCharacterSprite(CharMode.MainChar);
       UpdateSpriteAnimation(CharMode.MainChar^.CharSprite);
     end;
-    WriteLn(Length(CharMode.MainChar^.ShownLayersByDirState));
-    
   end;
 end.

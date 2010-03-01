@@ -115,6 +115,7 @@ begin
 	begin
 		ShowPanel(panels[i]);
 	end;
+  HidePanel(panels[6]); //DirectionAngles dropdown
 end;
 
 // Hides the previously active panels of the previous mode
@@ -129,7 +130,7 @@ begin
 end;
 
   // Handles Hiding/Showing of panels based on the mode
-procedure ChangePanelMode(BitmapPanels, AnimationPanels, CharacterPanels: PanelArray; var prevMode :integer; currentMode: Integer);
+procedure ChangePanelMode(BitmapPanels, AnimationPanels, CharacterPanels: PanelArray; p: Panel; var prevMode :integer; currentMode: Integer);
 var
 	i: integer;
 begin
@@ -145,6 +146,7 @@ begin
 		CharacterEditorID :  HidePanels(CharacterPanels);
 	end;
 	prevMode := currentMode;
+  HidePanel(p);
 end;
 
   //Draws the background depending on the mode
@@ -161,6 +163,7 @@ procedure HandleBrowser(var sharedVals: EditorValues);
 begin
   if (RegionClickedID() = 'BodyList')      then PopulatePartsList(sharedVals.Browser);
   if (RegionClickedID() = 'PartsList')     then PopulateImageList(sharedVals.Browser);
+  if (RegionClickedID() = 'BrowserCancel') then HidePanel(sharedVals.panels[BrowserPanel]);
   if (RegionClickedID() = 'AddItemButton') then
   begin
     sharedVals.BitmapPtr := GetSelectedBitmap(sharedVals.Browser);
@@ -211,7 +214,7 @@ begin
 	
 		if (prevMode <> ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap')))) then
 		begin
-			ChangePanelMode(BitmapMode.panels, AniMode.panels, CharMode.panels, prevMode, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))));
+			ChangePanelMode(BitmapMode.panels, AniMode.panels, CharMode.panels,sharedVals.panels[BrowserPanel], prevMode, ActiveRadioButtonIndex(RadioGroupFromRegion(RegionWithID('Bitmap'))));
 		end;
     
     DrawPanels();

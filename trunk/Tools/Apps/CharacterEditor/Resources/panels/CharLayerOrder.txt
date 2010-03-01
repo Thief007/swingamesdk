@@ -20,13 +20,13 @@ v: false
 //Radiobutton r: x, y, w, h, 3, GroupID
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
-r: 222, 290, 60, 15, Button,MoveUP
-r: 292, 290, 60, 15, Button,MoveDown
-r: 362, 13, 20, 20, Button,LORemove
+r: 272, 275, 20, 20, Button,MoveUP
+r: 322, 275, 20, 20, Button,MoveDown
+r: 362, 18, 20, 20, Button,LORemove
 r: 125, 202, 20, 20, Button,BrowseAni
 
 r: 32, 207, 110,15, Label, AniLbl, subsSmall, l, None
-r: 52, 290, 60, 15, Button,AcceptAni
+r: 22, 280, 110, 30, Button,AcceptAni
 
 r: 9, 33, 158, 51, List, StateLayerList, 1, 3, -1, subsSmall, left, 15,  v, blank.png
 r: 9, 110, 158, 51, List, DirLayerList, 1, 3, -1, subsSmall, left, 15,  v, blank.png

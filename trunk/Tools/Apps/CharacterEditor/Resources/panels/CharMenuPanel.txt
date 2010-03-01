@@ -1,0 +1,17 @@
+// Panel Version: 1
+
+// Panel data:
+x: 10
+y: 40
+w: 320
+h: 40
+a: CharButtonsAct.png
+i: CharButtons.png
+b: CharButtons.png
+v: false
+
+//Export Strip
+r: 0, 0, 160, 40, Button, ExportCharacter
+
+//Load Animation
+r: 160, 0, 160, 40, Button, LoadCharIntoEditor
