@@ -8,8 +8,6 @@
 // Change History:
 //
 // Version 3:
-// - 2010-02-17: David  : Changed process sounds in LoadAnimation to not split the
-//                        filepath if there was a colon in the path
 // - 2010-01-28: David  : Changed MapAnimationTemplate to use an already loaded 
 //												bitmap if found
 // - 2009-12-21: Andrew : Changed to include sound filename in animation loading.
@@ -176,6 +174,14 @@ interface
   /// @constructor
   /// @csn initAtIndex:%s from:%s
   function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
+  
+  /// Disposes of the resources used in the animation.
+  ///
+  /// @lib
+  ///
+  /// @class Animation
+  /// @dispose
+  procedure FreeAnimation(var ani: Animation);
   
   
   //----------------------------------------------------------------------------
@@ -425,7 +431,7 @@ var
   ids: Array of IdData;
   input: Text; //the bundle file
   line, id, data, path: String;
-  lineNo, maxId: Integer;
+  lineNo, maxId: LongInt;
   
   procedure AddRow(myRow: RowData);
   var
@@ -555,7 +561,6 @@ var
     id: LongInt;
     sndId, sndFile: String;
   begin
-    data := ExtractAfterFirstDelim(1, line, ':');
     if CountDelimiter(data, ',') <> 2 then
     begin
       RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. A sound must have three parts id,sound id,sound file.');
@@ -691,7 +696,7 @@ var
   // Animations with loops must have a duration > 0 for at least one frame
   procedure CheckAnimationLoops();
   var
-    i: Integer;
+    i: LongInt;
     done: Boolean;
     visited: Array of Boolean;
     current: AnimationFrame;
@@ -935,13 +940,22 @@ begin
     result := nil;
 end;
 
+procedure FreeAnimation(var ani: Animation);
+begin
+  if assigned(ani) then
+  begin
+    dispose(ani);
+    ani := nil;
+  end;
+end;
+
 function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
 begin
   result := nil;
   if frames = nil then exit;
   
   new(result);
-  AssignAnimation(result, identifier, frames)
+  AssignAnimation(result, identifier, frames, withSound)
 end;
 
 function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate): Animation; overload;
@@ -980,7 +994,10 @@ procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTempla
 begin
   if (not assigned(anim)) or (not assigned(frames)) then exit;
   if (idx < 0) or (idx > High(frames^.animations)) then 
-    begin RaiseException('Assigning an animation frame that is not within range 0-' + IntToStr(High(frames^.animations)) + '.'); exit; end;
+  begin 
+    //RaiseException('Assigning an animation frame that is not within range 0-' + IntToStr(High(frames^.animations)) + '.'); 
+    exit; 
+  end;
   
   anim^.firstFrame    := frames^.frames[frames^.animations[idx]];
   RestartAnimation(anim, withSound);

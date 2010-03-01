@@ -111,6 +111,32 @@ library %(name)s;
     end;
   end;
   
+  procedure TriangleCopyFromPtr(data: TrianglePtr; len: LongInt; out arr: TriangleArray);
+  var
+    i: LongInt;
+  begin
+    if len < 0 then raise Exception.Create('Length of array cannot be negative');
+
+    SetLength(arr, len);
+
+    for i := 0 to len - 1 do
+    begin
+      arr[i] := (data + i)^;
+    end;
+  end;
+  
+  procedure TriangleCopyToPtr(const arr: TriangleArray; len: LongInt; data: TrianglePtr);
+  var
+    i: LongInt;
+  begin
+    if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
+    
+    for i := Low(arr) to High(arr) do
+    begin
+      (data + i)^ := arr[i];
+    end;
+  end;
+  
   procedure BmpCopyFromPtr(bmp: BitmapPtr; len: LongInt; out arr: BitmapArray);
   var
     i: LongInt;

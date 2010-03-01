@@ -1399,7 +1399,7 @@ interface
   var
   output: text;
   bitmapCellsArray:  Array of BitmapCells;
-    procedure _CheckAddBitmap(bmp: Bitmap; cell,kindIdx: Integer);
+    procedure _CheckAddBitmap(bmp: Bitmap; cell,kindIdx: LongInt);
     var
       i,j:LongInt;
     begin

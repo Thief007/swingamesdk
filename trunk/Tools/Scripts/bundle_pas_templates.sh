@@ -16,6 +16,8 @@ source "${APP_PATH}/inc/os_check.sh"
 # Step 3: Set the paths to local variables
 #
 source "${APP_PATH}/inc/base_template_dirs.sh"
+PYTHON_SCRIPT='create_pas_lib.py'
+
 
 #
 # Step 4: Set up array of files to copy
@@ -46,6 +48,12 @@ fi
 source ${APP_PATH}/inc/copy_without_svn.sh
 source ${APP_PATH}/inc/dist_dir.sh
 
+CreatePasCode()
+{
+    cd ${PYTHON_SCRIPT_DIR}
+    python ${PYTHON_SCRIPT}
+}
+
 #
 # Step 6: Copy Pascal Library
 #
@@ -55,6 +63,8 @@ echo "--------------------------------------------------"
 echo "  Will Create Templates for: "
 ListDists "${COPY_LIST}"
 echo "--------------------------------------------------"
+
+CreatePasCode
 
 copyWithoutSVN "${SOURCE_DIST_DIR}/src" "${COMMON_PAS_TEMPLATE_DIR}/lib"
 

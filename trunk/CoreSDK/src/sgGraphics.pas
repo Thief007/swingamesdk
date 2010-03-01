@@ -358,7 +358,6 @@ interface
   /// if the Shape should be filled.
   /// 
   /// @lib DrawOrFillShapeOnto
-  /// @uname DrawOrFillShapeOnto
   /// @sn drawOnto:%s shape:%s filled:%s
   /// 
   /// @class Shape
@@ -370,7 +369,6 @@ interface
   /// Draw the Shape s onto the destination bitmap.
   /// 
   /// @lib DrawShapeOnto
-  /// @uname DrawShapeOnto
   /// @sn drawOnto:%s shape:%s
   /// 
   /// @class Shape
@@ -382,7 +380,6 @@ interface
   /// Fill the Shape s onto the destination bitmap.
   ///
   /// @lib FillShapeOnto
-  /// @uname FillShapeOnto
   /// @sn fillOnto:%s shape:%s
   /// 
   /// @class Shape
@@ -395,7 +392,6 @@ interface
   /// shapes game coordinates.
   /// 
   /// @lib DrawOrFillShape
-  /// @uname DrawOrFillShape
   /// @sn drawShape:%s filled:%s
   /// 
   /// @class Shape
@@ -408,7 +404,6 @@ interface
   /// 
   /// @lib DrawShape
   /// 
-  /// @uname DrawShape
   /// @class Shape
   /// @method Draw
   procedure DrawShape(s: Shape); overload;
@@ -417,7 +412,6 @@ interface
   /// 
   /// @lib FillShape
   /// 
-  /// @uname FillShape
   /// @class Shape
   /// @method Fill
   procedure FillShape(s: Shape); overload;
@@ -428,7 +422,6 @@ interface
   /// @lib DrawOrFillShapeOnScreen
   /// @sn drawShapeOnScreen:%s filled:%s
   /// 
-  /// @uname DrawOrFillShapeOnScreen
   /// @class Shape
   /// @overload DrawOnScreen DrawOrFillOnScreen
   /// @csn drawOnScreenFilled:%s
@@ -439,7 +432,6 @@ interface
   ///
   /// @lib DrawShapeOnScreen
   ///
-  /// @uname DrawShapeOnScreen
   /// @class Shape
   /// @method DrawOnScreen
   procedure DrawShapeOnScreen(s: Shape); overload;
@@ -449,7 +441,6 @@ interface
   /// 
   /// @lib FillShapeOnScreen
   /// 
-  /// @uname FillShapeOnScreen
   /// @class Shape
   /// @method FillOnScreen
   procedure FillShapeOnScreen(s: Shape); overload;
@@ -610,14 +601,12 @@ interface
   /// Clear the screen black.
   /// 
   /// @lib ClearScreenToBlack
-  /// @uname ClearScreen
   /// @sn clearScreen
   procedure ClearScreen(); overload;
   
   /// Clear the screen to a specified color.
   /// 
-  /// @lib
-  /// @uname ClearScreenWithColor
+  /// @lib ClearScreenWithColor
   /// @sn clearScreen:%s
   procedure ClearScreen(toColor : Color); overload;
   
@@ -1093,7 +1082,6 @@ interface
   /// Pop the clip rectangle of the screen.
   ///
   /// @lib PopClipScreen
-  /// @sn PopClip:%s
   procedure PopClip(); overload;
 
   /// Pop the clipping rectangle of a bitmap.
@@ -2022,7 +2010,7 @@ implementation
   
   procedure _DrawTriangles(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D; kind: ShapeKind);
   var
-    i: Integer;
+    i: LongInt;
     tri: TriangleArray;
   begin
     tri := ShapeTriangles(s, kind);
@@ -2056,7 +2044,7 @@ implementation
   procedure _DrawLines(dest: Bitmap; s: Shape; const offset: Point2D; kind: ShapeKind);
   var
     lines: LinesArray;
-    i: Integer;
+    i: LongInt;
   begin
     lines := ShapeLines(s, kind, offset);
     for i := 0 to High(lines) do

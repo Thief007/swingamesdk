@@ -127,7 +127,7 @@ interface
   /// The same as `StartReadingText' but with an additional `text` parameter
   /// that is displayed as default text to the user.  
   ///
-  /// @lib
+  /// @lib StartReadingTextWithTextInArea
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s area:%s
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
   
@@ -144,7 +144,7 @@ interface
   /// The same as `StartReadingText' but with an additional `text` parameter
   /// that is displayed as default text to the user.  
   ///
-  /// @lib
+  /// @lib StartReadingTextWithText
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s x:%s y:%s
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
   

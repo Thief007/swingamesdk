@@ -251,7 +251,7 @@ implementation
     count := 1; //1 is the first index... not 0
   
     // Find the start of this delimited range
-    for i := Low(value) to Length(value) do
+    for i := 1 to Length(value) do
     begin
       if count = index then break;
     
@@ -285,7 +285,7 @@ implementation
     i: Integer;
   begin
     result := 0;
-    for i := Low(value) to Length(value) do
+    for i := 1 to Length(value) do
     begin
       if value[i] = delim then 
         result := result + 1;
@@ -299,7 +299,7 @@ implementation
   begin
     inRange := false;
     result := 0;
-    for i := Low(value) to Length(value) do
+    for i := 1 to Length(value) do
     begin
       if (not inRange) and (value[i] = delim) then 
         result := result + 1
@@ -487,11 +487,15 @@ implementation
           line.lineNo := line.lineNo + 1;
           
           ReadLn(input, line.data);
-          line.data := Trim(line.data);
+          WriteLn(line.data);
           if Length(line.data) = 0 then continue;  //skip empty lines
+          WriteLn('here1');
+          line.data := Trim(line.data);
+          WriteLn('here2');
           if MidStr(line.data,1,2) = '//' then continue; //skip lines starting with //
-          
+          WriteLn('here3');
           proc(line, ptr);
+          WriteLn('here4');
         end;
       except on e: Exception do
         RaiseException('Error processing ' + filename + ' on line ' + IntToStr(line.lineNo) + ': ' + e.Message);

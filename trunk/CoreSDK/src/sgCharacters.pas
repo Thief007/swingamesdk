@@ -104,7 +104,7 @@ type
   ///
   /// @class Character
   /// @setter CurrentState
-  procedure CharacterSetCurrentState(c: Character; state: Integer); 
+  procedure CharacterSetCurrentState(c: Character; state: LongInt); 
     
   /// Sets the current direction of the character
   ///
@@ -113,7 +113,7 @@ type
   ///
   /// @class Character
   /// @method CurrentDirection  
-  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
+  procedure CharacterSetCurrentDirection(c: Character; direction: LongInt);
     
   /// Returns the index of the current state of the character
   ///
@@ -235,7 +235,7 @@ type
   ///
   /// @class Character
   /// @method Value
-  function CharacterValueAt(c: Character; index: Integer): Single;
+  function CharacterValueAt(c: Character; index: LongInt): Single;
   
   /// Set the value of the character.
   ///
@@ -342,7 +342,7 @@ type
   /// @class Character
   /// @method DrawCharacterWithStationary
   /// @csn stationaryState:%s state:%s
-  procedure DrawCharacterWithStationary(c: Character; stationaryState, state: Integer);
+  procedure DrawCharacterWithStationary(c: Character; stationaryState, state: LongInt);
   
   /// Draw Character without a stationary state with default facing down when not moving   
   ///
@@ -435,7 +435,7 @@ implementation
   // Character Directions and States
   //--------------------------------------------------------------------------- 
   
-  procedure CharacterSetCurrentState(c: Character; state: Integer);
+  procedure CharacterSetCurrentState(c: Character; state: LongInt);
   begin
     if not Assigned(c) then exit;
     if c^.CurrentState = state then exit;                                      // if current state is the stationary state then exit
@@ -457,7 +457,7 @@ implementation
     result := c^.CurrentDirection;
   end;
   
-  procedure CharacterSetCurrentDirection(c: Character; direction: Integer);
+  procedure CharacterSetCurrentDirection(c: Character; direction: LongInt);
   begin
     if not Assigned(c) then exit;
     c^.CurrentDirection := direction;
@@ -527,7 +527,7 @@ implementation
     result := SpriteValueNames(c^.CharSprite);
   end;
   
-  function CharacterValueAt(c: Character; index: Integer): Single;
+  function CharacterValueAt(c: Character; index: LongInt): Single;
   begin
     result := 0;
     if not Assigned(c) then exit;
@@ -620,7 +620,7 @@ implementation
   
   function UpdateDirectionAnimation(c: Character) : Boolean;
   var
-    i : Integer;
+    i : LongInt;
     angle : single;
   begin
     if not Assigned(c) then exit;
@@ -651,7 +651,7 @@ implementation
   
   function UpdateShownLayerCache(c: Character): LayerCache; // Layer cache is a 3d array for states, directions and layers
   var
-    states, directions, layers, count : Integer;
+    states, directions, layers, count : LongInt;
   begin
     if not Assigned(c) then exit;
     SetLength(result, NameCount(c^.States), NameCount(c^.Directions));
@@ -897,7 +897,7 @@ implementation
         RaiseException('Error in character ' + filename + '. Character files must start with "SwinGame Character #v1"');     
     end;
     
-  var i: Integer;
+  var i: LongInt;
   begin
   
     {$IFDEF TRACE}

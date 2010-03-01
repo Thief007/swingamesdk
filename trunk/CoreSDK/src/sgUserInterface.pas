@@ -51,7 +51,7 @@ type
   
   GUIEventCallback = procedure (r: Region; kind: EventKind);
   
-  GUITextBoxData = record
+  GUITextBoxData = packed record
     contentString:  String;
     font:           Font;
     lengthLimit:    LongInt;
@@ -59,21 +59,21 @@ type
     alignment:      FontAlignment;
   end;
   
-  GUILabelData = record
+  GUILabelData = packed record
     contentString:  String;
     font:           Font;
     alignment:      FontAlignment;
   end;
   
   /// Each list item has text and an image
-  GUIListItem = record
+  GUIListItem = packed record
     text:     String;
     image:    BitmapCell;
     parent:   GUIList;
   end;
 
   
-  GUIListData = record
+  GUIListData = packed record
     verticalScroll: Boolean;
     //The areas for the up/left down/right scrolling buttons
     scrollUp:     Rectangle;
@@ -93,17 +93,17 @@ type
     alignment:    FontAlignment;
   end;
     
-  GUIRadioGroupData = record
+  GUIRadioGroupData = packed record
     groupID:      string;
     buttons:      Array of Region;
     activeButton: LongInt;
   end;
   
-  GUICheckboxData = record
+  GUICheckboxData = packed record
     state:        boolean;
   end;
   
-  RegionData = record
+  RegionData = packed record
     stringID:       String;
     kind:           GUIElementKind;
     regionIdx:       LongInt;
@@ -114,7 +114,7 @@ type
     callbacks:      Array of GUIEventCallback;
   end;
   
-  PanelData = record
+  PanelData = packed record
     name:                 String;
     filename:             String;
     panelID:              LongInt;
@@ -718,7 +718,7 @@ procedure DeactivateTextBox();
 /// Returns the index of the active textbox's region.
 ///
 /// @lib
-function ActiveTextIndex(): Integer;
+function ActiveTextIndex(): LongInt;
 
 /// Checks if TextEntry finished, returns true/false
 ///
@@ -738,7 +738,7 @@ function RegionOfLastUpdatedTextBox(): Region;
 /// Returns the index of the region of the textbox in which text was changed/added into most recently.
 ///
 /// @lib
-function IndexOfLastUpdatedTextBox(): Integer;
+function IndexOfLastUpdatedTextBox(): LongInt;
 
 /// UpdateInterface main loop, checks the draggable, checks the region clicked, updates the interface
 ///
@@ -1219,7 +1219,7 @@ var
 // This is private to the unit
 procedure SendEvent(r: Region; kind: EventKind);
 var
-  i: Integer;
+  i: LongInt;
   pnl: Panel;
 begin
   if not assigned(r) then exit;
@@ -1301,7 +1301,7 @@ end;
 
 function ModalBefore(pnl: Panel): Boolean;
 var
-  i: Integer;
+  i: LongInt;
 begin
   result := false;
   
@@ -1504,7 +1504,7 @@ var
     FillTriangleOnScreen(VectorBackcolorToDraw(forRegion), tri);
   end;
   
-  procedure _ResizeItemArea(var area: Rectangle; var imgPt: Point2D; aligned: FontAlignment; bmp: BitmapCell);
+  procedure _ResizeItemArea(var area: Rectangle; var imgPt: Point2D; aligned: FontAlignment; const bmp: BitmapCell);
   begin
     
     case aligned of
@@ -1529,7 +1529,7 @@ var
   procedure _DrawScrollPosition();
   var
     pct:              Single;
-    largestStartIdx:  Integer;
+    largestStartIdx:  LongInt;
   begin
     largestStartIdx := ListLargestStartIndex(tempList);
     
@@ -1853,7 +1853,7 @@ end;
 
 function RegionWithID(pnl: Panel; ID: String): Region; overload;
 var
-  idx: Integer;
+  idx: LongInt;
 begin
   result := nil;
   if not assigned(pnl) then exit;
@@ -2096,7 +2096,7 @@ end;
 
 function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 var
-  i: Integer;
+  i: LongInt;
   current: Region;
 begin
   result := nil;
@@ -2133,7 +2133,7 @@ end;
 
 function RadioGroupFromId(pnl: Panel; id: String): GUIRadioGroup;
 var
-  i: Integer;
+  i: LongInt;
 begin
   result := nil;
   if not assigned(pnl) then exit;
@@ -2779,8 +2779,8 @@ end;
 
 function ListLargestStartIndex(lst: GUIList): LongInt;
 var
-  placeCount:       Integer;
-  itemCount:        Integer;
+  placeCount:       LongInt;
+  itemCount:        LongInt;
 begin
  result := 0;
  if not assigned(lst) then exit;
@@ -3023,7 +3023,7 @@ end;
 
 procedure ToggleShowPanel(p: Panel);
 var
-  i: Integer;
+  i: LongInt;
   found: Boolean;
 begin
   if assigned(p) then
@@ -3110,7 +3110,7 @@ function StringToKind(s: String): GUIElementKind;
       RaiseException(s + ' is an invalid kind for region.');
   end;
   
-  procedure CreateLabel(forRegion: Region; d: string; result: panel);
+  procedure CreateLabel(forRegion: Region; d: string; result: Panel);
   var
     newLbl: GUILabelData;
   begin
@@ -3132,10 +3132,10 @@ function StringToKind(s: String): GUIElementKind;
     groupToRecieve^.buttons[High(groupToRecieve^.buttons)] := regToAdd;    
   end;
   
-  procedure CreateRadioButton(forRegion: Region; data: String; result: panel);
+  procedure CreateRadioButton(forRegion: Region; data: String; result: Panel);
   var
     newRadioGroup: GUIRadioGroupData;
-    i: Integer;
+    i: LongInt;
     radioGroupID: string;
   begin
     radioGroupID := Trim(ExtractDelimited(7,data,[',']));
@@ -3161,14 +3161,10 @@ function StringToKind(s: String): GUIElementKind;
     forRegion^.elementIndex := High(result^.radioGroups);
   end;
   
-  procedure CreateCheckbox(forRegion: Region; data: string; result: panel);
-  var
-    newChkbox: GUICheckboxData;
+  procedure CreateCheckbox(forRegion: Region; data: string; result: Panel);
   begin
-    newChkbox.state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
-    
     SetLength(result^.Checkboxes, Length(result^.Checkboxes) + 1);
-    result^.Checkboxes[High(result^.Checkboxes)] := newChkbox;
+    result^.Checkboxes[High(result^.Checkboxes)].state := LowerCase(ExtractDelimited(7, data, [','])) = 'true';
     forRegion^.elementIndex := High(result^.Checkboxes);
   end;
   
@@ -3275,7 +3271,7 @@ function StringToKind(s: String): GUIElementKind;
   // newRegions is larger than or equal to the number of old regions in the panel
   procedure RewireRegions(p: Panel; newRegions: RegionDataArray);
   var
-    i, j, elemIdx: Integer;
+    i, j, elemIdx: LongInt;
   begin
     
     // for all of the regions
@@ -4020,7 +4016,7 @@ var
   procedure _PopulatePathList();
   var
     pathList: GUIList;
-    i, len: Integer;
+    i, len: LongInt;
   begin
     pathList  := ListFromRegion(RegionWithId(dialog.dialogPanel, 'PathList'));
     
@@ -4084,7 +4080,7 @@ var
   procedure _SelectFileInList();
   var
     filesList: GUIList;
-    fileIdx: Integer;
+    fileIdx: LongInt;
   begin
     filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
     if Length(filename) > 0 then
@@ -4155,7 +4151,7 @@ var
   procedure _PerformFileListClick();
   var
     selectedText, selectedPath: String;
-    selectedIdx: Integer;
+    selectedIdx: LongInt;
   begin
     // Get the idx of the item selected in the files list
     selectedIdx := ListActiveItemIndex(clicked);
@@ -4189,7 +4185,7 @@ var
   procedure _PerformPathListClick();
   var
     tmpPath, newPath: String;
-    selectedIdx, i, len: Integer;
+    selectedIdx, i, len: LongInt;
     paths: Array [0..256] of PChar;
   begin
     // Get the idx of the item selected in the paths
