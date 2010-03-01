@@ -21,7 +21,7 @@ i: ToolBar.png
 //Textbox r: x, y, w, h, 4, TextboxID, fontID, LengthLimit, InitialisedText
 
 //File Button
-r:0,0,160,40,Button,FileButton
+//r:0,0,160,40,Button,FileButton
 
 //BitmapEditor
 r:160,0,160,40,RadioGroup,Bitmap,Mode
