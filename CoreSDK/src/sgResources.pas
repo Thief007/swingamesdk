@@ -413,11 +413,8 @@ implementation
   begin
     delim := [ ',' ]; //comma delimited
     
-    WriteLn(1);
     current.kind := StringToResourceKind(ExtractDelimited(1, line.data, delim));
     current.name := ExtractDelimited(2, line.data, delim);
-    
-    WriteLn(2);
     
     if Length(current.name) = 0 then 
     begin
@@ -425,7 +422,6 @@ implementation
       exit;
     end;
     
-    WriteLn(3);
     current.path := ExtractDelimited(3, line.data, delim);
     
     if Length(current.path) = 0 then 
@@ -434,19 +430,14 @@ implementation
       exit;
     end;
     
-    WriteLn(4);
-    
     if CountDelimiter(line.data, ',') > 2 then
     begin
-      WriteLn(4.1);
       SetLength(current.data, CountDelimiter(line.data, ',') - 2);
       
       for i := 4 to CountDelimiter(line.data, ',') + 1 do //Start reading from the 4th position (after the 3rd ,)
       begin
-        WriteLn(4.2);
         if not TryStrToInt(ExtractDelimited(i, line.data, delim), current.data[i - 4]) then
         begin
-          WriteLn(4.3);
           RaiseException('Invalid data expected a whole number at position ' + IntToStr(i + 1));
           exit;
         end;
@@ -454,12 +445,10 @@ implementation
     end
     else
     begin
-      WriteLn(4.01);
       SetLength(current.data, 0);
     end;
       
     //WriteLn('Bundle: ', current.name, ' - ', current.path, ' - ', current.size);
-    WriteLn(10);
     tResourceBundle(ptr).add(current);
   end;
     

@@ -99,13 +99,16 @@ Public MustInherit Class AIPlayer : Inherits Player
         Dim result As AttackResult
         Dim row As Integer = 0
         Dim column As Integer = 0
-
+        
+        Delay()
+        
         Do 'keep hitting until a miss
-            Delay()
-
             GenerateCoords(row, column) 'generate coordinates for shot
             result = _game.Shoot(row, column) 'take shot
             ProcessShot(row, column, result)
+            if result.Value = ResultOfAttack.Hit then
+              Delay()
+            end if
         Loop While result.Value <> ResultOfAttack.Miss AndAlso result.Value <> ResultOfAttack.GameOver AndAlso Not SwinGame.Core.WindowCloseRequested
 
         Return result
@@ -115,11 +118,11 @@ Public MustInherit Class AIPlayer : Inherits Player
     ''' Wait a short period to simulate the think time
     ''' </summary>
     Private Sub Delay()
-        For i As Integer = 0 To 150
+        For i As Integer = 0 To 50
             'Dont delay if window is closed
             If SwinGame.Core.WindowCloseRequested Then Return
 
-            SwinGame.Core.Sleep(5)
+            SwinGame.Core.Sleep(2)
             SwinGame.Core.ProcessEvents()
             SwinGame.Core.RefreshScreen()
         Next
