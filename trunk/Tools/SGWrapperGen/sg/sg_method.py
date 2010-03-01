@@ -86,8 +86,8 @@ class SGMethod(SGMetaDataContainer):
                 temp_sn = temp_sn + ' result:%s'
             # if self.method_called.has_length_params:
             #     temp_sn = temp_sn + ' length:%s'
-            print temp_sn
-            print tuple([param.name for param in real_params])
+            # print temp_sn
+            # print tuple([param.name for param in real_params])
             
             if special_visitor != None:
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])

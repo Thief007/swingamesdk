@@ -234,7 +234,6 @@ implementation
     result := '';
     for i := index+1 to CountDelimiter(value , delim)+1 do
     begin
-      WriteLn(ExtractDelimited(i, value, [delim]));
       result += ExtractDelimited(i, value, [delim]);
       if i <> CountDelimiter(value , delim)+1 then result += delim;
     end;
@@ -440,7 +439,6 @@ implementation
       if not allowNewFile then exit; // not allowed so exit
       
       path      := ExtractFilePath(fullname);
-      // WriteLn(path);
       if not DirectoryExists(path) then exit; // directory does not exist
       
       filename  := ExtractFileName(fullname);
@@ -487,15 +485,10 @@ implementation
           line.lineNo := line.lineNo + 1;
           
           ReadLn(input, line.data);
-          WriteLn(line.data);
           if Length(line.data) = 0 then continue;  //skip empty lines
-          WriteLn('here1');
           line.data := Trim(line.data);
-          WriteLn('here2');
           if MidStr(line.data,1,2) = '//' then continue; //skip lines starting with //
-          WriteLn('here3');
           proc(line, ptr);
-          WriteLn('here4');
         end;
       except on e: Exception do
         RaiseException('Error processing ' + filename + ' on line ' + IntToStr(line.lineNo) + ': ' + e.Message);
