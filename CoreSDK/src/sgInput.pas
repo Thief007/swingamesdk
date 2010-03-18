@@ -57,6 +57,16 @@ interface
   /// @lib
   function MousePosition(): Point2D;
   
+  /// Returns the current x value of the mouse's position.
+  ///
+  /// @lib
+  function MouseX(): Single;
+  
+  /// Returns the current y value of the mouse's position.
+  ///
+  /// @lib
+  function MouseY(): Single;
+  
   /// Returns the amount of accumulated mouse movement, since the last time 
   /// `ProcessEvents` was called, as a `Vector`. 
   /// 
@@ -342,6 +352,16 @@ implementation
     x := 0; y := 0;
     SDL_GetMouseState(x, y);
     result := PointAt(x, y);    
+  end;
+  
+  function MouseX(): Single;
+  begin
+    result := MousePosition().x;
+  end;
+  
+  function MouseY(): Single;
+  begin
+    result := MousePosition().y;
   end;
   
   function MouseMovement(): Vector;

@@ -104,7 +104,7 @@ interface
   /// 
   /// @lib PathToResourceWithSubPaths
   /// @sn pathToResourceFilename:%s kind:%s subPaths:%s
-  function PathToResource(filename: String; kind: ResourceKind; subPaths: StringArray): String; overload;
+  function PathToResource(filename: String; kind: ResourceKind; const subPaths: StringArray): String; overload;
   
   /// Returns the path to the filename for a given file resource.
   /// 
@@ -562,7 +562,7 @@ implementation
     result := PathToResourceWithBase(applicationPath, filename, kind);
   end;
   
-  function PathToResource(filename: String; kind: ResourceKind; subPaths: StringArray): String; overload;
+  function PathToResource(filename: String; kind: ResourceKind; const subPaths: StringArray): String; overload;
   var
     temp: String;
     i: LongInt;

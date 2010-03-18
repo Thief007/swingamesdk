@@ -342,7 +342,7 @@ interface
   /// @class Sprite
   /// @setter LayerOffsets
   /// @length SpriteLayerCount
-  procedure SpriteSetLayerOffsets(s: Sprite; values: Point2DArray);
+  procedure SpriteSetLayerOffsets(s: Sprite; const values: Point2DArray);
   
   /// Gets the offset of the specified layer.
   ///
@@ -1617,7 +1617,7 @@ implementation
     result := s^.layerOffsets;
   end;
   
-  procedure SpriteSetLayerOffsets(s: Sprite; values: Point2DArray);
+  procedure SpriteSetLayerOffsets(s: Sprite; const values: Point2DArray);
   var
     i: LongInt;
   begin

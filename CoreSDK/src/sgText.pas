@@ -8,7 +8,8 @@
 // Change History:
 //
 // Version 3.0:
-// - 2010-02-02: Andrew:  Added string to FontAlignment
+// - 2010-03-18: Andtew : Altered font loading to provide mappings for all fonts.
+// - 2010-02-02: Andrew : Added string to FontAlignment
 // - 2009-12-07: Andrew : Added font loading and freeing code..
 // - 2009-06-05: Andrew : Using sgShared
 //
@@ -87,11 +88,23 @@ interface
   /// @lib
   function HasFont(name: String): Boolean;
   
+  /// Determines the name that will be used for a font loaded with
+  /// the indicated fontName and size.
+  /// 
+  /// @lib
+  function FontNameFor(fontName: String; size: LongInt): String;
+  
+  /// Returns the `Font` that has been loaded with the specified name,
+  /// and font size using `LoadFont`.
+  ///
+  /// @lib FontNamedWithSize
+  function FontNamed(name: String; size: LongInt): Font; overload;
+  
   /// Returns the `Font` that has been loaded with the specified name,
   /// see `MapFont`.
   ///
   /// @lib
-  function FontNamed(name: String): Font;
+  function FontNamed(name: String): Font; overload;
   
   /// Releases the SwinGame resources associated with the font of the
   /// specified `name`.
@@ -103,18 +116,23 @@ interface
   ///
   /// @lib
   procedure ReleaseAllFonts();
-
+  
+  
 //----------------------------------------------------------------------------
   
+  /// Alters the style of the font.
+  ///
   /// @lib
   /// @class Font
   /// @setter FontStyle
-  procedure SetFontStyle(font: Font; value: FontStyle);
-
+  procedure FontSetStyle(font: Font; value: FontStyle);
+  
+  /// Returns the style settings for the font.
+  ///
   /// @lib
   /// @class Font
   /// @getter FontStyle
-  function GetFontStyle(font: Font): FontStyle;
+  function FontFontStyle(font: Font): FontStyle;
   
   /// @lib
   procedure DrawTextOnScreen(theText: String; textColor: Color; theFont: Font; x, y: LongInt); overload;
@@ -200,30 +218,10 @@ implementation
 //----------------------------------------------------------------------------
   
   function LoadFont(fontName: String; size: LongInt): Font;
-  var
-    filename: String;
   begin
-    filename := fontName;
-    if not FileExists(filename) then
-    begin
-      filename := PathToResource(filename, FontResource);
-    
-      if not FileExists(filename) then
-      begin
-        RaiseException('Unable to locate font ' + fontName);
-        exit;
-      end;
-    end;
-
-    result := TTF_OpenFont(PChar(filename), size);
-  
-    if result = nil then
-    begin
-      RaiseException('LoadFont failed: ' + TTF_GetError());
-      exit;
-    end;
+    result := MapFont(FontNameFor(fontName, size), fontName, size);
   end;
-
+  
   procedure FreeFont(var fontToFree: Font);
   begin
     if Assigned(fontToFree) then
@@ -255,11 +253,42 @@ implementation
   var
     obj: tResourceContainer;
     fnt: Font;
+    
+    function _DoLoadFont(fontName: String; size: LongInt): Font;
+    var
+      filename: String;
+    begin
+      filename := fontName;
+      if not FileExists(filename) then
+      begin
+        filename := PathToResource(filename, FontResource);
+        
+        if not FileExists(filename) then
+        begin
+          RaiseException('Unable to locate font ' + fontName);
+          exit;
+        end;
+      end;
+      
+      result := TTF_OpenFont(PChar(filename), size);
+      
+      if result = nil then
+      begin
+        RaiseException('LoadFont failed: ' + TTF_GetError());
+        exit;
+      end;
+    end;
   begin
-    fnt := LoadFont(filename, size);
+    
+    if _Fonts.containsKey(name) then
+    begin
+      result := FontNamed(name);
+      exit;
+    end;
+    
+    fnt := _DoLoadFont(filename, size);
     obj := tResourceContainer.Create(fnt);
-    if not _Fonts.setValue(name, obj) then
-      raise Exception.create('Error loaded Font resource twice, ' + name);
+    if not _Fonts.setValue(name, obj) then raise Exception.create('Error loaded Font resource twice, ' + name);
     result := fnt;
   end;
 
@@ -267,7 +296,17 @@ implementation
   begin
     result := _Fonts.containsKey(name);
   end;
-
+  
+  function FontNameFor(fontName: String; size: LongInt): String;
+  begin
+    result := fontName + '|' + IntToStr(size);
+  end;
+  
+  function FontNamed(name: String; size: LongInt): Font;
+  begin
+    result := FontNamed(FontNameFor(name, size));
+  end;
+  
   function FontNamed(name: String): Font;
   var
     tmp : TObject;
@@ -306,13 +345,13 @@ implementation
   ///
   /// Side Effects:
   /// - The font's style is changed
-  procedure SetFontStyle(font: Font; value: FontStyle);
+  procedure FontSetStyle(font: Font; value: FontStyle);
   begin
     if not Assigned(font) then begin RaiseException('No font supplied'); exit; end;
     TTF_SetFontStyle(font, LongInt(value));
   end;
   
-  function GetFontStyle(font: Font): FontStyle;
+  function FontFontStyle(font: Font): FontStyle;
   begin
     if not Assigned(font) then begin RaiseException('No font supplied'); exit; end;
     result := FontStyle(TTF_GetFontStyle(font));

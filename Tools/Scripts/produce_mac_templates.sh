@@ -19,9 +19,9 @@ read answer
 if [ "a${answer}a" == "aya" ] ; then
     ./clean_all.sh
     ./create_library.sh
-    # ./bundle_c_templates.sh
-    # ./bundle_cs_templates.sh
-    # ./bundle_objc_templates.sh
+    ./bundle_c_templates.sh
+    #./bundle_cs_templates.sh
+    #./bundle_objc_templates.sh
     ./bundle_pas_templates.sh
 fi
 
@@ -40,10 +40,10 @@ PKG_COPY_LIST=( "Objective C,${XCODE_OBJC_DIST_DIR},${PKG_XCODE_OBJC_DIR}" )
 PKG_COPY_LIST=( "${PKG_COPY_LIST[@]}" "C,${XCODE_C_DIST_DIR},${PKG_XCODE_C_DIR}")
 
 MAC_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR}")
-# MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "C XCode,${XCODE_C_DIST_DIR}")
-# MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR}")
-# MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC XCode,${XCODE_OBJC_DIST_DIR}")
-# MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "C XCode,${XCODE_C_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "ObjC XCode,${XCODE_OBJC_DIST_DIR}")
+MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR}")
 MAC_DMG_LIST=( "${MAC_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR}")
 
 source ${APP_PATH}/inc/copy_without_svn.sh
