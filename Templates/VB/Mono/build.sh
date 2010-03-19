@@ -3,12 +3,12 @@ MAC="Mac OS X"
 WIN="Windows"
 LIN="Linux"
 
-if [ -f /System/Library/Frameworks/Cocoa.framework/Cocoa ]; then
+if [ `uname` = "Darwin" ]; then
     OS=$MAC
-elif [ -d /c/Windows ]; then
-    OS=$WIN
-else
+elif [ `uname` = "Linux" ]; then
     OS=$LIN
+else
+    OS=$WIN
 fi
 
 # Move to src dir

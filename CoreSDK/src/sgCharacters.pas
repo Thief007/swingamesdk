@@ -996,7 +996,6 @@ implementation
     end;
     
     chr := DoLoadCharacter(filename, name);
-    
     result := chr;
     
     {$IFDEF TRACE}

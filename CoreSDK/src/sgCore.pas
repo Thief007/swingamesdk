@@ -1073,10 +1073,10 @@ implementation
   //----------------------------------------------------------------------------
   function  ColorToString(c: Color): string;
   var
-  r,g,b,a : byte;
+    r,g,b,a : byte;
   begin
-  colorComponents(c,r,g,b,a);
-  result:=IntToStr(r)+','+IntToStr(g)+','+IntToStr(b)+','+IntToStr(a);
+    colorComponents(c,r,g,b,a);
+    result:=IntToStr(r)+','+IntToStr(g)+','+IntToStr(b)+','+IntToStr(a);
   end;
 
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
@@ -1086,9 +1086,14 @@ implementation
     {$ENDIF}
     if baseSurface = nil then
     begin
-      RaiseException('Cannot read screen format. Ensure window is open.');
+      RaiseWarning('Estimating color components as Windows has not been opened.');
+      a := (c and $FF000000) shr 24;
+      r := (c and $00FF0000) shr 16;
+      g := (c and $0000FF00) shr 8;
+      b := (c and $000000FF);
       exit;
     end;
+    
     SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
     {$IFDEF TRACE}
       TraceExit('sgCore', 'ColorComponents');
@@ -1261,7 +1266,8 @@ implementation
     {$ENDIF}
     if (baseSurface = nil) or (baseSurface^.format = nil) then
     begin
-      RaiseException('Unable to get RGBAColor as the window is not open');
+      RaiseWarning('Estimating RGBAColor as the window is not open');
+      result := (alpha shl 24) or (red shl 16) or (green shl 8) or (blue);
       exit;
     end;
 

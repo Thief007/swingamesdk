@@ -217,10 +217,10 @@ implementation
       {$IFDEF Trace}
         TraceIf(tlInfo, 'sgShared', 'INFO', 'InitialiseSwinGame', 'Loading Mac version');
       {$ENDIF}
-
+      
       //FIX: Error with Mac and FPC 2.2.2
       SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide, exOverflow, exUnderflow, exPrecision]);
-
+      
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
       pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
       objc_msgSend(pool, sel_registerName('init'));
@@ -250,6 +250,20 @@ implementation
     screen := nil;
     baseSurface := nil;
     
+    //Initialise colors... assuming ARGB -  will be recalculated when window is opened
+    ColorWhite        := $FFFFFFFF;
+    ColorGreen        := $FF00FF00;
+    ColorBlue         := $FF0000FF;
+    ColorBlack        := $FF000000;
+    ColorRed          := $FFFF0000;
+    ColorYellow       := $FFFFFF00;
+    ColorPink         := $FFFF1493;
+    ColorTurquoise    := $FF00CED1;
+    ColorGrey         := $FF808080;
+    ColorMagenta      := $FF00FFFF;
+    ColorTransparent  := $00000000;
+    ColorLightGrey    := $FFC8C8C8;
+    
     {$IFDEF TRACE}
       TraceExit('sgShared', 'InitialiseSwinGame');
     {$ENDIF}
@@ -274,7 +288,10 @@ implementation
   begin
     if (baseSurface = nil) or (baseSurface^.format = nil) then
     begin
-      RaiseException('Unable to get color as screen is not created.');
+      RaiseWarning('Estimating color as screen is not created.');
+      result.r := color and $00FF0000 shr 16;
+      result.g := color and $0000FF00 shr 8;
+      result.b := color and $000000FF;
       exit;
     end;
 
@@ -408,7 +425,7 @@ implementation
   procedure RaiseWarning(message: String);
   begin
     //TODO: make this better for cross language support
-    WriteLn(message);
+    WriteLn(stderr, message);
   end;
 
   //---------------------------------------------------------------------------

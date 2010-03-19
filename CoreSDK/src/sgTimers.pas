@@ -40,7 +40,17 @@ interface
   /// @class Timer
   /// @constructor
   /// @sn init
-  function CreateTimer(): Timer;
+  function CreateTimer(): Timer; overload;
+  
+  /// Create and return a new Timer. The timer will not be started, and will have
+  /// an initial 'ticks' of 0.
+  ///
+  /// @lib CreateTimerNamed
+  ///
+  /// @class Timer
+  /// @constructor
+  /// @sn initWithName:%s
+  function CreateTimer(name: String): Timer; overload;
   
   /// Free a created timer.
   ///
@@ -49,6 +59,23 @@ interface
   /// @class Timer
   /// @dispose
   procedure FreeTimer(var toFree: Timer);
+  
+  /// Get the timer created with the indicated named.
+  ///
+  /// @lib
+  function TimerNamed(name: String): Timer;
+  
+  /// Release the resources used by the timer with
+  /// the indicated name.
+  ///
+  /// @lib
+  procedure ReleaseTimer(name: String);
+  
+  /// Releases all of the timers that have been loaded.
+  ///
+  /// @lib
+  procedure ReleaseAllTimers();
+  
   
   /// Start a timer recording the time that has passed.
   ///
@@ -106,15 +133,43 @@ interface
   
 //=============================================================================
 implementation
-  uses sgTrace, sgShared;
+  uses  sgTrace, sgShared,
+        SysUtils,
+        stringhash;         // libsrc;
 //=============================================================================
 
-function CreateTimer(): Timer;
+var
+  _Timers: TStringHash;
+
+
+function CreateTimer(): Timer; overload;
+var
+  name: String;
+  idx: Integer;
+begin
+  name := 'Timer';
+  idx := 0;
+  
+  while not _Timers.containsKey(name) do
+  begin
+    name := 'Timer_' + IntToStr(idx);
+    idx := idx + 1;
+  end;
+  
+  result := CreateTimer(name);
+end;
+
+function CreateTimer(name: String): Timer; overload;
+var
+  obj: tResourceContainer;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgTimers', 'CreateTimer');
+    TraceEnter('sgTimers', 'CreateTimer', name);
   {$ENDIF}
+  
   New(result);
+  result^.name := name;
+  
   with result^ do
   begin
     startTicks := 0;
@@ -122,6 +177,17 @@ begin
     paused := false;
     started := false;
   end;
+  
+  obj := tResourceContainer.Create(result);
+  
+  if not _Timers.setValue(name, obj) then
+  begin
+    RaiseException('Error: Failed to assign timer ' + name);
+    Dispose(result);
+    result := nil;
+    exit;
+  end;
+  
   {$IFDEF TRACE}
     TraceExit('sgTimers', 'CreateTimer');
   {$ENDIF}
@@ -138,6 +204,46 @@ begin
   {$ENDIF}
 end;
 
+procedure ReleaseTimer(name: String);
+var
+  tmr: Timer;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgTimers', 'ReleaseTimer', 'tmr = ' + name);
+  {$ENDIF}
+  
+  tmr := TimerNamed(name);
+  if assigned(tmr) then
+  begin
+    _Timers.remove(name).Free();
+    
+    if Assigned(tmr) then
+    begin
+      Dispose(tmr);
+      CallFreeNotifier(tmr);
+    end;
+  end;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgTimers', 'ReleaseTimer');
+  {$ENDIF}
+end;
+
+procedure ReleaseAllTimers();
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgTimers', 'ReleaseAllTimers', '');
+  {$ENDIF}
+  
+  ReleaseAll(_Timers, @ReleaseTimer);
+  
+  {$IFDEF TRACE}
+    TraceExit('sgTimers', 'ReleaseAllTimers');
+  {$ENDIF}
+end;
+
+
+
 procedure FreeTimer(var toFree: Timer);
 begin
   {$IFDEF TRACE}
@@ -146,8 +252,7 @@ begin
   
   if Assigned(toFree) then
   begin
-    Dispose(toFree);
-    CallFreeNotifier(toFree);
+    ReleaseTimer(toFree^.name);
   end;
   
   toFree := nil;
@@ -156,6 +261,24 @@ begin
     TraceExit('sgTimers', 'FreeTimer');
   {$ENDIF}
 end;
+
+function TimerNamed(name: String): Timer;
+var
+  tmp : TObject;
+begin
+  {$IFDEF TRACE}
+    TraceEnter('sgTimers', 'TimerNamed', name);
+  {$ENDIF}
+  
+  tmp := _Timers.values[name];
+  if assigned(tmp) then result := Timer(tResourceContainer(tmp).Resource)
+  else result := nil;
+  
+  {$IFDEF TRACE}
+    TraceExit('sgTimers', 'TimerNamed', HexStr(result));
+  {$ENDIF}
+end;
+
 
 procedure StartTimer(toStart: Timer);
 begin
@@ -253,5 +376,20 @@ begin
   {$ENDIF}
 end;
 
+//=============================================================================
+
+  initialization
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgTimers', 'Initialise', '');
+    {$ENDIF}
+    
+    InitialiseSwinGame();
+    _Timers := TStringHash.Create(False, 1024);
+    
+    {$IFDEF TRACE}
+      TraceExit('sgTimers', 'Initialise');
+    {$ENDIF}
+  end;
 
 end.
