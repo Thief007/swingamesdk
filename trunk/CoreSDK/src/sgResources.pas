@@ -175,7 +175,7 @@ implementation
   uses SysUtils, StrUtils, Classes, // system
        stringhash, sgUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, 
+       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, sgTimers,
        sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps; // Swingame
 
   //----------------------------------------------------------------------------
@@ -287,6 +287,7 @@ implementation
       begin
         case kind of
           BundleResource:     MapResourceBundle(current.name, current.path, false);
+          TimerResource:      CreateTimer(current.name);
           BitmapResource:     rbLoadBitmap();
           FontResource:       rbLoadFont();
           SoundResource:      MapSoundEffect(current.name, current.path);
@@ -335,11 +336,12 @@ implementation
       case current.kind of
         BundleResource:     ReleaseResourceBundle(current.name);
         BitmapResource:     ReleaseBitmap(current.name);
+        TimerResource:      ReleaseTimer(current.name);
         FontResource:       ReleaseFont(current.name);
         SoundResource:      ReleaseSoundEffect(current.name);
         MusicResource:      ReleaseMusic(current.name);
         PanelResource:      ReleasePanel(current.name);
-        // MapResource:        ReleaseTileMap(current.name);
+        MapResource:        ReleaseMap(current.name);
         AnimationResource:  ReleaseAnimationTemplate(current.name);
         CharacterResource:  ReleaseCharacter(current.name);
       end;
@@ -352,6 +354,7 @@ implementation
   procedure ReleaseAllResources();
   begin
     ReleaseAllAnimationTemplates();
+    ReleaseAllTimers();
     ReleaseAllFonts();
     ReleaseAllBitmaps();
     ReleaseAllMusic();
@@ -369,6 +372,7 @@ implementation
     kind := Uppercase(Trim(kind));
     if kind = 'BUNDLE' then result := BundleResource
     else if kind = 'BITMAP'     then result := BitmapResource
+    else if kind = 'TIMER'      then result := TimerResource
     else if kind = 'SOUND'      then result := SoundResource
     else if kind = 'MUSIC'      then result := MusicResource
     else if kind = 'FONT'       then result := FontResource
@@ -424,9 +428,9 @@ implementation
     
     current.path := ExtractDelimited(3, line.data, delim);
     
-    if Length(current.path) = 0 then 
+    if (Length(current.path) = 0) and not (current.kind = TimerResource) then 
     begin
-      RaiseException('No path supplied for resource.');
+      RaiseException('No path supplied for resource ' + current.name);
       exit;
     end;
     
@@ -462,7 +466,7 @@ implementation
     
     if _Bundles.containsKey(name) then
     begin
-      RaiseException('Error loaded Resource Bundle resource twice, ' + name);
+      RaiseWarning('Warning loaded Resource Bundle resource twice, ' + name);
       exit;
     end;
     

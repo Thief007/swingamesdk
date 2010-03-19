@@ -416,6 +416,7 @@ interface
     /// @enum ResourceKind
     ResourceKind = (
       BundleResource,
+      TimerResource,
       BitmapResource,
       FontResource,
       MusicResource,
@@ -476,8 +477,14 @@ interface
       pausedTicks: UInt32;
       paused: Boolean;
       started: Boolean;
+      
+      name: String;         // the name of the timer registered with the _timers dictionary
     end;
-
+    
+    /// A timer can be used to track how much time has elapsed since the timer
+    /// was started. In games this can be used to ensure the game runs at the
+    /// right speed regardless of the framerate of the users computer.
+    /// 
     /// @class Timer
     /// @pointer_wrapper
     /// @field pointer: ^TimerData

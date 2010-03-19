@@ -9,7 +9,7 @@
 //
 // Version 3:
 // - 2010-01-28: David  : Changed MapAnimationTemplate to use an already loaded 
-//												bitmap if found
+//                        bitmap if found
 // - 2009-12-21: Andrew : Changed to include sound filename in animation loading.
 // - 2009-12-18: Andrew : Added in code to verify animations have no loops
 //                        with a 0 duration.

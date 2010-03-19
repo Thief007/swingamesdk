@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-03-19: Andrew : Fixed images to work prior to loading the graphics window.
 // - 2010-02-05: Andrew : Added png saving.
 // - 2010-02-01: Aaron  : Added BitmapName and BitmapFileName
 // - 2010-01-28: David  : Changed DoLoadBitmap to use an already loaded bitmap if found
@@ -876,17 +877,20 @@ begin
     RaiseException('Bitmap width and height must be greater then 0');
     exit;
   end;
-  if (baseSurface = nil) or (baseSurface^.format = nil) then
-  begin
-    RaiseException('Unable to CreateBitmap as the window is not open');
-    exit;
-  end;
   
   New(result);
   
-  with baseSurface^.format^ do
+  if (baseSurface = nil) or (baseSurface^.format = nil) then
   begin
-    result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, RMask, GMask, BMask, AMask);
+    RaiseWarning('Creating ARGB surface as screen format unknown.');
+    result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, $00FF0000, $0000FF00, $000000FF, $FF000000);
+  end
+  else
+  begin
+    with baseSurface^.format^ do
+    begin
+      result^.surface := SDL_CreateRGBSurface(SDL_SRCALPHA, width, height, 32, RMask, GMask, BMask, AMask);
+    end;
   end;
   
   if result^.surface = nil then
@@ -993,9 +997,24 @@ begin
   //
   new(result);
   
-  if not transparent then result^.surface := SDL_DisplayFormatAlpha(loadedImage)
+  if not transparent then 
+  begin
+    // Only move to screen alpha if window is open...
+    if baseSurface = nil then
+      result^.surface := loadedImage
+    else
+      result^.surface := SDL_DisplayFormatAlpha(loadedImage);
+  end
   else result^.surface := SDL_DisplayFormat(loadedImage);
   
+  if not assigned(result^.surface) then
+  begin
+    SDL_FreeSurface(loadedImage);
+    dispose(result);
+    result := nil;
+    RaiseException('Error loading image.')
+  end;
+    
   result^.width     := result^.surface^.w;
   result^.height    := result^.surface^.h;
   result^.cellW     := result^.width;

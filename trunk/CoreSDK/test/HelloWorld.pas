@@ -6,8 +6,13 @@ uses
   sgSprites, sgTimers;
 
 procedure Main();
+var
+  img: Bitmap;
 begin
   OpenAudio();
+  
+  LoadResourceBundle('splash.txt');
+  LoadResourceBundle('bundle.txt');
   
   OpenGraphicsWindow('Hello World', 640, 480);
   
@@ -23,7 +28,8 @@ begin
   // WriteLn('MAP: ', HexStr(TileMapNamed('fred')));
   // ReleaseTileMap('fred');
   ReleaseResourceBundle('fred');
-
+  
+  StartTimer(TimerNamed('TestTimer'));
   
   repeat // The game loop...
     ProcessEvents();
@@ -33,10 +39,11 @@ begin
     FillRectangle(ColorWhite, 10, 10, 780, 580);
     
     DrawFramerate(0,0);
-    
+    DrawBitmap(img, 50, 50);
     RefreshScreen();
   until WindowCloseRequested();
   
+  WriteLn('Time: ', TimerTicks(TimerNamed('TestTimer')));
   ReleaseAllResources();
   
   CloseAudio();
