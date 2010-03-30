@@ -42,8 +42,10 @@
 /// `LoadSoundEffect`, and `PlaySoundEffect`. Associated with these are the
 /// `Music` and `SoundEffect` types.
 ///
-///@module Audio
-///@static
+/// @module Audio
+/// @static
+///
+/// @doc_types SoundEffect, Music
 unit sgAudio;
 
 //=============================================================================

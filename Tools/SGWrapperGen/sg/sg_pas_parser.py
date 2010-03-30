@@ -66,7 +66,9 @@ class SGPasParser():
             'sameas': self.process_type_attribute,
             'calls': self.process_id_attribute,
             'length': self.process_id_attribute,
-            'updatesArrayParam': self.process_numbers_attribute
+            'updatesArrayParam': self.process_numbers_attribute,
+            'doc_group': self.process_id_attribute,
+            'doc_types': self.process_idlist_attribute,
         }
         self._block_header_processors = {
             'type': self.process_block_types,

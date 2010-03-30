@@ -24,7 +24,7 @@ class SGCodeModule(SGMetaDataContainer):
     def __init__(self, name):
         """Initialise the class, setting its name"""
         super(SGCodeModule,self).__init__(['static','module_kind',
-            'data_wrapper','pointer_wrapper', 'type_name',
+            'data_wrapper','pointer_wrapper', 'type_name', 'doc_types',
             'values', 'array_wrapper', 'fixed_array_wrapper', 'via_pointer'])
         self.name = name
         self.type_name = name
@@ -42,6 +42,7 @@ class SGCodeModule(SGMetaDataContainer):
         self.is_fixed_array_wrapper = False
         self.via_pointer = False
         self.data_type = None
+        self.doc_type = None
     
     def to_keyed_dict(self, doc_transform = None, type_visitor = None, array_idx_sep = ', ', param_visitor = None, map_data_value = None):
         """Export a keyed dictionary of the class for template matching"""
@@ -168,6 +169,10 @@ class SGCodeModule(SGMetaDataContainer):
     values = property(lambda self: self['values'].other, 
         lambda self,value: self.set_tag('values', value), 
         None, 'The values of an enum member.')
+    
+    doc_types = property(lambda self: self['doc_types'].other, 
+        lambda self,value: self.set_tag('doc_types', value), 
+        None, 'The types that should be printed alongside the documentation of this module.')
     
     is_class = property(lambda self: self.module_kind == 'class', 
         None, None, 'Is the module a class?')

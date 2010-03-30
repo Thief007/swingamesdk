@@ -17,13 +17,14 @@ class SGMetaDataContainer(object):
     def __init__(self, known_tags = None):
         """initialise the container setting up the tags dictionary"""
         self._known_tags = known_tags if known_tags != None else []
-        self._known_tags.extend(['note','name','version','in_file', 'ignore', 'file_line_details'])
+        self._known_tags.extend(['note','name','version','in_file', 'ignore', 'file_line_details', 'doc_group'])
         
         self.tags = {}
         self.doc = ""
         self.notes = []
         self.is_ignored = False
         self.file_line_details = None
+        self.doc_group = None
     
     def add_doc(self, doc):
         """adds documentation to the meta data container"""
@@ -65,6 +66,7 @@ class SGMetaDataContainer(object):
     is_ignored = property(lambda self: self['ignore'].other, lambda self,value: self.set_tag('ignore', value), None, "The element is ignored?")
     in_file = property(lambda self: self['in_file'].other, lambda self,value: self.set_tag('in_file', value), None, "The file containing the element.")
     version = property(lambda self: self['version'].other, lambda self,version: self.set_tag('version', version), None, "The version of the element.")
+    doc_group = property(lambda self: self['doc_group'].other, lambda self,doc_group: self.set_tag('doc_group', doc_group), None, "The documentation group.")
     
     file_line_details = property(lambda self: self['file_line_details'].other, 
         lambda self,value: self.set_tag('file_line_details', value), 
