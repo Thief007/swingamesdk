@@ -301,11 +301,15 @@ interface
   ///
   /// @lib ColorFromBitmap
   /// @sn colorFrom:%s apiColor:%s
+  ///
+  /// @doc_group colors
   function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
   
   /// Creates and returns a random color where R, G, B and A are all randomised.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function RandomColor(): Color;
   
   /// Creates and returns a random color where R, G, and B are all randomised, and A is set
@@ -314,6 +318,8 @@ interface
   /// @param alpha: the opacity of the random color
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function RandomRGBColor(alpha: Byte): Color;
 
   /// Gets a color given its RGBA components.
@@ -323,6 +329,8 @@ interface
   ///
   /// @lib
   /// @sn rgbaColorRed:%s green:%s blue:%s alpha:%s
+  ///
+  /// @doc_group colors
   function RGBAColor(red, green, blue, alpha: Byte): Color;
   
   /// Gets a color given its RGB components.
@@ -333,18 +341,24 @@ interface
   /// @lib RGBAColor(red, green, blue, 255)
   /// @uname RGBColor
   /// @sn rgbColorRed:%s green:%s blue:%s
+  ///
+  /// @doc_group colors
   function RGBColor(red, green, blue: Byte): Color;
   
   /// Gets a color given its RGBA components.
   ///
   /// @lib
   /// @sn colorComponentsOf:%s red:%s green:%s blue:%s alpha:%s
+  ///
+  /// @doc_group colors
   procedure ColorComponents(c: Color; out r, g, b, a: byte);
 
 
   /// returns color to string.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function  ColorToString(c: Color): string;
   
   /// Returns a color from a floating point RBG value set.
@@ -353,6 +367,8 @@ interface
   ///
   /// @lib
   /// @sn rgbFloatColorRed:%s green:%s blue:%s
+  ///
+  /// @doc_group colors
   function RGBFloatColor(r,g,b: Single): Color;
 
   /// Returns a color from a floating point RBGA value set.
@@ -361,6 +377,8 @@ interface
   ///
   /// @lib
   /// @sn rgbaFloatColorRed:%s green:%s blue:%s alpha:%s
+  ///
+  /// @doc_group colors
   function RGBAFloatColor(r,g,b, a: Single): Color;
   
   /// Returs a color from the HSB input.
@@ -370,26 +388,36 @@ interface
   ///
   /// @lib
   /// @sn hsbColorHue:%s sat:%s bri:%s
+  ///
+  /// @doc_group colors
   function HSBColor(hue, saturation, brightness: Single): Color;
   
   /// Get the transpareny value of `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function TransparencyOf(c: Color): byte;
   
   /// Get the red value of `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function RedOf(c: Color): byte;
   
   /// Get the green value of `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function GreenOf(c: Color): byte;
   
   /// Get the blue value of `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function BlueOf(c: Color): byte;
   
   /// Gets the hue ``h``, saturation ``s``, and brightness ``b`` values from
@@ -397,21 +425,29 @@ interface
   ///
   /// @lib
   /// @sn hsbValueOf:%s hue:%s sat:%s bri:%s
+  ///
+  /// @doc_group colors
   procedure HSBValuesOf(c: Color; out h, s, b: Single);
   
   /// Get the hue of the `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function HueOf(c: Color): Single;
   
   /// Get the saturation of the `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function SaturationOf(c: Color) : Single;
   
   /// Get the brightness of the `color`.
   ///
   /// @lib
+  ///
+  /// @doc_group colors
   function BrightnessOf(c: Color) : Single;
   
   
