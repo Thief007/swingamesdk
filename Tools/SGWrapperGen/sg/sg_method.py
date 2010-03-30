@@ -31,6 +31,7 @@ class SGMethod(SGMetaDataContainer):
         self.params = list()
         #self.param_cache = {}
         self.return_type = None
+        self.returns = ''
         self.is_operator = False
         self.in_class = None
         self.is_static = False
@@ -220,6 +221,11 @@ class SGMethod(SGMetaDataContainer):
     return_type = property(lambda self: self['return_type'].other, 
         lambda self,return_type: self.set_tag('return_type', return_type), 
         None, "The return type of the method.")
+
+    returns = property(lambda self: self['returns'].other, 
+        lambda self,returns: self.set_tag('returns', returns), 
+        None, "The returns documentation.")
+
     
     class_method = property(lambda self: self['class_method'].other, 
         lambda self,return_type: self.set_tag('class_method', return_type), 
