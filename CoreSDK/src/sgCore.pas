@@ -136,9 +136,9 @@ interface
   procedure SetIcon(filename: String);
   
   /// Opens the graphical window so that it can be drawn onto. You can set the
-  /// icon for this window using SetIcon. The window itself is only drawn when
-  /// you call RefreshScreen. All windows are opened at 32 bits per pixel. You
-  /// can toggle fullscreen using ToggleFullScreen. The window is closed when
+  /// icon for this window using `SetIcon`. The window itself is only drawn when
+  /// you call `RefreshScreen`. All windows are opened at 32 bits per pixel. You
+  /// can toggle fullscreen using `ToggleFullScreen`. The window is closed when
   /// the application terminates.
   ///
   /// @param caption The caption for the window
@@ -232,7 +232,7 @@ interface
   
   /// Checks to see if the window has been asked to close. You need to handle
   /// this if you want the game to end when the window is closed. This value
-  /// is updated by the ProcessEvents routine.
+  /// is updated by the `ProcessEvents` routine.
   ///
   /// @returns: True if the window has been requested to close.
   ///
@@ -392,7 +392,7 @@ interface
   /// @lib
   function BlueOf(c: Color): byte;
   
-  /// Gets the hue, saturation, and brightness values from
+  /// Gets the hue ``h``, saturation ``s``, and brightness ``b`` values from
   /// the color.
   ///
   /// @lib

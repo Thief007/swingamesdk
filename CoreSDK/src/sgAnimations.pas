@@ -89,10 +89,10 @@ interface
   // AnimationTemplate mapping routines
   //----------------------------------------------------------------------------
   
-  /// Loads and returns a AnimationTemplate. The supplied `filename` is used to
-  /// locate the AnimationTemplate to load. The supplied `name` indicates the 
+  /// Loads and returns a `AnimationTemplate`. The supplied ``filename`` is used to
+  /// locate the `AnimationTemplate` to load. The supplied ``name`` indicates the 
   /// name to use to refer to this in SwinGame. The `AnimationTemplate` can then be
-  /// retrieved by passing this `name` to the `FetchAnimationTemplate` function. 
+  /// retrieved by passing this ``name`` to the `FetchAnimationTemplate` function. 
   ///
   /// @lib
   /// @sn animationTemplateNamed:%s fromFile:%s
@@ -102,21 +102,21 @@ interface
   /// @csn initWithName:%s forFile:%s
   function MapAnimationTemplate(name, filename: String): AnimationTemplate;
   
-  /// Determines if SwinGame has animation frames loaded for the supplied name.
+  /// Determines if SwinGame has animation frames loaded for the supplied ``name``.
   /// This checks against all loaded animation frames, those loaded without a name
   /// are assigned the filename as a default.
   ///
   /// @lib
   function HasAnimationTemplate(name: String): Boolean;
   
-  /// Returns the `AnimationTemplate` that has been loaded with the specified name,
+  /// Returns the `AnimationTemplate` that has been loaded with the specified ``name``,
   /// see `MapAnimationTemplate`.
   ///
   /// @lib
   function AnimationTemplateNamed(name: String): AnimationTemplate;
   
   /// Releases the SwinGame resources associated with the animation template of the
-  /// specified `name`.
+  /// specified ``name``.
   ///
   /// @lib
   procedure ReleaseAnimationTemplate(name: String);
@@ -131,7 +131,7 @@ interface
   // Creating an Animation
   //----------------------------------------------------------------------------
   
-  /// Creates an animation from a AnimationTemplate. This may play a sound effect
+  /// Creates an animation from a `AnimationTemplate`. This may play a sound effect
   /// if the animation is set to play a sound effect on its first frame.
   ///
   /// @lib CreateAnimationNamed
@@ -142,7 +142,7 @@ interface
   /// @csn initAsName:%s from:%s
   function CreateAnimation(identifier: String;  frames: AnimationTemplate): Animation; overload;
   
-  /// Creates an animation from a AnimationTemplate. If withSound is true, this may
+  /// Creates an animation from a `AnimationTemplate`. If ``withSound`` is ``true``, this may
   /// play a sound effect if the animation is set to play a sound effect on its first frame.
   ///
   /// @lib CreateAnimationNamedWithSound
@@ -153,7 +153,7 @@ interface
   /// @csn initAsName:%s from:%s withSound:%s
   function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation;
   
-  /// Creates an animation from a AnimationTemplate. If withSound is true, this may
+  /// Creates an animation from an `AnimationTemplate`. If ``withSound`` is ``true``, this may
   /// play a sound effect if the animation is set to play a sound effect on its first frame.
   ///
   /// @lib
@@ -164,7 +164,7 @@ interface
   /// @csn initAtIndex:%s from:%s withSound:%s
   function CreateAnimation(identifier: LongInt;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
   
-  /// Creates an animation from a AnimationTemplate. This may play a sound effect
+  /// Creates an animation from an `AnimationTemplate`. This may play a sound effect
   /// if the animation is set to play a sound effect on its first frame.
   ///
   /// @lib CreateAnimationWithSound
@@ -188,7 +188,7 @@ interface
   // Drawing Animations
   //----------------------------------------------------------------------------
   
-  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// Assign a new starting animation to the passed in animation from the `AnimationTemplate`.
   /// This may play a sound if the first frame of the animation is linked to a sound effect.
   ///
   /// @lib AssignAnimationNamed
@@ -199,7 +199,7 @@ interface
   /// @csn assignAnimationNamed:%s from:%s
   procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate); overload;
   
-  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// Assign a new starting animation to the passed in animation from the `AnimationTemplate`.
   /// This may play a sound if the first frame of the animation is linked to a sound effect, and withSound is true.
   ///
   /// @lib AssignAnimationNamedWithSound
@@ -210,7 +210,7 @@ interface
   /// @csn assignAnimationNamed:%s from:%s withSound:%s
   procedure AssignAnimation(anim: Animation; name: String; frames: AnimationTemplate; withSound: Boolean); overload;
   
-  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
+  /// Assign a new starting animation to the passed in animation from the `AnimationTemplate`.
   /// This may play a sound if the first frame of the animation is linked to a sound effect.
   ///
   /// @lib AssignAnimation
@@ -221,8 +221,9 @@ interface
   /// @csn assignAnimation:%s from:%s
   procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate); overload;
   
-  /// Assign a new starting animation to the passed in animation from the AnimationTemplate.
-  /// This may play a sound if the first frame of the animation is linked to a sound effect, and withSound is true.
+  /// Assign a new starting animation to the passed in animation from the `AnimationTemplate`.
+  /// This may play a sound if the first frame of the animation is linked to a sound effect, and 
+  /// ``withSound`` is ``true``.
   ///
   /// @lib AssignAnimationWithSound
   /// @sn assignAnimation:%s to:%s from:%s withSound:%s
@@ -236,8 +237,8 @@ interface
   // Drawing Animations
   //----------------------------------------------------------------------------
   
-  /// Uses the animation information to draw a bitmap at the specified
-  /// x,y location.
+  /// Uses the `Animation` information to draw a `Bitmap` at the specified
+  /// ``x``,``y`` location.
   ///
   /// @lib
   /// @sn drawAnimation:%s bitmap:%s x:%s y:%s
