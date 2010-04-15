@@ -29,6 +29,11 @@
 
 {$I sgTrace.inc}
 
+/// Supports the loading and releasing of game resources and bundles, including 
+/// application path settings. Current resource types include images, sounds, 
+/// music and animation files to name a few. Resource files must be saved in
+/// specific locations of the ``Resources`` folder for your game.
+///
 /// @module Resources
 unit sgResources;
 
@@ -64,7 +69,7 @@ interface
   /// @lib
   procedure ReleaseResourceBundle(name: String);
   
-  /// Returns true if the resource bundle is loaded.
+  /// Returns ``true`` if the resource bundle is loaded.
   /// 
   /// @lib
   function HasResourceBundle(name: String): Boolean;
@@ -97,10 +102,11 @@ interface
   function PathToResourceWithBase(path, filename: String): String; overload; // forward;
   
   /// Returns the path to a resource given its filename, kind, and any subPaths. For example: to load
-  /// the image 'bullet01.png' from the 'bullets' subdirectory you pass in 'bullet01.png' as the filename,
-  /// ImageResource as the kind, and 'bullets' as the subPaths. This will then return the full path
+  /// the image ``bullet01.png`` from the ``bullets`` subdirectory you pass in ``bullet01.png`` as the filename,
+  /// `ImageResource` as the kind, and ``bullets`` as the subPaths. This will then return the full path
   /// to the resource according to the platform in question. 
-  /// For example: .../Resources/images/bullets/bullet01.png
+  ///
+  /// For example: ``.../Resources/images/bullets/bullet01.png``
   /// 
   /// @lib PathToResourceWithSubPaths
   /// @sn pathToResourceFilename:%s kind:%s subPaths:%s

@@ -21,9 +21,12 @@ from sg.file_writer import FileWriter
 #==============================================================================
 
 def get_svn_version():
-    lines = subprocess.Popen("svn info",shell=True, stdout=subprocess.PIPE).stdout.readlines()
-    print "svn info: ", lines[4]
-    result = lines[4].split()[1].strip() # "Revision: 12345"
+    try:
+        lines = subprocess.Popen("svn info",shell=True, stdout=subprocess.PIPE).stdout.readlines()
+        print "svn info: ", lines[4]
+        result = lines[4].split()[1].strip() # "Revision: 12345"
+    except:
+        result = "1250"
     return result
 
 _out_path = "../../Templates/Documentation"
@@ -88,12 +91,13 @@ dl dl { border: 0;}
 dt {font-weight: bold}
 dd dt {font-weight: normal }
 
-#footer { background: #eee; color: #500;font-size: 0.8em}
+#footer { background: #eee; color: #500;font-size: 0.8em; clear: both}
 
 #topnav { background: #eee; font-size: 0.8em; padding: 0; }
 #topnav ul, #topnav li {list-style-type: none; margin: 0; padding: 0 }
 #topnav li {display: inline; margin: 0 2em; }
 #topnav a { color: #500; }
+#topnav .current {text-decoration: none; font-weight: bold; }
 
 .info {color: #005; background: #eee; font-size: 0.8em }
 '''
@@ -113,6 +117,7 @@ _unit_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 <ul>
 <li><a href="index.html">API Index</a></li>
 <li><a href="identifiers.html">Identifiers</a></li>
+<li><a href="Types.html">Types</a></li>
 </ul>
 </div>
 <div id="toc">
@@ -130,7 +135,7 @@ _unit_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 %(body)s
 
 <div id="footer">
-Generated : %(datetime)s
+Generated %(datetime)s for svn version %(svnversion)s
 </div>
 
 </body>
@@ -148,13 +153,33 @@ _index_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 <style type="text/css">''' + _common_css + '''</style>
 </head>
 <body>
-
+<div id="topnav">
+<ul>
+<li><a href="index.html" class="current">API Index</a></li>
+<li><a href="identifiers.html">Identifiers</a></li>
+<li><a href="Types.html">Types</a></li>
+</ul>
+</div>
 <h1>SwinGame API Documentation</h1>
 
+<dl>
+    <dt><a href="identifiers.html">Identifiers</a></dt>
+    <dd>An alphbetical list of all method names and type identifiers. 
+    A text "search" in this page for key words might help you find just what 
+    you need...</dd>
+    
+    <dt><a href="Types.html">Types</a></dt>
+    <dd>Data type details so you know who contains what!</dd>
+</dl>
+
+<h2>Modules</h2>
 <dl>
  %(links)s
 </dl>
 
+<div id="footer">
+Generated %(datetime)s for svn version %(svnversion)s
+</div>
 </body>
 </html>
 '''
@@ -184,6 +209,9 @@ def link_type(text):
     # convert text to hyperlinked version is type is known or not general
     #TODO: link to either METHODS or TYPES not the identifiers page...
     text = text.strip()
+    # hack
+    if '[' in text: return text 
+    #
     if text not in _nolink_types:
         text = '<a class="code" href="identifiers.html#%s">%s</a>' % (text, text)
     return text
@@ -195,12 +223,13 @@ def format_text(text):
     # Convert single-ticks `-` into kind (identifier) links
     #TODO: need test of "method" identifier (module.method) or data "type" identifier 
     # ie each match need to be tested for kind of match (dict lookup) callback
-    text = p_kind.sub(r'<a class="code" href="identifiers\.html#\1">\1</a>' , text)
+    text = p_kind.sub(r'<a class="code" href="identifiers.html#\1">\1</a>' , text)
     # reformat paragraph breaks for pretty presentation
-    lines= text.split('\n')
-    for i, line in enumerate(lines):
-        if line.strip() == '': lines[i] = '</p><p>' 
-    text = '\n'.join(lines)
+    if len(text.strip()) > 0:
+        lines= text.split('\n')
+        for i, line in enumerate(lines):
+            if line.strip() == '': lines[i] = '</p><p>' 
+        text = '\n'.join(lines)
     # done
     return text
     
@@ -235,9 +264,10 @@ def method_visitor(method, other):
     tmp = '<div class="method" id="%(uname)s">\n<h3>%(name)s</h3>\n' + \
           '<p class="sig">%(sig)s</p>\n' + \
           '%(desc)s\n'
+    desc = '' if method.doc.strip() == '' else '<p>%s</p>' % format_text(method.doc)
     _body.append(tmp % {'uname': method.uname, # unique id's for overloads
                         'name': method.name, 
-                        'desc': '<p>%s</p>' % format_text(method.doc), 
+                        'desc': desc, 
                         'sig': sig })
     
     # If parameters and/or return type details
@@ -248,11 +278,14 @@ def method_visitor(method, other):
         if len(method.params) > 0:
             _body.append('<dt>Parameters:</dt>\n<dd>\n<dl>')
             for p in method.params:
-                tmp = '<dt><span class="pname">%(pname)s</span> : <span class="ptype">%(ptype)s</span></dt>' + \
-                      '<dd>%(pdesc)s</dd>'
+                tmp = '<dt><span class="pname">%(pname)s</span> : <span class="ptype">%(ptype)s</span></dt>\n%(pdesc)s'
+                if len(lead_trim(p.doc).strip()) > 0:
+                    pdesc = '<dd>%s</dd>' % format_text(lead_trim(p.doc))
+                else:
+                    pdesc = ''
                 _body.append(tmp % {'pname': p.name, 
                                     'ptype': link_type(p.data_type.name), 
-                                    'pdesc': format_text(lead_trim(p.doc)) })
+                                    'pdesc': pdesc })
             _body.append('</dl>\n</dd>')
         # RETURN TYPE DETAILS    
         if method.return_type:
@@ -341,8 +374,8 @@ def type_visitor(method, other):
 
 def visitor(the_file, other):
     # Don't do some files...
-    #if the_file.name in ['SGSDK', 'Types']: return
-    if the_file.name in ['SGSDK']: return
+    if the_file.name in ['SGSDK', 'Types']: return
+    #if the_file.name in ['SGSDK']: return
     # Keep the filename for the index 
     _files.append( (the_file.name, format_text(the_file.members[0].doc)) )
     # Clear the current body and toc contents
@@ -367,7 +400,8 @@ def visitor(the_file, other):
         'desc': format_text(the_file.members[0].doc), 
         'toc': format_toc(_toc),
         'body': "\n".join(_body),
-        'datetime': time.strftime('%Y-%m-%d %H:%M:%S'), 
+        'datetime': time.strftime('%Y-%m-%d %H:%M:%S'),
+        'svnversion': _svn_version, 
     }
     file_writer.write(_unit_html % tmp) 
     file_writer.close()   
@@ -386,7 +420,12 @@ def create_index_page():
     links = '\n'.join(links)
     # Create the file, merge links with the template
     file_writer = FileWriter( _out_path + '/index.html')
-    file_writer.write(_index_html % {'links': links })
+    tmp = {
+        'links': links, 
+        'datetime': time.strftime('%Y-%m-%d %H:%M:%S'),
+        'svnversion': _svn_version, 
+    }
+    file_writer.write(_index_html % tmp)
     file_writer.close()
     print 'Done.'
 
@@ -421,6 +460,13 @@ h3 { border-bottom: 1px solid #955 }
 </style>
 </head>
 <body>
+<div id="topnav">
+<ul>
+<li><a href="index.html">API Index</a></li>
+<li><a href="identifiers.html" class="current">Identifiers</a></li>
+<li><a href="Types.html">Types</a></li>
+</ul>
+</div>
 
 <h1>SwinGame API Identifiers</h1>
 
@@ -431,6 +477,9 @@ h3 { border-bottom: 1px solid #955 }
 <h2>Types</h2>
 %(types)s
 
+<div id="footer">
+Generated %(datetime)s for svn version %(svnversion)s
+</div>
 </body>
 </html>
 ''' 
@@ -519,6 +568,9 @@ h3 { border-bottom: 1px solid #955 }
         tmp.append('</ul>')
         body['types'] = '\n'.join(tmp)
         
+        body['datetime'] = time.strftime('%Y-%m-%d %H:%M:%S')
+        body['svnversion'] = _svn_version
+        
         # Create the single identifier file with all method names and special data types
         print 'Creating identifiers.html file...'
         file_writer = FileWriter(_out_path + '/identifiers.html')
@@ -543,10 +595,8 @@ h3 { border-bottom: 1px solid #955 }
             toc.append((key, key))
             # Print the headings    
             tmp = '<div class="type" id="%(name)s">\n<h3>%(name)s</h3>\n%(desc)s\n'
-            _body.append(tmp % {
-                'name': key, 
-                'desc': '<p>%s</p>' % format_text(obj.doc), 
-            })
+            desc = '' if obj.doc.strip() == '' else '<p>%s</p>' % format_text(obj.doc)
+            _body.append(tmp % { 'name': key, 'desc': desc })
             # Normal type details...
 
             if obj.is_enum:
@@ -631,6 +681,7 @@ h3 { border-bottom: 1px solid #955 }
             'toc': format_toc(toc),
             'body': "\n".join(_body),
             'datetime': time.strftime('%Y-%m-%d %H:%M:%S'), 
+            'svnversion': _svn_version,            
         }
         file_writer.write(_unit_html % tmp)        
         file_writer.close()
@@ -720,9 +771,9 @@ def main():
     # Extract all the details needed identifier
     IdentifierCollector()
     # Parse all files ...
-    # parser_runner.visit_all_units(visitor)
+    parser_runner.visit_all_units(visitor)
     # #Create the index.html page
-    # create_index_page()
+    create_index_page()
 
 if __name__ == '__main__':
     main()
