@@ -31,6 +31,10 @@
 // - Various
 //=============================================================================
 
+/// Supports the presentation (drawing) of text to screen using loaded `Font`s 
+/// to style the text. Load a different ``Font`` for each unique text 
+/// presentation style (colour and size) you need in your game.
+///
 ///@module Text
 ///@static
 unit sgText;

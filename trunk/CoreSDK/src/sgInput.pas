@@ -37,6 +37,11 @@
 
 {$I sgTrace.inc}
 
+/// Responsible for input event processing for mouse and keyboard events. This
+/// includes mouse visibility, mouse movement and button clicks (including the 
+/// scroll wheel as button "click" events) and keyboard events for text input 
+/// and key state checking.
+///
 /// @module Input
 /// @static
 unit sgInput;
@@ -73,12 +78,12 @@ interface
   /// @lib
   function MouseMovement(): Vector;
   
-  /// Returns `true` if the specified button is currently pressed down.
+  /// Returns ``true`` if the specified button is currently pressed down.
   /// 
   /// @lib
   function MouseDown(button: MouseButton): Boolean;
   
-  /// Returns `true` if the specified button is currently up.
+  /// Returns ``true`` if the specified button is currently up.
   /// 
   /// @lib
   function MouseUp(button: MouseButton): Boolean;
@@ -119,7 +124,7 @@ interface
   /// @lib
   procedure HideMouse();
   
-  /// Returns `true` if the mouse is currently visible, `false` if not.
+  /// Returns ``true`` if the mouse is currently visible, ``false`` if not.
   /// 
   /// @lib
   function MouseShown(): Boolean;
@@ -134,7 +139,7 @@ interface
   /// @sn startReadingTextColor:%s maxLen:%s font:%s area:%s
   procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
   
-  /// The same as `StartReadingText' but with an additional `text` parameter
+  /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
   ///
   /// @lib StartReadingTextWithTextInArea
@@ -151,14 +156,14 @@ interface
   /// @sn startReadingTextColor:%s maxLen:%s font:%s x:%s y:%s
   procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
   
-  /// The same as `StartReadingText' but with an additional `text` parameter
+  /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
   ///
   /// @lib StartReadingTextWithText
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s x:%s y:%s
   procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
   
-  /// The same as `StartReadingText' but with an additional `text` parameter
+  /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
   ///
   /// @lib StartReadingTextWithTextAtPt
