@@ -96,6 +96,10 @@ def run_for_all_units(file_visitor):
     The `file_visitor` is then given the chance to process each unit, including
     the generated sgsdk.pas, in turn.
     '''
+    parse_all_units()
+    visit_all_units(file_visitor)
+    
+def parse_all_units():
     parser = SGPasParser()
     
     lib_file = find_or_add_file('SGSDK','SGSDK','./sgsdk.pas')
@@ -117,12 +121,13 @@ def run_for_all_units(file_visitor):
     lib_file.members.append(find_or_add_class('lib'))
     
     post_parse_process(lib_file)
-    
+
+def visit_all_units(file_visitor):    
     logger.info('Processing files')
-    for each_file in [lib_file] + files:
-        logger.debug('Visiting file %s', each_file.name)
-        each_file.visit(file_visitor, None)
-    
+    files = [ unit[0] for unit in all_units ] + ['SGSDK']
+    for each_file in files:
+        logger.debug('Visiting file %s', each_file)
+        find_or_add_file(each_file).visit(file_visitor, None)
 
 def show_file(the_file, other):
     print 'Done', the_file.name

@@ -7,13 +7,8 @@ Created by Andrew Cain on 2010-03-19.
 Updates (HTML+CSS+TOC) by Clinton Woodward
 Copyright (c) 2010 Swinburne University of Technology. All rights reserved.
 """
-# TODO's
-# Line numbers - link to svn view of files (need revision for url)
-# http://swingamesdk.googlecode.com/svn/trunk/CoreSDK/src/sgAnimations.pas
-# http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/sgAnimations.pas#44
 
-
-import logging, sys, re, time
+import logging, sys, re, time, subprocess
 
 from sg import parser_runner
 from sg.sg_cache import logger, find_or_add_file
@@ -21,19 +16,30 @@ from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 from sg.file_writer import FileWriter
 
-_out_path="../../Templates/Documentation"
+#==============================================================================
+# Settings and global data ...
+#==============================================================================
+
+def get_svn_version():
+    lines = subprocess.Popen("svn info",shell=True, stdout=subprocess.PIPE).stdout.readlines()
+    print "svn info: ", lines[4]
+    result = lines[4].split()[1].strip() # "Revision: 12345"
+    return result
+
+_out_path = "../../Templates/Documentation"
+
+_svn_version = get_svn_version()
+_google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
 _files = []
 _toc = []
 _body = []
 _indentifiers = {}
 
-html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<title>%(title)s</title>
-<style type="text/css">
+_nolink_types = ('Single', 'String', 'Boolean', 'LongInt', 'Byte')
+
+
+_common_css = '''
 
 body, th { font-family: Arial; }
 td, th { border: 1px solid #888}
@@ -67,7 +73,7 @@ body {
 }
 #toc a:hover {background: #eef;}
 
-.method {border-top: 1px solid #55F; padding: 1em; }
+.method, .type {border-top: 1px solid #55F; padding: 1em; }
 .sig {background: #F5F5F5; display: inline}
 
 .sig, .pname, .ptype, .rtype, .code { font-family: monospace; }
@@ -90,14 +96,23 @@ dd dt {font-weight: normal }
 #topnav a { color: #500; }
 
 .info {color: #005; background: #eee; font-size: 0.8em }
+'''
 
-</style>
+#==============================================================================
+# Unit content page unitname.html template ...
+#==============================================================================
+_unit_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>%(title)s</title>
+<style type="text/css">''' + _common_css + '''</style>
 </head>
 <body>
 <div id="topnav">
 <ul>
 <li><a href="index.html">API Index</a></li>
-<li><a href="identifier.html">Identifiers</a></li>
+<li><a href="identifiers.html">Identifiers</a></li>
 </ul>
 </div>
 <div id="toc">
@@ -122,29 +137,55 @@ Generated : %(datetime)s
 </html>
 '''
 
-def format_toc():
+#==============================================================================
+# Index index.html page ...
+#==============================================================================
+_index_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>SwinGame API</title>
+<style type="text/css">''' + _common_css + '''</style>
+</head>
+<body>
+
+<h1>SwinGame API Documentation</h1>
+
+<dl>
+ %(links)s
+</dl>
+
+</body>
+</html>
+'''
+
+
+#==============================================================================
+# Functions ....
+#==============================================================================
+
+def format_toc(toc):
     '''convert toc list of tuples (name, unmae) to list items. 
     Only 1 unique name is presented in the toc for brevity.
     '''
     tmp = []
     last = ''
-    for title, uname in _toc:
+    for title, uname in toc:
         if title != last:
             last = title
             tmp.append('        <li><a href="#%s" title="%s">%s</a></li>' % (uname, uname, title))
     return '\n'.join(tmp)
 
-
+# Regular expressions for catching `linked-code` and ``code-formated`` text
 p_code = re.compile(r'``(.*?)``')
 p_kind = re.compile(r'`(.*?)`')
 
-_nolink_types = ('Single','String', 'Boolean', 'LongInt')
-
 def link_type(text):
     # convert text to hyperlinked version is type is known or not general
+    #TODO: link to either METHODS or TYPES not the identifiers page...
     text = text.strip()
     if text not in _nolink_types:
-        text = '<a class="code" href="identifer.html#%s">%s</a>' % (text, text)
+        text = '<a class="code" href="identifiers.html#%s">%s</a>' % (text, text)
     return text
     
 def format_text(text):
@@ -154,10 +195,14 @@ def format_text(text):
     # Convert single-ticks `-` into kind (identifier) links
     #TODO: need test of "method" identifier (module.method) or data "type" identifier 
     # ie each match need to be tested for kind of match (dict lookup) callback
-    text = p_kind.sub(r'<a class="code" href="identifer.html#\1">\1</a>' , text)
+    text = p_kind.sub(r'<a class="code" href="identifiers\.html#\1">\1</a>' , text)
+    # reformat paragraph breaks for pretty presentation
+    lines= text.split('\n')
+    for i, line in enumerate(lines):
+        if line.strip() == '': lines[i] = '</p><p>' 
+    text = '\n'.join(lines)
     # done
     return text
-    
     
 def lead_trim(text):
     '''Remove leading "-" or ":" from text as it sometimes appears in parameter 
@@ -166,6 +211,7 @@ def lead_trim(text):
     if len(text) > 0 and text[0] in ['-',':']:
         text = text[1:].strip()
     return text
+
 
 def method_visitor(method, other):
     '''Format the current method details and store in the global body and toc lists '''
@@ -218,114 +264,465 @@ def method_visitor(method, other):
         _body.append('</dl>')
 
     #TODO: not used yet
-    tmp = '''
-    <p><strong>Side Effects</strong>: </p>
-    <p><strong>See also</strong>: </p>
-    <p><strong>Deprecated</strong>: </p>
-    <p><strong>See also</strong>: </p>
-    '''
+    # tmp = '''
+    # <p><strong>Side Effects</strong>: </p>
+    # <p><strong>See also</strong>: </p>
+    # <p><strong>Deprecated</strong>: </p>
+    # <p><strong>See also</strong>: </p>
+    #'''
     
+    # Meta-details 
     tmp = '''
     <div class='info'>
     <ul>
-    <li>lib uname: %(uname)s</li>
+    <li>uname: %(uname)s</li>
     <li>in_class: %(in_class)s</li>
     <li>method_called: %(method_called)s</li>
+    <li><a target="new" href="%(source_url)s">source code url</a></li>
+    <li>doc_group: <a href="#group_%(doc_group)s">%(doc_group)s</a></li>
     </ul>
     </div>
     '''
+    # create code.google.com link
+    bits = method.file_line_details.split()
+    line_no = bits[3]
+    fname = bits[5].split('/')[-1].strip()
+    source_url = _google_base_url + fname + "?r=" + _svn_version + '#' + line_no
+    #
     _body.append(tmp % {'uname': method.uname, 
                         'in_class': method.in_class,
-                        'method_called': method.method_called} )
+                        'method_called': method.method_called,
+                        'source_url': source_url,
+                        'doc_group': method.doc_group} )
+    
+    #TODO: Keep track of doc groups, list at end of file with back-links.
     
     _body.append("\n</div>\n")
 
-
-#def 
+def type_visitor(method, other):
+    # '''Write out a single c member'''    
+    # assert member.is_class or member.is_struct or member.is_enum or member.is_type
+    # 
+    # if member.is_class or member.is_type or (member.is_struct and member.wraps_array):
+    #     #convert to resource pointer
+    #     if member.is_pointer_wrapper:
+    #         # assert len(member.fields) == 1
+    #         the_type = member.data_type
+    #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type, None) % member.lower_name)
+    #     elif member.is_data_wrapper:
+    #         assert len(member.fields) == 1
+    #         the_type = member.fields['data'].data_type
+    #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.lower_name)
+    #     elif member.wraps_array:
+    #         assert len(member.fields) == 1
+    #         the_type = member.fields['data'].data_type
+    #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.lower_name)
+    #     elif member.data_type.is_procedure:
+    #         assert member.data_type.method != None
+    #         #typedef float(*pt2Func)(float, float);
+    #         m = member.data_type.method
+    #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(member.data_type) % m.lower_name)
+    #     else:
+    #         logger.error('CREATE C  : Unknown class type for %s', member.uname)
+    #         assert False
+    # elif member.is_struct:
+    #     #typedef struct %s_struct { } struct;
+    #     writer = other['header writer']
+    #     writer.write('typedef struct { \n')
+    #     for field in member.field_list:
+    #         writer.writeln('    %s;' % adapter_type_visitor(field.data_type) % field.lower_name)
+    #     writer.writeln('} %s;\n' % member.lower_name)
+    # elif member.is_enum:
+    #     #enum id { list }
+    #     other['header writer'].write('typedef enum { \n    ')
+    #     other['header writer'].write( ',\n    '.join([wrapper_helper.upper_name(v) for v in member.values]))
+    #     other['header writer'].writeln('\n} %s;\n' % member.lower_name)    
+    pass
 
 def visitor(the_file, other):
     # Don't do some files...
     #if the_file.name in ['SGSDK', 'Types']: return
     if the_file.name in ['SGSDK']: return
     # Keep the filename for the index 
-    _files.append(the_file.name)
+    _files.append( (the_file.name, format_text(the_file.members[0].doc)) )
     # Clear the current body and toc contents
     _body[:] = []
     _toc[:] = []
     
     # Here we go...
     print '>> %s ... ' % (the_file.name),
-    # All units have only one code-module per file, and it's in the first position.
-#    the_file.members[0].visit_methods(method_visitor, None)
-    # 
     for m in the_file.members:
-        m.visit_methods(method_visitor, None)
+        if m.is_module:
+            # procedures / functions
+            m.visit_methods(method_visitor, None)
+        elif m.is_class or m.is_struct or m.is_enum or m.is_type:
+            # class/struct/enum/type stuff
+            type_visitor(m, None)
+            
     # Create output file
     file_writer = FileWriter('%s/%s.html'% (_out_path, the_file.name))
     # Extract content details: toc, body etc
     tmp = {
         'title': the_file.name, 
         'desc': format_text(the_file.members[0].doc), 
-        'toc': format_toc(),
+        'toc': format_toc(_toc),
         'body': "\n".join(_body),
         'datetime': time.strftime('%Y-%m-%d %H:%M:%S'), 
     }
-    file_writer.write(html % tmp) 
+    file_writer.write(_unit_html % tmp) 
     file_writer.close()   
     # We're done 
     print 'Done!'
 
 
 
-index_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
-<head>
-<title>SwinGame API</title>
-<style type="text/css">
-body { 
-  font-family: Arial; 
-  background: #FFF url(low_cog.gif) no-repeat;
-  background-attachment: fixed;
-  background-position: right bottom;
-}
-</style>
-</head>
-<body>
-
-<h1>SwinGame API Documentation</h1>
-
-<ul>
- %(links)s
-</ul>
-
-</body>
-</html>
-'''
-
-
 def create_index_page():
     print "Creating index.html ...",
     # Build up the list of files as links 
     links = []
-    for name in _files:
-        links.append("<li><a href='%s.html'>%s</a>" % (name, name))
+    for name, desc in _files:
+        links.append("<dt><a href='%s.html'>%s</a></dt>" % (name, name))
+        links.append("<dd>%s</dd>" % desc)
     links = '\n'.join(links)
     # Create the file, merge links with the template
-    file_writer = FileWriter('%s/%s.html'% (_out_path, "index"))
-    file_writer.write(index_html % {'links': links })
+    file_writer = FileWriter( _out_path + '/index.html')
+    file_writer.write(_index_html % {'links': links })
     file_writer.close()
     print 'Done.'
+
+
+#==============================================================================
+# Indentifier indentifier.html page template ...
+#==============================================================================
+
+class IdentifierCollector(object):
+
+    _identifier_html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>SwinGame API Identifiers</title>
+<style type="text/css">''' + _common_css + '''
+
+#links li { 
+    list-style-type: none; 
+    display: block; 
+    float: left; 
+    width: 1.5em; 
+    text-align: center;
+    background: #eee
+}
+
+h2, h3 { clear: both; }
+h3 { border-bottom: 1px solid #955 }
+.methods li, #types li { list-style-type: none; }
+#types li { display: inline; width: 20em; float: left }
+
+</style>
+</head>
+<body>
+
+<h1>SwinGame API Identifiers</h1>
+
+<h2>Methods</h2>
+%(links)s
+%(methods)s
+
+<h2>Types</h2>
+%(types)s
+
+</body>
+</html>
+''' 
+   
+    def __init__(self):
+            
+        ids = self.ids = {
+            'methods': {},
+            'umethods': {},
+            'types': {},
+            'structs': {},
+            'enums': {},
+            'classes': {},
+        }
+
+        ## 'Gathering identifier details:'
+        parser_runner.visit_all_units(self._file_visitor)
+
+        # build link-calls back to method parameters
+        for key, method in ids['umethods'].items():
+            if method.params:
+                for p in method.params:
+                    # only keep the special types, not LongInt etc
+                    if p.data_type.name in ids['types']:
+                        ids['types'][p.data_type.name]['used_by'][method.uname] = method
+
+
+        # Create the identifiers.html and types.html docs
+        self._create_identifiers_doc()
+        self._create_types_doc()
+            
+    def _create_identifiers_doc(self):
+        # Create the identifiers.html document body content ...
+        tmp = []
+        body = {}
+        links = []
+        ids = self.ids
+
+        ## Methods 
+        keys = ids['methods'].keys()
+        keys.sort()
+        current = ''
+        for key in keys:
+            if key[0] != current:
+                if current != '':
+                    tmp.append('</ul>')
+                current = key[0]
+                tmp.append('<h3 id="'+current+'">'+current+'</h3>')
+                tmp.append('<ul class="methods">')
+                links.append(current)
+                
+            if len(ids['methods'][key]) > 1:
+                unames = [ m.uname for m in ids['methods'][key] ]
+                unames.sort()
+                tmp.append( "<li>%s (%d): <ul>" % (key, len(unames)) )
+                for n in unames:
+                    url = ids['umethods'][n]['doc_url']
+                    tmp.append( '<li><a href="%s">%s</a></li>' % (url,n) )  
+                tmp.append('</ul></li>')
+            else:
+                url = ids['methods'][key][0]['doc_url'] # [0] == there is only one...
+                tmp.append('<li><a href="%s">%s</a></li>' % (url,key) )
+        tmp.append('</ul>')                                
+        body['methods'] = '\n'.join(tmp)
+        # Build a pretty alphabet of links for the top ...
+        tmp = []
+        for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+            if c in links:
+                tmp.append('<a href="#%s">%s</a>' % (c,c))
+            else:
+                tmp.append(c)
+        body['links'] = '<ul id="links">\n<li>' + ('</li><li>'.join(tmp)) + '</li></ul>'
+
+        ## Special Types:'
+        tmp = []
+        tmp.append('<ul id="types">')
+        keys = ids['types'].keys()
+        keys.sort()
+        for key in keys:
+            num = len(ids['types'][key]['used_by'])
+            url = ids['types'][key]['doc_url']
+            if num > 0:
+                tmp.append('<li><a href="%s">%s</a> (%d)</li>' % (url, key, num))
+            else:
+                tmp.append('<li>%s (%d)</li>' % (key, num))
+        tmp.append('</ul>')
+        body['types'] = '\n'.join(tmp)
+        
+        # Create the single identifier file with all method names and special data types
+        print 'Creating identifiers.html file...'
+        file_writer = FileWriter(_out_path + '/identifiers.html')
+        file_writer.write(self._identifier_html % body )
+        file_writer.close()
+        print 'Done.'
     
-def create_indentifer_page():
-    pass
+    def _create_types_doc(self):
+        # Create Types.html with all the details we need
+        ids = self.ids
+                
+        _body = []
+        
+        #print ids['types']
+        toc = []
+        
+        keys = ids['types'].keys()
+        keys.sort()
+        for key in keys:
+            obj = ids['types'][key]
+            # keep a TOC entry
+            toc.append((key, key))
+            # Print the headings    
+            tmp = '<div class="type" id="%(name)s">\n<h3>%(name)s</h3>\n%(desc)s\n'
+            _body.append(tmp % {
+                'name': key, 
+                'desc': '<p>%s</p>' % format_text(obj.doc), 
+            })
+            # Normal type details...
+
+            if obj.is_enum:
+                if obj.values:
+                    _body.append('<dl class="fields"><dt>Enumerated Values:</dt>')
+                    _body.extend( ['<dd><span class="pname">%s</span></dd>' % v for v in obj.values ])
+                    _body.append('</dl>')
+            elif obj.is_struct:
+                if obj.field_list:
+                    _body.append('<dl class="fields"><dt>Structure Field List:</dt>')
+                    tmp = '<dd><span class="pname">%s</span> : <span class="ptype">%s</span></dd>'
+                    _body.extend( [ tmp % (f.name, link_type(f.data_type.name)) for f in obj.field_list] )
+                    _body.append('</dl>')
+
+            # Used-by details
+            if len(obj['used_by']):
+                users = obj['used_by'].keys()
+                users.sort()
+                ##print users
+                _body.append('<dl><dt>Used by:</dt>\n<dd>')
+                _body.extend(['<span>%s</span> ' % link_type(name) for name in users ])
+                _body.append('</dd>\n</dl>')
+
+            # Extra info section for developers
+            if obj.is_class or obj.is_type or (obj.is_struct and obj.wraps_array):
+                #convert to resource pointer
+                if obj.is_pointer_wrapper:
+                    #if not isinstance(obj, SGCodeModule):
+                    type_info = 'is_pointer_wrapper: ' + obj.data_type.name + " : " + obj.data_type.related_type.name 
+                elif obj.is_data_wrapper:
+                    type_info = 'is_data_wrapper: ' + obj.fields['data'].data_type.name
+                    if obj.fields['data'].data_type.related_type:
+                        type_info = " : " +  obj.fields['data'].data_type.related_type.name
+                elif obj.wraps_array:
+                    type_info = 'wraps_array: ' + obj.fields['data'].data_type.name
+                    if obj.fields['data'].data_type.related_type:
+                        type_info = " : " +  obj.fields['data'].data_type.related_type.name 
+                elif obj.data_type.is_procedure: 
+                    pass
+                else:
+                    assert False
+            else:
+                type_info = 'struct/enum'
+            
+            tmp = '''
+            <div class='info'>
+            <ul>
+            <li>uname: %(uname)s</li>
+            <li>is_class: %(class)s</li>
+            <li>via_pointer: %(via_pointer)s</li>
+            <li>same_as: %(same_as)s</li>
+            <li>type info: %(type_info)s</li>
+            <li><a target="new" href="%(source_url)s">source code url</a></li>
+            <li>doc_group: <a href="#group_%(doc_group)s">%(doc_group)s</a></li>
+            </ul>
+            </div>
+            '''
+            # create code.google.com link
+            # TODO: need file_line_details set for types also...
+            #bits = obj.file_line_details.split()
+            line_no = '0' # bits[3]
+            fname = 'sgTypes.pas' # bits[5].split('/')[-1].strip()
+            source_url = _google_base_url + fname + "?r=" + _svn_version + '#' + line_no
+            #
+            _body.append(tmp % {'uname': obj.uname, 
+                                'class': obj.is_class,
+                                'via_pointer': obj.via_pointer,
+                                'same_as': obj.data_type.same_as,
+                                'type_info': type_info,
+                                'source_url': 'TODO',
+                                'doc_group': obj.doc_group} )            
+            # Close section
+            _body.append('</div>')
+        
+        toc.sort()
+        # Create the single types files with all the types 
+        print 'Creating Types.html file...'
+        file_writer = FileWriter(_out_path + '/Types.html')
+        tmp = {
+            'title': 'Types', 
+            'desc': format_text('DESCRIPTION'), 
+            'toc': format_toc(toc),
+            'body': "\n".join(_body),
+            'datetime': time.strftime('%Y-%m-%d %H:%M:%S'), 
+        }
+        file_writer.write(_unit_html % tmp)        
+        file_writer.close()
+        print 'Done.'        
+
+    def _file_visitor(self, the_file, other):
+        if the_file.name in ['SGSDK']: return
+        print '>> %s ... ' % (the_file.name),
+        for m in the_file.members:
+            if m.is_module:
+                # procedures / functions
+                m.visit_methods(self._method_visitor, None)
+            elif m.is_class or m.is_struct or m.is_enum or m.is_type:
+                # class/struct/enum/type stuff
+                self._type_visitor(m, None)
+        print 'Done!'    
+
+    def _method_visitor(self, method, other):
+        # keep the common and possibly overloaded name
+        if method.name not in self.ids['methods']:
+            self.ids['methods'][method.name] = []
+        self.ids['methods'][method.name].append( method )
+        # keep all unique (library) names
+        if method.uname not in self.ids['umethods']:
+            self.ids['umethods'][method.uname] = method
+        # modify method to also keep the doc_url for us
+        method.tags['doc_url'] = method.in_file.name + '.html#' + method.uname
+    
+    def _type_visitor(self, member, other):
+        self.ids['types'][member.name] = member
+        # modify member to keep track of who uses it
+        member.tags['used_by'] = {} 
+        # modify member to keep track of the doc_url for us
+        member.tags['doc_url'] = 'Types.html#' + member.name
+        
+        # determine the group and keep it for later ...
+        if member.is_enum: group = 'enums'
+        elif member.is_class: group = 'classes'
+        elif member.is_struct: group = 'structs'
+        else: 
+            print 'i dunno...', member.name
+            return
+        self.ids[group][member.name] = member
+        
+        # if member.is_class or member.is_type or (member.is_struct and member.wraps_array):
+        #     #convert to resource pointer
+        #     if member.is_pointer_wrapper:
+        #         # assert len(member.fields) == 1
+        #         the_type = member.data_type
+        #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type, None) % member.lower_name)
+        #     elif member.is_data_wrapper:
+        #         assert len(member.fields) == 1
+        #         the_type = member.fields['data'].data_type
+        #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.lower_name)
+        #     elif member.wraps_array:
+        #         assert len(member.fields) == 1
+        #         the_type = member.fields['data'].data_type
+        #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(the_type) % member.lower_name)
+        #     elif member.data_type.is_procedure:
+        #         assert member.data_type.method != None
+        #         #typedef float(*pt2Func)(float, float);
+        #         m = member.data_type.method
+        #         other['header writer'].writeln('typedef %s;\n' % adapter_type_visitor(member.data_type) % m.lower_name)
+        #     else:
+        #         logger.error('CREATE C  : Unknown class type for %s', member.uname)
+        #         assert False
+        # elif member.is_struct:
+        #     #typedef struct %s_struct { } struct;
+        #     writer = other['header writer']
+        #     writer.write('typedef struct { \n')
+        #     for field in member.field_list:
+        #         writer.writeln('    %s;' % adapter_type_visitor(field.data_type) % field.lower_name)
+        #     writer.writeln('} %s;\n' % member.lower_name)
+        # elif member.is_enum:
+        #     #enum id { list }
+        #     other['header writer'].write('typedef enum { \n    ')
+        #     other['header writer'].write( ',\n    '.join([wrapper_helper.upper_name(v) for v in member.values]))
+        #     other['header writer'].writeln('\n} %s;\n' % member.lower_name)    
+        #pass
+      
+    
     
 def main():
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
-    parser_runner.run_for_all_units(visitor)
-    #Create the index.html page
-    create_index_page()
-    #TODO: Create the identifer.html page
+    # Parse all files...
+    parser_runner.parse_all_units()
+    # Extract all the details needed identifier
+    IdentifierCollector()
+    # Parse all files ...
+    # parser_runner.visit_all_units(visitor)
+    # #Create the index.html page
+    # create_index_page()
 
 if __name__ == '__main__':
     main()

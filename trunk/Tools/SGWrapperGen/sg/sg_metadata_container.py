@@ -48,6 +48,7 @@ class SGMetaDataContainer(object):
         else:
             self.set_tag(SGTag(tag, other))
     
+    
     def _check_known_tags(self, tag):
         if not tag.title in self._known_tags:
             logger.error('Model Error: Unknown tag @%s added for %s', tag.title, str(self.__class__))
