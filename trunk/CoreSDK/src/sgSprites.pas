@@ -594,6 +594,7 @@ interface
   /// has a sound.
   ///  
   /// @lib UpdateSpritePctWithSound(s, pct, true)
+  /// @uname UpdateSpritePercent
   /// @sn updateSprite:%s percent:%s
   ///
   /// @class Sprite
@@ -621,14 +622,18 @@ interface
   procedure UpdateSpriteAnimation(s: Sprite); overload;
   
   /// @lib UpdateSpriteAnimationPctWithSound(s, 1.0, withSound)
+  /// @uname UpdateSpriteAnimationWithSound
   procedure UpdateSpriteAnimation(s: Sprite; withSound: Boolean); overload;
   
   /// @lib UpdateSpriteAnimationPctWithSound(s, pct, true)
+  /// @uname UpdateSpriteAnimationPercent
+  ///
   /// @class Sprite
   /// @overload UpdateAnimation UpdateAnimationPct
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
   
   /// @lib UpdateSpriteAnimationPctWithSound
+  /// @uname UpdateSpriteAnimationPercentWithSound
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   
   
@@ -648,11 +653,14 @@ interface
   
   /// @lib MoveSprite(s, 1.0)
   /// @uname MoveSprite
+  /// 
   /// @class Sprite
   /// @method Move
   procedure MoveSprite(s: Sprite); overload;
   
   /// @lib MoveSprite
+  /// @uname MoveSpritePercent
+  /// 
   /// @class Sprite
   /// @overload Move MovePct
   procedure MoveSprite(s: Sprite; pct: Single); overload;
@@ -664,6 +672,7 @@ interface
   procedure MoveSprite(s : Sprite; const velocity: Vector); overload;
     
   /// @lib MoveSpriteVecPct
+  ///
   /// @class Sprite
   ///@overload Move MoveVecPct
   procedure MoveSprite(s : Sprite; const velocity: Vector; pct: Single); overload;
