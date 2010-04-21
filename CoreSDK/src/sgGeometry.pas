@@ -112,7 +112,7 @@ interface
   /// @self 2
   function ClosestPointOnCircle(const fromPt: Point2D; const c: Circle): Point2D;
   
-  /// Returns the point at the opposite side of a circle from a given point `pt`.
+  /// Returns the point at the opposite side of a circle from a given point ``pt``.
   ///
   /// @lib
   /// @sn distantPointFrom:%s onCircle:%s
@@ -123,8 +123,8 @@ interface
   /// @csn distantPointFrom:%s
   function DistantPointOnCircle(const pt: Point2D; const c: Circle): Point2D;
   
-  /// Finds the opposite side of a circle from a given point `pt` when travelling along the
-  /// vector `heading`. Returns False if the ray projected from point `pt` misses the circle.
+  /// Finds the opposite side of a circle from a given point ``pt`` when travelling along the
+  /// vector ``heading``. Returns False if the ray projected from point ``pt`` misses the circle.
   ///
   /// @lib
   /// @sn distantPointFrom:%s onCircle:%s heading:%s result:%s
@@ -471,7 +471,7 @@ interface
   /// @csn initPointPrototypeAt:%s
   function PointPrototypeFrom(const pt: Point2D): ShapePrototype;
   
-  /// Create a shape prototype of a circle with a given radius `r`.
+  /// Create a shape prototype of a circle with a given radius ``r``.
   ///
   /// @lib
   /// @sn circlePrototypeFromPt:%s radius:%s
@@ -489,7 +489,7 @@ interface
   // /// @csn initEllipsePrototypeAt:%s width:%s height:%s
   // function EllipsePrototypeFrom(const pt: Point2D; w, h: Single): ShapePrototype;
   
-  /// Create a shape prototype for a line from `startPt` to `endPt`.
+  /// Create a shape prototype for a line from ``startPt`` to ``endPt``.
   ///
   /// @lib
   /// @sn linePrototypeFromPt:%s toPt:%s
@@ -499,7 +499,7 @@ interface
   /// @csn initLinePrototypeFrom:%s to:%s
   function LinePrototypeFrom(const startPt, endPt: Point2D): ShapePrototype;
   
-  /// Create a shape prototype for a triangle made of points `pt1`, `pt2`, and `pt3`.
+  /// Create a shape prototype for a triangle made of points ``pt1``, ``pt2``, and ``pt3``.
   ///
   /// @lib
   /// @sn trianglePrototypeFromPt1:%s pt2:%s pt3:%s
@@ -1078,7 +1078,7 @@ interface
   // Point test operations
   //---------------------------------------------------------------------------
   
-  /// Returns true if the point `pt` is in the Triangle `tri`.
+  /// Returns true if the point ``pt`` is in the Triangle ``tri``.
   ///
   /// @lib
   /// @sn point:%s inTriangle:%s
@@ -1097,7 +1097,7 @@ interface
   /// @csn inRectX:%s y:%s width:%s height:%s
   function PointInRect(const pt: Point2D; x, y, w, h: Single): Boolean; overload;
   
-  /// Returns True if point `pt` is in the Rectangle `rect`.
+  /// Returns True if point ``pt`` is in the Rectangle ``rect``.
   ///
   /// @lib
   /// @sn point:%s inRect:%s
@@ -1118,7 +1118,7 @@ interface
   /// @sn pointX:%s ptY:%s inRect:%s
   function PointInRect(x, y: Single; const rect: Rectangle): Boolean; overload;
   
-  /// Returns True if the point `pt` is in the circle.
+  /// Returns True if the point ``pt`` is in the circle.
   ///
   /// @lib
   /// @sn point:%s inCircle:%s
@@ -1127,7 +1127,7 @@ interface
   /// @method InCircle
   function PointInCircle(const pt: Point2D; const c: Circle): Boolean;
   
-  /// Returns True if point `pt` is on the line segment `line`.
+  /// Returns True if point ``pt`` is on the line segment ``line``.
   ///
   /// @lib PointOnLine
   /// @sn point:%s onLine:%s
@@ -1159,7 +1159,7 @@ interface
   function VectorTo(x, y: Single): Vector; overload;
   
   /// Creates a new `Vector` with the ``x`` and ``y`` values provided, and will 
-  /// invert the ``y`` value if the `invertY`` parameter is True. The inversion 
+  /// invert the ``y`` value if the ``invertY`` parameter is True. The inversion 
   /// of the ``y`` value provides a convienient option for handling screen 
   /// related vectors.
   ///
@@ -1284,7 +1284,7 @@ interface
   /// @getter Inverted
   function InvertVector(const v: Vector): Vector;
 
-  /// Returns a new `Vector` that is a based on the parameter `v` however
+  /// Returns a new `Vector` that is a based on the parameter ``v`` however
   /// its magnitude (length) will be limited (truncated) if it exceeds the
   /// specified limit value.
   ///

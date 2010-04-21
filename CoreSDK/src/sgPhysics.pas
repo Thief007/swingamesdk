@@ -88,7 +88,7 @@ interface
   // Sprite <-> Sprite Collision Detection
   //---------------------------------------------------------------------------
   
-  /// Returns ``true`` if the specifed `Sprites` (``s1`` and ``s2``) have
+  /// Returns ``true`` if the specifed sprites (``s1`` and ``s2``) have
   /// collided. Will use simple bounding box tests first, and low-level pixel
   /// tests if needed.
   ///
@@ -411,7 +411,7 @@ interface
   // Geometry Collision Tests
   //---------------------------------------------------------------------------
   
-  /// Returns True if the Circle collised with rectangle `rect`.
+  /// Returns True if the Circle collised with rectangle ``rect``.
   ///
   /// @lib
   /// @sn circle:%s collisionWithRect:%s
@@ -429,7 +429,7 @@ interface
   /// @sn circle:%s collisionWithCircle:%s
   function CircleCircleCollision(const c1, c2: Circle): Boolean;
   
-  /// Returns True if the Circle has collided with the Triangle `tri`.
+  /// Returns True if the Circle has collided with the Triangle ``tri``.
   ///
   /// @lib
   /// @sn circle:%s collisionWithTriangle:%s

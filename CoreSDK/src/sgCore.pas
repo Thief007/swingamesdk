@@ -392,28 +392,28 @@ interface
   /// @doc_group colors
   function HSBColor(hue, saturation, brightness: Single): Color;
   
-  /// Get the transpareny value of `color`.
+  /// Get the transpareny value of ``color``.
   ///
   /// @lib
   ///
   /// @doc_group colors
   function TransparencyOf(c: Color): byte;
   
-  /// Get the red value of `color`.
+  /// Get the red value of ``color``.
   ///
   /// @lib
   ///
   /// @doc_group colors
   function RedOf(c: Color): byte;
   
-  /// Get the green value of `color`.
+  /// Get the green value of ``color``.
   ///
   /// @lib
   ///
   /// @doc_group colors
   function GreenOf(c: Color): byte;
   
-  /// Get the blue value of `color`.
+  /// Get the blue value of ``color``.
   ///
   /// @lib
   ///
@@ -429,21 +429,21 @@ interface
   /// @doc_group colors
   procedure HSBValuesOf(c: Color; out h, s, b: Single);
   
-  /// Get the hue of the `color`.
+  /// Get the hue of the ``color``.
   ///
   /// @lib
   ///
   /// @doc_group colors
   function HueOf(c: Color): Single;
   
-  /// Get the saturation of the `color`.
+  /// Get the saturation of the ``color``.
   ///
   /// @lib
   ///
   /// @doc_group colors
   function SaturationOf(c: Color) : Single;
   
-  /// Get the brightness of the `color`.
+  /// Get the brightness of the ``color``.
   ///
   /// @lib
   ///

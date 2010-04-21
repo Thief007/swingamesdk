@@ -74,9 +74,9 @@ interface
 //----------------------------------------------------------------------------
   
   /// Loads and returns a font that can be used to draw text. The supplied
-  /// `filename` is used to locate the font to load. The supplied `name` indicates the 
+  /// ``filename`` is used to locate the font to load. The supplied ``name`` indicates the 
   /// name to use to refer to this Font in SwinGame. The `Font` can then be
-  /// retrieved by passing this `name` to the `FontNamed` function.
+  /// retrieved by passing this ``name`` to the `FontNamed` function.
   ///
   /// @lib
   ///
@@ -111,7 +111,7 @@ interface
   function FontNamed(name: String): Font; overload;
   
   /// Releases the SwinGame resources associated with the font of the
-  /// specified `name`.
+  /// specified ``name``.
   ///
   /// @lib
   procedure ReleaseFont(name: String);

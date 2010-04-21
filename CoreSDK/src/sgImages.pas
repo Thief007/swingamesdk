@@ -82,7 +82,7 @@ uses sgTypes;
   /// Loads a bitmap with a transparent color key. The transparent color is then
   /// setup as the color key to ensure the image is drawn correctly. Alpha
   /// values of Images loaded in this way will be ignored. All bitmaps must be
-  /// freed using the FreeBitmap once you are finished with them.
+  /// freed using the `FreeBitmap` once you are finished with them.
   ///
   /// @lib LoadBitmapWithTransparentColor(filename, True, transparentColor)
   /// @sn loadBitmapFile:%s withColorKey:%s
@@ -106,10 +106,10 @@ uses sgTypes;
 // Bitmap mapping routines
 //----------------------------------------------------------------------------
   
-  /// Loads and returns a bitmap. The supplied `filename` is used to
-  /// locate the Bitmap to load. The supplied `name` indicates the 
+  /// Loads and returns a bitmap. The supplied ``filename`` is used to
+  /// locate the Bitmap to load. The supplied ``name`` indicates the 
   /// name to use to refer to this Bitmap in SwinGame. The `Bitmap` can then be
-  /// retrieved by passing this `name` to the `BitmapNamed` function. 
+  /// retrieved by passing this ``name`` to the `BitmapNamed` function. 
   ///
   /// @lib
   /// @sn mapBitmapNamed:%s toFile:%s
@@ -120,9 +120,9 @@ uses sgTypes;
   function MapBitmap(name, filename: String): Bitmap;
   
   /// Loads and returns a bitmap with a given color code use for transparency.
-  /// The supplied `filename` is used to locate the Bitmap to load. The supplied
-  /// `name` indicates thename to use to refer to this Bitmap in SwinGame. The 
-  /// `Bitmap` can then be retrieved by passing this `name` to the `BitmapNamed` function. 
+  /// The supplied ``filename`` is used to locate the Bitmap to load. The supplied
+  /// ``name`` indicates thename to use to refer to this Bitmap in SwinGame. The 
+  /// `Bitmap` can then be retrieved by passing this ``name`` to the `BitmapNamed` function. 
   ///
   /// @lib
   /// @sn mapBitmapNamed:%s toFile:%s colorKey:%s
@@ -146,7 +146,7 @@ uses sgTypes;
   function BitmapNamed(name: String): Bitmap;
   
   /// Releases the SwinGame resources associated with the bitmap of the
-  /// specified `name`.
+  /// specified ``name``.
   ///
   /// @lib
   procedure ReleaseBitmap(name: String);

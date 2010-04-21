@@ -133,12 +133,14 @@ class SGPasParser():
             if not result in self._current_file.members:
                 self._current_file.members.append(result)
                 result.file_line_details = self._tokeniser.line_details()
+                result.meta_comment_line_details = self._tokeniser.meta_comment_line_details()
         elif kind == SGType:
             assert False
             #result = find_or_add_type(name)
         else:
             result = kind(name)
             result.file_line_details = self._tokeniser.line_details()
+            result.meta_comment_line_details = self._tokeniser.meta_comment_line_details()
             
         result.in_file = self._current_file
         logger.debug('Parser    : Creating model element: %s with kind:%s', name, kind)
@@ -525,6 +527,8 @@ class SGPasParser():
             self._match_token('operator','=') #read the =
             
             the_type = find_or_add_type(type_name)
+            the_type.file_line_details = self._tokeniser.line_details()
+            the_type.meta_comment_line_details = self._tokeniser.meta_comment_line_details()
             
             self._parse_type_declaration(the_type)
             
