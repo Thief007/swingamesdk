@@ -8,6 +8,8 @@ Updates (HTML+CSS+TOC) by Clinton Woodward
 Copyright (c) 2010 Swinburne University of Technology. All rights reserved.
 """
 
+#TODO: use "tags" (instead of "doc_group" for  )
+
 import logging, sys, re, time, subprocess
 
 from sg import parser_runner
@@ -24,10 +26,10 @@ def get_svn_version():
     try:
         lines = subprocess.Popen("svn info",shell=True, stdout=subprocess.PIPE).stdout.readlines()
         print "svn info: ", lines[4]
-        result = lines[4].split()[1].strip() # "Revision: 12345"
+        result = lines[4].split()[1].strip() # eg. "Revision: 12345"
     except:
         print
-        result = "1250"
+        result = "1253" # rough guess...
     return result
 
 OUT_PATH = "../../Templates/Documentation"
@@ -36,14 +38,30 @@ SVN_VERSION = get_svn_version()
 
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
-_nolink_types = ('Single', 'String', 'Boolean', 'LongInt', 'Byte')
+_nolink_types = (
+    'Single', 'String', 'Boolean', 'LongInt', 'Byte', 'UInt32', 'UInt16',
+    'PSDL_Surface', 'PMix_Music', 'PMix_Chunk', 'Pointer'
+)
+
+_ids = None # set once the IdentifierCollector() has been created.
+
+def source_url(text):
+    '''Break up a standard source code line string and return a URL to the code.'''
+    bits = text.split()
+    line_no = bits[3]
+    fname = bits[5].split('/')[-1].strip()
+    return _google_base_url + fname + "?r=" + SVN_VERSION + '#' + line_no    
 
 
+#==============================================================================
+# Document writer class to consistently format API html files
+#==============================================================================
 
 class APIDocWriter(object):
     '''Base class for presentation API documentation providing html template
     features including consistent header/footer details, toc and style links
     '''
+    
     _html = '''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
@@ -71,6 +89,7 @@ Generated %(datetime)s for svn version %(svnversion)s
 
 '''
     def __init__(self):
+        # keep track of standard document information and unique content
         self.title = ''
         self.css = ''
         self.topnav = [
@@ -81,12 +100,13 @@ Generated %(datetime)s for svn version %(svnversion)s
         self.toc = []
         self.desc = ''
         self.body = []
+        # bind the body append/extend methods to this object
         self.append = self.body.append
         self.extend = self.body.extend
 
     def savetofile(self, filename):
-        file_writer = FileWriter(OUT_PATH + '/' + filename)
-        tmp = {
+        file_writer = FileWriter(OUT_PATH + '/' + filename)        
+        file_writer.write(self._html % {
             # header/title details
             'title': self.title,
             'css': self.format_css(),
@@ -99,18 +119,11 @@ Generated %(datetime)s for svn version %(svnversion)s
             # footer details
             'datetime': time.strftime('%Y-%m-%d %H:%M:%S'), 
             'svnversion': SVN_VERSION,
-        }
-        
-        file_writer.write(self._html % tmp )
+        } )
         file_writer.close()
 
     def format_topnav(self, filename):
-        tmp = '''
-    <div id="topnav">
-        <ul>
-            %(items)s
-        </ul>
-    </div>'''
+        tmp = '<div id="topnav">\n<ul>\n%(items)s\n</ul>\n</div>'
         if self.topnav:
             items = []
             for f, title in self.topnav:
@@ -129,32 +142,20 @@ Generated %(datetime)s for svn version %(svnversion)s
             return ''
     
     def format_toc(self):
-        '''convert toc list of tuples (name, uname) to list items. 
+        '''Convert toc list of tuples (name, uname) to list items. 
         Only 1 unique name is presented in the toc for brevity.
         '''
-        toc = '''
-    <div id="toc">
-        <ul>
-        %(toc)s
-        </ul>
-    </div>
-        '''
+        toc = '<div id="toc">\n<ul>\n%(toc)s\n</ul>\n</div>\n'
         tmp = []
         last = ''
         for title, uname in self.toc:
             if title != last:
                 last = title
-                tmp.append('        <li><a href="#%s" title="%s">%s</a></li>' % (uname, uname, title))
+                tmp.append('<li><a href="#%s" title="%s">%s</a></li>' % (uname, uname, title))
         return toc % {'toc': '\n'.join(tmp) }
 
-    
     def format_desc(self):
-        tmp = '''
-    <h2 id="desc">Description</h2>
-    <p>
-    %(desc)s
-    </p>
-    '''
+        tmp = '<h2 id="desc">Description</h2>\n<p>\n%(desc)s\n</p>\n'
         if self.desc:
             return tmp % {'desc': self.desc }
         else:
@@ -171,10 +172,6 @@ Generated %(datetime)s for svn version %(svnversion)s
             self.body.append('<h3>%s</h3>' % text)
         else:
             self.body.append('<h3 id="%s">%s</h3>' % (id, text))
-
-
-
-        
 
 
 #==============================================================================
@@ -197,6 +194,7 @@ class IdentifierCollector(object):
             'structs': {},
             'enums': {},
             'classes': {},
+            'consts': {}, #TODO
         }
         # Gather identifier details
         parser_runner.visit_all_units(self._file_visitor)
@@ -207,27 +205,35 @@ class IdentifierCollector(object):
                     # only keep the special types, not LongInt etc
                     if p.data_type.name in ids['types']:
                         ids['types'][p.data_type.name]['used_by'][m.uname] = m
-    
-    def link_type(self, text):
-        # convert text to hyperlinked version if type is known or not general
-        #TODO: link to either METHODS or TYPES (not the identifiers page...)
-        text = text.strip()
-        # hack
-        if '[' in text: return text 
-        #
-        if text not in _nolink_types:
-            text = '<a class="code" href="identifiers.html#%s">%s</a>' % (text, text)
-        return text
+
+    def link_type(self, name):
+        '''Convert text to hyperlinked version if type is known and special. '''
+        name = name.strip()
+        if name in _nolink_types: 
+            return '<span class="code">%s</span>' % name
+        elif '[' in name: # special array type handling...
+            pos = name.index('[')
+            return '%s<span class="code">%s</span>' % (self.link_type(name[:pos]), name[pos:]) 
+        elif name in self.ids['umethods']:
+            doc_url = self.ids['umethods'][name]['doc_url']
+            return '<a class="code" href="%s">%s</a>' % (doc_url, name) 
+        elif name in self.ids['types']:
+            doc_url = self.ids['types'][name]['doc_url']
+            return '<a class="code" href="%s">%s</a>' % (doc_url, name) 
+        else:
+            print '## unknown id:', name
+            return '<span class="code">%s</span>' % name
         
     def format_text(self, text):
         '''Convert text to valid xhtml+css markup'''
-        # Convert double-ticks ``-`` into code formatting (no hypertext link)
+        # Convert double-ticks ``-`` into code format (no hypertext link)
         text = self.p_code.sub(r'<span class="code">\1</span>' , text)
         # Convert single-ticks `-` into kind (identifier) links
-        #TODO: need test of "method" identifier (module.method) or data "type" identifier 
-        # ie each match need to be tested for kind of match (dict lookup) callback
-        text = self.p_kind.sub(r'<a class="code" href="identifiers.html#\1">\1</a>' , text)
-        # reformat paragraph breaks for pretty presentation
+        def matcher(m):
+            # m is a Match instance - return the text to replace the matched text with
+            return self.link_type(m.groups()[0])             
+        text = self.p_kind.sub(matcher, text)
+        # Reformat paragraph breaks for pretty presentation
         if len(text.strip()) > 0:
             lines= text.split('\n')
             for i, line in enumerate(lines):
@@ -238,7 +244,7 @@ class IdentifierCollector(object):
 
     def _file_visitor(self, the_file, other):
         if the_file.name in ['SGSDK']: return
-        print '>> %s ... ' % (the_file.name),
+        print '>> %s ... ' % (the_file.name)
         # Keep the filename for the index 
         self.ids['files'][the_file.name] = the_file 
         
@@ -248,8 +254,7 @@ class IdentifierCollector(object):
                 m.visit_methods(self._method_visitor, None)
             elif m.is_class or m.is_struct or m.is_enum or m.is_type:
                 # class/struct/enum/type stuff
-                self._type_visitor(m, None)
-        print 'Done!'    
+                self._type_visitor(m, None)   
 
     def _method_visitor(self, method, other):
         # keep the common and possibly overloaded name
@@ -273,9 +278,12 @@ class IdentifierCollector(object):
         if member.is_enum: group = 'enums'
         elif member.is_class: group = 'classes'
         elif member.is_struct: group = 'structs'
-        else: 
-            print 'i dunno...', member.name
-            return
+        elif member.is_data_wrapper: return # eg. Color
+        elif member.is_pointer_wrapper: return # eg. BitmapPtr
+        elif member.wraps_array: return # BitmapArray
+        else: #elif member.is_type:
+            print '## is_type', member.uname
+            return 
         self.ids[group][member.name] = member
         
         # if member.is_class or member.is_type or (member.is_struct and member.wraps_array):
@@ -390,40 +398,30 @@ class UnitPresenter(object):
                                        'rdesc': format_text(self.lead_trim(method.returns)) })
             # END LIST
             self.doc.append('</dl>')
-    
-        #TODO: not used yet
-        # tmp = '''
-        # <p><strong>Side Effects</strong>: </p>
-        # <p><strong>See also</strong>: </p>
-        # <p><strong>Deprecated</strong>: </p>
-        # <p><strong>See also</strong>: </p>
-        #'''
+        # url = source_url(method.meta_comment_line_details),
+        # self.doc.append(
+        # '<p><a href="url" target="new" href="%s">Source URL</a></p>' % 
+        # 
+        # )
+
+        #TODO: fix "side effects" comments into normal text
+        #TODO: add @see details to 
+        info = []
+        # link to pascal source file
+        info.append('<li><a target="new" href="%s">source code</a></li>' % source_url(method.meta_comment_line_details))
+        # tags / document group details?
+        if method.doc_group:
+            info.append('<li>tags: %s</li>' % method.doc_group) 
+        # library unique name for this method
+        if method.uname != method.name:
+            info.append('<li>lib name: <span class="code">%s</span></li>' % method.uname )
+
+        # TODO: method of class details? show it...
+        # <li>in_class: %(in_class)s</li>
+        # <li>method_called: %(method_called)s</li>
         
         # Meta-details 
-        tmp = '''
-        <div class='info'>
-        <ul>
-        <li>uname: %(uname)s</li>
-        <li>in_class: %(in_class)s</li>
-        <li>method_called: %(method_called)s</li>
-        <li><a target="new" href="%(source_url)s">source code url</a></li>
-        <li>doc_group: <a href="#group_%(doc_group)s">%(doc_group)s</a></li>
-        </ul>
-        </div>
-        '''
-        # create code.google.com link
-        bits = method.file_line_details.split()
-        line_no = bits[3]
-        fname = bits[5].split('/')[-1].strip()
-        source_url = _google_base_url + fname + "?r=" + SVN_VERSION + '#' + line_no
-        #
-        self.doc.append(tmp % {'uname': method.uname, 
-                               'in_class': method.in_class,
-                               'method_called': method.method_called,
-                               'source_url': source_url,
-                               'doc_group': method.doc_group} )
-        
-        #TODO: Keep track of doc groups, list at end of file with back-links.
+        self.doc.append('<div class="info">\n<ul>\n%s\n</ul>\n</div>' % '\n'.join(info))
         self.doc.append("\n</div>\n")    
     
     def file_visitor(self, the_file, other):
@@ -437,14 +435,12 @@ class UnitPresenter(object):
         self.doc.desc = self.idcollection.format_text(the_file.members[0].doc)
         
         # Here we go...
-        print '>> %s ... ' % (the_file.name),
+        print '>> %s ... ' % (the_file.name)
         for m in the_file.members:
             if m.is_module: 
                 m.visit_methods(self.method_visitor, None)
                 
         self.doc.savetofile(the_file.name+'.html')
-        # We're done 
-        print 'Done!'
 
 
 
@@ -458,18 +454,17 @@ class IndexPresenter(object):
         doc = APIDocWriter()
         doc.title = "SwinGame API Documentation Index"
         # Describe the indentifier and types pages
-        tmp = '''
-<dl>
-    <dt><a href="identifiers.html">Identifiers</a></dt>
-    <dd>An alphbetical list of all method names and type identifiers. 
-    A text "search" in this page for key words might help you find just what 
-    you need...</dd>
+        doc.append('''
+        <dl>
+            <dt><a href="identifiers.html">Identifiers</a></dt>
+            <dd>An alphbetical list of all method names and type identifiers. 
+            A text "search" in this page for key words might help you find just what 
+            you need...</dd>
     
-    <dt><a href="Types.html">Types</a></dt>
-    <dd>Data type details so you know who contains what!</dd>
-</dl>
-'''
-        doc.append(tmp)        
+            <dt><a href="Types.html">Types</a></dt>
+            <dd>Data type details so you know who contains what!</dd>
+        </dl>
+        ''')        
         # Build up the list of files as links
         doc.h2('Modules') 
         doc.append('<dl>')
@@ -494,7 +489,7 @@ def create_identifiers_doc(idcollection):
     link_type = idcollection.link_type
     format_text = idcollection.format_text
     # Create the identifiers.html document body content ...
-    print 'Creating identifiers.html file...'
+    print 'Creating identifiers.html ...',
     doc = APIDocWriter()
     doc.title = 'Identifiers'
     doc.css = '''
@@ -567,7 +562,7 @@ h3 { border-bottom: 1px solid #955 }
         if num > 0:
             doc.append('<li><a href="%s">%s</a> (%d)</li>' % (url, key, num))
         else:
-            doc.append('<li>%s (%d)</li>' % (key, num))
+            doc.append('<li class="code">%s (%d)</li>' % (key, num))
     doc.append('</ul>')
     
     doc.savetofile('identifiers.html')
@@ -583,7 +578,7 @@ def create_types_doc(idcollection):
     link_type = idcollection.link_type
     format_text = idcollection.format_text
     # Create the single types files with all the types 
-    print 'Creating Types.html file...'
+    print 'Creating Types.html ...'
     doc = APIDocWriter()
     doc.title = 'Types'
     doc.desc = 'DESCRIPTION'
@@ -603,22 +598,24 @@ def create_types_doc(idcollection):
 
         if obj.is_enum:
             if obj.values:
-                doc.append('<dl class="fields"><dt>Enumerated Values:</dt>')
+                doc.append('<dl class="fields">\n<dt>Enumerated Values:</dt>')
                 doc.extend( ['<dd><span class="pname">%s</span></dd>' % v for v in obj.values ])
                 doc.append('</dl>')
+                type_info = "enum"
         elif obj.is_struct:
             if obj.field_list:
-                doc.append('<dl class="fields"><dt>Structure Field List:</dt>')
+                doc.append('<dl class="fields">\n<dt>Structure Field List:</dt>')
                 tmp = '<dd><span class="pname">%s</span> : <span class="ptype">%s</span></dd>'
                 doc.extend( [ tmp % (f.name, link_type(f.data_type.name)) for f in obj.field_list] )
                 doc.append('</dl>')
+                type_info = "struct"
 
         # Used-by details
         if len(obj['used_by']):
             users = obj['used_by'].keys()
             users.sort()
             ##print users
-            doc.append('<dl class="usedby"><dt>Used by:</dt>\n<dd>')
+            doc.append('<dl class="usedby">\n<dt>Used by:</dt>\n<dd>')
             doc.extend(['<span>%s</span> ' % link_type(name) for name in users ])
             doc.append('</dd>\n</dl>')
 
@@ -641,41 +638,52 @@ def create_types_doc(idcollection):
             else:
                 assert False
         else:
-            type_info = 'struct/enum'
+            pass
+            #type_info = 'struct/enum'
         
-        tmp = '''
-        <div class='info'>
-        <ul>
-        <li>uname: %(uname)s</li>
-        <li>is_class: %(class)s</li>
-        <li>via_pointer: %(via_pointer)s</li>
-        <li>same_as: %(same_as)s</li>
-        <li>type info: %(type_info)s</li>
-        <li><a target="new" href="%(source_url)s">source code url</a></li>
-        <li>doc_group: <a href="#group_%(doc_group)s">%(doc_group)s</a></li>
-        </ul>
-        </div>
-        '''
-        # create code.google.com link
-        # TODO: need file_line_details set for types also...
-        #bits = obj.file_line_details.split()
-        line_no = '0' # bits[3]
-        fname = 'sgTypes.pas' # bits[5].split('/')[-1].strip()
-        source_url = _google_base_url + fname + "?r=" + SVN_VERSION + '#' + line_no
-        #
-        doc.append(tmp % {'uname': obj.uname, 
-                            'class': obj.is_class,
-                            'via_pointer': obj.via_pointer,
-                            'same_as': obj.data_type.same_as,
-                            'type_info': type_info,
-                            'source_url': 'TODO',
-                            'doc_group': obj.doc_group} )            
+        info = []
+        info.append('<li><a href="%s" target="new">source code</a></li>' % source_url(obj.data_type.meta_comment_line_details))
+        # tags / document group details?
+        if obj.doc_group:
+            info.append('<li>tags: %s</li>' % obj.doc_group) 
+##        # library unique name for this method
+##        info.append('<li>uname: <span class="code">%s</span></li>' % obj.uname )
+        # is class/ via_pointer, info_type
+        if obj.is_class: info.append('<li>is class</li>' )
+        if obj.via_pointer: info.append('<li>via pointer</li>' )                    
+        if obj.data_type.same_as: info.append('<li>same_as: %s</li>' % obj.data_type.same_as )                    
+        # type info
+        if type_info not in ['enum','struct']:
+            info.append('<li>type: <span class="code">%s</span></li>' % type_info )
+        # create info div 
+        doc.append('<div class="info">\n<ul>\n%s\n</ul>\n</div>' % '\n'.join(info))
+        
+        # doc.append('''
+        # <div class='info'>
+        #     <ul>
+        #     <li>uname: %(uname)s</li>
+        #     <li>is_class: %(class)s</li>
+        #     <li>via_pointer: %(via_pointer)s</li>
+        #     <li>same_as: %(same_as)s</li>
+        #     <li>type info: %(type_info)s</li>
+        #     <li><a target="new" href="%(source_url)s">source code url</a></li>
+        #     <li>doc_group: <a href="#group_%(doc_group)s">%(doc_group)s</a></li>
+        #     </ul>
+        # </div>
+        # '''  % {
+        #     'uname': obj.uname, 
+        #     'class': obj.is_class,
+        #     'via_pointer': obj.via_pointer,
+        #     'same_as': obj.data_type.same_as,
+        #     'type_info': type_info,
+        #     'source_url': source_url(obj.data_type.meta_comment_line_details),
+        #     'doc_group': obj.doc_group,
+        # })            
         # Close section
         doc.append('</div>')
     
     doc.savetofile('Types.html')
-    print 'Done.'     
- 
+    print 'Done.'
 
 
 

@@ -17,13 +17,14 @@ class SGMetaDataContainer(object):
     def __init__(self, known_tags = None):
         """initialise the container setting up the tags dictionary"""
         self._known_tags = known_tags if known_tags != None else []
-        self._known_tags.extend(['note','name','version','in_file', 'ignore', 'file_line_details', 'doc_group'])
+        self._known_tags.extend(['note','name','version','in_file', 'ignore', 'file_line_details', 'meta_comment_line_details', 'doc_group'])
         
         self.tags = {}
         self.doc = ""
         self.notes = []
         self.is_ignored = False
         self.file_line_details = None
+        self.meta_comment_line_details = None
         self.doc_group = None
     
     def add_doc(self, doc):
@@ -72,6 +73,10 @@ class SGMetaDataContainer(object):
     file_line_details = property(lambda self: self['file_line_details'].other, 
         lambda self,value: self.set_tag('file_line_details', value), 
         None, 'The details of where in the file this is from.')
+
+    meta_comment_line_details = property(lambda self: self['meta_comment_line_details'].other, 
+        lambda self,value: self.set_tag('meta_comment_line_details', value), 
+        None, 'The details of where in the file the comment is.')
     
     def visit(self, visitor):
         visitor(self)

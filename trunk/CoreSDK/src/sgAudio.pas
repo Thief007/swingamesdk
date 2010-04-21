@@ -67,7 +67,7 @@ interface
   /// `OpenAudio` is used to initialise the SwinGame audio code. This should be
   /// called at the start of your programs code, and is usually coded into the
   /// starting project templates. After initialising the audio code you can
-  /// load and play `Music` using `LoadMusic` and `PlayMusic', load and play
+  /// load and play `Music` using `LoadMusic` and `PlayMusic`, load and play
   /// `SoundEffect`s using `LoadSoundEffect` and `PlaySoundEffect`. At the end
   /// of the program you need to call `CloseAudio` to ensure that the audio
   /// code is correctly terminated.
@@ -75,8 +75,8 @@ interface
   /// @lib
   procedure OpenAudio();
   
-  /// `AudioOpen` indicates if SwinGame's audio has been opened. Sound effects
-  /// and Music can only be played with the audio is open.
+  /// `AudioReady` indicates if SwinGame's audio has been opened. Sound effects
+  /// and Music can only be played with the audio is "ready".
   ///
   /// @lib
   function AudioReady(): Boolean;
@@ -115,10 +115,10 @@ interface
   /// @csn initFromPath:%s
   function LoadSoundEffect(filename: String): SoundEffect;
   
-  /// Loads and returns a sound effect. The supplied `filename` is used to
-  /// locate the sound effect to load. The supplied `name` indicates the 
+  /// Loads and returns a sound effect. The supplied ``filename`` is used to
+  /// locate the sound effect to load. The supplied ``name`` indicates the 
   /// name to use to refer to this SoundEffect. The `SoundEffect` can then be
-  /// retrieved by passing this `name` to the `SoundEffectNamed` function. 
+  /// retrieved by passing this ``name`` to the `SoundEffectNamed` function. 
   ///
   /// @lib
   /// @sn mapSoundEffectNamed:%s toFile:%s
@@ -142,7 +142,7 @@ interface
   function SoundEffectNamed(name: String): SoundEffect;
   
   /// Releases the SwinGame resources associated with the sound effect of the
-  /// specified `name`.
+  /// specified ``name``.
   ///
   /// @lib
   procedure ReleaseSoundEffect(name: String);
@@ -166,10 +166,10 @@ interface
 // Loading & Releasing Music
 //----------------------------------------------------------------------------
   
-  /// Loads and returns a music value. The supplied `filename` is used to
-  /// locate the music file to load. The supplied `name` indicates the 
+  /// Loads and returns a music value. The supplied ``filename`` is used to
+  /// locate the music file to load. The supplied ``name`` indicates the 
   /// name to use to refer to this Music value. The `Music` can then be
-  /// retrieved by passing this `name` to the `MusicNamed` function. 
+  /// retrieved by passing this ``name`` to the `MusicNamed` function. 
   ///
   /// @lib
   /// @sn mapMusicNamed:%s toFile:%s

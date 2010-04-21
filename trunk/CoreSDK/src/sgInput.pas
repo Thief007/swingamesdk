@@ -197,7 +197,7 @@ interface
   function TextReadAsASCII(): String;
   
   /// Returns true when the key requested is being held down. This is updated
-  /// as part of the `ProcessEvents` call. Use the key codes from `KeyCodes`
+  /// as part of the `ProcessEvents` call. Use the key codes from `KeyCode`
   /// to specify the key to be checked.
   ///
   /// @lib

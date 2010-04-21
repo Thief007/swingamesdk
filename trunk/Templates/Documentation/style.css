@@ -34,11 +34,11 @@ body {
 .method, .type {border-top: 1px solid #55F; padding: 1em; }
 .sig {background: #F5F5F5; display: inline}
 
-.sig, .pname, .ptype, .rtype, .code { font-family: monospace; }
+.sig, .pname, .ptype, .rtype, .code { font-family: monospace; font-size: 1.1em }
 .pname, .pmod { font-weight: bold }
 .pmod { color: #505 }
 
-a.code { text-decoration: none; }
+a.code { text-decoration: none;}
 
 h3 {padding: 0; margin: 0;}
 dl { /* background: #FAFAFA*/ }
@@ -46,7 +46,7 @@ dl dl { border: 0;}
 dt {font-weight: bold}
 dd dt {font-weight: normal }
 
-#footer { background: #eee; color: #500;font-size: 0.8em; clear: both}
+#footer { background: #eee; color: #500;font-size: 0.8em; clear: both; margin-top: 2em;}
 
 #topnav { background: #eee; font-size: 0.8em; padding: 0; }
 #topnav ul, #topnav li {list-style-type: none; margin: 0; padding: 0 }
@@ -57,5 +57,8 @@ dd dt {font-weight: normal }
 .info {color: #005; background: #eee; font-size: 0.8em }
 
 .methods, #typelist li {font-family: monospace; }
+#typelist li { list-style-type: none; display: block; float: left; width: 18em}
 
-.usedby { }
+.usedby { font-size: 0.9em }
+.usedby .code { padding: 0 0.3em;}
+.usedby .code:hover { text-decoration: underline; background-color: #DDD; }
