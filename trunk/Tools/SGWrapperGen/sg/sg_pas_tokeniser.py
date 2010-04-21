@@ -17,6 +17,7 @@ class SGPasTokeniser():
         self._char_no = -1
         self._token_start = -1
         self._meta_comment_start = -1
+        self._meta_comment_line = -1
         self._line_no = 0 #starts at first line
         self._filename = 'supplied data'
     
@@ -46,7 +47,7 @@ class SGPasTokeniser():
     def meta_comment_line_details(self):
         ''' Return string with line no. and filename details of the start of the meta comment for the 
             current element.'''
-        return 'char %d line %d in %s' % (self._meta_comment_start + 1, self._line_no + 1, self._filename)
+        return 'char %d line %d in %s' % (self._meta_comment_start + 1, self._meta_comment_line + 1, self._filename)
     
     def _next_char(self):
         '''Returns the next character from the input file.'''
@@ -209,6 +210,7 @@ class SGPasTokeniser():
                     if self._match_and_read('/'):
                         kind = 'meta comment'
                         self._meta_comment_start = self._char_no
+                        self._meta_comment_line = self._line_no
                         comment = self.read_to_end_of_comment()
                     else:
                         kind = 'comment'
