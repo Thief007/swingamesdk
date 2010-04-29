@@ -600,13 +600,13 @@ interface
   
   /// Clear the screen black.
   /// 
-  /// @lib ClearScreenToBlack
+  /// @lib ClearScreen
   /// @sn clearScreen
   procedure ClearScreen(); overload;
   
   /// Clear the screen to a specified color.
   /// 
-  /// @lib ClearScreenWithColor
+  /// @lib ClearScreenTo
   /// @sn clearScreen:%s
   procedure ClearScreen(toColor : Color); overload;
   

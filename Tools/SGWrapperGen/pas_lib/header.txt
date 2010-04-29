@@ -111,9 +111,9 @@ library %(name)s;
     end;
   end;
   
-  procedure TriangleCopyFromPtr(data: TrianglePtr; len: LongInt; out arr: TriangleArray);
+  procedure TriangleCopyFromPtr(data: Point2DPtr; len: LongInt; out arr: TriangleArray);
   var
-    i: LongInt;
+    i, j: LongInt;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -121,19 +121,26 @@ library %(name)s;
 
     for i := 0 to len - 1 do
     begin
-      arr[i] := (data + i)^;
+      for j := 0 to 2 do
+      begin
+        arr[i][j] := (data + i * 3 + j)^;
+      end;
     end;
   end;
   
-  procedure TriangleCopyToPtr(const arr: TriangleArray; len: LongInt; data: TrianglePtr);
+  procedure TriangleCopyToPtr(const arr: TriangleArray; len: LongInt; data: Point2DPtr);
   var
-    i: LongInt;
+    i, j: LongInt;
   begin
+    // len is number of triangles expected
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
     for i := Low(arr) to High(arr) do
     begin
-      (data + i)^ := arr[i];
+      for j := 0 to 2 do
+      begin
+        (data + i * 3 + j)^ := arr[i][j];
+      end;
     end;
   end;
   

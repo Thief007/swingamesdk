@@ -18,42 +18,24 @@
 //
 //=============================================================================
 
+/// SwinGame Characters are Sprites with additional functionality to handle animations
+/// for movement and state. For example, you may have a Soldier character with images
+/// and animations for moving in 8 directions (N, NE, E, etc..). The Soldier may
+/// also have states for walking, running, crawling, etc. With this data encapsulated
+/// within a character you can then set the state of the character to walking, and the
+/// character code will take care of choosing the correct images for this state
+/// and movement based on the Character's sprite's movement.
+///
+/// Characters in SwinGame may also have layers which can be selectively shown. These
+/// layers can then be used to add items or represent levels for your character.
+///
+/// @module Characters
 unit sgCharacters;
 
 //=============================================================================
 interface
   uses sgTypes;
 //=============================================================================
-
-type
-  DirectionAngles = record
-    min : LongInt;
-    max : LongInt;
-  end;
-  
-  DirStateData = record
-    Anim      : LongInt;
-    LayerOrder: Array of LongInt;
-  end;
-  
-  Character  = ^CharacterData;
-  LayerCache = Array of Array of Array of LongInt;
-
-  CharacterData = record
-    Name                  : String;
-    FileName              : String;
-    CharSprite            : Sprite;                               // The Character's Sprite
-    CharName              : String;                               // The Character's Name
-    CharType              : String;                               // The Character's Type
-    States                : NamedIndexCollection;                 // The names and indexs of the Character's States
-    Directions            : NamedIndexCollection;                 // The names and indexs of the Character's Direction
-    CurrentState          : LongInt;                              // The Character's Current State
-    CurrentDirection      : LongInt;                              // The Character's Current Direction
-    DirectionParameters   : Array of DirectionAngles;             // The different angle parameters the character checks to change the animation based on the direction
-    ShownLayers           : Array of Boolean;                     // Boolean stating whether a layer is to be drawn
-    ShownLayersByDirState : Array of Array of DirStateData;       // 
-    ShownLayerCache       : LayerCache;                           // The Character's Sprite
-  end;
   
   ///---------------------------------------------------------------------------
   /// Character Name and Type
@@ -112,7 +94,7 @@ type
   /// @sn character:%s setDirection:%s
   ///
   /// @class Character
-  /// @method CurrentDirection  
+  /// @setter CurrentDirection  
   procedure CharacterSetCurrentDirection(c: Character; direction: LongInt);
     
   /// Returns the index of the current state of the character
@@ -145,7 +127,7 @@ type
   ///
   /// @class Character
   /// @getter Directions
-  /// @length CharacterDirectionsCount
+  /// @length CharacterDirectionCount
   function CharacterDirections(c: Character) : StringArray;
        
   /// Returns all of the possible states of the character
@@ -177,7 +159,7 @@ type
   ///
   /// @class Character
   /// @method AngleAt
-  function CharacterAngleAt(c: Character; index : integer): DirectionAngles;  
+  function CharacterAngleAt(c: Character; index: LongInt): DirectionAngles;  
         
   /// Returns the count of the Angles of the character
   ///
@@ -195,7 +177,7 @@ type
   ///
   /// @class Character
   /// @method AngleMinAt
-  function CharacterAngleMinAt(c: Character; index : integer): LongInt;
+  function CharacterAngleMinAt(c: Character; index: LongInt): LongInt;
     
   /// Returns the maximum angle in the DirectionAngles record at the index
   /// specified
@@ -205,7 +187,7 @@ type
   ///
   /// @class Character
   /// @method AngleMaxAt
-  function CharacterAngleMaxAt(c: Character; index : integer): LongInt;
+  function CharacterAngleMaxAt(c: Character; index : LongInt): LongInt;
   
   //---------------------------------------------------------------------------
   // Character Values
@@ -231,15 +213,16 @@ type
   /// Returns the character's value at the index specified
   ///
   /// @lib
-  /// @sn character:%s valueIndex:$s
+  /// @sn character:%s valueAtIndex:%s
   ///
   /// @class Character
   /// @method Value
+  /// @csn valueAtIndex:%s
   function CharacterValueAt(c: Character; index: LongInt): Single;
   
   /// Set the value of the character.
   ///
-  /// @lib
+  /// @lib CharacterSetValueByName
   /// @sn character:%s setValueNamed:%s to:%s
   ///
   /// @class Character
@@ -283,15 +266,6 @@ type
   /// @method ActiveLayer  
   procedure SetActiveLayer(var c: Character);
   
-  /// Returns a new LayerCache. This is usually used when the values of the layers change
-  /// such as the order or visibility
-  ///
-  /// @lib
-  ///
-  /// @class Character
-  /// @method UpdateDirectionAnimation 
-  function UpdateShownLayerCache(c: Character): LayerCache;   
-  
   /// Update the animation of the character depending on its direction. Returns true
   /// if the direction was changed and false if it was no changed
   ///
@@ -310,7 +284,7 @@ type
   /// @class Character
   /// @method UpdateDirectionAnimationWithStationary
   /// @csn stationaryState:%s newState:%s
-  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
+  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: LongInt) : Boolean;
   
   /// Toggles whether or not the layer at the specified index is drawn or not
   ///
@@ -319,7 +293,7 @@ type
   ///
   /// @class Character
   /// @method ToggleVisibility 
-  procedure ToggleLayerVisibility(c: Character; index: integer);
+  procedure ToggleLayerVisibility(c: Character; index: LongInt);
       
   /// Returns whether or not the layer at the selected index is drawn
   ///
@@ -327,7 +301,7 @@ type
   ///
   /// @class Character
   /// @method LayerShownAt 
-  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
+  function CharacterShownLayersAt(c: Character; index: LongInt) : Boolean;
 
   //---------------------------------------------------------------------------
   // Handle Character Drawing
@@ -369,25 +343,73 @@ type
   /// @lib
   ///
   /// @class Character
-  /// @method LoadCharacter
-  function MapCharacter(name, filename: String): Character;
+  /// @constructor
+  /// @csn initFromFile:%s
   function LoadCharacter(filename: String): Character;
-  procedure FreeCharacter(var c: Character);
-  procedure ReleaseCharacter(name: String);
-  procedure ReleaseAllCharacters();
-  function CharacterFilename(c: Character): String;  
-  function CharacterName(c: Character): String;
-  function CharacterNamed(name: String): Character;
-  function HasCharacter(name: String): Boolean;
-    
-  /// Frees the Characrer, as well as calling FreeSprite on the Character's Sprite
+  
+  /// Loads the character from a text file, and assigns the character
+  /// the indicated name. This name can then be used to refer to this
+  /// character in the `CharacterNamed` function.
   ///
   /// @lib
+  /// @sn loadCharacterNamed:%s fromFile:%s
   ///
   /// @class Character
-  /// @method FreeCharacter
- // procedure FreeCharacter(var c: Character);
-
+  /// @constructor
+  /// @csn initWithName:%s fromFile:%s
+  function LoadCharacterNamed(name, filename: String): Character;
+  
+  /// Free the resources associated with a Character. Please note
+  /// that this also frees the `Sprite` that exists within the
+  /// Character.
+  /// 
+  /// @lib
+  /// @class Character
+  /// @dispose
+  procedure FreeCharacter(var c: Character);
+  
+  /// Free the resources associated with a Character with the
+  /// given name.
+  /// 
+  /// @lib
+  procedure ReleaseCharacter(name: String);
+  
+  /// Release all of the characters currently loaded into SwinGame.
+  ///
+  /// @lib
+  procedure ReleaseAllCharacters();
+  
+  /// Returns the name of the file that was used to load the character's
+  /// details.
+  ///
+  /// @lib
+  /// 
+  /// @class Character
+  /// @getter Filename
+  function CharacterFilename(c: Character): String;
+  
+  /// Returns the name of the character. This name can be used to
+  /// retrieve this character using the `CharacterNamed` function.
+  ///
+  /// @lib
+  /// 
+  /// @class Character
+  /// @getter Name
+  function CharacterName(c: Character): String;
+  
+  /// Returns the `Character` with the given name. You can specify
+  /// the name to use in the resource bundle, or by calling the
+  /// `LoadCharacterNamed` function.
+  ///
+  /// @lib
+  function CharacterNamed(name: String): Character;
+  
+  /// Returns `true` if SwinGame has loaded a character with the
+  /// indicated name.
+  ///
+  /// @lib
+  function HasCharacter(name: String): Boolean;
+    
 //=============================================================================
 implementation
   uses
@@ -399,6 +421,18 @@ implementation
   var
     _Characters : TStringHash;
   
+  type
+    LayerCache = array of array of array of LongInt;
+  
+  /// Returns a new LayerCache. This is usually used when the values of the layers change
+  /// such as the order or visibility
+  ///
+  /// @lib
+  ///
+  /// @class Character
+  /// @method UpdateDirectionAnimation 
+  function UpdateShownLayerCache(c: Character): LayerCache; forward;
+
   function DoLoadCharacter(filename, name: String): Character; forward;
   procedure DoFreeCharacter(var c: Character); forward;
   
@@ -491,7 +525,7 @@ implementation
   // Character Angles
   //--------------------------------------------------------------------------- 
       
-  function CharacterAngleAt(c: Character; index : integer): DirectionAngles;
+  function CharacterAngleAt(c: Character; index : LongInt): DirectionAngles;
   begin
     if not Assigned(c) then exit;
     result := c^.DirectionParameters[index];
@@ -503,13 +537,13 @@ implementation
     result := Length(c^.DirectionParameters);
   end;
   
-  function CharacterAngleMinAt(c: Character; index : integer): LongInt;
+  function CharacterAngleMinAt(c: Character; index : LongInt): LongInt;
   begin
     if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].min;
   end;
   
-  function CharacterAngleMaxAt(c: Character; index : integer): LongInt;
+  function CharacterAngleMaxAt(c: Character; index : LongInt): LongInt;
   begin
     if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].max;
@@ -588,13 +622,13 @@ implementation
     c^.CharSprite^.visibleLayers := c^.ShownLayerCache[c^.CurrentState, c^.CurrentDirection];
   end;
   
-  function CharacterShownLayersAt(c: Character; index: integer) : Boolean;
+  function CharacterShownLayersAt(c: Character; index: LongInt) : Boolean;
   begin
     if not Assigned(c) then exit;
     result := c^.ShownLayers[index];
   end;
    
-  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: integer) : Boolean;
+  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: LongInt) : Boolean;
   begin
     result := false;
     if not Assigned(c) then exit;
@@ -649,7 +683,8 @@ implementation
     end;
   end; 
   
-  function UpdateShownLayerCache(c: Character): LayerCache; // Layer cache is a 3d array for states, directions and layers
+  // Layer cache is a 3d array for states, directions and layers
+  function UpdateShownLayerCache(c: Character): LayerCache;
   var
     states, directions, layers, count : LongInt;
   begin
@@ -674,7 +709,7 @@ implementation
     end;    
   end;
   
-  procedure ToggleLayerVisibility(c: Character; index: integer);
+  procedure ToggleLayerVisibility(c: Character; index: LongInt);
   begin
     if not Assigned(c) then exit;
     c^.ShownLayers[index] := not c^.ShownLayers[index];     // Invert the boolean of the shown layer  for the specified index
@@ -687,7 +722,7 @@ implementation
   // Handle Character Drawing
   //---------------------------------------------------------------------------   
   
-  procedure DrawCharacterWithStationary(c: character; stationaryState, state: integer);
+  procedure DrawCharacterWithStationary(c: character; stationaryState, state: LongInt);
   begin
     if not Assigned(c) then exit;
     
@@ -714,12 +749,12 @@ implementation
   
   function DoLoadCharacter(filename, name: String): Character;
   var
-    bmpArray: Array of Bitmap;
+    bmpArray: array of Bitmap;
     data, line, id: string;
-    lineno, w, h, cols, rows, count, colliIndex: integer;
+    lineno, w, h, cols, rows, count, colliIndex: LongInt;
     aniTemp: AnimationTemplate;
     bmpIDs, tempValueIDs: StringArray;
-    singleValues: Array of Single;
+    singleValues: array of Single;
         
     procedure SetName();
     begin
@@ -766,7 +801,7 @@ implementation
     
     procedure SetDirections();
     var
-      i, dirCount: integer;
+      i, dirCount: LongInt;
     begin
       result^.CurrentDirection := StrToInt(ExtractDelimited(1, data, [',']));
       dirCount := StrToInt(ExtractDelimited(2, data, [',']));
@@ -782,7 +817,7 @@ implementation
     
     procedure SetStates();
     var
-      i: integer;
+      i: LongInt;
     begin
       result^.CurrentState := StrToInt(ExtractDelimited(1, data, [',']));
       InitNamedIndexCollection(result^.States);
@@ -795,7 +830,7 @@ implementation
     
     procedure SetAngles();
     var
-      i: integer;
+      i: LongInt;
       dirName: String;
     begin
       dirName := Trim(ExtractDelimited(1, data, [',']));
@@ -815,7 +850,7 @@ implementation
     
     procedure SetDirectionStateDetails();
     var
-      dirIndex, stateIndex: integer;
+      dirIndex, stateIndex: LongInt;
     begin
       stateIndex := IndexOf(result^.States, ExtractDelimited(1, data, [',']));
       dirIndex   := IndexOf(result^.Directions, ExtractDelimited(2, data, [',']));
@@ -832,7 +867,7 @@ implementation
     
     procedure SetShownLayersBooleans();
     var
-      i: integer;
+      i: LongInt;
       draw: string;
     begin     
       SetLength(result^.ShownLayers, Length(bmpArray));
@@ -974,14 +1009,14 @@ implementation
       TraceEnter('sgCharacters', 'LoadCharacter', filename);
     {$ENDIF}
     
-    result := MapCharacter(filename, filename);
+    result := LoadCharacterNamed(filename, filename);
     
     {$IFDEF TRACE}
       TraceExit('sgCharacters', 'LoadCharacter');
     {$ENDIF}
   end;
   
-  function MapCharacter(name, filename: String): Character;
+  function LoadCharacterNamed(name, filename: String): Character;
   var
     chr: Character;
   begin

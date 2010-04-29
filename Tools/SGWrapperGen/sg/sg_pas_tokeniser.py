@@ -174,7 +174,7 @@ class SGPasTokeniser():
                           # alpha-numeric characters and the _ character
             attribute,    # name starting with @... inside meta comment block 
                           # follows the id name character rules
-            operator,     # one of + - / * ** := < > <= >=
+            operator,     # one of + - / * ** := < > <= >= <>
             symbol,       # one of ':;,.()'
         
         '''
@@ -251,6 +251,8 @@ class SGPasTokeniser():
                     result = ('operator', ':=')
                 elif t == '*' and self._match_and_read('*'):
                     result = ('operator', '**')
+                elif t == '<' and self._match_and_read('>'):
+                    result = ('operator', '<>')
                 elif t in '<>' and self._match_and_read('='):
                     result = ('operator', t + '=')
                 else:

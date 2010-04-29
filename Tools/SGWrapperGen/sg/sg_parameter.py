@@ -80,6 +80,28 @@ class SGParameter(SGMetaDataContainer):
             return self.name + '_temp'
         else:
             return self.name
+            
+    def clone(self):
+        """ Returns a copy of the Parameter."""
+        result = SGParameter(self.name)
+        result.data_type = self.data_type
+        result.modifier = self.modifier
+        
+        #post parse values
+        result.maps_result = self.maps_result
+        result.maps_to_temp = self.maps_to_temp
+        result.is_length_param = self.is_length_param
+        result.has_length_param = self.has_length_param
+        result.length_idx = self.length_idx
+        result.length_of = self.length_of
+        result.length_param = self.length_param
+        result.local_for = self.local_for
+        result.has_field = self.has_field
+        result.is_returned = self.is_returned
+        result.pass_through = self.pass_through
+        result.updated = self.being_updated
+        
+        return result
 #
 # Test methods
 #

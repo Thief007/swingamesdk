@@ -53,11 +53,15 @@ _type_switcher = {
         'color': 'Color %s',
         
         #Resources
-        'soundeffect': 'SoundEffect %s',
-        'music': 'Music %s',
-        'shapeprototype': 'ShapePrototype %s',
-        'timer': 'Timer %s',
-        'shape': 'Shape %s',
+        'animationtemplate':    'AnimationTemplate %s',
+        'animation':            'Animation %s',
+        'character':            'Character %s',
+        'soundeffect':          'SoundEffect %s',
+        'music':                'Music %s',
+        'shapeprototype':       'ShapePrototype %s',
+        'timer':                'Timer %s',
+        'shape':                'Shape %s',
+        'sprite':               'Sprite %s',
         
         'resourcekind': 'ResourceKind %s',
         'uint32': 'uint %s',
@@ -78,14 +82,11 @@ _type_switcher = {
         'point2d[0..2]': 'Point2D %s[3]',
         'point2d[0..n - 1]': 'Point2D[] %s',
         'linesegment': 'LineSegment %s',
-        'sprite': 'Sprite %s',
+        
         'rectangle': 'Rectangle %s',
         'triangle': 'Triangle %s',
         'linesarray': 'LineSegment[] %s',
         'font': 'Font %s',
-        'fontalignment': 'FontAlignment %s',
-        'fontstyle': 'FontStyle %s',
-        'mousebutton': 'MouseButton %s',
         'uint16': 'ushort %s',
         'keycode': 'KeyCode %s',
         'collisionside': 'CollisionSide %s',
@@ -103,39 +104,51 @@ _type_switcher = {
         
         #Enums
         'shapekind': 'ShapeKind %s',
+        'collisiontestkind': 'CollisionTestKind %s',
+        'fontalignment': 'FontAlignment %s',
+        'fontstyle': 'FontStyle %s',
+        'mousebutton': 'MouseButton %s',
         
         #Functions
         'freenotifier': 'FreeNotifier %s',
     },
     'const' : {
         #Data
-        'point2d': 'Point2D %s',
-        'linesegment': 'LineSegment %s',
-        'rectangle': 'Rectangle %s',
-        'matrix2d': 'Matrix2D %s',
-        'vector': 'Vector %s',
-        'circle': 'Circle %s',
+        'point2d':      'Point2D %s',
+        'linesegment':  'LineSegment %s',
+        'rectangle':    'Rectangle %s',
+        'matrix2d':     'Matrix2D %s',
+        'vector':       'Vector %s',
+        'circle':       'Circle %s',
+        'bitmapcell':   'BitmapCell %s',
         
         #Arrays
-        'linesarray': 'LineSegment[] %s',
-        'triangle': 'Triangle %s',
-        'bitmaparray': 'Bitmap[] %s',
+        'linesarray':   'LineSegment[] %s',
+        'triangle':     'Triangle %s',
+        'bitmaparray':  'Bitmap[] %s',
         'longintarray': 'int[] %s',
         'point2darray': 'Point2D[] %s',
+        'stringarray':  'string[] %s',
+        'trianglearray':'Triangle[] %s',
 
     },
     'var' : {
-        'soundeffect': 'SoundEffect %s',
-        'music': 'Music %s',
-        'timer': 'Timer %s',
-        'shapeprototype': 'ShapePrototype %s',
-        'shape': 'Shape %s',
-        'font': 'Font %s',
-        'bitmap': 'Bitmap %s',
-        'sprite': 'Sprite %s',
-        'map': 'Map %s',
+        'animation':            'Animation %s',
+        'animationtemplate':    'AnimationTemplate %s',
+        'character':            'Character %s',
+        'soundeffect':          'SoundEffect %s',
+        'music':                'Music %s',
+        'timer':                'Timer %s',
+        'shapeprototype':       'ShapePrototype %s',
+        'shape':                'Shape %s',
+        'font':                 'Font %s',
+        'bitmap':               'Bitmap %s',
+        'sprite':               'Sprite %s',
+        'map':                  'Map %s',
         
-        'string': 'char *%s',
+        'string':       'ref string %s',
+        'single':       'ref float %s',
+        'rectangle':    'ref Rectangle %s',
         
         'triangle': 'Triangle %s',
         'matrix2d': 'Matrix2D %s',
@@ -168,74 +181,93 @@ _type_switcher = {
         'string': 'String %s',
         
         #Data
-        'point2d': 'Point2D %s',
-        'vector': 'Vector %s',
-        'circle': 'Circle %s',
-        'rectangle': 'Rectangle %s',
-        'linesegment': 'LineSegment %s',
-        'matrix2d': 'Matrix2D %s',
+        'point2d':          'Point2D %s',
+        'vector':           'Vector %s',
+        'circle':           'Circle %s',
+        'rectangle':        'Rectangle %s',
+        'linesegment':      'LineSegment %s',
+        'matrix2d':         'Matrix2D %s',
+        'bitmapcell':       'BitmapCell %s',
+        'directionangles':  'DirectionAngles %s',
         
         #Resources
-        'music': 'Music %s',
-        'soundeffect': 'SoundEffect %s',
-        'timer': 'Timer %s',
-        'bitmap': 'Bitmap %s',
+        'music':        'Music %s',
+        'soundeffect':  'SoundEffect %s',
+        'timer':        'Timer %s',
+        'bitmap':       'Bitmap %s',
         'shapeprototype': 'ShapePrototype %s',
-        'shape': 'Shape %s',
-        'font': 'Font %s',
-        'map': 'Map %s',
-        'sprite': 'Sprite %s',
+        'shape':        'Shape %s',
+        'font':         'Font %s',
+        'map':          'Map %s',
+        'sprite':       'Sprite %s',
+        'animationtemplate': 'AnimationTemplate %s',
+        'animation':    'Animation %s',
+        'character':    'Character %s',
         
         #Enum
-        'collisionside': 'CollisionSide %s',
-        'fontstyle': 'FontStyle %s',
-        'maptag': 'MapTag %s',
-        'maptile': 'MapTile %s',
-        'spriteendingaction': 'SpriteEndingAction %s',
-        'spritekind': 'SpriteKind %s',
-        'shapekind': 'ShapeKind %s',
+        'collisionside':        'CollisionSide %s',
+        'fontstyle':            'FontStyle %s',
+        'maptag':               'MapTag %s',
+        'maptile':              'MapTile %s',
+        'spriteendingaction':   'SpriteEndingAction %s',
+        'spritekind':           'SpriteKind %s',
+        'shapekind':            'ShapeKind %s',
+        'collisiontestkind':    'CollisionTestKind %s',
+        'fontalignment':        'FontAlignment %s',
         
         #Arrays
-        'linesarray': 'LineSegment[] %s',
+        'linesarray':   'LineSegment[] %s',
         'point2darray': 'Point2D[] %s',
-        'triangle': 'Triangle %s',
+        'triangle':     'Triangle %s',
         'longintarray': 'int[] %s',
+        'trianglearray':'Triangle[] %s',
+        'bitmaparray':  'Bitmap[] %s',
+        'stringarray':  'string[] %s',
     }
 }
 
 _data_switcher = {
     'temp_return' :
     {
-        'string': '%s.ToString()',
-        'linesarray': '%s',
-        'matrix2d': 'Utils.MatrixFromArray(%s)',
+        'string':       '%s.ToString()',
+        'linesarray':   '%s',
+        'matrix2d':     'Utils.MatrixFromArray(%s)',
         'point2darray': '%s',
-        'triangle': 'Utils.TriangleFromArray(%s)',
-        'longint': '%s',
+        'triangle':     'Utils.TriangleFromArray(%s)',
+        'longint':      '%s',
         'longintarray': '%s',
+        'trianglearray':'Utils.TriangleArrayFrom(%s)',
+        'bitmaparray':  'Utils.BitmapArrayFrom(%s)',
+        'stringarray':  'Utils.StringArrayFrom(%s)',
     },
     'return_val' : 
     {
         #Pascal type: what values of this type switch to %s = data value
         'boolean': '%s != 0',
-        'music': 'Music.Create(%s)',
-        'soundeffect': 'SoundEffect.Create(%s)',
-        'shape': 'Shape.Create(%s)',
-        'shapeprototype': 'ShapePrototype.Create(%s)',
-        'bitmap': 'Bitmap.Create(%s)',
-        'font': 'Font.Create(%s)',
-        'timer': 'Timer.Create(%s)',
-        'map': 'Map.Create(%s)',
-        'sprite': 'Sprite.Create(%s)',
+        
+        'music':                'Music.Create(%s)',
+        'soundeffect':          'SoundEffect.Create(%s)',
+        'shape':                'Shape.Create(%s)',
+        'shapeprototype':       'ShapePrototype.Create(%s)',
+        'bitmap':               'Bitmap.Create(%s)',
+        'font':                 'Font.Create(%s)',
+        'timer':                'Timer.Create(%s)',
+        'map':                  'Map.Create(%s)',
+        'sprite':               'Sprite.Create(%s)',
+        'animation':            'Animation.Create(%s)',
+        'animationtemplate':    'AnimationTemplate.Create(%s)',
+        'character':            'Character.Create(%s)',
+        
         'color': 'System.Drawing.Color.FromArgb(%s)',
-        'keycode': '(KeyCode)%s',
-        'mousebutton': '(MouseButton)%s',
-        'spriteendingaction': '(SpriteEndingAction)%s',
-        'spritekind': '(SpriteKind)%s',
-        'maptag': '(MapTag)%s',
-        'collisionside': '(CollisionSide)%s',
-        'fontalignment': '(FontAlignment)%s',
-        'fontstyle': '(FontStyle)%s'
+        
+        'keycode':              '(KeyCode)%s',
+        'mousebutton':          '(MouseButton)%s',
+        'spriteendingaction':   '(SpriteEndingAction)%s',
+        'spritekind':           '(SpriteKind)%s',
+        'maptag':               '(MapTag)%s',
+        'collisionside':        '(CollisionSide)%s',
+        'fontalignment':        '(FontAlignment)%s',
+        'fontstyle':            '(FontStyle)%s',
     },
     #Argument with a parameter value
     'arg_val' : 
@@ -251,6 +283,8 @@ _data_switcher = {
         'resourcekind': '(int)%s',
         'fontalignment': '(int)%s',
         'fontstyle': '(int)%s',
+        
+        'bitmaparray': 'Utils.BitmapArrToIntPtrArr(%s)'
     },
     #Argument with a literal value
     'arg_lit_val' : 
@@ -277,19 +311,22 @@ _adapter_type_switcher = {
         'color': 'int %s',
         
         #Resources
-        'soundeffect': 'IntPtr %s',
-        'music': 'IntPtr %s',
-        'shapeprototype': 'IntPtr %s',
-        'timer': 'IntPtr %s',
-        'shape': 'IntPtr %s',
+        'soundeffect':          'IntPtr %s',
+        'music':                'IntPtr %s',
+        'shapeprototype':       'IntPtr %s',
+        'timer':                'IntPtr %s',
+        'shape':                'IntPtr %s',
+        'animation':            'IntPtr %s',
+        'animationtemplate':    'IntPtr %s',
+        'character':            'IntPtr %s',
+        'sprite':               'IntPtr %s',
+        'bitmap':               'IntPtr %s',
         
         'uint32': 'uint %s',
-        'bitmap': 'IntPtr %s',
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
         'triangle': 'Point2D[] %s',
         'point2d': 'Point2D %s',
-        'sprite': 'IntPtr %s',
         'linesarray': 'LineSegment[] %s',
         'font': 'IntPtr %s',
         'fontalignment': 'int %s',
@@ -311,6 +348,7 @@ _adapter_type_switcher = {
         'longintarray': 'int[] %s',
         
         #Enums
+        'collisiontestkind':    'CollisionTestKind %s',
         'resourcekind': 'int %s',
         'spritekind': 'SpriteKind %s',
         'shapekind': 'ShapeKind %s',
@@ -329,11 +367,15 @@ _adapter_type_switcher = {
         'color': 'int %s',
         
         #Resources
-        'soundeffect': 'IntPtr %s',
-        'music': 'IntPtr %s',
-        'shapeprototype': 'IntPtr %s',
-        'timer': 'IntPtr %s',
-        'shape': 'IntPtr %s',
+        'soundeffect':          'IntPtr %s',
+        'music':                'IntPtr %s',
+        'shapeprototype':       'IntPtr %s',
+        'timer':                'IntPtr %s',
+        'shape':                'IntPtr %s',
+        'animation':            'IntPtr %s',
+        'animationtemplate':    'IntPtr %s',
+        'character':            'IntPtr %s',
+        'sprite':               'IntPtr %s',
         
         'resourcekind': 'int %s',
         'uint32': 'uint %s',
@@ -342,7 +384,6 @@ _adapter_type_switcher = {
         'linesegment': 'LineSegment %s',
         'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3)] Point2D[] %s',
         'point2d': 'Point2D %s',
-        'sprite': 'IntPtr %s',
         'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] LineSegment[] %s',
         'font': 'IntPtr %s',
         'fontalignment': 'int %s',
@@ -362,8 +403,9 @@ _adapter_type_switcher = {
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
         
         #Enums
-        'spritekind': 'SpriteKind %s',
-        'shapekind': 'ShapeKind %s',
+        'collisiontestkind':    'CollisionTestKind %s',        
+        'spritekind':           'SpriteKind %s',
+        'shapekind':            'ShapeKind %s',
         
         #Functions
         'freenotifier': 'FreeNotifier %s',
@@ -373,15 +415,19 @@ _adapter_type_switcher = {
         'linesegment':  'ref LineSegment %s',
         'rectangle':    'ref Rectangle %s',
         'circle':       'ref Circle %s',
+        'bitmapcell':   'ref BitmapCell %s',
         
         # Arrays are passed by reference already
         'matrix2d':     'float[,] %s',
         'triangle':     'Point2D[] %s',
+        'trianglearray':'Point2D[] %s',
         'vector':       'ref Vector %s',
         'linesarray':   'LineSegment[] %s',
         'longintarray': 'int[] %s',
-        'bitmaparray':  'Bitmap[] %s',
+        'bitmaparray':  'IntPtr[] %s',
         'point2darray': 'Point2D[] %s',
+        
+        'stringarray':  'String[] %s',
     },
     'lib_const' : {
         'point2d':      'ref Point2D %s',
@@ -389,45 +435,64 @@ _adapter_type_switcher = {
         'rectangle':    'ref Rectangle %s',
         'circle':       'ref Circle %s',
         'vector':       'ref Vector %s',
+        'bitmapcell':   'ref BitmapCell %s',
         
         # Arrays are passed by reference already
         'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), In] float[,] %s',
         'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In] Point2D[] %s',
-        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] LineSegment[] %s',
-        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] int[] %s',
-        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Bitmap[] %s',
-        'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s)] Point2D[] %s',
+        'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] Point2D[] %s',
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] LineSegment[] %s',
+        'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] int[] %s',
+        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] IntPtr[] %s',
+        'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] Point2D[] %s',
+        
+        'stringarray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In] String[] %s',
     },
     'var': {
-        'soundeffect': 'ref IntPtr %s',
-        'music': 'ref IntPtr %s',
-        'timer': 'ref IntPtr %s',
-        'byte': 'ref byte %s',
-        'font': 'ref IntPtr %s',
-        'bitmap': 'ref IntPtr %s',
-        'sprite': 'ref IntPtr %s',
-        'map': 'ref IntPtr %s',
-        'shapeprototype': 'ref IntPtr %s',
-        'shape': 'ref IntPtr %s',
+        'animation':            'ref IntPtr %s',
+        'animationtemplate':    'ref IntPtr %s',
+        'soundeffect':          'ref IntPtr %s',
+        'music':                'ref IntPtr %s',
+        'timer':                'ref IntPtr %s',
+        'font':                 'ref IntPtr %s',
+        'bitmap':               'ref IntPtr %s',
+        'sprite':               'ref IntPtr %s',
+        'map':                  'ref IntPtr %s',
+        'shapeprototype':       'ref IntPtr %s',
+        'shape':                'ref IntPtr %s',
+        'character':            'ref IntPtr %s',
         
-        'string': 'StringBuilder %s',
-        'triangle': 'Point2D[] %s',
+        'string':               'StringBuilder %s',
+        
+        'single':               'ref float %s',
+        'byte':                 'ref byte %s',
+        
+        'triangle':             'Point2D[] %s',
+        'rectangle':            'ref Rectangle %s',
     },
     
     'lib_var': {
-        'soundeffect':  'ref IntPtr %s',
-        'music': 'ref IntPtr %s',
-        'timer': 'ref IntPtr %s',
-        'byte': 'ref byte %s',
-        'font': 'ref IntPtr %s',
-        'bitmap': 'ref IntPtr %s',
-        'sprite': 'ref IntPtr %s',
-        'map': 'ref IntPtr %s',
-        'shapeprototype': 'ref IntPtr %s',
-        'shape': 'ref IntPtr %s',
+        'animation':            'ref IntPtr %s',
+        'animationtemplate':    'ref IntPtr %s',
+        'character':            'ref IntPtr %s',
+        'soundeffect':          'ref IntPtr %s',
+        'music':                'ref IntPtr %s',
+        'timer':                'ref IntPtr %s',
+        'byte':                 'ref byte %s',
+        'font':                 'ref IntPtr %s',
+        'bitmap':               'ref IntPtr %s',
+        'sprite':               'ref IntPtr %s',
+        'map':                  'ref IntPtr %s',
+        'shapeprototype':       'ref IntPtr %s',
+        'shape':                'ref IntPtr %s',
         
-        'string': '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
+        'single':               'ref float %s',
+        
+        'string':               '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
+        
+        'triangle':             '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
+        
+        'rectangle':            'ref Rectangle %s',
     },
     'out': {
         'string':       'StringBuilder %s',
@@ -449,20 +514,28 @@ _adapter_type_switcher = {
         'linesegment':  '[Out] out LineSegment %s',
     },
     'result': {
-        'string': 'StringBuilder %s',
-        'linesarray': 'LineSegment[] %s',
-        'matrix2d': 'float[,] %s',
-        'point2darray': 'Point2D[] %s',
-        'triangle': 'Point2D[] %s',
-        'longintarray': 'int[] %s',
+        'string':           'StringBuilder %s',
+        'stringarray':      'StringBuilder[] %s',
+        'linesarray':       'LineSegment[] %s',
+        'matrix2d':         'float[,] %s',
+        'point2darray':     'Point2D[] %s',
+        'triangle':         'Point2D[] %s',
+        'trianglearray':    'Point2D[] %s',
+        'longintarray':     'int[] %s',
+        'bitmaparray':      'IntPtr[] %s',
     },
     'lib_result': {
-        'string': '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
-        'linesarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
-        'matrix2d': '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
+        'string':       '[MarshalAs(UnmanagedType.LPStr), Out] StringBuilder %s',
+        'stringarray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] StringBuilder[] %s',
+        
+        'linesarray':   '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] LineSegment[] %s',
+        'matrix2d':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=9), Out] float[,] %s',
         'point2darray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
-        'triangle': '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
+        'triangle':     '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), Out] Point2D[] %s',
         'longintarray': '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] int[] %s',
+        'trianglearray':'[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] Point2D[] %s',
+        
+        'bitmaparray':  '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), Out] IntPtr[] %s',
     },
     'return' : {
         None: 'void %s',
@@ -472,49 +545,66 @@ _adapter_type_switcher = {
         'longint': 'int %s',
         
         #Resources
-        'music': 'IntPtr %s',
-        'soundeffect': 'IntPtr %s',
-        'shapeprototype': 'IntPtr %s',
-        'shape': 'IntPtr %s',
-        'timer': 'IntPtr %s',
-        'byte': 'byte %s',
-        'color': 'int %s',
-        'uint32': 'uint %s',
-        'vector': 'Vector %s',
-        'circle': 'Circle %s',
-        'rectangle': 'Rectangle %s',
-        'linesegment': 'LineSegment %s',
-        'bitmap': 'IntPtr %s',
-        'collisionside': 'int %s',
-        'font': 'IntPtr %s',
-        'map': 'IntPtr %s',
-        'sprite': 'IntPtr %s',
-        'fontstyle': 'int %s',
-        'maptag': 'int %s',
-        'maptile': 'MapTile %s',
+        'animation':            'IntPtr %s',
+        'animationtemplate':    'IntPtr %s',
+        'music':                'IntPtr %s',
+        'soundeffect':          'IntPtr %s',
+        'shapeprototype':       'IntPtr %s',
+        'shape':                'IntPtr %s',
+        'timer':                'IntPtr %s',
+        'bitmap':               'IntPtr %s',
+        'font':                 'IntPtr %s',
+        'map':                  'IntPtr %s',
+        'sprite':               'IntPtr %s',
+        'character':            'IntPtr %s',
         
-        #Enums
-        'spriteendingaction': 'int %s',
-        'spritekind': 'int %s',
-        'shapekind': 'ShapeKind %s',
+        'maptile':              'MapTile %s',
+        
+        'byte':     'byte %s',
+        'color':    'int %s',
+        'uint32':   'uint %s',
+        
+        # Structs
+        'bitmapcell':       'BitmapCell %s',
+        'vector':           'Vector %s',
+        'circle':           'Circle %s',
+        'rectangle':        'Rectangle %s',
+        'linesegment':      'LineSegment %s',
+        'directionangles':  'DirectionAngles %s',
+        
+        # Enums
+        'fontalignment':        'FontAlignment %s',
+        'spriteendingaction':   'int %s',
+        'spritekind':           'int %s',
+        'shapekind':            'ShapeKind %s',
+        'collisiontestkind':    'CollisionTestKind %s',
+        'collisionside':        'int %s',
+        'fontstyle':            'int %s',
+        'maptag':               'int %s',
     }
 }
 
 # mapping for local variables
 _local_type_switcher = {
-    'string': 'StringBuilder %s = new StringBuilder(2048);',
-    'color': 'int %s;',
-    'matrix2d': 'float[,] %s = new float[3,3];',
-    'triangle': 'Point2D[] %s = new Point2D[3];',
-    'linesarray': 'LineSegment[] %s;',
+    'string':       'StringBuilder %s = new StringBuilder(2048);',
+    'color':        'int %s;',
+    'matrix2d':     'float[,] %s = new float[3,3];',
+    'triangle':     'Point2D[] %s = new Point2D[3];',
+    'linesarray':   'LineSegment[] %s;',
     'longintarray': 'int[] %s;',
-    'bitmaparray' : 'Bitmap[] %s;',
+    'bitmaparray' : 'IntPtr[] %s;',
     'point2darray': 'Point2D[] %s;',
-    'longint': 'int %s;',
+    'longint':      'int %s;',
+    'trianglearray':'Point2D[] %s;',
+    'stringarray':  'string[] %s;',
 }
 
 # mapping for struct fields
 _struct_type_switcher = {
+    #Resource types
+    'sprite': 'internal Sprite _%s',
+    'character': 'internal Character _%s',
+    
     #Pascal type: what it maps to
     'single': 'internal float _%s',
     'longint': 'internal int _%s',
@@ -533,7 +623,7 @@ _struct_type_switcher = {
     'point2d': 'internal Point2D _%s',
     'point2d[0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=3 )]\ninternal Point2D[] _%s',
     'linesegment': 'internal LineSegment _%s',
-    'sprite': 'internal Sprite _%s',
+
     'rectangle': 'internal Rectangle _%s',
     'linesarray': 'internal LineSegment[] _%s',
     'font': 'internal Font _%s',
@@ -543,6 +633,7 @@ _struct_type_switcher = {
     'uint16': 'internal ushort _%s',
     'keycode': 'internal KeyCode _%s',
     'collisionside': 'internal CollisionSide _%s',
+    'longint[0..n - 1]': 'internal int[] _%s',
     'longint[0..n - 1][0..n - 1]': 'internal int[][] _%s',
     'mapdata': 'internal MapData _%s',
     'animationdata[0..n - 1]': 'internal AnimationData[] _%s',
@@ -675,6 +766,7 @@ def arg_visitor(arg_str, the_arg, for_param):
 def arg_cs_dll_visitor(arg_str, the_arg, for_param):
     the_type = for_param.data_type
     result = arg_str
+    
     #check var/out/const
     if the_type.array_wrapper or the_type.fixed_array_wrapper:
         return result
@@ -824,29 +916,47 @@ def method_visitor(the_method, other, as_accessor_name = None):
             
             #process all local variables
             for local_var in the_method.local_vars:
+                # print '----'
+                # print local_var.data_type.name, local_var.maps_result
+                
                 #declare variables
                 temp += '    %s\n' % _local_type_switcher[local_var.data_type.name.lower()] % local_var.name
                 
+                #
+                # Check if this local variable needs pre-call data manipulation
+                #
                 if isinstance(local_var, SGParameter) and local_var.maps_result:
                     #setup the size of a return array
                     if the_method.fixed_result_size > 0:
                         assert local_var.data_type.name in ['LinesArray', 'Point2DArray']
-                        temp_process_params = '%s = new %s[%s];\n    ' % (
+                        temp_process_params += '%s = new %s[%s];\n    ' % (
                                 local_var.name,
                                 'LineSegment' if local_var.data_type.name == 'LinesArray' else 'Point2D',
                                 the_method.fixed_result_size
                             )
                     elif the_method.length_call != None:
-                        # print local_var.data_type.name
-                        assert local_var.data_type.name in ['LongIntArray','Point2DArray']
-                        temp_process_params = '%s = new %s[%s];\n    ' % (
+                        # print the_method.name, local_var.data_type.name, ' = ', details['length_call']
+                        #FIX THIS...
+                        assert local_var.data_type.name in ['LongIntArray','Point2DArray','TriangleArray','StringArray','LinesArray','BitmapArray']
+                        
+                        if local_var.data_type.name == 'StringArray':
+                            temp_process_params = '%s = Utils.ResultStringArray(%s);' % (local_var.name, details['length_call'].replace('return ', '') )
+                            # also fix local variable type of string arrays that map results :(
+                            temp = temp.replace('string', 'StringBuilder')
+                        else:
+                            temp_process_params = '%s = new %s[%s];\n    ' % (
                                 local_var.name,
-                                'int' if local_var.data_type.name in ['LongIntArray'] else 'Point2D',
-                                details['length_call'].replace('return ', '')
+                                'int' if local_var.data_type.name in ['LongIntArray'] \
+                                else 'Point2D' if local_var.data_type.name in ['Point2DArray', 'TriangleArray'] \
+                                else 'LineSegment' if local_var.data_type.name in ['LinesArray'] \
+                                else 'IntPtr' if local_var.data_type.name in ['BitmapArray'] \
+                                else 'StringBuilder',
+                                details['length_call'].replace('return ', '') + (' * 3' if local_var.data_type.name in ['TriangleArray'] else '')
                             )
-                    
+                        
                     # skip initialisation of result
                     continue                
+                    
                 type_name = local_var.data_type.name.lower()
                 
                 if type_name == 'string':
@@ -860,6 +970,16 @@ def method_visitor(the_method, other, as_accessor_name = None):
                             local_var.name,
                             local_var.length_of.name if not local_var.length_of.has_field else local_var.length_of.name + '._' + local_var.field_name
                         )
+                elif type_name == 'trianglearray' and not local_var.maps_result:
+                    temp_process_params += '%s = Utils.TriangleArrToPoint2DArr(%s);\n    ' % (
+                            local_var.name,
+                            local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
+                        )                    
+                elif type_name == 'bitmaparray' and not local_var.maps_result:
+                    temp_process_params += '%s = Utils.BitmapArrToIntPtrArr(%s);\n    ' % (
+                            local_var.name,
+                            local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
+                        )                    
                 elif local_var.modifier != 'out':
                     # copy in value
                     temp_process_params += '%s = %s;\n    ' % (
@@ -896,7 +1016,8 @@ def method_visitor(the_method, other, as_accessor_name = None):
         else:
             details['params'] = '(%s)' % details['params']
         
-        # if the_method.is_operator:
+        if the_method.is_operator:
+            details['name'] = details['name'].replace('operator =', 'operator ==').replace('operator <>', 'operator !=')
         #     writer.writeln((_operator_overload % details).replace('%s', details['name']) )
         # else:
         
@@ -1049,6 +1170,7 @@ def write_sg_class(member, other):
     #if member.name not in ['SoundEffect', 'Music']: return
     
     file_writer = FileWriter('%s/%s.cs'% (_out_path, member.name))
+    logger.info('Creating %s/%s.cs'% (_out_path, member.name))
     
     file_writer.writeln(_module_header % { 
         'name' : other['the_file'].name,
@@ -1179,6 +1301,7 @@ def write_cs_type_for(member, other):
 def write_cs_lib_module(the_file):
     '''Write the header and c file to wrap the attached files detials'''
     file_writer = FileWriter('%s/%s.cs'% (_out_path, the_file.name))
+    logger.info('%s/%s.cs'% (_out_path, the_file.name))
     
     file_writer.writeln(_module_header % { 
         'name' : the_file.name,
@@ -1225,20 +1348,36 @@ def post_parse_process(the_file):
     
     logger.info('Post Processing %s for C# wrapper creation', the_file.name)
     
+    # Step 1: Rename property parameter names...
+    #
+    # In C# all properties have an invisible value variable.
+    # This must therefore be changed in all properties before other
+    # processing occurs. Also note that properties dont really
+    # have special methods in the model, so this is method is shared
+    # by the associated module code.
+    for member in the_file.members:
+        for key, prop in member.properties.items():
+            if prop.setter != None:
+                #HACK: method call details created the called method. so have to change the called method as well
+                prop.setter.method_called.get_parameter(prop.setter.params[0].name).name = 'value'
+                #change in the class method as well...
+                prop.setter.params[0].name = 'value'
+    
     for member in the_file.members:
         #process all method of the file
         methods_and_operators = member.methods.items() + member.operators.items()
-        
-        for key, method in methods_and_operators:
-            _post_process_method(method)
         
         for key, prop in member.properties.items():
             if prop.getter != None:
                 _post_process_method(prop.getter)
             if prop.setter != None:
                 _post_process_method(prop.setter)
+        
+        for key, method in methods_and_operators:
+            _post_process_method(method)
+        
 
-def _post_process_method(method):            
+def _post_process_method(method):
     for param in method.params:
         if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
             
@@ -1332,13 +1471,14 @@ def _post_process_method(method):
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
-    post_parse_process(the_file)
+    
     
     if the_file.name == 'SGSDK':
         logger.info('Creating C# Library Adapter %s.cs', the_file.name)
         write_cs_sgsdk_file(the_file)
     else:
         logger.info('Creating C# SwinGame Module %s', the_file.name)
+        post_parse_process(the_file)
         write_cs_lib_module(the_file)
 
 def main():

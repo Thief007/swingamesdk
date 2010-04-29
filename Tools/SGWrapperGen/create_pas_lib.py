@@ -58,7 +58,7 @@ _type_switcher = {
     'longintarray':     'LongIntPtr',
     'bitmaparray':      'BitmapPtr',
     'point2darray':     'Point2DPtr',
-    'trianglearray':    'TrianglePtr',
+    'trianglearray':    'Point2DPtr',
         
     'spriteendingaction': 'SpriteEndingAction',
     'circle': 'Circle',
@@ -239,9 +239,9 @@ def post_parse_process(the_lib):
                 local_var.data_type = param.data_type
                 local_var.modifier = param.modifier
                 local_var.maps_result = param.maps_result
+                local_var.local_for = param
                 method.local_vars.append(local_var)
                 param.maps_to_temp = True
-
 
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''

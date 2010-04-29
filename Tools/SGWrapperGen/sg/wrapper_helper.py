@@ -1,10 +1,10 @@
 from sg_parameter import SGParameter
 from sg_property import SGProperty
 from sg_method import SGMethod
-from sg.sg_cache import logger, find_or_add_type
+from sg_cache import logger, find_or_add_type
 
 _hasError = False
-_dieOnError = True
+_dieOnError = False
 
 def hasError():
     global _hasError
@@ -50,6 +50,7 @@ def map_data_value(the_dict, key, the_type, result):
      - modifier:    The modifier for the type
     '''
     if the_type.name.lower() in the_dict[key]:
+        # print the_type.name.lower(), ' -> ', the_dict[key][the_type.name.lower()]
         return the_dict[key][the_type.name.lower()] % result
         
     #If this is a 
@@ -74,9 +75,12 @@ def add_local_var_for_param(to_method, for_parameter):
     the program and the DLL and back.
     '''
     
+    # print 'Adding local for', for_parameter.name, 'in', to_method.name
+    
     if not for_parameter.maps_result:
         local_var = SGParameter(for_parameter.name + '_temp')
-    else: 
+        for_parameter.maps_to_temp = True
+    else:
         local_var = SGParameter(for_parameter.name)
         local_var.is_returned = True
     
@@ -91,7 +95,6 @@ def add_local_var_for_param(to_method, for_parameter):
         local_var.field_name = for_parameter.data_type.fields[0].name
     
     to_method.local_vars.append(local_var)
-    for_parameter.maps_to_temp = True
     return local_var
 
 
@@ -171,6 +174,30 @@ def add_length_args(to_method, len_str):
                 to_method.args.append(len_str % param.length_of.local_var_name())
 
 def add_local_var_processing(the_method, details, local_variable_switcher):
+    '''
+    This processing adds variable declaration code, pre-call processing code
+    and post-call processing code to the details for the_method. These values
+    stored in details['vars'], details['pre_call'] and details['post_call'].
+    
+    Params:
+     - the_method:              The method to process the local variables of
+     - details:                 The dictionary into which the output is written
+     - local_variable_switcher: The dictionary containing the type switching
+                                and code details. This dictionary must contain:
+                                
+        'declare':              Key used to get code to declare variable - is passed variable name (+ size if array).
+        'length-of':            Used for the code that calculates the length of an array (or string).
+        'initialise-param':     The code used to copy data from the language (arrays and string) into 
+                                data that can be passed to SwinGame. This code goes into 'pre_call'.
+        'process-param':        This is the code for 'post_call' processing for parameters. Called on
+                                standard parameters of arrays - (as array is a pointer and contents updated when
+                                dynamic arrays are used).
+        'process-out-param':    This is the code for 'post_call' processing for out parameters.
+        'process-result':       This is the 'post_call' processing for the result of a function. This code
+                                is used to return the result. This will be the last 'post_call' code.
+                            
+    '''
+    
     if len(the_method.local_vars) > 0:
         temp = ''
         temp_process_params = details['pre_call']
@@ -213,8 +240,10 @@ def add_local_var_processing(the_method, details, local_variable_switcher):
                     # the issue is that a return is added to the length_call. Here we want just the call
                     # to fix create a call.expr = call expression that is used to create the return blah; and (blah) here
                     var_details['size'] = details['length_call'].replace('return ', '').replace('result = ', '')
+                    # print var_details['size']
+                # TODO: fix this so that variable declaration is not hard coded (and C style)
                 
-                #TODO: fix this so that variable declaration is not hard coded (and C style)
+                # print the_method.name, '->', the_method.method_called.name
                 temp = 'int %(var)s = %(size)s;\n    ' % var_details + temp
                 continue #no further processing of these variables
             elif local_var.data_type.name.lower() == 'string':
