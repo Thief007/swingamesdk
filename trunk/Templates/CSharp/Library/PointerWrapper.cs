@@ -16,7 +16,10 @@ namespace SwinGame
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     internal enum PtrKind
     {
+        Animation,
+        AnimationTemplate,
         Bitmap,
+        Character,
         Font,
         SoundEffect,
         Music,

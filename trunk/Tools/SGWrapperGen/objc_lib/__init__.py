@@ -62,7 +62,7 @@ _type_switcher = {
         'spriteendingaction':   'sprite_ending_action',
         'maptag':               'map_tag',
         'spritekind':           'sprite_kind',
-        'fontalignment':        'font_alignment',
+        # 'fontalignment':        'font_alignment',
         'fontstyle':            'font_style',
         'shapekind':            'shape_kind',
     },
@@ -70,7 +70,7 @@ _type_switcher = {
         #records
         'point2d':      'SGPoint2D *',
         'linesegment':  'SGLineSegment *',
-        'rectangle':    'SGRectangle *',
+        # 'rectangle':    'SGRectangle *',
         'vector':       'SGVector *',
         'matrix2d':     'SGMatrix2D *',
         'triangle':     'SGTriangle *',
@@ -78,7 +78,7 @@ _type_switcher = {
         
         #Arrays
         'linesarray':       'NSArray *',
-        'bitmaparray':      'NSArray *',
+        # 'bitmaparray':      'NSArray *',
         'longintarray':     'NSArray *',
         'point2darray':     'NSArray *',
         'shapearray':       'NSArray *',
@@ -93,6 +93,8 @@ _type_switcher = {
         'font':             'SGFont *',
         'shapeprototype':   'SGShapePrototype *',
         'shape':            'SGShape *',
+        
+        'single':           'float *',
         
         'triangle':     'SGTriangle *',
         'matrix2d':     'SGMatrix2D *',
@@ -155,7 +157,7 @@ _type_switcher = {
         'point2d':      'SGPoint2D *',
         'vector':       'SGVector *',
         'circle':       'SGCircle *',
-        'rectangle':    'SGRectangle *',
+        # 'rectangle':    'SGRectangle *',
         'linesegment':  'SGLineSegment *',
         
         #function pointers
@@ -201,7 +203,7 @@ _data_switcher = {
         'point2d':      '[SGPoint2D point2DForData:%s]',
         'vector':       '[SGVector vectorForData:%s]',
         'circle':       '[SGCircle circleForData:%s]',
-        'rectangle':    '[SGRectangle rectangleForData:%s]',
+        # 'rectangle':    '[SGRectangle rectangleForData:%s]',
         'linesegment':  '[SGLineSegment lineSegmentForData:%s]',
         
         # 'matrix2d':     '[SGMatrix2D matrix2DForData:%s]',
@@ -213,7 +215,7 @@ _data_switcher = {
         'spritekind':           '(sprite_kind)%s',
         'maptag':               '(map_tag)%s',
         'collisionside':        '(collision_side)%s',
-        'fontalignment':        '(font_alignment)%s',
+        # 'fontalignment':        '(font_alignment)%s',
         'fontstyle':            '(font_style)%s',
     },
     # Argument with a parameter value
@@ -227,14 +229,15 @@ _data_switcher = {
         'maptag':               '(int)%s',
         'collisionside':        '(int)%s',
         'resourcekind':         '(int)%s',
-        'fontalignment':        '(int)%s',
+        # 'fontalignment':        '(int)%s',
         'fontstyle':            '(int)%s',
         
         'linesegment':          '%s->data',
         'vector':               '%s->data',
         'point2d':              '%s->data',
         'circle':               '%s->data',
-        'rectangle':            '%s->data',
+        # 'rectangle':            '%s->data',
+        # 'bitmapcell':           '%s->data',
         
         'matrix2d':             '%s->data',
         'triangle':             '%s->data',
@@ -276,7 +279,7 @@ local_variable_switcher = {
         #arrays for structs
         'linesarray':       'line_segment %(var)s[%(size)s];\n    ',
         'longintarray':     'int %(var)s[%(size)s];\n    ',
-        'bitmaparray' :     'bitmap %(var)s[%(size)s];\n    ',
+        # 'bitmaparray' :     'bitmap %(var)s[%(size)s];\n    ',
         'point2darray':     'point2d %(var)s[%(size)s];\n    ',
         'shapearray':       'shape %(var)s[%(size)s];\n    ',
         
@@ -287,17 +290,24 @@ local_variable_switcher = {
         
         'longint':          'int %s;\n    ',
     },
+    
     'length-of': #used to calculate %(size)s - is an expression
     {
         #String type
         'string':           '[%(param)s length] + 1',
         #NSArray types
-        'bitmaparray':      '[%(param)s count]',
+        # 'bitmaparray':      '[%(param)s count]',
         'longintarray':     '[%(param)s count]',
         'linesarray':       '[%(param)s count]',
         'point2darray':     '[%(param)s count]',
         'shapearray':       '[%(param)s count]',
     },
+    
+    # -------------------------------
+    # Parameter pre-call processing for arrays and strings
+    # -------------------------------
+    # This is used to take data from NSString and NSArray objects and
+    # copy them into data that can be passed to SwinGame code.
     'initialise-param':
     {
         #Direct mappings for C based language
@@ -306,12 +316,13 @@ local_variable_switcher = {
         #String type
         'string':           '[%(param)s getCString:%(var)s maxLength:[%(param)s length] + 1 encoding:NSASCIIStringEncoding];\n    ',
         #NSArray types
-        'bitmaparray':      '[SGBitmap getBitmaps:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
+        # 'bitmaparray':      '[SGBitmap getBitmaps:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'longintarray':     '[SGUtils getIntegers:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'linesarray':       '[SGLineSegment getLineSegments:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'point2darray':     '[SGPoint2D getPoint2Ds:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'shapearray':       '[SGShape getShapes:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
     },
+    
     # -------------------------------
     # Parameter post-call processing for standard parameters (arrays only)
     # -------------------------------
@@ -323,6 +334,7 @@ local_variable_switcher = {
     {
         'point2darray':     '\n    [SGPoint2D updatePoint2DsIn:%(param)s fromDataIn:%(var)s];',
     },
+    
     # -------------------------------
     # Parameter post-call processing for out parameters
     # -------------------------------
@@ -370,15 +382,178 @@ local_variable_switcher = {
         #return structs
         'vector':           '\n    return [[[SGVector alloc] initWithVector:%(var)s] autorelease];',
     },
-    'clean-up':
-    {
-        'string':           '',
-    },
 }
+
+
+#
+# The _type_dictionary_creation_data contains the data used to build
+# the dictionaries for creating the type conversion details.
+#
+# This cant use standard template string (%s) as the string values
+# must contain the %s for the dictionary. So the string must have
+# the #2# replaced by the 2nd element of the tupple eg.
+# -------------------------------
+# Format: key - contents
+# -------------------------------
+# _type_switcher
+_type_dictionary_creation_data = [
+    #pointer types
+    {
+        # List of Types, 
+        'identifiers':  [   
+                ('animationtemplate', 'SGAnimationTemplate'),
+                ('animation', 'SGAnimation'),
+                ('character', 'SGCharacter')
+            ],
+        '_type_switcher': {
+                None:       '#2# *',
+                # 'const':    '',
+                'var':      '#2# *',
+                # 'out':      '',
+                'return':   '#2# *',
+            },
+        '_data_switcher': {
+                'return_val': '[#2# createWithId:%s]',
+                # 'arg_val':  '',
+                # 'arg_lit_val': '',
+            },
+        'local_variable_switcher': {
+                'declare': '#2# *%(var)s;\n    ',
+                # 'length-of': '',
+                # 'initialise-param': '',
+                # 'process-param': '',
+                # 'process-out-param': '',
+                'process-result': '\n    return %(var)s;',
+            },
+    },
+    # structure types
+    {
+        'identifiers': [
+                # type key, objc name, prefix for switching, c-type, post-fix for switching
+                ('bitmapcell', 'SGBitmapCell', 'bitmapCell', 'bitmap_cell', 'BitmapCell'),
+                ('rectangle', 'SGRectangle', 'rectangle', 'rectangle', 'Rectangle'),
+                ('directionangles', 'SGDirectionAngles', 'directionAngles', 'direction_angles', 'DirectionAngles'),
+            ],
+            '_type_switcher': {
+                    # None:       '#2# *',
+                    'const':    '#2# *',
+                    'var':      '#2# *',
+                    'out':      '#2# *',
+                    'return':   '#2# *',
+                },
+            '_data_switcher': {
+                    'return_val':   '[#2# #3#ForData:%s]',
+                    'arg_val':      '%s->data',
+                    # 'arg_lit_val': '',
+                },
+            'local_variable_switcher': {
+                    'declare': '#4# %(var)s;\n    ',
+                    # 'length-of': '',
+                    # 'initialise-param': '',
+                    # 'process-param': '',
+                    'process-out-param': '\n    *%(param)s = [[[#2# alloc] initWith#5#:%(var)s] autorelease];',
+                    'process-result': '\n    return %(var)s;',
+                },
+    },
+    # enumerated types
+    {
+        'identifiers': [
+            # type key, objc name, prefix for switching, c-type, post-fix for switching
+            ('collisiontestkind', 'collision_test_kind'),
+            ('fontalignment', 'font_alignment'),
+            
+        ],
+        '_type_switcher': {
+                None:       '#2#',
+                # 'const':    '#2# *',
+                # 'var':      '#2# *',
+                # 'out':      '#2# *',
+                'return':   '#2#',
+            },
+        '_data_switcher': {
+                'return_val':   '(#2#)%s',
+                'arg_val':      '(int)%s',
+                # 'arg_lit_val': '',
+            },
+        'local_variable_switcher': {
+                # 'declare': '#4# %(var)s;\n    ',
+                # 'length-of': '',
+                # 'initialise-param': '',
+                # 'process-param': '',
+                # 'process-out-param': '\n    *%(param)s = [[[#2# alloc] initWith#5#:%(var)s] autorelease];',
+                # 'process-result': '\n    return %(var)s;',
+            },
+    },
+    # array types
+    {
+        'identifiers': [
+            # type key, objc name, prefix for switching, c-type, post-fix for switching
+            ('bitmaparray', 'SGBitmap *', 'SGBitmap', 'Bitmaps'),
+            ('stringarray', 'NSString *', 'NSString', 'Strings'),
+            ('trianglearray', 'triangle', 'SGTriangle', 'Triangles')
+            
+        ],
+        '_type_switcher': {
+                # None:       '#2#',
+                'const':    'NSArray *',
+                # 'var':      '#2# *',
+                'out':      'NSArray *',
+                'return':   'NSArray *',
+            },
+        '_data_switcher': {
+                'return_val':   '(#2#)%s',
+                'arg_val':      '(int)%s',
+                # 'arg_lit_val': '',
+            },
+        'local_variable_switcher': {
+                'declare': '#2# %(var)s[%(size)s];\n    ',
+                'length-of': '[%(param)s count]',
+                'initialise-param': '[#3# get#4#:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
+                # 'process-param': '',
+                # 'process-out-param': '\n    *%(param)s = [[[#2# alloc] initWith#5#:%(var)s] autorelease];',
+                'process-result': '\n    return [SGUtils arrayOf#4#:%(var)s size:%(size)s];',
+            },
+    },
+]
+
+def _dict_named(name):
+    if name == '_type_switcher': return _type_switcher
+    elif name == '_data_switcher': return _data_switcher
+    elif name == 'local_variable_switcher': return local_variable_switcher
+
+def _add_to_dict(into_dict, details_dict, ident_tupple):
+    #find all the part
+    for key,val in details_dict.iteritems():
+        to_ins = val
+        for idx,part in enumerate(ident_tupple):
+            to_ins = to_ins.replace('#%d#' % (idx + 1), ident_tupple[idx])
+        # print 'inserting -> ', key, ':', to_ins
+        
+        if  ident_tupple[0] in into_dict[key]:
+            print 'ERROR: Adding into type dictionary : ', into_dict[key][ident_tupple[0]]
+            print 'key: ', key, 'type', ident_tupple[0]
+            assert False
+        
+        into_dict[key][ident_tupple[0]] = to_ins
+
+def _build_type_dictionary():
+    """Builds the conversion dictionary for objective c."""
+    my_keys = ['_type_switcher', '_data_switcher', 'local_variable_switcher']
+    
+    for type_mapping in _type_dictionary_creation_data:
+        #print type_mapping
+        # Process each type in this type mapping
+        for identifier_tupple in type_mapping['identifiers']:
+            for a_key in my_keys:
+                _add_to_dict(_dict_named(a_key), type_mapping[a_key], identifier_tupple)
+            
+    
 
 def main():
     (path, script_file) = os.path.split(sys.modules[__name__].__file__) 
     dirList=os.listdir(path)
+    
+    _build_type_dictionary()
     
     for f in dirList:
         if '.py' in f or f[0] == '.' : continue

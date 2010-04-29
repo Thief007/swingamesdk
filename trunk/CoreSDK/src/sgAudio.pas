@@ -112,7 +112,7 @@ interface
   ///
   /// @class SoundEffect
   /// @constructor
-  /// @csn initFromPath:%s
+  /// @csn initFromFile:%s
   function LoadSoundEffect(filename: String): SoundEffect;
   
   /// Loads and returns a sound effect. The supplied ``filename`` is used to
@@ -121,12 +121,12 @@ interface
   /// retrieved by passing this ``name`` to the `SoundEffectNamed` function. 
   ///
   /// @lib
-  /// @sn mapSoundEffectNamed:%s toFile:%s
+  /// @sn loadSoundEffectNamed:%s fromFile:%s
   ///
   /// @class SoundEffect
   /// @constructor
-  /// @csn initWithName:%s forFilename:%s
-  function MapSoundEffect(name, filename: String): SoundEffect;
+  /// @csn initWithName:%s fromFile:%s
+  function LoadSoundEffectNamed(name, filename: String): SoundEffect;
   
   /// Determines if SwinGame has a sound effect loaded for the supplied name.
   /// This checks against all sounds loaded, those loaded without a name
@@ -172,12 +172,12 @@ interface
   /// retrieved by passing this ``name`` to the `MusicNamed` function. 
   ///
   /// @lib
-  /// @sn mapMusicNamed:%s toFile:%s
+  /// @sn loadMusicNamed:%s fromFile:%s
   ///
   /// @class Music
   /// @constructor
-  /// @csn initWithName:%s forFilename:%s
-  function MapMusic(name, filename: String): Music;
+  /// @csn initWithName:%s fromFile:%s
+  function LoadMusicNamed(name, filename: String): Music;
   
   /// Determines if SwinGame has a music value loaded for the supplied name.
   /// This checks against all music values loaded using `MapMusic`.
@@ -219,7 +219,7 @@ interface
   ///
   /// @class Music
   /// @constructor
-  /// @csn initFromPath:%s
+  /// @csn initFromFile:%s
   function LoadMusic(filename: String): Music;
   
   /// Frees the resources used by a `Music` resource. All loaded
@@ -682,14 +682,14 @@ implementation
       TraceEnter('sgAudio', 'LoadSoundEffect', filename);
     {$ENDIF}
     
-    result := MapSoundEffect(filename, filename);
+    result := LoadSoundEffectNamed(filename, filename);
     
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'LoadSoundEffect');
     {$ENDIF}
   end;
   
-  function MapSoundEffect(name, filename: String): SoundEffect;
+  function LoadSoundEffectNamed(name, filename: String): SoundEffect;
   var
     obj: tResourceContainer;
     snd: SoundEffect;
@@ -844,14 +844,14 @@ implementation
       TraceEnter('sgAudio', 'LoadMusic', filename);
     {$ENDIF}
     
-    result := MapMusic(filename, filename);
+    result := LoadMusicNamed(filename, filename);
     
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'LoadMusic');
     {$ENDIF}
   end;
   
-  function MapMusic(name, filename: String): Music;
+  function LoadMusicNamed(name, filename: String): Music;
   var
     obj: tResourceContainer;
     mus: Music;

@@ -344,7 +344,7 @@ interface
   ///
   /// @class Shape
   /// @getter LineCount
-  function LineCount(s: Shape): LongInt;
+  function ShapeLineCount(s: Shape): LongInt;
   
   /// Returns an array of lines from a given shape. These are the lines that represent
   /// the shape.
@@ -353,7 +353,7 @@ interface
   ///
   /// @class Shape
   /// @getter Lines
-  /// @length LineCount
+  /// @length ShapeLineCount
   function LinesFrom(s: shape): LinesArray; overload;
   
   /// Returns the vector needed to move shape ``s`` out of rectangle``bounds`` given the velocity specified.
@@ -785,7 +785,7 @@ interface
   ///
   /// @class Shape
   /// @method IntersectsRectangle
-  function ShapeRectangleIntersect(shp: Shape; const rect: Rectangle): Boolean;
+  function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean;
   
   /// Returns an axis aligned bounded box for the shape.
   /// 
@@ -793,7 +793,7 @@ interface
   ///
   /// @class Shape
   /// @getter AABB
-  function ShapeAABB(shp: Shape): Rectangle;
+  function ShapeAABB(s: Shape): Rectangle;
   
   /// Returns the kind of the shape.
   ///
@@ -801,47 +801,90 @@ interface
   ///
   /// @class Shape
   /// @getter ShapeKind
-  function ShapeShapeKind(shp: Shape): ShapeKind;
+  function ShapeShapeKind(s: Shape): ShapeKind;
+  
+  /// Returns the number of triangles in the Shape.
+  ///
+  /// @lib
+  /// 
+  /// @class Shape
+  /// @getter TriangleCount
+  function ShapeTriangleCount(s: Shape): LongInt;
+  
+  /// Returns the number of triangles in the Shape.
+  ///
+  /// @lib
+  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): LongInt;
   
   /// Returns the triangles for a triangle strip, list, or fan.
   ///
   /// @lib
-  /// @sn shapeTriangles:%s forKind:%s
+  /// @sn shapeTriangles:%s
+  /// @length ShapeTriangleCount
   ///
   /// @class Shape
   /// @method AsTriangles
+  /// @csn triangles
+  function ShapeTriangles(s: Shape): TriangleArray; overload;
+  
+  /// Returns the triangles for a triangle strip, list, or fan.
+  ///
+  /// @lib shapeTrianglesForKind
+  /// @sn shapeTriangles:%s forKind:%s
+  /// @length ShapeKindTriangleCount
+  ///
+  /// @class Shape
+  /// @overload AsTriangles AsTrianglesForKind
   /// @csn trianglesForKind:%s
-  function ShapeTriangles(shp: Shape; kind: ShapeKind): TriangleArray;
+  function ShapeTriangles(s: Shape; kind: ShapeKind): TriangleArray;
   
   /// Returns the triangles for a triangle strip, list, or fan with an offset.
   ///
   /// @lib ShapeTrianglesOffset
   /// @sn shapeTriangles:%s forKind:%s offset:%s
+  /// @length ShapeKindTriangleCount
   ///
   /// @class Shape
   /// @overload AsTriangles AsTrianglesOffset
   /// @csn trianglesForKind:%s offset:%s
-  function ShapeTriangles(shp: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
+  function ShapeTriangles(s: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
+  
+  /// Returns the number of lines in a given shape and kind.
+  ///
+  /// @lib
+  function ShapeKindLineCount(s: Shape; kind: ShapeKind): LongInt;
   
   /// Returns the lines for a triangle list or strip.
   ///
   /// @lib
-  /// @sn shapeLines:%s forKind:%s
+  /// @sn shapeLines:%s
+  /// @length ShapeLineCount
   ///
   /// @class Shape
   /// @method AsLines
+  function ShapeLines(s: Shape): LinesArray; overload;
+  
+  /// Returns the lines for a triangle list or strip.
+  ///
+  /// @lib ShapeKindLines
+  /// @sn shapeLines:%s forKind:%s
+  /// @length ShapeKindLineCount
+  ///
+  /// @class Shape
+  /// @overload AsLines AsLinesForKind
   /// @csn linesForKind:%s
-  function ShapeLines(shp: Shape; kind: ShapeKind): LinesArray;
+  function ShapeLines(s: Shape; kind: ShapeKind): LinesArray; overload;
   
   /// Returns the lines for a triangle list or strip with offset.
   ///
   /// @lib ShapeLinesWithOffset
   /// @sn shapeLines:%s forKind:%s withOffset:%s
+  /// @length ShapeLineCount
   ///
   /// @class Shape
   /// @overload AsLines AsLinesOffset
   /// @csn linesForKind:%s offset:%s
-  function ShapeLines(shp: Shape; kind: ShapeKind; const offset:Point2D): LinesArray;
+  function ShapeLines(s: Shape; kind: ShapeKind; const offset:Point2D): LinesArray; overload;
   
   /// Returns the triangle from the shapes details.
   /// 
@@ -849,7 +892,7 @@ interface
   /// 
   /// @class Shape
   /// @method AsTriangle
-  function ShapeTriangle(shp: Shape): Triangle;
+  function ShapeTriangle(s: Shape): Triangle;
   
   /// Returns the triangle from the shapes details with offset.
   /// 
@@ -857,7 +900,7 @@ interface
   /// 
   /// @class Shape
   /// @overload AsTriangle AsTriangleOffset
-  function ShapeTriangle(shp: Shape; const offset:Point2D): Triangle;
+  function ShapeTriangle(s: Shape; const offset:Point2D): Triangle;
   
   /// Returns the line from the shapes details.
   /// 
@@ -865,7 +908,7 @@ interface
   /// 
   /// @class Shape
   /// @method AsLine
-  function ShapeLine(shp: Shape): LineSegment;
+  function ShapeLine(s: Shape): LineSegment;
   
   /// Returns the line from the shapes details with offset.
   /// 
@@ -873,7 +916,7 @@ interface
   /// 
   /// @class Shape
   /// @overload AsLine AsLineOffset
-  function ShapeLine(shp: Shape; const offset:Point2D): LineSegment;
+  function ShapeLine(s: Shape; const offset:Point2D): LineSegment;
   
   /// Returns the circle from the shapes details.
   /// 
@@ -881,7 +924,7 @@ interface
   /// 
   /// @class Shape
   /// @method AsCircle
-  function ShapeCircle(shp: Shape): Circle;
+  function ShapeCircle(s: Shape): Circle;
   
   /// Returns the circle from the shapes details with offset.
   /// 
@@ -889,7 +932,7 @@ interface
   /// 
   /// @class Shape
   /// @overload AsCircle AsCircleOffset
-  function ShapeCircle(shp: Shape; const offset:Point2D): Circle;
+  function ShapeCircle(s: Shape; const offset:Point2D): Circle;
   
   
   //----------------------------------------------------------------------------
@@ -1041,7 +1084,7 @@ interface
   ///
   /// @class LineSegment
   /// @method IntersectionPoint
-  /// @csn intersectionWith:$s result:%s
+  /// @csn intersectionWith:%s result:%s
   function LineIntersectionPoint(const line1, line2: LineSegment; out pt: Point2D) : boolean;
   
   /// Returns the intersection point of a ray with a line, returning true if the ray intesects with the line.
@@ -1236,6 +1279,24 @@ interface
   operator = (const v1, v2: Vector) r : Boolean;
   {$endif}
   
+  /// Determines if two vectors are not equal.
+  /// 
+  /// @lib
+  /// @sn vector:%s doesNotEqual:%s
+  /// 
+  /// @class Vector
+  /// @method DoesNotEqualVector
+  function VectorsNotEqual(const v1, v2: Vector): Boolean;
+  
+  {$ifdef BLAH_BLAH_123}
+  // Never compile this... FPC doesn't allow <> operator
+  // but this is required by C#, so we need to pretend it exists...
+  
+  /// @class Vector
+  /// @calls VectorsNotEqual
+  operator <> (const v1, v2: Vector) r : Boolean;
+  {$endif}
+  
   /// Calculates the dot product (scalar product) between the two vector
   /// parameters  rovided (``v1`` and ``v2``). It returns the result as a
   /// scalar value.
@@ -1263,7 +1324,7 @@ interface
   /// @getter Normal
   function VectorNormal(const v: Vector): Vector;
 
-  /// Returns a unit vector (lenght is 1.0) that is "normal" (prependicular) to
+  /// Returns a unit vector (length is 1.0) that is "normal" (prependicular) to
   /// the ``line`` parameter. A normal vector is useful for calculating the
   /// result of a collision such as sprites bouncing off walls (lines).
   /// 
@@ -1343,9 +1404,6 @@ interface
   /// Returns a new `Vector` using the x and y value of a Point2D parameter.
   ///
   /// @lib
-  ///
-  /// @class Vector
-  /// @method ToPoint
   function VectorToPoint(const p1: Point2D): Vector;
   
   /// Returns a `Vector` created from the difference from the ``p1`` to 
@@ -2206,14 +2264,17 @@ implementation
   end;
   
   {$ifdef FPC}
-  /// @class Vector
-  /// @calls VectorsEqual
   operator = (const v1, v2: Vector) r : Boolean;
   begin
     r := VectorsEqual(v1, v2);
   end;
   {$endif}  
 
+  function VectorsNotEqual(const v1, v2: Vector): Boolean;
+  begin
+    result := (v1.x <> v2.x) or (v1.y <> v2.y);
+  end;
+  
   function InvertVector(const v: Vector): Vector;
   begin
     {$IFDEF TRACE}
@@ -3450,8 +3511,8 @@ implementation
   begin
     pts:= ShapePoints(s);
 
-    //WriteLn('LineCount: ', LineCount(s));
-    SetLength(result, LineCount(s));
+    //WriteLn('ShapeLineCount: ', ShapeLineCount(s));
+    SetLength(result, ShapeLineCount(s));
     if Length(result) <= 0 then exit;
     
     for i := 0 to Length(pts) - 3 do
@@ -3464,28 +3525,6 @@ implementation
 
     result[high(result)] := LineFrom(pts[High(pts) - 1], pts[High(pts)]);
     //WriteLn('  Line ', LineToString(result[High(result)]));
-  end;
-
-  function LineCount(s: Shape): LongInt;
-  var
-  k: ShapeKind;
-  begin
-    k := PrototypeKind(s^.prototype);
-    case k of
-      pkCircle: result := 0;
-      pkLine: result := 1;
-      pkTriangle: result := 3;
-      //pkLineList: result := PointOnLineList(pt,s);
-      //pkLineStrip: result := PointOnLineStrip(pt,s);
-      //pkPolygon: result := 3;
-      pkTriangleStrip, pkTriangleFan: result := (2*(PrototypePointCount(s^.prototype))-3);
-      pkTriangleList: result := ((PrototypePointCount(s^.prototype) div 3)*3);
-      else
-        begin
-          RaiseException('Shape not Recognized when getting line out of shape.');
-          exit;
-        end;
-    end;
   end;
   
   function LinesFrom(s: shape): LinesArray; overload;
@@ -3907,7 +3946,7 @@ implementation
     {$ENDIF}
   end;
   
-  function ShapeAABB(shp: Shape): Rectangle;
+  function ShapeAABB(s: Shape): Rectangle;
   var
     pts : Point2DArray;
     minPt, maxPt: Point2D;
@@ -3916,9 +3955,9 @@ implementation
     subRect: Rectangle;
     kind: ShapeKind;
   begin
-    pts :=    ShapePoints(shp);
+    pts :=    ShapePoints(s);
     result := RectangleFrom(0,0,0,0);
-    kind :=   ShapeShapeKind(shp);
+    kind :=   ShapeShapeKind(s);
     if (LongInt(kind) = -1) or (Length(pts) < MinimumPointsForKind(kind)) then exit;
     
     minPt := pts[0];
@@ -3958,9 +3997,9 @@ implementation
       end;
     end;
     
-    for i := Low(shp^.subShapes) to High(shp^.subShapes) do
+    for i := Low(s^.subShapes) to High(s^.subShapes) do
     begin
-      subRect := ShapeAABB(shp^.subShapes[i]);
+      subRect := ShapeAABB(s^.subShapes[i]);
       
       r := RectangleRight(subRect);
       l := RectangleLeft(subRect);
@@ -4112,46 +4151,46 @@ implementation
     {$ENDIF}
   end;
   
-  function ShapeCircle(shp: Shape): Circle;
+  function ShapeCircle(s: Shape): Circle;
   begin
-    result := ShapeCircle(shp, PointAt(0,0));
+    result := ShapeCircle(s, PointAt(0,0));
   end;
   
-  function ShapeCircle(shp: Shape; const offset: Point2D): Circle;
+  function ShapeCircle(s: Shape; const offset: Point2D): Circle;
   var
     pts: Point2DArray;
   begin
-    pts := ShapePoints(shp);
+    pts := ShapePoints(s);
     if length(pts) < 2 then begin result := CircleAt(0,0,0); exit; end;
       
     result := CircleAt(PointAdd(pts[0], offset), Round(PointPointDistance(pts[0], pts[1])));
   end;
   
-  function ShapeLine(shp: Shape): LineSegment;
+  function ShapeLine(s: Shape): LineSegment;
   begin
-    result := ShapeLine(shp, PointAt(0,0));
+    result := ShapeLine(s, PointAt(0,0));
   end;
   
-  function ShapeLine(shp: Shape; const offset: Point2D): LineSegment;
+  function ShapeLine(s: Shape; const offset: Point2D): LineSegment;
   var
     pts: Point2DArray;
   begin
-    pts := ShapePoints(shp);
+    pts := ShapePoints(s);
     if length(pts) < 2 then begin result := LineFrom(0,0,0,0); exit; end;
       
     result := LineFrom(PointAdd(pts[0], offset), PointAdd(pts[1], offset));
   end;
   
-  function ShapeTriangle(shp: Shape): Triangle;
+  function ShapeTriangle(s: Shape): Triangle;
   begin
-    result := ShapeTriangle(shp, PointAt(0,0));
+    result := ShapeTriangle(s, PointAt(0,0));
   end;
   
-  function ShapeTriangle(shp: Shape; const offset: Point2D): Triangle;
+  function ShapeTriangle(s: Shape; const offset: Point2D): Triangle;
   var
     pts: Point2DArray;
   begin
-    pts := ShapePoints(shp);
+    pts := ShapePoints(s);
     if length(pts) < 3 then begin result := TriangleFrom(0,0,0,0,0,0); exit; end;
       
     result := TriangleFrom( PointAdd(pts[0], offset), 
@@ -4159,18 +4198,94 @@ implementation
                             PointAdd(pts[2], offset));
   end;
   
-  function ShapeLines(shp: Shape; kind: ShapeKind): LinesArray;
+  function ShapeTriangleCount(s: Shape): LongInt;
   begin
-    result := ShapeLines(shp, kind, PointAt(0,0));
+    result := ShapeKindTriangleCount(s, ShapeShapeKind(s));
   end;
   
-  function ShapeLines(shp: Shape; kind: ShapeKind; const offset: Point2D): LinesArray;
+  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): LongInt;
+  var
+    pts: LongInt;
+  begin
+    result := 0;
+
+    pts := ShapePointCount(s);
+
+    case kind of
+      pkCircle: result := 0;
+      pkLine: result := 0;
+      pkTriangle: result := 1;
+      pkLineList: result := 0;
+      pkLineStrip: result := 0;
+      //pkPolygon: result := 3;
+      pkTriangleStrip, pkTriangleFan: result := pts - 2;
+      pkTriangleList: result := pts div 3;
+      else
+        begin
+          RaiseException('Shape not Recognized when getting line out of shape.');
+          exit;
+        end;
+    end;
+  end;
+  
+  function ShapeLineCount(s: Shape): LongInt;
+  begin
+    if assigned(s) then
+      result := ShapeKindLineCount(s, ShapeShapeKind(s))
+    else
+      result := 0;
+  end;
+  
+  function ShapeKindLineCount(s: Shape; kind: ShapeKind): LongInt;
+  var
+    pts: LongInt;
+  begin
+    result := 0;
+    
+    pts := ShapePointCount(s);
+    
+    case kind of
+      pkCircle: result := 0;
+      pkLine: result := 1;
+      pkTriangle: result := 3;
+      pkLineList: result := pts div 2;
+      pkLineStrip: result := pts - 1;
+      //pkPolygon: result := 3;
+      pkTriangleStrip, pkTriangleFan: 
+      begin
+        result := 2 * pts - 3;
+        if result < 0 then result := 0;
+      end;
+      pkTriangleList: result := (pts div 3) * 3;
+      else
+        begin
+          RaiseException('Shape not Recognized when getting line out of shape.');
+          exit;
+        end;
+    end;
+  end;
+  
+  function ShapeLines(s: Shape): LinesArray;
+  begin
+    if assigned(s) then
+      result := ShapeLines(s, ShapeShapeKind(s), PointAt(0,0))
+    else
+      result := nil;
+  end;
+  
+  function ShapeLines(s: Shape; kind: ShapeKind): LinesArray;
+  begin
+    result := ShapeLines(s, kind, PointAt(0,0));
+  end;
+  
+  function ShapeLines(s: Shape; kind: ShapeKind; const offset: Point2D): LinesArray;
   var
     pts,pts1: Point2DArray;
     i: LongInt;
   begin
-    pts := ShapePoints(shp);
+    pts := ShapePoints(s);
     SetLength(pts1, length(pts));
+    
     if length(pts) < 2 then begin SetLength(result, 0); exit; end;
     if not ((kind = pkLineList) or (kind = pkLineStrip)) then exit;
     
@@ -4188,25 +4303,34 @@ implementation
     end;
   end;
   
-  function ShapeTriangles(shp: Shape; kind: ShapeKind): TriangleArray;
+  function ShapeTriangles(s: Shape): TriangleArray; overload;
   begin
-    result := ShapeTriangles(shp, kind, PointAt(0,0));
+    if assigned(s) then
+      result := ShapeTriangles(s, ShapeShapeKind(s))
+    else
+      result := nil;
   end;
   
-  function ShapeTriangles(shp: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
+  function ShapeTriangles(s: Shape; kind: ShapeKind): TriangleArray;
+  begin
+    result := ShapeTriangles(s, kind, PointAt(0,0));
+  end;
+  
+  function ShapeTriangles(s: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
   var
     pts, pts1: Point2DArray;
     i: LongInt;
   begin
-    pts := ShapePoints(shp);
-    SetLength(pts1, Length(pts));
-    if length(pts) < 2 then begin SetLength(result, 0); exit; end;
+    SetLength(result, 0);
     if not ((kind = pkTriangleStrip) or (kind = pkTriangleFan) or (kind = pkTriangleList) or (kind = pkTriangle)) then exit;
+    pts := ShapePoints(s);
+    if length(pts) < 3 then begin exit; end;
     
-    if kind = pkLineList then SetLength(result, Length(pts) div 3)
+    if kind = pkTriangleList then SetLength(result, Length(pts) div 3)
     else if kind = pkTriangle then SetLength(result, 1)
     else SetLength(result, Length(pts) - 2);
     
+    SetLength(pts1, Length(pts));
     for i := 0 to high(pts) do pts1[i] := PointAdd(pts[i], offset);
     
     for i := 0 to High(result) do
@@ -4242,36 +4366,36 @@ implementation
     result := LinesIntersect(lines, LinesFrom(r));
   end;
   
-  function ShapeRectangleIntersect(shp: Shape; const rect: Rectangle): Boolean; overload;
+  function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean; overload;
   var
     kind: ShapeKind;
     i: LongInt;
   begin
     result := false;
     
-    if not assigned(shp) then exit;
-    if not RectanglesIntersect(rect, ShapeAABB(shp)) then exit;
+    if not assigned(s) then exit;
+    if not RectanglesIntersect(rect, ShapeAABB(s)) then exit;
     
-    kind := ShapeShapeKind(shp);
+    kind := ShapeShapeKind(s);
     
     case kind of
       pkPoint:      result := true;
-      pkCircle:     result := CircleRectCollision(ShapeCircle(shp), rect);
-      pkLine:       result := RectLineCollision(rect, ShapeLine(shp));
-      pkTriangle:   result := TriangleRectangleIntersect(ShapeTriangle(shp), rect);
+      pkCircle:     result := CircleRectCollision(ShapeCircle(s), rect);
+      pkLine:       result := RectLineCollision(rect, ShapeLine(s));
+      pkTriangle:   result := TriangleRectangleIntersect(ShapeTriangle(s), rect);
       pkLineList, pkLineStrip:  
-                    result := LinesRectIntersect(ShapeLines(shp, kind), rect);
+                    result := LinesRectIntersect(ShapeLines(s, kind), rect);
       pkTriangleStrip, pkTriangleFan, pkTriangleList:
-                    result := TrianglesRectangleIntersect(ShapeTriangles(shp, kind), rect);
+                    result := TrianglesRectangleIntersect(ShapeTriangles(s, kind), rect);
     end;
     
     if not result then
     begin
       //Check sub shapes
-      for i := 0 to High(shp^.subShapes) do
+      for i := 0 to High(s^.subShapes) do
       begin
         // if we have an intersection then return true
-        if ShapeRectangleIntersect(shp^.subShapes[i], rect) then
+        if ShapeRectangleIntersect(s^.subShapes[i], rect) then
         begin
           result := true;
           exit;
@@ -5646,11 +5770,11 @@ implementation
     {$ENDIF}
   end;
   
-  function ShapeShapeKind(shp: Shape): ShapeKind;
+  function ShapeShapeKind(s: Shape): ShapeKind;
   begin
-    if not assigned(shp) then begin result := ShapeKind(-1); exit; end;
+    if not assigned(s) then begin result := ShapeKind(-1); exit; end;
       
-    result := PrototypeKind(ShapeShapePrototype(shp));
+    result := PrototypeKind(ShapeShapePrototype(s));
   end;
   
   procedure FixRectangle(var rect: Rectangle);

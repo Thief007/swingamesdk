@@ -8,6 +8,7 @@ uses
 procedure Main();
 var
   img: Bitmap;
+  i: Integer;
 begin
   OpenAudio();
   
@@ -31,12 +32,16 @@ begin
   
   StartTimer(TimerNamed('TestTimer'));
   
+  for i := 0 to 2 do img := CreateBitmap(800,600);
+  
   repeat // The game loop...
     ProcessEvents();
     
     //DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
     ClearScreen(ColorBlack);
     FillRectangle(ColorWhite, 10, 10, 780, 580);
+    
+    ClearSurface(img, RandomColor());
     
     DrawFramerate(0,0);
     DrawBitmap(img, 50, 50);

@@ -56,6 +56,7 @@ def find_or_add_file(pascal_name, name=None, filename=None):
     if pascal_name in _files:
         return _files[pascal_name]
     else:
+        # print pascal_name, name, filename
         logger.info(' Cache     : Created file %s', pascal_name)
         result = SGFile(pascal_name, name, filename)
         _files[pascal_name] = result

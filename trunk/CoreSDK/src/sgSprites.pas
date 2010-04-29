@@ -633,7 +633,6 @@ interface
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
   
   /// @lib UpdateSpriteAnimationPctWithSound
-  /// @uname UpdateSpriteAnimationPercentWithSound
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   
   
@@ -641,6 +640,7 @@ interface
   /// @class Sprite
   /// @overload Draw DrawOffsetXY
   procedure DrawSprite(s : Sprite; xOffset, yOffset: LongInt); overload;
+  
   /// @lib DrawSpriteOffsetPoint
   /// @class Sprite
   /// @overload Draw DrawOffsetPoint
@@ -651,15 +651,14 @@ interface
   /// @method Draw
   procedure DrawSprite(s : Sprite); overload;
   
-  /// @lib MoveSprite(s, 1.0)
+  /// @lib MoveSpritePct(s, 1.0)
   /// @uname MoveSprite
   /// 
   /// @class Sprite
   /// @method Move
   procedure MoveSprite(s: Sprite); overload;
   
-  /// @lib MoveSprite
-  /// @uname MoveSpritePercent
+  /// @lib MoveSpritePct
   /// 
   /// @class Sprite
   /// @overload Move MovePct
@@ -667,6 +666,7 @@ interface
     
   /// @lib MoveSpriteVecPct(s, velocity, 1.0)
   /// @uname MoveSpriteVec
+  ///
   /// @class Sprite
   /// @overload Move MoveVec
   procedure MoveSprite(s : Sprite; const velocity: Vector); overload;

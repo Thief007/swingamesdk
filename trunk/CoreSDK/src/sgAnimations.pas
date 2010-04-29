@@ -1,5 +1,5 @@
 //=============================================================================
-// sgAnimation.pas
+// sgAnimations.pas
 //=============================================================================
 //
 // The Animation unit is responsible for defining and managing animation
@@ -95,12 +95,12 @@ interface
   /// retrieved by passing this ``name`` to the `FetchAnimationTemplate` function. 
   ///
   /// @lib
-  /// @sn animationTemplateNamed:%s fromFile:%s
+  /// @sn loadAnimationTemplateNamed:%s fromFile:%s
   ///
   /// @class AnimationTemplate
   /// @constructor
-  /// @csn initWithName:%s forFile:%s
-  function MapAnimationTemplate(name, filename: String): AnimationTemplate;
+  /// @csn initWithName:%s fromFile:%s
+  function LoadAnimationTemplateNamed(name, filename: String): AnimationTemplate;
   
   /// Determines if SwinGame has animation frames loaded for the supplied ``name``.
   /// This checks against all loaded animation frames, those loaded without a name
@@ -575,7 +575,7 @@ var
     
     if not HasSoundEffect(sndId) then
     begin
-      if MapSoundEffect(sndId, sndFile) = nil then
+      if LoadSoundEffectNamed(sndId, sndFile) = nil then
       begin
         RaiseException('Error at line ' + IntToStr(lineNo) + ' in animation ' + filename + '. Cannot find sound file ' + sndFile);
         exit;
@@ -801,7 +801,7 @@ end;
 
 function LoadAnimationTemplate(filename: String) : AnimationTemplate;
 begin
-  result := MapAnimationTemplate(filename, filename);
+  result := LoadAnimationTemplateNamed(filename, filename);
 end;
 
 procedure FreeAnimationTemplate(var framesToFree: AnimationTemplate);
@@ -811,7 +811,7 @@ begin
   framesToFree := nil;
 end;
 
-function MapAnimationTemplate(name, filename: String): AnimationTemplate;
+function LoadAnimationTemplateNamed(name, filename: String): AnimationTemplate;
 var
   obj: tResourceContainer;
   frm: AnimationTemplate;

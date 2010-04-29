@@ -79,11 +79,12 @@ interface
   /// retrieved by passing this ``name`` to the `FontNamed` function.
   ///
   /// @lib
+  /// @sn loadFontNamed:%s fromFile:%s size:%s
   ///
-  /// @class Map
+  /// @class Font
   /// @constructor
-  /// @csn initWithName:%s forFilename:%s andSize:%s
-  function MapFont(name, filename: String; size: LongInt): Font;
+  /// @csn initWithName:%s fromFile:%s size:%s
+  function LoadFontNamed(name, filename: String; size: LongInt): Font;
   
   /// Determines if SwinGame has a font loaded for the supplied name.
   /// This checks against all fonts loaded, those loaded without a name
@@ -223,7 +224,7 @@ implementation
   
   function LoadFont(fontName: String; size: LongInt): Font;
   begin
-    result := MapFont(FontNameFor(fontName, size), fontName, size);
+    result := LoadFontNamed(FontNameFor(fontName, size), fontName, size);
   end;
   
   procedure FreeFont(var fontToFree: Font);
@@ -253,7 +254,7 @@ implementation
 
 //----------------------------------------------------------------------------
 
-  function MapFont(name, filename: String; size: LongInt): Font;
+  function LoadFontNamed(name, filename: String; size: LongInt): Font;
   var
     obj: tResourceContainer;
     fnt: Font;

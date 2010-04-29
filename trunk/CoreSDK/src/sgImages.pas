@@ -8,6 +8,7 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-04-29: Andrew : Fixed create bitmap error that caused memory violation on freeing
 // - 2010-03-19: Andrew : Fixed images to work prior to loading the graphics window.
 // - 2010-02-05: Andrew : Added png saving.
 // - 2010-02-01: Aaron  : Added BitmapName and BitmapFileName
@@ -112,12 +113,12 @@ uses sgTypes;
   /// retrieved by passing this ``name`` to the `BitmapNamed` function. 
   ///
   /// @lib
-  /// @sn mapBitmapNamed:%s toFile:%s
+  /// @sn loadBitmapNamed:%s fromFile:%s
   ///
   /// @class Bitmap
   /// @constructor
-  /// @csn initWithName:%s forFilename:%s
-  function MapBitmap(name, filename: String): Bitmap;
+  /// @csn initWithName:%s fromFile:%s
+  function LoadBitmapNamed(name, filename: String): Bitmap;
   
   /// Loads and returns a bitmap with a given color code use for transparency.
   /// The supplied ``filename`` is used to locate the Bitmap to load. The supplied
@@ -125,12 +126,12 @@ uses sgTypes;
   /// `Bitmap` can then be retrieved by passing this ``name`` to the `BitmapNamed` function. 
   ///
   /// @lib
-  /// @sn mapBitmapNamed:%s toFile:%s colorKey:%s
+  /// @sn loadBitmapNamed:%s toFile:%s colorKey:%s
   ///
   /// @class Bitmap
   /// @constructor
-  /// @csn initWithName:%s forFilename:%s andColorKey:%s
-  function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
+  /// @csn initWithName:%s fromFile:%s colorKey:%s
+  function LoadTransparentBitmapNamed(name, filename: String; transparentColor: Color): Bitmap;
   
   /// Determines if SwinGame has a bitmap loaded for the supplied name.
   /// This checks against all bitmaps loaded, those loaded without a name
@@ -509,7 +510,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @method ToCellRectangle
-  /// @self 2
+  /// @self 3
   /// @csn toRectangleAtX:%s y:%s
   function BitmapCellRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
   
@@ -871,10 +872,11 @@ begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'CreateBitmap');
   {$ENDIF}
-
+  result := nil;
+  
   if (width < 1) or (height < 1) then
   begin
-    RaiseException('Bitmap width and height must be greater then 0');
+    RaiseWarning('Bitmap width and height must be greater then 0');
     exit;
   end;
   
@@ -907,7 +909,8 @@ begin
   
   name := 'Bitmap';
   idx := 0;
-  while not _Images.setValue(name, obj) do
+  
+  while _Images.containsKey(name) do
   begin
     name := 'Bitmap_' + IntToStr(idx);
     idx := idx + 1;
@@ -923,10 +926,17 @@ begin
   result^.cellCount := 1;
   
   result^.name      := name;
-  result^.filename  := name;
+  result^.filename  := '';
   
   SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
   SDL_FillRect(result^.surface, nil, ColorTransparent);
+  
+  if not _Images.setValue(name, obj) then
+  begin
+    FreeBitmap(result);
+    RaiseException('Error creating bitmap: ' + name);
+    exit;
+  end;
   
   {$IFDEF TRACE}
     TraceExit('sgImages', 'CreateBitmap', name + ' = ' + HexStr(result));
@@ -1122,7 +1132,7 @@ end;
 
 //----------------------------------------------------------------------------
 
-function MapBitmap(name, filename: String): Bitmap;
+function LoadBitmapNamed(name, filename: String): Bitmap;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'MapBitmap', name + ' -> ' + filename);
@@ -1135,7 +1145,7 @@ begin
   {$ENDIF}
 end;
 
-function MapTransparentBitmap(name, filename: String; transparentColor: Color): Bitmap;
+function LoadTransparentBitmapNamed(name, filename: String; transparentColor: Color): Bitmap;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'MapBitmap', name + ' -> ' + filename);
@@ -1171,14 +1181,13 @@ begin
   {$IFDEF TRACE}
     TraceEnter('sgImages', 'ReleaseBitmap', 'name = ' + name);
   {$ENDIF}
-
+  
   bmp := BitmapNamed(name);
   if (assigned(bmp)) then
   begin
     _Images.remove(name).Free();
     DoFreeBitmap(bmp);
   end;
-  
   {$IFDEF TRACE}
     TraceExit('sgImages', 'ReleaseBitmap');
   {$ENDIF}
@@ -1272,7 +1281,7 @@ begin
   if HasBitmap(name) then
   begin
     result := BitmapNamed(name);
-    exit;
+    exit; 
   end;
   
   New(result);

@@ -322,11 +322,12 @@ procedure FreePanel(var pnl: Panel);
 /// maps panel to name in Hash Table.
 ///
 /// @lib
+/// @sn loadPanelNamed:%s fromFile:%s
 ///
 /// @class Panel
 /// @constructor
-/// @csn initWithName:%s forFilename:%s
-function MapPanel(name, filename: String): Panel;
+/// @csn initWithName:%s fromFile:%s
+function LoadPanelNamed(name, filename: String): Panel;
 
 
 /// Loads panel from panel directory with filename
@@ -335,7 +336,7 @@ function MapPanel(name, filename: String): Panel;
 ///
 /// @class Panel
 /// @constructor
-/// @csn initFromPath:%s
+/// @csn initFromFile:%s
 function LoadPanel(filename: String): Panel;
 
 
@@ -3684,7 +3685,7 @@ begin
     TraceEnter('sgUserInterface', 'LoadPanel', filename);
   {$ENDIF}
   
-  result := MapPanel(filename, filename);
+  result := LoadPanelNamed(filename, filename);
   
   {$IFDEF TRACE}
     TraceExit('sgUserInterface', 'LoadPanel');
@@ -3692,7 +3693,7 @@ begin
 end;
 
 
-function MapPanel(name, filename: String): Panel;
+function LoadPanelNamed(name, filename: String): Panel;
 var
   obj: tResourceContainer;
   pnl: Panel;

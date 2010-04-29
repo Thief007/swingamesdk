@@ -52,6 +52,7 @@ _type_switcher = {
         'timer':            'timer %s',
         'bitmap':           'bitmap %s',
         'color':            'color %s',
+        'character':        'character %s',
         'sprite':           'sprite %s',
         'font':             'font %s',
         'map':              'map %s',
@@ -60,13 +61,15 @@ _type_switcher = {
         'character':            'character %s',
         
         'matrix2d':         'matrix2d %s',
+        'triangle':         'triangle %s',
+                
+        'directionangles':  'direction_angles %s',
         'vector':           'vector %s',
         'point2d':          'point2d %s',
         'linesegment':      'line_segment %s',
         'rectangle':        'rectangle %s',
-        'triangle':         'triangle %s',
         'circle':           'circle %s',
-        'bitmapcell':       'bitmap_cell *%s',
+        'bitmapcell':       'bitmap_cell %s',
         
         'keycode':              'key_code %s',
         'resourcekind':         'resource_kind %s',
@@ -125,13 +128,14 @@ _type_switcher = {
         None:               'void %s'
     },
     'const' : {
-        'point2d':      'point2d *%s',
-        'linesegment':  'line_segment *%s',
-        'rectangle':    'rectangle *%s',
-        'matrix2d':     'matrix2d %s',
-        'vector':       'vector *%s',
-        'circle':       'circle *%s',
-        'bitmapcell':   'bitmap_cell *%s',
+        'point2d':          'point2d *%s',
+        'linesegment':      'line_segment *%s',
+        'rectangle':        'rectangle *%s',
+        'matrix2d':         'matrix2d %s',
+        'directionangles':  'direction_angles *%s',
+        'vector':           'vector *%s',
+        'circle':           'circle *%s',
+        'bitmapcell':       'bitmap_cell *%s',
         
         'triangle':     'triangle %s',
         
@@ -152,13 +156,14 @@ _type_switcher = {
         'font':         'font *%s',
         'bitmap':       'bitmap *%s',
         'sprite':       'sprite *%s',
+        'character':    'character *%s',
         'map':          'map *%s',
         'animationtemplate':    'animation_template *%s',
         'animation':            'animation *%s',
         
         'matrix2d':     'matrix2d %s',
         'triangle':     'triangle %s',
-        'rectangle':    'rectangle %s',
+        'rectangle':    'rectangle *%s',
         
         'trianglearray':    'triangle_array %s',
         'stringarray':      'string_array %s',
@@ -195,19 +200,21 @@ _type_switcher = {
         'bitmap':       'bitmap %s',
         'font':         'font %s',
         'map':          'map %s',
+        'character':    'character %s',
         'sprite':       'sprite %s',
         'animationtemplate':    'animation_template %s',
         'animation':            'animation %s',
         
-        'color':        'color %s',
-        'point2d':      'point2d %s',
-        'vector':       'vector %s',
-        'circle':       'circle %s',
-        'triangle':     'triangle %s',
-        'rectangle':    'rectangle %s',
-        'linesegment':  'line_segment %s',
-        'matrix2d':     'matrix2d %s',
-        'bitmapcell':   'bitmap_cell %s',
+        'color':            'color %s',
+        'point2d':          'point2d %s',
+        'directionangles':  'direction_angles %s',
+        'vector':           'vector %s',
+        'circle':           'circle %s',
+        'triangle':         'triangle %s',
+        'rectangle':        'rectangle %s',
+        'linesegment':      'line_segment %s',
+        'matrix2d':         'matrix2d %s',
+        'bitmapcell':       'bitmap_cell %s',
         
         'linesarray':       'line_segment *%s',
         'point2darray':   'point2d *%s',
@@ -254,6 +261,7 @@ _adapter_type_switcher = {
         'timer':        'void *%s',
         'bitmap':       'void *%s',
         'sprite':       'void *%s',
+        'character':    'void *%s',
         'font':         'void *%s',
         'animationtemplate':    'void *%s',
         'animation':    'void *%s',
@@ -270,9 +278,10 @@ _adapter_type_switcher = {
         'mousebutton':      'mouse_button %s',
         'collisiontestkind':    'collision_test_kind %s',
         
-        'point2d':      'point2d %s',
-        'vector':       'vector %s',
-        'matrix2d':     'matrix2d %s',
+        'point2d':          'point2d %s',
+        'directionangles':  'direction_angles %s',
+        'vector':           'vector %s',
+        'matrix2d':         'matrix2d %s',
                 
         'rectangle':    'rectangle %s',
         'linesegment':  'line_segment %s',
@@ -308,6 +317,10 @@ _adapter_type_switcher = {
         'string[0..n - 1]':             'char **%s',
         
         'rectangle[0..n - 1]':          'rectangle *%s',
+        
+        'directionangles[0..n - 1]':                'direction_angles *%s',
+        'dirstatedata[0..n - 1][0..n - 1]':         'dir_state_data *%s',
+        'longint[0..n - 1][0..n - 1][0..n - 1]':    'int *%s',
         
         'mapdata':                          'map_data %s',
         'mapanimationdata[0..n - 1]':       'map_animation_data *%s',
@@ -349,6 +362,7 @@ _adapter_type_switcher = {
         'rectangle':        'rectangle *%s',
         'bitmapcell':       'bitmap_cell *%s',
         'vector':           'vector *%s',
+        'directionangles':  'direction_angles *%s',
         'circle':           'circle *%s',
         
         # Arrays - pass in as is (already pointer)
@@ -368,6 +382,7 @@ _adapter_type_switcher = {
         'font':         'font *%s',
         'bitmap':       'bitmap *%s',
         'sprite':       'sprite *%s',
+        'character':    'character *%s',
         'map':          'map *%s',
         'shapeprototype':       'shape_prototype *%s',
         'shape':                'shape *%s',
@@ -417,17 +432,22 @@ _adapter_type_switcher = {
         'byte': 'unsigned char %s',
         'color': 'unsigned int %s',
         'uint32': 'unsigned int %s',
-        'vector': 'vector %s',
-        'circle': 'circle %s',
-        'rectangle': 'rectangle %s',
-        'linesegment': 'line_segment %s',
+        
+        'vector':           'vector %s',
+        'directionangles':  'direction_angles %s',
+        'circle':           'circle %s',
+        'rectangle':        'rectangle %s',
+        'linesegment':      'line_segment %s',
+        
         'bitmap': 'bitmap %s',
         'collisionside': 'collision_side %s',
         'collisiontestkind': 'collision_test_kind %s',
         
-        'font': 'font %s',
-        'map': 'map %s',
-        'sprite': 'sprite %s',
+        'font':             'font %s',
+        'map':              'map %s',
+        'sprite':           'sprite %s',
+        'character':        'character %s',
+        
         'fontstyle': 'font_style %s',
         'maptag': 'map_tag %s',
         'maptile': 'map_tile %s',
@@ -558,7 +578,8 @@ def _const_strip_param_visitor(the_param, last):
     '''
     if the_param.modifier != 'const' or the_param.data_type.is_array:
         mod = the_param.modifier
-    else: mod = None
+    else: 
+        mod = None
     
     return '%s%s' % (
         type_visitor(the_param.data_type, mod) % the_param.name,

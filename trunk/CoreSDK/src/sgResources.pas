@@ -62,7 +62,7 @@ interface
   /// 
   /// @lib
   /// @sn mapResourceBundle:%s filename:%s showProgress:%s
-  procedure MapResourceBundle(name, filename: String; showProgress: Boolean);
+  procedure LoadResourceBundleNamed(name, filename: String; showProgress: Boolean);
   
   /// Release the resource bundle with the given name.
   /// 
@@ -263,14 +263,14 @@ implementation
         RaiseException('Font must have a size assigned. ' + current.name);
         exit;
       end;
-      MapFont(current.name, current.path, current.data[0])
+      LoadFontNamed(current.name, current.path, current.data[0])
     end;
     
     procedure rbLoadBitmap();
     var
       bmp: Bitmap;
     begin
-      bmp := MapBitmap(current.name, current.path);
+      bmp := LoadBitmapNamed(current.name, current.path);
       
       if Length(current.data) > 0 then
       begin
@@ -292,16 +292,16 @@ implementation
       if current.kind = kind then
       begin
         case kind of
-          BundleResource:     MapResourceBundle(current.name, current.path, false);
+          BundleResource:     LoadResourceBundleNamed(current.name, current.path, false);
           TimerResource:      CreateTimer(current.name);
           BitmapResource:     rbLoadBitmap();
           FontResource:       rbLoadFont();
-          SoundResource:      MapSoundEffect(current.name, current.path);
-          MusicResource:      MapMusic(current.name, current.path);
-          MapResource:        MapMap(current.name, current.path);
-          AnimationResource:  MapAnimationTemplate(current.name, current.path);
-          PanelResource:      MapPanel(current.name, current.path);
-          CharacterResource:  MapCharacter(current.name, current.path);
+          SoundResource:      LoadSoundEffectNamed(current.name, current.path);
+          MusicResource:      LoadMusicNamed(current.name, current.path);
+          MapResource:        LoadMapNamed(current.name, current.path);
+          AnimationResource:  LoadAnimationTemplateNamed(current.name, current.path);
+          PanelResource:      LoadPanelNamed(current.name, current.path);
+          CharacterResource:  LoadCharacterNamed(current.name, current.path);
           else
             RaiseException('Unkown recource kind in LoadResources' + IntToStr(LongInt(kind)));
         end;
@@ -410,7 +410,7 @@ implementation
   
   procedure LoadResourceBundle(name: String; showProgress: Boolean); overload;
   begin
-    MapResourceBundle(name, name, showProgress);
+    LoadResourceBundleNamed(name, name, showProgress);
   end;
   
   // Called to read in each line of the resource bundle.
@@ -462,7 +462,7 @@ implementation
     tResourceBundle(ptr).add(current);
   end;
     
-  procedure MapResourceBundle(name, filename: String; showProgress: Boolean);
+  procedure LoadResourceBundleNamed(name, filename: String; showProgress: Boolean);
   var
     bndl: tResourceBundle;
   begin

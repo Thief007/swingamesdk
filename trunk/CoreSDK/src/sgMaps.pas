@@ -672,12 +672,12 @@ interface
   /// retrieved by passing this `name` to the `MapNamed` function. 
   ///
   /// @lib
-  /// @sn mapMapNamed:%s toFile:%s
+  /// @sn loadMapNamed:%s fromFile:%s
   ///
   /// @class Map
   /// @constructor
-  /// @csn initWithName:%s forFilename:%s
-  function MapMap(name, filename: String): Map;
+  /// @csn initWithName:%s fromFile:%s
+  function LoadMapNamed(name, filename: String): Map;
 
   /// Returns the filename that SwinGame uses to load to this Map data.
   ///
@@ -2630,7 +2630,7 @@ interface
       TraceEnter('sgMaps', 'LoadMap', filename);
     {$ENDIF}
     
-    result := MapMap(filename, filename);
+    result := LoadMapNamed(filename, filename);
     
     {$IFDEF TRACE}
       TraceExit('sgMaps', 'LoadMap');
@@ -2638,7 +2638,7 @@ interface
   end;
 
 
-  function MapMap(name, filename: String): Map;
+  function LoadMapNamed(name, filename: String): Map;
   var
     obj: tResourceContainer;
     mp : Map;

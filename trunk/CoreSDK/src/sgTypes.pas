@@ -804,102 +804,68 @@ interface
       vk_POWER = 320, // Power Macintosh power key
       vk_EURO = 321 // Some european keyboards
     );
-
-    /// @enum MapTag
-    MapTag = (
-      MapTag1 = 0, MapTag2 = 1, MapTag3 = 2, MapTag4 = 3, MapTag5 = 4, MapTag6 = 5, MapTag7 = 6, MapTag8 = 7, MapTag9 = 8,
-      MapTag10 = 9, MapTag11 = 10, MapTag12 = 11, MapTag13 = 12, MapTag14 = 13, MapTag15 = 14, MapTag16 = 15,
-      MapTag17 = 16, MapTag18 = 17, MapTag19 = 18, MapTag20 = 19, MapTag21 = 20, MapTag22 = 21, MapTag23 = 22,
-      MapTag24 = 23
-    );
-
-    /// @struct MapTile
-    MapTile = packed record
-      xIndex: LongInt;
-      yIndex: LongInt;
-      topCorner: Point2D;
-      pointA: Point2D;
-      pointB: Point2D;
-      pointC: Point2D;
-      pointD: Point2D;
-    end;
-
-    /// @struct MapData
-    /// @via_pointer
-    MapData = packed record
-      Version: LongInt;
-      MapWidth: LongInt;
-      MapHeight: LongInt;
-      BlockWidth: LongInt;
-      BlockHeight: LongInt;
-      NumberOfBlocks: LongInt;
-      NumberOfLayers: LongInt;
-      NumberOfAnimations: LongInt;
-      CollisionLayer: LongInt;
-      TagLayer: LongInt;
-      GapX: LongInt;
-      GapY: LongInt;
-      StaggerX: LongInt;
-      StaggerY: LongInt;
-      Isometric: Boolean;
-    end;
-
-    /// @struct MapAnimationData
-    /// @via_pointer
-    MapAnimationData = packed record
-      AnimationNumber: LongInt;
-      Delay: LongInt;
-      NumberOfFrames: LongInt;
-      Frame: Array of LongInt;
-      CurrentFrame: LongInt;
-    end;
-
-    /// @struct MapLayerData
-    /// @via_pointer
-    MapLayerData = packed record
-      Animation: Array of Array of LongInt;
-      Value: Array of Array of LongInt;
-    end;
-
-    /// @struct MapCollisionData
-    /// @via_pointer
-    MapCollisionData = packed record
-      Collidable: Array of Array of Boolean;
-    end;
-
-    /// @struct MapTagDetails
-    /// @via_pointer
-    MapTagDetails = packed record
-      x: LongInt;
-      y: LongInt;
-    end;
-
-    /// @struct MapRecord
-    /// @via_pointer
-    MapRecord = packed record
-      MapInfo: MapData;
-      AnimationInfo: Array of MapAnimationData;
-      LayerInfo: Array of MapLayerData;
-      CollisionInfo: MapCollisionData;
-      TagInfo: Array [0..23] of Array of MapTagDetails; //TODO: Change to MapTag -> requires parser fixes to detect size
-      Tiles: Sprite;
-      Animate: Boolean;
-      Frame: LongInt;
-    end;
-
-    /// @class Map
-    /// @pointer_wrapper
-    /// @field pointer: ^MapRecord
-    Map = ^MapRecord;
-
-
-
+    
     /// The FreeNotifier is a function pointer used to notify user programs of
     /// swingame resources being freed. This should not be used by user programs.
     ///
     /// @type FreeNotifier
     FreeNotifier = procedure (p: Pointer); cdecl;
 
+
+  ///---------------------------------------------------------------------------
+  /// Character Type Details
+  ///--------------------------------------------------------------------------- 
+  
+    /// Character directions are represented as existing between a given
+    /// minimum and maximum angle as coded in the DirectionAngles type.
+    /// This is then used with the velocity from the `Character`'s `Sprite`
+    /// to determine the image that is shown.
+    ///
+    /// @struct DirectionAngles
+    DirectionAngles = record
+      min : LongInt;
+      max : LongInt;
+    end;
+    
+    /// The DirStateData contains the data for a Character's direction and
+    /// state combination. This allows, for example, for a character to have
+    /// an animation and layer orderring for Swimming North, Walking North,
+    /// Swimming East, etc.
+    ///
+    /// @struct DirStateData
+    DirStateData = record
+      Anim      : LongInt;
+      LayerOrder: array of LongInt;
+    end;
+    
+    /// SwinGame Characters allow you to code `Sprite` like entities that
+    /// include multiple layers, and handle directions and different states.
+    /// The Character code provides logic that manages displaying different
+    /// images and animations for characters based on their state and current
+    /// direction. 
+    ///
+    /// @class Character
+    /// @pointer_wrapper
+    /// @field pointer: ^CharacterData
+    Character  = ^CharacterData;
+    
+    /// @struct CharacterData
+    /// @via_pointer
+    CharacterData = record
+      Name                  : String;
+      FileName              : String;
+      CharSprite            : Sprite;                               // The Character's Sprite
+      CharName              : String;                               // The Character's Name
+      CharType              : String;                               // The Character's Type
+      States                : NamedIndexCollection;                 // The names and indexs of the Character's States
+      Directions            : NamedIndexCollection;                 // The names and indexs of the Character's Direction
+      CurrentState          : LongInt;                              // The Character's Current State
+      CurrentDirection      : LongInt;                              // The Character's Current Direction
+      DirectionParameters   : array of DirectionAngles;             // The different angle parameters the character checks to change the animation based on the direction
+      ShownLayers           : array of Boolean;                     // Boolean stating whether a layer is to be drawn
+      ShownLayersByDirState : array of array of DirStateData;       // 
+      ShownLayerCache       : array of array of array of LongInt;   // 
+    end;
 
 //=============================================================================
 implementation

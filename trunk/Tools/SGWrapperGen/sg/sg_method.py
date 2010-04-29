@@ -9,6 +9,7 @@ Copyright (c) 2009 Swinburne. All rights reserved.
 
 import logging
 import sys
+import copy
 
 from sg_metadata_container import SGMetaDataContainer
 from sg_parameter import SGParameter
@@ -41,6 +42,7 @@ class SGMethod(SGMetaDataContainer):
         self.is_external = False
         self.is_getter = False
         self.is_setter = False
+        self.is_class_method = False
         self.in_property = None
         self.called_by_lib = False
         self.method_called = None
@@ -83,22 +85,31 @@ class SGMethod(SGMetaDataContainer):
             #print self.name, real_params, self.sn
             
             temp_sn  = self.sn
-            if self.method_called.was_function:
-                temp_sn = temp_sn + ' result:%s'
+            # if self.method_called.was_function:
+            #     temp_sn = temp_sn + ' result:%s'
+            
             # if self.method_called.has_length_params:
             #     temp_sn = temp_sn + ' length:%s'
             # print temp_sn
             # print tuple([param.name for param in real_params])
             
             if special_visitor != None:
+                # self.sn, self.params
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
+                
+                result['sn'] = temp
+                result['sn.sel'] = (temp_sn % tuple(['' for param in real_params])).replace(' ', '')
             else:
-                temp = temp_sn % tuple([param.name for param in real_params])
+                temp = 'NO SN visitor'
+            #     # print self.method_called.name
+            #     # print self.name
+            #     print real_params
+            #     print temp_sn, tuple([param.name for param in real_params])
+            #     temp = temp_sn % tuple([param.name for param in real_params])
             
             #print temp
             
-            result['sn'] = temp
-            result['sn.sel'] = (temp_sn % tuple(['' for param in real_params])).replace(' ', '')
+            
         else:
             if special_visitor != None:
                 temp = ':'.join([special_visitor(param, param == self.params[-1]) for param in self.params])
@@ -135,7 +146,7 @@ class SGMethod(SGMetaDataContainer):
         result['field.name_lower'] = wrapper_helper.lower_name(self.field_name)
         
         if self.length_call != None:
-            if self.in_property != None: #replace first argument with 'self'
+            if self.in_property != None or self.is_class_method: #replace first argument with 'self'
                 old_arg = self.length_call.args[0]
                 self.length_call.args[0] = 'self.pointer'
                 result['length_call'] = self.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater)['the_call']
@@ -355,11 +366,12 @@ class SGMethod(SGMetaDataContainer):
         other.doc = self.doc
         #dont copy sn... unless other is static
         if other.sn == None and other.is_static:
-                    other.sn = self.sn
+            other.sn = self.sn
         # else:
         #     print other.sn
         
         other.length_call = self.length_call
+        other.fixed_result_size = self.fixed_result_size
         
         if self.is_static or other.is_constructor:
             other.params = self.params
@@ -379,7 +391,13 @@ class SGMethod(SGMetaDataContainer):
             logger.error('Model Error: Changing method called by %s', self.name)
             assert False
         self.method_called = method
-        self.args = args
+        self.args = list()
+        
+        for arg in args:
+            if not isinstance(arg, SGParameter):
+                self.args.append(arg)
+            else:
+                self.args.append(self.get_parameter(arg.name))
     
     def _process_args(self):
         '''
@@ -424,8 +442,11 @@ class SGMethod(SGMetaDataContainer):
         if self.called_by_lib: #Set up the call from the library to this method
             logger.debug('Method    : Setting %s in library to call %s', lib_method, self)
             lib_method.return_type = self.return_type #set return type
+            
+            lib_method.params = []  #add parameters
+            for p in self.params:
+                lib_method.params.append(p.clone())
             lib_method.calls(self, self.args) #..calls this method at other end
-            lib_method.params = self.params #add parameters
     
     def create_and_add_property(self, class_method):
         '''
@@ -455,7 +476,7 @@ class SGMethod(SGMetaDataContainer):
             prop.setter = class_method
             class_method.is_setter = True
             self.is_setter = False #transfer to other methods
-            class_method.params[0].name = 'value'
+            #class_method.params[0].name = 'value'
         else:
             logger.error('Property is not a getter or a setter: %s - %s', self.name, property_name)
             assert False
@@ -480,6 +501,7 @@ class SGMethod(SGMetaDataContainer):
             3: alter args (add pointer field access)
         '''
         self.clone_to(class_method) #copy self into other
+        class_method.is_class_method = True
         
         #if the class method is actually a property...
         if self.is_getter or self.is_setter:
@@ -643,6 +665,7 @@ class SGMethod(SGMetaDataContainer):
         params = self.params
         
         arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in params ]
+        # arg_list
         
         if arg_visitor != None:
             return ','.join([ arg_visitor(a, params[i], params[i]) for i,a in enumerate(arg_list) ])
@@ -656,6 +679,7 @@ class SGMethod(SGMetaDataContainer):
         
         arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in args ]
         if arg_visitor != None:
+            if len(params) < len(args): return 'ARGS > PARAMS' #TODO: Look into
             return ', '.join([ arg_visitor(a, args[i], params[i]) for i,a in enumerate(arg_list) ])
         else:
             return ', '.join(arg_list)

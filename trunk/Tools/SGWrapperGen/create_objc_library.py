@@ -36,11 +36,11 @@ def arg_visitor(arg_str, the_arg, for_param):
         # print arg_str, the_arg, for_param
         assert False
         
-    if isinstance(the_arg, SGParameter): #uses parameter as value
-        data_key = 'arg_val'
+    if isinstance(the_arg, SGParameter): # uses parameter as value
+        data_key = 'arg_val'            # Data is a variable/parameter
     else:
-        data_key = 'arg_lit_val'
-        
+        data_key = 'arg_lit_val'        # Data is a literal e.g. True
+    
     the_type = for_param.data_type
     
     # Change True to true for example...
