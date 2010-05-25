@@ -155,7 +155,7 @@ interface
   /// of this record can be accessed by .min and .max
   ///
   /// @lib
-  /// @sn character:%s idx:%s
+  /// @sn character:%s angleAtIdx:%s
   ///
   /// @class Character
   /// @method AngleAt
@@ -173,7 +173,7 @@ interface
   /// specified
   ///
   /// @lib
-  /// @sn character:%s idx:%s
+  /// @sn character:%s minAngleAtIdx:%s
   ///
   /// @class Character
   /// @method AngleMinAt
@@ -183,7 +183,7 @@ interface
   /// specified
   ///
   /// @lib
-  /// @sn character:%s idx:%s
+  /// @sn character:%s maxAngleAtIdx:%s
   ///
   /// @class Character
   /// @method AngleMaxAt

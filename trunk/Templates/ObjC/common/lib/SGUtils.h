@@ -8,4 +8,6 @@
 + (NSArray *) arrayOfIntegers:(int *)firstPtr size:(int)sz;
 + (void) getIntegers:(int *)firstPtr fromArray:(NSArray *)in_data maxSize:(int)sz;
 
++ (NSArray *) arrayOfStrings:(char **)firstPtr size:(int)sz;
+
 @end

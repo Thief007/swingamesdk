@@ -31,4 +31,19 @@
     }
 }
 
++ (NSArray *) arrayOfStrings:(char **)firstPtr size:(int)sz
+{
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];
+    int i;
+    NSString *obj;
+    
+    for (i = 0; i < sz; i++)
+    {
+        obj = [[[NSString alloc] initWithCString:*(firstPtr + i encoding:NSASCIIStringEncoding)] autorelease]; //obj is autorelease...
+        [result addObject: obj];
+    }
+    
+    return [result autorelease];
+}
+
 @end

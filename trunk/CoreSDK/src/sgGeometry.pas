@@ -356,15 +356,15 @@ interface
   /// @length ShapeLineCount
   function LinesFrom(s: shape): LinesArray; overload;
   
-  /// Returns the vector needed to move shape ``s`` out of rectangle``bounds`` given the velocity specified.
+  /// Returns the vector needed to move shape ``s`` out of rectangle``bounds`` given the it was moving with the velocity specified.
   /// 
   /// @lib
-  /// @sn vectorFromRect:%s outOfRect:%s givenHeading:%s
+  /// @sn shape:%s vectorOutOfRect:%s givenHeading:%s
   /// 
-  /// @class Rectangle
+  /// @class Shape
   /// @method VectorOutOfRect
   /// @csn vectorOutOfRect:%s givenHeading:%s
-  function VectorOutOfShapeFromRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
+  function ShapeVectorOutOfRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
   
   /// Returns a line from a starting point to the point at the end of the
   /// mv vector.
@@ -4840,7 +4840,7 @@ implementation
     {$ENDIF}
   end;
 
-  function VectorOutOfShapeFromRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
+  function ShapeVectorOutOfRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
   var
   maxIdx :LongInt;
   begin

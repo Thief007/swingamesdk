@@ -367,7 +367,7 @@ interface
   /// Sets the offset of the specified layer.
   ///
   /// @lib SpriteSetLayerOffsetNamed
-  /// @sn sprite:%s setOffsetOfLayer:%s to:%s
+  /// @sn sprite:%s setOffsetOfLayerNamed:%s to:%s
   ///
   /// @class Sprite
   /// @overload SetLayerOffset SetLayerNamedOffset
@@ -381,7 +381,7 @@ interface
   ///
   /// @class Sprite
   /// @overload SetLayerOffset SetLayerNamedOffset
-  /// @csn layerNamed:%s setOffset:%s 
+  /// @csn layer:%s setOffset:%s 
   procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D); overload;
   
   /// Returns the index of the n'th (idx parameter) visible layer.

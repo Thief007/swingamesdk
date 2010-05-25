@@ -489,8 +489,8 @@ _type_dictionary_creation_data = [
         'identifiers': [
             # type key, objc name, prefix for switching, c-type, post-fix for switching
             ('bitmaparray', 'SGBitmap *', 'SGBitmap', 'Bitmaps'),
-            ('stringarray', 'NSString *', 'NSString', 'Strings'),
-            ('trianglearray', 'triangle', 'SGTriangle', 'Triangles')
+            ('stringarray', 'char *', 'NSString', 'Strings'),
+            ('trianglearray', 'triangle', 'SGTriangle', 'Triangles'),
             
         ],
         '_type_switcher': {
@@ -501,7 +501,7 @@ _type_dictionary_creation_data = [
                 'return':   'NSArray *',
             },
         '_data_switcher': {
-                'return_val':   '(#2#)%s',
+                #'return_val':   '(#2#)%s',
                 'arg_val':      '(int)%s',
                 # 'arg_lit_val': '',
             },

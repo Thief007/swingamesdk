@@ -833,9 +833,10 @@ interface
     /// Swimming East, etc.
     ///
     /// @struct DirStateData
+    /// @via_pointer
     DirStateData = record
       Anim      : LongInt;
-      LayerOrder: array of LongInt;
+      LayerOrder: LongIntArray;
     end;
     
     /// SwinGame Characters allow you to code `Sprite` like entities that

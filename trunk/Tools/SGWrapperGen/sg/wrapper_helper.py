@@ -4,7 +4,7 @@ from sg_method import SGMethod
 from sg_cache import logger, find_or_add_type
 
 _hasError = False
-_dieOnError = False
+_dieOnError = True
 
 def hasError():
     global _hasError
