@@ -489,7 +489,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @overload ToCellRectangle ToCellRectangleAtOrigin
-  /// @csn toRectangleAtOrigin
+  /// @csn toRectangleForCellAtOrigin
   function BitmapCellRectangle(bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for a cell of the bitmap at the indicated point.
@@ -500,18 +500,18 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload ToCellRectangle ToCellRectangleAtPt
   /// @self 2
-  /// @csn toRectangleAt:%s
+  /// @csn toRectangleForCellAt:%s
   function BitmapCellRectangle(const pt: Point2D; bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for a cell of the bitmap at the indicated point.
   /// 
   /// @lib BitmapCellRectangleXY
-  /// @sn rectangleAtX:%s y:%s forBitmapCell:%s
+  /// @sn rectangleForCellAtX:%s y:%s forBitmapCell:%s
   ///
   /// @class Bitmap
   /// @method ToCellRectangle
   /// @self 3
-  /// @csn toRectangleAtX:%s y:%s
+  /// @csn toRectangleForCellAtX:%s y:%s
   function BitmapCellRectangle(x, y: Single; bmp: Bitmap): Rectangle; overload;
   
   /// Returns a rectangle for the location of the indicated cell within the

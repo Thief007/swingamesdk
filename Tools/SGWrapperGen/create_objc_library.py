@@ -187,6 +187,7 @@ def _create_objc_property_details(the_property, other):
     '''Visited for each property, adds details to the result details'''
     result_details = other['details']
     
+    # print the_property.name    
     type_name = wrapper_helper.std_type_visitor(objc_lib._type_switcher, the_property.data_type, 'return')
     
     is_wrapped = the_property.in_class.is_pointer_wrapper and (the_property.data_type.is_struct or the_property.data_type.is_array) and not the_property.is_static and the_property.getter != None and the_property.setter != None
