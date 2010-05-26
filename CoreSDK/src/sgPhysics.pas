@@ -870,7 +870,7 @@ implementation
   
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
   begin
-    result := LineIntersectsLines(line, LinesFrom(rect));
+    result := LineIntersectsLines(line, LinesFrom(rect)) or PointInRect(line.startPoint, rect);
   end;
     
   function RectLineCollision(s: Sprite; const line: LineSegment): Boolean; overload;

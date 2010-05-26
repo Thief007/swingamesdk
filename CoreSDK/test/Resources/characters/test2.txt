@@ -8,7 +8,7 @@ n:TestDude
 t:Badass
 
 //CellInfo WIDTH||HEIGHT||COLS||ROWS||COUNT
-c:48,64,3,4,12
+//c:48,64,3,4,12
 
 //Bitmaps 				COUNT || LIST OF BITMAPS
 b:Body,corpolupo1.png

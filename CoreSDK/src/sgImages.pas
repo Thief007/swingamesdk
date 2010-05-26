@@ -810,7 +810,7 @@ uses sgTypes;
   /// Draw a cell from a bitmap onto the game.
   ///
   /// @lib DrawCellOnScreen
-  /// @sn bitmap:%s drawCell:%s at:%s
+  /// @sn bitmap:%s drawCellOnScreen:%s at:%s
   ///
   /// @class Bitmap
   /// @overload DrawCell DrawCellAtPoint

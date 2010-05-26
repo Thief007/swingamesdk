@@ -1,4 +1,4 @@
-program MapEditorTest;
+program MapTest;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
   sgTypes, sgMaps, sgCore, sgCamera,
@@ -57,7 +57,7 @@ begin
 	p2d[4].x := 0;
 	p2d[4].y := 0;
 	
-  c := LoadCharacter('test2.txt');
+  c := LoadCharacter('CharasDude.txt');
   writeln('Map Loading');
   //myMap := NewMap();
   myMap := LoadMap('test1.txt');
@@ -108,7 +108,7 @@ begin
     //writeln('have  drawn');
 
     DrawMapDebug(myMap);
-
+    DrawCharacter(c);
 	//	DrawCharacterWithStationary(c, 0, 1);
     
     if SpriteHasCollidedWithTile(myMap, 2, c^.CharSprite, i, j) then

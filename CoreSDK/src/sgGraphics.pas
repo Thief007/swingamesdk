@@ -699,7 +699,7 @@ interface
   /// 
   /// @lib DrawOrFillRectangleRectOnto(dest, clr, True, source)
   /// @uname FillRectangleRectOnto
-  /// @sn drawOnto:%s color:%s rectangle:%s
+  /// @sn fillOnto:%s color:%s rectangle:%s
   procedure FillRectangle(dest: Bitmap; clr : Color; const source: Rectangle); overload;
   
   /// Draw a rectangle in the game (filled or outline).
@@ -765,14 +765,14 @@ interface
   /// Draw a rectangle on the screen (fill or outline).
   ///
   /// @lib DrawOrFillRectangleRectOnScreen
-  /// @sn draw:%s filled:%s rectangle:%s
+  /// @sn draw:%s filled:%s rectangleOnScreen:%s
   procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; const source : Rectangle); overload;
   
   /// Draw a rectangle on the screen.
   ///
   /// @lib DrawOrFillRectangleRectOnScreen(clr, False, source)
   /// @uname DrawRectangleRectOnScreen
-  /// @sn draw:%s rectangle:%s
+  /// @sn draw:%s rectangleOnScreen:%s
   procedure DrawRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   
   /// Fill a rectangle on the screen.

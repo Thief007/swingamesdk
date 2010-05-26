@@ -1,6 +1,8 @@
 #import "SGUtils.h"
+#import "SGTriangle.h"
 
 #import <Foundation/NSValue.h>
+
 
 @implementation SGUtils : NSObject
 
@@ -39,7 +41,22 @@
     
     for (i = 0; i < sz; i++)
     {
-        obj = [[[NSString alloc] initWithCString:*(firstPtr + i encoding:NSASCIIStringEncoding)] autorelease]; //obj is autorelease...
+        obj = [[[NSString alloc] initWithCString:*(firstPtr + i) encoding:NSASCIIStringEncoding] autorelease]; //obj is autorelease...
+        [result addObject: obj];
+    }
+    
+    return [result autorelease];
+}
+
++ (NSArray *) arrayOfTriangles:(triangle *)firstPtr size:(int)sz
+{
+    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:sz];
+    int i;
+    NSString *obj;
+    
+    for (i = 0; i < sz; i++)
+    {
+        obj = [SGTriangle triangleForData:*(firstPtr + i)]; //obj has 0 retain - not init or new...
         [result addObject: obj];
     }
     

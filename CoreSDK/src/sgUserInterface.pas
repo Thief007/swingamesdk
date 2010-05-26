@@ -156,6 +156,8 @@ type
 //---------------------------------------------------------------------------
 procedure GUISetForegroundColor(c:Color);
 procedure GUISetBackgroundColor(c:Color);
+procedure GUISetBackgroundColorInactive(c:color);
+procedure GUISetForegroundColorInactive(c:color);
 
 /// Returns true if any of the panels in the user interface have been clicked.
 /// 
@@ -1154,8 +1156,6 @@ procedure ShowOpenDialog(); overload;
 procedure ShowOpenDialog(select: FileDialogSelectType); overload;
 
 procedure DoFreePanel(var pnl: Panel);
-procedure GUISetBackgroundColorInactive(c:color);
-procedure GUISetForegroundColorInactive(c:color);
 
 //Do not use
 procedure AddPanelToGUI(p: Panel);
@@ -1709,7 +1709,7 @@ procedure DrawLabelText(forRegion: Region; const area: Rectangle);
 begin
   DrawTextLinesOnScreen(LabelText(forRegion), 
                         VectorForecolorToDraw(forRegion),
-                        VectorBackcolorToDraw(forRegion), 
+                        ColorTransparent, //VectorBackcolorToDraw(forRegion), 
                         LabelFont(forRegion),
                         LabelAlignment(forRegion), 
                         TextboxTextArea(area));
@@ -1790,12 +1790,10 @@ begin
     
     if GUIC.visiblePanels[i]^.DrawAsVectors then
     begin
-      
       DrawAsVectors(GUIC.visiblePanels[i])
     end
     else
     begin
-      
       DrawAsBitmaps(GUIC.visiblePanels[i]);
     end;
   end;

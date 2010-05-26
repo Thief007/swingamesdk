@@ -13,6 +13,24 @@
     return ret;
 }
 
+- (void) copyTo:(%(name_lower)s *)dest
+{
+    memcpy((void *)dest, (void *)data, sizeof(data));
+}
+
++ (void) get%(name)ss:(%(name_lower)s *)firstPtr fromArray:(const NSArray *)arr maxSize:(int)sz
+{
+    int i, count = [arr count];
+    count = count <= sz ? count: sz; //get min of count and sz
+    
+    for (i = 0; i < count; i++)
+    {
+        // get the i'th object from the NSArray
+        SG%(name)s *obj = ((SG%(name)s *)[arr objectAtIndex: i]);
+        [obj copyTo:(firstPtr + i)];
+    }
+}
+
 - (id)initWith%(name)s:(%(name_lower)s)dat
 {
     //Assign super's initialised value to the self pointer

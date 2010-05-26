@@ -502,7 +502,7 @@ _type_dictionary_creation_data = [
             },
         '_data_switcher': {
                 #'return_val':   '(#2#)%s',
-                'arg_val':      '(int)%s',
+                'arg_val':      '%s',
                 # 'arg_lit_val': '',
             },
         'local_variable_switcher': {
