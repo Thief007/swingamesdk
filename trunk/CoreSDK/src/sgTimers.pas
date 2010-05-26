@@ -150,7 +150,7 @@ begin
   name := 'Timer';
   idx := 0;
   
-  while not _Timers.containsKey(name) do
+  while _Timers.containsKey(name) do
   begin
     name := 'Timer_' + IntToStr(idx);
     idx := idx + 1;

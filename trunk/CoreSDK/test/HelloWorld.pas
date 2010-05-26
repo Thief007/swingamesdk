@@ -2,7 +2,7 @@ program HelloWorld;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
   sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources,
-  sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, 
+  sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, sgAnimations,
   sgSprites, sgTimers;
 
 procedure Main();
@@ -14,8 +14,11 @@ begin
   
   LoadResourceBundle('splash.txt');
   LoadResourceBundle('bundle.txt');
+  LoadAnimationTemplate('test.txt');
   
   OpenGraphicsWindow('Hello World', 640, 480);
+  
+  img := CreateBitmap(800, 600);
   
   //Test releasing of resources - not assigned
   WriteLn('BMP: ', HexStr(BitmapNamed('fred')));

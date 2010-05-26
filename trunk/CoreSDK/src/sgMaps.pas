@@ -256,6 +256,7 @@ interface
   ///
   /// @class Map
   function TileCount(m : map): Longint;
+  
   /// returns the index of the kind from the NamedIndexCollection given
   /// the name of the kind
   ///
@@ -1875,7 +1876,7 @@ interface
     //DrawRectangle(ColorYellow, sprRect);
     //DrawShape(tileShape);
     //WriteLn(x, ',', y);
-    kickVector := VectorOutOfShapeFromRect(tileshape, sprRect, velocity);
+    kickVector := ShapeVectorOutOfRect(tileshape, sprRect, velocity);
 
     sprRect.x += kickVector.x;
     sprRect.y += kickVector.y;

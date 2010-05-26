@@ -5,6 +5,27 @@ uses
   sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, 
   sgSprites, sgTimers;
 
+procedure TestRectLineCollision();
+var
+  lns: array [0..3] of LineSegment;
+  r: Rectangle;
+  i: Integer;
+begin
+  
+  r := RectangleFrom(50, 50, 50, 50);
+  DrawRectangle(ColorWhite, r);
+  
+  lns[0] := LineFrom(PointAt(55, 55), MousePosition());
+  
+  for i := 0 to High(lns) do
+  begin
+    if RectLineCollision(r, lns[i]) then
+      DrawLine(ColorRed, lns[i])
+    else
+      DrawLine(ColorBlue, lns[i]);
+  end;
+end;
+
 procedure Main();
 var
   rect, rect2: Rectangle;
@@ -31,6 +52,9 @@ begin
     
     //DrawBitmap(BitmapNamed('SplashBack'), 0, 0);
     ClearScreen(ColorBlack);
+    
+    TestRectLineCollision();
+    
     FillRectangle(ColorWhite, rect);
     DrawRectangle(ColorGreen, rect2);
     
@@ -40,7 +64,6 @@ begin
       ResetTimer(tmr);
     end;
       
-    
     mvmtLn := LineFromVector(rect.x + rect.width div 2, rect.y + rect.height div 2, mvmt);
     DrawLine(ColorRed, mvmtLn);
     

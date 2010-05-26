@@ -54,7 +54,9 @@ begin
   // end;
 
   if CheckboxState(RegionWithID('Checkbox1')) then
+  begin
     DrawGUIAsVectors(false)
+  end
   else
     DrawGUIAsVectors(true);
     

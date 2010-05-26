@@ -491,6 +491,7 @@ end;
 
 procedure DrawUpdate(m : Map; offset:vector);
 begin
+  
   if ListActiveItemText(RegionWithID('dD.displayList')) = 'Grid' then DrawMapGrid(m, offset);
   if ListActiveItemText(RegionWithID('dD.displayList')) =  'Bitmap' then
   begin
@@ -552,6 +553,8 @@ begin
   UpdateLayerList(myMap);
   ShowMapProperties(myMap);
   LoadBitmapFromMap(myMap);
+
+  GUISetBackgroundColor(ColorBlack);
 
   //SetCameraPos(VectorTo(-150,-30));
 
