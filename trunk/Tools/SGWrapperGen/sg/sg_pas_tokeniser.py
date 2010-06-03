@@ -66,6 +66,16 @@ class SGPasTokeniser():
             result = self.pas_lines[self._line_no][self._char_no + 1:self._char_no + chars + 1]
         #print 'peeking at', result
         return result
+        
+    def peekNextChar(self):
+        n = 1
+        ch = self._peek(n)
+        
+        while ch == ' ' or ch == '/t':
+            n = n + 1
+            ch = self._peek(n)
+        
+        return ch
     
     def _read_matching(self, start, match_fn):
         '''Return a string starting with the "start" character and moving

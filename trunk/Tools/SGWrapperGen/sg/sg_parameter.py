@@ -14,7 +14,7 @@ class SGParameter(SGMetaDataContainer):
     
     def __init__(self, name, data_type = None):
         """initialise the parameter with a name, sets type to None"""
-        SGMetaDataContainer.__init__(self, ['type','modifier','maps_result'])
+        SGMetaDataContainer.__init__(self, ['type','modifier','maps_result','related_params'])
         self.name = name
         self.data_type = data_type
         self.modifier = None
@@ -31,6 +31,7 @@ class SGParameter(SGMetaDataContainer):
         self.is_returned = False        # Does this variable actually contain the return value (must be maps_result)
         self.pass_through = False       # This parameter exists just to pass the result out after out parameters...
         self.being_updated = False       # This parameter is updated (so ignore reporting errors on arrays when parameters are checked) 
+        self.related_params = None
     
     # def set_as_output(self):
     #     """marks this as an output parameter"""
@@ -70,7 +71,11 @@ class SGParameter(SGMetaDataContainer):
     maps_result = property(lambda self: self['maps_result'].other, 
         lambda self,value: self.set_tag('maps_result', value), 
         None, "The parameter wraps the result of a function.")
-        
+    
+    def add_related_params(self, lst):
+        print 'Added related parameters to', self.name, ' related = ', lst
+        self.related_params = lst
+    
     def local_var_name(self):
         """returns the local variable name that this would be copied to if needed, otherwise the parameter name"""
         
@@ -100,6 +105,7 @@ class SGParameter(SGMetaDataContainer):
         result.is_returned = self.is_returned
         result.pass_through = self.pass_through
         result.updated = self.being_updated
+        result.related_params = self.related_params
         
         return result
 #
