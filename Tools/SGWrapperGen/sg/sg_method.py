@@ -308,6 +308,27 @@ class SGMethod(SGMetaDataContainer):
                 if not done:
                     logger.error('Method    : Unable to find parameter %s for %s', param_name, self.uname)
                     assert False
+        elif title == 'related_params':
+            # The parameters have related documentation
+            # The passed in details has the param name, and the list of its related
+            # parameters
+            for related_param_details in other:
+                param_name = related_param_details[0]
+                related_params = related_param_details[1]
+                
+                # Find the parameter
+                done = False
+                for param in self.params:
+                    # if this is the parameter...
+                    if param.name == param_name:
+                        # then add related docs
+                        param.add_related_params(related_params)
+                        done = True
+                        break
+                if not done:
+                    logger.error('Method    : Unable to find parameter %s for %s', param_name, self.uname)
+                    assert False
+                
         elif title == 'updatesArrayParams':
             # check which parameters are being updated and mark so that checking ignores them
             for idx in other:

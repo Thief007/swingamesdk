@@ -29,7 +29,7 @@ class SGPasParser():
             'unit': self.process_unit
         }
         self._attribute_processors = {
-            'param': self.process_id_and_comment_attribute,
+            'param': self.process_id_list_and_comment_attribute,
             'class': self.process_id_attribute,
             'type': self.process_id_attribute,
             'enum': self.process_id_attribute,
@@ -336,11 +336,29 @@ class SGPasParser():
         line = self._tokeniser.read_to_eol()
         self._add_attribute(token[1], line)
     
-    def process_id_and_comment_attribute(self, token):
+    def process_id_list_and_comment_attribute(self, token):
         '''read the id and attach comments etc as attributes'''
-        param_tok = self._match_token('id')
+        param_toks = list()
+        
+        param_toks.append(self._match_token('id')[1])
+        
+        # read ahead for a , between each identifier in the list
+        # the list must have 1 or more parameters
+        while self._tokeniser.peekNextChar() == ',':
+            self._match_lookahead('symbol', ',', True)
+            param_toks.append(self._match_token('id')[1])
+        
         doc_tok = self._tokeniser.read_to_end_of_comment()
-        self._append_attribute(token[1], [param_tok[1], doc_tok])
+        
+        print 'DOC TOK:', doc_tok
+        
+        for param_tok in param_toks:
+            self._append_attribute(token[1], [param_tok, doc_tok])
+            if len(param_toks) > 1:
+                # if there is more than one token then also add the list of
+                # related tokens
+                print 'related_' + token[1], param_tok, param_toks
+                self._append_attribute('related_' + token[1], [param_tok, param_toks])
     
     def process_comment_attribute(self, token):
         '''read the id and attach comments etc as attributes'''
