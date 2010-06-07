@@ -73,7 +73,7 @@ class SGParameter(SGMetaDataContainer):
         None, "The parameter wraps the result of a function.")
     
     def add_related_params(self, lst):
-        print 'Added related parameters to', self.name, ' related = ', lst
+        # print 'Added related parameters to', self.name, ' related = ', lst
         self.related_params = lst
     
     def local_var_name(self):

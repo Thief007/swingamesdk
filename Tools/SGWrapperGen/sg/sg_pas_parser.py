@@ -350,14 +350,14 @@ class SGPasParser():
         
         doc_tok = self._tokeniser.read_to_end_of_comment()
         
-        print 'DOC TOK:', doc_tok
+        # print 'DOC TOK:', doc_tok
         
         for param_tok in param_toks:
             self._append_attribute(token[1], [param_tok, doc_tok])
             if len(param_toks) > 1:
                 # if there is more than one token then also add the list of
                 # related tokens
-                print 'related_' + token[1], param_tok, param_toks
+                # print 'related_' + token[1], param_tok, param_toks
                 self._append_attribute('related_' + token[1], [param_tok, param_toks])
     
     def process_comment_attribute(self, token):
