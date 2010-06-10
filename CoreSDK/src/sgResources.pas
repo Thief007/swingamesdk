@@ -101,6 +101,25 @@ interface
   /// @sn pathToResourceBase:%s filename:%s
   function PathToResourceWithBase(path, filename: String): String; overload; // forward;
   
+  /// Returns the path to the filename that exists within the game's resources folder
+  /// in the indicated sub directory. For example, to get the "level1.txt" file from
+  /// the Resources/levels folder you call this passing in "level1.txt" as the filename
+  /// and "levels" as the subdir.
+  ///
+  /// @lib PathToResourseInSubdir
+  /// @sn pathToResource:%s inSubdir:%s
+  function PathToResource(filename, subdir: String): String; overload;
+  
+  /// Returns the path to the filename that exists within the game's resources folder
+  /// in the indicated sub directory of the directory for the given resource kind .
+  /// For example, to get the "background.png" file from "level1" folder in the images folder
+  /// (i.e. Resources/images/level1/background.png) you call this passing in "background.png" as the filename
+  /// `ImageResource` as the kind and "level1" as the subdir.
+  ///
+  /// @lib PathToResourseKindInSubdir
+  /// @sn pathToResource:%s kind:%s inSubdir:%s
+  function PathToResource(filename: String; kind: ResourceKind; subdir: String): String; overload;
+  
   /// Returns the path to a resource given its filename, kind, and any subPaths. For example: to load
   /// the image ``bullet01.png`` from the ``bullets`` subdirectory you pass in ``bullet01.png`` as the filename,
   /// `ImageResource` as the kind, and ``bullets`` as the subPaths. This will then return the full path
@@ -570,6 +589,22 @@ implementation
   function PathToResource(filename: String; kind: ResourceKind): String; overload;
   begin
     result := PathToResourceWithBase(applicationPath, filename, kind);
+  end;
+  
+  function PathToResource(filename, subdir: String): String; overload;
+  var
+    paths: array [0..0] of String;
+  begin
+    paths[0] := subdir;
+    result := PathToResource(filename, OtherResource, paths);
+  end;
+  
+  function PathToResource(filename: String; kind: ResourceKind; subdir: String): String; overload;
+  var
+    paths: array [0..0] of String;
+  begin
+    paths[0] := subdir;
+    result := PathToResource(filename, kind, paths);
   end;
   
   function PathToResource(filename: String; kind: ResourceKind; const subPaths: StringArray): String; overload;
