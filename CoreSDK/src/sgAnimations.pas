@@ -966,6 +966,7 @@ end;
 
 function CreateAnimation(identifier: String;  frames: AnimationTemplate; withSound: Boolean): Animation; overload;
 begin
+  result := nil;
   if frames = nil then exit;
     
   result := CreateAnimation(IndexOf(frames^.animationIds, identifier), frames, withSound);
