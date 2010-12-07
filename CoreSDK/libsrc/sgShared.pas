@@ -415,7 +415,7 @@ implementation
     ErrorMessage := message;
     
     {$IFDEF TRACE}
-      TraceExit('sgShared', 'Ended with exception: ' + message);
+      TraceExit('', 'Ended with exception: ' + message);
     {$ENDIF}
     
     if UseExceptions then raise Exception.Create(message)
@@ -424,8 +424,11 @@ implementation
 
   procedure RaiseWarning(message: String);
   begin
-    //TODO: make this better for cross language support
     WriteLn(stderr, message);
+    
+    {$IFDEF Trace}
+      TraceIf(tlWarning, '', 'WARN', '', message);
+    {$ENDIF}
   end;
 
   //---------------------------------------------------------------------------
