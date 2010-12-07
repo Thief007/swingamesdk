@@ -162,7 +162,7 @@ interface
     /// SoundEffect multiple times.
     ///
     /// You can check if a SoundEffect is currently playing using
-    /// `IsSoundEffectPlaying`.
+    /// `SoundEffectPlaying`.
     ///
     /// To stop a SoundEffect playing use `StopSoundEffect`. This will stop all
     /// instances of this one sound effect from playing.

@@ -113,8 +113,8 @@ interface
   /// Returns the path to the filename that exists within the game's resources folder
   /// in the indicated sub directory of the directory for the given resource kind .
   /// For example, to get the "background.png" file from "level1" folder in the images folder
-  /// (i.e. Resources/images/level1/background.png) you call this passing in "background.png" as the filename
-  /// `ImageResource` as the kind and "level1" as the subdir.
+  /// (i.e. Resources/images/level1/background.png) you call this passing in ``background.png`` as the filename
+  /// ``ImageResource`` as the kind and ``level1`` as the subdir.
   ///
   /// @lib PathToResourseKindInSubdir
   /// @sn pathToResource:%s kind:%s inSubdir:%s
@@ -122,7 +122,7 @@ interface
   
   /// Returns the path to a resource given its filename, kind, and any subPaths. For example: to load
   /// the image ``bullet01.png`` from the ``bullets`` subdirectory you pass in ``bullet01.png`` as the filename,
-  /// `ImageResource` as the kind, and ``bullets`` as the subPaths. This will then return the full path
+  /// ``ImageResource`` as the kind, and ``bullets`` as the subPaths. This will then return the full path
   /// to the resource according to the platform in question. 
   ///
   /// For example: ``.../Resources/images/bullets/bullet01.png``

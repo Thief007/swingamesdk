@@ -141,7 +141,7 @@ uses sgTypes;
   function HasBitmap(name: String): Boolean;
   
   /// Returns the `Bitmap` that has been loaded with the specified name,
-  /// see `MapBitmap`.
+  /// see `LoadBitmapNamed`.
   ///
   /// @lib
   function BitmapNamed(name: String): Bitmap;
@@ -1135,26 +1135,26 @@ end;
 function LoadBitmapNamed(name, filename: String): Bitmap;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgImages', 'MapBitmap', name + ' -> ' + filename);
+    TraceEnter('sgImages', 'LoadBitmapNamed', name + ' -> ' + filename);
   {$ENDIF}
   
   result := DoLoadBitmap(name, filename, false, ColorBlack);
   
   {$IFDEF TRACE}
-    TraceExit('sgImages', 'MapBitmap');
+    TraceExit('sgImages', 'LoadBitmapNamed');
   {$ENDIF}
 end;
 
 function LoadTransparentBitmapNamed(name, filename: String; transparentColor: Color): Bitmap;
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgImages', 'MapBitmap', name + ' -> ' + filename);
+    TraceEnter('sgImages', 'LoadTransparentBitmapNamed', name + ' -> ' + filename);
   {$ENDIF}
   
   result := DoLoadBitmap(name, filename, true, transparentColor);
   
   {$IFDEF TRACE}
-    TraceExit('sgImages', 'MapBitmap');
+    TraceExit('sgImages', 'LoadTransparentBitmapNamed');
   {$ENDIF}
 end;
 

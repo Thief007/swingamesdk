@@ -15,12 +15,12 @@ begin
   ReleaseSoundEffect('fred');
   ReleaseMusic('fred');
   
-  mus := MapMusic('fast', 'Fast.mp3');
+  mus := LoadMusicNamed('fast', 'Fast.mp3');
   mus1 := LoadMusic('menu.ogg');
-  snd := MapSoundEffect('shock', 'shock.wav');
-  snd2 := MapSoundEffect('menu', 'menu.ogg');
-  snd3 := MapSoundEffect('menu3', 'menu.ogg');
-  miditest := MapMusic('ASNY', 'aintseennothingyet.mid');
+  snd := LoadSoundEffectNamed('shock', 'shock.wav');
+  snd2 := LoadSoundEffectNamed('menu', 'menu.ogg');
+  snd3 := LoadSoundEffectNamed('menu3', 'menu.ogg');
+  miditest := LoadMusicNamed('ASNY', 'aintseennothingyet.mid');
   
   WriteLn(HexStr(mus), ' = Loaded ', MusicName(mus), ' for file ', MusicFilename(mus));
   WriteLn(HexStr(snd), ' = Loaded ', SoundEffectName(snd), ' for file ', SoundEffectFilename(snd));
@@ -83,6 +83,11 @@ begin
     PlaySoundEffect(snd);
     Delay(100);
   end;
+  
+  WriteLn('Press enter');
+  ReadLn();
+  
+  PlayMusic(mus1);
   
   WriteLn('Press enter');
   ReadLn();

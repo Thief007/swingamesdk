@@ -1436,7 +1436,7 @@ end;
 
 procedure DrawTextbox(forRegion: Region; const area: Rectangle);
 begin
-  if forRegion^.parent^.DrawAsVectors then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
+  if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   if GUIC.activeTextBox <> forRegion then
     DrawTextLinesOnScreen(TextboxText(forRegion), 
@@ -1544,7 +1544,7 @@ var
     
     if tempList^.verticalScroll then
     begin
-      if forRegion^.parent^.DrawAsVectors then
+      if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
                               Round(scrollArea.x),
                               Round(scrollArea.y + pct * (scrollArea.Height - tempList^.scrollSize)),
@@ -1558,7 +1558,7 @@ var
     end
     else
     begin
-      if forRegion^.parent^.DrawAsVectors then
+      if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), 
                               Round(scrollArea.x + pct * (scrollArea.Width - tempList^.scrollSize)),
                               Round(scrollArea.y),
@@ -1575,13 +1575,13 @@ begin
   tempList := ListFromRegion(forRegion);
   if not assigned(tempList) then exit;
   
-  if forRegion^.parent^.DrawAsVectors then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
+  if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), area);
   
   PushClip(area);
   areaPt := RectangleTopLeft(area);
   
   // Draw the up and down buttons
-  if forRegion^.parent^.DrawAsVectors then
+  if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
   begin
     if tempList^.verticalScroll then
     begin
@@ -1598,7 +1598,7 @@ begin
   // Draw the scroll area
   scrollArea := RectangleOffset(tempList^.scrollArea, areaPt);
   
-  if forRegion^.parent^.DrawAsVectors then
+  if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
   begin
     DrawRectangleOnScreen(VectorBackcolorToDraw(forRegion), scrollArea);
     DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), scrollArea);
@@ -1617,7 +1617,7 @@ begin
     placeHolderScreenRect := RectangleOffset(tempList^.placeHolder[i], RectangleTopLeft(forRegion^.area));
     
     // Outline the item's area
-    if forRegion^.parent^.DrawAsVectors then
+    if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
       DrawRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
     
     // Find the index of the first item to be shown in the list
@@ -1652,7 +1652,7 @@ begin
     // if selected draw the alternate background
     if (itemIdx = tempList^.activeItem) then
     begin
-      if forRegion^.parent^.DrawAsVectors then
+      if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
       begin
         // Fill and draw text in alternate color if vector based
         FillRectangleOnScreen(VectorForecolorToDraw(forRegion), itemArea);
@@ -1683,7 +1683,7 @@ begin
     end
     else // the item is the selected item...
     begin
-      if forRegion^.parent^.DrawAsVectors then
+      if forRegion^.parent^.DrawAsVectors or GUIC.VectorDrawing then
       begin
         DrawTextLinesOnScreen(ListItemText(tempList, itemIdx), 
                               VectorBackcolorToDraw(forRegion), VectorForecolorToDraw(forRegion),
@@ -1788,7 +1788,7 @@ begin
   for i := Low(GUIC.visiblePanels) to High(GUIC.visiblePanels) do
   begin  
     
-    if GUIC.visiblePanels[i]^.DrawAsVectors then
+    if GUIC.visiblePanels[i]^.DrawAsVectors or GUIC.VectorDrawing then
     begin
       DrawAsVectors(GUIC.visiblePanels[i])
     end

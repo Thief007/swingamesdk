@@ -106,13 +106,13 @@ interface
   procedure MoveMouse(const point: Point2D);overload;
   
   /// Tells the mouse cursor to be visible if it was previously hidden with 
-  /// by a `HideMouse` or `SetMouseVisible(False)` call.
+  /// by a `HideMouse` or `SetMouseVisible`(False) call.
   ///
   /// @lib
   procedure ShowMouse(); overload;
     
   /// Used to explicitly set the mouse cursors visible state (if it is showing
-  /// in the window or not) based on the `show` parameter.
+  /// in the window or not) based on the show parameter.
   ///
   /// @lib SetMouseVisible
   /// @sn showMouse:%s
