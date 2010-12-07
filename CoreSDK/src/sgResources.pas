@@ -322,7 +322,7 @@ implementation
           PanelResource:      LoadPanelNamed(current.name, current.path);
           CharacterResource:  LoadCharacterNamed(current.name, current.path);
           else
-            RaiseException('Unkown recource kind in LoadResources' + IntToStr(LongInt(kind)));
+            RaiseException('Unknown resource kind in LoadResources' + IntToStr(LongInt(kind)));
         end;
       end;
     end;
