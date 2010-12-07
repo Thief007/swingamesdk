@@ -194,7 +194,7 @@ uses
   procedure Trace(unitname, action, routine, message: String);
   begin
     try
-      if not TRACE_UNITS.containsKey(unitname) then exit;
+      if Length(unitname) > 0 and not TRACE_UNITS.containsKey(unitname) then exit;
       
       lineCount += 1;
       WriteLn(output, unitname, ': ':(15 - Length(unitname)), action, ': ':(8 - Length(action)), StringOfChar(' ', indentLevel * 2), routine, ': ', message);
