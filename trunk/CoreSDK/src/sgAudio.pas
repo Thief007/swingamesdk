@@ -9,6 +9,7 @@
 // Change History:
 //
 // Version 3:
+// - 2010-12-08: Andrew : Changed to RaiseWarning, and checked audio open
 // - 2010-01-28: David  : Changed LoadSoundEffectNamed to use an already
 //												loaded sound if found
 // - 2009-11-10: Andrew : Added sn and csn tags to code
@@ -654,7 +655,8 @@ implementation
       filename := PathToResource(filename, SoundResource);
       if not FileExists(filename) then
       begin
-        RaiseException('Unable to locate sound effect ' + filename);
+        RaiseWarning('Unable to locate ' + name + ' sound effect file at ' + filename);
+        result := nil;
         exit;
       end;
     end;
@@ -698,11 +700,12 @@ implementation
       TraceEnter('sgAudio', 'LoadSoundEffectNamed', name + ' = ' + filename);
     {$ENDIF}
     
-    if not AudioOpen then
+    if not AudioReady() then
     begin
       {$IFDEF TRACE}
         TraceExit('sgAudio', 'LoadSoundEffectNamed', 'Audio Closed');
       {$ENDIF}
+      result := nil;
       exit;
     end;
     
@@ -717,7 +720,7 @@ implementation
     
     if not _SoundEffects.setValue(name, obj) then
     begin
-      RaiseException('** Leaking: Caused by Sound Effect resource twice, ' + name);
+      RaiseWarning('** Leaking: Caused by Sound Effect resource loading twice, ' + name);
       result := nil;
       exit;
     end;
@@ -815,7 +818,8 @@ implementation
       filename := PathToResource(filename, SoundResource);
       if not FileExists(filename) then
       begin
-        RaiseException('Unable to locate music ' + filename);
+        RaiseWarning('Unable to locate ' + name + ' music file at ' + filename);
+        result := nil;
         exit;
       end;
     end;
@@ -860,9 +864,19 @@ implementation
       TraceEnter('sgAudio', 'LoadMusicNamed', name + ' = ' + filename);
     {$ENDIF}
     
+    if not AudioReady() then
+    begin
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'LoadMusicNamed', 'Audio Closed');
+      {$ENDIF}
+      result := nil;
+      exit;
+    end;
+    
+    
     if _Music.containsKey(name) then
     begin
-      RaiseException('Error loaded Music resource twice, ' + name);
+      RaiseWarning('Error loaded Music resource twice, ' + name);
       result := nil;
       exit;
     end;
@@ -872,7 +886,7 @@ implementation
     
     if not _Music.setValue(name, obj) then
     begin
-      RaiseException('** Leaking due to loading Music resource twice, ' + name);
+      RaiseWarning('** Leaking due to loading Music resource twice, ' + name);
       exit;
     end;
     
@@ -964,11 +978,23 @@ implementation
       TraceEnter('sgAudio', 'PlaySoundEffect', HexStr(effect) + ' loops = ' + IntToStr(loops) + ' vol = ' + FloatToStr(vol));
     {$ENDIF}
     
-    if not Assigned(effect) then
+    if not AudioReady() then
     begin
-      RaiseException('Sound not supplied');
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'PlaySoundEffect', 'Audio Closed');
+      {$ENDIF}
       exit;
     end;
+    
+    if not Assigned(effect) then
+    begin
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'PlaySoundEffect', 'No sound effect supplied.');
+      {$ENDIF}
+      RaiseWarning('No sound effect supplied to PlaySoundEffect');
+      exit;
+    end;
+    
     //dont play if loops = 0
     if loops = 0 then exit;
     
@@ -1037,7 +1063,15 @@ implementation
       TraceEnter('sgAudio', 'PlayMusic', HexStr(mus) + ' loops = ' + IntToStr(loops));
     {$ENDIF}
     
-    if not Assigned(mus) then begin RaiseException('Music not supplied'); exit; end;
+    if not AudioReady() then
+    begin
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'PlayMusic', 'Audio Closed');
+      {$ENDIF}
+      exit;
+    end;
+    
+    if not Assigned(mus) then begin RaiseWarning('Music not supplied to PlayMusic'); exit; end;
     Mix_PlayMusic(mus^.music, loops);
     
     {$IFDEF TRACE}
@@ -1064,7 +1098,15 @@ implementation
       TraceEnter('sgAudio', 'FadeMusicIn', HexStr(mus) + ' loops = ' + IntToStr(loops) + ' ms = ' + IntToStr(ms));
     {$ENDIF}
     
-    if not Assigned(mus) then begin RaiseException('Music not supplied'); exit; end;
+    if not AudioReady() then
+    begin
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'FadeMusicIn', 'Audio Closed');
+      {$ENDIF}
+      exit;
+    end;
+    
+    if not Assigned(mus) then begin RaiseWarning('Music not supplied to FadeMusicIn'); exit; end;
     Mix_FadeInMusic(mus^.music, loops, ms);
     
     {$IFDEF TRACE}
@@ -1091,6 +1133,14 @@ implementation
       TraceEnter('sgAudio', 'FadeMusicOut', IntToStr(ms));
     {$ENDIF}
     
+    if not AudioReady() then
+    begin
+      {$IFDEF TRACE}
+        TraceExit('sgAudio', 'FadeMusicOut', 'Audio Closed');
+      {$ENDIF}
+      exit;
+    end;
+    
     Mix_FadeOutMusic(ms);
     
     {$IFDEF TRACE}
@@ -1108,12 +1158,16 @@ implementation
     
     result := false;
     
-    for i := 0 to High(soundChannels) do
+    if AudioReady() then
     begin
-      if soundChannels[i] = effect then
+      // Check each channel to see if it is playing the sound effect
+      for i := 0 to High(soundChannels) do
       begin
-        result := result or (Mix_Playing(i) <> 0);
-        if result then break;
+        if soundChannels[i] = effect then
+        begin
+          result := result or (Mix_Playing(i) <> 0);
+          if result then break;
+        end;
       end;
     end;
     
@@ -1141,7 +1195,10 @@ implementation
       TraceEnter('sgAudio', 'MusicPlaying', '');
     {$ENDIF}
     
-    result := Mix_PlayingMusic() <> 0;
+    if AudioReady() then
+      result := Mix_PlayingMusic() <> 0
+    else
+      result := false;
     
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'MusicPlaying', BoolToStr(result, true));
@@ -1279,7 +1336,7 @@ implementation
       TraceEnter('sgAudio', 'StopMusic', '');
     {$ENDIF}
     
-    Mix_HaltMusic();
+    if AudioReady() then Mix_HaltMusic();
     
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'StopMusic');
@@ -1293,6 +1350,8 @@ implementation
     {$IFDEF TRACE}
       TraceEnter('sgAudio', 'StopSoundEffect', HexStr(effect));
     {$ENDIF}
+    
+    if not AudioReady() then exit;
     
     for i := 0 to High(soundChannels) do
     begin

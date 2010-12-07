@@ -264,7 +264,7 @@ interface
   ///
   /// @class Character
   /// @method ActiveLayer  
-  procedure SetActiveLayer(var c: Character);
+  procedure SetActiveLayer(c: Character);
   
   /// Update the animation of the character depending on its direction. Returns true
   /// if the direction was changed and false if it was no changed
@@ -616,7 +616,7 @@ implementation
   //--------------------------------------------------------------------------- 
   
   // Setting the visibile layers array in the sprite to match the array of the shown layer cache
-  procedure SetActiveLayer(var c: Character);
+  procedure SetActiveLayer(c: Character);
   begin
     if not Assigned(c) then exit;
     c^.CharSprite^.visibleLayers := c^.ShownLayerCache[c^.CurrentState, c^.CurrentDirection];

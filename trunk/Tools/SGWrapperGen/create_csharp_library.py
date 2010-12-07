@@ -737,7 +737,10 @@ def arg_visitor(arg_str, the_arg, for_param):
     
     #check for pointer wrapper param
     if the_type.pointer_wrapper and not '.pointer' in arg_str.lower():
-        arg_str = arg_str + '.Pointer'
+        if for_param.modifier != 'out' and for_param.modifier != 'var':
+            arg_str = '(' + arg_str + ' == null ? IntPtr.Zero : ' + arg_str + '.Pointer)'
+        else:
+            arg_str = arg_str + '.Pointer'
     
     # Change True to true for example...
     if for_param.modifier != 'out' and arg_str.lower() in _data_switcher[data_key]:
@@ -1021,6 +1024,14 @@ def method_visitor(the_method, other, as_accessor_name = None):
         #     writer.writeln((_operator_overload % details).replace('%s', details['name']) )
         # else:
         
+        #
+        # Check parameters 
+        #
+        for param in the_method.params:
+            if param.data_type.pointer_wrapper and param.modifier == 'var':
+                details['pre_call'] = 'if (' + param.name + ' == null) return;\n    ' + details['pre_call']
+                print 'Checks for null var parameter: ', the_method.name
+        
         # Morph fn is a function used to alter the output for this method.
         # It is passed the string output and changes it as required.
         # This is used by properties to alter some details.
@@ -1147,7 +1158,7 @@ def write_cs_sgsdk_file(the_file, for_others = False):
     file_writer.close()
 
 def write_cs_methods_for_module(member, other):
-    '''Write out a single c member'''
+    '''Write out a single c# member'''
     
     writer = other['file writer']
     
@@ -1379,6 +1390,9 @@ def post_parse_process(the_file):
 
 def _post_process_method(method):
     for param in method.params:
+        #
+        # Check if local variables are needed to be added for this parameter...
+        #
         if param.maps_result or param.data_type.wraps_array or (param.modifier in ['var', 'out'] and param.data_type.name.lower() in ['string','color']):
             
             if method.is_constructor: continue
