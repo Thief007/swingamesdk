@@ -71,8 +71,18 @@
 
 {$I sgTrace.inc}
 
-/// The physics contains code to check for collisions between bitmaps and shapes
-/// in SwinGame, as well as to perform collisions between sprites.
+/// The physics contains code to check and perform collisions between bitmaps and shapes
+/// in SwinGame. This code will help you determine if two sprites have hit each other, 
+/// or allow you to bounce one sprite off another or off a stationary shape. 
+/// 
+/// The functions that contain the text "collision" are used to determine if two 
+/// ``things`` have collided, for example `BitmapPointCollision` is used to determine 
+/// if a bitmap (with a specified location) has collided with a given point.
+///
+/// The procedures that contain the text "collide" are used to perform a "bounce"
+/// style collision, where a sprite is bounced off some other ``thing``. For example
+/// `CollideCircleLine` is used to bounce a sprite (which should be treated like a circle)
+/// off a given line.
 /// 
 /// @module Physics
 /// @static
@@ -260,7 +270,7 @@ interface
   /// @class Bitmap
   /// @overload PointCollision PointPartCollision
   /// @csn atX:%s y:%s part:%s collisionWithPtX:%s y:%s
-  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
+  function BitmapPartPointCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
   
   /// Returns True if a point (``pt``) is located within the ``part`` (rectangle) of the bitmap
   /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions. For bounding box collisions
@@ -268,13 +278,13 @@ interface
   /// The ``x`` and ``y`` values specify the world location of the bitmap.
   /// The point ``pt`` needs to be provided in world coordinates.
   ///  
-  /// @lib  BitmapPointXYCollisionPart
+  /// @lib  BitmapPartPointXYCollision
   /// @sn bitmap:%s atX:%s y:%s part:%s collisionWithPt:%s
   /// 
   /// @class Bitmap
   /// @overload PointCollision PointPartCollisionWithPt
   /// @csn atX:%s y:%s part:%s collisionWithPt:%s
-  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  function BitmapPartPointCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
   
   
   //---------------------------------------------------------------------------
@@ -417,7 +427,7 @@ interface
   /// @sn circle:%s collisionWithRect:%s
   function CircleRectCollision(const c: Circle; const rect: Rectangle): Boolean;
   
-  /// Returns True if the circle has collided with any of the lines from the `rect` rectangle.
+  /// Returns True if the circle has collided with any of the lines from the ``rect`` rectangle.
   ///
   /// @lib
   /// @sn circle:%s collisionWithLine:%s
@@ -929,12 +939,12 @@ implementation
     result := BitmapPointCollision(bmp, x, y, False, pt.x, pt.y);
   end;
   
-  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
+  function BitmapPartPointCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; ptX, ptY: Single): Boolean; overload;
   begin
     result := BitmapPointCollision(bmp, x, y, False, ptX + part.x, ptY + part.y);
   end;
   
-  function BitmapPointCollisionPart(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
+  function BitmapPartPointCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
   begin
     result := BitmapPointCollision(bmp, x, y, False, pt.x + part.x, pt.y + part.y);
   end;

@@ -8,7 +8,7 @@
 // Change History:
 //
 // Version 3:
-// - 2010-01-28: David  : Changed MapAnimationTemplate to use an already loaded 
+// - 2010-01-28: David  : Changed LoadAnimationTemplateNamed to use an already loaded 
 //                        bitmap if found
 // - 2009-12-21: Andrew : Changed to include sound filename in animation loading.
 // - 2009-12-18: Andrew : Added in code to verify animations have no loops
@@ -92,7 +92,7 @@ interface
   /// Loads and returns a `AnimationTemplate`. The supplied ``filename`` is used to
   /// locate the `AnimationTemplate` to load. The supplied ``name`` indicates the 
   /// name to use to refer to this in SwinGame. The `AnimationTemplate` can then be
-  /// retrieved by passing this ``name`` to the `FetchAnimationTemplate` function. 
+  /// retrieved by passing this ``name`` to the `AnimationTemplateNamed` function. 
   ///
   /// @lib
   /// @sn loadAnimationTemplateNamed:%s fromFile:%s
@@ -110,7 +110,7 @@ interface
   function HasAnimationTemplate(name: String): Boolean;
   
   /// Returns the `AnimationTemplate` that has been loaded with the specified ``name``,
-  /// see `MapAnimationTemplate`.
+  /// see `LoadAnimationTemplateNamed`.
   ///
   /// @lib
   function AnimationTemplateNamed(name: String): AnimationTemplate;

@@ -7,7 +7,7 @@ procedure Main();
 begin
   OpenAudio();
   
-  OpenGraphicsWindow('Hello World', 800, 600);
+  OpenGraphicsWindow('Memory Test', 800, 600);
   
   repeat // The game loop...
     ProcessEvents();
@@ -18,6 +18,7 @@ begin
     LoadResourceBundle('splash.txt');
     
     DrawFramerate(0,0);
+    DrawText('Close to end', ColorWhite, 100, 100);
     
     RefreshScreen();
   until WindowCloseRequested();

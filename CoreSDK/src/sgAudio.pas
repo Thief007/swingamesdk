@@ -9,8 +9,8 @@
 // Change History:
 //
 // Version 3:
-// - 2010-01-28: David  : Changed MapSoundEffect to use an already
-//												loaded bitmap if found
+// - 2010-01-28: David  : Changed LoadSoundEffectNamed to use an already
+//												loaded sound if found
 // - 2009-11-10: Andrew : Added sn and csn tags to code
 // - 2009-11-06: Andrew : Returned loading code
 //                      : Added extra comments and tracing
@@ -136,7 +136,7 @@ interface
   function HasSoundEffect(name: String): Boolean;
   
   /// Returns the `SoundEffect` that has been loaded with the specified name,
-  /// see `MapSoundEffect`.
+  /// see `LoadSoundEffectNamed`.
   ///
   /// @lib
   function SoundEffectNamed(name: String): SoundEffect;
@@ -180,13 +180,13 @@ interface
   function LoadMusicNamed(name, filename: String): Music;
   
   /// Determines if SwinGame has a music value loaded for the supplied name.
-  /// This checks against all music values loaded using `MapMusic`.
+  /// This checks against all music values loaded using `LoadMusicNamed`.
   ///
   /// @lib
   function HasMusic(name: String): Boolean;
   
   /// Returns the `Music` that has been loaded with the specified name.
-  /// This works with music data loaded using `MapMusic`.
+  /// This works with music data loaded using `LoadMusicNamed`.
   ///
   /// @lib
   function MusicNamed(name: String): Music;
@@ -642,7 +642,7 @@ implementation
   //----------------------------------------------------------------------------
   
   // Private:
-  // Called by MapSoundEffect
+  // Called by LoadSoundEffectNamed
   function DoLoadSoundEffect(filename, name: String): SoundEffect;
   begin
     {$IFDEF TRACE}
@@ -695,13 +695,13 @@ implementation
     snd: SoundEffect;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgAudio', 'MapSoundEffect', name + ' = ' + filename);
+      TraceEnter('sgAudio', 'LoadSoundEffectNamed', name + ' = ' + filename);
     {$ENDIF}
     
     if not AudioOpen then
     begin
       {$IFDEF TRACE}
-        TraceExit('sgAudio', 'MapSoundEffect', 'Audio Closed');
+        TraceExit('sgAudio', 'LoadSoundEffectNamed', 'Audio Closed');
       {$ENDIF}
       exit;
     end;
@@ -724,7 +724,7 @@ implementation
     result := snd;
     
     {$IFDEF TRACE}
-      TraceExit('sgAudio', 'MapSoundEffect');
+      TraceExit('sgAudio', 'LoadSoundEffectNamed');
     {$ENDIF}
   end;
   
@@ -857,7 +857,7 @@ implementation
     mus: Music;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgAudio', 'MapMusic', name + ' = ' + filename);
+      TraceEnter('sgAudio', 'LoadMusicNamed', name + ' = ' + filename);
     {$ENDIF}
     
     if _Music.containsKey(name) then
@@ -879,7 +879,7 @@ implementation
     result := mus;
     
     {$IFDEF TRACE}
-      TraceExit('sgAudio', 'MapMusic');
+      TraceExit('sgAudio', 'LoadMusicNamed');
     {$ENDIF}
   end;
   

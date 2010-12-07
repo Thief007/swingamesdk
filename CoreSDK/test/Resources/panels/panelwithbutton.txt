@@ -14,10 +14,13 @@ w: 680
 h: 400
 //active bmp
 a: testerfaceActive.png
+// Background Image
+b: testerface.png
 //inactive bmp
 i: testerface.png
 //Draggable
 d: true
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind

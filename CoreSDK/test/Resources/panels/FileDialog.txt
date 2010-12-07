@@ -14,7 +14,7 @@ d: true
 b: FileDialog_Background.png
 a: FileDialog_Active.png
 i: FileDialog_Inactive.png
-v: true
+v: false
 
 // Region data
 // Format: r: x, y, w, h, kind

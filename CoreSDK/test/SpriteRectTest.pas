@@ -1,7 +1,7 @@
-program HelloWorld;
+program SpriteRecTest;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources, sgSprites, sgInput, sgPhysics, sgCamera;
+  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources, sgSprites, sgInput, sgPhysics, sgCamera, sgImages;
 
 procedure Main();
 var
@@ -11,9 +11,9 @@ var
 begin
   OpenAudio();
   
-  OpenGraphicsWindow('Hello World', 640, 480);
+  OpenGraphicsWindow('Sprite Rect Test', 640, 480);
   
-  ball := MapBitmap('ball', 'ball_small.png');
+  ball := LoadBitmapNamed('ball', 'ball_small.png');
   s := CreateSprite(ball);
   
   SpriteSetX(s, 10);

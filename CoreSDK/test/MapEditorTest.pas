@@ -72,7 +72,7 @@ begin
   HidePanel(pnls[SelectorDropDown]);
   
   DrawGUIAsVectors(true);
-    ListSetActiveItemIndex(ListFromRegion(RegionWithID('SelectorList')),-1);
+  ListSetActiveItemIndex(ListFromRegion(RegionWithID('SelectorList')),-1);
 
 end;
 
@@ -277,7 +277,10 @@ end;
 
 procedure ApplyBitmapToTile(m:map; offset:vector);
 begin
+  
+  WriteLn('Active palette item: ', ListActiveItemIndex(RegionWithId('lst.Palette')));
 if ListActiveItemIndex(RegionWithId('lst.Palette')) = -1 then exit;
+  WriteLn('here');
 SetTileBitmap(m,TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30))),StrToInt(LabelText(RegionWithId('Lbl.Map.layer'))), ListActiveItemIndex(RegionWithId('lst.Palette')));
 end;
 
@@ -478,7 +481,7 @@ begin
     begin
       ApplyBitmapToTile(m,offset);
       ReAssignKinds(m);
-     // writeln(TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30)))^.Kind);
+     writeln(TileAt(m, PointAdd(ToWorld(MousePosition), vectorTo(-150,-30)))^.Kind);
     end;
     if (RegionClickedID() = 'b.Bitmap.Add') and (LabelText(RegionWithID('dD.BitmapTypeIndicator')) ='Cell') then
    begin

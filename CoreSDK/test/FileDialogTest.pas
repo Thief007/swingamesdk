@@ -8,8 +8,8 @@ uses
 
 procedure InitInterface();
 begin
-  DrawGUIAsVectors(false);
-  GUISetForegroundColor(ColorBlue);
+  DrawGUIAsVectors(true);
+  GUISetForegroundColor(ColorWhite);
 end;
 
 procedure Main();

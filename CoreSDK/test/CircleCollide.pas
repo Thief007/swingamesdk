@@ -186,7 +186,7 @@ begin
   OpenAudio();
   OpenGraphicsWindow('Circle Collisions', 800, 600);
   
-  MapBitmap('ball', 'ball_small.png');
+  LoadBitmapNamed('ball', 'ball_small.png');
   
   SetLength(testLines, 1);
   testLines[0] := LineFrom(300, 250, 500, 350);
