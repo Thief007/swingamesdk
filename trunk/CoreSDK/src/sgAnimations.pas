@@ -577,7 +577,7 @@ var
     begin
       if LoadSoundEffectNamed(sndId, sndFile) = nil then
       begin
-        RaiseWarning('At line ' + IntToStr(lineNo) + ' in animation ' + filename + ': Cannot find ' + sbdId + ' sound file ' + sndFile);
+        RaiseWarning('At line ' + IntToStr(lineNo) + ' in animation ' + filename + ': Cannot find ' + sndId + ' sound file ' + sndFile);
         exit;
       end;
     end;
