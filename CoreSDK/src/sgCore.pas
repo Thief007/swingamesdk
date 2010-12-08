@@ -587,7 +587,7 @@ implementation
     {$ENDIF}
     result := HasException;
     {$IFDEF TRACE}
-      TraceExit('sgCore', 'ExceptionOccured : ' + BoolToStr(result));
+      TraceExit('sgCore', 'ExceptionOccured : ' + BoolToStr(result, true));
     {$ENDIF}
   end;
 
