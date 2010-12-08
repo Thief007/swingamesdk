@@ -638,8 +638,16 @@ implementation
   
   procedure SetAppPath(path: String; withExe: Boolean);
   begin
+    {$IFDEF TRACE}
+      TraceEnter('sgResources', 'SetAppPath(' + path + ', ' + BoolToStr(withExe, true) + ')');
+    {$ENDIF}
+    
     if withExe then applicationPath := ExtractFileDir(path)
     else applicationPath := path;
+    
+    {$IFDEF TRACE}
+      TraceExit('sgResources', 'SetAppPath');
+    {$ENDIF}
   end;
   
   function AppPath(): String;
@@ -776,7 +784,10 @@ implementation
     _Bundles := TStringHash.Create(False, 1024);
     
     try
-        if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)
+        if ParamCount() >= 0 then
+        begin
+          SetAppPath(ParamStr(0), True)
+        end;
     except
     end;
     
