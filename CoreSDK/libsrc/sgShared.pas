@@ -415,7 +415,8 @@ implementation
     ErrorMessage := message;
     
     {$IFDEF TRACE}
-      TraceExit('', 'Ended with exception: ' + message);
+      TraceIf(tlError, '', 'EXCP', '** Exception Raised **', message);
+      TraceExit('', 'Ended with exception');
     {$ENDIF}
     
     if UseExceptions then raise Exception.Create(message)
@@ -427,7 +428,7 @@ implementation
     WriteLn(stderr, message);
     
     {$IFDEF Trace}
-      TraceIf(tlWarning, '', 'WARN', '', message);
+      TraceIf(tlWarning, '', 'WARN', '** Warning Raised **', message);
     {$ENDIF}
   end;
 

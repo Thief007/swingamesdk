@@ -576,7 +576,7 @@ implementation
     {$ENDIF}
     result := ErrorMessage;
     {$IFDEF TRACE}
-      TraceExit('sgCore', 'ExceptionMessage');
+      TraceExit('sgCore', 'ExceptionMessage', result);
     {$ENDIF}
   end;
 
@@ -587,7 +587,7 @@ implementation
     {$ENDIF}
     result := HasException;
     {$IFDEF TRACE}
-      TraceExit('sgCore', 'ExceptionOccured');
+      TraceExit('sgCore', 'ExceptionOccured : ' + BoolToStr(result));
     {$ENDIF}
   end;
 
