@@ -10,6 +10,7 @@
 //
 // Version 3:
 // - 2010-12-08: Andrew : Changed to RaiseWarning, and checked audio open
+//                      : Added interacting with sounds and music by name
 // - 2010-01-28: David  : Changed LoadSoundEffectNamed to use an already
 //												loaded sound if found
 // - 2009-11-10: Andrew : Added sn and csn tags to code
@@ -311,6 +312,62 @@ interface
   /// @overload Play PlayWithLoopsAndVolume
   procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; vol: Single); overload;
   
+  /// This version of PlaySoundEffect allows you to control both the number
+  /// of times the `SoundEffect` is repeated, and its playback volume.
+  ///
+  /// @param name The name of the sound effect to start playing. 
+  /// @param loops Controls the number of times the sound effect is played.
+  /// @param vol Indicates the percentage of the original volume to play the 
+  ///            `SoundEffect` at. This must be between 0 and 1.
+  ///
+  /// @lib PlaySoundEffectNamedWithLoopAndVolume
+  /// @sn playSoundEffectNamed:%s looped:%s atVolume:%s
+  procedure PlaySoundEffect(name: String; loops: LongInt; vol: Single); overload;
+  
+  /// This version of PlaySoundEffect allows you to indicate the number of times
+  /// the sound effect is repeated. Setting the loops parameter to -1 will cause
+  /// the sound effect to be looped infinitely, setting it to a value larger than
+  /// 0 plays the sound effect the number of times indicated, calling with a 
+  /// value of 0 means the sound effect is not played.
+  ///
+  /// @param name The name of the sound effect to start playing.
+  ///
+  /// @param loops Controls the number of times the sound effect is played. -1
+  ///              means the sound effect is repeated infinitely.
+  ///
+  /// @lib PlaySoundEffectNamedWithLoopAndVolume(name, loops, 1.0)
+  /// @uname PlaySoundEffectNamedWithLoop
+  /// @sn playSoundEffectNamed:%s looped:%s
+  procedure PlaySoundEffect(name: String; loops: LongInt); overload;
+  
+  /// There are several versions of PlaySoundEffect that can be used to control
+  /// the way the sound effect plays, allowing you to control its volume and 
+  /// the number of times the code loops. In all cases the started sound effect
+  /// is mixed with the currently playing sound effects and music.
+  ///
+  /// With this version of PlaySoundEffect, the started sound effect will be 
+  /// played at full volume.
+  ///
+  /// @param name The name of the sound effect to play
+  ///
+  /// @lib PlaySoundEffectNamedWithLoopAndVolume(name,1,1.0)
+  /// @uname PlaySoundEffectNamed
+  procedure PlaySoundEffect(name: String); overload;
+  
+  /// This version of PlaySoundEffect allows you to control the volume of the 
+  /// sounds playback. The vol parameter will take a value between 0 and 1 
+  /// indicating the percentage of full volume to play at.
+  /// For example, 0.1 plays the sound effect at 10% of its original volume.
+  ///
+  /// @param name The name of the sound effect to play.
+  /// @param vol Indicates the percentage of the original volume to play the 
+  ///            `SoundEffect` at. This must be between 0 and 1.
+  ///
+  /// @lib PlaySoundEffectNamedWithLoopAndVolume(name, 1, vol)
+  /// @uname PlaySoundEffectNamedWithVolume
+  /// @sn playSoundEffectNamed:%s atVolume:%s
+  procedure PlaySoundEffect(name: String; vol: Single); overload;
+  
   
   
   //----------------------------------------------------------------------------
@@ -396,6 +453,71 @@ interface
   /// @csn playLooped:%s fadeIn:%s
   procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
   
+  /// This version of PlayMusic allows you to control the number of times the 
+  /// `Music` resource is repeated. It starts playing the supplied `Music` 
+  /// resource, repeating it the numder of times specified in the loops 
+  /// parameter. Setting loops to -1 repeats the music infinitely, other values
+  /// larger than 0 indicate the number of times that the music should be 
+  /// played.
+  ///
+  /// @param name The name of the `Music` resource to be played.
+  /// @param loops The number of times that the music should be played, -1 for 
+  ///              repeat infinitely
+  ///
+  /// @lib PlayMusicNamedWithLoops
+  /// @sn playMusicNamed:%s looped:%s
+  procedure PlayMusic(name: String; loops: LongInt); overload;
+  
+  /// PlayMusic starts playing a `Music` resource. SwinGame only allows one 
+  /// music resource to be played at a time. Starting to play a new music 
+  /// resource will stop the currently playing music track. You can also stop
+  /// the music by calling `StopMusic`.
+  ///
+  /// By default SwinGame starts playing music at its full volume. This can be 
+  /// controlled by calling `SetMusicVolume`. The current volume can be checked 
+  /// with `MusicVolume`.
+  ///
+  /// To test if a `Music` resource is currently playing you can use the 
+  /// `MusicPlaying` function.
+  ///
+  /// This version of PlayMusic can be used to play background music that is 
+  /// looped infinitely. The currently playing music is stopped and the new 
+  /// music resource will start playing, and will repeat until `StopMusic` is 
+  /// called, or another resource is played. 
+  ///
+  /// @param name The name of the `Music` resource to play.
+  ///
+  /// @lib PlayMusicNamedWithLoops(name, -1)
+  /// @uname PlayMusicNamed
+  procedure PlayMusic(name: String); overload;
+  
+  /// This version of FadeMusicIn fades the music in then plays the 'Music' 
+  /// for a given number of loops.Setting loops to -1 repeats the music 
+  /// infinitely, other values larger than 0 indicate the number of times that
+  /// the music should be played.
+  ///
+  /// @param name The name of the `Music` resource to be played.
+  /// @param loops The number of times that the music should be played, -1 for 
+  ///              repeat infinitely
+  /// @param ms The number of milliseconds over which to fade the music in to 
+  ///           the current music volume.
+  ///
+  /// @lib FadeMusicNamedInWithLoops
+  /// @sn playMusicNamed:%s looped:%s fadeIn:%s
+  procedure FadeMusicIn(name: String; loops, ms: LongInt); overload;
+  
+  /// Fades the music in over a number of milliseconds, and then continues to
+  /// play the music repeatedly until the program ends or the music is stopped. 
+  /// The music fades from 0 volume up to the currently set music volume.
+  /// 
+  /// @param name The name of the `Music` resource to be played.
+  /// @param ms The number of milliseconds over which to fade the music in to 
+  //            the current music volume.
+  ///
+  /// @lib FadeMusicNamedIn
+  /// @sn playMusicNamed:%s fadeIn:%s
+  procedure FadeMusicIn(name: String; ms: LongInt); overload;
+  
   
   
   //----------------------------------------------------------------------------
@@ -475,7 +597,7 @@ interface
   ///
   /// @class SoundEffect
   /// @method IsPlaying
-  function SoundEffectPlaying(effect: SoundEffect): Boolean;
+  function SoundEffectPlaying(effect: SoundEffect): Boolean; overload;
   
   /// Returns the name that SwinGame uses to refer to this sound effect. This
   /// name can be used to fetch and release this sound effect resource.
@@ -509,7 +631,14 @@ interface
   /// @class SoundEffect
   /// @method Stop
   procedure StopSoundEffect(effect: SoundEffect);
-    
+  
+  /// Stops all occurances of the named `SoundEffect` that are currently playing.
+  ///
+  /// @param name The name of the sound effect to stop.
+  ///
+  /// @lib StopSoundEffectNamed
+  procedure StopSoundEffect(name: String);
+  
   /// Stops playing the current music resource.
   ///
   /// @lib StopMusic
@@ -970,6 +1099,11 @@ implementation
   
   //----------------------------------------------------------------------------
   
+  procedure PlaySoundEffect(name: String; loops: LongInt; vol: Single); overload;
+  begin
+    PlaySoundEffect(SoundEffectNamed(name), loops, vol);
+  end;
+  
   procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt; vol: Single); overload;
   var
     i: LongInt;
@@ -1018,6 +1152,11 @@ implementation
     {$ENDIF}    
   end;
   
+  procedure PlaySoundEffect(name: String; loops: LongInt); overload;
+  begin
+    PlaySoundEffect(SoundEffectNamed(name), loops);
+  end;
+  
   procedure PlaySoundEffect(effect: SoundEffect; loops: LongInt); overload;
   begin
     {$IFDEF TRACE}
@@ -1029,6 +1168,11 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'PlaySoundEffect');
     {$ENDIF}
+  end;
+  
+  procedure PlaySoundEffect(name: String); overload;
+  begin
+    PlaySoundEffect(SoundEffectNamed(name));
   end;
   
   procedure PlaySoundEffect(effect: SoundEffect); overload;
@@ -1044,6 +1188,11 @@ implementation
     {$ENDIF}    
   end;
   
+  procedure PlaySoundEffect(name: String; vol: Single); overload;
+  begin
+    PlaySoundEffect(SoundEffectNamed(name), vol);
+  end;
+  
   procedure PlaySoundEffect(effect: SoundEffect; vol: Single); overload;
   begin
     {$IFDEF TRACE}
@@ -1055,6 +1204,14 @@ implementation
    {$IFDEF TRACE}
      TraceExit('sgAudio', 'PlaySoundEffect');
    {$ENDIF}
+  end;
+  
+  
+  //----------------------------------------------------------------------------
+  
+  procedure PlayMusic(name: String; loops: LongInt); overload;
+  begin
+    PlayMusic(MusicNamed(name), loops);
   end;
   
   procedure PlayMusic(mus: Music; loops: LongInt); overload;
@@ -1079,6 +1236,11 @@ implementation
     {$ENDIF}    
   end;
   
+  procedure PlayMusic(name: String); overload;
+  begin
+    PlayMusic(MusicNamed(name));
+  end;
+  
   procedure PlayMusic(mus: Music); overload;
   begin
     {$IFDEF TRACE}
@@ -1091,7 +1253,12 @@ implementation
       TraceExit('sgAudio', 'PlayMusic');
     {$ENDIF}    
   end;
-
+  
+  procedure FadeMusicIn(name: String; loops, ms: LongInt); overload;
+  begin
+    FadeMusicIn(MusicNamed(name), loops, ms);
+  end;
+  
   procedure FadeMusicIn(mus: Music; loops, ms: LongInt); overload;
   begin
     {$IFDEF TRACE}
@@ -1112,6 +1279,11 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'FadeMusicIn');
     {$ENDIF}
+  end;
+  
+  procedure FadeMusicIn(name: String; ms: LongInt); overload;
+  begin
+    FadeMusicIn(MusicNamed(name), ms);
   end;
   
   procedure FadeMusicIn(mus: Music; ms: LongInt); overload;
@@ -1148,12 +1320,17 @@ implementation
     {$ENDIF}
   end;
   
-  function SoundPlaying(effect: Pointer): Boolean;
+  function SoundEffectPlaying(name: String): Boolean; overload;
+  begin
+    result := SoundEffectPlaying(SoundEffectNamed(name));
+  end;
+  
+  function SoundEffectPlaying(effect: SoundEffect): Boolean; overload;
   var
     i: LongInt;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgAudio', 'SoundPlaying', HexStr(effect));
+      TraceEnter('sgAudio', 'SoundEffectPlaying', HexStr(effect));
     {$ENDIF}
     
     result := false;
@@ -1170,19 +1347,6 @@ implementation
         end;
       end;
     end;
-    
-    {$IFDEF TRACE}
-      TraceExit('sgAudio', 'SoundPlaying', BoolToStr(result, true));
-    {$ENDIF}
-  end;
-  
-  function SoundEffectPlaying(effect: SoundEffect): Boolean;
-  begin
-    {$IFDEF TRACE}
-      TraceEnter('sgAudio', 'SoundEffectPlaying', HexStr(effect));
-    {$ENDIF}
-    
-    result := SoundPlaying(effect);
     
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'SoundEffectPlaying', BoolToStr(result, true));
@@ -1341,6 +1505,11 @@ implementation
     {$IFDEF TRACE}
       TraceExit('sgAudio', 'StopMusic');
     {$ENDIF}
+  end;
+  
+  procedure StopSoundEffect(name: String);
+  begin
+    StopSoundEffect(SoundEffectNamed(name));
   end;
   
   procedure StopSoundEffect(effect: SoundEffect);
