@@ -217,8 +217,7 @@ implementation
   procedure RegisterFreeNotifier(fn: FreeNotifier);
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgResources', 'sgResources.RegisterFreeNotifier');
-      Trace('sgResources', 'Info', 'sgResources.RegisterFreeNotifier', 'fn: ' + HexStr(fn));
+      TraceEnter('sgResources', 'sgResources.RegisterFreeNotifier', 'fn: ' + HexStr(fn));
     {$ENDIF}
     _FreeNotifier := fn;
     {$IFDEF TRACE}
@@ -646,7 +645,7 @@ implementation
     else applicationPath := path;
     
     {$IFDEF TRACE}
-      TraceExit('sgResources', 'SetAppPath');
+      TraceExit('sgResources', 'SetAppPath', applicationPath);
     {$ENDIF}
   end;
   
@@ -784,10 +783,7 @@ implementation
     _Bundles := TStringHash.Create(False, 1024);
     
     try
-        if ParamCount() >= 0 then
-        begin
-          SetAppPath(ParamStr(0), True)
-        end;
+      if ParamCount() >= 0 then SetAppPath(ParamStr(0), True)
     except
     end;
     

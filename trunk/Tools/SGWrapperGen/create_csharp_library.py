@@ -1147,6 +1147,15 @@ def write_cs_sgsdk_file(the_file, for_others = False):
     file_writer.writeln('internal class %s' % the_file.members[0].name);
     file_writer.writeln('{');
     
+    #
+    # Get the file path set when the library is loaded...
+    #
+    file_writer.writeln('''    static %s()
+    {
+        Resources.SetAppPath(System.Reflection.Assembly.GetExecutingAssembly().Location, true);
+    }
+    ''' % the_file.members[0].name)
+    
     file_writer.indent(2);
     the_file.members[0].visit_methods(method_visitor, other)
     file_writer.outdent(2);

@@ -1,12 +1,9 @@
 Public Module GameMain
     Public Sub Main()
-        ' Set the path to the application so the resource manager can
-        ' find the files it needs to load.
-        Resources.SetAppPath(Assembly.GetExecutingAssembly().Location, True)
-        
         'Start the audio system.
         Audio.OpenAudio()
         
+        'Open the game window
         Core.OpenGraphicsWindow("GameMain", 800, 600)
         
         'Run the game loop
@@ -14,8 +11,9 @@ Public Module GameMain
             'Fetch the next batch of UI interaction
             Core.ProcessEvents()
             
+            'Clear the screen and draw the framerate'
             Graphics.ClearScreen()
-            Text.DrawFramerate(0,0) 'Draw framerate top left
+            Text.DrawFramerate(0,0)
             
             'Draw onto the screen
             Core.RefreshScreen()
@@ -23,6 +21,8 @@ Public Module GameMain
         
         'End the audio
         Audio.CloseAudio()
+        
+        'Close any resources we were using
         Resources.ReleaseAllResources()
     End Sub
 End Module
