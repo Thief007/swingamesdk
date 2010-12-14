@@ -17,6 +17,9 @@ source "${APP_PATH}/inc/os_check.sh"
 #
 source "${APP_PATH}/inc/base_template_dirs.sh"
 
+# Remove all previously generated files
+find ${GENERATED_DIR} -type f ! -path \*.svn\* -exec rm -f {} \;
+
 #
 # Step 4: Set up array of files to copy
 #
@@ -57,11 +60,14 @@ CreateCCode()
     python create_c_library.py
     
     #Create SwinGame.h
-    cd "${COMMON_C_TEMPLATE_DIR}"/lib
+    cd "${C_GENERATED_DIR}"/lib
     echo "#ifndef SWINGAME" > SwinGame.h
     echo "#define SWINGAME" >> SwinGame.h 
+    
     ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> SwinGame.h
-    echo "#endif" >> SwinGame.h    
+    cd ${COMMON_C_TEMPLATE_DIR}/lib/
+    ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> "${C_GENERATED_DIR}"/lib/SwinGame.h
+    echo "#endif" >> "${C_GENERATED_DIR}"/lib/SwinGame.h    
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh
@@ -89,7 +95,7 @@ echo "--------------------------------------------------"
 echo "  ... Creating C library code"
 CreateCCode
 
-DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
+DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${C_GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
 
 echo "  Finished"
 echo "--------------------------------------------------"

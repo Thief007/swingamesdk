@@ -31,13 +31,14 @@ CreateDistDirs()
     done
 }
 
-# Copy the dist directories from $1 array, with dist dir in $2, common in $3, and lang common in $4 (optional)
+# Copy the dist directories from $1 array, with generated dir $2, source dist dir in $3, common in $4, and lang common in $5 (optional)
 CopyDists()
 {
     COPY_LIST=$1
-    SOURCE_DIST_DIR=$2
-    COMMON_TEMPLATE_DIR=$3
-    COMMON_LANG_TEMPLATE_DIR=$4
+    GENERATED_DIR=$2
+    SOURCE_DIST_DIR=$3
+    COMMON_TEMPLATE_DIR=$4
+    COMMON_LANG_TEMPLATE_DIR=$5
     
     for arg in "${COPY_LIST[@]}"; do
         name=`echo $arg | awk -F"," '{print $1}'`
@@ -46,6 +47,7 @@ CopyDists()
         
         echo -n "  ... Copying to $name"
         
+        copyWithoutSVN "$GENERATED_DIR" "$to"
         copyWithoutSVN "$COMMON_TEMPLATE_DIR" "$to"
         if [ ! "a$COMMON_LANG_TEMPLATE_DIR" = "a" ]; then
             copyWithoutSVN "$COMMON_LANG_TEMPLATE_DIR" "$to"
@@ -72,14 +74,15 @@ CopyDists()
 }
 
 # Perform the process of copying all files for a distribution
-# call with arguments: "${COPY_LIST}" "${LANG_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_LANG_TEMPLATE_DIR}"
+# call with arguments: "${COPY_LIST}" "${LANG_DIST_DIR}" "${GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_LANG_TEMPLATE_DIR}"
 DoDist()
 {
     COPY_LIST=$1
     LANG_DIST_DIR=$2
-    SOURCE_DIST_DIR=$3
-    COMMON_TEMPLATE_DIR=$4
-    COMMON_LANG_TEMPLATE_DIR=$5
+    GENERATED_DIR=$3
+    SOURCE_DIST_DIR=$4
+    COMMON_TEMPLATE_DIR=$5
+    COMMON_LANG_TEMPLATE_DIR=$6
     
     #Step 1: Delete old dists if they exist
     if [ -d "${LANG_DIST_DIR}" ]; then
@@ -93,5 +96,5 @@ DoDist()
     
     #Step 4: Copy files to all
     echo "  ... Copying files"
-    CopyDists "${COPY_LIST}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_LANG_TEMPLATE_DIR}"
+    CopyDists "${COPY_LIST}" "${GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_LANG_TEMPLATE_DIR}"
 }

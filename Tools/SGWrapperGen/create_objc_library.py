@@ -19,7 +19,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_out_path="../../Templates/ObjC/common/lib"
+_out_path="../../Generated/ObjC/lib"
 
 def type_visitor(the_type, modifier = None):
     return wrapper_helper.std_type_visitor(objc_lib._type_switcher, the_type, modifier)

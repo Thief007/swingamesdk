@@ -47,6 +47,7 @@ SWINGAME_DIR=`cd "$SWINGAME_DIR"; pwd`
 SDK_SRC="${SWINGAME_DIR}/CoreSDK/src"
 SDK_LIB_SRC="${SWINGAME_DIR}/CoreSDK/libsrc"
 
+GENERATED_DIR="${SWINGAME_DIR}/Generated"
 TEMPLATE_DIR="${SWINGAME_DIR}/Templates"
 DIST_DIR="${SWINGAME_DIR}/Dist"
 
@@ -56,10 +57,14 @@ SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 SRC_DIR="${SOURCE_DIST_DIR}/src"
 
-C_TEMPLATE_DIR="${TEMPLATE_DIR}/C"
-C_COMMON_LIB_DIR="${C_TEMPLATE_DIR}/common/lib"
+C_GENERATED_DIR="${GENERATED_DIR}/C"
+C_GENERATED_LIB_DIR="${C_GENERATED_DIR}/lib"
 
 PYTHON_SCRIPT_DIR=${SWINGAME_DIR}/Tools/SGWrapperGen
+
+# Remove all previously generated files
+find ${GENERATED_DIR} -type f ! -path \*.svn\* -exec rm -f {} \;
+
 
 if [ "$OS" = "$MAC" ]; then
     FRAMEWORK_DIR="${SWINGAME_DIR}/CoreSDK/lib/mac"
@@ -90,10 +95,10 @@ CreateLibrary()
     python create_pas_lib.py
     if [ $? != 0 ]; then echo "Error creating Pascal library."; exit 1; fi
     
-    cp -p "${C_COMMON_LIB_DIR}/SGSDK.h" "${SRC_DIR}/SGSDK.h"
+    cp -p "${C_GENERATED_LIB_DIR}/SGSDK.h" "${SRC_DIR}/SGSDK.h"
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
     
-    cp -p "${C_COMMON_LIB_DIR}/Types.h" "${SRC_DIR}/Types.h"
+    cp -p "${C_GENERATED_LIB_DIR}/Types.h" "${SRC_DIR}/Types.h"
     if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
 }
 

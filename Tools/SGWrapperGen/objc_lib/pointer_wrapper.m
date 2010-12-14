@@ -1,5 +1,7 @@
 #import "SG%(name)s.h"
 
+#import <stdlib.h>
+
 #import "SGSDK.h"
 #import "SwinGame.h"
 

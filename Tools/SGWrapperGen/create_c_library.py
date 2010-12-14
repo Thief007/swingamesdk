@@ -17,7 +17,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_out_path="../../Templates/C/common/lib"
+_out_path="../../Generated/C/lib"
 
 #templates for adapter
 _lib_import_header = ''
