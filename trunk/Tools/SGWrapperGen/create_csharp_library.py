@@ -17,7 +17,7 @@ from sg.file_writer import FileWriter
 from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 
-_out_path="../../Templates/CSharp/Library"
+_out_path="../../Generated/CSharp/Code"
 
 #templates for adapter
 _header = ''

@@ -31,7 +31,7 @@ from sg.sg_parameter import SGParameter
 
 import py_lib # template definitions
 
-_out_path="../../Templates/Python/common"
+_out_path="../../Generated/Python"
 
 
 _procedure_lines = None

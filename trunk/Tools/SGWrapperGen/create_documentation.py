@@ -32,7 +32,7 @@ def get_svn_version():
         result = "1253" # rough guess...
     return result
 
-OUT_PATH = "../../Templates/Documentation"
+OUT_PATH = "../../Generated/Documentation"
 
 SVN_VERSION = get_svn_version()
 

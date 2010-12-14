@@ -22,6 +22,8 @@ source "${APP_PATH}/inc/os_check.sh"
 #
 source "${APP_PATH}/inc/base_template_dirs.sh"
 
+# Remove all previously generated files
+find ${GENERATED_DIR} -type f ! -path \*.svn\* -exec rm -f {} \;
 
 #
 # Step 4: Set up array of files to copy
@@ -65,12 +67,17 @@ CreateCCode()
     # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/SGSDK.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
     # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/Types.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
     
-    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
-    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.c "${COMMON_OBJC_TEMPLATE_DIR}/lib"
+    cp -p "${C_GENERATED_DIR}"/lib/*.h "${OBJC_GENERATED_DIR}/lib"
+    cp -p "${C_GENERATED_DIR}"/lib/*.c "${OBJC_GENERATED_DIR}/lib"
+    
+    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.h "${OBJC_GENERATED_DIR}/lib"
+    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.c "${OBJC_GENERATED_DIR}/lib"
     
     #Create SwinGame.h
     cd "${COMMON_OBJC_TEMPLATE_DIR}"/lib
-    ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' > SwinGame.h
+    ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' > "${OBJC_GENERATED_DIR}"/lib/SwinGame.h
+    cd "${OBJC_GENERATED_DIR}"/lib
+    ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' >> SwinGame.h
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh
@@ -97,7 +104,7 @@ fi
 echo "--------------------------------------------------"
 CreateCCode
 
-DoDist "${COPY_LIST}" "${OBJC_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_OBJC_TEMPLATE_DIR}"
+DoDist "${COPY_LIST}" "${OBJC_DIST_DIR}" "${OBJC_GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_OBJC_TEMPLATE_DIR}"
 
 echo "  Finished"
 echo "--------------------------------------------------"

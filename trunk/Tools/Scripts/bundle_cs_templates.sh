@@ -18,6 +18,9 @@ source "${APP_PATH}/inc/os_check.sh"
 PYTHON_SCRIPT='create_csharp_library.py'
 source "${APP_PATH}/inc/base_template_dirs.sh"
 
+# Remove all previously generated files
+find ${GENERATED_DIR} -type f ! -path \*.svn\* -exec rm -f {} \;
+
 #
 # Step 4: Set up array of files to copy
 #
@@ -73,21 +76,21 @@ if [ "$OS" = "$WIN" ]; then
     CS_LIBRARY_DIR=`echo $CS_LIBRARY_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
     CS_LIBRARY_DIR=`echo $CS_LIBRARY_DIR | awk '{gsub("/", "\\\\"); print}'`
     
-    COMMON_CS_LIBRARY_DIR=`echo $COMMON_CS_LIBRARY_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
-    COMMON_CS_LIBRARY_DIR=`echo $COMMON_CS_LIBRARY_DIR | awk '{gsub("/", "\\\\"); print}'`
-    
-    csc -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${COMMON_CS_LIBRARY_DIR}\\SwinGame.dll" "${CS_LIBRARY_DIR}\\*.cs"
+    csc -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}\\SwinGame.dll" "${CS_LIBRARY_DIR}\\*.cs" "${CS_GENERATED_CODE_DIR}\\*.cs"
 else
-    gmcs -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs"
+    gmcs -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs" "${CS_GENERATED_CODE_DIR}/*.cs"
 fi
 
-cp "${COMMON_CS_LIBRARY_DIR}/SwinGame.dll" "${COMMON_VB_LIBRARY_DIR}/"
-
+#
+# Step 8: Copy files
+#
 echo "  ... Copy C# templates"
-DoDist "${COPY_LIST}" "${CS_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_CS_TEMPLATE_DIR}"
+DoDist "${COPY_LIST}" "${CS_DIST_DIR}" "${CS_GENERATED_LIB_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_CS_TEMPLATE_DIR}"
 
 echo "  ... Copy VB templates"
-DoDist "${VB_COPY_LIST}" "${VB_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_VB_TEMPLATE_DIR}"
+DoDist "${VB_COPY_LIST}" "${VB_DIST_DIR}" "${CS_GENERATED_LIB_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_VB_TEMPLATE_DIR}"
 
 echo "  Finished"
 echo "--------------------------------------------------"
+
+

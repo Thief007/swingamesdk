@@ -413,7 +413,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesInRect
-  /// @sn drawTextLines:%s color:%s font:%s align:%s inRect:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s font:%s align:%s inRect:%s
   procedure DrawTextLines(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   
   /// Draws the text in the specified rectangle using the fore and back colors, and the font indicated.
@@ -422,7 +422,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesInRectWithFontNamed
-  /// @sn drawTextLines:%s color:%s fontNamed:%s align:%s inRect:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s fontNamed:%s align:%s inRect:%s
   procedure DrawTextLines(theText: String; textColor, backColor: Color; name: String; align: FontAlignment; const withinRect: Rectangle); overload;
   
   /// Draws theText in the specified rectangle using the fore and back colors, and the font indicated.
@@ -431,7 +431,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesInRectWithFontNamedAndSize
-  /// @sn drawTextLines:%s color:%s fontNamed:%s size:%s align:%s inRect:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s fontNamed:%s size:%s align:%s inRect:%s
   procedure DrawTextLines(theText: String; textColor, backColor: Color; name: String; size: LongInt; align: FontAlignment; const withinRect: Rectangle); overload;
   
   
@@ -441,7 +441,7 @@ interface
   /// use the `DrawText` procedure.
   ///
   /// @lib DrawTextLinesOnBitmap
-  /// @sn bitmap:%s drawTextLines:%s color:%s font:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
+  /// @sn bitmap:%s drawTextLines:%s textColor:%s backColor:%s font:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
   
   /// Draws the text onto the bitmap at the specified x,y location using the fore and back colors, and the font indicated.
@@ -450,7 +450,7 @@ interface
   /// use the `DrawText` procedure.
   ///
   /// @lib DrawTextLinesOnBitmapWithFontNamed
-  /// @sn bitmap:%s drawTextLines:%s color:%s fontNamed:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
+  /// @sn bitmap:%s drawTextLines:%s textColor:%s backColor:%s fontNamed:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; name: String; align: FontAlignment; x, y, w, h: LongInt); overload;
   
   /// Draws theText onto the bitmap at the specified x,y location using the fore and back colors, and the font indicated.
@@ -459,7 +459,7 @@ interface
   /// use the `DrawText` procedure.
   ///
   /// @lib DrawTextLinesOnBitmapWithFontNamedAndSize
-  /// @sn bitmap:%s drawTextLines:%s color:%s fontNamed:%s size:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
+  /// @sn bitmap:%s drawTextLines:%s textColor:%s backColor:%s fontNamed:%s size:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; name: String; size: LongInt; align: FontAlignment; x, y, w, h: LongInt); overload;
   
   
@@ -469,7 +469,7 @@ interface
   /// use the `DrawText` procedure.
   ///
   /// @lib DrawTextLinesInRectOnBitmap
-  /// @sn bitmap:%s drawTextLines:%s color:%s font:%s align:%s in:%s
+  /// @sn bitmap:%s drawTextLines:%s textColor:%s backColor:%s font:%s align:%s in:%s
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   
   /// Draws the text onto the bitmap in the rectangle using the fore and back colors, and the font indicated.
@@ -478,7 +478,7 @@ interface
   /// use the `DrawText` procedure.
   ///
   /// @lib DrawTextLinesInRectOnBitmapWithFontNamed
-  /// @sn bitmap:%s drawTextLines:%s color:%s fontNamed:%s align:%s in:%s
+  /// @sn bitmap:%s drawTextLines:%s textColor:%s backColor:%s fontNamed:%s align:%s in:%s
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; name: String; align: FontAlignment; const withinRect: Rectangle); overload;
   
   /// Draws the text onto the bitmap in the rectangle using the fore and back colors, and the font indicated.
@@ -487,7 +487,7 @@ interface
   /// use the `DrawText` procedure.
   ///
   /// @lib DrawTextLinesInRectOnBitmapWithFontNamedAndSize
-  /// @sn bitmap:%s drawTextLines:%s color:%s fontNamed:%s size:%s align:%s in:%s
+  /// @sn bitmap:%s drawTextLines:%s textColor:%s backColor:%s fontNamed:%s size:%s align:%s in:%s
   procedure DrawTextLines(dest: Bitmap; theText: String; textColor, backColor: Color; name: String; size: LongInt; align: FontAlignment; const withinRect: Rectangle); overload;
   
   
@@ -499,7 +499,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib
-  /// @sn drawTextLines:%s color:%s font:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s font:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; x, y, w, h: LongInt); overload;
   
   /// Draws the text onto the screen at the specified x,y location using the fore and back colors, and the font indicated.
@@ -510,7 +510,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesOnScreenWithFontNamed
-  /// @sn drawTextLines:%s color:%s fontNamed:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s fontNamed:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; align: FontAlignment; x, y, w, h: LongInt); overload;
   
   /// Draws the text onto the screen at the specified x,y location using the fore and back colors, and the font indicated.
@@ -521,7 +521,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesOnScreenWithFontNamedWithSize
-  /// @sn drawTextLines:%s color:%s fontNamed:%s size:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s fontNamed:%s size:%s align:%s onScreenAtX:%s y:%s w:%s h:%s
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; size: LongInt; align: FontAlignment; x, y, w, h: LongInt); overload;
   
   
@@ -533,7 +533,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesInRectOnScreen
-  /// @sn drawTextLines:%s color:%s font:%s align:%s onScreenInRect:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s font:%s align:%s onScreenInRect:%s
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; theFont: Font; align: FontAlignment; const withinRect: Rectangle); overload;
   
   /// Draws the text onto the screen in the specified rectangle using the fore and back colors, and the font indicated.
@@ -544,7 +544,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesInRectOnScreenWithFontNamed
-  /// @sn drawTextLines:%s color:%s fontNamed:%s align:%s onScreenInRect:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s fontNamed:%s align:%s onScreenInRect:%s
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; align: FontAlignment; const withinRect: Rectangle); overload;
   
   /// Draws the text onto the screen in the specified rectangle using the fore and back colors, and the font indicated.
@@ -555,7 +555,7 @@ interface
   /// use the `DrawTextOnScreen` procedure.
   ///
   /// @lib DrawTextLinesInRectOnScreenWithFontNamedAndSize
-  /// @sn drawTextLines:%s color:%s fontNamed:%s size:%s align:%s onScreenInRect:%s
+  /// @sn drawTextLines:%s textColor:%s backColor:%s fontNamed:%s size:%s align:%s onScreenInRect:%s
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; size: LongInt; align: FontAlignment; const withinRect: Rectangle); overload;
   
   
@@ -580,7 +580,7 @@ interface
   /// This is useful for drawing text on a HUD or similar actions.
   ///
   /// @lib DrawSimpleTextOnScreen
-  /// @sn drawText:%s color:%s onScreenAtPt:%s
+  /// @sn drawText:%s color:%s onScreenX:%s y:%s
   procedure DrawTextOnScreen(theText: String; textColor: Color; x, y: Single); overload;
   
   /// Draws text using a simple bitmap font that is built into SwinGame.
