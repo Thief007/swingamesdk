@@ -243,8 +243,8 @@ interface
     ///
     /// @type Color
     /// @data_wrapper
-    /// @field data: UInt32
-    Color = UInt32;
+    /// @field data: Longword
+    Color = Longword;
     
     /// @struct AnimationFrame
     /// @via_pointer
@@ -473,8 +473,8 @@ interface
     /// @struct TimerData
     /// @via_pointer
     TimerData = packed record
-      startTicks: UInt32;
-      pausedTicks: UInt32;
+      startTicks: Longword;
+      pausedTicks: Longword;
       paused: Boolean;
       started: Boolean;
       

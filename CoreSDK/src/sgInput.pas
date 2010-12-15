@@ -51,7 +51,36 @@ interface
 //=============================================================================
 
   uses SDL, sgTypes;
-
+  
+  //----------------------------------------------------------------------------
+  // Window close and Processing events
+  //----------------------------------------------------------------------------
+  
+  /// Checks to see if the window has been asked to close. You need to handle
+  /// this if you want the game to end when the window is closed. This value
+  /// is updated by the `ProcessEvents` routine.
+  ///
+  /// @returns: True if the window has been requested to close.
+  ///
+  /// @lib WindowCloseRequested
+  function WindowCloseRequested(): Boolean;
+  
+  /// ProcessEvents allows the SwinGame API to react to user interactions. This
+  /// routine checks the current keyboard and mouse states. This routine must
+  /// be called frequently within your game loop to enable user interaction.
+  ///
+  /// Side Effects
+  /// - Reads user interaction events
+  /// - Updates keys down, text input, etc.
+  ///
+  /// @lib ProcessEvents
+  procedure ProcessEvents();
+  
+  
+  //----------------------------------------------------------------------------
+  // Mouse position
+  //----------------------------------------------------------------------------
+  
   /// Returns The current window position of the mouse as a `Vector`
   ///
   /// @lib
@@ -228,7 +257,43 @@ interface
 implementation
 //=============================================================================
 
-  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgCore, sgText, sgGeometry;
+  uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry;
+
+  //----------------------------------------------------------------------------
+  // Game Loop Essentials
+  //----------------------------------------------------------------------------
+
+  function WindowCloseRequested(): Boolean;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgInput', 'WindowCloseRequested');
+    {$ENDIF}
+    if sdlManager = nil then
+      result := false
+    else
+      result := sdlManager.HasQuit();
+    {$IFDEF TRACE}
+      TraceExit('sgInput', 'WindowCloseRequested');
+    {$ENDIF}
+  end;
+
+  procedure ProcessEvents();
+  var
+    x, y: LongInt;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgInput', 'ProcessEvents');
+    {$ENDIF}
+    {$ifdef DARWIN}
+    CyclePool();
+    {$endif}
+    SDL_GetRelativeMouseState(x, y);
+    sdlManager.ProcessEvents();
+    {$IFDEF TRACE}
+      TraceExit('sgInput', 'ProcessEvents');
+    {$ENDIF}
+  end;
+
 
   //---------------------------------------------------------------------------
 

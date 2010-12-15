@@ -16,4 +16,8 @@ public interface InputAdapter
     public boolean keyTyped(int key);    
     public boolean keyDown(int key);
     
+    public boolean windowCloseRequested();
+    public void processEvents();
+    
+    
 }

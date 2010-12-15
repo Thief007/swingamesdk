@@ -48,6 +48,8 @@
 //                      : shapes units.
 //=============================================================================
 
+{$I sgTrace.inc}
+
 /// SwinGame's geometry code includes the features to create, draw, and manipulate
 /// shapes.
 ///
@@ -1818,7 +1820,7 @@ implementation
 
   uses
     Classes, SysUtils, Math,  // system
-    sgCore, sgCamera, sgGraphics, sgSprites, sgPhysics, sgShared;     // SwinGame
+    sgCamera, sgGraphics, sgSprites, sgPhysics, sgShared, sgTrace;     // SwinGame
 
   const
     DEG_TO_RAD = 0.0174532925199432957692369076848861271344287188854172545609;
@@ -2549,7 +2551,7 @@ implementation
     result := t2 - t1;
   
     if result > 180 then result := result - 360
-    else if result <= -180 then result := result + 360
+    else if result <= -180 then result := result + 360;
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'CalculateAngle(const v1, v2: Vector): Single', '');
@@ -2839,7 +2841,7 @@ implementation
       end;
       result := result + '|' + LineEnding;
     end;
-    result := result + '-------------------------------'
+    result := result + '-------------------------------';
     
     {$IFDEF TRACE}
       TraceExit('sgGeometry', 'MatrixToString(const m: Matrix2D) : String', '');

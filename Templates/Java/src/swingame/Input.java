@@ -32,4 +32,8 @@ public class Input
     public static boolean mouseDown(int button) { return _ia.mouseDown(button); }
     public static boolean keyTyped(int key) { return _ia.keyTyped(key); }
     public static boolean keyDown(int key) { return _ia.keyDown(key); }
+    public static boolean windowCloseRequested() { return _ia.windowCloseRequested(); }
+    public static void processEvents() { _ia.processEvents(); }
+    
+    
 }

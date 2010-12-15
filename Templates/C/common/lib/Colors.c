@@ -1,5 +1,5 @@
 #include "Colors.h"
-#include "Core.h"
+#include "Graphics.h"
 
 color ColorBlue;
 color ColorGreen;

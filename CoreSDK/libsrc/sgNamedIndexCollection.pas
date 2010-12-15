@@ -51,7 +51,7 @@ interface
   procedure FreeNamedIndexCollection(var col: NamedIndexCollection);
   
 implementation
-uses sgShared, stringhash, sgUtils, StrUtils;
+uses sgShared, stringhash, sgSharedUtils, StrUtils;
 
   function NameAt(const col: NamedIndexCollection;idx: Integer): String;
   begin

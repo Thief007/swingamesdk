@@ -1,4 +1,3 @@
-#include "swingame_platform_NativeCore.h"
 #include "swingame_platform_NativeGraphics.h"
 #include "swingame_platform_NativeInput.h"
 

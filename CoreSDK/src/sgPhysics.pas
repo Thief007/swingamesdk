@@ -554,7 +554,7 @@ implementation
 
   uses
     SysUtils, sgTrace,
-    sgCore, sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages;
+    sgGraphics, sgCamera, sgGeometry, sgSprites, sgShared, sgImages;
 
 
   //---------------------------------------------------------------------------

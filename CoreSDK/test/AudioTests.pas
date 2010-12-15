@@ -1,6 +1,6 @@
 program AudioTests;
 uses
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources;
+  sgTypes, sgAudio, sgText, sgGraphics, sgResources;
 
 procedure Main();
 var

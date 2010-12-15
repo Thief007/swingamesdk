@@ -106,10 +106,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="lib\Colors.h" />
-		<Unit filename="lib\Core.c">
+		<Unit filename="lib\Utils.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="lib\Core.h" />
+		<Unit filename="lib\Utils.h" />
 		<Unit filename="lib\Geometry.c">
 			<Option compilerVar="CC" />
 		</Unit>

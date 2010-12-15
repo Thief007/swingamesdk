@@ -51,7 +51,7 @@ The main aims of the SwinGame 3.0 release are to address the following:
   Units renamed:
     SGSDK_Audio -> sgAudio
     SGSDK_Camera -> sgCamera
-    SGSDK_Core -> sgCore
+    SGSDK_Core -> deleted...
     SGSDK_Graphics -> sgGraphics
     SGSDK_Input -> sgInput
     SGSDK_Physics -> sgPhysics

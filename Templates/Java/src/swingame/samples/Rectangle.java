@@ -1,7 +1,6 @@
 package swingame.samples;
 
 import java.awt.Color;
-import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
 import swingame.KeyCode;

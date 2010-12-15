@@ -1,7 +1,6 @@
 package swingame.samples;
 
 import java.awt.Color;
-import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
 import swingame.KeyCode;
@@ -61,8 +60,8 @@ public class IntegerSortAnimator
     {
         Graphics.clearScreen();
 
-        int w = Core.screenWidth() / _data.length;
-        float scaleHeight = Core.screenHeight() / (float)_max;
+        int w = Graphics.screenWidth() / _data.length;
+        float scaleHeight = Graphics.screenHeight() / (float)_max;
 
         for(int i = 0; i < _data.length; i++)
         {         
@@ -73,7 +72,7 @@ public class IntegerSortAnimator
                 Graphics.fillRectangle(Color.RED, x, y, w, h);
         }
 
-        Core.refreshScreen(60);
+        Graphics.refreshScreen(60);
     }
     
     /**
@@ -101,8 +100,8 @@ public class IntegerSortAnimator
             {
                 if(show)
                 {
-                    Core.processEvents();
-                    if(Core.windowCloseRequested()) return;
+                    Input.processEvents();
+                    if(Input.windowCloseRequested()) return;
                     if(Input.keyTyped(KeyCode.VK_ESCAPE)) return;
                 }
                 

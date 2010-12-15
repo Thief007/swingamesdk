@@ -23,7 +23,7 @@ _type_switcher = {
         'string':   'NSString *',
         'boolean':  'BOOL',
         'byte':     'unsigned char',
-        'uint32':   'uint',
+        'longword': 'uint',
         'uint16':   'unsigned short',
         
         #SwinGame resources
@@ -139,7 +139,7 @@ _type_switcher = {
         'single':       'float',
         'longint':      'int',
         'byte':         'unsigned char',
-        'uint32':       'uint',
+        'longword':     'uint',
         'string':       'NSString *',
         
         #enums
@@ -317,7 +317,7 @@ local_variable_switcher = {
         'string':           '[%(param)s getCString:%(var)s maxLength:[%(param)s length] + 1 encoding:NSASCIIStringEncoding];\n    ',
         #NSArray types
         # 'bitmaparray':      '[SGBitmap getBitmaps:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
-        'longintarray':     '[SGUtils getIntegers:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
+        'longintarray':     '[SGObjcUtils getIntegers:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'linesarray':       '[SGLineSegment getLineSegments:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'point2darray':     '[SGPoint2D getPoint2Ds:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
         'shapearray':       '[SGShape getShapes:%(var)s fromArray:%(param)s maxSize:%(size)s];\n    ',
@@ -374,7 +374,7 @@ local_variable_switcher = {
         'triangle':         '\n    return [SGTriangle triangleForData:%(var)s];',
         
         #NSArray types
-        'longintarray':     '\n    return [SGUtils arrayOfIntegers:%(var)s size:%(size)s];',
+        'longintarray':     '\n    return [SGObjcUtils arrayOfIntegers:%(var)s size:%(size)s];',
         'linesarray':       '\n    return [SGLineSegment arrayOfLineSegments:%(var)s size:%(size)s];',
         'point2darray':     '\n    return [SGPoint2D arrayOfPoint2Ds:%(var)s size:%(size)s];',
         'shapearray':       '\n    return [SGShape arrayOfShapes:%(var)s size:%(size)s];',

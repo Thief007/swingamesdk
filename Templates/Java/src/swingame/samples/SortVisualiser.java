@@ -5,7 +5,7 @@
 
 package swingame.samples;
 
-import swingame.Core;
+import swingame.Graphics;
 import swingame.Input;
 import swingame.KeyCode;
 
@@ -25,7 +25,7 @@ public class SortVisualiser
     public static void main(String[] args)
     {
         //Open a new Graphics Window
-        Core.openGraphicsWindow("Sort Visualiser", 800, 600);
+        Graphics.openGraphicsWindow("Sort Visualiser", 800, 600);
 
         IntegerSortAnimator2 sa = new IntegerSortAnimator2(80, 100);            
 
@@ -33,16 +33,16 @@ public class SortVisualiser
         sa.sort();      // Sort when it starts
         do
         {
-            Core.processEvents();
+            Input.processEvents();
 
             if(Input.keyTyped(KeyCode.VK_R)) sa.randomize();
             if(Input.keyTyped(KeyCode.VK_S)) sa.sort();
             
             sa.showData();
             
-            Core.refreshScreen(60);
-        } while (false == Core.windowCloseRequested());
+            Graphics.refreshScreen(60);
+        } while (false == Input.windowCloseRequested());
         
-        Core.close();
+        Graphics.close();
     }
 }

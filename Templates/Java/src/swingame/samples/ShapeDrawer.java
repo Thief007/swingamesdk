@@ -1,8 +1,7 @@
 package swingame.samples;
 
-import java.awt.Color;
 import java.awt.Point;
-import swingame.Core;
+import java.awt.Color;
 import swingame.Graphics;
 import swingame.Input;
 import swingame.KeyCode;
@@ -18,7 +17,7 @@ public final class ShapeDrawer
     public static void main(String args[])
     {
         //Open a new Graphics Window
-        /*Core.openGraphicsWindow("Shape Drawer", 800, 600);
+        /*Graphics.openGraphicsWindow("Shape Drawer", 800, 600);
 
         Drawing myDrawing = new Drawing();
 
@@ -49,9 +48,9 @@ public final class ShapeDrawer
             Graphics.clearScreen();
             myDrawing.draw();
 
-            Core.refreshScreen();
-            Core.processEvents();
-        } while (!Core.windowCloseRequested());*/
+            Graphics.refreshScreen();
+            Input.processEvents();
+        } while (!Input.windowCloseRequested());*/
         // Core.useNative();
         runGame();
     }
@@ -59,7 +58,7 @@ public final class ShapeDrawer
     public static void runGame()
     {
         //Open a new Graphics Window
-        Core.openGraphicsWindow("Shape Drawer", 800, 600);
+        Graphics.openGraphicsWindow("Shape Drawer", 800, 600);
 
         DrawingController dc = new DrawingController();
 
@@ -68,10 +67,10 @@ public final class ShapeDrawer
         {
             Graphics.clearScreen();
             dc.draw();
-            Core.refreshScreen(60);
+            Graphics.refreshScreen(60);
 
-            Core.processEvents();
+            Input.processEvents();
             dc.handleInput();
-        } while (!Core.windowCloseRequested());
+        } while (!Input.windowCloseRequested());
     }
 }

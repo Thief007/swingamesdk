@@ -2,7 +2,7 @@ program GUITests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 
 uses
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText,
+  sgUserInterface, sgAudio, sgGraphics, sgResources, sgText,
   sgGeometry, sgTypes, sgInput, SysUtils, sgImages, sgMaps,
   sgCamera, sgUtils;
 

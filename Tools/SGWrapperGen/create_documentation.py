@@ -39,7 +39,7 @@ SVN_VERSION = get_svn_version()
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
 _nolink_types = (
-    'Single', 'String', 'Boolean', 'LongInt', 'Byte', 'UInt32', 'UInt16',
+    'Single', 'String', 'Boolean', 'LongInt', 'Byte', 'UInt32', 'Longword', 'UInt16',
     'PSDL_Surface', 'PMix_Music', 'PMix_Chunk', 'Pointer'
 )
 

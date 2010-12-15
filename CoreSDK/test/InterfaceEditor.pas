@@ -2,7 +2,7 @@ program GUITests;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 
 uses
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils, sgImages, sgNamedIndexCollection;
+  sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, SysUtils, sgImages, sgNamedIndexCollection;
   
 type
   ArrayOfPanel = Array of Panel;

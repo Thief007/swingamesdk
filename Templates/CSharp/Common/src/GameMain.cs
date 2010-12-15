@@ -13,20 +13,20 @@ namespace MyGame
             Audio.OpenAudio();
             
             //Open the game window
-            Core.OpenGraphicsWindow("GameMain", 800, 600);
+            Graphics.OpenGraphicsWindow("GameMain", 800, 600);
             
             //Run the game loop
-            while(false == Core.WindowCloseRequested())
+            while(false == Input.WindowCloseRequested())
             {
                 //Fetch the next batch of UI interaction
-                Core.ProcessEvents();
+                Input.ProcessEvents();
                 
                 //Clear the screen and draw the framerate
                 Graphics.ClearScreen();
                 Text.DrawFramerate(0,0);
                 
                 //Draw onto the screen
-                Core.RefreshScreen();
+                Graphics.RefreshScreen();
             }
             
             //End the audio

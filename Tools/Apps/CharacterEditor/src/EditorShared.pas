@@ -249,7 +249,7 @@ type
   procedure DoSaveDialog(var sharedVals : EditorValues; dt : DialogType);
 	
 implementation
-	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgNamedIndexCollection;
+	uses sgImages, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgNamedIndexCollection;
 
 	//---------------------------------------------------------------------------
   // Locate CellGroup and CellArea

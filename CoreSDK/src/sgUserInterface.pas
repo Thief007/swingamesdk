@@ -1165,8 +1165,8 @@ procedure AddRegionToPanelWithString(d: string; p: panel);
 implementation
   uses
     SysUtils, StrUtils, Classes, Math,
-    stringhash, sgUtils, sgNamedIndexCollection,   // libsrc
-    sgShared, sgResources, sgTrace, sgImages, sgGraphics, sgCore, 
+    stringhash, sgSharedUtils, sgNamedIndexCollection,   // libsrc
+    sgShared, sgResources, sgTrace, sgImages, sgGraphics,
     sgGeometry, sgText, sgInput, sgAudio;
 //=============================================================================
 

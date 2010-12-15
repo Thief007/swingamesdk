@@ -20,7 +20,7 @@ const
   procedure UpdateCharEditor(var CharMode : CharEditorValues;var sharedVals: EditorValues);
 
 implementation
-	uses sgImages, sgCore, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgSprites,
+	uses sgImages, sgInput, sgText, sgGeometry, sgGraphics, SysUtils, sgResources, sgShared, StrUtils, sgUtils, sgSprites,
   sgUserInterface, sgCharacters, sgNamedIndexCollection, sgAnimations;
 
   //---------------------------------------------------------------------------

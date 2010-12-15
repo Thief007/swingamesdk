@@ -5,7 +5,7 @@
 // This unit handles the processing of events, including the reading of text
 // for SwinGames. This unit and its code is not directly used by typical games.
 //
-// An object of the TSDLManager is created and managed in sgCore. Only one
+// An object of the TSDLManager is created and managed in sgShared. Only one
 // instance should be used (essentially a "singleton" pattern), which is
 // available in the sdlManager as a global variable.
 //
@@ -113,7 +113,7 @@ implementation
   var
     keys: PUint8;
     {$IFNDEF FPC}
-    indexAddress: uint32;
+    indexAddress: Longword;
     intPtr: ^UInt8;
     {$ENDIF}
   begin
@@ -124,7 +124,7 @@ implementation
       {$IFDEF FPC}
         result := (keys + virtKeyCode)^ = 1;
       {$ELSE}
-        indexAddress := uint32(keys) + uint32(virtKeyCode);
+        indexAddress := Longword(keys) + Longword(virtKeyCode);
         intPtr := Ptr(indexAddress);
         result := intPtr^ = 1;
       {$ENDIF}

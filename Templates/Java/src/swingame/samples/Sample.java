@@ -2,7 +2,6 @@ package swingame.samples;
 
 import java.awt.Color;
 import java.awt.Point;
-import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
 
@@ -22,15 +21,15 @@ public final class Sample
         //Use the native library using: 
         //Core.useNative();
         
-        Core.openGraphicsWindow("Hello World", 800, 600);
+        Graphics.openGraphicsWindow("Hello World", 800, 600);
         
         float x = 0.0f;
         Color c = Color.RED;
         Color c1 = Color.BLUE;
         
-        while (false == Core.windowCloseRequested())
+        while (false == Input.windowCloseRequested())
         {
-            Core.processEvents();
+            Input.processEvents();
             
             if (Input.mouseClicked(MouseButton.LEFT_BUTTON)) 
             {
@@ -54,7 +53,7 @@ public final class Sample
             Point p = Input.mousePosition();
             Graphics.drawPixel(Color.GREEN, (float)p.getX(), (float)p.getY());
             
-            Core.refreshScreen();
+            Graphics.refreshScreen();
         }
     }
 }
