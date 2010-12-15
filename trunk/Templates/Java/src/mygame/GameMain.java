@@ -3,11 +3,11 @@ package mygame;
 import java.awt.Color;
 import java.awt.Point;
 
-import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
 import swingame.MouseButton;
 import swingame.KeyCode;
+import swingame.Utils;
 
 /**
  * <<Class summary>>
@@ -20,17 +20,17 @@ public final class GameMain
     public static void main(String[] args)
     {
         //Use the native library using: 
-        //Core.useNative();
+        //Utils.useNative();
         
-        Core.openGraphicsWindow("Hello World", 800, 600);
+        Graphics.openGraphicsWindow("Hello World", 800, 600);
         
         float x = 0.0f;
         Color c = Color.RED;
         Color c1 = Color.BLUE;
         
-        while (false == Core.windowCloseRequested())
+        while (false == Input.windowCloseRequested())
         {
-            Core.processEvents();
+            Input.processEvents();
             
             if (Input.mouseClicked(MouseButton.LEFT_BUTTON)) 
             {
@@ -54,7 +54,7 @@ public final class GameMain
             Point p = Input.mousePosition();
             Graphics.drawPixel(Color.GREEN, (float)p.getX(), (float)p.getY());
             
-            Core.refreshScreen();
+            Graphics.refreshScreen();
         }
     }
 }

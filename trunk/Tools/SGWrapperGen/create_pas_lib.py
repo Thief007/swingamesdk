@@ -37,7 +37,7 @@ _type_switcher = {
     'timer': 'Timer',
     'byte': 'Byte',
     'resourcekind': 'ResourceKind',
-    'uint32': 'UInt32',
+    'longword': 'Longword',
     'uint16': 'UInt16',
     'bitmap': 'Bitmap',
     'matrix2d': 'SinglePtr',

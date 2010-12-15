@@ -2,7 +2,6 @@ package swingame.samples;
 
 import java.awt.Color;
 import java.awt.Point;
-import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
 import swingame.KeyCode;
@@ -60,14 +59,14 @@ import swingame.MouseButton;
          if (s != null)
          {
              float hue, sat, bri;
-             hue = Core.hueOf(s.getColor());
-             sat = Core.saturationOf(s.getColor());
-             bri = Core.brightnessOf(s.getColor());
+             hue = Graphics.hueOf(s.getColor());
+             sat = Graphics.saturationOf(s.getColor());
+             bri = Graphics.brightnessOf(s.getColor());
 
              hue += 0.01f;
              if (hue > 1) hue = hue - 1;
 
-             s.setColor(Core.hSBColor(hue, sat, bri));
+             s.setColor(Graphics.hSBColor(hue, sat, bri));
          }
      }
 

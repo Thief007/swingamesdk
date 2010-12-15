@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SwinGame
 {
-    internal static class Utils
+    internal static class WrapperUtils
     {
         internal static Matrix2D MatrixFromArray(float[,] data)
         {

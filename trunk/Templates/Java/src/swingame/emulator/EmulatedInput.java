@@ -17,26 +17,37 @@ public class EmulatedInput implements InputAdapter
 {
     public Point mousePosition() 
     {
-        return EmulatedCore.getWindow().getMousePoint();
+        return EmulatedGraphics.getWindow().getMousePoint();
     }
     
     public boolean mouseClicked(int button) 
     { 
-        return EmulatedCore.getWindow().mouseClicked(button); 
+        return EmulatedGraphics.getWindow().mouseClicked(button); 
     }
     
     public boolean mouseDown(int button) 
     { 
-        return EmulatedCore.getWindow().mouseDown(button); 
+        return EmulatedGraphics.getWindow().mouseDown(button); 
     }
     
     public boolean keyTyped(int key) 
     {
-        return EmulatedCore.getWindow().keyTyped(key); 
+        return EmulatedGraphics.getWindow().keyTyped(key); 
     }
     
     public boolean keyDown(int key) 
     { 
-        return EmulatedCore.getWindow().keyDown(key); 
+        return EmulatedGraphics.getWindow().keyDown(key); 
     }
+    
+    public boolean windowCloseRequested()
+    {
+        return false == EmulatedGraphics.getWindow().isVisible();
+    }
+    
+    public void processEvents()
+    {
+        EmulatedGraphics.getWindow().processEvents();
+    }
+    
 }

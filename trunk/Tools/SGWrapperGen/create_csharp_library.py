@@ -63,8 +63,8 @@ _type_switcher = {
         'shape':                'Shape %s',
         'sprite':               'Sprite %s',
         
-        'resourcekind': 'ResourceKind %s',
-        'uint32': 'uint %s',
+        'resourcekind':     'ResourceKind %s',
+        'longword':         'uint %s',
         'bitmap': 'Bitmap %s',
         'pointer': 'IntPtr %s',
         'single[0..2][0..2]': 'float %s[3][3]',
@@ -177,7 +177,7 @@ _type_switcher = {
         'longint': 'int %s',
         'byte': 'byte %s',
         'color': 'System.Drawing.Color %s',
-        'uint32': 'uint %s',
+        'longword': 'uint %s',
         'string': 'String %s',
         
         #Data
@@ -231,14 +231,14 @@ _data_switcher = {
     {
         'string':       '%s.ToString()',
         'linesarray':   '%s',
-        'matrix2d':     'Utils.MatrixFromArray(%s)',
+        'matrix2d':     'WrapperUtils.MatrixFromArray(%s)',
         'point2darray': '%s',
-        'triangle':     'Utils.TriangleFromArray(%s)',
+        'triangle':     'WrapperUtils.TriangleFromArray(%s)',
         'longint':      '%s',
         'longintarray': '%s',
-        'trianglearray':'Utils.TriangleArrayFrom(%s)',
-        'bitmaparray':  'Utils.BitmapArrayFrom(%s)',
-        'stringarray':  'Utils.StringArrayFrom(%s)',
+        'trianglearray':'WrapperUtils.TriangleArrayFrom(%s)',
+        'bitmaparray':  'WrapperUtils.BitmapArrayFrom(%s)',
+        'stringarray':  'WrapperUtils.StringArrayFrom(%s)',
     },
     'return_val' : 
     {
@@ -284,7 +284,7 @@ _data_switcher = {
         'fontalignment': '(int)%s',
         'fontstyle': '(int)%s',
         
-        'bitmaparray': 'Utils.BitmapArrToIntPtrArr(%s)'
+        'bitmaparray': 'WrapperUtils.BitmapArrToIntPtrArr(%s)'
     },
     #Argument with a literal value
     'arg_lit_val' : 
@@ -322,7 +322,7 @@ _adapter_type_switcher = {
         'sprite':               'IntPtr %s',
         'bitmap':               'IntPtr %s',
         
-        'uint32': 'uint %s',
+        'longword': 'uint %s',
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
         'triangle': 'Point2D[] %s',
@@ -378,7 +378,7 @@ _adapter_type_switcher = {
         'sprite':               'IntPtr %s',
         
         'resourcekind': 'int %s',
-        'uint32': 'uint %s',
+        'longword': 'uint %s',
         'bitmap': 'IntPtr %s',
         'rectangle': 'Rectangle %s',
         'linesegment': 'LineSegment %s',
@@ -562,7 +562,7 @@ _adapter_type_switcher = {
         
         'byte':     'byte %s',
         'color':    'int %s',
-        'uint32':   'uint %s',
+        'longword':   'uint %s',
         
         # Structs
         'bitmapcell':       'BitmapCell %s',
@@ -616,7 +616,7 @@ _struct_type_switcher = {
     'timer': 'internal Timer _%s',
     'color': 'internal Color _%s',
     'resourcekind': 'internal ResourceKind _%s',
-    'uint32': 'internal uint _%s',
+    'longword': 'internal uint _%s',
     'bitmap': 'internal Bitmap _%s',
     'single[0..2][0..2]': '[ MarshalAs( UnmanagedType.ByValArray, SizeConst=9 )]\ninternal float[,] _%s',
     'vector': 'internal Vector _%s',
@@ -943,7 +943,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                         assert local_var.data_type.name in ['LongIntArray','Point2DArray','TriangleArray','StringArray','LinesArray','BitmapArray']
                         
                         if local_var.data_type.name == 'StringArray':
-                            temp_process_params = '%s = Utils.ResultStringArray(%s);' % (local_var.name, details['length_call'].replace('return ', '') )
+                            temp_process_params = '%s = WrapperUtils.ResultStringArray(%s);' % (local_var.name, details['length_call'].replace('return ', '') )
                             # also fix local variable type of string arrays that map results :(
                             temp = temp.replace('string', 'StringBuilder')
                         else:
@@ -974,12 +974,12 @@ def method_visitor(the_method, other, as_accessor_name = None):
                             local_var.length_of.name if not local_var.length_of.has_field else local_var.length_of.name + '._' + local_var.field_name
                         )
                 elif type_name == 'trianglearray' and not local_var.maps_result:
-                    temp_process_params += '%s = Utils.TriangleArrToPoint2DArr(%s);\n    ' % (
+                    temp_process_params += '%s = WrapperUtils.TriangleArrToPoint2DArr(%s);\n    ' % (
                             local_var.name,
                             local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
                         )                    
                 elif type_name == 'bitmaparray' and not local_var.maps_result:
-                    temp_process_params += '%s = Utils.BitmapArrToIntPtrArr(%s);\n    ' % (
+                    temp_process_params += '%s = WrapperUtils.BitmapArrToIntPtrArr(%s);\n    ' % (
                             local_var.name,
                             local_var.name[:-5] if not local_var.has_field else local_var.name[:-5] + '._' + local_var.field_name
                         )                    
@@ -1030,7 +1030,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
         for param in the_method.params:
             if param.data_type.pointer_wrapper and param.modifier == 'var':
                 details['pre_call'] = 'if (' + param.name + ' == null) return;\n    ' + details['pre_call']
-                print 'Checks for null var parameter: ', the_method.name
+                # print 'Checks for null var parameter: ', the_method.name
         
         # Morph fn is a function used to alter the output for this method.
         # It is passed the string output and changes it as required.

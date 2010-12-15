@@ -26,6 +26,11 @@
 //=============================================================================
 
 {$I sgTrace.inc}
+{$IFDEF UNIX}
+  {$IFNDEF DARWIN}
+    {$linklib gcc}
+  {$ENDIF}  
+{$ENDIF}
 
 unit sgShared;
   
@@ -34,7 +39,7 @@ interface
   uses 
     SDL, SDL_Image,     //SDL
     stringhash,   // libsrc
-    sgEventProcessing, sgCore, sgTypes;
+    sgEventProcessing, sgTypes;
 //=============================================================================
   
   type
@@ -62,6 +67,7 @@ interface
 
     // Used by release all
     ReleaseFunction = procedure(name: String);
+    IntProc = procedure(val: Longword);
 
   // Immediate if
   function iif(pred: Boolean; trueVal, falseVal: Single): Single; overload;
@@ -72,7 +78,7 @@ interface
   // Takes a 4-byte (32bit) unsigned integer representing colour in the
   // current SDL pixel format and returns a nice `TSDL_Color` record with
   // simple red, green and blue components
-  function ToSDLColor(color: UInt32): TSDL_Color;
+  function ToSDLColor(color: Longword): TSDL_Color;
 
   // Converts the passed in SwinGame `Color` format (which changes as does
   // SDL to whatever the current SDL environment uses) to the Color structure
@@ -101,7 +107,7 @@ interface
   procedure RaiseWarning(message: String);
   
   {$ifdef DARWIN}
-  //procedure CyclePool();
+  procedure CyclePool();
   {$endif}
   
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
@@ -114,31 +120,31 @@ interface
   // Global variables that can be shared.
   var
     // The base path to the program's executable.
-    applicationPath: String;
+    applicationPath: String = '';
     
     // This `Bitmap` wraps the an SDL image (and its double-buffered nature)
     // which is used to contain the current "screen" rendered to the window.
-    screen: Bitmap;
+    screen: Bitmap = nil;
     
     // Used for on screen tests...
     screenRect: Rectangle;
     
     // The singleton instance manager used to check events and called
     // registered "handlers". See `RegisterEventProcessor`.
-    sdlManager: TSDLManager;
+    sdlManager: TSDLManager = nil;
 
     // The name of the icon file shown.
     // TODO: Does this work? Full path or just resource/filename?
-    iconFile: String;
+    iconFile: String = '';
 
     // This "base" surface is used to get standard pixel format information
     // for any other surfaces that need to be created and to support colour.
-    baseSurface: PSDL_Surface;
+    baseSurface: PSDL_Surface = nil;
 
     // Contains the last error message that has occured if `HasException` is
     // true. If multiple error messages have occured, only the last is stored.
     // Used only by the generated library code.
-    ErrorMessage: String;
+    ErrorMessage: String = '';
 
     // This flag is set to true if an error message has occured. Used only by
     // the generated library code.
@@ -149,6 +155,14 @@ interface
     
     // The function pointer to call into the other language to tell them something was freed
     _FreeNotifier: FreeNotifier = nil;
+    
+    // Timing details related to calculating FPS
+    _lastUpdateTime: Longword = 0;
+    
+    // The pointer to the screen's surface
+    _screen: PSDL_Surface = nil;
+    
+    _UpdateFPSData: IntProc = nil;
     
     UseExceptions: Boolean = True;
   const
@@ -162,7 +176,7 @@ interface
 implementation
   uses 
     SysUtils, Math, Classes, StrUtils,
-    sgTrace, 
+    sgTrace, sgGraphics, 
     SDL_gfx;
 //=============================================================================
   
@@ -223,7 +237,7 @@ implementation
       
       NSAutoreleasePool := objc_getClass('NSAutoreleasePool');
       pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-      objc_msgSend(pool, sel_registerName('init'));
+      pool := objc_msgSend(pool, sel_registerName('init'));
       NSApplicationLoad();
     {$endif}
     
@@ -247,9 +261,6 @@ implementation
     //Unicode required by input manager.
     SDL_EnableUNICODE(SDL_ENABLE);
     
-    screen := nil;
-    baseSurface := nil;
-    
     //Initialise colors... assuming ARGB -  will be recalculated when window is opened
     ColorWhite        := $FFFFFFFF;
     ColorGreen        := $FF00FF00;
@@ -270,21 +281,21 @@ implementation
   end;
   
   {$ifdef DARWIN}
-  // procedure CyclePool();
-  // begin
-  //   if class_respondsToSelector(NSAutoreleasePool, sel_registerName('release')) then
-  //   begin
-  //     //Drain the pool - releases it
-  //     objc_msgSend(pool, sel_registerName('release'));
-  //     WriteLn('Drain');
-  //     //Create a new pool
-  //     pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
-  //     objc_msgSend(pool, sel_registerName('init'));
-  //   end;
-  // end;
+  procedure CyclePool();
+  begin
+    if class_respondsToSelector(NSAutoreleasePool, sel_registerName('drain')) then
+    begin
+      //Drain the pool - releases it
+      objc_msgSend(pool, sel_registerName('drain'));
+      // WriteLn('Drain');
+      //Create a new pool
+      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+      pool := objc_msgSend(pool, sel_registerName('init'));
+    end;
+  end;
   {$endif}
 
-  function ToSDLColor(color: UInt32): TSDL_Color;
+  function ToSDLColor(color: Longword): TSDL_Color;
   begin
     if (baseSurface = nil) or (baseSurface^.format = nil) then
     begin
@@ -366,11 +377,11 @@ implementation
   function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
   var
     pixel, pixels: PUint32;
-    offset: Uint32;
+    offset: Longword;
   {$IFDEF FPC}
     pixelAddress: PUint32;
   {$ELSE}
-    pixelAddress: UInt32;
+    pixelAddress: Longword;
   {$ENDIF}
   begin
     //Convert the pixels to 32 bit
@@ -383,7 +394,7 @@ implementation
       pixelAddress := pixels + (offset div 4);
       pixel := PUint32(pixelAddress);
     {$ELSE}
-      pixelAddress := UInt32(pixels) + offset;
+      pixelAddress := Longword(pixels) + offset;
       pixel := Ptr(pixelAddress);
     {$ENDIF}
 
@@ -494,6 +505,12 @@ end;
 
   finalization
   begin
+    if not assigned(pool) then
+    begin
+      pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
+      pool := objc_msgSend(pool, sel_registerName('init'));
+    end;
+    
     if sdlManager <> nil then
     begin
       sdlManager.Free();
@@ -502,7 +519,7 @@ end;
     
     if screen <> nil then
     begin
-      if screen^.surface <> nil then
+      if screen^.surface <> nil then 
         SDL_FreeSurface(screen^.surface);
     
       Dispose(screen);
@@ -517,7 +534,7 @@ end;
       // last pool will self drain...
       if assigned(pool) then
       begin
-        objc_msgSend(pool, sel_registerName('release'));
+        objc_msgSend(pool, sel_registerName('drain'));
       end;
       pool := nil;
       NSAutoreleasePool := nil;

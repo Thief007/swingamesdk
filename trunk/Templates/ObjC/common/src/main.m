@@ -4,32 +4,26 @@
 
 int main(int argc, const char* argv[])
 {
-    NSAutoreleasePool *appPool = [[NSAutoreleasePool alloc] init];
     [SGResources setAppPath:[NSString stringWithCString:argv[0] encoding:NSASCIIStringEncoding]];
     
     [SGAudio openAudio];
-    [SGCore openGraphicsWindow:@"Hello World" 
+    [SGGraphics openGraphicsWindow:@"Hello World" 
                          width:800
                         height:600];
     [SGColors loadDefaultColors];
     
-    while (![SGCore windowCloseRequested])
+    while (![SGInput windowCloseRequested])
     {
-        NSAutoreleasePool *loopPool = [[NSAutoreleasePool alloc] init];
-        
         //Update game...
-        [SGCore processEvents];
+        [SGInput processEvents];
         
         //Draw game...
         [SGGraphics clearScreen];
         [SGText drawFrameRateWithSimpleFont: 0 :0];
-        [SGCore refreshScreen];
-        
-        [loopPool drain];
+        [SGGraphics refreshScreen];
     }
     
     [SGAudio closeAudio];
     [SGResources releaseAllResources];
-    [appPool drain];
     return 0;
 }

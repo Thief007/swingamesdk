@@ -2,7 +2,7 @@ program SaveBitmaps;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
   sysutils,
-  sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources,
+  sgTypes, sgAudio, sgText, sgGraphics, sgResources,
   sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, 
   sgSprites, sgTimers;
 

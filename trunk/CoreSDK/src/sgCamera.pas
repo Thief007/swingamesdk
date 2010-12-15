@@ -292,7 +292,7 @@ interface
 implementation
   uses 
     sgTrace, SysUtils, 
-    sgCore, sgGeometry, sgSprites, sgShared, sgImages;
+    sgGraphics, sgGeometry, sgSprites, sgShared, sgImages;
 //=============================================================================
 
   ///

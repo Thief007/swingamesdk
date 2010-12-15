@@ -1,6 +1,6 @@
 program AnimationTests;
 
-uses sgTypes, sgShared, sgSprites, sgAnimations, SysUtils, sgCore, sgAudio, sgResources, sgImages, sgGraphics, sgGeometry, sgText, sgInput;
+uses sgTypes, sgShared, sgSprites, sgAnimations, SysUtils, sgAudio, sgResources, sgImages, sgGraphics, sgGeometry, sgText, sgInput;
 
 var
   explosions: AnimationTemplate;

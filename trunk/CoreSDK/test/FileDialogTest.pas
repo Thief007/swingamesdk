@@ -4,7 +4,7 @@ program FileDialogTests;
 uses
   Math, SysUtils,
   sgUtils,
-  sgCore, sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, sgImages, sgInput;
+  sgUserInterface, sgAudio, sgGraphics, sgResources, sgText, sgGeometry, sgTypes, sgImages, sgInput;
 
 procedure InitInterface();
 begin

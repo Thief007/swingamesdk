@@ -1,4 +1,4 @@
-#import "SGUtils.h"
+#import "SGObjcUtils.h"
 #import "SGTriangle.h"
 
 #import <Foundation/NSValue.h>
@@ -56,7 +56,7 @@
 
 @end
 
-@implementation SGUtils : NSObject
+@implementation SGObjcUtils : NSObject
 
 + (NSArray *) arrayOfIntegers:(int *)firstPtr size:(int)sz
 {

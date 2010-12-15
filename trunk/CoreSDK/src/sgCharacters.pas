@@ -18,6 +18,8 @@
 //
 //=============================================================================
 
+{$I sgTrace.inc}
+
 /// SwinGame Characters are Sprites with additional functionality to handle animations
 /// for movement and state. For example, you may have a Soldier character with images
 /// and animations for moving in 8 directions (N, NE, E, etc..). The Soldier may
@@ -413,9 +415,9 @@ interface
 //=============================================================================
 implementation
   uses
-    sgCore, sgAnimations, sgGeometry, sgResources, stringHash,
-    sgImages, sgNamedIndexCollection, sgShared,
-    sgSprites, SysUtils, sgUtils, StrUtils;
+    sgGraphics, sgAnimations, sgGeometry, sgResources, stringHash,
+    sgImages, sgNamedIndexCollection, sgShared, sgTrace,
+    sgSprites, SysUtils, sgSharedUtils, StrUtils;
 //============================================================================= 
 
   var

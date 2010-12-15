@@ -150,8 +150,7 @@ uses
     end
     else
     begin
-      //Trace core and SGSDK.dll by default
-      TRACE_UNITS.SetValue('sgCore', nil);
+      //Trace SGSDK.dll by default
       TRACE_UNITS.SetValue('SGSDK.dll', nil);
     end;
   end;

@@ -51,6 +51,8 @@
 // - Various
 //=============================================================================
 
+{$I sgTrace.inc}
+
 /// The graphics code of SwinGame is used to draw primitive shapes to the screen
 /// or onto bitmaps.
 /// 
@@ -62,6 +64,299 @@ unit sgGraphics;
 interface
   uses sgTypes;
 //=============================================================================
+  
+  
+  //----------------------------------------------------------------------------
+  // Window management
+  //----------------------------------------------------------------------------
+  
+  /// Sets the icon for the window. This must be called before openning the
+  /// graphics window. The icon is loaded as a bitmap, though this can be from
+  /// any kind of bitmap file.
+  ///
+  /// @param filename The name of the file to load as the images icon
+  ///
+  ///Side Effects
+  /// - The icon will be loaded and used as the windows icon when the window
+  /// is opened.
+  ///
+  /// @lib
+  procedure SetIcon(filename: String);
+  
+  /// Opens the graphical window so that it can be drawn onto. You can set the
+  /// icon for this window using `SetIcon`. The window itself is only drawn when
+  /// you call `RefreshScreen`. All windows are opened at 32 bits per pixel. You
+  /// can toggle fullscreen using `ToggleFullScreen`. The window is closed when
+  /// the application terminates.
+  ///
+  /// @param caption The caption for the window
+  /// @param width The width of the window
+  /// @param height The height of the window
+  ///
+  /// Side Effects:
+  /// - A graphical window is opened
+  ///
+  /// @lib
+  /// @uname OpenGraphicsWindow
+  /// @sn openGraphicsWindow:%s width:%s height:%s
+  procedure OpenGraphicsWindow(caption: String; width, height: LongInt); overload;
+
+  /// Opens the graphical window as an 800 x 600 window. See OpenGramhicsWinddow
+  /// for more options.
+  /// @param caption: The caption for the window
+  ///
+  /// Side Effects:
+  /// - A graphical window is opened
+  ///
+  /// @lib OpenGraphicsWindow(caption, 800, 600)
+  /// @uname OpenGraphicsWindow800x600
+  /// @sn openGraphicsWindow:%s
+  procedure OpenGraphicsWindow(caption: String); overload;
+
+  /// Changes the size of the screen.
+  ///
+  /// @param width, height: The new width and height of the screen
+  ///
+  /// Side Effects:
+  /// - The screen changes to the specified size
+  ///
+  /// @lib
+  /// @sn changeScreenSizeToWidth:%s height:%s
+  procedure ChangeScreenSize(width, height: LongInt);
+
+  /// Switches the application to full screen or back from full screen to
+  /// windowed.
+  ///
+  /// Side Effects:
+  /// - The window switched between fullscreen and windowed
+  ///
+  /// @lib
+  procedure ToggleFullScreen();
+  
+  /// Toggle the Window border mode. This enables you to toggle from a bordered
+  /// window to a borderless window.
+  ///
+  /// @lib
+  procedure ToggleWindowBorder();
+  
+  /// Returns the width of the screen currently displayed.
+  ///
+  /// @returns: The screen's width
+  ///
+  /// @lib
+  ///
+  /// @class Graphics
+  /// @static
+  /// @getter ScreenWidth
+  function ScreenWidth(): LongInt;
+
+  /// Returns the height of the screen currently displayed.
+  ///
+  /// @returns: The screen's height
+  ///
+  /// @lib
+  ///
+  /// @class Graphics
+  /// @static
+  /// @getter ScreenHeight
+  function ScreenHeight(): LongInt;
+
+  /// Saves the current screen a bitmap file. The file will be saved into the
+  /// current directory.
+  ///
+  /// @param basename   The base name for the screen shot. e.g. "GemCollector"
+  ///
+  /// Side Effects:
+  /// - Saves the current screen image to a bitmap file.
+  ///
+  /// @lib TakeScreenshot
+  procedure TakeScreenshot(basename: String);
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Refreshing the screen
+  //----------------------------------------------------------------------------
+  
+  /// Draws the current drawing to the screen. This must be called to display
+  /// anything to the screen. This will draw all drawing operations, as well
+  /// as the text being entered by the user.
+  ///
+  /// Side Effects:
+  /// - The current drawing is shown on the screen.
+  ///
+  /// @lib RefreshScreen
+  procedure RefreshScreen(); overload;
+  
+  /// Refresh with a target FPS. This will delay a period of time that will 
+  /// approximately meet the targetted frames per second.
+  ///
+  /// @lib RefreshScreenRestrictFPS
+  procedure RefreshScreen(TargetFPS: Longword); overload;
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Color
+  //----------------------------------------------------------------------------
+
+  /// Maps a color from a given bitmap. This is used when determining color
+  /// keys for transparent images.
+  ///
+  /// @param bmp:   the bitmap to get the color for
+  /// @param apiColor:     The api color to match
+  /// @returns:           The color matched to the bitmaps pixel format
+  ///
+  /// @lib ColorFromBitmap
+  /// @sn colorFrom:%s apiColor:%s
+  ///
+  /// @doc_group colors
+  function ColorFrom(bmp: Bitmap; apiColor: Color): Color;
+
+  /// Creates and returns a random color where R, G, B and A are all randomised.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function RandomColor(): Color;
+
+  /// Creates and returns a random color where R, G, and B are all randomised, and A is set
+  /// to the passed in value.
+  ///
+  /// @param alpha: the opacity of the random color
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function RandomRGBColor(alpha: Byte): Color;
+
+  /// Gets a color given its RGBA components.
+  ///
+  /// @param red, green, blue, alpha:  Components of the color
+  /// @returns: The matching colour
+  ///
+  /// @lib
+  /// @sn rgbaColorRed:%s green:%s blue:%s alpha:%s
+  ///
+  /// @doc_group colors
+  function RGBAColor(red, green, blue, alpha: Byte): Color;
+
+  /// Gets a color given its RGB components.
+  ///
+  /// @param red, green, blue:   Components of the color
+  /// @returns:                 The matching colour
+  ///
+  /// @lib RGBAColor(red, green, blue, 255)
+  /// @uname RGBColor
+  /// @sn rgbColorRed:%s green:%s blue:%s
+  ///
+  /// @doc_group colors
+  function RGBColor(red, green, blue: Byte): Color;
+
+  /// Gets a color given its RGBA components.
+  ///
+  /// @lib
+  /// @sn colorComponentsOf:%s red:%s green:%s blue:%s alpha:%s
+  ///
+  /// @doc_group colors
+  procedure ColorComponents(c: Color; out r, g, b, a: byte);
+
+
+  /// returns color to string.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function  ColorToString(c: Color): string;
+
+  /// Returns a color from a floating point RBG value set.
+  ///
+  /// @param r,g,b: Components for color 0 = none 1 = full
+  ///
+  /// @lib
+  /// @sn rgbFloatColorRed:%s green:%s blue:%s
+  ///
+  /// @doc_group colors
+  function RGBFloatColor(r,g,b: Single): Color;
+
+  /// Returns a color from a floating point RBGA value set.
+  ///
+  /// @param r,g,b,a: Components for color 0 = none 1 = full
+  ///
+  /// @lib
+  /// @sn rgbaFloatColorRed:%s green:%s blue:%s alpha:%s
+  ///
+  /// @doc_group colors
+  function RGBAFloatColor(r,g,b, a: Single): Color;
+
+  /// Returs a color from the HSB input.
+  ///
+  /// @param hue, saturation, brightness: Values between 0 and 1
+  /// @returns The matching color
+  ///
+  /// @lib
+  /// @sn hsbColorHue:%s sat:%s bri:%s
+  ///
+  /// @doc_group colors
+  function HSBColor(hue, saturation, brightness: Single): Color;
+
+  /// Get the transpareny value of ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function TransparencyOf(c: Color): byte;
+
+  /// Get the red value of ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function RedOf(c: Color): byte;
+
+  /// Get the green value of ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function GreenOf(c: Color): byte;
+
+  /// Get the blue value of ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function BlueOf(c: Color): byte;
+
+  /// Gets the hue ``h``, saturation ``s``, and brightness ``b`` values from
+  /// the color.
+  ///
+  /// @lib
+  /// @sn hsbValueOf:%s hue:%s sat:%s bri:%s
+  ///
+  /// @doc_group colors
+  procedure HSBValuesOf(c: Color; out h, s, b: Single);
+
+  /// Get the hue of the ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function HueOf(c: Color): Single;
+
+  /// Get the saturation of the ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function SaturationOf(c: Color) : Single;
+
+  /// Get the brightness of the ``color``.
+  ///
+  /// @lib
+  ///
+  /// @doc_group colors
+  function BrightnessOf(c: Color) : Single;
   
   //---------------------------------------------------------------------------
   // Circle drawing code
@@ -1131,14 +1426,22 @@ interface
   /// @sn colorOnScreenAtX:%s y:%s
   function GetPixelFromScreen(x, y: LongInt): Color;
   
-
+  
+  var
+    //Preset colours, do not change these values.
+    ColorBlue, ColorGreen, ColorRed, ColorWhite, ColorBlack, ColorYellow,
+    ColorPink, ColorTurquoise, ColorGrey, ColorMagenta, ColorTransparent,
+    ColorLightGrey: Color;
+  
 //=============================================================================
 implementation
 //=============================================================================
 
-  uses Classes, SysUtils, // system
+  uses Math, Classes, SysUtils, // system
        SDL_gfx, SDL, SDL_Image, // sdl
-       sgCamera, sgPhysics, sgShared, sgCore, sgGeometry, sgResources, sgImages;
+       sgSavePNG, 
+       sgTrace, 
+       sgCamera, sgPhysics, sgShared, sgGeometry, sgResources, sgImages, sgUtils, sgUserInterface;
 
   /// Clears the surface of the screen to the passed in color.
   ///
@@ -2302,6 +2605,691 @@ implementation
     DrawShapeOnScreen(s, true);
   end;
   
+  //----------------------------------------------------------------------------
+  // Set Icon / Window Open / Screen Size / Resize
+  //----------------------------------------------------------------------------
+
+  procedure _SetupScreen();
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', '_SetupScreen');
+    {$ENDIF}
+    if screen = nil then New(screen)
+    else if (screen^.surface <> nil) then SDL_FreeSurface(screen^.surface);
+
+    with _screen^.format^ do
+    begin
+      screen^.surface := SDL_CreateRGBSurface(SDL_HWSURFACE,
+                                             ScreenWidth(), ScreenHeight(), 32,
+                                             RMask, GMask, BMask, 
+                                             $ffffffff and not RMask
+                                                and not GMask
+                                                and not BMask);
+      
+      //WriteLn(RMask, ':', GMask, ':', BMask, ':', screen^.surface^.format^.AMask);
+      
+      //Turn off alpha blending for when scr is blit onto _screen
+      SDL_SetAlpha(screen^.surface, 0, 255);
+      SDL_FillRect(screen^.surface, @screen^.surface^.clip_rect, 0);
+
+      baseSurface := screen^.surface;
+
+      screen^.width := _screen^.w;
+      screen^.height := _screen^.h;
+      screenRect := BitmapRectangle(0,0,screen);
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', '_SetupScreen');
+    {$ENDIF}
+  end;
+
+  /// Sets up the graphical window for the specified width and height.
+  /// Sets the caption of the window, and the icon if one is specified.
+  procedure _InitSDL(caption: String; screenWidth, screenHeight: LongInt);
+  var
+    icon: PSDL_Surface;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'InitSDL');
+    {$ENDIF}
+
+    if (screenWidth < 1) or (screenHeight < 1) then
+    begin
+      RaiseException('Screen Width and Height must be greater then 0 when opening a Graphical Window');
+      exit;
+    end;
+
+    if Length(iconFile) > 0 then
+    begin
+      try
+        icon := IMG_Load(PChar(iconFile));
+        SDL_WM_SetIcon(icon, 0);
+        SDL_FreeSurface(icon);
+      except
+        RaiseException('The icon file specified could not be loaded');
+        exit;
+      end;
+    end;
+
+    _screen := SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_HWSURFACE or SDL_DOUBLEBUF);
+    if _screen = nil then
+    begin
+      RaiseException('Unable to create window drawing surface... ' + SDL_GetError());
+      exit;
+    end;
+
+    _SetupScreen();
+    if length(caption) > 0 then
+      SDL_WM_SetCaption(PChar(caption), nil);
+
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', '_InitSDL');
+    {$ENDIF}
+  end;
+
+  procedure SetIcon(filename: String);
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'SetIcon');
+    {$ENDIF}
+    iconFile := filename;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'SetIcon');
+    {$ENDIF}
+  end;
+  
+  procedure OpenGraphicsWindow(caption: String; width: LongInt; height: LongInt); overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'OpenGraphicsWindow', caption + ': W' + IntToStr(width) + ': H' + IntToStr(height));
+    {$ENDIF}
+
+    if screen <> nil then
+    begin
+      RaiseException('Screen has been created. Cannot create multiple windows.');
+      exit;
+    end;
+
+    try         
+      _InitSDL(caption, width, height);
+      
+      //Init the colors
+      ColorWhite := RGBAColor(255, 255, 255, 255);
+      ColorGreen := RGBAColor(0, 255, 0, 255);
+      ColorBlue := RGBAColor(0, 0, 255, 255);
+      ColorBlack := RGBAColor(0, 0, 0, 255);
+      ColorRed := RGBAColor(255, 0, 0, 255);
+      ColorYellow := RGBAColor(255, 255, 0, 255);
+      ColorPink := RGBAColor(255, 20, 147, 255);
+      ColorTurquoise := RGBAColor(0, 206, 209, 255);
+      ColorGrey := RGBAColor(128, 128, 128, 255);
+      ColorMagenta := RGBAColor(255, 0, 255, 255);
+      ColorTransparent := RGBAColor(0, 0, 0, 0);
+      ColorLightGrey := RGBAColor(200, 200, 200, 255);
+      
+      GUISetForegroundColor(ColorGreen);
+      GUISetBackgroundColor(ColorBlack);
+      
+      SDL_FillRect(screen^.surface, nil, ColorGrey);
+      stringColor(screen^.surface, screenWidth div 2 - 30, screenHeight div 2, PChar('Loading ...'), ToGFXColor(ColorWhite));
+      RefreshScreen();
+    except on e: Exception do
+      begin
+        RaiseException('Error in OpenGraphicsWindow: ' + e.Message);
+        exit;
+      end;
+    end;
+    
+    {$IFDEF TRACE}
+      TraceIf(tlInfo, 'sgGraphics', 'Info', 'OpenGraphicsWindow', 'Window is open (' + caption + ' ' + IntToStr(width) + 'x' + IntToStr(height) + ')');
+    {$ENDIF}
+    
+    ShowLogos();
+    LoadResourceBundle('FileDialog.txt');
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'OpenGraphicsWindow');
+    {$ENDIF}
+  end;
+  
+
+  procedure OpenGraphicsWindow(caption: String); overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'OpenGraphicsWindow');
+    {$ENDIF}
+    OpenGraphicsWindow(caption, 800,600);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'OpenGraphicsWindow');
+    {$ENDIF}
+  end;
+
+  procedure ToggleFullScreen();
+  var
+    oldScr: PSDL_Surface;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ToggleFullScreen');
+    {$ENDIF}
+    oldScr := _screen;
+
+    try
+      //Remember... _screen is a pointer to screen buffer, not a "surface"!
+      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_FULLSCREEN);
+    except on exc: Exception do
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ToggleFullScreen');
+    {$ENDIF}
+  end;
+  
+  procedure ToggleWindowBorder();
+  var
+    oldScr: PSDL_Surface;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ToggleWindowBorder');
+    {$ENDIF}
+    oldScr := _screen;
+    
+    try
+      //Remember... _screen is a pointer to screen buffer, not a "surface"!
+      _screen := SDL_SetVideoMode(oldScr^.w, oldScr^.h, 32, oldScr^.flags xor SDL_NOFRAME);
+    except on exc: Exception do
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ToggleWindowBorder');
+    {$ENDIF}
+  end;
+
+  procedure ChangeScreenSize(width, height: LongInt);
+  var
+    oldScr: PSDL_Surface;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ChangeScreenSize');
+    {$ENDIF}
+    if (screen = nil) then
+    begin
+      RaiseException('Screen has not been created. Unable to get screen width.');
+      exit;
+    end;
+
+    if (width < 1) or (height < 1) then
+    begin
+      RaiseException('Screen Width and Height must be greater then 0 when resizing a Graphical Window');
+      exit; 
+    end;
+
+    if (width = ScreenWidth()) and (height = ScreenHeight()) then exit;
+
+    oldScr := _screen;
+    _screen := SDL_SetVideoMode(width, height, 32, oldScr^.flags);
+    _SetupScreen();
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ChangeScreenSize');
+    {$ENDIF}
+  end;
+
+  function ScreenWidth(): LongInt;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ScreenWidth');
+    {$ENDIF}
+    if (_screen = nil) then
+    begin
+      RaiseException('Screen has not been created. Unable to get screen width.');
+      exit;
+    end;
+    
+    result := _screen^.w;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ScreenWidth');
+    {$ENDIF}
+  end;
+
+  function ScreenHeight(): LongInt;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ScreenHeight');
+    {$ENDIF}
+    if (_screen = nil) then
+    begin
+      RaiseException('Screen has not been created. Unable to get screen height.');
+      exit;
+    end;
+    result := _screen^.h;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ScreenHeight');
+    {$ENDIF}
+  end;
+
+  procedure TakeScreenShot(basename: String);
+  var
+    path: String;
+    filename: String;
+    i: LongInt;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'TakeScreenShot');
+    {$ENDIF}
+    
+    path := IncludeTrailingPathDelimiter(GetUserDir()) + 'Desktop' + PathDelim;
+    if not DirectoryExists(path) then 
+      path := IncludeTrailingPathDelimiter(GetUserDir());
+    
+    filename := basename + '.png';
+    
+    i := 1;
+    
+    while FileExists(path + filename) do
+    begin
+      filename := basename + IntToStr(i) + '.png';
+      i := i + 1;
+    end;
+    
+    //if SDL_SaveBMP(screen^.surface, PChar(path + filename)) = -1 then
+    if not png_save_surface(path + filename, screen^.surface) then
+    begin
+      RaiseException('Failed to save ' + basename + ': ' + SDL_GetError());
+      exit;
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'TakeScreenShot');
+    {$ENDIF}
+  end;
+
+  procedure RefreshScreen(); overload;
+  var
+    nowTime: Longword;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RefreshScreen');
+    {$ENDIF}
+    //Draw then delay
+    sdlManager.DrawCollectedText(screen^.surface);
+    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
+    SDL_Flip(_screen);
+
+    nowTime := GetTicks();
+    _UpdateFPSData(nowTime - _lastUpdateTime); // delta
+    _lastUpdateTime := nowTime;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RefreshScreen');
+    {$ENDIF}
+  end;
+
+  procedure RefreshScreen(TargetFPS: Longword); overload;
+  var
+    nowTime: Longword;
+    delta, delayTime: Longword;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RefreshScreen');
+    {$ENDIF}
+    sdlManager.DrawCollectedText(screen^.surface);
+    SDL_BlitSurface(screen^.surface, nil, _screen, nil);
+    SDL_Flip(_screen);
+    
+    nowTime := GetTicks();
+    delta := nowTime - _lastUpdateTime;
+    
+    //dont sleep if 1ms remaining...
+    while (delta + 1) * TargetFPS < 1000 do
+    begin
+      delayTime := (1000 div TargetFPS) - delta;
+      Delay(delayTime);
+      nowTime := GetTicks();
+      delta := nowTime - _lastUpdateTime;
+    end;  
+
+    _UpdateFPSData(delta);
+    _lastUpdateTime := nowTime;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RefreshScreen');
+    {$ENDIF}
+  end;
+  
+  
+  
+  //----------------------------------------------------------------------------
+  // Colour
+  //----------------------------------------------------------------------------
+  function  ColorToString(c: Color): string;
+  var
+    r,g,b,a : byte;
+  begin
+    colorComponents(c,r,g,b,a);
+    result:=IntToStr(r)+','+IntToStr(g)+','+IntToStr(b)+','+IntToStr(a);
+  end;
+
+  procedure ColorComponents(c: Color; out r, g, b, a: byte);
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ColorComponents');
+    {$ENDIF}
+    if baseSurface = nil then
+    begin
+      RaiseWarning('Estimating color components as Windows has not been opened.');
+      a := (c and $FF000000) shr 24;
+      r := (c and $00FF0000) shr 16;
+      g := (c and $0000FF00) shr 8;
+      b := (c and $000000FF);
+      exit;
+    end;
+    
+    SDL_GetRGBA(c, baseSurface^.Format, @r, @g, @b, @a);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ColorComponents');
+    {$ENDIF}
+  end;
+
+  function RedOf(c: Color): byte;
+  var
+    r,g,b,a: Byte;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RedOf');
+    {$ENDIF}
+    ColorComponents(c, r, g, b, a);
+    result := r;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RedOf');
+    {$ENDIF}
+  end;
+
+  function GreenOf(c: Color): byte;
+  var
+    r,g,b,a: Byte;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'GreenOf');
+    {$ENDIF}
+    ColorComponents(c, r, g, b, a);
+    result := g;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'GreenOf');
+    {$ENDIF}
+  end;
+
+  function BlueOf(c: Color): byte;
+  var
+    r,g,b,a: Byte;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'BlueOf');
+    {$ENDIF}
+    ColorComponents(c, r, g, b, a);
+    result := b;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'BlueOf');
+    {$ENDIF}
+  end;
+
+  function TransparencyOf(c: Color): byte;
+  var
+    r,g,b,a: Byte;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'TransparencyOf');
+    {$ENDIF}
+    ColorComponents(c, r, g, b, a);
+    result := a;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'TransparencyOf');
+    {$ENDIF}
+  end;
+  
+  procedure HSBValuesOf(c: Color; out h, s, b: Single);
+  var
+    red, green, blue, alpha: byte;
+    rf, gf, bf: Single;
+    minRGB, maxRGB, delta: Single;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'HSBValuesOf');
+    {$ENDIF}
+     H := 0.0 ;
+     
+     ColorComponents(c, red, green, blue, alpha);
+     
+     rf := red / 255;
+     gf := green / 255;
+     bf := blue / 255;
+     
+     minRGB := Min(Min(rf, gf), bf);
+     maxRGB := Max(Max(rf, gf), bf);
+     delta := (maxRGB - minRGB);
+     
+     b := maxRGB;
+     if (maxRGB <> 0.0) then s := delta / maxRGB
+     else s := 0.0;
+      
+     if (s <> 0.0) then
+     begin
+       if rf = maxRGB then h := (gf - bf) / Delta
+       else
+         if gf = maxRGB then h := 2.0 + (bf - rf) / Delta
+         else
+           if bf = maxRGB then h := 4.0 + (rf - gf) / Delta
+     end
+     else h := -1.0;
+     h := h * 60 ;
+     if h < 0.0 then h := h + 360.0;
+       
+     h := h / 360.0;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'HSBValuesOf');
+    {$ENDIF}
+  end;
+  
+  function HueOf(c: Color) : Single;
+  var
+    s, b: Single;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'HueOf');
+    {$ENDIF}
+    HSBValuesOf(c, result, s, b);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'HueOf');
+    {$ENDIF}
+  end;
+  
+  function SaturationOf(c: Color) : Single;
+  var
+    h, b: Single;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'SaturationOf');
+    {$ENDIF}
+    HSBValuesOf(c, h, result, b);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'SaturationOf');
+    {$ENDIF}
+  end;
+  
+  function BrightnessOf(c: Color) : Single;
+  var
+    h, s: Single;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'BrightnessOf');
+    {$ENDIF}
+    HSBValuesOf(c, h, s, result);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'BrightnessOf');
+    {$ENDIF}
+  end;
+  
+  function ColorFrom(bmp: Bitmap; apiColor: Color): Color; overload;
+  var
+    r,g,b,a: Byte;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'ColorFrom');
+    {$ENDIF}
+    if (bmp = nil) or (bmp^.surface = nil) then
+    begin
+      RaiseException('Unable to get color as bitmap not specified');
+      exit;
+    end;
+    
+    ColorComponents(apiColor, r, g, b, a);
+    
+    result := SDL_MapRGBA(bmp^.surface^.format, r, g, b, a);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'ColorFrom');
+    {$ENDIF}
+  end;
+
+  function RGBAColor(red, green, blue, alpha: Byte): Color; overload;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RGBAColor');
+    {$ENDIF}
+    if (baseSurface = nil) or (baseSurface^.format = nil) then
+    begin
+      RaiseWarning('Estimating RGBAColor as the window is not open');
+      result := (alpha shl 24) or (red shl 16) or (green shl 8) or (blue);
+      exit;
+    end;
+
+    try
+      result := SDL_MapRGBA(baseSurface^.format, red, green, blue, alpha);
+    except
+      RaiseException('Error occured while trying to get a color from RGBA components');
+      exit;
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RGBAColor');
+    {$ENDIF}
+  end;
+
+  function RGBColor(red, green, blue: Byte): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RGBColor');
+    {$ENDIF}
+    result := RGBAColor(red, green, blue, 255);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RGBColor');
+    {$ENDIF}
+  end;
+
+  function RGBFloatColor(r,g,b: Single): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RGBFloatColor');
+    {$ENDIF}
+    result := RGBColor(Round(r * 255), Round(g * 255), Round(b * 255));
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RGBFloatColor');
+    {$ENDIF}
+  end;
+  
+  function RGBAFloatColor(r,g,b, a: Single): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RGBAFloatColor');
+    {$ENDIF}
+    result := RGBAColor(Round(r * 255), Round(g * 255), Round(b * 255), Round(a * 255));
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RGBAFloatColor');
+    {$ENDIF}
+  end;
+
+  function HSBColor(hue, saturation, brightness: Single): Color;
+  var
+    domainOffset: Single;
+    red, green, blue: Single;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'HSBColor');
+    {$ENDIF}
+    if brightness = 0 then
+    begin
+      result := ColorBlack;
+      exit;
+    end;
+
+    if saturation = 0 then
+    begin
+      result := RGBFloatColor(brightness, brightness, brightness);
+      exit;
+    end;
+
+    if hue < 1.0 / 6 then
+    begin // red domain... green ascends
+      domainOffset := hue;
+      red   := brightness;
+      blue  := brightness * (1.0 - saturation);
+      green := blue + (brightness - blue) * domainOffset * 6;
+    end
+    else if hue < 2.0 / 6 then
+    begin // yellow domain; red descends
+      domainOffset := hue - 1.0 / 6;
+      green := brightness;
+      blue  := brightness * (1.0 - saturation);
+      red   := green - (brightness - blue) * domainOffset * 6;
+    end
+    else if hue < 3.0 / 6 then
+    begin // green domain; blue ascends
+      domainOffset := hue - 2.0 / 6;
+      green := brightness;
+      red   := brightness * (1.0 - saturation);
+      blue  := red + (brightness - red) * domainOffset * 6;
+    end
+    else if hue < 4.0 / 6 then
+    begin // cyan domain; green descends
+      domainOffset := hue - 3.0 / 6;
+      blue  := brightness;
+      red   := brightness * (1.0 - saturation);
+      green := blue - (brightness - red) * domainOffset * 6;
+    end
+    else if hue < 5.0 / 6 then
+    begin // blue domain; red ascends
+      domainOffset := hue - 4.0 / 6;
+      blue  := brightness;
+      green := brightness * (1.0 - saturation);
+      red   := green + (brightness - green) * domainOffset * 6;
+    end
+    else
+    begin // magenta domain; blue descends
+      domainOffset := hue - 5.0 / 6;
+      red   := brightness;
+      green := brightness * (1.0 - saturation);
+      blue  := red - (brightness - green) * domainOffset * 6;
+    end;
+
+    result := RGBFloatColor(red, green, blue);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'HSBColor');
+    {$ENDIF}
+  end;
+  
+  function RandomColor(): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RandomColor');
+    {$ENDIF}
+    result := RGBAFloatColor(Rnd(), Rnd(), Rnd(), Rnd());
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RandomColor');
+    {$ENDIF}
+  end;
+  
+  function RandomRGBColor(alpha: Byte): Color;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgGraphics', 'RandomRGBColor');
+    {$ENDIF}
+    result := RGBAColor(Byte(Rnd(256)), Byte(Rnd(256)), Byte(Rnd(256)), alpha);
+    {$IFDEF TRACE}
+      TraceExit('sgGraphics', 'RandomRGBColor');
+    {$ENDIF}
+  end;
+
+
 //=============================================================================
   
   initialization

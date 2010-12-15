@@ -1,7 +1,7 @@
 program BitmapAnimationEditor;
 
 uses
-  crt, sgTypes, sgCore, sgAudio, sgText, sgGraphics, sgResources,
+  crt, sgTypes, sgAudio, sgText, sgGraphics, sgResources,
   sgGeometry, sgImages, sgInput, 
   SysUtils, sgUserInterface, sgAnimations, sgNamedIndexCollection,
 	EditorShared, BitmapEditor, AnimationEditor, CharacterEditor;

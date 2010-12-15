@@ -22,7 +22,6 @@ all_units = [
     ('sgAudio', 'Audio', '../../CoreSDK/src/sgAudio.pas'),
     ('sgCamera', 'Camera', '../../CoreSDK/src/sgCamera.pas'),
     ('sgCharacters', 'Characters', '../../CoreSDK/src/sgCharacters.pas'),
-    ('sgCore', 'Core', '../../CoreSDK/src/sgCore.pas'),
     ('sgGeometry', 'Geometry', '../../CoreSDK/src/sgGeometry.pas'),
     ('sgGraphics', 'Graphics', '../../CoreSDK/src/sgGraphics.pas'),
     ('sgImages', 'Images', '../../CoreSDK/src/sgImages.pas'),
@@ -33,6 +32,7 @@ all_units = [
     ('sgText', 'Text', '../../CoreSDK/src/sgText.pas'),
     # ('sgTileMap', 'TileMap', '../../CoreSDK/src/sgTileMap.pas'),
     ('sgTimers', 'Timers', '../../CoreSDK/src/sgTimers.pas'),
+    ('sgUtils', 'Utils', '../../CoreSDK/src/sgUtils.pas'),
 ]
 
 

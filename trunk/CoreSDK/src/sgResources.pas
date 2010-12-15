@@ -198,9 +198,9 @@ implementation
 //=============================================================================
 
   uses SysUtils, StrUtils, Classes, // system
-       stringhash, sgUtils,      // libsrc
+       stringhash, sgSharedUtils,      // libsrc
        SDL, SDL_Mixer, SDL_ttf, SDL_Image,
-       sgCore, sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, sgTimers,
+       sgText, sgAudio, sgGraphics, sgInput, sgCharacters, sgShared, sgTimers, sgUtils,
        sgSprites, sgTrace, sgImages, sgAnimations, sgUserInterface, sgMaps; // Swingame
 
   //----------------------------------------------------------------------------

@@ -1,3 +1,5 @@
+{$I sgTrace.inc}
+
 unit sgMaps;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 interface
@@ -712,10 +714,10 @@ interface
 
   implementation
   uses
-    sgCore, sgText, sgGraphics, sgTrace, sgResources,
+    sgText, sgGraphics, sgTrace, sgResources,
     sgCamera, sgGeometry, sgImages, sgInput, sgPhysics,
     sgSprites, sgTimers, SysUtils, StrUtils, Classes,
-      stringhash, sgUtils, sgNamedIndexCollection, sgShared;
+      stringhash, sgSharedUtils, sgNamedIndexCollection, sgShared;
 
 
   //==================================================================
@@ -2676,7 +2678,7 @@ interface
   i: LongInt;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgMap', 'DoFreeMap', 'map = ' + HexStr(map));
+      TraceEnter('sgMap', 'DoFreeMap', 'map = ' + HexStr(m));
     {$ENDIF}
     
     if assigned(m) then
@@ -2703,7 +2705,7 @@ interface
   procedure FreeMap(var m: map);
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgMap', 'FreeMap', 'map = ' + HexStr(map));
+      TraceEnter('sgMap', 'FreeMap', 'map = ' + HexStr(m));
     {$ENDIF}
     
     if(assigned(m)) then

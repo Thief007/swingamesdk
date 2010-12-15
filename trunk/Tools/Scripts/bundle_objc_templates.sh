@@ -87,7 +87,7 @@ source ${APP_PATH}/inc/dist_dir.sh
 # Step 6: Create c library and copy
 #
 echo "--------------------------------------------------"
-echo "          Creating SwinGame C Templates"
+echo "      Creating SwinGame Objective C Templates"
 echo "              for $OS"
 echo "--------------------------------------------------"
 echo "  Will Create Templates for: "

@@ -8,7 +8,7 @@ interface
 	procedure InitializeAnimationEditor(out AniMode: AnimationEditorValues);
 	
 implementation
-	uses sgTypes, sgCore, sgGraphics, sgResources, StrUtils,
+	uses sgTypes, sgGraphics, sgResources, StrUtils,
   sgGeometry, sgImages, sgInput, SysUtils, sgSprites, sgAnimations, 
 	sgUserInterface, sgShared, sgNamedIndexCollection, sgText;
 const

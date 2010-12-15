@@ -31,6 +31,8 @@
 // - Various
 //=============================================================================
 
+{$I sgTrace.inc}
+
 /// Supports the presentation (drawing) of text to screen using loaded `Font`s 
 /// to style the text. Load a different ``Font`` for each unique text 
 /// presentation style (colour and size) you need in your game.
@@ -600,8 +602,8 @@ interface
 //=============================================================================
 implementation
   uses SysUtils, Classes, 
-       stringhash,         // libsrc
-       sgCore, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages,
+       stringhash, sgTrace,         // libsrc
+       sgUtils, sgGeometry, sgGraphics, sgCamera, sgShared, sgResources, sgImages,
        SDL, SDL_TTF, SDL_gfx;
 //=============================================================================
 

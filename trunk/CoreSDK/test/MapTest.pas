@@ -1,7 +1,7 @@
 program MapTest;
 //{IFNDEF UNIX} {r GameLauncher.res} {ENDIF}
 uses
-  sgTypes, sgMaps, sgCore, sgCamera,
+  sgTypes, sgMaps, sgCamera,
   sgInput, sgAudio, sgShared, SysUtils,
   StrUtils, sgResources, sgGraphics, sgText,sgNamedIndexCollection, sgCharacters, sgAnimations, sgSprites, sgGeometry;
 //Main procedure

@@ -19,7 +19,7 @@
         <ProjectItem ReplaceParameters="true" TargetFileName="Audio.cs">Audio.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="Bitmap.cs">Bitmap.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="Camera.cs">Camera.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Core.cs">Core.cs</ProjectItem>
+        <ProjectItem ReplaceParameters="true" TargetFileName="Utils.cs">Utils.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="Font.cs">Font.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="Geometry.cs">Geometry.cs</ProjectItem>
         <ProjectItem ReplaceParameters="true" TargetFileName="Graphics.cs">Graphics.cs</ProjectItem>

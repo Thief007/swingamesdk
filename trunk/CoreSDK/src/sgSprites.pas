@@ -22,6 +22,8 @@
 //
 //=============================================================================
 
+{$I sgTrace.inc}
+
 /// SwinGame Sprites are game elements that can be moved, and animated. Sprites are
 /// located at a position in the game, have a velocity, and an animation. The 
 /// Sprite can also have arbitary data associated with it for game specific purposes.
@@ -1054,7 +1056,7 @@ implementation
   uses
     Classes, SysUtils, Math, // System
     sgNamedIndexCollection, //libsrc
-    sgAnimations, sgGraphics, sgGeometry, sgCore, sgCamera, sgShared, sgResources, sgImages; //SwinGame
+    sgAnimations, sgGraphics, sgGeometry, sgCamera, sgShared, sgResources, sgImages, sgTrace; //SwinGame
 //=============================================================================
 
   

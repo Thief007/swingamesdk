@@ -16,7 +16,7 @@
 // - 2010-02-02: Aaron  : Added LongIntArrayToRange
 // - Earlier   : Andrew : Various changes
 //=============================================================================
-unit sgUtils;
+unit sgSharedUtils;
 
 interface
 uses sgTypes;

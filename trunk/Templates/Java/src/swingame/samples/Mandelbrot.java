@@ -2,7 +2,6 @@ package swingame.samples;
 
 import java.awt.Color;
 import java.awt.Point;
-import swingame.Core;
 import swingame.Graphics;
 import swingame.Input;
 import swingame.MouseButton;
@@ -93,7 +92,7 @@ public class Mandelbrot
   
             if (hue > 1) hue = hue - 1; //correct for values beond 1.
   
-            return Core.hSBColor(hue, 1.0f, 0.9f);
+            return Graphics.hSBColor(hue, 1.0f, 0.9f);
         }
     }
     
@@ -141,7 +140,7 @@ public class Mandelbrot
         setHeight = 3.0f;
 
         //Open a new Graphics Window - using the constants
-        Core.openGraphicsWindow("Mandelbrot", SCREEN_WIDTH, SCREEN_HEIGHT);
+        Graphics.openGraphicsWindow("Mandelbrot", SCREEN_WIDTH, SCREEN_HEIGHT);
 
         //draw to buffer
         drawMandelbrot(setX, setY, setWidth, setHeight);
@@ -149,7 +148,7 @@ public class Mandelbrot
         //Game loop
         do
         {
-            Core.processEvents();
+            Input.processEvents();
 
             if(Input.mouseClicked(MouseButton.LEFT_BUTTON))
             {
@@ -170,10 +169,10 @@ public class Mandelbrot
             }
 
             //Draw buffer to screen
-            Core.refreshScreen(60);
-        } while (false == Core.windowCloseRequested());
+            Graphics.refreshScreen(60);
+        } while (false == Input.windowCloseRequested());
 
         //Close the window
-        Core.close();
+        Graphics.close();
     }
 }

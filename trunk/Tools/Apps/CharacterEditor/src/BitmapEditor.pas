@@ -19,7 +19,7 @@ const
 	ClipH										= 490;	
 	
 implementation
-	uses sgTypes, sgCore, sgGraphics, sgGeometry, sgImages, sgInput, SysUtils, sgUserInterface, sgShared;		
+	uses sgTypes, sgGraphics, sgGeometry, sgImages, sgInput, SysUtils, sgUserInterface, sgShared;		
 	
 	procedure ShowSelectedDetails(cellGrp : CellGroupData; var pnl: PanelArray);
 	var

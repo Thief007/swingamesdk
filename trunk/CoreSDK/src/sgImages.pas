@@ -849,7 +849,7 @@ uses sgTypes;
   
 //=============================================================================
 implementation
-uses sgCore, sgResources, sgCamera, sgGeometry, sgGraphics,
+uses sgResources, sgCamera, sgGeometry, sgGraphics,
      stringhash,         // libsrc
      SysUtils, 
      sgSavePNG, sgShared, sgTrace, 
