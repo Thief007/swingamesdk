@@ -26,3 +26,15 @@
 + (void) getIntegers:(int *)firstPtr fromArray:(NSArray *)in_data maxSize:(int)sz;
 
 @end
+
+@interface SGStringBufferManager : NSObject
+{
+@protected
+    char** buffer;
+    int size;
+}
+
+
++ (id) stringBufferManagerFor:(char **)buffer size:(int)sz;
+
+@end

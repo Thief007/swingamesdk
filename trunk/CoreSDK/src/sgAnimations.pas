@@ -43,7 +43,7 @@ interface
   /// Load animation details from a animation frames file.
   ///
   /// @lib
-  /// @sn animationTemplateFromFile:%s
+  /// @sn loadAnimationTemplateFromFile:%s
   ///
   /// @class AnimationTemplate
   /// @constructor

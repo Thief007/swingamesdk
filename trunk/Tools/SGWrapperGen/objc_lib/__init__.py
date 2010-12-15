@@ -489,7 +489,7 @@ _type_dictionary_creation_data = [
         'identifiers': [
             # type key, c-type, objc type, post-fix for switching, initialisation code
             ('bitmaparray', 'bitmap', 'SGBitmap', 'Bitmaps', ''),
-            ('stringarray', 'char *', 'NSString', 'Strings', '\n    int %(var)s_i;\n    for(%(var)s_i = 0; %(var)s_i < %(size)s; %(var)s_i++) %(var)s[%(var)s_i] = malloc(sizeof(char) * 2048);\n    '),
+            ('stringarray', 'char *', 'NSString', 'Strings', '\n    [SGStringBufferManager stringBufferManagerFor:%(var)s size:%(size)s];\n    '),
             ('trianglearray', 'triangle', 'SGTriangle', 'Triangles', ''),
             
         ],

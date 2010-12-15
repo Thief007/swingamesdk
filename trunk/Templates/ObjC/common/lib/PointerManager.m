@@ -15,8 +15,9 @@ static NSMutableDictionary *_ptrRegister;
 
 void removeObject(void *ptr)
 {
-    NSLog(@"Freeing %h", ptr);
     id key = [NSValue valueWithPointer:ptr];
+    
+    NSLog(@"Freeing '%h'-'%@'", ptr, key);
     
     id <PointerWrapper> obj = [_ptrRegister objectForKey:key];
     if (obj != nil)
