@@ -30,9 +30,6 @@
     {
         obj = [[[NSString alloc] initWithCString:*(firstPtr + i) encoding:NSASCIIStringEncoding] autorelease]; //obj is autorelease...
         [result addObject: obj];
-        
-        //release resource...
-        free(*(firstPtr + i));
     }
     
     return [result autorelease];
@@ -89,3 +86,46 @@
 }
 
 @end
+
+@implementation SGStringBufferManager : NSObject
+
+- (id) initWithBuffer:(char **)buf size:(int)sz
+{
+    self = [super init];
+    if (self != nil)
+    {
+        //Allocate pointers on heap
+        self->buffer = malloc(sizeof(char*) * sz);
+        self->size = sz;
+        
+        int i;
+        for(i = 0; i < sz; i++) 
+        {
+            buffer[i] = malloc(sizeof(char) * 2048);
+            //use same pointer in the passed in buffer... allowing us to free here
+            buf[i] = buffer[i];
+        }
+    }
+    return self;
+}
+
+-(void) dealloc
+{
+    int i;
+    for(i = 0; i < size; i++) 
+    {
+        free(buffer[i]);
+    }
+    free(buffer);
+    size = 0;
+    
+    [super dealloc];
+}
+
++ (id) stringBufferManagerFor:(char **)buffer size:(int)sz
+{
+    return [[[SGStringBufferManager alloc] initWithBuffer:buffer size:sz] autorelease];
+}
+
+@end
+
