@@ -7,6 +7,8 @@
 // Change History:
 //
 // Version 3.0:
+// - 2010-12-31: Andrew : Added name to sprite
+//                      : Added standard resource management code
 // - 2009-12-21: Andrew : Added the ability to toggle visible layers.
 //                      : Added width/height of layers and layer offsets
 //                      : Added rectangle calculation code for sprite layers
@@ -36,36 +38,16 @@ interface
   uses sgTypes;
 //=============================================================================
   
-  /// Returns a `Vector` that is the difference in the position of two sprites
-  /// (``s1`` and ``s2``).
-  ///
-  /// @lib
-  /// @sn vectorFromSprite:%s toSprite:%s
-  ///
-  /// @class Sprite
-  /// @method VectorTo
-  /// @csn vectorToSprite:%s
-  function VectorFromTo(s1, s2: Sprite): Vector;
-  
-  /// Returns a `Vector` that is the difference in location from the center of
-  /// the sprite ``s`` to the point ``pt``.
-  ///
-  /// @lib
-  /// @sn vectorFromCenterOfSprite:%s toPoint:%s
-  ///
-  /// @class Sprite
-  /// @overload VectorTo VectorToPoint
-  /// @csn vectorToPoint:%s
-  function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
-  
   
   //---------------------------------------------------------------------------
-  // Sprite routines
+  // Sprite creation routines
   //---------------------------------------------------------------------------
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, the layer have name 'layer1'.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateBasicSprite
   /// 
@@ -77,6 +59,8 @@ interface
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, and the specified layer have name.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateSpriteWithLayer
   /// 
@@ -88,6 +72,8 @@ interface
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, the specified animation template, the layer have name 'layer1'.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateSpriteWithAnimation
   /// 
@@ -99,6 +85,8 @@ interface
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, the specified animation template, and layer name.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateSpriteWithLayerAndAnimation
   /// 
@@ -110,6 +98,8 @@ interface
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSprite
   /// 
@@ -121,6 +111,8 @@ interface
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, and the specified layer names.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSpriteWithLayerNames
   /// 
@@ -132,6 +124,8 @@ interface
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, the specified animation template, the layer names 'layer1', 'layer2',... .
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSpriteWithAnimationTemplate
   /// 
@@ -143,6 +137,8 @@ interface
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationTemplate
   /// 
@@ -151,12 +147,131 @@ interface
   /// @csn initWithBitmaps:%s layerNames:%s animationTemplate:%s
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
   
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer have name 'layer1'.
+  /// 
+  /// @lib CreateBasicSpriteNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmap:%s
+  function CreateSprite(name: String; layer: Bitmap): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, and the specified layer have name.
+  /// 
+  /// @lib CreateSpriteWithLayerNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmap:%s layerNamed:%s
+  function CreateSprite(name: String; layer: Bitmap; layerName: String): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, the layer have name 'layer1'.
+  /// 
+  /// @lib CreateSpriteWithAnimationNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmap:%s animationTemplate:%s
+  function CreateSprite(name: String; layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, and layer name.
+  /// 
+  /// @lib CreateSpriteWithLayerAndAnimationNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmap:%s layerNamed:%s animationTemplate:%s
+  function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
+  /// 
+  /// @lib CreateLayeredSpriteNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmaps:%s
+  function CreateSprite(name: String; const layers: BitmapArray): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, and the specified layer names.
+  /// 
+  /// @lib CreateLayeredSpriteWithLayerNamesNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmaps:%s layerNames:%s
+  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, the layer names 'layer1', 'layer2',... .
+  /// 
+  /// @lib CreateLayeredSpriteWithAnimationTemplateNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed: %s withBitmaps:%s animationTemplate:%s
+  function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
+  /// 
+  /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationTemplateNamed
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initNamed:%s withBitmaps:%s layerNames:%s animationTemplate:%s
+  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  
   /// Free the resources associated with a sprite.
   /// 
   /// @lib
   /// @class Sprite
   /// @dispose
   procedure FreeSprite(var s : Sprite);
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Sprite Resource Management code
+  //---------------------------------------------------------------------------
+  
+  /// Determines if SwinGame has a sprite for the supplied name.
+  /// This checks against all sprites, those loaded without a name
+  /// are assigned a default.
+  ///
+  /// @lib
+  function HasSprite(name: String): Boolean;
+  
+  /// Returns the `Sprite` with the specified name,
+  /// see `CreateSprite`.
+  ///
+  /// @lib
+  function SpriteNamed(name: String): Sprite;
+  
+  /// Releases the SwinGame resources associated with the sprite of the
+  /// specified ``name``.
+  ///
+  /// @lib
+  procedure ReleaseSprite(name: String);
+  
+  /// Releases all of the sprites that have been loaded.
+  ///
+  /// @lib
+  procedure ReleaseAllSprites();
+  
   
   
   //---------------------------------------------------------------------------
@@ -494,7 +609,7 @@ interface
   
   
   //---------------------------------------------------------------------------
-  // Animation code
+  // Sprite Animation code
   //---------------------------------------------------------------------------
   
   /// Restart the sprite's current animation, this will play a sound if the
@@ -617,42 +732,148 @@ interface
   /// @csn updatePercent:%s withSound:%s
   procedure UpdateSprite(s: Sprite; pct: Single; withSound: Boolean); overload;
   
+  /// Updates the animation details of the sprite. 
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound.
+  ///
   /// @lib UpdateSpriteAnimationPctWithSound(s, 1.0, true)
   /// @uname UpdateSpriteAnimation
+  ///
   /// @class Sprite
   /// @method UpdateAnimation
   procedure UpdateSpriteAnimation(s: Sprite); overload;
   
+  /// Update the animation details of the Sprite.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound and withSound is true.
+  ///  
   /// @lib UpdateSpriteAnimationPctWithSound(s, 1.0, withSound)
   /// @uname UpdateSpriteAnimationWithSound
+  /// @sn sprite:%s updateAnimationWithSound:%s
+  ///
+  /// @class Sprite
+  /// @overload UpdateAnimation UpdateAnimationWithSound
+  /// @csn updateAnimationWithSound:%s
   procedure UpdateSpriteAnimation(s: Sprite; withSound: Boolean); overload;
   
+  /// Update the animation details of the Sprite by a 
+  /// given percentage of a single unit of movement/animation.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound.
+  ///  
   /// @lib UpdateSpriteAnimationPctWithSound(s, pct, true)
   /// @uname UpdateSpriteAnimationPercent
+  /// @sn sprite:%s updateAnimationPct:%s
   ///
   /// @class Sprite
   /// @overload UpdateAnimation UpdateAnimationPct
+  /// @csn updateAnimationPct:%s
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single); overload;
   
+  /// Update the position and animation details of the Sprite by a 
+  /// given percentage of a single unit of movement/animation.
+  /// This will play a sound effect if the new cell of the animation
+  /// has a sound and withSound is true.
+  ///
   /// @lib UpdateSpriteAnimationPctWithSound
+  /// @sn sprite:%s updateAnimationPct:%s withSound:%s
+  ///
+  /// @class Sprite
+  /// @overload UpdateAnimation UpdateAnimationPctWithSound
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   
+  /// Indicates if the sprites animation has ended.
+  /// 
+  /// @lib
+  /// 
+  /// @class Sprite
+  /// @getter AnimationHasEnded
+  function SpriteAnimationHasEnded(s: Sprite): Boolean;
   
+  
+  
+  //---------------------------------------------------------------------------
+  // Positioning code
+  //---------------------------------------------------------------------------
+  
+  
+  /// Returns a `Vector` that is the difference in the position of two sprites
+  /// (``s1`` and ``s2``).
+  /// 
+  /// @lib
+  /// @sn vectorFromSprite:%s toSprite:%s
+  /// 
+  /// @class Sprite
+  /// @method VectorTo
+  /// @csn vectorToSprite:%s
+  function VectorFromTo(s1, s2: Sprite): Vector;
+  
+  /// Returns a `Vector` that is the difference in location from the center of
+  /// the sprite ``s`` to the point ``pt``.
+  ///
+  /// @lib
+  /// @sn vectorFromCenterOfSprite:%s toPoint:%s
+  ///
+  /// @class Sprite
+  /// @overload VectorTo VectorToPoint
+  /// @csn vectorToPoint:%s
+  function VectorFromCenterSpriteToPoint(s: Sprite; const pt: Point2D): Vector;
+  
+  
+  
+  //---------------------------------------------------------------------------
+  // Drawing code
+  //---------------------------------------------------------------------------
+  
+  /// Draws the sprite at its position in the game offset by a given amount. Only
+  /// use this method when you want to draw the sprite displaced from its location
+  /// in your game. Otherwise you should change the sprite's location and then
+  /// use the standard ''DrawSprite'' routine.
+  ///
   /// @lib DrawSpriteOffsetXY
+  /// @sn sprite:%s drawOffsetX:%s y:%s
+  ///
   /// @class Sprite
   /// @overload Draw DrawOffsetXY
+  /// @csn drawOffsetX:%s y:%s
   procedure DrawSprite(s : Sprite; xOffset, yOffset: LongInt); overload;
   
+  /// Draws the sprite at its position in the game offset by a given amount. Only
+  /// use this method when you want to draw the sprite displaced from its location
+  /// in your game. Otherwise you should change the sprite's location and then
+  /// use the standard ''DrawSprite'' routine.
+  ///
   /// @lib DrawSpriteOffsetPoint
+  /// @sn sprite:%s drawOffset:%s
+  ///
   /// @class Sprite
   /// @overload Draw DrawOffsetPoint
+  /// @csn drawOffset:%s
   procedure DrawSprite(s : Sprite; const position: Point2D); overload;
+  
+  /// Draws the sprite at its location in the world. This is effected by the
+  /// position of the camera and the sprites current location.
+  ///
+  /// This is the standard routine for drawing sprites to the screen and should be
+  /// used in most cases.
+  ///
   /// @lib DrawSpriteOffsetXY(s, 0, 0)
   /// @uname DrawSprite
+  /// 
   /// @class Sprite
   /// @method Draw
   procedure DrawSprite(s : Sprite); overload;
   
+  
+  
+  //---------------------------------------------------------------------------
+  // Movement code
+  //---------------------------------------------------------------------------
+  
+  /// Moves the sprite as indicated by its velocity. You can call this directly ot 
+  /// alternatively, this action is performed when the sprite is updated using
+  /// the ''UpdateSprite'' routine.
+  ///
   /// @lib MoveSpritePct(s, 1.0)
   /// @uname MoveSprite
   /// 
@@ -660,29 +881,57 @@ interface
   /// @method Move
   procedure MoveSprite(s: Sprite); overload;
   
+  /// Moves the sprite as indicated by a percentage of its velocity. You can call 
+  /// this directly ot alternatively, this action is performed when the sprite is
+  /// updated using the ''UpdateSprite'' routines that require a percentage.
+  ///
   /// @lib MoveSpritePct
+  /// @sn sprite:%s movePct:%s
   /// 
   /// @class Sprite
   /// @overload Move MovePct
+  /// @csn movePct:%s
   procedure MoveSprite(s: Sprite; pct: Single); overload;
-    
-  /// @lib MoveSpriteVecPct(s, velocity, 1.0)
+  
+  /// Moves the sprite a given distance based on the value passed in rather than
+  /// based on the sprite's velocity. Typically this method is used to apply
+  /// other movement actions to the sprite and the velocity of the sprite is
+  /// used the intended movement of the sprite.
+  /// 
+  /// @lib MoveSpriteVecPct(s, distance, 1.0)
   /// @uname MoveSpriteVec
+  /// @sn sprite:$s move:%s
   ///
   /// @class Sprite
   /// @overload Move MoveVec
-  procedure MoveSprite(s : Sprite; const velocity: Vector); overload;
-    
+  /// @csn move:%s
+  procedure MoveSprite(s : Sprite; const distance: Vector); overload;
+  
+  
+  /// Moves the sprite a percentage of a given distance based on the value 
+  /// passed in rather than based on the sprite's velocity. Typically this 
+  /// method is used to apply other movement actions to the sprite and the
+  /// velocity of the sprite is used the intended movement of the sprite.
+  /// 
   /// @lib MoveSpriteVecPct
+  /// @sn sprite:%s move:%s pct:%s
   ///
   /// @class Sprite
-  ///@overload Move MoveVecPct
-  procedure MoveSprite(s : Sprite; const velocity: Vector; pct: Single); overload;
-
+  /// @overload Move MoveVecPct
+  /// @csn move:%s pct:%s
+  procedure MoveSprite(s : Sprite; const distance: Vector; pct: Single); overload;
+  
+  /// This method moves a sprite to a given position in the game.
+  /// 
   /// @lib
+  /// @sn sprite:%s moveToX:%s y:%s
+  ///
   /// @class Sprite
   /// @method MoveTo
+  /// @csn moveToX:%s y:%s
   procedure MoveSpriteTo(s : Sprite; x,y : LongInt);
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite Screen Position Tests 
@@ -692,22 +941,31 @@ interface
   /// specified (``x`` and ``y``) which is converted to a world location.
   ///
   /// @lib
+  /// @sn sprite:%s onScreenAtX:%s y:%s
+  /// 
   /// @class Sprite
   /// @method OnScreenAt
+  /// @csn onScreenAtX:%s y:%s
   function SpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
-
+  
   /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
   /// specified (``pt``), which is converted to a world location.
   ///
   /// @lib SpriteOnScreenAtPoint
+  /// @sn sprite:%s onScreenAt:%s
+  ///
   /// @class Sprite
   /// @overload OnScreenAt OnScreenAtPoint
+  /// @csn onScreenAt:%s
   function SpriteOnScreenAt(s: Sprite; const pt: Point2D): Boolean; overload;
   
+  /// Returns True if the sprite is entirely off the screen.
+  /// 
   /// @lib
+  ///
   /// @class Sprite
-  /// @method IsOffscreen
-  function IsSpriteOffscreen(s : Sprite): Boolean;
+  /// @method Offscreen
+  function SpriteOffscreen(s : Sprite): Boolean;
   
   
   
@@ -716,14 +974,16 @@ interface
   //---------------------------------------------------------------------------
   
   /// The current Height of the sprite (aligned to the Y axis).
-  ///
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Height
   function SpriteHeight(s: Sprite): LongInt;
   
   /// @lib SpriteLayerNamedHeight
   function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
+  
   /// @lib SpriteLayerHeight
   function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
   
@@ -736,6 +996,7 @@ interface
   
   /// @lib SpriteLayerNamedWidth
   function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
+  
   /// @lib SpriteLayerWidth
   function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
   
@@ -747,6 +1008,8 @@ interface
   /// @class Sprite
   /// @getter CenterPoint
   function CenterPoint(s: Sprite): Point2D; overload;
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite velocity
@@ -761,7 +1024,9 @@ interface
   /// @class Sprite
   /// @setter Velocity
   procedure SpriteSetVelocity(s: Sprite; const value: Vector);
-
+  
+  
+  
   //---------------------------------------------------------------------------
   // Sprite CellCount
   //---------------------------------------------------------------------------
@@ -782,6 +1047,8 @@ interface
   /// @class Sprite
   /// @getter ScreenRectangle
   function SpriteScreenRectangle(s: Sprite): Rectangle;
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite X,Y
@@ -807,6 +1074,8 @@ interface
   /// @getter Y
   function SpriteY(s: Sprite): Single;
   
+  
+  
   //---------------------------------------------------------------------------
   // Sprite position
   //---------------------------------------------------------------------------
@@ -820,6 +1089,8 @@ interface
   /// @class Sprite
   /// @setter Position
   procedure SpriteSetPosition(s: Sprite; const value: Point2D);
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite DX,DY
@@ -844,6 +1115,8 @@ interface
   /// @class Sprite
   /// @getter DY
   function SpriteDY(s: Sprite): Single;
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite speed and heading
@@ -877,6 +1150,8 @@ interface
   /// @setter Heading
   procedure SpriteSetHeading(s: Sprite; value: Single);
   
+  
+  
   //---------------------------------------------------------------------------
   // Sprite Current Frame
   //---------------------------------------------------------------------------
@@ -888,6 +1163,8 @@ interface
   /// @class Sprite
   /// @getter CurrentCell
   function SpriteCurrentCell(s: Sprite): LongInt;
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite collision details
@@ -904,12 +1181,7 @@ interface
   /// @lib
   procedure SpriteSetCollisionKind(s: Sprite; value: CollisionTestKind);
   
-  /// Indicates if the sprites animation has ended.
-  /// 
-  /// @lib
-  /// @class Sprite
-  /// @getter AnimationHasEnded
-  function SpriteAnimationHasEnded(s: Sprite): Boolean;
+  
   
   //---------------------------------------------------------------------------
   // Sprite mass
@@ -963,13 +1235,15 @@ interface
   /// @class Sprite
   /// @getter Scale
   function SpriteScale(s: Sprite): Single;
-
+  
   /// Allows you to change the scale of a Sprite.
   ///
   /// @lib
   /// @class Sprite
   /// @setter Scale
   procedure SpriteSetScale(s: Sprite; value: Single);
+  
+  
   
   //---------------------------------------------------------------------------
   // Sprite value code
@@ -1051,14 +1325,33 @@ interface
   procedure SpriteSetValue(s: Sprite; idx: LongInt; val: Single); overload;
   
   
+  
+  //---------------------------------------------------------------------------
+  // Sprite name
+  //---------------------------------------------------------------------------
+  
+  /// Returns the name of the sprite. This name is used for resource management
+  /// and can be used to interact with the sprite in various routines.
+  ///
+  /// @lib SpriteName
+  /// 
+  /// @class Sprite
+  /// @getter Name
+  function SpriteName(sprt: Sprite): String;
+  
+  
+  
 //=============================================================================
 implementation
   uses
     Classes, SysUtils, Math, // System
+    stringhash,
     sgNamedIndexCollection, //libsrc
     sgAnimations, sgGraphics, sgGeometry, sgCamera, sgShared, sgResources, sgImages, sgTrace; //SwinGame
 //=============================================================================
 
+  var
+    _Sprites: TStringHash;
   
   const
     MASS_IDX      = 0;  // The index of the sprite's mass value
@@ -1132,21 +1425,91 @@ implementation
   end;
   
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  begin
+    result := CreateSprite('Sprite', layers, layerNames, ani);
+  end;
+  
+  function CreateSprite(name: String; layer: Bitmap): Sprite; overload;
+  begin
+    result := CreateSprite(name, layer, 'layer0', nil);
+  end;
+  
+  function CreateSprite(name: String; layer: Bitmap; layerName: String): Sprite; overload;
+  begin
+    result := CreateSprite(name, layer, layerName, nil);
+  end;
+  
+  function CreateSprite(name: String; layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
+  begin
+    result := CreateSprite(name, layer, 'layer0', ani);
+  end;
+  
+  function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
   var
-    i, count: LongInt;
+    layerNames: StringArray;
+    layers: BitmapArray;
+  begin
+    SetLength(layerNames, 1);
+    SetLength(layers, 1);
+    
+    layerNames[0] := layerName;
+    layers[0] := layer;
+    
+    result := CreateSprite(name, layers, layerNames, ani);
+  end;
+  
+  function CreateSprite(name: String; const layers: BitmapArray): Sprite; overload;
+  begin
+    result := CreateSprite(name, layers, AnimationTemplate(nil));
+  end;
+  
+  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray): Sprite; overload;
+  begin
+    result := CreateSprite(name, layers, layerNames, nil);
+  end;
+  
+  function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
+  var
+    layerNames: StringArray;
+    i: LongInt;
+  begin
+    SetLength(layerNames, Length(layers));
+    for i := 0 to High(layers) do
+    begin
+      layerNames[i] := 'layer' + IntToStr(i);
+    end;
+    
+    result := CreateSprite(name, layers, layerNames, ani);
+  end;
+  
+  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  var
+    i, idx, count, cellCount: LongInt;
   begin
     result := nil; 
     count := Length(layers);
     
     if count <> Length(layerNames) then begin RaiseException('The number of layers and layer names do not match.'); exit; end;
     if count = 0 then begin exit; end;
-      
+    
+    // Find a unique name for this sprite
+    idx := 0;
+    
+    while HasSprite(name) do
+    begin
+      name := 'Sprite_' + IntToStr(idx);
+      idx += 1;
+    end;
+    
     //Allocate the space for the sprite
     New(result);
     
     //Set lengths of the layer arrays
     SetLength(result^.layers, count);
     SetLength(result^.layerOffsets, count);
+    
+    if Length(result^.layers) > 0 then
+      cellCount := BitmapCellCount(result^.layers[0]);
     
     for i := 0 to High(result^.layers) do
     begin
@@ -1155,11 +1518,11 @@ implementation
       
       // Make sure that this image can be used interchangably with the other layers of the
       // sprite.
-      if not BitmapsInterchangable(result^.layers[i], result^.layers[0]) then
+      if BitmapCellCount(result^.layers[i]) <> cellCount then
       begin
         Dispose(result);
         result := nil;
-        RaiseException('Layer ' + IntToStr(i) + ' is not the interchangable with the other layers of this sprite.');
+        RaiseException('Layer ' + IntToStr(i + 1) + ' does not have the same number of cells as the other layers in the sprite ' + name);
         exit;
       end;
     end;
@@ -1198,6 +1561,46 @@ implementation
     result^.collisionKind         := PixelCollisions;
     result^.collisionBitmap       := result^.layers[0];
   end;
+  
+  function HasSprite(name: String): Boolean;
+  begin
+    result := _Sprites.containsKey(name);
+  end;
+
+  function SpriteNamed(name: String): Sprite;
+  var
+    tmp : TObject;
+  begin
+    tmp := _Sprites.values[name];
+    if assigned(tmp) then
+      result := Sprite(tResourceContainer(tmp).Resource)
+    else 
+      result := nil;
+  end;
+
+  procedure ReleaseSprite(name: String);
+  var
+    sprt: Sprite;
+  begin
+    {$IFDEF TRACE}
+      TraceEnter('sgSprites', 'ReleaseSprite', 'name = ' + name);
+    {$ENDIF}
+
+    sprt := SpriteNamed(name);
+    if (assigned(sprt)) then
+    begin
+      FreeSprite(sprt);
+    end;
+    {$IFDEF TRACE}
+      TraceExit('sgSprites', 'ReleaseSprite');
+    {$ENDIF}
+  end;
+
+  procedure ReleaseAllSprites();
+  begin
+    ReleaseAll(_Sprites, @ReleaseSprite);
+  end;
+  
   
   // //
   // // Update the buffered image for rotation and scaling of a bitmap based sprite.
@@ -1259,12 +1662,16 @@ implementation
       // if s^.bufferBmp <> nil then FreeBitmap(s^.bufferBmp);
       // s^.bufferBmp := nil;
       
+      // Remove from hashtable
+      _Sprites.remove(name).Free();
+      
       //Dispose sprite
       CallFreeNotifier(s);
       
       Dispose(s);
-      s := nil;
     end;
+    
+    s := nil;
   end;
   
   function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): LongInt;
@@ -1389,7 +1796,7 @@ implementation
     end;
   end;
 
-  function IsSpriteOffscreen(s : Sprite): Boolean;
+  function SpriteOffscreen(s : Sprite): Boolean;
   begin
     if s = nil then 
       result := false
@@ -2107,11 +2514,20 @@ implementation
     s^.values[idx] := val;
   end;
   
+  function SpriteName(sprt: Sprite): String;
+  begin
+    result := '';
+    if not assigned(sprt) then exit;
+    result := sprt^.name;
+  end;
+
 
 //=============================================================================
 
   initialization
   begin
     InitialiseSwinGame();
+    
+    _Sprites := TStringHash.Create(False, 16384);
   end;
 end.

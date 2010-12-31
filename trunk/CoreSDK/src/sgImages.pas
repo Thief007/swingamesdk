@@ -254,16 +254,20 @@ uses sgTypes;
   function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
   
   /// Returns the name of the bitmap
+  ///
   /// @lib
+  ///
   /// @class Bitmap
   /// @getter Name
   function BitmapName(bmp:Bitmap): string;
   
-  /// Returns the FileName of the bitmap
+  /// Returns the Filename of the bitmap
+  ///
   /// @lib
+  ///
   /// @class Bitmap
   /// @getter Filename
-  function BitmapfileName(bmp:Bitmap): string;
+  function BitmapFilename(bmp:Bitmap): string;
 
 
   //----------------------------------------------------------------------------
@@ -952,8 +956,10 @@ procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparen
 var
   r, c: LongInt;
 begin
+  if not assigned(bmp) then exit;
+  
   SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
-
+  
   for c := 0 to bmp^.width - 1 do
   begin
     for r := 0 to bmp^.height - 1 do
@@ -1085,43 +1091,34 @@ begin
   result := LoadBitmap(filename, true, transparentColor);
 end;
 
-// private:
-// Called to actually free the resource
-procedure DoFreeBitmap(var bitmapToFree : Bitmap);
+procedure FreeBitmap(var bitmapToFree : Bitmap);
 begin
   {$IFDEF TRACE}
-    TraceEnter('sgImages', 'DoFreeBitmap', 'bitmapToFree = ' + HexStr(bitmapToFree));
+    TraceEnter('sgImages', 'FreeBitmap', 'bitmapToFree = ' + HexStr(bitmapToFree));
   {$ENDIF}
   
   if Assigned(bitmapToFree) then
   begin
+    
+    //Free the surface
     if Assigned(bitmapToFree^.surface) then
     begin
       //WriteLn('Free Bitmap - ', HexStr(bitmapToFree^.surface));
       SDL_FreeSurface(bitmapToFree^.surface);
     end;
+    
     bitmapToFree^.surface := nil;
-    // SetLength(bitmapToFree^.nonTransparentPixels, 0, 0);
-    Dispose(bitmapToFree);
+    
+    //Remove the image from the hashtable
+    _Images.remove(BitmapName(bitmapToFree)).Free();
+    
+    //Notify others that this is now gone!
     CallFreeNotifier(bitmapToFree);
-    bitmapToFree := nil;
+    
+    //Dispose the pointer
+    Dispose(bitmapToFree);
   end;
   
-  {$IFDEF TRACE}
-    TraceExit('sgImages', 'DoFreeBitmap');
-  {$ENDIF}
-end;
-
-procedure FreeBitmap(var bitmapToFree : Bitmap);
-begin
-  {$IFDEF TRACE}
-    TraceEnter('sgImages', 'FreeBitmap', 'effect = ' + HexStr(bitmapToFree));
-  {$ENDIF}
-  
-  if(assigned(bitmapToFree)) then
-  begin
-    ReleaseBitmap(bitmapToFree^.name);
-  end;
   bitmapToFree := nil;
   
   {$IFDEF TRACE}
@@ -1185,8 +1182,7 @@ begin
   bmp := BitmapNamed(name);
   if (assigned(bmp)) then
   begin
-    _Images.remove(name).Free();
-    DoFreeBitmap(bmp);
+    FreeBitmap(bmp);
   end;
   {$IFDEF TRACE}
     TraceExit('sgImages', 'ReleaseBitmap');
@@ -1202,14 +1198,17 @@ end;
 
 function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
 begin
-  result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
-            and ((x >= 0) and (x < bmp^.width))
-            and ((y >= 0) and (y < bmp^.height))
-            and bmp^.nonTransparentPixels[x, y];
+  if not assigned(bmp) then result := false
+  else result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
+                  and ((x >= 0) and (x < bmp^.width))
+                  and ((y >= 0) and (y < bmp^.height))
+                  and bmp^.nonTransparentPixels[x, y];
 end;
 
 procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
 begin
+  if not assigned(bmp) then exit;
+  
   bmp^.cellW     := width;
   bmp^.cellH     := height;
   bmp^.cellCols  := columns;
@@ -1219,22 +1218,24 @@ end;
 
 function BitmapCellCount(bmp: Bitmap): LongInt;
 begin
-  result := bmp^.cellCount;
+  if not assigned(bmp) then result := 0
+  else result := bmp^.cellCount;
 end;
 
 function BitmapCellRows(bmp: Bitmap): LongInt;
 begin
-  result := bmp^.cellRows;
+  if not assigned(bmp) then result := 0
+  else result := bmp^.cellRows;
 end;
 
 function BitmapCellColumns(bmp: Bitmap): LongInt;
 begin
-  result := bmp^.cellCols;
+  if not assigned(bmp) then result := 0
+  else result := bmp^.cellCols;
 end;
 
 function BitmapsInterchangable(bmp1, bmp2: Bitmap): Boolean;
 begin
-  
   if (not assigned(bmp1)) or (not assigned(bmp2)) then
     result := false
   else
@@ -1248,16 +1249,19 @@ end;
 
 procedure MakeOpaque(bmp: Bitmap);
 begin
+  if not assigned(bmp) then exit;
   SDL_SetAlpha(bmp^.surface, 0, 255);
 end;
 
 procedure SetOpacity(bmp: Bitmap; pct: Single);
 begin
+  if not assigned(bmp) then exit;
   SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, Round(pct * 255));
 end;
 
 procedure MakeTransparent(bmp: Bitmap);
 begin
+  if not assigned(bmp) then exit;
   SDL_SetAlpha(bmp^.surface, SDL_SRCALPHA, 0);
 end;
 
@@ -1312,6 +1316,7 @@ end;
 
 procedure SetupBitmapForCollisions(src: Bitmap);
 begin
+  if not assigned(src) then exit;
   if Length(src^.nonTransparentPixels) <> 0 then exit;
     
   SetNonAlphaPixels(src, src^.surface);
@@ -1324,11 +1329,7 @@ procedure OptimiseBitmap(surface: Bitmap);
 var
   oldSurface: PSDL_Surface;
 begin
-  if surface = nil then
-  begin
-    //RaiseException('No bitmap supplied');
-    exit;
-  end;
+  if not assigned(surface) then exit;
   
   oldSurface := surface^.surface;
   SetNonAlphaPixels(surface, oldSurface);
@@ -1350,27 +1351,17 @@ procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
 var
   offset: SDL_Rect;
 begin
-  if (dest = nil) or (src = nil) then exit;
+  if (not assigned(dest)) or (not assigned(src)) then exit;
   
   offset := NewSDLRect(x, y, 0, 0);
   SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
 end;
 
-/// Draws part of a bitmap (src) onto another bitmap (dest).
-///
-/// @param dest:     The destination bitmap - not optimised!
-/// @param src: The bitmap to be drawn onto the destination
-/// @param srcX, srcY:   The x,y offset to the area to copy in src
-/// @param srcW, srcH:   The width and height of the area to copy
-/// @param x,y:      The x,y location to draw the bitmap part to
-///
-/// Side Effects:
-/// - Draws part of the src at the x,y location in the destination.
 procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
 var
   offset, source: SDL_Rect;
 begin
-  if (dest = nil) or (src = nil) then begin {RaiseException('No bitmap supplied');} exit; end;
+  if (not assigned(dest)) or (not assigned(src)) then begin {RaiseException('No bitmap supplied');} exit; end;
   if (srcW <= 0) or (srcH <= 0) then begin {RaiseException('Width and Height must be >= 0');} exit; end;
   
   offset := NewSDLRect(x, y, 0, 0);
@@ -1384,16 +1375,6 @@ begin
   DrawBitmapPart(dest, src, Round(source.x), Round(source.y), source.width, source.height, x, y);
 end;
 
-/// Draws part of a bitmap (src) onto the screen.
-///
-/// @param src: The bitmap to be drawn onto the screen
-/// @param srcX, srcY:  The x,y offset to the area to copy in src
-/// @param srcW, srcH:  The width and height of the area to copy
-/// @param x,y:       The x,y location to draw the bitmap part to
-///
-/// Side Effects:
-/// - Draws part of the src at the x,y location on the screen.
-/// - Effected by visible window
 procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
 begin
   DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, x, y);
@@ -1404,13 +1385,6 @@ begin
   DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
 end;
 
-/// Draws one bitmap (src) onto the screen.
-///
-/// @param src:  The bitmap to be drawn onto the screen
-/// @param x,y:       The x,y location to draw the bitmap to
-///
-/// Side Effects:
-/// - Draws the src at the x,y location on the screen.
 procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
 begin
   DrawBitmap(screen, src, x, y);
@@ -1465,9 +1439,9 @@ end;
 
 procedure ClearSurface(dest: Bitmap; toColor: Color); overload;
 begin
-  if dest = nil then
+  if not assigned(dest) then
   begin
-    RaiseException('Cannot clear, destination bitmap not supplied (nil)');
+    RaiseWarning('Cannot clear, destination bitmap not supplied (nil)');
     exit;
   end;
   SDL_FillRect(dest^.surface, @dest^.surface^.clip_rect, toColor);
@@ -1616,7 +1590,8 @@ end;
 
 function BitmapRectangleOfCell(src: Bitmap; cell: LongInt): Rectangle;
 begin
-  if (cell < 0) or (cell >= src^.cellCount) then
+  
+  if (not assigned(src)) or (cell < 0) or (cell >= src^.cellCount) then
     result := RectangleFrom(0,0,0,0)
   else
   begin
@@ -1740,6 +1715,7 @@ end;
 
 procedure SaveBitmap(src: Bitmap; filepath: String);
 begin
+  if not assigned(src) then exit;
   SDL_SaveBMP(src^.surface, PChar(filepath));
 end;
 
