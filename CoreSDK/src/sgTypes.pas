@@ -438,6 +438,8 @@ interface
     /// @struct SpriteData
     /// @via_pointer
     SpriteData = packed record
+      name:             String;               // The name of the sprite for resource management
+      
       layerIds:         NamedIndexCollection; // The name <-> ids mapping for layers
       layers:           Array of Bitmap;      // Layers of the sprites
       visibleLayers:    Array of LongInt;     // The indexes of the visible layers
