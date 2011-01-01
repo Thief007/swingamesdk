@@ -150,378 +150,376 @@ type
     fdDirectories = 2, 
     fdFilesAndDirectories = 3 // = (1 or 2)
     );
-
+  
+  
+  
 //---------------------------------------------------------------------------
 // Alter GUI global values
 //---------------------------------------------------------------------------
-procedure GUISetForegroundColor(c:Color);
-procedure GUISetBackgroundColor(c:Color);
-procedure GUISetBackgroundColorInactive(c:color);
-procedure GUISetForegroundColorInactive(c:color);
-
-/// Returns true if any of the panels in the user interface have been clicked.
-/// 
-/// @lib
-function GUIClicked(): Boolean;
-
+  
+  procedure GUISetForegroundColor(c:Color);
+  procedure GUISetBackgroundColor(c:Color);
+  procedure GUISetBackgroundColorInactive(c:color);
+  procedure GUISetForegroundColorInactive(c:color);
+  
+  /// Returns true if any of the panels in the user interface have been clicked.
+  /// 
+  /// @lib
+  function GUIClicked(): Boolean;
+  
+  
+  
 //---------------------------------------------------------------------------
 // Panels
 //---------------------------------------------------------------------------
-
-procedure ShowPanelDialog(p: Panel);
-
-/// Display the panel on screen at panel's co-ordinates.
-///
-/// @lib
-///
-/// @class Panel
-/// @method Show
-procedure ShowPanel(p: Panel);
-
-/// Hide the panel, stop drawing it. Panels which are not being draw can not be interacted with by the user.
-///
-/// @lib
-///
-/// @class Panel
-/// @method Hide
-procedure HidePanel(p: Panel);
-
-/// Toggles whether the panel is being shown or not.
-///
-/// @lib
-///
-/// @class Panel
-/// @method ToggleVisible
-procedure ToggleShowPanel(p: Panel);
-
-/// Draw the currently visible panels (For use in the main loop)
-///
-/// @lib
-procedure DrawPanels();
-
-/// Activate the passed in panel. If shown, the panel will be clickable. This is the default state of a panel.
-///
-/// @lib
-///
-/// @class Panel
-/// @method Activate
-procedure ActivatePanel(p: Panel);
-
-/// Deactivate the panel. The panel will become unclickable, it will remain visible if it was already.
-///
-/// @lib
-///
-/// @class Panel
-/// @method Deactivate
-procedure DeactivatePanel(p: Panel);
-
-/// Activates the panel if deactivated, and deactivates if activated.
-///
-/// @lib
-///
-/// @class Panel
-/// @method ToggleActivate
-procedure ToggleActivatePanel(p: Panel);
-
-/// Returns whether panel is active
-///
-/// @lib
-///
-/// @class Panel
-/// @getter Active
-function PanelActive(pnl: panel): boolean;
-
-/// Returns true if panel is currently visible.
-///
-/// @lib
-///
-/// @class Panel
-/// @getter Visible
-function PanelVisible(p: Panel): boolean;
-
-/// Returns the last panel clicked.
-///
-/// @lib
-function PanelClicked(): Panel; overload;
-
-/// Returns true when the panel was clicked.
-///
-/// @lib PanelWasClicked
-///
-/// @class Panel
-/// @getter Clicked
-function PanelClicked(pnl: Panel): Boolean; overload;
-
-/// Sets panel's draggability to the passed boolean
-///
-/// @lib
-/// @sn panel:%s setDraggable:%s
-///
-/// @class Panel
-/// @setter Draggable
-procedure PanelSetDraggable(p: panel; b:boolean);
-
-/// Returns whether or not the passed panel is currently draggable
-///
-/// @lib
-/// @sn panelDraggable:%s
-///
-/// @class Panel
-/// @getter Draggable
-function PanelDraggable(p: panel): boolean;
-
-/// Move panel along vector
-///
-/// @lib
-///
-/// @class Panel
-/// @method Move
-procedure MovePanel(p: Panel; mvmt: Vector);
-
-/// Returns the panel at the point passed in. Returns nil if there is no panel.
-///
-/// @lib
-function PanelAtPoint(pt: Point2D): Panel;
-
-
-
-/// Returns true if point is in any region within the panel
-///
-/// @lib PointInRegionWithKind
-///
-/// @class Panel
-/// @self 2
-/// @Overload PointInRegion PointInRegionWithKind
-function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
-
-/// Returns true if point is in any region within the panel
-///
-/// @lib
-///
-/// @class Panel
-/// @self 2
-/// @method PointInRegion
-function PointInRegion(pt: Point2D; p: Panel): Boolean;
-
-/// Disposes of all panels
-///
-/// @lib
-procedure ReleaseAllPanels();
-
-/// Disposes of the panel by name, removing it from the index collection, setting its dragging to nil, and hiding it first to avoid crashes.
-///
-/// @lib
-procedure ReleasePanel(name: String);
-
-/// Disposes of the panel by panel
-///
-/// @lib
-///
-/// @class Panel
-/// @method Free
-procedure FreePanel(var pnl: Panel);
-
-/// maps panel to name in Hash Table.
-///
-/// @lib
-/// @sn loadPanelNamed:%s fromFile:%s
-///
-/// @class Panel
-/// @constructor
-/// @csn initWithName:%s fromFile:%s
-function LoadPanelNamed(name, filename: String): Panel;
-
-
-/// Loads panel from panel directory with filename
-///
-/// @lib
-///
-/// @class Panel
-/// @constructor
-/// @csn initFromFile:%s
-function LoadPanel(filename: String): Panel;
-
-
-/// Returns if panel is in Index Collection
-///
-/// @lib
-function HasPanel(name: String): Boolean;
-
-
-/// Returns panel with the name name
-///
-/// @lib
-function PanelNamed(name: String): Panel;  
-
-
-/// Returns the name of the panel
-///
-/// @lib
-/// 
-/// @class Panel
-/// @getter Name
-function PanelName(pnl: Panel): String;  
-
-/// Returns panel filename
-///
-/// @lib
-///
-/// @class Panel
-/// @getter FileName
-function PanelFilename(pnl: Panel): String;
-
-/// Returns if anything is currently being dragged
-///
-/// @lib
-function IsDragging(): Boolean; overload;
-
-/// Returns if panel is currently being dragged
-///
-/// @lib PanelIsDragging
-///
-/// @class Panel
-/// @getter IsDragging
-function IsDragging(pnl: Panel): Boolean; overload;
-
-/// Returns panel y value
-///
-/// @lib
-///
-/// @class Panel
-/// @getter Y
-function PanelY(p: Panel): Single;
-
-/// Returns panel x value
-///
-/// @lib
-///
-/// @class Panel
-/// @getter X
-function PanelX(p: Panel): Single;
-
-
-/// Returns panel h value
-///
-/// @lib
-///
-/// @class Panel
-/// @getter Height
-function PanelHeight(p: Panel): LongInt;
-
-
-/// Returns panel width value
-///
-/// @lib
-///
-/// @class Panel
-/// @getter Width
-function PanelWidth(p: Panel): LongInt;
-
-
+  
+  procedure ShowPanelDialog(p: Panel);
+  
+  /// Display the panel on screen at panel's co-ordinates.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method Show
+  procedure ShowPanel(p: Panel);
+  
+  /// Hide the panel, stop drawing it. Panels which are not being draw can not be interacted with by the user.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method Hide
+  procedure HidePanel(p: Panel);
+  
+  /// Toggles whether the panel is being shown or not.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method ToggleVisible
+  procedure ToggleShowPanel(p: Panel);
+  
+  /// Draw the currently visible panels (For use in the main loop)
+  ///
+  /// @lib
+  procedure DrawPanels();
+  
+  /// Activate the passed in panel. If shown, the panel will be clickable. This is the default state of a panel.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method Activate
+  procedure ActivatePanel(p: Panel);
+  
+  /// Deactivate the panel. The panel will become unclickable, it will remain visible if it was already.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method Deactivate
+  procedure DeactivatePanel(p: Panel);
+  
+  /// Activates the panel if deactivated, and deactivates if activated.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method ToggleActivate
+  procedure ToggleActivatePanel(p: Panel);
+  
+  /// Returns whether panel is active
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter Active
+  function PanelActive(pnl: panel): boolean;
+  
+  /// Returns true if panel is currently visible.
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter Visible
+  function PanelVisible(p: Panel): boolean;
+  
+  /// Returns the last panel clicked.
+  ///
+  /// @lib
+  function PanelClicked(): Panel; overload;
+  
+  /// Returns true when the panel was clicked.
+  ///
+  /// @lib PanelWasClicked
+  ///
+  /// @class Panel
+  /// @getter Clicked
+  function PanelClicked(pnl: Panel): Boolean; overload;
+  
+  /// Sets panel's draggability to the passed boolean
+  ///
+  /// @lib
+  /// @sn panel:%s setDraggable:%s
+  ///
+  /// @class Panel
+  /// @setter Draggable
+  procedure PanelSetDraggable(p: panel; b:boolean);
+  
+  /// Returns whether or not the passed panel is currently draggable
+  ///
+  /// @lib
+  /// @sn panelDraggable:%s
+  ///
+  /// @class Panel
+  /// @getter Draggable
+  function PanelDraggable(p: panel): boolean;
+  
+  /// Move panel along vector
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method Move
+  procedure MovePanel(p: Panel; mvmt: Vector);
+  
+  /// Returns the panel at the point passed in. Returns nil if there is no panel.
+  ///
+  /// @lib
+  function PanelAtPoint(pt: Point2D): Panel;
+  
+  /// Returns true if point is in any region within the panel
+  ///
+  /// @lib PointInRegionWithKind
+  ///
+  /// @class Panel
+  /// @self 2
+  /// @Overload PointInRegion PointInRegionWithKind
+  function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
+  
+  /// Returns true if point is in any region within the panel
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @self 2
+  /// @method PointInRegion
+  function PointInRegion(pt: Point2D; p: Panel): Boolean;
+  
+  /// Disposes of all panels
+  ///
+  /// @lib
+  procedure ReleaseAllPanels();
+  
+  /// Disposes of the panel by name, removing it from the index collection, setting its dragging to nil, and hiding it first to avoid crashes.
+  ///
+  /// @lib
+  procedure ReleasePanel(name: String);
+  
+  /// Disposes of the panel by panel
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method Free
+  procedure FreePanel(var pnl: Panel);
+  
+  /// maps panel to name in Hash Table.
+  ///
+  /// @lib
+  /// @sn loadPanelNamed:%s fromFile:%s
+  ///
+  /// @class Panel
+  /// @constructor
+  /// @csn initWithName:%s fromFile:%s
+  function LoadPanelNamed(name, filename: String): Panel;
+  
+  /// Loads panel from panel directory with filename
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @constructor
+  /// @csn initFromFile:%s
+  function LoadPanel(filename: String): Panel;
+  
+  /// Returns if panel is in Index Collection
+  ///
+  /// @lib
+  function HasPanel(name: String): Boolean;
+  
+  /// Returns panel with the name name
+  ///
+  /// @lib
+  function PanelNamed(name: String): Panel;  
+  
+  /// Returns the name of the panel
+  ///
+  /// @lib
+  /// 
+  /// @class Panel
+  /// @getter Name
+  function PanelName(pnl: Panel): String;  
+  
+  /// Returns panel filename
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter FileName
+  function PanelFilename(pnl: Panel): String;
+  
+  /// Returns if anything is currently being dragged
+  ///
+  /// @lib
+  function IsDragging(): Boolean; overload;
+  
+  /// Returns if panel is currently being dragged
+  ///
+  /// @lib PanelIsDragging
+  ///
+  /// @class Panel
+  /// @getter IsDragging
+  function IsDragging(pnl: Panel): Boolean; overload;
+  
+  /// Returns panel y value
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter Y
+  function PanelY(p: Panel): Single;
+  
+  /// Returns panel x value
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter X
+  function PanelX(p: Panel): Single;
+  
+  /// Returns panel h value
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter Height
+  function PanelHeight(p: Panel): LongInt;
+  
+  /// Returns panel width value
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @getter Width
+  function PanelWidth(p: Panel): LongInt;
+  
+  
+  
 //---------------------------------------------------------------------------
 // Regions
 //---------------------------------------------------------------------------
+  
+  /// Returns the ID of the last region clicked on by user.
+  ///
+  /// @lib
+  function RegionClickedID(): String;
 
-/// Returns the ID of the last region clicked on by user.
-///
-/// @lib
-function RegionClickedID(): String;
+  /// Returns the last region clicked on by user.
+  ///
+  /// @lib
+  function RegionClicked(): Region;
 
-/// Returns the last region clicked on by user.
-///
-/// @lib
-function RegionClicked(): Region;
+  /// Returns the ID of the last region clicked on by user.
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter ID
+  function RegionID(r: Region): String;
 
-/// Returns the ID of the last region clicked on by user.
-///
-/// @lib
-///
-/// @class Region
-/// @getter ID
-function RegionID(r: Region): String;
+  /// Returns the Region with the ID passed from the panel passed
+  ///
+  /// @lib
+  ///
+  /// @class Panel
+  /// @method RegionWithID
+  function RegionWithID(pnl: Panel; ID: String): Region; overload;
 
-/// Returns the Region with the ID passed from the panel passed
-///
-/// @lib
-///
-/// @class Panel
-/// @method RegionWithID
-function RegionWithID(pnl: Panel; ID: String): Region; overload;
+  /// Returns the Region with the ID passed
+  ///
+  /// @lib GlobalRegionWithID
+  function RegionWithID(ID: String): Region; overload;
 
-/// Returns the Region with the ID passed
-///
-/// @lib GlobalRegionWithID
-function RegionWithID(ID: String): Region; overload;
+  /// Returns the Region with the ID passed from the panel passed
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter ParentPanel
+  function RegionPanel(r: Region): Panel;
 
-/// Returns the Region with the ID passed from the panel passed
-///
-/// @lib
-///
-/// @class Region
-/// @getter ParentPanel
-function RegionPanel(r: Region): Panel;
+  /// Toggles the region active state
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  procedure ToggleRegionActive(forRegion: Region);
 
-/// Toggles the region active state
-///
-/// @lib
-///
-/// @class Region
-procedure ToggleRegionActive(forRegion: Region);
+  /// Sets the region active to boolean
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @setter RegionActive
+  procedure SetRegionActive(forRegion: Region; b: boolean);
 
-/// Sets the region active to boolean
-///
-/// @lib
-///
-/// @class Region
-/// @setter RegionActive
-procedure SetRegionActive(forRegion: Region; b: boolean);
+  /// Returns the Region Y value
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter Y
+  function RegionY(r: Region): Single;
 
-/// Returns the Region Y value
-///
-/// @lib
-///
-/// @class Region
-/// @getter Y
-function RegionY(r: Region): Single;
+  /// Returns the Region X value
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter X
+  function RegionX(r: Region): Single;
 
-/// Returns the Region X value
-///
-/// @lib
-///
-/// @class Region
-/// @getter X
-function RegionX(r: Region): Single;
+  /// Returns the Region height value
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter Height
+  function RegionHeight(r: Region): LongInt;
 
-/// Returns the Region height value
-///
-/// @lib
-///
-/// @class Region
-/// @getter Height
-function RegionHeight(r: Region): LongInt;
+  /// Returns the Region Wdith value
+  ///
+  /// @lib
+  ///
+  /// @class Region
+  /// @getter Width
+  function RegionWidth(r: Region): LongInt;
 
-/// Returns the Region Wdith value
-///
-/// @lib
-///
-/// @class Region
-/// @getter Width
-function RegionWidth(r: Region): LongInt;
+  /// Returns the region from the panel at the point
+  ///
+  /// @lib
+  function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 
-/// Returns the region from the panel at the point
-///
-/// @lib
-function RegionAtPoint(p: Panel; const pt: Point2D): Region;
-
-/// Registers the callback with the panel, when an event related to this
-/// region occurs the procedure registered will be called.
-///
-/// @lib
-/// @sn region:%s registerEventCallback:%s
-/// 
-/// @class Region
-/// @method  RegisterEventCallback
-procedure RegisterEventCallback(r: Region; callback: GUIEventCallback);
+  /// Registers the callback with the panel, when an event related to this
+  /// region occurs the procedure registered will be called.
+  ///
+  /// @lib
+  /// @sn region:%s registerEventCallback:%s
+  /// 
+  /// @class Region
+  /// @method  RegisterEventCallback
+  procedure RegisterEventCallback(r: Region; callback: GUIEventCallback);
 
 
 //---------------------------------------------------------------------------

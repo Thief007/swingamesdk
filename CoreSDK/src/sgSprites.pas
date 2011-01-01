@@ -39,9 +39,9 @@ interface
 //=============================================================================
   
   
-  //---------------------------------------------------------------------------
-  // Sprite creation routines
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite creation routines
+//---------------------------------------------------------------------------
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -244,9 +244,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite Resource Management code
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite Resource Management code
+//---------------------------------------------------------------------------
   
   /// Determines if SwinGame has a sprite for the supplied name.
   /// This checks against all sprites, those loaded without a name
@@ -274,9 +274,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Layer code
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Layer code
+//---------------------------------------------------------------------------
   
   /// Adds a new layer to the sprite.
   /// 
@@ -608,9 +608,10 @@ interface
   function SpriteCollisionCircle(s: Sprite): Circle;
   
   
-  //---------------------------------------------------------------------------
-  // Sprite Animation code
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Sprite Animation code
+//---------------------------------------------------------------------------
   
   /// Restart the sprite's current animation, this will play a sound if the
   /// first cell of the animation is associated with a sound effect.
@@ -792,10 +793,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Positioning code
-  //---------------------------------------------------------------------------
-  
+//---------------------------------------------------------------------------
+// Positioning code
+//---------------------------------------------------------------------------
   
   /// Returns a `Vector` that is the difference in the position of two sprites
   /// (``s1`` and ``s2``).
@@ -821,9 +821,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Drawing code
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Drawing code
+//---------------------------------------------------------------------------
   
   /// Draws the sprite at its position in the game offset by a given amount. Only
   /// use this method when you want to draw the sprite displaced from its location
@@ -866,9 +866,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Movement code
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Movement code
+//---------------------------------------------------------------------------
   
   /// Moves the sprite as indicated by its velocity. You can call this directly ot 
   /// alternatively, this action is performed when the sprite is updated using
@@ -933,10 +933,10 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite Screen Position Tests 
-  //---------------------------------------------------------------------------
-
+//---------------------------------------------------------------------------
+// Sprite Screen Position Tests 
+//---------------------------------------------------------------------------
+  
   /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
   /// specified (``x`` and ``y``) which is converted to a world location.
   ///
@@ -969,9 +969,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite Width and Heigth - CenterPoint
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite Width and Heigth - CenterPoint
+//---------------------------------------------------------------------------
   
   /// The current Height of the sprite (aligned to the Y axis).
   /// 
@@ -981,10 +981,24 @@ interface
   /// @getter Height
   function SpriteHeight(s: Sprite): LongInt;
   
+  /// The height of a given layer of the Sprite (aligned to the Y axis).
+  ///
   /// @lib SpriteLayerNamedHeight
+  /// @sn sprite:%s heightOfLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @overload LayerHeight LayerNamedHeight
+  /// @csn heightOfLayerNamed:%s
   function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
   
+  /// The height of a given layer of the Sprite (aligned to the Y axis).
+  ///
   /// @lib SpriteLayerHeight
+  /// @sn sprite:%s heightOfLayer:%s
+  ///
+  /// @class Sprite
+  /// @method LayerHeight
+  /// @csn heightOfLayer:%s
   function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
   
   /// The current Width of the sprite (aligned to the X axis).
@@ -994,13 +1008,27 @@ interface
   /// @getter Width
   function SpriteWidth(s: Sprite): LongInt;
   
+  /// The width of a given layer of the Sprite (aligned to the X axis).
+  ///
   /// @lib SpriteLayerNamedWidth
+  /// @sn sprite:%s widthOfLayerNamed:%s
+  ///
+  /// @class Sprite
+  /// @overload LayerWidth LayerNamedWidth
+  /// @csn widthOfLayerNamed:%s
   function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
   
+  /// The width of a given layer of the Sprite (aligned to the X axis).
+  ///
   /// @lib SpriteLayerWidth
+  /// @sn sprite:%s widthOfLayer:%s
+  ///
+  /// @class Sprite
+  /// @method LayerWidth
+  /// @csn widthOfLayer:%s
   function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
   
-  /// Returns the center point of the passed in Sprite. This uses the Sprite's 
+  /// Returns the center point of the passed in Sprite. This is based on the Sprite's 
   /// Position, Width and Height.
   ///
   /// @lib CenterPoint
@@ -1011,27 +1039,37 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite velocity
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite velocity
+//---------------------------------------------------------------------------
   
+  /// Returns the current velocity of the Sprite. When the Sprite is updated (see ``UpdateSprite``)
+  /// this vector is used to move the Sprite.
+  ///
   /// @lib
+  ///
   /// @class Sprite
   /// @getter Velocity
   function SpriteVelocity(s: Sprite): Vector;
-
+  
+  /// Sets the current velocity of the Sprite. When the Sprite is updated (see ``UpdateSprite``)
+  /// this vector is used to move the Sprite.
+  /// 
   /// @lib
+  /// @sn sprite:%s setVelocity:%s
+  /// 
   /// @class Sprite
   /// @setter Velocity
   procedure SpriteSetVelocity(s: Sprite; const value: Vector);
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite CellCount
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite CellCount
+//---------------------------------------------------------------------------
   
-  /// Returns a rectangle of the current cell within the Sprite's image.
+  /// Returns a rectangle of the current cell within the Sprite's image. This is used
+  /// to determine what part of the bitmap should be used when the Sprite is drawn.
   ///
   /// @lib
   ///
@@ -1050,184 +1088,264 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite X,Y
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite X,Y
+//---------------------------------------------------------------------------
   
+  /// Sets the X position of the Sprite.
+  /// 
   /// @lib
+  /// @sn sprite:%s setX:%s
+  ///
   /// @class Sprite
   /// @setter X
   procedure SpriteSetX(s: Sprite; value: Single);
-    
+  
+  /// Returns the X position of the Sprite.
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter X
   function SpriteX(s: Sprite): Single;
   
+  /// Sets the Y position of the Sprite.
+  /// 
   /// @lib
+  /// @sn sprite:%s setY:%s
+  /// 
   /// @class Sprite
   /// @setter Y
   procedure SpriteSetY(s: Sprite; value: Single);
-    
+  
+  /// Returns the Y position of the Sprite.
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Y
   function SpriteY(s: Sprite): Single;
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite position
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite position
+//---------------------------------------------------------------------------
   
+  /// Returns the Sprite's position.
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Position
   function SpritePosition(s: Sprite): Point2D;
-
+  
+  /// Sets the Sprite's position.
+  /// 
   /// @lib
+  /// @sn sprite:$s setPosition:%s
+  /// 
   /// @class Sprite
   /// @setter Position
   procedure SpriteSetPosition(s: Sprite; const value: Point2D);
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite DX,DY
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite DX,DY
+//---------------------------------------------------------------------------
   
+  /// Sets the X value of the Sprite's velocity.
+  /// 
   /// @lib
+  /// @sn sprite:%s setDX:%s
+  /// 
   /// @class Sprite
   /// @setter DX
   procedure SpriteSetDX(s: Sprite; value: Single);
-    
+  
+  /// Returns the X value of the Sprite's velocity.
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter DX
   function SpriteDX(s: Sprite): Single;
   
+  /// Sets the Y value of the Sprite's velocity.
+  /// 
   /// @lib
+  /// @sn sprite:%s setDY:%s
+  /// 
   /// @class Sprite
   /// @setter DY
   procedure SpriteSetDY(s: Sprite; value: Single);
-    
+  
+  /// Returns the Y value of the Sprite's velocity.
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter DY
   function SpriteDY(s: Sprite): Single;
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite speed and heading
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite speed and heading
+//---------------------------------------------------------------------------
   
   /// Returns the current speed (distance travelled per update) of the Sprite.
-  ///
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Speed
   function SpriteSpeed(s: Sprite): Single;
   
   /// Alters the speed of the Sprite without effecting the direction.
-  ///
+  /// 
   /// @lib
+  /// @sn sprite:%s setSpeed:%s
+  /// 
   /// @class Sprite
   /// @setter Speed
   procedure SpriteSetSpeed(s: Sprite; value: Single);
   
   /// Returns the direction the Sprite is heading in degrees.
-  ///
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Heading
   function SpriteHeading(s: Sprite): Single;
   
   /// Alters the direction the Sprite is heading without changing the speed.
-  ///
+  /// 
   /// @lib
+  /// @sn sprite:%s setHeading:%s
+  /// 
   /// @class Sprite
   /// @setter Heading
   procedure SpriteSetHeading(s: Sprite; value: Single);
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite Current Frame
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite Current Frame
+//---------------------------------------------------------------------------
   
   /// Returns the current animation cell for an Animated Sprite. The cell is
   /// updated when the sprite's animation data is updated.
-  ///
+  /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter CurrentCell
   function SpriteCurrentCell(s: Sprite): LongInt;
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite collision details
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite collision details
+//---------------------------------------------------------------------------
   
+  /// Returns the bitmap used by the Sprite to determine if it has collided with
+  /// other objects in the game.
+  /// 
   /// @lib
+  /// 
+  /// @class Sprite
+  /// @getter CollisionBitmap
   function SpriteCollisionBitmap(s: Sprite): Bitmap;
+  
+  /// Sets the bitmap used by the Sprite to determine if it has collided with
+  /// other objects in the game. By default the CollisionBitmap is set to the
+  /// bitmap from the Sprite's first layer.
+  /// 
   /// @lib
+  /// @sn sprite:%s setCollisionBitmap:%s
+  ///
+  /// @class Sprite
+  /// @setter CollisionBitmap
   procedure SpriteSetCollisionBitmap(s: Sprite; bmp: Bitmap);
   
+  /// Returns the kind of collision used with this Sprite. This is used when
+  /// determining if the Sprite has collided with other objects in the game.
+  /// 
   /// @lib
+  /// 
+  /// @class Sprite
+  /// @getter CollisionKind
   function SpriteCollisionKind(s: Sprite): CollisionTestKind;
   
+  /// Sets the kind of collision used with this Sprite. This is used when
+  /// determining if the Sprite has collided with other objects in the game.
+  /// 
   /// @lib
+  /// @sn sprite:%s setCollisionKind:%s
+  /// 
+  /// @class Sprite
+  /// @setter CollisionKind
   procedure SpriteSetCollisionKind(s: Sprite; value: CollisionTestKind);
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite mass
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite mass
+//---------------------------------------------------------------------------
   
   /// This indicates the mass of the Sprite for any of the collide methods from
   /// Physics. The mass of two colliding sprites will determine the relative
   /// velocitys after the collision.
   /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Mass
   function SpriteMass(s: Sprite): Single;
   
   /// Allows you to change the mass of a Sprite.
-  ///
+  /// 
   /// @lib
+  /// @sn sprite:%s sestMass:%s
+  /// 
   /// @class Sprite
   /// @setter Mass
   procedure SpriteSetMass(s: Sprite; value: Single);
   
-  //---------------------------------------------------------------------------
-  // Sprite rotation
-  //---------------------------------------------------------------------------
+  
+  
+//---------------------------------------------------------------------------
+// Sprite rotation
+//---------------------------------------------------------------------------
   
   /// This indicates the angle of rotation of the Sprite. This will rotate any 
   /// images of the sprite before drawing, which can be very slow. Avoid using
   /// this method with bitmap based Sprites where possible.
   /// 
   /// @lib
+  /// 
   /// @class Sprite
   /// @getter Rotation
   function SpriteRotation(s: Sprite): Single;
 
   /// Allows you to change the rotation of a Sprite.
-  ///
+  /// 
   /// @lib
+  /// @sn sprite:%s setRotation:%s
+  /// 
   /// @class Sprite
   /// @setter Rotation
   procedure SpriteSetRotation(s: Sprite; value: Single);
   
-  //---------------------------------------------------------------------------
-  // Sprite scale
-  //---------------------------------------------------------------------------
   
-  /// This indicates the scale (0 to 1.0) of the Sprite. This will scale any 
+  
+//---------------------------------------------------------------------------
+// Sprite scale
+//---------------------------------------------------------------------------
+  
+  /// This indicates the scale of the Sprite. This will scale any 
   /// images of the sprite before drawing, which can be very slow. Avoid using
   /// this method with bitmap based Sprites where possible.
   /// 
@@ -1237,19 +1355,21 @@ interface
   function SpriteScale(s: Sprite): Single;
   
   /// Allows you to change the scale of a Sprite.
-  ///
+  /// 
   /// @lib
+  /// @sn sprite:%s setScale:%s
+  /// 
   /// @class Sprite
   /// @setter Scale
   procedure SpriteSetScale(s: Sprite; value: Single);
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite value code
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite value code
+//---------------------------------------------------------------------------
   
-  /// Returns the count of sprite's values
+  /// Returns the count of sprite's values.
   ///
   /// @lib
   ///
@@ -1326,9 +1446,9 @@ interface
   
   
   
-  //---------------------------------------------------------------------------
-  // Sprite name
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite name
+//---------------------------------------------------------------------------
   
   /// Returns the name of the sprite. This name is used for resource management
   /// and can be used to interact with the sprite in various routines.
@@ -2241,9 +2361,9 @@ implementation
   end;
   
   
-  //---------------------------------------------------------------------------
-  // Sprite position
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite position
+//---------------------------------------------------------------------------
   
   function SpritePosition(s: Sprite): Point2D;
   begin
@@ -2255,9 +2375,9 @@ implementation
     s^.position := value;
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite DX,DY
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite DX,DY
+//---------------------------------------------------------------------------
   
   procedure SpriteSetDX(s: Sprite; value: Single);
   begin
@@ -2279,9 +2399,9 @@ implementation
     result := s^.velocity.y;
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite speed and heading
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite speed and heading
+//---------------------------------------------------------------------------
   
   function SpriteSpeed(s: Sprite): Single;
   begin
@@ -2303,9 +2423,9 @@ implementation
     s^.velocity := VectorFromAngle(value, VectorMagnitude(s^.velocity));
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite Current cell
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite Current cell
+//---------------------------------------------------------------------------
   
   function SpriteCurrentCell(s: Sprite): LongInt;
   begin
@@ -2319,9 +2439,9 @@ implementation
     else result := AnimationEnded(s^.animationData);
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite width/height
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite width/height
+//---------------------------------------------------------------------------
   
   function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
   begin
@@ -2360,9 +2480,9 @@ implementation
   end;
   
   
-  //---------------------------------------------------------------------------
-  // Sprite mass
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite mass
+//---------------------------------------------------------------------------
   
   function SpriteMass(s: Sprite): Single;
   begin
@@ -2374,9 +2494,9 @@ implementation
     s^.values[MASS_IDX] := value;
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite rotation
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite rotation
+//---------------------------------------------------------------------------
   
   function SpriteRotation(s: Sprite): Single;
   begin
@@ -2388,9 +2508,9 @@ implementation
     s^.values[ROTATION_IDX] := value;
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite scale
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite scale
+//---------------------------------------------------------------------------
   
   function SpriteScale(s: Sprite): Single;
   begin
@@ -2402,9 +2522,9 @@ implementation
     s^.values[SCALE_IDX] := value;
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite center point
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite center point
+//---------------------------------------------------------------------------
   
   function CenterPoint(s: Sprite): Point2D;
   begin
@@ -2420,9 +2540,9 @@ implementation
     {$ENDIF}
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite collision details
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite collision details
+//---------------------------------------------------------------------------
   
   function SpriteCollisionKind(s: Sprite): CollisionTestKind;
   begin
@@ -2446,9 +2566,9 @@ implementation
     if assigned(s) then s^.collisionBitmap := bmp;
   end;
   
-  //---------------------------------------------------------------------------
-  // Sprite value code
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite value code
+//---------------------------------------------------------------------------
   
   function SpriteValueCount(s: Sprite) : LongInt;
   begin

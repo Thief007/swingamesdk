@@ -36,9 +36,9 @@ interface
   uses sgTypes;
 //=============================================================================
   
-  //----------------------------------------------------------------------------
-  // Creating an AnimationTemplate
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Creating an AnimationTemplate
+//----------------------------------------------------------------------------
   
   /// Load animation details from a animation frames file.
   ///
@@ -60,9 +60,10 @@ interface
   procedure FreeAnimationTemplate(var framesToFree: AnimationTemplate);
   
   
-  //----------------------------------------------------------------------------
-  // AnimationTemplate mapping routines
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+// AnimationTemplate mapping routines
+//----------------------------------------------------------------------------
   
   /// The index of the animation within the animation template that has the supplied name.
   ///
@@ -85,9 +86,10 @@ interface
   function AnimationName(temp: AnimationTemplate; idx: LongInt): String;
   
   
-  //----------------------------------------------------------------------------
-  // AnimationTemplate mapping routines
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+// AnimationTemplate mapping routines
+//----------------------------------------------------------------------------
   
   /// Loads and returns a `AnimationTemplate`. The supplied ``filename`` is used to
   /// locate the `AnimationTemplate` to load. The supplied ``name`` indicates the 
@@ -127,9 +129,10 @@ interface
   procedure ReleaseAllAnimationTemplates();
   
   
-  //----------------------------------------------------------------------------
-  // Creating an Animation
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+// Creating an Animation
+//----------------------------------------------------------------------------
   
   /// Creates an animation from a `AnimationTemplate`. This may play a sound effect
   /// if the animation is set to play a sound effect on its first frame.
@@ -184,9 +187,10 @@ interface
   procedure FreeAnimation(var ani: Animation);
   
   
-  //----------------------------------------------------------------------------
-  // Drawing Animations
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+// Drawing Animations
+//----------------------------------------------------------------------------
   
   /// Assign a new starting animation to the passed in animation from the `AnimationTemplate`.
   /// This may play a sound if the first frame of the animation is linked to a sound effect.
@@ -233,9 +237,11 @@ interface
   /// @csn assignAnimation:%s from:%s withSound:%s
   procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationTemplate; withSound: Boolean); overload;
   
-  //----------------------------------------------------------------------------
-  // Drawing Animations
-  //----------------------------------------------------------------------------
+  
+  
+//----------------------------------------------------------------------------
+// Drawing Animations
+//----------------------------------------------------------------------------
   
   /// Uses the `Animation` information to draw a `Bitmap` at the specified
   /// ``x``,``y`` location.
@@ -305,9 +311,10 @@ interface
   procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; const pt: Point2D); overload;
   
   
-  //----------------------------------------------------------------------------
-  // Updating Animations
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+// Updating Animations
+//----------------------------------------------------------------------------
   
   /// Updates the animation, updating the time spent and possibly moving to a new
   /// frame in the animation. This may play a sound effect if the new frame
@@ -365,9 +372,11 @@ interface
   /// @csn resetWithSound:%s
   procedure RestartAnimation(anim: Animation; withSound: Boolean); overload;
   
-  //----------------------------------------------------------------------------
-  // Query Animation
-  //----------------------------------------------------------------------------
+  
+  
+//----------------------------------------------------------------------------
+// Query Animation
+//----------------------------------------------------------------------------
   
   /// Indicates if an animation has ended. Animations with loops will never end.
   /// 

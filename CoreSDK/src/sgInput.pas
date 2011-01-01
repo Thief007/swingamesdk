@@ -52,9 +52,9 @@ interface
 
   uses SDL, sgTypes;
   
-  //----------------------------------------------------------------------------
-  // Window close and Processing events
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Window close and Processing events
+//----------------------------------------------------------------------------
   
   /// Checks to see if the window has been asked to close. You need to handle
   /// this if you want the game to end when the window is closed. This value
@@ -77,9 +77,10 @@ interface
   procedure ProcessEvents();
   
   
-  //----------------------------------------------------------------------------
-  // Mouse position
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+// Mouse position
+//----------------------------------------------------------------------------
   
   /// Returns The current window position of the mouse as a `Vector`
   ///
@@ -259,9 +260,9 @@ implementation
 
   uses SysUtils, Classes, sgPhysics, sgTrace, sgShared, sgText, sgGeometry;
 
-  //----------------------------------------------------------------------------
-  // Game Loop Essentials
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Game Loop Essentials
+//----------------------------------------------------------------------------
 
   function WindowCloseRequested(): Boolean;
   begin

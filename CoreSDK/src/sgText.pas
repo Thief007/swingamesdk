@@ -124,9 +124,10 @@ interface
   procedure ReleaseAllFonts();
   
   
-  //---------------------------------------------------------------------------
-  // Font properties
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Font properties
+//---------------------------------------------------------------------------
   
   /// Alters the style of the font. This is time consuming, so load
   /// fonts multiple times and set the style for each if needed.
@@ -175,9 +176,10 @@ interface
   function TextAlignmentFrom(str: String): FontAlignment;
   
   
-  //---------------------------------------------------------------------------
-  // Draw Text - using font
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Draw Text - using font
+//---------------------------------------------------------------------------
   
   /// Draws the text at the specified point using the color and font indicated.
   ///
@@ -377,9 +379,10 @@ interface
   procedure DrawUnicode(theText: WideString; textColor: Color; theFont: Font; const pt: Point2D); overload; }
   
   
-  //---------------------------------------------------------------------------
-  // Draw Text Lines
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Draw Text Lines
+//---------------------------------------------------------------------------
   
   /// Draws the text at the specified x,y location using the fore and back colors, and the font indicated.
   ///
@@ -561,9 +564,10 @@ interface
   procedure DrawTextLinesOnScreen(theText: String; textColor, backColor: Color; name: String; size: LongInt; align: FontAlignment; const withinRect: Rectangle); overload;
   
   
-  //---------------------------------------------------------------------------
-  // Draw Text - without font
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Draw Text - without font
+//---------------------------------------------------------------------------
   
   /// Draws text using a simple bitmap font that is built into SwinGame.
   ///

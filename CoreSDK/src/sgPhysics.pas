@@ -94,9 +94,9 @@ interface
 //=============================================================================
   
   
-  //---------------------------------------------------------------------------
-  // Sprite <-> Sprite Collision Detection
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Sprite <-> Sprite Collision Detection
+//---------------------------------------------------------------------------
   
   /// Returns ``true`` if the specifed sprites (``s1`` and ``s2``) have
   /// collided. Will use simple bounding box tests first, and low-level pixel
@@ -110,9 +110,10 @@ interface
   function SpriteCollision(s1, s2: Sprite): Boolean;
   
   
-  //---------------------------------------------------------------------------
-  // Sprite <-> Rectangle Collision Detection
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Sprite <-> Rectangle Collision Detection
+//---------------------------------------------------------------------------
   
   /// Determined if a sprite has collided with a given rectangle. The rectangles
   /// coordinates are expressed in "world" coordinates.
@@ -144,9 +145,11 @@ interface
   /// @method ShapeCollision
   function SpriteShapeCollision(s: Sprite; shp: Shape): Boolean; overload; 
   
-  //---------------------------------------------------------------------------
-  // Sprite <-> Bitmap Collision Detection
-  //---------------------------------------------------------------------------
+  
+  
+//---------------------------------------------------------------------------
+// Sprite <-> Bitmap Collision Detection
+//---------------------------------------------------------------------------
   
   /// Determines if the `Sprite` ``s`` has collided with the bitmap ``bmp`` using
   /// pixel level testing if required.
@@ -174,9 +177,10 @@ interface
   function SpriteBitmapCollision(s: Sprite; bmp: Bitmap; const pt: Point2D): Boolean; overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap <-> Rectangle Collision Tests
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap <-> Rectangle Collision Tests
+//---------------------------------------------------------------------------
   
   /// Returns True if the bitmap ``bmp`` has collided with the rectangle
   /// specified using pixel level testing if required.
@@ -228,9 +232,10 @@ interface
   function BitmapRectCollision(bmp: Bitmap; const pt:Point2D; const part, rect: Rectangle): Boolean; overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap <-> Point
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap <-> Point
+//---------------------------------------------------------------------------
   
   /// Returns True if a point (``ptX``,``ptY``) is located within the bitmap
   /// ``bmp`` when it is drawn at ``x``,``y``, using pixel level collisions.
@@ -287,9 +292,10 @@ interface
   function BitmapPartPointCollision(bmp: Bitmap; x, y: LongInt; const part: Rectangle; const pt: Point2D): Boolean; overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap <-> Bitmap Collision Tests
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap <-> Bitmap Collision Tests
+//---------------------------------------------------------------------------
   
   /// Returns True if two bitmaps have collided using per pixel testing if required.
   /// The ``x`` and ``y`` parameters specify the world location of the bitmaps (``bmp1`` and ``bmp2``).
@@ -326,9 +332,10 @@ interface
   function BitmapCollision(bmp1: Bitmap; const pt1: Point2D; const part1: Rectangle; bmp2: Bitmap; const pt2: Point2D; const part2: Rectangle): Boolean; overload;
   
   
-  //---------------------------------------------------------------------------
-  // Cell based Collision Tests
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Cell based Collision Tests
+//---------------------------------------------------------------------------
   
   /// Returns true if the cells within the two bitmaps have collided at their specified x,y locations.
   ///
@@ -417,9 +424,10 @@ interface
   function CellRectCollision(bmp: Bitmap; cell: LongInt; const pt: Point2D; const rect: Rectangle): Boolean; overload;
   
   
-  //---------------------------------------------------------------------------
-  // Geometry Collision Tests
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Geometry Collision Tests
+//---------------------------------------------------------------------------
   
   /// Returns True if the Circle collised with rectangle ``rect``.
   ///
@@ -452,9 +460,10 @@ interface
   function TriangleLineCollision(const tri: Triangle; const ln: LineSegment): Boolean;
   
   
-  //---------------------------------------------------------------------------
-  // Sprite / Geometry Collision Tests
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Sprite / Geometry Collision Tests
+//---------------------------------------------------------------------------
   
   /// Returns True if the `Sprite` ``s``, represented by a bounding circle, has 
   /// collided with a ``line``. The diameter for the bounding circle is 
@@ -479,9 +488,10 @@ interface
   function RectLineCollision(const rect: Rectangle; const line: LineSegment): Boolean; overload;
   
   
-  //---------------------------------------------------------------------------
-  // Side to check based on movement direction
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Side to check based on movement direction
+//---------------------------------------------------------------------------
   
   /// Returns the side of that needs to be checked for collisions given the
   /// movement velocity.
@@ -490,9 +500,10 @@ interface
   function SideForCollisionTest(const velocity: Vector): CollisionSide;
   
   
-  //---------------------------------------------------------------------------
-  // Collision Effect Application ( angle + energy/mass transfer)
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Collision Effect Application ( angle + energy/mass transfer)
+//---------------------------------------------------------------------------
   
   /// Perform a physical collision with a circle bouncing off a line.
   /// 
@@ -912,9 +923,9 @@ implementation
     end;
   end;
   
-  //----------------------------------------------------------------------------
-  // Bitmap <--> Point collision detection
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Bitmap <--> Point collision detection
+//----------------------------------------------------------------------------
   
   function BitmapPointCollision(bmp: Bitmap; x, y: LongInt; bbox: Boolean; ptX, ptY: Single): Boolean; overload;
   begin
@@ -950,9 +961,9 @@ implementation
   end;
   
   
-  //----------------------------------------------------------------------------
-  // Collision Effect Application (angle + mass/energy transfer)
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Collision Effect Application (angle + mass/energy transfer)
+//----------------------------------------------------------------------------
 
   procedure _CollideCircleLine(s: Sprite; const line: LineSegment);
   var
@@ -1144,9 +1155,9 @@ implementation
 
 
 
-  //---------------------------------------------------------------------------
-  // Geometry Collision Tests
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
+// Geometry Collision Tests
+//---------------------------------------------------------------------------
   
   function CircleRectCollision(const c: Circle; const rect: Rectangle): Boolean;
   begin
