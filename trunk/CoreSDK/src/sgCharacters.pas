@@ -39,9 +39,9 @@ interface
   uses sgTypes;
 //=============================================================================
   
-  ///---------------------------------------------------------------------------
-  /// Character Name and Type
-  ///--------------------------------------------------------------------------- 
+//---------------------------------------------------------------------------
+// Character Name and Type
+//---------------------------------------------------------------------------
   
   /// Sets the Character's name
   ///
@@ -77,10 +77,12 @@ interface
   /// @getter CharacterType
   function CharacterType(c: Character): String;
   
-  //---------------------------------------------------------------------------
-  // Character Directions and States
-  //--------------------------------------------------------------------------- 
-    
+  
+  
+//---------------------------------------------------------------------------
+// Character Directions and States
+//---------------------------------------------------------------------------
+  
   /// Sets the current state of the character
   ///
   /// @lib
@@ -149,10 +151,12 @@ interface
   /// @length CharacterStateCount
   function CharacterStates(c: Character) : StringArray;
   
-  //---------------------------------------------------------------------------
-  // Character Angles
-  //---------------------------------------------------------------------------    
-      
+  
+  
+//---------------------------------------------------------------------------
+// Character Angles
+//---------------------------------------------------------------------------
+  
   /// Returns the DirectionAngles data at the selected index. The min and max
   /// of this record can be accessed by .min and .max
   ///
@@ -162,7 +166,7 @@ interface
   /// @class Character
   /// @method AngleAt
   function CharacterAngleAt(c: Character; index: LongInt): DirectionAngles;  
-        
+  
   /// Returns the count of the Angles of the character
   ///
   /// @lib
@@ -180,7 +184,7 @@ interface
   /// @class Character
   /// @method AngleMinAt
   function CharacterAngleMinAt(c: Character; index: LongInt): LongInt;
-    
+  
   /// Returns the maximum angle in the DirectionAngles record at the index
   /// specified
   ///
@@ -191,10 +195,12 @@ interface
   /// @method AngleMaxAt
   function CharacterAngleMaxAt(c: Character; index : LongInt): LongInt;
   
-  //---------------------------------------------------------------------------
-  // Character Values
-  //---------------------------------------------------------------------------     
-    
+  
+  
+//---------------------------------------------------------------------------
+// Character Values
+//---------------------------------------------------------------------------
+  
   /// Returns the count of character values
   ///
   /// @lib
@@ -243,10 +249,11 @@ interface
   procedure CharacterSetValue(c: Character; idx: LongInt; val: Single); overload;
   
   
-  //---------------------------------------------------------------------------
-  // Character Sprite
-  //---------------------------------------------------------------------------   
-    
+  
+//---------------------------------------------------------------------------
+// Character Sprite
+//---------------------------------------------------------------------------
+  
   /// Returns the character's sprite
   ///
   /// @lib
@@ -255,10 +262,12 @@ interface
   /// @getter CharSprite  
   function CharacterSprite(c: Character) : Sprite;  
   
- //---------------------------------------------------------------------------
-  // Handle Character Layers
-  //--------------------------------------------------------------------------- 
-      
+  
+  
+//---------------------------------------------------------------------------
+// Handle Character Layers
+//--------------------------------------------------------------------------- 
+  
   /// Sets the active layers from the shown layers cache, using the current
   /// states and directions for the indexes of the array
   ///
@@ -296,7 +305,7 @@ interface
   /// @class Character
   /// @method ToggleVisibility 
   procedure ToggleLayerVisibility(c: Character; index: LongInt);
-      
+  
   /// Returns whether or not the layer at the selected index is drawn
   ///
   /// @lib
@@ -304,10 +313,12 @@ interface
   /// @class Character
   /// @method LayerShownAt 
   function CharacterShownLayersAt(c: Character; index: LongInt) : Boolean;
-
-  //---------------------------------------------------------------------------
-  // Handle Character Drawing
-  //---------------------------------------------------------------------------   
+  
+  
+  
+//---------------------------------------------------------------------------
+// Handle Character Drawing
+//---------------------------------------------------------------------------
   
   /// Draw Character that changes state when its velocity is 0 to be the stationary
   /// state which is specified.
@@ -336,10 +347,12 @@ interface
   /// @method DrawCharacterSprite
   procedure DrawCharacterSprite(c: character);
   
-  //---------------------------------------------------------------------------
-  // Load and Free Character
-  //--------------------------------------------------------------------------- 
-      
+  
+  
+//---------------------------------------------------------------------------
+// Load and Free Character
+//--------------------------------------------------------------------------- 
+  
   /// Loads the character from a text file
   ///
   /// @lib
@@ -411,7 +424,9 @@ interface
   ///
   /// @lib
   function HasCharacter(name: String): Boolean;
-    
+  
+  
+  
 //=============================================================================
 implementation
   uses
@@ -1172,9 +1187,9 @@ implementation
   
   
   
-  //---------------------------------------------------------------------------
-  // Load Character
-  //--------------------------------------------------------------------------- 
+//---------------------------------------------------------------------------
+// Load Character
+//---------------------------------------------------------------------------
  
   initialization 
   begin

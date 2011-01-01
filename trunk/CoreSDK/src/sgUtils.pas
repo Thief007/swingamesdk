@@ -28,88 +28,90 @@ interface
 // Library Version
 //----------------------------------------------------------------------------
 
-/// Retrieves a string representing the version of SwinGame that is executing.
-/// This can be used to check that the version supports the features required
-/// for your game.
-///
-/// @lib
-function SwinGameVersion(): String;
-
-
-
+  /// Retrieves a string representing the version of SwinGame that is executing.
+  /// This can be used to check that the version supports the features required
+  /// for your game.
+  ///
+  /// @lib
+  function SwinGameVersion(): String;
+  
+  
+  
 //----------------------------------------------------------------------------
 // Exception Notification/Message
 //----------------------------------------------------------------------------
-
-/// This function can be used to retrieve a message containing the details of 
-/// the last error that occurred in SwinGame.
-///
-/// @lib
-function ExceptionMessage(): String;
-
-/// This function tells you if an error occurred with the last operation in
-/// SwinGame.
-///
-/// @lib
-function ExceptionOccured(): Boolean;
-
-
-
+  
+  /// This function can be used to retrieve a message containing the details of 
+  /// the last error that occurred in SwinGame.
+  ///
+  /// @lib
+  function ExceptionMessage(): String;
+  
+  /// This function tells you if an error occurred with the last operation in
+  /// SwinGame.
+  ///
+  /// @lib
+  function ExceptionOccured(): Boolean;
+  
+  
+  
 //----------------------------------------------------------------------------
 // Random
 //----------------------------------------------------------------------------
-
-/// Generates a random number between 0 and 1.
-///
-/// @lib
-function Rnd() : Single; overload;
-
-/// Generates a random integer up to (but not including) ubound. Effectively,
-/// the ubound value specifies the number of random values to create.
-///
-/// @lib RndUpto
-function Rnd(ubound: LongInt): LongInt; overload;
-
-
+  
+  /// Generates a random number between 0 and 1.
+  ///
+  /// @lib
+  function Rnd() : Single; overload;
+  
+  /// Generates a random integer up to (but not including) ubound. Effectively,
+  /// the ubound value specifies the number of random values to create.
+  ///
+  /// @lib RndUpto
+  function Rnd(ubound: LongInt): LongInt; overload;
+  
+  
+  
 //----------------------------------------------------------------------------
 // Delay / Framerate
 //----------------------------------------------------------------------------
-
-/// Returns the average framerate for the last 10 frames as an integer.
-///
-/// @returns     The current average framerate
-///
-/// @lib
-function GetFramerate(): LongInt;
-
-/// Gets the number of milliseconds that have passed. This can be used to
-/// determine timing operations, such as updating the game elements.
-///
-/// @returns     The number of milliseconds passed
-///
-/// @lib
-function GetTicks(): Longword;
-
-/// Puts the process to sleep for a specified number of
-/// milliseconds. This can be used to add delays into your
-/// game.
-///
-/// @param time - The number of milliseconds to sleep
-///
-/// Side Effects
-/// - Delay before returning
-///
-/// @lib
-procedure Delay(time: Longword);
-
-/// Returns the calculated framerate averages, highest, and lowest values along with
-/// the suggested rendering color.
-///
-/// @lib
-/// @sn calculateFramerateAvg:%s high:%s low:%s color:%s
-procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);
-
-
+  
+  /// Returns the average framerate for the last 10 frames as an integer.
+  ///
+  /// @returns     The current average framerate
+  ///
+  /// @lib
+  function GetFramerate(): LongInt;
+  
+  /// Gets the number of milliseconds that have passed. This can be used to
+  /// determine timing operations, such as updating the game elements.
+  ///
+  /// @returns     The number of milliseconds passed
+  ///
+  /// @lib
+  function GetTicks(): Longword;
+  
+  /// Puts the process to sleep for a specified number of
+  /// milliseconds. This can be used to add delays into your
+  /// game.
+  ///
+  /// @param time - The number of milliseconds to sleep
+  ///
+  /// Side Effects
+  /// - Delay before returning
+  ///
+  /// @lib
+  procedure Delay(time: Longword);
+  
+  /// Returns the calculated framerate averages, highest, and lowest values along with
+  /// the suggested rendering color.
+  ///
+  /// @lib
+  /// @sn calculateFramerateAvg:%s high:%s low:%s color:%s
+  procedure CalculateFramerate(out average, highest, lowest: String; out textColor: Color);
+  
+  
+  
 //=============================================================================
 implementation
   uses 
@@ -160,9 +162,9 @@ implementation
     {$ENDIF}
   end;
 
-  //----------------------------------------------------------------------------
-  // Library Version
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Library Version
+//----------------------------------------------------------------------------
 
   function SwinGameVersion(): String;
   begin
@@ -175,9 +177,9 @@ implementation
     {$ENDIF}
   end;
 
-  //----------------------------------------------------------------------------
-  // Exception Notification/Message
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Exception Notification/Message
+//----------------------------------------------------------------------------
 
   function ExceptionMessage(): String;
   begin
@@ -201,9 +203,9 @@ implementation
     {$ENDIF}
   end;
   
-  //----------------------------------------------------------------------------
-  // Delay / Framerate
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Delay / Framerate
+//----------------------------------------------------------------------------
 
   procedure Delay(time: Longword);
   begin
@@ -332,9 +334,9 @@ implementation
     {$ENDIF}
   end;
 
-  //----------------------------------------------------------------------------
-  // Random
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Random
+//----------------------------------------------------------------------------
   
   function Rnd() : Single; overload;
   begin

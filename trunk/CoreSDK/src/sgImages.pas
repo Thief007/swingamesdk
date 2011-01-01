@@ -103,6 +103,7 @@ uses sgTypes;
   procedure FreeBitmap(var bitmapToFree : Bitmap);
   
   
+  
 //----------------------------------------------------------------------------
 // Bitmap mapping routines
 //----------------------------------------------------------------------------
@@ -156,6 +157,7 @@ uses sgTypes;
   ///
   /// @lib
   procedure ReleaseAllBitmaps();
+  
   
   
 //---------------------------------------------------------------------------
@@ -268,11 +270,12 @@ uses sgTypes;
   /// @class Bitmap
   /// @getter Filename
   function BitmapFilename(bmp:Bitmap): string;
-
-
-  //----------------------------------------------------------------------------
-  // BitmapCell code
-  //----------------------------------------------------------------------------
+  
+  
+  
+//----------------------------------------------------------------------------
+// BitmapCell code
+//----------------------------------------------------------------------------
   
   /// Returns a bitmap cell for the cell of the indicated bitmap.
   ///
@@ -308,6 +311,7 @@ uses sgTypes;
   /// @class BitmapCell
   /// @getter Height
   function BitmapHeight(const bmp: BitmapCell): LongInt; overload;
+  
   
   
 //----------------------------------------------------------------------------
@@ -359,6 +363,7 @@ uses sgTypes;
   function BitmapCellCircle(bmp: Bitmap; x,y: LongInt): Circle; overload;
   
   
+  
 //---------------------------------------------------------------------------
 // Alpha blendings adjusting code
 //---------------------------------------------------------------------------
@@ -390,6 +395,7 @@ uses sgTypes;
   procedure MakeTransparent(bmp: Bitmap);
   
   
+  
 //---------------------------------------------------------------------------
 // Save
 //---------------------------------------------------------------------------
@@ -399,8 +405,10 @@ uses sgTypes;
   /// @lib
   ///
   /// @class Bitmap
-  /// @method save
+  /// @method saveToPNG
   procedure SaveToPNG(bmp: Bitmap; filename: String);
+  
+  
   
 //---------------------------------------------------------------------------
 // Rotate and Zoom
@@ -422,7 +430,9 @@ uses sgTypes;
   /// @class Bitmap
   /// @method SetupForCollisions
   procedure SetupBitmapForCollisions(src: Bitmap);
-
+  
+  
+  
 //---------------------------------------------------------------------------
 // Optimise
 //---------------------------------------------------------------------------
@@ -439,9 +449,10 @@ uses sgTypes;
   procedure OptimiseBitmap(surface: Bitmap);
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap drawing routines - clearing
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap drawing routines - clearing
+//---------------------------------------------------------------------------
   
   /// Clear the drawing on the Bitmap to the passed in color.
   ///
@@ -462,9 +473,10 @@ uses sgTypes;
   procedure ClearSurface(dest: Bitmap); overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap -> Rectangle functions
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap -> Rectangle functions
+//---------------------------------------------------------------------------
   
   /// Returns a bounding rectangle for the bitmap.
   /// 
@@ -530,9 +542,10 @@ uses sgTypes;
   function BitmapRectangleOfCell(src: Bitmap; cell: LongInt): Rectangle;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap drawing routines - onto bitmap
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap drawing routines - onto bitmap
+//---------------------------------------------------------------------------
   
   /// Draws the source bitmap onto the destination.
   ///
@@ -632,9 +645,10 @@ uses sgTypes;
   procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap drawing routines - standard
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap drawing routines - standard
+//---------------------------------------------------------------------------
   
   /// Draw the passed in bitmap onto the game.
   ///
@@ -727,9 +741,10 @@ uses sgTypes;
   procedure DrawCell(src: Bitmap; cell: LongInt; const position: Point2D); overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap drawing routines - onto screen
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap drawing routines - onto screen
+//---------------------------------------------------------------------------
   
   /// Draw the bitmap onto the screen.
   ///
@@ -822,9 +837,10 @@ uses sgTypes;
   procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap Saving
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap Saving
+//---------------------------------------------------------------------------
   
   /// Save Bitmap to specific directory.
   /// 
@@ -837,9 +853,10 @@ uses sgTypes;
   procedure SaveBitmap(src : Bitmap; filepath : string);
   
   
-  //---------------------------------------------------------------------------
-  // Bitmap Transparancy
-  //---------------------------------------------------------------------------
+  
+//---------------------------------------------------------------------------
+// Bitmap Transparancy
+//---------------------------------------------------------------------------
   
   /// Setting the color passed in to be transparent on the bitmap. This edits the
   /// passed in bitmap, altering the color to transparent.

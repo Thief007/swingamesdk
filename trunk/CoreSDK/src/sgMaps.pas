@@ -79,6 +79,9 @@ interface
   /// @csn initForPath:%s
 
   function LoadMap(filename:string): Map;
+  
+  
+  
 //----------------------------------------------------------------------------
 //       Draw Procedures            
 //----------------------------------------------------------------------------
@@ -141,9 +144,12 @@ interface
   /// @class Map
   /// @method DrawLayers
   procedure DrawMapLayer(map: Map; offset:Vector; layer:LongInt); overload;
-  //----------------------------------------------------------------------------
-  //       Save map
-  //----------------------------------------------------------------------------
+  
+  
+  
+//----------------------------------------------------------------------------
+//       Save map
+//----------------------------------------------------------------------------
 
   /// Saves map into a text file the filename provided needs to be the fullpath.
   ///
@@ -154,9 +160,10 @@ interface
   procedure SaveMap(m:Map; filename:String);
   
   
-  //----------------------------------------------------------------------------
-  //       Selecting Tile          
-  //----------------------------------------------------------------------------
+  
+//----------------------------------------------------------------------------
+//       Selecting Tile          
+//----------------------------------------------------------------------------
   
   /// Returns true if tile is in the selectedTile array in the map.
   ///
@@ -205,12 +212,13 @@ interface
   /// @method HighlightWith Offset
   
   procedure HighlightTile(highlightedTile: Tile; offset: Vector); OverLoad;
-
-
-  //----------------------------------------------------------------------------
-  //collision functions and procedures
-  //----------------------------------------------------------------------------
-
+  
+  
+  
+//----------------------------------------------------------------------------
+//collision functions and procedures
+//----------------------------------------------------------------------------
+  
   /// Returns a bounding rectangle the encompasses all the potential tiles
   ///that the sprite may collide with
   ///
@@ -240,11 +248,13 @@ interface
   /// @class Map
   /// @method MoveOut
   procedure MoveOut(m:map; s: Sprite; x, y: LongInt);
-
   
-  //----------------------------------------------------------------------------
-  //return map properties functions//
-  //----------------------------------------------------------------------------
+  
+  
+//----------------------------------------------------------------------------
+// Return map properties functions
+//----------------------------------------------------------------------------
+  
   /// Returns the BitmapCellKind of the map
   ///
   /// @lib BitmapCellKind
@@ -395,9 +405,10 @@ interface
   function Isometric(m : map): Boolean;
 
   
-  //----------------------------------------------------------------------------
-  //return tile properties functions//
-  //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// Return tile properties functions
+//----------------------------------------------------------------------------
+  
   /// Returns the Id of the given Tile
   ///
   /// @lib TileId
@@ -479,10 +490,12 @@ interface
   /// @overLoad TileAt TileAtRowCol
   /// @csn tileAtRow:%s col:%s
   function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
-
-  //----------------------------------------------------------------------------
-  // Set Tile procedures 
-  //----------------------------------------------------------------------------
+  
+  
+  
+//----------------------------------------------------------------------------
+// Set Tile procedures 
+//----------------------------------------------------------------------------
   
   /// Sets the kind of a given tile
   ///
@@ -645,11 +658,13 @@ interface
   /// @class Map
   /// @overload RemoveKind RemoveKindByName
   procedure RemoveKind(m:map; kname:string); overload;
-
-
-  //---------------------------------------------------------------------
-  //resource management
-  //------------------------------------------------------------------
+  
+  
+  
+//---------------------------------------------------------------------
+// Resource management
+//------------------------------------------------------------------
+  
   /// Releases all of the map data that have been loaded.
   ///
   /// @lib
@@ -2623,9 +2638,9 @@ interface
   end;
 
 
-  //----------------------------------------------------------
-  //  Resource management
-  //----------------------------------------------------------
+//----------------------------------------------------------
+//  Resource management
+//----------------------------------------------------------
 
   function LoadMap(filename: String): Map;
   begin
