@@ -94,7 +94,7 @@ class SGMethod(SGMetaDataContainer):
             # print tuple([param.name for param in real_params])
             
             if special_visitor != None:
-                # self.sn, self.params
+                # print self.sn, self.params
                 temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
                 
                 result['sn'] = temp
