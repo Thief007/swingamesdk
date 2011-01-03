@@ -150,7 +150,7 @@ type
     radio2,
     stripCount      : Integer;
     previewSprite   : Sprite;
-    aniTemp         : AnimationTemplate;
+    aniTemp         : AnimationScript;
 	end;
     
 	//LoadedBitmaps = LoadedBitmaps;        // The array that the bitmaps are stored in with the original and different scales
@@ -1383,7 +1383,7 @@ implementation
         begin
           for j := 0 to NameCount(Directions) -1 do
           begin
-            Write(txt, 'sd: ', NameAt(States, i), ',', NameAt(Directions, j),',', NameAt(CharSprite^.AnimationTemplate^.animationids, ShownLayersByDirState[i,j].Anim));
+            Write(txt, 'sd: ', NameAt(States, i), ',', NameAt(Directions, j),',', NameAt(CharSprite^.AnimationScript^.animationids, ShownLayersByDirState[i,j].Anim));
             if Length(ShownLayersByDirState[i,j].LayerOrder) <> 0 then
             begin
               Write(txt, ',[');

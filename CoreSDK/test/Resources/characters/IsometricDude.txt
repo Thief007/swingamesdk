@@ -13,7 +13,7 @@ b:Clothes,bluertparmourisometric3.png,48,64,3,4,12,255,255,255
 b:Hair,zackhairisometric2.png,48,64,3,4,12,255,255,255
 b:Hat,piratebandanaisometric6.png,48,64,3,4,12,255,255,255
 
-//AnimationTemplate
+//AnimationScript
 a:charas_animationiso.txt
 
 //Directions INITIAL || COUNT || NAMES

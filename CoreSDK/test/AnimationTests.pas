@@ -3,7 +3,7 @@ program AnimationTests;
 uses sgTypes, sgShared, sgSprites, sgAnimations, SysUtils, sgAudio, sgResources, sgImages, sgGraphics, sgGeometry, sgText, sgInput;
 
 var
-  explosions: AnimationTemplate;
+  explosions: AnimationScript;
   boom: Array [0..1] of Animation;
   expl: Bitmap;
   i, currentAnim: Integer;
@@ -16,8 +16,8 @@ begin
   
   LoadResourceBundle('Explosion.txt');
   
-  boom[0] := CreateAnimation('explosion', AnimationTemplateNamed('explosion_temp'), False);
-  boom[1] := CreateAnimation('implosion', AnimationTemplateNamed('explosion_temp'), False);
+  boom[0] := CreateAnimation('explosion', AnimationScriptNamed('explosion_temp'), False);
+  boom[1] := CreateAnimation('implosion', AnimationScriptNamed('explosion_temp'), False);
   
   expl := BitmapNamed('explosion_bmp');
   
@@ -26,7 +26,7 @@ begin
   
   currentAnim := -1;
   
-  s := CreateSprite(BitmapNamed('red_explosion'),'explosion',AnimationTemplateNamed('explosion_temp'));
+  s := CreateSprite(BitmapNamed('red_explosion'),'explosion',AnimationScriptNamed('explosion_temp'));
   SpriteAddLayer(s, BitmapNamed('count'), 'count');
   SpriteShowLayer(s, 'count');
   SpriteSetLayerOffset(s, 'count', PointAt(3,3));

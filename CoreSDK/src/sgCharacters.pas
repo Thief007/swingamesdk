@@ -769,7 +769,7 @@ implementation
     bmpArray: array of Bitmap;
     data, line, id: string;
     lineno, w, h, cols, rows, count, colliIndex: LongInt;
-    aniTemp: AnimationTemplate;
+    aniTemp: AnimationScript;
     bmpIDs, tempValueIDs: StringArray;
     singleValues: array of Single;
         
@@ -902,7 +902,7 @@ implementation
     
     procedure AddAniTemplateToChar();
     begin
-      aniTemp := LoadAnimationTemplate(Trim(ExtractDelimited(1, data, [','])));
+      aniTemp := LoadAnimationScript(Trim(ExtractDelimited(1, data, [','])));
     end;
          
     procedure ProcessLine();

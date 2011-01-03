@@ -17,7 +17,7 @@ namespace SwinGame
     internal enum PtrKind
     {
         Animation,
-        AnimationTemplate,
+        AnimationScript,
         Bitmap,
         Character,
         Font,
