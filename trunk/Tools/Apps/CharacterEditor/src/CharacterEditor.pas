@@ -327,8 +327,8 @@ implementation
   begin
     with CharMode.MainChar^ do
     begin
-      if CharSprite^.animationTemplate <> nil then FreeAnimationTemplate(CharSprite^.animationTemplate);
-      CharSprite^.animationTemplate := LoadAnimationTemplate(dialogPath);
+      if CharSprite^.animationTemplate <> nil then FreeAnimationScript(CharSprite^.animationTemplate);
+      CharSprite^.animationTemplate := LoadAnimationScript(dialogPath);
       ListClearItems(RegionWithID('AniLayerList'));
       ResetAnimationDetails(CharMode);
       for i := 0 to NameCount(CharSprite^.animationTemplate^.animationIDs)-1 do

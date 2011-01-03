@@ -80,7 +80,7 @@ interface
   /// @class Sprite
   /// @constructor
   /// @csn initWithBitmap:%s animationTemplate:%s
-  function CreateSprite(layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(layer: Bitmap; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -93,7 +93,7 @@ interface
   /// @class Sprite
   /// @constructor
   /// @csn initWithBitmap:%s layerNamed:%s animationTemplate:%s
-  function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -127,12 +127,12 @@ interface
   ///
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
-  /// @lib CreateLayeredSpriteWithAnimationTemplate
+  /// @lib CreateLayeredSpriteWithAnimationScript
   /// 
   /// @class Sprite
   /// @constructor
   /// @csn initWithBitmaps:%s animationTemplate:%s
-  function CreateSprite(const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -140,12 +140,12 @@ interface
   ///
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
-  /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationTemplate
+  /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationScript
   /// 
   /// @class Sprite
   /// @constructor
   /// @csn initWithBitmaps:%s layerNames:%s animationTemplate:%s
-  function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -178,7 +178,7 @@ interface
   /// @class Sprite
   /// @constructor
   /// @csn initNamed:%s withBitmap:%s animationTemplate:%s
-  function CreateSprite(name: String; layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; layer: Bitmap; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -189,7 +189,7 @@ interface
   /// @class Sprite
   /// @constructor
   /// @csn initNamed:%s withBitmap:%s layerNamed:%s animationTemplate:%s
-  function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -217,23 +217,23 @@ interface
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, the specified animation template, the layer names 'layer1', 'layer2',... .
   /// 
-  /// @lib CreateLayeredSpriteWithAnimationTemplateNamed
+  /// @lib CreateLayeredSpriteWithAnimationScriptNamed
   /// 
   /// @class Sprite
   /// @constructor
   /// @csn initNamed: %s withBitmaps:%s animationTemplate:%s
-  function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
   /// 
-  /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationTemplateNamed
+  /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationScriptNamed
   /// 
   /// @class Sprite
   /// @constructor
   /// @csn initNamed:%s withBitmaps:%s layerNames:%s animationTemplate:%s
-  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   
   /// Free the resources associated with a sprite.
   /// 
@@ -900,7 +900,7 @@ interface
   /// 
   /// @lib MoveSpriteVecPct(s, distance, 1.0)
   /// @uname MoveSpriteVec
-  /// @sn sprite:$s move:%s
+  /// @sn sprite:%s move:%s
   ///
   /// @class Sprite
   /// @overload Move MoveVec
@@ -1143,7 +1143,7 @@ interface
   /// Sets the Sprite's position.
   /// 
   /// @lib
-  /// @sn sprite:$s setPosition:%s
+  /// @sn sprite:%s setPosition:%s
   /// 
   /// @class Sprite
   /// @setter Position
@@ -1501,12 +1501,12 @@ implementation
     result := CreateSprite(layer, layerName, nil);
   end;
   
-  function CreateSprite(layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(layer: Bitmap; ani: AnimationScript): Sprite; overload;
   begin
     result := CreateSprite(layer, 'layer0', ani);
   end;
   
-  function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
   var
     layerNames: StringArray;
     layers: BitmapArray;
@@ -1522,7 +1522,7 @@ implementation
   
   function CreateSprite(const layers: BitmapArray): Sprite; overload;
   begin
-    result := CreateSprite(layers, AnimationTemplate(nil));
+    result := CreateSprite(layers, AnimationScript(nil));
   end;
   
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray): Sprite; overload;
@@ -1530,7 +1530,7 @@ implementation
     result := CreateSprite(layers, layerNames, nil);
   end;
   
-  function CreateSprite(const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   var
     layerNames: StringArray;
     i: LongInt;
@@ -1544,7 +1544,7 @@ implementation
     result := CreateSprite(layers, layerNames, ani);
   end;
   
-  function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   begin
     result := CreateSprite('Sprite', layers, layerNames, ani);
   end;
@@ -1559,12 +1559,12 @@ implementation
     result := CreateSprite(name, layer, layerName, nil);
   end;
   
-  function CreateSprite(name: String; layer: Bitmap; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; layer: Bitmap; ani: AnimationScript): Sprite; overload;
   begin
     result := CreateSprite(name, layer, 'layer0', ani);
   end;
   
-  function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
   var
     layerNames: StringArray;
     layers: BitmapArray;
@@ -1580,7 +1580,7 @@ implementation
   
   function CreateSprite(name: String; const layers: BitmapArray): Sprite; overload;
   begin
-    result := CreateSprite(name, layers, AnimationTemplate(nil));
+    result := CreateSprite(name, layers, AnimationScript(nil));
   end;
   
   function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray): Sprite; overload;
@@ -1588,7 +1588,7 @@ implementation
     result := CreateSprite(name, layers, layerNames, nil);
   end;
   
-  function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   var
     layerNames: StringArray;
     i: LongInt;
@@ -1602,7 +1602,7 @@ implementation
     result := CreateSprite(name, layers, layerNames, ani);
   end;
   
-  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationTemplate): Sprite; overload;
+  function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   var
     i, idx, count, cellCount: LongInt;
   begin
@@ -1783,7 +1783,7 @@ implementation
       // s^.bufferBmp := nil;
       
       // Remove from hashtable
-      _Sprites.remove(name).Free();
+      _Sprites.remove(s^.name).Free();
       
       //Dispose sprite
       CallFreeNotifier(s);
@@ -1924,12 +1924,12 @@ implementation
       result := not RectOnScreen(SpriteLayerRectangle(s, 0));
   end;
 
-  procedure MoveSprite(s : Sprite; const velocity : Vector); overload;
+  procedure MoveSprite(s : Sprite; const distance : Vector); overload;
   begin
-    MoveSprite(s, velocity, 1.0);
+    MoveSprite(s, distance, 1.0);
   end;
 
-  procedure MoveSprite(s : Sprite; const velocity : Vector; pct: Single); overload;
+  procedure MoveSprite(s : Sprite; const distance : Vector; pct: Single); overload;
   var
     mvmt: Vector;
   //   trans: Matrix2D;
@@ -1942,7 +1942,7 @@ implementation
     //   mvmt := MatrixMultiply(trans, velocity);
     // end
     // else  
-    mvmt := velocity;
+    mvmt := distance;
        
     s^.position.x := s^.position.x + (pct * mvmt.x);
     s^.position.y := s^.position.y + (pct * mvmt.y);

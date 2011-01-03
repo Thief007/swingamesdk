@@ -17,7 +17,7 @@ b:Tail,coda.png
 b:Face,facelupo3.png
 b:WTF,3_skeleton_hair.png
 
-//AnimationTemplate
+//AnimationScript
 a:charas_animation.txt
 
 //Directions INITIAL || COUNT || NAMES

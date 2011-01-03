@@ -667,8 +667,8 @@ const
       if (cellGrp.cellCount = 0) then exit;
       if previewSprite <> nil then FreeSprite(previewSprite);
       ExportAnimation(aniStrips, PathToResource('/animations/testsave.txt'));
-      if aniTemp <> nil then FreeAnimationTemplate(aniTemp);
-      aniTemp := LoadAnimationTemplate('testsave.txt');
+      if aniTemp <> nil then FreeAnimationScript(aniTemp);
+      aniTemp := LoadAnimationScript('testsave.txt');
       previewSprite := CreateSprite(cellGrp.cells[0].bmpPtr^.scaled[PreviewGroup], aniTemp);
       ListClearItems(RegionWithID('AniList'));
       for i := 0 to NameCount(aniTemp^.animationIDs)-1 do

@@ -73,7 +73,7 @@ _type_switcher = {
     
     'shapekind': 'ShapeKind',
     'animation': 'Animation',
-    'animationtemplate': 'AnimationTemplate',
+    'animationscript': 'AnimationScript',
     'stringarray': 'StringPtr',
     'collisiontestkind':    'CollisionTestKind',
     

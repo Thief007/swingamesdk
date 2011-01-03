@@ -401,7 +401,7 @@ _type_dictionary_creation_data = [
     {
         # List of Types, 
         'identifiers':  [   
-                ('animationtemplate', 'SGAnimationTemplate'),
+                ('animationscript', 'SGAnimationScript'),
                 ('animation', 'SGAnimation'),
                 ('character', 'SGCharacter')
             ],

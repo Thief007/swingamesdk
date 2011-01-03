@@ -321,7 +321,7 @@ implementation
           SoundResource:      LoadSoundEffectNamed(current.name, current.path);
           MusicResource:      LoadMusicNamed(current.name, current.path);
           MapResource:        LoadMapNamed(current.name, current.path);
-          AnimationResource:  LoadAnimationTemplateNamed(current.name, current.path);
+          AnimationResource:  LoadAnimationScriptNamed(current.name, current.path);
           PanelResource:      LoadPanelNamed(current.name, current.path);
           CharacterResource:  LoadCharacterNamed(current.name, current.path);
           else
@@ -370,7 +370,7 @@ implementation
         MusicResource:      ReleaseMusic(current.name);
         PanelResource:      ReleasePanel(current.name);
         MapResource:        ReleaseMap(current.name);
-        AnimationResource:  ReleaseAnimationTemplate(current.name);
+        AnimationResource:  ReleaseAnimationScript(current.name);
         CharacterResource:  ReleaseCharacter(current.name);
       end;
     end;
@@ -381,7 +381,7 @@ implementation
   
   procedure ReleaseAllResources();
   begin
-    ReleaseAllAnimationTemplates();
+    ReleaseAllAnimationScripts();
     ReleaseAllTimers();
     ReleaseAllFonts();
     ReleaseAllBitmaps();
@@ -722,7 +722,7 @@ implementation
           if isSkip then break;
         end;
         
-        startAni := CreateAnimation('splash', AnimationTemplateNamed('Startup'));
+        startAni := CreateAnimation('splash', AnimationScriptNamed('Startup'));
         
         while not AnimationEnded(startAni) do
         begin

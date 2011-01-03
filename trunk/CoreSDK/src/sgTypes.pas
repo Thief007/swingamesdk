@@ -260,11 +260,11 @@ interface
       next:       AnimationFrame;   // What is the next frame in this animation
     end;
     
-    /// @note Use AnimationTemplate.
+    /// @note Use AnimationScript.
     ///
-    /// @struct AnimationTemplateData
+    /// @struct AnimationScriptData
     /// @via_pointer
-    AnimationTemplateData = packed record
+    AnimationScriptData = packed record
       name:     String;                       // The name of the animation template so it can be retrieved from resources
       filename: String;                       // The filename from which this template was loaded
       
@@ -279,10 +279,10 @@ interface
     /// the next frame in the animation. The template can then be used to create
     /// a number of animations.
     ///
-    /// @class AnimationTemplate
+    /// @class AnimationScript
     /// @pointer_wrapper
     /// @field pointer: pointer
-    AnimationTemplate = ^AnimationTemplateData;
+    AnimationScript = ^AnimationScriptData;
     
     /// @note Do not use AnimationData directly, use Animation.
     /// @struct AnimationData
@@ -449,7 +449,7 @@ interface
       valueIds: NamedIndexCollection;         // The name <-> ids mappings for values
       
       animationData:      Animation;          // The data used to animate this sprite
-      animationTemplate:  AnimationTemplate;  // The template for this sprite's animations
+      animationTemplate:  AnimationScript;  // The template for this sprite's animations
       
       position: Point2D;                      // The game location of the sprite
       velocity: Vector;                       // The velocity of the sprite

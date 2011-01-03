@@ -14,7 +14,7 @@ begin
   
   LoadResourceBundle('splash.txt');
   LoadResourceBundle('bundle.txt');
-  LoadAnimationTemplate('test.txt');
+  LoadAnimationScript('test.txt');
   
   OpenGraphicsWindow('Hello World', 640, 480);
   

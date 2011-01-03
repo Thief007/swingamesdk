@@ -53,7 +53,7 @@ _type_switcher = {
         'color': 'Color %s',
         
         #Resources
-        'animationtemplate':    'AnimationTemplate %s',
+        'animationscript':    'AnimationScript %s',
         'animation':            'Animation %s',
         'character':            'Character %s',
         'soundeffect':          'SoundEffect %s',
@@ -134,7 +134,7 @@ _type_switcher = {
     },
     'var' : {
         'animation':            'Animation %s',
-        'animationtemplate':    'AnimationTemplate %s',
+        'animationscript':    'AnimationScript %s',
         'character':            'Character %s',
         'soundeffect':          'SoundEffect %s',
         'music':                'Music %s',
@@ -200,7 +200,7 @@ _type_switcher = {
         'font':         'Font %s',
         'map':          'Map %s',
         'sprite':       'Sprite %s',
-        'animationtemplate': 'AnimationTemplate %s',
+        'animationscript': 'AnimationScript %s',
         'animation':    'Animation %s',
         'character':    'Character %s',
         
@@ -255,7 +255,7 @@ _data_switcher = {
         'map':                  'Map.Create(%s)',
         'sprite':               'Sprite.Create(%s)',
         'animation':            'Animation.Create(%s)',
-        'animationtemplate':    'AnimationTemplate.Create(%s)',
+        'animationscript':    'AnimationScript.Create(%s)',
         'character':            'Character.Create(%s)',
         
         'color': 'System.Drawing.Color.FromArgb(%s)',
@@ -317,7 +317,7 @@ _adapter_type_switcher = {
         'timer':                'IntPtr %s',
         'shape':                'IntPtr %s',
         'animation':            'IntPtr %s',
-        'animationtemplate':    'IntPtr %s',
+        'animationscript':    'IntPtr %s',
         'character':            'IntPtr %s',
         'sprite':               'IntPtr %s',
         'bitmap':               'IntPtr %s',
@@ -373,7 +373,7 @@ _adapter_type_switcher = {
         'timer':                'IntPtr %s',
         'shape':                'IntPtr %s',
         'animation':            'IntPtr %s',
-        'animationtemplate':    'IntPtr %s',
+        'animationscript':    'IntPtr %s',
         'character':            'IntPtr %s',
         'sprite':               'IntPtr %s',
         
@@ -450,7 +450,7 @@ _adapter_type_switcher = {
     },
     'var': {
         'animation':            'ref IntPtr %s',
-        'animationtemplate':    'ref IntPtr %s',
+        'animationscript':    'ref IntPtr %s',
         'soundeffect':          'ref IntPtr %s',
         'music':                'ref IntPtr %s',
         'timer':                'ref IntPtr %s',
@@ -473,7 +473,7 @@ _adapter_type_switcher = {
     
     'lib_var': {
         'animation':            'ref IntPtr %s',
-        'animationtemplate':    'ref IntPtr %s',
+        'animationscript':    'ref IntPtr %s',
         'character':            'ref IntPtr %s',
         'soundeffect':          'ref IntPtr %s',
         'music':                'ref IntPtr %s',
@@ -546,7 +546,7 @@ _adapter_type_switcher = {
         
         #Resources
         'animation':            'IntPtr %s',
-        'animationtemplate':    'IntPtr %s',
+        'animationscript':    'IntPtr %s',
         'music':                'IntPtr %s',
         'soundeffect':          'IntPtr %s',
         'shapeprototype':       'IntPtr %s',

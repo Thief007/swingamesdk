@@ -56,7 +56,7 @@ _type_switcher = {
         'sprite':           'sprite %s',
         'font':             'font %s',
         'map':              'map %s',
-        'animationtemplate':    'animation_template %s',
+        'animationscript':    'animation_script %s',
         'animation':            'animation %s',
         'character':            'character %s',
         
@@ -158,7 +158,7 @@ _type_switcher = {
         'sprite':       'sprite *%s',
         'character':    'character *%s',
         'map':          'map *%s',
-        'animationtemplate':    'animation_template *%s',
+        'animationscript':    'animation_script *%s',
         'animation':            'animation *%s',
         
         'matrix2d':     'matrix2d %s',
@@ -202,7 +202,7 @@ _type_switcher = {
         'map':          'map %s',
         'character':    'character %s',
         'sprite':       'sprite %s',
-        'animationtemplate':    'animation_template %s',
+        'animationscript':    'animation_script %s',
         'animation':            'animation %s',
         
         'color':            'color %s',
@@ -263,7 +263,7 @@ _adapter_type_switcher = {
         'sprite':       'void *%s',
         'character':    'void *%s',
         'font':         'void *%s',
-        'animationtemplate':    'void *%s',
+        'animationscript':    'void *%s',
         'animation':    'void *%s',
         'character':    'void *%s',
         
@@ -386,7 +386,7 @@ _adapter_type_switcher = {
         'map':          'map *%s',
         'shapeprototype':       'shape_prototype *%s',
         'shape':                'shape *%s',
-        'animationtemplate':    'animation_template %s',
+        'animationscript':    'animation_script %s',
         'animation':            'animation %s',
         
         'rectangle':    'rectangle *%s',
@@ -453,7 +453,7 @@ _adapter_type_switcher = {
         'maptile': 'map_tile %s',
         'spriteendingaction': 'sprite_ending_action %s',
         'spritekind': 'sprite_kind %s',
-        'animationtemplate': 'animation_template %s',
+        'animationscript': 'animation_script %s',
         'animation': 'animation %s',
         
         'shapedrawingfn':      'shape_drawing_fn %s',
