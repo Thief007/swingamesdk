@@ -8,7 +8,7 @@ package swingame;
 import java.awt.Color;
 
 import swingame.emulator.EmulatedGraphics;
-// import swingame.platform.NativeGraphics;
+import swingame.platform.NativeGraphics;
 
 /**
  *
@@ -18,10 +18,10 @@ public class Graphics
 {
     private static GraphicsAdapter _ga = new EmulatedGraphics();
     
-    // protected static void useNative()
-    // {
-    //     _ga = new NativeGraphics();
-    // }
+    protected static void useNative()
+    {
+        _ga = new NativeGraphics();
+    }
     
     public static void openGraphicsWindow(String caption, int width, int height) { _ga.openGraphicsWindow(caption, width, height); }
     public static void refreshScreen(int frameRate) { _ga.refreshScreen(frameRate); }
