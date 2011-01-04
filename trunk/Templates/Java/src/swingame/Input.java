@@ -8,7 +8,7 @@ package swingame;
 import java.awt.Point;
 
 import swingame.emulator.EmulatedInput;
-// import swingame.platform.NativeInput;
+import swingame.platform.NativeInput;
 
 /**
  *
@@ -18,10 +18,10 @@ public class Input
 {
     private static InputAdapter _ia = new EmulatedInput();
     
-    // protected static void useNative()
-    // {
-    //     _ia = new NativeInput();
-    // }
+    protected static void useNative()
+    {
+        _ia = new NativeInput();
+    }
     
     public static Point mousePosition() 
     {

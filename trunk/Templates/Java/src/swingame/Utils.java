@@ -12,12 +12,12 @@ public final class Utils
 {
     private static Random _r = new Random();
     
-    // public static void useNative()
-    // {
-    //     Graphics.useNative();
-    //     Input.useNative();
-    // }
-    // 
+    public static void useNative()
+    {
+        Graphics.useNative();
+        Input.useNative();
+    }
+    
     
     public static float rnd()
     {

@@ -102,9 +102,9 @@ fi
 if [ $INSTALL != "N" ]; then
     if [ "$OS" = "$MAC" ]; then
         if [ "$(id -u)" != "0" ]; then
-            INSTALL_DIR="~/Library/Frameworks"
+            INSTALL_DIR=`cd ~/Library/Frameworks; pwd`
         else
-            INSTALL_DIR="/Library/Frameworks"
+            INSTALL_DIR=/Library/Frameworks
         fi
     elif [ "$OS" = "$LIN" ]; then
         if [ "$(id -u)" != "0" ]; then

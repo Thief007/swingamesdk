@@ -1,4 +1,4 @@
-package swingame.platform;
+    package swingame.platform;
 
 import java.awt.Color;
 
@@ -12,14 +12,6 @@ import swingame.GraphicsAdapter;
  */
 public final class NativeGraphics implements GraphicsAdapter
 {
-    static
-    {        
-        try
-        {
-            System.loadLibrary("JavaSwinGame");
-        }
-        finally { System.out.println("Loaded SwinGame native library"); }
-    }
 
     private static native void n_openGraphicsWindow(String caption, int width, int height);
     private static native void n_refreshScreen(int frameRate);
@@ -62,5 +54,10 @@ public final class NativeGraphics implements GraphicsAdapter
     public void clearScreen(Color color)
     {
         n_clearScreen(color.getRGB());
+    }
+    
+    public void close()
+    {
+        
     }
 }
