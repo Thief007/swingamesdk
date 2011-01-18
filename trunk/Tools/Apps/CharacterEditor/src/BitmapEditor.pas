@@ -171,7 +171,7 @@ implementation
 
 	function InitializePanels(): PanelArray;
 	var
-		i: LongInt;
+		i: Longint;
 	begin
 		SetLength(result, 3);
 		result[BitmapDetails]		:= LoadPanel('BitmapDetails.txt');

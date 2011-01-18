@@ -98,7 +98,7 @@ begin
 end;
 
 
-procedure CurrentMapProperties(m:Map; out mWidth, mHeight, mLayers, tWidth, tHeight : LongInt; out iso : Boolean);
+procedure CurrentMapProperties(m:Map; out mWidth, mHeight, mLayers, tWidth, tHeight : Longint; out iso : Boolean);
 begin
   mWidth   := MapWidth(m);
   mHeight  := MapHeight(m);
@@ -114,7 +114,7 @@ var
   mHeight,
   mLayers,
   tWidth,
-  tHeight : LongInt;
+  tHeight : Longint;
   iso     : Boolean;
 begin
   CurrentMapProperties(m, mWidth, mHeight, mLayers, tWidth, tHeight, iso);
@@ -132,7 +132,7 @@ var
   mHeight,
   mLayers,
   tWidth,
-  tHeight : LongInt;
+  tHeight : Longint;
   iso     : Boolean;
 begin
   CurrentMapProperties(m, mWidth, mHeight, mLayers, tWidth, tHeight, iso);
@@ -163,7 +163,7 @@ end;
 
 procedure UpdateKindList(m : map);
 var
-  i     : LongInt;
+  i     : Longint;
   kinds : stringArray;
 begin
   kinds := MapKinds(m);
@@ -176,7 +176,7 @@ end;
 
 procedure UpdateValuesList(m : map);
 var
-  i     : LongInt;
+  i     : Longint;
   values : stringArray;
 begin
   values := MapValues(m);
@@ -187,7 +187,7 @@ begin
   end;
 end;
 
-procedure UpdateValueTextBox(m: map; out kIdx,vIdx:LongInt);
+procedure UpdateValueTextBox(m: map; out kIdx,vIdx:Longint);
 var
     selectedKind : string;
   selectedValues : string;
@@ -204,7 +204,7 @@ end;
 
 procedure AssignValues(m : Map);
 var
-  kIdx,vIdx : LongInt;
+  kIdx,vIdx : Longint;
   val : single;
   
 begin
@@ -216,7 +216,7 @@ end;
 
 procedure UpdateLayerList(m : map);
 var
-i : LongInt;
+i : Longint;
 begin
   ListClearItems(RegionWithID('dD.layerList'));
   for i:= 0 to LayerCount(m)-1 do
@@ -229,7 +229,7 @@ end;
   
 procedure LoadBitmapFromMap(m:map);
 var
-  i: LongInt;
+  i: Longint;
   scale : Single;
 begin
   if m^.TileWidth = 0 then
@@ -251,8 +251,8 @@ end;
  procedure AddCellToPalette(m:map);
   var
   i,cellCount : longInt;
-  cellRegions : LongIntArray;
-  cellIds : LongIntArray;
+  cellRegions : LongintArray;
+  cellIds : LongintArray;
   
   begin
     CellCount := StrToInt(TextboxText(RegionWithID('tB.CellCount')));

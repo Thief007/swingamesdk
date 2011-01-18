@@ -53,111 +53,106 @@ class SGMethod(SGMetaDataContainer):
         self.self_pos = 1
         self.fixed_result_size = -1
         
-        self.local_vars = list()
+        self.local_vars = list()    # to remove - now in lang_data
         self.was_function = False
         self.has_length_params = False
         self.length_call = None
         self.field_name = None
     
-    def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None, call_creater = None, special_visitor=None):
+    def to_keyed_dict(self, param_visitor, type_visitor = None, arg_visitor = None, doc_transform = None, call_creater = None, special_visitor = None, lang_key = None):
         '''Returns a dictionary containing the details of this function/procedure
         
         The param_visitor is called to convert each parameter to a string. 
         param_visitor(the_param, last)
+        
+        Params:
+        - param_visitor = visitor function used to convert parameters into strings
+        - type_visitor = visitor to turn types into strings
+        - arg_visitor = visitor to turn arguments into strings
+        - doc_transform = visitor to change comments for insertion into code output
+        - call_creater = function to call to create the call from this method to the library method
+        - special_visitor = function to convert sn and csn values into Objective-C method names
+        - lang_key = key to get the language alterations stored in lang_data (as a LangMethodData)
         '''
         import wrapper_helper
         
-        result = dict()
-        result['doc'] = doc_transform(self.doc) if doc_transform != None else self.doc
-        result['name'] = self.name
-        result['camel_name'] = self.name.lower()[0] + self.name[1:]
-        result['uname'] = self.uname
-        result['uname_lower'] = wrapper_helper.lower_name(self.uname)
-        result['camel_uname'] = self.uname.lower()[0] + self.uname[1:]
+        alias = self.alias(lang_key)
         
-        if self.sn != None:
-            real_params = list()
+        result = dict()
+        result['doc']           = doc_transform(alias.doc) if doc_transform != None else alias.doc
+        result['name']          = alias.name
+        result['camel_name']    = alias.name.lower()[0] + alias.name[1:]
+        result['uname']         = alias.uname
+        result['uname_lower']   = wrapper_helper.lower_name(alias.uname)
+        result['camel_uname']   = alias.uname.lower()[0] + alias.uname[1:]
+        
+        if alias.sn != None:
+            # real_params = list()
+            # 
+            # for p in alias.params:
+            #     if not p.is_length_param:
+            #         real_params.append(p)
             
-            for p in self.params:
-                if not p.is_length_param:
-                    real_params.append(p)
+            #print alias.name, real_params, alias.sn
             
-            #print self.name, real_params, self.sn
-            
-            temp_sn  = self.sn
-            # if self.method_called.was_function:
-            #     temp_sn = temp_sn + ' result:%s'
-            
-            # if self.method_called.has_length_params:
-            #     temp_sn = temp_sn + ' length:%s'
-            # print temp_sn
-            # print tuple([param.name for param in real_params])
+            temp_sn  = alias.sn
             
             if special_visitor != None:
-                # print self.sn, self.params
-                temp = self.sn % tuple([special_visitor(param, param == self.params[-1]) for param in self.params])
+                # print alias.sn, alias.params
+                temp = alias.sn % tuple([special_visitor(param, param == alias.params[-1]) for param in alias.params])
                 
                 result['sn'] = temp
-                result['sn.sel'] = (temp_sn % tuple(['' for param in real_params])).replace(' ', '')
-            else:
-                temp = 'NO SN visitor'
-            #     # print self.method_called.name
-            #     # print self.name
-            #     print real_params
-            #     print temp_sn, tuple([param.name for param in real_params])
-            #     temp = temp_sn % tuple([param.name for param in real_params])
-            
-            #print temp
-            
-            
+                # result['sn.sel'] = (temp_sn % tuple(['' for param in real_params])).replace(' ', '')
         else:
             if special_visitor != None:
-                temp = ':'.join([special_visitor(param, param == self.params[-1]) for param in self.params])
-            else:
-                temp = ':'.join([param.name for param in self.params])
-            
-            result['sn.sel'] = self.uname
-            if len(self.params) > 0: 
-                temp = ':' + temp
-                for p in self.params:
-                    result['sn.sel'] += ':'
+                temp = ':'.join([special_visitor(param, param == alias.params[-1]) for param in alias.params])
                 
-            temp = self.uname + temp
+                if len(alias.params) > 1 : print "Need sn for " + alias.uname + " - " + temp
+            else:
+                temp = ':'.join([param.name for param in alias.params])
+            
+            # result['sn.sel'] = alias.uname
+            if len(alias.params) > 0: 
+                temp = ':' + temp
+            #     for p in alias.params:
+            #         result['sn.sel'] += ':'
+                
+            temp = alias.uname + temp
             
             #print temp
             result['sn'] = temp
             
-        result['in_class'] = self.in_class.name
-        result['return_type'] = self.return_type if type_visitor == None else type_visitor(self.return_type, 'return')
-        result['returns'] = '' if self.return_type == None else 'return '
-        result['params'] = self.param_string(param_visitor)
-        result['args'] = self.args_string_for_self(arg_visitor)
+        result['in_class']      = alias.in_class.name
+        result['return_type']   = alias.return_type if type_visitor == None else type_visitor(alias.return_type, 'return')
+        result['returns']       = '' if alias.return_type == None else 'return '
+        result['params']        = alias.param_string(param_visitor, lang_key=lang_key)
+        result['args']          = alias.args_string_for_self(arg_visitor, lang_key=lang_key)
         
-        if self.method_called != None:
-            result['calls.file.pascal_name'] = self.method_called.in_class.in_file.pascal_name
-            result['calls.file.name'] = self.method_called.in_class.in_file.name
-            result['calls.file.filename'] = self.method_called.in_class.in_file.filename
-            result['calls.class'] = self.method_called.in_class.name
-            result['calls.name'] = self.method_called.name
-            result['calls.args'] = self.args_string_for_called_method(arg_visitor)
+        if alias.method_called != None:
+            result['calls.file.pascal_name']    = alias.method_called.in_class.in_file.pascal_name
+            result['calls.file.name']           = alias.method_called.in_class.in_file.name
+            result['calls.file.filename']       = alias.method_called.in_class.in_file.filename
+            result['calls.class']               = alias.method_called.in_class.name
+            result['calls.name']                = alias.method_called.name
+            result['calls.args']                = alias.args_string_for_called_method(arg_visitor, lang_key=lang_key)
         
-        result['static'] = 'static ' if self.is_static or self.in_class.is_static else '' #TODO: fix this for VB - parameter
-        result['field.name'] = self.field_name
-        result['field.name_lower'] = wrapper_helper.lower_name(self.field_name)
+        result['static']            = 'static ' if alias.is_static or alias.in_class.is_static else '' #TODO: fix this for VB - parameter
+        result['field.name']        = alias.field_name
+        result['field.name_lower']  = wrapper_helper.lower_name(alias.field_name)
         
-        if self.length_call != None:
-            if self.in_property != None or self.is_class_method: #replace first argument with 'self'
-                old_arg = self.length_call.args[0]
-                self.length_call.args[0] = 'self.pointer'
-                result['length_call'] = self.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater)['the_call']
-                self.length_call.args[0] = old_arg
+        if alias.length_call != None:
+            if alias.in_property != None or alias.is_class_method: #replace first argument with 'self'
+                old_arg = alias.length_call.args[0]
+                alias.length_call.args[0] = 'self.pointer'
+                result['length_call'] = alias.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater, lang_key=lang_key)['the_call']
+                alias.length_call.args[0] = old_arg
             else:
-                result['length_call'] = self.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater)['the_call']
+                result['length_call'] = alias.length_call.to_keyed_dict(param_visitor, type_visitor, arg_visitor, doc_transform, call_creater, lang_key=lang_key)['the_call']
         
-        if self.is_operator:
-            result['operator'] = self.name
+        if alias.is_operator:
+            result['operator'] = alias.name
         
-        result['the_call'] = call_creater(result, self) if call_creater != None else None
+        result['the_call'] = call_creater(result, alias) if call_creater != None else None
         
         return result
     
@@ -681,9 +676,10 @@ class SGMethod(SGMetaDataContainer):
                     logger.error("Cannot match parameter %s in call to %s from %s", str(arg), str(method_called), self)
                     assert False
     
-    def args_string_for_self(self, arg_visitor = None):
+    def args_string_for_self(self, arg_visitor = None, lang_key = None):
         '''The arguments for calling self (used in C# to wrap for exception catching)'''
-        params = self.params
+        alias = self.alias(lang_key)
+        params = alias.params
         
         arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in params ]
         # arg_list
@@ -693,10 +689,15 @@ class SGMethod(SGMetaDataContainer):
         else:
             return ','.join(arg_list)
     
-    def args_string_for_called_method(self, arg_visitor = None):
-        args = self.args
+    def args_string_for_called_method(self, arg_visitor = None, lang_key = None):
+        '''Get the list of arguments for a class to the library method... ie. the method called by this object'''
         #print self.method_called
-        params = self.method_called.params
+        
+        alias = self.alias(lang_key)
+        called_alias = self.method_called.alias(lang_key)
+        
+        args = alias.args
+        params = called_alias.params
         
         arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in args ]
         if arg_visitor != None:
@@ -705,12 +706,15 @@ class SGMethod(SGMetaDataContainer):
         else:
             return ', '.join(arg_list)
     
-    def param_string(self, param_visitor = None):
-        if self.params: 
+    def param_string(self, param_visitor = None, lang_key = None):
+        alias = self.alias(lang_key)
+        params = alias.params
+        
+        if params: 
             if param_visitor == None:
-                return ', '.join([str(n) for n in self.params])
+                return ', '.join([str(n) for n in params])
             else:
-                return ''.join([param_visitor(param, param == self.params[-1]) for param in self.params])
+                return ''.join([param_visitor(param, param == params[-1]) for param in params])
                 #i.e. map(lambda param: param_visitor(param, param == self.params[-1]), self.params)
         else: return ''
     

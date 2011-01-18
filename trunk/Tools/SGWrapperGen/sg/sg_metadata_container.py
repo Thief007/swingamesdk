@@ -26,6 +26,18 @@ class SGMetaDataContainer(object):
         self.file_line_details = None
         self.meta_comment_line_details = None
         self.doc_group = None
+        
+        # lang_data is a dictionary of all of the language specific data added to these
+        # types during the post parse processing
+        self.lang_data = {}
+    
+    def alias(self, lang_key):
+        if lang_key is None:
+            return self
+        elif not self.lang_data.has_key(lang_key):
+            return self
+        else:
+            return self.lang_data[lang_key]
     
     def add_doc(self, doc):
         """adds documentation to the meta data container"""

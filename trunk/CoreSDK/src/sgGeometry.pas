@@ -71,13 +71,13 @@ interface
   ///
   /// @lib
   /// @sn circleAt:%s radius:%s
-  function CircleAt(const pt: Point2D; radius: LongInt): Circle; overload;
+  function CircleAt(const pt: Point2D; radius: Longint): Circle; overload;
   
   /// Creates a circle at the given x,y location with the indicated radius.
   ///
   /// @lib CircleFromXY
   /// @sn circleAtX:%s y:%s radius:%s
-  function CircleAt(x, y: Single; radius: LongInt): Circle; overload;
+  function CircleAt(x, y: Single; radius: Longint): Circle; overload;
   
   
   
@@ -103,7 +103,7 @@ interface
   /// Returns the radius of the passed in circle.
   /// 
   /// @lib
-  function CircleRadius(const c: Circle): LongInt;
+  function CircleRadius(const c: Circle): Longint;
   
   /// Returns the point that lies on the circle's radius that is closest to the fromPt.
   ///
@@ -351,7 +351,7 @@ interface
   ///
   /// @class Shape
   /// @getter LineCount
-  function ShapeLineCount(s: Shape): LongInt;
+  function ShapeLineCount(s: Shape): Longint;
   
   /// Returns an array of lines from a given shape. These are the lines that represent
   /// the shape.
@@ -402,7 +402,7 @@ interface
   ///
   /// @lib
   /// @sn rectangleFromX:%s y:%s width:%s height:%s
-  function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
+  function RectangleFrom(x, y: Single; w, h: Longint): Rectangle; overload;
   
   /// Returns a rectangle with pt1 and pt2 defining the two distant edge points.
   ///
@@ -414,7 +414,7 @@ interface
   ///
   /// @lib RectangleAtPoint
   /// @sn rectangleFrom:%s width:%s height:%s
-  function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
+  function RectangleFrom(const pt: Point2D; width, height: Longint): Rectangle; overload;
   
   /// Returns a rectangle that encloses the two points on the line segment.
   ///
@@ -439,7 +439,8 @@ interface
   /// Returns a rectangle that is inset from rect the amount specified.
   ///
   /// @lib
-  function InsetRectangle(const rect: Rectangle; insetAmount: LongInt): Rectangle;
+  /// @sn insetRectangle:%s pixels:%s
+  function InsetRectangle(const rect: Rectangle; insetAmount: Longint): Rectangle;
   
   /// Ensures that the passed in rectangle has a positive width and height.
   ///
@@ -450,7 +451,7 @@ interface
   ///
   /// @lib FixRect
   /// @sn fixRectangleX:%s y:%s width:%s height:%s
-  procedure FixRectangle(var x, y: Single; width,height: LongInt);
+  procedure FixRectangle(var x, y: Single; width,height: Longint);
   
   /// Returns a triangle from the points passed in.
   /// 
@@ -613,7 +614,7 @@ interface
   /// @class ShapePrototype
   /// @method MinimumPointsForKind
   /// @static
-  function MinimumPointsForKind(k: ShapeKind): LongInt;
+  function MinimumPointsForKind(k: ShapeKind): Longint;
   
   /// Returns the number of points allocated to this shape prototype.
   ///
@@ -621,7 +622,7 @@ interface
   ///
   /// @class ShapePrototype
   /// @getter PointCount
-  function PrototypePointCount(p: ShapePrototype): LongInt;
+  function PrototypePointCount(p: ShapePrototype): Longint;
   
   /// Change the prototype's points to the passed in points. The number of points must
   /// be sufficient for the kind of shape being changed.
@@ -698,7 +699,7 @@ interface
   /// @lib
   /// @class Shape
   /// @getter PointCount
-  function ShapePointCount(s: Shape): LongInt;
+  function ShapePointCount(s: Shape): Longint;
   
   /// Returns all of the points for a shape, based on its kind, angle 
   /// and scale.
@@ -819,12 +820,13 @@ interface
   /// 
   /// @class Shape
   /// @getter TriangleCount
-  function ShapeTriangleCount(s: Shape): LongInt;
+  function ShapeTriangleCount(s: Shape): Longint;
   
   /// Returns the number of triangles in the Shape.
   ///
   /// @lib
-  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): LongInt;
+  /// @sn shapeTriangleCount:%s kind:%s
+  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): Longint;
   
   /// Returns the triangles for a triangle strip, list, or fan.
   ///
@@ -862,7 +864,8 @@ interface
   /// Returns the number of lines in a given shape and kind.
   ///
   /// @lib
-  function ShapeKindLineCount(s: Shape; kind: ShapeKind): LongInt;
+  /// @sn shapeLineCount:%s kind:%s
+  function ShapeKindLineCount(s: Shape; kind: ShapeKind): Longint;
   
   /// Returns the lines for a triangle list or strip.
   ///
@@ -907,6 +910,7 @@ interface
   /// Returns the triangle from the shapes details with offset.
   /// 
   /// @lib ShapeTriangleWithOffset
+  /// @sn shape:%s asTriangleOffset:%s
   /// 
   /// @class Shape
   /// @overload AsTriangle AsTriangleOffset
@@ -923,6 +927,7 @@ interface
   /// Returns the line from the shapes details with offset.
   /// 
   /// @lib ShapeLineOffset
+  /// @sn shape:%s asLineOffset:%s
   /// 
   /// @class Shape
   /// @overload AsLine AsLineOffset
@@ -939,6 +944,7 @@ interface
   /// Returns the circle from the shapes details with offset.
   /// 
   /// @lib ShapeCircleOffset
+  /// @sn circleShape:%s offset:%s
   /// 
   /// @class Shape
   /// @overload AsCircle AsCircleOffset
@@ -1068,6 +1074,7 @@ interface
   /// Returns a rectangle that is offset by the vector.
   ///
   /// @lib
+  /// @sn rectangleOffset:%s by:%s
   function RectangleOffset(const rect: Rectangle; const vec: Vector): Rectangle;
   
   /// Returns true if the two rectangles intersect.
@@ -1463,7 +1470,7 @@ interface
   /// 
   /// @lib VectorFromPointToRect
   /// @sn vectorFromX:%s y:%s toRectX:%s y:%s width:%s height:%s
-  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
+  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: Longint): Vector; overload;
   
   /// Returns a vector from the specified point to the specified rectangle.
   /// 
@@ -1541,7 +1548,7 @@ interface
   /// @class Circle
   /// @method VectorOverLines
   /// @csn vectorOverLines:%s givenHeading:%s resultingMaxIdx:%s
-  function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   
   
   
@@ -1859,10 +1866,10 @@ implementation
   //
   // maxIds     The index of the line that is the furthest colliding line back from the points.
   //
-  function _VectorOverLinesFromLines(const srcLines, boundLines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromLines(const srcLines, boundLines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   var
     ray, vOut: Vector;
-    i, j, k: LongInt;
+    i, j, k: Longint;
     maxDist: Single;
     lnPoints, boundLnPoints: Point2DArray;
     bothDidHit: Boolean;
@@ -1970,11 +1977,11 @@ implementation
   //
   // maxIds     The index of the line that is the furthest colliding line back from the points.
   //
-  function _VectorOverLinesFromPoints(const pts: Point2DArray; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoints(const pts: Point2DArray; const lines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   var
     ptOnLine: Point2D;
     ray, vOut: Vector;
-    i, j: LongInt;
+    i, j: Longint;
     dist, maxDist: Single;
   begin
     {$IFDEF TRACE}
@@ -2032,7 +2039,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromPoint(const pt: Point2D; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromPoint(const pt: Point2D; const lines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   var
     pts: Point2DArray;
   begin
@@ -2052,7 +2059,7 @@ implementation
   //
   // This internal function is used to calculate the vector and determine if a hit has occurred...
   //
-  function _VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  function _VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   type
     DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
   var
@@ -2060,7 +2067,7 @@ implementation
     tmp: Array [0..3] of Point2D;
     chkPts: Array [0..3] of DoublePt;
     lineVec, normalMvmt, normalLine, toEdge, edge, ray, vOut: Vector;
-    i, j, hits: LongInt;
+    i, j, hits: Longint;
     dotProd, dist, maxDist: Single;
   begin
     {$IFDEF TRACE}
@@ -2844,7 +2851,7 @@ implementation
   
   function MatrixToString(const m: Matrix2D) : String;
   var
-    i, j: LongInt;
+    i, j: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'MatrixToString(const m: Matrix2D) : String', '');
@@ -2899,7 +2906,7 @@ implementation
   
   procedure ApplyMatrix(const m: Matrix2D; pts: Point2DArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
@@ -3126,7 +3133,7 @@ implementation
   
   function ClosestPointOnLinesFromCircle(const c: Circle; const lines: LinesArray): Point2D;
   var
-    i: LongInt;
+    i: Longint;
     dst, minDist: Single;
     pt: Point2D;
   begin
@@ -3152,9 +3159,9 @@ implementation
     {$ENDIF}
   end;
   
-  function InsetRectangle(const rect: Rectangle; insetAmount: LongInt): Rectangle;
+  function InsetRectangle(const rect: Rectangle; insetAmount: Longint): Rectangle;
   var
-    dblAmt: LongInt;
+    dblAmt: Longint;
   begin
     dblAmt := 2 * insetAmount;
     if (rect.width <= dblAmt) or (rect.height <= dblAmt) then begin result := rect; exit; end;
@@ -3195,7 +3202,7 @@ implementation
   function RectangleFrom(const tri: Triangle): Rectangle; overload;
   var
     minX, minY, maxX, maxY: Single;
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'RectangleFrom(const tri: Triangle): Rectangle', '');
@@ -3226,7 +3233,7 @@ implementation
   function RectangleFrom(const lines: LinesArray): Rectangle; overload;
   var
     minX, minY, maxX, maxY: Single;
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'RectangleFrom(const lines: LinesArray): Rectangle', '');
@@ -3361,7 +3368,7 @@ implementation
   function PointOnLineList(const pt:point2d; const s:Shape):Boolean;
   var
   pts : Point2dArray;
-  i :LongInt;
+  i :Longint;
   begin
     pts := ShapePoints(s);
     result:=False;
@@ -3378,7 +3385,7 @@ implementation
   function PointOnLineStrip(const pt:point2d; const s:Shape):Boolean;
   var
   pts : Point2dArray;
-  i :LongInt;
+  i :Longint;
   begin
     pts := ShapePoints(s);
     result:=False;
@@ -3396,7 +3403,7 @@ implementation
   function PointInTriangleList(const pt:point2d; const s:shape):Boolean;
   var
   pts : Point2dArray;
-  i :LongInt;
+  i :Longint;
   begin
     pts := ShapePoints(s);
     result:=False;
@@ -3416,7 +3423,7 @@ implementation
   function PointInTriangleFan(const pt:point2d; const s:shape):Boolean;
   var
   pts : Point2dArray;
-  i :LongInt;
+  i :Longint;
   begin
     pts := ShapePoints(s);
     result:=False;
@@ -3436,7 +3443,7 @@ implementation
   function PointInTriangleStrip(const pt:point2d; const s:shape):Boolean;
   var
   pts : Point2dArray;
-  i :LongInt;
+  i :Longint;
   begin
     pts := ShapePoints(s);
     result:=False;
@@ -3529,7 +3536,7 @@ implementation
   function LinesFromShapeAsTriangleStrip(s: shape): LinesArray; overload;
   var
     pts:Point2DArray;
-    i:LongInt;
+    i:Longint;
   begin
     pts:= ShapePoints(s);
 
@@ -3822,7 +3829,7 @@ implementation
     result := RectangleFrom(PointAdd(vec, RectangleTopLeft(rect)), rect.width, rect.height);
   end;
   
-  function RectangleFrom(x, y: Single; w, h: LongInt): Rectangle; overload;
+  function RectangleFrom(x, y: Single; w, h: Longint): Rectangle; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'RectangleFrom(x, y: Single', '');
@@ -3838,7 +3845,7 @@ implementation
     {$ENDIF}
   end;
   
-  function RectangleFrom(const pt: Point2D; width, height: LongInt): Rectangle; overload;
+  function RectangleFrom(const pt: Point2D; width, height: Longint): Rectangle; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'RectangleFrom(const pt: Point2D', '');
@@ -3972,7 +3979,7 @@ implementation
   var
     pts : Point2DArray;
     minPt, maxPt: Point2D;
-    i, max: LongInt;
+    i, max: Longint;
     r, l, t, b, temp: Single;
     subRect: Rectangle;
     kind: ShapeKind;
@@ -3980,7 +3987,7 @@ implementation
     pts :=    ShapePoints(s);
     result := RectangleFrom(0,0,0,0);
     kind :=   ShapeShapeKind(s);
-    if (LongInt(kind) = -1) or (Length(pts) < MinimumPointsForKind(kind)) then exit;
+    if (Longint(kind) = -1) or (Length(pts) < MinimumPointsForKind(kind)) then exit;
     
     minPt := pts[0];
     maxPt := minPt;
@@ -4042,7 +4049,7 @@ implementation
   function TriangleAABB(const tri: Triangle): Rectangle;
   var
     minPt, maxPt: Point2D;
-    i: LongInt;
+    i: Longint;
   begin
     minPt := tri[0];
     maxPt := tri[0];
@@ -4061,7 +4068,7 @@ implementation
   
   function TrianglesRectangleIntersect(const tri: TriangleArray; const rect: Rectangle): Boolean;
   var
-    i: LongInt;
+    i: Longint;
   begin
     for i := Low(tri) to High(tri) do
     begin
@@ -4220,14 +4227,14 @@ implementation
                             PointAdd(pts[2], offset));
   end;
   
-  function ShapeTriangleCount(s: Shape): LongInt;
+  function ShapeTriangleCount(s: Shape): Longint;
   begin
     result := ShapeKindTriangleCount(s, ShapeShapeKind(s));
   end;
   
-  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): LongInt;
+  function ShapeKindTriangleCount(s: Shape; kind: ShapeKind): Longint;
   var
-    pts: LongInt;
+    pts: Longint;
   begin
     result := 0;
 
@@ -4250,7 +4257,7 @@ implementation
     end;
   end;
   
-  function ShapeLineCount(s: Shape): LongInt;
+  function ShapeLineCount(s: Shape): Longint;
   begin
     if assigned(s) then
       result := ShapeKindLineCount(s, ShapeShapeKind(s))
@@ -4258,9 +4265,9 @@ implementation
       result := 0;
   end;
   
-  function ShapeKindLineCount(s: Shape; kind: ShapeKind): LongInt;
+  function ShapeKindLineCount(s: Shape; kind: ShapeKind): Longint;
   var
-    pts: LongInt;
+    pts: Longint;
   begin
     result := 0;
     
@@ -4303,7 +4310,7 @@ implementation
   function ShapeLines(s: Shape; kind: ShapeKind; const offset: Point2D): LinesArray;
   var
     pts,pts1: Point2DArray;
-    i: LongInt;
+    i: Longint;
   begin
     pts := ShapePoints(s);
     SetLength(pts1, length(pts));
@@ -4341,7 +4348,7 @@ implementation
   function ShapeTriangles(s: Shape; kind: ShapeKind; const offset: Point2D): TriangleArray;
   var
     pts, pts1: Point2DArray;
-    i: LongInt;
+    i: Longint;
   begin
     SetLength(result, 0);
     if not ((kind = pkTriangleStrip) or (kind = pkTriangleFan) or (kind = pkTriangleList) or (kind = pkTriangle)) then exit;
@@ -4368,7 +4375,7 @@ implementation
   
   function LinesIntersect(const lines, lines1: LinesArray): Boolean;
   var
-    i: LongInt;
+    i: Longint;
   begin
     result := false;
     if (Length(lines) = 0) or (Length(lines1) = 0) then exit;
@@ -4391,7 +4398,7 @@ implementation
   function ShapeRectangleIntersect(s: Shape; const rect: Rectangle): Boolean; overload;
   var
     kind: ShapeKind;
-    i: LongInt;
+    i: Longint;
   begin
     result := false;
     
@@ -4635,7 +4642,7 @@ implementation
 
   function LineIntersectsLines(const line: LineSegment; const lines: LinesArray): boolean;
   var
-    i: LongInt;
+    i: Longint;
     pt: Point2D;
   begin
     {$IFDEF TRACE}
@@ -4733,7 +4740,7 @@ implementation
     {$ENDIF}
   end;
 
-  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: LongInt): Vector; overload;
+  function VectorFromPointToRect(x, y, rectX, rectY: Single; rectWidth, rectHeight: Longint): Vector; overload;
   var
     px, py: Single;
   begin
@@ -4784,7 +4791,7 @@ implementation
 
   function VectorOutOfRectFromPoint(const pt: Point2D; const rect: Rectangle; const velocity: Vector): Vector;
   var
-    maxIdx: LongInt;
+    maxIdx: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'VectorOutOfRectFromPoint(const pt: Point2D', '');
@@ -4864,7 +4871,7 @@ implementation
 
   function ShapeVectorOutOfRect(s: shape; const bounds: Rectangle; const velocity: Vector  ): vector;
   var
-  maxIdx :LongInt;
+  maxIdx :Longint;
   begin
    result := _VectorOverLinesFromLines(LinesFrom(bounds),LinesFrom(s), velocity, maxIdx);
   end;
@@ -4873,7 +4880,7 @@ implementation
 
   function VectorOutOfRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   var
-    maxIDx: LongInt;
+    maxIDx: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'VectorOutOfRectFromRect(const src, bounds: Rectangle', '');
@@ -4889,14 +4896,14 @@ implementation
 
   // function VectorIntoRectFromRect(const src, bounds: Rectangle; const velocity: Vector): Vector;
   // var
-  //   maxIDx: LongInt;
+  //   maxIDx: Longint;
   // begin
   //   result := _VectorOverLinesFromPoints(PointsFrom(src), LinesFrom(bounds), velocity, False, maxIdx);
   // end;
 
   // function VectorIntoRectFromCircle(const c: Circle; bounds: Rectangle; const velocity: Vector): Vector;
   // var
-  //   maxIdx: LongInt;
+  //   maxIdx: Longint;
   // begin
   //   result := _VectorOverLinesFromCircle(c, LinesFrom(bounds), velocity, False, maxIdx);
   // end;
@@ -4933,7 +4940,7 @@ implementation
 
   function LineCircleHit(const c: Circle; const velocity: Vector; const lines: LinesArray; out found: LineSegment): Boolean;
   var
-    hitIdx: LongInt;
+    hitIdx: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'LineCircleHit(const c: Circle', '');
@@ -5016,7 +5023,7 @@ implementation
 
   function VectorOutOfRectFromCircle(const c: Circle; const rect: Rectangle; const velocity: Vector): Vector;
   var
-    maxIdx: LongInt;
+    maxIdx: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'VectorOutOfRectFromCircle(const c: Circle', '');
@@ -5029,7 +5036,7 @@ implementation
     {$ENDIF}
   end;
 
-  function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: LongInt): Vector;
+  function VectorOverLinesFromCircle(const c: Circle; const lines: LinesArray; const velocity: Vector; out maxIdx: Longint): Vector;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'VectorOverLinesFromCircle(const c: Circle', '');
@@ -5042,7 +5049,7 @@ implementation
     {$ENDIF}
   end;
 
-  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: LongInt): Vector;
+  // function VectorInLinesFromCircle(const c: Circle; lines: LinesArray; velocity: Vector; out maxIdx: Longint): Vector;
   // begin
   //   result := _VectorOverLinesFromCircle(c, lines, velocity, False, maxIDx);
   // end;
@@ -5098,7 +5105,7 @@ implementation
     {$ENDIF}
   end;
   
-  function CircleAt(const pt: Point2D; radius: LongInt): Circle; overload;
+  function CircleAt(const pt: Point2D; radius: Longint): Circle; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'CircleAt(const pt: Point2D', '');
@@ -5112,7 +5119,7 @@ implementation
     {$ENDIF}
   end;
   
-  function CircleAt(x, y: Single; radius: LongInt): Circle; overload;
+  function CircleAt(x, y: Single; radius: Longint): Circle; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'CircleAt(x, y: Single', '');
@@ -5152,16 +5159,16 @@ implementation
     {$ENDIF}
   end;
   
-  function CircleRadius(const c: Circle): LongInt;
+  function CircleRadius(const c: Circle): Longint;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'CircleRadius(const c: Circle): LongInt', '');
+      TraceEnter('sgGeometry', 'CircleRadius(const c: Circle): Longint', '');
     {$ENDIF}
     
     result := c.radius;
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'CircleRadius(const c: Circle): LongInt', '');
+      TraceExit('sgGeometry', 'CircleRadius(const c: Circle): Longint', '');
     {$ENDIF}
   end;
   
@@ -5404,10 +5411,10 @@ implementation
   
   //=============================================================================
   
-  function MinimumPointsForKind(k: ShapeKind): LongInt;
+  function MinimumPointsForKind(k: ShapeKind): Longint;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): LongInt', '');
+      TraceEnter('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): Longint', '');
     {$ENDIF}
     
     case k of
@@ -5425,27 +5432,27 @@ implementation
     end;
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): LongInt', '');
+      TraceExit('sgGeometry', 'MinimumPointsForKind(k: ShapeKind): Longint', '');
     {$ENDIF}
   end;
   
-  function PrototypePointCount(p: ShapePrototype): LongInt;
+  function PrototypePointCount(p: ShapePrototype): Longint;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'PrototypePointCount(p: ShapePrototype): LongInt', '');
+      TraceEnter('sgGeometry', 'PrototypePointCount(p: ShapePrototype): Longint', '');
     {$ENDIF}
     
     if not assigned(p) then result := 0
     else result := Length(p^.points);
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'PrototypePointCount(p: ShapePrototype): LongInt', '');
+      TraceExit('sgGeometry', 'PrototypePointCount(p: ShapePrototype): Longint', '');
     {$ENDIF}
   end;
   
   procedure PrototypeSetPoints(p: ShapePrototype; const points: Point2DArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'PrototypeSetPoints(p: ShapePrototype', '');
@@ -5560,7 +5567,7 @@ implementation
   
   procedure FreeShape(var s: Shape);
   var
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'FreeShape(var s: Shape)', '');
@@ -5587,7 +5594,7 @@ implementation
   procedure UpdateSubShapePoints(s: Shape; const parentM: Matrix2D);
   var
     m: Matrix2D;
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'UpdateSubShapePoints(s: Shape', '');
@@ -5644,17 +5651,17 @@ implementation
     {$ENDIF}
   end;
   
-  function ShapePointCount(s: Shape): LongInt;
+  function ShapePointCount(s: Shape): Longint;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgGeometry', 'ShapePointCount(s: Shape): LongInt', '');
+      TraceEnter('sgGeometry', 'ShapePointCount(s: Shape): Longint', '');
     {$ENDIF}
     
     if not Assigned(s) then begin result := 0; exit; end;
     result := PrototypePointCount(s^.prototype);
     
     {$IFDEF TRACE}
-      TraceExit('sgGeometry', 'ShapePointCount(s: Shape): LongInt', '');
+      TraceExit('sgGeometry', 'ShapePointCount(s: Shape): Longint', '');
     {$ENDIF}
   end;
   
@@ -5804,7 +5811,7 @@ implementation
     FixRectangle(rect.x, rect.y, rect.width, rect.height);
   end;
   
-  procedure FixRectangle(var x, y: Single; width,height: LongInt);
+  procedure FixRectangle(var x, y: Single; width,height: Longint);
   begin
     if width < 0 then
     begin

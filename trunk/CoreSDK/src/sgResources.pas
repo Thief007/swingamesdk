@@ -240,7 +240,7 @@ implementation
     //
     TResourceIdentifier = record
       name, path: String;
-      data: Array of LongInt;
+      data: Array of Longint;
       kind: ResourceKind;
     end;
     
@@ -276,7 +276,7 @@ implementation
   procedure TResourceBundle.LoadResources(showProgress: Boolean; kind: ResourceKind); //overload;
   var
     current: tResourceIdentifier;
-    i: LongInt;
+    i: Longint;
     
     procedure rbLoadFont();
     begin
@@ -325,7 +325,7 @@ implementation
           PanelResource:      LoadPanelNamed(current.name, current.path);
           CharacterResource:  LoadCharacterNamed(current.name, current.path);
           else
-            RaiseException('Unknown resource kind in LoadResources' + IntToStr(LongInt(kind)));
+            RaiseException('Unknown resource kind in LoadResources' + IntToStr(Longint(kind)));
         end;
       end;
     end;
@@ -342,7 +342,7 @@ implementation
     for kind := Low(ResourceKind) to High(ResourceKind) do
     begin
       {$IFDEF TRACE}
-        Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling for ' + IntToStr(LongInt(kind)));
+        Trace('sgResources', 'Info', 'TResourceBundle.LoadResources', 'Calling for ' + IntToStr(Longint(kind)));
       {$ENDIF}
       LoadResources(showProgress, kind);      
     end;
@@ -354,7 +354,7 @@ implementation
   procedure TResourceBundle.ReleaseResources();
   var
     current: tResourceIdentifier;
-    i: LongInt;
+    i: Longint;
   begin
   
     for i := Low(identifiers) to High(identifiers) do
@@ -440,7 +440,7 @@ implementation
   procedure ProcessBundleLine(const line: LineData; ptr: Pointer);
   var
     delim: TSysCharSet;
-    i: LongInt;
+    i: Longint;
     current: tResourceIdentifier;
   begin
     delim := [ ',' ]; //comma delimited
@@ -613,7 +613,7 @@ implementation
   function PathToResource(filename: String; kind: ResourceKind; const subPaths: StringArray): String; overload;
   var
     temp: String;
-    i: LongInt;
+    i: Longint;
   begin
     if Length(subPaths) > 0 then
     begin
@@ -670,10 +670,10 @@ implementation
     ANI_V_CELL_COUNT = 6;
     ANI_CELL_COUNT = 11;
   var
-    i: LongInt;
+    i: Longint;
     f: Font;
     txt: String;
-    oldW, oldH: LongInt;
+    oldW, oldH: Longint;
     //isStep: Boolean;
     isPaused: Boolean;
     isSkip: Boolean;

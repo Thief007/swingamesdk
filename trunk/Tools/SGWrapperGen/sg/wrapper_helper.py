@@ -1,3 +1,10 @@
+#
+# Being replaced by lang_helper!!!
+#
+# This is a work in progress... not tested!
+#
+
+
 from sg_parameter import SGParameter
 from sg_property import SGProperty
 from sg_method import SGMethod
@@ -132,7 +139,7 @@ def add_length_local(to_method, for_param):
     local_var = SGParameter(var_name)
     local_var.is_length_param = True
     local_var.local_for = for_param
-    local_var.data_type = find_or_add_type('LongInt')
+    local_var.data_type = find_or_add_type('Longint')
     local_var.modifier = for_param.modifier
     local_var.length_of = for_param
     

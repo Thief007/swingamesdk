@@ -17,6 +17,7 @@ class SGLibrary(SGCodeModule):
         """Initialise the library"""
         super(SGLibrary,self).__init__('sgLibrary')
         self.is_static = True
+        self.module_kind = "library"
         self.version = 0
         self.in_file = find_or_add_file('SGSDK')
     

@@ -18,7 +18,7 @@
 // - 2009-06-17: Andrew : added meta tags, renamed from "mappy" to tilemap
 //
 // Version 2:
-// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-17: Andrew : Moved all integers to Longint
 //
 // Version 1.1.5:
 // - 2008-04-18: Andrew : Fix extensions to work with Delphi.
@@ -140,7 +140,7 @@ interface
   /// @lib SpriteHasCollidedWithTileOutXY
   /// @class Map
   /// @overload  HasSpriteCollidedWithTile HasSpriteCollidedWithTileOutXY
-  function SpriteHasCollidedWithTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithTile(m: Map; s: Sprite; out collidedX, collidedY: Longint): Boolean; overload;
 
   /// @lib
   /// @class Map
@@ -150,22 +150,22 @@ interface
   /// @lib
   /// @class Map
   /// @method MoveSpriteOutOfTile
-  procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: LongInt);
+  procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: Longint);
 
   /// @lib
   /// @class Map
   /// @method MapTagCount
-  function MapTagCount(m: Map; tagType: MapTag): LongInt;
+  function MapTagCount(m: Map; tagType: MapTag): Longint;
 
   /// @lib
   /// @class Map
   /// @method MapTagPositionX
-  function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
+  function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: Longint): Longint;
 
   /// @lib
   /// @class Map
   /// @method MapTagPositionY
-  function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
+  function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: Longint): Longint;
 
   /// @lib
   /// @class Sprite
@@ -177,22 +177,22 @@ interface
   /// @lib
   /// @class Map
   /// @getter Width
-  function MapWidth(m: Map): LongInt;
+  function MapWidth(m: Map): Longint;
 
   /// @lib
   /// @class Map
   /// @getter Height
-  function MapHeight(m: Map): LongInt;
+  function MapHeight(m: Map): Longint;
 
   /// @lib
   /// @class Map
   /// @getter BlockWidth
-  function BlockWidth(m: Map): LongInt;
+  function BlockWidth(m: Map): Longint;
 
   /// @lib
   /// @class Map
   /// @getter BlockHeight
-  function BlockHeight(m: Map): LongInt;
+  function BlockHeight(m: Map): Longint;
 
   // TODO: Do Gap/Stagger need to be public? Concept need to be documented?
   // GapX and GapY = The distance between each tile (rectangular), can be
@@ -203,25 +203,25 @@ interface
   /// @lib
   /// @class Map
   /// @getter GapX
-  function GapX(m: Map): LongInt;
+  function GapX(m: Map): Longint;
 
   /// The y distance between each tile. See StaggerY for the isometric offset.
   /// @lib
   /// @class Map
   /// @getter GapY
-  function GapY(m: Map): LongInt;
+  function GapY(m: Map): Longint;
 
   /// The isometric x offset value.
   /// @lib
   /// @class Map
   /// @getter StaggerX
-  function StaggerX(m: Map): LongInt;
+  function StaggerX(m: Map): Longint;
 
   /// The isometric y offset value.
   /// @lib
   /// @class Map
   /// @getter StaggerY
-  function StaggerY(m: Map): LongInt;
+  function StaggerY(m: Map): Longint;
 
 
   /// Return the tile that is under a given Point2D. Isometric maps are taken
@@ -240,7 +240,7 @@ interface
   /// @lib
   /// @class Map
   /// @method GetTagAtTile
-  function GetTagAtTile(m: Map; xIndex, yIndex: LongInt): MapTag;
+  function GetTagAtTile(m: Map; xIndex, yIndex: Longint): MapTag;
 
 
 //=============================================================================
@@ -261,21 +261,21 @@ var
     var
       c: char;
       c2: char;
-      i: LongInt;
-      i2: LongInt;
+      i: Longint;
+      i2: Longint;
     begin
       Read(stream ,c);
       Read(stream ,c2);
 
-      i := LongInt(c);
-      i2 := LongInt(c2) * 256;
+      i := Longint(c);
+      i2 := Longint(c2) * 256;
 
       result := i + i2;
     end;
 
     procedure LoadMapInformation(m: Map; var stream: text);
     var
-      header: LongInt;
+      header: Longint;
     begin
       header := ReadInt(stream);
 
@@ -344,7 +344,7 @@ var
 
     procedure LoadAnimationInformation(m: Map; var stream: text);
     var
-      i, j: LongInt;
+      i, j: Longint;
     begin
 
       if m^.MapInfo.NumberOfAnimations > 0 then
@@ -393,7 +393,7 @@ var
 
     procedure LoadLayerData(m: Map; var stream: text);
     var
-      l, y, x: LongInt;
+      l, y, x: Longint;
     begin
 
       SetLength(m^.LayerInfo, m^.MapInfo.NumberOfLayers - m^.MapInfo.Collisionlayer - m^.MapInfo.TagLayer);
@@ -453,7 +453,7 @@ var
 
     procedure LoadCollisionData(m: Map; var stream: text);
     var
-      y, x: LongInt;
+      y, x: Longint;
     begin
       if m^.MapInfo.CollisionLayer = 1 then
       begin
@@ -498,7 +498,7 @@ var
 
     procedure LoadTagData(m: Map; var stream: text);
     var
-      py, px, smallestTagIdx, temp: LongInt;
+      py, px, smallestTagIdx, temp: Longint;
       evt: MapTag;
     begin
       //SetLength(m^.TagInfo, High(Tags));
@@ -520,9 +520,9 @@ var
           //TODO: Optimize - avoid repeated LongIng(evt) conversions
           if (evt >= MapTag1) and (evt <= MapTag24) then
           begin
-            SetLength(m^.TagInfo[LongInt(evt)], Length(m^.TagInfo[LongInt(evt)]) + 1);
+            SetLength(m^.TagInfo[Longint(evt)], Length(m^.TagInfo[Longint(evt)]) + 1);
 
-            with m^.TagInfo[LongInt(evt)][High(m^.TagInfo[LongInt(evt)])] do
+            with m^.TagInfo[Longint(evt)][High(m^.TagInfo[Longint(evt)])] do
             begin
               x := px;
               y := py;
@@ -539,7 +539,7 @@ var
         for x := 0 to m^.MapInfo.MapWidth - 1 do
         begin
           Write(' ');
-          Write(LongInt(m^.TagInfo.Tag[y][x]));
+          Write(Longint(m^.TagInfo.Tag[y][x]));
         end;
         WriteLn('');
       end;
@@ -549,7 +549,7 @@ var
 
     procedure LoadBlockSprites(m: Map; fileName: String);
     var
-      fpc: LongIntArray; //Array of LongInt;
+      fpc: LongintArray; //Array of Longint;
     begin
       SetLength(fpc, m^.MapInfo.NumberOfBlocks);
       m^.Tiles := CreateSprite(LoadBitmap(fileName), true, fpc,
@@ -662,9 +662,9 @@ var
 
   procedure DrawMap(m: Map);
   var
-    l, y ,x: LongInt;
-    XStart, YStart, XEnd, YEnd: LongInt;
-    f: LongInt;
+    l, y ,x: Longint;
+    XStart, YStart, XEnd, YEnd: Longint;
+    f: Longint;
   begin
     if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
 
@@ -737,13 +737,13 @@ var
   end;
 
   //Gets the number of MapTag of the specified type
-  function MapTagCount(m: Map; tagType: MapTag): LongInt;
+  function MapTagCount(m: Map; tagType: MapTag): Longint;
   begin
     if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
     if (tagType < MapTag1) or (tagType > High(MapTag)) then begin RaiseException('TagType is out of range'); exit; end;
     
-    result := Length(m^.TagInfo[LongInt(tagType)]);
-    //TODO: WHY do we keep converting tagType to LongInt - just store as LongINT!!!
+    result := Length(m^.TagInfo[Longint(tagType)]);
+    //TODO: WHY do we keep converting tagType to Longint - just store as LongINT!!!
     
     {count := 0;
   
@@ -759,34 +759,34 @@ var
   end;
 
   // Gets the Top Left X Coordinate of the MapTag
-  function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
+  function MapTagPositionX(m: Map; tagType: MapTag; tagnumber: Longint): Longint;
   begin
     if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then begin RaiseException('Tag number is out of range'); exit; end;
 
     if (m^.MapInfo.Isometric = true) then
     begin
-      result := m^.TagInfo[LongInt(tagType)][tagnumber].x * m^.MapInfo.GapX;
-      if ((m^.TagInfo[LongInt(tagType)][tagnumber].y MOD 2) = 1) then
+      result := m^.TagInfo[Longint(tagType)][tagnumber].x * m^.MapInfo.GapX;
+      if ((m^.TagInfo[Longint(tagType)][tagnumber].y MOD 2) = 1) then
         result := result + m^.MapInfo.StaggerX;
       end
     
     else
-      result := m^.TagInfo[LongInt(tagType)][tagnumber].x * m^.MapInfo.BlockWidth;
+      result := m^.TagInfo[Longint(tagType)][tagnumber].x * m^.MapInfo.BlockWidth;
   
   end;
 
   // Gets the Top Left Y Coordinate of the MapTag
-  function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: LongInt): LongInt;
+  function MapTagPositionY(m: Map; tagType: MapTag; tagnumber: Longint): Longint;
   begin
     if (tagnumber < 0) or (tagnumber > MapTagCount(m, tagType) - 1) then begin RaiseException('Tag number is out of range'); exit; end;
   
     if (m^.MapInfo.Isometric = true) then
     begin
-      result := m^.TagInfo[LongInt(tagType)][tagnumber].y * m^.MapInfo.StaggerY;
+      result := m^.TagInfo[Longint(tagType)][tagnumber].y * m^.MapInfo.StaggerY;
     end
     else      
     begin
-      result := m^.TagInfo[LongInt(tagType)][tagnumber].y * m^.MapInfo.BlockHeight;
+      result := m^.TagInfo[Longint(tagType)][tagnumber].y * m^.MapInfo.BlockHeight;
     end;
   end;
 
@@ -794,8 +794,8 @@ var
   const
     SEARCH_RANGE = 0;
   var
-    XStart, XEnd, YStart, YEnd: LongInt;
-    y, x, yCache: LongInt;
+    XStart, XEnd, YStart, YEnd: Longint;
+    y, x, yCache: Longint;
   begin
     result := false;
 
@@ -830,7 +830,7 @@ var
     end; // with
   end;
 
-  function BruteForceDetectionComponent(m: Map; var s: Sprite; xOffset, yOffset: LongInt): Boolean;
+  function BruteForceDetectionComponent(m: Map; var s: Sprite; xOffset, yOffset: Longint): Boolean;
   begin
     s^.position.x := s^.position.x + xOffset;
     s^.position.y := s^.position.y + yOffset;
@@ -847,7 +847,7 @@ var
     s^.position.y := s^.position.y - yOffset;
   end;
 
-  procedure MoveOut(s: Sprite; velocity: Vector; x, y, width, height: LongInt);
+  procedure MoveOut(s: Sprite; velocity: Vector; x, y, width, height: Longint);
   var
     kickVector: Vector;
     sprRect, tgtRect: Rectangle;
@@ -862,7 +862,7 @@ var
     function GetBoundingRectangle(): Rectangle;
     var
       startPoint, endPoint: Rectangle;
-      startX, startY, endX, endY: LongInt;
+      startX, startY, endX, endY: Longint;
     begin
       with m^.MapInfo do begin
         startPoint := RectangleFrom(
@@ -940,7 +940,7 @@ var
     else result := None;
   end;
 
-  procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: LongInt);
+  procedure MoveSpriteOutOfTile(m: Map; s: Sprite; x, y: Longint);
   begin
     //TODO: Avoid these exception tests (at least the first 2) - do them earlier during loading
     if m = nil then begin RaiseException('No Map supplied (nil)'); exit; end;
@@ -954,15 +954,15 @@ var
 
   function SpriteHasCollidedWithTile(m: Map; s: Sprite): Boolean; overload;
   var
-    x, y: LongInt;
+    x, y: Longint;
   begin
     result := SpriteHasCollidedWithTile(m, s, x, y);
   end;
 
-  function SpriteHasCollidedWithTile(m: Map; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithTile(m: Map; s: Sprite; out collidedX, collidedY: Longint): Boolean; overload;
   var
-    y, x, yCache, dy, dx, i, j, initY, initX: LongInt;
-    xStart, yStart, xEnd, yEnd: LongInt;
+    y, x, yCache, dy, dx, i, j, initY, initX: Longint;
+    xStart, yStart, xEnd, yEnd: Longint;
     rectSearch: Rectangle;
     side: CollisionSide;
   begin
@@ -1032,7 +1032,7 @@ var
 
   function CollisionWithMap(m: Map; s: Sprite; const vec: Vector): CollisionSide;
   var
-    x, y: LongInt;
+    x, y: Longint;
     temp: Vector;
   begin
     result := None;
@@ -1046,48 +1046,48 @@ var
     s^.velocity := temp;
   end;
 
-  function MapWidth(m: Map): LongInt;
+  function MapWidth(m: Map): Longint;
   begin
     result := m^.MapInfo.MapWidth;
   end;
 
-  function MapHeight(m: Map): LongInt;
+  function MapHeight(m: Map): Longint;
   begin
     result := m^.MapInfo.MapHeight;
   end;
 
-  function BlockWidth(m: Map): LongInt;
+  function BlockWidth(m: Map): Longint;
   begin
     result := m^.MapInfo.BlockWidth;
   end;
 
-  function BlockHeight(m: Map): LongInt;
+  function BlockHeight(m: Map): Longint;
   begin
     result := m^.MapInfo.BlockHeight;
   end;
 
-  function GapX(m: Map): LongInt;
+  function GapX(m: Map): Longint;
   begin
     result := m^.MapInfo.GapX;
   end;
 
-  function GapY(m: Map): LongInt;
+  function GapY(m: Map): Longint;
   begin
     result := m^.MapInfo.GapY;
   end;
 
-  function StaggerX(m: Map): LongInt;
+  function StaggerX(m: Map): Longint;
   begin
     result := m^.MapInfo.StaggerX;
   end;
 
-  function StaggerY(m: Map): LongInt;
+  function StaggerY(m: Map): Longint;
   begin
     result := m^.MapInfo.StaggerY;
   end;
 
   //Determines whether the specified point is within the tile provided
-  function IsPointInTile(point: Point2D; x, y: LongInt; m: Map): Boolean;
+  function IsPointInTile(point: Point2D; x, y: Longint; m: Map): Boolean;
   var
     tri: Triangle;
   begin
@@ -1122,7 +1122,7 @@ var
 
   function GetTileFromPoint(const point: Point2D; m: Map): MapTile;
   var
-    x, y, tx, ty: LongInt;
+    x, y, tx, ty: Longint;
   begin
     //Returns (-1,-1) if no tile has this point
     result.xIndex := -1;
@@ -1231,11 +1231,11 @@ var
     end; // with
   end;
 
-  function GetTagAtTile(m: Map; xIndex, yIndex: LongInt): MapTag;
+  function GetTagAtTile(m: Map; xIndex, yIndex: Longint): MapTag;
   var
-    i, j: LongInt;
+    i, j: Longint;
   begin
-    for i := LongInt(Low(MapTag)) to LongInt(High(MapTag)) do
+    for i := Longint(Low(MapTag)) to Longint(High(MapTag)) do
       if (Length(m^.TagInfo[i]) > 0) then
         for j := 0 to High(m^.TagInfo[i]) do
           if (m^.TagInfo[i][j].x = xIndex) and (m^.TagInfo[i][j].y = yIndex) then

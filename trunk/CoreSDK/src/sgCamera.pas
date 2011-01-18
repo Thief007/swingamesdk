@@ -20,7 +20,7 @@
 // - 2009-06-15: Andrew: Added meta tags
 //
 // Version 2:
-// - 2008-12-17: Andrew: Moved all integers to LongInt
+// - 2008-12-17: Andrew: Moved all integers to Longint
 //
 // Version 1.1:
 // - 2008-01-23: Andrew: Changed ToGameCoordinates to use Point2D
@@ -187,7 +187,7 @@ interface
   /// @class Sprite
   /// @overload CenterCamera CenterCameraOffsetXY
   /// @csn centerCameraOffsetX:%s offsetY:%s
-  procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt); overload;
+  procedure CenterCameraOn(s: Sprite; offsetX, offsetY: Longint); overload;
   
   /// Set the camera view to be centered over the specific sprite. The offset
   /// vector allows you to move the sprite from the direct center of the screen.
@@ -225,14 +225,14 @@ interface
   /// @param worldX The world x value to be translated
   /// @returns The translated screen x value
   /// @lib
-  function ToScreenX(worldX: Single): LongInt;
+  function ToScreenX(worldX: Single): Longint;
 
   /// Translate a world y value to the current screen y value set by the camera.
   ///
   /// @param worldY The world y value to be converted
   /// @returns A screen y value
   /// @lib
-  function ToScreenY(worldY: Single): LongInt;
+  function ToScreenY(worldY: Single): Longint;
 
   /// Translate a Point2D from world coordinates to screen coordinates.
   ///
@@ -258,14 +258,14 @@ interface
   /// @param screenX The current screen x value to be converted
   /// @returns A world x value 
   /// @lib
-  function ToWorldX(screenX: LongInt) : Single;
+  function ToWorldX(screenX: Longint) : Single;
 
   /// Translate a screen y value (based on the camera) to a world y value
   ///
   /// @param screenY The current screen y value to be converted
   /// @returns A world y value 
   /// @lib
-  function ToWorldY(screenY: LongInt) : Single;
+  function ToWorldY(screenY: Longint) : Single;
 
   /// Translate a Point2D from screen coordinates to world coordinates.
   ///
@@ -467,7 +467,7 @@ implementation
 // Camera - Sprite tracking
 //---------------------------------------------------------------------------
   
-  procedure CenterCameraOn(s: Sprite; offsetX, offsetY: LongInt);
+  procedure CenterCameraOn(s: Sprite; offsetX, offsetY: Longint);
   var
     center: Point2D;
     scX, scY: Single;
@@ -514,29 +514,29 @@ implementation
 // World-To-Screen Translation
 //---------------------------------------------------------------------------
 
-  function ToScreenX(worldX: Single): LongInt;
+  function ToScreenX(worldX: Single): Longint;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgCamera', 'ToScreenX(worldX: Single): LongInt', '');
+      TraceEnter('sgCamera', 'ToScreenX(worldX: Single): Longint', '');
     {$ENDIF}
     
     result := Round(worldX - _cameraX);
     
     {$IFDEF TRACE}
-      TraceExit('sgCamera', 'ToScreenX(worldX: Single): LongInt', '');
+      TraceExit('sgCamera', 'ToScreenX(worldX: Single): Longint', '');
     {$ENDIF}
   end;
 
-  function ToScreenY(worldY: Single): LongInt;
+  function ToScreenY(worldY: Single): Longint;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgCamera', 'ToScreenY(worldY: Single): LongInt', '');
+      TraceEnter('sgCamera', 'ToScreenY(worldY: Single): Longint', '');
     {$ENDIF}
     
     result := Round(worldY - _cameraY);
     
     {$IFDEF TRACE}
-      TraceExit('sgCamera', 'ToScreenY(worldY: Single): LongInt', '');
+      TraceExit('sgCamera', 'ToScreenY(worldY: Single): Longint', '');
     {$ENDIF}
   end;
 
@@ -567,29 +567,29 @@ implementation
 // Screen-To-World Translation
 //---------------------------------------------------------------------------
   
-  function ToWorldX(screenX: LongInt) : Single;
+  function ToWorldX(screenX: Longint) : Single;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgCamera', 'ToWorldX(screenX: LongInt) : Single', '');
+      TraceEnter('sgCamera', 'ToWorldX(screenX: Longint) : Single', '');
     {$ENDIF}
     
     result := screenX + _cameraX;
     
     {$IFDEF TRACE}
-      TraceExit('sgCamera', 'ToWorldX(screenX: LongInt) : Single', '');
+      TraceExit('sgCamera', 'ToWorldX(screenX: Longint) : Single', '');
     {$ENDIF}
   end;
 
-  function ToWorldY(screenY: LongInt) : Single;
+  function ToWorldY(screenY: Longint) : Single;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgCamera', 'ToWorldY(screenY: LongInt) : Single', '');
+      TraceEnter('sgCamera', 'ToWorldY(screenY: Longint) : Single', '');
     {$ENDIF}
     
     result := screenY + _cameraY;
     
     {$IFDEF TRACE}
-      TraceExit('sgCamera', 'ToWorldY(screenY: LongInt) : Single', '');
+      TraceExit('sgCamera', 'ToWorldY(screenY: Longint) : Single', '');
     {$ENDIF}
   end;
 

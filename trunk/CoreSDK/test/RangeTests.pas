@@ -2,7 +2,7 @@ program RangeTests;
 uses sgShared, sgTypes, strutils, sgUtils;
 
 var
-  data: LongIntArray;
+  data: LongintArray;
   i: Integer;
   testData: String;
 begin

@@ -53,7 +53,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @constructor
   /// @csn initWithWidth:%s andHeight:%s
-  function CreateBitmap(width, height: LongInt): Bitmap;
+  function CreateBitmap(width, height: Longint): Bitmap;
 
   /// Loads a bitmap from file using where the specified transparent color
   /// is used as a color key for the transparent color.
@@ -170,7 +170,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @getter Width
-  function BitmapWidth(bmp: Bitmap): LongInt; overload;
+  function BitmapWidth(bmp: Bitmap): Longint; overload;
   
   /// Returns the height of the entire bitmap.
   /// 
@@ -178,7 +178,7 @@ uses sgTypes;
   /// 
   /// @class Bitmap
   /// @getter Height
-  function BitmapHeight(bmp: Bitmap): LongInt; overload;
+  function BitmapHeight(bmp: Bitmap): Longint; overload;
   
   /// Returns the width of a cell within the bitmap.
   /// 
@@ -186,7 +186,7 @@ uses sgTypes;
   /// 
   /// @class Bitmap
   /// @getter CellWidth
-  function BitmapCellWidth(bmp: Bitmap): LongInt;
+  function BitmapCellWidth(bmp: Bitmap): Longint;
   
   /// Returns the height of a cell within the bitmap.
   ///
@@ -194,7 +194,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @getter CellHeight
-  function BitmapCellHeight(bmp: Bitmap): LongInt;
+  function BitmapCellHeight(bmp: Bitmap): Longint;
 
   /// Checks if a pixel is drawn at the specified x,y location.
   /// 
@@ -204,7 +204,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method PixelDrawnAtPoint  
   /// @csn pixelDrawnAtX:%s y:%s
-  function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
+  function PixelDrawnAtPoint(bmp: Bitmap; x, y: Longint): Boolean;
   
   /// This is used to define the number of cells in a bitmap, and 
   /// their width and height. The cells are
@@ -218,7 +218,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method SetCellDetails
   /// @csn setCellWidth:%s height:%s columns:%s rows:%s count:%s
-  procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
+  procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: Longint);
   
   /// Returns the number of cells in the specified bitmap.
   ///
@@ -226,7 +226,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @getter CellCount
-  function BitmapCellCount(bmp: Bitmap): LongInt;
+  function BitmapCellCount(bmp: Bitmap): Longint;
   
   /// Returns the number of rows of cells in the specified bitmap.
   ///
@@ -234,7 +234,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @getter CellRows
-  function BitmapCellRows(bmp: Bitmap): LongInt;
+  function BitmapCellRows(bmp: Bitmap): Longint;
   
   /// Returns the number of columns of cells in the specified bitmap.
   ///
@@ -242,7 +242,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @getter CellColumns
-  function BitmapCellColumns(bmp: Bitmap): LongInt;
+  function BitmapCellColumns(bmp: Bitmap): Longint;
   
   /// Are the two bitmaps of a similar format that they could be used in
   /// place of each other. This returns true if they have the same cell
@@ -284,7 +284,7 @@ uses sgTypes;
   ///
   /// @class Bitmap
   /// @method BitmapCell
-  function BitmapCellOf(bmp: Bitmap; cell: LongInt): BitmapCell;
+  function BitmapCellOf(bmp: Bitmap; cell: Longint): BitmapCell;
   
   /// Returns true of the two bitmap cells refer to the same cell
   /// in the one bitmap.
@@ -302,7 +302,7 @@ uses sgTypes;
   ///
   /// @class BitmapCell
   /// @getter Width
-  function BitmapWidth(const bmp: BitmapCell): LongInt; overload;
+  function BitmapWidth(const bmp: BitmapCell): Longint; overload;
   
   /// Returns the height of the bitmap cell.
   /// 
@@ -310,7 +310,7 @@ uses sgTypes;
   /// 
   /// @class BitmapCell
   /// @getter Height
-  function BitmapHeight(const bmp: BitmapCell): LongInt; overload;
+  function BitmapHeight(const bmp: BitmapCell): Longint; overload;
   
   
   
@@ -338,7 +338,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload ToCircle ToCircleXY
   /// @csn circleAtX:%s y:%s
-  function BitmapCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
+  function BitmapCircle(bmp: Bitmap; x, y: Longint): Circle; overload;
   
   /// Creates a circle from within a cell in a bitmap, uses the larger of the width and
   /// height.
@@ -360,7 +360,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload ToCellCircle ToCellCircleXY
   /// @csn circleCellAtX:%s y:%s
-  function BitmapCellCircle(bmp: Bitmap; x,y: LongInt): Circle; overload;
+  function BitmapCellCircle(bmp: Bitmap; x,y: Longint): Circle; overload;
   
   
   
@@ -403,6 +403,7 @@ uses sgTypes;
   /// Saves the bitmap to a png file at the specified location.
   ///
   /// @lib
+  /// @sn bitmap:%s saveToPNG:%s
   ///
   /// @class Bitmap
   /// @method saveToPNG
@@ -539,7 +540,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method CellRectangle
   /// @csn rectangleCell:%s
-  function BitmapRectangleOfCell(src: Bitmap; cell: LongInt): Rectangle;
+  function BitmapRectangleOfCell(src: Bitmap; cell: Longint): Rectangle;
   
   
   
@@ -556,7 +557,7 @@ uses sgTypes;
   /// @method DrawOnto
   /// @self 2
   /// @csn drawOnto:%s atX:%s y:%s
-  procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
+  procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : Longint); overload;
   
   /// Draws the source bitmap onto the destination
   ///
@@ -578,7 +579,7 @@ uses sgTypes;
   /// @method DrawOnto
   /// @self 2
   /// @csn drawOnto:%s atX:%s y:%s
-  procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; x, y : LongInt); overload;
+  procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; x, y : Longint); overload;
 
   /// Draws the cell of the source bitmap onto the destination
   ///
@@ -600,7 +601,7 @@ uses sgTypes;
   /// @method DrawPartOnto
   /// @self 2
   /// @csn drawOnto:%s srcX:%s srcY:%s srcW:%s srcH:%s atX:%s y:%s
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
   
   /// Draw part of the source bitmap onto the destination.
   ///
@@ -610,7 +611,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload DrawPartOnto DrawPartFromRectOnto
   /// @csn drawOnto:%s srcRect:%s atX:%s y:%s
-  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : Longint); overload;
   
   /// Draw part of the source bitmap onto the destination
   ///
@@ -631,7 +632,7 @@ uses sgTypes;
   /// @method DrawCellOnto
   /// @csn drawOnto:%s cell:%s atX:%s y:%s
   /// @self 2
-  procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; x, y: Single); overload;
+  procedure DrawCell(dest: Bitmap; src: Bitmap; cell: Longint; x, y: Single); overload;
   
   /// Draw a cell from a bitmap onto the destination.
   ///
@@ -642,7 +643,7 @@ uses sgTypes;
   /// @overload DrawCellOnto DrawCellAtPointOnto
   /// @csn drawOnto:%s cell:%s at:%s
   /// @self 2
-  procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
+  procedure DrawCell(dest: Bitmap; src: Bitmap; cell: Longint; const position: Point2D); overload;
   
   
   
@@ -698,7 +699,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawPart
   /// @csn drawSrcX:%s srcY:%s srcW:%s srcH:%s x:%s y:%s
-  procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+  procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: Longint; x, y : Single); overload;
   
   /// Draw part of a bitmap onto the game
   ///
@@ -728,7 +729,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawCell
   /// @csn drawCell:%s atX:%s y:%s
-  procedure DrawCell(src: Bitmap; cell: LongInt; x, y: Single); overload;
+  procedure DrawCell(src: Bitmap; cell: Longint; x, y: Single); overload;
   
   /// Draw a cell from a bitmap onto the game.
   ///
@@ -738,7 +739,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload DrawCell DrawCellAtPoint
   /// @csn drawCell:%s at:%s
-  procedure DrawCell(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+  procedure DrawCell(src: Bitmap; cell: Longint; const position: Point2D); overload;
   
   
   
@@ -754,7 +755,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawOnScreen
   /// @csn drawOnScreenAtX:%s y:%s
-  procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
+  procedure DrawBitmapOnScreen(src : Bitmap; x, y : Longint); overload;
   
   /// Draw the bitmap onto the screen.
   ///
@@ -774,7 +775,7 @@ uses sgTypes;
   /// @class BitmapCell
   /// @method DrawOnScreen
   /// @csn drawOnScreenAtX:%s y:%s
-  procedure DrawBitmapCellOnScreen(const src : BitmapCell; x, y : LongInt); overload;
+  procedure DrawBitmapCellOnScreen(const src : BitmapCell; x, y : Longint); overload;
 
   /// Draw the cell of the bitmap onto the screen.
   ///
@@ -794,7 +795,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawPartOnScreen
   /// @csn drawSrcX:%s srcY:%s srcW:%s srcH:%s onScreenAtX:%s y:%s
-  procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+  procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
   
   /// Draw part of the bitmap on the screen.
   ///
@@ -804,7 +805,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload DrawPartOnScreen DrawPartFromRectOnScreen
   /// @csn drawSrcRect:%s onScreenAtX:%s y:%s
-  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+  procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : Longint); overload;
   
   /// Draw part of the bitmap on the screen.
   ///
@@ -824,7 +825,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @method DrawCell
   /// @csn drawCell:%s onScreenAtX:%s y:%s
-  procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; x, y: Single); overload;
+  procedure DrawCellOnScreen(src: Bitmap; cell: Longint; x, y: Single); overload;
   
   /// Draw a cell from a bitmap onto the game.
   ///
@@ -834,7 +835,7 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload DrawCell DrawCellAtPoint
   /// @csn drawCell:%s onScreenAt:%s
-  procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+  procedure DrawCellOnScreen(src: Bitmap; cell: Longint; const position: Point2D); overload;
   
   
   
@@ -884,10 +885,10 @@ var
 
 //----------------------------------------------------------------------------
 
-function CreateBitmap(width, height: LongInt): Bitmap;
+function CreateBitmap(width, height: Longint): Bitmap;
 var
   name: String;
-  idx: LongInt;
+  idx: Longint;
   obj: tResourceContainer;
 begin
   {$IFDEF TRACE}
@@ -971,7 +972,7 @@ end;
 // @param surface The surface with pixel data for this Bitmap
 procedure SetNonTransparentPixels(bmp: Bitmap; surface: PSDL_Surface; transparentColor: Color);
 var
-  r, c: LongInt;
+  r, c: Longint;
 begin
   if not assigned(bmp) then exit;
   
@@ -1213,7 +1214,7 @@ end;
 
 //----------------------------------------------------------------------------
 
-function PixelDrawnAtPoint(bmp: Bitmap; x, y: LongInt): Boolean;
+function PixelDrawnAtPoint(bmp: Bitmap; x, y: Longint): Boolean;
 begin
   if not assigned(bmp) then result := false
   else result := (Length(bmp^.nonTransparentPixels) = bmp^.width)
@@ -1222,7 +1223,7 @@ begin
                   and bmp^.nonTransparentPixels[x, y];
 end;
 
-procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: LongInt);
+procedure BitmapSetCellDetails(bmp: Bitmap; width, height, columns, rows, count: Longint);
 begin
   if not assigned(bmp) then exit;
   
@@ -1233,19 +1234,19 @@ begin
   bmp^.cellCount := count;
 end;
 
-function BitmapCellCount(bmp: Bitmap): LongInt;
+function BitmapCellCount(bmp: Bitmap): Longint;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.cellCount;
 end;
 
-function BitmapCellRows(bmp: Bitmap): LongInt;
+function BitmapCellRows(bmp: Bitmap): Longint;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.cellRows;
 end;
 
-function BitmapCellColumns(bmp: Bitmap): LongInt;
+function BitmapCellColumns(bmp: Bitmap): Longint;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.cellCols;
@@ -1288,7 +1289,7 @@ function RotateScaleBitmap(src: Bitmap; degRot, scale: Single): Bitmap;
 var
   name: String;
   obj: TResourceContainer;
-  deg: LongInt;
+  deg: Longint;
 begin
   result := nil;
   if not assigned(src) then exit;
@@ -1364,7 +1365,7 @@ end;
 ///
 /// Side Effects:
 /// - Draws the src at the x,y location in the destination.
-procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : LongInt); overload;
+procedure DrawBitmap(dest: Bitmap; src: Bitmap; x, y : Longint); overload;
 var
   offset: SDL_Rect;
 begin
@@ -1374,7 +1375,7 @@ begin
   SDL_BlitSurface(src^.surface, nil, dest^.surface, @offset);
 end;
 
-procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
 var
   offset, source: SDL_Rect;
 begin
@@ -1387,22 +1388,22 @@ begin
   SDL_BlitSurface(src^.surface, @source, dest^.surface, @offset);
 end;
 
-procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : LongInt); overload;
+procedure DrawBitmapPart(dest: Bitmap; src: Bitmap; const source: Rectangle; x, y : Longint); overload;
 begin
   DrawBitmapPart(dest, src, Round(source.x), Round(source.y), source.width, source.height, x, y);
 end;
 
-procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : LongInt); overload;
+procedure DrawBitmapPartOnScreen(src : Bitmap; srcX, srcY, srcW, srcH, x, y : Longint); overload;
 begin
   DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, x, y);
 end;
 
-procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: LongInt; x, y : Single); overload;
+procedure DrawBitmapPart(src : Bitmap; srcX, srcY, srcW, srcH: Longint; x, y : Single); overload;
 begin
   DrawBitmapPart(screen, src, srcX, srcY, srcW, srcH, sgCamera.ToScreenX(x), sgCamera.ToScreenY(y));
 end;
 
-procedure DrawBitmapOnScreen(src : Bitmap; x, y : LongInt); overload;
+procedure DrawBitmapOnScreen(src : Bitmap; x, y : Longint); overload;
 begin
   DrawBitmap(screen, src, x, y);
 end;
@@ -1437,7 +1438,7 @@ begin
   DrawBitmapPart(src, source, Round(position.x), Round(position.y));
 end;
 
-procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : LongInt); overload;
+procedure DrawBitmapPartOnScreen(src : Bitmap; const source: Rectangle; x, y : Longint); overload;
 begin
   DrawBitmapPartOnScreen(src, Round(source.x), Round(source.y), source.width, source.height, x, y);
 end;
@@ -1471,40 +1472,40 @@ end;
 
 //---------------------------------------------------------------------------
 
-procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; x, y: Single); overload;
+procedure DrawCell(dest: Bitmap; src: Bitmap; cell: Longint; x, y: Single); overload;
 begin
   //DrawBitmapPart(dest, src, srcX, srcY, src^.cellW, src^.cellH, x, y);
   DrawBitmapPart(dest, src, BitmapRectangleOfCell(src, cell), Round(x), Round(y));
 end;
 
-procedure DrawCell(dest: Bitmap; src: Bitmap; cell: LongInt; const position: Point2D); overload;
+procedure DrawCell(dest: Bitmap; src: Bitmap; cell: Longint; const position: Point2D); overload;
 begin
   DrawCell(dest, src, cell, Round(position.x), Round(position.y));
 end;
 
-procedure DrawCell(src: Bitmap; cell: LongInt; x, y: Single); overload;
+procedure DrawCell(src: Bitmap; cell: Longint; x, y: Single); overload;
 begin
   DrawCell(screen, src,  cell, ToScreenX(x), ToScreenY(y));
 end;
 
-procedure DrawCell(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+procedure DrawCell(src: Bitmap; cell: Longint; const position: Point2D); overload;
 begin
   DrawCell(src, cell, Round(position.x), Round(position.y));
 end;
 
-procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; x, y: Single); overload;
+procedure DrawCellOnScreen(src: Bitmap; cell: Longint; x, y: Single); overload;
 begin
   DrawCell(screen, src, cell, x, y);
 end;
 
-procedure DrawCellOnScreen(src: Bitmap; cell: LongInt; const position: Point2D); overload;
+procedure DrawCellOnScreen(src: Bitmap; cell: Longint; const position: Point2D); overload;
 begin
   DrawCell(screen, src, cell, position);
 end;
 
 //---------------------------------------------------------------------------
 
-procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; x, y : LongInt); overload;
+procedure DrawBitmapCell(dest: Bitmap; const src: BitmapCell; x, y : Longint); overload;
 begin
   if src.cell = -1 then
     DrawBitmap(dest, src.bmp, x, y)
@@ -1536,7 +1537,7 @@ begin
     DrawCell(src.bmp, src.cell, position);
 end;
 
-procedure DrawBitmapCellOnScreen(const src : BitmapCell; x, y : LongInt); overload;
+procedure DrawBitmapCellOnScreen(const src : BitmapCell; x, y : Longint); overload;
 begin
   if src.cell = -1 then
     DrawBitmapOnScreen(src.bmp, x, y)
@@ -1605,7 +1606,7 @@ begin
   {$ENDIF}
 end;
 
-function BitmapRectangleOfCell(src: Bitmap; cell: LongInt): Rectangle;
+function BitmapRectangleOfCell(src: Bitmap; cell: Longint): Rectangle;
 begin
   
   if (not assigned(src)) or (cell < 0) or (cell >= src^.cellCount) then
@@ -1619,13 +1620,13 @@ begin
   end;
 end;
 
-function BitmapWidth(bmp: Bitmap): LongInt; overload;
+function BitmapWidth(bmp: Bitmap): Longint; overload;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.width;
 end;
 
-function BitmapHeight(bmp: Bitmap): LongInt; overload;
+function BitmapHeight(bmp: Bitmap): Longint; overload;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.height;
@@ -1636,32 +1637,32 @@ begin
   result := (bmp1.bmp = bmp2.bmp) and (bmp1.cell = bmp2.cell);
 end;
 
-function BitmapCellOf(bmp: Bitmap; cell: LongInt): BitmapCell;
+function BitmapCellOf(bmp: Bitmap; cell: Longint): BitmapCell;
 begin
   result.bmp := bmp;
   if cell >= -1 then result.cell := cell
   else result.cell := -1;
 end;
 
-function BitmapWidth(const bmp: BitmapCell): LongInt; overload;
+function BitmapWidth(const bmp: BitmapCell): Longint; overload;
 begin
   if bmp.cell = -1 then result := BitmapWidth(bmp.bmp)
   else result := BitmapCellWidth(bmp.bmp);
 end;
 
-function BitmapHeight(const bmp: BitmapCell): LongInt; overload;
+function BitmapHeight(const bmp: BitmapCell): Longint; overload;
 begin
   if bmp.cell = -1 then result := BitmapHeight(bmp.bmp)
   else result := BitmapCellHeight(bmp.bmp);
 end;
 
-function BitmapCellWidth(bmp: Bitmap): LongInt;
+function BitmapCellWidth(bmp: Bitmap): Longint;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.cellW;
 end;
 
-function BitmapCellHeight(bmp: Bitmap): LongInt;
+function BitmapCellHeight(bmp: Bitmap): Longint;
 begin
   if not assigned(bmp) then result := 0
   else result := bmp^.cellH;
@@ -1681,7 +1682,7 @@ begin
   result:=bmp^.filename;
 end;
 
-function BitmapCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
+function BitmapCircle(bmp: Bitmap; x, y: Longint): Circle; overload;
 begin
   result := BitmapCircle(bmp, PointAt(x, y));
 end;
@@ -1705,7 +1706,7 @@ begin
 end;
 
 
-function BitmapCellCircle(bmp: Bitmap; x, y: LongInt): Circle; overload;
+function BitmapCellCircle(bmp: Bitmap; x, y: Longint): Circle; overload;
 begin
   result := BitmapCellCircle(bmp, PointAt(x, y));
 end;

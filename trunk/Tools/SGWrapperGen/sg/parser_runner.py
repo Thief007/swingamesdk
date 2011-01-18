@@ -45,9 +45,10 @@ def _add_parameter(the_method, param):
     
 
 def method_process_visitor(the_method, other):
-    '''Process a method prior to rendering'''
+    '''Process a method prior to rendering. This does all of the transformations
+    that go into the functions and procedures of the SGSDK unit.'''
     
-    #Change functions with string or array return type to have a result property
+    # Change functions with string or array return type to have a result parameter
     if the_method.return_type != None and (the_method.return_type.wraps_array or the_method.return_type.name.lower() in ['string']):
         #print 'PARS RUN PARAMS', [p.name for p in the_method.params]
         result_param = SGParameter('result')
@@ -74,11 +75,11 @@ def method_process_visitor(the_method, other):
         if param.data_type.array_wrapper:
             the_method.has_length_params = True
             logger.debug('PARSER RUN: Altering variable length array of %s\'s parameter %s', the_method.name, param.name)
-            old_type = param.data_type
+            # old_type = param.data_type
             #param.data_type = param.data_type #.fields[0].data_type
             len_param = SGParameter('%s_len' % param.name)
             len_param.is_length_param = True
-            len_param.data_type = find_or_add_type('LongInt')
+            len_param.data_type = find_or_add_type('Longint')
             len_param.modifier = param.modifier if param.modifier is ['out', 'var'] else None
             len_param.length_of = param
             param.has_length_param = True
@@ -99,7 +100,7 @@ def run_for_all_units(file_visitor):
     '''
     parse_all_units()
     visit_all_units(file_visitor)
-    
+
 def parse_all_units():
     parser = SGPasParser()
     
@@ -118,9 +119,7 @@ def parse_all_units():
     
     # Tell the lib file about each of the known (or discovered) unit files
     lib_file.uses.extend([ f for f in all_files().values() if f != lib_file ] )
-    
     lib_file.members.append(find_or_add_class('lib'))
-    
     post_parse_process(lib_file)
 
 def visit_all_units(file_visitor):    

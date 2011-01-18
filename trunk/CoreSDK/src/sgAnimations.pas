@@ -68,22 +68,22 @@ interface
   /// The index of the animation within the animation template that has the supplied name.
   ///
   /// @lib
-  /// @sn animationTemplate:%s indexOfAnimation:%s
+  /// @sn animationScript:%s indexOfAnimation:%s
   ///
   /// @class AnimationScript
   /// @method IndexOfAnimation
   /// @csn indexOfAnimation:%s
-  function AnimationIndex(temp: AnimationScript; name: String): LongInt;
+  function AnimationIndex(temp: AnimationScript; name: String): Longint;
   
   /// The name of the animation within the animation template at the specified index.
   ///
   /// @lib
-  /// @sn animationTemplate:%s nameOfAnimation:%s
+  /// @sn animationScript:%s nameOfAnimation:%s
   ///
   /// @class AnimationScript
   /// @method NameOfAnimation
   /// @csn nameOfAnimation:%s
-  function AnimationName(temp: AnimationScript; idx: LongInt): String;
+  function AnimationName(temp: AnimationScript; idx: Longint): String;
   
   
   
@@ -165,7 +165,7 @@ interface
   /// @class Animation
   /// @constructor
   /// @csn initAtIndex:%s from:%s withSound:%s
-  function CreateAnimation(identifier: LongInt;  frames: AnimationScript; withSound: Boolean): Animation; overload;
+  function CreateAnimation(identifier: Longint;  frames: AnimationScript; withSound: Boolean): Animation; overload;
   
   /// Creates an animation from an `AnimationScript`. This may play a sound effect
   /// if the animation is set to play a sound effect on its first frame.
@@ -176,7 +176,7 @@ interface
   /// @class Animation
   /// @constructor
   /// @csn initAtIndex:%s from:%s
-  function CreateAnimation(identifier: LongInt;  frames: AnimationScript): Animation; overload;
+  function CreateAnimation(identifier: Longint;  frames: AnimationScript): Animation; overload;
   
   /// Disposes of the resources used in the animation.
   ///
@@ -223,7 +223,7 @@ interface
   /// @class Animation
   /// @method AssignAnimation
   /// @csn assignAnimation:%s from:%s
-  procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationScript); overload;
+  procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript); overload;
   
   /// Assign a new starting animation to the passed in animation from the `AnimationScript`.
   /// This may play a sound if the first frame of the animation is linked to a sound effect, and 
@@ -235,7 +235,7 @@ interface
   /// @class Animation
   /// @overload AssignAnimation AssignAnimationWithSound
   /// @csn assignAnimation:%s from:%s withSound:%s
-  procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationScript; withSound: Boolean); overload;
+  procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript; withSound: Boolean); overload;
   
   
   
@@ -252,7 +252,7 @@ interface
   /// @class Animation
   /// @method DrawBitmap
   /// @csn drawBitmap:%s x:%s y:%s
-  procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+  procedure DrawAnimation(ani: Animation; bmp: Bitmap; x,y: Longint); overload;
   
   /// Uses the animation information to draw a bitmap at the specified
   /// point.
@@ -275,7 +275,7 @@ interface
   /// @overload DrawBitmap DrawBitmapOnto
   /// @self 2
   /// @csn drawOnto:%s bitmap:%s x:%s y:%s
-  procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+  procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: Longint); overload;
   
   /// Uses the animation information to draw a bitmap at the specified
   /// point on a destination bitmap.
@@ -297,7 +297,7 @@ interface
   /// @class Animation
   /// @method DrawBitmapOnScreen
   /// @csn drawBitmap:%s onScreenAtX:%s y:%s
-  procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+  procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: Longint); overload;
   
   /// Uses the animation information to draw a bitmap to the screen at the specified
   /// point.
@@ -393,7 +393,7 @@ interface
   ///
   /// @class Animation
   /// @getter CurrentCell
-  function AnimationCurrentCell(anim: Animation): LongInt;
+  function AnimationCurrentCell(anim: Animation): Longint;
   
   /// Returns true if the animation entered a new frame on its last update.
   /// This can be used to trigger actions on frames within an animation.
@@ -429,23 +429,23 @@ var
 function DoLoadAnimationScript(name, filename: String) : AnimationScript;
 type
   RowData = record
-    id,cell,dur,next: LongInt;
+    id,cell,dur,next: Longint;
     snd: SoundEffect;
   end;
   IdData = record
     name: String;
-    startId: LongInt;
+    startId: Longint;
   end;
 var
   rows: Array of RowData;
   ids: Array of IdData;
   input: Text; //the bundle file
   line, id, data, path: String;
-  lineNo, maxId: LongInt;
+  lineNo, maxId: Longint;
   
   procedure AddRow(myRow: RowData);
   var
-    j: LongInt;
+    j: Longint;
   begin
     // Check if beyond current range
     if myRow.id > maxId then
@@ -478,7 +478,7 @@ var
 
   procedure AddID(myId: IdData);
   var
-    j: LongInt;
+    j: Longint;
   begin
     // Check if name is already in ids
     for j := 0 to High(ids) do
@@ -514,8 +514,8 @@ var
   
   procedure ProcessMultiFrame();
   var
-    id_range, cell_range: Array of LongInt;
-    dur, next, j: LongInt;
+    id_range, cell_range: Array of Longint;
+    dur, next, j: Longint;
     myRow: RowData;
   begin
     if CountDelimiterWithRanges(data, ',') <> 3 then
@@ -568,7 +568,7 @@ var
   
   procedure ProcessSound();
   var
-    id: LongInt;
+    id: Longint;
     sndId, sndFile: String;
   begin
     if CountDelimiter(data, ',') <> 2 then
@@ -623,7 +623,7 @@ var
   procedure BuildFrameLists();
   var
     frames: Array of AnimationFrame;
-    j, nextIdx, addedIdx: LongInt;
+    j, nextIdx, addedIdx: Longint;
   begin
     SetLength(frames, Length(rows));
     
@@ -681,7 +681,7 @@ var
   
   procedure MakeFalse(var visited: Array of Boolean);
   var
-    i: LongInt;
+    i: Longint;
   begin
     for i := 0 to High(visited) do
     begin
@@ -706,7 +706,7 @@ var
   // Animations with loops must have a duration > 0 for at least one frame
   procedure CheckAnimationLoops();
   var
-    i: LongInt;
+    i: Longint;
     done: Boolean;
     visited: Array of Boolean;
     current: AnimationFrame;
@@ -883,7 +883,7 @@ end;
 
 procedure DoFreeAnimationScript(var frm: AnimationScript);
 var
-  i: LongInt;
+  i: Longint;
 begin
   FreeNamedIndexCollection(frm^.animationIds);
   
@@ -930,7 +930,7 @@ begin
   {$ENDIF}
 end;
 
-function StartFrame(id: LongInt; temp: AnimationScript) : AnimationFrame;
+function StartFrame(id: Longint; temp: AnimationScript) : AnimationFrame;
 begin
   result := nil;
   if temp = nil then exit;
@@ -959,7 +959,7 @@ begin
   end;
 end;
 
-function CreateAnimation(identifier: LongInt;  frames: AnimationScript; withSound: Boolean): Animation; overload;
+function CreateAnimation(identifier: Longint;  frames: AnimationScript; withSound: Boolean): Animation; overload;
 begin
   result := nil;
   if frames = nil then exit;
@@ -968,7 +968,7 @@ begin
   AssignAnimation(result, identifier, frames, withSound)
 end;
 
-function CreateAnimation(identifier: LongInt;  frames: AnimationScript): Animation; overload;
+function CreateAnimation(identifier: Longint;  frames: AnimationScript): Animation; overload;
 begin
   result := CreateAnimation(identifier, frames, True);
 end;
@@ -996,12 +996,12 @@ begin
   AssignAnimation(anim, AnimationIndex(frames, name), frames, withSound);
 end;
 
-procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationScript); overload;
+procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript); overload;
 begin
   AssignAnimation(anim, idx, frames, true);
 end;
 
-procedure AssignAnimation(anim: Animation; idx: LongInt; frames: AnimationScript; withSound: Boolean); overload;
+procedure AssignAnimation(anim: Animation; idx: Longint; frames: AnimationScript; withSound: Boolean); overload;
 begin
   if (not assigned(anim)) or (not assigned(frames)) then exit;
   if (idx < 0) or (idx > High(frames^.animations)) then 
@@ -1082,7 +1082,7 @@ begin
 end;
 
 
-function AnimationCurrentCell(anim: Animation): LongInt;
+function AnimationCurrentCell(anim: Animation): Longint;
 begin
   if not assigned(anim) then
     result := 0 //no animation - return the first frame
@@ -1111,7 +1111,7 @@ begin
 end;
 
 
-procedure DrawAnimation(ani: Animation; bmp: Bitmap; x, y: LongInt); overload;
+procedure DrawAnimation(ani: Animation; bmp: Bitmap; x, y: Longint); overload;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgAnimations', 'DrawAnimation', ''); try
@@ -1137,7 +1137,7 @@ begin
   {$ENDIF}
 end;
 
-procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+procedure DrawAnimation(dest: Bitmap; ani: Animation; bmp: Bitmap; x,y: Longint); overload;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgAnimations', 'DrawAnimation', ''); try
@@ -1163,7 +1163,7 @@ begin
   {$ENDIF}
 end;
 
-procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: LongInt); overload;
+procedure DrawAnimationOnScreen(ani: Animation; bmp: Bitmap; x,y: Longint); overload;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgAnimations', 'DrawAnimationOnScreen', ''); try
@@ -1190,13 +1190,13 @@ begin
 end;
 
 
-function AnimationIndex(temp: AnimationScript; name: String): LongInt;
+function AnimationIndex(temp: AnimationScript; name: String): Longint;
 begin
   if not assigned(temp) then result := -1
   else result := IndexOf(temp^.animationIds, name);
 end;
 
-function AnimationName(temp: AnimationScript; idx: LongInt): String;
+function AnimationName(temp: AnimationScript; idx: Longint): String;
 begin
   if not assigned(temp) then result := ''
   else result := NameAt(temp^.animationIds, idx);

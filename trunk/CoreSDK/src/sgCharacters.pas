@@ -90,7 +90,7 @@ interface
   ///
   /// @class Character
   /// @setter CurrentState
-  procedure CharacterSetCurrentState(c: Character; state: LongInt); 
+  procedure CharacterSetCurrentState(c: Character; state: Longint); 
     
   /// Sets the current direction of the character
   ///
@@ -99,7 +99,7 @@ interface
   ///
   /// @class Character
   /// @setter CurrentDirection  
-  procedure CharacterSetCurrentDirection(c: Character; direction: LongInt);
+  procedure CharacterSetCurrentDirection(c: Character; direction: Longint);
     
   /// Returns the index of the current state of the character
   ///
@@ -107,7 +107,7 @@ interface
   ///
   /// @class Character
   /// @getter CurrentState
-  function CharacterCurrentState(c: Character): LongInt;
+  function CharacterCurrentState(c: Character): Longint;
     
   /// Returns the index of the current direction of the character
   ///
@@ -115,7 +115,7 @@ interface
   ///
   /// @class Character
   /// @getter CurrentDirection
-  function CharacterCurrentDirection(c: Character): LongInt;
+  function CharacterCurrentDirection(c: Character): Longint;
   
   /// Returns the count of the amount of directions that the character has
   ///
@@ -123,7 +123,7 @@ interface
   ///
   /// @class Character
   /// @getter DirectionCount
-  function CharacterDirectionCount(c: Character): LongInt;
+  function CharacterDirectionCount(c: Character): Longint;
     
   /// Returns all of the possible directions of the character
   ///
@@ -140,7 +140,7 @@ interface
   ///
   /// @class Character
   /// @getter StateCount
-  function CharacterStateCount(c: Character): LongInt;
+  function CharacterStateCount(c: Character): Longint;
     
   /// Returns all of the possible directions of the character
   ///
@@ -165,7 +165,7 @@ interface
   ///
   /// @class Character
   /// @method AngleAt
-  function CharacterAngleAt(c: Character; index: LongInt): DirectionAngles;  
+  function CharacterAngleAt(c: Character; index: Longint): DirectionAngles;  
   
   /// Returns the count of the Angles of the character
   ///
@@ -173,7 +173,7 @@ interface
   ///
   /// @class Character
   /// @getter AngleLength
-  function CharacterAnglesLength(c: Character): LongInt;    
+  function CharacterAnglesLength(c: Character): Longint;    
   
   /// Returns the minimum angle in the DirectionAngles record at the index
   /// specified
@@ -183,7 +183,7 @@ interface
   ///
   /// @class Character
   /// @method AngleMinAt
-  function CharacterAngleMinAt(c: Character; index: LongInt): LongInt;
+  function CharacterAngleMinAt(c: Character; index: Longint): Longint;
   
   /// Returns the maximum angle in the DirectionAngles record at the index
   /// specified
@@ -193,7 +193,7 @@ interface
   ///
   /// @class Character
   /// @method AngleMaxAt
-  function CharacterAngleMaxAt(c: Character; index : LongInt): LongInt;
+  function CharacterAngleMaxAt(c: Character; index : Longint): Longint;
   
   
   
@@ -207,7 +207,7 @@ interface
   ///
   /// @class Character
   /// @getter ValueCount 
-  function CharacterValueCount(c: Character) : LongInt;
+  function CharacterValueCount(c: Character) : Longint;
   
   /// Returns the names of all of the values of the character
   ///
@@ -226,7 +226,7 @@ interface
   /// @class Character
   /// @method Value
   /// @csn valueAtIndex:%s
-  function CharacterValueAt(c: Character; index: LongInt): Single;
+  function CharacterValueAt(c: Character; index: Longint): Single;
   
   /// Set the value of the character.
   ///
@@ -246,7 +246,7 @@ interface
   /// @class Character
   /// @overload SetValue SetValueIdx
   /// @csn setValue:%s to:%s
-  procedure CharacterSetValue(c: Character; idx: LongInt; val: Single); overload;
+  procedure CharacterSetValue(c: Character; idx: Longint; val: Single); overload;
   
   
   
@@ -295,7 +295,7 @@ interface
   /// @class Character
   /// @method UpdateDirectionAnimationWithStationary
   /// @csn stationaryState:%s newState:%s
-  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: LongInt) : Boolean;
+  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: Longint) : Boolean;
   
   /// Toggles whether or not the layer at the specified index is drawn or not
   ///
@@ -304,15 +304,16 @@ interface
   ///
   /// @class Character
   /// @method ToggleVisibility 
-  procedure ToggleLayerVisibility(c: Character; index: LongInt);
+  procedure ToggleLayerVisibility(c: Character; index: Longint);
   
   /// Returns whether or not the layer at the selected index is drawn
   ///
   /// @lib
+  /// @sn character:%s shownLayersAt:%s
   ///
   /// @class Character
-  /// @method LayerShownAt 
-  function CharacterShownLayersAt(c: Character; index: LongInt) : Boolean;
+  /// @method LayerShownAt
+  function CharacterShownLayersAt(c: Character; index: Longint) : Boolean;
   
   
   
@@ -329,7 +330,7 @@ interface
   /// @class Character
   /// @method DrawCharacterWithStationary
   /// @csn stationaryState:%s state:%s
-  procedure DrawCharacterWithStationary(c: Character; stationaryState, state: LongInt);
+  procedure DrawCharacterWithStationary(c: Character; stationaryState, state: Longint);
   
   /// Draw Character without a stationary state with default facing down when not moving   
   ///
@@ -439,7 +440,7 @@ implementation
     _Characters : TStringHash;
   
   type
-    LayerCache = array of array of array of LongInt;
+    LayerCache = array of array of array of Longint;
   
   /// Returns a new LayerCache. This is usually used when the values of the layers change
   /// such as the order or visibility
@@ -486,7 +487,7 @@ implementation
   // Character Directions and States
   //--------------------------------------------------------------------------- 
   
-  procedure CharacterSetCurrentState(c: Character; state: LongInt);
+  procedure CharacterSetCurrentState(c: Character; state: Longint);
   begin
     if not Assigned(c) then exit;
     if c^.CurrentState = state then exit;                                      // if current state is the stationary state then exit
@@ -496,25 +497,25 @@ implementation
     SpriteStartAnimation(c^.CharSprite, c^.ShownLayersByDirState[c^.CurrentState, c^.CurrentDirection].Anim); // Restart the animation for the animation at the index
   end;
   
-  function CharacterCurrentState(c: Character): LongInt;
+  function CharacterCurrentState(c: Character): Longint;
   begin
     if not Assigned(c) then exit;
     result := c^.CurrentState;
   end;
   
-  function CharacterCurrentDirection(c: Character): LongInt;
+  function CharacterCurrentDirection(c: Character): Longint;
   begin
     if not Assigned(c) then exit;
     result := c^.CurrentDirection;
   end;
   
-  procedure CharacterSetCurrentDirection(c: Character; direction: LongInt);
+  procedure CharacterSetCurrentDirection(c: Character; direction: Longint);
   begin
     if not Assigned(c) then exit;
     c^.CurrentDirection := direction;
   end;
   
-  function CharacterDirectionCount(c: Character) : LongInt;
+  function CharacterDirectionCount(c: Character) : Longint;
   begin
     if not Assigned(c) then exit;
     result := NameCount(c^.Directions);
@@ -526,7 +527,7 @@ implementation
     result := c^.Directions.names;
   end;
   
-  function CharacterStateCount(c: Character) : LongInt;
+  function CharacterStateCount(c: Character) : Longint;
   begin
     if not Assigned(c) then exit;
     result := NameCount(c^.States);
@@ -542,25 +543,25 @@ implementation
   // Character Angles
   //--------------------------------------------------------------------------- 
       
-  function CharacterAngleAt(c: Character; index : LongInt): DirectionAngles;
+  function CharacterAngleAt(c: Character; index : Longint): DirectionAngles;
   begin
     if not Assigned(c) then exit;
     result := c^.DirectionParameters[index];
   end;
   
-  function CharacterAnglesLength(c: Character): LongInt;
+  function CharacterAnglesLength(c: Character): Longint;
   begin
     if not Assigned(c) then exit;
     result := Length(c^.DirectionParameters);
   end;
   
-  function CharacterAngleMinAt(c: Character; index : LongInt): LongInt;
+  function CharacterAngleMinAt(c: Character; index : Longint): Longint;
   begin
     if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].min;
   end;
   
-  function CharacterAngleMaxAt(c: Character; index : LongInt): LongInt;
+  function CharacterAngleMaxAt(c: Character; index : Longint): Longint;
   begin
     if not Assigned(c) then exit;
     result := c^.DirectionParameters[index].max;
@@ -578,7 +579,7 @@ implementation
     result := SpriteValueNames(c^.CharSprite);
   end;
   
-  function CharacterValueAt(c: Character; index: LongInt): Single;
+  function CharacterValueAt(c: Character; index: Longint): Single;
   begin
     result := 0;
     if not Assigned(c) then exit;
@@ -586,7 +587,7 @@ implementation
     result := c^.CharSprite^.values[index];
   end;
   
-  function CharacterValueCount(c: Character): LongInt;
+  function CharacterValueCount(c: Character): Longint;
   begin
     result := -1;
     if not Assigned(c) then exit;
@@ -601,7 +602,7 @@ implementation
     SpriteSetValue(c^.CharSprite, name, val);
   end;
   
-  procedure CharacterSetValue(c: Character; idx: LongInt; val: Single); overload;
+  procedure CharacterSetValue(c: Character; idx: Longint; val: Single); overload;
   begin
     if not assigned(c) then exit;
     
@@ -639,13 +640,13 @@ implementation
     c^.CharSprite^.visibleLayers := c^.ShownLayerCache[c^.CurrentState, c^.CurrentDirection];
   end;
   
-  function CharacterShownLayersAt(c: Character; index: LongInt) : Boolean;
+  function CharacterShownLayersAt(c: Character; index: Longint) : Boolean;
   begin
     if not Assigned(c) then exit;
     result := c^.ShownLayers[index];
   end;
    
-  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: LongInt) : Boolean;
+  function UpdateDirectionAnimationWithStationary(c: Character; state, newState: Longint) : Boolean;
   begin
     result := false;
     if not Assigned(c) then exit;
@@ -671,7 +672,7 @@ implementation
   
   function UpdateDirectionAnimation(c: Character) : Boolean;
   var
-    i : LongInt;
+    i : Longint;
     angle : single;
   begin
     if not Assigned(c) then exit;
@@ -703,7 +704,7 @@ implementation
   // Layer cache is a 3d array for states, directions and layers
   function UpdateShownLayerCache(c: Character): LayerCache;
   var
-    states, directions, layers, count : LongInt;
+    states, directions, layers, count : Longint;
   begin
     if not Assigned(c) then exit;
     SetLength(result, NameCount(c^.States), NameCount(c^.Directions));
@@ -726,7 +727,7 @@ implementation
     end;    
   end;
   
-  procedure ToggleLayerVisibility(c: Character; index: LongInt);
+  procedure ToggleLayerVisibility(c: Character; index: Longint);
   begin
     if not Assigned(c) then exit;
     c^.ShownLayers[index] := not c^.ShownLayers[index];     // Invert the boolean of the shown layer  for the specified index
@@ -739,7 +740,7 @@ implementation
   // Handle Character Drawing
   //---------------------------------------------------------------------------   
   
-  procedure DrawCharacterWithStationary(c: character; stationaryState, state: LongInt);
+  procedure DrawCharacterWithStationary(c: character; stationaryState, state: Longint);
   begin
     if not Assigned(c) then exit;
     
@@ -768,7 +769,7 @@ implementation
   var
     bmpArray: array of Bitmap;
     data, line, id: string;
-    lineno, w, h, cols, rows, count, colliIndex: LongInt;
+    lineno, w, h, cols, rows, count, colliIndex: Longint;
     aniTemp: AnimationScript;
     bmpIDs, tempValueIDs: StringArray;
     singleValues: array of Single;
@@ -818,7 +819,7 @@ implementation
     
     procedure SetDirections();
     var
-      i, dirCount: LongInt;
+      i, dirCount: Longint;
     begin
       result^.CurrentDirection := StrToInt(ExtractDelimited(1, data, [',']));
       dirCount := StrToInt(ExtractDelimited(2, data, [',']));
@@ -834,7 +835,7 @@ implementation
     
     procedure SetStates();
     var
-      i: LongInt;
+      i: Longint;
     begin
       result^.CurrentState := StrToInt(ExtractDelimited(1, data, [',']));
       InitNamedIndexCollection(result^.States);
@@ -847,7 +848,7 @@ implementation
     
     procedure SetAngles();
     var
-      i: LongInt;
+      i: Longint;
       dirName: String;
     begin
       dirName := Trim(ExtractDelimited(1, data, [',']));
@@ -867,7 +868,7 @@ implementation
     
     procedure SetDirectionStateDetails();
     var
-      dirIndex, stateIndex: LongInt;
+      dirIndex, stateIndex: Longint;
     begin
       stateIndex := IndexOf(result^.States, ExtractDelimited(1, data, [',']));
       dirIndex   := IndexOf(result^.Directions, ExtractDelimited(2, data, [',']));
@@ -884,7 +885,7 @@ implementation
     
     procedure SetShownLayersBooleans();
     var
-      i: LongInt;
+      i: Longint;
       draw: string;
     begin     
       SetLength(result^.ShownLayers, Length(bmpArray));
@@ -949,7 +950,7 @@ implementation
         RaiseException('Error in character ' + filename + '. Character files must start with "SwinGame Character #v1"');     
     end;
     
-  var i: LongInt;
+  var i: Longint;
   begin
   
     {$IFDEF TRACE}
@@ -1010,7 +1011,7 @@ implementation
       SpriteAddValue(result^.CharSprite, tempValueIDs[i], singleValues[i]);
     end;
     
-    // result^.CharSprite^.animationTemplate := aniTemp;
+    // result^.CharSprite^.animationScript := aniTemp;
     if colliIndex <> -1 then SpriteSetCollisionBitmap(result^.CharSprite, bmpArray[colliIndex]);
     result^.ShownLayerCache := UpdateShownLayerCache(result);
     SetActiveLayer(result);

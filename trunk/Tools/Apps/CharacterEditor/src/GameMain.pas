@@ -173,7 +173,7 @@ end;
 
 procedure Main();
 var
-	prevMode: LongInt; // Stores previous mode value so the program knows when to Update panels
+	prevMode: Longint; // Stores previous mode value so the program knows when to Update panels
 	p : PanelArray; //Panel Array for the editor (toolbar, file)
 	sharedVals : EditorValues;  //Editor record
 	BitmapMode : BitmapEditorValues;  //Bitmap Editor Record

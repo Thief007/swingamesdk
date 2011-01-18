@@ -940,7 +940,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                     elif the_method.length_call != None:
                         # print the_method.name, local_var.data_type.name, ' = ', details['length_call']
                         #FIX THIS...
-                        assert local_var.data_type.name in ['LongIntArray','Point2DArray','TriangleArray','StringArray','LinesArray','BitmapArray']
+                        assert local_var.data_type.name in ['LongintArray','Point2DArray','TriangleArray','StringArray','LinesArray','BitmapArray']
                         
                         if local_var.data_type.name == 'StringArray':
                             temp_process_params = '%s = WrapperUtils.ResultStringArray(%s);' % (local_var.name, details['length_call'].replace('return ', '') )
@@ -949,7 +949,7 @@ def method_visitor(the_method, other, as_accessor_name = None):
                         else:
                             temp_process_params = '%s = new %s[%s];\n    ' % (
                                 local_var.name,
-                                'int' if local_var.data_type.name in ['LongIntArray'] \
+                                'int' if local_var.data_type.name in ['LongintArray'] \
                                 else 'Point2D' if local_var.data_type.name in ['Point2DArray', 'TriangleArray'] \
                                 else 'LineSegment' if local_var.data_type.name in ['LinesArray'] \
                                 else 'IntPtr' if local_var.data_type.name in ['BitmapArray'] \
@@ -1455,7 +1455,7 @@ def _post_process_method(method):
         #             var_name = param.length_of.local_var_name() + '_length'
         # 
         #             local_var = SGParameter(var_name)
-        #             local_var.data_type = find_or_add_type('LongInt')
+        #             local_var.data_type = find_or_add_type('Longint')
         #             local_var.modifier = param.modifier
         # 
         #             method.local_vars.append(local_var)

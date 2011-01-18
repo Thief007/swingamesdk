@@ -15,7 +15,7 @@
 // - 2009-06-23: Clinton: Comment formatting/cleanup
 //
 // Version 2:
-// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-17: Andrew : Moved all integers to Longint
 //
 // Version 1.1.6:
 // - 2008-05-09: Andrew : Introduced unit
@@ -57,15 +57,15 @@ uses
   
   // These vars are read in from the config file
   var 
-    MAX_LINES: LongInt; //default 10000
-    MAX_LOGS: LongInt;  //default 10
+    MAX_LINES: Longint; //default 10000
+    MAX_LOGS: Longint;  //default 10
     TRACE_UNITS: TStringHash;
     TRACE_LEVEL: TraceLevel;
   
   var 
-    indentLevel: LongInt;
-    lineCount: LongInt;
-    traceLog: LongInt;
+    indentLevel: Longint;
+    lineCount: Longint;
+    traceLog: Longint;
     output: Text;
   
   procedure ConfigureTrace();
@@ -78,7 +78,7 @@ uses
     idx: Integer;
     inUnits: Boolean;
     
-    function ReadInteger(start, default: LongInt): LongInt;
+    function ReadInteger(start, default: Longint): Longint;
     var
       subStr: String;
     begin

@@ -107,8 +107,8 @@ OpenGraphicsWindow = _decorate(
     '''OpenGraphicsWindow(caption, width, height) -> None
 
 caption PChar
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -138,8 +138,8 @@ ChangeScreenSize = _decorate(
     None,
     '''ChangeScreenSize(width, height) -> None
 
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -159,7 +159,7 @@ RefreshScreenWithFrame = _decorate(
     None,
     '''RefreshScreenWithFrame(TargetFPS) -> None
 
-TargetFPS LongInt'''
+TargetFPS Longint'''
 )
 
 
@@ -356,7 +356,7 @@ ShowMouse = _decorate(
     None,
     '''ShowMouse(show) -> None
 
-show LongInt'''
+show Longint'''
 )
 
 
@@ -441,10 +441,10 @@ StartReadingText = _decorate(
     '''StartReadingText(textColor, maxLength, theFont, x, y) -> None
 
 textColor Colour
-maxLength LongInt
+maxLength Longint
 theFont Font
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -484,7 +484,7 @@ IsKeyPressed = _decorate(
     c_int,
     '''IsKeyPressed(virtKeyCode) -> c_int
 
-virtKeyCode LongInt'''
+virtKeyCode Longint'''
 )
 
 
@@ -494,7 +494,7 @@ WasKeyTyped = _decorate(
     c_int,
     '''WasKeyTyped(virtKeyCode) -> c_int
 
-virtKeyCode LongInt'''
+virtKeyCode Longint'''
 )
 
 
@@ -575,7 +575,7 @@ PlaySoundEffectLoop = _decorate(
     '''PlaySoundEffectLoop(effect, loops) -> None
 
 effect SoundEffect
-loops LongInt'''
+loops Longint'''
 )
 
 
@@ -586,7 +586,7 @@ PlayMusic = _decorate(
     '''PlayMusic(mus, loops) -> None
 
 mus Music
-loops LongInt'''
+loops Longint'''
 )
 
 
@@ -637,7 +637,7 @@ LoadFont = _decorate(
     '''LoadFont(fontName, size) -> c_void_p
 
 fontName PChar
-size LongInt'''
+size Longint'''
 )
 
 
@@ -689,8 +689,8 @@ theFont Font
 align FontAlignment
 x Single
 y Single
-w LongInt
-h LongInt'''
+w Longint
+h Longint'''
 )
 
 
@@ -703,8 +703,8 @@ DrawTextOnScreen = _decorate(
 theText PChar
 textColor Colour
 theFont Font
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -719,10 +719,10 @@ textColor Colour
 backColor Colour
 theFont Font
 align FontAlignment
-x LongInt
-y LongInt
-w LongInt
-h LongInt'''
+x Longint
+y Longint
+w Longint
+h Longint'''
 )
 
 
@@ -736,8 +736,8 @@ dest Bitmap
 theText PChar
 textColor Colour
 theFont Font
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -753,10 +753,10 @@ textColor Colour
 backColor Colour
 theFont Font
 align FontAlignment
-x LongInt
-y LongInt
-w LongInt
-h LongInt'''
+x Longint
+y Longint
+w Longint
+h Longint'''
 )
 
 
@@ -788,8 +788,8 @@ DrawFramerate = _decorate(
     None,
     '''DrawFramerate(x, y, font) -> None
 
-x LongInt
-y LongInt
+x Longint
+y Longint
 font Font'''
 )
 
@@ -812,8 +812,8 @@ IsSpriteOnScreenAt = _decorate(
     '''IsSpriteOnScreenAt(theSprite, x, y) -> c_int
 
 theSprite Sprite
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -835,7 +835,7 @@ HasSpriteCollidedX = _decorate(
     '''HasSpriteCollidedX(theSprite, x, range) -> c_int
 
 theSprite Sprite
-x LongInt
+x Longint
 range CollisionDetectionRange'''
 )
 
@@ -847,7 +847,7 @@ HasSpriteCollidedY = _decorate(
     '''HasSpriteCollidedY(theSprite, y, range) -> c_int
 
 theSprite Sprite
-y LongInt
+y Longint
 range CollisionDetectionRange'''
 )
 
@@ -861,8 +861,8 @@ HasSpriteCollidedWithRect = _decorate(
 theSprite Sprite
 x Single
 y Single
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -887,7 +887,7 @@ theSprite Sprite
 theBitmap Bitmap
 x Single
 y Single
-bounded LongInt'''
+bounded Longint'''
 )
 
 
@@ -901,7 +901,7 @@ theSprite Sprite
 theBitmap Bitmap
 pt Point2D
 src Rectangle
-bounded LongInt'''
+bounded Longint'''
 )
 
 
@@ -912,13 +912,13 @@ HaveBitmapsCollided = _decorate(
     '''HaveBitmapsCollided(image1, x1, y1, bounded1, image2, x2, y2, bounded2) -> c_int
 
 image1 Bitmap
-x1 LongInt
-y1 LongInt
-bounded1 LongInt
+x1 Longint
+y1 Longint
+bounded1 Longint
 image2 Bitmap
-x2 LongInt
-y2 LongInt
-bounded2 LongInt'''
+x2 Longint
+y2 Longint
+bounded2 Longint'''
 )
 
 
@@ -931,11 +931,11 @@ HaveBitmapPartsCollided = _decorate(
 image1 Bitmap
 pt1 Point2D
 src1 Rectangle
-bounded1 LongInt
+bounded1 Longint
 image2 Bitmap
 pt2 Point2D
 src2 Rectangle
-bounded2 LongInt'''
+bounded2 Longint'''
 )
 
 
@@ -1066,8 +1066,8 @@ GetMatrix2DElement = _decorate(
     '''GetMatrix2DElement(matrix, x, y) -> c_float
 
 matrix Matrix2DPtr
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -1078,8 +1078,8 @@ SetMatrix2DElement = _decorate(
     '''SetMatrix2DElement(matrix, x, y, val) -> None
 
 matrix Matrix2DPtr
-x LongInt
-y LongInt
+x Longint
+y Longint
 val Single'''
 )
 
@@ -1152,8 +1152,8 @@ GetPixel = _decorate(
     '''GetPixel(bmp, x, y) -> c_uint32
 
 bmp Bitmap
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -1163,8 +1163,8 @@ GetPixelFromScreen = _decorate(
     c_uint32,
     '''GetPixelFromScreen(x, y) -> c_uint32
 
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -1175,7 +1175,7 @@ GetSpriteBitmap = _decorate(
     '''GetSpriteBitmap(surface, id) -> c_void_p
 
 surface Sprite
-id LongInt'''
+id Longint'''
 )
 
 
@@ -1238,7 +1238,7 @@ SetSpriteCurrentFrame = _decorate(
     '''SetSpriteCurrentFrame(surface, val) -> None
 
 surface Sprite
-val LongInt'''
+val Longint'''
 )
 
 
@@ -1259,7 +1259,7 @@ SetSpriteUsePixelCollision = _decorate(
     '''SetSpriteUsePixelCollision(surface, val) -> None
 
 surface Sprite
-val LongInt'''
+val Longint'''
 )
 
 
@@ -1269,8 +1269,8 @@ CreateBitmap = _decorate(
     c_void_p,
     '''CreateBitmap(width, height) -> c_void_p
 
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -1291,7 +1291,7 @@ LoadBitmapWithTransparentColor = _decorate(
     '''LoadBitmapWithTransparentColor(pathToBitmap, transparent, transparentColor) -> c_void_p
 
 pathToBitmap PChar
-transparent LongInt
+transparent Longint
 transparentColor Colour'''
 )
 
@@ -1356,8 +1356,8 @@ DrawBitmapWithDestination = _decorate(
 
 dest Bitmap
 bitmapToDraw Bitmap
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -1369,12 +1369,12 @@ DrawBitmapPartWithDestination = _decorate(
 
 dest Bitmap
 bitmapToDraw Bitmap
-srcX LongInt
-srcY LongInt
-srcW LongInt
-srcH LongInt
-x LongInt
-y LongInt'''
+srcX Longint
+srcY Longint
+srcW Longint
+srcH Longint
+x Longint
+y Longint'''
 )
 
 
@@ -1386,8 +1386,8 @@ DrawPixelWithDestination = _decorate(
 
 dest Bitmap
 theColour Colour
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -1399,11 +1399,11 @@ DrawRectangleWithDestination = _decorate(
 
 dest Bitmap
 theColour Colour
-filled LongInt
-xPos LongInt
-yPos LongInt
-width LongInt
-height LongInt'''
+filled Longint
+xPos Longint
+yPos Longint
+width Longint
+height Longint'''
 )
 
 
@@ -1415,10 +1415,10 @@ FillRectangleWithDestination = _decorate(
 
 dest Bitmap
 theColour Colour
-xPos LongInt
-yPos LongInt
-width LongInt
-height LongInt'''
+xPos Longint
+yPos Longint
+width Longint
+height Longint'''
 )
 
 
@@ -1430,10 +1430,10 @@ DrawLineWithDestination = _decorate(
 
 dest Bitmap
 theColour Colour
-xPosStart LongInt
-yPosStart LongInt
-xPosEnd LongInt
-yPosEnd LongInt'''
+xPosStart Longint
+yPosStart Longint
+xPosEnd Longint
+yPosEnd Longint'''
 )
 
 
@@ -1445,9 +1445,9 @@ DrawHorizontalLineWithDestination = _decorate(
 
 dest Bitmap
 theColor Color
-y LongInt
-x1 LongInt
-x2 LongInt'''
+y Longint
+x1 Longint
+x2 Longint'''
 )
 
 
@@ -1459,9 +1459,9 @@ DrawVerticalLineWithDestination = _decorate(
 
 dest Bitmap
 theColor Color
-x LongInt
-y1 LongInt
-y2 LongInt'''
+x Longint
+y1 Longint
+y2 Longint'''
 )
 
 
@@ -1473,10 +1473,10 @@ DrawCircleWithDestination = _decorate(
 
 dest Bitmap
 theColour Colour
-filled LongInt
-xc LongInt
-yc LongInt
-radius LongInt'''
+filled Longint
+xc Longint
+yc Longint
+radius Longint'''
 )
 
 
@@ -1488,11 +1488,11 @@ DrawEllipseWithDestination = _decorate(
 
 dest Bitmap
 theColour Colour
-filled LongInt
-xPos LongInt
-yPos LongInt
-width LongInt
-height LongInt'''
+filled Longint
+xPos Longint
+yPos Longint
+width Longint
+height Longint'''
 )
 
 
@@ -1525,10 +1525,10 @@ DrawBitmapPart = _decorate(
     '''DrawBitmapPart(bitmapToDraw, srcX, srcY, srcW, srcH, x, y) -> None
 
 bitmapToDraw Bitmap
-srcX LongInt
-srcY LongInt
-srcW LongInt
-srcH LongInt
+srcX Longint
+srcY Longint
+srcW Longint
+srcH Longint
 x Single
 y Single'''
 )
@@ -1553,11 +1553,11 @@ DrawRectangle = _decorate(
     '''DrawRectangle(theColour, filled, xPos, yPos, width, height) -> None
 
 theColour Colour
-filled LongInt
+filled Longint
 xPos Single
 yPos Single
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -1608,10 +1608,10 @@ DrawCircle = _decorate(
     '''DrawCircle(theColour, filled, xc, yc, radius) -> None
 
 theColour Colour
-filled LongInt
+filled Longint
 xc Single
 yc Single
-radius LongInt'''
+radius Longint'''
 )
 
 
@@ -1622,11 +1622,11 @@ DrawEllipse = _decorate(
     '''DrawEllipse(theColour, filled, xPos, yPos, width, height) -> None
 
 theColour Colour
-filled LongInt
+filled Longint
 xPos Single
 yPos Single
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -1658,10 +1658,10 @@ CreateSpriteMultiFPC = _decorate(
     '''CreateSpriteMultiFPC(image, framesPerCell, frames, width, height) -> c_void_p
 
 image Bitmap
-framesPerCell LongInt
-frames LongInt
-width LongInt
-height LongInt'''
+framesPerCell Longint
+frames Longint
+width Longint
+height Longint'''
 )
 
 
@@ -1671,10 +1671,10 @@ CreateSpriteArrayFPC = _decorate(
     c_void_p,
     '''CreateSpriteArrayFPC(bitLength, bitmaps, framesPerCell, frames) -> c_void_p
 
-bitLength LongInt
+bitLength Longint
 bitmaps BitmapPtr
-framesPerCell LongInt
-frames LongInt'''
+framesPerCell Longint
+frames Longint'''
 )
 
 
@@ -1685,12 +1685,12 @@ CreateSpriteMultiEnding = _decorate(
     '''CreateSpriteMultiEnding(image, isMulti, length, framesPerCell, endingAction, width, height) -> c_void_p
 
 image Bitmap
-isMulti LongInt
-length LongInt
+isMulti Longint
+length Longint
 framesPerCell IntPtr
 endingAction SpriteEndingAction
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -1701,11 +1701,11 @@ CreateSpriteMulti = _decorate(
     '''CreateSpriteMulti(image, isMulti, length, framesPerCell, width, height) -> c_void_p
 
 image Bitmap
-isMulti LongInt
-length LongInt
+isMulti Longint
+length Longint
 framesPerCell IntPtr
-width LongInt
-height LongInt'''
+width Longint
+height Longint'''
 )
 
 
@@ -1715,9 +1715,9 @@ CreateSpriteArrayEnding = _decorate(
     c_void_p,
     '''CreateSpriteArrayEnding(bitLength, bitmaps, length, framesPerCell, endingAction) -> c_void_p
 
-bitLength LongInt
+bitLength Longint
 bitmaps BitmapPtr
-length LongInt
+length Longint
 framesPerCell IntPtr
 endingAction SpriteEndingAction'''
 )
@@ -1729,9 +1729,9 @@ CreateSpriteArray = _decorate(
     c_void_p,
     '''CreateSpriteArray(bitlength, bitmaps, length, framesPerCell) -> c_void_p
 
-bitlength LongInt
+bitlength Longint
 bitmaps BitmapPtr
-length LongInt
+length Longint
 framesPerCell IntPtr'''
 )
 
@@ -1785,7 +1785,7 @@ SetSpriteFramesPerCell = _decorate(
 
 surface Sprite
 framesPerCell IntPtr
-length LongInt'''
+length Longint'''
 )
 
 
@@ -1796,7 +1796,7 @@ GetSpriteFramesPerCell = _decorate(
     '''GetSpriteFramesPerCell(surface, ind) -> c_int
 
 surface Sprite
-ind LongInt'''
+ind Longint'''
 )
 
 
@@ -1961,8 +1961,8 @@ DrawSprite = _decorate(
     '''DrawSprite(spriteToDraw, xOffset, yOffset) -> None
 
 spriteToDraw Sprite
-xOffset LongInt
-yOffset LongInt'''
+xOffset Longint
+yOffset Longint'''
 )
 
 
@@ -1994,8 +1994,8 @@ MoveSpriteTo = _decorate(
     '''MoveSpriteTo(spriteToMove, x, y) -> None
 
 spriteToMove Sprite
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -2026,12 +2026,12 @@ DrawBitmapPartOnScreen = _decorate(
     '''DrawBitmapPartOnScreen(bitmapToDraw, srcX, srcY, srcW, srcH, x, y) -> None
 
 bitmapToDraw Bitmap
-srcX LongInt
-srcY LongInt
-srcW LongInt
-srcH LongInt
-x LongInt
-y LongInt'''
+srcX Longint
+srcY Longint
+srcW Longint
+srcH Longint
+x Longint
+y Longint'''
 )
 
 
@@ -2042,8 +2042,8 @@ DrawBitmapOnScreen = _decorate(
     '''DrawBitmapOnScreen(bitmapToDraw, x, y) -> None
 
 bitmapToDraw Bitmap
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -2054,8 +2054,8 @@ DrawPixelOnScreen = _decorate(
     '''DrawPixelOnScreen(theColour, x, y) -> None
 
 theColour Colour
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -2066,11 +2066,11 @@ DrawRectangleOnScreen = _decorate(
     '''DrawRectangleOnScreen(theColour, filled, xPos, yPos, width, height) -> None
 
 theColour Colour
-filled LongInt
-xPos LongInt
-yPos LongInt
-width LongInt
-height LongInt'''
+filled Longint
+xPos Longint
+yPos Longint
+width Longint
+height Longint'''
 )
 
 
@@ -2081,10 +2081,10 @@ DrawLineOnScreen = _decorate(
     '''DrawLineOnScreen(theColour, xPosStart, yPosStart, xPosEnd, yPosEnd) -> None
 
 theColour Colour
-xPosStart LongInt
-yPosStart LongInt
-xPosEnd LongInt
-yPosEnd LongInt'''
+xPosStart Longint
+yPosStart Longint
+xPosEnd Longint
+yPosEnd Longint'''
 )
 
 
@@ -2095,9 +2095,9 @@ DrawHorizontalLineOnScreen = _decorate(
     '''DrawHorizontalLineOnScreen(theColor, y, x1, x2) -> None
 
 theColor Color
-y LongInt
-x1 LongInt
-x2 LongInt'''
+y Longint
+x1 Longint
+x2 Longint'''
 )
 
 
@@ -2108,9 +2108,9 @@ DrawVerticalLineOnScreen = _decorate(
     '''DrawVerticalLineOnScreen(theColor, x, y1, y2) -> None
 
 theColor Color
-x LongInt
-y1 LongInt
-y2 LongInt'''
+x Longint
+y1 Longint
+y2 Longint'''
 )
 
 
@@ -2121,10 +2121,10 @@ DrawCircleOnScreen = _decorate(
     '''DrawCircleOnScreen(theColour, filled, xc, yc, radius) -> None
 
 theColour Colour
-filled LongInt
-xc LongInt
-yc LongInt
-radius LongInt'''
+filled Longint
+xc Longint
+yc Longint
+radius Longint'''
 )
 
 
@@ -2135,11 +2135,11 @@ DrawEllipseOnScreen = _decorate(
     '''DrawEllipseOnScreen(theColour, filled, xPos, yPos, width, height) -> None
 
 theColour Colour
-filled LongInt
-xPos LongInt
-yPos LongInt
-width LongInt
-height LongInt'''
+filled Longint
+xPos Longint
+yPos Longint
+width Longint
+height Longint'''
 )
 
 
@@ -2189,7 +2189,7 @@ GameX = _decorate(
     c_float,
     '''GameX(x) -> c_float
 
-x LongInt'''
+x Longint'''
 )
 
 
@@ -2199,7 +2199,7 @@ GameY = _decorate(
     c_float,
     '''GameY(y) -> c_float
 
-y LongInt'''
+y Longint'''
 )
 
 
@@ -2242,8 +2242,8 @@ FollowSprite = _decorate(
     '''FollowSprite(spr, xOffset, yOffset) -> None
 
 spr Sprite
-xOffset LongInt
-yOffset LongInt'''
+xOffset Longint
+yOffset Longint'''
 )
 
 
@@ -2254,10 +2254,10 @@ SetClip = _decorate(
     '''SetClip(bmp, x, y, w, h) -> None
 
 bmp Bitmap
-x LongInt
-y LongInt
-w LongInt
-h LongInt'''
+x Longint
+y Longint
+w Longint
+h Longint'''
 )
 
 
@@ -2323,7 +2323,7 @@ EventPositionX = _decorate(
 
 m Map
 anEvent Event
-eventnumber LongInt'''
+eventnumber Longint'''
 )
 
 
@@ -2335,7 +2335,7 @@ EventPositionY = _decorate(
 
 m Map
 anEvent Event
-eventnumber LongInt'''
+eventnumber Longint'''
 )
 
 
@@ -2357,8 +2357,8 @@ SpriteHasCollidedWithMapTile = _decorate(
 
 m Map
 spr Sprite
-collidedX (out) LongInt
-collidedY (out) LongInt
+collidedX (out) Longint
+collidedY (out) Longint
 "out" parameters are used as pointers to store the result.
 '''
 )
@@ -2383,8 +2383,8 @@ MoveSpriteOutOfTile = _decorate(
 
 m Map
 spr Sprite
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -2486,8 +2486,8 @@ GetEventAtTile = _decorate(
     '''GetEventAtTile(m, xIndex, yIndex) -> c_int
 
 m Map
-xIndex LongInt
-yIndex LongInt'''
+xIndex Longint
+yIndex Longint'''
 )
 
 
@@ -2557,7 +2557,7 @@ LineIntersectsWithLines = _decorate(
     '''LineIntersectsWithLines(target, len, data) -> c_int
 
 target LineSegment
-len LongInt
+len Longint
 data LineSegPtr'''
 )
 
@@ -2569,12 +2569,12 @@ HasBitmapCollidedWithRect = _decorate(
     '''HasBitmapCollidedWithRect(image, x, y, rectX, rectY, rectWidth, rectHeight) -> c_int
 
 image Bitmap
-x LongInt
-y LongInt
-rectX LongInt
-rectY LongInt
-rectWidth LongInt
-rectHeight LongInt'''
+x Longint
+y Longint
+rectX Longint
+rectY Longint
+rectWidth Longint
+rectHeight Longint'''
 )
 
 
@@ -2597,10 +2597,10 @@ StartReadingTextWithText = _decorate(
 
 text PChar
 textColor Colour
-maxLength LongInt
+maxLength Longint
 theFont Font
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -2650,8 +2650,8 @@ DrawSimpleFramerate = _decorate(
     None,
     '''DrawSimpleFramerate(x, y) -> None
 
-x LongInt
-y LongInt'''
+x Longint
+y Longint'''
 )
 
 
@@ -2741,7 +2741,7 @@ PlaySoundEffectLoopVolume = _decorate(
     '''PlaySoundEffectLoopVolume(effect, loops, vol) -> None
 
 effect SoundEffect
-loops LongInt
+loops Longint
 vol Single'''
 )
 

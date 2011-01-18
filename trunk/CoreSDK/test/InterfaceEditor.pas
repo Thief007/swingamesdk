@@ -34,7 +34,7 @@ end;
   
 procedure UpdateWorkingPanel();
 var
-  testInt: LongInt;
+  testInt: Longint;
 begin
   
   testInt := 10;
@@ -60,7 +60,7 @@ end;
 
 procedure InitInterface();
 var
-  i: LongInt;
+  i: Longint;
 begin
   SetLength(panels, 10);
   panels[Tabs] := LoadPanel('IETabs.txt');
@@ -117,7 +117,7 @@ end;
 procedure MyUpdateGUI();
 var
   tab, kinds: GUIRadioGroup;
-  i: LongInt;
+  i: Longint;
 begin
   tab := RadioGroupFromId(panels[Tabs], 'UpperTabs');
   

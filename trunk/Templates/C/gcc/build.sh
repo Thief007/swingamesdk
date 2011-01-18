@@ -27,7 +27,7 @@ SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
 LOG_FILE="${APP_PATH}/out.log"
 
-C_FLAGS="-O3 -Wall"
+C_FLAGS="-O3 -Wall -std=c99"
 SG_INC="-I${APP_PATH}/lib/"
 
 GCC_BIN=`which gcc`

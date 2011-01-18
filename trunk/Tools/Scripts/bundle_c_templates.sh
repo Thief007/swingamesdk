@@ -64,9 +64,9 @@ CreateCCode()
     echo "#ifndef SWINGAME" > SwinGame.h
     echo "#define SWINGAME" >> SwinGame.h 
     
-    ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> SwinGame.h
+    ls *.h | grep -v SGSDK | awk '{ printf("#include \"%s\"\n", $1); }' >> SwinGame.h
     cd ${COMMON_C_TEMPLATE_DIR}/lib/
-    ls *.h | grep -v SGSDK.* | awk '{ printf("#include \"%s\"\n", $1); }' >> "${C_GENERATED_DIR}"/lib/SwinGame.h
+    ls *.h | grep -v SGSDK | awk '{ printf("#include \"%s\"\n", $1); }' >> "${C_GENERATED_DIR}"/lib/SwinGame.h
     echo "#endif" >> "${C_GENERATED_DIR}"/lib/SwinGame.h    
 }
 
