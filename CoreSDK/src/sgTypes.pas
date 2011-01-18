@@ -40,15 +40,10 @@ interface
   type
     
     
-    /// @type LongIntArray
+    /// @type LongintArray
     /// @array_wrapper
-    /// @field data: array of LongInt
-    LongIntArray = array of LongInt;
-    
-    /// @type LongIntPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^LongInt
-    LongIntPtr = ^LongInt;
+    /// @field data: array of Longint
+    LongintArray = array of Longint;
     
     /// @type StringArray
     /// @array_wrapper
@@ -59,13 +54,6 @@ interface
     /// @array_wrapper
     /// @field data: array of Single
     SingleArray = array of Single;
-    
-    /// This type is used for mapping arrays out of the Pascal library
-    ///
-    /// @type StringPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^String
-    StringPtr = ^String;
     
     /// The named index collection type is used to maintain a named collection of 
     /// index values that can then be used to lookup the location of the
@@ -93,12 +81,7 @@ interface
     /// @field y: Single
     /// @sameas Point2D
     Vector = Point2D;
-
-    /// @type Point2DPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^Point2D
-    Point2DPtr = ^Point2D;
-
+    
     /// @type Point2DArray
     /// @array_wrapper
     /// @field data: array of Point2D
@@ -107,13 +90,13 @@ interface
     /// @struct Rectangle
     Rectangle = packed record
       x, y: Single;
-      width, height: LongInt;
+      width, height: Longint;
     end;
     
     /// @struct Circle
     Circle = packed record
       center: Point2D;
-      radius: LongInt;
+      radius: Longint;
     end;
 
     /// @struct LineSegment
@@ -129,21 +112,13 @@ interface
 
     /// @type LinesArray
     /// @array_wrapper
-    /// @field data: LineSegmentPtr
+    /// @field data: array of LineSegment
     LinesArray = Array of LineSegment;
     
     /// @type TriangleArray
     /// @array_wrapper
-    /// @field data: TrianglePtr
+    /// @field data: array of Triangle
     TriangleArray = Array of Triangle;
-    
-    /// @type TrianglePtr
-    /// @pointer_wrapper
-    TrianglePtr = ^Triangle;
-    
-    /// @type LineSegmentPtr
-    /// @pointer_wrapper
-    LineSegmentPtr = ^LineSegment;
     
     /// @struct SoundEffectData
     /// @via_pointer
@@ -213,12 +188,7 @@ interface
     /// @field data: array[0..2,0..2] of Single
     /// @sameas Array [0..2,0..2] of Single
     Matrix2D = Array [0..2,0..2] of Single;
-
-    /// @type SinglePtr
-    /// @pointer_wrapper
-    /// @field pointer: ^Single
-    SinglePtr = ^Single;
-
+    
     /// The CollisionSide enumeration is used to indicate the side a collision
     /// has occurred on.
     ///
@@ -253,8 +223,8 @@ interface
     /// @struct AnimationFrameData
     /// @via_pointer
     AnimationFrameData = packed record
-      index:      LongInt;          // The index of the frame in the animation template
-      cellIndex:  LongInt;          // Which cell of the current bitmap is drawn
+      index:      Longint;          // The index of the frame in the animation template
+      cellIndex:  Longint;          // Which cell of the current bitmap is drawn
       sound:      SoundEffect;      // Which sound should be played on entry
       duration:   Single;           // How long should this animation frame play for
       next:       AnimationFrame;   // What is the next frame in this animation
@@ -269,7 +239,7 @@ interface
       filename: String;                       // The filename from which this template was loaded
       
       animationIds: NamedIndexCollection;     // The names and ids of the animations. This links to animations.
-      animations:   LongIntArray;             // The starting index of the animations in this template.
+      animations:   LongintArray;             // The starting index of the animations in this template.
       frames:       Array of AnimationFrame;  // The frames of the animations within this template.
     end;
     
@@ -313,15 +283,15 @@ interface
       filename, name: String;         // Used for locating bitmaps during load/freeing
       surface:        PSDL_Surface;   // The actual bitmap image
       
-      width:  LongInt;        // The width of the bitmap
-      height: LongInt;        // The height of the bitmap
+      width:  Longint;        // The width of the bitmap
+      height: Longint;        // The height of the bitmap
       
       //Used for bitmaps that are made up of cells
-      cellW:      LongInt;    // The width of a cell
-      cellH:      LongInt;    // The height of a cell
-      cellCols:   LongInt;    // The columns of cells in the bitmap
-      cellRows:   LongInt;    // The rows of cells in the bitmap
-      cellCount:  LongInt;    // The total number of cells in the bitmap
+      cellW:      Longint;    // The width of a cell
+      cellH:      Longint;    // The height of a cell
+      cellCols:   Longint;    // The columns of cells in the bitmap
+      cellRows:   Longint;    // The rows of cells in the bitmap
+      cellCount:  Longint;    // The total number of cells in the bitmap
       
       nonTransparentPixels: Array of Array of Boolean;  // Pixel mask used for pixel level collisions
       clipStack: Array of Rectangle;                    // The clipping rectangle history for the bitmap
@@ -344,7 +314,7 @@ interface
     /// @struct BitmapCell
     BitmapCell = record
       bmp: Bitmap;
-      cell: LongInt;
+      cell: Longint;
     end;
     
     /// The ShapeKind is used to configure the drawing method for a
@@ -388,14 +358,9 @@ interface
     ShapePrototypeData = packed record
       points: Point2DArray;
       kind: ShapeKind;
-      shapeCount: LongInt;            //the number of shapes using the prototype
+      shapeCount: Longint;            //the number of shapes using the prototype
       drawWith: ShapeDrawingFn;
     end;
-    
-    /// @type ShapeArray
-    /// @array_wrapper
-    /// @field data: array of Shape
-    ShapeArray = Array of Shape;
     
     /// @struct ShapeData
     /// @via_pointer
@@ -406,7 +371,7 @@ interface
       scale: Point2D;
       angle: single;
       ptBuffer: Point2DArray;
-      subShapes: ShapeArray;
+      subShapes: array of Shape;
     end;
     
     /// Use this with the resource path functions to get the path to a
@@ -441,21 +406,21 @@ interface
       name:             String;               // The name of the sprite for resource management
       
       layerIds:         NamedIndexCollection; // The name <-> ids mapping for layers
-      layers:           Array of Bitmap;      // Layers of the sprites
-      visibleLayers:    Array of LongInt;     // The indexes of the visible layers
-      layerOffsets:     Array of Point2D;     // Offsets from drawing the layers
+      layers:           BitmapArray;      // Layers of the sprites
+      visibleLayers:    LongintArray;     // The indexes of the visible layers
+      layerOffsets:     Point2DArray;     // Offsets from drawing the layers
       
-      values:   Array of Single;              // Values associated with this sprite
-      valueIds: NamedIndexCollection;         // The name <-> ids mappings for values
+      values:           SingleArray;              // Values associated with this sprite
+      valueIds:         NamedIndexCollection;         // The name <-> ids mappings for values
       
-      animationData:      Animation;          // The data used to animate this sprite
-      animationTemplate:  AnimationScript;  // The template for this sprite's animations
+      animationData:    Animation;          // The data used to animate this sprite
+      animationScript:  AnimationScript;  // The template for this sprite's animations
       
-      position: Point2D;                      // The game location of the sprite
-      velocity: Vector;                       // The velocity of the sprite
+      position:         Point2D;                      // The game location of the sprite
+      velocity:         Vector;                       // The velocity of the sprite
       
-      collisionKind: CollisionTestKind;       //The kind of collisions used by this sprite
-      collisionBitmap: Bitmap;                // The bitmap used for collision testing (default to first image)
+      collisionKind:    CollisionTestKind;       //The kind of collisions used by this sprite
+      collisionBitmap:  Bitmap;                // The bitmap used for collision testing (default to first image)
         
       //add later -> 
       //collisionShape: Shape;                // This can be used in place of pixel level collisions for a Shape
@@ -531,13 +496,6 @@ interface
     /// @field data: array of Bitmap
     BitmapArray = array of Bitmap;
     
-    /// This type is used for mapping arrays out of the Pascal library
-    ///
-    /// @type BitmapPtr
-    /// @pointer_wrapper
-    /// @field pointer: ^Bitmap
-    BitmapPtr = ^Bitmap;
-
     /// A mouse can have many different types of buttons. Most people know
     /// about the simple Left and Right buttons, but there is also a Middle
     /// button (sometimes part of a scoll wheel). Scroll wheel movement is also
@@ -825,8 +783,8 @@ interface
     ///
     /// @struct DirectionAngles
     DirectionAngles = record
-      min : LongInt;
-      max : LongInt;
+      min : Longint;
+      max : Longint;
     end;
     
     /// The DirStateData contains the data for a Character's direction and
@@ -837,8 +795,26 @@ interface
     /// @struct DirStateData
     /// @via_pointer
     DirStateData = record
-      Anim      : LongInt;
-      LayerOrder: LongIntArray;
+      Anim      : Longint;
+      LayerOrder: LongintArray;
+    end;
+    
+    /// @struct CharacterData
+    /// @via_pointer
+    CharacterData = record
+      Name                  : String;
+      FileName              : String;
+      CharSprite            : Sprite;                               // The Character's Sprite
+      CharName              : String;                               // The Character's Name
+      CharType              : String;                               // The Character's Type
+      States                : NamedIndexCollection;                 // The names and indexs of the Character's States
+      Directions            : NamedIndexCollection;                 // The names and indexs of the Character's Direction
+      CurrentState          : Longint;                              // The Character's Current State
+      CurrentDirection      : Longint;                              // The Character's Current Direction
+      DirectionParameters   : array of DirectionAngles;             // The different angle parameters the character checks to change the animation based on the direction
+      ShownLayers           : array of Boolean;                     // Boolean stating whether a layer is to be drawn
+      ShownLayersByDirState : array of array of DirStateData;       // 
+      ShownLayerCache       : array of array of array of Longint;   // 
     end;
     
     /// SwinGame Characters allow you to code `Sprite` like entities that
@@ -851,24 +827,6 @@ interface
     /// @pointer_wrapper
     /// @field pointer: ^CharacterData
     Character  = ^CharacterData;
-    
-    /// @struct CharacterData
-    /// @via_pointer
-    CharacterData = record
-      Name                  : String;
-      FileName              : String;
-      CharSprite            : Sprite;                               // The Character's Sprite
-      CharName              : String;                               // The Character's Name
-      CharType              : String;                               // The Character's Type
-      States                : NamedIndexCollection;                 // The names and indexs of the Character's States
-      Directions            : NamedIndexCollection;                 // The names and indexs of the Character's Direction
-      CurrentState          : LongInt;                              // The Character's Current State
-      CurrentDirection      : LongInt;                              // The Character's Current Direction
-      DirectionParameters   : array of DirectionAngles;             // The different angle parameters the character checks to change the animation based on the direction
-      ShownLayers           : array of Boolean;                     // Boolean stating whether a layer is to be drawn
-      ShownLayersByDirState : array of array of DirStateData;       // 
-      ShownLayerCache       : array of array of array of LongInt;   // 
-    end;
 
 //=============================================================================
 implementation

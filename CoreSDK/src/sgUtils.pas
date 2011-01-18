@@ -68,7 +68,7 @@ interface
   /// the ubound value specifies the number of random values to create.
   ///
   /// @lib RndUpto
-  function Rnd(ubound: LongInt): LongInt; overload;
+  function Rnd(ubound: Longint): Longint; overload;
   
   
   
@@ -81,7 +81,7 @@ interface
   /// @returns     The current average framerate
   ///
   /// @lib
-  function GetFramerate(): LongInt;
+  function GetFramerate(): Longint;
   
   /// Gets the number of milliseconds that have passed. This can be used to
   /// determine timing operations, such as updating the game elements.
@@ -125,7 +125,7 @@ implementation
     // Details required for the Frames per second calculations.
     FPSData = record
       values: Array [0..59] of Single;
-      pos: LongInt;
+      pos: Longint;
       max, min, avg: Single;
       ready: Boolean;
     end;
@@ -140,7 +140,7 @@ implementation
   //Used to initialise the Frame Per Second data structure.
   procedure _InitFPSData();
   var
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgUtils', '_InitFPSData');
@@ -229,7 +229,7 @@ implementation
     {$ENDIF}
   end;
 
-  function GetFramerate(): LongInt;
+  function GetFramerate(): Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgUtils', 'GetFramerate');
@@ -288,9 +288,9 @@ implementation
 
 
   procedure _UpdateFPSDataProc(delta: Longword);
-    function RunningAverage(var values: Array of Single; newValue: Longword; var pos: LongInt): Single;
+    function RunningAverage(var values: Array of Single; newValue: Longword; var pos: Longint): Single;
     var
-      i: LongInt;
+      i: Longint;
       sum: Double;
     begin
     {$IFDEF TRACE}
@@ -349,7 +349,7 @@ implementation
     {$ENDIF}
   end;
   
-  function Rnd(ubound: LongInt): LongInt; overload;
+  function Rnd(ubound: Longint): Longint; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgUtils', 'Rnd');

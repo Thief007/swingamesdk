@@ -58,11 +58,11 @@ interface
     // hash table
     TIntegerContainer = class(tObject)
     private
-      val : LongInt;
+      val : Longint;
     public
-      constructor Create(data: LongInt);
+      constructor Create(data: Longint);
 
-      property Value: LongInt read val;
+      property Value: Longint read val;
     end;
 
     // Used by release all
@@ -89,11 +89,11 @@ interface
   // size (``w`` and ``h``). SDL_Rect are used internally by SDL to specify
   // the part of a source or destination image to be used in clipping and
   // blitting operations.
-  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect; overload;
+  function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
   function NewSDLRect(const r: Rectangle): SDL_Rect; overload;
 
   // Rounds `x` up... 1.1 -> 2
-  function Ceiling(x: Single): LongInt;
+  function Ceiling(x: Single): Longint;
 
   // Used by SwinGame units to register event "handlers" what will be called
   // when SDL events have occured. Events such as mouse movement, button
@@ -111,7 +111,7 @@ interface
   {$endif}
   
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
-  function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
+  function GetPixel32(surface: PSDL_Surface; x, y: Longint): Color;
   
   /// Called when ANY resource is freed to inform other languages to remove from
   /// their caches.
@@ -210,7 +210,7 @@ implementation
     resource_val := data;
   end;
   
-  constructor TIntegerContainer.create(data: LongInt);
+  constructor TIntegerContainer.create(data: Longint);
   begin
     inherited create;
     val := data;
@@ -332,7 +332,7 @@ implementation
     result := NewSDLRect(Round(r.x), Round(r.y), r.width, r.height);
   end;
   
-  function NewSDLRect(x, y, w, h: LongInt): SDL_Rect; overload;
+  function NewSDLRect(x, y, w, h: Longint): SDL_Rect; overload;
   begin
     if w < 0 then
     begin
@@ -351,7 +351,7 @@ implementation
     result.h := Word(h);
   end;
   
-  function Ceiling(x: Single): LongInt;
+  function Ceiling(x: Single): Longint;
   begin
     result := Round(x);
     if result < x then result := result + 1;
@@ -359,7 +359,7 @@ implementation
   
   procedure SetNonAlphaPixels(bmp: Bitmap; surface: PSDL_Surface);
   var
-    r, c: LongInt;
+    r, c: Longint;
     hasAlpha: Boolean;
   begin
     SetLength(bmp^.nonTransparentPixels, bmp^.width, bmp^.height);
@@ -374,7 +374,7 @@ implementation
     end;
   end;
   
-  function GetPixel32(surface: PSDL_Surface; x, y: LongInt): Color;
+  function GetPixel32(surface: PSDL_Surface; x, y: Longint): Color;
   var
     pixel, pixels: PUint32;
     offset: Longword;

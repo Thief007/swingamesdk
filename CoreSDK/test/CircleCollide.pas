@@ -28,7 +28,7 @@ begin
   end;
 end;
 
-procedure DoLineTest(testLines: LinesArray; const center: Point2D; radius: LongInt; movement: Vector);
+procedure DoLineTest(testLines: LinesArray; const center: Point2D; radius: Longint; movement: Vector);
 type
   DoublePt = record ptOnCircle, ptOnLine: Point2D; end;
 var
@@ -169,7 +169,7 @@ end;
 procedure Main();
 var
   c1, rectPt, ptOut, temp, tmp, edge: Point2D;
-  r1, r2: LongInt;
+  r1, r2: Longint;
   rect, rect1: Rectangle;
   s1, s2: Sprite;
   found: LineSegment;

@@ -3,6 +3,12 @@
 """
 create_pas_lib.py
 
+This script creates the code for the dynamic SwinGame library.
+
+Steps include:
+1: Parsing swingame source files
+2: 
+
 Created by Andrew Cain on 2009-06-02.
 Copyright (c) 2009 __MyCompanyName__. All rights reserved.
 """
@@ -29,7 +35,7 @@ _function_as_procedure = None
 _exports_header = ''
 _type_switcher = {
     'single': 'Single',
-    'longint': 'LongInt',
+    'longint': 'Longint',
     'soundeffect': 'SoundEffect',
     'music': 'Music',
     'string': 'PChar',
@@ -55,7 +61,7 @@ _type_switcher = {
     'boolean': 'Boolean',
     'keycode': 'KeyCode',
     
-    'longintarray':     'LongIntPtr',
+    'longintarray':     'LongintPtr',
     'bitmaparray':      'BitmapPtr',
     'point2darray':     'Point2DPtr',
     'trianglearray':    'Point2DPtr',
@@ -86,7 +92,7 @@ _type_switcher = {
 _array_copy_data = {
     'linesarray': 'Line',
     'bitmaparray': 'Bmp',
-    'longintarray': 'LongInt',
+    'longintarray': 'Longint',
     'point2darray': 'Point2D',
     'stringarray':  'String',
     'trianglearray':  'Triangle',
@@ -246,6 +252,7 @@ def post_parse_process(the_lib):
 def file_visitor(the_file, other):
     '''Called for each file read in by the parser'''
     
+    # Write out the types in a C header file
     if the_file.name == 'Types':
         logger.info('Processing types in %s', the_file.name)
         create_c_library.write_c_lib_module(the_file)

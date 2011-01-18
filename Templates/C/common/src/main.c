@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
         
         clear_screen();
         
-        draw_frame_rate_with_simple_font(0,0);
+        draw_framerate_with_simple_font(0,0);
         
         refresh_screen();
     } while ( ! window_close_requested() );

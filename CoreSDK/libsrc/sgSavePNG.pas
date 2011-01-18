@@ -60,7 +60,7 @@ const
 //  return colortype;
 // }
 
-function png_colortype_from_surface(surface: PSDL_Surface): LongInt;
+function png_colortype_from_surface(surface: PSDL_Surface): Longint;
 begin
   result := PNG_COLOR_TYPE_RGB; // grayscale not supported
   
@@ -115,7 +115,7 @@ var
   fp:           Pointer;
   png_ptr:      png_structp;
   info_ptr:     png_infop;
-  i, colortype: LongInt;
+  i, colortype: Longint;
   row_pointers: pppng_byte;
 begin
   result := false;

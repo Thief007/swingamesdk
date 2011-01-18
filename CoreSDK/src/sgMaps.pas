@@ -10,20 +10,20 @@ interface
 
     
     {BitmapCell = Record
-      Cell:         LongInt;
+      Cell:         Longint;
       Bmap:         Bitmap;
     end;}
 
       type
       BitmapCellKind = record
-      Cell:         LongInt;
+      Cell:         Longint;
       Bmap:         Bitmap;
-      KindIdx:      LongInt;    
+      KindIdx:      Longint;    
     end;
 
     {Marker = record
       position:     Point2D;
-      Id:           LongInt;
+      Id:           Longint;
     end;}
 
     BitmapCellKindArray = Array of BitmapCellKind;
@@ -31,8 +31,8 @@ interface
     BitmapCellKindPtr = ^BitmapCellKind;
     Tile = ^TileData;
     TileData = Record
-      TileID:             LongInt;                      // The tile's unique id
-      Kind:               LongInt;                      // The "kind" of the tile - links to KindNames etc.
+      TileID:             Longint;                      // The tile's unique id
+      Kind:               Longint;                      // The "kind" of the tile - links to KindNames etc.
       Position:           Point2D;                      // Position of the top right corner of the Tile
       Center:             Point2D;                      // position of the center of the Tile
       TileBitmapCellKind: Array of BitmapCellKindPtr;      // ptr to bitmapCellKindData
@@ -47,7 +47,7 @@ interface
       name:              String;
       filename:           String;
       Tiles:              Array of Array of TileData;     // The actual tiles -> in col,row order
-      SelectedTiles:      LongIntArray;                   // id of selected tiles
+      SelectedTiles:      LongintArray;                   // id of selected tiles
       Isometric:          Boolean;                        // Map Isometric
       valueIds:           NamedIndexCollection;           // has names of values
       kindids:            NamedIndexCollection;           // has names of kinds
@@ -55,11 +55,11 @@ interface
       //MapMarkers:        Array of Marker;
       MapPrototype:       ShapePrototype;                 // prototype of the tiles
       MapHighlightcolor:  Color;                          // highlight color
-      MapWidth:           LongInt;                        // The Map width (# of grid in x axis)
-      MapHeight:          LongInt;                        // The Map height (# of grid in Y axis)
-      MapLayer:           LongInt;                        // The Number of layers within the map
-      TileWidth:          LongInt;                        // The Tile width
-      TileHeight:         LongInt;                        // The Tile height
+      MapWidth:           Longint;                        // The Map width (# of grid in x axis)
+      MapHeight:          Longint;                        // The Map height (# of grid in Y axis)
+      MapLayer:           Longint;                        // The Number of layers within the map
+      TileWidth:          Longint;                        // The Tile width
+      TileHeight:         Longint;                        // The Tile height
       TileStagger:        Vector;                         // Offset of the tile's X Position
       MapDefaultValues:   Array of Array of Single;       //default values of tiles depending on bitmaps.
       BitmapCellKind:     Array of BitmapCellKind;        // Bitmap/cell/kinds.
@@ -143,7 +143,7 @@ interface
   ///
   /// @class Map
   /// @method DrawLayers
-  procedure DrawMapLayer(map: Map; offset:Vector; layer:LongInt); overload;
+  procedure DrawMapLayer(map: Map; offset:Vector; layer:Longint); overload;
   
   
   
@@ -237,7 +237,7 @@ interface
   /// @class Map
   /// @method SpriteHasCollidedWithTile
   /// @csn kind:%s hasCollidedWithSprite:%s resultAtX:%s y:%s
-  function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithTile(map: Map; k: Longint; s: Sprite; out collidedX, collidedY: Longint): Boolean; overload;
 
   /// Moves the sprite out of a tile. The x and y is the column and row of
   /// the tile that the sprite needs to be kicked out of.
@@ -247,7 +247,7 @@ interface
   ///
   /// @class Map
   /// @method MoveOut
-  procedure MoveOut(m:map; s: Sprite; x, y: LongInt);
+  procedure MoveOut(m:map; s: Sprite; x, y: Longint);
   
   
   
@@ -277,7 +277,7 @@ interface
   ///
   /// @class Map
   /// @getter IndexOfKind
-  function IndexOfKind(const m :  map; const kname : string) : LongInt;
+  function IndexOfKind(const m :  map; const kname : string) : Longint;
 
   /// returns the index of the value from the NamedIndexCollection given
   /// the name of the value
@@ -287,7 +287,7 @@ interface
   ///
   /// @class Map
   /// @getter IndexOfValue
-  function IndexOfValues(const m :  map; const vName : string) : LongInt;
+  function IndexOfValues(const m :  map; const vName : string) : Longint;
 
   /// returns all the names of kinds in a string array
   ///
@@ -320,7 +320,7 @@ interface
   ///
   /// class Map
   /// @csn defaultValueAtKindId:%s and valueId:%s
-  function MapDefaultValues(m : map; const kId, vId : LongInt): single;
+  function MapDefaultValues(m : map; const kId, vId : Longint): single;
 
   /// Returns the number of layers that the given map has.
   ///
@@ -328,21 +328,21 @@ interface
   ///
   /// @class Map
   /// @getter LayerCount
-  function LayerCount(m: Map) : LongInt;
+  function LayerCount(m: Map) : Longint;
   /// Returns the Tile height of the given map.
   ///
   /// @lib TileHeight
   ///
   /// @class Map
   /// @getter TileHeight  
-  function TileHeight(m: Map) : LongInt;
+  function TileHeight(m: Map) : Longint;
   /// Returns the Tile width of the given map.
   ///
   /// @lib TileWidth
   ///
   /// @class Map
   /// @getter TileWidht
-  function TileWidth(m: Map) : LongInt;
+  function TileWidth(m: Map) : Longint;
   /// Returns the Color that is used for highlighting within the map.
   ///
   /// @lib MapHighlightColor
@@ -353,7 +353,7 @@ interface
   /// Returns the number of selected tiles.
   ///
   /// @lib CountSelectedTiles
-  function CountSelectedTiles(m: Map) : LongInt;
+  function CountSelectedTiles(m: Map) : Longint;
 
   /// Returns the prototype of the tiles used within the map.
   ///
@@ -386,7 +386,7 @@ interface
   ///
   /// @class Map
   /// @getter ValueName
-  function ValueName(m : map; idx:LongInt): String;
+  function ValueName(m : map; idx:Longint): String;
   /// Returns the name of the kind given the index.
   ///
   /// @lib KindName
@@ -394,7 +394,7 @@ interface
   ///
   /// @class Map
   /// @getter KindName
-  function KindName(m : map; idx:LongInt): String;
+  function KindName(m : map; idx:Longint): String;
 
   /// Returns if the map type is isometric.
   ///
@@ -415,7 +415,7 @@ interface
   ///
   /// @class Tile
   /// @getter id
-  function TileId(t: Tile): LongInt;
+  function TileId(t: Tile): Longint;
   /// Returns the neighbouring tile by the given tile and direction
   ///
   /// @lib TileNeightbour
@@ -455,14 +455,14 @@ interface
   ///
   /// @class Tile
   /// @method Value
-  function TileValue(t: Tile; vId: LongInt) : Single;
+  function TileValue(t: Tile; vId: Longint) : Single;
   /// Returns the kind of the given tile
   ///
   /// @lib TileKind
   ///
   /// @class Tile
   /// @getter kind
-  function TileKind(t: Tile) : LongInt;
+  function TileKind(t: Tile) : Longint;
   /// Returns Tile given the id of the tile
   ///
   /// @lib TileAtId
@@ -470,7 +470,7 @@ interface
   ///
   /// @class Map
   /// @method TileAt
-  function TileAt(m: Map; id:LongInt) : Tile; Overload;
+  function TileAt(m: Map; id:Longint) : Tile; Overload;
 
   /// Return Tile given the top right position
   ///
@@ -489,7 +489,7 @@ interface
   /// @class Map
   /// @overLoad TileAt TileAtRowCol
   /// @csn tileAtRow:%s col:%s
-  function TileAt(m: Map; row, col: LongInt) : Tile; Overload;
+  function TileAt(m: Map; row, col: Longint) : Tile; Overload;
   
   
   
@@ -504,7 +504,7 @@ interface
   ///
   /// @class Tile
   /// @setter TileKind
-  procedure SetTileKind(t : Tile; kindId : LongInt);
+  procedure SetTileKind(t : Tile; kindId : Longint);
 
   /// Sets the Values of a given tile at a given index
   ///
@@ -513,7 +513,7 @@ interface
   ///
   /// @class Tile
   /// @method TileValue
-  procedure SetTileValue(t : Tile; VId : LongInt; value : Single); overload;
+  procedure SetTileValue(t : Tile; VId : Longint; value : Single); overload;
 
   /// Sets the values of a given tile at a given name
   ///
@@ -527,7 +527,7 @@ interface
 
 
 
-  procedure SetTileBitmap(m:map; t : tile; layer:LongInt; idx :LongInt);
+  procedure SetTileBitmap(m:map; t : tile; layer:Longint; idx :Longint);
 
   /// returns an empty new map
   ///
@@ -551,7 +551,7 @@ interface
   ///
   /// @class Map
   /// @method RemoveBitmap
-  procedure MapRemoveBitmap(m : map; const idx:LongInt);
+  procedure MapRemoveBitmap(m : map; const idx:Longint);
   
   /// Adds a values to map where idx1 represents kind and idx2 represents value index
   ///
@@ -560,7 +560,7 @@ interface
   ///
   /// @class Map
   /// @method AddMapValues
-  procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
+  procedure AddMapValues(m : map;const  idx1,idx2 : Longint;const  val : Single);
   /// Sets the map width, height layer count, tile width, tile height and if the map is isometric.
   ///
   /// @lib MapSetDimension
@@ -569,7 +569,7 @@ interface
   /// @class map
   /// @method MapSetDimension
   /// @csn width:%s height:%s layers:%s tileWidth:%s tileHeight:%s isometric:%s
-  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
+  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Longint; iso:boolean);
 
   /// Allocates Default values to given tile depending on the tile's kind
   ///
@@ -614,7 +614,7 @@ interface
   /// @class Map
   /// @method MapAddBitmapCells
   /// @csn bitmapCellIds:%s cellRegions:%s bitmap:%s
-  procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
+  procedure MapAddBitmapCells(m : map; bitmapCellIds : array of Longint; cellRegions : array of Longint; gridBitmap : Bitmap);
 
   /// Adds Kind Name to the numed index collection within the map.
   ///
@@ -640,7 +640,7 @@ interface
   ///
   /// @class Map
   /// @overload RemoveValue RemoveValueId
-  procedure RemoveValue(m:map; idx:LongInt); overload;
+  procedure RemoveValue(m:map; idx:Longint); overload;
   /// Removes the kind from the named index collection by idx and sets all tiles of removed kind to -1
   ///
   /// @lib RemoveKindIdx
@@ -648,7 +648,7 @@ interface
   ///
   /// @class Map
   /// @method RemoveKind
-  procedure RemoveKind(m:map; idx:LongInt); overload;
+  procedure RemoveKind(m:map; idx:Longint); overload;
   /// Removes the kind From the named index collection by kind
   /// name and sets all tiles of removed kind to -1
   ///
@@ -744,7 +744,7 @@ interface
 
     Procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
     var
-      i, namesLength:LongInt;    
+      i, namesLength:Longint;    
     begin
       if names = '' then exit;
       //number of names = ,'s + 1 (commas + 1)
@@ -762,7 +762,7 @@ interface
 
     procedure AllocateDefaultValues(map:Map; var tile: TileData);
     var
-      kindIdx, i : LongInt;
+      kindIdx, i : Longint;
     begin
       kindIdx := tile.kind;
       SetLength(tile.values, NameCount(map^.valueIds));
@@ -785,8 +785,8 @@ interface
 
   type
     SpecificValuesLoader = record
-      row:      LongInt;
-      col:      LongInt;
+      row:      Longint;
+      col:      Longint;
       name:     string;
       value:    Single;
     end;
@@ -798,11 +798,11 @@ interface
     textFile:         Text;                           // text file that is loaded
     id:               String;                         // id for the line processor to identify how to handle the data
     data,line:        String;                         // line is read then seperated into id and data.
-    lineno:           LongInt;                        // line number for exceptions
+    lineno:           Longint;                        // line number for exceptions
 
     procedure AllocateSpecificValues();
     var
-    i: LongInt;
+    i: Longint;
     begin
       for i := low(tempValues) to high(tempValues) do
       begin
@@ -817,7 +817,7 @@ interface
   // use data processed to set tile properties.
     Procedure SetTiles();
     var
-      row,col,id : LongInt;
+      row,col,id : Longint;
     begin
       id:=0;
       SetLength(result^.Tiles, result^.MapHeight, result^.MapWidth); //set lengths of tiles
@@ -838,9 +838,9 @@ interface
     procedure AddTile();
 
     var
-      bitmapIdxs: Array of LongInt;
-      layer, i,rowNum:LongInt;
-      current : LongInt;
+      bitmapIdxs: Array of Longint;
+      layer, i,rowNum:Longint;
+      current : Longint;
     begin
       rowNum:= 0;
       if Length(result^.Tiles) = 0 then ReconfigureMap(result);
@@ -887,7 +887,7 @@ interface
     //sets up positions of each tile
     procedure ProcessTiles();
     var
-      row,col: LongInt;
+      row,col: Longint;
     begin
       for row:=low(result^.Tiles) to high(result^.Tiles) do
       begin
@@ -908,7 +908,7 @@ interface
     procedure AddDefaultValue(data:String);
     var
     defaultValues:SingleArray;
-    kind,i: LongInt;
+    kind,i: Longint;
     begin
       kind:=MyStrToInt(ExtractDelimited(1,data,[',']),false);
       
@@ -931,8 +931,8 @@ interface
     //Maps kinds to the bitmap
     procedure MapBitmapToKind(data:string);
     var
-    i: LongInt;
-    kindIds:LongIntArray;
+    i: Longint;
+    kindIds:LongintArray;
     begin
       kindIds:=ProcessRange(ExtractDelimitedWithRanges(1,data));
       if length(kindIds) = length(result^.BitmapCellKind) then
@@ -948,7 +948,7 @@ interface
 
     procedure LoadSpecificValue(data:String);
     var
-    row,col:LongInt;
+    row,col:Longint;
     val:single;
     name:String;
     begin
@@ -1061,14 +1061,14 @@ interface
     //Process line procedure*************
     procedure ProcessLine();
     var
-    bitmapCellIds : array of LongInt;
-    cellRegions   : array of LongInt;
+    bitmapCellIds : array of Longint;
+    cellRegions   : array of Longint;
     gridBitmap    : Bitmap;
     cellWidth,
     cellHeight,
     cellRows,
     cellCols,
-    cellCount     : LongInt;
+    cellCount     : Longint;
     begin
       // Split line into id and data
       id   := ExtractDelimited(1, line, [':']);
@@ -1147,7 +1147,7 @@ interface
     close(textFile);
   end;
   
-  procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:LongInt  );
+  procedure MapRangeFromRect(r:Rectangle; map:Map; out startX, startY, endX, endY:Longint  );
   begin
     //WriteLn('Getting range for ', RectangleToString(r));
     // Calculate the tiles that are on the screen - only draw these
@@ -1176,10 +1176,10 @@ interface
     //WriteLn('result ', startX, ':', startY, ' ', endX, ':', endY);
   end;
 
-  procedure PushMapClip(map:Map; startCol, startRow, endCol, endRow : LongInt; offset :Vector);
+  procedure PushMapClip(map:Map; startCol, startRow, endCol, endRow : Longint; offset :Vector);
   var
-    rowCount, colCount: LongInt;
-    width, height : LongInt;
+    rowCount, colCount: Longint;
+    width, height : Longint;
     pt: Point2D;
   begin
     //WriteLn('cols: ', startCol, ' to ', endCol);
@@ -1210,7 +1210,7 @@ interface
   //checks if tile is Selected.
   function TileSelected(map:Map; tile:Tile):Boolean;
   var
-  k:LongInt;
+  k:Longint;
   begin
     for k:=low(map^.SelectedTiles) to high(map^.SelectedTiles) do
       begin
@@ -1227,7 +1227,7 @@ interface
   //procedure to deselect a tile. (includes removing from array and reducing array length)
   procedure Deselect(map:Map; tile:Tile);
   var
-  l,m : LongInt;
+  l,m : Longint;
   begin
     for l:=low(map^.SelectedTiles) to high(map^.SelectedTiles) do
       if (map^.SelectedTiles[l] = tile^.TileID) then
@@ -1257,7 +1257,7 @@ interface
   //updates whether a tile is highlighted.
   procedure UpdateHighlight(map:Map);
   var
-  i:LongInt;
+  i:Longint;
   begin
     for i:=low(map^.SelectedTiles) to high(map^.SelectedTiles) do
             HighlightTile(TileAt(map, map^.SelectedTiles[i]));
@@ -1266,7 +1266,7 @@ interface
   //updates whether a tile should be selected or deselected.
   procedure UpdateSelect(map:Map);
   var
-    //startCol, startRow, endCol, endRow:LongInt;
+    //startCol, startRow, endCol, endRow:Longint;
     t: Tile;
   begin
     t := TileAt(map, ToWorld(MousePosition()));
@@ -1285,9 +1285,9 @@ interface
   end;
 
   
-  procedure DoDrawMapLayer(map: Map; offset:Vector; layer, startCol, startRow, endCol, endRow:LongInt); overload;
+  procedure DoDrawMapLayer(map: Map; offset:Vector; layer, startCol, startRow, endCol, endRow:Longint); overload;
   var
-    col, row : LongInt;
+    col, row : Longint;
    // dir:Direction;
   begin
     if not assigned(map) or (map^.MapWidth = 0) or (map^.MapHeight = 0) then exit;
@@ -1309,9 +1309,9 @@ interface
   end;
 
   
-  procedure DrawMapLayer(map: Map; offset:Vector; layer:LongInt); overload;
+  procedure DrawMapLayer(map: Map; offset:Vector; layer:Longint); overload;
   var
-    startRow, startCol, endRow, endCol : LongInt;
+    startRow, startCol, endRow, endCol : Longint;
   begin
     if not assigned(map) or (map^.MapWidth = 0) or (map^.MapHeight = 0) then exit;
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
@@ -1340,7 +1340,7 @@ interface
   procedure DrawMapDebug(map: map); 
   var
   dir: Direction;
-  row,col,startRow, startCol, endRow, endCol : LongInt;
+  row,col,startRow, startCol, endRow, endCol : Longint;
   begin
     if not assigned(map) or (map^.MapWidth = 0) or (map^.MapHeight = 0) then exit;
     MapRangeFromRect(CameraScreenRect(), map, startCol, startRow, endCol, endRow);
@@ -1371,7 +1371,7 @@ interface
 
   procedure DrawMapGrid(m:map; offset:Vector); overload;
   var
-    row,col,startRow, startCol, endRow, endCol : LongInt;
+    row,col,startRow, startCol, endRow, endCol : Longint;
   begin
     if not assigned(m) or (m^.MapWidth = 0) or (m^.MapHeight = 0) then exit;
     MapRangeFromRect(CameraScreenRect(), m, startCol, startRow, endCol, endRow);
@@ -1402,8 +1402,8 @@ interface
   Procedure SaveMap(m:Map; filename:String);
   type
   cellkind = record
-    cell      : LongInt;
-    kindIdx      : LongInt;
+    cell      : Longint;
+    kindIdx      : Longint;
     end;
 
   cellKindArray = array of cellkind;
@@ -1411,15 +1411,15 @@ interface
   BitmapCells = record
     bmp       : Bitmap;
     Cellkinds : cellKindArray;
-    startIdx  : LongInt;
-    kindIdx   : LongInt;
+    startIdx  : Longint;
+    kindIdx   : Longint;
   end;
   var
   output: text;
   bitmapCellsArray:  Array of BitmapCells;
-    procedure _CheckAddBitmap(bmp: Bitmap; cell,kindIdx: LongInt);
+    procedure _CheckAddBitmap(bmp: Bitmap; cell,kindIdx: Longint);
     var
-      i,j:LongInt;
+      i,j:Longint;
     begin
      // WriteLn('Checking ', HexStr(bmp), ' ', cell, ' kind ', kindIdx);
       
@@ -1458,7 +1458,7 @@ interface
 
     procedure _SetStartIdx();
     var
-    i:LongInt;
+    i:Longint;
     begin
       if length(bitmapCellsArray) = 0 then exit;
       bitmapCellsArray[0].startIdx:=0;
@@ -1469,9 +1469,9 @@ interface
     end;
 
 
-    function _IndexOfMapCellKind(ptr:BitmapCellKindPtr): LongInt;
+    function _IndexOfMapCellKind(ptr:BitmapCellKindPtr): Longint;
     var
-    i:LongInt;
+    i:Longint;
     begin
     result := -1;
     if ptr = nil then exit;
@@ -1487,7 +1487,7 @@ interface
     var
     i,j:Longint;
     endIdx : longint;
-    cells : LongIntArray;
+    cells : LongintArray;
     currentBitmap : BitmapCells;
     cellrange:string;
     begin
@@ -1501,13 +1501,13 @@ interface
         else
         begin
 
-          //make cell into LongIntArray of cells
+          //make cell into LongintArray of cells
           SetLength(cells,length(currentBitmap.CellKinds));
           for j := low(currentBitmap.CellKinds) to high(currentBitmap.CellKinds) do
           begin
             cells[j] := currentBitmap.CellKinds[j].cell;
           end;
-         cellrange := LongIntArrayToRange(cells);
+         cellrange := LongintArrayToRange(cells);
           endIdx:=bitmapCellsArray[i].startIdx+length(bitmapCellsArray[i].CellKinds)-1;
         writeln(output,'gb:[',bitmapCellsArray[i].startIdx,'-',endIdx,'],',cellrange,
               ',',BitmapName(bitmapCellsArray[i].bmp),
@@ -1524,7 +1524,7 @@ interface
     
     procedure _SaveMapBitmaps();
     var
-      row,col,bmpIdx:LongInt;
+      row,col,bmpIdx:Longint;
       current :Array of BitmapCellKind;
     begin
       for row:=low(m^.Tiles) to high(m^.Tiles) do
@@ -1546,7 +1546,7 @@ interface
 
   procedure _WriteKindBitmap();
   var
-    i,j : LongInt;
+    i,j : Longint;
     mki : string;
   begin
     if length(bitmapCellsArray) = 0 then exit;
@@ -1594,8 +1594,8 @@ interface
   end;
   procedure _WriteTileLayers();
   var
-    ids : LongIntArray;
-    row,col, layer : LongInt;
+    ids : LongintArray;
+    row,col, layer : Longint;
     currentTile: TileData;
   begin
     SetLength(ids, m^.MapWidth);
@@ -1610,14 +1610,14 @@ interface
           //add indexes to ids.
           ids[col]:=_IndexOfMapCellKind(currentTile.TileBitmapCellKind[layer]);
         end; // end col
-        writeln(output, LongIntArrayToRange(ids));
+        writeln(output, LongintArrayToRange(ids));
       end; // end row
     end; // end layer
   end;
 
   procedure _WriteTileKind();
   var
-    row,col : LongInt;
+    row,col : Longint;
     currentTile : TileData;
   const
     LAYER = 0;
@@ -1639,7 +1639,7 @@ interface
 
   procedure _WriteDefaultValues();
   var
-  i : LongInt;
+  i : Longint;
   currentArr : SingleArray;
   begin
     for i := low(m^.MapDefaultValues) to high(m^.MapDefaultValues) do
@@ -1652,7 +1652,7 @@ interface
 
   procedure _WriteTileValues();
   var
-  row, col, vId: LongInt;
+  row, col, vId: Longint;
   currentTile : TileData;
   currentValue : Single;
   begin
@@ -1745,7 +1745,7 @@ interface
   function GetPotentialCollisions(map: Map; s: Sprite): Rectangle;
   var
     startPoint, endPoint: Rectangle;
-    startX, startY, endX, endY: LongInt;
+    startX, startY, endX, endY: Longint;
   begin
     if map^.MapWidth = 0 or map^.MapHeight then exit;
     with map^ do
@@ -1798,11 +1798,11 @@ interface
   end;
 
 // outs the tile X and Y that the sprite has collided with  map and result is a boolean if it did collide.
-  function SpriteHasCollidedWithTile(map: Map; k: LongInt; s: Sprite; out collidedX, collidedY: LongInt): Boolean; overload;
+  function SpriteHasCollidedWithTile(map: Map; k: Longint; s: Sprite; out collidedX, collidedY: Longint): Boolean; overload;
   var
-    y, x, dy, dx, i, j, initY, initX: LongInt;
-    yRange, xRange: LongInt;
-    xStart, yStart, xEnd, yEnd: LongInt;
+    y, x, dy, dx, i, j, initY, initX: Longint;
+    yRange, xRange: Longint;
+    xStart, yStart, xEnd, yEnd: Longint;
     rectSearch: Rectangle;
     side: CollisionSide;
   begin
@@ -1878,7 +1878,7 @@ interface
     collidedY := -1;
   end;
 
-  procedure MoveOut(m: map; s: Sprite; x, y: LongInt);
+  procedure MoveOut(m: map; s: Sprite; x, y: Longint);
   var
     kickVector: Vector;
     sprRect: Rectangle;
@@ -1911,7 +1911,7 @@ interface
   //==================================================================
   function BitmapCellKinds(m:map): BitmapCellKindArray;
   var
-    i : LongInt;
+    i : Longint;
   begin
     SetLength(result,0);
     if NOT Assigned(m) then exit;
@@ -1925,7 +1925,7 @@ interface
   end;
 
   
-  function MapDefaultValues(m : map; const kId, vId : LongInt): single;
+  function MapDefaultValues(m : map; const kId, vId : Longint): single;
   begin
     result := -1;
     if NOT Assigned(m) then exit;
@@ -1939,14 +1939,14 @@ interface
     result := (m^.MapWidth) * (m^.MapHeight);
   end;
 
-  function IndexOfKind(const m :  map; const kname : string) : LongInt;
+  function IndexOfKind(const m :  map; const kname : string) : Longint;
   begin
     result := -1;
     if NOT Assigned(m) then exit;
     result := indexOf(m^.kindIds, kname);
   end;
 
-  function IndexOfValues(const m :  map; const vName : string) : LongInt;
+  function IndexOfValues(const m :  map; const vName : string) : Longint;
   begin
     result := -1;
     if NOT Assigned(m) then exit;
@@ -1955,7 +1955,7 @@ interface
   
   function MapKinds(m: map) : StringArray;
   var
-    i : LongInt;
+    i : Longint;
   begin
     SetLength(result,0);
     result:= result;
@@ -1969,7 +1969,7 @@ interface
   
   function MapValues(m: map) : StringArray;
   var
-    i : LongInt;
+    i : Longint;
   begin
     SetLength(result,0);
     if not Assigned(m) then exit
@@ -2013,7 +2013,7 @@ interface
     result := m^.MapPrototype;
   end;
 
-  function CountSelectedTiles(m: Map) : LongInt;
+  function CountSelectedTiles(m: Map) : Longint;
   begin
     result := -1;
     if NOT assigned(m) then exit
@@ -2021,7 +2021,7 @@ interface
     result:= length(m^.SelectedTiles);
   end;
 
-  function SelectedTiles(m: Map) : LongIntArray;
+  function SelectedTiles(m: Map) : LongintArray;
   begin
     result := nil;
     if NOT Assigned(m) then exit
@@ -2035,7 +2035,7 @@ interface
   end;
 
   
-  function TileWidth(m: Map) : LongInt;
+  function TileWidth(m: Map) : Longint;
   begin
     result := -1;
     if NOT Assigned(m) then exit
@@ -2043,7 +2043,7 @@ interface
     result := m^.TileWidth;
   end;
   
-  function TileHeight(m: Map) : LongInt;
+  function TileHeight(m: Map) : Longint;
   begin
     result := -1;
     if NOT Assigned(m) then exit
@@ -2051,7 +2051,7 @@ interface
     result := m^.TileHeight;
   end;
 
-  function LayerCount(m: Map) : LongInt;
+  function LayerCount(m: Map) : Longint;
   begin
     result := -1;
     if NOT Assigned(m) then exit
@@ -2073,9 +2073,9 @@ interface
   //=========================//
 
 
-  function TileAt(m: Map; id:LongInt) : Tile; Overload;
+  function TileAt(m: Map; id:Longint) : Tile; Overload;
   var
-    row,col : LongInt;
+    row,col : Longint;
   begin
     result := nil;
     row := id div m^.MapWidth;
@@ -2085,7 +2085,7 @@ interface
     result := TileAt(m, row,col);
   end;
 
-  function TileAt(m: Map; row, col: LongInt): Tile; overload;
+  function TileAt(m: Map; row, col: Longint): Tile; overload;
   begin    
     if (not assigned(m)) or (row < Low(m^.Tiles)) or (row > High(m^.Tiles)) or (col < Low(m^.Tiles[row])) or (col > High(m^.Tiles[row])) then
       result := nil
@@ -2095,9 +2095,9 @@ interface
 
   function TileAt(m: Map; const pos:Point2D): Tile; overload;
   var
-    startrow,startcol : LongInt;
-    endrow,endcol : LongInt;
-    row,col : LongInt;
+    startrow,startcol : Longint;
+    endrow,endcol : Longint;
+    row,col : Longint;
   begin
     result:=nil;
     if (pos.y <0) or (pos.x <0) or (m^.TileWidth = 0) or (m^.TileHeight = 0) then exit;
@@ -2113,7 +2113,7 @@ interface
     end;
   end;
 
-  function TileKind(t: Tile) : LongInt;
+  function TileKind(t: Tile) : Longint;
   begin
     result := -1;
     if NOT Assigned(t) then exit
@@ -2122,7 +2122,7 @@ interface
   end;
 
 
-  function TileValue(t: Tile; vId: LongInt) : Single;
+  function TileValue(t: Tile; vId: Longint) : Single;
   begin
     result := -1;
     if NOT Assigned(t) then exit
@@ -2167,7 +2167,7 @@ interface
     result := t^.SurroundingTiles[d];
   end;
 
-  function TileId(t: Tile): LongInt;
+  function TileId(t: Tile): Longint;
   begin
     result := -1;
     if NOT Assigned(t) then exit
@@ -2175,7 +2175,7 @@ interface
     result := t^.TileId;
   end;
 
-  function TileBitmap(t: Tile; layer:LongInt): Bitmap;
+  function TileBitmap(t: Tile; layer:Longint): Bitmap;
   begin
     result := nil;
     if not Assigned(t) then exit
@@ -2183,7 +2183,7 @@ interface
     result := t^.TileBitmapCellKind[layer]^.BMap;
   end;
 
-  function KindName(m : map; idx:LongInt): String;
+  function KindName(m : map; idx:Longint): String;
   begin
     result := '';
     if not Assigned(m) then exit
@@ -2191,7 +2191,7 @@ interface
     result:= NameAt(m^.KindIds, idx);
   end;
   
-  function ValueName(m : map; idx:LongInt): String;
+  function ValueName(m : map; idx:Longint): String;
   begin
     result := '';
     if not Assigned(m) then exit
@@ -2204,19 +2204,19 @@ interface
 
 
   
-  procedure SetTileBitmap(m:map; t : tile; layer:LongInt; idx :LongInt);
+  procedure SetTileBitmap(m:map; t : tile; layer:Longint; idx :Longint);
   begin
     if not assigned(t) then exit;
     t^.TileBitmapCellKind[layer] := @m^.BitmapCellKind[idx]
   end;
   
-  procedure SetTileKind(t: Tile; kindId:LongInt);
+  procedure SetTileKind(t: Tile; kindId:Longint);
   begin
     t^.Kind := KindId;
   end;
 
 
-  procedure SetTileValue(t : Tile; vId : LongInt; value : Single);
+  procedure SetTileValue(t : Tile; vId : Longint; value : Single);
   begin
     if not Assigned(t) or (vId < 0) OR (vId > High(t^.values)) then exit;
     t^.Values[vId] := value;
@@ -2226,7 +2226,7 @@ interface
 
   procedure SetTileValue(m:map; t :Tile; name : String; val : Single);
   var
-    idx: LongInt;
+    idx: Longint;
   begin  
     if not assigned(t) then exit;
     idx := IndexOf(m^.valueIds, name);
@@ -2241,7 +2241,7 @@ interface
 
   procedure ReAssignKinds(m:map);
   var
-    row,col : LongInt;
+    row,col : Longint;
   begin
     for row := low(m^.Tiles) to high(m^.Tiles) do
     begin
@@ -2263,15 +2263,15 @@ interface
   m^.BitmapCellKind[idx].KindIdx := kind;
   end;
 
-  procedure MapRemoveBitmap(m : map; const idx:LongInt);
+  procedure MapRemoveBitmap(m : map; const idx:Longint);
   var
-    i,k,row,col : LongInt;
+    i,k,row,col : Longint;
     NewBitmapCellKinds : array of BitmapCellKind;
     oldAdd, newAdd : Array of Pointer;
     
     procedure _MakeNewBitmapCellKind();
     var
-      j : LongInt;
+      j : Longint;
     begin
       setLength(NewBitmapCellKinds, length(m^.BitmapCellKind)-1);
       setLength(oldAdd, length(m^.BitmapCellKind));
@@ -2314,7 +2314,7 @@ interface
      m^.BitmapCellKind := NewBitmapCellKinds;
   end; 
   
-  procedure AddMapValues(m : map;const  idx1,idx2 : LongInt;const  val : Single);
+  procedure AddMapValues(m : map;const  idx1,idx2 : Longint;const  val : Single);
   begin
     if (idx1 = -1) or (idx2 = -1) then exit;
     m^.MapDefaultValues[idx1,idx2] := val;
@@ -2324,7 +2324,7 @@ interface
   
   procedure AddKind(m:map; kname:string);
   var
-    i,j: LongInt;
+    i,j: Longint;
   begin
     if length(kname) = 0 then exit;
     AddName(m^.kindIds, kname);
@@ -2340,7 +2340,7 @@ interface
   end;
   procedure MapAddValue(m:map; vName:string);
   var
-    i:LongInt;
+    i:Longint;
   begin
     if length(vName) = 0 then exit;
     AddName(m^.valueIds, vName);
@@ -2354,9 +2354,9 @@ interface
 
 // set values of kind removed to 0 then set kind to -1
 
-  procedure RemoveKind(m:map; idx:LongInt); overload;
+  procedure RemoveKind(m:map; idx:Longint); overload;
   var
-    row,col,i : LongInt;
+    row,col,i : Longint;
   begin
     if not assigned(m) then exit;
     RemoveName(m^.kindIds, NameAt(m^.kindids, idx));
@@ -2393,9 +2393,9 @@ interface
   
 
   
-  procedure RemoveValue(m:map; idx:LongInt); overload;
+  procedure RemoveValue(m:map; idx:Longint); overload;
   var
-    row,col,vIdx,i : LongInt;
+    row,col,vIdx,i : Longint;
     
   begin
     if not assigned(m)  then exit;
@@ -2428,7 +2428,7 @@ interface
    // PRIVATE FUNCTION
     procedure RewireTilesToBitmapCellKind(m:map; oldBCKArray,newBCKArray: array of pointer );
     var
-      row,col,layer,i : LongInt;
+      row,col,layer,i : Longint;
     begin
       for row := low(m^.Tiles) to high(m^.Tiles) do // loop row
       begin 
@@ -2452,7 +2452,7 @@ interface
       end;// end row loop
     end; // end of procedure.
   
-  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : LongInt; iso:boolean);
+  procedure MapSetDimension(m : map;  Width, height, layers, tWidth, tHeight : Longint; iso:boolean);
   begin
     if not assigned(m) or (Width < 0) or  (height < 0) or  (Layers < 0) or  (tWidth < 0) or  (tHeight < 0) then exit;
     m^.MapHeight := height;
@@ -2467,7 +2467,7 @@ interface
 
     procedure MapAddBitmap(m:map; filename:String);
     var
-      index,i:LongInt;
+      index,i:Longint;
       oldBCKArray, newBCKArray : Array Of Pointer;
     begin
       SetLength(oldBCKArray, length(m^.BitmapCellKind));
@@ -2493,9 +2493,9 @@ interface
     end;
 
 
-    procedure MapAddBitmapCells(m : map; bitmapCellIds : array of LongInt; cellRegions : array of LongInt; gridBitmap : Bitmap);
+    procedure MapAddBitmapCells(m : map; bitmapCellIds : array of Longint; cellRegions : array of Longint; gridBitmap : Bitmap);
     var
-    i ,j  : LongInt;
+    i ,j  : Longint;
     oldBCKArray, newBCKArray : Array of pointer;
     begin
       SetLength(oldBCKArray, length(m^.BitmapCellKind));
@@ -2544,9 +2544,9 @@ interface
 
   procedure ReconfigureMap(var m: map);
   var
-    row,col,id : LongInt;
+    row,col,id : Longint;
     
-    procedure _CreateSurroundingTiles(tile : Tile; row, col : LongInt);
+    procedure _CreateSurroundingTiles(tile : Tile; row, col : Longint);
     begin
       if NOT (m^.Isometric) then
       begin
@@ -2690,7 +2690,7 @@ interface
 
   procedure DoFreeMap(var m: Map);
   var
-  i: LongInt;
+  i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgMap', 'DoFreeMap', 'map = ' + HexStr(m));

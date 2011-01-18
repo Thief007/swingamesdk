@@ -9,6 +9,15 @@ library %(name)s;
   uses SysUtils, Strings, sgTrace, sgShared,
     %(uses)s
   
+  type 
+    LongintPtr      = ^Longint;
+    StringPtr       = ^String;
+    SinglePtr       = ^Single;
+    Point2DPtr      = ^Point2D;
+    LineSegmentPtr  = ^LineSegment;
+    BitmapPtr       = ^Bitmap;
+  
+  
   // The exception trap is used to ensure that exceptions do not propagate beyond the
   // library boundary.
   procedure TrapException(exc: Exception; fromMethod: String);
@@ -28,7 +37,7 @@ library %(name)s;
   // The following routines are used to copy array data
   procedure TriCopyToPtr(tri: Point2DPtr; const fromTri: Triangle);
   var
-    i: LongInt;
+    i: Longint;
   begin
     for i := 0 to 2 do
     begin
@@ -38,7 +47,7 @@ library %(name)s;
   
   procedure TriCopyFromPtr(var toTri: Triangle; tri: Point2DPtr);
   var
-    i: LongInt;
+    i: Longint;
   begin
     for i := 0 to 2 do
     begin
@@ -48,7 +57,7 @@ library %(name)s;
   
   procedure MatrixCopyToPtr(matrix: SinglePtr; const fromMatrix: Matrix2D);
   var
-    i, j: LongInt;
+    i, j: Longint;
   begin
     //WriteLn('************************');
     for i := 0 to 2 do
@@ -67,7 +76,7 @@ library %(name)s;
   
   procedure MatrixCopyFromPtr(var toMatrix: Matrix2D; matrix: SinglePtr);
   var
-    i, j: LongInt;
+    i, j: Longint;
   begin
     //WriteLn('************************');
     for i := 0 to 2 do
@@ -85,9 +94,9 @@ library %(name)s;
     //WriteLn('************************');
   end;
   
-  procedure LineCopyFromPtr(data: LineSegmentPtr; len: LongInt; out arr: LinesArray);
+  procedure LineCopyFromPtr(data: LineSegmentPtr; len: Longint; out arr: LinesArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -99,9 +108,9 @@ library %(name)s;
     end;
   end;
   
-  procedure LineCopyToPtr(const arr: LinesArray; len: LongInt; data: LineSegmentPtr);
+  procedure LineCopyToPtr(const arr: LinesArray; len: Longint; data: LineSegmentPtr);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
@@ -111,9 +120,9 @@ library %(name)s;
     end;
   end;
   
-  procedure TriangleCopyFromPtr(data: Point2DPtr; len: LongInt; out arr: TriangleArray);
+  procedure TriangleCopyFromPtr(data: Point2DPtr; len: Longint; out arr: TriangleArray);
   var
-    i, j: LongInt;
+    i, j: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -128,9 +137,9 @@ library %(name)s;
     end;
   end;
   
-  procedure TriangleCopyToPtr(const arr: TriangleArray; len: LongInt; data: Point2DPtr);
+  procedure TriangleCopyToPtr(const arr: TriangleArray; len: Longint; data: Point2DPtr);
   var
-    i, j: LongInt;
+    i, j: Longint;
   begin
     // len is number of triangles expected
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
@@ -144,9 +153,9 @@ library %(name)s;
     end;
   end;
   
-  procedure BmpCopyFromPtr(bmp: BitmapPtr; len: LongInt; out arr: BitmapArray);
+  procedure BmpCopyFromPtr(bmp: BitmapPtr; len: Longint; out arr: BitmapArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -158,9 +167,9 @@ library %(name)s;
     end;
   end;
   
-  procedure BmpCopyToPtr(const arr: BitmapArray; len: LongInt; bmp: BitmapPtr);
+  procedure BmpCopyToPtr(const arr: BitmapArray; len: Longint; bmp: BitmapPtr);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
@@ -170,9 +179,9 @@ library %(name)s;
     end;
   end;
   
-  procedure LongIntCopyFromPtr(data: LongIntPtr; len: LongInt; out arr: LongIntArray);
+  procedure LongintCopyFromPtr(data: LongintPtr; len: Longint; out arr: LongintArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
 
@@ -184,9 +193,9 @@ library %(name)s;
     end;
   end;
   
-  procedure LongIntCopyToPtr(const arr: LongIntArray; len: LongInt; data: LongIntPtr);
+  procedure LongintCopyToPtr(const arr: LongintArray; len: Longint; data: LongintPtr);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
@@ -196,9 +205,9 @@ library %(name)s;
     end;
   end;
   
-  procedure Point2DCopyFromPtr(data: Point2DPtr; len: LongInt; out arr: Point2DArray);
+  procedure Point2DCopyFromPtr(data: Point2DPtr; len: Longint; out arr: Point2DArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
     
@@ -210,9 +219,9 @@ library %(name)s;
     end;
   end;
   
-  procedure Point2DCopyToPtr(const arr: Point2DArray; len: LongInt; data: Point2DPtr);
+  procedure Point2DCopyToPtr(const arr: Point2DArray; len: Longint; data: Point2DPtr);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     
@@ -222,9 +231,9 @@ library %(name)s;
     end;
   end;
   
-  procedure StringCopyFromPtr(str: StringPtr; len: LongInt; out arr: StringArray);
+  procedure StringCopyFromPtr(str: StringPtr; len: Longint; out arr: StringArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < 0 then raise Exception.Create('Length of array cannot be negative');
     
@@ -236,9 +245,9 @@ library %(name)s;
     end;
   end;
   
-  procedure StringCopyToPtr(const arr: StringArray; len: LongInt; str: StringPtr);
+  procedure StringCopyToPtr(const arr: StringArray; len: Longint; str: StringPtr);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if len < Length(arr) then raise Exception.Create('Error in array size to call expected length to be ' + IntToStr(len));
     

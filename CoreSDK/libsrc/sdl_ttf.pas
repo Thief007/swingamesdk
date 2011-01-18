@@ -115,7 +115,7 @@ unit sdl_ttf;
   Changed LibName to reflect what most Linux distros will have. ie libSDL*-1.2.so.0 respectively.
 
   Revision 1.10  2005/01/02 19:07:32  savage
-  Slight bug fix to use LongInt instead of Long ( Thanks Michalis Kamburelis )
+  Slight bug fix to use Longint instead of Long ( Thanks Michalis Kamburelis )
 
   Revision 1.9  2005/01/01 02:15:20  savage
   Updated to v2.0.7

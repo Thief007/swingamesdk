@@ -38,7 +38,7 @@ var
   myMap: Map;
 	c: Character;
   p2d : Point2DArray;
-  i,j,k : LongInt;
+  i,j,k : Longint;
   
 begin
   OpenAudio();

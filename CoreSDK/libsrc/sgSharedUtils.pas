@@ -13,7 +13,7 @@
 // - 2010-02-03: Andrew : Added ExtractFileAndPath
 // - 2010-02-03: Aaron  : Added SingleArrayToRange
 //                        Added ZeroArray
-// - 2010-02-02: Aaron  : Added LongIntArrayToRange
+// - 2010-02-02: Aaron  : Added LongintArrayToRange
 // - Earlier   : Andrew : Various changes
 //=============================================================================
 unit sgSharedUtils;
@@ -26,27 +26,27 @@ uses sgTypes;
   {$endif}
   function ExtractAfterFirstDelim(index: integer; value: string; delim: Char): string;
 
-  function CountDelimiter(value: String; delim: Char): LongInt;
-  function CountDelimiterWithRanges(value: String; delim: Char): LongInt;
+  function CountDelimiter(value: String; delim: Char): Longint;
+  function CountDelimiterWithRanges(value: String; delim: Char): Longint;
   
-  function ExtractDelimitedWithRanges(index: LongInt; value: String): String;
-  function ProcessRange(value: String): LongIntArray;
+  function ExtractDelimitedWithRanges(index: Longint; value: String): String;
+  function ProcessRange(value: String): LongintArray;
   function ProcessFloatRange(value: String): SingleArray;
 
-  function MyStrToInt(str: String): LongInt; overload;
-  function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt; overload;
+  function MyStrToInt(str: String): Longint; overload;
+  function MyStrToInt(str: String; allowEmpty: Boolean) : Longint; overload;
   
   function MyStrToFloat(str: String): Extended; overload;
   function MyStrToFloat(str: String; allowEmpty: Boolean) : Extended; overload;
 
-  function LongIntArrayToRange(ints: LongIntArray):String;
+  function LongintArrayToRange(ints: LongintArray):String;
   function SingleArrayToRange(singles: SingleArray):String;
 
   function ExtractFileAndPath(fullname: String; out path, filename: String; allowNewFile: Boolean): Boolean;
 
-  procedure ZeroArray (var ints : LongIntArray); overload;
+  procedure ZeroArray (var ints : LongintArray); overload;
   procedure ZeroArray (var singles : SingleArray); overload;
-  procedure ZeroArray (var Ints : array of LongIntArray); overload;
+  procedure ZeroArray (var Ints : array of LongintArray); overload;
   procedure ZeroArray (var singles : array of SingleArray); overload;
   
   procedure MakeFalse (var visited: Array of Boolean);
@@ -56,7 +56,7 @@ uses sgTypes;
     LineData = record
       filename: String;
       data:     String;
-      lineNo:   LongInt;
+      lineNo:   Longint;
     end;
     LineProcessor = procedure(const data: LineData; ptr: Pointer);
   
@@ -71,9 +71,9 @@ implementation
     SysUtils, Math, Classes, StrUtils,
     sgShared, sgResources;
 
-  procedure ZeroArray (var ints : LongIntArray); overload;
+  procedure ZeroArray (var ints : LongintArray); overload;
   var
-  i: LongInt;
+  i: Longint;
   begin
     for i := low(ints) to high(ints) do
     begin
@@ -84,7 +84,7 @@ implementation
   
   procedure ZeroArray (var singles : SingleArray); overload;
   var
-  i : LongInt;
+  i : Longint;
   begin
     for i := low(singles) to high(singles) do
     begin
@@ -95,7 +95,7 @@ implementation
 
   procedure ZeroArray (var singles : array of SingleArray); overload;
   var
-  i : LongInt;
+  i : Longint;
   begin
     for i := low(singles) to high(singles) do
     begin
@@ -103,9 +103,9 @@ implementation
     end;
   end;
 
-  procedure ZeroArray (var Ints : array of LongIntArray); overload;
+  procedure ZeroArray (var Ints : array of LongintArray); overload;
   var
-  i : LongInt;
+  i : Longint;
   begin
     for i := low(Ints) to high(Ints) do
     begin
@@ -115,7 +115,7 @@ implementation
   
   function SingleArrayToRange(singles: SingleArray):String;
   var
-  i : LongInt;
+  i : Longint;
   begin
     result := '['+FloatToStr(singles[0]);
     for i := low(singles)+1 to high(singles) do
@@ -124,7 +124,7 @@ implementation
     end;
     result +=']';
   end; 
-  function LongIntArrayToRange(ints: LongIntArray):String;
+  function LongintArrayToRange(ints: LongintArray):String;
   var
     i,temp:longint;
     tempChanged : Boolean;
@@ -161,13 +161,13 @@ implementation
     
     result += ']';
   end;
-  function MyStrToInt(str: String): LongInt; overload;
+  function MyStrToInt(str: String): Longint; overload;
   begin
     if Length(str) = 0 then result := 0
     else result := StrToInt(Trim(str));
   end;
 
-  function MyStrToInt(str: String; allowEmpty: Boolean) : LongInt; overload;
+  function MyStrToInt(str: String; allowEmpty: Boolean) : Longint; overload;
   begin
     if allowEmpty and (Length(str) = 0) then
     begin
@@ -239,9 +239,9 @@ implementation
     end;
   end;
 
-  function ExtractDelimitedWithRanges(index: LongInt; value: String): String;
+  function ExtractDelimitedWithRanges(index: Longint; value: String): String;
   var
-    i, count, start: LongInt;
+    i, count, start: Longint;
     inRange: Boolean;
   begin
     //SetLength(result, 0);
@@ -279,7 +279,7 @@ implementation
     end;
   end;
 
-  function CountDelimiter(value: String; delim: Char): LongInt;
+  function CountDelimiter(value: String; delim: Char): Longint;
   var
     i: Integer;
   begin
@@ -291,7 +291,7 @@ implementation
     end;
   end;
   
-  function CountDelimiterWithRanges(value: String; delim: Char): LongInt;
+  function CountDelimiterWithRanges(value: String; delim: Char): Longint;
   var
     i: Integer;
     inRange: Boolean;
@@ -309,12 +309,12 @@ implementation
     end;
   end;
   
-  function ProcessRange(value: String): LongIntArray;
+  function ProcessRange(value: String): LongintArray;
   var
-    i, j, count, temp, lowPart, highPart, dashCount: LongInt;
+    i, j, count, temp, lowPart, highPart, dashCount: Longint;
     part: String;
   
-    procedure _AddToResult(val: LongInt);
+    procedure _AddToResult(val: Longint);
     begin
       SetLength(result, Length(result) + 1);
       result[High(result)] := val;
@@ -377,7 +377,7 @@ implementation
   
   function ProcessFloatRange(value: String): SingleArray;
   var
-    i, count : LongInt;
+    i, count : Longint;
     temp: Extended;
     part: String;
   
@@ -450,7 +450,7 @@ implementation
   
   procedure MakeFalse(var visited: Array of Boolean);
   var
-    i: LongInt;
+    i: Longint;
   begin
     for i := 0 to High(visited) do
     begin

@@ -8,8 +8,8 @@ int main(int argc, const char* argv[])
     
     [SGAudio openAudio];
     [SGGraphics openGraphicsWindow:@"Hello World" 
-                         width:800
-                        height:600];
+                             width:800
+                            height:600];
     [SGColors loadDefaultColors];
     
     while (![SGInput windowCloseRequested])
@@ -19,7 +19,7 @@ int main(int argc, const char* argv[])
         
         //Draw game...
         [SGGraphics clearScreen];
-        [SGText drawFrameRateWithSimpleFont: 0 :0];
+        [SGText drawFramerateAtX:0 y:0];
         [SGGraphics refreshScreen];
     }
     

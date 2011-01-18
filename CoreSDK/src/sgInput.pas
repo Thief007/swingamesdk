@@ -18,7 +18,7 @@
 // - 2009-06-05: Andrew : Using sgShared
 //
 // Version 2.2.2:
-// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-17: Andrew : Moved all integers to Longint
 // - 2008-12-16: Andrew : Added WasAKeyPressed
 //
 // Version 1.1.5:
@@ -167,14 +167,14 @@ interface
   ///
   /// @lib StartReadingTextWithinArea
   /// @sn startReadingTextColor:%s maxLen:%s font:%s area:%s
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   
   /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
   ///
   /// @lib StartReadingTextWithTextInArea
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s area:%s
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   
   /// Starts the reading of a string of characters from the user. Entry is 
   /// completed when the user presses ENTER, and aborted with ESCAPE.
@@ -184,21 +184,21 @@ interface
   ///
   /// @lib
   /// @sn startReadingTextColor:%s maxLen:%s font:%s x:%s y:%s
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
+  procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
   
   /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
   ///
   /// @lib StartReadingTextWithText
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s x:%s y:%s
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
   
   /// The same as `StartReadingText` but with an additional ``text`` parameter
   /// that is displayed as default text to the user.  
   ///
   /// @lib StartReadingTextWithTextAtPt
   /// @sn startReadingTextWith:%s color:%s maxLen:%s font:%s at:%s
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const pt: Point2D); overload;
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const pt: Point2D); overload;
   
   /// Returns the string that has been read since `StartReadingText` or 
   /// `StartReadingTextWithText` was called.
@@ -280,7 +280,7 @@ implementation
 
   procedure ProcessEvents();
   var
-    x, y: LongInt;
+    x, y: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgInput', 'ProcessEvents');
@@ -300,12 +300,12 @@ implementation
 
   function KeyTyped(key: KeyCode): Boolean;
   begin
-    result := sdlManager.WasKeyTyped(LongInt(key));
+    result := sdlManager.WasKeyTyped(Longint(key));
   end;
 
   function KeyDown(key : keyCode): Boolean;
   begin
-    result := sdlManager.IsKeyPressed(LongInt(key));
+    result := sdlManager.IsKeyPressed(Longint(key));
   end;
 
   function AnyKeyPressed(): Boolean;
@@ -315,7 +315,7 @@ implementation
 
   //---------------------------------------------------------------------------
   
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   begin
     if theFont = nil then begin RaiseException('The specified font to start reading text is nil'); exit; end;
     if maxLength <= 0 then begin RaiseException('Minimum length to start reading text is 1'); exit; end;
@@ -324,23 +324,23 @@ implementation
     sdlManager.StartReadingText(ToSDLColor(textColor), maxLength, theFont, NewSDLRect(area));
   end;
   
-  procedure StartReadingText(textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
+  procedure StartReadingText(textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, RectangleFrom(x, y, TextWidth(theFont, StringOfChar('M', maxLength)), TextHeight(theFont, 'M')));
   end;
   
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const area: Rectangle); overload;
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const area: Rectangle); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, area);
     sdlManager.SetText(text);    
   end;
   
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; const pt: Point2D); overload;
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; const pt: Point2D); overload;
   begin
     StartReadingTextWithText(text, textColor, maxLength, theFont, Round(pt.x), Round(pt.y));
   end;
   
-  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: LongInt; theFont: Font; x, y: LongInt); overload;
+  procedure StartReadingTextWithText(text: String; textColor: Color; maxLength: Longint; theFont: Font; x, y: Longint); overload;
   begin
     StartReadingText(textColor, maxLength, theFont, x, y);
     sdlManager.SetText(text);
@@ -372,7 +372,7 @@ implementation
   
   function MousePositionAsVector(): Vector;
   var
-    x, y: LongInt;
+    x, y: Longint;
   begin
     x := 0; y := 0;
     SDL_GetMouseState(x, y);
@@ -418,7 +418,7 @@ implementation
   
   function MousePosition(): Point2D;
   var
-    x, y: LongInt;
+    x, y: Longint;
   begin
     x := 0; y := 0;
     SDL_GetMouseState(x, y);
@@ -437,7 +437,7 @@ implementation
   
   function MouseMovement(): Vector;
   var
-    x, y: LongInt;
+    x, y: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgInput', 'MouseMovement');
@@ -455,10 +455,10 @@ implementation
   
   function MouseDown(button: MouseButton): Boolean;
   var
-    x, y: LongInt;
+    x, y: Longint;
   begin
     x := 0; y := 0;
-    result := (SDL_GetMouseState(x, y) and SDL_BUTTON(LongInt(button))) > 0;
+    result := (SDL_GetMouseState(x, y) and SDL_BUTTON(Longint(button))) > 0;
   end;
   
   function MouseUp(button: MouseButton): Boolean;

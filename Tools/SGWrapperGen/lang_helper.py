@@ -1,17 +1,25 @@
-#
-# Being replaced by lang_helper!!!
-#
-# This is a work in progress... not tested!
-#
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+lang_helper.py
 
+Created by Andrew Cain on 2011-01-05.
+Copyright (c) 2011 Swinburne University. All rights reserved.
+"""
 
-from sg_parameter import SGParameter
-from sg_property import SGProperty
-from sg_method import SGMethod
-from sg_cache import logger, find_or_add_type
+import sys
+import os
+
+from sg.sg_parameter import SGParameter
+from sg.sg_property import SGProperty
+from sg.sg_method import SGMethod
+from sg.sg_cache import logger, find_or_add_type
+
+# from prepared_method import PreparedMethod
+
 
 _hasError = False
-_dieOnError = True
+_dieOnError = False
 
 def hasError():
     global _hasError
@@ -32,7 +40,7 @@ def std_type_visitor(the_dict, the_type, modifier = None, dict_name = '_type_swi
     if modifier == 'result': modifier = 'return'
     
     if key not in the_dict[modifier]:
-        logger.error('WRAPPER   : Error changing model type %s - %s', modifier, the_type)
+        logger.error('HELPER    : Error changing model type %s - %s', modifier, the_type)
         logger.error('          : Add \'%s[%s]\': \'%s\': \'????\',', dict_name, modifier, the_type.name.lower())
         
         global _hasError, _dieOnError
@@ -62,7 +70,7 @@ def map_data_value(the_dict, key, the_type, result):
         
     #If this is a 
     if the_type.pointer_wrapper and key == 'return_val':
-        logger.error('WRAPPER   : Error pointer wrapper without return data mapping - %s', the_type)
+        logger.error('HELPER   : Error pointer wrapper without return data mapping - %s', the_type)
         
         global _hasError, _dieOnError
         _hasError = True
@@ -75,66 +83,60 @@ def map_data_value(the_dict, key, the_type, result):
         
     return result
 
-def add_local_var_for_param(to_method, for_parameter):
+# ===================================
+# = Adding data to a PreparedMethod =
+# ===================================
+
+def add_local_var_for_param(to_method, for_sg_parameter):
     '''
     Add a local variable to_method for_parameter. This is used for array
     processing in cases where the array data need to be marshalled between
     the program and the DLL and back.
+    
+    PARAMS:
+    - to_method : the PerparedMethod that needs the local variable added.
+    - for_sg_parameter : the parameter that will have a local variable
     '''
     
-    # print 'Adding local for', for_parameter.name, 'in', to_method.name
+    logger.debug('HELPER   : Adding local for %s in %s', for_sg_parameter.name, to_method.method_name);
     
-    if not for_parameter.maps_result:
-        local_var = SGParameter(for_parameter.name + '_temp')
-        for_parameter.maps_to_temp = True
-    else:
-        local_var = SGParameter(for_parameter.name)
-        local_var.is_returned = True
-    
-    local_var.data_type = for_parameter.data_type
-    local_var.modifier = for_parameter.modifier
-    local_var.maps_result = for_parameter.maps_result
-    local_var.local_for = for_parameter
-    local_var.pass_through = for_parameter.pass_through
-    
-    if for_parameter.data_type.is_struct and for_parameter.data_type.wraps_array:
-        local_var.has_field = True
-        local_var.field_name = for_parameter.data_type.fields[0].name
-    
+    local_var = LocalVar()
+    local_var.setup_for_parameter(for_sg_parameter)
     to_method.local_vars.append(local_var)
+    
     return local_var
-
 
 def add_local_var_for_result(to_method):
     '''
-    
+    Adds a local variable for the result of a function. This can be used to add processing
+    after the call and before the value is returned. Also needed for any function that has
+    been turned into a procedure (ones that return any form of array).
     '''
     
-    if to_method.method_called != None and to_method.method_called.was_function:
-        result_param = to_method.method_called.params[-1]
+    sg_method = to_method.sg_method
+    
+    if sg_method.method_called != None and sg_method.method_called.was_function:
+        # The called method has been turned into a procedure, so create a local variable for its result parameter
+        result_param = sg_method.method_called.params[-1]
         if not result_param.maps_result: #in case of returning var length array
-            result_param = to_method.method_called.params[-2]
+            result_param = sg_method.method_called.params[-2]
+        
+        assert result_param.maps_result
+        
+        local_var = add_local_var_for_param(to_method, result_param)
     else:
-        #skip void functions...
+        # Ignore call for void functions...
         if to_method.return_type is None: return
         
-        result_param = SGParameter('result')
-        result_param.maps_result = True
-        result_param.pass_through = True
-        result_param.modifier = 'result'        
-        result_param.data_type = to_method.return_type
+        local_var = LocalVar()
+        local_var.setup_for_result(to_method.return_type)
+        to_method.local_vars.append(local_var)
     
-    assert result_param.maps_result
-    
-    #Add the local variable ...
-    var = add_local_var_for_param(to_method, result_param)
-    var.length_param = result_param.length_param
-    var.has_length_param = result_param.has_length_param
-    
-    if to_method.method_called != None and to_method.method_called.was_function:
+    if sg_method.method_called != None and sg_method.method_called.was_function:
         to_method.args.append(var) # and pass it as an additional argument
 
-def add_length_local(to_method, for_param):
+def add_length_local(to_method, for_sg_parameter):
+    
     var_name = for_param.local_var_name() + '_len'
     local_var = SGParameter(var_name)
     local_var.is_length_param = True
@@ -317,7 +319,7 @@ def create_property_for_field(in_class, field):
     '''Creates a property to access the '''
     
     if field.data_type.wraps_array:
-        logger.error('WRAPPER   : Error structure with array fields must be set to via_pointer')
+        logger.error('HELPER    : Error structure with array fields must be set to via_pointer')
         
         global _hasError, _dieOnError
         _hasError = True
@@ -395,3 +397,34 @@ def lower_name(string):
             result += c
             last_was_us = False
     return result
+
+# ===================================================
+# = Type conversion dictionary population functions =
+# ===================================================
+
+def _add_to_dict(into_dict, details_dict, ident_tupple):
+    #find all the part
+    for key,val in details_dict.iteritems():
+        to_ins = val
+        for idx,part in enumerate(ident_tupple):
+            to_ins = to_ins.replace('#%d#' % (idx + 1), ident_tupple[idx])
+        # print 'inserting -> ', key, ':', to_ins
+        
+        if  ident_tupple[0] in into_dict[key]:
+            print 'ERROR: Adding into type dictionary : ', into_dict[key][ident_tupple[0]]
+            print 'key: ', key, 'type', ident_tupple[0]
+            assert False
+        
+        into_dict[key][ident_tupple[0]] = to_ins
+
+def build_type_dictionary(type_dictionary_creation_data, dicts):
+    """Builds the conversion dictionary."""
+    my_keys = dicts.keys()
+    
+    for type_mapping in type_dictionary_creation_data:
+        #print type_mapping
+        # Process each type in this type mapping
+        for identifier_tupple in type_mapping['identifiers']:
+            for a_key in my_keys:
+                _add_to_dict(dicts[a_key], type_mapping[a_key], identifier_tupple)
+

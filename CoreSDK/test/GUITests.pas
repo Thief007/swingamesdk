@@ -7,13 +7,13 @@ uses
 
 procedure __callback__Button1Clicked(r: Region; kind: EventKind);
 begin
-  WriteLn('here button1 - ', RegionID(r), ' - ', LongInt(kind));
+  WriteLn('here button1 - ', RegionID(r), ' - ', Longint(kind));
   LabelSetText('Label1', TextBoxText('TextBox1'));
 end;
 
 procedure __callback__List1(r: Region; kind: EventKind);
 begin
-  WriteLn('here - list1 - ', RegionID(r), ' - ', LongInt(kind));
+  WriteLn('here - list1 - ', RegionID(r), ' - ', Longint(kind));
   if kind = ekSelectionMade then
   begin
     LabelSetText('Label1', ListActiveItemText('List1'));

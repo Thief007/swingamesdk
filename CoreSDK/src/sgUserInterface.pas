@@ -54,7 +54,7 @@ type
   GUITextBoxData = packed record
     contentString:  String;
     font:           Font;
-    lengthLimit:    LongInt;
+    lengthLimit:    Longint;
     region:         Region;
     alignment:      FontAlignment;
   end;
@@ -79,14 +79,14 @@ type
     scrollUp:     Rectangle;
     scrollDown:   Rectangle;
     scrollArea:   Rectangle;
-    columns:      LongInt;
-    rows:         LongInt;
-    rowHeight:    LongInt;
-    colWidth:     LongInt;
-    scrollSize:   LongInt;
+    columns:      Longint;
+    rows:         Longint;
+    rowHeight:    Longint;
+    colWidth:     Longint;
+    scrollSize:   Longint;
     placeholder:  Array of Rectangle;
-    activeItem:   LongInt;
-    startingAt:   LongInt;
+    activeItem:   Longint;
+    startingAt:   Longint;
     font:         Font;
     items:        Array of GUIListItem;
     scrollButton: Bitmap;
@@ -96,7 +96,7 @@ type
   GUIRadioGroupData = packed record
     groupID:      string;
     buttons:      Array of Region;
-    activeButton: LongInt;
+    activeButton: Longint;
   end;
   
   GUICheckboxData = packed record
@@ -106,8 +106,8 @@ type
   RegionData = packed record
     stringID:       String;
     kind:           GUIElementKind;
-    regionIdx:       LongInt;
-    elementIndex:   LongInt;
+    regionIdx:       Longint;
+    elementIndex:   Longint;
     area:           Rectangle;
     active:         Boolean;
     parent:         Panel;
@@ -117,7 +117,7 @@ type
   PanelData = packed record
     name:                 String;
     filename:             String;
-    panelID:              LongInt;
+    panelID:              Longint;
     area:                 Rectangle;
     visible:              Boolean;
     active:               Boolean;
@@ -404,7 +404,7 @@ type
   ///
   /// @class Panel
   /// @getter Height
-  function PanelHeight(p: Panel): LongInt;
+  function PanelHeight(p: Panel): Longint;
   
   /// Returns panel width value
   ///
@@ -412,7 +412,7 @@ type
   ///
   /// @class Panel
   /// @getter Width
-  function PanelWidth(p: Panel): LongInt;
+  function PanelWidth(p: Panel): Longint;
   
   
   
@@ -496,7 +496,7 @@ type
   ///
   /// @class Region
   /// @getter Height
-  function RegionHeight(r: Region): LongInt;
+  function RegionHeight(r: Region): Longint;
 
   /// Returns the Region Wdith value
   ///
@@ -504,7 +504,7 @@ type
   ///
   /// @class Region
   /// @getter Width
-  function RegionWidth(r: Region): LongInt;
+  function RegionWidth(r: Region): Longint;
 
   /// Returns the region from the panel at the point
   ///
@@ -667,7 +667,7 @@ procedure TextboxSetText(tb: GUITextBox; s: string); overload;
 ///
 /// @class Textbox
 /// @setter Text
-procedure TextboxSetText(tb: GUITextBox; i: LongInt); overload;
+procedure TextboxSetText(tb: GUITextBox; i: Longint); overload;
 
 /// Sets the textbox text from region
 /// 
@@ -691,7 +691,7 @@ procedure TextboxSetText(r: Region; single: Single); overload;
 ///
 /// @class Region
 /// @setter TextboxText
-procedure TextboxSetText(r: Region; i: LongInt); overload;
+procedure TextboxSetText(r: Region; i: Longint); overload;
 
 /// Sets the textbox text from region
 /// 
@@ -719,7 +719,7 @@ procedure DeactivateTextBox();
 /// Returns the index of the active textbox's region.
 ///
 /// @lib
-function ActiveTextIndex(): LongInt;
+function ActiveTextIndex(): Longint;
 
 /// Checks if TextEntry finished, returns true/false
 ///
@@ -739,7 +739,7 @@ function RegionOfLastUpdatedTextBox(): Region;
 /// Returns the index of the region of the textbox in which text was changed/added into most recently.
 ///
 /// @lib
-function IndexOfLastUpdatedTextBox(): LongInt;
+function IndexOfLastUpdatedTextBox(): Longint;
 
 /// UpdateInterface main loop, checks the draggable, checks the region clicked, updates the interface
 ///
@@ -800,7 +800,7 @@ procedure ListRemoveActiveItem(s : string); overload;
 ///
 /// @class List
 /// @setter activeItem
-procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
+procedure ListSetActiveItemIndex(lst: GUIList; idx: Longint);
 
 /// Returns the active item text of the List in panel, pnl- with ID, ID
 ///
@@ -853,7 +853,7 @@ procedure ListSetFont(lst: GUITextbox; f: font);
 ///
 /// @class Region
 /// @getter ListItemText
-function ListItemText(r: Region; idx: LongInt): String; overload;
+function ListItemText(r: Region; idx: Longint): String; overload;
 
 /// Returns the text of the item at index idx
 ///
@@ -861,7 +861,7 @@ function ListItemText(r: Region; idx: LongInt): String; overload;
 ///
 /// @class List
 /// @getter ItemText
-function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+function ListItemText(lst: GUIList; idx: Longint): String; overload;
 
 /// Returns the text of the active item in the list of the region
 ///
@@ -877,7 +877,7 @@ function ListActiveItemText(r: Region): String; overload;
 ///
 /// @class Region
 /// @getter ListItemCount
-function ListItemCount(r: Region): LongInt; overload;
+function ListItemCount(r: Region): Longint; overload;
 
 /// Returns the number of items in the list
 ///
@@ -885,7 +885,7 @@ function ListItemCount(r: Region): LongInt; overload;
 ///
 /// @class List
 /// @getter ItemCount
-function ListItemCount(lst:GUIList): LongInt; overload;
+function ListItemCount(lst:GUIList): Longint; overload;
 
 /// Returns active item's index from the list of the region
 ///
@@ -893,7 +893,7 @@ function ListItemCount(lst:GUIList): LongInt; overload;
 ///
 /// @class Region
 /// @getter ListActiveItemIndex
-function ListActiveItemIndex(r: Region): LongInt; overload;
+function ListActiveItemIndex(r: Region): Longint; overload;
 
 /// Returns active item's index from the list
 ///
@@ -901,7 +901,7 @@ function ListActiveItemIndex(r: Region): LongInt; overload;
 ///
 /// @class List
 /// @getter ActiveItemIndex
-function ListActiveItemIndex(lst: GUIList): LongInt;
+function ListActiveItemIndex(lst: GUIList): Longint;
 
 /// Removes item at index idx from the list
 ///
@@ -909,7 +909,7 @@ function ListActiveItemIndex(lst: GUIList): LongInt;
 ///
 /// @class List
 /// @method RemoveItem
-procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+procedure ListRemoveItem(lst: GUIList; idx: Longint);
 
 /// Removes all items from the list.
 ///
@@ -1028,7 +1028,7 @@ procedure ListAddItem(r : Region; img:Bitmap; text: String); overload;
 ///
 /// @class List
 /// @getter activeItem
-function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
 
 /// Returns the index of the item with the bitmap and cell.
 ///
@@ -1036,7 +1036,7 @@ function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
 ///
 /// @class List
 /// @getter activeItem
-function ListBitmapIndex(lst: GUIList; const img: BitmapCell): LongInt;
+function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint;
 
 /// Adds an item to the list by text
 ///
@@ -1044,7 +1044,7 @@ function ListBitmapIndex(lst: GUIList; const img: BitmapCell): LongInt;
 ///
 /// @class Region
 /// @getter activeItem
-function ListTextIndex(lst: GUIList; value: String): LongInt;
+function ListTextIndex(lst: GUIList; value: String): Longint;
 
 /// Returns the starting point for the list
 ///
@@ -1052,7 +1052,7 @@ function ListTextIndex(lst: GUIList; value: String): LongInt;
 ///
 /// @class List
 /// @getter StartingAt
-function ListStartAt(lst: GUIList): LongInt;
+function ListStartAt(lst: GUIList): Longint;
 
 /// Returns the starting point for the list from region
 ///
@@ -1060,7 +1060,7 @@ function ListStartAt(lst: GUIList): LongInt;
 ///
 /// @class Region
 /// @getter ListStartingAt
-function ListStartAt(r: Region): LongInt;
+function ListStartAt(r: Region): Longint;
 
 /// Sets the starting point for the list
 ///
@@ -1068,7 +1068,7 @@ function ListStartAt(r: Region): LongInt;
 ///
 /// @class List
 /// @setter StartingAt
-procedure ListSetStartAt(lst: GUIList; idx: LongInt);
+procedure ListSetStartAt(lst: GUIList; idx: Longint);
 
 /// Sets the starting point for the list from region
 ///
@@ -1076,7 +1076,7 @@ procedure ListSetStartAt(lst: GUIList; idx: LongInt);
 ///
 /// @class Region
 /// @setter ListStartingAt
-procedure ListSetStartAt(r: Region; idx: LongInt);
+procedure ListSetStartAt(r: Region; idx: Longint);
 
 /// Returns the font alignment of a list from region
 ///
@@ -1116,7 +1116,7 @@ procedure ListSetFontAlignment(lst: GUIList; align: FontAlignment);
 ///
 /// @class List
 /// @setter LargestStartIndex
-function ListLargestStartIndex(lst: GUIList): LongInt;
+function ListLargestStartIndex(lst: GUIList): Longint;
 
 /// Returns the largest index that startingAt should be set to.
 ///
@@ -1124,7 +1124,7 @@ function ListLargestStartIndex(lst: GUIList): LongInt;
 ///
 /// @class List
 /// @method ScrollIncrement
-function ListScrollIncrement(lst: GUIList): LongInt;
+function ListScrollIncrement(lst: GUIList): Longint;
 
 //Label
 function  LabelFont(l: GUILabel): Font; overload;
@@ -1202,7 +1202,7 @@ type
     allowNew:             Boolean;
     selectType:           FileDialogSelectType;
     onlyFiles:            Boolean;
-    lastSelectedFile, lastSelectedPath: LongInt; // These represent the index if the selected file/path to enable double-like clicking
+    lastSelectedFile, lastSelectedPath: Longint; // These represent the index if the selected file/path to enable double-like clicking
   end;
   
 var
@@ -1218,7 +1218,7 @@ var
 // This is private to the unit
 procedure SendEvent(r: Region; kind: EventKind);
 var
-  i: LongInt;
+  i: Longint;
   pnl: Panel;
 begin
   if not assigned(r) then exit;
@@ -1262,14 +1262,14 @@ begin
   result := GUIC.lastActiveTextBox;
 end;
 
-function IndexOfLastUpdatedTextBox(): LongInt;
+function IndexOfLastUpdatedTextBox(): Longint;
 begin
   result := -1;
   if not assigned(GUIC.lastActiveTextBox) then exit;
   result := RegionOfLastUpdatedTextBox()^.elementIndex;
 end;
 
-function ActiveTextIndex(): LongInt;
+function ActiveTextIndex(): Longint;
 begin
   result := -1;
   if not assigned(GUIC.activeTextBox) then exit;
@@ -1300,7 +1300,7 @@ end;
 
 function ModalBefore(pnl: Panel): Boolean;
 var
-  i: LongInt;
+  i: Longint;
 begin
   result := false;
   
@@ -1448,7 +1448,7 @@ end;
 procedure DrawList(forRegion: Region; const area: Rectangle);
 var
   tempList:               GUIList;
-  i, itemIdx:             LongInt;
+  i, itemIdx:             Longint;
   areaPt, imagePt:        Point2D;
   itemArea, scrollArea:   Rectangle;
   itemTextArea:           Rectangle;
@@ -1528,7 +1528,7 @@ var
   procedure _DrawScrollPosition();
   var
     pct:              Single;
-    largestStartIdx:  LongInt;
+    largestStartIdx:  Longint;
   begin
     largestStartIdx := ListLargestStartIndex(tempList);
     
@@ -1801,7 +1801,7 @@ end;
 // Region Code
 //---------------------------------------------------------------------------------------
 
-function RegionWidth(r: Region): LongInt;
+function RegionWidth(r: Region): Longint;
 begin
   result := -1;
   if not(assigned(r)) then exit;
@@ -1809,7 +1809,7 @@ begin
   result := r^.area.width;
 end;
 
-function RegionHeight(r: Region): LongInt;
+function RegionHeight(r: Region): Longint;
 begin
   result := -1;
   if not(assigned(r)) then exit;
@@ -1850,7 +1850,7 @@ end;
 
 function RegionWithID(pnl: Panel; ID: String): Region; overload;
 var
-  idx: LongInt;
+  idx: Longint;
 begin
   result := nil;
   if not assigned(pnl) then exit;
@@ -1887,7 +1887,7 @@ end;
 procedure HandlePanelInput(pnl: Panel);
   procedure _ScrollWithScrollArea(lst: GUIList; mouse: Point2D);
   var
-    largestStartIdx: LongInt;
+    largestStartIdx: Longint;
     pct: Single;
   begin
     GUIC.lastClicked := nil;
@@ -1904,7 +1904,7 @@ procedure HandlePanelInput(pnl: Panel);
   
   procedure _ScrollUp(lst: GUIList);
   var
-    inc: LongInt;
+    inc: Longint;
   begin
     inc := ListScrollIncrement(lst);
     
@@ -1914,7 +1914,7 @@ procedure HandlePanelInput(pnl: Panel);
   
   procedure _ScrollDown(lst: GUIList);
   var
-    inc, largestStartIdx: LongInt;
+    inc, largestStartIdx: Longint;
   begin
     inc := ListScrollIncrement(lst);
     largestStartIdx := ListLargestStartIndex(lst);
@@ -1925,7 +1925,7 @@ procedure HandlePanelInput(pnl: Panel);
   
   procedure _PerformListClicked(lstRegion: Region; lst: GUIList; pointClicked: Point2D);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if not assigned(lst) then exit;
     
@@ -2093,7 +2093,7 @@ end;
 
 function RegionAtPoint(p: Panel; const pt: Point2D): Region;
 var
-  i: LongInt;
+  i: Longint;
   current: Region;
 begin
   result := nil;
@@ -2130,7 +2130,7 @@ end;
 
 function RadioGroupFromId(pnl: Panel; id: String): GUIRadioGroup;
 var
-  i: LongInt;
+  i: Longint;
 begin
   result := nil;
   if not assigned(pnl) then exit;
@@ -2361,7 +2361,7 @@ begin
   TextboxSetText(TextBoxFromRegion(r), s);
 end;
 
-procedure TextboxSetText(r: Region; i: LongInt); overload;
+procedure TextboxSetText(r: Region; i: Longint); overload;
 begin
   TextboxSetText(TextBoxFromRegion(r), IntToStr(i));
 end;
@@ -2377,7 +2377,7 @@ begin
     tb^.contentString := s;
 end;
 
-procedure TextboxSetText(tb: GUITextBox; i: LongInt); overload;
+procedure TextboxSetText(tb: GUITextBox; i: Longint); overload;
 begin
   TextboxSetText(tb, IntToStr(i));
 end;
@@ -2505,7 +2505,7 @@ begin
 end;
 
 
-procedure ListSetActiveItemIndex(lst: GUIList; idx: LongInt);
+procedure ListSetActiveItemIndex(lst: GUIList; idx: Longint);
 begin
   if not assigned(lst) then exit;
   lst^.activeItem := idx;
@@ -2532,12 +2532,12 @@ begin
   result := lst^.font;
 end;
 
-function ListItemText(r: Region; idx: LongInt): String; overload;
+function ListItemText(r: Region; idx: Longint): String; overload;
 begin
   result := ListItemText(ListFromRegion(r), idx);
 end;
 
-function ListItemText(lst: GUIList; idx: LongInt): String; overload;
+function ListItemText(lst: GUIList; idx: Longint): String; overload;
 begin
   result := '';
   if not assigned(lst) then exit;
@@ -2546,12 +2546,12 @@ begin
   result := lst^.items[idx].text;
 end;
 
-function ListItemCount(r: Region): LongInt; overload;
+function ListItemCount(r: Region): Longint; overload;
 begin
   result := ListItemCount(ListFromRegion(r));
 end;
 
-function ListItemCount(lst:GUIList): LongInt; overload;
+function ListItemCount(lst:GUIList): Longint; overload;
 begin
   result := 0;
   if not assigned(lst) then exit;
@@ -2638,9 +2638,9 @@ begin
 end;
 
 
-procedure ListRemoveItem(lst: GUIList; idx: LongInt);
+procedure ListRemoveItem(lst: GUIList; idx: Longint);
 var
-  i: LongInt;
+  i: Longint;
 begin
     if not assigned(lst) then exit;
     if (idx < 0) or (idx > High(lst^.items)) then exit;
@@ -2656,9 +2656,9 @@ begin
     if lst^.activeItem >= idx then lst^.activeItem := lst^.activeItem - 1;
 end;
 
-function ListTextIndex(lst: GUIList; value: String): LongInt;
+function ListTextIndex(lst: GUIList; value: String): Longint;
 var
-  i: LongInt;
+  i: Longint;
 begin
   result := -1;
   if not assigned(lst) then exit;
@@ -2674,14 +2674,14 @@ begin
   end;
 end;
 
-function ListBitmapIndex(lst: GUIList; img: Bitmap): LongInt;
+function ListBitmapIndex(lst: GUIList; img: Bitmap): Longint;
 begin
   result := ListBitmapIndex(lst, BitmapCellOf(img, -1));
 end;
 
-function ListBitmapIndex(lst: GUIList; const img: BitmapCell): LongInt;
+function ListBitmapIndex(lst: GUIList; const img: BitmapCell): Longint;
 var
-  i: LongInt;
+  i: Longint;
 begin
   result := -1;
   if not assigned(lst) then exit;
@@ -2697,7 +2697,7 @@ begin
   end;
 end;
 
-function ListScrollIncrement(lst: GUIList): LongInt;
+function ListScrollIncrement(lst: GUIList): Longint;
 begin
   result := 1;
   if not assigned(lst) then exit;
@@ -2710,19 +2710,19 @@ begin
   if result <= 0 then result := 1;
 end;
 
-function ListActiveItemIndex(r: Region): LongInt; overload;
+function ListActiveItemIndex(r: Region): Longint; overload;
 begin
   result := ListActiveItemIndex(ListFromRegion(r));
 end;
 
-function ListActiveItemIndex(lst: GUIList): LongInt; overload;
+function ListActiveItemIndex(lst: GUIList): Longint; overload;
 begin
   result := -1;
   if not assigned(lst) then exit;
   result := lst^.activeItem;
 end;
 
-function ListStartAt(lst: GUIList): LongInt;
+function ListStartAt(lst: GUIList): Longint;
 begin
   result := 0;
   if not assigned(lst) then exit;
@@ -2730,12 +2730,12 @@ begin
   result := lst^.startingAt;
 end;
 
-function ListStartAt(r: Region): LongInt;
+function ListStartAt(r: Region): Longint;
 begin
   result := ListStartAt(ListFromRegion(r));
 end;
 
-procedure ListSetStartAt(lst: GUIList; idx: LongInt);
+procedure ListSetStartAt(lst: GUIList; idx: Longint);
 begin
   if not assigned(lst) then exit;
   if (idx < 0) then idx := 0
@@ -2744,7 +2744,7 @@ begin
   lst^.startingAt := idx;
 end;
 
-procedure ListSetStartAt(r: Region; idx: LongInt);
+procedure ListSetStartAt(r: Region; idx: Longint);
 begin
   ListSetStartAt(ListFromRegion(r), idx);
 end;
@@ -2774,10 +2774,10 @@ begin
   lst^.alignment := align;
 end;
 
-function ListLargestStartIndex(lst: GUIList): LongInt;
+function ListLargestStartIndex(lst: GUIList): Longint;
 var
-  placeCount:       LongInt;
-  itemCount:        LongInt;
+  placeCount:       Longint;
+  itemCount:        Longint;
 begin
  result := 0;
  if not assigned(lst) then exit;
@@ -2857,21 +2857,21 @@ begin
    p^.draggable := b;
 end;
 
-procedure PanelSetX(p: Panel; nX: LongInt);
+procedure PanelSetX(p: Panel; nX: Longint);
 begin
   if not(assigned(p)) then exit;
   
   p^.area.X := nX;
 end;
 
-procedure PanelSetY(p: Panel; nY: LongInt);
+procedure PanelSetY(p: Panel; nY: Longint);
 begin
   if not(assigned(p)) then exit;
   
   p^.area.Y := nY;
 end;
 
-function PanelWidth(p: Panel): LongInt;
+function PanelWidth(p: Panel): Longint;
 begin
   result := -1;
   if not(assigned(p)) then exit;
@@ -2879,7 +2879,7 @@ begin
   result := p^.area.width;
 end;
 
-function PanelHeight(p: Panel): LongInt;
+function PanelHeight(p: Panel): Longint;
 begin
   result := -1;
   if not(assigned(p)) then exit;
@@ -3020,7 +3020,7 @@ end;
 
 procedure ToggleShowPanel(p: Panel);
 var
-  i: LongInt;
+  i: Longint;
   found: Boolean;
 begin
   if assigned(p) then
@@ -3132,7 +3132,7 @@ function StringToKind(s: String): GUIElementKind;
   procedure CreateRadioButton(forRegion: Region; data: String; result: Panel);
   var
     newRadioGroup: GUIRadioGroupData;
-    i: LongInt;
+    i: Longint;
     radioGroupID: string;
   begin
     radioGroupID := Trim(ExtractDelimited(7,data,[',']));
@@ -3193,7 +3193,7 @@ function StringToKind(s: String): GUIElementKind;
   procedure CreateList(r: Region; data: string; result: Panel);
   var
     newList: GUIListData;
-    scrollSz, rhs, btm, height, width: LongInt;
+    scrollSz, rhs, btm, height, width: Longint;
   begin
     //Format is
     // 1, 2, 3, 4, 5, 6,      7,       8,    9,          10,     11,        12,         13          14                  
@@ -3268,7 +3268,7 @@ function StringToKind(s: String): GUIElementKind;
   // newRegions is larger than or equal to the number of old regions in the panel
   procedure RewireRegions(p: Panel; newRegions: RegionDataArray);
   var
-    i, j, elemIdx: LongInt;
+    i, j, elemIdx: Longint;
   begin
     
     // for all of the regions
@@ -3416,7 +3416,7 @@ var
   
   procedure CreateRegions();
   var
-    i: LongInt;
+    i: Longint;
   begin
     SetLength(result^.regions, Length(regionDataArr));
     
@@ -3431,8 +3431,8 @@ var
   procedure SetupListPlaceholders();
   var
     tempListPtr: GUIList;
-    workingCol, workingRow: LongInt;
-    j, k: LongInt;
+    workingCol, workingRow: Longint;
+    j, k: Longint;
     
   begin
     for j := Low(result^.Regions) to High(result^.Regions) do
@@ -3541,12 +3541,12 @@ end;
 
 function IsSet(toCheck, checkFor: GuiElementKind): Boolean; overload;
 begin
-  result := (LongInt(toCheck) and LongInt(checkFor)) = LongInt(checkFor);
+  result := (Longint(toCheck) and Longint(checkFor)) = Longint(checkFor);
 end;
 
 function PointInRegion(pt: Point2D; p: Panel; kind: GuiElementKind): Boolean; overload;
 var
-  i: LongInt;
+  i: Longint;
   curr: Region;
 begin
   result := false;
@@ -3570,7 +3570,7 @@ end;
 
 function PanelAtPoint(pt: Point2D): Panel;
 var
-  i: LongInt;
+  i: Longint;
   curPanel: Panel;
 begin
   result := nil;
@@ -3619,7 +3619,7 @@ begin
   mp := MousePosition();
   curPanel := PanelAtPoint(mp);
   
-  if not PointInRegion(mp, curPanel, GuiElementKind(LongInt(gkAnyKind) and not LongInt(gkLabel))) then
+  if not PointInRegion(mp, curPanel, GuiElementKind(Longint(gkAnyKind) and not Longint(gkLabel))) then
   begin
     GUIC.panelDragging := curPanel;
   end
@@ -3727,7 +3727,7 @@ end;
 // Called to actually free the resource
 
 procedure DoFreePanel(var pnl: Panel);
-var i, j: LongInt;
+var i, j: Longint;
 begin
   {$IFDEF TRACE}
     TraceEnter('sgUserInterface', 'DoFreePanel', 'pnl = ' + HexStr(pnl));
@@ -3996,7 +3996,7 @@ end;
 
 function IsSet(toCheck, checkFor: FileDialogSelectType): Boolean; overload;
 begin
-  result := (LongInt(toCheck) and LongInt(checkFor)) = LongInt(checkFor);
+  result := (Longint(toCheck) and Longint(checkFor)) = Longint(checkFor);
 end;
 
 procedure ShowErrorMessage(msg: String);
@@ -4013,7 +4013,7 @@ var
   procedure _PopulatePathList();
   var
     pathList: GUIList;
-    i, len: LongInt;
+    i, len: Longint;
   begin
     pathList  := ListFromRegion(RegionWithId(dialog.dialogPanel, 'PathList'));
     
@@ -4077,7 +4077,7 @@ var
   procedure _SelectFileInList();
   var
     filesList: GUIList;
-    fileIdx: LongInt;
+    fileIdx: Longint;
   begin
     filesList := ListFromRegion(RegionWithId(dialog.dialogPanel, 'FilesList'));
     if Length(filename) > 0 then
@@ -4148,7 +4148,7 @@ var
   procedure _PerformFileListClick();
   var
     selectedText, selectedPath: String;
-    selectedIdx: LongInt;
+    selectedIdx: Longint;
   begin
     // Get the idx of the item selected in the files list
     selectedIdx := ListActiveItemIndex(clicked);
@@ -4182,7 +4182,7 @@ var
   procedure _PerformPathListClick();
   var
     tmpPath, newPath: String;
-    selectedIdx, i, len: LongInt;
+    selectedIdx, i, len: Longint;
     paths: Array [0..256] of PChar;
   begin
     // Get the idx of the item selected in the paths
@@ -4253,7 +4253,7 @@ procedure UpdateInterface();
   var
     pnl: Panel;
     r: Region;
-    txtCount, inc, idx: LongInt;
+    txtCount, inc, idx: Longint;
     txt: GUITextBox;
   begin
     //Enable tabbing between text boxes

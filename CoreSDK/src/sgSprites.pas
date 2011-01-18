@@ -63,6 +63,7 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateSpriteWithLayer
+  /// @sn createSpriteWithLayer:%s layerNamed:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -76,10 +77,11 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateSpriteWithAnimation
+  /// @sn createSpriteWithLayer:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initWithBitmap:%s animationTemplate:%s
+  /// @csn initWithBitmap:%s animationScript:%s
   function CreateSprite(layer: Bitmap; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
@@ -89,10 +91,11 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateSpriteWithLayerAndAnimation
+  /// @sn createSpriteWithLayer:%s layerNamed:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initWithBitmap:%s layerNamed:%s animationTemplate:%s
+  /// @csn initWithBitmap:%s layerNamed:%s animationScript:%s
   function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
@@ -102,6 +105,7 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSprite
+  /// @sn createSpriteWithLayers:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -115,6 +119,7 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSpriteWithLayerNames
+  /// @sn createSpriteWithLayers:%s layersNamed:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -128,10 +133,11 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSpriteWithAnimationScript
+  /// @sn createSpriteWithLayers:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initWithBitmaps:%s animationTemplate:%s
+  /// @csn initWithBitmaps:%s animationScript:%s
   function CreateSprite(const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
@@ -141,10 +147,11 @@ interface
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
   /// 
   /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationScript
+  /// @sn createSpriteWithLayers:%s layersNamed:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initWithBitmaps:%s layerNames:%s animationTemplate:%s
+  /// @csn initWithBitmaps:%s layerNames:%s animationScript:%s
   function CreateSprite(const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
@@ -152,6 +159,7 @@ interface
   /// pixel level collisions, no animation, the layer have name 'layer1'.
   /// 
   /// @lib CreateBasicSpriteNamed
+  /// @sn createSpriteNamed:%s layer:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -163,6 +171,7 @@ interface
   /// pixel level collisions, no animation, and the specified layer have name.
   /// 
   /// @lib CreateSpriteWithLayerNamed
+  /// @sn createSpriteNamed:%s layer:%s layerNamed:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -174,10 +183,11 @@ interface
   /// pixel level collisions, the specified animation template, the layer have name 'layer1'.
   /// 
   /// @lib CreateSpriteWithAnimationNamed
+  /// @sn createSpriteNamed:%s layer:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initNamed:%s withBitmap:%s animationTemplate:%s
+  /// @csn initNamed:%s withBitmap:%s animationScript:%s
   function CreateSprite(name: String; layer: Bitmap; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
@@ -185,10 +195,11 @@ interface
   /// pixel level collisions, the specified animation template, and layer name.
   /// 
   /// @lib CreateSpriteWithLayerAndAnimationNamed
+  /// @sn createSpriteNamed:%s layer:%s layerNamed:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initNamed:%s withBitmap:%s layerNamed:%s animationTemplate:%s
+  /// @csn initNamed:%s withBitmap:%s layerNamed:%s animationScript:%s
   function CreateSprite(name: String; layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
@@ -196,6 +207,7 @@ interface
   /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
   /// 
   /// @lib CreateLayeredSpriteNamed
+  /// @sn createSpriteNamed:%s layers:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -207,6 +219,7 @@ interface
   /// pixel level collisions, no animation, and the specified layer names.
   /// 
   /// @lib CreateLayeredSpriteWithLayerNamesNamed
+  /// @sn createSpriteNamed:%s layers:%s layersNamed:%s
   /// 
   /// @class Sprite
   /// @constructor
@@ -218,10 +231,11 @@ interface
   /// pixel level collisions, the specified animation template, the layer names 'layer1', 'layer2',... .
   /// 
   /// @lib CreateLayeredSpriteWithAnimationScriptNamed
+  /// @sn createSpriteNamed:%s layers:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initNamed: %s withBitmaps:%s animationTemplate:%s
+  /// @csn initNamed: %s withBitmaps:%s animationScript:%s
   function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap images. The sprite will use the cell information within the 
@@ -229,10 +243,11 @@ interface
   /// pixel level collisions, no animation, the layer names 'layer1', 'layer2',... .
   /// 
   /// @lib CreateLayeredSpriteWithLayerNamesAndAnimationScriptNamed
+  /// @sn createSpriteNamed:%s layers:%s layersNamed:%s animationScript:%s
   /// 
   /// @class Sprite
   /// @constructor
-  /// @csn initNamed:%s withBitmaps:%s layerNames:%s animationTemplate:%s
+  /// @csn initNamed:%s withBitmaps:%s layerNames:%s animationScript:%s
   function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   
   /// Free the resources associated with a sprite.
@@ -286,7 +301,7 @@ interface
   /// @class Sprite
   /// @method AddLayer
   /// @csn addLayer:%s named:%s
-  function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): LongInt;
+  function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): Longint;
   
   /// Returns the bitmap of the indicated layer of the sprite.
   ///
@@ -306,7 +321,7 @@ interface
   /// @class Sprite
   /// @method LayerAtIdx
   /// @csn layerAtIdx:%s
-  function SpriteLayer(s: Sprite; idx: LongInt): Bitmap; overload;
+  function SpriteLayer(s: Sprite; idx: Longint): Bitmap; overload;
   
   /// Returns the index of the specified layer.
   ///
@@ -316,7 +331,7 @@ interface
   /// @class Sprite
   /// @method IndexOfLayer
   /// @csn indexOfLayer:%s
-  function SpriteLayerIndex(s: Sprite; name: String): LongInt;
+  function SpriteLayerIndex(s: Sprite; name: String): Longint;
   
   /// Returns the name of the specified layer.
   ///
@@ -326,7 +341,7 @@ interface
   /// @class Sprite
   /// @method LayerName
   /// @csn layerName:%s
-  function SpriteLayerName(s: Sprite; idx: LongInt): String;
+  function SpriteLayerName(s: Sprite; idx: Longint): String;
   
   /// Show the specified layer of the sprite.
   ///
@@ -336,7 +351,7 @@ interface
   /// @class Sprite
   /// @overload ShowLayer ShowLayerNamed
   /// @csn showLayerNamed:%s
-  function SpriteShowLayer(s: Sprite; name: String): LongInt; overload;
+  function SpriteShowLayer(s: Sprite; name: String): Longint; overload;
   
   /// Show the specified layer of the sprite.
   ///
@@ -346,7 +361,7 @@ interface
   /// @class Sprite
   /// @method ShowLayer
   /// @csn showLayer:%s
-  function SpriteShowLayer(s: Sprite; id: LongInt): LongInt; overload;
+  function SpriteShowLayer(s: Sprite; id: Longint): Longint; overload;
   
   /// Hide the specified layer of the sprite.
   ///
@@ -366,7 +381,7 @@ interface
   /// @class Sprite
   /// @method HideLayer
   /// @csn hideLayer:%s
-  procedure SpriteHideLayer(s: Sprite; id: LongInt); overload;
+  procedure SpriteHideLayer(s: Sprite; id: Longint); overload;
   
   /// Toggle the visibility of the specified layer of the sprite.
   ///
@@ -386,7 +401,7 @@ interface
   /// @class Sprite
   /// @method ToggleLayerVisible
   /// @csn toggleLayerVisible:%s
-  procedure SpriteToggleLayerVisible(s: Sprite; id: LongInt); overload;
+  procedure SpriteToggleLayerVisible(s: Sprite; id: Longint); overload;
   
   /// Returns the index (z-order) of the sprite's layer.
   ///
@@ -396,7 +411,7 @@ interface
   /// @class Sprite
   /// @overload VisibleIndexOfLayer VisibleIndexOfLayerNamed
   /// @csn visibleIndexOfLayerNamed:%s
-  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt; overload;
+  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): Longint; overload;
   
   /// Returns the index (z-order) of the sprite's layer.
   ///
@@ -406,7 +421,7 @@ interface
   /// @class Sprite
   /// @method VisibleIndexOfLayer
   /// @csn visibleIndexOfLayer:%s
-  function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt; overload;
+  function SpriteVisibleIndexOfLayer(s: Sprite; id: Longint): Longint; overload;
   
   /// Returns the number of layers within the Sprite.
   ///
@@ -414,7 +429,7 @@ interface
   ///
   /// @class Sprite
   /// @getter LayerCount
-  function SpriteLayerCount(s: Sprite): LongInt;
+  function SpriteLayerCount(s: Sprite): Longint;
   
   ///Returns the number of layers that are currently visible for the sprite.
   ///
@@ -422,7 +437,7 @@ interface
   ///
   /// @class Sprite
   /// @getter VisibleLayerCount
-  function SpriteVisibleLayerCount(s: Sprite): LongInt;
+  function SpriteVisibleLayerCount(s: Sprite): Longint;
   
   /// Returns the ids of the layers that are currently visible. In order back to front.
   ///
@@ -431,7 +446,7 @@ interface
   /// @class Sprite
   /// @getter VisibleLayerIds
   /// @length SpriteVisibleLayerCount
-  function SpriteVisibleLayerIds(s: Sprite) : LongIntArray;
+  function SpriteVisibleLayerIds(s: Sprite) : LongintArray;
   
   /// Returns the bitmaps of the layers in the Sprite.
   ///
@@ -479,7 +494,7 @@ interface
   /// @class Sprite
   /// @method LayerOffset
   /// @csn offsetOfLayer:%s 
-  function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D; overload;
+  function SpriteLayerOffset(s: Sprite; idx: Longint): Point2D; overload;
   
   /// Sets the offset of the specified layer.
   ///
@@ -499,7 +514,7 @@ interface
   /// @class Sprite
   /// @overload SetLayerOffset SetLayerNamedOffset
   /// @csn layer:%s setOffset:%s 
-  procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D); overload;
+  procedure SpriteSetLayerOffset(s: Sprite; idx: Longint; const value: Point2D); overload;
   
   /// Returns the index of the n'th (idx parameter) visible layer.
   /// 
@@ -508,7 +523,7 @@ interface
   ///
   /// @class Sprite
   /// @method VisibleLayer
-  function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
+  function SpriteVisibleLayer(s: Sprite; idx: Longint): Longint;
   
   /// Sends the layer specified to the back in the visible layer order.
   /// 
@@ -517,7 +532,7 @@ interface
   ///
   /// @class Sprite
   /// @method SendLayerToBack
-  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: Longint);
   
   /// Sends the layer specified backward in the visible layer order.
   /// 
@@ -526,7 +541,7 @@ interface
   ///
   /// @class Sprite
   /// @method SendLayerToBackward
-  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: Longint);
   
   /// Sends the layer specified forward in the visible layer order.
   /// 
@@ -535,7 +550,7 @@ interface
   ///
   /// @class Sprite
   /// @method SendLayerForward
-  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: Longint);
   
   /// Sends the layer specified to the front in the visible layer order.
   /// 
@@ -544,7 +559,7 @@ interface
   ///
   /// @class Sprite
   /// @method SendLayerToFront
-  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: Longint);
   
   /// Gets a rectangle that surrounds the indicated layer.
   ///
@@ -562,7 +577,7 @@ interface
   /// 
   /// @class Sprite
   /// @method RectangleForLayer
-  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
+  function SpriteLayerRectangle(s: Sprite; idx: Longint): Rectangle; overload;
   
   /// Returns the collision rectangle for the specified sprite.
   ///
@@ -588,7 +603,7 @@ interface
   /// 
   /// @class Sprite
   /// @method CircleForLayer
-  function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
+  function SpriteLayerCircle(s: Sprite; idx: Longint): Circle; overload;
   
   /// Gets a circle in the bounds of the base layer of the indicated sprite.
   ///
@@ -667,7 +682,7 @@ interface
   /// @class Sprite
   /// @method StartAnimation
   /// @csn startAnimation:%s
-  procedure SpriteStartAnimation(s: Sprite; idx: LongInt); overload;
+  procedure SpriteStartAnimation(s: Sprite; idx: Longint); overload;
   
   /// Start playing an animation from the sprite's animation template.
   /// The withSound parameter determines whether to play a sound effect 
@@ -679,7 +694,7 @@ interface
   /// @class Sprite
   /// @overload StartAnimation StartAnimationWithSound
   /// @csn startAnimation:%s withSound:%s
-  procedure SpriteStartAnimation(s: Sprite; idx: LongInt; withSound: Boolean); overload;
+  procedure SpriteStartAnimation(s: Sprite; idx: Longint; withSound: Boolean); overload;
   
   /// Update the position and animation details of the Sprite.
   /// This will play a sound effect if the new cell of the animation
@@ -781,6 +796,7 @@ interface
   ///
   /// @class Sprite
   /// @overload UpdateAnimation UpdateAnimationPctWithSound
+  /// @csn updateAnimationPct:%s withSound:%s
   procedure UpdateSpriteAnimation(s: Sprite; pct: Single; withSound: Boolean); overload;
   
   /// Indicates if the sprites animation has ended.
@@ -836,7 +852,7 @@ interface
   /// @class Sprite
   /// @overload Draw DrawOffsetXY
   /// @csn drawOffsetX:%s y:%s
-  procedure DrawSprite(s : Sprite; xOffset, yOffset: LongInt); overload;
+  procedure DrawSprite(s : Sprite; xOffset, yOffset: Longint); overload;
   
   /// Draws the sprite at its position in the game offset by a given amount. Only
   /// use this method when you want to draw the sprite displaced from its location
@@ -929,7 +945,7 @@ interface
   /// @class Sprite
   /// @method MoveTo
   /// @csn moveToX:%s y:%s
-  procedure MoveSpriteTo(s : Sprite; x,y : LongInt);
+  procedure MoveSpriteTo(s : Sprite; x,y : Longint);
   
   
   
@@ -946,7 +962,7 @@ interface
   /// @class Sprite
   /// @method OnScreenAt
   /// @csn onScreenAtX:%s y:%s
-  function SpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
+  function SpriteOnScreenAt(s: Sprite; x, y: Longint): Boolean; overload;
   
   /// Returns True if a pixel of the `Sprite` ``s`` is at the screen location
   /// specified (``pt``), which is converted to a world location.
@@ -979,7 +995,7 @@ interface
   /// 
   /// @class Sprite
   /// @getter Height
-  function SpriteHeight(s: Sprite): LongInt;
+  function SpriteHeight(s: Sprite): Longint;
   
   /// The height of a given layer of the Sprite (aligned to the Y axis).
   ///
@@ -989,7 +1005,7 @@ interface
   /// @class Sprite
   /// @overload LayerHeight LayerNamedHeight
   /// @csn heightOfLayerNamed:%s
-  function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
+  function SpriteLayerHeight(s: Sprite; name: String): Longint; overload;
   
   /// The height of a given layer of the Sprite (aligned to the Y axis).
   ///
@@ -999,14 +1015,14 @@ interface
   /// @class Sprite
   /// @method LayerHeight
   /// @csn heightOfLayer:%s
-  function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
+  function SpriteLayerHeight(s: Sprite; idx: Longint): Longint; overload;
   
   /// The current Width of the sprite (aligned to the X axis).
   /// 
   /// @lib
   /// @class Sprite
   /// @getter Width
-  function SpriteWidth(s: Sprite): LongInt;
+  function SpriteWidth(s: Sprite): Longint;
   
   /// The width of a given layer of the Sprite (aligned to the X axis).
   ///
@@ -1016,7 +1032,7 @@ interface
   /// @class Sprite
   /// @overload LayerWidth LayerNamedWidth
   /// @csn widthOfLayerNamed:%s
-  function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
+  function SpriteLayerWidth(s: Sprite; name: String): Longint; overload;
   
   /// The width of a given layer of the Sprite (aligned to the X axis).
   ///
@@ -1026,7 +1042,7 @@ interface
   /// @class Sprite
   /// @method LayerWidth
   /// @csn widthOfLayer:%s
-  function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
+  function SpriteLayerWidth(s: Sprite; idx: Longint): Longint; overload;
   
   /// Returns the center point of the passed in Sprite. This is based on the Sprite's 
   /// Position, Width and Height.
@@ -1242,7 +1258,7 @@ interface
   /// 
   /// @class Sprite
   /// @getter CurrentCell
-  function SpriteCurrentCell(s: Sprite): LongInt;
+  function SpriteCurrentCell(s: Sprite): Longint;
   
   
   
@@ -1375,7 +1391,7 @@ interface
   ///
   /// @class Sprite
   /// @getter ValueCount 
-  function SpriteValueCount(s: Sprite) : LongInt;
+  function SpriteValueCount(s: Sprite) : Longint;
   
   /// Returns the names of all of the values of the sprite
   ///
@@ -1393,7 +1409,7 @@ interface
   ///
   /// @class Sprite
   /// @overload Value ValueAt
-  function SpriteValue(s: Sprite; index: LongInt): Single; overload;
+  function SpriteValue(s: Sprite; index: Longint): Single; overload;
   
   /// Returns the indicated value of the sprite
   ///
@@ -1442,7 +1458,7 @@ interface
   /// @class Sprite
   /// @method SetValue
   /// @csn setValue:%s to:%s
-  procedure SpriteSetValue(s: Sprite; idx: LongInt; val: Single); overload;
+  procedure SpriteSetValue(s: Sprite; idx: Longint; val: Single); overload;
   
   
   
@@ -1533,7 +1549,7 @@ implementation
   function CreateSprite(const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   var
     layerNames: StringArray;
-    i: LongInt;
+    i: Longint;
   begin
     SetLength(layerNames, Length(layers));
     for i := 0 to High(layers) do
@@ -1591,7 +1607,7 @@ implementation
   function CreateSprite(name: String; const layers: BitmapArray; ani: AnimationScript): Sprite; overload;
   var
     layerNames: StringArray;
-    i: LongInt;
+    i: Longint;
   begin
     SetLength(layerNames, Length(layers));
     for i := 0 to High(layers) do
@@ -1604,7 +1620,7 @@ implementation
   
   function CreateSprite(name: String; const layers: BitmapArray; const layerNames: StringArray; ani: AnimationScript): Sprite; overload;
   var
-    i, idx, count, cellCount: LongInt;
+    i, idx, count, cellCount: Longint;
   begin
     result := nil; 
     count := Length(layers);
@@ -1674,7 +1690,7 @@ implementation
     result^.velocity              := VectorTo(0,0);
     
     // Setup animation detials
-    result^.animationTemplate     := ani;
+    result^.animationScript     := ani;
     result^.animationData         := nil;
     
     // Setup collision details
@@ -1728,7 +1744,7 @@ implementation
   // procedure UpdateSpriteBuffers(s: Sprite);
   // var
   //   dest: Bitmap; //temporary surface
-  //   srcX, srcY: LongInt; //for image parts
+  //   srcX, srcY: Longint; //for image parts
   // begin
   //   if (s^.rotation = s^.bufferedRotation) and (s^.scale = s^.bufferedScale) then exit;
   //   if (s^.bufferBmp <> nil) then FreeBitmap(s^.bufferBmp);
@@ -1775,7 +1791,7 @@ implementation
       FreeAnimation(s^.animationData);
       
       // Nil pointers to resources managed by sgResources
-      s^.animationTemplate := nil;
+      s^.animationScript := nil;
       s^.collisionBitmap := nil;
       
       //Free buffered rotation image
@@ -1794,7 +1810,7 @@ implementation
     s := nil;
   end;
   
-  function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): LongInt;
+  function SpriteAddLayer(s: Sprite; newLayer: Bitmap; layerName: String): Longint;
   begin
     if newLayer = nil then begin RaiseException('Cannot add non-existing bitmap to Sprite'); exit; end;
     if s = nil then begin RaiseException('No sprite to add to'); exit; end;
@@ -1830,23 +1846,23 @@ implementation
   
   procedure SpriteStartAnimation(s: Sprite; named: String; withSound: Boolean);
   begin
-    SpriteStartAnimation(s, AnimationIndex(s^.animationTemplate, named), withSound);
+    SpriteStartAnimation(s, AnimationIndex(s^.animationScript, named), withSound);
   end;
   
-  procedure SpriteStartAnimation(s: Sprite; idx: LongInt);
+  procedure SpriteStartAnimation(s: Sprite; idx: Longint);
   begin
     SpriteStartAnimation(s, idx, true);
   end;
   
-  procedure SpriteStartAnimation(s: Sprite; idx: LongInt; withSound: Boolean);
+  procedure SpriteStartAnimation(s: Sprite; idx: Longint; withSound: Boolean);
   begin
     if not assigned(s) then exit;
-    if not assigned(s^.animationTemplate) then exit;
+    if not assigned(s^.animationScript) then exit;
     
     if assigned(s^.animationData) then
-      AssignAnimation(s^.animationData, idx, s^.animationTemplate, withSound)
+      AssignAnimation(s^.animationData, idx, s^.animationScript, withSound)
     else
-      s^.animationData := CreateAnimation(idx, s^.animationTemplate, withSound);
+      s^.animationData := CreateAnimation(idx, s^.animationScript, withSound);
   end;
   
   procedure UpdateSpriteAnimation(s: Sprite); overload;
@@ -1901,9 +1917,9 @@ implementation
     DrawSprite(s, Round(position.x), Round(position.y));
   end;
 
-  procedure DrawSprite(s: Sprite; xOffset, yOffset: LongInt); overload;
+  procedure DrawSprite(s: Sprite; xOffset, yOffset: Longint); overload;
   var
-    i, idx: LongInt;
+    i, idx: Longint;
   begin
     if not Assigned(s) then begin RaiseException('No sprite supplied'); exit; end;
     
@@ -1948,7 +1964,7 @@ implementation
     s^.position.y := s^.position.y + (pct * mvmt.y);
   end;
 
-  procedure MoveSpriteTo(s : Sprite; x,y : LongInt);
+  procedure MoveSpriteTo(s : Sprite; x,y : Longint);
   begin
     if s = nil then begin RaiseException('No sprite supplied'); exit; end;
   
@@ -1966,7 +1982,7 @@ implementation
     MoveSprite(s, s^.velocity, pct);
   end;
 
-  function SpriteOnScreenAt(s: Sprite; x, y: LongInt): Boolean; overload;
+  function SpriteOnScreenAt(s: Sprite; x, y: Longint): Boolean; overload;
   var
     cellRect: Rectangle;
     wx, wy: Single;
@@ -2047,32 +2063,32 @@ implementation
     else result := SpriteLayer(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteLayer(s: Sprite; idx: LongInt): Bitmap;
+  function SpriteLayer(s: Sprite; idx: Longint): Bitmap;
   begin
     if not assigned(s) then result := nil
     else if (idx < 0) or (idx > High(s^.layers)) then begin result := nil; RaiseException('Sprite layer index out of range - ' + IntToStr(idx)); exit; end
     else result := s^.layers[idx];
   end;
   
-  function SpriteLayerIndex(s: Sprite; name: String): LongInt;
+  function SpriteLayerIndex(s: Sprite; name: String): Longint;
   begin
     if not assigned(s) then result := -1
     else result := IndexOf(s^.layerIds, name);
   end;
   
-  function SpriteLayerName(s: Sprite; idx: LongInt): String;
+  function SpriteLayerName(s: Sprite; idx: Longint): String;
   begin
     if not assigned(s) then result := ''
     else result := NameAt(s^.layerIds, idx);
   end;
   
-  function SpriteShowLayer(s: Sprite; name: String): LongInt;
+  function SpriteShowLayer(s: Sprite; name: String): Longint;
   begin
     if not assigned(s) then result := -1
     else result := SpriteShowLayer(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteShowLayer(s: Sprite; id: LongInt): LongInt;
+  function SpriteShowLayer(s: Sprite; id: Longint): Longint;
   begin
     if not assigned(s) then result := -1
     else
@@ -2094,9 +2110,9 @@ implementation
     else SpriteHideLayer(s, IndexOf(s^.layerIds, name));
   end;
   
-  procedure SpriteHideLayer(s: Sprite; id: LongInt);
+  procedure SpriteHideLayer(s: Sprite; id: Longint);
   var
-    i, idx: LongInt;
+    i, idx: Longint;
   begin
     idx := SpriteVisibleIndexOfLayer(s, id);
     if idx < 0 then exit; // The layer is not shown
@@ -2117,7 +2133,7 @@ implementation
     else SpriteToggleLayerVisible(s, IndexOf(s^.layerIds, name));
   end;
   
-  procedure SpriteToggleLayerVisible(s: Sprite; id: LongInt); overload;
+  procedure SpriteToggleLayerVisible(s: Sprite; id: Longint); overload;
   begin
     if SpriteVisibleIndexOfLayer(s, id) < 0 then 
       SpriteShowLayer(s, id)
@@ -2125,19 +2141,19 @@ implementation
       SpriteHideLayer(s, id);
   end;
   
-  function SpriteLayerCount(s: Sprite): LongInt;
+  function SpriteLayerCount(s: Sprite): Longint;
   begin
     if not assigned(s) then result := 0
     else result := Length(s^.layers);
   end;
   
-  function SpriteVisibleLayerCount(s: Sprite): LongInt;
+  function SpriteVisibleLayerCount(s: Sprite): Longint;
   begin
     if not assigned(s) then result := 0
     else result := Length(s^.visibleLayers);
   end;
   
-  function SpriteVisibleLayerIds(s: Sprite) : LongIntArray;
+  function SpriteVisibleLayerIds(s: Sprite) : LongintArray;
   begin
     if not assigned(s) then result := nil
     else result := s^.visibleLayers;
@@ -2157,7 +2173,7 @@ implementation
   
   procedure SpriteSetLayerOffsets(s: Sprite; const values: Point2DArray);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if not Assigned(s) then exit;
     if not Length(values) = Length(s^.layerOffsets) then begin RaiseException('Unable to set sprite layer offsets as lengths are not equal.'); exit; end;
@@ -2174,7 +2190,7 @@ implementation
     else result := SpriteLayerOffset(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteLayerOffset(s: Sprite; idx: LongInt): Point2D;
+  function SpriteLayerOffset(s: Sprite; idx: Longint): Point2D;
   begin
     if not assigned(s) then result := PointAt(0,0)
     else if (idx < 0) or (idx >= Length(s^.layerOffsets)) then begin RaiseException('Error fetching layer offset out of range.'); result := PointAt(0,0); exit; end
@@ -2187,21 +2203,21 @@ implementation
       SpriteSetLayerOffset(s, IndexOf(s^.layerIds, name), value);
   end;
   
-  procedure SpriteSetLayerOffset(s: Sprite; idx: LongInt; const value: Point2D);
+  procedure SpriteSetLayerOffset(s: Sprite; idx: Longint; const value: Point2D);
   begin
     if assigned(s) then
       s^.layerOffsets[idx] := value;
   end;
   
-  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): LongInt;
+  function SpriteVisibleIndexOfLayer(s: Sprite; name: String): Longint;
   begin
     if not assigned(s) then result := -1
     else result := SpriteVisibleIndexOfLayer(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteVisibleIndexOfLayer(s: Sprite; id: LongInt): LongInt;
+  function SpriteVisibleIndexOfLayer(s: Sprite; id: Longint): Longint;
   var
-    i: LongInt;
+    i: Longint;
   begin
     result := -1;
     if not assigned(s) then exit
@@ -2218,25 +2234,25 @@ implementation
     end;
   end;
   
-  function SpriteVisibleLayer(s: Sprite; idx: LongInt): LongInt;
+  function SpriteVisibleLayer(s: Sprite; idx: Longint): Longint;
   begin
     result := -1;
     if not assigned(s) then exit
     else result := s^.visibleLayers[idx];
   end;
   
-  procedure Swap(var val1, val2: LongInt);
+  procedure Swap(var val1, val2: Longint);
   var
-    temp: LongInt;
+    temp: Longint;
   begin
     temp := val1;
     val1 := val2;
     val2 := temp;
   end;
   
-  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteSendLayerToBack(s: Sprite; visibleLayer: Longint);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if not assigned(s) then exit;
     //Check not last or beyond in array
@@ -2249,7 +2265,7 @@ implementation
     end;
   end;
   
-  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: Longint);
   begin
     if not assigned(s) then exit;
     //Check not last or beyond in array
@@ -2258,7 +2274,7 @@ implementation
     Swap(s^.visibleLayers[visibleLayer], s^.visibleLayers[visibleLayer + 1]);
   end;
   
-  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteBringLayerForward(s: Sprite; visibleLayer: Longint);
   begin
     if not assigned(s) then exit;
     //Check not first or lower
@@ -2267,9 +2283,9 @@ implementation
     Swap(s^.visibleLayers[visibleLayer], s^.visibleLayers[visibleLayer - 1]);
   end;
   
-  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: LongInt);
+  procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: Longint);
   var
-    i: LongInt;
+    i: Longint;
   begin
     if not assigned(s) then exit;
     //Check not last or beyond in array
@@ -2288,17 +2304,17 @@ implementation
     else result := SpriteLayerRectangle(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle; overload;
+  function SpriteLayerRectangle(s: Sprite; idx: Longint): Rectangle; overload;
   begin
     {$IFDEF TRACE}
-      TraceEnter('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+      TraceEnter('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: Longint): Rectangle', '');
     {$ENDIF}
     
     if not assigned(s) then result := RectangleFrom(0,0,0,0)
     else result := BitmapCellRectangle(s^.position.x + s^.layerOffsets[idx].x, s^.position.y + s^.layerOffsets[idx].y, s^.layers[idx]);
       
     {$IFDEF TRACE}
-      TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: LongInt): Rectangle', '');
+      TraceExit('sgSprites', 'SpriteLayerRectangle(s: Sprite; idx: Longint): Rectangle', '');
     {$ENDIF}
   end;
   
@@ -2327,7 +2343,7 @@ implementation
     else result := SpriteLayerCircle(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteLayerCircle(s: Sprite; idx: LongInt): Circle; overload;
+  function SpriteLayerCircle(s: Sprite; idx: Longint): Circle; overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgSprites', 'SpriteLayerCircle(s: Sprite): Circle', '');
@@ -2427,7 +2443,7 @@ implementation
 // Sprite Current cell
 //---------------------------------------------------------------------------
   
-  function SpriteCurrentCell(s: Sprite): LongInt;
+  function SpriteCurrentCell(s: Sprite): Longint;
   begin
     if not assigned(s) then result := -1
     else result := AnimationCurrentCell(s^.animationData);
@@ -2443,38 +2459,38 @@ implementation
 // Sprite width/height
 //---------------------------------------------------------------------------
   
-  function SpriteLayerHeight(s: Sprite; name: String): LongInt; overload;
+  function SpriteLayerHeight(s: Sprite; name: String): Longint; overload;
   begin
     if not Assigned(s) then result := 0
     else result := SpriteLayerHeight(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteLayerHeight(s: Sprite; idx: LongInt): LongInt; overload;
+  function SpriteLayerHeight(s: Sprite; idx: Longint): Longint; overload;
   begin
     if not Assigned(s) then result := 0
     else if (idx < 0) or (idx >= Length(s^.layers)) then result := 0
     else result := s^.layers[idx]^.cellH;
   end;
   
-  function SpriteLayerWidth(s: Sprite; name: String): LongInt; overload;
+  function SpriteLayerWidth(s: Sprite; name: String): Longint; overload;
   begin
     if not assigned(s) then result := 0
     else result := SpriteLayerWidth(s, IndexOf(s^.layerIds, name));
   end;
   
-  function SpriteLayerWidth(s: Sprite; idx: LongInt): LongInt; overload;
+  function SpriteLayerWidth(s: Sprite; idx: Longint): Longint; overload;
   begin
     if not Assigned(s) then result := 0
     else if (idx < 0) or (idx >= Length(s^.layers)) then result := 0
     else result := s^.layers[idx]^.cellW;
   end;  
   
-  function SpriteWidth(s: Sprite): LongInt;
+  function SpriteWidth(s: Sprite): Longint;
   begin
     result := SpriteLayerWidth(s, 0);
   end;
   
-  function SpriteHeight(s: Sprite): LongInt;
+  function SpriteHeight(s: Sprite): Longint;
   begin
     result := SpriteLayerHeight(s, 0);
   end;
@@ -2570,7 +2586,7 @@ implementation
 // Sprite value code
 //---------------------------------------------------------------------------
   
-  function SpriteValueCount(s: Sprite) : LongInt;
+  function SpriteValueCount(s: Sprite) : Longint;
   begin
     result := -1;
     if not Assigned(s) then exit;
@@ -2586,7 +2602,7 @@ implementation
     result := NamesOf(s^.valueIds);
   end;
   
-  function SpriteValue(s: Sprite; index: LongInt): Single; overload;
+  function SpriteValue(s: Sprite; index: Longint): Single; overload;
   begin
     result := 0;
     if not Assigned(s) then exit;
@@ -2609,7 +2625,7 @@ implementation
   
   procedure SpriteAddValue(s: Sprite; name: String; initVal: Single);
   var
-    idx: LongInt;
+    idx: Longint;
   begin
     if not assigned(s) then exit;
     if HasName(s^.valueIds, name) then exit;
@@ -2626,7 +2642,7 @@ implementation
     SpriteSetValue(s, IndexOf(s^.valueIds, name), val);
   end;
   
-  procedure SpriteSetValue(s: Sprite; idx: LongInt; val: Single); overload;
+  procedure SpriteSetValue(s: Sprite; idx: Longint; val: Single); overload;
   begin
     if not assigned(s) then exit;
     if (idx < 0) or (idx > High(s^.values)) then exit;

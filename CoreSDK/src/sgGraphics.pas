@@ -25,7 +25,7 @@
 // - 2009-06-05: Andrew : Using sgShared
 //
 // Version 2.0:
-// - 2008-12-17: Andrew : Moved all integers to LongInt
+// - 2008-12-17: Andrew : Moved all integers to Longint
 // - 2008-12-10: Andrew : Moved primitive drawing to SDL_gfx
 //                      : Added rotation and zoom to Sprite + Sprite Drawing
 //                      : Added RotateZoomBitmap
@@ -99,7 +99,7 @@ interface
   /// @lib
   /// @uname OpenGraphicsWindow
   /// @sn openGraphicsWindow:%s width:%s height:%s
-  procedure OpenGraphicsWindow(caption: String; width, height: LongInt); overload;
+  procedure OpenGraphicsWindow(caption: String; width, height: Longint); overload;
 
   /// Opens the graphical window as an 800 x 600 window. See OpenGramhicsWinddow
   /// for more options.
@@ -122,7 +122,7 @@ interface
   ///
   /// @lib
   /// @sn changeScreenSizeToWidth:%s height:%s
-  procedure ChangeScreenSize(width, height: LongInt);
+  procedure ChangeScreenSize(width, height: Longint);
 
   /// Switches the application to full screen or back from full screen to
   /// windowed.
@@ -148,7 +148,7 @@ interface
   /// @class Graphics
   /// @static
   /// @getter ScreenWidth
-  function ScreenWidth(): LongInt;
+  function ScreenWidth(): Longint;
 
   /// Returns the height of the screen currently displayed.
   ///
@@ -159,7 +159,7 @@ interface
   /// @class Graphics
   /// @static
   /// @getter ScreenHeight
-  function ScreenHeight(): LongInt;
+  function ScreenHeight(): Longint;
 
   /// Saves the current screen a bitmap file. The file will be saved into the
   /// current directory.
@@ -368,41 +368,41 @@ interface
   /// 
   /// @lib DrawOrFillPtCircleOnto
   /// @sn drawOnto:%s color:%s filled:%s circleX:%s y:%s radius:%s
-  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle onto a destination.
   /// 
   /// @lib DrawOrFillPtCircleOnto(dest, clr, False, xc, yc, radius)
   /// @uname DrawPtCircleOnto
   /// @sn drawOnto:%s color:%s circleX:%s y:%s radius:%s
-  procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Fill a circle onto a destination.
   /// 
   /// @lib DrawOrFillPtCircleOnto(dest, clr, True, xc, yc, radius)
   /// @uname FillPtCircleOnto
   /// @sn fillOnto:%s color:%s circleX:%s y:%s radius:%s
-  procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle onto a destination (filled or outline).
   /// 
   /// @lib DrawOrFillPtCircleAtPointOnto
   /// @sn drawOnto:%s color:%s filled:%s circle:%s radius:%s
-  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: Longint); overload;
   
   /// Draw a circle onto a bitmap.
   /// 
   /// @lib DrawOrFillPtCircleAtPointOnto(dest, clr, False, point, radius)
   /// @uname DrawCircleAtPointOnto
   /// @sn drawOnto:%s color:%s circle:%s radius:%s
-  procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: Longint); overload;
   
   /// Fill a circle onto a destination bitmap.
   /// 
   /// @lib DrawOrFillPtCircleAtPointOnto(dest, clr, True, point, radius)
   /// @uname FillCircleAtPointOnto
   /// @sn fillOnto:%s color:%s circle:%s radius:%s
-  procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: Longint); overload;
   
   /// Draw a circle onto a bitmap (filled or outline).
   /// 
@@ -428,41 +428,41 @@ interface
   /// 
   /// @lib DrawOrFillPtCircle
   /// @sn draw:%s filled:%s circleX:%s y:%s radius:%s
-  procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle in the game.
   /// 
   /// @lib DrawOrFillPtCircle(clr, False, xc, yc, radius)
   /// @uname DrawPtCircle
   /// @sn draw:%s circleX:%s y:%s radius:%s
-  procedure DrawCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Fill a circle in the game.
   /// 
   /// @lib DrawOrFillPtCircle(clr, True, xc, yc, radius)
   /// @uname FillPtCircle
   /// @sn fill:%s circleX:%s y:%s radius:%s
-  procedure FillCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircle(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle in the game (filled or outline).
   /// 
   /// @lib DrawOrFillPtCircleAtPoint
   /// @sn draw:%s filled:%s circle:%s radius:%s
-  procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: Longint); overload;
   
   /// Draw circle in the game.
   /// 
   /// @lib DrawOrFillPtCircleAtPoint(clr, False, position, radius)
   /// @uname DrawPtCircleAtPoint
   /// @sn draw:%s circle:%s radius:%s
-  procedure DrawCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Fill a circle in the game.
   /// 
   /// @lib DrawOrFillPtCircleAtPoint(clr, True, position, radius)
   /// @uname FillPtCircleAtPoint
   /// @sn fill:%s circle:%s radius:%s
-  procedure FillCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircle(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Draw a circle in the game (filled or outline).
   /// 
@@ -488,42 +488,42 @@ interface
   /// 
   /// @lib DrawOrFillPtCircleOnScreen
   /// @sn draw:%s filled:%s circleOnScreenX:%s y:%s radius:%s
-  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle on the screen.
   /// 
   /// @lib DrawOrFillPtCircleOnScreen(clr, False, xc, yc, radius)
   /// @uname DrawCirclePtOnScreen
   /// @sn draw:%s circleOnScreenX:%s y:%s radius:%s
-  procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Fill a circle on the screen.
   /// 
   /// @lib DrawOrFillPtCircleOnScreen(clr, True, xc, yc, radius)
   /// @uname FillCirclePtOnScreen
   /// @sn fill:%s circleOnScreenX:%s y:%s radius:%s
-  procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: Longint); overload;
   
   /// Draw a circle onto the screen (filled or outline).
   /// 
   /// Draw a circle onto the screen
   /// @lib DrawOrFillCircleAtPointOnScreen
   /// @sn draw:%s filled:%s circleOnScreen:%s radius:%s
-  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: Longint); overload;
   
   /// Draw a circle onto the screen.
   /// 
   /// @lib DrawOrFillCircleAtPointOnScreen(clr, False, position, radius)
   /// @uname DrawCircleAtPointOnScreen
   /// @sn draw:%s circleOnScreen:%s radius:%s
-  procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Fills a circle onto the screen.
   /// 
   /// @lib DrawOrFillCircleAtPointOnScreen(clr, True, position, radius)
   /// @uname FillCircleAtPointOnScreen
   /// @sn fill:%s circleOnScreen:%s radius:%s
-  procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: Longint); overload;
   
   /// Draw a circle on the screen (filled or outline)
   /// 
@@ -920,13 +920,13 @@ interface
   ///
   /// @lib
   /// @sn bitmap:%s putPixelX:%s y:%s color:%s
-  procedure PutPixel(bmp: Bitmap; value: Color; x, y: LongInt);
+  procedure PutPixel(bmp: Bitmap; value: Color; x, y: Longint);
   
   /// Draw a pixel onto a destination.
   /// 
   /// @lib DrawPixelOnto
   /// @sn drawOnto:%s color:%s pixelX:%s y:%s
-  procedure DrawPixel(dest: Bitmap; clr: Color; x, y: LongInt); overload;
+  procedure DrawPixel(dest: Bitmap; clr: Color; x, y: Longint); overload;
   
   /// Draw a pixel onto a destination.
   /// 
@@ -950,7 +950,7 @@ interface
   /// 
   /// @lib
   /// @sn draw:%s pixelOnScreenX:%s y:%s
-  procedure DrawPixelOnScreen(clr: Color; x, y: LongInt); overload;
+  procedure DrawPixelOnScreen(clr: Color; x, y: Longint); overload;
   
   /// Draw a pixel on the screen.
   ///
@@ -968,7 +968,7 @@ interface
   /// 
   /// @lib DrawOrFillRectangleOnto
   /// @sn drawOnto:%s color:%s filled:%s rectangleX:%s y:%s width:%s height:%s
-  procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; filled : Boolean; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle onto a destination (filled or outline).
   /// 
@@ -981,7 +981,7 @@ interface
   /// @lib DrawOrFillRectangleOnto(dest, clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangleOnto
   /// @sn drawOnto:%s color:%s rectangleX:%s y:%s width:%s height:%s
-  procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height: Longint); overload;
   
   /// Draw a rectangle onto a destination.
   /// 
@@ -995,7 +995,7 @@ interface
   /// @lib DrawOrFillRectangleOnto(dest, clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnto
   /// @sn fillOnto:%s color:%s rectangleX:%s y:%s width:%s height:%s
-  procedure FillRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Fill a rectangle onto a destination.
   /// 
@@ -1008,7 +1008,7 @@ interface
   ///
   /// @lib DrawOrFillRectangle
   /// @sn draw:%s filled:%s rectangleX:%s y:%s width:%s height:%s
-  procedure DrawRectangle(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawRectangle(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw a rectangle in the game (filled or outline).
   /// 
@@ -1021,7 +1021,7 @@ interface
   /// @lib DrawOrFillRectangle(clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangle
   /// @sn draw:%s rectangleX:%s y:%s width:%s height:%s
-  procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw rectangle in the game.
   ///
@@ -1035,7 +1035,7 @@ interface
   /// @lib DrawOrFillRectangle(clr, True, xPos, yPos, width, height)
   /// @uname FillRectangle
   /// @sn fill:%s rectangleX:%s y:%s width:%s height:%s
-  procedure FillRectangle(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure FillRectangle(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Fill a rectangle in the game.
   ///
@@ -1048,21 +1048,21 @@ interface
   ///
   /// @lib DrawOrFillRectangleOnScreen
   /// @sn draw:%s filled:%s rectangleOnScreenX:%s y:%s width:%s height:%s
-  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle on the screen.
   ///
   /// @lib DrawOrFillRectangleOnScreen(clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangleOnScreen
   /// @sn draw:%s rectangleOnScreenX:%s y:%s width:%s height:%s
-  procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Fill a rectangle on the screen.
   ///
   /// @lib DrawOrFillRectangleOnScreen(clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnScreen
   /// @sn fill:%s rectangleOnScreenX:%s y:%s width:%s height:%s
-  procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle on the screen (fill or outline).
   ///
@@ -1094,7 +1094,7 @@ interface
   /// 
   /// @lib DrawLineOnto
   /// @sn drawOnto:%s color:%s lineX1:%s y1:%s x2:%s y2:%s
-  procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Longint); overload;
   
   /// Draw a line onto a destination bitmap.
   /// 
@@ -1112,13 +1112,13 @@ interface
   /// 
   /// @lib DrawHorizontalLineOnto
   /// @sn drawOnto:%s color:%s horizontalLineY:%s x1:%s x2:%s
-  procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: LongInt); overload;
+  procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: Longint); overload;
   
   /// Draw a vertical line onto a destination.
   ///
   /// @lib DrawVerticalLineOnto
   /// @sn drawOnto:%s color:%s verticalLineX:%s y1:%s y2:%s
-  procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: LongInt); overload;
+  procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: Longint); overload;
   
   /// Draw a collection of lines.
   /// 
@@ -1160,7 +1160,7 @@ interface
   /// 
   /// @lib
   /// @sn draw:%s onScreenX1:%s y1:%s x2:%s y2:%s
-  procedure DrawLineOnScreen(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLineOnScreen(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Longint); overload;
   
   /// Draw a line on the screen.
   ///
@@ -1178,13 +1178,13 @@ interface
   ///
   /// @lib
   /// @sn draw:%s horizontalLineOnScreenY:%s x1:%s x2:%s
-  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: LongInt);
+  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: Longint);
   
   /// Draw a vertical line on the screen between y1 and y2.
   ///
   /// @lib
   /// @sn draw:%s verticalLineOnScreenX:%s y1:%s y2:%s
-  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: LongInt);
+  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: Longint);
   
   
   
@@ -1196,7 +1196,7 @@ interface
   /// 
   /// @lib DrawOrFillEllipseOnto
   /// @sn drawOnto:%s color:%s filled:%s ellipseX:%s y:%s width:%s height:%s
-  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: Longint); overload;
   
   /// Draw the ellipse onto the destination (filled or outline).
   /// 
@@ -1209,7 +1209,7 @@ interface
   /// @lib DrawOrFillEllipseOnto(dest, clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipseOnto
   /// @sn drawOnto:%s color:%s ellipseX:%s y:%s width:%s height:%s
-  procedure DrawEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: Longint); overload;
   
   /// Draw the ellipse onto the destination.
   /// 
@@ -1223,7 +1223,7 @@ interface
   /// @lib DrawOrFillEllipseOnto(dest, clr, True, xPos, yPos, width, height)
   /// @uname FillEllipseOnto
   /// @sn fillOnto:%s color:%s ellipseX:%s y:%s width:%s height:%s
-  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: Longint); overload;
   
   /// Fill the ellipse onto the destination.
   /// 
@@ -1236,7 +1236,7 @@ interface
   ///
   /// @lib DrawOrFillEllipse
   /// @sn draw:%s filled:%s x:%s y:%s width:%s height:%s
-  procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw an ellipse in the game (filled or outline).
   ///
@@ -1249,7 +1249,7 @@ interface
   /// @lib DrawOrFillEllipse(clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipse
   /// @sn draw:%s x:%s y:%s width:%s height:%s
-  procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw an ellipse in the game.
   /// 
@@ -1263,7 +1263,7 @@ interface
   /// @lib DrawOrFillEllipse(clr, True, xPos, yPos, width, height)
   /// @uname FillEllipse
   /// @sn fill:%s x:%s y:%s width:%s height:%s
-  procedure FillEllipse(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure FillEllipse(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Fill a ellipse in the game.
   ///
@@ -1276,21 +1276,21 @@ interface
   /// 
   /// @lib DrawOrFillEllipseOnScreen
   /// @sn draw:%s filled:%s ellipseOnScreenX:%s y:%s width:%s height:%s
-  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: Longint); overload;
   
   /// Draw an ellipse on screen.
   ///
   /// @lib DrawOrFillEllipseOnScreen(clr, False, xPos, yPos, width, height)
   /// @uname DrawEllipseOnScreen
   /// @sn draw:%s ellipseOnScreenX:%s y:%s width:%s height:%s
-  procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: Longint); overload;
   
   /// Fills an ellipse on the screen.
   ///
   /// @lib DrawOrFillEllipseOnScreen(clr, True, xPos, yPos, width, height)
   /// @uname FillEllipseOnScreen
   /// @sn fill:%s ellipseOnScreenX:%s y:%s width:%s height:%s
-  procedure FillEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipseOnScreen(clr: Color; xPos, yPos, width, height: Longint); overload;
   
   /// Draw an ellpse on the screen (filled or outline).
   ///
@@ -1322,7 +1322,7 @@ interface
   ///
   /// @lib PushClipXY
   /// @sn pushClipX:%s y:%s width:%s height:%s
-  procedure PushClip(x, y, w, h: LongInt); overload;
+  procedure PushClip(x, y, w, h: Longint); overload;
   
   /// Push a clip rectangle to the screen. This can be undone using PopClip.
   ///
@@ -1372,7 +1372,7 @@ interface
   ///
   /// @lib SetClipXY
   /// @sn setClipX:%s y:%s width:%s height:%s
-  procedure SetClip(x, y, w, h: LongInt); overload;
+  procedure SetClip(x, y, w, h: Longint); overload;
 
   /// Set the clip rectangle of the bitmap.
   ///
@@ -1382,7 +1382,7 @@ interface
   /// @class Bitmap
   /// @overload SetClip SetClipXY
   /// @csn setClipX:%s y:%s width:%s height:%s
-  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
+  procedure SetClip(bmp: Bitmap; x, y, w, h: Longint); overload;
   
   /// Pop the clip rectangle of the screen.
   ///
@@ -1428,13 +1428,13 @@ interface
   /// @class Bitmap
   /// @method GetPixel
   /// @csn colorAtX:%s y:%s
-  function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
+  function GetPixel(bmp: Bitmap; x, y: Longint): Color;
   
   /// Returns the color of the pixel at the given x,y location.
   ///
   /// @lib
   /// @sn colorOnScreenAtX:%s y:%s
-  function GetPixelFromScreen(x, y: LongInt): Color;
+  function GetPixelFromScreen(x, y: Longint): Color;
   
   
   var
@@ -1473,7 +1473,7 @@ implementation
     ClearScreen(ColorBlack);
   end;
 
-  function GetPixel(bmp: Bitmap; x, y: LongInt): Color;
+  function GetPixel(bmp: Bitmap; x, y: Longint): Color;
   begin
     if not Assigned(bmp) then begin RaiseException('No bitmap supplied'); exit; end;
 
@@ -1486,16 +1486,16 @@ implementation
     result := GetPixel32(bmp^.surface, x, y);
   end;
 
-  function GetPixelFromScreen(x, y: LongInt): Color;
+  function GetPixelFromScreen(x, y: Longint): Color;
   begin
     result := GetPixel(screen, x, y);
   end;
 
-  procedure PutPixel(bmp: Bitmap; value: Color; x, y: LongInt);
+  procedure PutPixel(bmp: Bitmap; value: Color; x, y: Longint);
   var
     clr:  Color;
     p:    ^Color;
-    bpp:  LongInt;
+    bpp:  Longint;
   begin
     if not assigned(bmp) then exit;
     
@@ -1515,7 +1515,7 @@ implementation
   ///
   /// Side Effects:
   /// - Sets one pixel on the screen
-  procedure DrawPixelOnScreen(clr: Color; x, y: LongInt);
+  procedure DrawPixelOnScreen(clr: Color; x, y: Longint);
   begin
     DrawPixel(screen, clr, x, y);
   end;
@@ -1534,12 +1534,12 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a rectangle in the dest bitmap
-  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(clr : Color; filled : Boolean; xPos, yPos, width, height : Longint); overload;
   begin
     DrawRectangle(screen, clr, filled, xPos, yPos, width, height);
   end;
 
-  procedure DrawRectangle(clr : Color; filled : Boolean; xPos, yPos: Single; width, height : LongInt); overload;
+  procedure DrawRectangle(clr : Color; filled : Boolean; xPos, yPos: Single; width, height : Longint); overload;
   begin
     DrawRectangle(screen, clr, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
@@ -1552,12 +1552,12 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a rectangle on the screen
-  procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   begin
     DrawRectangle(screen, clr, xPos, yPos, width, height);
   end;
   
-  procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height : LongInt); overload;
+  procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height : Longint); overload;
   begin
     DrawRectangle(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
@@ -1570,12 +1570,12 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a rectangle on the screen
-  procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   begin
     FillRectangle(screen, clr, xPos, yPos, width, height);
   end;
 
-  procedure FillRectangle(clr : Color; xPos, yPos: Single; width, height : LongInt); overload;
+  procedure FillRectangle(clr : Color; xPos, yPos: Single; width, height : Longint); overload;
   begin
     FillRectangle(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
@@ -1588,7 +1588,7 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a line in the screen
-  procedure DrawLineOnScreen(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt); overload;
+  procedure DrawLineOnScreen(clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Longint); overload;
   begin
     DrawLine(screen, clr, xPosStart, yPosStart, xPosEnd, yPosEnd);
   end;
@@ -1698,7 +1698,7 @@ implementation
 
   //=============================================================================
   
-  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: LongInt); overload;
+  procedure DrawHorizontalLineOnScreen(clr: Color; y, x1, x2: Longint); overload;
   begin
     DrawHorizontalLine(screen, clr, y, x1, x2);
   end;
@@ -1708,7 +1708,7 @@ implementation
     DrawHorizontalLine(screen, clr, sgCamera.ToScreenY(y), sgCamera.ToScreenX(x1), sgCamera.ToScreenX(x2));
   end;
 
-  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: LongInt); overload;
+  procedure DrawVerticalLineOnScreen(clr: Color; x, y1, y2: Longint); overload;
   begin
     DrawVerticalLine(screen, clr, x, y1, y2);
   end;
@@ -1720,48 +1720,48 @@ implementation
   
   //=============================================================================
   
-  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   begin
     DrawCircle(screen, clr, filled, xc, yc, radius);
   end;
   
-  procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   begin
     DrawCircle(screen, clr, filled, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
   
-  procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; xc, yc: Single; radius: Longint); overload;
   begin
     DrawCircle(screen, clr, xc, yc, radius);
   end;
   
-  procedure DrawCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; xc, yc: Single; radius: Longint); overload;
   begin
     DrawCircle(screen, clr, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
 
-  procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircleOnScreen(clr: Color; xc, yc: Single; radius: Longint); overload;
   begin
     FillCircle(screen, clr, xc, yc, radius);
   end;
 
-  procedure FillCircle(clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure FillCircle(clr: Color; xc, yc: Single; radius: Longint); overload;
   begin
     FillCircle(screen, clr, sgCamera.ToScreenX(xc), sgCamera.ToScreenY(yc), radius);
   end;
   
-  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; xc, yc: Single; radius: Longint); overload;
   begin
     if filled then FillCircle(dest, clr, xc, yc, radius)
     else DrawCircle(dest, clr, xc, yc, radius);
   end;
 
-  procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint); overload;
   begin
     aacircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
   end;
 
-  procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: LongInt);
+  procedure FillCircle(dest: Bitmap; clr: Color; xc, yc: Single; radius: Longint);
   begin
     filledCircleColor(dest^.surface, Round(xc), Round(yc), Abs(radius), ToGfxColor(clr));
   end;
@@ -1813,43 +1813,43 @@ implementation
   
   //=============================================================================
   
-  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(clr: Color; filled: Boolean; xPos, yPos, width, height: Longint); overload;
   begin
     DrawEllipse(screen, clr, filled, xPos, yPos, width, height);
   end;
 
-  procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(clr: Color; filled: Boolean; xPos, yPos: Single; width, height: Longint); overload;
   begin
     DrawEllipse(screen, clr, filled, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
 
-  procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipseOnScreen(clr: Color; xPos, yPos, width, height: Longint); overload;
   begin
     DrawEllipse(screen, clr, xPos, yPos, width, height);
   end;
 
-  procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: LongInt); overload;
+  procedure DrawEllipse(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   begin
     DrawEllipse(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
   
-  procedure FillEllipseOnScreen(clr: Color;  xPos, yPos, width, height: LongInt); overload;
+  procedure FillEllipseOnScreen(clr: Color;  xPos, yPos, width, height: Longint); overload;
   begin
     FillEllipse(screen, clr, xPos, yPos, width, height);
   end;
   
-  procedure FillEllipse(clr: Color;  xPos, yPos: Single; width, height: LongInt); overload;
+  procedure FillEllipse(clr: Color;  xPos, yPos: Single; width, height: Longint); overload;
   begin
     FillEllipse(screen, clr, sgCamera.ToScreenX(xPos), sgCamera.ToScreenY(yPos), width, height);
   end;
   
-  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color; filled: Boolean; xPos, yPos, width, height: Longint); overload;
   begin
     if filled then FillEllipse(dest, clr, xPos, yPos, width, height)
     else DrawEllipse(dest, clr, xPos, yPos, width, height);
   end;
   
-  procedure DrawEllipse(dest: Bitmap; clr: Color;  xPos, yPos, width, height: LongInt); overload;
+  procedure DrawEllipse(dest: Bitmap; clr: Color;  xPos, yPos, width, height: Longint); overload;
   var
     halfWidth, halfHeight: Sint16;
   begin
@@ -1870,7 +1870,7 @@ implementation
     aaellipseColor(dest^.surface, xPos + halfWidth, yPos + halfHeight, halfWidth, halfHeight, ToGfxColor(clr));
   end;
 
-  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: LongInt);
+  procedure FillEllipse(dest: Bitmap; clr: Color; xPos, yPos, width, height: Longint);
   var
     halfWidth, halfHeight: Sint16;
   begin
@@ -1893,19 +1893,19 @@ implementation
 
   //=============================================================================
   
-  procedure DrawRectangle(dest: Bitmap; clr: Color; filled : Boolean; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr: Color; filled : Boolean; xPos, yPos, width, height : Longint); overload;
   begin
     if filled then FillRectangle(dest, clr, xPos, yPos, width, height)
     else DrawRectangle(dest, clr, xPos, yPos, width, height);
   end;
 
-  procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : LongInt); overload;
+  procedure DrawRectangle(dest: Bitmap; clr : Color; xPos, yPos, width, height : Longint); overload;
   begin
     if dest = nil then begin RaiseException('No destination bitmap supplied'); exit; end;
     rectangleColor(dest^.surface, xPos, yPos, xPos + width - 1, yPos + height - 1, ToGfxColor(clr));
   end;
 
-  procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : LongInt);
+  procedure FillRectangle(dest: Bitmap; clr : Color;  xPos, yPos, width, height : Longint);
   var
     rect: SDL_Rect;
   begin
@@ -1939,7 +1939,7 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a line in the dest bitmap
-  procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: LongInt);
+  procedure DrawVerticalLine(dest: Bitmap; clr: Color; x, y1, y2: Longint);
   begin
     if dest = nil then begin RaiseException('The destination bitmap to draw a vertical line is nil'); exit; end;
     vlineColor(dest^.surface, x, y1, y2, ToGfxColor(clr));
@@ -1954,7 +1954,7 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a line in the dest bitmap
-  procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: LongInt);
+  procedure DrawHorizontalLine(dest: Bitmap; clr: Color; y, x1, x2: Longint);
   begin
     if dest = nil then begin RaiseException('The destination bitmap to draw a vertical line is nil'); exit; end;
       
@@ -1970,7 +1970,7 @@ implementation
   ///
   /// Side Effects:
   /// - Draws a line in the dest bitmap
-  procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: LongInt);
+  procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Longint);
   begin
     aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(clr));
   end;
@@ -1983,7 +1983,7 @@ implementation
   ///
   /// Side Effects:
   /// - Sets one pixel on the destination bitmap
-  procedure DrawPixel(dest: Bitmap; clr: Color; x, y: LongInt); overload;
+  procedure DrawPixel(dest: Bitmap; clr: Color; x, y: Longint); overload;
   begin
     if dest = nil then begin RaiseException('The destination bitmap to draw a pixel is nil'); exit; end;
     
@@ -2017,17 +2017,17 @@ implementation
     FillRectangle(dest, clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; filled: Boolean; const point: Point2D; radius: Longint); overload;
   begin
     DrawCircle(dest, clr, filled, Round(point.x), Round(point.y), radius);
   end;
 
-  procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: Longint); overload;
   begin
     DrawCircle(dest, clr, Round(point.x), Round(point.y), radius);
   end;
 
-  procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: LongInt); overload;
+  procedure FillCircle(dest: Bitmap; clr: Color; const point: Point2D; radius: Longint); overload;
   begin
     FillCircle(dest, clr, Round(point.x), Round(point.y), radius);
   end;
@@ -2067,17 +2067,17 @@ implementation
     FillRectangle(clr, Round(source.x), Round(source.y), source.width, source.height);
   end;
 
-  procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; filled: Boolean; const position: Point2D; radius: Longint); overload;
   begin
     DrawCircle(clr, filled, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure DrawCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircle(clr: Color; const position: Point2D; radius: Longint); overload;
   begin
     DrawCircle(clr, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure FillCircle(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircle(clr: Color; const position: Point2D; radius: Longint); overload;
   begin
     FillCircle(clr, position.x, position.y, radius);
   end;
@@ -2127,17 +2127,17 @@ implementation
     DrawLineOnScreen(clr, Round(startPt.x), Round(startPt.y), Round(endPt.x), Round(endPt.y));
   end;
   
-  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; filled: Boolean; const position: Point2D; radius: Longint); overload;
   begin
     DrawCircleOnScreen(clr, filled, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure DrawCircleOnScreen(clr: Color; const position: Point2D; radius: Longint); overload;
   begin
     DrawCircleOnScreen(clr, Round(position.x), Round(position.y), radius);
   end;
 
-  procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: LongInt); overload;
+  procedure FillCircleOnScreen(clr: Color; const position: Point2D; radius: Longint); overload;
   begin
     FillCircleOnScreen(clr, Round(position.x), Round(position.y), radius);
   end;
@@ -2197,17 +2197,17 @@ implementation
     DoSetClip(bmp, bmp^.clipStack[high(bmp^.clipStack)]);
   end;
 
-  procedure SetClip(x, y, w, h: LongInt); overload;
+  procedure SetClip(x, y, w, h: Longint); overload;
   begin
     SetClip(screen, RectangleFrom(x, y, w, h));
   end;
   
-  procedure SetClip(bmp: Bitmap; x, y, w, h: LongInt); overload;
+  procedure SetClip(bmp: Bitmap; x, y, w, h: Longint); overload;
   begin
     SetClip(bmp, RectangleFrom(x, y, w, h));
   end;
 
-  procedure PushClip(x, y, w, h: LongInt); overload;
+  procedure PushClip(x, y, w, h: Longint); overload;
   begin
     PushClip(screen, RectangleFrom(x, y, w, h));
   end;
@@ -2260,7 +2260,7 @@ implementation
   
   procedure DrawLines(clr: Color; const lines: LinesArray); //TODO: overload;
   var
-    i: LongInt;
+    i: Longint;
   begin
     for i := 0 to High(lines) do
     begin
@@ -2323,7 +2323,7 @@ implementation
   
   procedure _DrawTriangles(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D; kind: ShapeKind);
   var
-    i: LongInt;
+    i: Longint;
     tri: TriangleArray;
   begin
     tri := ShapeTriangles(s, kind);
@@ -2357,7 +2357,7 @@ implementation
   procedure _DrawLines(dest: Bitmap; s: Shape; const offset: Point2D; kind: ShapeKind);
   var
     lines: LinesArray;
-    i: LongInt;
+    i: Longint;
   begin
     lines := ShapeLines(s, kind, offset);
     for i := 0 to High(lines) do
@@ -2371,7 +2371,7 @@ implementation
     _DrawLines(dest, s, offset, pkLineList);
   end;
   // var
-  //   i: LongInt;
+  //   i: Longint;
   //   pts: Point2DArray;
   // begin
   //   pts := ShapePoints(s);
@@ -2387,7 +2387,7 @@ implementation
     _DrawLines(dest, s, offset, pkLineStrip);
   end;
   // var
-  //   i: LongInt;
+  //   i: Longint;
   //   pts: Point2DArray;
   // begin
   //   pts := ShapePoints(s);
@@ -2400,7 +2400,7 @@ implementation
   
   {procedure DrawShapeAsPolygon(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D);
   var
-    i, l: LongInt;
+    i, l: Longint;
     pts: Point2DArray;
   begin
     pts := ShapePoints(s);
@@ -2430,7 +2430,7 @@ implementation
   
   // procedure DrawTriangleFan(dest: Bitmap; s: Shape; const offset: Point2D);
   // // var
-  // //   i: LongInt;
+  // //   i: Longint;
   // //   pts: Point2DArray;
   // begin
   //   DrawTriangleFan(dest, s, false, offset);
@@ -2447,7 +2447,7 @@ implementation
   // 
   // procedure FillTriangleFan(dest: Bitmap; s: Shape; const offset: Point2D);
   // // var
-  // //   i: LongInt;
+  // //   i: Longint;
   // //   pts: Point2DArray;
   // begin
   //   DrawTriangleFan(dest, s, true, offset);
@@ -2473,7 +2473,7 @@ implementation
   //   DrawTriangleStrip(dest, s, false, offset);
   // end;
   // // var
-  // //   i: LongInt;
+  // //   i: Longint;
   // //   pts: Point2DArray;
   // // begin
   // //   pts := ShapePoints(s);
@@ -2493,7 +2493,7 @@ implementation
   // end;
   // 
   // // var
-  // //   i: LongInt;
+  // //   i: Longint;
   // //   pts: Point2DArray;
   // // begin
   // //   pts := ShapePoints(s);
@@ -2518,7 +2518,7 @@ implementation
   //   DrawTriangleList(dest, s, false, offset);
   // end;
   // // var
-  // //   i: LongInt;
+  // //   i: Longint;
   // //   pts: Point2DArray;
   // // begin
   // //   pts := ShapePoints(s);
@@ -2537,7 +2537,7 @@ implementation
   //   DrawTriangleList(dest, s, true, offset);
   // end;
   // // var
-  // //   i: LongInt;
+  // //   i: Longint;
   // //   pts: Point2DArray;
   // // begin
   // //   pts := ShapePoints(s);
@@ -2560,7 +2560,7 @@ implementation
   
   procedure DrawShape(dest: Bitmap; s: Shape; filled: Boolean; const offset: Point2D); overload;
   var
-    i: LongInt;
+    i: Longint;
   begin
     s^.prototype^.drawWith(dest, s, filled, offset);
     
@@ -2655,7 +2655,7 @@ implementation
 
   /// Sets up the graphical window for the specified width and height.
   /// Sets the caption of the window, and the icon if one is specified.
-  procedure _InitSDL(caption: String; screenWidth, screenHeight: LongInt);
+  procedure _InitSDL(caption: String; screenWidth, screenHeight: Longint);
   var
     icon: PSDL_Surface;
   begin
@@ -2708,7 +2708,7 @@ implementation
     {$ENDIF}
   end;
   
-  procedure OpenGraphicsWindow(caption: String; width: LongInt; height: LongInt); overload;
+  procedure OpenGraphicsWindow(caption: String; width: Longint; height: Longint); overload;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'OpenGraphicsWindow', caption + ': W' + IntToStr(width) + ': H' + IntToStr(height));
@@ -2811,7 +2811,7 @@ implementation
     {$ENDIF}
   end;
 
-  procedure ChangeScreenSize(width, height: LongInt);
+  procedure ChangeScreenSize(width, height: Longint);
   var
     oldScr: PSDL_Surface;
   begin
@@ -2840,7 +2840,7 @@ implementation
     {$ENDIF}
   end;
 
-  function ScreenWidth(): LongInt;
+  function ScreenWidth(): Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ScreenWidth');
@@ -2857,7 +2857,7 @@ implementation
     {$ENDIF}
   end;
 
-  function ScreenHeight(): LongInt;
+  function ScreenHeight(): Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'ScreenHeight');
@@ -2877,7 +2877,7 @@ implementation
   var
     path: String;
     filename: String;
-    i: LongInt;
+    i: Longint;
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGraphics', 'TakeScreenShot');

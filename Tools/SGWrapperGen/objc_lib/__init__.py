@@ -388,14 +388,17 @@ local_variable_switcher = {
 #
 # The _type_dictionary_creation_data contains the data used to build
 # the dictionaries for creating the type conversion details.
-#
+# 
 # This cant use standard template string (%s) as the string values
 # must contain the %s for the dictionary. So the string must have
 # the #2# replaced by the 2nd element of the tupple eg.
-# -------------------------------
-# Format: key - contents
-# -------------------------------
-# _type_switcher
+# 
+# The data in the identifiers list of tupples is merged into the
+# dictionaries indicated by the remaining keys. The #1# values are
+# taken from the tupples within the identifiers list. This allows
+# a simple replication of the types across a range of type changing
+# dictionaries in a consistent manner
+#
 _type_dictionary_creation_data = [
     #pointer types
     {
@@ -458,7 +461,7 @@ _type_dictionary_creation_data = [
     # enumerated types
     {
         'identifiers': [
-            # type key, objc name, prefix for switching, c-type, post-fix for switching
+            # type key, c-type
             ('collisiontestkind', 'collision_test_kind'),
             ('fontalignment', 'font_alignment'),
             
@@ -526,7 +529,7 @@ def _add_to_dict(into_dict, details_dict, ident_tupple):
     for key,val in details_dict.iteritems():
         to_ins = val
         for idx,part in enumerate(ident_tupple):
-            to_ins = to_ins.replace('#%d#' % (idx + 1), ident_tupple[idx])
+            to_ins = to_ins.replace('#%d#' % (idx + 1), ident_tupple[idx] if not ident_tupple[idx] is None else '')
         # print 'inserting -> ', key, ':', to_ins
         
         if  ident_tupple[0] in into_dict[key]:

@@ -17,7 +17,7 @@
 // - 2009-06-23: Clinton: Renamed file/unit, comment/format cleanup/tweaks
 //
 // Version 2.0.0:
-// - 2008-12-17: Andrew: Moved all integers to LongInt
+// - 2008-12-17: Andrew: Moved all integers to Longint
 // - 2008-12-16: Andrew: Added any key press
 //                       Added SetText
 //
@@ -39,9 +39,9 @@ interface
 
   type
     KeyDownData = record
-      downAt:   LongInt;
-      code:     LongInt;
-      keyChar:  LongInt;
+      downAt:   Longint;
+      code:     Longint;
+      keyChar:  Longint;
     end;
     
     EventProcessPtr = procedure(event: PSDL_Event);
@@ -58,13 +58,13 @@ interface
       _tempString:            String;
       _textSurface:           PSDL_Surface;
       _cursorSurface:         PSDL_Surface;
-      _maxStringLen:          LongInt;
+      _maxStringLen:          Longint;
       _font:                  PTTF_Font;
       _foreColor:             TSDL_Color;
       _area:                  SDL_Rect;
-      _lastKeyRepeat:         LongInt;
+      _lastKeyRepeat:         Longint;
       _KeyDown:               Array of KeyDownData;
-      _KeyTyped:              Array of LongInt;
+      _KeyTyped:              Array of Longint;
       _EventProcessors:       Array of EventProcessPtr;
       _EventStartProcessors:  Array of EventStartProcessPtr;
       
@@ -73,23 +73,23 @@ interface
       procedure CheckQuit();
       procedure HandleEvent(event: PSDL_Event);
       procedure HandleKeydownEvent(event: PSDL_Event);
-      procedure AddKeyData(kyCode, kyChar: LongInt);
+      procedure AddKeyData(kyCode, kyChar: Longint);
       procedure HandleKeyupEvent(event: PSDL_Event);
-      procedure ProcessKeyPress(keyCode, keyChar: LongInt);
+      procedure ProcessKeyPress(keyCode, keyChar: Longint);
       procedure CheckKeyRepeat();
     public
       // text reading/draw collection
-      property MaxStringLength: LongInt read _maxStringLen write _maxStringLen;
+      property MaxStringLength: Longint read _maxStringLen write _maxStringLen;
       property EnteredString: String read _tempString write _tempString;
       property IsReading: Boolean read _readingString;
       property TextEntryWasCancelled: Boolean read _textCancelled;
       procedure DrawCollectedText(dest: PSDL_Surface);
       procedure SetText(text: String);
-      procedure StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; area: SDL_Rect);
+      procedure StartReadingText(textColor: TSDL_Color; maxLength: Longint; theFont: PTTF_Font; area: SDL_Rect);
       function  EndReadingText(): String;
       // key pressed/typed tests
-      function WasKeyTyped(keyCode: LongInt): Boolean;
-      function IsKeyPressed(virtKeyCode: LongInt): Boolean;
+      function WasKeyTyped(keyCode: Longint): Boolean;
+      function IsKeyPressed(virtKeyCode: Longint): Boolean;
       function WasAKeyPressed(): Boolean;
       // event register/process Quit
       procedure RegisterEventProcessor(handle: EventProcessPtr; handle2: EventStartProcessPtr);
@@ -109,7 +109,7 @@ implementation
     result := _keyPressed;
   end;
 
-  function TSDLManager.IsKeyPressed(virtKeyCode: LongInt): Boolean;
+  function TSDLManager.IsKeyPressed(virtKeyCode: Longint): Boolean;
   var
     keys: PUint8;
     {$IFNDEF FPC}
@@ -165,7 +165,7 @@ implementation
   procedure TSDLManager.ProcessEvents();
   var
     event: TSDL_EVENT;
-    i: LongInt;
+    i: Longint;
   begin
     _keyPressed := false;
     SetLength(_KeyTyped, 0);
@@ -188,7 +188,7 @@ implementation
   
   procedure TSDLManager.CheckKeyRepeat();
   var
-    nowTime, timeDown: LongInt;
+    nowTime, timeDown: Longint;
   begin
     if Length(_KeyDown) <> 1 then exit;
     
@@ -207,7 +207,7 @@ implementation
   end;
   
   procedure TSDLManager.HandleEvent(event: PSDL_Event);
-  var i: LongInt;
+  var i: Longint;
   begin
     case event^.type_ of
       SDL_QUITEV:   DoQuit();
@@ -221,7 +221,7 @@ implementation
     end;
   end;
   
-  procedure TSDLManager.AddKeyData(kyCode, kyChar: LongInt);
+  procedure TSDLManager.AddKeyData(kyCode, kyChar: Longint);
   var
     i: Integer;
   begin
@@ -246,7 +246,7 @@ implementation
   procedure TSDLManager.HandleKeyupEvent(event: PSDL_Event);
   var
     i, keyAt: Integer;
-    kyCode: LongInt;
+    kyCode: Longint;
   begin
     kyCode := event^.key.keysym.sym;
     keyAt := -1;
@@ -267,7 +267,7 @@ implementation
     SetLength(_KeyDown, Length(_KeyDown) - 1);
   end;
   
-  procedure TSDLManager.ProcessKeyPress(keyCode, keyChar: LongInt);
+  procedure TSDLManager.ProcessKeyPress(keyCode, keyChar: Longint);
   var
     oldStr, newStr: String;
   begin
@@ -363,7 +363,7 @@ implementation
   procedure TSDLManager.DrawCollectedText(dest: PSDL_Surface);
   var
     srect, drect: SDL_Rect;
-    textWidth: LongInt;
+    textWidth: Longint;
   begin
     if not assigned(dest) then exit;
     
@@ -386,7 +386,7 @@ implementation
     end;
   end;
   
-  procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: LongInt; theFont: PTTF_Font; area: SDL_Rect);
+  procedure TSDLManager.StartReadingText(textColor: TSDL_Color; maxLength: Longint; theFont: PTTF_Font; area: SDL_Rect);
   var
     newStr: String;
   begin
@@ -445,8 +445,8 @@ implementation
     result := _quit;
   end;
   
-  function TSDLManager.WasKeyTyped(keyCode: LongInt): Boolean;
-  var i: LongInt;
+  function TSDLManager.WasKeyTyped(keyCode: Longint): Boolean;
+  var i: Longint;
   begin
     result := false;
   

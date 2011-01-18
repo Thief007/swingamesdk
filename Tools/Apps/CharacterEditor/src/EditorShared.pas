@@ -73,7 +73,7 @@ type
 		cells               : Array of CellArea;     // The Array of cell areas within the group
 		rows, cols, cellCount, 
     cellW, cellH        : Integer;               // Rows, columns, cell count, cell width, cell height
-		selectedOrder       : Array of LongInt;      // the order which the cells were selected (for shift click select functionality)
+		selectedOrder       : Array of Longint;      // the order which the cells were selected (for shift click select functionality)
 		GridType            : BMPType                // The type of grid used. This is used for the Loaded bitmap record for the type of scale to draw
 	end;
 	
@@ -221,10 +221,10 @@ type
   // Selecting
   //--------------------------------------------------------------------------- 	
   
-	procedure AddSelection(var cellGrp : CellGroupData; i : LongInt);
-	procedure RemoveSelection(var cellGrp : CellGroupData; i : LongInt);
+	procedure AddSelection(var cellGrp : CellGroupData; i : Longint);
+	procedure RemoveSelection(var cellGrp : CellGroupData; i : Longint);
 	procedure DeselectAll(var cellGrp : CellGroupData);
-	procedure SelectMultiple(var cellGrp : CellGroupData; i : LongInt);
+	procedure SelectMultiple(var cellGrp : CellGroupData; i : Longint);
 	procedure HandleSelection(var cellGrp : CellGroupData; dCell: CellAreaPtr);
   procedure DeleteSelected(var cellGrp: CellGroupData; const gap : Integer);
  
@@ -235,7 +235,7 @@ type
   procedure MyDrawSplitBitmapCells(cellGrp: CellGroupData; sharedVals: EditorValues);
   procedure MyDrawEmptyCells(cellGrp: CellGroupData; sharedVals: EditorValues);
   procedure DrawOnMouse(sharedVals: EditorValues);
-	procedure DrawCellGroup(cellGrp : CellGroupData; i: LongInt);
+	procedure DrawCellGroup(cellGrp : CellGroupData; i: Longint);
 
   //---------------------------------------------------------------------------
   // Saving
@@ -325,7 +325,7 @@ implementation
   
   procedure UpdatePosition(var cellGrp: CellGroupData);
   var
-		r, c, i: LongInt; //Rows and Column count in loop
+		r, c, i: Longint; //Rows and Column count in loop
 	begin
 		c := 0;
 		r := 0;		
@@ -348,7 +348,7 @@ implementation
   
   procedure InitializeCellArea(var cellGrp : CellGroupData; bmpPtr: LoadedBitmapPtr; const cellGapSize: Integer; drawindex : boolean);
 	var
-		xGap, yGap, oldLength, i, columns: LongInt;
+		xGap, yGap, oldLength, i, columns: Longint;
 	begin
 		if (cellGrp.cellCount = 0) OR (cellGrp.cols = 0) then exit;
 		xGap 			:= 0;
@@ -673,16 +673,16 @@ implementation
   // Selecting
   //--------------------------------------------------------------------------- 	
 	
-	procedure AddSelection(var cellGrp : CellGroupData; i : LongInt);
+	procedure AddSelection(var cellGrp : CellGroupData; i : Longint);
 	begin
 		SetLength(cellGrp.selectedOrder, Length(cellGrp.selectedOrder) + 1);
 		cellGrp.selectedOrder[High(cellGrp.selectedOrder)] := i;
 		cellGrp.cells[i].isSelected := true;
 	end;
 
-	procedure RemoveSelection(var cellGrp : CellGroupData; i : LongInt);
+	procedure RemoveSelection(var cellGrp : CellGroupData; i : Longint);
 	var
-		j: LongInt;
+		j: Longint;
 	begin
 		for j := Low(cellGrp.selectedOrder) to High(cellGrp.selectedOrder) do
 		begin
@@ -753,16 +753,16 @@ implementation
   
 	procedure DeselectAll(var cellGrp : CellGroupData);
 	var 
-		i: LongInt;
+		i: Longint;
 	begin
 		SetLength(cellGrp.selectedOrder, 0);
 		
 		for i := Low(cellGrp.cells) to High(cellGrp.cells) do cellGrp.cells[i].isSelected := false;
 	end;
 
-	procedure SelectMultiple(var cellGrp : CellGroupData; i : LongInt);
+	procedure SelectMultiple(var cellGrp : CellGroupData; i : Longint);
 	var
-		previousSelect, j, count, startVal : LongInt;
+		previousSelect, j, count, startVal : Longint;
 	begin
 		if Length(cellGrp.selectedOrder) = 0 then exit;
 		previousSelect := cellGrp.selectedOrder[High(cellGrp.selectedOrder)];
@@ -790,7 +790,7 @@ implementation
   
   procedure HandleSelection(var cellGrp : CellGroupData; dCell: CellAreaPtr);
 	var
-		i: LongInt;
+		i: Longint;
 	begin
 		if (dCell <> nil) OR (not MouseClicked(LeftButton)) then exit;
 		with cellGrp do
@@ -901,7 +901,7 @@ implementation
     sharedVals.OpenSave := dt;
   end;
   
-	procedure SaveBitmapGrid(destbmp: bitmap; cellGrp : CellGroupData; idx, xPos, yPos : LongInt);
+	procedure SaveBitmapGrid(destbmp: bitmap; cellGrp : CellGroupData; idx, xPos, yPos : Longint);
 	begin
 		with cellGrp do
 		begin
@@ -1129,7 +1129,7 @@ implementation
       lastCellDetails: last;
     end;   
   var
-    i, Id : LongInt;
+    i, Id : Longint;
     txt: Text;
     arrayofSounds, arrayofIDs : StringArray;
     FramesArray : Array of FrameSet;
@@ -1173,7 +1173,7 @@ implementation
 
     function _OutputMultiFrameAnimation(aniStrip: AnimationStrip): FrameSet;
     var
-      i, lastVal : LongInt;
+      i, lastVal : Longint;
     begin
       with aniStrip do
       begin
@@ -1480,7 +1480,7 @@ implementation
   // Drawing
   //--------------------------------------------------------------------------- 
 
-	procedure DrawCellGroup(cellGrp : CellGroupData; i: LongInt);
+	procedure DrawCellGroup(cellGrp : CellGroupData; i: Longint);
 	begin
 		with cellGrp do
 		begin

@@ -39,7 +39,7 @@ SVN_VERSION = get_svn_version()
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
 _nolink_types = (
-    'Single', 'String', 'Boolean', 'LongInt', 'Byte', 'UInt32', 'Longword', 'UInt16',
+    'Single', 'String', 'Boolean', 'Longint', 'Byte', 'UInt32', 'Longword', 'UInt16',
     'PSDL_Surface', 'PMix_Music', 'PMix_Chunk', 'Pointer'
 )
 
@@ -202,7 +202,7 @@ class IdentifierCollector(object):
         for key, m in ids['umethods'].items():
             if m.params:
                 for p in m.params:
-                    # only keep the special types, not LongInt etc
+                    # only keep the special types, not Longint etc
                     if p.data_type.name in ids['types']:
                         ids['types'][p.data_type.name]['used_by'][m.uname] = m
 

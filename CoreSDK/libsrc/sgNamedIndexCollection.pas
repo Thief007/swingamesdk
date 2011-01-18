@@ -46,8 +46,8 @@ interface
   
   procedure InitNamedIndexCollection(var col: NamedIndexCollection; names: StringArray); overload;
   procedure InitNamedIndexCollection(var col: NamedIndexCollection); overload;
-  procedure RemoveName(var col: NamedIndexCollection; idx: LongInt); overload;
-  function RemoveName(var col: NamedIndexCollection; name: String): LongInt; overload;
+  procedure RemoveName(var col: NamedIndexCollection; idx: Longint); overload;
+  function RemoveName(var col: NamedIndexCollection; name: String): Longint; overload;
   procedure FreeNamedIndexCollection(var col: NamedIndexCollection);
   
 implementation
@@ -128,7 +128,7 @@ uses sgShared, stringhash, sgSharedUtils, StrUtils;
 
   procedure AddNamesToCollection(var col: NamedIndexCollection; names: String);
   var
-    i, namesLength:LongInt;    
+    i, namesLength:Longint;    
   begin
     if Length(names) = 0 then exit;
     
@@ -142,13 +142,13 @@ uses sgShared, stringhash, sgSharedUtils, StrUtils;
     end;
   end;
 
-  function RemoveName(var col: NamedIndexCollection; name: String): LongInt; overload;
+  function RemoveName(var col: NamedIndexCollection; name: String): Longint; overload;
   begin
     result := IndexOf(col, name);
     RemoveName(col, result);
   end;
 
-  procedure RemoveName(var col: NamedIndexCollection; idx: LongInt); overload;
+  procedure RemoveName(var col: NamedIndexCollection; idx: Longint); overload;
   var
     hash: TStringHash;
     name: String;
