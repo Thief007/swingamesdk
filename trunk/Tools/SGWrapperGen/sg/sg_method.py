@@ -681,7 +681,7 @@ class SGMethod(SGMetaDataContainer):
         alias = self.alias(lang_key)
         params = alias.params
         
-        arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in params ]
+        arg_list = [ a.arg_name(lang_key) if isinstance(a, SGParameter) else a for a in params ]
         # arg_list
         
         if arg_visitor != None:
@@ -699,7 +699,7 @@ class SGMethod(SGMetaDataContainer):
         args = alias.args
         params = called_alias.params
         
-        arg_list = [ a.arg_name() if isinstance(a, SGParameter) else a for a in args ]
+        arg_list = [ a.arg_name(lang_key) if isinstance(a, SGParameter) else a for a in args ]
         if arg_visitor != None:
             if len(params) < len(args): return 'ARGS > PARAMS' #TODO: Look into
             return ', '.join([ arg_visitor(a, args[i], params[i]) for i,a in enumerate(arg_list) ])

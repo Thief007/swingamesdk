@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+__init__.py
+
+Created by Andrew Cain on 2011-01-19.
+Copyright (c) 2011 Swinburne University. All rights reserved.
+"""
+
+import sys
+import os
+
+_type_switcher = {
+    'single': 'Single',
+    'longint': 'Longint',
+    'soundeffect': 'SoundEffect',
+    'music': 'Music',
+    'string': 'PChar',
+    'color': 'LongWord',
+    'timer': 'Timer',
+    'byte': 'Byte',
+    'resourcekind': 'ResourceKind',
+    'longword': 'Longword',
+    'uint16': 'UInt16',
+    'bitmap': 'Bitmap',
+    'matrix2d': 'SinglePtr',
+    'triangle': 'Point2DPtr',
+    'linesegment': 'LineSegment',
+    'point2d': 'Point2D',
+    'vector': 'Vector',
+    'rectangle': 'Rectangle',
+    'sprite': 'Sprite',
+    'linesarray': 'LineSegmentPtr',
+    'font': 'Font',
+    'fontalignment': 'FontAlignment',
+    'fontstyle': 'FontStyle',
+    'mousebutton': 'MouseButton',
+    'boolean': 'Boolean',
+    'keycode': 'KeyCode',
+    
+    'longintarray':     'LongintPtr',
+    'bitmaparray':      'BitmapPtr',
+    'point2darray':     'Point2DPtr',
+    'trianglearray':    'Point2DPtr',
+        
+    'spriteendingaction': 'SpriteEndingAction',
+    'circle': 'Circle',
+    'map': 'Map',
+    'maptag': 'MapTag',
+    'spritekind': 'SpriteKind',
+    'freenotifier': 'FreeNotifier',
+    
+    'shapeprototype': 'ShapePrototype',
+    'character': 'Character',
+    'shape': 'Shape',
+    
+    'shapekind': 'ShapeKind',
+    'animation': 'Animation',
+    'animationscript': 'AnimationScript',
+    'stringarray': 'StringPtr',
+    'collisiontestkind':    'CollisionTestKind',
+    
+    'bitmapcell':       'BitmapCell',
+    
+}
+
+
+def main():
+    '''Load all of the files in this directory into attributes of this module.'''
+    (path, script_file) = os.path.split(sys.modules[__name__].__file__) 
+    dirList=os.listdir(path)
+    
+    for f in dirList:
+        if '.py' in f or f[0] == '.' : continue
+        
+        (dirName, fileName) = os.path.split(f)
+        key = fileName.replace('.', '_')
+        #print key
+        
+        fin = open(path + '/' + f)
+        data = fin.read()
+        fin.close()
+        
+        setattr(sys.modules[__name__], key, data)
+    
+
+
+main()
+

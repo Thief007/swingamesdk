@@ -309,7 +309,12 @@ interface
     /// @field pointer: ^BitmapData
     Bitmap = ^BitmapData;
     
-    /// A bitmap cell is used to store the cell to draw from a particular bitmap.
+    /// @type BitmapArray
+    /// @array_wrapper
+    /// @field data: array of Bitmap
+    BitmapArray = array of Bitmap;
+    
+      /// A bitmap cell is used to store the cell to draw from a particular bitmap.
     /// 
     /// @struct BitmapCell
     BitmapCell = record
@@ -490,11 +495,6 @@ interface
         AlignCenter = 2,
         AlignRight  = 4
       );
-
-    /// @type BitmapArray
-    /// @array_wrapper
-    /// @field data: array of Bitmap
-    BitmapArray = array of Bitmap;
     
     /// A mouse can have many different types of buttons. Most people know
     /// about the simple Left and Right buttons, but there is also a Middle

@@ -18,6 +18,9 @@ from sg.sg_type import SGType
 from sg.sg_parameter import SGParameter
 from sg.file_writer import FileWriter
 
+from lang_c import create_c_code_for_file
+from lang_pas import create_pas_code_for_file
+
 #==============================================================================
 # Settings and global data ...
 #==============================================================================
@@ -196,8 +199,14 @@ class IdentifierCollector(object):
             'classes': {},
             'consts': {}, #TODO
         }
+        
+        # Load the signatures from other languages...
+        parser_runner.visit_all_units(create_c_code_for_file)
+        parser_runner.visit_all_units(create_pas_code_for_file)
+        
         # Gather identifier details
         parser_runner.visit_all_units(self._file_visitor)
+        
         # Build link-calls back to method parameters
         for key, m in ids['umethods'].items():
             if m.params:
@@ -396,8 +405,16 @@ class UnitPresenter(object):
                       '<dd><span class="rtype">%(rtype)s</span> : %(rdesc)s</dd>'
                 self.doc.append(tmp % {'rtype': link_type(method.return_type.name), 
                                        'rdesc': format_text(self.lead_trim(method.returns)) })
+            # SIGNATURES - by language (Andrew)
+            if len(method.lang_data) > 0:
+                self.doc.append('<dt>Signatures by Language:</dt>\n')
+                lang_keys = method.lang_data.keys()
+                lang_keys.sort()
+                for key in lang_keys:
+                    self.doc.append('<dd>%s : <span class="code">%s</span></dd>' % (key, method.alias(key).signature))
             # END LIST
             self.doc.append('</dl>')
+            
         # url = source_url(method.meta_comment_line_details),
         # self.doc.append(
         # '<p><a href="url" target="new" href="%s">Source URL</a></p>' % 

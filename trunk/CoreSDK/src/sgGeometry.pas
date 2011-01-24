@@ -841,7 +841,7 @@ interface
   
   /// Returns the triangles for a triangle strip, list, or fan.
   ///
-  /// @lib shapeTrianglesForKind
+  /// @lib ShapeTrianglesForKind
   /// @sn shapeTriangles:%s forKind:%s
   /// @length ShapeKindTriangleCount
   ///

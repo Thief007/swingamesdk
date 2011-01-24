@@ -68,7 +68,8 @@ CreatePasCode
 
 copyWithoutSVN "${SOURCE_DIST_DIR}/src" "${COMMON_PAS_TEMPLATE_DIR}/lib"
 
-DoDist "${COPY_LIST}" "${PAS_DIST_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_PAS_TEMPLATE_DIR}"
+DoDist "${COPY_LIST}" "${C_DIST_DIR}" "${C_GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_C_TEMPLATE_DIR}"
+DoDist "${COPY_LIST}" "${PAS_DIST_DIR}" "${PAS_GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_PAS_TEMPLATE_DIR}"
 
 echo "  Finished"
 echo "--------------------------------------------------"

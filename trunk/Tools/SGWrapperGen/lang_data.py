@@ -38,6 +38,11 @@ class LangMethodData(LangBasicData):
         None, None, 'The method is a function'
         )
 
-
+class LangParamData(LangBasicData):
+    
+    def __init__(self, sg_param):
+        LangBasicData.__init__(self, sg_param)
+        self.maps_to_temp  = sg_param.maps_to_temp
+    
 
     
