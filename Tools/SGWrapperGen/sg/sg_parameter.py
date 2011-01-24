@@ -60,10 +60,12 @@ class SGParameter(SGMetaDataContainer):
     def __repr__(self):
         return self.name
     
-    def arg_name(self):
+    def arg_name(self, lang_key):
+        alias = self.alias(lang_key)
+        
         return '%s%s' % (
-            self.name,
-            '_temp' if self.maps_to_temp else ''
+            alias.name,
+            '_temp' if alias.maps_to_temp else ''
             )
     
     data_type = property(lambda self: self['type'].other, lambda self,the_type: self.set_tag('type', the_type), None, "The data type of the parameter.")

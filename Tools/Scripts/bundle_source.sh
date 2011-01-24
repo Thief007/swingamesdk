@@ -57,6 +57,8 @@ SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
 SRC_DIR="${SOURCE_DIST_DIR}/src"
 
+SRC_GENERATED_DIR="${GENERATED_DIR}/Source/src"
+
 C_GENERATED_DIR="${GENERATED_DIR}/C"
 C_GENERATED_LIB_DIR="${C_GENERATED_DIR}/lib"
 
@@ -94,12 +96,6 @@ CreateLibrary()
     cd "${PYTHON_SCRIPT_DIR}"
     python create_pas_lib.py
     if [ $? != 0 ]; then echo "Error creating Pascal library."; exit 1; fi
-    
-    cp -p "${C_GENERATED_LIB_DIR}/SGSDK.h" "${SRC_DIR}/SGSDK.h"
-    if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
-    
-    cp -p "${C_GENERATED_LIB_DIR}/Types.h" "${SRC_DIR}/Types.h"
-    if [ $? != 0 ]; then echo "Error copying header."; exit 1; fi
 }
 
 source "${APP_PATH}/inc/copy_without_svn.sh"
@@ -149,6 +145,13 @@ if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
 
 find ${SDK_LIB_SRC} -maxdepth 1 -path \*.inc -exec cp -p {} ${SRC_DIR} \;
 if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
+find ${SRC_GENERATED_DIR} -maxdepth 1 -path \*.pas -exec cp -p {} ${SRC_DIR} \;
+if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
+find ${SRC_GENERATED_DIR} -maxdepth 1 -path \*.h -exec cp -p {} ${SRC_DIR} \;
+if [ $? != 0 ]; then echo "Error copying source."; exit 1; fi
+
 
 echo "  Copying build script"
 cp -p "${SOURCE_TEMPLATE_DIR}"/build.sh "${SOURCE_DIST_DIR}"

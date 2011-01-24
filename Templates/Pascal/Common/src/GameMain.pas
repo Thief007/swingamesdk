@@ -1,7 +1,7 @@
 program GameMain;
 {$IFNDEF UNIX} {$r GameLauncher.res} {$ENDIF}
 uses
-  sgTypes, sgAudio, sgText, sgGraphics, sgResources;
+  sgTypes, sgInput, sgAudio, sgGraphics, sgResources, sgUtils, sgText;
 
 procedure Main();
 begin
@@ -12,7 +12,8 @@ begin
   repeat // The game loop...
     ProcessEvents();
     
-    FillRectangle(ColorWhite, 10, 10, 780, 580);
+    ClearScreen(ColorBlack);
+    DrawFramerate(0,0);
     
     RefreshScreen();
   until WindowCloseRequested();

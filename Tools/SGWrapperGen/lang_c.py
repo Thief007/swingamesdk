@@ -216,15 +216,15 @@ def _do_create_type_code(member):
     if member.is_class or member.is_type or (member.is_struct and member.wraps_array):
         if member.is_pointer_wrapper: # convert to resource pointer
             the_type = member.data_type
-            member_data.signature = 'typedef %s;' % c_code_for_adapter_type(the_type, member.lower_name)
+            member_data.signature = 'typedef %s;\n' % c_code_for_adapter_type(the_type, member.lower_name)
         elif member.is_data_wrapper: # alias of another type
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
-            member_data.signature = 'typedef %s;' % c_code_for_adapter_type(the_type, member.lower_name)
+            member_data.signature = 'typedef %s;\n' % c_code_for_adapter_type(the_type, member.lower_name)
         elif member.wraps_array:
             assert len(member.fields) == 1
             the_type = member.fields['data'].data_type
-            member_data.signature = 'typedef %s;' % c_code_for_adapter_type(the_type, member.lower_name)
+            member_data.signature = 'typedef %s;\n' % c_code_for_adapter_type(the_type, member.lower_name)
         elif member.data_type.is_procedure:
             assert member.data_type.method != None
             #typedef float(*pt2Func)(float, float);
@@ -242,13 +242,13 @@ def _do_create_type_code(member):
         for field in member.field_list:
             member_data.signature += '    %s;\n' % c_code_for_adapter_type(field.data_type, field.lower_name)
         
-        member_data.signature += '} %s;' % member.lower_name
+        member_data.signature += '} %s;\n' % member.lower_name
         
     elif member.is_enum:
         #enum id { list }
         member_data.signature = 'typedef enum { \n    '
         member_data.signature += ',\n    '.join([wrapper_helper.upper_name(v) for v in member.values])
-        member_data.signature += '\n} %s;' % member.lower_name
+        member_data.signature += '\n} %s;\n' % member.lower_name
     
     # print member_data.signature
 
@@ -362,7 +362,8 @@ def write_c_code_files(the_file, other):
     '''Save the c code to file'''
     
     write_c_header_for(the_file)
-    write_c_body_for(the_file)
+    if the_file.has_body:
+        write_c_body_for(the_file)
 
 
 
