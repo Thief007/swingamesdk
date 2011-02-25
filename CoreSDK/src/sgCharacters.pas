@@ -420,7 +420,7 @@ interface
   /// @lib
   function CharacterNamed(name: String): Character;
   
-  /// Returns `true` if SwinGame has loaded a character with the
+  /// Returns ``true`` if SwinGame has loaded a character with the
   /// indicated name.
   ///
   /// @lib

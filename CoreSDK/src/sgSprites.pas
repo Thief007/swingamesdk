@@ -271,7 +271,7 @@ interface
   function HasSprite(name: String): Boolean;
   
   /// Returns the `Sprite` with the specified name,
-  /// see `CreateSprite`.
+  /// see `CreateBasicSprite`.
   ///
   /// @lib
   function SpriteNamed(name: String): Sprite;

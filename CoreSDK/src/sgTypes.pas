@@ -50,7 +50,7 @@ interface
     /// @field data: array of String
     StringArray = array of String;
 
-    /// @type SinglesArray
+    /// @type SingleArray
     /// @array_wrapper
     /// @field data: array of Single
     SingleArray = array of Single;
