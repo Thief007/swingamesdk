@@ -34,10 +34,10 @@ body {
 .method, .type {border-top: 1px solid #55F; padding: 1em; }
 .sig {background: #F5F5F5; display: inline}
 
-.sig, .pname, .ptype, .rtype, .code { font-family: monospace; font-size: 1.1em }
-.pname, .pmod { font-weight: bold }
+.sig, .pname, .ptype, .rtype, .code, .langkey { font-family: monospace; font-size: 1.1em }
+.pname, .pmod, .langkey { font-weight: bold }
 .pmod { color: #505 }
-
+.langkey { display: block; width: 5em; float: left; margin-top: 0.2em;  height: 1.1em}
 a.code { text-decoration: none;}
 
 h3 {padding: 0; margin: 0;}

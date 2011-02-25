@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-check_pas_parameters.py
 
 Created by Andrew Cain on 2010-03-19.
 Updates (HTML+CSS+TOC) by Clinton Woodward
@@ -32,7 +31,7 @@ def get_svn_version():
         result = lines[4].split()[1].strip() # eg. "Revision: 12345"
     except:
         print
-        result = "1253" # rough guess...
+        result = "1284" # rough guess...
     return result
 
 OUT_PATH = "../../Generated/Documentation"
@@ -41,15 +40,16 @@ SVN_VERSION = get_svn_version()
 
 _google_base_url = "http://code.google.com/p/swingamesdk/source/browse/trunk/CoreSDK/src/"
 
+# List the pascal types that we do not want to document and link to
 _nolink_types = (
     'Single', 'String', 'Boolean', 'Longint', 'Byte', 'UInt32', 'Longword', 'UInt16',
     'PSDL_Surface', 'PMix_Music', 'PMix_Chunk', 'Pointer'
 )
 
-_ids = None # set once the IdentifierCollector() has been created.
-
 def source_url(text):
-    '''Break up a standard source code line string and return a URL to the code.'''
+    '''Break up a standard source code line string and return a URL to the code.
+    ie. url="http://code.google. ... /[filename]?r=[SVN_VERSION]#[line_no]"
+    '''
     bits = text.split()
     line_no = bits[3]
     fname = bits[5].split('/')[-1].strip()
@@ -407,11 +407,17 @@ class UnitPresenter(object):
                                        'rdesc': format_text(self.lead_trim(method.returns)) })
             # SIGNATURES - by language (Andrew)
             if len(method.lang_data) > 0:
-                self.doc.append('<dt>Signatures by Language:</dt>\n')
+                self.doc.append('<dt>Signatures by Language:</dt>')
                 lang_keys = method.lang_data.keys()
                 lang_keys.sort()
+                lang_map = {'c': 'C/C++', 'pas': 'Pascal'}
                 for key in lang_keys:
-                    self.doc.append('<dd>%s : <span class="code">%s</span></dd>' % (key, method.alias(key).signature))
+                  if key == 'c':
+                    bits = [ bit + ';' for bit in method.alias(key).signature.split(';')[:-1]]
+                  else:
+                    bits = [method.alias(key).signature]
+                  for bit in bits:
+                    self.doc.append('<dd><span class="langkey">%s:</span> <span class="code">%s</span></dd>' % (lang_map[key], bit.strip()))
             # END LIST
             self.doc.append('</dl>')
             
@@ -709,6 +715,8 @@ def create_types_doc(idcollection):
 #==============================================================================
     
 def main():
+    # coppy
+  
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     # Parse all files ready for use...
     print 'Parsing all pas units...'
