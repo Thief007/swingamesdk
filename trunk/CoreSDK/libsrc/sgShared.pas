@@ -26,11 +26,6 @@
 //=============================================================================
 
 {$I sgTrace.inc}
-{$IFDEF UNIX}
-  {$IFNDEF DARWIN}
-    {$linklib gcc}
-  {$ENDIF}  
-{$ENDIF}
 
 unit sgShared;
   
