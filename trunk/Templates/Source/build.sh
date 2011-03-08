@@ -378,6 +378,7 @@ then
         fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
+        mv "${OUT_DIR}/libSGSDK.so" "${OUT_DIR}/libsgsdk.so"
         mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
         ln -s "${OUT_DIR}/libsgsdk.so.${VERSION}" "${OUT_DIR}/libsgsdk.so"
         
