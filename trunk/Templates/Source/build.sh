@@ -180,7 +180,7 @@ doMacCompile()
     LINK_OPTS="$2"
     
     # Compile to assembly (.s)
-    "${FPC_BIN}" -Mobjfpc -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
+    "${FPC_BIN}" -Mobjfpc -Sh ${EXTRA_OPTS} -FE"${TMP_DIR}" -FU"${TMP_DIR}" -s "${SDK_SRC_DIR}/SGSDK.pas" >> "${LOG_FILE}"
     if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
     rm -f "${LOG_FILE}"
     
@@ -359,7 +359,7 @@ then
 				
 				
         
-        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/sgsdk.pas" >> "${LOG_FILE}"
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> "${LOG_FILE}"
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat "${LOG_FILE}"; exit 1; fi
         
         if [ ! $INSTALL = "N" ]
@@ -375,7 +375,7 @@ then
         PrepareTmp
 
         echo "  ... Compiling Library"
-        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/sgsdk.pas" >> ${LOG_FILE}
+        fpc -Mobjfpc -Sh $EXTRA_OPTS -FE"${OUT_DIR}" "${SDK_SRC_DIR}/SGSDK.pas" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling SGSDK"; cat ${LOG_FILE}; exit 1; fi
         
         mv "${OUT_DIR}/libsgsdk.so" "${OUT_DIR}/libsgsdk.so.${VERSION}"
