@@ -500,11 +500,13 @@ end;
 
   finalization
   begin
+    {$ifdef DARWIN}
     if not assigned(pool) then
     begin
       pool := objc_msgSend(NSAutoreleasePool, sel_registerName('alloc'));
       pool := objc_msgSend(pool, sel_registerName('init'));
     end;
+    {$endif}
     
     if sdlManager <> nil then
     begin
