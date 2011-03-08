@@ -24,7 +24,32 @@ if [ "a${answer}a" == "aya" ] ; then
     ./bundle_cs_templates.sh
     #./bundle_objc_templates.sh
     ./bundle_pas_templates.sh
+    
+    echo
+    echo
 fi
+
+echo "--------------------------------------------------"
+echo "          Producing Windows Distribution Files"
+echo "--------------------------------------------------"
+
+
+#
+# Create version dir on mercury
+#
+
+MERCURY_BASE_INST_DIR="/home/acad/acain/www/htdocs/media/SwinGame"
+MERCURY_INST_DIR="${MERCURY_BASE_INST_DIR}/SwinGame $SG_VERSION"
+MERCURY_INST_DIR_NO_SPACE=`echo ${MERCURY_INST_DIR} | awk '{gsub(/[ \t]/,"\\\\ ");print}'`
+
+echo " - Creating destination on server"
+ssh mercury.it.swin.edu.au "mkdir -p \"${MERCURY_INST_DIR}\""
+
+echo " - Saving version name on server"
+ssh mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/version.txt\""
+
+
+
 
 WIN_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR},Project Template")
 WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "C CodeBlocks,${CODEBLOCKS_C_DIST_DIR},")
@@ -73,6 +98,9 @@ for arg in "${WIN_DMG_LIST[@]}"; do
     zip -q -r "${to}" *
     sleep 1
     rm -rf "${ZIP_BASE_DIR}"
+    
+    echo "      Copying to server"
+    scp "${to}" mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 done
 
 echo "  ... Creating Visual Studio Template Structure"
