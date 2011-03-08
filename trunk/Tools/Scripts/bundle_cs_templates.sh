@@ -76,6 +76,12 @@ if [ "$OS" = "$WIN" ]; then
     CS_LIBRARY_DIR=`echo $CS_LIBRARY_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
     CS_LIBRARY_DIR=`echo $CS_LIBRARY_DIR | awk '{gsub("/", "\\\\"); print}'`
     
+    CS_GENERATED_LIB_DIR=`echo $CS_GENERATED_LIB_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
+    CS_GENERATED_LIB_DIR=`echo $CS_GENERATED_LIB_DIR | awk '{gsub("/", "\\\\"); print}'`
+    
+    CS_GENERATED_CODE_DIR=`echo $CS_GENERATED_CODE_DIR | awk '{sub("/c/", "c:\\\\"); print}'`
+    CS_GENERATED_CODE_DIR=`echo $CS_GENERATED_CODE_DIR | awk '{gsub("/", "\\\\"); print}'`
+    
     csc -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}\\lib\\SwinGame.dll" "${CS_LIBRARY_DIR}\\*.cs" "${CS_GENERATED_CODE_DIR}\\*.cs"
 else
     gmcs -t:library -r:System.Drawing.dll -define:DEBUG -debug+ -out:"${CS_GENERATED_LIB_DIR}/lib/SwinGame.dll" "${CS_LIBRARY_DIR}/*.cs" "${CS_GENERATED_CODE_DIR}/*.cs"
