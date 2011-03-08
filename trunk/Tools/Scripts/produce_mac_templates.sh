@@ -20,10 +20,32 @@ if [ "a${answer}a" == "aya" ] ; then
     ./clean_all.sh
     ./create_library.sh
     ./bundle_c_templates.sh
-    #./bundle_cs_templates.sh
-    #./bundle_objc_templates.sh
+    ./bundle_cs_templates.sh
+    ./bundle_objc_templates.sh
     ./bundle_pas_templates.sh
+    
+    echo
+    echo
 fi
+
+echo "--------------------------------------------------"
+echo "          Producing Mac Distribution Files"
+echo "--------------------------------------------------"
+
+
+#
+# Create version dir on mercury
+#
+
+MERCURY_BASE_INST_DIR="/home/acad/acain/www/htdocs/media/SwinGame"
+MERCURY_INST_DIR="${MERCURY_BASE_INST_DIR}/SwinGame $SG_VERSION"
+MERCURY_INST_DIR_NO_SPACE=`echo ${MERCURY_INST_DIR} | awk '{gsub(/[ \t]/,"\\\\ ");print}'`
+
+echo " - Creating destination on server"
+ssh mercury.it.swin.edu.au "mkdir -p \"${MERCURY_INST_DIR}\""
+
+echo " - Saving version name on server"
+ssh mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/version.txt\""
 
 #
 # Create XCode packages
@@ -58,12 +80,17 @@ if [ -f "$XCODE_PKG_NAME" ] ; then
 fi
 
 # Step 2: Copy all files to related directories
+echo "  ... Copying files to pkg directory"
 COPY_LIST=( "${PKG_COPY_LIST[@]}" )
 DoCopy "${COPY_LIST}"
 
 # Step 3: Create packages
 echo "  ... Creating packages"
 /Developer/usr/bin/packagemaker --doc "${APP_PATH}/pkgdocs/SwinGame.pmdoc" --version "${SG_VERSION}" --out "${XCODE_PKG_NAME}" 2>> /dev/null
+
+echo "      Copying to server"
+scp "${XCODE_PKG_NAME}" mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
+
 
 echo "  ... Creating DMGs"
 for arg in "${MAC_DMG_LIST[@]}"; do
@@ -80,6 +107,9 @@ for arg in "${MAC_DMG_LIST[@]}"; do
     cp -r "${from}/" "${DMG_BASE_DIR}"
     hdiutil create -quiet -ov -srcfolder "${create_from}" "${to}"
     rm -rf "${DMG_BASE_DIR}"
+    
+    echo "      Copying to server"
+    scp "$to" mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 done
 
 rm -rf ${PKG_TMP_DIR}

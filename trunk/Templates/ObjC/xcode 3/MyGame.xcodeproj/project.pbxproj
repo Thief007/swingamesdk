@@ -8,53 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		9424DA37101EC2AB00E5B4BA /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9DB101EC2AB00E5B4BA /* Audio.c */; };
-		9424DA38101EC2AB00E5B4BA /* Camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9DD101EC2AB00E5B4BA /* Camera.c */; };
-		9424DA39101EC2AB00E5B4BA /* Colors.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9DF101EC2AB00E5B4BA /* Colors.c */; };
-		9424DA3A101EC2AB00E5B4BA /* Core.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9E1101EC2AB00E5B4BA /* Core.c */; };
-		9424DA3B101EC2AB00E5B4BA /* Geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9E3101EC2AB00E5B4BA /* Geometry.c */; };
-		9424DA3C101EC2AB00E5B4BA /* Graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9E5101EC2AB00E5B4BA /* Graphics.c */; };
-		9424DA3D101EC2AB00E5B4BA /* Input.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9E7101EC2AB00E5B4BA /* Input.c */; };
-		9424DA3E101EC2AB00E5B4BA /* Physics.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9E9101EC2AB00E5B4BA /* Physics.c */; };
-		9424DA3F101EC2AB00E5B4BA /* PointerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9EC101EC2AB00E5B4BA /* PointerManager.m */; };
-		9424DA40101EC2AB00E5B4BA /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9ED101EC2AB00E5B4BA /* Resources.c */; };
 		9424DA41101EC2AB00E5B4BA /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9EF101EC2AB00E5B4BA /* SDL.framework */; };
 		9424DA42101EC2AB00E5B4BA /* SDL_gfx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F0101EC2AB00E5B4BA /* SDL_gfx.framework */; };
 		9424DA43101EC2AB00E5B4BA /* SDL_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F1101EC2AB00E5B4BA /* SDL_image.framework */; };
 		9424DA44101EC2AB00E5B4BA /* SDL_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F2101EC2AB00E5B4BA /* SDL_mixer.framework */; };
 		9424DA45101EC2AB00E5B4BA /* SDL_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F3101EC2AB00E5B4BA /* SDL_ttf.framework */; };
-		9424DA46101EC2AB00E5B4BA /* SGAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9F5101EC2AB00E5B4BA /* SGAudio.m */; };
-		9424DA47101EC2AB00E5B4BA /* SGBitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9F7101EC2AB00E5B4BA /* SGBitmap.m */; };
-		9424DA48101EC2AB00E5B4BA /* SGCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9F9101EC2AB00E5B4BA /* SGCamera.m */; };
-		9424DA49101EC2AB00E5B4BA /* SGCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9FB101EC2AB00E5B4BA /* SGCircle.m */; };
-		9424DA4A101EC2AB00E5B4BA /* SGColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9FD101EC2AB00E5B4BA /* SGColors.m */; };
-		9424DA4B101EC2AB00E5B4BA /* SGCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424D9FF101EC2AB00E5B4BA /* SGCore.m */; };
-		9424DA4C101EC2AB00E5B4BA /* SGFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA01101EC2AB00E5B4BA /* SGFont.m */; };
-		9424DA4D101EC2AB00E5B4BA /* SGGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA03101EC2AB00E5B4BA /* SGGeometry.m */; };
-		9424DA4E101EC2AB00E5B4BA /* SGGraphics.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA05101EC2AB00E5B4BA /* SGGraphics.m */; };
-		9424DA4F101EC2AB00E5B4BA /* SGInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA07101EC2AB00E5B4BA /* SGInput.m */; };
-		9424DA50101EC2AB00E5B4BA /* SGLineSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA09101EC2AB00E5B4BA /* SGLineSegment.m */; };
-		9424DA51101EC2AB00E5B4BA /* SGMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA0B101EC2AB00E5B4BA /* SGMap.m */; };
-		9424DA52101EC2AB00E5B4BA /* SGMapTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA0D101EC2AB00E5B4BA /* SGMapTile.m */; };
-		9424DA53101EC2AB00E5B4BA /* SGMatrix2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA0F101EC2AB00E5B4BA /* SGMatrix2D.m */; };
-		9424DA54101EC2AB00E5B4BA /* SGMusic.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA11101EC2AB00E5B4BA /* SGMusic.m */; };
-		9424DA55101EC2AB00E5B4BA /* SGPhysics.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA13101EC2AB00E5B4BA /* SGPhysics.m */; };
-		9424DA56101EC2AB00E5B4BA /* SGPoint2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA15101EC2AB00E5B4BA /* SGPoint2D.m */; };
-		9424DA57101EC2AB00E5B4BA /* SGRectangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA17101EC2AB00E5B4BA /* SGRectangle.m */; };
-		9424DA58101EC2AB00E5B4BA /* SGResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA19101EC2AB00E5B4BA /* SGResources.m */; };
 		9424DA59101EC2AB00E5B4BA /* SGSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9424DA1A101EC2AB00E5B4BA /* SGSDK.framework */; };
-		9424DA5A101EC2AB00E5B4BA /* SGSoundEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA1D101EC2AB00E5B4BA /* SGSoundEffect.m */; };
-		9424DA5B101EC2AB00E5B4BA /* SGSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA1F101EC2AB00E5B4BA /* SGSprite.m */; };
-		9424DA5C101EC2AB00E5B4BA /* SGSprites.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA21101EC2AB00E5B4BA /* SGSprites.m */; };
-		9424DA5D101EC2AB00E5B4BA /* SGText.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA23101EC2AB00E5B4BA /* SGText.m */; };
-		9424DA5E101EC2AB00E5B4BA /* SGTileMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA25101EC2AB00E5B4BA /* SGTileMap.m */; };
-		9424DA5F101EC2AB00E5B4BA /* SGTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA27101EC2AB00E5B4BA /* SGTimer.m */; };
-		9424DA60101EC2AB00E5B4BA /* SGTriangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA29101EC2AB00E5B4BA /* SGTriangle.m */; };
-		9424DA61101EC2AB00E5B4BA /* SGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA2C101EC2AB00E5B4BA /* SGUtils.m */; };
-		9424DA62101EC2AB00E5B4BA /* SGVector.m in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA2E101EC2AB00E5B4BA /* SGVector.m */; };
-		9424DA63101EC2AB00E5B4BA /* Sprites.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA2F101EC2AB00E5B4BA /* Sprites.c */; };
-		9424DA64101EC2AB00E5B4BA /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA32101EC2AB00E5B4BA /* Text.c */; };
-		9424DA65101EC2AB00E5B4BA /* TileMap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9424DA34101EC2AB00E5B4BA /* TileMap.c */; };
 		9424DA67101EC2FE00E5B4BA /* SGSDK.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424DA1A101EC2AB00E5B4BA /* SGSDK.framework */; };
 		9424DA68101EC2FE00E5B4BA /* SDL_gfx.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F0101EC2AB00E5B4BA /* SDL_gfx.framework */; };
 		9424DA69101EC2FE00E5B4BA /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9EF101EC2AB00E5B4BA /* SDL.framework */; };
@@ -62,9 +21,62 @@
 		9424DA6B101EC2FE00E5B4BA /* SDL_mixer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F2101EC2AB00E5B4BA /* SDL_mixer.framework */; };
 		9424DA6C101EC2FE00E5B4BA /* SDL_ttf.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 9424D9F3101EC2AB00E5B4BA /* SDL_ttf.framework */; };
 		9424DA6F101EC34F00E5B4BA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
-		94E4812B1088229000AA74FD /* SGShape.m in Sources */ = {isa = PBXBuildFile; fileRef = 94E481241088229000AA74FD /* SGShape.m */; };
-		94E4812D1088229000AA74FD /* SGShapePrototype.m in Sources */ = {isa = PBXBuildFile; fileRef = 94E481281088229000AA74FD /* SGShapePrototype.m */; };
 		94F1F568101EC46F006F3D32 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 94F1F567101EC46F006F3D32 /* main.m */; };
+		94FA05FA1325CEAE0066F30C /* libpng.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94FA05F91325CEAE0066F30C /* libpng.framework */; };
+		94FA06811325CEDF0066F30C /* libpng.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 94FA05F91325CEAE0066F30C /* libpng.framework */; };
+		94FA07951325CFA20066F30C /* Animations.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07281325CFA10066F30C /* Animations.c */; };
+		94FA07961325CFA20066F30C /* Audio.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA072A1325CFA10066F30C /* Audio.c */; };
+		94FA07971325CFA20066F30C /* Camera.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA072C1325CFA10066F30C /* Camera.c */; };
+		94FA07981325CFA20066F30C /* Characters.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA072E1325CFA10066F30C /* Characters.c */; };
+		94FA07991325CFA20066F30C /* Colors.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07301325CFA10066F30C /* Colors.c */; };
+		94FA079A1325CFA20066F30C /* Geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07321325CFA10066F30C /* Geometry.c */; };
+		94FA079B1325CFA20066F30C /* Graphics.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07341325CFA20066F30C /* Graphics.c */; };
+		94FA079C1325CFA20066F30C /* Images.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07361325CFA20066F30C /* Images.c */; };
+		94FA079D1325CFA20066F30C /* Input.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07381325CFA20066F30C /* Input.c */; };
+		94FA079E1325CFA20066F30C /* Physics.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA073A1325CFA20066F30C /* Physics.c */; };
+		94FA079F1325CFA20066F30C /* PointerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA073D1325CFA20066F30C /* PointerManager.m */; };
+		94FA07A01325CFA20066F30C /* Resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA073E1325CFA20066F30C /* Resources.c */; };
+		94FA07A11325CFA20066F30C /* SGAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07411325CFA20066F30C /* SGAnimation.m */; };
+		94FA07A21325CFA20066F30C /* SGAnimations.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07431325CFA20066F30C /* SGAnimations.m */; };
+		94FA07A31325CFA20066F30C /* SGAnimationScript.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07451325CFA20066F30C /* SGAnimationScript.m */; };
+		94FA07A41325CFA20066F30C /* SGAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07471325CFA20066F30C /* SGAudio.m */; };
+		94FA07A51325CFA20066F30C /* SGBitmap.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07491325CFA20066F30C /* SGBitmap.m */; };
+		94FA07A61325CFA20066F30C /* SGBitmapCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA074B1325CFA20066F30C /* SGBitmapCell.m */; };
+		94FA07A71325CFA20066F30C /* SGCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA074D1325CFA20066F30C /* SGCamera.m */; };
+		94FA07A81325CFA20066F30C /* SGCharacter.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA074F1325CFA20066F30C /* SGCharacter.m */; };
+		94FA07A91325CFA20066F30C /* SGCharacters.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07511325CFA20066F30C /* SGCharacters.m */; };
+		94FA07AA1325CFA20066F30C /* SGCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07531325CFA20066F30C /* SGCircle.m */; };
+		94FA07AB1325CFA20066F30C /* SGColors.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07551325CFA20066F30C /* SGColors.m */; };
+		94FA07AC1325CFA20066F30C /* SGDirectionAngles.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07571325CFA20066F30C /* SGDirectionAngles.m */; };
+		94FA07AD1325CFA20066F30C /* SGFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07591325CFA20066F30C /* SGFont.m */; };
+		94FA07AE1325CFA20066F30C /* SGGeometry.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA075B1325CFA20066F30C /* SGGeometry.m */; };
+		94FA07AF1325CFA20066F30C /* SGGraphics.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA075D1325CFA20066F30C /* SGGraphics.m */; };
+		94FA07B01325CFA20066F30C /* SGImages.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA075F1325CFA20066F30C /* SGImages.m */; };
+		94FA07B11325CFA20066F30C /* SGInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07611325CFA20066F30C /* SGInput.m */; };
+		94FA07B21325CFA20066F30C /* SGLineSegment.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07631325CFA20066F30C /* SGLineSegment.m */; };
+		94FA07B31325CFA20066F30C /* SGMatrix2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07651325CFA20066F30C /* SGMatrix2D.m */; };
+		94FA07B41325CFA20066F30C /* SGMusic.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07671325CFA20066F30C /* SGMusic.m */; };
+		94FA07B51325CFA20066F30C /* SGObjcUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07691325CFA20066F30C /* SGObjcUtils.m */; };
+		94FA07B61325CFA20066F30C /* SGPhysics.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA076B1325CFA20066F30C /* SGPhysics.m */; };
+		94FA07B71325CFA20066F30C /* SGPoint2D.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA076D1325CFA20066F30C /* SGPoint2D.m */; };
+		94FA07B81325CFA20066F30C /* SGRectangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA076F1325CFA20066F30C /* SGRectangle.m */; };
+		94FA07B91325CFA20066F30C /* SGResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07711325CFA20066F30C /* SGResources.m */; };
+		94FA07BA1325CFA20066F30C /* SGSDK.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07721325CFA20066F30C /* SGSDK.c */; };
+		94FA07BB1325CFA20066F30C /* SGShape.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07751325CFA20066F30C /* SGShape.m */; };
+		94FA07BC1325CFA20066F30C /* SGShapePrototype.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07771325CFA20066F30C /* SGShapePrototype.m */; };
+		94FA07BD1325CFA20066F30C /* SGSoundEffect.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07791325CFA20066F30C /* SGSoundEffect.m */; };
+		94FA07BE1325CFA20066F30C /* SGSprite.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA077B1325CFA20066F30C /* SGSprite.m */; };
+		94FA07BF1325CFA20066F30C /* SGSprites.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA077D1325CFA20066F30C /* SGSprites.m */; };
+		94FA07C01325CFA20066F30C /* SGText.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA077F1325CFA20066F30C /* SGText.m */; };
+		94FA07C11325CFA20066F30C /* SGTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07811325CFA20066F30C /* SGTimer.m */; };
+		94FA07C21325CFA20066F30C /* SGTimers.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07831325CFA20066F30C /* SGTimers.m */; };
+		94FA07C31325CFA20066F30C /* SGTriangle.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07851325CFA20066F30C /* SGTriangle.m */; };
+		94FA07C41325CFA20066F30C /* SGUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07881325CFA20066F30C /* SGUtils.m */; };
+		94FA07C51325CFA20066F30C /* SGVector.m in Sources */ = {isa = PBXBuildFile; fileRef = 94FA078A1325CFA20066F30C /* SGVector.m */; };
+		94FA07C61325CFA20066F30C /* Sprites.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA078B1325CFA20066F30C /* Sprites.c */; };
+		94FA07C71325CFA20066F30C /* Text.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA078E1325CFA20066F30C /* Text.c */; };
+		94FA07C81325CFA20066F30C /* Timers.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07901325CFA20066F30C /* Timers.c */; };
+		94FA07C91325CFA20066F30C /* Utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 94FA07931325CFA20066F30C /* Utils.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -74,6 +86,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				94FA06811325CEDF0066F30C /* libpng.framework in Copy Frameworks */,
 				9424DA67101EC2FE00E5B4BA /* SGSDK.framework in Copy Frameworks */,
 				9424DA68101EC2FE00E5B4BA /* SDL_gfx.framework in Copy Frameworks */,
 				9424DA69101EC2FE00E5B4BA /* SDL.framework in Copy Frameworks */,
@@ -90,103 +103,123 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* MyGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9424D9DB101EC2AB00E5B4BA /* Audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Audio.c; path = lib/Audio.c; sourceTree = "<group>"; };
-		9424D9DC101EC2AB00E5B4BA /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Audio.h; path = lib/Audio.h; sourceTree = "<group>"; };
-		9424D9DD101EC2AB00E5B4BA /* Camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Camera.c; path = lib/Camera.c; sourceTree = "<group>"; };
-		9424D9DE101EC2AB00E5B4BA /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = lib/Camera.h; sourceTree = "<group>"; };
-		9424D9DF101EC2AB00E5B4BA /* Colors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Colors.c; path = lib/Colors.c; sourceTree = "<group>"; };
-		9424D9E0101EC2AB00E5B4BA /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Colors.h; path = lib/Colors.h; sourceTree = "<group>"; };
-		9424D9E1101EC2AB00E5B4BA /* Core.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Core.c; path = lib/Core.c; sourceTree = "<group>"; };
-		9424D9E2101EC2AB00E5B4BA /* Core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Core.h; path = lib/Core.h; sourceTree = "<group>"; };
-		9424D9E3101EC2AB00E5B4BA /* Geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Geometry.c; path = lib/Geometry.c; sourceTree = "<group>"; };
-		9424D9E4101EC2AB00E5B4BA /* Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geometry.h; path = lib/Geometry.h; sourceTree = "<group>"; };
-		9424D9E5101EC2AB00E5B4BA /* Graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Graphics.c; path = lib/Graphics.c; sourceTree = "<group>"; };
-		9424D9E6101EC2AB00E5B4BA /* Graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Graphics.h; path = lib/Graphics.h; sourceTree = "<group>"; };
-		9424D9E7101EC2AB00E5B4BA /* Input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Input.c; path = lib/Input.c; sourceTree = "<group>"; };
-		9424D9E8101EC2AB00E5B4BA /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Input.h; path = lib/Input.h; sourceTree = "<group>"; };
-		9424D9E9101EC2AB00E5B4BA /* Physics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Physics.c; path = lib/Physics.c; sourceTree = "<group>"; };
-		9424D9EA101EC2AB00E5B4BA /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Physics.h; path = lib/Physics.h; sourceTree = "<group>"; };
-		9424D9EB101EC2AB00E5B4BA /* PointerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointerManager.h; path = lib/PointerManager.h; sourceTree = "<group>"; };
-		9424D9EC101EC2AB00E5B4BA /* PointerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PointerManager.m; path = lib/PointerManager.m; sourceTree = "<group>"; };
-		9424D9ED101EC2AB00E5B4BA /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = lib/Resources.c; sourceTree = "<group>"; };
-		9424D9EE101EC2AB00E5B4BA /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = lib/Resources.h; sourceTree = "<group>"; };
 		9424D9EF101EC2AB00E5B4BA /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = lib/SDL.framework; sourceTree = "<group>"; };
 		9424D9F0101EC2AB00E5B4BA /* SDL_gfx.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_gfx.framework; path = lib/SDL_gfx.framework; sourceTree = "<group>"; };
 		9424D9F1101EC2AB00E5B4BA /* SDL_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_image.framework; path = lib/SDL_image.framework; sourceTree = "<group>"; };
 		9424D9F2101EC2AB00E5B4BA /* SDL_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_mixer.framework; path = lib/SDL_mixer.framework; sourceTree = "<group>"; };
 		9424D9F3101EC2AB00E5B4BA /* SDL_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL_ttf.framework; path = lib/SDL_ttf.framework; sourceTree = "<group>"; };
-		9424D9F4101EC2AB00E5B4BA /* SGAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGAudio.h; path = lib/SGAudio.h; sourceTree = "<group>"; };
-		9424D9F5101EC2AB00E5B4BA /* SGAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGAudio.m; path = lib/SGAudio.m; sourceTree = "<group>"; };
-		9424D9F6101EC2AB00E5B4BA /* SGBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGBitmap.h; path = lib/SGBitmap.h; sourceTree = "<group>"; };
-		9424D9F7101EC2AB00E5B4BA /* SGBitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGBitmap.m; path = lib/SGBitmap.m; sourceTree = "<group>"; };
-		9424D9F8101EC2AB00E5B4BA /* SGCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCamera.h; path = lib/SGCamera.h; sourceTree = "<group>"; };
-		9424D9F9101EC2AB00E5B4BA /* SGCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCamera.m; path = lib/SGCamera.m; sourceTree = "<group>"; };
-		9424D9FA101EC2AB00E5B4BA /* SGCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCircle.h; path = lib/SGCircle.h; sourceTree = "<group>"; };
-		9424D9FB101EC2AB00E5B4BA /* SGCircle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCircle.m; path = lib/SGCircle.m; sourceTree = "<group>"; };
-		9424D9FC101EC2AB00E5B4BA /* SGColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGColors.h; path = lib/SGColors.h; sourceTree = "<group>"; };
-		9424D9FD101EC2AB00E5B4BA /* SGColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGColors.m; path = lib/SGColors.m; sourceTree = "<group>"; };
-		9424D9FE101EC2AB00E5B4BA /* SGCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCore.h; path = lib/SGCore.h; sourceTree = "<group>"; };
-		9424D9FF101EC2AB00E5B4BA /* SGCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCore.m; path = lib/SGCore.m; sourceTree = "<group>"; };
-		9424DA00101EC2AB00E5B4BA /* SGFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGFont.h; path = lib/SGFont.h; sourceTree = "<group>"; };
-		9424DA01101EC2AB00E5B4BA /* SGFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGFont.m; path = lib/SGFont.m; sourceTree = "<group>"; };
-		9424DA02101EC2AB00E5B4BA /* SGGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGGeometry.h; path = lib/SGGeometry.h; sourceTree = "<group>"; };
-		9424DA03101EC2AB00E5B4BA /* SGGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGGeometry.m; path = lib/SGGeometry.m; sourceTree = "<group>"; };
-		9424DA04101EC2AB00E5B4BA /* SGGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGGraphics.h; path = lib/SGGraphics.h; sourceTree = "<group>"; };
-		9424DA05101EC2AB00E5B4BA /* SGGraphics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGGraphics.m; path = lib/SGGraphics.m; sourceTree = "<group>"; };
-		9424DA06101EC2AB00E5B4BA /* SGInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGInput.h; path = lib/SGInput.h; sourceTree = "<group>"; };
-		9424DA07101EC2AB00E5B4BA /* SGInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGInput.m; path = lib/SGInput.m; sourceTree = "<group>"; };
-		9424DA08101EC2AB00E5B4BA /* SGLineSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGLineSegment.h; path = lib/SGLineSegment.h; sourceTree = "<group>"; };
-		9424DA09101EC2AB00E5B4BA /* SGLineSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGLineSegment.m; path = lib/SGLineSegment.m; sourceTree = "<group>"; };
-		9424DA0A101EC2AB00E5B4BA /* SGMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGMap.h; path = lib/SGMap.h; sourceTree = "<group>"; };
-		9424DA0B101EC2AB00E5B4BA /* SGMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGMap.m; path = lib/SGMap.m; sourceTree = "<group>"; };
-		9424DA0C101EC2AB00E5B4BA /* SGMapTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGMapTile.h; path = lib/SGMapTile.h; sourceTree = "<group>"; };
-		9424DA0D101EC2AB00E5B4BA /* SGMapTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGMapTile.m; path = lib/SGMapTile.m; sourceTree = "<group>"; };
-		9424DA0E101EC2AB00E5B4BA /* SGMatrix2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGMatrix2D.h; path = lib/SGMatrix2D.h; sourceTree = "<group>"; };
-		9424DA0F101EC2AB00E5B4BA /* SGMatrix2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGMatrix2D.m; path = lib/SGMatrix2D.m; sourceTree = "<group>"; };
-		9424DA10101EC2AB00E5B4BA /* SGMusic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGMusic.h; path = lib/SGMusic.h; sourceTree = "<group>"; };
-		9424DA11101EC2AB00E5B4BA /* SGMusic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGMusic.m; path = lib/SGMusic.m; sourceTree = "<group>"; };
-		9424DA12101EC2AB00E5B4BA /* SGPhysics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGPhysics.h; path = lib/SGPhysics.h; sourceTree = "<group>"; };
-		9424DA13101EC2AB00E5B4BA /* SGPhysics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGPhysics.m; path = lib/SGPhysics.m; sourceTree = "<group>"; };
-		9424DA14101EC2AB00E5B4BA /* SGPoint2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGPoint2D.h; path = lib/SGPoint2D.h; sourceTree = "<group>"; };
-		9424DA15101EC2AB00E5B4BA /* SGPoint2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGPoint2D.m; path = lib/SGPoint2D.m; sourceTree = "<group>"; };
-		9424DA16101EC2AB00E5B4BA /* SGRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGRectangle.h; path = lib/SGRectangle.h; sourceTree = "<group>"; };
-		9424DA17101EC2AB00E5B4BA /* SGRectangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGRectangle.m; path = lib/SGRectangle.m; sourceTree = "<group>"; };
-		9424DA18101EC2AB00E5B4BA /* SGResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGResources.h; path = lib/SGResources.h; sourceTree = "<group>"; };
-		9424DA19101EC2AB00E5B4BA /* SGResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGResources.m; path = lib/SGResources.m; sourceTree = "<group>"; };
 		9424DA1A101EC2AB00E5B4BA /* SGSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SGSDK.framework; path = lib/SGSDK.framework; sourceTree = "<group>"; };
-		9424DA1B101EC2AB00E5B4BA /* SGSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSDK.h; path = lib/SGSDK.h; sourceTree = "<group>"; };
-		9424DA1C101EC2AB00E5B4BA /* SGSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSoundEffect.h; path = lib/SGSoundEffect.h; sourceTree = "<group>"; };
-		9424DA1D101EC2AB00E5B4BA /* SGSoundEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSoundEffect.m; path = lib/SGSoundEffect.m; sourceTree = "<group>"; };
-		9424DA1E101EC2AB00E5B4BA /* SGSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSprite.h; path = lib/SGSprite.h; sourceTree = "<group>"; };
-		9424DA1F101EC2AB00E5B4BA /* SGSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSprite.m; path = lib/SGSprite.m; sourceTree = "<group>"; };
-		9424DA20101EC2AB00E5B4BA /* SGSprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSprites.h; path = lib/SGSprites.h; sourceTree = "<group>"; };
-		9424DA21101EC2AB00E5B4BA /* SGSprites.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSprites.m; path = lib/SGSprites.m; sourceTree = "<group>"; };
-		9424DA22101EC2AB00E5B4BA /* SGText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGText.h; path = lib/SGText.h; sourceTree = "<group>"; };
-		9424DA23101EC2AB00E5B4BA /* SGText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGText.m; path = lib/SGText.m; sourceTree = "<group>"; };
-		9424DA24101EC2AB00E5B4BA /* SGTileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTileMap.h; path = lib/SGTileMap.h; sourceTree = "<group>"; };
-		9424DA25101EC2AB00E5B4BA /* SGTileMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGTileMap.m; path = lib/SGTileMap.m; sourceTree = "<group>"; };
-		9424DA26101EC2AB00E5B4BA /* SGTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTimer.h; path = lib/SGTimer.h; sourceTree = "<group>"; };
-		9424DA27101EC2AB00E5B4BA /* SGTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGTimer.m; path = lib/SGTimer.m; sourceTree = "<group>"; };
-		9424DA28101EC2AB00E5B4BA /* SGTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTriangle.h; path = lib/SGTriangle.h; sourceTree = "<group>"; };
-		9424DA29101EC2AB00E5B4BA /* SGTriangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGTriangle.m; path = lib/SGTriangle.m; sourceTree = "<group>"; };
-		9424DA2A101EC2AB00E5B4BA /* SGTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTypes.h; path = lib/SGTypes.h; sourceTree = "<group>"; };
-		9424DA2B101EC2AB00E5B4BA /* SGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGUtils.h; path = lib/SGUtils.h; sourceTree = "<group>"; };
-		9424DA2C101EC2AB00E5B4BA /* SGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGUtils.m; path = lib/SGUtils.m; sourceTree = "<group>"; };
-		9424DA2D101EC2AB00E5B4BA /* SGVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGVector.h; path = lib/SGVector.h; sourceTree = "<group>"; };
-		9424DA2E101EC2AB00E5B4BA /* SGVector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGVector.m; path = lib/SGVector.m; sourceTree = "<group>"; };
-		9424DA2F101EC2AB00E5B4BA /* Sprites.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Sprites.c; path = lib/Sprites.c; sourceTree = "<group>"; };
-		9424DA30101EC2AB00E5B4BA /* Sprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sprites.h; path = lib/Sprites.h; sourceTree = "<group>"; };
-		9424DA31101EC2AB00E5B4BA /* SwinGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwinGame.h; path = lib/SwinGame.h; sourceTree = "<group>"; };
-		9424DA32101EC2AB00E5B4BA /* Text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Text.c; path = lib/Text.c; sourceTree = "<group>"; };
-		9424DA33101EC2AB00E5B4BA /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Text.h; path = lib/Text.h; sourceTree = "<group>"; };
-		9424DA34101EC2AB00E5B4BA /* TileMap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = TileMap.c; path = lib/TileMap.c; sourceTree = "<group>"; };
-		9424DA35101EC2AB00E5B4BA /* TileMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileMap.h; path = lib/TileMap.h; sourceTree = "<group>"; };
-		9424DA36101EC2AB00E5B4BA /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Types.h; path = lib/Types.h; sourceTree = "<group>"; };
-		94E481231088229000AA74FD /* SGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShape.h; path = lib/SGShape.h; sourceTree = "<group>"; };
-		94E481241088229000AA74FD /* SGShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShape.m; path = lib/SGShape.m; sourceTree = "<group>"; };
-		94E481271088229000AA74FD /* SGShapePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShapePrototype.h; path = lib/SGShapePrototype.h; sourceTree = "<group>"; };
-		94E481281088229000AA74FD /* SGShapePrototype.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShapePrototype.m; path = lib/SGShapePrototype.m; sourceTree = "<group>"; };
 		94F1F567101EC46F006F3D32 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = src/main.m; sourceTree = "<group>"; };
+		94FA05F91325CEAE0066F30C /* libpng.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libpng.framework; path = lib/libpng.framework; sourceTree = "<group>"; };
+		94FA07281325CFA10066F30C /* Animations.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Animations.c; path = lib/Animations.c; sourceTree = "<group>"; };
+		94FA07291325CFA10066F30C /* Animations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Animations.h; path = lib/Animations.h; sourceTree = "<group>"; };
+		94FA072A1325CFA10066F30C /* Audio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Audio.c; path = lib/Audio.c; sourceTree = "<group>"; };
+		94FA072B1325CFA10066F30C /* Audio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Audio.h; path = lib/Audio.h; sourceTree = "<group>"; };
+		94FA072C1325CFA10066F30C /* Camera.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Camera.c; path = lib/Camera.c; sourceTree = "<group>"; };
+		94FA072D1325CFA10066F30C /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = lib/Camera.h; sourceTree = "<group>"; };
+		94FA072E1325CFA10066F30C /* Characters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Characters.c; path = lib/Characters.c; sourceTree = "<group>"; };
+		94FA072F1325CFA10066F30C /* Characters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Characters.h; path = lib/Characters.h; sourceTree = "<group>"; };
+		94FA07301325CFA10066F30C /* Colors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Colors.c; path = lib/Colors.c; sourceTree = "<group>"; };
+		94FA07311325CFA10066F30C /* Colors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Colors.h; path = lib/Colors.h; sourceTree = "<group>"; };
+		94FA07321325CFA10066F30C /* Geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Geometry.c; path = lib/Geometry.c; sourceTree = "<group>"; };
+		94FA07331325CFA20066F30C /* Geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geometry.h; path = lib/Geometry.h; sourceTree = "<group>"; };
+		94FA07341325CFA20066F30C /* Graphics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Graphics.c; path = lib/Graphics.c; sourceTree = "<group>"; };
+		94FA07351325CFA20066F30C /* Graphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Graphics.h; path = lib/Graphics.h; sourceTree = "<group>"; };
+		94FA07361325CFA20066F30C /* Images.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Images.c; path = lib/Images.c; sourceTree = "<group>"; };
+		94FA07371325CFA20066F30C /* Images.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Images.h; path = lib/Images.h; sourceTree = "<group>"; };
+		94FA07381325CFA20066F30C /* Input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Input.c; path = lib/Input.c; sourceTree = "<group>"; };
+		94FA07391325CFA20066F30C /* Input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Input.h; path = lib/Input.h; sourceTree = "<group>"; };
+		94FA073A1325CFA20066F30C /* Physics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Physics.c; path = lib/Physics.c; sourceTree = "<group>"; };
+		94FA073B1325CFA20066F30C /* Physics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Physics.h; path = lib/Physics.h; sourceTree = "<group>"; };
+		94FA073C1325CFA20066F30C /* PointerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointerManager.h; path = lib/PointerManager.h; sourceTree = "<group>"; };
+		94FA073D1325CFA20066F30C /* PointerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PointerManager.m; path = lib/PointerManager.m; sourceTree = "<group>"; };
+		94FA073E1325CFA20066F30C /* Resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Resources.c; path = lib/Resources.c; sourceTree = "<group>"; };
+		94FA073F1325CFA20066F30C /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = lib/Resources.h; sourceTree = "<group>"; };
+		94FA07401325CFA20066F30C /* SGAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGAnimation.h; path = lib/SGAnimation.h; sourceTree = "<group>"; };
+		94FA07411325CFA20066F30C /* SGAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGAnimation.m; path = lib/SGAnimation.m; sourceTree = "<group>"; };
+		94FA07421325CFA20066F30C /* SGAnimations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGAnimations.h; path = lib/SGAnimations.h; sourceTree = "<group>"; };
+		94FA07431325CFA20066F30C /* SGAnimations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGAnimations.m; path = lib/SGAnimations.m; sourceTree = "<group>"; };
+		94FA07441325CFA20066F30C /* SGAnimationScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGAnimationScript.h; path = lib/SGAnimationScript.h; sourceTree = "<group>"; };
+		94FA07451325CFA20066F30C /* SGAnimationScript.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGAnimationScript.m; path = lib/SGAnimationScript.m; sourceTree = "<group>"; };
+		94FA07461325CFA20066F30C /* SGAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGAudio.h; path = lib/SGAudio.h; sourceTree = "<group>"; };
+		94FA07471325CFA20066F30C /* SGAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGAudio.m; path = lib/SGAudio.m; sourceTree = "<group>"; };
+		94FA07481325CFA20066F30C /* SGBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGBitmap.h; path = lib/SGBitmap.h; sourceTree = "<group>"; };
+		94FA07491325CFA20066F30C /* SGBitmap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGBitmap.m; path = lib/SGBitmap.m; sourceTree = "<group>"; };
+		94FA074A1325CFA20066F30C /* SGBitmapCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGBitmapCell.h; path = lib/SGBitmapCell.h; sourceTree = "<group>"; };
+		94FA074B1325CFA20066F30C /* SGBitmapCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGBitmapCell.m; path = lib/SGBitmapCell.m; sourceTree = "<group>"; };
+		94FA074C1325CFA20066F30C /* SGCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCamera.h; path = lib/SGCamera.h; sourceTree = "<group>"; };
+		94FA074D1325CFA20066F30C /* SGCamera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCamera.m; path = lib/SGCamera.m; sourceTree = "<group>"; };
+		94FA074E1325CFA20066F30C /* SGCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCharacter.h; path = lib/SGCharacter.h; sourceTree = "<group>"; };
+		94FA074F1325CFA20066F30C /* SGCharacter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCharacter.m; path = lib/SGCharacter.m; sourceTree = "<group>"; };
+		94FA07501325CFA20066F30C /* SGCharacters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCharacters.h; path = lib/SGCharacters.h; sourceTree = "<group>"; };
+		94FA07511325CFA20066F30C /* SGCharacters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCharacters.m; path = lib/SGCharacters.m; sourceTree = "<group>"; };
+		94FA07521325CFA20066F30C /* SGCircle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGCircle.h; path = lib/SGCircle.h; sourceTree = "<group>"; };
+		94FA07531325CFA20066F30C /* SGCircle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGCircle.m; path = lib/SGCircle.m; sourceTree = "<group>"; };
+		94FA07541325CFA20066F30C /* SGColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGColors.h; path = lib/SGColors.h; sourceTree = "<group>"; };
+		94FA07551325CFA20066F30C /* SGColors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGColors.m; path = lib/SGColors.m; sourceTree = "<group>"; };
+		94FA07561325CFA20066F30C /* SGDirectionAngles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGDirectionAngles.h; path = lib/SGDirectionAngles.h; sourceTree = "<group>"; };
+		94FA07571325CFA20066F30C /* SGDirectionAngles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGDirectionAngles.m; path = lib/SGDirectionAngles.m; sourceTree = "<group>"; };
+		94FA07581325CFA20066F30C /* SGFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGFont.h; path = lib/SGFont.h; sourceTree = "<group>"; };
+		94FA07591325CFA20066F30C /* SGFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGFont.m; path = lib/SGFont.m; sourceTree = "<group>"; };
+		94FA075A1325CFA20066F30C /* SGGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGGeometry.h; path = lib/SGGeometry.h; sourceTree = "<group>"; };
+		94FA075B1325CFA20066F30C /* SGGeometry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGGeometry.m; path = lib/SGGeometry.m; sourceTree = "<group>"; };
+		94FA075C1325CFA20066F30C /* SGGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGGraphics.h; path = lib/SGGraphics.h; sourceTree = "<group>"; };
+		94FA075D1325CFA20066F30C /* SGGraphics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGGraphics.m; path = lib/SGGraphics.m; sourceTree = "<group>"; };
+		94FA075E1325CFA20066F30C /* SGImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGImages.h; path = lib/SGImages.h; sourceTree = "<group>"; };
+		94FA075F1325CFA20066F30C /* SGImages.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGImages.m; path = lib/SGImages.m; sourceTree = "<group>"; };
+		94FA07601325CFA20066F30C /* SGInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGInput.h; path = lib/SGInput.h; sourceTree = "<group>"; };
+		94FA07611325CFA20066F30C /* SGInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGInput.m; path = lib/SGInput.m; sourceTree = "<group>"; };
+		94FA07621325CFA20066F30C /* SGLineSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGLineSegment.h; path = lib/SGLineSegment.h; sourceTree = "<group>"; };
+		94FA07631325CFA20066F30C /* SGLineSegment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGLineSegment.m; path = lib/SGLineSegment.m; sourceTree = "<group>"; };
+		94FA07641325CFA20066F30C /* SGMatrix2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGMatrix2D.h; path = lib/SGMatrix2D.h; sourceTree = "<group>"; };
+		94FA07651325CFA20066F30C /* SGMatrix2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGMatrix2D.m; path = lib/SGMatrix2D.m; sourceTree = "<group>"; };
+		94FA07661325CFA20066F30C /* SGMusic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGMusic.h; path = lib/SGMusic.h; sourceTree = "<group>"; };
+		94FA07671325CFA20066F30C /* SGMusic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGMusic.m; path = lib/SGMusic.m; sourceTree = "<group>"; };
+		94FA07681325CFA20066F30C /* SGObjcUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGObjcUtils.h; path = lib/SGObjcUtils.h; sourceTree = "<group>"; };
+		94FA07691325CFA20066F30C /* SGObjcUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGObjcUtils.m; path = lib/SGObjcUtils.m; sourceTree = "<group>"; };
+		94FA076A1325CFA20066F30C /* SGPhysics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGPhysics.h; path = lib/SGPhysics.h; sourceTree = "<group>"; };
+		94FA076B1325CFA20066F30C /* SGPhysics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGPhysics.m; path = lib/SGPhysics.m; sourceTree = "<group>"; };
+		94FA076C1325CFA20066F30C /* SGPoint2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGPoint2D.h; path = lib/SGPoint2D.h; sourceTree = "<group>"; };
+		94FA076D1325CFA20066F30C /* SGPoint2D.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGPoint2D.m; path = lib/SGPoint2D.m; sourceTree = "<group>"; };
+		94FA076E1325CFA20066F30C /* SGRectangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGRectangle.h; path = lib/SGRectangle.h; sourceTree = "<group>"; };
+		94FA076F1325CFA20066F30C /* SGRectangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGRectangle.m; path = lib/SGRectangle.m; sourceTree = "<group>"; };
+		94FA07701325CFA20066F30C /* SGResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGResources.h; path = lib/SGResources.h; sourceTree = "<group>"; };
+		94FA07711325CFA20066F30C /* SGResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGResources.m; path = lib/SGResources.m; sourceTree = "<group>"; };
+		94FA07721325CFA20066F30C /* SGSDK.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = SGSDK.c; path = lib/SGSDK.c; sourceTree = "<group>"; };
+		94FA07731325CFA20066F30C /* SGSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSDK.h; path = lib/SGSDK.h; sourceTree = "<group>"; };
+		94FA07741325CFA20066F30C /* SGShape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShape.h; path = lib/SGShape.h; sourceTree = "<group>"; };
+		94FA07751325CFA20066F30C /* SGShape.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShape.m; path = lib/SGShape.m; sourceTree = "<group>"; };
+		94FA07761325CFA20066F30C /* SGShapePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGShapePrototype.h; path = lib/SGShapePrototype.h; sourceTree = "<group>"; };
+		94FA07771325CFA20066F30C /* SGShapePrototype.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGShapePrototype.m; path = lib/SGShapePrototype.m; sourceTree = "<group>"; };
+		94FA07781325CFA20066F30C /* SGSoundEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSoundEffect.h; path = lib/SGSoundEffect.h; sourceTree = "<group>"; };
+		94FA07791325CFA20066F30C /* SGSoundEffect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSoundEffect.m; path = lib/SGSoundEffect.m; sourceTree = "<group>"; };
+		94FA077A1325CFA20066F30C /* SGSprite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSprite.h; path = lib/SGSprite.h; sourceTree = "<group>"; };
+		94FA077B1325CFA20066F30C /* SGSprite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSprite.m; path = lib/SGSprite.m; sourceTree = "<group>"; };
+		94FA077C1325CFA20066F30C /* SGSprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGSprites.h; path = lib/SGSprites.h; sourceTree = "<group>"; };
+		94FA077D1325CFA20066F30C /* SGSprites.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGSprites.m; path = lib/SGSprites.m; sourceTree = "<group>"; };
+		94FA077E1325CFA20066F30C /* SGText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGText.h; path = lib/SGText.h; sourceTree = "<group>"; };
+		94FA077F1325CFA20066F30C /* SGText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGText.m; path = lib/SGText.m; sourceTree = "<group>"; };
+		94FA07801325CFA20066F30C /* SGTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTimer.h; path = lib/SGTimer.h; sourceTree = "<group>"; };
+		94FA07811325CFA20066F30C /* SGTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGTimer.m; path = lib/SGTimer.m; sourceTree = "<group>"; };
+		94FA07821325CFA20066F30C /* SGTimers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTimers.h; path = lib/SGTimers.h; sourceTree = "<group>"; };
+		94FA07831325CFA20066F30C /* SGTimers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGTimers.m; path = lib/SGTimers.m; sourceTree = "<group>"; };
+		94FA07841325CFA20066F30C /* SGTriangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTriangle.h; path = lib/SGTriangle.h; sourceTree = "<group>"; };
+		94FA07851325CFA20066F30C /* SGTriangle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGTriangle.m; path = lib/SGTriangle.m; sourceTree = "<group>"; };
+		94FA07861325CFA20066F30C /* SGTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGTypes.h; path = lib/SGTypes.h; sourceTree = "<group>"; };
+		94FA07871325CFA20066F30C /* SGUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGUtils.h; path = lib/SGUtils.h; sourceTree = "<group>"; };
+		94FA07881325CFA20066F30C /* SGUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGUtils.m; path = lib/SGUtils.m; sourceTree = "<group>"; };
+		94FA07891325CFA20066F30C /* SGVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SGVector.h; path = lib/SGVector.h; sourceTree = "<group>"; };
+		94FA078A1325CFA20066F30C /* SGVector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SGVector.m; path = lib/SGVector.m; sourceTree = "<group>"; };
+		94FA078B1325CFA20066F30C /* Sprites.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Sprites.c; path = lib/Sprites.c; sourceTree = "<group>"; };
+		94FA078C1325CFA20066F30C /* Sprites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Sprites.h; path = lib/Sprites.h; sourceTree = "<group>"; };
+		94FA078D1325CFA20066F30C /* SwinGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SwinGame.h; path = lib/SwinGame.h; sourceTree = "<group>"; };
+		94FA078E1325CFA20066F30C /* Text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Text.c; path = lib/Text.c; sourceTree = "<group>"; };
+		94FA078F1325CFA20066F30C /* Text.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Text.h; path = lib/Text.h; sourceTree = "<group>"; };
+		94FA07901325CFA20066F30C /* Timers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Timers.c; path = lib/Timers.c; sourceTree = "<group>"; };
+		94FA07911325CFA20066F30C /* Timers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Timers.h; path = lib/Timers.h; sourceTree = "<group>"; };
+		94FA07921325CFA20066F30C /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Types.h; path = lib/Types.h; sourceTree = "<group>"; };
+		94FA07931325CFA20066F30C /* Utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Utils.c; path = lib/Utils.c; sourceTree = "<group>"; };
+		94FA07941325CFA20066F30C /* Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utils.h; path = lib/Utils.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +235,7 @@
 				9424DA44101EC2AB00E5B4BA /* SDL_mixer.framework in Frameworks */,
 				9424DA45101EC2AB00E5B4BA /* SDL_ttf.framework in Frameworks */,
 				9424DA59101EC2AB00E5B4BA /* SGSDK.framework in Frameworks */,
+				94FA05FA1325CEAE0066F30C /* libpng.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,96 +253,115 @@
 		1058C7A0FEA54F0111CA2CBB /* SwinGame Code */ = {
 			isa = PBXGroup;
 			children = (
-				9424D9DB101EC2AB00E5B4BA /* Audio.c */,
-				9424D9DC101EC2AB00E5B4BA /* Audio.h */,
-				9424D9DD101EC2AB00E5B4BA /* Camera.c */,
-				9424D9DE101EC2AB00E5B4BA /* Camera.h */,
-				9424D9DF101EC2AB00E5B4BA /* Colors.c */,
-				9424D9E0101EC2AB00E5B4BA /* Colors.h */,
-				9424D9E1101EC2AB00E5B4BA /* Core.c */,
-				9424D9E2101EC2AB00E5B4BA /* Core.h */,
-				9424D9E3101EC2AB00E5B4BA /* Geometry.c */,
-				9424D9E4101EC2AB00E5B4BA /* Geometry.h */,
-				9424D9E5101EC2AB00E5B4BA /* Graphics.c */,
-				9424D9E6101EC2AB00E5B4BA /* Graphics.h */,
-				9424D9E7101EC2AB00E5B4BA /* Input.c */,
-				9424D9E8101EC2AB00E5B4BA /* Input.h */,
-				9424D9E9101EC2AB00E5B4BA /* Physics.c */,
-				9424D9EA101EC2AB00E5B4BA /* Physics.h */,
-				9424D9EB101EC2AB00E5B4BA /* PointerManager.h */,
-				9424D9EC101EC2AB00E5B4BA /* PointerManager.m */,
-				9424D9ED101EC2AB00E5B4BA /* Resources.c */,
-				9424D9EE101EC2AB00E5B4BA /* Resources.h */,
-				9424D9F4101EC2AB00E5B4BA /* SGAudio.h */,
-				9424D9F5101EC2AB00E5B4BA /* SGAudio.m */,
-				9424D9F6101EC2AB00E5B4BA /* SGBitmap.h */,
-				9424D9F7101EC2AB00E5B4BA /* SGBitmap.m */,
-				9424D9F8101EC2AB00E5B4BA /* SGCamera.h */,
-				9424D9F9101EC2AB00E5B4BA /* SGCamera.m */,
-				9424D9FA101EC2AB00E5B4BA /* SGCircle.h */,
-				9424D9FB101EC2AB00E5B4BA /* SGCircle.m */,
-				9424D9FC101EC2AB00E5B4BA /* SGColors.h */,
-				9424D9FD101EC2AB00E5B4BA /* SGColors.m */,
-				9424D9FE101EC2AB00E5B4BA /* SGCore.h */,
-				9424D9FF101EC2AB00E5B4BA /* SGCore.m */,
-				9424DA00101EC2AB00E5B4BA /* SGFont.h */,
-				9424DA01101EC2AB00E5B4BA /* SGFont.m */,
-				9424DA02101EC2AB00E5B4BA /* SGGeometry.h */,
-				9424DA03101EC2AB00E5B4BA /* SGGeometry.m */,
-				9424DA04101EC2AB00E5B4BA /* SGGraphics.h */,
-				9424DA05101EC2AB00E5B4BA /* SGGraphics.m */,
-				9424DA06101EC2AB00E5B4BA /* SGInput.h */,
-				9424DA07101EC2AB00E5B4BA /* SGInput.m */,
-				9424DA08101EC2AB00E5B4BA /* SGLineSegment.h */,
-				9424DA09101EC2AB00E5B4BA /* SGLineSegment.m */,
-				9424DA0A101EC2AB00E5B4BA /* SGMap.h */,
-				9424DA0B101EC2AB00E5B4BA /* SGMap.m */,
-				9424DA0C101EC2AB00E5B4BA /* SGMapTile.h */,
-				9424DA0D101EC2AB00E5B4BA /* SGMapTile.m */,
-				9424DA0E101EC2AB00E5B4BA /* SGMatrix2D.h */,
-				9424DA0F101EC2AB00E5B4BA /* SGMatrix2D.m */,
-				9424DA10101EC2AB00E5B4BA /* SGMusic.h */,
-				9424DA11101EC2AB00E5B4BA /* SGMusic.m */,
-				9424DA12101EC2AB00E5B4BA /* SGPhysics.h */,
-				9424DA13101EC2AB00E5B4BA /* SGPhysics.m */,
-				9424DA14101EC2AB00E5B4BA /* SGPoint2D.h */,
-				9424DA15101EC2AB00E5B4BA /* SGPoint2D.m */,
-				9424DA16101EC2AB00E5B4BA /* SGRectangle.h */,
-				9424DA17101EC2AB00E5B4BA /* SGRectangle.m */,
-				9424DA18101EC2AB00E5B4BA /* SGResources.h */,
-				9424DA19101EC2AB00E5B4BA /* SGResources.m */,
-				9424DA1B101EC2AB00E5B4BA /* SGSDK.h */,
-				94E481231088229000AA74FD /* SGShape.h */,
-				94E481241088229000AA74FD /* SGShape.m */,
-				94E481271088229000AA74FD /* SGShapePrototype.h */,
-				94E481281088229000AA74FD /* SGShapePrototype.m */,
-				9424DA1C101EC2AB00E5B4BA /* SGSoundEffect.h */,
-				9424DA1D101EC2AB00E5B4BA /* SGSoundEffect.m */,
-				9424DA1E101EC2AB00E5B4BA /* SGSprite.h */,
-				9424DA1F101EC2AB00E5B4BA /* SGSprite.m */,
-				9424DA20101EC2AB00E5B4BA /* SGSprites.h */,
-				9424DA21101EC2AB00E5B4BA /* SGSprites.m */,
-				9424DA22101EC2AB00E5B4BA /* SGText.h */,
-				9424DA23101EC2AB00E5B4BA /* SGText.m */,
-				9424DA24101EC2AB00E5B4BA /* SGTileMap.h */,
-				9424DA25101EC2AB00E5B4BA /* SGTileMap.m */,
-				9424DA26101EC2AB00E5B4BA /* SGTimer.h */,
-				9424DA27101EC2AB00E5B4BA /* SGTimer.m */,
-				9424DA28101EC2AB00E5B4BA /* SGTriangle.h */,
-				9424DA29101EC2AB00E5B4BA /* SGTriangle.m */,
-				9424DA2A101EC2AB00E5B4BA /* SGTypes.h */,
-				9424DA2B101EC2AB00E5B4BA /* SGUtils.h */,
-				9424DA2C101EC2AB00E5B4BA /* SGUtils.m */,
-				9424DA2D101EC2AB00E5B4BA /* SGVector.h */,
-				9424DA2E101EC2AB00E5B4BA /* SGVector.m */,
-				9424DA2F101EC2AB00E5B4BA /* Sprites.c */,
-				9424DA30101EC2AB00E5B4BA /* Sprites.h */,
-				9424DA31101EC2AB00E5B4BA /* SwinGame.h */,
-				9424DA32101EC2AB00E5B4BA /* Text.c */,
-				9424DA33101EC2AB00E5B4BA /* Text.h */,
-				9424DA34101EC2AB00E5B4BA /* TileMap.c */,
-				9424DA35101EC2AB00E5B4BA /* TileMap.h */,
-				9424DA36101EC2AB00E5B4BA /* Types.h */,
+				94FA07281325CFA10066F30C /* Animations.c */,
+				94FA07291325CFA10066F30C /* Animations.h */,
+				94FA072A1325CFA10066F30C /* Audio.c */,
+				94FA072B1325CFA10066F30C /* Audio.h */,
+				94FA072C1325CFA10066F30C /* Camera.c */,
+				94FA072D1325CFA10066F30C /* Camera.h */,
+				94FA072E1325CFA10066F30C /* Characters.c */,
+				94FA072F1325CFA10066F30C /* Characters.h */,
+				94FA07301325CFA10066F30C /* Colors.c */,
+				94FA07311325CFA10066F30C /* Colors.h */,
+				94FA07321325CFA10066F30C /* Geometry.c */,
+				94FA07331325CFA20066F30C /* Geometry.h */,
+				94FA07341325CFA20066F30C /* Graphics.c */,
+				94FA07351325CFA20066F30C /* Graphics.h */,
+				94FA07361325CFA20066F30C /* Images.c */,
+				94FA07371325CFA20066F30C /* Images.h */,
+				94FA07381325CFA20066F30C /* Input.c */,
+				94FA07391325CFA20066F30C /* Input.h */,
+				94FA073A1325CFA20066F30C /* Physics.c */,
+				94FA073B1325CFA20066F30C /* Physics.h */,
+				94FA073C1325CFA20066F30C /* PointerManager.h */,
+				94FA073D1325CFA20066F30C /* PointerManager.m */,
+				94FA073E1325CFA20066F30C /* Resources.c */,
+				94FA073F1325CFA20066F30C /* Resources.h */,
+				94FA07401325CFA20066F30C /* SGAnimation.h */,
+				94FA07411325CFA20066F30C /* SGAnimation.m */,
+				94FA07421325CFA20066F30C /* SGAnimations.h */,
+				94FA07431325CFA20066F30C /* SGAnimations.m */,
+				94FA07441325CFA20066F30C /* SGAnimationScript.h */,
+				94FA07451325CFA20066F30C /* SGAnimationScript.m */,
+				94FA07461325CFA20066F30C /* SGAudio.h */,
+				94FA07471325CFA20066F30C /* SGAudio.m */,
+				94FA07481325CFA20066F30C /* SGBitmap.h */,
+				94FA07491325CFA20066F30C /* SGBitmap.m */,
+				94FA074A1325CFA20066F30C /* SGBitmapCell.h */,
+				94FA074B1325CFA20066F30C /* SGBitmapCell.m */,
+				94FA074C1325CFA20066F30C /* SGCamera.h */,
+				94FA074D1325CFA20066F30C /* SGCamera.m */,
+				94FA074E1325CFA20066F30C /* SGCharacter.h */,
+				94FA074F1325CFA20066F30C /* SGCharacter.m */,
+				94FA07501325CFA20066F30C /* SGCharacters.h */,
+				94FA07511325CFA20066F30C /* SGCharacters.m */,
+				94FA07521325CFA20066F30C /* SGCircle.h */,
+				94FA07531325CFA20066F30C /* SGCircle.m */,
+				94FA07541325CFA20066F30C /* SGColors.h */,
+				94FA07551325CFA20066F30C /* SGColors.m */,
+				94FA07561325CFA20066F30C /* SGDirectionAngles.h */,
+				94FA07571325CFA20066F30C /* SGDirectionAngles.m */,
+				94FA07581325CFA20066F30C /* SGFont.h */,
+				94FA07591325CFA20066F30C /* SGFont.m */,
+				94FA075A1325CFA20066F30C /* SGGeometry.h */,
+				94FA075B1325CFA20066F30C /* SGGeometry.m */,
+				94FA075C1325CFA20066F30C /* SGGraphics.h */,
+				94FA075D1325CFA20066F30C /* SGGraphics.m */,
+				94FA075E1325CFA20066F30C /* SGImages.h */,
+				94FA075F1325CFA20066F30C /* SGImages.m */,
+				94FA07601325CFA20066F30C /* SGInput.h */,
+				94FA07611325CFA20066F30C /* SGInput.m */,
+				94FA07621325CFA20066F30C /* SGLineSegment.h */,
+				94FA07631325CFA20066F30C /* SGLineSegment.m */,
+				94FA07641325CFA20066F30C /* SGMatrix2D.h */,
+				94FA07651325CFA20066F30C /* SGMatrix2D.m */,
+				94FA07661325CFA20066F30C /* SGMusic.h */,
+				94FA07671325CFA20066F30C /* SGMusic.m */,
+				94FA07681325CFA20066F30C /* SGObjcUtils.h */,
+				94FA07691325CFA20066F30C /* SGObjcUtils.m */,
+				94FA076A1325CFA20066F30C /* SGPhysics.h */,
+				94FA076B1325CFA20066F30C /* SGPhysics.m */,
+				94FA076C1325CFA20066F30C /* SGPoint2D.h */,
+				94FA076D1325CFA20066F30C /* SGPoint2D.m */,
+				94FA076E1325CFA20066F30C /* SGRectangle.h */,
+				94FA076F1325CFA20066F30C /* SGRectangle.m */,
+				94FA07701325CFA20066F30C /* SGResources.h */,
+				94FA07711325CFA20066F30C /* SGResources.m */,
+				94FA07721325CFA20066F30C /* SGSDK.c */,
+				94FA07731325CFA20066F30C /* SGSDK.h */,
+				94FA07741325CFA20066F30C /* SGShape.h */,
+				94FA07751325CFA20066F30C /* SGShape.m */,
+				94FA07761325CFA20066F30C /* SGShapePrototype.h */,
+				94FA07771325CFA20066F30C /* SGShapePrototype.m */,
+				94FA07781325CFA20066F30C /* SGSoundEffect.h */,
+				94FA07791325CFA20066F30C /* SGSoundEffect.m */,
+				94FA077A1325CFA20066F30C /* SGSprite.h */,
+				94FA077B1325CFA20066F30C /* SGSprite.m */,
+				94FA077C1325CFA20066F30C /* SGSprites.h */,
+				94FA077D1325CFA20066F30C /* SGSprites.m */,
+				94FA077E1325CFA20066F30C /* SGText.h */,
+				94FA077F1325CFA20066F30C /* SGText.m */,
+				94FA07801325CFA20066F30C /* SGTimer.h */,
+				94FA07811325CFA20066F30C /* SGTimer.m */,
+				94FA07821325CFA20066F30C /* SGTimers.h */,
+				94FA07831325CFA20066F30C /* SGTimers.m */,
+				94FA07841325CFA20066F30C /* SGTriangle.h */,
+				94FA07851325CFA20066F30C /* SGTriangle.m */,
+				94FA07861325CFA20066F30C /* SGTypes.h */,
+				94FA07871325CFA20066F30C /* SGUtils.h */,
+				94FA07881325CFA20066F30C /* SGUtils.m */,
+				94FA07891325CFA20066F30C /* SGVector.h */,
+				94FA078A1325CFA20066F30C /* SGVector.m */,
+				94FA078B1325CFA20066F30C /* Sprites.c */,
+				94FA078C1325CFA20066F30C /* Sprites.h */,
+				94FA078D1325CFA20066F30C /* SwinGame.h */,
+				94FA078E1325CFA20066F30C /* Text.c */,
+				94FA078F1325CFA20066F30C /* Text.h */,
+				94FA07901325CFA20066F30C /* Timers.c */,
+				94FA07911325CFA20066F30C /* Timers.h */,
+				94FA07921325CFA20066F30C /* Types.h */,
+				94FA07931325CFA20066F30C /* Utils.c */,
+				94FA07941325CFA20066F30C /* Utils.h */,
 			);
 			name = "SwinGame Code";
 			sourceTree = "<group>";
@@ -350,6 +403,7 @@
 				9424D9F1101EC2AB00E5B4BA /* SDL_image.framework */,
 				9424D9F2101EC2AB00E5B4BA /* SDL_mixer.framework */,
 				9424D9F3101EC2AB00E5B4BA /* SDL_ttf.framework */,
+				94FA05F91325CEAE0066F30C /* libpng.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
@@ -417,50 +471,60 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9424DA37101EC2AB00E5B4BA /* Audio.c in Sources */,
-				9424DA38101EC2AB00E5B4BA /* Camera.c in Sources */,
-				9424DA39101EC2AB00E5B4BA /* Colors.c in Sources */,
-				9424DA3A101EC2AB00E5B4BA /* Core.c in Sources */,
-				9424DA3B101EC2AB00E5B4BA /* Geometry.c in Sources */,
-				9424DA3C101EC2AB00E5B4BA /* Graphics.c in Sources */,
-				9424DA3D101EC2AB00E5B4BA /* Input.c in Sources */,
-				9424DA3E101EC2AB00E5B4BA /* Physics.c in Sources */,
-				9424DA3F101EC2AB00E5B4BA /* PointerManager.m in Sources */,
-				9424DA40101EC2AB00E5B4BA /* Resources.c in Sources */,
-				9424DA46101EC2AB00E5B4BA /* SGAudio.m in Sources */,
-				9424DA47101EC2AB00E5B4BA /* SGBitmap.m in Sources */,
-				9424DA48101EC2AB00E5B4BA /* SGCamera.m in Sources */,
-				9424DA49101EC2AB00E5B4BA /* SGCircle.m in Sources */,
-				9424DA4A101EC2AB00E5B4BA /* SGColors.m in Sources */,
-				9424DA4B101EC2AB00E5B4BA /* SGCore.m in Sources */,
-				9424DA4C101EC2AB00E5B4BA /* SGFont.m in Sources */,
-				9424DA4D101EC2AB00E5B4BA /* SGGeometry.m in Sources */,
-				9424DA4E101EC2AB00E5B4BA /* SGGraphics.m in Sources */,
-				9424DA4F101EC2AB00E5B4BA /* SGInput.m in Sources */,
-				9424DA50101EC2AB00E5B4BA /* SGLineSegment.m in Sources */,
-				9424DA51101EC2AB00E5B4BA /* SGMap.m in Sources */,
-				9424DA52101EC2AB00E5B4BA /* SGMapTile.m in Sources */,
-				9424DA53101EC2AB00E5B4BA /* SGMatrix2D.m in Sources */,
-				9424DA54101EC2AB00E5B4BA /* SGMusic.m in Sources */,
-				9424DA55101EC2AB00E5B4BA /* SGPhysics.m in Sources */,
-				9424DA56101EC2AB00E5B4BA /* SGPoint2D.m in Sources */,
-				9424DA57101EC2AB00E5B4BA /* SGRectangle.m in Sources */,
-				9424DA58101EC2AB00E5B4BA /* SGResources.m in Sources */,
-				9424DA5A101EC2AB00E5B4BA /* SGSoundEffect.m in Sources */,
-				9424DA5B101EC2AB00E5B4BA /* SGSprite.m in Sources */,
-				9424DA5C101EC2AB00E5B4BA /* SGSprites.m in Sources */,
-				9424DA5D101EC2AB00E5B4BA /* SGText.m in Sources */,
-				9424DA5E101EC2AB00E5B4BA /* SGTileMap.m in Sources */,
-				9424DA5F101EC2AB00E5B4BA /* SGTimer.m in Sources */,
-				9424DA60101EC2AB00E5B4BA /* SGTriangle.m in Sources */,
-				9424DA61101EC2AB00E5B4BA /* SGUtils.m in Sources */,
-				9424DA62101EC2AB00E5B4BA /* SGVector.m in Sources */,
-				9424DA63101EC2AB00E5B4BA /* Sprites.c in Sources */,
-				9424DA64101EC2AB00E5B4BA /* Text.c in Sources */,
-				9424DA65101EC2AB00E5B4BA /* TileMap.c in Sources */,
 				94F1F568101EC46F006F3D32 /* main.m in Sources */,
-				94E4812B1088229000AA74FD /* SGShape.m in Sources */,
-				94E4812D1088229000AA74FD /* SGShapePrototype.m in Sources */,
+				94FA07951325CFA20066F30C /* Animations.c in Sources */,
+				94FA07961325CFA20066F30C /* Audio.c in Sources */,
+				94FA07971325CFA20066F30C /* Camera.c in Sources */,
+				94FA07981325CFA20066F30C /* Characters.c in Sources */,
+				94FA07991325CFA20066F30C /* Colors.c in Sources */,
+				94FA079A1325CFA20066F30C /* Geometry.c in Sources */,
+				94FA079B1325CFA20066F30C /* Graphics.c in Sources */,
+				94FA079C1325CFA20066F30C /* Images.c in Sources */,
+				94FA079D1325CFA20066F30C /* Input.c in Sources */,
+				94FA079E1325CFA20066F30C /* Physics.c in Sources */,
+				94FA079F1325CFA20066F30C /* PointerManager.m in Sources */,
+				94FA07A01325CFA20066F30C /* Resources.c in Sources */,
+				94FA07A11325CFA20066F30C /* SGAnimation.m in Sources */,
+				94FA07A21325CFA20066F30C /* SGAnimations.m in Sources */,
+				94FA07A31325CFA20066F30C /* SGAnimationScript.m in Sources */,
+				94FA07A41325CFA20066F30C /* SGAudio.m in Sources */,
+				94FA07A51325CFA20066F30C /* SGBitmap.m in Sources */,
+				94FA07A61325CFA20066F30C /* SGBitmapCell.m in Sources */,
+				94FA07A71325CFA20066F30C /* SGCamera.m in Sources */,
+				94FA07A81325CFA20066F30C /* SGCharacter.m in Sources */,
+				94FA07A91325CFA20066F30C /* SGCharacters.m in Sources */,
+				94FA07AA1325CFA20066F30C /* SGCircle.m in Sources */,
+				94FA07AB1325CFA20066F30C /* SGColors.m in Sources */,
+				94FA07AC1325CFA20066F30C /* SGDirectionAngles.m in Sources */,
+				94FA07AD1325CFA20066F30C /* SGFont.m in Sources */,
+				94FA07AE1325CFA20066F30C /* SGGeometry.m in Sources */,
+				94FA07AF1325CFA20066F30C /* SGGraphics.m in Sources */,
+				94FA07B01325CFA20066F30C /* SGImages.m in Sources */,
+				94FA07B11325CFA20066F30C /* SGInput.m in Sources */,
+				94FA07B21325CFA20066F30C /* SGLineSegment.m in Sources */,
+				94FA07B31325CFA20066F30C /* SGMatrix2D.m in Sources */,
+				94FA07B41325CFA20066F30C /* SGMusic.m in Sources */,
+				94FA07B51325CFA20066F30C /* SGObjcUtils.m in Sources */,
+				94FA07B61325CFA20066F30C /* SGPhysics.m in Sources */,
+				94FA07B71325CFA20066F30C /* SGPoint2D.m in Sources */,
+				94FA07B81325CFA20066F30C /* SGRectangle.m in Sources */,
+				94FA07B91325CFA20066F30C /* SGResources.m in Sources */,
+				94FA07BA1325CFA20066F30C /* SGSDK.c in Sources */,
+				94FA07BB1325CFA20066F30C /* SGShape.m in Sources */,
+				94FA07BC1325CFA20066F30C /* SGShapePrototype.m in Sources */,
+				94FA07BD1325CFA20066F30C /* SGSoundEffect.m in Sources */,
+				94FA07BE1325CFA20066F30C /* SGSprite.m in Sources */,
+				94FA07BF1325CFA20066F30C /* SGSprites.m in Sources */,
+				94FA07C01325CFA20066F30C /* SGText.m in Sources */,
+				94FA07C11325CFA20066F30C /* SGTimer.m in Sources */,
+				94FA07C21325CFA20066F30C /* SGTimers.m in Sources */,
+				94FA07C31325CFA20066F30C /* SGTriangle.m in Sources */,
+				94FA07C41325CFA20066F30C /* SGUtils.m in Sources */,
+				94FA07C51325CFA20066F30C /* SGVector.m in Sources */,
+				94FA07C61325CFA20066F30C /* Sprites.c in Sources */,
+				94FA07C71325CFA20066F30C /* Text.c in Sources */,
+				94FA07C81325CFA20066F30C /* Timers.c in Sources */,
+				94FA07C91325CFA20066F30C /* Utils.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,6 +548,7 @@
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				PRODUCT_NAME = "$(PROJECT_NAME)";
+				SDKROOT = "";
 			};
 			name = Debug;
 		};
