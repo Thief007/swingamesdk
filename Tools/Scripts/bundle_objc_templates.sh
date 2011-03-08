@@ -56,28 +56,24 @@ fi
 #
 
 # Create the c code using Python
-CreateCCode()
+CreateObjCCode()
 {
     cd "${PYTHON_SCRIPT_DIR}"
-    echo "  ... Creating C library code"
-    python create_c_library.py
     echo "  ... Creating Objective C library code"
     python create_objc_library.py
     
-    # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/SGSDK.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
-    # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/Types.h "${COMMON_OBJC_TEMPLATE_DIR}/lib"
-    
-    cp -p "${C_GENERATED_DIR}"/lib/*.h "${OBJC_GENERATED_DIR}/lib"
-    cp -p "${C_GENERATED_DIR}"/lib/*.c "${OBJC_GENERATED_DIR}/lib"
-    
-    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.h "${OBJC_GENERATED_DIR}/lib"
-    cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.c "${OBJC_GENERATED_DIR}/lib"
+    # cp -p "${C_GENERATED_DIR}"/lib/*.h "${OBJC_GENERATED_DIR}/lib"
+    # cp -p "${C_GENERATED_DIR}"/lib/*.c "${OBJC_GENERATED_DIR}/lib"
+    # 
+    # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.h "${OBJC_GENERATED_DIR}/lib"
+    # cp -p "${COMMON_C_TEMPLATE_DIR}"/lib/*.c "${OBJC_GENERATED_DIR}/lib"
     
     #Create SwinGame.h
     cd "${COMMON_OBJC_TEMPLATE_DIR}"/lib
-    ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' > "${OBJC_GENERATED_DIR}"/lib/SwinGame.h
+    ls *.h | grep -v SGSDK.h | awk '{ printf("#import \"%s\"\n", $1); }' > "${OBJC_GENERATED_DIR}"/lib/SwinGame.h
+    
     cd "${OBJC_GENERATED_DIR}"/lib
-    ls *.h | grep -v SGSDK.* | awk '{ printf("#import \"%s\"\n", $1); }' >> SwinGame.h
+    ls *.h | grep -v SGSDK.h | grep -v SwinGame.h | awk '{ printf("#import \"%s\"\n", $1); }' >> "${OBJC_GENERATED_DIR}"/lib/SwinGame.h
 }
 
 source ${APP_PATH}/inc/copy_without_svn.sh
@@ -102,7 +98,7 @@ elif [ "$OS" = "$WIN" ]; then
 fi
 
 echo "--------------------------------------------------"
-CreateCCode
+CreateObjCCode
 
 DoDist "${COPY_LIST}" "${OBJC_DIST_DIR}" "${OBJC_GENERATED_DIR}" "${SOURCE_DIST_DIR}" "${COMMON_TEMPLATE_DIR}" "${COMMON_OBJC_TEMPLATE_DIR}"
 

@@ -7,5 +7,4 @@
 */
 
 #include "SGSDK.h"
-#include <stdbool.h>
 #include "%(name)s.h"

@@ -14,9 +14,10 @@ copyWithoutSVN()
     cd "${FROM_DIR}"
     
     # Create directory structure
-    find . -mindepth 1 -type d ! -path \*.svn\* ! -path \*/. -exec mkdir "${TO_DIR}/{}" \;
+    find . -mindepth 1 -type d ! -path \*.svn\* ! -path \*/. -exec sh -c "if [ ! -d \"${TO_DIR}/{}\" ] ; then mkdir \"${TO_DIR}/{}\" ; fi" \;
+    
     # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec sh -c "cp -R -p \"{}\" \"${TO_DIR}/{}\""  \;
 }
 
 # copy frameworks from $1 to $1 without copying SVN details

@@ -270,7 +270,7 @@ def write_c_code(method, other):
     
     return other
 
-def write_c_header_for(the_file, out_path=_out_path):
+def write_c_header_for(the_file, out_path):
     writer = FileWriter('%s/%s.h'% (out_path, the_file.name))
     
     writer.writeln(c_lib.module_header_header_txt % { 
@@ -302,7 +302,7 @@ def write_c_header_for(the_file, out_path=_out_path):
     writer.writeln(c_lib.module_header_footer_txt)
     writer.close()
 
-def write_c_body_for(the_file, out_path=_out_path):
+def write_c_body_for(the_file, out_path):
     if not the_file.has_body: return
     
     writer = FileWriter('%s/%s.c'% (out_path, the_file.name))
@@ -358,12 +358,12 @@ def create_c_code_for_file(the_file, other):
                     _do_c_create_method_code(method)
             
 
-def write_c_code_files(the_file, other):
+def write_c_code_files(the_file, other, out_path=_out_path):
     '''Save the c code to file'''
     
-    write_c_header_for(the_file)
+    write_c_header_for(the_file, out_path)
     if the_file.has_body:
-        write_c_body_for(the_file)
+        write_c_body_for(the_file, out_path)
 
 
 

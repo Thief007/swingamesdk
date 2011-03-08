@@ -62,9 +62,9 @@ _type_dictionary_creation_data = [
         'identifiers': [
             ('boolean',     'bool'),
             ('byte',        'unsigned char'),
-            ('longword',    'unsigned long int'),
+            ('longword',    'uint32_t'),
             ('single',      'float'),
-            ('longint',     'long int'),
+            ('longint',     'int32_t'),
             ('uint16',      'unsigned short int'),
             ('color',       'color'),
         ],
@@ -140,31 +140,30 @@ _type_dictionary_creation_data = [
             'return':   '#2#',
         }
     },
-    # pointer types (string and void)
+    # string types
     {
         'identifiers': [
             ('string',          'char *'),
         ],
         '_type_switcher': {
-            None:       '#2#',
+            None:       'const #2#',
             'var':      '#2#',
             'out':      '#2#',
             'return':   '#2#',
         },
         '_adapter_type_switcher': {
-            None:       '#2#',
+            None:       'const #2#',
             'return':   '#2#',
         }
     },
     # array types
     {
         'identifiers': [
-            ('matrix2d',        'matrix2d '),
             ('triangle',        'triangle '),
             ('linesarray',     'lines_array '),
             ('stringarray',     'string_array '),
             ('point2darray',    'point2d *'),
-            ('longintarray',    'long int *'),
+            ('longintarray',    'int32_t *'),
             ('trianglearray',   'triangle_array '),
             ('bitmaparray',     'bitmap *'),
             ('singlearray',     'float *'),
@@ -172,6 +171,22 @@ _type_dictionary_creation_data = [
         '_type_switcher': {
             None:       '#2#',
             'const':    'const #2#',
+            'var':      '#2#',
+            'return':   '#2#',
+        },
+        '_adapter_type_switcher': {
+            None:       '#2#',
+            'return':   '#2#',
+        }
+    },
+    # 2d array types
+    {
+        'identifiers': [
+            ('matrix2d',        'matrix2d '),
+        ],
+        '_type_switcher': {
+            None:       '#2#',
+            'const':    '#2#',
             'var':      '#2#',
             'return':   '#2#',
         },
@@ -230,8 +245,8 @@ _type_dictionary_creation_data = [
     # types for mapping structs and typedefs to Pascal
     {
         'identifiers': [
-            ('longint[0..n - 1]',                       'long int *'),
-            ('longint[0..n - 1][0..n - 1][0..n - 1]',   'long int *'),
+            ('longint[0..n - 1]',                       'int32_t *'),
+            ('longint[0..n - 1][0..n - 1][0..n - 1]',   'int32_t *'),
             ('string[0..n - 1]',                        'char **'),
             ('single[0..n - 1]',                        'float *%s'),
             ('point2d[0..n - 1]',                       'point2d *'),

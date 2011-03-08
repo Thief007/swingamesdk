@@ -11,7 +11,7 @@ import logging
 import sys
 
 import objc_lib #import templates
-import create_c_library
+import lang_c
 
 from sg import parser_runner, wrapper_helper
 from sg.sg_cache import logger, find_or_add_file
@@ -387,10 +387,10 @@ def _file_visitor(the_file, other):
     
     _post_parse_process(the_file)
     
-    if the_file.name == 'SGSDK':
-        create_c_library.write_c_lib_header(the_file, True)
-    elif the_file.name == 'Types':
-        create_c_library.write_c_lib_module(the_file)
+    # if the_file.name == 'SGSDK':
+    #     create_c_library.write_c_lib_header(the_file, True)
+    # elif the_file.name == 'Types':
+    #     create_c_library.write_c_lib_module(the_file)
     
     for member in the_file.members:
         if member.is_module or member.is_class or (member.is_struct and not member.via_pointer):
@@ -416,9 +416,11 @@ def main():
     
     logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
-    create_c_library.load_data()
+    parser_runner.parse_all_units()
+    parser_runner.visit_all_units(lang_c.create_c_code_for_file)
+    parser_runner.visit_all_units(lambda the_file, other: lang_c.write_c_code_files(the_file, other, _out_path))
     
-    parser_runner.run_for_all_units(_file_visitor)
+    parser_runner.visit_all_units(_file_visitor)
     classes_file_writer.close
 
 if __name__ == '__main__':
