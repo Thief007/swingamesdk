@@ -43,10 +43,10 @@ MERCURY_INST_DIR="${MERCURY_BASE_INST_DIR}/SwinGame $SG_VERSION"
 MERCURY_INST_DIR_NO_SPACE=`echo ${MERCURY_INST_DIR} | awk '{gsub(/[ \t]/,"\\\\ ");print}'`
 
 echo " - Creating destination on server"
-ssh mercury.it.swin.edu.au "mkdir -p \"${MERCURY_INST_DIR}\""
+ssh acain@mercury.it.swin.edu.au "mkdir -p \"${MERCURY_INST_DIR}\""
 
 echo " - Saving version name on server"
-ssh mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/version.txt\""
+ssh acain@mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/version.txt\""
 
 
 
@@ -100,7 +100,7 @@ for arg in "${WIN_DMG_LIST[@]}"; do
     rm -rf "${ZIP_BASE_DIR}"
     
     echo "      Copying to server"
-    scp "${to}" mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
+    scp "${to}" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 done
 
 echo "  ... Creating Visual Studio Template Structure"
