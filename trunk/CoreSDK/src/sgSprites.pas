@@ -1644,9 +1644,10 @@ implementation
     SetLength(result^.layers, count);
     SetLength(result^.layerOffsets, count);
     
-    if Length(result^.layers) > 0 then
-      cellCount := BitmapCellCount(result^.layers[0]);
+    //Get the number of cells from the first layer
+    cellCount := BitmapCellCount(layers[0]);
     
+    //Copy across the layers...
     for i := 0 to High(result^.layers) do
     begin
       result^.layers[i] := layers[i];

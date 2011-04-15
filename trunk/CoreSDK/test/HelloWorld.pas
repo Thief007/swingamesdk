@@ -5,6 +5,20 @@ uses
   sgCamera, sgGeometry, sgImages, sgInput, sgPhysics, sgAnimations,
   sgSprites, sgTimers;
 
+procedure TestLineDraw();
+var
+  p1, p2: Point2D;
+begin
+  
+  p1.x := -6000;
+  p1.y := 2000;
+  p2.x := 1000;
+  p2.y := 40000;
+  
+  DrawLineOnScreen(ColorRed, p1, p2);
+  
+end;
+
 procedure Main();
 var
   img: Bitmap;
@@ -17,6 +31,8 @@ begin
   LoadAnimationScript('test.txt');
   
   OpenGraphicsWindow('Hello World', 640, 480);
+  
+  TestLineDraw();
   
   img := CreateBitmap(800, 600);
   
