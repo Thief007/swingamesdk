@@ -1972,7 +1972,10 @@ implementation
   /// - Draws a line in the dest bitmap
   procedure DrawLine(dest: Bitmap; clr: Color; xPosStart, yPosStart, xPosEnd, yPosEnd: Longint);
   begin
-    aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(clr));
+    try
+      aalineColor(dest^.surface, xPosStart, yPosStart, xPosEnd, yPosEnd, ToGfxColor(clr));
+    except
+    end;
   end;
 
   /// Draws a pixel onto the destination bitmap.
