@@ -427,6 +427,9 @@ interface
       collisionKind:    CollisionTestKind;       //The kind of collisions used by this sprite
       collisionBitmap:  Bitmap;                // The bitmap used for collision testing (default to first image)
         
+      backupCollisionBitmap:  Bitmap;         // Cache for rotated sprites
+      cacheImage:             Bitmap;
+      
       //add later -> 
       //collisionShape: Shape;                // This can be used in place of pixel level collisions for a Shape
     end;

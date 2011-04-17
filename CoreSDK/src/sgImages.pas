@@ -53,8 +53,31 @@ uses sgTypes;
   /// @class Bitmap
   /// @constructor
   /// @csn initWithWidth:%s andHeight:%s
-  function CreateBitmap(width, height: Longint): Bitmap;
-
+  function CreateBitmap(width, height: Longint): Bitmap; overload;
+  
+  /// Creates a bitmap in memory that is the specified width and height (in pixels).
+  /// The new bitmap is initially transparent and can be used as the target 
+  /// for various drawing operations. Once you have drawn the desired image onto
+  /// the bitmap you can call OptimiseBitmap to optimise the surface.
+  ///
+  /// @lib CreateBitmapNamed
+  /// @sn createBitmapNamed:%s width:%s height:%s
+  ///
+  /// @class Bitmap
+  /// @constructor
+  /// @csn initNamed:%s withWidth:%s andHeight:%s
+  function CreateBitmap(name: String; width, height: Longint): Bitmap; overload;
+  
+  /// Creates a new bitmap by combining together the bitmaps from an array. 
+  /// The bitmaps will be arranged in the number of columns specified, the 
+  /// number of rows will be determined by the number of columns specified.
+  /// This can be used to create a bitmap that can be used by a Sprite for
+  /// animation.
+  ///
+  /// @lib
+  /// @sn combineIntoBitmap:%s columns:%s
+  function CombineIntoGrid(const bitmaps: BitmapArray; cols: LongInt): Bitmap;
+  
   /// Loads a bitmap from file using where the specified transparent color
   /// is used as a color key for the transparent color.
   ///
@@ -885,9 +908,16 @@ var
 
 //----------------------------------------------------------------------------
 
+
+
 function CreateBitmap(width, height: Longint): Bitmap;
+begin
+  result := CreateBitmap('Bitmap', width, height);
+end;
+
+function CreateBitmap(name: String; width, height: Longint): Bitmap; overload;
 var
-  name: String;
+  realName: String;
   idx: Longint;
   obj: tResourceContainer;
 begin
@@ -929,12 +959,12 @@ begin
   //
   obj := tResourceContainer.Create(result);
   
-  name := 'Bitmap';
+  realName := name;
   idx := 0;
   
-  while _Images.containsKey(name) do
+  while _Images.containsKey(realName) do
   begin
-    name := 'Bitmap_' + IntToStr(idx);
+    realName := name + '_' + IntToStr(idx);
     idx := idx + 1;
   end;
   
@@ -947,22 +977,56 @@ begin
   result^.cellRows  := 1;
   result^.cellCount := 1;
   
-  result^.name      := name;
+  result^.name      := realName;
   result^.filename  := '';
   
   SDL_SetAlpha(result^.surface, SDL_SRCALPHA, 0);
   SDL_FillRect(result^.surface, nil, ColorTransparent);
   
-  if not _Images.setValue(name, obj) then
+  if not _Images.setValue(realName, obj) then
   begin
     FreeBitmap(result);
-    RaiseException('Error creating bitmap: ' + name);
+    RaiseException('Error creating bitmap: ' + realName);
     exit;
   end;
   
   {$IFDEF TRACE}
-    TraceExit('sgImages', 'CreateBitmap', name + ' = ' + HexStr(result));
+    TraceExit('sgImages', 'CreateBitmap', realName + ' = ' + HexStr(result));
   {$ENDIF}
+end;
+
+function CombineIntoGrid(const bitmaps: BitmapArray; cols: LongInt): Bitmap;
+var
+  i, w, h, rows: Integer;
+begin
+  result := nil;
+  w := 0;
+  h := 0;
+  
+  for i := Low(bitmaps) to High(bitmaps) do
+  begin
+    if BitmapWidth(bitmaps[i]) > w then w := BitmapWidth(bitmaps[i]);
+    if BitmapHeight(bitmaps[i]) > h then h := BitmapWidth(bitmaps[i]);
+  end;
+  
+  if Length(bitmaps) < 1 then exit;
+  if cols < 1 then exit;
+  if (w = 0) or (h = 0) then exit;
+  
+  rows := Length(bitmaps) div cols;
+  if Length(bitmaps) mod cols > 0 then 
+    rows += 1;
+  
+  result := CreateBitmap(w * cols, h * rows);
+  
+  for i := Low(bitmaps) to High(bitmaps) do
+  begin
+    MakeOpaque(bitmaps[i]);
+    DrawBitmap(result, bitmaps[i], (i mod cols) * w, (i div cols) * h);
+    MakeTransparent(bitmaps[i]);
+  end;
+  
+  BitmapSetCellDetails(result, w, h, cols, rows, Length(bitmaps));
 end;
 
 // Sets the non-transparent pixels in a Bitmap. This is then used for
@@ -1065,7 +1129,7 @@ begin
   begin
     correctedTransColor := ColorFrom(result, transparentColor);
     SDL_SetColorKey(result^.surface, SDL_RLEACCEL or SDL_SRCCOLORKEY, correctedTransColor);
-    SetNonTransparentPixels(result, loadedImage, correctedTransColor);
+    SetNonTransparentPixels(result, loadedImage, transparentColor);
   end
   else
   begin
@@ -1307,6 +1371,7 @@ begin
   end;
   
   New(result);
+  result^.name := name;
   obj := tResourceContainer.Create(result);
   if not _Images.setValue(name, obj) then
   begin

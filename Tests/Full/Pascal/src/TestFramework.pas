@@ -1,7 +1,7 @@
 unit TestFramework;
 
 interface
-	 uses SGSDK_Shapes;
+	 uses sgTypes;
 	
 	type
 		TestMethod = procedure (const drawIn: Rectangle);
@@ -23,11 +23,11 @@ interface
 			
 		TestSuites = Array of TestSuite;
 
-		procedure RunTestSuite(const suite: TestSuite);
+		procedure RunTestSuite(var suite: TestSuite);
 		procedure InitTest(var test: TestSet);
 		procedure WriteReport(const suites: TestSuites);
 implementation
-	uses SGSDK_Input, SGSDK_Graphics, SGSDK_Font, SGSDK_Core, SGSDK_KeyCodes, SGSDK_Camera, GameResources;
+	uses sgInput, sgImages, sgGraphics, sgGeometry, sgText, sgCamera, GameResources;
 	
 	const
 		TITLE_TEXT_TOP = 26;
@@ -66,22 +66,22 @@ implementation
 	procedure DrawTitle(title : String);
 	begin
 		//FillRectangleOnScreen(ColorBlack, 0, 0, SCREEN_WIDTH, TITLE_HEIGHT);
-	    DrawTextOnScreen(title, ColorWhite, GameFont('CourierLarge'), TITLE_TEXT_LEFT, TITLE_TEXT_TOP);
+	    DrawTextOnScreen(title, ColorWhite, FontNamed('CourierLarge'), TITLE_TEXT_LEFT, TITLE_TEXT_TOP);
 	end;
 
 	procedure DrawMethodBeingTested(methodBeingTested : String);
 	begin
 		FillRectangleOnScreen(ColorBlack, METHOD_LEFT, METHOD_TOP, METHOD_WIDTH + 100, METHOD_HEIGHT);
-	    DrawTextOnScreen(methodBeingTested, ColorWhite, GameFont('Courier'), METHOD_LEFT, METHOD_TOP);
+	    DrawTextOnScreen(methodBeingTested, ColorWhite, FontNamed('Courier'), METHOD_LEFT, METHOD_TOP);
 	end;
 
 	procedure DrawInstructions(instructions: String);
 	var
 		rect: Rectangle;
 	begin
-		rect := CreateRectangle(INSTRUCTION_LEFT, INSTRUCTION_TOP, INSTRUCTION_WIDTH + 20, INSTRUCTION_HEIGHT);
+		rect := RectangleFrom(INSTRUCTION_LEFT, INSTRUCTION_TOP, INSTRUCTION_WIDTH + 20, INSTRUCTION_HEIGHT);
 		FillRectangle(ColorBlack, rect);
-		DrawTextLines(instructions, ColorWhite, ColorTransparent, GameFont('Courier'), AlignLeft, rect);
+		DrawTextLines(instructions, ColorWhite, ColorTransparent, FontNamed('Courier'), AlignLeft, rect);
 	end;
 	
 	procedure DrawGeneralInstructions();
@@ -90,53 +90,53 @@ implementation
 	var
 		fg: Color;
 	begin
-		fg := GetColor(33, 118, 182, 255);
-	    DrawTextOnScreen(INST, fg, GameFont('Courier'), GENERAL_INST_LEFT, GENERAL_INST_TOP);
+		fg := RGBAColor(33, 118, 182, 255);
+	    DrawTextOnScreen(INST, fg, FontNamed('Courier'), GENERAL_INST_LEFT, GENERAL_INST_TOP);
 	end;
 	
 
 	procedure RunTest(var test: TestSet; const drawIn: Rectangle);
 	begin
-		if test.ClearScreen then DrawBitmapOnScreen(GameImage('BGA'), Round(drawIn.x), Round(drawIn.y));	
+		if test.ClearScreen then DrawBitmapOnScreen(BitmapNamed('BGA'), Round(drawIn.x), Round(drawIn.y));	
 		
 		DrawMethodBeingTested(test.MethodBeingTested);		
 		DrawInstructions(test.Instructions);
 		
-		if WasKeyTyped(VK_P) then
+		if KeyTyped(VK_P) then
 		begin
 			test.Passed := true;
 			test.Skipped := false;
 			test.Done := true;
 		end;
-		if WasKeyTyped(VK_F) then
+		if KeyTyped(VK_F) then
 		begin
 			test.Passed := false;
 			test.Skipped := false;
 			test.Done := true;
 		end;
-		if WasKeyTyped(VK_N) then
+		if KeyTyped(VK_N) then
 		begin
 			test.Skipped := true;
 			test.Done := true;
 		end;
 		
 		SetClip(drawIn);
-		SetScreenOffset(-drawIn.x, -drawIn.y);
+		SetCameraPos(PointAt(-drawIn.x, -drawIn.y));
 		test.ToRun(drawIn);
-		SetScreenOffset(0, 0);
+		SetCameraPos(PointAt(0, 0));
 		ResetClip();
 	end;
 
-	procedure RunTestSuite(const suite: TestSuite);
+	procedure RunTestSuite(var suite: TestSuite);
 	var
 		i: Integer;
 		testDrawIn: Rectangle;
 		skip: Boolean;
 	begin
 		skip := false;
-		testDrawIn := CreateRectangle(TEST_IN_LEFT, TEST_IN_TOP, TEST_IN_WIDTH, TEST_IN_HEIGHT);
+		testDrawIn := RectangleFrom(TEST_IN_LEFT, TEST_IN_TOP, TEST_IN_WIDTH, TEST_IN_HEIGHT);
 		
-		DrawBitmapOnScreen(GameImage('BG'), 0, 0);
+		DrawBitmapOnScreen(BitmapNamed('BG'), 0, 0);
 		DrawTitle(suite.Title);
 		DrawGeneralInstructions();
 		
@@ -147,7 +147,7 @@ implementation
 												
 				RunTest(suite.Tests[i], testDrawIn);
 								
-				if WasKeyTyped(VK_ESCAPE) then skip := true;
+				if KeyTyped(VK_ESCAPE) then skip := true;
 			
 				RefreshScreen();
 			until WindowCloseRequested() or suite.Tests[i].Done or skip;

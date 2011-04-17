@@ -58,6 +58,36 @@ interface
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer have name 'layer1', and position the sprite at the
+  /// given x,y location.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
+  /// 
+  /// @lib CreateBasicSpriteXY
+  /// @sn createSpriteWithLayer:%s x:%s y:%s
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s x:%s y:%s
+  function CreateSprite(layer: Bitmap; x, y: Single): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, no animation, the layer have name 'layer1', and position the sprite at the
+  /// given location.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
+  /// 
+  /// @lib CreateBasicSpritePt
+  /// @sn createSpriteWithLayer:%s atPoint:%s
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s position:%s
+  function CreateSprite(layer: Bitmap; pt: Point2D): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
   /// pixel level collisions, no animation, and the specified layer have name.
   ///
   /// This version of the constructor will assign a default name to the sprite for resource management purposes.
@@ -83,6 +113,36 @@ interface
   /// @constructor
   /// @csn initWithBitmap:%s animationScript:%s
   function CreateSprite(layer: Bitmap; ani: AnimationScript): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, the layer have name 'layer1', at the given
+  /// x, y location.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
+  /// 
+  /// @lib CreateSpriteWithAnimationXY
+  /// @sn createSpriteWithLayer:%s animationScript:%s x:%s y:%s
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s animationScript:%s x:%s y:%s
+  function CreateSprite(layer: Bitmap; ani: AnimationScript; x, y: Single): Sprite; overload;
+  
+  /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
+  /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
+  /// pixel level collisions, the specified animation template, the layer have name 'layer1', at the given
+  /// location.
+  ///
+  /// This version of the constructor will assign a default name to the sprite for resource management purposes.
+  /// 
+  /// @lib CreateSpriteWithAnimationPt
+  /// @sn createSpriteWithLayer:%s animationScript:%s position:%s
+  /// 
+  /// @class Sprite
+  /// @constructor
+  /// @csn initWithBitmap:%s animationScript:%s position:%s
+  function CreateSprite(layer: Bitmap; ani: AnimationScript; pt: Point2D): Sprite; overload;
   
   /// Creates a sprite for the passed in bitmap image. The sprite will use the cell information within the 
   /// sprite if it is animated at a later stage. This version of CreateSprite will initialise the sprite to use
@@ -1078,6 +1138,17 @@ interface
   /// @setter Velocity
   procedure SpriteSetVelocity(s: Sprite; const value: Vector);
   
+  /// Alters the current velocity of the Sprite, adding the passed in vector to the current velocity.
+  ///
+  /// When the Sprite is updated (see ``UpdateSprite``)
+  /// this vector is used to move the Sprite.
+  /// 
+  /// @lib
+  /// @sn sprite:%s addToVelocity:%s
+  /// 
+  /// @class Sprite
+  /// @method AddToVelocity
+  procedure SpriteAddToVelocity(s: Sprite; const value: Vector);
   
   
 //---------------------------------------------------------------------------
@@ -1512,6 +1583,19 @@ implementation
     result := CreateSprite(layer, 'layer0', nil);
   end;
   
+  function CreateSprite(layer: Bitmap; x, y: Single): Sprite; overload;
+  begin
+    result := CreateSprite(layer);
+    SpriteSetX(result, x);
+    SpriteSetY(result, y);
+  end;
+  
+  function CreateSprite(layer: Bitmap; pt: Point2D): Sprite; overload;
+  begin
+    result := CreateSprite(layer);
+    SpriteSetPosition(result, pt);
+  end;
+  
   function CreateSprite(layer: Bitmap; layerName: String): Sprite; overload;
   begin
     result := CreateSprite(layer, layerName, nil);
@@ -1520,6 +1604,19 @@ implementation
   function CreateSprite(layer: Bitmap; ani: AnimationScript): Sprite; overload;
   begin
     result := CreateSprite(layer, 'layer0', ani);
+  end;
+  
+  function CreateSprite(layer: Bitmap; ani: AnimationScript; x, y: Single): Sprite; overload;
+  begin
+    result := CreateSprite(layer, ani);
+    SpriteSetX(result, x);
+    SpriteSetY(result, y);
+  end;
+  
+  function CreateSprite(layer: Bitmap; ani: AnimationScript; pt: Point2D): Sprite; overload;
+  begin
+    result := CreateSprite(layer);
+    SpriteSetPosition(result, pt);
   end;
   
   function CreateSprite(layer: Bitmap; layerName: String; ani: AnimationScript): Sprite; overload;
@@ -1697,6 +1794,10 @@ implementation
     // Setup collision details
     result^.collisionKind         := PixelCollisions;
     result^.collisionBitmap       := result^.layers[0];
+    
+    // Setup cache details
+    result^.backupCollisionBitmap := nil;
+    result^.cacheImage := nil;
   end;
   
   function HasSprite(name: String): Boolean;
@@ -1739,41 +1840,75 @@ implementation
   end;
   
   
-  // //
-  // // Update the buffered image for rotation and scaling of a bitmap based sprite.
-  // //
-  // procedure UpdateSpriteBuffers(s: Sprite);
-  // var
-  //   dest: Bitmap; //temporary surface
-  //   srcX, srcY: Longint; //for image parts
-  // begin
-  //   if (s^.rotation = s^.bufferedRotation) and (s^.scale = s^.bufferedScale) then exit;
-  //   if (s^.bufferBmp <> nil) then FreeBitmap(s^.bufferBmp);
-  //   if (s^.rotation = 0) and (s^.scale = 1) then exit; //no need to transform
-  // 
-  //   //Draw non-transformed bitmap onto temp surface
-  //   dest := CreateBitmap(s^.width, s^.height);
-  // 
-  //   if s^.spriteKind <> AnimMultiSprite then
-  //     DrawBitmap(dest, s^.bitmaps[s^.currentCell], 0, 0)
-  //   else
-  //   begin
-  //     with s^ do
-  //     begin
-  //       srcX := (currentCell mod cols) * width;
-  //       srcY := (currentCell - (currentCell mod cols)) div cols * height;
-  //     end;
-  // 
-  //     MakeOpaque(s^.bitmaps[0]);
-  //     DrawBitmapPart(dest, s^.bitmaps[0], srcX, srcY, s^.width, s^.height, 0, 0);
-  //     MakeTransparent(s^.bitmaps[0]);
-  //   end;
-  // 
-  //   s^.bufferBmp := RotateScaleBitmap(dest, s^.rotation, s^.scale);
-  // 
-  //   FreeBitmap(dest);
-  // end;
-
+  //
+  // Update the buffered image for rotation and scaling of a bitmap based sprite.
+  //
+  procedure _UpdateSpriteImageCache(s: Sprite);
+  var
+    dest, bmp: Bitmap; //temporary surface
+    cells: BitmapArray;
+    i, idx, currentCell, numCells: Longint; //for image parts
+  begin
+    if (s^.cacheImage <> nil) then FreeBitmap(s^.cacheImage);
+    if (s^.backupCollisionBitmap <> nil) then
+    begin
+      FreeBitmap(s^.collisionBitmap); // cache is the copy...
+      s^.collisionBitmap := s^.backupCollisionBitmap;
+      s^.backupCollisionBitmap := nil;
+    end; 
+    if (SpriteRotation(s) = 0) and (SpriteScale(s) = 1) then exit; //no need to transform
+    
+    numCells := BitmapCellCount(s^.layers[0]);
+    if numCells = 0 then exit;
+    
+    SetLength(cells, numCells);
+    
+    //Draw non-transformed bitmap onto temp surface
+    for currentCell := 0 to High(cells) do
+    begin
+      dest := CreateBitmap('sprite-rot-cell-' + IntToStr(currentCell) + '-' + SpriteName(s), SpriteWidth(s), SpriteHeight(s));
+      for i := 0 to High(s^.visibleLayers) do
+      begin
+        idx := s^.visibleLayers[i];
+        bmp := s^.layers[idx]; // the bitmap to draw + rotate
+        MakeOpaque(bmp);
+        DrawCell(dest, bmp, currentCell, Round(s^.layerOffsets[idx].x), Round(s^.layerOffsets[idx].y));
+        MakeTransparent(bmp);
+      end;
+      cells[currentCell] := RotateScaleBitmap(dest, SpriteRotation(s), SpriteScale(s));
+      FreeBitmap(dest);
+    end;
+    
+    // Make into a new image...
+    s^.cacheImage := CombineIntoGrid(cells, 6);
+    
+    for currentCell := 0 to High(cells) do FreeBitmap(cells[currentCell]);
+    
+    // Repeat for cacheCollisionBitmap
+    s^.backupCollisionBitmap := s^.collisionBitmap;
+    bmp := s^.collisionBitmap;
+    numCells := BitmapCellCount(bmp);
+    
+    if numCells = 0 then exit;
+    SetLength(cells, numCells);
+    
+    //Draw non-transformed bitmap onto temp surface
+    for currentCell := 0 to High(cells) do
+    begin
+      dest := CreateBitmap('collision-cache-cell' + IntToStr(currentCell) + '-' + BitmapName(bmp), BitmapCellWidth(bmp), BitmapCellHeight(bmp));
+      MakeOpaque(bmp);
+      DrawCell(dest, bmp, currentCell, 0, 0);
+      MakeTransparent(bmp);
+      cells[currentCell] := RotateScaleBitmap(dest, SpriteRotation(s), SpriteScale(s));
+      FreeBitmap(dest);
+    end;
+    
+    s^.collisionBitmap := CombineIntoGrid(cells, 6);
+    for currentCell := 0 to High(cells) do FreeBitmap(cells[currentCell]);
+    
+    SetupBitmapForCollisions(s^.collisionBitmap);
+  end;
+  
   procedure FreeSprite(var s : Sprite);
   begin
     if Assigned(s) then
@@ -1793,11 +1928,13 @@ implementation
       
       // Nil pointers to resources managed by sgResources
       s^.animationScript := nil;
-      s^.collisionBitmap := nil;
       
       //Free buffered rotation image
-      // if s^.bufferBmp <> nil then FreeBitmap(s^.bufferBmp);
-      // s^.bufferBmp := nil;
+      if s^.cacheImage <> nil then FreeBitmap(s^.cacheImage);
+      if s^.backupCollisionBitmap <> nil then FreeBitmap(s^.collisionBitmap);
+      s^.cacheImage := nil;
+      s^.collisionBitmap := nil;
+      s^.backupCollisionBitmap := nil;
       
       // Remove from hashtable
       _Sprites.remove(s^.name).Free();
@@ -1826,6 +1963,8 @@ implementation
     //Add the values to the array
     s^.layers[result] := newLayer;
     s^.layerOffsets[result] := PointAt(0,0);
+    
+    _UpdateSpriteImageCache(s);
   end;
   
   procedure SpriteReplayAnimation(s: Sprite);
@@ -1924,6 +2063,14 @@ implementation
   begin
     if not Assigned(s) then begin RaiseException('No sprite supplied'); exit; end;
     
+    if Assigned(s^.cacheImage) then 
+    begin
+      DrawCell(s^.cacheImage, SpriteCurrentCell(s), 
+        Round(s^.position.x + xOffset), 
+        Round(s^.position.y + yOffset));
+      exit;
+    end;
+    
     for i := 0 to High(s^.visibleLayers) do
     begin
       idx := s^.visibleLayers[i];
@@ -1949,17 +2096,17 @@ implementation
   procedure MoveSprite(s : Sprite; const distance : Vector; pct: Single); overload;
   var
     mvmt: Vector;
-  //   trans: Matrix2D;
+    trans: Matrix2D;
   begin
     if not Assigned(s) then begin RaiseException('No sprite supplied'); exit; end;
     
-    // if s^.rotation <> 0 then
-    // begin
-    //   trans := RotationMatrix(-s^.rotation);
-    //   mvmt := MatrixMultiply(trans, velocity);
-    // end
-    // else  
-    mvmt := distance;
+    if SpriteRotation(s) <> 0 then
+    begin
+      trans := RotationMatrix(-SpriteRotation(s));
+      mvmt := MatrixMultiply(trans, distance);
+    end
+    else  
+      mvmt := distance;
        
     s^.position.x := s^.position.x + (pct * mvmt.x);
     s^.position.y := s^.position.y + (pct * mvmt.y);
@@ -2020,6 +2167,11 @@ implementation
   procedure SpriteSetVelocity(s: Sprite; const value: Vector);
   begin
     s^.velocity := value;
+  end;
+  
+  procedure SpriteAddToVelocity(s: Sprite; const value: Vector);
+  begin
+    s^.velocity := AddVectors(s^.velocity, value);
   end;
   
   function SpriteCurrentCellRectangle(s: Sprite): Rectangle;
@@ -2102,6 +2254,8 @@ implementation
       SetLength(s^.visibleLayers, Length(s^.visibleLayers) + 1);
       result := High(s^.visibleLayers);
       s^.visibleLayers[result] := id;
+      
+      _UpdateSpriteImageCache(s);
     end;
   end;
   
@@ -2126,6 +2280,7 @@ implementation
     
     //Resize the array to remove element
     SetLength(s^.visibleLayers, Length(s^.visibleLayers) - 1);
+    _UpdateSpriteImageCache(s);
   end;
   
   procedure SpriteToggleLayerVisible(s: Sprite; name: String); overload;
@@ -2183,6 +2338,7 @@ implementation
     begin
       s^.layerOffsets[i] := values[i];
     end;
+    _UpdateSpriteImageCache(s);
   end;
   
   function SpriteLayerOffset(s: Sprite; name: String): Point2D;
@@ -2264,6 +2420,8 @@ implementation
     begin
       Swap(s^.visibleLayers[i], s^.visibleLayers[i + 1]);
     end;
+    
+    _UpdateSpriteImageCache(s);
   end;
   
   procedure SpriteSendLayerBackward(s: Sprite; visibleLayer: Longint);
@@ -2273,6 +2431,7 @@ implementation
     if (visibleLayer < 0) or (visibleLayer >= Length(s^.visibleLayers) - 1) then exit;
     
     Swap(s^.visibleLayers[visibleLayer], s^.visibleLayers[visibleLayer + 1]);
+    _UpdateSpriteImageCache(s);
   end;
   
   procedure SpriteBringLayerForward(s: Sprite; visibleLayer: Longint);
@@ -2282,6 +2441,7 @@ implementation
     if (visibleLayer < 1) or (visibleLayer >= Length(s^.visibleLayers)) then exit;
     
     Swap(s^.visibleLayers[visibleLayer], s^.visibleLayers[visibleLayer - 1]);
+    _UpdateSpriteImageCache(s);
   end;
   
   procedure SpriteBringLayerToFront(s: Sprite; visibleLayer: Longint);
@@ -2297,6 +2457,8 @@ implementation
     begin
       Swap(s^.visibleLayers[i], s^.visibleLayers[i - 1]);
     end;
+    
+    _UpdateSpriteImageCache(s);
   end;
   
   function SpriteLayerRectangle(s: Sprite; name: String): Rectangle; overload;
@@ -2523,6 +2685,7 @@ implementation
   procedure SpriteSetRotation(s: Sprite; value: Single);
   begin
     s^.values[ROTATION_IDX] := value;
+    _UpdateSpriteImageCache(s);
   end;
   
 //---------------------------------------------------------------------------
@@ -2537,6 +2700,7 @@ implementation
   procedure SpriteSetScale(s: Sprite; value: Single);
   begin
     s^.values[SCALE_IDX] := value;
+    _UpdateSpriteImageCache(s);
   end;
   
 //---------------------------------------------------------------------------

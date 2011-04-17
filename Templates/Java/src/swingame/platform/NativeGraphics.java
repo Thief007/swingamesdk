@@ -12,6 +12,14 @@ import swingame.GraphicsAdapter;
  */
 public final class NativeGraphics implements GraphicsAdapter
 {
+    static
+    {        
+        try
+        {
+            System.loadLibrary("JavaSwinGame");
+        }
+        finally { System.out.println("Loaded SwinGame native library"); }
+    }
 
     private static native void n_openGraphicsWindow(String caption, int width, int height);
     private static native void n_refreshScreen(int frameRate);

@@ -17,7 +17,7 @@ begin
   
   lns[0] := LineFrom(PointAt(55, 55), MousePosition());
   
-  for i := 0 to High(lns) do
+  for i := 0 to 0 do
   begin
     if RectLineCollision(r, lns[i]) then
       DrawLine(ColorRed, lns[i])

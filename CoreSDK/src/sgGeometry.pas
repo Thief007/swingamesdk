@@ -1782,7 +1782,7 @@ interface
   /// @method ApplyTo
   /// @updatesArrayParam 2
   /// @csn applyToTriangle:%s
-  procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
+  procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
   
   /// Apply the passed in Matrix2D to all of the points in the 
   /// Point2DArray.
@@ -1794,7 +1794,7 @@ interface
   /// @overload ApplyTo ApplyToPoints
   /// @updatesArrayParam 2
   /// @csn applyToPoints:%s
-  procedure ApplyMatrix(const m: Matrix2D; pts: Point2DArray);
+  procedure ApplyMatrix(const m: Matrix2D; var pts: Point2DArray);
   
   {$ifdef FPC}
   /// Multiply matrix by the vector.
@@ -2889,7 +2889,7 @@ implementation
     {$ENDIF}
   end;
   
-  procedure ApplyMatrix(const m: Matrix2D; tri: Triangle);
+  procedure ApplyMatrix(const m: Matrix2D; var tri: Triangle);
   begin
     {$IFDEF TRACE}
       TraceEnter('sgGeometry', 'ApplyMatrix(const m: Matrix2D', '');
@@ -2904,7 +2904,7 @@ implementation
     {$ENDIF}
   end;
   
-  procedure ApplyMatrix(const m: Matrix2D; pts: Point2DArray);
+  procedure ApplyMatrix(const m: Matrix2D; var pts: Point2DArray);
   var
     i: Longint;
   begin

@@ -98,6 +98,8 @@ _type_switcher = {
         
         'triangle':     'SGTriangle *',
         'matrix2d':     'SGMatrix2D *',
+        
+        'point2darray':     'NSArray *',
     },
     'out' : {
         'string':       'NSString **',
@@ -347,6 +349,7 @@ local_variable_switcher = {
         #Passed through arrays
         'triangle':         '\n    *%(param)s = [[[SGTriangle alloc] initWithTriangle:%(var)s size:3] autorelease];',
         'matrix2d':         '\n    *%(param)s = [[[SGMatrix2D alloc] initWithMatrix2D:%(var)s size:9] autorelease];',
+        'point2darray':     '\n    *%(param)s = [SGPoint2D arrayOfPoint2Ds:%(var)s size:%(size)s];',
         
         #out structs
         'point2d':          '\n    *%(param)s = [[[SGPoint2D alloc] initWithPoint2D:%(var)s] autorelease];',
