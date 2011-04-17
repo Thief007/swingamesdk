@@ -368,7 +368,7 @@ def write_c_code_files(the_file, other, out_path=_out_path):
 
 
 def main():
-    logging.basicConfig(level=logging.WARNING,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG,format='%(asctime)s - %(levelname)s - %(message)s',stream=sys.stdout)
     
     parser_runner.parse_all_units()
     parser_runner.visit_all_units(create_c_code_for_file)

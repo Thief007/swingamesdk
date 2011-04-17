@@ -469,11 +469,12 @@ _adapter_type_switcher = {
         
         'triangle':             'Point2D[] %s',
         'rectangle':            'ref Rectangle %s',
+        'point2darray':         'Point2D[] %s',
     },
     
     'lib_var': {
         'animation':            'ref IntPtr %s',
-        'animationscript':    'ref IntPtr %s',
+        'animationscript':      'ref IntPtr %s',
         'character':            'ref IntPtr %s',
         'soundeffect':          'ref IntPtr %s',
         'music':                'ref IntPtr %s',
@@ -491,6 +492,7 @@ _adapter_type_switcher = {
         'string':               '[MarshalAs(UnmanagedType.LPStr), In, Out] StringBuilder %s',
         
         'triangle':             '[MarshalAs(UnmanagedType.LPArray, SizeConst=3), In, Out] Point2D[] %s',
+        'point2darray':         '[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=%s), In, Out] Point2D[] %s',
         
         'rectangle':            'ref Rectangle %s',
     },

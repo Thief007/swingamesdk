@@ -7,7 +7,9 @@ implementation
 	uses
 	GameResources,
 	SysUtils,
-	SGSDK_Core, TestFramework, AudioTests, GraphicsTests, CameraTests, CoreTests, FontTests, InputTests, MappyTests, ShapesTests, PhysicsTests;
+	sgGraphics,
+	sgInput,
+	TestFramework, AudioTests, GraphicsTests, CoreTests, CameraTests, FontTests, InputTests, ShapesTests, PhysicsTests;
 	
 	
 	type SuiteAdder = procedure (var suites: TestSuites);
@@ -22,15 +24,15 @@ implementation
 	begin
 		SetLength(suites, 0);
 		
-		AddSuite(suites, @AddPhysicsSuite);
 		AddSuite(suites, @AddCoreSuite);
-		AddSuite(suites, @AddShapesSuite);
-		AddSuite(suites, @AddInputSuite);
-		AddSuite(suites, @AddFontSuite);
+    AddSuite(suites, @AddCameraSuite);
+    AddSuite(suites, @AddPhysicsSuite);
+    AddSuite(suites, @AddShapesSuite);
+    AddSuite(suites, @AddInputSuite);
+    AddSuite(suites, @AddFontSuite);
 		AddSuite(suites, @AddAudioSuite);
 		AddSuite(suites, @AddGraphicsSuite);
-		AddSuite(suites, @AddCameraSuite);
-		AddSuite(suites, @AddMappySuite);
+    // AddSuite(suites, @AddMappySuite);
 	end;
 		
 	//The main procedure that controlls the game logic.

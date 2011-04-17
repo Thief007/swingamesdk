@@ -6,7 +6,7 @@ interface
 	procedure AddCoreSuite(var suites: TestSuites); 
 
 implementation
-	uses GameResources, SGSDK_Core, SGSDK_Input, SGSDK_Graphics, SGSDK_KeyCodes, SGSDK_Shapes, SGSDK_Font, SysUtils;
+	uses GameResources, sgInput, sgGraphics, sgTypes,sgGeometry,sgText,SysUtils,sgTimers;
 	
 	var
 		_Timer: Timer;
@@ -15,13 +15,13 @@ implementation
 	
 	procedure ScreenTest(const drawIn: Rectangle);
 	begin
-		DrawText('Current Screen Resolution: ' + IntToStr(ScreenWidth()) + 'x' + IntToStr(ScreenHeight()), ColourWhite, GameFont('Courier'), 10, 10);
+		DrawText('Current Screen Resolution: ' + IntToStr(ScreenWidth()) + 'x' + IntToStr(ScreenHeight()), ColorWhite, FontNamed('Courier'), 10, 10);
 
-        if WasKeyTyped(VK_3) then ChangeScreenSize(300, 200);
-        if WasKeyTyped(VK_6) then ChangeScreenSize(640, 480);
-        if WasKeyTyped(VK_8) then ChangeScreenSize(800, 600);
+        if KeyTyped(VK_3) then ChangeScreenSize(300, 200);
+        if KeyTyped(VK_6) then ChangeScreenSize(640, 480);
+        if KeyTyped(VK_8) then ChangeScreenSize(800, 600);
 
-        if WasKeyTyped(VK_S) then ToggleFullScreen();
+        if KeyTyped(VK_S) then ToggleFullScreen();
 	end;
 	
 	procedure TimerTest(const drawIn: Rectangle);
@@ -38,17 +38,17 @@ implementation
 		procedure ToggleTimer();
 		begin
             if _IsTimerRunning then PauseTimer(_Timer)
-            	else UnpauseTimer(_Timer);
+            	else ResumeTimer(_Timer);
 
             _IsTimerRunning := not _IsTimerRunning;
 		end;
 	begin
 		StartTimerI();
 
-        if WasKeyTyped(VK_S) then ToggleTimer();
-        if WasKeyTyped(VK_R) then StartTimer(_Timer);
+        if KeyTyped(VK_S) then ToggleTimer();
+        if KeyTyped(VK_R) then StartTimer(_Timer);
 
-        DrawText(IntToStr(GetTimerTicks(_Timer)), ColourWhite, GameFont('Courier'), 10, 10);
+        DrawText(IntToStr(TimerTicks(_Timer)), ColorWhite, FontNamed('Courier'), 10, 10);
 	end;
 	
 	function GetCoreTests(): TestSuite;
@@ -67,9 +67,9 @@ implementation
 		begin
 			MethodBeingTested := 'Screen Tests';
 			Instructions := 
-		        '[3]00 x 200' + EOL +
-		        '[6]40 x 480' + EOL +
-		        '[8]00 x 600' + EOL +
+		        '[3]00 x 200' + LineEnding +
+		        '[6]40 x 480' + LineEnding +
+		        '[8]00 x 600' + LineEnding +
 		        'Toggle Full [S]creen';
 			ToRun := @ScreenTest;
 		end;
@@ -77,7 +77,7 @@ implementation
 		with result.Tests[1] do
 		begin
 			MethodBeingTested := 'All of Timer';
-			Instructions := '[S]tart and Stop the Timer' + EOL +
+			Instructions := '[S]tart and Stop the Timer' + LineEnding +
 							'[R]estart Timer';
 			_Timer := CreateTimer();
 			_IsTimerRunning := false;

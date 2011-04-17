@@ -811,7 +811,8 @@ implementation
 
   function BitmapCollision(bmp1: Bitmap; x1, y1: Longint; bmp2: Bitmap; x2, y2: Longint): Boolean; overload;
   begin
-    result := BitmapCollision(bmp1, x1, y1, bmp2, x2, y2);
+    result := CollisionWithinBitmapImages(bmp1, x1, y1, BitmapWidth(bmp1), BitmapHeight(bmp1), 0, 0,
+                                          bmp2, x2, y2, BitmapWidth(bmp2), BitmapHeight(bmp2), 0, 0);
   end;
 
   function BitmapCollision(bmp1: Bitmap; const pt1: Point2D; bmp2: Bitmap; const pt2: Point2D): Boolean; overload;
