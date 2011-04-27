@@ -18,10 +18,17 @@ fi
 # Move to src dir
 APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != "") { if (patharr[idx] != "/") {printf("%s/", patharr[idx]); idx++ }} }'`
 APP_PATH=`cd "$APP_PATH"; pwd` 
+echo $APP_PATH
 cd "$APP_PATH"
+
+GAME_NAME=${APP_PATH##*/}
+ICON=SwinGame
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
 
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
@@ -31,9 +38,6 @@ PAS_FLAGS="-O3 -vw"
 SG_INC="-Fu${APP_PATH}/lib/"
 
 FPC_BIN=`which fpc`
-
-GAME_NAME=${APP_PATH##*/}
-ICON=SwinGame
 
 CLEAN="N"
 
@@ -73,9 +77,11 @@ if [ "a${DEBUG}a" != "aa" ]; then
         PAS_FLAGS="-g -vw"
     fi
     OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
     TMP_DIR="${TMP_DIR}/Debug"
 else
     OUT_DIR="${OUT_DIR}/Release"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
 fi
 
@@ -104,6 +110,17 @@ CleanTmp()
     mkdir "${TMP_DIR}"
 }
 
+doBasicMacCompile()
+{
+    mkdir -p ${TMP_DIR}
+    echo "  ... Compiling $GAME_NAME"
+    
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${OUT_DIR}" -FU"${TMP_DIR}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F'${LIB_DIR}' -framework Cocoa ${FRAMEWORKS}" -o"${GAME_NAME}" "${SRC_DIR}/GameMain.pas" > "${LOG_FILE}"
+    if [ $? != 0 ]; then DoExitCompile; fi
+}
+
 #
 # Compile for Mac - manually assembles and links files
 # argument 1 is arch
@@ -113,29 +130,11 @@ doMacCompile()
     mkdir -p ${TMP_DIR}/${1}
     echo "  ... Compiling $GAME_NAME - $1"
     
-    ${FPC_BIN}  $PAS_FLAGS ${SG_INC} -Mobjfpc -Sh -FE${TMP_DIR}/${1} -FU${TMP_DIR}/${1} -Fu${LIB_DIR} -Fi${SRC_DIR} -s ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    FRAMEWORKS=`ls -d "${LIB_DIR}"/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    
+    ${FPC_BIN} ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE"${TMP_DIR}/${1}" -FU"${TMP_DIR}/${1}" -Fu"${LIB_DIR}" -Fi"${SRC_DIR}" -k"-F${LIB_DIR} -framework Cocoa ${FRAMEWORKS}" -o"${TMP_DIR}/${1}/${GAME_NAME}" "${SRC_DIR}/GameMain.pas" > ${LOG_FILE}
+    
     if [ $? != 0 ]; then DoExitCompile; fi
-    rm -f ${LOG_FILE}
-    
-    #Remove the pascal assembler script
-    rm ${TMP_DIR}/${1}/ppas.sh
-    
-    echo "  ... Assembling for $1"
-    
-    #Assemble all of the .s files
-    for file in `find ${TMP_DIR}/${1} | grep [.]s$`
-    do
-        /usr/bin/as -o ${file%.s}.o $file -arch $1
-        if [ $? != 0 ]; then DoExitAsm $file; fi
-        rm $file
-    done
-    
-    echo "  ... Linking ${GAME_NAME}"
-    
-    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($1,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
-    
-    /usr/bin/ld /usr/lib/crt1.o -F${LIB_DIR} -L/usr/X11R6/lib -L/usr/lib -search_paths_first -multiply_defined suppress -o "${TMP_DIR}/${1}/${GAME_NAME}" `cat ${TMP_DIR}/${1}/link.res` -framework Cocoa ${FRAMEWORKS}
-    if [ $? != 0 ]; then DoExitLink ${GAME_NAME}; fi
 }
 
 # 
@@ -143,13 +142,13 @@ doMacCompile()
 # 
 doLipo()
 {
-    echo "  ... Creating Universal Binary"
+    echo "  ... Combining ${1} and ${2} into Universal Binary"
     lipo -arch ${1} "${TMP_DIR}/${1}/${GAME_NAME}" -arch ${2} "${TMP_DIR}/${2}/${GAME_NAME}" -output "${OUT_DIR}/${GAME_NAME}" -create
 }
 
 doMacPackage()
 {
-    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
+    GAMEAPP_PATH="${FULL_OUT_DIR}/${GAME_NAME}.app"
     if [ -d "${GAMEAPP_PATH}" ] 
     then
     	echo "  ... Removing old application"
@@ -164,10 +163,10 @@ doMacPackage()
     mkdir "${GAMEAPP_PATH}/Contents/Resources"
     mkdir "${GAMEAPP_PATH}/Contents/Frameworks"
 
-    echo "  ... Added Private Frameworks"
+    echo "  ... Adding Private Frameworks"
     cp -R -p "${LIB_DIR}/"*.framework "${GAMEAPP_PATH}/Contents/Frameworks/"
-
-    mv "${OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
+    
+    mv "${FULL_OUT_DIR}/${GAME_NAME}" "${GAMEAPP_PATH}/Contents/MacOS/" 
 
     echo "<?xml version='1.0' encoding='UTF-8'?>\
     <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\
@@ -212,7 +211,7 @@ doLinuxCompile()
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${OUT_DIR}/Resources"
+    RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
 }
 
 doWindowsCompile()
@@ -240,10 +239,10 @@ doWindowsCompile()
 
 doWindowsPackage()
 {
-    RESOURCE_DIR=${OUT_DIR}/Resources
+    RESOURCE_DIR=${FULL_OUT_DIR}/Resources
     
     echo "  ... Copying libraries"
-    cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
+    cp -p -f "${LIB_DIR}"/*.dll "${FULL_OUT_DIR}"
 }
 
 
@@ -256,8 +255,11 @@ copyWithoutSVN()
     
     # Create directory structure
     find . -mindepth 1 ! -path \*.svn\* ! -path \*/. -type d -exec mkdir -p "${TO_DIR}/{}" \;
+    if [ $? != 0 ]; then DoExitCompile; fi
+    
     # Copy files and links
-    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p {} "${TO_DIR}/{}"  \;
+    find . ! -path \*.svn\* ! -name \*.DS_Store ! -type d -exec cp -R -p "{}" "${TO_DIR}/{}"  \;
+    if [ $? != 0 ]; then DoExitCompile; fi
 }
 
 #
@@ -267,7 +269,7 @@ doCopyResources()
 {
     echo "  ... Copying Resources into $GAME_NAME"
     
-    copyWithoutSVN "${APP_PATH}/Resources" "${RESOURCE_DIR}"
+    copyWithoutSVN "${FULL_APP_PATH}/Resources" "${RESOURCE_DIR}"
 }
 
 
@@ -289,12 +291,30 @@ then
     echo "  ... Creating ${GAME_NAME}"
     
     if [ "$OS" = "$MAC" ]; then
-        FPC_BIN=`which ppc386`
-        doMacCompile "i386"
-        FPC_BIN=`which ppcppc`
-        doMacCompile "ppc"
+        HAS_PPC=false
+        HAS_i386=false
         
-        doLipo "i386" "ppc"
+        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+            HAS_PPC=true
+        fi
+        
+        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+            HAS_i386=true
+        fi
+        
+        if [[ HAS_i386 && HAS_PPC ]]; then
+            echo "  ... Building Universal Binary"
+            FPC_BIN=`which ppc386`
+            doMacCompile "i386"
+            
+            FPC_BIN=`which ppcppc`
+            doMacCompile "ppc"
+            
+            doLipo "i386" "ppc"
+        else
+            doBasicMacCompile
+        fi
+        
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
