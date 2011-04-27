@@ -20,8 +20,14 @@ APP_PATH=`echo $0 | awk '{split($0,patharr,"/"); idx=1; while(patharr[idx+1] != 
 APP_PATH=`cd "$APP_PATH"; pwd` 
 cd "$APP_PATH"
 
+GAME_NAME=${APP_PATH##*/}
+FULL_APP_PATH=$APP_PATH
+APP_PATH="."
+
+
 #Set the basic paths
 OUT_DIR="${APP_PATH}/bin"
+FULL_OUT_DIR="${FULL_APP_PATH}/bin"
 TMP_DIR="${APP_PATH}/tmp"
 SRC_DIR="${APP_PATH}/src"
 LIB_DIR="${APP_PATH}/lib"
@@ -32,7 +38,6 @@ SG_INC="-I${APP_PATH}/lib/"
 
 GCC_BIN=`which gcc`
 
-GAME_NAME=${APP_PATH##*/}
 ICON=SwinGame
 
 CLEAN="N"
@@ -75,9 +80,11 @@ fi
 if [ "a${DEBUG}a" != "aa" ]; then
     C_FLAGS="-g -Wall"
     OUT_DIR="${OUT_DIR}/Debug"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Debug"
     TMP_DIR="${TMP_DIR}/Debug"
 else
     OUT_DIR="${OUT_DIR}/Release"
+    FULL_OUT_DIR="${FULL_OUT_DIR}/Release"
     TMP_DIR="${TMP_DIR}/Release"
 fi
 
@@ -112,9 +119,28 @@ doCompile()
     
     if [ ! -f $out_file ] || [ $file -nt $out_file ]; then
         echo "      ... Compiling ${name}"    
-        ${GCC_BIN} -c ${extra_opts} ${SG_INC} ${C_FLAGS} -o "${out_file}" ${file} >> ${LOG_FILE}
+        ${GCC_BIN} -c ${extra_opts} ${SG_INC} ${C_FLAGS} -o "${out_file}" "${file}" >> ${LOG_FILE}
         if [ $? != 0 ]; then echo "Error compiling"; cat ${LOG_FILE}; exit 1; fi
     fi
+}
+
+doBasicMacCompile()
+{
+    mkdir -p "${TMP_DIR}"
+    
+    for file in `find ${APP_PATH} -mindepth 2 | grep [.]c$` ; do
+        name=${file##*/} # ## = delete longest match for */... ie all but file name
+        name=${name%%.c} # %% = delete longest match from back, i.e. extract .c
+        out_file="${TMP_DIR}/${name}.o"
+        doCompile "${file}" "${name}" "${out_file}" "-arch i386"
+    done
+    
+    #Assemble all of the .s files
+    echo "  ... Creating game"
+    FRAMEWORKS=`ls -d ${LIB_DIR}/*.framework | awk -F . '{split($2,patharr,"/"); idx=1; while(patharr[idx+1] != "") { idx++ } printf("-framework %s ", patharr[idx]) }'`
+    
+    ${GCC_BIN} -F${LIB_DIR} ${FRAMEWORKS} -arch i386 -o "${OUT_DIR}/${GAME_NAME}" `find ${TMP_DIR}/${1} -maxdepth 1 -name \*.o`
+    if [ $? != 0 ]; then echo "Error creating game"; exit 1; fi
 }
 
 #
@@ -152,7 +178,7 @@ doLipo()
 
 doMacPackage()
 {
-    GAMEAPP_PATH="${OUT_DIR}/${GAME_NAME}.app"
+    GAMEAPP_PATH="${FULL_OUT_DIR}/${GAME_NAME}.app"
     if [ -d "${GAMEAPP_PATH}" ]; then
         echo "  ... Removing old application"
         rm -rf "${GAMEAPP_PATH}"
@@ -221,7 +247,7 @@ doLinuxCompile()
 
 doLinuxPackage()
 {
-    RESOURCE_DIR="${OUT_DIR}/Resources"
+    RESOURCE_DIR="${FULL_OUT_DIR}/Resources"
 }
 
 doWindowsCompile()
@@ -245,7 +271,7 @@ doWindowsPackage()
     echo "  ... Copying libraries"
     cp -p -f "${LIB_DIR}"/*.dll "${OUT_DIR}"
     
-    RESOURCE_DIR=${OUT_DIR}/Resources
+    RESOURCE_DIR=${FULL_OUT_DIR}/Resources
 }
 
 copyWithoutSVN()
@@ -291,10 +317,27 @@ then
 
     
     if [ "$OS" = "$MAC" ]; then
-        doMacCompile "ppc"
-        doMacCompile "i386"
+        HAS_PPC=false
+        HAS_i386=false
         
-        doLipo "i386" "ppc"
+        if [ -f /usr/libexec/gcc/darwin/ppc/as ]; then
+            HAS_PPC=true
+        fi
+        
+        if [ -f /usr/libexec/gcc/darwin/i386/as ]; then
+            HAS_i386=true
+        fi
+        
+        # if [[ HAS_i386 && HAS_PPC ]]; then
+        #     echo "  ... Building Universal Binary"
+        #     doMacCompile "i386"
+        #     doMacCompile "ppc"
+        #     
+        #     doLipo "i386" "ppc"
+        # else
+            doBasicMacCompile
+        # fi
+        
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
