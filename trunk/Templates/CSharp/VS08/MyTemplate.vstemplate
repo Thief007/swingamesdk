@@ -1,13 +1,13 @@
 <VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>SwinGame CSharp Project</Name>
+    <Name>SwinGame C# Project</Name>
     <Description>A Template to create a SwinGame using C#</Description>
     <ProjectType>CSharp</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>SwinGame CSharp Project</DefaultName>
+    <DefaultName>SwinGame 3.0 C# Project</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>

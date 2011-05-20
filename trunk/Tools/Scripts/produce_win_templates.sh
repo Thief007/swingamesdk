@@ -34,29 +34,9 @@ echo "          Producing Windows Distribution Files"
 echo "--------------------------------------------------"
 
 
-#
-# Create version dir on mercury
-#
-
-MERCURY_BASE_INST_DIR="/home/acad/acain/www/htdocs/media/SwinGame"
-MERCURY_INST_DIR="${MERCURY_BASE_INST_DIR}/SwinGame $SG_VERSION"
-MERCURY_INST_DIR_NO_SPACE=`echo ${MERCURY_INST_DIR} | awk '{gsub(/[ \t]/,"\\\\ ");print}'`
-
-echo " - Creating destination on server"
-ssh acain@mercury.it.swin.edu.au "mkdir -p \"${MERCURY_INST_DIR}\""
-
-echo " - Saving version name on server"
-ssh acain@mercury.it.swin.edu.au "echo ${SG_VERSION_WEB} > \"${MERCURY_INST_DIR}/version.txt\""
-
-
-
-
 WIN_DMG_LIST=( "C GCC,${GCC_C_DIST_DIR},Project Template")
 WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "C CodeBlocks,${CODEBLOCKS_C_DIST_DIR},")
-#WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "ObjC GCC,${GCC_OBJC_DIST_DIR},Project Template")
-#WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "Mono C#,${MONO_DIST_DIR},Project Template")
 WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "FPC,${FPC_PAS_DIST_DIR},Project Template")
-#WIN_DMG_LIST=( "${WIN_DMG_LIST[@]}" "Source,${SOURCE_DIST_DIR},SwinGame")
 
 #Simple copy list with VS templates
 SMPL_COPY_LIST=( "C# Express 08,${STUDIO_EX_CS_08_TEMP_DIR},${STUDIO_EX_CS_08_DIST_DIR}" )
@@ -67,7 +47,7 @@ source ${APP_PATH}/inc/copy_without_svn.sh
 ZIP_TMP_DIR="${TMP_DIR}/Zips"
 rm -rf ${ZIP_TMP_DIR}
 
-echo "  ... Creating zip files"
+echo "  Creating zip files"
 for arg in "${WIN_DMG_LIST[@]}"; do
     name=`echo $arg | awk -F"," '{print $1}'`
     from=`echo $arg | awk -F"," '{print $2}'`
@@ -96,64 +76,46 @@ for arg in "${WIN_DMG_LIST[@]}"; do
     fi
     
     zip -q -r "${to}" *
-    sleep 1
-    rm -rf "${ZIP_BASE_DIR}"
-    
-    echo "      Copying to server"
-    scp "${to}" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 done
 
-echo "  ... Creating Visual Studio Template Structure"
+echo "  Creating Visual Studio Template Structure"
 rm -rf "${STUDIO_DIST_DIR}"
 COPY_LIST=( "${SMPL_COPY_LIST[@]}" )
 DoCopy "${COPY_LIST}"
 
 #Go to the VS08 C# template dir
-echo "  ... Creating Project Template for C# Express"
+echo "  ... Creating Project Template for C#"
 cd "${VS08_DIST_DIR}"
-#rm *.sln
-#cat "src/GameMain.cs" | awk '{sub("MyGame", "[!output SAFE_NAMESPACE_NAME].src"); print}' >> "src/NewGameMain.cs"
+
+# Replace project name with safe project name replaced by VS
 cat "src/GameMain.cs" | awk '{sub("MyGame", "$safeprojectname$.src"); print}' >> "src/NewGameMain.cs"
 mv "src/NewGameMain.cs" "src/GameMain.cs"
 zip -r "SwinGame C# Project.zip" * > /dev/null
-# scp "SwinGame C# Project.zip" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 
-echo "  ... Creating Template Installer for C# Express"
+echo "  ... Creating Template Installer for C#"
 mv "SwinGame C# Project.zip" "${STUDIO_EX_CS_08_DIST_DIR}"
 cd "${STUDIO_EX_CS_08_DIST_DIR}"
-zip -r "SwinGame C# Template Installer.vsi" .vscontent * > /dev/null
-mv "SwinGame C# Template Installer.vsi" "${DIST_DIR}"
-scp "${DIST_DIR}/SwinGame C# Template Installer.vsi" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
+zip -r "SwinGame ${SG_VERSION} C# Template Installer.vsi" .vscontent * > /dev/null
+mv "SwinGame ${SG_VERSION} C# Template Installer.vsi" "${DIST_DIR}"
 
 # Change the following lines... was Mono
 #    <StartupObject>$safeprojectname$.GameMain</StartupObject>
 #    <RootNamespace>$safeprojectname$</RootNamespace>
 #    <AssemblyName>$safeprojectname$</AssemblyName>
 # <DocumentationFile>$safeprojectname$.xml</DocumentationFile>
-echo "  ... Creating Project Template for VB Express"
+echo "  ... Creating Project Template for VB"
 cd "${VB_VS08_DIST_DIR}"
 cat "Mono.vbproj" | awk '{sub("Mono", "$safeprojectname$"); print}' >> "NewMono.vbproj"
 mv "NewMono.vbproj" "Mono.vbproj"
 zip -r "SwinGame VB Project.zip" * > /dev/null
-# scp "SwinGame VB Project.zip" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 
-echo "  ... Creating Template Installer for VB Express"
+echo "  ... Creating Template Installer for VB"
 mv "SwinGame VB Project.zip" "${STUDIO_EX_VB_08_DIST_DIR}"
 cd "${STUDIO_EX_VB_08_DIST_DIR}"
-zip -r "SwinGame VB Template Installer.vsi" .vscontent * > /dev/null
-mv "SwinGame VB Template Installer.vsi" "${DIST_DIR}"
-scp "${DIST_DIR}/SwinGame VB Template Installer.vsi" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
+zip -r "SwinGame ${SG_VERSION} VB Template Installer.vsi" .vscontent * > /dev/null
+mv "SwinGame ${SG_VERSION} VB Template Installer.vsi" "${DIST_DIR}"
 
-# # Create ZIPs
-# echo "  ... Creating Code blocks zip"
-# cd "${C_DIST_DIR}/code blocks"
-# zip -r "../SwinGame C - Code Blocks.zip" "*" > /dev/null
-# 
-# echo "  ... Creating GCC zip"
-# cd "${GCC_C_DIST_DIR}"
-# zip -r "../SwinGame C - GCC.zip" "*" > /dev/null
-
-#rm -rf ${ZIP_TMP_DIR}
+rm -rf ${ZIP_TMP_DIR}
 
 echo " ... Done"
 
