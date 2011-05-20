@@ -33,6 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+	<Reference Include="SwinGame, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\SwinGame.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -41,13 +45,18 @@
   <ItemGroup>
     <Compile Include="src\GameMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="lib\*.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="lib\*.dll" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\animations\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\bundles\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\fonts\*">

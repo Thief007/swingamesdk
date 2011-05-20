@@ -1,13 +1,13 @@
 <VSTemplate Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
   <TemplateData>
-    <Name>SwinGame C# Project</Name>
-    <Description>Create a SwinGame Project with C#</Description>
+    <Name>SwinGame CSharp Project</Name>
+    <Description>A Template to create a SwinGame using C#</Description>
     <ProjectType>CSharp</ProjectType>
     <ProjectSubType>
     </ProjectSubType>
     <SortOrder>1000</SortOrder>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>MySwinGame</DefaultName>
+    <DefaultName>SwinGame CSharp Project</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
     <LocationField>Enabled</LocationField>
     <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
@@ -16,55 +16,49 @@
   <TemplateContent>
     <Project TargetFileName="MyGame.csproj" File="MyGame.csproj" ReplaceParameters="true">
       <Folder Name="lib" TargetFolderName="lib">
-        <ProjectItem ReplaceParameters="true" TargetFileName="Audio.cs">Audio.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Bitmap.cs">Bitmap.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Camera.cs">Camera.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Utils.cs">Utils.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Font.cs">Font.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Geometry.cs">Geometry.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Graphics.cs">Graphics.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Input.cs">Input.cs</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="jpeg.dll">jpeg.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libfreetype-6.dll">libfreetype-6.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libogg-0.dll">libogg-0.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libpng12-0.dll">libpng12-0.dll</ProjectItem>
+        <ProjectItem ReplaceParameters="false" TargetFileName="libpng13.dll">libpng13.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libtiff-3.dll">libtiff-3.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libvorbis-0.dll">libvorbis-0.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="libvorbisfile-3.dll">libvorbisfile-3.dll</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Map.cs">Map.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Music.cs">Music.cs</ProjectItem>
+        <ProjectItem ReplaceParameters="false" TargetFileName="mikmod.dll">mikmod.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="ogg.dll">ogg.dll</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Physics.cs">Physics.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="PointerWrapper.cs">PointerWrapper.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Resources.cs">Resources.cs</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL.dll">SDL.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_gfx.dll">SDL_gfx.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_image.dll">SDL_image.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_mixer.dll">SDL_mixer.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SDL_ttf.dll">SDL_ttf.dll</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="SGSDK.cs">SGSDK.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="false" TargetFileName="sgsdk.dll">sgsdk.dll</ProjectItem>
+        <ProjectItem ReplaceParameters="false" TargetFileName="SGSDK.dll">SGSDK.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="smpeg.dll">smpeg.dll</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="SoundEffect.cs">SoundEffect.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Sprite.cs">Sprite.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Sprites.cs">Sprites.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="SwinGameException.cs">SwinGameException.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="SwinGameUtils.cs">SwinGameUtils.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Text.cs">Text.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="TileMap.cs">TileMap.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Timer.cs">Timer.cs</ProjectItem>
-        <ProjectItem ReplaceParameters="true" TargetFileName="Types.cs">Types.cs</ProjectItem>
+        <ProjectItem ReplaceParameters="false" TargetFileName="SwinGame.dll">SwinGame.dll</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="zlib1.dll">zlib1.dll</ProjectItem>
       </Folder>
       <Folder Name="Properties" TargetFolderName="Properties">
         <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       </Folder>
       <Folder Name="Resources" TargetFolderName="Resources">
+        <Folder Name="animations" TargetFolderName="animations">
+          <ProjectItem ReplaceParameters="true" TargetFileName="startup.txt">startup.txt</ProjectItem>
+        </Folder>
+        <Folder Name="bundles" TargetFolderName="bundles">
+          <ProjectItem ReplaceParameters="true" TargetFileName="FileDialog.txt">FileDialog.txt</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="splash.txt">splash.txt</ProjectItem>
+        </Folder>
         <Folder Name="fonts" TargetFolderName="fonts">
           <ProjectItem ReplaceParameters="false" TargetFileName="arial.ttf">arial.ttf</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="cour.ttf">cour.ttf</ProjectItem>
         </Folder>
         <Folder Name="images" TargetFolderName="images">
+          <ProjectItem ReplaceParameters="false" TargetFileName="fdFile.png">fdFile.png</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="fdFolder.png">fdFolder.png</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileDialog_Active.png">FileDialog_Active.png</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileDialog_Background.png">FileDialog_Background.png</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileDialog_Inactive.png">FileDialog_Inactive.png</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileDialog_Scroll.png">FileDialog_Scroll.png</ProjectItem>
+          <ProjectItem ReplaceParameters="false" TargetFileName="FileDialog_ScrollSmall.png">FileDialog_ScrollSmall.png</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="loader_empty.png">loader_empty.png</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="loader_full.png">loader_full.png</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="SplashBack.jpg">SplashBack.jpg</ProjectItem>
@@ -72,10 +66,13 @@
           <ProjectItem ReplaceParameters="false" TargetFileName="SwinGame.jpg">SwinGame.jpg</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="SwinGameAni.jpg">SwinGameAni.jpg</ProjectItem>
         </Folder>
+        <Folder Name="panels" TargetFolderName="panels">
+          <ProjectItem ReplaceParameters="true" TargetFileName="FileDialog.txt">FileDialog.txt</ProjectItem>
+        </Folder>
         <Folder Name="sounds" TargetFolderName="sounds">
+          <ProjectItem ReplaceParameters="false" TargetFileName="error.wav">error.wav</ProjectItem>
           <ProjectItem ReplaceParameters="false" TargetFileName="SwinGameStart.ogg">SwinGameStart.ogg</ProjectItem>
         </Folder>
-        <ProjectItem ReplaceParameters="true" TargetFileName="splash.txt">splash.txt</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SwinGame.icns">SwinGame.icns</ProjectItem>
         <ProjectItem ReplaceParameters="false" TargetFileName="SwinGame.ico">SwinGame.ico</ProjectItem>
       </Folder>
