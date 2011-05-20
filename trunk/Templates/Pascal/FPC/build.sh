@@ -204,7 +204,7 @@ doLinuxCompile()
     mkdir -p ${TMP_DIR}
     echo "  ... Compiling $GAME_NAME"
     
-    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o${GAME_NAME} ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
+    ${FPC_BIN}  ${PAS_FLAGS} ${SG_INC} -Mobjfpc -Sh -FE${OUT_DIR} -FU${TMP_DIR} -Fu${LIB_DIR} -Fi${SRC_DIR} -o"${GAME_NAME}" ${SRC_DIR}/GameMain.pas > ${LOG_FILE}
     if [ $? != 0 ]; then DoExitCompile; fi
 }
 
@@ -219,6 +219,9 @@ doWindowsCompile()
     
     echo "  ... Compiling $GAME_NAME"
     
+    #
+    # If using full path then you need to escape the /c/ used by MSYS
+    #
     # LIB_DIR=`echo $LIB_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
     # TMP_DIR=`echo $TMP_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
     # SRC_DIR=`echo $SRC_DIR | sed 's/\/\(.\)\//\1:\//'`          #awk '{sub("/c/", "c:/"); print}'`
@@ -301,7 +304,7 @@ then
             HAS_i386=true
         fi
         
-        if [[ HAS_i386 && HAS_PPC ]]; then
+        if [[ $HAS_i386 = true && $HAS_PPC = true ]]; then
             echo "  ... Building Universal Binary"
             FPC_BIN=`which ppc386`
             doMacCompile "i386"

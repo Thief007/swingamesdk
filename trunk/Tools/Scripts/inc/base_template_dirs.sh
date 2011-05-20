@@ -120,3 +120,13 @@ FPC_PAS_DIST_DIR="${PAS_DIST_DIR}/FPC"
 # 
 SOURCE_DIST_DIR="${DIST_DIR}/Source"
 
+#
+# Documentation Directories
+#
+DOC_GENERATED_DIR="${GENERATED_DIR}/Documentation"
+DOC_TEMPLATE_DIR="${TEMPLATE_DIR}/Documentation"
+DOC_DIST_DIR="${DIST_DIR}/Documentation"
+
+
+
+

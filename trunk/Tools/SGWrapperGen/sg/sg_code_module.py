@@ -24,7 +24,7 @@ class SGCodeModule(SGMetaDataContainer):
     def __init__(self, name):
         """Initialise the class, setting its name"""
         super(SGCodeModule,self).__init__(['static','module_kind',
-            'data_wrapper','pointer_wrapper', 'type_name', 'doc_types',
+            'data_wrapper','pointer_wrapper', 'type_name', 'doc_types', 
             'values', 'array_wrapper', 'fixed_array_wrapper', 'via_pointer'])
         self.name = name
         self.type_name = name
@@ -256,11 +256,12 @@ class SGCodeModule(SGMetaDataContainer):
     def visit_methods(self, visitor, other):
         logger.debug('Code Modul: Visiting method of %s' % self.name)
         
-        keys = self.methods.keys()
-        keys.sort()
+        #
+        # Sort based on name, doc_idx, then number of parameters....
+        #
         
-        for key in keys :
-            method = self.methods[key]
+        for method in sorted(self.methods.values(), key=lambda mthd: mthd.name + str(mthd.doc_idx) + str(len(mthd.params))) :
+            # method = self.methods[key]
             logger.debug('Code Modul: Visiting method %s' % method.uname)
             other = visitor(method, other)
         return other

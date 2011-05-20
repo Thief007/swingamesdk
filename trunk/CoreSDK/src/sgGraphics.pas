@@ -1021,6 +1021,8 @@ interface
   /// @lib DrawOrFillRectangle(clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangle
   /// @sn draw:%s rectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 0
   procedure DrawRectangle(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Draw rectangle in the game.
@@ -1028,6 +1030,8 @@ interface
   /// @lib DrawOrFillRectangleRect(clr, False, source)
   /// @uname DrawRectangleRect
   /// @sn draw:%s rectangle:%s
+  ///
+  /// @doc_idx 1
   procedure DrawRectangle(clr: Color; const source: Rectangle); overload;
   
   /// Fill rectangle.
@@ -1035,6 +1039,8 @@ interface
   /// @lib DrawOrFillRectangle(clr, True, xPos, yPos, width, height)
   /// @uname FillRectangle
   /// @sn fill:%s rectangleX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 0
   procedure FillRectangle(clr: Color; xPos, yPos: Single; width, height: Longint); overload;
   
   /// Fill a rectangle in the game.
@@ -1042,6 +1048,8 @@ interface
   /// @lib DrawOrFillRectangleRect(clr, True, source)
   /// @uname FillRectangleRect
   /// @sn fill:%s rectangle:%s
+  ///
+  /// @doc_idx 1
   procedure FillRectangle(clr: Color; const source: Rectangle); overload;
   
   /// Draw a rectangle on the screen (filled or outline).
@@ -1055,6 +1063,8 @@ interface
   /// @lib DrawOrFillRectangleOnScreen(clr, False, xPos, yPos, width, height)
   /// @uname DrawRectangleOnScreen
   /// @sn draw:%s rectangleOnScreenX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 0
   procedure DrawRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Fill a rectangle on the screen.
@@ -1062,6 +1072,8 @@ interface
   /// @lib DrawOrFillRectangleOnScreen(clr, True, xPos, yPos, width, height)
   /// @uname FillRectangleOnScreen
   /// @sn fill:%s rectangleOnScreenX:%s y:%s width:%s height:%s
+  ///
+  /// @doc_idx 0
   procedure FillRectangleOnScreen(clr : Color; xPos, yPos, width, height : Longint); overload;
   
   /// Draw a rectangle on the screen (fill or outline).
@@ -1075,6 +1087,8 @@ interface
   /// @lib DrawOrFillRectangleRectOnScreen(clr, False, source)
   /// @uname DrawRectangleRectOnScreen
   /// @sn draw:%s rectangleOnScreen:%s
+  ///
+  /// @doc_idx 1
   procedure DrawRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   
   /// Fill a rectangle on the screen.
@@ -1082,6 +1096,8 @@ interface
   /// @lib DrawOrFillRectangleRectOnScreen(clr, True, source)
   /// @uname FillRectangleRectOnScreen
   /// @sn fill:%s rectangleOnScreen:%s
+  ///
+  /// @doc_idx 1
   procedure FillRectangleOnScreen(clr : Color; const source : Rectangle); overload;
   
   

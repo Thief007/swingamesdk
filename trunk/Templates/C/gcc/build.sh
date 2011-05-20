@@ -328,15 +328,15 @@ then
             HAS_i386=true
         fi
         
-        # if [[ HAS_i386 && HAS_PPC ]]; then
-        #     echo "  ... Building Universal Binary"
-        #     doMacCompile "i386"
-        #     doMacCompile "ppc"
-        #     
-        #     doLipo "i386" "ppc"
-        # else
+        if [[ $HAS_i386 = true && $HAS_PPC = true ]]; then
+            echo "  ... Building Universal Binary"
+            doMacCompile "i386"
+            doMacCompile "ppc"
+            
+            doLipo "i386" "ppc"
+        else
             doBasicMacCompile
-        # fi
+        fi
         
         doMacPackage
     elif [ "$OS" = "$LIN" ]; then

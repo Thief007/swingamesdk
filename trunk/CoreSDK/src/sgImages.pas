@@ -682,6 +682,8 @@ uses sgTypes;
   /// @class Bitmap
   /// @method Draw
   /// @csn drawAtX:%s y:%s
+  ///
+  /// @doc_idx 0
   procedure DrawBitmap(src : Bitmap; x, y : Single); overload;
   
   /// Draw the passed in bitmap onto the game.
@@ -692,7 +694,25 @@ uses sgTypes;
   /// @class Bitmap
   /// @overload Draw DrawAtPoint
   /// @csn drawAt:%s
+  ///
+  /// @doc_idx 2
   procedure DrawBitmap(src : Bitmap; const position : Point2D); overload;
+  
+  /// Draw the named bitmap onto the game.
+  ///
+  /// @lib DrawBitmapNamed
+  /// @sn drawBitmapNamed:%s x:%s y:%s
+  ///
+  /// @doc_idx 1
+  procedure DrawBitmap(name: String; x, y : Single); overload;
+  
+  /// Draw the passed in bitmap onto the game.
+  ///
+  /// @lib DrawBitmapNamedAtPoint
+  /// @sn drawBitmapNamed:%s position:%s
+  ///
+  /// @doc_idx 2
+  procedure DrawBitmap(name: String; const position : Point2D); overload;
   
   /// Draw the cell of the passed in bitmap onto the game.
   ///
@@ -1516,6 +1536,16 @@ end;
 procedure DrawBitmapOnScreen(src : Bitmap; const position : Point2D); overload;
 begin
   DrawBitmapOnScreen(src, Round(position.x), Round(position.y))
+end;
+
+procedure DrawBitmap(name: String; x, y : Single); overload;
+begin
+  DrawBitmap(BitmapNamed(name), x, y);
+end;
+
+procedure DrawBitmap(name: String; const position : Point2D); overload;
+begin
+  DrawBitmap(BitmapNamed(name), position);
 end;
 
 //---------------------------------------------------------------------------

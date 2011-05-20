@@ -157,6 +157,12 @@ implementation
 		DrawBitmapPartOnScreen(ship, Round(framePos.x + 289), Round(framePos.y + 268), 100, 100, Round(289 + drawIn.x), Round(268 + drawIn.y));
 	end;
 	
+	procedure TestDrawNamedBitmap(const drawIn: Rectangle);
+	begin
+	  DrawBitmap('enShip', drawIn.x + 10, drawIn.y + 10);
+	  DrawBitmap('SmallBall', PointAt(drawIn.x + 50, drawIn.y + 10));
+	end;
+	
 	procedure TestPixels(const drawIn: Rectangle);
 		procedure ClearStuff();
 		begin
@@ -604,7 +610,7 @@ implementation
 		tempBitmap: Array of Bitmap;
 	begin
 		result.Title := 'Graphics Tests';
-		SetLength(result.Tests, 12);
+		SetLength(result.Tests, 13);
 		
 		for i := 0 to High(result.Tests) do
 		begin
@@ -770,6 +776,15 @@ implementation
 			zoom := 1;
 			rotate := 0;
 			ToRun := @TestRotBmp;
+		end;
+		
+		with result.Tests[12] do
+		begin
+		  MethodBeingTested := 'DrawBitmap via name';
+			Instructions := 	'Draws two bitmaps...';
+			zoom := 1;
+			rotate := 0;
+			ToRun := @TestDrawNamedBitmap
 		end;
 	end;
 	
