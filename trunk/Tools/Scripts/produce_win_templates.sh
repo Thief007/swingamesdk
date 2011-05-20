@@ -116,7 +116,7 @@ cd "${VS08_DIST_DIR}"
 cat "src/GameMain.cs" | awk '{sub("MyGame", "$safeprojectname$.src"); print}' >> "src/NewGameMain.cs"
 mv "src/NewGameMain.cs" "src/GameMain.cs"
 zip -r "SwinGame C# Project.zip" * > /dev/null
-scp "SwinGame C# Project.zip" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
+# scp "SwinGame C# Project.zip" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 
 echo "  ... Creating Template Installer for C# Express"
 mv "SwinGame C# Project.zip" "${STUDIO_EX_CS_08_DIST_DIR}"
@@ -135,7 +135,7 @@ cd "${VB_VS08_DIST_DIR}"
 cat "Mono.vbproj" | awk '{sub("Mono", "$safeprojectname$"); print}' >> "NewMono.vbproj"
 mv "NewMono.vbproj" "Mono.vbproj"
 zip -r "SwinGame VB Project.zip" * > /dev/null
-scp "SwinGame VB Project.zip" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
+# scp "SwinGame VB Project.zip" acain@mercury.it.swin.edu.au:"${MERCURY_INST_DIR_NO_SPACE}/"
 
 echo "  ... Creating Template Installer for VB Express"
 mv "SwinGame VB Project.zip" "${STUDIO_EX_VB_08_DIST_DIR}"
@@ -153,7 +153,7 @@ scp "${DIST_DIR}/SwinGame VB Template Installer.vsi" acain@mercury.it.swin.edu.a
 # cd "${GCC_C_DIST_DIR}"
 # zip -r "../SwinGame C - GCC.zip" "*" > /dev/null
 
-rm -rf ${ZIP_TMP_DIR}
+#rm -rf ${ZIP_TMP_DIR}
 
 echo " ... Done"
 
